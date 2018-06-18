@@ -1,0 +1,167 @@
+/****************************************************************************
+ ** @license
+ ** This demo file is part of yFiles for HTML 2.1.
+ ** Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** 72070 Tuebingen, Germany. All rights reserved.
+ **
+ ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+ ** of demo files in source code or binary form, with or without
+ ** modification, is not permitted.
+ **
+ ** Owners of a valid software license for a yFiles for HTML version that this
+ ** demo is shipped with are allowed to use the demo source code as basis
+ ** for their own yFiles for HTML powered applications. Use of such programs is
+ ** governed by the rights and conditions as set out in the yFiles for HTML
+ ** license agreement.
+ **
+ ** THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+ ** WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ ** MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+ ** NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ ** SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+ ** TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ ** PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+ ** LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+ ** NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ **
+ ***************************************************************************/
+html,
+body,
+.yfiles-canvascomponent {
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  margin: 0;
+}
+
+div {
+  box-sizing: border-box;
+}
+
+#center {
+  position: absolute;
+  box-sizing: border-box;
+  width: 60%;
+  padding: 10px;
+  left: 20%;
+  top: 0;
+  bottom: 0;
+}
+
+#top {
+  position: absolute;
+  box-sizing: border-box;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 30px;
+  background-color: #eeeeee;
+}
+
+#graphContainer {
+  box-sizing: border-box;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  top: 0;
+}
+
+.sidebar {
+  position: absolute;
+  box-sizing: border-box;
+  width: 20%;
+  top: 0;
+  bottom: 0;
+}
+
+#left {
+  left: 0;
+  border-right: 5px solid #eeeeee;
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+#right {
+  right: 0;
+  border-left: 5px solid #eeeeee;
+}
+
+.sidebar-content {
+  position: relative;
+  height: 100%;
+  overflow: auto;
+  word-wrap: break-word;
+}
+
+#right ul {
+  list-style: none;
+  padding: 0;
+  margin: 0 10px;
+}
+
+#right ul > .item-selected {
+  background-color: gold;
+}
+
+#right ul > li {
+  line-height: 20px;
+  border-bottom: 1px solid lightgray;
+  padding: 2px 5px;
+}
+
+#right ul button {
+  float: right;
+  margin: 2px 10px 0 0;
+  vertical-align: middle;
+  font-size: 10px;
+  background-color: white;
+  border: 1px solid black;
+  border-radius: 3px;
+  line-height: normal;
+}
+
+#right ul button:hover {
+  background-color: #dddddd;
+}
+
+#top > button {
+  float: left;
+  margin: 3px 5px;
+}
+
+#nodes-list {
+  top: 280px;
+  bottom: 10px;
+  right: 0;
+  left: 0;
+  overflow: auto;
+  position: absolute;
+}
+
+#node-filter {
+  white-space: nowrap;
+  display: table;
+  width: 100%;
+  border-spacing: 10px;
+  background-color: #eee;
+}
+
+#node-filter > label {
+  display: table-cell;
+  width: 1px;
+  vertical-align: middle;
+}
+
+#nodeFilter {
+  box-sizing: border-box;
+  display: table-cell;
+  width: 100%;
+  padding-right: 5px;
+}
+
+#node-view {
+  margin: 5px;
+  height: 115px;
+  max-width: 255px;
+}

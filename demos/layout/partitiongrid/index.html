@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+
+<!-- ////////////////////////////////////////////////////////////////////////
+     // @license
+     // This demo file is part of yFiles for HTML 2.1.
+     // Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // 72070 Tuebingen, Germany. All rights reserved.
+     //
+     // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+     // of demo files in source code or binary form, with or without
+     // modification, is not permitted.
+     //
+     // Owners of a valid software license for a yFiles for HTML version that this
+     // demo is shipped with are allowed to use the demo source code as basis
+     // for their own yFiles for HTML powered applications. Use of such programs is
+     // governed by the rights and conditions as set out in the yFiles for HTML
+     // license agreement.
+     //
+     // THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+     // WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+     // MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+     // NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+     // SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+     // TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+     // PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+     // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+     // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+     // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+     // 
+     ////////////////////////////////////////////////////////////////////////-->
+
+  <title>Partition Grid Demo [yFiles for HTML]</title>
+
+  <link rel="stylesheet" href="../../../lib/yfiles.css">
+  <link rel="stylesheet" href="../../resources/style/demo.css">
+
+  <!-- enable debugging -->
+  <script src="../../../ide-support/yfiles-typeinfo.js"></script>
+
+  <style>
+    .option-input {
+      width: 60px;
+      padding-left: 2px;
+      margin-top: 3px;
+    }
+
+    .option label {
+      width: 45%;
+      padding-left: 5px;
+      padding-right: 2px;
+      margin-top: 3px;
+    }
+
+    .grid-button-plus {
+      background: url('../../resources/icons/plus-16.svg') no-repeat 0 50%;
+      padding-left: 20px;
+      margin-right: 20px;
+      width: 48%;
+    }
+
+    .grid-button-minus {
+      background: url('../../resources/icons/minus-16.svg') no-repeat 0 50%;
+      padding-left: 20px;
+      width: 48%;
+    }
+
+    .grid-button-minus-whole-width {
+      background: url('../../resources/icons/minus-16.svg') no-repeat 0 50%;
+      padding-left: 20px;
+    }
+
+    .grid-button-minus[disabled] {
+      opacity: 0.6;
+    }
+
+    .option {
+      display: flex;
+      padding-bottom: 1em;
+    }
+
+    .grid-button {
+      margin-right: 11px;
+      padding-top: 3px;
+      padding-bottom: 3px;
+      border: 1px solid #888;
+      background-color: #ddd;
+    }
+
+    .grid-button:not([disabled]):hover {
+      background-color: #bbb;
+    }
+  </style>
+</head>
+<body class="demo-has-left demo-has-right">
+<aside class="demo-sidebar demo-left">
+  <h1 class="demo-sidebar-header">Description</h1>
+  <div class="demo-sidebar-content">
+    <p>
+      This demo application lets you experience the usage of a <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.layout.PartitionGrid">yfiles.layout.PartitionGrid</a> for hierarchic and
+      organic layout calculations. </p>
+    <p>
+      Nodes are assigned to columns/rows by their fill color (gray nodes are unassigned) and the calculated partition
+      grid is visualized after a layout run to show the effect of the node assignment to the layout. </p>
+    <h2>Things to try</h2>
+    <ul>
+      <li>Click the Hierarchic or Organic button of the toolbar to trigger the corresponding layout algorithm based on
+        the current node assignment. Note that, the Organic layout doesn't support stretching of a group node if it
+        contains child nodes assigned to different rows or columns. In this case, the Organic layout button will be
+        disabled.
+      </li>
+      <li>
+        Change the partition cell of a (non-gray) node by moving it to a different partition cell. For the gray nodes
+        that do not have currently active restrictions, select the desired ones and press the <img
+          src="resources/grid-16.svg" style="vertical-align: bottom"/>-button from the toolbar to add restrictions based
+        on their current location. Then, move them to other partition cells, if desired. Nodes that are positioned
+        outside the partition grid do not receive a restriction.
+      </li>
+      <li>Add/remove active restrictions to/from the selected nodes, using buttons <img src="resources/grid-16.svg"
+          style="vertical-align: bottom"/> or <img src="../../resources/icons/delete2-16.svg"
+          style="vertical-align: bottom"/> of the toolbar.
+      </li>
+      <li>
+        Configure the partition grid using the settings panel on the right.
+      </li>
+      <li>
+        Remove a row/column from the partition grid, by right-clicking on a cell that belongs to the desired row/column
+        and use the "Delete Row" or "Delete Column" of the settings panel on the right.
+      </li>
+    </ul>
+  </div>
+</aside>
+
+<div class="demo-content">
+  <div class="demo-toolbar">
+    <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
+    <button data-command="ZoomOriginal" title="Zoom to original size" class="demo-icon-yIconZoomOriginal"></button>
+    <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
+    <button data-command="FitContent" title="Fit Content" class="demo-icon-yIconZoomFit"></button>
+
+    <span class="demo-separator"></span>
+
+    <button data-command="GroupSelection" title="Group selected element" class="demo-icon-yIconGroup"></button>
+    <button data-command="UngroupSelection" title="Ungroup selected element" class="demo-icon-yIconUngroup"></button>
+
+    <span class="demo-separator"></span>
+
+    <button data-command="GenerateGridRestrictions" title="Add Grid Restrictions to Selection"
+        style="background-image:url('resources/grid-16.svg')"></button>
+
+    <button data-command="RemoveRestrictions" title="Remove Restrictions From Selection"
+        class="demo-icon-yIconDelete"></button>
+
+    <span class="demo-separator"></span>
+
+    <button id="hierarchicLayout" data-command="HierarchicLayout" title="Calculates a hierarchic layout"
+        class="demo-icon-yIconLayoutHierarchic labeled">Hierarchic
+    </button>
+    <button id="organicLayout" data-command="OrganicLayout" title="Calculates an organic layout"
+        class="demo-icon-yIconLayoutOrganic labeled">Organic
+    </button>
+  </div>
+
+  <div id="graphComponent"></div>
+</div>
+
+<aside class="demo-sidebar demo-right">
+  <h1 class="demo-sidebar-header">Settings</h1>
+  <div class="demo-sidebar-content">
+    <h2>Partition Grid</h2>
+    <div class="option">
+      <button data-command="AddRow" id="AddRow" class="grid-button grid-button-plus">Add Row</button>
+      <button data-command="DeleteRow" id="DeleteRow" class="grid-button grid-button-minus" disabled>Delete Row</button>
+    </div>
+
+    <div class="option">
+      <button data-command="AddColumn" id="AddColumn" class="grid-button grid-button-plus">Add Column</button>
+      <button data-command="DeleteColumn" id="DeleteColumn" class="grid-button grid-button-minus" disabled>Delete Column</button>
+    </div>
+
+    <div class="option">
+      <button data-command="DeleteEmptyRowsColumns" id="DeleteEmpty" class="grid-button grid-button-minus-whole-width">Delete Empty
+        Rows/Columns
+      </button>
+    </div>
+
+    <h2>Column Configuration</h2>
+    <div class="option">
+      <label for="leftInset">Left Inset: </label> <input type="number" id="leftInset" min="1" max="200"
+        class="option-input" value="10">
+    </div>
+
+    <div class="option">
+      <label for="rightInset">Right Inset: </label> <input type="number" id="rightInset" min="1" max="200"
+        class="option-input" value="10">
+    </div>
+
+    <div class="option">
+      <label for="columnWidth">Min Column Width: </label> <input type="number" id="columnWidth" min="1" max="200"
+        class="option-input" value="50">
+    </div>
+
+    <div class="option">
+      <input type="checkbox" id="fixColumnOrder" class="demo-toggle-button labeled" data-command="FixColumnOrder"
+          checked><label for="fixColumnOrder">Fixed Column Order</label>
+    </div>
+
+    <div class="option">
+      <input type="checkbox" id="stretchGroupNodes" class="demo-toggle-button labeled"
+          data-command="ToggleStretchGroupNodes"><label for="stretchGroupNodes">Stretch Group Nodes</label>
+    </div>
+
+    <h2>Row Configuration</h2>
+
+    <div class="option">
+      <label for="topInset">Top Inset: </label> <input type="number" id="topInset" min="1" max="200"
+        class="option-input" value="10">
+    </div>
+
+    <div class="option">
+      <label for="bottomInset">Bottom Inset: </label> <input type="number" id="bottomInset" min="1" max="200"
+        class="option-input" value="10">
+    </div>
+
+    <div class="option">
+      <label for="rowHeight">Min Row Height: </label> <input type="number" id="rowHeight" min="1" max="200"
+        class="option-input" value="50">
+    </div>
+  </div>
+</aside>
+
+
+<script src="../../resources/require.js"></script>
+<script src="PartitionGridDemo.js"></script>
+
+</body>
+</html>

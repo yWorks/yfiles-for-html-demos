@@ -1,0 +1,19 @@
+{
+  "compileOnSave": false,
+  "compilerOptions": {
+    "outDir": "../dist/out-tsc",
+    "baseUrl": "./",
+    "sourceMap": true,
+    "declaration": false,
+    "moduleResolution": "node",
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "target": "es6",
+    "types": [],
+    "lib": ["es2017", "dom"],
+    "paths": {
+      "yfiles/*": ["../../../../lib/es6-modules/yfiles/*"]
+    }
+  },
+  "include": ["**/*.ts", "../../../../ide-support/yfiles-api-es6-modules-webstorm.d.ts"]
+}

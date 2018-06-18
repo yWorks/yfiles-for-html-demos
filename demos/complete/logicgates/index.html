@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+
+<!-- ////////////////////////////////////////////////////////////////////////
+     // @license
+     // This demo file is part of yFiles for HTML 2.1.
+     // Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // 72070 Tuebingen, Germany. All rights reserved.
+     //
+     // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+     // of demo files in source code or binary form, with or without
+     // modification, is not permitted.
+     //
+     // Owners of a valid software license for a yFiles for HTML version that this
+     // demo is shipped with are allowed to use the demo source code as basis
+     // for their own yFiles for HTML powered applications. Use of such programs is
+     // governed by the rights and conditions as set out in the yFiles for HTML
+     // license agreement.
+     //
+     // THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+     // WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+     // MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+     // NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+     // SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+     // TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+     // PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+     // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+     // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+     // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+     // 
+     ////////////////////////////////////////////////////////////////////////-->
+
+  <title>Logic Gates Demo [yFiles for HTML]</title>
+
+  <link rel="stylesheet" href="../../../lib/yfiles.css">
+  <link rel="stylesheet" href="../../resources/style/demo.css">
+
+  <!-- enable debugging -->
+  <script src="../../../ide-support/yfiles-typeinfo.js"></script>
+
+  <style>
+    #dndPanelContainer {
+      position: absolute;
+      top: 60px;
+      bottom: 0;
+      width: 150px;
+      border-right: 5px solid #eee;
+      overflow: auto;
+      box-sizing: border-box;
+      z-index: 12;
+    }
+
+    #dndPanel {
+      width: 100%;
+    }
+
+    .demo-dndPanelItem {
+      margin: 10px auto;
+    }
+
+    .yfiles-cursor-dragdrop-copy {
+      cursor: copy;
+    }
+
+    .yfiles-cursor-dragdrop-move {
+      cursor: move;
+    }
+
+    .yfiles-cursor-dragdrop-link {
+      cursor: alias;
+    }
+
+    .yfiles-cursor-dragdrop-scroll {
+      cursor: move;
+    }
+
+    .yfiles-cursor-dragdrop-all {
+      cursor: copy;
+    }
+
+    .yfiles-cursor-dragdrop-no-drop {
+      cursor: no-drop;
+    }
+
+    .demo-toolbar, #graphComponent,
+    .demo-left-hidden .demo-toolbar,
+    .demo-left-hidden #graphComponent {
+      left: 150px !important;
+    }
+
+    .yfiles-drag {
+      z-index: 15;
+      opacity: 0.35;
+      transition: opacity .2s ease-in-out;
+    }
+
+    .yfiles-drag.hidden {
+      opacity: 0;
+    }
+  </style>
+
+</head>
+<body class="demo-has-left">
+<!--
+  The sidebar for the description
+-->
+<aside class="demo-sidebar demo-left">
+  <h1 class="demo-sidebar-header">Description</h1>
+  <div class="demo-sidebar-content">
+    <p>
+      This demo shows how yfiles for HTML can be used for the visualization of a digital system consisted of logic
+      gates. </p>
+    <p> Each node in this system has specific ports such that incoming edges are connected only to the left side of the
+      target node, while outgoing edges connect to the right side of the source node. To achieve this, the notions of
+      <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.layout.PortConstraint">yfiles.layout.PortConstraint</a> and <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.layout.PortCandidate">yfiles.layout.PortCandidate</a> have been used. </p>
+
+    <h2>Things to Try:</h2>
+    <ul>
+      <li>Drag nodes from the palette and connect them with edges. The new edges will also start and end at certain
+        ports.
+      </li>
+      <li>Try to create a new edge. While creating the connection the possible end ports are indicated with green
+        color.
+      </li>
+      <li>Hover over a node to see its available input (indicated with green color) and output (indicated with red
+        color) ports.
+      </li>
+      <li>Re-assign a connection by dragging the endpoint of the particular edge.</li>
+      <li>Apply the currently selected layout algorithm and notice that, the ports remain unchanged.</li>
+    </ul>
+  </div>
+</aside>
+
+<div class="demo-content">
+  <div class="demo-toolbar">
+    <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
+    <button data-command="ZoomOriginal" title="Zoom to original size" class="demo-icon-yIconZoomOriginal"></button>
+    <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
+    <button data-command="FitContent" title="Fit Content" class="demo-icon-yIconZoomFit"></button>
+
+    <span class="demo-separator"></span>
+
+    <button data-command="Cut" title="Cut" class="demo-icon-yIconCut"></button>
+    <button data-command="Copy" title="Copy" class="demo-icon-yIconCopy"></button>
+    <button data-command="Paste" title="Paste" class="demo-icon-yIconPaste"></button>
+    <button data-command="Delete" title="Delete" class="demo-icon-yIconDelete"></button>
+
+    <span class="demo-separator"></span>
+
+    <button data-command="Undo" title="Undo" class="demo-icon-yIconUndo"></button>
+    <button data-command="Redo" title="Redo" class="demo-icon-yIconRedo"></button>
+
+    <span class="demo-separator"></span>
+
+    <select id="algorithm-select-box" data-type="ComboBox" data-command="AlgorithmSelectionChanged"
+        title="Select a layout algorithm">
+      <option>Hierarchic Layout</option>
+      <option>Edge Router</option>
+    </select>
+
+    <button id="layoutButton" data-command="Layout" title="Layout" class="demo-icon-yIconLayout labeled">Layout</button>
+  </div>
+
+  <div id="dndPanelContainer">
+    <div id="dndPanel"></div>
+  </div>
+
+  <div id="graphComponent"></div>
+</div>
+
+<script src="../../resources/require.js"></script>
+<script src="LogicGatesDemo.js"></script>
+</body>
+</html>

@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+
+<!-- ////////////////////////////////////////////////////////////////////////
+     // @license
+     // This demo file is part of yFiles for HTML 2.1.
+     // Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // 72070 Tuebingen, Germany. All rights reserved.
+     //
+     // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+     // of demo files in source code or binary form, with or without
+     // modification, is not permitted.
+     //
+     // Owners of a valid software license for a yFiles for HTML version that this
+     // demo is shipped with are allowed to use the demo source code as basis
+     // for their own yFiles for HTML powered applications. Use of such programs is
+     // governed by the rights and conditions as set out in the yFiles for HTML
+     // license agreement.
+     //
+     // THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+     // WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+     // MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+     // NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+     // SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+     // TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+     // PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+     // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+     // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+     // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+     // 
+     ////////////////////////////////////////////////////////////////////////-->
+
+  <title>SVG Export Demo [yFiles for HTML]</title>
+
+  <link rel="stylesheet" href="../../../lib/yfiles.css">
+  <link rel="stylesheet" href="../../resources/style/demo.css">
+
+  <style>
+    .demo-properties label.short {
+      width: 6em;
+    }
+
+    .demo-properties input[type=number] {
+      width: 5em;
+    }
+
+    .demo-exportDialog {
+      z-index: 10000;
+      position: absolute;
+      left: 25%;
+      right: 25%;
+      top: 10%;
+      max-width: 600px;
+      background: #F9F9F9;
+      border: 1px solid #ccc;
+      box-shadow: 0 0 12px rgba(0, 0, 0, .3);
+      text-align: center;
+      font-size: 12px;
+    }
+
+    .demo-exportDialog h2 {
+      font-size: 14pt;
+      font-weight: bold;
+      font-family: Helvetica, Arial, sans-serif;
+      background-color: #eeeeee;
+      line-height: 20pt;
+      border-bottom: 1px solid #dddddd;
+      border-top: 1px solid #dddddd;
+    }
+
+    .outer div {
+      margin-bottom: 12px;
+    }
+
+    .outer label {
+      font-size: larger;
+    }
+
+    .outer select {
+      min-width: 80px;
+    }
+
+    .exportImageContainer {
+      width: 90%;
+      height: 100%;
+      display: inline-block;
+      border: 1px solid #CCCCCC;
+    }
+
+    .exportImageContainer button {
+      margin: 0 auto;
+    }
+
+    .exportImageContainer div {
+      overflow: auto;
+      height: 240px;
+      max-width: 260px;
+      margin: 0 auto;
+    }
+
+    #imageContainer img {
+      margin: auto;
+      display: block;
+    }
+
+    .demo-exportDialog button {
+      border: 1px solid #7D7D7D;
+      background: #eeeeee;
+      margin: 10px;
+      padding: 2px 5px;
+    }
+
+    .hidden {
+      display: none;
+    }
+  </style>
+
+  <!-- enable debugging -->
+  <script src="../../../ide-support/yfiles-typeinfo.js"></script>
+
+</head>
+<body class="demo-has-left demo-has-right">
+<aside class="demo-sidebar demo-left">
+  <h1 class="demo-sidebar-header">Description</h1>
+  <div class="demo-sidebar-content">
+    <p>This demo shows how to export the whole diagram or a part of it to an SVG file.</p>
+
+    <h2>Things to Try</h2>
+    <ul>
+      <li>
+        Resize and move the hatched rectangle to control the region which will be exported.
+      </li>
+      <li>
+        <em>Export</em> shows the exported drawing in a popup with an option to save as SVG file.
+      </li>
+      <li>
+        Disable <em>Export Rectangle Contents</em> to export the complete graph instead of the rectangle's region.
+      </li>
+      <li>
+        Explore the setting for scale.
+      </li>
+    </ul>
+
+    <h2>Details</h2>
+
+    <p>
+      The approach used in this demo completely runs in the user's browser. It is supported by the latest versions of
+      all major browsers. However, the save to file button won't work in IE9 but it can still be saved with
+      right-click on the exported SVG and "Save as...".</p>
+  </div>
+</aside>
+
+<div class="demo-content">
+  <div id="graphComponent"></div>
+</div>
+
+<!--
+  Export Properties
+  -->
+<aside class="demo-sidebar demo-right">
+  <h1 class="demo-sidebar-header">Export</h1>
+  <div class="demo-sidebar-content">
+
+    <div class=demo-properties>
+      <div id="formContainer">
+        <fieldset>
+          <legend>Export Properties</legend>
+          <div class="demo-form-block"><label for="useRect">Export Rectangle Contents</label> <input id="useRect"
+              data-name="inputUseRect" type="checkbox" name="useRect" checked="checked"></div>
+          <div class="demo-form-block">
+            <label for="scale" class="short">Scale</label> <input id="scale" data-name="inputScale" type="number"
+              min="0.1" max="200.0" step="0.1" name="scale" value="1.0">
+          </div>
+        </fieldset>
+        <button data-name="ExportButton" data-command="Export" value="Export">Export</button>
+      </div>
+    </div>
+
+  </div>
+</aside>
+
+<!-- Export popup -->
+<div id="popup" class="demo-exportDialog hidden">
+  <div id="outerExport" class="outer">
+    <h2>SVG Export</h2>
+    <div id="svgContainer" class="exportImageContainer">
+      <h3>Exported SVG</h3>
+      <div id="svgContainerInner"></div>
+      <button id="svgSaveButton">Save</button>
+    </div>
+  </div>
+  <button id="closeButton">Close</button>
+</div>
+
+
+<script src="../../resources/require.js"></script>
+<script src="SvgExportDemo.js"></script>
+
+</body>
+</html>

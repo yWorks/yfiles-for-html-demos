@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+
+<!-- ////////////////////////////////////////////////////////////////////////
+     // @license
+     // This demo file is part of yFiles for HTML 2.1.
+     // Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // 72070 Tuebingen, Germany. All rights reserved.
+     //
+     // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+     // of demo files in source code or binary form, with or without
+     // modification, is not permitted.
+     //
+     // Owners of a valid software license for a yFiles for HTML version that this
+     // demo is shipped with are allowed to use the demo source code as basis
+     // for their own yFiles for HTML powered applications. Use of such programs is
+     // governed by the rights and conditions as set out in the yFiles for HTML
+     // license agreement.
+     //
+     // THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+     // WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+     // MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+     // NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+     // SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+     // TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+     // PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+     // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+     // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+     // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+     // 
+     ////////////////////////////////////////////////////////////////////////-->
+
+  <title>Size Constraint Provider Demo [yFiles for HTML]</title>
+
+  <link rel="stylesheet" href="../../../lib/yfiles.css">
+  <link rel="stylesheet" href="../../resources/style/demo.css">
+
+  <style type="text/css">
+    .orange {
+      fill: #FF8C00;
+    }
+
+    .green {
+      fill: #008000;
+    }
+
+    .royalblue {
+      fill: #007FFF;
+    }
+  </style>
+
+  <!-- enable debugging -->
+  <script src="../../../ide-support/yfiles-typeinfo.js"></script>
+</head>
+<body class="demo-has-left">
+<aside class="demo-sidebar demo-left">
+  <h1 class="demo-sidebar-header">Description</h1>
+  <div class="demo-sidebar-content">
+
+    <p>This demo shows how resizing of nodes can be restricted.</p>
+
+    <p>This is done with custom implementations of the interface <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.input.INodeSizeConstraintProvider">yfiles.input.INodeSizeConstraintProvider</a>
+      that are
+      added to the lookup of the nodes. </p>
+
+    <h2>Things to Try</h2>
+
+    <p>Select and resize the nodes.</p>
+
+    <h2>Node Types</h2>
+    <ul>
+      <li>
+        <em class="demo-blue demo-bold">Blue nodes</em> cannot shrink. Additionally, neither side can become
+        larger than three times its initial size in each resizing operation.
+      </li>
+      <li>
+        The minimum size of a <em class="demo-green demo-bold">green node</em> is the size of its label. It gets
+        never smaller than that.
+      </li>
+      <li>
+        The <em class="demo-orange demo-bold">orange node</em> must always encompass the black rectangle.
+        Additionally, it has predefined minimum and maximum sizes.
+      </li>
+    </ul>
+  </div>
+</aside>
+
+<div class="demo-content">
+  <div id="graphComponent"></div>
+</div>
+
+<script src="../../resources/require.js"></script>
+<script src="SizeConstraintProviderDemo.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- ////////////////////////////////////////////////////////////////////////
+     // @license
+     // This demo file is part of yFiles for HTML 2.1.
+     // Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // 72070 Tuebingen, Germany. All rights reserved.
+     //
+     // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+     // of demo files in source code or binary form, with or without
+     // modification, is not permitted.
+     //
+     // Owners of a valid software license for a yFiles for HTML version that this
+     // demo is shipped with are allowed to use the demo source code as basis
+     // for their own yFiles for HTML powered applications. Use of such programs is
+     // governed by the rights and conditions as set out in the yFiles for HTML
+     // license agreement.
+     //
+     // THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+     // WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+     // MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+     // NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+     // SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+     // TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+     // PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+     // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+     // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+     // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+     // 
+     ////////////////////////////////////////////////////////////////////////-->
+
+<svg id="database" xmlns="http://www.w3.org/2000/svg" width="70px" height="70px" viewBox="0 0 70 70">
+  <g id="disk_3">
+    <path fill="#61ace0" d="M35 46.2c-10.8 0-19.6-1.9-19.6-4.2v10c0 2.3 8.8 4.2 19.6 4.2s19.6-1.9 19.6-4.2V42c0 2.3-8.8 4.2-19.6 4.2z"/>
+    <path fill="#96cdea" d="M35 46.2c10.8 0 19.6-1.9 19.6-4.2l-1.2-2c0 2.2-8.2 3.9-18.4 3.9-9.5 0-17.4-2-18.4-3.9l-1.2 2c0 2.3 8.8 4.2 19.6 4.2z"/>
+    <path fill="#3c89c9" d="M35 35.9c10.2 0 19.6 2.8 19.6 2.8-.4 2.7-5.4 5.4-19.6 5.4-12.1 0-18.5-2.5-19.5-4.9-.3-.7 9.3-3.3 19.5-3.3z"/>
+  </g>
+  <g id="disk_2">
+    <path fill="#61ace0" d="M35 32.7c-10.8 0-19.6-1.9-19.6-4.2v10c0 2.3 8.8 4.2 19.6 4.2s19.6-1.9 19.6-4.2v-10c0 2.3-8.8 4.2-19.6 4.2z"/>
+    <path fill="#96cdea" d="M35 32.7c10.8 0 19.6-1.9 19.6-4.2l-1.2-2c0 2.2-8.2 3.9-18.4 3.9-9.5 0-17.4-2-18.4-3.9l-1.2 2c0 2.3 8.8 4.2 19.6 4.2z"/>
+    <path fill="#3c89c9" d="M34.9 22.4c10.2 0 19.6 2.8 19.6 2.8-.4 2.7-5.4 5.4-19.6 5.4-12.1 0-18.5-2.5-19.5-4.9-.3-.6 9.3-3.3 19.5-3.3z"/>
+  </g>
+  <g id="disk_1">
+    <path fill="#61ace0" d="M35 19.5c-10.8 0-19.6-1.9-19.6-4.2v10c0 2.3 8.8 4.2 19.6 4.2s19.6-1.9 19.6-4.2v-10c0 2.3-8.8 4.2-19.6 4.2z"/>
+    <path fill="#96cdea" d="M35 19.5c10.8 0 19.6-1.9 19.6-4.2l-1.2-2c0 2.2-8.2 3.9-18.4 3.9-9.5 0-17.4-2-18.4-3.9l-1.2 2c0 2.3 8.8 4.2 19.6 4.2z"/>
+    <ellipse fill="#61ace0" cx="35" cy="13.3" rx="18.4" ry="3.9"/>
+  </g>
+</svg>

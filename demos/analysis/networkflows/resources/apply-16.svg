@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 width="16px" height="16px" xml:space="preserve">
+<g>    
+  <circle cx="8" cy="8" r="8" fill="dodgerblue" />
+  <path d="m 2.3389831,9.6610169 1.2711864,-1.7288135 2.5254237,2 L 12,3 13.474576,4.2711864 6.2711864,12.779661 Z" fill="#ffffff"></path>
+</g>
+</svg>

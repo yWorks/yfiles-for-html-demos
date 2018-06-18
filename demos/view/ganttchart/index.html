@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+
+<!-- ////////////////////////////////////////////////////////////////////////
+     // @license
+     // This demo file is part of yFiles for HTML 2.1.
+     // Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // 72070 Tuebingen, Germany. All rights reserved.
+     //
+     // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+     // of demo files in source code or binary form, with or without
+     // modification, is not permitted.
+     //
+     // Owners of a valid software license for a yFiles for HTML version that this
+     // demo is shipped with are allowed to use the demo source code as basis
+     // for their own yFiles for HTML powered applications. Use of such programs is
+     // governed by the rights and conditions as set out in the yFiles for HTML
+     // license agreement.
+     //
+     // THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+     // WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+     // MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+     // NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+     // SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+     // TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+     // PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+     // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+     // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+     // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+     // 
+     ////////////////////////////////////////////////////////////////////////-->
+
+  <title>Gantt Chart Demo [yFiles for HTML]</title>
+
+  <link rel="stylesheet" href="../../../lib/yfiles.css">
+  <link rel="stylesheet" href="../../resources/style/demo.css">
+  <link rel="stylesheet" href="resources/gantt-styles.css">
+
+  <!-- enable debugging -->
+  <script src="../../../ide-support/yfiles-typeinfo.js"></script>
+
+</head>
+<body class="demo-has-left">
+<aside class="demo-sidebar demo-left">
+  <h1 class="demo-sidebar-header">Description</h1>
+  <div class="demo-sidebar-content">
+
+    <p>The Gantt Chart demo shows how to create a Gantt component from JSON data.</p>
+    <p>The data consists of tasks which define the horizontal lanes and activities, each of which is assigned to a
+      task.</p>
+    <p>An activity has a start and end date, and optionally a lead time and follow-up time. Also an activity can
+      optionally depend on other activities.</p>
+    <p>The activity duration is rendered as a solid area. The lead and follow-up times are rendered with a hatch
+      pattern.</p>
+    <p>The activity dependencies are modeled as edges between the activity nodes.</p>
+    <p>This demo uses <a href="https://momentjs.com/">Moment.js</a> to parse, manipulate and calculate dates.</p>
+
+    <h2>Things to Try</h2>
+
+    <ul>
+      <li>Scroll the tasks using the mouse wheel.</li>
+      <li>Scroll the timeline horizontally using shift + mouse wheel.</li>
+      <li>Hover over an activity to highlight its dependencies.</li>
+      <li>Hover over a dependency edge to highlight the source and target.</li>
+      <li>Select an activity to display the activity information.</li>
+      <li>Grab and drag an activity to change the start and end time, or to assign an activity to a different task</li>
+      <li>Grab the left or right side of the solid area of an activity and drag to change the duration.</li>
+      <li>Select an activity and drag one of the round handles on the left or right to change the lead or follow-up
+        time.
+      </li>
+      <li>Select an activity and press 'F2' to change its name.</li>
+      <li>Drag an activity so it overlaps with other activities in the same task lane. The activities are placed below
+        each other so they don't overlap.
+      </li>
+      <li>Drag the mouse on an empty part of a task lane to create a new activity.</li>
+      <li>Shift-drag from a node to create a new dependency edge.</li>
+    </ul>
+
+  </div>
+</aside>
+
+<div class="demo-content">
+  <div id="graphComponentContainer">
+    <div id="mainComponent"></div>
+    <div id="timelineComponent"></div>
+    <div id="taskComponent"></div>
+  </div>
+</div>
+
+<div id="info" style="display: none"></div>
+<div id="nodeInfo" style="display: none">
+  <div><span data-name="name"></span></div>
+  <div>Start Time: <span data-name="start"></span></div>
+  <div>End Time: <span data-name="end"></span></div>
+  <div>Lead Time: <span data-name="lead"></span> h</div>
+  <div>Follow-up Time: <span data-name="followUp"></span> h</div>
+  <div>Total Duration: <span data-name="duration"></span> h</div>
+  <div>Task: <span data-name="task"></span></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.5/require.min.js"></script>
+<script src="GanttChartDemo.js"></script>
+
+</body>
+</html>

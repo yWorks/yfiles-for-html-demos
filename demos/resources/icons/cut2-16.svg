@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 width="16px" height="16px" viewBox="0 0 16 16" enable-background="new 0 0 16 16" xml:space="preserve">
+<g>
+    <ellipse cx="12.063" cy="12.19" rx="2" ry="2.551" transform="matrix(0.9572 -0.2896 0.2896 0.9572 -3.0133 4.0155)" stroke-width="2" stroke="#666666" stroke-miterlimit="10" fill="none"/>
+    <line x1="10.146" x2="5.306" y1="12.771" y2="1.298" fill="none" stroke-width="2" stroke="#666666" stroke-miterlimit="10"/>
+    <ellipse cx="3.938" cy="12.191" rx="1.999" ry="2.55" transform="matrix(-0.957 -0.2901 0.2901 -0.957 4.1689 25.0009)" stroke-width="2" stroke="#666666" stroke-miterlimit="10" fill="none"/>
+    <line x1="5.85" x2="10.691" y1="12.771" y2="1.298" fill="none" stroke-width="2" stroke="#666666" stroke-miterlimit="10"/>
+</g>
+</svg>

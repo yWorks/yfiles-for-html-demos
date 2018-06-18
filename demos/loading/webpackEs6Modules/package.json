@@ -1,0 +1,30 @@
+{
+  "name": "webpack-demo",
+  "version": "2.0.0",
+  "description": "Using webpack with yFiles for HTML",
+  "main": "webpack-demo.js",
+  "author": "yfileshtml@yworks.com",
+  "license": "https://www.yworks.com/en/products_yfiles_sla.html",
+  "private": true,
+  "dependencies": {
+    "color": "3.0.0"
+  },
+  "scripts": {
+    "production": "grunt && webpack --config webpack.prod.js",
+    "build": "webpack --config webpack.dev.js",
+    "start": "webpack --config webpack.dev.js && webpack-dev-server --config webpack.dev.js --open"
+  },
+  "devDependencies": {
+    "chunk-manifest-webpack-plugin": "1.1.2",
+    "grunt": "1.0.1",
+    "grunt-contrib-clean": "1.1.0",
+    "grunt-yfiles-deployment": "../../../deployment/grunt-yfiles-deployment",
+    "html-webpack-harddisk-plugin": "0.1.0",
+    "html-webpack-plugin": "2.30.1",
+    "uglifyjs-webpack-plugin": "1.1.8",
+    "webpack": "3.10.0",
+    "webpack-chunk-hash": "0.5.0",
+    "webpack-dev-server": "2.11.1",
+    "webpack-merge": "4.1.2"
+  }
+}

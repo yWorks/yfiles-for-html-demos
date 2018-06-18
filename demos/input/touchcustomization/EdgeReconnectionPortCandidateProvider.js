@@ -1,0 +1,111 @@
+/****************************************************************************
+ ** @license
+ ** This demo file is part of yFiles for HTML 2.1.
+ ** Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** 72070 Tuebingen, Germany. All rights reserved.
+ **
+ ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+ ** of demo files in source code or binary form, with or without
+ ** modification, is not permitted.
+ **
+ ** Owners of a valid software license for a yFiles for HTML version that this
+ ** demo is shipped with are allowed to use the demo source code as basis
+ ** for their own yFiles for HTML powered applications. Use of such programs is
+ ** governed by the rights and conditions as set out in the yFiles for HTML
+ ** license agreement.
+ **
+ ** THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+ ** WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ ** MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+ ** NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ ** SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+ ** TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ ** PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+ ** LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+ ** NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ **
+ ***************************************************************************/
+'use strict'
+
+define(['yfiles/view-editor'], /** @type {yfiles_namespace} */ /** typeof yfiles */ yfiles => {
+  /**
+   * An {@link yfiles.input.IEdgeReconnectionPortCandidateProvider} that allows moving ports to
+   * any other port candidate that another node provides.
+   * @implements {yfiles.input.IEdgeReconnectionPortCandidateProvider}
+   */
+  class EdgeReconnectionPortCandidateProvider extends yfiles.lang.Class(
+    yfiles.input.IEdgeReconnectionPortCandidateProvider
+  ) {
+    constructor(edge) {
+      super()
+      this.edge = edge
+    }
+
+    /**
+     * Gets a list of port candidates for edge reconnection that matches the list of candidates the
+     * IPortCandidateProvider interface returns.
+     * @param {yfiles.input.IInputModeContext} context
+     * @returns {yfiles.collections.List} The list of source port candidates
+     */
+    getSourcePortCandidates(context) {
+      const result = new yfiles.collections.List()
+      // add the current one as the default
+      result.add(new yfiles.input.DefaultPortCandidate(this.edge.sourcePort))
+
+      const graph = context.graph
+      if (graph === null) {
+        return result
+      }
+      graph.nodes.forEach(node => {
+        const provider = node.lookup(yfiles.input.IPortCandidateProvider.$class)
+        // If available, use the candidates from the provider. Otherwise, add a default candidate.
+        if (provider !== null) {
+          result.addRange(provider.getAllTargetPortCandidates(context))
+        } else {
+          result.add(
+            new yfiles.input.DefaultPortCandidate(
+              node,
+              yfiles.graph.FreeNodePortLocationModel.NODE_CENTER_ANCHORED
+            )
+          )
+        }
+      })
+      return result
+    }
+
+    /**
+     * Gets a list of port candidates for edge reconnection that matches the list of candidates the
+     * IPortCandidateProvider interface returns.
+     * @param {yfiles.input.IInputModeContext} context
+     * @returns {yfiles.collections.List} The list of target port candidates
+     */
+    getTargetPortCandidates(context) {
+      const result = new yfiles.collections.List()
+      // add the current one as the default
+      result.add(new yfiles.input.DefaultPortCandidate(this.edge.targetPort))
+
+      const graph = context.graph
+      if (graph === null) {
+        return result
+      }
+      graph.nodes.forEach(node => {
+        const provider = node.lookup(yfiles.input.IPortCandidateProvider.$class)
+        // If available, use the candidates from the provider. Otherwise, add a default candidate.
+        if (provider !== null) {
+          result.addRange(provider.getAllSourcePortCandidates(context))
+        } else {
+          result.add(
+            new yfiles.input.DefaultPortCandidate(
+              node,
+              yfiles.graph.FreeNodePortLocationModel.NODE_CENTER_ANCHORED
+            )
+          )
+        }
+      })
+      return result
+    }
+  }
+
+  return EdgeReconnectionPortCandidateProvider
+})

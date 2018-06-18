@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+
+<!-- ////////////////////////////////////////////////////////////////////////
+     // @license
+     // This demo file is part of yFiles for HTML 2.1.
+     // Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // 72070 Tuebingen, Germany. All rights reserved.
+     //
+     // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+     // of demo files in source code or binary form, with or without
+     // modification, is not permitted.
+     //
+     // Owners of a valid software license for a yFiles for HTML version that this
+     // demo is shipped with are allowed to use the demo source code as basis
+     // for their own yFiles for HTML powered applications. Use of such programs is
+     // governed by the rights and conditions as set out in the yFiles for HTML
+     // license agreement.
+     //
+     // THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+     // WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+     // MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+     // NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+     // SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+     // TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+     // PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+     // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+     // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+     // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+     // 
+     ////////////////////////////////////////////////////////////////////////-->
+
+  <title>Edge Bundling Demo [yFiles for HTML]</title>
+
+  <link rel="stylesheet" href="../../../lib/yfiles.css">
+  <link rel="stylesheet" href="../../resources/style/demo.css">
+
+  <!-- enable debugging -->
+  <script src="../../../ide-support/yfiles-typeinfo.js"></script>
+
+  <style type="text/css">
+    .gc-busy {
+      /*mark important to override cursors of input modes*/
+      cursor: wait !important;
+    }
+
+    .demo-toolbar label {
+      width: 110px;
+      vertical-align: baseline;
+      text-align: right;
+    }
+
+    .demo-toolbar label:hover {
+      background-color: transparent;
+      cursor: default;
+    }
+
+    input[type="checkbox"]:disabled,
+    input[type="range"]:disabled {
+      opacity: 0.5;
+      cursor: default;
+      background-color: transparent;
+    }
+
+    #bundling-strength-label {
+      width: 30px;
+    }
+
+    #loadingIndicator {
+      position: absolute;
+      top: 50%;
+      width: 100%;
+      height: 200px;
+      -moz-box-sizing: border-box;
+      box-sizing: border-box;
+      margin-top: -100px;
+      background-color: rgba(0, 0, 0, 0.6);
+      color: #FFFFFF;
+      padding-top: 80px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body class="demo-has-left">
+<aside class="demo-sidebar demo-left">
+  <h1 class="demo-sidebar-header">Description</h1>
+  <div class="demo-sidebar-content">
+    <p>
+      This demo shows how edge bundling can be applied for reducing visual cluttering in dense graphs.</p>
+    <p>
+      The edge curves are drawn using piecewise cubic bezier curves with gradient colors from dark-blue (that starts from the
+      source node) to light-blue (that leads to the target node of the edge). For the approximation of the edge curves, a
+      <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.layout.CurveFittingLayoutStage">yfiles.layout.CurveFittingLayoutStage</a> is applied.</p>
+    <p>
+      For circular layouts, a circular-sector style is used for the visualization of the nodes. </p>
+    <h2>Things to Try</h2>
+    <ul>
+      <li>Select one of the layout algorithm that support edge bundling using the combo-box in the toolbar.</li>
+      <li>Modify the strength of the bundles using the slider in the toolbar and notice how this change influences the
+        shape of the curves of the bundled edges. Values close to <code>1</code> lead to tight bundles, while values
+        close to <code>0</code> lead to straight-line non-bundled edges. Values larger than <code>0.85</code> are
+        recommended.
+      </li>
+      <li>Press the 'Layout' button to apply a new layout.</li>
+      <li>
+        Hover over an edge to highlight its path and its source and target nodes. The edges are highlighted also with
+        gradient colors from red (source node) to gold (target node).
+      </li>
+      <li>
+        Hover over a node to highlight its adjacent edges.
+      </li>
+      <li>
+        Right-click on a node to open a popup-menu and determine whether the edges adjacent to the particular node or to
+        all other currently selected nodes should be bundled or not.
+      </li>
+      <li>
+        Right-click on an edge to open a popup-menu and determine whether the particular edge or all other currently
+        edges should be bundled or not.
+      </li>
+    </ul>
+  </div>
+</aside>
+
+<div class="demo-content">
+  <div class="demo-toolbar">
+    <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
+    <button data-command="ZoomOriginal" title="Zoom to original size" class="demo-icon-yIconZoomOriginal"></button>
+    <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
+    <button data-command="FitContent" title="Fit Content" class="demo-icon-yIconZoomFit"></button>
+
+    <span class="demo-separator"></span>
+
+    <span>Sample</span>
+    <button data-command="PreviousFile" title="Open previous graph" class="demo-icon-yIconPrevious"
+        id="previous-sample-button"></button>
+    <select data-command="SampleSelectionChanged" title="Select a sample graph" id="sample-combo-box">
+      <option>Single Cycle Layout</option>
+      <option>Circular Layout</option>
+      <option>Radial Layout</option>
+      <option>Balloon Layout</option>
+      <option>Tree Layout</option>
+    </select>
+    <button data-command="NextFile" title="Open next graph" class="demo-icon-yIconNext"
+        id="next-sample-button"></button>
+
+    <span class="demo-separator"></span>
+
+    <span>Bundling Strength: </span><input type="range" min="0" max="1" value="0.98" step="0.01"
+      id="bundling-strength-slider" style="padding: 0px"><span id="bundling-strength-label">0.98</span>
+  </div>
+  <div id="graphComponent"></div>
+  <div id="loadingIndicator">Calculating the layout. This may take a while.</div>
+</div>
+
+<script src="../../resources/require.js"></script>
+<script src="EdgeBundlingDemo.js"></script>
+</body>
+</html>

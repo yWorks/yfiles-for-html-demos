@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="50%" y="50%"
+	 width="180px" height="136px" viewBox="0 0 180 136" xml:space="preserve">
+<g>
+    <rect x="1" y="4" rx="5" ry="5" width="163" height="130" style="fill:white;stroke:gray;stroke-width:3" />
+    <path d = "M 12 20 L 60 20" fill="none" stroke="salmon" stroke-width="3"/>
+    <text x="68" y="24"> <tspan style="font-family:Arial,Helvetica;font-size:12;fill:black;">involves</tspan></text>
+
+    <path d = "M 12 40 L 60 40" fill="none" stroke="mediumseagreen" stroke-width="3"/>
+    <text x="68" y="44"> <tspan style="font-family:Arial,Helvetica;font-size:12;fill:black;">witnesses</tspan></text>
+
+    <path d = "M 12 60 L 60 60" fill="none" stroke="darkseagreen" stroke-width="3"/>
+    <text x="68" y="64"> <tspan style="font-family:Arial,Helvetica;font-size:12;fill:black;">drives</tspan></text>
+
+    <path d = "M 12 80 L 60 80" fill="none" stroke="yellowgreen" stroke-width="3"/>
+    <text x="68" y="84"> <tspan style="font-family:Arial,Helvetica;font-size:12;fill:black;">isPassenger</tspan></text>
+
+    <path d = "M 12 100 L 60 100" fill="none" stroke="dodgerblue" stroke-width="3"/>
+    <text x="68" y="104"> <tspan style="font-family:Arial,Helvetica;font-size:12;fill:black;">represents</tspan></text>
+
+    <path d = "M 12 120 L 60 120" fill="none" stroke="lightskyblue" stroke-width="3"/>
+    <text x="68" y="124"> <tspan style="font-family:Arial,Helvetica;font-size:12;fill:black;">heals</tspan></text>
+</g>
+</svg>

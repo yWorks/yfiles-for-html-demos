@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+
+<!-- ////////////////////////////////////////////////////////////////////////
+     // @license
+     // This demo file is part of yFiles for HTML 2.1.
+     // Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // 72070 Tuebingen, Germany. All rights reserved.
+     //
+     // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+     // of demo files in source code or binary form, with or without
+     // modification, is not permitted.
+     //
+     // Owners of a valid software license for a yFiles for HTML version that this
+     // demo is shipped with are allowed to use the demo source code as basis
+     // for their own yFiles for HTML powered applications. Use of such programs is
+     // governed by the rights and conditions as set out in the yFiles for HTML
+     // license agreement.
+     //
+     // THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+     // WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+     // MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+     // NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+     // SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+     // TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+     // PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+     // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+     // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+     // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+     // 
+     ////////////////////////////////////////////////////////////////////////-->
+
+  <title>Split Edges Demo [yFiles for HTML]</title>
+
+  <link rel="stylesheet" href="../../../lib/yfiles.css">
+  <link rel="stylesheet" href="../../resources/style/demo.css">
+
+  <!-- enable debugging -->
+  <script src="../../../ide-support/yfiles-typeinfo.js"></script>
+
+  <style>
+    .demo-context-menu *:focus {
+      outline: none;
+    }
+
+    .demo-context-menu .demo-menu-item {
+      text-align: start;
+    }
+
+    .node-color {
+      fill: #CCCCCC;
+    }
+
+    .group-border {
+      fill: #999999;
+    }
+  </style>
+</head>
+<body class="demo-has-left">
+<aside class="demo-sidebar demo-left">
+  <h1 class="demo-sidebar-header">Description</h1>
+  <div class="demo-sidebar-content">
+    <p>
+      This demo shows how to use split ids to align edges outside with edges inside a group nodes in <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.layout.RecursiveGroupLayout">yfiles.layout.RecursiveGroupLayout</a>.
+      In <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.layout.RecursiveGroupLayout">yfiles.layout.RecursiveGroupLayout</a> the routing for inter-edges is sometimes not satisfactory.
+      Inter-edges are edges that connect nodes outside of a group with nodes inside of this group. Since
+      RecursiveGroupLayout routes these edges after the rest of the graph is arranged, they sometimes don't fit into the
+      overall layout style.
+    </p>
+    <p>
+      In combination with <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.hierarchic.HierarchicLayout">yfiles.hierarchic.HierarchicLayout</a>, inter-edges can be replaced with two edges that
+      are aligned at the group node. <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.hierarchic.HierarchicLayout">yfiles.hierarchic.HierarchicLayout</a> provides the option that an edge is
+      routed directly from the border of a group nodes to a node inside of this group node instead of leaving the group node first.
+    </p>
+
+    <h2>Things to Try</h2>
+    Change the graph and the split ids of the edges and see how the layout changes, too. Edges with split ids are
+    colored different than grey.
+    <ul>
+      <li>
+        Align edges that connect to the same group nodes from the outside and the inside. Select two or more edges that
+        are connected a group and choose 'Align Selected Edges' from the context menu.
+      </li>
+      <li>
+        Unalign edges to delete the split ids. Select at least one edge with a split id and choose 'Unalign Selected
+        Edges' from the context menu.
+      </li>
+      <li>
+        Select an inter-edge and split it into several edges that connect to the formerly crossed group using the
+        context menu.
+      </li>
+      <li>
+        Select an aligned edge and join it with all edges that have the same split id using the context menu.
+      </li>
+      <li>
+        Split all inter-edges of a group node with the context menu of the group node.
+      </li>
+      <li>
+        Join edges at a group node that share a split id with the context menu of a group node.
+      </li>
+      <li>
+        Normal nodes and edges do not provide a context menu.
+      </li>
+    </ul>
+  </div>
+</aside>
+
+<div class="demo-content">
+
+  <div class="demo-toolbar">
+    <button data-command="Reset" title="Reset Graph" class="demo-icon-yIconNew"></button>
+    <span class="demo-separator"></span>
+    <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
+    <button data-command="ZoomOriginal" title="Zoom to original size" class="demo-icon-yIconZoomOriginal"></button>
+    <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
+    <button data-command="FitContent" title="Fit Content" class="demo-icon-yIconZoomFit"></button>
+    <span class="demo-separator"></span>
+    <button data-command="GroupSelection" title="Group selected element" class="demo-icon-yIconGroup"></button>
+    <button data-command="UngroupSelection" title="Ungroup selected element" class="demo-icon-yIconUngroup"></button>
+    <span class="demo-separator"></span>
+    <button data-command="Layout" title="Apply Layout" class="demo-icon-yIconLayout labeled">Layout</button>
+  </div>
+
+  <div id="graphComponent"></div>
+</div>
+
+<script src="../../resources/require.js"></script>
+<script src="SplitEdgesDemo.js"></script>
+
+</body>
+</html>

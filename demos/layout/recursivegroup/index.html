@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+
+<!-- ////////////////////////////////////////////////////////////////////////
+     // @license
+     // This demo file is part of yFiles for HTML 2.1.
+     // Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // 72070 Tuebingen, Germany. All rights reserved.
+     //
+     // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+     // of demo files in source code or binary form, with or without
+     // modification, is not permitted.
+     //
+     // Owners of a valid software license for a yFiles for HTML version that this
+     // demo is shipped with are allowed to use the demo source code as basis
+     // for their own yFiles for HTML powered applications. Use of such programs is
+     // governed by the rights and conditions as set out in the yFiles for HTML
+     // license agreement.
+     //
+     // THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+     // WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+     // MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+     // NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+     // SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+     // TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+     // PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+     // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+     // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+     // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+     // 
+     ////////////////////////////////////////////////////////////////////////-->
+
+  <title>Recursive Group Layout Demo [yFiles for HTML]</title>
+
+  <link rel="stylesheet" href="../../../lib/yfiles.css">
+  <link rel="stylesheet" href="../../resources/style/demo.css">
+
+  <!-- enable debugging -->
+  <script src="../../../ide-support/yfiles-typeinfo.js"></script>
+</head>
+<body class="demo-has-left">
+<aside class="demo-sidebar demo-left">
+  <h1 class="demo-sidebar-header">Description</h1>
+  <div class="demo-sidebar-content">
+    <p>
+      Shows how to use the <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.layout.RecursiveGroupLayout">yfiles.layout.RecursiveGroupLayout</a> to apply different layouts to the contents of
+      group nodes and the overall graph.</p>
+
+    <h2>Sample: Table</h2>
+    <p>
+      Demonstrates a table node structure. Each group node in the drawing represents a table and the nodes within the
+      groups represent the table rows. Edges are connected to specific rows. The rows are sorted according to their
+      y-coordinate in the initial drawing. </p>
+
+    <h2>Sample: Three-Tier</h2>
+    <p>
+      Demonstrates different layouts of elements assigned to different tiers. Each group node can be assigned to the
+      left, right or middle tier (depending on the group node label). </p>
+    <p>
+      All group nodes labeled <em>left</em> are placed on the left side. Their content is drawn using a <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.tree.TreeLayout">yfiles.tree.TreeLayout</a>
+      with layout orientation left-to-right. Analogously, all group nodes labeled <em>right</em> are placed on the right
+      side. Their content is drawn using a <em>TreeLayout</em> with layout orientation right-to-left. Elements not
+      assigned to <em>left</em> or <em>right</em> group nodes are always arranged in the middle using the <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.hierarchic.HierarchicLayout">yfiles.hierarchic.HierarchicLayout</a>
+      with layout orientation left-to-right. Note that group nodes not labeled <em>left</em> or <em>right</em> are
+      handled non-recursively.</p>
+
+    <h3>Usage</h3>
+    <ul>
+      <li>
+        Calculate a layout by folding and unfolding a group node or pressing the layout button.
+      </li>
+      <li>
+        Enable <em>Use Sketch</em> option to make <em>HierarchicLayout</em> keep the relative locations of the group
+        nodes to each other. This allows for manually adjusting the order of the tables.
+      </li>
+    </ul>
+  </div>
+</aside>
+
+<div class="demo-content">
+
+  <div class="demo-toolbar">
+    <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
+    <button data-command="ZoomOriginal" title="Zoom to original size" class="demo-icon-yIconZoomOriginal"></button>
+    <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
+    <button data-command="FitContent" title="Fit Content" class="demo-icon-yIconZoomFit"></button>
+
+    <span class="demo-separator"></span>
+
+    <select id="select-sample" data-command="SelectSample">
+      <option>Sample: Table</option>
+      <option>Sample: Three-Tier</option>
+    </select>
+    <button id="reset" data-command="Reset" title="Reset the Sample" class="demo-icon-yIconReload"></button>
+
+    <span class="demo-separator"></span>
+
+    <input type="checkbox" id="from-sketch" title="Toggle From-Sketch mode" class="demo-toggle-button labeled"/> <label
+      for="from-sketch">From Sketch</label>
+
+    <span class="demo-separator"></span>
+    <button id="layout" data-command="Layout" title="Apply layout" class="demo-icon-yIconLayout labeled">Layout</button>
+  </div>
+
+  <div id="graphComponent"></div>
+</div>
+
+<script src="../../resources/require.js"></script>
+<script src="RecursiveGroupDemo.js"></script>
+
+</body>
+</html>

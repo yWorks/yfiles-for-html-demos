@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+
+<!-- ////////////////////////////////////////////////////////////////////////
+     // @license
+     // This demo file is part of yFiles for HTML 2.1.
+     // Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // 72070 Tuebingen, Germany. All rights reserved.
+     //
+     // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+     // of demo files in source code or binary form, with or without
+     // modification, is not permitted.
+     //
+     // Owners of a valid software license for a yFiles for HTML version that this
+     // demo is shipped with are allowed to use the demo source code as basis
+     // for their own yFiles for HTML powered applications. Use of such programs is
+     // governed by the rights and conditions as set out in the yFiles for HTML
+     // license agreement.
+     //
+     // THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+     // WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+     // MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+     // NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+     // SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+     // TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+     // PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+     // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+     // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+     // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+     // 
+     ////////////////////////////////////////////////////////////////////////-->
+
+  <title>Single Selection Demo [yFiles for HTML]</title>
+
+  <link rel="stylesheet" href="../../../lib/yfiles.css">
+  <link rel="stylesheet" href="../../resources/style/demo.css">
+
+  <style type="text/css">
+    path.firebrick {
+      stroke: #B02222;
+    }
+    rect.firebrick {
+      fill: #B02222;
+    }
+
+    path.orange {
+      stroke: #FF8C00;
+    }
+    rect.orange {
+      fill: #FF8C00;
+    }
+
+    path.green {
+      stroke: #008000;
+    }
+    rect.green {
+      fill: #008000;
+    }
+
+    path.royalblue {
+      stroke: #007FFF;
+    }
+    rect.royalblue {
+      fill: #007FFF;
+    }
+
+  </style>
+
+  <!-- enable debugging -->
+  <script src="../../../ide-support/yfiles-typeinfo.js"></script>
+</head>
+<body class="demo-has-left">
+<aside class="demo-sidebar demo-left">
+  <h1 class="demo-sidebar-header">Description</h1>
+  <div class="demo-sidebar-content">
+
+    <p>This demo shows how to configure <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.input.GraphEditorInputMode">yfiles.input.GraphEditorInputMode</a> for single selection mode. In this mode, only one
+      graph item can be selected at a time.</p>
+
+    <h2>Things to Try</h2>
+
+    <ul>
+      <li>
+        Toggle single selection mode and examine the differences.
+      </li>
+      <li>
+        Select a single node and toggle its selection state by pressing <code>Ctrl-Space</code>. This works in
+        both single selection and regular mode due to a custom command binding.
+      </li>
+      <li>
+        Move the node focus (indicated by a thin dashed line) by holding down <code>Ctrl</code> and pressing an
+        arrow key. Toggle the selection state of the focused item by pressing <code>Ctrl-Space</code>.
+      </li>
+      <li>
+        Take a look at the source code, especially method <em>enableSingleSelection</em>.
+      </li>
+    </ul>
+
+    <h2>Features of Single Selection Mode</h2>
+
+    <ul>
+      <li>
+        Marquee selection is disabled. Try to drag the mouse over a set of nodes to select them.
+      </li>
+      <li>
+        Click-selecting multiple nodes is disabled. Try to extend the selection by holding the <code>Ctrl</code>
+        key while clicking another node.
+      </li>
+      <li>
+        <em>Select All</em> is disabled. Try to select all nodes by pressing <code>Ctrl-A</code>.
+      </li>
+    </ul>
+  </div>
+</aside>
+
+<div class="demo-content">
+  <div class="demo-toolbar">
+
+    <input type="checkbox" id="toggleSingleSelection" class="demo-toggle-button labeled" title="Single Selection" data-command="ToggleSingleSelection" checked/><label for="toggleSingleSelection">Single Selection</label>
+  </div>
+
+  <div id="graphComponent"></div>
+</div>
+
+<script src="../../resources/require.js"></script>
+<script src="SingleSelectionDemo.js"></script>
+
+</body>
+</html>

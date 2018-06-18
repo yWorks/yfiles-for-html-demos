@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="demodescription"
+      content="This step introduces class GraphComponent, which is the central UI element for working with graphs."/>
+
+<!-- ////////////////////////////////////////////////////////////////////////
+     // @license
+     // This demo file is part of yFiles for HTML 2.1.
+     // Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // 72070 Tuebingen, Germany. All rights reserved.
+     //
+     // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+     // of demo files in source code or binary form, with or without
+     // modification, is not permitted.
+     //
+     // Owners of a valid software license for a yFiles for HTML version that this
+     // demo is shipped with are allowed to use the demo source code as basis
+     // for their own yFiles for HTML powered applications. Use of such programs is
+     // governed by the rights and conditions as set out in the yFiles for HTML
+     // license agreement.
+     //
+     // THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+     // WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+     // MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+     // NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+     // SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+     // TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+     // PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+     // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+     // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+     // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+     // 
+     ////////////////////////////////////////////////////////////////////////-->
+
+  <title>Creating the View - Getting Started Tutorial [yFiles for HTML]</title>
+  <link type="text/css" rel="stylesheet" href="../../../lib/yfiles.css">
+
+  <style>
+    html {
+      font-family: Myriad, Tahoma, Verdana, sans-serif;
+      font-size: 12px;
+    }
+    html, body, #graphComponent {
+      width: 100%;
+      height: 100%;
+      padding: 0;
+      margin: 0;
+    }
+    .descriptionPanel {
+      box-sizing: border-box;
+      -moz-box-sizing: border-box;
+      border-right: 1px solid black;
+      padding: 5px;
+    }
+  </style>
+
+  <!-- enable debugging -->
+  <script src="../../../ide-support/yfiles-typeinfo.js"></script>
+
+</head>
+<body>
+  <div style="width:20%; height: 100%; float:left;" class="descriptionPanel">
+    <h3>How to create a basic view.</h3>
+
+    <p>This step introduces class <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.view.GraphComponent">yfiles.view.GraphComponent</a>, which is the
+      <a href="https://docs.yworks.com/yfileshtml/#/dguide/getting_started-application">
+      central UI element for working with graphs</a>. The application
+      does not provide any interactive features except mouse wheel zooming, which is enabled by default. It is merely
+      meant as a very basic example of how to display a GraphComponent within a web page.</p>
+
+    <p>See the sources for details.</p>
+
+    <p>Please note that the subsequent tutorial steps use a web component framework (demo-utils) to reduce the
+      amount of code that is needed to demonstrate the relevant features. All of the code samples included in this
+      distribution are also feasible using plain HTML and JavaScript together with yFiles HTML. </p>
+
+    <h4>Important Note</h4>
+    <p>
+      yFiles provides <a href="https://docs.yworks.com/yfileshtml/index.html#/kb/article/704/Browser_issues_and_included_workarounds"
+      target="_blank">workarounds</a> which address several bugs in current browsers. Find <code>demos/resources/demo-util.js</code>
+      as a reference on how several of them are enabled for most of the demos and how to enable them for this demo, too.
+    </p>
+  </div>
+  <div style="width:80%; height: 100%; padding-left: 20%">
+    <div id="graphComponent"></div>
+  </div>
+
+  <!-- You can use any AMD compatible "require" implementation to load the JavaScript resources.
+       See the "AMD Loading Demo" for more examples on module loading and alternative loading techhniques in the
+       "loading" demo directory. -->
+  <script src="../../resources/require.js"></script>
+  <script src="SampleApplication.js"></script>
+</body>
+</html>

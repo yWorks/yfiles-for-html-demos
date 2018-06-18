@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+
+<!-- ////////////////////////////////////////////////////////////////////////
+     // @license
+     // This demo file is part of yFiles for HTML 2.1.
+     // Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // 72070 Tuebingen, Germany. All rights reserved.
+     //
+     // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+     // of demo files in source code or binary form, with or without
+     // modification, is not permitted.
+     //
+     // Owners of a valid software license for a yFiles for HTML version that this
+     // demo is shipped with are allowed to use the demo source code as basis
+     // for their own yFiles for HTML powered applications. Use of such programs is
+     // governed by the rights and conditions as set out in the yFiles for HTML
+     // license agreement.
+     //
+     // THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+     // WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+     // MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+     // NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+     // SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+     // TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+     // PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+     // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+     // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+     // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+     // 
+     ////////////////////////////////////////////////////////////////////////-->
+
+  <title>Edge Label Placement Demo [yFiles for HTML]</title>
+
+  <link rel="stylesheet" href="../../../lib/yfiles.css">
+  <link rel="stylesheet" href="../../resources/style/demo.css">
+
+  <!-- enable debugging -->
+  <script src="../../../ide-support/yfiles-typeinfo.js"></script>
+  <style type="text/css">
+    .option-input {
+      width: 100%;
+    }
+    .option {
+      padding-bottom: 0.5em;
+    }
+  </style>
+</head>
+<body class="demo-has-left demo-has-right">
+<aside class="demo-sidebar demo-left">
+  <h1 class="demo-sidebar-header">Description</h1>
+  <div class="demo-sidebar-content">
+    <p>
+      This demo shows how to place edge labels at the preferred location with a labeling algorithm and the
+      <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.layout.PreferredPlacementDescriptor">yfiles.layout.PreferredPlacementDescriptor</a> type.
+    </p>
+
+    <h2>Usage</h2>
+    <ul>
+      <li>To add a new label to a selected edge, press Shift + F2.
+      </li>
+      <li>Changes of the label properties are immediately applied to the selected labels, or to all labels if no label is selected, and a new layout is calculated to visualize the result of these settings.
+      </li>
+      <li>The selected layout is calculated immediately after changing any of the label properties or if the Refresh Layout button is pressed.
+      </li>
+    </ul>
+
+    <h2>Edge Label Properties</h2>
+    <h3>Distance to Edge</h3>
+    <p>The distance between the edge and the closest label corner.</p>
+    <h3>Placement Along Edge</h3>
+    <p>Whether the label should be placed near the source or target node, centered between source and target or
+      anywhere. Placement at source port or at target port is only supported by hierarchic layout. In all other cases,
+      it is replaced by at source/at target respectively.</p>
+    <h3>Side of Edge</h3>
+    <p>Whether the label should be placed centered on the edge or on the left or right side.</p>
+    <h3>Side Reference</h3>
+    <p>Determines if 'left' and 'right' of the edge are interpreted relative to the edge direction or using the absolute position. In the latter case, the side is ambiguous for horizontal segments, and either the left or the right side can be 'North' of the edge.</p>
+    <h3>Angle (In Degrees)</h3>
+    <p>The rotation angle (in degrees) of the label.</p>
+    <h3>Angle Reference</h3>
+    <p>Whether the rotation angle is relative to the edge slope or absolute.</p>
+    <h3>Angle Rotation on Right Side</h3>
+    <p>While the angle for labels on the edge and left of the edge is always interpreted clockwise, the rotation for labels on the right side can either be interpreted clockwise or counter-clockwise.</p>
+    <h3>Add 180&deg; on Right Side</h3>
+    <p>Whether labels on the right side should be rotated by additional 180 degrees.
+    </p>
+  </div>
+</aside>
+
+<aside class="demo-sidebar demo-right">
+  <h1 class="demo-sidebar-header">Edge Label Properties</h1>
+  <div class="demo-sidebar-content">
+    <div class="option">
+      <label for="labelTextArea" style="vertical-align: top">Text</label>
+      <textarea rows="2" id="labelTextArea" class="option-input" style="vertical-align: top"></textarea>
+    </div>
+    <div class="option">
+      <label for="distanceToEdgeNumberField">Distance to Edge</label>
+      <input type="number" id="distanceToEdgeNumberField" min="-1" max="200" class="option-input">
+    </div>
+    <div class="option">
+      <label for="placementAlongEdgeComboBox">Placement Along Edge</label>
+      <select id="placementAlongEdgeComboBox" data-command="PlacementAlongEdgeChanged" class="option-input"></select>
+    </div>
+    <div class="option">
+      <label for="placementSideOfEdgeComboBox">Side Of Edge</label>
+      <select id="placementSideOfEdgeComboBox" data-command="PlacementSideOfEdgeChanged" class="option-input"></select>
+    </div>
+    <div class="option">
+      <label for="sideReferenceComboBox">Side Reference</label>
+      <select id="sideReferenceComboBox" data-command="SideReferenceChanged" class="option-input"></select>
+    </div>
+    <div class="option">
+      <label for="angleNumberField">Angle (In Degrees)</label>
+      <input type="number" id="angleNumberField" min="-360" max="360" class="option-input">
+    </div>
+    <div class="option">
+      <label for="angleReferenceComboBox">Angle Reference</label>
+      <select id="angleReferenceComboBox" data-command="AngleReferenceChanged" class="option-input"></select>
+    </div>
+    <div class="option">
+      <label for="angleRotationComboBox">Angle Rotation on Right Side</label>
+      <select id="angleRotationComboBox" data-command="AngleRotationChanged" class="option-input"></select>
+    </div>
+    <div class="option">
+      <input type="checkbox" id="add180CheckBox" class="demo-checkbox">
+      <label for="add180CheckBox" class="demo-checkbox">Add 180&deg; on Right Side</label>
+    </div>
+  </div>
+</aside>
+
+<div class="demo-content">
+  <div class="demo-toolbar">
+    <button data-command="Undo" title="Undo" class="demo-icon-yIconUndo"></button>
+    <button data-command="Redo" title="Redo" class="demo-icon-yIconRedo"></button>
+    <span class="demo-separator"></span>
+    <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
+    <button data-command="ZoomOriginal" title="Zoom to original size" class="demo-icon-yIconZoomOriginal"></button>
+    <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
+    <button data-command="FitContent" title="Fit Content" class="demo-icon-yIconZoomFit"></button>
+    <span class="demo-separator"></span>
+    <select data-command="SelectLayout" id="layoutComboBox"></select>
+    <button id="layoutButton" data-command="Layout" title="Layout" class="demo-icon-yIconLayout labeled">Layout</button>
+  </div>
+  <div id="graphComponent"></div>
+</div>
+
+<script src="../../resources/require.js"></script>
+<script src="EdgeLabelPlacementDemo.js"></script>
+</body>
+</html>

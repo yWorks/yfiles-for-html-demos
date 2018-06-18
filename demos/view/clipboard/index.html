@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+
+<!-- ////////////////////////////////////////////////////////////////////////
+     // @license
+     // This demo file is part of yFiles for HTML 2.1.
+     // Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // 72070 Tuebingen, Germany. All rights reserved.
+     //
+     // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+     // of demo files in source code or binary form, with or without
+     // modification, is not permitted.
+     //
+     // Owners of a valid software license for a yFiles for HTML version that this
+     // demo is shipped with are allowed to use the demo source code as basis
+     // for their own yFiles for HTML powered applications. Use of such programs is
+     // governed by the rights and conditions as set out in the yFiles for HTML
+     // license agreement.
+     //
+     // THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+     // WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+     // MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+     // NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+     // SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+     // TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+     // PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+     // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+     // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+     // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+     // 
+     ////////////////////////////////////////////////////////////////////////-->
+
+  <title>Clipboard Demo [yFiles for HTML]</title>
+
+  <link rel="stylesheet" href="../../../lib/yfiles.css">
+  <link rel="stylesheet" href="../../resources/style/demo.css">
+
+  <!-- enable debugging -->
+  <script src="../../../ide-support/yfiles-typeinfo.js"></script>
+
+  <script type="text/yfiles-template">
+    <g id="ClipboardStyle">
+      <defs>
+        <linearGradient id="innerGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" style="stop-color:rgb(210,255,255);stop-opacity:1"/>
+          <stop offset="100%" style="stop-color:rgb(36,154,231);stop-opacity:1"/>
+        </linearGradient>
+      </defs>
+      <rect stroke="none" fill="url(#innerGradient)" rx="4" ry="4" width="{TemplateBinding width}"
+          height="{TemplateBinding height}"></rect>
+      <rect stroke="none" fill="white" fill-opacity="0.25" width="{TemplateBinding width}" height="30"></rect>
+      <text data-content="{Binding name}"
+          transform="{TemplateBinding width, Converter=centertransformconverter, Parameter=15}"
+          text-anchor="middle" style="font-size:120%; fill:#000" dy="0.5em"></text>
+    </g>
+  </script>
+
+  <style type="text/css">
+    .demo-toolbar {
+      top: 0 !important;
+    }
+
+    #left {
+      width: 50%;
+      top: 60px;
+      position: absolute;
+      bottom: 0;
+      border-right: 4px solid #f7f7f7;
+    }
+
+    #right .demo-toolbar {
+      overflow: hidden;
+    }
+
+    #right {
+      width: 49.8%;
+      position: absolute;
+      top: 60px;
+      bottom: 0;
+      right: 0;
+    }
+
+    #graphComponent {
+      top: 40px !important;
+    }
+
+    #graphComponent2 {
+      position: absolute;
+      top: 40px !important;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #FFFFFF;
+    }
+  </style>
+</head>
+<body class="demo-has-left">
+<aside class="demo-sidebar demo-left">
+  <h1 class="demo-sidebar-header">Description</h1>
+  <div class="demo-sidebar-content">
+    <p>
+      The Clipboard demo shows different ways of using <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.graph.GraphClipboard">yfiles.graph.GraphClipboard</a> for Copy & Paste
+      operations. </p>
+
+    <p>
+      The main goal of this demo is to show custom clipboard functionality. Regular clipboard operations like copying
+      nodes, edges and labels are available out-of-the-box. </p>
+
+    <h2>Things to Try</h2>
+
+    <ul>
+      <li>
+        Cut, copy and paste elements with the usual keyboard shortcuts.
+      </li>
+      <li>
+        Cut, copy and paste elements from one canvas to the other.
+      </li>
+      <li>
+        Create new elements in the canvas with the usual gestures. Click to focus a canvas, then click it again to
+        create a node.
+      </li>
+    </ul>
+
+    <h2>Remarks</h2>
+
+    <ul>
+      <li>
+        Note how both paste variants update the labels of the copied nodes.
+      </li>
+
+      <li>
+        <em>Paste Special</em> only pastes nodes and node labels, even if edges have been also copied or cut.
+      </li>
+
+      <li>
+        The nodes have a "business object" associated with the elements reflected in the nodes' titles (the text which
+        is displayed inside the node). Editing the <code>name</code> property of a node's business object via the "Edit
+        name" button changes the node's title, too, as it is bound to the name of the business object. <br> See class
+        <code>ClipboardBusinessObject</code> which is associated via the node's <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.graph.ITagOwner#tag">yfiles.graph.ITagOwner#tag</a>.
+      </li>
+
+      <li>
+        The two nodes which are linked with the "Shared Object" edge share the same business object. Editing the name of
+        one of the nodes will also change the name of the other object. Note that, the referential identity between them
+        is maintained across clipboard operations: For instance, copy and paste both nodes and edit the name of one of
+        the new nodes to see that the names of the associated nodes also change.
+      </li>
+    </ul>
+  </div>
+</aside>
+
+<div class="demo-content">
+
+  <div id="left">
+    <div class="demo-toolbar">
+      <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
+      <button data-command="ZoomOriginal" title="Zoom to original size" class="demo-icon-yIconZoomOriginal"></button>
+      <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
+      <button data-command="FitContent" title="Fit Content" class="demo-icon-yIconZoomFit"></button>
+
+      <span class="demo-separator"></span>
+
+      <button data-command="Cut" title="Cut" class="demo-icon-yIconCut"></button>
+      <button data-command="Copy" title="Copy" class="demo-icon-yIconCopy"></button>
+      <button data-command="Paste" title="Paste" class="demo-icon-yIconPaste"></button>
+      <button data-command="Delete" title="Delete" class="demo-icon-yIconDelete"></button>
+      <button data-command="PasteSpecial" title="Paste Special" class="labeled">Paste Special</button>
+
+      <span class="demo-separator"></span>
+
+      <button data-command="Undo" title="Undo" class="demo-icon-yIconUndo"></button>
+      <button data-command="Redo" title="Redo" class="demo-icon-yIconRedo"></button>
+
+      <span class="demo-separator"></span>
+
+      <button data-command="EditName" title="Edit Name" class="labeled">Edit Name</button>
+    </div>
+    <div id="graphComponent">
+      <div id="nameDialog" class="demo-dialog" style="display: none">
+        <!-- The content template for the name dialog panel -->
+        <h2>Node Name</h2>
+        <div class="demo-properties demo-dialog-content">
+          <form>
+            <label for="nodeNameInput">Edit the node name</label>
+            <input id="nodeNameInput" maxlength="25">
+            <button type="submit" id="applyButton">Apply</button>
+            <button type="button" id="cancelButton">Cancel</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="right">
+    <div class="demo-toolbar">
+      <button data-command="ZoomIn2" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
+      <button data-command="ZoomOriginal2" title="Zoom to original size" class="demo-icon-yIconZoomOriginal"></button>
+      <button data-command="ZoomOut2" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
+      <button data-command="FitContent2" title="Fit Content" class="demo-icon-yIconZoomFit"></button>
+
+      <span class="demo-separator"></span>
+
+      <button data-command="Cut2" title="Cut" class="demo-icon-yIconCut"></button>
+      <button data-command="Copy2" title="Copy" class="demo-icon-yIconCopy"></button>
+      <button data-command="Paste2" title="Paste" class="demo-icon-yIconPaste"></button>
+      <button data-command="Delete2" title="Delete" class="demo-icon-yIconDelete"></button>
+      <button data-command="PasteSpecial2" title="Paste Special" class="labeled">Paste Special</button>
+
+      <span class="demo-separator"></span>
+
+      <button data-command="Undo2" title="Undo" class="demo-icon-yIconUndo"></button>
+      <button data-command="Redo2" title="Redo" class="demo-icon-yIconRedo"></button>
+
+      <span class="demo-separator"></span>
+
+      <button data-command="EditName2" title="Edit Name" class="labeled">Edit Name</button>
+    </div>
+    <div id="graphComponent2"></div>
+  </div>
+
+</div>
+
+<script src="../../resources/require.js"></script>
+<script src="ClipboardDemo.js"></script>
+</body>
+</html>

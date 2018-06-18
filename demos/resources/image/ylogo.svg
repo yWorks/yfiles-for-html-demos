@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- ////////////////////////////////////////////////////////////////////////
+     // @license
+     // This demo file is part of yFiles for HTML 2.1.
+     // Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // 72070 Tuebingen, Germany. All rights reserved.
+     //
+     // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+     // of demo files in source code or binary form, with or without
+     // modification, is not permitted.
+     //
+     // Owners of a valid software license for a yFiles for HTML version that this
+     // demo is shipped with are allowed to use the demo source code as basis
+     // for their own yFiles for HTML powered applications. Use of such programs is
+     // governed by the rights and conditions as set out in the yFiles for HTML
+     // license agreement.
+     //
+     // THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+     // WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+     // MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+     // NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+     // SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+     // TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+     // PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+     // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+     // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+     // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+     // 
+     ////////////////////////////////////////////////////////////////////////-->
+
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="512px" height="512px" viewBox="-77.706 -29.575 512 512" xml:space="preserve">
+  <circle fill="#6699CC" cx="177.294" cy="267.55" r="177.294"></circle>
+  <path fill="#FFFFFF" d="M198.431,0c-32.78,0-62.211,41.495-76.26,86.292c1.333,6.043,5.353,10.72,12.708,8.72
+    c14.03-28.098,25.417-50.845,38.802-50.845c12.705,0,24.079,26.092,25.417,100.341c0.653,56.862-4.032,118.379-13.38,152.477
+    c-12.709,44.173-42.14,86.298-58.861,100.347c-16.054,13.377-28.1,18.727-36.796,18.727c-10.702,0-16.708-8.694-18.731-12.038
+    c-4.665-6.688-11.35-10.705-18.039-10.705c-14.736,0-26.761,12.038-26.761,28.78c0,16.71,13.361,30.754,34.789,30.754
+    c21.385,0,54.832-10.699,104.333-67.545c53.518-60.889,76.932-105.019,110.357-160.547
+    c59.531-100.981,78.263-187.284,77.591-204.005c0-7.355-2.005-10.699-6.021-13.376c-5.345-3.344-14.038-6.022-18.721-6.022
+    c-4.684,0-14.721,1.344-16.06,20.764c-0.667,17.382-10.705,84.927-24.743,123.734c-14.726,40.786-34.103,82.26-56.184,115.014
+    h-2.688c9.366-55.501,10.702-104.314,10.054-147.122C237.876,66.915,232.524,0,198.431,0"></path>
+</svg>

@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+
+<!-- ////////////////////////////////////////////////////////////////////////
+     // @license
+     // This demo file is part of yFiles for HTML 2.1.
+     // Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // 72070 Tuebingen, Germany. All rights reserved.
+     //
+     // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+     // of demo files in source code or binary form, with or without
+     // modification, is not permitted.
+     //
+     // Owners of a valid software license for a yFiles for HTML version that this
+     // demo is shipped with are allowed to use the demo source code as basis
+     // for their own yFiles for HTML powered applications. Use of such programs is
+     // governed by the rights and conditions as set out in the yFiles for HTML
+     // license agreement.
+     //
+     // THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+     // WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+     // MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+     // NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+     // SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+     // TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+     // PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+     // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+     // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+     // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+     // 
+     ////////////////////////////////////////////////////////////////////////-->
+
+  <title>Partial Layout Demo [yFiles for HTML]</title>
+
+  <link rel="stylesheet" href="../../../lib/yfiles.css">
+  <link rel="stylesheet" href="../../resources/style/demo.css">
+
+  <!-- enable debugging -->
+  <script src="../../../ide-support/yfiles-typeinfo.js"></script>
+
+  <style>
+    .partial-edge {
+      stroke: #FF8C00;
+    }
+
+    .partial-edge-arrow {
+      fill: #FF8C00;
+    }
+
+    .fixed-node {
+      fill: lightgrey;
+    }
+
+    .fixed-group-node-expanded .group-border {
+      fill: #808080;
+    }
+
+    .fixed-group-node-collapsed .folder-foreground {
+      fill: #A9A9A9;
+    }
+
+    .fixed-group-node-collapsed .folder-background {
+      fill: #808080;
+    }
+
+    .fixed-edge {
+      stroke: #808080;
+    }
+
+    .fixed-edge-arrow {
+      fill: #808080;
+    }
+
+    .demo-properties label.option-label {
+      width: 55%;
+    }
+
+    .option-element {
+      width: 40%;
+    }
+  </style>
+</head>
+<body class="demo-has-left demo-has-right">
+<aside class="demo-sidebar demo-left">
+  <h1 class="demo-sidebar-header">Description</h1>
+  <div class="demo-sidebar-content">
+    <p>
+      Shows how to integrate (new) graph elements into an existing graph layout with <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.partial.PartialLayout">yfiles.partial.PartialLayout</a>.</p>
+    <p>
+      This layout algorithm changes the coordinates of a given set of graph elements (called <em>partial</em> elements)
+      and leaves the location and size of all other elements (called <em>fixed</em> elements) unchanged. The algorithm
+      aims to place the partial elements such that the resulting drawing (including the fixed elements) has a good
+      quality with respect to common graph drawing aesthetics.</p>
+    <p>
+      <em>Partial</em> node elements can be assigned to the so called <em>subgraph components</em>. During the layout
+      process each <em>subgraph</em> induced by the nodes of a component is first laid out using the specified subgraph
+      layout. Then, the different components are placed one-by-one onto the drawing area such that the number of
+      overlaps among graph elements is small. The user can specify different placement strategies for finding 'good'
+      positions for subgraph components.</p>
+    <p>
+      The demo allows for specifying fixed and partial elements. <em>Fixed</em> elements are drawn <em>grey</em> and
+      <em>partial</em> elements are <em>colored</em>. To change the fixed/partial state of elements, select the
+      corresponding elements and click on the <em>Lock Selected Elements</em> or <em>Unlock Selected Elements</em>-button.
+      The current state of the selected elements can be toggled with a mouse-double-click. To start the partial layout click
+      on the play button.</p>
+    <p>
+      Different scenarios for hierarchic, orthogonal, organic or circular layout are available. A scenario includes a
+      graph arranged with the corresponding layout style and some new graph elements that shall be placed by <em>PartialLayout</em>.
+      In addition suitable configuration options are preset.</p>
+  </div>
+</aside>
+
+<div class="demo-content">
+  <div class="demo-toolbar">
+    <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
+    <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
+    <button data-command="FitContent" title="Fit Content" class="demo-icon-yIconZoomFit"></button>
+
+    <span class="demo-separator"></span>
+
+    <button id="lock-selection" data-command="LockSelection" title="Fixate selected nodes" class="labeled">Lock
+      Selection
+    </button>
+    <button id="unlock-selection" data-command="UnlockSelection" title="Free selected nodes" class="labeled">Unlock
+      Selection
+    </button>
+
+    <span class="demo-separator"></span>
+
+    <select id="select-sample" data-command="SelectSample" title="Choose from predefined samples">
+      <option>Scenario: Hierarchic</option>
+      <option>Scenario: Orthogonal</option>
+      <option>Scenario: Organic</option>
+      <option>Scenario: Circular</option>
+    </select>
+    <button id="refresh" data-command="Refresh" title="Refresh sample graph" class="demo-icon-yIconReload"></button>
+
+    <span class="demo-separator"></span>
+
+    <button id="layout" data-command="Layout" title="Run Hierarchic Layout" class="demo-icon-yIconLayout labeled">
+      Layout
+    </button>
+  </div>
+
+  <div id="graphComponent"></div>
+</div>
+
+<aside class="demo-sidebar demo-right">
+  <h1 class="demo-sidebar-header">Settings</h1>
+  <div class="demo-sidebar-content">
+    <div class="demo-properties">
+      <div class="demo-form-block"><label for="component-assignment" class="option-label">Component Assignment</label>
+        <select id="component-assignment" class="option-element">
+          <option>Single</option>
+          <option>Connected</option>
+        </select></div>
+      <div class="demo-form-block"><label for="subgraph-layout" class="option-label">Subgraph Layout</label> <select
+          id="subgraph-layout" class="option-element">
+        <option>Hierarchic</option>
+        <option>Orthogonal</option>
+        <option>Organic</option>
+        <option>Circular</option>
+        <option>Unchanged</option>
+      </select></div>
+      <div class="demo-form-block"><label for="subgraph-positioning" class="option-label">Subgraph Positioning</label>
+        <select id="subgraph-positioning" class="option-element">
+          <option>Barycenter</option>
+          <option>From Sketch</option>
+        </select></div>
+      <div class="demo-form-block"><label for="edge-routing-style" class="option-label">Edge Routing Style</label>
+        <select id="edge-routing-style" class="option-element">
+          <option>Automatic</option>
+          <option>Orthogonal</option>
+          <option>Straightline</option>
+          <option>Organic</option>
+          <option>Octilinear</option>
+        </select></div>
+      <div class="demo-form-block"><label for="layout-orientation" class="option-label">Layout Orientation</label>
+        <select id="layout-orientation" class="option-element">
+          <option>None</option>
+          <option>Auto-detect</option>
+          <option>Top to Bottom</option>
+          <option>Bottom to Top</option>
+          <option>Left to Right</option>
+          <option>Right to Left</option>
+        </select></div>
+      <div class="demo-form-block">
+        <label for="node-distance" class="option-label">Minimum Node Distance</label> <input type="number"
+          id="node-distance" value="20" min="0" max="200"/></div>
+      <div class="demo-form-block">
+        <label for="mirroring" class="option-label">Allow Mirroring</label> <input type="checkbox" id="mirroring"/>
+      </div>
+      <div class="demo-form-block">
+        <label for="snapping" class="option-label">Node Snapping</label> <input type="checkbox" id="snapping"/>
+      </div>
+    </div>
+
+    <h2> Configuration Options</h2>
+    <dl>
+      <dt><b>Component Assignment</b></dt>
+      <dd>
+        Partial nodes as <em>single</em> nodes or in <em>connected</em> components with a common subgraph layout.
+      </dd>
+      <dt><b>Subgraph Layout</b></dt>
+      <dd>
+        The layout algorithm to apply to subgraph components: hierarchic, orthogonal, organic or circular.
+        Furthermore, the components can remain <em>Unchanged</em>.
+      </dd>
+      <dt><b>Subgraph Positioning Strategy</b></dt>
+      <dd>
+        Subgraph components can either be close to the <em>barycenter</em> of its graph neighbors or close to its
+        original position (<em>From Sketch</em>).
+      </dd>
+      <dt><b>Edge Routing Style</b></dt>
+      <dd>
+        Partial edges and edges between different subgraph components (so-called inter-edges) are either routed <em>Straightline</em>,
+        <em>Orthogonal</em> or <em>Organic</em>.<br/>The algorithm can also <em>automatically</em> choose a suitable
+        routing strategy.
+      </dd>
+      <dt><b>Layout Orientation</b></dt>
+      <dd>
+        The layout orientation for the layout of subgraph components. <em>Automatic</em> specifies that the orientation
+        should be determined automatically.
+      </dd>
+      <dt><b>Minimum Node Distance</b></dt>
+      <dd>The minimum distance between two adjacent nodes.</dd>
+      <dt><b>Allow Mirroring</b></dt>
+      <dd>Allows mirroring of subgraph components to improve the layout quality.</dd>
+      <dt><b>Node Snapping:</b></dt>
+      <dd>The algorithm tries to align nodes with each other.</dd>
+    </dl>
+  </div>
+</aside>
+
+<script src="../../resources/require.js"></script>
+<script src="PartialLayoutDemo.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,546 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- ////////////////////////////////////////////////////////////////////////
+     // @license
+     // This demo file is part of yFiles for HTML 2.1.
+     // Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // 72070 Tuebingen, Germany. All rights reserved.
+     //
+     // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+     // of demo files in source code or binary form, with or without
+     // modification, is not permitted.
+     //
+     // Owners of a valid software license for a yFiles for HTML version that this
+     // demo is shipped with are allowed to use the demo source code as basis
+     // for their own yFiles for HTML powered applications. Use of such programs is
+     // governed by the rights and conditions as set out in the yFiles for HTML
+     // license agreement.
+     //
+     // THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+     // WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+     // MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+     // NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+     // SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+     // TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+     // PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+     // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+     // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+     // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+     // 
+     ////////////////////////////////////////////////////////////////////////-->
+
+<graphml xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://www.yworks.com/xml/schema/graphml.html/2.0/ygraphml.xsd " xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:x="http://www.yworks.com/xml/yfiles-common/markup/3.0" xmlns:y="http://www.yworks.com/xml/yfiles-common/3.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:yjs="http://www.yworks.com/xml/yfiles-for-html/2.0/xaml" xmlns:demostyle="http://www.yworks.com/yFilesHTML/demos/FlatDemoStyle/1.0">
+	<key id="d0" for="node" attr.type="string" attr.name="Url"/>
+	<key id="d1" for="node" attr.type="string" attr.name="ToolTip"/>
+	<key id="d2" for="node" attr.type="string" attr.name="Description"/>
+	<key id="d3" for="node" attr.name="NodeLabels" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/NodeLabels"/>
+	<key id="d4" for="node" attr.name="NodeGeometry" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/NodeGeometry"/>
+	<key id="d5" for="node" attr.name="NodeStyle" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/NodeStyle"/>
+	<key id="d6" for="node" attr.type="boolean" attr.name="Expanded" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/folding/Expanded">
+		<default>true</default>
+	</key>
+	<key id="d7" for="node" attr.name="NodeViewState" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/folding/1.1/NodeViewState"/>
+	<key id="d8" for="graph" attr.type="string" attr.name="GraphDescription"/>
+	<key id="d9" for="port" attr.name="PortLocationParameter" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/PortLocationParameter">
+    <default>
+      <x:Static Member="y:FreeNodePortLocationModel.NodeCenterAnchored" />
+    </default>
+	</key>
+	<key id="d10" for="port" attr.name="PortStyle" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/PortStyle">
+		<default>
+			<x:Static Member="y:VoidPortStyle.Instance"/>
+		</default>
+	</key>
+	<key id="d11" for="port" attr.name="PortViewState" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/folding/1.1/PortViewState"/>
+	<key id="d12" attr.name="SharedData" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/SharedData"/>
+	<key id="d13" for="all" attr.name="UserTags" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/UserTags"/>
+	<key id="d14" for="edge" attr.name="EdgeLabels" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/EdgeLabels"/>
+	<key id="d15" for="edge" attr.name="EdgeGeometry" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/EdgeGeometry"/>
+	<key id="d16" for="edge" attr.name="EdgeStyle" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/EdgeStyle"/>
+	<key id="d17" for="edge" attr.name="EdgeViewState" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/folding/1.1/EdgeViewState"/>
+	<data key="d12">
+		<y:SharedData>
+			<yjs:DefaultLabelStyle x:Key="1" textFill="#ff323232" clipText="false"/>
+			<demostyle:DemoNodeStyle x:Key="2" cssClass="male"/>
+			<demostyle:DemoNodeStyle x:Key="3"/>
+			<yjs:ShapeNodeStyle x:Key="4" shape="ELLIPSE" fill="#ff336699">
+				<yjs:ShapeNodeStyle.stroke>
+					<yjs:Stroke lineJoin="ROUND" lineCap="SQUARE" fill="#ff336699"/>
+				</yjs:ShapeNodeStyle.stroke>
+			</yjs:ShapeNodeStyle>
+			<demostyle:DemoEdgeStyle x:Key="5" showTargetArrows="false"/>
+		</y:SharedData>
+	</data>
+	<graph id="G" edgedefault="directed">
+		<data key="d8"><![CDATA[A family tree. The layout was computed with the FamilyTreeLayouter of yFiles.]]></data>
+		<node id="n0">
+			<data key="d3">
+				<x:List>
+						<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}"  Style="{y:GraphMLReference 1}">
+							<y:Label.Text><![CDATA[John Fitzgerald Kennedy]]></y:Label.Text>
+						</y:Label>
+				</x:List>
+			</data>
+			<data key="d4">
+				<y:RectD Height="35" X="220" Width="160" Y="150"/>
+			</data>
+			<data key="d5">
+				<y:GraphMLReference ResourceKey="2"/>
+			</data>
+			<port name="p0"/>
+			<port name="p1">
+				<data key="d9">
+					<y:FreeNodePortLocationModelParameter Offset="0,0.5"/>
+				</data>
+			</port>
+		</node>
+		<node id="n1">
+			<data key="d3">
+				<x:List>
+						<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}"  Style="{y:GraphMLReference 1}">
+							<y:Label.Text><![CDATA[Joseph Patrick Kennedy]]></y:Label.Text>
+						</y:Label>
+				</x:List>
+			</data>
+			<data key="d4">
+				<y:RectD Height="35" X="0" Width="160" Y="337.5"/>
+			</data>
+			<data key="d5">
+				<y:GraphMLReference ResourceKey="2"/>
+			</data>
+			<port name="p0"/>
+		</node>
+		<node id="n2">
+			<data key="d3">
+				<x:List>
+						<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}"  Style="{y:GraphMLReference 1}">
+							<y:Label.Text><![CDATA[Rose Elizabeth Fitzgerald]]></y:Label.Text>
+						</y:Label>
+				</x:List>
+			</data>
+			<data key="d4">
+				<y:RectD Height="35" X="0" Width="160" Y="262.5"/>
+			</data>
+			<data key="d5">
+				<y:GraphMLReference ResourceKey="3"/>
+			</data>
+			<port name="p0"/>
+		</node>
+		<node id="n3">
+			<data key="d3">
+				<x:List>
+						<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}"  Style="{y:GraphMLReference 1}">
+							<y:Label.Text><![CDATA[Joseph Patrick Kennedy Jr]]></y:Label.Text>
+						</y:Label>
+				</x:List>
+			</data>
+			<data key="d4">
+				<y:RectD Height="35" X="220" Width="160" Y="450"/>
+			</data>
+			<data key="d5">
+				<y:GraphMLReference ResourceKey="2"/>
+			</data>
+			<port name="p0">
+				<data key="d9">
+					<y:FreeNodePortLocationModelParameter Offset="0,0.5"/>
+				</data>
+			</port>
+		</node>
+		<node id="n4">
+			<data key="d3">
+				<x:List>
+						<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}"  Style="{y:GraphMLReference 1}">
+							<y:Label.Text><![CDATA[Rosemary Kennedy]]></y:Label.Text>
+						</y:Label>
+				</x:List>
+			</data>
+			<data key="d4">
+				<y:RectD Height="35" X="220" Width="160" Y="375"/>
+			</data>
+			<data key="d5">
+				<y:GraphMLReference ResourceKey="3"/>
+			</data>
+			<port name="p0">
+				<data key="d9">
+					<y:FreeNodePortLocationModelParameter Offset="0,0.5"/>
+				</data>
+			</port>
+		</node>
+		<node id="n5">
+			<data key="d3">
+				<x:List>
+						<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}"  Style="{y:GraphMLReference 1}">
+							<y:Label.Text><![CDATA[Kathleen Kennedy]]></y:Label.Text>
+						</y:Label>
+				</x:List>
+			</data>
+			<data key="d4">
+				<y:RectD Height="35" X="220" Width="160" Y="300"/>
+			</data>
+			<data key="d5">
+				<y:GraphMLReference ResourceKey="3"/>
+			</data>
+			<port name="p0">
+				<data key="d9">
+					<y:FreeNodePortLocationModelParameter Offset="0,0.5"/>
+				</data>
+			</port>
+		</node>
+		<node id="n6">
+			<data key="d3">
+				<x:List>
+						<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}"  Style="{y:GraphMLReference 1}">
+							<y:Label.Text><![CDATA[Eunice Mary Kennedy]]></y:Label.Text>
+						</y:Label>
+				</x:List>
+			</data>
+			<data key="d4">
+				<y:RectD Height="35" X="220" Width="160" Y="225"/>
+			</data>
+			<data key="d5">
+				<y:GraphMLReference ResourceKey="3"/>
+			</data>
+			<port name="p0">
+				<data key="d9">
+					<y:FreeNodePortLocationModelParameter Offset="0,0.5"/>
+				</data>
+			</port>
+		</node>
+		<node id="n7">
+			<data key="d4">
+				<y:RectD Height="10" X="295" Width="10" Y="125"/>
+			</data>
+			<data key="d5">
+				<y:GraphMLReference ResourceKey="4"/>
+			</data>
+			<port name="p0"/>
+			<port name="p1"/>
+			<port name="p2">
+				<data key="d9">
+					<y:FreeNodePortLocationModelParameter Offset="1,0.5"/>
+				</data>
+			</port>
+			<port name="p3">
+				<data key="d9">
+					<y:FreeNodePortLocationModelParameter Offset="1,0.5"/>
+				</data>
+			</port>
+			<port name="p4">
+				<data key="d9">
+					<y:FreeNodePortLocationModelParameter Offset="1,0.5"/>
+				</data>
+			</port>
+		</node>
+		<node id="n8">
+			<data key="d4">
+				<y:RectD Height="10" X="75" Width="10" Y="312.5"/>
+			</data>
+			<data key="d5">
+				<y:GraphMLReference ResourceKey="4"/>
+			</data>
+			<port name="p0"/>
+			<port name="p1"/>
+			<port name="p2">
+				<data key="d9">
+					<y:FreeNodePortLocationModelParameter Offset="1,0.5"/>
+				</data>
+			</port>
+			<port name="p3">
+				<data key="d9">
+					<y:FreeNodePortLocationModelParameter Offset="1,0.5"/>
+				</data>
+			</port>
+			<port name="p4">
+				<data key="d9">
+					<y:FreeNodePortLocationModelParameter Offset="1,0.5"/>
+				</data>
+			</port>
+			<port name="p5">
+				<data key="d9">
+					<y:FreeNodePortLocationModelParameter Offset="1,0.5"/>
+				</data>
+			</port>
+			<port name="p6">
+				<data key="d9">
+					<y:FreeNodePortLocationModelParameter Offset="1,0.5"/>
+				</data>
+			</port>
+		</node>
+		<node id="n9">
+			<data key="d3">
+				<x:List>
+						<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}"  Style="{y:GraphMLReference 1}">
+							<y:Label.Text><![CDATA[Jaqueline Lee Bouvier]]></y:Label.Text>
+						</y:Label>
+				</x:List>
+			</data>
+			<data key="d4">
+				<y:RectD Height="35" X="220" Width="160" Y="75"/>
+			</data>
+			<data key="d5">
+				<y:GraphMLReference ResourceKey="3"/>
+			</data>
+			<port name="p0"/>
+			<port name="p1"/>
+			<port name="p2">
+				<data key="d9">
+					<y:FreeNodePortLocationModelParameter Offset="0,0.5"/>
+				</data>
+			</port>
+		</node>
+		<node id="n10">
+			<data key="d3">
+				<x:List>
+						<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}"  Style="{y:GraphMLReference 1}">
+							<y:Label.Text><![CDATA[Caroline Bouvier Kennedy]]></y:Label.Text>
+						</y:Label>
+				</x:List>
+			</data>
+			<data key="d4">
+				<y:RectD Height="35" X="440" Width="160" Y="187.5"/>
+			</data>
+			<data key="d5">
+				<y:GraphMLReference ResourceKey="3"/>
+			</data>
+			<port name="p0">
+				<data key="d9">
+					<y:FreeNodePortLocationModelParameter Offset="0,0.5"/>
+				</data>
+			</port>
+		</node>
+		<node id="n11">
+			<data key="d3">
+				<x:List>
+						<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}"  Style="{y:GraphMLReference 1}">
+							<y:Label.Text><![CDATA[John Fitzgerald Kennedy]]></y:Label.Text>
+						</y:Label>
+				</x:List>
+			</data>
+			<data key="d4">
+				<y:RectD Height="35" X="440" Width="160" Y="112.5"/>
+			</data>
+			<data key="d5">
+				<y:GraphMLReference ResourceKey="2"/>
+			</data>
+			<port name="p0">
+				<data key="d9">
+					<y:FreeNodePortLocationModelParameter Offset="0,0.5"/>
+				</data>
+			</port>
+		</node>
+		<node id="n12">
+			<data key="d3">
+				<x:List>
+						<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}"  Style="{y:GraphMLReference 1}">
+							<y:Label.Text><![CDATA[Patrick Bouvier Kennedy]]></y:Label.Text>
+						</y:Label>
+				</x:List>
+			</data>
+			<data key="d4">
+				<y:RectD Height="35" X="440" Width="160" Y="37.5"/>
+			</data>
+			<data key="d5">
+				<y:GraphMLReference ResourceKey="2"/>
+			</data>
+			<port name="p0">
+				<data key="d9">
+					<y:FreeNodePortLocationModelParameter Offset="0,0.5"/>
+				</data>
+			</port>
+		</node>
+		<node id="n13">
+			<data key="d4">
+				<y:RectD Height="10" X="295" Width="10" Y="50"/>
+			</data>
+			<data key="d5">
+				<y:GraphMLReference ResourceKey="4"/>
+			</data>
+			<port name="p0"/>
+			<port name="p1"/>
+		</node>
+		<node id="n14">
+			<data key="d4">
+				<y:RectD Height="10" X="75" Width="10" Y="87.5"/>
+			</data>
+			<data key="d5">
+				<y:GraphMLReference ResourceKey="4"/>
+			</data>
+			<port name="p0"/>
+			<port name="p1"/>
+			<port name="p2">
+				<data key="d9">
+					<y:FreeNodePortLocationModelParameter Offset="1,0.5"/>
+				</data>
+			</port>
+		</node>
+		<node id="n15">
+			<data key="d3">
+				<x:List>
+						<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}"  Style="{y:GraphMLReference 1}">
+							<y:Label.Text><![CDATA[John Vernou Bouvier III]]></y:Label.Text>
+						</y:Label>
+				</x:List>
+			</data>
+			<data key="d4">
+				<y:RectD Height="35" X="0" Width="160" Y="37.5"/>
+			</data>
+			<data key="d5">
+				<y:GraphMLReference ResourceKey="2"/>
+			</data>
+			<port name="p0"/>
+		</node>
+		<node id="n16">
+			<data key="d3">
+				<x:List>
+						<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}"  Style="{y:GraphMLReference 1}">
+							<y:Label.Text><![CDATA[Janet Norton Lee]]></y:Label.Text>
+						</y:Label>
+				</x:List>
+			</data>
+			<data key="d4">
+				<y:RectD Height="35" X="0" Width="160" Y="112.5"/>
+			</data>
+			<data key="d5">
+				<y:GraphMLReference ResourceKey="3"/>
+			</data>
+			<port name="p0"/>
+		</node>
+		<node id="n17">
+			<data key="d3">
+				<x:List>
+						<y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}"  Style="{y:GraphMLReference 1}">
+							<y:Label.Text><![CDATA[Aristotle Onassis]]></y:Label.Text>
+						</y:Label>
+				</x:List>
+			</data>
+			<data key="d4">
+				<y:RectD Height="35" X="220" Width="160" Y="0"/>
+			</data>
+			<data key="d5">
+				<y:GraphMLReference ResourceKey="2"/>
+			</data>
+			<port name="p0"/>
+		</node>
+		<edge id="e0" source="n0" target="n7" sourceport="p0" targetport="p0">
+			<data key="d16">
+				<y:GraphMLReference ResourceKey="5"/>
+			</data>
+		</edge>
+		<edge id="e1" source="n9" target="n7" sourceport="p0" targetport="p1">
+			<data key="d16">
+				<y:GraphMLReference ResourceKey="5"/>
+			</data>
+		</edge>
+		<edge id="e2" source="n7" target="n10" sourceport="p2" targetport="p0">
+			<data key="d15">
+				<x:List>
+						<y:Bend Location="420,130"/>
+						<y:Bend Location="420,205"/>
+				</x:List>
+			</data>
+			<data key="d16">
+				<y:GraphMLReference ResourceKey="5"/>
+			</data>
+		</edge>
+		<edge id="e3" source="n7" target="n11" sourceport="p3" targetport="p0">
+			<data key="d16">
+				<y:GraphMLReference ResourceKey="5"/>
+			</data>
+		</edge>
+		<edge id="e4" source="n7" target="n12" sourceport="p4" targetport="p0">
+			<data key="d15">
+				<x:List>
+						<y:Bend Location="420,130"/>
+						<y:Bend Location="420,55"/>
+				</x:List>
+			</data>
+			<data key="d16">
+				<y:GraphMLReference ResourceKey="5"/>
+			</data>
+		</edge>
+		<edge id="e5" source="n1" target="n8" sourceport="p0" targetport="p0">
+			<data key="d16">
+				<y:GraphMLReference ResourceKey="5"/>
+			</data>
+		</edge>
+		<edge id="e6" source="n2" target="n8" sourceport="p0" targetport="p1">
+			<data key="d16">
+				<y:GraphMLReference ResourceKey="5"/>
+			</data>
+		</edge>
+		<edge id="e7" source="n8" target="n3" sourceport="p2" targetport="p0">
+			<data key="d15">
+				<x:List>
+						<y:Bend Location="200,317.5"/>
+						<y:Bend Location="200,467.5"/>
+				</x:List>
+			</data>
+			<data key="d16">
+				<y:GraphMLReference ResourceKey="5"/>
+			</data>
+		</edge>
+		<edge id="e8" source="n8" target="n0" sourceport="p3" targetport="p1">
+			<data key="d15">
+				<x:List>
+						<y:Bend Location="200,317.5"/>
+						<y:Bend Location="200,167.5"/>
+				</x:List>
+			</data>
+			<data key="d16">
+				<y:GraphMLReference ResourceKey="5"/>
+			</data>
+		</edge>
+		<edge id="e9" source="n8" target="n4" sourceport="p4" targetport="p0">
+			<data key="d15">
+				<x:List>
+						<y:Bend Location="200,317.5"/>
+						<y:Bend Location="200,392.5"/>
+				</x:List>
+			</data>
+			<data key="d16">
+				<y:GraphMLReference ResourceKey="5"/>
+			</data>
+		</edge>
+		<edge id="e10" source="n8" target="n5" sourceport="p5" targetport="p0">
+			<data key="d16">
+				<y:GraphMLReference ResourceKey="5"/>
+			</data>
+		</edge>
+		<edge id="e11" source="n8" target="n6" sourceport="p6" targetport="p0">
+			<data key="d15">
+				<x:List>
+						<y:Bend Location="200,317.5"/>
+						<y:Bend Location="200,242.5"/>
+				</x:List>
+			</data>
+			<data key="d16">
+				<y:GraphMLReference ResourceKey="5"/>
+			</data>
+		</edge>
+		<edge id="e12" source="n17" target="n13" sourceport="p0" targetport="p0">
+			<data key="d16">
+				<y:GraphMLReference ResourceKey="5"/>
+			</data>
+		</edge>
+		<edge id="e13" source="n9" target="n13" sourceport="p1" targetport="p1">
+			<data key="d16">
+				<y:GraphMLReference ResourceKey="5"/>
+			</data>
+		</edge>
+		<edge id="e14" source="n15" target="n14" sourceport="p0" targetport="p0">
+			<data key="d16">
+				<y:GraphMLReference ResourceKey="5"/>
+			</data>
+		</edge>
+		<edge id="e15" source="n16" target="n14" sourceport="p0" targetport="p1">
+			<data key="d16">
+				<y:GraphMLReference ResourceKey="5"/>
+			</data>
+		</edge>
+		<edge id="e16" source="n14" target="n9" sourceport="p2" targetport="p2">
+			<data key="d16">
+				<y:GraphMLReference ResourceKey="5"/>
+			</data>
+		</edge>
+	</graph>
+</graphml>
+

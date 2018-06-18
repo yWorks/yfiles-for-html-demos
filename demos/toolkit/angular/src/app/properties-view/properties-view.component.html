@@ -1,0 +1,22 @@
+<h2 class="demo-sidebar-header">Properties</h2>
+<div class="demo-sidebar-content">
+  <div *ngIf="person">
+    <label>Name <input type="text" [(ngModel)]="person.name"></label>
+    <label>Position <input type="text" [(ngModel)]="person.position"></label>
+    <label>E-Mail <input type="text" [(ngModel)]="person.email"></label>
+    <label>Phone <input type="text" [(ngModel)]="person.phone"></label>
+    <label>Fax <input type="text" [(ngModel)]="person.fax"></label>
+    <label>
+      Business Unit
+      <select [(ngModel)]="person.businessUnit">
+        <option>Executive Unit</option>
+        <option>Production</option>
+        <option>Sales</option>
+        <option>Accounting</option>
+      </select>
+    </label>
+  </div>
+  <div *ngIf="!person">
+    <h3>Please select a node.</h3>
+  </div>
+</div>

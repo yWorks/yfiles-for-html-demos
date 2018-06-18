@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+
+
+<!-- ////////////////////////////////////////////////////////////////////////
+     // @license
+     // This demo file is part of yFiles for HTML 2.1.
+     // Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // 72070 Tuebingen, Germany. All rights reserved.
+     //
+     // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+     // of demo files in source code or binary form, with or without
+     // modification, is not permitted.
+     //
+     // Owners of a valid software license for a yFiles for HTML version that this
+     // demo is shipped with are allowed to use the demo source code as basis
+     // for their own yFiles for HTML powered applications. Use of such programs is
+     // governed by the rights and conditions as set out in the yFiles for HTML
+     // license agreement.
+     //
+     // THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+     // WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+     // MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+     // NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+     // SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+     // TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+     // PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+     // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+     // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+     // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+     // 
+     ////////////////////////////////////////////////////////////////////////-->
+
+  <title>Network Monitoring Demo [yFiles for HTML]</title>
+
+  <link rel="stylesheet" href="../../../lib/yfiles.css">
+  <link rel="stylesheet" href="../../resources/style/demo.css">
+
+  <link rel="stylesheet" href="./resources/app.css">
+
+  <!-- enable debugging -->
+  <script src="../../../ide-support/yfiles-typeinfo.js"></script>
+
+  <!-- load d3.js for the bar chart and d3-tip for the tooltips -->
+  <script src="https://unpkg.com/d3@5.0.0/dist/d3.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-tip/0.7.1/d3-tip.min.js"></script>
+</head>
+<body class="demo-has-left">
+<aside class="demo-sidebar demo-left">
+  <h1 class="demo-sidebar-header">Description</h1>
+  <div class="demo-sidebar-content">
+    <p>This demo shows a basic network monitoring tool.</p>
+
+    <p>You can watch the traffic flowing through the network and even influence the network by deactivating nodes.</p>
+
+    <p>The network consists of PCs, Laptops, Tablets, Servers, Databases and Routers. The color of a connection depicts
+      its traffic load and changes from green to yellow to red. The traffic load of a node is shown on its control panel
+      pop-up.</p>
+
+    <p>The bar charts in the node popups are created using <a href="https://d3js.org/" target="_blank">D3.js</a>.</p>
+
+    <h2>Things to Try</h2>
+
+    <h3>Show/Hide Node Control Panel</h3>
+
+    <p>Every node has a control panel that shows its name, IP address and traffic load. You can show this panel by
+      clicking on the node. Close the panel by clicking on the empty canvas area, or open the panel of another
+      node.</p>
+
+    <h3>(De)activate Nodes</h3>
+
+    <p>The control panel contains a power button that turns a node on and off. Deactivated nodes do not process data.
+      This way you can influence the data flow and watch what happens when nodes fail.</p>
+
+    <h3>Enable Failures</h3>
+
+    <p>When enabled, nodes and edges fail randomly and cannot process data anymore. Broken elements are marked with a
+      stop sign. If a failure happens outside the current viewport, the viewport will focus on the broken element.</p>
+
+    <h3>Repair Failures</h3>
+
+    <p>You can repair a failed element by clicking it.</p>
+
+    <h2>Mouse Interaction</h2>
+
+    <h3>Mouse wheel</h3>
+
+    <p>Changes the zoom level of the view.</p>
+
+    <h3>Left mouse drag</h3>
+
+    <p>Moves the diagram within the view.</p>
+
+    <h3>Clicking a node</h3>
+
+    <p>Opens the control panel for that node.</p>
+
+    <h3>Hover over a nodes or an edge</h3>
+
+    <p>Shows the load of that element.</p>
+
+    <h3>Hover over a load indicator in the control panel</h3>
+
+    <p>Shows the load of that node.</p>
+
+    <h3>Clicking a broken node or edge</h3>
+
+    <p>Repairs that element.</p>
+  </div>
+</aside>
+
+<div class="demo-content">
+
+  <div class="demo-toolbar">
+
+    <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
+    <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
+    <button data-command="FitContent" title="Fit Content" class="demo-icon-yIconZoomFit"></button>
+    <span class="demo-separator"></span>
+    <input type="checkbox" id="toggleFailures" class="demo-toggle-button labeled" title="Simulate Failures" data-command="ToggleFailures"/><label for="toggleFailures">Simulate Failures</label>
+    <span class="demo-separator"></span>
+    <input type="checkbox" id="toggleLabels" class="demo-toggle-button labeled" title="Toggle Node Labels" data-command="ToggleLabels"/><label for="toggleLabels">Toggle Labels</label>
+  </div>
+
+  <div id="graphComponent">
+    <div id="nodePopupContent" class="popupContent" tabindex="0">
+      <!-- The content template for the node popup panel -->
+      <div class="popupContentInfo">
+        <div id="powerButton" title="Power On/Off">
+          <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+                      width="25px" height="25px" viewBox="0 0 25 25" xml:space="preserve">
+                      <path d="m 6.0040426,5.028485 a 10,10 0 1 0 12.0000004,0 m -6,-3 0,10" id="powerButton-path"></path>
+                    </svg>
+        </div>
+        <div data-id="name" style="font-size:14px;font-weight:bold;margin-bottom:4px;"></div>
+        <div data-id="ip" style="margin-bottom:4px;"></div>
+        <div id="closeButton" title="Close this label">&#x274c;</div>
+      </div>
+      <svg class="chart"></svg>
+      <div class="nodePointer">&#x25BC;</div>
+    </div>
+  </div>
+</div>
+
+<script src="../../resources/require.js"></script>
+<script src="NetworkMonitoringDemo.js"></script>
+
+</body>
+</html>

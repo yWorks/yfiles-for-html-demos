@@ -1,0 +1,25 @@
+{
+  "name": "browserify-demo",
+  "version": "2.0.1",
+  "description": "Using browserify with yFiles for HTML",
+  "main": "browserify-demo.js",
+  "author": "yfileshtml@yworks.com",
+  "license": "https://www.yworks.com/en/products_yfiles_sla.html",
+  "private": true,
+  "scripts": {
+    "build": "grunt"
+  },
+  "dependencies": {
+    "color": "3.0.0"
+  },
+  "devDependencies": {
+    "browserify": "15.2.0",
+    "grunt": "1.0.1",
+    "grunt-browserify": "5.2.0",
+    "grunt-contrib-clean": "1.1.0",
+    "grunt-contrib-copy": "1.0.0",
+    "grunt-text-replace": "0.4.0",
+    "grunt-yfiles-deployment": "../../../deployment/grunt-yfiles-deployment",
+    "load-grunt-tasks": "3.5.2"
+  }
+}

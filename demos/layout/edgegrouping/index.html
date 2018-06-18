@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+
+<!-- ////////////////////////////////////////////////////////////////////////
+     // @license
+     // This demo file is part of yFiles for HTML 2.1.
+     // Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // 72070 Tuebingen, Germany. All rights reserved.
+     //
+     // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+     // of demo files in source code or binary form, with or without
+     // modification, is not permitted.
+     //
+     // Owners of a valid software license for a yFiles for HTML version that this
+     // demo is shipped with are allowed to use the demo source code as basis
+     // for their own yFiles for HTML powered applications. Use of such programs is
+     // governed by the rights and conditions as set out in the yFiles for HTML
+     // license agreement.
+     //
+     // THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+     // WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+     // MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+     // NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+     // SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+     // TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+     // PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+     // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+     // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+     // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+     // 
+     ////////////////////////////////////////////////////////////////////////-->
+
+  <title>Edge Grouping Demo [yFiles for HTML]</title>
+
+  <link rel="stylesheet" href="../../../lib/yfiles.css">
+  <link rel="stylesheet" href="../../resources/style/demo.css">
+
+  <!-- enable debugging -->
+  <script src="../../../ide-support/yfiles-typeinfo.js"></script>
+
+  <style>
+    .demo-context-menu *:focus {
+      outline: none;
+    }
+
+    .demo-context-menu .demo-menu-item {
+      text-align: start;
+      border-left: 7px solid #BBBBBB;
+    }
+    .demo-context-menu .demo-menu-item.source-edge-group {
+      border-left-color: #4169E1;
+    }
+    .demo-context-menu .demo-menu-item.target-edge-group {
+      border-left-color: #483D8B;
+    }
+    .demo-context-menu .demo-menu-item.source-and-target-edge-group {
+      border-left-color: #6495ED;
+    }
+    .demo-context-menu .demo-menu-item.source-port-group {
+      border-left-color: #DC143C;
+    }
+    .demo-context-menu .demo-menu-item.target-port-group {
+      border-left-color: #D2691E;
+    }
+    .demo-context-menu .demo-menu-item.source-and-target-port-group {
+      border-left-color: #FFA500;
+    }
+
+    .node-color {
+      fill: #CCCCCC;
+    }
+  </style>
+</head>
+<body class="demo-has-left">
+<aside class="demo-sidebar demo-left">
+  <h1 class="demo-sidebar-header">Description</h1>
+  <div class="demo-sidebar-content">
+    <p>
+      This demo shows the possibilities of edge and port grouping using the example of <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.hierarchic.HierarchicLayout">yfiles.hierarchic.HierarchicLayout</a>.
+      Edge groups lead to edges sharing some segments while port groups will combine the edges only in their first
+      segment.
+    </p>
+
+    <h2>Things to Try</h2>
+    <ul>
+      <li>
+        Use the combo-box in the toolbar to toggle between edge grouping and port grouping.
+      </li>
+      <li>
+        Customize the grouping information in the graph using the context menu. You can either:
+        <ul>
+          <li>Right-Click on the canvas and group/ungroup all edges at the same time</li>
+          <li>Right-Click on an edge or selection of edges and group/ungroup the incident edges</li>
+          <li>Right-Click on a node or selection of nodes and group/ungroup the incident edges</li>
+        </ul>
+      </li>
+      <li>
+        Apply a complete layout from scratch by pressing the Layout-Button in the toolbar. Setting incremental edge or
+        port groups can lead to uncommon routings, thus it may be necessary to calculate a new layout.
+      </li>
+      <li>
+        Reset the graph and start again with the initial sample.
+      </li>
+    </ul>
+
+    <h2>Grouping Types</h2>
+    <img src="resources/legend.svg">
+
+  </div>
+</aside>
+
+<div class="demo-content">
+  <div class="demo-toolbar">
+    <button data-command="Reset" title="Reset Graph" class="demo-icon-yIconNew"></button>
+    <span class="demo-separator"></span>
+    <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
+    <button data-command="ZoomOriginal" title="Zoom to original size" class="demo-icon-yIconZoomOriginal"></button>
+    <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
+    <button data-command="FitContent" title="Fit Content" class="demo-icon-yIconZoomFit"></button>
+    <span class="demo-separator"></span>
+    <span>Group Mode</span>
+    <select data-command="TogglePortGroupMode" title="Switch between Edge and Port Grouping">
+      <option>Edge Grouping</option>
+      <option>Port Grouping</option>
+    </select>
+    <span class="demo-separator"></span>
+    <button data-command="Layout" title="Run Hierarchic Layout" class="demo-icon-yIconLayout labeled">Layout</button>
+  </div>
+  <div id="graphComponent"></div>
+</div>
+
+<script src="../../resources/require.js"></script>
+<script src="EdgeGroupingDemo.js"></script>
+</body>
+</html>

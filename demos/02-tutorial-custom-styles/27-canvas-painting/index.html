@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+
+<!-- ////////////////////////////////////////////////////////////////////////
+     // @license
+     // This demo file is part of yFiles for HTML 2.1.
+     // Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // 72070 Tuebingen, Germany. All rights reserved.
+     //
+     // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+     // of demo files in source code or binary form, with or without
+     // modification, is not permitted.
+     //
+     // Owners of a valid software license for a yFiles for HTML version that this
+     // demo is shipped with are allowed to use the demo source code as basis
+     // for their own yFiles for HTML powered applications. Use of such programs is
+     // governed by the rights and conditions as set out in the yFiles for HTML
+     // license agreement.
+     //
+     // THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+     // WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+     // MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+     // NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+     // SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+     // TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+     // PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+     // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+     // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+     // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+     // 
+     ////////////////////////////////////////////////////////////////////////-->
+
+  <title>Canvas Painting - Custom Styles Tutorial [yFiles for HTML]</title>
+
+  <link rel="stylesheet" href="../../../lib/yfiles.css">
+  <link rel="stylesheet" href="../../resources/style/demo.css">
+
+  <!-- enable debugging -->
+  <script src="../../../ide-support/yfiles-typeinfo.js"></script>
+
+</head>
+<body class="demo-has-left">
+<!--
+  The sidebar for the overview and description text
+  -->
+<aside class="demo-sidebar demo-left">
+  <h1 class="demo-sidebar-header">Description</h1>
+  <div class="demo-sidebar-content">
+    <p>
+      This step shows how to implement a zoom-dependent high-performance rendering using HTML5 Canvas painting for
+      nodes. With the <em>High Performance</em> button, you can switch between the normal SVG-based rendering and the
+      Canvas painting. </p>
+
+    <h2>Description</h2>
+
+    <p>
+      To use Canvas painting, the style must create <code>Visuals</code> that extend <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.view.HtmlCanvasVisual">yfiles.view.HtmlCanvasVisual</a>. In
+      this demo, the style which was developed in the earlier tutorial steps has been modified such that its methods
+      <code>createVisual()</code> and <code>updateVisual()</code> return an <code>HtmlCanvasVisual</code> implementation at
+      low zoom levels. </p>
+
+    <p>
+      This, together with a very simplified visualization, enables very fast rendering, especially suited for a large
+      number of nodes at a low zoom level. </p>
+
+    <h2>Things to Try</h2>
+    <ul>
+      <li>
+        Click "Start Animation" to see the performance of the SVG based node rendering.
+      </li>
+      <li>
+        Turn on "High Performance" and click "Start Animation" to see the benefit of the zoom dependent canvas painting.
+      </li>
+      <li>
+        Zoom in and out to see the automatic change between the two visualizations.
+      </li>
+      <li>
+        Take a look at class <code>CircleVisual</code> and methods
+        <code>MySimpleNodeStyle.createVisual()</code> and <code>MySimpleNodeStyle.updateVisual()</code>.
+      </li>
+    </ul>
+  </div>
+</aside>
+
+<div class="demo-content">
+
+  <div class="demo-toolbar">
+
+    <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
+    <button data-command="ZoomOriginal" title="Zoom to original size" class="demo-icon-yIconZoomOriginal"></button>
+    <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
+    <button data-command="FitContent" title="Fit Content" class="demo-icon-yIconZoomFit"></button>
+
+    <span class="demo-separator"></span>
+
+
+    <button data-command="StartAnimation" title="Start Animation" class="demo-icon-yIconLayout labeled">Start
+      Animation
+    </button>
+
+    <input type="checkbox" id="togglePerformance" class="demo-toggle-button labeled" title="High Performance" data-command="TogglePerformance"/><label for="togglePerformance">High Performance</label>
+
+  </div>
+
+  <div id="graphComponent"></div>
+</div>
+
+
+<script src="../../resources/require.js"></script>
+<script src="SampleApplication.js"></script>
+
+</body>
+</html>

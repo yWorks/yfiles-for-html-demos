@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 85 85"
+    height="85"
+    width="85"
+    y="50%"
+    x="50%"
+    version="1.1">
+  <g
+      transform="translate(5.5,0.5)"
+  >
+    <g
+    >
+      <rect
+          x="2"
+          y="2"
+          rx="2"
+          ry="2"
+          width="70"
+          height="80"
+          style="fill:#ffffff;stroke:#808080;stroke-width:4"/>
+      <text
+          x="10"
+          y="16"
+      >
+        <tspan
+            style="font-size:10px;font-weight:bold;fill:#808080;font-family:Verdana"
+        >Payment
+        </tspan>
+      </text>
+      <text
+          x="28"
+          y="48"
+      >
+        <tspan
+            style="font-size:30px;font-weight:bold;fill:#808080;font-family:E-font"
+        >€
+        </tspan>
+      </text>
+      <path
+          d="m 17,60 41,0"
+          style="fill:none;stroke:#808080;stroke-width:4"/>
+      <path
+          d="m 17,70 41,0"
+          style="fill:none;stroke:#808080;stroke-width:4"/>
+    </g>
+  </g>
+</svg>

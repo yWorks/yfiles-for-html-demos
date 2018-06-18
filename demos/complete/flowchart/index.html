@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+
+<!-- ////////////////////////////////////////////////////////////////////////
+     // @license
+     // This demo file is part of yFiles for HTML 2.1.
+     // Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // 72070 Tuebingen, Germany. All rights reserved.
+     //
+     // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+     // of demo files in source code or binary form, with or without
+     // modification, is not permitted.
+     //
+     // Owners of a valid software license for a yFiles for HTML version that this
+     // demo is shipped with are allowed to use the demo source code as basis
+     // for their own yFiles for HTML powered applications. Use of such programs is
+     // governed by the rights and conditions as set out in the yFiles for HTML
+     // license agreement.
+     //
+     // THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+     // WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+     // MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+     // NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+     // SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+     // TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+     // PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+     // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+     // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+     // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+     // 
+     ////////////////////////////////////////////////////////////////////////-->
+
+  <title>Flowchart Demo [yFiles for HTML]</title>
+
+  <link rel="stylesheet" href="../../../lib/yfiles.css">
+  <link rel="stylesheet" href="../../resources/style/demo.css">
+
+  <!-- enable debugging -->
+  <script src="../../../ide-support/yfiles-typeinfo.js"></script>
+
+  <style>
+    #dndPanelContainer {
+      position: absolute;
+      top: 60px;
+      right: 0px;
+      bottom: 0;
+      width: 210px;
+      border-left: 5px solid #eee;
+      overflow: auto;
+      box-sizing: border-box;
+      z-index: 12;
+    }
+
+    #dndPanel {
+      width: 100%;
+    }
+
+    .demo-dndPanelItem {
+      margin: 10px auto;
+      float: left;
+    }
+
+    .yfiles-cursor-dragdrop-copy {
+      cursor: copy;
+    }
+
+    .yfiles-cursor-dragdrop-move {
+      cursor: move;
+    }
+
+    .yfiles-cursor-dragdrop-link {
+      cursor: alias;
+    }
+
+    .yfiles-cursor-dragdrop-scroll {
+      cursor: move;
+    }
+
+    .yfiles-cursor-dragdrop-all {
+      cursor: copy;
+    }
+
+    .yfiles-cursor-dragdrop-no-drop {
+      cursor: no-drop;
+    }
+
+    .demo-toolbar, #graphComponent,
+    .demo-left-hidden .demo-toolbar,
+    .demo-left-hidden #graphComponent {
+      right: 210px !important;
+    }
+
+    .yfiles-drag {
+      z-index: 15;
+      opacity: 0.35;
+      transition: opacity .2s ease-in-out;
+    }
+
+    .yfiles-drag.hidden {
+      opacity: 0;
+    }
+  </style>
+</head>
+<body class="demo-has-left">
+<aside class="demo-sidebar demo-left">
+  <h1 class="demo-sidebar-header">Description</h1>
+  <div class="demo-sidebar-content">
+    This demo provides a number of <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.styles.INodeStyle">yfiles.styles.INodeStyle</a>s which are shaped as common flowchart symbols.
+    To use those different styles, drag them from the palette to the main graph component.
+
+    <h2>Flowchart Layout</h2>
+    There is an adjusted <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.hierarchic.HierarchicLayout">yfiles.hierarchic.HierarchicLayout</a> which considers some flowchart specialities.
+    <ul>
+      <li>Incoming-edges are grouped if they are many and there are also some outgoing-edges.</li>
+      <li>
+        The direction of edges that represent positive ('yes') or negative ('branches') can be selected in the toolbar.
+      </li>
+      <li>Flatwise edges can be drawn entirely to one side or just attach at the side of a node.</li>
+      <li>Long paths in the graph are aligned.</li>
+    </ul>
+    Try out the different styles on the set of sample graphs by selecting the directions and press the layout-button.
+  </div>
+</aside>
+
+<div class="demo-content">
+  <div class="demo-toolbar">
+    <button data-command="Open" title="Open a GraphML file" class="demo-icon-yIconOpen"></button>
+    <button data-command="Save" title="Save a GraphML file" class="demo-icon-yIconSave"></button>
+
+    <span class="demo-separator"></span>
+
+    <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
+    <button data-command="ZoomOriginal" title="Zoom to original size" class="demo-icon-yIconZoomOriginal"></button>
+    <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
+    <button data-command="FitContent" title="Fit Content" class="demo-icon-yIconZoomFit"></button>
+
+    <span class="demo-separator"></span>
+
+    <button id="previous-sample" data-command="PreviousSample" title="Previous Sample Graph" class="demo-icon-yIconPrevious" disabled></button>
+    <select id="select-sample" data-type="ComboBox" data-command="SelectSample" title="Choose a Sample Graph">
+      <option>Sample: Problem Solving</option>
+      <option>Sample: Student Registration</option>
+      <option>Sample: eCommerce</option>
+      <option>Sample: Computing Factorial</option>
+      <option>Sample: Largest Number</option>
+    </select>
+    <button id="next-sample" data-command="NextSample" title="Next Sample Graph" class="demo-icon-yIconNext"></button>
+
+    <span class="demo-separator"></span>
+
+    <span>'Yes'-Branch</span> <select id="select-positive-branch-direction" data-command="SelectPositiveBranchDirection"
+      title="Choose a preferred direction for edges with 'Yes'-Labels">
+    <option>Same As Flow</option>
+    <option>Flatwise</option>
+    <option>Left In Flow</option>
+    <option>Right In Flow</option>
+    <option selected>Undefined</option>
+  </select> <span>'No'-Branch</span> <select id="select-negative-branch-direction"
+      data-command="SelectNegativeBranchDirection" title="Choose a preferred direction for edges with 'No'-Labels">
+    <option>Same As Flow</option>
+    <option>Flatwise</option>
+    <option>Left In Flow</option>
+    <option>Right In Flow</option>
+    <option selected>Undefined</option>
+  </select> <span>In-Edge Grouping</span> <select id="select-in-edge-grouping"
+      data-command="SelectInEdgeGrouping" title="Choose in which way edges are grouped">
+    <option>None</option>
+    <option>All</option>
+    <option selected>Optimized</option>
+  </select> <input type="checkbox" id="allow-flatwise-edges" class="demo-toggle-button labeled" checked/> <label
+      for="allow-flatwise-edges">Allow Flatwise Edges</label>
+
+    <span class="demo-separator"></span>
+
+    <button id="layout" data-command="Layout" title="Run a Layout Algorithm" class="demo-icon-yIconLayout labeled">Layout</button>
+  </div>
+
+  <div id="dndPanelContainer">
+    <div id="dndPanel"></div>
+  </div>
+  <div id="graphComponent"></div>
+</div>
+
+<script src="../../resources/require.js"></script>
+<script src="FlowchartDemo.js"></script>
+</body>
+</html>

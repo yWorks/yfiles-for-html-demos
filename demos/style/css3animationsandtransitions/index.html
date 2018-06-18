@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+
+<!-- ////////////////////////////////////////////////////////////////////////
+     // @license
+     // This demo file is part of yFiles for HTML 2.1.
+     // Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // 72070 Tuebingen, Germany. All rights reserved.
+     //
+     // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+     // of demo files in source code or binary form, with or without
+     // modification, is not permitted.
+     //
+     // Owners of a valid software license for a yFiles for HTML version that this
+     // demo is shipped with are allowed to use the demo source code as basis
+     // for their own yFiles for HTML powered applications. Use of such programs is
+     // governed by the rights and conditions as set out in the yFiles for HTML
+     // license agreement.
+     //
+     // THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+     // WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+     // MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+     // NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+     // SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+     // TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+     // PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+     // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+     // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+     // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+     // 
+     ////////////////////////////////////////////////////////////////////////-->
+
+  <title>CSS3 Animations And Transitions Demo [yFiles for HTML]</title>
+
+  <link rel="stylesheet" href="../../../lib/yfiles.css">
+  <link rel="stylesheet" href="../../resources/style/demo.css">
+
+  <!-- enable debugging -->
+  <script src="../../../ide-support/yfiles-typeinfo.js"></script>
+
+  <style>
+    .node .node-rect {
+      fill: #FFAF00;
+      transform-origin: center;
+    }
+
+    .node .node-shine {
+      opacity: 0.4;
+      fill: url('#shine-gradient');
+      pointer-events: none;
+      transform: scaleX(0);
+      transform-origin: center;
+    }
+
+    .node:hover .node-shine {
+      animation: 0.5s linear nodeHoverAnimation;
+    }
+
+    .node.node-created .node-rect {
+      transform-origin: 40px 40px;
+      animation: 0.3s ease-out nodeCreatedAnimation;
+    }
+
+    .node.node-focused .node-rect{
+      fill: #336699;
+      transition: fill 0.3s ease-out;
+    }
+
+    .node.node-selected .node-rect {
+      stroke: #ff7b2c;
+      stroke-width: 3;
+      stroke-dasharray: 4;
+      animation: 0.3s linear infinite selectedAnimation;
+    }
+
+    .group-node-expanded .group-border, .group-node-collapsed .folder-background {
+      transition: fill 0.5s ease;
+    }
+
+    @keyframes nodeCreatedAnimation {
+      0% {
+        transform: scale(0);
+      }
+      100% {
+        transform: scale(1);
+      }
+    }
+
+    @keyframes nodeHoverAnimation {
+      0% {
+        transform: translate(-80px, 0);
+      }
+      40% {
+        transform: translate(20px, 0);
+      }
+      60% {
+        transform: translate(40px, 0);
+      }
+      100% {
+        transform: translate(80px, 0);
+      }
+    }
+
+    @keyframes selectedAnimation {
+      0% {
+        stroke-dashoffset: 0;
+      }
+      100% {
+        stroke-dashoffset: 8;
+      }
+    }
+  </style>
+
+  <svg version="1.1" xmlns="http://www.w3.org/2000/svg" style="visibility: hidden; display: block" width="0px" height="0px">
+    <defs>
+      <linearGradient id="shine-gradient">
+        <stop offset="0%" stop-color="white" stop-opacity="0"/>
+        <stop offset="40%" stop-color="white" stop-opacity="1"/>
+        <stop offset="60%" stop-color="white" stop-opacity="1"/>
+        <stop offset="100%" stop-color="white" stop-opacity="0"/>
+      </linearGradient>
+    </defs>
+  </svg>
+
+</head>
+<body class="demo-has-left">
+<aside class="demo-sidebar demo-left">
+  <h1 class="demo-sidebar-header">Description</h1>
+  <div class="demo-sidebar-content">
+    <p>This demo shows how CSS3 transformations and animations can be applied to graph items.</p>
+
+    <h2>Things to Try</h2>
+    <ul>
+      <li>
+        Create a node by clicking on an empty location on the canvas and watch how the new node is animated.
+      </li>
+      <li>
+        Move the mouse over a node to see a simple shine effect.
+      </li>
+      <li>
+        Select a node by clicking on it and see the animated selection indicator.
+      </li>
+      <li>
+        Collapse or expand a group node to see its border color transition between light and dark blue.
+      </li>
+    </ul>
+
+    <h2>Browser support</h2>
+    <p>
+      Depending on your browser, some animations might not work correctly or not at all. This demo applies CSS
+      animations and transitions on SVG elements which is not supported by every browser out of the box.
+    </p>
+
+  </div>
+</aside>
+
+<div class="demo-content">
+
+  <div class="demo-toolbar">
+
+    <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
+    <button data-command="ZoomOriginal" title="Zoom to original size" class="demo-icon-yIconZoomOriginal"></button>
+    <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
+    <button data-command="FitContent" title="Fit Content" class="demo-icon-yIconZoomFit"></button>
+
+  </div>
+
+  <div id="graphComponent"></div>
+</div>
+
+<script src="../../resources/require.js"></script>
+<script src="CSS3AnimationsAndTransitionsDemo.js"></script>
+
+</body>
+</html>

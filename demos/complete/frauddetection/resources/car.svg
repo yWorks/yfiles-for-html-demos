@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="50%" y="50%"
+	 width="64px" height="64px" viewBox="0 0 64 64" xml:space="preserve">
+<g>
+  <path d="M 4 44.5 L 60 44.5 L 52 4.5 L 12 4.5 Z" fill="white" stroke="gray" stroke-width="4" stroke-linejoin="round"/>
+  <rect x="2" y="24.5" width="60" height="25" rx="5" ry="5" fill="gray" stroke="gray" stroke-width="4"/>
+  <rect x="8" y="47.5" width="8" height="10" rx="3" ry="3" fill="gray" stroke="gray" stroke-width="4"/>
+  <rect x="48" y="47.5" width="8" height="10" rx="3" ry="3" fill="gray" stroke="gray" stroke-width="4"/>
+  <ellipse cx="14" cy="32.5" rx="4" ry="4" fill="white" stroke="white"/>
+  <ellipse cx="50" cy="32.5" rx="4" ry="4" fill="white" stroke="white"/>
+</g>
+</svg>

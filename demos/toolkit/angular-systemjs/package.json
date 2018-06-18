@@ -1,0 +1,33 @@
+{
+  "name": "demo.yfiles.angular",
+  "version": "2.0.0",
+  "scripts": {
+    "start": "concurrently \"npm run tsc:w\" \"npm run lite\" ",
+    "tsc": "tsc",
+    "tsc:w": "tsc -w",
+    "lite": "lite-server",
+    "postinstall": "npm run tsc"
+  },
+  "dependencies": {
+    "@angular/common": "5.2.2",
+    "@angular/compiler": "5.2.2",
+    "@angular/core": "5.2.2",
+    "@angular/forms": "5.2.2",
+    "@angular/http": "5.2.2",
+    "@angular/platform-browser": "5.2.2",
+    "@angular/platform-browser-dynamic": "5.2.2",
+    "@angular/router": "5.2.2",
+    "@angular/upgrade": "5.2.2",
+    "core-js": "2.5.3",
+    "reflect-metadata": "0.1.12",
+    "rxjs": "5.5.6",
+    "systemjs": "0.20.19",
+    "zone.js": "0.8.20"
+  },
+  "devDependencies": {
+    "@types/node": "9.4.0",
+    "concurrently": "3.5.1",
+    "lite-server": "2.3.0",
+    "typescript": "2.6.2"
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "name": "yfiles-es6-modules-demo",
+  "description": "Using yFiles and ES6 modules.",
+  "version": "1.0.0",
+  "homepage": "https://http://www.yworks.com/en/products/yfiles/yfiles-for-html/",
+  "author": "yfileshtml@yworks.com",
+  "license": "http://www.yworks.com/en/products_yfiles_sla.html",
+  "scripts": {
+    "postinstall": "npm run build",
+    "build": "grunt",
+    "deploy": "grunt deploy",
+    "bundle": "grunt bundle"
+  },
+  "dependencies": {
+    "grunt": "~1.0.1",
+    "grunt-cli": "~1.2.0",
+    "grunt-contrib-clean": "~1.1.0",
+    "grunt-contrib-copy": "~1.0.0",
+    "grunt-yfiles-deployment": "../../../deployment/grunt-yfiles-deployment",
+    "load-grunt-tasks": "~3.5.2",
+    "rollup": "~0.55.1"
+  },
+  "private": true
+}

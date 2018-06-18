@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+
+
+<!-- ////////////////////////////////////////////////////////////////////////
+     // @license
+     // This demo file is part of yFiles for HTML 2.1.
+     // Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // 72070 Tuebingen, Germany. All rights reserved.
+     //
+     // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+     // of demo files in source code or binary form, with or without
+     // modification, is not permitted.
+     //
+     // Owners of a valid software license for a yFiles for HTML version that this
+     // demo is shipped with are allowed to use the demo source code as basis
+     // for their own yFiles for HTML powered applications. Use of such programs is
+     // governed by the rights and conditions as set out in the yFiles for HTML
+     // license agreement.
+     //
+     // THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+     // WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+     // MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+     // NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+     // SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+     // TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+     // PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+     // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+     // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+     // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+     // 
+     ////////////////////////////////////////////////////////////////////////-->
+
+  <title>Multi-Page Layout Demo [yFiles for HTML]</title>
+
+  <link rel="stylesheet" href="../../../lib/yfiles.css">
+  <link rel="stylesheet" href="../../resources/style/demo.css">
+
+  <!-- enable debugging -->
+  <script src="../../../ide-support/yfiles-typeinfo.js"></script>
+
+  <script type="text/yfiles-template">
+    <g id="NormalNodeTemplate">
+      <rect fill="#99CCFF" stroke="#99CCFF" stroke-width="1" rx="2" ry="2" width="{TemplateBinding width}"
+          height="{TemplateBinding height}"></rect>
+      <text data-content="{TemplateBinding item, Converter=multipage.labelconverter}"
+          transform="{TemplateBinding width, Converter=multipage.transformconverter}"
+          style="font-size:10px; font-family:Arial; fill:#000; text-anchor: middle; dominant-baseline: central;"></text>
+    </g>
+    <g id="ConnectorNodeTemplate">
+      <rect fill="#FF8C00" stroke="#FF8C00" stroke-width="2" rx="2" ry="2" width="{TemplateBinding width}"
+          height="{TemplateBinding height}"></rect>
+      <rect fill="white" rx="2" ry="2" class="hoverable" width="{TemplateBinding width}"
+          height="{TemplateBinding height}"></rect>
+      <text data-content="{TemplateBinding item, Converter=multipage.labelconverter}"
+          transform="{TemplateBinding width, Converter=multipage.transformconverter}"
+          style="font-size:10px; font-family:Arial; fill:#000; text-anchor: middle; dominant-baseline: central;"></text>
+      <rect rx="2" ry="2" style="opacity: 0" width="{TemplateBinding width}" height="{TemplateBinding height}"></rect>
+    </g>
+    <g id="ProxyNodeTemplate">
+      <rect fill="#99CC33" stroke="#99CC33" stroke-width="2" rx="2" ry="2" width="{TemplateBinding width}"
+          height="{TemplateBinding height}"></rect>
+      <rect fill="white" rx="2" ry="2" class="hoverable" width="{TemplateBinding width}"
+          height="{TemplateBinding height}"></rect>
+      <text data-content="{TemplateBinding item, Converter=multipage.labelconverter}"
+          transform="{TemplateBinding width, Converter=multipage.transformconverter}"
+          style="font-size:10px; font-family:Arial; fill:#000; text-anchor: middle; dominant-baseline: central;"></text>
+      <rect rx="2" ry="2" style="opacity: 0" width="{TemplateBinding width}" height="{TemplateBinding height}"></rect>
+    </g>
+    <g id="ProxyReferenceNodeTemplate">
+      <rect fill="#F23802" stroke="#F23802" stroke-width="2" rx="2" ry="2" width="{TemplateBinding width}"
+          height="{TemplateBinding height}"></rect>
+      <rect fill="white" rx="2" ry="2" class="hoverable" width="{TemplateBinding width}"
+          height="{TemplateBinding height}"></rect>
+      <text data-content="{TemplateBinding item, Converter=multipage.labelconverter}"
+          transform="{TemplateBinding width, Converter=multipage.transformconverter}"
+          style="font-size:10px; font-family:Arial; fill:#000; text-anchor: middle; dominant-baseline: central;"></text>
+      <rect rx="2" ry="2" style="opacity: 0" width="{TemplateBinding width}" height="{TemplateBinding height}"></rect>
+    </g>
+  </script>
+  <style type="text/css">
+    #loadingIndicator {
+      position: absolute;
+      top: 50%;
+      width: 100%;
+      height: 200px;
+      -moz-box-sizing: border-box;
+      box-sizing: border-box;
+      margin-top: -100px;
+      background-color: rgba(0, 0, 0, 0.6);
+      color: #FFFFFF;
+      padding-top: 80px;
+      text-align: center;
+    }
+
+    .hoverable {
+      fill-opacity: 0;
+    }
+
+    .yfiles-highlighted .hoverable {
+      fill-opacity: 0.5;
+    }
+
+    .option-input {
+      width: 100%;
+    }
+
+    .option {
+      padding-bottom: 0.5em;
+    }
+
+    #modelGraphComponent {
+      height: 50%;
+      background-color: white;
+    }
+
+    .demo-sidebar.demo-right {
+      width: 30%;
+    }
+
+    .demo-right-hidden .demo-sidebar.demo-right {
+      right: -30%;
+    }
+
+    @media screen and (max-width: 960px) {
+      .demo-sidebar {
+        width: 100% !important;
+      }
+      .demo-right-hidden .demo-sidebar.demo-right {
+        right: -100% !important;
+      }
+      .demo-hide-right-when-small:not(.demo-right-hidden) .demo-content {
+        right: 0;
+      }
+    }
+
+    .demo-has-right .demo-content {
+      right: 30%;
+    }
+
+    .demo-right-hidden .demo-content {
+      right: 0;
+    }
+  </style>
+</head>
+<body class="demo-has-left demo-has-right">
+<aside class="demo-sidebar demo-left demo-description">
+  <h1 class="demo-sidebar-header">Description</h1>
+  <div class="demo-sidebar-content">
+
+    <p>This demo shows how to divide a large model graph into several smaller page graphs.</p>
+
+    <h2>About Multi-Page Layout</h2>
+
+    <p>
+      MultiPageLayout subdivides a large graph (called model graph) into a set of smaller graphs (called page graphs)
+      such that the layout of each page graph fits a specified maximum page size. To guarantee that no information is
+      lost when distributing the elements of the model over several pages, the algorithm introduces the following three
+      kinds of auxiliary nodes.</p>
+
+    <p>
+      <svg namespace="http://www.w3.org/2000/svg" width="100%" height="40">
+        <g>
+          <rect fill="#FF8C00" stroke="#FF8C00" stroke-width="2" rx="2" ry="2" width="100%" height="40"></rect>
+          <text x="50%" y="50%" text-anchor="middle" dy=".3em">Connector</text>
+        </g>
+      </svg>
+      The layout algorithm replaces edges between nodes on different pages by so-called connector nodes. More precisely,
+      for each edge between two nodes v and w that belong to different page graphs, there is a connector node attached
+      to v that has the same label as node w. Similarly, there is a connector node attached to w that has the same label
+      as node v. Click on a connector node to switch to the page graph that holds the related element.
+    </p>
+    <p>
+      <svg namespace="http://www.w3.org/2000/svg" width="100%" height="40">
+        <g>
+          <rect fill="#99CC33" stroke="#99CC33" stroke-width="2" rx="2" ry="2" width="100%" height="40"></rect>
+          <text x="50%" y="50%" text-anchor="middle" dy=".3em">Proxy</text>
+        </g>
+      </svg>
+      The layout algorithm may also replicate a node as one or more proxy nodes, if the original node and its direct
+      neighbors do not fit onto a single page. Proxy nodes have the same label as the node they replicate. Click on a
+      proxy node to switch to the page graph that holds the replicated node.
+    </p>
+    <p>
+      <svg namespace="http://www.w3.org/2000/svg" width="100%" height="40">
+        <g>
+          <rect fill="#F23802" stroke="#F23802" stroke-width="2" rx="2" ry="2" width="100%" height="40"></rect>
+          <text x="50%" y="50%" text-anchor="middle" dy=".3em">Proxy Reference</text>
+        </g>
+      </svg>
+      For each proxy node the layout algorithm creates a so-called proxy reference node in the page graph that holds the
+      node which is replicated by the proxy. Proxy reference nodes are labeled with the number of the page graph that
+      holds the referenced proxy node. Click on a proxy reference node to switch to the page graph that holds the
+      referenced proxy node.
+    </p>
+  </div>
+</aside>
+
+<aside class="demo-sidebar demo-right">
+  <h1 class="demo-sidebar-header">Layout Settings</h1>
+  <div class="demo-sidebar-content">
+    <div class="option">
+      <label for="pageWidthTextBox">Page Width</label> <input id="pageWidthTextBox" type="number" value="800"
+        class="option-input"/>
+    </div>
+    <div class="option">
+      <label for="pageHeightTextBox">Page Height</label> <input id="pageHeightTextBox" type="number" value="800"
+        class="option-input"/>
+    </div>
+    <div class="option">
+      <label for="coreLayoutComboBox">Core Layout Algorithm</label> <select id="coreLayoutComboBox"
+        class="option-input"></select>
+    </div>
+    <div class="option">
+      <label for="createProxyReferenceNodes">Create Proxy Reference Nodes</label>
+      <input id="createProxyReferenceNodes" type="checkbox" checked>
+    </div>
+    <div class="option">
+      <label for="placeMultipleComponentsOnSinglePage">Place Multiple Components on Single Page</label>
+      <input id="placeMultipleComponentsOnSinglePage" type="checkbox" checked>
+    </div>
+    <div class="option">
+      <label for="additionalParentCount">Additional Parent Count</label>
+      <input id="additionalParentCount" type="number" min="0" value="1" class="option-input" disabled/>
+    </div>
+    <button data-command="DoLayout" title="Layout" data-icon="yIconLayout">Layout</button>
+    <h1>Model Graph</h1>
+    <div id="modelGraphComponent"></div>
+    <div>
+      <h3>Browse the model graph:</h3>
+      <ul>
+        <li>Use the mouse-wheel to zoom into/out of the model graph.</li>
+        <li>Drag the model graph to navigate to the parts of interest.</li>
+        <li>Double-click on the model graph to fit its bounds into the component.</li>
+      </ul>
+    </div>
+  </div>
+</aside>
+
+<div class="demo-content">
+
+  <div class="demo-toolbar">
+    <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
+    <button data-command="ZoomOriginal" title="Zoom to original size" class="demo-icon-yIconZoomOriginal"></button>
+    <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
+    <button data-command="FitContent" title="Fit Content" class="demo-icon-yIconZoomFit"></button>
+    <span class="demo-separator"></span>
+    <button id="previousPage" data-command="PreviousPage" title="Previous Page"
+        class="demo-icon-yIconPrevious"></button>
+    <input id="pageNumberTextBox" data-command="PageNumberTextBox" type="number" style="width:4em;">
+    <button id="nextPage" data-command="NextPage" title="Next Page" class="demo-icon-yIconNext"></button>
+    <span class="demo-separator"></span>
+    <select id="sampleComboBox" data-command="SampleComboBox">
+      <option>Pop Artists</option>
+      <option>yFiles Layout Namespaces</option>
+    </select>
+  </div>
+
+  <div id="graphComponent"></div>
+
+  <div id="loadingIndicator">Calculating the layout. This may take some time...</div>
+</div>
+
+<script src="../../resources/require.js"></script>
+<script src="MultiPageDemo.js"></script>
+</body>
+</html>

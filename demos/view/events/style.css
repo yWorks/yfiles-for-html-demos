@@ -1,0 +1,287 @@
+/****************************************************************************
+ ** @license
+ ** This demo file is part of yFiles for HTML 2.1.
+ ** Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** 72070 Tuebingen, Germany. All rights reserved.
+ **
+ ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+ ** of demo files in source code or binary form, with or without
+ ** modification, is not permitted.
+ **
+ ** Owners of a valid software license for a yFiles for HTML version that this
+ ** demo is shipped with are allowed to use the demo source code as basis
+ ** for their own yFiles for HTML powered applications. Use of such programs is
+ ** governed by the rights and conditions as set out in the yFiles for HTML
+ ** license agreement.
+ **
+ ** THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+ ** WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ ** MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+ ** NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ ** SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+ ** TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ ** PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+ ** LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+ ** NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ **
+ ***************************************************************************/
+.demo-sidebar-content {
+  height: calc(50% - 60px) !important;
+}
+
+.event-options-heading {
+  display: block;
+  cursor: pointer;
+  width: 100%;
+  background-color: #ddd;
+  user-select: none;
+  color: white !important;
+  padding: 5px;
+  box-sizing: border-box;
+  margin-top: 0 !important;
+  margin-bottom: 2px !important;
+}
+
+.event-options-heading.collapsed {
+  background: url('../../resources/icons/arrowheadRightWhite.png') no-repeat right 10px center;
+}
+
+.event-options-heading.expanded {
+  background: url('../../resources/icons/arrowheadDownWhite.png') no-repeat right 10px center;
+}
+
+.options-section {
+}
+
+#event-options {
+  height: calc(50% - 60px);
+  overflow-y: auto;
+}
+
+#event-options li {
+  list-style-type: none;
+  position: relative;
+}
+
+*[data-tooltip]:after {
+  content: attr(data-tooltip);
+  position: absolute;
+  left: 3em;
+  top: 2em;
+  background: rgba(100, 100, 100, 1);
+  color: rgba(255, 255, 255, 1);
+  border-radius: 3px;
+  max-width: 100%;
+  padding: 10px;
+  z-index: 100;
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out 0s;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+*[data-tooltip]:hover:after {
+  opacity: 1;
+  transition: opacity 0.3s ease-in-out 0.5s;
+  visibility: visible;
+}
+
+#event-options input {
+  position: relative;
+  vertical-align: middle;
+  bottom: 1px;
+}
+
+#log {
+  position: absolute;
+  top: 195px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  overflow: auto;
+  -webkit-overflow-scrolling: auto !important;
+  padding: 5px;
+  font-family: 'Consolas', 'Courier New', Courier, mono, serif;
+}
+
+.logMessage {
+  background-color: #eee;
+  padding: 3px;
+  width: 100%;
+  box-sizing: border-box;
+  margin-bottom: 5px;
+}
+
+.logGroup {
+  margin-bottom: 5px;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0;
+}
+
+.logGroup-container {
+  position: relative;
+  vertical-align: top;
+  display: table;
+  box-sizing: border-box;
+  border-spacing: 3px;
+  background-color: white;
+  border: 3px solid #999;
+  height: 100%;
+  width: 100%;
+}
+.logGroup-container:before,
+.logGroup-container:after {
+  left: 20px;
+  right: 20px;
+  height: 3px;
+  background: white;
+  content: '';
+  position: absolute;
+}
+.logGroup-container:before {
+  top: -3px;
+}
+
+.logGroup-container:after {
+  bottom: -3px;
+}
+
+.logGroup .logMessage {
+  margin-bottom: 0 !important;
+}
+
+.logGroup-messages {
+  width: 85%;
+  overflow: hidden;
+  box-sizing: border-box;
+  display: table-cell;
+}
+
+.logGroup-count {
+  width: 15%;
+  height: 100%;
+  text-align: center;
+  vertical-align: middle;
+  font-size: 30px;
+  font-weight: bold;
+  color: #666;
+  background-color: #eee;
+  margin-bottom: 6px;
+  display: table-cell;
+}
+
+.logMessage.category-InputMode {
+  border-left: 3px solid #26a65b;
+}
+
+.event-options-heading.category-InputMode {
+  background-color: #26a65b;
+}
+
+.category-InputMode-light,
+.logMessage.category-InputMode,
+.logGroup.category-InputMode {
+  background-color: #ebf6f0;
+}
+
+.logMessage.category-GraphComponent {
+  border-left: 3px solid #5c97bf;
+}
+
+.event-options-heading.category-GraphComponent {
+  background-color: #5c97bf;
+}
+
+.category-GraphComponent-light,
+.logMessage.category-GraphComponent,
+.logGroup.category-GraphComponent {
+  background-color: #d4e8f5;
+}
+
+.logMessage.category-Graph {
+  border-left: 3px solid #e87e04;
+}
+
+.event-options-heading.category-Graph {
+  background-color: #e87e04;
+}
+
+.category-Graph-light,
+.logMessage.category-Graph,
+.logGroup.category-Graph {
+  background-color: #f6dec2;
+}
+
+.category-Unknown {
+  background-color: #eee;
+}
+
+.demo-sidebar.demo-right {
+  width: 30%;
+}
+.demo-right-hidden .demo-sidebar.demo-right {
+  right: -30%;
+}
+@media screen and (max-width: 960px) {
+  .demo-sidebar {
+    width: 100% !important;
+  }
+  .demo-right-hidden .demo-sidebar.demo-right {
+    right: -100% !important;
+  }
+  .demo-hide-right-when-small:not(.demo-right-hidden) .demo-content {
+    right: 0;
+  }
+}
+.demo-has-right .demo-content {
+  right: 30%;
+}
+.demo-right-hidden .demo-content {
+  right: 0;
+}
+
+#drag-and-drop-panel {
+  background-color: white;
+  padding: 10px 0;
+  border: 5px solid #f7f7f7;
+}
+
+#drag-and-drop-panel > div {
+  display: inline-block;
+}
+
+.yfiles-cursor-dragdrop-copy {
+  cursor: copy;
+}
+
+.yfiles-cursor-dragdrop-move {
+  cursor: move;
+}
+
+.yfiles-cursor-dragdrop-link {
+  cursor: alias;
+}
+
+.yfiles-cursor-dragdrop-scroll {
+  cursor: move;
+}
+
+.yfiles-cursor-dragdrop-all {
+  cursor: copy;
+}
+
+.yfiles-cursor-dragdrop-no-drop {
+  cursor: no-drop;
+}
+
+.yfiles-drag {
+  z-index: 15;
+  opacity: 0.35;
+  transition: opacity 0.2s ease-in-out;
+}
+
+.yfiles-drag.hidden {
+  opacity: 0;
+}

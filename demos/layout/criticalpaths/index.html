@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+
+<!-- ////////////////////////////////////////////////////////////////////////
+     // @license
+     // This demo file is part of yFiles for HTML 2.1.
+     // Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // 72070 Tuebingen, Germany. All rights reserved.
+     //
+     // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+     // of demo files in source code or binary form, with or without
+     // modification, is not permitted.
+     //
+     // Owners of a valid software license for a yFiles for HTML version that this
+     // demo is shipped with are allowed to use the demo source code as basis
+     // for their own yFiles for HTML powered applications. Use of such programs is
+     // governed by the rights and conditions as set out in the yFiles for HTML
+     // license agreement.
+     //
+     // THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+     // WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+     // MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+     // NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+     // SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+     // TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+     // PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+     // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+     // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+     // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+     // 
+     ////////////////////////////////////////////////////////////////////////-->
+
+  <title>Critical Paths Demo [yFiles for HTML]</title>
+
+  <link rel="stylesheet" href="../../../lib/yfiles.css">
+  <link rel="stylesheet" href="../../resources/style/demo.css">
+
+  <!-- enable debugging -->
+  <script src="../../../ide-support/yfiles-typeinfo.js"></script>
+
+  <style>
+    #priority-panel {
+      border: solid lightgray;
+      background-color: rgba(255, 255, 255, 0.9);
+      padding: 6px;
+      position: relative;
+      display: inline-block;
+      user-select: none;
+    }
+
+    #heading {
+      font-size: 28px;
+    }
+
+    .priority-button {
+      width: 30px;
+      height: 30px;
+      text-align: center;
+      vertical-align: middle;
+      font-size: 24px;
+      display: inline-block;
+    }
+
+    .current-priority {
+      border: solid darkseagreen;
+    }
+
+    #priority-button-0 {
+      background-color: #336699;
+      color: white;
+    }
+
+    #priority-button-1 {
+      background-color: gold;
+    }
+
+    #priority-button-2 {
+      background-color: orange;
+    }
+
+    #priority-button-3 {
+      background-color: darkorange;
+    }
+
+    #priority-button-4 {
+      background-color: orangered;
+    }
+
+    #priority-button-5 {
+      background-color: firebrick;
+      color: white;
+    }
+  </style>
+</head>
+<body class="demo-has-left">
+<aside class="demo-sidebar demo-left">
+  <h1 class="demo-sidebar-header">Description</h1>
+  <div class="demo-sidebar-content">
+    <p>
+      This demo shows how the hierarchic and tree layout styles emphasise important, or 'critical', paths.
+    </p>
+    <p>
+      To make these critical paths more striking, the nodes and edges in each path are aligned if possible.
+    </p>
+    <p>
+      If there is more than one critical path, priorities can be assigned to define which path should be aligned in case
+      a node or edge is part of more than one critical path.
+    </p>
+    <h2>Things to Try</h2>
+    <ul>
+      <li>Use the toolbar button to mark random paths in the graph and see how the layout changes.</li>
+      <li>Add custom priorities by clicking on an edge and choosing a priority from the pop-up.</li>
+      <li>Mark an upstream path by clicking a node and choosing a priority from the pop-up.</li>
+      <li>Switch between samples for hierarchic and tree layout.</li>
+    </ul>
+  </div>
+</aside>
+
+<div class="demo-content">
+  <div class="demo-toolbar">
+    <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
+    <button data-command="ZoomOriginal" title="Zoom to original size" class="demo-icon-yIconZoomOriginal"></button>
+    <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
+    <button data-command="FitContent" title="Fit Content" class="demo-icon-yIconZoomFit"></button>
+
+    <span class="demo-separator"></span>
+
+    <button data-command="RandomPredecessorsPaths" title="Mark random upstream paths" class="demo-icon-yIconEdgeThickness labeled">Random Paths</button>
+
+    <span class="demo-separator"></span>
+
+    <button data-command="ClearPriorities" id="clear-priorities" title="Remove all priorities from the edges"
+        class="demo-icon-yIconTrashcan labeled">Clear Priorities
+    </button>
+
+    <span class="demo-separator"></span>
+
+    <select data-command="ChangeSample" id="change-sample" title="Choose Layout Style">
+      <option>Hierarchic Layout</option>
+      <option>Tree Layout</option>
+    </select>
+  </div>
+  <div id="graphComponent">
+    <div id="priority-panel" class="popupContent" tabindex="0">
+      <div id="heading">Priority</div>
+      <div id="priority-button-0" class="priority-button current-priority">0</div>
+      <div id="priority-button-1" class="priority-button">1</div>
+      <div id="priority-button-2" class="priority-button">2</div>
+      <div id="priority-button-3" class="priority-button">3</div>
+      <div id="priority-button-4" class="priority-button">4</div>
+      <div id="priority-button-5" class="priority-button">5</div>
+    </div>
+  </div>
+</div>
+
+<script src="../../resources/require.js"></script>
+<script src="CriticalPathsDemo.js"></script>
+</body>
+</html>

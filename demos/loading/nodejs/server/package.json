@@ -1,0 +1,13 @@
+{
+  "name": "layout-server",
+  "version": "2.0.0",
+  "description": "Minimal yFiles layout server using node.js express",
+  "main": "server.js",
+  "author": "yfileshtml@yworks.com",
+  "license": "https://www.yworks.com/en/products_yfiles_sla.html",
+  "private": true,
+  "dependencies": {
+    "express": "4.16.2",
+    "body-parser": "1.18.2"
+  }
+}

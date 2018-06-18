@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 118 118"
+    height="118"
+    width="118"
+    y="50%"
+    x="50%"
+    version="1.1">
+  <path
+      transform="translate(7,-4.5)"
+      d="M 2,48 52,10 102,48 z"
+      style="fill:#ffffff;stroke:#808080;stroke-width:2"/>
+  <text
+      transform="matrix(0.94360339,0,0,1,7.954349,-4.5)"
+      x="25"
+      y="45"
+  >
+    <tspan
+        style="font-size:14px;font-weight:bold;fill:#808080;font-family:Arial"
+    >B A N K
+    </tspan>
+  </text>
+  <rect
+      transform="translate(7,-4.5)"
+      x="12"
+      y="51"
+      width="81"
+      height="5"
+      style="fill:#ffffff;stroke:#808080;stroke-width:2"/>
+  <rect
+      transform="translate(7,-4.5)"
+      x="22"
+      y="60"
+      width="7"
+      height="40"
+      style="fill:#ffffff;stroke:#808080;stroke-width:2"/>
+  <rect
+      transform="translate(7,-4.5)"
+      x="49"
+      y="60"
+      width="7"
+      height="40"
+      style="fill:#ffffff;stroke:#808080;stroke-width:2"/>
+  <rect
+      transform="translate(7,-4.5)"
+      x="76"
+      y="60"
+      width="7"
+      height="40"
+      style="fill:#ffffff;stroke:#808080;stroke-width:2"/>
+  <rect
+      transform="translate(7,-4.5)"
+      x="7"
+      y="104"
+      width="91"
+      height="5"
+      style="fill:#ffffff;stroke:#808080;stroke-width:2"/>
+  <rect
+      transform="translate(7,-4.5)"
+      x="2"
+      y="112"
+      width="100"
+      height="5"
+      style="fill:#ffffff;stroke:#808080;stroke-width:2"/>
+</svg>

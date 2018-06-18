@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+<!-- ////////////////////////////////////////////////////////////////////////
+     // @license
+     // This demo file is part of yFiles for HTML 2.1.
+     // Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // 72070 Tuebingen, Germany. All rights reserved.
+     //
+     // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+     // of demo files in source code or binary form, with or without
+     // modification, is not permitted.
+     //
+     // Owners of a valid software license for a yFiles for HTML version that this
+     // demo is shipped with are allowed to use the demo source code as basis
+     // for their own yFiles for HTML powered applications. Use of such programs is
+     // governed by the rights and conditions as set out in the yFiles for HTML
+     // license agreement.
+     //
+     // THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+     // WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+     // MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+     // NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+     // SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+     // TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+     // PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+     // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+     // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+     // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+     // 
+     ////////////////////////////////////////////////////////////////////////-->
+
+  <title>Tutorial 2 - Custom Styles [yFiles for HTML]</title>
+  <link rel="stylesheet" type="text/css" href="../../doc/documentation-style.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+</head>
+<body>
+<header>
+  <div class="logo"></div>
+  <div class="title">
+    <a href="../../README.html">yFiles for HTML</a>
+    <span class="angle-right"></span>
+    <a href="../README.html">Demos</a>
+    <span class="angle-right"></span>
+    Tutorial 2 -
+    Custom Styles
+  </div>
+</header>
+<div class="content">
+  <div class="block-space-header content-centered">
+    <h1>Tutorial 2 - Custom Styles</h1>
+
+    <p>
+      This tutorial is a step-by-step guide to customizing the visual representation of graph elements. It shows the
+      creation of custom styles for nodes, edges, labels, and ports. Moreover, it presents a custom arrowhead rendering,
+      a customized edge selection, and a visual representation of graph elements that depends on the current application
+      state. Finally, several optimization strategies are discussed.
+    </p>
+
+    <p>
+      It is intended for users who want to learn how to create custom styles from scratch. If you are new to styles, in
+      particular to their customization, we recommend to start by going through the tutorial steps that show the basics
+      one by one. Of the specialized topics, you can skip the ones that doesn't apply to your use case. To make full use
+      of the tutorial, we recommend to review and possibly modify the source code of the sample projects.
+    </p>
+
+    <h2>Running a Tutorial Step</h2>
+
+    <p>
+      To execute a specific programming sample, either follow the corresponding link from the table below or open the
+      file <code>index.html</code> in the specific demo directory. It is also possible to deploy the samples to a web
+      server and load them from there.
+    </p>
+
+    <div class="important" id="no-ecmascript6" style="display: none">
+      <p>These demos use ECMAScript 6 features that your browser does not support.</p>
+      <p>
+        Please switch to a browser with support for ECMAScript 6 (Chrome, Firefox, Edge, Safari 10) or use the included
+        <a href="../../deployment/README.html#demos-es5">deployment tool</a> to convert the demos to ECMAScript 5. The
+        converted demos are also <a href="https://live.yworks.com/demos/"
+          target="_blank">available online</a>.
+      </p>
+      <p>
+        Note that ECMAScript 6 is a requirement of the demos, only. The yFiles for HTML library itself is compatible
+        with ECMAScript 5.
+      </p>
+    </div>
+
+    <div class="note" id="localhost-notice" style="display: none">
+      <p>
+        Due to strict cross domain policies in both <b>Internet Explorer</b> and <b>Google Chrome</b>, some demos work
+        only partially or not at all when viewed from a filesystem location in these browsers. Therefore, it is
+        recommended to access the demos through a Web server. Install and start scripts for a <a
+          href="../demo-server/README.html">local Node.js Express server</a> are included: </p>
+      <pre>
+> cd %YFILES_HTML_DISTRIBUTION_DIR%/demos/demo-server/
+> npm install
+> npm start</pre>
+      <p>
+        Google Chrome can also be instructed to use a more tolerant policy by starting <code>chrome.exe</code> with the
+        <code>--allow-file-access-from-files</code> command line option. In addition, all demos are <a
+          href="https://live.yworks.com/demos/" target="_blank">available online</a>.
+      </p>
+
+      <p>
+        In Firefox, the demos should run well from a filesystem location, since its cross domain policy is tolerant by
+        default.
+      </p>
+    </div>
+
+    <h2>Steps in this Tutorial</h2>
+
+    <table id="tutorials">
+      <colgroup>
+        <col width='20%'>
+        <col width='70%'>
+      </colgroup>
+      <thead>
+      <tr>
+        <th class='democell'>
+          Name
+        </th>
+        <th class='democell'>
+          Description
+        </th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+        <td class='demotitle'>
+          <a href='01-custom-node-style/index.html' target='_blank'>01 Custom Node Style</a></td>
+        <td>
+          Shows how to create a custom node style.
+        </td>
+      </tr>
+      <tr>
+        <td class='demotitle'>
+          <a href='02-node-color/index.html' target='_blank'>02 Node Color</a></td>
+        <td>
+          Shows how to change a style dependent on the nodes yfiles.graph.ITagOwner#tag.
+        </td>
+      </tr>
+      <tr>
+        <td class='demotitle'>
+          <a href='03-update-visual-and-render-data-cache/index.html' target='_blank'>03 UpdateVisual and
+            RenderDataCache</a></td>
+        <td>
+          Shows how to implement high-performance rendering of nodes.
+        </td>
+      </tr>
+      <tr>
+        <td class='demotitle'>
+          <a href='04-is-inside/index.html' target='_blank'>04 IsInside</a></td>
+        <td>
+          Shows how to override isInside() and getOutline() of yfiles.styles.NodeStyleBase.
+        </td>
+      </tr>
+      <tr>
+        <td class='demotitle'>
+          <a href='05-hit-test/index.html' target='_blank'>05 Hit Test</a></td>
+        <td>
+          Shows how to override isHit() and isInBox() of yfiles.styles.NodeStyleBase.
+        </td>
+      </tr>
+      <tr>
+        <td class='demotitle'>
+          <a href='06-get-bounds/index.html' target='_blank'>06 GetBounds</a></td>
+        <td>
+          Shows how to override getBounds() of yfiles.styles.NodeStyleBase.
+        </td>
+      </tr>
+      <tr>
+        <td class='demotitle'>
+          <a href='07-drop-shadow-performance/index.html' target='_blank'>07 Dropshadow Performance</a></td>
+        <td>
+          Replaces the simple drop shadow in the last steps with a more visually appealing, blurred one.
+        </td>
+      </tr>
+      <tr>
+        <td class='demotitle'>
+          <a href='08-edge-from-node-to-label/index.html' target='_blank'>08 Edge From Node To Label</a></td>
+        <td>
+          Shows how to visually connect a label to its owner node with a line.
+        </td>
+      </tr>
+      <tr>
+        <td class='demotitle'>
+          <a href='09-is-visible/index.html' target='_blank'>09 IsVisible</a></td>
+        <td>
+          Shows how to override the method isVisible() of yfiles.styles.NodeStyleBase.
+        </td>
+      </tr>
+      <tr>
+        <td class='demotitle'>
+          <a href='10-custom-label-style/index.html' target='_blank'>10 Custom Label Style</a></td>
+        <td>
+          Shows how a custom label style.
+        </td>
+      </tr>
+      <tr>
+        <td class='demotitle'>
+          <a href='11-label-preferred-size/index.html' target='_blank'>11 Label Preferred Size</a></td>
+        <td>
+          Shows how to set the size of the label dependent on the size of its text by overriding the
+          yfiles.styles.LabelStyleBase#getPreferredSize() method.
+        </td>
+      </tr>
+      <tr>
+        <td class='demotitle'>
+          <a href='12-high-performance-label-rendering/index.html' target='_blank'>12 High Performance Rendering Of
+            Label</a></td>
+        <td>
+          Shows how to implement high-performance rendering for labels.
+        </td>
+      </tr>
+      <tr>
+        <td class='demotitle'>
+          <a href='13-label-edit-button/index.html' target='_blank'>13 Label Edit Button</a></td>
+        <td>
+          Shows how to display a button on a label that starts the label editor.
+        </td>
+      </tr>
+      <tr>
+        <td class='demotitle'>
+          <a href='14-button-visibility/index.html' target='_blank'>14 Button Visibility</a></td>
+        <td>
+          Shows how to hide the 'Label Edit' button based on the zoom level.
+        </td>
+      </tr>
+      <tr>
+        <td class='demotitle'>
+          <a href='15-using-data-in-label-tag/index.html' target='_blank'>15 Using Data In Label Tag</a></td>
+        <td>
+          Shows how to use data from a business object, which is stored in the label's tag, for rendering.
+        </td>
+      </tr>
+      <tr>
+        <td class='demotitle'>
+          <a href='16-custom-edge-style/index.html' target='_blank'>16 Custom Edge Style</a></td>
+        <td>
+          Shows how to create a custom edge style which allows to specify the edge thickness by setting a property on
+          the style.
+        </td>
+      </tr>
+      <tr>
+        <td class='demotitle'>
+          <a href='17-edge-hit-test/index.html' target='_blank'>17 Edge Hit Test</a></td>
+        <td>
+          Shows how to take the thickness of the edge into account when checking if the edge was clicked.
+        </td>
+      </tr>
+      <tr>
+        <td class='demotitle'>
+          <a href='18-edge-cropping/index.html' target='_blank'>18 Edge Cropping</a></td>
+        <td>
+          Shows how to crop an edge at the node's bounds.
+        </td>
+      </tr>
+      <tr>
+        <td class='demotitle'>
+          <a href='19-animated-edge-selection/index.html' target='_blank'>19 Animated Edge Selection</a></td>
+        <td>
+          Shows how to change the style of an edge if the edge is selected.
+        </td>
+      </tr>
+      <tr>
+        <td class='demotitle'>
+          <a href='20-custom-arrow/index.html' target='_blank'>20 Custom Arrow</a></td>
+        <td>
+          Shows a custom arrow.
+        </td>
+      </tr>
+      <tr>
+        <td class='demotitle'>
+          <a href='21-edge-performance/index.html' target='_blank'>21 Edge Performance</a></td>
+        <td>
+          Shows how to optimize rendering performance for edges and arrows.
+        </td>
+      </tr>
+      <tr>
+        <td class='demotitle'>
+          <a href='22-arrow-thickness/index.html' target='_blank'>22 Arrow Thickness</a></td>
+        <td>
+          Shows how to render the arrow dependent on a property of its edge.
+        </td>
+      </tr>
+      <tr>
+        <td class='demotitle'>
+          <a href='23-custom-ports/index.html' target='_blank'>23 Custom Ports</a></td>
+        <td>
+          Shows a custom port style.
+        </td>
+      </tr>
+      <tr>
+        <td class='demotitle'>
+          <a href='24-style-decorator/index.html' target='_blank'>24 Style Decorator</a></td>
+        <td>
+          Shows how to enhance an existing node style by adding visual decorators.
+        </td>
+      </tr>
+      <tr>
+        <td class='demotitle'>
+          <a href='25-custom-group-style/index.html' target='_blank'>25 Custom Group Style</a></td>
+        <td>
+          Shows a special node style for group nodes.
+        </td>
+      </tr>
+      <tr>
+        <td class='demotitle'>
+          <a href='26-custom-group-bounds/index.html' target='_blank'>26 Custom Group Bounds</a></td>
+        <td>
+          Shows how to customize the way the group insets are calculated by implementing a
+          yfiles.layout.IGroupBoundsCalculator.
+        </td>
+      </tr>
+      <tr>
+        <td class='demotitle'>
+          <a href='27-canvas-painting/index.html' target='_blank'>27 Canvas Painting</a></td>
+        <td>
+          Shows how to implement a zoom-dependent high-performance rendering using HTML5 Canvas painting for nodes.
+        </td>
+      </tr>
+      <tr>
+        <td class='demotitle'>
+          <a href='28-bridge-support/index.html' target='_blank'>28 Bridge Support</a></td>
+        <td>
+          Shows how to enable bridges for a custom edge style.
+        </td>
+      </tr>
+      <tr>
+        <td class='demotitle'>
+          <a href='29-label-line-wrapping/index.html' target='_blank'>29 Label Line Wrapping</a></td>
+        <td>
+          Shows how to enhance a custom label style to support different line wrapping (trimming) styles as well as text
+          clipping at the label bounds.
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+  <footer>
+    <div class="footer-block">
+      <h4>Contents</h4>
+      <a href="../../README.html">Welcome Page</a><br>
+      <a href="../../doc/api/index.html">API Documentation</a><br>
+      <a href="../../doc/api/index.html#/dguide/getting_started">Getting Started</a><br>
+      <a href="../../doc/readme/legal/SOFTWARE_LICENSE_AGREEMENT.html">License Agreement</a><br>
+      <a href="../../doc/readme/support.html">Help and Support</a>
+    </div>
+    <div class="footer-block">
+      <h4>Contact</h4>
+      yWorks GmbH<br>
+      Vor dem Kreuzberg 28<br>
+      72070 T&uuml;bingen<br>
+      Germany<br>
+      Phone: <a href="tel:+497071979050">+49 7071 979050</a><br>
+      Email: <a href="https://www.yworks.com/contact">contact(at)yworks.com</a><br>
+    </div>
+    <div class="footer-block">
+      <h4>Follow Us</h4>
+      <div class="social">
+        <a href="https://www.yworks.com/products/yfileshtml" target="_blank" class="web">
+          Homepage
+        </a>
+        <a href="https://www.yworks.com/newsfeed" target="_blank" class="rss">
+          RSS-Feed
+        </a>
+        <a href="https://twitter.com/yworks" target="_blank" class="tw">
+          Twitter
+        </a>
+        <a href="https://www.youtube.com/user/yWorksTube" target="_blank" class="yt">
+          YouTube
+        </a>
+      </div>
+      <span class="copyright">COPYRIGHT &#x00A9; 2018 yWorks</span><br>
+      <a href="https://www.yworks.com/company/legal/imprint">Imprint</a>
+      | <a href="https://www.yworks.com/company/legal/terms-of-use">Terms of Use</a>
+      | <a href="https://www.yworks.com/company/legal/privacy">Privacy Policy</a>
+    </div>
+    <div class="footer-block logo">
+    </div>
+  </footer>
+<script src="../resources/readme-demo-support.js"></script>
+</body>
+</html>

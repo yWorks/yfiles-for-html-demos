@@ -1,0 +1,623 @@
+/****************************************************************************
+ ** @license
+ ** This demo file is part of yFiles for HTML 2.1.
+ ** Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** 72070 Tuebingen, Germany. All rights reserved.
+ **
+ ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+ ** of demo files in source code or binary form, with or without
+ ** modification, is not permitted.
+ **
+ ** Owners of a valid software license for a yFiles for HTML version that this
+ ** demo is shipped with are allowed to use the demo source code as basis
+ ** for their own yFiles for HTML powered applications. Use of such programs is
+ ** governed by the rights and conditions as set out in the yFiles for HTML
+ ** license agreement.
+ **
+ ** THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+ ** WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ ** MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+ ** NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ ** SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+ ** TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ ** PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+ ** LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+ ** NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ **
+ ***************************************************************************/
+.option-ui-tabbar {
+  position: relative;
+  box-sizing: border-box;
+  background: #a0a0a0;
+  color: #fff;
+}
+
+.option-ui-tabbar > div {
+  height: 3.5em;
+  position: relative;
+  pointer-events: none;
+  padding: 0 8px;
+}
+
+.option-ui-tabbar > div > * {
+  pointer-events: auto;
+}
+
+.option-ui-tablist {
+  position: relative;
+  max-width: 481px;
+  width: 100%;
+  height: 3em;
+  line-height: 3em;
+  margin: 0;
+  padding-top: 0.5em;
+  overflow: hidden;
+  text-transform: uppercase;
+  -ms-user-select: none;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.option-ui-tablist .tabsContainer {
+  height: inherit;
+  line-height: inherit;
+  white-space: nowrap;
+}
+
+.option-ui-tab {
+  height: inherit;
+  line-height: inherit;
+  overflow: hidden;
+  float: left;
+  cursor: pointer;
+  -ms-user-select: none;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.option-ui-tab .tabContainer {
+  background-color: transparent;
+}
+
+.option-ui-tab .tabContainer:active {
+  background-color: rgba(239, 239, 239, 0.95);
+}
+
+.option-ui-tab .tabContainer:not(:active) {
+  -webkit-transition: background-color 0.66s ease-in 0s;
+  -moz-transition: background-color 0.66s ease-in 0s;
+  transition: background-color 0.66s ease-in 0s;
+}
+
+.option-ui-tab .tab-content {
+  text-align: center;
+  -webkit-transition: opacity 0.1s cubic-bezier(0.4, 0, 1, 1) 0s,
+    color 0.1s cubic-bezier(0.4, 0, 1, 1) 0s;
+  -moz-transition: opacity 0.1s cubic-bezier(0.4, 0, 1, 1) 0s,
+    color 0.1s cubic-bezier(0.4, 0, 1, 1) 0s;
+  transition: opacity 0.1s cubic-bezier(0.4, 0, 1, 1) 0s, color 0.1s cubic-bezier(0.4, 0, 1, 1) 0s;
+  cursor: default;
+  pointer-events: none;
+  -ms-user-select: initial;
+  -moz-user-select: initial;
+  -webkit-user-select: initial;
+  user-select: initial;
+}
+
+.option-ui-tablist .selectionBar {
+  position: absolute;
+  height: 2px;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  background-color: #efefef;
+  -webkit-transition: width 0.15s ease-in-out 0.18s, left 0.15s ease-in-out 0.18s;
+  -moz-transition: width 0.15s ease-in-out 0.18s, left 0.15s ease-in-out 0.18s;
+  transition: width 0.15s ease-in-out 0.18s, left 0.15s ease-in-out 0.18s;
+}
+
+.option-ui-tab:not(.active) .tab-content {
+  opacity: 0.6;
+}
+
+.option-ui-tabbar + .option-ui-shadow {
+  height: 6px;
+  box-shadow: inset 0 5px 6px -3px rgba(0, 0, 0, 0.25);
+  -ms-user-select: none;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.option-ui-button {
+  display: inline-block;
+  white-space: nowrap;
+  cursor: pointer;
+  pointer-events: auto;
+  background-color: transparent;
+}
+
+.option-ui-button > div * {
+  pointer-events: none;
+}
+
+.option-ui-button span {
+  display: inline-block;
+  line-height: 2em;
+  height: 2em;
+  vertical-align: bottom;
+}
+
+.option-ui-button .icon {
+  width: 2em;
+  fill: currentColor;
+}
+
+form.option-ui-checkbox div.checkbox-container {
+  width: 100%;
+  position: relative;
+  display: table;
+}
+
+form.option-ui-checkbox div.checkbox-container div.vcenter-container,
+form.option-ui-checkbox div.checkbox-container label {
+  display: table-cell;
+  vertical-align: middle;
+}
+
+form.option-ui-combobox select {
+  max-width: 150px;
+}
+
+form.option-ui-combobox div.combobox-container {
+  width: 100%;
+  position: relative;
+  display: table;
+}
+
+form.option-ui-combobox div.combobox-container div.vcenter-container,
+form.option-ui-combobox div.combobox-container label {
+  display: table-cell;
+  vertical-align: middle;
+}
+
+.option-ui-combobox:hover a.option-ui-api-link, .option-ui-slider:hover a.option-ui-api-link, .option-ui-checkbox:hover a.option-ui-api-link, .option-ui-spinner:hover a.option-ui-api-link {
+  opacity: 1;
+}
+
+.option-ui-api-link {
+  background-color: #5cb85c;
+  color: #FFF;
+  font-size: 10px;
+  margin-left: 5px;
+  padding: 1px 2px;
+  font-family: monospace;
+  vertical-align: middle;
+  opacity: 0;
+  transition: opacity .2s ease-in-out;
+}
+
+.option-ui-dropdown {
+  position: relative;
+  box-sizing: border-box;
+  background: #a0a0a0;
+  color: #fff;
+}
+
+.option-ui-dropdown > div {
+  height: 3.5em;
+  position: relative;
+  pointer-events: none;
+  padding: 0 8px;
+}
+
+.option-ui-selectionlist {
+  position: relative;
+  max-width: 481px;
+  width: 100%;
+  height: 3em;
+  line-height: 3em;
+  margin: 0;
+  padding-top: 0.5em;
+  overflow: hidden;
+  text-transform: uppercase;
+  -ms-user-select: none;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.option-ui-selectionlist * {
+  pointer-events: auto;
+}
+
+.option-ui-selectionlist select,
+.option-ui-selectionlist select option {
+  height: inherit;
+  width: inherit;
+  line-height: inherit;
+  white-space: nowrap;
+  background: #adadad;
+  color: #fff;
+  border: none;
+  outline: 0;
+  padding-left: 1.5em;
+}
+
+.option-ui-selectionlist .selectionBar {
+  position: absolute;
+  height: 2px;
+  bottom: 0;
+  left: 0;
+  width: inherit;
+  background-color: #efefef;
+}
+
+.option-ui-dropdown + .option-ui-shadow {
+  height: 6px;
+  box-shadow: inset 0 5px 6px -3px rgba(0, 0, 0, 0.25);
+  -ms-user-select: none;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+form.option-ui-slider div.slider-container {
+  display: table;
+  width: 100%;
+  position: relative;
+}
+
+form.option-ui-slider div.range-container {
+  display: table-cell;
+  vertical-align: middle;
+  width: 75%;
+  padding-right: 8px;
+}
+
+form.option-ui-slider div.number-container {
+  display: table-cell;
+  vertical-align: middle;
+  width: 20%;
+}
+
+form.option-ui-slider input[type='number'] {
+  position: relative;
+}
+
+input[type='range'] {
+  padding: 0;
+  -webkit-appearance: none;
+  height: 20px;
+}
+
+input[type='range']::-webkit-slider-runnable-track {
+  height: 2px;
+  background: #a0a0a0;
+  border: none;
+  border-radius: 3px;
+}
+
+input[type='range']::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  border: none;
+  height: 14px;
+  width: 14px;
+  border-radius: 50%;
+  background: #a0a0a0;
+  margin-top: -6px;
+}
+
+input[type='range']:focus {
+  outline: 0;
+}
+
+input[type='range']::-moz-range-track {
+  height: 2px;
+  background: #a0a0a0;
+  border: none;
+  border-radius: 3px;
+}
+
+input[type='range']::-moz-range-thumb {
+  border: none;
+  height: 14px;
+  width: 14px;
+  border-radius: 50%;
+  background: #a0a0a0;
+}
+
+input[type='range']:-moz-focusring {
+  outline: #fff solid 1px;
+  outline-offset: -1px;
+}
+
+input[type='range']::-ms-track {
+  height: 2px;
+  background: 0 0;
+  border-color: transparent;
+  border-width: 6px 0;
+  color: transparent;
+}
+
+input[type='range']::-ms-fill-lower {
+  background: #a0a0a0;
+  border-radius: 10px;
+}
+
+input[type='range']::-ms-fill-upper {
+  background: #a0a0a0;
+  border-radius: 10px;
+}
+
+input[type='range']::-ms-thumb {
+  border: none;
+  height: 14px;
+  width: 14px;
+  border-radius: 50%;
+  background: #a0a0a0;
+}
+
+form.option-ui-spinner input[type='number'] {
+  width: 5em;
+}
+
+form.option-ui-spinner div.spinner-container {
+  width: 100%;
+  position: relative;
+  display: table;
+}
+
+form.option-ui-spinner div.spinner-container div.vcenter-container,
+form.option-ui-spinner div.spinner-container label {
+  display: table-cell;
+  vertical-align: middle;
+}
+
+.noselect {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.option-ui,
+.option-ui input,
+.option-ui select {
+  margin: 0;
+  font-family: sans-serif;
+  font-size: 14.4px;
+}
+
+.option-ui-htmlblock {
+  font-family: Tahoma, Verdana, sans-serif;
+  font-size: 12px;
+  line-height: 135%;
+}
+
+.option-ui .block {
+  display: block;
+}
+
+.option-ui .hidden {
+  display: none !important;
+}
+
+.option-ui .relative {
+  position: relative;
+}
+
+.option-ui .fit {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}
+
+.option-ui-form-group {
+  position: relative;
+  border-top: 1px solid #ccc;
+}
+
+.option-ui-form-group.collapsed {
+  margin-bottom: 0;
+  border-top: 1px solid #ccc;
+  padding-bottom: 0;
+}
+
+.option-ui-form-group .option-ui-form-group {
+  left: 0;
+  border: 1px solid #ccc;
+  margin-right: 8px;
+  margin-top: 8px;
+  margin-left: 8px;
+}
+
+.option-ui-form-group .option-ui-form-group > [data-option-ui-button] {
+  color: #333;
+  font-weight: 400;
+  padding: 0;
+  background-color: #eee;
+  width: 100%;
+}
+
+.option-ui-form-group .option-ui-form-group > [data-option-ui-button] > div {
+  width: 100%;
+}
+
+.option-ui-form-group .option-ui-form-group .option-ui-form-section {
+  margin-top: 0;
+  padding: 3px 0 3px 8px;
+}
+
+.option-ui-form-group .option-ui-form-group.collapsed > .option-ui-button {
+  background-color: #eee;
+  color: #333;
+}
+
+.option-ui-form-group.collapsed > .option-ui-form-section {
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+.option-ui-form-group > [data-option-ui-button] {
+  color: #fff;
+  width: 100%;
+}
+
+.option-ui-form-group > [data-option-ui-button] > div {
+  width: 100%;
+}
+
+.option-ui-content .disabled,
+.option-ui-form-group.aria-disabled {
+  opacity: 0.3;
+}
+
+.option-ui-form-group.aria-disabled .disabled,
+.option-ui-form-group.aria-disabled .option-ui-form-group.aria-disabled {
+  opacity: 1;
+}
+
+.option-ui-content-container {
+  overflow-y: auto;
+}
+
+.option-ui-form-group {
+  background-color: #fff;
+}
+
+.option-ui-form-group.collapsed > .option-ui-button {
+  background-color: #a0a0a0;
+  color: #fff;
+}
+
+.option-ui-form-group > .option-ui-button {
+  background-color: #a0a0a0;
+  width: 100%;
+  color: #fff;
+}
+
+form.option-ui-checkbox input,
+form.option-ui-combobox select,
+form.option-ui-spinner input {
+  float: right;
+}
+
+.option-ui-form-group form.option-ui-checkbox,
+.option-ui-form-group form.option-ui-combobox,
+.option-ui-form-group form.option-ui-slider,
+.option-ui-form-group form.option-ui-spinner {
+  padding: 3px 16px;
+}
+
+.option-ui-form-group .option-ui-form-group form.option-ui-checkbox,
+.option-ui-form-group .option-ui-form-group form.option-ui-combobox,
+.option-ui-form-group .option-ui-form-group form.option-ui-slider,
+.option-ui-form-group .option-ui-form-group form.option-ui-spinner {
+  padding: 3px 8px 3px 0;
+}
+
+form.option-ui-slider input[type='range'] {
+  width: 100%;
+  margin: 0;
+}
+
+form.option-ui-slider input[type='number'] {
+  width: 90%;
+  margin: 0;
+}
+
+.option-ui-item {
+  padding: 2px 0;
+}
+
+.option-ui-item label {
+  max-width: 100%;
+}
+
+.option-ui-item .option-ui-button .icon {
+  margin: 0;
+  padding: 0;
+  height: 1em;
+  width: 1em;
+}
+
+.option-ui-form .form-error-container {
+  width: 100%;
+  text-align: right;
+}
+
+.option-ui-form input.ng-invalid.ng-touched {
+  border: 2px solid red;
+}
+
+.option-ui-form .form-error-tip {
+  position: relative;
+  display: inline-block;
+  top: 5px;
+  z-index: 1;
+  right: 0;
+}
+
+.option-ui-form .form-error-tip .arrow-top {
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-bottom: 5px solid red;
+  position: absolute;
+  top: -5px;
+  right: 10px;
+}
+
+.option-ui-form .form-error-tip .arrow-left {
+  width: 0;
+  height: 0;
+  border-top: 5px solid transparent;
+  border-bottom: 5px solid transparent;
+  border-right: 5px solid red;
+  float: left;
+  position: relative;
+  top: 2px;
+  left: 0;
+}
+
+.option-ui-form .form-error-tip .label {
+  background-color: red;
+  color: #fff;
+  padding: 8px;
+  font-weight: 700;
+  border-radius: 2px;
+}
+
+@media screen and (min-device-width: 768px) and (max-device-width: 1024px) {
+  .option-ui,
+  .option-ui input,
+  .option-ui select {
+    margin: 0;
+    font-family: sans-serif;
+    font-size: 12px;
+  }
+
+  input[type='range']::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    border: none;
+    height: 20px;
+    width: 20px;
+    border-radius: 50%;
+    background: #a0a0a0;
+    margin-top: -9px;
+  }
+
+  .option-ui-form-group .option-ui-form-group .option-ui-form-section {
+    margin-top: 0;
+    padding: 2px;
+  }
+}

@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+
+<!-- ////////////////////////////////////////////////////////////////////////
+     // @license
+     // This demo file is part of yFiles for HTML 2.1.
+     // Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // 72070 Tuebingen, Germany. All rights reserved.
+     //
+     // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+     // of demo files in source code or binary form, with or without
+     // modification, is not permitted.
+     //
+     // Owners of a valid software license for a yFiles for HTML version that this
+     // demo is shipped with are allowed to use the demo source code as basis
+     // for their own yFiles for HTML powered applications. Use of such programs is
+     // governed by the rights and conditions as set out in the yFiles for HTML
+     // license agreement.
+     //
+     // THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+     // WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+     // MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+     // NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+     // SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+     // TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+     // PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+     // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+     // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+     // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+     // 
+     ////////////////////////////////////////////////////////////////////////-->
+
+  <title>Neo4j Integration Demo [yFiles for HTML]</title>
+
+  <link rel="stylesheet" href="../../../lib/yfiles.css">
+  <link rel="stylesheet" href="../../resources/style/demo.css">
+
+  <!-- enable debugging -->
+  <script src="../../../ide-support/yfiles-typeinfo.js"></script>
+
+  <style>
+    #propertyTable {
+      width: 100%;
+      table-layout: fixed;
+      word-wrap: break-word;
+      border-collapse: collapse;
+    }
+
+    #propertyTable td {
+      border: 1px solid #CCC;
+    }
+
+    #loadingIndicator {
+      position: absolute;
+      top: 60px;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      padding: 50px;
+      font-size: 2rem;
+      text-align: center;
+    }
+
+    .custom-slider {
+      vertical-align: middle;
+      width: 5em;
+      padding: 0;
+    }
+
+    .custom-slider[disabled] {
+      opacity: 0.5;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    #noWebSocketAPI {
+      margin: 30px;
+    }
+  </style>
+</head>
+<body class="demo-has-left">
+<aside class="demo-sidebar demo-left">
+  <h1 class="demo-sidebar-header">Description</h1>
+  <div class="demo-sidebar-content">
+    <p>
+      This demo shows how to load data from a Neo4j database and display it with yFiles for HTML.
+    </p>
+    <p>
+      First, connect to a Neo4j database by entering a URL, a username and a password into the corresponding form
+      fields, then click the <em>Connect</em> button.
+    </p>
+    <p>
+      After establishing a connection, a small set of data from the database will be displayed.
+    </p>
+    <h2>Things to Try</h2>
+    <ul>
+      <li>
+        Explore the data: Change the viewport by dragging the canvas with the mouse and change the zoom level by using
+        the mouse wheel.
+      </li>
+      <li>
+        Click on a node to select it, which will show its labels and properties in the properties view on the right.
+      </li>
+      <li>
+        Hover over a node to highlight the adjacent edges. Hover over an edge to highlight the adjacent nodes.
+      </li>
+      <li>
+        Move the sliders for the maximum node count and label diversity and then click the <em>Reload Data</em> button
+        to query the database for a new set of data.
+        <br>
+        <strong>Warning:</strong> Retrieving data with the sliders set to <em>high</em> might take a <em>really</em>
+        long time (2 minutes and more) or might yield no results at all, depending on the database.
+      </li>
+    </ul>
+
+    <h2>Details</h2>
+    <p>
+      This demo uses the <a href="https://github.com/neo4j/neo4j-javascript-driver">Neo4j Bolt driver for JavaScript</a>
+      to connect to a Neo4j database and query it for data.
+    </p>
+    <p>
+      The query results are then used by a custom <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.binding.GraphBuilder">yfiles.binding.GraphBuilder</a> implementation to construct a
+      graph from the data, while assigning different node styles to nodes with different labels.
+    </p>
+    <p>
+      The maximum node count setting limits the amount of nodes that are queries from the database, while the label
+      diversity setting determines the length of the distinct node label sequences that is searched for.
+    </p>
+    <p>
+      The graph layout is achieved by using <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.organic.OrganicLayout">yfiles.organic.OrganicLayout</a> with substructures enabled.
+    </p>
+  </div>
+</aside>
+
+<aside class="demo-sidebar demo-right">
+  <h1 class="demo-sidebar-header">Properties</h1>
+  <div class="demo-sidebar-content">
+    <h2>Labels</h2>
+    <p id="labels">None.</p>
+    <h2>Properties</h2>
+    <table id="propertyTable">
+      <tr>
+        <th>Name</th>
+        <th>Value</th>
+      </tr>
+    </table>
+  </div>
+</aside>
+
+<div class="demo-content">
+  <div id="loginPane" style="margin-top: 60px; padding: 20px;">
+    <div id="login">
+      <h2>Connect to Neo4j database</h2>
+      <table style="max-width: 500px;">
+        <tr>
+          <td>Database URL</td>
+          <td><input type="text" id="hostInput" value="bolt://localhost"></td>
+        </tr>
+        <tr>
+          <td>Username</td>
+          <td><input type="text" id="userInput" value="neo4j"></td>
+        </tr>
+        <tr>
+          <td>Password</td>
+          <td><input type="password" id="passwordInput"></td>
+        </tr>
+        <tr>
+          <td><label for="encryptionInput">Use Encryption</label></td>
+          <td><input type="checkbox" id="encryptionInput" title="Connects to the database using encryption. The database has to support encrypted connections."></td>
+        </tr>
+        <tr>
+          <td colspan="2" style="text-align: center; padding-top: 10px;"><button id="connectButton">Connect</button></td>
+        </tr>
+        <tr>
+          <td colspan="2" id="connectionError" style="color: darkred;"></td>
+        </tr>
+        <tr>
+          <td colspan="2" id="openInHttp" style="visibility: hidden;">
+            Connections from https to http are forbidden by the browser's security policy. If you can't connect to a non-encrypted database, try clicking the link below to open this tool served on http.<br/>
+            <a title="">Open in http</a>
+          </td>
+        </tr>
+      </table>
+    </div>
+    <div id="noWebSocketAPI" class="hidden">
+      <p>This demo application uses <a href="https://developer.mozilla.org/de/docs/WebSockets" target="_blank">WebSockets</a> to connect to the given Neo4j database.</p>
+      <p>Unfortunately, your browser does not support WebSockets.</p>
+      <p>To view this demo, please switch to a recent browser.</p>
+    </div>
+  </div>
+  <div id="graphPane" style="display: none;">
+    <div class="demo-toolbar">
+      <button data-command="ZoomIn" title="Zoom In" class="demo-icon demo-icon-yIconZoomIn"></button>
+      <button data-command="ZoomOriginal" title="Zoom to original size" class="demo-icon-yIconZoomOriginal"></button>
+      <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
+      <button data-command="FitContent" title="Fit Content" class="demo-icon-yIconZoomFit"></button>
+
+      <span class="demo-separator"></span>
+
+      <span style="margin: 0 10px 0 10px;">Maximum Node Count: </span> <input type="range" id="numNodes" value="50" min="50" max="500" step="50" class="custom-slider">
+      <span id="numNodesLabel">50</span>
+      <span class="demo-separator"></span>
+      <span style="margin: 0 10px 0 10px;">Label Diversity: </span> <input type="range" id="numLabels" value="2" min="2" max="5" class="custom-slider">
+      <span id="numLabelsLabel">2</span>
+      <span class="demo-separator"></span>
+      <button id="reloadDataButton" data-command="ReloadData" class="demo-icon-yIconReload labeled">Reload Data</button>
+    </div>
+
+    <div id="graphComponent"></div>
+    <div id="loadingIndicator" style="display: none;">
+      <p>Retrieving data from the Neo4j database...</p>
+      <p><img src="../../resources/image/loading.gif"></p>
+    </div>
+  </div>
+</div>
+
+<script src="../../resources/require.js"></script>
+<script src="Neo4jDemo.js"></script>
+</body>
+</html>

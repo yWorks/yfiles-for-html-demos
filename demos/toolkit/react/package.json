@@ -1,0 +1,21 @@
+{
+  "name": "yFilesForHTMLReactDemo",
+  "version": "2.0.0",
+  "private": true,
+  "dependencies": {
+    "react": "15.6.2",
+    "react-dom": "15.6.2"
+  },
+  "scripts": {
+    "babel": "babel src -d build",
+    "webpack": "webpack",
+    "build": "npm run babel && npm run webpack",
+    "build:watch": "watch \"npm run build\" src"
+  },
+  "devDependencies": {
+    "babel-cli": "6.26.0",
+    "babel-preset-react": "6.24.1",
+    "watch": "1.0.2",
+    "webpack": "3.10.0"
+  }
+}

@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+
+<!-- ////////////////////////////////////////////////////////////////////////
+     // @license
+     // This demo file is part of yFiles for HTML 2.1.
+     // Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // 72070 Tuebingen, Germany. All rights reserved.
+     //
+     // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+     // of demo files in source code or binary form, with or without
+     // modification, is not permitted.
+     //
+     // Owners of a valid software license for a yFiles for HTML version that this
+     // demo is shipped with are allowed to use the demo source code as basis
+     // for their own yFiles for HTML powered applications. Use of such programs is
+     // governed by the rights and conditions as set out in the yFiles for HTML
+     // license agreement.
+     //
+     // THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+     // WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+     // MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+     // NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+     // SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+     // TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+     // PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+     // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+     // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+     // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+     // 
+     ////////////////////////////////////////////////////////////////////////-->
+
+  <title>HTML Popup Demo [yFiles for HTML]</title>
+
+  <link rel="stylesheet" href="../../../lib/yfiles.css">
+  <link rel="stylesheet" href="../../resources/style/demo.css">
+
+  <!-- enable debugging -->
+  <script src="../../../ide-support/yfiles-typeinfo.js"></script>
+
+  <style type="text/css">
+    .popupContent {
+      position: absolute;
+      display: none; /* during runtime, the display value is overridden by class HTMLPopupSupport */
+      border: 2px solid lightgray;
+      border-radius: 15px;
+      padding: 5px;
+      overflow: hidden;
+      background: rgba(255, 255, 255, .85);
+    }
+
+    .popupContentLeft {
+      position: relative;
+      float: left;
+      top: 0;
+      width: 60px;
+      height: 100%;
+      display: inline-block;
+      margin-right: 10px;
+    }
+
+    .popupContentRight {
+      position: relative;
+      float: left;
+      top: 0;
+      width: 180px;
+      height: 100%;
+      display: inline-block;
+    }
+  </style>
+
+</head>
+<body class="demo-has-left">
+<!--
+  The sidebar for the description text
+  -->
+<aside class="demo-sidebar demo-left">
+  <h1 class="demo-sidebar-header">Description</h1>
+  <div class="demo-sidebar-content">
+    <p>
+      This demo shows HTML pop-up panels that display additional information about a clicked node or edge.</p>
+
+    <p>
+      The pop-up is displayed in the <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.view.GraphComponent">yfiles.view.GraphComponent</a> above the graph items but below the
+      scrollbars, and rendered zoom-invariant with a fixed size.
+    </p>
+    <p>
+      In this demo, a <em>pop-up</em> is shown when clicking a node or an edge. The data are retrieved from a graph item's
+      <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.graph.ITagOwner#tag">yfiles.graph.ITagOwner#tag</a> property. The template for these pop-ups is defined in the GraphComponent's
+      div and is automatically added to the <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.view.CanvasComponent#overlayPanel">yfiles.view.CanvasComponent#overlayPanel</a> element by the
+      GraphComponent's constructor.
+    </p>
+    <p>
+      In general, a pop-up can contain arbitrary HTML content, it can be created through JavaScript code or copied over
+      from another part of the DOM, and it can be manually added to the
+      <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.view.CanvasComponent#overlayPanel">yfiles.view.CanvasComponent#overlayPanel</a> of the GraphComponent at any time.</p>
+
+    <h2>Things to Try</h2>
+
+    <ul>
+      <li>
+        Click a node to show information about the person.
+      </li>
+      <li>
+        Click an edge to display information about the connection.
+      </li>
+      <li>
+        Take a look at the code, especially <code>HTMLPopupSupport.js</code>.
+      </li>
+    </ul>
+  </div>
+</aside>
+
+<div class="demo-content">
+
+  <div class="demo-toolbar">
+    <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
+    <button data-command="ZoomOriginal" title="Zoom to original size" class="demo-icon-yIconZoomOriginal"></button>
+    <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
+    <button data-command="FitContent" title="Fit Content" class="demo-icon-yIconZoomFit"></button>
+  </div>
+
+  <!--
+  The GraphComponent
+  -->
+  <div id="graphComponent">
+    <div id="nodePopupContent" class="popupContent" tabindex="0">
+      <!-- The content template for the node popup panel -->
+      <div class="popupContentLeft">
+        <img id="icon" style="position:relative;top:6px;">
+      </div>
+      <div class="popupContentRight">
+        <div data-id="name" style="font-size:14px;font-weight:bold;margin-bottom:4px;"></div>
+        <div data-id="position" style="margin-bottom:4px;"></div>
+        <div data-id="email"></div>
+        <div data-id="phone"></div>
+        <div data-id="fax"></div>
+      </div>
+    </div>
+
+    <div id="edgePopupContent" class="popupContent" style="text-align: center" tabindex="0">
+      <!-- The content template for the edge popup panel -->
+      <div style="display: inline-block;">
+        <div data-id="sourceName" style="font-weight:bold;float:left"></div>
+        <div style="float:left; margin-left:5px; margin-right: 5px">-></div>
+        <div data-id="targetName" style="font-weight:bold;float:left"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="../../resources/require.js"></script>
+<script src="HTMLPopupDemo.js"></script>
+
+</body>
+</html>

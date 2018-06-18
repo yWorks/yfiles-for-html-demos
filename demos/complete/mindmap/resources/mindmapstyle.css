@@ -1,0 +1,132 @@
+/****************************************************************************
+ ** @license
+ ** This demo file is part of yFiles for HTML 2.1.
+ ** Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** 72070 Tuebingen, Germany. All rights reserved.
+ **
+ ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+ ** of demo files in source code or binary form, with or without
+ ** modification, is not permitted.
+ **
+ ** Owners of a valid software license for a yFiles for HTML version that this
+ ** demo is shipped with are allowed to use the demo source code as basis
+ ** for their own yFiles for HTML powered applications. Use of such programs is
+ ** governed by the rights and conditions as set out in the yFiles for HTML
+ ** license agreement.
+ **
+ ** THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+ ** WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ ** MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+ ** NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ ** SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+ ** TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ ** PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+ ** LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+ ** NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ **
+ ***************************************************************************/
+.iconCrossReference {
+  background: url(crossref-24.svg) no-repeat;
+}
+.iconColorChooser {
+  background: url(colors-24.svg) no-repeat;
+}
+.iconSmileyHappy {
+  background: url(smiley-happy-24.svg) no-repeat;
+}
+.iconMinus {
+  background: url(minus-24.svg) no-repeat;
+}
+.popupIcon.disabled {
+  display: none;
+}
+.iconPlus {
+  background: url(plus-24.svg) no-repeat;
+}
+
+.edge.level0 {
+  stroke-width: 3;
+  fill: none;
+  stroke: #47f;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+
+.edge.level1 {
+  stroke-width: 4;
+  fill: none;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+
+.edge.level2 {
+  stroke-width: 3;
+  fill: none;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+
+.nodeBackground.level0 {
+  stroke-width: 3;
+  fill: #fff;
+  stroke: #000;
+}
+
+.nodeBackground.level1 {
+  fill: transparent;
+}
+
+.nodeBackground.level2 {
+  fill: transparent;
+}
+
+.nodeUnderline.level0 {
+  stroke-linecap: round;
+  stroke-width: 8;
+}
+
+.nodeUnderline.level1 {
+  stroke-linecap: round;
+  stroke-width: 8;
+}
+
+.nodeUnderline.level2 {
+  stroke-linecap: round;
+  stroke-width: 3;
+}
+
+.collapseButton {
+  cursor: pointer;
+}
+
+.popupContent {
+  position: absolute;
+  display: none; /* during runtime, the display value is overridden by the popup support class */
+  border-radius: 16px;
+  padding: 2px;
+  overflow: hidden;
+  background-color: #eee;
+}
+
+.popupIcon {
+  width: 24px;
+  height: 24px;
+  margin: 2px;
+  float: left;
+  cursor: pointer;
+}
+
+div.colorButton {
+  width: 80px;
+  height: 20px;
+  margin-bottom: 2px;
+}
+
+div.iconButton {
+  width: 16px;
+  height: 16px;
+  float: left;
+  margin: 2px;
+  cursor: pointer;
+}

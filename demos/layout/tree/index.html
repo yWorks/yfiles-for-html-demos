@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+
+<!-- ////////////////////////////////////////////////////////////////////////
+     // @license
+     // This demo file is part of yFiles for HTML 2.1.
+     // Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // 72070 Tuebingen, Germany. All rights reserved.
+     //
+     // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+     // of demo files in source code or binary form, with or without
+     // modification, is not permitted.
+     //
+     // Owners of a valid software license for a yFiles for HTML version that this
+     // demo is shipped with are allowed to use the demo source code as basis
+     // for their own yFiles for HTML powered applications. Use of such programs is
+     // governed by the rights and conditions as set out in the yFiles for HTML
+     // license agreement.
+     //
+     // THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+     // WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+     // MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+     // NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+     // SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+     // TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+     // PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+     // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+     // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+     // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+     // 
+     ////////////////////////////////////////////////////////////////////////-->
+
+  <title>Tree Layout Demo [yFiles for HTML]</title>
+
+  <link rel="stylesheet" href="../../../lib/yfiles.css">
+  <link rel="stylesheet" href="../../resources/style/demo.css">
+  <link rel="stylesheet" href="resources/tree-layout-demo.css">
+
+  <!-- enable debugging -->
+  <script src="../../../ide-support/yfiles-typeinfo.js"></script>
+</head>
+<body class="demo-has-left demo-has-right">
+<aside class="demo-sidebar demo-left">
+  <h1 class="demo-sidebar-header">Description</h1>
+  <div class="demo-sidebar-content">
+    Demonstrates different <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.tree.INodePlacer">yfiles.tree.INodePlacer</a> implementations for <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.tree.TreeLayout">yfiles.tree.TreeLayout</a>.
+    <p>
+      Each node can have a separate <em>NodePlacer</em> assigned to arrange its children in a certain style. In this
+      demo, all nodes of the same layer get the same <em>NodePlacer</em>.
+    </p>
+
+    <h2>Configure the NodePlacers</h2>
+    The panel on the right offers a set of settings for the <em>NodePlacer</em> of the selected layer. Changing an
+    option in the panel will update the layout of the graph immediately. A preview demonstrates the chosen subtree style
+    in a smaller context.<br/>
+    If there wasn't a <em>NodePlacer</em> selected for the current layer, yet, a <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.tree.DefaultNodePlacer">yfiles.tree.DefaultNodePlacer</a> is used.
+    <ul>
+      <li>Select the layer to change either by selecting a node or directly in the panel.</li>
+      <li>Some <em>NodePlacer</em>s offer rotation and mirroring of the subtree. Click the buttons to see the effect.</li>
+      <li>
+        Reset the <em>NodePlacer</em> to <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.tree.DefaultNodePlacer">yfiles.tree.DefaultNodePlacer</a> with initial settings by clicking the
+        <img src="../../resources/icons/reload-16.svg" style="vertical-align: bottom"/>-Button.
+      </li>
+      <li>
+        Toggle the <em>Assistant</em>-marking for single nodes by <em>double-clicking</em> on them. They will show their
+        effect when their parent layer has <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.tree.AssistantNodePlacer">yfiles.tree.AssistantNodePlacer</a> assigned.
+      </li>
+    </ul>
+
+    <h2>Change the Graph</h2>
+    The graph can be altered interactively. In this demo, adding and deleting nodes will keep the tree-structure of the
+    graph intact. Also, each change will trigger a layout calculation.
+    <ul>
+      <li>Add nodes (and edges) by dragging from an unselected node.</li>
+      <li>Removing selected nodes will remove the whole subtree. The root node cannot be deleted.</li>
+      <li>Resize nodes to see how the layout changes.</li>
+      <li>Change the order of children by adding number-labels using the <em>F2</em>-key.</li>
+    </ul>
+  </div>
+</aside>
+
+<div class="demo-content">
+  <div class="demo-toolbar">
+    <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
+    <button data-command="ZoomOriginal" title="Zoom to original size" class="demo-icon-yIconZoomOriginal"></button>
+    <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
+    <button data-command="FitContent" title="Fit Content" class="demo-icon-yIconZoomFit"></button>
+  </div>
+
+  <div id="graphComponent"></div>
+</div>
+
+<aside class="demo-sidebar demo-right">
+  <h1 class="demo-sidebar-header">Node Placer Settings</h1>
+  <div class="demo-sidebar-content">
+    <div id="layer-section">
+      <label id="layer-label" class="layer-label-white" for="layer-index">Layer</label>
+      <input id="layer-index" data-command="LayerIndex" type="number" min="0" max="4" value="0" title="Select Layer"/>
+      <button id="reset-node-placer" class="reset-node-placer-white" title="Reset to DefaultNodePlacer"></button>
+    </div>
+    <div class="demo-properties">
+      <div class="demo-form-block">
+        <label id="select-node-placer-label" for="select-node-placer">Type</label>
+        <select id="select-node-placer" data-command="SelectNodePlacer" class="option-element">
+          <option>DefaultNodePlacer</option>
+          <option>SimpleNodePlacer</option>
+          <option>BusNodePlacer</option>
+          <option>DoubleLineNodePlacer</option>
+          <option>LeftRightNodePlacer</option>
+          <option>AspectRatioNodePlacer</option>
+          <option>AssistantNodePlacer</option>
+          <option>CompactNodePlacer</option>
+        </select>
+      </div>
+
+      <div id="rotation" style="display: none">
+        <h2>Rotation/Mirroring</h2>
+        <div id="rotation-buttons">
+          <button id="rotation-right" class="demo-icon-yIconReload settings-button" title="Rotate Rightwards"></button>
+          <button id="rotation-left" class="demo-icon-yIconReload settings-button mirrored" title="Rotate Leftwards"></button>
+          <button id="mirror-horizontal" class="icon-mirror settings-button rotated" title="Mirror Horizontal"></button>
+          <button id="mirror-vertical" class="icon-mirror settings-button" title="Mirror Vertical"></button>
+        </div>
+      </div>
+
+      <div id="default-node-placer-settings" class="node-placer-settings">
+        <h2>Settings</h2>
+        <div class="demo-form-block">
+          <label for="select-child-placement" class="option-label">Child Placement</label>
+          <select id="select-child-placement" class="option-element">
+            <option>Horizontal Downward</option>
+            <option>Horizontal Upward</option>
+            <option>Vertical Leftward</option>
+            <option>Vertical Rightward</option>
+          </select>
+        </div>
+        <div class="demo-form-block">
+          <label for="routing-style" class="option-label">Routing Style</label>
+          <select id="routing-style" class="option-element">
+            <option>Fork</option>
+            <option>Fork at Root</option>
+            <option>Straight-line</option>
+            <option>Polyline</option>
+          </select>
+        </div>
+        <div class="demo-form-block">
+          <label for="horizontal-distance" class="option-label">Horizontal Distance</label>
+          <input type="range" id="horizontal-distance" min="0" max="200" value="40"/>
+          <label id="horizontal-distance-label">40</label>
+        </div>
+        <div class="demo-form-block">
+          <label for="vertical-distance" class="option-label">Vertical Distance</label>
+          <input type="range" id="vertical-distance" min="0" max="200" value="40"/>
+          <label id="vertical-distance-label">40</label>
+        </div>
+        <div class="demo-form-block">
+          <label for="root-alignment" class="option-label">Root Alignment</label>
+          <select id="root-alignment" class="option-element">
+            <option>Leading-Offset</option>
+            <option>Leading</option>
+            <option>Center</option>
+            <option>Median</option>
+            <option>Trailing</option>
+            <option>Trailing-Offset</option>
+            <option>Leading on Bus</option>
+            <option>Trailing on Bus</option>
+          </select>
+        </div>
+        <div class="demo-form-block">
+          <label for="minimum-channel-segment-distance" class="option-label">Minimum Channel Segment Distance</label>
+          <input type="range" id="minimum-channel-segment-distance" min="0" max="200" value="40"/>
+          <label id="minimum-channel-segment-distance-label">40</label>
+        </div>
+      </div>
+      <div id="simple-node-placer-settings" class="node-placer-settings" style="display: none">
+        <h2>Settings</h2>
+        <div class="demo-form-block">
+          <label for="create-bus" class="option-label">Create Bus</label>
+          <input type="checkbox" id="create-bus" class="option-element">
+        </div>
+        <div class="demo-form-block">
+          <label for="simple-root-node-alignment" class="option-label">Root Alignment</label>
+          <select id="simple-root-node-alignment">
+            <option>Leading</option>
+            <option>Left</option>
+            <option>Center</option>
+            <option>Center over Children</option>
+            <option>Median</option>
+            <option>Right</option>
+            <option>Trailing</option>
+          </select>
+        </div>
+        <div class="demo-form-block">
+          <label for="min-channel-segment-distance" class="option-label">Minimum Channel Segment Distance</label>
+          <input type="range" id="min-channel-segment-distance" min="0" max="200" value="40"/>
+          <label id="min-channel-segment-distance-label">40</label>
+        </div>
+      </div>
+      <div id="bus-node-placer-settings" class="node-placer-settings" style="display: none">
+        <h2>Settings</h2>
+      </div>
+      <div id="double-line-node-placer-settings" class="node-placer-settings" style="display: none">
+        <h2>Settings</h2>
+        <div class="demo-form-block">
+          <label for="double-line-root-node-alignment" class="option-label">Root Alignment</label>
+          <select id="double-line-root-node-alignment" class="option-element">
+            <option>Leading</option>
+            <option>Left</option>
+            <option>Center</option>
+            <option>Center over Children</option>
+            <option>Median</option>
+            <option>Right</option>
+            <option>Trailing</option>
+          </select>
+        </div>
+      </div>
+      <div id="left-right-node-placer-settings" class="node-placer-settings" style="display: none">
+        <h2>Settings</h2>
+        <div class="demo-form-block">
+          <label for="last-on-bottom" class="option-label">Last on Bottom</label>
+          <input type="checkbox" id="last-on-bottom" class="option-element"/>
+        </div>
+      </div>
+      <div id="aspect-ratio-node-placer-settings" class="node-placer-settings" style="display: none">
+        <h2>Settings</h2>
+        <div class="demo-form-block">
+          <label for="aspect-ratio" class="option-label">Aspect Ratio</label>
+          <input type="number" id="aspect-ratio" min="0.1" max="2" value="1" step="0.1" class="option-element"/>
+        </div>
+        <div class="demo-form-block">
+          <label for="fill-style" class="option-label">Fill Style</label>
+          <select id="fill-style" class="option-element">
+            <option>Justify</option>
+            <option>Leading</option>
+            <option>Centered</option>
+            <option>Trailing</option>
+          </select>
+        </div>
+        <div class="demo-form-block">
+          <label for="aspect-ratio-horizontal-distance" class="option-label">Horizontal Distance</label>
+          <input type="range" min="0" max="500" value="40" id="aspect-ratio-horizontal-distance"/>
+          <label id="aspect-ratio-horizontal-distance-label">40</label>
+        </div>
+        <div class="demo-form-block">
+          <label for="aspect-ratio-vertical-distance" class="option-label">Vertical Distance</label>
+          <input type="range" min="0" max="500" value="40" id="aspect-ratio-vertical-distance"/>
+          <label id="aspect-ratio-vertical-distance-label">40</label>
+        </div>
+        <div class="demo-form-block">
+          <label for="horizontal" class="option-label">Horizontal</label>
+          <input type="checkbox" id="horizontal" class="option-element"/>
+        </div>
+      </div>
+      <div id="assistant-node-placer-settings" class="node-placer-settings" style="display: none">
+        <h2>Settings</h2>
+        <div class="demo-form-block">
+          <label for="child-node-placer" class="option-label">Child Node Placer</label>
+          <select id="child-node-placer" class="option-element">
+            <option>DefaultNodePlacer</option>
+            <option>SimpleNodePlacer</option>
+            <option>BusNodePlacer</option>
+            <option>DoubleLineNodePlacer</option>
+            <option>LeftRightNodePlacer</option>
+            <option>AspectRatioNodePlacer</option>
+          </select>
+        </div>
+      </div>
+      <div id="compact-node-placer-settings" class="node-placer-settings" style="display: none">
+        <h2>Settings</h2>
+        <div class="demo-form-block">
+          <label for="compact-preferred-aspect-ratio" class="option-label">Preferred Aspect Ratio</label>
+          <input type="range" id="compact-preferred-aspect-ratio" min="0.1" max="4" step="0.1" value="1"/>
+          <label id="compact-preferred-aspect-ratio-label">1</label>
+        </div>
+        <div class="demo-form-block">
+          <label for="compact-vertical-distance" class="option-label">Vertical Distance</label>
+          <input type="range" id="compact-vertical-distance" min="0" max="500" value="20"/>
+          <label id="compact-vertical-distance-label">1</label>
+        </div>
+        <div class="demo-form-block">
+          <label for="compact-horizontal-distance" class="option-label">Horizontal Distance</label>
+          <input type="range" id="compact-horizontal-distance" min="0" max="500" value="20"/>
+          <label id="compact-horizontal-distance-label">1</label>
+        </div>
+        <div class="demo-form-block">
+          <label for="compact-minimum-first-segment-length" class="option-label">Minimum First Segment Length</label>
+          <input type="range" id="compact-minimum-first-segment-length" min="0" max="500" value="20"/>
+          <label id="compact-minimum-first-segment-length-label">1</label>
+        </div>
+        <div class="demo-form-block">
+          <label for="compact-minimum-last-segment-length" class="option-label">Minimum Last Segment Length</label>
+          <input type="range" id="compact-minimum-last-segment-length" min="0" max="500" value="20"/>
+          <label id="compact-minimum-last-segment-length-label">1</label>
+        </div>
+      </div>
+      <div id="rotatable-spacing" class="demo-form-block" style="display: none">
+        <label for="spacing" class="option-label">Spacing</label>
+        <input type="range" id="spacing" min="0" max="500" value="20"/>
+        <label id="spacing-label">20</label>
+      </div>
+      <div id="node-placer-description"></div>
+    </div>
+    <div id="previewComponent"></div>
+  </div>
+</aside>
+
+<script src="../../resources/require.js"></script>
+<script src="TreeLayoutDemo.js"></script>
+
+</body>
+</html>

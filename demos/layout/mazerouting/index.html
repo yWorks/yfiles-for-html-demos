@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+
+<!-- ////////////////////////////////////////////////////////////////////////
+     // @license
+     // This demo file is part of yFiles for HTML 2.1.
+     // Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // 72070 Tuebingen, Germany. All rights reserved.
+     //
+     // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+     // of demo files in source code or binary form, with or without
+     // modification, is not permitted.
+     //
+     // Owners of a valid software license for a yFiles for HTML version that this
+     // demo is shipped with are allowed to use the demo source code as basis
+     // for their own yFiles for HTML powered applications. Use of such programs is
+     // governed by the rights and conditions as set out in the yFiles for HTML
+     // license agreement.
+     //
+     // THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+     // WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+     // MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+     // NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+     // SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+     // TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+     // PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+     // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+     // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+     // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+     // 
+     ////////////////////////////////////////////////////////////////////////-->
+
+  <title>Maze Routing Demo [yFiles for HTML]</title>
+
+  <link rel="stylesheet" href="../../../lib/yfiles.css">
+  <link rel="stylesheet" href="../../resources/style/demo.css">
+  <link rel="stylesheet" href="../../resources/style/demo-option-editor.css">
+
+  <!-- enable debugging -->
+  <script src="../../../ide-support/yfiles-typeinfo.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.8/angular.min.js"
+      integrity="sha256-drxfSiYW94qA5Cyx5wrs8T8qV5GB45vES84r+X4zNS0=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.8/angular-sanitize.min.js"
+      integrity="sha256-A5XIWW1Wvws/VV2ZVAhfMVtQKwILF+o/z3zYZ8fhiec=" crossorigin="anonymous"></script>
+  <style type="text/css">
+
+    #data-editor-header select:not(.demo-disabled),
+    #data-editor-header select:not(.demo-disabled):hover {
+      border: 1px #888;
+      padding-left: 1px;
+    }
+
+    .option-ui-content-container {
+      overflow-y: visible;
+    }
+
+    #data-editor {
+      position: absolute;
+      right: 25px;
+      left: 25px;
+      bottom: 45px;
+      top: 60px;
+      overflow: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    #data-editor-button-container {
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+      background-color: #f7f7f7;
+      min-width: 235px;
+    }
+
+    .flat-button {
+      width: 7.5em;
+      height: inherit;
+      margin: 11px 0 11px 11px;
+      padding: 14px 9px 14px 9px;
+      background-color: #A0A0A0;
+      color: #f7f7f7;
+      border: none;
+    }
+
+    #route-edges-button {
+      background-color: #1871BD;
+      color: #f7f7f7;
+    }
+
+    #route-edges-button:hover:not(.demo-disabled) {
+      background-color: #328AD5;
+    }
+
+    #reset-button:hover {
+      background-color: #B0B0B0;
+    }
+
+    @media screen and (max-width: 1024px) {
+      .demo-splitter {
+        width: 10px;
+        -webkit-user-select: none;
+      }
+    }
+
+  </style>
+</head>
+<body class="demo-has-left demo-has-right">
+<!--
+  The sidebar for the description
+-->
+<aside class="demo-sidebar demo-left">
+  <h1 class="demo-sidebar-header">Description</h1>
+  <div class="demo-sidebar-content">
+    <p>This demo shows how the <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.router.EdgeRouter">yfiles.router.EdgeRouter</a> can be used for finding routes through a maze. This
+      algorithm tries to find the way with the fewest possible changes in direction trying to avoid possible
+      obstacles.</p>
+    <p>
+      The graph consists of the nodes that form the maze and the normal ones. The maze nodes are visible only during the
+      layout and serve as obstacles for the algorithm. Also, a non-editable background visual is created from these
+      maze nodes and is displayed inside the graph component. </p>
+
+    <h2>Things to try</h2>
+    <p>
+    <ul>
+    <li>Change the settings of the <code>EdgeRouter</code> from the configuration panel on the right to see how the routing of the
+        edges changes.
+      </li>
+      <li>
+        Modify the graph with one of the following operations to see how the affected edges are rerouted:
+        <ul>
+          <li>Create new edges.</li>
+          <li>Move nodes or edges.</li>
+          <li>Resize nodes.</li>
+        </ul>
+      </li>
+    </ul>
+    </p>
+  </div>
+</aside>
+
+<div class="demo-content">
+
+  <div class="demo-toolbar">
+    <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
+    <button data-command="ZoomOriginal" title="Zoom to original size" class="demo-icon-yIconZoomOriginal"></button>
+    <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
+    <button data-command="FitContent" title="Fit Content" class="demo-icon-yIconZoomFit"></button>
+
+    <span class="demo-separator"></span>
+
+    <button data-command="Cut" title="Cut" class="demo-icon-yIconCut"></button>
+    <button data-command="Copy" title="Copy" class="demo-icon-yIconCopy"></button>
+    <button data-command="Paste" title="Paste" class="demo-icon-yIconPaste"></button>
+    <button data-command="Delete" title="Delete" class="demo-icon-yIconDelete"></button>
+
+    <span class="demo-separator"></span>
+
+    <button data-command="Undo" title="Undo" class="demo-icon-yIconUndo"></button>
+    <button data-command="Redo" title="Redo" class="demo-icon-yIconRedo"></button>
+  </div>
+
+  <!--
+  The GraphComponent
+  -->
+  <div id="graphComponent"></div>
+</div>
+
+<!--
+The sidebar for the properties and settings
+-->
+<aside class="demo-sidebar demo-right">
+  <h1 class="demo-sidebar-header">Routing Style</h1>
+  <div class="demo-sidebar-content">
+    <div id="data-editor">
+      <!-- Begin Templates -->
+      <script type="text/ng-template" id="./templates/option-ui.html">
+        <div class="option-ui-content-container">
+          <div class="option-ui-content">
+            <div data-option-ui-form data-accordeon data-members="config.membersArray"></div>
+          </div>
+        </div>
+
+      </script>
+
+      <script type="text/ng-template" id="./templates/option-ui-form.html">
+        <form name="form" class="option-ui-form" novalidate>
+          <div data-ng-repeat-start="member in members" data-ng-if="member.type==='group'">
+            <div class="option-ui-form-group"
+                data-ng-class="{hidden: member._member._isHidden, 'aria-disabled': member._recIsDisabled, collapsed: member._isCollapsed}">
+              <div data-option-ui-button data-click-callback="toggleCollapsed(member, members)"
+                  data-label="::member._member.label"
+                  data-icon="member._isCollapsed ? 'chevronDown' : 'chevronRight'"></div>
+              <br>
+              <div option-ui-collapse class="option-ui-form-section" data-collapsed="member._isCollapsed">
+                <div data-option-ui-form data-members="member.members"></div>
+              </div>
+            </div>
+          </div>
+          <div data-ng-repeat-end data-ng-if="member.type==='option'">
+            <div data-option-ui-item data-option="member._member" data-disabled="member._recIsDisabled"
+                data-ng-class="{disabled: member._recIsDisabled}"></div>
+          </div>
+        </form>
+      </script>
+
+      <script type="text/ng-template" id="./templates/option-ui-item.html">
+        <div class="item" data-ng-switch data-on="::option.component" data-ng-class="{hidden: option._isHidden}">
+          <div data-ng-switch-when="checkbox" data-option-ui-checkbox data-option="::option"
+              data-disabled="disabled"></div>
+          <div data-ng-switch-when="spinner" data-option-ui-spinner data-option="::option"
+              data-disabled="disabled"></div>
+          <div data-ng-switch-when="slider" data-option-ui-slider data-option="::option" data-disabled="disabled"></div>
+          <div data-ng-switch-when="text" data-option-ui-text data-option="::option" data-disabled="disabled"></div>
+          <div data-ng-switch-when="combobox" data-option-ui-combobox data-option="::option"
+              data-options="::option.options" data-disabled="disabled"></div>
+          <div data-ng-switch-when="htmlblock" data-option-ui-htmlblock data-option="::option"></div>
+          <div ng-switch-default>{{::option.component}}</div>
+        </div>
+
+      </script>
+
+      <script type="text/ng-template" id="./templates/option-ui-revert.html">
+        <!--div data-option-ui-button data-click-callback="clickCallback()" data-icon="'undo'"></div-->
+      </script>
+
+      <script type="text/ng-template" id="./components/option-ui-button/option-ui-button.html">
+        <div class="option-ui-button" data-ng-click="!disabled && clickCallback()" data-ng-disabled="disabled">
+          <span class="icon" data-ng-show="!!icon"></span> <span class="label" data-ng-show="!!label">{{::label}}</span>
+        </div>
+      </script>
+
+      <script type="text/ng-template" id="./components/option-ui-checkbox/option-ui-checkbox.html">
+        <form class="option-ui-checkbox">
+          <div class="checkbox-container">
+            <label class="option-ui-checkbox" title="{{::option.label}}">{{::option.label}}</label>
+            <div class="vcenter-container">
+              <input type="checkbox" data-ng-model="option.value" data-ng-disabled="disabled"/>
+            </div>
+          </div>
+        </form>
+      </script>
+
+      <script type="text/ng-template" id="./components/option-ui-collapse/option-ui-collapse.html">
+        <div class="option-ui-collapse demo-collapsible-pane-content" data-ng-transclude data-ng-if="!collapsed"></div>
+      </script>
+
+      <script type="text/ng-template" id="./components/option-ui-combobox/option-ui-combobox.html">
+        <form class="option-ui-combobox">
+          <div class="combobox-container">
+            <label class="option-ui-combobox" title="{{::option.label}}">{{::option.label}}</label>
+            <div class="vcenter-container">
+              <select size="1" data-ng-model="option.value" data-ng-disabled="disabled"
+                  ng-options="option.value as option.name for option in options"></select>
+            </div>
+          </div>
+        </form>
+      </script>
+
+      <script type="text/ng-template" id="./components/option-ui-dropdown/option-ui-dropdown.html">
+        <div class="option-ui-dropdown">
+          <div class="option-ui-selectionlist">
+            <select size="1" data-ng-model="currentSelected">
+              <option data-ng-repeat="option in options" value="{{::$index}}">{{::option.label}}</option>
+            </select>
+            <div class="selectionBar" data-ng-style="slide"></div>
+          </div>
+        </div>
+
+      </script>
+
+      <script type="text/ng-template" id="./components/option-ui-slider/option-ui-slider.html">
+        <form class="option-ui-slider" name="ctrlForm">
+          <div>
+            <label class="option-ui-slider" title="{{::option.label}}"> {{::option.label}}<br/> </label>
+          </div>
+
+          <div class="slider-container">
+            <div class="range-container">
+              <input class="noselect" type="range" data-option-ui-number-parser min="{{::option.min}}"
+                  max="{{::option.max}}" step="{{::option.step}}" data-ng-model="option.value"
+                  data-ng-disabled="disabled" option-ui-validate/>
+            </div>
+            <div class="number-container">
+              <input type="number" min="{{::option.min}}" max="{{::option.max}}" step="{{::option.step}}"
+                  data-ng-model="option.value" data-ng-disabled="disabled" name="input" option-ui-validate required/>
+            </div>
+          </div>
+          <div class="form-error-container">
+            <div class="form-error-tip" ng-show="ctrlForm.input.$error.min">
+              <div class="arrow-top"></div>
+              <div class="label"> &lt; {{option.min}}</div>
+            </div>
+            <div class="form-error-tip" ng-show="ctrlForm.input.$error.max">
+              <div class="arrow-top"></div>
+              <div class="label"> &gt; {{option.max}}</div>
+            </div>
+            <div class="form-error-tip" ng-show="ctrlForm.input.$error.number || ctrlForm.input.$error.required">
+              <div class="arrow-top"></div>
+              <div class="label">Invalid number</div>
+            </div>
+          </div>
+        </form>
+      </script>
+
+      <script type="text/ng-template" id="./components/option-ui-spinner/option-ui-spinner.html">
+        <form class="option-ui-spinner" name="ctrlForm">
+          <div class="spinner-container">
+            <label class="option-ui-spinner" title="{{::option.label}}">{{::option.label}}</label>
+            <div class="vcenter-container">
+              <input class="spinner" type="number" min="{{::option.min}}" max="{{::option.max}}"
+                  step="{{::option.step}}" name="input" data-ng-model="option.value" data-ng-disabled="disabled"
+                  required option-ui-validate/>
+            </div>
+          </div>
+          <div class="form-error-container">
+            <div class="form-error-tip" ng-show="ctrlForm.input.$error.min">
+              <div class="arrow-top"></div>
+              <div class="label"> &lt; {{option.min}}</div>
+            </div>
+            <div class="form-error-tip" ng-show="ctrlForm.input.$error.max">
+              <div class="arrow-top"></div>
+              <div class="label"> &gt; {{option.max}}</div>
+            </div>
+            <div class="form-error-tip" ng-show="ctrlForm.input.$error.number || ctrlForm.input.$error.required">
+              <div class="arrow-top"></div>
+              <div class="label">Invalid number</div>
+            </div>
+          </div>
+        </form>
+      </script>
+
+      <script type="text/ng-template" id="./components/option-ui-tabbar/option-ui-tabbar.html">
+        <div>
+          <div role="tablist" class="option-ui-tablist">
+            <div class="tabsContainer" data-ng-mousedown="moveSlider()">
+              <div class="option-ui-tab relative" role="tab" data-ng-mousedown="setCurrentTab($index)"
+                  data-ng-class="{active: isCurrentTab($index)}" data-ng-repeat="tab in tabs"
+                  data-ng-style="{'width': 100/tabs.length+'%'}" title="{{::tab.label}}">
+                <div class="tabContainer fit">
+                  <div class="tab-content" data-ng-bind="::tab.label|camelcase"></div>
+                </div>
+              </div>
+              <div class="selectionBar" data-ng-style="slide"></div>
+            </div>
+          </div>
+        </div>
+      </script>
+
+      <script type="text/ng-template" id="./components/option-ui-text/option-ui-text.html">
+        <label> {{::option.label}}<br/> <input type="text" minlength="{{::option.minLength}}"
+            maxlength="{{::option.maxLength}}" data-ng-model="option.value" data-ng-disabled="disabled"/> </label>
+      </script>
+
+      <script type="text/ng-template" id="./components/option-ui-htmlblock/option-ui-htmlblock.html">
+        <div class="option-ui-htmlblock"></div>
+
+      </script>
+      <!-- End Templates -->
+    </div>
+    <div id="data-editor-button-container" class="demo-form-block">
+      <button id="route-edges-button" class="flat-button" data-command="RouteEdgesCommand" title="Route the Edges">
+        <span>Apply</span>
+      </button>
+      <button id="reset-button" class="flat-button" data-command="ResetConfigCommand" title="Reset Configuration">
+        <span>Reset</span>
+      </button>
+    </div>
+  </div>
+</aside>
+
+<script src="../../resources/require.js"></script>
+<script src="MazeRoutingDemo.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,120 @@
+/****************************************************************************
+ ** @license
+ ** This demo file is part of yFiles for HTML 2.1.
+ ** Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** 72070 Tuebingen, Germany. All rights reserved.
+ **
+ ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+ ** of demo files in source code or binary form, with or without
+ ** modification, is not permitted.
+ **
+ ** Owners of a valid software license for a yFiles for HTML version that this
+ ** demo is shipped with are allowed to use the demo source code as basis
+ ** for their own yFiles for HTML powered applications. Use of such programs is
+ ** governed by the rights and conditions as set out in the yFiles for HTML
+ ** license agreement.
+ **
+ ** THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+ ** WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ ** MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+ ** NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ ** SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+ ** TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ ** PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+ ** LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+ ** NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ **
+ ***************************************************************************/
+.orgchart-node .hover-ellipse {
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.orgchart-node:hover .hover-ellipse {
+  opacity: 0.6;
+}
+
+.orgchart-node .orgchart-status-indicator {
+  stroke: rgb(229, 233, 240);
+  stroke-width: 4px;
+}
+
+.orgchart-label text {
+  font: 22px Tahoma, Verdana, sans-serif;
+}
+
+.yfiles-svgpanel {
+  background-color: rgb(60, 66, 83);
+}
+
+#propertiesView {
+  padding: 10px;
+}
+
+#propertiesView td {
+  padding: 3px 0;
+}
+
+#propertiesView td:first-of-type {
+  text-transform: uppercase;
+  color: #ffaf00;
+  font-weight: bold;
+  padding-right: 20px;
+}
+
+#propertiesView td a {
+  color: #407fbf;
+  text-decoration: none;
+}
+
+#propertiesView td a:hover {
+  color: #ffaf00;
+}
+
+#propertiesView .user-detail {
+  position: relative;
+  height: 50px;
+  margin: 10px 0;
+}
+
+#propertiesView .user-detail img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  clip-path: circle(25px at center);
+}
+
+#propertiesView .user-detail h2,
+#propertiesView input {
+  font-size: 20px;
+  font-weight: normal;
+  margin: 0 0 5px 60px;
+  color: #336699;
+}
+
+#propertiesView .user-detail input {
+  width: 150px;
+}
+
+#propertiesView .user-detail div {
+  margin-left: 60px;
+  font-weight: 400;
+  text-transform: uppercase;
+}
+
+#propertiesView .demo-edit-name-button {
+  width: 24px;
+  height: 24px;
+  background-image: url(../../../resources/icons/settings2-16.svg);
+  border: none;
+  outline: none;
+  background-repeat: no-repeat;
+  background-position: center;
+  display: inline-block;
+  margin-left: 10px;
+  background-color: transparent;
+}
+#propertiesView .demo-edit-name-button:hover {
+  background-color: #dedede;
+}

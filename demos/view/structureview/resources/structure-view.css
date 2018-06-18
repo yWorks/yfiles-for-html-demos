@@ -1,0 +1,131 @@
+/****************************************************************************
+ ** @license
+ ** This demo file is part of yFiles for HTML 2.1.
+ ** Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** 72070 Tuebingen, Germany. All rights reserved.
+ **
+ ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+ ** of demo files in source code or binary form, with or without
+ ** modification, is not permitted.
+ **
+ ** Owners of a valid software license for a yFiles for HTML version that this
+ ** demo is shipped with are allowed to use the demo source code as basis
+ ** for their own yFiles for HTML powered applications. Use of such programs is
+ ** governed by the rights and conditions as set out in the yFiles for HTML
+ ** license agreement.
+ **
+ ** THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+ ** WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ ** MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+ ** NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ ** SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+ ** TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ ** PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+ ** LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+ ** NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ **
+ ***************************************************************************/
+.structure-view-container {
+  overflow: auto;
+}
+
+.structure-view-container .structure-view-list li {
+  margin: 2px 0;
+  user-select: none;
+  white-space: nowrap;
+}
+
+.structure-view-container .structure-view-list li:first-of-type {
+  margin-top: 0;
+}
+
+.structure-view-container .structure-view-list li.structure-view-group {
+  margin-top: 5px;
+}
+
+.structure-view-container ol.structure-view-list {
+  padding: 0;
+  width: 300px;
+  display: inline;
+}
+
+.structure-view-group {
+  margin-top: 2px;
+}
+
+.structure-view-group ol {
+  margin: 0;
+}
+
+.structure-view-list li {
+  position: relative;
+  padding: 0;
+  list-style: none;
+}
+
+.structure-view-node {
+  cursor: pointer;
+}
+
+.structure-view-node:hover {
+  font-weight: bold;
+}
+
+.structure-view-node::before {
+  content: '\25A0';
+  padding-right: 3px;
+  color: lightgray;
+  vertical-align: text-bottom;
+}
+
+.structure-view-list {
+  list-style: none;
+}
+
+.structure-view-container li input {
+  position: absolute;
+  left: 0;
+  margin-left: 0;
+  opacity: 0;
+  z-index: 2;
+  cursor: pointer;
+  height: 1em;
+  width: 1em;
+  top: 0;
+}
+
+.structure-view-container .structure-view-list li input + ol > li {
+  display: none;
+  margin-left: -14px;
+  padding-left: 1px;
+}
+
+.structure-view-expanded {
+  background: url("folder-expanded.svg") 0 0 no-repeat;
+}
+
+.structure-view-collapsed {
+  background: url("folder-collapsed.svg") 0 0 no-repeat;
+}
+
+.structure-view-container .structure-view-list li label {
+  display: block;
+  padding-left: 20px;
+  cursor: pointer;
+}
+
+.structure-view-container .structure-view-list li input + ol {
+  margin: -12px 0 0 -44px;
+  height: 1em;
+}
+
+.structure-view-container .structure-view-list li input:checked + ol {
+  margin: -18px 0 0 -44px;
+  padding: 20px 0 0 80px;
+  height: auto;
+}
+
+.structure-view-container .structure-view-list li input:checked + ol > li {
+  display: block;
+}

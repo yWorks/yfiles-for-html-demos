@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+
+<!-- ////////////////////////////////////////////////////////////////////////
+     // @license
+     // This demo file is part of yFiles for HTML 2.1.
+     // Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // 72070 Tuebingen, Germany. All rights reserved.
+     //
+     // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+     // of demo files in source code or binary form, with or without
+     // modification, is not permitted.
+     //
+     // Owners of a valid software license for a yFiles for HTML version that this
+     // demo is shipped with are allowed to use the demo source code as basis
+     // for their own yFiles for HTML powered applications. Use of such programs is
+     // governed by the rights and conditions as set out in the yFiles for HTML
+     // license agreement.
+     //
+     // THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+     // WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+     // MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+     // NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+     // SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+     // TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+     // PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+     // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+     // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+     // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+     // 
+     ////////////////////////////////////////////////////////////////////////-->
+
+  <title>Data Table Demo [yFiles for HTML]</title>
+
+  <link rel="stylesheet" href="../../../lib/yfiles.css">
+  <link rel="stylesheet" href="../../resources/style/demo.css">
+
+  <!-- enable debugging -->
+  <script src="../../../ide-support/yfiles-typeinfo.js"></script>
+
+  <style type="text/css">
+    .myTableNode.background {
+      stroke: none;
+      fill: #80B0E8;
+    }
+
+    .myTableNode.grid, .myTableNode.border {
+      stroke-width: 1;
+      stroke: #000000;
+      fill: none;;
+    }
+
+    .myTableNode.border {
+      stroke-width: 2;
+    }
+
+    .myTableLabel.background {
+      stroke: none;
+      fill: #e8c21f;
+    }
+
+    .myTableLabel.grid, .myTableLabel.border {
+      stroke-width: 1;
+      stroke: #2446a3;
+      fill: none;;
+    }
+
+    .myTableLabel.border {
+      stroke-width: 2;
+    }
+  </style>
+</head>
+</head>
+<body class="demo-has-left">
+<!--
+  The sidebar for description text
+  -->
+<aside class="demo-sidebar demo-left demo-description">
+  <h1 class="demo-sidebar-header">Description</h1>
+  <div class="demo-sidebar-content">
+
+    <p>This demo shows a node style and a label style that display data in a tabular fashion.</p>
+
+    <h2>Things to Try</h2>
+
+    <ul>
+      <li>
+        Resize a node: Its content is clipped on its bounds.
+      </li>
+      <li>
+        Toggle labels for all nodes with the toolbar button.
+      </li>
+    </ul>
+
+    <h2>Description</h2>
+
+    <ul>
+      <li>
+        Labels measure their content and resize to the minimum bounds.
+      </li>
+      <li>
+        The components of the tabular visualization can be styled with CSS.
+      </li>
+    </ul>
+  </div>
+</aside>
+
+<div class="demo-content">
+
+
+  <div class="demo-toolbar">
+
+    <button data-command="New" title="New" class="demo-icon-yIconNew"></button>
+    <button data-command="Open" title="Open a GraphML file" class="demo-icon-yIconOpen"></button>
+    <button data-command="Save" title="Save a GraphML file" class="demo-icon-yIconSave"></button>
+
+    <span class="demo-separator"></span>
+
+    <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
+    <button data-command="ZoomOriginal" title="Zoom to original size" class="demo-icon-yIconZoomOriginal"></button>
+    <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
+    <button data-command="FitContent" title="Fit Content" class="demo-icon-yIconZoomFit"></button>
+
+    <span class="demo-separator"></span>
+
+    <button data-command="Cut" title="Cut" class="demo-icon-yIconCut"></button>
+    <button data-command="Copy" title="Copy" class="demo-icon-yIconCopy"></button>
+    <button data-command="Paste" title="Paste" class="demo-icon-yIconPaste"></button>
+    <button data-command="Delete" title="Delete" class="demo-icon-yIconDelete"></button>
+
+    <span class="demo-separator"></span>
+
+    <button data-command="Undo" title="Undo" class="demo-icon-yIconUndo"></button>
+    <button data-command="Redo" title="Redo" class="demo-icon-yIconRedo"></button>
+
+    <span class="demo-separator"></span>
+
+    <input type="checkbox" id="ToggleLabels" class="demo-toggle-button labeled" title="Toggle Labels"
+        data-command="ToggleLabels"/><label for="ToggleLabels">Toggle Labels</label>
+
+  </div>
+
+  <div id="graphComponent"></div>
+</div>
+
+<script src="../../resources/require.js"></script>
+<script src="DataTableDemo.js"></script>
+
+</body>
+</html>

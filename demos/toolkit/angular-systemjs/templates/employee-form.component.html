@@ -1,0 +1,30 @@
+<div>
+  <form (ngSubmit)="onSubmit()">
+    <div>
+      <label for="name">Name</label>
+      <input type="text" id="name" [(ngModel)]="nodeData.name" name="name">
+    </div>
+    <div>
+      <label for="position">Position</label>
+      <input type="text" id="position" [(ngModel)]="nodeData.position" name="position">
+    </div>
+    <div>
+      <label for="email">E-mail</label>
+      <input type="text" id="email" [(ngModel)]="nodeData.email" name="email">
+    </div>
+    <div>
+      <label for="phone">Phone</label>
+      <input type="text" id="phone" [(ngModel)]="nodeData.phone" name="phone">
+    </div>
+    <div>
+      <label for="fax">Fax</label>
+      <input type="text" id="fax" [(ngModel)]="nodeData.fax" name="fax">
+    </div>
+    <div>
+      <label for="businessUnit">Business Unit</label>
+      <select id="businessUnit" [(ngModel)]="nodeData.businessUnit" name="businessUnit">
+        <option *ngFor="let bu of businessUnits" [value]="bu">{{bu}}</option>
+      </select>
+    </div>
+  </form>
+</div>

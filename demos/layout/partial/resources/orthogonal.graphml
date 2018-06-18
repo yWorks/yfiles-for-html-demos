@@ -1,0 +1,564 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- ////////////////////////////////////////////////////////////////////////
+     // @license
+     // This demo file is part of yFiles for HTML 2.1.
+     // Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // 72070 Tuebingen, Germany. All rights reserved.
+     //
+     // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+     // of demo files in source code or binary form, with or without
+     // modification, is not permitted.
+     //
+     // Owners of a valid software license for a yFiles for HTML version that this
+     // demo is shipped with are allowed to use the demo source code as basis
+     // for their own yFiles for HTML powered applications. Use of such programs is
+     // governed by the rights and conditions as set out in the yFiles for HTML
+     // license agreement.
+     //
+     // THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+     // WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+     // MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+     // NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+     // SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+     // TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+     // PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+     // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+     // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+     // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+     // 
+     ////////////////////////////////////////////////////////////////////////-->
+
+<graphml
+    xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://www.yworks.com/xml/schema/graphml.html/2.0/ygraphml.xsd "
+    xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:x="http://www.yworks.com/xml/yfiles-common/markup/3.0"
+    xmlns:y="http://www.yworks.com/xml/yfiles-common/3.0" xmlns:yjs="http://www.yworks.com/xml/yfiles-for-html/2.0/xaml"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <key id="d0" for="all" attr.name="UserTags" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/UserTags"/>
+  <key id="d1" for="node" attr.type="boolean" attr.name="AffectedNodesDpKey">
+    <default>false</default>
+  </key>
+  <key id="d2" for="node" attr.name="NodeLabels" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/NodeLabels"/>
+  <key id="d3" for="node" attr.name="NodeGeometry"
+       y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/NodeGeometry"/>
+  <key id="d5" for="node" attr.type="boolean" attr.name="Expanded"
+       y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/folding/Expanded">
+    <default>true</default>
+  </key>
+  <key id="d6" for="node" attr.name="NodeViewState"
+       y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/folding/1.1/NodeViewState"/>
+  <key id="d7" for="edge" attr.type="boolean" attr.name="AffectedEdgesDpKey">
+    <default>false</default>
+  </key>
+  <key id="d8" for="edge" attr.name="EdgeLabels" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/EdgeLabels"/>
+  <key id="d9" for="edge" attr.name="EdgeGeometry"
+       y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/EdgeGeometry"/>
+  <key id="d11" for="edge" attr.name="EdgeViewState"
+       y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/folding/1.1/EdgeViewState"/>
+  <key id="d12" for="port" attr.name="PortLocationParameter"
+       y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/PortLocationParameter">
+    <default>
+      <x:Static Member="y:FreeNodePortLocationModel.NodeCenterAnchored"/>
+    </default>
+  </key>
+  <key id="d14" for="port" attr.name="PortViewState"
+       y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/folding/1.1/PortViewState"/>
+  <graph id="G" edgedefault="directed">
+    <node id="n0">
+      <data key="d3">
+        <y:RectD X="233.45624999999995" Y="-597" Width="60" Height="30"/>
+      </data>
+      <data key="d2">
+        <x:List>
+          <y:Label PreferredSize="7,14">
+            <y:Label.Text>1</y:Label.Text>
+          </y:Label>
+        </x:List>
+      </data>
+      <port name="p0">
+        <data key="d12">
+          <y:FreeNodePortLocationModelParameter Ratio="0.5,0"/>
+        </data>
+      </port>
+      <port name="p1">
+        <data key="d12">
+          <y:FreeNodePortLocationModelParameter Ratio="0.5,1"/>
+        </data>
+      </port>
+      <port name="p2"/>
+    </node>
+    <node id="n1">
+      <data key="d3">
+        <y:RectD X="233.45624999999995" Y="-687" Width="60" Height="30"/>
+      </data>
+      <data key="d2">
+        <x:List>
+          <y:Label PreferredSize="7,14">
+            <y:Label.Text>2</y:Label.Text>
+          </y:Label>
+        </x:List>
+      </data>
+      <port name="p0">
+        <data key="d12">
+          <y:FreeNodePortLocationModelParameter Ratio="0.5,1"/>
+        </data>
+      </port>
+      <port name="p1">
+        <data key="d12">
+          <y:FreeNodePortLocationModelParameter Ratio="1,0.5"/>
+        </data>
+      </port>
+      <port name="p2"/>
+    </node>
+    <node id="n2">
+      <data key="d3">
+        <y:RectD X="233.45624999999995" Y="-507" Width="60" Height="30"/>
+      </data>
+      <data key="d2">
+        <x:List>
+          <y:Label PreferredSize="7,14">
+            <y:Label.Text>3</y:Label.Text>
+          </y:Label>
+        </x:List>
+      </data>
+      <port name="p0">
+        <data key="d12">
+          <y:FreeNodePortLocationModelParameter Ratio="0.5,0"/>
+        </data>
+      </port>
+      <port name="p1"/>
+      <port name="p2">
+        <data key="d12">
+          <y:FreeNodePortLocationModelParameter Ratio="0.5,1"/>
+        </data>
+      </port>
+      <port name="p3">
+        <data key="d12">
+          <y:FreeNodePortLocationModelParameter Ratio="1,0.5"/>
+        </data>
+      </port>
+    </node>
+    <node id="n3">
+      <data key="d3">
+        <y:RectD X="323.45624999999995" Y="-687" Width="60" Height="30"/>
+      </data>
+      <data key="d2">
+        <x:List>
+          <y:Label PreferredSize="7,14">
+            <y:Label.Text>5</y:Label.Text>
+          </y:Label>
+        </x:List>
+      </data>
+      <port name="p0">
+        <data key="d12">
+          <y:FreeNodePortLocationModelParameter Ratio="0,0.5"/>
+        </data>
+      </port>
+      <port name="p1">
+        <data key="d12">
+          <y:FreeNodePortLocationModelParameter Ratio="0.5,1"/>
+        </data>
+      </port>
+    </node>
+    <node id="n4">
+      <data key="d3">
+        <y:RectD X="323.45624999999995" Y="-507" Width="60" Height="30"/>
+      </data>
+      <data key="d2">
+        <x:List>
+          <y:Label PreferredSize="7,14">
+            <y:Label.Text>9</y:Label.Text>
+          </y:Label>
+        </x:List>
+      </data>
+      <port name="p0">
+        <data key="d12">
+          <y:FreeNodePortLocationModelParameter Ratio="0.5,0"/>
+        </data>
+      </port>
+      <port name="p1">
+        <data key="d12">
+          <y:FreeNodePortLocationModelParameter Ratio="0,0.5"/>
+        </data>
+      </port>
+    </node>
+    <node id="n5">
+      <data key="d3">
+        <y:RectD X="233.45624999999995" Y="-417" Width="60" Height="30"/>
+      </data>
+      <data key="d2">
+        <x:List>
+          <y:Label PreferredSize="14,14">
+            <y:Label.Text>10</y:Label.Text>
+          </y:Label>
+        </x:List>
+      </data>
+      <port name="p0">
+        <data key="d12">
+          <y:FreeNodePortLocationModelParameter Ratio="0.5,0"/>
+        </data>
+      </port>
+      <port name="p1"/>
+      <port name="p2"/>
+    </node>
+    <node id="n6">
+      <data key="d3">
+        <y:RectD X="-186.54375000000005" Y="-705" Width="330" Height="413"/>
+      </data>
+      <data key="d2">
+        <x:List>
+          <y:Label PreferredSize="34,14">
+            <y:Label.Text>Group</y:Label.Text>
+          </y:Label>
+        </x:List>
+      </data>
+      <graph id="n6:" edgedefault="directed">
+        <node id="n6::n0">
+          <data key="d3">
+            <y:RectD X="-19.543750000000045" Y="-569" Width="60" Height="30"/>
+          </data>
+          <data key="d2">
+            <x:List>
+              <y:Label PreferredSize="7,14">
+                <y:Label.Text>4</y:Label.Text>
+              </y:Label>
+            </x:List>
+          </data>
+          <port name="p0"/>
+          <port name="p1">
+            <data key="d12">
+              <y:FreeNodePortLocationModelParameter Ratio="0.5,0"/>
+            </data>
+          </port>
+          <port name="p2">
+            <data key="d12">
+              <y:FreeNodePortLocationModelParameter Ratio="1,0.5"/>
+            </data>
+          </port>
+          <port name="p3"/>
+        </node>
+        <node id="n6::n1">
+          <data key="d3">
+            <y:RectD X="-19.543750000000045" Y="-659" Width="60" Height="30"/>
+          </data>
+          <data key="d2">
+            <x:List>
+              <y:Label PreferredSize="7,14">
+                <y:Label.Text>6</y:Label.Text>
+              </y:Label>
+            </x:List>
+          </data>
+          <port name="p0">
+            <data key="d12">
+              <y:FreeNodePortLocationModelParameter Ratio="0.5,1"/>
+            </data>
+          </port>
+          <port name="p1">
+            <data key="d12">
+              <y:FreeNodePortLocationModelParameter Ratio="1,0.5"/>
+            </data>
+          </port>
+        </node>
+        <node id="n6::n2">
+          <data key="d3">
+            <y:RectD X="70.456249999999955" Y="-659" Width="60" Height="30"/>
+          </data>
+          <data key="d2">
+            <x:List>
+              <y:Label PreferredSize="7,14">
+                <y:Label.Text>7</y:Label.Text>
+              </y:Label>
+            </x:List>
+          </data>
+          <port name="p0">
+            <data key="d12">
+              <y:FreeNodePortLocationModelParameter Ratio="0.5,1"/>
+            </data>
+          </port>
+          <port name="p1">
+            <data key="d12">
+              <y:FreeNodePortLocationModelParameter Ratio="0,0.5"/>
+            </data>
+          </port>
+          <port name="p2"/>
+        </node>
+        <node id="n6::n3">
+          <data key="d3">
+            <y:RectD X="70.456249999999955" Y="-569" Width="60" Height="30"/>
+          </data>
+          <data key="d2">
+            <x:List>
+              <y:Label PreferredSize="7,14">
+                <y:Label.Text>8</y:Label.Text>
+              </y:Label>
+            </x:List>
+          </data>
+          <port name="p0">
+            <data key="d12">
+              <y:FreeNodePortLocationModelParameter Ratio="0.5,0"/>
+            </data>
+          </port>
+          <port name="p1">
+            <data key="d12">
+              <y:FreeNodePortLocationModelParameter Ratio="0,0.5"/>
+            </data>
+          </port>
+          <port name="p2"/>
+        </node>
+        <node id="n6::n4">
+          <data key="d3">
+            <y:RectD X="-17.543750000000045" Y="-417" Width="60" Height="30"/>
+          </data>
+          <data key="d2">
+            <x:List>
+              <y:Label PreferredSize="14,14">
+                <y:Label.Text>13</y:Label.Text>
+              </y:Label>
+            </x:List>
+          </data>
+          <port name="p0"/>
+          <port name="p1"/>
+          <port name="p2"/>
+        </node>
+        <node id="n6::n5">
+          <data key="d3">
+            <y:RectD X="72.456249999999955" Y="-417" Width="60" Height="30"/>
+          </data>
+          <data key="d2">
+            <x:List>
+              <y:Label PreferredSize="14,14">
+                <y:Label.Text>14</y:Label.Text>
+              </y:Label>
+            </x:List>
+          </data>
+          <port name="p0"/>
+          <port name="p1"/>
+        </node>
+        <node id="n6::n6">
+          <data key="d3">
+            <y:RectD X="-17.543750000000045" Y="-327" Width="60" Height="30"/>
+          </data>
+          <data key="d2">
+            <x:List>
+              <y:Label PreferredSize="14,14">
+                <y:Label.Text>15</y:Label.Text>
+              </y:Label>
+            </x:List>
+          </data>
+          <port name="p0"/>
+          <port name="p1"/>
+        </node>
+        <node id="n6::n7">
+          <data key="d3">
+            <y:RectD X="-166.44759165494906" Y="-366.37489271831453" Width="60" Height="30"/>
+          </data>
+          <data key="d1">true</data>
+          <data key="d2">
+            <x:List>
+              <y:Label PreferredSize="13,14">
+                <y:Label.Text>11</y:Label.Text>
+              </y:Label>
+            </x:List>
+          </data>
+          <port name="p0"/>
+          <port name="p1"/>
+        </node>
+        <edge id="n6::e0" source="n6::n0" target="n6::n1" sourceport="p1" targetport="p0">
+        </edge>
+        <edge id="n6::e1" source="n6::n2" target="n6::n3" sourceport="p0" targetport="p0">
+        </edge>
+        <edge id="n6::e2" source="n6::n3" target="n6::n0" sourceport="p1" targetport="p2">
+        </edge>
+        <edge id="n6::e3" source="n6::n2" target="n6::n1" sourceport="p1" targetport="p1">
+        </edge>
+        <edge id="n6::e4" source="n6::n4" target="n6::n5" sourceport="p0" targetport="p0">
+        </edge>
+        <edge id="n6::e5" source="n6::n4" target="n6::n6" sourceport="p1" targetport="p0">
+        </edge>
+        <edge id="n6::e6" source="n6::n7" target="n6::n4" sourceport="p1" targetport="p2">
+        </edge>
+      </graph>
+    </node>
+    <node id="n7">
+      <data key="d3">
+        <y:RectD X="-17.543750000000045" Y="-237" Width="60" Height="30"/>
+      </data>
+      <data key="d2">
+        <x:List>
+          <y:Label PreferredSize="14,14">
+            <y:Label.Text>16</y:Label.Text>
+          </y:Label>
+        </x:List>
+      </data>
+      <port name="p0"/>
+    </node>
+    <node id="n8">
+      <data key="d3">
+        <y:RectD X="-361.9967954011255" Y="-641.04600454503316" Width="60" Height="30"/>
+      </data>
+      <data key="d1">true</data>
+      <data key="d2">
+        <x:List>
+          <y:Label PreferredSize="14,14">
+            <y:Label.Text>17</y:Label.Text>
+          </y:Label>
+        </x:List>
+      </data>
+      <port name="p0"/>
+      <port name="p1"/>
+    </node>
+    <node id="n9">
+      <data key="d3">
+        <y:RectD X="-471.12193382780708" Y="-577.86829282432268" Width="60" Height="30"/>
+      </data>
+      <data key="d1">true</data>
+      <data key="d2">
+        <x:List>
+          <y:Label PreferredSize="14,14">
+            <y:Label.Text>18</y:Label.Text>
+          </y:Label>
+        </x:List>
+      </data>
+      <port name="p0"/>
+      <port name="p1"/>
+    </node>
+    <node id="n10">
+      <data key="d3">
+        <y:RectD X="-600.1799859339294" Y="-530.69058110361232" Width="322.71084688284162" Height="317.49507489463315"/>
+      </data>
+      <data key="d1">true</data>
+      <data key="d2">
+        <x:List>
+          <y:Label PreferredSize="34,14">
+            <y:Label.Text>Group</y:Label.Text>
+          </y:Label>
+        </x:List>
+      </data>
+      <graph id="n10:" edgedefault="directed">
+        <node id="n10::n0">
+          <data key="d3">
+            <y:RectD X="-551.5299305632567" Y="-449.21549804760332" Width="60" Height="30"/>
+          </data>
+          <data key="d1">true</data>
+          <data key="d2">
+            <x:List>
+              <y:Label PreferredSize="14,14">
+                <y:Label.Text>19</y:Label.Text>
+              </y:Label>
+            </x:List>
+          </data>
+          <port name="p0"/>
+          <port name="p1"/>
+          <port name="p2"/>
+        </node>
+        <node id="n10::n1">
+          <data key="d3">
+            <y:RectD X="-379.22708041586469" Y="-497.46029608887306" Width="60" Height="30"/>
+          </data>
+          <data key="d1">true</data>
+          <data key="d2">
+            <x:List>
+              <y:Label PreferredSize="14,14">
+                <y:Label.Text>20</y:Label.Text>
+              </y:Label>
+            </x:List>
+          </data>
+          <port name="p0"/>
+          <port name="p1"/>
+          <port name="p2"/>
+        </node>
+        <node id="n10::n2">
+          <data key="d3">
+            <y:RectD X="-428.62056412478375" Y="-356.17195896801161" Width="60" Height="30"/>
+          </data>
+          <data key="d1">true</data>
+          <data key="d2">
+            <x:List>
+              <y:Label PreferredSize="14,14">
+                <y:Label.Text>21</y:Label.Text>
+              </y:Label>
+            </x:List>
+          </data>
+          <port name="p0"/>
+          <port name="p1"/>
+        </node>
+        <node id="n10::n3">
+          <data key="d3">
+            <y:RectD X="-532.00227421321893" Y="-301.03504692084607" Width="60" Height="30"/>
+          </data>
+          <data key="d1">true</data>
+          <data key="d2">
+            <x:List>
+              <y:Label PreferredSize="14,14">
+                <y:Label.Text>22</y:Label.Text>
+              </y:Label>
+            </x:List>
+          </data>
+          <port name="p0"/>
+          <port name="p1"/>
+          <port name="p2"/>
+        </node>
+        <node id="n10::n4">
+          <data key="d3">
+            <y:RectD X="-378.07839474821543" Y="-263.1284198884199" Width="60" Height="30"/>
+          </data>
+          <data key="d1">true</data>
+          <data key="d2">
+            <x:List>
+              <y:Label PreferredSize="14,14">
+                <y:Label.Text>23</y:Label.Text>
+              </y:Label>
+            </x:List>
+          </data>
+          <port name="p0"/>
+          <port name="p1"/>
+        </node>
+        <edge id="n10::e0" source="n10::n0" target="n10::n3" sourceport="p0" targetport="p0">
+        </edge>
+        <edge id="n10::e1" source="n10::n3" target="n10::n2" sourceport="p1" targetport="p0">
+        </edge>
+        <edge id="n10::e2" source="n10::n3" target="n10::n4" sourceport="p2" targetport="p0">
+        </edge>
+        <edge id="n10::e3" source="n10::n1" target="n10::n2" sourceport="p0" targetport="p1">
+        </edge>
+        <edge id="n10::e4" source="n10::n0" target="n10::n1" sourceport="p1" targetport="p1">
+        </edge>
+      </graph>
+    </node>
+    <edge id="e0" source="n0" target="n1" sourceport="p0" targetport="p0">
+    </edge>
+    <edge id="e1" source="n0" target="n2" sourceport="p1" targetport="p0">
+    </edge>
+    <edge id="e2" source="n2" target="n6::n0" sourceport="p1" targetport="p0">
+      <data key="d7">true</data>
+    </edge>
+    <edge id="e3" source="n1" target="n3" sourceport="p1" targetport="p0">
+    </edge>
+    <edge id="e4" source="n4" target="n3" sourceport="p0" targetport="p1">
+    </edge>
+    <edge id="e5" source="n5" target="n2" sourceport="p0" targetport="p2">
+    </edge>
+    <edge id="e6" source="n2" target="n4" sourceport="p3" targetport="p1">
+    </edge>
+    <edge id="e7" source="n1" target="n6::n2" sourceport="p2" targetport="p2">
+      <data key="d7">true</data>
+    </edge>
+    <edge id="e8" source="n0" target="n6::n3" sourceport="p2" targetport="p2">
+      <data key="d7">true</data>
+    </edge>
+    <edge id="e9" source="n6::n6" target="n7" sourceport="p1" targetport="p0">
+    </edge>
+    <edge id="e10" source="n5" target="n6::n5" sourceport="p1" targetport="p1">
+      <data key="d7">true</data>
+    </edge>
+    <edge id="e11" source="n6::n0" target="n8" sourceport="p3" targetport="p0">
+    </edge>
+    <edge id="e12" source="n8" target="n9" sourceport="p1" targetport="p0">
+    </edge>
+    <edge id="e13" source="n10::n1" target="n6::n7" sourceport="p2" targetport="p0">
+    </edge>
+    <edge id="e14" source="n10::n4" target="n5" sourceport="p1" targetport="p2">
+    </edge>
+    <edge id="e15" source="n10::n0" target="n9" sourceport="p2" targetport="p1">
+    </edge>
+  </graph>
+</graphml>

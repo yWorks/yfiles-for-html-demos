@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <!--
+    This document is used by the PrintingSupport as target for the generated SVG elements.
+    Using a real document instead of 'about:blank' has the advantage that relative URLs in
+    the styles of the graph items still work. -->
+  <style type="text/css">
+    .pagebreak { display: block; page-break-after: always; }
+  </style>
+</head>
+<body>
+<script>
+  // wait until the web page has finished loading
+  setTimeout(function() {
+    try {
+      window.opener.addPrintDom(window);
+    } catch (e) {
+      // check if the browser complains about cross-origin page access
+      // this is the case for Chrome if the demo is run from the local filesystem.
+      if (e.message.indexOf('cross', 0) >= 0) {
+        alert(
+          'Cannot modify the printing window due to cross-origin policies in effect. Try running the demo from a server!');
+      } else {
+        alert('There was an error during printing! '+ e.message);
+      }
+    }
+  }, 400);
+</script>
+</body>
+</html>

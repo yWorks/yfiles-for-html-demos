@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- ////////////////////////////////////////////////////////////////////////
+     // @license
+     // This demo file is part of yFiles for HTML 2.1.
+     // Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // 72070 Tuebingen, Germany. All rights reserved.
+     //
+     // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+     // of demo files in source code or binary form, with or without
+     // modification, is not permitted.
+     //
+     // Owners of a valid software license for a yFiles for HTML version that this
+     // demo is shipped with are allowed to use the demo source code as basis
+     // for their own yFiles for HTML powered applications. Use of such programs is
+     // governed by the rights and conditions as set out in the yFiles for HTML
+     // license agreement.
+     //
+     // THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+     // WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+     // MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+     // NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+     // SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+     // TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+     // PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+     // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+     // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+     // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+     // 
+     ////////////////////////////////////////////////////////////////////////-->
+
+<graphml xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://www.yworks.com/xml/schema/graphml.html/2.0/ygraphml.xsd " xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:x="http://www.yworks.com/xml/yfiles-common/markup/3.0" xmlns:y="http://www.yworks.com/xml/yfiles-common/3.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:yjs="http://www.yworks.com/xml/yfiles-for-html/2.0/xaml">
+	<key id="d2" for="node" attr.name="NodeGeometry" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/NodeGeometry"/>
+	<graph id="G" edgedefault="directed">
+		<node id="n0">
+			<data key="d2">
+				<y:RectD X="268.9088564712887" Y="246.896466991088" Width="30" Height="30"/>
+			</data>
+			<port name="p0"/>
+			<port name="p1"/>
+			<port name="p2"/>
+			<port name="p3"/>
+			<port name="p4"/>
+			<port name="p5"/>
+			<port name="p6"/>
+			<port name="p7"/>
+			<port name="p8"/>
+			<port name="p9"/>
+			<port name="p10"/>
+		</node>
+		<node id="n1">
+			<data key="d2">
+				<y:RectD X="488.00062683270835" Y="472.54559909672537" Width="30" Height="30"/>
+			</data>
+			<port name="p0"/>
+			<port name="p1"/>
+			<port name="p2"/>
+			<port name="p3"/>
+			<port name="p4"/>
+			<port name="p5"/>
+			<port name="p6"/>
+			<port name="p7"/>
+			<port name="p8"/>
+		</node>
+		<node id="n2">
+			<data key="d2">
+				<y:RectD X="172.90885647128857" Y="333.896466991088" Width="30" Height="30"/>
+			</data>
+			<data key="d3">
+				<y:GraphMLReference ResourceKey="3"/>
+			</data>
+			<port name="p0"/>
+			<port name="p1"/>
+			<port name="p2"/>
+			<port name="p3"/>
+			<port name="p4"/>
+			<port name="p5"/>
+			<port name="p6"/>
+			<port name="p7"/>
+			<port name="p8"/>
+		</node>
+		<node id="n3">
+			<data key="d2">
+				<y:RectD X="423.00062683270835" Y="161.54559909672537" Width="30" Height="30"/>
+			</data>
+			<data key="d3">
+				<y:GraphMLReference ResourceKey="3"/>
+			</data>
+			<port name="p0"/>
+			<port name="p1"/>
+			<port name="p2"/>
+			<port name="p3"/>
+			<port name="p4"/>
+			<port name="p5"/>
+			<port name="p6"/>
+			<port name="p7"/>
+			<port name="p8"/>
+		</node>
+		<node id="n4">
+			<data key="d2">
+				<y:RectD X="348.95474165199846" Y="244.04559909672537" Width="30" Height="30"/>
+			</data>
+			<port name="p0"/>
+			<port name="p1"/>
+			<port name="p2"/>
+			<port name="p3"/>
+			<port name="p4"/>
+			<port name="p5"/>
+			<port name="p6"/>
+			<port name="p7"/>
+		</node>
+		<node id="n5">
+			<data key="d2">
+				<y:RectD X="348.95474165199846" Y="333.896466991088" Width="30" Height="30"/>
+			</data>
+			<port name="p0"/>
+			<port name="p1"/>
+			<port name="p2"/>
+			<port name="p3"/>
+			<port name="p4"/>
+		</node>
+		<node id="n6">
+			<data key="d2">
+				<y:RectD X="172.90885647128857" Y="472.54559909672537" Width="30" Height="30"/>
+			</data>
+			<port name="p0"/>
+			<port name="p1"/>
+			<port name="p2"/>
+		</node>
+		<node id="n7">
+			<data key="d2">
+				<y:RectD X="423.00062683270835" Y="333.896466991088" Width="30" Height="30"/>
+			</data>
+			<port name="p0"/>
+			<port name="p1"/>
+			<port name="p2"/>
+		</node>
+		<node id="n8">
+			<data key="d2">
+				<y:RectD X="348.95474165199846" Y="412.2210330439067" Width="30" Height="30"/>
+			</data>
+			<port name="p0"/>
+			<port name="p1"/>
+		</node>
+		<node id="n9">
+			<data key="d2">
+				<y:RectD X="172.90885647128857" Y="412.2210330439067" Width="95" Height="30"/>
+			</data>
+			<port name="p0"/>
+			<port name="p1"/>
+			<port name="p2"/>
+			<port name="p3"/>
+		</node>
+		<node id="n10">
+			<data key="d2">
+				<y:RectD X="113.45474165199846" Y="412.2210330439067" Width="30" Height="30"/>
+			</data>
+			<port name="p0"/>
+		</node>
+		<node id="n11">
+			<data key="d2">
+				<y:RectD X="54.00062683270835" Y="412.2210330439067" Width="30" Height="30"/>
+			</data>
+			<port name="p0"/>
+			<port name="p1"/>
+			<port name="p2"/>
+			<port name="p3"/>
+			<port name="p4"/>
+		</node>
+		<node id="n12">
+			<data key="d2">
+				<y:RectD X="423.00062683270835" Y="412.2210330439067" Width="30" Height="30"/>
+			</data>
+			<port name="p0"/>
+			<port name="p1"/>
+		</node>
+		<node id="n13">
+			<data key="d2">
+				<y:RectD X="113.45474165199846" Y="246.896466991088" Width="30" Height="30"/>
+			</data>
+			<port name="p0"/>
+			<port name="p1"/>
+			<port name="p2"/>
+		</node>
+		<edge id="e0" source="n0" target="n1" sourceport="p0" targetport="p0"/>
+		<edge id="e1" source="n0" target="n1" sourceport="p1" targetport="p1"/>
+		<edge id="e2" source="n0" target="n1" sourceport="p2" targetport="p2"/>
+		<edge id="e3" source="n2" target="n3" sourceport="p0" targetport="p0"/>
+		<edge id="e4" source="n2" target="n3" sourceport="p1" targetport="p1"/>
+		<edge id="e5" source="n2" target="n3" sourceport="p2" targetport="p2"/>
+		<edge id="e6" source="n2" target="n0" sourceport="p3" targetport="p3"/>
+		<edge id="e7" source="n2" target="n0" sourceport="p4" targetport="p4"/>
+		<edge id="e8" source="n2" target="n1" sourceport="p5" targetport="p3"/>
+		<edge id="e9" source="n2" target="n1" sourceport="p6" targetport="p4"/>
+		<edge id="e10" source="n1" target="n3" sourceport="p5" targetport="p3"/>
+		<edge id="e11" source="n1" target="n3" sourceport="p6" targetport="p4"/>
+		<edge id="e12" source="n4" target="n3" sourceport="p0" targetport="p5"/>
+		<edge id="e13" source="n3" target="n4" sourceport="p6" targetport="p1"/>
+		<edge id="e14" source="n4" target="n5" sourceport="p2" targetport="p0"/>
+		<edge id="e15" source="n5" target="n4" sourceport="p1" targetport="p3"/>
+		<edge id="e16" source="n4" target="n0" sourceport="p4" targetport="p5"/>
+		<edge id="e17" source="n0" target="n4" sourceport="p6" targetport="p5"/>
+		<edge id="e18" source="n4" target="n0" sourceport="p6" targetport="p7"/>
+		<edge id="e19" source="n5" target="n1" sourceport="p2" targetport="p7"/>
+		<edge id="e20" source="n5" target="n1" sourceport="p3" targetport="p8"/>
+		<edge id="e21" source="n5" target="n7" sourceport="p4" targetport="p0"/>
+		<edge id="e22" source="n7" target="n3" sourceport="p1" targetport="p7"/>
+		<edge id="e23" source="n6" target="n2" sourceport="p0" targetport="p7"/>
+		<edge id="e24" source="n10" target="n9" sourceport="p0" targetport="p0"/>
+		<edge id="e25" source="n11" target="n6" sourceport="p0" targetport="p1"/>
+		<edge id="e26" source="n11" target="n2" sourceport="p1" targetport="p8"/>
+		<edge id="e27" source="n11" target="n3" sourceport="p2" targetport="p8"/>
+		<edge id="e28" source="n6" target="n9" sourceport="p2" targetport="p1"/>
+		<edge id="e29" source="n9" target="n11" sourceport="p2" targetport="p3"/>
+		<edge id="e30" source="n13" target="n0" sourceport="p0" targetport="p8"/>
+		<edge id="e31" source="n13" target="n0" sourceport="p1" targetport="p9"/>
+		<edge id="e32" source="n13" target="n0" sourceport="p2" targetport="p10"/>
+		<edge id="e33" source="n9" target="n11" sourceport="p3" targetport="p4"/>
+		<edge id="e34" source="n8" target="n12" sourceport="p0" targetport="p0"/>
+		<edge id="e35" source="n12" target="n8" sourceport="p1" targetport="p1"/>
+		<edge id="e36" source="n4" target="n7" sourceport="p7" targetport="p2"/>
+	</graph>
+</graphml>

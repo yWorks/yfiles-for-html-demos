@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+
+<!-- ////////////////////////////////////////////////////////////////////////
+     // @license
+     // This demo file is part of yFiles for HTML 2.1.
+     // Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // 72070 Tuebingen, Germany. All rights reserved.
+     //
+     // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+     // of demo files in source code or binary form, with or without
+     // modification, is not permitted.
+     //
+     // Owners of a valid software license for a yFiles for HTML version that this
+     // demo is shipped with are allowed to use the demo source code as basis
+     // for their own yFiles for HTML powered applications. Use of such programs is
+     // governed by the rights and conditions as set out in the yFiles for HTML
+     // license agreement.
+     //
+     // THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+     // WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+     // MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+     // NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+     // SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+     // TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+     // PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+     // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+     // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+     // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+     // 
+     ////////////////////////////////////////////////////////////////////////-->
+
+  <title>Snapping Demo [yFiles for HTML]</title>
+
+  <link rel="stylesheet" href="../../../lib/yfiles.css">
+  <link rel="stylesheet" href="../../resources/style/demo.css">
+
+  <!-- enable debugging -->
+  <script src="../../../ide-support/yfiles-typeinfo.js"></script>
+
+</head>
+<body class="demo-has-left">
+<!--
+  The sidebar for the description text
+  -->
+<aside class="demo-sidebar demo-left">
+  <h1 class="demo-sidebar-header">Description</h1>
+  <div class="demo-sidebar-content">
+    <p>
+      This demo shows how the snapping feature can be customized.</p>
+
+    <p>
+      In addition to the default snapping features, it adds extra snap lines to the bounds of labels, lets the outline
+      of the star shaped nodes snap to grid points, and uses free additional snap lines nodes can snap to. </p>
+
+    <h2>Things to Try</h2>
+    <ul>
+      <li>
+        <p>
+          Move the topmost <em>orange node</em> and one of the <em>star shaped nodes</em> around and compare their
+          <em>different grid snapping behavior</em>. </p>
+
+        <p>
+          While an orange node only snaps to grid points with its center, a star shaped node snaps with all points of
+          its outline, but then again only to the grid points, not in between. </p>
+      </li>
+      <li>
+        Move the <em>unconnected orange node</em> close to an orthogonal node or edge label to snap it to the label's
+        bounds.
+      </li>
+      <li>
+        Move an <em>edge label</em> to a non-orthogonal edge segment to disable node snapping for this label. Nodes
+        cannot snap to non-orthogonal labels.
+      </li>
+      <li>
+        Move <em>node and and edge labels</em> along their owner's border/path to snap them to other particular
+        positions relative to the owner.
+      </li>
+      <li>
+        Move a node close to the <em>red snap lines</em> to snap it to these non-graph elements.
+      </li>
+      <li>
+        <em>Position of a red snap line</em> by dragging it around.
+      </li>
+    </ul>
+  </div>
+</aside>
+
+
+<div class="demo-content">
+  <!--The GraphComponent-->
+  <div id="graphComponent"></div>
+</div>
+
+<script src="../../resources/require.js"></script>
+<script src="CustomSnappingDemo.js"></script>
+
+</body>
+</html>

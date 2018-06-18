@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+
+<!-- ////////////////////////////////////////////////////////////////////////
+     // @license
+     // This demo file is part of yFiles for HTML 2.1.
+     // Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // 72070 Tuebingen, Germany. All rights reserved.
+     //
+     // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+     // of demo files in source code or binary form, with or without
+     // modification, is not permitted.
+     //
+     // Owners of a valid software license for a yFiles for HTML version that this
+     // demo is shipped with are allowed to use the demo source code as basis
+     // for their own yFiles for HTML powered applications. Use of such programs is
+     // governed by the rights and conditions as set out in the yFiles for HTML
+     // license agreement.
+     //
+     // THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+     // WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+     // MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+     // NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+     // SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+     // TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+     // PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+     // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+     // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+     // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+     // 
+     ////////////////////////////////////////////////////////////////////////-->
+
+  <title>Edge To Edge Demo [yFiles for HTML]</title>
+
+  <link rel="stylesheet" href="../../../lib/yfiles.css">
+  <link rel="stylesheet" href="../../resources/style/demo.css">
+
+  <!-- enable debugging -->
+  <script src="../../../ide-support/yfiles-typeinfo.js"></script>
+</head>
+</head>
+<body class="demo-has-left">
+<aside class="demo-sidebar demo-left demo-description">
+  <h1 class="demo-sidebar-header">Description</h1>
+  <div class="demo-sidebar-content">
+    <p>
+      This demo shows edge-to-edge connections. The input mode of this demo is configured to allow edges to connect
+      not only to nodes but also to edges.
+    </p>
+    <p>
+      This application also demonstrates how to provide port candidates at edges to allow interactive creation of
+      edge-to-edge connections. Please take a look at the code behind to observe some of the customization possibilities.
+    </p>
+
+    <h2>Things to Try</h2>
+    <ul>
+      <li>
+        Create a connection between a node and an edge by pressing the left mouse button on an unselected node and
+        dragging the edge onto another edge.
+      </li>
+      <li>
+        Create a connection between two edges by dragging the mouse from an edge onto another edge.
+      </li>
+      <li>
+        Hold down the shift modifier when moving the endpoints of an edge across another edge to create dynamic port
+        candidates that best match the mouse location.
+      </li>
+      <li>
+        Start dragging the mouse from various positions on an edge to observe that the best available port location
+        is chosen for the source port.
+      </li>
+      <li>
+        Re-connect an existing edge by selecting it and dragging the source or target onto another node or edge.
+      </li>
+      <li>
+        Try to re-connect an edge's source or target to itself or another edge that connects to the edge that is being
+        re-connected. There will be no port candidates since connecting an edge to itself or creating a mutual
+        dependency is forbidden in this demo.
+      </li>
+    </ul>
+    <p>
+      Please note that the bend creation gesture has been customized in this demo. Press the Shift button and drag the
+      mouse on an unselected edge to create a bend.
+    </p>
+  </div>
+</aside>
+
+<div class="demo-content">
+  <div class="demo-toolbar">
+    <button data-command="New" title="New" class="demo-icon-yIconNew"></button>
+
+    <span class="demo-separator"></span>
+
+    <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
+    <button data-command="ZoomOriginal" title="Zoom to original size" class="demo-icon-yIconZoomOriginal"></button>
+    <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
+    <button data-command="FitContent" title="Fit Content" class="demo-icon-yIconZoomFit"></button>
+
+    <span class="demo-separator"></span>
+
+    <button data-command="Cut" title="Cut" class="demo-icon-yIconCut"></button>
+    <button data-command="Copy" title="Copy" class="demo-icon-yIconCopy"></button>
+    <button data-command="Paste" title="Paste" class="demo-icon-yIconPaste"></button>
+    <button data-command="Delete" title="Delete" class="demo-icon-yIconDelete"></button>
+
+    <span class="demo-separator"></span>
+
+    <button data-command="Undo" title="Undo" class="demo-icon-yIconUndo"></button>
+    <button data-command="Redo" title="Redo" class="demo-icon-yIconRedo"></button>
+
+    <span class="demo-separator"></span>
+
+    <input type="checkbox" id="demo-snapping-button" class="demo-toggle-button">
+    <label for="demo-snapping-button"class="demo-icon-yIconSnapping" title="Snapping"></label>
+    <input type="checkbox" id="demo-orthogonal-editing-button"class="demo-toggle-button">
+    <label for="demo-orthogonal-editing-button"class="demo-icon-yIconOrthogonal" title="Enable Orthogonal Edges"></label>
+  </div>
+
+  <div id="graphComponent"></div>
+</div>
+
+<script src="../../resources/require.js"></script>
+<script src="EdgeToEdgeDemo.js"></script>
+
+</body>
+</html>

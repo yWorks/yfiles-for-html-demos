@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "target": "es6",
+    "module": "system",
+    "moduleResolution": "node",
+    "sourceMap": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "removeComments": false,
+    "noImplicitAny": false,
+    "allowSyntheticDefaultImports": true,
+    "outDir": "./build/"
+  },
+  "include": ["app/**/*", "../../../ide-support/yfiles-api-umd-webstorm.d.ts"],
+  "exclude": ["node_modules"]
+}

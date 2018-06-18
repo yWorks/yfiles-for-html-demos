@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+
+<!-- ////////////////////////////////////////////////////////////////////////
+     // @license
+     // This demo file is part of yFiles for HTML 2.1.
+     // Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // 72070 Tuebingen, Germany. All rights reserved.
+     //
+     // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+     // of demo files in source code or binary form, with or without
+     // modification, is not permitted.
+     //
+     // Owners of a valid software license for a yFiles for HTML version that this
+     // demo is shipped with are allowed to use the demo source code as basis
+     // for their own yFiles for HTML powered applications. Use of such programs is
+     // governed by the rights and conditions as set out in the yFiles for HTML
+     // license agreement.
+     //
+     // THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+     // WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+     // MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+     // NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+     // SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+     // TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+     // PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+     // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+     // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+     // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+     // 
+     ////////////////////////////////////////////////////////////////////////-->
+
+  <title>Reparent Handler Demo [yFiles for HTML]</title>
+
+  <link rel="stylesheet" href="../../../lib/yfiles.css">
+  <link rel="stylesheet" href="../../resources/style/demo.css">
+
+  <style type="text/css">
+    .firebrick {
+      fill: #B02222;
+    }
+
+    .green, .green-expanded .group-border {
+      fill: #008000;
+    }
+
+    .royalblue, .royalblue-expanded .group-border {
+      fill: #007FFF;
+    }
+  </style>
+
+  <!-- enable debugging -->
+  <script src="../../../ide-support/yfiles-typeinfo.js"></script>
+</head>
+<body class="demo-has-left">
+<aside class="demo-sidebar demo-left">
+  <h1 class="demo-sidebar-header">Description</h1>
+  <div class="demo-sidebar-content">
+
+    <p>This demo shows how reparenting of nodes can be customized.</p>
+
+    <p>This is done with a custom implementation of the interface <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.input.IReparentNodeHandler">yfiles.input.IReparentNodeHandler</a>
+      that is set as
+      default reparent handler of the input mode of the graph component. </p>
+
+    <h2>Things to Try</h2>
+
+    <p>Select and move a node. While dragging, press the <code>Shift</code> key to add or remove a node from a
+      group. Angled indicators are shown at the group's corners if adding or removing is possible.</p>
+
+    <h2>Node Types</h2>
+    <ul>
+      <li>
+        <em class="demo-red demo-bold">Red nodes</em> cannot be added to any group.
+      </li>
+      <li>
+        <em class="demo-green demo-bold">Green nodes</em> and <em class="demo-blue demo-bold">blue nodes</em> can
+        be added only to groups of the same color.
+      </li>
+      <li>
+        <em class="demo-green demo-bold">Green nodes</em> can be reparented without pressing the
+        <code>Shift</code> key.
+      </li>
+    </ul>
+  </div>
+</aside>
+
+<div class="demo-content">
+  <div id="graphComponent"></div>
+</div>
+
+<script src="../../resources/require.js"></script>
+<script src="ReparentHandlerDemo.js"></script>
+
+</body>
+</html>

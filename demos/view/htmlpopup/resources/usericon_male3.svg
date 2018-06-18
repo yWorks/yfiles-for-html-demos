@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg version="1.1" id="usericon_male3" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 width="57px" height="65px" viewBox="0 0 57 65" enable-background="new 0 0 57 65" xml:space="preserve">
+	 <defs>
+		<linearGradient id="SVGID_1_3" gradientUnits="userSpaceOnUse" x1="316.2227" y1="-3460.7012" x2="317.4636" y2="-3490.4995" gradientTransform="matrix(1 0 0 -1 -289.3398 -3438.7256)">
+			<stop  offset="0.2711" style="stop-color:#FFAB4F"/>
+			<stop  offset="1" style="stop-color:#FFD28F"/>
+		</linearGradient>
+		<radialGradient id="face_x5F_white_1_3" cx="317.4668" cy="-3462.4668" r="23.4253" fx="312.8971" fy="-3464.9565" gradientTransform="matrix(1 0 0 -1 -289.3398 -3438.7256)" gradientUnits="userSpaceOnUse">
+			<stop  offset="0" style="stop-color:#FFD28F"/>
+			<stop  offset="1" style="stop-color:#FFAB4F"/>
+		</radialGradient>
+		<linearGradient id="face_highlight_2_3" gradientUnits="userSpaceOnUse" x1="6756.1211" y1="-12676.7168" x2="6789.8862" y2="-12810.25" gradientTransform="matrix(0.275 0 0 -0.2733 -1833.4225 -3465.5386)">
+			<stop  offset="0" style="stop-color:#FFFFFF;stop-opacity:0.24"/>
+			<stop  offset="1" style="stop-color:#FFFFFF;stop-opacity:0.16"/>
+		</linearGradient>
+		<radialGradient id="collar_x5F_body_1_3" cx="304.8438" cy="-3493.9077" r="32.4003" gradientTransform="matrix(1 0 0 -1 -289.3398 -3438.7256)" gradientUnits="userSpaceOnUse">
+			<stop  offset="0" style="stop-color:#B0E8FF"/>
+			<stop  offset="1" style="stop-color:#74AEEE"/>
+		</radialGradient>
+		<radialGradient id="collar_x5F_r_1_3" cx="321.1826" cy="-3484.0352" r="9.2823" gradientTransform="matrix(1 0 0 -1 -289.3398 -3438.7256)" gradientUnits="userSpaceOnUse">
+			<stop  offset="0" style="stop-color:#80CCFF"/>
+			<stop  offset="1" style="stop-color:#74AEEE"/>
+		</radialGradient>
+		<radialGradient id="collar_x5F_l_1_3" cx="308.8203" cy="-3484.0762" r="9.2843" gradientTransform="matrix(1 0 0 -1 -289.3398 -3438.7256)" gradientUnits="userSpaceOnUse">
+			<stop  offset="0" style="stop-color:#80CCFF"/>
+			<stop  offset="1" style="stop-color:#74AEEE"/>
+		</radialGradient>
+		<radialGradient id="Knob2_1_3" cx="317.5723" cy="-2720.2617" r="0.9669" gradientTransform="matrix(1 0 0 -1 -289.4199 -2666.0342)" gradientUnits="userSpaceOnUse">
+			<stop  offset="0" style="stop-color:#80CCFF"/>
+			<stop  offset="1" style="stop-color:#74AEEE"/>
+		</radialGradient>
+		<radialGradient id="Knob1_1_3" cx="317.6104" cy="-2726.5029" r="0.9669" gradientTransform="matrix(1 0 0 -1 -289.4199 -2666.0342)" gradientUnits="userSpaceOnUse">
+			<stop  offset="0" style="stop-color:#80CCFF"/>
+			<stop  offset="1" style="stop-color:#74AEEE"/>
+		</radialGradient>
+		<radialGradient id="jacket_x5F_body_2_3" cx="303.0889" cy="-3493.0322" r="40.9197" gradientTransform="matrix(1 0 0 -1 -289.3398 -3438.7256)" gradientUnits="userSpaceOnUse">
+			<stop  offset="0" style="stop-color:#D0D0D0"/>
+			<stop  offset="1" style="stop-color:#9B9B9B"/>
+		</radialGradient>
+	 </defs>
+<g>
+	<path fill="url(#SVGID_1_3)" stroke="#ED9135" stroke-miterlimit="10" d="M49.752,49.239c-4.396-4.396-10.951-5.884-12.063-6.108
+		v-7.316H19.5c0,0,0.038,6.903,0,6.868c0,0-6.874,0.997-12.308,6.432c-5.592,5.592-6.47,11.67-6.47,11.67
+		c0,1.938,1.575,3.492,3.523,3.492h48.51c1.947,0,3.521-1.558,3.521-3.492C56.277,60.782,54.434,53.921,49.752,49.239z"/>
+	<path id="face_x5F_white_3_" fill="url(#face_x5F_white_1_3)" stroke="#ED9135" stroke-miterlimit="10" d="M43.898,21.371
+		c0.086,10.2-6.738,18.521-15.25,18.587c-8.5,0.067-15.464-8.147-15.55-18.345c-0.082-10.199,6.742-18.52,15.247-18.587
+		C36.85,2.959,43.813,11.172,43.898,21.371z"/>
+	<path id="face_highlight_1_" fill="url(#face_highlight_2_3)" d="M28.638,3.639c-6.035,0.047-10.747,4.493-12.787,10.386
+		c-0.664,1.919-0.294,4.043,0.98,5.629c2.73,3.398,5.729,6.283,9.461,8.088c3.137,1.518,7.535,2.385,11.893,1.247
+		c2.274-0.592,3.988-2.459,4.375-4.766c0.187-1.094,0.293-2.289,0.283-3.553C42.763,11.258,36.951,3.574,28.638,3.639z"/>
+	<path id="hair_x5F_gray_3_" fill="#ECECEC" stroke="#9B9B9B" stroke-linecap="round" stroke-linejoin="round" d="M20.5,11.264
+		c0,0,5.321,7.25,15,3.75c2.729-0.563,9.059,1.035,9.059,1.035S40.902-0.121,27.512,0.758C9.625,2.139,12.281,23.692,12.281,23.692
+		s2.768-0.684,5.036-4.802C18.291,17.12,20.5,11.264,20.5,11.264z"/>
+	<path id="collar_x5F_body_3_" fill="url(#collar_x5F_body_1_3)" stroke="#5491CF" d="M0.723,60.782c0,1.938,1.575,3.494,3.523,3.494
+		h48.51c1.947,0,3.521-1.559,3.521-3.494c0,0-1.845-6.86-6.525-11.543c-4.815-4.813-11.244-6.146-11.244-6.146
+		c-1.771,1.655-5.61,2.802-10.063,2.802c-4.453,0-8.292-1.146-10.063-2.802c0,0-5.755,0.586-11.189,6.021
+		C1.601,54.704,0.723,60.782,0.723,60.782z"/>
+	<path id="collar_x5F_r_3_" fill="url(#collar_x5F_r_1_3)" stroke="#5491CF" d="M38.382,39.396c0,0-0.574,2.369-3.013,4.441
+		c-2.108,1.795-5.783,2.072-5.783,2.072l3.974,6.217c0,0,2.957-1.637,5.009-3.848c1.922-2.072,1.37-5.479,1.37-5.479L38.382,39.396z
+		"/>
+	<path id="collar_x5F_l_3_" fill="url(#collar_x5F_l_1_3)" stroke="#5491CF" d="M18.853,39.437c0,0,0.576,2.369,3.012,4.441
+		c2.109,1.793,5.785,2.072,5.785,2.072l-3.974,6.217c0,0-2.957-1.637-5.007-3.851c-1.922-2.071-1.37-5.479-1.37-5.479L18.853,39.437
+		z"/>
+	<circle id="Knob2_3_" fill="url(#Knob2_1_3)" stroke="#5491CF" cx="28.48" cy="54.269" r="0.584"/>
+	<circle id="Knob1_3_" fill="url(#Knob1_1_3)" stroke="#5491CF" cx="28.52" cy="60.514" r="0.584"/>
+		<path id="jacket_x5F_body_1_" fill="url(#jacket_x5F_body_2_3)" stroke="#4B4B4B" stroke-linecap="round" stroke-linejoin="round" d="
+		M49.752,49.239c-4.434-4.434-10.223-5.91-11.112-6.117l-5.39,21.146h-8.858l-5.242-20.574c-0.286-0.19-0.543-0.393-0.767-0.602
+		c0,0-5.755,0.586-11.189,6.02c-5.592,5.592-6.47,11.67-6.47,11.67c0,1.938,1.575,3.494,3.523,3.494h48.51
+		c1.948,0,3.521-1.559,3.521-3.494C56.277,60.782,54.434,53.921,49.752,49.239z"/>
+	<polygon id="jacket_x5F_r_1_" fill="#9B9B9B" stroke="#4B4B4B" stroke-linecap="round" stroke-linejoin="round" points="
+		39.154,40.091 42.391,44.389 41.011,53.685 37.607,54.515 38.875,57.14 34.799,64.267 33.25,64.267 	"/>
+	<polygon id="jacket_x5F_l_1_" fill="#B2B2B2" stroke="#4B4B4B" stroke-linecap="round" stroke-linejoin="round" points="
+		18.486,40.091 15.25,44.389 16.632,53.685 20.034,54.515 18.767,57.14 22.844,64.267 24.392,64.267 	"/>
+	<path id="path5135_4_" fill="#ECECEC" stroke="#4B4B4B" d="M27.665,53.245c0,0-1.852,2.057-2.082,6.543
+		c-0.23,4.487,0,4.487,0,4.487h6.546c0,0,0.229,0.063-0.154-4.366c-0.4-4.604-2.389-6.668-2.389-6.668L27.665,53.245L27.665,53.245z
+		"/>
+	<path id="path5131_4_" fill="#ECECEC" stroke="#4B4B4B" d="M28.548,46.702h0.125l2.55,4.004c0.516,0.953-1.207,1.797-1.457,2.547
+		l-2.277-0.018c-0.242-0.762-2.26-1.369-1.477-2.585L28.548,46.702z"/>
+</g>
+</svg>

@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+
+<!-- ////////////////////////////////////////////////////////////////////////
+     // @license
+     // This demo file is part of yFiles for HTML 2.1.
+     // Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // 72070 Tuebingen, Germany. All rights reserved.
+     //
+     // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+     // of demo files in source code or binary form, with or without
+     // modification, is not permitted.
+     //
+     // Owners of a valid software license for a yFiles for HTML version that this
+     // demo is shipped with are allowed to use the demo source code as basis
+     // for their own yFiles for HTML powered applications. Use of such programs is
+     // governed by the rights and conditions as set out in the yFiles for HTML
+     // license agreement.
+     //
+     // THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+     // WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+     // MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+     // NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+     // SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+     // TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+     // PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+     // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+     // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+     // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+     // 
+     ////////////////////////////////////////////////////////////////////////-->
+
+  <title>Vue.js Template Node Style Demo [yFiles for HTML]</title>
+
+  <link rel="stylesheet" href="../../../lib/yfiles.css">
+  <link rel="stylesheet" href="../../resources/style/demo.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.33.0/codemirror.css"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.33.0/addon/dialog/dialog.css"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.33.0/addon/lint/lint.css"/>
+  <!-- load Vue.js, a helper package and the demo -->
+  <script src="https://unpkg.com/vue@2.5.13"></script>
+  <script src="https://unpkg.com/jsonlint@1.6.2"></script>
+
+  <!-- enable debugging -->
+  <script src="../../../ide-support/yfiles-typeinfo.js"></script>
+  <!--
+    Use require.js instead of the simple yFiles demo AMD loader implementation, so we can use
+    the "paths" configuration option for mapping remote modules.
+    -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.5/require.min.js"></script>
+
+  <style>
+    .editorText {
+      font-family: "Consolas", "Courier New", Courier, mono, serif;
+      font-size: 13px;
+    }
+
+    .right h2 {
+      margin: 1ex 1em 1ex 1ex;
+      display: inline-block;
+    }
+
+    .left {
+      width: 50%;
+      top: 60px;
+      position: absolute;
+      bottom: 0;
+      border-right: 4px solid #f7f7f7;
+    }
+
+    .right {
+      width: 49.8%;
+      position: absolute;
+      top: 100px;
+      bottom: 0;
+      right: 0;
+      background-color: #f7f7f7;
+      padding-right: 10px;
+    }
+
+    #templateEditorContainer {
+      height: 70%;
+    }
+
+    #tagEditorContainer {
+      height: 20%;
+    }
+
+    .CodeMirror {
+      height: 100%;
+    }
+
+    .error {
+      color: #ffffff;
+      font-size: 16px;
+      font-weight: bold;
+      vertical-align: b;
+      text-align: center;
+      height: 0;
+      box-sizing: border-box;
+      transition: all .2s ease-in-out;
+      margin-left: 1ex;
+    }
+
+    #template-text-area-error {
+      bottom: 250px;
+    }
+
+    #tag-text-area-error {
+      bottom: 15px;
+    }
+
+    .apply-button {
+      float: right;
+      margin: 1ex 0 1ex 0;
+      padding: 5px 9px 5px 9px;
+      background-color: #1871BD;
+      color: #f7f7f7;
+      border: none;
+      cursor: pointer;
+    }
+
+    .apply-button:hover  {
+      background-color: #328AD5;
+    }
+
+    .apply-button:disabled {
+      background-color: #A0A0A0;
+    }
+
+    .open-error {
+      height: 1.5em;
+      background-color: #F44336;
+      padding: 2px 4px;
+    }
+  </style>
+</head>
+<body class="demo-has-left">
+
+<aside class="demo-sidebar demo-left">
+  <h1 class="demo-sidebar-header">Description</h1>
+  <div class="demo-sidebar-content">
+    <p>
+      This demo presents a very versatile and easily customizable <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.styles.INodeStyle">yfiles.styles.INodeStyle</a>.
+    </p>
+    <p>
+      The visualization of the node is defined by an svg-template which is interpreted by the node style using the
+      <a href="https://vuejs.org/v2/guide/index.html">Vue.js-framework</a>. Thus, it has access to the whole binding
+      functionality of <code>Vue.js</code> as well as conditional rendering.
+    </p>
+      The node style provides the following properties available for binding:
+      <ul>
+        <li><b>layout:</b> The layout of the styled node, consisting of x, y, width and height</li>
+        <li><b>tag:</b> The user data associated with the node</li>
+        <li><b>zoom:</b> The zoom level of the graph component</li>
+        <li><b>selected:</b> Whether the node is selected</li>
+        <li><b>focused:</b> Whether the node is focused</li>
+        <li><b>highlighted:</b> Whether the node is highlighted</li>
+      </ul>
+    <p>
+      Change the template of one or more nodes. Bind colors or text to properties in the tag. Then, apply the new
+      template by pressing the button. Or modify the tag and see how the style changes.
+    </p>
+    <p>
+      For interactive creation of templates you can use
+      <a href="https://www.yworks.com/node-template-designer/">Node Template Designer</a>. Graphs containing this template
+      node style can also be viewed with <a href="https://www.yworks.com/yed-live/">yEd Live</a>.
+    </p>
+  </div>
+</aside>
+
+<div class="demo-content">
+  <div class="demo-toolbar">
+    <button data-command="Open" title="Open from GraphML File" class="demo-icon-yIconOpen"></button>
+    <button data-command="Save" title="Save to GraphML File" class="demo-icon-yIconSave"></button>
+    <div class="demo-separator"></div>
+    <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
+    <button data-command="ZoomOriginal" title="Zoom to original size" class="demo-icon-yIconZoomOriginal"></button>
+    <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
+    <button data-command="FitContent" title="Fit Content" class="demo-icon-yIconZoomFit"></button>
+    <span class="demo-separator"></span>
+    <button data-command="Reload" title="Reload" class="demo-icon-yIconReload"></button>
+  </div>
+
+  <div id="graphComponent" class="left"></div>
+
+  <div class="right">
+    <h2>Template String</h2><button data-command="ApplyTemplate" id="apply-template-button" class="apply-button" title="Applies the current Template to all selected nodes">Apply Template</button>
+    <div id="template-text-area-error" class="error">
+      Could not compile template string!
+    </div>
+    <div id="templateEditorContainer" class="editorText">
+      <textarea id="template-text-area" style="width:100%;height:100%"></textarea>
+    </div>
+
+    <h2>Tag Object</h2><button data-command="ApplyTag" id="apply-tag-button" class="apply-button" title="Applies the current Tag to all selected nodes">Apply Tag</button>
+    <div id="tag-text-area-error" class="error">
+      Could not parse tag object!
+    </div>
+    <div id="tagEditorContainer" class="editorText">
+      <textarea id="tag-text-area"></textarea>
+    </div>
+  </div>
+</div>
+
+<script src="VuejsTemplateNodeStyleDemo.js"></script>
+
+</body>
+</html>

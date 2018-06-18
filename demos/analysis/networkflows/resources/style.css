@@ -1,0 +1,101 @@
+/****************************************************************************
+ ** @license
+ ** This demo file is part of yFiles for HTML 2.1.
+ ** Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** 72070 Tuebingen, Germany. All rights reserved.
+ **
+ ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+ ** of demo files in source code or binary form, with or without
+ ** modification, is not permitted.
+ **
+ ** Owners of a valid software license for a yFiles for HTML version that this
+ ** demo is shipped with are allowed to use the demo source code as basis
+ ** for their own yFiles for HTML powered applications. Use of such programs is
+ ** governed by the rights and conditions as set out in the yFiles for HTML
+ ** license agreement.
+ **
+ ** THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+ ** WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ ** MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+ ** NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ ** SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+ ** TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ ** PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+ ** LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+ ** NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ **
+ ***************************************************************************/
+.popupContent {
+  position: absolute;
+  display: block;
+  opacity: 1;
+  border: 1px solid #c9c9c9;
+  overflow: visible;
+  background: rgba(255, 255, 255, 0.85);
+  z-index: 5;
+}
+
+#popupContentInfo label {
+  width: 58px;
+  display: inline-block;
+  font-weight: bold;
+  vertical-align: middle;
+}
+
+#popupContentInfo button {
+  border: none;
+  cursor: pointer;
+  width: 16px;
+  height: 16px;
+  vertical-align: middle;
+}
+
+#costMinus {
+  background: url('../resources/minus-16.svg') no-repeat;
+}
+
+#costPlus {
+  background: url('../resources/plus-16.svg') no-repeat;
+}
+
+#apply {
+  background: url('../resources/apply-16.svg');
+  border-left: 1px inset;
+}
+
+.popupSeparator {
+  border: 1px inset;
+  margin: 5px;
+  vertical-align: middle;
+}
+
+img {
+  vertical-align: middle;
+}
+
+#cost-form {
+  border: none;
+  width: 16px;
+  background-color: transparent;
+  vertical-align: middle;
+  padding: 1.5px;
+  text-align: center;
+}
+
+#flowValue {
+  width: 50px;
+  text-align: right;
+  display: none;
+  padding-right: 2px;
+}
+
+.demo-toolbar label {
+  font-weight: bold;
+  width: auto;
+}
+
+.demo-toolbar label:hover {
+  background-color: transparent;
+  cursor: default;
+}

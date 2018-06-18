@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+<!-- ////////////////////////////////////////////////////////////////////////
+     // @license
+     // This demo file is part of yFiles for HTML 2.1.
+     // Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // 72070 Tuebingen, Germany. All rights reserved.
+     //
+     // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+     // of demo files in source code or binary form, with or without
+     // modification, is not permitted.
+     //
+     // Owners of a valid software license for a yFiles for HTML version that this
+     // demo is shipped with are allowed to use the demo source code as basis
+     // for their own yFiles for HTML powered applications. Use of such programs is
+     // governed by the rights and conditions as set out in the yFiles for HTML
+     // license agreement.
+     //
+     // THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+     // WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+     // MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+     // NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+     // SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+     // TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+     // PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+     // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+     // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+     // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+     // 
+     ////////////////////////////////////////////////////////////////////////-->
+
+  <title>Tutorial 3 - Application Features [yFiles for HTML]</title>
+  <link rel="stylesheet" type="text/css" href="../../doc/documentation-style.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+</head>
+<body>
+<header>
+  <div class="logo"></div>
+  <div class="title">
+    <a href="../../README.html">yFiles for HTML</a>
+    <span class="angle-right"></span>
+    <a href="../README.html">Demos</a>
+    <span class="angle-right"></span>
+    Tutorial 3 -
+    Application Features
+  </div>
+</header>
+<div class="content">
+
+  <div class="block-space-header content-centered">
+    <h1>Tutorial 3 - Application Features</h1>
+
+    <p>
+      This tutorial is an introduction to the features of the yFiles for HTML diagramming library for building an application.
+      It covers a broad range of topics including building graphs from JSON data, drag and drop, tooltips, snapping
+      (guide lines), etc.
+    </p>
+    <p>
+      It is intended for developers who are interested in how to implement specific application features. If you are new
+      to the yFiles for HTML diagramming library, we recommend to start with the <a href="../01-tutorial-getting-started">Getting
+      Started</a> tutorial. Then, have a look at the samples of this tutorial that cover the features you are interested
+      in.</p>
+    <p>
+      To make full use of this tutorial, we also recommend to review and possibly modify the source code for each sample
+      project.
+    </p>
+
+    <h2>Running a Feature Sample</h2>
+
+    <p>
+      To execute a specific programming sample, either follow the corresponding link from the table below or open the
+      file <code>index.html</code> in the specific demo directory. It is also possible to deploy the samples to a web
+      server and load them from there.
+    </p>
+
+    <div class="important" id="no-ecmascript6" style="display: none">
+      <p>These demos use ECMAScript 6 features that your browser does not support.</p>
+      <p>
+        Please switch to a browser with support for ECMAScript 6 (Chrome, Firefox, Edge, Safari 10) or use the included
+        <a href="../../deployment/README.html#demos-es5">deployment tool</a> to convert the demos to ECMAScript 5. The
+        converted demos are also <a href="https://live.yworks.com/demos/"
+          target="_blank">available online</a>.
+      </p>
+      <p>
+        Note that ECMAScript 6 is a requirement of the demos, only. The yFiles for HTML library itself is compatible
+        with ECMAScript 5.
+      </p>
+    </div>
+
+    <div class="note" id="localhost-notice" style="display: none">
+      <p>
+        Due to strict cross domain policies in both <b>Internet Explorer</b> and <b>Google Chrome</b>, some demos work
+        only partially or not at all when viewed from a filesystem location in these browsers. Therefore, it is
+        recommended to access the demos through a Web server. Install and start scripts for a <a
+          href="../demo-server/README.html">local Node.js Express server</a> are included: </p>
+      <pre>
+  > cd %YFILES_HTML_DISTRIBUTION_DIR%/demos/demo-server/
+  > npm install
+  > npm start</pre>
+      <p>
+        Google Chrome can also be instructed to use a more tolerant policy by starting <code>chrome.exe</code> with the
+        <code>--allow-file-access-from-files</code> command line option. In addition, all demos are <a
+          href="https://live.yworks.com/demos/" target="_blank">available online</a>.
+      </p>
+
+      <p>
+        In Firefox, the demos should run well from a filesystem location, since its cross domain policy is tolerant by
+        default.
+      </p>
+    </div>
+
+    <h2>Samples in this Tutorial</h2>
+
+    <table id="tutorials">
+      <colgroup>
+        <col width="20%">
+        <col width="70%">
+      </colgroup>
+      <thead>
+      <tr>
+        <th class="democell">
+          Name
+        </th>
+        <th class="democell">
+          Description
+        </th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+        <td class="demotitle">
+          <a href="application-features-base/index.html" target="_blank">Base Application</a></td>
+        <td>
+          The base application for the feature specific samples in this tutorial.
+        </td>
+      </tr>
+      <tr>
+        <td class="demotitle">
+          <a href="building-graph-from-data/index.html" target="_blank">Building Graph from Data</a></td>
+        <td>
+          Shows how to create nodes and edges using data stored in JSON format.
+        </td>
+      </tr>
+      <tr>
+        <td class="demotitle">
+          <a href="building-swimlanes-from-data/index.html" target="_blank">Building Swimlanes from Data</a></td>
+        <td>
+          Shows how to create swimlanes with nodes and edges using data stored in JSON format.
+        </td>
+      </tr>
+      <tr>
+        <td class="demotitle">
+          <a href="input-output/index.html" target="_blank">Save and Load GraphML</a></td>
+        <td>
+          Shows how to enable basic serialization and deserialization of the graph as GraphML file.
+        </td>
+      </tr>
+      <tr>
+      <tr>
+        <td class="demotitle">
+          <a href="custom-graphml/index.html" target="_blank">Custom Data in GraphML</a></td>
+        <td>
+          Shows how to read and write data that is bound to graph elements to and from a GraphML file.
+        </td>
+      </tr>
+      <tr>
+        <td class="demotitle">
+          <a href="drag-and-drop/index.html" target="_blank">Drag and Drop</a></td>
+        <td>
+          Shows how to drag nodes from a separate panel into the graph component by using the
+          <code>NodeDropInputMode</code> class.
+        </td>
+      </tr>
+      <tr>
+        <td class="demotitle">
+          <a href="folding/index.html" target="_blank">Folding</a></td>
+        <td>
+          Shows how to enabled folding.
+        </td>
+      </tr>
+      <tr>
+        <td class="demotitle">
+          <a href="filtering-with-folding/index.html" target="_blank">Filtering with Folding</a></td>
+        <td>
+          Shows how to enabled filtering and folding in the same graph.
+        </td>
+      </tr>
+      <tr>
+        <td class="demotitle">
+          <a href="orthogonal-edges/index.html" target="_blank">Orthogonal Edges</a></td>
+        <td>
+          Shows how to enable interactive orthogonal edge editing.
+        </td>
+      </tr>
+      <tr>
+        <td class="demotitle">
+          <a href="snapping/index.html" target="_blank">Snapping</a></td>
+        <td>
+          Shows how to enable snapping (guide lines) for graph elements.
+        </td>
+      </tr>
+      <tr>
+        <td class="demotitle">
+          <a href="grid-snapping/index.html" target="_blank">Grid Snapping</a></td>
+        <td>
+          Shows how to enable grid snapping for graph elements.
+        </td>
+      </tr>
+      <tr>
+        <td class="demotitle">
+          <a href="tooltips/index.html" target="_blank">Tooltips</a></td>
+        <td>
+          Shows how to enable tooltips for graph items.
+        </td>
+      </tr>
+      <tr>
+        <td class="demotitle">
+          <a href="external-links/index.html" target="_blank">External Links</a></td>
+        <td>
+          Shows how to add labels that act like external links and open in a new window.
+        </td>
+      </tr>
+      <tr>
+        <td class="demotitle">
+          <a href="clickable-style-decorator/index.html" target="_blank">Clickable Style Decorator</a></td>
+        <td>
+           Shows how to handle clicks on specific areas of an item style.
+        </td>
+      </tr>
+      <tr>
+        <td class='demotitle'>
+          <a href='native-listeners/index.html' target='_blank'>Native Listeners</a></td>
+        <td>
+          This demo illustrates an approach on how to use native listeners on SVG-elements in the style.
+        </td>
+      </tr>
+      <tr>
+        <td class="demotitle">
+          <a href="label-text-wrapping/index.html" target="_blank">Label Text Wrapping</a></td>
+        <td>
+          Shows how to enable the text wrapping (or trimming) feature provided by the default label style.
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-block">
+    <h4>Contents</h4>
+    <a href="../../README.html">Welcome Page</a><br>
+    <a href="../../doc/api/index.html">API Documentation</a><br>
+    <a href="../../doc/api/index.html#/dguide/getting_started">Getting Started</a><br>
+    <a href="../../doc/readme/legal/SOFTWARE_LICENSE_AGREEMENT.html">License Agreement</a><br>
+    <a href="../../doc/readme/support.html">Help and Support</a>
+  </div>
+  <div class="footer-block">
+    <h4>Contact</h4>
+    yWorks GmbH<br>
+    Vor dem Kreuzberg 28<br>
+    72070 T&uuml;bingen<br>
+    Germany<br>
+    Phone: <a href="tel:+497071979050">+49 7071 979050</a><br>
+    Email: <a href="https://www.yworks.com/contact">contact(at)yworks.com</a><br>
+  </div>
+  <div class="footer-block">
+    <h4>Follow Us</h4>
+    <div class="social">
+      <a href="https://www.yworks.com/products/yfileshtml" target="_blank" class="web">
+        Homepage
+      </a>
+      <a href="https://www.yworks.com/newsfeed" target="_blank" class="rss">
+        RSS-Feed
+      </a>
+      <a href="https://twitter.com/yworks" target="_blank" class="tw">
+        Twitter
+      </a>
+      <a href="https://www.youtube.com/user/yWorksTube" target="_blank" class="yt">
+        YouTube
+      </a>
+    </div>
+    <span class="copyright">COPYRIGHT &#x00A9; 2018 yWorks</span><br>
+    <a href="https://www.yworks.com/company/legal/imprint">Imprint</a>
+    | <a href="https://www.yworks.com/company/legal/terms-of-use">Terms of Use</a>
+    | <a href="https://www.yworks.com/company/legal/privacy">Privacy Policy</a>
+  </div>
+  <div class="footer-block logo">
+  </div>
+</footer>
+<script src="../resources/readme-demo-support.js"></script>
+</body>
+</html>

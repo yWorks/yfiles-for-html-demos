@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "target": "es6",
+    "module": "amd",
+    "moduleResolution": "classic",
+    "sourceMap": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "removeComments": false,
+    "noImplicitAny": true
+  },
+  "files": [
+    "../../../ide-support/yfiles-api-umd-webstorm.d.ts",
+    "MyNodeStyle.ts",
+    "MyMarqueeTemplate.ts",
+    "MyArrow.ts",
+    "TypeScript2Demo.ts"
+  ]
+}

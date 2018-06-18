@@ -1,0 +1,241 @@
+/****************************************************************************
+ ** @license
+ ** This demo file is part of yFiles for HTML 2.1.
+ ** Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** 72070 Tuebingen, Germany. All rights reserved.
+ **
+ ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+ ** of demo files in source code or binary form, with or without
+ ** modification, is not permitted.
+ **
+ ** Owners of a valid software license for a yFiles for HTML version that this
+ ** demo is shipped with are allowed to use the demo source code as basis
+ ** for their own yFiles for HTML powered applications. Use of such programs is
+ ** governed by the rights and conditions as set out in the yFiles for HTML
+ ** license agreement.
+ **
+ ** THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+ ** WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ ** MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+ ** NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ ** SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+ ** TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ ** PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+ ** LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+ ** NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ **
+ ***************************************************************************/
+@import url(http://fonts.googleapis.com/css?family=Roboto:400,300,100);
+
+html {
+  font-family: 'Roboto', sans-serif;
+  font-weight: 300;
+}
+
+#graphComponent {
+  top: 60px;
+}
+
+.freeform-selection-path {
+  fill: #53a2d9;
+  stroke: #53a2d9;
+  stroke-width: 3px;
+  fill-opacity: 0.04;
+}
+
+.demo-handle {
+  fill: rgba(0, 0, 0, 0.9);
+  stroke: rgba(255, 255, 255, 0.7);
+}
+.demo-handle.demo-handle-move {
+  fill: rgba(192, 17, 10, 0.9);
+  stroke: rgba(255, 255, 255, 0.7);
+}
+.demo-handle.demo-handle-resize {
+  fill: rgba(64, 128, 192, 0.9);
+  stroke: rgba(255, 255, 255, 0.7);
+}
+.demo-handle-move-bend {
+  fill: rgba(11, 85, 23, 0.9);
+  stroke: rgba(255, 255, 255, 0.7);
+}
+
+.demo-dial-menu {
+  opacity: 0;
+  animation: fadein 0.3s linear forwards;
+}
+
+.demo-dial-menu-item > path {
+  fill: rgb(134, 175, 213);
+  stroke: #fff;
+}
+
+.demo-dial-menu-item.disabled > path {
+  fill: rgb(197, 215, 235);
+}
+
+.demo-dial-menu-item.disabled > .demo-dial-icon {
+  opacity: 0.5;
+}
+
+.demo-dial-menu-item.highlighted > path {
+  fill: rgb(102, 153, 204);
+}
+
+.demo-dial-menu-item > .demo-dial-icon {
+  width: 32px;
+}
+
+.demo-dial-menu-item > .demo-dial-title > text {
+  fill: white;
+}
+
+.demo-dial-menu-item > .demo-dial-title > rect {
+  fill: rgba(102, 153, 204, 0.8);
+  rx: 4;
+  ry: 4;
+}
+
+.demo-dial-menu-item > .demo-dial-title {
+  opacity: 0;
+  animation: fadein 0.3s linear 1s forwards;
+}
+
+@keyframes fadein {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeout {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+#dndPanelContainer {
+  position: absolute;
+  top: 60px;
+  bottom: 0;
+  width: 150px;
+  border-right: 5px solid #eee;
+  overflow: auto;
+  box-sizing: border-box;
+  z-index: 12;
+}
+
+#dndPanel {
+  width: 100%;
+}
+
+.demo-dndPanelItem {
+  margin: 10px auto;
+}
+
+.yfiles-cursor-dragdrop-copy {
+  cursor: copy;
+}
+
+.yfiles-cursor-dragdrop-move {
+  cursor: move;
+}
+
+.yfiles-cursor-dragdrop-link {
+  cursor: alias;
+}
+
+.yfiles-cursor-dragdrop-scroll {
+  cursor: move;
+}
+
+.yfiles-cursor-dragdrop-all {
+  cursor: copy;
+}
+
+.yfiles-cursor-dragdrop-no-drop {
+  cursor: no-drop;
+}
+
+.demo-toolbar,
+#graphComponent,
+.demo-left-hidden .demo-toolbar,
+.demo-left-hidden #graphComponent {
+  left: 150px !important;
+}
+
+#cancelButton {
+  position: absolute;
+  left: 30px;
+  top: 20px;
+  color: white;
+  background-color: rgb(231, 93, 104);
+  border: none;
+  padding: 10px;
+  border-radius: 10px;
+  font-size: 1.5em;
+  min-width: 100px;
+  user-select: none;
+  cursor: pointer;
+}
+
+.demo-button-invisible {
+  visibility: hidden;
+  opacity: 0;
+  transition: visibility 0s linear 0.3s, opacity 0.3s ease-in-out;
+  -moz-transition: visibility 0s linear 0.3s, opacity 0.3s ease-in-out;
+  -webkit-transition: visibility 0s linear 0.3s, opacity 0.3s ease-in-out;
+}
+
+.demo-button-visible {
+  visibility: visible;
+  opacity: 0.9;
+  transition: opacity 0.3s ease-in-out;
+  -moz-transition: opacity 0.3s ease-in-out;
+  -webkit-transition: opacity 0.3s ease-in-out;
+}
+
+.demo-button-visible:hover {
+  opacity: 1;
+}
+
+#snapPanningDiv {
+  border-bottom: 5px solid #eee;
+  padding: 20px 5px;
+}
+
+#snapPanningBox {
+  background: url('../../resources/icons/arrowheadDownWhite.png') no-repeat 99px 7px;
+  height: 29px;
+  overflow: hidden;
+  width: 120px;
+  margin: auto;
+  border-radius: 5px;
+  background-color: #68b0e3;
+}
+
+#snapPanningBox select {
+  background: transparent;
+  border: none;
+  font-size: 14px;
+  height: 29px;
+  padding: 5px;
+  width: 268px;
+  color: #fff;
+}
+
+#snapPanningBox option {
+  color: #000;
+}
+
+#snapPanningLabel {
+  margin: 0 0 10px 0;
+  text-align: center;
+  color: #333333;
+}

@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+
+<!-- ////////////////////////////////////////////////////////////////////////
+     // @license
+     // This demo file is part of yFiles for HTML 2.1.
+     // Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // 72070 Tuebingen, Germany. All rights reserved.
+     //
+     // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+     // of demo files in source code or binary form, with or without
+     // modification, is not permitted.
+     //
+     // Owners of a valid software license for a yFiles for HTML version that this
+     // demo is shipped with are allowed to use the demo source code as basis
+     // for their own yFiles for HTML powered applications. Use of such programs is
+     // governed by the rights and conditions as set out in the yFiles for HTML
+     // license agreement.
+     //
+     // THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+     // WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+     // MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+     // NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+     // SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+     // TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+     // PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+     // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+     // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+     // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+     // 
+     ////////////////////////////////////////////////////////////////////////-->
+
+  <title>Script Loading Demo [yFiles for HTML]</title>
+
+  <link rel="stylesheet" href="../../../lib/yfiles.css">
+  <link rel="stylesheet" href="../../resources/style/demo.css">
+
+  <!-- enable debugging -->
+  <script src="../../../ide-support/yfiles-typeinfo.js"></script>
+</head>
+<body class="demo-has-left demo-hide-left-when-small loaded">
+
+<aside class="demo-sidebar demo-left">
+  <h1 class="demo-sidebar-header">Description</h1>
+  <div class="demo-sidebar-content">
+    <p>
+      This demo loads the yFiles modules using <em>&lt;script&gt;</em> tags instead of an AMD loader. </p>
+
+    <p>
+      With script-tags, dependencies between the yFiles modules are not resolved automatically. Therefore, all modules
+      that are used by an application have to be loaded separately and in the correct order, as shown in this
+      <a href="https://docs.yworks.com/yfileshtml/#/dguide/introduction-modules">yFiles modules dependency diagram</a>.
+    </p>
+
+    <h2>Deployment Tool</h2>
+
+    <p>
+      yFiles comes with a <a href="https://docs.yworks.com/yfileshtml/#/dguide/deployment_tool">deployment tool</a> that can combine the yFiles modules
+      into fewer or optionally even a single file. See the tool's documentation for details.
+    </p>
+  </div>
+</aside>
+
+<div class="demo-content">
+  <div class="demo-header">
+    <a href="https://www.yworks.com"> <img src="../../resources/image/ylogo.svg" class="demo-y-logo"> </a> <a
+      href="../../README.html">yFiles for HTML</a> <span class="demo-title">Script Loading Demo [yFiles for HTML]</span>
+  </div>
+  <div class="demo-toolbar">
+    <button data-command="Layout" title="Layout" class="demo-icon-yIconLayout labeled">Layout</button>
+  </div>
+
+  <div id="graphComponent"></div>
+</div>
+
+<!-- Load license -->
+<script src="../../resources/license.js"></script>
+
+<!-- Script loading of all modules in correct order -->
+
+<!-- Core Modules-->
+<script src="../../../lib/umd/yfiles/impl/lang.js"></script>
+<script src="../../../lib/umd/yfiles/impl/core-lib.js"></script>
+
+<!-- Viewer Modules-->
+<script src="../../../lib/umd/yfiles/impl/graph-core.js"></script>
+<script src="../../../lib/umd/yfiles/impl/graph-binding.js"></script>
+<script src="../../../lib/umd/yfiles/impl/graph-styles-core.js"></script>
+<script src="../../../lib/umd/yfiles/impl/graph-styles-default.js"></script>
+<script src="../../../lib/umd/yfiles/impl/graph-styles-other.js"></script>
+<script src="../../../lib/umd/yfiles/impl/graph-styles-template.js"></script>
+<script src="../../../lib/umd/yfiles/impl/graph-input.js"></script>
+<script src="../../../lib/umd/yfiles/impl/graph-folding.js"></script>
+<script src="../../../lib/umd/yfiles/impl/graph-table.js"></script>
+<script src="../../../lib/umd/yfiles/impl/graph-styles-table.js"></script>
+<script src="../../../lib/umd/yfiles/impl/graph-input-table.js"></script>
+<script src="../../../lib/umd/yfiles/impl/graph-graphml.js"></script>
+
+<!-- Layout Modules-->
+<script src="../../../lib/umd/yfiles/impl/algorithms.js"></script>
+<script src="../../../lib/umd/yfiles/impl/layout-core.js"></script>
+<script src="../../../lib/umd/yfiles/impl/layout-hierarchic.js"></script>
+<script src="../../../lib/umd/yfiles/impl/layout-organic.js"></script>
+<script src="../../../lib/umd/yfiles/impl/layout-tree.js"></script>
+<script src="../../../lib/umd/yfiles/impl/layout-polyline.js"></script>
+<script src="../../../lib/umd/yfiles/impl/layout-router.js"></script>
+<script src="../../../lib/umd/yfiles/impl/layout-orthogonal.js"></script>
+<script src="../../../lib/umd/yfiles/impl/layout-orthogonal-compact.js"></script>
+<script src="../../../lib/umd/yfiles/impl/layout-seriesparallel.js"></script>
+<script src="../../../lib/umd/yfiles/impl/layout-radial.js"></script>
+<script src="../../../lib/umd/yfiles/impl/layout-familytree.js"></script>
+<script src="../../../lib/umd/yfiles/impl/layout-multipage.js"></script>
+
+<!-- Viewer-Layout-Bridge Module -->
+<script src="../../../lib/umd/yfiles/impl/graph-layout-bridge.js"></script>
+
+<!-- Load workarounds -->
+<script src="../../utils/Workarounds.js"></script>
+
+<!-- Load demo-->
+<script src="ScriptLoadingDemo.js"></script>
+
+</body>
+</html>

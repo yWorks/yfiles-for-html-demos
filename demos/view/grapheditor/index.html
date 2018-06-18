@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+
+<!-- ////////////////////////////////////////////////////////////////////////
+     // @license
+     // This demo file is part of yFiles for HTML 2.1.
+     // Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // 72070 Tuebingen, Germany. All rights reserved.
+     //
+     // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+     // of demo files in source code or binary form, with or without
+     // modification, is not permitted.
+     //
+     // Owners of a valid software license for a yFiles for HTML version that this
+     // demo is shipped with are allowed to use the demo source code as basis
+     // for their own yFiles for HTML powered applications. Use of such programs is
+     // governed by the rights and conditions as set out in the yFiles for HTML
+     // license agreement.
+     //
+     // THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+     // WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+     // MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+     // NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+     // SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+     // TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+     // PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+     // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+     // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+     // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+     // 
+     ////////////////////////////////////////////////////////////////////////-->
+
+  <title>Graph Editor Demo [yFiles for HTML]</title>
+
+  <link rel="stylesheet" href="../../../lib/yfiles.css">
+  <link rel="stylesheet" href="../../resources/style/demo.css">
+
+  <!-- enable debugging -->
+  <script src="../../../ide-support/yfiles-typeinfo.js"></script>
+
+</head>
+<body class="demo-has-left">
+<aside class="demo-sidebar demo-left">
+  <h1 class="demo-sidebar-header">Description</h1>
+  <div class="demo-sidebar-content">
+
+    <p>
+      The Simple Editor demo exhibits a <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.view.GraphComponent">yfiles.view.GraphComponent</a> which
+      enables graph editing via the default <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.input.GraphEditorInputMode">yfiles.input.GraphEditorInputMode</a>.
+    </p>
+
+    <h4>Creating Elements (Nodes / Vertices)</h4>
+
+    <p>
+      Click on an empty location on the canvas.
+    </p>
+
+    <h4>Creating Connections (Edges / Links)</h4>
+
+    <p>
+      To begin creating an edge, press the left mouse button on an unselected source node, and drag away from the node.
+      Complete the edge creation by releasing the mouse button over a target node. Abort edge creation by pressing the
+      Esc key.
+    </p>
+
+    <p>
+      You can optionally create control points (bends) during edge creation. Create the first control point by
+      releasing the mouse button, and subsequent control points by clicking on empty areas of the canvas. Undo
+      control point creation with right-click.
+    </p>
+
+    <h4>Creating and Editing Labels</h4>
+
+    <p>
+      Press the F2 key while an element or connection is selected.
+    </p>
+
+    <h4>Panning and Zooming</h4>
+
+    <ul>
+      <li>
+        Move the diagram view by dragging the mouse with the Ctrl key held down. Start dragging on an empty location
+        on the canvas.
+      </li>
+      <li>
+        Change the zoom factor with the mouse wheel or the zoom buttons in the toolbar. Display the entire diagram
+        using the "Fit Content" button in the toolbar.
+      </li>
+    </ul>
+
+    <h4>Selection</h4>
+
+    <ul>
+      <li>
+        Select all objects by pressing Ctrl+A.
+      </li>
+      <li>
+        Select a single object by clicking on it.
+      </li>
+      <li>
+        Select multiple objects by dragging the mouse over the canvas and enclosing all desired elements within the
+        selection rectangle. Or use the Ctrl key when clicking on a node to add it to an existing selection.
+      </li>
+      <li>
+        Deselect all items by clicking on an empty part of the canvas.
+      </li>
+    </ul>
+
+    <h4>Moving Items</h4>
+
+    <p>
+      Select the item to be moved, then drag it to its new location.
+    </p>
+
+    <h4>Removing Items</h4>
+
+    <p>
+      Press the delete key to remove all currently-selected items, or use the delete button in the toolbar.
+    </p>
+
+    <h4>Resizing Elements</h4>
+
+    <p>
+      Select a node, then drag one of the resizing handles to change the size.
+    </p>
+
+    <h4>Clipboard</h4>
+
+    <ul>
+      <li>
+        Cut selected elements by pressing Ctrl+X.
+      </li>
+      <li>
+        Copy selected elements to the clipboard by pressing Ctrl+C.
+      </li>
+      <li>
+        Paste the clipboard's contents into the diagram by pressing Ctrl+V.
+      </li>
+    </ul>
+    <p>There are also buttons for all clipboard operations in the toolbar.</p>
+
+    <h4>Undo/Redo</h4>
+
+    <ul>
+      <li>
+        Undo edit operations by pressing Ctrl+Z.
+      </li>
+      <li>
+        Redo undone operations by pressing Ctrl+Y.
+      </li>
+    </ul>
+    <p>There are also undo/redo buttons in the toolbar.</p>
+
+    <h4>Grouping</h4>
+
+    <ul>
+      <li>
+        Group selected nodes into a group node by pressing Ctrl+G. A group node sized to the initial contents is
+        created.
+      </li>
+      <li>
+        Add or remove a node from the group node by dragging it with the Shift key held down. The group which will be
+        the node's parent is indicated by highlighted corners.
+      </li>
+      <li>
+        Deleting a group node removes the group node but not its children.
+      </li>
+    </ul>
+    <p>There are also group/ungroup buttons in the toolbar.</p>
+
+    <h4>Collapsing and Expanding Groups</h4>
+
+    <ul>
+      <li>
+        Collapse an expanded group node by selecting it and pressing Ctrl+Minus, or by clicking on the Minus button in
+        its top left corner.
+      </li>
+      <li>
+        Expand a collapsed group node by selecting it and pressing Ctrl+Plus. or by clicking on the Plus button in its
+        top left corner.
+      </li>
+    </ul>
+
+    <h4>Entering and Exiting Groups</h4>
+    <ul>
+      <li>Enter a selected group node by pressing Ctrl+Enter.</li>
+      <li>Exit a group node by pressing Ctrl+Backspace.</li>
+    </ul>
+    <p>There are also enter group/exit group buttons in the toolbar.</p>
+
+    <h4>Orthogonal Edge Creation</h4>
+
+    <ul>
+      <li>Switch orthogonal edges on/off in the toolbar.</li>
+      <li>Change the outgoing node side by pressing the space bar while creating an orthogonal edge (before creating a
+        bend).
+      </li>
+    </ul>
+
+    <h4>Snapping</h4>
+    <ul>
+      <li>
+        Switch snapping on/off in the toolbar. Drag nodes, edges, and bends near other graph elements to make them
+        snap.
+      </li>
+      <li>
+        When snapping is enabled, orthogonal edge segments snap to other graph elements during edge creation.
+      </li>
+    </ul>
+  </div>
+</aside>
+
+<div class="demo-content">
+
+  <div id="graphOverviewComponent" class="demo-overview-container">
+    <div class="demo-overview-header">Overview</div>
+    <div id="overviewComponent"></div>
+  </div>
+
+  <div class="demo-toolbar">
+
+    <button data-command="New" title="New" class="demo-icon-yIconNew"></button>
+    <button data-command="Open" title="Open a GraphML file" class="demo-icon-yIconOpen"></button>
+    <button data-command="Save" title="Save a GraphML file" class="demo-icon-yIconSave"></button>
+
+    <span class="demo-separator"></span>
+
+    <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
+    <button data-command="ZoomOriginal" title="Zoom to original size" class="demo-icon-yIconZoomOriginal"></button>
+    <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
+    <button data-command="FitContent" title="Fit Content" class="demo-icon-yIconZoomFit"></button>
+
+    <span class="demo-separator"></span>
+
+    <button data-command="Cut" title="Cut" class="demo-icon-yIconCut"></button>
+    <button data-command="Copy" title="Copy" class="demo-icon-yIconCopy"></button>
+    <button data-command="Paste" title="Paste" class="demo-icon-yIconPaste"></button>
+    <button data-command="Delete" title="Delete" class="demo-icon-yIconDelete"></button>
+
+    <span class="demo-separator"></span>
+
+    <button data-command="Undo" title="Undo" class="demo-icon-yIconUndo"></button>
+    <button data-command="Redo" title="Redo" class="demo-icon-yIconRedo"></button>
+
+    <span class="demo-separator"></span>
+
+    <input type="checkbox" id="demo-snapping-button" class="demo-toggle-button"><label for="demo-snapping-button"
+      class="demo-icon-yIconSnapping" title="Snapping"></label> <input type="checkbox" id="demo-orthogonal-editing-button"
+      class="demo-toggle-button"><label for="demo-orthogonal-editing-button"
+      class="demo-icon-yIconOrthogonal" title="Enable Orthogonal Edges"></label>
+
+    <span class="demo-separator"></span>
+
+    <button data-command="GroupSelection" title="Group selected element" class="demo-icon-yIconGroup"></button>
+    <button data-command="UngroupSelection" title="Ungroup selected element" class="demo-icon-yIconUngroup"></button>
+    <button data-command="EnterGroup" title="Enter group" class="demo-icon-yIconEnterGroup"></button>
+    <button data-command="ExitGroup" title="Leave group" class="demo-icon-yIconExitGroup"></button>
+
+  </div>
+
+  <div id="graphComponent"></div>
+</div>
+
+<script src="../../resources/require.js"></script>
+<script src="GraphEditorDemo.js"></script>
+
+</body>
+</html>

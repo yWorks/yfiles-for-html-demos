@@ -1,0 +1,135 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+
+<!-- ////////////////////////////////////////////////////////////////////////
+     // @license
+     // This demo file is part of yFiles for HTML 2.1.
+     // Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // 72070 Tuebingen, Germany. All rights reserved.
+     //
+     // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+     // of demo files in source code or binary form, with or without
+     // modification, is not permitted.
+     //
+     // Owners of a valid software license for a yFiles for HTML version that this
+     // demo is shipped with are allowed to use the demo source code as basis
+     // for their own yFiles for HTML powered applications. Use of such programs is
+     // governed by the rights and conditions as set out in the yFiles for HTML
+     // license agreement.
+     //
+     // THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+     // WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+     // MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+     // NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+     // SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+     // TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+     // PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+     // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+     // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+     // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+     // 
+     ////////////////////////////////////////////////////////////////////////-->
+
+  <title>Angular CLI Demo [yFiles for HTML]</title>
+</head>
+<body class="demo-has-left loaded">
+
+<!-- a hidden SVG that stores the gradients used in the node templates -->
+<svg class="svg-defs" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <defs>
+    <lineargradient id="nodeGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:rgb(204,255,255);"></stop>
+      <stop offset="100%" style="stop-color:rgb(153,204,255);"></stop>
+    </lineargradient>
+  </defs>
+</svg>
+
+<script type="text/yfiles-template">
+  <g id="nodeTemplate">
+    <rect fill="url(#nodeGradient)" stroke="#249AE7" stroke-width="3" rx="8" ry="8" width="250" height="100"></rect>
+    <image xlink:href="{Binding icon}" transform="translate(5 15)" width="58px" height="66px"></image>
+    <text transform="translate(80 20)" style="font-size:10px; font-family:Arial; fill:#505050" data-content="{Binding name}"></text>
+    <text transform="translate(80 38)" style="font-size: 8px; font-family:Arial; fill:#505050" data-content="{Binding position}"></text>
+    <text transform="translate(80 56)" style="font-size:10px; font-family:Arial; fill:#505050" data-content="{Binding email}"></text>
+    <text transform="translate(80 74)" style="font-size:10px; font-family:Arial; fill:#505050" data-content="{Binding phone}"></text>
+    <text transform="translate(80 92)" style="font-size:10px; font-family:Arial; fill:#505050" data-content="{Binding fax}"></text>
+  </g>
+</script>
+
+<aside class="demo-sidebar demo-left">
+  <h1 class="demo-sidebar-header">Description</h1>
+  <div class="demo-sidebar-content">
+    <p>
+      This demo shows the integration of yFiles for HTML with <a href="https://cli.angular.io/">Angular CLI</a>.
+    </p>
+
+    <h2>How this demo was created</h2>
+    <p>
+      The structure of this demo was created using Angular CLI with the <code>--minimal</code> option, which skips
+      scaffolding testing and git integration. Afterwards, the two TypeScript configuration files
+      <code>./tsconfig.json</code> and <code>./src/tsconfig.app.json</code> were merged into a single file:
+      <code>./src/tsconfig.json</code>. This is so that IDEs like WebStorm and Visual Studio Code can provide better
+      code completion and error messages, as they only recognize TypeScript configuration files if their name is exactly
+      <code>tsconfig.json</code> (
+      <a href="https://youtrack.jetbrains.com/issue/WEB-28091" target="_blank" rel="noopener">WebStorm issue</a>,
+      <a href="https://github.com/Microsoft/vscode/issues/12463" target="_blank" rel="noopener">VSCode issue</a>).
+    </p>
+
+    <p>
+      Then, two Angular components were created: <br>
+      <code>ng generate component graph-component</code><br>
+      <code>ng generate component properties-view</code>
+    </p>
+
+    <h2>Integrating yFiles</h2>
+    <p>
+      To include the library css file, it was added to the <code>styles</code> array in <code>.angular.json</code>.
+      Similarly, the license file and <code>yfiles-typeinfo</code> were added to the <code>scripts</code> array.
+    </p>
+    <p>
+      yFiles for HTML comes with TypeScript declarations, which have to be included in the <code>tsconfig.json</code> file
+      using the <code>include</code> or <code>files</code> option. Also, specify the path to the yFiles library in ES6
+      module format using the <code>paths</code> compiler option. For this demo, the entry looks like this:
+    </p>
+    <pre>
+"paths": {
+  "yfiles/*": [
+    "../../../../lib/es6-modules/yfiles/*"
+  ]
+}</pre>
+    <p>
+      To run and build the app, you can use the regular <code>ng server</code> and <code>ng build</code> commands. <br>
+      <strong>Important:</strong> When building in production mode (<code>ng build --prod</code>), make sure to set
+      the <code style="white-space: nowrap">--build-optimizer</code> option to <strong><code>false</code></strong>, as it performs some optimizations
+      that break the yFiles library.
+    </p>
+  </div>
+</aside>
+
+<div class="demo-content">
+  <div class="demo-header">
+    <a href="http://www.yworks.com">
+      <svg class="demo-y-logo" version="1.1" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="512px" height="512px" viewBox="-77.706 -29.575 512 512" xml:space="preserve">
+        <circle fill="#6699CC" cx="177.294" cy="267.55" r="177.294"></circle>
+        <path fill="#FFFFFF" d="M198.431,0c-32.78,0-62.211,41.495-76.26,86.292c1.333,6.043,5.353,10.72,12.708,8.72
+          c14.03-28.098,25.417-50.845,38.802-50.845c12.705,0,24.079,26.092,25.417,100.341c0.653,56.862-4.032,118.379-13.38,152.477
+          c-12.709,44.173-42.14,86.298-58.861,100.347c-16.054,13.377-28.1,18.727-36.796,18.727c-10.702,0-16.708-8.694-18.731-12.038
+          c-4.665-6.688-11.35-10.705-18.039-10.705c-14.736,0-26.761,12.038-26.761,28.78c0,16.71,13.361,30.754,34.789,30.754
+          c21.385,0,54.832-10.699,104.333-67.545c53.518-60.889,76.932-105.019,110.357-160.547
+          c59.531-100.981,78.263-187.284,77.591-204.005c0-7.355-2.005-10.699-6.021-13.376c-5.345-3.344-14.038-6.022-18.721-6.022
+          c-4.684,0-14.721,1.344-16.06,20.764c-0.667,17.382-10.705,84.927-24.743,123.734c-14.726,40.786-34.103,82.26-56.184,115.014
+          h-2.688c9.366-55.501,10.702-104.314,10.054-147.122C237.876,66.915,232.524,0,198.431,0"></path>
+      </svg>
+    </a>
+    <a href="../../../README.html">yFiles for HTML</a> <span class="demo-title">Angular CLI Demo [yFiles for HTML]</span>
+  </div>
+
+  <app-root></app-root>
+</div>
+
+</body>
+</html>

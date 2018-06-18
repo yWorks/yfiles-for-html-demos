@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+
+<!-- ////////////////////////////////////////////////////////////////////////
+     // @license
+     // This demo file is part of yFiles for HTML 2.1.
+     // Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // 72070 Tuebingen, Germany. All rights reserved.
+     //
+     // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+     // of demo files in source code or binary form, with or without
+     // modification, is not permitted.
+     //
+     // Owners of a valid software license for a yFiles for HTML version that this
+     // demo is shipped with are allowed to use the demo source code as basis
+     // for their own yFiles for HTML powered applications. Use of such programs is
+     // governed by the rights and conditions as set out in the yFiles for HTML
+     // license agreement.
+     //
+     // THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+     // WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+     // MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+     // NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+     // SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+     // TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+     // PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+     // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+     // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+     // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+     // 
+     ////////////////////////////////////////////////////////////////////////-->
+
+  <title>Printing Demo [yFiles for HTML]</title>
+
+  <link rel="stylesheet" href="../../../lib/yfiles.css">
+  <link rel="stylesheet" href="../../resources/style/demo.css">
+
+  <!-- enable debugging -->
+  <script src="../../../ide-support/yfiles-typeinfo.js"></script>
+
+  <style>
+    .demo-properties label.short {
+      width: 6em;
+    }
+
+    .demo-properties input[type=number] {
+      width: 5em;
+    }
+  </style>
+
+</head>
+<body class="demo-has-left demo-has-right">
+<aside class="demo-sidebar demo-left">
+  <h1 class="demo-sidebar-header">Description</h1>
+  <div class="demo-sidebar-content">
+
+    <p>The Printing demo shows how to export a graph or a part of it to vector graphics (SVG) on the client and how to
+      print this graphic.</p>
+
+    <h2>Things to Try</h2>
+    <ul>
+      <li>Resize and move the export rectangle to control the region which will be printed.</li>
+      <li>Press the <code>Print</code> button to open a new browser window with the exported SVG and trigger the
+        printing.
+      </li>
+      <li>Disable <code>Use Clipping Rectangle</code> to ignore the export region rectangle and export the complete
+        graph instead.
+      </li>
+      <li>Play with the settings to see how different settings affect the outcome.</li>
+    </ul>
+  </div>
+</aside>
+
+<div class="demo-content">
+  <div id="graphComponent"></div>
+</div>
+
+<!--
+  Export Properties
+  -->
+<aside class="demo-sidebar demo-right">
+  <h1 class="demo-sidebar-header">Printing properties</h1>
+  <div class="demo-sidebar-content">
+
+    <div class=demo-properties>
+      <div id="formContainer" class="formContainer">
+        <fieldset>
+          <legend>General</legend>
+          <div class="demo-form-block">
+            <label for="scale" class="short">Scale</label> <input id="scale" name="scale" type="number" min="0.1"
+              max="200.0" step="0.1" value="1.0">
+          </div>
+          <div class="demo-form-block">
+            <label for="margin" class="short">Margin</label> <input id="margin" name="margin" type="number" min="0"
+              max="100" value="5.0">
+          </div>
+          <div class="demo-form-block">
+            <label for="useRect">Use Clipping Rectangle</label> <input id="useRect" type="checkbox" name="useRect"
+              checked="checked">
+          </div>
+        </fieldset>
+        <fieldset>
+          <legend>Tiles</legend>
+          <div class="demo-form-block">
+            <label for="useTilePrinting">Tiled Printing</label> <input id="useTilePrinting"
+              data-name="inputUseTilePrinting" type="checkbox" name="useTilePrinting">
+          </div>
+          <div class="demo-form-block">
+            <label for="tileWidth" class="short">Tile Width</label> <input id="tileWidth" data-name="inputTileWidth"
+              name="tileWidth" type="number" min="10" value="595">
+          </div>
+          <div class="demo-form-block">
+            <label for="tileHeight" class="short">Tile Height</label> <input id="tileHeight"
+              data-name="inputTileHeight" name="tileHeight" type="number" min="10" value="842">
+          </div>
+        </fieldset>
+        <p>
+          <button data-name="PrintButton" data-command="Print" id="Print" value="Print">Print</button>
+        </p>
+      </div>
+    </div>
+
+  </div>
+</aside>
+
+<script src="../../resources/require.js"></script>
+<script src="PrintingDemo.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+<!-- ////////////////////////////////////////////////////////////////////////
+     // @license
+     // This demo file is part of yFiles for HTML 2.1.
+     // Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // 72070 Tuebingen, Germany. All rights reserved.
+     //
+     // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+     // of demo files in source code or binary form, with or without
+     // modification, is not permitted.
+     //
+     // Owners of a valid software license for a yFiles for HTML version that this
+     // demo is shipped with are allowed to use the demo source code as basis
+     // for their own yFiles for HTML powered applications. Use of such programs is
+     // governed by the rights and conditions as set out in the yFiles for HTML
+     // license agreement.
+     //
+     // THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+     // WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+     // MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+     // NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+     // SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+     // TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+     // PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+     // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+     // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+     // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+     // 
+     ////////////////////////////////////////////////////////////////////////-->
+
+  <title>yFiles for HTML Programming Samples and Tutorials </title>
+  <link rel="stylesheet" type="text/css" href="../doc/documentation-style.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+</head>
+<body>
+<header>
+  <div class="logo"></div>
+  <div class="title">
+    <a href="../README.html">yFiles for HTML</a>
+    <span class="angle-right"></span>
+    Demo Applications 
+  </div>
+</header>
+<div class="main">
+  <aside class="sidebar" id="sidebar">
+    <div class="search-container">
+      <input id="search" type="search" value="" title="Search" placeholder="Search" autofocus tabindex="1">
+      <svg height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+        <path fill="#706f6f" d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"></path>
+        <path d="M0 0h24v24H0z" fill="none"></path>
+      </svg>
+    </div>
+  </aside>
+  <div class="content">
+    <span>
+      The <a href="https://www.yworks.com/products/yfileshtml">yFiles for HTML</a> programming samples and tutorials are
+      extensive sample applications with <b>HTML/JavaScript</b> source that present the functionality of the yFiles for HTML
+      diagramming library.
+    </span>
+    <p>
+      To execute a specific programming sample, click on the links in the items below or locate the
+      <code>index.html</code> in the specific demo subdirectory.
+    </p>
+    <p id="online-notice">
+      All of these demos are also available online at the <a href="https://live.yworks.com/demos/" target="_blank">yFiles
+      for HTML Online Demos Page</a>.
+    </p>
+
+    <div class="important" id="no-ecmascript6" style="display: none">
+      <p>These demos use ECMAScript 6 features that your browser does not support.</p>
+      <p>
+        Please switch to a browser with support for ECMAScript 6 (Chrome, Firefox, Edge, Safari 10) or use the included
+        <a href="../deployment/README.html#demos-es5">deployment tool</a> to convert the demos to ECMAScript 5. The
+        converted demos are also <a href="https://live.yworks.com/demos/"
+          target="_blank">available online</a>.
+      </p>
+      <p>
+        Note that ECMAScript 6 is a requirement of the demos, only. The yFiles for HTML library itself is compatible
+        with ECMAScript 5.
+      </p>
+    </div>
+
+    <div class="note" id="localhost-notice" style="display: none">
+      <p>
+        Due to strict cross domain policies in both <b>Internet Explorer</b> and <b>Google Chrome</b>, some demos work
+        only partially or not at all when viewed from a filesystem location in these browsers. Therefore, it is
+        recommended to access the demos through a Web server. Install and start scripts for a <a
+          href="demo-server/README.html">local Node.js Express server</a> are included: </p>
+      <pre>
+ > cd %YFILES_HTML_DISTRIBUTION_DIR%/demos/demo-server/
+ > npm install
+ > npm start</pre>
+      <p>
+        <b>Google Chrome</b> can also be instructed to use a more tolerant policy by starting Chrome with the <code>--allow-file-access-from-files</code>
+        command line option.
+      </p>
+      <p>
+        In <b>Firefox</b>, the demos should run well from a filesystem location, since its cross domain policy is
+        tolerant by default.
+      </p>
+    </div>
+
+    <div class="demo-grid">
+      <noscript>
+        Please enable JavaScript to see and search the list of the available demos.
+      </noscript>
+    </div>
+  </div>
+</div>
+<footer>
+  <div class="footer-block">
+    <h4>Contents</h4>
+    <a href="../README.html">Welcome Page</a><br>
+    <a href="../doc/api/index.html">API Documentation</a><br>
+    <a href="../doc/api/index.html#/dguide/getting_started">Getting Started</a><br>
+    <a href="../doc/readme/legal/SOFTWARE_LICENSE_AGREEMENT.html">License Agreement</a><br>
+    <a href="../doc/readme/support.html">Help and Support</a>
+  </div>
+  <div class="footer-block">
+    <h4>Contact</h4>
+    yWorks GmbH<br>
+    Vor dem Kreuzberg 28<br>
+    72070 T&uuml;bingen<br>
+    Germany<br>
+    Phone: <a href="tel:+497071979050">+49 7071 979050</a><br>
+    Email: <a href="https://www.yworks.com/contact">contact(at)yworks.com</a><br>
+  </div>
+  <div class="footer-block">
+    <h4>Follow Us</h4>
+    <div class="social">
+      <a href="https://www.yworks.com/products/yfileshtml" target="_blank" class="web">
+        Homepage
+      </a>
+      <a href="https://www.yworks.com/newsfeed" target="_blank" class="rss">
+        RSS-Feed
+      </a>
+      <a href="https://twitter.com/yworks" target="_blank" class="tw">
+        Twitter
+      </a>
+      <a href="https://www.youtube.com/user/yWorksTube" target="_blank" class="yt">
+        YouTube
+      </a>
+    </div>
+    <span class="copyright">COPYRIGHT &#x00A9; 2018 yWorks</span><br>
+    <a href="https://www.yworks.com/company/legal/imprint">Imprint</a>
+    | <a href="https://www.yworks.com/company/legal/terms-of-use">Terms of Use</a>
+    | <a href="https://www.yworks.com/company/legal/privacy">Privacy Policy</a>
+  </div>
+  <div class="footer-block logo">
+  </div>
+</footer>
+<template id="grid-item-template">
+  <div class="thumbnail">
+    <a href="{{demoPath}}" style="background-image: url({{thumbnailPath}})"></a>
+    <div class="actions">
+      <a href="{{demoPath}}" class="action-run"></a>
+    </div>
+  </div>
+  <div class="description">
+    <h2 class="title"><a href="{{demoPath}}" tabindex="{{index}}">{{name}}</a></h2>
+    <p class="details">{{summary}}</p>
+    <div class="tags"></div>
+  </div>
+</template>
+<template id="accordion-template">
+  <div class="accordion-pane">
+    <h5 class="accordion-title" onclick="toggleExpanded(this.parentNode)">{{title}}<i class="accordion-icon"></i></h5>
+    <div class="accordion-content demo-items demo-items-{{title}}">
+    </div>
+  </div>
+</template>
+<script src="resources/readme-demo-data.js"></script>
+<script>
+  function toggleExpanded(element){
+    if (element.className.indexOf("expanded") >= 0){
+      element.className = element.className.replace(" expanded", "");
+    } else {
+      element.className += " expanded";
+    }
+  }
+</script>
+<script src="resources/readme-demo-support.js" ></script>
+</body>
+</html>

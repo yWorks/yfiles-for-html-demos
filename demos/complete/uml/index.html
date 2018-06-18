@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+
+<!-- ////////////////////////////////////////////////////////////////////////
+     // @license
+     // This demo file is part of yFiles for HTML 2.1.
+     // Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // 72070 Tuebingen, Germany. All rights reserved.
+     //
+     // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+     // of demo files in source code or binary form, with or without
+     // modification, is not permitted.
+     //
+     // Owners of a valid software license for a yFiles for HTML version that this
+     // demo is shipped with are allowed to use the demo source code as basis
+     // for their own yFiles for HTML powered applications. Use of such programs is
+     // governed by the rights and conditions as set out in the yFiles for HTML
+     // license agreement.
+     //
+     // THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+     // WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+     // MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+     // NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+     // SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+     // TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+     // PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+     // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+     // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+     // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+     // 
+     ////////////////////////////////////////////////////////////////////////-->
+
+  <title>UML Editor Demo</title>
+
+  <link rel="stylesheet" href="../../../lib/yfiles.css"/>
+  <link rel="stylesheet" href="../../resources/style/demo.css"/>
+
+  <script src="../../../ide-support/yfiles-typeinfo.js"></script><!-- enable debugging -->
+
+  <style>
+    .uml-button {
+      cursor: pointer;
+    }
+    .uml-button:not(.disabled):hover path,
+    polygon.uml-button:not(.disabled):hover {
+      fill: #eee;
+    }
+    .context-button {
+      transition: opacity .1s ease-in-out;
+    }
+    .context-button g {
+      cursor: pointer;
+    }
+    .context-button g ellipse {
+      transition: fill .1s ease-in-out;
+    }
+    .context-button g:hover ellipse {
+      fill: #ECEFF1;
+    }
+    .context-button .interface-toggle.toggled rect {
+      fill: seagreen;
+    }
+    .context-button .interface-toggle:hover rect {
+      opacity: 0.5;
+    }
+    .context-button .abstract-toggle.toggled rect {
+      fill: crimson;
+    }
+    .context-button .abstract-toggle:hover rect {
+      opacity: 0.5;
+    }
+  </style>
+
+</head>
+<body class="demo-has-left">
+
+<aside class="demo-sidebar demo-left">
+  <h1 class="demo-sidebar-header">Description</h1>
+  <div class="demo-sidebar-content">
+    <p>
+      The UML Editor demo showcases a custom UML node style that renders an UML data set. Additional
+      control elements are provided to conveniently add/remove entries and to create different type of UML edges
+      as well as toggling the node's 'interface' or 'abstract' state.
+    </p>
+
+    <p>
+      The node style uses an <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.graph.InteriorStretchLabelModel">yfiles.graph.InteriorStretchLabelModel</a> to stack the UML entries on
+      top of each other. A custom <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.input.IEditLabelHelper">yfiles.input.IEditLabelHelper</a> is provided by the UML node style to enable
+      editing of the different UML entries.
+    </p>
+
+    <h2>Things to Try</h2>
+    <ul>
+      <li>
+        Click a node to bring up additional control elements.
+      </li>
+      <li>
+        Create UML specific edges by dragging one of the edge creation controls. A layout will route the new edge when
+        the edge creation has finished.
+      </li>
+      <li>
+        Entries can be added/removed with the '+' and '-' buttons on the respective header section.
+      </li>
+      <li>
+        Toggle the node's 'interface' or 'abstract' state with the 'I' or 'A' buttons.
+      </li>
+      <li>
+        The layout button in the toolbar will create a new layout from scratch and bundle inheritance edges.
+      </li>
+    </ul>
+
+  </div>
+</aside>
+
+<div class="demo-content">
+
+  <div class="demo-toolbar">
+    <button data-command="New" title="New" class="demo-icon-yIconNew"></button>
+    <button data-command="Open" title="Open a GraphML file" class="demo-icon-yIconOpen"></button>
+    <button data-command="Save" title="Save a GraphML file" class="demo-icon-yIconSave"></button>
+
+    <span class="demo-separator"></span>
+
+    <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
+    <button data-command="ZoomOriginal" title="Zoom to original size" class="demo-icon-yIconZoomOriginal"></button>
+    <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
+    <button data-command="FitContent" title="Fit Content" class="demo-icon-yIconZoomFit"></button>
+
+    <span class="demo-separator"></span>
+
+    <button data-command="Cut" title="Cut" class="demo-icon-yIconCut"></button>
+    <button data-command="Copy" title="Copy" class="demo-icon-yIconCopy"></button>
+    <button data-command="Paste" title="Paste" class="demo-icon-yIconPaste"></button>
+    <button data-command="Delete" title="Delete" class="demo-icon-yIconDelete"></button>
+
+    <span class="demo-separator"></span>
+
+    <button data-command="Undo" title="Undo" class="demo-icon-yIconUndo"></button>
+    <button data-command="Redo" title="Redo" class="demo-icon-yIconRedo"></button>
+
+    <span class="demo-separator"></span>
+
+    <button data-command="Layout" title="Run Layout" class="demo-icon-yIconLayout"></button>
+  </div>
+
+  <div id="graphComponent"></div>
+</div>
+
+<script src="../../resources/require.js"></script>
+<script src="UMLEditorDemo.js"></script>
+</body>
+</html>

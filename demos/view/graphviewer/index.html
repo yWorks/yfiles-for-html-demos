@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+
+<!-- ////////////////////////////////////////////////////////////////////////
+     // @license
+     // This demo file is part of yFiles for HTML 2.1.
+     // Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // 72070 Tuebingen, Germany. All rights reserved.
+     //
+     // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+     // of demo files in source code or binary form, with or without
+     // modification, is not permitted.
+     //
+     // Owners of a valid software license for a yFiles for HTML version that this
+     // demo is shipped with are allowed to use the demo source code as basis
+     // for their own yFiles for HTML powered applications. Use of such programs is
+     // governed by the rights and conditions as set out in the yFiles for HTML
+     // license agreement.
+     //
+     // THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+     // WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+     // MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+     // NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+     // SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+     // TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+     // PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+     // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+     // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+     // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+     // 
+     ////////////////////////////////////////////////////////////////////////-->
+
+  <title>Graph Viewer Demo [yFiles for HTML]</title>
+
+  <link rel="stylesheet" href="../../../lib/yfiles.css">
+  <link rel="stylesheet" href="../../resources/style/demo.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:400,300,100"/>
+
+  <style type="text/css">
+    .nodeInfo :first-child {
+      margin-top: 0 !important;
+    }
+    .hoverable {
+      fill: white;
+      fill-opacity: 0;
+    }
+    .hoverable:hover {
+      fill-opacity: 0.4;
+    }
+    .male {
+      fill: #68B0E3;
+    }
+    .uml-class {
+      fill: #B9CCD6;
+    }
+    .uml-interface {
+      fill: #FFAB26;
+    }
+  </style>
+
+  <!-- enable debugging -->
+  <script src="../../../ide-support/yfiles-typeinfo.js"></script>
+</head>
+<body class="demo-has-left demo-has-right">
+<!--
+  The sidebar for the description
+-->
+<aside class="demo-sidebar demo-left">
+  <h1 class="demo-sidebar-header">Description</h1>
+  <div class="demo-sidebar-content">
+    <p>The Graph Viewer demo displays several sample graphs from various domains. It allows navigating the diagram
+      but prohibits editing.</p>
+
+    <h2>Things to Try</h2>
+
+    <ul>
+      <li>
+        Move the mouse over the graph and watch the hover effects. Hovering over edges will highlight
+        the adjacent nodes, whereas hovering over nodes will highlight adjacent edges.
+      </li>
+      <li>
+        Use the combo box or the navigation buttons to switch between several sample graphs.
+      </li>
+      <li>
+        Write a term in the search box and see how nodes that contain the specific term are highlighted. Press Enter to
+        focus on these specific nodes.
+      </li>
+      <li>
+        Change the focused node either by clicking on it or navigating with the keyboard arrow keys.
+      </li>
+      <li>
+        Various properties of the graph and the currently focused node are shown in the right pane.
+      </li>
+      <li>
+        Change the zoom level by using the mouse wheel.
+      </li>
+      <li>
+        Change the viewport by dragging the canvas with the mouse.
+      </li>
+    </ul>
+  </div>
+</aside>
+
+<div class="demo-content">
+
+  <div id="graphOverviewComponent" class="demo-overview-container">
+    <div class="demo-overview-header">Overview</div>
+    <div id="overviewComponent"></div>
+  </div>
+
+  <div class="demo-toolbar">
+
+    <button data-command="Open" title="Open a GraphML file" class="demo-icon-yIconOpen"></button>
+
+    <span class="demo-separator"></span>
+    <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
+    <button data-command="ZoomOriginal" title="Zoom to original size" class="demo-icon-yIconZoomOriginal"></button>
+    <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
+    <button data-command="FitContent" title="Fit Content" class="demo-icon-yIconZoomFit"></button>
+
+    <span class="demo-separator"></span>
+
+    <button data-command="PreviousFile" title="Open previous graph" class="demo-icon-yIconPrevious" id="previousFileButton"></button>
+    <select data-command="SelectedFileChanged" title="Select a sample graph" id="graphChooserBox"></select>
+    <button data-command="NextFile" title="Open next graph" class="demo-icon-yIconNext" id="nextFileButton"></button>
+
+    <span class="demo-separator"></span>
+
+    <span style="white-space: nowrap">Search: <input type="search" data-command="SearchChanged" id="searchBox" style="vertical-align: initial;"></span>
+
+  </div>
+
+  <!--
+  The GraphComponent
+  -->
+  <div id="graphComponent"></div>
+</div>
+
+<!--
+The sidebar for the properties and settings
+-->
+<aside class="demo-sidebar demo-right">
+  <h1 class="demo-sidebar-header">Graph Description</h1>
+  <div class="demo-sidebar-content">
+    <p id="graphInfoContent" class="graphInfo"></p>
+
+    <h1>Node Info</h1>
+    <div id="nodeInfoContent" class="nodeInfo">
+      <h4>Label</h4>
+
+      <p id="nodeInfoLabel"></p>
+
+      <h4>Description</h4>
+
+      <p id="nodeInfoDescription"></p>
+
+      <h4>Link</h4>
+
+      <p id="nodeInfoUrl"></p>
+    </div>
+  </div>
+
+</aside>
+
+<script src="../../resources/require.js"></script>
+<script src="GraphViewerDemo.js"></script>
+</body>
+</html>

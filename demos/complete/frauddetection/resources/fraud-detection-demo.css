@@ -1,0 +1,225 @@
+/****************************************************************************
+ ** @license
+ ** This demo file is part of yFiles for HTML 2.1.
+ ** Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** 72070 Tuebingen, Germany. All rights reserved.
+ **
+ ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+ ** of demo files in source code or binary form, with or without
+ ** modification, is not permitted.
+ **
+ ** Owners of a valid software license for a yFiles for HTML version that this
+ ** demo is shipped with are allowed to use the demo source code as basis
+ ** for their own yFiles for HTML powered applications. Use of such programs is
+ ** governed by the rights and conditions as set out in the yFiles for HTML
+ ** license agreement.
+ **
+ ** THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+ ** WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ ** MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+ ** NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ ** SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+ ** TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ ** PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+ ** LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+ ** NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ **
+ ***************************************************************************/
+#graphComponent {
+  bottom: 180px;
+  border-bottom: 4px solid #f7f7f7;
+}
+
+#timelineComponent {
+  position: absolute;
+  height: 180px;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+
+#fraudDetectionTitle {
+  position: relative;
+  font-size: 20px;
+  font-weight: bold;
+  color: white;
+}
+
+#fraudDetectionView {
+  width: calc(100% - 10px);
+  height: calc(100% - 110px);
+  left: 0;
+  top: 100px;
+  position: absolute;
+  display: none;
+  border: 5px solid orangered;
+  background-color: white;
+}
+
+#fraudDetectionHeader {
+  background-color: orangered;
+  height: 25px;
+}
+
+#fraudDetectionToolbar {
+  display: none;
+  vertical-align: baseline;
+}
+
+#fraudDetectionComponent {
+  height: calc(80% - 10px);
+  border-bottom: 4px solid #f7f7f7;
+}
+
+#fraudDetectionTimeline {
+  position: relative;
+  height: calc(20% - 35px);
+}
+
+.demo-toggle-button.labeled:disabled + label {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.demo-toggle-button.labeled:hover + label {
+  background: none;
+}
+
+.time-frame-rect {
+  stroke-width: 3;
+  stroke: orange;
+  stroke-opacity: 0.3;
+  fill: gold;
+  fill-opacity: 0.3;
+}
+
+.popupContent {
+  position: absolute;
+  display: none; /* during runtime, the display value is overridden by class NodePopup */
+  border: 1px solid lightgray;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.85);
+  vertical-align: middle;
+}
+
+label {
+  vertical-align: middle;
+  margin: 3px 2px 0px 0px;
+}
+
+.col1 {
+  text-align: right;
+  width: 80px;
+  height: 15px;
+  float: left;
+  color: #5a698b;
+  text-transform: uppercase;
+  font: bold 10px 'Lucida Grande', 'Trebuchet MS', Arial, Helvetica, sans-serif;
+}
+
+.col2 {
+  width: 100px;
+  height: 15px;
+  display: block;
+  float: left;
+  margin: 0;
+  text-transform: uppercase;
+}
+
+.wideText {
+  border: 1px solid #8595b2;
+  background-color: #fff;
+  font: 10px 'Lucida Grande', 'Trebuchet MS', Arial, Helvetica, sans-serif;
+  color: #5a698b;
+  margin-left: 1px;
+  width: 96px;
+  resize: none;
+  text-transform: uppercase;
+}
+
+div.row {
+  clear: both;
+  width: 200px;
+}
+
+.title {
+  width: 180px;
+  height: 26px;
+  color: #5a698b;
+  font: bold 12px 'Lucida Grande', 'Trebuchet MS', Arial, Helvetica, sans-serif;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  text-align: center;
+}
+
+.closeButton {
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+  padding: 3px;
+  z-index: 1;
+  color: #a9a9a9;
+  background: url('close-16.svg') no-repeat center;
+  transition: color 0.1s ease-in-out;
+}
+
+#loadingIndicator {
+  position: absolute;
+  top: 50%;
+  width: 100%;
+  height: 200px;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  margin-top: -100px;
+  background-color: rgba(0, 0, 0, 0.6);
+  color: #ffffff;
+  padding-top: 80px;
+  text-align: center;
+}
+
+.warning {
+  float: right;
+  background-image: url('fraud-warning-16.svg');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 24px;
+  background-color: transparent;
+  height: 24px;
+  width: 24px;
+  margin: 8px 1px 0 0;
+  border: none;
+  color: orangered;
+  font-size: 10px;
+  font-weight: bold;
+  padding: 0;
+}
+
+.warning:active {
+  background-color: #b2b2b2;
+  border: none;
+}
+
+.warning:hover {
+  cursor: pointer;
+  background-color: #bbb !important;
+  border: none;
+}
+
+.warning:focus {
+  outline: none;
+}
+
+#layoutButton:hover {
+  cursor: pointer;
+  background-color: #bbb !important;
+}
+
+.customCursor {
+  cursor: pointer !important;
+}

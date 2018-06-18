@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+
+<!-- ////////////////////////////////////////////////////////////////////////
+     // @license
+     // This demo file is part of yFiles for HTML 2.1.
+     // Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // 72070 Tuebingen, Germany. All rights reserved.
+     //
+     // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+     // of demo files in source code or binary form, with or without
+     // modification, is not permitted.
+     //
+     // Owners of a valid software license for a yFiles for HTML version that this
+     // demo is shipped with are allowed to use the demo source code as basis
+     // for their own yFiles for HTML powered applications. Use of such programs is
+     // governed by the rights and conditions as set out in the yFiles for HTML
+     // license agreement.
+     //
+     // THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+     // WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+     // MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+     // NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+     // SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+     // TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+     // PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+     // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+     // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+     // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+     // 
+     ////////////////////////////////////////////////////////////////////////-->
+
+  <title>Hierarchic Subcomponents Demo [yFiles for HTML]</title>
+
+  <link rel="stylesheet" href="../../../lib/yfiles.css">
+  <link rel="stylesheet" href="../../resources/style/demo.css">
+
+  <!-- enable debugging -->
+  <script src="../../../ide-support/yfiles-typeinfo.js"></script>
+
+  <style>
+    .icon-add-component {
+      background-image: url('../../resources/icons/plus2-16.svg');
+    }
+
+    .icon-remove-component {
+      background-image: url('../../resources/icons/minus2-16.svg');
+    }
+
+    .crimson {
+      fill: crimson;
+    }
+
+    .darkturquoise {
+      fill: darkturquoise;
+    }
+
+    .cornflowerblue {
+      fill: cornflowerblue;
+    }
+
+    .darkslateblue {
+      fill: darkslateblue;
+    }
+
+    .gold {
+      fill: gold;
+    }
+
+    .mediumslateblue {
+      fill: mediumslateblue;
+    }
+
+    .forestgreen {
+      fill: forestgreen;
+    }
+
+    .mediumvioletred {
+      fill: mediumvioletred;
+    }
+
+    .darkcyan {
+      fill: darkcyan;
+    }
+
+    .chocolate {
+      fill: chocolate;
+    }
+
+    .limegreen {
+      fill: limegreen;
+    }
+
+    .mediumorchid {
+      fill: mediumorchid;
+    }
+
+    .royalblue {
+      fill: royalblue;
+    }
+
+    .orangered {
+      fill: orangered;
+    }
+  </style>
+</head>
+<body class="demo-has-left">
+<aside class="demo-sidebar demo-left">
+  <h1 class="demo-sidebar-header">Description</h1>
+  <div class="demo-sidebar-content">
+    <p>
+      This demo shows how hierarchic layout can arrange selected subcomponents of a graph with different layout styles.
+    </p>
+    <p>
+      Available styles are tree, organic, or orthogonal style, or a hierarchic style with different settings than the
+      main layout.
+    </p>
+
+    <h2>Things to Try</h2>
+    <ul>
+      <li>
+        Add nodes to a new subcomponent that gets an individual layout. Select some nodes, chose a layout algorithm and
+        style, and hit <img src="../../resources/icons/plus2-16.svg">. Then the new subcomponent is marked with a color
+        and the layout is updated.
+      </li>
+      <li>
+        Remove nodes from subcomponents. Select some nodes and press <img src="../../resources/icons/minus2-16.svg">.
+        Those nodes are removed from their subcomponents.
+      </li>
+    </ul>
+  </div>
+</aside>
+
+<div class="demo-content">
+  <div class="demo-toolbar">
+    <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
+    <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
+    <button data-command="FitContent" title="Fit Content" class="demo-icon-yIconZoomFit"></button>
+
+    <span class="demo-separator"></span>
+
+    <select id="layout-select" data-command="SelectLayout" title="Select the layout of a new subcomponent">
+      <option value="tree">Tree Layout</option>
+      <option value="organic">Organic Layout</option>
+      <option value="orthogonal">Orthogonal Layout</option>
+      <option value="hierarchic">Hierarchic Layout</option>
+    </select>
+    <select id="orientation-select" data-command="SelectOrientation" title="Select the orientation of a new subcomponent">
+      <option value="top-to-bottom">Top to Bottom</option>
+      <option value="bottom-to-top">Bottom to Top</option>
+      <option value="left-to-right">Left to Right</option>
+      <option value="right-to-left">Right to Left</option>
+    </select>
+    <button data-command="CreateSubcomponent" title="Add the selected nodes to a new subcomponent"
+        class="icon-add-component" disabled></button>
+
+    <span class="demo-separator"></span>
+
+    <button data-command="RemoveSubcomponent" title="Remove the selected nodes from their subcomponent"
+        class="icon-remove-component" disabled></button>
+
+    <span class="demo-separator"></span>
+
+    <button id="layoutButton" data-command="Layout" title="Run Hierarchic Layout" class="demo-icon-yIconLayout labeled">
+      Layout
+    </button>
+  </div>
+
+  <div id="graphComponent"></div>
+</div>
+
+<script src="../../resources/require.js"></script>
+<script src="SubcomponentsDemo.js"></script>
+
+</body>
+</html>

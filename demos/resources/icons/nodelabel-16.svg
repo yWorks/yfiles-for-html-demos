@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 width="16px" height="16px" viewBox="0 0 16 16" enable-background="new 0 0 16 16" xml:space="preserve">
+<g>   
+    <rect fill="#666666" height="9" width="15" x="0.5" y="3.5" stroke="#666666" stroke-miterlimit="10"/>
+    <rect fill="#666666" height="2" width="11" x="2.5" y="1.5" stroke="#666666" stroke-miterlimit="10"/>
+    <rect fill="#666666" height="2" width="11" x="2.5" y="12.5" stroke="#666666" stroke-miterlimit="10"/>
+    <line fill="none" stroke="#FFFFFF" stroke-miterlimit="10" x1="2" x2="5" y1="7.5" y2="7.5"/>
+    <line fill="none" stroke="#FFFFFF" stroke-miterlimit="10" x1="4.5" x2="4.5" y1="7" y2="11"/>
+    <line fill="none" stroke="#FFFFFF" stroke-miterlimit="10" x1="4" x2="2" y1="10.5" y2="10.5"/>
+    <line fill="none" stroke="#FFFFFF" stroke-miterlimit="10" x1="2" x2="4" y1="9.5" y2="9.5"/>
+    <line fill="none" stroke="#FFFFFF" stroke-miterlimit="10" x1="6.5" x2="6.5" y1="5" y2="11"/>
+    <line fill="none" stroke="#FFFFFF" stroke-miterlimit="10" x1="7" x2="9" y1="7.5" y2="7.5"/>
+    <line fill="none" stroke="#FFFFFF" stroke-miterlimit="10" x1="8.5" x2="8.5" y1="8" y2="11"/>
+    <line fill="none" stroke="#FFFFFF" stroke-miterlimit="10" x1="8" x2="7" y1="10.5" y2="10.5"/>
+    <line fill="none" stroke="#FFFFFF" stroke-miterlimit="10" x1="13" x2="10" y1="7.5" y2="7.5"/>
+    <line fill="none" stroke="#FFFFFF" stroke-miterlimit="10" x1="10.5" x2="10.5" y1="8" y2="11"/>
+    <line fill="none" stroke="#FFFFFF" stroke-miterlimit="10" x1="10" x2="13" y1="10.5" y2="10.5"/>
+    <line fill="none" stroke="#FFFFFF" stroke-miterlimit="10" x1="3" x2="13" y1="2.5" y2="2.5"/>
+    <line fill="none" stroke="#FFFFFF" stroke-miterlimit="10" x1="3" x2="13" y1="13.5" y2="13.5"/>
+</g>
+</svg>

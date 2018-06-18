@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+
+<!-- ////////////////////////////////////////////////////////////////////////
+     // @license
+     // This demo file is part of yFiles for HTML 2.1.
+     // Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // 72070 Tuebingen, Germany. All rights reserved.
+     //
+     // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+     // of demo files in source code or binary form, with or without
+     // modification, is not permitted.
+     //
+     // Owners of a valid software license for a yFiles for HTML version that this
+     // demo is shipped with are allowed to use the demo source code as basis
+     // for their own yFiles for HTML powered applications. Use of such programs is
+     // governed by the rights and conditions as set out in the yFiles for HTML
+     // license agreement.
+     //
+     // THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+     // WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+     // MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+     // NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+     // SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+     // TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+     // PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+     // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+     // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+     // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+     // 
+     ////////////////////////////////////////////////////////////////////////-->
+
+  <title id="title">AngularJS 1 Integration Demo [yFiles for HTML]</title>
+
+  <link rel="stylesheet" href="../../../lib/yfiles.css">
+  <link rel="stylesheet" href="app.css">
+  <link rel="stylesheet" href="../../resources/style/demo.css">
+  <script src="../../resources/require.js"></script>
+  <script src="../../../ide-support/yfiles-typeinfo.js"></script>
+
+  <script type="text/yfiles-template">
+    <g id="NodeStyleTemplate">
+      <rect stroke="none" fill="lightgray" rx="4" ry="4" width="{TemplateBinding width}"
+          height="{TemplateBinding height}"></rect>
+      <text data-content="{Binding name}"></text>
+    </g>
+  </script>
+</head>
+<body data-ng-controller="graphCtrl" class="demo-has-left demo-has-right">
+  <aside class="demo-sidebar demo-left">
+    <div class="demo-sidebar-content">
+      <h1 class="demo-sidebar-header">Description</h1>
+
+      <p>This demo shows how to use yFiles for HTML in an AngularJS 1 app.</p>
+
+      <h2>Things to Try</h2>
+
+      <ul>
+        <li>Select an employee either in the graph or in the employee list. The personal data of the selected one is
+          displayed in the details panel.</li>
+
+        <li>Edit the name of the selected employee. The name is automatically changed everywhere via two-way
+          binding.
+        </li>
+
+        <li>Filter the graph and the employee list by name.</li>
+
+      </ul>
+
+      <h2>AngularJS Features</h2>
+
+      <p>An AngularJS directive is used to setup the <code>GraphComponent</code>. The graph is created
+        automatically from JSON data using class <code>GraphBuilder</code>. The data is bound to the
+        <code>GraphComponent</code> with the directive's attributes.
+      </p>
+
+      <p>The <code>GraphComponent</code> directive also provides a way of specifying the node filter via an attribute.
+        This filter is used to filter the node input array in code. A <code>watch</code> on the filter ensures that
+        the graph is updated if the filter changes.</p>
+
+      <p>The <code>GraphComponent</code> directive provides a <code>currentNode</code> attribute that is updated with
+        the currently focused graph item. This attribute is used to highlight the focused node in the nodes list and
+        is updated accordingly if the <code>GraphComponent#currentItem</code> has changed as well as if the focused item in the nodes
+        list changes.</p>
+
+      <p>The node styles use AngularJS templates to visualize the nodes, which are compiled before they are rendered.
+        The templates can contain AngularJS bindings and directives.</p>
+
+      <p><strong>Level-of-detail rendering</strong> is used by the node style. It has three different templates for
+        different zoom levels.</p>
+
+      <p>A directive is used to abbreviate the employee names in the overview template.</p>
+
+      <p>The layout is provided by a <code>Service</code>.</p>
+
+      <p>The zoom buttons use a <code>Command</code> directive that binds the click events to yFiles commands.</p>
+    </div>
+  </aside>
+
+  <aside class="demo-sidebar demo-right">
+    <h1 class="demo-sidebar-header">Employee Details</h1>
+    <div class="demo-sidebar-content">
+
+      <div id="node-view" ng-cloak="">
+        <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewbox="-10 -10 270 120">
+          <rect fill="url(#nodeGradient)" stroke="#249AE7" stroke-width="3" rx="8" ry="8" width="250" height="100"></rect>
+          <g ng-if="currentNode">
+            <image ng-href="{{currentNode.icon}}" transform="translate(5 15)" width="58px" height="66px" xlink:href="resources/usericon_female1.svg"></image>
+            <text transform="translate(80 20)" style="font-size:10px; font-family:Arial; fill:#505050">{{currentNode.name}}</text>
+            <text transform="translate(80 38)" style="font-size:8px; font-family:Arial; fill:#505050">{{currentNode.position}}</text>
+            <text transform="translate(80 56)" style="font-size:10px; font-family:Arial; fill:#505050">{{currentNode.email}}</text>
+            <text transform="translate(80 74)" style="font-size:10px; font-family:Arial; fill:#505050">{{currentNode.phone}}</text>
+            <text transform="translate(80 92)" style="font-size:10px; font-family:Arial; fill:#505050">{{currentNode.fax}}</text>
+          </g>
+        </svg>
+      </div>
+
+      <h1>Employees</h1>
+
+      <div id="node-filter">
+        <label for="nodeFilter">Filter</label> <input id="nodeFilter" type="text" data-ng-model="nodesFilter.name">
+      </div>
+      <div id="nodes-list" ng-cloak="">
+        <ul>
+          <li ng-repeat="node in nodesModel | filter: nodesFilter | orderBy: 'name'" ng-class="{'item-selected': node===currentNode}" ng-click="$parent.currentNode=node" style="position:relative;">
+            <span ng-if="!editing || node !== currentNode">{{node.name}}</span>
+            <button ng-if="!editing && node === currentNode" ng-click="$parent.editing=!$parent.editing" ng-disabled="!currentNode">Edit
+            </button>
+            <input type="text" ng-if="editing && node === currentNode" ng-model="node.name" enter-press="$parent.editing=false">
+          </li>
+        </ul>
+      </div>
+    </div>
+  </aside>
+
+  <div class="demo-content">
+
+    <div class="demo-toolbar">
+      <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn demo-toolbar-button demo-hide-when-small"></button>
+      <button data-command="ZoomOriginal" title="Zoom to original size" class="demo-icon-yIconZoomOriginal demo-toolbar-button demo-hide-when-small"></button>
+      <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut demo-toolbar-button demo-hide-when-small"></button>
+      <button data-command="FitContent" title="Fit Content" class="demo-icon-yIconZoomFit demo-toolbar-button demo-hide-when-small"></button>
+    </div>
+    <div id="graphContainer">
+      <!-- the GraphComponent directive -->
+      <graph-component id="graphComponent" nodes-source="nodesModel" edges-source="edgesModel" nodes-filter="nodesFilter" current-node="currentNode" node-id-binding="name" source-node-binding="from" target-node-binding="to"></graph-component>
+    </div>
+  </div>
+
+  <!-- a hidden SVG that stores the gradients used in the node templates -->
+  <svg style="visibility: hidden" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <defs>
+      <lineargradient id="nodeGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+        <stop offset="0%" style="stop-color:rgb(204,255,255);"></stop>
+        <stop offset="100%" style="stop-color:rgb(153,204,255);"></stop>
+      </lineargradient>
+    </defs>
+  </svg>
+
+  <script src="app.js"></script>
+</body>
+</html>

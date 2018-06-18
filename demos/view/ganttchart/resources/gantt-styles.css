@@ -1,0 +1,92 @@
+/****************************************************************************
+ ** @license
+ ** This demo file is part of yFiles for HTML 2.1.
+ ** Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** 72070 Tuebingen, Germany. All rights reserved.
+ **
+ ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+ ** of demo files in source code or binary form, with or without
+ ** modification, is not permitted.
+ **
+ ** Owners of a valid software license for a yFiles for HTML version that this
+ ** demo is shipped with are allowed to use the demo source code as basis
+ ** for their own yFiles for HTML powered applications. Use of such programs is
+ ** governed by the rights and conditions as set out in the yFiles for HTML
+ ** license agreement.
+ **
+ ** THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+ ** WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ ** MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+ ** NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ ** SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+ ** TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ ** PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+ ** LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+ ** NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ **
+ ***************************************************************************/
+#mainComponent {
+    position: absolute;
+    left: 150px;
+    top: 70px;
+    right: 0;
+    bottom: 0;
+}
+#timelineComponent {
+    position: absolute;
+    height: 70px;
+    left: 150px;
+    top: 0;
+    right: 0;
+}
+#taskComponent {
+    position: absolute;
+    width: 150px;
+    top: 70px;
+    left: 0;
+    bottom: 0;
+}
+#graphComponentContainer {
+    position: absolute;
+    top: 60px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+#info {
+    position: absolute;
+    min-width: 60px;
+    padding: 0 5px;
+    height: 25px;
+    background-color: rgba(255,2555,255,0.7);
+    border: 1px solid #444;
+    color: #444;
+    line-height: 25px;
+    text-align: center;
+}
+
+#nodeInfo {
+    position: absolute;
+    min-width: 60px;
+    padding: 20px;
+    background-color: #6991ff;
+    color: #fff;
+    line-height: 25px;
+    text-align: left;
+}
+
+#nodeInfo span[data-name="name"] {
+    font-size: 12pt;
+    text-decoration: underline;
+}
+
+#nodeInfo>#background {
+    position: absolute;
+    left: 0px;
+    right: 0px;
+    top: 0px;
+    bottom: 0px;
+    background-color: rgb(51, 102, 255);
+    opacity: 0.5;
+}

@@ -1,0 +1,12 @@
+{
+  "name": "TypeScript-Demo",
+  "version": "2.0.0",
+  "dependencies": {},
+  "devDependencies": {
+    "typescript": "2.6.2"
+  },
+  "scripts": {
+    "postinstall": "npm run build",
+    "build": "tsc"
+  }
+}

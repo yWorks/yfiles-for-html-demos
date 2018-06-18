@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+
+<!-- ////////////////////////////////////////////////////////////////////////
+     // @license
+     // This demo file is part of yFiles for HTML 2.1.
+     // Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // 72070 Tuebingen, Germany. All rights reserved.
+     //
+     // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+     // of demo files in source code or binary form, with or without
+     // modification, is not permitted.
+     //
+     // Owners of a valid software license for a yFiles for HTML version that this
+     // demo is shipped with are allowed to use the demo source code as basis
+     // for their own yFiles for HTML powered applications. Use of such programs is
+     // governed by the rights and conditions as set out in the yFiles for HTML
+     // license agreement.
+     //
+     // THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+     // WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+     // MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+     // NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+     // SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+     // TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+     // PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+     // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+     // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+     // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+     // 
+     ////////////////////////////////////////////////////////////////////////-->
+
+  <title>Simple Graph Builder Demo [yFiles for HTML]</title>
+
+  <link rel="stylesheet" href="../../../lib/yfiles.css">
+  <link rel="stylesheet" href="../../resources/style/demo.css">
+
+  <!-- enable debugging -->
+  <script src="../../../ide-support/yfiles-typeinfo.js"></script>
+
+  <script type="text/yfiles-template">
+    <defs>
+      <clipPath id="myClip">
+        <rect width="260" height="60"></rect>
+      </clipPath>
+    </defs>
+    <g id="nodeTemplate" clip-path="url(#myClip)">
+      <rect fill="#FF8C00" stroke="#FFF" stroke-width="1" rx="2" ry="2"
+          width="{TemplateBinding width}" height="{TemplateBinding height}"></rect>
+      <text transform="translate(10 20)" data-content="{Binding name}"
+          style="font-size:18px; fill:#000; text-anchor: start; dominant-baseline: central;"></text>
+      <text transform="translate(10 40)" data-content="{Binding position}"
+          style="font-size:18px; fill:#000; text-anchor: start; dominant-baseline: central;"></text>
+    </g>
+  </script>
+
+</head>
+<body class="demo-has-left">
+<aside class="demo-sidebar demo-left">
+  <h1 class="demo-sidebar-header">Description</h1>
+  <div class="demo-sidebar-content">
+    <p>
+      This demo uses <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.binding.GraphBuilder">yfiles.binding.GraphBuilder</a>
+      or <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.binding.TreeBuilder">yfiles.binding.TreeBuilder</a>
+      to automatically build a graph from business data. <br/> The business data can be stored in <em>arrays</em> or in
+      <em>JSON</em> format.<br/> The nodes are visualized by a
+      <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.styles.TemplateNodeStyle">yfiles.styles.TemplateNodeStyle</a>
+      instance that binds to the business data objects which
+      <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.binding.GraphBuilder">yfiles.binding.GraphBuilder</a> stores
+      in the graph item's
+      <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.graph.ITagOwner#tag">yfiles.graph.ITagOwner#tag</a>.</p>
+    <ul>
+      <li>
+        <code>nodesSource</code> stores the business objects that represent the nodes.
+      </li>
+      <li>
+        <code>edgesSource</code> stores the business objects that represent the edges that connect the nodes.
+      </li>
+      <li>
+        <code>groupsSource</code> stores the business objects that represent the group nodes.
+      </li>
+    </ul>
+    <p>
+      The files <em>graph-builder-data.js</em>, <em>tree-builder-array-data.js</em>, <em>tree-builder-id-array-data.js</em> and
+      <em>tree-builder-json-data.js</em> show how the data has to be specified for the classes
+      <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.binding.GraphBuilder">yfiles.binding.GraphBuilder</a> and
+      <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.binding.TreeBuilder">yfiles.binding.TreeBuilder</a>.
+    </p>
+  </div>
+</aside>
+
+<div class="demo-content">
+  <div class="demo-toolbar">
+    <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
+    <button data-command="ZoomOriginal" title="Zoom to original size" class="demo-icon-yIconZoomOriginal"></button>
+    <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
+    <button data-command="FitContent" title="Fit Content" class="demo-icon-yIconZoomFit"></button>
+    <span class="demo-separator"></span>
+    <select data-command="SelectBuilder" title="Select builder type">
+      <option>Graph Builder</option>
+      <option>Tree Builder (Array)</option>
+      <option>Tree Builder (Array with IDs)</option>
+      <option>Tree Builder (JSON)</option>
+    </select>
+  </div>
+
+  <div id="graphComponent"></div>
+</div>
+
+<script src="../../resources/require.js"></script>
+<script src="SimpleGraphBuilderDemo.js"></script>
+</body>
+</html>

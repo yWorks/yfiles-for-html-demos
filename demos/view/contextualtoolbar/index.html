@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+
+<!-- ////////////////////////////////////////////////////////////////////////
+     // @license
+     // This demo file is part of yFiles for HTML 2.1.
+     // Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // 72070 Tuebingen, Germany. All rights reserved.
+     //
+     // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+     // of demo files in source code or binary form, with or without
+     // modification, is not permitted.
+     //
+     // Owners of a valid software license for a yFiles for HTML version that this
+     // demo is shipped with are allowed to use the demo source code as basis
+     // for their own yFiles for HTML powered applications. Use of such programs is
+     // governed by the rights and conditions as set out in the yFiles for HTML
+     // license agreement.
+     //
+     // THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+     // WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+     // MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+     // NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+     // SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+     // TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+     // PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+     // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+     // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+     // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+     // 
+     ////////////////////////////////////////////////////////////////////////-->
+
+  <title>Contextual Toolbar [yFiles for HTML]</title>
+
+  <link rel="stylesheet" href="../../../lib/yfiles.css">
+  <link rel="stylesheet" href="../../resources/style/demo.css">
+
+  <!-- the stylesheet for the contextual toolbar -->
+  <link rel="stylesheet" href="./resources/contextual-toolbar.css">
+
+  <!-- we use font-awesome icons for the toolbar in this demo -->
+  <script defer src="https://use.fontawesome.com/releases/v5.0.9/js/all.js" integrity="sha384-8iPTk2s/jMVj81dnzb/iFR2sdA7u06vHJyyLlAd4snFpCl/SnyUjRrbdJsw1pGIl" crossorigin="anonymous"></script>
+
+  <!-- enable debugging -->
+  <script src="../../../ide-support/yfiles-typeinfo.js"></script>
+
+</head>
+<body class="demo-has-left">
+<aside class="demo-sidebar demo-left">
+  <h1 class="demo-sidebar-header">Description</h1>
+  <div class="demo-sidebar-content">
+    <p>
+      This demo presents a contextual toolbar that provides easy to reach controls for selected graph items.
+    </p>
+
+    <p>
+      Similar to the <a href="../../view/htmlpopup/index.html">HTML Popup Demo</a>, the toolbar is displayed in the
+      <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.view.GraphComponent">yfiles.view.GraphComponent</a> above the graph items and rendered zoom-invariant with a fixed size.
+      It moves alongside the graph items but is limited to the Graph Component container, such that it will be visible
+      at all times.
+    </p>
+
+    <h2>Things to Try</h2>
+    <ul>
+      <li>Select a node, label or edge to show the toolbar for the respective item.</li>
+      <li>Select multiple items to show the toolbar for all containing types.</li>
+      <li>Move the viewport when the toolbar is open to see its dynamic positioning.</li>
+      <li>Zoom in or out to see the zoom-invariant behavior of the toolbar.</li>
+    </ul>
+  </div>
+</aside>
+
+<div class="demo-content">
+  <div class="demo-toolbar">
+    <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
+    <button data-command="ZoomOriginal" title="Zoom to original size" class="demo-icon-yIconZoomOriginal"></button>
+    <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
+    <button data-command="FitContent" title="Fit Content" class="demo-icon-yIconZoomFit"></button>
+
+    <span class="demo-separator"></span>
+
+    <button data-command="Undo" title="Undo" class="demo-icon-yIconUndo"></button>
+    <button data-command="Redo" title="Redo" class="demo-icon-yIconRedo"></button>
+  </div>
+
+  <div id="graphComponent">
+    <!-- The contextual toolbar is placed within the GraphComponent to act as an overlay -->
+    <div id="contextualToolbar" class="contextual-toolbar" tabindex="0">
+      <div id="clipboard-ui">
+        <input type="checkbox" id="clipboard" class="toggle-button" data-container-id="clipboard-actions">
+        <label for="clipboard" title="Clipboard">
+          <span class="fa-layers fa-fw">
+            <i class="fas fa-clipboard"></i>
+            <i class="fas fa-sm fa-caret-right" data-fa-transform="right-14 down-12 rotate-45"></i>
+          </span>
+        </label>
+        <span class="separator"></span>
+      </div>
+      <div id="node-ui">
+        <input type="checkbox" id="shape-picker" class="toggle-button" data-container-id="shape-picker-shapes">
+        <label for="shape-picker" title="Shape Picker">
+          <span class="fa-layers fa-fw">
+            <i class="fas fa-star" data-fa-transform="shrink-6 up-8"></i>
+            <i class="fas fa-square" data-fa-transform="shrink-6 down-4 left-6"></i>
+            <i class="fas fa-circle" data-fa-transform="shrink-6 down-4 right-6"></i>
+            <i class="fas fa-sm fa-caret-right" data-fa-transform="right-14 down-12 rotate-45"></i>
+          </span>
+        </label>
+        <input type="checkbox" id="color-picker" class="toggle-button" data-container-id="color-picker-colors">
+        <label for="color-picker" title="Color Picker">
+          <span class="fa-layers fa-fw">
+            <i class="fas fa-paint-brush"></i>
+            <i class="fas fa-sm fa-caret-right" data-fa-transform="right-14 down-12 rotate-45"></i>
+          </span>
+        </label>
+      </div>
+      <div id="label-ui">
+        <span class="separator"></span>
+        <input type="checkbox" id="font-color-picker" class="toggle-button" data-container-id="font-color-picker-colors">
+        <label for="font-color-picker" title="Font Color Picker">
+          <span class="fa-layers fa-fw">
+            <i class="fas fa-font" data-fa-transform="shrink-2 up-4"></i>
+            <i class="far fa-window-minimize" data-fa-transform="shrink-2"></i>
+            <i class="fas fa-sm fa-caret-right" data-fa-transform="right-14 down-12 rotate-45"></i>
+          </span>
+        </label>
+        <button title="Decrease Font Size" id="decrease-font-size">
+          <span class="fa-layers fa-fw">
+            <i class="fas fa-long-arrow-alt-right" data-fa-transform="up-8 rotate-20"></i>
+            <i class="fas fa-font" data-fa-transform="shrink-5 down-2.5 right-6"></i>
+            <i class="fas fa-font" data-fa-transform="left-6 down-1"></i>
+          </span>
+        </button>
+        <button title="Increase Font Size" id="increase-font-size">
+          <span class="fa-layers fa-fw">
+            <i class="fas fa-long-arrow-alt-right" data-fa-transform="up-8 rotate--20"></i>
+            <i class="fas fa-font" data-fa-transform="right-6 down-1"></i>
+            <i class="fas fa-font" data-fa-transform="shrink-5 down-2.5 left-6"></i>
+          </span>
+        </button>
+        <input type="checkbox" id="font-bold" class="toggle-button" data-fontWeight="bold"><label for="font-bold" title="Bold"><i class="fas fa-bold"></i></label>
+        <input type="checkbox" id="font-italic" class="toggle-button" data-fontStyle="italic"><label for="font-italic" title="Italic"><i class="fas fa-italic"></i></label>
+        <input type="checkbox" id="font-underline" class="toggle-button" data-textDecoration="underline"><label for="font-underline" title="Underline"><i class="fas fa-underline"></i></label>
+      </div>
+      <div id="edge-ui">
+        <span class="separator"></span>
+        <input type="checkbox" id="source-arrow-picker" class="toggle-button" data-container-id="arrow-picker-types">
+        <label for="source-arrow-picker" title="Source Arrow Picker">
+          <span class="fa-layers fa-fw">
+            <i class="fas fa-long-arrow-alt-left"></i>
+            <i class="fas fa-sm fa-caret-right" data-fa-transform="right-14 down-12 rotate-45"></i>
+          </span>
+        </label>
+        <input type="checkbox" id="edge-color-picker" class="toggle-button" data-container-id="edge-colors">
+        <label for="edge-color-picker" title="Edge Color Picker">
+          <span class="fa-layers fa-fw">
+            <i class="fas fa-paint-brush" data-fa-transform="shrink-4 up-4"></i>
+            <i class="far fa-window-minimize" data-fa-transform="shrink-2"></i>
+            <i class="fas fa-sm fa-caret-right" data-fa-transform="right-14 down-12 rotate-45"></i>
+          </span>
+        </label>
+        <input type="checkbox" id="target-arrow-picker" class="toggle-button" data-container-id="arrow-picker-types">
+        <label for="target-arrow-picker" title="Target Arrow Picker">
+          <span class="fa-layers fa-fw">
+            <i class="fas fa-long-arrow-alt-right"></i>
+            <i class="fas fa-sm fa-caret-right" data-fa-transform="right-14 down-12 rotate-45"></i>
+          </span>
+        </label>
+      </div>
+
+      <div id="color-picker-colors" class="picker-container color-picker">
+        <button data-color="#DC143C" style="background-color: #DC143C;" title="#DC143C"></button>
+        <button data-color="#336699" style="background-color: #336699;" title="#336699"></button>
+        <button data-color="#32CD32" style="background-color: #32CD32;" title="#32CD32"></button>
+        <button data-color="#228B22" style="background-color: #228B22;" title="#228B22"></button>
+        <button data-color="#FF8C00" style="background-color: #FF8C00;" title="#FF8C00"></button>
+        <button data-color="#7B68EE" style="background-color: #7B68EE;" title="#7B68EE"></button>
+      </div>
+
+      <div id="edge-colors" class="picker-container color-picker">
+        <button data-color="#DC143C" style="background-color: #DC143C;" title="#DC143C"></button>
+        <button data-color="#336699" style="background-color: #336699;" title="#336699"></button>
+        <button data-color="#32CD32" style="background-color: #32CD32;" title="#32CD32"></button>
+        <button data-color="#228B22" style="background-color: #228B22;" title="#228B22"></button>
+        <button data-color="#FF8C00" style="background-color: #FF8C00;" title="#FF8C00"></button>
+        <button data-color="#333333" style="background-color: #333333;" title="#333333"></button>
+      </div>
+
+      <div id="font-color-picker-colors" class="picker-container color-picker">
+        <button data-color="#000000" style="background-color: #000000;" title="#000000"></button>
+        <button data-color="#FFFFFF" style="background-color: #FFFFFF;" title="#FFFFFF"></button>
+        <button data-color="#336699" style="background-color: #336699;" title="#336699"></button>
+        <button data-color="#DC143C" style="background-color: #DC143C;" title="#DC143C"></button>
+        <button data-color="#32CD32" style="background-color: #32CD32;" title="#32CD32"></button>
+        <button data-color="#7B68EE" style="background-color: #7B68EE;" title="#7B68EE"></button>
+      </div>
+
+      <div id="shape-picker-shapes" class="picker-container">
+        <button title="Rectangle" data-shape="RECTANGLE" style="background-image: url('resources/shapes/rectangle.svg');"></button>
+        <button title="Ellipse" data-shape="ELLIPSE" style="background-image: url('resources/shapes/ellipse.svg');"></button>
+        <button title="Star-6" data-shape="STAR6" style="background-image: url('resources/shapes/star6.svg');"></button>
+        <button title="Hexagon" data-shape="HEXAGON" style="background-image: url('resources/shapes/hexagon.svg');"></button>
+        <button title="Triangle" data-shape="TRIANGLE" style="background-image: url('resources/shapes/triangle.svg');"></button>
+        <button title="Trapez" data-shape="TRAPEZ" style="background-image: url('resources/shapes/trapez.svg');"></button>
+      </div>
+
+      <div id="arrow-picker-types" class="picker-container">
+        <button title="Circle" data-type="CIRCLE" style="background-image: url('resources/arrows/circle.svg');"></button>
+        <button title="Default" data-type="DEFAULT" style="background-image: url('resources/arrows/default.svg');"></button>
+        <button title="Diamond" data-type="DIAMOND" style="background-image: url('resources/arrows/diamond.svg');"></button>
+        <button title="None" data-type="NONE" style="background-image: url('resources/arrows/none.svg');"></button>
+        <button title="Short" data-type="SHORT" style="background-image: url('resources/arrows/short.svg');"></button>
+        <button title="Triangle" data-type="TRIANGLE" style="background-image: url('resources/arrows/triangle.svg');"></button>
+      </div>
+
+      <div id="clipboard-actions" class="picker-container">
+        <div data-command="Cut"><i class="fas fa-fw fa-lg fa-cut"></i><span>Cut</span></div>
+        <div data-command="Copy"><i class="fas fa-fw fa-lg fa-copy"></i><span>Copy</span></div>
+        <div data-command="Paste"><i class="fas fa-fw fa-lg fa-paste"></i><span>Paste</span></div>
+        <div data-command="Duplicate"><i class="fas fa-fw fa-lg fa-clone"></i><span>Duplicate</span></div>
+        <div data-command="Delete"><i class="fas fa-fw fa-lg fa-trash"></i><span>Delete</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="../../resources/require.js"></script>
+<script src="ContextualToolbarDemo.js"></script>
+
+</body>
+</html>

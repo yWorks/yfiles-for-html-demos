@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "target": "es6",
+    "module": "es6",
+    "moduleResolution": "classic",
+    "sourceMap": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "removeComments": false,
+    "noImplicitAny": true
+  },
+  "files": [
+    "../../../ide-support/yfiles-api-es6-modules-vscode.d.ts",
+    "MyNodeStyle.ts",
+    "MyMarqueeTemplate.ts",
+    "MyArrow.ts",
+    "TypeScript2Demo.ts"
+  ]
+}

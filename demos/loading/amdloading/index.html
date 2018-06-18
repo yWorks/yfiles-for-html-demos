@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+
+  <link rel="stylesheet" href="../../../lib/yfiles.css">
+  <link rel="stylesheet" href="../../resources/style/demo.css">
+
+<!-- ////////////////////////////////////////////////////////////////////////
+     // @license
+     // This demo file is part of yFiles for HTML 2.1.
+     // Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // 72070 Tuebingen, Germany. All rights reserved.
+     //
+     // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+     // of demo files in source code or binary form, with or without
+     // modification, is not permitted.
+     //
+     // Owners of a valid software license for a yFiles for HTML version that this
+     // demo is shipped with are allowed to use the demo source code as basis
+     // for their own yFiles for HTML powered applications. Use of such programs is
+     // governed by the rights and conditions as set out in the yFiles for HTML
+     // license agreement.
+     //
+     // THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+     // WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+     // MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+     // NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+     // SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+     // TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+     // PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+     // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+     // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+     // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+     // 
+     ////////////////////////////////////////////////////////////////////////-->
+
+  <title>Amd Loading Demo [yFiles for HTML]</title>
+
+  <!-- enable debugging -->
+  <script src="../../../ide-support/yfiles-typeinfo.js"></script>
+</head>
+<body class="demo-has-left">
+
+<aside data-type="BorderLayout" class="demo-sidebar demo-left">
+  <h1 class="demo-sidebar-header">Description</h1>
+  <div class="demo-sidebar-content">
+    <p>
+      This demo loads the yFiles module resources using the <em>require</em> function that is defined in the AMD loading
+      standard. </p>
+    <p>
+      The default AMD Loader in use by this demo is the one included in the distribution as part of the demos in
+      <em>demos/resources/require.js</em>. </p>
+    <p>
+      Different AMD Loader implementations should work, too. E.g. in the sources of this page below you can find the
+      configuration code for other popular implementations. These can easily be tested by commenting out the current
+      loader and uncommenting one of the alternatives. </p>
+    <p>
+      The alternatives listed in this file are the <a href="http://requirejs.org">RequireJS</a> loader and the loader
+      included in the <a href="http://dojotoolkit.org/">dojo Toolkit</a>. </p>
+    <p>
+      Resources that have a <em>.js</em> ending are loaded as JavaScript files. Loading a
+      resource without the <em>.js</em> postfix loads the resource as a module. Only the required top-level modules in
+      the reference-tree have to be required explicitly. Dependent modules are resolved and loaded automatically without
+      having to specify them. </p>
+    <p>
+      Please take a look at the HTML sources of this document to see how to load modules using <em>require</em>. </p>
+    <p>
+      Modules can be loaded dynamically at runtime when certain resources are needed. This improves the app's loading
+      speed at startup. In order to observe dynamic loading at runtime, hit the <em>layout</em> button. The modules <em>layout-hierarchic</em>
+      and <em>graph-layout-bridge</em> needed for layout calculation are loaded when the button is hit for the first
+      time. Please take a look at the demo's source code to see how dynamic loading works. </p>
+  </div>
+</aside>
+
+<div class="demo-content">
+  <div class="demo-toolbar">
+
+    <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
+    <button data-command="ZoomOriginal" title="Zoom to original size" class="demo-icon-yIconZoomOriginal"></button>
+    <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
+    <button data-command="FitContent" title="Fit Content" class="demo-icon-yIconZoomFit"></button>
+
+    <span class="demo-separator"></span>
+
+    <button data-command="Cut" title="Cut" class="demo-icon-yIconCut"></button>
+    <button data-command="Copy" title="Copy" class="demo-icon-yIconCopy"></button>
+    <button data-command="Paste" title="Paste" class="demo-icon-yIconPaste"></button>
+    <button data-command="Delete" title="Delete" class="demo-icon-yIconDelete"></button>
+
+    <span class="demo-separator"></span>
+
+    <button data-command="Undo" title="Undo" class="demo-icon-yIconUndo"></button>
+    <button data-command="Redo" title="Redo" class="demo-icon-yIconRedo"></button>
+
+    <span class="demo-separator"></span>
+
+    <button id="layoutButton" data-command="Layout" title="Layout" class="demo-icon-yIconLayout labeled">Layout</button>
+  </div>
+
+  <div id="graphComponent"></div>
+</div>
+
+<!-- USING the DOJO AMD Loader implementation -->
+<!--<script
+    data-dojo-config="async:true, parseOnLoad:true,
+     baseUrl: location.pathname.replace(/\/[^/]+$/, '/'),
+     packages: [
+       { name: 'yfiles', location: '../../../lib/umd/yfiles' },
+       { name: 'demo', location: '../../resources' }
+     ]"
+    src="https://cdnjs.cloudflare.com/ajax/libs/dojo/1.10.4/dojo.js"></script>-->
+
+<!-- USING RequireJS as the AMD Loader implementation -->
+<!--<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.5/require.js"></script>-->
+
+<!-- USING yFiles' demo-framework AMD Loader implementation -->
+<script src="../../resources/require.js"></script>
+
+<!-- Load demo -->
+<script src="AmdLoadingDemo.js"></script>
+</body>
+</html>
