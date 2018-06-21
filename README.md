@@ -4,7 +4,7 @@ This repository contains source code demos that use the commercial [yFiles for H
 
 # Running the Demos
 
-![yFiles for HTML Demos](./demo-grid.png)
+[![yFiles for HTML Demos](./demo-grid.png)](https://live.yworks.com/yfiles-for-html)
 
 Most of the demos are hosted [online here](https://live.yworks.com/yfiles-for-html) for everyone to play with. Developers should [evaluate the library](https://www.yworks.com/products/yfiles-for-html/evaluate), instead. 
 The evaluation version also contains these demos and the necessary library to execute the code. 
