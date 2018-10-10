@@ -237,7 +237,7 @@ The sidebar for the properties and settings
       <script type="text/ng-template" id="./components/option-ui-checkbox/option-ui-checkbox.html">
         <form class="option-ui-checkbox">
           <div class="checkbox-container">
-            <label class="option-ui-checkbox" title="{{::option.label}}">{{::option.label}}</label>
+            <label  class="option-ui-checkbox" title="{{::option.label}}">{{::option.label}}<a data-ng-if="!!option.link" href="{{::option.link}}" title="Open Documentation" class="option-ui-api-link" target="_blank">API&#129034;</a></label>
             <div class="vcenter-container">
               <input type="checkbox" data-ng-model="option.value" data-ng-disabled="disabled"/>
             </div>
@@ -252,7 +252,7 @@ The sidebar for the properties and settings
       <script type="text/ng-template" id="./components/option-ui-combobox/option-ui-combobox.html">
         <form class="option-ui-combobox">
           <div class="combobox-container">
-            <label class="option-ui-combobox" title="{{::option.label}}">{{::option.label}}</label>
+            <label class="option-ui-combobox" title="{{::option.label}}">{{::option.label}}<a data-ng-if="!!option.link" href="{{::option.link}}" title="Open Documentation" class="option-ui-api-link" target="_blank">API&#129034;</a></label>
             <div class="vcenter-container">
               <select size="1" data-ng-model="option.value" data-ng-disabled="disabled"
                   ng-options="option.value as option.name for option in options"></select>
@@ -276,7 +276,9 @@ The sidebar for the properties and settings
       <script type="text/ng-template" id="./components/option-ui-slider/option-ui-slider.html">
         <form class="option-ui-slider" name="ctrlForm">
           <div>
-            <label class="option-ui-slider" title="{{::option.label}}"> {{::option.label}}<br/> </label>
+            <label class="option-ui-slider" title="{{::option.label}}">
+              {{::option.label}}<a data-ng-if="!!option.link" href="{{::option.link}}" title="Open Documentation" class="option-ui-api-link" target="_blank">API&#129034;</a><br />
+            </label>
           </div>
 
           <div class="slider-container">
@@ -310,7 +312,7 @@ The sidebar for the properties and settings
       <script type="text/ng-template" id="./components/option-ui-spinner/option-ui-spinner.html">
         <form class="option-ui-spinner" name="ctrlForm">
           <div class="spinner-container">
-            <label class="option-ui-spinner" title="{{::option.label}}">{{::option.label}}</label>
+            <label class="option-ui-spinner" title="{{::option.label}}">{{::option.label}}<a data-ng-if="!!option.link" href="{{::option.link}}" title="Open Documentation" class="option-ui-api-link" target="_blank">API&#129034;</a></label>
             <div class="vcenter-container">
               <input class="spinner" type="number" min="{{::option.min}}" max="{{::option.max}}"
                   step="{{::option.step}}" name="input" data-ng-model="option.value" data-ng-disabled="disabled"

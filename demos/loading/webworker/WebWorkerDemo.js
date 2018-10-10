@@ -202,13 +202,17 @@ require([
       yfiles.graph.InteriorLabelModel.CENTER
     graphComponent.graph.edgeDefaults.labels.layoutParameter = yfiles.graph.FreeEdgeLabelModel.INSTANCE.createDefaultParameter()
 
-    // Add listeners for item created events to add a label to each new item
+    // Add listeners for item created events to add a tag to each new item
     const masterGraph = manager.masterGraph
     masterGraph.addNodeCreatedListener((source, evt) => {
-      evt.item.tag = (masterGraph.isGroupNode(evt.item) ? 'G-' : 'N-') + masterGraph.nodes.size
+      evt.item.tag = {
+        id: (masterGraph.isGroupNode(evt.item) ? 'G-' : 'N-') + masterGraph.nodes.size
+      }
     })
     masterGraph.addEdgeCreatedListener((source, evt) => {
-      evt.item.tag = `E-${masterGraph.edges.size}`
+      evt.item.tag = {
+        id: `E-${masterGraph.edges.size}`
+      }
     })
   }
 

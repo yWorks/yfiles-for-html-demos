@@ -153,7 +153,6 @@ require([
     document.getElementById('enableAllConstraintsButton').disabled = disabled
     document.getElementById('disableAllConstraintsButton').disabled = disabled
     document.getElementById('layoutButton').disabled = disabled
-    graphComponent.inputMode.waiting = disabled
   }
 
   /**

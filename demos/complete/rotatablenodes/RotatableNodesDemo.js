@@ -466,10 +466,17 @@ require([
     layout.edgeRoutingMode = getRoutingMode()
 
     // apply the layout
-    graphComponent.morphLayout(layout, '700ms').then(() => {
-      // clean up mapper registry
-      graph.mapperRegistry.removeMapper(RotatedNodeLayoutStage.ROTATED_NODE_LAYOUT_DP_KEY)
-    })
+    graphComponent
+      .morphLayout(layout, '700ms')
+      .then(() => {
+        // clean up mapper registry
+        graph.mapperRegistry.removeMapper(RotatedNodeLayoutStage.ROTATED_NODE_LAYOUT_DP_KEY)
+      })
+      .catch(error => {
+        if (typeof window.reportError === 'function') {
+          window.reportError(error)
+        }
+      })
   }
 
   /**

@@ -1155,8 +1155,6 @@ require([
     document.getElementById('algorithmComboBox').disabled = disabled
     document.getElementById('reloadButton').disabled = disabled
     document.getElementById('layoutButton').disabled = disabled
-    // disable/enable also the input mode
-    graphComponent.inputMode.waiting = disabled
   }
 
   /**

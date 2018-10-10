@@ -114,7 +114,7 @@
 
     /**
      * Returns the windows NT version or -1 if it is lower than windows 95 or another OS.
-     * See also http://stackoverflow.com/questions/228256/operating-system-from-user-agent-http-header
+     * See also https://stackoverflow.com/questions/228256/operating-system-from-user-agent-http-header
      * @return {number}
      * The windows NT version or the windows version for windows 98 or older:
      * <ul>
@@ -177,7 +177,7 @@
 
     /**
      * Returns the iOS version or -1 if it is another OS.
-     * See also http://stackoverflow.com/questions/9038625/detect-if-device-is-ios
+     * See also https://stackoverflow.com/questions/9038625/detect-if-device-is-ios
      * @return {number}
      * The iOS version:
      * <ul>
@@ -264,12 +264,15 @@
     }
 
     /**
-     * Returns whether or not the browser supports native drag and drop events. Feature Detection.
+     * Returns whether or not the browser supports native drag and drop events and custom dataTransfer types.
      * @return {boolean}
      */
     function detectNativeDragAndDropSupported() {
       const div = document.createElement('div')
-      return 'draggable' in div || ('ondragstart' in div && 'ondrop' in div)
+      const hasDndSupport = 'draggable' in div || ('ondragstart' in div && 'ondrop' in div)
+      const ieVersion = detectInternetExplorerVersion()
+      const hasCustomTypeSupport = ieVersion === -1 || ieVersion > 11
+      return hasDndSupport && hasCustomTypeSupport
     }
 
     /**

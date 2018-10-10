@@ -239,8 +239,14 @@ body {
 .demo-sidebar .demo-sidebar-content h6 {
   color: #666666;
 }
-.demo-sidebar .demo-sidebar-content a {
+.demo-sidebar .demo-sidebar-content a,
+.demo-sidebar .demo-sidebar-content a:visited {
   text-decoration: none;
+  color: #1871bd;
+}
+.demo-sidebar .demo-sidebar-content a:hover {
+  text-decoration: none;
+  color: #18468c;
 }
 .demo-sidebar .demo-sidebar-content ul {
   padding-left: 1.3em;
@@ -342,6 +348,15 @@ body {
   overflow: hidden;
   white-space: nowrap;
   width: inherit;
+}
+.demo-sidebar .privacy-links a,
+.demo-sidebar .privacy-links a:visited {
+  text-decoration: none;
+  color: #1871bd;
+}
+.demo-sidebar .privacy-links a:hover {
+  text-decoration: none;
+  color: #18468c;
 }
 .demo-left-hidden .demo-play {
   opacity: 0;

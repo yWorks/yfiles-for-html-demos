@@ -115,7 +115,7 @@ require([
         '<a href="mailto:ejoplin@yoyodyne.com">ejoplin@yoyodyne.com</a>' +
         '<p>Phone: 555-0100 Fax: 555-0101' +
         '<br>' +
-        'Web: <a href="http://yoyodyne.com/ejoplin" target="_blank">yoyodyne.com/ejoplin</a>' +
+        'Web: <a href="https://yoyodyne.com/ejoplin" target="_blank">yoyodyne.com/ejoplin</a>' +
         '</p>' +
         '<hr>' +
         '<div class="subordinates">' +
@@ -136,7 +136,7 @@ require([
         '<a href="mailto:akain@yoyodyne.com">akain@yoyodyne.com</a>' +
         '<p>Phone: 555-0106 Fax: 555-0107' +
         '<br>' +
-        'Web: <a href="http://yoyodyne.com/akain" target="_blank">yoyodyne.com/akain</a>' +
+        'Web: <a href="https://yoyodyne.com/akain" target="_blank">yoyodyne.com/akain</a>' +
         '</p>' +
         '</div>'
     )
@@ -148,7 +148,7 @@ require([
         '<a href="mailto:rfuller@yoyodyne.com">rfuller@yoyodyne.com</a>' +
         '<p>Phone: 555-0134 Fax: 555-0135' +
         '<br>' +
-        'Web: <a href="http://yoyodyne.com/rfuller" target="_blank">yoyodyne.com/rfuller</a>' +
+        'Web: <a href="https://yoyodyne.com/rfuller" target="_blank">yoyodyne.com/rfuller</a>' +
         '</p>' +
         '</div>'
     )
@@ -160,7 +160,7 @@ require([
         '<a href="mailto:mshark@yoyodyne.com">mshark@yoyodyne.com</a>' +
         '<p>Phone: 555-0156 Fax: 555-0157' +
         '<br>' +
-        'Web: <a href="http://yoyodyne.com/mshark" target="_blank">yoyodyne.com/mshark</a>' +
+        'Web: <a href="https://yoyodyne.com/mshark" target="_blank">yoyodyne.com/mshark</a>' +
         '</p>' +
         '</div>'
     )
@@ -172,7 +172,7 @@ require([
         '<a href="mailto:ahaase@yoyodyne.com">ahaase@yoyodyne.com</a>' +
         '<p>Phone: 555-0170 Fax: 555-0171' +
         '<br>' +
-        'Web: <a href="http://yoyodyne.com/ahaase" target="_blank">yoyodyne.com/ahaase</a>' +
+        'Web: <a href="https://yoyodyne.com/ahaase" target="_blank">yoyodyne.com/ahaase</a>' +
         '</p>' +
         '<hr>' +
         '<div class="subordinates">' +
@@ -189,7 +189,7 @@ require([
         '<a href="mailto:dkerry@yoyodyne.com">dkerry@yoyodyne.com</a>' +
         '<p>Phone: 555-0180 Fax: 555-0181' +
         '<br>' +
-        'Web: <a href="http://yoyodyne.com/dkerry" target="_blank">yoyodyne.com/dkerry</a>' +
+        'Web: <a href="https://yoyodyne.com/dkerry" target="_blank">yoyodyne.com/dkerry</a>' +
         '</p>' +
         '<hr>' +
         '<div class="subordinates">' +

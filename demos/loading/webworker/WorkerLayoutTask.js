@@ -32,8 +32,6 @@
 /* eslint-disable global-require */
 /* eslint-disable import/no-dynamic-require */
 ;(() => {
-  const basePath = '../../../lib/umd/'
-
   // noinspection EmptyCatchBlockJS
   try {
     // Try to enable development support
@@ -49,7 +47,12 @@
   require.onError = error => {
     throw error
   }
-  require.config({ baseUrl: basePath })
+  require.config({
+    paths: {
+      yfiles: '../../../lib/umd/yfiles/',
+      utils: '../../utils/'
+    }
+  })
 
   // Require imports
   self.addEventListener(
@@ -59,12 +62,12 @@
       const jsonGraph = jsonData.graph
 
       require([
-        '../../utils/GraphToJSON.js',
+        './WebWorkerJsonIO.js',
         'yfiles/layout-hierarchic',
         'yfiles/view-layout-bridge',
         '../../resources/license.js'
-      ], (graphToJSON, /** @type {yfiles_namespace} */ /** typeof yfiles */ yfiles) => {
-        runLayout(jsonGraph, graphToJSON, yfiles)
+      ], (WebWorkerJsonIO, /** @type {yfiles_namespace} */ /** typeof yfiles */ yfiles) => {
+        runLayout(jsonGraph, WebWorkerJsonIO, yfiles)
       })
     },
     false
@@ -72,11 +75,11 @@
 
   /**
    * @param {JSONGraph} jsonGraph
-   * @param {GraphToJSON} graphToJSON
+   * @param {ServerJsonIO} WebWorkerJsonIO
    * @param {yfiles} yfiles
    */
-  function runLayout(jsonGraph, graphToJSON, yfiles) {
-    const graph = graphToJSON.read(jsonGraph)
+  function runLayout(jsonGraph, WebWorkerJsonIO, yfiles) {
+    const graph = WebWorkerJsonIO.read(jsonGraph)
 
     const layout = new yfiles.hierarchic.HierarchicLayout()
     layout.minimumNodeDistance = 50
@@ -84,7 +87,7 @@
     layout.integratedEdgeLabeling = true
     graph.applyLayout(new yfiles.layout.MinimumNodeSizeStage(layout))
 
-    const reply = graphToJSON.write(graph)
+    const reply = WebWorkerJsonIO.write(graph)
 
     self.postMessage(reply)
   }

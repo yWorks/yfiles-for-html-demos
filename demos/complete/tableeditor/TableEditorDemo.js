@@ -410,7 +410,6 @@ require([
   function setUIDisabled(disabled) {
     document.getElementById('newButton').disabled = disabled
     document.getElementById('layoutButton').disabled = disabled
-    graphComponent.inputMode.waiting = disabled
   }
 
   /**

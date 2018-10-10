@@ -9,7 +9,7 @@
     "start": "node server.js"
   },
   "author": "yWorks GmbH <yfileshtml@yworks.com>",
-  "license": "https://www.yworks.com/en/products_yfileshtml_sla.html",
+  "license": "https://www.yworks.com/products/yfiles-for-html/sla",
   "private": true,
   "dependencies": {
     "express": "4.15.3",

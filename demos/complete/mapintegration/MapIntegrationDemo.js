@@ -394,8 +394,9 @@ require([
 
     // use openstreetmap tiles for this demo:
     // create the tile layer with correct attribution
-    const osmUrl = 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
-    const osmAttrib = 'Map data © <a href="http://openstreetmap.org">OpenStreetMap</a> contributors'
+    const osmUrl = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
+    const osmAttrib =
+      'Map data © <a href="https://openstreetmap.org">OpenStreetMap</a> contributors'
 
     worldMap.setView(L.latLng(15.538, 16.523), 3)
     worldMap.addLayer(

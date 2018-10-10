@@ -206,7 +206,6 @@ require([
     document.getElementById('reset').disabled = disabled
     document.getElementById('from-sketch').disabled = disabled
     document.getElementById('layout').disabled = disabled
-    graphComponent.inputMode.waiting = disabled
   }
 
   // start the demo

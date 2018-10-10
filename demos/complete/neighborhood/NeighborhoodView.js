@@ -85,6 +85,8 @@ define([
 
       this.initializeInputMode()
       this.initializeHighlightStyle()
+
+      this.createEditListeners()
     }
 
     /**
@@ -100,6 +102,7 @@ define([
      * @type {yfiles.view.GraphComponent}
      */
     set graphComponent(value) {
+      this.selectedNodes = null
       if (this.$graphComponent !== null) {
         this.$graphComponent.removeGraphChangedListener(this.onGraphChanged.bind(this))
         if (this.useSelection) {
@@ -279,6 +282,38 @@ define([
       }
     }
 
+    createEditListeners() {
+      this.editListeners = new Map()
+      this.editListeners.set('nodeCreated', () => this.onNodeEdited())
+      this.editListeners.set('nodeRemoved', () => this.onNodeRemoved())
+      this.editListeners.set('nodeLayoutChanged', (source, node, oldLayout) => {
+        if (node.layout.width !== oldLayout.width || node.layout.height !== oldLayout.height) {
+          // only react to size changes, since the neighborhood view has its own layout
+          this.onNodeEdited()
+        }
+      })
+      this.editListeners.set('nodeStyleChanged', () => this.onNodeEdited())
+      this.editListeners.set('edgeCreated', () => this.onEdgeEdited())
+      this.editListeners.set('edgeRemoved', () => this.onEdgeEdited())
+      this.editListeners.set('edgePortsChanged', () => this.onEdgeEdited())
+      this.editListeners.set('edgeStyleChanged', () => this.onEdgeEdited())
+      this.editListeners.set('portAdded', () => this.onPortEdited())
+      this.editListeners.set('portRemoved', () => this.onPortEdited())
+      this.editListeners.set('portStyleChanged', () => this.onPortEdited())
+      this.editListeners.set('labelAdded', () => this.onLabelEdited())
+      this.editListeners.set('labelRemoved', () => this.onLabelEdited())
+      this.editListeners.set('labelStyleChanged', () => this.onLabelEdited())
+      this.editListeners.set('labelTextChanged', () => this.onLabelEdited())
+
+      this.editListeners.set('isGroupNodeChanged', (source, args) =>
+        this.onItemEdited(source, args)
+      )
+      this.editListeners.set('parentChanged', (source, args) => this.onItemEdited(source, args))
+      this.editListeners.set('itemSelectionChanged', (source, args) =>
+        this.onItemSelectionChanged(source, args)
+      )
+    }
+
     /**
      * Installs listeners such that the neighborhood component is updated if the
      * source graph is edited.
@@ -287,24 +322,23 @@ define([
       if (this.sourceGraph === null) {
         return
       }
-      this.sourceGraph.addNodeCreatedListener(this.onNodeEdited.bind(this))
-      this.sourceGraph.addNodeRemovedListener(this.onNodeRemoved.bind(this))
-      this.sourceGraph.addNodeLayoutChangedListener(this.onNodeEdited.bind(this))
-      this.sourceGraph.addNodeStyleChangedListener(this.onNodeEdited.bind(this))
-      this.sourceGraph.addEdgeCreatedListener(this.onEdgeEdited.bind(this))
-      this.sourceGraph.addEdgeRemovedListener(this.onEdgeEdited.bind(this))
-      this.sourceGraph.addEdgePortsChangedListener(this.onEdgeEdited.bind(this))
-      this.sourceGraph.addEdgeStyleChangedListener(this.onEdgeEdited.bind(this))
-      this.sourceGraph.addPortAddedListener(this.onPortEdited.bind(this))
-      this.sourceGraph.addPortRemovedListener(this.onPortEdited.bind(this))
-      this.sourceGraph.addPortStyleChangedListener(this.onPortEdited.bind(this))
-      this.sourceGraph.addLabelAddedListener(this.onLabelEdited.bind(this))
-      this.sourceGraph.addLabelRemovedListener(this.onLabelEdited.bind(this))
-      this.sourceGraph.addLabelStyleChangedListener(this.onLabelEdited.bind(this))
-      this.sourceGraph.addLabelTextChangedListener(this.onLabelEdited.bind(this))
-
-      this.sourceGraph.addIsGroupNodeChangedListener(this.onItemEdited.bind(this))
-      this.sourceGraph.addParentChangedListener(this.onItemEdited.bind(this))
+      this.sourceGraph.addNodeCreatedListener(this.editListeners.get('nodeCreated'))
+      this.sourceGraph.addNodeRemovedListener(this.editListeners.get('nodeRemoved'))
+      this.sourceGraph.addNodeLayoutChangedListener(this.editListeners.get('nodeLayoutChanged'))
+      this.sourceGraph.addNodeStyleChangedListener(this.editListeners.get('nodeStyleChanged'))
+      this.sourceGraph.addEdgeCreatedListener(this.editListeners.get('edgeCreated'))
+      this.sourceGraph.addEdgeRemovedListener(this.editListeners.get('edgeRemoved'))
+      this.sourceGraph.addEdgePortsChangedListener(this.editListeners.get('edgePortsChanged'))
+      this.sourceGraph.addEdgeStyleChangedListener(this.editListeners.get('edgeStyleChanged'))
+      this.sourceGraph.addPortAddedListener(this.editListeners.get('portAdded'))
+      this.sourceGraph.addPortRemovedListener(this.editListeners.get('portRemoved'))
+      this.sourceGraph.addPortStyleChangedListener(this.editListeners.get('portStyleChanged'))
+      this.sourceGraph.addLabelAddedListener(this.editListeners.get('labelAdded'))
+      this.sourceGraph.addLabelRemovedListener(this.editListeners.get('labelRemoved'))
+      this.sourceGraph.addLabelStyleChangedListener(this.editListeners.get('labelStyleChanged'))
+      this.sourceGraph.addLabelTextChangedListener(this.editListeners.get('labelTextChanged'))
+      this.sourceGraph.addIsGroupNodeChangedListener(this.editListeners.get('isGroupNodeChanged'))
+      this.sourceGraph.addParentChangedListener(this.editListeners.get('parentChanged'))
     }
 
     /**
@@ -314,24 +348,25 @@ define([
       if (this.sourceGraph === null) {
         return
       }
-      this.sourceGraph.removeNodeCreatedListener(this.onNodeEdited.bind(this))
-      this.sourceGraph.removeNodeRemovedListener(this.onNodeEdited.bind(this))
-      this.sourceGraph.removeNodeLayoutChangedListener(this.onNodeEdited.bind(this))
-      this.sourceGraph.removeNodeStyleChangedListener(this.onNodeEdited.bind(this))
-      this.sourceGraph.removeEdgeCreatedListener(this.onEdgeEdited.bind(this))
-      this.sourceGraph.removeEdgeRemovedListener(this.onEdgeEdited.bind(this))
-      this.sourceGraph.removeEdgePortsChangedListener(this.onEdgeEdited.bind(this))
-      this.sourceGraph.removeEdgeStyleChangedListener(this.onEdgeEdited.bind(this))
-      this.sourceGraph.removePortAddedListener(this.onPortEdited.bind(this))
-      this.sourceGraph.removePortRemovedListener(this.onPortEdited.bind(this))
-      this.sourceGraph.removePortStyleChangedListener(this.onPortEdited.bind(this))
-      this.sourceGraph.removeLabelAddedListener(this.onLabelEdited.bind(this))
-      this.sourceGraph.removeLabelRemovedListener(this.onLabelEdited.bind(this))
-      this.sourceGraph.removeLabelStyleChangedListener(this.onLabelEdited.bind(this))
-      this.sourceGraph.removeLabelTextChangedListener(this.onLabelEdited.bind(this))
-
-      this.sourceGraph.removeIsGroupNodeChangedListener(this.onItemEdited.bind(this))
-      this.sourceGraph.removeParentChangedListener(this.onItemEdited.bind(this))
+      this.sourceGraph.removeNodeCreatedListener(this.editListeners.get('nodeCreated'))
+      this.sourceGraph.removeNodeRemovedListener(this.editListeners.get('nodeRemoved'))
+      this.sourceGraph.removeNodeLayoutChangedListener(this.editListeners.get('nodeLayoutChanged'))
+      this.sourceGraph.removeNodeStyleChangedListener(this.editListeners.get('nodeStyleChanged'))
+      this.sourceGraph.removeEdgeCreatedListener(this.editListeners.get('edgeCreated'))
+      this.sourceGraph.removeEdgeRemovedListener(this.editListeners.get('edgeRemoved'))
+      this.sourceGraph.removeEdgePortsChangedListener(this.editListeners.get('edgePortsChanged'))
+      this.sourceGraph.removeEdgeStyleChangedListener(this.editListeners.get('edgeStyleChanged'))
+      this.sourceGraph.removePortAddedListener(this.editListeners.get('portAdded'))
+      this.sourceGraph.removePortRemovedListener(this.editListeners.get('portRemoved'))
+      this.sourceGraph.removePortStyleChangedListener(this.editListeners.get('portStyleChanged'))
+      this.sourceGraph.removeLabelAddedListener(this.editListeners.get('labelAdded'))
+      this.sourceGraph.removeLabelRemovedListener(this.editListeners.get('labelRemoved'))
+      this.sourceGraph.removeLabelStyleChangedListener(this.editListeners.get('labelStyleChanged'))
+      this.sourceGraph.removeLabelTextChangedListener(this.editListeners.get('labelTextChanged'))
+      this.sourceGraph.removeIsGroupNodeChangedListener(
+        this.editListeners.get('isGroupNodeChanged')
+      )
+      this.sourceGraph.removeParentChangedListener(this.editListeners.get('parentChanged'))
     }
 
     /**
@@ -397,7 +432,7 @@ define([
     installItemSelectionChangedListener() {
       if (this.graphComponent !== null) {
         this.graphComponent.selection.addItemSelectionChangedListener(
-          this.onItemSelectionChanged.bind(this)
+          this.editListeners.get('itemSelectionChanged')
         )
       }
     }
@@ -408,7 +443,7 @@ define([
     uninstallItemSelectionChangedListener() {
       if (this.graphComponent !== null) {
         this.graphComponent.selection.removeItemSelectionChangedListener(
-          this.onItemSelectionChanged.bind(this)
+          this.editListeners.get('itemSelectionChanged')
         )
       }
     }

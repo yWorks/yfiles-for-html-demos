@@ -290,7 +290,6 @@ require([
     document.getElementById('labelModelComboBox').disabled = disabled
     document.getElementById('labelFontSizeField').disabled = disabled
     document.getElementById('placeLabels').disabled = disabled
-    graphComponent.inputMode.waiting = disabled
   }
 
   /**

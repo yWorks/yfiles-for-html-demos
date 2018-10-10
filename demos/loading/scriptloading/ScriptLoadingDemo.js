@@ -97,7 +97,6 @@ function applyLayout() {
  */
 function setUIDisabled(disabled) {
   document.querySelector("button[data-command='Layout']").disabled = disabled
-  graphComponent.inputMode.waiting = disabled
 }
 
 // start demo

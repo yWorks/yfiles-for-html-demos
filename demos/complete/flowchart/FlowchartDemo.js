@@ -433,7 +433,6 @@ require([
     document.getElementById('select-in-edge-grouping').disabled = disabled
     document.getElementById('allow-flatwise-edges').disabled = disabled
     document.getElementById('layout').disabled = disabled
-    graphComponent.inputMode.waiting = disabled
   }
 
   run()

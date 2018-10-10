@@ -206,8 +206,8 @@ define(['yfiles/layout'], yfiles => {
             graph.setSize(node, newLayout)
           }
         })
-
-        this.coreLayout.applyLayout(graph)
+        const layout = new yfiles.layout.MinimumNodeSizeStage(this.coreLayout)
+        layout.applyLayout(graph)
 
         const groups = graph.getDataProvider(yfiles.layout.GroupingKeys.GROUP_DP_KEY)
         graph.nodes.forEach(node => {

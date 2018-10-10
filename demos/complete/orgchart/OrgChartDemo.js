@@ -463,9 +463,10 @@ require([
   /**
    * Configures the tree layout to handle assistant nodes and stack leaf nodes.
    * @param {boolean} incremental
+   * @param {yfiles.graph.INode[]} incrementalNodes
    * @return {yfiles.tree.TreeLayout} A configured TreeLayout.
    */
-  function createConfiguredLayout(incremental) {
+  function createConfiguredLayout(incremental, incrementalNodes = []) {
     const graph = graphComponent.graph
     const registry = graph.mapperRegistry
     const assistantMapper = registry.createMapper(
@@ -491,14 +492,26 @@ require([
       })
     }
 
+    const hasIncrementalParent = node => {
+      return (
+        graph.inDegree(node) > 0 &&
+        incrementalNodes.indexOf(graph.predecessors(node).first()) !== -1
+      )
+    }
+
     // we let the CompactNodePlacer arrange the nodes
     treeLayout.defaultNodePlacer = new yfiles.tree.CompactNodePlacer()
     // we still want assistant nodes to be placed specifically
-    graph.nodes.filter(node => node.tag && node.tag.assistant).forEach(assistant => {
-      assistantMapper.set(assistant, true)
-    })
+    graph.nodes
+      .filter(
+        node =>
+          node.tag && node.tag.assistant && graph.inDegree(node) > 0 && !hasIncrementalParent(node)
+      )
+      .forEach(assistant => {
+        assistantMapper.set(assistant, true)
+      })
 
-    //layout stages used to place nodes at barycenter for smoother layout animations.
+    // layout stages used to place nodes at barycenter for smoother layout animations
     const edgeRouter = new yfiles.router.StraightLineEdgeRouter()
     edgeRouter.scope = yfiles.router.Scope.ROUTE_EDGES_AT_AFFECTED_NODES
     treeLayout.appendStage(edgeRouter)
@@ -520,6 +533,7 @@ require([
    * Creates an array containing all nodes the subtree rooted by the given node.
    * @param {yfiles.graph.IGraph} graph
    * @param {yfiles.graph.INode} root
+   * @return {yfiles.graph.INode[]}
    */
   function collectSubtreeNodes(graph, root) {
     const nodes = []
@@ -538,7 +552,7 @@ require([
    * Creates an array of all nodes except of the nodes in the subtree rooted in the excluded sub-root.
    * @param {yfiles.graph.IGraph} graph
    * @param {yfiles.graph.INode} excludedRoot
-   * @return {Array.<yfiles.graph.INode>}
+   * @return {yfiles.graph.INode[]}
    */
   function collectAllNodesExceptSubtree(graph, excludedRoot) {
     const nodes = []
@@ -702,8 +716,8 @@ require([
   /**
    * Refreshes the node after modifications on the tree.
    * @param {yfiles.graph.INode} centerNode
-   * @param {Array.<yfiles.graph.INode>} incrementalNodes
-   * @param {boolean} expand
+   * @param {yfiles.graph.INode[]} incrementalNodes
+   * @param {boolean} collapse
    * @param {boolean} centerNode
    * @return {Promise} a promise which is resolved when the layout has been executed.
    */
@@ -724,7 +738,7 @@ require([
     }
 
     // configure the tree layout
-    const treeLayout = createConfiguredLayout(true)
+    const treeLayout = createConfiguredLayout(true, collapse ? incrementalNodes : [])
 
     // create the layout (with a stage that fixes the center node in the coordinate system)
     const layout = new yfiles.layout.FixNodeLayoutStage(treeLayout)
@@ -769,7 +783,7 @@ require([
 
   /**
    * Moves incremental nodes between their neighbors before expanding for a smooth animation.
-   * @param {yfiles.collections.Map} incrementalMap
+   * @param {yfiles.collections.Map} incrementalNodes
    */
   function prepareSmoothExpandLayoutAnimation(incrementalNodes) {
     const graph = graphComponent.graph

@@ -102,15 +102,59 @@ define(['yfiles/view-component'], /** @type {yfiles_namespace} */ /** typeof yfi
     }
 
     /**
+     * Returns the graph that is currently displayed by this structure view.
+     * @type {yfiles.graph.IGraph}
+     */
+    get graph() {
+      return this.$graph
+    }
+
+    /**
+     * Specifies the graph that is currently displayed by this structure view.
+     * @type {yfiles.graph.IGraph}
+     */
+    set graph(value) {
+      if (this.$graph === value) {
+        return
+      }
+
+      const previousSyncFoldingState = this.syncFoldingState
+      if (this.$graph) {
+        // reset the StructureView
+        this.syncFoldingState = false
+        this.uninstallEditListeners()
+        this.clearStructure()
+        this.foldingView = null
+        this.masterGraph = null
+      }
+
+      this.$graph = value
+      if (this.$graph) {
+        // re-initialize the StructureView with the new graph
+        this.foldingView = value.foldingView
+        if (this.foldingView === null) {
+          this.masterGraph = value
+        } else {
+          this.masterGraph = this.foldingView.manager.masterGraph
+        }
+        this.installEditListeners()
+        this.buildStructure()
+      }
+
+      this.syncFoldingState = previousSyncFoldingState
+    }
+
+    /**
      * Initializes the structure view in the DOM element given by the id and the given click callback.
-     *
-     * @param {yfiles.graph.IGraph} graph The graph for which this structure view should be displayed.
      * @param {string} selector The selector for the container in which the structure view should be created.
      */
-    constructor(graph, selector) {
-      // some private maps to store the DOM element to INode relation and vice versa
-      this.element2node = new yfiles.collections.Map()
+    constructor(selector) {
+      // Some private maps to store the DOM element to INode relation and vice versa. If the key will be a yFiles
+      // object, make sure to use a yFiles map. Otherwise use the native JS objects for less overhead and better
+      // performance.
+      this.element2node = new Map()
       this.node2element = new yfiles.collections.Map()
+
       this.groupElementCounter = 0
       this.labelPlaceholder = '< no value >'
 
@@ -147,16 +191,7 @@ define(['yfiles/view-component'], /** @type {yfiles_namespace} */ /** typeof yfi
       // Append the 'Graph' root folder
       graphList.appendChild(li)
 
-      // Check for folding and initialize the variables
-      this.foldingView = graph.foldingView
-      if (this.foldingView === null) {
-        this.masterGraph = graph
-      } else {
-        this.masterGraph = this.foldingView.manager.masterGraph
-      }
-
-      this.installEditListeners()
-      this.buildStructure()
+      this.createEditListeners()
     }
 
     /**
@@ -280,12 +315,13 @@ define(['yfiles/view-component'], /** @type {yfiles_namespace} */ /** typeof yfi
     }
 
     /**
-     * Installs listeners to update the structure view if the graph is edited.
+     * Creates listeners to update the structure view if the graph is edited.
      * The structure is updated on label editing, node creation/deletion and reparenting.
      * @private
      */
-    installEditListeners() {
-      this.masterGraph.addLabelAddedListener((src, args) => {
+    createEditListeners() {
+      this.editListeners = new Map()
+      this.editListeners.set('labelAdded', (src, args) => {
         if (yfiles.graph.INode.isInstance(args.item.owner)) {
           const node = args.item.owner
           const label = this.getLabelElement(this.node2element.get(node))
@@ -293,7 +329,7 @@ define(['yfiles/view-component'], /** @type {yfiles_namespace} */ /** typeof yfi
         }
       })
 
-      this.masterGraph.addLabelTextChangedListener((src, args) => {
+      this.editListeners.set('labelTextChanged', (src, args) => {
         if (yfiles.graph.INode.isInstance(args.item.owner)) {
           const node = args.item.owner
           const label = this.getLabelElement(this.node2element.get(node))
@@ -301,17 +337,19 @@ define(['yfiles/view-component'], /** @type {yfiles_namespace} */ /** typeof yfi
         }
       })
 
-      this.masterGraph.addLabelRemovedListener((src, args) => {
-        const ownerNode = args.owner
-        const label = this.getLabelElement(this.node2element.get(ownerNode))
-        label.textContent =
-          ownerNode.labels.size > 0 ? ownerNode.labels.last().text : this.labelPlaceholder
+      this.editListeners.set('labelRemoved', (src, args) => {
+        if (yfiles.graph.INode.isInstance(args.owner)) {
+          const ownerNode = args.owner
+          const label = this.getLabelElement(this.node2element.get(ownerNode))
+          label.textContent =
+            ownerNode.labels.size > 0 ? ownerNode.labels.last().text : this.labelPlaceholder
+        }
       })
 
-      this.masterGraph.addNodeCreatedListener((src, args) => this.onNodeCreated(args.item))
-      this.masterGraph.addNodeRemovedListener((src, args) => this.onNodeRemoved(args.item))
+      this.editListeners.set('nodeCreated', (src, args) => this.onNodeCreated(args.item))
+      this.editListeners.set('nodeRemoved', (src, args) => this.onNodeRemoved(args.item))
 
-      this.masterGraph.addParentChangedListener((src, args) => {
+      this.editListeners.set('parentChanged', (src, args) => {
         const node = args.item
         // get the element of the new parent
         let newParentListElement = this.rootListElement
@@ -323,6 +361,33 @@ define(['yfiles/view-component'], /** @type {yfiles_namespace} */ /** typeof yfi
         const element = this.node2element.get(node)
         newParentListElement.appendChild(element)
       })
+    }
+
+    /**
+     * Installs listeners to update the structure view if the graph is edited.
+     * The structure is updated on label editing, node creation/deletion and reparenting.
+     * @private
+     */
+    installEditListeners() {
+      this.masterGraph.addLabelAddedListener(this.editListeners.get('labelAdded'))
+      this.masterGraph.addLabelTextChangedListener(this.editListeners.get('labelTextChanged'))
+      this.masterGraph.addLabelRemovedListener(this.editListeners.get('labelRemoved'))
+      this.masterGraph.addNodeCreatedListener(this.editListeners.get('nodeCreated'))
+      this.masterGraph.addNodeRemovedListener(this.editListeners.get('nodeRemoved'))
+      this.masterGraph.addParentChangedListener(this.editListeners.get('parentChanged'))
+    }
+
+    /**
+     * Uninstalls listeners added in {@link installEditListeners}.
+     * @private
+     */
+    uninstallEditListeners() {
+      this.masterGraph.removeLabelAddedListener(this.editListeners.get('labelAdded'))
+      this.masterGraph.removeLabelTextChangedListener(this.editListeners.get('labelTextChanged'))
+      this.masterGraph.removeLabelRemovedListener(this.editListeners.get('labelRemoved'))
+      this.masterGraph.removeNodeCreatedListener(this.editListeners.get('nodeCreated'))
+      this.masterGraph.removeNodeRemovedListener(this.editListeners.get('nodeRemoved'))
+      this.masterGraph.removeParentChangedListener(this.editListeners.get('parentChanged'))
     }
 
     /**

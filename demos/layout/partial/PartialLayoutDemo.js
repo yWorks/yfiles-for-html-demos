@@ -510,7 +510,6 @@ require([
     document.getElementById('select-sample').disabled = disabled
     document.getElementById('refresh').disabled = disabled
     document.getElementById('layout').disabled = disabled
-    graphComponent.inputMode.waiting = disabled
   }
 
   // run the demo

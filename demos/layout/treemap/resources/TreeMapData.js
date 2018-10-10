@@ -5388,8 +5388,8 @@ define([], () => {
       color: 'rgb(0, 137, 122)'
     },
     {
-      id: 'yFiles-for-HTML-Complete/demos/loading/nodejs/GraphToJSON.js',
-      label: 'GraphToJSON.js\n(10.59kb)',
+      id: 'yFiles-for-HTML-Complete/demos/loading/nodejs/JsonIO.js',
+      label: 'JsonIO.js\n(10.59kb)',
       groupRef: 'yFiles-for-HTML-Complete/demos/loading/nodejs',
       size: '10586',
       color: 'rgb(0, 177, 135)'
@@ -5500,8 +5500,8 @@ define([], () => {
       color: 'rgb(0, 120, 167)'
     },
     {
-      id: 'yFiles-for-HTML-Complete/demos/loading/webworker/GraphToJSON.js',
-      label: 'GraphToJSON.js\n(9.55kb)',
+      id: 'yFiles-for-HTML-Complete/demos/loading/webworker/JsonIO.js',
+      label: 'JsonIO.js\n(9.55kb)',
       groupRef: 'yFiles-for-HTML-Complete/demos/loading/webworker',
       size: '9549',
       color: 'rgb(0, 191, 195)'

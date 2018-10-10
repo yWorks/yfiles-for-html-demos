@@ -420,7 +420,10 @@
           scopeItem: {
             $meta: function() {
               return [
-                demo.options.LabelAttribute('Scope'),
+                demo.options.LabelAttribute(
+                  'Scope',
+                  '#/api/yfiles.router.EdgeRouter#EdgeRouter-property-scope'
+                ),
                 demo.options.OptionGroupAttribute('LayoutGroup', 10),
                 demo.options.EnumValuesAttribute().init({
                   values: [
@@ -450,7 +453,10 @@
           optimizationStrategyItem: {
             $meta: function() {
               return [
-                demo.options.LabelAttribute('Optimization Strategy'),
+                demo.options.LabelAttribute(
+                  'Optimization Strategy',
+                  '#/api/yfiles.router.EdgeLayoutDescriptor#EdgeLayoutDescriptor-property-penaltySettings'
+                ),
                 demo.options.OptionGroupAttribute('LayoutGroup', 20),
                 demo.options.EnumValuesAttribute().init({
                   values: [
@@ -487,7 +493,10 @@
           monotonicRestrictionItem: {
             $meta: function() {
               return [
-                demo.options.LabelAttribute('Monotonic Restriction'),
+                demo.options.LabelAttribute(
+                  'Monotonic Restriction',
+                  '#/api/yfiles.router.EdgeLayoutDescriptor#EdgeLayoutDescriptor-property-monotonicPathRestriction'
+                ),
                 demo.options.OptionGroupAttribute('LayoutGroup', 30),
                 demo.options.EnumValuesAttribute().init({
                   values: [
@@ -518,7 +527,10 @@
           enableReroutingItem: {
             $meta: function() {
               return [
-                demo.options.LabelAttribute('Reroute Crossing Edges'),
+                demo.options.LabelAttribute(
+                  'Reroute Crossing Edges',
+                  '#/api/yfiles.router.EdgeRouter#EdgeRouter-property-rerouting'
+                ),
                 demo.options.OptionGroupAttribute('LayoutGroup', 60),
                 demo.options.TypeAttribute(yfiles.lang.Boolean.$class)
               ]
@@ -541,7 +553,10 @@
           maximumDurationItem: {
             $meta: function() {
               return [
-                demo.options.LabelAttribute('Maximum Duration'),
+                demo.options.LabelAttribute(
+                  'Maximum Duration',
+                  '#/api/yfiles.router.EdgeRouter#EdgeRouter-property-maximumDuration'
+                ),
                 demo.options.OptionGroupAttribute('LayoutGroup', 70),
                 demo.options.MinMaxAttribute().init({
                   min: 0,
@@ -569,7 +584,10 @@
           minimumEdgeToEdgeDistanceItem: {
             $meta: function() {
               return [
-                demo.options.LabelAttribute('Edge to Edge'),
+                demo.options.LabelAttribute(
+                  'Edge to Edge',
+                  '#/api/yfiles.router.EdgeLayoutDescriptor#EdgeLayoutDescriptor-property-minimumEdgeToEdgeDistance'
+                ),
                 demo.options.OptionGroupAttribute('DistancesGroup', 10),
                 demo.options.MinMaxAttribute().init({
                   min: 0,
@@ -597,7 +615,10 @@
           minimumNodeToEdgeDistanceItem: {
             $meta: function() {
               return [
-                demo.options.LabelAttribute('Node to Edge'),
+                demo.options.LabelAttribute(
+                  'Node to Edge',
+                  '#/api/yfiles.router.EdgeRouter#EdgeRouter-property-minimumNodeToEdgeDistance'
+                ),
                 demo.options.OptionGroupAttribute('DistancesGroup', 20),
                 demo.options.MinMaxAttribute().init({
                   min: 0,
@@ -625,7 +646,10 @@
           minimumNodeCornerDistanceItem: {
             $meta: function() {
               return [
-                demo.options.LabelAttribute('Port to Node Corner'),
+                demo.options.LabelAttribute(
+                  'Port to Node Corner',
+                  '#/api/yfiles.router.EdgeLayoutDescriptor#EdgeLayoutDescriptor-property-minimumNodeCornerDistance'
+                ),
                 demo.options.OptionGroupAttribute('DistancesGroup', 30),
                 demo.options.MinMaxAttribute().init({
                   min: 0,
@@ -653,7 +677,10 @@
           minimumFirstSegmentLengthItem: {
             $meta: function() {
               return [
-                demo.options.LabelAttribute('First Segment Length'),
+                demo.options.LabelAttribute(
+                  'First Segment Length',
+                  '#/api/yfiles.router.EdgeLayoutDescriptor#EdgeLayoutDescriptor-property-minimumFirstSegmentLength'
+                ),
                 demo.options.OptionGroupAttribute('DistancesGroup', 40),
                 demo.options.MinMaxAttribute().init({
                   min: 0,
@@ -681,7 +708,10 @@
           minimumLastSegmentLengthItem: {
             $meta: function() {
               return [
-                demo.options.LabelAttribute('Last Segment Length'),
+                demo.options.LabelAttribute(
+                  'Last Segment Length',
+                  '#/api/yfiles.router.EdgeLayoutDescriptor#EdgeLayoutDescriptor-property-minimumLastSegmentLength'
+                ),
                 demo.options.OptionGroupAttribute('DistancesGroup', 50),
                 demo.options.MinMaxAttribute().init({
                   min: 0,
@@ -709,7 +739,10 @@
           gridEnabledItem: {
             $meta: function() {
               return [
-                demo.options.LabelAttribute('Route on Grid'),
+                demo.options.LabelAttribute(
+                  'Route on Grid',
+                  '#/api/yfiles.router.EdgeRouter#EdgeRouter-property-grid'
+                ),
                 demo.options.OptionGroupAttribute('GridGroup', 10),
                 demo.options.TypeAttribute(yfiles.lang.Boolean.$class)
               ]
@@ -732,7 +765,10 @@
           gridSpacingItem: {
             $meta: function() {
               return [
-                demo.options.LabelAttribute('Grid Spacing'),
+                demo.options.LabelAttribute(
+                  'Grid Spacing',
+                  '#/api/yfiles.router.Grid#Grid-property-spacing'
+                ),
                 demo.options.OptionGroupAttribute('GridGroup', 20),
                 demo.options.MinMaxAttribute().init({
                   min: 2,
@@ -770,7 +806,10 @@
           enablePolylineRoutingItem: {
             $meta: function() {
               return [
-                demo.options.LabelAttribute('Octilinear Routing'),
+                demo.options.LabelAttribute(
+                  'Octilinear Routing',
+                  '#/api/yfiles.router.EdgeRouter#EdgeRouter-property-polylineRouting'
+                ),
                 demo.options.OptionGroupAttribute('PolylineGroup', 10),
                 demo.options.TypeAttribute(yfiles.lang.Boolean.$class)
               ]
@@ -793,7 +832,10 @@
           preferredPolylineSegmentLengthItem: {
             $meta: function() {
               return [
-                demo.options.LabelAttribute('Preferred Polyline Segment Length'),
+                demo.options.LabelAttribute(
+                  'Preferred Polyline Segment Length',
+                  '#/api/yfiles.router.EdgeRouter#EdgeRouter-property-preferredPolylineSegmentLength'
+                ),
                 demo.options.OptionGroupAttribute('PolylineGroup', 20),
                 demo.options.MinMaxAttribute().init({
                   min: 5,
@@ -831,7 +873,10 @@
           considerNodeLabelsItem: {
             $meta: function() {
               return [
-                demo.options.LabelAttribute('Consider Node Labels'),
+                demo.options.LabelAttribute(
+                  'Consider Node Labels',
+                  '#/api/yfiles.router.EdgeRouter#EdgeRouter-property-considerNodeLabels'
+                ),
                 demo.options.OptionGroupAttribute('NodePropertiesGroup', 10),
                 demo.options.TypeAttribute(yfiles.lang.Boolean.$class)
               ]
@@ -854,7 +899,10 @@
           considerEdgeLabelsItem: {
             $meta: function() {
               return [
-                demo.options.LabelAttribute('Consider Fixed Edges Labels'),
+                demo.options.LabelAttribute(
+                  'Consider Fixed Edges Labels',
+                  '#/api/yfiles.router.EdgeRouter#EdgeRouter-property-considerEdgeLabels'
+                ),
                 demo.options.OptionGroupAttribute('EdgePropertiesGroup', 10),
                 demo.options.TypeAttribute(yfiles.lang.Boolean.$class)
               ]
@@ -877,7 +925,10 @@
           edgeLabelingItem: {
             $meta: function() {
               return [
-                demo.options.LabelAttribute('Edge Labeling'),
+                demo.options.LabelAttribute(
+                  'Edge Labeling',
+                  '#/api/yfiles.labeling.GenericLabeling'
+                ),
                 demo.options.OptionGroupAttribute('EdgePropertiesGroup', 20),
                 demo.options.TypeAttribute(yfiles.lang.Boolean.$class)
               ]
@@ -900,7 +951,10 @@
           reduceAmbiguityItem: {
             $meta: function() {
               return [
-                demo.options.LabelAttribute('Reduce Ambiguity'),
+                demo.options.LabelAttribute(
+                  'Reduce Ambiguity',
+                  '#/api/yfiles.labeling.GenericLabeling#MISLabelingBase-property-reduceAmbiguity'
+                ),
                 demo.options.OptionGroupAttribute('EdgePropertiesGroup', 30),
                 demo.options.TypeAttribute(yfiles.lang.Boolean.$class)
               ]
@@ -933,7 +987,10 @@
           labelPlacementOrientationItem: {
             $meta: function() {
               return [
-                demo.options.LabelAttribute('Orientation'),
+                demo.options.LabelAttribute(
+                  'Orientation',
+                  '#/api/yfiles.layout.LayoutGraphAdapter#LayoutGraphAdapter-field-EDGE_LABEL_LAYOUT_PREFERRED_PLACEMENT_DESCRIPTOR_DP_KEY'
+                ),
                 demo.options.OptionGroupAttribute('PreferredPlacementGroup', 10),
                 demo.options.EnumValuesAttribute().init({
                   values: [
@@ -988,7 +1045,10 @@
           labelPlacementAlongEdgeItem: {
             $meta: function() {
               return [
-                demo.options.LabelAttribute('Along Edge'),
+                demo.options.LabelAttribute(
+                  'Along Edge',
+                  '#/api/yfiles.layout.PreferredPlacementDescriptor#PreferredPlacementDescriptor-property-placeAlongEdge'
+                ),
                 demo.options.OptionGroupAttribute('PreferredPlacementGroup', 20),
                 demo.options.EnumValuesAttribute().init({
                   values: [
@@ -1040,7 +1100,10 @@
           labelPlacementSideOfEdgeItem: {
             $meta: function() {
               return [
-                demo.options.LabelAttribute('Side of Edge'),
+                demo.options.LabelAttribute(
+                  'Side of Edge',
+                  '#/api/yfiles.layout.PreferredPlacementDescriptor#PreferredPlacementDescriptor-property-sideOfEdge'
+                ),
                 demo.options.OptionGroupAttribute('PreferredPlacementGroup', 30),
                 demo.options.EnumValuesAttribute().init({
                   values: [
@@ -1090,7 +1153,10 @@
           labelPlacementDistanceItem: {
             $meta: function() {
               return [
-                demo.options.LabelAttribute('Distance'),
+                demo.options.LabelAttribute(
+                  'Distance',
+                  '#/api/yfiles.layout.PreferredPlacementDescriptor#PreferredPlacementDescriptor-property-distanceToEdge'
+                ),
                 demo.options.OptionGroupAttribute('PreferredPlacementGroup', 40),
                 demo.options.MinMaxAttribute().init({
                   min: 0.0,

@@ -255,11 +255,8 @@ require([
    * Initializes the input modes.
    */
   function initializeInputModes() {
-    // Create a GraphEditorInputMode instance
-    const editMode = new yfiles.input.GraphEditorInputMode()
-
-    // and install the edit mode into the canvas.
-    graphComponent.inputMode = editMode
+    // Add a GraphEditorInputMode
+    graphComponent.inputMode = new yfiles.input.GraphEditorInputMode()
 
     // create the model for the export rectangle
     exportRect = new yfiles.geometry.MutableRectangle(-10, 0, 300, 160)
@@ -272,7 +269,7 @@ require([
       exportRect
     )
 
-    addExportRectInputModes(editMode)
+    addExportRectInputModes(graphComponent.inputMode)
   }
 
   /**

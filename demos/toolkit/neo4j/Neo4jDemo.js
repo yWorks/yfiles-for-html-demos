@@ -197,21 +197,28 @@ require([
         trust: 'TRUST_CUSTOM_CA_SIGNED_CERTIFICATES'
       })
 
-      runCypherQuery('MATCH (n) RETURN n LIMIT 1')
-        .then(result => {
-          // hide the login form and show the graph component
-          document.querySelector('#loginPane').setAttribute('style', 'display: none;')
-          document.querySelector('#graphPane').removeAttribute('style')
-          loadGraph()
-        })
-        .catch(() => {
-          if (window.location.protocol === 'https:') {
-            document.querySelector('#openInHttp').style.visibility = 'visible'
-            document
-              .querySelector('#openInHttp>a')
-              .setAttribute('href', window.location.href.replace('https:', 'http:'))
-          }
-        })
+      const errorHandler = () => {
+        if (window.location.protocol === 'https:') {
+          document.querySelector('#openInHttp').style.visibility = 'visible'
+          document
+            .querySelector('#openInHttp>a')
+            .setAttribute('href', window.location.href.replace('https:', 'http:'))
+        }
+      }
+
+      try {
+        runCypherQuery('MATCH (n) RETURN n LIMIT 1')
+          .then(result => {
+            // hide the login form and show the graph component
+            document.querySelector('#loginPane').setAttribute('style', 'display: none;')
+            document.querySelector('#graphPane').removeAttribute('style')
+            loadGraph()
+          })
+          .catch(errorHandler)
+      } catch (e) {
+        // In some cases (connecting from https to http) an exception is thrown outside the promise
+        errorHandler()
+      }
     })
   }
 

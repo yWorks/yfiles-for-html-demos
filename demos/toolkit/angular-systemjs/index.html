@@ -91,10 +91,18 @@
           '@angular/forms': 'node_modules/@angular/forms/bundles/forms.umd.js',
           '@angular/platform-browser': 'node_modules/@angular/platform-browser/bundles/platform-browser.umd.js',
           '@angular/platform-browser-dynamic': 'node_modules/@angular/platform-browser-dynamic/bundles/platform-browser-dynamic.umd.js',
+          'plugin-babel': 'node_modules/systemjs-plugin-babel/plugin-babel.js',
+          'systemjs-babel-build': 'node_modules/systemjs-plugin-babel/systemjs-babel-browser.js'
         },
+        transpiler: 'plugin-babel',
         packages: {
           'rxjs': {
+            main: 'index.js',
             defaultExtension: 'js'
+          },
+          'rxjs/operators': {
+            'main': 'index.js',
+            'defaultExtension': 'js'
           },
           "../../../lib/umd/yfiles/": {
             format: 'amd'

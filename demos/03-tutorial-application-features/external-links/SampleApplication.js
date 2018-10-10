@@ -106,7 +106,7 @@ require([
       }
 
       if (url) {
-        window.open(url.startsWith('http') ? url : `http://${url}`, '_blank')
+        window.open(url.startsWith('http') ? url : `https://${url}`, '_blank')
         args.handled = true
       }
     })

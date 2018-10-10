@@ -175,7 +175,7 @@ require([
       // we use the artificial target node to create a new node at the current location
       const dummyTargetNode = createEdgeInputMode.dummyTargetNode
       const node = graph.createNode(
-        dummyTargetNode.layout,
+        dummyTargetNode.layout.toRect(),
         dummyTargetNode.style.clone(),
         dummyTargetNode.tag
       )
