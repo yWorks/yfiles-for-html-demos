@@ -197,7 +197,8 @@
    * @param {string} word A single search term
    */
   function matchWord(demo, word) {
-    var regex = new RegExp(word, 'gi')
+    var modWord = word.replace(/-/g, '')
+    var regex = new RegExp(modWord + '|' + word, 'gi')
     if (regex.test(demo.name)) {
       return true
     }
@@ -236,11 +237,6 @@
     insertSortedChild(element, sidebarItem)
     demo.sidebarElement = sidebarItem
   })
-
-  var notice = document.getElementById('online-notice')
-  if (window.location.hostname.indexOf('yworks.') >= 0) {
-    notice.setAttribute('style', 'display:none')
-  }
 
   var searchBox = document.querySelector('#search')
   searchBox.addEventListener('input', searchBoxChanged)

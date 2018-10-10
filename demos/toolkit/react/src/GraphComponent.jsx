@@ -3,6 +3,7 @@
 /* eslint-disable import/no-unresolved */
 
 const React = require('react')
+const PropTypes = require('prop-types');
 const yfiles = require('yfiles/view-editor')
 
 class GraphComponent extends React.Component {
@@ -88,8 +89,8 @@ GraphComponent.defaultProps = {
 }
 
 GraphComponent.propTypes = {
-  editable: React.PropTypes.bool,
-  graph: React.PropTypes.object
+  editable: PropTypes.bool,
+  graph: PropTypes.object
 }
 
 module.exports = GraphComponent

@@ -9,6 +9,7 @@
     "removeComments": false,
     "noImplicitAny": false,
     "allowSyntheticDefaultImports": true,
+    "types": ["node"],
     "outDir": "./build/"
   },
   "include": ["app/**/*", "../../../ide-support/yfiles-api-umd-webstorm.d.ts"],

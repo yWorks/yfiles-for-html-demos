@@ -1342,7 +1342,7 @@ define(['yfiles/layout-tree', 'resources/demo-app'], (
     }
 
     createNodePlacer() {
-      const nodePlacer = new yfiles.tree.AspectRatioNodePlacer(this.modificationMatrix)
+      const nodePlacer = new yfiles.tree.AspectRatioNodePlacer()
       nodePlacer.aspectRatio = this.aspectRatio
       nodePlacer.fillStyle = this.fillStyle
       nodePlacer.horizontalDistance = this.horizontalDistance

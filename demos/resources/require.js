@@ -31,7 +31,7 @@
  *
  * This code is part of the demo sources of yFiles for HTML. It is not intended
  * for production use. We recommend using a third party implementation of the
- * AMD loading standard like the one provided by http://requirejs.org.
+ * AMD loading standard like the one provided by https://requirejs.org/.
  *
  * @yjs:keep
  */

@@ -32,7 +32,7 @@
 
 const defaultPage = '/doc/readme/documentation.html'
 
-const http = require('http')
+const https = require('https')
 
 const express = require('express')
 const app = express()
@@ -89,10 +89,10 @@ app.get('/npm-request', function(request, outerResponse) {
 
   let url
   if (type === 'dependencies') {
-    url = 'http://registry.npmjs.org/' + npmPackage + '/latest'
+    url = 'https://registry.npmjs.org/' + npmPackage + '/latest'
   } else if (type === 'dependents') {
     url =
-      'http://registry.npmjs.org/-/_view/dependedUpon?group_level=2&startkey=%5B%22' +
+      'https://registry.npmjs.org/-/_view/dependedUpon?group_level=2&startkey=%5B%22' +
       npmPackage +
       '%22%5D&endkey=%5B%22' +
       npmPackage +
@@ -101,7 +101,7 @@ app.get('/npm-request', function(request, outerResponse) {
     outerResponse.status(500).send('Invalid query type!')
   }
 
-  http
+  https
     .get(url, function(res) {
       let completeResponse = ''
 

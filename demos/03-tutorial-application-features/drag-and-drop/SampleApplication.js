@@ -126,7 +126,7 @@ require(['yfiles/view-editor', 'resources/demo-app', 'resources/license'], (
   function addNodeVisual(style, panel) {
     // Create the HTML element for the visual.
     const div = document.createElement('div')
-    div.setAttribute('style', 'width: 40px; height: 40px; margin: 10px auto;')
+    div.setAttribute('style', 'width: 40px; height: 40px; margin: 10px auto; cursor: grab;')
     const img = document.createElement('img')
     img.setAttribute('style', 'width: auto; height: auto;')
     // Create a visual for the style.

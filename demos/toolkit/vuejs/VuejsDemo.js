@@ -111,11 +111,14 @@ require([
    */
   Vue.component('graph-component', {
     template: '<div class="graph-component"></div>',
-    props: ['graph'],
     created() {
       // the GraphComponent is created but not appended to the DOM yet
       const graphComponent = new yfiles.view.GraphComponent()
       this.$graphComponent = graphComponent
+
+      // create a graph from the Orgchart data.
+      createGraph(orgChartData, graphComponent.graph)
+
       graphComponent.focusIndicatorManager.showFocusPolicy = yfiles.view.ShowFocusPolicy.ALWAYS
       // disable default highlight indicators
       graphComponent.selectionIndicatorManager.enabled = false
@@ -124,15 +127,12 @@ require([
 
       graphComponent.inputMode = createViewerInputMode()
 
-      // assign the graph that is passed as a prop to the GraphComponent
-      graphComponent.graph = this.graph
-
       // apply tree layout to the graph
       doLayout(graphComponent.graph)
 
       // emit custom event 'focused-item-changed' whenever the focused item of the GraphControl changes
       graphComponent.focusIndicatorManager.addPropertyChangedListener(() => {
-        this.$emit('focused-item-changed', graphComponent.focusIndicatorManager.focusedItem)
+        this.$emit('focused-item-changed', graphComponent.focusIndicatorManager.focusedItem.tag)
       })
     },
     mounted() {
@@ -149,7 +149,6 @@ require([
   new Vue({
     el: '#yfiles-vue-app',
     data: {
-      graph: {},
       sharedData
     },
     methods: {
@@ -170,17 +169,12 @@ require([
       },
       /**
        * This is called when the custom <code>focused-item-changed</code> event is emitted on the graph-control.
-       * @param {yfiles.graph.INode} item - The currently focused node.
+       * @param {Object} tag - The tag of the currently focused node.
        */
-      focusedItemChanged(item) {
+      focusedItemChanged(tag) {
         // update shared state
-        this.sharedData.focusedNodeData = item.tag
+        this.sharedData.focusedNodeData = tag
       }
-    },
-    created() {
-      // create a graph from the Orgchart data.
-      this.graph = new yfiles.graph.DefaultGraph()
-      createGraph(orgChartData, this.graph)
     },
     mounted() {
       // run the demo

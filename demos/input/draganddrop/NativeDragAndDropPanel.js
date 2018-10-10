@@ -42,6 +42,7 @@ define(['yfiles/view-component'], (/** @type {yfiles_namespace} */ /** typeof yf
       this.div = div
       this.graphComponent = graphComponent
       this.$showPreview = true
+      this.$copyNodeLabels = true
     }
 
     /**
@@ -58,6 +59,18 @@ define(['yfiles/view-component'], (/** @type {yfiles_namespace} */ /** typeof yf
      */
     set showPreview(showPreview) {
       this.$showPreview = showPreview
+    }
+
+    /**
+     * Whether the labels of the DnD node visual should be transferred to the created node or discarded.
+     * @returns {Boolean}
+     */
+    get copyNodeLabels() {
+      return this.$copyNodeLabels
+    }
+
+    set copyNodeLabels(value) {
+      this.$copyNodeLabels = value
     }
 
     /**
@@ -97,6 +110,9 @@ define(['yfiles/view-component'], (/** @type {yfiles_namespace} */ /** typeof yf
           modifiedNode.style = node.style
           modifiedNode.ports = node.ports
           modifiedNode.tag = node.tag
+          modifiedNode.labels = this.$copyNodeLabels
+            ? node.labels
+            : yfiles.collections.IListEnumerable.EMPTY
           id2items.set(nodeID, modifiedNode)
         }
 
@@ -240,6 +256,7 @@ define(['yfiles/view-component'], (/** @type {yfiles_namespace} */ /** typeof yf
     div.style.setProperty('width', nodeVisual.getAttribute('width'), '')
     div.style.setProperty('height', nodeVisual.getAttribute('height'), '')
     div.style.setProperty('touch-action', 'none', '')
+    div.style.setProperty('cursor', 'grab', '')
     div.setAttribute('draggable', 'true')
     div.title = tooltip
     return div

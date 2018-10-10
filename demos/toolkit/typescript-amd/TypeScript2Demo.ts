@@ -1,4 +1,4 @@
-/// <amd-dependency path="../../resources/demo-util" name="app"/>
+/// <amd-dependency path="../../resources/demo-app" name="app"/>
 import yfiles = require('yfiles/view-editor')
 import { MySimpleArrow } from './MyArrow'
 import { MyMarqueeTemplate } from './MyMarqueeTemplate'

@@ -28,7 +28,7 @@
  ***************************************************************************/
 'use strict'
 
-define(['yfiles/view-layout-bridge', 'utils/GraphToJSON'], (yfiles, GraphToJSON) => {
+define(['yfiles/view-layout-bridge', 'WebWorkerJsonIO.js'], (yfiles, WebWorkerJsonIO) => {
   class WebWorkerLayoutExecutor {
     /**
      * Creates a new instance.
@@ -46,12 +46,6 @@ define(['yfiles/view-layout-bridge', 'utils/GraphToJSON'], (yfiles, GraphToJSON)
      */
     start() {
       return new Promise((resolve, reject) => {
-        // transfer the graph structure and layout in JSON format
-        const graphJSON = GraphToJSON.write(this.graphComponent.graph)
-
-        const o = {}
-        o.graph = graphJSON
-
         this.worker.onmessage = e => {
           const compoundEdit = this.graphComponent.graph.beginEdit('Layout', 'Layout')
           applyCalculatedLayout(e.data, this.graphComponent).then(() => {
@@ -72,7 +66,11 @@ define(['yfiles/view-layout-bridge', 'utils/GraphToJSON'], (yfiles, GraphToJSON)
             reject(new Error(`${e.message} (${e.filename}:${e.lineno})`))
           }
         }
-        this.worker.postMessage(o)
+
+        const graphJSON = WebWorkerJsonIO.write(this.graphComponent.graph)
+        this.worker.postMessage({
+          graph: graphJSON
+        })
       })
     }
   }
@@ -132,8 +130,8 @@ define(['yfiles/view-layout-bridge', 'utils/GraphToJSON'], (yfiles, GraphToJSON)
     const targetBounds = new yfiles.geometry.Rect(
       parseFloat(bounds.x),
       parseFloat(bounds.y),
-      parseFloat(bounds.w),
-      parseFloat(bounds.h)
+      parseFloat(bounds.width),
+      parseFloat(bounds.height)
     )
     const graphAnimation = yfiles.view.IAnimation.createGraphAnimation(
       graph,
@@ -163,33 +161,26 @@ define(['yfiles/view-layout-bridge', 'utils/GraphToJSON'], (yfiles, GraphToJSON)
    * @param {yfiles.view.GraphComponent} graphComponent
    */
   function storeNodeLayout(node2Layout, label2Parameter, nodeObj, graphComponent) {
-    const node = graphComponent.graph.nodes.find(n => n.tag === nodeObj.id)
+    const node = graphComponent.graph.nodes.find(n => n.tag.id === nodeObj.tag.id)
     if (node !== null) {
-      const newNodeLayout = getLayoutFromObj(nodeObj)
-      node2Layout.set(node, newNodeLayout)
+      const newLayout = getLayoutFromObj(nodeObj)
+      node2Layout.set(node, newLayout)
 
       // We need a dummy label with the new owner layout, so the ILabelModelParameterFinder can
       // calculate the parameter correctly.
       const dummyNode = new yfiles.graph.SimpleNode()
-      dummyNode.layout = newNodeLayout
-      nodeObj.labels.forEach((labelObj, index) => {
-        const label = node.labels.get(index)
-        const dummyLabel = new yfiles.graph.SimpleLabel(
-          dummyNode,
-          label.text,
-          label.layoutParameter
-        )
-        dummyLabel.preferredSize = label.preferredSize
-        label2Parameter.set(label, getLabelParameter(labelObj, dummyLabel))
-      })
-
-      if ('children' in nodeObj) {
-        const children = nodeObj.children
-        for (let i = 0; i < children.length; i++) {
-          const childNodeObj = children[i]
-          storeNodeLayout(node2Layout, label2Parameter, childNodeObj, graphComponent)
-        }
-      }
+      dummyNode.layout = newLayout
+      nodeObj.labels &&
+        nodeObj.labels.forEach((labelObj, index) => {
+          const label = node.labels.get(index)
+          const dummyLabel = new yfiles.graph.SimpleLabel(
+            dummyNode,
+            label.text,
+            label.layoutParameter
+          )
+          dummyLabel.preferredSize = label.preferredSize
+          label2Parameter.set(label, getLabelParameter(labelObj.layout, dummyLabel))
+        })
     }
   }
 
@@ -202,8 +193,8 @@ define(['yfiles/view-layout-bridge', 'utils/GraphToJSON'], (yfiles, GraphToJSON)
     const layout = jsonNode.layout
     const x = parseFloat(layout.x)
     const y = parseFloat(layout.y)
-    const w = parseFloat(layout.w)
-    const h = parseFloat(layout.h)
+    const w = parseFloat(layout.width)
+    const h = parseFloat(layout.height)
     return new yfiles.geometry.Rect(x, y, w, h)
   }
 
@@ -225,7 +216,7 @@ define(['yfiles/view-layout-bridge', 'utils/GraphToJSON'], (yfiles, GraphToJSON)
     edgeObj,
     graphComponent
   ) {
-    const edge = graphComponent.graph.edges.find(e => e.tag === edgeObj.id)
+    const edge = graphComponent.graph.edges.find(e => e.tag.id === edgeObj.tag.id)
     if (edge !== null) {
       // We need a dummy label with the new source/target port layout, so the ILabelModelParameterFinder can
       // calculate the parameter correctly
@@ -238,25 +229,28 @@ define(['yfiles/view-layout-bridge', 'utils/GraphToJSON'], (yfiles, GraphToJSON)
 
       const dummyEdge = new yfiles.graph.SimpleEdge(sourcePort, targetPort)
 
-      const bendObjs = edgeObj.bends
-      const bends = []
-      for (let i = 0; i < bendObjs.length; i++) {
-        bends.push(getLocationFromObj(bendObjs[i]))
+      if (Array.isArray(edgeObj.bends)) {
+        const bends = []
+        for (let i = 0; i < edgeObj.bends.length; i++) {
+          bends.push(getLocationFromObj(edgeObj.bends[i]))
+        }
+        edge2Bends.set(edge, bends)
       }
 
-      edge2Bends.set(edge, bends)
       port2Location.set(edge.sourcePort, getLocationFromObj(edgeObj.sourcePort))
       port2Location.set(edge.targetPort, getLocationFromObj(edgeObj.targetPort))
-      edgeObj.labels.forEach((labelObj, index) => {
-        const label = edge.labels.get(index)
-        const dummyLabel = new yfiles.graph.SimpleLabel(
-          dummyEdge,
-          label.text,
-          label.layoutParameter
-        )
-        dummyLabel.preferredSize = label.preferredSize
-        label2Parameter.set(label, getLabelParameter(labelObj, dummyLabel))
-      })
+
+      edgeObj.labels &&
+        edgeObj.labels.forEach((labelObj, index) => {
+          const label = edge.labels.get(index)
+          const dummyLabel = new yfiles.graph.SimpleLabel(
+            dummyEdge,
+            label.text,
+            label.layoutParameter
+          )
+          dummyLabel.preferredSize = label.preferredSize
+          label2Parameter.set(label, getLabelParameter(labelObj.layout, dummyLabel))
+        })
     }
   }
 
@@ -273,20 +267,20 @@ define(['yfiles/view-layout-bridge', 'utils/GraphToJSON'], (yfiles, GraphToJSON)
 
   /**
    * Converts the web worker's label layout to a label layout parameter with findBestParameter.
-   * @param {Object} labelObj The JSON label object from the web worker that specifies the new label layout.
+   * @param {Object} layoutObj The JSON label object from the web worker that specifies the new label layout.
    * @param {yfiles.graph.ILabel} dummyLabel A dummy label that is used to calculate the layout parameter.
    * @return {yfiles.graph.ILabelModelParameter} The parameter that best matches the new layout.
    */
-  function getLabelParameter(labelObj, dummyLabel) {
+  function getLabelParameter(layoutObj, dummyLabel) {
     const model = dummyLabel.layoutParameter.model
     const parameterFinder = model.lookup(yfiles.graph.ILabelModelParameterFinder.$class)
     const layout = new yfiles.geometry.OrientedRectangle(
-      labelObj.anchorX,
-      labelObj.anchorY,
-      labelObj.width,
-      labelObj.height,
-      labelObj.upX,
-      labelObj.upY
+      layoutObj.anchorX,
+      layoutObj.anchorY,
+      layoutObj.width,
+      layoutObj.height,
+      layoutObj.upX,
+      layoutObj.upY
     )
     return parameterFinder.findBestParameter(dummyLabel, model, layout)
   }

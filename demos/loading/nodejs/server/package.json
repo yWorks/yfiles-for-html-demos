@@ -4,10 +4,10 @@
   "description": "Minimal yFiles layout server using node.js express",
   "main": "server.js",
   "author": "yfileshtml@yworks.com",
-  "license": "https://www.yworks.com/en/products_yfiles_sla.html",
+  "license": "https://www.yworks.com/products/yfiles-for-html/sla",
   "private": true,
   "dependencies": {
-    "express": "4.16.2",
-    "body-parser": "1.18.2"
+    "express": "4.16.3",
+    "body-parser": "1.18.3"
   }
 }

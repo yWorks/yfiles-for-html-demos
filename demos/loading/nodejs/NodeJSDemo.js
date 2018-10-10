@@ -40,10 +40,10 @@ require([
   'yfiles/view-editor',
   'resources/demo-app',
   'resources/demo-styles',
-  'utils/GraphToJSON',
+  'utils/JsonIO',
   'yfiles/view-folding',
   'resources/license'
-], (/** @type {yfiles_namespace} */ /** typeof yfiles */ yfiles, app, DemoStyles, GraphToJSON) => {
+], (/** @type {yfiles_namespace} */ /** typeof yfiles */ yfiles, app, DemoStyles, jsonIO) => {
   let graphComponent = null
 
   function run() {
@@ -105,11 +105,27 @@ require([
     }
 
     // transfer the graph structure and layout in JSON format
-    const graphJSON = GraphToJSON.write(graphComponent.graph)
+    const jsonWriter = new jsonIO.JSONWriter()
+    jsonWriter.nodeIdProvider = n => n.tag.id
+
+    // In addition to the default data, we need the insets for the layout calculation
+    jsonWriter.nodeDataCreated = (data, node, graph) => {
+      const insetsProvider = node.lookup(yfiles.input.INodeInsetsProvider.$class)
+      if (insetsProvider !== null) {
+        const insets = insetsProvider.getInsets(node)
+        data.insets = {
+          top: insets.top,
+          right: insets.right,
+          bottom: insets.bottom,
+          left: insets.left
+        }
+      }
+    }
+
     request.open('POST', 'http://localhost:3001/layout', true)
     // required for IE9 (otherwise the content-type header is empty)
     request.setRequestHeader('Content-Type', 'text/plain;charset=UTF-8')
-    request.send(JSON.stringify(graphJSON))
+    request.send(JSON.stringify(jsonWriter.write(graphComponent.graph)))
   }
 
   /**
@@ -164,8 +180,8 @@ require([
     const targetBounds = new yfiles.geometry.Rect(
       parseFloat(bounds.x),
       parseFloat(bounds.y),
-      parseFloat(bounds.w),
-      parseFloat(bounds.h)
+      parseFloat(bounds.width),
+      parseFloat(bounds.height)
     )
     // we ignore label locations here.
     const graphAnimation = yfiles.view.IAnimation.createGraphAnimation(
@@ -221,13 +237,13 @@ require([
    * @param {Object} nodeObj The JSON node object from the NodeJS server that specifies the new node layout
    */
   function storeNodeLayout(node2Layout, label2Parameter, nodeObj) {
-    const node = graphComponent.graph.nodes.find(n => n.tag === nodeObj.id)
+    const node = graphComponent.graph.nodes.find(n => n.tag.id === nodeObj.tag.id)
     if (node !== null) {
       const objLayout = nodeObj.layout
       const x = parseFloat(objLayout.x)
       const y = parseFloat(objLayout.y)
-      const w = parseFloat(objLayout.w)
-      const h = parseFloat(objLayout.h)
+      const w = parseFloat(objLayout.width)
+      const h = parseFloat(objLayout.height)
       const newLayout = new yfiles.geometry.Rect(x, y, w, h)
       node2Layout.set(node, newLayout)
 
@@ -235,23 +251,17 @@ require([
       // calculate the parameter correctly.
       const dummyNode = new yfiles.graph.SimpleNode()
       dummyNode.layout = newLayout
-      nodeObj.labels.forEach((labelObj, index) => {
-        const label = node.labels.get(index)
-        const dummyLabel = new yfiles.graph.SimpleLabel(
-          dummyNode,
-          label.text,
-          label.layoutParameter
-        )
-        dummyLabel.preferredSize = label.preferredSize
-        label2Parameter.set(label, getLabelParameter(labelObj, dummyLabel))
-      })
-      if ('children' in nodeObj) {
-        const children = nodeObj.children
-        for (let i = 0; i < children.length; i++) {
-          const childNodeObj = children[i]
-          storeNodeLayout(node2Layout, label2Parameter, childNodeObj)
-        }
-      }
+      nodeObj.labels &&
+        nodeObj.labels.forEach((labelObj, index) => {
+          const label = node.labels.get(index)
+          const dummyLabel = new yfiles.graph.SimpleLabel(
+            dummyNode,
+            label.text,
+            label.layoutParameter
+          )
+          dummyLabel.preferredSize = label.preferredSize
+          label2Parameter.set(label, getLabelParameter(labelObj.layout, dummyLabel))
+        })
     }
   }
 
@@ -279,7 +289,7 @@ require([
    * @param {Object} edgeObj The JSON edge object from the nodejs server that specifies the new layout.
    */
   function storeEdgeLayout(edge2Bends, node2Layout, port2Location, label2Parameter, edgeObj) {
-    const edge = graphComponent.graph.edges.find(e => e.tag === edgeObj.id)
+    const edge = graphComponent.graph.edges.find(e => e.tag.id === edgeObj.tag.id)
     if (edge !== null) {
       // We need a dummy label with the new source/target port layout, so the ILabelModelParameterFinder can
       // calculate the parameter correctly
@@ -292,25 +302,28 @@ require([
 
       const dummyEdge = new yfiles.graph.SimpleEdge(sourcePort, targetPort)
 
-      const bendObjs = edgeObj.bends
-      const bends = []
-      for (let i = 0; i < bendObjs.length; i++) {
-        bends.push(getLocationFromObj(bendObjs[i]))
+      if (Array.isArray(edgeObj.bends)) {
+        const bends = []
+        for (let i = 0; i < edgeObj.bends.length; i++) {
+          bends.push(getLocationFromObj(edgeObj.bends[i]))
+        }
+        edge2Bends.set(edge, bends)
       }
 
-      edge2Bends.set(edge, bends)
       port2Location.set(edge.sourcePort, getLocationFromObj(edgeObj.sourcePort))
       port2Location.set(edge.targetPort, getLocationFromObj(edgeObj.targetPort))
-      edgeObj.labels.forEach((labelObj, index) => {
-        const label = edge.labels.get(index)
-        const dummyLabel = new yfiles.graph.SimpleLabel(
-          dummyEdge,
-          label.text,
-          label.layoutParameter
-        )
-        dummyLabel.preferredSize = label.preferredSize
-        label2Parameter.set(label, getLabelParameter(labelObj, dummyLabel))
-      })
+
+      edgeObj.labels &&
+        edgeObj.labels.forEach((labelObj, index) => {
+          const label = edge.labels.get(index)
+          const dummyLabel = new yfiles.graph.SimpleLabel(
+            dummyEdge,
+            label.text,
+            label.layoutParameter
+          )
+          dummyLabel.preferredSize = label.preferredSize
+          label2Parameter.set(label, getLabelParameter(labelObj.layout, dummyLabel))
+        })
     }
   }
 
@@ -371,13 +384,15 @@ require([
       yfiles.graph.InteriorLabelModel.CENTER
     graphComponent.graph.edgeDefaults.labels.layoutParameter = yfiles.graph.FreeEdgeLabelModel.INSTANCE.createDefaultParameter()
 
-    // Add listeners for item created events to add a label to each new item
+    // Add listeners for item created events to add a tag to each new item
     const masterGraph = manager.masterGraph
     masterGraph.addNodeCreatedListener((source, evt) => {
-      evt.item.tag = (masterGraph.isGroupNode(evt.item) ? 'G-' : 'N-') + masterGraph.nodes.size
+      evt.item.tag = {
+        id: (masterGraph.isGroupNode(evt.item) ? 'G-' : 'N-') + masterGraph.nodes.size
+      }
     })
     masterGraph.addEdgeCreatedListener((source, evt) => {
-      evt.item.tag = `E-${masterGraph.edges.size}`
+      evt.item.tag = { id: `E-${masterGraph.edges.size}` }
     })
   }
 

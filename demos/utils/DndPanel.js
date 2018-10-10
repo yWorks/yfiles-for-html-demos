@@ -42,6 +42,7 @@ define(['yfiles/view-component'], yfiles => {
       this.divField = div
       this.$maxItemWidth = 150
       this.passiveSupported = !!passiveSupported
+      this.$copyNodeLabels = true
     }
 
     /**
@@ -77,6 +78,18 @@ define(['yfiles/view-component'], yfiles => {
 
     set beginDragCallback(callback) {
       this.$beginDragCallback = callback
+    }
+
+    /**
+     * Whether the labels of the DnD node visual should be transferred to the created node or discarded.
+     * @returns {Boolean}
+     */
+    get copyNodeLabels() {
+      return this.$copyNodeLabels
+    }
+
+    set copyNodeLabels(value) {
+      this.$copyNodeLabels = value
     }
 
     /**
@@ -179,6 +192,7 @@ define(['yfiles/view-component'], yfiles => {
       div.style.setProperty('width', nodeVisual.getAttribute('width'), '')
       div.style.setProperty('height', nodeVisual.getAttribute('height'), '')
       div.style.setProperty('touch-action', 'none')
+      div.style.setProperty('cursor', 'grab', '')
       if (tooltip) {
         div.title = tooltip
       }
@@ -213,6 +227,9 @@ define(['yfiles/view-component'], yfiles => {
           simpleNode.layout = node.layout
           simpleNode.style = node.style.clone()
           simpleNode.tag = node.tag
+          simpleNode.labels = this.$copyNodeLabels
+            ? node.labels
+            : yfiles.collections.IListEnumerable.EMPTY
           if (node.ports.size > 0) {
             simpleNode.ports = new yfiles.collections.ListEnumerable(node.ports)
           }

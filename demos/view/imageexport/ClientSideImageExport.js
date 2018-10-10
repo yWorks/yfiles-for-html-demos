@@ -134,9 +134,15 @@ define(['yfiles/view-component', 'resources/demo-app'], (yfiles, util) => {
       return exportImageWithCanvg(svgElement, targetCanvas, null)
     }
 
+    if (util.detectInternetExplorerVersion() > 11) {
+      // A bug in Microsoft Edge results in black gradients when drawn into a Canvas if the call to drawImage happens
+      // in a timeout, e.g. a button click.
+      return exportImageWithCanvg(svgElement, targetCanvas, null)
+    }
+
     return new Promise(resolve => {
       // The SVG image is now used as the source of an HTML image element,
-      // which is then rendered onto a canvas element.
+      // which is then rendered onto a Canvas element.
 
       // An image that gets the export SVG in the Data URL format
       const svgImage = new Image()
@@ -149,8 +155,8 @@ define(['yfiles/view-component', 'resources/demo-app'], (yfiles, util) => {
         setTimeout(() => {
           try {
             targetContext.drawImage(svgImage, margins.left, margins.top)
-            // When the svg image has been rendered to the canvas,
-            // the raster image can be exported from the canvas.
+            // When the svg image has been rendered to the Canvas,
+            // the raster image can be exported from the Canvas.
             const pngImage = new Image()
             // The following 'toDataURL' function throws a security error in IE
             pngImage.src = targetCanvas.toDataURL('image/png')
@@ -167,7 +173,7 @@ define(['yfiles/view-component', 'resources/demo-app'], (yfiles, util) => {
       // workaround for the following Firefox bug: https://bugzilla.mozilla.org/show_bug.cgi?id=1365622
       if (ffVersion > 52 && ffVersion < 55) {
         svgImage.onload = () => {
-          // draw the image to the canvas immediately to preload it
+          // draw the image to the Canvas immediately to preload it
           targetContext.drawImage(svgImage, 0, 0)
           const waitMessage = document.createElement('p')
           waitMessage.textContent = 'Please wait...'

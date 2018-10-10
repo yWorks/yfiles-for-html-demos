@@ -78,18 +78,18 @@ require(['yfiles/view-editor', 'resources/demo-app', 'resources/license'], (
     const graphModelManager = graphComponent.graphModelManager
 
     // set to default first
-    graphComponent.graphModelManager.labelLayerPolicy = yfiles.view.PortLayerPolicy.SEPARATE_LAYER
-    graphComponent.graphModelManager.portLayerPolicy = yfiles.view.LabelLayerPolicy.SEPARATE_LAYER
+    graphComponent.graphModelManager.labelLayerPolicy = yfiles.view.LabelLayerPolicy.SEPARATE_LAYER
+    graphComponent.graphModelManager.portLayerPolicy = yfiles.view.PortLayerPolicy.SEPARATE_LAYER
     graphComponent.graphModelManager.hierarchicNestingPolicy =
       yfiles.view.HierarchicNestingPolicy.NODES_AND_EDGES
     graphModelManager.edgeGroup.below(graphModelManager.nodeGroup)
 
     if (order === 'at-owner') {
-      graphComponent.graphModelManager.labelLayerPolicy = yfiles.view.PortLayerPolicy.AT_OWNER
-      graphComponent.graphModelManager.portLayerPolicy = yfiles.view.LabelLayerPolicy.AT_OWNER
+      graphComponent.graphModelManager.labelLayerPolicy = yfiles.view.LabelLayerPolicy.AT_OWNER
+      graphComponent.graphModelManager.portLayerPolicy = yfiles.view.PortLayerPolicy.AT_OWNER
     } else if (order === 'edges-on-top') {
-      graphComponent.graphModelManager.labelLayerPolicy = yfiles.view.PortLayerPolicy.AT_OWNER
-      graphComponent.graphModelManager.portLayerPolicy = yfiles.view.LabelLayerPolicy.AT_OWNER
+      graphComponent.graphModelManager.labelLayerPolicy = yfiles.view.LabelLayerPolicy.AT_OWNER
+      graphComponent.graphModelManager.portLayerPolicy = yfiles.view.PortLayerPolicy.AT_OWNER
       graphComponent.graphModelManager.hierarchicNestingPolicy =
         yfiles.view.HierarchicNestingPolicy.NODES
       graphModelManager.edgeGroup.above(graphModelManager.nodeGroup)

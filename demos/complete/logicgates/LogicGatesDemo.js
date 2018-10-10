@@ -297,7 +297,6 @@ require([
   function setUIDisabled(disabled) {
     document.getElementById('algorithm-select-box').disabled = disabled
     document.getElementById('layoutButton').disabled = disabled
-    graphComponent.inputMode.waiting = disabled
   }
 
   /**

@@ -36,8 +36,8 @@
   } else {
     document.querySelector('#graphComponent').innerHTML = `<div style="padding: 50px">
             <p style="font-size: 2rem;">Your browser doesn't support Web Components.</p>
-            <p> See <a href="http://jonrimmer.github.io/are-we-componentized-yet/">Are We Componentized Yet?</a> and 
-            <a href="http://caniuse.com/#search=web%20components">caniuse.com</a> for details on browser support for 
+            <p> See <a href="https://www.webcomponents.org/">webcomponents.org</a> and 
+            <a href="https://caniuse.com/#search=web%20components">caniuse.com</a> for details on browser support for 
             Web Components.</p>
         </div>`
   }

@@ -119,6 +119,20 @@ define(['yfiles/view-component'], /** @type {yfiles_namespace} */ /** typeof yfi
       logError(err != null ? unwindStack(err) : message)
       return openErrorDialog(message, url, lineNumber, cl, err)
     }
+
+    window.onunhandledrejection = e => {
+      if (e.reason instanceof Error) {
+        logError(unwindStack(e.reason))
+        openErrorDialog(null, null, 0, 0, e.reason)
+      } else if (typeof e.reason === 'string') {
+        logError(e.reason)
+        openErrorDialog(e.reason, null, 0, 0, null)
+      } else {
+        const message = 'Unhandled promise rejection'
+        logError(message)
+        openErrorDialog(message, null, null, 0, 0, null)
+      }
+    }
   }
 
   function getInnermostMessage(error) {
@@ -245,7 +259,7 @@ define(['yfiles/view-component'], /** @type {yfiles_namespace} */ /** typeof yfi
    * @return {Element}
    */
   function createErrorDialog(errorMessage, url, lineNumber, columnNumber, error) {
-    const actionUrl = 'http://kb.yworks.com/errorFeedback.html'
+    const actionUrl = 'https://www.yworks.com/actions/errorReportHtmlDemos'
     const { dialogAnchor, dialogPanel, contentPanel } = createPlainDialog('Report Error to yWorks')
     const parent = document.body
 

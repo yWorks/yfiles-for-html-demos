@@ -1171,7 +1171,6 @@ require([
   function setUIDisabled(disabled) {
     document.getElementById('AddRow').disabled = disabled
     document.getElementById('AddColumn').disabled = disabled
-    graphComponent.inputMode.waiting = disabled
   }
 
   /**

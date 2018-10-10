@@ -110,6 +110,7 @@ require([
           document.getElementById('stylePanel'),
           app.passiveSupported
         )
+        stylePanel.copyNodeLabels = false
         // Set the callback that starts the actual drag and drop operation
         stylePanel.beginDragCallback = (element, data) => {
           const dragPreview = element.cloneNode(true)

@@ -92,21 +92,26 @@ require([
         return
       }
       const node = args.item
-      if (node.style.getDecorationLayout(node.layout).contains(args.location)) {
-        // The decorator was clicked.
-        // Handle the click if it should do nothing else than what is defined in the decorator click listener.
-        // Otherwise the click will be handled by other input modes, too. For instance, a node may be created or the
-        // clicked node may be selected.
-        args.handled = true
-
-        // Shows a toast to indicate the successful click, and hides it again.
-        clearTimeout(hideTimer)
-        const toast = document.getElementById('toast')
-        toast.style.bottom = '40px'
-        hideTimer = setTimeout(() => {
-          toast.style.bottom = '-50px'
-        }, 2000)
+      if (
+        !(node.style instanceof NodeStyleDecorator) ||
+        !node.style.getDecorationLayout(node.layout).contains(args.location)
+      ) {
+        return
       }
+
+      // The decorator was clicked.
+      // Handle the click if it should do nothing else than what is defined in the decorator click listener.
+      // Otherwise the click will be handled by other input modes, too. For instance, a node may be created or the
+      // clicked node may be selected.
+      args.handled = true
+
+      // Shows a toast to indicate the successful click, and hides it again.
+      clearTimeout(hideTimer)
+      const toast = document.getElementById('toast')
+      toast.style.bottom = '40px'
+      hideTimer = setTimeout(() => {
+        toast.style.bottom = '-50px'
+      }, 2000)
     })
   }
 

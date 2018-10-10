@@ -28,15 +28,11 @@
  ***************************************************************************/
 'use strict'
 
-/* eslint-disable import/no-unresolved */
-
-const webpack = require('webpack')
 const path = require('path')
 
 module.exports = {
   entry: {
-    app: './build/main.js',
-    libraries: ['./src/libraries.js']
+    app: './build/main.js'
   },
 
   resolve: {
@@ -49,15 +45,25 @@ module.exports = {
     ]
   },
 
-  plugins: [
-    new webpack.optimize.CommonsChunkPlugin({
-      name: 'libraries',
-      filename: 'lib.bundle.js'
-    })
-  ],
+  optimization: {
+    splitChunks: {
+      cacheGroups: {
+        yfiles: {
+          test: /lib[/\\]umd[/\\]yfiles/,
+          name: 'yfiles',
+          chunks: 'all'
+        },
+        vendors: {
+          test: /[\\/]node_modules[\\/]/,
+          name: 'vendors',
+          chunks: 'all'
+        }
+      }
+    }
+  },
 
   output: {
     path: path.resolve('./dist'),
-    filename: 'bundle.js'
+    filename: '[name].js'
   }
 }

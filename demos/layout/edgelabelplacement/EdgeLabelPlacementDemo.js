@@ -142,7 +142,6 @@ require([
   function setUIDisabled(disabled) {
     document.getElementById('layoutButton').disabled = disabled
     document.getElementById('layoutComboBox').disabled = disabled
-    graphComponent.inputMode.waiting = disabled
   }
 
   /**

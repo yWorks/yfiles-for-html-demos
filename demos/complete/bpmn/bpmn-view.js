@@ -4320,7 +4320,7 @@ define(['yfiles/view-table'], /** @type {yfiles_namespace} */ /** typeof yfiles 
         let yOffset = 0
         for (let i = 0; i < this.$topParticipants.size; i++) {
           const topParticipant = this.$topParticipants.get(i)
-          if (index === i++) {
+          if (index === i) {
             return new yfiles.geometry.Rect(
               owner.layout.x,
               owner.layout.y + yOffset,
@@ -4335,7 +4335,7 @@ define(['yfiles/view-table'], /** @type {yfiles_namespace} */ /** typeof yfiles 
         for (let i = 0; i < this.$bottomParticipants.size; i++) {
           const bottomParticipant = this.$bottomParticipants.get(i)
           yOffset -= bottomParticipant.getSize()
-          if (index === i++) {
+          if (index === i) {
             return new yfiles.geometry.Rect(
               owner.layout.x,
               owner.layout.y + yOffset,

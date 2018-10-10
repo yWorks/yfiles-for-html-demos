@@ -57,9 +57,10 @@ module.exports = grunt => {
         input: path.join(deployDir, 'ES6ModulesDemo.js'),
         onwarn(warning) {
           if (warning.code !== 'THIS_IS_UNDEFINED') {
-            console.log(message)
+            console.log(warning.message)
           }
-        }
+        },
+        treeshake: false
       })
       .then(bundle =>
         bundle.write({

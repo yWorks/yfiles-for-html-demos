@@ -28,61 +28,34 @@
  ***************************************************************************/
 'use strict'
 
-const webpack = require('webpack')
-const WebpackChunkHash = require('webpack-chunk-hash')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
-const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
-const merge = require('webpack-merge')
 const path = require('path')
-const baseConfig = require('./webpack.base')
 
-module.exports = () => {
-  console.log('Running Webpack...')
-
-  return merge(baseConfig, {
-    entry: {
-      app: './build/webpack-demo.js'
-    },
-
-    resolve: {
-      // where webpack will look to resolve required modules
-      // https://webpack.js.org/configuration/resolve/#resolve-modules
-      // In contrast to the dev configuration, the modules will be picked up from
-      // ./build/ after they have been optimized using the yFiles deployment tool.
-      modules: ['node_modules', path.resolve('./build'), path.resolve('./build/lib/es6-modules/')]
-    },
-
-    plugins: [
-      // The chunk hashes should be based on the file contents
-      // https://webpack.js.org/guides/caching/#deterministic-hashes
-      new WebpackChunkHash(),
-
-      // Inject the bundle script tags into the html page
-      new HtmlWebpackPlugin({
-        inject: true,
-        filename: '../index.html',
-        template: path.resolve(__dirname, 'index.template.html')
-      }),
-
-      // For production, we want additional minification.
-      new UglifyJsPlugin({
-        uglifyOptions: {
-          beautify: false,
-          compress: {
-            dead_code: false,
-            conditionals: false
-          },
-          // keep the yFiles license header comments
-          extractComments: false
-        }
-      })
-    ],
-
-    output: {
-      // For production, we use hashed filenames to enable long term caching/cache busting
-      // https://webpack.js.org/guides/caching/
-      filename: '[name].[chunkhash].js',
-      path: path.resolve(__dirname, 'dist')
-    }
-  })
+module.exports = {
+  mode: 'production',
+  entry: {
+    app: './build/webpack-demo.js'
+  },
+  resolve: {
+    // where webpack will look to resolve required modules
+    // https://webpack.js.org/configuration/resolve/#resolve-modules
+    // In contrast to the dev configuration, the modules will be picked up from
+    // ./build/ after they have been optimized using the yFiles deployment tool.
+    modules: ['node_modules', path.resolve('./build'), path.resolve('./build/lib/es6-modules/')]
+  },
+  plugins: [
+    // Inject the bundle script tags into the html page
+    new HtmlWebpackPlugin({
+      inject: true,
+      filename: '../index.html',
+      template: path.resolve(__dirname, 'index.template.html')
+    })
+  ],
+  output: {
+    filename: '[name].[hash].js',
+    path: path.resolve(__dirname, 'dist'), // This is necessary when using the webpack dev server, so the bundles can
+    // be loaded from dist/
+    // https://webpack.js.org/configuration/output/#output-publicpath
+    publicPath: 'dist'
+  }
 }

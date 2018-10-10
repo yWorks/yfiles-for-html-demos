@@ -87,7 +87,8 @@ require([
    * Initializes the structure view component.
    */
   function initializeStructureView() {
-    structureView = new StructureView(graphComponent.graph, '#structure-view')
+    structureView = new StructureView('#structure-view')
+    structureView.graph = graphComponent.graph
     structureView.labelPlaceholder = '< node >'
     structureView.onElementClicked = node => {
       const viewNode = graphComponent.graph.foldingView

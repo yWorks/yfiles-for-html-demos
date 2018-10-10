@@ -28,29 +28,35 @@
  ***************************************************************************/
 'use strict'
 
-const webpack = require('webpack')
+const merge = require('webpack-merge')
+const devConfig = require('./webpack.dev')
+const prodConfig = require('./webpack.prod')
 
-module.exports = {
-  plugins: [
-    // extract yfiles and node modules to a separate webpack chunk
-    new webpack.optimize.CommonsChunkPlugin({
-      name: 'lib',
-      minChunks(module) {
-        return (
-          module.resource &&
-          /\.js$/.test(module.resource) &&
-          (/lib[/\\]es6-modules[/\\]yfiles/.test(module.resource) ||
-            /node_modules[/\\]/.test(module.resource))
-        )
+const baseConfig = {
+  optimization: {
+    splitChunks: {
+      cacheGroups: {
+        yfiles: {
+          test: /lib[/\\]es6-modules[/\\]yfiles/,
+          name: 'yfiles',
+          chunks: 'all'
+        },
+        vendors: {
+          test: /[\\/]node_modules[\\/]/,
+          name: 'vendors',
+          chunks: 'all'
+        }
       }
-    }),
+    }
+  }
+}
 
-    new webpack.optimize.CommonsChunkPlugin({
-      // put the webpack manifest into a separate bundle, so
-      // the library bundle hash does not change for every build.
-      // https://webpack.js.org/guides/code-splitting-libraries/#manifest-file
-      name: 'manifest',
-      minChunks: Infinity
-    })
-  ]
+module.exports = function(env, options) {
+  if (options.mode === 'development') {
+    console.log('Running webpack in development mode...')
+    return merge(baseConfig, devConfig)
+  } else {
+    console.log('Running webpack in production mode...')
+    return merge(baseConfig, prodConfig)
+  }
 }

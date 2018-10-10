@@ -578,10 +578,6 @@ require([
    */
   function setUIDisabled(disabled) {
     document.getElementById('layoutButton').disabled = disabled
-    setTimeout(() => {
-      // timeout to make sure the mutex can be acquired even if it was triggered by another input mode's event
-      graphComponent.inputMode.waiting = disabled
-    }, 0)
   }
 
   /**

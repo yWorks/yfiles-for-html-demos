@@ -66,6 +66,12 @@
       z-index: 12;
     }
 
+    @media screen and (max-height: 500px) {
+      #dndPanelContainer, #nativeDndPanelContainer {
+        top: 30px;
+      }
+    }
+
     #disabled-indicator {
       background-color: rgba(0, 0, 0, 0.3);
       position: absolute;
@@ -172,6 +178,12 @@
       The second palette supports native drag and drop. The drop input modes are able to react to the native drag events.
       Unfortunately, snapping is not supported for elements dragged from this palette. Note that this palette only works
       with mouse events. Native drag and drop is currently not able to handle touch or pen events.
+    </p>
+
+    <p>
+      The native drag and drop approach is disabled in Internet Explorer because the HTML5 drag and drop API is only
+      partially supported. See <a href="../../../doc/readme/known_issues.html#datatransfer-ie" target="_blank">Known
+      Issues</a> for further details.
     </p>
 
     <h2>Things to Try</h2>

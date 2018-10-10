@@ -30,7 +30,8 @@
 global.self = global
 
 require('../../../resources/license.js')
-const GraphToJSON = require('../../../utils/GraphToJSON.js')
+const jsonIO = require('./server-io')
+
 // All yfiles modules return the yfiles namespace object
 const yfiles = require('../../../../lib/umd/yfiles/view-component')
 require('../../../../lib/umd/yfiles/layout-hierarchic')
@@ -79,7 +80,7 @@ app.post('/layout', (req, res) => {
  * @returns {JSONGraph}
  */
 function runLayout(inputGraph) {
-  const graph = GraphToJSON.read(inputGraph)
+  const graph = jsonIO.read(inputGraph)
 
   const layout = new yfiles.hierarchic.HierarchicLayout()
   layout.minimumNodeDistance = 50
@@ -87,7 +88,7 @@ function runLayout(inputGraph) {
   layout.integratedEdgeLabeling = true
   graph.applyLayout(new yfiles.layout.MinimumNodeSizeStage(layout))
 
-  return GraphToJSON.write(graph)
+  return jsonIO.write(graph)
 }
 
 function checkLicense() {

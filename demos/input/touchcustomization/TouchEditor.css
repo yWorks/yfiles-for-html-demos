@@ -26,13 +26,6 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-@import url(http://fonts.googleapis.com/css?family=Roboto:400,300,100);
-
-html {
-  font-family: 'Roboto', sans-serif;
-  font-weight: 300;
-}
-
 #graphComponent {
   top: 60px;
 }

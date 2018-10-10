@@ -306,7 +306,6 @@ require([
    */
   function createGraphMLIOHandler() {
     const ioHandler = new yfiles.graphml.GraphMLIOHandler()
-    ioHandler.catchDeserializationErrors = true
 
     // Enable parsing/writing of arbitrary custom data
     ioHandler.addQueryInputHandlersListener((sender, args) => {

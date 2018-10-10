@@ -31,18 +31,14 @@
 const webpack = require('webpack')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const HtmlWebpackHarddiskPlugin = require('html-webpack-harddisk-plugin')
-const merge = require('webpack-merge')
 const path = require('path')
-const baseConfig = require('./webpack.base')
 
-module.exports = merge(baseConfig, {
+module.exports = {
+  mode: 'development',
   entry: {
     app: './src/webpack-demo.js'
   },
-
   resolve: {
-    // where webpack will look to resolve required modules
-    // https://webpack.js.org/configuration/resolve/#resolve-modules
     modules: [
       path.resolve('./node_modules'),
       path.resolve('./src'),
@@ -50,8 +46,18 @@ module.exports = merge(baseConfig, {
       path.resolve('../../../lib/es6-modules')
     ]
   },
-
+  devServer: {
+    contentBase: [
+      path.join(__dirname, '.'),
+      // serve the package root as well, so relative links to assets (css/images) work in dev server
+      path.join(__dirname, '../../../')
+    ],
+    compress: true,
+    hot: true,
+    port: 9003
+  },
   plugins: [
+    new webpack.HotModuleReplacementPlugin(),
     new HtmlWebpackPlugin({
       inject: true,
       filename: '../index.html',
@@ -61,32 +67,17 @@ module.exports = merge(baseConfig, {
       alwaysWriteToDisk: true
     }),
     new HtmlWebpackHarddiskPlugin(),
-
     new webpack.SourceMapDevToolPlugin({
       filename: '[file].map',
       // add source maps for non-library code to enable convenient debugging
-      exclude: ['lib.js', 'manifest.js']
+      exclude: ['yfiles.js']
     })
   ],
-
   output: {
     filename: '[name].js',
     path: path.resolve(__dirname, 'dist'), // This is necessary when using the webpack dev server, so the bundles can
     // be loaded from dist/
     // https://webpack.js.org/configuration/output/#output-publicpath
     publicPath: 'dist'
-  },
-
-  devServer: {
-    staticOptions: {
-      index: 'index_dev.html'
-    },
-    contentBase: [
-      path.join(__dirname, '.'),
-      // serve the package root as well, so relative links to assets (css/images) work in dev server
-      path.join(__dirname, '../../../')
-    ],
-    compress: true,
-    port: 9003
   }
-})
+}
