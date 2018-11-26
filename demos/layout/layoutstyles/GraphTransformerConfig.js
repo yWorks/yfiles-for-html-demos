@@ -57,7 +57,6 @@
            */
           constructor: function() {
             demo.LayoutConfiguration.call(this)
-            this.$initGraphTransformerConfig()
             const transformer = new yfiles.layout.GraphTransformer()
             this.operationItem = yfiles.layout.OperationType.SCALE
             this.actOnSelectionOnlyItem = false
@@ -84,7 +83,7 @@
               this.applyBestFitRotationItem &&
               this.operationItem === yfiles.layout.OperationType.ROTATE
             ) {
-              const size = graphComponent.size
+              const size = graphComponent.innerSize
               this.applyBestFitRotationItem = true
               const layoutGraph = new yfiles.layout.LayoutGraphAdapter(
                 graphComponent.graph,
@@ -176,8 +175,8 @@
                 demo.options.OptionGroupAttribute('GeneralGroup', 10),
                 demo.options.EnumValuesAttribute().init({
                   values: [
-                    ['Mirror on X-Axis', yfiles.layout.OperationType.MIRROR_X_AXIS],
-                    ['Mirror on Y-Axis', yfiles.layout.OperationType.MIRROR_Y_AXIS],
+                    ['Mirror on X axis', yfiles.layout.OperationType.MIRROR_X_AXIS],
+                    ['Mirror on Y axis', yfiles.layout.OperationType.MIRROR_Y_AXIS],
                     ['Rotate', yfiles.layout.OperationType.ROTATE],
                     ['Scale', yfiles.layout.OperationType.SCALE],
                     ['Translate', yfiles.layout.OperationType.TRANSLATE]
@@ -448,10 +447,6 @@
             get: function() {
               return this.operationItem !== yfiles.layout.OperationType.TRANSLATE
             }
-          },
-
-          $initGraphTransformerConfig: function() {
-            this.$operationItem = yfiles.layout.OperationType.MIRROR_X_AXIS
           }
         }
       })

@@ -75,30 +75,20 @@ require([
    */
   let optionEditor = null
 
-  /**
-   * @type {boolean}
-   */
   let configOptionsValid = false
-
-  /**
-   * @type {boolean}
-   */
   let inLayout = false
-
-  /**
-   * @type {boolean}
-   */
   let inLoadSample = false
 
   // get hold of some UI elements
 
-  /** @type {HTMLSelectElement} */
-  const newButton = document.getElementById('new')
-  const layoutComboBox = document.getElementById('layout-select-box')
+  const layoutComboBox = /** @type {HTMLSelectElement} */ document.getElementById(
+    'layout-select-box'
+  )
+  const sampleComboBox = /** @type {HTMLSelectElement} */ document.getElementById(
+    'sample-combo-box'
+  )
   const nextButton = document.getElementById('next-sample-button')
   const previousButton = document.getElementById('previous-sample-button')
-  /** @type {HTMLSelectElement} */
-  const sampleComboBox = document.getElementById('sample-combo-box')
   const layoutButton = document.getElementById('apply-layout-button')
   const resetButton = document.getElementById('reset-layout-button')
   const generateEdgeThicknessButton = document.getElementById('generate-edge-thickness-button')
@@ -1055,7 +1045,7 @@ require([
    * @param {string} sample The name of the sample to check.
    * @param {boolean} isDefault Whether the given sample is the default one.
    */
-  function maybeLoadAsInitialSample(sample, isDefault) {
+  function maybeLoadAsInitialSample(sample, isDefault = false) {
     // First, get the normalized sample name from the hash part of the URL
     let requestedSample = ''
     if (window.location.hash) {
@@ -1094,7 +1084,9 @@ require([
    * @param {boolean} disabled true if the elements should be disabled, false otherwise
    */
   function setUIDisabled(disabled) {
-    newButton.disabled = disabled
+    document.querySelector("button[data-command='New']").disabled = disabled
+    document.querySelector("button[data-command='Open']").disabled = disabled
+    document.querySelector("button[data-command='Save']").disabled = disabled
     sampleComboBox.disabled = disabled
     nextButton.disabled = disabled
     previousButton.disabled = disabled

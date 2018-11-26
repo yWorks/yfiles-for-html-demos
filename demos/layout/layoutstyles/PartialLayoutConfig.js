@@ -41,7 +41,7 @@
     yfiles.module('demo', exports => {
       /**
        * Configuration options for the layout algorithm of the same name.
-       * @yjs:keep=DescriptionGroup,LayoutGroup,considerSnaplinesItem,descriptionText,minNodeDistItem,modeComponentAssignmentItem,orientationItem,routingToSubgraphItem,subgraphLayouterItem,subgraphPositionStrategyItem
+       * @yjs:keep=DescriptionGroup,LayoutGroup,alignNodesItem,descriptionText,minNodeDistItem,componentAssignmentStrategyItem,orientationItem,routingToSubgraphItem,subgraphLayoutItem,subgraphPlacementItem
        * @class
        * @extends demo.LayoutConfiguration
        */
@@ -57,73 +57,54 @@
            */
           constructor: function() {
             demo.LayoutConfiguration.call(this)
-            this.$initPartialLayoutConfig()
             this.routingToSubgraphItem = yfiles.partial.EdgeRoutingStrategy.AUTOMATIC
-            this.modeComponentAssignmentItem = yfiles.partial.ComponentAssignmentStrategy.CONNECTED
-            this.subgraphLayouterItem = demo.PartialLayoutConfig.EnumSubgraphLayouters.IHL
-            this.subgraphPositionStrategyItem = yfiles.partial.SubgraphPlacement.FROM_SKETCH
+            this.componentAssignmentStrategyItem =
+              yfiles.partial.ComponentAssignmentStrategy.CONNECTED
+            this.subgraphLayoutItem = demo.PartialLayoutConfig.EnumSubgraphLayouts.IHL
+            this.subgraphPlacementItem = yfiles.partial.SubgraphPlacement.FROM_SKETCH
             this.minNodeDistItem = 30
             this.orientationItem = yfiles.partial.LayoutOrientation.AUTO_DETECT
-            this.considerSnaplinesItem = true
+            this.alignNodesItem = true
           },
-
-          /**
-           * @type {yfiles.collections.IMapper.<yfiles.graph.INode,boolean>}
-           */
-          $pnMapperOld: null,
-
-          /**
-           * @type {yfiles.collections.IMapper.<yfiles.graph.IEdge,boolean>}
-           */
-          $peMapperOld: null,
-
-          /**
-           * @type {function(yfiles.graph.INode):boolean}
-           */
-          $pnMapper: null,
-
-          /**
-           * @type {function(yfiles.graph.IEdge):boolean}
-           */
-          $peMapper: null,
 
           /**
            * Creates and configures a layout and the graph's {@link yfiles.graph.IGraph#mapperRegistry} if necessary.
            * @param {yfiles.view.GraphComponent} graphComponent The <code>GraphComponent</code> to apply the
            *   configuration on.
-           * @return {yfiles.layout.ILayoutAlgorithm} The configured layouter.
+           * @return {yfiles.layout.ILayoutAlgorithm} The configured layout.
            */
           createConfiguredLayout: function(graphComponent) {
             const layout = new yfiles.partial.PartialLayout()
-            layout.considerNodeAlignment = this.considerSnaplinesItem
+            layout.considerNodeAlignment = this.alignNodesItem
             layout.minimumNodeDistance = this.minNodeDistItem
-            layout.subgraphPlacement = this.subgraphPositionStrategyItem
-            layout.componentAssignmentStrategy = this.modeComponentAssignmentItem
+            layout.subgraphPlacement = this.subgraphPlacementItem
+            layout.componentAssignmentStrategy = this.componentAssignmentStrategyItem
             layout.layoutOrientation = this.orientationItem
             layout.edgeRoutingStrategy = this.routingToSubgraphItem
 
-            let subgraphLayouter = null
+            let subgraphLayout = null
             if (
-              this.modeComponentAssignmentItem !== yfiles.partial.ComponentAssignmentStrategy.SINGLE
+              this.componentAssignmentStrategyItem !==
+              yfiles.partial.ComponentAssignmentStrategy.SINGLE
             ) {
-              switch (this.subgraphLayouterItem) {
-                case demo.PartialLayoutConfig.EnumSubgraphLayouters.IHL:
-                  subgraphLayouter = new yfiles.hierarchic.HierarchicLayout()
+              switch (this.subgraphLayoutItem) {
+                case demo.PartialLayoutConfig.EnumSubgraphLayouts.IHL:
+                  subgraphLayout = new yfiles.hierarchic.HierarchicLayout()
                   break
-                case demo.PartialLayoutConfig.EnumSubgraphLayouters.ORGANIC:
-                  subgraphLayouter = new yfiles.organic.OrganicLayout()
+                case demo.PartialLayoutConfig.EnumSubgraphLayouts.ORGANIC:
+                  subgraphLayout = new yfiles.organic.OrganicLayout()
                   break
-                case demo.PartialLayoutConfig.EnumSubgraphLayouters.CIRCULAR:
-                  subgraphLayouter = new yfiles.circular.CircularLayout()
+                case demo.PartialLayoutConfig.EnumSubgraphLayouts.CIRCULAR:
+                  subgraphLayout = new yfiles.circular.CircularLayout()
                   break
-                case demo.PartialLayoutConfig.EnumSubgraphLayouters.ORTHOGONAL:
-                  subgraphLayouter = new yfiles.orthogonal.OrthogonalLayout()
+                case demo.PartialLayoutConfig.EnumSubgraphLayouts.ORTHOGONAL:
+                  subgraphLayout = new yfiles.orthogonal.OrthogonalLayout()
                   break
                 default:
                   break
               }
             }
-            layout.coreLayout = subgraphLayouter
+            layout.coreLayout = subgraphLayout
 
             return layout
           },
@@ -134,19 +115,13 @@
            */
           createConfiguredLayoutData: function(graphComponent, layout) {
             const layoutData = new yfiles.partial.PartialLayoutData()
-
             const selection = graphComponent.selection
-            layoutData.affectedNodes.delegate = node => selection.isSelected(node)
-            layoutData.affectedEdges.delegate = edge => selection.isSelected(edge)
+
+            layoutData.affectedNodes.source = selection.selectedNodes
+            layoutData.affectedEdges.source = selection.selectedEdges
 
             return layoutData
           },
-
-          /**
-           * Called after the layout animation is done.
-           * @see Overrides {@link demo.LayoutConfiguration#postProcess}
-           */
-          postProcess: function(graphComponent) {},
 
           // ReSharper disable UnusedMember.Global
           // ReSharper disable InconsistentNaming
@@ -205,7 +180,7 @@
                 demo.options.OptionGroupAttribute('LayoutGroup', 10),
                 demo.options.EnumValuesAttribute().init({
                   values: [
-                    ['Auto Detect', yfiles.partial.EdgeRoutingStrategy.AUTOMATIC],
+                    ['Auto-Detect', yfiles.partial.EdgeRoutingStrategy.AUTOMATIC],
                     ['Octilinear', yfiles.partial.EdgeRoutingStrategy.OCTILINEAR],
                     ['Straight-Line', yfiles.partial.EdgeRoutingStrategy.STRAIGHTLINE],
                     ['Orthogonal', yfiles.partial.EdgeRoutingStrategy.ORTHOGONAL],
@@ -227,10 +202,10 @@
            * Backing field for below property
            * @type {yfiles.partial.ComponentAssignmentStrategy}
            */
-          $modeComponentAssignmentItem: null,
+          $componentAssignmentStrategyItem: null,
 
           /** @type {yfiles.partial.ComponentAssignmentStrategy} */
-          modeComponentAssignmentItem: {
+          componentAssignmentStrategyItem: {
             $meta: function() {
               return [
                 demo.options.LabelAttribute(
@@ -253,21 +228,21 @@
               ]
             },
             get: function() {
-              return this.$modeComponentAssignmentItem
+              return this.$componentAssignmentStrategyItem
             },
             set: function(value) {
-              this.$modeComponentAssignmentItem = value
+              this.$componentAssignmentStrategyItem = value
             }
           },
 
           /**
            * Backing field for below property
-           * @type {demo.PartialLayoutConfig.EnumSubgraphLayouters}
+           * @type {demo.PartialLayoutConfig.EnumSubgraphLayouts}
            */
-          $subgraphLayouterItem: null,
+          $subgraphLayoutItem: null,
 
-          /** @type {demo.PartialLayoutConfig.EnumSubgraphLayouters} */
-          subgraphLayouterItem: {
+          /** @type {demo.PartialLayoutConfig.EnumSubgraphLayouts} */
+          subgraphLayoutItem: {
             $meta: function() {
               return [
                 demo.options.LabelAttribute(
@@ -277,21 +252,21 @@
                 demo.options.OptionGroupAttribute('LayoutGroup', 30),
                 demo.options.EnumValuesAttribute().init({
                   values: [
-                    ['Hierarchical', demo.PartialLayoutConfig.EnumSubgraphLayouters.IHL],
-                    ['Organic', demo.PartialLayoutConfig.EnumSubgraphLayouters.ORGANIC],
-                    ['Circular', demo.PartialLayoutConfig.EnumSubgraphLayouters.CIRCULAR],
-                    ['Orthogonal', demo.PartialLayoutConfig.EnumSubgraphLayouters.ORTHOGONAL],
-                    ['As Is', demo.PartialLayoutConfig.EnumSubgraphLayouters.AS_IS]
+                    ['Hierarchical', demo.PartialLayoutConfig.EnumSubgraphLayouts.IHL],
+                    ['Organic', demo.PartialLayoutConfig.EnumSubgraphLayouts.ORGANIC],
+                    ['Circular', demo.PartialLayoutConfig.EnumSubgraphLayouts.CIRCULAR],
+                    ['Orthogonal', demo.PartialLayoutConfig.EnumSubgraphLayouts.ORTHOGONAL],
+                    ['As Is', demo.PartialLayoutConfig.EnumSubgraphLayouts.AS_IS]
                   ]
                 }),
-                demo.options.TypeAttribute(demo.PartialLayoutConfig.EnumSubgraphLayouters.$class)
+                demo.options.TypeAttribute(demo.PartialLayoutConfig.EnumSubgraphLayouts.$class)
               ]
             },
             get: function() {
-              return this.$subgraphLayouterItem
+              return this.$subgraphLayoutItem
             },
             set: function(value) {
-              this.$subgraphLayouterItem = value
+              this.$subgraphLayoutItem = value
             }
           },
 
@@ -299,10 +274,10 @@
            * Backing field for below property
            * @type {yfiles.partial.SubgraphPlacement}
            */
-          $subgraphPositionStrategyItem: 0,
+          $subgraphPlacementItem: 0,
 
           /** @type {yfiles.partial.SubgraphPlacement} */
-          subgraphPositionStrategyItem: {
+          subgraphPlacementItem: {
             $meta: function() {
               return [
                 demo.options.LabelAttribute(
@@ -320,10 +295,10 @@
               ]
             },
             get: function() {
-              return this.$subgraphPositionStrategyItem
+              return this.$subgraphPlacementItem
             },
             set: function(value) {
-              this.$subgraphPositionStrategyItem = value
+              this.$subgraphPlacementItem = value
             }
           },
 
@@ -398,10 +373,10 @@
            * Backing field for below property
            * @type {boolean}
            */
-          $considerSnaplinesItem: false,
+          $alignNodesItem: false,
 
           /** @type {boolean} */
-          considerSnaplinesItem: {
+          alignNodesItem: {
             $meta: function() {
               return [
                 demo.options.LabelAttribute(
@@ -413,25 +388,18 @@
               ]
             },
             get: function() {
-              return this.$considerSnaplinesItem
+              return this.$alignNodesItem
             },
             set: function(value) {
-              this.$considerSnaplinesItem = value
+              this.$alignNodesItem = value
             }
-          },
-
-          $initPartialLayoutConfig: function() {
-            this.$routingToSubgraphItem = yfiles.partial.EdgeRoutingStrategy.ORTHOGONAL
-            this.$modeComponentAssignmentItem = yfiles.partial.ComponentAssignmentStrategy.SINGLE
-            this.$subgraphLayouterItem = demo.PartialLayoutConfig.EnumSubgraphLayouters.IHL
-            this.$orientationItem = yfiles.partial.LayoutOrientation.TOP_TO_BOTTOM
           },
 
           /** @lends {demo.PartialLayoutConfig} */
           $static: {
             // ReSharper restore UnusedMember.Global
             // ReSharper restore InconsistentNaming
-            EnumSubgraphLayouters: new yfiles.lang.EnumDefinition(() => {
+            EnumSubgraphLayouts: new yfiles.lang.EnumDefinition(() => {
               return {
                 IHL: 0,
                 ORGANIC: 1,

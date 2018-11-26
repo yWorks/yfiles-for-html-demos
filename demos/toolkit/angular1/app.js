@@ -47,7 +47,7 @@ require([
   'yfiles/layout-tree',
   'yfiles/router-polyline',
   'yfiles/router-other',
-  'https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.7.2/angular.min.js',
+  'https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.7.5/angular.min.js',
   'resources/license'
 ], (
   /** @type {yfiles_namespace} */ /** typeof yfiles */ yfiles,

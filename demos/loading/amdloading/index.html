@@ -58,8 +58,8 @@
       configuration code for other popular implementations. These can easily be tested by commenting out the current
       loader and uncommenting one of the alternatives. </p>
     <p>
-      The alternatives listed in this file are the <a href="https://requirejs.org/">RequireJS</a> loader and the loader
-      included in the <a href="https://dojotoolkit.org/">dojo Toolkit</a>. </p>
+      The alternatives listed in this file are the <a href="https://requirejs.org/" target="_blank">RequireJS</a> loader and the loader
+      included in the <a href="https://dojotoolkit.org/" target="_blank">dojo Toolkit</a>. </p>
     <p>
       Resources that have a <em>.js</em> ending are loaded as JavaScript files. Loading a
       resource without the <em>.js</em> postfix loads the resource as a module. Only the required top-level modules in
@@ -109,12 +109,13 @@
      baseUrl: location.pathname.replace(/\/[^/]+$/, '/'),
      packages: [
        { name: 'yfiles', location: '../../../lib/umd/yfiles' },
-       { name: 'demo', location: '../../resources' }
+       { name: 'utils', location: '../../utils' },
+       { name: 'resources', location: '../../resources' }
      ]"
     src="https://cdnjs.cloudflare.com/ajax/libs/dojo/1.10.4/dojo.js"></script>-->
 
 <!-- USING RequireJS as the AMD Loader implementation -->
-<!--<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.5/require.js"></script>-->
+<!--<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.js"></script>-->
 
 <!-- USING yFiles' demo-framework AMD Loader implementation -->
 <script src="../../resources/require.js"></script>

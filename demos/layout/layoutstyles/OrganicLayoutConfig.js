@@ -56,7 +56,6 @@
            */
           constructor: function() {
             demo.LayoutConfiguration.call(this)
-            this.$initOrganicLayoutConfig()
             const layout = new yfiles.organic.OrganicLayout()
             this.scopeItem = yfiles.organic.Scope.ALL
             this.preferredEdgeLengthItem = layout.preferredEdgeLength
@@ -187,14 +186,14 @@
                 layoutData.groupNodeModes.delegate = node => {
                   return graphComponent.graph.isGroupNode(node)
                     ? yfiles.organic.GroupNodeMode.FIX_BOUNDS
-                    : null
+                    : yfiles.organic.GroupNodeMode.NORMAL
                 }
                 break
               case demo.OrganicLayoutConfig.EnumGroupLayoutPolicy.FIX_GROUP_CONTENTS:
                 layoutData.groupNodeModes.delegate = node => {
                   return graphComponent.graph.isGroupNode(node)
                     ? yfiles.organic.GroupNodeMode.FIX_CONTENTS
-                    : null
+                    : yfiles.organic.GroupNodeMode.NORMAL
                 }
                 break
               default:
@@ -203,9 +202,7 @@
                 break
             }
 
-            layoutData.affectedNodes.delegate = node => {
-              return graphComponent.selection.isSelected(node)
-            }
+            layoutData.affectedNodes.source = graphComponent.selection.selectedNodes
 
             if (this.edgeDirectednessItem) {
               layoutData.edgeDirectedness.delegate = edge => {
@@ -315,8 +312,6 @@
             this.parallelSubstructureItem = yfiles.organic.ParallelSubstructureStyle.STRAIGHT_LINE
           },
 
-          // ReSharper disable UnusedMember.Global
-          // ReSharper disable InconsistentNaming
           /** @type {demo.options.OptionGroup} */
           DescriptionGroup: {
             $meta: function() {
@@ -418,7 +413,7 @@
             $meta: function() {
               return [
                 demo.options.LabelAttribute('Labeling'),
-                demo.options.OptionGroupAttribute('RootGroup', 50),
+                demo.options.OptionGroupAttribute('RootGroup', 60),
                 demo.options.TypeAttribute(demo.options.OptionGroup.$class)
               ]
             },
@@ -608,7 +603,7 @@
           },
 
           /** @type {boolean} */
-          shouldDisableminimumNodeDistanceItem: {
+          shouldDisableMinimumNodeDistanceItem: {
             $meta: function() {
               return [demo.options.TypeAttribute(yfiles.lang.Boolean.$class)]
             },
@@ -661,7 +656,7 @@
                 demo.options.MinMaxAttribute().init({
                   min: 0.0,
                   max: 1.0,
-                  step: 0.01
+                  step: 0.1
                 }),
                 demo.options.ComponentAttribute(demo.options.Components.SLIDER),
                 demo.options.TypeAttribute(yfiles.lang.Number.$class)
@@ -701,16 +696,6 @@
             }
           },
 
-          /** @type {boolean} */
-          shouldDisableAutoClusteringQualityItem: {
-            $meta: function() {
-              return [demo.options.TypeAttribute(yfiles.lang.Boolean.$class)]
-            },
-            get: function() {
-              return this.useAutoClusteringItem === false
-            }
-          },
-
           /**
            * Backing field for below property
            * @type {number}
@@ -740,6 +725,16 @@
             },
             set: function(value) {
               this.$autoClusteringQualityItem = value
+            }
+          },
+
+          /** @type {boolean} */
+          shouldDisableAutoClusteringQualityItem: {
+            $meta: function() {
+              return [demo.options.TypeAttribute(yfiles.lang.Boolean.$class)]
+            },
+            get: function() {
+              return this.useAutoClusteringItem === false
             }
           },
 
@@ -1068,7 +1063,7 @@
             $meta: function() {
               return [
                 demo.options.LabelAttribute(
-                  'Quality/Time Ratio',
+                  'Quality',
                   '#/api/yfiles.organic.OrganicLayout#OrganicLayout-property-qualityTimeRatio'
                 ),
                 demo.options.OptionGroupAttribute('AlgorithmGroup', 10),
@@ -1316,7 +1311,7 @@
             $meta: function() {
               return [
                 demo.options.LabelAttribute(
-                  'Arrows define Edge Direction',
+                  'Arrows Define Edge Direction',
                   '#/api/yfiles.organic.OrganicLayoutData#OrganicLayoutData-property-edgeDirectedness'
                 ),
                 demo.options.OptionGroupAttribute('SubstructureLayoutGroup', 50),
@@ -1610,19 +1605,6 @@
                   demo.LayoutConfiguration.EnumLabelPlacementSideOfEdge.ON_EDGE
               )
             }
-          },
-
-          $initOrganicLayoutConfig: function() {
-            this.$scopeItem = yfiles.organic.Scope.ALL
-            this.$restrictOutputItem = demo.OrganicLayoutConfig.EnumOutputRestrictions.NONE
-            this.$groupLayoutPolicyItem =
-              demo.OrganicLayoutConfig.EnumGroupLayoutPolicy.LAYOUT_GROUPS
-            this.$labelPlacementOrientationItem =
-              demo.LayoutConfiguration.EnumLabelPlacementOrientation.PARALLEL
-            this.$labelPlacementAlongEdgeItem =
-              demo.LayoutConfiguration.EnumLabelPlacementAlongEdge.ANYWHERE
-            this.$labelPlacementSideOfEdgeItem =
-              demo.LayoutConfiguration.EnumLabelPlacementSideOfEdge.ANYWHERE
           },
 
           /** @lends {demo.OrganicLayoutConfig} */

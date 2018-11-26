@@ -54,12 +54,12 @@
 
           constructor: function() {
             demo.LayoutConfiguration.call(this)
-            this.$initSeriesParallelLayoutConfig()
-            const defaults = new yfiles.seriesparallel.SeriesParallelLayout()
-            const edgeLayoutDescriptor = defaults.defaultEdgeLayoutDescriptor
+            const layout = new yfiles.seriesparallel.SeriesParallelLayout()
+            const edgeLayoutDescriptor = layout.defaultEdgeLayoutDescriptor
 
+            this.orientationItem = yfiles.layout.LayoutOrientation.TOP_TO_BOTTOM
             this.verticalAlignmentItem = 0.5
-            this.useDrawingAsSketchItem = defaults.fromSketchMode
+            this.useDrawingAsSketchItem = layout.fromSketchMode
             this.minimumNodeToNodeDistanceItem = 30
             this.minimumNodeToEdgeDistanceItem = 15
             this.minimumEdgeToEdgeDistanceItem = 15
@@ -68,17 +68,15 @@
 
             this.portStyleItem = yfiles.seriesparallel.PortAssignmentMode.CENTER
             this.routingStyleItem = yfiles.seriesparallel.RoutingStyle.ORTHOGONAL
-            this.preferredOctilinearSegmentLengthItem = defaults.preferredOctilinearSegmentLength
-            this.minimumPolylineSegmentLengthItem = defaults.minimumPolylineSegmentLength
-            this.minimumSlopeItem = defaults.minimumSlope
+            this.preferredOctilinearSegmentLengthItem = layout.preferredOctilinearSegmentLength
+            this.minimumPolylineSegmentLengthItem = layout.minimumPolylineSegmentLength
+            this.minimumSlopeItem = layout.minimumSlope
             this.routingStyleNonSeriesParallelItem =
               demo.SeriesParallelLayoutConfig.ROUTING_STYLE_ORTHOGONAL
             this.routeEdgesInFlowDirectionItem = true
             this.minimumFirstSegmentLengthItem = edgeLayoutDescriptor.minimumFirstSegmentLength
             this.minimumLastSegmentLengthItem = edgeLayoutDescriptor.minimumLastSegmentLength
             this.minimumEdgeLengthItem = 20
-            this.orientationItem = yfiles.layout.LayoutOrientation.TOP_TO_BOTTOM
-            this.verticalAlignmentItem = 0.5
           },
 
           /**
@@ -91,8 +89,7 @@
             const layout = new yfiles.seriesparallel.SeriesParallelLayout()
             layout.generalGraphHandling = true
 
-            const ol = layout.orientationLayout
-            ol.orientation = this.orientationItem
+            layout.layoutOrientation = this.orientationItem
 
             layout.verticalAlignment = this.verticalAlignmentItem
             layout.fromSketchMode = this.useDrawingAsSketchItem
@@ -111,16 +108,16 @@
               : yfiles.seriesparallel.ForkStyle.AT_NODE
 
             layout.routingStyle = this.routingStyleItem
-            if (yfiles.seriesparallel.RoutingStyle.OCTILINEAR === this.routingStyleItem) {
+            if (this.routingStyleItem === yfiles.seriesparallel.RoutingStyle.OCTILINEAR) {
               layout.preferredOctilinearSegmentLength = this.preferredOctilinearSegmentLengthItem
-            } else if (yfiles.seriesparallel.RoutingStyle.POLYLINE === this.routingStyleItem) {
+            } else if (this.routingStyleItem === yfiles.seriesparallel.RoutingStyle.POLYLINE) {
               layout.minimumPolylineSegmentLength = this.minimumPolylineSegmentLengthItem
               layout.minimumSlope = this.minimumSlopeItem
             }
 
             if (
-              demo.SeriesParallelLayoutConfig.ROUTING_STYLE_ORTHOGONAL ===
-              this.routingStyleNonSeriesParallelItem
+              this.routingStyleNonSeriesParallelItem ===
+              demo.SeriesParallelLayoutConfig.ROUTING_STYLE_ORTHOGONAL
             ) {
               const edgeRouter = new yfiles.router.EdgeRouter()
               edgeRouter.rerouting = true
@@ -128,16 +125,16 @@
               layout.nonSeriesParallelEdgeRouter = edgeRouter
               layout.nonSeriesParallelEdgesDpKey = edgeRouter.affectedEdgesDpKey
             } else if (
-              demo.SeriesParallelLayoutConfig.ROUTING_STYLE_ORGANIC ===
-              this.routingStyleNonSeriesParallelItem
+              this.routingStyleNonSeriesParallelItem ===
+              demo.SeriesParallelLayoutConfig.ROUTING_STYLE_ORGANIC
             ) {
               const edgeRouter = new yfiles.router.OrganicEdgeRouter()
               layout.nonSeriesParallelEdgeRouter = edgeRouter
               layout.nonSeriesParallelEdgesDpKey =
                 yfiles.router.OrganicEdgeRouter.AFFECTED_EDGES_DP_KEY
             } else if (
-              demo.SeriesParallelLayoutConfig.ROUTING_STYLE_STRAIGHT ===
-              this.routingStyleNonSeriesParallelItem
+              this.routingStyleNonSeriesParallelItem ===
+              demo.SeriesParallelLayoutConfig.ROUTING_STYLE_STRAIGHT
             ) {
               const edgeRouter = new yfiles.router.StraightLineEdgeRouter()
               edgeRouter.scope = yfiles.router.Scope.ROUTE_AFFECTED_EDGES
@@ -232,7 +229,7 @@
               ]
             },
             get: function() {
-              return 'The series-parallel layout algorithm highlights the main direction or flow of a graph, similar to the hierarchic style. In comparison, this algorithm is usually faster but can be used only on special graphs, namely series-parallel graphs.'
+              return '<p>The series-parallel layout algorithm highlights the main direction or flow of a graph, similar to the hierarchic style. In comparison, this algorithm is usually faster but can be used only on special graphs, namely series-parallel graphs.</p>'
             }
           },
 
@@ -723,7 +720,7 @@
                   'Routing Style (Non-Series-Parallel Edges)',
                   '#/api/yfiles.seriesparallel.SeriesParallelLayout#SeriesParallelLayout-property-nonSeriesParallelEdgeRouter'
                 ),
-                demo.options.OptionGroupAttribute('edgesGroup', 20),
+                demo.options.OptionGroupAttribute('edgesGroup', 60),
                 demo.options.EnumValuesAttribute().init({
                   values: [
                     ['Orthogonal', demo.SeriesParallelLayoutConfig.ROUTING_STYLE_ORTHOGONAL],
@@ -756,7 +753,7 @@
                   'Route Edges in Flow Direction',
                   '#/api/yfiles.seriesparallel.DefaultPortAssignment#DefaultPortAssignment-property-forkStyle'
                 ),
-                demo.options.OptionGroupAttribute('LabelingGroup', 70),
+                demo.options.OptionGroupAttribute('edgesGroup', 70),
                 demo.options.TypeAttribute(yfiles.lang.Boolean.$class)
               ]
             },
@@ -859,12 +856,6 @@
             set: function(value) {
               this.$minimumEdgeLengthItem = value
             }
-          },
-
-          $initSeriesParallelLayoutConfig: function() {
-            this.$orientationItem = yfiles.layout.LayoutOrientation.TOP_TO_BOTTOM
-            this.$portStyleItem = yfiles.seriesparallel.PortAssignmentMode.CENTER
-            this.$routingStyleItem = yfiles.seriesparallel.RoutingStyle.ORTHOGONAL
           },
 
           /** @lends {demo.SeriesParallelLayoutConfig} */

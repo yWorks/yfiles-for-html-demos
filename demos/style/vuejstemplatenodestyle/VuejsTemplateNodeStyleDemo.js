@@ -40,7 +40,7 @@ require.config({
   packages: [
     {
       name: 'codemirror',
-      location: 'https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.33.0',
+      location: 'https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.4.0',
       main: 'codemirror.min'
     }
   ],

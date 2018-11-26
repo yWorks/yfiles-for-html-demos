@@ -51,10 +51,10 @@
   <div class="demo-sidebar-content">
 
     <p>This step shows how to implement high-performance rendering for labels.</p>
-    <p>To do this, you need to implement <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.styles.LabelStyleBase#updateVisual">yfiles.styles.LabelStyleBase#updateVisual</a>
-      which is called when the container decides to update the visual representation of a label. In contrast to <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.styles.LabelStyleBase#createVisual">yfiles.styles.LabelStyleBase#createVisual</a>,
+    <p>To do this, you need to implement <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.styles.LabelStyleBase#updateVisual" target="_blank">yfiles.styles.LabelStyleBase#updateVisual</a>
+      which is called when the container decides to update the visual representation of a label. In contrast to <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.styles.LabelStyleBase#createVisual" target="_blank">yfiles.styles.LabelStyleBase#createVisual</a>,
       we try to re-use the old visual instead of creating a new one.</p>
-    <p>Method <code>createRenderDataCache()</code> saves the relevant data for creating a visual. <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.styles.LabelStyleBase#updateVisual">yfiles.styles.LabelStyleBase#updateVisual</a>
+    <p>Method <code>createRenderDataCache()</code> saves the relevant data for creating a visual. <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.styles.LabelStyleBase#updateVisual" target="_blank">yfiles.styles.LabelStyleBase#updateVisual</a>
       checks whether this data has changed. If it hasn't changed, the old visual can be returned, otherwise the whole or
       part of the visual has to be re-rendered.</p>
 

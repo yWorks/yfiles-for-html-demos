@@ -56,7 +56,6 @@
            */
           constructor: function() {
             demo.LayoutConfiguration.call(this)
-            this.$initHierarchicLayoutConfig()
             this.groupHorizontalCompactionItem = yfiles.hierarchic.GroupCompactionPolicy.NONE
             this.groupAlignmentItem = yfiles.hierarchic.GroupAlignmentPolicy.TOP
             this.considerNodeLabelsItem = true
@@ -122,7 +121,6 @@
               layout.layoutMode = yfiles.hierarchic.LayoutMode.FROM_SCRATCH
             }
 
-            // cast to implementation simplex
             layout.nodePlacer.barycenterMode = this.symmetricPlacementItem
 
             layout.componentLayoutEnabled = this.LayoutComponentsSeparatelyItem
@@ -155,8 +153,7 @@
             nld.minimumLayerHeight = 0
             nld.layerAlignment = this.layerAlignmentItem
 
-            const ol = layout.orientationLayout
-            ol.orientation = this.orientationItem
+            layout.orientationLayout.orientation = this.orientationItem
 
             if (this.considerNodeLabelsItem) {
               layout.considerNodeLabels = true
@@ -182,9 +179,7 @@
                 this.edgeLabelingItem === demo.HierarchicLayoutConfig.EnumEdgeLabeling.INTEGRATED
               ) {
                 layout.integratedEdgeLabeling = true
-                if (layout.nodePlacer instanceof yfiles.hierarchic.SimplexNodePlacer) {
-                  layout.nodePlacer.labelCompaction = this.compactEdgeLabelPlacementItem
-                }
+                layout.nodePlacer.labelCompaction = this.compactEdgeLabelPlacementItem
               }
             } else {
               layout.integratedEdgeLabeling = false
@@ -193,10 +188,7 @@
             layout.fromScratchLayeringStrategy = this.rankingPolicyItem
             layout.componentArrangementPolicy = this.componentArrangementPolicyItem
             layout.nodePlacer.nodeCompaction = this.nodeCompactionItem
-
-            if (layout.nodePlacer instanceof yfiles.hierarchic.SimplexNodePlacer) {
-              layout.nodePlacer.straightenEdges = this.straightenEdgesItem
-            }
+            layout.nodePlacer.straightenEdges = this.straightenEdgesItem
 
             // configure AsIsLayerer
             const layerer =
@@ -204,11 +196,10 @@
                 ? layout.fromScratchLayerer
                 : layout.fixedElementsLayerer
             if (layerer instanceof yfiles.hierarchic.AsIsLayerer) {
-              const ail = layerer
-              ail.nodeHalo = this.haloItem
-              ail.nodeScalingFactor = this.scaleItem
-              ail.minimumNodeSize = this.minimumSizeItem
-              ail.maximumNodeSize = this.maximumSizeItem
+              layerer.nodeHalo = this.haloItem
+              layerer.nodeScalingFactor = this.scaleItem
+              layerer.minimumNodeSize = this.minimumSizeItem
+              layerer.maximumNodeSize = this.maximumSizeItem
             }
 
             // configure grouping
@@ -219,8 +210,7 @@
               this.groupLayeringStrategyItem ===
                 demo.HierarchicLayoutConfig.GroupLayeringStrategyOptions.LAYOUT_GROUPS
             ) {
-              const alignmentPolicy = this.groupAlignmentItem
-              layout.groupAlignmentPolicy = alignmentPolicy
+              layout.groupAlignmentPolicy = this.groupAlignmentItem
               layout.compactGroups = this.groupEnableCompactionItem
               layout.recursiveGroupLayering = true
             } else {
@@ -357,8 +347,6 @@
             this.subComponentsItem = true
           },
 
-          // ReSharper disable UnusedMember.Global
-          // ReSharper disable InconsistentNaming
           /** @type {demo.options.OptionGroup} */
           DescriptionGroup: {
             $meta: function() {
@@ -515,8 +503,6 @@
             value: null
           },
 
-          // ReSharper restore UnusedMember.Global
-          // ReSharper restore InconsistentNaming
           /** @type {string} */
           descriptionText: {
             $meta: function() {
@@ -622,7 +608,7 @@
             $meta: function() {
               return [
                 demo.options.LabelAttribute(
-                  'Layout Sub-Components Separately',
+                  'Layout Sub-components Separately',
                   '#/api/yfiles.hierarchic.HierarchicLayoutData#HierarchicLayoutData-property-subComponents'
                 ),
                 demo.options.OptionGroupAttribute('GeneralGroup', 45),
@@ -1053,6 +1039,16 @@
             }
           },
 
+          /** @type {boolean} */
+          shouldDisableMinimumSlopeItem: {
+            $meta: function() {
+              return [demo.options.TypeAttribute(yfiles.lang.Boolean.$class)]
+            },
+            get: function() {
+              return this.edgeRoutingItem !== yfiles.hierarchic.EdgeRoutingStyle.POLYLINE
+            }
+          },
+
           /**
            * Backing field for below property
            * @type {boolean}
@@ -1063,9 +1059,9 @@
           edgeDirectednessItem: {
             $meta: function() {
               return [
-                demo.options.OptionGroupAttribute('EdgeSettingsGroup', 80),
+                demo.options.OptionGroupAttribute('EdgeSettingsGroup', 100),
                 demo.options.LabelAttribute(
-                  'Consider Undirected Edges',
+                  'Arrows Define Edge Direction',
                   '#/api/yfiles.hierarchic.HierarchicLayoutData#HierarchicLayoutData-property-edgeDirectedness'
                 ),
                 demo.options.TypeAttribute(yfiles.lang.Boolean.$class)
@@ -1089,7 +1085,7 @@
           edgeThicknessItem: {
             $meta: function() {
               return [
-                demo.options.OptionGroupAttribute('EdgeSettingsGroup', 80),
+                demo.options.OptionGroupAttribute('EdgeSettingsGroup', 110),
                 demo.options.LabelAttribute(
                   'Consider Edge Thickness',
                   '#/api/yfiles.hierarchic.HierarchicLayoutData#HierarchicLayoutData-property-edgeThickness'
@@ -1102,16 +1098,6 @@
             },
             set: function(value) {
               this.$edgeThicknessItem = value
-            }
-          },
-
-          /** @type {boolean} */
-          shouldDisableMinimumSlopeItem: {
-            $meta: function() {
-              return [demo.options.TypeAttribute(yfiles.lang.Boolean.$class)]
-            },
-            get: function() {
-              return this.edgeRoutingItem !== yfiles.hierarchic.EdgeRoutingStyle.POLYLINE
             }
           },
 
@@ -1129,7 +1115,7 @@
                   'Port Constraint Optimization',
                   '#/api/yfiles.hierarchic.EdgeLayoutDescriptor#EdgeLayoutDescriptor-property-sourcePortOptimization'
                 ),
-                demo.options.OptionGroupAttribute('EdgeSettingsGroup', 100),
+                demo.options.OptionGroupAttribute('EdgeSettingsGroup', 120),
                 demo.options.TypeAttribute(yfiles.lang.Boolean.$class)
               ]
             },
@@ -1155,7 +1141,7 @@
                   'Straighten Edges',
                   '#/api/yfiles.hierarchic.SimplexNodePlacer#SimplexNodePlacer-property-straightenEdges'
                 ),
-                demo.options.OptionGroupAttribute('EdgeSettingsGroup', 110),
+                demo.options.OptionGroupAttribute('EdgeSettingsGroup', 130),
                 demo.options.TypeAttribute(yfiles.lang.Boolean.$class)
               ]
             },
@@ -1191,7 +1177,7 @@
                   'Recursive Edge Routing Style',
                   '#/api/yfiles.hierarchic.EdgeLayoutDescriptor#EdgeLayoutDescriptor-property-recursiveEdgeStyle'
                 ),
-                demo.options.OptionGroupAttribute('EdgeSettingsGroup', 120),
+                demo.options.OptionGroupAttribute('EdgeSettingsGroup', 140),
                 demo.options.EnumValuesAttribute().init({
                   values: [
                     ['Off', yfiles.hierarchic.RecursiveEdgeStyle.OFF],
@@ -2063,6 +2049,15 @@
           },
 
           /**
+           * @type {boolean}
+           */
+          shouldDisableUseOrderFromSketchItem: {
+            get: function() {
+              return !this.treatRootGroupAsSwimlanesItem
+            }
+          },
+
+          /**
            * Backing field for below property
            * @type {number}
            */
@@ -2090,15 +2085,6 @@
             },
             set: function(value) {
               this.$swimlineSpacingItem = value
-            }
-          },
-
-          /**
-           * @type {boolean}
-           */
-          shouldDisableUseOrderFromSketchItem: {
-            get: function() {
-              return !this.treatRootGroupAsSwimlanesItem
             }
           },
 
@@ -2208,25 +2194,6 @@
             set: function(value) {
               this.$gridPortAssignmentItem = value
             }
-          },
-
-          $initHierarchicLayoutConfig: function() {
-            this.orientationItem = yfiles.layout.LayoutOrientation.TOP_TO_BOTTOM
-            this.$edgeRoutingItem = yfiles.hierarchic.EdgeRoutingStyle.ORTHOGONAL
-            this.$rankingPolicyItem = yfiles.hierarchic.LayeringStrategy.HIERARCHICAL_TOPMOST
-            this.$componentArrangementPolicyItem =
-              yfiles.hierarchic.ComponentArrangementPolicy.COMPACT
-            this.$edgeLabelingItem = demo.HierarchicLayoutConfig.EnumEdgeLabeling.NONE
-            this.$labelPlacementOrientationItem =
-              demo.LayoutConfiguration.EnumLabelPlacementOrientation.PARALLEL
-            this.$labelPlacementAlongEdgeItem =
-              demo.LayoutConfiguration.EnumLabelPlacementAlongEdge.ANYWHERE
-            this.$labelPlacementSideOfEdgeItem =
-              demo.LayoutConfiguration.EnumLabelPlacementSideOfEdge.ANYWHERE
-            this.$groupLayeringStrategyItem =
-              demo.HierarchicLayoutConfig.GroupLayeringStrategyOptions.LAYOUT_GROUPS
-            this.$groupHorizontalCompactionItem = yfiles.hierarchic.GroupCompactionPolicy.NONE
-            this.$gridPortAssignmentItem = yfiles.hierarchic.PortAssignmentMode.DEFAULT
           },
 
           /** @lends {demo.HierarchicLayoutConfig} */

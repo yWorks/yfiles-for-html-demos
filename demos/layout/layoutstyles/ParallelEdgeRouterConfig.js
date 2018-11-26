@@ -56,7 +56,6 @@
            */
           constructor: function() {
             demo.LayoutConfiguration.call(this)
-            this.$initParallelEdgeRouterConfig()
             const router = new yfiles.router.ParallelEdgeRouter()
             this.scopeItem = demo.ParallelEdgeRouterConfig.EnumScope.SCOPE_ALL_EDGES
             this.useSelectedEdgesAsMasterItem = false
@@ -92,6 +91,7 @@
           createConfiguredLayoutData: function(graphComponent, layout) {
             const layoutData = new yfiles.router.ParallelEdgeRouterData()
             const selection = graphComponent.selection
+
             if (
               this.scopeItem === demo.ParallelEdgeRouterConfig.EnumScope.SCOPE_AT_SELECTED_NODES
             ) {
@@ -106,19 +106,41 @@
             }
 
             if (this.useSelectedEdgesAsMasterItem) {
-              layoutData.leadingEdges.delegate = edge => selection.isSelected(edge)
+              layoutData.leadingEdges.source = selection.selectedEdges
             }
+
             return layoutData
           },
 
-          /**
-           * Called after the layout animation is done.
-           * @see Overrides {@link demo.LayoutConfiguration#postProcess}
-           */
-          postProcess: function(graphComponent) {},
-
           // ReSharper disable UnusedMember.Global
           // ReSharper disable InconsistentNaming
+
+          /** @type {demo.options.OptionGroup} */
+          DescriptionGroup: {
+            $meta: function() {
+              return [
+                demo.options.LabelAttribute('Description'),
+                demo.options.OptionGroupAttribute('RootGroup', 5),
+                demo.options.TypeAttribute(demo.options.OptionGroup.$class)
+              ]
+            },
+            value: null
+          },
+
+          /** @type {string} */
+          descriptionText: {
+            $meta: function() {
+              return [
+                demo.options.OptionGroupAttribute('DescriptionGroup', 10),
+                demo.options.ComponentAttribute(demo.options.Components.HTML_BLOCK),
+                demo.options.TypeAttribute(yfiles.lang.String.$class)
+              ]
+            },
+            get: function() {
+              return "<p style='margin-top:0'>The parallel edge routing algorithm routes parallel edges which connect the same pair of nodes in a graph. It is often used as layout stage for other layout algorithms to handle the parallel edges for those.</p>"
+            }
+          },
+
           /** @type {demo.options.OptionGroup} */
           LayoutGroup: {
             $meta: function() {
@@ -344,10 +366,6 @@
             get: function() {
               return !this.joinEndsItem
             }
-          },
-
-          $initParallelEdgeRouterConfig: function() {
-            this.$scopeItem = demo.ParallelEdgeRouterConfig.EnumScope.SCOPE_ALL_EDGES
           },
 
           /** @lends {demo.ParallelEdgeRouterConfig} */

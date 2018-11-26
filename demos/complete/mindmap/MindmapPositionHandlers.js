@@ -103,9 +103,11 @@ define(['yfiles/view-editor', 'MindmapUtil.js', 'MindmapLayout.js'], (
       // get incoming edge of moved node
       const inEdge = MindmapUtil.Structure.getInEdge(this.movedNode, fullGraph)
       // store data at drag start
-      this.originalParent = inEdge.sourceNode
-      this.originalIsLeft = MindmapUtil.Structure.isLeft(this.movedNode)
-      this.oldParent = this.originalParent
+      if (inEdge) {
+        this.originalParent = inEdge.sourceNode
+        this.originalIsLeft = MindmapUtil.Structure.isLeft(this.movedNode)
+        this.oldParent = this.originalParent
+      }
     }
 
     /**

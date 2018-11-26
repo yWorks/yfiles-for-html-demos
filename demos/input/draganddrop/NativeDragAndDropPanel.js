@@ -29,6 +29,7 @@
 'use strict'
 
 define(['yfiles/view-component'], (/** @type {yfiles_namespace} */ /** typeof yfiles */ yfiles) => {
+  // @yjs:keep=effectAllowed
   /**
    * A palette of sample nodes. Users can drag and drop the nodes from this palette to a graph control.
    */

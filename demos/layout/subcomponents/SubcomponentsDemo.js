@@ -211,6 +211,9 @@ require([
     createSubcomponent(graph.nodes.filter(node => node.tag === 0), hierarchicLayout)
     const treeLayout = new yfiles.tree.TreeLayout()
     treeLayout.defaultNodePlacer.routingStyle = yfiles.tree.RoutingStyle.POLYLINE
+    const treeReductionStage = new yfiles.tree.TreeReductionStage()
+    treeReductionStage.nonTreeEdgeRouter = new yfiles.router.StraightLineEdgeRouter()
+    treeLayout.prependStage(treeReductionStage)
     createSubcomponent(graph.nodes.filter(node => node.tag === 1), treeLayout)
     const organicLayout = new yfiles.organic.OrganicLayout()
     organicLayout.deterministic = true

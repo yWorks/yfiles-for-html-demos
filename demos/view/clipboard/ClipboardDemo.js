@@ -108,6 +108,7 @@ require([
     graph.decorator.nodeDecorator.clipboardHelperDecorator.setImplementation(
       new ClipboardHelper.TaggedNodeClipboardHelper()
     )
+    graph.decorator.nodeDecorator.focusIndicatorDecorator.hideImplementation()
     graphComponent.enabled = true
 
     // Register specialized copiers that can deal with our business objects
@@ -124,6 +125,7 @@ require([
     graph2.decorator.nodeDecorator.clipboardHelperDecorator.setImplementation(
       new ClipboardHelper.TaggedNodeClipboardHelper()
     )
+    graph2.decorator.nodeDecorator.focusIndicatorDecorator.hideImplementation()
     graphComponent2.clipboard = graphComponent.clipboard
 
     graphComponent2.zoomTo(graphComponent.center, graphComponent.zoom)

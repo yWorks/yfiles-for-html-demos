@@ -190,7 +190,7 @@ require([
     const encrypted = document.querySelector('#encryptionInput').checked
 
     /* eslint-disable global-require */
-    require(['https://unpkg.com/neo4j-driver@1.6.1/lib/browser/neo4j-web.js'], neo4j => {
+    require(['https://unpkg.com/neo4j-driver@1.7.1/lib/browser/neo4j-web.js'], neo4j => {
       // create a new Neo4j driver instance
       neo4jDriver = neo4j.v1.driver(url, neo4j.v1.auth.basic(user, pass), {
         encrypted: encrypted,

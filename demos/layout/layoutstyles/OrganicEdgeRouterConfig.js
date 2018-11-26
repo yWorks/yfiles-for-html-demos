@@ -74,7 +74,7 @@
             const router = new yfiles.router.OrganicEdgeRouter()
             router.minimumDistance = this.minimumNodeDistanceItem
             router.keepExistingBends = this.keepBendsItem
-            router.routeAllEdges = this.routeOnlyNecessaryItem
+            router.routeAllEdges = !this.routeOnlyNecessaryItem
 
             const layout = new yfiles.layout.SequentialLayout()
             if (this.allowMovingNodesItem) {
@@ -108,26 +108,12 @@
             const layoutData = new yfiles.router.OrganicEdgeRouterData()
 
             if (this.selectionOnlyItem) {
-              layoutData.affectedEdges.delegate = edge => {
-                return graphComponent.selection.isSelected(edge)
-              }
+              layoutData.affectedEdges.source = graphComponent.selection.selectedEdges
             }
 
             return layoutData
           },
 
-          /**
-           * Called after the layout animation is done.
-           * @see Overrides {@link demo.LayoutConfiguration#postProcess}
-           */
-          postProcess: function(graphComponent) {
-            graphComponent.graph.mapperRegistry.removeMapper(
-              yfiles.router.OrganicEdgeRouter.AFFECTED_EDGES_DP_KEY
-            )
-          },
-
-          // ReSharper disable UnusedMember.Global
-          // ReSharper disable InconsistentNaming
           /** @type {demo.options.OptionGroup} */
           DescriptionGroup: {
             $meta: function() {
@@ -152,8 +138,6 @@
             value: null
           },
 
-          // ReSharper restore UnusedMember.Global
-          // ReSharper restore InconsistentNaming
           /** @type {string} */
           descriptionText: {
             $meta: function() {

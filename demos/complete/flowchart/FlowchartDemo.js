@@ -84,7 +84,11 @@ require([
     flowchartLayoutData.preferredNegativeBranchDirection = getBranchDirection(false)
     flowchartLayoutData.inEdgeGrouping = getInEdgeGroupingStyle()
     graphComponent
-      .morphLayout(flowchartLayout, '0.5s', flowchartLayoutData)
+      .morphLayout(
+        new yfiles.layout.MinimumNodeSizeStage(flowchartLayout),
+        '0.5s',
+        flowchartLayoutData
+      )
       .then(() => {
         setUIDisabled(false)
       })

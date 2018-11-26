@@ -417,6 +417,7 @@ require([
       })
     } else {
       simpleWebglStyle.disabled = true
+      StaticWebglImageGmm.disabled = true
       document.getElementById('no-webgl-support').style.display = 'block'
     }
     graphComponent.graphModelManager = graphModelManager
@@ -575,8 +576,7 @@ require([
    */
   function createEditorInputMode(isMoveMode) {
     const graphEditorInputMode = new yfiles.input.GraphEditorInputMode({
-      allowCreateBend: false,
-      allowGroupingOperations: true
+      allowCreateBend: false
     })
 
     // disable anything besides moving of nodes

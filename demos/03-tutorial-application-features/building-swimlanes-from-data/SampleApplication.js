@@ -44,11 +44,12 @@ require.config({
 require([
   'yfiles/view-editor',
   'resources/demo-app',
+  'utils/FileSaveSupport',
   'yfiles/view-table',
   'yfiles/view-layout-bridge',
   'yfiles/layout-hierarchic',
   'resources/license'
-], (/** @type {yfiles_namespace} */ /** typeof yfiles */ yfiles, app) => {
+], (/** @type {yfiles_namespace} */ /** typeof yfiles */ yfiles, app, FileSaveSupport) => {
   /** @type {yfiles.view.GraphComponent} */
   let graphComponent = null
 
@@ -113,6 +114,11 @@ require([
     const clipboard = new yfiles.graph.GraphClipboard()
     clipboard.parentNodeDetection = yfiles.graph.ParentNodeDetectionModes.PREVIOUS_PARENT
     graphComponent.clipboard = clipboard
+
+    // prevent selection of the table node
+    graphEditorInputMode.selectablePredicate = item => {
+      return !(yfiles.graph.INode.isInstance(item) && item.lookup(yfiles.graph.ITable.$class))
+    }
   }
 
   /**
@@ -242,6 +248,95 @@ require([
   }
 
   /**
+   * Serializes the graph to JSON.
+   * @param {yfiles.graph.IGraph} graph The graph
+   * @return {{nodesSource: Array, edgesSource: Array, lanesSource: Array}}
+   */
+  function writeToJSON(graph) {
+    const jsonOutput = {
+      nodesSource: [],
+      edgesSource: [],
+      lanesSource: []
+    }
+
+    // find the table, we assume there is only one
+    const tableNode = graph.nodes.find(node => !!node.lookup(yfiles.graph.ITable.$class))
+    const table = tableNode.lookup(yfiles.graph.ITable.$class)
+
+    // serialize the nodes with their swimlane information
+    const node2id = new yfiles.collections.Map()
+    graph.nodes.forEach((node, i) => {
+      // skip the table node
+      if (node === tableNode) {
+        return
+      }
+
+      // save the id to easily create the edgesSource afterwards
+      node2id.set(node, i)
+
+      // serialize the node
+      const jsonNode = {
+        id: i,
+        size: [node.layout.width, node.layout.height],
+        fill: colorToHex(node.style.fill.color)
+      }
+      if (node.labels.size > 0) {
+        jsonNode.label = node.labels.first().text
+      }
+      jsonOutput.nodesSource.push(jsonNode)
+
+      // store the lane of the node
+      const column = table.findColumn(tableNode, node.layout.center)
+      if (column) {
+        const columnId = `lane${table.findColumn(tableNode, node.layout.center).index}`
+        jsonNode.lane = columnId
+        // store new lanes in the json
+        if (!jsonOutput.lanesSource.find(lane => lane.id === columnId)) {
+          const jsonLane = { id: columnId }
+          if (column.labels.size > 0) {
+            jsonLane.label = column.labels.first().text
+          }
+          jsonOutput.lanesSource.push(jsonLane)
+        }
+      }
+    })
+
+    // serialize the edges
+    graph.edges.forEach(edge => {
+      const sourceId = node2id.get(edge.sourceNode)
+      const targetId = node2id.get(edge.targetNode)
+      jsonOutput.edgesSource.push({
+        from: sourceId,
+        to: targetId
+      })
+    })
+
+    return jsonOutput
+  }
+
+  /**
+   * Helper function that converts a {yfiles.view.Color} to a hex color string.
+   * @param {yfiles.view.Color} color
+   * @returns {string} hex color
+   */
+  function colorToHex(color) {
+    // zero-padding
+    let hexR = color.r.toString(16)
+    if (hexR.length < 2) {
+      hexR = `0${hexR}`
+    }
+    let hexG = color.g.toString(16)
+    if (hexG.length < 2) {
+      hexG = `0${hexG}`
+    }
+    let hexB = color.b.toString(16)
+    if (hexB.length < 2) {
+      hexB = `0${hexB}`
+    }
+    return `#${hexR}${hexG}${hexB}`
+  }
+
+  /**
    * Runs a {@link yfiles.hierarchic.HierarchicLayout} on the current graph. The
    * {@link yfiles.hierarchic.HierarchicLayout} respects the node to cell (or swimlane) assignment by considering the
    * nodes location in relation to the swimlane bounds.
@@ -308,6 +403,10 @@ require([
     app.bindAction("button[data-command='New']", () => {
       graphComponent.graph.clear()
       yfiles.input.ICommand.FIT_GRAPH_BOUNDS.execute(null, graphComponent)
+    })
+    app.bindAction("button[data-command='Save']", () => {
+      const json = writeToJSON(graphComponent.graph)
+      FileSaveSupport.save(JSON.stringify(json), 'graph.json')
     })
     app.bindCommand("button[data-command='Cut']", ICommand.CUT, graphComponent)
     app.bindCommand("button[data-command='Copy']", ICommand.COPY, graphComponent)

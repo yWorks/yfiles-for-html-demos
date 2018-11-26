@@ -291,6 +291,7 @@ require([
     })
 
     inputMode.addDeletingSelectionListener((sender, args) => {
+      edgePopup.currentItem = null
       // collect all nodes that are endpoints of removed edges
       args.selection.forEach(item => {
         if (yfiles.graph.IEdge.isInstance(item)) {

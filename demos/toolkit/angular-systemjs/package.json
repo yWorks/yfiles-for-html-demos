@@ -9,26 +9,26 @@
     "postinstall": "npm run tsc"
   },
   "dependencies": {
-    "@angular/common": "6.1.3",
-    "@angular/compiler": "6.1.3",
-    "@angular/core": "6.1.3",
-    "@angular/forms": "6.1.3",
-    "@angular/http": "6.1.3",
-    "@angular/platform-browser": "6.1.3",
-    "@angular/platform-browser-dynamic": "6.1.3",
-    "@angular/router": "6.1.3",
-    "@angular/upgrade": "6.1.3",
+    "@angular/common": "7.0.2",
+    "@angular/compiler": "7.0.2",
+    "@angular/core": "7.0.2",
+    "@angular/forms": "7.0.2",
+    "@angular/http": "7.0.2",
+    "@angular/platform-browser": "7.0.2",
+    "@angular/platform-browser-dynamic": "7.0.2",
+    "@angular/router": "7.0.2",
+    "@angular/upgrade": "7.0.2",
     "core-js": "2.5.7",
     "reflect-metadata": "0.1.12",
-    "rxjs": "6.2.2",
-    "systemjs": "0.20.4",
+    "rxjs": "6.3.3",
+    "systemjs": "0.21.5",
     "zone.js": "0.8.26"
   },
   "devDependencies": {
-    "@types/node": "10.7.1",
-    "concurrently": "3.6.1",
+    "@types/node": "10.12.2",
+    "concurrently": "4.0.1",
     "lite-server": "2.4.0",
     "systemjs-plugin-babel": "0.0.25",
-    "typescript": "3.0.1"
+    "typescript": "3.1.6"
   }
 }

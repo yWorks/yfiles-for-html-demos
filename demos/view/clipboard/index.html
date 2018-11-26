@@ -96,6 +96,14 @@
       bottom: 0;
       background-color: #FFFFFF;
     }
+
+    .component {
+      border: #FFFFFF 3px solid;
+    }
+
+    .component:focus {
+      border: #6e99ce 3px solid;
+    }
   </style>
 </head>
 <body class="demo-has-left">
@@ -103,7 +111,7 @@
   <h1 class="demo-sidebar-header">Description</h1>
   <div class="demo-sidebar-content">
     <p>
-      The Clipboard demo shows different ways of using <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.graph.GraphClipboard">yfiles.graph.GraphClipboard</a> for Copy & Paste
+      The Clipboard demo shows different ways of using <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.graph.GraphClipboard" target="_blank">yfiles.graph.GraphClipboard</a> for Copy & Paste
       operations. </p>
 
     <p>
@@ -140,7 +148,7 @@
         The nodes have a "business object" associated with the elements reflected in the nodes' titles (the text which
         is displayed inside the node). Editing the <code>name</code> property of a node's business object via the "Edit
         name" button changes the node's title, too, as it is bound to the name of the business object. <br> See class
-        <code>ClipboardBusinessObject</code> which is associated via the node's <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.graph.ITagOwner#tag">yfiles.graph.ITagOwner#tag</a>.
+        <code>ClipboardBusinessObject</code> which is associated via the node's <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.graph.ITagOwner#tag" target="_blank">yfiles.graph.ITagOwner#tag</a>.
       </li>
 
       <li>
@@ -179,7 +187,7 @@
 
       <button data-command="EditName" title="Edit Name" class="labeled">Edit Name</button>
     </div>
-    <div id="graphComponent">
+    <div id="graphComponent" class="component">
       <div id="nameDialog" class="demo-dialog" style="display: none">
         <!-- The content template for the name dialog panel -->
         <h2>Node Name</h2>
@@ -219,7 +227,7 @@
 
       <button data-command="EditName2" title="Edit Name" class="labeled">Edit Name</button>
     </div>
-    <div id="graphComponent2"></div>
+    <div id="graphComponent2" class="component"></div>
   </div>
 
 </div>

@@ -49,7 +49,7 @@
 <aside class="demo-sidebar demo-left">
   <h1 class="demo-sidebar-header">Description</h1>
   <div class="demo-sidebar-content">
-    <p>This step shows how to override <code>isInside()</code> and <code>getOutline()</code> of <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.styles.NodeStyleBase">yfiles.styles.NodeStyleBase</a>.</p>
+    <p>This step shows how to override <code>isInside()</code> and <code>getOutline()</code> of <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.styles.NodeStyleBase" target="_blank">yfiles.styles.NodeStyleBase</a>.</p>
 
     <h2>Things to Try</h2>
 
@@ -67,7 +67,7 @@
       </li>
       <li>
         Select an incoming edge and drag it's port outside the node. See how the behaviour of the edge changes when the
-        port enters the node. That is an effect of the implementation of <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.styles.NodeStyleBase#isInside">yfiles.styles.NodeStyleBase#isInside</a>.
+        port enters the node. That is an effect of the implementation of <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.styles.NodeStyleBase#isInside" target="_blank">yfiles.styles.NodeStyleBase#isInside</a>.
       </li>
       <li>
         Now, comment in the first line in <code>MySimpleNodeStyle.isInside</code> so that the implementation of the
@@ -75,11 +75,11 @@
         calculation.
       </li>
       <li>
-        Please note that <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.styles.NodeStyleBase#isInside">yfiles.styles.NodeStyleBase#isInside</a> as well as <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.styles.NodeStyleBase#getIntersection">yfiles.styles.NodeStyleBase#getIntersection</a>,
-        which isn't demonstrated here, are just used to improve performance. If not implemented, <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.styles.NodeStyleBase#getOutline">yfiles.styles.NodeStyleBase#getOutline</a>
-        will be used to calculate exactly the same thing, with the difference that <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.styles.NodeStyleBase#getOutline">yfiles.styles.NodeStyleBase#getOutline</a>
-        needs first to build a <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.geometry.GeneralPath">yfiles.geometry.GeneralPath</a>, which is more expensive than an effective
-        implementation as shown in <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.styles.NodeStyleBase#isInside">yfiles.styles.NodeStyleBase#isInside</a>.
+        Please note that <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.styles.NodeStyleBase#isInside" target="_blank">yfiles.styles.NodeStyleBase#isInside</a> as well as <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.styles.NodeStyleBase#getIntersection" target="_blank">yfiles.styles.NodeStyleBase#getIntersection</a>,
+        which isn't demonstrated here, are just used to improve performance. If not implemented, <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.styles.NodeStyleBase#getOutline" target="_blank">yfiles.styles.NodeStyleBase#getOutline</a>
+        will be used to calculate exactly the same thing, with the difference that <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.styles.NodeStyleBase#getOutline" target="_blank">yfiles.styles.NodeStyleBase#getOutline</a>
+        needs first to build a <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.geometry.GeneralPath" target="_blank">yfiles.geometry.GeneralPath</a>, which is more expensive than an effective
+        implementation as shown in <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.styles.NodeStyleBase#isInside" target="_blank">yfiles.styles.NodeStyleBase#isInside</a>.
       </li>
     </ul>
 
@@ -87,12 +87,12 @@
 
     <ul>
       <li>
-        Implement <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.styles.NodeStyleBase#isHit">yfiles.styles.NodeStyleBase#isHit</a>, so that a node won't get selected when clicking on the
+        Implement <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.styles.NodeStyleBase#isHit" target="_blank">yfiles.styles.NodeStyleBase#isHit</a>, so that a node won't get selected when clicking on the
         bounding box but not on the node itself (this works already in this step, but can be implemented explicitly for
         performance reasons).
       </li>
       <li>
-        Implement <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.styles.NodeStyleBase#getBounds">yfiles.styles.NodeStyleBase#getBounds</a>, so that the drop shadow will be included in the bounds of
+        Implement <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.styles.NodeStyleBase#getBounds" target="_blank">yfiles.styles.NodeStyleBase#getBounds</a>, so that the drop shadow will be included in the bounds of
         the node.
       </li>
       <li>

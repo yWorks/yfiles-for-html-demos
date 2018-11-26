@@ -482,7 +482,7 @@ define([
 
     /**
      * Moves incremental nodes between their neighbors before expanding for a smooth animation.
-     * @param {yfiles.collections.Map} incrementalMap
+     * @param {yfiles.collections.List} incrementalNodes
      */
     prepareSmoothExpandLayoutAnimation(incrementalNodes) {
       const graph = this.$graphComponent.graph

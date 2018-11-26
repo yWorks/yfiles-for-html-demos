@@ -61,36 +61,49 @@
            */
           constructor: function() {
             demo.LayoutConfiguration.call(this)
-            this.$initTreeLayoutConfig()
+
             const layout = new yfiles.tree.ClassicTreeLayout()
             const aspectRatioNodePlacer = new yfiles.tree.AspectRatioNodePlacer()
             const defaultNodePlacer = new yfiles.tree.DefaultNodePlacer()
 
             this.layoutStyleItem = demo.TreeLayoutConfig.EnumStyle.DEFAULT
             this.routingStyleForNonTreeEdgesItem = demo.TreeLayoutConfig.EnumRoute.ORTHOGONAL
+            this.edgeBundlingStrengthItem = 0.95
             this.actOnSelectionOnlyItem = false
+
+            this.defaultLayoutOrientationItem = yfiles.layout.LayoutOrientation.TOP_TO_BOTTOM
+            this.classicLayoutOrientationItem = yfiles.layout.LayoutOrientation.TOP_TO_BOTTOM
 
             this.minimumNodeDistanceItem = layout.minimumNodeDistance | 0
             this.minimumLayerDistanceItem = layout.minimumLayerDistance | 0
-            this.layoutOrientationItem = yfiles.layout.LayoutOrientation.TOP_TO_BOTTOM
             this.portStyleItem = yfiles.tree.PortStyle.NODE_CENTER
 
-            this.considerNodeLabelingItem = false
+            this.considerNodeLabelsItem = false
 
-            this.orthognalEdgeRoutingItem = false
-            this.busAlignmentItem = 0.5
+            this.orthogonalEdgeRoutingItem = false
 
             this.verticalAlignmentItem = 0.5
             this.childPlacementPolicyItem = yfiles.tree.LeafPlacement.SIBLINGS_ON_SAME_LAYER
             this.enforceGlobalLayeringItem = false
 
+            this.nodePlacerItem = demo.TreeLayoutConfig.EnumNodePlacer.DEFAULT
+
+            this.spacingItem = 20
+            this.rootAlignmentItem = demo.TreeLayoutConfig.EnumRootAlignment.CENTER
+            this.allowMultiParentsItem = false
+            this.portAssignmentItem = yfiles.tree.PortAssignmentMode.NONE
+
             this.hvHorizontalSpaceItem = defaultNodePlacer.horizontalDistance | 0
             this.hvVerticalSpaceItem = defaultNodePlacer.verticalDistance | 0
 
+            this.busAlignmentItem = 0.5
+
             this.arHorizontalSpaceItem = aspectRatioNodePlacer.horizontalDistance | 0
             this.arVerticalSpaceItem = aspectRatioNodePlacer.verticalDistance | 0
-            this.aspectRatioItem = aspectRatioNodePlacer.aspectRatio
+            this.nodePlacerAspectRatioItem = aspectRatioNodePlacer.aspectRatio
+
             this.arUseViewAspectRatioItem = true
+            this.compactPreferredAspectRatioItem = 1
 
             this.edgeLabelingItem = demo.TreeLayoutConfig.EnumEdgeLabeling.NONE
             this.labelPlacementAlongEdgeItem =
@@ -99,7 +112,7 @@
               demo.LayoutConfiguration.EnumLabelPlacementSideOfEdge.ON_EDGE
             this.labelPlacementOrientationItem =
               demo.LayoutConfiguration.EnumLabelPlacementOrientation.HORIZONTAL
-            this.labelPlacementDistanceItem = 10.0
+            this.labelPlacementDistanceItem = 10
           },
 
           /**
@@ -119,11 +132,12 @@
               case demo.TreeLayoutConfig.EnumStyle.CLASSIC:
                 layout = this.$configureClassicLayout()
                 break
-              case demo.TreeLayoutConfig.EnumStyle.HV:
-                layout = this.$configureHVLayout(graphComponent)
+              case demo.TreeLayoutConfig.EnumStyle.HORIZONTAL_VERTICAL:
+                layout = new yfiles.tree.TreeLayout()
                 break
               case demo.TreeLayoutConfig.EnumStyle.COMPACT:
                 layout = this.$configureCompactLayout(graphComponent)
+                break
             }
 
             layout.parallelEdgeRouterEnabled = false
@@ -136,21 +150,21 @@
               this.edgeLabelingItem === demo.TreeLayoutConfig.EnumEdgeLabeling.INTEGRATED ||
               this.edgeLabelingItem === demo.TreeLayoutConfig.EnumEdgeLabeling.GENERIC
 
-            // required to prevent WrongGraphStructure-Exception which may be thrown by TreeLayout if there are edges
+            // required to prevent WrongGraphStructure exception which may be thrown by TreeLayout if there are edges
             // between group nodes
             layout.prependStage(new HandleEdgesBetweenGroupsStage(placeLabels))
 
-            layout.considerNodeLabels = this.considerNodeLabelingItem
+            layout.considerNodeLabels = this.considerNodeLabelsItem
 
             if (this.edgeLabelingItem === demo.TreeLayoutConfig.EnumEdgeLabeling.GENERIC) {
               layout.integratedEdgeLabeling = false
 
-              const genericLabeling = new yfiles.labeling.GenericLabeling()
-              genericLabeling.placeEdgeLabels = true
-              genericLabeling.placeNodeLabels = false
-              genericLabeling.reduceAmbiguity = this.reduceAmbiguityItem
+              const labeling = new yfiles.labeling.GenericLabeling()
+              labeling.placeEdgeLabels = true
+              labeling.placeNodeLabels = false
+              labeling.reduceAmbiguity = this.reduceAmbiguityItem
               layout.labelingEnabled = true
-              layout.labeling = genericLabeling
+              layout.labeling = labeling
             } else if (
               this.edgeLabelingItem === demo.TreeLayoutConfig.EnumEdgeLabeling.INTEGRATED
             ) {
@@ -164,6 +178,7 @@
               this.labelPlacementOrientationItem,
               this.labelPlacementDistanceItem
             )
+
             return layout
           },
 
@@ -185,18 +200,38 @@
                 const parent = predecessors.firstOrDefault()
                 if (parent) {
                   const siblings = graph.successors(parent).toArray()
-                  return siblings.indexOf(node) % 2
+                  return siblings.indexOf(node) % 2 !== 0
                 }
-                return 0
+                return false
               }
               layoutData.compactNodePlacerStrategyMementos = new yfiles.collections.Mapper()
+              return layoutData
+            } else if (
+              this.layoutStyleItem === demo.TreeLayoutConfig.EnumStyle.HORIZONTAL_VERTICAL
+            ) {
+              const layoutData = new yfiles.tree.TreeLayoutData()
+              layoutData.nodePlacers.delegate = node => {
+                // children of selected nodes should be placed vertical and to the right of their child nodes, while
+                // the children of non-selected horizontal downwards
+                const childPlacement = graphComponent.selection.isSelected(node)
+                  ? yfiles.tree.ChildPlacement.VERTICAL_TO_RIGHT
+                  : yfiles.tree.ChildPlacement.HORIZONTAL_DOWNWARD
+
+                const hvNodePlacer = new yfiles.tree.DefaultNodePlacer(
+                  childPlacement,
+                  yfiles.tree.RootAlignment.LEADING_ON_BUS,
+                  this.hvVerticalSpaceItem,
+                  this.hvHorizontalSpaceItem
+                )
+                return hvNodePlacer
+              }
               return layoutData
             }
             return null
           },
 
           /**
-           * Configures the tree reduction stage algorithm that will handle the edges that do not belong to the tree.
+           * Configures the tree reduction stage that will handle edges that do not belong to the tree.
            * @return {yfiles.tree.TreeReductionStage}
            */
           $createTreeReductionStage: function() {
@@ -224,11 +259,11 @@
             } else if (
               this.routingStyleForNonTreeEdgesItem === demo.TreeLayoutConfig.EnumRoute.ORTHOGONAL
             ) {
-              const orthogonal = new yfiles.router.EdgeRouter()
-              orthogonal.rerouting = true
-              orthogonal.scope = yfiles.router.Scope.ROUTE_AFFECTED_EDGES
-              reductionStage.nonTreeEdgeSelectionKey = orthogonal.affectedEdgesDpKey
-              reductionStage.nonTreeEdgeRouter = orthogonal
+              const edgeRouter = new yfiles.router.EdgeRouter()
+              edgeRouter.rerouting = true
+              edgeRouter.scope = yfiles.router.Scope.ROUTE_AFFECTED_EDGES
+              reductionStage.nonTreeEdgeRouter = edgeRouter
+              reductionStage.nonTreeEdgeSelectionKey = edgeRouter.affectedEdgesDpKey
             } else if (
               this.routingStyleForNonTreeEdgesItem === demo.TreeLayoutConfig.EnumRoute.STRAIGHTLINE
             ) {
@@ -238,23 +273,11 @@
             ) {
               const ebc = reductionStage.edgeBundling
               const bundlingDescriptor = new yfiles.layout.EdgeBundleDescriptor()
-              bundlingDescriptor.bundled =
-                this.routingStyleForNonTreeEdgesItem === demo.TreeLayoutConfig.EnumRoute.BUNDLED
+              bundlingDescriptor.bundled = true
               ebc.bundlingStrength = this.edgeBundlingStrengthItem
               ebc.defaultBundleDescriptor = bundlingDescriptor
             }
             return reductionStage
-          },
-
-          /**
-           * Postprocess the graph. Remove additional data bound to graph elements.
-           * @see Overrides {@link demo.LayoutConfiguration#postProcess}
-           */
-          postProcess: function(graphComponent) {
-            const graph = graphComponent.graph
-            if (graph.mapperRegistry.getMapper(yfiles.tree.TreeLayout.NODE_PLACER_DP_KEY)) {
-              graph.mapperRegistry.removeMapper(yfiles.tree.TreeLayout.NODE_PLACER_DP_KEY)
-            }
           },
 
           /**
@@ -270,7 +293,7 @@
             const layout = new yfiles.tree.TreeLayout()
             layout.layoutOrientation = isAspectRatioNodePlacer
               ? yfiles.layout.LayoutOrientation.TOP_TO_BOTTOM
-              : this.orientationItem
+              : this.defaultLayoutOrientationItem
 
             const spacing = this.spacingItem
 
@@ -343,7 +366,6 @@
               case demo.TreeLayoutConfig.EnumNodePlacer.LEFT_RIGHT:
                 const leftRightNodePlacer = new yfiles.tree.LeftRightNodePlacer()
                 leftRightNodePlacer.spacing = spacing
-                leftRightNodePlacer.rootAlignment = rootAlignment
                 layout.defaultNodePlacer = leftRightNodePlacer
                 layout.multiParentAllowed = allowMultiParents
                 break
@@ -402,9 +424,9 @@
             layout.minimumLayerDistance = this.minimumLayerDistanceItem
 
             const ol = layout.orientationLayout
-            ol.orientation = this.layoutOrientationItem
+            ol.orientation = this.classicLayoutOrientationItem
 
-            if (this.orthognalEdgeRoutingItem) {
+            if (this.orthogonalEdgeRoutingItem) {
               layout.edgeRoutingStyle = yfiles.tree.EdgeRoutingStyle.ORTHOGONAL
             } else {
               layout.edgeRoutingStyle = yfiles.tree.EdgeRoutingStyle.PLAIN
@@ -421,59 +443,24 @@
           },
 
           /**
-           * Configures the tree layout algorithm with the appropriate node placer to obtain an HV-layout.
-           * @return {yfiles.layout.MultiStageLayout}
-           */
-          $configureHVLayout: function(graphComponent) {
-            const layout = new yfiles.tree.TreeLayout()
-            const nodePlacerMap = new yfiles.collections.Mapper()
-
-            graphComponent.graph.nodes.forEach(node => {
-              // children of selected nodes should be placed vertical and to the right of their child nodes, while
-              // the children of non-selected horizontal downwards
-              const childPlacement = graphComponent.selection.isSelected(node)
-                ? yfiles.tree.ChildPlacement.VERTICAL_TO_RIGHT
-                : yfiles.tree.ChildPlacement.HORIZONTAL_DOWNWARD
-
-              const hvNodePlacer = new yfiles.tree.DefaultNodePlacer(
-                childPlacement,
-                yfiles.tree.RootAlignment.LEADING_ON_BUS,
-                this.hvVerticalSpaceItem,
-                this.hvHorizontalSpaceItem
-              )
-              nodePlacerMap.set(node, hvNodePlacer)
-            })
-
-            graphComponent.graph.mapperRegistry.addMapper(
-              yfiles.graph.INode.$class,
-              yfiles.tree.DefaultNodePlacer.$class,
-              yfiles.tree.TreeLayout.NODE_PLACER_DP_KEY,
-              nodePlacerMap
-            )
-            return layout
-          },
-
-          /**
            * Configures the tree layout algorithm with the appropriate node placer to obtain a compact tree layout.
            * @return {yfiles.layout.MultiStageLayout}
            */
           $configureCompactLayout: function(graphComponent) {
             const layout = new yfiles.tree.TreeLayout()
-            const aspectNodePlacer = new yfiles.tree.AspectRatioNodePlacer()
+            const aspectRatioNodePlacer = new yfiles.tree.AspectRatioNodePlacer()
 
-            if (graphComponent !== null) {
-              const size = graphComponent.size
-              if (this.arUseViewAspectRatioItem) {
-                aspectNodePlacer.aspectRatio = size.width / size.height
-              } else {
-                aspectNodePlacer.aspectRatio = this.aspectRatioItem
-              }
+            if (graphComponent && this.arUseViewAspectRatioItem) {
+              const size = graphComponent.innerSize
+              aspectRatioNodePlacer.aspectRatio = size.width / size.height
+            } else {
+              aspectRatioNodePlacer.aspectRatio = this.compactPreferredAspectRatioItem
             }
 
-            aspectNodePlacer.horizontalDistance = this.arHorizontalSpaceItem
-            aspectNodePlacer.verticalDistance = this.arVerticalSpaceItem
+            aspectRatioNodePlacer.horizontalDistance = this.arHorizontalSpaceItem
+            aspectRatioNodePlacer.verticalDistance = this.arVerticalSpaceItem
 
-            layout.defaultNodePlacer = aspectNodePlacer
+            layout.defaultNodePlacer = aspectRatioNodePlacer
             return layout
           },
 
@@ -516,18 +503,6 @@
           },
 
           /** @type {demo.options.OptionGroup} */
-          ClassicGroup: {
-            $meta: function() {
-              return [
-                demo.options.LabelAttribute('Classic'),
-                demo.options.OptionGroupAttribute('RootGroup', 40),
-                demo.options.TypeAttribute(demo.options.OptionGroup.$class)
-              ]
-            },
-            value: null
-          },
-
-          /** @type {demo.options.OptionGroup} */
           HVGroup: {
             $meta: function() {
               return [
@@ -540,11 +515,23 @@
           },
 
           /** @type {demo.options.OptionGroup} */
-          ARGroup: {
+          CompactGroup: {
             $meta: function() {
               return [
                 demo.options.LabelAttribute('Compact'),
                 demo.options.OptionGroupAttribute('RootGroup', 30),
+                demo.options.TypeAttribute(demo.options.OptionGroup.$class)
+              ]
+            },
+            value: null
+          },
+
+          /** @type {demo.options.OptionGroup} */
+          ClassicGroup: {
+            $meta: function() {
+              return [
+                demo.options.LabelAttribute('Classic'),
+                demo.options.OptionGroupAttribute('RootGroup', 40),
                 demo.options.TypeAttribute(demo.options.OptionGroup.$class)
               ]
             },
@@ -645,8 +632,8 @@
                 demo.options.EnumValuesAttribute().init({
                   values: [
                     ['Default', demo.TreeLayoutConfig.EnumStyle.DEFAULT],
-                    ['Horizontal-Vertical', demo.TreeLayoutConfig.EnumStyle.HV],
-                    ['Compact', demo.TreeLayoutConfig.EnumStyle.AR],
+                    ['Horizontal-Vertical', demo.TreeLayoutConfig.EnumStyle.HORIZONTAL_VERTICAL],
+                    ['Compact', demo.TreeLayoutConfig.EnumStyle.COMPACT],
                     ['Classic', demo.TreeLayoutConfig.EnumStyle.CLASSIC]
                   ]
                 }),
@@ -697,32 +684,6 @@
 
           /**
            * Backing field for below property
-           * @type {boolean}
-           */
-          $actOnSelectionOnlyItem: false,
-
-          /** @type {boolean} */
-          actOnSelectionOnlyItem: {
-            $meta: function() {
-              return [
-                demo.options.LabelAttribute(
-                  'Act on Selection Only',
-                  '#/api/yfiles.tree.TreeLayout#MultiStageLayout-property-subgraphLayoutEnabled'
-                ),
-                demo.options.OptionGroupAttribute('GeneralGroup', 30),
-                demo.options.TypeAttribute(yfiles.lang.Boolean.$class)
-              ]
-            },
-            get: function() {
-              return this.$actOnSelectionOnlyItem
-            },
-            set: function(value) {
-              this.$actOnSelectionOnlyItem = value
-            }
-          },
-
-          /**
-           * Backing field for below property
            * @type {number}
            */
           $edgeBundlingStrengthItem: 1.0,
@@ -735,7 +696,7 @@
                   'Bundling Strength',
                   '#/api/yfiles.layout.EdgeBundling#EdgeBundling-property-bundlingStrength'
                 ),
-                demo.options.OptionGroupAttribute('GeneralGroup', 40),
+                demo.options.OptionGroupAttribute('GeneralGroup', 30),
                 demo.options.MinMaxAttribute().init({
                   min: 0,
                   max: 1.0,
@@ -767,130 +728,27 @@
 
           /**
            * Backing field for below property
-           * @type {yfiles.layout.LayoutOrientation}
+           * @type {boolean}
            */
-          $layoutOrientationItem: null,
+          $actOnSelectionOnlyItem: false,
 
-          /** @type {yfiles.layout.LayoutOrientation} */
-          layoutOrientationItem: {
+          /** @type {boolean} */
+          actOnSelectionOnlyItem: {
             $meta: function() {
               return [
                 demo.options.LabelAttribute(
-                  'Orientation',
-                  '#/api/yfiles.layout.OrientationLayout#OrientationLayout-property-orientation'
+                  'Act on Selection Only',
+                  '#/api/yfiles.tree.TreeLayout#MultiStageLayout-property-subgraphLayoutEnabled'
                 ),
-                demo.options.OptionGroupAttribute('ClassicGroup', 10),
-                demo.options.EnumValuesAttribute().init({
-                  values: [
-                    ['Top to Bottom', yfiles.layout.LayoutOrientation.TOP_TO_BOTTOM],
-                    ['Left to Right', yfiles.layout.LayoutOrientation.LEFT_TO_RIGHT],
-                    ['Bottom to Top', yfiles.layout.LayoutOrientation.BOTTOM_TO_TOP],
-                    ['Right to Left', yfiles.layout.LayoutOrientation.RIGHT_TO_LEFT]
-                  ]
-                }),
-                demo.options.TypeAttribute(yfiles.layout.LayoutOrientation.$class)
+                demo.options.OptionGroupAttribute('GeneralGroup', 40),
+                demo.options.TypeAttribute(yfiles.lang.Boolean.$class)
               ]
             },
             get: function() {
-              return this.$layoutOrientationItem
+              return this.$actOnSelectionOnlyItem
             },
             set: function(value) {
-              this.$layoutOrientationItem = value
-            }
-          },
-
-          /**
-           * Backing field for below property
-           * @type {number}
-           */
-          $minimumNodeDistanceItem: 0,
-
-          /** @type {number} */
-          minimumNodeDistanceItem: {
-            $meta: function() {
-              return [
-                demo.options.LabelAttribute(
-                  'Minimum Node Distance',
-                  '#/api/yfiles.tree.ClassicTreeLayout#ClassicTreeLayout-property-minimumNodeDistance'
-                ),
-                demo.options.MinMaxAttribute().init({
-                  min: 1,
-                  max: 100
-                }),
-                demo.options.OptionGroupAttribute('ClassicGroup', 20),
-                demo.options.ComponentAttribute(demo.options.Components.SLIDER),
-                demo.options.TypeAttribute(yfiles.lang.Number.$class)
-              ]
-            },
-            get: function() {
-              return this.$minimumNodeDistanceItem
-            },
-            set: function(value) {
-              this.$minimumNodeDistanceItem = value
-            }
-          },
-
-          /**
-           * Backing field for below property
-           * @type {number}
-           */
-          $minimumLayerDistanceItem: 0,
-
-          /** @type {number} */
-          minimumLayerDistanceItem: {
-            $meta: function() {
-              return [
-                demo.options.LabelAttribute(
-                  'Minimum Layer Distance',
-                  '#/api/yfiles.tree.ClassicTreeLayout#ClassicTreeLayout-property-minimumLayerDistance'
-                ),
-                demo.options.MinMaxAttribute().init({
-                  min: 10,
-                  max: 300
-                }),
-                demo.options.OptionGroupAttribute('ClassicGroup', 30),
-                demo.options.ComponentAttribute(demo.options.Components.SLIDER),
-                demo.options.TypeAttribute(yfiles.lang.Number.$class)
-              ]
-            },
-            get: function() {
-              return this.$minimumLayerDistanceItem
-            },
-            set: function(value) {
-              this.$minimumLayerDistanceItem = value
-            }
-          },
-
-          /**
-           * Backing field for below property
-           * @type {yfiles.tree.PortStyle}
-           */
-          $portStyleItem: null,
-
-          /** @type {yfiles.tree.PortStyle} */
-          portStyleItem: {
-            $meta: function() {
-              return [
-                demo.options.LabelAttribute(
-                  'Port Style',
-                  '#/api/yfiles.tree.ClassicTreeLayout#ClassicTreeLayout-property-portStyle'
-                ),
-                demo.options.OptionGroupAttribute('ClassicGroup', 40),
-                demo.options.EnumValuesAttribute().init({
-                  values: [
-                    ['Node Centered', yfiles.tree.PortStyle.NODE_CENTER],
-                    ['Border Centered', yfiles.tree.PortStyle.BORDER_CENTER],
-                    ['Border Distributed', yfiles.tree.PortStyle.BORDER_DISTRIBUTED]
-                  ]
-                }),
-                demo.options.TypeAttribute(yfiles.tree.PortStyle.$class)
-              ]
-            },
-            get: function() {
-              return this.$portStyleItem
-            },
-            set: function(value) {
-              this.$portStyleItem = value
+              this.$actOnSelectionOnlyItem = value
             }
           },
 
@@ -898,182 +756,25 @@
            * Backing field for below property
            * @type {boolean}
            */
-          $enforceGlobalLayeringItem: false,
+          $considerNodeLabelsItem: false,
 
           /** @type {boolean} */
-          enforceGlobalLayeringItem: {
+          considerNodeLabelsItem: {
             $meta: function() {
               return [
                 demo.options.LabelAttribute(
-                  'Global Layering',
-                  '#/api/yfiles.tree.ClassicTreeLayout#ClassicTreeLayout-property-enforceGlobalLayering'
+                  'Consider Node Labels',
+                  '#/api/yfiles.tree.TreeLayout#TreeLayout-property-considerNodeLabels'
                 ),
-                demo.options.OptionGroupAttribute('ClassicGroup', 50),
+                demo.options.OptionGroupAttribute('GeneralGroup', 50),
                 demo.options.TypeAttribute(yfiles.lang.Boolean.$class)
               ]
             },
             get: function() {
-              return this.$enforceGlobalLayeringItem
+              return this.$considerNodeLabelsItem
             },
             set: function(value) {
-              this.$enforceGlobalLayeringItem = value
-            }
-          },
-
-          /**
-           * Backing field for below property
-           * @type {boolean}
-           */
-          $orthognalEdgeRoutingItem: false,
-
-          /** @type {boolean} */
-          orthognalEdgeRoutingItem: {
-            $meta: function() {
-              return [
-                demo.options.LabelAttribute(
-                  'Orthogonal Edge Routing',
-                  '#/api/yfiles.tree.ClassicTreeLayout#ClassicTreeLayout-property-edgeRoutingStyle'
-                ),
-                demo.options.OptionGroupAttribute('ClassicGroup', 60),
-                demo.options.TypeAttribute(yfiles.lang.Boolean.$class)
-              ]
-            },
-            get: function() {
-              return this.$orthognalEdgeRoutingItem
-            },
-            set: function(value) {
-              this.$orthognalEdgeRoutingItem = value
-            }
-          },
-
-          /**
-           * Backing field for below property
-           * @type {number}
-           */
-          $busAlignmentItem: 0,
-
-          /** @type {number} */
-          busAlignmentItem: {
-            $meta: function() {
-              return [
-                demo.options.LabelAttribute(
-                  'Edge Bus Alignment',
-                  '#/api/yfiles.tree.ClassicTreeLayout#ClassicTreeLayout-property-busAlignment'
-                ),
-                demo.options.OptionGroupAttribute('ClassicGroup', 70),
-                demo.options.MinMaxAttribute().init({
-                  min: 0.0,
-                  max: 1.0,
-                  step: 0.01
-                }),
-                demo.options.ComponentAttribute(demo.options.Components.SLIDER),
-                demo.options.TypeAttribute(yfiles.lang.Number.$class)
-              ]
-            },
-            get: function() {
-              return this.$busAlignmentItem
-            },
-            set: function(value) {
-              this.$busAlignmentItem = value
-            }
-          },
-
-          /** @type {boolean} */
-          shouldDisableBusAlignmentItem: {
-            $meta: function() {
-              return [demo.options.TypeAttribute(yfiles.lang.Boolean.$class)]
-            },
-            get: function() {
-              return (
-                this.orthognalEdgeRoutingItem === false ||
-                (this.enforceGlobalLayeringItem === false &&
-                  this.childPlacementPolicyItem !==
-                    yfiles.tree.LeafPlacement.ALL_LEAVES_ON_SAME_LAYER)
-              )
-            }
-          },
-
-          /**
-           * Backing field for below property
-           * @type {number}
-           */
-          $verticalAlignmentItem: 0,
-
-          /** @type {number} */
-          verticalAlignmentItem: {
-            $meta: function() {
-              return [
-                demo.options.LabelAttribute(
-                  'Vertical Child Alignment',
-                  '#/api/yfiles.tree.ClassicTreeLayout#ClassicTreeLayout-property-verticalAlignment'
-                ),
-                demo.options.OptionGroupAttribute('ClassicGroup', 80),
-                demo.options.MinMaxAttribute().init({
-                  min: 0.0,
-                  max: 1.0,
-                  step: 0.01
-                }),
-                demo.options.ComponentAttribute(demo.options.Components.SLIDER),
-                demo.options.TypeAttribute(yfiles.lang.Number.$class)
-              ]
-            },
-            get: function() {
-              return this.$verticalAlignmentItem
-            },
-            set: function(value) {
-              this.$verticalAlignmentItem = value
-            }
-          },
-
-          /** @type {boolean} */
-          shouldDisableVerticalAlignmentItem: {
-            $meta: function() {
-              return [demo.options.TypeAttribute(yfiles.lang.Boolean.$class)]
-            },
-            get: function() {
-              return this.enforceGlobalLayeringItem === false
-            }
-          },
-
-          /**
-           * Backing field for below property
-           * @type {yfiles.tree.ChildPlacement}
-           */
-          $childPlacementPolicyItem: null,
-
-          /** @type {yfiles.tree.ChildPlacement} */
-          childPlacementPolicyItem: {
-            $meta: function() {
-              return [
-                demo.options.LabelAttribute(
-                  'Child Placement Policy',
-                  '#/api/yfiles.tree.ClassicTreeLayout#ClassicTreeLayout-property-leafPlacement'
-                ),
-                demo.options.OptionGroupAttribute('ClassicGroup', 90),
-                demo.options.EnumValuesAttribute().init({
-                  values: [
-                    ['Siblings in same Layer', yfiles.tree.LeafPlacement.SIBLINGS_ON_SAME_LAYER],
-                    [
-                      'All Leaves in same Layer',
-                      yfiles.tree.LeafPlacement.ALL_LEAVES_ON_SAME_LAYER
-                    ],
-                    ['Leaves stacked', yfiles.tree.LeafPlacement.LEAVES_STACKED],
-                    ['Leaves stacked left', yfiles.tree.LeafPlacement.LEAVES_STACKED_LEFT],
-                    ['Leaves stacked right', yfiles.tree.LeafPlacement.LEAVES_STACKED_RIGHT],
-                    [
-                      'Leaves stacked left and right',
-                      yfiles.tree.LeafPlacement.LEAVES_STACKED_LEFT_AND_RIGHT
-                    ]
-                  ]
-                }),
-                demo.options.TypeAttribute(yfiles.tree.LeafPlacement.$class)
-              ]
-            },
-            get: function() {
-              return this.$childPlacementPolicyItem
-            },
-            set: function(value) {
-              this.$childPlacementPolicyItem = value
+              this.$considerNodeLabelsItem = value
             }
           },
 
@@ -1203,10 +904,10 @@
            * Backing field for below property
            * @type {yfiles.layout.LayoutOrientation}
            */
-          $orientationItem: null,
+          $defaultLayoutOrientationItem: null,
 
           /** @type {yfiles.layout.LayoutOrientation} */
-          orientationItem: {
+          defaultLayoutOrientationItem: {
             $meta: function() {
               return [
                 demo.options.LabelAttribute(
@@ -1226,15 +927,15 @@
               ]
             },
             get: function() {
-              return this.$orientationItem
+              return this.$defaultLayoutOrientationItem
             },
             set: function(value) {
-              this.$orientationItem = value
+              this.$defaultLayoutOrientationItem = value
             }
           },
 
           /** @type {boolean} */
-          shouldDisableOrientationItem: {
+          shouldDisableDefaultLayoutOrientationItem: {
             $meta: function() {
               return [demo.options.TypeAttribute(yfiles.lang.Boolean.$class)]
             },
@@ -1443,7 +1144,7 @@
                   'Horizontal Spacing',
                   '#/api/yfiles.tree.AspectRatioNodePlacer#AspectRatioNodePlacer-property-horizontalDistance'
                 ),
-                demo.options.OptionGroupAttribute('ARGroup', 10),
+                demo.options.OptionGroupAttribute('CompactGroup', 10),
                 demo.options.MinMaxAttribute().init({
                   min: 0,
                   max: 100
@@ -1474,7 +1175,7 @@
                   'Vertical Spacing',
                   '#/api/yfiles.tree.AspectRatioNodePlacer#AspectRatioNodePlacer-property-verticalDistance'
                 ),
-                demo.options.OptionGroupAttribute('ARGroup', 20),
+                demo.options.OptionGroupAttribute('CompactGroup', 20),
                 demo.options.MinMaxAttribute().init({
                   min: 0,
                   max: 100
@@ -1505,7 +1206,7 @@
                   'Use Aspect Ratio of View',
                   '#/api/yfiles.tree.AspectRatioNodePlacer#AspectRatioNodePlacer-property-aspectRatio'
                 ),
-                demo.options.OptionGroupAttribute('ARGroup', 40),
+                demo.options.OptionGroupAttribute('CompactGroup', 40),
                 demo.options.TypeAttribute(yfiles.lang.Boolean.$class)
               ]
             },
@@ -1521,17 +1222,17 @@
            * Backing field for below property
            * @type {number}
            */
-          $aspectRatioItem: 0,
+          $compactPreferredAspectRatioItem: 0,
 
           /** @type {number} */
-          aspectRatioItem: {
+          compactPreferredAspectRatioItem: {
             $meta: function() {
               return [
                 demo.options.LabelAttribute(
                   'Preferred Aspect Ratio',
                   '#/api/yfiles.tree.AspectRatioNodePlacer#AspectRatioNodePlacer-property-aspectRatio'
                 ),
-                demo.options.OptionGroupAttribute('ARGroup', 50),
+                demo.options.OptionGroupAttribute('CompactGroup', 50),
                 demo.options.MinMaxAttribute().init({
                   min: 0.2,
                   max: 5.0,
@@ -1542,20 +1243,149 @@
               ]
             },
             get: function() {
-              return this.$aspectRatioItem
+              return this.$compactPreferredAspectRatioItem
             },
             set: function(value) {
-              this.$aspectRatioItem = value
+              this.$compactPreferredAspectRatioItem = value
             }
           },
 
           /** @type {boolean} */
-          shouldDisableAspectRatioItem: {
+          shouldDisableCompactPreferredAspectRatioItem: {
             $meta: function() {
               return [demo.options.TypeAttribute(yfiles.lang.Boolean.$class)]
             },
             get: function() {
-              return this.arUseViewAspectRatioItem
+              return this.arUseViewCompactPreferredAspectRatioItem
+            }
+          },
+
+          /**
+           * Backing field for below property
+           * @type {yfiles.layout.LayoutOrientation}
+           */
+          $classicLayoutOrientationItem: null,
+
+          /** @type {yfiles.layout.LayoutOrientation} */
+          classicLayoutOrientationItem: {
+            $meta: function() {
+              return [
+                demo.options.LabelAttribute(
+                  'Orientation',
+                  '#/api/yfiles.layout.OrientationLayout#OrientationLayout-property-orientation'
+                ),
+                demo.options.OptionGroupAttribute('ClassicGroup', 10),
+                demo.options.EnumValuesAttribute().init({
+                  values: [
+                    ['Top to Bottom', yfiles.layout.LayoutOrientation.TOP_TO_BOTTOM],
+                    ['Left to Right', yfiles.layout.LayoutOrientation.LEFT_TO_RIGHT],
+                    ['Bottom to Top', yfiles.layout.LayoutOrientation.BOTTOM_TO_TOP],
+                    ['Right to Left', yfiles.layout.LayoutOrientation.RIGHT_TO_LEFT]
+                  ]
+                }),
+                demo.options.TypeAttribute(yfiles.layout.LayoutOrientation.$class)
+              ]
+            },
+            get: function() {
+              return this.$classicLayoutOrientationItem
+            },
+            set: function(value) {
+              this.$classicLayoutOrientationItem = value
+            }
+          },
+
+          /**
+           * Backing field for below property
+           * @type {number}
+           */
+          $minimumNodeDistanceItem: 0,
+
+          /** @type {number} */
+          minimumNodeDistanceItem: {
+            $meta: function() {
+              return [
+                demo.options.LabelAttribute(
+                  'Minimum Node Distance',
+                  '#/api/yfiles.tree.ClassicTreeLayout#ClassicTreeLayout-property-minimumNodeDistance'
+                ),
+                demo.options.MinMaxAttribute().init({
+                  min: 1,
+                  max: 100
+                }),
+                demo.options.OptionGroupAttribute('ClassicGroup', 20),
+                demo.options.ComponentAttribute(demo.options.Components.SLIDER),
+                demo.options.TypeAttribute(yfiles.lang.Number.$class)
+              ]
+            },
+            get: function() {
+              return this.$minimumNodeDistanceItem
+            },
+            set: function(value) {
+              this.$minimumNodeDistanceItem = value
+            }
+          },
+
+          /**
+           * Backing field for below property
+           * @type {number}
+           */
+          $minimumLayerDistanceItem: 0,
+
+          /** @type {number} */
+          minimumLayerDistanceItem: {
+            $meta: function() {
+              return [
+                demo.options.LabelAttribute(
+                  'Minimum Layer Distance',
+                  '#/api/yfiles.tree.ClassicTreeLayout#ClassicTreeLayout-property-minimumLayerDistance'
+                ),
+                demo.options.MinMaxAttribute().init({
+                  min: 10,
+                  max: 300
+                }),
+                demo.options.OptionGroupAttribute('ClassicGroup', 30),
+                demo.options.ComponentAttribute(demo.options.Components.SLIDER),
+                demo.options.TypeAttribute(yfiles.lang.Number.$class)
+              ]
+            },
+            get: function() {
+              return this.$minimumLayerDistanceItem
+            },
+            set: function(value) {
+              this.$minimumLayerDistanceItem = value
+            }
+          },
+
+          /**
+           * Backing field for below property
+           * @type {yfiles.tree.PortStyle}
+           */
+          $portStyleItem: null,
+
+          /** @type {yfiles.tree.PortStyle} */
+          portStyleItem: {
+            $meta: function() {
+              return [
+                demo.options.LabelAttribute(
+                  'Port Style',
+                  '#/api/yfiles.tree.ClassicTreeLayout#ClassicTreeLayout-property-portStyle'
+                ),
+                demo.options.OptionGroupAttribute('ClassicGroup', 40),
+                demo.options.EnumValuesAttribute().init({
+                  values: [
+                    ['Node Centered', yfiles.tree.PortStyle.NODE_CENTER],
+                    ['Border Centered', yfiles.tree.PortStyle.BORDER_CENTER],
+                    ['Border Distributed', yfiles.tree.PortStyle.BORDER_DISTRIBUTED]
+                  ]
+                }),
+                demo.options.TypeAttribute(yfiles.tree.PortStyle.$class)
+              ]
+            },
+            get: function() {
+              return this.$portStyleItem
+            },
+            set: function(value) {
+              this.$portStyleItem = value
             }
           },
 
@@ -1563,25 +1393,182 @@
            * Backing field for below property
            * @type {boolean}
            */
-          $considerNodeLabelingItem: false,
+          $enforceGlobalLayeringItem: false,
 
           /** @type {boolean} */
-          considerNodeLabelingItem: {
+          enforceGlobalLayeringItem: {
             $meta: function() {
               return [
                 demo.options.LabelAttribute(
-                  'Consider Node Labels',
-                  '#/api/yfiles.tree.TreeLayout#TreeLayout-property-considerNodeLabels'
+                  'Global Layering',
+                  '#/api/yfiles.tree.ClassicTreeLayout#ClassicTreeLayout-property-enforceGlobalLayering'
                 ),
-                demo.options.OptionGroupAttribute('NodePropertiesGroup', 10),
+                demo.options.OptionGroupAttribute('ClassicGroup', 50),
                 demo.options.TypeAttribute(yfiles.lang.Boolean.$class)
               ]
             },
             get: function() {
-              return this.$considerNodeLabelingItem
+              return this.$enforceGlobalLayeringItem
             },
             set: function(value) {
-              this.$considerNodeLabelingItem = value
+              this.$enforceGlobalLayeringItem = value
+            }
+          },
+
+          /**
+           * Backing field for below property
+           * @type {boolean}
+           */
+          $orthogonalEdgeRoutingItem: false,
+
+          /** @type {boolean} */
+          orthogonalEdgeRoutingItem: {
+            $meta: function() {
+              return [
+                demo.options.LabelAttribute(
+                  'Orthogonal Edge Routing',
+                  '#/api/yfiles.tree.ClassicTreeLayout#ClassicTreeLayout-property-edgeRoutingStyle'
+                ),
+                demo.options.OptionGroupAttribute('ClassicGroup', 60),
+                demo.options.TypeAttribute(yfiles.lang.Boolean.$class)
+              ]
+            },
+            get: function() {
+              return this.$orthogonalEdgeRoutingItem
+            },
+            set: function(value) {
+              this.$orthogonalEdgeRoutingItem = value
+            }
+          },
+
+          /**
+           * Backing field for below property
+           * @type {number}
+           */
+          $busAlignmentItem: 0,
+
+          /** @type {number} */
+          busAlignmentItem: {
+            $meta: function() {
+              return [
+                demo.options.LabelAttribute(
+                  'Edge Bus Alignment',
+                  '#/api/yfiles.tree.ClassicTreeLayout#ClassicTreeLayout-property-busAlignment'
+                ),
+                demo.options.OptionGroupAttribute('ClassicGroup', 70),
+                demo.options.MinMaxAttribute().init({
+                  min: 0.0,
+                  max: 1.0,
+                  step: 0.01
+                }),
+                demo.options.ComponentAttribute(demo.options.Components.SLIDER),
+                demo.options.TypeAttribute(yfiles.lang.Number.$class)
+              ]
+            },
+            get: function() {
+              return this.$busAlignmentItem
+            },
+            set: function(value) {
+              this.$busAlignmentItem = value
+            }
+          },
+
+          /** @type {boolean} */
+          shouldDisableBusAlignmentItem: {
+            $meta: function() {
+              return [demo.options.TypeAttribute(yfiles.lang.Boolean.$class)]
+            },
+            get: function() {
+              return (
+                this.orthogonalEdgeRoutingItem === false ||
+                (this.enforceGlobalLayeringItem === false &&
+                  this.childPlacementPolicyItem !==
+                    yfiles.tree.LeafPlacement.ALL_LEAVES_ON_SAME_LAYER)
+              )
+            }
+          },
+
+          /**
+           * Backing field for below property
+           * @type {number}
+           */
+          $verticalAlignmentItem: 0,
+
+          /** @type {number} */
+          verticalAlignmentItem: {
+            $meta: function() {
+              return [
+                demo.options.LabelAttribute(
+                  'Vertical Child Alignment',
+                  '#/api/yfiles.tree.ClassicTreeLayout#ClassicTreeLayout-property-verticalAlignment'
+                ),
+                demo.options.OptionGroupAttribute('ClassicGroup', 80),
+                demo.options.MinMaxAttribute().init({
+                  min: 0.0,
+                  max: 1.0,
+                  step: 0.01
+                }),
+                demo.options.ComponentAttribute(demo.options.Components.SLIDER),
+                demo.options.TypeAttribute(yfiles.lang.Number.$class)
+              ]
+            },
+            get: function() {
+              return this.$verticalAlignmentItem
+            },
+            set: function(value) {
+              this.$verticalAlignmentItem = value
+            }
+          },
+
+          /** @type {boolean} */
+          shouldDisableVerticalAlignmentItem: {
+            $meta: function() {
+              return [demo.options.TypeAttribute(yfiles.lang.Boolean.$class)]
+            },
+            get: function() {
+              return !this.enforceGlobalLayeringItem
+            }
+          },
+
+          /**
+           * Backing field for below property
+           * @type {yfiles.tree.ChildPlacement}
+           */
+          $childPlacementPolicyItem: null,
+
+          /** @type {yfiles.tree.ChildPlacement} */
+          childPlacementPolicyItem: {
+            $meta: function() {
+              return [
+                demo.options.LabelAttribute(
+                  'Child Placement Policy',
+                  '#/api/yfiles.tree.ClassicTreeLayout#ClassicTreeLayout-property-leafPlacement'
+                ),
+                demo.options.OptionGroupAttribute('ClassicGroup', 90),
+                demo.options.EnumValuesAttribute().init({
+                  values: [
+                    ['Siblings in same Layer', yfiles.tree.LeafPlacement.SIBLINGS_ON_SAME_LAYER],
+                    [
+                      'All Leaves in same Layer',
+                      yfiles.tree.LeafPlacement.ALL_LEAVES_ON_SAME_LAYER
+                    ],
+                    ['Leaves stacked', yfiles.tree.LeafPlacement.LEAVES_STACKED],
+                    ['Leaves stacked left', yfiles.tree.LeafPlacement.LEAVES_STACKED_LEFT],
+                    ['Leaves stacked right', yfiles.tree.LeafPlacement.LEAVES_STACKED_RIGHT],
+                    [
+                      'Leaves stacked left and right',
+                      yfiles.tree.LeafPlacement.LEAVES_STACKED_LEFT_AND_RIGHT
+                    ]
+                  ]
+                }),
+                demo.options.TypeAttribute(yfiles.tree.LeafPlacement.$class)
+              ]
+            },
+            get: function() {
+              return this.$childPlacementPolicyItem
+            },
+            set: function(value) {
+              this.$childPlacementPolicyItem = value
             }
           },
 
@@ -1853,28 +1840,6 @@
             }
           },
 
-          $initTreeLayoutConfig: function() {
-            this.$layoutStyleItem = demo.TreeLayoutConfig.EnumStyle.CLASSIC
-            this.$routingStyleForNonTreeEdgesItem = demo.TreeLayoutConfig.EnumRoute.ORTHOGONAL
-            this.$layoutOrientationItem = yfiles.layout.LayoutOrientation.TOP_TO_BOTTOM
-            this.$portStyleItem = yfiles.tree.PortStyle.NODE_CENTER
-            this.$childPlacementPolicyItem = yfiles.tree.LeafPlacement.LEAVES_STACKED
-            this.$edgeLabelingItem = demo.TreeLayoutConfig.EnumEdgeLabeling.NONE
-            this.$labelPlacementOrientationItem =
-              demo.LayoutConfiguration.EnumLabelPlacementOrientation.PARALLEL
-            this.$labelPlacementAlongEdgeItem =
-              demo.LayoutConfiguration.EnumLabelPlacementAlongEdge.ANYWHERE
-            this.$labelPlacementSideOfEdgeItem =
-              demo.LayoutConfiguration.EnumLabelPlacementSideOfEdge.ANYWHERE
-            this.$nodePlacerItem = demo.TreeLayoutConfig.EnumNodePlacer.DEFAULT
-            this.$spacingItem = 20
-            this.$rootAlignmentItem = demo.TreeLayoutConfig.EnumRootAlignment.CENTER
-            this.$orientationItem = yfiles.layout.LayoutOrientation.TOP_TO_BOTTOM
-            this.$nodePlacerAspectRatioItem = 1
-            this.$allowMultiParentsItem = false
-            this.$portAssignmentItem = yfiles.tree.PortAssignmentMode.NONE
-          },
-
           /** @lends {demo.TreeLayoutConfig} */
           $static: {
             // ReSharper restore UnusedMember.Global
@@ -1899,8 +1864,8 @@
             EnumStyle: new yfiles.lang.EnumDefinition(function() {
               return {
                 DEFAULT: 0,
-                HV: 1,
-                AR: 2,
+                HORIZONTAL_VERTICAL: 1,
+                COMPACT: 2,
                 CLASSIC: 3
               }
             }),

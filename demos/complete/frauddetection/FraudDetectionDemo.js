@@ -210,6 +210,7 @@ require([
       selectableItems: yfiles.graph.GraphItemTypes.NODE,
       focusableItems: yfiles.graph.GraphItemTypes.NONE,
       showHandleItems: yfiles.graph.GraphItemTypes.NONE,
+      deletableItems: yfiles.graph.GraphItemTypes.NONE,
       clickHitTestOrder: [yfiles.graph.GraphItemTypes.NODE, yfiles.graph.GraphItemTypes.EDGE]
     })
     inputMode.moveInputMode.enabled = false

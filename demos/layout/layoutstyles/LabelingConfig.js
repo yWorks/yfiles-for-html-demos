@@ -61,7 +61,6 @@
            */
           constructor: function() {
             demo.LayoutConfiguration.call(this)
-            this.$initLabelingConfig()
             this.placeNodeLabelsItem = true
             this.placeEdgeLabelsItem = true
             this.considerSelectedFeaturesOnlyItem = false
@@ -70,6 +69,8 @@
 
             this.allowNodeOverlapsItem = false
             this.allowEdgeOverlapsItem = true
+            this.reduceAmbiguityItem = true
+
             this.labelPlacementAlongEdgeItem =
               demo.LayoutConfiguration.EnumLabelPlacementAlongEdge.CENTERED
             this.labelPlacementSideOfEdgeItem =
@@ -128,10 +129,7 @@
 
             const selection = graphComponent.selection
             if (selection !== null) {
-              // layoutData.affectedLabels.source = selection.selectedLabels;
-              layoutData.affectedLabels.delegate = label => {
-                return selection.isSelected(label)
-              }
+              layoutData.affectedLabels.source = selection.selectedLabels
 
               graphComponent.graph.mapperRegistry.createDelegateMapper(
                 yfiles.graph.ILabelOwner.$class,
@@ -156,7 +154,11 @@
            * Called after the layout animation is done.
            * @see Overrides {@link demo.LayoutConfiguration#postProcess}
            */
-          postProcess: function(graphComponent) {},
+          postProcess: function(graphComponent) {
+            graphComponent.graph.mapperRegistry.removeMapper(
+              SelectedLabelsStage.SELECTED_LABELS_AT_ITEM_KEY
+            )
+          },
 
           $setupEdgeLabelModels: function(graphComponent) {
             const model = new yfiles.graph.FreeEdgeLabelModel()
@@ -186,8 +188,6 @@
             })
           },
 
-          // ReSharper disable UnusedMember.Global
-          // ReSharper disable InconsistentNaming
           /** @type {demo.options.OptionGroup} */
           DescriptionGroup: {
             $meta: function() {
@@ -236,8 +236,6 @@
             value: null
           },
 
-          // ReSharper restore UnusedMember.Global
-          // ReSharper restore InconsistentNaming
           /** @type {string} */
           descriptionText: {
             $meta: function() {
@@ -393,17 +391,17 @@
             $meta: function() {
               return [
                 demo.options.LabelAttribute(
-                  'Optimization Strategy',
+                  'Reduce overlaps',
                   '#/api/yfiles.labeling.GenericLabeling#MISLabelingBase-property-optimizationStrategy'
                 ),
                 demo.options.OptionGroupAttribute('QualityGroup', 40),
                 demo.options.EnumValuesAttribute().init({
                   values: [
                     ['Balanced', yfiles.labeling.OptimizationStrategy.BALANCED],
-                    ['NodeOverlap', yfiles.labeling.OptimizationStrategy.NODE_OVERLAP],
-                    ['LabelOverlap', yfiles.labeling.OptimizationStrategy.LABEL_OVERLAP],
-                    ['EdgeOverlap', yfiles.labeling.OptimizationStrategy.EDGE_OVERLAP],
-                    ['None', yfiles.labeling.OptimizationStrategy.NONE]
+                    ['With Nodes', yfiles.labeling.OptimizationStrategy.NODE_OVERLAP],
+                    ['Between Labels', yfiles.labeling.OptimizationStrategy.LABEL_OVERLAP],
+                    ['With Edges', yfiles.labeling.OptimizationStrategy.EDGE_OVERLAP],
+                    ["Don't optimize", yfiles.labeling.OptimizationStrategy.NONE]
                   ]
                 }),
                 demo.options.TypeAttribute(yfiles.labeling.OptimizationStrategy.$class)
@@ -603,24 +601,6 @@
                 demo.LayoutConfiguration.EnumLabelPlacementSideOfEdge.ON_EDGE
               )
             }
-          },
-
-          $initLabelingConfig: function() {
-            this.$optimizationStrategyItem = yfiles.labeling.OptimizationStrategy.BALANCED
-            this.$labelPlacementOrientationItem =
-              demo.LayoutConfiguration.EnumLabelPlacementOrientation.PARALLEL
-            this.$labelPlacementAlongEdgeItem =
-              demo.LayoutConfiguration.EnumLabelPlacementAlongEdge.ANYWHERE
-            this.$labelPlacementSideOfEdgeItem =
-              demo.LayoutConfiguration.EnumLabelPlacementSideOfEdge.ANYWHERE
-          },
-
-          /** @lends {demo.LabelingConfig} */
-          $static: {
-            /**
-             * @type {string}
-             */
-            LABEL_SELECTION_DP_KEY: 'LabelSelection'
           }
         }
       })

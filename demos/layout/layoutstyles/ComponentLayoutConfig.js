@@ -41,7 +41,7 @@
     yfiles.module('demo', exports => {
       /**
        * Configuration options for the layout algorithm of the same name.
-       * @yjs:keep=DescriptionGroup,LayoutGroup,descriptionText,aspectRatioItem,componentSpacingItem,fromSketchItem,gridEnabledItem,gridSpacingItem,noOverlapItem,shouldDisableAspectRatioItem,shouldDisableGridSpacingItem,styleItem,useSceenRatioItem
+       * @yjs:keep=DescriptionGroup,LayoutGroup,descriptionText,aspectRatioItem,componentSpacingItem,fromSketchItem,gridEnabledItem,gridSpacingItem,noOverlapItem,shouldDisableAspectRatioItem,shouldDisableGridSpacingItem,styleItem,useScreenRatioItem
        * @class
        * @extends demo.LayoutConfiguration
        */
@@ -57,7 +57,6 @@
            */
           constructor: function() {
             demo.LayoutConfiguration.call(this)
-            this.$initComponentLayoutConfig()
             const layout = new yfiles.layout.ComponentLayout()
             this.styleItem = yfiles.layout.ComponentArrangementStyles.ROWS
             this.noOverlapItem =
@@ -65,7 +64,7 @@
             this.fromSketchItem =
               (layout.style & yfiles.layout.ComponentArrangementStyles.MODIFIER_AS_IS) !== 0
             const size = layout.preferredSize
-            this.useSceenRatioItem = true
+            this.useScreenRatioItem = true
             this.aspectRatioItem = size.width / size.height
 
             this.componentSpacingItem = layout.componentSpacing
@@ -92,8 +91,8 @@
             layout.style = style
 
             let w, h
-            if (graphComponent !== null && this.useSceenRatioItem) {
-              const canvasSize = graphComponent.size
+            if (graphComponent !== null && this.useScreenRatioItem) {
+              const canvasSize = graphComponent.innerSize
               w = canvasSize.width
               h = canvasSize.height
             } else {
@@ -113,8 +112,6 @@
             return layout
           },
 
-          // ReSharper disable UnusedMember.Global
-          // ReSharper disable InconsistentNaming
           /** @type {demo.options.OptionGroup} */
           DescriptionGroup: {
             $meta: function() {
@@ -139,8 +136,6 @@
             value: null
           },
 
-          // ReSharper restore UnusedMember.Global
-          // ReSharper restore InconsistentNaming
           /** @type {string} */
           descriptionText: {
             $meta: function() {
@@ -192,19 +187,19 @@
                       yfiles.layout.ComponentArrangementStyles.MULTI_ROWS_COMPACT
                     ],
                     [
-                      'Width Constrained Nested Rows',
+                      'Width-constrained Nested Rows',
                       yfiles.layout.ComponentArrangementStyles.MULTI_ROWS_WIDTH_CONSTRAINT
                     ],
                     [
-                      'Height Constrained Nested Rows',
+                      'Height-constrained Nested Rows',
                       yfiles.layout.ComponentArrangementStyles.MULTI_ROWS_HEIGHT_CONSTRAINT
                     ],
                     [
-                      'Width Constrained Compact Nested Rows',
+                      'Width-constrained Compact Nested Rows',
                       yfiles.layout.ComponentArrangementStyles.MULTI_ROWS_WIDTH_CONSTRAINT_COMPACT
                     ],
                     [
-                      'Height Constrained Compact Nested Rows',
+                      'Height-constrained Compact Nested Rows',
                       yfiles.layout.ComponentArrangementStyles.MULTI_ROWS_HEIGHT_CONSTRAINT_COMPACT
                     ]
                   ]
@@ -272,24 +267,14 @@
             }
           },
 
-          /** @type {boolean} */
-          shouldDisableAspectRatioItem: {
-            $meta: function() {
-              return [demo.options.TypeAttribute(yfiles.lang.Boolean.$class)]
-            },
-            get: function() {
-              return this.useSceenRatioItem
-            }
-          },
-
           /**
            * Backing field for below property
            * @type {boolean}
            */
-          $useSceenRatioItem: false,
+          $useScreenRatioItem: false,
 
           /** @type {boolean} */
-          useSceenRatioItem: {
+          useScreenRatioItem: {
             $meta: function() {
               return [
                 demo.options.LabelAttribute(
@@ -301,10 +286,10 @@
               ]
             },
             get: function() {
-              return this.$useSceenRatioItem
+              return this.$useScreenRatioItem
             },
             set: function(value) {
-              this.$useSceenRatioItem = value
+              this.$useScreenRatioItem = value
             }
           },
 
@@ -337,6 +322,16 @@
             },
             set: function(value) {
               this.$aspectRatioItem = value
+            }
+          },
+
+          /** @type {boolean} */
+          shouldDisableAspectRatioItem: {
+            $meta: function() {
+              return [demo.options.TypeAttribute(yfiles.lang.Boolean.$class)]
+            },
+            get: function() {
+              return this.useScreenRatioItem
             }
           },
 
@@ -436,10 +431,6 @@
             get: function() {
               return !this.gridEnabledItem
             }
-          },
-
-          $initComponentLayoutConfig: function() {
-            this.$styleItem = yfiles.layout.ComponentArrangementStyles.NONE
           }
         }
       })

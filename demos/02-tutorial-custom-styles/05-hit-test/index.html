@@ -49,16 +49,16 @@
 <aside class="demo-sidebar demo-left">
   <h1 class="demo-sidebar-header">Description</h1>
   <div class="demo-sidebar-content">
-    <p>This step shows how to override <code>isHit()</code> and <code>isInBox()</code> of <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.styles.NodeStyleBase">yfiles.styles.NodeStyleBase</a>.
+    <p>This step shows how to override <code>isHit()</code> and <code>isInBox()</code> of <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.styles.NodeStyleBase" target="_blank">yfiles.styles.NodeStyleBase</a>.
     </p>
 
     <div>
       <p>
-        <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.styles.NodeStyleBase#isHit">yfiles.styles.NodeStyleBase#isHit</a> is used for mouse click detection. It should return true if the
-        tested point is inside the node. <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.styles.NodeStyleBase#isHit">yfiles.styles.NodeStyleBase#isHit</a> should take into account the
-        imprecision radius specified by the <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.view.ICanvasContext#hitTestRadius">yfiles.view.ICanvasContext#hitTestRadius</a> property. </p>
+        <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.styles.NodeStyleBase#isHit" target="_blank">yfiles.styles.NodeStyleBase#isHit</a> is used for mouse click detection. It should return true if the
+        tested point is inside the node. <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.styles.NodeStyleBase#isHit" target="_blank">yfiles.styles.NodeStyleBase#isHit</a> should take into account the
+        imprecision radius specified by the <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.view.ICanvasContext#hitTestRadius" target="_blank">yfiles.view.ICanvasContext#hitTestRadius</a> property. </p>
       <p>
-        <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.styles.NodeStyleBase#isInBox">yfiles.styles.NodeStyleBase#isInBox</a> is used for marquee detection. It should return true if the node
+        <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.styles.NodeStyleBase#isInBox" target="_blank">yfiles.styles.NodeStyleBase#isInBox</a> is used for marquee detection. It should return true if the node
         intersects with the "tested" box or lies completely inside. Also, it should be true if the "tested box" lies
         completely inside the node.</p>
     </div>
@@ -67,15 +67,15 @@
 
     <ul>
       <li>
-        Take a look at <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.styles.NodeStyleBase#isHit">yfiles.styles.NodeStyleBase#isHit</a> and <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.styles.NodeStyleBase#isInBox">yfiles.styles.NodeStyleBase#isInBox</a>.
+        Take a look at <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.styles.NodeStyleBase#isHit" target="_blank">yfiles.styles.NodeStyleBase#isHit</a> and <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.styles.NodeStyleBase#isInBox" target="_blank">yfiles.styles.NodeStyleBase#isInBox</a>.
       </li>
       <li>
-        Click inside/outside a node to see when it gets selected. Click near the node to watch the effects of the <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.view.ICanvasContext#hitTestRadius">yfiles.view.ICanvasContext#hitTestRadius</a>.
-        Zooming out makes the <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.view.ICanvasContext#hitTestRadius">yfiles.view.ICanvasContext#hitTestRadius</a> bigger.
+        Click inside/outside a node to see when it gets selected. Click near the node to watch the effects of the <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.view.ICanvasContext#hitTestRadius" target="_blank">yfiles.view.ICanvasContext#hitTestRadius</a>.
+        Zooming out makes the <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.view.ICanvasContext#hitTestRadius" target="_blank">yfiles.view.ICanvasContext#hitTestRadius</a> bigger.
       </li>
       <li>
         Drag a marquee box to select a node. If you drag it inside the surrounding box of a node, you will see that the node
-        doesn't get selected. Drag it near the node to watch the effects of the <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.view.ICanvasContext#hitTestRadius">yfiles.view.ICanvasContext#hitTestRadius</a>.
+        doesn't get selected. Drag it near the node to watch the effects of the <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.view.ICanvasContext#hitTestRadius" target="_blank">yfiles.view.ICanvasContext#hitTestRadius</a>.
       </li>
       <li>
         Comment in the first line in <code>MySimpleNodeStyle#isHit</code> and <code>MySimpleNodeStyle#isInBox</code>
@@ -83,12 +83,12 @@
         node won't be respected but the node will be treated as if it was rectangular.
       </li>
       <li>
-        Please note that <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.styles.NodeStyleBase#isHit">yfiles.styles.NodeStyleBase#isHit</a> is just implemented for the sake of completeness
-        and performance here. The base class implementation takes the result of <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.styles.NodeStyleBase#getOutline">yfiles.styles.NodeStyleBase#getOutline</a>
-        for hit testing which calculates exactly the same thing, with the difference that <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.styles.NodeStyleBase#getOutline">yfiles.styles.NodeStyleBase#getOutline</a>
-        needs first to build a <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.geometry.GeneralPath">yfiles.geometry.GeneralPath</a>, which is more expensive than an effective
-        implementation as shown in <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.styles.NodeStyleBase#isHit">yfiles.styles.NodeStyleBase#isHit</a>. If <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.styles.NodeStyleBase#getOutline">yfiles.styles.NodeStyleBase#getOutline</a>
-        is implemented correctly, <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.styles.NodeStyleBase#isHit">yfiles.styles.NodeStyleBase#isHit</a> will automatically return the correct
+        Please note that <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.styles.NodeStyleBase#isHit" target="_blank">yfiles.styles.NodeStyleBase#isHit</a> is just implemented for the sake of completeness
+        and performance here. The base class implementation takes the result of <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.styles.NodeStyleBase#getOutline" target="_blank">yfiles.styles.NodeStyleBase#getOutline</a>
+        for hit testing which calculates exactly the same thing, with the difference that <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.styles.NodeStyleBase#getOutline" target="_blank">yfiles.styles.NodeStyleBase#getOutline</a>
+        needs first to build a <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.geometry.GeneralPath" target="_blank">yfiles.geometry.GeneralPath</a>, which is more expensive than an effective
+        implementation as shown in <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.styles.NodeStyleBase#isHit" target="_blank">yfiles.styles.NodeStyleBase#isHit</a>. If <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.styles.NodeStyleBase#getOutline" target="_blank">yfiles.styles.NodeStyleBase#getOutline</a>
+        is implemented correctly, <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.styles.NodeStyleBase#isHit" target="_blank">yfiles.styles.NodeStyleBase#isHit</a> will automatically return the correct
         result.
       </li>
     </ul>
@@ -97,7 +97,7 @@
 
     <ul>
       <li>
-        Implement <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.styles.NodeStyleBase#getBounds">yfiles.styles.NodeStyleBase#getBounds</a>, so that the drop shadow will be included in the bounds of
+        Implement <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.styles.NodeStyleBase#getBounds" target="_blank">yfiles.styles.NodeStyleBase#getBounds</a>, so that the drop shadow will be included in the bounds of
         the node.
       </li>
       <li>

@@ -57,7 +57,6 @@
            */
           constructor: function() {
             demo.LayoutConfiguration.call(this)
-            this.$initPolylineEdgeRouterConfig()
             const router = new yfiles.router.EdgeRouter()
 
             this.scopeItem = router.scope
@@ -91,7 +90,7 @@
               demo.LayoutConfiguration.EnumLabelPlacementSideOfEdge.ON_EDGE
             this.labelPlacementOrientationItem =
               demo.LayoutConfiguration.EnumLabelPlacementOrientation.HORIZONTAL
-            this.labelPlacementDistanceItem = 10.0
+            this.labelPlacementDistanceItem = 10
           },
 
           /**
@@ -221,6 +220,7 @@
               layoutData.affectedEdges.delegate = edge => true
               layoutData.affectedNodes.delegate = node => true
             }
+
             return layoutData
           },
 
@@ -401,9 +401,9 @@
                 demo.options.EnumValuesAttribute().init({
                   values: [
                     ['Balanced', demo.PolylineEdgeRouterConfig.EnumStrategies.BALANCED],
-                    ['Less Bends', demo.PolylineEdgeRouterConfig.EnumStrategies.MINIMIZE_BENDS],
+                    ['Fewer Bends', demo.PolylineEdgeRouterConfig.EnumStrategies.MINIMIZE_BENDS],
                     [
-                      'Less Crossings',
+                      'Fewer Crossings',
                       demo.PolylineEdgeRouterConfig.EnumStrategies.MINIMIZE_CROSSINGS
                     ],
                     [
@@ -1134,18 +1134,6 @@
                   demo.LayoutConfiguration.EnumLabelPlacementSideOfEdge.ON_EDGE
               )
             }
-          },
-
-          $initPolylineEdgeRouterConfig: function() {
-            this.$scopeItem = yfiles.router.Scope.ROUTE_ALL_EDGES
-            this.$optimizationStrategyItem = demo.PolylineEdgeRouterConfig.EnumStrategies.BALANCED
-            this.$monotonicRestrictionItem = demo.PolylineEdgeRouterConfig.EnumMonotonyFlags.NONE
-            this.$labelPlacementOrientationItem =
-              demo.LayoutConfiguration.EnumLabelPlacementOrientation.PARALLEL
-            this.$labelPlacementAlongEdgeItem =
-              demo.LayoutConfiguration.EnumLabelPlacementAlongEdge.ANYWHERE
-            this.$labelPlacementSideOfEdgeItem =
-              demo.LayoutConfiguration.EnumLabelPlacementSideOfEdge.ANYWHERE
           },
 
           /** @lends {demo.PolylineEdgeRouterConfig} */

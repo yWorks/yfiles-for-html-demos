@@ -143,12 +143,9 @@
             } else if (
               this.routingStyleForNonTreeEdgesItem === demo.BalloonLayoutConfig.EnumRoute.ORTHOGONAL
             ) {
-              let /**yfiles.router.EdgeRouter*/ newEdgeRouter
-              newEdgeRouter = new yfiles.router.EdgeRouter()
-              newEdgeRouter.rerouting = true
-              newEdgeRouter.scope = yfiles.router.Scope.ROUTE_AFFECTED_EDGES
-
-              const edgeRouter = newEdgeRouter
+              const edgeRouter = new yfiles.router.EdgeRouter()
+              edgeRouter.rerouting = true
+              edgeRouter.scope = 'ROUTE_AFFECTED_EDGES'
               treeReductionStage.nonTreeEdgeSelectionKey = edgeRouter.affectedEdgesDpKey
               treeReductionStage.nonTreeEdgeRouter = edgeRouter
             } else if (

@@ -47,10 +47,11 @@ define([], () => {
         const format = fileName.split('.')[1].toLowerCase()
 
         if (FileSaveSupport.isFileConstructorAvailable()) {
-          if (format === 'txt' || format === 'svg' || format === 'graphml') {
+          if (format === 'txt' || format === 'json' || format === 'svg' || format === 'graphml') {
             let mimeType = ''
             switch (format) {
               case 'txt':
+              case 'json':
               default:
                 mimeType = 'text/plain'
                 break

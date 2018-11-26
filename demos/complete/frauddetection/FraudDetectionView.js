@@ -219,7 +219,7 @@ define([
 
     /**
      * Determines whether or not a node of the filtered graph should be visible.
-     * @param [yfiles.graph.INode} node
+     * @param {yfiles.graph.INode} node
      * @return {boolean} true if the node should be visible, false otherwise
      */
     nodePredicate(node) {

@@ -34,12 +34,12 @@ define(['yfiles/view-component'], /** @type {yfiles_namespace} */ /** typeof yfi
    *
    * The stage must be prepended to the layout algorithm and applies the following three steps:
    * <ul>
-   *   <li>Removes from the graph edges that are incident to group nodes.</li>
+   *   <li>Removes edges from the graph that are incident to group nodes.</li>
    *   <li>Invokes the core layout algorithm on the reduced graph.</li>
    *   <li>Re-inserts all previously removed edges and optionally places their labels.</li>
    * </ul>
    *
-   * This stage can be useful for layout algorithms or stages that cannot handle edges between group nodes e.g.,
+   * This stage can be useful for layout algorithms or stages that cannot handle edges between group nodes, e.g.,
    * {@link TreeReductionStage}. Optionally, {@link HandleEdgesBetweenGroupsStage} can also place the labels of
    * the edges that were temporarily removed right after they are restored back to the graph.
    *
@@ -74,7 +74,7 @@ define(['yfiles/view-component'], /** @type {yfiles_namespace} */ /** typeof yfi
     /**
      * Specifies the edge routing algorithm that is applied to the set of marked edges.
      *
-     * Note that, it is required that a suitable edge selection key is specified and the router's scope is
+     * Note that it is required that a suitable edge selection key is specified and the router's scope is
      * reduced to the affected edges.
      */
     get markedEdgeRouter() {
@@ -122,9 +122,7 @@ define(['yfiles/view-component'], /** @type {yfiles_namespace} */ /** typeof yfi
           ) {
             hiddenEdgesMap.set(edge, true)
             edgeHider.hide(edge)
-            if (!existHiddenEdges) {
-              existHiddenEdges = true
-            }
+            existHiddenEdges = true
           } else {
             hiddenEdgesMap.set(edge, false)
           }

@@ -56,7 +56,6 @@
            */
           constructor: function() {
             demo.LayoutConfiguration.call(this)
-            this.$initChannelEdgeRouterConfig()
             this.scopeItem = yfiles.router.Scope.ROUTE_ALL_EDGES
             this.minimumDistanceItem = 10
             this.activateGridRoutingItem = true
@@ -129,8 +128,6 @@
            */
           postProcess: function(graphComponent) {},
 
-          // ReSharper disable UnusedMember.Global
-          // ReSharper disable InconsistentNaming
           /** @type {demo.options.OptionGroup} */
           DescriptionGroup: {
             $meta: function() {
@@ -403,22 +400,6 @@
             set: function(value) {
               this.$nodeCrossingCostItem = value
             }
-          },
-
-          $initChannelEdgeRouterConfig: function() {
-            this.$scopeItem = yfiles.router.Scope.ROUTE_ALL_EDGES
-          },
-
-          /** @lends {demo.ChannelEdgeRouterConfig} */
-          $static: {
-            // ReSharper restore UnusedMember.Global
-            // ReSharper restore InconsistentNaming
-            EnumPathFinder: new yfiles.lang.EnumDefinition(() => {
-              return {
-                ORTHOGONAL_PATTERN_PATH_FINDER: 0,
-                ORTHOGONAL_SHORTEST_PATH_PATH_FINDER: 1
-              }
-            })
           }
         }
       })

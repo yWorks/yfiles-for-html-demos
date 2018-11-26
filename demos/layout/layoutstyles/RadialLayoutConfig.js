@@ -56,7 +56,7 @@
            */
           constructor: function() {
             demo.LayoutConfiguration.call(this)
-            this.$initRadialLayoutConfig()
+
             const layout = new yfiles.radial.RadialLayout()
 
             this.centerStrategyItem = yfiles.radial.CenterNodesPolicy.WEIGHTED_CENTRALITY
@@ -74,6 +74,7 @@
                   layout.minimumBendAngle) /
                   demo.RadialLayoutConfig.SMOOTHNESS_ANGLE_FACTOR
               ) | 0
+            this.edgeBundlingStrengthItem = 0.95
 
             this.edgeLabelingItem = false
             this.considerNodeLabelsItem = layout.considerNodeLabels
@@ -83,7 +84,7 @@
               demo.LayoutConfiguration.EnumLabelPlacementSideOfEdge.ON_EDGE
             this.labelPlacementOrientationItem =
               demo.LayoutConfiguration.EnumLabelPlacementOrientation.HORIZONTAL
-            this.labelPlacementDistanceItem = 10.0
+            this.labelPlacementDistanceItem = 10
           },
 
           /**
@@ -98,7 +99,7 @@
 
             if (
               this.edgeRoutingStrategyItem !==
-              demo.RadialLayoutConfig.EnumEdgeRootingStrategies.BUNDLED
+              demo.RadialLayoutConfig.EnumEdgeRoutingStrategies.BUNDLED
             ) {
               layout.edgeRoutingStrategy = this.edgeRoutingStrategyItem
             }
@@ -117,20 +118,26 @@
             const bundlingDescriptor = new yfiles.layout.EdgeBundleDescriptor()
             bundlingDescriptor.bundled =
               this.edgeRoutingStrategyItem ===
-              demo.RadialLayoutConfig.EnumEdgeRootingStrategies.BUNDLED
+              demo.RadialLayoutConfig.EnumEdgeRoutingStrategies.BUNDLED
             ebc.bundlingStrength = this.edgeBundlingStrengthItem
             ebc.defaultBundleDescriptor = bundlingDescriptor
 
             if (this.edgeLabelingItem) {
-              const genericLabeling = new yfiles.labeling.GenericLabeling()
-              genericLabeling.placeEdgeLabels = true
-              genericLabeling.placeNodeLabels = false
-              genericLabeling.reduceAmbiguity = this.reduceAmbiguityItem
+              const labeling = new yfiles.labeling.GenericLabeling()
+              labeling.placeEdgeLabels = true
+              labeling.placeNodeLabels = false
+              labeling.reduceAmbiguity = this.reduceAmbiguityItem
               layout.labelingEnabled = true
-              layout.labeling = genericLabeling
+              layout.labeling = labeling
             }
 
-            this.$preProcess(graphComponent)
+            demo.LayoutConfiguration.addPreferredPlacementDescriptor(
+              graphComponent.graph,
+              this.labelPlacementAlongEdgeItem,
+              this.labelPlacementSideOfEdgeItem,
+              this.labelPlacementOrientationItem,
+              this.labelPlacementDistanceItem
+            )
 
             return layout
           },
@@ -146,20 +153,6 @@
               layoutData.centerNodes.delegate = node => graphComponent.selection.isSelected(node)
             }
             return layoutData
-          },
-
-          /**
-           * Preprocess the graph. Bind additional data to graph elements using mappers
-           * and set label model parameter for proper label placement.
-           */
-          $preProcess: function(graphComponent) {
-            demo.LayoutConfiguration.addPreferredPlacementDescriptor(
-              graphComponent.graph,
-              this.labelPlacementAlongEdgeItem,
-              this.labelPlacementSideOfEdgeItem,
-              this.labelPlacementOrientationItem,
-              this.labelPlacementDistanceItem
-            )
           },
 
           // ReSharper disable UnusedMember.Global
@@ -249,8 +242,8 @@
             },
             get: function() {
               return (
-                'The radial layout style arranges the nodes of a graph on concentric circles. Similar to hierarchic layouts, the overall flow of the graph is nicely visualized.</p>' +
-                'This style is well suited for the visualization of directed graphs and tree-like structures.'
+                '<p>The radial layout style arranges the nodes of a graph on concentric circles. Similar to hierarchic layouts, the overall flow of the graph is nicely visualized.</p>' +
+                '<p>This style is well suited for the visualization of directed graphs and tree-like structures.</p>'
               )
             }
           },
@@ -365,9 +358,9 @@
                 demo.options.OptionGroupAttribute('GeneralGroup', 40),
                 demo.options.EnumValuesAttribute().init({
                   values: [
-                    ['Straight', demo.RadialLayoutConfig.EnumEdgeRootingStrategies.POLYLINE],
-                    ['Arc', demo.RadialLayoutConfig.EnumEdgeRootingStrategies.ARC],
-                    ['Bundled', demo.RadialLayoutConfig.EnumEdgeRootingStrategies.BUNDLED]
+                    ['Straight', demo.RadialLayoutConfig.EnumEdgeRoutingStrategies.POLYLINE],
+                    ['Arc', demo.RadialLayoutConfig.EnumEdgeRoutingStrategies.ARC],
+                    ['Bundled', demo.RadialLayoutConfig.EnumEdgeRoutingStrategies.BUNDLED]
                   ]
                 }),
                 demo.options.TypeAttribute(yfiles.radial.EdgeRoutingStrategy.$class)
@@ -392,7 +385,7 @@
             $meta: function() {
               return [
                 demo.options.LabelAttribute(
-                  'Edge Smoothness',
+                  'Arc Smoothness',
                   '#/api/yfiles.radial.RadialLayout#RadialLayout-property-minimumBendAngle'
                 ),
                 demo.options.OptionGroupAttribute('GeneralGroup', 50),
@@ -419,6 +412,51 @@
             },
             get: function() {
               return this.edgeRoutingStrategyItem !== yfiles.radial.EdgeRoutingStrategy.ARC
+            }
+          },
+
+          /**
+           * Backing field for below property
+           * @type {number}
+           */
+          $edgeBundlingStrengthItem: 1.0,
+
+          /** @type {number} */
+          edgeBundlingStrengthItem: {
+            $meta: function() {
+              return [
+                demo.options.LabelAttribute(
+                  'Bundling Strength',
+                  '#/api/yfiles.layout.EdgeBundling#EdgeBundling-property-bundlingStrength'
+                ),
+                demo.options.OptionGroupAttribute('GeneralGroup', 55),
+                demo.options.MinMaxAttribute().init({
+                  min: 0,
+                  max: 1.0,
+                  step: 0.01
+                }),
+                demo.options.ComponentAttribute(demo.options.Components.SLIDER),
+                demo.options.TypeAttribute(yfiles.lang.Number.$class)
+              ]
+            },
+            get: function() {
+              return this.$edgeBundlingStrengthItem
+            },
+            set: function(value) {
+              this.$edgeBundlingStrengthItem = value
+            }
+          },
+
+          /** @type {boolean} */
+          shouldDisableEdgeBundlingStrengthItem: {
+            $meta: function() {
+              return [demo.options.TypeAttribute(yfiles.lang.Boolean.$class)]
+            },
+            get: function() {
+              return (
+                this.edgeRoutingStrategyItem !==
+                demo.RadialLayoutConfig.EnumEdgeRoutingStrategies.BUNDLED
+              )
             }
           },
 
@@ -485,51 +523,6 @@
             },
             set: function(value) {
               this.$layeringStrategyItem = value
-            }
-          },
-
-          /**
-           * Backing field for below property
-           * @type {number}
-           */
-          $edgeBundlingStrengthItem: 1.0,
-
-          /** @type {number} */
-          edgeBundlingStrengthItem: {
-            $meta: function() {
-              return [
-                demo.options.LabelAttribute(
-                  'Bundling Strength',
-                  '#/api/yfiles.layout.EdgeBundling#EdgeBundling-property-bundlingStrength'
-                ),
-                demo.options.OptionGroupAttribute('GeneralGroup', 80),
-                demo.options.MinMaxAttribute().init({
-                  min: 0,
-                  max: 1.0,
-                  step: 0.01
-                }),
-                demo.options.ComponentAttribute(demo.options.Components.SLIDER),
-                demo.options.TypeAttribute(yfiles.lang.Number.$class)
-              ]
-            },
-            get: function() {
-              return this.$edgeBundlingStrengthItem
-            },
-            set: function(value) {
-              this.$edgeBundlingStrengthItem = value
-            }
-          },
-
-          /** @type {boolean} */
-          shouldDisableEdgeBundlingStrengthItem: {
-            $meta: function() {
-              return [demo.options.TypeAttribute(yfiles.lang.Boolean.$class)]
-            },
-            get: function() {
-              return (
-                this.edgeRoutingStrategyItem !==
-                demo.RadialLayoutConfig.EnumEdgeRootingStrategies.BUNDLED
-              )
             }
           },
 
@@ -814,16 +807,6 @@
             }
           },
 
-          $initRadialLayoutConfig: function() {
-            this.$centerStrategyItem = yfiles.radial.CenterNodesPolicy.DIRECTED
-            this.$labelPlacementOrientationItem =
-              demo.LayoutConfiguration.EnumLabelPlacementOrientation.PARALLEL
-            this.$labelPlacementAlongEdgeItem =
-              demo.LayoutConfiguration.EnumLabelPlacementAlongEdge.ANYWHERE
-            this.$labelPlacementSideOfEdgeItem =
-              demo.LayoutConfiguration.EnumLabelPlacementSideOfEdge.ANYWHERE
-          },
-
           /** @lends {demo.RadialLayoutConfig} */
           $static: {
             /**
@@ -841,7 +824,7 @@
              */
             SMOOTHNESS_ANGLE_FACTOR: 4,
 
-            EnumEdgeRootingStrategies: new yfiles.lang.EnumDefinition(() => {
+            EnumEdgeRoutingStrategies: new yfiles.lang.EnumDefinition(() => {
               return {
                 ARC: yfiles.radial.EdgeRoutingStrategy.ARC,
                 POLYLINE: yfiles.radial.EdgeRoutingStrategy.POLYLINE,

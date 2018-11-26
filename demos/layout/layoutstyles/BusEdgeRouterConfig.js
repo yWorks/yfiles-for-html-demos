@@ -56,7 +56,6 @@
            */
           constructor: function() {
             demo.LayoutConfiguration.call(this)
-            this.$initBusEdgeRouterConfig()
             const router = new yfiles.router.BusRouter()
             this.scopeItem = demo.BusEdgeRouterConfig.EnumScope.ALL
             this.busesItem = demo.BusEdgeRouterConfig.EnumBuses.LABEL
@@ -127,8 +126,8 @@
             graph.edges.forEach(edge => {
               const isFixed =
                 scopePartial &&
-                !graphComponent.selection.isSelected(edge.sourceNode) &&
-                !graphComponent.selection.isSelected(edge.targetNode)
+                !graphSelection.isSelected(edge.sourceNode) &&
+                !graphSelection.isSelected(edge.targetNode)
               const id = demo.BusEdgeRouterConfig.getBusId(edge, this.busesItem)
               busIds.set(edge, new yfiles.router.BusDescriptor(id, isFixed))
             })
@@ -166,7 +165,7 @@
                   yfiles.graph.IEdge.$class,
                   yfiles.lang.Boolean.$class,
                   HideNonOrthogonalEdgesStage.SELECTED_NODES_DP_KEY,
-                  node => graph.selection.isSelected(node)
+                  node => graphSelection.isSelected(node)
                 )
 
                 layoutData.affectedEdges.delegate = edge => {
@@ -599,11 +598,6 @@
             set: function(value) {
               this.$minimumConnectionsCountItem = value
             }
-          },
-
-          $initBusEdgeRouterConfig: function() {
-            this.$scopeItem = demo.BusEdgeRouterConfig.EnumScope.ALL
-            this.$busesItem = demo.BusEdgeRouterConfig.EnumBuses.SINGLE
           },
 
           /** @lends {demo.BusEdgeRouterConfig} */

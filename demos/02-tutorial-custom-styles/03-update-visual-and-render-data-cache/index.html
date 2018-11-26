@@ -54,25 +54,25 @@
       This step shows how to implement high-performance rendering of nodes. </p>
 
     <p>
-      To achieve this, you need to implement <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.styles.NodeStyleBase#updateVisual">yfiles.styles.NodeStyleBase#updateVisual</a> which is called when the
-      container decides to update the visual representation of a node. In contrast to <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.styles.NodeStyleBase#createVisual">yfiles.styles.NodeStyleBase#createVisual</a>,
+      To achieve this, you need to implement <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.styles.NodeStyleBase#updateVisual" target="_blank">yfiles.styles.NodeStyleBase#updateVisual</a> which is called when the
+      container decides to update the visual representation of a node. In contrast to <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.styles.NodeStyleBase#createVisual" target="_blank">yfiles.styles.NodeStyleBase#createVisual</a>,
       we try to re-use the old visual instead of creating a new one. </p>
     <p>
-      Method <code>createRenderDataCache()</code> saves the relevant data for creating a visual. <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.styles.NodeStyleBase#updateVisual">yfiles.styles.NodeStyleBase#updateVisual</a>
+      Method <code>createRenderDataCache()</code> saves the relevant data for creating a visual. <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.styles.NodeStyleBase#updateVisual" target="_blank">yfiles.styles.NodeStyleBase#updateVisual</a>
       checks whether this data has changed. If it hasn't changed, the old visual can be returned, otherwise the whole or
       part of the visual has to be re-rendered. </p>
     <p>
       With the "High Performance" button, you can switch between the custom implementation of <code>updateVisual()</code> and the base
-      implementation which simply calls <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.styles.NodeStyleBase#createVisual">yfiles.styles.NodeStyleBase#createVisual</a>. </p>
+      implementation which simply calls <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.styles.NodeStyleBase#createVisual" target="_blank">yfiles.styles.NodeStyleBase#createVisual</a>. </p>
 
     <h2>Things to Try</h2>
 
     <ul>
       <li>
-        Click "Animate Nodes" to see the performance of <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.styles.NodeStyleBase#createVisual">yfiles.styles.NodeStyleBase#createVisual</a>.
+        Click "Animate Nodes" to see the performance of <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.styles.NodeStyleBase#createVisual" target="_blank">yfiles.styles.NodeStyleBase#createVisual</a>.
       </li>
       <li>
-        Turn on "High Performance" and click "Start Animation" to see the benefit of implementing <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.styles.NodeStyleBase#updateVisual">yfiles.styles.NodeStyleBase#updateVisual</a>.
+        Turn on "High Performance" and click "Start Animation" to see the benefit of implementing <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.styles.NodeStyleBase#updateVisual" target="_blank">yfiles.styles.NodeStyleBase#updateVisual</a>.
       </li>
       <li>
         Take a look at the methods <code>updateVisual()</code> and <code>createRenderDataCache()</code> of class <code>MySimpleNodeStyle</code>.
@@ -83,15 +83,15 @@
 
     <ul>
       <li>
-        Implement <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.styles.NodeStyleBase#isInside">yfiles.styles.NodeStyleBase#isInside</a> and <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.styles.NodeStyleBase#getOutline">yfiles.styles.NodeStyleBase#getOutline</a>,
+        Implement <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.styles.NodeStyleBase#isInside" target="_blank">yfiles.styles.NodeStyleBase#isInside</a> and <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.styles.NodeStyleBase#getOutline" target="_blank">yfiles.styles.NodeStyleBase#getOutline</a>,
         so that the edges end at the node instead of the node's bounding box.
       </li>
       <li>
-        Implement <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.styles.NodeStyleBase#isHit">yfiles.styles.NodeStyleBase#isHit</a>, so that a node won't get selected when clicking on its
+        Implement <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.styles.NodeStyleBase#isHit" target="_blank">yfiles.styles.NodeStyleBase#isHit</a>, so that a node won't get selected when clicking on its
         bounding box but, not on the node itself.
       </li>
       <li>
-        Implement <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.styles.NodeStyleBase#getBounds">yfiles.styles.NodeStyleBase#getBounds</a>, so that the drop shadow will be included in the
+        Implement <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.styles.NodeStyleBase#getBounds" target="_blank">yfiles.styles.NodeStyleBase#getBounds</a>, so that the drop shadow will be included in the
         bounds of the node.
       </li>
       <li>

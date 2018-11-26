@@ -56,7 +56,6 @@
            */
           constructor: function() {
             demo.LayoutConfiguration.call(this)
-            this.$initCircularLayoutConfig()
             const layout = new yfiles.circular.CircularLayout()
             const treeLayout = layout.balloonLayout
 
@@ -99,7 +98,7 @@
            */
           createConfiguredLayout: function(graphComponent) {
             const layout = new yfiles.circular.CircularLayout()
-            const treeLayout = layout.balloonLayout
+            const balloonLayout = layout.balloonLayout
 
             layout.layoutStyle = this.layoutStyleItem
             layout.subgraphLayoutEnabled = this.actOnSelectionOnlyItem
@@ -113,12 +112,12 @@
             layout.singleCycleLayout.automaticRadius = this.chooseRadiusAutomaticallyItem
             layout.singleCycleLayout.fixedRadius = this.fixedRadiusItem
 
-            treeLayout.preferredChildWedge = this.preferredChildWedgeItem
-            treeLayout.minimumEdgeLength = this.minimumEdgeLengthItem
-            treeLayout.compactnessFactor = this.compactnessFactorItem
-            treeLayout.allowOverlaps = this.allowOverlapsItem
+            balloonLayout.preferredChildWedge = this.preferredChildWedgeItem
+            balloonLayout.minimumEdgeLength = this.minimumEdgeLengthItem
+            balloonLayout.compactnessFactor = this.compactnessFactorItem
+            balloonLayout.allowOverlaps = this.allowOverlapsItem
             layout.placeChildrenOnCommonRadius = this.placeChildrenOnCommonRadiusItem
-            treeLayout.minimumNodeDistance = this.minimumTreeNodeDistanceItem
+            balloonLayout.minimumNodeDistance = this.minimumTreeNodeDistanceItem
 
             if (this.edgeLabelingItem) {
               const genericLabeling = new yfiles.labeling.GenericLabeling()
@@ -1100,17 +1099,6 @@
                   demo.LayoutConfiguration.EnumLabelPlacementSideOfEdge.ON_EDGE
               )
             }
-          },
-
-          $initCircularLayoutConfig: function() {
-            this.$layoutStyleItem = yfiles.circular.LayoutStyle.BCC_COMPACT
-            this.$partitionLayoutStyleItem = yfiles.circular.PartitionStyle.CYCLE
-            this.$labelPlacementOrientationItem =
-              demo.LayoutConfiguration.EnumLabelPlacementOrientation.PARALLEL
-            this.$labelPlacementAlongEdgeItem =
-              demo.LayoutConfiguration.EnumLabelPlacementAlongEdge.ANYWHERE
-            this.$labelPlacementSideOfEdgeItem =
-              demo.LayoutConfiguration.EnumLabelPlacementSideOfEdge.ANYWHERE
           }
         }
       })

@@ -1506,7 +1506,7 @@ define(['yfiles/layout-tree', 'resources/demo-app'], (
       return (
         '<h2>AssistantNodePlacer</h2>' +
         'This node placer delegates to two different node placers to arrange the child nodes: Nodes that are marked' +
-        ' as <em>Assistants</em> are placed using the <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.tree.LeftRightNodePlacer">yfiles.tree.LeftRightNodePlacer</a>. The other children are arranged' +
+        ' as <em>Assistants</em> are placed using the <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.tree.LeftRightNodePlacer" target="_blank">yfiles.tree.LeftRightNodePlacer</a>. The other children are arranged' +
         ' below the assistant nodes using the child node placer.'
       )
     }

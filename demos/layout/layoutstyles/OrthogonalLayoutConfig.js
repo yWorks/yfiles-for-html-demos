@@ -41,7 +41,7 @@
     yfiles.module('demo', exports => {
       /**
        * Configuration options for the layout algorithm of the same name.
-       * @yjs:keep=DescriptionGroup,EdgePropertiesGroup,EdgesGroup,GroupingGroup,LabelingGroup,LayoutGroup,NodePropertiesGroup,PreferredPlacementGroup,descriptionText,considerNodeLabelsItem,crossingPostprocessingItem,edgeLabelingItem,gridItem,groupLayoutPolicyItem,groupLayoutQualityItem,labelPlacementAlongEdgeItem,labelPlacementDistanceItem,labelPlacementOrientationItem,labelPlacementSideOfEdgeItem,lengthReductionItem,minimumFirstSegmentLengthItem,minimumLastSegmentLengthItem,minimumSegmentLengthItem,perceivedBendsPostprocessingItem,shouldDisableCrossingPostprocessingItem,shouldDisableLabelPlacementAlongEdgeItem,shouldDisableLabelPlacementDistanceItem,shouldDisableLabelPlacementOrientationItem,shouldDisableLabelPlacementSideOfEdgeItem,shouldDisablePerceivedBendsPostprocessingItem,uniformPortAssignmentItem,shouldDisableStyleItem,shouldDisableUseRandomizationItem,styleItem,useExistingDrawingAsSketchItem,useFaceMaximizationItem,useRandomizationItem,cycleSubstructureStyleItem,cycleSubstructureSizeItem,shouldDisableCycleSubstructureSizeItem,chainSubstructureStyleItem,chainSubstructureSizeItem,shouldDisableChainSubstructureSizeItem,treeSubstructureStyleItem,treeSubstructureSizeItem,shouldDisableTreeSubstructureSizeItem
+       * @yjs:keep=DescriptionGroup,EdgePropertiesGroup,EdgesGroup,GroupingGroup,LabelingGroup,LayoutGroup,NodePropertiesGroup,PreferredPlacementGroup,descriptionText,considerNodeLabelsItem,crossingReductionItem,edgeLabelingItem,gridSpacingItem,groupLayoutPolicyItem,groupLayoutQualityItem,labelPlacementAlongEdgeItem,labelPlacementDistanceItem,labelPlacementOrientationItem,labelPlacementSideOfEdgeItem,edgeLengthReductionItem,minimumFirstSegmentLengthItem,minimumLastSegmentLengthItem,minimumSegmentLengthItem,perceivedBendsPostprocessingItem,shouldDisablecrossingReductionItem,shouldDisableLabelPlacementAlongEdgeItem,shouldDisableLabelPlacementDistanceItem,shouldDisableLabelPlacementOrientationItem,shouldDisableLabelPlacementSideOfEdgeItem,shouldDisablePerceivedBendsPostprocessingItem,uniformPortAssignmentItem,shouldDisableStyleItem,shouldDisableUseRandomizationItem,styleItem,useExistingDrawingAsSketchItem,useFaceMaximizationItem,useRandomizationItem,cycleSubstructureStyleItem,cycleSubstructureSizeItem,shouldDisableCycleSubstructureSizeItem,chainSubstructureStyleItem,chainSubstructureSizeItem,shouldDisableChainSubstructureSizeItem,treeSubstructureStyleItem,treeSubstructureSizeItem,shouldDisableTreeSubstructureSizeItem
        * @class
        * @extends demo.LayoutConfiguration
        */
@@ -57,12 +57,12 @@
            */
           constructor: function() {
             demo.LayoutConfiguration.call(this)
-            this.$initOrthogonalLayoutConfig()
+
             this.styleItem = yfiles.orthogonal.LayoutStyle.NORMAL
-            this.gridItem = 15
-            this.lengthReductionItem = true
+            this.gridSpacingItem = 15
+            this.edgeLengthReductionItem = true
             this.useExistingDrawingAsSketchItem = false
-            this.crossingPostprocessingItem = true
+            this.crossingReductionItem = true
             this.perceivedBendsPostprocessingItem = true
             this.uniformPortAssignmentItem = false
             this.useRandomizationItem = true
@@ -89,7 +89,8 @@
             this.cycleSubstructureSizeItem = 4
             this.treeSubstructureStyleItem = yfiles.orthogonal.TreeLayoutStyle.NONE
             this.treeSubstructureSizeItem = 3
-            this.treeSubstructureOrientationItem = yfiles.orthogonal.TreeLayoutStyle.NONE
+            this.treeSubstructureOrientationItem =
+              yfiles.orthogonal.SubstructureOrientation.AUTO_DETECT
 
             this.groupLayoutPolicyItem = demo.OrthogonalLayoutConfig.EnumGroupPolicy.LAYOUT_GROUPS
           },
@@ -112,15 +113,15 @@
               this.groupLayoutPolicyItem ===
               demo.OrthogonalLayoutConfig.EnumGroupPolicy.IGNORE_GROUPS
             ) {
-              layout.prependStage(new yfiles.layout.HideGroupsStage())
+              layout.hideGroupsStageEnabled = true
             }
 
             layout.layoutStyle = this.styleItem
-            layout.gridSpacing = this.gridItem
-            layout.edgeLengthReduction = this.lengthReductionItem
+            layout.gridSpacing = this.gridSpacingItem
+            layout.edgeLengthReduction = this.edgeLengthReductionItem
             layout.optimizePerceivedBends = this.perceivedBendsPostprocessingItem
             layout.uniformPortAssignment = this.uniformPortAssignmentItem
-            layout.crossingReduction = this.crossingPostprocessingItem
+            layout.crossingReduction = this.crossingReductionItem
             layout.randomization = this.useRandomizationItem
             layout.faceMaximization = this.useFaceMaximizationItem
             layout.fromSketchMode = this.useExistingDrawingAsSketchItem
@@ -177,13 +178,11 @@
             if (this.considerEdgeDirectionItem) {
               layoutData.directedEdges.source = graphComponent.selection.selectedEdges
             } else {
-              layoutData.directedEdges.delegate = edgeData => false
+              layoutData.directedEdges.delegate = edge => false
             }
             return layoutData
           },
 
-          // ReSharper disable UnusedMember.Global
-          // ReSharper disable InconsistentNaming
           /** @type {demo.options.OptionGroup} */
           DescriptionGroup: {
             $meta: function() {
@@ -324,7 +323,6 @@
                 demo.options.EnumValuesAttribute().init({
                   values: [
                     ['Normal', yfiles.orthogonal.LayoutStyle.NORMAL],
-                    ['Normal + Trees', yfiles.orthogonal.LayoutStyle.NORMAL_TREE],
                     ['Uniform Node Sizes', yfiles.orthogonal.LayoutStyle.UNIFORM],
                     ['Node Boxes', yfiles.orthogonal.LayoutStyle.BOX],
                     ['Mixed', yfiles.orthogonal.LayoutStyle.MIXED],
@@ -343,14 +341,24 @@
             }
           },
 
+          /** @type {boolean} */
+          shouldDisableStyleItem: {
+            $meta: function() {
+              return [demo.options.TypeAttribute(yfiles.lang.Boolean.$class)]
+            },
+            get: function() {
+              return this.useExistingDrawingAsSketchItem === true
+            }
+          },
+
           /**
            * Backing field for below property
            * @type {number}
            */
-          $gridItem: 0,
+          $gridSpacingItem: 0,
 
           /** @type {number} */
-          gridItem: {
+          gridSpacingItem: {
             $meta: function() {
               return [
                 demo.options.LabelAttribute(
@@ -367,10 +375,10 @@
               ]
             },
             get: function() {
-              return this.$gridItem
+              return this.$gridSpacingItem
             },
             set: function(value) {
-              this.$gridItem = value
+              this.$gridSpacingItem = value
             }
           },
 
@@ -378,10 +386,10 @@
            * Backing field for below property
            * @type {boolean}
            */
-          $lengthReductionItem: false,
+          $edgeLengthReductionItem: false,
 
           /** @type {boolean} */
-          lengthReductionItem: {
+          edgeLengthReductionItem: {
             $meta: function() {
               return [
                 demo.options.LabelAttribute(
@@ -393,10 +401,10 @@
               ]
             },
             get: function() {
-              return this.$lengthReductionItem
+              return this.$edgeLengthReductionItem
             },
             set: function(value) {
-              this.$lengthReductionItem = value
+              this.$edgeLengthReductionItem = value
             }
           },
 
@@ -430,14 +438,14 @@
            * Backing field for below property
            * @type {boolean}
            */
-          $crossingPostprocessingItem: false,
+          $crossingReductionItem: false,
 
           /** @type {boolean} */
-          crossingPostprocessingItem: {
+          crossingReductionItem: {
             $meta: function() {
               return [
                 demo.options.LabelAttribute(
-                  'Crossing Postprocessing',
+                  'Crossing Reduction',
                   '#/api/yfiles.orthogonal.OrthogonalLayout#OrthogonalLayout-property-crossingReduction'
                 ),
                 demo.options.OptionGroupAttribute('LayoutGroup', 50),
@@ -445,10 +453,20 @@
               ]
             },
             get: function() {
-              return this.$crossingPostprocessingItem
+              return this.$crossingReductionItem
             },
             set: function(value) {
-              this.$crossingPostprocessingItem = value
+              this.$crossingReductionItem = value
+            }
+          },
+
+          /** @type {boolean} */
+          shouldDisableCrossingReductionItem: {
+            $meta: function() {
+              return [demo.options.TypeAttribute(yfiles.lang.Boolean.$class)]
+            },
+            get: function() {
+              return this.useExistingDrawingAsSketchItem === true
             }
           },
 
@@ -478,6 +496,16 @@
             }
           },
 
+          /** @type {boolean} */
+          shouldDisablePerceivedBendsPostprocessingItem: {
+            $meta: function() {
+              return [demo.options.TypeAttribute(yfiles.lang.Boolean.$class)]
+            },
+            get: function() {
+              return this.useExistingDrawingAsSketchItem === true
+            }
+          },
+
           /**
            * Backing field for below property
            * @type {boolean}
@@ -504,6 +532,20 @@
             }
           },
 
+          /** @type {boolean} */
+          shouldDisableUniformPortAssignmentItem: {
+            $meta: function() {
+              return [demo.options.TypeAttribute(yfiles.lang.Boolean.$class)]
+            },
+            get: function() {
+              return (
+                !this.useExistingDrawingAsSketchItem &&
+                this.styleItem !== yfiles.orthogonal.LayoutStyle.NORMAL &&
+                this.styleItem !== yfiles.orthogonal.LayoutStyle.UNIFORM
+              )
+            }
+          },
+
           /**
            * Backing field for below property
            * @type {boolean}
@@ -527,6 +569,16 @@
             },
             set: function(value) {
               this.$useRandomizationItem = value
+            }
+          },
+
+          /** @type {boolean} */
+          shouldDisableUseRandomizationItem: {
+            $meta: function() {
+              return [demo.options.TypeAttribute(yfiles.lang.Boolean.$class)]
+            },
+            get: function() {
+              return this.useExistingDrawingAsSketchItem === true
             }
           },
 
@@ -951,7 +1003,7 @@
                   'Route Selected Edges Downwards',
                   '#/api/yfiles.orthogonal.OrthogonalLayoutData#OrthogonalLayoutData-property-directedEdges'
                 ),
-                demo.options.OptionGroupAttribute('EdgesGroup', 30),
+                demo.options.OptionGroupAttribute('EdgesGroup', 40),
                 demo.options.TypeAttribute(yfiles.lang.Boolean.$class)
               ]
             },
@@ -996,60 +1048,6 @@
             },
             set: function(value) {
               this.$groupLayoutPolicyItem = value
-            }
-          },
-
-          /** @type {boolean} */
-          shouldDisableCrossingPostprocessingItem: {
-            $meta: function() {
-              return [demo.options.TypeAttribute(yfiles.lang.Boolean.$class)]
-            },
-            get: function() {
-              return this.useExistingDrawingAsSketchItem === true
-            }
-          },
-
-          /** @type {boolean} */
-          shouldDisablePerceivedBendsPostprocessingItem: {
-            $meta: function() {
-              return [demo.options.TypeAttribute(yfiles.lang.Boolean.$class)]
-            },
-            get: function() {
-              return this.useExistingDrawingAsSketchItem === true
-            }
-          },
-
-          /** @type {boolean} */
-          shouldDisableUniformPortAssignmentItem: {
-            $meta: function() {
-              return [demo.options.TypeAttribute(yfiles.lang.Boolean.$class)]
-            },
-            get: function() {
-              return (
-                !this.useExistingDrawingAsSketchItem &&
-                this.styleItem !== yfiles.orthogonal.LayoutStyle.NORMAL &&
-                this.styleItem !== yfiles.orthogonal.LayoutStyle.UNIFORM
-              )
-            }
-          },
-
-          /** @type {boolean} */
-          shouldDisableStyleItem: {
-            $meta: function() {
-              return [demo.options.TypeAttribute(yfiles.lang.Boolean.$class)]
-            },
-            get: function() {
-              return this.useExistingDrawingAsSketchItem === true
-            }
-          },
-
-          /** @type {boolean} */
-          shouldDisableUseRandomizationItem: {
-            $meta: function() {
-              return [demo.options.TypeAttribute(yfiles.lang.Boolean.$class)]
-            },
-            get: function() {
-              return this.useExistingDrawingAsSketchItem === true
             }
           },
 
@@ -1106,7 +1104,7 @@
                   'Minimum Cycle Size',
                   '#/api/yfiles.orthogonal.OrthogonalLayout#OrthogonalLayout-property-cycleSize'
                 ),
-                demo.options.OptionGroupAttribute('SubstructureLayoutGroup', 10),
+                demo.options.OptionGroupAttribute('SubstructureLayoutGroup', 20),
                 demo.options.MinMaxAttribute().init({
                   min: 4,
                   max: 20,
@@ -1136,11 +1134,11 @@
 
           /**
            * Backing field for below property
-           * @type {yfiles.orthogonal.CycleLayoutStyle}
+           * @type {yfiles.orthogonal.ChainLayoutStyle}
            */
           $chainSubstructureStyleItem: null,
 
-          /** @type {yfiles.orthogonal.CycleLayoutStyle} */
+          /** @type {yfiles.orthogonal.ChainLayoutStyle} */
           chainSubstructureStyleItem: {
             $meta: function() {
               return [
@@ -1148,7 +1146,7 @@
                   'Chains',
                   '#/api/yfiles.orthogonal.OrthogonalLayout#OrthogonalLayout-property-chainStyle'
                 ),
-                demo.options.OptionGroupAttribute('SubstructureLayoutGroup', 10),
+                demo.options.OptionGroupAttribute('SubstructureLayoutGroup', 30),
                 demo.options.EnumValuesAttribute().init({
                   values: [
                     ['Ignore', yfiles.orthogonal.ChainLayoutStyle.NONE],
@@ -1188,7 +1186,7 @@
                   'Minimum Chain Length',
                   '#/api/yfiles.orthogonal.OrthogonalLayout#OrthogonalLayout-property-chainSize'
                 ),
-                demo.options.OptionGroupAttribute('SubstructureLayoutGroup', 10),
+                demo.options.OptionGroupAttribute('SubstructureLayoutGroup', 40),
                 demo.options.MinMaxAttribute().init({
                   min: 2,
                   max: 20,
@@ -1218,11 +1216,11 @@
 
           /**
            * Backing field for below property
-           * @type {yfiles.orthogonal.CycleLayoutStyle}
+           * @type {yfiles.orthogonal.TreeLayoutStyle}
            */
           $treeSubstructureStyleItem: null,
 
-          /** @type {yfiles.orthogonal.CycleLayoutStyle} */
+          /** @type {yfiles.orthogonal.TreeLayoutStyle} */
           treeSubstructureStyleItem: {
             $meta: function() {
               return [
@@ -1230,7 +1228,7 @@
                   'Tree Style',
                   '#/api/yfiles.orthogonal.OrthogonalLayout#OrthogonalLayout-property-treeStyle'
                 ),
-                demo.options.OptionGroupAttribute('SubstructureLayoutGroup', 10),
+                demo.options.OptionGroupAttribute('SubstructureLayoutGroup', 50),
                 demo.options.EnumValuesAttribute().init({
                   values: [
                     ['Ignore', yfiles.orthogonal.TreeLayoutStyle.NONE],
@@ -1265,7 +1263,7 @@
                   'Minimum Tree Size',
                   '#/api/yfiles.orthogonal.OrthogonalLayout#OrthogonalLayout-property-treeSize'
                 ),
-                demo.options.OptionGroupAttribute('SubstructureLayoutGroup', 10),
+                demo.options.OptionGroupAttribute('SubstructureLayoutGroup', 60),
                 demo.options.MinMaxAttribute().init({
                   min: 3,
                   max: 20,
@@ -1307,7 +1305,7 @@
                   'Tree Orientation',
                   '#/api/yfiles.orthogonal.OrthogonalLayout#OrthogonalLayout-property-treeOrientation'
                 ),
-                demo.options.OptionGroupAttribute('SubstructureLayoutGroup', 10),
+                demo.options.OptionGroupAttribute('SubstructureLayoutGroup', 70),
                 demo.options.EnumValuesAttribute().init({
                   values: [
                     ['Automatic', yfiles.orthogonal.SubstructureOrientation.AUTO_DETECT],
@@ -1336,18 +1334,6 @@
             get: function() {
               return this.treeSubstructureStyleItem === yfiles.orthogonal.TreeLayoutStyle.NONE
             }
-          },
-
-          $initOrthogonalLayoutConfig: function() {
-            this.$styleItem = yfiles.orthogonal.LayoutStyle.NORMAL
-            this.$edgeLabelingItem = demo.OrthogonalLayoutConfig.EnumEdgeLabeling.NONE
-            this.$labelPlacementOrientationItem =
-              demo.LayoutConfiguration.EnumLabelPlacementOrientation.PARALLEL
-            this.$labelPlacementAlongEdgeItem =
-              demo.LayoutConfiguration.EnumLabelPlacementAlongEdge.ANYWHERE
-            this.$labelPlacementSideOfEdgeItem =
-              demo.LayoutConfiguration.EnumLabelPlacementSideOfEdge.ANYWHERE
-            this.$groupLayoutPolicyItem = demo.OrthogonalLayoutConfig.EnumGroupPolicy.LAYOUT_GROUPS
           },
 
           /**

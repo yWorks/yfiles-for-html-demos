@@ -106,11 +106,11 @@ require([
     // disable server sided export in IE9 due to limited XHR CORS support
     if (ieVersion === -1 || (ieVersion !== -1 && ieVersion > 9)) {
       // if a server is available, enable the server export button
-      isServerAlive(JAVA_SERVLET_URL).then(() => {
-        document.getElementById('BatikServerExportButton').disabled = false
+      isServerAlive(JAVA_SERVLET_URL).then(isAlive => {
+        document.getElementById('BatikServerExportButton').disabled = !isAlive
       })
-      isServerAlive(PHANTOM_JS_URL).then(() => {
-        document.getElementById('PhantomServerExportButton').disabled = false
+      isServerAlive(PHANTOM_JS_URL).then(isAlive => {
+        document.getElementById('PhantomServerExportButton').disabled = !isAlive
       })
     }
 
@@ -364,14 +364,18 @@ require([
    */
   function isServerAlive(url) {
     return new Promise(resolve => {
-      const xhr = new XMLHttpRequest()
-      xhr.onreadystatechange = () => {
-        if (xhr.readyState === 4 && xhr.status === 200) {
-          resolve()
+      try {
+        const xhr = new XMLHttpRequest()
+        xhr.onreadystatechange = () => {
+          if (xhr.readyState === 4 && xhr.status === 200) {
+            resolve(true)
+          }
         }
+        xhr.open('POST', url, true)
+        xhr.send('isAlive')
+      } catch (e) {
+        resolve(false)
       }
-      xhr.open('POST', url, true)
-      xhr.send('isAlive')
     })
   }
 

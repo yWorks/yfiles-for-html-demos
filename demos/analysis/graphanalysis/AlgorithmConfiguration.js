@@ -37,7 +37,6 @@ define(['yfiles/view-component', './DemoStyles.js'], (
    */
   class AlgorithmConfiguration {
     constructor() {
-      this.$abstract = true
       this.$running = false
       this.$directed = false
       this.$useUniformWeights = false

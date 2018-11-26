@@ -59,7 +59,7 @@
 
             const layout = new yfiles.layout.TabularLayout()
 
-            this.layoutPolicyItem = layout.layoutPolicy
+            this.layoutPolicyItem = demo.TabularLayoutConfig.EnumLayoutPolicies.AUTO_SIZE
             this.rowCountItem = 8
             this.columnCountItem = 12
             this.horizontalAlignmentItem = demo.TabularLayoutConfig.EnumHorizontalAlignments.CENTER
@@ -130,26 +130,27 @@
                 break
             }
 
+            const nodeCount = graphComponent.graph.nodes.size
             let partitionGrid
             switch (this.layoutPolicyItem) {
               case demo.TabularLayoutConfig.EnumLayoutPolicies.FIXED_TABLE_SIZE:
                 const rowCount = this.rowCountItem
                 const columnCount = this.columnCountItem
-                if (rowCount * columnCount >= graphComponent.graph.nodes.size) {
+                if (rowCount * columnCount >= nodeCount) {
                   partitionGrid = new yfiles.layout.PartitionGrid(rowCount, columnCount)
                 } else {
                   // make sure partitionGrid has enough cells for all nodes
                   partitionGrid = new yfiles.layout.PartitionGrid(
-                    graphComponent.graph.nodes.size / columnCount,
+                    nodeCount / columnCount,
                     columnCount
                   )
                 }
                 break
               case demo.TabularLayoutConfig.EnumLayoutPolicies.SINGLE_ROW:
-                partitionGrid = new yfiles.layout.PartitionGrid(1, graphComponent.graph.nodes.size)
+                partitionGrid = new yfiles.layout.PartitionGrid(1, nodeCount)
                 break
               case demo.TabularLayoutConfig.EnumLayoutPolicies.SINGLE_COLUMN:
-                partitionGrid = new yfiles.layout.PartitionGrid(graphComponent.graph.nodes.size, 1)
+                partitionGrid = new yfiles.layout.PartitionGrid(nodeCount, 1)
                 break
               default:
                 partitionGrid = new yfiles.layout.PartitionGrid(1, 1)
