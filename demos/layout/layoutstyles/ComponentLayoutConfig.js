@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.1.
- ** Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.2.
+ ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,423 +26,400 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-'use strict'
+import {
+  Class,
+  ComponentArrangementStyles,
+  ComponentLayout,
+  GraphComponent,
+  YBoolean,
+  YDimension,
+  YNumber,
+  YString
+} from 'yfiles'
 
-/*eslint-disable*/
-;(function(r) {
-  ;(function(f) {
-    if ('function' === typeof define && define.amd) {
-      define(['yfiles/lang', 'yfiles/view-component', 'LayoutConfiguration.js'], f)
-    } else {
-      f(r.yfiles.lang, r.yfiles)
+import LayoutConfiguration from './LayoutConfiguration.js'
+import {
+  ComponentAttribute,
+  Components,
+  EnumValuesAttribute,
+  LabelAttribute,
+  MinMaxAttribute,
+  OptionGroup,
+  OptionGroupAttribute,
+  TypeAttribute
+} from '../../resources/demo-option-editor.js'
+
+/**
+ * Configuration options for the layout algorithm of the same name.
+ * @yjs:keep=DescriptionGroup,LayoutGroup,descriptionText,aspectRatioItem,componentSpacingItem,fromSketchItem,gridEnabledItem,gridSpacingItem,noOverlapItem,shouldDisableAspectRatioItem,shouldDisableGridSpacingItem,styleItem,useScreenRatioItem
+ */
+const ComponentLayoutConfig = Class('ComponentLayoutConfig', {
+  $extends: LayoutConfiguration,
+
+  $meta: [LabelAttribute('ComponentLayout')],
+
+  /**
+   * Setup default values for various configuration parameters.
+   */
+  constructor: function() {
+    LayoutConfiguration.call(this)
+    const layout = new ComponentLayout()
+    this.styleItem = ComponentArrangementStyles.ROWS
+    this.noOverlapItem = (layout.style & ComponentArrangementStyles.MODIFIER_NO_OVERLAP) !== 0
+    this.fromSketchItem = (layout.style & ComponentArrangementStyles.MODIFIER_AS_IS) !== 0
+    const size = layout.preferredSize
+    this.useScreenRatioItem = true
+    this.aspectRatioItem = size.width / size.height
+
+    this.componentSpacingItem = layout.componentSpacing
+    this.gridEnabledItem = layout.gridSpacing > 0
+    this.gridSpacingItem = layout.gridSpacing > 0 ? layout.gridSpacing : 20.0
+  },
+
+  /**
+   * Creates and configures a layout and the graph's {@link IGraph#mapperRegistry} if necessary.
+   * @param {GraphComponent} graphComponent The <code>GraphComponent</code> to apply the
+   *   configuration on.
+   * @return {ILayoutAlgorithm} The configured layout algorithm.
+   */
+  createConfiguredLayout: function(graphComponent) {
+    const layout = new ComponentLayout()
+    layout.componentArrangement = true
+    let style = this.styleItem
+    if (this.noOverlapItem) {
+      style |= ComponentArrangementStyles.MODIFIER_NO_OVERLAP
     }
-  })((lang, yfiles) => {
-    const demo = yfiles.module('demo')
-    yfiles.module('demo', exports => {
-      /**
-       * Configuration options for the layout algorithm of the same name.
-       * @yjs:keep=DescriptionGroup,LayoutGroup,descriptionText,aspectRatioItem,componentSpacingItem,fromSketchItem,gridEnabledItem,gridSpacingItem,noOverlapItem,shouldDisableAspectRatioItem,shouldDisableGridSpacingItem,styleItem,useScreenRatioItem
-       * @class
-       * @extends demo.LayoutConfiguration
-       */
-      exports.ComponentLayoutConfig = new yfiles.lang.ClassDefinition(() => {
-        /** @lends {demo.ComponentLayoutConfig.prototype} */
-        return {
-          $extends: demo.LayoutConfiguration,
+    if (this.fromSketchItem) {
+      style |= ComponentArrangementStyles.MODIFIER_AS_IS
+    }
+    layout.style = style
 
-          $meta: [demo.options.LabelAttribute('ComponentLayout')],
+    let w, h
+    if (graphComponent !== null && this.useScreenRatioItem) {
+      const canvasSize = graphComponent.innerSize
+      w = canvasSize.width
+      h = canvasSize.height
+    } else {
+      w = this.aspectRatioItem
+      h = 1.0 / w
+      w *= 400.0
+      h *= 400.0
+    }
+    layout.preferredSize = new YDimension(w, h)
+    layout.componentSpacing = this.componentSpacingItem
+    if (this.gridEnabledItem) {
+      layout.gridSpacing = this.gridSpacingItem
+    } else {
+      layout.gridSpacing = 0
+    }
 
-          /**
-           * Setup default values for various configuration parameters.
-           */
-          constructor: function() {
-            demo.LayoutConfiguration.call(this)
-            const layout = new yfiles.layout.ComponentLayout()
-            this.styleItem = yfiles.layout.ComponentArrangementStyles.ROWS
-            this.noOverlapItem =
-              (layout.style & yfiles.layout.ComponentArrangementStyles.MODIFIER_NO_OVERLAP) !== 0
-            this.fromSketchItem =
-              (layout.style & yfiles.layout.ComponentArrangementStyles.MODIFIER_AS_IS) !== 0
-            const size = layout.preferredSize
-            this.useScreenRatioItem = true
-            this.aspectRatioItem = size.width / size.height
+    return layout
+  },
 
-            this.componentSpacingItem = layout.componentSpacing
-            this.gridEnabledItem = layout.gridSpacing > 0
-            this.gridSpacingItem = layout.gridSpacing > 0 ? layout.gridSpacing : 20.0
-          },
+  /** @type {OptionGroup} */
+  DescriptionGroup: {
+    $meta: function() {
+      return [
+        LabelAttribute('Description'),
+        OptionGroupAttribute('RootGroup', 5),
+        TypeAttribute(OptionGroup.$class)
+      ]
+    },
+    value: null
+  },
 
-          /**
-           * Creates and configures a layout and the graph's {@link yfiles.graph.IGraph#mapperRegistry} if necessary.
-           * @param {yfiles.view.GraphComponent} graphComponent The <code>GraphComponent</code> to apply the
-           *   configuration on.
-           * @return {yfiles.layout.ILayoutAlgorithm} The configured layout algorithm.
-           */
-          createConfiguredLayout: function(graphComponent) {
-            const layout = new yfiles.layout.ComponentLayout()
-            layout.componentArrangement = true
-            let style = this.styleItem
-            if (this.noOverlapItem) {
-              style |= yfiles.layout.ComponentArrangementStyles.MODIFIER_NO_OVERLAP
-            }
-            if (this.fromSketchItem) {
-              style |= yfiles.layout.ComponentArrangementStyles.MODIFIER_AS_IS
-            }
-            layout.style = style
+  /** @type {OptionGroup} */
+  LayoutGroup: {
+    $meta: function() {
+      return [
+        LabelAttribute('General'),
+        OptionGroupAttribute('RootGroup', 10),
+        TypeAttribute(OptionGroup.$class)
+      ]
+    },
+    value: null
+  },
 
-            let w, h
-            if (graphComponent !== null && this.useScreenRatioItem) {
-              const canvasSize = graphComponent.innerSize
-              w = canvasSize.width
-              h = canvasSize.height
-            } else {
-              w = this.aspectRatioItem
-              h = 1.0 / w
-              w *= 400.0
-              h *= 400.0
-            }
-            layout.preferredSize = new yfiles.algorithms.YDimension(w, h)
-            layout.componentSpacing = this.componentSpacingItem
-            if (this.gridEnabledItem) {
-              layout.gridSpacing = this.gridSpacingItem
-            } else {
-              layout.gridSpacing = 0
-            }
+  /** @type {string} */
+  descriptionText: {
+    $meta: function() {
+      return [
+        OptionGroupAttribute('DescriptionGroup', 10),
+        ComponentAttribute(Components.HTML_BLOCK),
+        TypeAttribute(YString.$class)
+      ]
+    },
+    get: function() {
+      return "<p style='margin-top:0'>The component layout arranges the connected components of a graph. It can use any other layout style to arrange each component separately, and then arranges the components as such.</p><p>In this demo, the arrangement of each component is just kept as it is.</p>"
+    }
+  },
 
-            return layout
-          },
+  /**
+   * Backing field for below property
+   * @type {ComponentArrangementStyles}
+   */
+  $styleItem: null,
 
-          /** @type {demo.options.OptionGroup} */
-          DescriptionGroup: {
-            $meta: function() {
-              return [
-                demo.options.LabelAttribute('Description'),
-                demo.options.OptionGroupAttribute('RootGroup', 5),
-                demo.options.TypeAttribute(demo.options.OptionGroup.$class)
-              ]
-            },
-            value: null
-          },
+  /** @type {ComponentArrangementStyles} */
+  styleItem: {
+    $meta: function() {
+      return [
+        LabelAttribute('Layout Style', '#/api/ComponentLayout#ComponentLayout-property-style'),
+        OptionGroupAttribute('LayoutGroup', 10),
+        EnumValuesAttribute().init({
+          values: [
+            ['No Arrangement', ComponentArrangementStyles.NONE],
+            ['Multiple Rows', ComponentArrangementStyles.ROWS],
+            ['Single Row', ComponentArrangementStyles.SINGLE_ROW],
+            ['Single Column', ComponentArrangementStyles.SINGLE_COLUMN],
+            ['Packed Rectangle', ComponentArrangementStyles.PACKED_RECTANGLE],
+            ['Compact Rectangle', ComponentArrangementStyles.PACKED_COMPACT_RECTANGLE],
+            ['Packed Circle', ComponentArrangementStyles.PACKED_CIRCLE],
+            ['Compact Circle', ComponentArrangementStyles.PACKED_COMPACT_CIRCLE],
+            ['Nested Rows', ComponentArrangementStyles.MULTI_ROWS],
+            ['Compact Nested Rows', ComponentArrangementStyles.MULTI_ROWS_COMPACT],
+            [
+              'Width-constrained Nested Rows',
+              ComponentArrangementStyles.MULTI_ROWS_WIDTH_CONSTRAINT
+            ],
+            [
+              'Height-constrained Nested Rows',
+              ComponentArrangementStyles.MULTI_ROWS_HEIGHT_CONSTRAINT
+            ],
+            [
+              'Width-constrained Compact Nested Rows',
+              ComponentArrangementStyles.MULTI_ROWS_WIDTH_CONSTRAINT_COMPACT
+            ],
+            [
+              'Height-constrained Compact Nested Rows',
+              ComponentArrangementStyles.MULTI_ROWS_HEIGHT_CONSTRAINT_COMPACT
+            ]
+          ]
+        }),
+        TypeAttribute(ComponentArrangementStyles.$class)
+      ]
+    },
+    get: function() {
+      return this.$styleItem
+    },
+    set: function(value) {
+      this.$styleItem = value
+    }
+  },
 
-          /** @type {demo.options.OptionGroup} */
-          LayoutGroup: {
-            $meta: function() {
-              return [
-                demo.options.LabelAttribute('General'),
-                demo.options.OptionGroupAttribute('RootGroup', 10),
-                demo.options.TypeAttribute(demo.options.OptionGroup.$class)
-              ]
-            },
-            value: null
-          },
+  /**
+   * Backing field for below property
+   * @type {boolean}
+   */
+  $noOverlapItem: false,
 
-          /** @type {string} */
-          descriptionText: {
-            $meta: function() {
-              return [
-                demo.options.OptionGroupAttribute('DescriptionGroup', 10),
-                demo.options.ComponentAttribute(demo.options.Components.HTML_BLOCK),
-                demo.options.TypeAttribute(yfiles.lang.String.$class)
-              ]
-            },
-            get: function() {
-              return "<p style='margin-top:0'>The component layout arranges the connected components of a graph. It can use any other layout style to arrange each component separately, and then arranges the components as such.</p><p>In this demo, the arrangement of each component is just kept as it is.</p>"
-            }
-          },
+  /** @type {boolean} */
+  noOverlapItem: {
+    $meta: function() {
+      return [
+        LabelAttribute('Remove Overlaps', '#/api/ComponentLayout#ComponentLayout-property-style'),
+        OptionGroupAttribute('LayoutGroup', 20),
+        TypeAttribute(YBoolean.$class)
+      ]
+    },
+    get: function() {
+      return this.$noOverlapItem
+    },
+    set: function(value) {
+      this.$noOverlapItem = value
+    }
+  },
 
-          /**
-           * Backing field for below property
-           * @type {yfiles.layout.ComponentArrangementStyles}
-           */
-          $styleItem: null,
+  /**
+   * Backing field for below property
+   * @type {boolean}
+   */
+  $fromSketchItem: false,
 
-          /** @type {yfiles.layout.ComponentArrangementStyles} */
-          styleItem: {
-            $meta: function() {
-              return [
-                demo.options.LabelAttribute(
-                  'Layout Style',
-                  '#/api/yfiles.layout.ComponentLayout#ComponentLayout-property-style'
-                ),
-                demo.options.OptionGroupAttribute('LayoutGroup', 10),
-                demo.options.EnumValuesAttribute().init({
-                  values: [
-                    ['No Arrangement', yfiles.layout.ComponentArrangementStyles.NONE],
-                    ['Multiple Rows', yfiles.layout.ComponentArrangementStyles.ROWS],
-                    ['Single Row', yfiles.layout.ComponentArrangementStyles.SINGLE_ROW],
-                    ['Single Column', yfiles.layout.ComponentArrangementStyles.SINGLE_COLUMN],
-                    ['Packed Rectangle', yfiles.layout.ComponentArrangementStyles.PACKED_RECTANGLE],
-                    [
-                      'Compact Rectangle',
-                      yfiles.layout.ComponentArrangementStyles.PACKED_COMPACT_RECTANGLE
-                    ],
-                    ['Packed Circle', yfiles.layout.ComponentArrangementStyles.PACKED_CIRCLE],
-                    [
-                      'Compact Circle',
-                      yfiles.layout.ComponentArrangementStyles.PACKED_COMPACT_CIRCLE
-                    ],
-                    ['Nested Rows', yfiles.layout.ComponentArrangementStyles.MULTI_ROWS],
-                    [
-                      'Compact Nested Rows',
-                      yfiles.layout.ComponentArrangementStyles.MULTI_ROWS_COMPACT
-                    ],
-                    [
-                      'Width-constrained Nested Rows',
-                      yfiles.layout.ComponentArrangementStyles.MULTI_ROWS_WIDTH_CONSTRAINT
-                    ],
-                    [
-                      'Height-constrained Nested Rows',
-                      yfiles.layout.ComponentArrangementStyles.MULTI_ROWS_HEIGHT_CONSTRAINT
-                    ],
-                    [
-                      'Width-constrained Compact Nested Rows',
-                      yfiles.layout.ComponentArrangementStyles.MULTI_ROWS_WIDTH_CONSTRAINT_COMPACT
-                    ],
-                    [
-                      'Height-constrained Compact Nested Rows',
-                      yfiles.layout.ComponentArrangementStyles.MULTI_ROWS_HEIGHT_CONSTRAINT_COMPACT
-                    ]
-                  ]
-                }),
-                demo.options.TypeAttribute(yfiles.layout.ComponentArrangementStyles.$class)
-              ]
-            },
-            get: function() {
-              return this.$styleItem
-            },
-            set: function(value) {
-              this.$styleItem = value
-            }
-          },
+  /** @type {boolean} */
+  fromSketchItem: {
+    $meta: function() {
+      return [
+        LabelAttribute(
+          'Use Drawing as Sketch',
+          '#/api/ComponentLayout#ComponentLayout-property-style'
+        ),
+        OptionGroupAttribute('LayoutGroup', 30),
+        TypeAttribute(YBoolean.$class)
+      ]
+    },
+    get: function() {
+      return this.$fromSketchItem
+    },
+    set: function(value) {
+      this.$fromSketchItem = value
+    }
+  },
 
-          /**
-           * Backing field for below property
-           * @type {boolean}
-           */
-          $noOverlapItem: false,
+  /**
+   * Backing field for below property
+   * @type {boolean}
+   */
+  $useScreenRatioItem: false,
 
-          /** @type {boolean} */
-          noOverlapItem: {
-            $meta: function() {
-              return [
-                demo.options.LabelAttribute(
-                  'Remove Overlaps',
-                  '#/api/yfiles.layout.ComponentLayout#ComponentLayout-property-style'
-                ),
-                demo.options.OptionGroupAttribute('LayoutGroup', 20),
-                demo.options.TypeAttribute(yfiles.lang.Boolean.$class)
-              ]
-            },
-            get: function() {
-              return this.$noOverlapItem
-            },
-            set: function(value) {
-              this.$noOverlapItem = value
-            }
-          },
+  /** @type {boolean} */
+  useScreenRatioItem: {
+    $meta: function() {
+      return [
+        LabelAttribute(
+          'Use Screen Aspect Ratio',
+          '#/api/ComponentLayout#ComponentLayout-property-preferredSize'
+        ),
+        OptionGroupAttribute('LayoutGroup', 40),
+        TypeAttribute(YBoolean.$class)
+      ]
+    },
+    get: function() {
+      return this.$useScreenRatioItem
+    },
+    set: function(value) {
+      this.$useScreenRatioItem = value
+    }
+  },
 
-          /**
-           * Backing field for below property
-           * @type {boolean}
-           */
-          $fromSketchItem: false,
+  /**
+   * Backing field for below property
+   * @type {number}
+   */
+  $aspectRatioItem: 0,
 
-          /** @type {boolean} */
-          fromSketchItem: {
-            $meta: function() {
-              return [
-                demo.options.LabelAttribute(
-                  'Use Drawing as Sketch',
-                  '#/api/yfiles.layout.ComponentLayout#ComponentLayout-property-style'
-                ),
-                demo.options.OptionGroupAttribute('LayoutGroup', 30),
-                demo.options.TypeAttribute(yfiles.lang.Boolean.$class)
-              ]
-            },
-            get: function() {
-              return this.$fromSketchItem
-            },
-            set: function(value) {
-              this.$fromSketchItem = value
-            }
-          },
+  /** @type {number} */
+  aspectRatioItem: {
+    $meta: function() {
+      return [
+        LabelAttribute(
+          'Aspect Ratio',
+          '#/api/ComponentLayout#ComponentLayout-property-preferredSize'
+        ),
+        OptionGroupAttribute('LayoutGroup', 50),
+        MinMaxAttribute().init({
+          min: 0.2,
+          max: 5.0,
+          step: 0.01
+        }),
+        ComponentAttribute(Components.SLIDER),
+        TypeAttribute(YNumber.$class)
+      ]
+    },
+    get: function() {
+      return this.$aspectRatioItem
+    },
+    set: function(value) {
+      this.$aspectRatioItem = value
+    }
+  },
 
-          /**
-           * Backing field for below property
-           * @type {boolean}
-           */
-          $useScreenRatioItem: false,
+  /** @type {boolean} */
+  shouldDisableAspectRatioItem: {
+    $meta: function() {
+      return [TypeAttribute(YBoolean.$class)]
+    },
+    get: function() {
+      return this.useScreenRatioItem
+    }
+  },
 
-          /** @type {boolean} */
-          useScreenRatioItem: {
-            $meta: function() {
-              return [
-                demo.options.LabelAttribute(
-                  'Use Screen Aspect Ratio',
-                  '#/api/yfiles.layout.ComponentLayout#ComponentLayout-property-preferredSize'
-                ),
-                demo.options.OptionGroupAttribute('LayoutGroup', 40),
-                demo.options.TypeAttribute(yfiles.lang.Boolean.$class)
-              ]
-            },
-            get: function() {
-              return this.$useScreenRatioItem
-            },
-            set: function(value) {
-              this.$useScreenRatioItem = value
-            }
-          },
+  /**
+   * Backing field for below property
+   * @type {number}
+   */
+  $componentSpacingItem: 0,
 
-          /**
-           * Backing field for below property
-           * @type {number}
-           */
-          $aspectRatioItem: 0,
+  /** @type {number} */
+  componentSpacingItem: {
+    $meta: function() {
+      return [
+        LabelAttribute(
+          'Minimum Component Distance',
+          '#/api/ComponentLayout#ComponentLayout-property-componentSpacing'
+        ),
+        OptionGroupAttribute('LayoutGroup', 60),
+        MinMaxAttribute().init({
+          min: 0.0,
+          max: 400.0
+        }),
+        ComponentAttribute(Components.SLIDER),
+        TypeAttribute(YNumber.$class)
+      ]
+    },
+    get: function() {
+      return this.$componentSpacingItem
+    },
+    set: function(value) {
+      this.$componentSpacingItem = value
+    }
+  },
 
-          /** @type {number} */
-          aspectRatioItem: {
-            $meta: function() {
-              return [
-                demo.options.LabelAttribute(
-                  'Aspect Ratio',
-                  '#/api/yfiles.layout.ComponentLayout#ComponentLayout-property-preferredSize'
-                ),
-                demo.options.OptionGroupAttribute('LayoutGroup', 50),
-                demo.options.MinMaxAttribute().init({
-                  min: 0.2,
-                  max: 5.0,
-                  step: 0.01
-                }),
-                demo.options.ComponentAttribute(demo.options.Components.SLIDER),
-                demo.options.TypeAttribute(yfiles.lang.Number.$class)
-              ]
-            },
-            get: function() {
-              return this.$aspectRatioItem
-            },
-            set: function(value) {
-              this.$aspectRatioItem = value
-            }
-          },
+  /**
+   * Backing field for below property
+   * @type {boolean}
+   */
+  $gridEnabledItem: false,
 
-          /** @type {boolean} */
-          shouldDisableAspectRatioItem: {
-            $meta: function() {
-              return [demo.options.TypeAttribute(yfiles.lang.Boolean.$class)]
-            },
-            get: function() {
-              return this.useScreenRatioItem
-            }
-          },
+  /** @type {boolean} */
+  gridEnabledItem: {
+    $meta: function() {
+      return [
+        LabelAttribute(
+          'Route on Grid',
+          '#/api/ComponentLayout#ComponentLayout-property-gridSpacing'
+        ),
+        OptionGroupAttribute('LayoutGroup', 70),
+        TypeAttribute(YBoolean.$class)
+      ]
+    },
+    get: function() {
+      return this.$gridEnabledItem
+    },
+    set: function(value) {
+      this.$gridEnabledItem = value
+    }
+  },
 
-          /**
-           * Backing field for below property
-           * @type {number}
-           */
-          $componentSpacingItem: 0,
+  /**
+   * Backing field for below property
+   * @type {number}
+   */
+  $gridSpacingItem: 0,
 
-          /** @type {number} */
-          componentSpacingItem: {
-            $meta: function() {
-              return [
-                demo.options.LabelAttribute(
-                  'Minimum Component Distance',
-                  '#/api/yfiles.layout.ComponentLayout#ComponentLayout-property-componentSpacing'
-                ),
-                demo.options.OptionGroupAttribute('LayoutGroup', 60),
-                demo.options.MinMaxAttribute().init({
-                  min: 0.0,
-                  max: 400.0
-                }),
-                demo.options.ComponentAttribute(demo.options.Components.SLIDER),
-                demo.options.TypeAttribute(yfiles.lang.Number.$class)
-              ]
-            },
-            get: function() {
-              return this.$componentSpacingItem
-            },
-            set: function(value) {
-              this.$componentSpacingItem = value
-            }
-          },
+  /** @type {number} */
+  gridSpacingItem: {
+    $meta: function() {
+      return [
+        LabelAttribute(
+          'Grid Spacing',
+          '#/api/ComponentLayout#ComponentLayout-property-gridSpacing'
+        ),
+        OptionGroupAttribute('LayoutGroup', 80),
+        MinMaxAttribute().init({
+          min: 2,
+          max: 100
+        }),
+        ComponentAttribute(Components.SLIDER),
+        TypeAttribute(YNumber.$class)
+      ]
+    },
+    get: function() {
+      return this.$gridSpacingItem
+    },
+    set: function(value) {
+      this.$gridSpacingItem = value
+    }
+  },
 
-          /**
-           * Backing field for below property
-           * @type {boolean}
-           */
-          $gridEnabledItem: false,
-
-          /** @type {boolean} */
-          gridEnabledItem: {
-            $meta: function() {
-              return [
-                demo.options.LabelAttribute(
-                  'Route on Grid',
-                  '#/api/yfiles.layout.ComponentLayout#ComponentLayout-property-gridSpacing'
-                ),
-                demo.options.OptionGroupAttribute('LayoutGroup', 70),
-                demo.options.TypeAttribute(yfiles.lang.Boolean.$class)
-              ]
-            },
-            get: function() {
-              return this.$gridEnabledItem
-            },
-            set: function(value) {
-              this.$gridEnabledItem = value
-            }
-          },
-
-          /**
-           * Backing field for below property
-           * @type {number}
-           */
-          $gridSpacingItem: 0,
-
-          /** @type {number} */
-          gridSpacingItem: {
-            $meta: function() {
-              return [
-                demo.options.LabelAttribute(
-                  'Grid Spacing',
-                  '#/api/yfiles.layout.ComponentLayout#ComponentLayout-property-gridSpacing'
-                ),
-                demo.options.OptionGroupAttribute('LayoutGroup', 80),
-                demo.options.MinMaxAttribute().init({
-                  min: 2,
-                  max: 100
-                }),
-                demo.options.ComponentAttribute(demo.options.Components.SLIDER),
-                demo.options.TypeAttribute(yfiles.lang.Number.$class)
-              ]
-            },
-            get: function() {
-              return this.$gridSpacingItem
-            },
-            set: function(value) {
-              this.$gridSpacingItem = value
-            }
-          },
-
-          /** @type {boolean} */
-          shouldDisableGridSpacingItem: {
-            $meta: function() {
-              return [demo.options.TypeAttribute(yfiles.lang.Boolean.$class)]
-            },
-            get: function() {
-              return !this.gridEnabledItem
-            }
-          }
-        }
-      })
-    })
-    return yfiles.module('demo')
-  })
-})(
-  'undefined' !== typeof window
-    ? window
-    : 'undefined' !== typeof global
-      ? global
-      : 'undefined' !== typeof self
-        ? self
-        : this
-)
+  /** @type {boolean} */
+  shouldDisableGridSpacingItem: {
+    $meta: function() {
+      return [TypeAttribute(YBoolean.$class)]
+    },
+    get: function() {
+      return !this.gridEnabledItem
+    }
+  }
+})
+export default ComponentLayoutConfig

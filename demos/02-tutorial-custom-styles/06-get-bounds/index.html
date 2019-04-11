@@ -7,8 +7,8 @@
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.1.
-     // Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML 2.2.
+     // Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -36,11 +36,12 @@
 
   <title>GetBounds - Custom Styles Tutorial [yFiles for HTML]</title>
 
-  <link rel="stylesheet" href="../../../lib/yfiles.css">
+  <link rel="stylesheet" href="../../node_modules/yfiles/yfiles.css">
   <link rel="stylesheet" href="../../resources/style/demo.css">
 
   <!-- enable debugging -->
   <script src="../../../ide-support/yfiles-typeinfo.js"></script>
+  <script src="../../resources/filesystem-warning.js"></script>
 </head>
 <body class="demo-has-left">
 <!--
@@ -49,9 +50,9 @@
 <aside class="demo-sidebar demo-left">
   <h1 class="demo-sidebar-header">Description</h1>
   <div class="demo-sidebar-content">
-    <p>This step shows how to override <code>getBounds()</code> of <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.styles.NodeStyleBase" target="_blank">yfiles.styles.NodeStyleBase</a>.</p>
-    <p>Also, <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.styles.NodeStyleBase#getOutline" target="_blank">yfiles.styles.NodeStyleBase#getOutline</a> is implemented, so that implementations of <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.styles.NodeStyleBase#getIntersection" target="_blank">yfiles.styles.NodeStyleBase#getIntersection</a>,
-      <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.styles.NodeStyleBase#isInside" target="_blank">yfiles.styles.NodeStyleBase#isInside</a> and <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.styles.NodeStyleBase#isHit" target="_blank">yfiles.styles.NodeStyleBase#isHit</a> won't be
+    <p>This step shows how to override <code>getBounds()</code> of <a href="https://docs.yworks.com/yfileshtml/#/api/NodeStyleBase" target="_blank">NodeStyleBase</a>.</p>
+    <p>Also, <a href="https://docs.yworks.com/yfileshtml/#/api/NodeStyleBase#getOutline" target="_blank">NodeStyleBase#getOutline</a> is implemented, so that implementations of <a href="https://docs.yworks.com/yfileshtml/#/api/NodeStyleBase#getIntersection" target="_blank">NodeStyleBase#getIntersection</a>,
+      <a href="https://docs.yworks.com/yfileshtml/#/api/NodeStyleBase#isInside" target="_blank">NodeStyleBase#isInside</a> and <a href="https://docs.yworks.com/yfileshtml/#/api/NodeStyleBase#isHit" target="_blank">NodeStyleBase#isHit</a> won't be
       necessary any more.</p>
 
     <h2>Things to Try</h2>
@@ -110,8 +111,7 @@
   <div id="graphComponent"></div>
 </div>
 
-<script src="../../resources/require.js"></script>
-<script src="SampleApplication.js"></script>
+<script type="module" crossorigin="anonymous" src="SampleApplication.js"></script>
 
 </body>
 </html>

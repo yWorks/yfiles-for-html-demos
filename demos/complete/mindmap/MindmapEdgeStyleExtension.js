@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.1.
- ** Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.2.
+ ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,69 +26,63 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-/*eslint-disable*/
-'use strict'
+import { Class, ILookup, MarkupExtension } from 'yfiles'
+import MindmapEdgeStyle from './MindmapEdgeStyle.js'
 
-define(['yfiles/lang', 'yfiles/view-component', './MindmapEdgeStyle.js'], (
-  lang,
-  yfiles,
-  MindmapEdgeStyle
-) => {
+/**
+ * A markup extension class used for (de-)serializing a custom edge style, namely
+ * MindmapEdgeStyle class, that is written in ECMAScript 6.
+ */
+const MindmapEdgeStyleExtension = Class('MindmapEdgeStyleExtension', {
+  $extends: MarkupExtension,
+
   /**
-   * A markup extension class used for (de-)serializing a custom edge style, namely
-   * MindmapEdgeStyle class, that is written in ECMAScript 6.
+   * Backing field for below property
+   * @type {number}
    */
-  const MindmapEdgeStyleExtension = yfiles.lang.Class('MindmapEdgeStyleExtension', {
-    $extends: yfiles.graphml.MarkupExtension,
+  $thicknessStart: 1,
 
-    /**
-     * Backing field for below property
-     * @type {number}
-     */
-    $thicknessStart: 1,
-
-    /**
-     * Gets or sets the start thickness of an edge.
-     * The explicit getter/setter is needed to support (de-)serialization.
-     * @type {number}
-     */
-    thicknessStart: {
-      get: function() {
-        return this.$thicknessStart
-      },
-      set: function(value) {
-        this.$thicknessStart = value
-      }
+  /**
+   * Gets or sets the start thickness of an edge.
+   * The explicit getter/setter is needed to support (de-)serialization.
+   * @type {number}
+   */
+  thicknessStart: {
+    get: function() {
+      return this.$thicknessStart
     },
-
-    /**
-     * Backing field for below property
-     * @type {number}
-     */
-    $thicknessEnd: 1,
-
-    /**
-     * Gets or sets the end thickness of an edge.
-     * The explicit getter/setter is needed to support (de-)serialization.
-     * @type {number}
-     */
-    thicknessEnd: {
-      get: function() {
-        return this.$thicknessEnd
-      },
-      set: function(value) {
-        this.$thicknessEnd = value
-      }
-    },
-
-    /**
-     * @param {yfiles.graph.ILookup} lookup
-     * @return {MindmapEdgeStyle}
-     */
-    provideValue: function(lookup) {
-      return new MindmapEdgeStyle(this.thicknessStart, this.thicknessEnd)
+    set: function(value) {
+      this.$thicknessStart = value
     }
-  })
+  },
 
-  return MindmapEdgeStyleExtension
+  /**
+   * Backing field for below property
+   * @type {number}
+   */
+  $thicknessEnd: 1,
+
+  /**
+   * Gets or sets the end thickness of an edge.
+   * The explicit getter/setter is needed to support (de-)serialization.
+   * @type {number}
+   */
+  thicknessEnd: {
+    get: function() {
+      return this.$thicknessEnd
+    },
+    set: function(value) {
+      this.$thicknessEnd = value
+    }
+  },
+
+  /**
+   * @param {ILookup} lookup
+   * @return {MindmapEdgeStyle}
+   */
+  provideValue: function(lookup) {
+    return new MindmapEdgeStyle(this.thicknessStart, this.thicknessEnd)
+  }
 })
+
+export default MindmapEdgeStyleExtension

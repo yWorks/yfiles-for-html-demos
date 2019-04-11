@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.1.
- ** Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.2.
+ ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,57 +26,62 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-﻿'use strict'
+import {
+  BaseClass,
+  FreeEdgeLabelModel,
+  FreeLabelModel,
+  FreeNodeLabelModel,
+  IHandleProvider,
+  IInputModeContext,
+  ILabel,
+  InteriorStretchLabelModel,
+  List
+} from 'yfiles'
 
-define(['yfiles/view-editor', 'LabelResizeHandle.js', 'LabelRotateHandle.js'], (
-  /** @type {yfiles_namespace} */ /** typeof yfiles */ yfiles,
-  LabelResizeHandle,
-  LabelRotateHandle
-) => {
+import LabelRotateHandle from './LabelRotateHandle.js'
+import LabelResizeHandle from './LabelResizeHandle.js'
+
+/**
+ * A custom {@link IHandleProvider} implementation that returns a {@link LabelResizeHandle} for each
+ * label which can be resized and a {@link LabelRotateHandle} for each label which can be rotated.
+ */
+export default class LabelHandleProvider extends BaseClass(IHandleProvider) {
   /**
-   * A custom {@link yfiles.input.IHandleProvider} implementation that returns a {@link LabelResizeHandle} for each
-   * label which can be resized and a {@link LabelRotateHandle} for each label which can be rotated.
+   * Creates a new instance of <code>LabelHandleProvider</code>.
+   * @param {ILabel} label The given label
    */
-  class LabelHandleProvider extends yfiles.lang.Class(yfiles.input.IHandleProvider) {
-    /**
-     * Creates a new instance of <code>LabelHandleProvider</code>.
-     * @param {yfiles.graph.ILabel} label The given label
-     */
-    constructor(label) {
-      super()
-      this.$label = label
-    }
-
-    /**
-     * Implementation of {@link yfiles.input.IHandleProvider#getHandles}.
-     *
-     * Returns a list of available handles for the label this instance has been created for.
-     * @param {yfiles.input.IInputModeContext} context
-     * @return {yfiles.collections.IEnumerable<yfiles.input.IHandle>}
-     */
-    getHandles(context) {
-      // return a list of the available handles
-      const handles = new yfiles.collections.List()
-      const labelModel = this.$label.layoutParameter.model
-      if (labelModel instanceof yfiles.graph.InteriorStretchLabelModel) {
-        // Some label models are not resizable at all - don't provide any handles
-      } else if (
-        labelModel instanceof yfiles.graph.FreeEdgeLabelModel ||
-        labelModel instanceof yfiles.graph.FreeNodeLabelModel ||
-        labelModel instanceof yfiles.graph.FreeLabelModel
-      ) {
-        // These models support resizing in one direction
-        handles.add(new LabelResizeHandle(this.$label, false))
-        // They also support rotation
-        handles.add(new LabelRotateHandle(this.$label, context))
-      } else {
-        // For all other models, we assume the *center* needs to stay the same
-        // This requires that the label must be resized symmetrically in both directions
-        handles.add(new LabelResizeHandle(this.$label, true))
-      }
-      return handles
-    }
+  constructor(label) {
+    super()
+    this.$label = label
   }
 
-  return LabelHandleProvider
-})
+  /**
+   * Implementation of {@link IHandleProvider#getHandles}.
+   *
+   * Returns a list of available handles for the label this instance has been created for.
+   * @param {IInputModeContext} context
+   * @return {IEnumerable<IHandle>}
+   */
+  getHandles(context) {
+    // return a list of the available handles
+    const handles = new List()
+    const labelModel = this.$label.layoutParameter.model
+    if (labelModel instanceof InteriorStretchLabelModel) {
+      // Some label models are not resizable at all - don't provide any handles
+    } else if (
+      labelModel instanceof FreeEdgeLabelModel ||
+      labelModel instanceof FreeNodeLabelModel ||
+      labelModel instanceof FreeLabelModel
+    ) {
+      // These models support resizing in one direction
+      handles.add(new LabelResizeHandle(this.$label, false))
+      // They also support rotation
+      handles.add(new LabelRotateHandle(this.$label, context))
+    } else {
+      // For all other models, we assume the *center* needs to stay the same
+      // This requires that the label must be resized symmetrically in both directions
+      handles.add(new LabelResizeHandle(this.$label, true))
+    }
+    return handles
+  }
+}

@@ -7,8 +7,8 @@
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.1.
-     // Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML 2.2.
+     // Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -36,11 +36,12 @@
 
   <title>Logic Gates Demo [yFiles for HTML]</title>
 
-  <link rel="stylesheet" href="../../../lib/yfiles.css">
+  <link rel="stylesheet" href="../../node_modules/yfiles/yfiles.css">
   <link rel="stylesheet" href="../../resources/style/demo.css">
 
   <!-- enable debugging -->
   <script src="../../../ide-support/yfiles-typeinfo.js"></script>
+  <script src="../../resources/filesystem-warning.js"></script>
 
   <style>
     #dndPanelContainer {
@@ -116,7 +117,7 @@
       gates. </p>
     <p> Each node in this system has specific ports such that incoming edges are connected only to the left side of the
       target node, while outgoing edges connect to the right side of the source node. To achieve this, the notions of
-      <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.layout.PortConstraint" target="_blank">yfiles.layout.PortConstraint</a> and <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.layout.PortCandidate" target="_blank">yfiles.layout.PortCandidate</a> have been used. </p>
+      <a href="https://docs.yworks.com/yfileshtml/#/api/PortConstraint" target="_blank">PortConstraint</a> and <a href="https://docs.yworks.com/yfileshtml/#/api/PortCandidate" target="_blank">PortCandidate</a> have been used. </p>
 
     <h2>Things to Try:</h2>
     <ul>
@@ -124,7 +125,8 @@
         ports.
       </li>
       <li>Try to create a new edge. While creating the connection the possible end ports are indicated with green
-        color.
+        color. The edge will be created in the direction induced by the kind of port candidate (source/target) on which
+        the drag has started.
       </li>
       <li>Hover over a node to see its available input (indicated with green color) and output (indicated with red
         color) ports.
@@ -172,7 +174,6 @@
   <div id="graphComponent"></div>
 </div>
 
-<script src="../../resources/require.js"></script>
-<script src="LogicGatesDemo.js"></script>
+<script type="module" crossorigin="anonymous" src="LogicGatesDemo.js"></script>
 </body>
 </html>

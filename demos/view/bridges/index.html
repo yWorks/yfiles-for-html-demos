@@ -7,8 +7,8 @@
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.1.
-     // Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML 2.2.
+     // Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -36,11 +36,12 @@
 
   <title>Bridges Demo [yFiles for HTML]</title>
 
-  <link rel="stylesheet" href="../../../lib/yfiles.css">
+  <link rel="stylesheet" href="../../node_modules/yfiles/yfiles.css">
   <link rel="stylesheet" href="../../resources/style/demo.css">
 
   <!-- enable debugging -->
   <script src="../../../ide-support/yfiles-typeinfo.js"></script>
+  <script src="../../resources/filesystem-warning.js"></script>
 
   <style type="text/css">
     .customSlider {
@@ -64,7 +65,7 @@
   <h1 class="demo-sidebar-header">Description</h1>
   <div class="demo-sidebar-content">
     <p>
-      The Bridges demo showcases the capabilities of the <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.view.BridgeManager" target="_blank">yfiles.view.BridgeManager</a> class
+      The Bridges demo showcases the capabilities of the <a href="https://docs.yworks.com/yfileshtml/#/api/BridgeManager" target="_blank">BridgeManager</a> class
       for inserting bridges into edge paths. </p>
     <p>
       In addition to bridges for edge-edge intersections, this demo shows bridges for other obstacles like group node
@@ -77,7 +78,7 @@
         Create new edges and move existing nodes and bends to create new bridges.
       </li>
       <li>
-        Explore the settings of the <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.view.BridgeManager" target="_blank">yfiles.view.BridgeManager</a> using the toolbar's combo boxes.
+        Explore the settings of the <a href="https://docs.yworks.com/yfileshtml/#/api/BridgeManager" target="_blank">BridgeManager</a> using the toolbar's combo boxes.
       </li>
     </ul>
   </div>
@@ -104,7 +105,6 @@
   <div id="graphComponent"></div>
 </div>
 
-<script src="../../resources/require.js"></script>
-<script src="BridgesDemo.js"></script>
+<script type="module" crossorigin="anonymous" src="BridgesDemo.js"></script>
 </body>
 </html>

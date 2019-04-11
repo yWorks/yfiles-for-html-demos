@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.1.
- ** Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.2.
+ ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,69 +26,41 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-'use strict'
+import '../../../ide-support/yfiles-typeinfo'
+import licenseData from '../../../lib/license.json'
+import { Class, HierarchicLayout, LayoutExecutor, License, MinimumNodeSizeStage } from 'yfiles'
+import { readJSON, writeJSON } from './WebWorkerJsonIO'
 
-/* eslint-env worker */
-/* eslint-disable global-require */
-/* eslint-disable import/no-dynamic-require */
-;(() => {
-  // noinspection EmptyCatchBlockJS
-  try {
-    // Try to enable development support
-    importScripts('../../../ide-support/yfiles-typeinfo.js')
-  } catch (ignored) {
-    // Development support not available, probably because we're in a production environment.
-    // Just proceed without it.
-  }
+License.value = licenseData
 
-  importScripts('../../resources/require.js')
+self.addEventListener(
+  'message',
+  e => {
+    const jsonData = e.data
+    const jsonGraph = jsonData.graph
 
-  // @yjs:keep=onError
-  require.onError = error => {
-    throw error
-  }
-  require.config({
-    paths: {
-      yfiles: '../../../lib/umd/yfiles/',
-      utils: '../../utils/'
-    }
-  })
+    runLayout(jsonGraph)
+  },
+  false
+)
 
-  // Require imports
-  self.addEventListener(
-    'message',
-    e => {
-      const jsonData = e.data
-      const jsonGraph = jsonData.graph
+// We need to load the 'view-layout-bridge' module explicitly to prevent tree-shaking
+// tools it from removing this dependency which is needed for 'applyLayout'.
+Class.ensure(LayoutExecutor)
 
-      require([
-        './WebWorkerJsonIO.js',
-        'yfiles/layout-hierarchic',
-        'yfiles/view-layout-bridge',
-        '../../resources/license.js'
-      ], (WebWorkerJsonIO, /** @type {yfiles_namespace} */ /** typeof yfiles */ yfiles) => {
-        runLayout(jsonGraph, WebWorkerJsonIO, yfiles)
-      })
-    },
-    false
-  )
+/**
+ * @param {JSONGraph} jsonGraph
+ */
+function runLayout(jsonGraph) {
+  const graph = readJSON(jsonGraph)
 
-  /**
-   * @param {JSONGraph} jsonGraph
-   * @param {ServerJsonIO} WebWorkerJsonIO
-   * @param {yfiles} yfiles
-   */
-  function runLayout(jsonGraph, WebWorkerJsonIO, yfiles) {
-    const graph = WebWorkerJsonIO.read(jsonGraph)
+  const layout = new HierarchicLayout()
+  layout.minimumNodeDistance = 50
+  layout.considerNodeLabels = true
+  layout.integratedEdgeLabeling = true
+  graph.applyLayout(new MinimumNodeSizeStage(layout))
 
-    const layout = new yfiles.hierarchic.HierarchicLayout()
-    layout.minimumNodeDistance = 50
-    layout.considerNodeLabels = true
-    layout.integratedEdgeLabeling = true
-    graph.applyLayout(new yfiles.layout.MinimumNodeSizeStage(layout))
+  const reply = writeJSON(graph)
 
-    const reply = WebWorkerJsonIO.write(graph)
-
-    self.postMessage(reply)
-  }
-})()
+  self.postMessage(reply)
+}

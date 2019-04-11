@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.1.
- ** Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.2.
+ ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,162 +26,131 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-'use strict'
+import {
+  HoveredItemChangedEventArgs,
+  IEdge,
+  IModelItem,
+  INode,
+  ItemHoverInputMode,
+  ShortestPath
+} from 'yfiles'
+import { SingleColorEdgeStyle, SingleColorNodeStyle } from './DemoStyles.js'
 
-define(['yfiles/view-component', './DemoStyles.js'], (
-  /** @type {yfiles_namespace} */ /** typeof yfiles */ yfiles,
-  demoStyles
-) => {
+/**
+ * Input mode that highlights the shortest path to the single source when hovering over a marked node or edge.
+ */
+export default class HighlightHoverInputMode extends ItemHoverInputMode {
   /**
-   * Input mode that highlights the shortest path to the single source when hovering over a marked node or edge.
+   * Changes the node/edge styles when the hovered item changes.
+   * @param {HoveredItemChangedEventArgs} hoveredItemChangedEventArgs The current event.
    */
-  class HighlightHoverInputMode extends yfiles.input.ItemHoverInputMode {
-    /**
-     * Changes the node/edge styles when the hovered item changes.
-     * @param {yfiles.input.HoveredItemChangedEventArgs} hoveredItemChangedEventArgs The current event.
-     */
-    onHoveredItemChanged(hoveredItemChangedEventArgs) {
-      const item = hoveredItemChangedEventArgs.item
-      const oldItem = hoveredItemChangedEventArgs.oldItem
-      const graph = this.inputModeContext.canvasComponent.graph
+  onHoveredItemChanged(hoveredItemChangedEventArgs) {
+    const item = hoveredItemChangedEventArgs.item
+    const oldItem = hoveredItemChangedEventArgs.oldItem
+    const graph = this.inputModeContext.canvasComponent.graph
 
-      // reset the changes on the style of the previously hovered item
-      if (
-        yfiles.graph.INode.isInstance(oldItem) &&
-        graph.contains(oldItem) &&
-        oldItem.style instanceof demoStyles.SingleColorNodeStyle
-      ) {
-        if (oldItem && oldItem.tag && oldItem.tag.singleSource) {
-          this.changeStyles(oldItem, false)
-        }
-      } else if (
-        yfiles.graph.IEdge.isInstance(oldItem) &&
-        graph.contains(oldItem) &&
-        oldItem.style instanceof demoStyles.SingleColorEdgeStyle
-      ) {
-        const oldNode = oldItem.targetNode
-        if (oldNode && oldNode.tag && oldNode.tag.singleSource) {
-          this.changeStyles(oldNode, false)
-
-          const oldSourceElement = window.document.getElementById(
-            `node${oldItem.sourceNode.tag.id}`
-          )
-          if (oldSourceElement !== null) {
-            oldSourceElement.setAttribute('class', 'path-highlight')
-          }
-          const oldEdgeElement = window.document.getElementById(`edge${oldItem.tag.id}path`)
-          if (oldEdgeElement !== null) {
-            oldEdgeElement.setAttribute('class', 'single-colored-edge')
-          }
-        }
+    // reset the changes on the style of the previously hovered item
+    if (
+      INode.isInstance(oldItem) &&
+      graph.contains(oldItem) &&
+      oldItem.style instanceof SingleColorNodeStyle
+    ) {
+      if (oldItem && oldItem.tag && oldItem.tag.singleSource) {
+        this.changeStyles(oldItem, false)
       }
+    } else if (
+      IEdge.isInstance(oldItem) &&
+      graph.contains(oldItem) &&
+      oldItem.style instanceof SingleColorEdgeStyle
+    ) {
+      const oldNode = oldItem.targetNode
+      if (oldNode && oldNode.tag && oldNode.tag.singleSource) {
+        this.changeStyles(oldNode, false)
 
-      // change the style of the currently hovered item
-      if (
-        yfiles.graph.INode.isInstance(item) &&
-        graph.contains(item) &&
-        item.style instanceof demoStyles.SingleColorNodeStyle
-      ) {
-        if (item && item.tag && item.tag.singleSource) {
-          this.changeStyles(item, true)
+        const oldSourceElement = window.document.getElementById(`node${oldItem.sourceNode.tag.id}`)
+        if (oldSourceElement !== null) {
+          oldSourceElement.setAttribute('class', 'path-highlight')
         }
-      } else if (
-        yfiles.graph.IEdge.isInstance(item) &&
-        graph.contains(item) &&
-        item.style instanceof demoStyles.SingleColorEdgeStyle
-      ) {
-        const node = item.targetNode
-        if (node && node.tag && node.tag.singleSource) {
-          this.changeStyles(node, true)
-
-          const sourceElement = window.document.getElementById(`node${item.sourceNode.tag.id}`)
-          if (sourceElement !== null) {
-            sourceElement.setAttribute('class', 'path-highlight-hovered')
-          }
-          const edgeElement = window.document.getElementById(`edge${item.tag.id}path`)
-          if (edgeElement !== null) {
-            edgeElement.setAttribute('class', 'single-colored-edge-hovered')
-          }
+        const oldEdgeElement = window.document.getElementById(`edge${oldItem.tag.id}path`)
+        if (oldEdgeElement !== null) {
+          oldEdgeElement.setAttribute('class', 'single-colored-edge')
         }
       }
     }
 
-    /**
-     * Changes the css-style class for the hovered/non-hovered item.
-     * @param {yfiles.graph.IModelItem} item The changed item.
-     * @param {boolean} hovered The hovered state of the item.
-     */
-    changeStyles(item, hovered) {
-      const graph = this.inputModeContext.canvasComponent.graph
+    // change the style of the currently hovered item
+    if (
+      INode.isInstance(item) &&
+      graph.contains(item) &&
+      item.style instanceof SingleColorNodeStyle
+    ) {
+      if (item && item.tag && item.tag.singleSource) {
+        this.changeStyles(item, true)
+      }
+    } else if (
+      IEdge.isInstance(item) &&
+      graph.contains(item) &&
+      item.style instanceof SingleColorEdgeStyle
+    ) {
+      const node = item.targetNode
+      if (node && node.tag && node.tag.singleSource) {
+        this.changeStyles(node, true)
 
-      // calculate the shortest path between the item and the single source
-      const adapter = new yfiles.layout.YGraphAdapter(graph)
-      const cost = this.getCosts(graph)
-      const source = adapter.getCopiedNode(item.tag.singleSource)
-      const sink = adapter.getCopiedNode(item)
-      let pathEdges = yfiles.algorithms.ShortestPaths.singleSourceSingleSink(
-        adapter.yGraph,
-        source,
-        sink,
-        false,
-        cost
-      )
-      pathEdges = adapter.createEdgeEnumerable(pathEdges)
-
-      // change css-classes of all items in the path
-      pathEdges.forEach(edge => {
-        if (edge.tag) {
-          const path = window.document.getElementById(`edge${edge.tag.id}path`)
-          if (path !== null) {
-            path.setAttribute(
-              'class',
-              hovered ? 'single-colored-edge-hovered' : 'single-colored-edge'
-            )
-          }
+        const sourceElement = window.document.getElementById(`node${item.sourceNode.tag.id}`)
+        if (sourceElement !== null) {
+          sourceElement.setAttribute('class', 'path-highlight-hovered')
         }
-
-        const sourceNode = edge.sourceNode
-        if (sourceNode.tag) {
-          const sourceElement = window.document.getElementById(`node${sourceNode.tag.id}`)
-          if (sourceElement !== null) {
-            sourceElement.setAttribute(
-              'class',
-              hovered ? 'path-highlight-hovered' : 'path-highlight'
-            )
-          }
+        const edgeElement = window.document.getElementById(`edge${item.tag.id}path`)
+        if (edgeElement !== null) {
+          edgeElement.setAttribute('class', 'single-colored-edge-hovered')
         }
-
-        const targetNode = edge.targetNode
-        if (targetNode.tag) {
-          const targetElement = window.document.getElementById(`node${targetNode.tag.id}`)
-          if (targetElement !== null) {
-            targetElement.setAttribute(
-              'class',
-              hovered ? 'path-highlight-hovered' : 'path-highlight'
-            )
-          }
-        }
-      })
-    }
-
-    /**
-     * Returns an array with costs for each edge. All marked edges have the same weight. Non-marked edges have
-     * infinite costs because they must not be part of a highlighted path.
-     * @param {yfiles.graph.IGraph} graph The graph that contains the edges.
-     * @returns {Array} The array with the costs for each edge.
-     */
-    getCosts(graph) {
-      const costs = []
-      graph.edges.forEach((edge, index) => {
-        if (edge.style instanceof demoStyles.SingleColorEdgeStyle) {
-          costs[index] = 1
-        } else {
-          costs[index] = Number.POSITIVE_INFINITY
-        }
-      })
-      return costs
+      }
     }
   }
 
-  return HighlightHoverInputMode
-})
+  /**
+   * Changes the css-style class for the hovered/non-hovered item.
+   * @param {IModelItem} item The changed item.
+   * @param {boolean} hovered The hovered state of the item.
+   */
+  changeStyles(item, hovered) {
+    const graph = this.inputModeContext.canvasComponent.graph
+
+    // calculate the shortest path between the item and the single source
+    const result = new ShortestPath({
+      directed: false,
+      costs: edge => (edge.style instanceof SingleColorEdgeStyle ? 1 : Number.POSITIVE_INFINITY),
+      source: item.tag.singleSource,
+      sink: item
+    }).run(graph)
+
+    // change css-classes of all items in the path
+    result.edges.forEach(edge => {
+      if (edge.tag) {
+        const path = window.document.getElementById(`edge${edge.tag.id}path`)
+        if (path !== null) {
+          path.setAttribute(
+            'class',
+            hovered ? 'single-colored-edge-hovered' : 'single-colored-edge'
+          )
+        }
+      }
+
+      const sourceNode = edge.sourceNode
+      if (sourceNode.tag) {
+        const sourceElement = window.document.getElementById(`node${sourceNode.tag.id}`)
+        if (sourceElement !== null) {
+          sourceElement.setAttribute('class', hovered ? 'path-highlight-hovered' : 'path-highlight')
+        }
+      }
+
+      const targetNode = edge.targetNode
+      if (targetNode.tag) {
+        const targetElement = window.document.getElementById(`node${targetNode.tag.id}`)
+        if (targetElement !== null) {
+          targetElement.setAttribute('class', hovered ? 'path-highlight-hovered' : 'path-highlight')
+        }
+      }
+    })
+  }
+}

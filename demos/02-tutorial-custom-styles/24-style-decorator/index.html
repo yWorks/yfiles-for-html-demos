@@ -7,8 +7,8 @@
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.1.
-     // Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML 2.2.
+     // Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -36,11 +36,12 @@
 
   <title>Style Decorator - Custom Styles Tutorial [yFiles for HTML]</title>
 
-  <link rel="stylesheet" href="../../../lib/yfiles.css">
+  <link rel="stylesheet" href="../../node_modules/yfiles/yfiles.css">
   <link rel="stylesheet" href="../../resources/style/demo.css">
 
   <!-- enable debugging -->
   <script src="../../../ide-support/yfiles-typeinfo.js"></script>
+  <script src="../../resources/filesystem-warning.js"></script>
 
 </head>
 <body class="demo-has-left">
@@ -58,8 +59,8 @@
       For the purpose of this tutorial step, the "label edges" rendering code has been removed from <code>MySimpleNodeStyle</code>.
     </p>
     <p>
-      Other graph item styles can be wrapped in the same fashion by subclassing <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.styles.EdgeStyleBase" target="_blank">yfiles.styles.EdgeStyleBase</a>,
-      <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.styles.LabelStyleBase" target="_blank">yfiles.styles.LabelStyleBase</a> and <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.styles.PortStyleBase" target="_blank">yfiles.styles.PortStyleBase</a>. </p>
+      Other graph item styles can be wrapped in the same fashion by subclassing <a href="https://docs.yworks.com/yfileshtml/#/api/EdgeStyleBase" target="_blank">EdgeStyleBase</a>,
+      <a href="https://docs.yworks.com/yfileshtml/#/api/LabelStyleBase" target="_blank">LabelStyleBase</a> and <a href="https://docs.yworks.com/yfileshtml/#/api/PortStyleBase" target="_blank">PortStyleBase</a>. </p>
 
     <h2>Things to Try</h2>
 
@@ -68,7 +69,7 @@
         Take a look at the source code of <code>MyNodeStyleDecorator</code> class.
       </li>
       <li>
-        Uncomment the line in <code>SammpleApplication.initializeGraph()</code> that creates an instance of <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.styles.ShinyPlateNodeStyle" target="_blank">yfiles.styles.ShinyPlateNodeStyle</a>
+        Uncomment the line in <code>SammpleApplication.initializeGraph()</code> that creates an instance of <a href="https://docs.yworks.com/yfileshtml/#/api/ShinyPlateNodeStyle" target="_blank">ShinyPlateNodeStyle</a>
         instead of <code>MySimpleNodeStyle</code> and observe the outcome.
       </li>
     </ul>
@@ -104,8 +105,7 @@
 </div>
 
 
-<script src="../../resources/require.js"></script>
-<script src="SampleApplication.js"></script>
+<script type="module" crossorigin="anonymous" src="SampleApplication.js"></script>
 
 </body>
 </html>

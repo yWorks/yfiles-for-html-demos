@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.1.
- ** Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.2.
+ ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,153 +26,138 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-'use strict'
+import {
+  FoldingManager,
+  GraphComponent,
+  GraphEditorInputMode,
+  ICommand,
+  License,
+  Point,
+  Size
+} from 'yfiles'
 
-require.config({
-  paths: {
-    yfiles: '../../../lib/umd/yfiles/',
-    utils: '../../utils/',
-    resources: '../../resources/'
-  }
-})
+import CSS3NodeStyle from './CSS3NodeStyle.js'
+import { initDemoStyles } from '../../resources/demo-styles.js'
+import { bindCommand, showApp } from '../../resources/demo-app.js'
+import loadJson from '../../resources/load-json.js'
 
-require([
-  'yfiles/view-editor',
-  'resources/demo-app',
-  './CSS3NodeStyle.js',
-  'resources/demo-styles',
-  'yfiles/view-folding',
-  'resources/license'
-], (
-  /** @type {yfiles_namespace} */ /** typeof yfiles */ yfiles,
-  app,
-  CSS3NodeStyle,
-  DemoStyles
-) => {
-  /** @type {yfiles.view.GraphComponent} */
-  let graphComponent = null
+/** @type {GraphComponent} */
+let graphComponent = null
 
-  function run() {
-    graphComponent = new yfiles.view.GraphComponent('graphComponent')
+function run(licenseData) {
+  License.value = licenseData
+  graphComponent = new GraphComponent('graphComponent')
 
-    enableFolding()
+  enableFolding()
 
-    initializeGraph()
+  initializeGraph()
 
-    graphComponent.inputMode = createEditorMode()
+  graphComponent.inputMode = createEditorMode()
 
-    graphComponent.fitGraphBounds()
+  graphComponent.fitGraphBounds()
 
-    registerCommands()
+  registerCommands()
 
-    app.show(graphComponent)
-  }
+  showApp(graphComponent)
+}
 
-  /**
-   * Setup graph defaults.
-   */
-  function initializeGraph() {
-    const graph = graphComponent.graph
+/**
+ * Setup graph defaults.
+ */
+function initializeGraph() {
+  const graph = graphComponent.graph
 
-    // hide regular highlight styling as we define custom ones with CSS
-    graph.decorator.nodeDecorator.selectionDecorator.hideImplementation()
-    graph.decorator.edgeDecorator.selectionDecorator.hideImplementation()
-    graph.decorator.nodeDecorator.focusIndicatorDecorator.hideImplementation()
+  // hide regular highlight styling as we define custom ones with CSS
+  graph.decorator.nodeDecorator.selectionDecorator.hideImplementation()
+  graph.decorator.edgeDecorator.selectionDecorator.hideImplementation()
+  graph.decorator.nodeDecorator.focusIndicatorDecorator.hideImplementation()
 
-    DemoStyles.initDemoStyles(graph)
-    // use our custom node style
-    graph.nodeDefaults.style = new CSS3NodeStyle()
+  initDemoStyles(graph)
+  // use our custom node style
+  graph.nodeDefaults.style = new CSS3NodeStyle()
 
-    graph.nodeDefaults.size = new yfiles.geometry.Size(80, 80)
+  graph.nodeDefaults.size = new Size(80, 80)
 
-    // set the CSS class to use for group nodes
-    graph.groupNodeDefaults.style.cssClass = 'group-node'
+  // set the CSS class to use for group nodes
+  graph.groupNodeDefaults.style.cssClass = 'group-node'
 
-    // Create some graph elements with the above defined styles.
-    createSampleGraph()
-  }
+  // Create some graph elements with the above defined styles.
+  createSampleGraph()
+}
 
-  /**
-   * Creates the default input mode for the graphComponent, a {@link yfiles.input.GraphEditorInputMode}.
-   * @return {yfiles.input.IInputMode} a new GraphEditorInputMode instance
-   */
-  function createEditorMode() {
-    const mode = new yfiles.input.GraphEditorInputMode({
-      hideLabelDuringEditing: false,
-      allowGroupingOperations: true
-    })
+/**
+ * Creates the default input mode for the graphComponent, a {@link GraphEditorInputMode}.
+ * @return {IInputMode} a new GraphEditorInputMode instance
+ */
+function createEditorMode() {
+  const mode = new GraphEditorInputMode({
+    hideLabelDuringEditing: false,
+    allowGroupingOperations: true
+  })
 
-    // whenever a node is created by the user, we set a created flag on its tag data object, which will then be used
-    // by the custom node style to set the appropriate CSS classes
-    mode.addNodeCreatedListener((sender, args) => {
-      const node = args.item
-      node.tag = {}
-      node.tag.created = true
-    })
+  // whenever a node is created by the user, we set a created flag on its tag data object, which will then be used
+  // by the custom node style to set the appropriate CSS classes
+  mode.addNodeCreatedListener((sender, args) => {
+    const node = args.item
+    node.tag = {}
+    node.tag.created = true
+  })
 
-    return mode
-  }
+  return mode
+}
 
-  /**
-   * Creates the initial sample graph.
-   */
-  function createSampleGraph() {
-    const graph = graphComponent.graph
+/**
+ * Creates the initial sample graph.
+ */
+function createSampleGraph() {
+  const graph = graphComponent.graph
 
-    const n0 = graph.createNodeAt(new yfiles.geometry.Point(291, 433))
-    const n1 = graph.createNodeAt(new yfiles.geometry.Point(396, 398))
-    const n2 = graph.createNodeAt(new yfiles.geometry.Point(462, 308))
-    const n3 = graph.createNodeAt(new yfiles.geometry.Point(462, 197))
-    const n4 = graph.createNodeAt(new yfiles.geometry.Point(396, 107))
-    const n5 = graph.createNodeAt(new yfiles.geometry.Point(291, 73))
-    const n6 = graph.createNodeAt(new yfiles.geometry.Point(185, 107))
-    const n7 = graph.createNodeAt(new yfiles.geometry.Point(119, 197))
-    const n8 = graph.createNodeAt(new yfiles.geometry.Point(119, 308))
-    const n9 = graph.createNodeAt(new yfiles.geometry.Point(185, 398))
+  const n0 = graph.createNodeAt(new Point(291, 433))
+  const n1 = graph.createNodeAt(new Point(396, 398))
+  const n2 = graph.createNodeAt(new Point(462, 308))
+  const n3 = graph.createNodeAt(new Point(462, 197))
+  const n4 = graph.createNodeAt(new Point(396, 107))
+  const n5 = graph.createNodeAt(new Point(291, 73))
+  const n6 = graph.createNodeAt(new Point(185, 107))
+  const n7 = graph.createNodeAt(new Point(119, 197))
+  const n8 = graph.createNodeAt(new Point(119, 308))
+  const n9 = graph.createNodeAt(new Point(185, 398))
 
-    graph.createEdge(n0, n4)
-    graph.createEdge(n6, n0)
-    graph.createEdge(n6, n5)
-    graph.createEdge(n5, n2)
-    graph.createEdge(n3, n7)
-    graph.createEdge(n9, n4)
-    graph.createEdge(n1, n8)
+  graph.createEdge(n0, n4)
+  graph.createEdge(n6, n0)
+  graph.createEdge(n6, n5)
+  graph.createEdge(n5, n2)
+  graph.createEdge(n3, n7)
+  graph.createEdge(n9, n4)
+  graph.createEdge(n1, n8)
 
-    // put all nodes into a group
-    graph.groupNodes(graph.nodes)
-  }
+  // put all nodes into a group
+  graph.groupNodes(graph.nodes)
+}
 
-  /**
-   * Wires up the UI.
-   */
-  function registerCommands() {
-    const iCommand = yfiles.input.ICommand
+/**
+ * Wires up the UI.
+ */
+function registerCommands() {
+  bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent, null)
+  bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent, null)
+  bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent, null)
+  bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
+}
 
-    app.bindCommand("button[data-command='ZoomIn']", iCommand.INCREASE_ZOOM, graphComponent, null)
-    app.bindCommand("button[data-command='ZoomOut']", iCommand.DECREASE_ZOOM, graphComponent, null)
-    app.bindCommand(
-      "button[data-command='FitContent']",
-      iCommand.FIT_GRAPH_BOUNDS,
-      graphComponent,
-      null
-    )
-    app.bindCommand("button[data-command='ZoomOriginal']", iCommand.ZOOM, graphComponent, 1.0)
-  }
+/**
+ * @type {FoldingManager}
+ */
+let foldingManager = null
 
-  /**
-   * @type {yfiles.graph.FoldingManager}
-   */
-  let foldingManager = null
+/**
+ * Enables folding - changes the graphComponent's graph to a managed view
+ * that provides the actual collapse/expand state.
+ */
+function enableFolding() {
+  foldingManager = new FoldingManager(graphComponent.graph)
+  graphComponent.graph = foldingManager.createFoldingView().graph
+}
 
-  /**
-   * Enables folding - changes the graphComponent's graph to a managed view
-   * that provides the actual collapse/expand state.
-   */
-  function enableFolding() {
-    foldingManager = new yfiles.graph.FoldingManager(graphComponent.graph)
-    graphComponent.graph = foldingManager.createFoldingView().graph
-  }
-
-  // start demo
-  run()
-})
+// start demo
+loadJson().then(run)

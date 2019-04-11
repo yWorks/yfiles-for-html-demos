@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.1.
- ** Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.2.
+ ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,63 +26,57 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-'use strict'
+import { INode, IRenderContext, NodeStyleBase, SvgVisual } from 'yfiles'
 
-define(['yfiles/view-component'], /** @type {yfiles_namespace} */ /** typeof yfiles */ yfiles => {
+/**
+ * A simple node style to render the node highlight for activity nodes.
+ * Only createVisual() is implemented, since updateVisual() is not called for node highlight.
+ */
+export default class ActivityNodeHighlightStyle extends NodeStyleBase {
   /**
-   * A simple node style to render the node highlight for activity nodes.
-   * Only createVisual() is implemented, since updateVisual() is not called for node highlight.
-   * @class ActivityNodeHighlightStyle
-   * @extends {yfiles.styles.NodeStyleBase}
+   * @param {object} color
    */
-  class ActivityNodeHighlightStyle extends yfiles.styles.NodeStyleBase {
-    /**
-     * @param {object} color
-     */
-    constructor(color) {
-      super()
-      this.color = `rgb(${color.r},${color.g},${color.b})`
-    }
-
-    /**
-     * Creates the visual element for the highlight.
-     * @param {yfiles.view.IRenderContext} context - The render context.
-     * @param {yfiles.graph.INode} node - The node to which this style instance is assigned.
-     * @returns {yfiles.view.SvgVisual} */
-    createVisual(context, node) {
-      // get the activity data
-      const tag = node.tag
-      const layout = node.layout
-
-      // get the width of the lead an followUp decorations
-      const leadWidth =
-        typeof tag.leadTimeWidth === 'number' && tag.leadTimeWidth > 0 ? tag.leadTimeWidth : 0
-      const followUpWidth =
-        typeof tag.followUpTimeWidth === 'number' && tag.followUpTimeWidth > 0
-          ? tag.followUpTimeWidth
-          : 0
-
-      const rectWidth = layout.width + leadWidth + followUpWidth
-      const rectX = -leadWidth
-
-      const halfHeight = layout.height * 0.5
-
-      // create the round rectangle
-      const rect = window.document.createElementNS('http://www.w3.org/2000/svg', 'rect')
-      rect.width.baseVal.value = rectWidth
-      rect.height.baseVal.value = layout.height
-      rect.rx.baseVal.value = halfHeight
-      rect.ry.baseVal.value = halfHeight
-      rect.setAttribute('fill', 'none')
-      rect.setAttribute('stroke', this.color)
-      rect.setAttribute('stroke-width', 4)
-
-      // translate rect to node position
-      yfiles.view.SvgVisual.setTranslate(rect, layout.x + rectX, layout.y)
-
-      return new yfiles.view.SvgVisual(rect)
-    }
+  constructor(color) {
+    super()
+    this.color = `rgb(${color.r},${color.g},${color.b})`
   }
 
-  return ActivityNodeHighlightStyle
-})
+  /**
+   * Creates the visual element for the highlight.
+   * @param {IRenderContext} context - The render context.
+   * @param {INode} node - The node to which this style instance is assigned.
+   * @returns {SvgVisual} */
+  createVisual(context, node) {
+    // get the activity data
+    const tag = node.tag
+    const layout = node.layout
+
+    // get the width of the lead an followUp decorations
+    const leadWidth =
+      typeof tag.leadTimeWidth === 'number' && tag.leadTimeWidth > 0 ? tag.leadTimeWidth : 0
+    const followUpWidth =
+      typeof tag.followUpTimeWidth === 'number' && tag.followUpTimeWidth > 0
+        ? tag.followUpTimeWidth
+        : 0
+
+    const rectWidth = layout.width + leadWidth + followUpWidth
+    const rectX = -leadWidth
+
+    const halfHeight = layout.height * 0.5
+
+    // create the round rectangle
+    const rect = window.document.createElementNS('http://www.w3.org/2000/svg', 'rect')
+    rect.width.baseVal.value = rectWidth
+    rect.height.baseVal.value = layout.height
+    rect.rx.baseVal.value = halfHeight
+    rect.ry.baseVal.value = halfHeight
+    rect.setAttribute('fill', 'none')
+    rect.setAttribute('stroke', this.color)
+    rect.setAttribute('stroke-width', 4)
+
+    // translate rect to node position
+    SvgVisual.setTranslate(rect, layout.x + rectX, layout.y)
+
+    return new SvgVisual(rect)
+  }
+}

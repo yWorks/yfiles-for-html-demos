@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.1.
- ** Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.2.
+ ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,218 +26,220 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-'use strict'
+import {
+  EdgeStyleBase,
+  HtmlCanvasVisual,
+  IBend,
+  IEdge,
+  IInputModeContext,
+  INode,
+  IPoint,
+  IRectangle,
+  IRenderContext,
+  NodeStyleBase,
+  Point,
+  Visual
+} from 'yfiles'
 
-define(['yfiles/view-component'], /** @type {yfiles_namespace} */ /** typeof yfiles */ yfiles => {
+/**
+ * A very basic high-performance node style implementation that uses HTML5 Canvas rendering.
+ */
+export class InteractiveOrganicFastNodeStyle extends NodeStyleBase {
   /**
-   * A very basic high-performance node style implementation that uses HTML5 Canvas rendering.
-   * @extends yfiles.styles.NodeStyleBase
+   * @param {IRenderContext} renderContext
+   * @param {INode} node
+   * @return {NodeRenderVisual}
    */
-  class InteractiveOrganicFastNodeStyle extends yfiles.styles.NodeStyleBase {
-    /**
-     * @param {yfiles.view.IRenderContext} renderContext
-     * @param {yfiles.graph.INode} node
-     * @return {NodeRenderVisual}
-     */
-    createVisual(renderContext, node) {
-      return new NodeRenderVisual(node.layout)
-    }
-
-    /**
-     * @param {yfiles.view.IRenderContext} renderContext
-     * @param {yfiles.view.Visual} oldVisual
-     * @param {yfiles.graph.INode} node
-     * @return {yfiles.view.Visual}
-     */
-    updateVisual(renderContext, oldVisual, node) {
-      return oldVisual
-    }
-  }
-
-  /**
-   * For HTML5 Canvas based rendering we need to extend from {@link yfiles.view.HtmlCanvasVisual}.
-   * @extends yfiles.view.HtmlCanvasVisual
-   */
-  class NodeRenderVisual extends yfiles.view.HtmlCanvasVisual {
-    /**
-     * Creates a new instance of NodeRenderVisual.
-     * @param {yfiles.geometry.IRectangle} layout
-     */
-    constructor(layout) {
-      super()
-      this.$layout = layout
-    }
-
-    /**
-     * Gets the current node layout.
-     * @type {yfiles.geometry.IRectangle}
-     */
-    get layout() {
-      return this.$layout
-    }
-
-    /**
-     * Sets the current node layout.
-     * @type {yfiles.geometry.IRectangle}
-     */
-    set layout(value) {
-      this.$layout = value
-    }
-
-    /**
-     * Draw a rectangle with a solid orange fill.
-     * @see Overrides {@link yfiles.view.HtmlCanvasVisual#paint}
-     * @param {yfiles.view.IRenderContext} renderContext
-     * @param {CanvasRenderingContext2D} ctx
-     */
-    paint(renderContext, ctx) {
-      ctx.fillStyle = 'rgba(255,140,0,1)'
-      const l = this.layout
-      ctx.fillRect(l.x, l.y, l.width, l.height)
-    }
+  createVisual(renderContext, node) {
+    return new NodeRenderVisual(node.layout)
   }
 
   /**
-   * A very basic high-performance edge style that uses HTML 5 canvas rendering.
-   * Arrows are not supported by this implementation.
-   * @extends yfiles.styles.EdgeStyleBase
+   * @param {IRenderContext} renderContext
+   * @param {Visual} oldVisual
+   * @param {INode} node
+   * @return {Visual}
    */
-  class InteractiveOrganicFastEdgeStyle extends yfiles.styles.EdgeStyleBase {
-    /**
-     * @param {yfiles.view.IRenderContext} renderContext
-     * @param {yfiles.graph.IEdge} edge
-     * @return {EdgeRenderVisual}
-     */
-    createVisual(renderContext, edge) {
-      return new EdgeRenderVisual(
-        edge.bends,
-        edge.sourcePort.dynamicLocation,
-        edge.targetPort.dynamicLocation
-      )
-    }
+  updateVisual(renderContext, oldVisual, node) {
+    return oldVisual
+  }
+}
 
-    /**
-     * @param {yfiles.input.IInputModeContext} context
-     * @param {yfiles.geometry.Point} location
-     * @param {yfiles.graph.IEdge} edge
-     * @return {boolean}
-     */
-    isHit(context, location, edge) {
-      // we use a very simple hit logic here (the base implementation)
-      if (!super.isHit(context, location, edge)) {
-        return false
-      }
-
-      // but we exclude hits on the source and target node
-      const s = edge.sourceNode
-      const t = edge.targetNode
-      return (
-        !s.style.renderer.getHitTestable(s, s.style).isHit(context, location) &&
-        !t.style.renderer.getHitTestable(t, t.style).isHit(context, location)
-      )
-    }
-
-    /**
-     * @param {yfiles.view.IRenderContext} renderContext
-     * @param {yfiles.view.Visual} oldVisual
-     * @param {yfiles.graph.IEdge} edge
-     * @return {yfiles.view.Visual}
-     */
-    updateVisual(renderContext, oldVisual, edge) {
-      return oldVisual
-    }
+/**
+ * For HTML5 Canvas based rendering we need to extend from {@link HtmlCanvasVisual}.
+ */
+class NodeRenderVisual extends HtmlCanvasVisual {
+  /**
+   * Creates a new instance of NodeRenderVisual.
+   * @param {IRectangle} layout
+   */
+  constructor(layout) {
+    super()
+    this.$layout = layout
   }
 
   /**
-   * For HTML5 Canvas based rendering we need to extend from {@link yfiles.view.HtmlCanvasVisual}.
-   * @extends yfiles.view.HtmlCanvasVisual
+   * Gets the current node layout.
+   * @type {IRectangle}
    */
-  class EdgeRenderVisual extends yfiles.view.HtmlCanvasVisual {
-    /**
-     * @param {yfiles.collections.IListEnumerable.<yfiles.graph.IBend>} bends
-     * @param {yfiles.geometry.IPoint} sourcePortLocation
-     * @param {yfiles.geometry.IPoint} targetPortLocation
-     */
-    constructor(bends, sourcePortLocation, targetPortLocation) {
-      super()
-      this.$bends = bends
-      this.$sourcePortLocation = sourcePortLocation
-      this.$targetPortLocation = targetPortLocation
-    }
-
-    /**
-     * Gets the edge bends.
-     * @type {yfiles.collections.IListEnumerable.<yfiles.graph.IBend>}
-     */
-    get bends() {
-      return this.$bends
-    }
-
-    /**
-     * Sets the edge bends.
-     * @type {yfiles.collections.IListEnumerable.<yfiles.graph.IBend>}
-     */
-    set bends(value) {
-      this.$bends = value
-    }
-
-    /**
-     * Gets the source port location.
-     * @type {yfiles.geometry.IPoint}
-     */
-    get sourcePortLocation() {
-      return this.$sourcePortLocation
-    }
-
-    /**
-     * Gets the source port location.
-     * @type {yfiles.geometry.IPoint}
-     */
-    set sourcePortLocation(value) {
-      this.$sourcePortLocation = value
-    }
-
-    /**
-     * Gets the target port location.
-     * @type {yfiles.geometry.IPoint}
-     */
-    get targetPortLocation() {
-      return this.$targetPortLocation
-    }
-
-    /**
-     * Sets the target port location.
-     * @type {yfiles.geometry.IPoint}
-     */
-    set targetPortLocation(value) {
-      this.$targetPortLocation = value
-    }
-
-    /**
-     * @param {yfiles.view.IRenderContext} renderContext
-     * @param {CanvasRenderingContext2D} ctx
-     */
-    paint(renderContext, ctx) {
-      // simply draw a blue line from the source port location via all bends to the target port location
-      ctx.fill = 'rgb(51,102,153)'
-
-      ctx.beginPath()
-      let location = this.sourcePortLocation
-      ctx.moveTo(location.x, location.y)
-      if (this.bends.size > 0) {
-        this.bends.forEach(bend => {
-          location = bend.location
-          ctx.lineTo(location.x, location.y)
-        })
-      }
-      location = this.targetPortLocation
-      ctx.lineTo(location.x, location.y)
-      ctx.stroke()
-    }
+  get layout() {
+    return this.$layout
   }
 
-  return {
-    InteractiveOrganicFastEdgeStyle,
-    InteractiveOrganicFastNodeStyle
+  /**
+   * Sets the current node layout.
+   * @type {IRectangle}
+   */
+  set layout(value) {
+    this.$layout = value
   }
-})
+
+  /**
+   * Draw a rectangle with a solid orange fill.
+   * @see Overrides {@link HtmlCanvasVisual#paint}
+   * @param {IRenderContext} renderContext
+   * @param {CanvasRenderingContext2D} ctx
+   */
+  paint(renderContext, ctx) {
+    ctx.fillStyle = 'rgba(255,140,0,1)'
+    const l = this.layout
+    ctx.fillRect(l.x, l.y, l.width, l.height)
+  }
+}
+
+/**
+ * A very basic high-performance edge style that uses HTML 5 canvas rendering.
+ * Arrows are not supported by this implementation.
+ */
+export class InteractiveOrganicFastEdgeStyle extends EdgeStyleBase {
+  /**
+   * @param {IRenderContext} renderContext
+   * @param {IEdge} edge
+   * @return {EdgeRenderVisual}
+   */
+  createVisual(renderContext, edge) {
+    return new EdgeRenderVisual(
+      edge.bends,
+      edge.sourcePort.dynamicLocation,
+      edge.targetPort.dynamicLocation
+    )
+  }
+
+  /**
+   * @param {IInputModeContext} context
+   * @param {Point} location
+   * @param {IEdge} edge
+   * @return {boolean}
+   */
+  isHit(context, location, edge) {
+    // we use a very simple hit logic here (the base implementation)
+    if (!super.isHit(context, location, edge)) {
+      return false
+    }
+
+    // but we exclude hits on the source and target node
+    const s = edge.sourceNode
+    const t = edge.targetNode
+    return (
+      !s.style.renderer.getHitTestable(s, s.style).isHit(context, location) &&
+      !t.style.renderer.getHitTestable(t, t.style).isHit(context, location)
+    )
+  }
+
+  /**
+   * @param {IRenderContext} renderContext
+   * @param {Visual} oldVisual
+   * @param {IEdge} edge
+   * @return {Visual}
+   */
+  updateVisual(renderContext, oldVisual, edge) {
+    return oldVisual
+  }
+}
+
+/**
+ * For HTML5 Canvas based rendering we need to extend from {@link HtmlCanvasVisual}.
+ */
+class EdgeRenderVisual extends HtmlCanvasVisual {
+  /**
+   * @param {IListEnumerable.<IBend>} bends
+   * @param {IPoint} sourcePortLocation
+   * @param {IPoint} targetPortLocation
+   */
+  constructor(bends, sourcePortLocation, targetPortLocation) {
+    super()
+    this.$bends = bends
+    this.$sourcePortLocation = sourcePortLocation
+    this.$targetPortLocation = targetPortLocation
+  }
+
+  /**
+   * Gets the edge bends.
+   * @type {IListEnumerable.<IBend>}
+   */
+  get bends() {
+    return this.$bends
+  }
+
+  /**
+   * Sets the edge bends.
+   * @type {IListEnumerable.<IBend>}
+   */
+  set bends(value) {
+    this.$bends = value
+  }
+
+  /**
+   * Gets the source port location.
+   * @type {IPoint}
+   */
+  get sourcePortLocation() {
+    return this.$sourcePortLocation
+  }
+
+  /**
+   * Gets the source port location.
+   * @type {IPoint}
+   */
+  set sourcePortLocation(value) {
+    this.$sourcePortLocation = value
+  }
+
+  /**
+   * Gets the target port location.
+   * @type {IPoint}
+   */
+  get targetPortLocation() {
+    return this.$targetPortLocation
+  }
+
+  /**
+   * Sets the target port location.
+   * @type {IPoint}
+   */
+  set targetPortLocation(value) {
+    this.$targetPortLocation = value
+  }
+
+  /**
+   * @param {IRenderContext} renderContext
+   * @param {CanvasRenderingContext2D} ctx
+   */
+  paint(renderContext, ctx) {
+    // simply draw a blue line from the source port location via all bends to the target port location
+    ctx.fill = 'rgb(51,102,153)'
+
+    ctx.beginPath()
+    let location = this.sourcePortLocation
+    ctx.moveTo(location.x, location.y)
+    if (this.bends.size > 0) {
+      this.bends.forEach(bend => {
+        location = bend.location
+        ctx.lineTo(location.x, location.y)
+      })
+    }
+    location = this.targetPortLocation
+    ctx.lineTo(location.x, location.y)
+    ctx.stroke()
+  }
+}

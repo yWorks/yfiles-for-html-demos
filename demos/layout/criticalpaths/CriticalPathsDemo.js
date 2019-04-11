@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.1.
- ** Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.2.
+ ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,315 +26,319 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-'use strict'
+import {
+  GraphBuilder,
+  GraphComponent,
+  GraphItemTypes,
+  GraphViewerInputMode,
+  HierarchicLayout,
+  HierarchicLayoutData,
+  ICommand,
+  IEdge,
+  INode,
+  LayeredNodePlacer,
+  License,
+  PolylineEdgeStyle,
+  Stroke,
+  TreeLayout
+} from 'yfiles'
 
-require.config({
-  paths: {
-    yfiles: '../../../lib/umd/yfiles/',
-    utils: '../../utils/',
-    resources: '../../resources/'
+import PriorityPanel from './PriorityPanel.js'
+import * as SampleData from './resources/SampleData.js'
+import { DemoNodeStyle } from '../../resources/demo-styles.js'
+import { bindAction, bindChangeListener, bindCommand, showApp } from '../../resources/demo-app.js'
+import loadJson from '../../resources/load-json.js'
+
+/**
+ * The graph component in which the graph is displayed.
+ * @type {GraphComponent}
+ */
+let graphComponent = null
+
+/**
+ * A popup panel to change the priority of edges.
+ * @type {PriorityPanel}
+ */
+let priorityPanel = null
+
+/**
+ * Flag that prevents re-entrant layout runs.
+ * @type {boolean}
+ */
+let layoutRunning = false
+
+/**
+ * The current layout algorithm.
+ * @type {'hierarchic'|'tree'}
+ */
+let layoutStyle = 'hierarchic'
+
+function run(licenseData) {
+  License.value = licenseData
+  graphComponent = new GraphComponent('graphComponent')
+
+  initializeInputMode()
+  initializePriorityPanel()
+  loadGraph(layoutStyle)
+  registerCommands()
+
+  showApp(graphComponent)
+}
+
+/**
+ * Loads the sample graph which initially provides some priorities.
+ * @param {'hierarchic'|'tree'} sample
+ */
+function loadGraph(sample) {
+  const graph = graphComponent.graph
+  graph.nodeDefaults.style = new DemoNodeStyle()
+  graph.edgeDefaults.style = new PolylineEdgeStyle()
+  graph.edgeDefaults.shareStyleInstance = false
+
+  const data = SampleData[sample]
+
+  const builder = new GraphBuilder({
+    graph,
+    nodesSource: data.nodes,
+    edgesSource: data.edges,
+    sourceNodeBinding: 'source',
+    targetNodeBinding: 'target',
+    nodeIdBinding: 'id'
+  })
+
+  builder.buildGraph()
+
+  graph.edges.forEach(edge => setPriority(edge, edge.tag.priority || 0))
+
+  graphComponent.fitGraphBounds()
+
+  runLayout()
+}
+
+/**
+ * Specifies the priority of the given edge.
+ * @param {IEdge} edge
+ * @param {number} priority
+ */
+function setPriority(edge, priority) {
+  if (edge.tag) {
+    edge.tag.priority = priority
+  } else {
+    edge.tag = { priority }
   }
-})
+  edge.style.stroke = getStroke(priority)
+}
 
-require([
-  'yfiles/view-editor',
-  'resources/demo-app',
-  'resources/demo-styles',
-  'resources/SampleData.js',
-  './PriorityPanel.js',
-  'yfiles/view-layout-bridge',
-  'yfiles/layout-hierarchic',
-  'yfiles/layout-tree',
-  'resources/license'
-], (
-  /** @type {yfiles_namespace} */ /** typeof yfiles */ yfiles,
-  app,
-  DemoStyles,
-  SampleData,
-  PriorityPanel
-) => {
-  /**
-   * The graph component in which the graph is displayed.
-   * @type {yfiles.view.GraphComponent}
-   */
-  let graphComponent = null
-
-  /**
-   * A popup panel to change the priority of edges.
-   * @type {PriorityPanel}
-   */
-  let priorityPanel = null
-
-  /**
-   * Flag that prevents re-entrant layout runs.
-   * @type {boolean}
-   */
-  let layoutRunning = false
-
-  /**
-   * The current layout algorithm.
-   * @type {'hierarchic'|'tree'}
-   */
-  let layoutStyle = 'hierarchic'
-
-  function run() {
-    graphComponent = new yfiles.view.GraphComponent('graphComponent')
-
-    initializeInputMode()
-    initializePriorityPanel()
-    loadGraph(layoutStyle)
-    registerCommands()
-
-    app.show(graphComponent)
+/**
+ * Updates the stroke color and thickness according to the given priority.
+ * @param {number} priority
+ * @return {Stroke}
+ */
+function getStroke(priority) {
+  switch (priority) {
+    case 1:
+      return new Stroke('gold', 3)
+    case 2:
+      return new Stroke('orange', 3)
+    case 3:
+      return new Stroke('darkorange', 3)
+    case 4:
+      return new Stroke('orangered', 3)
+    case 5:
+      return new Stroke('firebrick', 3)
+    default:
+      return new Stroke(51, 102, 153, 255, 1)
   }
+}
 
-  /**
-   * Loads the sample graph which initially provides some priorities.
-   * @param {'hierarchic'|'tree'} sample
-   */
-  function loadGraph(sample) {
-    const graph = graphComponent.graph
-    graph.nodeDefaults.style = new DemoStyles.DemoNodeStyle()
-    graph.edgeDefaults.style = new yfiles.styles.PolylineEdgeStyle()
-    graph.edgeDefaults.shareStyleInstance = false
-
-    const data = SampleData[sample]
-
-    const builder = new yfiles.binding.GraphBuilder(graph)
-    builder.nodesSource = data.nodes
-    builder.edgesSource = data.edges
-    builder.sourceNodeBinding = 'source'
-    builder.targetNodeBinding = 'target'
-    builder.nodeIdBinding = 'id'
-
-    builder.buildGraph()
-
-    graph.edges.forEach(edge => setPriority(edge, edge.tag.priority || 0))
-
-    graphComponent.fitGraphBounds()
-
-    runLayout()
+/**
+ * Applies a hierarchic layout considering the edge priorities.
+ */
+function runLayout() {
+  if (layoutRunning) {
+    return
   }
+  layoutRunning = true
 
-  /**
-   * Specifies the priority of the given edge.
-   * @param {yfiles.graph.IEdge} edge
-   * @param {number} priority
-   */
-  function setPriority(edge, priority) {
-    if (edge.tag) {
-      edge.tag.priority = priority
-    } else {
-      edge.tag = { priority }
+  const { layout, layoutData } =
+    layoutStyle === 'hierarchic' ? configureHierarchicLayout() : configureTreeLayout()
+
+  graphComponent.morphLayout(layout, '700ms', layoutData).then(() => {
+    if (layoutStyle === 'tree') {
+      graphComponent.graph.mapperRegistry.removeMapper(TreeLayout.CRITICAL_EDGE_DP_KEY)
     }
-    edge.style.stroke = getStroke(priority)
-  }
+    layoutRunning = false
+  })
+}
 
-  /**
-   * Updates the stroke color and thickness according to the given priority.
-   * @param {number} priority
-   * @return {yfiles.view.Stroke}
-   */
-  function getStroke(priority) {
-    switch (priority) {
-      case 1:
-        return new yfiles.view.Stroke('gold', 3)
-      case 2:
-        return new yfiles.view.Stroke('orange', 3)
-      case 3:
-        return new yfiles.view.Stroke('darkorange', 3)
-      case 4:
-        return new yfiles.view.Stroke('orangered', 3)
-      case 5:
-        return new yfiles.view.Stroke('firebrick', 3)
-      default:
-        return new yfiles.view.Stroke(51, 102, 153, 255, 1)
-    }
-  }
+/**
+ * Returns a configured hierarchic layout considering the edge priorities.
+ */
+function configureHierarchicLayout() {
+  const layout = new HierarchicLayout()
+  layout.orthogonalRouting = true
+  layout.edgeLayoutDescriptor.minimumFirstSegmentLength = 30
+  layout.edgeLayoutDescriptor.minimumLastSegmentLength = 30
+  layout.nodePlacer.barycenterMode = true
 
-  /**
-   * Applies a hierarchic layout considering the edge priorities.
-   */
-  function runLayout() {
-    if (layoutRunning) {
-      return
-    }
-    layoutRunning = true
-
-    const { layout, layoutData } =
-      layoutStyle === 'hierarchic' ? configureHierarchicLayout() : configureTreeLayout()
-
-    graphComponent.morphLayout(layout, '700ms', layoutData).then(() => {
-      if (layoutStyle === 'tree') {
-        graphComponent.graph.mapperRegistry.removeMapper(
-          yfiles.tree.TreeLayout.CRITICAL_EDGE_DP_KEY
-        )
+  const layoutData = new HierarchicLayoutData({
+    criticalEdgePriorities: edge => {
+      if (edge.tag) {
+        return edge.tag.priority || 0
       }
-      layoutRunning = false
-    })
-  }
+      return 0
+    },
+    // Use the edge crossing costs to avoid crossings of different critical paths, when the priority of the edge is high then the probability of crossing is low.
+    edgeCrossingCosts: edge => {
+      if (edge.tag) {
+        return edge.tag.priority + 1 || 1
+      }
+      return 1
+    }
+  })
 
-  /**
-   * Returns a configured hierarchic layout considering the edge priorities.
-   */
-  function configureHierarchicLayout() {
-    const layout = new yfiles.hierarchic.HierarchicLayout()
-    layout.orthogonalRouting = true
-    layout.edgeLayoutDescriptor.minimumFirstSegmentLength = 30
-    layout.edgeLayoutDescriptor.minimumLastSegmentLength = 30
-    layout.nodePlacer.barycenterMode = true
-    const layoutData = new yfiles.hierarchic.HierarchicLayoutData()
-    layoutData.criticalEdgePriorities.delegate = edge => {
+  return {
+    layout,
+    layoutData
+  }
+}
+
+/**
+ * Returns a configured tree layout considering the edge priorities.
+ */
+function configureTreeLayout() {
+  const layout = new TreeLayout()
+  const layeredNodePlacer = new LayeredNodePlacer()
+  layeredNodePlacer.layerSpacing = 60
+  layeredNodePlacer.spacing = 30
+  layout.defaultNodePlacer = layeredNodePlacer
+
+  graphComponent.graph.mapperRegistry.createDelegateMapper(
+    TreeLayout.CRITICAL_EDGE_DP_KEY,
+    edge => {
       if (edge.tag) {
         return edge.tag.priority || 0
       }
       return 0
     }
+  )
 
-    return {
-      layout,
-      layoutData
-    }
+  return {
+    layout,
+    layoutData: null
+  }
+}
+
+/**
+ * Marks random upstream paths from leaf nodes to generate random long paths.
+ */
+function markRandomPredecessorsPaths() {
+  if (layoutRunning) {
+    return
   }
 
-  /**
-   * Returns a configured tree layout considering the edge priorities.
-   */
-  function configureTreeLayout() {
-    const layout = new yfiles.tree.TreeLayout()
-    const layeredNodePlacer = new yfiles.tree.LayeredNodePlacer()
-    layeredNodePlacer.layerSpacing = 60
-    layeredNodePlacer.spacing = 30
-    layout.defaultNodePlacer = layeredNodePlacer
+  const leafs = graphComponent.graph.nodes.filter(node => {
+    return graphComponent.graph.outEdgesAt(node).size === 0
+  })
 
-    graphComponent.graph.mapperRegistry.createDelegateMapper(
-      yfiles.tree.TreeLayout.CRITICAL_EDGE_DP_KEY,
-      edge => {
-        if (edge.tag) {
-          return edge.tag.priority || 0
-        }
-        return 0
-      }
-    )
+  // clear priorities
+  graphComponent.graph.edges.forEach(edge => {
+    setPriority(edge, 0)
+  })
 
-    return {
-      layout,
-      layoutData: null
-    }
+  // mark the upstream path of random leaf nodes
+  let randomNodeCount = Math.min(10, leafs.size)
+  while (randomNodeCount > 0) {
+    randomNodeCount--
+    const rndNodeIdx = Math.floor(Math.random() * leafs.size)
+    const rndPriority = Math.floor(Math.random() * 5) + 1
+    markPredecessorsPath(leafs.elementAt(rndNodeIdx), rndPriority)
   }
 
-  /**
-   * Marks random upstream paths from leaf nodes to generate random long paths.
-   */
-  function markRandomPredecessorsPaths() {
-    if (layoutRunning) {
-      return
+  runLayout()
+}
+
+/**
+ * Marks the upstream path from a given node.
+ * @param {INode} node
+ * @param {number} priority
+ */
+function markPredecessorsPath(node, priority) {
+  let incomingEdges = graphComponent.graph.inEdgesAt(node)
+  while (incomingEdges.size > 0) {
+    const edge = incomingEdges.first()
+    if (edge.tag.priority > priority) {
+      // stop upstream path when a higher priority is found
+      break
     }
+    setPriority(edge, priority)
+    incomingEdges = graphComponent.graph.inEdgesAt(edge.sourceNode)
+  }
+}
 
-    const leafs = graphComponent.graph.nodes.filter(node => {
-      return graphComponent.graph.outEdgesAt(node).size === 0
-    })
+/**
+ * Clears all edge priorities and reapplies the layout.
+ */
+function clearPriorities() {
+  graphComponent.graph.edges.forEach(edge => {
+    setPriority(edge, 0)
+  })
 
-    // clear priorities
-    graphComponent.graph.edges.forEach(edge => {
-      setPriority(edge, 0)
-    })
+  runLayout()
+}
 
-    // mark the upstream path of random leaf nodes
-    let randomNodeCount = Math.min(10, leafs.size)
-    while (randomNodeCount > 0) {
-      randomNodeCount--
-      const rndNodeIdx = Math.floor(Math.random() * leafs.size)
-      const rndPriority = Math.floor(Math.random() * 5) + 1
-      markPredecessorsPath(leafs.elementAt(rndNodeIdx), rndPriority)
+function initializeInputMode() {
+  graphComponent.inputMode = new GraphViewerInputMode({
+    selectableItems: GraphItemTypes.EDGE | GraphItemTypes.NODE,
+    toolTipItems: GraphItemTypes.EDGE
+  })
+  graphComponent.inputMode.addQueryItemToolTipListener((sender, event) => {
+    if (!event.handled) {
+      const node = event.item
+      event.toolTip = `Priority: ${node.tag.priority || 0}`
+      event.handled = true
     }
+  })
+}
 
+function initializePriorityPanel() {
+  priorityPanel = new PriorityPanel(graphComponent)
+  priorityPanel.itemPriorityChanged = (item, newPriority) => {
+    if (IEdge.isInstance(item)) {
+      setPriority(item, newPriority)
+    } else if (INode.isInstance(item)) {
+      markPredecessorsPath(item, newPriority)
+    }
+    graphComponent.selection.clear()
+  }
+  priorityPanel.priorityChanged = () => {
     runLayout()
   }
-
-  /**
-   * Marks the upstream path from a given node.
-   * @param {yfiles.graph.INode} node
-   * @param {number} priority
-   */
-  function markPredecessorsPath(node, priority) {
-    let incomingEdges = graphComponent.graph.inEdgesAt(node)
-    while (incomingEdges.size > 0) {
-      const edge = incomingEdges.first()
-      if (edge.tag.priority > priority) {
-        // stop upstream path when a higher priority is found
-        break
-      }
-      setPriority(edge, priority)
-      incomingEdges = graphComponent.graph.inEdgesAt(edge.sourceNode)
+  graphComponent.selection.addItemSelectionChangedListener((src, args) => {
+    if (INode.isInstance(args.item)) {
+      priorityPanel.currentItems = graphComponent.selection.selectedNodes.toArray()
+    } else {
+      priorityPanel.currentItems = graphComponent.selection.selectedEdges.toArray()
     }
-  }
+  })
+}
 
-  /**
-   * Clears all edge priorities and reapplies the layout.
-   */
-  function clearPriorities() {
-    graphComponent.graph.edges.forEach(edge => {
-      setPriority(edge, 0)
-    })
+function registerCommands() {
+  bindCommand("button[data-command='Open']", ICommand.OPEN, graphComponent)
+  bindCommand("button[data-command='Save']", ICommand.SAVE, graphComponent)
+  bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent)
+  bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent)
+  bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent)
+  bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
 
+  bindAction("button[data-command='RandomPredecessorsPaths']", markRandomPredecessorsPaths)
+  bindAction("button[data-command='ClearPriorities']", clearPriorities)
+
+  bindChangeListener("select[data-command='ChangeSample']", value => {
+    layoutStyle = value === 'Hierarchic Layout' ? 'hierarchic' : 'tree'
+    loadGraph(layoutStyle)
     runLayout()
-  }
+  })
+}
 
-  function initializeInputMode() {
-    graphComponent.inputMode = new yfiles.input.GraphViewerInputMode({
-      selectableItems: yfiles.graph.GraphItemTypes.EDGE | yfiles.graph.GraphItemTypes.NODE,
-      toolTipItems: yfiles.graph.GraphItemTypes.EDGE
-    })
-    graphComponent.inputMode.addQueryItemToolTipListener((sender, event) => {
-      if (!event.handled) {
-        const node = event.item
-        event.toolTip = `Priority: ${node.tag.priority || 0}`
-        event.handled = true
-      }
-    })
-  }
-
-  function initializePriorityPanel() {
-    priorityPanel = new PriorityPanel(graphComponent)
-    priorityPanel.itemPriorityChanged = (item, newPriority) => {
-      if (yfiles.graph.IEdge.isInstance(item)) {
-        setPriority(item, newPriority)
-      } else if (yfiles.graph.INode.isInstance(item)) {
-        markPredecessorsPath(item, newPriority)
-      }
-      graphComponent.selection.clear()
-    }
-    priorityPanel.priorityChanged = () => {
-      runLayout()
-    }
-    graphComponent.selection.addItemSelectionChangedListener((src, args) => {
-      if (yfiles.graph.INode.isInstance(args.item)) {
-        priorityPanel.currentItems = graphComponent.selection.selectedNodes.toArray()
-      } else {
-        priorityPanel.currentItems = graphComponent.selection.selectedEdges.toArray()
-      }
-    })
-  }
-
-  function registerCommands() {
-    const iCommand = yfiles.input.ICommand
-    app.bindCommand("button[data-command='Open']", iCommand.OPEN, graphComponent)
-    app.bindCommand("button[data-command='Save']", iCommand.SAVE, graphComponent)
-    app.bindCommand("button[data-command='FitContent']", iCommand.FIT_GRAPH_BOUNDS, graphComponent)
-    app.bindCommand("button[data-command='ZoomIn']", iCommand.INCREASE_ZOOM, graphComponent)
-    app.bindCommand("button[data-command='ZoomOut']", iCommand.DECREASE_ZOOM, graphComponent)
-    app.bindCommand("button[data-command='ZoomOriginal']", iCommand.ZOOM, graphComponent, 1.0)
-
-    app.bindAction("button[data-command='RandomPredecessorsPaths']", markRandomPredecessorsPaths)
-    app.bindAction("button[data-command='ClearPriorities']", clearPriorities)
-
-    app.bindChangeListener("select[data-command='ChangeSample']", value => {
-      layoutStyle = value === 'Hierarchic Layout' ? 'hierarchic' : 'tree'
-      loadGraph(layoutStyle)
-      runLayout()
-    })
-  }
-
-  run()
-})
+loadJson().then(run)

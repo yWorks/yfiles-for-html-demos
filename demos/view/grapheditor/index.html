@@ -7,8 +7,8 @@
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.1.
-     // Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML 2.2.
+     // Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -36,12 +36,12 @@
 
   <title>Graph Editor Demo [yFiles for HTML]</title>
 
-  <link rel="stylesheet" href="../../../lib/yfiles.css">
+  <link rel="stylesheet" href="../../node_modules/yfiles/yfiles.css">
   <link rel="stylesheet" href="../../resources/style/demo.css">
 
   <!-- enable debugging -->
   <script src="../../../ide-support/yfiles-typeinfo.js"></script>
-
+  <script src="../../resources/filesystem-warning.js"></script>
 </head>
 <body class="demo-has-left">
 <aside class="demo-sidebar demo-left">
@@ -49,8 +49,8 @@
   <div class="demo-sidebar-content">
 
     <p>
-      The Simple Editor demo exhibits a <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.view.GraphComponent" target="_blank">yfiles.view.GraphComponent</a> which
-      enables graph editing via the default <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.input.GraphEditorInputMode" target="_blank">yfiles.input.GraphEditorInputMode</a>.
+      The Simple Editor demo exhibits a <a href="https://docs.yworks.com/yfileshtml/#/api/GraphComponent" target="_blank">GraphComponent</a> which
+      enables graph editing via the default <a href="https://docs.yworks.com/yfileshtml/#/api/GraphEditorInputMode" target="_blank">GraphEditorInputMode</a>.
     </p>
 
     <h4>Creating Elements (Nodes / Vertices)</h4>
@@ -265,8 +265,7 @@
   <div id="graphComponent"></div>
 </div>
 
-<script src="../../resources/require.js"></script>
-<script src="GraphEditorDemo.js"></script>
+<script type="module" crossorigin="anonymous" src="GraphEditorDemo.js"></script>
 
 </body>
 </html>

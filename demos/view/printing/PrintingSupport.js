@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.1.
- ** Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.2.
+ ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,184 +26,176 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-'use strict'
+import { GraphComponent, IGraph, Insets, Rect, Size, SvgExport } from 'yfiles'
 
-define(['yfiles/view-component'], /** @type {yfiles_namespace} */ /** typeof yfiles */ yfiles => {
+/**
+ * Helper class for printing the contents of a graph component.
+ * Printing is done in multiple steps. First, the graph is exported to one or
+ * more SVG elements, these elements are then added to a new document in a
+ * new window, and finally, this window is printed using the browser's print
+ * feature.
+ */
+export default class PrintingSupport {
   /**
-   * Helper class for printing the contents of a graph component.
-   * Printing is done in multiple steps. First, the graph is exported to one or
-   * more SVG elements, these elements are then added to a new document in a
-   * new window, and finally, this window is printed using the browser's print
-   * feature.
+   * Creates a new instance of this class.
    */
-  class PrintingSupport {
-    /**
-     * Creates a new instance of this class.
-     */
-    constructor() {
-      this.margin = 5
-      this.scale = 1.0
-      this.tiledPrinting = false
-      this.tileWidth = 595
-      this.tileHeight = 842
-      this.targetUrl = './printdocument.html'
-    }
+  constructor() {
+    this.margin = 5
+    this.scale = 1.0
+    this.tiledPrinting = false
+    this.tileWidth = 595
+    this.tileHeight = 842
+    this.targetUrl = './printdocument.html'
+  }
 
-    /**
-     * Prints the detail of the given graph that is specified by the
-     * <code>clippingRectangle</code>.
-     * If no clipping rectangle is specified, the complete graph is printed.
-     * @param {yfiles.graph.IGraph} graph
-     * @param {yfiles.geometry.Rect} clippingRectangle
-     */
-    printGraph(graph, clippingRectangle) {
-      // Create a new graph component for exporting the original SVG content
-      const exportComponent = new yfiles.view.GraphComponent()
-      // ... and assign it the same graph.
-      exportComponent.graph = graph
-      exportComponent.updateContentRect()
-      this.print(exportComponent, clippingRectangle)
-    }
+  /**
+   * Prints the detail of the given graph that is specified by the
+   * <code>clippingRectangle</code>.
+   * If no clipping rectangle is specified, the complete graph is printed.
+   * @param {IGraph} graph
+   * @param {Rect} clippingRectangle
+   */
+  printGraph(graph, clippingRectangle) {
+    // Create a new graph component for exporting the original SVG content
+    const exportComponent = new GraphComponent()
+    // ... and assign it the same graph.
+    exportComponent.graph = graph
+    exportComponent.updateContentRect()
+    this.print(exportComponent, clippingRectangle)
+  }
 
-    /**
-     * Prints the detail of the given GraphComponent's graph that is specified by the
-     * <code>clippingRectangle</code>.
-     * If no clipping rectangle is specified, the complete graph is printed.
-     * @param {yfiles.view.GraphComponent} graphComponent
-     * @param {yfiles.geometry.Rect} clippingRectangle
-     */
-    print(graphComponent, clippingRectangle) {
-      const targetRect = clippingRectangle != null ? clippingRectangle : graphComponent.contentRect
+  /**
+   * Prints the detail of the given GraphComponent's graph that is specified by the
+   * <code>clippingRectangle</code>.
+   * If no clipping rectangle is specified, the complete graph is printed.
+   * @param {GraphComponent} graphComponent
+   * @param {Rect} clippingRectangle
+   */
+  print(graphComponent, clippingRectangle) {
+    const targetRect = clippingRectangle != null ? clippingRectangle : graphComponent.contentRect
 
-      let /** @type {number} */ rows
-      let /** @type {number} */ columns
-      let /** @type {yfiles.geometry.Rect[][]} */ tiles
+    let /** @type {number} */ rows
+    let /** @type {number} */ columns
+    let /** @type {Rect[][]} */ tiles
 
-      if (!this.tiledPrinting) {
-        // no tiles - just one row and column
-        rows = 1
-        columns = 1
-        tiles = [[targetRect]]
-      } else {
-        // get the size of the printed tiles
-        const tileSize = new yfiles.geometry.Size(this.tileWidth, this.tileHeight)
-        const tileSizeScaled = new yfiles.geometry.Size(
-          tileSize.width / this.scale,
-          tileSize.height / this.scale
-        )
+    if (!this.tiledPrinting) {
+      // no tiles - just one row and column
+      rows = 1
+      columns = 1
+      tiles = [[targetRect]]
+    } else {
+      // get the size of the printed tiles
+      const tileSize = new Size(this.tileWidth, this.tileHeight)
+      const tileSizeScaled = new Size(tileSize.width / this.scale, tileSize.height / this.scale)
 
-        // calculate number of rows and columns
-        rows = Math.ceil(targetRect.height * this.scale / tileSize.height)
-        columns = Math.ceil(targetRect.width * this.scale / tileSize.width)
+      // calculate number of rows and columns
+      rows = Math.ceil(targetRect.height * this.scale / tileSize.height)
+      columns = Math.ceil(targetRect.width * this.scale / tileSize.width)
 
-        // calculate tile bounds
-        tiles = []
-        for (let i = 0; i < rows; i++) {
-          const column = []
-          for (let k = 0; k < columns; k++) {
-            column.push(
-              new yfiles.geometry.Rect(
-                targetRect.x + tileSizeScaled.width * k,
-                targetRect.y + tileSizeScaled.height * i,
-                tileSizeScaled.width,
-                tileSizeScaled.height
-              )
-            )
-          }
-          tiles.push(column)
-        }
-        // calculate bounds of last row/column
-        const lastX = targetRect.x + tileSizeScaled.width * (columns - 1)
-        const lastY = targetRect.y + tileSizeScaled.height * (rows - 1)
-        const lastWidth = targetRect.width - tileSizeScaled.width * (columns - 1)
-        const lastHeight = targetRect.height - tileSizeScaled.height * (rows - 1)
-        // set bounds of last row
-        for (let k = 0; k < columns - 1; k++) {
-          tiles[rows - 1][k] = new yfiles.geometry.Rect(
-            targetRect.x + tileSizeScaled.width * k,
-            lastY,
-            tileSizeScaled.width,
-            lastHeight
-          )
-        }
-        // set bounds of last column
-        for (let i = 0; i < rows - 1; i++) {
-          tiles[i][columns - 1] = new yfiles.geometry.Rect(
-            lastX,
-            targetRect.y + tileSizeScaled.height * i,
-            lastWidth,
-            tileSizeScaled.height
-          )
-        }
-        // set bounds of bottom right tile
-        tiles[rows - 1][columns - 1] = new yfiles.geometry.Rect(lastX, lastY, lastWidth, lastHeight)
-      }
-
-      let resultingHTML = ''
-      // loop through all rows and columns
+      // calculate tile bounds
+      tiles = []
       for (let i = 0; i < rows; i++) {
+        const column = []
         for (let k = 0; k < columns; k++) {
-          const lastRow = i === rows - 1
-          const lastColumn = k === columns - 1
-
-          const exporter = new yfiles.view.SvgExport(tiles[i][k], this.scale)
-          exporter.copyDefsElements = true
-          this.configureMargin(exporter, i === 0, lastRow, k === 0, lastColumn)
-
-          if (!lastRow || !lastColumn) {
-            resultingHTML += "<div class='pagebreak'>"
-          } else {
-            resultingHTML += '<div>'
-          }
-          // export the svg to an XML string
-          resultingHTML += yfiles.view.SvgExport.exportSvgString(exporter.exportSvg(graphComponent))
-          resultingHTML += '</div>'
+          column.push(
+            new Rect(
+              targetRect.x + tileSizeScaled.width * k,
+              targetRect.y + tileSizeScaled.height * i,
+              tileSizeScaled.width,
+              tileSizeScaled.height
+            )
+          )
         }
+        tiles.push(column)
       }
-
-      // This function has to be global, because it is called from the print preview window.
-      window.addPrintDom = win => {
-        win.document.body.innerHTML = resultingHTML
-        win.document.close()
-        // Wait for everything to be rendered before printing
-        setTimeout(() => {
-          win.print()
-        }, 0)
+      // calculate bounds of last row/column
+      const lastX = targetRect.x + tileSizeScaled.width * (columns - 1)
+      const lastY = targetRect.y + tileSizeScaled.height * (rows - 1)
+      const lastWidth = targetRect.width - tileSizeScaled.width * (columns - 1)
+      const lastHeight = targetRect.height - tileSizeScaled.height * (rows - 1)
+      // set bounds of last row
+      for (let k = 0; k < columns - 1; k++) {
+        tiles[rows - 1][k] = new Rect(
+          targetRect.x + tileSizeScaled.width * k,
+          lastY,
+          tileSizeScaled.width,
+          lastHeight
+        )
       }
+      // set bounds of last column
+      for (let i = 0; i < rows - 1; i++) {
+        tiles[i][columns - 1] = new Rect(
+          lastX,
+          targetRect.y + tileSizeScaled.height * i,
+          lastWidth,
+          tileSizeScaled.height
+        )
+      }
+      // set bounds of bottom right tile
+      tiles[rows - 1][columns - 1] = new Rect(lastX, lastY, lastWidth, lastHeight)
+    }
 
-      // display exported svg in new window
-      const printWindow = window.open(this.targetUrl)
+    let resultingHTML = ''
+    // loop through all rows and columns
+    for (let i = 0; i < rows; i++) {
+      for (let k = 0; k < columns; k++) {
+        const lastRow = i === rows - 1
+        const lastColumn = k === columns - 1
 
-      if (!printWindow) {
-        alert('Could not open print preview window - maybe it was blocked?')
+        const exporter = new SvgExport(tiles[i][k], this.scale)
+        exporter.copyDefsElements = true
+        this.configureMargin(exporter, i === 0, lastRow, k === 0, lastColumn)
+
+        if (!lastRow || !lastColumn) {
+          resultingHTML += "<div class='pagebreak'>"
+        } else {
+          resultingHTML += '<div>'
+        }
+        // export the svg to an XML string
+        resultingHTML += SvgExport.exportSvgString(exporter.exportSvg(graphComponent))
+        resultingHTML += '</div>'
       }
     }
 
-    /**
-     * @param {yfiles.view.SvgExport} exporter
-     * @param {boolean} firstRow
-     * @param {boolean} lastRow
-     * @param {boolean} firstColumn
-     * @param {boolean} lastColumn
-     */
-    configureMargin(exporter, firstRow, lastRow, firstColumn, lastColumn) {
-      if (!this.tiledPrinting) {
-        // set margin if we don't print tiles
-        exporter.margins = new yfiles.geometry.Insets(this.margin)
-        return
-      }
+    // This function has to be global, because it is called from the print preview window.
+    window.addPrintDom = win => {
+      win.document.body.innerHTML = resultingHTML
+      win.document.close()
+      // Wait for everything to be rendered before printing
+      setTimeout(() => {
+        win.print()
+      }, 0)
+    }
 
-      // for tile printing, set margin only for border tiles
-      const top = firstRow ? this.margin : 0
-      const bottom = firstRow ? this.margin : 0
-      const right = firstRow ? this.margin : 0
-      const left = firstRow ? this.margin : 0
+    // display exported svg in new window
+    const printWindow = window.open(this.targetUrl)
 
-      const margin = new yfiles.geometry.Insets(left, top, right, bottom)
-      exporter.margins = margin
+    if (!printWindow) {
+      alert('Could not open print preview window - maybe it was blocked?')
     }
   }
 
-  // run the demo
-  return PrintingSupport
-})
+  /**
+   * @param {SvgExport} exporter
+   * @param {boolean} firstRow
+   * @param {boolean} lastRow
+   * @param {boolean} firstColumn
+   * @param {boolean} lastColumn
+   */
+  configureMargin(exporter, firstRow, lastRow, firstColumn, lastColumn) {
+    if (!this.tiledPrinting) {
+      // set margin if we don't print tiles
+      exporter.margins = new Insets(this.margin)
+      return
+    }
+
+    // for tile printing, set margin only for border tiles
+    const top = firstRow ? this.margin : 0
+    const bottom = firstRow ? this.margin : 0
+    const right = firstRow ? this.margin : 0
+    const left = firstRow ? this.margin : 0
+
+    const margin = new Insets(left, top, right, bottom)
+    exporter.margins = margin
+  }
+}

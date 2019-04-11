@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.1.
- ** Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.2.
+ ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,366 +26,203 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-'use strict'
+import { Rect } from 'yfiles'
 
-define(['yfiles/view-component'], /** @type {yfiles_namespace} */ /** typeof yfiles */ yfiles => {
-  /**
-   * This class provides methods to handle a solid figure in both view and layout space.
-   */
-  class IsometricTransformationSupport {
-    /**
-     * Creates an instance with the given dimensions.
-     * @param {number} width
-     * @param {number} depth
-     * @param {number} height
-     * @param {number} isHorizontal
-     */
-    constructor(width, depth, height, isHorizontal) {
-      this.$width = width
-      this.$depth = depth
-      this.$height = height
-      this.$horizontal = isHorizontal
-    }
+/**
+ * A collection of methods to handle a solid figure in both view and layout space.
+ */
 
-    // Matrix to transform points from the layout space into the view space.
-    /** @type {number} */
-    static get M_TO_VIEW_11() {
-      return Math.sqrt(3) * 0.5
-    }
+// Matrix to transform points from the layout space into the view space.
+/** @type {number} */
+export const M_TO_VIEW_11 = Math.sqrt(3) * 0.5
 
-    /** @type {number} */
-    static get M_TO_VIEW_12() {
-      return IsometricTransformationSupport.M_TO_VIEW_11
-    }
+/** @type {number} */
+export const M_TO_VIEW_12 = M_TO_VIEW_11
 
-    /** @type {number} */
-    static get M_TO_VIEW_21() {
-      return -0.5
-    }
+/** @type {number} */
+export const M_TO_VIEW_21 = -0.5
 
-    /** @type {number} */
-    static get M_TO_VIEW_22() {
-      return 0.5
-    }
+/** @type {number} */
+export const M_TO_VIEW_22 = 0.5
 
-    // Matrix to transform points from the view space into the layout space.
-    /** @type {number} */
-    static get M_TO_LAYOUT_11() {
-      return 1 / Math.sqrt(3)
-    }
+// Matrix to transform points from the view space into the layout space.
+/** @type {number} */
+export const M_TO_LAYOUT_11 = 1 / Math.sqrt(3)
 
-    /** @type {number} */
-    static get M_TO_LAYOUT_12() {
-      return -1
-    }
+/** @type {number} */
+export const M_TO_LAYOUT_12 = -1
 
-    /** @type {number} */
-    static get M_TO_LAYOUT_21() {
-      return IsometricTransformationSupport.M_TO_LAYOUT_11
-    }
+/** @type {number} */
+export const M_TO_LAYOUT_21 = M_TO_LAYOUT_11
 
-    /** @type {number} */
-    static get M_TO_LAYOUT_22() {
-      return -IsometricTransformationSupport.M_TO_LAYOUT_12
-    }
+/** @type {number} */
+export const M_TO_LAYOUT_22 = -M_TO_LAYOUT_12
 
-    // Indices for the corners of the bounding box.
-    // lower left
-    /** @type {number} */
-    static get C0_X() {
-      return 0
-    }
+// Indices for the corners of the bounding box.
+// lower left
+/** @type {number} */
+export const C0_X = 0
 
-    /** @type {number} */
-    static get C0_Y() {
-      return 1
-    }
+/** @type {number} */
+export const C0_Y = 1
 
-    // lower front
-    /** @type {number} */
-    static get C1_X() {
-      return 2
-    }
+// lower front
+/** @type {number} */
+export const C1_X = 2
 
-    /** @type {number} */
-    static get C1_Y() {
-      return 3
-    }
+/** @type {number} */
+export const C1_Y = 3
 
-    // lower right
-    /** @type {number} */
-    static get C2_X() {
-      return 4
-    }
+// lower right
+/** @type {number} */
+export const C2_X = 4
 
-    /** @type {number} */
-    static get C2_Y() {
-      return 5
-    }
+/** @type {number} */
+export const C2_Y = 5
 
-    // lower back
-    /** @type {number} */
-    static get C3_X() {
-      return 6
-    }
+// lower back
+/** @type {number} */
+export const C3_X = 6
 
-    /** @type {number} */
-    static get C3_Y() {
-      return 7
-    }
+/** @type {number} */
+export const C3_Y = 7
 
-    // upper left
-    /** @type {number} */
-    static get C4_X() {
-      return 8
-    }
+// upper left
+/** @type {number} */
+export const C4_X = 8
 
-    /** @type {number} */
-    static get C4_Y() {
-      return 9
-    }
+/** @type {number} */
+export const C4_Y = 9
 
-    // upper front
-    /** @type {number} */
-    static get C5_X() {
-      return 10
-    }
+// upper front
+/** @type {number} */
+export const C5_X = 10
 
-    /** @type {number} */
-    static get C5_Y() {
-      return 11
-    }
+/** @type {number} */
+export const C5_Y = 11
 
-    // upper right
-    /** @type {number} */
-    static get C6_X() {
-      return 12
-    }
+// upper right
+/** @type {number} */
+export const C6_X = 12
 
-    /** @type {number} */
-    static get C6_Y() {
-      return 13
-    }
+/** @type {number} */
+export const C6_Y = 13
 
-    // upper back
-    /** @type {number} */
-    static get C7_X() {
-      return 14
-    }
+// upper back
+/** @type {number} */
+export const C7_X = 14
 
-    /** @type {number} */
-    static get C7_Y() {
-      return 15
-    }
+/** @type {number} */
+export const C7_Y = 15
 
-    /**
-     * Returns the width of the solid figure.
-     * @type {number}
-     */
-    get width() {
-      return this.$width
-    }
+/**
+ * Calculates the bounds of the solid figure in the view space.
+ * @param {Object} geometry the data to construct the 3D-figure
+ * @param {Array.<number>} corners the corners of the projection of the bounds of solid figure into the view space
+ * @return {Rect} bounds  the calculated bounds
+ */
+export function calculateViewBounds(geometry, corners) {
+  corners = corners || calculateCorners(geometry)
 
-    /**
-     * Sets the width of the solid figure.
-     * @type {number}
-     */
-    set width(value) {
-      this.$width = value
-    }
+  let minX = corners[C0_X]
+  let minY = corners[C0_Y]
+  let maxX = corners[C0_X]
+  let maxY = corners[C0_Y]
+  for (let i = 2; i < corners.length; i += 2) {
+    minX = Math.min(minX, corners[i])
+    minY = Math.min(minY, corners[i + 1])
+    maxX = Math.max(maxX, corners[i])
+    maxY = Math.max(maxY, corners[i + 1])
+  }
+  return new Rect(minX, minY, maxX - minX, maxY - minY)
+}
 
-    /**
-     * Returns the depth of the solid figure.
-     * @type {number}
-     */
-    get depth() {
-      return this.$depth
-    }
+/**
+ * Calculates the corners of the projection of the bounds of solid figure into the view space.
+ * @return {Array.<number>} corners the calculated corners.
+ */
+export function calculateCorners(geometry) {
+  const corners = new Array(16)
+  corners[C0_X] = 0
+  corners[C0_Y] = 0
 
-    /**
-     * Sets the depth of the solid figure.
-     * @type {number}
-     */
-    set depth(value) {
-      this.$depth = value
-    }
+  corners[C1_X] = toViewX(geometry.width, 0)
+  corners[C1_Y] = toViewY(geometry.width, 0)
 
-    /**
-     * Returns the height of the solid figure.
-     * @type {number}
-     */
-    get height() {
-      return this.$height
-    }
+  corners[C2_X] = toViewX(geometry.width, geometry.depth)
+  corners[C2_Y] = toViewY(geometry.width, geometry.depth)
 
-    /**
-     * Sets the height of the solid figure.
-     * @type {number}
-     */
-    set height(value) {
-      this.$height = value
-    }
+  corners[C3_X] = toViewX(0, geometry.depth)
+  corners[C3_Y] = toViewY(0, geometry.depth)
 
-    /**
-     * Determines whether or no the base of the solid figure is horizontal in layout space.
-     * This is important for labels that may be rotated during layout.
-     * @type {boolean}
-     */
-    get horizontal() {
-      return this.$horizontal
-    }
+  for (let i = 0; i < 8; i += 2) {
+    corners[i + 8] = corners[i]
+    corners[i + 9] = corners[i + 1] - geometry.height
+  }
+  return corners
+}
 
-    /**
-     * Specifies whether or no the base of the solid figure is horizontal in layout space.
-     * This is important for labels that may be rotated during layout.
-     * @type {boolean}
-     */
-    set horizontal(value) {
-      this.$horizontal = value
-    }
+/**
+ * Transforms the given point from the layout space into the view space.
+ * @param {number} layoutX x-coordinate in layout space
+ * @param {number} layoutY y-coordinate in layout space
+ * @return {number} x-coordinate in view space
+ */
+export function toViewX(layoutX, layoutY) {
+  return M_TO_VIEW_11 * layoutX + M_TO_VIEW_12 * layoutY
+}
 
-    /**
-     * Calculates the bounds of the solid figure in the view space.
-     * @param {Object} geometry the data to construct the 3D-figure
-     * @param {Array.<number>} corners the corners of the projection of the bounds of solid figure into the view space
-     * @return {yfiles.geometry.Rect} bounds  the calculated bounds
-     */
-    static calculateViewBounds(geometry, corners) {
-      corners = corners || IsometricTransformationSupport.calculateCorners(geometry)
+/**
+ * Transforms the given point from the layout space into the view space.
+ * @param {number} layoutX x-coordinate in layout space
+ * @param {number} layoutY y-coordinate in layout space
+ * @return {number} y-coordinate in view space
+ */
+export function toViewY(layoutX, layoutY) {
+  return M_TO_VIEW_21 * layoutX + M_TO_VIEW_22 * layoutY
+}
 
-      let minX = corners[IsometricTransformationSupport.C0_X]
-      let minY = corners[IsometricTransformationSupport.C0_Y]
-      let maxX = corners[IsometricTransformationSupport.C0_X]
-      let maxY = corners[IsometricTransformationSupport.C0_Y]
-      for (let i = 2; i < corners.length; i += 2) {
-        minX = Math.min(minX, corners[i])
-        minY = Math.min(minY, corners[i + 1])
-        maxX = Math.max(maxX, corners[i])
-        maxY = Math.max(maxY, corners[i + 1])
-      }
-      return new yfiles.geometry.Rect(minX, minY, maxX - minX, maxY - minY)
-    }
+/**
+ * Transforms the given point from the view space into the layout space.
+ * @param {number} viewX x-coordinate in view space
+ * @param {number} viewY y-coordinate in view space
+ * @return {number} x-coordinate in layout space
+ */
+export function toLayoutX(viewX, viewY) {
+  return M_TO_LAYOUT_11 * viewX + M_TO_LAYOUT_12 * viewY
+}
 
-    /**
-     * Calculates the corners of the projection of the bounds of solid figure into the view space.
-     * @return {Array.<number>} corners the calculated corners.
-     */
-    static calculateCorners(geometry) {
-      const corners = new Array(16)
-      corners[IsometricTransformationSupport.C0_X] = 0
-      corners[IsometricTransformationSupport.C0_Y] = 0
+/**
+ * Transforms the given point from the view space into the layout space.
+ * @param {number} viewX x-coordinate in view space
+ * @param {number} viewY y-coordinate in view space
+ * @return {number} y-coordinate in layout space
+ */
+export function toLayoutY(viewX, viewY) {
+  return M_TO_LAYOUT_21 * viewX + M_TO_LAYOUT_22 * viewY
+}
 
-      corners[IsometricTransformationSupport.C1_X] = IsometricTransformationSupport.toViewX(
-        geometry.width,
-        0
-      )
-      corners[IsometricTransformationSupport.C1_Y] = IsometricTransformationSupport.toViewY(
-        geometry.width,
-        0
-      )
-
-      corners[IsometricTransformationSupport.C2_X] = IsometricTransformationSupport.toViewX(
-        geometry.width,
-        geometry.depth
-      )
-      corners[IsometricTransformationSupport.C2_Y] = IsometricTransformationSupport.toViewY(
-        geometry.width,
-        geometry.depth
-      )
-
-      corners[IsometricTransformationSupport.C3_X] = IsometricTransformationSupport.toViewX(
-        0,
-        geometry.depth
-      )
-      corners[IsometricTransformationSupport.C3_Y] = IsometricTransformationSupport.toViewY(
-        0,
-        geometry.depth
-      )
-
-      for (let i = 0; i < 8; i += 2) {
-        corners[i + 8] = corners[i]
-        corners[i + 9] = corners[i + 1] - geometry.height
-      }
-      return corners
-    }
-
-    /**
-     * Transforms the given point from the layout space into the view space.
-     * @param {number} layoutX x-coordinate in layout space
-     * @param {number} layoutY y-coordinate in layout space
-     * @return {number} x-coordinate in view space
-     */
-    static toViewX(layoutX, layoutY) {
-      return (
-        IsometricTransformationSupport.M_TO_VIEW_11 * layoutX +
-        IsometricTransformationSupport.M_TO_VIEW_12 * layoutY
-      )
-    }
-
-    /**
-     * Transforms the given point from the layout space into the view space.
-     * @param {number} layoutX x-coordinate in layout space
-     * @param {number} layoutY y-coordinate in layout space
-     * @return {number} y-coordinate in view space
-     */
-    static toViewY(layoutX, layoutY) {
-      return (
-        IsometricTransformationSupport.M_TO_VIEW_21 * layoutX +
-        IsometricTransformationSupport.M_TO_VIEW_22 * layoutY
-      )
-    }
-
-    /**
-     * Transforms the given point from the view space into the layout space.
-     * @param {number} viewX x-coordinate in view space
-     * @param {number} viewY y-coordinate in view space
-     * @return {number} x-coordinate in layout space
-     */
-    static toLayoutX(viewX, viewY) {
-      return (
-        IsometricTransformationSupport.M_TO_LAYOUT_11 * viewX +
-        IsometricTransformationSupport.M_TO_LAYOUT_12 * viewY
-      )
-    }
-
-    /**
-     * Transforms the given point from the view space into the layout space.
-     * @param {number} viewX x-coordinate in view space
-     * @param {number} viewY y-coordinate in view space
-     * @return {number} y-coordinate in layout space
-     */
-    static toLayoutY(viewX, viewY) {
-      return (
-        IsometricTransformationSupport.M_TO_LAYOUT_21 * viewX +
-        IsometricTransformationSupport.M_TO_LAYOUT_22 * viewY
-      )
-    }
-
-    /**
-     * Translates the given corner to the given location, so that the upper left location of the bounds of the given
-     * corners is on the given location.
-     * @param {number} x x-coordinate of the location where the corners should be moved to
-     * @param {number} y y-coordinate of the location where the corners should be moved to
-     * @param {Array.<number>} corners corners to be moved
-     */
-    static moveTo(x, y, corners) {
-      // Calculate the upper left location of the bounds of the given corners.
-      let minX = corners[IsometricTransformationSupport.C0_X]
-      let minY = corners[IsometricTransformationSupport.C0_Y]
-      for (let i = 2; i < corners.length; i += 2) {
-        minX = Math.min(minX, corners[i])
-        minY = Math.min(minY, corners[i + 1])
-      }
-
-      // Move the corners to the given location.
-      const dx = x - minX
-      const dy = y - minY
-      for (let i = 0; i < corners.length; i += 2) {
-        corners[i] += dx
-        corners[i + 1] += dy
-      }
-    }
+/**
+ * Translates the given corner to the given location, so that the upper left location of the bounds of the given
+ * corners is on the given location.
+ * @param {number} x x-coordinate of the location where the corners should be moved to
+ * @param {number} y y-coordinate of the location where the corners should be moved to
+ * @param {Array.<number>} corners corners to be moved
+ */
+export function moveTo(x, y, corners) {
+  // Calculate the upper left location of the bounds of the given corners.
+  let minX = corners[C0_X]
+  let minY = corners[C0_Y]
+  for (let i = 2; i < corners.length; i += 2) {
+    minX = Math.min(minX, corners[i])
+    minY = Math.min(minY, corners[i + 1])
   }
 
-  return IsometricTransformationSupport
-})
+  // Move the corners to the given location.
+  const dx = x - minX
+  const dy = y - minY
+  for (let i = 0; i < corners.length; i += 2) {
+    corners[i] += dx
+    corners[i + 1] += dy
+  }
+}

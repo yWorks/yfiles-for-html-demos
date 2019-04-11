@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.1.
- ** Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.2.
+ ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,91 +26,87 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-'use strict'
+import {
+  CollapsibleNodeStyleDecoratorRenderer,
+  ImageNodeStyle,
+  INodeInsetsProvider,
+  Rect,
+  SimpleNode
+} from 'yfiles'
 
-define(['yfiles/view-component'], /** @type {yfiles_namespace} */ /** typeof yfiles */ yfiles => {
-  /**
-   * Provides a customized visualization of the collapse/expand button of a
-   * group node. This implementation delegates the actual rendering of each
-   * state to a node style.
-   * @extends yfiles.styles.CollapsibleNodeStyleDecoratorRenderer
-   */
-  class CustomCollapsibleNodeStyleDecoratorRenderer extends yfiles.styles
-    .CollapsibleNodeStyleDecoratorRenderer {
-    constructor(size) {
-      super()
+/**
+ * Provides a customized visualization of the collapse/expand button of a
+ * group node. This implementation delegates the actual rendering of each
+ * state to a node style.
+ */
+export default class CustomCollapsibleNodeStyleDecoratorRenderer extends CollapsibleNodeStyleDecoratorRenderer {
+  constructor(size) {
+    super()
 
-      // The size of the button.
-      this.size = size
-      // The node style used for the rendering of the expanded state.
-      this.expandedButtonStyle = new yfiles.styles.ImageNodeStyle('resources/collapse.svg')
-      // The node style used for the rendering of the collapsed state.
-      this.collapsedButtonStyle = new yfiles.styles.ImageNodeStyle('resources/expand.svg')
-      // A dumCustom node that is used internally for the rendering of the button. This is a class field
-      // since we want to reuse the same instance for each call to
-      // {@link CustomCollapsibleNodeStyleDecoratorRenderer#createButton} and
-      // {@link CustomCollapsibleNodeStyleDecoratorRenderer#updateButton} (for performance reasons).
-      this.dumCustomNode = new yfiles.graph.SimpleNode()
-    }
+    // The size of the button.
+    this.size = size
+    // The node style used for the rendering of the expanded state.
+    this.expandedButtonStyle = new ImageNodeStyle('resources/collapse.svg')
+    // The node style used for the rendering of the collapsed state.
+    this.collapsedButtonStyle = new ImageNodeStyle('resources/expand.svg')
+    // A dumCustom node that is used internally for the rendering of the button. This is a class field
+    // since we want to reuse the same instance for each call to
+    // {@link CustomCollapsibleNodeStyleDecoratorRenderer#createButton} and
+    // {@link CustomCollapsibleNodeStyleDecoratorRenderer#updateButton} (for performance reasons).
+    this.dumCustomNode = new SimpleNode()
+  }
 
-    /** @return {yfiles.view.Visual} */
-    createButton(context, expanded, size) {
-      // Set the dumCustom node to the desired size
-      this.dumCustomNode.layout = new yfiles.geometry.Rect(0, 0, size.width, size.height)
-      // Delegate the creation of the button visualization to the node styles
-      const nodeStyle = expanded ? this.expandedButtonStyle : this.collapsedButtonStyle
-      const visual = nodeStyle.renderer
-        .getVisualCreator(this.dumCustomNode, nodeStyle)
-        .createVisual(context)
-      // Add the commands for user interaction
-      yfiles.styles.CollapsibleNodeStyleDecoratorRenderer.addToggleExpansionStateCommand(
+  /** @return {Visual} */
+  createButton(context, expanded, size) {
+    // Set the dumCustom node to the desired size
+    this.dumCustomNode.layout = new Rect(0, 0, size.width, size.height)
+    // Delegate the creation of the button visualization to the node styles
+    const nodeStyle = expanded ? this.expandedButtonStyle : this.collapsedButtonStyle
+    const visual = nodeStyle.renderer
+      .getVisualCreator(this.dumCustomNode, nodeStyle)
+      .createVisual(context)
+    // Add the commands for user interaction
+    CollapsibleNodeStyleDecoratorRenderer.addToggleExpansionStateCommand(visual, this.node, context)
+    return visual
+  }
+
+  /** @return {Visual} */
+  updateButton(context, expanded, size, oldVisual) {
+    // Set the dumCustom node to the desired size
+    this.dumCustomNode.layout = new Rect(0, 0, size.width, size.height)
+    // Delegate the updating of the button visualization to the node styles
+    const nodeStyle = expanded ? this.expandedButtonStyle : this.collapsedButtonStyle
+    const visual = nodeStyle.renderer
+      .getVisualCreator(this.dumCustomNode, nodeStyle)
+      .updateVisual(context, oldVisual)
+    if (visual !== oldVisual) {
+      // Add the commands for user interaction is a new visual was created
+      CollapsibleNodeStyleDecoratorRenderer.addToggleExpansionStateCommand(
         visual,
         this.node,
         context
       )
-      return visual
     }
-
-    /** @return {yfiles.view.Visual} */
-    updateButton(context, expanded, size, oldVisual) {
-      // Set the dumCustom node to the desired size
-      this.dumCustomNode.layout = new yfiles.geometry.Rect(0, 0, size.width, size.height)
-      // Delegate the updating of the button visualization to the node styles
-      const nodeStyle = expanded ? this.expandedButtonStyle : this.collapsedButtonStyle
-      const visual = nodeStyle.renderer
-        .getVisualCreator(this.dumCustomNode, nodeStyle)
-        .updateVisual(context, oldVisual)
-      if (visual !== oldVisual) {
-        // Add the commands for user interaction is a new visual was created
-        yfiles.styles.CollapsibleNodeStyleDecoratorRenderer.addToggleExpansionStateCommand(
-          visual,
-          this.node,
-          context
-        )
-      }
-      return visual
-    }
-
-    /** @return {yfiles.geometry.Size} */
-    getButtonSize() {
-      return this.size
-    }
-
-    /**
-     * This is implemented to override the base insets provider, which would add insets for the label.
-     * @see Overrides {@link yfiles.styles.CollapsibleNodeStyleDecoratorRenderer#lookup}
-     * @see Specified by {@link yfiles.graph.ILookup#lookup}.
-     * @return {Object}
-     */
-    lookup(type) {
-      if (type === yfiles.input.INodeInsetsProvider.$class) {
-        // Return the implementation of the wrapped style directly
-        const wrappedStyle = this.getWrappedStyle()
-        return wrappedStyle.renderer.getContext(this.node, wrappedStyle).lookup(type)
-      }
-      return super.lookup(type)
-    }
+    return visual
   }
 
-  return CustomCollapsibleNodeStyleDecoratorRenderer
-})
+  /** @return {Size} */
+  getButtonSize() {
+    return this.size
+  }
+
+  /**
+   * This is implemented to override the base insets provider, which would add insets for the label.
+   * @see Overrides {@link CollapsibleNodeStyleDecoratorRenderer#lookup}
+   * @see Specified by {@link ILookup#lookup}.
+   * @return {Object}
+   */
+  lookup(type) {
+    if (type === INodeInsetsProvider.$class) {
+      // Return the implementation of the wrapped style directly
+      const wrappedStyle = this.getWrappedStyle()
+      return wrappedStyle.renderer.getContext(this.node, wrappedStyle).lookup(type)
+    }
+    return super.lookup(type)
+  }
+}

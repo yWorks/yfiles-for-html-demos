@@ -1,26 +1,23 @@
-'use strict'
-
-/* eslint-disable import/no-unresolved */
-/* eslint-disable jsx-a11y/label-has-for */
-
-const React = require('react')
-const GraphComponent = require('./GraphComponent')
-const yfiles = require('yfiles/view-editor')
-const DemoStyles = require('../../../resources/demo-styles')
+import React from 'react'
+import ReactGraphComponent from './ReactGraphComponent.jsx'
+import {DefaultGraph, ShapeNodeStyle} from 'yfiles'
 
 class App extends React.Component {
   /**
    * Create a new graph with nicer default node and edge styles,
    * and create a simple graph structure
-   * @returns {yfiles.graph.DefaultGraph}
+   * @returns {DefaultGraph}
    */
   static createDefaultGraph() {
-    const graph = new yfiles.graph.DefaultGraph()
-    graph.nodeDefaults.style = new DemoStyles.DemoNodeStyle()
-    graph.edgeDefaults.style = new DemoStyles.DemoEdgeStyle()
-    const n1 = graph.createNodeAt(new yfiles.geometry.Point(150, 150))
-    const n2 = graph.createNodeAt(new yfiles.geometry.Point(250, 150))
-    const n3 = graph.createNodeAt(new yfiles.geometry.Point(150, 250))
+    const graph = new DefaultGraph()
+    graph.nodeDefaults.style = new ShapeNodeStyle({
+      fill: 'orange',
+      stroke: 'orange',
+      shape: 'rectangle'
+    })
+    const n1 = graph.createNodeAt([150, 150])
+    const n2 = graph.createNodeAt([250, 150])
+    const n3 = graph.createNodeAt([150, 250])
     graph.createEdge(n1, n2)
     graph.createEdge(n1, n3)
     graph.createEdge(n2, n3)
@@ -69,10 +66,10 @@ class App extends React.Component {
           />
           <label htmlFor="toggleEditable">Toggle Editing</label>
         </div>
-        <GraphComponent graph={this.state.graph} editable={this.state.editable} />
+        <ReactGraphComponent graph={this.state.graph} editable={this.state.editable} />
       </div>
     )
   }
 }
 
-module.exports = App
+export default App

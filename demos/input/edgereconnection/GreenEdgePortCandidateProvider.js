@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.1.
- ** Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.2.
+ ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,53 +26,51 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-'use strict'
+import {
+  BaseClass,
+  DefaultPortCandidate,
+  FreeNodePortLocationModel,
+  IEdgeReconnectionPortCandidateProvider,
+  IInputModeContext,
+  IListEnumerable,
+  List
+} from 'yfiles'
 
-define(['yfiles/view-editor'], /** @type {yfiles_namespace} */ /** typeof yfiles */ yfiles => {
+/**
+ * An {@link IEdgeReconnectionPortCandidateProvider} that uses candidates with a
+ * dynamic NodeScaled port location model. It allows moving ports to any
+ * location inside a green node.
+ */
+export default class GreenEdgePortCandidateProvider extends BaseClass(
+  IEdgeReconnectionPortCandidateProvider
+) {
   /**
-   * An {@link yfiles.input.IEdgeReconnectionPortCandidateProvider} that uses candidates with a
-   * dynamic NodeScaled port location model. It allows moving ports to any
-   * location inside a green node.
-   * @implements {yfiles.input.IEdgeReconnectionPortCandidateProvider}
+   * Returns all source port candidates that may be used for all nodes.
+   * @param {IInputModeContext} context The context for which the candidates should be provided
+   * @see Specified by {@link IEdgeReconnectionPortCandidateProvider#getTargetPortCandidates}.
+   * @return {IEnumerable.<IPortCandidate>}
    */
-  class GreenEdgePortCandidateProvider extends yfiles.lang.Class(
-    yfiles.input.IEdgeReconnectionPortCandidateProvider
-  ) {
-    /**
-     * Returns all source port candidates that may be used for all nodes.
-     * @param {yfiles.input.IInputModeContext} context The context for which the candidates should be provided
-     * @see Specified by {@link yfiles.input.IEdgeReconnectionPortCandidateProvider#getTargetPortCandidates}.
-     * @return {yfiles.collections.IEnumerable.<yfiles.input.IPortCandidate>}
-     */
-    getSourcePortCandidates(context) {
-      const graph = context.graph
-      if (graph === null) {
-        return yfiles.collections.IListEnumerable.EMPTY
+  getSourcePortCandidates(context) {
+    const graph = context.graph
+    if (graph === null) {
+      return IListEnumerable.EMPTY
+    }
+    const candidates = new List()
+    graph.nodes.forEach(node => {
+      if (node.tag === 'green') {
+        candidates.add(new DefaultPortCandidate(node, FreeNodePortLocationModel.INSTANCE))
       }
-      const candidates = new yfiles.collections.List()
-      graph.nodes.forEach(node => {
-        if (node.tag === 'green') {
-          candidates.add(
-            new yfiles.input.DefaultPortCandidate(
-              node,
-              yfiles.graph.FreeNodePortLocationModel.INSTANCE
-            )
-          )
-        }
-      })
-      return candidates
-    }
-
-    /**
-     * Returns all target port candidates that may be used for all nodes.
-     * @param {yfiles.input.IInputModeContext} context The context for which the candidates should be provided
-     * @see Specified by {@link yfiles.input.IEdgeReconnectionPortCandidateProvider#getTargetPortCandidates}.
-     * @return {yfiles.collections.IEnumerable.<yfiles.input.IPortCandidate>}
-     */
-    getTargetPortCandidates(context) {
-      return this.getSourcePortCandidates(context)
-    }
+    })
+    return candidates
   }
 
-  return GreenEdgePortCandidateProvider
-})
+  /**
+   * Returns all target port candidates that may be used for all nodes.
+   * @param {IInputModeContext} context The context for which the candidates should be provided
+   * @see Specified by {@link IEdgeReconnectionPortCandidateProvider#getTargetPortCandidates}.
+   * @return {IEnumerable.<IPortCandidate>}
+   */
+  getTargetPortCandidates(context) {
+    return this.getSourcePortCandidates(context)
+  }
+}

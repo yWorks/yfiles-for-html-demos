@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.1.
- ** Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.2.
+ ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,29 +26,24 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-'use strict'
+import { IEdge, IInputModeContext, OrthogonalEdgeHelper } from 'yfiles'
 
-define(['yfiles/view-editor'], /** @type {yfiles_namespace} */ /** typeof yfiles */ yfiles => {
+/**
+ * An {@link OrthogonalEdgeHelper} that enables moving the
+ * source/target of the edge to another port.
+ */
+export default class OrangeOrthogonalEdgeHelper extends OrthogonalEdgeHelper {
   /**
-   * An {@link yfiles.input.OrthogonalEdgeHelper} that enables moving the
-   * source/target of the edge to another port.
-   * @extends yfiles.input.OrthogonalEdgeHelper
+   * Enables moving the source and target of the edge to other ports.
+   * @param {IInputModeContext} inputModeContext The input mode context in which the segment is edited
+   * @param {IEdge} edge The edge to inspect
+   * @param {boolean} sourceEnd <code>True</code> if the source end of the edge is queried, <code>false</code> false
+   * for the target end
+   * @see Overrides {@link OrthogonalEdgeHelper#shouldMoveEndImplicitly}
+   * @see Specified by {@link IOrthogonalEdgeHelper#shouldMoveEndImplicitly}.
+   * @return {boolean}
    */
-  class OrangeOrthogonalEdgeHelper extends yfiles.input.OrthogonalEdgeHelper {
-    /**
-     * Enables moving the source and target of the edge to other ports.
-     * @param {yfiles.input.IInputModeContext} inputModeContext The input mode context in which the segment is edited
-     * @param {yfiles.graph.IEdge} edge The edge to inspect
-     * @param {boolean} sourceEnd <code>True</code> if the source end of the edge is queried, <code>false</code> false
-     * for the target end
-     * @see Overrides {@link yfiles.input.OrthogonalEdgeHelper#shouldMoveEndImplicitly}
-     * @see Specified by {@link yfiles.input.IOrthogonalEdgeHelper#shouldMoveEndImplicitly}.
-     * @return {boolean}
-     */
-    shouldMoveEndImplicitly(inputModeContext, edge, sourceEnd) {
-      return true
-    }
+  shouldMoveEndImplicitly(inputModeContext, edge, sourceEnd) {
+    return true
   }
-
-  return OrangeOrthogonalEdgeHelper
-})
+}

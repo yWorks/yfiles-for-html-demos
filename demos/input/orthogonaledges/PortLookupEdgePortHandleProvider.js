@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.1.
- ** Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.2.
+ ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,37 +26,36 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-'use strict'
+import {
+  BaseClass,
+  IEdge,
+  IEdgePortHandleProvider,
+  IHandle,
+  IInputModeContext,
+  INode
+} from 'yfiles'
+import NodeLayoutPortLocationHandle from './NodeLayoutPortLocationHandle.js'
 
-define(['yfiles/view-editor', './NodeLayoutPortLocationHandle'], (
-  /** @type {yfiles_namespace} */ /** typeof yfiles */ yfiles,
-  NodeLayoutPortLocationHandle
-) => {
+/**
+ * Creates an {@link IEdgePortHandleProvider} that constraints the original
+ * port location handle to the layout rectangle of the port's owner node.
+ */
+export default class PortLookupEdgePortHandleProvider extends BaseClass(IEdgePortHandleProvider) {
   /**
-   * Creates an {@link yfiles.input.IEdgePortHandleProvider} that constraints the original
-   * port location handle to the layout rectangle of the port's owner node.
+   * Returns a handle that is constrained to the layout rectangle of the
+   * port's owner node.
+   * @param {IInputModeContext} context The context in which the handle will be used
+   * @param {IEdge} edge The edge for which an handle is needed
+   * @param {boolean} sourceHandle  <code>True</code> if the handle for the source side/port should be returned,
+   * <code>false</code> for the target side/port
+   * @returns {IHandle}
+   * @see Specified by {@link IEdgePortHandleProvider#getHandle}.
+   * @return {IHandle}
    */
-  class PortLookupEdgePortHandleProvider extends yfiles.lang.Class(
-    yfiles.input.IEdgePortHandleProvider
-  ) {
-    /**
-     * Returns a handle that is constrained to the layout rectangle of the
-     * port's owner node.
-     * @param {yfiles.input.IInputModeContext} context The context in which the handle will be used
-     * @param {yfiles.graph.IEdge} edge The edge for which an handle is needed
-     * @param {boolean} sourceHandle  <code>True</code> if the handle for the source side/port should be returned,
-     * <code>false</code> for the target side/port
-     * @returns {yfiles.input.IHandle}
-     * @see Specified by {@link yfiles.input.IEdgePortHandleProvider#getHandle}.
-     * @return {yfiles.input.IHandle}
-     */
-    getHandle(context, edge, sourceHandle) {
-      const port = sourceHandle ? edge.sourcePort : edge.targetPort
-      return yfiles.graph.INode.isInstance(port.owner)
-        ? new NodeLayoutPortLocationHandle(port.owner, port.lookup(yfiles.input.IHandle.$class))
-        : port.lookup(yfiles.input.IHandle.$class)
-    }
+  getHandle(context, edge, sourceHandle) {
+    const port = sourceHandle ? edge.sourcePort : edge.targetPort
+    return INode.isInstance(port.owner)
+      ? new NodeLayoutPortLocationHandle(port.owner, port.lookup(IHandle.$class))
+      : port.lookup(IHandle.$class)
   }
-
-  return PortLookupEdgePortHandleProvider
-})
+}

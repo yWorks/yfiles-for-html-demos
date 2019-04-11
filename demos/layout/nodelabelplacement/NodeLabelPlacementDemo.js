@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.1.
- ** Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.2.
+ ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,311 +26,310 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-'use strict'
+import {
+  DefaultLabelStyle,
+  ExtendedLabelCandidateProfitModel,
+  ExteriorLabelModel,
+  ExteriorLabelModelPosition,
+  FreeNodeLabelModel,
+  GenericLabeling,
+  GenericLabelModel,
+  GraphBuilder,
+  GraphComponent,
+  GraphEditorInputMode,
+  GraphItemTypes,
+  HorizontalTextAlignment,
+  ICanvasObjectDescriptor,
+  ICommand,
+  INode,
+  Insets,
+  InteriorLabelModel,
+  LabelCandidateDescriptor,
+  LayoutExecutor,
+  License,
+  SandwichLabelModel,
+  ShinyPlateNodeStyle,
+  Size
+} from 'yfiles'
 
-require.config({
-  paths: {
-    yfiles: '../../../lib/umd/yfiles/',
-    utils: '../../utils/',
-    resources: '../../resources/'
-  }
-})
-require([
-  'yfiles/view-editor',
-  'resources/demo-app',
-  './CityLabelStyle.js',
-  'resources/sample.js',
-  './MapVisualCreator.js',
-  'yfiles/view-layout-bridge',
-  'resources/license'
-], (
-  /** @type {yfiles_namespace} */ /** typeof yfiles */ yfiles,
-  app,
-  CityLabelStyle,
-  Sample,
-  MapVisualCreator
-) => {
-  /**
-   * The graph component.
-   * @type {yfiles.view.GraphComponent}
-   */
-  let graphComponent = null
+import SampleData from './resources/sample.js'
+import MapVisualCreator from './MapVisualCreator.js'
+import CityLabelStyle from './CityLabelStyle.js'
+import { bindAction, bindChangeListener, bindCommand, showApp } from '../../resources/demo-app.js'
+import loadJson from '../../resources/load-json.js'
 
-  /**
-   * Holds whether or not a layout is in progress.
-   * @type {boolean}
-   */
-  let inLayout = false
+/**
+ * The graph component.
+ * @type {GraphComponent}
+ */
+let graphComponent = null
 
-  /**
-   * Holds the available label models.
-   * @type {Array}
-   */
-  let labelModels = []
+/**
+ * Holds whether or not a layout is in progress.
+ * @type {boolean}
+ */
+let inLayout = false
 
-  /**
-   * Runs the demo.
-   */
-  function run() {
-    graphComponent = new yfiles.view.GraphComponent('graphComponent')
+/**
+ * Holds the available label models.
+ * @type {Array}
+ */
+let labelModels = []
 
-    // initialize the node label properties
-    initializeOptions()
+/**
+ * Runs the demo.
+ */
+function run(licenseData) {
+  License.value = licenseData
+  graphComponent = new GraphComponent('graphComponent')
 
-    // set the default styles for nodes and labels
-    initializeGraph()
+  // initialize the node label properties
+  initializeOptions()
 
-    // create the input mode
-    initializeInputMode()
+  // set the default styles for nodes and labels
+  initializeGraph()
 
-    // create the sample graph
-    createSampleGraph()
+  // create the input mode
+  initializeInputMode()
 
-    // wire up the UI
-    registerCommands()
+  // create the sample graph
+  createSampleGraph()
 
-    // show the demo
-    app.show(graphComponent)
-  }
+  // wire up the UI
+  registerCommands()
 
-  /**
-   * Initialize the node label options.
-   */
-  function initializeOptions() {
-    const labelModelParameters = []
-    let model = new yfiles.graph.ExteriorLabelModel({ insets: 5 })
-    labelModelParameters.push(model.createParameter(yfiles.graph.ExteriorLabelModelPosition.NORTH))
-    labelModelParameters.push(
-      model.createParameter(yfiles.graph.ExteriorLabelModelPosition.NORTH_EAST)
-    )
-    labelModelParameters.push(
-      model.createParameter(yfiles.graph.ExteriorLabelModelPosition.NORTH_WEST)
-    )
-    labelModelParameters.push(model.createParameter(yfiles.graph.ExteriorLabelModelPosition.SOUTH))
-    labelModelParameters.push(
-      model.createParameter(yfiles.graph.ExteriorLabelModelPosition.SOUTH_EAST)
-    )
-    labelModelParameters.push(
-      model.createParameter(yfiles.graph.ExteriorLabelModelPosition.SOUTH_WEST)
-    )
-    labelModelParameters.push(model.createParameter(yfiles.graph.ExteriorLabelModelPosition.EAST))
-    labelModelParameters.push(model.createParameter(yfiles.graph.ExteriorLabelModelPosition.WEST))
-    model = new yfiles.graph.ExteriorLabelModel({ insets: new yfiles.geometry.Insets(10) })
-    labelModelParameters.push(model.createParameter(yfiles.graph.ExteriorLabelModelPosition.NORTH))
-    labelModelParameters.push(
-      model.createParameter(yfiles.graph.ExteriorLabelModelPosition.NORTH_EAST)
-    )
-    labelModelParameters.push(
-      model.createParameter(yfiles.graph.ExteriorLabelModelPosition.NORTH_WEST)
-    )
-    labelModelParameters.push(model.createParameter(yfiles.graph.ExteriorLabelModelPosition.SOUTH))
-    labelModelParameters.push(
-      model.createParameter(yfiles.graph.ExteriorLabelModelPosition.SOUTH_EAST)
-    )
-    labelModelParameters.push(
-      model.createParameter(yfiles.graph.ExteriorLabelModelPosition.SOUTH_WEST)
-    )
-    labelModelParameters.push(model.createParameter(yfiles.graph.ExteriorLabelModelPosition.EAST))
-    labelModelParameters.push(model.createParameter(yfiles.graph.ExteriorLabelModelPosition.WEST))
-    model = new yfiles.graph.ExteriorLabelModel({ insets: new yfiles.geometry.Insets(15) })
-    labelModelParameters.push(model.createParameter(yfiles.graph.ExteriorLabelModelPosition.NORTH))
-    labelModelParameters.push(
-      model.createParameter(yfiles.graph.ExteriorLabelModelPosition.NORTH_EAST)
-    )
-    labelModelParameters.push(
-      model.createParameter(yfiles.graph.ExteriorLabelModelPosition.NORTH_WEST)
-    )
-    labelModelParameters.push(model.createParameter(yfiles.graph.ExteriorLabelModelPosition.SOUTH))
-    labelModelParameters.push(
-      model.createParameter(yfiles.graph.ExteriorLabelModelPosition.SOUTH_EAST)
-    )
-    labelModelParameters.push(
-      model.createParameter(yfiles.graph.ExteriorLabelModelPosition.SOUTH_WEST)
-    )
-    labelModelParameters.push(model.createParameter(yfiles.graph.ExteriorLabelModelPosition.EAST))
-    labelModelParameters.push(model.createParameter(yfiles.graph.ExteriorLabelModelPosition.WEST))
+  // show the demo
+  showApp(graphComponent)
+}
 
-    const genericLabelModel = new yfiles.graph.GenericLabelModel(labelModelParameters[0])
-    labelModelParameters.forEach(labelModelParameter => {
-      const insets = labelModelParameter.model.insets.top
-      let profit
-      if (insets < 10) {
-        profit = 1.0
-      } else if (insets < 15) {
-        profit = 0.9
-      } else {
-        profit = 0.8
-      }
-      const labelCandidateDescriptor = new yfiles.graph.LabelCandidateDescriptor()
-      labelCandidateDescriptor.profit = profit
-      genericLabelModel.addParameter(labelModelParameter, labelCandidateDescriptor)
-    })
+/**
+ * Initialize the node label options.
+ */
+function initializeOptions() {
+  const labelModelParameters = []
+  let model = new ExteriorLabelModel({ insets: 5 })
+  labelModelParameters.push(model.createParameter(ExteriorLabelModelPosition.NORTH))
+  labelModelParameters.push(model.createParameter(ExteriorLabelModelPosition.NORTH_EAST))
+  labelModelParameters.push(model.createParameter(ExteriorLabelModelPosition.NORTH_WEST))
+  labelModelParameters.push(model.createParameter(ExteriorLabelModelPosition.SOUTH))
+  labelModelParameters.push(model.createParameter(ExteriorLabelModelPosition.SOUTH_EAST))
+  labelModelParameters.push(model.createParameter(ExteriorLabelModelPosition.SOUTH_WEST))
+  labelModelParameters.push(model.createParameter(ExteriorLabelModelPosition.EAST))
+  labelModelParameters.push(model.createParameter(ExteriorLabelModelPosition.WEST))
+  model = new ExteriorLabelModel({ insets: new Insets(10) })
+  labelModelParameters.push(model.createParameter(ExteriorLabelModelPosition.NORTH))
+  labelModelParameters.push(model.createParameter(ExteriorLabelModelPosition.NORTH_EAST))
+  labelModelParameters.push(model.createParameter(ExteriorLabelModelPosition.NORTH_WEST))
+  labelModelParameters.push(model.createParameter(ExteriorLabelModelPosition.SOUTH))
+  labelModelParameters.push(model.createParameter(ExteriorLabelModelPosition.SOUTH_EAST))
+  labelModelParameters.push(model.createParameter(ExteriorLabelModelPosition.SOUTH_WEST))
+  labelModelParameters.push(model.createParameter(ExteriorLabelModelPosition.EAST))
+  labelModelParameters.push(model.createParameter(ExteriorLabelModelPosition.WEST))
+  model = new ExteriorLabelModel({ insets: new Insets(15) })
+  labelModelParameters.push(model.createParameter(ExteriorLabelModelPosition.NORTH))
+  labelModelParameters.push(model.createParameter(ExteriorLabelModelPosition.NORTH_EAST))
+  labelModelParameters.push(model.createParameter(ExteriorLabelModelPosition.NORTH_WEST))
+  labelModelParameters.push(model.createParameter(ExteriorLabelModelPosition.SOUTH))
+  labelModelParameters.push(model.createParameter(ExteriorLabelModelPosition.SOUTH_EAST))
+  labelModelParameters.push(model.createParameter(ExteriorLabelModelPosition.SOUTH_WEST))
+  labelModelParameters.push(model.createParameter(ExteriorLabelModelPosition.EAST))
+  labelModelParameters.push(model.createParameter(ExteriorLabelModelPosition.WEST))
 
-    labelModels = [
-      new yfiles.graph.InteriorLabelModel(),
-      new yfiles.graph.ExteriorLabelModel(),
-      new yfiles.graph.FreeNodeLabelModel(),
-      new yfiles.graph.SandwichLabelModel(),
-      genericLabelModel
-    ]
-  }
-
-  /**
-   * Initializes node and label styles that are applied when the graph is created.
-   */
-  function initializeGraph() {
-    const graph = graphComponent.graph
-    // set the default style for nodes
-    graph.nodeDefaults.style = new yfiles.styles.ShinyPlateNodeStyle({
-      drawShadow: false,
-      radius: 1,
-      fill: 'orange'
-    })
-
-    // set the default size for nodes
-    graph.nodeDefaults.size = new yfiles.geometry.Size(10, 10)
-
-    // set the default style for labels
-    const innerLabelStyle = new yfiles.styles.DefaultLabelStyle({
-      textSize: 10,
-      horizontalTextAlignment: yfiles.view.HorizontalTextAlignment.CENTER
-    })
-    graph.nodeDefaults.labels.style = new CityLabelStyle(innerLabelStyle)
-    graph.nodeDefaults.labels.layoutParameter = yfiles.graph.ExteriorLabelModel.NORTH
-
-    // add the background visual for the map
-    graphComponent.backgroundGroup.addChild(
-      new MapVisualCreator(),
-      yfiles.view.ICanvasObjectDescriptor.ALWAYS_DIRTY_INSTANCE
-    )
-  }
-
-  /**
-   * Creates the input mode.
-   */
-  function initializeInputMode() {
-    const inputMode = new yfiles.input.GraphEditorInputMode({
-      showHandleItems: yfiles.graph.GraphItemTypes.NONE,
-      allowCreateEdge: false
-    })
-    // add a label for each newly created node
-    inputMode.addNodeCreatedListener((sender, args) => {
-      graphComponent.graph.addLabel(args.item, 'City')
-    })
-    graphComponent.inputMode = inputMode
-  }
-
-  /**
-   * Configures the label models and runs the labeling algorithm.
-   */
-  function placeLabels() {
-    if (inLayout) {
-      return
+  const genericLabelModel = new GenericLabelModel(labelModelParameters[0])
+  labelModelParameters.forEach(labelModelParameter => {
+    const insets = labelModelParameter.model.insets.top
+    let profit
+    if (insets < 10) {
+      profit = 1.0
+    } else if (insets < 15) {
+      profit = 0.9
+    } else {
+      profit = 0.8
     }
-    const graph = graphComponent.graph
-    setUIDisabled(true)
-
-    const labelModelComboBox = document.getElementById('labelModelComboBox')
-    const labelModel = labelModels[labelModelComboBox.selectedIndex]
-    const sizeInput = document.getElementById('labelFontSizeField')
-
-    // sets the label mode based on the selected value of the corresponding combo-box
-    graph.labels.forEach(label => {
-      if (yfiles.graph.INode.isInstance(label.owner)) {
-        // if the default label model is not the selected, change it
-        if (labelModel !== graph.nodeDefaults.labels.layoutParameter.model) {
-          graph.setLabelLayoutParameter(label, labelModel.createDefaultParameter())
-        }
-
-        // sets the label size based on the selected value of the corresponding text-field
-        const cityLabelStyle = label.style
-        if (cityLabelStyle && cityLabelStyle.innerLabelStyle) {
-          const updatedStyle = new yfiles.styles.DefaultLabelStyle({
-            textSize: parseFloat(sizeInput.value),
-            horizontalTextAlignment: yfiles.view.HorizontalTextAlignment.CENTER
-          })
-          graph.setStyle(label, new CityLabelStyle(updatedStyle))
-        }
-      }
-    })
-    // set as default label model parameter
-    graph.nodeDefaults.labels.layoutParameter = labelModel.createDefaultParameter()
-    const updatedStyle = new yfiles.styles.DefaultLabelStyle({
-      textSize: parseFloat(sizeInput.value),
-      horizontalTextAlignment: yfiles.view.HorizontalTextAlignment.CENTER
-    })
-    graph.nodeDefaults.labels.style = new CityLabelStyle(updatedStyle)
-    graphComponent.invalidate()
-
-    // apply the labeling algorithm
-    const labelingAlgorithm = new yfiles.labeling.GenericLabeling()
-    labelingAlgorithm.placeEdgeLabels = false
-    labelingAlgorithm.removeEdgeOverlaps = true
-    labelingAlgorithm.profitModel = new yfiles.layout.ExtendedLabelCandidateProfitModel()
-
-    const layoutExecutor = new yfiles.layout.LayoutExecutor(
-      graphComponent,
-      graphComponent.graph,
-      labelingAlgorithm
+    genericLabelModel.addParameter(
+      labelModelParameter,
+      new LabelCandidateDescriptor({
+        profit
+      })
     )
-    layoutExecutor.duration = '0.5s'
-    layoutExecutor.easedAnimation = true
-    layoutExecutor.animateViewport = false
-    layoutExecutor.start().then(() => {
+  })
+
+  labelModels = [
+    new InteriorLabelModel(),
+    new ExteriorLabelModel(),
+    new FreeNodeLabelModel(),
+    new SandwichLabelModel(),
+    genericLabelModel
+  ]
+}
+
+/**
+ * Initializes node and label styles that are applied when the graph is created.
+ */
+function initializeGraph() {
+  const graph = graphComponent.graph
+  // set the default style for nodes
+  graph.nodeDefaults.style = new ShinyPlateNodeStyle({
+    drawShadow: false,
+    radius: 1,
+    fill: 'orange'
+  })
+
+  // set the default size for nodes
+  graph.nodeDefaults.size = new Size(10, 10)
+
+  // set the default style for labels
+  const innerLabelStyle = new DefaultLabelStyle({
+    textSize: 10,
+    horizontalTextAlignment: HorizontalTextAlignment.CENTER
+  })
+  graph.nodeDefaults.labels.style = new CityLabelStyle(innerLabelStyle)
+  graph.nodeDefaults.labels.layoutParameter = ExteriorLabelModel.NORTH
+
+  // add the background visual for the map
+  graphComponent.backgroundGroup.addChild(
+    new MapVisualCreator(),
+    ICanvasObjectDescriptor.ALWAYS_DIRTY_INSTANCE
+  )
+}
+
+/**
+ * Creates the input mode.
+ */
+function initializeInputMode() {
+  const inputMode = new GraphEditorInputMode({
+    showHandleItems: GraphItemTypes.NONE,
+    allowCreateEdge: false
+  })
+  // add a label for each newly created node
+  inputMode.addNodeCreatedListener((sender, args) => {
+    graphComponent.graph.addLabel(args.item, 'City')
+  })
+  graphComponent.inputMode = inputMode
+}
+
+/**
+ * Configures the label models and runs the labeling algorithm.
+ */
+function placeLabels() {
+  if (inLayout) {
+    return
+  }
+  // Check if the label size input is valid. Valid inputs are greater than zero and less than 50.
+  const textSize = parseFloat(document.getElementById('labelFontSizeField').value)
+  if (isNaN(textSize) || textSize <= 0 || textSize > 50) {
+    alert('Label size should be greater than 0 and less than 50.')
+    return
+  }
+
+  const graph = graphComponent.graph
+  setUIDisabled(true)
+
+  const labelModelComboBox = document.getElementById('labelModelComboBox')
+  const labelModel = labelModels[labelModelComboBox.selectedIndex]
+  // sets the label model based on the selected value of the corresponding combo-box
+  graph.labels.forEach(label => {
+    if (INode.isInstance(label.owner)) {
+      // if the default label model is not the selected, change it
+      if (labelModel !== graph.nodeDefaults.labels.layoutParameter.model) {
+        graph.setLabelLayoutParameter(label, labelModel.createDefaultParameter())
+      }
+
+      // sets the label size based on the selected value of the corresponding text-field
+      const cityLabelStyle = label.style
+      if (cityLabelStyle && cityLabelStyle.innerLabelStyle) {
+        const updatedStyle = new DefaultLabelStyle({
+          textSize,
+          horizontalTextAlignment: HorizontalTextAlignment.CENTER
+        })
+        graph.setStyle(label, new CityLabelStyle(updatedStyle))
+      }
+    }
+  })
+  // set as default label model parameter
+  graph.nodeDefaults.labels.layoutParameter = labelModel.createDefaultParameter()
+  const updatedStyle = new DefaultLabelStyle({
+    textSize,
+    horizontalTextAlignment: HorizontalTextAlignment.CENTER
+  })
+  graph.nodeDefaults.labels.style = new CityLabelStyle(updatedStyle)
+  graphComponent.invalidate()
+
+  // apply the labeling algorithm
+  const labelingAlgorithm = new GenericLabeling({
+    placeEdgeLabels: false,
+    removeEdgeOverlaps: true,
+    profitModel: new ExtendedLabelCandidateProfitModel()
+  })
+
+  new LayoutExecutor({
+    graphComponent,
+    layout: labelingAlgorithm,
+    duration: '0.5s',
+    easedAnimation: true
+  })
+    .start()
+    .then(() => {
       setUIDisabled(false)
     })
-  }
-
-  /**
-   * Changes the state of the UI's elements.
-   * @param {boolean} disabled True if the UI elements should be enabled, false otherwise
-   */
-  function setUIDisabled(disabled) {
-    inLayout = disabled
-    document.getElementById('labelModelComboBox').disabled = disabled
-    document.getElementById('labelFontSizeField').disabled = disabled
-    document.getElementById('placeLabels').disabled = disabled
-  }
-
-  /**
-   * Wires up the UI.
-   */
-  function registerCommands() {
-    const iCommand = yfiles.input.ICommand
-    app.bindCommand("button[data-command='FitContent']", iCommand.FIT_GRAPH_BOUNDS, graphComponent)
-    app.bindCommand("button[data-command='ZoomIn']", iCommand.INCREASE_ZOOM, graphComponent)
-    app.bindCommand("button[data-command='ZoomOut']", iCommand.DECREASE_ZOOM, graphComponent)
-    app.bindCommand("button[data-command='ZoomOriginal']", iCommand.ZOOM, graphComponent, 1.0)
-    app.bindCommand("button[data-command='Delete']", iCommand.DELETE, graphComponent, 1.0)
-    app.bindAction("button[data-command='PlaceLabels']", placeLabels)
-    app.bindChangeListener("select[data-command='labelModelChanged']", placeLabels)
-    document.getElementById('labelFontSizeField').addEventListener('change', placeLabels)
-  }
-
-  /**
-   * Creates the sample graph.
-   */
-  function createSampleGraph() {
-    const graph = graphComponent.graph
-    const builder = new yfiles.binding.GraphBuilder(graph)
-    builder.nodesSource = Sample.nodes
-    builder.nodeIdBinding = 'id'
-    builder.locationXBinding = 'x'
-    builder.locationYBinding = 'y'
-    builder.buildGraph()
-
-    // adds the node labels
-    graph.nodes.forEach(node => {
-      graph.addLabel(node, `${node.tag.label}`)
+    .catch(error => {
+      if (typeof window.reportError === 'function') {
+        window.reportError(error)
+      } else {
+        throw error
+      }
     })
+}
 
-    // fit content
-    graphComponent.fitGraphBounds()
+/**
+ * Changes the state of the UI's elements.
+ * @param {boolean} disabled True if the UI elements should be enabled, false otherwise
+ */
+function setUIDisabled(disabled) {
+  inLayout = disabled
+  document.getElementById('labelModelComboBox').disabled = disabled
+  document.getElementById('labelFontSizeField').disabled = disabled
+  document.getElementById('placeLabels').disabled = disabled
+}
 
-    // places the node labels
-    placeLabels()
-  }
+/**
+ * Wires up the UI.
+ */
+function registerCommands() {
+  bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent)
+  bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent)
+  bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent)
+  bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
+  bindCommand("button[data-command='Delete']", ICommand.DELETE, graphComponent, 1.0)
+  bindAction("button[data-command='PlaceLabels']", placeLabels)
+  bindChangeListener("select[data-command='labelModelChanged']", placeLabels)
+  document.getElementById('labelFontSizeField').addEventListener('change', placeLabels)
+}
 
-  // runs the demo
-  run()
-})
+/**
+ * Creates the sample graph.
+ */
+function createSampleGraph() {
+  const builder = new GraphBuilder({
+    graph: graphComponent.graph,
+    nodesSource: SampleData.nodes,
+    nodeIdBinding: 'id',
+    locationXBinding: 'x',
+    locationYBinding: 'y'
+  })
+  const graph = builder.buildGraph()
+
+  // adds the node labels
+  graph.nodes.forEach(node => {
+    graph.addLabel(node, `${node.tag.label}`)
+  })
+
+  // fit content
+  graphComponent.fitGraphBounds()
+
+  // places the node labels
+  placeLabels()
+}
+
+// runs the demo
+loadJson().then(run)

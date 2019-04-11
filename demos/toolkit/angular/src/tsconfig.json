@@ -8,12 +8,11 @@
     "moduleResolution": "node",
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "target": "es6",
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "target": "es5",
     "types": [],
-    "lib": ["es2017", "dom"],
-    "paths": {
-      "yfiles/*": ["../../../../lib/es6-modules/yfiles/*"]
-    }
+    "lib": ["es2017", "dom"]
   },
-  "include": ["**/*.ts", "../../../../ide-support/yfiles-api-es6-modules-webstorm.d.ts"]
+  "include": ["**/*.ts"]
 }

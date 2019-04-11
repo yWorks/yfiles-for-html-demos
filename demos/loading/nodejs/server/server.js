@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.1.
- ** Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.2.
+ ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -29,13 +29,13 @@
 // Make references to "self" in the yFiles library work
 global.self = global
 
-require('../../../resources/license.js')
+const licenseData = require('../../../../lib/license')
 const jsonIO = require('./server-io')
 
 // All yfiles modules return the yfiles namespace object
-const yfiles = require('../../../../lib/umd/yfiles/view-component')
-require('../../../../lib/umd/yfiles/layout-hierarchic')
-require('../../../../lib/umd/yfiles/view-layout-bridge')
+const yfiles = require('../../../../lib/umd/view-component')
+require('../../../../lib/umd/layout-hierarchic')
+require('../../../../lib/umd/view-layout-bridge')
 
 // Create a minimal Express server
 const express = require('express')
@@ -57,6 +57,8 @@ app.post('/layout', (req, res) => {
   // Allow cross-origin requests
   res.header('Access-Control-Allow-Origin', '*')
   res.header('Access-Control-Allow-Headers', 'X-Requested-With')
+
+  yfiles.lang.License.value = licenseData
 
   if (!checkLicense()) {
     const message =

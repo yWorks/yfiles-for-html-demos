@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.1.
- ** Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.2.
+ ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,192 +26,193 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-'use strict'
+import {
+  DefaultLabelStyle,
+  EdgeSegmentLabelModel,
+  EdgeSides,
+  FreeEdgeLabelModel,
+  FreeLabelModel,
+  FreeNodeLabelModel,
+  GenericLabelModel,
+  GraphComponent,
+  GraphEditorInputMode,
+  GraphItemTypes,
+  ICommand,
+  ILabel,
+  InteriorLabelModel,
+  LabelStyleDecorationInstaller,
+  License,
+  Size,
+  StringTemplateLabelStyle,
+  TemplateLabelStyle,
+  Visualization
+} from 'yfiles'
 
-require.config({
-  paths: {
-    yfiles: '../../../lib/umd/yfiles/',
-    utils: '../../utils/',
-    resources: '../../resources/'
-  }
-})
+import LabelHandleProvider from './LabelHandleProvider.js'
+import { initDemoStyles } from '../../resources/demo-styles.js'
+import { showApp, bindCommand } from '../../resources/demo-app.js'
+import loadJson from '../../resources/load-json.js'
+/** @type {GraphComponent} */
+let graphComponent = null
+
+function run(licenseData) {
+  License.value = licenseData
+  graphComponent = new GraphComponent('graphComponent')
+
+  initializeGraph()
+
+  initializeInputMode()
+
+  registerCommands()
+
+  showApp(graphComponent)
+}
 
 /**
- * Shows how to achieve interactive resize behavior for labels by implementing a custom
- * {@link yfiles.input.IHandleProvider} and {@link yfiles.input.IHandle}.
+ * Sets the default styles and creates the graph.
  */
-require([
-  'yfiles/view-editor',
-  'resources/demo-app',
-  'resources/demo-styles',
-  'LabelHandleProvider.js',
-  'resources/license'
-], (
-  /** @type {yfiles_namespace} */ /** typeof yfiles */ yfiles,
-  app,
-  DemoStyles,
-  LabelHandleProvider
-) => {
-  /** @type {yfiles.view.GraphComponent} */
-  let graphComponent = null
+function initializeGraph() {
+  const graph = graphComponent.graph
 
-  function run() {
-    graphComponent = new yfiles.view.GraphComponent('graphComponent')
+  // add a custom handle provider for labels
+  graph.decorator.labelDecorator.handleProviderDecorator.setFactory(getLabelHandleProvider)
+  // for rotatable labels: modify the selection visualization to indicate that this label can be rotated
+  const templateString = `<g>
+           <rect fill="none" stroke-width="3" stroke="lightgray" width="{TemplateBinding width}" height="{TemplateBinding height}"></rect>
+           <line x1="{TemplateBinding width, Converter=demoBindings.halfConverter}" y1="0" x2="{TemplateBinding width, Converter=demoBindings.halfConverter}" y2="-15" stroke-width="{TemplateBinding isUpsideDown, Converter=demoBindings.showUpsideHandle}" stroke="lightgray"></line>
+           <line x1="{TemplateBinding width, Converter=demoBindings.halfConverter}" y1="{TemplateBinding height}" x2="{TemplateBinding width, Converter=demoBindings.halfConverter}" y2="{TemplateBinding height, Converter=demoBindings.flippedHandlePosition}" stroke-width="{TemplateBinding isUpsideDown, Converter=demoBindings.showFlippedHandle}" stroke="lightgray"></line>
+           <circle r="4" stroke="black" stroke-width="1" fill="none" cx="{TemplateBinding width, Converter=demoBindings.halfConverter}" cy="{TemplateBinding height, Converter=demoBindings.halfConverter}"></circle>
+         </g>`
 
-    initializeGraph()
+  const demoBindings = {}
+  TemplateLabelStyle.CONVERTERS.demoBindings = demoBindings
+  demoBindings.halfConverter = value => value * 0.5
+  demoBindings.flippedHandlePosition = height => height + 15
+  demoBindings.showUpsideHandle = isUpsideDown => (isUpsideDown ? '0' : '3')
+  demoBindings.showFlippedHandle = isUpsideDown => (isUpsideDown ? '3' : '0')
+  const templateLabelStyle = new StringTemplateLabelStyle(templateString)
 
-    initializeInputMode()
+  const labelDecorationInstaller = new LabelStyleDecorationInstaller({
+    labelStyle: templateLabelStyle
+  })
 
-    registerCommands()
+  graphComponent.graph.decorator.labelDecorator.selectionDecorator.setImplementation(
+    label =>
+      label.layoutParameter.model instanceof FreeNodeLabelModel ||
+      label.layoutParameter.model instanceof FreeEdgeLabelModel ||
+      label.layoutParameter.model instanceof FreeLabelModel,
+    labelDecorationInstaller
+  )
 
-    app.show(graphComponent)
-  }
+  initDemoStyles(graph)
+  graphComponent.graph.nodeDefaults.size = new Size(100, 50)
 
-  /**
-   * Sets the default styles and creates the graph.
-   */
-  function initializeGraph() {
-    const graph = graphComponent.graph
+  // create a label style that shows the labels bounds
+  const labelStyle = new DefaultLabelStyle({
+    backgroundFill: 'rgb(119, 204, 255)',
+    backgroundStroke: 'lightgray',
+    horizontalTextAlignment: 'center',
+    insets: [3, 5, 3, 5]
+  })
+  graph.nodeDefaults.labels.style = labelStyle
+  // Our resize logic does not work together with all label models resp. label model parameters
+  // for simplicity, we just use a centered label for nodes
+  graph.nodeDefaults.labels.layoutParameter = new GenericLabelModel(
+    InteriorLabelModel.CENTER
+  ).createDefaultParameter()
 
-    // add a custom handle provider for labels
-    graph.decorator.labelDecorator.handleProviderDecorator.setFactory(getLabelHandleProvider)
-    // for rotatable labels: modify the selection visualization to indicate that this label can be rotated
-    const templateString = `<g>
-             <rect fill="none" stroke-width="3" stroke="lightgray" width="{TemplateBinding width}" height="{TemplateBinding height}"></rect>
-             <line x1="{TemplateBinding width, Converter=demoBindings.halfConverter}" y1="0" x2="{TemplateBinding width, Converter=demoBindings.halfConverter}" y2="-15" stroke-width="{TemplateBinding isUpsideDown, Converter=demoBindings.showUpsideHandle}" stroke="lightgray"></line>
-             <line x1="{TemplateBinding width, Converter=demoBindings.halfConverter}" y1="{TemplateBinding height}" x2="{TemplateBinding width, Converter=demoBindings.halfConverter}" y2="{TemplateBinding height, Converter=demoBindings.flippedHandlePosition}" stroke-width="{TemplateBinding isUpsideDown, Converter=demoBindings.showFlippedHandle}" stroke="lightgray"></line>
-             <circle r="4" stroke="black" stroke-width="1" fill="none" cx="{TemplateBinding width, Converter=demoBindings.halfConverter}" cy="{TemplateBinding height, Converter=demoBindings.halfConverter}"></circle>
-           </g>`
+  graph.edgeDefaults.labels.style = labelStyle
 
-    const demoBindings = {}
-    yfiles.styles.TemplateLabelStyle.CONVERTERS.demoBindings = demoBindings
-    demoBindings.halfConverter = value => value * 0.5
-    demoBindings.flippedHandlePosition = height => height + 15
-    demoBindings.showUpsideHandle = isUpsideDown => (isUpsideDown ? '0' : '3')
-    demoBindings.showFlippedHandle = isUpsideDown => (isUpsideDown ? '3' : '0')
-    const templateLabelStyle = new yfiles.styles.StringTemplateLabelStyle(templateString)
+  const labelModel = new EdgeSegmentLabelModel({ distance: 10 })
+  graph.edgeDefaults.labels.layoutParameter = labelModel.createParameterFromSource(
+    0,
+    0.5,
+    EdgeSides.RIGHT_OF_EDGE
+  )
 
-    const labelDecorationInstaller = new yfiles.view.LabelStyleDecorationInstaller({
-      labelStyle: templateLabelStyle
-    })
+  // create sample graph
+  const n1 = graph.createNodeAt({
+    location: [100, 100],
+    labels: ['Centered Node Label. Resizes symmetrically.']
+  })
+  const n2 = graph.createNodeAt({
+    location: [500, 0],
+    labels: [
+      {
+        text: 'Free Node Label.\nSupports rotation and asymmetric resizing',
+        layoutParameter: new FreeNodeLabelModel().createParameter(
+          [0.5, 0.5],
+          [0, 0],
+          [0.5, 0.5],
+          [0, 0],
+          0
+        ),
+        style: new DefaultLabelStyle({
+          backgroundFill: 'rgb(119, 204, 255)',
+          backgroundStroke: 'lightgray',
+          horizontalTextAlignment: 'center',
+          autoFlip: false,
+          insets: [3, 5, 3, 5]
+        })
+      }
+    ]
+  })
+  graph.createEdge({
+    source: n2,
+    target: n1,
+    labels: ['Rotated Edge Label']
+  })
 
-    graphComponent.graph.decorator.labelDecorator.selectionDecorator.setImplementation(
-      label =>
-        label.layoutParameter.model instanceof yfiles.graph.FreeNodeLabelModel ||
-        label.layoutParameter.model instanceof yfiles.graph.FreeEdgeLabelModel ||
-        label.layoutParameter.model instanceof yfiles.graph.FreeLabelModel,
-      labelDecorationInstaller
-    )
+  graphComponent.fitGraphBounds()
+}
 
-    DemoStyles.initDemoStyles(graph)
-    graphComponent.graph.nodeDefaults.size = new yfiles.geometry.Size(100, 50)
+/**
+ * Returns the LabelHandleProvider for the given label.
+ * @param {ILabel} label The given label
+ * @return {LabelHandleProvider}
+ */
+function getLabelHandleProvider(label) {
+  return new LabelHandleProvider(label)
+}
 
-    // create a label style that shows the labels bounds
-    const labelStyle = new yfiles.styles.DefaultLabelStyle({
-      backgroundFill: 'rgb(119, 204, 255)',
-      backgroundStroke: 'lightgray',
-      horizontalTextAlignment: 'center'
-    })
-    graph.nodeDefaults.labels.style = labelStyle
-    // Our resize logic does not work together with all label models resp. label model parameters
-    // for simplicity, we just use a centered label for nodes
-    graph.nodeDefaults.labels.layoutParameter = new yfiles.graph.GenericLabelModel(
-      yfiles.graph.InteriorLabelModel.CENTER
-    ).createDefaultParameter()
+/**
+ * Initializes the input mode.
+ */
+function initializeInputMode() {
+  const mode = new GraphEditorInputMode({
+    // customize hit test order to simplify click selecting labels
+    clickHitTestOrder: [
+      GraphItemTypes.EDGE_LABEL,
+      GraphItemTypes.NODE_LABEL,
+      GraphItemTypes.BEND,
+      GraphItemTypes.EDGE,
+      GraphItemTypes.NODE,
+      GraphItemTypes.PORT,
+      GraphItemTypes.ALL
+    ]
+  })
 
-    graph.edgeDefaults.labels.style = labelStyle
+  // add a label to each created node
+  mode.addNodeCreatedListener((sender, args) => {
+    const graph = mode.graphComponent.graph
+    graph.addLabel(args.item, `Node ${graph.nodes.size}`)
+  })
 
-    const labelModel = new yfiles.graph.EdgeSegmentLabelModel({ distance: 10 })
-    graph.edgeDefaults.labels.layoutParameter = labelModel.createParameterFromSource(
-      0,
-      0.5,
-      yfiles.graph.EdgeSides.RIGHT_OF_EDGE
-    )
+  // the handles should be moved together with the ghost visualization of the label
+  mode.moveLabelInputMode.visualization = Visualization.LIVE
 
-    // create sample graph
-    const n1 = graph.createNodeAt({
-      location: [100, 100],
-      labels: ['Centered Node Label. Resizes symmetrically.']
-    })
-    const n2 = graph.createNodeAt({
-      location: [500, 0],
-      labels: [
-        {
-          text: 'Free Node Label.\nSupports rotation and asymmetric resizing',
-          layoutParameter: new yfiles.graph.FreeNodeLabelModel().createParameter(
-            [0.5, 0.5],
-            [0, 0],
-            [0.5, 0.5],
-            [0, 0],
-            0
-          ),
-          style: new yfiles.styles.DefaultLabelStyle({
-            backgroundFill: 'rgb(119, 204, 255)',
-            backgroundStroke: 'lightgray',
-            horizontalTextAlignment: 'center',
-            autoFlip: false
-          })
-        }
-      ]
-    })
-    graph.createEdge({
-      source: n2,
-      target: n1,
-      labels: ['Rotated Edge Label']
-    })
+  graphComponent.inputMode = mode
+}
 
-    graphComponent.fitGraphBounds()
-  }
+/**
+ * Wires up the UI.
+ */
+function registerCommands() {
+  bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent)
+  bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent)
+  bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent)
+  bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
+}
 
-  /**
-   * Returns the LabelHandleProvider for the given label.
-   * @param {yfiles.graph.ILabel} label The given label
-   * @return {LabelHandleProvider}
-   */
-  function getLabelHandleProvider(label) {
-    return new LabelHandleProvider(label)
-  }
-
-  /**
-   * Initializes the input mode.
-   */
-  function initializeInputMode() {
-    const mode = new yfiles.input.GraphEditorInputMode({
-      // customize hit test order to simplify click selecting labels
-      clickHitTestOrder: [
-        yfiles.graph.GraphItemTypes.EDGE_LABEL,
-        yfiles.graph.GraphItemTypes.NODE_LABEL,
-        yfiles.graph.GraphItemTypes.BEND,
-        yfiles.graph.GraphItemTypes.EDGE,
-        yfiles.graph.GraphItemTypes.NODE,
-        yfiles.graph.GraphItemTypes.PORT,
-        yfiles.graph.GraphItemTypes.ALL
-      ]
-    })
-
-    // add a label to each created node
-    mode.addNodeCreatedListener((sender, args) => {
-      const graph = mode.graphComponent.graph
-      graph.addLabel(args.item, `Node ${graph.nodes.size}`)
-    })
-
-    // the handles should be moved together with the ghost visualization of the label
-    mode.moveLabelInputMode.visualization = yfiles.input.Visualization.LIVE
-
-    graphComponent.inputMode = mode
-  }
-
-  /**
-   * Wires up the UI.
-   */
-  function registerCommands() {
-    const iCommand = yfiles.input.ICommand
-    app.bindCommand("button[data-command='FitContent']", iCommand.FIT_GRAPH_BOUNDS, graphComponent)
-    app.bindCommand("button[data-command='ZoomIn']", iCommand.INCREASE_ZOOM, graphComponent)
-    app.bindCommand("button[data-command='ZoomOut']", iCommand.DECREASE_ZOOM, graphComponent)
-    app.bindCommand("button[data-command='ZoomOriginal']", iCommand.ZOOM, graphComponent, 1.0)
-  }
-
-  // run the demo
-  run()
-})
+// run the demo
+loadJson().then(run)

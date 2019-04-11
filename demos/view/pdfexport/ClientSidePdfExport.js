@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.1.
- ** Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.2.
+ ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,125 +26,124 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-'use strict'
+import { GraphComponent, IGraph, Insets, Rect, Size, SvgExport } from 'yfiles'
 
-define(['yfiles/view-component'], yfiles => {
+/**
+ * A class that provides PDF-image export. The image is exported to svg and converted to PDF.
+ */
+export default class ClientSidePdfExport {
   /**
-   * A class that provides PDF-image export. The image is exported to svg and converted to PDF.
+   * Creates a new instance.
    */
-  class ClientSidePdfExport {
-    /**
-     * Creates a new instance.
-     */
-    constructor() {
-      this.$scale = 1
-      this.$margins = new yfiles.geometry.Insets(5)
-    }
-
-    /**
-     * Returns the scaling of the exported image.
-     * @return {number}
-     */
-    get scale() {
-      return this.$scale
-    }
-
-    /**
-     * Specifies the scaling of the exported image.
-     * @param {number} value
-     */
-    set scale(value) {
-      this.$scale = value
-    }
-
-    /**
-     * Returns the margins for the exported image.
-     * @return {yfiles.geometry.Insets}
-     */
-    get margins() {
-      return this.$margins
-    }
-
-    /**
-     * Specifies the margins for the exported image.
-     * @param {yfiles.geometry.Insets} value
-     */
-    set margins(value) {
-      this.$margins = value
-    }
-
-    /**
-     * Exports the graph to a PDF.
-     * @param {yfiles.graph.IGraph} graph
-     * @param {yfiles.geometry.Rect} exportRect
-     * @return {Promise.<string>}
-     */
-    exportPdf(graph, exportRect) {
-      // Create a new graph component for exporting the original SVG content
-      const exportComponent = new yfiles.view.GraphComponent()
-      // ... and assign it the same graph.
-      exportComponent.graph = graph
-      exportComponent.updateContentRect()
-
-      // Determine the bounds of the exported area
-      const targetRect = exportRect || exportComponent.contentRect
-
-      exportComponent.zoomTo(targetRect)
-
-      // Create the exporter class
-      const exporter = new yfiles.view.SvgExport(targetRect, this.scale)
-      exporter.margins = this.margins
-
-      if (window.btoa != null) {
-        // Don't use base 64 encoding if btoa is not available and don't inline images as-well.
-        // Otherwise canvg will throw an exception.
-        exporter.encodeImagesBase64 = true
-        exporter.inlineSvgImages = true
-      }
-
-      return exporter.exportSvgAsync(exportComponent).then(svgElement =>
-        // convert svgElement to PDF
-        convertSvgToPdf(
-          svgElement,
-          new yfiles.geometry.Size(exporter.viewWidth, exporter.viewHeight),
-          this.margins
-        )
-      )
-    }
+  constructor() {
+    this.$scale = 1
+    this.$margins = new Insets(5)
   }
 
   /**
-   * Converts an SvgElement to PDF.
-   * @param {SVGElement} svgElement
-   * @param {yfiles.geometry.Size} size
-   * @param {yfiles.geometry.Insets} margins
-   * @return {string}
+   * Returns the scaling of the exported image.
+   * @return {number}
    */
-  function convertSvgToPdf(svgElement, size, margins) {
-    svgElement = svgElement.cloneNode(true)
-
-    const margin = margins ? Math.max(margins.left, margins.right, margins.top, margins.bottom) : 5
-    const sizeArray = new Array(2)
-    sizeArray[0] = size.width + 2 * margin
-    sizeArray[1] = size.height + 2 * margin
-    // eslint-disable-next-line no-undef,new-cap
-    const jsPdf = new jsPDF(sizeArray[0] > sizeArray[1] ? 'l' : 'p', 'pt', sizeArray)
-
-    // Register custom fonts that are provided in the custom-fonts.js file. Please see
-    // the https://github.com/yWorks/jsPDF readme on how to create a JS file that can be included to provide
-    // custom fonts.
-    jsPdf.addFont('Prata-Regular.ttf', 'Prata', 'normal') // Cyrillic
-    jsPdf.addFont('mplus-1c-regular.ttf', 'Rounded Mplus 1c', 'normal') // Hiragana
-
-    const offsets = {}
-    offsets.xOffset = margin
-    offsets.yOffset = margin
-
-    // eslint-disable-next-line no-undef
-    svg2pdf(svgElement, jsPdf, offsets)
-
-    return jsPdf.output('datauristring')
+  get scale() {
+    return this.$scale
   }
 
-  return ClientSidePdfExport
-})
+  /**
+   * Specifies the scaling of the exported image.
+   * @param {number} value
+   */
+  set scale(value) {
+    this.$scale = value
+  }
+
+  /**
+   * Returns the margins for the exported image.
+   * @return {Insets}
+   */
+  get margins() {
+    return this.$margins
+  }
+
+  /**
+   * Specifies the margins for the exported image.
+   * @param {Insets} value
+   */
+  set margins(value) {
+    this.$margins = value
+  }
+
+  /**
+   * Exports the graph to a PDF.
+   * @param {IGraph} graph
+   * @param {Rect} exportRect
+   * @return {Promise.<string>}
+   */
+  exportPdf(graph, exportRect) {
+    // Create a new graph component for exporting the original SVG content
+    const exportComponent = new GraphComponent()
+    // ... and assign it the same graph.
+    exportComponent.graph = graph
+    exportComponent.updateContentRect()
+
+    // Determine the bounds of the exported area
+    const targetRect = exportRect || exportComponent.contentRect
+
+    exportComponent.zoomTo(targetRect)
+
+    // Create the exporter class
+    const exporter = new SvgExport(targetRect, this.scale)
+    exporter.margins = this.margins
+
+    if (window.btoa != null) {
+      // Don't use base 64 encoding if btoa is not available and don't inline images as-well.
+      // Otherwise canvg will throw an exception.
+      exporter.encodeImagesBase64 = true
+      exporter.inlineSvgImages = true
+    }
+
+    return exporter.exportSvgAsync(exportComponent).then(svgElement =>
+      // convert svgElement to PDF
+      convertSvgToPdf(svgElement, new Size(exporter.viewWidth, exporter.viewHeight), this.margins)
+    )
+  }
+}
+
+/**
+ * Converts an SvgElement to PDF.
+ * @param {SVGElement} svgElement
+ * @param {Size} size
+ * @param {Insets} margins
+ * @return {string}
+ * @yjs:keep=compress,orientation
+ */
+function convertSvgToPdf(svgElement, size, margins) {
+  svgElement = svgElement.cloneNode(true)
+
+  const margin = margins ? Math.max(margins.left, margins.right, margins.top, margins.bottom) : 5
+  const sizeArray = new Array(2)
+  sizeArray[0] = size.width + 2 * margin
+  sizeArray[1] = size.height + 2 * margin
+  // eslint-disable-next-line no-undef,new-cap
+  const jsPdf = new jsPDF({
+    orientation: sizeArray[0] > sizeArray[1] ? 'l' : 'p',
+    unit: 'pt',
+    format: sizeArray,
+    compress: true,
+    floatPrecision: 'smart'
+  })
+
+  // Register custom fonts that are provided in the custom-fonts.js file. Please see
+  // the https://github.com/yWorks/jsPDF readme on how to create a JS file that can be included to provide
+  // custom fonts.
+  jsPdf.addFont('Prata-Regular.ttf', 'Prata', 'normal') // Cyrillic
+  jsPdf.addFont('kosugi-v3-japanese-regular.ttf', 'Kosugi', 'normal') // Hiragana
+
+  const offsets = {}
+  offsets.xOffset = margin
+  offsets.yOffset = margin
+
+  // eslint-disable-next-line no-undef
+  svg2pdf(svgElement, jsPdf, offsets)
+
+  return jsPdf.output('datauristring')
+}

@@ -7,8 +7,8 @@
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.1.
-     // Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML 2.2.
+     // Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -36,11 +36,12 @@
 
   <title>Sankey Demo [yFiles for HTML]</title>
 
-  <link rel="stylesheet" href="../../../lib/yfiles.css">
+  <link rel="stylesheet" href="../../node_modules/yfiles/yfiles.css">
   <link rel="stylesheet" href="../../resources/style/demo.css">
 
   <!-- enable debugging -->
   <script src="../../../ide-support/yfiles-typeinfo.js"></script>
+  <script src="../../resources/filesystem-warning.js"></script>
 
   <style type="text/css">
     .popupContent {
@@ -68,7 +69,7 @@
     <p>
       Sankey diagrams are used for visualizing flow information in which the thickness of the edges is proportional
       to the flow quantity. Such diagrams can be produced by means of the hierarchic layout algorithm (see
-      <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.hierarchic.HierarchicLayout" target="_blank">yfiles.hierarchic.HierarchicLayout</a>). </p>
+      <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicLayout" target="_blank">HierarchicLayout</a>). </p>
     <p>
       The example diagram shows a voters' migration flow between different political parties over the course of three
       elections (each column represents an election). The flow is depicted from left to right. </p>
@@ -115,8 +116,7 @@
   </div>
 </div>
 
-<script src="../../resources/require.js"></script>
-<script src="SankeyDemo.js"></script>
+<script type="module" crossorigin="anonymous" src="SankeyDemo.js"></script>
 
 </body>
 </html>

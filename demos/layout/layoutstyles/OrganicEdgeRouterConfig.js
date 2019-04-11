@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.1.
- ** Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.2.
+ ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,277 +26,269 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-'use strict'
+import {
+  BendConverter,
+  Class,
+  CompositeLayoutStage,
+  GraphComponent,
+  OrganicEdgeRouter,
+  OrganicEdgeRouterData,
+  RemoveOverlapsStage,
+  SequentialLayout,
+  YBoolean,
+  YNumber,
+  YString
+} from 'yfiles'
 
-/*eslint-disable*/
-;(function(r) {
-  ;(function(f) {
-    if ('function' == typeof define && define.amd) {
-      define(['yfiles/lang', 'yfiles/view-component', 'LayoutConfiguration.js'], f)
-    } else {
-      f(r.yfiles.lang, r.yfiles)
+import LayoutConfiguration from './LayoutConfiguration.js'
+import {
+  ComponentAttribute,
+  Components,
+  LabelAttribute,
+  MinMaxAttribute,
+  OptionGroup,
+  OptionGroupAttribute,
+  TypeAttribute
+} from '../../resources/demo-option-editor.js'
+
+/**
+ * Configuration options for the layout algorithm of the same name.
+ */
+const OrganicEdgeRouterConfig = Class('OrganicEdgeRouterConfig', {
+  $extends: LayoutConfiguration,
+
+  $meta: [LabelAttribute('OrganicEdgeRouter')],
+
+  /**
+   * Setup default values for various configuration parameters.
+   */
+  constructor: function() {
+    LayoutConfiguration.call(this)
+    const router = new OrganicEdgeRouter()
+    this.selectionOnlyItem = false
+    this.minimumNodeDistanceItem = router.minimumDistance
+    this.keepBendsItem = router.keepExistingBends
+    this.routeOnlyNecessaryItem = !router.routeAllEdges
+    this.allowMovingNodesItem = false
+  },
+
+  /**
+   * Creates and configures a layout and the graph's {@link IGraph#mapperRegistry} if necessary.
+   * @param {GraphComponent} graphComponent The <code>GraphComponent</code> to apply the
+   *   configuration on.
+   * @return {ILayoutAlgorithm} The configured layout algorithm.
+   */
+  createConfiguredLayout: function(graphComponent) {
+    const router = new OrganicEdgeRouter()
+    router.minimumDistance = this.minimumNodeDistanceItem
+    router.keepExistingBends = this.keepBendsItem
+    router.routeAllEdges = !this.routeOnlyNecessaryItem
+
+    const layout = new SequentialLayout()
+    if (this.allowMovingNodesItem) {
+      // if we are allowed to move nodes, we can improve the routing results by temporarily enlarging nodes and
+      // removing overlaps (this strategy ensures that there is enough space for the edges)
+      const cls = new CompositeLayoutStage()
+      cls.appendStage(router.createNodeEnlargementStage())
+      cls.appendStage(new RemoveOverlapsStage(0))
+      layout.appendLayout(cls)
     }
-  })((lang, yfiles) => {
-    const demo = yfiles.module('demo')
-    yfiles.module('demo', exports => {
-      /**
-       * Configuration options for the layout algorithm of the same name.
-       * @class
-       * @extends demo.LayoutConfiguration
-       */
-      exports.OrganicEdgeRouterConfig = new yfiles.lang.ClassDefinition(() => {
-        /** @lends {demo.OrganicEdgeRouterConfig.prototype} */
-        return {
-          $extends: demo.LayoutConfiguration,
+    if (router.keepExistingBends) {
+      // we want to keep the original bends
+      const bendConverter = new BendConverter()
+      bendConverter.affectedEdgesDpKey = OrganicEdgeRouter.AFFECTED_EDGES_DP_KEY
+      bendConverter.adoptAffectedEdges = this.selectionOnlyItem
+      bendConverter.coreLayout = router
+      layout.appendLayout(bendConverter)
+    } else {
+      layout.appendLayout(router)
+    }
 
-          $meta: [demo.options.LabelAttribute('OrganicEdgeRouter')],
+    return layout
+  },
 
-          /**
-           * Setup default values for various configuration parameters.
-           */
-          constructor: function() {
-            demo.LayoutConfiguration.call(this)
-            const router = new yfiles.router.OrganicEdgeRouter()
-            this.selectionOnlyItem = false
-            this.minimumNodeDistanceItem = router.minimumDistance
-            this.keepBendsItem = router.keepExistingBends
-            this.routeOnlyNecessaryItem = !router.routeAllEdges
-            this.allowMovingNodesItem = false
-          },
+  /**
+   * Creates and configures the layout data.
+   * @return {LayoutData} The configured layout data.
+   */
+  createConfiguredLayoutData: function(graphComponent, layout) {
+    const layoutData = new OrganicEdgeRouterData()
 
-          /**
-           * Creates and configures a layout and the graph's {@link yfiles.graph.IGraph#mapperRegistry} if necessary.
-           * @param {yfiles.view.GraphComponent} graphComponent The <code>GraphComponent</code> to apply the
-           *   configuration on.
-           * @return {yfiles.layout.ILayoutAlgorithm} The configured layout algorithm.
-           */
-          createConfiguredLayout: function(graphComponent) {
-            const router = new yfiles.router.OrganicEdgeRouter()
-            router.minimumDistance = this.minimumNodeDistanceItem
-            router.keepExistingBends = this.keepBendsItem
-            router.routeAllEdges = !this.routeOnlyNecessaryItem
+    if (this.selectionOnlyItem) {
+      layoutData.affectedEdges = graphComponent.selection.selectedEdges
+    }
 
-            const layout = new yfiles.layout.SequentialLayout()
-            if (this.allowMovingNodesItem) {
-              // if we are allowed to move nodes, we can improve the routing results by temporarily enlarging nodes and
-              // removing overlaps (this strategy ensures that there is enough space for the edges)
-              const cls = new yfiles.layout.CompositeLayoutStage()
-              cls.appendStage(router.createNodeEnlargementStage())
-              cls.appendStage(new yfiles.organic.RemoveOverlapsStage(0))
-              layout.appendLayout(cls)
-            }
-            if (router.keepExistingBends) {
-              // we want to keep the original bends
-              const bendConverter = new yfiles.layout.BendConverter()
-              bendConverter.affectedEdgesDpKey =
-                yfiles.router.OrganicEdgeRouter.AFFECTED_EDGES_DP_KEY
-              bendConverter.adoptAffectedEdges = this.selectionOnlyItem
-              bendConverter.coreLayout = router
-              layout.appendLayout(bendConverter)
-            } else {
-              layout.appendLayout(router)
-            }
+    return layoutData
+  },
 
-            return layout
-          },
+  /** @type {OptionGroup} */
+  DescriptionGroup: {
+    $meta: function() {
+      return [
+        LabelAttribute('Description'),
+        OptionGroupAttribute('RootGroup', 5),
+        TypeAttribute(OptionGroup.$class)
+      ]
+    },
+    value: null
+  },
 
-          /**
-           * Creates and configures the layout data.
-           * @return {yfiles.layout.LayoutData} The configured layout data.
-           */
-          createConfiguredLayoutData: function(graphComponent, layout) {
-            const layoutData = new yfiles.router.OrganicEdgeRouterData()
+  /** @type {OptionGroup} */
+  LayoutGroup: {
+    $meta: function() {
+      return [
+        LabelAttribute('General'),
+        OptionGroupAttribute('RootGroup', 10),
+        TypeAttribute(OptionGroup.$class)
+      ]
+    },
+    value: null
+  },
 
-            if (this.selectionOnlyItem) {
-              layoutData.affectedEdges.source = graphComponent.selection.selectedEdges
-            }
+  /** @type {string} */
+  descriptionText: {
+    $meta: function() {
+      return [
+        OptionGroupAttribute('DescriptionGroup', 10),
+        ComponentAttribute(Components.HTML_BLOCK),
+        TypeAttribute(YString.$class)
+      ]
+    },
+    get: function() {
+      return "<p style='margin-top:0'>The organic edge routing algorithm routes edges in soft curves to ensure that they do not overlap with nodes. It is especially well suited for non-orthogonal, organic or circular diagrams.</p>"
+    }
+  },
 
-            return layoutData
-          },
+  /**
+   * Backing field for below property
+   * @type {boolean}
+   */
+  $selectionOnlyItem: false,
 
-          /** @type {demo.options.OptionGroup} */
-          DescriptionGroup: {
-            $meta: function() {
-              return [
-                demo.options.LabelAttribute('Description'),
-                demo.options.OptionGroupAttribute('RootGroup', 5),
-                demo.options.TypeAttribute(demo.options.OptionGroup.$class)
-              ]
-            },
-            value: null
-          },
+  /** @type {boolean} */
+  selectionOnlyItem: {
+    $meta: function() {
+      return [
+        LabelAttribute(
+          'Route Selected Edges Only',
+          '#/api/OrganicEdgeRouterData#OrganicEdgeRouterData-property-affectedEdges'
+        ),
+        OptionGroupAttribute('LayoutGroup', 10),
+        TypeAttribute(YBoolean.$class)
+      ]
+    },
+    get: function() {
+      return this.$selectionOnlyItem
+    },
+    set: function(value) {
+      this.$selectionOnlyItem = value
+    }
+  },
 
-          /** @type {demo.options.OptionGroup} */
-          LayoutGroup: {
-            $meta: function() {
-              return [
-                demo.options.LabelAttribute('General'),
-                demo.options.OptionGroupAttribute('RootGroup', 10),
-                demo.options.TypeAttribute(demo.options.OptionGroup.$class)
-              ]
-            },
-            value: null
-          },
+  /**
+   * Backing field for below property
+   * @type {number}
+   */
+  $minimumNodeDistanceItem: 0,
 
-          /** @type {string} */
-          descriptionText: {
-            $meta: function() {
-              return [
-                demo.options.OptionGroupAttribute('DescriptionGroup', 10),
-                demo.options.ComponentAttribute(demo.options.Components.HTML_BLOCK),
-                demo.options.TypeAttribute(yfiles.lang.String.$class)
-              ]
-            },
-            get: function() {
-              return "<p style='margin-top:0'>The organic edge routing algorithm routes edges in soft curves to ensure that they do not overlap with nodes. It is especially well suited for non-orthogonal, organic or circular diagrams.</p>"
-            }
-          },
+  /** @type {number} */
+  minimumNodeDistanceItem: {
+    $meta: function() {
+      return [
+        LabelAttribute(
+          'Minimum Distance',
+          '#/api/OrganicEdgeRouter#OrganicEdgeRouter-property-minimumDistance'
+        ),
+        OptionGroupAttribute('LayoutGroup', 20),
+        MinMaxAttribute().init({
+          min: 0,
+          max: 100
+        }),
+        ComponentAttribute(Components.SLIDER),
+        TypeAttribute(YNumber.$class)
+      ]
+    },
+    get: function() {
+      return this.$minimumNodeDistanceItem
+    },
+    set: function(value) {
+      this.$minimumNodeDistanceItem = value
+    }
+  },
 
-          /**
-           * Backing field for below property
-           * @type {boolean}
-           */
-          $selectionOnlyItem: false,
+  /**
+   * Backing field for below property
+   * @type {boolean}
+   */
+  $keepBendsItem: false,
 
-          /** @type {boolean} */
-          selectionOnlyItem: {
-            $meta: function() {
-              return [
-                demo.options.LabelAttribute(
-                  'Route Selected Edges Only',
-                  '#/api/yfiles.router.OrganicEdgeRouterData#OrganicEdgeRouterData-property-affectedEdges'
-                ),
-                demo.options.OptionGroupAttribute('LayoutGroup', 10),
-                demo.options.TypeAttribute(yfiles.lang.Boolean.$class)
-              ]
-            },
-            get: function() {
-              return this.$selectionOnlyItem
-            },
-            set: function(value) {
-              this.$selectionOnlyItem = value
-            }
-          },
+  /** @type {boolean} */
+  keepBendsItem: {
+    $meta: function() {
+      return [
+        LabelAttribute(
+          'Keep Existing Bends',
+          '#/api/OrganicEdgeRouter#OrganicEdgeRouter-property-keepExistingBends'
+        ),
+        OptionGroupAttribute('LayoutGroup', 30),
+        TypeAttribute(YBoolean.$class)
+      ]
+    },
+    get: function() {
+      return this.$keepBendsItem
+    },
+    set: function(value) {
+      this.$keepBendsItem = value
+    }
+  },
 
-          /**
-           * Backing field for below property
-           * @type {number}
-           */
-          $minimumNodeDistanceItem: 0,
+  /**
+   * Backing field for below property
+   * @type {boolean}
+   */
+  $routeOnlyNecessaryItem: false,
 
-          /** @type {number} */
-          minimumNodeDistanceItem: {
-            $meta: function() {
-              return [
-                demo.options.LabelAttribute(
-                  'Minimum Distance',
-                  '#/api/yfiles.router.OrganicEdgeRouter#OrganicEdgeRouter-property-minimumDistance'
-                ),
-                demo.options.OptionGroupAttribute('LayoutGroup', 20),
-                demo.options.MinMaxAttribute().init({
-                  min: 0,
-                  max: 100
-                }),
-                demo.options.ComponentAttribute(demo.options.Components.SLIDER),
-                demo.options.TypeAttribute(yfiles.lang.Number.$class)
-              ]
-            },
-            get: function() {
-              return this.$minimumNodeDistanceItem
-            },
-            set: function(value) {
-              this.$minimumNodeDistanceItem = value
-            }
-          },
+  /** @type {boolean} */
+  routeOnlyNecessaryItem: {
+    $meta: function() {
+      return [
+        LabelAttribute(
+          'Route Only Necessary',
+          '#/api/OrganicEdgeRouter#OrganicEdgeRouter-property-routeAllEdges'
+        ),
+        OptionGroupAttribute('LayoutGroup', 40),
+        TypeAttribute(YBoolean.$class)
+      ]
+    },
+    get: function() {
+      return this.$routeOnlyNecessaryItem
+    },
+    set: function(value) {
+      this.$routeOnlyNecessaryItem = value
+    }
+  },
 
-          /**
-           * Backing field for below property
-           * @type {boolean}
-           */
-          $keepBendsItem: false,
+  /**
+   * Backing field for below property
+   * @type {boolean}
+   */
+  $allowMovingNodesItem: false,
 
-          /** @type {boolean} */
-          keepBendsItem: {
-            $meta: function() {
-              return [
-                demo.options.LabelAttribute(
-                  'Keep Existing Bends',
-                  '#/api/yfiles.router.OrganicEdgeRouter#OrganicEdgeRouter-property-keepExistingBends'
-                ),
-                demo.options.OptionGroupAttribute('LayoutGroup', 30),
-                demo.options.TypeAttribute(yfiles.lang.Boolean.$class)
-              ]
-            },
-            get: function() {
-              return this.$keepBendsItem
-            },
-            set: function(value) {
-              this.$keepBendsItem = value
-            }
-          },
-
-          /**
-           * Backing field for below property
-           * @type {boolean}
-           */
-          $routeOnlyNecessaryItem: false,
-
-          /** @type {boolean} */
-          routeOnlyNecessaryItem: {
-            $meta: function() {
-              return [
-                demo.options.LabelAttribute(
-                  'Route Only Necessary',
-                  '#/api/yfiles.router.OrganicEdgeRouter#OrganicEdgeRouter-property-routeAllEdges'
-                ),
-                demo.options.OptionGroupAttribute('LayoutGroup', 40),
-                demo.options.TypeAttribute(yfiles.lang.Boolean.$class)
-              ]
-            },
-            get: function() {
-              return this.$routeOnlyNecessaryItem
-            },
-            set: function(value) {
-              this.$routeOnlyNecessaryItem = value
-            }
-          },
-
-          /**
-           * Backing field for below property
-           * @type {boolean}
-           */
-          $allowMovingNodesItem: false,
-
-          /** @type {boolean} */
-          allowMovingNodesItem: {
-            $meta: function() {
-              return [
-                demo.options.LabelAttribute(
-                  'Allow Moving Nodes',
-                  '#/api/yfiles.layout.CompositeLayoutStage'
-                ),
-                demo.options.OptionGroupAttribute('LayoutGroup', 50),
-                demo.options.TypeAttribute(yfiles.lang.Boolean.$class)
-              ]
-            },
-            get: function() {
-              return this.$allowMovingNodesItem
-            },
-            set: function(value) {
-              this.$allowMovingNodesItem = value
-            }
-          }
-        }
-      })
-    })
-    return yfiles.module('demo')
-  })
-})(
-  'undefined' !== typeof window
-    ? window
-    : 'undefined' !== typeof global
-      ? global
-      : 'undefined' !== typeof self
-        ? self
-        : this
-)
+  /** @type {boolean} */
+  allowMovingNodesItem: {
+    $meta: function() {
+      return [
+        LabelAttribute('Allow Moving Nodes', '#/api/CompositeLayoutStage'),
+        OptionGroupAttribute('LayoutGroup', 50),
+        TypeAttribute(YBoolean.$class)
+      ]
+    },
+    get: function() {
+      return this.$allowMovingNodesItem
+    },
+    set: function(value) {
+      this.$allowMovingNodesItem = value
+    }
+  }
+})
+export default OrganicEdgeRouterConfig

@@ -7,8 +7,8 @@
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.1.
-     // Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML 2.2.
+     // Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -36,18 +36,19 @@
 
   <title>Custom Port Location Model Demo [yFiles for HTML]</title>
 
-  <link rel="stylesheet" href="../../../lib/yfiles.css">
+  <link rel="stylesheet" href="../../node_modules/yfiles/yfiles.css">
   <link rel="stylesheet" href="../../resources/style/demo.css">
 
   <!-- enable debugging -->
   <script src="../../../ide-support/yfiles-typeinfo.js"></script>
+  <script src="../../resources/filesystem-warning.js"></script>
 </head>
 <body class="demo-has-left">
 <aside class="demo-sidebar demo-left">
   <h1 class="demo-sidebar-header">Description</h1>
   <div class="demo-sidebar-content">
     <p>
-      This demo shows how to create and use a custom <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.graph.IPortLocationModel" target="_blank">yfiles.graph.IPortLocationModel</a>.
+      This demo shows how to create and use a custom <a href="https://docs.yworks.com/yfileshtml/#/api/IPortLocationModel" target="_blank">IPortLocationModel</a>.
     </p>
     <h2>Thing to Try</h2>
     <ul>
@@ -90,8 +91,7 @@
   <div id="graphComponent"></div>
 </div>
 
-<script src="../../resources/require.js"></script>
-<script src="CustomPortModelDemo.js"></script>
+<script type="module" crossorigin="anonymous" src="CustomPortModelDemo.js"></script>
 
 </body>
 </html>

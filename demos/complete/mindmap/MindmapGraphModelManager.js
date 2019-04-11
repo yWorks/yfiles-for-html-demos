@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.1.
- ** Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.2.
+ ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,72 +26,68 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-'use strict'
+import {
+  GraphComponent,
+  GraphModelManager,
+  HierarchicNestingPolicy,
+  ICanvasObjectGroup,
+  IEdge,
+  ILabel,
+  IModelItem,
+  INode
+} from 'yfiles'
+import { Structure } from './MindmapUtil.js'
 
-define(['yfiles/view-component', 'MindmapUtil.js'], (
-  /** @type {yfiles_namespace} */ /** typeof yfiles */ yfiles,
-  MindmapUtil
-) => {
+/**
+ * Provides a special {@link ICanvasObjectGroup} for cross reference edges
+ * or delegates to the wrapped implementation.
+ */
+export default class MindmapGraphModelManager extends GraphModelManager {
   /**
-   * Provides a special {@link yfiles.view.ICanvasObjectGroup} for cross reference edges
-   * or delegates to the wrapped implementation.
-   * @extends yfiles.view.GraphModelManager
+   * Constructs the GraphModelManager.
+   * @param {GraphComponent} graphComponent The given graphComponent.
+   * @param {ICanvasObjectGroup} contentGroup The content group.
    */
-  class MindmapGraphModelManager extends yfiles.view.GraphModelManager {
-    /**
-     * Constructs the GraphModelManager.
-     * @param {yfiles.view.GraphComponent} graphComponent The given graphComponent.
-     * @param {yfiles.view.ICanvasObjectGroup} contentGroup The content group.
-     */
-    constructor(graphComponent, contentGroup) {
-      super(graphComponent, contentGroup)
-      this.$crossReferenceEdgeGroup = this.createContentGroup()
-      this.hierarchicNestingPolicy = yfiles.view.HierarchicNestingPolicy.NODES
-    }
-
-    /**
-     * Gets the cross reference canvas group.
-     * @return {yfiles.view.ICanvasObjectGroup}
-     */
-    get crossReferenceEdgeGroup() {
-      return this.$crossReferenceEdgeGroup
-    }
-
-    /**
-     * Sets the cross reference canvas group.
-     * @param {yfiles.view.ICanvasObjectGroup} value The given canvas group.
-     */
-    set crossReferenceEdgeGroup(value) {
-      this.$crossReferenceEdgeGroup = value
-    }
-
-    /**
-     * Retrieves the Canvas Object group to use for the given item.
-     * @param {yfiles.graph.IModelItem} modelItem The given item.
-     * @return {yfiles.view.ICanvasObjectGroup}
-     */
-    getCanvasObjectGroup(modelItem) {
-      if (yfiles.graph.IEdge.isInstance(modelItem)) {
-        if (MindmapUtil.Structure.isCrossReference(modelItem)) {
-          return this.crossReferenceEdgeGroup
-        }
-        return this.edgeGroup
-      } else if (yfiles.graph.INode.isInstance(modelItem)) {
-        return this.nodeGroup
-      } else if (
-        yfiles.graph.ILabel.isInstance(modelItem) &&
-        yfiles.graph.INode.isInstance(modelItem.owner)
-      ) {
-        return this.nodeLabelGroup
-      } else if (
-        yfiles.graph.ILabel.isInstance(modelItem) &&
-        yfiles.graph.IEdge.isInstance(modelItem.owner)
-      ) {
-        return this.edgeLabelGroup
-      }
-      return this.contentGroup
-    }
+  constructor(graphComponent, contentGroup) {
+    super(graphComponent, contentGroup)
+    this.$crossReferenceEdgeGroup = this.createContentGroup()
+    this.hierarchicNestingPolicy = HierarchicNestingPolicy.NODES
   }
 
-  return MindmapGraphModelManager
-})
+  /**
+   * Gets the cross reference canvas group.
+   * @return {ICanvasObjectGroup}
+   */
+  get crossReferenceEdgeGroup() {
+    return this.$crossReferenceEdgeGroup
+  }
+
+  /**
+   * Sets the cross reference canvas group.
+   * @param {ICanvasObjectGroup} value The given canvas group.
+   */
+  set crossReferenceEdgeGroup(value) {
+    this.$crossReferenceEdgeGroup = value
+  }
+
+  /**
+   * Retrieves the Canvas Object group to use for the given item.
+   * @param {IModelItem} modelItem The given item.
+   * @return {ICanvasObjectGroup}
+   */
+  getCanvasObjectGroup(modelItem) {
+    if (IEdge.isInstance(modelItem)) {
+      if (Structure.isCrossReference(modelItem)) {
+        return this.crossReferenceEdgeGroup
+      }
+      return this.edgeGroup
+    } else if (INode.isInstance(modelItem)) {
+      return this.nodeGroup
+    } else if (ILabel.isInstance(modelItem) && INode.isInstance(modelItem.owner)) {
+      return this.nodeLabelGroup
+    } else if (ILabel.isInstance(modelItem) && IEdge.isInstance(modelItem.owner)) {
+      return this.edgeLabelGroup
+    }
+    return this.contentGroup
+  }
+}

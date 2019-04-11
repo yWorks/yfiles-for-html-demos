@@ -7,8 +7,8 @@
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.1.
-     // Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML 2.2.
+     // Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -36,11 +36,12 @@
 
   <title>High Performance Rendering of Label - Custom Styles Tutorial [yFiles for HTML]</title>
 
-  <link rel="stylesheet" href="../../../lib/yfiles.css">
+  <link rel="stylesheet" href="../../node_modules/yfiles/yfiles.css">
   <link rel="stylesheet" href="../../resources/style/demo.css">
 
   <!-- enable debugging -->
   <script src="../../../ide-support/yfiles-typeinfo.js"></script>
+  <script src="../../resources/filesystem-warning.js"></script>
 </head>
 <body class="demo-has-left">
 <!--
@@ -51,10 +52,10 @@
   <div class="demo-sidebar-content">
 
     <p>This step shows how to implement high-performance rendering for labels.</p>
-    <p>To do this, you need to implement <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.styles.LabelStyleBase#updateVisual" target="_blank">yfiles.styles.LabelStyleBase#updateVisual</a>
-      which is called when the container decides to update the visual representation of a label. In contrast to <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.styles.LabelStyleBase#createVisual" target="_blank">yfiles.styles.LabelStyleBase#createVisual</a>,
+    <p>To do this, you need to implement <a href="https://docs.yworks.com/yfileshtml/#/api/LabelStyleBase#updateVisual" target="_blank">LabelStyleBase#updateVisual</a> which is called when the
+      container decides to update the visual representation of a label. In contrast to <a href="https://docs.yworks.com/yfileshtml/#/api/LabelStyleBase#createVisual" target="_blank">LabelStyleBase#createVisual</a>,
       we try to re-use the old visual instead of creating a new one.</p>
-    <p>Method <code>createRenderDataCache()</code> saves the relevant data for creating a visual. <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.styles.LabelStyleBase#updateVisual" target="_blank">yfiles.styles.LabelStyleBase#updateVisual</a>
+    <p>Method <code>createRenderDataCache()</code> saves the relevant data for creating a visual. <a href="https://docs.yworks.com/yfileshtml/#/api/LabelStyleBase#updateVisual" target="_blank">LabelStyleBase#updateVisual</a>
       checks whether this data has changed. If it hasn't changed, the old visual can be returned, otherwise the whole or
       part of the visual has to be re-rendered.</p>
 
@@ -105,8 +106,7 @@
   <div id="graphComponent"></div>
 </div>
 
-<script src="../../resources/require.js"></script>
-<script src="SampleApplication.js"></script>
+<script type="module" crossorigin="anonymous" src="SampleApplication.js"></script>
 
 </body>
 </html>

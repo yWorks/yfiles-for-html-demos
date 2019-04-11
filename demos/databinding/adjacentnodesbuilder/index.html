@@ -7,8 +7,8 @@
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.1.
-     // Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML 2.2.
+     // Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -36,11 +36,12 @@
 
   <title>Adjacent Nodes Graph Builder Demo [yFiles for HTML]</title>
 
-  <link rel="stylesheet" href="../../../lib/yfiles.css">
+  <link rel="stylesheet" href="../../node_modules/yfiles/yfiles.css">
   <link rel="stylesheet" href="../../resources/style/demo.css">
 
   <!-- enable debugging -->
   <script src="../../../ide-support/yfiles-typeinfo.js"></script>
+  <script src="../../resources/filesystem-warning.js"></script>
 
 </head>
 <body class="demo-has-left demo-has-right">
@@ -49,15 +50,15 @@
   <h1 class="demo-sidebar-header">Description</h1>
   <div class="demo-sidebar-content">
     <p>
-      Interactively create and modify a graph from business data with class <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.binding.AdjacentNodesGraphBuilder" target="_blank">yfiles.binding.AdjacentNodesGraphBuilder</a>.
+      Interactively create and modify a graph from business data with class <a href="https://docs.yworks.com/yfileshtml/#/api/AdjacentNodesGraphBuilder" target="_blank">AdjacentNodesGraphBuilder</a>.
     </p>
 
     <p>
-      <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.binding.AdjacentNodesGraphBuilder" target="_blank">yfiles.binding.AdjacentNodesGraphBuilder</a>
+      <a href="https://docs.yworks.com/yfileshtml/#/api/AdjacentNodesGraphBuilder" target="_blank">AdjacentNodesGraphBuilder</a>
       stores the business data object of each node in the node's
-      <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.graph.ITagOwner#tag" target="_blank">yfiles.graph.ITagOwner#tag</a>
+      <a href="https://docs.yworks.com/yfileshtml/#/api/ITagOwner#tag" target="_blank">ITagOwner#tag</a>
       property, thus, the properties of a node's
-      <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.styles.TemplateNodeStyle" target="_blank">yfiles.styles.TemplateNodeStyle</a>
+      <a href="https://docs.yworks.com/yfileshtml/#/api/TemplateNodeStyle" target="_blank">TemplateNodeStyle</a>
       can be bound to this object. </p>
 
     <h2>Things to Try</h2>
@@ -138,7 +139,6 @@
   <div id="graphComponent"></div>
 </div>
 
-<script src="../../resources/require.js"></script>
-<script src="AdjacentNodesGraphBuilderDemo.js"></script>
+<script type="module" crossorigin="anonymous" src="AdjacentNodesGraphBuilderDemo.js"></script>
 </body>
 </html>

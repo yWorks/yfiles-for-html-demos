@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.1.
- ** Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.2.
+ ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,300 +26,301 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-'use strict'
+import {
+  Animator,
+  GraphComponent,
+  GraphConnectivity,
+  ICollection,
+  IEdge,
+  INode,
+  InteractiveOrganicLayout,
+  LayoutGraphAdapter,
+  Maps,
+  Point
+} from 'yfiles'
 
-define([
-  'yfiles/view-component',
-  'yfiles/view-layout-bridge',
-  'yfiles/layout-organic'
-], /** @type {yfiles_namespace} */ /** typeof yfiles */ yfiles => {
+/**
+ * This class manages the interactive layout of this demo.
+ */
+export default class InteractiveLayout {
   /**
-   * This class manages the interactive layout of this demo.
+   * Initializes the layout algorithm.
+   * @param {GraphComponent} graphComponent The given graph component
+   * @param {function} callback Called if layout has been initialized.
    */
-  class InteractiveLayout {
-    /**
-     * Initializes the layout algorithm.
-     * @param {yfiles.view.GraphComponent} graphComponent The given graph component
-     * @param {function} callback Called if layout has been initialized.
-     */
-    initLayout(graphComponent, callback) {
-      this.graphComponent = graphComponent
-      this.graph = graphComponent.graph
-      this.copiedLayoutGraph = null
-      this.layoutContext = null
+  initLayout(graphComponent, callback) {
+    this.graphComponent = graphComponent
+    this.graph = graphComponent.graph
+    this.copiedLayoutGraph = null
+    this.layoutContext = null
 
-      this.animator = new yfiles.view.Animator(graphComponent)
-      this.animator.autoInvalidation = false
-      this.animator.allowUserInteraction = true
+    this.animator = new Animator(graphComponent)
+    this.animator.autoInvalidation = false
+    this.animator.allowUserInteraction = true
 
-      this.nodesAdded = []
-      this.edgesAdded = []
-      this.edgesRemoved = []
-      this.nodesRemoved = []
+    this.nodesAdded = []
+    this.edgesAdded = []
+    this.edgesRemoved = []
+    this.nodesRemoved = []
 
-      if (callback) {
-        callback()
-      }
-    }
-
-    /**
-     * Starts the layout.
-     */
-    startLayout() {
-      // create a copy of the graph for the layout algorithm
-      const adapter = new yfiles.layout.LayoutGraphAdapter(this.graph)
-      this.copiedLayoutGraph = new yfiles.layout.CopiedLayoutGraph(adapter)
-
-      // create the layout
-      const organicLayout = new yfiles.organic.InteractiveOrganicLayout()
-      organicLayout.qualityTimeRatio = 0.2
-      organicLayout.preferredNodeDistance = 30
-
-      this.layoutContext = organicLayout.startLayout(this.copiedLayoutGraph)
-
-      let first = true
-      // make the nodes unmovable at the beginning, so that the layout of the graph is maintained as it is in the
-      // JSON file
-      this.copiedLayoutGraph.nodes.forEach(node => {
-        organicLayout.setInertia(node, 1)
-      })
-
-      this.animator.animate(() => {
-        if (
-          this.nodesAdded.length > 0 ||
-          this.edgesAdded.length > 0 ||
-          this.edgesRemoved.length > 0
-        ) {
-          this.layout.syncStructure()
-          this.layoutContext.continueLayout(10)
-        }
-
-        // At this point, we have to configure the layout algorithm so that:
-        // (i) the new nodes can freely move,
-        // (ii) the nodes that already exist in the graph can move but not as the new nodes, so that the mental map of
-        //      the graph does not change a lot,
-        // (iii) if an edge is removed, its source/target nodes can move more that the other nodes of the graph.
-        if (this.edgesAdded.length > 0) {
-          this.edgesAdded.forEach(edge => {
-            const copiedSource = this.copiedLayoutGraph.getCopiedNode(edge.sourceNode)
-            const copiedTarget = this.copiedLayoutGraph.getCopiedNode(edge.targetNode)
-
-            if (copiedSource) {
-              if (this.nodesAdded.indexOf(edge.sourceNode) >= 0) {
-                this.layout.setInertia(copiedSource, 0)
-                this.layout.setStress(copiedSource, 1)
-              } else {
-                this.layout.setInertia(copiedSource, 0.7)
-                this.layout.setStress(copiedSource, 0.5)
-              }
-            }
-
-            if (copiedTarget) {
-              if (this.nodesAdded.indexOf(edge.targetNode) >= 0) {
-                this.layout.setInertia(copiedTarget, 0)
-                this.layout.setStress(copiedTarget, 1)
-              } else {
-                this.layout.setInertia(copiedTarget, 0.7)
-                this.layout.setStress(copiedTarget, 0.5)
-              }
-            }
-          })
-
-          this.edgesAdded.length = 0
-        }
-
-        if (this.nodesAdded.length > 0) {
-          this.graph.nodes.forEach(node => {
-            if (this.nodesAdded.indexOf(node) >= 0) {
-              const copiedNode = this.copiedLayoutGraph.getCopiedNode(node)
-              if (copiedNode) {
-                this.layout.setInertia(copiedNode, 0.8)
-                this.layout.setStress(copiedNode, 1)
-              }
-            }
-          })
-
-          this.nodesAdded.length = 0
-        }
-
-        if (this.edgesRemoved.length > 0) {
-          this.edgesRemoved.forEach(edge => {
-            const sourceNode = edge.sourceNode
-            if (this.graph.contains(sourceNode)) {
-              const copiedSource = this.copiedLayoutGraph.getCopiedNode(sourceNode)
-              if (copiedSource) {
-                this.layout.setInertia(copiedSource, 0)
-                this.layout.setStress(copiedSource, 0.5)
-              }
-            }
-            const targetNode = edge.targetNode
-            if (this.graph.contains(targetNode)) {
-              const copiedTarget = this.copiedLayoutGraph.getCopiedNode(targetNode)
-              if (copiedTarget) {
-                this.layout.setInertia(copiedTarget, 0)
-                this.layout.setStress(copiedTarget, 0.5)
-              }
-            }
-          })
-
-          this.edgesRemoved.length = 0
-        }
-
-        this.layoutContext.continueLayout(10)
-        if (organicLayout.commitPositionsSmoothly(50, 0.05) > 0) {
-          this.graphComponent.invalidate()
-
-          if (first) {
-            this.copiedLayoutGraph.nodes.forEach(node => {
-              organicLayout.setInertia(node, 0.8)
-              organicLayout.setStress(node, 0.6)
-            })
-            first = false
-          }
-        }
-      }, Number.POSITIVE_INFINITY)
-
-      this.layout = organicLayout
-    }
-
-    /**
-     * Stops the layout.
-     */
-    stopLayout() {
-      this.animator.stop()
-      this.layout.stop()
-    }
-
-    /**
-     * Invoked when a node is created.
-     * @param {yfiles.graph.INode} node
-     */
-    onNodeCreated(node) {
-      this.nodesAdded.push(node)
-      this.layout.wakeUp()
-    }
-
-    /**
-     * Invoked when a node is removed.
-     * @param {yfiles.graph.INode} node
-     */
-    onNodeRemoved(node) {
-      this.nodesRemoved.push(node)
-      this.layout.wakeUp()
-    }
-
-    /**
-     * Invoked when an edge is created.
-     * @param {yfiles.graph.IEdge} edge
-     */
-    onEdgeCreated(edge) {
-      this.edgesAdded.push(edge)
-      this.layout.wakeUp()
-    }
-
-    /**
-     * Invoked when an edge is removed.
-     * @param {yfiles.graph.IEdge} edge
-     */
-    onEdgeRemoved(edge) {
-      this.edgesRemoved.push(edge)
-      this.layout.wakeUp()
-    }
-
-    /**
-     * Invoked when dragging has started.
-     * @param {yfiles.collections.ICollection} affectedItems
-     */
-    onDragStarted(affectedItems) {
-      this.movedNode = affectedItems.size > 0 ? affectedItems.first() : null
-      if (yfiles.graph.INode.isInstance(this.movedNode) && this.graph.contains(this.movedNode)) {
-        this.copiedLayoutGraph.syncStructure()
-
-        this.components = yfiles.algorithms.Maps.createHashedNodeMap()
-        yfiles.algorithms.GraphConnectivity.connectedComponents(
-          this.copiedLayoutGraph,
-          this.components
-        )
-
-        const copiedMovedNode = this.copiedLayoutGraph.getCopiedNode(this.movedNode)
-        if (copiedMovedNode) {
-          const center = this.movedNode.layout.center
-          this.layout.setCenter(copiedMovedNode, center.x, center.y)
-          this.layout.setInertia(copiedMovedNode, 1)
-
-          const movedNodeComponent = this.components.getInt(copiedMovedNode)
-          this.copiedLayoutGraph.nodes.forEach(node => {
-            if (node !== copiedMovedNode) {
-              if (this.components.getInt(node) === movedNodeComponent) {
-                this.layout.setStress(node, 0.5)
-                this.layout.setInertia(node, 0.5)
-              } else {
-                this.layout.setStress(node, 0)
-                this.layout.setInertia(node, 0.99)
-              }
-            }
-          })
-        }
-      } else if (!this.graph.contains(this.movedNode)) {
-        this.movedNode = null
-      }
-      this.layout.wakeUp()
-    }
-
-    /**
-     * Invoked when dragging is in progress.
-     */
-    onDragged() {
-      if (this.movedNode && this.graph.contains(this.movedNode)) {
-        const center = this.movedNode.layout.center
-        const centerX = center.x
-        const centerY = center.y
-        this.graph.setNodeCenter(this.movedNode, new yfiles.geometry.Point(centerX, centerY))
-        const copiedMovedNode = this.copiedLayoutGraph.getCopiedNode(this.movedNode)
-        if (copiedMovedNode) {
-          this.layout.setCenter(copiedMovedNode, centerX, centerY)
-
-          const movedNodeComponent = this.components.getInt(copiedMovedNode)
-          this.copiedLayoutGraph.nodes.forEach(node => {
-            if (node !== copiedMovedNode) {
-              if (this.components.getInt(node) === movedNodeComponent) {
-                this.layout.setStress(node, 0.5)
-                this.layout.setInertia(node, 0.5)
-              } else {
-                this.layout.setStress(node, 0)
-                this.layout.setInertia(node, 0.99)
-              }
-            }
-          })
-        }
-      } else if (!this.graph.contains(this.movedNode)) {
-        this.movedNode = null
-      }
-    }
-
-    /**
-     * Invoked when dragging has finished.
-     */
-    onDragFinished() {
-      if (this.movedNode && this.graph.contains(this.movedNode)) {
-        const center = this.movedNode.layout.center
-        const centerX = center.x
-        const centerY = center.y
-        this.graph.setNodeCenter(this.movedNode, new yfiles.geometry.Point(centerX, centerY))
-        const copiedMovedNode = this.copiedLayoutGraph.getCopiedNode(this.movedNode)
-        if (copiedMovedNode) {
-          this.graph.setNodeCenter(this.movedNode, new yfiles.geometry.Point(centerX, centerY))
-          this.layout.setCenter(copiedMovedNode, centerX, centerY)
-          this.layout.setStress(copiedMovedNode, 0)
-          this.layout.setInertia(copiedMovedNode, 0)
-        }
-
-        this.movedNode = null
-      } else if (!this.graph.contains(this.movedNode)) {
-        this.movedNode = null
-      }
+    if (callback) {
+      callback()
     }
   }
 
-  return InteractiveLayout
-})
+  /**
+   * Starts the layout.
+   */
+  startLayout() {
+    // create a copy of the graph for the layout algorithm
+    const adapter = new LayoutGraphAdapter(this.graph)
+    this.copiedLayoutGraph = adapter.createCopiedLayoutGraph()
+
+    // create the layout
+    const organicLayout = new InteractiveOrganicLayout({
+      qualityTimeRatio: 0.2,
+      preferredNodeDistance: 30
+    })
+
+    this.layoutContext = organicLayout.startLayout(this.copiedLayoutGraph)
+
+    let first = true
+    // make the nodes unmovable at the beginning, so that the layout of the graph is maintained as it is in the
+    // JSON file
+    this.copiedLayoutGraph.nodes.forEach(node => {
+      organicLayout.setInertia(node, 1)
+    })
+
+    this.animator.animate(() => {
+      if (
+        this.nodesAdded.length > 0 ||
+        this.edgesAdded.length > 0 ||
+        this.edgesRemoved.length > 0
+      ) {
+        this.layout.syncStructure()
+        this.layoutContext.continueLayout(10)
+      }
+
+      // At this point, we have to configure the layout algorithm so that:
+      // (i) the new nodes can freely move,
+      // (ii) the nodes that already exist in the graph can move but not as the new nodes, so that the mental map of
+      //      the graph does not change a lot,
+      // (iii) if an edge is removed, its source/target nodes can move more that the other nodes of the graph.
+      if (this.edgesAdded.length > 0) {
+        this.edgesAdded.forEach(edge => {
+          const copiedSource = this.copiedLayoutGraph.getCopiedNode(edge.sourceNode)
+          const copiedTarget = this.copiedLayoutGraph.getCopiedNode(edge.targetNode)
+
+          if (copiedSource) {
+            if (this.nodesAdded.indexOf(edge.sourceNode) >= 0) {
+              this.layout.setInertia(copiedSource, 0)
+              this.layout.setStress(copiedSource, 1)
+            } else {
+              this.layout.setInertia(copiedSource, 0.7)
+              this.layout.setStress(copiedSource, 0.5)
+            }
+          }
+
+          if (copiedTarget) {
+            if (this.nodesAdded.indexOf(edge.targetNode) >= 0) {
+              this.layout.setInertia(copiedTarget, 0)
+              this.layout.setStress(copiedTarget, 1)
+            } else {
+              this.layout.setInertia(copiedTarget, 0.7)
+              this.layout.setStress(copiedTarget, 0.5)
+            }
+          }
+        })
+
+        this.edgesAdded.length = 0
+      }
+
+      if (this.nodesAdded.length > 0) {
+        this.graph.nodes.forEach(node => {
+          if (this.nodesAdded.indexOf(node) >= 0) {
+            const copiedNode = this.copiedLayoutGraph.getCopiedNode(node)
+            if (copiedNode) {
+              this.layout.setInertia(copiedNode, 0.8)
+              this.layout.setStress(copiedNode, 1)
+            }
+          }
+        })
+
+        this.nodesAdded.length = 0
+      }
+
+      if (this.edgesRemoved.length > 0) {
+        this.edgesRemoved.forEach(edge => {
+          const sourceNode = edge.sourceNode
+          if (this.graph.contains(sourceNode)) {
+            const copiedSource = this.copiedLayoutGraph.getCopiedNode(sourceNode)
+            if (copiedSource) {
+              this.layout.setInertia(copiedSource, 0)
+              this.layout.setStress(copiedSource, 0.5)
+            }
+          }
+          const targetNode = edge.targetNode
+          if (this.graph.contains(targetNode)) {
+            const copiedTarget = this.copiedLayoutGraph.getCopiedNode(targetNode)
+            if (copiedTarget) {
+              this.layout.setInertia(copiedTarget, 0)
+              this.layout.setStress(copiedTarget, 0.5)
+            }
+          }
+        })
+
+        this.edgesRemoved.length = 0
+      }
+
+      this.layoutContext.continueLayout(10)
+      if (organicLayout.commitPositionsSmoothly(50, 0.05) > 0) {
+        this.graphComponent.invalidate()
+
+        if (first) {
+          this.copiedLayoutGraph.nodes.forEach(node => {
+            organicLayout.setInertia(node, 0.8)
+            organicLayout.setStress(node, 0.6)
+          })
+          first = false
+        }
+      }
+    }, Number.POSITIVE_INFINITY)
+
+    this.layout = organicLayout
+  }
+
+  /**
+   * Stops the layout.
+   */
+  stopLayout() {
+    this.animator.stop()
+    this.layout.stop()
+  }
+
+  /**
+   * Invoked when a node is created.
+   * @param {INode} node
+   */
+  onNodeCreated(node) {
+    this.nodesAdded.push(node)
+    this.layout.wakeUp()
+  }
+
+  /**
+   * Invoked when a node is removed.
+   * @param {INode} node
+   */
+  onNodeRemoved(node) {
+    this.nodesRemoved.push(node)
+    this.layout.wakeUp()
+  }
+
+  /**
+   * Invoked when an edge is created.
+   * @param {IEdge} edge
+   */
+  onEdgeCreated(edge) {
+    this.edgesAdded.push(edge)
+    this.layout.wakeUp()
+  }
+
+  /**
+   * Invoked when an edge is removed.
+   * @param {IEdge} edge
+   */
+  onEdgeRemoved(edge) {
+    this.edgesRemoved.push(edge)
+    this.layout.wakeUp()
+  }
+
+  /**
+   * Invoked when dragging has started.
+   * @param {ICollection} affectedItems
+   */
+  onDragStarted(affectedItems) {
+    this.movedNode = affectedItems.size > 0 ? affectedItems.first() : null
+    if (INode.isInstance(this.movedNode) && this.graph.contains(this.movedNode)) {
+      this.copiedLayoutGraph.syncStructure()
+
+      this.components = Maps.createHashedNodeMap()
+      GraphConnectivity.connectedComponents(this.copiedLayoutGraph, this.components)
+
+      const copiedMovedNode = this.copiedLayoutGraph.getCopiedNode(this.movedNode)
+      if (copiedMovedNode) {
+        const center = this.movedNode.layout.center
+        this.layout.setCenter(copiedMovedNode, center.x, center.y)
+        this.layout.setInertia(copiedMovedNode, 1)
+
+        const movedNodeComponent = this.components.getInt(copiedMovedNode)
+        this.copiedLayoutGraph.nodes.forEach(node => {
+          if (node !== copiedMovedNode) {
+            if (this.components.getInt(node) === movedNodeComponent) {
+              this.layout.setStress(node, 0.5)
+              this.layout.setInertia(node, 0.5)
+            } else {
+              this.layout.setStress(node, 0)
+              this.layout.setInertia(node, 0.99)
+            }
+          }
+        })
+      }
+    } else if (!this.graph.contains(this.movedNode)) {
+      this.movedNode = null
+    }
+    this.layout.wakeUp()
+  }
+
+  /**
+   * Invoked when dragging is in progress.
+   */
+  onDragged() {
+    if (this.movedNode && this.graph.contains(this.movedNode)) {
+      const center = this.movedNode.layout.center
+      const centerX = center.x
+      const centerY = center.y
+      this.graph.setNodeCenter(this.movedNode, new Point(centerX, centerY))
+      const copiedMovedNode = this.copiedLayoutGraph.getCopiedNode(this.movedNode)
+      if (copiedMovedNode) {
+        this.layout.setCenter(copiedMovedNode, centerX, centerY)
+
+        const movedNodeComponent = this.components.getInt(copiedMovedNode)
+        this.copiedLayoutGraph.nodes.forEach(node => {
+          if (node !== copiedMovedNode) {
+            if (this.components.getInt(node) === movedNodeComponent) {
+              this.layout.setStress(node, 0.5)
+              this.layout.setInertia(node, 0.5)
+            } else {
+              this.layout.setStress(node, 0)
+              this.layout.setInertia(node, 0.99)
+            }
+          }
+        })
+      }
+    } else if (!this.graph.contains(this.movedNode)) {
+      this.movedNode = null
+    }
+  }
+
+  /**
+   * Invoked when dragging has finished.
+   */
+  onDragFinished() {
+    if (this.movedNode && this.graph.contains(this.movedNode)) {
+      const center = this.movedNode.layout.center
+      const centerX = center.x
+      const centerY = center.y
+      this.graph.setNodeCenter(this.movedNode, new Point(centerX, centerY))
+      const copiedMovedNode = this.copiedLayoutGraph.getCopiedNode(this.movedNode)
+      if (copiedMovedNode) {
+        this.graph.setNodeCenter(this.movedNode, new Point(centerX, centerY))
+        this.layout.setCenter(copiedMovedNode, centerX, centerY)
+        this.layout.setStress(copiedMovedNode, 0)
+        this.layout.setInertia(copiedMovedNode, 0)
+      }
+
+      this.movedNode = null
+    } else if (!this.graph.contains(this.movedNode)) {
+      this.movedNode = null
+    }
+  }
+}

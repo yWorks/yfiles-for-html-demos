@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.1.
- ** Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.2.
+ ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,138 +26,127 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-'use strict'
+import { BaseClass, HtmlCanvasVisual, IRenderContext, IVisualCreator } from 'yfiles'
+import Mapper from './Mapper.js'
 
-define(['yfiles/view-component', './Mapper.js', 'moment/moment'], (
-  /** @type {yfiles_namespace} */ /** typeof yfiles */ yfiles,
-  Mapper,
-  moment
-) => {
-  /**
-   * Manages and renders the background of the main component.
-   * @implements {yfiles.view.IVisualCreator}
-   */
-  class GridVisual extends yfiles.lang.Class(
-    yfiles.view.HtmlCanvasVisual,
-    yfiles.view.IVisualCreator
-  ) {
-    constructor(mapper, dataModel) {
-      super()
-      this.mapper = mapper
-      this.dataModel = dataModel
-    }
-
-    /**
-     * @param {yfiles.view.IRenderContext} renderContext - The render context of the
-     *   {@link yfiles.view.CanvasComponent}
-     * @param {CanvasRenderingContext2D} canvasContext - The HTML5 Canvas context to use for rendering.
-     */
-    paint(renderContext, canvasContext) {
-      const mapper = this.mapper
-
-      const component = renderContext.canvasComponent
-      const { x, width } = component.viewport
-
-      // get start date
-      const beginDate = mapper.getDate(x - 100).startOf('month')
-      const beginX = mapper.getX(beginDate)
-
-      const endDate = mapper.getDate(x + width + 100).endOf('month')
-      const endX = mapper.getX(endDate)
-
-      this.drawDays(renderContext, canvasContext, beginX, endX, beginDate)
-      this.drawMonths(renderContext, canvasContext, beginX, endX, beginDate)
-      this.drawTaskSeparators(renderContext, canvasContext, beginX, endX)
-    }
-
-    /**
-     * Draws the day separators.
-     */
-    drawDays(renderContext, canvasContext, beginX, endX, beginDate) {
-      const date = moment(beginDate)
-
-      let x = beginX
-      canvasContext.strokeStyle = '#ccc'
-      canvasContext.lineWidth = 1
-      const y1 = renderContext.canvasComponent.viewport.y
-      const y2 = renderContext.canvasComponent.viewport.bottomLeft.y
-      canvasContext.beginPath()
-      while (x < endX) {
-        canvasContext.moveTo(x, y1)
-        canvasContext.lineTo(x, y2)
-        x += Mapper.dayWidth
-        date.add(1, 'days')
-      }
-      canvasContext.stroke()
-    }
-
-    /**
-     * Draws the day separators.
-     */
-    drawMonths(renderContext, canvasContext, beginX, endX, beginDate) {
-      const date = moment(beginDate)
-
-      let x = beginX
-      canvasContext.strokeStyle = '#ccc'
-      canvasContext.lineWidth = 3
-      const y1 = renderContext.canvasComponent.viewport.y
-      const y2 = renderContext.canvasComponent.viewport.bottomLeft.y
-      canvasContext.beginPath()
-      while (x < endX) {
-        canvasContext.moveTo(x, y1)
-        canvasContext.lineTo(x, y2)
-        const monthDays = date.daysInMonth()
-        x += Mapper.dayWidth * monthDays
-        date.add(1, 'months')
-      }
-      canvasContext.stroke()
-    }
-
-    /**
-     * Draws the horizontal task lane separators.
-     */
-    drawTaskSeparators(renderContext, canvasContext, beginX, endX) {
-      const x1 = beginX
-      const x2 = endX
-
-      canvasContext.save()
-      canvasContext.strokeStyle = '#ccc'
-      canvasContext.lineWidth = 1
-      try {
-        canvasContext.setLineDash([5, 5])
-      } catch (e) {
-        // Unsupported in IE9 and IE10. Just use solid line then
-      }
-
-      canvasContext.beginPath()
-      this.dataModel.tasks.forEach(task => {
-        const y =
-          this.mapper.getTaskY(task) +
-          this.mapper.getCompleteTaskHeight(task) +
-          Mapper.taskSpacing * 0.5
-        canvasContext.moveTo(x1, y)
-        canvasContext.lineTo(x2, y)
-      })
-      canvasContext.stroke()
-      canvasContext.restore()
-    }
-
-    /**
-     * Returns this instance.
-     * @returns {GridVisual}
-     */
-    createVisual(context) {
-      return this
-    }
-
-    /**
-     * Returns this instance.
-     * @returns {GridVisual}
-     */
-    updateVisual(context, oldVisual) {
-      return oldVisual
-    }
+/**
+ * Manages and renders the background of the main component.
+ */
+export default class GridVisual extends BaseClass(HtmlCanvasVisual, IVisualCreator) {
+  constructor(mapper, dataModel) {
+    super()
+    this.mapper = mapper
+    this.dataModel = dataModel
   }
 
-  return GridVisual
-})
+  /**
+   * @param {IRenderContext} renderContext - The render context of the
+   *   {@link CanvasComponent}
+   * @param {CanvasRenderingContext2D} canvasContext - The HTML5 Canvas context to use for rendering.
+   */
+  paint(renderContext, canvasContext) {
+    const mapper = this.mapper
+
+    const component = renderContext.canvasComponent
+    const { x, width } = component.viewport
+
+    // get start date
+    const beginDate = mapper.getDate(x - 100).startOf('month')
+    const beginX = mapper.getX(beginDate)
+
+    const endDate = mapper.getDate(x + width + 100).endOf('month')
+    const endX = mapper.getX(endDate)
+
+    this.drawDays(renderContext, canvasContext, beginX, endX, beginDate)
+    this.drawMonths(renderContext, canvasContext, beginX, endX, beginDate)
+    this.drawTaskSeparators(renderContext, canvasContext, beginX, endX)
+  }
+
+  /**
+   * Draws the day separators.
+   */
+  drawDays(renderContext, canvasContext, beginX, endX, beginDate) {
+    const date = moment(beginDate)
+
+    let x = beginX
+    canvasContext.strokeStyle = '#ccc'
+    canvasContext.lineWidth = 1
+    const y1 = renderContext.canvasComponent.viewport.y
+    const y2 = renderContext.canvasComponent.viewport.bottomLeft.y
+    canvasContext.beginPath()
+    while (x < endX) {
+      canvasContext.moveTo(x, y1)
+      canvasContext.lineTo(x, y2)
+      x += Mapper.dayWidth
+      date.add(1, 'days')
+    }
+    canvasContext.stroke()
+  }
+
+  /**
+   * Draws the day separators.
+   */
+  drawMonths(renderContext, canvasContext, beginX, endX, beginDate) {
+    const date = moment(beginDate)
+
+    let x = beginX
+    canvasContext.strokeStyle = '#ccc'
+    canvasContext.lineWidth = 3
+    const y1 = renderContext.canvasComponent.viewport.y
+    const y2 = renderContext.canvasComponent.viewport.bottomLeft.y
+    canvasContext.beginPath()
+    while (x < endX) {
+      canvasContext.moveTo(x, y1)
+      canvasContext.lineTo(x, y2)
+      const monthDays = date.daysInMonth()
+      x += Mapper.dayWidth * monthDays
+      date.add(1, 'months')
+    }
+    canvasContext.stroke()
+  }
+
+  /**
+   * Draws the horizontal task lane separators.
+   */
+  drawTaskSeparators(renderContext, canvasContext, beginX, endX) {
+    const x1 = beginX
+    const x2 = endX
+
+    canvasContext.save()
+    canvasContext.strokeStyle = '#ccc'
+    canvasContext.lineWidth = 1
+    try {
+      canvasContext.setLineDash([5, 5])
+    } catch (e) {
+      // Unsupported in IE9 and IE10. Just use solid line then
+    }
+
+    canvasContext.beginPath()
+    this.dataModel.tasks.forEach(task => {
+      const y =
+        this.mapper.getTaskY(task) +
+        this.mapper.getCompleteTaskHeight(task) +
+        Mapper.taskSpacing * 0.5
+      canvasContext.moveTo(x1, y)
+      canvasContext.lineTo(x2, y)
+    })
+    canvasContext.stroke()
+    canvasContext.restore()
+  }
+
+  /**
+   * Returns this instance.
+   * @returns {GridVisual}
+   */
+  createVisual(context) {
+    return this
+  }
+
+  /**
+   * Returns this instance.
+   * @returns {GridVisual}
+   */
+  updateVisual(context, oldVisual) {
+    return oldVisual
+  }
+}

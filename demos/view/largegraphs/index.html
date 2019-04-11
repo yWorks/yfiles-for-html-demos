@@ -7,8 +7,8 @@
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.1.
-     // Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML 2.2.
+     // Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -36,11 +36,12 @@
 
   <title>Large Graphs Demo [yFiles for HTML]</title>
 
-  <link rel="stylesheet" href="../../../lib/yfiles.css">
+  <link rel="stylesheet" href="../../node_modules/yfiles/yfiles.css">
   <link rel="stylesheet" href="../../resources/style/demo.css">
   <link rel="stylesheet" href="resources/html-style.css">
 
   <!-- debugging with yfiles-typeinfo.js deactivated for performance reasons-->
+  <script src="../../resources/filesystem-warning.js"></script>
 
 </head>
 <body class="demo-has-left demo-has-right">
@@ -72,13 +73,13 @@ The sidebar for the description text
       <li>
         Graph Item Styles:
         <p>
-          The actual <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.styles.INodeStyle" target="_blank">yfiles.styles.INodeStyle</a>
+          The actual <a href="https://docs.yworks.com/yfileshtml/#/api/INodeStyle" target="_blank">INodeStyle</a>
           which is used to render the nodes. </p>
       </li>
       <li>
         GraphModelManager Optimizations:
         <p>
-          The <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.view.GraphModelManager" target="_blank">yfiles.view.GraphModelManager</a> (GMM)
+          The <a href="https://docs.yworks.com/yfileshtml/#/api/GraphModelManager" target="_blank">GraphModelManager</a> (GMM)
           manages the visual appearance of the graph. A GMM tailored to your use case can have a
           massive impact on the performance of your application, especially for input gestures like panning, zooming,
           etc. The GraphModelManager implementation illustrated in this demo is designed to be plugged into your
@@ -488,8 +489,7 @@ Tooltips that are shown on hovering the respective settings.
   </div>
 </div>
 
-<script src="../../resources/require.js"></script>
-<script src="LargeGraphsDemo.js"></script>
+<script type="module" crossorigin="anonymous" src="LargeGraphsDemo.js"></script>
 
 <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
     style="visibility: hidden; display: block" width="0px" height="0px">

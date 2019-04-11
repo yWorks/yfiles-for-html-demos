@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.1.
- ** Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.2.
+ ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,210 +26,212 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-'use strict'
+import {
+  ExteriorLabelModel,
+  ExteriorLabelModelPosition,
+  GraphComponent,
+  IModelItem,
+  Point,
+  SimpleLabel,
+  Size
+} from 'yfiles'
 
-define(['yfiles/view-component'], /** @type {yfiles_namespace} */ /** typeof yfiles */ yfiles => {
+/**
+ * Adds a HTML panel on top of the contents of the GraphComponent that can display arbitrary information about a
+ * {@link IModelItem graph element}. In order to not interfere with the positioning of the popup, HTML
+ * content should be added as ancestor of the {@link #div div element}, and use relative positioning.
+ * This implementation uses a {@link ILabelModelParameter layout parameter} to determine the position of
+ * the popup.
+ */
+export default class NodePopup {
   /**
-   * Adds a HTML panel on top of the contents of the GraphComponent that can display arbitrary information about a
-   * {@link yfiles.model.IModelItem graph element}. In order to not interfere with the positioning of the popup, HTML
-   * content should be added as ancestor of the {@link #div div element}, and use relative positioning.
-   * This implementation uses a {@link yfiles.graph.ILabelModelParameter layout parameter} to determine the position of
-   * the popup.
+   * Creates a new popup
+   * @param {GraphComponent} graphComponent
+   * @param {HTMLElement} div
    */
-  class NodePopup {
-    /**
-     * Creates a new popup
-     * @param {yfiles.view.GraphComponent} graphComponent
-     * @param {yfiles.HTMLElement} div
-     */
-    constructor(graphComponent, div) {
-      this.graphComponent = graphComponent
+  constructor(graphComponent, div) {
+    this.graphComponent = graphComponent
 
-      const labelModel = new yfiles.graph.ExteriorLabelModel({ insets: 2 })
-      this.layoutParameter = labelModel.createParameter(
-        yfiles.graph.ExteriorLabelModelPosition.EAST
-      )
-      this.currentItem = null
-      this.dirty = false
+    const labelModel = new ExteriorLabelModel({ insets: 2 })
+    this.layoutParameter = labelModel.createParameter(ExteriorLabelModelPosition.EAST)
+    this.currentItem = null
+    this.dirty = false
 
-      this.div = document.getElementById(div)
-      this.div.style.display = 'none'
-      this.registerListeners()
+    this.div = document.getElementById(div)
+    this.div.style.display = 'none'
+    this.registerListeners()
+  }
+
+  /**
+   * Updates the {@link IModelItem item} to display information for.
+   * Setting this property to a value other than null shows the popup.
+   * Setting the property to null hides the popup.
+   * @param {IModelItem} item The item whose information is displayed.
+   */
+  updatePopup(item) {
+    if (item === this.currentItem) {
+      return
     }
-
-    /**
-     * Updates the {@link yfiles.model.IModelItem item} to display information for.
-     * Setting this property to a value other than null shows the popup.
-     * Setting the property to null hides the popup.
-     * @param {yfiles.graph.IModelItem} item The item whose information is displayed.
-     */
-    updatePopup(item) {
-      if (item === this.currentItem) {
-        return
-      }
-      this.currentItem = item
-      if (item !== null) {
-        this.updateContent(item)
-        this.show()
-      } else {
-        this.hide()
-      }
-    }
-
-    /**
-     * Registers some listeners to keep the location of the popup updated.
-     */
-    registerListeners() {
-      // add listener for viewport changes to set a dirty mark when zooming or panning
-      this.graphComponent.addViewportChangedListener((sender, event) => {
-        if (this.currentItem) {
-          this.dirty = true
-        }
-      })
-
-      // add listener for node bounds changes to set a dirty mark when moving the corresponding node
-      this.graphComponent.graph.addNodeLayoutChangedListener((source, node, oldLayout) => {
-        if (this.currentItem && this.currentItem === node) {
-          this.dirty = true
-        }
-      })
-
-      // add listener for updates of the visual tree to actually update the location of the popup when needed
-      this.graphComponent.addUpdatedVisualListener((sender, event) => {
-        if (this.currentItem && this.dirty) {
-          this.dirty = false
-          this.updateLocation()
-        }
-      })
-
-      // Add close button listener to be able to close the popup by clicking the button
-      document.getElementById(`${this.div.id}-closeButton`).addEventListener(
-        'click',
-        event => {
-          this.updatePopup(null)
-        },
-        true
-      )
-    }
-
-    /**
-     * Makes this popup visible near the given item.
-     */
-    show() {
-      this.div.style.display = 'block'
-      this.updateLocation()
-    }
-
-    /**
-     * Hides this popup.
-     */
-    hide() {
-      this.div.style.display = 'none'
-    }
-
-    /**
-     * Updates the content of the popup using the information stored in the tag of the given model item.
-     * @param {yfiles.graph.IModelItem} item The item from which the information is retrieved.
-     */
-    updateContent(item) {
-      if (item.tag) {
-        const title = this.div.querySelector(`#${this.div.id}-title`)
-        title.innerHTML = `${item.tag.type} Properties`
-
-        const info = this.getInfo(item.tag)
-        const content = this.div.querySelector(`#${this.div.id}-content`)
-
-        const removedElements = []
-        for (let i = 0; i < Math.max(info.length, content.childElementCount); i++) {
-          if (i < info.length) {
-            const data = info[i]
-            if (i < content.childElementCount) {
-              // there still is an old element => reuse the previous info element
-              const element = content.children[i]
-              element.firstElementChild.innerHTML = data[0]
-              element.lastElementChild.value = data[1]
-            } else {
-              // there are not enough old elements => create a new info element
-              const element = document.createElement('div')
-              element.setAttribute('class', 'row')
-              const column1 = document.createElement('label')
-              column1.setAttribute('class', 'col1')
-              column1.innerHTML = data[0]
-              const column2 = document.createElement('input')
-              column2.setAttribute('class', 'col2')
-              column2.setAttribute('class', 'wideText')
-              column2.setAttribute('type', 'text')
-              column2.setAttribute('readonly', 'readonly')
-              column2.value = data[1]
-              element.appendChild(column1)
-              element.appendChild(column2)
-              content.appendChild(element)
-            }
-          } else {
-            // there are too many old elements => remove the info element
-            removedElements.push(content.children[i])
-          }
-        }
-        removedElements.forEach(element => {
-          content.removeChild(element)
-        })
-      }
-    }
-
-    /**
-     * Retrieve the information from the tag element.
-     * @param {Object} tag The tag object from which to retrieve the information.
-     * @return {Array} An array of arrays with length = 2 which stores a name and a value for each piece of information.
-     */
-    getInfo(tag) {
-      const info = []
-
-      // the tag info may consist of a single string or an info object
-      if (typeof tag.info === 'string') {
-        info.push(['info', tag.info])
-      } else {
-        Object.keys(tag.info).forEach(key => {
-          info.push([key, tag.info[key]])
-        })
-      }
-
-      // also add enter and exit dates
-      const enter = tag.enter.length > 1 ? 'Enter Dates' : 'Enter Date'
-      const exit = tag.exit.length > 1 ? 'Exit Dates' : 'Exit Date'
-      info.push([enter, tag.enter])
-      info.push([exit, tag.exit])
-
-      return info
-    }
-
-    /**
-     * Changes the location of this popup to the location calculated by the {@link NodePopup#layoutParameter}.
-     * Currently, this implementation does not support rotated popups.
-     */
-    updateLocation() {
-      if (!this.currentItem && !this.layoutParameter) {
-        return
-      }
-
-      const width = this.div.clientWidth
-      const height = this.div.clientHeight
-      const zoom = this.graphComponent.zoom
-
-      const dummyLabel = new yfiles.graph.SimpleLabel(this.currentItem, '', this.layoutParameter)
-      dummyLabel.preferredSize = new yfiles.geometry.Size(width / zoom, height / zoom)
-      if (this.layoutParameter.supports(dummyLabel)) {
-        dummyLabel.layoutParameter = this.layoutParameter
-        const layout = this.layoutParameter.model.getGeometry(dummyLabel, this.layoutParameter)
-
-        // Calculate the view coordinates since we have to place the div in the regular HTML coordinate space
-        const viewPoint = this.graphComponent.toViewCoordinates(
-          new yfiles.geometry.Point(layout.anchorX, layout.anchorY - height / zoom)
-        )
-        this.div.style.left = `${viewPoint.x}px`
-        this.div.style.top = `${viewPoint.y}px`
-      }
+    this.currentItem = item
+    if (item !== null) {
+      this.updateContent(item)
+      this.show()
+    } else {
+      this.hide()
     }
   }
 
-  return NodePopup
-})
+  /**
+   * Registers some listeners to keep the location of the popup updated.
+   */
+  registerListeners() {
+    // add listener for viewport changes to set a dirty mark when zooming or panning
+    this.graphComponent.addViewportChangedListener((sender, event) => {
+      if (this.currentItem) {
+        this.dirty = true
+      }
+    })
+
+    // add listener for node bounds changes to set a dirty mark when moving the corresponding node
+    this.graphComponent.graph.addNodeLayoutChangedListener((source, node, oldLayout) => {
+      if (this.currentItem && this.currentItem === node) {
+        this.dirty = true
+      }
+    })
+
+    // add listener for updates of the visual tree to actually update the location of the popup when needed
+    this.graphComponent.addUpdatedVisualListener((sender, event) => {
+      if (this.currentItem && this.dirty) {
+        this.dirty = false
+        this.updateLocation()
+      }
+    })
+
+    // Add close button listener to be able to close the popup by clicking the button
+    document.getElementById(`${this.div.id}-closeButton`).addEventListener(
+      'click',
+      event => {
+        this.updatePopup(null)
+      },
+      true
+    )
+  }
+
+  /**
+   * Makes this popup visible near the given item.
+   */
+  show() {
+    this.div.style.display = 'block'
+    this.updateLocation()
+  }
+
+  /**
+   * Hides this popup.
+   */
+  hide() {
+    this.div.style.display = 'none'
+  }
+
+  /**
+   * Updates the content of the popup using the information stored in the tag of the given model item.
+   * @param {IModelItem} item The item from which the information is retrieved.
+   */
+  updateContent(item) {
+    if (item.tag) {
+      const title = this.div.querySelector(`#${this.div.id}-title`)
+      title.innerHTML = `${item.tag.type} Properties`
+
+      const info = this.getInfo(item.tag)
+      const content = this.div.querySelector(`#${this.div.id}-content`)
+
+      const removedElements = []
+      for (let i = 0; i < Math.max(info.length, content.childElementCount); i++) {
+        if (i < info.length) {
+          const data = info[i]
+          if (i < content.childElementCount) {
+            // there still is an old element => reuse the previous info element
+            const element = content.children[i]
+            element.firstElementChild.innerHTML = data[0]
+            element.lastElementChild.value = data[1]
+          } else {
+            // there are not enough old elements => create a new info element
+            const element = document.createElement('div')
+            element.setAttribute('class', 'row')
+            const column1 = document.createElement('label')
+            column1.setAttribute('class', 'col1')
+            column1.innerHTML = data[0]
+            const column2 = document.createElement('input')
+            column2.setAttribute('class', 'col2')
+            column2.setAttribute('class', 'wideText')
+            column2.setAttribute('type', 'text')
+            column2.setAttribute('readonly', 'readonly')
+            column2.value = data[1]
+            element.appendChild(column1)
+            element.appendChild(column2)
+            content.appendChild(element)
+          }
+        } else {
+          // there are too many old elements => remove the info element
+          removedElements.push(content.children[i])
+        }
+      }
+      removedElements.forEach(element => {
+        content.removeChild(element)
+      })
+    }
+  }
+
+  /**
+   * Retrieve the information from the tag element.
+   * @param {Object} tag The tag object from which to retrieve the information.
+   * @return {Array} An array of arrays with length = 2 which stores a name and a value for each piece of information.
+   */
+  getInfo(tag) {
+    const info = []
+
+    // the tag info may consist of a single string or an info object
+    if (typeof tag.info === 'string') {
+      info.push(['info', tag.info])
+    } else {
+      Object.keys(tag.info).forEach(key => {
+        info.push([key, tag.info[key]])
+      })
+    }
+
+    // also add enter and exit dates
+    const enter = tag.enter.length > 1 ? 'Enter Dates' : 'Enter Date'
+    const exit = tag.exit.length > 1 ? 'Exit Dates' : 'Exit Date'
+    info.push([enter, tag.enter])
+    info.push([exit, tag.exit])
+
+    return info
+  }
+
+  /**
+   * Changes the location of this popup to the location calculated by the {@link NodePopup#layoutParameter}.
+   * Currently, this implementation does not support rotated popups.
+   */
+  updateLocation() {
+    if (!this.currentItem && !this.layoutParameter) {
+      return
+    }
+
+    const width = this.div.clientWidth
+    const height = this.div.clientHeight
+    const zoom = this.graphComponent.zoom
+
+    const dummyLabel = new SimpleLabel(this.currentItem, '', this.layoutParameter)
+    dummyLabel.preferredSize = new Size(width / zoom, height / zoom)
+    if (this.layoutParameter.supports(dummyLabel)) {
+      dummyLabel.layoutParameter = this.layoutParameter
+      const layout = this.layoutParameter.model.getGeometry(dummyLabel, this.layoutParameter)
+
+      // Calculate the view coordinates since we have to place the div in the regular HTML coordinate space
+      const viewPoint = this.graphComponent.toViewCoordinates(
+        new Point(layout.anchorX, layout.anchorY - height / zoom)
+      )
+      this.div.style.left = `${viewPoint.x}px`
+      this.div.style.top = `${viewPoint.y}px`
+    }
+  }
+}

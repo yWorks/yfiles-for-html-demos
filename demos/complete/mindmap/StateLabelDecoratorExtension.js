@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.1.
- ** Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.2.
+ ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,129 +26,131 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-/*eslint-disable*/
-'use strict'
+import {
+  Class,
+  ILabelModelParameter,
+  ILookup,
+  IconLabelStyle,
+  Insets,
+  MarkupExtension
+} from 'yfiles'
+import StateLabelDecorator from './StateLabelDecorator.js'
 
-define(['yfiles/lang', 'yfiles/view-component', './StateLabelDecorator.js'], (
-  lang,
-  yfiles,
-  StateLabelDecorator
-) => {
+/**
+ * A markup extension class used for (de-)serializing a custom label style, namely
+ * StateLabelDecorator class, that is written in ECMAScript 6.
+ */
+const StateLabelDecoratorExtension = Class('StateLabelDecoratorExtension', {
+  $extends: MarkupExtension,
+
   /**
-   * A markup extension class used for (de-)serializing a custom label style, namely
-   * StateLabelDecorator class, that is written in ECMAScript 6.
+   * Backing field for below property
+   * @type {IconLabelStyle}
    */
-  const StateLabelDecoratorExtension = yfiles.lang.Class('StateLabelDecoratorExtension', {
-    $extends: yfiles.graphml.MarkupExtension,
+  $wrappedStyle: null,
 
-    /**
-     * Backing field for below property
-     * @type {yfiles.styles.IconLabelStyle}
-     */
-    $wrappedStyle: null,
-
-    /**
-     * Gets or sets the style used to render the icon label.
-     * The explicit getter/setter is needed to support (de-)serialization.
-     * @type {yfiles.styles.IconLabelStyle}
-     */
-    wrappedStyle: {
-      get: function() {
-        return this.$wrappedStyle
-      },
-      set: function(value) {
-        this.$wrappedStyle = value
-      }
+  /**
+   * Gets or sets the style used to render the icon label.
+   * The explicit getter/setter is needed to support (de-)serialization.
+   * @type {IconLabelStyle}
+   */
+  wrappedStyle: {
+    get: function() {
+      return this.$wrappedStyle
     },
-
-    /**
-     * The ILabelModelParameter for an icon of a node placed on the left side of the tree.
-     * Places the icon inside the label on the east.
-     * @type {yfiles.graph.ILabelModelParameter}
-     */
-    $labelModelParameterLeft: null,
-
-    /**
-     * Gets or sets ILabelModelParameter for an icon of a node placed on the left side of the tree.
-     * Places the icon inside the label on the east.
-     * @type {yfiles.graph.ILabelModelParameter}
-     */
-    labelModelParameterLeft: {
-      get: function() {
-        return this.$labelModelParameterLeft
-      },
-      set: function(value) {
-        this.$labelModelParameterLeft = value
-      }
-    },
-
-    /**
-     * The ILabelModelParameter for an icon of a node placed on the right side of the tree.
-     * Places the icon inside the label on the east.
-     * @type {yfiles.graph.ILabelModelParameter}
-     */
-    $labelModelParameterRight: null,
-
-    /**
-     * Gets or sets the ILabelModelParameter for an icon of a node placed on the right side of the tree.
-     * Places the icon inside the label on the east.
-     * @type {yfiles.graph.ILabelModelParameter}
-     */
-    labelModelParameterRight: {
-      get: function() {
-        return this.$labelModelParameterRight
-      },
-      set: function(value) {
-        this.$labelModelParameterRight = value
-      }
-    },
-
-    /**
-     * The insets for an icon placed on the left side of the tree.
-     * @type {yfiles.geometry.Insets}
-     */
-    $insetsLeft: null,
-
-    /**
-     * Gets or sets the insets for an icon placed on the left side of the tree.
-     * @type {yfiles.geometry.Insets}
-     */
-    insetsLeft: {
-      get: function() {
-        return this.$insetsLeft
-      },
-      set: function(value) {
-        this.$insetsLeft = value
-      }
-    },
-
-    /**
-     * The insets for an icon placed on the right side of the tree.
-     * @type {yfiles.geometry.Insets}
-     */
-    $insetsRight: null,
-
-    /**
-     * Gets or sets the insets for an icon placed on the right side of the tree.
-     * @type {yfiles.geometry.Insets}
-     */
-    insetsRight: {
-      get: function() {
-        return this.$insetsRight
-      },
-      set: function(value) {
-        this.$insetsRight = value
-      }
-    },
-
-    /**
-     * @param {yfiles.graph.ILookup} lookup
-     * @return {StateLabelDecorator}
-     */
-    provideValue: function(lookup) {
-      let stateLabelDecorator = new StateLabelDecorator(this.wrappedStyle)
-      return stateLabelDecorator
+    set: function(value) {
+      this.$wrappedStyle = value
     }
-  })
-  return StateLabelDecoratorExtension
+  },
+
+  /**
+   * The ILabelModelParameter for an icon of a node placed on the left side of the tree.
+   * Places the icon inside the label on the east.
+   * @type {ILabelModelParameter}
+   */
+  $labelModelParameterLeft: null,
+
+  /**
+   * Gets or sets ILabelModelParameter for an icon of a node placed on the left side of the tree.
+   * Places the icon inside the label on the east.
+   * @type {ILabelModelParameter}
+   */
+  labelModelParameterLeft: {
+    get: function() {
+      return this.$labelModelParameterLeft
+    },
+    set: function(value) {
+      this.$labelModelParameterLeft = value
+    }
+  },
+
+  /**
+   * The ILabelModelParameter for an icon of a node placed on the right side of the tree.
+   * Places the icon inside the label on the east.
+   * @type {ILabelModelParameter}
+   */
+  $labelModelParameterRight: null,
+
+  /**
+   * Gets or sets the ILabelModelParameter for an icon of a node placed on the right side of the tree.
+   * Places the icon inside the label on the east.
+   * @type {ILabelModelParameter}
+   */
+  labelModelParameterRight: {
+    get: function() {
+      return this.$labelModelParameterRight
+    },
+    set: function(value) {
+      this.$labelModelParameterRight = value
+    }
+  },
+
+  /**
+   * The insets for an icon placed on the left side of the tree.
+   * @type {Insets}
+   */
+  $insetsLeft: null,
+
+  /**
+   * Gets or sets the insets for an icon placed on the left side of the tree.
+   * @type {Insets}
+   */
+  insetsLeft: {
+    get: function() {
+      return this.$insetsLeft
+    },
+    set: function(value) {
+      this.$insetsLeft = value
+    }
+  },
+
+  /**
+   * The insets for an icon placed on the right side of the tree.
+   * @type {Insets}
+   */
+  $insetsRight: null,
+
+  /**
+   * Gets or sets the insets for an icon placed on the right side of the tree.
+   * @type {Insets}
+   */
+  insetsRight: {
+    get: function() {
+      return this.$insetsRight
+    },
+    set: function(value) {
+      this.$insetsRight = value
+    }
+  },
+
+  /**
+   * @param {ILookup} lookup
+   * @return {StateLabelDecorator}
+   */
+  provideValue: function(lookup) {
+    let stateLabelDecorator = new StateLabelDecorator(this.wrappedStyle)
+    return stateLabelDecorator
+  }
 })
+
+export default StateLabelDecoratorExtension

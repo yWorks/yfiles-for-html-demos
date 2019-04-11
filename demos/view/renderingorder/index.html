@@ -7,8 +7,8 @@
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.1.
-     // Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML 2.2.
+     // Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -36,11 +36,12 @@
 
   <title>Rendering Order Demo [yFiles for HTML]</title>
 
-  <link rel="stylesheet" href="../../../lib/yfiles.css">
+  <link rel="stylesheet" href="../../node_modules/yfiles/yfiles.css">
   <link rel="stylesheet" href="../../resources/style/demo.css">
 
   <!-- enable debugging -->
   <script src="../../../ide-support/yfiles-typeinfo.js"></script>
+  <script src="../../resources/filesystem-warning.js"></script>
 </head>
 <body class="demo-has-left">
 
@@ -49,13 +50,13 @@
   <div class="demo-sidebar-content">
     <h2>Rendering Order</h2>
     Sometimes it is necessary to change the render order of graph, e.g. when labels should be
-    rendered in front of their owner but behind another item. This demo shows how to use <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.view.GraphModelManager" target="_blank">yfiles.view.GraphModelManager</a>
+    rendered in front of their owner but behind another item. This demo shows how to use <a href="https://docs.yworks.com/yfileshtml/#/api/GraphModelManager" target="_blank">GraphModelManager</a>
     to configure the rendering order for grouped graphs as well as layer policies for labels and ports.
 
     <h3>Hierarchic Nesting</h3>
     <p>Each item type is assigned to a specific canvas object group. These groups have a default rendering order from
       back to front. See <a href="https://docs.yworks.com/yfileshtml/#/dguide/customizing_view-z_order" target="_blank">The Z-order of Graph Elements</a> for more
-      information about the different <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.view.ICanvasObjectGroup" target="_blank">yfiles.view.ICanvasObjectGroup</a>s and their default rendering order.</p>
+      information about the different <a href="https://docs.yworks.com/yfileshtml/#/api/ICanvasObjectGroup" target="_blank">ICanvasObjectGroup</a>s and their default rendering order.</p>
     <p>For grouped graphs, we provide some nesting policies to structure nodes and edges in more complex hierarchies. In
       these cases, some of the canvas object groups may not be used.</p>
 
@@ -101,7 +102,6 @@
   <div id="graphComponent"></div>
 </div>
 
-<script src="../../resources/require.js"></script>
-<script src="RenderingOrderDemo.js"></script>
+<script type="module" crossorigin="anonymous" src="RenderingOrderDemo.js"></script>
 </body>
 </html>

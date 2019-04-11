@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.1.
- ** Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.2.
+ ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,115 +26,114 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-'use strict'
+import {
+  Font,
+  ILabel,
+  IRectangle,
+  IRenderContext,
+  LabelStyleBase,
+  SvgVisual,
+  TextRenderSupport,
+  TextWrapping,
+  Visual
+} from 'yfiles'
 
-define(['yfiles/view-component'], /** @type {yfiles_namespace} */ /** typeof yfiles */ yfiles => {
+/**
+ * A faster label style. It only renders the text but doesn't support features like text clipping and trimming
+ * that are potentially costly.
+ */
+export default class SvgLabelStyle extends LabelStyleBase {
   /**
-   * A faster label style. It only renders the text but doesn't support features like text clipping and trimming
-   * that are potentially costly.
-   * @extends yfiles.styles.LabelStyleBase
+   * Create a new instance of this label style.
    */
-  class SvgLabelStyle extends yfiles.styles.LabelStyleBase {
-    /**
-     * Create a new instance of this label style.
-     */
-    constructor() {
-      super()
-      this.font = new yfiles.view.Font({ fontSize: 14 })
-    }
-
-    /**
-     * Callback that creates the visual.
-     * This method is called in response to a {@link yfiles.view.IVisualCreator#createVisual}
-     * call to the instance that has been queried from the {@link yfiles.styles.LabelStyleBase#renderer}.
-     * @param {yfiles.view.IRenderContext} context The render context.
-     * @param {yfiles.graph.ILabel} label The label to which this style instance is assigned.
-     * @return {yfiles.view.Visual} The visual as required by the {@link yfiles.view.IVisualCreator#createVisual}
-     *   interface.
-     * @see {@link yfiles.styles.LabelStyleBase#updateVisual}
-     */
-    createVisual(context, label) {
-      const layout = label.layout
-
-      const g = document.createElementNS('http://www.w3.org/2000/svg', 'g')
-
-      // Render the label
-      this.render(label, layout, g)
-
-      // move container to correct location
-      const transform = yfiles.styles.LabelStyleBase.createLayoutTransform(label.layout, true)
-      transform.applyTo(g)
-
-      // Cache the necessary data for rendering of the label
-      g['data-cache'] = label.text
-      return new yfiles.view.SvgVisual(g)
-    }
-
-    /**
-     * Callback that updates the visual previously created by {@link yfiles.styles.LabelStyleBase#createVisual}.
-     * This method is called in response to a {@link yfiles.view.IVisualCreator#updateVisual}
-     * call to the instance that has been queried from the {@link yfiles.styles.LabelStyleBase#renderer}.
-     * This implementation simply delegates to {@link yfiles.styles.LabelStyleBase#createVisual} so subclasses
-     * should override to improve rendering performance.
-     * @param {yfiles.view.IRenderContext} context The render context.
-     * @param {yfiles.view.Visual} oldVisual The visual that has been created in the call to
-     *   {@link yfiles.styles.LabelStyleBase#createVisual}.
-     * @param {yfiles.graph.ILabel} label The label to which this style instance is assigned.
-     * @return {yfiles.view.Visual} The visual as required by the {@link yfiles.view.IVisualCreator#createVisual}
-     *   interface.
-     * @see {@link yfiles.styles.LabelStyleBase#createVisual}
-     */
-    updateVisual(context, oldVisual, label) {
-      const layout = label.layout
-      const g = oldVisual.svgElement
-
-      // if text changed, re-create the text element
-      const oldText = g['data-cache']
-      if (oldText !== label.text) {
-        // remove the old text element
-        g.removeChild(g.firstChild)
-        this.render(label, layout, g)
-        // update the cache
-        g['data-cache'] = label.text
-      }
-
-      // move container to correct location
-      const transform = yfiles.styles.LabelStyleBase.createLayoutTransform(label.layout, true)
-      transform.applyTo(g)
-
-      return oldVisual
-    }
-
-    /**
-     * Creates the text element and appends it to the given g element.
-     * @param {yfiles.graph.ILabel} label The label to render.
-     * @param {yfiles.geometry.IRectangle} layout The bounds of the label.
-     * @param {SVGElement} g The group element to which the text is appended.
-     */
-    render(label, layout, g) {
-      const text = window.document.createElementNS('http://www.w3.org/2000/svg', 'text')
-      text.setAttribute('fill', 'black')
-
-      yfiles.styles.TextRenderSupport.addText(
-        text,
-        label.text,
-        this.font,
-        layout.toSize(),
-        yfiles.view.TextWrapping.NONE
-      )
-
-      g.appendChild(text)
-    }
-
-    /**
-     * Callback that returns the preferred {@link yfiles.geometry.Size size} of the label.
-     * @param {yfiles.graph.ILabel} label The label to which this style instance is assigned.
-     * @return {yfiles.geometry.Size} The preferred size.
-     */
-    getPreferredSize(label) {
-      return yfiles.styles.TextRenderSupport.measureText(label.text, this.font).toSize()
-    }
+  constructor() {
+    super()
+    this.font = new Font({ fontSize: 14 })
   }
 
-  return SvgLabelStyle
-})
+  /**
+   * Callback that creates the visual.
+   * This method is called in response to a {@link IVisualCreator#createVisual}
+   * call to the instance that has been queried from the {@link LabelStyleBase#renderer}.
+   * @param {IRenderContext} context The render context.
+   * @param {ILabel} label The label to which this style instance is assigned.
+   * @return {Visual} The visual as required by the {@link IVisualCreator#createVisual}
+   *   interface.
+   * @see {@link LabelStyleBase#updateVisual}
+   */
+  createVisual(context, label) {
+    const layout = label.layout
+
+    const g = document.createElementNS('http://www.w3.org/2000/svg', 'g')
+
+    // Render the label
+    this.render(label, layout, g)
+
+    // move container to correct location
+    const transform = LabelStyleBase.createLayoutTransform(label.layout, true)
+    transform.applyTo(g)
+
+    // Cache the necessary data for rendering of the label
+    g['data-cache'] = label.text
+    return new SvgVisual(g)
+  }
+
+  /**
+   * Callback that updates the visual previously created by {@link LabelStyleBase#createVisual}.
+   * This method is called in response to a {@link IVisualCreator#updateVisual}
+   * call to the instance that has been queried from the {@link LabelStyleBase#renderer}.
+   * This implementation simply delegates to {@link LabelStyleBase#createVisual} so subclasses
+   * should override to improve rendering performance.
+   * @param {IRenderContext} context The render context.
+   * @param {Visual} oldVisual The visual that has been created in the call to
+   *   {@link LabelStyleBase#createVisual}.
+   * @param {ILabel} label The label to which this style instance is assigned.
+   * @return {Visual} The visual as required by the {@link IVisualCreator#createVisual}
+   *   interface.
+   * @see {@link LabelStyleBase#createVisual}
+   */
+  updateVisual(context, oldVisual, label) {
+    const layout = label.layout
+    const g = oldVisual.svgElement
+
+    // if text changed, re-create the text element
+    const oldText = g['data-cache']
+    if (oldText !== label.text) {
+      // remove the old text element
+      g.removeChild(g.firstChild)
+      this.render(label, layout, g)
+      // update the cache
+      g['data-cache'] = label.text
+    }
+
+    // move container to correct location
+    const transform = LabelStyleBase.createLayoutTransform(label.layout, true)
+    transform.applyTo(g)
+
+    return oldVisual
+  }
+
+  /**
+   * Creates the text element and appends it to the given g element.
+   * @param {ILabel} label The label to render.
+   * @param {IRectangle} layout The bounds of the label.
+   * @param {SVGElement} g The group element to which the text is appended.
+   */
+  render(label, layout, g) {
+    const text = window.document.createElementNS('http://www.w3.org/2000/svg', 'text')
+    text.setAttribute('fill', 'black')
+
+    TextRenderSupport.addText(text, label.text, this.font, layout.toSize(), TextWrapping.NONE)
+
+    g.appendChild(text)
+  }
+
+  /**
+   * Callback that returns the preferred {@link Size size} of the label.
+   * @param {ILabel} label The label to which this style instance is assigned.
+   * @return {Size} The preferred size.
+   */
+  getPreferredSize(label) {
+    return TextRenderSupport.measureText(label.text, this.font)
+  }
+}

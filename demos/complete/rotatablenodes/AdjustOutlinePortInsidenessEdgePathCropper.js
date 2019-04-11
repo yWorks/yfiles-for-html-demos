@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.1.
- ** Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.2.
+ ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,67 +26,63 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-'use strict'
+import { DefaultEdgePathCropper, IEdge, INode, IShapeGeometry, Matrix, Point } from 'yfiles'
 
-define(['yfiles/view-component'], yfiles => {
+/**
+ * Crops adjacent edges at the nodes rotated bounds for internal ports.
+ */
+export default class AdjustOutlinePortInsidenessEdgePathCropper extends DefaultEdgePathCropper {
   /**
-   * Crops adjacent edges at the nodes rotated bounds for internal ports.
+   * Checks whether or not the given location is inside the nodes rotated shape.
+   * @param {Point} location
+   * @param {INode} node
+   * @param {IShapeGeometry} nodeShapeGeometry
+   * @param {IEdge} edge
+   * @return {boolean}
    */
-  class AdjustOutlinePortInsidenessEdgePathCropper extends yfiles.styles.DefaultEdgePathCropper {
-    /**
-     * Checks whether or not the given location is inside the nodes rotated shape.
-     * @param {yfiles.geometry.Point} location
-     * @param {yfiles.graph.INode} node
-     * @param {yfiles.styles.IShapeGeometry} nodeShapeGeometry
-     * @param {yfiles.graph.IEdge} edge
-     * @return {boolean}
-     */
-    isInside(location, node, nodeShapeGeometry, edge) {
-      if (nodeShapeGeometry) {
-        return getScaledOutline(node, nodeShapeGeometry).areaContains(location)
-      }
-      return super.isInside(location, node, nodeShapeGeometry, edge)
+  isInside(location, node, nodeShapeGeometry, edge) {
+    if (nodeShapeGeometry) {
+      return getScaledOutline(node, nodeShapeGeometry).areaContains(location)
     }
-
-    /**
-     * Returns the intersection point of the segment between the outer and inner point and the node's rotated shape.
-     * If there is no intersection point, the result is null.
-     * @param {yfiles.graph.INode} node
-     * @param {yfiles.styles.IShapeGeometry} nodeShapeGeometry
-     * @param {yfiles.graph.IEdge} edge
-     * @param {yfiles.geometry.Point} inner
-     * @param {yfiles.geometry.Point} outer
-     * @return {yfiles.geometry.Point|null}
-     */
-    getIntersection(node, nodeShapeGeometry, edge, inner, outer) {
-      if (nodeShapeGeometry) {
-        const a = getScaledOutline(node, nodeShapeGeometry).findLineIntersection(inner, outer)
-        if (a < Number.POSITIVE_INFINITY) {
-          return inner.add(outer.subtract(inner).multiply(a))
-        }
-        return null
-      }
-      return super.getIntersection(node, nodeShapeGeometry, edge, inner, outer)
-    }
+    return super.isInside(location, node, nodeShapeGeometry, edge)
   }
 
   /**
-   * Returns a slightly enlarged outline of the shape to ensure that ports ports that lie exactly on the shape's outline
-   * are always considered inside.
-   * @param {yfiles.graph.INode} node
-   * @param {yfiles.styles.IShapeGeometry} nodeShapeGeometry
-   * @return {yfiles.geometry.GeneralPath}
+   * Returns the intersection point of the segment between the outer and inner point and the node's rotated shape.
+   * If there is no intersection point, the result is null.
+   * @param {INode} node
+   * @param {IShapeGeometry} nodeShapeGeometry
+   * @param {IEdge} edge
+   * @param {Point} inner
+   * @param {Point} outer
+   * @return {Point|null}
    */
-  function getScaledOutline(node, nodeShapeGeometry) {
-    const outline = nodeShapeGeometry.getOutline()
-    const factor = 1.001
-    const center = node.layout.center
-    const matrix = new yfiles.geometry.Matrix()
-    matrix.translate(new yfiles.geometry.Point(-center.x * (factor - 1), -center.y * (factor - 1)))
-    matrix.scale(factor, factor)
-    outline.transform(matrix)
-    return outline
+  getIntersection(node, nodeShapeGeometry, edge, inner, outer) {
+    if (nodeShapeGeometry) {
+      const a = getScaledOutline(node, nodeShapeGeometry).findLineIntersection(inner, outer)
+      if (a < Number.POSITIVE_INFINITY) {
+        return inner.add(outer.subtract(inner).multiply(a))
+      }
+      return null
+    }
+    return super.getIntersection(node, nodeShapeGeometry, edge, inner, outer)
   }
+}
 
-  return AdjustOutlinePortInsidenessEdgePathCropper
-})
+/**
+ * Returns a slightly enlarged outline of the shape to ensure that ports ports that lie exactly on the shape's outline
+ * are always considered inside.
+ * @param {INode} node
+ * @param {IShapeGeometry} nodeShapeGeometry
+ * @return {GeneralPath}
+ */
+function getScaledOutline(node, nodeShapeGeometry) {
+  const outline = nodeShapeGeometry.getOutline()
+  const factor = 1.001
+  const center = node.layout.center
+  const matrix = new Matrix()
+  matrix.translate(new Point(-center.x * (factor - 1), -center.y * (factor - 1)))
+  matrix.scale(factor, factor)
+  outline.transform(matrix)
+  return outline
+}

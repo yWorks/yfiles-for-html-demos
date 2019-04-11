@@ -7,8 +7,8 @@
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.1.
-     // Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML 2.2.
+     // Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -36,9 +36,10 @@
 
   <title>Browserify Demo [yFiles for HTML]</title>
 
-  <link type="text/css" rel="stylesheet" href="dist/resources/yfiles.css">
-  <link type="text/css" rel="stylesheet" href="dist/resources/style/demo.css">
-  <script src="dist/resources/license.js"></script>
+  <link type="text/css" rel="stylesheet" href="../../node_modules/yfiles/yfiles.css">
+  <link type="text/css" rel="stylesheet" href="../../resources/style/demo.css">
+
+  <script src="../../resources/filesystem-warning.js"></script>
 </head>
 
 <body class="demo-has-left loaded">
@@ -49,11 +50,7 @@
       This demo shows how to bundle the yFiles library in a <a href="https://browserify.org/" target="_blank">browserify</a> project.</p>
 
     <p>
-      First, the build process creates minified and optimized yFiles modules with the <em>yFiles deployment tool</em>.
-    </p>
-
-    <p>
-      The optimized modules are <code>require</code>d in the demo sources in addition to an <code>npm</code> library (<a
+      The yFiles modules are <code>require</code>d in the demo sources in addition to an <code>npm</code> library (<a
         href="https://www.npmjs.com/package/color">color</a>), so browserify will add the yfiles modules and the npm
       library to the generated <code>bundle.js</code>. </p>
 
@@ -76,18 +73,11 @@
 
     <p>The grunt build will place the output files in the <code>dist/</code> directory inside this demo folder. To run
       the demo, open <code>./index.html</code> in a browser.</p>
-
-    <h2>Important Note</h2>
-    <p>
-      yFiles provides <a href="https://docs.yworks.com/yfileshtml/index.html#/kb/article/704/Browser_issues_and_included_workarounds" target="_blank">workarounds</a>
-      which address several bugs in current browsers. Find <code>demos/utils/Workarounds.js</code> as a reference on
-      how several of them are enabled for most of the demos and how to enable them for this demo, too.
-    </p>
   </div>
 </aside>
 <div class="demo-content">
   <div class="demo-header">
-    <a href="https://www.yworks.com" target="_blank"> <img src="dist/resources/image/ylogo.svg" class="demo-y-logo"> </a> <a
+    <a href="https://www.yworks.com" target="_blank"> <img src="../../resources/image/ylogo.svg" class="demo-y-logo"> </a> <a
       href="../../README.html">yFiles for HTML</a> <span class="demo-title">Browserify Demo [yFiles for HTML]</span>
   </div>
 

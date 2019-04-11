@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.1.
- ** Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.2.
+ ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,43 +26,36 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-'use strict'
+import { GraphEditorInputMode, IEdge, IModelItem, INode } from 'yfiles'
+import { Structure } from './MindmapUtil.js'
 
-define(['yfiles/view-component', 'MindmapUtil.js'], (
-  /** @type {yfiles_namespace} */ /** typeof yfiles */ yfiles,
-  MindmapUtil
-) => {
+/**
+ * This class disables interactions on certain items.
+ */
+export default class MindmapEditorInputMode extends GraphEditorInputMode {
   /**
-   * This class disables interactions on certain items.
-   * @extends yfiles.input.GraphEditorInputMode
+   * Enables selection only for cross reference edges.
+   * @param {IModelItem} item The item to check.
+   * @see Overrides {@link GraphEditorInputMode#shouldClickSelect}
+   * @return {boolean}
    */
-  class MindmapEditorInputMode extends yfiles.input.GraphEditorInputMode {
-    /**
-     * Enables selection only for cross reference edges.
-     * @param {yfiles.graph.IModelItem} item The item to check.
-     * @see Overrides {@link yfiles.input.GraphEditorInputMode#shouldClickSelect}
-     * @return {boolean}
-     */
-    shouldClickSelect(item) {
-      if (yfiles.graph.IEdge.isInstance(item)) {
-        return MindmapUtil.Structure.isCrossReference(item)
-      }
-      return super.shouldClickSelect(item)
+  shouldClickSelect(item) {
+    if (IEdge.isInstance(item)) {
+      return Structure.isCrossReference(item)
     }
-
-    /**
-     * Disables moving root node.
-     * @param {yfiles.graph.IModelItem} item The item to check.
-     * @see Overrides {@link yfiles.input.GraphEditorInputMode#shouldMove}
-     * @return {boolean}
-     */
-    shouldMove(item) {
-      if (yfiles.graph.INode.isInstance(item)) {
-        return !MindmapUtil.Structure.isRoot(item)
-      }
-      return super.shouldMove(item)
-    }
+    return super.shouldClickSelect(item)
   }
 
-  return MindmapEditorInputMode
-})
+  /**
+   * Disables moving root node.
+   * @param {IModelItem} item The item to check.
+   * @see Overrides {@link GraphEditorInputMode#shouldMove}
+   * @return {boolean}
+   */
+  shouldMove(item) {
+    if (INode.isInstance(item)) {
+      return !Structure.isRoot(item)
+    }
+    return super.shouldMove(item)
+  }
+}

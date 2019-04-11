@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.1.
- ** Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.2.
+ ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,203 +26,201 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-'use strict'
+import {
+  GeneralPath,
+  GraphComponent,
+  GraphEditorInputMode,
+  HandleInputMode,
+  HandlePositions,
+  IHitTestable,
+  License,
+  MoveInputMode,
+  MutableRectangle,
+  ObservableCollection,
+  Point,
+  RectangleHandle,
+  RectangleIndicatorInstaller
+} from 'yfiles'
 
-require.config({
-  paths: {
-    yfiles: '../../../lib/umd/yfiles/',
-    utils: '../../utils/',
-    resources: '../../resources/'
+import PrintingSupport from './PrintingSupport.js'
+import PositionHandler from './PositionHandler.js'
+import { initDemoStyles } from '../../resources/demo-styles.js'
+import { bindAction, showApp } from '../../resources/demo-app.js'
+import loadJson from '../../resources/load-json.js'
+
+/** @type {GraphComponent} */
+let graphComponent = null
+
+/**
+ * region that will be exported and displayed in the demo
+ * @type {MutableRectangle}
+ */
+let exportRect = null
+
+let margin = null
+
+let scale = null
+
+let useRect = null
+
+let useTilePrinting = null
+
+let useTileWidth = null
+
+let useTileHeight = null
+
+/**
+ * Runs the demo.
+ */
+function run(licenseData) {
+  License.value = licenseData
+  init()
+
+  initializeInputModes()
+  initializeGraph()
+
+  // wire up the printing button
+  bindAction("button[data-command='Print']", printButtonClick)
+
+  showApp(graphComponent)
+}
+
+/**
+ * Initializes the UI's elements.
+ */
+function init() {
+  graphComponent = new GraphComponent('graphComponent')
+  scale = document.getElementById('scale')
+  margin = document.getElementById('margin')
+  useRect = document.getElementById('useRect')
+  useTilePrinting = document.getElementById('useTilePrinting')
+  useTileWidth = document.getElementById('tileWidth')
+  useTileHeight = document.getElementById('tileHeight')
+}
+
+/**
+ * Initializes the input mode.
+ */
+function initializeInputModes() {
+  // Create a GraphEditorInputMode instance
+  const editMode = new GraphEditorInputMode()
+
+  // and install the edit mode into the canvas.
+  graphComponent.inputMode = editMode
+
+  // create the model for the export rectangle
+  exportRect = new MutableRectangle(0, 0, 100, 100)
+
+  // visualize it
+  const installer = new RectangleIndicatorInstaller(exportRect)
+  installer.addCanvasObject(
+    graphComponent.createRenderContext(),
+    graphComponent.backgroundGroup,
+    exportRect
+  )
+
+  addExportRectInputModes(editMode)
+}
+
+/**
+ * Initializes the graph instance and set default styles.
+ */
+function initializeGraph() {
+  const graph = graphComponent.graph
+  // initialize the default styles
+  initDemoStyles(graph)
+
+  // create sample graph
+  graph.addLabel(graph.createNodeAt(new Point(30, 30)), 'Node')
+  const node = graph.createNodeAt(new Point(90, 30))
+  graph.createEdge(node, graph.createNodeAt(new Point(90, 90)))
+  graph.createEdge(node, graph.createNodeAt(new Point(200, 30)))
+
+  graphComponent.fitGraphBounds()
+}
+
+/**
+ * Adds the input modes that handle the resizing and movement of the export rectangle.
+ * @param {GraphEditorInputMode} inputMode
+ */
+function addExportRectInputModes(inputMode) {
+  // create a mode that deals with the handles
+  const exportHandleInputMode = new HandleInputMode()
+  exportHandleInputMode.priority = 1
+  // add it to the graph editor mode
+  inputMode.add(exportHandleInputMode)
+
+  // create handles for interactive resizing the export rectangle
+  const exportHandles = new ObservableCollection()
+  exportHandles.add(new RectangleHandle(HandlePositions.NORTH_EAST, exportRect))
+  exportHandles.add(new RectangleHandle(HandlePositions.NORTH_WEST, exportRect))
+  exportHandles.add(new RectangleHandle(HandlePositions.SOUTH_EAST, exportRect))
+  exportHandles.add(new RectangleHandle(HandlePositions.SOUTH_WEST, exportRect))
+  exportHandleInputMode.handles = exportHandles
+
+  // create a mode that allows for dragging the export rectangle at the sides
+  const moveInputMode = new MoveInputMode()
+  moveInputMode.positionHandler = new PositionHandler(exportRect)
+  moveInputMode.hitTestable = IHitTestable.create((context, location) => {
+    const path = new GeneralPath(5)
+    path.appendRectangle(exportRect, false)
+    return path.pathContains(location, context.hitTestRadius + 3 / context.zoom)
+  })
+
+  // add it to the edit mode
+  moveInputMode.priority = 41
+  inputMode.add(moveInputMode)
+}
+
+/**
+ * Actually perform the printing upon the click of the print button.
+ */
+function printButtonClick() {
+  if (!isValidInput(scale.value, 'Scale') || !isValidInput(margin.value, 'Margin')) {
+    return
   }
-})
-
-require([
-  'yfiles/view-editor',
-  'resources/demo-app',
-  'resources/demo-styles',
-  'PrintingSupport.js',
-  'PositionHandler.js',
-  'resources/license'
-], (
-  /** @type {yfiles_namespace} */ /** typeof yfiles */ yfiles,
-  app,
-  DemoStyles,
-  PrintingSupport,
-  PositionHandler
-) => {
-  /** @type {yfiles.view.GraphComponent} */
-  let graphComponent = null
-
-  /**
-   * region that will be exported and displayed in the demo
-   * @type {yfiles.geometry.MutableRectangle}
-   */
-  let exportRect = null
-
-  let margin = null
-
-  let scale = null
-
-  let useRect = null
-
-  let useTilePrinting = null
-
-  let useTileWidth = null
-
-  let useTileHeight = null
-
-  /**
-   * Runs the demo.
-   */
-  function run() {
-    init()
-
-    initializeInputModes()
-    initializeGraph()
-
-    // wire up the printing button
-    app.bindAction("button[data-command='Print']", printButtonClick)
-
-    app.show(graphComponent)
-  }
-
-  /**
-   * Initializes the UI's elements.
-   */
-  function init() {
-    graphComponent = new yfiles.view.GraphComponent('graphComponent')
-    scale = document.getElementById('scale')
-    margin = document.getElementById('margin')
-    useRect = document.getElementById('useRect')
-    useTilePrinting = document.getElementById('useTilePrinting')
-    useTileWidth = document.getElementById('tileWidth')
-    useTileHeight = document.getElementById('tileHeight')
-  }
-
-  /**
-   * Initializes the input mode.
-   */
-  function initializeInputModes() {
-    // Create a GraphEditorInputMode instance
-    const editMode = new yfiles.input.GraphEditorInputMode()
-
-    // and install the edit mode into the canvas.
-    graphComponent.inputMode = editMode
-
-    // create the model for the export rectangle
-    exportRect = new yfiles.geometry.MutableRectangle(0, 0, 100, 100)
-
-    // visualize it
-    const installer = new yfiles.view.RectangleIndicatorInstaller(exportRect)
-    installer.addCanvasObject(
-      graphComponent.createRenderContext(),
-      graphComponent.backgroundGroup,
-      exportRect
-    )
-
-    addExportRectInputModes(editMode)
-  }
-
-  /**
-   * Initializes the graph instance and set default styles.
-   */
-  function initializeGraph() {
-    const graph = graphComponent.graph
-    // initialize the default styles
-    DemoStyles.initDemoStyles(graph)
-
-    // create sample graph
-    graph.addLabel(graph.createNodeAt(new yfiles.geometry.Point(30, 30)), 'Node')
-    const node = graph.createNodeAt(new yfiles.geometry.Point(90, 30))
-    graph.createEdge(node, graph.createNodeAt(new yfiles.geometry.Point(90, 90)))
-    graph.createEdge(node, graph.createNodeAt(new yfiles.geometry.Point(200, 30)))
-
-    graphComponent.fitGraphBounds()
-  }
-
-  /**
-   * Adds the input modes that handle the resizing and movement of the export rectangle.
-   * @param {yfiles.input.GraphEditorInputMode} inputMode
-   */
-  function addExportRectInputModes(inputMode) {
-    // create a mode that deals with the handles
-    const exportHandleInputMode = new yfiles.input.HandleInputMode()
-    exportHandleInputMode.priority = 1
-    // add it to the graph editor mode
-    inputMode.add(exportHandleInputMode)
-
-    // create handles for interactive resizing the export rectangle
-    const exportHandles = new yfiles.collections.ObservableCollection()
-    exportHandles.add(
-      new yfiles.input.RectangleHandle(yfiles.input.HandlePositions.NORTH_EAST, exportRect)
-    )
-    exportHandles.add(
-      new yfiles.input.RectangleHandle(yfiles.input.HandlePositions.NORTH_WEST, exportRect)
-    )
-    exportHandles.add(
-      new yfiles.input.RectangleHandle(yfiles.input.HandlePositions.SOUTH_EAST, exportRect)
-    )
-    exportHandles.add(
-      new yfiles.input.RectangleHandle(yfiles.input.HandlePositions.SOUTH_WEST, exportRect)
-    )
-    exportHandleInputMode.handles = exportHandles
-
-    // create a mode that allows for dragging the export rectangle at the sides
-    const moveInputMode = new yfiles.input.MoveInputMode()
-    moveInputMode.positionHandler = new PositionHandler(exportRect)
-    moveInputMode.hitTestable = yfiles.input.IHitTestable.create((context, location) => {
-      const path = new yfiles.geometry.GeneralPath(5)
-      path.appendRectangle(exportRect, false)
-      return path.pathContains(location, context.hitTestRadius + 3 / context.zoom)
-    })
-
-    // add it to the edit mode
-    moveInputMode.priority = 41
-    inputMode.add(moveInputMode)
-  }
-
-  /**
-   * Actually perform the printing upon the click of the print button.
-   */
-  function printButtonClick() {
-    if (!isNumber(scale.value, 'Scale') || !isNumber(margin.value, 'Margin')) {
-      return
-    }
-    if (
-      useTilePrinting.checked &&
-      (!isNumber(scale.value, 'Tile width') || !isNumber(margin.value, 'Tile height'))
-    ) {
-      return
-    }
-
-    // we use a helper class
-    const printingSupport = new PrintingSupport()
-
-    printingSupport.scale = parseFloat(scale.value)
-    printingSupport.margin = parseInt(margin.value, 10)
-    printingSupport.tiledPrinting = useTilePrinting.checked
-    printingSupport.tileWidth = parseInt(useTileWidth.value, 10)
-    printingSupport.tileHeight = parseInt(useTileHeight.value, 10)
-
-    // finally start the "printing" process.
-    // this will open a new document in a separate browser window/tab and use
-    // the javascript "print()" method of the browser to print the document.
-    printingSupport.printGraph(graphComponent.graph, useRect.checked ? exportRect.toRect() : null)
+  if (
+    useTilePrinting.checked &&
+    (!isValidInput(useTileWidth.value, 'Tile width') ||
+      !isValidInput(useTileHeight.value, 'Tile height'))
+  ) {
+    return
   }
 
-  /**
-   * @param {number} number
-   * @param {string} text
-   * @return {boolean}
-   */
-  function isNumber(number, text) {
-    if (isNaN(parseFloat(number))) {
-      alert(`${text} must be a valid number.`)
-      return false
-    }
-    return true
-  }
+  // we use a helper class
+  const printingSupport = new PrintingSupport()
 
-  // run the demo
-  run()
-})
+  printingSupport.scale = parseFloat(scale.value)
+  printingSupport.margin = parseInt(margin.value, 10)
+  printingSupport.tiledPrinting = useTilePrinting.checked
+  printingSupport.tileWidth = parseInt(useTileWidth.value, 10)
+  printingSupport.tileHeight = parseInt(useTileHeight.value, 10)
+
+  // finally start the "printing" process.
+  // this will open a new document in a separate browser window/tab and use
+  // the javascript "print()" method of the browser to print the document.
+  printingSupport.printGraph(graphComponent.graph, useRect.checked ? exportRect.toRect() : null)
+}
+
+/**
+ * @param {number} number
+ * @param {string} text
+ * @return {boolean}
+ */
+function isValidInput(number, text) {
+  const value = parseFloat(number)
+  if (isNaN(value)) {
+    alert(`${text} must be a valid number.`)
+    return false
+  } else if (value <= 0 && text !== 'Margin') {
+    alert(`${text} must be a positive number.`)
+    return false
+  } else if (value < 0 && text === 'Margin') {
+    alert(`${text} must be a non-negative number.`)
+    return false
+  }
+  return true
+}
+
+// run the demo
+loadJson().then(run)

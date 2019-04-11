@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.1.
- ** Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.2.
+ ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,121 +26,115 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-'use strict'
-
-define([], () => {
+/**
+ * Provides helper methods for file saving.
+ */
+export default class FileSaveSupport {
   /**
-   * Provides helper methods for file saving.
+   * Saves the file to the file system using the HTML5 File download or
+   * the proprietary msSaveOrOpenBlob function in Internet Explorer.
+   *
+   * @param {string} fileContent The file contents to be saved.
+   * @param {string} fileName The default filename for the downloaded file.
+   * @return {Promise} A promise which resolves when the save operation is complete.
    */
-  class FileSaveSupport {
-    /**
-     * Saves the file to the file system using the HTML5 File download or
-     * the proprietary msSaveOrOpenBlob function in Internet Explorer.
-     *
-     * @param {string} fileContent The file contents to be saved.
-     * @param {string} fileName The default filename for the downloaded file.
-     * @return {Promise} A promise which resolves when the save operation is complete.
-     */
-    static save(fileContent, fileName) {
-      return new Promise((resolve, reject) => {
-        // extract file format
-        const format = fileName.split('.')[1].toLowerCase()
+  static save(fileContent, fileName) {
+    return new Promise((resolve, reject) => {
+      // extract file format
+      const format = fileName.split('.')[1].toLowerCase()
 
-        if (FileSaveSupport.isFileConstructorAvailable()) {
-          if (format === 'txt' || format === 'json' || format === 'svg' || format === 'graphml') {
-            let mimeType = ''
-            switch (format) {
-              case 'txt':
-              case 'json':
-              default:
-                mimeType = 'text/plain'
-                break
-              case 'svg':
-                mimeType = 'image/svg+xml'
-                break
-              case 'graphml':
-                mimeType = 'application/xml'
-                break
-            }
-
-            // workaround for supporting non-binary data
-            fileContent = URL.createObjectURL(new Blob([fileContent], { type: mimeType }))
+      if (FileSaveSupport.isFileConstructorAvailable()) {
+        if (format === 'txt' || format === 'json' || format === 'svg' || format === 'graphml') {
+          let mimeType = ''
+          switch (format) {
+            case 'txt':
+            case 'json':
+            default:
+              mimeType = 'text/plain'
+              break
+            case 'svg':
+              mimeType = 'image/svg+xml'
+              break
+            case 'graphml':
+              mimeType = 'application/xml'
+              break
           }
 
-          const aElement = document.createElement('a')
-          aElement.setAttribute('href', fileContent)
-          aElement.setAttribute('download', fileName)
-          aElement.style.display = 'none'
-          document.body.appendChild(aElement)
-          aElement.click()
-          document.body.removeChild(aElement)
+          // workaround for supporting non-binary data
+          fileContent = URL.createObjectURL(new Blob([fileContent], { type: mimeType }))
+        }
 
+        const aElement = document.createElement('a')
+        aElement.setAttribute('href', fileContent)
+        aElement.setAttribute('download', fileName)
+        aElement.style.display = 'none'
+        document.body.appendChild(aElement)
+        aElement.click()
+        document.body.removeChild(aElement)
+
+        resolve('File saved successfully')
+        return
+      }
+      if (FileSaveSupport.isMsSaveAvailable()) {
+        let blob
+        if (fileContent.startsWith('data:')) {
+          const dataUrlParts = fileContent.split(',')
+          const bString = window.atob(dataUrlParts[1])
+          const byteArray = []
+          for (let i = 0; i < bString.length; i++) {
+            byteArray.push(bString.charCodeAt(i))
+          }
+          // For the options, extract the mime type from the Data URL
+          blob = new Blob([new Uint8Array(byteArray)], {
+            type: dataUrlParts[0].match(/:(.*?);/, '')[1]
+          })
+        } else {
+          blob = new Blob([fileContent])
+        }
+
+        if (window.navigator.msSaveOrOpenBlob(blob, fileName)) {
           resolve('File saved successfully')
-          return
+        } else {
+          reject(new Error('File save failed: A failure occurred during saving.'))
         }
-        if (FileSaveSupport.isMsSaveAvailable()) {
-          let blob
-          if (fileContent.startsWith('data:')) {
-            const dataUrlParts = fileContent.split(',')
-            const bString = window.atob(dataUrlParts[1])
-            const byteArray = []
-            for (let i = 0; i < bString.length; i++) {
-              byteArray.push(bString.charCodeAt(i))
-            }
-            // For the options, extract the mime type from the Data URL
-            blob = new Blob([new Uint8Array(byteArray)], {
-              type: dataUrlParts[0].match(/:(.*?);/, '')[1]
-            })
-          } else {
-            blob = new Blob([fileContent])
-          }
-
-          if (window.navigator.msSaveOrOpenBlob(blob, fileName)) {
-            resolve('File saved successfully')
-          } else {
-            reject(new Error('File save failed: A failure occurred during saving.'))
-          }
-          return
-        }
-        reject(new Error('File save failed: Save operation is not supported by the browser.'))
-      })
-    }
-
-    static isFileConstructorAvailable() {
-      // Test whether required functions exist
-      if (
-        typeof window.URL !== 'function' ||
-        typeof window.Blob !== 'function' ||
-        typeof window.File !== 'function'
-      ) {
-        return false
+        return
       }
-      // Test whether the constructor works as expected
-      try {
-        // eslint-disable-next-line no-new
-        new File(['Content'], 'fileName', {
-          type: 'image/png',
-          lastModified: Date.now()
-        })
-      } catch (ignored) {
-        return false
-      }
-      // Everything is available
-      return true
-    }
-
-    /**
-     * Returns whether the MS Internet Explorer specific save technique is available.
-     * This works in IE 10+. See the related demo for more details.
-     * for more details.
-     * @return {boolean}
-     */
-    static isMsSaveAvailable() {
-      return (
-        typeof window.Blob === 'function' && typeof window.navigator.msSaveOrOpenBlob === 'function'
-      )
-    }
+      reject(new Error('File save failed: Save operation is not supported by the browser.'))
+    })
   }
 
-  return FileSaveSupport
-})
+  static isFileConstructorAvailable() {
+    // Test whether required functions exist
+    if (
+      typeof window.URL !== 'function' ||
+      typeof window.Blob !== 'function' ||
+      typeof window.File !== 'function'
+    ) {
+      return false
+    }
+    // Test whether the constructor works as expected
+    try {
+      // eslint-disable-next-line no-new
+      new File(['Content'], 'fileName', {
+        type: 'image/png',
+        lastModified: Date.now()
+      })
+    } catch (ignored) {
+      return false
+    }
+    // Everything is available
+    return true
+  }
+
+  /**
+   * Returns whether the MS Internet Explorer specific save technique is available.
+   * This works in IE 10+. See the related demo for more details.
+   * for more details.
+   * @return {boolean}
+   */
+  static isMsSaveAvailable() {
+    return (
+      typeof window.Blob === 'function' && typeof window.navigator.msSaveOrOpenBlob === 'function'
+    )
+  }
+}

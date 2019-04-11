@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.1.
- ** Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.2.
+ ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,41 +26,36 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-'use strict'
+import { ConstrainedHandle, IHandle, IInputModeContext, INode, Point } from 'yfiles'
 
-define(['yfiles/view-editor'], /** @type {yfiles_namespace} */ /** typeof yfiles */ yfiles => {
+/**
+ * A port location handle that is constrained to the layout rectangle of
+ * the port's owner node.
+ */
+export default class NodeLayoutPortLocationHandle extends ConstrainedHandle {
   /**
-   * A port location handle that is constrained to the layout rectangle of
-   * the port's owner node.
-   * @extends yfiles.input.ConstrainedHandle
+   * Creates a new instance of <code>NodeLayoutPortLocationHandle</code>.
+   * @param {INode} node
+   * @param {IHandle} wrappedHandle
    */
-  class NodeLayoutPortLocationHandle extends yfiles.input.ConstrainedHandle {
-    /**
-     * Creates a new instance of <code>NodeLayoutPortLocationHandle</code>.
-     * @param {yfiles.graph.INode} node
-     * @param {yfiles.input.IHandle} wrappedHandle
-     */
-    constructor(node, wrappedHandle) {
-      super(wrappedHandle)
-      this.node = node
-    }
-
-    /**
-     * Returns the constraints for the new location.
-     * @param {yfiles.input.IInputModeContext} context The context in which the drag will be performed
-     * @param {yfiles.geometry.Point} originalLocation The value of the
-     * {@link yfiles.input.ConstrainedDragHandler<TWrapped>#location} property at the time of
-     * {@link yfiles.input.ConstrainedDragHandler<TWrapped>#initializeDrag}
-     * @param {yfiles.geometry.Point} newLocation The coordinates in the world coordinate system that the client wants
-     * the handle to be at. Depending on the implementation the
-     * {@link yfiles.input.ConstrainedDragHandler<TWrapped>#location} may or may not be modified to reflect the new
-     *   value
-     * @returns {yfiles.geometry.Point}
-     */
-    constrainNewLocation(context, originalLocation, newLocation) {
-      return newLocation.getConstrained(this.node.layout.toRect())
-    }
+  constructor(node, wrappedHandle) {
+    super(wrappedHandle)
+    this.node = node
   }
 
-  return NodeLayoutPortLocationHandle
-})
+  /**
+   * Returns the constraints for the new location.
+   * @param {IInputModeContext} context The context in which the drag will be performed
+   * @param {Point} originalLocation The value of the
+   * {@link ConstrainedDragHandler<TWrapped>#location} property at the time of
+   * {@link ConstrainedDragHandler<TWrapped>#initializeDrag}
+   * @param {Point} newLocation The coordinates in the world coordinate system that the client wants
+   * the handle to be at. Depending on the implementation the
+   * {@link ConstrainedDragHandler<TWrapped>#location} may or may not be modified to reflect the new
+   *   value
+   * @returns {Point}
+   */
+  constrainNewLocation(context, originalLocation, newLocation) {
+    return newLocation.getConstrained(this.node.layout.toRect())
+  }
+}

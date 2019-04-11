@@ -7,8 +7,8 @@
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.1.
-     // Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML 2.2.
+     // Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -36,11 +36,12 @@
 
   <title>Decision Tree Demo [yFiles for HTML]</title>
 
-  <link rel="stylesheet" href="../../../lib/yfiles.css">
+  <link rel="stylesheet" href="../../node_modules/yfiles/yfiles.css">
   <link rel="stylesheet" href="../../resources/style/demo.css">
 
   <!-- enable debugging -->
   <script src="../../../ide-support/yfiles-typeinfo.js"></script>
+  <script src="../../resources/filesystem-warning.js"></script>
 
   <style>
     .action-button {
@@ -67,8 +68,17 @@
       background-color: #FFFFFF;
     }
 
+    @media screen and (max-height: 500px) {
+      #decisionTree {
+        top: 60px;
+      }
+    }
+
     #showDecisionTreeButton {
       background-image: url('../../resources/icons/play2-16.svg');
+    }
+    #showDecisionTreeButton.disabled {
+      background-color: #aaaaaa;
     }
 
     #editDecisionTreeButton {
@@ -204,13 +214,12 @@
   </div>
 
   <div id="graphComponent"></div>
-  <div id="decisionTree" style="display: none"></div>
+  <div id="decisionTree" style="visibility: hidden"></div>
   <div id="showDecisionTreeButton" class="action-button" title="Show Decision Tree" data-command="ShowDecisionTree"></div>
   <div id="editDecisionTreeButton" class="action-button" style="display: none" title="Edit Decision Tree Graph" data-command="EditDecisionTree"></div>
 </div>
 
-<script src="../../resources/require.js"></script>
-<script src="DecisionTreeDemo.js"></script>
+<script type="module" crossorigin="anonymous" src="DecisionTreeDemo.js"></script>
 
 </body>
 </html>

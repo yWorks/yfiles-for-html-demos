@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.1.
- ** Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.2.
+ ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,94 +26,91 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-'use strict'
+import {
+  HoveredItemChangedEventArgs,
+  IEdge,
+  ILabel,
+  IModelItem,
+  INode,
+  ItemHoverInputMode,
+  ModifierKeys
+} from 'yfiles'
 
-define(['yfiles/view-component'], /** @type {yfiles_namespace} */ /** typeof yfiles */ yfiles => {
-  /**
-   * This {@link yfiles.input.ItemHoverInputMode} will show a pointer cursor for external links and underline the link's
-   * text to indicate a clickable link. It is configured to only do the highlighting when the CTRL modifier is pressed
-   * and when there is an external link.
-   * @class LinkItemHoverInputMode
-   */
-  class LinkItemHoverInputMode extends yfiles.input.ItemHoverInputMode {
-    constructor() {
-      super()
-      this.priority = 54
-      this.hoverCursor = 'pointer'
-    }
-
-    /**
-     * It is only a valid hover when the CTRL modifier is active and there is actually a link that can be clicked.
-     * @param {yfiles.graph.IModelItem} item - The item to check.
-     * @returns {boolean}
-     */
-    isValidHoverItem(item) {
-      if (
-        this.inputModeContext.canvasComponent.lastMouseEvent.modifiers !==
-        yfiles.view.ModifierKeys.CONTROL
-      ) {
-        return false
-      }
-      return !!this.getLabelLink(item)
-    }
-
-    /**
-     * Toggles the underline text decoration for valid links.
-     * @param {yfiles.input.HoveredItemChangedEventArgs} evt - The {@link yfiles.input.HoveredItemChangedEventArgs}
-     *   instance containing the event data.
-     */
-    onHoveredItemChanged(evt) {
-      const oldLabelLink = this.getLabelLink(evt.oldItem)
-      const labelLink = this.getLabelLink(evt.item)
-
-      // the toggle of underlined text should not be added to the undo queue
-      const edit = this.inputModeContext.graph.beginEdit('LinkDecoration', 'LinkDecoration')
-
-      if (oldLabelLink) {
-        // re-apply the original style
-        this.inputModeContext.graph.setStyle(
-          oldLabelLink,
-          this.inputModeContext.graph.nodeDefaults.labels.getStyleInstance(oldLabelLink.owner)
-        )
-      }
-
-      if (labelLink) {
-        // underline the text of the link
-        const clone = labelLink.style.clone()
-        clone.font = clone.font.createCopy({
-          textDecoration: 'UNDERLINE'
-        })
-        this.inputModeContext.graph.setStyle(labelLink, clone)
-      }
-
-      // we cancel the edit to not add it to the undo queue
-      edit.cancel()
-    }
-
-    /**
-     * Returns the {@linke yfiles.graph.ILabel} that represents a link, otherwise null. Nodes and edges are checked for
-     * any label that represents a link, too.
-     * @param {yfiles.graph.IModelItem} item The item that should be checked for an external link.
-     * @returns {yfiles.graph.ILabel} The label that represents a link or null.
-     */
-    getLabelLink(item) {
-      let labelLink = null
-      if (
-        yfiles.graph.ILabel.isInstance(item) &&
-        (item.text.startsWith('www.') || item.text.startsWith('http'))
-      ) {
-        labelLink = item
-      } else if (yfiles.graph.INode.isInstance(item) || yfiles.graph.IEdge.isInstance(item)) {
-        item.labels.forEach(label => {
-          const text = label.text
-          if (text.startsWith('www.') || text.startsWith('http')) {
-            labelLink = label
-          }
-        })
-      }
-      return labelLink
-    }
+/**
+ * This {@link ItemHoverInputMode} will show a pointer cursor for external links and underline the link's
+ * text to indicate a clickable link. It is configured to only do the highlighting when the CTRL modifier is pressed
+ * and when there is an external link.
+ */
+export default class LinkItemHoverInputMode extends ItemHoverInputMode {
+  constructor() {
+    super()
+    this.priority = 54
+    this.hoverCursor = 'pointer'
   }
 
-  return LinkItemHoverInputMode
-})
+  /**
+   * It is only a valid hover when the CTRL modifier is active and there is actually a link that can be clicked.
+   * @param {IModelItem} item - The item to check.
+   * @returns {boolean}
+   */
+  isValidHoverItem(item) {
+    if (this.inputModeContext.canvasComponent.lastMouseEvent.modifiers !== ModifierKeys.CONTROL) {
+      return false
+    }
+    return !!this.getLabelLink(item)
+  }
+
+  /**
+   * Toggles the underline text decoration for valid links.
+   * @param {HoveredItemChangedEventArgs} evt - The {@link HoveredItemChangedEventArgs}
+   *   instance containing the event data.
+   */
+  onHoveredItemChanged(evt) {
+    const oldLabelLink = this.getLabelLink(evt.oldItem)
+    const labelLink = this.getLabelLink(evt.item)
+
+    // the toggle of underlined text should not be added to the undo queue
+    const edit = this.inputModeContext.graph.beginEdit('LinkDecoration', 'LinkDecoration')
+
+    if (oldLabelLink) {
+      // re-apply the original style
+      this.inputModeContext.graph.setStyle(
+        oldLabelLink,
+        this.inputModeContext.graph.nodeDefaults.labels.getStyleInstance(oldLabelLink.owner)
+      )
+    }
+
+    if (labelLink) {
+      // underline the text of the link
+      const clone = labelLink.style.clone()
+      clone.font = clone.font.createCopy({
+        textDecoration: 'UNDERLINE'
+      })
+      this.inputModeContext.graph.setStyle(labelLink, clone)
+    }
+
+    // we cancel the edit to not add it to the undo queue
+    edit.cancel()
+  }
+
+  /**
+   * Returns the {@linke ILabel} that represents a link, otherwise null. Nodes and edges are checked for
+   * any label that represents a link, too.
+   * @param {IModelItem} item The item that should be checked for an external link.
+   * @returns {ILabel} The label that represents a link or null.
+   */
+  getLabelLink(item) {
+    let labelLink = null
+    if (ILabel.isInstance(item) && (item.text.startsWith('www.') || item.text.startsWith('http'))) {
+      labelLink = item
+    } else if (INode.isInstance(item) || IEdge.isInstance(item)) {
+      item.labels.forEach(label => {
+        const text = label.text
+        if (text.startsWith('www.') || text.startsWith('http')) {
+          labelLink = label
+        }
+      })
+    }
+    return labelLink
+  }
+}

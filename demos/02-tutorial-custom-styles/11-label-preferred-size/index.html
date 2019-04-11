@@ -7,8 +7,8 @@
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.1.
-     // Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML 2.2.
+     // Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -36,11 +36,12 @@
 
   <title>Label Preferred Size - Custom Styles Tutorial [yFiles for HTML]</title>
 
-  <link rel="stylesheet" href="../../../lib/yfiles.css">
+  <link rel="stylesheet" href="../../node_modules/yfiles/yfiles.css">
   <link rel="stylesheet" href="../../resources/style/demo.css">
 
   <!-- enable debugging -->
   <script src="../../../ide-support/yfiles-typeinfo.js"></script>
+  <script src="../../resources/filesystem-warning.js"></script>
 </head>
 <body class="demo-has-left">
 <!--
@@ -50,14 +51,15 @@
   <h1 class="demo-sidebar-header">Description</h1>
   <div class="demo-sidebar-content">
 
-    <p>This step shows how to set the size of the label based on the size of its text by overriding the <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.styles.LabelStyleBase#getPreferredSize" target="_blank">yfiles.styles.LabelStyleBase#getPreferredSize</a>
+    <p>This step shows how to set the size of the label based on the size of its text by overriding the <a href="https://docs.yworks.com/yfileshtml/#/api/LabelStyleBase#getPreferredSize" target="_blank">LabelStyleBase#getPreferredSize</a>
       method.</p>
 
     <h2>Things to Try</h2>
 
     <ul>
       <li>
-        Select a label, open the label editor using "F2" to edit the label's text, and see how the label size is adjusted.
+        Select a label, open the label editor using "F2" to edit the label's text, and see how the label size is
+        adjusted.
       </li>
       <li>
         Take a look at <code>MySimpleLabelStyle.getPreferredSize()</code>.
@@ -68,7 +70,7 @@
 
     <ul>
       <li>
-        Override <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.styles.LabelStyleBase#updateVisual" target="_blank">yfiles.styles.LabelStyleBase#updateVisual</a> to get high-performance rendering.
+        Override <a href="https://docs.yworks.com/yfileshtml/#/api/LabelStyleBase#updateVisual" target="_blank">LabelStyleBase#updateVisual</a> to get high-performance rendering.
       </li>
       <li>
         Implement a button to open the label editor.
@@ -106,8 +108,7 @@
   <div id="graphComponent"></div>
 </div>
 
-<script src="../../resources/require.js"></script>
-<script src="SampleApplication.js"></script>
+<script type="module" crossorigin="anonymous" src="SampleApplication.js"></script>
 
 </body>
 </html>

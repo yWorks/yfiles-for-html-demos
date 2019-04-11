@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.1.
- ** Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.2.
+ ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,53 +26,47 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-'use strict'
-
-define([], () => {
+/**
+ */
+export default class SaveToNewWindowOperation {
   /**
+   * Checks if the operation can be executed.
+   * @return {boolean}
    */
-  class SaveToNewWindowOperation {
-    /**
-     * Checks if the operation can be executed.
-     * @return {boolean}
-     */
-    isAvailable() {
-      return true
-    }
-
-    /**
-     * @param {string} fileContent
-     * @return {Promise} A Promise that resolves when the save operation is complete.
-     */
-    save(fileContent) {
-      return new Promise((resolve, reject) => {
-        const newWindow = window.open()
-        if (typeof newWindow === 'undefined') {
-          reject(new Error('Could not open a new window. Maybe it was blocked by the browser.'))
-          return
-        }
-        newWindow.document.open()
-        if (newWindow.document.documentElement === null) {
-          newWindow.document.write('<html></html>')
-        }
-        const elementsByTagName = newWindow.document.documentElement.getElementsByTagName('body')
-        let body
-        if (elementsByTagName.length === 0) {
-          body = newWindow.document.createElement('body')
-          newWindow.document.documentElement.appendChild(body)
-        } else {
-          body = elementsByTagName.item(0)
-        }
-        newWindow.document.title = 'GraphML Export'
-        const pre = newWindow.document.createElement('pre')
-        body.appendChild(pre)
-        pre.textContent = fileContent
-        newWindow.document.close()
-
-        resolve()
-      })
-    }
+  isAvailable() {
+    return true
   }
 
-  return SaveToNewWindowOperation
-})
+  /**
+   * @param {string} fileContent
+   * @return {Promise} A Promise that resolves when the save operation is complete.
+   */
+  save(fileContent) {
+    return new Promise((resolve, reject) => {
+      const newWindow = window.open()
+      if (typeof newWindow === 'undefined') {
+        reject(new Error('Could not open a new window. Maybe it was blocked by the browser.'))
+        return
+      }
+      newWindow.document.open()
+      if (newWindow.document.documentElement === null) {
+        newWindow.document.write('<html></html>')
+      }
+      const elementsByTagName = newWindow.document.documentElement.getElementsByTagName('body')
+      let body
+      if (elementsByTagName.length === 0) {
+        body = newWindow.document.createElement('body')
+        newWindow.document.documentElement.appendChild(body)
+      } else {
+        body = elementsByTagName.item(0)
+      }
+      newWindow.document.title = 'GraphML Export'
+      const pre = newWindow.document.createElement('pre')
+      body.appendChild(pre)
+      pre.textContent = fileContent
+      newWindow.document.close()
+
+      resolve()
+    })
+  }
+}

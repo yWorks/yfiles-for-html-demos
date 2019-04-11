@@ -7,8 +7,8 @@
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.1.
-     // Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML 2.2.
+     // Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -36,11 +36,12 @@
 
   <title>External Links - Application Features Tutorial [yFiles for HTML]</title>
 
-  <link rel="stylesheet" href="../../../lib/yfiles.css">
+  <link rel="stylesheet" href="../../node_modules/yfiles/yfiles.css">
   <link rel="stylesheet" href="../../resources/style/demo.css">
 
   <!-- enable debugging -->
   <script src="../../../ide-support/yfiles-typeinfo.js"></script>
+  <script src="../../resources/filesystem-warning.js"></script>
 </head>
 <body class="demo-has-left">
 
@@ -55,8 +56,8 @@
       It is configured to only follow the external link on a <code>CTRL</code> click.
     </p>
     <p>
-      This demo works directly on the <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.graph.ILabel" target="_blank">yfiles.graph.ILabel</a> text, therefore you can also add
-      new labels the represent links.
+      This demo works directly on the <a href="https://docs.yworks.com/yfileshtml/#/api/ILabel" target="_blank">ILabel</a> text, therefore you can also add new labels the
+      represent links.
     </p>
 
     <p>See the sources for details.</p>
@@ -68,7 +69,7 @@
     <button data-command="New" title="New" class="demo-icon-yIconNew"></button>
     <span class="demo-separator"></span>
     <button data-command="ZoomOriginal" title="Zoom to original size"
-        class="demo-icon-yIconZoomOriginal"></button>
+      class="demo-icon-yIconZoomOriginal"></button>
     <button data-command="FitContent" title="Fit Content" class="demo-icon-yIconZoomFit"></button>
     <span class="demo-separator"></span>
     <button data-command="Cut" title="Cut" class="demo-icon-yIconCut"></button>
@@ -85,7 +86,6 @@
   <div id="graphComponent"></div>
 </div>
 
-<script src="../../resources/require.js"></script>
-<script src="SampleApplication.js"></script>
+<script type="module" crossorigin="anonymous" src="SampleApplication.js"></script>
 </body>
 </html>

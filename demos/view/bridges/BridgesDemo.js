@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.1.
- ** Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.2.
+ ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,322 +26,314 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-'use strict'
+import {
+  BridgeCrossingPolicy,
+  BridgeCrossingStyle,
+  BridgeManager,
+  BridgeOrientationStyle,
+  GraphComponent,
+  GraphEditorInputMode,
+  GraphObstacleProvider,
+  HierarchicNestingPolicy,
+  ICommand,
+  Insets,
+  License,
+  Point,
+  Rect
+} from 'yfiles'
 
-require.config({
-  paths: {
-    yfiles: '../../../lib/umd/yfiles/',
-    utils: '../../utils/',
-    resources: '../../resources/'
+import { CustomCallback, GroupNodeObstacleProvider } from './BridgeHelper.js'
+import { bindChangeListener, bindCommand, showApp } from '../../resources/demo-app.js'
+import { initDemoStyles } from '../../resources/demo-styles.js'
+import loadJson from '../../resources/load-json.js'
+
+/**
+ * Holds the graphComponent.
+ * @type {GraphComponent}
+ */
+let graphComponent = null
+
+/**
+ * Holds the bridgeManager.
+ * @type {BridgeManager}
+ */
+let bridgeManager = null
+
+/**
+ * Runs the demo.
+ */
+function run(licenseData) {
+  License.value = licenseData
+  graphComponent = new GraphComponent('graphComponent')
+  const graph = graphComponent.graph
+
+  // draw edges in front, so that group nodes don't hide the bridges..
+  graphComponent.graphModelManager.edgeGroup.toFront()
+  graphComponent.graphModelManager.hierarchicNestingPolicy = HierarchicNestingPolicy.NODES
+
+  initDemoStyles(graph)
+
+  graphComponent.inputMode = new GraphEditorInputMode({
+    allowGroupingOperations: true
+  })
+
+  configureBridges()
+
+  createSampleGraph()
+
+  registerCommands()
+
+  showApp(graphComponent)
+}
+
+/**
+ * Adds and configures the {@link BridgeManager}.
+ */
+function configureBridges() {
+  bridgeManager = new BridgeManager()
+
+  // We would like to change the custom bridge rendering default,
+  // this can be done by decorating the existing default callback
+  bridgeManager.defaultBridgeCreator = new CustomCallback(bridgeManager.defaultBridgeCreator)
+
+  // Convenience class that just queries all model item
+  const provider = new GraphObstacleProvider()
+
+  // We also want to query nodes for potential obstacles (disabled by default)
+  provider.queryNodes = true
+
+  // Register an IObstacleProvider, bridgeManager will query all registered obstacle providers
+  // to determine if a bridge must be created
+  bridgeManager.addObstacleProvider(provider)
+  // Bind the bridge manager to the GraphComponent...
+  bridgeManager.canvasComponent = graphComponent
+
+  // We register a custom obstacle provider in the node's lookup of group nodes
+  // that can be used by bridgeManager (through provider...)
+  graphComponent.graph.decorator.nodeDecorator.obstacleProviderDecorator.setFactory(
+    node => graphComponent.graph.isGroupNode(node),
+    node => new GroupNodeObstacleProvider(node)
+  )
+
+  initializeToolBarElements()
+}
+
+/**
+ * Initializes the combo boxes and the text-boxes of the toolbar.
+ */
+function initializeToolBarElements() {
+  const crossingStylesComboBox = document.getElementById('crossingStyleComboBox')
+  const crossingStylesElements = [
+    {
+      text: 'Arc',
+      value: BridgeCrossingStyle.ARC
+    },
+    {
+      text: 'Gap',
+      value: BridgeCrossingStyle.GAP
+    },
+    {
+      text: 'TwoSidesScaled',
+      value: BridgeCrossingStyle.TWO_SIDES_SCALED
+    },
+    {
+      text: 'TwoSides',
+      value: BridgeCrossingStyle.TWO_SIDES
+    },
+    {
+      text: 'Custom',
+      value: BridgeCrossingStyle.CUSTOM
+    },
+    {
+      text: 'Rectangle',
+      value: BridgeCrossingStyle.RECTANGLE
+    },
+    {
+      text: 'RectangleScaled',
+      value: BridgeCrossingStyle.RECTANGLE_SCALED
+    },
+    {
+      text: 'ArcScaled',
+      value: BridgeCrossingStyle.ARC_SCALED
+    }
+  ]
+  fillComboBox(crossingStylesComboBox, crossingStylesElements)
+
+  const crossingPolicyComboBox = document.getElementById('crossingPolicyComboBox')
+  const crossingDeterminationElements = [
+    {
+      text: 'HorizontalBridgesVertical',
+      value: BridgeCrossingPolicy.HORIZONTAL_BRIDGES_VERTICAL
+    },
+    {
+      text: 'VerticalBridgesHorizontal',
+      value: BridgeCrossingPolicy.VERTICAL_BRIDGES_HORIZONTAL
+    },
+    {
+      text: 'MoreHorizontalBridgesLessHorizontal',
+      value: BridgeCrossingPolicy.MORE_HORIZONTAL_BRIDGES_LESS_HORIZONTAL
+    },
+    {
+      text: 'MoreVerticalBridgesLessVertical',
+      value: BridgeCrossingPolicy.MORE_VERTICAL_BRIDGES_LESS_VERTICAL
+    }
+  ]
+  fillComboBox(crossingPolicyComboBox, crossingDeterminationElements)
+
+  const bridgeOrientationComboBox = document.getElementById('bridgeOrientationComboBox')
+  const bridgeOrientationElements = [
+    {
+      text: 'Up',
+      value: BridgeOrientationStyle.UP
+    },
+    {
+      text: 'Down',
+      value: BridgeOrientationStyle.DOWN
+    },
+    {
+      text: 'Left',
+      value: BridgeOrientationStyle.LEFT
+    },
+    {
+      text: 'Right',
+      value: BridgeOrientationStyle.RIGHT
+    },
+    {
+      text: 'FlowRight',
+      value: BridgeOrientationStyle.FLOW_RIGHT
+    },
+    {
+      text: 'Positive',
+      value: BridgeOrientationStyle.POSITIVE
+    },
+    {
+      text: 'Negative',
+      value: BridgeOrientationStyle.NEGATIVE
+    },
+    {
+      text: 'FlowLeft',
+      value: BridgeOrientationStyle.FLOW_LEFT
+    }
+  ]
+  fillComboBox(bridgeOrientationComboBox, bridgeOrientationElements)
+}
+
+/**
+ * Fills the given combo box with the given values.
+ * @param {HTMLElement} comboBox The combo box to be filled
+ * @param {Array} content The values to be used
+ */
+function fillComboBox(comboBox, content) {
+  for (let i = 0; i < content.length; i++) {
+    const el = document.createElement('option')
+    el.textContent = content[i].text
+    el.value = content[i].value
+    comboBox.appendChild(el)
   }
-})
+}
 
-require([
-  'yfiles/view-editor',
-  'resources/demo-app',
-  'resources/demo-styles',
-  './BridgeHelper.js',
-  'resources/license'
-], (/** @type {yfiles_namespace} */ /** typeof yfiles */ yfiles, app, DemoStyles, BridgeHelper) => {
-  /**
-   * Holds the graphComponent.
-   * @type {yfiles.view.GraphComponent}
-   */
-  let graphComponent = null
+/**
+ * Wires up the UI.
+ */
+function registerCommands() {
+  bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent)
+  bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent)
+  bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent)
+  bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
 
-  /**
-   * Holds the bridgeManager.
-   * @type {yfiles.view.BridgeManager}
-   */
-  let bridgeManager = null
-
-  /**
-   * Runs the demo.
-   */
-  function run() {
-    graphComponent = new yfiles.view.GraphComponent('graphComponent')
-    const graph = graphComponent.graph
-
-    // draw edges in front, so that group nodes don't hide the bridges..
-    graphComponent.graphModelManager.edgeGroup.toFront()
-    graphComponent.graphModelManager.hierarchicNestingPolicy =
-      yfiles.view.HierarchicNestingPolicy.NODES
-
-    // Assign the default demo styles
-    DemoStyles.initDemoStyles(graph)
-
-    // initialize the input mode
-    const mode = new yfiles.input.GraphEditorInputMode({
-      allowGroupingOperations: true
-    })
-    graphComponent.inputMode = mode
-
-    configureBridges()
-
-    createSampleGraph()
-
-    registerCommands()
-
-    app.show(graphComponent)
-  }
-
-  /**
-   * Adds and configures the {@link yfiles.view.BridgeManager}.
-   */
-  function configureBridges() {
-    bridgeManager = new yfiles.view.BridgeManager()
-
-    // We would like to change the custom bridge rendering default,
-    // this can be done by decorating the existing default callback
-    bridgeManager.defaultBridgeCreator = new BridgeHelper.CustomCallback(
-      bridgeManager.defaultBridgeCreator
+  bindChangeListener("select[data-command='CrossingStyleChanged']", () => {
+    const crossingStyleComboBox = document.getElementById('crossingStyleComboBox')
+    bridgeManager.defaultBridgeCrossingStyle = parseInt(
+      crossingStyleComboBox[crossingStyleComboBox.selectedIndex].value
     )
-
-    // Convenience class that just queries all model item
-    const provider = new yfiles.view.GraphObstacleProvider()
-
-    // We also want to query nodes for potential obstacles (disabled by default)
-    provider.queryNodes = true
-
-    // Register an IObstacleProvider, bridgeManager will query all registered obstacle providers
-    // to determine if a bridge must be created
-    bridgeManager.addObstacleProvider(provider)
-    // Bind the bridge manager to the GraphComponent...
-    bridgeManager.canvasComponent = graphComponent
-
-    // We register a custom obstacle provider in the node's lookup of group nodes
-    // that can be used by bridgeManager (through provider...)
-    graphComponent.graph.decorator.nodeDecorator.obstacleProviderDecorator.setFactory(
-      node => graphComponent.graph.isGroupNode(node),
-      node => new BridgeHelper.GroupNodeObstacleProvider(node)
-    )
-
-    initializeToolBarElements()
-  }
-
-  /**
-   * Initializes the combo boxes and the text-boxes of the toolbar.
-   */
-  function initializeToolBarElements() {
-    const crossingStylesComboBox = document.getElementById('crossingStyleComboBox')
-    const crossingStylesElements = [
-      {
-        text: 'Arc',
-        value: yfiles.view.BridgeCrossingStyle.ARC
-      },
-      {
-        text: 'Gap',
-        value: yfiles.view.BridgeCrossingStyle.GAP
-      },
-      {
-        text: 'TwoSidesScaled',
-        value: yfiles.view.BridgeCrossingStyle.TWO_SIDES_SCALED
-      },
-      {
-        text: 'TwoSides',
-        value: yfiles.view.BridgeCrossingStyle.TWO_SIDES
-      },
-      {
-        text: 'Custom',
-        value: yfiles.view.BridgeCrossingStyle.CUSTOM
-      },
-      {
-        text: 'Rectangle',
-        value: yfiles.view.BridgeCrossingStyle.RECTANGLE
-      },
-      {
-        text: 'RectangleScaled',
-        value: yfiles.view.BridgeCrossingStyle.RECTANGLE_SCALED
-      },
-      {
-        text: 'ArcScaled',
-        value: yfiles.view.BridgeCrossingStyle.ARC_SCALED
-      }
-    ]
-    fillComboBox(crossingStylesComboBox, crossingStylesElements)
-
+    graphComponent.invalidate()
+  })
+  bindChangeListener("select[data-command='CrossingPolicyChanged']", () => {
     const crossingPolicyComboBox = document.getElementById('crossingPolicyComboBox')
-    const crossingDeterminationElements = [
-      {
-        text: 'HorizontalBridgesVertical',
-        value: yfiles.view.BridgeCrossingPolicy.HORIZONTAL_BRIDGES_VERTICAL
-      },
-      {
-        text: 'VerticalBridgesHorizontal',
-        value: yfiles.view.BridgeCrossingPolicy.VERTICAL_BRIDGES_HORIZONTAL
-      },
-      {
-        text: 'MoreHorizontalBridgesLessHorizontal',
-        value: yfiles.view.BridgeCrossingPolicy.MORE_HORIZONTAL_BRIDGES_LESS_HORIZONTAL
-      },
-      {
-        text: 'MoreVerticalBridgesLessVertical',
-        value: yfiles.view.BridgeCrossingPolicy.MORE_VERTICAL_BRIDGES_LESS_VERTICAL
-      }
-    ]
-    fillComboBox(crossingPolicyComboBox, crossingDeterminationElements)
-
+    bridgeManager.bridgeCrossingPolicy = parseInt(
+      crossingPolicyComboBox[crossingPolicyComboBox.selectedIndex].value
+    )
+    graphComponent.invalidate()
+  })
+  bindChangeListener("select[data-command='BridgeOrientationChanged']", () => {
     const bridgeOrientationComboBox = document.getElementById('bridgeOrientationComboBox')
-    const bridgeOrientationElements = [
-      {
-        text: 'Up',
-        value: yfiles.view.BridgeOrientationStyle.UP
-      },
-      {
-        text: 'Down',
-        value: yfiles.view.BridgeOrientationStyle.DOWN
-      },
-      {
-        text: 'Left',
-        value: yfiles.view.BridgeOrientationStyle.LEFT
-      },
-      {
-        text: 'Right',
-        value: yfiles.view.BridgeOrientationStyle.RIGHT
-      },
-      {
-        text: 'FlowRight',
-        value: yfiles.view.BridgeOrientationStyle.FLOW_RIGHT
-      },
-      {
-        text: 'Positive',
-        value: yfiles.view.BridgeOrientationStyle.POSITIVE
-      },
-      {
-        text: 'Negative',
-        value: yfiles.view.BridgeOrientationStyle.NEGATIVE
-      },
-      {
-        text: 'FlowLeft',
-        value: yfiles.view.BridgeOrientationStyle.FLOW_LEFT
-      }
-    ]
-    fillComboBox(bridgeOrientationComboBox, bridgeOrientationElements)
-  }
-
-  /**
-   * Fills the given combo box with the given values.
-   * @param {HTMLElement} comboBox The combo box to be filled
-   * @param {Array} content The values to be used
-   */
-  function fillComboBox(comboBox, content) {
-    for (let i = 0; i < content.length; i++) {
-      const el = document.createElement('option')
-      el.textContent = content[i].text
-      el.value = content[i].value
-      comboBox.appendChild(el)
-    }
-  }
-
-  /**
-   * Wires up the UI.
-   */
-  function registerCommands() {
-    const iCommand = yfiles.input.ICommand
-    app.bindCommand("button[data-command='ZoomIn']", iCommand.INCREASE_ZOOM, graphComponent)
-    app.bindCommand("button[data-command='ZoomOut']", iCommand.DECREASE_ZOOM, graphComponent)
-    app.bindCommand("button[data-command='FitContent']", iCommand.FIT_GRAPH_BOUNDS, graphComponent)
-    app.bindCommand("button[data-command='ZoomOriginal']", iCommand.ZOOM, graphComponent, 1.0)
-
-    app.bindChangeListener("select[data-command='CrossingStyleChanged']", () => {
-      const crossingStyleComboBox = document.getElementById('crossingStyleComboBox')
-      bridgeManager.defaultBridgeCrossingStyle = parseInt(
-        crossingStyleComboBox[crossingStyleComboBox.selectedIndex].value
-      )
-      graphComponent.invalidate()
-    })
-    app.bindChangeListener("select[data-command='CrossingPolicyChanged']", () => {
-      const crossingPolicyComboBox = document.getElementById('crossingPolicyComboBox')
-      bridgeManager.bridgeCrossingPolicy = parseInt(
-        crossingPolicyComboBox[crossingPolicyComboBox.selectedIndex].value
-      )
-      graphComponent.invalidate()
-    })
-    app.bindChangeListener("select[data-command='BridgeOrientationChanged']", () => {
-      const bridgeOrientationComboBox = document.getElementById('bridgeOrientationComboBox')
-      bridgeManager.defaultBridgeOrientationStyle = parseInt(
-        bridgeOrientationComboBox[bridgeOrientationComboBox.selectedIndex].value
-      )
-      graphComponent.invalidate()
-    })
-
-    const bridgeWidthSlider = document.getElementById('bridgeWidthSlider')
-    bridgeWidthSlider.addEventListener(
-      'change',
-      evt => {
-        bridgeManager.defaultBridgeWidth = parseInt(bridgeWidthSlider.value)
-        graphComponent.invalidate()
-        document.getElementById('bridgeWidthLabel').textContent = bridgeWidthSlider.value.toString()
-      },
-      true
+    bridgeManager.defaultBridgeOrientationStyle = parseInt(
+      bridgeOrientationComboBox[bridgeOrientationComboBox.selectedIndex].value
     )
+    graphComponent.invalidate()
+  })
 
-    const bridgeHeightSlider = document.getElementById('bridgeHeightSlider')
-    bridgeHeightSlider.addEventListener(
-      'change',
-      evt => {
-        bridgeManager.defaultBridgeHeight = parseInt(bridgeHeightSlider.value)
-        graphComponent.invalidate()
-        document.getElementById(
-          'bridgeHeightLabel'
-        ).textContent = bridgeHeightSlider.value.toString()
-      },
-      true
-    )
+  const bridgeWidthSlider = document.getElementById('bridgeWidthSlider')
+  bridgeWidthSlider.addEventListener(
+    'change',
+    evt => {
+      bridgeManager.defaultBridgeWidth = parseInt(bridgeWidthSlider.value)
+      graphComponent.invalidate()
+      document.getElementById('bridgeWidthLabel').textContent = bridgeWidthSlider.value.toString()
+    },
+    true
+  )
+
+  const bridgeHeightSlider = document.getElementById('bridgeHeightSlider')
+  bridgeHeightSlider.addEventListener(
+    'change',
+    evt => {
+      bridgeManager.defaultBridgeHeight = parseInt(bridgeHeightSlider.value)
+      graphComponent.invalidate()
+      document.getElementById('bridgeHeightLabel').textContent = bridgeHeightSlider.value.toString()
+    },
+    true
+  )
+}
+
+/**
+ * Creates the sample graph.
+ */
+function createSampleGraph() {
+  const graph = graphComponent.graph
+  const nodes = []
+  for (let i = 1; i < 5; i++) {
+    nodes.push(graph.createNodeAt(new Point(50 + 40 * i, 260)))
+    nodes.push(graph.createNodeAt(new Point(50 + 40 * i, 40)))
+    nodes.push(graph.createNodeAt(new Point(40, 50 + 40 * i)))
+    nodes.push(graph.createNodeAt(new Point(260, 50 + 40 * i)))
   }
 
-  /**
-   * Creates the sample graph.
-   */
-  function createSampleGraph() {
-    const graph = graphComponent.graph
-    const nodes = []
-    for (let i = 1; i < 5; i++) {
-      nodes.push(graph.createNodeAt(new yfiles.geometry.Point(50 + 40 * i, 260)))
-      nodes.push(graph.createNodeAt(new yfiles.geometry.Point(50 + 40 * i, 40)))
-      nodes.push(graph.createNodeAt(new yfiles.geometry.Point(40, 50 + 40 * i)))
-      nodes.push(graph.createNodeAt(new yfiles.geometry.Point(260, 50 + 40 * i)))
-    }
-
-    for (let i = 0; i < nodes.length; i++) {
-      graph.addLabel(nodes[i], `${i}`)
-    }
-
-    graph.createEdge(nodes[0], nodes[1])
-
-    const p1 = graph.addPortAt(nodes[0], new yfiles.geometry.Point(0, 0))
-    graph.setRelativePortLocation(p1, new yfiles.geometry.Point(5, 0))
-
-    const p2 = graph.addPortAt(nodes[1], new yfiles.geometry.Point(0, 0))
-    graph.setRelativePortLocation(p2, new yfiles.geometry.Point(5, 0))
-    graph.createEdge(p1, p2)
-
-    graph.createEdge(nodes[5], nodes[4])
-    graph.createEdge(nodes[2], nodes[3])
-    graph.createEdge(nodes[7], nodes[6])
-    graph.createEdge(nodes[2 + 8], nodes[3 + 8])
-    graph.createEdge(nodes[7 + 8], nodes[6 + 8])
-    graph.createEdge(nodes[0 + 8], nodes[1 + 8])
-    graph.createEdge(nodes[5 + 8], nodes[4 + 8])
-
-    const n1 = graph.createNodeAt(new yfiles.geometry.Point(300, 150))
-    const n2 = graph.createNodeAt(new yfiles.geometry.Point(500, 150))
-
-    graph.createEdge(n1, n2)
-
-    const groupNode = graph.createGroupNode({
-      labels: 'Group Node',
-      children: [{ layout: new yfiles.geometry.Rect(400, 150, 30, 30) }]
-    })
-    graph.adjustGroupNodeLayout(groupNode)
-    graph.setNodeLayout(
-      groupNode,
-      groupNode.layout.toRect().getEnlarged(new yfiles.geometry.Insets(15, 0, 15, 0))
-    )
-
-    graphComponent.fitGraphBounds()
+  for (let i = 0; i < nodes.length; i++) {
+    graph.addLabel(nodes[i], `${i}`)
   }
 
-  // run the demo
-  run()
-})
+  graph.createEdge(nodes[0], nodes[1])
+
+  const p1 = graph.addPortAt(nodes[0], new Point(0, 0))
+  graph.setRelativePortLocation(p1, new Point(5, 0))
+
+  const p2 = graph.addPortAt(nodes[1], new Point(0, 0))
+  graph.setRelativePortLocation(p2, new Point(5, 0))
+  graph.createEdge(p1, p2)
+
+  graph.createEdge(nodes[5], nodes[4])
+  graph.createEdge(nodes[2], nodes[3])
+  graph.createEdge(nodes[7], nodes[6])
+  graph.createEdge(nodes[2 + 8], nodes[3 + 8])
+  graph.createEdge(nodes[7 + 8], nodes[6 + 8])
+  graph.createEdge(nodes[0 + 8], nodes[1 + 8])
+  graph.createEdge(nodes[5 + 8], nodes[4 + 8])
+
+  const n1 = graph.createNodeAt(new Point(300, 150))
+  const n2 = graph.createNodeAt(new Point(500, 150))
+
+  graph.createEdge(n1, n2)
+
+  const groupNode = graph.createGroupNode({
+    labels: ['Group Node'],
+    children: [{ layout: new Rect(400, 150, 30, 30) }]
+  })
+  graph.adjustGroupNodeLayout(groupNode)
+  graph.setNodeLayout(groupNode, groupNode.layout.toRect().getEnlarged(new Insets(15, 0, 15, 0)))
+
+  graphComponent.fitGraphBounds()
+}
+
+// run the demo
+loadJson().then(run)

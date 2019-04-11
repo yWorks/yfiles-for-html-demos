@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.1.
- ** Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.2.
+ ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -156,17 +156,43 @@ body {
   -ms-touch-action: none;
   overscroll-behavior-y: contain;
 }
-body {
-  background: white url(../image/loading.gif) no-repeat center;
-}
 body > * {
   visibility: hidden;
+}
+body:not(.loaded):not(.file-system-warning):before {
+  content: '';
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: transparent url(data:image/svg+xml;charset=utf-8;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4NCjxzdmcgaWQ9ImxvYWRpbmctYmFja2dyb3VuZCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHg9IjBweCIgeT0iMHB4IiB3aWR0aD0iMTYycHgiDQogICAgIGhlaWdodD0iMTk1cHgiIHZpZXdCb3g9IjAgNzkyIDYyMiA4MDIiIGVuYWJsZS1iYWNrZ3JvdW5kPSJuZXcgMCA3OTIgNjEyIDc5MiIgeG1sOnNwYWNlPSJwcmVzZXJ2ZSI+DQogIDxkZWZzPg0KICAgIDxsaW5lYXJHcmFkaWVudCBpZD0ibXlHcmFkaWVudCI+DQogICAgICA8c3RvcCBvZmZzZXQ9IjEwJSIgc3RvcC1jb2xvcj0iIzMzNjY5OSIvPg0KICAgICAgPHN0b3Agb2Zmc2V0PSI0MiUiIHN0b3AtY29sb3I9IiNmZmYiIHN0b3Atb3BhY2l0eT0iMCIvPg0KICAgIDwvbGluZWFyR3JhZGllbnQ+DQogIDwvZGVmcz4NCiAgPGcgaWQ9ImxvYWRpbmctbW92aW5nIj4NCiAgICA8Y2lyY2xlIGN4PSIzMTEiIGN5PSIxMjYwIiByPSIzMDUiIGZpbGw9IiM2Njk5Q0MiLz4NCiAgICA8Y2lyY2xlIGN4PSIzMTEiIGN5PSIxMjYwIiByPSIzMDUiIGZpbGw9InVybCgnI215R3JhZGllbnQnKSIvPg0KICAgIDxjaXJjbGUgY3g9IjMxMSIgY3k9IjEyNjAiIHI9IjI3NSIgZmlsbD0iIzY2OTlDQyIvPg0KICAgIDxwYXRoIGQ9Ik0gMzExIDEyNjAgTCA2IDEyNjAgQSAzMTEgMzExIDAgMCAxIDMxMSA5NTUgWiIgZmlsbD0iIzY2OTlDQyIvPg0KICA8L2c+DQo8L3N2Zz4=) no-repeat center;
+  animation: rotation 1.4s infinite linear;
+  transform-origin: 50% calc(50% + 16.3px);
+}
+body:not(.loaded):not(.file-system-warning):after {
+  content: '';
+  display: block;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  background: transparent url(data:image/svg+xml;charset=utf-8;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4NCjxzdmcgaWQ9ImxvYWRpbmctYmFja2dyb3VuZCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHg9IjBweCIgeT0iMHB4IiB3aWR0aD0iMTYycHgiDQogICAgIGhlaWdodD0iMTk1cHgiIHZpZXdCb3g9IjAgNzkyIDYyMiA4MDIiIGVuYWJsZS1iYWNrZ3JvdW5kPSJuZXcgMCA3OTIgNjEyIDc5MiIgeG1sOnNwYWNlPSJwcmVzZXJ2ZSI+DQogIDxwYXRoIGlkPSJ5bG9nby1mb3JlZ3JvdW5kIiBmaWxsPSIjMzMzIiBkPSJNMzQzLDc5Ni40Yy01Ni44LDAtMTA3LjksNzEuNy0xMzIuMSwxNDkuNGMyLDEwLjUsOS4zLDE4LjUsMjEuNywxNC45ICAgYzI0LjItNDguNyw0My45LTg4LjIsNjcuMi04OC4yYzIxLjcsMCw0MS41LDQ1LjEsNDMuOSwxNzMuNWMxLjIsOTguNi03LjIsMjA0LjktMjMsMjY0LjFjLTIxLjYsNzYuNi03Mi43LDE0OS41LTEwMS43LDE3My42ICAgYy0yNy44LDIzLTQ4LjcsMzIuMi02My42LDMyLjJjLTE4LjUsMC0yOS0xNC45LTMyLjItMjAuOWMtOC4xLTExLjctMTkuNy0xOC41LTMxLTE4LjVjLTI1LjgsMC00Ni43LDIwLjktNDYuNyw0OS45ICAgczIyLjksNTMuMSw2MC40LDUzLjFjMzcsMCw5NC42LTE4LjUsMTgwLjgtMTE3LjJjOTIuNi0xMDUuMSwxMzMuMy0xODIsMTkxLjMtMjc3LjhjMTAzLTE3NC43LDEzNS4yLTMyNCwxMzQtMzUzICAgYzAtMTIuNS0zLjItMTguNS0xMC41LTIzYy05LjMtNi0yNC4yLTEwLjUtMzIuMi0xMC41cy0yNS44LDIuNC0yNy44LDM2LjJjLTEuMiwzMC4yLTE4LjUsMTQ3LTQyLjcsMjE0LjIgICBjLTI1LjgsNzAuNS01OS4yLDE0Mi41LTk3LjQsMTk5LjNIMzk3YzE2LjUtOTUuOCwxOC41LTE4MC44LDE3LjctMjU0LjlDNDExLjUsOTEyLDQwMi4yLDc5Ni40LDM0Myw3OTYuNCIvPg0KPC9zdmc+) no-repeat center;
 }
 body.loaded {
   background: none;
 }
 body.loaded > * {
   visibility: visible;
+}
+@keyframes rotation {
+  0% {
+    -webkit-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
 }
 .error-box {
   visibility: visible;
@@ -362,6 +388,82 @@ body {
   opacity: 0;
   width: 0;
 }
+.demo-fullscreen-button {
+  position: absolute;
+  top: 0;
+  right: 0;
+  display: inline-block;
+  border: none;
+  outline: none;
+  height: 60px;
+  width: 60px;
+  cursor: pointer;
+  background: transparent url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath d='M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z' fill='white'/%3E%3C/svg%3E") no-repeat 50% 50%;
+  background-size: 25px;
+}
+.demo-fullscreen-button:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+.demo-fullscreen-button:active {
+  background-color: rgba(0, 0, 0, 0.2);
+}
+@media screen and (max-height: 500px) {
+  .demo-fullscreen-button {
+    height: 30px;
+    width: 30px;
+  }
+}
+.demo-has-right.demo-right-hidden .demo-fullscreen-button {
+  right: 60px;
+  /* Add a delayed transition for the sidebar close animation */
+  transition: right 0.2s cubic-bezier(0.23, 1, 0.32, 1);
+  transition-delay: 0.1s;
+}
+@media screen and (max-height: 500px) {
+  .demo-has-right.demo-right-hidden .demo-fullscreen-button {
+    right: 30px;
+  }
+}
+:fullscreen .demo-toolbar {
+  top: 30px;
+}
+:fullscreen .demo-header {
+  height: 30px;
+  font-size: 10px;
+}
+:fullscreen .demo-header a {
+  height: 30px;
+  line-height: 30px;
+}
+:fullscreen .demo-header .demo-y-logo {
+  height: 30px;
+  line-height: 30px;
+}
+:fullscreen .demo-header .demo-title {
+  height: 30px;
+  line-height: 30px;
+}
+:fullscreen .demo-fullscreen-button {
+  height: 30px;
+  width: 30px;
+}
+:fullscreen .demo-has-right.demo-right-hidden .demo-fullscreen-button {
+  right: 30px;
+}
+:fullscreen #graphComponent {
+  top: 40px;
+}
+:fullscreen .demo-header + #graphComponent,
+:fullscreen .demo-header + a + #graphComponent,
+:fullscreen .demo-header + a + a + #graphComponent {
+  /* demos without toolbar */
+  top: 30px;
+}
+:fullscreen .demo-left-hidden .demo-left-sidebar-toggle-button,
+:fullscreen .demo-right-hidden .demo-right-sidebar-toggle-button {
+  width: 30px;
+  height: 30px;
+}
 .demo-left-sidebar-toggle-button,
 .demo-right-sidebar-toggle-button {
   position: absolute;
@@ -376,13 +478,6 @@ body {
   background-size: 39px;
   z-index: 99;
 }
-@media screen and (max-height: 500px) {
-  .demo-left-sidebar-toggle-button,
-  .demo-right-sidebar-toggle-button {
-    width: 30px;
-    height: 30px;
-  }
-}
 .demo-left-sidebar-toggle-button:hover,
 .demo-right-sidebar-toggle-button:hover {
   background-color: rgba(0, 0, 0, 0.1);
@@ -396,6 +491,12 @@ body {
 }
 .demo-left-hidden .demo-left-sidebar-toggle-button {
   background-image: url('../../resources/image/sidebar-left_white.svg');
+}
+@media screen and (max-height: 500px) {
+  .demo-left-hidden .demo-left-sidebar-toggle-button {
+    width: 30px;
+    height: 30px;
+  }
 }
 .demo-left-hidden .demo-left-sidebar-toggle-button:hover {
   background-color: rgba(255, 255, 255, 0.2);
@@ -421,6 +522,12 @@ body {
 }
 .demo-right-hidden .demo-right-sidebar-toggle-button {
   background-image: url('../../resources/image/sidebar-right_white.svg');
+}
+@media screen and (max-height: 500px) {
+  .demo-right-hidden .demo-right-sidebar-toggle-button {
+    width: 30px;
+    height: 30px;
+  }
 }
 .demo-right-hidden .demo-right-sidebar-toggle-button:hover {
   background-color: rgba(255, 255, 255, 0.2);
@@ -542,6 +649,19 @@ body {
 .demo-has-left.demo-left-hidden .demo-header {
   padding-left: 60px;
 }
+.demo-header + #graphComponent,
+.demo-header + a + #graphComponent,
+.demo-header + a + a + #graphComponent {
+  /* demos without toolbar */
+  top: 60px;
+}
+@media screen and (max-height: 500px) {
+  .demo-header + #graphComponent,
+  .demo-header + a + #graphComponent,
+  .demo-header + a + a + #graphComponent {
+    top: 30px;
+  }
+}
 .demo-toolbar {
   position: absolute;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
@@ -600,18 +720,6 @@ body {
 .demo-toolbar button.labeled[class*='demo-icon'] {
   padding-left: 24px;
   background-position-x: 2px;
-}
-@media screen and (max-width: 960px ) {
-  .demo-toolbar .demo-hide-when-small {
-    visibility: collapse;
-    display: none !important;
-  }
-}
-@media screen and (max-width: 640px ) {
-  .demo-toolbar .demo-hide-when-tiny {
-    visibility: collapse;
-    display: none !important;
-  }
 }
 .demo-toolbar input.demo-toggle-button {
   display: none !important;
@@ -710,13 +818,17 @@ body {
   min-width: 150px;
   background-color: #f7f7f7;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+  box-sizing: border-box;
 }
 .demo-toolbar .overflow-container-wrapper.open {
   right: 0;
+  max-height: calc(100vh - 100px);
+  overflow-y: scroll;
 }
 @media screen and (max-height: 500px) {
-  .demo-toolbar .overflow-container-wrapper {
+  .demo-toolbar .overflow-container-wrapper.open {
     top: 30px;
+    max-height: calc(100vh - 60px);
   }
 }
 .demo-toolbar .overflow-container-wrapper .overflow-container {
@@ -833,6 +945,16 @@ body {
   padding: 0;
   min-width: 100px;
   user-select: none;
+  opacity: 0;
+  /* the context menu is faded in */
+  transition: opacity 0.2s ease-in;
+}
+.demo-context-menu.visible {
+  opacity: 1;
+}
+.demo-context-menu.demo-context-menu-clone {
+  pointer-events: none;
+  transition: opacity 0.2s ease-out;
 }
 .demo-context-menu .demo-menu-item {
   position: relative;

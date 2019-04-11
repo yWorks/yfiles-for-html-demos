@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.1.
- ** Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.2.
+ ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,45 +26,57 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-'use strict'
+import 'yfiles/yfiles.css'
+import '../../../resources/style/demo.css'
 
-/* eslint-disable import/no-extraneous-dependencies */
-/* eslint-disable import/no-unresolved */
+import licenseData from '../../../../lib/license.json'
+import Color from 'color' // https://github.com/harthur/color
+import {
+  Class,
+  GraphComponent,
+  GraphEditorInputMode,
+  LayoutExecutor,
+  License,
+  MinimumNodeSizeStage,
+  OrganicLayout,
+  PolylineEdgeStyle,
+  ShapeNodeStyle,
+  SolidColorFill
+} from 'yfiles'
+import { enableWorkarounds } from '../../../utils/Workarounds'
 
-// All yfiles modules return the yfiles namespace object
-const yfiles = require('yfiles/view-editor')
-const demoBrowserSupport = require('../../../utils/Workarounds')
-require('yfiles/view-layout-bridge')
-require('yfiles/layout-organic')
-require('../../../resources/license')
+License.value = licenseData
 
-const Color = require('color') // https://github.com/harthur/color
+enableWorkarounds()
 
-demoBrowserSupport.enableWorkarounds(yfiles)
+const graphComponent = new GraphComponent('graphComponent')
 
-const graphComponent = new yfiles.view.GraphComponent('graphComponent')
-
-graphComponent.inputMode = new yfiles.input.GraphEditorInputMode()
+graphComponent.inputMode = new GraphEditorInputMode()
 
 // Set the default edge- and node styles
-graphComponent.graph.edgeDefaults.style = new yfiles.styles.PolylineEdgeStyle()
+graphComponent.graph.edgeDefaults.style = new PolylineEdgeStyle()
 const color = Color('#2c3e50')
 const defaultColor = color.rotate(-75).lighten(0.75)
 graphComponent.graph.nodeDefaults.style = createStyle(defaultColor)
 
 createSampleGraph(graphComponent.graph, color)
-layout()
-graphComponent.fitGraphBounds()
+layout().then(() => {
+  graphComponent.fitGraphBounds()
+})
+
+// We need to load the 'view-layout-bridge' module explicitly to prevent tree-shaking
+// tools it from removing this dependency which is needed for 'morphLayout'.
+Class.ensure(LayoutExecutor)
 
 function layout() {
-  const layoutAlgorithm = new yfiles.layout.MinimumNodeSizeStage(new yfiles.organic.OrganicLayout())
-  graphComponent.morphLayout(layoutAlgorithm, '2s')
+  const layoutAlgorithm = new MinimumNodeSizeStage(new OrganicLayout())
+  return graphComponent.morphLayout(layoutAlgorithm, '2s')
 }
 
 function createSampleGraph(graph, styleColor) {
   graph.clear()
 
-  const /** @type {yfiles.graph.INode[]} */ nodes = []
+  const nodes = []
   for (let j = 0; j < 27; j++) {
     nodes[j] = graph.createNode()
     styleColor = styleColor.rotate(-5).lighten(0.05)
@@ -109,8 +121,8 @@ function createSampleGraph(graph, styleColor) {
 // Use the Color npm module to create color variants for the node style
 function createStyle(styleColor) {
   const c = styleColor.rgb().round()
-  const brush = new yfiles.view.SolidColorFill(c.red(), c.green(), c.blue(), c.alpha() * 255)
-  return new yfiles.styles.ShapeNodeStyle({
+  const brush = new SolidColorFill(c.red(), c.green(), c.blue(), c.alpha() * 255)
+  return new ShapeNodeStyle({
     shape: 'ellipse',
     stroke: null,
     fill: brush

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.1.
- ** Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.2.
+ ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,225 +26,210 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-'use strict'
+import {
+  FoldingManager,
+  GraphComponent,
+  GraphEditorInputMode,
+  ICommand,
+  License,
+  Rect
+} from 'yfiles'
+import StructureView from './StructureView.js'
+import { bindAction, bindCommand, showApp } from '../../resources/demo-app.js'
+import { initDemoStyles } from '../../resources/demo-styles.js'
+import loadJson from '../../resources/load-json.js'
 
-require.config({
-  paths: {
-    yfiles: '../../../lib/umd/yfiles/',
-    utils: '../../utils/',
-    resources: '../../resources/'
-  }
-})
+/** @type {GraphComponent} */
+let graphComponent = null
 
-require([
-  'yfiles/view-editor',
-  'resources/demo-app',
-  'resources/demo-styles',
-  './StructureView.js',
-  'yfiles/view-folding',
-  'resources/license'
-], (
-  /** @type {yfiles_namespace} */ /** typeof yfiles */ yfiles,
-  app,
-  DemoStyles,
-  StructureView
-) => {
-  /** @type {yfiles.view.GraphComponent} */
-  let graphComponent = null
+/** @type {StructureView} */
+let structureView = null
 
-  /** @type {StructureView} */
-  let structureView = null
+function run(licenseData) {
+  License.value = licenseData
+  // initialize the GraphComponent and enable folding
+  graphComponent = new GraphComponent('graphComponent')
+  const foldingManager = new FoldingManager()
 
-  function run() {
-    // initialize the GraphComponent and enable folding
-    graphComponent = new yfiles.view.GraphComponent('graphComponent')
-    const foldingManager = new yfiles.graph.FoldingManager()
+  const foldingView = foldingManager.createFoldingView()
+  foldingView.enqueueNavigationalUndoUnits = true
 
-    const foldingView = foldingManager.createFoldingView()
-    foldingView.enqueueNavigationalUndoUnits = true
+  // configure default styles and build an initial sample graph
+  initDemoStyles(foldingView.graph)
+  createSampleGraph(foldingView.graph)
 
-    // configure default styles and build an initial sample graph
-    DemoStyles.initDemoStyles(foldingView.graph)
-    createSampleGraph(foldingView.graph)
+  graphComponent.graph = foldingView.graph
+  graphComponent.inputMode = new GraphEditorInputMode({
+    allowGroupingOperations: true
+  })
+  graphComponent.fitGraphBounds()
 
-    graphComponent.graph = foldingView.graph
-    graphComponent.inputMode = new yfiles.input.GraphEditorInputMode({
-      allowGroupingOperations: true
-    })
-    graphComponent.fitGraphBounds()
+  foldingManager.masterGraph.undoEngineEnabled = true
 
-    foldingManager.masterGraph.undoEngineEnabled = true
+  // instantiate the structure view
+  initializeStructureView()
 
-    // instantiate the structure view
-    initializeStructureView()
+  registerCommands()
 
-    registerCommands()
+  showApp(graphComponent)
+}
 
-    app.show(graphComponent)
-  }
-
-  /**
-   * Initializes the structure view component.
-   */
-  function initializeStructureView() {
-    structureView = new StructureView('#structure-view')
-    structureView.graph = graphComponent.graph
-    structureView.labelPlaceholder = '< node >'
-    structureView.onElementClicked = node => {
-      const viewNode = graphComponent.graph.foldingView
-        ? graphComponent.graph.foldingView.getViewItem(node)
-        : node
+/**
+ * Initializes the structure view component.
+ */
+function initializeStructureView() {
+  structureView = new StructureView('#structure-view')
+  structureView.graph = graphComponent.graph
+  structureView.labelPlaceholder = '< node >'
+  structureView.onElementClicked = node => {
+    const viewNode = graphComponent.graph.foldingView
+      ? graphComponent.graph.foldingView.getViewItem(node)
+      : node
+    if (viewNode) {
       graphComponent.currentItem = viewNode
       graphComponent.selection.clear()
       graphComponent.selection.setSelected(viewNode, true)
-      yfiles.input.ICommand.ZOOM_TO_CURRENT_ITEM.execute(null, graphComponent)
+      ICommand.ZOOM_TO_CURRENT_ITEM.execute(null, graphComponent)
     }
   }
+}
 
-  function registerCommands() {
-    const iCommand = yfiles.input.ICommand
+function registerCommands() {
+  bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent, null)
+  bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent, null)
+  bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent, null)
+  bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
 
-    app.bindCommand("button[data-command='ZoomIn']", iCommand.INCREASE_ZOOM, graphComponent, null)
-    app.bindCommand("button[data-command='ZoomOut']", iCommand.DECREASE_ZOOM, graphComponent, null)
-    app.bindCommand(
-      "button[data-command='FitContent']",
-      iCommand.FIT_GRAPH_BOUNDS,
-      graphComponent,
-      null
-    )
-    app.bindCommand("button[data-command='ZoomOriginal']", iCommand.ZOOM, graphComponent, 1.0)
+  bindCommand("button[data-command='Undo']", ICommand.UNDO, graphComponent, null)
+  bindCommand("button[data-command='Redo']", ICommand.REDO, graphComponent, null)
 
-    app.bindCommand("button[data-command='Undo']", iCommand.UNDO, graphComponent, null)
-    app.bindCommand("button[data-command='Redo']", iCommand.REDO, graphComponent, null)
+  bindCommand("button[data-command='Cut']", ICommand.CUT, graphComponent, null)
+  bindCommand("button[data-command='Copy']", ICommand.COPY, graphComponent, null)
+  bindCommand("button[data-command='Paste']", ICommand.PASTE, graphComponent, null)
+  bindCommand("button[data-command='Delete']", ICommand.DELETE, graphComponent, null)
 
-    app.bindCommand("button[data-command='Cut']", iCommand.CUT, graphComponent, null)
-    app.bindCommand("button[data-command='Copy']", iCommand.COPY, graphComponent, null)
-    app.bindCommand("button[data-command='Paste']", iCommand.PASTE, graphComponent, null)
-    app.bindCommand("button[data-command='Delete']", iCommand.DELETE, graphComponent, null)
+  bindCommand(
+    "button[data-command='GroupSelection']",
+    ICommand.GROUP_SELECTION,
+    graphComponent,
+    null
+  )
+  bindCommand(
+    "button[data-command='UngroupSelection']",
+    ICommand.UNGROUP_SELECTION,
+    graphComponent,
+    null
+  )
+  bindCommand("button[data-command='EnterGroup']", ICommand.ENTER_GROUP, graphComponent, null)
+  bindCommand("button[data-command='ExitGroup']", ICommand.EXIT_GROUP, graphComponent, null)
 
-    app.bindCommand(
-      "button[data-command='GroupSelection']",
-      iCommand.GROUP_SELECTION,
-      graphComponent,
-      null
-    )
-    app.bindCommand(
-      "button[data-command='UngroupSelection']",
-      iCommand.UNGROUP_SELECTION,
-      graphComponent,
-      null
-    )
-    app.bindCommand("button[data-command='EnterGroup']", iCommand.ENTER_GROUP, graphComponent, null)
-    app.bindCommand("button[data-command='ExitGroup']", iCommand.EXIT_GROUP, graphComponent, null)
+  bindAction('#sync-folding-state', e => (structureView.syncFoldingState = e.target.checked))
+}
 
-    app.bindAction('#sync-folding-state', e => (structureView.syncFoldingState = e.target.checked))
-  }
+/**
+ * Creates the initial graph.
+ */
+function createSampleGraph(graph) {
+  const n1 = graph.createNode({
+    layout: new Rect(126, 0, 30, 30),
+    labels: 'N1'
+  })
+  const n2 = graph.createNode({
+    layout: new Rect(126, 72, 30, 30),
+    labels: 'N2'
+  })
+  const n3 = graph.createNode({
+    layout: new Rect(75, 147, 30, 30),
+    labels: 'N3'
+  })
+  const n4 = graph.createNode({
+    layout: new Rect(177.5, 147, 30, 30),
+    labels: 'N4'
+  })
+  const n5 = graph.createNode({
+    layout: new Rect(110, 249, 30, 30),
+    labels: 'N5'
+  })
+  const n6 = graph.createNode({
+    layout: new Rect(177.5, 249, 30, 30),
+    labels: 'N6'
+  })
+  const n7 = graph.createNode({
+    layout: new Rect(110, 299, 30, 30),
+    labels: 'N7'
+  })
+  const n8 = graph.createNode({
+    layout: new Rect(177.5, 299, 30, 30),
+    labels: 'N8'
+  })
+  const n9 = graph.createNode({
+    layout: new Rect(110, 359, 30, 30),
+    labels: 'N9'
+  })
+  const n10 = graph.createNode({
+    layout: new Rect(47.5, 299, 30, 30),
+    labels: 'N10'
+  })
+  const n11 = graph.createNode({
+    layout: new Rect(20, 440, 30, 30),
+    labels: 'N11'
+  })
+  const n12 = graph.createNode({
+    layout: new Rect(110, 440, 30, 30),
+    labels: 'N12'
+  })
+  const n13 = graph.createNode({
+    layout: new Rect(20, 515, 30, 30),
+    labels: 'N13'
+  })
+  const n14 = graph.createNode({
+    layout: new Rect(80, 515, 30, 30),
+    labels: 'N14'
+  })
+  const n15 = graph.createNode({
+    layout: new Rect(140, 515, 30, 30),
+    labels: 'N15'
+  })
+  const n16 = graph.createNode({
+    layout: new Rect(20, 569, 30, 30),
+    labels: 'N16'
+  })
 
-  /**
-   * Creates the initial graph.
-   */
-  function createSampleGraph(graph) {
-    const n1 = graph.createNode({
-      layout: new yfiles.geometry.Rect(126, 0, 30, 30),
-      labels: 'N1'
-    })
-    const n2 = graph.createNode({
-      layout: new yfiles.geometry.Rect(126, 72, 30, 30),
-      labels: 'N2'
-    })
-    const n3 = graph.createNode({
-      layout: new yfiles.geometry.Rect(75, 147, 30, 30),
-      labels: 'N3'
-    })
-    const n4 = graph.createNode({
-      layout: new yfiles.geometry.Rect(177.5, 147, 30, 30),
-      labels: 'N4'
-    })
-    const n5 = graph.createNode({
-      layout: new yfiles.geometry.Rect(110, 249, 30, 30),
-      labels: 'N5'
-    })
-    const n6 = graph.createNode({
-      layout: new yfiles.geometry.Rect(177.5, 249, 30, 30),
-      labels: 'N6'
-    })
-    const n7 = graph.createNode({
-      layout: new yfiles.geometry.Rect(110, 299, 30, 30),
-      labels: 'N7'
-    })
-    const n8 = graph.createNode({
-      layout: new yfiles.geometry.Rect(177.5, 299, 30, 30),
-      labels: 'N8'
-    })
-    const n9 = graph.createNode({
-      layout: new yfiles.geometry.Rect(110, 359, 30, 30),
-      labels: 'N9'
-    })
-    const n10 = graph.createNode({
-      layout: new yfiles.geometry.Rect(47.5, 299, 30, 30),
-      labels: 'N10'
-    })
-    const n11 = graph.createNode({
-      layout: new yfiles.geometry.Rect(20, 440, 30, 30),
-      labels: 'N11'
-    })
-    const n12 = graph.createNode({
-      layout: new yfiles.geometry.Rect(110, 440, 30, 30),
-      labels: 'N12'
-    })
-    const n13 = graph.createNode({
-      layout: new yfiles.geometry.Rect(20, 515, 30, 30),
-      labels: 'N13'
-    })
-    const n14 = graph.createNode({
-      layout: new yfiles.geometry.Rect(80, 515, 30, 30),
-      labels: 'N14'
-    })
-    const n15 = graph.createNode({
-      layout: new yfiles.geometry.Rect(140, 515, 30, 30),
-      labels: 'N15'
-    })
-    const n16 = graph.createNode({
-      layout: new yfiles.geometry.Rect(20, 569, 30, 30),
-      labels: 'N16'
-    })
+  const group1 = graph.createGroupNode({
+    layout: new Rect(25, 45, 202.5, 353),
+    labels: 'Group 1'
+  })
+  graph.groupNodes(group1, [n2, n3, n4, n9, n10])
 
-    const group1 = graph.createGroupNode({
-      layout: new yfiles.geometry.Rect(25, 45, 202.5, 353),
-      labels: 'Group 1'
-    })
-    graph.groupNodes(group1, [n2, n3, n4, n9, n10])
+  const group2 = graph.createGroupNode({
+    parent: group1,
+    layout: new Rect(98, 222, 119.5, 116),
+    labels: 'Group 2'
+  })
+  graph.groupNodes(group2, [n5, n6, n7, n8])
 
-    const group2 = graph.createGroupNode({
-      parent: group1,
-      layout: new yfiles.geometry.Rect(98, 222, 119.5, 116),
-      labels: 'Group 2'
-    })
-    graph.groupNodes(group2, [n5, n6, n7, n8])
+  const group3 = graph.createGroupNode({
+    layout: new Rect(10, 413, 170, 141),
+    labels: 'Group 3'
+  })
+  graph.groupNodes(group3, [n11, n12, n13, n14, n15])
 
-    const group3 = graph.createGroupNode({
-      layout: new yfiles.geometry.Rect(10, 413, 170, 141),
-      labels: 'Group 3'
-    })
-    graph.groupNodes(group3, [n11, n12, n13, n14, n15])
+  graph.createEdge(n1, n2)
+  graph.createEdge(n2, n3)
+  graph.createEdge(n2, n4)
+  graph.createEdge(n3, n5)
+  graph.createEdge(n3, n10)
+  graph.createEdge(n5, n7)
+  graph.createEdge(n7, n9)
+  graph.createEdge(n4, n6)
+  graph.createEdge(n6, n8)
+  graph.createEdge(n10, n11)
+  graph.createEdge(n10, n12)
+  graph.createEdge(n11, n13)
+  graph.createEdge(n13, n16)
+  graph.createEdge(n12, n14)
+  graph.createEdge(n12, n15)
+}
 
-    graph.createEdge(n1, n2)
-    graph.createEdge(n2, n3)
-    graph.createEdge(n2, n4)
-    graph.createEdge(n3, n5)
-    graph.createEdge(n3, n10)
-    graph.createEdge(n5, n7)
-    graph.createEdge(n7, n9)
-    graph.createEdge(n4, n6)
-    graph.createEdge(n6, n8)
-    graph.createEdge(n10, n11)
-    graph.createEdge(n10, n12)
-    graph.createEdge(n11, n13)
-    graph.createEdge(n13, n16)
-    graph.createEdge(n12, n14)
-    graph.createEdge(n12, n15)
-  }
-
-  // Start the demo
-  run()
-})
+// Start the demo
+loadJson().then(run)

@@ -1,0 +1,776 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- ////////////////////////////////////////////////////////////////////////
+     // @license
+     // This demo file is part of yFiles for HTML 2.2.
+     // Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // 72070 Tuebingen, Germany. All rights reserved.
+     //
+     // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+     // of demo files in source code or binary form, with or without
+     // modification, is not permitted.
+     //
+     // Owners of a valid software license for a yFiles for HTML version that this
+     // demo is shipped with are allowed to use the demo source code as basis
+     // for their own yFiles for HTML powered applications. Use of such programs is
+     // governed by the rights and conditions as set out in the yFiles for HTML
+     // license agreement.
+     //
+     // THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+     // WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+     // MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+     // NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+     // SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+     // TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+     // PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+     // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+     // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+     // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+     // 
+     ////////////////////////////////////////////////////////////////////////-->
+
+<!--Created by yFiles for HTML 2.2-190329-B462-->
+<graphml xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://www.yworks.com/xml/schema/graphml.html/2.0/ygraphml.xsd " xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:y="http://www.yworks.com/xml/yfiles-common/3.0" xmlns:x="http://www.yworks.com/xml/yfiles-common/markup/3.0" xmlns:yjs="http://www.yworks.com/xml/yfiles-for-html/2.0/xaml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<key id="d0" for="node" attr.name="NodeLabels" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/NodeLabels"/>
+	<key id="d1" for="node" attr.name="NodeGeometry" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/NodeGeometry"/>
+	<key id="d2" for="all" attr.name="UserTags" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/UserTags"/>
+	<key id="d3" for="node" attr.name="NodeStyle" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/NodeStyle"/>
+	<key id="d4" for="edge" attr.name="EdgeLabels" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/EdgeLabels"/>
+	<key id="d5" for="edge" attr.name="EdgeGeometry" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/EdgeGeometry"/>
+	<key id="d6" for="edge" attr.name="EdgeStyle" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/EdgeStyle"/>
+	<key id="d7" for="port" attr.name="PortLabels" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/PortLabels"/>
+	<key id="d8" for="port" attr.name="PortLocationParameter" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/PortLocationParameter">
+		<default>
+			<x:Static Member="y:FreeNodePortLocationModel.NodeCenterAnchored"/>
+		</default>
+	</key>
+	<key id="d9" for="port" attr.name="PortStyle" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/PortStyle">
+		<default>
+			<x:Static Member="y:VoidPortStyle.Instance"/>
+		</default>
+	</key>
+	<key id="d10" attr.name="SharedData" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/SharedData"/>
+	<data key="d10">
+		<y:SharedData>
+			<yjs:TemplateNodeStyle x:Key="1" styleResourceKey="detailNodeStyleTemplate"/>
+			<yjs:PolylineEdgeStyle x:Key="2">
+				<yjs:PolylineEdgeStyle.stroke>
+					<yjs:Stroke fill="#FFAAAAAA" lineCap="SQUARE" thickness="2"/>
+				</yjs:PolylineEdgeStyle.stroke>
+			</yjs:PolylineEdgeStyle>
+		</y:SharedData>
+	</data>
+	<graph id="G" edgedefault="directed">
+		<node id="n0">
+			<data key="d1">
+				<y:RectD X="1015" Y="0" Width="285" Height="100"/>
+			</data>
+			<data key="d2">
+				<y:Json>{"position":"Chief Executive Officer","name":"Eric Joplin","email":"ejoplin@yoyodyne.com","phone":"555-0100","fax":"555-0101","businessUnit":"Executive Unit","status":"present","icon":"usericon_male1","subordinates":[{"position":"Chief Executive Assistant","name":"Gary Roberts","email":"groberts@yoyodyne.com","phone":"555-0100","fax":"555-0101","businessUnit":"Executive Unit","status":"present","icon":"usericon_male2","assistant":true,"subordinates":[{"position":"Senior Executive Assistant","name":"Alexander Burns","email":"aburns@yoyodyne.com","phone":"555-0102","fax":"555-0103","businessUnit":"Executive Unit","status":"present","icon":"usericon_male3"},{"position":"Junior Executive Assistant","name":"Linda Newland","email":"lnewland@yoyodyne.com","phone":"555-0112","fax":"555-0113","businessUnit":"Executive Unit","status":"present","icon":"usericon_female1"}]},{"position":"Vice President of Sales","name":"Richard Fuller","email":"rfuller@yoyodyne.com","phone":"555-0134","fax":"555-0135","businessUnit":"Sales","status":"unavailable","icon":"usericon_male1","subordinates":[{"position":"North America Sales Manager","name":"Joe Vargas","email":"jvargas@yoyodyne.com","phone":"555-0136","fax":"555-0137","businessUnit":"Sales","status":"present","icon":"usericon_male2","subordinates":[{"position":"Sales Representative","name":"Robert Parson","email":"rparson@yoyodyne.com","phone":"555-0150","fax":"555-0151","businessUnit":"Sales","status":"travel","icon":"usericon_male3"},{"position":"Sales Representative","name":"Melissa Noren","email":"mnoren@yoyodyne.com","phone":"555-0152","fax":"555-0153","businessUnit":"Sales","status":"unavailable","icon":"usericon_female1"}]},{"position":"European Sales Manager","name":"Robert Hartman","email":"rhartman@yoyodyne.com","phone":"555-0138","fax":"555-0139","businessUnit":"Sales","status":"busy","icon":"usericon_male5","subordinates":[{"position":"Sales Representative","name":"Rebecca Polite","email":"rpolite@yoyodyne.com","phone":"555-0148","fax":"555-0149","businessUnit":"Sales","status":"travel","icon":"usericon_female3"},{"position":"Sales Representative","name":"Michael Daniels","email":"mdaniels@yoyodyne.com","phone":"555-0154","fax":"555-0155","businessUnit":"Sales","status":"travel","icon":"usericon_male1"}]}]},{"position":"Marketing Manager","name":"Angela Haase","email":"ahaase@yoyodyne.com","phone":"555-0170","fax":"555-0171","businessUnit":"Marketing","status":"unavailable","icon":"usericon_female1","subordinates":[{"position":"Marketing Specialist","name":"Jermaine Stewart","email":"jstewart@yoyodyne.com","phone":"555-0172","fax":"555-0173","businessUnit":"Marketing","status":"present","icon":"usericon_male2"},{"position":"Marketing Assistant","name":"Lorraine Deaton","email":"ldeaton@yoyodyne.com","phone":"555-0174","fax":"555-0175","businessUnit":"Marketing","status":"present","icon":"usericon_female3","assistant":true}]},{"position":"Chief Financial Officer","name":"David Kerry","email":"dkerry@yoyodyne.com","phone":"555-0180","fax":"555-0181","businessUnit":"Accounting","status":"busy","icon":"usericon_male1","subordinates":[{"position":"Accounts Manager","name":"Walter Hastings","email":"whastings@yoyodyne.com","phone":"555-0182","fax":"555-0183","businessUnit":"Accounting","status":"present","icon":"usericon_male4","subordinates":[{"position":"Accounts Receivable Specialist","name":"Susan Moran","email":"smoran@yoyodyne.com","phone":"555-0184","fax":"555-0185","businessUnit":"Accounting","status":"present","icon":"usericon_female3"},{"position":"Accountant","name":"Melvin Cruz","email":"mcruz@yoyodyne.com","phone":"555-0186","fax":"555-0187","businessUnit":"Accounting","status":"unavailable","icon":"usericon_male1"},{"position":"Accounts Payable Specialist","name":"Rachel King","email":"rking@yoyodyne.com","phone":"555-0188","fax":"555-0189","businessUnit":"Accounting","status":"present","icon":"usericon_female2"}]},{"position":"Finance Manager","name":"Joy Medico","email":"jmedico@yoyodyne.com","phone":"555-0190","fax":"555-0191","businessUnit":"Accounting","status":"present","icon":"usericon_female3","subordinates":[{"position":"Purchasing Manager","name":"Edward Lewis","email":"elewis@yoyodyne.com","phone":"555-0192","fax":"555-0193","businessUnit":"Accounting","status":"unavailable","icon":"usericon_male1"},{"position":"Purchasing Assistant","name":"Mildred Bean","email":"mbean@yoyodyne.com","phone":"555-0194","fax":"555-0195","businessUnit":"Accounting","status":"busy","icon":"usericon_female5","assistant":true},{"position":"Buyer","name":"Raymond Lindley","email":"rlindley@yoyodyne.com","phone":"555-0196","fax":"555-0197","businessUnit":"Accounting","status":"present","icon":"usericon_male3"}]},{"position":"Human Resource Manager","name":"Danny Welch","email":"dwelch@yoyodyne.com","phone":"555-0198","fax":"555-0199","businessUnit":"Accounting","status":"present","icon":"usericon_male1","subordinates":[{"position":"Human Resource Administrative Assistant","name":"Leroy Vison","email":"lvison@yoyodyne.com","phone":"555-0200","fax":"555-0201","businessUnit":"Accounting","status":"present","icon":"usericon_male2","assistant":true},{"position":"Benefits Specialist","name":"Mark Parks","email":"mparks@yoyodyne.com","phone":"555-0202","fax":"555-0203","businessUnit":"Accounting","status":"present","icon":"usericon_male5"},{"position":"Recruiter","name":"Linda Lenhart","email":"llenhart@yoyodyne.com","phone":"555-0204","fax":"555-0205","businessUnit":"Accounting","status":"busy","icon":"usericon_female1"}]}]}]}</y:Json>
+			</data>
+			<data key="d3">
+				<y:GraphMLReference ResourceKey="1"/>
+			</data>
+			<port name="p0">
+				<data key="d8">
+					<y:FreeNodePortLocationModelParameter Ratio="0.5,1"/>
+				</data>
+			</port>
+			<port name="p1">
+				<data key="d8">
+					<y:FreeNodePortLocationModelParameter Ratio="0.5,1"/>
+				</data>
+			</port>
+			<port name="p2">
+				<data key="d8">
+					<y:FreeNodePortLocationModelParameter Ratio="0.5,1"/>
+				</data>
+			</port>
+			<port name="p3">
+				<data key="d8">
+					<y:FreeNodePortLocationModelParameter Ratio="0.5,1"/>
+				</data>
+			</port>
+		</node>
+		<node id="n1">
+			<data key="d1">
+				<y:RectD X="670" Y="140" Width="285" Height="100"/>
+			</data>
+			<data key="d2">
+				<y:Json>{"position":"Chief Executive Assistant","name":"Gary Roberts","email":"groberts@yoyodyne.com","phone":"555-0100","fax":"555-0101","businessUnit":"Executive Unit","status":"present","icon":"usericon_male2","assistant":true,"subordinates":[{"position":"Senior Executive Assistant","name":"Alexander Burns","email":"aburns@yoyodyne.com","phone":"555-0102","fax":"555-0103","businessUnit":"Executive Unit","status":"present","icon":"usericon_male3"},{"position":"Junior Executive Assistant","name":"Linda Newland","email":"lnewland@yoyodyne.com","phone":"555-0112","fax":"555-0113","businessUnit":"Executive Unit","status":"present","icon":"usericon_female1"}]}</y:Json>
+			</data>
+			<data key="d3">
+				<y:GraphMLReference ResourceKey="1"/>
+			</data>
+			<port name="p0"/>
+			<port name="p1">
+				<data key="d8">
+					<y:FreeNodePortLocationModelParameter Ratio="0.5,1"/>
+				</data>
+			</port>
+			<port name="p2">
+				<data key="d8">
+					<y:FreeNodePortLocationModelParameter Ratio="0.5,1"/>
+				</data>
+			</port>
+		</node>
+		<node id="n2">
+			<data key="d1">
+				<y:RectD X="1015" Y="461" Width="285" Height="100"/>
+			</data>
+			<data key="d2">
+				<y:Json>{"position":"Vice President of Sales","name":"Richard Fuller","email":"rfuller@yoyodyne.com","phone":"555-0134","fax":"555-0135","businessUnit":"Sales","status":"unavailable","icon":"usericon_male1","subordinates":[{"position":"North America Sales Manager","name":"Joe Vargas","email":"jvargas@yoyodyne.com","phone":"555-0136","fax":"555-0137","businessUnit":"Sales","status":"present","icon":"usericon_male2","subordinates":[{"position":"Sales Representative","name":"Robert Parson","email":"rparson@yoyodyne.com","phone":"555-0150","fax":"555-0151","businessUnit":"Sales","status":"travel","icon":"usericon_male3"},{"position":"Sales Representative","name":"Melissa Noren","email":"mnoren@yoyodyne.com","phone":"555-0152","fax":"555-0153","businessUnit":"Sales","status":"unavailable","icon":"usericon_female1"}]},{"position":"European Sales Manager","name":"Robert Hartman","email":"rhartman@yoyodyne.com","phone":"555-0138","fax":"555-0139","businessUnit":"Sales","status":"busy","icon":"usericon_male5","subordinates":[{"position":"Sales Representative","name":"Rebecca Polite","email":"rpolite@yoyodyne.com","phone":"555-0148","fax":"555-0149","businessUnit":"Sales","status":"travel","icon":"usericon_female3"},{"position":"Sales Representative","name":"Michael Daniels","email":"mdaniels@yoyodyne.com","phone":"555-0154","fax":"555-0155","businessUnit":"Sales","status":"travel","icon":"usericon_male1"}]}]}</y:Json>
+			</data>
+			<data key="d3">
+				<y:GraphMLReference ResourceKey="1"/>
+			</data>
+			<port name="p0"/>
+			<port name="p1">
+				<data key="d8">
+					<y:FreeNodePortLocationModelParameter Ratio="0.5,1"/>
+				</data>
+			</port>
+			<port name="p2">
+				<data key="d8">
+					<y:FreeNodePortLocationModelParameter Ratio="0.5,1"/>
+				</data>
+			</port>
+		</node>
+		<node id="n3">
+			<data key="d1">
+				<y:RectD X="2030" Y="461" Width="285" Height="100"/>
+			</data>
+			<data key="d2">
+				<y:Json>{"position":"Marketing Manager","name":"Angela Haase","email":"ahaase@yoyodyne.com","phone":"555-0170","fax":"555-0171","businessUnit":"Marketing","status":"unavailable","icon":"usericon_female1","subordinates":[{"position":"Marketing Specialist","name":"Jermaine Stewart","email":"jstewart@yoyodyne.com","phone":"555-0172","fax":"555-0173","businessUnit":"Marketing","status":"present","icon":"usericon_male2"},{"position":"Marketing Assistant","name":"Lorraine Deaton","email":"ldeaton@yoyodyne.com","phone":"555-0174","fax":"555-0175","businessUnit":"Marketing","status":"present","icon":"usericon_female3","assistant":true}]}</y:Json>
+			</data>
+			<data key="d3">
+				<y:GraphMLReference ResourceKey="1"/>
+			</data>
+			<port name="p0"/>
+			<port name="p1">
+				<data key="d8">
+					<y:FreeNodePortLocationModelParameter Ratio="0.5,1"/>
+				</data>
+			</port>
+			<port name="p2">
+				<data key="d8">
+					<y:FreeNodePortLocationModelParameter Ratio="0.5,1"/>
+				</data>
+			</port>
+		</node>
+		<node id="n4">
+			<data key="d1">
+				<y:RectD X="0" Y="461" Width="285" Height="100"/>
+			</data>
+			<data key="d2">
+				<y:Json>{"position":"Chief Financial Officer","name":"David Kerry","email":"dkerry@yoyodyne.com","phone":"555-0180","fax":"555-0181","businessUnit":"Accounting","status":"busy","icon":"usericon_male1","subordinates":[{"position":"Accounts Manager","name":"Walter Hastings","email":"whastings@yoyodyne.com","phone":"555-0182","fax":"555-0183","businessUnit":"Accounting","status":"present","icon":"usericon_male4","subordinates":[{"position":"Accounts Receivable Specialist","name":"Susan Moran","email":"smoran@yoyodyne.com","phone":"555-0184","fax":"555-0185","businessUnit":"Accounting","status":"present","icon":"usericon_female3"},{"position":"Accountant","name":"Melvin Cruz","email":"mcruz@yoyodyne.com","phone":"555-0186","fax":"555-0187","businessUnit":"Accounting","status":"unavailable","icon":"usericon_male1"},{"position":"Accounts Payable Specialist","name":"Rachel King","email":"rking@yoyodyne.com","phone":"555-0188","fax":"555-0189","businessUnit":"Accounting","status":"present","icon":"usericon_female2"}]},{"position":"Finance Manager","name":"Joy Medico","email":"jmedico@yoyodyne.com","phone":"555-0190","fax":"555-0191","businessUnit":"Accounting","status":"present","icon":"usericon_female3","subordinates":[{"position":"Purchasing Manager","name":"Edward Lewis","email":"elewis@yoyodyne.com","phone":"555-0192","fax":"555-0193","businessUnit":"Accounting","status":"unavailable","icon":"usericon_male1"},{"position":"Purchasing Assistant","name":"Mildred Bean","email":"mbean@yoyodyne.com","phone":"555-0194","fax":"555-0195","businessUnit":"Accounting","status":"busy","icon":"usericon_female5","assistant":true},{"position":"Buyer","name":"Raymond Lindley","email":"rlindley@yoyodyne.com","phone":"555-0196","fax":"555-0197","businessUnit":"Accounting","status":"present","icon":"usericon_male3"}]},{"position":"Human Resource Manager","name":"Danny Welch","email":"dwelch@yoyodyne.com","phone":"555-0198","fax":"555-0199","businessUnit":"Accounting","status":"present","icon":"usericon_male1","subordinates":[{"position":"Human Resource Administrative Assistant","name":"Leroy Vison","email":"lvison@yoyodyne.com","phone":"555-0200","fax":"555-0201","businessUnit":"Accounting","status":"present","icon":"usericon_male2","assistant":true},{"position":"Benefits Specialist","name":"Mark Parks","email":"mparks@yoyodyne.com","phone":"555-0202","fax":"555-0203","businessUnit":"Accounting","status":"present","icon":"usericon_male5"},{"position":"Recruiter","name":"Linda Lenhart","email":"llenhart@yoyodyne.com","phone":"555-0204","fax":"555-0205","businessUnit":"Accounting","status":"busy","icon":"usericon_female1"}]}]}</y:Json>
+			</data>
+			<data key="d3">
+				<y:GraphMLReference ResourceKey="1"/>
+			</data>
+			<port name="p0"/>
+			<port name="p1">
+				<data key="d8">
+					<y:FreeNodePortLocationModelParameter Ratio="0.5,1"/>
+				</data>
+			</port>
+			<port name="p2">
+				<data key="d8">
+					<y:FreeNodePortLocationModelParameter Ratio="0.5,1"/>
+				</data>
+			</port>
+			<port name="p3">
+				<data key="d8">
+					<y:FreeNodePortLocationModelParameter Ratio="0.5,1"/>
+				</data>
+			</port>
+		</node>
+		<node id="n5">
+			<data key="d1">
+				<y:RectD X="507.5" Y="601" Width="285" Height="100"/>
+			</data>
+			<data key="d2">
+				<y:Json>{"position":"Accounts Manager","name":"Walter Hastings","email":"whastings@yoyodyne.com","phone":"555-0182","fax":"555-0183","businessUnit":"Accounting","status":"present","icon":"usericon_male4","subordinates":[{"position":"Accounts Receivable Specialist","name":"Susan Moran","email":"smoran@yoyodyne.com","phone":"555-0184","fax":"555-0185","businessUnit":"Accounting","status":"present","icon":"usericon_female3"},{"position":"Accountant","name":"Melvin Cruz","email":"mcruz@yoyodyne.com","phone":"555-0186","fax":"555-0187","businessUnit":"Accounting","status":"unavailable","icon":"usericon_male1"},{"position":"Accounts Payable Specialist","name":"Rachel King","email":"rking@yoyodyne.com","phone":"555-0188","fax":"555-0189","businessUnit":"Accounting","status":"present","icon":"usericon_female2"}]}</y:Json>
+			</data>
+			<data key="d3">
+				<y:GraphMLReference ResourceKey="1"/>
+			</data>
+			<port name="p0"/>
+			<port name="p1">
+				<data key="d8">
+					<y:FreeNodePortLocationModelParameter Ratio="0.5,1"/>
+				</data>
+			</port>
+			<port name="p2">
+				<data key="d8">
+					<y:FreeNodePortLocationModelParameter Ratio="0.5,1"/>
+				</data>
+			</port>
+			<port name="p3">
+				<data key="d8">
+					<y:FreeNodePortLocationModelParameter Ratio="0.5,1"/>
+				</data>
+			</port>
+		</node>
+		<node id="n6">
+			<data key="d1">
+				<y:RectD X="365" Y="881" Width="285" Height="100"/>
+			</data>
+			<data key="d2">
+				<y:Json>{"position":"Finance Manager","name":"Joy Medico","email":"jmedico@yoyodyne.com","phone":"555-0190","fax":"555-0191","businessUnit":"Accounting","status":"present","icon":"usericon_female3","subordinates":[{"position":"Purchasing Manager","name":"Edward Lewis","email":"elewis@yoyodyne.com","phone":"555-0192","fax":"555-0193","businessUnit":"Accounting","status":"unavailable","icon":"usericon_male1"},{"position":"Purchasing Assistant","name":"Mildred Bean","email":"mbean@yoyodyne.com","phone":"555-0194","fax":"555-0195","businessUnit":"Accounting","status":"busy","icon":"usericon_female5","assistant":true},{"position":"Buyer","name":"Raymond Lindley","email":"rlindley@yoyodyne.com","phone":"555-0196","fax":"555-0197","businessUnit":"Accounting","status":"present","icon":"usericon_male3"}]}</y:Json>
+			</data>
+			<data key="d3">
+				<y:GraphMLReference ResourceKey="1"/>
+			</data>
+			<port name="p0"/>
+			<port name="p1">
+				<data key="d8">
+					<y:FreeNodePortLocationModelParameter Ratio="0.5,1"/>
+				</data>
+			</port>
+			<port name="p2">
+				<data key="d8">
+					<y:FreeNodePortLocationModelParameter Ratio="0.5,1"/>
+				</data>
+			</port>
+			<port name="p3">
+				<data key="d8">
+					<y:FreeNodePortLocationModelParameter Ratio="0.5,1"/>
+				</data>
+			</port>
+		</node>
+		<node id="n7">
+			<data key="d1">
+				<y:RectD X="365" Y="1342" Width="285" Height="100"/>
+			</data>
+			<data key="d2">
+				<y:Json>{"position":"Human Resource Manager","name":"Danny Welch","email":"dwelch@yoyodyne.com","phone":"555-0198","fax":"555-0199","businessUnit":"Accounting","status":"present","icon":"usericon_male1","subordinates":[{"position":"Human Resource Administrative Assistant","name":"Leroy Vison","email":"lvison@yoyodyne.com","phone":"555-0200","fax":"555-0201","businessUnit":"Accounting","status":"present","icon":"usericon_male2","assistant":true},{"position":"Benefits Specialist","name":"Mark Parks","email":"mparks@yoyodyne.com","phone":"555-0202","fax":"555-0203","businessUnit":"Accounting","status":"present","icon":"usericon_male5"},{"position":"Recruiter","name":"Linda Lenhart","email":"llenhart@yoyodyne.com","phone":"555-0204","fax":"555-0205","businessUnit":"Accounting","status":"busy","icon":"usericon_female1"}]}</y:Json>
+			</data>
+			<data key="d3">
+				<y:GraphMLReference ResourceKey="1"/>
+			</data>
+			<port name="p0"/>
+			<port name="p1">
+				<data key="d8">
+					<y:FreeNodePortLocationModelParameter Ratio="0.5,1"/>
+				</data>
+			</port>
+			<port name="p2">
+				<data key="d8">
+					<y:FreeNodePortLocationModelParameter Ratio="0.5,1"/>
+				</data>
+			</port>
+			<port name="p3">
+				<data key="d8">
+					<y:FreeNodePortLocationModelParameter Ratio="0.5,1"/>
+				</data>
+			</port>
+		</node>
+		<node id="n8">
+			<data key="d1">
+				<y:RectD X="182.5" Y="1482" Width="285" Height="100"/>
+			</data>
+			<data key="d2">
+				<y:Json>{"position":"Human Resource Administrative Assistant","name":"Leroy Vison","email":"lvison@yoyodyne.com","phone":"555-0200","fax":"555-0201","businessUnit":"Accounting","status":"present","icon":"usericon_male2","assistant":true}</y:Json>
+			</data>
+			<data key="d3">
+				<y:GraphMLReference ResourceKey="1"/>
+			</data>
+			<port name="p0"/>
+		</node>
+		<node id="n9">
+			<data key="d1">
+				<y:RectD X="202.5" Y="1663" Width="285" Height="100"/>
+			</data>
+			<data key="d2">
+				<y:Json>{"position":"Benefits Specialist","name":"Mark Parks","email":"mparks@yoyodyne.com","phone":"555-0202","fax":"555-0203","businessUnit":"Accounting","status":"present","icon":"usericon_male5"}</y:Json>
+			</data>
+			<data key="d3">
+				<y:GraphMLReference ResourceKey="1"/>
+			</data>
+			<port name="p0"/>
+		</node>
+		<node id="n10">
+			<data key="d1">
+				<y:RectD X="527.5" Y="1663" Width="285" Height="100"/>
+			</data>
+			<data key="d2">
+				<y:Json>{"position":"Recruiter","name":"Linda Lenhart","email":"llenhart@yoyodyne.com","phone":"555-0204","fax":"555-0205","businessUnit":"Accounting","status":"busy","icon":"usericon_female1"}</y:Json>
+			</data>
+			<data key="d3">
+				<y:GraphMLReference ResourceKey="1"/>
+			</data>
+			<port name="p0"/>
+		</node>
+		<node id="n11">
+			<data key="d1">
+				<y:RectD X="202.5" Y="1202" Width="285" Height="100"/>
+			</data>
+			<data key="d2">
+				<y:Json>{"position":"Purchasing Manager","name":"Edward Lewis","email":"elewis@yoyodyne.com","phone":"555-0192","fax":"555-0193","businessUnit":"Accounting","status":"unavailable","icon":"usericon_male1"}</y:Json>
+			</data>
+			<data key="d3">
+				<y:GraphMLReference ResourceKey="1"/>
+			</data>
+			<port name="p0"/>
+		</node>
+		<node id="n12">
+			<data key="d1">
+				<y:RectD X="182.5" Y="1021" Width="285" Height="100"/>
+			</data>
+			<data key="d2">
+				<y:Json>{"position":"Purchasing Assistant","name":"Mildred Bean","email":"mbean@yoyodyne.com","phone":"555-0194","fax":"555-0195","businessUnit":"Accounting","status":"busy","icon":"usericon_female5","assistant":true}</y:Json>
+			</data>
+			<data key="d3">
+				<y:GraphMLReference ResourceKey="1"/>
+			</data>
+			<port name="p0"/>
+		</node>
+		<node id="n13">
+			<data key="d1">
+				<y:RectD X="527.5" Y="1202" Width="285" Height="100"/>
+			</data>
+			<data key="d2">
+				<y:Json>{"position":"Buyer","name":"Raymond Lindley","email":"rlindley@yoyodyne.com","phone":"555-0196","fax":"555-0197","businessUnit":"Accounting","status":"present","icon":"usericon_male3"}</y:Json>
+			</data>
+			<data key="d3">
+				<y:GraphMLReference ResourceKey="1"/>
+			</data>
+			<port name="p0"/>
+		</node>
+		<node id="n14">
+			<data key="d1">
+				<y:RectD X="182.5" Y="741" Width="285" Height="100"/>
+			</data>
+			<data key="d2">
+				<y:Json>{"position":"Accounts Receivable Specialist","name":"Susan Moran","email":"smoran@yoyodyne.com","phone":"555-0184","fax":"555-0185","businessUnit":"Accounting","status":"present","icon":"usericon_female3"}</y:Json>
+			</data>
+			<data key="d3">
+				<y:GraphMLReference ResourceKey="1"/>
+			</data>
+			<port name="p0"/>
+		</node>
+		<node id="n15">
+			<data key="d1">
+				<y:RectD X="507.5" Y="741" Width="285" Height="100"/>
+			</data>
+			<data key="d2">
+				<y:Json>{"position":"Accountant","name":"Melvin Cruz","email":"mcruz@yoyodyne.com","phone":"555-0186","fax":"555-0187","businessUnit":"Accounting","status":"unavailable","icon":"usericon_male1"}</y:Json>
+			</data>
+			<data key="d3">
+				<y:GraphMLReference ResourceKey="1"/>
+			</data>
+			<port name="p0"/>
+		</node>
+		<node id="n16">
+			<data key="d1">
+				<y:RectD X="832.5" Y="741" Width="285" Height="100"/>
+			</data>
+			<data key="d2">
+				<y:Json>{"position":"Accounts Payable Specialist","name":"Rachel King","email":"rking@yoyodyne.com","phone":"555-0188","fax":"555-0189","businessUnit":"Accounting","status":"present","icon":"usericon_female2"}</y:Json>
+			</data>
+			<data key="d3">
+				<y:GraphMLReference ResourceKey="1"/>
+			</data>
+			<port name="p0"/>
+		</node>
+		<node id="n17">
+			<data key="d1">
+				<y:RectD X="2030" Y="782" Width="285" Height="100"/>
+			</data>
+			<data key="d2">
+				<y:Json>{"position":"Marketing Specialist","name":"Jermaine Stewart","email":"jstewart@yoyodyne.com","phone":"555-0172","fax":"555-0173","businessUnit":"Marketing","status":"present","icon":"usericon_male2"}</y:Json>
+			</data>
+			<data key="d3">
+				<y:GraphMLReference ResourceKey="1"/>
+			</data>
+			<port name="p0"/>
+		</node>
+		<node id="n18">
+			<data key="d1">
+				<y:RectD X="1847.5" Y="601" Width="285" Height="100"/>
+			</data>
+			<data key="d2">
+				<y:Json>{"position":"Marketing Assistant","name":"Lorraine Deaton","email":"ldeaton@yoyodyne.com","phone":"555-0174","fax":"555-0175","businessUnit":"Marketing","status":"present","icon":"usericon_female3","assistant":true}</y:Json>
+			</data>
+			<data key="d3">
+				<y:GraphMLReference ResourceKey="1"/>
+			</data>
+			<port name="p0"/>
+		</node>
+		<node id="n19">
+			<data key="d1">
+				<y:RectD X="1360" Y="601" Width="285" Height="100"/>
+			</data>
+			<data key="d2">
+				<y:Json>{"position":"North America Sales Manager","name":"Joe Vargas","email":"jvargas@yoyodyne.com","phone":"555-0136","fax":"555-0137","businessUnit":"Sales","status":"present","icon":"usericon_male2","subordinates":[{"position":"Sales Representative","name":"Robert Parson","email":"rparson@yoyodyne.com","phone":"555-0150","fax":"555-0151","businessUnit":"Sales","status":"travel","icon":"usericon_male3"},{"position":"Sales Representative","name":"Melissa Noren","email":"mnoren@yoyodyne.com","phone":"555-0152","fax":"555-0153","businessUnit":"Sales","status":"unavailable","icon":"usericon_female1"}]}</y:Json>
+			</data>
+			<data key="d3">
+				<y:GraphMLReference ResourceKey="1"/>
+			</data>
+			<port name="p0"/>
+			<port name="p1">
+				<data key="d8">
+					<y:FreeNodePortLocationModelParameter Ratio="0.5,1"/>
+				</data>
+			</port>
+			<port name="p2">
+				<data key="d8">
+					<y:FreeNodePortLocationModelParameter Ratio="0.5,1"/>
+				</data>
+			</port>
+		</node>
+		<node id="n20">
+			<data key="d1">
+				<y:RectD X="1360" Y="881" Width="285" Height="100"/>
+			</data>
+			<data key="d2">
+				<y:Json>{"position":"European Sales Manager","name":"Robert Hartman","email":"rhartman@yoyodyne.com","phone":"555-0138","fax":"555-0139","businessUnit":"Sales","status":"busy","icon":"usericon_male5","subordinates":[{"position":"Sales Representative","name":"Rebecca Polite","email":"rpolite@yoyodyne.com","phone":"555-0148","fax":"555-0149","businessUnit":"Sales","status":"travel","icon":"usericon_female3"},{"position":"Sales Representative","name":"Michael Daniels","email":"mdaniels@yoyodyne.com","phone":"555-0154","fax":"555-0155","businessUnit":"Sales","status":"travel","icon":"usericon_male1"}]}</y:Json>
+			</data>
+			<data key="d3">
+				<y:GraphMLReference ResourceKey="1"/>
+			</data>
+			<port name="p0"/>
+			<port name="p1">
+				<data key="d8">
+					<y:FreeNodePortLocationModelParameter Ratio="0.5,1"/>
+				</data>
+			</port>
+			<port name="p2">
+				<data key="d8">
+					<y:FreeNodePortLocationModelParameter Ratio="0.5,1"/>
+				</data>
+			</port>
+		</node>
+		<node id="n21">
+			<data key="d1">
+				<y:RectD X="1197.5" Y="1021" Width="285" Height="100"/>
+			</data>
+			<data key="d2">
+				<y:Json>{"position":"Sales Representative","name":"Rebecca Polite","email":"rpolite@yoyodyne.com","phone":"555-0148","fax":"555-0149","businessUnit":"Sales","status":"travel","icon":"usericon_female3"}</y:Json>
+			</data>
+			<data key="d3">
+				<y:GraphMLReference ResourceKey="1"/>
+			</data>
+			<port name="p0"/>
+		</node>
+		<node id="n22">
+			<data key="d1">
+				<y:RectD X="1522.5" Y="1021" Width="285" Height="100"/>
+			</data>
+			<data key="d2">
+				<y:Json>{"position":"Sales Representative","name":"Michael Daniels","email":"mdaniels@yoyodyne.com","phone":"555-0154","fax":"555-0155","businessUnit":"Sales","status":"travel","icon":"usericon_male1"}</y:Json>
+			</data>
+			<data key="d3">
+				<y:GraphMLReference ResourceKey="1"/>
+			</data>
+			<port name="p0"/>
+		</node>
+		<node id="n23">
+			<data key="d1">
+				<y:RectD X="1197.5" Y="741" Width="285" Height="100"/>
+			</data>
+			<data key="d2">
+				<y:Json>{"position":"Sales Representative","name":"Robert Parson","email":"rparson@yoyodyne.com","phone":"555-0150","fax":"555-0151","businessUnit":"Sales","status":"travel","icon":"usericon_male3"}</y:Json>
+			</data>
+			<data key="d3">
+				<y:GraphMLReference ResourceKey="1"/>
+			</data>
+			<port name="p0"/>
+		</node>
+		<node id="n24">
+			<data key="d1">
+				<y:RectD X="1522.5" Y="741" Width="285" Height="100"/>
+			</data>
+			<data key="d2">
+				<y:Json>{"position":"Sales Representative","name":"Melissa Noren","email":"mnoren@yoyodyne.com","phone":"555-0152","fax":"555-0153","businessUnit":"Sales","status":"unavailable","icon":"usericon_female1"}</y:Json>
+			</data>
+			<data key="d3">
+				<y:GraphMLReference ResourceKey="1"/>
+			</data>
+			<port name="p0"/>
+		</node>
+		<node id="n25">
+			<data key="d1">
+				<y:RectD X="507.5" Y="280" Width="285" Height="100"/>
+			</data>
+			<data key="d2">
+				<y:Json>{"position":"Senior Executive Assistant","name":"Alexander Burns","email":"aburns@yoyodyne.com","phone":"555-0102","fax":"555-0103","businessUnit":"Executive Unit","status":"present","icon":"usericon_male3"}</y:Json>
+			</data>
+			<data key="d3">
+				<y:GraphMLReference ResourceKey="1"/>
+			</data>
+			<port name="p0"/>
+		</node>
+		<node id="n26">
+			<data key="d1">
+				<y:RectD X="832.5" Y="280" Width="285" Height="100"/>
+			</data>
+			<data key="d2">
+				<y:Json>{"position":"Junior Executive Assistant","name":"Linda Newland","email":"lnewland@yoyodyne.com","phone":"555-0112","fax":"555-0113","businessUnit":"Executive Unit","status":"present","icon":"usericon_female1"}</y:Json>
+			</data>
+			<data key="d3">
+				<y:GraphMLReference ResourceKey="1"/>
+			</data>
+			<port name="p0"/>
+		</node>
+		<edge id="e0" source="n0" target="n1" sourceport="p0" targetport="p0">
+			<data key="d5">
+				<x:List>
+					<y:Bend Location="1157.5,190"/>
+				</x:List>
+			</data>
+			<data key="d6">
+				<y:GraphMLReference ResourceKey="2"/>
+			</data>
+		</edge>
+		<edge id="e1" source="n0" target="n2" sourceport="p1" targetport="p0">
+			<data key="d6">
+				<y:GraphMLReference ResourceKey="2"/>
+			</data>
+		</edge>
+		<edge id="e2" source="n0" target="n3" sourceport="p2" targetport="p0">
+			<data key="d5">
+				<x:List>
+					<y:Bend Location="1157.5,441"/>
+					<y:Bend Location="2172.5,441"/>
+				</x:List>
+			</data>
+			<data key="d6">
+				<y:GraphMLReference ResourceKey="2"/>
+			</data>
+		</edge>
+		<edge id="e3" source="n0" target="n4" sourceport="p3" targetport="p0">
+			<data key="d5">
+				<x:List>
+					<y:Bend Location="1157.5,441"/>
+					<y:Bend Location="142.5,441"/>
+				</x:List>
+			</data>
+			<data key="d6">
+				<y:GraphMLReference ResourceKey="2"/>
+			</data>
+		</edge>
+		<edge id="e4" source="n4" target="n5" sourceport="p1" targetport="p0">
+			<data key="d5">
+				<x:List>
+					<y:Bend Location="142.5,651"/>
+				</x:List>
+			</data>
+			<data key="d6">
+				<y:GraphMLReference ResourceKey="2"/>
+			</data>
+		</edge>
+		<edge id="e5" source="n4" target="n6" sourceport="p2" targetport="p0">
+			<data key="d5">
+				<x:List>
+					<y:Bend Location="142.5,931"/>
+				</x:List>
+			</data>
+			<data key="d6">
+				<y:GraphMLReference ResourceKey="2"/>
+			</data>
+		</edge>
+		<edge id="e6" source="n4" target="n7" sourceport="p3" targetport="p0">
+			<data key="d5">
+				<x:List>
+					<y:Bend Location="142.5,1392"/>
+				</x:List>
+			</data>
+			<data key="d6">
+				<y:GraphMLReference ResourceKey="2"/>
+			</data>
+		</edge>
+		<edge id="e7" source="n7" target="n8" sourceport="p1" targetport="p0">
+			<data key="d5">
+				<x:List>
+					<y:Bend Location="507.5,1532"/>
+				</x:List>
+			</data>
+			<data key="d6">
+				<y:GraphMLReference ResourceKey="2"/>
+			</data>
+		</edge>
+		<edge id="e8" source="n7" target="n9" sourceport="p2" targetport="p0">
+			<data key="d5">
+				<x:List>
+					<y:Bend Location="507.5,1643"/>
+					<y:Bend Location="345,1643"/>
+				</x:List>
+			</data>
+			<data key="d6">
+				<y:GraphMLReference ResourceKey="2"/>
+			</data>
+		</edge>
+		<edge id="e9" source="n7" target="n10" sourceport="p3" targetport="p0">
+			<data key="d5">
+				<x:List>
+					<y:Bend Location="507.5,1643"/>
+					<y:Bend Location="670,1643"/>
+				</x:List>
+			</data>
+			<data key="d6">
+				<y:GraphMLReference ResourceKey="2"/>
+			</data>
+		</edge>
+		<edge id="e10" source="n6" target="n11" sourceport="p1" targetport="p0">
+			<data key="d5">
+				<x:List>
+					<y:Bend Location="507.5,1182"/>
+					<y:Bend Location="345,1182"/>
+				</x:List>
+			</data>
+			<data key="d6">
+				<y:GraphMLReference ResourceKey="2"/>
+			</data>
+		</edge>
+		<edge id="e11" source="n6" target="n12" sourceport="p2" targetport="p0">
+			<data key="d5">
+				<x:List>
+					<y:Bend Location="507.5,1071"/>
+				</x:List>
+			</data>
+			<data key="d6">
+				<y:GraphMLReference ResourceKey="2"/>
+			</data>
+		</edge>
+		<edge id="e12" source="n6" target="n13" sourceport="p3" targetport="p0">
+			<data key="d5">
+				<x:List>
+					<y:Bend Location="507.5,1182"/>
+					<y:Bend Location="670,1182"/>
+				</x:List>
+			</data>
+			<data key="d6">
+				<y:GraphMLReference ResourceKey="2"/>
+			</data>
+		</edge>
+		<edge id="e13" source="n5" target="n14" sourceport="p1" targetport="p0">
+			<data key="d5">
+				<x:List>
+					<y:Bend Location="650,721"/>
+					<y:Bend Location="325,721"/>
+				</x:List>
+			</data>
+			<data key="d6">
+				<y:GraphMLReference ResourceKey="2"/>
+			</data>
+		</edge>
+		<edge id="e14" source="n5" target="n15" sourceport="p2" targetport="p0">
+			<data key="d6">
+				<y:GraphMLReference ResourceKey="2"/>
+			</data>
+		</edge>
+		<edge id="e15" source="n5" target="n16" sourceport="p3" targetport="p0">
+			<data key="d5">
+				<x:List>
+					<y:Bend Location="650,721"/>
+					<y:Bend Location="975,721"/>
+				</x:List>
+			</data>
+			<data key="d6">
+				<y:GraphMLReference ResourceKey="2"/>
+			</data>
+		</edge>
+		<edge id="e16" source="n3" target="n17" sourceport="p1" targetport="p0">
+			<data key="d6">
+				<y:GraphMLReference ResourceKey="2"/>
+			</data>
+		</edge>
+		<edge id="e17" source="n3" target="n18" sourceport="p2" targetport="p0">
+			<data key="d5">
+				<x:List>
+					<y:Bend Location="2172.5,651"/>
+				</x:List>
+			</data>
+			<data key="d6">
+				<y:GraphMLReference ResourceKey="2"/>
+			</data>
+		</edge>
+		<edge id="e18" source="n2" target="n19" sourceport="p1" targetport="p0">
+			<data key="d5">
+				<x:List>
+					<y:Bend Location="1157.5,651"/>
+				</x:List>
+			</data>
+			<data key="d6">
+				<y:GraphMLReference ResourceKey="2"/>
+			</data>
+		</edge>
+		<edge id="e19" source="n2" target="n20" sourceport="p2" targetport="p0">
+			<data key="d5">
+				<x:List>
+					<y:Bend Location="1157.5,931"/>
+				</x:List>
+			</data>
+			<data key="d6">
+				<y:GraphMLReference ResourceKey="2"/>
+			</data>
+		</edge>
+		<edge id="e20" source="n20" target="n21" sourceport="p1" targetport="p0">
+			<data key="d5">
+				<x:List>
+					<y:Bend Location="1502.5,1001"/>
+					<y:Bend Location="1340,1001"/>
+				</x:List>
+			</data>
+			<data key="d6">
+				<y:GraphMLReference ResourceKey="2"/>
+			</data>
+		</edge>
+		<edge id="e21" source="n20" target="n22" sourceport="p2" targetport="p0">
+			<data key="d5">
+				<x:List>
+					<y:Bend Location="1502.5,1001"/>
+					<y:Bend Location="1665,1001"/>
+				</x:List>
+			</data>
+			<data key="d6">
+				<y:GraphMLReference ResourceKey="2"/>
+			</data>
+		</edge>
+		<edge id="e22" source="n19" target="n23" sourceport="p1" targetport="p0">
+			<data key="d5">
+				<x:List>
+					<y:Bend Location="1502.5,721"/>
+					<y:Bend Location="1340,721"/>
+				</x:List>
+			</data>
+			<data key="d6">
+				<y:GraphMLReference ResourceKey="2"/>
+			</data>
+		</edge>
+		<edge id="e23" source="n19" target="n24" sourceport="p2" targetport="p0">
+			<data key="d5">
+				<x:List>
+					<y:Bend Location="1502.5,721"/>
+					<y:Bend Location="1665,721"/>
+				</x:List>
+			</data>
+			<data key="d6">
+				<y:GraphMLReference ResourceKey="2"/>
+			</data>
+		</edge>
+		<edge id="e24" source="n1" target="n25" sourceport="p1" targetport="p0">
+			<data key="d5">
+				<x:List>
+					<y:Bend Location="812.5,260"/>
+					<y:Bend Location="650,260"/>
+				</x:List>
+			</data>
+			<data key="d6">
+				<y:GraphMLReference ResourceKey="2"/>
+			</data>
+		</edge>
+		<edge id="e25" source="n1" target="n26" sourceport="p2" targetport="p0">
+			<data key="d5">
+				<x:List>
+					<y:Bend Location="812.5,260"/>
+					<y:Bend Location="975,260"/>
+				</x:List>
+			</data>
+			<data key="d6">
+				<y:GraphMLReference ResourceKey="2"/>
+			</data>
+		</edge>
+	</graph>
+</graphml>

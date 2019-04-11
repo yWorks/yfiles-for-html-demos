@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.1.
- ** Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.2.
+ ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,203 +26,197 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-'use strict'
+import { ConnectedComponents, CycleEdges, FilteredGraphWrapper, IGraph } from 'yfiles'
+import AlgorithmConfiguration from './AlgorithmConfiguration.js'
+import { MultiColorNodeStyle } from './DemoStyles.js'
 
-define(['yfiles/view-component', './AlgorithmConfiguration', './DemoStyles.js'], (
-  /** @type {yfiles_namespace} */ /** typeof yfiles */ yfiles,
-  AlgorithmConfiguration,
-  demoStyles
-) => {
+/**
+ * Configuration options for the cycles algorithm.
+ */
+export default class CyclesConfig extends AlgorithmConfiguration {
   /**
-   * Configuration options for the cycles algorithm.
+   * Creates an instance of CyclesConfig with default settings.
    */
-  class CyclesConfig extends AlgorithmConfiguration {
-    /**
-     * Creates an instance of CyclesConfig with default settings.
-     */
-    constructor() {
-      super()
-      this.$cycleEdges = null
+  constructor() {
+    super()
+    this.$cycleEdges = null
+  }
+
+  /**
+   * Finds edges that belong to a cycle in the graph.
+   * @param {IGraph} graph The graph on which the cycle algorithm is executed.
+   */
+  runAlgorithm(graph) {
+    // reset cycles to remove previous markings
+    this.resetCycles(graph)
+
+    // find all edges that belong to a cycle
+    const result = new CycleEdges({ directed: this.directed }).run(graph)
+    this.$cycleEdges = result.edges
+    this.markCycles(graph)
+  }
+
+  /**
+   * Adds different styles to independent cycles.
+   * If some nodes or edges are selected only cycles that depend on them are marked.
+   * @param {IGraph} graph The graph whose cycles are marked.
+   */
+  markCycles(graph) {
+    const cycleEdges = this.$cycleEdges.toArray()
+
+    // hides all non-cycle edges to be able to find independent cycles
+    const cycleEdgeSet = new Set(cycleEdges)
+    const filteredGraph = new FilteredGraphWrapper(
+      graph,
+      node => true,
+      edge => cycleEdgeSet.has(edge)
+    )
+
+    // finds the edges that belong to the same component (without non-cycle edges) and treats them as dependent
+    const result = new ConnectedComponents().run(filteredGraph)
+
+    // dispose the filtered graph
+    filteredGraph.dispose()
+
+    // find the components that are affected by the use move, if any
+    const affectedComponents = this.getAffectedNodeComponents(result.nodeComponentIds, graph)
+
+    const allCycles = []
+    for (let i = 0; i < result.components.size; i++) {
+      allCycles[i] = []
     }
 
-    /**
-     * Finds edges that belong to a cycle in the graph.
-     * @param {yfiles.graph.IGraph} graph The graph on which the cycle algorithm is executed.
-     */
-    runAlgorithm(graph) {
-      // reset cycles to remove previous markings
-      this.resetCycles(graph)
+    // create the array with the components needed for the node/edge style
+    cycleEdges.forEach(cycleEdge => {
+      const source = cycleEdge.sourceNode
+      const target = cycleEdge.targetNode
 
-      // find all edges that belong to a cycle
-      const adapter = new yfiles.layout.YGraphAdapter(graph)
-      const cycles = yfiles.algorithms.Cycles.findAllCycleEdges(adapter.yGraph, this.directed)
-      this.$cycleEdges = adapter.createEdgeEnumerable(cycles)
+      const componentIndex = result.nodeComponentIds.get(source)
 
-      this.markCycles(graph)
-    }
+      allCycles[componentIndex].push(cycleEdge)
+      allCycles[componentIndex].push(source)
+      allCycles[componentIndex].push(target)
+    })
 
-    /**
-     * Adds different styles to independent cycles.
-     * If some nodes or edges are selected only cycles that depend on them are marked.
-     * @param {yfiles.graph.IGraph} graph The graph whose cycles are marked.
-     */
-    markCycles(graph) {
-      const adapter = new yfiles.layout.YGraphAdapter(graph)
-      const cycleEdges = this.$cycleEdges
+    // this is the component with the larger number of elements
+    const largestComponentIdx = this.getLargestComponentIndex(affectedComponents, allCycles)
+    // holds the color of the affected components
+    const color2AffectedComponent = new Map()
+    // generate a color array
+    const colors = this.generateColors(null)
 
-      // hides all non-cycle edges to be able to find independent cylces
-      const graphHider = new yfiles.algorithms.LayoutGraphHider(adapter.yGraph)
-      adapter.yGraph.edges.forEach(edge => {
-        if (!cycleEdges.includes(adapter.getOriginalEdge(edge))) {
-          graphHider.hide(edge)
-        }
-      })
+    const cyclesNodeSet = new Set()
 
-      // finds the edges that belong to the same component (without non-cycle edges) and treats them as dependent
-      const componentIndices = adapter.yGraph.createNodeMap()
-      const cyclesCount = yfiles.algorithms.GraphConnectivity.connectedComponents(
-        adapter.yGraph,
-        componentIndices
-      )
-
-      // find the components that are affected by the use move, if any
-      const affectedComponents = this.getAffectedNodeComponents(componentIndices, adapter)
-
-      const allCycles = []
-      for (let i = 0; i < cyclesCount; i++) {
-        allCycles[i] = []
+    graph.nodes.forEach((node, index) => {
+      if (!node.tag) {
+        node.tag = {}
       }
+      node.tag.id = index
+    })
 
-      // create the array with the components needed for the node/edge style
-      cycleEdges.forEach(cycleEdge => {
-        const source = cycleEdge.sourceNode
-        const target = cycleEdge.targetNode
+    // change the styles for the nodes and edges that belong to a cycle
+    graph.edges.forEach((edge, index) => {
+      const source = edge.sourceNode
+      const target = edge.targetNode
 
-        const componentIndex = componentIndices.getInt(adapter.getCopiedNode(source))
+      const componentIndex = result.nodeComponentIds.get(source)
+      let color
+      if (cycleEdgeSet.has(edge)) {
+        color = this.determineElementColor(
+          colors,
+          componentIndex,
+          affectedComponents,
+          color2AffectedComponent,
+          largestComponentIdx,
+          allCycles,
+          graph,
+          edge
+        )
+        graph.setStyle(edge, this.getMarkedEdgeStyle(this.directed, componentIndex, null))
+        edge.tag = {
+          id: index,
+          color,
+          components: allCycles,
+          edgeComponent: componentIndex
+        }
 
-        allCycles[componentIndex].push(cycleEdge)
-        allCycles[componentIndex].push(source)
-        allCycles[componentIndex].push(target)
-      })
-
-      // this is the component with the larger number of elements
-      const largestComponentIdx = this.getLargestComponentIndex(affectedComponents, allCycles)
-      // holds the color of the affected components
-      const color2AffectedComponent = new Map()
-      // generate a color array
-      const colors = this.generateColors(null)
-
-      const cycleEdgesSet = new Set(cycleEdges.toArray())
-      const cyclesNodeSet = new Set()
-
-      // change the styles for the nodes and edges that belong to a cycle
-      graph.edges.forEach((edge, index) => {
-        const source = edge.sourceNode
-        const target = edge.targetNode
-
-        const componentIndex = componentIndices.getInt(adapter.getCopiedNode(source))
-        let color
-        if (cycleEdgesSet.has(edge)) {
-          color = this.determineElementColor(
-            colors,
-            componentIndex,
-            affectedComponents,
-            color2AffectedComponent,
-            largestComponentIdx,
-            allCycles,
-            graph,
-            edge
-          )
-          graph.setStyle(edge, this.getMarkedEdgeStyle(this.directed, componentIndex, null))
-          edge.tag = {
-            id: index,
+        if (!cyclesNodeSet.has(source)) {
+          cyclesNodeSet.add(source)
+          graph.setStyle(source, new MultiColorNodeStyle())
+          source.tag = {
+            id: source.tag.id,
             color,
             components: allCycles,
-            edgeComponent: componentIndex
+            nodeComponents: [componentIndex]
           }
-
-          if (!cyclesNodeSet.has(source)) {
-            cyclesNodeSet.add(source)
-            graph.setStyle(source, new demoStyles.MultiColorNodeStyle())
-            source.tag = {
-              id: adapter.getCopiedNode(source).index,
-              color,
-              components: allCycles,
-              nodeComponents: [componentIndex]
-            }
-          }
-          if (!cyclesNodeSet.has(target)) {
-            cyclesNodeSet.add(target)
-            graph.setStyle(target, new demoStyles.MultiColorNodeStyle())
-            target.tag = {
-              id: adapter.getCopiedNode(target).index,
-              color,
-              components: allCycles,
-              nodeComponents: [componentIndex]
-            }
-          }
-        } else {
-          graph.setStyle(edge, graph.edgeDefaults.style)
-          edge.tag = {
-            id: index,
+        }
+        if (!cyclesNodeSet.has(target)) {
+          cyclesNodeSet.add(target)
+          graph.setStyle(target, new MultiColorNodeStyle())
+          target.tag = {
+            id: target.tag.id,
             color,
             components: allCycles,
-            edgeComponent: 0
+            nodeComponents: [componentIndex]
           }
         }
-      })
-
-      // for all edges that do not belong to the cycle, reset the style to default
-      graph.nodes.forEach(node => {
-        if (!cyclesNodeSet.has(node)) {
-          graph.setStyle(node, graph.nodeDefaults.style)
+      } else {
+        graph.setStyle(edge, graph.edgeDefaults.style)
+        edge.tag = {
+          id: index,
+          color,
+          components: allCycles,
+          edgeComponent: 0
         }
-      })
-
-      // clean up
-      graphHider.unhideEdges()
-      adapter.yGraph.disposeNodeMap(componentIndices)
-      if (this.incrementalElements !== null) {
-        this.incrementalElements.clear()
-        this.incrementalElements = null
-        this.edgeRemoved = false
       }
-    }
+    })
 
-    /**
-     * Resets the style of all edges that belong to a cycle.
-     * @param {yfiles.graph.IGraph} graph
-     */
-    resetCycles(graph) {
-      // reset style of previous cycle edges
-      const cycleEdges = this.$cycleEdges
-      if (cycleEdges != null) {
-        cycleEdges.forEach(cycleEdge => {
-          if (graph.contains(cycleEdge)) {
-            const defaultEdgeStyle = graph.edgeDefaults.style
-            graph.setStyle(cycleEdge, defaultEdgeStyle)
-
-            const sourceNode = cycleEdge.sourceNode
-            const targetNode = cycleEdge.targetNode
-            const defaultNodeStyle = graph.nodeDefaults.style
-            graph.setStyle(sourceNode, defaultNodeStyle)
-            graph.setStyle(targetNode, defaultNodeStyle)
-          }
-        })
-
-        // clear cycle edges
-        cycleEdges.length = 0
+    // for all edges that do not belong to the cycle, reset the style to default
+    graph.nodes.forEach(node => {
+      if (!cyclesNodeSet.has(node)) {
+        graph.setStyle(node, graph.nodeDefaults.style)
       }
-    }
+    })
 
-    /**
-     * Returns the description text that explains the cycle algorithm.
-     * @return {string} The description text.
-     */
-    get descriptionText() {
-      return "<p style='margin-top:0'>Finding <em>cycles in a graph</em> is part of analysing graph structures. This part of the demo shows an algorithm that finds edges that belong to a cycle in a graph.</p><p>Independent cycles are presented with different colors. Cycles which share common nodes and edges get the same color. This algorithm is able to take the <em>direction of edges</em> into account.</p>"
+    // clean up
+    if (this.incrementalElements !== null) {
+      this.incrementalElements.clear()
+      this.incrementalElements = null
+      this.edgeRemoved = false
     }
   }
 
-  return CyclesConfig
-})
+  /**
+   * Resets the style of all edges that belong to a cycle.
+   * @param {IGraph} graph
+   */
+  resetCycles(graph) {
+    // reset style of previous cycle edges
+    const cycleEdges = this.$cycleEdges
+    if (cycleEdges != null) {
+      cycleEdges.forEach(cycleEdge => {
+        if (graph.contains(cycleEdge)) {
+          const defaultEdgeStyle = graph.edgeDefaults.style
+          graph.setStyle(cycleEdge, defaultEdgeStyle)
+
+          const sourceNode = cycleEdge.sourceNode
+          const targetNode = cycleEdge.targetNode
+          const defaultNodeStyle = graph.nodeDefaults.style
+          graph.setStyle(sourceNode, defaultNodeStyle)
+          graph.setStyle(targetNode, defaultNodeStyle)
+        }
+      })
+
+      // clear cycle edges
+      cycleEdges.length = 0
+    }
+  }
+
+  /**
+   * Returns the description text that explains the cycle algorithm.
+   * @return {string} The description text.
+   */
+  get descriptionText() {
+    return "<p style='margin-top:0'>Finding <em>cycles in a graph</em> is part of analysing graph structures. This part of the demo shows an algorithm that finds edges that belong to a cycle in a graph.</p><p>Independent cycles are presented with different colors. Cycles which share common nodes and edges get the same color. This algorithm is able to take the <em>direction of edges</em> into account.</p>"
+  }
+}

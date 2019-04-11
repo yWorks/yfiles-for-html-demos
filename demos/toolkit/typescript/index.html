@@ -7,8 +7,8 @@
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.1.
-     // Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML 2.2.
+     // Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -36,9 +36,9 @@
 
   <title id="title">TypeScript Demo [yFiles for HTML]</title>
 
-  <link rel="stylesheet" href="../../../lib/yfiles.css">
-  <link rel="stylesheet" href="../../resources/style/demo.css">
-  <script src="../../../ide-support/yfiles-typeinfo.js"></script>
+  <link rel="stylesheet" href="dist/main.css">
+
+  <script src="../../resources/filesystem-warning.js"></script>
 
 </head>
 <body class="demo-has-left loaded">
@@ -84,18 +84,17 @@
   <div class="demo-toolbar">
 
     <button data-command="ZoomIn" title="Zoom In"
-        class="demo-icon-yIconZoomIn demo-toolbar-button demo-hide-when-small"></button>
+        class="demo-icon-yIconZoomIn demo-toolbar-button"></button>
     <button data-command="ZoomOriginal" title="Zoom to original size"
-        class="demo-icon-yIconZoomOriginal demo-toolbar-button demo-hide-when-small"></button>
+        class="demo-icon-yIconZoomOriginal demo-toolbar-button"></button>
     <button data-command="ZoomOut" title="Zoom Out"
-        class="demo-icon-yIconZoomOut demo-toolbar-button demo-hide-when-small"></button>
+        class="demo-icon-yIconZoomOut demo-toolbar-button"></button>
     <button data-command="FitContent" title="Fit Content"
-        class="demo-icon-yIconZoomFit demo-toolbar-button demo-hide-when-small"></button>
+        class="demo-icon-yIconZoomFit demo-toolbar-button"></button>
   </div>
   <div id="graphComponent"></div>
 </div>
 </body>
 
-<script src="../../resources/license.js"></script>
 <script src="dist/bundle.js"></script>
 </html>

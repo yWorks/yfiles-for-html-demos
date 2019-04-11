@@ -7,8 +7,8 @@
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.1.
-     // Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML 2.2.
+     // Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -36,7 +36,7 @@
 
   <title>Port Candidate Provider Demo [yFiles for HTML]</title>
 
-  <link rel="stylesheet" href="../../../lib/yfiles.css">
+  <link rel="stylesheet" href="../../node_modules/yfiles/yfiles.css">
   <link rel="stylesheet" href="../../resources/style/demo.css">
 
   <style type="text/css">
@@ -75,13 +75,14 @@
 
   <!-- enable debugging -->
   <script src="../../../ide-support/yfiles-typeinfo.js"></script>
+  <script src="../../resources/filesystem-warning.js"></script>
 </head>
 <body class="demo-has-left">
 <aside class="demo-sidebar demo-left">
   <h1 class="demo-sidebar-header">Description</h1>
   <div class="demo-sidebar-content">
 
-    <p>This demo shows how edge creation can be customized by implementing the <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.input.IPortCandidateProvider" target="_blank">yfiles.input.IPortCandidateProvider</a>
+    <p>This demo shows how edge creation can be customized by implementing the <a href="https://docs.yworks.com/yfileshtml/#/api/IPortCandidateProvider" target="_blank">IPortCandidateProvider</a>
       interface.</p>
 
     <p>Add the custom implementation as decoration to the edge decorator of the graph to use it.</p>
@@ -116,8 +117,7 @@
   <div id="graphComponent"></div>
 </div>
 
-<script src="../../resources/require.js"></script>
-<script src="PortCandidateProviderDemo.js"></script>
+<script type="module" crossorigin="anonymous" src="PortCandidateProviderDemo.js"></script>
 
 </body>
 </html>

@@ -7,8 +7,8 @@
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.1.
-     // Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML 2.2.
+     // Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -36,18 +36,19 @@
 
   <title>Tree Layout Demo [yFiles for HTML]</title>
 
-  <link rel="stylesheet" href="../../../lib/yfiles.css">
+  <link rel="stylesheet" href="../../node_modules/yfiles/yfiles.css">
   <link rel="stylesheet" href="../../resources/style/demo.css">
   <link rel="stylesheet" href="resources/tree-layout-demo.css">
 
   <!-- enable debugging -->
   <script src="../../../ide-support/yfiles-typeinfo.js"></script>
+  <script src="../../resources/filesystem-warning.js"></script>
 </head>
 <body class="demo-has-left demo-has-right">
 <aside class="demo-sidebar demo-left">
   <h1 class="demo-sidebar-header">Description</h1>
   <div class="demo-sidebar-content">
-    Demonstrates different <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.tree.INodePlacer" target="_blank">yfiles.tree.INodePlacer</a> implementations for <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.tree.TreeLayout" target="_blank">yfiles.tree.TreeLayout</a>.
+    Demonstrates different <a href="https://docs.yworks.com/yfileshtml/#/api/ITreeLayoutNodePlacer" target="_blank">ITreeLayoutNodePlacer</a> implementations for <a href="https://docs.yworks.com/yfileshtml/#/api/TreeLayout" target="_blank">TreeLayout</a>.
     <p>
       Each node can have a separate <em>NodePlacer</em> assigned to arrange its children in a certain style. In this
       demo, all nodes of the same layer get the same <em>NodePlacer</em>.
@@ -57,17 +58,17 @@
     The panel on the right offers a set of settings for the <em>NodePlacer</em> of the selected layer. Changing an
     option in the panel will update the layout of the graph immediately. A preview demonstrates the chosen subtree style
     in a smaller context.<br/>
-    If there wasn't a <em>NodePlacer</em> selected for the current layer, yet, a <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.tree.DefaultNodePlacer" target="_blank">yfiles.tree.DefaultNodePlacer</a> is used.
+    If there wasn't a <em>NodePlacer</em> selected for the current layer, yet, a <a href="https://docs.yworks.com/yfileshtml/#/api/DefaultNodePlacer" target="_blank">DefaultNodePlacer</a> is used.
     <ul>
       <li>Select the layer to change either by selecting a node or directly in the panel.</li>
       <li>Some <em>NodePlacer</em>s offer rotation and mirroring of the subtree. Click the buttons to see the effect.</li>
       <li>
-        Reset the <em>NodePlacer</em> to <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.tree.DefaultNodePlacer" target="_blank">yfiles.tree.DefaultNodePlacer</a> with initial settings by clicking the
+        Reset the <em>NodePlacer</em> to <a href="https://docs.yworks.com/yfileshtml/#/api/DefaultNodePlacer" target="_blank">DefaultNodePlacer</a> with initial settings by clicking the
         <img src="../../resources/icons/reload-16.svg" style="vertical-align: bottom"/>-Button.
       </li>
       <li>
         Toggle the <em>Assistant</em>-marking for single nodes by <em>double-clicking</em> on them. They will show their
-        effect when their parent layer has <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.tree.AssistantNodePlacer" target="_blank">yfiles.tree.AssistantNodePlacer</a> assigned.
+        effect when their parent layer has <a href="https://docs.yworks.com/yfileshtml/#/api/AssistantNodePlacer" target="_blank">AssistantNodePlacer</a> assigned.
       </li>
     </ul>
 
@@ -109,6 +110,7 @@
           <option>DefaultNodePlacer</option>
           <option>SimpleNodePlacer</option>
           <option>BusNodePlacer</option>
+          <option>GridNodePlacer</option>
           <option>DoubleLineNodePlacer</option>
           <option>LeftRightNodePlacer</option>
           <option>AspectRatioNodePlacer</option>
@@ -203,6 +205,29 @@
       <div id="bus-node-placer-settings" class="node-placer-settings" style="display: none">
         <h2>Settings</h2>
       </div>
+      <div id="grid-node-placer-settings" class="node-placer-settings" style="display: none">
+        <h2>Settings</h2>
+        <div class="demo-form-block">
+          <label for="grid-node-placer-alignment" class="option-label">Root Alignment</label>
+          <select id="grid-node-placer-alignment" class="option-element">
+            <option>Leading</option>
+            <option>Left</option>
+            <option>Center</option>
+            <option>Center over Children</option>
+            <option>Right</option>
+            <option>Trailing</option>
+            <option>Bus Aligned</option>
+          </select>
+        </div>
+        <div class="demo-form-block">
+          <label for="grid-node-placer-bus-placement" class="option-label">Bus Placement</label>
+          <select id="grid-node-placer-bus-placement" class="option-element">
+            <option>Center</option>
+            <option>Leading</option>
+            <option>Trailing</option>
+          </select>
+        </div>
+      </div>
       <div id="double-line-node-placer-settings" class="node-placer-settings" style="display: none">
         <h2>Settings</h2>
         <div class="demo-form-block">
@@ -223,6 +248,11 @@
         <div class="demo-form-block">
           <label for="last-on-bottom" class="option-label">Last on Bottom</label>
           <input type="checkbox" id="last-on-bottom" class="option-element"/>
+        </div>
+        <div class="demo-form-block">
+          <label for="branch-count" class="option-label">Branch Count</label>
+          <input type="range" min="1" max="5" value="1" id="branch-count"/>
+          <label id="branch-count-label">1</label>
         </div>
       </div>
       <div id="aspect-ratio-node-placer-settings" class="node-placer-settings" style="display: none">
@@ -308,8 +338,7 @@
   </div>
 </aside>
 
-<script src="../../resources/require.js"></script>
-<script src="TreeLayoutDemo.js"></script>
+<script type="module" crossorigin="anonymous" src="TreeLayoutDemo.js"></script>
 
 </body>
 </html>

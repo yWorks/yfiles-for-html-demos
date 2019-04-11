@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.1.
- ** Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.2.
+ ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,120 +26,129 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-'use strict'
+import {
+  FreeNodePortLocationModel,
+  ICanvasContext,
+  ILabel,
+  ILabelStyle,
+  IRenderContext,
+  LabelStyleBase,
+  PolylineEdgeStyle,
+  Rect,
+  ShapeNodeStyle,
+  SimpleEdge,
+  SimpleNode,
+  SimplePort,
+  SvgVisualGroup
+} from 'yfiles'
 
-define(['yfiles/view-component'], /** @type {yfiles_namespace} */ /** typeof yfiles */ yfiles => {
+/**
+ * This class is an example for a custom style based on the {@link LabelStyleBase}.
+ * For each label, an edge is created that connects the label to its owner node.
+ */
+export default class CityLabelStyle extends LabelStyleBase {
   /**
-   * This class is an example for a custom style based on the {@link yfiles.styles.LabelStyleBase}.
-   * For each label, an edge is created that connects the label to its owner node.
-   * @extends yfiles.styles.LabelStyleBase
+   * Initializes a new instance of CityLabelStyle.
+   * @param {ILabelStyle} innerLabelStyle
    */
-  class CityLabelStyle extends yfiles.styles.LabelStyleBase {
-    /**
-     * Initializes a new instance of CityLabelStyle.
-     * @param {yfiles.styles.ILabelStyle} innerLabelStyle
-     */
-    constructor(innerLabelStyle) {
-      super()
-      this.innerLabelStyle = innerLabelStyle
-      this.connectorEdgeStyle = new yfiles.styles.PolylineEdgeStyle()
-      this.ownerPortLocation = yfiles.graph.FreeNodePortLocationModel.NODE_CENTER_ANCHORED
-      this.labelPortLocation = yfiles.graph.FreeNodePortLocationModel.NODE_CENTER_ANCHORED
-    }
-
-    /**
-     * Creates the visual for a label to be drawn.
-     * @param {yfiles.view.IRenderContext} context The render context
-     * @param {yfiles.graph.ILabel} label The label to be rendered
-     * @return {yfiles.view.SvgVisualGroup} The visual for a label to be drawn.
-     */
-    createVisual(context, label) {
-      // create a visual group
-      const group = new yfiles.view.SvgVisualGroup()
-
-      const connectorEdge = this.createConnectorEdge(label)
-      const connectorVisual = this.connectorEdgeStyle.renderer
-        .getVisualCreator(connectorEdge, this.connectorEdgeStyle)
-        .createVisual(context)
-      group.add(connectorVisual)
-
-      const labelVisual = this.innerLabelStyle.renderer
-        .getVisualCreator(label, this.innerLabelStyle)
-        .createVisual(context)
-      group.add(labelVisual)
-      return group
-    }
-
-    /**
-     * Re-renders the label using the old visual for performance reasons.
-     * @param {yfiles.view.IRenderContext} context The render context
-     * @param {yfiles.view.SvgVisualGroup} oldVisual The old visual
-     * @param {yfiles.graph.ILabel} label The label to be rendered
-     * @return {yfiles.view.SvgVisualGroup}
-     */
-    updateVisual(context, oldVisual, label) {
-      const connectorEdge = this.createConnectorEdge(label)
-      const connectorVisual = this.connectorEdgeStyle.renderer
-        .getVisualCreator(connectorEdge, this.connectorEdgeStyle)
-        .updateVisual(context, oldVisual.children.get(0))
-      oldVisual.children.set(0, connectorVisual)
-
-      const labelVisual = this.innerLabelStyle.renderer
-        .getVisualCreator(label, this.innerLabelStyle)
-        .updateVisual(context, oldVisual.children.get(1))
-      oldVisual.children.set(1, labelVisual)
-      return oldVisual
-    }
-
-    /**
-     * Creates the edge that connects the label with its owner node.
-     * @param {yfiles.graph.ILabel} label The given label
-     * @return {yfiles.graph.SimpleEdge} The edge that connects the label with its owner node
-     */
-    createConnectorEdge(label) {
-      // create a dummy node at the location of the label
-      const labelNodeDummy = new yfiles.graph.SimpleNode()
-      labelNodeDummy.layout = label.layout.bounds
-      labelNodeDummy.style = new yfiles.styles.ShapeNodeStyle()
-
-      const simpleEdge = new yfiles.graph.SimpleEdge(null, null)
-      simpleEdge.style = this.connectorEdgeStyle
-      simpleEdge.sourcePort = new yfiles.graph.SimplePort(labelNodeDummy, this.labelPortLocation)
-      simpleEdge.targetPort = new yfiles.graph.SimplePort(label.owner, this.ownerPortLocation)
-      return simpleEdge
-    }
-
-    /**
-     * Returns the preferred size of the given label.
-     * @param {yfiles.graph.ILabel} label The given label
-     * @return {yfiles.geometry.Size} The preferred size of the given label
-     */
-    getPreferredSize(label) {
-      return this.innerLabelStyle.renderer.getPreferredSize(label, this.innerLabelStyle)
-    }
-
-    /**
-     * Determines whether the visualization for the specified label is visible in the context.
-     * @param {yfiles.view.ICanvasContext} context The canvas context
-     * @param {yfiles.geometry.Rect} rectangle The clipping rectangle
-     * @param {yfiles.graph.ILabel} label The given label
-     * @return {boolean} True if the visualization is visible, false otherwise
-     */
-    isVisible(context, rectangle, label) {
-      if (
-        this.innerLabelStyle.renderer
-          .getVisibilityTestable(label, this.innerLabelStyle)
-          .isVisible(context, rectangle)
-      ) {
-        return true
-      }
-      const connectorEdge = this.createConnectorEdge(label)
-      // check the connecting edge visual
-      return this.connectorEdgeStyle.renderer
-        .getVisibilityTestable(connectorEdge, this.connectorEdgeStyle)
-        .isVisible(context, rectangle)
-    }
+  constructor(innerLabelStyle) {
+    super()
+    this.innerLabelStyle = innerLabelStyle
+    this.connectorEdgeStyle = new PolylineEdgeStyle()
+    this.ownerPortLocation = FreeNodePortLocationModel.NODE_CENTER_ANCHORED
+    this.labelPortLocation = FreeNodePortLocationModel.NODE_CENTER_ANCHORED
   }
 
-  return CityLabelStyle
-})
+  /**
+   * Creates the visual for a label to be drawn.
+   * @param {IRenderContext} context The render context
+   * @param {ILabel} label The label to be rendered
+   * @return {SvgVisualGroup} The visual for a label to be drawn.
+   */
+  createVisual(context, label) {
+    // create a visual group
+    const group = new SvgVisualGroup()
+
+    const connectorEdge = this.createConnectorEdge(label)
+    const connectorVisual = this.connectorEdgeStyle.renderer
+      .getVisualCreator(connectorEdge, this.connectorEdgeStyle)
+      .createVisual(context)
+    group.add(connectorVisual)
+
+    const labelVisual = this.innerLabelStyle.renderer
+      .getVisualCreator(label, this.innerLabelStyle)
+      .createVisual(context)
+    group.add(labelVisual)
+    return group
+  }
+
+  /**
+   * Re-renders the label using the old visual for performance reasons.
+   * @param {IRenderContext} context The render context
+   * @param {SvgVisualGroup} oldVisual The old visual
+   * @param {ILabel} label The label to be rendered
+   * @return {SvgVisualGroup}
+   */
+  updateVisual(context, oldVisual, label) {
+    const connectorEdge = this.createConnectorEdge(label)
+    const connectorVisual = this.connectorEdgeStyle.renderer
+      .getVisualCreator(connectorEdge, this.connectorEdgeStyle)
+      .updateVisual(context, oldVisual.children.get(0))
+    oldVisual.children.set(0, connectorVisual)
+
+    const labelVisual = this.innerLabelStyle.renderer
+      .getVisualCreator(label, this.innerLabelStyle)
+      .updateVisual(context, oldVisual.children.get(1))
+    oldVisual.children.set(1, labelVisual)
+    return oldVisual
+  }
+
+  /**
+   * Creates the edge that connects the label with its owner node.
+   * @param {ILabel} label The given label
+   * @return {SimpleEdge} The edge that connects the label with its owner node
+   */
+  createConnectorEdge(label) {
+    // create a dummy node at the location of the label
+    const labelNodeDummy = new SimpleNode()
+    labelNodeDummy.layout = label.layout.bounds
+    labelNodeDummy.style = new ShapeNodeStyle()
+
+    const simpleEdge = new SimpleEdge(null, null)
+    simpleEdge.style = this.connectorEdgeStyle
+    simpleEdge.sourcePort = new SimplePort(labelNodeDummy, this.labelPortLocation)
+    simpleEdge.targetPort = new SimplePort(label.owner, this.ownerPortLocation)
+    return simpleEdge
+  }
+
+  /**
+   * Returns the preferred size of the given label.
+   * @param {ILabel} label The given label
+   * @return {Size} The preferred size of the given label
+   */
+  getPreferredSize(label) {
+    return this.innerLabelStyle.renderer.getPreferredSize(label, this.innerLabelStyle)
+  }
+
+  /**
+   * Determines whether the visualization for the specified label is visible in the context.
+   * @param {ICanvasContext} context The canvas context
+   * @param {Rect} rectangle The clipping rectangle
+   * @param {ILabel} label The given label
+   * @return {boolean} True if the visualization is visible, false otherwise
+   */
+  isVisible(context, rectangle, label) {
+    if (
+      this.innerLabelStyle.renderer
+        .getVisibilityTestable(label, this.innerLabelStyle)
+        .isVisible(context, rectangle)
+    ) {
+      return true
+    }
+    const connectorEdge = this.createConnectorEdge(label)
+    // check the connecting edge visual
+    return this.connectorEdgeStyle.renderer
+      .getVisibilityTestable(connectorEdge, this.connectorEdgeStyle)
+      .isVisible(context, rectangle)
+  }
+}

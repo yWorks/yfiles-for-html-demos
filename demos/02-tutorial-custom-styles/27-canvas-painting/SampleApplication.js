@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.1.
- ** Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.2.
+ ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,148 +26,140 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-'use strict'
+import {
+  Animator,
+  GraphComponent,
+  GraphEditorInputMode,
+  IAnimation,
+  ICommand,
+  IGraph,
+  IMapper,
+  License,
+  Rect,
+  Size
+} from 'yfiles'
+
+import MySimpleNodeStyle from './MySimpleNodeStyle.js'
+import { bindAction, bindCommand, showApp } from '../../resources/demo-app.js'
+import loadJson from '../../resources/load-json.js'
+
+/** @type {GraphComponent} */
+let graphComponent = null
+
+/** @type {IGraph} */
+let graph = null
+
+function run(licenseData) {
+  License.value = licenseData
+  // Initialize the GraphComponent and place it in the div with CSS selector #graphComponent
+  graphComponent = new GraphComponent('#graphComponent')
+  // conveniently store a reference to the graph that is displayed
+  graph = graphComponent.graph
+
+  // initialize the graph
+  initializeGraph()
+
+  // initialize the input mode
+  graphComponent.inputMode = createEditorMode()
+
+  graphComponent.fitGraphBounds()
+
+  // bind the demo buttons to their commands
+  registerCommands()
+
+  // Initialize the demo application's CSS and Javascript for the description
+  showApp(graphComponent)
+}
 
 /**
- * This demo show how to create and use a relatively simple, non-interactive custom style
- * for nodes, labels, edges, and ports, as well as a custom arrow.
+ * Helper method that binds the various commands available in yFiles for HTML to the buttons
+ * in the demo's toolbar.
  */
-require.config({
-  paths: {
-    yfiles: '../../../lib/umd/yfiles/',
-    utils: '../../utils/',
-    resources: '../../resources/'
+function registerCommands() {
+  bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent)
+  bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent)
+  bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent)
+  bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
+
+  // /////////////// New in this Sample /////////////////
+  bindAction("button[data-command='StartAnimation']", animationButtonClick)
+  bindAction("input[data-command='TogglePerformance']", performanceButtonClick)
+}
+
+/**
+ * Sets a custom NodeStyle instance as a template for newly created
+ * nodes in the graph.
+ */
+function initializeGraph() {
+  // Create a new style and use it as default node style
+  graph.nodeDefaults.style = new MySimpleNodeStyle()
+  graph.nodeDefaults.size = new Size(50, 50)
+
+  // Create some graph elements with the above defined styles.
+  createSampleGraph()
+}
+
+/**
+ * Creates the default input mode for the graphComponent,
+ * a {@link GraphEditorInputMode}.
+ * @return {IInputMode} a new GraphEditorInputMode instance
+ */
+function createEditorMode() {
+  return new GraphEditorInputMode({
+    allowEditLabel: true
+  })
+}
+
+/**
+ * Creates the initial sample graph.
+ */
+function createSampleGraph() {
+  for (let i = 1; i <= 40; i++) {
+    for (let j = 1; j <= 40; j++) {
+      graph.createNode(new Rect(60 * i, 60 * j, 30, 30))
+    }
   }
-})
+}
 
-require(['yfiles/view-editor', 'resources/demo-app', 'MySimpleNodeStyle.js', 'resources/license'], (
-  /** @type {yfiles_namespace} */ /** typeof yfiles */ yfiles,
-  app,
-  MySimpleNodeStyle
-) => {
-  /** @type {yfiles.view.GraphComponent} */
-  let graphComponent = null
-
-  /** @type {yfiles.graph.IGraph} */
-  let graph = null
-
-  function run() {
-    // Initialize the GraphComponent and place it in the div with CSS selector #graphComponent
-    graphComponent = new yfiles.view.GraphComponent('#graphComponent')
-    // conveniently store a reference to the graph that is displayed
-    graph = graphComponent.graph
-
-    // initialize the graph
-    initializeGraph()
-
-    // initialize the input mode
-    graphComponent.inputMode = createEditorMode()
-
-    graphComponent.fitGraphBounds()
-
-    // bind the demo buttons to their commands
-    registerCommands()
-
-    // Initialize the demo application's CSS and Javascript for the description
-    app.show(graphComponent)
-  }
-
-  /**
-   * Helper method that binds the various commands available in yFiles for HTML to the buttons
-   * in the demo's toolbar.
-   */
-  function registerCommands() {
-    const ICommand = yfiles.input.ICommand
-    app.bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent)
-    app.bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent)
-    app.bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent)
-    app.bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
-
+function performanceButtonClick() {
+  // switch canvas painting on/off
+  const style = graphComponent.graph.nodeDefaults.style
+  if (style instanceof MySimpleNodeStyle) {
     // /////////////// New in this Sample /////////////////
-    app.bindAction("button[data-command='StartAnimation']", animationButtonClick)
-    app.bindAction("input[data-command='TogglePerformance']", performanceButtonClick)
+    // this code is only included in this tutorial step. It is necessary to
+    // make the toggle button work that can be used to switch between high-
+    // and low-performance mode.
+    style.highPerformanceRendering = window.document.getElementById('togglePerformance').checked
+    graph.invalidateDisplays()
   }
+}
 
-  /**
-   * Sets a custom NodeStyle instance as a template for newly created
-   * nodes in the graph.
-   */
-  function initializeGraph() {
-    // Create a new style and use it as default node style
-    graph.nodeDefaults.style = new MySimpleNodeStyle()
-    graph.nodeDefaults.size = new yfiles.geometry.Size(50, 50)
+let animator = null
 
-    // Create some graph elements with the above defined styles.
-    createSampleGraph()
+function animationButtonClick() {
+  startAnimation()
+}
+
+function startAnimation() {
+  // animates the nodes in random fashion
+  if (animator === null) {
+    animator = new Animator(graphComponent)
   }
+  const graphAnimation = IAnimation.createGraphAnimation(
+    graph,
+    IMapper.fromDelegate(
+      node =>
+        new Rect(Math.random() * 2400, Math.random() * 2400, node.layout.width, node.layout.height)
+    ),
+    null,
+    null,
+    null,
+    '5s'
+  )
+  animator.animate(graphAnimation)
+}
 
-  /**
-   * Creates the default input mode for the graphComponent,
-   * a {@link yfiles.input.GraphEditorInputMode}.
-   * @return {yfiles.input.IInputMode} a new GraphEditorInputMode instance
-   */
-  function createEditorMode() {
-    return new yfiles.input.GraphEditorInputMode({
-      allowEditLabel: true
-    })
-  }
+// ////////////////////////////////////////////////////
 
-  /**
-   * Creates the initial sample graph.
-   */
-  function createSampleGraph() {
-    for (let i = 1; i <= 40; i++) {
-      for (let j = 1; j <= 40; j++) {
-        graph.createNode(new yfiles.geometry.Rect(60 * i, 60 * j, 30, 30))
-      }
-    }
-  }
-
-  function performanceButtonClick() {
-    // switch canvas painting on/off
-    const style = graphComponent.graph.nodeDefaults.style
-    if (style instanceof MySimpleNodeStyle) {
-      // /////////////// New in this Sample /////////////////
-      // this code is only included in this tutorial step. It is necessary to
-      // make the toggle button work that can be used to switch between high-
-      // and low-performance mode.
-      style.highPerformanceRendering = window.document.getElementById('togglePerformance').checked
-      graph.invalidateDisplays()
-    }
-  }
-
-  let animator = null
-
-  function animationButtonClick() {
-    startAnimation()
-  }
-
-  function startAnimation() {
-    // animates the nodes in random fashion
-    if (animator === null) {
-      animator = new yfiles.view.Animator(graphComponent)
-    }
-    const graphAnimation = yfiles.view.IAnimation.createGraphAnimation(
-      graph,
-      yfiles.collections.IMapper.fromDelegate(
-        node =>
-          new yfiles.geometry.Rect(
-            Math.random() * 2400,
-            Math.random() * 2400,
-            node.layout.width,
-            node.layout.height
-          )
-      ),
-      null,
-      null,
-      null,
-      '5s'
-    )
-    animator.animate(graphAnimation)
-  }
-
-  // ////////////////////////////////////////////////////
-
-  // Start demo
-  run()
-})
+// Start demo
+loadJson().then(run)

@@ -7,8 +7,8 @@
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.1.
-     // Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML 2.2.
+     // Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -36,11 +36,12 @@
 
   <title>Clipboard Demo [yFiles for HTML]</title>
 
-  <link rel="stylesheet" href="../../../lib/yfiles.css">
+  <link rel="stylesheet" href="../../node_modules/yfiles/yfiles.css">
   <link rel="stylesheet" href="../../resources/style/demo.css">
 
   <!-- enable debugging -->
   <script src="../../../ide-support/yfiles-typeinfo.js"></script>
+  <script src="../../resources/filesystem-warning.js"></script>
 
   <script type="text/yfiles-template">
     <g id="ClipboardStyle">
@@ -60,8 +61,8 @@
   </script>
 
   <style type="text/css">
-    .demo-toolbar {
-      top: 0 !important;
+    .demo-content .demo-toolbar {
+      top: 0;
     }
 
     #left {
@@ -84,13 +85,34 @@
       right: 0;
     }
 
+    :fullscreen #left {
+      top: 0;
+    }
+
+    :fullscreen #right {
+      top: 0;
+    }
+
+    :fullscreen .demo-toolbar {
+      top: 30px;
+    }
+
+    @media screen and (max-height: 500px) {
+      #left,
+      #right,
+      #left #graphComponent,
+      #right #graphComponent2{
+        top: 30px;
+      }
+    }
+
     #graphComponent {
-      top: 40px !important;
+      top: 40px;
     }
 
     #graphComponent2 {
       position: absolute;
-      top: 40px !important;
+      top: 40px;
       left: 0;
       right: 0;
       bottom: 0;
@@ -111,7 +133,7 @@
   <h1 class="demo-sidebar-header">Description</h1>
   <div class="demo-sidebar-content">
     <p>
-      The Clipboard demo shows different ways of using <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.graph.GraphClipboard" target="_blank">yfiles.graph.GraphClipboard</a> for Copy & Paste
+      The Clipboard demo shows different ways of using <a href="https://docs.yworks.com/yfileshtml/#/api/GraphClipboard" target="_blank">GraphClipboard</a> for Copy & Paste
       operations. </p>
 
     <p>
@@ -148,7 +170,7 @@
         The nodes have a "business object" associated with the elements reflected in the nodes' titles (the text which
         is displayed inside the node). Editing the <code>name</code> property of a node's business object via the "Edit
         name" button changes the node's title, too, as it is bound to the name of the business object. <br> See class
-        <code>ClipboardBusinessObject</code> which is associated via the node's <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.graph.ITagOwner#tag" target="_blank">yfiles.graph.ITagOwner#tag</a>.
+        <code>ClipboardBusinessObject</code> which is associated via the node's <a href="https://docs.yworks.com/yfileshtml/#/api/ITagOwner#tag" target="_blank">ITagOwner#tag</a>.
       </li>
 
       <li>
@@ -232,7 +254,6 @@
 
 </div>
 
-<script src="../../resources/require.js"></script>
-<script src="ClipboardDemo.js"></script>
+<script type="module" crossorigin="anonymous" src="ClipboardDemo.js"></script>
 </body>
 </html>

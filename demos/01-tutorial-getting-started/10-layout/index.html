@@ -7,8 +7,8 @@
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.1.
-     // Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML 2.2.
+     // Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -36,61 +36,62 @@
 
   <title>Automatic Graph Layout - Getting Started Tutorial [yFiles for HTML]</title>
 
-  <link rel="stylesheet" href="../../../lib/yfiles.css">
+  <link rel="stylesheet" href="../../node_modules/yfiles/yfiles.css">
   <link rel="stylesheet" href="../../resources/style/demo.css">
 
-  <script src="../../../ide-support/yfiles-typeinfo.js"></script><!-- enable debugging -->
+  <script src="../../../ide-support/yfiles-typeinfo.js"></script>
+
+  <script src="../../resources/filesystem-warning.js"></script><!-- enable debugging -->
 </head>
 <body class="demo-has-left">
 
-  <!--
-    The sidebar for the overview and description text
-    -->
-  <aside class="demo-sidebar demo-left">
-    <h1 class="demo-sidebar-header">Description</h1>
-    <div class="demo-sidebar-content">
-      <h2>Tutorial Demo 11</h2>
+<!--
+  The sidebar for the overview and description text
+  -->
+<aside class="demo-sidebar demo-left">
+  <h1 class="demo-sidebar-header">Description</h1>
+  <div class="demo-sidebar-content">
+    <h2>Tutorial Demo 10</h2>
 
-      <p>This step shows how to use the <a href="https://docs.yworks.com/yfileshtml/#/dguide/getting_started-layout" target="_blank">
-        layout algorithms</a> in yFiles for HTML to automatically place the graph elements.</p>
-      <p>Automatic layout is one of the main features of the yFiles products. The layout library provides
-        a large set of ready-to-use, highly customizable algorithms for most scenarios. The purpose of
-        this sample is to demonstrate how to run an arbitrary layout algorithm. For an overview of the available
-        layout styles, please see <a href="../../../demos/layout/layoutstyles/index.html" target="_blank">Layout Styles Demo</a>.</p>
+    <p>This step shows how to use the <a href="https://docs.yworks.com/yfileshtml/#/dguide/getting_started-layout" target="_blank"> layout algorithms</a> in yFiles for
+      HTML to automatically place the graph elements.</p>
+    <p>Automatic layout is one of the main features of the yFiles products. The layout library provides a large set of
+      ready-to-use, highly customizable algorithms for most scenarios. The purpose of this sample is to demonstrate how
+      to run an arbitrary layout algorithm. For an overview of the available layout styles, please see <a
+        href="../../../demos/layout/layoutstyles/index.html" target="_blank">Layout Styles Demo</a>.</p>
 
-      <ul>
-        <li>Click the 'Layout' button in the toolbar to run an automatic layout.</li>
-      </ul>
+    <ul>
+      <li>Click the 'Layout' button in the toolbar to run an automatic layout.</li>
+    </ul>
 
-      <p>See the sources for details.</p>
-    </div>
-  </aside>
+    <p>See the sources for details.</p>
+  </div>
+</aside>
 
-  <div class="demo-content">
+<div class="demo-content">
 
-    <div class="demo-toolbar">
-      <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
-      <button data-command="ZoomOriginal" title="Zoom to original size" class="demo-icon-yIconZoomOriginal"></button>
-      <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
-      <button data-command="FitContent" title="Fit Content" class="demo-icon-yIconZoomFit"></button>
-      <span class="demo-separator"></span>
-      <button data-command="Cut" title="Cut" class="demo-icon-yIconCut"></button>
-      <button data-command="Copy" title="Copy" class="demo-icon-yIconCopy"></button>
-      <button data-command="Paste" title="Paste" class="demo-icon-yIconPaste"></button>
-      <span class="demo-separator"></span>
-      <button data-command="Undo" title="Undo" class="demo-icon-yIconUndo"></button>
-      <button data-command="Redo" title="Redo" class="demo-icon-yIconRedo"></button>
-      <span class="demo-separator"></span>
-      <button data-command="GroupSelection" title="Group selected element" class="demo-icon-yIconGroup"></button>
-      <button data-command="UngroupSelection" title="Ungroup selected element" class="demo-icon-yIconUngroup"></button>
-      <span class="demo-separator"></span>
-      <button data-command="Layout" title="Layout" class="demo-icon-yIconLayout labeled">Layout</button>
-    </div>
-
-    <div id="graphComponent"></div>
+  <div class="demo-toolbar">
+    <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
+    <button data-command="ZoomOriginal" title="Zoom to original size" class="demo-icon-yIconZoomOriginal"></button>
+    <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
+    <button data-command="FitContent" title="Fit Content" class="demo-icon-yIconZoomFit"></button>
+    <span class="demo-separator"></span>
+    <button data-command="Cut" title="Cut" class="demo-icon-yIconCut"></button>
+    <button data-command="Copy" title="Copy" class="demo-icon-yIconCopy"></button>
+    <button data-command="Paste" title="Paste" class="demo-icon-yIconPaste"></button>
+    <span class="demo-separator"></span>
+    <button data-command="Undo" title="Undo" class="demo-icon-yIconUndo"></button>
+    <button data-command="Redo" title="Redo" class="demo-icon-yIconRedo"></button>
+    <span class="demo-separator"></span>
+    <button data-command="GroupSelection" title="Group selected element" class="demo-icon-yIconGroup"></button>
+    <button data-command="UngroupSelection" title="Ungroup selected element" class="demo-icon-yIconUngroup"></button>
+    <span class="demo-separator"></span>
+    <button data-command="Layout" title="Layout" class="demo-icon-yIconLayout labeled">Layout</button>
   </div>
 
-<script src="../../resources/require.js"></script>
-<script src="SampleApplication.js"></script>
+  <div id="graphComponent"></div>
+</div>
+
+<script type="module" crossorigin="anonymous" src="SampleApplication.js"></script>
 </body>
 </html>

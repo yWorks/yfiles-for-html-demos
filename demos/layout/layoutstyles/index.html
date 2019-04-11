@@ -7,8 +7,8 @@
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.1.
-     // Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML 2.2.
+     // Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -36,12 +36,13 @@
 
   <title>Layout Styles Demo [yFiles for HTML]</title>
 
-  <link rel="stylesheet" href="../../../lib/yfiles.css">
+  <link rel="stylesheet" href="../../node_modules/yfiles/yfiles.css">
   <link rel="stylesheet" href="../../resources/style/demo.css">
   <link rel="stylesheet" href="../../resources/style/demo-option-editor.css">
 
   <!-- enable debugging -->
   <script src="../../../ide-support/yfiles-typeinfo.js"></script>
+  <script src="../../resources/filesystem-warning.js"></script>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.7.5/angular.min.js"
     integrity="sha256-QRJz3b0/ZZC4ilKmBRRjY0MgnVhQ+RR1tpWLYaRRjSo=" crossorigin="anonymous"></script>
@@ -299,7 +300,7 @@ The sidebar for the properties and settings
       <script type="text/ng-template" id="./components/option-ui-checkbox/option-ui-checkbox.html">
         <form class="option-ui-checkbox">
           <div class="checkbox-container">
-            <label  class="option-ui-checkbox" title="{{::option.label}}">{{::option.label}}<a data-ng-if="!!option.link" href="{{::option.link}}" title="Open Documentation" class="option-ui-api-link" target="_blank">API&#129034;</a></label>
+            <label  class="option-ui-checkbox" title="{{::option.label}}">{{::option.label}}<a data-ng-if="!!option.link" href="{{::option.link}}" title="Open Documentation" class="option-ui-api-link" target="_blank">API<span style="font-size: 12px;">&#8594;</span></a></label>
             <div class="vcenter-container">
               <input type="checkbox" data-ng-model="option.value" data-ng-disabled="disabled" />
             </div>
@@ -315,7 +316,7 @@ The sidebar for the properties and settings
       <script type="text/ng-template" id="./components/option-ui-combobox/option-ui-combobox.html">
         <form class="option-ui-combobox">
           <div class="combobox-container">
-            <label class="option-ui-combobox" title="{{::option.label}}">{{::option.label}}<a data-ng-if="!!option.link" href="{{::option.link}}" title="Open Documentation" class="option-ui-api-link" target="_blank">API&#129034;</a></label>
+            <label class="option-ui-combobox" title="{{::option.label}}">{{::option.label}}<a data-ng-if="!!option.link" href="{{::option.link}}" title="Open Documentation" class="option-ui-api-link" target="_blank">API<span style="font-size: 12px;">&#8594;</span></a></label>
             <div class="vcenter-container">
               <select size="1" data-ng-model="option.value" data-ng-disabled="disabled" ng-options="option.value as option.name for option in options"></select>
             </div>
@@ -339,7 +340,7 @@ The sidebar for the properties and settings
         <form class="option-ui-slider" name="ctrlForm">
           <div>
             <label class="option-ui-slider" title="{{::option.label}}">
-              {{::option.label}}<a data-ng-if="!!option.link" href="{{::option.link}}" title="Open Documentation" class="option-ui-api-link" target="_blank">API&#129034;</a><br />
+              {{::option.label}}<a data-ng-if="!!option.link" href="{{::option.link}}" title="Open Documentation" class="option-ui-api-link" target="_blank">API<span style="font-size: 12px;">&#8594;</span></a><br />
             </label>
           </div>
 
@@ -371,7 +372,7 @@ The sidebar for the properties and settings
       <script type="text/ng-template" id="./components/option-ui-spinner/option-ui-spinner.html">
         <form class="option-ui-spinner" name="ctrlForm">
           <div class="spinner-container">
-            <label class="option-ui-spinner" title="{{::option.label}}">{{::option.label}}<a data-ng-if="!!option.link" href="{{::option.link}}" title="Open Documentation" class="option-ui-api-link" target="_blank">API&#129034;</a></label>
+            <label class="option-ui-spinner" title="{{::option.label}}">{{::option.label}}<a data-ng-if="!!option.link" href="{{::option.link}}" title="Open Documentation" class="option-ui-api-link" target="_blank">API<span style="font-size: 12px;">&#8594;</span></a></label>
             <div class="vcenter-container">
               <input class="spinner" type="number" min="{{::option.min}}" max="{{::option.max}}" step="{{::option.step}}" name="input" data-ng-model="option.value" data-ng-disabled="disabled" required  option-ui-validate />
             </div>
@@ -432,7 +433,6 @@ The sidebar for the properties and settings
   </div>
 </aside>
 
-<script src="../../resources/require.js"></script>
-<script src="LayoutStylesDemo.js"></script>
+<script type="module" crossorigin="anonymous" src="LayoutStylesDemo.js"></script>
 </body>
 </html>

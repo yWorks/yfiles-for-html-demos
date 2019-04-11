@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.1.
- ** Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.2.
+ ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,53 +26,56 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-'use strict'
+import {
+  BaseClass,
+  IGraph,
+  IGroupBoundsCalculator,
+  INode,
+  INodeInsetsProvider,
+  Insets,
+  Rect
+} from 'yfiles'
+import { RotatableNodeStyleDecorator } from './RotatableNodes.js'
 
-define(['yfiles/view-component', 'RotatableNodes.js'], (yfiles, RotatableNodes) => {
+/**
+ * Calculates group bounds taking the rotated layout for nodes which
+ * {@link RotatableNodes.RotatableNodeStyleDecorator support rotation}.
+ */
+export default class RotationAwareGroupBoundsCalculator extends BaseClass(IGroupBoundsCalculator) {
   /**
-   * Calculates group bounds taking the rotated layout for nodes which
-   * {@link RotatableNodes.RotatableNodeStyleDecorator support rotation}.
+   * Calculates the minimum bounds for the given group node to enclose all its children plus insets.
+   * @param {IGraph} graph
+   * @param {INode} groupNode
+   * @return {Rect}
    */
-  class RotationAwareGroupBoundsCalculator extends yfiles.lang.Class(
-    yfiles.graph.IGroupBoundsCalculator
-  ) {
-    /**
-     * Calculates the minimum bounds for the given group node to enclose all its children plus insets.
-     * @param {yfiles.graph.IGraph} graph
-     * @param {yfiles.graph.INode} groupNode
-     * @return {yfiles.geometry.Rect}
-     */
-    calculateBounds(graph, groupNode) {
-      let bounds = yfiles.geometry.Rect.EMPTY
-      graph.getChildren(groupNode).forEach(node => {
-        const styleWrapper = node.style
-        if (styleWrapper instanceof RotatableNodes.RotatableNodeStyleDecorator) {
-          // if the node supports rotation: add the outer bounds of the rotated layout
-          bounds = yfiles.geometry.Rect.add(bounds, styleWrapper.getRotatedLayout(node).bounds)
-        } else {
-          // in all other cases: add the node's layout
-          bounds = yfiles.geometry.Rect.add(bounds, node.layout.toRect())
-        }
-      })
-      // if we have content: add insets
-      return bounds.isEmpty ? bounds : bounds.getEnlarged(getInsets(groupNode))
-    }
+  calculateBounds(graph, groupNode) {
+    let bounds = Rect.EMPTY
+    graph.getChildren(groupNode).forEach(node => {
+      const styleWrapper = node.style
+      if (styleWrapper instanceof RotatableNodeStyleDecorator) {
+        // if the node supports rotation: add the outer bounds of the rotated layout
+        bounds = Rect.add(bounds, styleWrapper.getRotatedLayout(node).bounds)
+      } else {
+        // in all other cases: add the node's layout
+        bounds = Rect.add(bounds, node.layout.toRect())
+      }
+    })
+    // if we have content: add insets
+    return bounds.isEmpty ? bounds : bounds.getEnlarged(getInsets(groupNode))
   }
+}
 
-  /**
-   * Returns insets to add to apply to the given groupNode.
-   * @param {yfiles.graph.INode} groupNode
-   * @return {yfiles.geometry.Insets}
-   */
-  function getInsets(groupNode) {
-    const provider = groupNode.lookup(yfiles.input.INodeInsetsProvider.$class)
-    if (provider) {
-      // get the insets from the node's insets provider if there is one
-      return provider.getInsets(groupNode)
-    }
-    // otherwise add 5 to each border
-    return new yfiles.geometry.Insets(5)
+/**
+ * Returns insets to add to apply to the given groupNode.
+ * @param {INode} groupNode
+ * @return {Insets}
+ */
+function getInsets(groupNode) {
+  const provider = groupNode.lookup(INodeInsetsProvider.$class)
+  if (provider) {
+    // get the insets from the node's insets provider if there is one
+    return provider.getInsets(groupNode)
   }
-
-  return RotationAwareGroupBoundsCalculator
-})
+  // otherwise add 5 to each border
+  return new Insets(5)
+}

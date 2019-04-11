@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.1.
- ** Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.2.
+ ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,71 +26,67 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-'use strict'
+import { GraphBuilder, IGraph } from 'yfiles'
 
-define(['yfiles/view-component'], /** @type {yfiles_namespace} */ /** typeof yfiles */ yfiles => {
+/**
+ * This is a modified GraphSource that stores a child scope of the given scope in each node's tag.
+ *
+ * By default, GraphSource stores the business data object that corresponds to a node in the node's tag. For this
+ * demo, we want to store a scope object instead (and store the data as item of the scope). Therefore, the methods
+ * the deal with the creation and updating of nodes and groups are overridden to implement this behavior.
+ */
+export default class ScopeGraphBuilder extends GraphBuilder {
   /**
-   * This is a modified GraphSource that stores a child scope of the given scope in each node's tag.
-   *
-   * By default, GraphSource stores the business data object that corresponds to a node in the node's tag. For this
-   * demo, we want to store a scope object instead (and store the data as item of the scope). Therefore, the methods
-   * the deal with the creation and updating of nodes and groups are overridden to implement this behavior.
+   * Creates a new instance of ScopeGraphBuilder.
+   * @param {IGraph} graph
+   * @param {object} scope
    */
-  class ScopeGraphBuilder extends yfiles.binding.GraphBuilder {
-    /**
-     * Creates a new instance of ScopeGraphBuilder.
-     * @param {yfiles.graph.IGraph} graph
-     * @param {object} scope
-     */
-    constructor(graph, scope) {
-      super(graph)
-      this.scope = scope
-    }
-
-    createNode(groupedGraph, parent, location, labelData, data) {
-      // call the super method
-      const node = super.createNode(groupedGraph, parent, location, labelData, data)
-      // create a new child scope
-      const childScope = this.scope.$new(false)
-      // assign the business data
-      childScope.item = data
-      // put the child scope in the node's tag
-      node.tag = childScope
-      return node
-    }
-
-    createGroupNode(groupedGraph, data) {
-      // call the super method
-      const node = super.createGroupNode(groupedGraph, data)
-      // create a new child scope
-      const childScope = this.scope.$new(false)
-      // assign the business data
-      childScope.item = data
-      // put the child scope in the node's tag
-      node.tag = childScope
-      return node
-    }
-
-    updateNode(groupedGraph, node, parent, location, labelData, data) {
-      // get the scope from the node's tag
-      const scope = node.tag
-      // call the super method (replaces 'the' tag with the data)
-      super.updateNode(groupedGraph, node, parent, location, labelData, data)
-      // assign the business data
-      scope.item = data
-      node.tag = scope
-    }
-
-    updateGroupNode(groupedGraph, groupNode, data) {
-      // get the scope from the node's tag
-      const scope = groupNode.tag
-      // call the super method (replaces the 'tag' with the data)
-      super.updateGroupNode(groupedGraph, groupNode, data)
-      // assign the business data
-      scope.item = data
-      groupNode.tag = scope
-    }
+  constructor(graph, scope) {
+    super(graph)
+    this.scope = scope
   }
 
-  return ScopeGraphBuilder
-})
+  createNode(groupedGraph, parent, location, labelData, data) {
+    // call the super method
+    const node = super.createNode(groupedGraph, parent, location, labelData, data)
+    // create a new child scope
+    const childScope = this.scope.$new(false)
+    // assign the business data
+    childScope.item = data
+    // put the child scope in the node's tag
+    node.tag = childScope
+    return node
+  }
+
+  createGroupNode(groupedGraph, data) {
+    // call the super method
+    const node = super.createGroupNode(groupedGraph, data)
+    // create a new child scope
+    const childScope = this.scope.$new(false)
+    // assign the business data
+    childScope.item = data
+    // put the child scope in the node's tag
+    node.tag = childScope
+    return node
+  }
+
+  updateNode(groupedGraph, node, parent, location, labelData, data) {
+    // get the scope from the node's tag
+    const scope = node.tag
+    // call the super method (replaces 'the' tag with the data)
+    super.updateNode(groupedGraph, node, parent, location, labelData, data)
+    // assign the business data
+    scope.item = data
+    node.tag = scope
+  }
+
+  updateGroupNode(groupedGraph, groupNode, data) {
+    // get the scope from the node's tag
+    const scope = groupNode.tag
+    // call the super method (replaces the 'tag' with the data)
+    super.updateGroupNode(groupedGraph, groupNode, data)
+    // assign the business data
+    scope.item = data
+    groupNode.tag = scope
+  }
+}

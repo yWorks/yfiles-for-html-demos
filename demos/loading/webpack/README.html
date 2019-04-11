@@ -5,8 +5,8 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.1.
-     // Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML 2.2.
+     // Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -32,7 +32,7 @@
      // 
      ////////////////////////////////////////////////////////////////////////-->
 
-  <title>Webpack Demo</title>
+  <title>Webpack ES Modules Demo</title>
   <link rel="stylesheet" type="text/css" href="../../../doc/documentation-style.css">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 </head>
@@ -42,20 +42,16 @@
   <div class="title">
     <a href="../../README.html">yFiles for HTML</a>
     <span class="angle-right"></span>
-    Webpack Demo
+    Webpack ES Modules Demo
   </div>
 </header>
 <div class="content">
-  <div class="content-centered" style="padding-bottom: 20px">
+  <div class="content-centered">
     <p>
       This demo shows how to integrate the yFiles library in a <a href="https://webpack.js.org/">webpack 3</a> project.
     </p>
-
-    <p>
-      In contrast to the <a href="../webpackEs6Modules/README.html">webpack ES6 Modules Demo</a>, this demo uses the UMD version of the
-      yFiles library.
-    </p>
-
+  </div>
+  <div class="content-centered" style="padding-bottom: 20px">
     <p>
       Two fundamental concepts for webpack projects are demonstrated:
     </p>
@@ -63,15 +59,10 @@
       <li><a href="https://webpack.js.org/guides/code-splitting/">Code Splitting</a></li>
       <li>Separate webpack configurations for development and <a href="https://webpack.js.org/guides/production-build/">production</a></li>
     </ul>
-
-    <p>
-      The demo also shows how the <a href="../../../deployment/README.html">yFiles for HTML deployment tool</a> can be integrated into the webpack build process for
-      optimal obfuscation and minification.
-    </p>
   </div>
 
 
-  <div class="background-blue" style="padding: 40px 0 20px 0">
+  <div class="block-space" style="padding: 40px 0 20px 0">
     <div class="content-centered">
       <h2>Running the demo</h2>
 
@@ -110,7 +101,6 @@
 
       <p>The following build steps are specific to the production configuration:</p>
       <ul>
-        <li>Run the yFiles for HTML deployment tool to obfuscate and minify the yFiles library along with its usages.</li>
         <li>Append a content-based hash to the bundle filename to enable long-term caching.</li>
         <li><a href="https://webpack.js.org/guides/production-build/#minification">Minify</a> the bundles using webpack's minification plugin.</li>
       </ul>
@@ -155,7 +145,7 @@
       <a href="https://www.youtube.com/user/yWorksTube" target="_blank" class="yt">YouTube</a>
     </div>
     <br><br>
-    <span class="copyright">COPYRIGHT &#x00A9; 2018 yWorks</span><br>
+    <span class="copyright">COPYRIGHT &#x00A9; 2019 yWorks</span><br>
     <a href="https://www.yworks.com/company/legal/imprint">Imprint</a> |
     <a href="https://www.yworks.com/company/legal/terms-of-use">Terms of Use</a> |
     <a href="https://www.yworks.com/company/legal/privacy">Privacy Policy</a>

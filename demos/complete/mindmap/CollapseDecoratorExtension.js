@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.1.
- ** Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.2.
+ ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,49 +26,44 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-/*eslint-disable*/
-'use strict'
+import { Class, ILookup, INodeStyle, MarkupExtension } from 'yfiles'
+import CollapseDecorator from './CollapseDecorator.js'
 
-define(['yfiles/lang', 'yfiles/view-component', 'CollapseDecorator.js'], (
-  lang,
-  yfiles,
-  CollapseDecorator
-) => {
+/**
+ * A markup extension class used for (de-)serializing a custom node style, namely
+ * CollapseDecorator class, that is written in ECMAScript 6.
+ */
+const CollapseDecoratorExtension = Class('CollapseDecoratorExtension', {
+  $extends: MarkupExtension,
+
   /**
-   * A markup extension class used for (de-)serializing a custom node style, namely
-   * CollapseDecorator class, that is written in ECMAScript 6.
+   * Backing field for below property
+   * @type {INodeStyle}
    */
-  const CollapseDecoratorExtension = yfiles.lang.Class('CollapseDecoratorExtension', {
-    $extends: yfiles.graphml.MarkupExtension,
+  $wrappedStyle: null,
 
-    /**
-     * Backing field for below property
-     * @type {yfiles.styles.INodeStyle}
-     */
-    $wrappedStyle: null,
-
-    /**
-     * Gets or sets the inner style used to render the collapse/expand icon.
-     * The explicit getter/setter is needed to support (de-)serialization.
-     * @type {yfiles.styles.INodeStyle}
-     */
-    wrappedStyle: {
-      get: function() {
-        return this.$wrappedStyle
-      },
-      set: function(value) {
-        this.$wrappedStyle = value
-      }
+  /**
+   * Gets or sets the inner style used to render the collapse/expand icon.
+   * The explicit getter/setter is needed to support (de-)serialization.
+   * @type {INodeStyle}
+   */
+  wrappedStyle: {
+    get: function() {
+      return this.$wrappedStyle
     },
-
-    /**
-     * @param {yfiles.graph.ILookup} lookup
-     * @return {CollapseDecorator}
-     */
-    provideValue: function(lookup) {
-      let collapseDecorator = new CollapseDecorator(this.wrappedStyle)
-      return collapseDecorator
+    set: function(value) {
+      this.$wrappedStyle = value
     }
-  })
-  return CollapseDecoratorExtension
+  },
+
+  /**
+   * @param {ILookup} lookup
+   * @return {CollapseDecorator}
+   */
+  provideValue: function(lookup) {
+    let collapseDecorator = new CollapseDecorator(this.wrappedStyle)
+    return collapseDecorator
+  }
 })
+
+export default CollapseDecoratorExtension

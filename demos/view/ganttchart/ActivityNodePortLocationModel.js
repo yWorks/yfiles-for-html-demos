@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.1.
- ** Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.2.
+ ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,157 +26,156 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-'use strict'
+import {
+  BaseClass,
+  Class,
+  Enum,
+  ILookup,
+  INode,
+  IPort,
+  IPortLocationModel,
+  IPortLocationModelParameter,
+  IPortOwner,
+  Point
+} from 'yfiles'
 
-define(['yfiles/view-component'], /** @type {yfiles_namespace} */ /** typeof yfiles */ yfiles => {
-  /**
-   * An enumeration for right or left port position.
-   */
-  const PortPosition = yfiles.lang.Enum('PortPosition', {
-    LEFT: 1,
-    RIGHT: 2
-  })
+/**
+ * An enumeration for right or left port position.
+ */
+const PortPosition = Enum('PortPosition', {
+  LEFT: 1,
+  RIGHT: 2
+})
 
+/**
+ * A simple PortLocationModel that allows ports to be placed in the center left or center right
+ * location of the node. This implementation also considers the lead and followUp time.
+ */
+export default class ActivityNodePortLocationModel extends BaseClass(IPortLocationModel) {
   /**
-   * A simple PortLocationModel that allows ports to be placed in the center left or center right
-   * location of the node. This implementation also considers the lead and followUp time.
-   * @class ActivityNodePortLocationModel
-   * @implements {yfiles.graph.IPortLocationModel}
+   * Calculates the port location for a parameter. Places the port at the right or left side of a node.
+   * @param {IPort} port - The port to determine the location for.
+   * @param {IPortLocationModelParameter} locationParameter - The parameter to use. The parameter can be
+   *   expected to be created by this instance having the {@link IPortLocationModelParameter#model}
+   *   property set to this instance..
+   * @returns {Point}
    */
-  class ActivityNodePortLocationModel extends yfiles.lang.Class(yfiles.graph.IPortLocationModel) {
-    /**
-     * Calculates the port location for a parameter. Places the port at the right or left side of a node.
-     * @param {yfiles.graph.IPort} port - The port to determine the location for.
-     * @param {yfiles.graph.IPortLocationModelParameter} locationParameter - The parameter to use. The parameter can be
-     *   expected to be created by this instance having the {@link yfiles.graph.IPortLocationModelParameter#model}
-     *   property set to this instance..
-     * @returns {yfiles.geometry.Point}
-     */
-    getLocation(port, locationParameter) {
-      const node = port.owner
-      const layout = node.layout
-      if (locationParameter instanceof ActivityNodePortLocationModelParameter) {
-        const tag = node.tag
-        switch (locationParameter.position) {
-          case PortPosition.RIGHT: {
-            // get followUp time
-            const followUpTime = tag.followUpTimeWidth ? tag.followUpTimeWidth : 0
-            return new yfiles.geometry.Point(
-              layout.x + layout.width + followUpTime,
-              layout.y + layout.height * 0.5
-            )
-          }
-          case PortPosition.LEFT:
-          default: {
-            // get lead time
-            const leadTime = tag.leadTimeWidth ? tag.leadTimeWidth : 0
-            return new yfiles.geometry.Point(layout.x - leadTime, layout.y + layout.height * 0.5)
-          }
+  getLocation(port, locationParameter) {
+    const node = port.owner
+    const layout = node.layout
+    if (locationParameter instanceof ActivityNodePortLocationModelParameter) {
+      const tag = node.tag
+      switch (locationParameter.position) {
+        case PortPosition.RIGHT: {
+          // get followUp time
+          const followUpTime = tag.followUpTimeWidth ? tag.followUpTimeWidth : 0
+          return new Point(layout.x + layout.width + followUpTime, layout.y + layout.height * 0.5)
+        }
+        case PortPosition.LEFT:
+        default: {
+          // get lead time
+          const leadTime = tag.leadTimeWidth ? tag.leadTimeWidth : 0
+          return new Point(layout.x - leadTime, layout.y + layout.height * 0.5)
         }
       }
-      // if we reach this point, parameter was not of type TaskNodePortLocationModelParameter
-      return layout.center // use the node center as fallback.
     }
+    // if we reach this point, parameter was not of type TaskNodePortLocationModelParameter
+    return layout.center // use the node center as fallback.
+  }
 
-    /** Creates a suitable parameter for a location.
-     * @param {yfiles.graph.IPortOwner} owner - The port owner that will own the port for which the parameter shall be
-     *   created.
-     * @param {yfiles.geometry.Point} location - The location in the world coordinate system that should be matched as
-     *   best as possible.
-     * @returns {yfiles.graph.IPortLocationModelParameter}
-     */
-    createParameter(owner, location) {
-      // see if we are in the right or the left half of the node
-      if (owner.layout && location.x > owner.layout.center.x) {
-        return ActivityNodePortLocationModel.RIGHT
-      }
-      return ActivityNodePortLocationModel.LEFT
+  /** Creates a suitable parameter for a location.
+   * @param {IPortOwner} owner - The port owner that will own the port for which the parameter shall be
+   *   created.
+   * @param {Point} location - The location in the world coordinate system that should be matched as
+   *   best as possible.
+   * @returns {IPortLocationModelParameter}
+   */
+  createParameter(owner, location) {
+    // see if we are in the right or the left half of the node
+    if (owner.layout && location.x > owner.layout.center.x) {
+      return ActivityNodePortLocationModel.RIGHT
     }
-
-    /**
-     * @param {yfiles.graph.IPort} port - The port to use in the context.
-     * @param {yfiles.graph.IPortLocationModelParameter} locationParameter - The parameter to use for the port in the
-     *   context.
-     * @returns {yfiles.graph.ILookup}
-     */
-    getContext(port, locationParameter) {
-      // no special types to lookup
-      return yfiles.graph.ILookup.EMPTY
-    }
-
-    /**
-     * @param {yfiles.lang.Class} type - the type for which an instance shall be returned
-     * @returns {*}
-     */
-    lookup(type) {
-      return null
-    }
-
-    static get INSTANCE() {
-      return instance
-    }
-
-    static get LEFT() {
-      return left
-    }
-
-    static get RIGHT() {
-      return right
-    }
+    return ActivityNodePortLocationModel.LEFT
   }
 
   /**
-   * The parameter used by this location model.
-   * @extends yfiles.graph.IPortLocationModelParameter
+   * @param {IPort} port - The port to use in the context.
+   * @param {IPortLocationModelParameter} locationParameter - The parameter to use for the port in the
+   *   context.
+   * @returns {ILookup}
    */
-  class ActivityNodePortLocationModelParameter extends yfiles.lang.Class(
-    yfiles.graph.IPortLocationModelParameter
-  ) {
-    /**
-     * @param {PortPosition} position
-     * @param {ActivityNodePortLocationModel} model
-     */
-    constructor(position, model) {
-      super()
-      this.$position = position
-      this.$model = model
-    }
-
-    /**
-     * @returns {PortPosition}
-     */
-    get position() {
-      return this.$position
-    }
-
-    /**
-     * @returns {yfiles.graph.IPortLocationModel}
-     */
-    get model() {
-      return this.$model
-    }
-
-    /**
-     * @param {yfiles.graph.IPortOwner} owner - The port owner to test.
-     * @returns {boolean}
-     */
-    supports(owner) {
-      // this implementation supports only nodes
-      return yfiles.graph.INode.isInstance(owner)
-    }
-
-    /**
-     * @returns {ActivityNodePortLocationModelParameter}
-     */
-    clone() {
-      return new ActivityNodePortLocationModelParameter(this.$position, this.$model)
-    }
+  getContext(port, locationParameter) {
+    // no special types to lookup
+    return ILookup.EMPTY
   }
 
-  const instance = new ActivityNodePortLocationModel()
+  /**
+   * @param {Class} type - the type for which an instance shall be returned
+   * @returns {*}
+   */
+  lookup(type) {
+    return null
+  }
 
-  const left = new ActivityNodePortLocationModelParameter(PortPosition.LEFT, instance)
-  const right = new ActivityNodePortLocationModelParameter(PortPosition.RIGHT, instance)
+  static get INSTANCE() {
+    return instance
+  }
 
-  return ActivityNodePortLocationModel
-})
+  static get LEFT() {
+    return left
+  }
+
+  static get RIGHT() {
+    return right
+  }
+}
+
+/**
+ * The parameter used by this location model.
+ */
+class ActivityNodePortLocationModelParameter extends BaseClass(IPortLocationModelParameter) {
+  /**
+   * @param {PortPosition} position
+   * @param {ActivityNodePortLocationModel} model
+   */
+  constructor(position, model) {
+    super()
+    this.$position = position
+    this.$model = model
+  }
+
+  /**
+   * @returns {PortPosition}
+   */
+  get position() {
+    return this.$position
+  }
+
+  /**
+   * @returns {IPortLocationModel}
+   */
+  get model() {
+    return this.$model
+  }
+
+  /**
+   * @param {IPortOwner} owner - The port owner to test.
+   * @returns {boolean}
+   */
+  supports(owner) {
+    // this implementation supports only nodes
+    return INode.isInstance(owner)
+  }
+
+  /**
+   * @returns {ActivityNodePortLocationModelParameter}
+   */
+  clone() {
+    return new ActivityNodePortLocationModelParameter(this.$position, this.$model)
+  }
+}
+
+const instance = new ActivityNodePortLocationModel()
+
+const left = new ActivityNodePortLocationModelParameter(PortPosition.LEFT, instance)
+const right = new ActivityNodePortLocationModelParameter(PortPosition.RIGHT, instance)

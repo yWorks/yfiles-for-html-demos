@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.1.
- ** Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.2.
+ ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,57 +26,62 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-'use strict'
+import {
+  CollectSnapResultsEventArgs,
+  GraphSnapContext,
+  GridSnapTypes,
+  INode,
+  NodeSnapResultProvider,
+  PathType,
+  Point,
+  Rect,
+  SnapPolicy
+} from 'yfiles'
 
-define(['yfiles/view-editor'], /** @type {yfiles_namespace} */ /** typeof yfiles */ yfiles => {
+/**
+ * Customizes the grid snapping behavior of NodeSnapResultProvider by providing SnapResults for each point of the
+ * node's shape path instead of the node's center.
+ */
+export default class ShapeBasedGridNodeSnapResultProvider extends NodeSnapResultProvider {
   /**
-   * Customizes the grid snapping behavior of NodeSnapResultProvider by providing SnapResults for each point of the
-   * node's shape path instead of the node's center.
-   * @extends yfiles.input.NodeSnapResultProvider
+   * Collects snap results that snap the node to a grid and adds them to the argument.
+   * @param {GraphSnapContext} context The context in which the snapping is performed
+   * @param {CollectSnapResultsEventArgs} args The arguments to add the results to
+   * @param {Rect} suggestedLayout The layout of the node if it would move without snapping
+   * @param {INode} node The node that is currently being processed
    */
-  class ShapeBasedGridNodeSnapResultProvider extends yfiles.input.NodeSnapResultProvider {
-    /**
-     * Collects snap results that snap the node to a grid and adds them to the argument.
-     * @param {yfiles.input.GraphSnapContext} context The context in which the snapping is performed
-     * @param {yfiles.input.CollectSnapResultsEventArgs} args The arguments to add the results to
-     * @param {yfiles.geometry.Rect} suggestedLayout The layout of the node if it would move without snapping
-     * @param {yfiles.graph.INode} node The node that is currently being processed
-     */
-    collectGridSnapResults(context, args, suggestedLayout, node) {
-      // node.Layout isn't updated, yet, so we have to calculate the delta between the the new suggested layout and the
-      // current node.Layout
-      const delta = new yfiles.geometry.Point(
-        suggestedLayout.topLeft.x - node.layout.topLeft.x,
-        suggestedLayout.topLeft.y - node.layout.topLeft.y
-      )
+  collectGridSnapResults(context, args, suggestedLayout, node) {
+    // node.Layout isn't updated, yet, so we have to calculate the delta between the the new suggested layout and the
+    // current node.Layout
+    const delta = new Point(
+      suggestedLayout.topLeft.x - node.layout.topLeft.x,
+      suggestedLayout.topLeft.y - node.layout.topLeft.y
+    )
 
-      // get outline of the shape and iterate over it's path point
-      const geometry = node.style.renderer.getShapeGeometry(node, node.style)
-      const outline = geometry.getOutline()
-      if (outline === null) {
-        return
-      }
+    // get outline of the shape and iterate over it's path point
+    const geometry = node.style.renderer.getShapeGeometry(node, node.style)
+    const outline = geometry.getOutline()
+    if (outline === null) {
+      return
+    }
 
-      const cursor = outline.createCursor()
-      while (cursor.moveNext()) {
-        // ignore PathType.Close as we had the path point as first point
-        // and cursor.CurrentEndPoint is always (0, 0) for PathType.Close
-        if (cursor.pathType !== yfiles.geometry.PathType.CLOSE) {
-          // adjust path point by the delta calculated above and add an according SnapResult
-          const endPoint = cursor.currentEndPoint.add(delta)
-          this.addGridSnapResultCore(
-            context,
-            args,
-            endPoint,
-            node,
-            yfiles.input.GridSnapTypes.GRID_POINTS,
-            yfiles.input.SnapPolicy.TO_NEAREST,
-            yfiles.input.SnapPolicy.TO_NEAREST
-          )
-        }
+    const cursor = outline.createCursor()
+    while (cursor.moveNext()) {
+      // ignore PathType.Close as we had the path point as first point
+      // and cursor.CurrentEndPoint is always (0, 0) for PathType.Close
+      if (cursor.pathType !== PathType.CLOSE) {
+        // adjust path point by the delta calculated above and add an according SnapResult
+        const endPoint = cursor.currentEndPoint.add(delta)
+        this.addGridSnapResultCore(
+          context,
+          args,
+          endPoint,
+          node,
+          GridSnapTypes.GRID_POINTS,
+          SnapPolicy.TO_NEAREST,
+          SnapPolicy.TO_NEAREST
+        )
       }
     }
   }
-
-  return ShapeBasedGridNodeSnapResultProvider
-})
+}

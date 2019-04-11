@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.1.
- ** Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.2.
+ ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,298 +26,295 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-'use strict'
+import {
+  BaseClass,
+  IGraph,
+  IMapper,
+  IRenderContext,
+  IVisualCreator,
+  List,
+  Point,
+  Rect,
+  SvgVisual,
+  Visual
+} from 'yfiles'
 
-define(['yfiles/view-component'], /** @type {yfiles_namespace} */ /** typeof yfiles */ yfiles => {
+/**
+ * Manages and renders the layers.
+ */
+export default class LayerVisual extends BaseClass(IVisualCreator) {
+  constructor() {
+    super()
+    // the bounds of the complete drawing
+    this.bounds = Rect.EMPTY
+    // the list of the dividers (one less than the number of layers)
+    this.dividers = new List()
+    // the opacity of the drawing
+    this.opacity = '0.5'
+  }
+
   /**
-   * Manages and renders the layers.
+   * updates the layer drawing from the information passed in
+   * @param {IGraph} graph
+   * @param {IMapper} layerMapper
    */
-  class LayerVisual extends yfiles.lang.Class(yfiles.view.IVisualCreator) {
-    constructor() {
-      super()
-      // the bounds of the complete drawing
-      this.bounds = yfiles.geometry.Rect.EMPTY
-      // the list of the dividers (one less than the number of layers)
-      this.dividers = new yfiles.collections.List()
-      // the opacity of the drawing
-      this.opacity = '0.5'
+  updateLayers(graph, layerMapper) {
+    // count the layers
+    let nodes
+    if (graph.groupingSupport.hasGroupNodes()) {
+      nodes = graph.nodes.filter(
+        node => !graph.isGroupNode(node) || graph.getChildren(node).size === 0
+      )
+    } else {
+      nodes = graph.nodes
     }
 
-    /**
-     * updates the layer drawing from the information passed in
-     * @param {yfiles.graph.IGraph} graph
-     * @param {yfiles.collections.IMapper} layerMapper
-     */
-    updateLayers(graph, layerMapper) {
-      // count the layers
-      let nodes
-      if (graph.groupingSupport.hasGroupNodes()) {
-        nodes = graph.nodes.filter(
-          node => !graph.isGroupNode(node) || graph.getChildren(node).size === 0
-        )
-      } else {
-        nodes = graph.nodes
-      }
+    let layerCount = 0
+    nodes.forEach(node => {
+      layerCount = Math.max(layerCount, layerMapper.get(node))
+    })
+    layerCount++
 
-      let layerCount = 0
-      nodes.forEach(node => {
-        layerCount = Math.max(layerCount, layerMapper.get(node))
-      })
-      layerCount++
+    // calculate min and max values
+    const mins = new Array(layerCount)
+    const maxs = new Array(layerCount)
+    for (let i = 0; i < maxs.length; i++) {
+      maxs[i] = Number.MIN_SAFE_INTEGER
+    }
 
-      // calculate min and max values
-      const mins = new Array(layerCount)
-      const maxs = new Array(layerCount)
-      for (let i = 0; i < maxs.length; i++) {
-        maxs[i] = Number.MIN_SAFE_INTEGER
-      }
+    for (let i = 0; i < mins.length; i++) {
+      mins[i] = Number.MAX_SAFE_INTEGER
+    }
 
-      for (let i = 0; i < mins.length; i++) {
-        mins[i] = Number.MAX_SAFE_INTEGER
-      }
+    let minX = Number.POSITIVE_INFINITY
+    let maxX = Number.NEGATIVE_INFINITY
+    nodes.forEach(node => {
+      mins[layerMapper.get(node)] = Math.min(mins[layerMapper.get(node)], node.layout.y | 0)
+      maxs[layerMapper.get(node)] = Math.max(maxs[layerMapper.get(node)], node.layout.maxY | 0)
+      minX = Math.min(minX, node.layout.x)
+      maxX = Math.max(maxX, node.layout.maxX)
+    })
 
-      let minX = Number.POSITIVE_INFINITY
-      let maxX = Number.NEGATIVE_INFINITY
-      nodes.forEach(node => {
-        mins[layerMapper.get(node)] = Math.min(mins[layerMapper.get(node)], node.layout.y | 0)
-        maxs[layerMapper.get(node)] = Math.max(maxs[layerMapper.get(node)], node.layout.maxY | 0)
-        minX = Math.min(minX, node.layout.x)
-        maxX = Math.max(maxX, node.layout.maxX)
-      })
+    // now determine divider locations
+    this.dividers.clear()
+    this.dividers.capacity = Math.max(mins.length, this.dividers.capacity)
+    for (let i = 0; i < maxs.length - 1; i++) {
+      this.dividers.add((maxs[i] + mins[i + 1]) * 0.5)
+    }
 
-      // now determine divider locations
-      this.dividers.clear()
-      this.dividers.capacity = Math.max(mins.length, this.dividers.capacity)
-      for (let i = 0; i < maxs.length - 1; i++) {
-        this.dividers.add((maxs[i] + mins[i + 1]) * 0.5)
-      }
-
-      // determine the bounds of all elements
-      const margin = 10
+    // determine the bounds of all elements
+    const margin = 10
+    mins[0] -= margin
+    minX -= margin
+    maxX += margin
+    maxs[maxs.length - 1] += margin
+    if (nodes.getEnumerator().moveNext()) {
       mins[0] -= margin
       minX -= margin
       maxX += margin
       maxs[maxs.length - 1] += margin
-      if (nodes.getEnumerator().moveNext()) {
-        mins[0] -= margin
-        minX -= margin
-        maxX += margin
-        maxs[maxs.length - 1] += margin
-        this.bounds = new yfiles.geometry.Rect(
-          minX,
-          mins[0],
-          maxX - minX,
-          maxs[maxs.length - 1] - mins[0]
-        )
-      } else {
-        this.bounds = yfiles.geometry.Rect.EMPTY
-      }
+      this.bounds = new Rect(minX, mins[0], maxX - minX, maxs[maxs.length - 1] - mins[0])
+    } else {
+      this.bounds = Rect.EMPTY
     }
+  }
 
-    /**
-     * Gets the layer at the given location.
-     * @param {yfiles.geometry.Point} location The location.
-     * @return {number} A positive value if a specific layer is hit, a negative one to indicate that a new layer should
-     * be inserted before layer -(value + 1) - int.MaxValue if no layer has been hit.
-     */
-    getLayer(location) {
-      // global bounds
-      const nbounds = new yfiles.geometry.Rect(
-        this.bounds.x,
-        this.bounds.y - LAYER_INSETS,
-        this.bounds.width,
-        this.bounds.height + LAYER_INSETS * 2
-      )
-      if (location.y < this.bounds.y) {
-        // before the first layer
-        return -1
-      }
-      if (location.y > this.bounds.y + this.bounds.height) {
-        // after the last layer
-        return -(this.dividers.size + 2 + 1)
-      }
-      // nothing found,
-      if (!nbounds.contains(location)) {
-        return Number.MAX_SAFE_INTEGER
-      }
-
-      // now search the layer
-      let top = this.bounds.y
-
-      let layerCount = 0
-      for (let i = 0; i < this.dividers.size; i++) {
-        const divider = this.dividers.get(i)
-        const layerBounds = new yfiles.geometry.Rect(
-          this.bounds.x,
-          top,
-          this.bounds.width,
-          divider - top
-        )
-        if (layerBounds.contains(location)) {
-          return getLayerIndex(location, layerBounds, layerCount)
-        }
-        layerCount++
-        top = divider
-      }
-      const layerBounds = new yfiles.geometry.Rect(
-        this.bounds.x,
-        top,
-        this.bounds.width,
-        this.bounds.y + (this.bounds.height - top)
-      )
-      if (layerBounds.contains(location)) {
-        return getLayerIndex(location, layerBounds, layerCount)
-      }
-      // should not really happen...
+  /**
+   * Gets the layer at the given location.
+   * @param {Point} location The location.
+   * @return {number} A positive value if a specific layer is hit, a negative one to indicate that a new layer should
+   * be inserted before layer -(value + 1) - int.MaxValue if no layer has been hit.
+   */
+  getLayer(location) {
+    // global bounds
+    const nbounds = new Rect(
+      this.bounds.x,
+      this.bounds.y - LAYER_INSETS,
+      this.bounds.width,
+      this.bounds.height + LAYER_INSETS * 2
+    )
+    if (location.y < this.bounds.y) {
+      // before the first layer
+      return -1
+    }
+    if (location.y > this.bounds.y + this.bounds.height) {
+      // after the last layer
+      return -(this.dividers.size + 2 + 1)
+    }
+    // nothing found,
+    if (!nbounds.contains(location)) {
       return Number.MAX_SAFE_INTEGER
     }
 
-    /**
-     * Gets the bounds of a layer by index as specified by {@link LayerVisual#getLayer}.
-     * @param {number} layerIndex Index of the layer.
-     * @return {yfiles.geometry.Rect} The bounds of the layer
-     */
-    getLayerBounds(layerIndex) {
-      if (layerIndex === Number.MAX_SAFE_INTEGER) {
-        return this.bounds.getEnlarged(20)
-      }
-      if (layerIndex < 0) {
-        // new layer
-        const beforeLayer = -(layerIndex + 1)
-        if (beforeLayer <= this.dividers.size) {
-          const layerBounds = this.getLayerBounds(beforeLayer)
-          return new yfiles.geometry.Rect(
-            layerBounds.x,
-            layerBounds.y - LAYER_INSETS,
-            layerBounds.width,
-            LAYER_INSETS * 2
-          )
-        }
+    // now search the layer
+    let top = this.bounds.y
 
-        // after last layer
-        const layerBounds = this.getLayerBounds(this.dividers.size)
-        return new yfiles.geometry.Rect(
+    let layerCount = 0
+    for (let i = 0; i < this.dividers.size; i++) {
+      const divider = this.dividers.get(i)
+      const layerBounds = new Rect(this.bounds.x, top, this.bounds.width, divider - top)
+      if (layerBounds.contains(location)) {
+        return getLayerIndex(location, layerBounds, layerCount)
+      }
+      layerCount++
+      top = divider
+    }
+    const layerBounds = new Rect(
+      this.bounds.x,
+      top,
+      this.bounds.width,
+      this.bounds.y + (this.bounds.height - top)
+    )
+    if (layerBounds.contains(location)) {
+      return getLayerIndex(location, layerBounds, layerCount)
+    }
+    // should not really happen...
+    return Number.MAX_SAFE_INTEGER
+  }
+
+  /**
+   * Gets the bounds of a layer by index as specified by {@link LayerVisual#getLayer}.
+   * @param {number} layerIndex Index of the layer.
+   * @return {Rect} The bounds of the layer
+   */
+  getLayerBounds(layerIndex) {
+    if (layerIndex === Number.MAX_SAFE_INTEGER) {
+      return this.bounds.getEnlarged(20)
+    }
+    if (layerIndex < 0) {
+      // new layer
+      const beforeLayer = -(layerIndex + 1)
+      if (beforeLayer <= this.dividers.size) {
+        const layerBounds = this.getLayerBounds(beforeLayer)
+        return new Rect(
           layerBounds.x,
-          layerBounds.maxY - LAYER_INSETS,
+          layerBounds.y - LAYER_INSETS,
           layerBounds.width,
           LAYER_INSETS * 2
         )
       }
-      const top = layerIndex > 0 ? this.dividers.get(layerIndex - 1) : this.bounds.y
-      const bottom =
-        layerIndex < this.dividers.size
-          ? this.dividers.get(layerIndex)
-          : this.bounds.y + this.bounds.height
-      return new yfiles.geometry.Rect(this.bounds.x, top, this.bounds.width, bottom - top)
-    }
 
-    /**
-     * Creates a new visual that emphasizes the hierarchic layers in the graph layout.
-     * @see overrides {@link yfiles.view.IVisualCreator#createVisual}
-     * @param {yfiles.view.IRenderContext} context
-     * @return {yfiles.view.Visual}
-     */
-    createVisual(context) {
-      return this.updateVisual(
-        context,
-        new yfiles.view.SvgVisual(document.createElementNS('http://www.w3.org/2000/svg', 'g'))
+      // after last layer
+      const layerBounds = this.getLayerBounds(this.dividers.size)
+      return new Rect(
+        layerBounds.x,
+        layerBounds.maxY - LAYER_INSETS,
+        layerBounds.width,
+        LAYER_INSETS * 2
       )
     }
+    const top = layerIndex > 0 ? this.dividers.get(layerIndex - 1) : this.bounds.y
+    const bottom =
+      layerIndex < this.dividers.size
+        ? this.dividers.get(layerIndex)
+        : this.bounds.y + this.bounds.height
+    return new Rect(this.bounds.x, top, this.bounds.width, bottom - top)
+  }
 
-    /**
-     * Updates the visual that emphasizes the hierarchic layers in the graph layout.
-     * @see overrides {@link yfiles.view.IVisualCreator#updateVisual}
-     * @param {yfiles.view.IRenderContext} context
-     * @param {yfiles.view.Visual} oldVisual
-     * @return {yfiles.view.Visual}
-     */
-    updateVisual(context, oldVisual) {
-      const g = oldVisual.svgElement
+  /**
+   * Creates a new visual that emphasizes the hierarchic layers in the graph layout.
+   * @see overrides {@link IVisualCreator#createVisual}
+   * @param {IRenderContext} context
+   * @return {Visual}
+   */
+  createVisual(context) {
+    return this.updateVisual(
+      context,
+      new SvgVisual(document.createElementNS('http://www.w3.org/2000/svg', 'g'))
+    )
+  }
 
-      let y = this.bounds.y
-      let count = 0
-      this.dividers.forEach(divider => {
-        let rectangle
-        if (g.childNodes.length <= count) {
-          // no element to reuse => create a new rectangle
-          rectangle = window.document.createElementNS('http://www.w3.org/2000/svg', 'rect')
-          g.appendChild(rectangle)
-        } else {
-          // use an existing rectangle
-          rectangle = g.childNodes.item(count)
-        }
-        const bottom = divider
-        rectangle.setAttribute('x', this.bounds.x)
-        rectangle.setAttribute('y', y)
-        rectangle.setAttribute('width', this.bounds.width.toString())
-        rectangle.setAttribute('height', (bottom - y).toString())
-        rectangle.setAttribute('fill', count % 2 === 1 ? LIGHT_FILL : DARK_FILL)
-        rectangle.setAttribute('opacity', this.opacity)
-        y = bottom
-        count++
-      })
+  /**
+   * Updates the visual that emphasizes the hierarchic layers in the graph layout.
+   * @see overrides {@link IVisualCreator#updateVisual}
+   * @param {IRenderContext} context
+   * @param {Visual} oldVisual
+   * @return {Visual}
+   */
+  updateVisual(context, oldVisual) {
+    const g = oldVisual.svgElement
 
+    let y = this.bounds.y
+    let count = 0
+    this.dividers.forEach(divider => {
       let rectangle
       if (g.childNodes.length <= count) {
-        g.appendChild(
-          (rectangle = window.document.createElementNS('http://www.w3.org/2000/svg', 'rect'))
-        )
+        // no element to reuse => create a new rectangle
+        rectangle = window.document.createElementNS('http://www.w3.org/2000/svg', 'rect')
+        g.appendChild(rectangle)
       } else {
+        // use an existing rectangle
         rectangle = g.childNodes.item(count)
       }
+      const bottom = divider
       rectangle.setAttribute('x', this.bounds.x)
       rectangle.setAttribute('y', y)
       rectangle.setAttribute('width', this.bounds.width.toString())
-      rectangle.setAttribute('height', (this.bounds.y + this.bounds.height - y).toString())
+      rectangle.setAttribute('height', (bottom - y).toString())
       rectangle.setAttribute('fill', count % 2 === 1 ? LIGHT_FILL : DARK_FILL)
       rectangle.setAttribute('opacity', this.opacity)
+      y = bottom
       count++
+    })
 
-      while (g.childNodes.length > count) {
-        g.removeChild(g.childNodes.item(g.childNodes.length - 1))
-      }
-      return oldVisual
+    let rectangle
+    if (g.childNodes.length <= count) {
+      g.appendChild(
+        (rectangle = window.document.createElementNS('http://www.w3.org/2000/svg', 'rect'))
+      )
+    } else {
+      rectangle = g.childNodes.item(count)
     }
+    rectangle.setAttribute('x', this.bounds.x)
+    rectangle.setAttribute('y', y)
+    rectangle.setAttribute('width', this.bounds.width.toString())
+    rectangle.setAttribute('height', (this.bounds.y + this.bounds.height - y).toString())
+    rectangle.setAttribute('fill', count % 2 === 1 ? LIGHT_FILL : DARK_FILL)
+    rectangle.setAttribute('opacity', this.opacity)
+    count++
+
+    while (g.childNodes.length > count) {
+      g.removeChild(g.childNodes.item(g.childNodes.length - 1))
+    }
+    return oldVisual
   }
+}
 
-  /**
-   * checks a layer and determines if the layer has been clicked near the border
-   * @param {yfiles.geometry.Point} location
-   * @param {yfiles.geometry.Rect} layerBounds
-   * @param {number} layerIndex
-   * @return {number}
-   */
-  function getLayerIndex(location, layerBounds, layerIndex) {
-    // check if close to top or bottom
-    if (location.y - layerBounds.minY < LAYER_INSETS) {
-      // before current layer
-      return -(layerIndex + 1)
-    }
-    if (layerBounds.maxY - location.y < LAYER_INSETS) {
-      // after current layer
-      return -(layerIndex + 2)
-    }
-    // in current layer
-    return layerIndex
+/**
+ * checks a layer and determines if the layer has been clicked near the border
+ * @param {Point} location
+ * @param {Rect} layerBounds
+ * @param {number} layerIndex
+ * @return {number}
+ */
+function getLayerIndex(location, layerBounds, layerIndex) {
+  // check if close to top or bottom
+  if (location.y - layerBounds.minY < LAYER_INSETS) {
+    // before current layer
+    return -(layerIndex + 1)
   }
+  if (layerBounds.maxY - location.y < LAYER_INSETS) {
+    // after current layer
+    return -(layerIndex + 2)
+  }
+  // in current layer
+  return layerIndex
+}
 
-  /**
-   * the dark fill used for drawing the layers
-   * @type {string}
-   */
-  const DARK_FILL = 'rgb(150,200,255)'
+/**
+ * the dark fill used for drawing the layers
+ * @type {string}
+ */
+const DARK_FILL = 'rgb(150,200,255)'
 
-  /**
-   * the light fill used for drawing the layers
-   * @type {string}
-   */
-  const LIGHT_FILL = 'rgb(220,240,240)'
+/**
+ * the light fill used for drawing the layers
+ * @type {string}
+ */
+const LIGHT_FILL = 'rgb(220,240,240)'
 
-  /**
-   * the insets for each layer
-   * @type {number}
-   */
-  const LAYER_INSETS = 10
-
-  return LayerVisual
-})
+/**
+ * the insets for each layer
+ * @type {number}
+ */
+const LAYER_INSETS = 10

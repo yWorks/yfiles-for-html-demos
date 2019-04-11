@@ -7,8 +7,8 @@
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.1.
-     // Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML 2.2.
+     // Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -36,11 +36,12 @@
 
   <title>Canvas Painting - Custom Styles Tutorial [yFiles for HTML]</title>
 
-  <link rel="stylesheet" href="../../../lib/yfiles.css">
+  <link rel="stylesheet" href="../../node_modules/yfiles/yfiles.css">
   <link rel="stylesheet" href="../../resources/style/demo.css">
 
   <!-- enable debugging -->
   <script src="../../../ide-support/yfiles-typeinfo.js"></script>
+  <script src="../../resources/filesystem-warning.js"></script>
 
 </head>
 <body class="demo-has-left">
@@ -58,10 +59,10 @@
     <h2>Description</h2>
 
     <p>
-      To use Canvas painting, the style must create <code>Visuals</code> that extend <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.view.HtmlCanvasVisual" target="_blank">yfiles.view.HtmlCanvasVisual</a>. In
-      this demo, the style which was developed in the earlier tutorial steps has been modified such that its methods
-      <code>createVisual()</code> and <code>updateVisual()</code> return an <code>HtmlCanvasVisual</code> implementation at
-      low zoom levels. </p>
+      To use Canvas painting, the style must create <code>Visuals</code> that extend
+      <a href="https://docs.yworks.com/yfileshtml/#/api/HtmlCanvasVisual" target="_blank">HtmlCanvasVisual</a>. In this demo, the style which was developed in the earlier tutorial steps
+      has been modified such that its methods <code>createVisual()</code> and <code>updateVisual()</code> return an
+      <code>HtmlCanvasVisual</code> implementation at low zoom levels. </p>
 
     <p>
       This, together with a very simplified visualization, enables very fast rendering, especially suited for a large
@@ -79,8 +80,8 @@
         Zoom in and out to see the automatic change between the two visualizations.
       </li>
       <li>
-        Take a look at class <code>CircleVisual</code> and methods
-        <code>MySimpleNodeStyle.createVisual()</code> and <code>MySimpleNodeStyle.updateVisual()</code>.
+        Take a look at class <code>CircleVisual</code> and methods <code>MySimpleNodeStyle.createVisual()</code> and
+        <code>MySimpleNodeStyle.updateVisual()</code>.
       </li>
     </ul>
   </div>
@@ -98,11 +99,11 @@
     <span class="demo-separator"></span>
 
 
-    <button data-command="StartAnimation" title="Start Animation" class="demo-icon-yIconLayout labeled">Start
-      Animation
+    <button data-command="StartAnimation" title="Start Animation" class="demo-icon-yIconLayout labeled">Start Animation
     </button>
 
-    <input type="checkbox" id="togglePerformance" class="demo-toggle-button labeled" title="High Performance" data-command="TogglePerformance"/><label for="togglePerformance">High Performance</label>
+    <input type="checkbox" id="togglePerformance" class="demo-toggle-button labeled" title="High Performance"
+      data-command="TogglePerformance"/><label for="togglePerformance">High Performance</label>
 
   </div>
 
@@ -110,8 +111,7 @@
 </div>
 
 
-<script src="../../resources/require.js"></script>
-<script src="SampleApplication.js"></script>
+<script type="module" crossorigin="anonymous" src="SampleApplication.js"></script>
 
 </body>
 </html>

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.1.
- ** Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.2.
+ ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,39 +26,39 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-'use strict'
+import {
+  DefaultPortCandidate,
+  FreeNodePortLocationModel,
+  IListEnumerable,
+  List,
+  PortCandidateProviderBase,
+  PortCandidateValidity
+} from 'yfiles'
 
-define(['yfiles/view-editor'], /** @type {yfiles_namespace} */ /** typeof yfiles */ yfiles => {
-  /**
-   * This port candidate provider does not allow to start edges at group nodes.
-   */
-  class GroupNodePortCandidateProvider extends yfiles.input.PortCandidateProviderBase {
-    constructor(node) {
-      super()
-      this.node = node
-    }
-
-    /**
-     * Returns a single port candidate at the top of the node.
-     */
-    getTargetPortCandidates(context, source) {
-      const candidates = new yfiles.collections.List()
-      const portCandidate = new yfiles.input.DefaultPortCandidate(
-        this.node,
-        yfiles.graph.FreeNodePortLocationModel.NODE_TOP_ANCHORED
-      )
-      portCandidate.validity = yfiles.input.PortCandidateValidity.VALID
-      candidates.add(portCandidate)
-      return candidates
-    }
-
-    /**
-     * Returns an empty list.
-     */
-    getPortCandidates(context) {
-      return yfiles.collections.IListEnumerable.EMPTY
-    }
+export default class GroupNodePortCandidateProvider extends PortCandidateProviderBase {
+  constructor(node) {
+    super()
+    this.node = node
   }
 
-  return GroupNodePortCandidateProvider
-})
+  /**
+   * Returns a single port candidate at the top of the node.
+   */
+  getTargetPortCandidates(context, source) {
+    const candidates = new List()
+    const portCandidate = new DefaultPortCandidate(
+      this.node,
+      FreeNodePortLocationModel.NODE_TOP_ANCHORED
+    )
+    portCandidate.validity = PortCandidateValidity.VALID
+    candidates.add(portCandidate)
+    return candidates
+  }
+
+  /**
+   * Returns an empty list.
+   */
+  getPortCandidates(context) {
+    return IListEnumerable.EMPTY
+  }
+}

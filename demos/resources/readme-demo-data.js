@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.1.
- ** Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.2.
+ ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,564 +26,9 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-/**
- * This file contains the data for the demos/README.html file.
- */
-
-'use strict'
-
 // eslint-disable-next-line no-unused-vars
 function getDemoData() {
   return [
-    {
-      id: 'tutorial-getting-started--graphcomponent',
-      name: 'Graphcomponent',
-      summary:
-        'This step introduces class GraphComponent, which is the central UI element for working with graphs',
-      demoPath: '01-tutorial-getting-started/01-graphcomponent/index.html',
-      thumbnailPath: 'resources/image/tutorial01.png',
-      category: 'tutorial step',
-      tags: ['tutorial', 'introduction']
-    },
-    {
-      id: 'tutorial-getting-started--graph-element-creation',
-      name: 'Graph Element Creation',
-      summary: 'This step shows how to create the basic graph elements',
-      demoPath: '01-tutorial-getting-started/02-graph-element-creation/index.html',
-      thumbnailPath: 'resources/image/tutorial01.png',
-      category: 'tutorial step',
-      tags: ['tutorial', 'introduction']
-    },
-    {
-      id: 'tutorial-getting-started--managing-viewport',
-      name: 'Managing Viewport',
-      summary: 'This step shows how to work with the viewport',
-      demoPath: '01-tutorial-getting-started/03-managing-viewport/index.html',
-      thumbnailPath: 'resources/image/tutorial01.png',
-      category: 'tutorial step',
-      tags: ['tutorial', 'introduction']
-    },
-    {
-      id: 'tutorial-getting-started--setting-styles',
-      name: 'Setting Styles',
-      summary:
-        'This step shows how to configure the visual appearance of graph elements using styles',
-      demoPath: '01-tutorial-getting-started/04-setting-styles/index.html',
-      thumbnailPath: 'resources/image/tutorial01.png',
-      category: 'tutorial step',
-      tags: ['tutorial', 'introduction']
-    },
-    {
-      id: 'tutorial-getting-started--label-placement',
-      name: 'Label Placement',
-      summary:
-        'This step shows how to control label placement with the help of so called label model parameters',
-      demoPath: '01-tutorial-getting-started/05-label-placement/index.html',
-      thumbnailPath: 'resources/image/tutorial01.png',
-      category: 'tutorial step',
-      tags: ['tutorial', 'introduction']
-    },
-    {
-      id: 'tutorial-getting-started--basic-interaction',
-      name: 'Basic Interaction',
-      summary:
-        'This step shows the default interaction gestures that are provided by class GraphEditorInputMode',
-      demoPath: '01-tutorial-getting-started/06-basic-interaction/index.html',
-      thumbnailPath: 'resources/image/tutorial01.png',
-      category: 'tutorial step',
-      tags: ['tutorial', 'introduction']
-    },
-    {
-      id: 'tutorial-getting-started--undo-clipboard-support',
-      name: 'Undo Clipboard Support',
-      summary: 'This step shows how to use the undo and clipboard features',
-      demoPath: '01-tutorial-getting-started/07-undo-clipboard-support/index.html',
-      thumbnailPath: 'resources/image/tutorial01.png',
-      category: 'tutorial step',
-      tags: ['tutorial', 'introduction']
-    },
-    {
-      id: 'tutorial-getting-started--grouping',
-      name: 'Grouping',
-      summary:
-        'This step shows how to configure support for grouped (or hierarchically organized) graphs',
-      demoPath: '01-tutorial-getting-started/08-grouping/index.html',
-      thumbnailPath: 'resources/image/tutorial01.png',
-      category: 'tutorial step',
-      tags: ['tutorial', 'introduction']
-    },
-    {
-      id: 'tutorial-getting-started--data-binding',
-      name: 'Data Binding',
-      summary: 'This step shows how to bind data to graph elements',
-      demoPath: '01-tutorial-getting-started/09-data-binding/index.html',
-      thumbnailPath: 'resources/image/tutorial01.png',
-      category: 'tutorial step',
-      tags: ['tutorial', 'introduction']
-    },
-    {
-      id: 'tutorial-getting-started--layout',
-      name: 'Layout',
-      summary:
-        'This step shows how to use the layout algorithms in yFiles for HTML to automatically place the graph elements',
-      demoPath: '01-tutorial-getting-started/10-layout/index.html',
-      thumbnailPath: 'resources/image/tutorial01.png',
-      category: 'tutorial step',
-      tags: ['tutorial', 'introduction']
-    },
-    {
-      id: 'tutorial-getting-started--custom-ports',
-      name: 'Custom Ports',
-      summary: 'This step presents the ILookup interface',
-      demoPath: '01-tutorial-getting-started/11-custom-ports/index.html',
-      thumbnailPath: 'resources/image/tutorial01.png',
-      category: 'tutorial step',
-      tags: ['tutorial', 'introduction']
-    },
-    {
-      id: 'tutorial-custom-styles--custom-node-style',
-      name: 'Custom Node Style',
-      summary: 'This step shows how to create a custom node style',
-      demoPath: '02-tutorial-custom-styles/01-custom-node-style/index.html',
-      thumbnailPath: 'resources/image/tutorial02.png',
-      category: 'tutorial step',
-      tags: ['tutorial', 'introduction']
-    },
-    {
-      id: 'tutorial-custom-styles--node-color',
-      name: 'Node Color',
-      summary: 'This step shows how to change the style of the nodes based on their yfiles',
-      demoPath: '02-tutorial-custom-styles/02-node-color/index.html',
-      thumbnailPath: 'resources/image/tutorial02.png',
-      category: 'tutorial step',
-      tags: ['tutorial', 'introduction']
-    },
-    {
-      id: 'tutorial-custom-styles--update-visual-and-render-data-cache',
-      name: 'Update Visual And Render Data Cache',
-      summary: 'This step shows how to implement high-performance rendering of nodes',
-      demoPath: '02-tutorial-custom-styles/03-update-visual-and-render-data-cache/index.html',
-      thumbnailPath: 'resources/image/tutorial02.png',
-      category: 'tutorial step',
-      tags: ['tutorial', 'introduction']
-    },
-    {
-      id: 'tutorial-custom-styles--is-inside',
-      name: 'Is Inside',
-      summary: 'This step shows how to override isInside() and getOutline() of yfiles',
-      demoPath: '02-tutorial-custom-styles/04-is-inside/index.html',
-      thumbnailPath: 'resources/image/tutorial02.png',
-      category: 'tutorial step',
-      tags: ['tutorial', 'introduction']
-    },
-    {
-      id: 'tutorial-custom-styles--hit-test',
-      name: 'Hit Test',
-      summary: 'This step shows how to override isHit() and isInBox() of yfiles',
-      demoPath: '02-tutorial-custom-styles/05-hit-test/index.html',
-      thumbnailPath: 'resources/image/tutorial02.png',
-      category: 'tutorial step',
-      tags: ['tutorial', 'introduction']
-    },
-    {
-      id: 'tutorial-custom-styles--get-bounds',
-      name: 'Get Bounds',
-      summary: 'This step shows how to override getBounds() of yfiles',
-      demoPath: '02-tutorial-custom-styles/06-get-bounds/index.html',
-      thumbnailPath: 'resources/image/tutorial02.png',
-      category: 'tutorial step',
-      tags: ['tutorial', 'introduction']
-    },
-    {
-      id: 'tutorial-custom-styles--drop-shadow-performance',
-      name: 'Drop Shadow Performance',
-      summary:
-        'This step replaces the simple drop shadow in the last steps with a more visually appealing, blurred one',
-      demoPath: '02-tutorial-custom-styles/07-drop-shadow-performance/index.html',
-      thumbnailPath: 'resources/image/tutorial02.png',
-      category: 'tutorial step',
-      tags: ['tutorial', 'introduction']
-    },
-    {
-      id: 'tutorial-custom-styles--edge-from-node-to-label',
-      name: 'Edge From Node To Label',
-      summary: 'This step shows how to visually connect a label to its owner node with a line',
-      demoPath: '02-tutorial-custom-styles/08-edge-from-node-to-label/index.html',
-      thumbnailPath: 'resources/image/tutorial02.png',
-      category: 'tutorial step',
-      tags: ['tutorial', 'introduction']
-    },
-    {
-      id: 'tutorial-custom-styles--is-visible',
-      name: 'Is Visible',
-      summary: 'This step shows how to override the method isVisible() of yfiles',
-      demoPath: '02-tutorial-custom-styles/09-is-visible/index.html',
-      thumbnailPath: 'resources/image/tutorial02.png',
-      category: 'tutorial step',
-      tags: ['tutorial', 'introduction']
-    },
-    {
-      id: 'tutorial-custom-styles--custom-label-style',
-      name: 'Custom Label Style',
-      summary: 'This step shows how a custom label style',
-      demoPath: '02-tutorial-custom-styles/10-custom-label-style/index.html',
-      thumbnailPath: 'resources/image/tutorial02.png',
-      category: 'tutorial step',
-      tags: ['tutorial', 'introduction']
-    },
-    {
-      id: 'tutorial-custom-styles--label-preferred-size',
-      name: 'Label Preferred Size',
-      summary:
-        'This step shows how to set the size of the label based on the size of its text by overriding the yfiles',
-      demoPath: '02-tutorial-custom-styles/11-label-preferred-size/index.html',
-      thumbnailPath: 'resources/image/tutorial02.png',
-      category: 'tutorial step',
-      tags: ['tutorial', 'introduction']
-    },
-    {
-      id: 'tutorial-custom-styles--high-performance-label-rendering',
-      name: 'High Performance Label Rendering',
-      summary: 'This step shows how to implement high-performance rendering for labels',
-      demoPath: '02-tutorial-custom-styles/12-high-performance-label-rendering/index.html',
-      thumbnailPath: 'resources/image/tutorial02.png',
-      category: 'tutorial step',
-      tags: ['tutorial', 'introduction']
-    },
-    {
-      id: 'tutorial-custom-styles--label-edit-button',
-      name: 'Label Edit Button',
-      summary: 'This step shows how to display a button on a label that starts the label editor',
-      demoPath: '02-tutorial-custom-styles/13-label-edit-button/index.html',
-      thumbnailPath: 'resources/image/tutorial02.png',
-      category: 'tutorial step',
-      tags: ['tutorial', 'introduction']
-    },
-    {
-      id: 'tutorial-custom-styles--button-visibility',
-      name: 'Button Visibility',
-      summary: "This step shows how to hide the 'Label Edit' button based on the zoom level",
-      demoPath: '02-tutorial-custom-styles/14-button-visibility/index.html',
-      thumbnailPath: 'resources/image/tutorial02.png',
-      category: 'tutorial step',
-      tags: ['tutorial', 'introduction']
-    },
-    {
-      id: 'tutorial-custom-styles--using-data-in-label-tag',
-      name: 'Using Data In Label Tag',
-      summary:
-        "This step shows how to use data from a business object, which is stored in the label's tag, for rendering",
-      demoPath: '02-tutorial-custom-styles/15-using-data-in-label-tag/index.html',
-      thumbnailPath: 'resources/image/tutorial02.png',
-      category: 'tutorial step',
-      tags: ['tutorial', 'introduction']
-    },
-    {
-      id: 'tutorial-custom-styles--custom-edge-style',
-      name: 'Custom Edge Style',
-      summary:
-        'This step shows how to create a custom edge style which allows to specify the edge thickness by setting a property on the style',
-      demoPath: '02-tutorial-custom-styles/16-custom-edge-style/index.html',
-      thumbnailPath: 'resources/image/tutorial02.png',
-      category: 'tutorial step',
-      tags: ['tutorial', 'introduction']
-    },
-    {
-      id: 'tutorial-custom-styles--edge-hit-test',
-      name: 'Edge Hit Test',
-      summary:
-        'This step shows how to take the thickness of the edge into account when checking if the edge was clicked',
-      demoPath: '02-tutorial-custom-styles/17-edge-hit-test/index.html',
-      thumbnailPath: 'resources/image/tutorial02.png',
-      category: 'tutorial step',
-      tags: ['tutorial', 'introduction']
-    },
-    {
-      id: 'tutorial-custom-styles--edge-cropping',
-      name: 'Edge Cropping',
-      summary: "This step shows how to crop an edge at the node's bounds",
-      demoPath: '02-tutorial-custom-styles/18-edge-cropping/index.html',
-      thumbnailPath: 'resources/image/tutorial02.png',
-      category: 'tutorial step',
-      tags: ['tutorial', 'introduction']
-    },
-    {
-      id: 'tutorial-custom-styles--animated-edge-selection',
-      name: 'Animated Edge Selection',
-      summary: 'This step shows how to change the style of an edge if the edge is selected',
-      demoPath: '02-tutorial-custom-styles/19-animated-edge-selection/index.html',
-      thumbnailPath: 'resources/image/tutorial02.png',
-      category: 'tutorial step',
-      tags: ['tutorial', 'introduction']
-    },
-    {
-      id: 'tutorial-custom-styles--custom-arrow',
-      name: 'Custom Arrow',
-      summary: 'This step shows a custom arrow',
-      demoPath: '02-tutorial-custom-styles/20-custom-arrow/index.html',
-      thumbnailPath: 'resources/image/tutorial02.png',
-      category: 'tutorial step',
-      tags: ['tutorial', 'introduction']
-    },
-    {
-      id: 'tutorial-custom-styles--edge-performance',
-      name: 'Edge Performance',
-      summary: 'This step shows how to optimize rendering performance for edges and arrows',
-      demoPath: '02-tutorial-custom-styles/21-edge-performance/index.html',
-      thumbnailPath: 'resources/image/tutorial02.png',
-      category: 'tutorial step',
-      tags: ['tutorial', 'introduction']
-    },
-    {
-      id: 'tutorial-custom-styles--arrow-thickness',
-      name: 'Arrow Thickness',
-      summary: 'This step shows how to render the arrow based on a property of its edge',
-      demoPath: '02-tutorial-custom-styles/22-arrow-thickness/index.html',
-      thumbnailPath: 'resources/image/tutorial02.png',
-      category: 'tutorial step',
-      tags: ['tutorial', 'introduction']
-    },
-    {
-      id: 'tutorial-custom-styles--custom-ports',
-      name: 'Custom Ports',
-      summary: 'This step shows a custom port style',
-      demoPath: '02-tutorial-custom-styles/23-custom-ports/index.html',
-      thumbnailPath: 'resources/image/tutorial02.png',
-      category: 'tutorial step',
-      tags: ['tutorial', 'introduction']
-    },
-    {
-      id: 'tutorial-custom-styles--style-decorator',
-      name: 'Style Decorator',
-      summary: 'This step shows how to enhance an existing node style by adding visual decorators',
-      demoPath: '02-tutorial-custom-styles/24-style-decorator/index.html',
-      thumbnailPath: 'resources/image/tutorial02.png',
-      category: 'tutorial step',
-      tags: ['tutorial', 'introduction']
-    },
-    {
-      id: 'tutorial-custom-styles--custom-group-style',
-      name: 'Custom Group Style',
-      summary: 'This step shows how to implement a special node style for group nodes',
-      demoPath: '02-tutorial-custom-styles/25-custom-group-style/index.html',
-      thumbnailPath: 'resources/image/tutorial02.png',
-      category: 'tutorial step',
-      tags: ['tutorial', 'introduction']
-    },
-    {
-      id: 'tutorial-custom-styles--custom-group-bounds',
-      name: 'Custom Group Bounds',
-      summary:
-        'This step shows how to customize the way that the group insets are calculated by implementing an yfiles',
-      demoPath: '02-tutorial-custom-styles/26-custom-group-bounds/index.html',
-      thumbnailPath: 'resources/image/tutorial02.png',
-      category: 'tutorial step',
-      tags: ['tutorial', 'introduction']
-    },
-    {
-      id: 'tutorial-custom-styles--canvas-painting',
-      name: 'Canvas Painting',
-      summary:
-        'This step shows how to implement a zoom-dependent high-performance rendering using HTML5 Canvas painting for nodes',
-      demoPath: '02-tutorial-custom-styles/27-canvas-painting/index.html',
-      thumbnailPath: 'resources/image/tutorial02.png',
-      category: 'tutorial step',
-      tags: ['tutorial', 'introduction']
-    },
-    {
-      id: 'tutorial-custom-styles--bridge-support',
-      name: 'Bridge Support',
-      summary: 'This step shows how to enable bridges for a custom edge style',
-      demoPath: '02-tutorial-custom-styles/28-bridge-support/index.html',
-      thumbnailPath: 'resources/image/tutorial02.png',
-      category: 'tutorial step',
-      tags: ['tutorial', 'introduction']
-    },
-    {
-      id: 'tutorial-custom-styles--label-line-wrapping',
-      name: 'Label Line Wrapping',
-      summary:
-        'This step shows how to enhance a custom label style to support different line wrapping (trimming) styles as well as text clipping at the label bounds',
-      demoPath: '02-tutorial-custom-styles/29-label-line-wrapping/index.html',
-      thumbnailPath: 'resources/image/tutorial02.png',
-      category: 'tutorial step',
-      tags: ['tutorial', 'introduction']
-    },
-    {
-      id: 'tutorial-application-features--application-features-base',
-      name: 'Application Features Base',
-      summary:
-        'This demo provides the base application for the feature specific demos in this tutorial',
-      demoPath: '03-tutorial-application-features/application-features-base/index.html',
-      thumbnailPath: 'resources/image/tutorial03.png',
-      category: 'tutorial step',
-      tags: ['tutorial', 'introduction']
-    },
-    {
-      id: 'tutorial-application-features--building-graph-from-data',
-      name: 'Building Graph From Data',
-      summary: 'This demo shows how to build a graph using the data stored in JSON-format',
-      demoPath: '03-tutorial-application-features/building-graph-from-data/index.html',
-      thumbnailPath: 'resources/image/tutorial03.png',
-      category: 'tutorial step',
-      tags: ['tutorial', 'introduction']
-    },
-    {
-      id: 'tutorial-application-features--building-swimlanes-from-data',
-      name: 'Building Swimlanes From Data',
-      summary: 'This demo shows how to build a graph using the data stored in JSON-format',
-      demoPath: '03-tutorial-application-features/building-swimlanes-from-data/index.html',
-      thumbnailPath: 'resources/image/tutorial03.png',
-      category: 'tutorial step',
-      tags: ['tutorial', 'introduction']
-    },
-    {
-      id: 'tutorial-application-features--clickable-style-decorator',
-      name: 'Clickable Style Decorator',
-      summary:
-        'This demo illustrates an approach on how to handle clicks on specific areas of the style',
-      demoPath: '03-tutorial-application-features/clickable-style-decorator/index.html',
-      thumbnailPath: 'resources/image/tutorial03.png',
-      category: 'tutorial step',
-      tags: ['tutorial', 'introduction']
-    },
-    {
-      id: 'tutorial-application-features--custom-graphml',
-      name: 'Custom Graphml',
-      summary:
-        'This step shows how to read and write data that is bound to graph elements to and from a GraphML file',
-      demoPath: '03-tutorial-application-features/custom-graphml/index.html',
-      thumbnailPath: 'resources/image/tutorial03.png',
-      category: 'tutorial step',
-      tags: ['tutorial', 'introduction']
-    },
-    {
-      id: 'tutorial-application-features--drag-and-drop',
-      name: 'Drag And Drop',
-      summary: 'This demo shows how to use yfiles',
-      demoPath: '03-tutorial-application-features/drag-and-drop/index.html',
-      thumbnailPath: 'resources/image/tutorial03.png',
-      category: 'tutorial step',
-      tags: ['tutorial', 'introduction']
-    },
-    {
-      id: 'tutorial-application-features--external-links',
-      name: 'External Links',
-      summary:
-        'This demo shows how to add labels that act like external links and open in a new window',
-      demoPath: '03-tutorial-application-features/external-links/index.html',
-      thumbnailPath: 'resources/image/tutorial03.png',
-      category: 'tutorial step',
-      tags: ['tutorial', 'introduction']
-    },
-    {
-      id: 'tutorial-application-features--filtering-with-folding',
-      name: 'Filtering With Folding',
-      summary: 'nothing',
-      demoPath: '03-tutorial-application-features/filtering-with-folding/index.html',
-      thumbnailPath: 'resources/image/tutorial03.png',
-      category: 'tutorial step',
-      tags: ['tutorial', 'introduction']
-    },
-    {
-      id: 'tutorial-application-features--folding',
-      name: 'Folding',
-      summary: 'This step shows how to enable collapsing and expanding of group nodes',
-      demoPath: '03-tutorial-application-features/folding/index.html',
-      thumbnailPath: 'resources/image/tutorial03.png',
-      category: 'tutorial step',
-      tags: ['tutorial', 'introduction']
-    },
-    {
-      id: 'tutorial-application-features--grid-snapping',
-      name: 'Grid Snapping',
-      summary: 'This demo shows how to enable grid snapping for graph elements',
-      demoPath: '03-tutorial-application-features/grid-snapping/index.html',
-      thumbnailPath: 'resources/image/tutorial03.png',
-      category: 'tutorial step',
-      tags: ['tutorial', 'introduction']
-    },
-    {
-      id: 'tutorial-application-features--input-output',
-      name: 'Input Output',
-      summary: 'This demo shows how to use GraphML input and output',
-      demoPath: '03-tutorial-application-features/input-output/index.html',
-      thumbnailPath: 'resources/image/tutorial03.png',
-      category: 'tutorial step',
-      tags: ['tutorial', 'introduction']
-    },
-    {
-      id: 'tutorial-application-features--label-text-wrapping',
-      name: 'Label Text Wrapping',
-      summary:
-        'This demo shows how to enable the label text wrapping and trimming feature provided by yfiles',
-      demoPath: '03-tutorial-application-features/label-text-wrapping/index.html',
-      thumbnailPath: 'resources/image/tutorial03.png',
-      category: 'tutorial step',
-      tags: ['tutorial', 'introduction']
-    },
-    {
-      id: 'tutorial-application-features--native-listeners',
-      name: 'Native Listeners',
-      summary:
-        'This demo illustrates an approach on how to register native event listeners to SVG-elements on a style',
-      demoPath: '03-tutorial-application-features/native-listeners/index.html',
-      thumbnailPath: 'resources/image/tutorial03.png',
-      category: 'tutorial step',
-      tags: ['tutorial', 'introduction']
-    },
-    {
-      id: 'tutorial-application-features--orthogonal-edges',
-      name: 'Orthogonal Edges',
-      summary: 'This demo shows how to enable interactive orthogonal edge editing',
-      demoPath: '03-tutorial-application-features/orthogonal-edges/index.html',
-      thumbnailPath: 'resources/image/tutorial03.png',
-      category: 'tutorial step',
-      tags: ['tutorial', 'introduction']
-    },
-    {
-      id: 'tutorial-application-features--snapping',
-      name: 'Snapping',
-      summary: 'This demo shows how to enable snapping (guide lines) for graph elements',
-      demoPath: '03-tutorial-application-features/snapping/index.html',
-      thumbnailPath: 'resources/image/tutorial03.png',
-      category: 'tutorial step',
-      tags: ['tutorial', 'introduction']
-    },
-    {
-      id: 'getting-started-tutorial',
-      name: 'Getting Started Tutorial',
-      demoPath: '01-tutorial-getting-started/README.html',
-      summary:
-        'Introduces basic concepts like the graph, the graph component, built-in styles, and default user interaction.',
-      category: 'tutorial',
-      thumbnailPath: 'resources/image/tutorial01.png',
-      sourcePath: '',
-      tags: ['introduction', 'graph creation']
-    },
-    {
-      id: 'custom-styles-tutorial',
-      name: 'Custom Styles Tutorial',
-      demoPath: '02-tutorial-custom-styles/README.html',
-      summary:
-        'Shows the details of the implementation of custom styles for nodes, edges, labels, and ports.',
-      category: 'tutorial',
-      thumbnailPath: 'resources/image/tutorial02.png',
-      sourcePath: '',
-      tags: ['introduction', 'styles']
-    },
-    {
-      id: 'application-features-tutorial',
-      name: 'Application Features Tutorial',
-      demoPath: '03-tutorial-application-features/README.html',
-      summary:
-        'Covers a broad range of topics including building graphs from JSON data, drag and drop, tooltips, snapping (guide lines), etc.',
-      category: 'tutorial',
-      thumbnailPath: 'resources/image/tutorial03.png',
-      sourcePath: '',
-      tags: ['introduction', 'interaction'],
-      keywords: ['v2.1.0.2', 'v2.1.0.3']
-    },
     {
       id: 'layout-styles',
       name: 'Layout Styles',
@@ -627,20 +72,30 @@ function getDemoData() {
         'An editor for Business Process diagrams that features interactive editing, BPMN node styles and a specialized BPMN layout algorithm.',
       category: 'complete',
       thumbnailPath: 'resources/image/bpmneditor.png',
-      sourcePath: 'complete/orgchart/BpmnDemo.js',
+      sourcePath: 'complete/bpmn/BpmnDemo.js',
       tags: ['styles', 'layout'],
       keywords: ['contextmenu', 'draganddrop', 'palette', 'ports', 'overview']
     },
     {
       id: 'organization-chart',
       name: 'Organization Chart',
-      demoPath: 'complete/orgchart/index.html',
+      demoPath: 'complete/interactiveorgchart/index.html',
       summary: 'An interactive viewer for organization charts with automatic layout updates.',
       category: 'complete',
-      thumbnailPath: 'resources/image/orgchart.png',
-      sourcePath: 'complete/orgchart/OrgChartDemo.js',
+      thumbnailPath: 'resources/image/interactiveorgchart.png',
+      sourcePath: 'complete/interactiveorgchart/OrgChartDemo.js',
       tags: ['styles', 'layout', 'interaction'],
-      keywords: ['animation', 'filtering', 'search', 'template', 'print', 'datapanel']
+      keywords: [
+        'animation',
+        'filtering',
+        'search',
+        'template',
+        'print',
+        'datapanel',
+        'structure',
+        'hide',
+        'detail'
+      ]
     },
     {
       id: 'gantt-chart',
@@ -662,7 +117,7 @@ function getDemoData() {
       thumbnailPath: 'resources/image/frauddetection.png',
       sourcePath: 'complete/frauddetection/FraudDetectionDemo.js',
       tags: ['timeline', 'layout', 'detailed view'],
-      keywords: ['filtering', 'animation']
+      keywords: ['filtering', 'animation', 'structure', 'detail']
     },
     {
       id: 'isometric-drawing',
@@ -685,7 +140,7 @@ function getDemoData() {
       thumbnailPath: 'resources/image/networkmonitoring.png',
       sourcePath: 'complete/networkmonitoring/NetworkMonitoringDemo.js',
       tags: ['styles', 'viewer', 'animation'],
-      keywords: ['tooltip', 'datapanel', 'chart']
+      keywords: ['tooltip', 'datapanel', 'chart', 'structure']
     },
     {
       id: 'graph-analysis',
@@ -744,6 +199,17 @@ function getDemoData() {
       keywords: ['treemap', 'v2.1.0.0', 'animation', 'tooltip']
     },
     {
+      id: 'family-tree',
+      name: 'Family Tree',
+      demoPath: 'layout/familytree/index.html',
+      summary: 'Shows how to visualize genealogical graphs (family trees).',
+      category: 'layout',
+      thumbnailPath: 'resources/image/familyTree.png',
+      sourcePath: 'layout/familytree/FamilyTreeDemo.js',
+      tags: ['layout', 'genealogy'],
+      keywords: ['familytree', 'tree', 'layout', 'genealogical', 'v2.2.0.0', 'structure']
+    },
+    {
       id: 'template-styles',
       name: 'Template Styles',
       demoPath: 'style/templatestyles/index.html',
@@ -755,6 +221,39 @@ function getDemoData() {
       keywords: ['v2.1.0.2', 'SVG', 'datapanel', 'template']
     },
     {
+      id: 'css-styling',
+      name: 'CSS Styling',
+      demoPath: 'style/cssstyling/index.html',
+      summary: 'Shows how to style indicators and other templates.',
+      category: 'style',
+      thumbnailPath: 'resources/image/cssstyling.png',
+      sourcePath: 'style/cssstyling/CSSStylingDemo.js',
+      tags: ['css', 'indicators', 'theme'],
+      keywords: ['stylesheet', 'v2.2.0.0']
+    },
+    {
+      id: 'overview',
+      name: 'Overview Styling',
+      demoPath: 'view/overviewstyles/index.html',
+      summary: 'Shows several different rendering techniques and styles for the overview.',
+      category: 'view',
+      thumbnailPath: 'resources/image/overview.png',
+      sourcePath: 'view/overviewstyles/OverviewStylesDemo.js',
+      tags: ['styles', 'Canvas'],
+      keywords: ['v2.2.0.0', 'overviewinputmode', 'svg']
+    },
+    {
+      id: 'metaball-groups',
+      name: 'Metaball Groups',
+      demoPath: 'complete/metaballgroups/index.html',
+      summary: 'Shows how to render metaball-like background visualizations.',
+      category: 'complete',
+      thumbnailPath: 'resources/image/metaballgroups.png',
+      sourcePath: 'complete/metaballgroups/MetaballGroupsDemo.js',
+      tags: ['background', 'WebGL'],
+      keywords: ['v2.2.0.0', 'overlapping']
+    },
+    {
       id: 'maze-routing',
       name: 'Maze Routing',
       demoPath: 'layout/mazerouting/index.html',
@@ -763,7 +262,7 @@ function getDemoData() {
       thumbnailPath: 'resources/image/mazerouting.png',
       sourcePath: 'layout/mazerouting/MazeRoutingDemo.js',
       tags: ['layout', 'router'],
-      keywords: ['edgerouter', 'polylinerouter']
+      keywords: ['edgerouter', 'polylinerouter', 'background']
     },
     {
       id: 'interactive-map',
@@ -782,7 +281,8 @@ function getDemoData() {
         'radial',
         'tooltip',
         'shortestpaths',
-        'filtering'
+        'filtering',
+        'background'
       ]
     },
     {
@@ -795,7 +295,7 @@ function getDemoData() {
       thumbnailPath: 'resources/image/umleditor.png',
       sourcePath: 'complete/uml/UMLEditorDemo.js',
       tags: ['styles', 'layout', 'interaction'],
-      keywords: ['v2.1.0.1', 'contextmenu', 'labels', 'edgerouter', 'hierarchic']
+      keywords: ['v2.1.0.1', 'contextmenu', 'labels', 'edgerouter', 'hierarchic', 'structure']
     },
     {
       id: 'flowchart-editor',
@@ -832,7 +332,18 @@ function getDemoData() {
       thumbnailPath: 'resources/image/mindmap.png',
       sourcePath: 'complete/mindmap/MindmapDemo.js',
       tags: ['styles', 'layout'],
-      keywords: ['contextmenu', 'tree']
+      keywords: ['contextmenu', 'tree', 'structure']
+    },
+    {
+      id: 'd3-chart-nodes',
+      name: 'd3 Chart Nodes',
+      demoPath: 'style/d3chartnodes/index.html',
+      summary: 'Presents a node style that visualizes dynamic data with d3.js.',
+      category: 'style',
+      thumbnailPath: 'resources/image/d3chartnodes.png',
+      sourcePath: 'style/d3chartnodes/D3ChartNodesDemo.js',
+      tags: ['styles', 'sparklines', 'bars', 'd3.js'],
+      keywords: ['v2.2.0.0']
     },
     {
       id: 'logic-gates',
@@ -842,7 +353,7 @@ function getDemoData() {
       category: 'complete',
       thumbnailPath: 'resources/image/logicgates.png',
       sourcePath: 'complete/logicgates/LogicGatesDemo.js',
-      tags: ['ports', 'styles', 'layout'],
+      tags: ['ports', 'styles', 'layout', 'structure'],
       keywords: [
         'drag',
         'drop',
@@ -852,8 +363,20 @@ function getDemoData() {
         'hierarchic',
         'edgerouter',
         'draganddrop',
-        'palette'
+        'palette',
+        'reversed edge creation'
       ]
+    },
+    {
+      id: 'organization-chart-viewer',
+      name: 'Organization Chart Viewer',
+      demoPath: 'complete/orgchartviewer/index.html',
+      summary: 'A viewer for organization charts.',
+      category: 'complete',
+      thumbnailPath: 'resources/image/orgchart.png',
+      sourcePath: 'complete/orgchartviewer/OrgChartViewerDemo.js',
+      tags: ['styles', 'layout'],
+      keywords: ['search', 'template', 'datapanel', 'v2.2.0.0', 'structure']
     },
     {
       id: 'collapsible-trees',
@@ -864,7 +387,7 @@ function getDemoData() {
       thumbnailPath: 'resources/image/collapsibletree.png',
       sourcePath: 'complete/collapse/CollapseDemo.js',
       tags: ['layout', 'interaction', 'animation'],
-      keywords: ['hierarchic', 'organic', 'tree', 'balloon', 'filtering']
+      keywords: ['hierarchic', 'organic', 'tree', 'balloon', 'filtering', 'hide']
     },
     {
       id: 'rotatable-nodes',
@@ -891,7 +414,8 @@ function getDemoData() {
         'radial',
         'edgerouter',
         'polyline-router',
-        'organic-router'
+        'organic-router',
+        'curves'
       ]
     },
     {
@@ -910,7 +434,7 @@ function getDemoData() {
       id: 'graph-editor',
       name: 'Graph Editor',
       demoPath: 'view/grapheditor/index.html',
-      summary: 'Shows the graph editing features of the yFiles graph component.',
+      summary: 'Shows the graph editing features of the graph component.',
       category: 'view',
       thumbnailPath: 'resources/image/simpleeditor.png',
       sourcePath: 'view/grapheditor/GraphEditorDemo.js',
@@ -927,7 +451,16 @@ function getDemoData() {
       thumbnailPath: 'resources/image/tableeditor.png',
       sourcePath: 'complete/tableeditor/TableEditorDemo.js',
       tags: ['table', 'interaction'],
-      keywords: ['drag', 'drop', 'draganddrop', 'palette', 'hierarchic', 'groups', 'contextmenu']
+      keywords: [
+        'drag',
+        'drop',
+        'draganddrop',
+        'palette',
+        'hierarchic',
+        'groups',
+        'contextmenu',
+        'move'
+      ]
     },
     {
       id: 'graph-viewer',
@@ -938,7 +471,7 @@ function getDemoData() {
       thumbnailPath: 'resources/image/graphviewer.png',
       sourcePath: 'view/graphviewer/GraphViewerDemo.js',
       tags: ['styles', 'overview'],
-      keywords: ['tooltip', 'contextmenu', 'datapanel']
+      keywords: ['tooltip', 'contextmenu', 'datapanel', 'search']
     },
     {
       id: 'large-graphs',
@@ -968,11 +501,11 @@ function getDemoData() {
       name: 'Touch Interaction',
       demoPath: 'input/touchcustomization/index.html',
       summary: 'Shows how a graph editor application can be optimized for touch devices.',
-      category: 'view',
+      category: 'input',
       thumbnailPath: 'resources/image/custom_touch_interaction.png',
       sourcePath: 'input/touchcustomization/TouchEditorDemoDemo.js',
       tags: ['interaction', 'mobile'],
-      keywords: ['v2.1.0.0', 'palette', 'draganddrop', 'contextmenu']
+      keywords: ['v2.1.0.0', 'palette', 'draganddrop', 'contextmenu', 'move']
     },
     {
       id: 'neighborhood-view',
@@ -983,7 +516,7 @@ function getDemoData() {
       thumbnailPath: 'resources/image/neighborhoodview.png',
       sourcePath: 'complete/neighborhood/NeighborhoodDemo.js',
       tags: ['layout', 'interaction'],
-      keywords: ['hierarchic', 'copy']
+      keywords: ['hierarchic', 'copy', 'detail']
     },
     {
       id: 'clustering-algorithms',
@@ -995,7 +528,7 @@ function getDemoData() {
       thumbnailPath: 'resources/image/clustering.png',
       sourcePath: 'analysis/clustering/ClusteringDemo.js',
       tags: ['algorithms'],
-      keywords: ['kmeans', 'hierarchical', 'voronoi', 'dendrogram']
+      keywords: ['kmeans', 'hierarchical', 'voronoi', 'dendrogram', 'background']
     },
     {
       id: 'network-flows',
@@ -1019,7 +552,7 @@ function getDemoData() {
       thumbnailPath: 'resources/image/transitivity.png',
       sourcePath: 'analysis/transitivity/TransitivityDemo.js',
       tags: ['analysis'],
-      keywords: ['transitive', 'closure', 'reduction', 'npm', 'filtering']
+      keywords: ['transitive', 'closure', 'reduction', 'npm', 'filtering', 'structure']
     },
     {
       id: 'edge-label-placement',
@@ -1039,7 +572,8 @@ function getDemoData() {
         'tree',
         'hierarchic',
         'orthogonal',
-        'edgerouter'
+        'edgerouter',
+        'move'
       ]
     },
     {
@@ -1052,7 +586,7 @@ function getDemoData() {
       thumbnailPath: 'resources/image/nodelabelplacement.png',
       sourcePath: 'layout/nodelabelplacement/NodeLabelPlacementDemo.js',
       tags: ['labels', 'labeling'],
-      keywords: ['generic', 'genericlabeling', 'text']
+      keywords: ['generic', 'genericlabeling', 'text', 'background']
     },
     {
       id: 'hierarchic-nesting',
@@ -1063,7 +597,7 @@ function getDemoData() {
       thumbnailPath: 'resources/image/hierarchicgrouping.png',
       sourcePath: 'complete/hierarchicgrouping/HierarchicGroupingDemo.js',
       tags: ['layout', 'hierarchic', 'animation'],
-      keywords: ['overview', 'folding']
+      keywords: ['overview', 'folding', 'hide']
     },
     {
       id: 'incremental-hierarchic-layout',
@@ -1075,7 +609,7 @@ function getDemoData() {
       thumbnailPath: 'resources/image/incrementalhierarchic.png',
       sourcePath: 'layout/incrementalhierarchic/IncrementalHierarchicDemo.js',
       tags: ['layout', 'hierarchic'],
-      keywords: ['ports']
+      keywords: ['ports', 'background']
     },
     {
       id: 'edge-grouping',
@@ -1143,6 +677,17 @@ function getDemoData() {
       tags: ['layout', 'partition grid', 'hierarchic', 'organic']
     },
     {
+      id: 'simple-partition-grid',
+      name: 'Simple Partition Grid',
+      demoPath: 'layout/simplepartitiongrid/index.html',
+      summary: 'Shows how to create a simple partition grid.',
+      category: 'layout',
+      thumbnailPath: 'resources/image/simplePartitionGrid.png',
+      sourcePath: 'layout/simplepartitiongrid/SimplePartitionGridDemo.js',
+      tags: ['layout', 'partition grid', 'hierarchic'],
+      keywords: ['v2.2.0.0']
+    },
+    {
       id: 'layer-constraints',
       name: 'Layer Constraints',
       demoPath: 'layout/layerconstraints/index.html',
@@ -1158,7 +703,7 @@ function getDemoData() {
       name: 'Sequence Constraints',
       demoPath: 'layout/sequenceconstraints/index.html',
       summary:
-        'Shows how to use sequence constraints to prescribe the node sequencing in hierarchic layouts..',
+        'Shows how to use sequence constraints to prescribe the node sequencing in hierarchic layouts.',
       category: 'layout',
       thumbnailPath: 'resources/image/sequenceconstraints.png',
       sourcePath: 'layout/sequenceconstraints/SequenceConstraintsDemo.js',
@@ -1170,10 +715,10 @@ function getDemoData() {
       demoPath: 'layout/interactiveorganic/index.html',
       summary: "Shows the 'interactive organic' layout algorithm.",
       category: 'layout',
-      thumbnailPath: 'resources/image/InteractiveLayout.gif',
+      thumbnailPath: 'resources/image/InteractiveLayout.mp4',
       sourcePath: 'layout/interactiveorganic/InteractiveOrganicDemo.js',
       tags: ['layout', 'interaction', 'animation'],
-      keywords: ['organic']
+      keywords: ['organic', 'move']
     },
     {
       id: 'recursive-group-layout',
@@ -1185,7 +730,7 @@ function getDemoData() {
       thumbnailPath: 'resources/image/recursivegroup.png',
       sourcePath: 'layout/recursivegroup/RecursiveGroupDemo.js',
       tags: ['layout', 'hierarchic'],
-      keywords: ['groups']
+      keywords: ['groups', 'hide']
     },
     {
       id: 'multi-page-layout',
@@ -1193,7 +738,7 @@ function getDemoData() {
       demoPath: 'layout/multipage/index.html',
       summary:
         'Shows how to divide a large model graph into several smaller page graphs, for example to print to' +
-        ' multiple pages',
+        ' multiple pages.',
       category: 'layout',
       thumbnailPath: 'resources/image/multipage.png',
       sourcePath: 'layout/multipage/MultiPageDemo.js',
@@ -1220,7 +765,7 @@ function getDemoData() {
       thumbnailPath: 'resources/image/partiallayout.png',
       sourcePath: 'layout/partial/PartialLayoutDemo.js',
       tags: ['layout', 'incremental', 'hierarchic'],
-      keywords: ['orthogonal', 'organic', 'circular']
+      keywords: ['orthogonal', 'organic', 'circular', 'curves']
     },
     {
       id: 'image-export',
@@ -1275,7 +820,7 @@ function getDemoData() {
       thumbnailPath: 'resources/image/structureview.png',
       sourcePath: 'view/structureview/StructureViewDemo.js',
       tags: ['interaction'],
-      keywords: ['list', 'tree', 'overview', 'v2.1.0.3']
+      keywords: ['list', 'tree', 'overview', 'structure', 'v2.1.0.3']
     },
     {
       id: 'graph-builder',
@@ -1287,7 +832,7 @@ function getDemoData() {
       thumbnailPath: 'resources/image/graphbuilder.png',
       sourcePath: 'databinding/graphbuilder/GraphBuilderDemo.js',
       tags: ['JSON', 'binding', 'layout'],
-      keywords: ['hierarchic']
+      keywords: ['hierarchic', 'structure']
     },
     {
       id: 'adjacent-nodes-graph-builder',
@@ -1326,18 +871,6 @@ function getDemoData() {
       keywords: ['v2.1.0.0', 'tools', 'tree', 'datapanel']
     },
     {
-      id: 'angular-(systemjs)',
-      name: 'Angular (SystemJS)',
-      demoPath: 'toolkit/angular-systemjs/README.html',
-      summary:
-        'Shows how to use yFiles for HTML in an Angular app (Angular 2 and newer) using SystemJS.',
-      category: 'integration',
-      thumbnailPath: 'resources/image/angular.png',
-      sourcePath: '',
-      tags: ['angular', 'binding', 'typescript'],
-      keywords: ['styles', 'tree', 'datapanel']
-    },
-    {
       id: 'angularjs-1',
       name: 'AngularJS 1',
       demoPath: 'toolkit/angular1/index.html',
@@ -1364,7 +897,7 @@ function getDemoData() {
       name: 'NodeJS',
       demoPath: 'loading/nodejs/index.html',
       summary:
-        " Shows how to run a yFiles layout algorithm in a <a href='https://nodejs.org/' target='_blank'>Node.js&reg;</a> environment.",
+        "Shows how to run a yFiles layout algorithm in a <a href='https://nodejs.org/' target='_blank'>Node.js&reg;</a> environment.",
       category: 'loading',
       thumbnailPath: 'resources/image/nodejs.png',
       sourcePath: 'loading/nodejs/NodeJsDemo.js',
@@ -1382,27 +915,15 @@ function getDemoData() {
       tags: ['react', 'webpack']
     },
     {
-      id: 'typescript-amd',
-      name: 'TypeScript-amd',
-      demoPath: 'toolkit/typescript-amd/README.html',
-      summary:
-        'Shows the integration of yFiles for HTML with TypeScript (using the UMD module version of yFiles).',
-      category: 'integration',
-      thumbnailPath: 'resources/image/typescript.png',
-      sourcePath: '',
-      tags: ['typescript', 'styles'],
-      keywords: ['overview']
-    },
-    {
       id: 'typescript',
       name: 'TypeScript',
       demoPath: 'toolkit/typescript/README.html',
       summary:
-        'Shows the integration of yFiles for HTML with TypeScript (using the ES6 module version of yFiles).',
+        'Shows the integration of yFiles for HTML with TypeScript (using the ES module version of yFiles).',
       category: 'integration',
       thumbnailPath: 'resources/image/typescript.png',
       sourcePath: '',
-      tags: ['typescript', 'styles', 'ES6 modules'],
+      tags: ['typescript', 'styles', 'ES modules'],
       keywords: ['overview']
     },
     {
@@ -1414,7 +935,7 @@ function getDemoData() {
       thumbnailPath: 'resources/image/vuejs.png',
       sourcePath: 'toolkit/vuejs/VuejsDemo.js',
       tags: ['vuejs', 'databinding'],
-      keywords: ['template', 'datapanel', 'tree']
+      keywords: ['template', 'datapanel', 'tree', 'detail']
     },
     {
       id: 'web-components',
@@ -1434,7 +955,8 @@ function getDemoData() {
       category: 'style',
       thumbnailPath: 'resources/image/css3_animations_and_transitions.png',
       sourcePath: 'style/css3animationsandtransitions/CSS3AnimationsAndTransitionsDemo.js',
-      tags: ['styles', 'animation', 'transition']
+      tags: ['styles', 'animation', 'transition'],
+      keywords: ['curves']
     },
     {
       id: 'custom-styles',
@@ -1468,7 +990,7 @@ function getDemoData() {
       thumbnailPath: 'resources/image/datatable.png',
       sourcePath: 'style/datatable/DataTableDemo.js',
       tags: ['styles', 'labels'],
-      keywords: ['datatable']
+      keywords: ['datatable', 'structure']
     },
     {
       id: 'html-label',
@@ -1491,7 +1013,7 @@ function getDemoData() {
       thumbnailPath: 'resources/image/htmlpopup.png',
       sourcePath: 'view/htmlpopup/HTMLPopupDemo.js',
       tags: ['interaction', 'overlay'],
-      keywords: ['htmlpopup', 'datapanel', 'tooltip']
+      keywords: ['htmlpopup', 'datapanel', 'tooltip', 'structure', 'detail']
     },
     {
       id: 'selection-styling',
@@ -1577,23 +1099,22 @@ function getDemoData() {
       id: 'amd-loading',
       name: 'AMD Loading',
       demoPath: 'loading/amdloading/index.html',
-      summary:
-        'Loads the yFiles module resources using the require function that is defined in the AMD loading standard.',
+      summary: 'Loads the yFiles library modules with the AMD loading standard (require.js).',
       category: 'loading',
       thumbnailPath: 'resources/image/amdloading.png',
       sourcePath: 'loading/amdloading/AmdLoadingDemo.js',
       tags: ['loader', 'modules'],
-      keywords: ['requirejs', 'requirejs']
+      keywords: ['requirejs', 'nonsymbolic']
     },
     {
-      id: 'es6-module-loading',
-      name: 'ES6 Module Loading',
-      demoPath: 'loading/es6modules/README.html',
-      summary: 'Loads the yFiles module resources using ES6 module imports.',
+      id: 'es-module-loading',
+      name: 'ES Module Loading',
+      demoPath: 'loading/esmodules/index.html',
+      summary: 'Loads the yFiles module resources using ES module imports.',
       category: 'loading',
-      thumbnailPath: 'resources/image/es6modules.png',
-      sourcePath: 'loading/es6modules/src/ES6ModulesDemo.js',
-      tags: ['ES6 modules', 'import'],
+      thumbnailPath: 'resources/image/esmodules.png',
+      sourcePath: 'loading/esmodules/src/ESModulesDemo.js',
+      tags: ['ES modules', 'import'],
       keywords: ['v2.1.0.0', 'hierarchic']
     },
     {
@@ -1601,12 +1122,24 @@ function getDemoData() {
       name: 'Browserify',
       demoPath: 'loading/browserify/README.html',
       summary:
-        "Shows how to bundle the yFiles library in a <a href='https://browserify.org/'>Browserify</a> project.",
+        'Shows how to bundle the yFiles library in a <a href="https://browserify.org" target="_blank">Browserify</a> project.',
       category: 'loading',
       thumbnailPath: 'resources/image/browserify.png',
       sourcePath: 'loading/browserify/browserify-demo.js',
       tags: ['deployment', 'modules'],
       keywords: ['organic']
+    },
+    {
+      id: 'rollup',
+      name: 'Rollup.js',
+      demoPath: 'loading/rollupjs/README.html',
+      summary:
+        'Shows how to bundle the yFiles library in a <a href="https://rollupjs.org" target="_blank">rollup</a> project.',
+      category: 'loading',
+      thumbnailPath: 'resources/image/scriptloading.png',
+      sourcePath: 'loading/rollupjs/src/RollupJsDemo.js',
+      tags: ['deployment', 'modules', 'rollup', 'optimizer'],
+      keywords: ['v2.2.0.0']
     },
     {
       id: 'script-loading',
@@ -1617,14 +1150,14 @@ function getDemoData() {
       thumbnailPath: 'resources/image/scriptloading.png',
       sourcePath: 'loading/scriptloading/ScriptLoadingDemo.html',
       tags: ['loader', 'modules'],
-      keywords: ['scriptloading']
+      keywords: ['scriptloading', 'nonsymbolic']
     },
     {
       id: 'web-worker',
       name: 'Web Worker',
-      demoPath: 'loading/webworker/index.html',
+      demoPath: 'loading/webworker/README.html',
       summary:
-        ' Shows how to run a yFiles layout algorithm in a Web Worker task in order to prevent the layout calculation from blocking the UI.',
+        'Shows how to run a yFiles layout algorithm in a Web Worker task in order to prevent the layout calculation from blocking the UI.',
       category: 'loading',
       thumbnailPath: 'resources/image/webworker.png',
       sourcePath: 'loading/webworker/WebWorkerDemo.js',
@@ -1632,27 +1165,27 @@ function getDemoData() {
       keywords: ['threads', 'background', 'json', 'folding', 'hierarchic']
     },
     {
+      id: 'web-worker-umd',
+      name: 'Web Worker UMD',
+      demoPath: 'loading/webworker-umd/index.html',
+      summary:
+        'Shows how to run a yFiles layout algorithm in a Web Worker task in order to prevent the layout calculation from blocking the UI.',
+      category: 'loading',
+      thumbnailPath: 'resources/image/webworker.png',
+      sourcePath: 'loading/webworker-umd/WebWorkerDemo.js',
+      tags: ['threading', 'layout', 'hierarchic'],
+      keywords: ['threads', 'background', 'json', 'folding', 'hierarchic', 'nonsymbolic']
+    },
+    {
       id: 'webpack',
       name: 'webpack',
       demoPath: 'loading/webpack/README.html',
       summary:
-        "Shows how to integrate the yFiles library in a <a href='https://webpack.js.org/'>webpack 2</a> project.",
+        'Shows how to integrate the yFiles library in a <a href="https://webpack.js.org" target="_blank">webpack</a> project using ES modules.',
       category: 'loading',
       thumbnailPath: 'resources/image/webpack.png',
       sourcePath: 'loading/webpack/src/webpack-demo.js',
-      tags: ['nodejs', 'npm', 'deployment', 'layout'],
-      keywords: ['organic']
-    },
-    {
-      id: 'webpack-es6-modules',
-      name: 'webpack ES6 Modules',
-      demoPath: 'loading/webpackEs6Modules/README.html',
-      summary:
-        "Shows how to integrate the yFiles library in a <a href='https://webpack.js.org/'>webpack 2</a> project using ES6 modules.",
-      category: 'loading',
-      thumbnailPath: 'resources/image/webpack.png',
-      sourcePath: 'loading/webpackEs6Modules/src/webpack-demo.js',
-      tags: ['nodejs', 'npm', 'ES6 Modules', 'deployment', 'layout'],
+      tags: ['nodejs', 'npm', 'ES Modules', 'deployment', 'layout'],
       keywords: ['organic']
     },
     {
@@ -1705,10 +1238,10 @@ function getDemoData() {
       demoPath: 'input/customsnapping/index.html',
       summary: 'Shows how the snapping feature can be customized.',
       category: 'input',
-      thumbnailPath: 'resources/image/CustomSnapping.gif',
+      thumbnailPath: 'resources/image/CustomSnapping.mp4',
       sourcePath: 'input/customsnapping/CustomSnappingDemo.js',
       tags: ['interaction', 'snapping'],
-      keywords: ['guides', 'lines', 'labels']
+      keywords: ['guides', 'lines', 'labels', 'move']
     },
     {
       id: 'context-menu',
@@ -1720,7 +1253,7 @@ function getDemoData() {
       thumbnailPath: 'resources/image/contextmenu.png',
       sourcePath: 'input/contextmenu/ContextMenuDemo.js',
       tags: ['interaction'],
-      keywords: ['contextmenu']
+      keywords: ['contextmenu', 'copy']
     },
     {
       id: 'drag-and-drop',
@@ -1731,7 +1264,7 @@ function getDemoData() {
       thumbnailPath: 'resources/image/draganddrop.png',
       sourcePath: 'input/draganddrop/DragAndDropDemo.js',
       tags: ['interaction'],
-      keywords: ['draganddrop', 'palette', 'ports', 'labels', 'groups', 'html5', 'native']
+      keywords: ['draganddrop', 'palette', 'ports', 'labels', 'groups', 'html5', 'native', 'move']
     },
     {
       id: 'edge-reconnection',
@@ -1777,7 +1310,7 @@ function getDemoData() {
       thumbnailPath: 'resources/image/move_unselected_nodes.png',
       sourcePath: 'input/moveunselectednodes/MoveUnselectedNodesDemo.js',
       tags: ['interaction', 'selection'],
-      keywords: ['inputmode']
+      keywords: ['inputmode', 'move']
     },
     {
       id: 'orthogonal-edges',
@@ -1785,10 +1318,10 @@ function getDemoData() {
       demoPath: 'input/orthogonaledges/index.html',
       summary: 'Shows the customization of orthogonal edge editing.',
       category: 'input',
-      thumbnailPath: 'resources/image/OrthogonalEdges.gif',
+      thumbnailPath: 'resources/image/OrthogonalEdges.mp4',
       sourcePath: 'input/orthogonaledges/OrthogonalEdgesDemo.js',
       tags: ['interaction'],
-      keywords: ['orthogonaledges']
+      keywords: ['orthogonaledges', 'move']
     },
     {
       id: 'port-candidate-provider',
@@ -1807,10 +1340,10 @@ function getDemoData() {
       demoPath: 'input/positionhandler/index.html',
       summary: 'Shows how to customize and restrict the movement behavior of nodes.',
       category: 'input',
-      thumbnailPath: 'resources/image/PositionHandler.gif',
+      thumbnailPath: 'resources/image/PositionHandler.mp4',
       sourcePath: 'input/positionhandler/PositionHandlerDemo.js',
       tags: ['interaction'],
-      keywords: ['positionhandler']
+      keywords: ['positionhandler', 'move']
     },
     {
       id: 'reparent-handler',
@@ -1829,7 +1362,7 @@ function getDemoData() {
       demoPath: 'input/reshapehandleprovider/index.html',
       summary: 'Shows how resizing of nodes can be customized.',
       category: 'input',
-      thumbnailPath: 'resources/image/ReshapeHandle.gif',
+      thumbnailPath: 'resources/image/ReshapeHandle.mp4',
       sourcePath: 'input/reshapehandleprovider/ReshapeHandleProviderDemo.js',
       tags: ['interaction', 'reshapehandleprovider'],
       keywords: ['handles']
@@ -1862,30 +1395,678 @@ function getDemoData() {
       demoPath: 'input/sizeconstraintprovider/index.html',
       summary: 'Shows how resizing of nodes can be restricted.',
       category: 'input',
-      thumbnailPath: 'resources/image/SizeConstraint.gif',
+      thumbnailPath: 'resources/image/SizeConstraint.mp4',
       sourcePath: 'input/sizeconstraintprovider/SizeConstraintProviderDemo.js',
       tags: ['interaction'],
       keywords: ['sizeconstraintprovider', 'handles']
     },
     {
-      id: 'jquery-sparklines',
-      name: 'jQuery Sparklines',
-      demoPath: 'style/sparkline/index.html',
+      id: 'tutorial-getting-started--graphcomponent',
+      name: '01 Creating the View',
       summary:
-        'Shows how to integrate visualizations generated by a third-party library with a custom node style.',
-      category: 'style',
-      thumbnailPath: 'resources/image/sparklines.png',
-      sourcePath: 'style/sparkline/SparklineDemo.html',
-      tags: ['styles'],
-      keywords: ['chart']
+        'Introduces class GraphComponent, which is the central UI element for working with graphs.',
+      demoPath: '01-tutorial-getting-started/01-graphcomponent/index.html',
+      thumbnailPath: 'resources/image/tutorial1step1.png',
+      category: 'tutorial-getting-started',
+      tags: ['tutorial', 'getting started']
+    },
+    {
+      id: 'tutorial-getting-started--graph-element-creation',
+      name: '02 Creating Graph Elements',
+      summary: 'Shows how to create the basic graph elements.',
+      demoPath: '01-tutorial-getting-started/02-graph-element-creation/index.html',
+      thumbnailPath: 'resources/image/tutorial1step2.png',
+      category: 'tutorial-getting-started',
+      tags: ['tutorial', 'getting started'],
+      keywords: ['node', 'edge', 'label']
+    },
+    {
+      id: 'tutorial-getting-started--managing-viewport',
+      name: '03 Managing Viewport',
+      summary: 'Shows how to work with the viewport.',
+      demoPath: '01-tutorial-getting-started/03-managing-viewport/index.html',
+      thumbnailPath: 'resources/image/tutorial1step2.png',
+      category: 'tutorial-getting-started',
+      tags: ['tutorial', 'getting started'],
+      keywords: ['zoom', 'fit content']
+    },
+    {
+      id: 'tutorial-getting-started--setting-styles',
+      name: '04 Setting Styles',
+      summary: 'Shows how to configure the visual appearance of graph elements using styles.',
+      demoPath: '01-tutorial-getting-started/04-setting-styles/index.html',
+      thumbnailPath: 'resources/image/tutorial1step4.png',
+      category: 'tutorial-getting-started',
+      tags: ['tutorial', 'getting started'],
+      keywords: [
+        'DefaultLabelStyle',
+        'ShapeNodeStyle',
+        'ShinyPlateNodeStyle',
+        'PolylineEdgeStyle',
+        'Arrow'
+      ]
+    },
+    {
+      id: 'tutorial-getting-started--label-placement',
+      name: '05 Label Placement',
+      summary:
+        'Shows how to control label placement with the help of so called label model parameters.',
+      demoPath: '01-tutorial-getting-started/05-label-placement/index.html',
+      thumbnailPath: 'resources/image/tutorial1step5.png',
+      category: 'tutorial-getting-started',
+      tags: ['tutorial', 'getting started'],
+      keywords: ['InteriorLabelModel', 'SmartEdgeLabelModel']
+    },
+    {
+      id: 'tutorial-getting-started--basic-interaction',
+      name: '06 Basic Interaction',
+      summary:
+        'Shows the default interaction gestures that are provided by class GraphEditorInputMode.',
+      demoPath: '01-tutorial-getting-started/06-basic-interaction/index.html',
+      thumbnailPath: 'resources/image/tutorial1step6.png',
+      category: 'tutorial-getting-started',
+      tags: ['tutorial', 'getting started']
+    },
+    {
+      id: 'tutorial-getting-started--undo-clipboard-support',
+      name: '07 Undo Clipboard Support',
+      summary: 'Shows how to use the undo and clipboard features.',
+      demoPath: '01-tutorial-getting-started/07-undo-clipboard-support/index.html',
+      thumbnailPath: 'resources/image/tutorial1step7.png',
+      category: 'tutorial-getting-started',
+      tags: ['tutorial', 'getting started'],
+      keywords: ['cut', 'copy', 'paste', 'redo']
+    },
+    {
+      id: 'tutorial-getting-started--grouping',
+      name: '08 Grouping',
+      summary: 'Shows how to configure support for grouped (or hierarchically organized) graphs.',
+      demoPath: '01-tutorial-getting-started/08-grouping/index.html',
+      thumbnailPath: 'resources/image/tutorial1step8.png',
+      category: 'tutorial-getting-started',
+      tags: ['tutorial', 'getting started'],
+      keywords: ['PanelNodeStyle', 'InteriorStretchLabelModel']
+    },
+    {
+      id: 'tutorial-getting-started--data-binding',
+      name: '09 Data Binding',
+      summary: 'Shows how to bind data to graph elements.',
+      demoPath: '01-tutorial-getting-started/09-data-binding/index.html',
+      thumbnailPath: 'resources/image/tutorial1step9.png',
+      category: 'tutorial-getting-started',
+      tags: ['tutorial', 'getting started'],
+      keywords: ['Mapper']
+    },
+    {
+      id: 'tutorial-getting-started--layout',
+      name: '10 Layout',
+      summary:
+        'Shows how to use the layout algorithms in yFiles for HTML to automatically place the graph elements.',
+      demoPath: '01-tutorial-getting-started/10-layout/index.html',
+      thumbnailPath: 'resources/image/tutorial1step10.png',
+      category: 'tutorial-getting-started',
+      tags: ['tutorial', 'getting started', 'hierarchic'],
+      keywords: ['morphLayout']
+    },
+    {
+      id: 'tutorial-getting-started--layout-data',
+      name: '11 Layout Data',
+      summary: 'Shows how to configure individual settings for each node for the automatic layout.',
+      demoPath: '01-tutorial-getting-started/11-layout-data/index.html',
+      thumbnailPath: 'resources/image/tutorial1step11.png',
+      category: 'tutorial-getting-started',
+      tags: ['tutorial', 'getting started'],
+      keywords: ['v2.2.0.0', 'hierarchic']
+    },
+    {
+      id: 'tutorial-getting-started--custom-ports',
+      name: '12 Custom Ports',
+      summary: 'This step presents the ILookup interface.',
+      demoPath: '01-tutorial-getting-started/12-custom-ports/index.html',
+      thumbnailPath: 'resources/image/tutorial1step12.png',
+      category: 'tutorial-getting-started',
+      tags: ['tutorial', 'getting started'],
+      keywords: ['decorator', 'candidate', 'provider']
+    },
+    {
+      id: 'tutorial-getting-started--layout',
+      name: '13 Analysis Algorithms',
+      summary: 'Shows how to use the graph analysis algorithms.',
+      demoPath: '01-tutorial-getting-started/13-graph-analysis/index.html',
+      thumbnailPath: 'resources/image/tutorial1step10.png',
+      category: 'tutorial-getting-started',
+      tags: ['tutorial', 'getting started', 'analysis'],
+      keywords: ['Reachability', 'ShortestPaths', 'v2.2.0.0']
+    },
+    {
+      id: 'tutorial-custom-styles--custom-node-style',
+      name: '01 Custom Node Style',
+      summary: 'Shows how to create a custom node style.',
+      demoPath: '02-tutorial-custom-styles/01-custom-node-style/index.html',
+      thumbnailPath: 'resources/image/tutorial2step1.png',
+      category: 'tutorial-custom-styles',
+      tags: ['tutorial', 'custom styles'],
+      keywords: ['NodeStyleBase']
+    },
+    {
+      id: 'tutorial-custom-styles--node-color',
+      name: '02 Node Color',
+      summary: 'Shows how to change the style of the nodes based on their tag.',
+      demoPath: '02-tutorial-custom-styles/02-node-color/index.html',
+      thumbnailPath: 'resources/image/tutorial2step2.png',
+      category: 'tutorial-custom-styles',
+      tags: ['tutorial', 'custom styles']
+    },
+    {
+      id: 'tutorial-custom-styles--update-visual-and-render-data-cache',
+      name: '03 Update Visual And Render Data Cache',
+      summary: 'Shows how to implement high-performance rendering of nodes.',
+      demoPath: '02-tutorial-custom-styles/03-update-visual-and-render-data-cache/index.html',
+      thumbnailPath: 'resources/image/tutorial2step3.png',
+      category: 'tutorial-custom-styles',
+      tags: ['tutorial', 'custom styles']
+    },
+    {
+      id: 'tutorial-custom-styles--is-inside',
+      name: '04 Is Inside',
+      summary: 'Shows how to override isInside() and getOutline() of NodeStyleBase.',
+      demoPath: '02-tutorial-custom-styles/04-is-inside/index.html',
+      thumbnailPath: 'resources/image/tutorial2step1.png',
+      category: 'tutorial-custom-styles',
+      tags: ['tutorial', 'custom styles']
+    },
+    {
+      id: 'tutorial-custom-styles--hit-test',
+      name: '05 Hit Test',
+      summary: 'Shows how to override isHit() and isInBox() of NodeStyleBase.',
+      demoPath: '02-tutorial-custom-styles/05-hit-test/index.html',
+      thumbnailPath: 'resources/image/tutorial2step1.png',
+      category: 'tutorial-custom-styles',
+      tags: ['tutorial', 'custom styles']
+    },
+    {
+      id: 'tutorial-custom-styles--get-bounds',
+      name: '06 Get Bounds',
+      summary: 'Shows how to override getBounds() of NodeStyleBase.',
+      demoPath: '02-tutorial-custom-styles/06-get-bounds/index.html',
+      thumbnailPath: 'resources/image/tutorial2step1.png',
+      category: 'tutorial-custom-styles',
+      tags: ['tutorial', 'custom styles']
+    },
+    {
+      id: 'tutorial-custom-styles--drop-shadow-performance',
+      name: '07 Drop Shadow Performance',
+      summary:
+        'This step replaces the simple drop shadow in the last steps with a more visually appealing, blurred one.',
+      demoPath: '02-tutorial-custom-styles/07-drop-shadow-performance/index.html',
+      thumbnailPath: 'resources/image/tutorial2step7.png',
+      category: 'tutorial-custom-styles',
+      tags: ['tutorial', 'custom styles']
+    },
+    {
+      id: 'tutorial-custom-styles--edge-from-node-to-label',
+      name: '08 Edge From Node To Label',
+      summary: 'Shows how to visually connect a label to its owner node with a line.',
+      demoPath: '02-tutorial-custom-styles/08-edge-from-node-to-label/index.html',
+      thumbnailPath: 'resources/image/tutorial2step8.png',
+      category: 'tutorial-custom-styles',
+      tags: ['tutorial', 'custom styles']
+    },
+    {
+      id: 'tutorial-custom-styles--is-visible',
+      name: '09 Is Visible',
+      summary: 'Shows how to override the method isVisible() of NodeStyleBase.',
+      demoPath: '02-tutorial-custom-styles/09-is-visible/index.html',
+      thumbnailPath: 'resources/image/tutorial2step1.png',
+      category: 'tutorial-custom-styles',
+      tags: ['tutorial', 'custom styles']
+    },
+    {
+      id: 'tutorial-custom-styles--custom-label-style',
+      name: '10 Custom Label Style',
+      summary: 'Shows how a custom label style.',
+      demoPath: '02-tutorial-custom-styles/10-custom-label-style/index.html',
+      thumbnailPath: 'resources/image/tutorial2step10.png',
+      category: 'tutorial-custom-styles',
+      tags: ['tutorial', 'custom styles'],
+      keywords: ['LabelStyleBase']
+    },
+    {
+      id: 'tutorial-custom-styles--label-preferred-size',
+      name: '11 Label Preferred Size',
+      summary:
+        'Shows how to set the size of the label based on the size of its text by overriding the LabelStyleBase#getPreferredSize() method.',
+      demoPath: '02-tutorial-custom-styles/11-label-preferred-size/index.html',
+      thumbnailPath: 'resources/image/tutorial2step11.png',
+      category: 'tutorial-custom-styles',
+      tags: ['tutorial', 'custom styles']
+    },
+    {
+      id: 'tutorial-custom-styles--high-performance-label-rendering',
+      name: '12 High Performance Label Rendering',
+      summary: 'Shows how to implement high-performance rendering for labels.',
+      demoPath: '02-tutorial-custom-styles/12-high-performance-label-rendering/index.html',
+      thumbnailPath: 'resources/image/tutorial2step11.png',
+      category: 'tutorial-custom-styles',
+      tags: ['tutorial', 'custom styles']
+    },
+    {
+      id: 'tutorial-custom-styles--label-edit-button',
+      name: '13 Label Edit Button',
+      summary: 'Shows how to display a button on a label that starts the label editor.',
+      demoPath: '02-tutorial-custom-styles/13-label-edit-button/index.html',
+      thumbnailPath: 'resources/image/tutorial2step13.png',
+      category: 'tutorial-custom-styles',
+      tags: ['tutorial', 'custom styles']
+    },
+    {
+      id: 'tutorial-custom-styles--button-visibility',
+      name: '14 Button Visibility',
+      summary: "Shows how to hide the 'Label Edit' button based on the zoom level.",
+      demoPath: '02-tutorial-custom-styles/14-button-visibility/index.html',
+      thumbnailPath: 'resources/image/tutorial2step13.png',
+      category: 'tutorial-custom-styles',
+      tags: ['tutorial', 'custom styles']
+    },
+    {
+      id: 'tutorial-custom-styles--using-data-in-label-tag',
+      name: '15 Using Data In Label Tag',
+      summary:
+        "Shows how to use data from a business object, which is stored in the label's tag, for rendering.",
+      demoPath: '02-tutorial-custom-styles/15-using-data-in-label-tag/index.html',
+      thumbnailPath: 'resources/image/tutorial2step15.png',
+      category: 'tutorial-custom-styles',
+      tags: ['tutorial', 'custom styles']
+    },
+    {
+      id: 'tutorial-custom-styles--custom-edge-style',
+      name: '16 Custom Edge Style',
+      summary:
+        'Shows how to create a custom edge style which allows to specify the edge thickness by setting a property on the style.',
+      demoPath: '02-tutorial-custom-styles/16-custom-edge-style/index.html',
+      thumbnailPath: 'resources/image/tutorial2step16.png',
+      category: 'tutorial-custom-styles',
+      tags: ['tutorial', 'custom styles'],
+      keywords: ['EdgeStyleBase']
+    },
+    {
+      id: 'tutorial-custom-styles--edge-hit-test',
+      name: '17 Edge Hit Test',
+      summary:
+        'Shows how to take the thickness of the edge into account when checking if the edge was clicked.',
+      demoPath: '02-tutorial-custom-styles/17-edge-hit-test/index.html',
+      thumbnailPath: 'resources/image/tutorial2step17.png',
+      category: 'tutorial-custom-styles',
+      tags: ['tutorial', 'custom styles']
+    },
+    {
+      id: 'tutorial-custom-styles--edge-cropping',
+      name: '18 Edge Cropping',
+      summary: "Shows how to crop an edge at the node's bounds.",
+      demoPath: '02-tutorial-custom-styles/18-edge-cropping/index.html',
+      thumbnailPath: 'resources/image/tutorial2step18.png',
+      category: 'tutorial-custom-styles',
+      tags: ['tutorial', 'custom styles']
+    },
+    {
+      id: 'tutorial-custom-styles--animated-edge-selection',
+      name: '19 Animated Edge Selection',
+      summary: 'Shows how to change the style of an edge if the edge is selected.',
+      demoPath: '02-tutorial-custom-styles/19-animated-edge-selection/index.html',
+      thumbnailPath: 'resources/image/tutorial2step19.png',
+      category: 'tutorial-custom-styles',
+      tags: ['tutorial', 'custom styles']
+    },
+    {
+      id: 'tutorial-custom-styles--custom-arrow',
+      name: '20 Custom Arrow',
+      summary: 'Shows a custom arrow.',
+      demoPath: '02-tutorial-custom-styles/20-custom-arrow/index.html',
+      thumbnailPath: 'resources/image/tutorial2step20.png',
+      category: 'tutorial-custom-styles',
+      tags: ['tutorial', 'custom styles']
+    },
+    {
+      id: 'tutorial-custom-styles--edge-performance',
+      name: '21 Edge Performance',
+      summary: 'Shows how to optimize rendering performance for edges and arrows.',
+      demoPath: '02-tutorial-custom-styles/21-edge-performance/index.html',
+      thumbnailPath: 'resources/image/tutorial2step20.png',
+      category: 'tutorial-custom-styles',
+      tags: ['tutorial', 'custom styles']
+    },
+    {
+      id: 'tutorial-custom-styles--arrow-thickness',
+      name: '22 Arrow Thickness',
+      summary: 'Shows how to render the arrow based on a property of its edge.',
+      demoPath: '02-tutorial-custom-styles/22-arrow-thickness/index.html',
+      thumbnailPath: 'resources/image/tutorial2step22.png',
+      category: 'tutorial-custom-styles',
+      tags: ['tutorial', 'custom styles']
+    },
+    {
+      id: 'tutorial-custom-styles--custom-ports',
+      name: '23 Custom Ports',
+      summary: 'Shows a custom port style.',
+      demoPath: '02-tutorial-custom-styles/23-custom-ports/index.html',
+      thumbnailPath: 'resources/image/tutorial2step23.png',
+      category: 'tutorial-custom-styles',
+      tags: ['tutorial', 'custom styles'],
+      keywords: ['PortStyleBase']
+    },
+    {
+      id: 'tutorial-custom-styles--style-decorator',
+      name: '24 Style Decorator',
+      summary: 'Shows how to enhance an existing node style by adding visual decorators.',
+      demoPath: '02-tutorial-custom-styles/24-style-decorator/index.html',
+      thumbnailPath: 'resources/image/tutorial2step23.png',
+      category: 'tutorial-custom-styles',
+      tags: ['tutorial', 'introduction']
+    },
+    {
+      id: 'tutorial-custom-styles--custom-group-style',
+      name: '25 Custom Group Style',
+      summary: 'Shows how to implement a special node style for group nodes.',
+      demoPath: '02-tutorial-custom-styles/25-custom-group-style/index.html',
+      thumbnailPath: 'resources/image/tutorial2step25.png',
+      category: 'tutorial-custom-styles',
+      tags: ['tutorial', 'custom styles'],
+      keywords: ['CollapsibleNodeStyleDecoratorRenderer', 'NodeStyleBase']
+    },
+    {
+      id: 'tutorial-custom-styles--custom-group-bounds',
+      name: '26 Custom Group Bounds',
+      summary:
+        'Shows how to customize the way that the group insets are calculated by implementing an ILayoutGroupBoundsCalculator.',
+      demoPath: '02-tutorial-custom-styles/26-custom-group-bounds/index.html',
+      thumbnailPath: 'resources/image/tutorial2step26.png',
+      category: 'tutorial-custom-styles',
+      tags: ['tutorial', 'custom styles']
+    },
+    {
+      id: 'tutorial-custom-styles--canvas-painting',
+      name: '27 Canvas Painting',
+      summary:
+        'Shows how to implement a zoom-dependent high-performance rendering using HTML5 Canvas painting for nodes.',
+      demoPath: '02-tutorial-custom-styles/27-canvas-painting/index.html',
+      thumbnailPath: 'resources/image/tutorial2step27.png',
+      category: 'tutorial-custom-styles',
+      tags: ['tutorial', 'custom styles']
+    },
+    {
+      id: 'tutorial-custom-styles--bridge-support',
+      name: '28 Bridge Support',
+      summary: 'Shows how to enable bridges for a custom edge style.',
+      demoPath: '02-tutorial-custom-styles/28-bridge-support/index.html',
+      thumbnailPath: 'resources/image/tutorial2step28.png',
+      category: 'tutorial-custom-styles',
+      tags: ['tutorial', 'custom styles']
+    },
+    {
+      id: 'tutorial-custom-styles--label-line-wrapping',
+      name: '29 Label Line Wrapping',
+      summary:
+        'Shows how to enhance a custom label style to support different line wrapping (trimming) styles as well as text clipping at the label bounds.',
+      demoPath: '02-tutorial-custom-styles/29-label-line-wrapping/index.html',
+      thumbnailPath: 'resources/image/tutorial2step29.png',
+      category: 'tutorial-custom-styles',
+      tags: ['tutorial', 'custom styles']
+    },
+    {
+      id: 'tutorial-application-features--application-features-base',
+      name: 'Application Features Base',
+      summary: 'This demo is the base for the feature-specific demos of this tutorial.',
+      demoPath: '03-tutorial-application-features/application-features-base/index.html',
+      thumbnailPath: 'resources/image/tutorial3step1.png',
+      category: 'tutorial-application-features',
+      tags: ['template', 'simple', 'app']
+    },
+    {
+      id: 'tutorial-application-features--background-image',
+      name: 'Background Image',
+      summary: 'Shows how to add a background visualizations to a graph component.',
+      demoPath: '03-tutorial-application-features/background-image/index.html',
+      thumbnailPath: 'resources/image/tutorial3step2.png',
+      category: 'tutorial-application-features',
+      tags: ['rectangle', 'icon', 'group'],
+      keywords: ['v2.2.0.0', 'ICanvasObjectGroup', 'backgroundGroup']
+    },
+    {
+      id: 'tutorial-application-features--building-graph-from-data',
+      name: 'Building Graphs From Data',
+      summary: 'Shows how to build a graph from data in JSON format.',
+      demoPath: '03-tutorial-application-features/building-graph-from-data/index.html',
+      thumbnailPath: 'resources/image/tutorial3step3.png',
+      category: 'tutorial-application-features',
+      tags: ['JSON', 'file', 'input'],
+      keywords: ['I/O', 'read']
+    },
+    {
+      id: 'tutorial-application-features--building-swimlanes-from-data',
+      name: 'Building Swimlanes From Data',
+      summary: 'Shows how to build a graph with swimlanes from data in JSON format.',
+      demoPath: '03-tutorial-application-features/building-swimlanes-from-data/index.html',
+      thumbnailPath: 'resources/image/tutorial3step4.png',
+      category: 'tutorial-application-features',
+      tags: ['JSON', 'lanes', 'table'],
+      keywords: ['I/O', 'read', 'input']
+    },
+    {
+      id: 'tutorial-application-features--clickable-style-decorator',
+      name: 'Clickable Style Decorator',
+      summary: 'Illustrates an approach for handling clicks on specific areas of the style.',
+      demoPath: '03-tutorial-application-features/clickable-style-decorator/index.html',
+      thumbnailPath: 'resources/image/tutorial3step5.png',
+      category: 'tutorial-application-features',
+      tags: ['mouse', 'icon', 'region', 'image'],
+      keywords: ['NodeDecorator', 'ILookupDecorator', 'NodeStyleBase', 'event']
+    },
+    {
+      id: 'tutorial-application-features--drag-and-drop',
+      name: 'Drag And Drop',
+      summary:
+        'Shows how to enable dragging nodes from a panel and drop them into the graph component.',
+      demoPath: '03-tutorial-application-features/drag-and-drop/index.html',
+      thumbnailPath: 'resources/image/tutorial03.png',
+      category: 'tutorial-application-features',
+      tags: ['mouse', 'event', 'input mode'],
+      keywords: ['DropInputMode', 'addDragDroppedListener', 'move']
+    },
+    {
+      id: 'tutorial-application-features--external-links',
+      name: 'External Links',
+      summary: 'Shows how to add labels that act like external links and open in a new window.',
+      demoPath: '03-tutorial-application-features/external-links/index.html',
+      thumbnailPath: 'resources/image/tutorial3step8.png',
+      category: 'tutorial-application-features',
+      tags: ['navigation', 'tab', 'clickable'],
+      keywords: ['ItemHoverInputMode', 'CONTROL']
+    },
+    {
+      id: 'tutorial-application-features--filtering',
+      name: 'Filtering',
+      summary: 'Shows how to configure graph filtering.',
+      demoPath: '03-tutorial-application-features/filtering/index.html',
+      thumbnailPath: 'resources/image/tutorial3step9.png',
+      category: 'tutorial-application-features',
+      tags: ['hide', 'subset', 'group'],
+      keywords: ['v2.2.0.0', 'FilteredGraphWrapper', 'predicate']
+    },
+    {
+      id: 'tutorial-application-features--filtering-with-folding',
+      name: 'Filtering With Folding',
+      summary: 'Shows how to configure filtering and folding in the same application.',
+      demoPath: '03-tutorial-application-features/filtering-with-folding/index.html',
+      thumbnailPath: 'resources/image/tutorial3step10.png',
+      category: 'tutorial-application-features',
+      tags: ['hide', 'subset', 'folder', 'group'],
+      keywords: [
+        'v2.2.0.0',
+        'FilteredGraphWrapper',
+        'predicate',
+        'masterGraph',
+        'wrappedGraph',
+        'FoldingManager',
+        'nest',
+        'folded',
+        'hide'
+      ]
+    },
+    {
+      id: 'tutorial-application-features--folding',
+      name: 'Folding',
+      summary: 'Shows how to enable collapsing and expanding of group nodes.',
+      demoPath: '03-tutorial-application-features/folding/index.html',
+      thumbnailPath: 'resources/image/tutorial3step11.png',
+      category: 'tutorial-application-features',
+      tags: ['folder', 'group', 'folded'],
+      keywords: [
+        'v2.2.0.0',
+        'masterGraph',
+        'wrappedGraph',
+        'FoldingManager',
+        'collapse',
+        'expand',
+        'nest',
+        'hide'
+      ]
+    },
+    {
+      id: 'tutorial-application-features--graph-copy',
+      name: 'Graph Copy',
+      summary: 'Shows how to copy a graph or parts of a graph.',
+      demoPath: '03-tutorial-application-features/graph-copy/index.html',
+      thumbnailPath: 'resources/image/tutorial3graphcopy.png',
+      category: 'tutorial-application-features',
+      tags: ['clipboard', 'cut', 'paste'],
+      keywords: ['v2.2.0.0', 'GraphCopier', 'copy']
+    },
+    {
+      id: 'tutorial-application-features--graph-search',
+      name: 'Graph Search',
+      summary: 'Shows how to search for specific nodes in a graph.',
+      demoPath: '03-tutorial-application-features/graph-search/index.html',
+      thumbnailPath: 'resources/image/tutorial3step12.png',
+      category: 'tutorial-application-features',
+      tags: ['highlight', 'query', 'match', 'find'],
+      keywords: ['v2.2.0.0']
+    },
+    {
+      id: 'tutorial-application-features--grid-snapping',
+      name: 'Grid Snapping',
+      summary: 'Shows how to enable grid snapping during interactive changes.',
+      demoPath: '03-tutorial-application-features/grid-snapping/index.html',
+      thumbnailPath: 'resources/image/tutorial3step13.png',
+      category: 'tutorial-application-features',
+      tags: ['align', 'visual', 'interactive'],
+      keywords: ['GraphSnapContext', 'LabelSnapContext', 'GridSnapTypes', 'GridVisualCreator']
+    },
+    {
+      id: 'tutorial-application-features--input-output',
+      name: 'Save and Load GraphML',
+      summary: 'Shows how to use GraphML input and output.',
+      demoPath: '03-tutorial-application-features/input-output/index.html',
+      thumbnailPath: 'resources/image/tutorial3step1.png',
+      category: 'tutorial-application-features',
+      tags: ['I/O', 'read', 'write', 'file'],
+      keywords: ['GraphMLSupport']
+    },
+    {
+      id: 'tutorial-application-features--custom-graphml',
+      name: 'Custom Data in GraphML',
+      summary: 'Shows how to read and write additional data from and to GraphML.',
+      demoPath: '03-tutorial-application-features/custom-graphml/index.html',
+      thumbnailPath: 'resources/image/tutorial3step1.png',
+      category: 'tutorial-application-features',
+      tags: ['property', 'save', 'tooltip', 'I/O'],
+      keywords: ['IMapper', 'mapperRegistry', 'GraphMLIOHandler']
+    },
+    {
+      id: 'tutorial-application-features--label-text-wrapping',
+      name: 'Label Text Wrapping',
+      summary: 'Shows how to enable label text wrapping and trimming.',
+      demoPath: '03-tutorial-application-features/label-text-wrapping/index.html',
+      thumbnailPath: 'resources/image/tutorial3step15.png',
+      category: 'tutorial-application-features',
+      tags: ['character', 'word', 'ellipsis'],
+      keywords: ['TextWrapping', 'line break']
+    },
+    {
+      id: 'tutorial-application-features--level-of-detail-style',
+      name: 'Level of Detail Style',
+      summary: 'Shows a node style that hides details when zooming out.',
+      demoPath: '03-tutorial-application-features/level-of-detail-style/index.html',
+      thumbnailPath: 'resources/image/tutorial3step16.png',
+      category: 'tutorial-application-features',
+      tags: ['overview', 'data', 'intermediate'],
+      keywords: ['v2.2.0.0', 'bind', 'performance', 'readability', 'hide', 'detail']
+    },
+    {
+      id: 'tutorial-application-features--native-listeners',
+      name: 'Native Listeners',
+      summary: 'Illustrates how to register native event listeners to a SVG elements of a style.',
+      demoPath: '03-tutorial-application-features/native-listeners/index.html',
+      thumbnailPath: 'resources/image/tutorial3step17.png',
+      category: 'tutorial-application-features',
+      tags: ['decorator', 'mouse'],
+      keywords: ['NodeDecorator', 'ILookupDecorator', 'NodeStyleBase', 'event']
+    },
+    {
+      id: 'tutorial-application-features--orthogonal-edges',
+      name: 'Orthogonal Edges',
+      summary: 'Shows how to enable interactive orthogonal edge editing.',
+      demoPath: '03-tutorial-application-features/orthogonal-edges/index.html',
+      thumbnailPath: 'resources/image/tutorial3step18.png',
+      category: 'tutorial-application-features',
+      tags: ['edge creation', 'bend'],
+      keywords: ['OrthogonalEdgeEditingContext', 'OrthogonalEdgeEditingPolicy']
+    },
+    {
+      id: 'tutorial-application-features--rectangular-indicator',
+      name: 'Rectangular Indicator',
+      summary: 'Shows how to add an interactive rectangular indicator to the graph component.',
+      demoPath: '03-tutorial-application-features/rectangular-indicator/index.html',
+      thumbnailPath: 'resources/image/tutorial3step19.png',
+      category: 'tutorial-application-features',
+      tags: ['interactive', 'selection', 'handle'],
+      keywords: ['v2.2.0.0', 'PositionHandler', 'RectangleIndicatorInstaller', 'RectangleHandle']
+    },
+    {
+      id: 'tutorial-application-features--smart-click-navigation',
+      name: 'Smart Click Navigation',
+      demoPath: '03-tutorial-application-features/smart-click-navigation/index.html',
+      summary: 'Shows the how to scroll and zoom to the area of interest by single edge-clicks.',
+      category: 'tutorial-application-features',
+      thumbnailPath: 'resources/image/navigation.png',
+      tags: ['introduction', 'tutorial'],
+      keywords: ['v2.2.0.0', 'navigation', 'zoom', 'move']
+    },
+    {
+      id: 'tutorial-application-features--snapping',
+      name: 'Snapping',
+      summary: 'Shows how to enable snapping (guide lines) for interactive changes.',
+      demoPath: '03-tutorial-application-features/snapping/index.html',
+      thumbnailPath: 'resources/image/tutorial3step1.png',
+      category: 'tutorial-application-features',
+      tags: ['tutorial', 'introduction']
+    },
+    {
+      id: 'tutorial-application-features--tooltips',
+      name: 'Tooltips',
+      summary: 'Show how tooltips to graph items.',
+      demoPath: '03-tutorial-application-features/tooltips/index.html',
+      thumbnailPath: 'resources/image/tutorial3step21.png',
+      category: 'tutorial-application-features',
+      tags: ['hover', 'mouse', 'information'],
+      keywords: ['mouseHoverInputMode', 'addQueryItemToolTipListener', 'event']
     }
   ]
 }
 // This is needed for docviewer processing
 if (
-  'object' === typeof exports &&
-  'undefined' !== typeof module &&
-  'object' === typeof module.exports
+  typeof exports === 'object' &&
+  typeof module !== 'undefined' &&
+  typeof module.exports === 'object'
 ) {
   module.exports = getDemoData()
 }

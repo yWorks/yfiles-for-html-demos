@@ -1,12 +1,26 @@
-import { AfterViewInit, Component, ViewChild } from '@angular/core'
-import { ICommand, IGraph, Size } from 'yfiles/view-component'
+import {
+  AfterViewInit,
+  ApplicationRef,
+  Component,
+  ComponentFactoryResolver,
+  Injector,
+  ViewChild
+} from '@angular/core'
+import {
+  IArrow,
+  ICommand,
+  IGraph,
+  PolylineEdgeStyle,
+  OrganicEdgeRouter,
+  Size,
+  TreeLayout,
+  TreeReductionStage
+} from 'yfiles'
 import { GraphComponentComponent } from './graph-component/graph-component.component'
 import { EDGE_DATA, NODE_DATA } from './data'
-import { TreeLayout, TreeReductionStage } from 'yfiles/layout-tree'
-import { OrganicEdgeRouter } from 'yfiles/router-other'
-import 'yfiles/view-layout-bridge'
-import { TemplateNodeStyle } from 'yfiles/styles-template'
+import 'yfiles/view-layout-bridge.js'
 import { Person } from './person'
+import { NodeComponentStyle } from './NodeComponentStyle'
 
 @Component({
   selector: 'app-root',
@@ -20,12 +34,23 @@ export class AppComponent implements AfterViewInit {
 
   public currentPerson: Person
 
+  constructor(
+    private _injector: Injector,
+    private _resolver: ComponentFactoryResolver,
+    private _appRef: ApplicationRef
+  ) {}
+
   ngAfterViewInit() {
     const graphComponent = this.gcComponent.graphComponent
     const graph = graphComponent.graph
 
-    graph.nodeDefaults.size = new Size(250, 100)
-    graph.nodeDefaults.style = new TemplateNodeStyle('nodeTemplate')
+    graph.nodeDefaults.size = new Size(285, 100)
+    graph.nodeDefaults.style = new NodeComponentStyle(this._injector, this._resolver, this._appRef)
+
+    graph.edgeDefaults.style = new PolylineEdgeStyle({
+      stroke: '2px rgb(170, 170, 170)',
+      targetArrow: IArrow.NONE
+    })
 
     graphComponent.addCurrentItemChangedListener(() => {
       this.currentPerson = graphComponent.currentItem.tag

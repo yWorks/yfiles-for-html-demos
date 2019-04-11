@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.1.
- ** Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.2.
+ ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,182 +26,176 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-'use strict'
+import NetworkMonitoringNodeStyle from './NetworkMonitoringNodeStyle.js'
 
-/* eslint-disable no-undef */
+/**
+ * A class for creating a bar chart.
+ */
+export default class D3BarChart {
+  constructor() {
+    this.$currentNode = null
 
-define(['NetworkMonitoringNodeStyle.js'], NetworkMonitoringNodeStyle => {
-  /**
-   * A class for creating a bar chart.
-   */
-  class D3BarChart {
-    constructor() {
-      this.$currentNode = null
-
-      this.chartMargin = {
-        top: 0,
-        right: 0,
-        bottom: 10,
-        left: 30
-      }
-      this.chartWidth = 250 - this.chartMargin.left - this.chartMargin.right
-      this.chartHeight = 75 - this.chartMargin.top - this.chartMargin.bottom
-
-      this.chart = d3
-        .select('.chart')
-        .attr('width', this.chartWidth + this.chartMargin.left + this.chartMargin.right)
-        .attr('height', this.chartHeight + this.chartMargin.top + this.chartMargin.bottom)
-
-      const y = d3
-        .scaleLinear()
-        .domain([0, 1])
-        .range([this.chartHeight, 5])
-
-      const yAxis = d3.axisLeft(y).ticks(3, '.6')
-
-      this.chart
-        .append('g')
-        .attr('class', 'y axis')
-        .attr('transform', 'translate(25,0)')
-        .call(yAxis)
-
-      // d3.tip positioning doesn't work properly in Firefox (see https://github.com/Caged/d3-tip/issues/56).
-      // To compensate for this, we position it in Firefox with an offset.
-      const tipOffset = navigator.userAgent.toLowerCase().indexOf('firefox') > -1 ? 12 : 0
-
-      this.tip = d3
-        .tip()
-        .attr('class', 'd3-tip')
-        .direction('n')
-        .offset([-10, tipOffset])
-        .html(
-          (d, i) =>
-            `<strong>Load:</strong> <span style='color:${NetworkMonitoringNodeStyle.convertLoadToColor(
-              d,
-              1
-            )}'>${(d * 100).toFixed(0)}%</span>`
-        )
-
-      d3.select('.chart').call(this.tip)
+    this.chartMargin = {
+      top: 0,
+      right: 0,
+      bottom: 10,
+      left: 30
     }
+    this.chartWidth = 250 - this.chartMargin.left - this.chartMargin.right
+    this.chartHeight = 75 - this.chartMargin.top - this.chartMargin.bottom
 
-    /** @type {yfiles.graph.INode} */
-    set currentNode(value) {
-      this.$currentNode = value
-    }
+    this.chart = d3
+      .select('.chart')
+      .attr('width', this.chartWidth + this.chartMargin.left + this.chartMargin.right)
+      .attr('height', this.chartHeight + this.chartMargin.top + this.chartMargin.bottom)
 
-    /** @type {yfiles.graph.INode} */
-    get currentNode() {
-      return this.$currentNode
-    }
+    const y = d3
+      .scaleLinear()
+      .domain([0, 1])
+      .range([this.chartHeight, 5])
 
-    /**
-     * Show the data of the given node as a bar chart.
-     * @param {yfiles.graph.INode} node
-     */
-    barChart(node) {
-      if (!node) {
-        return
-      }
+    const yAxis = d3.axisLeft(y).ticks(3, '.6')
 
-      // Store the data
-      this.currentNode = node
+    this.chart
+      .append('g')
+      .attr('class', 'y axis')
+      .attr('transform', 'translate(25,0)')
+      .call(yAxis)
 
-      // Extract the last load, since it is the current value
-      const currentBarLoad = [node.tag.loadHistory[node.tag.loadHistory.length - 1]]
-      const remainingLoads = node.tag.loadHistory.slice(0, node.tag.loadHistory.length - 1)
+    // d3.tip positioning doesn't work properly in Firefox (see https://github.com/Caged/d3-tip/issues/56).
+    // To compensate for this, we position it in Firefox with an offset.
+    const tipOffset = navigator.userAgent.toLowerCase().indexOf('firefox') > -1 ? 12 : 0
 
-      // Width of each bar
-      const currentBarWidth = this.chartWidth / remainingLoads.length * 2
-      const barWidth = (this.chartWidth - currentBarWidth) / remainingLoads.length
+    this.tip = d3
+      .tip()
+      .attr('class', 'd3-tip')
+      .direction('n')
+      .offset([-10, tipOffset])
+      .html(
+        (d, i) =>
+          `<strong>Load:</strong> <span style='color:${NetworkMonitoringNodeStyle.convertLoadToColor(
+            d,
+            1
+          )}'>${(d * 100).toFixed(0)}%</span>`
+      )
 
-      // Use linear y-axis scaling from 0 to 1
-      const y = d3
-        .scaleLinear()
-        .domain([0, 1])
-        .range([this.chartHeight - 1, 5])
-
-      // Bind the data to the surrounding bar elements
-      const groups = this.chart.selectAll('.bar').data(remainingLoads)
-
-      // Add new bars on entering of new data which consist of ...
-      const newGroups = groups
-        .enter()
-        .append('g')
-        .attr('class', 'bar')
-        .attr('transform', (d, i) => `translate(${i * barWidth + this.chartMargin.left},0)`)
-
-      // ... the actual bar element
-      newGroups
-        .append('rect')
-        .style('fill', d => NetworkMonitoringNodeStyle.convertLoadToColor(d, 0.75))
-        .attr('y', d => y(d))
-        .attr('height', d => this.chartHeight - y(d))
-        .attr('width', barWidth - 1)
-        .on('mouseover', this.tip.show)
-        .on('mouseout', this.tip.hide)
-
-      // Update the already constructed bars and labels if no new data is added
-      groups
-        .select('rect')
-        .style('fill', d => NetworkMonitoringNodeStyle.convertLoadToColor(d, 0.75))
-        .attr('y', d => y(d))
-        .attr('height', d => this.chartHeight - y(d))
-
-      // Remove bars which are no longer bound to data in the current data set
-      groups.exit().remove()
-
-      // The same pattern is applied to the special 'now'-bar also
-      // Bind data
-      const currentGroup = this.chart.selectAll('.current-load').data(currentBarLoad)
-
-      // Enter new data
-      const newCurrentGroup = currentGroup
-        .enter()
-        .append('g')
-        .attr('class', 'current-load')
-        .attr(
-          'transform',
-          (d, i) => `translate(${this.chartMargin.left + remainingLoads.length * barWidth},0)`
-        )
-
-      newCurrentGroup
-        .append('rect')
-        .style('fill', d => NetworkMonitoringNodeStyle.convertLoadToColor(d, 1))
-        .attr('y', d => y(d))
-        .attr('height', d => this.chartHeight - y(d))
-        .attr('width', currentBarWidth - 1)
-        .on('mouseover', this.tip.show)
-        .on('mouseout', this.tip.hide)
-
-      newCurrentGroup
-        .append('text')
-        .attr('x', currentBarWidth / 2)
-        .attr('y', this.chartHeight)
-        .attr('dy', '1em')
-        .attr('text-anchor', 'middle')
-        .text('\u25B2')
-
-      // Update data
-      currentGroup
-        .select('rect')
-        .style('fill', d => NetworkMonitoringNodeStyle.convertLoadToColor(d, 1))
-        .attr('y', d => y(d))
-        .attr('height', d => this.chartHeight - y(d))
-
-      // Remove old data
-      currentGroup.exit().remove()
-    }
-
-    /**
-     * Updates the current chart.
-     */
-    updateCurrentChart() {
-      if (this.currentNode) {
-        this.barChart(this.currentNode)
-      }
-    }
+    d3.select('.chart').call(this.tip)
   }
 
-  return D3BarChart
-})
+  /** @type {INode} */
+  set currentNode(value) {
+    this.$currentNode = value
+  }
+
+  /** @type {INode} */
+  get currentNode() {
+    return this.$currentNode
+  }
+
+  /**
+   * Show the data of the given node as a bar chart.
+   * @param {INode} node
+   */
+  barChart(node) {
+    if (!node) {
+      return
+    }
+
+    // Store the data
+    this.currentNode = node
+
+    // Extract the last load, since it is the current value
+    const currentBarLoad = [node.tag.loadHistory[node.tag.loadHistory.length - 1]]
+    const remainingLoads = node.tag.loadHistory.slice(0, node.tag.loadHistory.length - 1)
+
+    // Width of each bar
+    const currentBarWidth = this.chartWidth / remainingLoads.length * 2
+    const barWidth = (this.chartWidth - currentBarWidth) / remainingLoads.length
+
+    // Use linear y-axis scaling from 0 to 1
+    const y = d3
+      .scaleLinear()
+      .domain([0, 1])
+      .range([this.chartHeight - 1, 5])
+
+    // Bind the data to the surrounding bar elements
+    const groups = this.chart.selectAll('.bar').data(remainingLoads)
+
+    // Add new bars on entering of new data which consist of ...
+    const newGroups = groups
+      .enter()
+      .append('g')
+      .attr('class', 'bar')
+      .attr('transform', (d, i) => `translate(${i * barWidth + this.chartMargin.left},0)`)
+
+    // ... the actual bar element
+    newGroups
+      .append('rect')
+      .style('fill', d => NetworkMonitoringNodeStyle.convertLoadToColor(d, 0.75))
+      .attr('y', d => y(d))
+      .attr('height', d => this.chartHeight - y(d))
+      .attr('width', barWidth - 1)
+      .on('mouseover', this.tip.show)
+      .on('mouseout', this.tip.hide)
+
+    // Update the already constructed bars and labels if no new data is added
+    groups
+      .select('rect')
+      .style('fill', d => NetworkMonitoringNodeStyle.convertLoadToColor(d, 0.75))
+      .attr('y', d => y(d))
+      .attr('height', d => this.chartHeight - y(d))
+
+    // Remove bars which are no longer bound to data in the current data set
+    groups.exit().remove()
+
+    // The same pattern is applied to the special 'now'-bar also
+    // Bind data
+    const currentGroup = this.chart.selectAll('.current-load').data(currentBarLoad)
+
+    // Enter new data
+    const newCurrentGroup = currentGroup
+      .enter()
+      .append('g')
+      .attr('class', 'current-load')
+      .attr(
+        'transform',
+        (d, i) => `translate(${this.chartMargin.left + remainingLoads.length * barWidth},0)`
+      )
+
+    newCurrentGroup
+      .append('rect')
+      .style('fill', d => NetworkMonitoringNodeStyle.convertLoadToColor(d, 1))
+      .attr('y', d => y(d))
+      .attr('height', d => this.chartHeight - y(d))
+      .attr('width', currentBarWidth - 1)
+      .on('mouseover', this.tip.show)
+      .on('mouseout', this.tip.hide)
+
+    newCurrentGroup
+      .append('text')
+      .attr('x', currentBarWidth / 2)
+      .attr('y', this.chartHeight)
+      .attr('dy', '1em')
+      .attr('text-anchor', 'middle')
+      .text('\u25B2')
+
+    // Update data
+    currentGroup
+      .select('rect')
+      .style('fill', d => NetworkMonitoringNodeStyle.convertLoadToColor(d, 1))
+      .attr('y', d => y(d))
+      .attr('height', d => this.chartHeight - y(d))
+
+    // Remove old data
+    currentGroup.exit().remove()
+  }
+
+  /**
+   * Updates the current chart.
+   */
+  updateCurrentChart() {
+    if (this.currentNode) {
+      this.barChart(this.currentNode)
+    }
+  }
+}

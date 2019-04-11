@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.1.
- ** Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.2.
+ ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,37 +26,142 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-/* eslint-disable no-multi-str,no-unused-vars */
-
-'use strict'
-
-const defaultPage = '/doc/readme/documentation.html'
-
+const path = require('path')
+const fs = require('fs')
+const http = require('http')
 const https = require('https')
-
 const express = require('express')
+const multer = require('multer') // multipart/form-data parsing
+const opn = require('opn')
+const favicon = require('serve-favicon')
+
+const es6ModuleMappings = require('../../tools/common/ES6ModuleMappings.json')
+
+const defaultPage = '/README.html'
 const app = express()
+const staticRoot = path.join(__dirname, '../..')
+const importYfilesRegex = /import\s+([\s\S]*?)\s+from\s+['"]yfiles\/?([^'"]*)['"]/g
 
-// Send README.html for directory requests
-app.use('/', express.static('../../', { index: ['README.html', 'index.html', 'index.htm'] }))
+const es6NameToEsModule = {
+  yfiles: 'lang'
+}
 
-const server = app.listen(3000, function() {
-  console.log('Demo Server listening at localhost:3000')
+for (const [esModuleName, implModuleMap] of Object.entries(es6ModuleMappings)) {
+  for (const nameMap of Object.values(implModuleMap)) {
+    for (const es6Name of Object.values(nameMap)) {
+      es6NameToEsModule[es6Name] = esModuleName
+    }
+  }
+}
 
-  // open the documentation page (hopefully in a browser)
-  const open = require('open')
-  open('http://localhost:3000' + defaultPage)
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*')
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept')
+  res.header('Access-Control-Expose-Headers', 'X-Powered-By, X-yFiles-for-HTML-Demo-Server')
+  res.header('X-yFiles-for-HTML-Demo-Server', 'true')
+  next()
 })
+
+app.use(favicon(path.join(staticRoot, 'demos/resources/image', 'favicon.ico')))
+
+const serveStatic = express.static(staticRoot, {
+  index: ['README.html', 'index.html', 'index.htm']
+})
+
+function resolveModuleName(moduleName, basePath) {
+  return path
+    .join(
+      path.relative(path.dirname(basePath), staticRoot),
+      `demos/node_modules/yfiles/${moduleName}.js`
+    )
+    .replace(/\\/g, '/')
+}
+
+function transformFile(data, filePath) {
+  return data.replace(importYfilesRegex, (match, imports, from) => {
+    const module = from || 'yfiles'
+    if (module === 'yfiles') {
+      const neededModules = {}
+      const [defaultImport] = imports.match(/^[^{,]*/) || []
+      let [fullMatch, namedImportsMatch] = imports.match(/{((?:.|\n|\r|\t)*)}/) || []
+      const numLines = fullMatch.split('\n').length
+      if (namedImportsMatch) {
+        namedImportsMatch = namedImportsMatch.replace(/\s*\/\/.*/g, '')
+
+        const namedImports = namedImportsMatch.replace(/\s/g, '').split(',')
+        for (const namedImport of namedImports) {
+          const module = es6NameToEsModule[namedImport]
+          if (!module) {
+            console.error('Named import not found in module mappings:', namedImport)
+          } else {
+            if (!neededModules[module]) {
+              neededModules[module] = []
+            }
+            neededModules[module].push(namedImport)
+          }
+        }
+      }
+
+      if (defaultImport) {
+        if (!neededModules['lang']) {
+          neededModules['lang'] = []
+        }
+        if (defaultImport === 'yfiles') {
+          neededModules['lang'].push(defaultImport)
+        } else {
+          neededModules['lang'].push('yfiles as ' + defaultImport)
+        }
+      }
+
+      const trailingComments = new Array(numLines - 1)
+        .fill('// keep linenumbers with imports adapted by demoserver')
+        .join('\n')
+
+      return (
+        Object.entries(neededModules)
+          .map(
+            ([moduleName, imports]) =>
+              `import {${imports.join(',')}} from '${resolveModuleName(moduleName, filePath)}'`
+          )
+          .join(';') +
+        (numLines > 1 ? '\n' : '') +
+        trailingComments
+      )
+    } else {
+      return `import ${imports} from '${resolveModuleName(module, filePath)}'`
+    }
+  })
+}
+
+app.use('/', (req, res, next) => {
+  const filePath = path.join(staticRoot, req.path)
+  const ext = path.extname(filePath)
+  if ((/demos[\\/]/i.test(filePath) || /compatibility[\\/]/i.test(filePath)) && ext === '.js') {
+    fs.readFile(filePath, 'utf8', (err, data) => {
+      if (err) {
+        return res.sendStatus(404)
+      }
+      res.type(ext)
+      if (importYfilesRegex.test(data)) {
+        data = transformFile(data, filePath)
+      }
+      res.send(data)
+    })
+  } else {
+    next()
+  }
+})
+
+app.use('/', serveStatic)
 
 //
 // file save/load support for the fileoperations demo
 //
-const multer = require('multer') // multipart/form-data parsing
 const upload = multer({
   storage: multer.memoryStorage() // don't write the uploaded file to disk
 })
 
-app.get('/file/isAlive', function(req, res) {
+app.get('/file/isAlive', (req, res) => {
   res.set({
     'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Headers': 'X-Requested-With'
@@ -64,7 +169,7 @@ app.get('/file/isAlive', function(req, res) {
   res.status(200).send('yes')
 })
 
-app.post('/file/save', upload.single('demo-input-graph'), function(req, res) {
+app.post('/file/save', upload.single('demo-input-graph'), (req, res) => {
   const graphml = req.body['demo-input-graph']
 
   const fileNameParam = req.query.fn
@@ -83,7 +188,7 @@ app.post('/file/save', upload.single('demo-input-graph'), function(req, res) {
 //
 // proxy server for TransitivityDemo for queries regarding npm packages
 //
-app.get('/npm-request', function(request, outerResponse) {
+app.get('/npm-request', (request, outerResponse) => {
   const type = request.query.type
   const npmPackage = request.query.package
 
@@ -98,17 +203,15 @@ app.get('/npm-request', function(request, outerResponse) {
       npmPackage +
       '%22%2C%7B%7D%5D&skip=0&limit=5000'
   } else {
-    outerResponse.status(500).send('Invalid query type!')
+    return outerResponse.status(500).send('Invalid query type!')
   }
 
   https
-    .get(url, function(res) {
+    .get(url, res => {
       let completeResponse = ''
 
-      res.on('data', function(chunk) {
-        completeResponse += chunk
-      })
-      res.on('end', function(chunk) {
+      res.on('data', chunk => (completeResponse += chunk))
+      res.on('end', () => {
         outerResponse.set({
           'Access-Control-Allow-Origin': '*',
           'Access-Control-Allow-Headers': 'X-Requested-With'
@@ -116,25 +219,21 @@ app.get('/npm-request', function(request, outerResponse) {
         outerResponse.status(200).send(completeResponse)
       })
     })
-    .on('error', function(err) {
-      outerResponse.status(500).send(JSON.stringify(err))
-    })
+    .on('error', err => outerResponse.status(500).send(JSON.stringify(err)))
 })
 
 const inputFormName = 'demo-open-input'
-app.post('/file/load', upload.single(inputFormName), function(req, res) {
+app.post('/file/load', upload.single(inputFormName), (req, res) => {
   let message = ''
 
-  const file = req.file
-  if (!file) {
+  if (!req.file) {
     message =
       '!ERROR! The specified file part of name ' + inputFormName + ' was not found in the request.'
   } else {
-    const content = file.buffer
-    message = encodeURIComponent(content)
+    message = encodeURIComponent(req.file.buffer)
   }
 
-  // To keep the demo page open, the response is send to an iframe, where a message containing the GraphML content
+  // To keep the demo page open, the response is sent to an iframe, where a message containing the GraphML content
   // is posted to the parent window
   res
     .set({
@@ -142,15 +241,29 @@ app.post('/file/load', upload.single(inputFormName), function(req, res) {
       'Access-Control-Allow-Origin': '*',
       'Access-Control-Allow-Headers': 'X-Requested-With'
     })
-    .send(
-      "<html>\
-            <body>\
-              <script type='text/javascript'>\
-                window.parent.postMessage('" +
-        message +
-        "','*') ;\n\
-               </script>\
-            </body>\
-          </html>"
-    )
+    .send(`<html><body><script>window.parent.postMessage('${message}', '*')</script></body></html>`)
 })
+
+let port = 3000
+const server = http.createServer(app)
+
+server.on('error', e => {
+  if (e.code === 'EADDRINUSE') {
+    console.error(`Port ${port} already in use, retrying to start demo server...`)
+    setTimeout(() => {
+      server.close()
+      server.listen(port)
+    }, 1000)
+  }
+})
+
+server.on('listening', () => {
+  console.log(`Demo server listening at localhost:${port}`)
+
+  // open the documentation page (hopefully in a browser)
+  if (typeof process.env.NO_OPEN === 'undefined') {
+    opn(`http://localhost:${port}${defaultPage}`)
+  }
+})
+
+server.listen(port)

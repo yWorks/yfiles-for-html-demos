@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.1.
- ** Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.2.
+ ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -32,23 +32,23 @@
 
 require.config({
   paths: {
-    yfiles: '../../../lib/umd/yfiles/',
+    yfiles: '../../../lib/umd/',
     utils: '../../utils/',
     resources: '../../resources/'
   }
 })
 
-require([
-  'yfiles/view-component',
-  'resources/demo-app',
-  'resources/demo-styles',
-  'resources/license'
-], (/** @type {yfiles_namespace} */ /** typeof yfiles */ yfiles, app, DemoStyles) => {
+require(['yfiles/view-component'], (
+  /** @type {yfiles_namespace} */ /** typeof yfiles */ yfiles
+) => {
   /** @type {yfiles.view.GraphComponent} */
   let graphComponent = null
 
-  function run() {
+  function run(licenseData) {
+    yfiles.lang.License.value = licenseData
+
     graphComponent = new yfiles.view.GraphComponent('graphComponent')
+    const graph = graphComponent.graph
     graphComponent.graph.undoEngineEnabled = true
 
     // load the input module and set the input editor
@@ -57,10 +57,16 @@ require([
     })
 
     // set a nice default style
-    DemoStyles.initDemoStyles(graphComponent.graph)
+    graph.nodeDefaults.style = new yfiles.styles.ShapeNodeStyle({
+      fill: 'orange',
+      stroke: 'orange',
+      shape: 'rectangle'
+    })
+    graph.edgeDefaults.style = new yfiles.styles.PolylineEdgeStyle({
+      targetArrow: yfiles.styles.IArrow.DEFAULT
+    })
 
     // create small sample graph
-    const graph = graphComponent.graph
     const node1 = graph.createNode(new yfiles.geometry.Rect(50, 50, 30, 30))
     const node2 = graph.createNode(new yfiles.geometry.Rect(0, 150, 30, 30))
     const node3 = graph.createNode(new yfiles.geometry.Rect(100, 150, 30, 30))
@@ -71,26 +77,43 @@ require([
     graphComponent.fitGraphBounds()
 
     registerCommands()
-
-    app.show(graphComponent)
   }
 
   function registerCommands() {
     const iCommand = yfiles.input.ICommand
-    app.bindCommand("button[data-command='FitContent']", iCommand.FIT_GRAPH_BOUNDS, graphComponent)
-    app.bindCommand("button[data-command='ZoomIn']", iCommand.INCREASE_ZOOM, graphComponent)
-    app.bindCommand("button[data-command='ZoomOut']", iCommand.DECREASE_ZOOM, graphComponent)
-    app.bindCommand("button[data-command='ZoomOriginal']", iCommand.ZOOM, graphComponent, 1.0)
 
-    app.bindCommand("button[data-command='Cut']", iCommand.CUT, graphComponent)
-    app.bindCommand("button[data-command='Copy']", iCommand.COPY, graphComponent)
-    app.bindCommand("button[data-command='Paste']", iCommand.PASTE, graphComponent)
-    app.bindCommand("button[data-command='Delete']", iCommand.DELETE, graphComponent)
+    function bindCommand(selector, command, parameter = null) {
+      const element = document.querySelector(selector)
+      command.addCanExecuteChangedListener(() => {
+        if (command.canExecute(parameter, graphComponent)) {
+          element.removeAttribute('disabled')
+        } else {
+          element.setAttribute('disabled', 'disabled')
+        }
+      })
+      element.addEventListener('click', e => {
+        if (command.canExecute(parameter, graphComponent)) {
+          command.execute(parameter, graphComponent)
+        }
+      })
+    }
 
-    app.bindCommand("button[data-command='Undo']", iCommand.UNDO, graphComponent)
-    app.bindCommand("button[data-command='Redo']", iCommand.REDO, graphComponent)
+    bindCommand("button[data-command='FitContent']", iCommand.FIT_GRAPH_BOUNDS)
+    bindCommand("button[data-command='ZoomIn']", iCommand.INCREASE_ZOOM)
+    bindCommand("button[data-command='ZoomOut']", iCommand.DECREASE_ZOOM)
+    bindCommand("button[data-command='ZoomOriginal']", iCommand.ZOOM, 1.0)
 
-    app.bindAction("button[data-command='Layout']", applyLayout.bind(this))
+    bindCommand("button[data-command='Cut']", iCommand.CUT)
+    bindCommand("button[data-command='Copy']", iCommand.COPY)
+    bindCommand("button[data-command='Paste']", iCommand.PASTE)
+    bindCommand("button[data-command='Delete']", iCommand.DELETE)
+
+    bindCommand("button[data-command='Undo']", iCommand.UNDO)
+    bindCommand("button[data-command='Redo']", iCommand.REDO)
+
+    document
+      .querySelector("button[data-command='Layout']")
+      .addEventListener('click', applyLayout.bind(this))
   }
 
   function applyLayout() {
@@ -110,10 +133,15 @@ require([
           layoutButton.disabled = false
           if (typeof window.reportError === 'function') {
             window.reportError(error)
+          } else {
+            throw error
           }
         })
     })
   }
 
-  run()
+  // start demo
+  fetch('../../../lib/license.json')
+    .then(response => response.json())
+    .then(run)
 })

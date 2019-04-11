@@ -7,8 +7,8 @@
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.1.
-     // Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML 2.2.
+     // Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -36,11 +36,12 @@
 
   <title>Move Unselected Nodes Demo [yFiles for HTML]</title>
 
-  <link rel="stylesheet" href="../../../lib/yfiles.css">
+  <link rel="stylesheet" href="../../node_modules/yfiles/yfiles.css">
   <link rel="stylesheet" href="../../resources/style/demo.css">
 
   <!-- enable debugging -->
   <script src="../../../ide-support/yfiles-typeinfo.js"></script>
+  <script src="../../resources/filesystem-warning.js"></script>
   <style>
     p a {
       word-wrap: break-word;
@@ -55,7 +56,7 @@
       This demo shows a special input mode that allows you to move nodes without selecting them first.
     </p>
     <p>
-      This is done by enabling the <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.input.GraphEditorInputMode#moveUnselectedInputMode" target="_blank">yfiles.input.GraphEditorInputMode#moveUnselectedInputMode</a>.
+      This is done by enabling the <a href="https://docs.yworks.com/yfileshtml/#/api/GraphEditorInputMode#moveUnselectedInputMode" target="_blank">GraphEditorInputMode#moveUnselectedInputMode</a>.
     </p>
 
     <h2>Things to Try</h2>
@@ -69,7 +70,7 @@
         Try the different modes provided by the <em>Move Unselected Nodes</em> combo box.
       </li>
       <li>
-        Disable the <em>Default Move Mode</em> which is the out of the box <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.input.MoveInputMode" target="_blank">yfiles.input.MoveInputMode</a> to
+        Disable the <em>Default Move Mode</em> which is the out of the box <a href="https://docs.yworks.com/yfileshtml/#/api/MoveInputMode" target="_blank">MoveInputMode</a> to
         move selected nodes. When disabled, only the current <em>Move Unselected Nodes</em> setting is considered,
         therefore selected nodes may not be draggable. <br>Note that both, the standard and the special move input mode,
         can be enabled at the same time.
@@ -138,8 +139,7 @@
   <div id="graphComponent"></div>
 </div>
 
-<script src="../../resources/require.js"></script>
-<script src="MoveUnselectedNodesDemo.js"></script>
+<script type="module" crossorigin="anonymous" src="MoveUnselectedNodesDemo.js"></script>
 
 </body>
 </html>

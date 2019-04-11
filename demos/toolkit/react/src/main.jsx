@@ -1,14 +1,14 @@
-'use strict'
+import licenseData from '../../../../lib/license.json'
+import { License } from 'yfiles'
+import { enableWorkarounds } from '../../../utils/Workarounds'
+License.value = licenseData
 
-/* eslint-disable import/no-unresolved */
+enableWorkarounds()
 
-const demo = require('../../../resources/demo-app')
-require('../../../resources/license.js')
-
-const React = require('react')
-const ReactDOM = require('react-dom')
-const App = require('./app')
+import React from 'react'
+import ReactDOM from 'react-dom'
+import App from './app.jsx'
 
 ReactDOM.render(<App />, document.getElementById('react-app'))
 
-demo.show()
+// showApp()

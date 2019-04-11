@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.1.
- ** Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.2.
+ ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,188 +26,181 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-'use strict'
+import {
+  FoldingManager,
+  GraphComponent,
+  GraphEditorInputMode,
+  GraphItemTypes,
+  GraphMLIOHandler,
+  ICommand,
+  License,
+  NodeAlignmentPolicy,
+  Size
+} from 'yfiles'
 
-require.config({
-  paths: {
-    yfiles: '../../../lib/umd/yfiles/',
-    utils: '../../utils/',
-    resources: '../../resources/'
+import { initDemoStyles } from '../../resources/demo-styles.js'
+import ThreeTierLayout from './ThreeTierLayout.js'
+import TableLayout from './TableLayout.js'
+import {
+  bindAction,
+  bindChangeListener,
+  bindCommand,
+  readGraph,
+  showApp
+} from '../../resources/demo-app.js'
+import loadJson from '../../resources/load-json.js'
+
+/**
+ * The GraphComponent.
+ * @type {GraphComponent}
+ */
+let graphComponent = null
+
+/**
+ * Runs the demo.
+ */
+function run(licenseData) {
+  License.value = licenseData
+  graphComponent = new GraphComponent('graphComponent')
+
+  initializeGraph()
+  initializeInputModes()
+  registerCommands()
+
+  loadSample()
+
+  showApp(graphComponent)
+}
+
+/**
+ * Runs a {@link TableLayout} or a {@link ThreeTierLayout} depending on the selected sample.
+ */
+function runLayout() {
+  setUIDisabled(true)
+
+  const selectedLayout = document.getElementById('select-sample').value.substring(8)
+  const fromSketch = document.getElementById('from-sketch').checked
+
+  let layout
+  let layoutData
+  switch (selectedLayout) {
+    case 'Table':
+      layout = new TableLayout(fromSketch)
+      layoutData = TableLayout.LAYOUT_DATA
+      graphComponent
+        .morphLayout(layout, '0.5s', layoutData)
+        .then(() => {
+          setUIDisabled(false)
+        })
+        .catch(error => {
+          setUIDisabled(false)
+          if (typeof window.reportError === 'function') {
+            window.reportError(error)
+          } else {
+            throw error
+          }
+        })
+      break
+    case 'Three-Tier':
+      layout = new ThreeTierLayout(fromSketch)
+      layoutData = ThreeTierLayout.LAYOUT_DATA(graphComponent.graph, fromSketch)
+      graphComponent
+        .morphLayout(layout, '0.5s', layoutData)
+        .then(() => {
+          setUIDisabled(false)
+        })
+        .catch(error => {
+          setUIDisabled(false)
+          if (typeof window.reportError === 'function') {
+            window.reportError(error)
+          } else {
+            throw error
+          }
+        })
+      break
+    default:
+      setUIDisabled(false)
   }
-})
+}
 
-require([
-  'yfiles/view-editor',
-  'resources/demo-app',
-  'resources/demo-styles',
-  'TableLayout.js',
-  'ThreeTierLayout.js',
-  'yfiles/view-folding',
-  'yfiles/view-graphml',
-  'yfiles/view-layout-bridge',
-  'yfiles/layout-hierarchic',
-  'resources/license'
-], (
-  /** @type {yfiles_namespace} */ /** typeof yfiles */ yfiles,
-  app,
-  DemoStyles,
-  TableLayout,
-  ThreeTierLayout
-) => {
-  /**
-   * The GraphComponent.
-   * @type {yfiles.view.GraphComponent}
-   */
-  let graphComponent = null
+/**
+ * Initializes folding and default styles for the current graph.
+ */
+function initializeGraph() {
+  const manager = new FoldingManager()
+  graphComponent.graph = manager.createFoldingView().graph
+  const folderNodeConverter = manager.folderNodeConverter
+  folderNodeConverter.copyFirstLabel = true
+  folderNodeConverter.folderNodeSize = new Size(80, 60)
 
-  /**
-   * Runs the demo.
-   */
-  function run() {
-    graphComponent = new yfiles.view.GraphComponent('graphComponent')
+  graphComponent.navigationCommandsEnabled = true
 
-    initializeGraph()
-    initializeInputModes()
-    registerCommands()
+  initDemoStyles(graphComponent.graph)
+}
 
-    loadSample()
+/**
+ * Initializes the interactive behavior.
+ */
+function initializeInputModes() {
+  const inputMode = new GraphEditorInputMode({
+    showHandleItems: GraphItemTypes.NONE
+  })
+  inputMode.navigationInputMode.autoGroupNodeAlignmentPolicy = NodeAlignmentPolicy.TOP_LEFT
+  inputMode.navigationInputMode.addGroupCollapsedListener(runLayout)
+  inputMode.navigationInputMode.addGroupExpandedListener(runLayout)
+  graphComponent.inputMode = inputMode
+}
 
-    app.show(graphComponent)
-  }
+/**
+ * Wires up the GUI.
+ */
+function registerCommands() {
+  bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent, null)
+  bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent, null)
+  bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent, null)
+  bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
 
-  /**
-   * Runs a {@link TableLayout} or a {@link ThreeTierLayout} depending on the selected sample.
-   */
-  function runLayout() {
-    setUIDisabled(true)
+  bindChangeListener("select[data-command='SelectSample']", loadSample)
 
-    const selectedLayout = document.getElementById('select-sample').value.substring(8)
-    const fromSketch = document.getElementById('from-sketch').checked
+  bindAction("button[data-command='Reset']", loadSample)
+  bindAction("button[data-command='Layout']", runLayout)
+}
 
-    let layout
-    let layoutData
-    switch (selectedLayout) {
-      case 'Table':
-        layout = new TableLayout(fromSketch)
-        layoutData = TableLayout.LAYOUT_DATA
-        graphComponent
-          .morphLayout(layout, '0.5s', layoutData)
-          .then(() => {
-            setUIDisabled(false)
-          })
-          .catch(error => {
-            setUIDisabled(false)
-            if (typeof window.reportError === 'function') {
-              window.reportError(error)
-            }
-          })
-        break
-      case 'Three-Tier':
-        layout = new ThreeTierLayout(fromSketch)
-        layoutData = ThreeTierLayout.LAYOUT_DATA(graphComponent.graph, fromSketch)
-        graphComponent
-          .morphLayout(layout, '0.5s', layoutData)
-          .then(() => {
-            setUIDisabled(false)
-          })
-          .catch(error => {
-            setUIDisabled(false)
-            if (typeof window.reportError === 'function') {
-              window.reportError(error)
-            }
-          })
-        break
-      default:
-        setUIDisabled(false)
+/**
+ * Loads the table or three-tire.
+ */
+function loadSample() {
+  const filename = document.getElementById('select-sample').value.substring(8)
+  const path = `resources/${filename}.graphml`
+
+  const ioHandler = new GraphMLIOHandler()
+  readGraph(ioHandler, graphComponent.graph, path).then(() => {
+    // adjust default size and style to match the first leaf in the loaded graph to have new nodes match the graph's
+    // style
+    const graph = graphComponent.graph
+    const firstLeaf = graph.groupingSupport
+      .getDescendants(null)
+      .find(node => !graph.isGroupNode(node))
+    if (firstLeaf) {
+      graphComponent.graph.nodeDefaults.size = firstLeaf.layout.toSize()
+      graphComponent.graph.nodeDefaults.style = firstLeaf.style
     }
-  }
 
-  /**
-   * Initializes folding and default styles for the current graph.
-   */
-  function initializeGraph() {
-    const manager = new yfiles.graph.FoldingManager()
-    graphComponent.graph = manager.createFoldingView().graph
-    const folderNodeConverter = manager.folderNodeConverter
-    folderNodeConverter.copyFirstLabel = true
-    folderNodeConverter.folderNodeSize = new yfiles.geometry.Size(80, 60)
+    runLayout()
+  })
+}
 
-    graphComponent.navigationCommandsEnabled = true
+/**
+ * Enables/disables the buttons in the toolbar and the input mode. This is used for managing the toolbar during
+ * layout calculation.
+ * @param {boolean} disabled
+ */
+function setUIDisabled(disabled) {
+  document.getElementById('select-sample').disabled = disabled
+  document.getElementById('reset').disabled = disabled
+  document.getElementById('from-sketch').disabled = disabled
+  document.getElementById('layout').disabled = disabled
+}
 
-    DemoStyles.initDemoStyles(graphComponent.graph)
-  }
-
-  /**
-   * Initializes the interactive behavior.
-   */
-  function initializeInputModes() {
-    const inputMode = new yfiles.input.GraphEditorInputMode({
-      showHandleItems: yfiles.graph.GraphItemTypes.NONE
-    })
-    inputMode.navigationInputMode.autoGroupNodeAlignmentPolicy =
-      yfiles.input.NodeAlignmentPolicy.TOP_LEFT
-    inputMode.navigationInputMode.addGroupCollapsedListener(runLayout)
-    inputMode.navigationInputMode.addGroupExpandedListener(runLayout)
-    graphComponent.inputMode = inputMode
-  }
-
-  /**
-   * Wires up the GUI.
-   */
-  function registerCommands() {
-    const iCommand = yfiles.input.ICommand
-    app.bindCommand("button[data-command='ZoomIn']", iCommand.INCREASE_ZOOM, graphComponent, null)
-    app.bindCommand("button[data-command='ZoomOut']", iCommand.DECREASE_ZOOM, graphComponent, null)
-    app.bindCommand(
-      "button[data-command='FitContent']",
-      iCommand.FIT_GRAPH_BOUNDS,
-      graphComponent,
-      null
-    )
-    app.bindCommand("button[data-command='ZoomOriginal']", iCommand.ZOOM, graphComponent, 1.0)
-
-    app.bindChangeListener("select[data-command='SelectSample']", loadSample)
-
-    app.bindAction("button[data-command='Reset']", loadSample)
-    app.bindAction("button[data-command='Layout']", runLayout)
-  }
-
-  /**
-   * Loads the table or three-tire.
-   */
-  function loadSample() {
-    const filename = document.getElementById('select-sample').value.substring(8)
-    const path = `resources/${filename}.graphml`
-
-    const ioHandler = new yfiles.graphml.GraphMLIOHandler()
-    app.readGraph(ioHandler, graphComponent.graph, path).then(() => {
-      // adjust default size and style to match the first leaf in the loaded graph to have new nodes match the graph's
-      // style
-      const graph = graphComponent.graph
-      const firstLeaf = graph.groupingSupport
-        .getDescendants(null)
-        .find(node => !graph.isGroupNode(node))
-      if (firstLeaf) {
-        graphComponent.graph.nodeDefaults.size = firstLeaf.layout.toSize()
-        graphComponent.graph.nodeDefaults.style = firstLeaf.style
-      }
-
-      runLayout()
-    })
-  }
-
-  /**
-   * Enables/disables the buttons in the toolbar and the input mode. This is used for managing the toolbar during
-   * layout calculation.
-   * @param {boolean} disabled
-   */
-  function setUIDisabled(disabled) {
-    document.getElementById('select-sample').disabled = disabled
-    document.getElementById('reset').disabled = disabled
-    document.getElementById('from-sketch').disabled = disabled
-    document.getElementById('layout').disabled = disabled
-  }
-
-  // start the demo
-  run()
-})
+// start the demo
+loadJson().then(run)

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.1.
- ** Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.2.
+ ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,118 +26,113 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-'use strict'
+import { INode, IRenderContext, NodeStyleBase, SvgVisual, Visual } from 'yfiles'
 
-define(['yfiles/view-component'], /** @type {yfiles_namespace} */ /** typeof yfiles */ yfiles => {
+/**
+ * The node style used for the non-root nodes of the mindmap.
+ */
+export default class MindmapNodeStyle extends NodeStyleBase {
   /**
-   * The node style used for the non-root nodes of the mindmap.
-   * @extends yfiles.styles.NodeStyleBase
+   * Creates a new instance of this style using the given class name.
+   * @param {string} className The css class attributed to the node.
    */
-  class MindmapNodeStyle extends yfiles.styles.NodeStyleBase {
-    /**
-     * Creates a new instance of this style using the given class name.
-     * @param {string} className The css class attributed to the node.
-     */
-    constructor(className) {
-      super()
-      this.$className = className
-    }
-
-    /**
-     * Gets the class name associated with this node style.
-     * @return {string}
-     */
-    get className() {
-      return this.$className
-    }
-
-    /**
-     * Sets the class name to this node style.
-     * @param {string} value The value to be set.
-     */
-    set className(value) {
-      this.$className = value
-    }
-
-    /**
-     * Creates the visual for this node style.
-     * @param {yfiles.view.IRenderContext} renderContext The render context.
-     * @param {yfiles.graph.INode} node The node to which this style instance is assigned.
-     * @see Overrides {@link yfiles.styles.NodeStyleBase#createVisual}
-     * @return {yfiles.view.SvgVisual}
-     */
-    createVisual(renderContext, node) {
-      // create a container element
-      const g = window.document.createElementNS('http://www.w3.org/2000/svg', 'g')
-      this.render(renderContext, node, g)
-      // move the container to the node position
-      yfiles.view.SvgVisual.setTranslate(g, node.layout.x, node.layout.y)
-      return new yfiles.view.SvgVisual(g)
-    }
-
-    /**
-     * Updates the visual.
-     * @param {yfiles.view.IRenderContext} renderContext The render context.
-     * @param {yfiles.view.Visual} oldVisual The old visual.
-     * @param {yfiles.graph.INode} node The node to which this style instance is assigned.
-     * @see Overrides {@link yfiles.styles.NodeStyleBase#updateVisual}
-     * @return {yfiles.view.SvgVisual}
-     */
-    updateVisual(renderContext, oldVisual, node) {
-      const nodeSize = node.layout.toSize()
-      const color = node.tag.color
-      const container = oldVisual.svgElement
-
-      // check if the data used to create the visualization has changed
-      if (!nodeSize.equals(container['data-size']) || color !== container['data-color']) {
-        // remove the old elements and re-render the node
-        while (container.hasChildNodes()) {
-          // remove all children
-          container.removeChild(container.firstChild)
-        }
-        this.render(renderContext, node, container)
-      }
-      // move the container to the node position
-      yfiles.view.SvgVisual.setTranslate(container, node.layout.x, node.layout.y)
-      return oldVisual
-    }
-
-    /**
-     * Creates the Svg elements and adds them to the container.
-     * @param {yfiles.view.IRenderContext} renderContext The render context.
-     * @param {yfiles.graph.INode} node The node to which this style instance is assigned.
-     * @param {Element} container The svg element.
-     */
-    render(renderContext, node, container) {
-      const nodeSize = node.layout.toSize()
-      const w = nodeSize.width
-      const h = nodeSize.height
-
-      const line = window.document.createElementNS('http://www.w3.org/2000/svg', 'line')
-      line.x1.baseVal.value = 0
-      line.x2.baseVal.value = w
-      line.y1.baseVal.value = h
-      line.y2.baseVal.value = h
-      // set the CSS class for the line
-      line.setAttribute('class', `nodeUnderline ${this.className}`)
-      line.setAttribute('stroke', node.tag.color)
-
-      const rect = window.document.createElementNS('http://www.w3.org/2000/svg', 'rect')
-      rect.x.baseVal.value = 0
-      rect.y.baseVal.value = 0
-      rect.width.baseVal.value = w
-      rect.height.baseVal.value = h
-      // set the CSS class for the rect
-      rect.setAttribute('class', `nodeBackground ${this.className}`)
-
-      container.appendChild(rect)
-      container.appendChild(line)
-
-      // store the data used to create the elements with the container
-      container['data-size'] = nodeSize
-      container['data-color'] = node.tag.color
-    }
+  constructor(className) {
+    super()
+    this.$className = className
   }
 
-  return MindmapNodeStyle
-})
+  /**
+   * Gets the class name associated with this node style.
+   * @return {string}
+   */
+  get className() {
+    return this.$className
+  }
+
+  /**
+   * Sets the class name to this node style.
+   * @param {string} value The value to be set.
+   */
+  set className(value) {
+    this.$className = value
+  }
+
+  /**
+   * Creates the visual for this node style.
+   * @param {IRenderContext} renderContext The render context.
+   * @param {INode} node The node to which this style instance is assigned.
+   * @see Overrides {@link NodeStyleBase#createVisual}
+   * @return {SvgVisual}
+   */
+  createVisual(renderContext, node) {
+    // create a container element
+    const g = window.document.createElementNS('http://www.w3.org/2000/svg', 'g')
+    this.render(renderContext, node, g)
+    // move the container to the node position
+    SvgVisual.setTranslate(g, node.layout.x, node.layout.y)
+    return new SvgVisual(g)
+  }
+
+  /**
+   * Updates the visual.
+   * @param {IRenderContext} renderContext The render context.
+   * @param {Visual} oldVisual The old visual.
+   * @param {INode} node The node to which this style instance is assigned.
+   * @see Overrides {@link NodeStyleBase#updateVisual}
+   * @return {SvgVisual}
+   */
+  updateVisual(renderContext, oldVisual, node) {
+    const nodeSize = node.layout.toSize()
+    const color = node.tag.color
+    const container = oldVisual.svgElement
+
+    // check if the data used to create the visualization has changed
+    if (!nodeSize.equals(container['data-size']) || color !== container['data-color']) {
+      // remove the old elements and re-render the node
+      while (container.hasChildNodes()) {
+        // remove all children
+        container.removeChild(container.firstChild)
+      }
+      this.render(renderContext, node, container)
+    }
+    // move the container to the node position
+    SvgVisual.setTranslate(container, node.layout.x, node.layout.y)
+    return oldVisual
+  }
+
+  /**
+   * Creates the Svg elements and adds them to the container.
+   * @param {IRenderContext} renderContext The render context.
+   * @param {INode} node The node to which this style instance is assigned.
+   * @param {Element} container The svg element.
+   */
+  render(renderContext, node, container) {
+    const nodeSize = node.layout.toSize()
+    const w = nodeSize.width
+    const h = nodeSize.height
+
+    const line = window.document.createElementNS('http://www.w3.org/2000/svg', 'line')
+    line.x1.baseVal.value = 0
+    line.x2.baseVal.value = w
+    line.y1.baseVal.value = h
+    line.y2.baseVal.value = h
+    // set the CSS class for the line
+    line.setAttribute('class', `nodeUnderline ${this.className}`)
+    line.setAttribute('stroke', node.tag.color)
+
+    const rect = window.document.createElementNS('http://www.w3.org/2000/svg', 'rect')
+    rect.x.baseVal.value = 0
+    rect.y.baseVal.value = 0
+    rect.width.baseVal.value = w
+    rect.height.baseVal.value = h
+    // set the CSS class for the rect
+    rect.setAttribute('class', `nodeBackground ${this.className}`)
+
+    container.appendChild(rect)
+    container.appendChild(line)
+
+    // store the data used to create the elements with the container
+    container['data-size'] = nodeSize
+    container['data-color'] = node.tag.color
+  }
+}

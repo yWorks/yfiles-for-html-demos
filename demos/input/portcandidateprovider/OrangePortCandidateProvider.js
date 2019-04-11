@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.1.
- ** Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.2.
+ ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,44 +26,42 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-'use strict'
+import {
+  DefaultPortCandidate,
+  FreeNodePortLocationModel,
+  IInputModeContext,
+  INode,
+  List,
+  PortCandidateProviderBase
+} from 'yfiles'
 
-define(['yfiles/view-editor'], /** @type {yfiles_namespace} */ /** typeof yfiles */ yfiles => {
+/**
+ * This port candidate provider uses dynamic port candidates that allow
+ * any location inside the node.
+ */
+export default class OrangePortCandidateProvider extends PortCandidateProviderBase {
   /**
-   * This port candidate provider uses dynamic port candidates that allow
-   * any location inside the node.
+   * Creates a new instance of <code>OrangePortCandidateProvider</code>.
+   * @param {INode} node The given node.
    */
-  class OrangePortCandidateProvider extends yfiles.input.PortCandidateProviderBase {
-    /**
-     * Creates a new instance of <code>OrangePortCandidateProvider</code>.
-     * @param {yfiles.graph.INode} node The given node.
-     */
-    constructor(node) {
-      super()
-      this.node = node
-    }
-
-    /**
-     * Returns a list that contains a single dynamic port candidate. That candidate
-     * allows any location inside the node layout.
-     * Note that the various variants of getPortCandidates of
-     * {@link yfiles.input.PortCandidateProviderBase} delegate to this method. This can be
-     * used to provide the same candidates for all use-cases.
-     * @param {yfiles.input.IInputModeContext} context The context for which the candidates should be provided
-     * @see Overrides {@link yfiles.input.PortCandidateProviderBase#getPortCandidates}
-     * @return {yfiles.collections.IEnumerable.<yfiles.input.IPortCandidate>}
-     */
-    getPortCandidates(context) {
-      const list = new yfiles.collections.List()
-      list.add(
-        new yfiles.input.DefaultPortCandidate(
-          this.node,
-          yfiles.graph.FreeNodePortLocationModel.INSTANCE
-        )
-      )
-      return list
-    }
+  constructor(node) {
+    super()
+    this.node = node
   }
 
-  return OrangePortCandidateProvider
-})
+  /**
+   * Returns a list that contains a single dynamic port candidate. That candidate
+   * allows any location inside the node layout.
+   * Note that the various variants of getPortCandidates of
+   * {@link PortCandidateProviderBase} delegate to this method. This can be
+   * used to provide the same candidates for all use-cases.
+   * @param {IInputModeContext} context The context for which the candidates should be provided
+   * @see Overrides {@link PortCandidateProviderBase#getPortCandidates}
+   * @return {IEnumerable.<IPortCandidate>}
+   */
+  getPortCandidates(context) {
+    const list = new List()
+    list.add(new DefaultPortCandidate(this.node, FreeNodePortLocationModel.INSTANCE))
+    return list
+  }
+}

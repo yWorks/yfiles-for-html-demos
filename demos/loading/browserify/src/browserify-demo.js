@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.1.
- ** Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.2.
+ ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,20 +26,16 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-'use strict'
-
-/* eslint-disable import/no-unresolved */
-
 // All yfiles modules return the yfiles namespace object
-const yfiles = require('./yfiles/view-editor')
-const demoBrowserSupport = require('./Workarounds.js')
-require('./yfiles/view-layout-bridge')
-require('./yfiles/layout-organic')
+const yfiles = require('../../../../lib/umd/view-editor')
+require('../../../../lib/umd/view-layout-bridge')
+require('../../../../lib/umd/layout-organic')
 
-const Color = require('color')
 // https://github.com/harthur/color
+const Color = require('color')
 
-demoBrowserSupport.enableWorkarounds(yfiles)
+const licenseData = require('../../../../lib/license.json')
+yfiles.lang.License.value = licenseData
 
 const graphComponent = new yfiles.view.GraphComponent('graphComponent')
 
@@ -61,13 +57,13 @@ function layout() {
 }
 
 /**
- * @param {yfiles.graph.IGraph} graph
+ * @param {IGraph} graph
  * @param {Color} styleColor
  */
 function createSampleGraph(graph, styleColor) {
   graph.clear()
 
-  /** @type {yfiles.graph.INode[]} */
+  /** @type {INode[]} */
   const nodes = []
   for (let j = 0; j < 27; j++) {
     nodes[j] = graph.createNode()
@@ -114,7 +110,7 @@ function createSampleGraph(graph, styleColor) {
 /**
  * Use the Color npm module to create color variants for the node style
  * @param {Color} styleColor
- * @return {yfiles.styles.ShapeNodeStyle}
+ * @return {ShapeNodeStyle}
  */
 function createStyle(styleColor) {
   const c = styleColor.rgb().round()

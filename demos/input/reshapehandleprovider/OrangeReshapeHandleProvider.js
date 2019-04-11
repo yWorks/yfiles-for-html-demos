@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.1.
- ** Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.2.
+ ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,54 +26,47 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-'use strict'
+import { BaseClass, HandlePositions, IInputModeContext, IReshapeHandleProvider, Rect } from 'yfiles'
+import BoxConstrainedHandle from './BoxConstrainedHandle.js'
 
-define(['yfiles/view-editor', './BoxConstrainedHandle'], (
-  /** @type {yfiles_namespace} */ /** typeof yfiles */ yfiles,
-  BoxConstrainedHandle
-) => {
+/**
+ * An {@link IReshapeHandleProvider} that limits the resizing of a
+ * node to be within an enclosing rectangle and delegates for other aspects
+ * to another (the original) handler.
+ */
+export default class OrangeReshapeHandleProvider extends BaseClass(IReshapeHandleProvider) {
   /**
-   * An {@link yfiles.input.IReshapeHandleProvider} that limits the resizing of a
-   * node to be within an enclosing rectangle and delegates for other aspects
-   * to another (the original) handler.
-   * @implements {yfiles.input.IReshapeHandleProvider}
+   * Creates a new instance of <code>OrangeReshapeHandleProvider</code>.
+   * @param {Rect} boundaryRectangle The boundary rectangle
+   * @param {IReshapeHandleProvider} wrappedHandler The wrapped handler
    */
-  class OrangeReshapeHandleProvider extends yfiles.lang.Class(yfiles.input.IReshapeHandleProvider) {
-    /**
-     * Creates a new instance of <code>OrangeReshapeHandleProvider</code>.
-     * @param {yfiles.geometry.Rect} boundaryRectangle The boundary rectangle
-     * @param {yfiles.input.IReshapeHandleProvider} wrappedHandler The wrapped handler
-     */
-    constructor(boundaryRectangle, wrappedHandler) {
-      super()
-      this.boundaryRectangle = boundaryRectangle
-      this.wrappedHandler = wrappedHandler
-    }
-
-    /**
-     * Returns the available handles of the wrapped handler.
-     * @param {yfiles.input.IInputModeContext} inputModeContext The context for which the handles are queried
-     * @see Specified by {@link yfiles.input.IReshapeHandleProvider#getAvailableHandles}.
-     * @return {yfiles.input.HandlePositions}
-     */
-    getAvailableHandles(inputModeContext) {
-      return this.wrappedHandler.getAvailableHandles(inputModeContext)
-    }
-
-    /**
-     * Returns a handle for the given original position that is limited to
-     * the bounds of the boundary rectangle of this class.
-     * @param {yfiles.input.IInputModeContext} inputModeContext The context for which the handles are queried
-     * @param {yfiles.input.HandlePositions} position The single position a handle implementation should be returned for
-     * @see Specified by {@link yfiles.input.IReshapeHandleProvider#getHandle}.
-     * @return {yfiles.input.IHandle}
-     */
-    getHandle(inputModeContext, position) {
-      // return handle that is constrained by a box
-      const handle = this.wrappedHandler.getHandle(inputModeContext, position)
-      return new BoxConstrainedHandle(handle, this.boundaryRectangle)
-    }
+  constructor(boundaryRectangle, wrappedHandler) {
+    super()
+    this.boundaryRectangle = boundaryRectangle
+    this.wrappedHandler = wrappedHandler
   }
 
-  return OrangeReshapeHandleProvider
-})
+  /**
+   * Returns the available handles of the wrapped handler.
+   * @param {IInputModeContext} inputModeContext The context for which the handles are queried
+   * @see Specified by {@link IReshapeHandleProvider#getAvailableHandles}.
+   * @return {HandlePositions}
+   */
+  getAvailableHandles(inputModeContext) {
+    return this.wrappedHandler.getAvailableHandles(inputModeContext)
+  }
+
+  /**
+   * Returns a handle for the given original position that is limited to
+   * the bounds of the boundary rectangle of this class.
+   * @param {IInputModeContext} inputModeContext The context for which the handles are queried
+   * @param {HandlePositions} position The single position a handle implementation should be returned for
+   * @see Specified by {@link IReshapeHandleProvider#getHandle}.
+   * @return {IHandle}
+   */
+  getHandle(inputModeContext, position) {
+    // return handle that is constrained by a box
+    const handle = this.wrappedHandler.getHandle(inputModeContext, position)
+    return new BoxConstrainedHandle(handle, this.boundaryRectangle)
+  }
+}

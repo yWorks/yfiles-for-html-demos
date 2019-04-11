@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.1.
- ** Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.2.
+ ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,102 +26,113 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-'use strict'
-;(() => {
-  // wait for the custom graph-component element to be defined
-  if (window.customElements && 'import' in document.createElement('link')) {
-    window.customElements.whenDefined('graph-component').then(() => {
-      run()
-    })
-  } else {
-    document.querySelector('#graphComponent').innerHTML = `<div style="padding: 50px">
-            <p style="font-size: 2rem;">Your browser doesn't support Web Components.</p>
-            <p> See <a href="https://www.webcomponents.org/">webcomponents.org</a> and 
-            <a href="https://caniuse.com/#search=web%20components">caniuse.com</a> for details on browser support for 
-            Web Components.</p>
-        </div>`
-  }
+import {
+  GraphEditorInputMode,
+  IArrow,
+  License,
+  PolylineEdgeStyle,
+  Rect,
+  ShapeNodeStyle
+} from 'yfiles'
+import { enableWorkarounds } from '../../utils/Workarounds.js'
+import loadJson from '../../resources/load-json.js'
 
-  /* eslint-disable no-undef */
+import './GraphComponentElement.js'
 
-  /** @type {GraphComponent} */
-  let graphComponent = null
+// wait for the custom graph-component element to be defined
+if (window.customElements) {
+  window.customElements
+    .whenDefined('graph-component')
+    .then(loadJson)
+    .then(run)
+} else {
+  const warningDiv = document.createElement('div')
+  document.querySelector('.demo-content').appendChild(warningDiv)
+  warningDiv.outerHTML = `
+    <div style="padding: 50px; margin-top: 100px;">
+      <p style="font-size: 2rem;">Your browser doesn't support Web Components.</p>
+      <p> See <a href="https://www.webcomponents.org/">webcomponents.org</a> and 
+        <a href="https://caniuse.com/#search=web%20components">caniuse.com</a> for details on browser support for Web Components.
+      </p>
+    </div>
+`
+}
 
-  function run() {
-    demoBrowserSupport.enableWorkarounds(yfiles)
+function run(licenseData) {
+  License.value = licenseData
+  enableWorkarounds()
 
-    // create a custom graph component element
-    graphComponent = document.querySelector('#graphComponent')
-    graphComponent.inputMode = new yfiles.input.GraphEditorInputMode()
+  // create a custom graph component element
+  const graphComponent = document.createElement('graph-component')
+  graphComponent.setAttribute('id', 'graphComponent')
+  document.querySelector('.demo-content').appendChild(graphComponent)
 
-    // initialize graph
-    initializeGraph(graphComponent.graph)
+  graphComponent.inputMode = new GraphEditorInputMode()
 
-    registerCommands()
+  // initialize graph
+  initializeGraph(graphComponent.graph)
 
-    // center graph
+  registerCommands(graphComponent)
+
+  // center graph
+  graphComponent.fitGraphBounds()
+
+  defineShadowDomHelper()
+}
+
+function initializeGraph(graph) {
+  // initialize default styles
+  graph.nodeDefaults.style = new ShapeNodeStyle({
+    fill: 'orange',
+    stroke: 'white',
+    shape: 'rectangle'
+  })
+  graph.edgeDefaults.style = new PolylineEdgeStyle({
+    targetArrow: IArrow.DEFAULT
+  })
+
+  // create small sample graph
+  const node1 = graph.createNode(new Rect(50, 50, 30, 30))
+  const node2 = graph.createNode(new Rect(0, 150, 30, 30))
+  const node3 = graph.createNode(new Rect(100, 150, 30, 30))
+  graph.createEdge(node1, node2)
+  graph.createEdge(node1, node3)
+}
+
+/**
+ * Wires up the UI.
+ */
+function registerCommands(graphComponent) {
+  document.querySelector("button[data-command='ZoomIn']").addEventListener('click', () => {
+    graphComponent.zoom *= 1.2
+  })
+  document.querySelector("button[data-command='ZoomOut']").addEventListener('click', () => {
+    graphComponent.zoom /= 1.2
+  })
+  document.querySelector("button[data-command='FitContent']").addEventListener('click', () => {
     graphComponent.fitGraphBounds()
+  })
+  document.querySelector("button[data-command='ZoomOriginal']").addEventListener('click', () => {
+    graphComponent.zoom = 1
+  })
+  document.querySelector('#useShadow').addEventListener('click', () => {
+    graphComponent.toggleShadowRoot()
+  })
+}
 
-    defineShadowDomHelper()
-  }
-
-  /**
-   * @param {yfiles.graph.IGraph} graph
-   */
-  function initializeGraph(graph) {
-    // initialize default styles
-    graph.nodeDefaults.style = new yfiles.styles.ShapeNodeStyle({
-      fill: 'black',
-      stroke: 'white',
-      shape: 'rectangle'
-    })
-    graph.edgeDefaults.style = new yfiles.styles.PolylineEdgeStyle({
-      targetArrow: yfiles.styles.IArrow.DEFAULT
-    })
-
-    // create small sample graph
-    const node1 = graph.createNode(new yfiles.geometry.Rect(50, 50, 30, 30))
-    const node2 = graph.createNode(new yfiles.geometry.Rect(0, 150, 30, 30))
-    const node3 = graph.createNode(new yfiles.geometry.Rect(100, 150, 30, 30))
-    graph.createEdge(node1, node2)
-    graph.createEdge(node1, node3)
-  }
-
-  /**
-   * Wires up the UI.
-   */
-  function registerCommands() {
-    document.querySelector("button[data-command='ZoomIn']").addEventListener('click', () => {
-      graphComponent.zoom *= 1.2
-    })
-    document.querySelector("button[data-command='ZoomOut']").addEventListener('click', () => {
-      graphComponent.zoom /= 1.2
-    })
-    document.querySelector("button[data-command='FitContent']").addEventListener('click', () => {
-      graphComponent.fitGraphBounds()
-    })
-    document.querySelector("button[data-command='ZoomOriginal']").addEventListener('click', () => {
-      graphComponent.zoom = 1
-    })
-    document.querySelector('#useShadow').addEventListener('click', () => {
-      graphComponent.toggleShadowRoot()
-    })
-  }
-
-  /**
-   * Simple auxiliary custom element that puts all its children inside a shadow root
-   */
-  function defineShadowDomHelper() {
-    window.customElements.define(
-      'shadow-dom',
-      class extends HTMLElement {
-        connectedCallback() {
-          const shadowRoot = this.attachShadow({ mode: 'open' })
-          while (this.firstElementChild) {
-            shadowRoot.appendChild(this.firstElementChild)
-          }
+/**
+ * Simple auxiliary custom element that puts all its children inside a shadow root
+ */
+function defineShadowDomHelper() {
+  window.customElements.define(
+    'shadow-dom',
+    class extends HTMLElement {
+      connectedCallback() {
+        const shadowRoot = this.attachShadow({ mode: 'open' })
+        while (this.firstElementChild) {
+          shadowRoot.appendChild(this.firstElementChild)
         }
       }
-    )
-  }
-})()
+    }
+  )
+}

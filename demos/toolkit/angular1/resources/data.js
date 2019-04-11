@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.1.
- ** Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.2.
+ ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,15 +26,11 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-'use strict'
-
-define([], () => {
-  //
-  // The JSON model data for the organization chart example.
-  //
-  // @yjs:keep
-  //
-  const nodeData = [
+//
+// The JSON model data for the organization chart example.
+//
+export default {
+  nodeData: [
     {
       position: 'Chief Executive Officer',
       name: 'Eric Joplin',
@@ -193,8 +189,8 @@ define([], () => {
     {
       layout: 'rightHanging',
       position: 'Maintenance Supervisor',
-      name: 'Carmen Langenhagen',
-      email: 'clangenhagen@yoyodyne.com',
+      name: 'Carmen Shortened',
+      email: 'cshortened@yoyodyne.com',
       phone: '555-0142',
       fax: '555-0143',
       businessUnit: 'Production',
@@ -468,9 +464,9 @@ define([], () => {
       icon: 'resources/usericon_male2.svg',
       assistant: true
     }
-  ]
+  ],
 
-  const edgeData = [
+  edgeData: [
     {
       from: 'Eric Joplin',
       to: 'Gary Roberts'
@@ -621,7 +617,7 @@ define([], () => {
     },
     {
       from: 'Timothy Jackson',
-      to: 'Carmen Langenhagen'
+      to: 'Carmen Shortened'
     },
     {
       from: 'Timothy Jackson',
@@ -636,9 +632,4 @@ define([], () => {
       to: 'Raymond Lindley'
     }
   ]
-
-  return {
-    nodeData,
-    edgeData
-  }
-})
+}

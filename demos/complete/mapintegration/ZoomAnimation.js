@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.1.
- ** Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.2.
+ ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,90 +26,86 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-'use strict'
+import { BaseClass, CanvasComponent, IAnimation, Point, TimeSpan } from 'yfiles'
 
-define(['yfiles/view-component'], yfiles => {
-  class ZoomAnimation extends yfiles.lang.Class(yfiles.view.IAnimation) {
-    /**
-     * @param {yfiles.view.CanvasComponent} canvas
-     * @param {number} targetZoom
-     * @param {yfiles.geometry.Point} zoomPoint
-     * @param {number} duration
-     */
-    constructor(canvas, targetZoom, zoomPoint, duration) {
-      super()
-      this.canvas = canvas
-      this.targetZoomLog = Math.log(targetZoom) / Math.log(2)
-      this.$preferredDuration = new yfiles.lang.TimeSpan(duration)
-      this.$delta = 0
-      this.$initialZoomLog = 0
-      this.zoomPoint = zoomPoint
-    }
-
-    /**
-     * Gets the preferred duration of the animation.
-     * @see Specified by {@link yfiles.view.IAnimation#preferredDuration}.
-     * @type {yfiles.lang.TimeSpan}
-     */
-    get preferredDuration() {
-      return this.$preferredDuration
-    }
-
-    /**
-     * Sets the preferred duration of the animation.
-     * @see Specified by {@link yfiles.view.IAnimation#preferredDuration}.
-     * @type {yfiles.lang.TimeSpan}
-     */
-    set preferredDuration(value) {
-      this.$preferredDuration = value
-    }
-
-    /**
-     * The zoom level difference between the initial and the target zoom level.
-     * @type {number}
-     */
-    get delta() {
-      return this.$delta
-    }
-
-    /** @type {number} */
-    set delta(value) {
-      this.$delta = value
-    }
-
-    /**
-     * Binary logarithm of the initial zoom level.
-     * @type {number}
-     */
-    get initialZoomLog() {
-      return this.$initialZoomLog
-    }
-
-    /** @type {number} */
-    set initialZoomLog(value) {
-      this.$initialZoomLog = value
-    }
-
-    /**
-     * Initializes the animation.
-     */
-    initialize() {
-      this.initialZoomLog = Math.log(this.canvas.zoom) / Math.log(2)
-      this.delta = this.targetZoomLog - this.initialZoomLog
-    }
-
-    /**
-     * Does the animation according to the relative animation time.
-     * The animation starts with the time 0 and ends with time 1.
-     * @param {number} time
-     */
-    animate(time) {
-      const newZoom = this.initialZoomLog + this.delta * time
-      this.canvas.zoomTo(this.zoomPoint, Math.pow(2, newZoom))
-    }
-
-    cleanUp() {}
+export default class ZoomAnimation extends BaseClass(IAnimation) {
+  /**
+   * @param {CanvasComponent} canvas
+   * @param {number} targetZoom
+   * @param {Point} zoomPoint
+   * @param {number} duration
+   */
+  constructor(canvas, targetZoom, zoomPoint, duration) {
+    super()
+    this.canvas = canvas
+    this.targetZoomLog = Math.log(targetZoom) / Math.log(2)
+    this.$preferredDuration = new TimeSpan(duration)
+    this.$delta = 0
+    this.$initialZoomLog = 0
+    this.zoomPoint = zoomPoint
   }
 
-  return ZoomAnimation
-})
+  /**
+   * Gets the preferred duration of the animation.
+   * @see Specified by {@link IAnimation#preferredDuration}.
+   * @type {TimeSpan}
+   */
+  get preferredDuration() {
+    return this.$preferredDuration
+  }
+
+  /**
+   * Sets the preferred duration of the animation.
+   * @see Specified by {@link IAnimation#preferredDuration}.
+   * @type {TimeSpan}
+   */
+  set preferredDuration(value) {
+    this.$preferredDuration = value
+  }
+
+  /**
+   * The zoom level difference between the initial and the target zoom level.
+   * @type {number}
+   */
+  get delta() {
+    return this.$delta
+  }
+
+  /** @type {number} */
+  set delta(value) {
+    this.$delta = value
+  }
+
+  /**
+   * Binary logarithm of the initial zoom level.
+   * @type {number}
+   */
+  get initialZoomLog() {
+    return this.$initialZoomLog
+  }
+
+  /** @type {number} */
+  set initialZoomLog(value) {
+    this.$initialZoomLog = value
+  }
+
+  /**
+   * Initializes the animation.
+   */
+  initialize() {
+    this.initialZoomLog = Math.log(this.canvas.zoom) / Math.log(2)
+    this.delta = this.targetZoomLog - this.initialZoomLog
+  }
+
+  /**
+   * Does the animation according to the relative animation time.
+   * The animation starts with the time 0 and ends with time 1.
+   * @param {number} time
+   */
+  animate(time) {
+    const newZoom = this.initialZoomLog + this.delta * time
+    this.canvas.zoomTo(this.zoomPoint, Math.pow(2, newZoom))
+  }
+
+  cleanUp() {}
+}

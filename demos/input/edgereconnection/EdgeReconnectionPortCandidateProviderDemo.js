@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.1.
- ** Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.2.
+ ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,194 +26,162 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-'use strict'
+import {
+  FreeNodePortLocationModel,
+  GraphComponent,
+  GraphEditorInputMode,
+  IGraph,
+  IPortCandidateProvider,
+  License,
+  NodeStylePortStyleAdapter,
+  Point,
+  PortCandidateValidity,
+  Rect,
+  ShapeNodeStyle,
+  YString
+} from 'yfiles'
 
-require.config({
-  paths: {
-    yfiles: '../../../lib/umd/yfiles/',
-    utils: '../../utils/',
-    resources: '../../resources/'
-  }
-})
+import { DemoNodeStyle, DemoEdgeStyle } from '../../resources/demo-styles.js'
+import { showApp } from '../../resources/demo-app.js'
+import GreenEdgePortCandidateProvider from './GreenEdgePortCandidateProvider.js'
+import BlueEdgePortCandidateProvider from './BlueEdgePortCandidateProvider.js'
+import OrangeEdgePortCandidateProvider from './OrangeEdgePortCandidateProvider.js'
+import RedEdgePortCandidateProvider from './RedEdgePortCandidateProvider.js'
+import loadJson from '../../resources/load-json.js'
+/**
+ * Registers a callback function as decorator that provides a custom
+ * {@link IEdgeReconnectionPortCandidateProvider} for each node.
+ * This callback function is called whenever a node in the graph is queried
+ * for its <code>IEdgePortCandidateProvider</code>. In this case, the 'node'
+ * parameter will be set to that node.
+ * @param {IGraph} graph The given graph
+ */
+function registerEdgePortCandidateProvider(graph) {
+  const edgeDecorator = graph.decorator.edgeDecorator
+  edgeDecorator.edgeReconnectionPortCandidateProviderDecorator.setFactory(edge => {
+    // obtain the tag from the edge
+    const edgeTag = edge.tag
+
+    // Check if it is a known tag and choose the respective implementation
+    if (!YString.isInstance(edgeTag)) {
+      return null
+    } else if (edgeTag === 'firebrick') {
+      return new RedEdgePortCandidateProvider(edge)
+    } else if (edgeTag === 'orange') {
+      return new OrangeEdgePortCandidateProvider(edge)
+    } else if (edgeTag === 'royalblue') {
+      return new BlueEdgePortCandidateProvider()
+    } else if (edgeTag === 'green') {
+      return new GreenEdgePortCandidateProvider()
+    }
+    // otherwise revert to default behavior
+    return null
+  })
+}
 
 /**
- * Shows how to customize the reconnection behavior for existing edges in the graph
- * by implementing a custom {@link yfiles.input.IEdgeReconnectionPortCandidateProvider}.
+ * Called after this application has been set up by the demo framework.
  */
-require([
-  'yfiles/view-editor',
-  'resources/demo-app',
-  'resources/demo-styles',
-  'BlueEdgePortCandidateProvider.js',
-  'GreenEdgePortCandidateProvider.js',
-  './OrangeEdgePortCandidateProvider.js',
-  './RedEdgePortCandidateProvider.js',
-  'resources/license'
-], (
-  /** @type {yfiles_namespace} */ /** typeof yfiles */ yfiles,
-  app,
-  DemoStyles,
-  BlueEdgePortCandidateProvider,
-  GreenEdgePortCandidateProvider,
-  OrangeEdgePortCandidateProvider,
-  RedEdgePortCandidateProvider
-) => {
-  /**
-   * Registers a callback function as decorator that provides a custom
-   * {@link yfiles.input.IEdgeReconnectionPortCandidateProvider} for each node.
-   * This callback function is called whenever a node in the graph is queried
-   * for its <code>IEdgePortCandidateProvider</code>. In this case, the 'node'
-   * parameter will be set to that node.
-   * @param {yfiles.graph.IGraph} graph The given graph
-   */
-  function registerEdgePortCandidateProvider(graph) {
-    const edgeDecorator = graph.decorator.edgeDecorator
-    edgeDecorator.edgeReconnectionPortCandidateProviderDecorator.setFactory(edge => {
-      // obtain the tag from the edge
-      const edgeTag = edge.tag
+function run(licenseData) {
+  License.value = licenseData
+  // initialize the GraphComponent
+  const graphComponent = new GraphComponent('graphComponent')
+  const graph = graphComponent.graph
 
-      // Check if it is a known tag and choose the respective implementation
-      if (!yfiles.lang.String.isInstance(edgeTag)) {
-        return null
-      } else if (edgeTag === 'firebrick') {
-        return new RedEdgePortCandidateProvider(edge)
-      } else if (edgeTag === 'orange') {
-        return new OrangeEdgePortCandidateProvider(edge)
-      } else if (edgeTag === 'royalblue') {
-        return new BlueEdgePortCandidateProvider()
-      } else if (edgeTag === 'green') {
-        return new GreenEdgePortCandidateProvider()
-      }
-      // otherwise revert to default behavior
-      return null
+  // Disable automatic cleanup of unconnected ports since some nodes have a predefined set of ports
+  graph.nodeDefaults.ports.autoCleanUp = false
+
+  // Create a default editor input mode
+  const graphEditorInputMode = new GraphEditorInputMode({
+    // Just for user convenience: disable node/edge creation and clipboard operations
+    allowCreateEdge: false,
+    allowCreateNode: false,
+    allowClipboardOperations: false
+  })
+  // and enable the undo feature.
+  graph.undoEngineEnabled = true
+
+  // Finally, set the input mode to the graph component.
+  graphComponent.inputMode = graphEditorInputMode
+
+  // Set a port style that makes the pre-defined ports visible
+  graph.nodeDefaults.ports.style = new NodeStylePortStyleAdapter(
+    new ShapeNodeStyle({
+      shape: 'ellipse'
     })
-  }
+  )
 
-  /**
-   * Called after this application has been set up by the demo framework.
-   */
-  function run() {
-    // initialize the GraphComponent
-    const graphComponent = new yfiles.view.GraphComponent('graphComponent')
-    const graph = graphComponent.graph
+  registerEdgePortCandidateProvider(graph)
 
-    // Disable automatic cleanup of unconnected ports since some nodes have a predefined set of ports
-    graph.nodeDefaults.ports.autoCleanUp = false
+  createSampleGraph(graphComponent)
+  graphComponent.updateContentRect()
 
-    // Create a default editor input mode
-    const graphEditorInputMode = new yfiles.input.GraphEditorInputMode({
-      // Just for user convenience: disable node/edge creation and clipboard operations
-      allowCreateEdge: false,
-      allowCreateNode: false,
-      allowClipboardOperations: false
+  showApp(graphComponent)
+}
+
+/**
+ * Creates the sample graph of this demo.
+ * @param {GraphComponent} graphComponent The given graphComponent
+ */
+function createSampleGraph(graphComponent) {
+  const graph = graphComponent.graph
+  const blackPortStyle = new NodeStylePortStyleAdapter(
+    new ShapeNodeStyle({
+      shape: 'ellipse'
     })
-    // and enable the undo feature.
-    graph.undoEngineEnabled = true
+  )
+  createSubgraph(graph, 'firebrick', 0)
+  createSubgraph(graph, 'orange', 200)
+  createSubgraph(graph, 'green', 600)
 
-    // Finally, set the input mode to the graph component.
-    graphComponent.inputMode = graphEditorInputMode
+  // the blue nodes have some additional ports besides the ones used by the edge
+  const nodes = createSubgraph(graph, 'royalblue', 400)
+  graph.addPort(
+    nodes[0],
+    FreeNodePortLocationModel.INSTANCE.createParameterForRatios(new Point(1.0, 0.2)),
+    blackPortStyle
+  )
+  graph.addPort(
+    nodes[0],
+    FreeNodePortLocationModel.INSTANCE.createParameterForRatios(new Point(1.0, 0.8)),
+    blackPortStyle
+  )
 
-    // Set a port style that makes the pre-defined ports visible
-    graph.nodeDefaults.ports.style = new yfiles.styles.NodeStylePortStyleAdapter(
-      new yfiles.styles.ShapeNodeStyle({
-        shape: 'ellipse'
-      })
-    )
+  const candidateProvider = IPortCandidateProvider.fromShapeGeometry(nodes[2], 0, 0.25, 0.5, 0.75)
+  candidateProvider.style = blackPortStyle
+  const candidates = candidateProvider.getAllSourcePortCandidates(graphComponent.inputModeContext)
+  candidates.forEach(portCandidate => {
+    if (portCandidate.validity !== PortCandidateValidity.DYNAMIC) {
+      portCandidate.createPort(graphComponent.inputModeContext)
+    }
+  })
 
-    registerEdgePortCandidateProvider(graph)
+  // clear undo after initial graph loading
+  graph.undoEngine.clear()
+}
 
-    createSampleGraph(graphComponent)
-    graphComponent.updateContentRect()
+/**
+ * Creates the sample graph of the given css class for different colored graphs.
+ * @param {IGraph} graph The given graph
+ * @param {string} cssClass The given cssClass
+ * @param {number} yOffset An y-offset
+ * @return {INode[]}
+ */
+function createSubgraph(graph, cssClass, yOffset) {
+  const nodeStyle = new DemoNodeStyle()
+  nodeStyle.cssClass = cssClass
 
-    app.show(graphComponent)
-  }
+  const n1 = graph.createNode(new Rect(100, 100 + yOffset, 60, 60), nodeStyle, cssClass)
+  const n2 = graph.createNode(new Rect(500, 100 + yOffset, 60, 60), nodeStyle, cssClass)
+  const n3 = graph.createNode(new Rect(300, 160 + yOffset, 60, 60), nodeStyle, cssClass)
 
-  /**
-   * Creates the sample graph of this demo.
-   * @param {yfiles.view.GraphComponent} graphComponent The given graphComponent
-   */
-  function createSampleGraph(graphComponent) {
-    const graph = graphComponent.graph
-    const blackPortStyle = new yfiles.styles.NodeStylePortStyleAdapter(
-      new yfiles.styles.ShapeNodeStyle({
-        shape: 'ellipse'
-      })
-    )
-    createSubgraph(graph, 'firebrick', 0)
-    createSubgraph(graph, 'orange', 200)
-    createSubgraph(graph, 'green', 600)
+  const edgeStyle = new DemoEdgeStyle()
+  edgeStyle.cssClass = cssClass
+  edgeStyle.showTargetArrows = false
 
-    // the blue nodes have some additional ports besides the ones used by the edge
-    const nodes = createSubgraph(graph, 'royalblue', 400)
-    graph.addPort(
-      nodes[0],
-      yfiles.graph.FreeNodePortLocationModel.INSTANCE.createParameterForRatios(
-        new yfiles.geometry.Point(1.0, 0.2)
-      ),
-      blackPortStyle
-    )
-    graph.addPort(
-      nodes[0],
-      yfiles.graph.FreeNodePortLocationModel.INSTANCE.createParameterForRatios(
-        new yfiles.geometry.Point(1.0, 0.8)
-      ),
-      blackPortStyle
-    )
+  graph.createEdge(n1, n2, edgeStyle, cssClass)
+  return [n1, n2, n3]
+}
 
-    const candidateProvider = yfiles.input.IPortCandidateProvider.fromShapeGeometry(
-      nodes[2],
-      0,
-      0.25,
-      0.5,
-      0.75
-    )
-    candidateProvider.style = blackPortStyle
-    const candidates = candidateProvider.getAllSourcePortCandidates(graphComponent.inputModeContext)
-    candidates.forEach(portCandidate => {
-      if (portCandidate.validity !== yfiles.input.PortCandidateValidity.DYNAMIC) {
-        portCandidate.createPort(graphComponent.inputModeContext)
-      }
-    })
-
-    // clear undo after initial graph loading
-    graph.undoEngine.clear()
-  }
-
-  /**
-   * Creates the sample graph of the given css class for different colored graphs.
-   * @param {yfiles.graph.IGraph} graph The given graph
-   * @param {string} cssClass The given cssClass
-   * @param {number} yOffset An y-offset
-   * @return {yfiles.graph.INode[]}
-   */
-  function createSubgraph(graph, cssClass, yOffset) {
-    const nodeStyle = new DemoStyles.DemoNodeStyle()
-    nodeStyle.cssClass = cssClass
-
-    const n1 = graph.createNode(
-      new yfiles.geometry.Rect(100, 100 + yOffset, 60, 60),
-      nodeStyle,
-      cssClass
-    )
-    const n2 = graph.createNode(
-      new yfiles.geometry.Rect(500, 100 + yOffset, 60, 60),
-      nodeStyle,
-      cssClass
-    )
-    const n3 = graph.createNode(
-      new yfiles.geometry.Rect(300, 160 + yOffset, 60, 60),
-      nodeStyle,
-      cssClass
-    )
-
-    const edgeStyle = new DemoStyles.DemoEdgeStyle()
-    edgeStyle.cssClass = cssClass
-    edgeStyle.showTargetArrows = false
-
-    graph.createEdge(n1, n2, edgeStyle, cssClass)
-    return [n1, n2, n3]
-  }
-
-  // run the demo
-  run()
-})
+// run the demo
+loadJson().then(run)

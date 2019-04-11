@@ -7,8 +7,8 @@
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.1.
-     // Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML 2.2.
+     // Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -36,11 +36,12 @@
 
   <title>IsVisible - Custom Styles Tutorial [yFiles for HTML]</title>
 
-  <link rel="stylesheet" href="../../../lib/yfiles.css">
+  <link rel="stylesheet" href="../../node_modules/yfiles/yfiles.css">
   <link rel="stylesheet" href="../../resources/style/demo.css">
 
   <!-- enable debugging -->
   <script src="../../../ide-support/yfiles-typeinfo.js"></script>
+  <script src="../../resources/filesystem-warning.js"></script>
 </head>
 <body class="demo-has-left">
 <!--
@@ -50,7 +51,7 @@
   <h1 class="demo-sidebar-header">Description</h1>
   <div class="demo-sidebar-content">
 
-    <p>This step shows how to override the method <code>isVisible()</code> of <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.styles.NodeStyleBase" target="_blank">yfiles.styles.NodeStyleBase</a>.
+    <p>This step shows how to override the method <code>isVisible()</code> of <a href="https://docs.yworks.com/yfileshtml/#/api/NodeStyleBase" target="_blank">NodeStyleBase</a>.
     </p>
 
     <h2>Things to Try</h2>
@@ -103,8 +104,7 @@
   <div id="graphComponent"></div>
 </div>
 
-<script src="../../resources/require.js"></script>
-<script src="SampleApplication.js"></script>
+<script type="module" crossorigin="anonymous" src="SampleApplication.js"></script>
 
 </body>
 </html>

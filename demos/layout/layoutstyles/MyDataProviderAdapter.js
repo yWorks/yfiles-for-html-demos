@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.1.
- ** Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.2.
+ ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,54 +26,46 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-'use strict'
+import { CopiedLayoutGraph, DataProviderBase, IEdgeLabelLayout, INodeLabelLayout } from 'yfiles'
 
-define(['yfiles/view-component'], /** @type {yfiles_namespace} */ /** typeof yfiles */ yfiles => {
-  /**
-   * @class
-   * @extends yfiles.algorithms.DataProviderAdapter
-   */
-  class MyDataProviderAdapter extends yfiles.algorithms.DataProviderAdapter {
-    constructor(selectedLabelsAtItemProvider, layoutGraph) {
-      super()
-      this.$selectedLabelsAtItemProvider = selectedLabelsAtItemProvider
-      this.$layoutGraph = layoutGraph
-    }
+export default class MyDataProviderAdapter extends DataProviderBase {
+  constructor(selectedLabelsAtItemProvider, layoutGraph) {
+    super()
+    this.$selectedLabelsAtItemProvider = selectedLabelsAtItemProvider
+    this.$layoutGraph = layoutGraph
+  }
 
-    /** @return {boolean} */
-    getBoolean(dataHolder) {
-      if (yfiles.layout.INodeLabelLayout.isInstance(dataHolder)) {
-        const node = this.$layoutGraph.getOwnerNode(dataHolder)
-        if (this.$layoutGraph instanceof yfiles.layout.CopiedLayoutGraph) {
-          const selectedLabels = this.$selectedLabelsAtItemProvider.get(node)
-          if (selectedLabels !== null) {
-            const nodeLabelLayouts = this.$layoutGraph.getLabelLayout(node)
-            for (let i = 0; i < nodeLabelLayouts.length; i++) {
-              const nodeLabelLayout = nodeLabelLayouts[i]
-              if (nodeLabelLayout === dataHolder && selectedLabels.length > i) {
-                return selectedLabels[i]
-              }
-            }
-          }
-        }
-      } else if (yfiles.layout.IEdgeLabelLayout.isInstance(dataHolder)) {
-        const edge = this.$layoutGraph.getOwnerEdge(dataHolder)
-        if (this.$layoutGraph instanceof yfiles.layout.CopiedLayoutGraph) {
-          const selectedLabels = this.$selectedLabelsAtItemProvider.get(edge)
-          if (selectedLabels !== null) {
-            const edgeLabelLayouts = this.$layoutGraph.getLabelLayout(edge)
-            for (let i = 0; i < edgeLabelLayouts.length; i++) {
-              const edgeLabelLayout = edgeLabelLayouts[i]
-              if (edgeLabelLayout === dataHolder && selectedLabels.length > i) {
-                return selectedLabels[i]
-              }
+  /** @return {boolean} */
+  getBoolean(dataHolder) {
+    if (INodeLabelLayout.isInstance(dataHolder)) {
+      const node = this.$layoutGraph.getOwnerNode(dataHolder)
+      if (this.$layoutGraph instanceof CopiedLayoutGraph) {
+        const selectedLabels = this.$selectedLabelsAtItemProvider.get(node)
+        if (selectedLabels !== null) {
+          const nodeLabelLayouts = this.$layoutGraph.getLabelLayout(node)
+          for (let i = 0; i < nodeLabelLayouts.length; i++) {
+            const nodeLabelLayout = nodeLabelLayouts[i]
+            if (nodeLabelLayout === dataHolder && selectedLabels.length > i) {
+              return selectedLabels[i]
             }
           }
         }
       }
-      return false
+    } else if (IEdgeLabelLayout.isInstance(dataHolder)) {
+      const edge = this.$layoutGraph.getOwnerEdge(dataHolder)
+      if (this.$layoutGraph instanceof CopiedLayoutGraph) {
+        const selectedLabels = this.$selectedLabelsAtItemProvider.get(edge)
+        if (selectedLabels !== null) {
+          const edgeLabelLayouts = this.$layoutGraph.getLabelLayout(edge)
+          for (let i = 0; i < edgeLabelLayouts.length; i++) {
+            const edgeLabelLayout = edgeLabelLayouts[i]
+            if (edgeLabelLayout === dataHolder && selectedLabels.length > i) {
+              return selectedLabels[i]
+            }
+          }
+        }
+      }
     }
+    return false
   }
-
-  return MyDataProviderAdapter
-})
+}

@@ -7,8 +7,8 @@
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.1.
-     // Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML 2.2.
+     // Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -36,7 +36,7 @@
 
   <title>Edge Reconnection Port Candidate Provider Demo [yFiles for HTML]</title>
 
-  <link rel="stylesheet" href="../../../lib/yfiles.css">
+  <link rel="stylesheet" href="../../node_modules/yfiles/yfiles.css">
   <link rel="stylesheet" href="../../resources/style/demo.css">
 
   <style type="text/css">
@@ -73,7 +73,8 @@
     }
   </style>
 
-  <!--<script src="../../../ide-support/yfiles-typeinfo.js"></script>&lt;!&ndash; enable debugging &ndash;&gt;-->
+  <script src="../../../ide-support/yfiles-typeinfo.js"></script><!-- enable debugging -->
+  <script src="../../resources/filesystem-warning.js"></script>
 </head>
 <body class="demo-has-left">
 <aside class="demo-sidebar demo-left">
@@ -82,7 +83,7 @@
 
     <p>This demo shows how the reconnection of edge ports can be customized and restricted.</p>
 
-    <p> This is done with custom implementations of <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.input.IEdgePortCandidateProvider" target="_blank">yfiles.input.IEdgePortCandidateProvider</a>
+    <p> This is done with custom implementations of <a href="https://docs.yworks.com/yfileshtml/#/api/IEdgePortCandidateProvider" target="_blank">IEdgePortCandidateProvider</a>
       that are added to the lookup of the edges. </p>
 
     <h2>Things to Try</h2>
@@ -115,8 +116,7 @@
   <div id="graphComponent"></div>
 </div>
 
-<script src="../../resources/require.js"></script>
-<script src="EdgeReconnectionPortCandidateProviderDemo.js"></script>
+<script type="module" crossorigin="anonymous" src="EdgeReconnectionPortCandidateProviderDemo.js"></script>
 
 </body>
 </html>

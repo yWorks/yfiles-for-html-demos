@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.1.
- ** Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.2.
+ ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,161 +26,147 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-'use strict'
+import {
+  DefaultLabelStyle,
+  GraphComponent,
+  GraphEditorInputMode,
+  GraphItemTypes,
+  IGraph,
+  License,
+  MutableRectangle,
+  Rect
+} from 'yfiles'
 
-require.config({
-  paths: {
-    yfiles: '../../../lib/umd/yfiles/',
-    utils: '../../utils/',
-    resources: '../../resources/'
-  }
-})
+import { DemoNodeStyle } from '../../resources/demo-styles.js'
+import { showApp } from '../../resources/demo-app.js'
+import LimitingRectangleDescriptor from './LimitingRectangleDescriptor.js'
+import GreenReshapeHandleProvider from './GreenReshapeHandleProvider.js'
+import RedReshapeHandleProvider from './RedReshapeHandleProvider.js'
+import OrangeReshapeHandleProvider from './OrangeReshapeHandleProvider.js'
+import loadJson from '../../resources/load-json.js'
+/**
+ * Registers a callback function as a decorator that provides a custom
+ * {@link IReshapeHandleProvider} for each node.
+ * This callback function is called whenever a node in the graph is queried
+ * for its <code>IReshapeHandleProvider</code>. In this case, the 'node'
+ * parameter will be set to that node and the 'delegateHandler' parameter
+ * will be set to the reshape handle provider that would have been returned
+ * without setting this function as a decorator.
+ * @param {IGraph} graph The given graph
+ * @param {MutableRectangle} boundaryRectangle The rectangle that limits the node's size.
+ */
+function registerReshapeHandleProvider(graph, boundaryRectangle) {
+  const nodeDecorator = graph.decorator.nodeDecorator
+  nodeDecorator.reshapeHandleProviderDecorator.setImplementationWrapper(
+    (node, delegateProvider) => {
+      // Obtain the tag from the node
+      const nodeTag = node.tag
+
+      // Check if it is a known tag and choose the respective implementation.
+      // Fallback to the default behavior otherwise.
+      if (typeof nodeTag !== 'string') {
+        return delegateProvider
+      } else if (nodeTag === 'orange') {
+        // An implementation that delegates certain behavior to the default implementation
+        return new OrangeReshapeHandleProvider(boundaryRectangle, delegateProvider)
+      } else if (nodeTag === 'firebrick') {
+        // A simple implementation that prohibits resizing
+        return new RedReshapeHandleProvider()
+      } else if (nodeTag === 'royalblue') {
+        // An implementationOne that uses two levels of delegation to create a combined behavior
+        return new OrangeReshapeHandleProvider(
+          boundaryRectangle,
+          new GreenReshapeHandleProvider(delegateProvider, node)
+        )
+      } else if (nodeTag === 'green') {
+        // Another implementation that delegates certain behavior to the default implementation
+        return new GreenReshapeHandleProvider(delegateProvider, node)
+      }
+      return delegateProvider
+    }
+  )
+}
+
+function run(licenseData) {
+  License.value = licenseData
+  // initialize the GraphComponent
+  const graphComponent = new GraphComponent('graphComponent')
+  const graph = graphComponent.graph
+
+  // Create a default editor input mode
+  const graphEditorInputMode = new GraphEditorInputMode({
+    // Just for user convenience: disable node, edge creation and clipboard operations,
+    allowCreateEdge: false,
+    allowCreateNode: false,
+    allowClipboardOperations: false, // don't allow moving nodes,
+    movableItems: GraphItemTypes.NONE
+  })
+  // and enable the undo feature.
+  graph.undoEngineEnabled = true
+
+  // Finally, set the input mode to the graph component.
+  graphComponent.inputMode = graphEditorInputMode
+
+  // Create the rectangle that limits the movement of some nodes
+  // and add it to the graphComponent.
+  const boundaryRectangle = new MutableRectangle(20, 20, 480, 400)
+  graphComponent.backgroundGroup.addChild(boundaryRectangle, new LimitingRectangleDescriptor())
+
+  registerReshapeHandleProvider(graph, boundaryRectangle)
+
+  createSampleGraph(graph)
+
+  showApp(graphComponent)
+}
 
 /**
- * Shows how to customize the resize behavior of nodes by implementing a
- * custom {@link yfiles.input.IReshapeHandleProvider}.
+ * Creates the sample graph of this demo.
+ * @param {IGraph} graph The input graph
  */
-require([
-  'yfiles/view-editor',
-  'resources/demo-app',
-  'resources/demo-styles',
-  'RedReshapeHandleProvider.js',
-  'GreenReshapeHandleProvider.js',
-  'OrangeReshapeHandleProvider.js',
-  'LimitingRectangleDescriptor.js',
-  'resources/license'
-], (
-  /** @type {yfiles_namespace} */ /** typeof yfiles */ yfiles,
-  app,
-  DemoStyles,
-  RedReshapeHandleProvider,
-  GreenReshapeHandleProvider,
-  OrangeReshapeHandleProvider,
-  LimitingRectangleDescriptor
-) => {
-  /**
-   * Registers a callback function as a decorator that provides a custom
-   * {@link yfiles.input.IReshapeHandleProvider} for each node.
-   * This callback function is called whenever a node in the graph is queried
-   * for its <code>IReshapeHandleProvider</code>. In this case, the 'node'
-   * parameter will be set to that node and the 'delegateHandler' parameter
-   * will be set to the reshape handle provider that would have been returned
-   * without setting this function as a decorator.
-   * @param {yfiles.graph.IGraph} graph The given graph
-   * @param {yfiles.geometry.MutableRectangle} boundaryRectangle The rectangle that limits the node's size.
-   */
-  function registerReshapeHandleProvider(graph, boundaryRectangle) {
-    const nodeDecorator = graph.decorator.nodeDecorator
-    nodeDecorator.reshapeHandleProviderDecorator.setImplementationWrapper(
-      (node, delegateProvider) => {
-        // Obtain the tag from the node
-        const nodeTag = node.tag
+function createSampleGraph(graph) {
+  createNode(graph, 80, 100, 140, 30, 'firebrick', 'whitesmoke', 'Fixed Size')
+  createNode(graph, 300, 100, 140, 30, 'green', 'whitesmoke', 'Keep Aspect Ratio')
+  createNode(graph, 80, 260, 140, 30, 'orange', 'black', 'Limited to Rectangle')
+  createNode(
+    graph,
+    300,
+    250,
+    140,
+    50,
+    'royalblue',
+    'whitesmoke',
+    'Limited to Rectangle\nand Keep Aspect Ratio'
+  )
 
-        // Check if it is a known tag and choose the respective implementation.
-        // Fallback to the default behavior otherwise.
-        if (typeof nodeTag !== 'string') {
-          return delegateProvider
-        } else if (nodeTag === 'orange') {
-          // An implementation that delegates certain behavior to the default implementation
-          return new OrangeReshapeHandleProvider(boundaryRectangle, delegateProvider)
-        } else if (nodeTag === 'firebrick') {
-          // A simple implementation that prohibits resizing
-          return new RedReshapeHandleProvider()
-        } else if (nodeTag === 'royalblue') {
-          // An implementationOne that uses two levels of delegation to create a combined behavior
-          return new OrangeReshapeHandleProvider(
-            boundaryRectangle,
-            new GreenReshapeHandleProvider(delegateProvider, node)
-          )
-        } else if (nodeTag === 'green') {
-          // Another implementation that delegates certain behavior to the default implementation
-          return new GreenReshapeHandleProvider(delegateProvider, node)
-        }
-        return delegateProvider
-      }
-    )
-  }
+  // clear undo after initial graph loading
+  graph.undoEngine.clear()
+}
 
-  function run() {
-    // initialize the GraphComponent
-    const graphComponent = new yfiles.view.GraphComponent('graphComponent')
-    const graph = graphComponent.graph
+/**
+ * Creates a sample node for this demo.
+ * @param {IGraph} graph The given graph
+ * @param {number} x The node's x-coordinate
+ * @param {number} y The node's y-coordinate
+ * @param {number} w The node's width
+ * @param {number} h The node's height
+ * @param {string} cssClass The given css class
+ * @param {string} textColor The color of the text
+ * @param {string} labelText The nodes label's text
+ */
+function createNode(graph, x, y, w, h, cssClass, textColor, labelText) {
+  const textLabelStyle = new DefaultLabelStyle({
+    textFill: textColor
+  })
 
-    // Create a default editor input mode
-    const graphEditorInputMode = new yfiles.input.GraphEditorInputMode({
-      // Just for user convenience: disable node, edge creation and clipboard operations,
-      allowCreateEdge: false,
-      allowCreateNode: false,
-      allowClipboardOperations: false, // don't allow moving nodes,
-      movableItems: yfiles.graph.GraphItemTypes.NONE
-    })
-    // and enable the undo feature.
-    graph.undoEngineEnabled = true
+  const nodeStyle = new DemoNodeStyle()
+  nodeStyle.cssClass = cssClass
 
-    // Finally, set the input mode to the graph component.
-    graphComponent.inputMode = graphEditorInputMode
+  const node = graph.createNode(new Rect(x, y, w, h), nodeStyle, cssClass)
+  graph.addLabel({
+    owner: node,
+    text: labelText,
+    style: textLabelStyle
+  })
+}
 
-    // Create the rectangle that limits the movement of some nodes
-    // and add it to the graphComponent.
-    const boundaryRectangle = new yfiles.geometry.MutableRectangle(20, 20, 480, 400)
-    graphComponent.backgroundGroup.addChild(boundaryRectangle, new LimitingRectangleDescriptor())
-
-    registerReshapeHandleProvider(graph, boundaryRectangle)
-
-    createSampleGraph(graph)
-
-    app.show(graphComponent)
-  }
-
-  /**
-   * Creates the sample graph of this demo.
-   * @param {yfiles.graph.IGraph} graph The input graph
-   */
-  function createSampleGraph(graph) {
-    createNode(graph, 80, 100, 140, 30, 'firebrick', 'whitesmoke', 'Fixed Size')
-    createNode(graph, 300, 100, 140, 30, 'green', 'whitesmoke', 'Keep Aspect Ratio')
-    createNode(graph, 80, 260, 140, 30, 'orange', 'black', 'Limited to Rectangle')
-    createNode(
-      graph,
-      300,
-      250,
-      140,
-      50,
-      'royalblue',
-      'whitesmoke',
-      'Limited to Rectangle\nand Keep Aspect Ratio'
-    )
-
-    // clear undo after initial graph loading
-    graph.undoEngine.clear()
-  }
-
-  /**
-   * Creates a sample node for this demo.
-   * @param {yfiles.graph.IGraph} graph The given graph
-   * @param {number} x The node's x-coordinate
-   * @param {number} y The node's y-coordinate
-   * @param {number} w The node's width
-   * @param {number} h The node's height
-   * @param {string} cssClass The given css class
-   * @param {string} textColor The color of the text
-   * @param {string} labelText The nodes label's text
-   */
-  function createNode(graph, x, y, w, h, cssClass, textColor, labelText) {
-    const textLabelStyle = new yfiles.styles.DefaultLabelStyle({
-      textFill: textColor
-    })
-
-    const nodeStyle = new DemoStyles.DemoNodeStyle()
-    nodeStyle.cssClass = cssClass
-
-    const node = graph.createNode(new yfiles.geometry.Rect(x, y, w, h), nodeStyle, cssClass)
-    graph.addLabel({
-      owner: node,
-      text: labelText,
-      style: textLabelStyle
-    })
-  }
-
-  run()
-})
+loadJson().then(run)

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.1.
- ** Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.2.
+ ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,28 +26,59 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-'use strict'
+const MiniCssExtractPlugin = require('mini-css-extract-plugin')
+const CleanWebpackPlugin = require('clean-webpack-plugin')
+const yWorksOptimizer = require('@yworks/optimizer/webpack-plugin')
 
-const path = require('path')
+module.exports = function(env, options) {
+  const config = {
+    entry: ['./TypeScript2Demo.ts'],
 
-module.exports = {
-  entry: './TypeScript2Demo.ts',
-  mode: 'development',
-  output: {
-    filename: './bundle.js'
-  },
-  resolve: {
-    modules: [path.resolve('../../../lib/es6-modules')],
-    // Add '.ts' and '.tsx' as a resolvable extension.
-    extensions: ['.webpack.js', '.web.js', '.ts', '.tsx', '.js']
-  },
-  module: {
-    rules: [
-      // all files with a '.ts' or '.tsx' extension will be handled by 'ts-loader'
-      {
-        test: /\.tsx?$/,
-        loader: 'ts-loader'
-      }
-    ]
+    output: {
+      filename: './bundle.js'
+    },
+    resolve: {
+      // Add '.ts' and '.tsx' as a resolvable extension.
+      extensions: ['.webpack.js', '.web.js', '.ts', '.tsx', '.js']
+    },
+    plugins: [
+      new CleanWebpackPlugin(),
+      new MiniCssExtractPlugin({
+        filename: '[name].css',
+        chunkFilename: '[id].css'
+      })
+    ],
+    module: {
+      rules: [
+        {
+          test: /\.css$/,
+          use: [MiniCssExtractPlugin.loader, 'css-loader'],
+          sideEffects: true
+        },
+        {
+          // Include ts, tsx, js, and jsx files.
+          test: /\.(ts|js)x?$/,
+          exclude: /node_modules/,
+          loader: 'babel-loader',
+          options: {
+            presets: ['@babel/preset-env', '@babel/preset-typescript']
+          }
+        },
+        {
+          test: /\.(png|svg|jpg|gif)$/,
+          use: ['file-loader']
+        }
+      ]
+    }
   }
+
+  if (options.mode === 'production') {
+    // Obfuscate yFiles modules and usages for production build
+    config.plugins.unshift(new yWorksOptimizer())
+  } else {
+    // Add yFiles debugging support for development build
+    config.entry.unshift('../../../ide-support/yfiles-typeinfo.js')
+  }
+
+  return config
 }

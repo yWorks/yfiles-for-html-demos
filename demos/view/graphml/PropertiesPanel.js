@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.1.
- ** Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.2.
+ ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,296 +26,287 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-'use strict'
+import { HashMap, IEdge, IModelItem, INode, IPort, KeyScope, KeyType, List } from 'yfiles'
+import PropertiesPanelUI from './PropertiesPanelUI.js'
 
-define(['yfiles/view-graphml', 'PropertiesPanelUI.js'], (
-  /** @type {yfiles_namespace} */ /** typeof yfiles */ yfiles,
-  PropertiesPanelUI
-) => {
+/**
+ * A panel that displays custom data associated with the graph and the current item.
+ */
+export class PropertiesPanel {
   /**
-   * A panel that displays custom data associated with the graph and the current item.
+   * @param {HTMLElement} div
    */
-  class PropertiesPanel {
-    /**
-     * @param {HTMLElement} div
-     */
-    constructor(div) {
-      this.itemMap = new yfiles.collections.Map()
-      /** @type {yfiles.collections.Map.<GraphMLProperty,>} */
-      this.graphMap = new yfiles.collections.Map()
-      this.currentItem = null
-      this.ui = new PropertiesPanelUI(div)
+  constructor(div) {
+    this.itemMap = new HashMap()
+    /** @type {HashMap.<GraphMLProperty,>} */
+    this.graphMap = new HashMap()
+    this.currentItem = null
+    this.ui = new PropertiesPanelUI(div)
 
-      // register the callback that is called when a new item property has been added
-      this.ui.itemPropertyAddedCallback = (name, value) => {
-        const scope = this.getCurrentItemScope()
-        if (scope !== null) {
-          const property = this.addItemProperty(name, yfiles.graphml.KeyType.STRING, scope)
-          this.setItemProperty(this.currentItem, property, value)
-          this.ui.addItemProperty(property, value)
-        }
-        this.onSomethingChanged()
+    // register the callback that is called when a new item property has been added
+    this.ui.itemPropertyAddedCallback = (name, value) => {
+      const scope = this.getCurrentItemScope()
+      if (scope !== null) {
+        const property = this.addItemProperty(name, KeyType.STRING, scope)
+        this.setItemProperty(this.currentItem, property, value)
+        this.ui.addItemProperty(property, value)
       }
-      // register the callback that is called when a new graph property has been added
-      this.ui.graphPropertyAddedCallback = (name, value) => {
-        const property = this.addGraphProperty(name, yfiles.graphml.KeyType.STRING)
-        this.setGraphProperty(property, value)
-        this.ui.addGraphProperty(property, value)
-        this.onSomethingChanged()
-      }
-      // register the callback that is called when an item property's value has changed
-      this.ui.itemValueChangedCallback = (property, newVal) => {
-        const val = PropertiesPanel.parseValue(newVal, property.type)
-        this.setItemProperty(this.currentItem, property, val)
-        this.onSomethingChanged()
-      }
-      // register the callback that is called when a graph property's value has changed
-      this.ui.graphValueChangedCallback = (property, newVal) => {
-        const val = PropertiesPanel.parseValue(newVal, property.type)
-        this.setGraphProperty(property, val)
-        this.onSomethingChanged()
-      }
+      this.onSomethingChanged()
     }
-
-    /**
-     * Gets the graph and item properties.
-     * @type {yfiles.collections.IEnumerable.<GraphMLProperty>}
-     */
-    get properties() {
-      const list = new yfiles.collections.List()
-      list.addRange(this.itemMap.keys)
-      list.addRange(this.graphMap.keys)
-      return list
+    // register the callback that is called when a new graph property has been added
+    this.ui.graphPropertyAddedCallback = (name, value) => {
+      const property = this.addGraphProperty(name, KeyType.STRING)
+      this.setGraphProperty(property, value)
+      this.ui.addGraphProperty(property, value)
+      this.onSomethingChanged()
     }
-
-    /**
-     * Adds a new item property with the given name, type and scope.
-     * @param {string} propertyName
-     * @param {yfiles.graphml.KeyType} type
-     * @param {yfiles.graphml.KeyScope} keyScope
-     * @return {GraphMLProperty}
-     */
-    addItemProperty(propertyName, type, keyScope) {
-      const property = new GraphMLProperty()
-      property.name = propertyName
-      property.type = type
-      property.keyScope = keyScope
-
-      this.itemMap.set(property, new yfiles.collections.Map())
-      return property
+    // register the callback that is called when an item property's value has changed
+    this.ui.itemValueChangedCallback = (property, newVal) => {
+      const val = PropertiesPanel.parseValue(newVal, property.type)
+      this.setItemProperty(this.currentItem, property, val)
+      this.onSomethingChanged()
     }
-
-    /**
-     * Adds a new graph property with the given name and type.
-     * @param {string} propertyName
-     * @param {yfiles.graphml.KeyType} type
-     * @return {GraphMLProperty}
-     */
-    addGraphProperty(propertyName, type) {
-      const property = new GraphMLProperty()
-      property.name = propertyName
-      property.type = type
-      property.keyScope = yfiles.graphml.KeyScope.GRAPH
-
-      this.graphMap.set(property, null)
-      return property
-    }
-
-    /**
-     * Gets the value for a given item and property.
-     * @param {GraphMLProperty} property
-     * @param {yfiles.graph.IModelItem} item
-     * @return {Object}
-     */
-    getItemValue(property, item) {
-      const propertyDict = this.itemMap.get(property)
-      if (propertyDict.has(item)) {
-        return this.itemMap.get(property).get(item)
-      }
-      return null
-    }
-
-    /**
-     * Sets the property value for a given item.
-     * @param {yfiles.graph.IModelItem} item
-     * @param {GraphMLProperty} property
-     * @param {object} value
-     */
-    setItemProperty(item, property, value) {
-      const dict = this.itemMap.get(property)
-      dict.set(item, value)
-    }
-
-    /**
-     * Gets the graph value for the given property.
-     * @param {GraphMLProperty} property
-     * @return {Object}
-     */
-    getGraphValue(property) {
-      if (this.graphMap.has(property)) {
-        return this.graphMap.get(property)
-      }
-      return null
-    }
-
-    /**
-     * Sets the graph value for the given property.
-     * @param {GraphMLProperty} property
-     * @param {object} value
-     */
-    setGraphProperty(property, value) {
-      this.graphMap.set(property, value)
-    }
-
-    /**
-     * Clears the current properties.
-     */
-    clear() {
-      this.itemMap.clear()
-      this.graphMap.clear()
-      this.ui.clearAllProperties()
-    }
-
-    /**
-     * Sets the item that is currently being displayed.
-     * @param {yfiles.graph.IModelItem} currentItem
-     */
-    setCurrentItem(currentItem) {
-      this.ui.setCurrentItemVisibility(currentItem !== null)
-      this.ui.clearItemProperties()
-      this.currentItem = currentItem
-      this.itemMap.keys.forEach(property => {
-        if (PropertiesPanel.suitsScope(currentItem, property.keyScope)) {
-          this.ui.addItemProperty(property, this.getItemValue(property, currentItem))
-        }
-      })
-    }
-
-    /**
-     * Displays the graph properties in the UI after all properties have been added.
-     */
-    showGraphProperties() {
-      this.graphMap.keys.forEach(property => {
-        this.ui.addGraphProperty(property, this.graphMap.get(property))
-      })
-    }
-
-    /**
-     * Parses the string value for the given key type.
-     * @param {string} newVal The value to parse
-     * @param {yfiles.graphml.KeyType} keyType The target type
-     * @return {Object} The parsed value.
-     */
-    static parseValue(newVal, keyType) {
-      let val = newVal
-      switch (keyType) {
-        case yfiles.graphml.KeyType.INT:
-          val = Number.parseInt(newVal)
-          break
-        case yfiles.graphml.KeyType.LONG:
-          val = Number.parseInt(newVal)
-          break
-        case yfiles.graphml.KeyType.FLOAT:
-          val = Number.parseFloat(newVal)
-          break
-        case yfiles.graphml.KeyType.DOUBLE:
-          val = Number.parseFloat(newVal)
-          break
-        case yfiles.graphml.KeyType.BOOLEAN:
-          val = newVal
-          break
-        default:
-      }
-      return val
-    }
-
-    /**
-     * Gets the scope that fits the current item.
-     * @return {yfiles.graphml.KeyScope}
-     */
-    getCurrentItemScope() {
-      if (yfiles.graph.INode.isInstance(this.currentItem)) {
-        return yfiles.graphml.KeyScope.NODE
-      }
-      if (yfiles.graph.IEdge.isInstance(this.currentItem)) {
-        return yfiles.graphml.KeyScope.EDGE
-      }
-      if (yfiles.graph.IPort.isInstance(this.currentItem)) {
-        return yfiles.graphml.KeyScope.PORT
-      }
-      return null
-    }
-
-    /**
-     * Checks if the given item suits the given scope.
-     * @param {yfiles.graph.IModelItem} modelItem
-     * @param {yfiles.graphml.KeyScope} scope
-     * @return {boolean}
-     */
-    static suitsScope(modelItem, scope) {
-      switch (scope) {
-        case yfiles.graphml.KeyScope.ALL:
-          return true
-        case yfiles.graphml.KeyScope.NODE:
-          return yfiles.graph.INode.isInstance(modelItem)
-        case yfiles.graphml.KeyScope.EDGE:
-          return yfiles.graph.IEdge.isInstance(modelItem)
-        case yfiles.graphml.KeyScope.PORT:
-          return yfiles.graph.IPort.isInstance(modelItem)
-        default:
-          return false
-      }
-    }
-
-    /**
-     * Called when data has changed.
-     * @param {function} listener the listener which gets notified when something changed.
-     */
-    addSomethingChangedListener(listener) {
-      this.somethingChangedListener = listener
-    }
-
-    /**
-     * Called when data has changed.
-     */
-    removeSomethingChangedListener() {
-      this.somethingChangedListener = null
-    }
-
-    /**
-     * Notifies the listener if there is one that something changed.
-     */
-    onSomethingChanged() {
-      if (this.somethingChangedListener !== null) {
-        this.somethingChangedListener()
-      }
+    // register the callback that is called when a graph property's value has changed
+    this.ui.graphValueChangedCallback = (property, newVal) => {
+      const val = PropertiesPanel.parseValue(newVal, property.type)
+      this.setGraphProperty(property, val)
+      this.onSomethingChanged()
     }
   }
 
   /**
-   * Models a property of the GraphML content.
+   * Gets the graph and item properties.
+   * @type {IEnumerable.<GraphMLProperty>}
    */
-  class GraphMLProperty {
-    constructor() {
-      /** @type {Object} */
-      this.defaultValue = null
+  get properties() {
+    const list = new List()
+    list.addRange(this.itemMap.keys)
+    list.addRange(this.graphMap.keys)
+    return list
+  }
 
-      /** @type {boolean} */
-      this.defaultExists = false
+  /**
+   * Adds a new item property with the given name, type and scope.
+   * @param {string} propertyName
+   * @param {KeyType} type
+   * @param {KeyScope} keyScope
+   * @return {GraphMLProperty}
+   */
+  addItemProperty(propertyName, type, keyScope) {
+    const property = new GraphMLProperty()
+    property.name = propertyName
+    property.type = type
+    property.keyScope = keyScope
 
-      /** @type {string} */
-      this.name = null
+    this.itemMap.set(property, new HashMap())
+    return property
+  }
 
-      /** @type {yfiles.graphml.KeyType} */
-      this.type = yfiles.graphml.KeyType.INT
+  /**
+   * Adds a new graph property with the given name and type.
+   * @param {string} propertyName
+   * @param {KeyType} type
+   * @return {GraphMLProperty}
+   */
+  addGraphProperty(propertyName, type) {
+    const property = new GraphMLProperty()
+    property.name = propertyName
+    property.type = type
+    property.keyScope = KeyScope.GRAPH
 
-      /** @type {yfiles.graphml.KeyScope} */
-      this.keyScope = yfiles.graphml.KeyScope.ALL
+    this.graphMap.set(property, null)
+    return property
+  }
+
+  /**
+   * Gets the value for a given item and property.
+   * @param {GraphMLProperty} property
+   * @param {IModelItem} item
+   * @return {Object}
+   */
+  getItemValue(property, item) {
+    const propertyDict = this.itemMap.get(property)
+    if (propertyDict.has(item)) {
+      return this.itemMap.get(property).get(item)
+    }
+    return null
+  }
+
+  /**
+   * Sets the property value for a given item.
+   * @param {IModelItem} item
+   * @param {GraphMLProperty} property
+   * @param {object} value
+   */
+  setItemProperty(item, property, value) {
+    const dict = this.itemMap.get(property)
+    dict.set(item, value)
+  }
+
+  /**
+   * Gets the graph value for the given property.
+   * @param {GraphMLProperty} property
+   * @return {Object}
+   */
+  getGraphValue(property) {
+    if (this.graphMap.has(property)) {
+      return this.graphMap.get(property)
+    }
+    return null
+  }
+
+  /**
+   * Sets the graph value for the given property.
+   * @param {GraphMLProperty} property
+   * @param {object} value
+   */
+  setGraphProperty(property, value) {
+    this.graphMap.set(property, value)
+  }
+
+  /**
+   * Clears the current properties.
+   */
+  clear() {
+    this.itemMap.clear()
+    this.graphMap.clear()
+    this.ui.clearAllProperties()
+  }
+
+  /**
+   * Sets the item that is currently being displayed.
+   * @param {IModelItem} currentItem
+   */
+  setCurrentItem(currentItem) {
+    this.ui.setCurrentItemVisibility(currentItem !== null)
+    this.ui.clearItemProperties()
+    this.currentItem = currentItem
+    this.itemMap.keys.forEach(property => {
+      if (PropertiesPanel.suitsScope(currentItem, property.keyScope)) {
+        this.ui.addItemProperty(property, this.getItemValue(property, currentItem))
+      }
+    })
+  }
+
+  /**
+   * Displays the graph properties in the UI after all properties have been added.
+   */
+  showGraphProperties() {
+    this.graphMap.keys.forEach(property => {
+      this.ui.addGraphProperty(property, this.graphMap.get(property))
+    })
+  }
+
+  /**
+   * Parses the string value for the given key type.
+   * @param {string} newVal The value to parse
+   * @param {KeyType} keyType The target type
+   * @return {Object} The parsed value.
+   */
+  static parseValue(newVal, keyType) {
+    let val = newVal
+    switch (keyType) {
+      case KeyType.INT:
+        val = Number.parseInt(newVal)
+        break
+      case KeyType.LONG:
+        val = Number.parseInt(newVal)
+        break
+      case KeyType.FLOAT:
+        val = Number.parseFloat(newVal)
+        break
+      case KeyType.DOUBLE:
+        val = Number.parseFloat(newVal)
+        break
+      case KeyType.BOOLEAN:
+        val = newVal
+        break
+      default:
+    }
+    return val
+  }
+
+  /**
+   * Gets the scope that fits the current item.
+   * @return {KeyScope}
+   */
+  getCurrentItemScope() {
+    if (INode.isInstance(this.currentItem)) {
+      return KeyScope.NODE
+    }
+    if (IEdge.isInstance(this.currentItem)) {
+      return KeyScope.EDGE
+    }
+    if (IPort.isInstance(this.currentItem)) {
+      return KeyScope.PORT
+    }
+    return null
+  }
+
+  /**
+   * Checks if the given item suits the given scope.
+   * @param {IModelItem} modelItem
+   * @param {KeyScope} scope
+   * @return {boolean}
+   */
+  static suitsScope(modelItem, scope) {
+    switch (scope) {
+      case KeyScope.ALL:
+        return true
+      case KeyScope.NODE:
+        return INode.isInstance(modelItem)
+      case KeyScope.EDGE:
+        return IEdge.isInstance(modelItem)
+      case KeyScope.PORT:
+        return IPort.isInstance(modelItem)
+      default:
+        return false
     }
   }
 
-  return {
-    PropertiesPanel,
-    GraphMLProperty
+  /**
+   * Called when data has changed.
+   * @param {function} listener the listener which gets notified when something changed.
+   */
+  addSomethingChangedListener(listener) {
+    this.somethingChangedListener = listener
   }
-})
+
+  /**
+   * Called when data has changed.
+   */
+  removeSomethingChangedListener() {
+    this.somethingChangedListener = null
+  }
+
+  /**
+   * Notifies the listener if there is one that something changed.
+   */
+  onSomethingChanged() {
+    if (this.somethingChangedListener !== null) {
+      this.somethingChangedListener()
+    }
+  }
+}
+
+/**
+ * Models a property of the GraphML content.
+ */
+export class GraphMLProperty {
+  constructor() {
+    /** @type {Object} */
+    this.defaultValue = null
+
+    /** @type {boolean} */
+    this.defaultExists = false
+
+    /** @type {string} */
+    this.name = null
+
+    /** @type {KeyType} */
+    this.type = KeyType.INT
+
+    /** @type {KeyScope} */
+    this.keyScope = KeyScope.ALL
+  }
+}

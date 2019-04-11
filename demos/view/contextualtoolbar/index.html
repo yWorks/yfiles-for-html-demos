@@ -7,8 +7,8 @@
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.1.
-     // Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML 2.2.
+     // Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -36,7 +36,7 @@
 
   <title>Contextual Toolbar [yFiles for HTML]</title>
 
-  <link rel="stylesheet" href="../../../lib/yfiles.css">
+  <link rel="stylesheet" href="../../node_modules/yfiles/yfiles.css">
   <link rel="stylesheet" href="../../resources/style/demo.css">
 
   <!-- the stylesheet for the contextual toolbar -->
@@ -49,6 +49,7 @@
 
   <!-- enable debugging -->
   <script src="../../../ide-support/yfiles-typeinfo.js"></script>
+  <script src="../../resources/filesystem-warning.js"></script>
 
 </head>
 <body class="demo-has-left">
@@ -61,7 +62,7 @@
 
     <p>
       Similar to the <a href="../../view/htmlpopup/index.html" target="_blank">HTML Popup Demo</a>, the toolbar is displayed in the
-      <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.view.GraphComponent" target="_blank">yfiles.view.GraphComponent</a> above the graph items and rendered zoom-invariant with a fixed size.
+      <a href="https://docs.yworks.com/yfileshtml/#/api/GraphComponent" target="_blank">GraphComponent</a> above the graph items and rendered zoom-invariant with a fixed size.
       It moves alongside the graph items but is limited to the Graph Component container, such that it will be visible
       at all times.
     </p>
@@ -117,6 +118,13 @@
           <span class="fa-layers fa-fw">
             <i class="fas fa-paint-brush"></i>
             <i class="fas fa-sm fa-caret-right" data-fa-transform="right-14 down-12 rotate-45"></i>
+          </span>
+        </label>
+        <span class="separator"></span>
+        <input type="checkbox" id="quick-element-creation" class="toggle-button">
+        <label for="quick-element-creation" title="Quick Element Creation">
+          <span class="fa-layers fa-fw">
+            <i class="fas fa-plus-square" data-fa-transform="grow-6"></i>
           </span>
         </label>
       </div>
@@ -230,8 +238,7 @@
   </div>
 </div>
 
-<script src="../../resources/require.js"></script>
-<script src="ContextualToolbarDemo.js"></script>
+<script type="module" crossorigin="anonymous" src="ContextualToolbarDemo.js"></script>
 
 </body>
 </html>

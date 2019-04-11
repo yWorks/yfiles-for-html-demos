@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.1.
- ** Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.2.
+ ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,245 +26,238 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-'use strict'
+import {
+  DefaultLabelStyle,
+  GraphComponent,
+  GraphEditorInputMode,
+  ICommand,
+  IGraph,
+  INodeStyle,
+  InteriorLabelModel,
+  License,
+  NodeStylePortStyleAdapter,
+  Point,
+  ShapeNodeStyle,
+  SmartEdgeLabelModel
+} from 'yfiles'
 
-require.config({
-  paths: {
-    yfiles: '../../../lib/umd/yfiles/',
-    utils: '../../utils/',
-    resources: '../../resources/'
-  }
-})
+import { showApp, bindAction, bindCommand } from '../../resources/demo-app.js'
+import LabelStyleDecorator from './LabelStyleDecorator.js'
+import EdgeStyleDecorator from './EdgeStyleDecorator.js'
+import NodeStyleDecorator from './NodeStyleDecorator.js'
+import { initDemoStyles } from '../../resources/demo-styles.js'
+import loadJson from '../../resources/load-json.js'
+/** @type {GraphComponent} */
+let graphComponent = null
 
-require([
-  'yfiles/view-editor',
-  'resources/demo-app',
-  'resources/demo-styles',
-  'EdgeStyleDecorator.js',
-  'NodeStyleDecorator.js',
-  'LabelStyleDecorator.js',
-  'resources/license'
-], (
-  /** @type {yfiles_namespace} */ /** typeof yfiles */ yfiles,
-  app,
-  DemoStyles,
-  EdgeStyleDecorator,
-  NodeStyleDecorator,
-  LabelStyleDecorator
-) => {
-  /** @type {yfiles.view.GraphComponent} */
-  let graphComponent = null
+/** @type {INodeStyle} */
+let baseStyle = null
 
-  /** @type {yfiles.styles.INodeStyle} */
-  let baseStyle = null
+function run(licenseData) {
+  License.value = licenseData
+  graphComponent = new GraphComponent('graphComponent')
 
-  function run() {
-    graphComponent = new yfiles.view.GraphComponent('graphComponent')
+  const graphEditorInputMode = new GraphEditorInputMode({
+    allowEditLabel: true
+  })
 
-    const graphEditorInputMode = new yfiles.input.GraphEditorInputMode({
-      allowEditLabel: true
-    })
+  // set a random traffic value to edges created interactively
+  graphEditorInputMode.createEdgeInputMode.addEdgeCreatedListener((source, eventArgs) => {
+    switch (Math.floor(Math.random() * 4)) {
+      case 0:
+        eventArgs.item.tag = 'TRAFFIC_VERY_HIGH'
+        break
+      case 1:
+        eventArgs.item.tag = 'TRAFFIC_HIGH'
+        break
+      case 2:
+        eventArgs.item.tag = 'TRAFFIC_NORMAL'
+        break
+      case 3:
+      default:
+        eventArgs.item.tag = 'TRAFFIC_LOW'
+        break
+    }
+  })
+  graphComponent.inputMode = graphEditorInputMode
 
-    // set a random traffic value to edges created interactively
-    graphEditorInputMode.createEdgeInputMode.addEdgeCreatedListener((source, eventArgs) => {
-      switch (Math.floor(Math.random() * 4)) {
-        case 0:
-          eventArgs.item.tag = 'TRAFFIC_VERY_HIGH'
-          break
-        case 1:
-          eventArgs.item.tag = 'TRAFFIC_HIGH'
-          break
-        case 2:
-          eventArgs.item.tag = 'TRAFFIC_NORMAL'
-          break
-        case 3:
-        default:
-          eventArgs.item.tag = 'TRAFFIC_LOW'
-          break
-      }
-    })
-    graphComponent.inputMode = graphEditorInputMode
+  const graph = graphComponent.graph
+  initDemoStyles(graph)
 
-    const graph = graphComponent.graph
-    DemoStyles.initDemoStyles(graph)
+  baseStyle = new ShapeNodeStyle({
+    fill: 'rgb(102, 153, 204)',
+    stroke: null,
+    shape: 'rectangle'
+  })
+  graph.nodeDefaults.style = new NodeStyleDecorator(baseStyle, 'resources/workstation.svg')
+  graph.nodeDefaults.size = [80, 40]
 
-    baseStyle = new yfiles.styles.ShapeNodeStyle({
-      fill: 'rgb(102, 153, 204)',
-      stroke: null,
-      shape: 'rectangle'
+  graph.edgeDefaults.style = new EdgeStyleDecorator(
+    new NodeStylePortStyleAdapter({
+      nodeStyle: new ShapeNodeStyle({
+        fill: 'lightgray',
+        stroke: null,
+        shape: 'ellipse'
+      }),
+      renderSize: [5, 5]
     })
-    graph.nodeDefaults.style = new NodeStyleDecorator(baseStyle, 'resources/workstation.svg')
-    graph.nodeDefaults.size = [80, 40]
+  )
 
-    graph.edgeDefaults.style = new EdgeStyleDecorator(
-      new yfiles.styles.NodeStylePortStyleAdapter({
-        nodeStyle: new yfiles.styles.ShapeNodeStyle({
-          fill: 'lightgray',
-          stroke: null,
-          shape: 'ellipse'
-        }),
-        renderSize: [5, 5]
-      })
-    )
+  graph.nodeDefaults.labels.style = new LabelStyleDecorator(
+    new DefaultLabelStyle({ textFill: 'white' })
+  )
+  graph.nodeDefaults.labels.layoutParameter = InteriorLabelModel.CENTER
 
-    graph.nodeDefaults.labels.style = new LabelStyleDecorator(
-      new yfiles.styles.DefaultLabelStyle({ textFill: 'white' })
-    )
-    graph.nodeDefaults.labels.layoutParameter = yfiles.graph.InteriorLabelModel.CENTER
+  graph.edgeDefaults.labels.style = new LabelStyleDecorator(new DefaultLabelStyle())
+  graph.edgeDefaults.labels.layoutParameter = new SmartEdgeLabelModel().createDefaultParameter()
 
-    graph.edgeDefaults.labels.style = new LabelStyleDecorator(new yfiles.styles.DefaultLabelStyle())
-    graph.edgeDefaults.labels.layoutParameter = new yfiles.graph.SmartEdgeLabelModel().createDefaultParameter()
+  createSampleGraph(graph)
+  graphComponent.fitGraphBounds()
 
-    createSampleGraph(graph)
-    graphComponent.fitGraphBounds()
+  registerCommands()
 
-    registerCommands()
+  showApp(graphComponent)
+}
 
-    app.show(graphComponent)
-  }
+function registerCommands() {
+  bindAction("button[data-command='Reload']", () => {
+    graphComponent.graph.clear()
+    createSampleGraph(graphComponent.graph)
+    ICommand.FIT_GRAPH_BOUNDS.execute(null, graphComponent)
+  })
+  bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent)
+  bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent)
+  bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent)
+  bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
+}
 
-  function registerCommands() {
-    const iCommand = yfiles.input.ICommand
+/**
+ * Creates the sample graph of this demo.
+ * @param {IGraph} graph The graph to which nodes and edges are added
+ */
+function createSampleGraph(graph) {
+  graph.clear()
 
-    app.bindAction("button[data-command='Reload']", () => {
-      graphComponent.graph.clear()
-      createSampleGraph(graphComponent.graph)
-      yfiles.input.ICommand.FIT_GRAPH_BOUNDS.execute(null, graphComponent)
-    })
-    app.bindCommand("button[data-command='ZoomIn']", iCommand.INCREASE_ZOOM, graphComponent)
-    app.bindCommand("button[data-command='ZoomOut']", iCommand.DECREASE_ZOOM, graphComponent)
-    app.bindCommand("button[data-command='FitContent']", iCommand.FIT_GRAPH_BOUNDS, graphComponent)
-    app.bindCommand("button[data-command='ZoomOriginal']", iCommand.ZOOM, graphComponent, 1.0)
-  }
+  graph.createNodeAt({
+    location: new Point(0, 0),
+    style: new NodeStyleDecorator(baseStyle, 'resources/switch.svg'),
+    tag: 'Root',
+    labels: ['Root']
+  })
+  graph.createNodeAt({
+    location: new Point(120, -50),
+    style: new NodeStyleDecorator(baseStyle, 'resources/switch.svg'),
+    tag: 'Switch',
+    labels: ['Switch']
+  })
+  graph.createNodeAt({
+    location: new Point(-130, 60),
+    style: new NodeStyleDecorator(baseStyle, 'resources/switch.svg'),
+    tag: 'Switch',
+    labels: ['Switch']
+  })
+  graph.createNodeAt({
+    location: new Point(95, -180),
+    style: new NodeStyleDecorator(baseStyle, 'resources/scanner.svg'),
+    tag: 'Scanner',
+    labels: ['Scanner']
+  })
+  graph.createNodeAt({
+    location: new Point(240, -110),
+    style: new NodeStyleDecorator(baseStyle, 'resources/printer.svg'),
+    tag: 'Printer',
+    labels: ['Printer']
+  })
+  graph.createNodeAt({
+    location: new Point(200, 50),
+    style: new NodeStyleDecorator(baseStyle, 'resources/workstation.svg'),
+    tag: 'Workstation',
+    labels: ['Workstation']
+  })
+  graph.createNodeAt({
+    location: new Point(-160, -60),
+    style: new NodeStyleDecorator(baseStyle, 'resources/printer.svg'),
+    tag: 'Printer',
+    labels: ['Printer']
+  })
+  graph.createNodeAt({
+    location: new Point(-260, 40),
+    style: new NodeStyleDecorator(baseStyle, 'resources/scanner.svg'),
+    tag: 'Scanner',
+    labels: ['Scanner']
+  })
+  graph.createNodeAt({
+    location: new Point(-200, 170),
+    style: new NodeStyleDecorator(baseStyle, 'resources/workstation.svg'),
+    tag: 'Workstation',
+    labels: ['Workstation']
+  })
+  graph.createNodeAt({
+    location: new Point(-50, 160),
+    style: new NodeStyleDecorator(baseStyle, 'resources/workstation.svg'),
+    tag: 'Workstation',
+    labels: ['Workstation']
+  })
 
-  /**
-   * Creates the sample graph of this demo.
-   * @param {yfiles.graph.IGraph} graph The graph to which nodes and edges are added
-   */
-  function createSampleGraph(graph) {
-    graph.clear()
+  const nodes = graph.nodes.toArray()
 
-    graph.createNodeAt({
-      location: new yfiles.geometry.Point(0, 0),
-      style: new NodeStyleDecorator(baseStyle, 'resources/switch.svg'),
-      tag: 'Root',
-      labels: ['Root']
-    })
-    graph.createNodeAt({
-      location: new yfiles.geometry.Point(120, -50),
-      style: new NodeStyleDecorator(baseStyle, 'resources/switch.svg'),
-      tag: 'Switch',
-      labels: ['Switch']
-    })
-    graph.createNodeAt({
-      location: new yfiles.geometry.Point(-130, 60),
-      style: new NodeStyleDecorator(baseStyle, 'resources/switch.svg'),
-      tag: 'Switch',
-      labels: ['Switch']
-    })
-    graph.createNodeAt({
-      location: new yfiles.geometry.Point(95, -180),
-      style: new NodeStyleDecorator(baseStyle, 'resources/scanner.svg'),
-      tag: 'Scanner',
-      labels: ['Scanner']
-    })
-    graph.createNodeAt({
-      location: new yfiles.geometry.Point(240, -110),
-      style: new NodeStyleDecorator(baseStyle, 'resources/printer.svg'),
-      tag: 'Printer',
-      labels: ['Printer']
-    })
-    graph.createNodeAt({
-      location: new yfiles.geometry.Point(200, 50),
-      style: new NodeStyleDecorator(baseStyle, 'resources/workstation.svg'),
-      tag: 'Workstation',
-      labels: ['Workstation']
-    })
-    graph.createNodeAt({
-      location: new yfiles.geometry.Point(-160, -60),
-      style: new NodeStyleDecorator(baseStyle, 'resources/printer.svg'),
-      tag: 'Printer',
-      labels: ['Printer']
-    })
-    graph.createNodeAt({
-      location: new yfiles.geometry.Point(-260, 40),
-      style: new NodeStyleDecorator(baseStyle, 'resources/scanner.svg'),
-      tag: 'Scanner',
-      labels: ['Scanner']
-    })
-    graph.createNodeAt({
-      location: new yfiles.geometry.Point(-200, 170),
-      style: new NodeStyleDecorator(baseStyle, 'resources/workstation.svg'),
-      tag: 'Workstation',
-      labels: ['Workstation']
-    })
-    graph.createNodeAt({
-      location: new yfiles.geometry.Point(-50, 160),
-      style: new NodeStyleDecorator(baseStyle, 'resources/workstation.svg'),
-      tag: 'Workstation',
-      labels: ['Workstation']
-    })
+  graph.createEdge({
+    source: nodes[0],
+    target: nodes[1],
+    tag: 'TRAFFIC_VERY_HIGH'
+  })
+  graph.createEdge({
+    source: nodes[0],
+    target: nodes[2],
+    tag: 'TRAFFIC_HIGH'
+  })
+  graph.createEdge({
+    source: nodes[1],
+    target: nodes[3],
+    tag: 'TRAFFIC_HIGH'
+  })
+  graph.createEdge({
+    source: nodes[1],
+    target: nodes[4],
+    tag: 'TRAFFIC_NORMAL'
+  })
+  graph.createEdge({
+    source: nodes[1],
+    target: nodes[5],
+    tag: 'TRAFFIC_HIGH'
+  })
+  graph.createEdge({
+    source: nodes[2],
+    target: nodes[6],
+    tag: 'TRAFFIC_LOW'
+  })
+  graph.createEdge({
+    source: nodes[2],
+    target: nodes[7],
+    tag: 'TRAFFIC_LOW'
+  })
+  graph.createEdge({
+    source: nodes[2],
+    target: nodes[8],
+    tag: 'TRAFFIC_NORMAL'
+  })
+  graph.createEdge({
+    source: nodes[2],
+    target: nodes[9],
+    tag: 'TRAFFIC_LOW'
+  })
 
-    const nodes = graph.nodes.toArray()
-
-    graph.createEdge({
-      source: nodes[0],
-      target: nodes[1],
-      tag: 'TRAFFIC_VERY_HIGH'
-    })
-    graph.createEdge({
-      source: nodes[0],
-      target: nodes[2],
-      tag: 'TRAFFIC_HIGH'
-    })
-    graph.createEdge({
-      source: nodes[1],
-      target: nodes[3],
-      tag: 'TRAFFIC_HIGH'
-    })
-    graph.createEdge({
-      source: nodes[1],
-      target: nodes[4],
-      tag: 'TRAFFIC_NORMAL'
-    })
-    graph.createEdge({
-      source: nodes[1],
-      target: nodes[5],
-      tag: 'TRAFFIC_HIGH'
-    })
-    graph.createEdge({
-      source: nodes[2],
-      target: nodes[6],
-      tag: 'TRAFFIC_LOW'
-    })
-    graph.createEdge({
-      source: nodes[2],
-      target: nodes[7],
-      tag: 'TRAFFIC_LOW'
-    })
-    graph.createEdge({
-      source: nodes[2],
-      target: nodes[8],
-      tag: 'TRAFFIC_NORMAL'
-    })
-    graph.createEdge({
-      source: nodes[2],
-      target: nodes[9],
-      tag: 'TRAFFIC_LOW'
-    })
-
-    // add some bends
-    const edges = graph.edges.toArray()
-    edges.forEach(edge => {
-      graph.addBend(
-        edge,
-        edge.sourcePort.location.add(
-          edge.targetPort.location.subtract(edge.sourcePort.location).multiply(0.5)
-        )
+  // add some bends
+  const edges = graph.edges.toArray()
+  edges.forEach(edge => {
+    graph.addBend(
+      edge,
+      edge.sourcePort.location.add(
+        edge.targetPort.location.subtract(edge.sourcePort.location).multiply(0.5)
       )
-    })
-  }
+    )
+  })
+}
 
-  // start demo
-  run()
-})
+// start demo
+loadJson().then(run)

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.1.
- ** Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.2.
+ ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,48 +26,41 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-'use strict'
+import { BaseClass, INode, INodeSizeConstraintProvider, Rect, Size } from 'yfiles'
 
-define(['yfiles/view-editor'], /** @type {yfiles_namespace} */ /** typeof yfiles */ yfiles => {
+/**
+ * An {@link INodeSizeConstraintProvider} that prevents shrinking of
+ * nodes. Additionally, neither side of the node can become larger than
+ * three times its initial size in each resizing operation.
+ */
+export default class BlueSizeConstraintProvider extends BaseClass(INodeSizeConstraintProvider) {
   /**
-   * An {@link yfiles.input.INodeSizeConstraintProvider} that prevents shrinking of
-   * nodes. Additionally, neither side of the node can become larger than
-   * three times its initial size in each resizing operation.
-   * @implements {yfiles.input.INodeSizeConstraintProvider.<yfiles.graph.INode>}
+   * Returns the current node size to prevent the shrinking of nodes.
+   * @param {INode} item
+   * @see Specified by {@link INodeSizeConstraintProvider#getMinimumSize}.
+   * @return {Size}
    */
-  class BlueSizeConstraintProvider extends yfiles.lang.Class(
-    yfiles.input.INodeSizeConstraintProvider
-  ) {
-    /**
-     * Returns the current node size to prevent the shrinking of nodes.
-     * @param {yfiles.graph.INode} item
-     * @see Specified by {@link yfiles.input.INodeSizeConstraintProvider#getMinimumSize}.
-     * @return {yfiles.geometry.Size}
-     */
-    getMinimumSize(item) {
-      return item.layout.toSize()
-    }
-
-    /**
-     * Returns three times the current node size.
-     * @param {yfiles.graph.INode} item
-     * @see Specified by {@link yfiles.input.INodeSizeConstraintProvider#getMaximumSize}.
-     * @return {yfiles.geometry.Size}
-     */
-    getMaximumSize(item) {
-      return new yfiles.geometry.Size(item.layout.width * 3, item.layout.height * 3)
-    }
-
-    /**
-     * Returns an empty rectangle since this area is not constraint.
-     * @param {yfiles.graph.INode} item
-     * @see Specified by {@link yfiles.input.INodeSizeConstraintProvider#getMinimumEnclosedArea}.
-     * @return {yfiles.geometry.Rect}
-     */
-    getMinimumEnclosedArea(item) {
-      return yfiles.geometry.Rect.EMPTY
-    }
+  getMinimumSize(item) {
+    return item.layout.toSize()
   }
 
-  return BlueSizeConstraintProvider
-})
+  /**
+   * Returns three times the current node size.
+   * @param {INode} item
+   * @see Specified by {@link INodeSizeConstraintProvider#getMaximumSize}.
+   * @return {Size}
+   */
+  getMaximumSize(item) {
+    return new Size(item.layout.width * 3, item.layout.height * 3)
+  }
+
+  /**
+   * Returns an empty rectangle since this area is not constraint.
+   * @param {INode} item
+   * @see Specified by {@link INodeSizeConstraintProvider#getMinimumEnclosedArea}.
+   * @return {Rect}
+   */
+  getMinimumEnclosedArea(item) {
+    return Rect.EMPTY
+  }
+}

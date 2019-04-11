@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.1.
- ** Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.2.
+ ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,400 +26,391 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-'use strict'
+import {
+  CircularLayout,
+  Class,
+  ComponentAssignmentStrategy,
+  EnumDefinition,
+  GraphComponent,
+  HierarchicLayout,
+  OrganicLayout,
+  OrthogonalLayout,
+  PartialLayout,
+  PartialLayoutData,
+  PartialLayoutEdgeRoutingStrategy,
+  PartialLayoutOrientation,
+  SubgraphPlacement,
+  YBoolean,
+  YNumber,
+  YString
+} from 'yfiles'
 
-/*eslint-disable*/
-;(function(r) {
-  ;(function(f) {
-    if ('function' == typeof define && define.amd) {
-      define(['yfiles/lang', 'yfiles/view-component', 'LayoutConfiguration.js'], f)
-    } else {
-      f(r.yfiles.lang, r.yfiles)
+import LayoutConfiguration from './LayoutConfiguration.js'
+import {
+  ComponentAttribute,
+  Components,
+  EnumValuesAttribute,
+  LabelAttribute,
+  MinMaxAttribute,
+  OptionGroup,
+  OptionGroupAttribute,
+  TypeAttribute
+} from '../../resources/demo-option-editor.js'
+
+/**
+ * Configuration options for the layout algorithm of the same name.
+ * @yjs:keep=DescriptionGroup,LayoutGroup,alignNodesItem,descriptionText,minNodeDistItem,componentAssignmentStrategyItem,orientationItem,routingToSubgraphItem,subgraphLayoutItem,subgraphPlacementItem
+ */
+const PartialLayoutConfig = Class('PartialLayoutConfig', {
+  $extends: LayoutConfiguration,
+
+  $meta: [LabelAttribute('PartialLayout')],
+
+  /**
+   * Setup default values for various configuration parameters.
+   */
+  constructor: function() {
+    LayoutConfiguration.call(this)
+    this.routingToSubgraphItem = PartialLayoutEdgeRoutingStrategy.AUTOMATIC
+    this.componentAssignmentStrategyItem = ComponentAssignmentStrategy.CONNECTED
+    this.subgraphLayoutItem = PartialLayoutConfig.EnumSubgraphLayouts.IHL
+    this.subgraphPlacementItem = SubgraphPlacement.FROM_SKETCH
+    this.minNodeDistItem = 30
+    this.orientationItem = PartialLayoutOrientation.AUTO_DETECT
+    this.alignNodesItem = true
+  },
+
+  /**
+   * Creates and configures a layout and the graph's {@link IGraph#mapperRegistry} if necessary.
+   * @param {GraphComponent} graphComponent The <code>GraphComponent</code> to apply the
+   *   configuration on.
+   * @return {ILayoutAlgorithm} The configured layout.
+   */
+  createConfiguredLayout: function(graphComponent) {
+    const layout = new PartialLayout()
+    layout.considerNodeAlignment = this.alignNodesItem
+    layout.minimumNodeDistance = this.minNodeDistItem
+    layout.subgraphPlacement = this.subgraphPlacementItem
+    layout.componentAssignmentStrategy = this.componentAssignmentStrategyItem
+    layout.layoutOrientation = this.orientationItem
+    layout.edgeRoutingStrategy = this.routingToSubgraphItem
+
+    let subgraphLayout = null
+    if (this.componentAssignmentStrategyItem !== ComponentAssignmentStrategy.SINGLE) {
+      switch (this.subgraphLayoutItem) {
+        case PartialLayoutConfig.EnumSubgraphLayouts.IHL:
+          subgraphLayout = new HierarchicLayout()
+          break
+        case PartialLayoutConfig.EnumSubgraphLayouts.ORGANIC:
+          subgraphLayout = new OrganicLayout()
+          break
+        case PartialLayoutConfig.EnumSubgraphLayouts.CIRCULAR:
+          subgraphLayout = new CircularLayout()
+          break
+        case PartialLayoutConfig.EnumSubgraphLayouts.ORTHOGONAL:
+          subgraphLayout = new OrthogonalLayout()
+          break
+        default:
+          break
+      }
     }
-  })((lang, yfiles) => {
-    const demo = yfiles.module('demo')
-    yfiles.module('demo', exports => {
-      /**
-       * Configuration options for the layout algorithm of the same name.
-       * @yjs:keep=DescriptionGroup,LayoutGroup,alignNodesItem,descriptionText,minNodeDistItem,componentAssignmentStrategyItem,orientationItem,routingToSubgraphItem,subgraphLayoutItem,subgraphPlacementItem
-       * @class
-       * @extends demo.LayoutConfiguration
-       */
-      exports.PartialLayoutConfig = new yfiles.lang.ClassDefinition(() => {
-        /** @lends {demo.PartialLayoutConfig.prototype} */
-        return {
-          $extends: demo.LayoutConfiguration,
+    layout.coreLayout = subgraphLayout
 
-          $meta: [demo.options.LabelAttribute('PartialLayout')],
+    return layout
+  },
 
-          /**
-           * Setup default values for various configuration parameters.
-           */
-          constructor: function() {
-            demo.LayoutConfiguration.call(this)
-            this.routingToSubgraphItem = yfiles.partial.EdgeRoutingStrategy.AUTOMATIC
-            this.componentAssignmentStrategyItem =
-              yfiles.partial.ComponentAssignmentStrategy.CONNECTED
-            this.subgraphLayoutItem = demo.PartialLayoutConfig.EnumSubgraphLayouts.IHL
-            this.subgraphPlacementItem = yfiles.partial.SubgraphPlacement.FROM_SKETCH
-            this.minNodeDistItem = 30
-            this.orientationItem = yfiles.partial.LayoutOrientation.AUTO_DETECT
-            this.alignNodesItem = true
-          },
-
-          /**
-           * Creates and configures a layout and the graph's {@link yfiles.graph.IGraph#mapperRegistry} if necessary.
-           * @param {yfiles.view.GraphComponent} graphComponent The <code>GraphComponent</code> to apply the
-           *   configuration on.
-           * @return {yfiles.layout.ILayoutAlgorithm} The configured layout.
-           */
-          createConfiguredLayout: function(graphComponent) {
-            const layout = new yfiles.partial.PartialLayout()
-            layout.considerNodeAlignment = this.alignNodesItem
-            layout.minimumNodeDistance = this.minNodeDistItem
-            layout.subgraphPlacement = this.subgraphPlacementItem
-            layout.componentAssignmentStrategy = this.componentAssignmentStrategyItem
-            layout.layoutOrientation = this.orientationItem
-            layout.edgeRoutingStrategy = this.routingToSubgraphItem
-
-            let subgraphLayout = null
-            if (
-              this.componentAssignmentStrategyItem !==
-              yfiles.partial.ComponentAssignmentStrategy.SINGLE
-            ) {
-              switch (this.subgraphLayoutItem) {
-                case demo.PartialLayoutConfig.EnumSubgraphLayouts.IHL:
-                  subgraphLayout = new yfiles.hierarchic.HierarchicLayout()
-                  break
-                case demo.PartialLayoutConfig.EnumSubgraphLayouts.ORGANIC:
-                  subgraphLayout = new yfiles.organic.OrganicLayout()
-                  break
-                case demo.PartialLayoutConfig.EnumSubgraphLayouts.CIRCULAR:
-                  subgraphLayout = new yfiles.circular.CircularLayout()
-                  break
-                case demo.PartialLayoutConfig.EnumSubgraphLayouts.ORTHOGONAL:
-                  subgraphLayout = new yfiles.orthogonal.OrthogonalLayout()
-                  break
-                default:
-                  break
-              }
-            }
-            layout.coreLayout = subgraphLayout
-
-            return layout
-          },
-
-          /**
-           * Creates and configures the layout data.
-           * @return {yfiles.layout.LayoutData} The configured layout data.
-           */
-          createConfiguredLayoutData: function(graphComponent, layout) {
-            const layoutData = new yfiles.partial.PartialLayoutData()
-            const selection = graphComponent.selection
-
-            layoutData.affectedNodes.source = selection.selectedNodes
-            layoutData.affectedEdges.source = selection.selectedEdges
-
-            return layoutData
-          },
-
-          // ReSharper disable UnusedMember.Global
-          // ReSharper disable InconsistentNaming
-          /** @type {demo.options.OptionGroup} */
-          DescriptionGroup: {
-            $meta: function() {
-              return [
-                demo.options.LabelAttribute('Description'),
-                demo.options.OptionGroupAttribute('RootGroup', 5),
-                demo.options.TypeAttribute(demo.options.OptionGroup.$class)
-              ]
-            },
-            value: null
-          },
-
-          /** @type {demo.options.OptionGroup} */
-          LayoutGroup: {
-            $meta: function() {
-              return [
-                demo.options.LabelAttribute('General'),
-                demo.options.OptionGroupAttribute('RootGroup', 10),
-                demo.options.TypeAttribute(demo.options.OptionGroup.$class)
-              ]
-            },
-            value: null
-          },
-
-          /** @type {string} */
-          descriptionText: {
-            $meta: function() {
-              return [
-                demo.options.OptionGroupAttribute('DescriptionGroup', 10),
-                demo.options.ComponentAttribute(demo.options.Components.HTML_BLOCK),
-                demo.options.TypeAttribute(yfiles.lang.String.$class)
-              ]
-            },
-            get: function() {
-              return "<p style='margin-top:0'>Partial layout arranges user-specified parts of a diagram, the so-called partial elements, while keeping the other parts fixed. It is related to incremental graph layout. This concept is a perfect fit for incremental scenarios where subsequently added parts should be arranged so that they fit into a given, unchanged diagram.</p><p>In a first step, partial elements are combined to form subgraph components. Subsequently, these are arranged and afterwards placed so that the remainder of the diagram, which consists of the so-called fixed elements, is not affected.</p><p>Placing a subgraph component predominantly means finding a good position that both meets certain proximity criteria and offers enough space to accommodate the subgraph component.</p>"
-            }
-          },
-
-          /**
-           * Backing field for below property
-           * @type {yfiles.partial.EdgeRoutingStrategy}
-           */
-          $routingToSubgraphItem: null,
-
-          /** @type {yfiles.partial.EdgeRoutingStrategy} */
-          routingToSubgraphItem: {
-            $meta: function() {
-              return [
-                demo.options.LabelAttribute(
-                  'Edge Routing Style',
-                  '#/api/yfiles.partial.PartialLayout#PartialLayout-property-edgeRoutingStrategy'
-                ),
-                demo.options.OptionGroupAttribute('LayoutGroup', 10),
-                demo.options.EnumValuesAttribute().init({
-                  values: [
-                    ['Auto-Detect', yfiles.partial.EdgeRoutingStrategy.AUTOMATIC],
-                    ['Octilinear', yfiles.partial.EdgeRoutingStrategy.OCTILINEAR],
-                    ['Straight-Line', yfiles.partial.EdgeRoutingStrategy.STRAIGHTLINE],
-                    ['Orthogonal', yfiles.partial.EdgeRoutingStrategy.ORTHOGONAL],
-                    ['Organic', yfiles.partial.EdgeRoutingStrategy.ORGANIC]
-                  ]
-                }),
-                demo.options.TypeAttribute(yfiles.partial.EdgeRoutingStrategy.$class)
-              ]
-            },
-            get: function() {
-              return this.$routingToSubgraphItem
-            },
-            set: function(value) {
-              this.$routingToSubgraphItem = value
-            }
-          },
-
-          /**
-           * Backing field for below property
-           * @type {yfiles.partial.ComponentAssignmentStrategy}
-           */
-          $componentAssignmentStrategyItem: null,
-
-          /** @type {yfiles.partial.ComponentAssignmentStrategy} */
-          componentAssignmentStrategyItem: {
-            $meta: function() {
-              return [
-                demo.options.LabelAttribute(
-                  'Placement Strategy',
-                  '#/api/yfiles.partial.PartialLayout#PartialLayout-property-componentAssignmentStrategy'
-                ),
-                demo.options.OptionGroupAttribute('LayoutGroup', 20),
-                demo.options.EnumValuesAttribute().init({
-                  values: [
-                    [
-                      'Connected Nodes as a Unit',
-                      yfiles.partial.ComponentAssignmentStrategy.CONNECTED
-                    ],
-                    ['Each Node Separately', yfiles.partial.ComponentAssignmentStrategy.SINGLE],
-                    ['All Nodes as a Unit', yfiles.partial.ComponentAssignmentStrategy.CUSTOMIZED],
-                    ['Clustering', yfiles.partial.ComponentAssignmentStrategy.CLUSTERING]
-                  ]
-                }),
-                demo.options.TypeAttribute(yfiles.partial.ComponentAssignmentStrategy.$class)
-              ]
-            },
-            get: function() {
-              return this.$componentAssignmentStrategyItem
-            },
-            set: function(value) {
-              this.$componentAssignmentStrategyItem = value
-            }
-          },
-
-          /**
-           * Backing field for below property
-           * @type {demo.PartialLayoutConfig.EnumSubgraphLayouts}
-           */
-          $subgraphLayoutItem: null,
-
-          /** @type {demo.PartialLayoutConfig.EnumSubgraphLayouts} */
-          subgraphLayoutItem: {
-            $meta: function() {
-              return [
-                demo.options.LabelAttribute(
-                  'Subgraph Layouter',
-                  '#/api/yfiles.partial.PartialLayout#PartialLayout-property-coreLayout'
-                ),
-                demo.options.OptionGroupAttribute('LayoutGroup', 30),
-                demo.options.EnumValuesAttribute().init({
-                  values: [
-                    ['Hierarchical', demo.PartialLayoutConfig.EnumSubgraphLayouts.IHL],
-                    ['Organic', demo.PartialLayoutConfig.EnumSubgraphLayouts.ORGANIC],
-                    ['Circular', demo.PartialLayoutConfig.EnumSubgraphLayouts.CIRCULAR],
-                    ['Orthogonal', demo.PartialLayoutConfig.EnumSubgraphLayouts.ORTHOGONAL],
-                    ['As Is', demo.PartialLayoutConfig.EnumSubgraphLayouts.AS_IS]
-                  ]
-                }),
-                demo.options.TypeAttribute(demo.PartialLayoutConfig.EnumSubgraphLayouts.$class)
-              ]
-            },
-            get: function() {
-              return this.$subgraphLayoutItem
-            },
-            set: function(value) {
-              this.$subgraphLayoutItem = value
-            }
-          },
-
-          /**
-           * Backing field for below property
-           * @type {yfiles.partial.SubgraphPlacement}
-           */
-          $subgraphPlacementItem: 0,
-
-          /** @type {yfiles.partial.SubgraphPlacement} */
-          subgraphPlacementItem: {
-            $meta: function() {
-              return [
-                demo.options.LabelAttribute(
-                  'Preferred Placement',
-                  '#/api/yfiles.partial.PartialLayout#PartialLayout-property-subgraphPlacement'
-                ),
-                demo.options.OptionGroupAttribute('LayoutGroup', 40),
-                demo.options.EnumValuesAttribute().init({
-                  values: [
-                    ['Close to Initial Position', yfiles.partial.SubgraphPlacement.FROM_SKETCH],
-                    ['Close to Neighbors', yfiles.partial.SubgraphPlacement.BARYCENTER]
-                  ]
-                }),
-                demo.options.TypeAttribute(yfiles.partial.SubgraphPlacement.$class)
-              ]
-            },
-            get: function() {
-              return this.$subgraphPlacementItem
-            },
-            set: function(value) {
-              this.$subgraphPlacementItem = value
-            }
-          },
-
-          /**
-           * Backing field for below property
-           * @type {number}
-           */
-          $minNodeDistItem: 0,
-
-          /** @type {number} */
-          minNodeDistItem: {
-            $meta: function() {
-              return [
-                demo.options.LabelAttribute(
-                  'Minimum Node Distance',
-                  '#/api/yfiles.partial.PartialLayout#PartialLayout-property-minimumNodeDistance'
-                ),
-                demo.options.OptionGroupAttribute('LayoutGroup', 50),
-                demo.options.MinMaxAttribute().init({
-                  min: 1,
-                  max: 100
-                }),
-                demo.options.ComponentAttribute(demo.options.Components.SLIDER),
-                demo.options.TypeAttribute(yfiles.lang.Number.$class)
-              ]
-            },
-            get: function() {
-              return this.$minNodeDistItem
-            },
-            set: function(value) {
-              this.$minNodeDistItem = value
-            }
-          },
-
-          /**
-           * Backing field for below property
-           * @type {yfiles.partial.LayoutOrientation}
-           */
-          $orientationItem: null,
-
-          /** @type {yfiles.partial.LayoutOrientation} */
-          orientationItem: {
-            $meta: function() {
-              return [
-                demo.options.LabelAttribute(
-                  'Orientation',
-                  '#/api/yfiles.partial.PartialLayout#PartialLayout-property-layoutOrientation'
-                ),
-                demo.options.OptionGroupAttribute('LayoutGroup', 60),
-                demo.options.EnumValuesAttribute().init({
-                  values: [
-                    ['Auto Detect', yfiles.partial.LayoutOrientation.AUTO_DETECT],
-                    ['Top to Bottom', yfiles.partial.LayoutOrientation.TOP_TO_BOTTOM],
-                    ['Left to Right', yfiles.partial.LayoutOrientation.LEFT_TO_RIGHT],
-                    ['Bottom to Top', yfiles.partial.LayoutOrientation.BOTTOM_TO_TOP],
-                    ['Right to Left', yfiles.partial.LayoutOrientation.RIGHT_TO_LEFT],
-                    ['None', yfiles.partial.LayoutOrientation.NONE]
-                  ]
-                }),
-                demo.options.TypeAttribute(yfiles.partial.LayoutOrientation.$class)
-              ]
-            },
-            get: function() {
-              return this.$orientationItem
-            },
-            set: function(value) {
-              this.$orientationItem = value
-            }
-          },
-
-          /**
-           * Backing field for below property
-           * @type {boolean}
-           */
-          $alignNodesItem: false,
-
-          /** @type {boolean} */
-          alignNodesItem: {
-            $meta: function() {
-              return [
-                demo.options.LabelAttribute(
-                  'Align Nodes',
-                  '#/api/yfiles.partial.PartialLayout#PartialLayout-property-considerNodeAlignment'
-                ),
-                demo.options.OptionGroupAttribute('LayoutGroup', 70),
-                demo.options.TypeAttribute(yfiles.lang.Boolean.$class)
-              ]
-            },
-            get: function() {
-              return this.$alignNodesItem
-            },
-            set: function(value) {
-              this.$alignNodesItem = value
-            }
-          },
-
-          /** @lends {demo.PartialLayoutConfig} */
-          $static: {
-            // ReSharper restore UnusedMember.Global
-            // ReSharper restore InconsistentNaming
-            EnumSubgraphLayouts: new yfiles.lang.EnumDefinition(() => {
-              return {
-                IHL: 0,
-                ORGANIC: 1,
-                CIRCULAR: 2,
-                ORTHOGONAL: 3,
-                AS_IS: 4
-              }
-            })
-          }
-        }
-      })
+  /**
+   * Creates and configures the layout data.
+   * @return {LayoutData} The configured layout data.
+   */
+  createConfiguredLayoutData: function(graphComponent, layout) {
+    return new PartialLayoutData({
+      affectedNodes: graphComponent.selection.selectedNodes,
+      affectedEdges: graphComponent.selection.selectedEdges
     })
-    return yfiles.module('demo')
-  })
-})(
-  'undefined' !== typeof window
-    ? window
-    : 'undefined' !== typeof global
-      ? global
-      : 'undefined' !== typeof self
-        ? self
-        : this
-)
+  },
+
+  // ReSharper disable UnusedMember.Global
+  // ReSharper disable InconsistentNaming
+  /** @type {OptionGroup} */
+  DescriptionGroup: {
+    $meta: function() {
+      return [
+        LabelAttribute('Description'),
+        OptionGroupAttribute('RootGroup', 5),
+        TypeAttribute(OptionGroup.$class)
+      ]
+    },
+    value: null
+  },
+
+  /** @type {OptionGroup} */
+  LayoutGroup: {
+    $meta: function() {
+      return [
+        LabelAttribute('General'),
+        OptionGroupAttribute('RootGroup', 10),
+        TypeAttribute(OptionGroup.$class)
+      ]
+    },
+    value: null
+  },
+
+  /** @type {string} */
+  descriptionText: {
+    $meta: function() {
+      return [
+        OptionGroupAttribute('DescriptionGroup', 10),
+        ComponentAttribute(Components.HTML_BLOCK),
+        TypeAttribute(YString.$class)
+      ]
+    },
+    get: function() {
+      return "<p style='margin-top:0'>Partial layout arranges user-specified parts of a diagram, the so-called partial elements, while keeping the other parts fixed. It is related to incremental graph layout. This concept is a perfect fit for incremental scenarios where subsequently added parts should be arranged so that they fit into a given, unchanged diagram.</p><p>In a first step, partial elements are combined to form subgraph components. Subsequently, these are arranged and afterwards placed so that the remainder of the diagram, which consists of the so-called fixed elements, is not affected.</p><p>Placing a subgraph component predominantly means finding a good position that both meets certain proximity criteria and offers enough space to accommodate the subgraph component.</p>"
+    }
+  },
+
+  /**
+   * Backing field for below property
+   * @type {PartialLayoutEdgeRoutingStrategy}
+   */
+  $routingToSubgraphItem: null,
+
+  /** @type {PartialLayoutEdgeRoutingStrategy} */
+  routingToSubgraphItem: {
+    $meta: function() {
+      return [
+        LabelAttribute(
+          'Edge Routing Style',
+          '#/api/PartialLayout#PartialLayout-property-edgeRoutingStrategy'
+        ),
+        OptionGroupAttribute('LayoutGroup', 10),
+        EnumValuesAttribute().init({
+          values: [
+            ['Auto-Detect', PartialLayoutEdgeRoutingStrategy.AUTOMATIC],
+            ['Octilinear', PartialLayoutEdgeRoutingStrategy.OCTILINEAR],
+            ['Straight-Line', PartialLayoutEdgeRoutingStrategy.STRAIGHTLINE],
+            ['Orthogonal', PartialLayoutEdgeRoutingStrategy.ORTHOGONAL],
+            ['Organic', PartialLayoutEdgeRoutingStrategy.ORGANIC]
+          ]
+        }),
+        TypeAttribute(PartialLayoutEdgeRoutingStrategy.$class)
+      ]
+    },
+    get: function() {
+      return this.$routingToSubgraphItem
+    },
+    set: function(value) {
+      this.$routingToSubgraphItem = value
+    }
+  },
+
+  /**
+   * Backing field for below property
+   * @type {ComponentAssignmentStrategy}
+   */
+  $componentAssignmentStrategyItem: null,
+
+  /** @type {ComponentAssignmentStrategy} */
+  componentAssignmentStrategyItem: {
+    $meta: function() {
+      return [
+        LabelAttribute(
+          'Placement Strategy',
+          '#/api/PartialLayout#PartialLayout-property-componentAssignmentStrategy'
+        ),
+        OptionGroupAttribute('LayoutGroup', 20),
+        EnumValuesAttribute().init({
+          values: [
+            ['Connected Nodes as a Unit', ComponentAssignmentStrategy.CONNECTED],
+            ['Each Node Separately', ComponentAssignmentStrategy.SINGLE],
+            ['All Nodes as a Unit', ComponentAssignmentStrategy.CUSTOMIZED],
+            ['Clustering', ComponentAssignmentStrategy.CLUSTERING]
+          ]
+        }),
+        TypeAttribute(ComponentAssignmentStrategy.$class)
+      ]
+    },
+    get: function() {
+      return this.$componentAssignmentStrategyItem
+    },
+    set: function(value) {
+      this.$componentAssignmentStrategyItem = value
+    }
+  },
+
+  /**
+   * Backing field for below property
+   * @type {PartialLayoutConfig.EnumSubgraphLayouts}
+   */
+  $subgraphLayoutItem: null,
+
+  /** @type {PartialLayoutConfig.EnumSubgraphLayouts} */
+  subgraphLayoutItem: {
+    $meta: function() {
+      return [
+        LabelAttribute(
+          'Subgraph Layouter',
+          '#/api/PartialLayout#PartialLayout-property-coreLayout'
+        ),
+        OptionGroupAttribute('LayoutGroup', 30),
+        EnumValuesAttribute().init({
+          values: [
+            ['Hierarchical', PartialLayoutConfig.EnumSubgraphLayouts.IHL],
+            ['Organic', PartialLayoutConfig.EnumSubgraphLayouts.ORGANIC],
+            ['Circular', PartialLayoutConfig.EnumSubgraphLayouts.CIRCULAR],
+            ['Orthogonal', PartialLayoutConfig.EnumSubgraphLayouts.ORTHOGONAL],
+            ['As Is', PartialLayoutConfig.EnumSubgraphLayouts.AS_IS]
+          ]
+        }),
+        TypeAttribute(PartialLayoutConfig.EnumSubgraphLayouts.$class)
+      ]
+    },
+    get: function() {
+      return this.$subgraphLayoutItem
+    },
+    set: function(value) {
+      this.$subgraphLayoutItem = value
+    }
+  },
+
+  /**
+   * Backing field for below property
+   * @type {SubgraphPlacement}
+   */
+  $subgraphPlacementItem: 0,
+
+  /** @type {SubgraphPlacement} */
+  subgraphPlacementItem: {
+    $meta: function() {
+      return [
+        LabelAttribute(
+          'Preferred Placement',
+          '#/api/PartialLayout#PartialLayout-property-subgraphPlacement'
+        ),
+        OptionGroupAttribute('LayoutGroup', 40),
+        EnumValuesAttribute().init({
+          values: [
+            ['Close to Initial Position', SubgraphPlacement.FROM_SKETCH],
+            ['Close to Neighbors', SubgraphPlacement.BARYCENTER]
+          ]
+        }),
+        TypeAttribute(SubgraphPlacement.$class)
+      ]
+    },
+    get: function() {
+      return this.$subgraphPlacementItem
+    },
+    set: function(value) {
+      this.$subgraphPlacementItem = value
+    }
+  },
+
+  /**
+   * Backing field for below property
+   * @type {number}
+   */
+  $minNodeDistItem: 0,
+
+  /** @type {number} */
+  minNodeDistItem: {
+    $meta: function() {
+      return [
+        LabelAttribute(
+          'Minimum Node Distance',
+          '#/api/PartialLayout#PartialLayout-property-minimumNodeDistance'
+        ),
+        OptionGroupAttribute('LayoutGroup', 50),
+        MinMaxAttribute().init({
+          min: 1,
+          max: 100
+        }),
+        ComponentAttribute(Components.SLIDER),
+        TypeAttribute(YNumber.$class)
+      ]
+    },
+    get: function() {
+      return this.$minNodeDistItem
+    },
+    set: function(value) {
+      this.$minNodeDistItem = value
+    }
+  },
+
+  /**
+   * Backing field for below property
+   * @type {PartialLayoutOrientation}
+   */
+  $orientationItem: null,
+
+  /** @type {PartialLayoutOrientation} */
+  orientationItem: {
+    $meta: function() {
+      return [
+        LabelAttribute(
+          'Orientation',
+          '#/api/PartialLayout#PartialLayout-property-layoutOrientation'
+        ),
+        OptionGroupAttribute('LayoutGroup', 60),
+        EnumValuesAttribute().init({
+          values: [
+            ['Auto Detect', PartialLayoutOrientation.AUTO_DETECT],
+            ['Top to Bottom', PartialLayoutOrientation.TOP_TO_BOTTOM],
+            ['Left to Right', PartialLayoutOrientation.LEFT_TO_RIGHT],
+            ['Bottom to Top', PartialLayoutOrientation.BOTTOM_TO_TOP],
+            ['Right to Left', PartialLayoutOrientation.RIGHT_TO_LEFT],
+            ['None', PartialLayoutOrientation.NONE]
+          ]
+        }),
+        TypeAttribute(PartialLayoutOrientation.$class)
+      ]
+    },
+    get: function() {
+      return this.$orientationItem
+    },
+    set: function(value) {
+      this.$orientationItem = value
+    }
+  },
+
+  /**
+   * Backing field for below property
+   * @type {boolean}
+   */
+  $alignNodesItem: false,
+
+  /** @type {boolean} */
+  alignNodesItem: {
+    $meta: function() {
+      return [
+        LabelAttribute(
+          'Align Nodes',
+          '#/api/PartialLayout#PartialLayout-property-considerNodeAlignment'
+        ),
+        OptionGroupAttribute('LayoutGroup', 70),
+        TypeAttribute(YBoolean.$class)
+      ]
+    },
+    get: function() {
+      return this.$alignNodesItem
+    },
+    set: function(value) {
+      this.$alignNodesItem = value
+    }
+  },
+
+  $static: {
+    // ReSharper restore UnusedMember.Global
+    // ReSharper restore InconsistentNaming
+    EnumSubgraphLayouts: new EnumDefinition(() => {
+      return {
+        IHL: 0,
+        ORGANIC: 1,
+        CIRCULAR: 2,
+        ORTHOGONAL: 3,
+        AS_IS: 4
+      }
+    })
+  }
+})
+export default PartialLayoutConfig

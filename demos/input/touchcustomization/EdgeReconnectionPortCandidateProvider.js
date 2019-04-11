@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.1.
- ** Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.2.
+ ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,86 +26,79 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-'use strict'
+import {
+  BaseClass,
+  DefaultPortCandidate,
+  FreeNodePortLocationModel,
+  IEdgeReconnectionPortCandidateProvider,
+  IInputModeContext,
+  IPortCandidateProvider,
+  List
+} from 'yfiles'
 
-define(['yfiles/view-editor'], /** @type {yfiles_namespace} */ /** typeof yfiles */ yfiles => {
-  /**
-   * An {@link yfiles.input.IEdgeReconnectionPortCandidateProvider} that allows moving ports to
-   * any other port candidate that another node provides.
-   * @implements {yfiles.input.IEdgeReconnectionPortCandidateProvider}
-   */
-  class EdgeReconnectionPortCandidateProvider extends yfiles.lang.Class(
-    yfiles.input.IEdgeReconnectionPortCandidateProvider
-  ) {
-    constructor(edge) {
-      super()
-      this.edge = edge
-    }
-
-    /**
-     * Gets a list of port candidates for edge reconnection that matches the list of candidates the
-     * IPortCandidateProvider interface returns.
-     * @param {yfiles.input.IInputModeContext} context
-     * @returns {yfiles.collections.List} The list of source port candidates
-     */
-    getSourcePortCandidates(context) {
-      const result = new yfiles.collections.List()
-      // add the current one as the default
-      result.add(new yfiles.input.DefaultPortCandidate(this.edge.sourcePort))
-
-      const graph = context.graph
-      if (graph === null) {
-        return result
-      }
-      graph.nodes.forEach(node => {
-        const provider = node.lookup(yfiles.input.IPortCandidateProvider.$class)
-        // If available, use the candidates from the provider. Otherwise, add a default candidate.
-        if (provider !== null) {
-          result.addRange(provider.getAllTargetPortCandidates(context))
-        } else {
-          result.add(
-            new yfiles.input.DefaultPortCandidate(
-              node,
-              yfiles.graph.FreeNodePortLocationModel.NODE_CENTER_ANCHORED
-            )
-          )
-        }
-      })
-      return result
-    }
-
-    /**
-     * Gets a list of port candidates for edge reconnection that matches the list of candidates the
-     * IPortCandidateProvider interface returns.
-     * @param {yfiles.input.IInputModeContext} context
-     * @returns {yfiles.collections.List} The list of target port candidates
-     */
-    getTargetPortCandidates(context) {
-      const result = new yfiles.collections.List()
-      // add the current one as the default
-      result.add(new yfiles.input.DefaultPortCandidate(this.edge.targetPort))
-
-      const graph = context.graph
-      if (graph === null) {
-        return result
-      }
-      graph.nodes.forEach(node => {
-        const provider = node.lookup(yfiles.input.IPortCandidateProvider.$class)
-        // If available, use the candidates from the provider. Otherwise, add a default candidate.
-        if (provider !== null) {
-          result.addRange(provider.getAllSourcePortCandidates(context))
-        } else {
-          result.add(
-            new yfiles.input.DefaultPortCandidate(
-              node,
-              yfiles.graph.FreeNodePortLocationModel.NODE_CENTER_ANCHORED
-            )
-          )
-        }
-      })
-      return result
-    }
+/**
+ * An {@link IEdgeReconnectionPortCandidateProvider} that allows moving ports to
+ * any other port candidate that another node provides.
+ */
+export default class EdgeReconnectionPortCandidateProvider extends BaseClass(
+  IEdgeReconnectionPortCandidateProvider
+) {
+  constructor(edge) {
+    super()
+    this.edge = edge
   }
 
-  return EdgeReconnectionPortCandidateProvider
-})
+  /**
+   * Gets a list of port candidates for edge reconnection that matches the list of candidates the
+   * IPortCandidateProvider interface returns.
+   * @param {IInputModeContext} context
+   * @returns {List} The list of source port candidates
+   */
+  getSourcePortCandidates(context) {
+    const result = new List()
+    // add the current one as the default
+    result.add(new DefaultPortCandidate(this.edge.sourcePort))
+
+    const graph = context.graph
+    if (graph === null) {
+      return result
+    }
+    graph.nodes.forEach(node => {
+      const provider = node.lookup(IPortCandidateProvider.$class)
+      // If available, use the candidates from the provider. Otherwise, add a default candidate.
+      if (provider !== null) {
+        result.addRange(provider.getAllTargetPortCandidates(context))
+      } else {
+        result.add(new DefaultPortCandidate(node, FreeNodePortLocationModel.NODE_CENTER_ANCHORED))
+      }
+    })
+    return result
+  }
+
+  /**
+   * Gets a list of port candidates for edge reconnection that matches the list of candidates the
+   * IPortCandidateProvider interface returns.
+   * @param {IInputModeContext} context
+   * @returns {List} The list of target port candidates
+   */
+  getTargetPortCandidates(context) {
+    const result = new List()
+    // add the current one as the default
+    result.add(new DefaultPortCandidate(this.edge.targetPort))
+
+    const graph = context.graph
+    if (graph === null) {
+      return result
+    }
+    graph.nodes.forEach(node => {
+      const provider = node.lookup(IPortCandidateProvider.$class)
+      // If available, use the candidates from the provider. Otherwise, add a default candidate.
+      if (provider !== null) {
+        result.addRange(provider.getAllSourcePortCandidates(context))
+      } else {
+        result.add(new DefaultPortCandidate(node, FreeNodePortLocationModel.NODE_CENTER_ANCHORED))
+      }
+    })
+    return result
+  }
+}

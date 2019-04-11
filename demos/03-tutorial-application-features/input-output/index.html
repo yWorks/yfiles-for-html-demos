@@ -7,8 +7,8 @@
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.1.
-     // Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML 2.2.
+     // Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -36,11 +36,12 @@
 
   <title>Input / Output - Application Features Tutorial [yFiles for HTML]</title>
 
-  <link rel="stylesheet" href="../../../lib/yfiles.css">
+  <link rel="stylesheet" href="../../node_modules/yfiles/yfiles.css">
   <link rel="stylesheet" href="../../resources/style/demo.css">
 
   <!-- enable debugging -->
   <script src="../../../ide-support/yfiles-typeinfo.js"></script>
+  <script src="../../resources/filesystem-warning.js"></script>
 </head>
 <body class="demo-has-left">
 
@@ -52,10 +53,10 @@
       This demo shows how to use <a href="https://docs.yworks.com/yfileshtml/#/dguide/io-loading_saving" target="_blank">GraphML input and output</a>.
     </p>
     <p>
-      GraphML is the standard file format for yFiles for HTML. It is an XML format that provides great flexibility
-      when storing custom data. However, note that these attributes (such as styles or even node locations) are
-      not standardized, so you probably won't be able to exchange all of them between different graph libraries,
-      for example.
+      GraphML is the standard file format for yFiles for HTML. It is an XML format that provides great flexibility when
+      storing custom data. However, note that these attributes (such as styles or even node locations) are not
+      standardized, so you probably won't be able to exchange all of them between different graph libraries, for
+      example.
     </p>
     <p>
       Built-in types, in particular styles, can be de-/serialized out of the box which is illustrated in this
@@ -63,8 +64,8 @@
       <a href="https://docs.yworks.com/yfileshtml/#/dguide/customizing_io_automatic-serialization" target="_blank">Automatically Serialized Types.</a>
     </p>
     <p>
-      How to de-/serialize complex types is described in
-      <a href="https://docs.yworks.com/yfileshtml/#/dguide/customizing_io_serialization_complex-types" target="_blank">Serializing Complex Types.</a>
+      How to de-/serialize complex types is described in <a href="https://docs.yworks.com/yfileshtml/#/dguide/customizing_io_serialization_complex-types" target="_blank">Serializing
+      Complex Types.</a>
     </p>
 
     <p>See the sources for details.</p>
@@ -78,7 +79,7 @@
     <button data-command="Save" title="Save" class="demo-icon-yIconSave"></button>
     <span class="demo-separator"></span>
     <button data-command="ZoomOriginal" title="Zoom to original size"
-        class="demo-icon-yIconZoomOriginal"></button>
+      class="demo-icon-yIconZoomOriginal"></button>
     <button data-command="FitContent" title="Fit Content" class="demo-icon-yIconZoomFit"></button>
     <span class="demo-separator"></span>
     <button data-command="Cut" title="Cut" class="demo-icon-yIconCut"></button>
@@ -95,7 +96,6 @@
   <div id="graphComponent"></div>
 </div>
 
-<script src="../../resources/require.js"></script>
-<script src="SampleApplication.js"></script>
+<script type="module" crossorigin="anonymous" src="SampleApplication.js"></script>
 </body>
 </html>

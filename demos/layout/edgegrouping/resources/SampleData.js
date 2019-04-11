@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.1.
- ** Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.2.
+ ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,10 +26,8 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-'use strict'
-
-define([], () => {
-  const nodes = [
+export default {
+  nodes: [
     { id: 0 },
     { id: 1 },
     { id: 2 },
@@ -51,9 +49,9 @@ define([], () => {
     { id: 18 },
     { id: 19 },
     { id: 20 }
-  ]
+  ],
 
-  const edges = [
+  edges: [
     { id: 0, from: 0, to: 20, groupIds: { sourceGroupId: 'st9', targetGroupId: 'st9' } },
     { id: 1, from: 1, to: 2, groupIds: { sourceGroupId: 's1' } },
     { id: 2, from: 1, to: 3, groupIds: { sourceGroupId: 's1' } },
@@ -87,9 +85,4 @@ define([], () => {
     { id: 31, from: 17, to: 20, groupIds: { sourceGroupId: 'st9', targetGroupId: 'st9' } },
     { id: 32, from: 18, to: 19, groupIds: { targetGroupId: 't8' } }
   ]
-
-  return {
-    nodes,
-    edges
-  }
-})
+}

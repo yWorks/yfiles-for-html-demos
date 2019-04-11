@@ -7,8 +7,8 @@
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.1.
-     // Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML 2.2.
+     // Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -36,11 +36,12 @@
 
   <title>Folding - Application Features Tutorial [yFiles for HTML]</title>
 
-  <link rel="stylesheet" href="../../../lib/yfiles.css">
+  <link rel="stylesheet" href="../../node_modules/yfiles/yfiles.css">
   <link rel="stylesheet" href="../../resources/style/demo.css">
 
   <!-- enable debugging -->
   <script src="../../../ide-support/yfiles-typeinfo.js"></script>
+  <script src="../../resources/filesystem-warning.js"></script>
 </head>
 <body class="demo-has-left">
 
@@ -50,11 +51,11 @@
     <h2>Folding</h2>
     <p>
       This step shows how to enable <a href="https://docs.yworks.com/yfileshtml/#/dguide/folding" target="_blank"> collapsing and expanding of group nodes</a>. This is
-      provided through class <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.graph.FoldingManager" target="_blank">yfiles.graph.FoldingManager</a> and its support classes.
+      provided through class <a href="https://docs.yworks.com/yfileshtml/#/api/FoldingManager" target="_blank">FoldingManager</a> and its support classes.
     </p>
 
     <p>
-      <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.input.GraphEditorInputMode" target="_blank">yfiles.input.GraphEditorInputMode</a> provides the following default gestures for collapse/expand:
+      <a href="https://docs.yworks.com/yfileshtml/#/api/GraphEditorInputMode" target="_blank">GraphEditorInputMode</a> provides the following default gestures for collapse/expand:
     </p>
     <ul>
       <li>Press CTRL+Numpad + or click the expand-button on the node's top left corner to open (expand) a closed group
@@ -94,7 +95,6 @@
   <div id="graphComponent"></div>
 </div>
 
-<script src="../../resources/require.js"></script>
-<script src="SampleApplication.js"></script>
+<script type="module" crossorigin="anonymous" src="SampleApplication.js"></script>
 </body>
 </html>

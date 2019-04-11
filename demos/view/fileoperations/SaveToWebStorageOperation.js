@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.1.
- ** Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.2.
+ ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,76 +26,72 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-'use strict'
+import { StorageLocation } from 'yfiles'
 
-define(['yfiles/view-graphml'], /** @type {yfiles_namespace} */ /** typeof yfiles */ yfiles => {
+/**
+ * Saves the given string to a Web Storage, alternatively either to the Local
+ * Storage or to the Session Storage.
+ */
+export default class SaveToWebStorageOperation {
   /**
-   * Saves the given string to a Web Storage, alternatively either to the Local
-   * Storage or to the Session Storage.
+   * @param {StorageLocation} [storageLocation] The storage location.
+   * @param {string} [uri] The uri that is used in the storage key.
    */
-  class SaveToWebStorageOperation {
-    /**
-     * @param {yfiles.graphml.StorageLocation} [storageLocation] The storage location.
-     * @param {string} [uri] The uri that is used in the storage key.
-     */
-    constructor(storageLocation, uri) {
-      this.$allowOverwrite = true
-      this.$storageLocation = storageLocation || yfiles.graphml.StorageLocation.LOCAL_STORAGE
-      this.$uri = uri || 'www.yworks.com/yFilesHTML/GraphML/'
-    }
-
-    /**
-     * Gets a value indicating whether [allow overwrite].
-     * @type {boolean}
-     */
-    get allowOverwrite() {
-      return this.$allowOverwrite
-    }
-
-    /**
-     * Sets a value indicating whether [allow overwrite].
-     * @type {boolean}
-     */
-    set allowOverwrite(value) {
-      this.$allowOverwrite = value
-    }
-
-    /**
-     * Checks if the operation can be executed.
-     * @return {boolean}
-     */
-    isAvailable() {
-      return typeof SaveToWebStorageOperation.getStorage(this.$storageLocation) !== 'undefined'
-    }
-
-    /**
-     * Saves the given content to the file with the given name.
-     * @param {string} fileContent
-     * @return {Promise} A Promise that resolves when the save operation is complete.
-     */
-    save(fileContent) {
-      return new Promise((resolve, reject) => {
-        const storage = SaveToWebStorageOperation.getStorage(this.$storageLocation)
-        const key = `${this.$uri}/example.graphml`
-        if (undefined === storage.getItem(key) || this.allowOverwrite) {
-          storage.setItem(key, fileContent)
-          resolve()
-        } else {
-          reject(new Error(`The key '${key}' already exists and overwriting is not allowed.`))
-        }
-      })
-    }
-
-    /**
-     * Gets the storage location.
-     * @return {Storage}
-     */
-    static getStorage(storageLocation) {
-      return storageLocation === yfiles.graphml.StorageLocation.SESSION_STORAGE
-        ? window.sessionStorage
-        : window.localStorage
-    }
+  constructor(storageLocation, uri) {
+    this.$allowOverwrite = true
+    this.$storageLocation = storageLocation || StorageLocation.LOCAL_STORAGE
+    this.$uri = uri || 'www.yworks.com/yFilesHTML/GraphML/'
   }
 
-  return SaveToWebStorageOperation
-})
+  /**
+   * Gets a value indicating whether [allow overwrite].
+   * @type {boolean}
+   */
+  get allowOverwrite() {
+    return this.$allowOverwrite
+  }
+
+  /**
+   * Sets a value indicating whether [allow overwrite].
+   * @type {boolean}
+   */
+  set allowOverwrite(value) {
+    this.$allowOverwrite = value
+  }
+
+  /**
+   * Checks if the operation can be executed.
+   * @return {boolean}
+   */
+  isAvailable() {
+    return typeof SaveToWebStorageOperation.getStorage(this.$storageLocation) !== 'undefined'
+  }
+
+  /**
+   * Saves the given content to the file with the given name.
+   * @param {string} fileContent
+   * @return {Promise} A Promise that resolves when the save operation is complete.
+   */
+  save(fileContent) {
+    return new Promise((resolve, reject) => {
+      const storage = SaveToWebStorageOperation.getStorage(this.$storageLocation)
+      const key = `${this.$uri}/example.graphml`
+      if (undefined === storage.getItem(key) || this.allowOverwrite) {
+        storage.setItem(key, fileContent)
+        resolve()
+      } else {
+        reject(new Error(`The key '${key}' already exists and overwriting is not allowed.`))
+      }
+    })
+  }
+
+  /**
+   * Gets the storage location.
+   * @return {Storage}
+   */
+  static getStorage(storageLocation) {
+    return storageLocation === StorageLocation.SESSION_STORAGE
+      ? window.sessionStorage
+      : window.localStorage
+  }
+}

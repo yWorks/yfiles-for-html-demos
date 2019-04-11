@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.1.
- ** Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.2.
+ ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,108 +26,99 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-'use strict'
+import { HtmlCanvasVisual, IRenderContext } from 'yfiles'
+import Mapper from './Mapper.js'
 
-define(['yfiles/view-component', './Mapper.js', 'moment/moment'], (
-  /** @type {yfiles_namespace} */ /** typeof yfiles */ yfiles,
-  Mapper,
-  moment
-) => {
-  const colors = ['#6991ff', '#9bc3ff']
+const colors = ['#6991ff', '#9bc3ff']
+
+/**
+ * Manages and renders the timeline ruler
+ */
+export default class TimelineVisual extends HtmlCanvasVisual {
+  constructor(mapper) {
+    super()
+    this.mapper = mapper
+  }
 
   /**
-   * Manages and renders the timeline ruler
-   * @class TimelineVisual
-   * @implements {yfiles.view.IVisualCreator}
+   * @param {IRenderContext} renderContext - The render context of the
+   *   {@link CanvasComponent}
+   * @param {CanvasRenderingContext2D} canvasContext - The HTML5 Canvas context to use for rendering.
    */
-  class TimelineVisual extends yfiles.lang.Class(yfiles.view.HtmlCanvasVisual) {
-    constructor(mapper) {
-      super()
-      this.mapper = mapper
-    }
+  paint(renderContext, canvasContext) {
+    const mapper = this.mapper
 
-    /**
-     * @param {yfiles.view.IRenderContext} renderContext - The render context of the
-     *   {@link yfiles.view.CanvasComponent}
-     * @param {CanvasRenderingContext2D} canvasContext - The HTML5 Canvas context to use for rendering.
-     */
-    paint(renderContext, canvasContext) {
-      const mapper = this.mapper
+    const component = renderContext.canvasComponent
+    const { x, width } = component.viewport
 
-      const component = renderContext.canvasComponent
-      const { x, width } = component.viewport
+    // get start date
+    const beginDate = mapper.getDate(x - 100).startOf('month')
+    const beginX = mapper.getX(beginDate)
 
-      // get start date
-      const beginDate = mapper.getDate(x - 100).startOf('month')
-      const beginX = mapper.getX(beginDate)
+    const endDate = mapper.getDate(x + width + 100).endOf('month')
+    const endX = mapper.getX(endDate)
 
-      const endDate = mapper.getDate(x + width + 100).endOf('month')
-      const endX = mapper.getX(endDate)
+    this.drawDays(renderContext, canvasContext, beginX, endX, beginDate)
+    this.drawMonths(renderContext, canvasContext, beginX, endX, beginDate)
+  }
 
-      this.drawDays(renderContext, canvasContext, beginX, endX, beginDate)
-      this.drawMonths(renderContext, canvasContext, beginX, endX, beginDate)
-    }
+  /**
+   * Draws the day separators.
+   */
+  drawDays(renderContext, canvasContext, beginX, endX, beginDate) {
+    const date = moment(beginDate)
 
-    /**
-     * Draws the day separators.
-     */
-    drawDays(renderContext, canvasContext, beginX, endX, beginDate) {
-      const date = moment(beginDate)
+    let odd = date.diff(this.mapper.originDate, 'days') % 2 === 0
 
-      let odd = date.diff(this.mapper.originDate, 'days') % 2 === 0
-
-      let x = beginX
-      canvasContext.strokeStyle = 'white'
-      canvasContext.lineWidth = 3
-      const y = 35
-      const width = Mapper.dayWidth
-      const halfWidth = width * 0.5
-      const height = 30
-      const halfHeight = height * 0.5
-      canvasContext.textAlign = 'center'
-      canvasContext.textBaseline = 'middle'
-      canvasContext.font = '14px sans-serif'
-      while (x < endX) {
-        canvasContext.fillStyle = odd ? colors[0] : colors[1]
-        canvasContext.fillRect(x, y, width, height)
-        canvasContext.strokeRect(x, y, width, height)
-        canvasContext.fillStyle = 'white'
-        canvasContext.fillText(date.format('DD'), x + halfWidth, y + halfHeight)
-        x += Mapper.dayWidth
-        date.add(1, 'days')
-        odd = !odd
-      }
-    }
-
-    drawMonths(renderContext, canvasContext, beginX, endX, beginDate) {
-      const date = moment(beginDate)
-
-      let odd = date.diff(this.mapper.originDate.startOf('month'), 'months') % 2 === 0
-
-      let x = beginX
-      canvasContext.strokeStyle = 'white'
-      canvasContext.lineWidth = 3
-      const y = 5
-      const height = 30
-      const halfHeight = height * 0.5
-      canvasContext.textAlign = 'center'
-      canvasContext.textBaseline = 'middle'
-      canvasContext.font = '14px sans-serif'
-      while (x < endX) {
-        const monthDays = date.daysInMonth()
-        const width = Mapper.dayWidth * monthDays
-        const halfWidth = width * 0.5
-        canvasContext.fillStyle = odd ? colors[0] : colors[1]
-        canvasContext.fillRect(x, y, width, height)
-        canvasContext.strokeRect(x, y, width, height)
-        canvasContext.fillStyle = 'white'
-        canvasContext.fillText(date.format('MMMM YYYY'), x + halfWidth, y + halfHeight)
-        x += Mapper.dayWidth * monthDays
-        date.add(1, 'months')
-        odd = !odd
-      }
+    let x = beginX
+    canvasContext.strokeStyle = 'white'
+    canvasContext.lineWidth = 3
+    const y = 35
+    const width = Mapper.dayWidth
+    const halfWidth = width * 0.5
+    const height = 30
+    const halfHeight = height * 0.5
+    canvasContext.textAlign = 'center'
+    canvasContext.textBaseline = 'middle'
+    canvasContext.font = '14px sans-serif'
+    while (x < endX) {
+      canvasContext.fillStyle = odd ? colors[0] : colors[1]
+      canvasContext.fillRect(x, y, width, height)
+      canvasContext.strokeRect(x, y, width, height)
+      canvasContext.fillStyle = 'white'
+      canvasContext.fillText(date.format('DD'), x + halfWidth, y + halfHeight)
+      x += Mapper.dayWidth
+      date.add(1, 'days')
+      odd = !odd
     }
   }
 
-  return TimelineVisual
-})
+  drawMonths(renderContext, canvasContext, beginX, endX, beginDate) {
+    const date = moment(beginDate)
+
+    let odd = date.diff(this.mapper.originDate.startOf('month'), 'months') % 2 === 0
+
+    let x = beginX
+    canvasContext.strokeStyle = 'white'
+    canvasContext.lineWidth = 3
+    const y = 5
+    const height = 30
+    const halfHeight = height * 0.5
+    canvasContext.textAlign = 'center'
+    canvasContext.textBaseline = 'middle'
+    canvasContext.font = '14px sans-serif'
+    while (x < endX) {
+      const monthDays = date.daysInMonth()
+      const width = Mapper.dayWidth * monthDays
+      const halfWidth = width * 0.5
+      canvasContext.fillStyle = odd ? colors[0] : colors[1]
+      canvasContext.fillRect(x, y, width, height)
+      canvasContext.strokeRect(x, y, width, height)
+      canvasContext.fillStyle = 'white'
+      canvasContext.fillText(date.format('MMMM YYYY'), x + halfWidth, y + halfHeight)
+      x += Mapper.dayWidth * monthDays
+      date.add(1, 'months')
+      odd = !odd
+    }
+  }
+}

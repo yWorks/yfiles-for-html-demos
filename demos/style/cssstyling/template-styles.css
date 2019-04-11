@@ -1,0 +1,231 @@
+/****************************************************************************
+ ** @license
+ ** This demo file is part of yFiles for HTML 2.2.
+ ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** 72070 Tuebingen, Germany. All rights reserved.
+ **
+ ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+ ** of demo files in source code or binary form, with or without
+ ** modification, is not permitted.
+ **
+ ** Owners of a valid software license for a yFiles for HTML version that this
+ ** demo is shipped with are allowed to use the demo source code as basis
+ ** for their own yFiles for HTML powered applications. Use of such programs is
+ ** governed by the rights and conditions as set out in the yFiles for HTML
+ ** license agreement.
+ **
+ ** THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+ ** WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ ** MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+ ** NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ ** SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+ ** TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ ** PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+ ** LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+ ** NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ **
+ ***************************************************************************/
+/* Graph Components */
+#graphComponent {
+  background-color: #3c4253;
+}
+#graphOverviewComponent {
+  background-color: #53596b;
+}
+
+/* Viewport Rectangle in Overview */
+.yfiles-overview-viewport-template {
+  fill: #e8cb8a;
+  stroke: #e8cb8a;
+  stroke-width: 2px;
+}
+#overviewComponent .yfiles-handle-resize-template {
+  fill: #e8cb8a;
+  stroke: #e8cb8a;
+}
+
+/* Resize Handles */
+.yfiles-handle-resize-template {
+  fill: currentColor; /* Use SVG currentColor to allow different colors for individual handles*/
+  stroke: currentColor; /* Use SVG currentColor to allow different colors for individual handles*/
+}
+.yfiles-handle {
+  color: #e8cb87;
+}
+.yfiles-handle-north.yfiles-handle-east,
+.yfiles-handle-north.yfiles-handle-west,
+.yfiles-handle-south.yfiles-handle-east,
+.yfiles-handle-south.yfiles-handle-west {
+  color: #b96069;
+}
+
+/* Port Handle */
+.yfiles-handle-move-template {
+ fill: #b96069;
+}
+
+/* Marquee Selection Rectangle */
+.yfiles-marquee-rect-template {
+  fill: #a5be8a;
+  stroke: #a5be8a;
+  stroke-width: 2px;
+}
+
+/* Selection */
+.yfiles-node-selection-template,
+.yfiles-edge-selection-template,
+.yfiles-label-selection-template,
+.yfiles-port-selection-template {
+  stroke: #b96069;
+  stroke-width: 4px;
+  stroke-linejoin: round;
+}
+
+/* Focus */
+.yfiles-node-focus-template,
+.yfiles-edge-focus-template,
+.yfiles-label-focus-template,
+.yfiles-port-focus-template {
+  stroke: #e8cb87;
+  stroke-width: 2px;
+  stroke-linejoin: round;
+}
+
+/* Highlights */
+.yfiles-node-highlight-template,
+.yfiles-edge-highlight-template,
+.yfiles-label-highlight-template,
+.yfiles-port-highlight-template {
+  stroke: #85be8a;
+  stroke-linejoin: round;
+}
+.yfiles-node-highlight-middle-template {
+  stroke: #3c4253;
+}
+
+/* Label Candidates */
+.yfiles-label-position-highlight-template {
+  stroke: #8fc0d1;
+}
+.yfiles-label-position-candidate-template {
+  stroke: #85a1c2;
+}
+
+/* Port Candidates */
+.yfiles-port-candidate-template.yfiles-valid .yfiles-outer-rect {
+  fill: #85be8a;
+}
+.yfiles-port-candidate-template.yfiles-valid .yfiles-inner-rect {
+  fill: #85be8a;
+}
+.yfiles-port-candidate-template.yfiles-valid .yfiles-corner-path {
+  stroke: transparent;
+}
+
+/* Snap-Lines */
+.yfiles-snap-line {
+  stroke: #e8cb87;
+  stroke-width: 2px;
+}
+
+/* Scrollbars */
+.yfiles-canvascomponent .yfiles-scrollbar.yfiles-scrollbar-horizontal,
+.yfiles-canvascomponent .yfiles-scrollbar.yfiles-scrollbar-horizontal div,
+.yfiles-canvascomponent .yfiles-scrollbar-range.yfiles-scrollbar-range-horizontal .yfiles-scrollbar-slider,
+.yfiles-canvascomponent .yfiles-scrollbar .yfiles-scrollbar-range.yfiles-scrollbar-range-horizontal {
+  height: 10px;
+}
+.yfiles-canvascomponent .yfiles-scrollbar.yfiles-scrollbar-vertical,
+.yfiles-canvascomponent .yfiles-scrollbar.yfiles-scrollbar-vertical div,
+.yfiles-canvascomponent .yfiles-scrollbar-range.yfiles-scrollbar-range-vertical .yfiles-scrollbar-slider,
+.yfiles-canvascomponent .yfiles-scrollbar .yfiles-scrollbar-range.yfiles-scrollbar-range-vertical {
+  width: 10px;
+}
+.yfiles-canvascomponent .yfiles-scrollbar.yfiles-scrollbar-horizontal,
+.yfiles-canvascomponent .yfiles-scrollbar.yfiles-scrollbar-vertical {
+  background-color: transparent;
+}
+.yfiles-canvascomponent .yfiles-scrollbar.yfiles-scrollbar-horizontal:hover,
+.yfiles-canvascomponent .yfiles-scrollbar.yfiles-scrollbar-vertical:hover,
+.yfiles-canvascomponent .yfiles-scrollbar.yfiles-scrollbar-horizontal:active,
+.yfiles-canvascomponent .yfiles-scrollbar.yfiles-scrollbar-vertical:active {
+  background-color: #282e4044;
+}
+.yfiles-canvascomponent .yfiles-scrollbar .yfiles-scrollbar-slider-content {
+  background-color: #282e40;
+  opacity: 1;
+}
+.yfiles-canvascomponent .yfiles-scrollbar .yfiles-button {
+  width: 10px;
+  height: 10px;
+}
+.yfiles-canvascomponent .yfiles-scrollbar .yfiles-button.yfiles-button-left {
+  background: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNSIgaGVpZ2h0PSIxMCI+PHBhdGggZD0iTTUgNSBMMTAgMSBMMTAgOSBaIi8+PC9zdmc+DQo=);
+}
+.yfiles-canvascomponent .yfiles-scrollbar .yfiles-button.yfiles-button-right {
+  background: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNSIgaGVpZ2h0PSIxMCI+PHBhdGggZD0iTTUgMSBMMTAgNSBMNSA5IFoiLz48L3N2Zz4NCg==);
+}
+.yfiles-canvascomponent .yfiles-scrollbar .yfiles-button.yfiles-button-down {
+  background: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMCIgaGVpZ2h0PSIxNSI+PHBhdGggZD0iTTEgNSBMOSA1IEw1IDEwIFoiLz48L3N2Zz4NCg==);
+}
+.yfiles-canvascomponent .yfiles-scrollbar .yfiles-button.yfiles-button-up {
+  background: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMCIgaGVpZ2h0PSIxNSI+PHBhdGggZD0iTTEgMTAgTDUgNSBMOSAxMCBaIi8+PC9zdmc+DQo=);
+}
+
+/* Tooltips */
+.yfiles-tooltip {
+  background-color: #85a1c2;
+  color: white;
+  border-color: #85a1c2;
+  border-radius: 5px;
+  border-width: 2px;
+  padding: 5px;
+  font-weight: bold;
+}
+.yfiles-tooltip-entering {
+  transition: opacity 0.2s ease-in;
+}
+.yfiles-tooltip-enter {
+  opacity: 0;
+}
+.yfiles-tooltip-enter-to {
+  opacity: 1;
+}
+.yfiles-tooltip-leaving {
+  transition: opacity 0.2s ease-out;
+}
+.yfiles-tooltip-leave {
+  opacity: 1;
+}
+.yfiles-tooltip-leave-to {
+  opacity: 0;
+}
+
+/* Label Editor*/
+@keyframes scaleAnimation {
+  from { opacity: 0; transform: scale(0); }
+  to { opacity: 1; transform: scale(1); }
+}
+.yfiles-canvascomponent .yfiles-labeleditbox-container {
+  background-color: #282e40;
+  border-color: #85a1c2;
+}
+
+.yfiles-canvascomponent .yfiles-labeleditbox {
+  font-family: sans-serif;
+  font-size: 12pt;
+  color: lightgrey;
+}
+
+.yfiles-canvascomponent .yfiles-labeleditbox::selection {
+  background: #85a1c2;
+  color: #fff;
+}
+
+.yfiles-labeleditbox-container-entering {
+  animation: scaleAnimation 0.3s ease-in;
+}
+.yfiles-labeleditbox-container-leaving {
+  animation: scaleAnimation reverse 0.3s ease-out;
+}

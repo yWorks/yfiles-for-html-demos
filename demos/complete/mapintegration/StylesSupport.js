@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.1.
- ** Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.2.
+ ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,119 +26,125 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-'use strict'
+import {
+  ArcEdgeStyle,
+  DefaultLabelStyle,
+  ExteriorLabelModel,
+  FreeNodePortLocationModel,
+  GeneralPath,
+  IEdge,
+  ImageNodeStyle,
+  NodeStyleLabelStyleAdapter,
+  PolylineEdgeStyle,
+  Rect,
+  ShapeNodeShape,
+  ShapeNodeStyle
+} from 'yfiles'
 
-define(['yfiles/view-component'], yfiles => {
-  class StylesSupport {
-    static initializeDefaultStyles(graph) {
-      graph.nodeDefaults.style = StylesSupport.createMapNodeStyle()
-      graph.nodeDefaults.size = [40, 40]
-      graph.nodeDefaults.shareStyleInstance = false
-      graph.nodeDefaults.labels.style = StylesSupport.createLabelStyle()
-      graph.nodeDefaults.labels.layoutParameter = yfiles.graph.ExteriorLabelModel.SOUTH
-      graph.nodeDefaults.ports.locationParameter =
-        yfiles.graph.FreeNodePortLocationModel.NODE_BOTTOM_ANCHORED
+export function initializeDefaultMapStyles(graph) {
+  graph.nodeDefaults.style = createMapNodeStyle()
+  graph.nodeDefaults.size = [40, 40]
+  graph.nodeDefaults.shareStyleInstance = false
+  graph.nodeDefaults.labels.style = createLabelStyle()
+  graph.nodeDefaults.labels.layoutParameter = ExteriorLabelModel.SOUTH
+  graph.nodeDefaults.ports.locationParameter = FreeNodePortLocationModel.NODE_BOTTOM_ANCHORED
 
-      graph.edgeDefaults.style = StylesSupport.createMapEdgeStyle()
-      graph.edgeDefaults.shareStyleInstance = false
-    }
+  graph.edgeDefaults.style = createMapEdgeStyle()
+  graph.edgeDefaults.shareStyleInstance = false
+}
 
-    static applyMapStyles(graph) {
-      graph.edges.forEach(edge => {
-        graph.setStyle(edge, StylesSupport.createMapEdgeStyle(StylesSupport.getArcHeight(edge)))
-      })
-      graph.nodes.forEach(node => {
-        graph.setStyle(node, StylesSupport.createMapNodeStyle())
-        node.ports.forEach(port => {
-          graph.setPortLocationParameter(port, graph.nodeDefaults.ports.locationParameter.clone())
-        })
-      })
-    }
+export function applyMapStyles(graph) {
+  graph.edges.forEach(edge => {
+    graph.setStyle(edge, createMapEdgeStyle(getArcHeight(edge)))
+  })
+  graph.nodes.forEach(node => {
+    graph.setStyle(node, createMapNodeStyle())
+    node.ports.forEach(port => {
+      graph.setPortLocationParameter(port, graph.nodeDefaults.ports.locationParameter.clone())
+    })
+  })
+}
 
-    static applyLayoutStyles(graph) {
-      graph.edges.forEach(edge => {
-        graph.setStyle(edge, StylesSupport.createLayoutEdgeStyle(edge))
-      })
-      graph.nodes.forEach(node => {
-        graph.setStyle(node, StylesSupport.createLayoutNodeStyle())
-      })
-    }
+export function applyLayoutStyles(graph) {
+  graph.edges.forEach(edge => {
+    graph.setStyle(edge, createLayoutEdgeStyle(edge))
+  })
+  graph.nodes.forEach(node => {
+    graph.setStyle(node, createLayoutNodeStyle())
+  })
+}
 
-    static createMapNodeStyle() {
-      const outline = new yfiles.geometry.GeneralPath()
-      outline.moveTo(0.5, 0)
-      outline.cubicTo(0.289, 0, 0.118, 0.171, 0.118, 0.382)
-      outline.cubicTo(0.118, 0.509, 0.18, 0.621, 0.275, 0.691)
-      outline.cubicTo(0.287, 0.699, 0.295, 0.713, 0.307, 0.722)
-      outline.lineTo(0.5, 1)
-      outline.lineTo(0.725, 0.684)
-      outline.cubicTo(0.82, 0.614, 0.882, 0.502, 0.882, 0.375)
-      outline.cubicTo(0.882, 0.164, 0.711, 0, 0.5, 0)
-      outline.close()
+function createMapNodeStyle() {
+  const outline = new GeneralPath()
+  outline.moveTo(0.5, 0)
+  outline.cubicTo(0.289, 0, 0.118, 0.171, 0.118, 0.382)
+  outline.cubicTo(0.118, 0.509, 0.18, 0.621, 0.275, 0.691)
+  outline.cubicTo(0.287, 0.699, 0.295, 0.713, 0.307, 0.722)
+  outline.lineTo(0.5, 1)
+  outline.lineTo(0.725, 0.684)
+  outline.cubicTo(0.82, 0.614, 0.882, 0.502, 0.882, 0.375)
+  outline.cubicTo(0.882, 0.164, 0.711, 0, 0.5, 0)
+  outline.close()
 
-      return new yfiles.styles.ImageNodeStyle({
-        image: 'resources/airport-drop.svg',
-        normalizedOutline: outline
-      })
-    }
+  return new ImageNodeStyle({
+    image: 'resources/airport-drop.svg',
+    normalizedOutline: outline
+  })
+}
 
-    static createMapEdgeStyle(height) {
-      return new yfiles.styles.ArcEdgeStyle({
-        stroke: '5px dashed royalblue',
-        height: height || 100
-      })
-    }
+function createMapEdgeStyle(height) {
+  return new ArcEdgeStyle({
+    stroke: '5px dashed royalblue',
+    height: height || 100
+  })
+}
 
-    static createLayoutEdgeStyle() {
-      return new yfiles.styles.PolylineEdgeStyle({
-        stroke: '5px dashed royalblue'
-      })
-    }
+function createLayoutEdgeStyle() {
+  return new PolylineEdgeStyle({
+    stroke: '5px dashed royalblue'
+  })
+}
 
-    static createLayoutNodeStyle() {
-      const outline = new yfiles.geometry.GeneralPath()
-      outline.appendEllipse(new yfiles.geometry.Rect(0.125, 0, 0.75, 0.75), false)
-      return new yfiles.styles.ImageNodeStyle({
-        image: 'resources/airport-circle.svg',
-        normalizedOutline: outline
-      })
-    }
+function createLayoutNodeStyle() {
+  const outline = new GeneralPath()
+  outline.appendEllipse(new Rect(0.125, 0, 0.75, 0.75), false)
+  return new ImageNodeStyle({
+    image: 'resources/airport-circle.svg',
+    normalizedOutline: outline
+  })
+}
 
-    static createLabelStyle() {
-      return new yfiles.styles.NodeStyleLabelStyleAdapter({
-        nodeStyle: new yfiles.styles.ShapeNodeStyle({
-          shape: yfiles.styles.ShapeNodeShape.ROUND_RECTANGLE,
-          fill: 'crimson',
-          stroke: null
-        }),
-        labelStyle: new yfiles.styles.DefaultLabelStyle({
-          textFill: 'white'
-        }),
-        labelStyleInsets: [3, 5]
-      })
-    }
+function createLabelStyle() {
+  return new NodeStyleLabelStyleAdapter({
+    nodeStyle: new ShapeNodeStyle({
+      shape: ShapeNodeShape.ROUND_RECTANGLE,
+      fill: 'crimson',
+      stroke: null
+    }),
+    labelStyle: new DefaultLabelStyle({
+      textFill: 'white'
+    }),
+    labelStyleInsets: [3, 5]
+  })
+}
 
-    static updateEdgeArcs(graph) {
-      graph.edges.forEach(edge => {
-        edge.style.height = StylesSupport.getArcHeight(edge)
-      })
-    }
+export function updateEdgeArcs(graph) {
+  graph.edges.forEach(edge => {
+    edge.style.height = getArcHeight(edge)
+  })
+}
 
-    /**
-     * Returns the height of the edge arc considering the length of the edge.
-     * @param {yfiles.graph.IEdge} edge
-     * @return {number}
-     */
-    static getArcHeight(edge) {
-      const sourceCenter = edge.sourceNode.layout.center
-      const targetCenter = edge.targetNode.layout.center
-      const distance = sourceCenter.distanceTo(targetCenter)
-      if (distance < 500) {
-        return distance / 10
-      }
-      return 100
-    }
+/**
+ * Returns the height of the edge arc considering the length of the edge.
+ * @param {IEdge} edge
+ * @return {number}
+ */
+export function getArcHeight(edge) {
+  const sourceCenter = edge.sourceNode.layout.center
+  const targetCenter = edge.targetNode.layout.center
+  const distance = sourceCenter.distanceTo(targetCenter)
+  if (distance < 500) {
+    return distance / 10
   }
-
-  return StylesSupport
-})
+  return 100
+}

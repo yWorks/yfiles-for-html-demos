@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.1.
- ** Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.2.
+ ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,34 +26,31 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-'use strict'
+export const detailTemplate = `<g>
+<rect fill="#C0C0C0" width="285" height="100" transform="translate(2 2)"/>
+<rect fill="#FFFFFF" stroke="#C0C0C0" width="285" height="100"/>
+<g style="font-size:10px; font-family:Roboto,sans-serif; font-weight: 300; fill: #444">
+  <image ng-href="{{item.icon}}" transform="scale(0.85) translate(15 20)" xlink:href="{{item.icon}}" width="75px" height="75px"/>
+  <text transform="translate(100 25)" style="font-size:16px; fill:#336699">{{item.name}}</text>
+  <text transform="translate(100 45)" style="text-transform: uppercase; font-weight: 400" data-linebreak="{{item.position}}" data-attributes="true"></text>
+  <text transform="translate(100 60)" style="text-transform: uppercase; font-weight: 400" data-linebreak="{{item.position}}" data-attributes="false"></text>
+  <text transform="translate(100 75)">{{item.email}}</text>
+  <text transform="translate(100 92)">{{item.phone}}</text>
+  <text transform="translate(170 92)">{{item.fax}}</text>
+</g>
+</g>`
 
-define([], () => {
-  const detailTemplate = `<g>
-  <rect fill="url(#nodeGradient)" stroke="#249AE7" stroke-width="3" rx="8" ry="8" width="250" height="100"/>
-  <image ng-href="{{item.icon}}" transform="translate(5 15)" width="58px" height="66px" xlink:href="resources/usericon_female1.svg"/>
-  <text transform="translate(80 20)" style="font-size:10px; font-family:Arial; fill:#505050">{{item.name}}</text>
-  <text transform="translate(80 38)" style="font-size:8px; font-family:Arial; fill:#505050">{{item.position}}</text>
-  <text transform="translate(80 56)" style="font-size:10px; font-family:Arial; fill:#505050">{{item.email}}</text>
-  <text transform="translate(80 74)" style="font-size:10px; font-family:Arial; fill:#505050">{{item.phone}}</text>
-  <text transform="translate(80 92)" style="font-size:10px; font-family:Arial; fill:#505050">{{item.fax}}</text>
-  </g>`
+export const intermediateTemplate = `<g>
+<rect fill="#C0C0C0" width="285" height="100" transform="translate(2 2)"/>
+<rect fill="#FFFFFF" stroke="#C0C0C0" width="285" height="100"/>
+<image ng-href="{{item.icon}}" transform="scale(0.75) translate(15 30)" xlink:href="{{item.icon}}" width="75px" height="75px"/>
+<text transform="translate(75 40)" style="font-size:26px;font-family:Roboto,sans-serif; fill:#336699;">{{item.name}}</text>
+<text transform="translate(75 70)" style="font-size:15px; font-family:Roboto,sans-serif; text-transform: uppercase; font-weight: 400" data-linebreak="{{item.position}}" data-attributes="true"></text>
+<text transform="translate(75 90)" style="font-size:15px; font-family:Roboto,sans-serif; text-transform: uppercase; font-weight: 400" data-linebreak="{{item.position}}" data-attributes="false"></text>
+</g>`
 
-  const intermediateTemplate = `<g>
-    <rect fill="url(#nodeGradient)" stroke="#249AE7" stroke-width="3" rx="8" ry="8" width="250" height="100"/>
-    <text transform="translate(125 50)" style="font-size:22px; font-family:Arial; fill:#505050;\
-    text-anchor: middle; dominant-baseline: central;">{{item.name}}</text>
-  </g>`
-
-  const overviewTemplate = `<g>
-    <rect fill="url(#nodeGradient)" stroke="#249AE7" stroke-width="3" rx="8" ry="8" width="250" height="100"/>
-    <text transform="translate(125 50)" style="font-size:26px; font-family:Arial; fill:#505050;\
-    text-anchor: middle; dominant-baseline: central;" data-abbreviate="{{item.name}}"></text>
-  </g>`
-
-  return {
-    detailTemplate,
-    intermediateTemplate,
-    overviewTemplate
-  }
-})
+export const overviewTemplate = `<g>
+<rect fill="#AAA" width="288" height="103" transform="translate(-1 -1)"/>
+<rect fill="#FFFFFF" width="285" height="100"/>
+<text transform="translate(30 50)" style="font-size:40px; font-family:Roboto,sans-serif; fill:#336699; dominant-baseline: central;" data-abbreviate="{{item.name}}"></text>
+</g>`

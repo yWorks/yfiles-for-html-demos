@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.1.
- ** Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.2.
+ ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,46 +26,34 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-'use strict'
+import { FixNodeLayoutStage, LayoutGraph, YNodeList, YPoint } from 'yfiles'
+import * as IsometricTransformationSupport from './IsometricTransformationSupport.js'
+import IsometricTransformationStage from './IsometricTransformationStage.js'
 
-define([
-  'yfiles/view-layout-bridge',
-  'IsometricTransformationSupport.js',
-  'IsometricTransformationStage.js'
-], (
-  /** @type {yfiles_namespace} */ /** typeof yfiles */ yfiles,
-  IsometricTransformationSupport,
-  IsometricTransformationStage
-) => {
+/**
+ * When the user opens/closes a folder/group node by clicking its state icon, the layout algorithm calculates a new
+ * layout. This {@link y.layout.ILayoutStage} moves the graph afterwards so, that the state icon of the group/folder
+ * node remains under the mouse cursor.
+ */
+export default class FixGroupStateIconStage extends FixNodeLayoutStage {
   /**
-   * When the user opens/closes a folder/group node by clicking its state icon, the layout algorithm calculates a new
-   * layout. This {@link y.layout.ILayoutStage} moves the graph afterwards so, that the state icon of the group/folder
-   * node remains under the mouse cursor.
+   * Overwritten to fix the lower left corner (where the state icon is placed) of the isometric painted folder/group
+   * node.
+   * @param {LayoutGraph} graph
+   * @param {YNodeList} fixedNodes
+   * @return {YPoint}
    */
-  class FixGroupStateIconStage extends yfiles.layout.FixNodeLayoutStage {
-    /**
-     * Overwritten to fix the lower left corner (where the state icon is placed) of the isometric painted folder/group
-     * node.
-     * @param {yfiles.layout.LayoutGraph} graph
-     * @param {yfiles.algorithms.NodeList} fixedNodes
-     * @return {yfiles.algorithms.YPoint}
-     */
-    calculateFixPoint(graph, fixedNodes) {
-      const node = fixedNodes.firstNode()
-      const provider = graph.getDataProvider(
-        IsometricTransformationStage.TRANSFORMATION_DATA_DP_KEY
-      )
-      const geometry = provider.get(node)
+  calculateFixPoint(graph, fixedNodes) {
+    const node = fixedNodes.firstNode()
+    const provider = graph.getDataProvider(IsometricTransformationStage.TRANSFORMATION_DATA_DP_KEY)
+    const geometry = provider.get(node)
 
-      const corners = IsometricTransformationSupport.calculateCorners(geometry)
-      const nodeLayout = graph.getLayout(node)
-      IsometricTransformationSupport.moveTo(nodeLayout.x, nodeLayout.y, corners)
-      return new yfiles.algorithms.YPoint(
-        corners[IsometricTransformationSupport.C3_X],
-        corners[IsometricTransformationSupport.C3_Y]
-      )
-    }
+    const corners = IsometricTransformationSupport.calculateCorners(geometry)
+    const nodeLayout = graph.getLayout(node)
+    IsometricTransformationSupport.moveTo(nodeLayout.x, nodeLayout.y, corners)
+    return new YPoint(
+      corners[IsometricTransformationSupport.C3_X],
+      corners[IsometricTransformationSupport.C3_Y]
+    )
   }
-
-  return FixGroupStateIconStage
-})
+}

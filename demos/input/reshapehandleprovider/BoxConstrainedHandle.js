@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.1.
- ** Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.2.
+ ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,59 +26,54 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-'use strict'
+import { ConstrainedHandle, IHandle, IInputModeContext, Point, Rect } from 'yfiles'
 
-define(['yfiles/view-editor'], /** @type {yfiles_namespace} */ /** typeof yfiles */ yfiles => {
+/**
+ * A {@link ConstrainedHandle} that is limited to the interior of a
+ * given rectangle.
+ */
+export default class BoxConstrainedHandle extends ConstrainedHandle {
   /**
-   * A {@link yfiles.input.ConstrainedHandle} that is limited to the interior of a
-   * given rectangle.
-   * @extends yfiles.input.ConstrainedHandle
+   * Creates a new instance of <code>BoxConstrainedHandle</code>.
+   * @param {IHandle} handle The delegate handler
+   * @param {Rect} boundaryRectangle The boundary rectangle
    */
-  class BoxConstrainedHandle extends yfiles.input.ConstrainedHandle {
-    /**
-     * Creates a new instance of <code>BoxConstrainedHandle</code>.
-     * @param {yfiles.input.IHandle} handle The delegate handler
-     * @param {yfiles.geometry.Rect} boundaryRectangle The boundary rectangle
-     */
-    constructor(handle, boundaryRectangle) {
-      super(handle)
-      this.boundaryRectangle = boundaryRectangle
-      this.constraintRect = null
-    }
-
-    /**
-     * Returns for the given new location the constrained location that is
-     * inside the boundary rectangle.
-     * @param {yfiles.input.IInputModeContext} context The context in which the drag will be performed
-     * @param {yfiles.geometry.Point} originalLocation The value of the
-     * {@link yfiles.input.ConstrainedDragHandler<TWrapped>#location} property at the time of
-     * {@link yfiles.input.ConstrainedDragHandler<TWrapped>#initializeDrag}
-     * @param {yfiles.geometry.Point} newLocation The coordinates in the world coordinate system that the client wants
-     * the handle to be at. Depending on the implementation the
-     * {@link yfiles.input.ConstrainedDragHandler<TWrapped>#location} may or may not be modified to reflect the new
-     *   value
-     * @see Overrides {@link yfiles.input.ConstrainedDragHandler#constrainNewLocation}
-     * @return {yfiles.geometry.Point}
-     */
-    constrainNewLocation(context, originalLocation, newLocation) {
-      return newLocation.getConstrained(this.constraintRect)
-    }
-
-    /**
-     * Makes sure that the constraintRect is set to the current boundary
-     * rectangle and delegates to the base implementation.
-     * position, besides the base functionality. Since a position handler
-     * works on points, the actual rectangle must be a limit for the upper
-     * left corner of the node and not for the node's bounding box.
-     * @param {yfiles.input.IInputModeContext} inputModeContext The input mode context
-     * @param {yfiles.geometry.Point} originalLocation The original location
-     * @see Overrides {@link yfiles.input.ConstrainedDragHandler#onInitialized}
-     */
-    onInitialized(inputModeContext, originalLocation) {
-      super.onInitialized(inputModeContext, originalLocation)
-      this.constraintRect = this.boundaryRectangle.toRect()
-    }
+  constructor(handle, boundaryRectangle) {
+    super(handle)
+    this.boundaryRectangle = boundaryRectangle
+    this.constraintRect = null
   }
 
-  return BoxConstrainedHandle
-})
+  /**
+   * Returns for the given new location the constrained location that is
+   * inside the boundary rectangle.
+   * @param {IInputModeContext} context The context in which the drag will be performed
+   * @param {Point} originalLocation The value of the
+   * {@link ConstrainedDragHandler<TWrapped>#location} property at the time of
+   * {@link ConstrainedDragHandler<TWrapped>#initializeDrag}
+   * @param {Point} newLocation The coordinates in the world coordinate system that the client wants
+   * the handle to be at. Depending on the implementation the
+   * {@link ConstrainedDragHandler<TWrapped>#location} may or may not be modified to reflect the new
+   *   value
+   * @see Overrides {@link ConstrainedDragHandler#constrainNewLocation}
+   * @return {Point}
+   */
+  constrainNewLocation(context, originalLocation, newLocation) {
+    return newLocation.getConstrained(this.constraintRect)
+  }
+
+  /**
+   * Makes sure that the constraintRect is set to the current boundary
+   * rectangle and delegates to the base implementation.
+   * position, besides the base functionality. Since a position handler
+   * works on points, the actual rectangle must be a limit for the upper
+   * left corner of the node and not for the node's bounding box.
+   * @param {IInputModeContext} inputModeContext The input mode context
+   * @param {Point} originalLocation The original location
+   * @see Overrides {@link ConstrainedDragHandler#onInitialized}
+   */
+  onInitialized(inputModeContext, originalLocation) {
+    super.onInitialized(inputModeContext, originalLocation)
+    this.constraintRect = this.boundaryRectangle.toRect()
+  }
+}

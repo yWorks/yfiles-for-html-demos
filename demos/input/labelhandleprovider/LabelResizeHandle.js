@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.1.
- ** Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.2.
+ ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,234 +26,236 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-﻿'use strict'
+import {
+  BaseClass,
+  Cursor,
+  HandleTypes,
+  IHandle,
+  IInputModeContext,
+  ILabel,
+  IPoint,
+  OrientedRectangle,
+  OrientedRectangleIndicatorInstaller,
+  Point,
+  Size
+} from 'yfiles'
 
-define(['yfiles/view-editor'], /** @type {yfiles_namespace} */ /** typeof yfiles */ yfiles => {
+/**
+ * A custom {@link IHandle} implementation that implements the functionality needed for resizing a label.
+ */
+export default class LabelResizeHandle extends BaseClass(IHandle) {
   /**
-   * A custom {@link yfiles.input.IHandle} implementation that implements the functionality needed for resizing a label.
+   * Creates a new instance of <code>LabelResizeHandle</code>.
+   * @param {ILabel} label
+   * @param {boolean} symmetricResize
    */
-  class LabelResizeHandle extends yfiles.lang.Class(yfiles.input.IHandle) {
-    /**
-     * Creates a new instance of <code>LabelResizeHandle</code>.
-     * @param {yfiles.input.ILabel} label
-     * @param {boolean} symmetricResize
-     */
-    constructor(label, symmetricResize) {
-      super()
-      this.$label = label
-      this.$symmetricResize = symmetricResize
+  constructor(label, symmetricResize) {
+    super()
+    this.$label = label
+    this.$symmetricResize = symmetricResize
+  }
+
+  /**
+   * Gets whether the resizing should be symmetric.
+   * @return {boolean} True if the resize should be symmetric, false otherwise
+   */
+  get symmetricResize() {
+    return this.$symmetricResize
+  }
+
+  /**
+   * Gets the type of the handler.
+   * @return {number}
+   */
+  get type() {
+    return HandleTypes.RESIZE
+  }
+
+  /**
+   * Returns the cursor object.
+   * @return {Cursor}
+   */
+  get cursor() {
+    return Cursor.EW_RESIZE
+  }
+
+  /**
+   * Returns the handler's location.
+   * @return {LabelResizeHandleLivePoint}
+   */
+  get location() {
+    if (this.$location === undefined) {
+      this.$location = new LabelResizeHandleLivePoint(this)
     }
+    return this.$location
+  }
 
-    /**
-     * Gets whether the resizing should be symmetric.
-     * @return {boolean} True if the resize should be symmetric, false otherwise
-     */
-    get symmetricResize() {
-      return this.$symmetricResize
-    }
-
-    /**
-     * Gets the type of the handler.
-     * @return {number}
-     */
-    get type() {
-      return yfiles.input.HandleTypes.RESIZE
-    }
-
-    /**
-     * Returns the cursor object.
-     * @return {yfiles.view.Cursor}
-     */
-    get cursor() {
-      return yfiles.view.Cursor.EW_RESIZE
-    }
-
-    /**
-     * Returns the handler's location.
-     * @return {LabelResizeHandleLivePoint}
-     */
-    get location() {
-      if (this.$location === undefined) {
-        this.$location = new LabelResizeHandleLivePoint(this)
-      }
-      return this.$location
-    }
-
-    /**
-     * Invoked when dragging is about to start.
-     * @param {yfiles.input.IInputModeContext} context The context to retrieve information
-     */
-    initializeDrag(context) {
-      // start using the calculated dummy bounds
-      this.$emulate = true
-      this.$dummyPreferredSize = this.$label.preferredSize
-      this.$dummyLocation = this.$label.layout.anchorLocation
-      const canvasComponent = context.canvasComponent
-      if (canvasComponent !== null) {
-        // install the visual size indicator in the SelectionGroup of the canvas
-        this.$sizeIndicator = new LabelResizeIndicatorInstaller(this).addCanvasObject(
-          canvasComponent.canvasContext,
-          canvasComponent.selectionGroup,
-          this
-        )
-      }
-    }
-
-    /**
-     * Invoked when an element has been dragged and its position should be updated.
-     * @param {yfiles.input.IInputModeContext} context The context to retrieve information
-     * @param {yfiles.geometry.Point} originalLocation The value of the location property at the time of initializeDrag
-     * @param {yfiles.geometry.Point} newLocation The new location in the world coordinate system
-     */
-    handleMove(context, originalLocation, newLocation) {
-      const layout = this.$label.layout
-      // the normal (orthogonal) vector of the 'up' vector
-      const upNormal = new yfiles.geometry.Point(-layout.upY, layout.upX)
-
-      // calculate the total distance the handle has been moved in this drag gesture
-      let delta = upNormal.scalarProduct(newLocation.subtract(originalLocation))
-
-      // max with minus half the label size - because the label width can't shrink below zero
-      delta = Math.max(delta, -layout.width * (this.symmetricResize ? 0.5 : 1))
-
-      // add one or two times delta to the width to expand the label right and left
-      const newWidth = layout.width + delta * (this.symmetricResize ? 2 : 1)
-      this.$dummyPreferredSize = new yfiles.geometry.Size(newWidth, this.$dummyPreferredSize.height)
-      // calculate the new location
-      this.$dummyLocation = layout.anchorLocation.subtract(
-        this.symmetricResize
-          ? new yfiles.geometry.Point(upNormal.x * delta, upNormal.y * delta)
-          : new yfiles.geometry.Point(0, 0)
+  /**
+   * Invoked when dragging is about to start.
+   * @param {IInputModeContext} context The context to retrieve information
+   */
+  initializeDrag(context) {
+    // start using the calculated dummy bounds
+    this.$emulate = true
+    this.$dummyPreferredSize = this.$label.preferredSize
+    this.$dummyLocation = this.$label.layout.anchorLocation
+    const canvasComponent = context.canvasComponent
+    if (canvasComponent !== null) {
+      // install the visual size indicator in the SelectionGroup of the canvas
+      this.$sizeIndicator = new LabelResizeIndicatorInstaller(this).addCanvasObject(
+        canvasComponent.canvasContext,
+        canvasComponent.selectionGroup,
+        this
       )
     }
+  }
 
-    /**
-     * Invoked when dragging has canceled.
-     * @param {yfiles.input.IInputModeContext} context The context to retrieve information
-     * @param {yfiles.geometry.Point} originalLocation The value of the location property at the time of initializeDrag
-     */
-    cancelDrag(context, originalLocation) {
-      // use the normal label bounds if the drag gesture is over
-      this.$emulate = false
-      // remove the visual size indicator
-      if (this.$sizeIndicator !== null) {
-        this.$sizeIndicator.remove()
-        this.$sizeIndicator = null
-      }
+  /**
+   * Invoked when an element has been dragged and its position should be updated.
+   * @param {IInputModeContext} context The context to retrieve information
+   * @param {Point} originalLocation The value of the location property at the time of initializeDrag
+   * @param {Point} newLocation The new location in the world coordinate system
+   */
+  handleMove(context, originalLocation, newLocation) {
+    const layout = this.$label.layout
+    // the normal (orthogonal) vector of the 'up' vector
+    const upNormal = new Point(-layout.upY, layout.upX)
+
+    // calculate the total distance the handle has been moved in this drag gesture
+    let delta = upNormal.scalarProduct(newLocation.subtract(originalLocation))
+
+    // max with minus half the label size - because the label width can't shrink below zero
+    delta = Math.max(delta, -layout.width * (this.symmetricResize ? 0.5 : 1))
+
+    // add one or two times delta to the width to expand the label right and left
+    const newWidth = layout.width + delta * (this.symmetricResize ? 2 : 1)
+    this.$dummyPreferredSize = new Size(newWidth, this.$dummyPreferredSize.height)
+    // calculate the new location
+    this.$dummyLocation = layout.anchorLocation.subtract(
+      this.symmetricResize ? new Point(upNormal.x * delta, upNormal.y * delta) : new Point(0, 0)
+    )
+  }
+
+  /**
+   * Invoked when dragging has canceled.
+   * @param {IInputModeContext} context The context to retrieve information
+   * @param {Point} originalLocation The value of the location property at the time of initializeDrag
+   */
+  cancelDrag(context, originalLocation) {
+    // use the normal label bounds if the drag gesture is over
+    this.$emulate = false
+    // remove the visual size indicator
+    if (this.$sizeIndicator !== null) {
+      this.$sizeIndicator.remove()
+      this.$sizeIndicator = null
     }
+  }
 
-    /**
-     * Invoked when dragging has finished.
-     * @param {yfiles.input.IInputModeContext} context The context to retrieve information
-     * @param {yfiles.geometry.Point} originalLocation The value of the location property at the time of initializeDrag
-     * @param {yfiles.geometry.Point} newLocation The new location in the world coordinate system
-     */
-    dragFinished(context, originalLocation, newLocation) {
-      this.cancelDrag(context, originalLocation)
-      const graph = context.graph
-      if (graph !== null) {
-        // assign the new size
-        graph.setLabelPreferredSize(this.$label, this.$dummyPreferredSize)
-      }
+  /**
+   * Invoked when dragging has finished.
+   * @param {IInputModeContext} context The context to retrieve information
+   * @param {Point} originalLocation The value of the location property at the time of initializeDrag
+   * @param {Point} newLocation The new location in the world coordinate system
+   */
+  dragFinished(context, originalLocation, newLocation) {
+    this.cancelDrag(context, originalLocation)
+    const graph = context.graph
+    if (graph !== null) {
+      // assign the new size
+      graph.setLabelPreferredSize(this.$label, this.$dummyPreferredSize)
     }
+  }
 
-    /**
-     * Returns the current label layout.
-     * @return {yfiles.geometry.OrientedRectangle}
-     */
-    getCurrentLabelLayout() {
-      const labelLayout = this.$label.layout
-      if (this.$emulate) {
-        return new yfiles.geometry.OrientedRectangle(
-          this.$dummyLocation.x,
-          this.$dummyLocation.y,
-          this.$dummyPreferredSize.width,
-          this.$dummyPreferredSize.height,
-          labelLayout.upX,
-          labelLayout.upY
-        )
-      }
-      return new yfiles.geometry.OrientedRectangle(
-        labelLayout.anchorX,
-        labelLayout.anchorY,
-        this.$label.preferredSize.width,
-        this.$label.preferredSize.height,
+  /**
+   * Returns the current label layout.
+   * @return {OrientedRectangle}
+   */
+  getCurrentLabelLayout() {
+    const labelLayout = this.$label.layout
+    if (this.$emulate) {
+      return new OrientedRectangle(
+        this.$dummyLocation.x,
+        this.$dummyLocation.y,
+        this.$dummyPreferredSize.width,
+        this.$dummyPreferredSize.height,
         labelLayout.upX,
         labelLayout.upY
       )
     }
+    return new OrientedRectangle(
+      labelLayout.anchorX,
+      labelLayout.anchorY,
+      this.$label.preferredSize.width,
+      this.$label.preferredSize.height,
+      labelLayout.upX,
+      labelLayout.upY
+    )
+  }
+}
+
+/**
+ * Represents the new resize point for the given handler.
+ */
+class LabelResizeHandleLivePoint extends BaseClass(IPoint) {
+  /**
+   * Creates a new point for the given handler.
+   * @param {IHandle} outerThis The given handler
+   */
+  constructor(outerThis) {
+    super()
+    this.$outerThis = outerThis
   }
 
   /**
-   * Represents the new resize point for the given handler.
+   * Returns the x-coordinate of the location of the handle from the anchor, the size and the orientation.
+   * @return {number}
    */
-  class LabelResizeHandleLivePoint extends yfiles.lang.Class(yfiles.geometry.IPoint) {
-    /**
-     * Creates a new point for the given handler.
-     * @param {yfiles.input.IHandle} outerThis The given handler
-     */
-    constructor(outerThis) {
-      super()
-      this.$outerThis = outerThis
-    }
-
-    /**
-     * Returns the x-coordinate of the location of the handle from the anchor, the size and the orientation.
-     * @return {number}
-     */
-    get x() {
-      const layout = this.$outerThis.$label.layout
-      const up = layout.upVector
-      const preferredSize = this.$outerThis.$emulate
-        ? this.$outerThis.$dummyPreferredSize
-        : this.$outerThis.$label.preferredSize
-      const anchor = this.$outerThis.$emulate
-        ? this.$outerThis.$dummyLocation
-        : layout.anchorLocation
-      // calculate the location of the handle from the anchor, the size and the orientation
-      return anchor.x + (up.x * preferredSize.height * 0.5 + -up.y * preferredSize.width)
-    }
-
-    /**
-     * Returns the y-coordinate of the location of the handle from the anchor, the size and the orientation.
-     * @return {number}
-     */
-    get y() {
-      const layout = this.$outerThis.$label.layout
-      const up = layout.upVector
-      const preferredSize = this.$outerThis.$emulate
-        ? this.$outerThis.$dummyPreferredSize
-        : this.$outerThis.$label.preferredSize
-      const anchor = this.$outerThis.$emulate
-        ? this.$outerThis.$dummyLocation
-        : layout.anchorLocation
-      // calculate the location of the handle from the anchor, the size and the orientation
-      return anchor.y + (up.y * preferredSize.height * 0.5 + up.x * preferredSize.width)
-    }
+  get x() {
+    const layout = this.$outerThis.$label.layout
+    const up = layout.upVector
+    const preferredSize = this.$outerThis.$emulate
+      ? this.$outerThis.$dummyPreferredSize
+      : this.$outerThis.$label.preferredSize
+    const anchor = this.$outerThis.$emulate ? this.$outerThis.$dummyLocation : layout.anchorLocation
+    // calculate the location of the handle from the anchor, the size and the orientation
+    return anchor.x + (up.x * preferredSize.height * 0.5 + -up.y * preferredSize.width)
   }
 
   /**
-   * Represents the oriented rectangle used for a given handler.
+   * Returns the y-coordinate of the location of the handle from the anchor, the size and the orientation.
+   * @return {number}
    */
-  class LabelResizeIndicatorInstaller extends yfiles.view.OrientedRectangleIndicatorInstaller {
-    /**
-     * Creates a new oriented rectangle for the given handler.
-     * @param {LabelResizeHandle} outerThis The given handler
-     */
-    constructor(outerThis) {
-      super()
-      this.$outerThis = outerThis
-    }
+  get y() {
+    const layout = this.$outerThis.$label.layout
+    const up = layout.upVector
+    const preferredSize = this.$outerThis.$emulate
+      ? this.$outerThis.$dummyPreferredSize
+      : this.$outerThis.$label.preferredSize
+    const anchor = this.$outerThis.$emulate ? this.$outerThis.$dummyLocation : layout.anchorLocation
+    // calculate the location of the handle from the anchor, the size and the orientation
+    return anchor.y + (up.y * preferredSize.height * 0.5 + up.x * preferredSize.width)
+  }
+}
 
-    /**
-     * Returns an IOrientedRectangle for a given user object.
-     * @param {object} item The given user object
-     * @return {yfiles.geometry.OrientedRectangle}
-     */
-    getRectangle(item) {
-      return this.$outerThis.getCurrentLabelLayout()
-    }
+/**
+ * Represents the oriented rectangle used for a given handler.
+ */
+class LabelResizeIndicatorInstaller extends OrientedRectangleIndicatorInstaller {
+  /**
+   * Creates a new oriented rectangle for the given handler.
+   * @param {LabelResizeHandle} outerThis The given handler
+   */
+  constructor(outerThis) {
+    super()
+    this.$outerThis = outerThis
   }
 
-  return LabelResizeHandle
-})
+  /**
+   * Returns an IOrientedRectangle for a given user object.
+   * @param {object} item The given user object
+   * @return {OrientedRectangle}
+   */
+  getRectangle(item) {
+    return this.$outerThis.getCurrentLabelLayout()
+  }
+}

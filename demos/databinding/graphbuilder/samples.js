@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.1.
- ** Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.2.
+ ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,9 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-'use strict'
-
-define([], () => [
+export default [
   {
     name: '1 - Simple Arrays',
     updateEnabled: true,
@@ -98,20 +96,7 @@ define([], () => [
     lazyNodeDefinition: false
   },
   {
-    name: '6 - Dynamic Modules',
-    nodesSource:
-      'nodes = require.getRequiredModuleStates(),\nedges = [],\nnodes.forEach(function(n){n.dependencies.forEach(function(e){var ed = {t:e}; ed.s = n.name; edges.push(ed)})}),\n(nodes)',
-    edgesSource: 'edges',
-    sourceNodeBinding: 's',
-    targetNodeBinding: 't',
-    nodeIdBinding: 'name',
-    edgeLabelBinding: '',
-    nodeTemplate:
-      "<rect fill='darkorange' stroke='white' rx='2' ry='2' width='{TemplateBinding width}' height='{TemplateBinding height}'></rect><text transform='translate(5 30)' data-content='{Binding name}' style='font-size:9px;'></text>",
-    lazyNodeDefinition: false
-  },
-  {
-    name: '7 - Tree',
+    name: '6 - Tree',
     nodesSource:
       "n0={name:'root'},\nn1={name:'n1, level 1'},\nn2={name:'n2, level 1'},\nn3={name:'n3, level 2'},\nn4={name:'n4, level 2'},\nn5={name:'n5, level 2'},\n([n0])",
     edgesSource:
@@ -124,4 +109,4 @@ define([], () => [
       "<rect fill='darkorange' stroke='white' rx='2' ry='2' width='{TemplateBinding width}' height='{TemplateBinding height}'></rect><text transform='translate(5 30)' data-content='{Binding name}' style='font-size:9px;'></text>",
     lazyNodeDefinition: true
   }
-])
+]

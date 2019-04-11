@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.1.
- ** Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.2.
+ ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,162 +26,160 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-'use strict'
+import {
+  FoldingManager,
+  GraphComponent,
+  GraphMLSupport,
+  GraphViewerInputMode,
+  ICommand,
+  License,
+  StorageLocation
+} from 'yfiles'
 
-require.config({
-  paths: {
-    yfiles: '../../../lib/umd/yfiles/',
-    utils: '../../utils/',
-    resources: '../../resources/'
-  }
-})
+import { configureIOHandler } from './graphml-compat.js'
+import {
+  bindAction,
+  bindChangeListener,
+  bindCommand,
+  readGraph,
+  showApp
+} from '../../resources/demo-app.js'
+import loadJson from '../../resources/load-json.js'
 
-require([
-  'yfiles/view',
-  'resources/demo-app',
-  './graphml-compat.js',
-  'graphml-compat.js',
-  'resources/license'
-], (/** @type {yfiles_namespace} */ /** typeof yfiles */ yfiles, app, compat) => {
-  /**
-   * This demo shows how to enable backwards READ compatibility for GraphML.
-   *
-   * The graphml-compat.js that is bundled in this demo provides a configurator class that can be used to
-   * configure a given GraphMLIOHandler instance so that it can read GraphML files written in versions prior to 2.x.
-   * You can enable backwards compatibiliyt with this single line:
-   *
-   * compat.graphml.CompatibilitySupport.configureIOHandler(ioh);
-   *
-   * The compat file is human readable and can be adjusted easily.
-   *
-   * The resources directory contains a number of sample files from previous distributions
-   */
+/**
+ * This demo shows how to enable backwards READ compatibility for GraphML.
+ *
+ * The graphml-compat.js that is bundled in this demo provides a configurator class that can be used to
+ * configure a given GraphMLIOHandler instance so that it can read GraphML files written in versions prior to 2.x.
+ * You can enable backwards compatibility with this single line:
+ *
+ * configureIOHandler(ioh);
+ *
+ * The compat file is human readable and can be adjusted easily.
+ *
+ * The resources directory contains a number of sample files from previous distributions
+ */
 
-  let graphComponent = null
-  let graphMLIOHandler = null
+let graphComponent = null
+let graphMLSupport = null
 
-  const graphChooserBox = document.getElementById('graphChooserBox')
-  const nextButton = document.getElementById('nextFileButton')
-  const previousButton = document.getElementById('previousFileButton')
+const graphChooserBox = document.getElementById('graphChooserBox')
+const nextButton = document.getElementById('nextFileButton')
+const previousButton = document.getElementById('previousFileButton')
 
-  function run() {
-    // Initialize the GraphComponent and place it in the div with CSS selector #graphComponent
-    graphComponent = new yfiles.view.GraphComponent('#graphComponent')
+function run(licenseData) {
+  License.value = licenseData
+  // Initialize the GraphComponent and place it in the div with CSS selector #graphComponent
+  graphComponent = new GraphComponent('#graphComponent')
 
-    // We also enable folding in this demo.
-    const fm = new yfiles.graph.FoldingManager()
-    graphComponent.graph = fm.createFoldingView().graph
+  // We also enable folding in this demo.
+  const fm = new FoldingManager()
+  graphComponent.graph = fm.createFoldingView().graph
 
-    // Enable GraphML IO and compatibility
-    graphMLIOHandler = enableGraphML()
+  // Enable GraphML IO and compatibility
+  enableGraphML()
 
-    // bind the demo buttons to their commands
-    registerCommands()
-    ;[
-      'computer-network',
-      'orgchart',
-      'movies',
-      'family-tree',
-      'hierarchy',
-      'nesting',
-      'social-network',
-      'uml-diagram'
-    ].forEach(graph => {
-      const option = document.createElement('option')
-      option.text = graph
-      option.value = graph
-      graphChooserBox.add(option)
-    })
+  // bind the demo buttons to their commands
+  registerCommands()
+  ;[
+    'computer-network',
+    'orgchart',
+    'movies',
+    'family-tree',
+    'hierarchy',
+    'nesting',
+    'social-network',
+    'uml-diagram'
+  ].forEach(graph => {
+    const option = document.createElement('option')
+    option.text = graph
+    option.value = graph
+    graphChooserBox.add(option)
+  })
 
-    // enable input mode
-    const mode = new yfiles.input.GraphViewerInputMode()
-    mode.navigationInputMode.allowCollapseGroup = true
-    mode.navigationInputMode.allowExpandGroup = true
-    graphComponent.inputMode = mode
+  // enable input mode
+  const mode = new GraphViewerInputMode()
+  mode.navigationInputMode.allowCollapseGroup = true
+  mode.navigationInputMode.allowExpandGroup = true
+  graphComponent.inputMode = mode
 
-    // We load a sample graph
-    readSampleGraph()
+  // We load a sample graph
+  readSampleGraph()
 
-    app.show(graphComponent)
-  }
+  showApp(graphComponent)
+}
 
-  /**
-   * Enables loading and saving the graph to GraphML.
-   */
-  function enableGraphML() {
-    const ioHandler = new yfiles.graphml.GraphMLIOHandler()
-    // Configure backwards compatibility
-    compat.graphml.CompatibilitySupport.configureIOHandler(ioHandler)
-    // create a new GraphMLSupport instance that handles save and load operations
-    const gs = new yfiles.graphml.GraphMLSupport({
-      graphComponent,
-      // configure to load and save to the file system
-      storageLocation: yfiles.graphml.StorageLocation.FILE_SYSTEM
-    })
-    gs.graphMLIOHandler = ioHandler
-    return ioHandler
-  }
+/**
+ * Enables loading and saving the graph to GraphML.
+ */
+function enableGraphML() {
+  // create a new GraphMLSupport instance that handles save and load operations
+  graphMLSupport = new GraphMLSupport({
+    graphComponent,
+    // configure to load and save to the file system
+    storageLocation: StorageLocation.FILE_SYSTEM
+  })
+  // Configure backwards compatibility
+  configureIOHandler(graphMLSupport.graphMLIOHandler)
+}
 
-  /**
-   * Helper method that reads the currently selected graphml from the combobox.
-   */
-  function readSampleGraph() {
-    // Disable navigation buttons while graph is loaded
-    nextButton.disabled = true
-    previousButton.disabled = true
+/**
+ * Helper method that reads the currently selected graphml from the combobox.
+ */
+function readSampleGraph() {
+  // Disable navigation buttons while graph is loaded
+  nextButton.disabled = true
+  previousButton.disabled = true
 
-    // first derive the file name
-    const selectedItem = graphChooserBox.options[graphChooserBox.selectedIndex].value
-    const fileName = `resources/${selectedItem}.graphml`
-    // then load the graph
-    app.readGraph(graphMLIOHandler, graphComponent.graph, fileName).then(() => {
-      // when done - fit the bounds
-      yfiles.input.ICommand.FIT_GRAPH_BOUNDS.execute(null, graphComponent)
-      // re-enable navigation buttons
-      setTimeout(updateButtons, 10)
-    })
-  }
+  // first derive the file name
+  const selectedItem = graphChooserBox.options[graphChooserBox.selectedIndex].value
+  const fileName = `resources/${selectedItem}.graphml`
+  // then load the graph
+  readGraph(graphMLSupport.graphMLIOHandler, graphComponent.graph, fileName).then(() => {
+    // when done - fit the bounds
+    ICommand.FIT_GRAPH_BOUNDS.execute(null, graphComponent)
+    // re-enable navigation buttons
+    setTimeout(updateButtons, 10)
+  })
+}
 
-  function registerCommands() {
-    const ICommand = yfiles.input.ICommand
+function registerCommands() {
+  bindCommand("button[data-command='Open']", ICommand.OPEN, graphComponent)
+  bindCommand("button[data-command='Save']", ICommand.SAVE, graphComponent)
 
-    app.bindCommand("button[data-command='Open']", ICommand.OPEN, graphComponent)
-    app.bindCommand("button[data-command='Save']", ICommand.SAVE, graphComponent)
+  bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent)
+  bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent)
+  bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent)
+  bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
 
-    app.bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent)
-    app.bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent)
-    app.bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent)
-    app.bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
+  bindAction("button[data-command='PreviousFile']", onPreviousButtonClicked)
+  bindAction("button[data-command='NextFile']", onNextButtonClicked)
+  bindChangeListener("select[data-command='SelectedFileChanged']", readSampleGraph)
+}
 
-    app.bindAction("button[data-command='PreviousFile']", onPreviousButtonClicked)
-    app.bindAction("button[data-command='NextFile']", onNextButtonClicked)
-    app.bindChangeListener("select[data-command='SelectedFileChanged']", readSampleGraph)
-  }
+/**
+ * Updates the previous/next button states.
+ */
+function updateButtons() {
+  nextButton.disabled = graphChooserBox.selectedIndex >= graphChooserBox.length - 1
+  previousButton.disabled = graphChooserBox.selectedIndex <= 0
+}
 
-  /**
-   * Updates the previous/next button states.
-   */
-  function updateButtons() {
-    nextButton.disabled = graphChooserBox.selectedIndex >= graphChooserBox.length - 1
-    previousButton.disabled = graphChooserBox.selectedIndex <= 0
-  }
+/**
+ * Switches to the previous graph.
+ */
+function onPreviousButtonClicked() {
+  graphChooserBox.selectedIndex--
+  readSampleGraph()
+}
 
-  /**
-   * Switches to the previous graph.
-   */
-  function onPreviousButtonClicked() {
-    graphChooserBox.selectedIndex--
-    readSampleGraph()
-  }
+/**
+ * Switches to the next graph.
+ */
+function onNextButtonClicked() {
+  graphChooserBox.selectedIndex++
+  readSampleGraph()
+}
 
-  /**
-   * Switches to the next graph.
-   */
-  function onNextButtonClicked() {
-    graphChooserBox.selectedIndex++
-    readSampleGraph()
-  }
-
-  // run the demo
-  run()
-})
+// run the demo
+loadJson().then(run)

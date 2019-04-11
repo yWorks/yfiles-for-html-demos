@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.1.
- ** Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.2.
+ ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,48 +26,44 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-/*eslint-disable*/
-'use strict'
-define(['yfiles/lang', 'yfiles/view-component', 'MindmapNodeStyleRoot.js'], (
-  lang,
-  yfiles,
-  MindmapNodeStyleRoot
-) => {
+import { Class, ILookup, MarkupExtension } from 'yfiles'
+import MindmapNodeStyleRoot from './MindmapNodeStyleRoot.js'
+
+/**
+ * A markup extension class used for (de-)serializing a custom node style, namely
+ * MindmapNodeStyleRoot class, that is written in ECMAScript 6.
+ */
+const MindmapNodeStyleRootExtension = Class('MindmapNodeStyleRootExtension', {
+  $extends: MarkupExtension,
+
   /**
-   * A markup extension class used for (de-)serializing a custom node style, namely
-   * MindmapNodeStyleRoot class, that is written in ECMAScript 6.
+   * Backing field for below property
+   * @type {string}
    */
-  const MindmapNodeStyleRootExtension = yfiles.lang.Class('MindmapNodeStyleRootExtension', {
-    $extends: yfiles.graphml.MarkupExtension,
+  $className: '',
 
-    /**
-     * Backing field for below property
-     * @type {string}
-     */
-    $className: '',
-
-    /**
-     * Gets or sets the class name.
-     * The explicit getter/setter is needed to support (de-)serialization.
-     * @type {string}
-     */
-    className: {
-      get: function() {
-        return this.$className
-      },
-      set: function(value) {
-        this.$className = value
-      }
+  /**
+   * Gets or sets the class name.
+   * The explicit getter/setter is needed to support (de-)serialization.
+   * @type {string}
+   */
+  className: {
+    get: function() {
+      return this.$className
     },
-
-    /**
-     * @param {yfiles.graph.ILookup} lookup
-     * @return {MindmapNodeStyleRoot}
-     */
-    provideValue: function(lookup) {
-      let mindmapNodeStyleRoot = new MindmapNodeStyleRoot(this.className)
-      return mindmapNodeStyleRoot
+    set: function(value) {
+      this.$className = value
     }
-  })
-  return MindmapNodeStyleRootExtension
+  },
+
+  /**
+   * @param {ILookup} lookup
+   * @return {MindmapNodeStyleRoot}
+   */
+  provideValue: function(lookup) {
+    let mindmapNodeStyleRoot = new MindmapNodeStyleRoot(this.className)
+    return mindmapNodeStyleRoot
+  }
 })
+
+export default MindmapNodeStyleRootExtension

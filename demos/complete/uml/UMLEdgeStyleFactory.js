@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.1.
- ** Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.2.
+ ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,112 +26,100 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-'use strict'
+import { Arrow, ArrowType, DashStyle, Fill, PolylineEdgeStyle, Stroke } from 'yfiles'
 
-define(['yfiles/view-component'], /** @type {yfiles_namespace} */ /** typeof yfiles */ yfiles => {
-  /**
-   * Static helper class to create UML styles and provide methods to check for certain styles.
-   */
-  class UMLEdgeStyleFactory {
-    static createAssociationStyle() {
-      return new yfiles.styles.PolylineEdgeStyle()
-    }
+/**
+ * Static helpers class to create UML styles and provide methods to check for certain styles.
+ */
+export function createAssociationStyle() {
+  return new PolylineEdgeStyle()
+}
 
-    static createDirectedAssociationStyle() {
-      return new yfiles.styles.PolylineEdgeStyle({
-        targetArrow: new yfiles.styles.Arrow({
-          stroke: yfiles.view.Stroke.BLACK,
-          fill: yfiles.view.Fill.BLACK,
-          type: yfiles.styles.ArrowType.DEFAULT
-        })
-      })
-    }
+export function createDirectedAssociationStyle() {
+  return new PolylineEdgeStyle({
+    targetArrow: new Arrow({
+      stroke: Stroke.BLACK,
+      fill: Fill.BLACK,
+      type: ArrowType.DEFAULT
+    })
+  })
+}
 
-    static createRealizationStyle() {
-      return new yfiles.styles.PolylineEdgeStyle({
-        stroke: new yfiles.view.Stroke({
-          dashStyle: yfiles.view.DashStyle.DASH
-        }),
-        sourceArrow: new yfiles.styles.Arrow({
-          stroke: yfiles.view.Stroke.BLACK,
-          fill: yfiles.view.Fill.WHITE,
-          type: yfiles.styles.ArrowType.TRIANGLE
-        })
-      })
-    }
+export function createRealizationStyle() {
+  return new PolylineEdgeStyle({
+    stroke: new Stroke({
+      dashStyle: DashStyle.DASH
+    }),
+    sourceArrow: new Arrow({
+      stroke: Stroke.BLACK,
+      fill: Fill.WHITE,
+      type: ArrowType.TRIANGLE
+    })
+  })
+}
 
-    static createGeneralizationStyle() {
-      return new yfiles.styles.PolylineEdgeStyle({
-        sourceArrow: new yfiles.styles.Arrow({
-          stroke: yfiles.view.Stroke.BLACK,
-          fill: yfiles.view.Fill.WHITE,
-          type: yfiles.styles.ArrowType.TRIANGLE
-        })
-      })
-    }
+export function createGeneralizationStyle() {
+  return new PolylineEdgeStyle({
+    sourceArrow: new Arrow({
+      stroke: Stroke.BLACK,
+      fill: Fill.WHITE,
+      type: ArrowType.TRIANGLE
+    })
+  })
+}
 
-    static createAggregationStyle() {
-      return new yfiles.styles.PolylineEdgeStyle({
-        sourceArrow: new yfiles.styles.Arrow({
-          stroke: yfiles.view.Stroke.BLACK,
-          fill: yfiles.view.Fill.WHITE,
-          type: yfiles.styles.ArrowType.DIAMOND
-        })
-      })
-    }
+export function createAggregationStyle() {
+  return new PolylineEdgeStyle({
+    sourceArrow: new Arrow({
+      stroke: Stroke.BLACK,
+      fill: Fill.WHITE,
+      type: ArrowType.DIAMOND
+    })
+  })
+}
 
-    static createDependencyStyle() {
-      return new yfiles.styles.PolylineEdgeStyle({
-        stroke: new yfiles.view.Stroke({
-          dashStyle: yfiles.view.DashStyle.DASH
-        }),
-        targetArrow: new yfiles.styles.Arrow({
-          stroke: yfiles.view.Stroke.BLACK,
-          fill: yfiles.view.Fill.BLACK,
-          type: yfiles.styles.ArrowType.DEFAULT
-        })
-      })
-    }
+export function createDependencyStyle() {
+  return new PolylineEdgeStyle({
+    stroke: new Stroke({
+      dashStyle: DashStyle.DASH
+    }),
+    targetArrow: new Arrow({
+      stroke: Stroke.BLACK,
+      fill: Fill.BLACK,
+      type: ArrowType.DEFAULT
+    })
+  })
+}
 
-    /**
-     * Inheritance styles, i.e. generalization or realization
-     * @param style
-     * @returns {boolean}
-     */
-    static isInheritance(style) {
-      return UMLEdgeStyleFactory.isGeneralization(style) || UMLEdgeStyleFactory.isRealization(style)
-    }
+/**
+ * Inheritance styles, i.e. generalization or realization
+ * @param style
+ * @returns {boolean}
+ */
+export function isInheritance(style) {
+  return isGeneralization(style) || isRealization(style)
+}
 
-    /**
-     * If the style symbolizes a generalization.
-     * @param style
-     * @returns {boolean}
-     */
-    static isGeneralization(style) {
-      if (!style.stroke || !style.sourceArrow) {
-        return false
-      }
-      return (
-        style.stroke.dashStyle === yfiles.view.DashStyle.SOLID &&
-        style.sourceArrow.type === yfiles.styles.ArrowType.TRIANGLE
-      )
-    }
-
-    /**
-     * If the style symbolizes a realization.
-     * @param style
-     * @returns {boolean}
-     */
-    static isRealization(style) {
-      if (!style.stroke || !style.sourceArrow) {
-        return false
-      }
-      return (
-        style.stroke.dashStyle === yfiles.view.DashStyle.DASH &&
-        style.sourceArrow.type === yfiles.styles.ArrowType.TRIANGLE
-      )
-    }
+/**
+ * If the style symbolizes a generalization.
+ * @param style
+ * @returns {boolean}
+ */
+export function isGeneralization(style) {
+  if (!style.stroke || !style.sourceArrow) {
+    return false
   }
+  return style.stroke.dashStyle === DashStyle.SOLID && style.sourceArrow.type === ArrowType.TRIANGLE
+}
 
-  return UMLEdgeStyleFactory
-})
+/**
+ * If the style symbolizes a realization.
+ * @param style
+ * @returns {boolean}
+ */
+export function isRealization(style) {
+  if (!style.stroke || !style.sourceArrow) {
+    return false
+  }
+  return style.stroke.dashStyle === DashStyle.DASH && style.sourceArrow.type === ArrowType.TRIANGLE
+}

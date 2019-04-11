@@ -5,8 +5,8 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.1.
-     // Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML 2.2.
+     // Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -35,6 +35,42 @@
   <title>yFiles for HTML Programming Samples and Tutorials </title>
   <link rel="stylesheet" type="text/css" href="../doc/documentation-style.css">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+
+  <style>
+    .first-paragraph {
+      margin-top: 0;
+    }
+    .hidden {
+      display: none;
+    }
+    .demo-grid .tutorial-header {
+      margin: 16px 0;
+      font-size: 28px;
+      color: #f7f7f7;
+      font-weight: 400;
+      text-align: center;
+      padding: 8px 0;
+      background-color: #336699;
+    }
+    #no-search-results {
+      text-align: center;
+      padding: 24px;
+      line-height: 2;
+      font-size: 20px;
+    }
+    .btn {
+      display: inline-block;
+      background-color: #ea720b;
+      color: #f7f7f7;
+      padding: 8px;
+      text-decoration: none;
+      margin-top: 8px;
+    }
+    .btn:hover {
+      text-decoration: none;
+    }
+  </style>
+  <script src="resources/filesystem-warning.js" ></script>
 </head>
 <body>
 <header>
@@ -56,9 +92,58 @@
     </div>
   </aside>
   <div class="content">
-    <p style="margin-top: 0;">
-      The <a href="https://www.yworks.com/products/yfiles-for-html">yFiles for HTML</a> demos and tutorials are extensive sample applications that present the
+    <p id="general-intro" class="first-paragraph">
+      The <a href="https://www.yworks.com/products/yfiles-for-html">yFiles for HTML 2.2</a> demos and tutorials are extensive sample applications that present the
       features of the yFiles for HTML diagramming library.</p>
+    <div id="tutorial-getting-started" class="hidden">
+      <p>
+        This Getting Started Tutorial is a step-by-step introduction to the concepts and main features of the yFiles for HTML
+        diagramming library. Topics include basic styling, user interaction, Undo/Redo, clipboard, group nodes and
+        folding.
+      </p>
+      <p>
+        It is intended for developers who want to get started with the library in an effective way. If you are new to the
+        yFiles for HTML diagramming library, we recommend to start by going through the projects in this tutorial one by one. In
+        addition, have a look at the <a href="../doc/api/index.html#/dguide/getting_started#top">Getting Started</a>
+        chapter of the developer's guide.
+      </p>
+      <p>
+        To make full use of the tutorial, we also recommend to review and possibly modify the source code for each sample
+        project.
+      </p>
+    </div>
+
+    <div id="tutorial-custom-styles" class="hidden">
+    <p>
+    This tutorial is a step-by-step guide to customizing the visual representation of graph elements. It shows the
+    creation of custom styles for nodes, edges, labels, and ports. Moreover, it presents a custom arrowhead rendering,
+    a customized edge selection, and a visual representation of graph elements that depends on the current application
+    state. Finally, several optimization strategies are discussed.
+    </p>
+    <p>
+    It is intended for users who want to learn how to create custom styles from scratch. If you are new to styles, in
+    particular to their customization, we recommend to start by going through the tutorial steps that show the basics
+    one by one. Of the specialized topics, you can skip the ones that doesn't apply to your use case. To make full use
+    of the tutorial, we recommend to review and possibly modify the source code of the sample projects.
+    </p>
+    </div>
+
+    <div id="tutorial-application-features" class="hidden">
+    <p>
+    This tutorial is an introduction to the features of the yFiles for HTML diagramming library for building an application.
+    It covers a broad range of topics including building graphs from JSON data, drag and drop, tooltips, snapping
+    (guide lines), etc.
+    </p>
+    <p>
+    It is intended for developers who are interested in how to implement specific application features. If you are new
+    to the yFiles for HTML diagramming library, we recommend to start with the <a href="../01-tutorial-getting-started">Getting
+    Started</a> tutorial. Then, have a look at the samples of this tutorial that cover the features you are interested
+    in.</p>
+    <p>
+    To make full use of this tutorial, we also recommend to review and possibly modify the source code for each sample
+    project.
+    </p>
+    </div>
     <p>
       The complete source code of all of these samples is part of the yFiles for HTML package and available at <a
       href="https://github.com/yWorks/yfiles-for-html-demos">GitHub</a>.</p>
@@ -83,30 +168,24 @@
       </p>
     </div>
 
-    <div class="note" id="localhost-notice" style="display: none">
-      <p>
-        Due to strict cross domain policies in both <b>Internet Explorer</b> and <b>Google Chrome</b>, some demos work
-        only partially or not at all when viewed from a filesystem location in these browsers. Therefore, it is
-        recommended to access the demos through a Web server. Install and start scripts for a <a
-          href="demo-server/README.html">local Node.js Express server</a> are included: </p>
-      <pre>
- > cd %YFILES_HTML_DISTRIBUTION_DIR%/demos/demo-server/
- > npm install
- > npm start</pre>
-      <p>
-        <b>Google Chrome</b> can also be instructed to use a more tolerant policy by starting Chrome with the <code>--allow-file-access-from-files</code>
-        command line option.
-      </p>
-      <p>
-        In <b>Firefox</b>, the demos should run well from a filesystem location, since its cross domain policy is
-        tolerant by default.
-      </p>
-    </div>
-
     <div class="demo-grid">
+      <div id="no-search-results" style="display: none;">
+        No demos match your search query. <br>
+        <a href="#" class="reset-search btn">
+          Click here to see all demos
+        </a>
+
+      </div>
       <noscript>
         Please enable JavaScript to see and search the list of the available demos.
       </noscript>
+      <div id="non-tutorial-grid"></div>
+      <div class="tutorial-header" id="tutorial-getting-started-header">Tutorial: Getting Started</div>
+      <div id="tutorial-getting-started-grid"></div>
+      <div class="tutorial-header" id="tutorial-custom-styles-header">Tutorial: Custom Styles</div>
+      <div id="tutorial-custom-styles-grid"></div>
+      <div class="tutorial-header" id="tutorial-application-features-header">Tutorial: Application Features</div>
+      <div id="tutorial-application-features-grid"></div>
     </div>
   </div>
 </div>
@@ -140,7 +219,7 @@
       <a href="https://www.youtube.com/user/yWorksTube" target="_blank" class="yt">YouTube</a>
     </div>
     <br><br>
-    <span class="copyright">COPYRIGHT &#x00A9; 2018 yWorks</span><br>
+    <span class="copyright">COPYRIGHT &#x00A9; 2019 yWorks</span><br>
     <a href="https://www.yworks.com/company/legal/imprint">Imprint</a> |
     <a href="https://www.yworks.com/company/legal/terms-of-use">Terms of Use</a> |
     <a href="https://www.yworks.com/company/legal/privacy">Privacy Policy</a>
@@ -149,7 +228,7 @@
 </footer>
 <template id="grid-item-template">
   <div class="thumbnail">
-    <a href="{{demoPath}}" style="background-image: url({{thumbnailPath}})"></a>
+    <a href="{{demoPath}}" style="background-image: url({{thumbnailPath}})">{{video}}</a>
     <div class="actions">
       <a href="{{demoPath}}" class="action-run"></a>
     </div>
@@ -162,21 +241,12 @@
 </template>
 <template id="accordion-template">
   <div class="accordion-pane">
-    <h5 class="accordion-title" onclick="toggleExpanded(this.parentNode)">{{title}}<i class="accordion-icon"></i></h5>
-    <div class="accordion-content demo-items demo-items-{{title}}">
+    <h5 class="accordion-title">{{title}}<i class="accordion-icon"></i></h5>
+    <div class="accordion-content demo-items demo-items-{{identifier}}">
     </div>
   </div>
 </template>
 <script src="resources/readme-demo-data.js"></script>
-<script>
-  function toggleExpanded(element){
-    if (element.className.indexOf("expanded") >= 0){
-      element.className = element.className.replace(" expanded", "");
-    } else {
-      element.className += " expanded";
-    }
-  }
-</script>
 <script src="resources/readme-demo-support.js" ></script>
 </body>
 </html>

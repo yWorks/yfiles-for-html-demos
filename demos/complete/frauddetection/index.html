@@ -7,8 +7,8 @@
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.1.
-     // Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML 2.2.
+     // Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -36,7 +36,7 @@
 
   <title>Fraud Detection Demo [yFiles for HTML]</title>
 
-  <link rel="stylesheet" href="../../../lib/yfiles.css">
+  <link rel="stylesheet" href="../../node_modules/yfiles/yfiles.css">
   <link rel="stylesheet" href="../../resources/style/demo.css">
   <link rel="stylesheet" href="resources/fraud-detection-demo.css">
   <link rel="stylesheet" href="resources/timeline-component.css">
@@ -44,6 +44,8 @@
   <!-- enable debugging -->
   <!-- Commented out for performance reasons -->
   <!--<script src="../../../ide-support/yfiles-typeinfo.js"></script>-->
+
+  <script src="../../resources/filesystem-warning.js"></script>
 </head>
 <body class="demo-has-left demo-has-right">
 
@@ -187,8 +189,7 @@
 
 <div id="loadingIndicator">Loading... This may take a while.</div>
 
-<script src="../../resources/require.js"></script>
-<script src="FraudDetectionDemo.js"></script>
+<script type="module" crossorigin="anonymous" src="FraudDetectionDemo.js"></script>
 
 </body>
 </html>

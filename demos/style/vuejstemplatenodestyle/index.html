@@ -7,8 +7,8 @@
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.1.
-     // Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML 2.2.
+     // Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -36,7 +36,7 @@
 
   <title>Vue.js Template Node Style Demo [yFiles for HTML]</title>
 
-  <link rel="stylesheet" href="../../../lib/yfiles.css">
+  <link rel="stylesheet" href="../../node_modules/yfiles/yfiles.css">
   <link rel="stylesheet" href="../../resources/style/demo.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.41.0/codemirror.css"/>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.41.0/addon/dialog/dialog.css"/>
@@ -45,15 +45,25 @@
   <script src="https://unpkg.com/vue@2.5.17"></script>
   <script src="https://unpkg.com/jsonlint@1.6.3"></script>
 
+  <!-- load Codemirror resources -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.42.0/codemirror.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.42.0/addon/search/search.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.42.0/addon/search/searchcursor.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.42.0/addon/dialog/dialog.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.42.0/addon/lint/json-lint.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.42.0/mode/javascript/javascript.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.42.0/addon/lint/lint.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.42.0/mode/xml/xml.min.js"></script>
+
   <!-- enable debugging -->
   <script src="../../../ide-support/yfiles-typeinfo.js"></script>
-  <!--
-    Use require.js instead of the simple yFiles demo AMD loader implementation, so we can use
-    the "paths" configuration option for mapping remote modules.
-    -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js"></script>
+  <script src="../../resources/filesystem-warning.js"></script>
 
   <style>
+    #graphComponent {
+      background-color: #EEEEEE;
+    }
+
     .editorText {
       font-family: "Consolas", "Courier New", Courier, mono, serif;
       font-size: 13px;
@@ -80,6 +90,13 @@
       right: 0;
       background-color: #f7f7f7;
       padding-right: 10px;
+      box-sizing: border-box;
+    }
+
+    @media screen and (max-height: 500px) {
+      .right {
+        top: 60px;
+      }
     }
 
     #templateEditorContainer {
@@ -145,7 +162,7 @@
   <h1 class="demo-sidebar-header">Description</h1>
   <div class="demo-sidebar-content">
     <p>
-      This demo presents a very versatile and easily customizable <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.styles.INodeStyle" target="_blank">yfiles.styles.INodeStyle</a>.
+      This demo presents a very versatile and easily customizable <a href="https://docs.yworks.com/yfileshtml/#/api/INodeStyle" target="_blank">INodeStyle</a>.
     </p>
     <p>
       The visualization of the node is defined by an svg-template which is interpreted by the node style using the
@@ -207,7 +224,7 @@
   </div>
 </div>
 
-<script src="VuejsTemplateNodeStyleDemo.js"></script>
+<script type="module" crossorigin="anonymous" src="VuejsTemplateNodeStyleDemo.js"></script>
 
 </body>
 </html>

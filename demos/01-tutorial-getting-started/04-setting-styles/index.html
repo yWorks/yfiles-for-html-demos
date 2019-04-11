@@ -7,8 +7,8 @@
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.1.
-     // Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML 2.2.
+     // Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -36,47 +36,48 @@
 
   <title>Customizing Styles - Getting Started Tutorial [yFiles for HTML]</title>
 
-  <link rel="stylesheet" href="../../../lib/yfiles.css">
+  <link rel="stylesheet" href="../../node_modules/yfiles/yfiles.css">
   <link rel="stylesheet" href="../../resources/style/demo.css">
 
-  <script src="../../../ide-support/yfiles-typeinfo.js"></script><!-- enable debugging -->
+  <script src="../../../ide-support/yfiles-typeinfo.js"></script>
+
+  <script src="../../resources/filesystem-warning.js"></script><!-- enable debugging -->
 </head>
 <body class="demo-has-left">
 
-  <!--
-    The sidebar for the overview and description text
-    -->
-  <aside class="demo-sidebar demo-left">
-    <h1 class="demo-sidebar-header">Description</h1>
-    <div class="demo-sidebar-content">
-      <h2>Tutorial Demo 4</h2>
+<!--
+  The sidebar for the overview and description text
+  -->
+<aside class="demo-sidebar demo-left">
+  <h1 class="demo-sidebar-header">Description</h1>
+  <div class="demo-sidebar-content">
+    <h2>Tutorial Demo 4</h2>
 
-      <h3>How to influence visual appearance.</h3>
+    <h3>How to influence visual appearance.</h3>
 
-      <p>This step shows how to <a href="https://docs.yworks.com/yfileshtml/#/dguide/getting_started-setting_styles" target="_blank">
-        configure the visual appearance of graph elements</a> using styles.</p>
+    <p>This step shows how to <a href="https://docs.yworks.com/yfileshtml/#/dguide/getting_started-setting_styles" target="_blank"> configure the visual appearance of graph
+      elements</a> using styles.</p>
 
-      <p>yFiles for HTML offers a set of predefined and configurable item styles for various use-cases. The tutorial <a
-          href="../../02-tutorial-custom-styles/README.html">02 Custom Styles</a> shows in detail how to create a
-        custom style from scratch.</p>
+    <p>yFiles for HTML offers a set of predefined and configurable item styles for various use-cases. The tutorial <a
+      href="../../README.html#tutorial-custom-styles">02 Custom Styles</a> shows in detail how to create a custom
+      style from scratch.</p>
 
-      <p>See the sources for details.</p>
-    </div>
-  </aside>
+    <p>See the sources for details.</p>
+  </div>
+</aside>
 
-  <div class="demo-content">
+<div class="demo-content">
 
-    <div class="demo-toolbar">
-      <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
-      <button data-command="ZoomOriginal" title="Zoom to original size" class="demo-icon-yIconZoomOriginal"></button>
-      <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
-      <button data-command="FitContent" title="Fit Content" class="demo-icon-yIconZoomFit"></button>
-    </div>
-
-    <div id="graphComponent"></div>
+  <div class="demo-toolbar">
+    <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
+    <button data-command="ZoomOriginal" title="Zoom to original size" class="demo-icon-yIconZoomOriginal"></button>
+    <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
+    <button data-command="FitContent" title="Fit Content" class="demo-icon-yIconZoomFit"></button>
   </div>
 
-<script src="../../resources/require.js"></script>
-<script src="SampleApplication.js"></script>
+  <div id="graphComponent"></div>
+</div>
+
+<script type="module" crossorigin="anonymous" src="SampleApplication.js"></script>
 </body>
 </html>

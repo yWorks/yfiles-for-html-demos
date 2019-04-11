@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.1.
- ** Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.2.
+ ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,88 +26,76 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-'use strict'
+import { IGraph, IModelItem, IWriteContext, KeyType, OutputHandlerBase, YObject } from 'yfiles'
 
-define(['yfiles/view-graphml'], /** @type {yfiles_namespace} */ /** typeof yfiles */ yfiles => {
+/**
+ * An output handler that writes primitive data types and ignores complex types.
+ */
+export default class SimpleOutputHandler extends OutputHandlerBase {
   /**
-   * An output handler that writes primitive data types and ignores complex types.
-   *
-   * @extends yfiles.graphml.OutputHandlerBase
+   * @param {GraphMLProperty} property
+   * @param {PropertiesPanel} propertiesPanel
    */
-  class SimpleOutputHandler extends yfiles.graphml.OutputHandlerBase {
-    /**
-     * @param {GraphMLProperty} property
-     * @param {PropertiesPanel} propertiesPanel
-     */
-    constructor(property, propertiesPanel) {
-      super(
-        yfiles.lang.Object.$class,
-        yfiles.lang.Object.$class,
-        property.keyScope,
-        property.name,
-        property.type
-      )
-      this.property = property
-      this.propertiesPanel = propertiesPanel
-      this.defaultExists = property.defaultExists
-      if (property.defaultExists) {
-        this.defaultValue = property.defaultValue
-      }
-    }
-
-    /**
-     * Writes the property data to xml.
-     *
-     * Only primitive data types are written. Complex data types are ignored, because they
-     * cannot be serialized in a meaningful manner.
-     *
-     * @see Overrides {@link yfiles.graphml.OutputHandlerBase#writeValueCore}
-     * @param {yfiles.graphml.IWriteContext} context
-     * @param {object} data
-     */
-    writeValueCore(context, data) {
-      if (data !== null) {
-        switch (this.property.type) {
-          case yfiles.graphml.KeyType.INT:
-            context.writer.writeString((data | 0).toString())
-            break
-          case yfiles.graphml.KeyType.LONG:
-            context.writer.writeString((data | 0).toString())
-            break
-          case yfiles.graphml.KeyType.FLOAT:
-            context.writer.writeString(data)
-            break
-          case yfiles.graphml.KeyType.DOUBLE:
-            context.writer.writeString(data)
-            break
-          case yfiles.graphml.KeyType.STRING:
-            context.writer.writeCData(data)
-            break
-          case yfiles.graphml.KeyType.BOOLEAN:
-            context.writer.writeString((!!data).toString())
-            break
-          default:
-            throw new Error('Invalid Type!')
-        }
-      }
-    }
-
-    /**
-     * Gets the value for the given key.
-     * @param {yfiles.graphml.IWriteContext} context
-     * @param {Object} key
-     * @return {Object}
-     * @see Overrides {@link yfiles.graphml.OutputHandlerBase#getValue}
-     */
-    getValue(context, key) {
-      if (yfiles.graph.IModelItem.isInstance(key)) {
-        return this.propertiesPanel.getItemValue(this.property, key)
-      } else if (yfiles.graph.IGraph.isInstance(key) && context.objectStack.size === 2) {
-        return this.propertiesPanel.getGraphValue(this.property)
-      }
-      return null
+  constructor(property, propertiesPanel) {
+    super(YObject.$class, YObject.$class, property.keyScope, property.name, property.type)
+    this.property = property
+    this.propertiesPanel = propertiesPanel
+    this.defaultExists = property.defaultExists
+    if (property.defaultExists) {
+      this.defaultValue = property.defaultValue
     }
   }
 
-  return SimpleOutputHandler
-})
+  /**
+   * Writes the property data to xml.
+   *
+   * Only primitive data types are written. Complex data types are ignored, because they
+   * cannot be serialized in a meaningful manner.
+   *
+   * @see Overrides {@link OutputHandlerBase#writeValueCore}
+   * @param {IWriteContext} context
+   * @param {object} data
+   */
+  writeValueCore(context, data) {
+    if (data !== null) {
+      switch (this.property.type) {
+        case KeyType.INT:
+          context.writer.writeString((data | 0).toString())
+          break
+        case KeyType.LONG:
+          context.writer.writeString((data | 0).toString())
+          break
+        case KeyType.FLOAT:
+          context.writer.writeString(data)
+          break
+        case KeyType.DOUBLE:
+          context.writer.writeString(data)
+          break
+        case KeyType.STRING:
+          context.writer.writeCData(data)
+          break
+        case KeyType.BOOLEAN:
+          context.writer.writeString((!!data).toString())
+          break
+        default:
+          throw new Error('Invalid Type!')
+      }
+    }
+  }
+
+  /**
+   * Gets the value for the given key.
+   * @param {IWriteContext} context
+   * @param {Object} key
+   * @return {Object}
+   * @see Overrides {@link OutputHandlerBase#getValue}
+   */
+  getValue(context, key) {
+    if (IModelItem.isInstance(key)) {
+      return this.propertiesPanel.getItemValue(this.property, key)
+    } else if (IGraph.isInstance(key) && context.objectStack.size === 2) {
+      return this.propertiesPanel.getGraphValue(this.property)
+    }
+    return null
+  }
+}

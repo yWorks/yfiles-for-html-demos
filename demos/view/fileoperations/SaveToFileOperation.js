@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.1.
- ** Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.2.
+ ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,144 +26,138 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-'use strict'
-
-define([], () => {
+/**
+ * Saves the given string to a file with either the File API and the download attribute or with
+ * the Internet Explorer specific function msSaveOrOpenBlob.
+ * See {@link SaveToFileOperation.fileConstructorIsAvailable()} and {@link SaveToFileOperation.msSaveIsAvailable()}
+ * for details on browser compatibility.
+ */
+export default class SaveToFileOperation {
   /**
-   * Saves the given string to a file with either the File API and the download attribute or with
-   * the Internet Explorer specific function msSaveOrOpenBlob.
-   * See {@link SaveToFileOperation.fileConstructorIsAvailable()} and {@link SaveToFileOperation.msSaveIsAvailable()}
-   * for details on browser compatibility.
+   * Checks if the operation can be executed.
+   * @return {boolean}
    */
-  class SaveToFileOperation {
-    /**
-     * Checks if the operation can be executed.
-     * @return {boolean}
-     */
-    isAvailable() {
-      return (
-        SaveToFileOperation.isFileConstructorAvailable() || SaveToFileOperation.isMsSaveAvailable()
-      )
-    }
-
-    /**
-     * Saves the file to the file system using the HTML5 File download or
-     * the proprietary msSaveOrOpenBlob function in Internet Explorer.
-     *
-     * @param {string} fileContent The file contents to be saved.
-     * @param {string} fileName The default filename for the downloaded file.
-     * @return {Promise} A promise which resolves when the save operation is complete.
-     */
-    save(fileContent, fileName) {
-      return new Promise((resolve, reject) => {
-        // extract file format
-        const format = fileName.split('.')[1].toLowerCase()
-
-        if (SaveToFileOperation.isFileConstructorAvailable()) {
-          if (format === 'txt' || format === 'svg' || format === 'graphml') {
-            let mimeType = ''
-            switch (format) {
-              case 'txt':
-              default:
-                mimeType = 'text/plain'
-                break
-              case 'svg':
-                mimeType = 'image/svg+xml'
-                break
-              case 'graphml':
-                mimeType = 'application/xml'
-                break
-            }
-
-            // workaround for supporting non-binary data
-            fileContent = URL.createObjectURL(new Blob([fileContent], { type: mimeType }))
-          }
-
-          const aElement = document.createElement('a')
-          aElement.setAttribute('href', fileContent)
-          aElement.setAttribute('download', fileName)
-          aElement.style.display = 'none'
-          document.body.appendChild(aElement)
-          aElement.click()
-          document.body.removeChild(aElement)
-
-          resolve('File saved successfully')
-        } else if (SaveToFileOperation.isMsSaveAvailable()) {
-          let blob
-          if (fileContent.startsWith('data:')) {
-            const dataUrlParts = fileContent.split(',')
-            const bString = window.atob(dataUrlParts[1])
-            const byteArray = []
-            for (let i = 0; i < bString.length; i++) {
-              byteArray.push(bString.charCodeAt(i))
-            }
-            // For the options, extract the mime type from the Data URL
-            blob = new Blob([new Uint8Array(byteArray)], {
-              type: dataUrlParts[0].match(/:(.*?);/, '')[1]
-            })
-          } else {
-            blob = new Blob([fileContent])
-          }
-
-          if (window.navigator.msSaveOrOpenBlob(blob, fileName)) {
-            resolve('File saved successfully')
-          } else {
-            reject(new Error('File save failed: A failure occurred during saving.'))
-          }
-        } else {
-          reject(new Error('File save failed: Save operation is not supported by the browser.'))
-        }
-      })
-    }
-
-    /**
-     * Returns whether the File Constructor-based save technique is available.
-     * This works in Firefox 28+, Chrome 38+, Opera 25+, recent versions of the related mobile
-     * browsers and Android Browser 4.4.4. At the time of writing, it does not work in neither
-     * Internet Explorer nor Safari (OS X and iOS).
-     *
-     * For techniques that support older browsers, see for example the following web pages
-     * <ul>
-     * <li>FileSaver.js: https://github.com/eligrey/FileSaver.js </li>
-     * <li>saveAs.js: https://gist.github.com/phanect/46b692241c6bbe456994 </li>
-     * </ul>
-     * @return {boolean}
-     */
-    static isFileConstructorAvailable() {
-      // Test whether required functions exist
-      if (
-        typeof window.URL !== 'function' ||
-        typeof window.Blob !== 'function' ||
-        typeof window.File !== 'function'
-      ) {
-        return false
-      }
-      // Test whether the constructor works as expected
-      try {
-        // eslint-disable-next-line no-new
-        new File(['Content'], 'fileName', {
-          type: 'image/png',
-          lastModified: Date.now()
-        })
-      } catch (ignored) {
-        return false
-      }
-      // Everything is available
-      return true
-    }
-
-    /**
-     * Returns whether the MS Internet Explorer specific save technique is available.
-     * This works in IE 10+. See https://msdn.microsoft.com/en-us/library/hh779016(v=vs.85).aspx
-     * for more details.
-     * @return {boolean}
-     */
-    static isMsSaveAvailable() {
-      return (
-        typeof window.Blob === 'function' && typeof window.navigator.msSaveOrOpenBlob === 'function'
-      )
-    }
+  isAvailable() {
+    return (
+      SaveToFileOperation.isFileConstructorAvailable() || SaveToFileOperation.isMsSaveAvailable()
+    )
   }
 
-  return SaveToFileOperation
-})
+  /**
+   * Saves the file to the file system using the HTML5 File download or
+   * the proprietary msSaveOrOpenBlob function in Internet Explorer.
+   *
+   * @param {string} fileContent The file contents to be saved.
+   * @param {string} fileName The default filename for the downloaded file.
+   * @return {Promise} A promise which resolves when the save operation is complete.
+   */
+  save(fileContent, fileName) {
+    return new Promise((resolve, reject) => {
+      // extract file format
+      const format = fileName.split('.')[1].toLowerCase()
+
+      if (SaveToFileOperation.isFileConstructorAvailable()) {
+        if (format === 'txt' || format === 'svg' || format === 'graphml') {
+          let mimeType = ''
+          switch (format) {
+            case 'txt':
+            default:
+              mimeType = 'text/plain'
+              break
+            case 'svg':
+              mimeType = 'image/svg+xml'
+              break
+            case 'graphml':
+              mimeType = 'application/xml'
+              break
+          }
+
+          // workaround for supporting non-binary data
+          fileContent = URL.createObjectURL(new Blob([fileContent], { type: mimeType }))
+        }
+
+        const aElement = document.createElement('a')
+        aElement.setAttribute('href', fileContent)
+        aElement.setAttribute('download', fileName)
+        aElement.style.display = 'none'
+        document.body.appendChild(aElement)
+        aElement.click()
+        document.body.removeChild(aElement)
+
+        resolve('File saved successfully')
+      } else if (SaveToFileOperation.isMsSaveAvailable()) {
+        let blob
+        if (fileContent.startsWith('data:')) {
+          const dataUrlParts = fileContent.split(',')
+          const bString = window.atob(dataUrlParts[1])
+          const byteArray = []
+          for (let i = 0; i < bString.length; i++) {
+            byteArray.push(bString.charCodeAt(i))
+          }
+          // For the options, extract the mime type from the Data URL
+          blob = new Blob([new Uint8Array(byteArray)], {
+            type: dataUrlParts[0].match(/:(.*?);/, '')[1]
+          })
+        } else {
+          blob = new Blob([fileContent])
+        }
+
+        if (window.navigator.msSaveOrOpenBlob(blob, fileName)) {
+          resolve('File saved successfully')
+        } else {
+          reject(new Error('File save failed: A failure occurred during saving.'))
+        }
+      } else {
+        reject(new Error('File save failed: Save operation is not supported by the browser.'))
+      }
+    })
+  }
+
+  /**
+   * Returns whether the File Constructor-based save technique is available.
+   * This works in Firefox 28+, Chrome 38+, Opera 25+, recent versions of the related mobile
+   * browsers and Android Browser 4.4.4. At the time of writing, it does not work in neither
+   * Internet Explorer nor Safari (OS X and iOS).
+   *
+   * For techniques that support older browsers, see for example the following web pages
+   * <ul>
+   * <li>FileSaver.js: https://github.com/eligrey/FileSaver.js </li>
+   * <li>saveAs.js: https://gist.github.com/phanect/46b692241c6bbe456994 </li>
+   * </ul>
+   * @return {boolean}
+   */
+  static isFileConstructorAvailable() {
+    // Test whether required functions exist
+    if (
+      typeof window.URL !== 'function' ||
+      typeof window.Blob !== 'function' ||
+      typeof window.File !== 'function'
+    ) {
+      return false
+    }
+    // Test whether the constructor works as expected
+    try {
+      // eslint-disable-next-line no-new
+      new File(['Content'], 'fileName', {
+        type: 'image/png',
+        lastModified: Date.now()
+      })
+    } catch (ignored) {
+      return false
+    }
+    // Everything is available
+    return true
+  }
+
+  /**
+   * Returns whether the MS Internet Explorer specific save technique is available.
+   * This works in IE 10+. See https://msdn.microsoft.com/en-us/library/hh779016(v=vs.85).aspx
+   * for more details.
+   * @return {boolean}
+   */
+  static isMsSaveAvailable() {
+    return (
+      typeof window.Blob === 'function' && typeof window.navigator.msSaveOrOpenBlob === 'function'
+    )
+  }
+}

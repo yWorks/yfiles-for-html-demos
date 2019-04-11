@@ -9,8 +9,11 @@
       "projectType": "application",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:browser",
+          "builder": "@angular-builders/custom-webpack:browser",
           "options": {
+            "customWebpackConfig": {
+              "path": "./extra-webpack.config.js"
+            },
             "outputPath": "dist",
             "index": "src/index.html",
             "main": "src/main.ts",
@@ -21,11 +24,7 @@
             ],
             "styles": [
               "../../resources/style/demo.css",
-              "../../../lib/yfiles.css"
-            ],
-            "scripts": [
-              "../../resources/license.js",
-              "../../../ide-support/yfiles-typeinfo.js"
+              "../../../lib/es-modules/yfiles.css"
             ]
           },
           "configurations": {

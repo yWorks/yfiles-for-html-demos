@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.1.
- ** Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.2.
+ ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,11 +26,8 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-'use strict'
-
-/* @yjs:keep=from,to */
-define([], () => {
-  const nodesSource = [
+export default {
+  nodesSource: [
     {
       id: 0,
       type: 'Accident',
@@ -15828,8 +15825,9 @@ define([], () => {
       x: 3804.5,
       y: 3078.5
     }
-  ]
-  const edgesSource = [
+  ],
+
+  edgesSource: [
     { from: 1, to: 0, type: 'involves' },
     { from: 3, to: 1, type: 'isPassenger' },
     { from: 2, to: 3, type: 'represents' },
@@ -17778,9 +17776,4 @@ define([], () => {
     { from: 1522, to: 1517, type: 'heals' },
     { from: 1546, to: 1517, type: 'represents' }
   ]
-
-  return {
-    nodesSource,
-    edgesSource
-  }
-})
+}

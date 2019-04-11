@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.1.
- ** Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.2.
+ ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,99 +26,92 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-'use strict'
+import { StorageLocation } from 'yfiles'
 
-define([
-  'yfiles/view-editor',
-  'yfiles/view-graphml'
-], /** @type {yfiles_namespace} */ /** typeof yfiles */ yfiles => {
-  /**
-   * Opens the given string from a Web Storage, alternatively either from the Local
-   * Storage or from the Session Storage.
-   */
-  class OpenFromWebStorageOperation {
-    constructor(uri) {
-      this.$storageLocation = yfiles.graphml.StorageLocation.LOCAL_STORAGE
-      this.$uri = uri || 'www.yworks.com/yFilesHTML/GraphML/'
-    }
-
-    /**
-     * Gets the type of the storage.
-     * @type {yfiles.graphml.StorageLocation}
-     */
-    get storageLocation() {
-      return this.$storageLocation
-    }
-
-    /**
-     * Sets the type of the storage.
-     * @type {yfiles.graphml.StorageLocation}
-     */
-    set storageLocation(value) {
-      this.$storageLocation = value
-    }
-
-    /**
-     * Checks if the operation can be executed.
-     * @return {boolean}
-     */
-    isAvailable() {
-      const storageAvailable =
-        OpenFromWebStorageOperation.getStorage(this.storageLocation) !== undefined
-      if (storageAvailable) {
-        const item = this.getItem()
-        return item !== null && item !== undefined
-      }
-      return false
-    }
-
-    /**
-     * Opens the file stored in local storage.
-     * @return {Promise} A Promise that resolves with the file content.
-     */
-    open() {
-      return new Promise((resolve, reject) => {
-        if (!this.isAvailable()) {
-          reject(new Error('Web storage is not available'))
-          return
-        }
-
-        const item = this.getItem()
-        if (typeof item === 'undefined' || item === null) {
-          reject(new Error(`No item found in local storage for key ${this.storageKey}`))
-        } else {
-          resolve(item)
-        }
-      })
-    }
-
-    /**
-     * Gets the storage key.
-     * @type {string}
-     */
-    get storageKey() {
-      return `${this.$uri}/example.graphml`
-    }
-
-    /**
-     * Gets the current item from the storage.
-     * @return {string}
-     */
-    getItem() {
-      const storage = OpenFromWebStorageOperation.getStorage(this.storageLocation)
-      return storage.getItem(this.storageKey)
-    }
-
-    /**
-     * Gets the storage location.
-     * @return {Storage}
-     */
-    static getStorage(storageLocation) {
-      return storageLocation === yfiles.graphml.StorageLocation.SESSION_STORAGE
-        ? window.sessionStorage
-        : window.localStorage
-    }
+/**
+ * Opens the given string from a Web Storage, alternatively either from the Local
+ * Storage or from the Session Storage.
+ */
+export default class OpenFromWebStorageOperation {
+  constructor(uri) {
+    this.$storageLocation = StorageLocation.LOCAL_STORAGE
+    this.$uri = uri || 'www.yworks.com/yFilesHTML/GraphML/'
   }
 
-  return OpenFromWebStorageOperation
-})
+  /**
+   * Gets the type of the storage.
+   * @type {StorageLocation}
+   */
+  get storageLocation() {
+    return this.$storageLocation
+  }
+
+  /**
+   * Sets the type of the storage.
+   * @type {StorageLocation}
+   */
+  set storageLocation(value) {
+    this.$storageLocation = value
+  }
+
+  /**
+   * Checks if the operation can be executed.
+   * @return {boolean}
+   */
+  isAvailable() {
+    const storageAvailable =
+      OpenFromWebStorageOperation.getStorage(this.storageLocation) !== undefined
+    if (storageAvailable) {
+      const item = this.getItem()
+      return item !== null && item !== undefined
+    }
+    return false
+  }
+
+  /**
+   * Opens the file stored in local storage.
+   * @return {Promise} A Promise that resolves with the file content.
+   */
+  open() {
+    return new Promise((resolve, reject) => {
+      if (!this.isAvailable()) {
+        reject(new Error('Web storage is not available'))
+        return
+      }
+
+      const item = this.getItem()
+      if (typeof item === 'undefined' || item === null) {
+        reject(new Error(`No item found in local storage for key ${this.storageKey}`))
+      } else {
+        resolve(item)
+      }
+    })
+  }
+
+  /**
+   * Gets the storage key.
+   * @type {string}
+   */
+  get storageKey() {
+    return `${this.$uri}/example.graphml`
+  }
+
+  /**
+   * Gets the current item from the storage.
+   * @return {string}
+   */
+  getItem() {
+    const storage = OpenFromWebStorageOperation.getStorage(this.storageLocation)
+    return storage.getItem(this.storageKey)
+  }
+
+  /**
+   * Gets the storage location.
+   * @return {Storage}
+   */
+  static getStorage(storageLocation) {
+    return storageLocation === StorageLocation.SESSION_STORAGE
+      ? window.sessionStorage
+      : window.localStorage
+  }
+}

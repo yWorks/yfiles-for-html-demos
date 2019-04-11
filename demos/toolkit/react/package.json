@@ -1,21 +1,28 @@
 {
-  "name": "yFilesForHTMLReactDemo",
-  "version": "2.0.0",
+  "name": "yfiles-for-html-react-demo",
+  "version": "2.0.1",
   "private": true,
   "dependencies": {
     "react": "16.4.2",
     "react-dom": "16.4.2"
   },
   "scripts": {
+    "postinstall": "cd ../.. && yarn || npm i",
     "babel": "babel src -d build",
-    "webpack": "webpack --mode=production",
-    "build": "npm run babel && npm run webpack --mode=production",
+    "production": "webpack --mode=production",
+    "build": "webpack --mode=development",
     "build:watch": "watch \"npm run build\" src"
   },
+  "peerDependencies": {
+    "yfiles": "^2.2.0"
+  },
   "devDependencies": {
-    "babel-cli": "6.26.0",
-    "babel-preset-react": "6.24.1",
-    "watch": "1.0.2",
+    "@yworks/optimizer": "^1.0.0",
+    "@babel/cli": "^7.2.3",
+    "@babel/core": "^7.4.0",
+    "@babel/preset-env": "^7.4.2",
+    "@babel/preset-react": "^7.0.0",
+    "babel-loader": "^8.0.5",
     "webpack": "4.17.1",
     "webpack-cli": "3.1.0"
   }

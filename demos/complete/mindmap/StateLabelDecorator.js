@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.1.
- ** Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.2.
+ ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,227 +26,221 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-'use strict'
+import {
+  ILabel,
+  ILabelStyle,
+  IRenderContext,
+  IconLabelStyle,
+  Insets,
+  InteriorLabelModel,
+  LabelStyleBase,
+  Size,
+  Visual
+} from 'yfiles'
 
-define(['yfiles/view-component'], /** @type {yfiles_namespace} */ /** typeof yfiles */ yfiles => {
+/**
+ * A decorator that renders an icon (the state label) with a text label.
+ * This class implements the Decorator pattern. An innerStyle is used by this style
+ * to render a text alongside with an icon. The style uses {@link StateLabelDecorator#wrappedStyle}
+ * to render the icon. The icon is determined by the StateIcon property inside a nodes tag.
+ * The placement of the icon is on the right (left) side of the text label for nodes on the
+ * left (right) side of the tree. Visual caching is implemented using a helper class
+ * RenderDataCache encapsulating the cached data.
+ */
+export default class StateLabelDecorator extends LabelStyleBase {
   /**
-   * A decorator that renders an icon (the state label) with a text label.
-   * This class implements the Decorator pattern. An innerStyle is used by this style
-   * to render a text alongside with an icon. The style uses {@link StateLabelDecorator#wrappedStyle}
-   * to render the icon. The icon is determined by the StateIcon property inside a nodes tag.
-   * The placement of the icon is on the right (left) side of the text label for nodes on the
-   * left (right) side of the tree. Visual caching is implemented using a helper class
-   * RenderDataCache encapsulating the cached data.
-   * @extends yfiles.styles.LabelStyleBase
+   * The decorator constructor.
+   * The wrapped labelStyle is passed as <code>wrappedStyle</code>
+   * and used by the iconLabelStyle to render the text label.
+   * @param {ILabelStyle} wrappedStyle The wrapped labelStyle that is used to render the text.
    */
-  class StateLabelDecorator extends yfiles.styles.LabelStyleBase {
-    /**
-     * The decorator constructor.
-     * The wrapped labelStyle is passed as <code>wrappedStyle</code>
-     * and used by the iconLabelStyle to render the text label.
-     * @param {yfiles.styles.ILabelStyle} wrappedStyle The wrapped labelStyle that is used to render the text.
-     */
-    constructor(wrappedStyle) {
-      super()
-      this.labelModelParameterLeft = yfiles.graph.InteriorLabelModel.EAST
-      this.labelModelParameterRight = yfiles.graph.InteriorLabelModel.WEST
-      this.insetsLeft = new yfiles.geometry.Insets(
-        0,
-        0,
-        StateLabelDecorator.STATE_ICON_SIZE.width + 4,
-        0
-      )
-      this.insetsRight = new yfiles.geometry.Insets(
-        StateLabelDecorator.STATE_ICON_SIZE.width + 4,
-        0,
-        0,
-        0
-      )
+  constructor(wrappedStyle) {
+    super()
+    this.labelModelParameterLeft = InteriorLabelModel.EAST
+    this.labelModelParameterRight = InteriorLabelModel.WEST
+    this.insetsLeft = new Insets(0, 0, StateLabelDecorator.STATE_ICON_SIZE.width + 4, 0)
+    this.insetsRight = new Insets(StateLabelDecorator.STATE_ICON_SIZE.width + 4, 0, 0, 0)
 
-      this.$wrappedStyle = new yfiles.styles.IconLabelStyle({
-        icon: 'resources/no-icon-16.png',
-        iconSize: StateLabelDecorator.STATE_ICON_SIZE,
-        iconPlacement: this.labelModelParameterLeft
-      })
-      this.$wrappedStyle.wrapped = wrappedStyle
-    }
+    this.$wrappedStyle = new IconLabelStyle({
+      icon: 'resources/no-icon-16.png',
+      iconSize: StateLabelDecorator.STATE_ICON_SIZE,
+      iconPlacement: this.labelModelParameterLeft
+    })
+    this.$wrappedStyle.wrapped = wrappedStyle
+  }
 
-    /**
-     * Returns the default icon's size.
-     * @return {yfiles.geometry.Size}
-     */
-    static get STATE_ICON_SIZE() {
-      return new yfiles.geometry.Size(16, 16)
-    }
+  /**
+   * Returns the default icon's size.
+   * @return {Size}
+   */
+  static get STATE_ICON_SIZE() {
+    return new Size(16, 16)
+  }
 
-    /**
-     * Returns an array with the state icons.
-     * @return {array[]}
-     */
-    static get STATE_ICONS() {
-      return [
-        'no-icon',
-        'smiley-happy',
-        'smiley-not-amused',
-        'smiley-grumpy',
-        'abstract-green',
-        'abstract-red',
-        'abstract-blue',
-        'questionmark',
-        'exclamationmark',
-        'delete',
-        'checkmark',
-        'star'
-      ]
-    }
+  /**
+   * Returns an array with the state icons.
+   * @return {string[]}
+   */
+  static get STATE_ICONS() {
+    return [
+      'no-icon',
+      'smiley-happy',
+      'smiley-not-amused',
+      'smiley-grumpy',
+      'abstract-green',
+      'abstract-red',
+      'abstract-blue',
+      'questionmark',
+      'exclamationmark',
+      'delete',
+      'checkmark',
+      'star'
+    ]
+  }
 
-    /**
-     * Gets the style used to render the icon label.
-     * The explicit getter/setter is needed to support (de-)serialization.
-     * @return {yfiles.styles.IconLabelStyle}
-     */
-    get wrappedStyle() {
-      return this.$wrappedStyle
-    }
+  /**
+   * Gets the style used to render the icon label.
+   * The explicit getter/setter is needed to support (de-)serialization.
+   * @return {IconLabelStyle}
+   */
+  get wrappedStyle() {
+    return this.$wrappedStyle
+  }
 
-    /**
-     * Sets the style used to render the icon label.
-     * The explicit getter/setter is needed to support (de-)serialization.
-     * @param {yfiles.styles.IconLabelStyle} value The style to be set.
-     */
-    set wrappedStyle(value) {
-      this.$wrappedStyle = value
-    }
+  /**
+   * Sets the style used to render the icon label.
+   * The explicit getter/setter is needed to support (de-)serialization.
+   * @param {IconLabelStyle} value The style to be set.
+   */
+  set wrappedStyle(value) {
+    this.$wrappedStyle = value
+  }
 
-    /**
-     * Creates the Visual and initializes the RenderDataCache.
-     * @param {yfiles.view.IRenderContext} renderContext The render context.
-     * @param {yfiles.graph.ILabel} label The label to which this style instance is assigned.
-     * @see Overrides {@link yfiles.styles.LabelStyleBase#createVisual}
-     * @return {yfiles.view.Visual}
-     */
-    createVisual(renderContext, label) {
-      // create the cache for updating the visual
-      const cache = this.createRenderDataCache(label.owner.tag)
-      this.configureIconStyle(cache)
+  /**
+   * Creates the Visual and initializes the RenderDataCache.
+   * @param {IRenderContext} renderContext The render context.
+   * @param {ILabel} label The label to which this style instance is assigned.
+   * @see Overrides {@link LabelStyleBase#createVisual}
+   * @return {Visual}
+   */
+  createVisual(renderContext, label) {
+    // create the cache for updating the visual
+    const cache = this.createRenderDataCache(label.owner.tag)
+    this.configureIconStyle(cache)
 
-      // create the wrapped style's visual
-      const wrappedVisual = this.wrappedStyle.renderer
+    // create the wrapped style's visual
+    const wrappedVisual = this.wrappedStyle.renderer
+      .getVisualCreator(label, this.wrappedStyle)
+      .createVisual(renderContext)
+
+    // store the cache with the container
+    wrappedVisual.svgElement['data-iconRenderDataCache'] = cache
+    return wrappedVisual
+  }
+
+  /**
+   * Updates the Visual if cache data can be reused, creates a new Visual otherwise.
+   * @param {IRenderContext} renderContext The render context.
+   * @param {Visual} oldVisual The old visual.
+   * @param {ILabel} label The label to which this style instance is assigned.
+   * @see Overrides {@link LabelStyleBase#updateVisual}
+   * @return {Visual}
+   */
+  updateVisual(renderContext, oldVisual, label) {
+    const cache = this.createRenderDataCache(label.owner.tag)
+    const oldCache = oldVisual.svgElement['data-iconRenderDataCache']
+
+    this.configureIconStyle(cache)
+    let visual
+    if (!cache.equals(oldCache)) {
+      visual = this.wrappedStyle.renderer
         .getVisualCreator(label, this.wrappedStyle)
         .createVisual(renderContext)
-
-      // store the cache with the container
-      wrappedVisual.svgElement['data-iconRenderDataCache'] = cache
-      return wrappedVisual
+    } else {
+      visual = this.wrappedStyle.renderer
+        .getVisualCreator(label, this.wrappedStyle)
+        .updateVisual(renderContext, oldVisual)
     }
-
-    /**
-     * Updates the Visual if cache data can be reused, creates a new Visual otherwise.
-     * @param {yfiles.view.IRenderContext} renderContext The render context.
-     * @param {yfiles.view.Visual} oldVisual The old visual.
-     * @param {yfiles.graph.ILabel} label The label to which this style instance is assigned.
-     * @see Overrides {@link yfiles.styles.LabelStyleBase#updateVisual}
-     * @return {yfiles.view.Visual}
-     */
-    updateVisual(renderContext, oldVisual, label) {
-      const cache = this.createRenderDataCache(label.owner.tag)
-      const oldCache = oldVisual.svgElement['data-iconRenderDataCache']
-
-      this.configureIconStyle(cache)
-      let visual
-      if (!cache.equals(oldCache)) {
-        visual = this.wrappedStyle.renderer
-          .getVisualCreator(label, this.wrappedStyle)
-          .createVisual(renderContext)
-      } else {
-        visual = this.wrappedStyle.renderer
-          .getVisualCreator(label, this.wrappedStyle)
-          .updateVisual(renderContext, oldVisual)
-      }
-      visual.svgElement['data-iconRenderDataCache'] = cache
-      return visual
-    }
-
-    /**
-     * Returns the preferred size of the wrapped {@link StateLabelDecorator#wrappedStyle}.
-     * @param {yfiles.graph.ILabel} label The given label.
-     * @see Overrides {@link yfiles.styles.LabelStyleBase#getPreferredSize}
-     * @return {yfiles.geometry.Size}
-     */
-    getPreferredSize(label) {
-      const cache = this.createRenderDataCache(label.owner.tag)
-      this.configureIconStyle(cache)
-      return this.wrappedStyle.renderer.getPreferredSize(label, this.wrappedStyle)
-    }
-
-    /**
-     * Configures the wrappedStyle using parameters stored in RenderDataCache cache.
-     * @param {object} cache The data render cache.
-     */
-    configureIconStyle(cache) {
-      this.wrappedStyle.iconPlacement = cache.labelModelParameter
-      this.wrappedStyle.wrappedInsets = cache.insets
-      this.wrappedStyle.icon = cache.icon
-      this.wrappedStyle.iconSize = cache.size
-    }
-
-    /**
-     * Creates a RenderDataCache using values in NodeData.
-     * @param {object} data The label tag.
-     * @return {RenderDataCache}
-     */
-    createRenderDataCache(data) {
-      // place icon left or right of text
-      const labelModelParameter = data.isLeft
-        ? this.labelModelParameterLeft
-        : this.labelModelParameterRight
-      // use empty insets if there is no icon, else add space for the icon and text-to-icon padding
-      let labelInsets
-      if (data.stateIcon === 0) {
-        labelInsets = yfiles.geometry.Insets.EMPTY
-      } else {
-        labelInsets = data.isLeft ? this.insetsLeft : this.insetsRight
-      }
-      // get the filename
-      const icon = `resources/${StateLabelDecorator.STATE_ICONS[data.stateIcon]}-16.svg`
-
-      // use empty size if there is no icon, else use default size
-      const iconSize =
-        data.stateIcon === 0 ? yfiles.geometry.Size.EMPTY : StateLabelDecorator.STATE_ICON_SIZE
-      return new RenderDataCache(labelModelParameter, labelInsets, icon, iconSize)
-    }
+    visual.svgElement['data-iconRenderDataCache'] = cache
+    return visual
   }
 
   /**
-   * Helper class that holds the data fields used by visual caching.
-   * The equals method detects if the cache has changed.
+   * Returns the preferred size of the wrapped {@link StateLabelDecorator#wrappedStyle}.
+   * @param {ILabel} label The given label.
+   * @see Overrides {@link LabelStyleBase#getPreferredSize}
+   * @return {Size}
    */
-  class RenderDataCache {
-    constructor(labelModelParameter, insets, icon, size) {
-      this.labelModelParameter = labelModelParameter
-      this.insets = insets
-      this.icon = icon
-      this.size = size
-    }
-
-    /** @return {boolean} */
-    equals(obj) {
-      if (!(obj instanceof RenderDataCache)) {
-        return false
-      }
-      return this.equalsWithOther(obj)
-    }
-
-    /** @return {boolean} */
-    equalsWithOther(other) {
-      return (
-        this.labelModelParameter.equals(other.labelModelParameter) &&
-        this.insets.equals(other.insets) &&
-        this.icon === other.icon &&
-        this.size.equals(other.size)
-      )
-    }
+  getPreferredSize(label) {
+    const cache = this.createRenderDataCache(label.owner.tag)
+    this.configureIconStyle(cache)
+    return this.wrappedStyle.renderer.getPreferredSize(label, this.wrappedStyle)
   }
 
-  return StateLabelDecorator
-})
+  /**
+   * Configures the wrappedStyle using parameters stored in RenderDataCache cache.
+   * @param {object} cache The data render cache.
+   */
+  configureIconStyle(cache) {
+    this.wrappedStyle.iconPlacement = cache.labelModelParameter
+    this.wrappedStyle.wrappedInsets = cache.insets
+    this.wrappedStyle.icon = cache.icon
+    this.wrappedStyle.iconSize = cache.size
+  }
+
+  /**
+   * Creates a RenderDataCache using values in NodeData.
+   * @param {object} data The label tag.
+   * @return {RenderDataCache}
+   */
+  createRenderDataCache(data) {
+    // place icon left or right of text
+    const labelModelParameter = data.isLeft
+      ? this.labelModelParameterLeft
+      : this.labelModelParameterRight
+    // use empty insets if there is no icon, else add space for the icon and text-to-icon padding
+    let labelInsets
+    if (data.stateIcon === 0) {
+      labelInsets = Insets.EMPTY
+    } else {
+      labelInsets = data.isLeft ? this.insetsLeft : this.insetsRight
+    }
+    // get the filename
+    const icon = `resources/${StateLabelDecorator.STATE_ICONS[data.stateIcon]}-16.svg`
+
+    // use empty size if there is no icon, else use default size
+    const iconSize = data.stateIcon === 0 ? Size.EMPTY : StateLabelDecorator.STATE_ICON_SIZE
+    return new RenderDataCache(labelModelParameter, labelInsets, icon, iconSize)
+  }
+}
+
+/**
+ * Helper class that holds the data fields used by visual caching.
+ * The equals method detects if the cache has changed.
+ */
+class RenderDataCache {
+  constructor(labelModelParameter, insets, icon, size) {
+    this.labelModelParameter = labelModelParameter
+    this.insets = insets
+    this.icon = icon
+    this.size = size
+  }
+
+  /** @return {boolean} */
+  equals(obj) {
+    if (!(obj instanceof RenderDataCache)) {
+      return false
+    }
+    return this.equalsWithOther(obj)
+  }
+
+  /** @return {boolean} */
+  equalsWithOther(other) {
+    return (
+      this.labelModelParameter.equals(other.labelModelParameter) &&
+      this.insets.equals(other.insets) &&
+      this.icon === other.icon &&
+      this.size.equals(other.size)
+    )
+  }
+}

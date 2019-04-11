@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.1.
- ** Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.2.
+ ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,49 +26,52 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-'use strict'
+import {
+  BaseClass,
+  DefaultPortCandidate,
+  IEdge,
+  IEdgeReconnectionPortCandidateProvider,
+  IInputModeContext,
+  IListEnumerable,
+  List
+} from 'yfiles'
 
-define(['yfiles/view-editor'], /** @type {yfiles_namespace} */ /** typeof yfiles */ yfiles => {
+/**
+ * An {@link IEdgeReconnectionPortCandidateProvider} that uses candidates with a
+ * dynamic NodeScaled port location model. It allows moving ports to any
+ * location inside a green node.
+ */
+export default class RedEdgePortCandidateProvider extends BaseClass(
+  IEdgeReconnectionPortCandidateProvider
+) {
   /**
-   * An {@link yfiles.input.IEdgeReconnectionPortCandidateProvider} that uses candidates with a
-   * dynamic NodeScaled port location model. It allows moving ports to any
-   * location inside a green node.
-   * @implements {yfiles.input.IEdgeReconnectionPortCandidateProvider}
+   * Creates a new instance of <code>OrangeEdgePortCandidateProvider</code>.
+   * @param {IEdge} edge The given edge
    */
-  class RedEdgePortCandidateProvider extends yfiles.lang.Class(
-    yfiles.input.IEdgeReconnectionPortCandidateProvider
-  ) {
-    /**
-     * Creates a new instance of <code>OrangeEdgePortCandidateProvider</code>.
-     * @param {yfiles.graph.IEdge} edge The given edge
-     */
-    constructor(edge) {
-      super()
-      this.edge = edge
-    }
-
-    /**
-     * Returns only the current port as candidate, thus effectively disabling relocation.
-     * @param {yfiles.input.IInputModeContext} context The context for which the candidates should be provided
-     * @see Specified by {@link yfiles.input.IEdgeReconnectionPortCandidateProvider#getSourcePortCandidates}.
-     * @return {yfiles.collections.IEnumerable.<yfiles.input.IPortCandidate>}
-     */
-    getSourcePortCandidates(context) {
-      const candidates = new yfiles.collections.List()
-      candidates.add(new yfiles.input.DefaultPortCandidate(this.edge.sourcePort))
-      return candidates
-    }
-
-    /**
-     * Returns no candidates, thus effectively disabling relocation.
-     * @param {yfiles.input.IInputModeContext} context The context for which the candidates should be provided
-     * @see Specified by {@link yfiles.input.IEdgeReconnectionPortCandidateProvider#getTargetPortCandidates}.
-     * @return {yfiles.collections.IEnumerable.<yfiles.input.IPortCandidate>}
-     */
-    getTargetPortCandidates(context) {
-      return yfiles.collections.IListEnumerable.EMPTY
-    }
+  constructor(edge) {
+    super()
+    this.edge = edge
   }
 
-  return RedEdgePortCandidateProvider
-})
+  /**
+   * Returns only the current port as candidate, thus effectively disabling relocation.
+   * @param {IInputModeContext} context The context for which the candidates should be provided
+   * @see Specified by {@link IEdgeReconnectionPortCandidateProvider#getSourcePortCandidates}.
+   * @return {IEnumerable.<IPortCandidate>}
+   */
+  getSourcePortCandidates(context) {
+    const candidates = new List()
+    candidates.add(new DefaultPortCandidate(this.edge.sourcePort))
+    return candidates
+  }
+
+  /**
+   * Returns no candidates, thus effectively disabling relocation.
+   * @param {IInputModeContext} context The context for which the candidates should be provided
+   * @see Specified by {@link IEdgeReconnectionPortCandidateProvider#getTargetPortCandidates}.
+   * @return {IEnumerable.<IPortCandidate>}
+   */
+  getTargetPortCandidates(context) {
+    return IListEnumerable.EMPTY
+  }
+}

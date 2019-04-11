@@ -7,8 +7,8 @@
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.1.
-     // Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML 2.2.
+     // Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -36,11 +36,12 @@
 
   <title>Partial Layout Demo [yFiles for HTML]</title>
 
-  <link rel="stylesheet" href="../../../lib/yfiles.css">
+  <link rel="stylesheet" href="../../node_modules/yfiles/yfiles.css">
   <link rel="stylesheet" href="../../resources/style/demo.css">
 
   <!-- enable debugging -->
   <script src="../../../ide-support/yfiles-typeinfo.js"></script>
+  <script src="../../resources/filesystem-warning.js"></script>
 
   <style>
     .partial-edge {
@@ -89,7 +90,7 @@
   <h1 class="demo-sidebar-header">Description</h1>
   <div class="demo-sidebar-content">
     <p>
-      Shows how to integrate (new) graph elements into an existing graph layout with <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.partial.PartialLayout" target="_blank">yfiles.partial.PartialLayout</a>.</p>
+      Shows how to integrate (new) graph elements into an existing graph layout with <a href="https://docs.yworks.com/yfileshtml/#/api/PartialLayout" target="_blank">PartialLayout</a>.</p>
     <p>
       This layout algorithm changes the coordinates of a given set of graph elements (called <em>partial</em> elements)
       and leaves the location and size of all other elements (called <em>fixed</em> elements) unchanged. The algorithm
@@ -236,8 +237,7 @@
   </div>
 </aside>
 
-<script src="../../resources/require.js"></script>
-<script src="PartialLayoutDemo.js"></script>
+<script type="module" crossorigin="anonymous" src="PartialLayoutDemo.js"></script>
 
 </body>
 </html>

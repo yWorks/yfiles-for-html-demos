@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.1.
- ** Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.2.
+ ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,44 +26,63 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-'use strict'
-
 const path = require('path')
 
-module.exports = {
-  entry: {
-    app: './build/main.js'
-  },
+const YWorksOptimizer = require('@yworks/optimizer/webpack-plugin')
 
-  resolve: {
-    modules: [
-      'node_modules',
-      path.resolve('./build'),
-      path.resolve('.'),
-      path.resolve('../../'),
-      path.resolve('../../../lib/umd')
-    ]
-  },
+module.exports = function(env, options) {
+  const config = {
+    entry: {
+      app: ['./src/main.jsx']
+    },
 
-  optimization: {
-    splitChunks: {
-      cacheGroups: {
-        yfiles: {
-          test: /lib[/\\]umd[/\\]yfiles/,
-          name: 'yfiles',
-          chunks: 'all'
-        },
-        vendors: {
-          test: /[\\/]node_modules[\\/]/,
-          name: 'vendors',
-          chunks: 'all'
+    plugins: [],
+
+    optimization: {
+      minimize: false,
+      splitChunks: {
+        cacheGroups: {
+          vendors: {
+            test: /[\\/]node_modules[\\/]/,
+            name: 'vendors',
+            chunks: 'all'
+          }
         }
       }
-    }
-  },
+    },
 
-  output: {
-    path: path.resolve('./dist'),
-    filename: '[name].js'
+    module: {
+      rules: [
+        {
+          test: /\.(js|jsx)$/,
+          exclude: /node_modules/,
+          use: {
+            loader: 'babel-loader',
+            options: {
+              presets: ['@babel/preset-env']
+            }
+          }
+        }
+      ]
+    },
+
+    output: {
+      path: path.resolve('./dist'),
+      filename: '[name].js'
+    }
   }
+
+  if (options.mode === 'production') {
+    // Obfuscate yFiles modules and usages for production build
+    config.plugins.push(
+      new YWorksOptimizer({
+        blacklist: ['Component', 'render']
+      })
+    )
+  } else {
+    // Add yFiles debugging support for development build
+    config.entry.app.unshift('../../../ide-support/yfiles-typeinfo.js')
+  }
+
+  return config
 }

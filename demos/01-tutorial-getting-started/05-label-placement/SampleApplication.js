@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.1.
- ** Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.2.
+ ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,251 +26,233 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-'use strict'
+import {
+  DefaultLabelStyle,
+  ExteriorLabelModel,
+  ExteriorLabelModelPosition,
+  FreeNodePortLocationModel,
+  GraphComponent,
+  ICommand,
+  IGraph,
+  Insets,
+  InteriorLabelModel,
+  InteriorStretchLabelModel,
+  InteriorStretchLabelModelPosition,
+  License,
+  Point,
+  ShapeNodeStyle,
+  Size,
+  SmartEdgeLabelModel
+} from 'yfiles'
 
-require.config({
-  paths: {
-    yfiles: '../../../lib/umd/yfiles/',
-    utils: '../../utils/',
-    resources: '../../resources/'
-  }
-})
+import { bindCommand, showApp } from '../../resources/demo-app.js'
+import loadJson from '../../resources/load-json.js'
+
+/** @type {GraphComponent} */
+let graphComponent = null
+
+/** @type {IGraph} */
+let graph = null
+
+function run(licenseData) {
+  License.value = licenseData
+  // Initialize the GraphComponent and place it in the div with CSS selector #graphComponent
+  graphComponent = new GraphComponent('#graphComponent')
+  // conveniently store a reference to the graph that is displayed
+  graph = graphComponent.graph
+
+  // /////////////// New in this Sample /////////////////
+
+  // Configures default label model parameters for newly created graph elements
+  setDefaultLabelParameters()
+
+  // ////////////////////////////////////////////////////
+
+  // Configures default styles for newly created graph elements
+  setDefaultStyles()
+
+  // Populates the graph and overrides some styles and label models
+  populateGraph()
+
+  // Manages the viewport
+  updateViewport()
+
+  // bind the demo buttons to their commands
+  registerCommands()
+
+  // Initialize the demo application's CSS and Javascript for the description
+  showApp(graphComponent)
+}
 
 /**
- * Getting Started - 05 Placing Labels
- * This demo shows how to control label placement with the help of label model parameters.
- * Label positions are not usually specified through explicit (absolute or relative)
- * coordinates. Instead, so called {@link yfiles.graph.ILabelModelParameter}s are used, which
- * encode a specific symbolic position in a specific {@link yfiles.graph.ILabelModel}.
- * For example, {@link yfiles.graph.InteriorLabelModel#NORTH_WEST} encodes a label position in the
- * upper left corner inside the <code>INode</code> that owns the label, without having to explicitly
- * determine the coordinates yourself.
- *
- * Label models are also used for interactive placement of labels (you can only drag to
- * valid positions in the given label model) as well as for the various automatic labeling algorithms.
+ * Set up default label model parameters for graph elements.
+ * Label model parameters control the actual label placement as well as the available
+ * placement candidates when moving the label interactively.
  */
-require(['yfiles/view-editor', 'resources/demo-app', 'resources/license'], (
-  /** @type {yfiles_namespace} */ /** typeof yfiles */ yfiles,
-  app
-) => {
-  /** @type {yfiles.view.GraphComponent} */
-  let graphComponent = null
+function setDefaultLabelParameters() {
+  // For node labels, the default is a label position at the node center
+  // Let's keep the default.  Here is how to set it manually
+  graph.nodeDefaults.labels.layoutParameter = InteriorLabelModel.CENTER
 
-  /** @type {yfiles.graph.IGraph} */
-  let graph = null
+  // Set the label model for edges
+  graph.edgeDefaults.labels.layoutParameter = new SmartEdgeLabelModel({
+    autoRotation: true
+  }).createParameterFromSource(0, 10.0, 0.5)
+}
 
-  function run() {
-    // Initialize the GraphComponent and place it in the div with CSS selector #graphComponent
-    graphComponent = new yfiles.view.GraphComponent('#graphComponent')
-    // conveniently store a reference to the graph that is displayed
-    graph = graphComponent.graph
+/**
+ * Creates a sample graph and introduces all important graph elements present in
+ * yFiles for HTML. Additionally, this method now overrides the label placement for some specific labels.
+ */
+function populateGraph() {
+  // ////////// Sample node creation ///////////////////
 
-    // /////////////// New in this Sample /////////////////
+  // Creates two nodes with the default node size
+  // The location is specified for the _center_
+  const node1 = graph.createNodeAt(new Point(30, 30))
+  const node2 = graph.createNodeAt(new Point(150, 30))
+  const node3 = graph.createNodeAt(new Point(260, 200))
 
-    // Configures default label model parameters for newly created graph elements
-    setDefaultLabelParameters()
+  // ///////////////////////////////////////////////////
 
-    // ////////////////////////////////////////////////////
+  // ////////// Sample edge creation ///////////////////
 
-    // Configures default styles for newly created graph elements
-    setDefaultStyles()
+  // Creates some edges between the nodes
+  graph.createEdge(node1, node2)
+  const edge = graph.createEdge(node2, node3)
 
-    // Populates the graph and overrides some styles and label models
-    populateGraph()
+  // ///////////////////////////////////////////////////
 
-    // Manages the viewport
-    updateViewport()
+  // ////////// Using Bends ////////////////////////////
 
-    // bind the demo buttons to their commands
-    registerCommands()
+  // Creates the first bend for edge at (260, 30)
+  graph.addBend(edge, new Point(260, 30))
 
-    // Initialize the demo application's CSS and Javascript for the description
-    app.show(graphComponent)
-  }
+  // ///////////////////////////////////////////////////
 
-  /**
-   * Set up default label model parameters for graph elements.
-   * Label model parameters control the actual label placement as well as the available
-   * placement candidates when moving the label interactively.
-   */
-  function setDefaultLabelParameters() {
-    // For node labels, the default is a label position at the node center
-    // Let's keep the default.  Here is how to set it manually
-    graph.nodeDefaults.labels.layoutParameter = yfiles.graph.InteriorLabelModel.CENTER
+  // ////////// Using Ports ////////////////////////////
 
-    // Set the label model for edges
-    graph.edgeDefaults.labels.layoutParameter = new yfiles.graph.SmartEdgeLabelModel({
-      autoRotation: true
-    }).createParameterFromSource(0, 10.0, 0.5)
-  }
+  // Actually, edges connect "ports", not nodes directly.
+  // If necessary, you can manually create ports at nodes
+  // and let the edges connect to these.
+  // Creates a port in the center of the node layout
+  const port1AtNode1 = graph.addPort(node1, FreeNodePortLocationModel.NODE_CENTER_ANCHORED)
 
-  /**
-   * Creates a sample graph and introduces all important graph elements present in
-   * yFiles for HTML. Additionally, this method now overrides the label placement for some specific labels.
-   */
-  function populateGraph() {
-    // ////////// Sample node creation ///////////////////
+  // Creates a port at the middle of the left border
+  // Note to use absolute locations when placing ports using PointD.
+  const port1AtNode3 = graph.addPortAt(node3, new Point(node3.layout.x, node3.layout.center.y))
 
-    // Creates two nodes with the default node size
-    // The location is specified for the _center_
-    const node1 = graph.createNodeAt(new yfiles.geometry.Point(30, 30))
-    const node2 = graph.createNodeAt(new yfiles.geometry.Point(150, 30))
-    // Creates a third node with a different size of 60x30
-    // In this case, the location of (400,400) describes the _upper left_
-    // corner of the node bounds
-    const node3 = graph.createNode(new yfiles.geometry.Rect(230, 200, 60, 30))
+  // Creates an edge that connects these specific ports
+  const edgeAtPorts = graph.createEdge(port1AtNode1, port1AtNode3)
 
-    // ///////////////////////////////////////////////////
+  // ///////////////////////////////////////////////////
 
-    // ////////// Sample edge creation ///////////////////
+  // ////////// Sample label creation ///////////////////
 
-    // Creates some edges between the nodes
-    graph.createEdge(node1, node2)
-    const edge = graph.createEdge(node2, node3)
+  // Adds labels to several graph elements
+  graph.addLabel(node1, 'n1')
+  const n2Label = graph.addLabel(node2, 'n2')
+  const n3Label = graph.addLabel(node3, 'n3')
+  graph.addLabel(edgeAtPorts, 'Edge at Ports')
 
-    // ///////////////////////////////////////////////////
+  const model = new InteriorStretchLabelModel({ insets: new Insets(3) })
+  graph.setLabelLayoutParameter(
+    n2Label,
+    model.createParameter(InteriorStretchLabelModelPosition.SOUTH)
+  )
 
-    // ////////// Using Bends ////////////////////////////
+  // ///////////////////////////////////////////////////
+  // Override default label placement
 
-    // Creates the first bend for edge at (260, 30)
-    graph.addBend(edge, new yfiles.geometry.Point(260, 30))
+  // For our "special" label, we use a model that describes discrete positions
+  // outside the node bounds
+  const exteriorLabelModel = new ExteriorLabelModel()
 
-    // ///////////////////////////////////////////////////
+  // We use some extra insets from the label to the node bounds
+  exteriorLabelModel.insets = new Insets(20)
 
-    // ////////// Using Ports ////////////////////////////
+  // We assign this label a specific symbolic position out of the eight possible
+  // external locations valid for ExteriorLabelModel
+  graph.setLabelLayoutParameter(
+    n3Label,
+    exteriorLabelModel.createParameter(ExteriorLabelModelPosition.SOUTH)
+  )
+}
 
-    // Actually, edges connect "ports", not nodes directly.
-    // If necessary, you can manually create ports at nodes
-    // and let the edges connect to these.
-    // Creates a port in the center of the node layout
-    const port1AtNode1 = graph.addPort(
-      node1,
-      yfiles.graph.FreeNodePortLocationModel.NODE_CENTER_ANCHORED
-    )
+/**
+ * Set up default styles for graph elements.
+ * Default styles apply only to elements created after the default style has been set,
+ * so typically, you'd set these as early as possible in your application.
+ */
+function setDefaultStyles() {
+  // Sets the default style for nodes
+  // Creates a nice ShinyPlateNodeStyle instance, using an orange Fill.
+  // Sets this style as the default for all nodes that don't have another
+  // style assigned explicitly
+  graph.nodeDefaults.style = new ShapeNodeStyle({
+    fill: 'darkorange',
+    stroke: 'white'
+  })
+  // Sets the default size explicitly to 40x40
+  graph.nodeDefaults.size = new Size(40, 40)
+  graph.nodeDefaults.labels.style = new DefaultLabelStyle({
+    verticalTextAlignment: 'center',
+    wrapping: 'word_ellipsis'
+  })
+  // Sets the default style for labels
+  // Creates a label style with the label text color set to dark red
+  // Sets the defined style as the default for both edge and node labels:
+  const defaultLabelStyle = new DefaultLabelStyle({
+    font: '12px Tahoma',
+    textFill: 'black'
+  })
+  graph.edgeDefaults.labels.style = defaultLabelStyle
+  graph.nodeDefaults.labels.style = defaultLabelStyle
+}
 
-    // Creates a port at the middle of the left border
-    // Note to use absolute locations when placing ports using PointD.
-    const port1AtNode3 = graph.addPortAt(
-      node3,
-      new yfiles.geometry.Point(node3.layout.x, node3.layout.center.y)
-    )
+/**
+ * Updates the content rectangle to encompass all existing graph elements.
+ * If you create your graph elements programmatically, the content rectangle
+ * (i.e. the rectangle in <b>world coordinates</b>
+ * that encloses the graph) is <b>not</b> updated automatically to enclose these elements.
+ * Typically, this manifests in wrong/missing scrollbars, incorrect {@link GraphOverviewComponent}
+ * behavior and the like.
+ *
+ * This method demonstrates several ways to update the content rectangle, with or without adjusting the zoom level
+ * to show the whole graph in the view.
+ *
+ * Note that updating the content rectangle only does not change the current Viewport (i.e. the world coordinate
+ * rectangle that corresponds to the currently visible area in view coordinates)
+ *
+ * Uncomment various combinations of lines in this method and observe the different effects.
+ *
+ * The following demos in this tutorial will assume that you've called <code>GraphComponent.fitGraphBounds()</code>
+ * in this method.
+ */
+function updateViewport() {
+  // Uncomment the following line to update the content rectangle
+  // to include all graph elements
+  // This should result in correct scrolling behaviour:
 
-    // Creates an edge that connects these specific ports
-    const edgeAtPorts = graph.createEdge(port1AtNode1, port1AtNode3)
+  // graphComponent.updateContentRect();
 
-    // ///////////////////////////////////////////////////
+  // Additionally, we can also set the zoom level so that the
+  // content rectangle fits exactly into the viewport area:
+  // Uncomment this line in addition to UpdateContentRect:
+  // Note that this changes the zoom level (i.e. the graph elements will look smaller)
 
-    // ////////// Sample label creation ///////////////////
+  // graphComponent.fitContent();
 
-    // Adds labels to several graph elements
-    graph.addLabel(node1, 'n1')
-    graph.addLabel(node2, 'n2')
-    const n3Label = graph.addLabel(node3, 'n3')
-    graph.addLabel(edgeAtPorts, 'Edge at Ports')
+  // The sequence above is equivalent to just calling:
+  graphComponent.fitGraphBounds()
+}
 
-    // ///////////////////////////////////////////////////
-    // Override default label placement
+function registerCommands() {
+  bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent)
+  bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent)
+  bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent)
+  bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
+}
 
-    // For our "special" label, we use a model that describes discrete positions
-    // outside the node bounds
-    const exteriorLabelModel = new yfiles.graph.ExteriorLabelModel()
-
-    // We use some extra insets from the label to the node bounds
-    exteriorLabelModel.insets = new yfiles.geometry.Insets(5)
-
-    // We assign this label a specific symbolic position out of the eight possible
-    // external locations valid for ExteriorLabelModel
-    graph.setLabelLayoutParameter(
-      n3Label,
-      exteriorLabelModel.createParameter(yfiles.graph.ExteriorLabelModelPosition.SOUTH)
-    )
-  }
-
-  /**
-   * Set up default styles for graph elements.
-   * Default styles apply only to elements created after the default style has been set,
-   * so typically, you'd set these as early as possible in your application.
-   */
-  function setDefaultStyles() {
-    // Sets the default style for nodes
-    // Creates a nice ShinyPlateNodeStyle instance, using an orange Fill.
-    // Sets this style as the default for all nodes that don't have another
-    // style assigned explicitly
-    graph.nodeDefaults.style = new yfiles.styles.ShinyPlateNodeStyle({
-      fill: 'rgb(255, 140, 0)'
-    })
-
-    // Set the default style for edges
-    // Use a red Pen with thickness 2.
-    graph.edgeDefaults.style = new yfiles.styles.PolylineEdgeStyle({
-      stroke: '2px red',
-      targetArrow: new yfiles.styles.Arrow({
-        type: 'default',
-        stroke: '2px red',
-        fill: 'red'
-      })
-    })
-
-    // Sets the default style for labels
-    // Creates a label style with the label text color set to dark red
-    // Sets the defined style as the default for both edge and node labels:
-    const defaultLabelStyle = new yfiles.styles.DefaultLabelStyle({
-      font: '12px Tahoma',
-      textFill: 'darkred'
-    })
-    graph.edgeDefaults.labels.style = defaultLabelStyle
-    graph.nodeDefaults.labels.style = defaultLabelStyle
-
-    // Sets the default size explicitly to 40x40
-    graph.nodeDefaults.size = [40, 40]
-  }
-
-  /**
-   * Updates the content rectangle to encompass all existing graph elements.
-   * If you create your graph elements programmatically, the content rectangle
-   * (i.e. the rectangle in <b>world coordinates</b>
-   * that encloses the graph) is <b>not</b> updated automatically to enclose these elements.
-   * Typically, this manifests in wrong/missing scrollbars, incorrect {@link yfiles.view.GraphOverviewComponent}
-   * behavior and the like.
-   *
-   * This method demonstrates several ways to update the content rectangle, with or without adjusting the zoom level
-   * to show the whole graph in the view.
-   *
-   * Note that updating the content rectangle only does not change the current Viewport (i.e. the world coordinate
-   * rectangle that corresponds to the currently visible area in view coordinates)
-   *
-   * Uncomment various combinations of lines in this method and observe the different effects.
-   *
-   * The following demos in this tutorial will assume that you've called <code>GraphComponent.fitGraphBounds()</code>
-   * in this method.
-   */
-  function updateViewport() {
-    // Uncomment the following line to update the content rectangle
-    // to include all graph elements
-    // This should result in correct scrolling behaviour:
-
-    // graphComponent.updateContentRect();
-
-    // Additionally, we can also set the zoom level so that the
-    // content rectangle fits exactly into the viewport area:
-    // Uncomment this line in addition to UpdateContentRect:
-    // Note that this changes the zoom level (i.e. the graph elements will look smaller)
-
-    // graphComponent.fitContent();
-
-    // The sequence above is equivalent to just calling:
-    graphComponent.fitGraphBounds()
-  }
-
-  function registerCommands() {
-    const ICommand = yfiles.input.ICommand
-
-    app.bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent)
-    app.bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent)
-    app.bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent)
-    app.bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
-  }
-
-  // start tutorial
-  run()
-})
+// start tutorial
+loadJson().then(run)

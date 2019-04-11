@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.1.
- ** Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.2.
+ ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,88 +26,84 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-'use strict'
+import OpenViaServerOperation from './OpenViaServerOperation.js'
 
-define(['./OpenViaServerOperation.js'], OpenViaServerOperation => {
+/**
+ * Saves a file via a dedicated server. The GraphML content is submitted to the server which responds with a
+ * download URL for the respective file. The handling of the download then depends on the user's browser settings.
+ * @deprecated Please note that using a dedicated server is not the recommended way to save a file in modern
+ *   browsers.
+ * If you only want to download the file to the local filesystem, use the approach shown in 'SaveToFileOperation.js'
+ *   instead.
+ */
+export default class SaveViaServerOperation {
   /**
-   * Saves a file via a dedicated server. The GraphML content is submitted to the server which responds with a
-   * download URL for the respective file. The handling of the download then depends on the user's browser settings.
-   * @deprecated Please note that using a dedicated server is not the recommended way to save a file in modern
-   *   browsers.
-   * If you only want to download the file to the local filesystem, use the approach shown in 'SaveToFileOperation.js'
-   *   instead.
+   * @param {string|null} [fileServerUrl] The URL the file server runs on.
    */
-  class SaveViaServerOperation {
-    /**
-     * @param {string|null} [fileServerUrl] The URL the file server runs on.
-     */
-    constructor(fileServerUrl) {
-      this.$fileServerUrl = fileServerUrl || 'http://localhost:3000/file/'
-      this.$executable = false
-    }
+  constructor(fileServerUrl) {
+    this.$fileServerUrl = fileServerUrl || 'http://localhost:3000/file/'
+    this.$executable = false
+  }
 
-    /**
-     * Gets whether the operation can be executed.
-     * @type {boolean}
-     */
-    get executable() {
-      return this.$executable
-    }
+  /**
+   * Gets whether the operation can be executed.
+   * @type {boolean}
+   */
+  get executable() {
+    return this.$executable
+  }
 
-    /**
-     * Sets whether the operation can be executed.
-     * @type {boolean}
-     */
-    set executable(value) {
-      if (this.$executable !== value) {
-        this.$executable = value
-      }
-    }
-
-    /**
-     * Gets the save form id.
-     * @type {string}
-     */
-    static get SAVE_FORM_ID() {
-      return 'demo-save-form'
-    }
-
-    /**
-     * Gets the form id.
-     * @type {string}
-     */
-    static get FORM_INPUT_GRAPH_ID() {
-      return 'demo-input-graph'
-    }
-
-    /**
-     * Checks if the operation can be executed.
-     * @return {boolean}
-     */
-    isAvailable() {
-      return this.executable
-    }
-
-    /**
-     * Saves the file content via a dedicated server.
-     * @param {string} fileContent
-     * @return {Promise} A Promise that resolves when the save operation is complete.
-     */
-    save(fileContent) {
-      return new Promise((resolve, reject) => {
-        const saveForm = document.getElementById(SaveViaServerOperation.SAVE_FORM_ID)
-        const graphInputField = document.getElementById(SaveViaServerOperation.FORM_INPUT_GRAPH_ID)
-        if (graphInputField !== null && saveForm !== null) {
-          saveForm.action = `${this.$fileServerUrl}save?${OpenViaServerOperation.createRequestId()}`
-          graphInputField.value = fileContent
-          saveForm.submit()
-          resolve()
-        } else {
-          reject(new Error('Save failed'))
-        }
-      })
+  /**
+   * Sets whether the operation can be executed.
+   * @type {boolean}
+   */
+  set executable(value) {
+    if (this.$executable !== value) {
+      this.$executable = value
     }
   }
 
-  return SaveViaServerOperation
-})
+  /**
+   * Gets the save form id.
+   * @type {string}
+   */
+  static get SAVE_FORM_ID() {
+    return 'demo-save-form'
+  }
+
+  /**
+   * Gets the form id.
+   * @type {string}
+   */
+  static get FORM_INPUT_GRAPH_ID() {
+    return 'demo-input-graph'
+  }
+
+  /**
+   * Checks if the operation can be executed.
+   * @return {boolean}
+   */
+  isAvailable() {
+    return this.executable
+  }
+
+  /**
+   * Saves the file content via a dedicated server.
+   * @param {string} fileContent
+   * @return {Promise} A Promise that resolves when the save operation is complete.
+   */
+  save(fileContent) {
+    return new Promise((resolve, reject) => {
+      const saveForm = document.getElementById(SaveViaServerOperation.SAVE_FORM_ID)
+      const graphInputField = document.getElementById(SaveViaServerOperation.FORM_INPUT_GRAPH_ID)
+      if (graphInputField !== null && saveForm !== null) {
+        saveForm.action = `${this.$fileServerUrl}save?${OpenViaServerOperation.createRequestId()}`
+        graphInputField.value = fileContent
+        saveForm.submit()
+        resolve()
+      } else {
+        reject(new Error('Save failed'))
+      }
+    })
+  }
+}

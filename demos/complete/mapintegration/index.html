@@ -7,8 +7,8 @@
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.1.
-     // Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML 2.2.
+     // Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -36,11 +36,12 @@
 
   <title>Map Integration Demo [yFiles for HTML]</title>
 
-  <link rel="stylesheet" href="../../../lib/yfiles.css">
+  <link rel="stylesheet" href="../../node_modules/yfiles/yfiles.css">
   <link rel="stylesheet" href="../../resources/style/demo.css">
 
   <!-- enable debugging -->
   <script src="../../../ide-support/yfiles-typeinfo.js"></script>
+  <script src="../../resources/filesystem-warning.js"></script>
 
   <!-- include leaflet -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.4/dist/leaflet.css"
@@ -51,11 +52,6 @@
     crossorigin=""></script>
 
   <style>
-    #graphComponent {
-      top: 60px;
-      text-align: left !important;
-    }
-
     .toggle-graph-mode {
       display: inline-block;
       width: 30px;
@@ -103,7 +99,7 @@
 <aside class="demo-sidebar demo-left">
   <h1 class="demo-sidebar-header">Description</h1>
   <div class="demo-sidebar-content">
-    This demo shows how to integrate a <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.view.GraphComponent" target="_blank">yfiles.view.GraphComponent</a> with <a href="https://leafletjs.com/" target="_blank">Leaflet</a>.
+    This demo shows how to integrate a <a href="https://docs.yworks.com/yfileshtml/#/api/GraphComponent" target="_blank">GraphComponent</a> with <a href="https://leafletjs.com/" target="_blank">Leaflet</a>.
     The <code>GraphComponent</code> is included in a custom Leaflet-Layer. The placement of the nodes uses
     geo-coordinates to get the correct locations on the map.
 
@@ -129,7 +125,6 @@
   <div id="graphComponent"></div>
 </div>
 
-<script src="../../resources/require.js"></script>
-<script src="MapIntegrationDemo.js"></script>
+<script type="module" crossorigin="anonymous" src="MapIntegrationDemo.js"></script>
 </body>
 </html>

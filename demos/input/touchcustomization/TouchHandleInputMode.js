@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.1.
- ** Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.2.
+ ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,59 +26,53 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-'use strict'
+import { HandleInputMode, IHandle, Point } from 'yfiles'
 
-define(['yfiles/view-editor'], yfiles => {
+/**
+ * A customized HandleInputMode that considers the handle size during hit testing.
+ */
+export default class TouchHandleInputMode extends HandleInputMode {
   /**
-   * A customized HandleInputMode that considers the handle size during hit testing.
-   * @class TouchHandleInputMode
-   * @extends {yfiles.input.HandleInputMode}
+   * Creates a new instance with the given handle radius.
+   * @constructs
+   * @param {number} handleRadius - The radius of the handles.
    */
-  class TouchHandleInputMode extends yfiles.input.HandleInputMode {
-    /**
-     * Creates a new instance with the given handle radius.
-     * @constructs
-     * @param {number} handleRadius - The radius of the handles.
-     */
-    constructor(handleRadius) {
-      super()
-      this.handleRadius = handleRadius
-    }
-
-    /**
-     * Override touch hit test to take handle size into account.
-     * @param {yfiles.input.IHandle} handle - The handle to check
-     * @param {yfiles.geometry.Point} location - The world coordinates to check.
-     * @param {yfiles.geometry.Point} distance - The distance of the handle to the touch location. In the default
-     *   implementation, this is a tuple representing the x- and y-distance of the handle to the touch location.
-     * @returns {boolean}
-     */
-    handleIsHitTouch(handle, location, distance) {
-      const canvasComponent = this.inputModeContext.canvasComponent
-      const maxDistance =
-        canvasComponent != null
-          ? canvasComponent.hitTestRadiusTouch + this.handleRadius
-          : this.handleRadius
-      return distance.vectorLength <= maxDistance
-    }
-
-    /**
-     * Override hit test to take handle size into account.
-     * @param {yfiles.input.IHandle} handle - The handle to check
-     * @param {yfiles.geometry.Point} location - The view coordinates to check.
-     * @param {yfiles.geometry.Point} distance - The distance of the handle to the location. In the default
-     *   implementation, this is a tuple representing the x- and y-distance of the handle to the location.
-     * @returns {boolean}
-     */
-    handleIsHit(handle, location, distance) {
-      const canvasComponent = this.inputModeContext.canvasComponent
-      const maxDistance =
-        canvasComponent != null
-          ? canvasComponent.hitTestRadius + this.handleRadius
-          : this.handleRadius
-      return distance.vectorLength <= maxDistance
-    }
+  constructor(handleRadius) {
+    super()
+    this.handleRadius = handleRadius
   }
 
-  return TouchHandleInputMode
-})
+  /**
+   * Override touch hit test to take handle size into account.
+   * @param {IHandle} handle - The handle to check
+   * @param {Point} location - The world coordinates to check.
+   * @param {Point} distance - The distance of the handle to the touch location. In the default
+   *   implementation, this is a tuple representing the x- and y-distance of the handle to the touch location.
+   * @returns {boolean}
+   */
+  handleIsHitTouch(handle, location, distance) {
+    const canvasComponent = this.inputModeContext.canvasComponent
+    const maxDistance =
+      canvasComponent != null
+        ? canvasComponent.hitTestRadiusTouch + this.handleRadius
+        : this.handleRadius
+    return distance.vectorLength <= maxDistance
+  }
+
+  /**
+   * Override hit test to take handle size into account.
+   * @param {IHandle} handle - The handle to check
+   * @param {Point} location - The view coordinates to check.
+   * @param {Point} distance - The distance of the handle to the location. In the default
+   *   implementation, this is a tuple representing the x- and y-distance of the handle to the location.
+   * @returns {boolean}
+   */
+  handleIsHit(handle, location, distance) {
+    const canvasComponent = this.inputModeContext.canvasComponent
+    const maxDistance =
+      canvasComponent != null
+        ? canvasComponent.hitTestRadius + this.handleRadius
+        : this.handleRadius
+    return distance.vectorLength <= maxDistance
+  }
+}

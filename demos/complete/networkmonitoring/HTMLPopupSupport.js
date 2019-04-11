@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.1.
- ** Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.2.
+ ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,237 +26,236 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-'use strict'
+import {
+  GraphComponent,
+  IEdge,
+  ILabelModelParameter,
+  IModelItem,
+  Point,
+  SimpleLabel,
+  Size
+} from 'yfiles'
 
-define(['yfiles/view-component'], /** @type {yfiles_namespace} */ /** typeof yfiles */ yfiles => {
+/**
+ * Adds a HTML panel on top of the contents of the GraphComponent that can
+ * display arbitrary information about a {@link IModelItem graph item}.
+ * In order to not interfere with the positioning of the pop-up, HTML content
+ * should be added as ancestor of the {@link HTMLPopupSupport#div div element}, and
+ * use relative positioning. This implementation uses a
+ * {@link ILabelModelParameter label model parameter} to determine
+ * the position of the pop-up.
+ */
+export default class HTMLPopupSupport {
   /**
-   * Adds a HTML panel on top of the contents of the GraphComponent that can
-   * display arbitrary information about a {@link yfiles.graph.IModelItem graph item}.
-   * In order to not interfere with the positioning of the pop-up, HTML content
-   * should be added as ancestor of the {@link HTMLPopupSupport#div div element}, and
-   * use relative positioning. This implementation uses a
-   * {@link yfiles.graph.ILabelModelParameter label model parameter} to determine
-   * the position of the pop-up.
+   * Constructor that takes the graphComponent, the container div element and an ILabelModelParameter
+   * to determine the relative position of the popup.
+   * @param {GraphComponent} graphComponent
+   * @param {HTMLElement} div
+   * @param {ILabelModelParameter} labelModelParameter
    */
-  class HTMLPopupSupport {
-    /**
-     * Constructor that takes the graphComponent, the container div element and an ILabelModelParameter
-     * to determine the relative position of the popup.
-     * @param {yfiles.view.GraphComponent} graphComponent
-     * @param {HTMLElement} div
-     * @param {yfiles.graph.ILabelModelParameter} labelModelParameter
-     */
-    constructor(graphComponent, div, labelModelParameter) {
-      this.graphComponent = graphComponent
-      this.labelModelParameter = labelModelParameter
+  constructor(graphComponent, div, labelModelParameter) {
+    this.graphComponent = graphComponent
+    this.labelModelParameter = labelModelParameter
 
-      this.$div = div
-      this.$currentItem = null
-      this.$dirty = false
-      // make the popup invisible
-      div.style.opacity = '0'
-      div.style.display = 'none'
-      this.$div.setAttribute('class', 'popupContent')
+    this.$div = div
+    this.$currentItem = null
+    this.$dirty = false
+    // make the popup invisible
+    div.style.opacity = '0'
+    div.style.display = 'none'
+    this.$div.setAttribute('class', 'popupContent')
 
-      this.registerListeners()
+    this.registerListeners()
+  }
+
+  /**
+   * Set the container {@link HTMLPopupSupport#div div element}.
+   * @type {HTMLElement}
+   */
+  set div(value) {
+    this.$div = value
+  }
+
+  /**
+   * Gets the container {@link HTMLPopupSupport#div div element}.
+   * @type {HTMLElement}
+   */
+  get div() {
+    return this.$div
+  }
+
+  /**
+   * Sets the {@link IModelItem item} to display information for.
+   * Setting this property to a value other than null shows the pop-up.
+   * Setting the property to null hides the pop-up.
+   * @type {IModelItem}
+   */
+  set currentItem(value) {
+    if (value === this.$currentItem) {
+      return
     }
-
-    /**
-     * Set the container {@link HTMLPopupSupport#div div element}.
-     * @type {HTMLElement}
-     */
-    set div(value) {
-      this.$div = value
-    }
-
-    /**
-     * Gets the container {@link HTMLPopupSupport#div div element}.
-     * @type {HTMLElement}
-     */
-    get div() {
-      return this.$div
-    }
-
-    /**
-     * Sets the {@link yfiles.graph.IModelItem item} to display information for.
-     * Setting this property to a value other than null shows the pop-up.
-     * Setting the property to null hides the pop-up.
-     * @type {yfiles.graph.IModelItem}
-     */
-    set currentItem(value) {
-      if (value === this.$currentItem) {
-        return
-      }
-      this.$currentItem = value
-      if (value !== null) {
-        this.show()
-      } else {
-        this.hide()
-      }
-    }
-
-    /**
-     * Gets the {@link yfiles.graph.IModelItem item} to display information for.
-     * @type {yfiles.graph.IModelItem}
-     */
-    get currentItem() {
-      return this.$currentItem
-    }
-
-    /**
-     * Sets the flag for the current position is no longer valid.
-     * @param value true if the current position is no longer valid, false otherwise
-     * @type {boolean}
-     */
-    set dirty(value) {
-      this.$dirty = value
-    }
-
-    /**
-     * Gets the flag for the current position is no longer valid.
-     * @type {boolean}
-     */
-    get dirty() {
-      return this.$dirty
-    }
-
-    /**
-     * Registers click and visual update listeners.
-     */
-    registerListeners() {
-      // Add power button listener
-      document.getElementById('powerButton').addEventListener(
-        'click',
-        evt => {
-          if (this.currentItem !== null) {
-            const itemTag = this.currentItem.tag
-            itemTag.enabled = !itemTag.enabled
-            const powerButtonPath = document.getElementById('powerButton-path')
-            if (itemTag.enabled) {
-              powerButtonPath.setAttribute('class', '')
-            } else {
-              powerButtonPath.setAttribute('class', 'powerButton-off')
-            }
-            this.graphComponent.invalidate()
-          }
-        },
-        true
-      )
-
-      // Add close button listener
-      document.getElementById('closeButton').addEventListener(
-        'click',
-        evt => {
-          this.hide()
-        },
-        true
-      )
-
-      // Add listener for viewport changes
-      this.graphComponent.addViewportChangedListener((sender, propertyChangedEventArgs) => {
-        if (this.currentItem) {
-          this.dirty = true
-        }
-      })
-
-      // Add listeners for node layout changes
-      this.graphComponent.graph.addNodeLayoutChangedListener((node, oldLayout) => {
-        if (
-          ((this.currentItem && this.currentItem === node) ||
-            yfiles.graph.IEdge.isInstance(this.currentItem)) &&
-          (node === this.currentItem.sourcePort.owner || node === this.currentItem.targetPort.owner)
-        ) {
-          this.dirty = true
-        }
-      })
-
-      // Add listener for updates of the visual tree
-      this.graphComponent.addUpdatedVisualListener((sender, eventArgs) => {
-        if (this.currentItem && this.dirty) {
-          this.dirty = false
-          this.updateLocation()
-        }
-      })
-    }
-
-    /**
-     * Makes this pop-up visible near the given item.
-     */
-    show() {
-      this.div.style.display = 'block'
-      // ensure opacity is set after display block, to enable the fading animation
-      setTimeout(() => {
-        this.div.style.opacity = '1'
-      }, 0)
-      this.div.setAttribute('class', 'popupContent popupContentFade')
-      this.updateLocation()
-    }
-
-    /**
-     * Hides this pop-up.
-     */
-    hide() {
-      const parent = this.div.parentNode
-      // clone the current tooltip to fade it out, since only one 'real' tooltip can exist
-      const clonedTooltip = this.div.cloneNode(true)
-      clonedTooltip.setAttribute('class', 'popupContentClone')
-      parent.appendChild(clonedTooltip)
-      // fade the clone out, then remove it from the DOM. Both actions need to be timed.
-      setTimeout(() => {
-        clonedTooltip.setAttribute('class', 'popupContentClone invisible')
-        setTimeout(() => {
-          parent.removeChild(clonedTooltip)
-        }, 300)
-      }, 10)
-      // make the original popup invisible
-      this.div.style.opacity = '0'
-      this.div.style.display = 'none'
-      this.div.setAttribute('class', 'popupContent')
-    }
-
-    /**
-     * Changes the location of this pop-up to the location calculated by the
-     * {@link HTMLPopupSupport#labelModelParameter}. Currently, this implementation does not support rotated pop-ups.
-     */
-    updateLocation() {
-      if (!this.currentItem && !this.labelModelParameter) {
-        return
-      }
-      const width = this.div.clientWidth
-      const height = this.div.clientHeight
-      const zoom = this.graphComponent.zoom
-
-      // create a dummy label to let the LabelModelParameter compute the correct location
-      const dummyLabel = new yfiles.graph.SimpleLabel(
-        this.currentItem,
-        '',
-        this.labelModelParameter
-      )
-      if (this.labelModelParameter.supports(dummyLabel)) {
-        dummyLabel.preferredSize = new yfiles.geometry.Size(width / zoom, height / zoom)
-        const newLayout = this.labelModelParameter.model.getGeometry(
-          dummyLabel,
-          this.labelModelParameter
-        )
-        this.setLocation(newLayout.anchorX, newLayout.anchorY - (height + 10) / zoom)
-        setTimeout(() => {
-          this.div.setAttribute('class', 'popupContent')
-        }, 300)
-      }
-    }
-
-    /**
-     * Sets the location of this pop-up to the given world coordinates.
-     * @param {number} x The target x-coordinate of the pop-up.
-     * @param {number} y The target y-coordinate of the pop-up.
-     */
-    setLocation(x, y) {
-      // Calculate the view coordinates since we have to place the div in the regular HTML coordinate space
-      const viewPoint = this.graphComponent.toViewCoordinates(new yfiles.geometry.Point(x, y))
-      this.div.style.left = `${viewPoint.x}px`
-      this.div.style.top = `${viewPoint.y}px`
+    this.$currentItem = value
+    if (value !== null) {
+      this.show()
+    } else {
+      this.hide()
     }
   }
 
-  return HTMLPopupSupport
-})
+  /**
+   * Gets the {@link IModelItem item} to display information for.
+   * @type {IModelItem}
+   */
+  get currentItem() {
+    return this.$currentItem
+  }
+
+  /**
+   * Sets the flag for the current position is no longer valid.
+   * @param value true if the current position is no longer valid, false otherwise
+   * @type {boolean}
+   */
+  set dirty(value) {
+    this.$dirty = value
+  }
+
+  /**
+   * Gets the flag for the current position is no longer valid.
+   * @type {boolean}
+   */
+  get dirty() {
+    return this.$dirty
+  }
+
+  /**
+   * Registers click and visual update listeners.
+   */
+  registerListeners() {
+    // Add power button listener
+    document.getElementById('powerButton').addEventListener(
+      'click',
+      evt => {
+        if (this.currentItem !== null) {
+          const itemTag = this.currentItem.tag
+          itemTag.enabled = !itemTag.enabled
+          const powerButtonPath = document.getElementById('powerButton-path')
+          if (itemTag.enabled) {
+            powerButtonPath.setAttribute('class', '')
+          } else {
+            powerButtonPath.setAttribute('class', 'powerButton-off')
+          }
+          this.graphComponent.invalidate()
+        }
+      },
+      true
+    )
+
+    // Add close button listener
+    document.getElementById('closeButton').addEventListener(
+      'click',
+      evt => {
+        this.hide()
+      },
+      true
+    )
+
+    // Add listener for viewport changes
+    this.graphComponent.addViewportChangedListener((sender, propertyChangedEventArgs) => {
+      if (this.currentItem) {
+        this.dirty = true
+      }
+    })
+
+    // Add listeners for node layout changes
+    this.graphComponent.graph.addNodeLayoutChangedListener((node, oldLayout) => {
+      if (
+        ((this.currentItem && this.currentItem === node) || IEdge.isInstance(this.currentItem)) &&
+        (node === this.currentItem.sourcePort.owner || node === this.currentItem.targetPort.owner)
+      ) {
+        this.dirty = true
+      }
+    })
+
+    // Add listener for updates of the visual tree
+    this.graphComponent.addUpdatedVisualListener((sender, eventArgs) => {
+      if (this.currentItem && this.dirty) {
+        this.dirty = false
+        this.updateLocation()
+      }
+    })
+  }
+
+  /**
+   * Makes this pop-up visible near the given item.
+   */
+  show() {
+    this.div.style.display = 'block'
+    // ensure opacity is set after display block, to enable the fading animation
+    setTimeout(() => {
+      this.div.style.opacity = '1'
+    }, 0)
+    this.div.setAttribute('class', 'popupContent popupContentFade')
+    this.updateLocation()
+  }
+
+  /**
+   * Hides this pop-up.
+   */
+  hide() {
+    const parent = this.div.parentNode
+    // clone the current tooltip to fade it out, since only one 'real' tooltip can exist
+    const clonedTooltip = this.div.cloneNode(true)
+    clonedTooltip.setAttribute('class', 'popupContentClone')
+    parent.appendChild(clonedTooltip)
+    // fade the clone out, then remove it from the DOM. Both actions need to be timed.
+    setTimeout(() => {
+      clonedTooltip.setAttribute('class', 'popupContentClone invisible')
+      setTimeout(() => {
+        parent.removeChild(clonedTooltip)
+      }, 300)
+    }, 10)
+    // make the original popup invisible
+    this.div.style.opacity = '0'
+    this.div.style.display = 'none'
+    this.div.setAttribute('class', 'popupContent')
+  }
+
+  /**
+   * Changes the location of this pop-up to the location calculated by the
+   * {@link HTMLPopupSupport#labelModelParameter}. Currently, this implementation does not support rotated pop-ups.
+   */
+  updateLocation() {
+    if (!this.currentItem && !this.labelModelParameter) {
+      return
+    }
+    const width = this.div.clientWidth
+    const height = this.div.clientHeight
+    const zoom = this.graphComponent.zoom
+
+    // create a dummy label to let the LabelModelParameter compute the correct location
+    const dummyLabel = new SimpleLabel(this.currentItem, '', this.labelModelParameter)
+    if (this.labelModelParameter.supports(dummyLabel)) {
+      dummyLabel.preferredSize = new Size(width / zoom, height / zoom)
+      const newLayout = this.labelModelParameter.model.getGeometry(
+        dummyLabel,
+        this.labelModelParameter
+      )
+      this.setLocation(newLayout.anchorX, newLayout.anchorY - (height + 10) / zoom)
+      setTimeout(() => {
+        this.div.setAttribute('class', 'popupContent')
+      }, 300)
+    }
+  }
+
+  /**
+   * Sets the location of this pop-up to the given world coordinates.
+   * @param {number} x The target x-coordinate of the pop-up.
+   * @param {number} y The target y-coordinate of the pop-up.
+   */
+  setLocation(x, y) {
+    // Calculate the view coordinates since we have to place the div in the regular HTML coordinate space
+    const viewPoint = this.graphComponent.toViewCoordinates(new Point(x, y))
+    this.div.style.left = `${viewPoint.x}px`
+    this.div.style.top = `${viewPoint.y}px`
+  }
+}

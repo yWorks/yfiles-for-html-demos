@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.1.
- ** Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.2.
+ ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,24 +26,21 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-'use strict'
+const path = require('path')
 
 const HtmlWebpackPlugin = require('html-webpack-plugin')
-const path = require('path')
+const OptimizerPlugin = require('@yworks/optimizer/webpack-plugin')
 
 module.exports = {
   mode: 'production',
   entry: {
-    app: './build/webpack-demo.js'
-  },
-  resolve: {
-    // where webpack will look to resolve required modules
-    // https://webpack.js.org/configuration/resolve/#resolve-modules
-    // In contrast to the dev configuration, the modules will be picked up from
-    // ./build/ after they have been optimized using the yFiles deployment tool.
-    modules: ['node_modules', path.resolve('./build'), path.resolve('./build/lib/umd/')]
+    app: './src/webpack-demo.js'
   },
   plugins: [
+    new OptimizerPlugin({
+      logLevel: 'info'
+    }),
+
     // Inject the bundle script tags into the html page
     new HtmlWebpackPlugin({
       inject: true,
@@ -53,7 +50,8 @@ module.exports = {
   ],
   output: {
     filename: '[name].[hash].js',
-    path: path.resolve(__dirname, 'dist'), // This is necessary when using the webpack dev server, so the bundles can
+    path: path.resolve(__dirname, 'dist'),
+    // This is necessary when using the webpack dev server, so the bundles can
     // be loaded from dist/
     // https://webpack.js.org/configuration/output/#output-publicpath
     publicPath: 'dist'

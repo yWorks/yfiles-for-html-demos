@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.1.
- ** Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.2.
+ ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,65 +26,50 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-'use strict'
+import {
+  DefaultPortCandidate,
+  FreeNodePortLocationModel,
+  IInputModeContext,
+  INode,
+  List,
+  PortCandidateProviderBase
+} from 'yfiles'
 
-define(['yfiles/view-editor'], /** @type {yfiles_namespace} */ /** typeof yfiles */ yfiles => {
+/**
+ * This port candidate provider provides port candidates at each side and in the center of a node.
+ */
+export default class NodePortCandidateProvider extends PortCandidateProviderBase {
   /**
-   * This port candidate provider provides port candidates at each side and in the center of a node.
-   * @extends yfiles.input.PortCandidateProviderBase
+   * Creates a new instance of <code>NodePortCandidateProvider</code>.
+   * @param {INode} node The given node.
    */
-  class NodePortCandidateProvider extends yfiles.input.PortCandidateProviderBase {
-    /**
-     * Creates a new instance of <code>NodePortCandidateProvider</code>.
-     * @param {yfiles.graph.INode} node The given node.
-     */
-    constructor(node) {
-      super()
-      this.node = node
-    }
-
-    /**
-     * Returns a list that contains the port candidates.
-     * @param {yfiles.input.IInputModeContext} context The context for which the candidates should be provided
-     * @see Overrides {@link yfiles.input.PortCandidateProviderBase#getPortCandidates}
-     * @return {yfiles.collections.IEnumerable.<yfiles.input.IPortCandidate>}
-     */
-    getPortCandidates(context) {
-      const candidates = new yfiles.collections.List()
-      candidates.add(
-        new yfiles.input.DefaultPortCandidate(
-          this.node,
-          yfiles.graph.FreeNodePortLocationModel.NODE_CENTER_ANCHORED
-        )
-      )
-      candidates.add(
-        new yfiles.input.DefaultPortCandidate(
-          this.node,
-          yfiles.graph.FreeNodePortLocationModel.NODE_LEFT_ANCHORED
-        )
-      )
-      candidates.add(
-        new yfiles.input.DefaultPortCandidate(
-          this.node,
-          yfiles.graph.FreeNodePortLocationModel.NODE_TOP_ANCHORED
-        )
-      )
-      candidates.add(
-        new yfiles.input.DefaultPortCandidate(
-          this.node,
-          yfiles.graph.FreeNodePortLocationModel.NODE_RIGHT_ANCHORED
-        )
-      )
-      candidates.add(
-        new yfiles.input.DefaultPortCandidate(
-          this.node,
-          yfiles.graph.FreeNodePortLocationModel.NODE_BOTTOM_ANCHORED
-        )
-      )
-
-      return candidates
-    }
+  constructor(node) {
+    super()
+    this.node = node
   }
 
-  return NodePortCandidateProvider
-})
+  /**
+   * Returns a list that contains the port candidates.
+   * @param {IInputModeContext} context The context for which the candidates should be provided
+   * @see Overrides {@link PortCandidateProviderBase#getPortCandidates}
+   * @return {IEnumerable.<IPortCandidate>}
+   */
+  getPortCandidates(context) {
+    const candidates = new List()
+    candidates.add(
+      new DefaultPortCandidate(this.node, FreeNodePortLocationModel.NODE_CENTER_ANCHORED)
+    )
+    candidates.add(
+      new DefaultPortCandidate(this.node, FreeNodePortLocationModel.NODE_LEFT_ANCHORED)
+    )
+    candidates.add(new DefaultPortCandidate(this.node, FreeNodePortLocationModel.NODE_TOP_ANCHORED))
+    candidates.add(
+      new DefaultPortCandidate(this.node, FreeNodePortLocationModel.NODE_RIGHT_ANCHORED)
+    )
+    candidates.add(
+      new DefaultPortCandidate(this.node, FreeNodePortLocationModel.NODE_BOTTOM_ANCHORED)
+    )
+
+    return candidates
+  }
+}

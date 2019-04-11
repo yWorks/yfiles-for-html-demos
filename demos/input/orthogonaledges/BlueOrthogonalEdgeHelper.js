@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.1.
- ** Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.2.
+ ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,33 +26,28 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-'use strict'
+import { IEdge, IInputModeContext, OrthogonalEdgeHelper, SegmentOrientation } from 'yfiles'
 
-define(['yfiles/view-editor'], /** @type {yfiles_namespace} */ /** typeof yfiles */ yfiles => {
+/**
+ * The {@link OrthogonalEdgeHelper} for blue edges. Orthogonal edge
+ * editing is enabled for the inner segments of this edges but not for the
+ * first and last one.
+ */
+export default class BlueOrthogonalEdgeHelper extends OrthogonalEdgeHelper {
   /**
-   * The {@link yfiles.input.OrthogonalEdgeHelper} for blue edges. Orthogonal edge
-   * editing is enabled for the inner segments of this edges but not for the
-   * first and last one.
-   * @extends yfiles.input.OrthogonalEdgeHelper
+   * Returns the NonOrthogonal segment orientation for the first and last
+   * segment, and the default for all other segments.
+   * @param {IInputModeContext} inputModeContext  The input mode context in which the orientation is
+   *   needed
+   * @param {IEdge} edge The edge to inspect.
+   * @param {number} segmentIndex The index of the segment
+   * @see Overrides {@link OrthogonalEdgeHelper#getSegmentOrientation}
+   * @see Specified by {@link IOrthogonalEdgeHelper#getSegmentOrientation}.
+   * @return {SegmentOrientation}
    */
-  class BlueOrthogonalEdgeHelper extends yfiles.input.OrthogonalEdgeHelper {
-    /**
-     * Returns the NonOrthogonal segment orientation for the first and last
-     * segment, and the default for all other segments.
-     * @param {yfiles.input.IInputModeContext} inputModeContext  The input mode context in which the orientation is
-     *   needed
-     * @param {yfiles.graph.IEdge} edge The edge to inspect.
-     * @param {number} segmentIndex The index of the segment
-     * @see Overrides {@link yfiles.input.OrthogonalEdgeHelper#getSegmentOrientation}
-     * @see Specified by {@link yfiles.input.IOrthogonalEdgeHelper#getSegmentOrientation}.
-     * @return {yfiles.input.SegmentOrientation}
-     */
-    getSegmentOrientation(inputModeContext, edge, segmentIndex) {
-      return segmentIndex === 0 || segmentIndex === edge.bends.size
-        ? yfiles.input.SegmentOrientation.NON_ORTHOGONAL
-        : super.getSegmentOrientation(inputModeContext, edge, segmentIndex)
-    }
+  getSegmentOrientation(inputModeContext, edge, segmentIndex) {
+    return segmentIndex === 0 || segmentIndex === edge.bends.size
+      ? SegmentOrientation.NON_ORTHOGONAL
+      : super.getSegmentOrientation(inputModeContext, edge, segmentIndex)
   }
-
-  return BlueOrthogonalEdgeHelper
-})
+}

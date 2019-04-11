@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.1.
- ** Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.2.
+ ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,49 +26,45 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-'use strict'
+import { HtmlCanvasVisual, IRectangle, IRenderContext } from 'yfiles'
 
-define(['yfiles/view-component'], /** @type {yfiles_namespace} */ /** typeof yfiles */ yfiles => {
+/**
+ * Renders a circle with the given layout and color on a HTML5 Canvas.
+ */
+export default class CircleVisual extends HtmlCanvasVisual {
   /**
-   * Renders a circle with the given layout and color on a HTML5 Canvas.
+   * Creates a new instance.
+   * @param {IRectangle} layout The layout of the node to render.
+   * @param {string} color The color of the node to render.
    */
-  class CircleVisual extends yfiles.view.HtmlCanvasVisual {
-    /**
-     * Creates a new instance.
-     * @param {yfiles.geometry.IRectangle} layout The layout of the node to render.
-     * @param {string} color The color of the node to render.
-     */
-    constructor(layout, color) {
-      super()
-      this.layout = layout
-      this.color = color
-    }
-
-    /**
-     * Paints onto the context using HTML5 Canvas operations.
-     * Paints a simple filled ellipse with the layout and color.
-     * @param {yfiles.view.IRenderContext} context The render context of the {@link yfiles.view.CanvasComponent}
-     * @param {Object} canvas2d The HTML5 Canvas context to use for rendering.
-     * @see Overrides {@link yfiles.view.HtmlCanvasVisual#paint}
-     */
-    paint(context, canvas2d) {
-      // always save the context and restore it after finishing the rendering
-      canvas2d.save()
-      // set the fill color
-      canvas2d.fillStyle = this.color
-      const l = this.layout
-      // apply the layout
-      canvas2d.translate(l.x, l.y)
-      canvas2d.scale(l.width, l.height)
-      canvas2d.beginPath()
-      // draw the ellipse with center 0.5,0.5, radius 0.5
-      // from 0 to 2*Pi
-      canvas2d.arc(0.5, 0.5, 0.5, 0, Math.PI * 2, false)
-      canvas2d.fill()
-      // restore the context
-      canvas2d.restore()
-    }
+  constructor(layout, color) {
+    super()
+    this.layout = layout
+    this.color = color
   }
 
-  return CircleVisual
-})
+  /**
+   * Paints onto the context using HTML5 Canvas operations.
+   * Paints a simple filled ellipse with the layout and color.
+   * @param {IRenderContext} context The render context of the {@link CanvasComponent}
+   * @param {Object} canvas2d The HTML5 Canvas context to use for rendering.
+   * @see Overrides {@link HtmlCanvasVisual#paint}
+   */
+  paint(context, canvas2d) {
+    // always save the context and restore it after finishing the rendering
+    canvas2d.save()
+    // set the fill color
+    canvas2d.fillStyle = this.color
+    const l = this.layout
+    // apply the layout
+    canvas2d.translate(l.x, l.y)
+    canvas2d.scale(l.width, l.height)
+    canvas2d.beginPath()
+    // draw the ellipse with center 0.5,0.5, radius 0.5
+    // from 0 to 2*Pi
+    canvas2d.arc(0.5, 0.5, 0.5, 0, Math.PI * 2, false)
+    canvas2d.fill()
+    // restore the context
+    canvas2d.restore()
+  }
+}

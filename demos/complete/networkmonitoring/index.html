@@ -8,8 +8,8 @@
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.1.
-     // Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML 2.2.
+     // Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -37,13 +37,14 @@
 
   <title>Network Monitoring Demo [yFiles for HTML]</title>
 
-  <link rel="stylesheet" href="../../../lib/yfiles.css">
+  <link rel="stylesheet" href="../../node_modules/yfiles/yfiles.css">
   <link rel="stylesheet" href="../../resources/style/demo.css">
 
   <link rel="stylesheet" href="./resources/app.css">
 
   <!-- enable debugging -->
   <script src="../../../ide-support/yfiles-typeinfo.js"></script>
+  <script src="../../resources/filesystem-warning.js"></script>
 
   <!-- load d3.js for the bar chart and d3-tip for the tooltips -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/5.7.0/d3.min.js"></script>
@@ -99,7 +100,7 @@
 
     <p>Opens the control panel for that node.</p>
 
-    <h3>Hover over a nodes or an edge</h3>
+    <h3>Hover over a node or an edge</h3>
 
     <p>Shows the load of that element.</p>
 
@@ -146,8 +147,7 @@
   </div>
 </div>
 
-<script src="../../resources/require.js"></script>
-<script src="NetworkMonitoringDemo.js"></script>
+<script type="module" crossorigin="anonymous" src="NetworkMonitoringDemo.js"></script>
 
 </body>
 </html>

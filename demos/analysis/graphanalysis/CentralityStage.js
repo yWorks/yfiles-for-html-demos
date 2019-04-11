@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.1.
- ** Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.2.
+ ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,181 +26,176 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-'use strict'
+import {
+  CentralityAlgorithm,
+  Graph,
+  ILayoutAlgorithm,
+  INodeMap,
+  LayoutGraph,
+  LayoutStageBase,
+  Maps
+} from 'yfiles'
 
-define([
-  'yfiles/view-layout-bridge'
-], /** @type {yfiles_namespace} */ /** typeof yfiles */ yfiles => {
+/**
+ * A LayoutStage for changing the sizes of the nodes according to their centrality values.
+ */
+export default class CentralityStage extends LayoutStageBase {
   /**
-   * A LayoutStage for changing the sizes of the nodes according to their centrality values.
+   * Creates a new instance of CentralityStage
+   * @param {ILayoutAlgorithm} layout
    */
-  class CentralityStage extends yfiles.layout.LayoutStageBase {
-    /**
-     * Creates a new instance of CentralityStage
-     * @param {yfiles.layout.ILayoutAlgorithm} layout
-     */
-    constructor(layout) {
-      super(layout)
-      this.$centrality = 0
-      this.$directed = false
-    }
-
-    /**
-     * Specifies the centrality algorithm that will be applied.
-     * @param {number} centrality the centrality algorithm
-     */
-    set centrality(centrality) {
-      this.$centrality = centrality
-    }
-
-    /**
-     * Returns the centrality algorithm that will be applied.
-     * @return {number} centrality the centrality algorithm
-     */
-    get centrality() {
-      return this.$centrality
-    }
-
-    /**
-     * Specifies whether the edges should be considered directed or undirected.
-     * @param {boolean} directed true if the edges should be considered directed, false otherwise
-     */
-    set directed(directed) {
-      this.$directed = directed
-    }
-
-    /**
-     * Returns whether the edges should be considered directed or undirected.
-     * @return {boolean} directed true if the edges should be considered directed, false otherwise
-     */
-    get directed() {
-      return this.$directed
-    }
-
-    /**
-     * Applies the layout to the given graph.
-     * @param {yfiles.layout.LayoutGraph} graph the given graph
-     */
-    applyLayout(graph) {
-      // run the core layout
-      this.applyLayoutCore(graph)
-
-      // run the selected centrality algorithm
-      const centrality = yfiles.algorithms.Maps.createHashedNodeMap()
-      const weightProvider = graph.getDataProvider('EDGE_WEIGHTS')
-
-      const weights = yfiles.algorithms.Maps.createHashedEdgeMap()
-
-      graph.edges.forEach(edge => {
-        if (weightProvider.get(edge) !== null) {
-          weights.setNumber(edge, weightProvider.get(edge))
-        } else {
-          // calculate geometric edge length
-          const path = graph.getPath(edge)
-          let totalEdgeLength = 0
-          for (let cursor = path.lineSegments(); cursor.ok; cursor.next()) {
-            totalEdgeLength += cursor.lineSegment.length()
-          }
-          weights.setNumber(edge, totalEdgeLength)
-        }
-      })
-
-      switch (this.$centrality) {
-        case 0: {
-          // DEGREE_CENTRALITY
-          yfiles.algorithms.Centrality.degreeCentrality(graph, centrality, true, true)
-          break
-        }
-        case 1: {
-          // WEIGHT_CENTRALITY
-          yfiles.algorithms.Centrality.weightCentrality(graph, centrality, true, true, weights)
-          break
-        }
-        case 2: {
-          // GRAPH_CENTRALITY
-          yfiles.algorithms.Centrality.graphCentrality(graph, centrality, this.$directed, weights)
-          break
-        }
-        case 3: {
-          // NODE_EDGE_BETWEENESS_CENTRALITY
-          const edgeCentrality = yfiles.algorithms.Maps.createHashedEdgeMap()
-          yfiles.algorithms.Centrality.nodeEdgeBetweenness(
-            graph,
-            centrality,
-            edgeCentrality,
-            this.$directed,
-            weightProvider
-          )
-          break
-        }
-        case 4: {
-          // CLOSENESS_CENTRALITY
-          yfiles.algorithms.Centrality.closenessCentrality(
-            graph,
-            centrality,
-            this.$directed,
-            weights
-          )
-          break
-        }
-        default: {
-          // DEGREE_CENTRALITY
-          yfiles.algorithms.Centrality.degreeCentrality(graph, centrality, true, true)
-          break
-        }
-      }
-      yfiles.algorithms.Centrality.normalizeNodeMap(graph, centrality)
-
-      // change the node sizes
-      const mostCentralSize = 100
-      const leastCentralSize = 30
-      const centralityValues = this.getCentralityValues(graph, centrality)
-      graph.nodes.forEach(node => {
-        const centralityId = centrality.getNumber(node)
-        const nodeLayout = graph.getLayout(node)
-        if (centralityValues.difference > 0) {
-          const sizeScale = (mostCentralSize - leastCentralSize) / centralityValues.difference
-          const size = parseInt(
-            leastCentralSize + (centralityId - centralityValues.min) * sizeScale
-          )
-          nodeLayout.setSize(size, size)
-          nodeLayout.setLocation(
-            nodeLayout.x + (nodeLayout.width * 0.5 - size * 0.5),
-            nodeLayout.y + (nodeLayout.height * 0.5 - size * 0.5)
-          )
-        } else {
-          nodeLayout.setSize(leastCentralSize, leastCentralSize)
-          nodeLayout.setLocation(
-            nodeLayout.x + (nodeLayout.width * 0.5 - leastCentralSize * 0.5),
-            nodeLayout.y + (nodeLayout.height * 0.5 - leastCentralSize * 0.5)
-          )
-        }
-      })
-    }
-
-    /**
-     * Returns the range of centrality values of the nodes.
-     * @param {yfiles.algorithms.Graph} graph
-     * @param {yfiles.algorithms.INodeMap} centrality
-     * @return {{min: Number, max: number, difference: number}}
-     */
-    getCentralityValues(graph, centrality) {
-      let min = Number.MAX_VALUE
-      let max = -Number.MAX_VALUE
-
-      graph.nodes.forEach(node => {
-        const centralityValue = centrality.getNumber(node)
-        min = Math.min(min, centralityValue)
-        max = Math.max(max, centralityValue)
-      })
-
-      return {
-        min,
-        max,
-        difference: max - min
-      }
-    }
+  constructor(layout) {
+    super(layout)
+    this.$centrality = 0
+    this.$directed = false
   }
 
-  return CentralityStage
-})
+  /**
+   * Specifies the centrality algorithm that will be applied.
+   * @param {number} centrality the centrality algorithm
+   */
+  set centrality(centrality) {
+    this.$centrality = centrality
+  }
+
+  /**
+   * Returns the centrality algorithm that will be applied.
+   * @return {number} centrality the centrality algorithm
+   */
+  get centrality() {
+    return this.$centrality
+  }
+
+  /**
+   * Specifies whether the edges should be considered directed or undirected.
+   * @param {boolean} directed true if the edges should be considered directed, false otherwise
+   */
+  set directed(directed) {
+    this.$directed = directed
+  }
+
+  /**
+   * Returns whether the edges should be considered directed or undirected.
+   * @return {boolean} directed true if the edges should be considered directed, false otherwise
+   */
+  get directed() {
+    return this.$directed
+  }
+
+  /**
+   * Applies the layout to the given graph.
+   * @param {LayoutGraph} graph the given graph
+   */
+  applyLayout(graph) {
+    // run the core layout
+    this.applyLayoutCore(graph)
+
+    // run the selected centrality algorithm
+    const centrality = Maps.createHashedNodeMap()
+    const weightProvider = graph.getDataProvider('EDGE_WEIGHTS')
+
+    const weights = Maps.createHashedEdgeMap()
+
+    graph.edges.forEach(edge => {
+      if (weightProvider.get(edge) !== null) {
+        weights.setNumber(edge, weightProvider.get(edge))
+      } else {
+        // calculate geometric edge length
+        const path = graph.getPath(edge)
+        let totalEdgeLength = 0
+        for (let cursor = path.lineSegments(); cursor.ok; cursor.next()) {
+          totalEdgeLength += cursor.lineSegment.length()
+        }
+        weights.setNumber(edge, totalEdgeLength)
+      }
+    })
+
+    switch (this.$centrality) {
+      case 0: {
+        // DEGREE_CENTRALITY
+        CentralityAlgorithm.degreeCentrality(graph, centrality, true, true)
+        break
+      }
+      case 1: {
+        // WEIGHT_CENTRALITY
+        CentralityAlgorithm.weightCentrality(graph, centrality, true, true, weights)
+        break
+      }
+      case 2: {
+        // GRAPH_CENTRALITY
+        CentralityAlgorithm.graphCentrality(graph, centrality, this.$directed, weights)
+        break
+      }
+      case 3: {
+        // NODE_EDGE_BETWEENESS_CENTRALITY
+        const edgeCentrality = Maps.createHashedEdgeMap()
+        CentralityAlgorithm.nodeEdgeBetweenness(
+          graph,
+          centrality,
+          edgeCentrality,
+          this.$directed,
+          weightProvider
+        )
+        break
+      }
+      case 4: {
+        // CLOSENESS_CENTRALITY
+        CentralityAlgorithm.closenessCentrality(graph, centrality, this.$directed, weights)
+        break
+      }
+      default: {
+        // DEGREE_CENTRALITY
+        CentralityAlgorithm.degreeCentrality(graph, centrality, true, true)
+        break
+      }
+    }
+    CentralityAlgorithm.normalizeNodeMap(graph, centrality)
+
+    // change the node sizes
+    const mostCentralSize = 100
+    const leastCentralSize = 30
+    const centralityValues = this.getCentralityValues(graph, centrality)
+    graph.nodes.forEach(node => {
+      const centralityId = centrality.getNumber(node)
+      const nodeLayout = graph.getLayout(node)
+      if (centralityValues.difference > 0) {
+        const sizeScale = (mostCentralSize - leastCentralSize) / centralityValues.difference
+        const size = parseInt(leastCentralSize + (centralityId - centralityValues.min) * sizeScale)
+        nodeLayout.setSize(size, size)
+        nodeLayout.setLocation(
+          nodeLayout.x + (nodeLayout.width * 0.5 - size * 0.5),
+          nodeLayout.y + (nodeLayout.height * 0.5 - size * 0.5)
+        )
+      } else {
+        nodeLayout.setSize(leastCentralSize, leastCentralSize)
+        nodeLayout.setLocation(
+          nodeLayout.x + (nodeLayout.width * 0.5 - leastCentralSize * 0.5),
+          nodeLayout.y + (nodeLayout.height * 0.5 - leastCentralSize * 0.5)
+        )
+      }
+    })
+  }
+
+  /**
+   * Returns the range of centrality values of the nodes.
+   * @param {Graph} graph
+   * @param {INodeMap} centrality
+   * @return {{min: Number, max: number, difference: number}}
+   */
+  getCentralityValues(graph, centrality) {
+    let min = Number.MAX_VALUE
+    let max = -Number.MAX_VALUE
+
+    graph.nodes.forEach(node => {
+      const centralityValue = centrality.getNumber(node)
+      min = Math.min(min, centralityValue)
+      max = Math.max(max, centralityValue)
+    })
+
+    return {
+      min,
+      max,
+      difference: max - min
+    }
+  }
+}

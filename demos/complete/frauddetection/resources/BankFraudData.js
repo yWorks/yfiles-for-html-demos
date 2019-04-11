@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.1.
- ** Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.2.
+ ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,11 +26,8 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-'use strict'
-
-/* @yjs:keep=from,to */
-define([], () => {
-  const nodesSource = [
+export default {
+  nodesSource: [
     {
       id: 0,
       type: 'Account Holder',
@@ -7494,8 +7491,9 @@ define([], () => {
       x: 87.5,
       y: -122.5
     }
-  ]
-  const edgesSource = [
+  ],
+
+  edgesSource: [
     {
       from: 0,
       to: 2
@@ -10593,9 +10591,4 @@ define([], () => {
       to: 776
     }
   ]
-
-  return {
-    nodesSource,
-    edgesSource
-  }
-})
+}

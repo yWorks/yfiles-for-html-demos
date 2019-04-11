@@ -151,8 +151,8 @@ export const NODE_DATA = [
   },
   {
     position: 'Maintenance Supervisor',
-    name: 'Carmen Langenhagen',
-    email: 'clangenhagen@yoyodyne.com',
+    name: 'Carmen Shortened',
+    email: 'cshortened@yoyodyne.com',
     phone: '555-0142',
     fax: '555-0143',
     businessUnit: 'Production',
@@ -459,7 +459,7 @@ export const EDGE_DATA = [
   { from: 'Valerie Burnett', to: 'Martin Cornett' },
   { from: 'Edward Monge', to: 'Lisa Jensen' },
   { from: 'Edward Monge', to: 'Howard Meyer' },
-  { from: 'Timothy Jackson', to: 'Carmen Langenhagen' },
+  { from: 'Timothy Jackson', to: 'Carmen Shortened' },
   { from: 'Timothy Jackson', to: 'Thomas Stark' },
   { from: 'Edward Lewis', to: 'Mildred Bean' },
   { from: 'Edward Lewis', to: 'Raymond Lindley' }

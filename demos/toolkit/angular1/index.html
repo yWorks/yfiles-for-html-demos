@@ -7,8 +7,8 @@
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.1.
-     // Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML 2.2.
+     // Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -36,19 +36,13 @@
 
   <title id="title">AngularJS 1 Integration Demo [yFiles for HTML]</title>
 
-  <link rel="stylesheet" href="../../../lib/yfiles.css">
+  <link rel="stylesheet" href="../../node_modules/yfiles/yfiles.css">
   <link rel="stylesheet" href="app.css">
   <link rel="stylesheet" href="../../resources/style/demo.css">
-  <script src="../../resources/require.js"></script>
   <script src="../../../ide-support/yfiles-typeinfo.js"></script>
+  <script src="../../resources/filesystem-warning.js"></script>
 
-  <script type="text/yfiles-template">
-    <g id="NodeStyleTemplate">
-      <rect stroke="none" fill="lightgray" rx="4" ry="4" width="{TemplateBinding width}"
-          height="{TemplateBinding height}"></rect>
-      <text data-content="{Binding name}"></text>
-    </g>
-  </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.7.5/angular.min.js"></script>
 </head>
 <body data-ng-controller="graphCtrl" class="demo-has-left demo-has-right">
   <aside class="demo-sidebar demo-left">
@@ -107,14 +101,16 @@
 
       <div id="node-view" ng-cloak="">
         <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewbox="-10 -10 270 120">
-          <rect fill="url(#nodeGradient)" stroke="#249AE7" stroke-width="3" rx="8" ry="8" width="250" height="100"></rect>
+          <rect fill="#C0C0C0" width="250" height="100" transform="translate(2 2)"/>
+          <rect fill="#FFFFFF" stroke="#C0C0C0" width="250" height="100"/>
           <g ng-if="currentNode">
-            <image ng-href="{{currentNode.icon}}" transform="translate(5 15)" width="58px" height="66px" xlink:href="resources/usericon_female1.svg"></image>
-            <text transform="translate(80 20)" style="font-size:10px; font-family:Arial; fill:#505050">{{currentNode.name}}</text>
-            <text transform="translate(80 38)" style="font-size:8px; font-family:Arial; fill:#505050">{{currentNode.position}}</text>
-            <text transform="translate(80 56)" style="font-size:10px; font-family:Arial; fill:#505050">{{currentNode.email}}</text>
-            <text transform="translate(80 74)" style="font-size:10px; font-family:Arial; fill:#505050">{{currentNode.phone}}</text>
-            <text transform="translate(80 92)" style="font-size:10px; font-family:Arial; fill:#505050">{{currentNode.fax}}</text>
+            <image ng-href="{{currentNode.icon}}" transform="scale(0.85) translate(15 20)" xlink:href="resources/usericon_male1.svg" width="75px" height="75px"></image>
+            <text transform="translate(90 25)" style="font-size:16px; fill:#336699">{{currentNode.name}}</text>
+            <text transform="translate(90 45)" style="text-transform: uppercase; font-weight: 400" data-linebreak="{{currentNode.position}}" data-attributes="true"></text>
+            <text transform="translate(90 60)" style="text-transform: uppercase; font-weight: 400" data-linebreak="{{currentNode.position}}" data-attributes="false"></text>
+            <text transform="translate(90 75)">{{currentNode.email}}</text>
+            <text transform="translate(90 92)">{{currentNode.phone}}</text>
+            <text transform="translate(160 92)">{{currentNode.fax}}</text>
           </g>
         </svg>
       </div>
@@ -140,14 +136,14 @@
   <div class="demo-content">
 
     <div class="demo-toolbar">
-      <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn demo-toolbar-button demo-hide-when-small"></button>
-      <button data-command="ZoomOriginal" title="Zoom to original size" class="demo-icon-yIconZoomOriginal demo-toolbar-button demo-hide-when-small"></button>
-      <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut demo-toolbar-button demo-hide-when-small"></button>
-      <button data-command="FitContent" title="Fit Content" class="demo-icon-yIconZoomFit demo-toolbar-button demo-hide-when-small"></button>
+      <button command="INCREASE_ZOOM" target="graphComponent" title="Zoom In" class="demo-icon-yIconZoomIn demo-toolbar-button"></button>
+      <button command="ZOOM" parameter="1.0" target="graphComponent" title="Zoom to original size" class="demo-icon-yIconZoomOriginal demo-toolbar-button"></button>
+      <button command="DECREASE_ZOOM" target="graphComponent" title="Zoom Out" class="demo-icon-yIconZoomOut demo-toolbar-button"></button>
+      <button command="FIT_GRAPH_BOUNDS" target="graphComponent" title="Fit Content" class="demo-icon-yIconZoomFit demo-toolbar-button"></button>
     </div>
     <div id="graphContainer">
       <!-- the GraphComponent directive -->
-      <graph-component id="graphComponent" nodes-source="nodesModel" edges-source="edgesModel" nodes-filter="nodesFilter" current-node="currentNode" node-id-binding="name" source-node-binding="from" target-node-binding="to"></graph-component>
+      <graph-component id="graphComponent" data-graph-component="graphComponent" nodes-model="nodesModel" edges-model="edgesModel" nodes-filter="nodesFilter" current-node="currentNode" node-binding="name" source-binding="from" target-binding="to"></graph-component>
     </div>
   </div>
 
@@ -161,6 +157,6 @@
     </defs>
   </svg>
 
-  <script src="app.js"></script>
+  <script type="module" crossorigin="anonymous" src="app.js"></script>
 </body>
 </html>

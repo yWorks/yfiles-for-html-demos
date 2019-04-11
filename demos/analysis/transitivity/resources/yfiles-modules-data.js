@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.1.
- ** Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.2.
+ ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,129 +26,142 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-'use strict'
-
-define([], () => {
-  /* @yjs:keep */
-  const nodes = [
+export default {
+  nodes: [
     {
       id: 0,
-      label: 'yfiles/complete'
+      label: 'yfiles'
     },
     {
       id: 1,
-      label: 'yfiles/layout'
+      label: 'layout-core'
     },
     {
       id: 2,
-      label: 'yfiles/layout-radial'
+      label: 'layout-radial'
     },
     {
       id: 3,
-      label: 'yfiles/layout-familytree'
+      label: 'layout-familytree'
     },
     {
       id: 4,
-      label: 'yfiles/layout-multipage'
+      label: 'layout-multipage'
     },
     {
       id: 5,
-      label: 'yfiles/layout-orthogonal-compact'
+      label: 'layout-orthogonal-compact'
     },
     {
       id: 6,
-      label: 'yfiles/layout-orthogonal'
+      label: 'layout-orthogonal'
     },
     {
       id: 7,
-      label: 'yfiles/layout-seriesparallel'
+      label: 'layout-seriesparallel'
     },
     {
       id: 8,
-      label: 'yfiles/layout-hierarchic'
+      label: 'layout-hierarchic'
     },
     {
       id: 9,
-      label: 'yfiles/layout-organic'
+      label: 'layout-organic'
     },
     {
       id: 10,
-      label: 'yfiles/router-other'
+      label: 'router-other'
     },
     {
       id: 11,
-      label: 'yfiles/router-polyline'
+      label: 'router-polyline'
     },
     {
       id: 12,
-      label: 'yfiles/layout-tree'
+      label: 'layout-tree'
     },
     {
       id: 13,
-      label: 'yfiles/algorithms'
+      label: 'view-layout-bridge'
     },
     {
       id: 14,
-      label: 'yfiles/view-layout-bridge'
+      label: 'view-folding'
     },
     {
       id: 15,
-      label: 'yfiles/view'
+      label: 'view-graphml'
     },
     {
       id: 16,
-      label: 'yfiles/view-folding'
+      label: 'view-editor'
     },
     {
       id: 17,
-      label: 'yfiles/view-graphml'
+      label: 'view-table'
     },
     {
       id: 18,
-      label: 'yfiles/view-editor'
+      label: 'view-component'
     },
     {
       id: 19,
-      label: 'yfiles/view-table'
+      label: 'styles-other'
     },
     {
       id: 20,
-      label: 'yfiles/view-component'
+      label: 'styles-template'
     }
-  ]
+  ],
 
-  const edges = [
+  edges: [
     {
       from: 0,
       to: 1
     },
     {
       from: 0,
-      to: 14
+      to: 2
+    },
+    {
+      from: 0,
+      to: 3
+    },
+    {
+      from: 0,
+      to: 4
+    },
+    {
+      from: 0,
+      to: 5
+    },
+    {
+      from: 0,
+      to: 7
+    },
+    {
+      from: 0,
+      to: 8
+    },
+    {
+      from: 0,
+      to: 13
     },
     {
       from: 0,
       to: 15
     },
     {
-      from: 1,
-      to: 7
+      from: 0,
+      to: 17
     },
     {
-      from: 1,
-      to: 2
+      from: 0,
+      to: 18
     },
     {
-      from: 1,
-      to: 3
-    },
-    {
-      from: 1,
-      to: 4
-    },
-    {
-      from: 1,
-      to: 5
+      from: 0,
+      to: 19
     },
     {
       from: 2,
@@ -187,97 +200,72 @@ define([], () => {
       to: 11
     },
     {
+      from: 5,
+      to: 12
+    },
+    {
       from: 6,
       to: 12
     },
     {
       from: 7,
-      to: 13
+      to: 1
     },
     {
       from: 8,
-      to: 13
+      to: 1
     },
     {
       from: 9,
-      to: 13
+      to: 1
     },
     {
       from: 10,
-      to: 13
+      to: 1
     },
     {
       from: 11,
-      to: 13
+      to: 1
     },
     {
       from: 12,
-      to: 13
+      to: 1
+    },
+    {
+      from: 13,
+      to: 1
+    },
+    {
+      from: 13,
+      to: 18
     },
     {
       from: 14,
-      to: 13
-    },
-    {
-      from: 14,
-      to: 20
-    },
-    {
-      from: 15,
-      to: 16
-    },
-    {
-      from: 15,
-      to: 17
-    },
-    {
-      from: 15,
       to: 18
     },
     {
       from: 15,
-      to: 19
+      to: 14
     },
     {
       from: 16,
-      to: 20
+      to: 18
+    },
+    {
+      from: 17,
+      to: 16
     },
     {
       from: 17,
       to: 20
     },
     {
-      from: 18,
-      to: 20
-    },
-    {
       from: 19,
-      to: 20
+      to: 18
     },
     {
-      from: 0,
-      to: 20
-    },
-    {
-      from: 1,
-      to: 6
-    },
-    {
-      from: 1,
-      to: 8
-    },
-    {
-      from: 1,
-      to: 9
-    },
-    {
-      from: 1,
-      to: 12
+      from: 20,
+      to: 18
     }
   ]
-
-  return {
-    nodes,
-    edges
-  }
-})
+}

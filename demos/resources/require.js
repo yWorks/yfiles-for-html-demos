@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.1.
- ** Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.2.
+ ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,18 +26,6 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-/**
- * This is a demo implementation of the AMD loading mechanism.
- *
- * This code is part of the demo sources of yFiles for HTML. It is not intended
- * for production use. We recommend using a third party implementation of the
- * AMD loading standard like the one provided by https://requirejs.org/.
- *
- * @yjs:keep
- */
-'use strict'
-
-/* eslint-disable no-shadow-restricted-names,no-var,no-eval,no-undef */
 ;(function(global, undefined) {
   if (typeof global.require === 'function') {
     // don't overwrite an existing require implementation
@@ -45,12 +33,12 @@
   }
 
   var logError = function(o1, o2) {
-    if (console == null) {
+    if (typeof window.console === 'undefined') {
       // do nothing
-    } else if (typeof console.error === 'function') {
-      o2 ? console.error(o1, o2) : console.error(o1)
+    } else if (typeof window.console.error === 'function') {
+      o2 ? window.console.error(o1, o2) : window.console.error(o1)
     } else {
-      o2 ? console.log(o1, o2) : console.log(o1)
+      o2 ? window.console.log(o1, o2) : window.console.log(o1)
     }
   }
   var dependencyState = {}
@@ -69,7 +57,7 @@
   var errorBoxOpen = false
   var enableES6warning =
     global.location.hostname.indexOf('yworks.') < 0 &&
-    global.location.pathname.indexOf('demos-es5') < 0 &&
+    global.location.pathname.indexOf('es5/demos') < 0 &&
     !hasEs6Support()
 
   if (enableES6warning) {

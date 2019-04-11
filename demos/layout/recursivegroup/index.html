@@ -7,8 +7,8 @@
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.1.
-     // Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML 2.2.
+     // Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -36,18 +36,19 @@
 
   <title>Recursive Group Layout Demo [yFiles for HTML]</title>
 
-  <link rel="stylesheet" href="../../../lib/yfiles.css">
+  <link rel="stylesheet" href="../../node_modules/yfiles/yfiles.css">
   <link rel="stylesheet" href="../../resources/style/demo.css">
 
   <!-- enable debugging -->
   <script src="../../../ide-support/yfiles-typeinfo.js"></script>
+  <script src="../../resources/filesystem-warning.js"></script>
 </head>
 <body class="demo-has-left">
 <aside class="demo-sidebar demo-left">
   <h1 class="demo-sidebar-header">Description</h1>
   <div class="demo-sidebar-content">
     <p>
-      Shows how to use the <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.layout.RecursiveGroupLayout" target="_blank">yfiles.layout.RecursiveGroupLayout</a> to apply different layouts to the contents of
+      Shows how to use the <a href="https://docs.yworks.com/yfileshtml/#/api/RecursiveGroupLayout" target="_blank">RecursiveGroupLayout</a> to apply different layouts to the contents of
       group nodes and the overall graph.</p>
 
     <h2>Sample: Table</h2>
@@ -61,10 +62,10 @@
       Demonstrates different layouts of elements assigned to different tiers. Each group node can be assigned to the
       left, right or middle tier (depending on the group node label). </p>
     <p>
-      All group nodes labeled <em>left</em> are placed on the left side. Their content is drawn using a <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.tree.TreeLayout" target="_blank">yfiles.tree.TreeLayout</a>
+      All group nodes labeled <em>left</em> are placed on the left side. Their content is drawn using a <a href="https://docs.yworks.com/yfileshtml/#/api/TreeLayout" target="_blank">TreeLayout</a>
       with layout orientation left-to-right. Analogously, all group nodes labeled <em>right</em> are placed on the right
       side. Their content is drawn using a <em>TreeLayout</em> with layout orientation right-to-left. Elements not
-      assigned to <em>left</em> or <em>right</em> group nodes are always arranged in the middle using the <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.hierarchic.HierarchicLayout" target="_blank">yfiles.hierarchic.HierarchicLayout</a>
+      assigned to <em>left</em> or <em>right</em> group nodes are always arranged in the middle using the <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicLayout" target="_blank">HierarchicLayout</a>
       with layout orientation left-to-right. Note that group nodes not labeled <em>left</em> or <em>right</em> are
       handled non-recursively.</p>
 
@@ -74,7 +75,7 @@
         Calculate a layout by folding and unfolding a group node or pressing the layout button.
       </li>
       <li>
-        Enable <em>Use Sketch</em> option to make <em>HierarchicLayout</em> keep the relative locations of the group
+        Enable <em>From Sketch</em> option to make <em>HierarchicLayout</em> keep the relative locations of the group
         nodes to each other. This allows for manually adjusting the order of the tables.
       </li>
     </ul>
@@ -109,8 +110,7 @@
   <div id="graphComponent"></div>
 </div>
 
-<script src="../../resources/require.js"></script>
-<script src="RecursiveGroupDemo.js"></script>
+<script type="module" crossorigin="anonymous" src="RecursiveGroupDemo.js"></script>
 
 </body>
 </html>

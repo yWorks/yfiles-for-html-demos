@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.1.
- ** Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.2.
+ ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,9 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-'use strict'
-
-define([], () => [
+export default [
   {
     name: '1 - Simple Arrays',
     updateEnabled: true,
@@ -61,4 +59,4 @@ define([], () => [
     nodeTemplate:
       "<rect fill='darkorange' stroke='white' rx='2' ry='2' width='{TemplateBinding width}' height='{TemplateBinding height}'></rect><text transform='translate(10 20)' data-content='{Binding name}' style='font-size:18px;'></text>"
   }
-])
+]

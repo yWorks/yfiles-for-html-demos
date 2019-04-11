@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.1.
- ** Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.2.
+ ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,58 +26,61 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-'use strict'
+import {
+  BaseClass,
+  IEdge,
+  IGraph,
+  IInputModeContext,
+  IOrthogonalEdgeHelper,
+  SegmentOrientation
+} from 'yfiles'
 
-define(['yfiles/view-editor'], /** @type {yfiles_namespace} */ /** typeof yfiles */ yfiles => {
+/**
+ * An {@link IOrthogonalEdgeHelper} for edges that don't have
+ * orthogonal editing behavior.
+ */
+export default class RedOrthogonalEdgeHelper extends BaseClass(IOrthogonalEdgeHelper) {
   /**
-   * An {@link yfiles.input.IOrthogonalEdgeHelper} for edges that don't have
-   * orthogonal editing behavior.
+   * Returns the non-orthogonal segment orientation.
+   * @param {IInputModeContext} inputModeContext The input mode context in which the segment is edited
+   * @param {IEdge} edge The edge to inspect
+   * @param {number} segmentIndex The index of the segment
+   * @see Specified by {@link IOrthogonalEdgeHelper#getSegmentOrientation}.
+   * @return {SegmentOrientation}
    */
-  class RedOrthogonalEdgeHelper extends yfiles.lang.Class(yfiles.input.IOrthogonalEdgeHelper) {
-    /**
-     * Returns the non-orthogonal segment orientation.
-     * @param {yfiles.input.IInputModeContext} inputModeContext The input mode context in which the segment is edited
-     * @param {yfiles.graph.IEdge} edge The edge to inspect
-     * @param {number} segmentIndex The index of the segment
-     * @see Specified by {@link yfiles.input.IOrthogonalEdgeHelper#getSegmentOrientation}.
-     * @return {yfiles.input.SegmentOrientation}
-     */
-    getSegmentOrientation(inputModeContext, edge, segmentIndex) {
-      return yfiles.input.SegmentOrientation.NON_ORTHOGONAL
-    }
-
-    /**
-     * Returns <code>false</code>.
-     * @param {yfiles.input.IInputModeContext} inputModeContext The input mode context in which the segment is edited
-     * @param {yfiles.graph.IEdge} edge The edge to inspect
-     * @param {boolean} sourceEnd <code>True</code> if the source end of the edge is queried, <code>false</code> for
-     * the target end
-     * @see Specified by {@link yfiles.input.IOrthogonalEdgeHelper#shouldMoveEndImplicitly}.
-     * @return {boolean}
-     */
-    shouldMoveEndImplicitly(inputModeContext, edge, sourceEnd) {
-      return false
-    }
-
-    /**
-     * Returns <code>false</code>.
-     * @param {yfiles.input.IInputModeContext} inputModeContext The input mode context in which the segment is edited
-     * @see Specified by {@link yfiles.input.IOrthogonalEdgeHelper#shouldEditOrthogonally}.
-     * @return {boolean}
-     */
-    shouldEditOrthogonally(inputModeContext) {
-      return false
-    }
-
-    /**
-     * Does nothing; no cleanup of bends performed.
-     * @param {yfiles.input.IInputModeContext} inputModeContext  The input mode context which edited the edge
-     * @param {yfiles.graph.IGraph} graph The graph to use for modifying the edge instance
-     * @param {yfiles.graph.IEdge} edge  The edge to clean up the path
-     * @see Specified by {@link yfiles.input.IOrthogonalEdgeHelper#cleanUpEdge}.
-     */
-    cleanUpEdge(inputModeContext, graph, edge) {}
+  getSegmentOrientation(inputModeContext, edge, segmentIndex) {
+    return SegmentOrientation.NON_ORTHOGONAL
   }
 
-  return RedOrthogonalEdgeHelper
-})
+  /**
+   * Returns <code>false</code>.
+   * @param {IInputModeContext} inputModeContext The input mode context in which the segment is edited
+   * @param {IEdge} edge The edge to inspect
+   * @param {boolean} sourceEnd <code>True</code> if the source end of the edge is queried, <code>false</code> for
+   * the target end
+   * @see Specified by {@link IOrthogonalEdgeHelper#shouldMoveEndImplicitly}.
+   * @return {boolean}
+   */
+  shouldMoveEndImplicitly(inputModeContext, edge, sourceEnd) {
+    return false
+  }
+
+  /**
+   * Returns <code>false</code>.
+   * @param {IInputModeContext} inputModeContext The input mode context in which the segment is edited
+   * @see Specified by {@link IOrthogonalEdgeHelper#shouldEditOrthogonally}.
+   * @return {boolean}
+   */
+  shouldEditOrthogonally(inputModeContext) {
+    return false
+  }
+
+  /**
+   * Does nothing; no cleanup of bends performed.
+   * @param {IInputModeContext} inputModeContext  The input mode context which edited the edge
+   * @param {IGraph} graph The graph to use for modifying the edge instance
+   * @param {IEdge} edge  The edge to clean up the path
+   * @see Specified by {@link IOrthogonalEdgeHelper#cleanUpEdge}.
+   */
+  cleanUpEdge(inputModeContext, graph, edge) {}
+}

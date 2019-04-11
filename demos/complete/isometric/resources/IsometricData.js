@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.1.
- ** Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.2.
+ ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,14 +26,11 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-'use strict'
-
-define([], () => {
-  /* @yjs:keep */
-  const nodesSource = [
+export default {
+  nodesSource: [
     {
       id: 'tablet1',
-      fill: 'rgba(255,153,0,255)',
+      fill: 'rgba(255,153,0,1)',
       geometry: {
         width: 23,
         height: 5,
@@ -45,7 +42,7 @@ define([], () => {
     },
     {
       id: 'tablet2',
-      fill: 'rgba(255,153,0,255)',
+      fill: 'rgba(255,153,0,1)',
       geometry: {
         width: 23,
         height: 5,
@@ -57,7 +54,7 @@ define([], () => {
     },
     {
       id: 'tablet3',
-      fill: 'rgba(255,153,0,255)',
+      fill: 'rgba(255,153,0,1)',
       geometry: {
         width: 23,
         height: 5,
@@ -69,7 +66,7 @@ define([], () => {
     },
     {
       id: 'tablet4',
-      fill: 'rgba(255,153,0,255)',
+      fill: 'rgba(255,153,0,1)',
       geometry: {
         width: 23,
         height: 5,
@@ -81,7 +78,7 @@ define([], () => {
     },
     {
       id: 'server1',
-      fill: 'rgba(153,51,255,255)',
+      fill: 'rgba(153,51,255,1)',
       geometry: {
         width: 29,
         height: 30,
@@ -93,7 +90,7 @@ define([], () => {
     },
     {
       id: 'server2',
-      fill: 'rgba(153,51,255,255)',
+      fill: 'rgba(153,51,255,1)',
       geometry: {
         width: 29,
         height: 30,
@@ -105,7 +102,7 @@ define([], () => {
     },
     {
       id: 'pc1',
-      fill: 'rgba(153,204,0,255)',
+      fill: 'rgba(153,204,0,1)',
       geometry: {
         width: 15,
         height: 30,
@@ -117,7 +114,7 @@ define([], () => {
     },
     {
       id: 'pc2',
-      fill: 'rgba(153,204,0,255)',
+      fill: 'rgba(153,204,0,1)',
       geometry: {
         width: 15,
         height: 30,
@@ -129,7 +126,7 @@ define([], () => {
     },
     {
       id: 'pc3',
-      fill: 'rgba(153,204,0,255)',
+      fill: 'rgba(153,204,0,1)',
       geometry: {
         width: 15,
         height: 30,
@@ -141,7 +138,7 @@ define([], () => {
     },
     {
       id: 'pc4',
-      fill: 'rgba(153,204,0,255)',
+      fill: 'rgba(153,204,0,1)',
       geometry: {
         width: 15,
         height: 30,
@@ -153,7 +150,7 @@ define([], () => {
     },
     {
       id: 'pc5',
-      fill: 'rgba(153,204,0,255)',
+      fill: 'rgba(153,204,0,1)',
       geometry: {
         width: 15,
         height: 30,
@@ -165,7 +162,7 @@ define([], () => {
     },
     {
       id: 'pc6',
-      fill: 'rgba(153,204,0,255)',
+      fill: 'rgba(153,204,0,1)',
       geometry: {
         width: 15,
         height: 30,
@@ -177,7 +174,7 @@ define([], () => {
     },
     {
       id: 'pc7',
-      fill: 'rgba(153,204,0,255)',
+      fill: 'rgba(153,204,0,1)',
       geometry: {
         width: 15,
         height: 30,
@@ -189,7 +186,7 @@ define([], () => {
     },
     {
       id: 'pc8',
-      fill: 'rgba(153,204,0,255)',
+      fill: 'rgba(153,204,0,1)',
       geometry: {
         width: 15,
         height: 30,
@@ -201,7 +198,7 @@ define([], () => {
     },
     {
       id: 'pc9',
-      fill: 'rgba(153,204,0,255)',
+      fill: 'rgba(153,204,0,1)',
       geometry: {
         width: 15,
         height: 30,
@@ -213,7 +210,7 @@ define([], () => {
     },
     {
       id: 'pc10',
-      fill: 'rgba(153,204,0,255)',
+      fill: 'rgba(153,204,0,1)',
       geometry: {
         width: 15,
         height: 30,
@@ -225,7 +222,7 @@ define([], () => {
     },
     {
       id: 'pc11',
-      fill: 'rgba(153,204,0,255)',
+      fill: 'rgba(153,204,0,1)',
       geometry: {
         width: 15,
         height: 30,
@@ -237,7 +234,7 @@ define([], () => {
     },
     {
       id: 'laptop1',
-      fill: 'rgba(0,204,255,255)',
+      fill: 'rgba(0,204,255,1)',
       geometry: {
         width: 43,
         height: 10,
@@ -249,7 +246,7 @@ define([], () => {
     },
     {
       id: 'laptop2',
-      fill: 'rgba(0,204,255,255)',
+      fill: 'rgba(0,204,255,1)',
       geometry: {
         width: 43,
         height: 10,
@@ -261,7 +258,7 @@ define([], () => {
     },
     {
       id: 'laptop3',
-      fill: 'rgba(0,204,255,255)',
+      fill: 'rgba(0,204,255,1)',
       geometry: {
         width: 43,
         height: 10,
@@ -273,7 +270,7 @@ define([], () => {
     },
     {
       id: 'laptop4',
-      fill: 'rgba(0,204,255,255)',
+      fill: 'rgba(0,204,255,1)',
       geometry: {
         width: 43,
         height: 10,
@@ -285,7 +282,7 @@ define([], () => {
     },
     {
       id: 'laptop5',
-      fill: 'rgba(0,204,255,255)',
+      fill: 'rgba(0,204,255,1)',
       geometry: {
         width: 43,
         height: 10,
@@ -297,7 +294,7 @@ define([], () => {
     },
     {
       id: 'db',
-      fill: 'rgba(153,51,255,255)',
+      fill: 'rgba(153,51,255,1)',
       geometry: {
         width: 20,
         height: 30,
@@ -309,7 +306,7 @@ define([], () => {
     },
     {
       id: 'hub1',
-      fill: 'rgba(192,192,192,255)',
+      fill: 'rgba(192,192,192,1)',
       geometry: {
         width: 38,
         height: 7,
@@ -321,7 +318,7 @@ define([], () => {
     },
     {
       id: 'hub2',
-      fill: 'rgba(192,192,192,255)',
+      fill: 'rgba(192,192,192,1)',
       geometry: {
         width: 38,
         height: 7,
@@ -333,7 +330,7 @@ define([], () => {
     },
     {
       id: 'hub3',
-      fill: 'rgba(192,192,192,255)',
+      fill: 'rgba(192,192,192,1)',
       geometry: {
         width: 38,
         height: 7,
@@ -345,7 +342,7 @@ define([], () => {
     },
     {
       id: 'hub4',
-      fill: 'rgba(192,192,192,255)',
+      fill: 'rgba(192,192,192,1)',
       geometry: {
         width: 38,
         height: 7,
@@ -357,7 +354,7 @@ define([], () => {
     },
     {
       id: 'hub5',
-      fill: 'rgba(192,192,192,255)',
+      fill: 'rgba(192,192,192,1)',
       geometry: {
         width: 38,
         height: 7,
@@ -369,7 +366,7 @@ define([], () => {
     },
     {
       id: 'switch',
-      fill: 'rgba(255,102,0,255)',
+      fill: 'rgba(255,102,0,1)',
       geometry: {
         width: 63,
         height: 15,
@@ -380,7 +377,7 @@ define([], () => {
     },
     {
       id: 'gateway',
-      fill: 'rgba(153,51,255,255)',
+      fill: 'rgba(153,51,255,1)',
       geometry: {
         width: 29,
         height: 30,
@@ -391,7 +388,7 @@ define([], () => {
     },
     {
       id: 'firewall',
-      fill: 'rgba(255,0,0,255)',
+      fill: 'rgba(255,0,0,1)',
       geometry: {
         width: 57,
         height: 30,
@@ -400,8 +397,9 @@ define([], () => {
       },
       label: 'Firewall'
     }
-  ]
-  const edgesSource = [
+  ],
+
+  edgesSource: [
     {
       from: 'server1',
       to: 'hub1'
@@ -530,8 +528,9 @@ define([], () => {
       from: 'gateway',
       to: 'firewall'
     }
-  ]
-  const groupsSource = [
+  ],
+
+  groupsSource: [
     {
       id: 'development',
       label: 'Development',
@@ -541,7 +540,7 @@ define([], () => {
         depth: 10,
         horizontal: false
       },
-      fill: 'rgba(202,236,255,128)'
+      fill: 'rgba(202,236,255,0.5)'
     },
     {
       id: 'management',
@@ -552,7 +551,7 @@ define([], () => {
         depth: 10,
         horizontal: false
       },
-      fill: 'rgba(202,236,255,128)'
+      fill: 'rgba(202,236,255,0.5)'
     },
     {
       id: 'production',
@@ -563,7 +562,7 @@ define([], () => {
         depth: 10,
         horizontal: false
       },
-      fill: 'rgba(202,236,255,128)'
+      fill: 'rgba(202,236,255,0.5)'
     },
     {
       id: 'sales',
@@ -574,7 +573,7 @@ define([], () => {
         depth: 10,
         horizontal: false
       },
-      fill: 'rgba(202,236,255,128)'
+      fill: 'rgba(202,236,255,0.5)'
     },
     {
       id: 'it',
@@ -585,13 +584,7 @@ define([], () => {
         depth: 10,
         horizontal: false
       },
-      fill: 'rgba(202,236,255,128)'
+      fill: 'rgba(202,236,255,0.5)'
     }
   ]
-
-  return {
-    nodesSource,
-    edgesSource,
-    groupsSource
-  }
-})
+}

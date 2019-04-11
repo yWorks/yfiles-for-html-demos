@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.1.
- ** Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.2.
+ ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,37 +26,30 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-'use strict'
+import { LayoutStageBase } from 'yfiles'
+import MyDataProviderAdapter from './MyDataProviderAdapter.js'
 
-define(['yfiles/view-component', './MyDataProviderAdapter'], (
-  /** @type {yfiles_namespace} */ /** typeof yfiles */ yfiles,
-  MyDataProviderAdapter
-) => {
-  /**
-   * A layout stage that takes care to convert the selected labels mapper into the respective data provider.
-   * Unfortunately, mappers for labels are not converted into working data providers for labels automatically.
-   * @extends yfiles.layout.LayoutStageBase
-   */
-  class SelectedLabelsStage extends yfiles.layout.LayoutStageBase {
-    /** @type {string} */
-    static get PROVIDER_KEY() {
-      return 'YetAnotherKey'
-    }
-
-    static get SELECTED_LABELS_AT_ITEM_KEY() {
-      return 'SelectedLabelsAtItem'
-    }
-
-    applyLayout(graph) {
-      const dataProvider = graph.getDataProvider(SelectedLabelsStage.SELECTED_LABELS_AT_ITEM_KEY)
-      graph.addDataProvider(
-        SelectedLabelsStage.PROVIDER_KEY,
-        new MyDataProviderAdapter(dataProvider, graph)
-      )
-      this.applyLayoutCore(graph)
-      graph.removeDataProvider(SelectedLabelsStage.PROVIDER_KEY)
-    }
+/**
+ * A layout stage that takes care to convert the selected labels mapper into the respective data provider.
+ * Unfortunately, mappers for labels are not converted into working data providers for labels automatically.
+ */
+export default class SelectedLabelsStage extends LayoutStageBase {
+  /** @type {string} */
+  static get PROVIDER_KEY() {
+    return 'YetAnotherKey'
   }
 
-  return SelectedLabelsStage
-})
+  static get SELECTED_LABELS_AT_ITEM_KEY() {
+    return 'SelectedLabelsAtItem'
+  }
+
+  applyLayout(graph) {
+    const dataProvider = graph.getDataProvider(SelectedLabelsStage.SELECTED_LABELS_AT_ITEM_KEY)
+    graph.addDataProvider(
+      SelectedLabelsStage.PROVIDER_KEY,
+      new MyDataProviderAdapter(dataProvider, graph)
+    )
+    this.applyLayoutCore(graph)
+    graph.removeDataProvider(SelectedLabelsStage.PROVIDER_KEY)
+  }
+}

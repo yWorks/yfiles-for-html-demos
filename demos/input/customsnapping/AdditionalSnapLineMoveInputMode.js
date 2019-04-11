@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.1.
- ** Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.2.
+ ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,104 +26,102 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-'use strict'
+import {
+  IHitTestable,
+  IInputModeContext,
+  InputModeEventArgs,
+  MoveInputMode,
+  Point,
+  Rect,
+  Size
+} from 'yfiles'
+import AdditionalSnapLinePositionHandler from './AdditionalSnapLinePositionHandler.js'
 
-define(['yfiles/view-editor', './AdditionalSnapLinePositionHandler.js'], (
-  /** @type {yfiles_namespace} */ /** typeof yfiles */ yfiles,
-  AdditionalSnapLinePositionHandler
-) => {
+/**
+ * This input mode allows moving free snaplines using a drag gesture.
+ */
+export default class AdditionalSnapLineMoveInputMode extends MoveInputMode {
   /**
-   * This input mode allows moving free snaplines using a drag gesture.
-   * @extends yfiles.input.MoveInputMode
+   * Creates a new instance of <code>AdditionalSnapLineMoveInputMode</code>
+   * @param snapLineCreators {List.<AdditionalSnapLineVisualCreator>}
    */
-  class AdditionalSnapLineMoveInputMode extends yfiles.input.MoveInputMode {
-    /**
-     * Creates a new instance of <code>AdditionalSnapLineMoveInputMode</code>
-     * @param snapLineCreators {yfiles.collections.List.<AdditionalSnapLineVisualCreator>}
-     */
-    constructor(snapLineCreators) {
-      super()
-      this.$snapLineCreators = snapLineCreators
-      this.initialize()
-    }
-
-    /**
-     * Returns the list of snap lines.
-     * @return {yfiles.collections.IEnumerable.<AdditionalSnapLineVisualCreator>}
-     */
-    get snapLineCreators() {
-      return this.$snapLineCreators
-    }
-
-    /**
-     * Clears the {@link yfiles.input.MoveInputMode#positionHandler} property and sets
-     * the {@link yfiles.input.MoveInputMode#hitTestable} property to check for hit
-     * {@link AdditionalSnapLineVisualCreator}s.
-     */
-    initialize() {
-      this.positionHandler = null
-      this.hitTestable = yfiles.input.IHitTestable.create(this.isValidHit.bind(this))
-    }
-
-    /**
-     * Returns true if an AdditionalSnapLine can be found in a close surrounding of the given location.
-     * @param {yfiles.input.IInputModeContext} context
-     * @param {yfiles.geometry.Point} location
-     * @return {boolean}
-     */
-    isValidHit(context, location) {
-      const line = this.tryGetAdditionalSnapLineCreatorAt(location)
-      if (line !== null) {
-        this.handler = new AdditionalSnapLinePositionHandler(line, location)
-        return true
-      }
-      this.handler = null
-      return false
-    }
-
-    /**
-     * Returns the first AdditionalSnapLine found in a close surrounding of the given location
-     * or null if none can be found.
-     * @param {yfiles.geometry.Point} location
-     * @return {AdditionalSnapLineVisualCreator}
-     */
-    tryGetAdditionalSnapLineCreatorAt(location) {
-      const surrounding = new yfiles.geometry.Rect(
-        location.add(new yfiles.geometry.Point(-3, -3)),
-        new yfiles.geometry.Size(6, 6)
-      )
-      return this.snapLineCreators.find(line => surrounding.intersectsLine(line.from, line.to))
-    }
-
-    /**
-     * Sets the {@link yfiles.input.MoveInputMode#positionHandler} property.
-     * @param {yfiles.input.InputModeEventArgs} inputModeEventArgs
-     * @see Overrides {@link yfiles.input.MoveInputMode#onDragStarting}
-     */
-    onDragStarting(inputModeEventArgs) {
-      this.positionHandler = this.handler
-      super.onDragStarting(inputModeEventArgs)
-    }
-
-    /**
-     * Clears the {@link yfiles.input.MoveInputMode#positionHandler} property.
-     * @param {yfiles.input.InputModeEventArgs} inputModeEventArgs
-     * @see Overrides {@link yfiles.input.MoveInputMode#onDragCanceled}
-     */
-    onDragCanceled(inputModeEventArgs) {
-      super.onDragCanceled(inputModeEventArgs)
-      this.positionHandler = null
-    }
-
-    /**
-     * Clears the {@link yfiles.input.MoveInputMode#positionHandler} property.
-     * @see Overrides {@link yfiles.input.MoveInputMode#onDragFinished}
-     */
-    onDragFinished(inputModeEventArgs) {
-      super.onDragFinished(inputModeEventArgs)
-      this.positionHandler = null
-    }
+  constructor(snapLineCreators) {
+    super()
+    this.$snapLineCreators = snapLineCreators
+    this.initialize()
   }
 
-  return AdditionalSnapLineMoveInputMode
-})
+  /**
+   * Returns the list of snap lines.
+   * @return {IEnumerable.<AdditionalSnapLineVisualCreator>}
+   */
+  get snapLineCreators() {
+    return this.$snapLineCreators
+  }
+
+  /**
+   * Clears the {@link MoveInputMode#positionHandler} property and sets
+   * the {@link MoveInputMode#hitTestable} property to check for hit
+   * {@link AdditionalSnapLineVisualCreator}s.
+   */
+  initialize() {
+    this.positionHandler = null
+    this.hitTestable = IHitTestable.create(this.isValidHit.bind(this))
+  }
+
+  /**
+   * Returns true if an AdditionalSnapLine can be found in a close surrounding of the given location.
+   * @param {IInputModeContext} context
+   * @param {Point} location
+   * @return {boolean}
+   */
+  isValidHit(context, location) {
+    const line = this.tryGetAdditionalSnapLineCreatorAt(location)
+    if (line !== null) {
+      this.handler = new AdditionalSnapLinePositionHandler(line, location)
+      return true
+    }
+    this.handler = null
+    return false
+  }
+
+  /**
+   * Returns the first AdditionalSnapLine found in a close surrounding of the given location
+   * or null if none can be found.
+   * @param {Point} location
+   * @return {AdditionalSnapLineVisualCreator}
+   */
+  tryGetAdditionalSnapLineCreatorAt(location) {
+    const surrounding = new Rect(location.add(new Point(-3, -3)), new Size(6, 6))
+    return this.snapLineCreators.find(line => surrounding.intersectsLine(line.from, line.to))
+  }
+
+  /**
+   * Sets the {@link MoveInputMode#positionHandler} property.
+   * @param {InputModeEventArgs} inputModeEventArgs
+   * @see Overrides {@link MoveInputMode#onDragStarting}
+   */
+  onDragStarting(inputModeEventArgs) {
+    this.positionHandler = this.handler
+    super.onDragStarting(inputModeEventArgs)
+  }
+
+  /**
+   * Clears the {@link MoveInputMode#positionHandler} property.
+   * @param {InputModeEventArgs} inputModeEventArgs
+   * @see Overrides {@link MoveInputMode#onDragCanceled}
+   */
+  onDragCanceled(inputModeEventArgs) {
+    super.onDragCanceled(inputModeEventArgs)
+    this.positionHandler = null
+  }
+
+  /**
+   * Clears the {@link MoveInputMode#positionHandler} property.
+   * @see Overrides {@link MoveInputMode#onDragFinished}
+   */
+  onDragFinished(inputModeEventArgs) {
+    super.onDragFinished(inputModeEventArgs)
+    this.positionHandler = null
+  }
+}

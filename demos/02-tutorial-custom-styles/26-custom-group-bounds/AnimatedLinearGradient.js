@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.1.
- ** Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.2.
+ ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,87 +26,84 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-'use strict'
+import { ISvgDefsCreator, Matrix } from 'yfiles'
+// create the gradient element
+const gradient = window.document.createElementNS('http://www.w3.org/2000/svg', 'linearGradient')
+gradient.setAttribute('x1', 0)
+gradient.setAttribute('y1', 0)
+gradient.setAttribute('x2', 30)
+gradient.setAttribute('y2', 30)
+gradient.setAttribute('spreadMethod', 'repeat')
+const stop1 = window.document.createElementNS('http://www.w3.org/2000/svg', 'stop')
+stop1.setAttribute('stop-color', 'rgb(255, 215, 0)')
+stop1.setAttribute('offset', '0')
+const stop2 = window.document.createElementNS('http://www.w3.org/2000/svg', 'stop')
+stop2.setAttribute('stop-color', 'rgb(255, 245, 30)')
+stop2.setAttribute('offset', '0.5')
+const stop3 = window.document.createElementNS('http://www.w3.org/2000/svg', 'stop')
+stop3.setAttribute('stop-color', 'rgb(255, 215, 0)')
+stop3.setAttribute('offset', '1')
+gradient.appendChild(stop1)
+gradient.appendChild(stop2)
+gradient.appendChild(stop3)
 
-define(['yfiles/view-component'], /** @type {yfiles_namespace} */ /** typeof yfiles */ yfiles => {
-  // create the gradient element
-  const gradient = window.document.createElementNS('http://www.w3.org/2000/svg', 'linearGradient')
-  gradient.setAttribute('x1', 0)
-  gradient.setAttribute('y1', 0)
-  gradient.setAttribute('x2', 30)
-  gradient.setAttribute('y2', 30)
-  gradient.setAttribute('spreadMethod', 'repeat')
-  const stop1 = window.document.createElementNS('http://www.w3.org/2000/svg', 'stop')
-  stop1.setAttribute('stop-color', 'rgb(255, 215, 0)')
-  stop1.setAttribute('offset', '0')
-  const stop2 = window.document.createElementNS('http://www.w3.org/2000/svg', 'stop')
-  stop2.setAttribute('stop-color', 'rgb(255, 245, 30)')
-  stop2.setAttribute('offset', '0.5')
-  const stop3 = window.document.createElementNS('http://www.w3.org/2000/svg', 'stop')
-  stop3.setAttribute('stop-color', 'rgb(255, 215, 0)')
-  stop3.setAttribute('offset', '1')
-  gradient.appendChild(stop1)
-  gradient.appendChild(stop2)
-  gradient.appendChild(stop3)
+// set gradient units to userSpaceOnUse in order to be interpreted globally
+gradient.setAttribute('gradientUnits', 'userSpaceOnUse')
 
-  // set gradient units to userSpaceOnUse in order to be interpreted globally
-  gradient.setAttribute('gradientUnits', 'userSpaceOnUse')
+const defsCreator = new ISvgDefsCreator({
+  /** @return {Element} */
+  createDefsElement: context => gradient,
 
-  const defsCreator = new yfiles.view.ISvgDefsCreator({
-    /** @return {Element} */
-    createDefsElement: context => gradient,
+  /** @return {boolean} */
+  accept: (context, node, id) =>
+    node instanceof Element &&
+    node.localName === 'path' &&
+    node.hasAttribute('stroke') &&
+    node.getAttribute('stroke') === `url(#${id})`,
 
-    /** @return {boolean} */
-    accept: (context, node, id) =>
-      node instanceof Element &&
-      node.localName === 'path' &&
-      node.hasAttribute('stroke') &&
-      node.getAttribute('stroke') === `url(#${id})`,
-
-    updateDefsElement: (context, oldElement) => {}
-  })
-
-  let animationFrameId = -1
-  const startGradientAnimation = () => {
-    let offset = 0
-    const ANIMATION_SPEED = 0.05
-    // get current timestamp
-    let t = new Date().getTime()
-    // create the animation callback
-    const frameRequestCallback = timestamp => {
-      // calculate the milliseconds since the last animation frame
-      const currentTime = new Date().getTime()
-      const dt = currentTime - t
-      t = currentTime
-      // check if the gradient is still alive
-      if (gradient.ownerDocument !== null && gradient.parentNode !== null) {
-        // calculate the new offset
-        offset = (offset + dt * ANIMATION_SPEED) % 60
-        // ...and set the new transform
-        gradient.setAttribute(
-          'gradientTransform',
-          new yfiles.geometry.Matrix(1, 0, 0, 1, offset, offset).toSvgTransform()
-        )
-        // re-start the animation
-        animationFrameId = requestAnimationFrame(frameRequestCallback)
-      } else {
-        // if the gradient is dead, cancel the animation
-        cancelAnimationFrame(animationFrameId)
-        animationFrameId = -1
-      }
-    }
-    // start the animation
-    animationFrameId = requestAnimationFrame(frameRequestCallback)
-  }
-
-  return {
-    applyToElement: (context, element) => {
-      const gradientId = context.getDefsId(defsCreator)
-      element.setAttribute('stroke', `url(#${gradientId})`)
-      // start animation if not already running
-      if (animationFrameId < 0) {
-        startGradientAnimation()
-      }
-    }
-  }
+  updateDefsElement: (context, oldElement) => {}
 })
+
+let animationFrameId = -1
+const startGradientAnimation = () => {
+  let offset = 0
+  const ANIMATION_SPEED = 0.05
+  // get current timestamp
+  let t = new Date().getTime()
+  // create the animation callback
+  const frameRequestCallback = timestamp => {
+    // calculate the milliseconds since the last animation frame
+    const currentTime = new Date().getTime()
+    const dt = currentTime - t
+    t = currentTime
+    // check if the gradient is still alive
+    if (gradient.ownerDocument !== null && gradient.parentNode !== null) {
+      // calculate the new offset
+      offset = (offset + dt * ANIMATION_SPEED) % 60
+      // ...and set the new transform
+      gradient.setAttribute(
+        'gradientTransform',
+        new Matrix(1, 0, 0, 1, offset, offset).toSvgTransform()
+      )
+      // re-start the animation
+      animationFrameId = requestAnimationFrame(frameRequestCallback)
+    } else {
+      // if the gradient is dead, cancel the animation
+      cancelAnimationFrame(animationFrameId)
+      animationFrameId = -1
+    }
+  }
+  // start the animation
+  animationFrameId = requestAnimationFrame(frameRequestCallback)
+}
+
+export default {
+  applyToElement: (context, element) => {
+    const gradientId = context.getDefsId(defsCreator)
+    element.setAttribute('stroke', `url(#${gradientId})`)
+    // start animation if not already running
+    if (animationFrameId < 0) {
+      startGradientAnimation()
+    }
+  }
+}

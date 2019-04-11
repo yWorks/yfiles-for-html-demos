@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.1.
- ** Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.2.
+ ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,124 +26,120 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-'use strict'
+import { Font, Point, Size } from 'yfiles'
 
-define(['yfiles/view-component'], /** @type {yfiles_namespace} */ /** typeof yfiles */ yfiles => {
+/**
+ * Saves the data which is necessary for the creation of a style and some additional information
+ * to speed up node/label style rendering.
+ */
+export default class RenderDataCache {
   /**
-   * Saves the data which is necessary for the creation of a style and some additional information
-   * to speed up node/label style rendering.
+   * @param {object} data
+   * @param {Font} font
+   * @param {Size} size
+   * @param {Point} location
    */
-  class RenderDataCache {
-    /**
-     * @param {object} data
-     * @param {yfiles.view.Font} font
-     * @param {yfiles.geometry.Size} size
-     * @param {yfiles.geometry.Point} location
-     */
-    constructor(data, font, size, location) {
-      this.size = size || yfiles.geometry.Size.EMPTY
-      this.location = location || yfiles.geometry.Point.ORIGIN
-      this.data = data
-      this.font = font
-      this.propertyNames = data !== null ? Object.keys(data) : []
+  constructor(data, font, size, location) {
+    this.size = size || Size.EMPTY
+    this.location = location || Point.ORIGIN
+    this.data = data
+    this.font = font
+    this.propertyNames = data !== null ? Object.keys(data) : []
 
-      this.lineHeight = -1.0
-      this.maxLabelWidth = -1.0
+    this.lineHeight = -1.0
+    this.maxLabelWidth = -1.0
+  }
+
+  /** @type {Object} */
+  get data() {
+    return this.$data
+  }
+
+  /** @type {Object} */
+  set data(value) {
+    this.$data = value
+  }
+
+  /** @type {Font} */
+  get font() {
+    return this.$font
+  }
+
+  /** @type {Font} */
+  set font(value) {
+    this.$font = value
+  }
+
+  /** @type {Size} */
+  get size() {
+    return this.$size
+  }
+
+  /** @type {Size} */
+  set size(value) {
+    this.$size = value
+  }
+
+  /** @type {Point} */
+  get location() {
+    return this.$location
+  }
+
+  /** @type {Point} */
+  set location(value) {
+    this.$location = value
+  }
+
+  /** @type {number} */
+  get lineHeight() {
+    return this.$lineHeight
+  }
+
+  /** @type {number} */
+  set lineHeight(value) {
+    this.$lineHeight = value
+  }
+
+  /** @type {number} */
+  get maxLabelWidth() {
+    return this.$maxLabelWidth
+  }
+
+  /** @type {number} */
+  set maxLabelWidth(value) {
+    this.$maxLabelWidth = value
+  }
+
+  /**
+   * Adopts the values for line height and label widths from the given {@link RenderDataCache} if appropriate.
+   * @param {RenderDataCache} other
+   */
+  adoptValues(other) {
+    if (!this.font.equals(other.font)) {
+      return
     }
-
-    /** @type {Object} */
-    get data() {
-      return this.$data
-    }
-
-    /** @type {Object} */
-    set data(value) {
-      this.$data = value
-    }
-
-    /** @type {yfiles.view.Font} */
-    get font() {
-      return this.$font
-    }
-
-    /** @type {yfiles.view.Font} */
-    set font(value) {
-      this.$font = value
-    }
-
-    /** @type {yfiles.geometry.Size} */
-    get size() {
-      return this.$size
-    }
-
-    /** @type {yfiles.geometry.Size} */
-    set size(value) {
-      this.$size = value
-    }
-
-    /** @type {yfiles.geometry.Point} */
-    get location() {
-      return this.$location
-    }
-
-    /** @type {yfiles.geometry.Point} */
-    set location(value) {
-      this.$location = value
-    }
-
-    /** @type {number} */
-    get lineHeight() {
-      return this.$lineHeight
-    }
-
-    /** @type {number} */
-    set lineHeight(value) {
-      this.$lineHeight = value
-    }
-
-    /** @type {number} */
-    get maxLabelWidth() {
-      return this.$maxLabelWidth
-    }
-
-    /** @type {number} */
-    set maxLabelWidth(value) {
-      this.$maxLabelWidth = value
-    }
-
-    /**
-     * Adopts the values for line height and label widths from the given {@link RenderDataCache} if appropriate.
-     * @param {RenderDataCache} other
-     */
-    adoptValues(other) {
-      if (!this.font.equals(other.font)) {
-        return
-      }
-      this.lineHeight = other.lineHeight
-      if (this.data === other.data) {
-        this.maxLabelWidth = other.maxLabelWidth
-        this.propertyNames = other.propertyNames
-      }
-    }
-
-    /**
-     * Returns whether this data has the same visual representation (ignoring location and size) as the given other
-     * data.
-     * @param {RenderDataCache} other
-     * @return {boolean}
-     */
-    hasSameVisual(other) {
-      return this.data === other.data && other.font.equals(this.font)
-    }
-
-    /**
-     * @param {object} obj
-     * @return {boolean}
-     */
-    equals(obj) {
-      return obj !== null && obj instanceof RenderDataCache && this.hasSameVisual(obj)
+    this.lineHeight = other.lineHeight
+    if (this.data === other.data) {
+      this.maxLabelWidth = other.maxLabelWidth
+      this.propertyNames = other.propertyNames
     }
   }
 
-  return RenderDataCache
-})
+  /**
+   * Returns whether this data has the same visual representation (ignoring location and size) as the given other
+   * data.
+   * @param {RenderDataCache} other
+   * @return {boolean}
+   */
+  hasSameVisual(other) {
+    return this.data === other.data && other.font.equals(this.font)
+  }
+
+  /**
+   * @param {object} obj
+   * @return {boolean}
+   */
+  equals(obj) {
+    return obj !== null && obj instanceof RenderDataCache && this.hasSameVisual(obj)
+  }
+}

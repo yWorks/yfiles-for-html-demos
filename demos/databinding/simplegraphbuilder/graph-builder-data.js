@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.1.
- ** Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.2.
+ ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,11 +26,8 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-'use strict'
-
-define([], () => {
-  /* @yjs:keep */
-  const nodesSource = [
+export default {
+  nodesSource: [
     {
       id: 0,
       group: 'group0',
@@ -283,8 +280,9 @@ define([], () => {
       status: 'present',
       icon: '#usericon_male1'
     }
-  ]
-  const edgesSource = [
+  ],
+
+  edgesSource: [
     {
       fromNode: 0,
       toNode: 1
@@ -365,8 +363,9 @@ define([], () => {
       fromNode: 15,
       toNode: 20
     }
-  ]
-  const groupsSource = [
+  ],
+
+  groupsSource: [
     { id: 'group0' },
     { id: 'group1' },
     {
@@ -382,10 +381,4 @@ define([], () => {
       parentGroup: 'group1'
     }
   ]
-
-  return {
-    nodesSource,
-    edgesSource,
-    groupsSource
-  }
-})
+}

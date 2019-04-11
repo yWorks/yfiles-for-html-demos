@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html >
+<html>
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -7,8 +7,8 @@
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.1.
-     // Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML 2.2.
+     // Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -36,11 +36,12 @@
 
   <title>Custom Node Style - Custom Styles Tutorial [yFiles for HTML]</title>
 
-  <link rel="stylesheet" href="../../../lib/yfiles.css">
+  <link rel="stylesheet" href="../../node_modules/yfiles/yfiles.css">
   <link rel="stylesheet" href="../../resources/style/demo.css">
 
   <!-- enable debugging -->
   <script src="../../../ide-support/yfiles-typeinfo.js"></script>
+  <script src="../../resources/filesystem-warning.js"></script>
 </head>
 <body class="demo-has-left">
 <!--
@@ -73,22 +74,21 @@
 
     <ul>
       <li>
-        Use node's <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.graph.ITagOwner#tag" target="_blank">yfiles.graph.ITagOwner#tag</a> as
-        background color.
+        Use node's <a href="https://docs.yworks.com/yfileshtml/#/api/ITagOwner#tag" target="_blank">ITagOwner#tag</a> as background color.
       </li>
       <li>
         Implement high-performance rendering of nodes.
       </li>
       <li>
-        Implement <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.styles.NodeStyleBase#isInside" target="_blank">yfiles.styles.NodeStyleBase#isInside</a> and <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.styles.NodeStyleBase#getOutline" target="_blank">yfiles.styles.NodeStyleBase#getOutline</a>,
+        Implement <a href="https://docs.yworks.com/yfileshtml/#/api/NodeStyleBase#isInside" target="_blank">NodeStyleBase#isInside</a> and <a href="https://docs.yworks.com/yfileshtml/#/api/NodeStyleBase#getOutline" target="_blank">NodeStyleBase#getOutline</a>,
         so that the edges end at the node instead of the node's bounding box.
       </li>
       <li>
-        Implement <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.styles.NodeStyleBase#isHit" target="_blank">yfiles.styles.NodeStyleBase#isHit</a>, so that a node won't get selected when clicking on its
+        Implement <a href="https://docs.yworks.com/yfileshtml/#/api/NodeStyleBase#isHit" target="_blank">NodeStyleBase#isHit</a>, so that a node won't get selected when clicking on its
         bounding box but, not on the node itself.
       </li>
       <li>
-        Implement <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.styles.NodeStyleBase#getBounds" target="_blank">yfiles.styles.NodeStyleBase#getBounds</a>, so that the drop shadow will be included in the
+        Implement <a href="https://docs.yworks.com/yfileshtml/#/api/NodeStyleBase#getBounds" target="_blank">NodeStyleBase#getBounds</a>, so that the drop shadow will be included in the
         bounds of the node.
       </li>
       <li>
@@ -128,8 +128,7 @@
   <div id="graphComponent"></div>
 </div>
 
-<script src="../../resources/require.js"></script>
-<script src="SampleApplication.js"></script>
+<script type="module" crossorigin="anonymous" src="SampleApplication.js"></script>
 
 </body>
 </html>

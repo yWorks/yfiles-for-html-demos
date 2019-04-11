@@ -7,8 +7,8 @@
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.1.
-     // Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML 2.2.
+     // Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -36,11 +36,12 @@
 
   <title>Edge Bundling Demo [yFiles for HTML]</title>
 
-  <link rel="stylesheet" href="../../../lib/yfiles.css">
+  <link rel="stylesheet" href="../../node_modules/yfiles/yfiles.css">
   <link rel="stylesheet" href="../../resources/style/demo.css">
 
   <!-- enable debugging -->
   <script src="../../../ide-support/yfiles-typeinfo.js"></script>
+  <script src="../../resources/filesystem-warning.js"></script>
 
   <style type="text/css">
     .gc-busy {
@@ -94,12 +95,12 @@
     <p>
       The edge curves are drawn using piecewise cubic bezier curves with gradient colors from dark-blue (that starts from the
       source node) to light-blue (that leads to the target node of the edge). For the approximation of the edge curves, a
-      <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.layout.CurveFittingLayoutStage" target="_blank">yfiles.layout.CurveFittingLayoutStage</a> is applied.</p>
+      <a href="https://docs.yworks.com/yfileshtml/#/api/CurveFittingLayoutStage" target="_blank">CurveFittingLayoutStage</a> is applied.</p>
     <p>
       For circular layouts, a circular-sector style is used for the visualization of the nodes. </p>
     <h2>Things to Try</h2>
     <ul>
-      <li>Select one of the layout algorithm that support edge bundling using the combo-box in the toolbar.</li>
+      <li>Select one of the layout algorithms that support edge bundling using the combo-box in the toolbar.</li>
       <li>Modify the strength of the bundles using the slider in the toolbar and notice how this change influences the
         shape of the curves of the bundled edges. Values close to <code>1</code> lead to tight bundles, while values
         close to <code>0</code> lead to straight-line non-bundled edges. Values larger than <code>0.85</code> are
@@ -156,7 +157,6 @@
   <div id="loadingIndicator">Calculating the layout. This may take a while.</div>
 </div>
 
-<script src="../../resources/require.js"></script>
-<script src="EdgeBundlingDemo.js"></script>
+<script type="module" crossorigin="anonymous" src="EdgeBundlingDemo.js"></script>
 </body>
 </html>

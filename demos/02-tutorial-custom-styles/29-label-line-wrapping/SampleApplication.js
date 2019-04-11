@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.1.
- ** Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.2.
+ ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,179 +26,169 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-'use strict'
+import {
+  ExteriorLabelModel,
+  ExteriorLabelModelPosition,
+  GraphComponent,
+  GraphEditorInputMode,
+  ICommand,
+  IGraph,
+  License,
+  Point,
+  Rect,
+  Size,
+  TextWrapping
+} from 'yfiles'
+
+import MySimpleLabelStyle from './MySimpleLabelStyle.js'
+import MySimpleEdgeStyle from './MySimpleEdgeStyle.js'
+import MySimpleNodeStyle from './MySimpleNodeStyle.js'
+import { bindCommand, showApp } from '../../resources/demo-app.js'
+import loadJson from '../../resources/load-json.js'
+
+let labelStyle = null
+
+/** @type {GraphComponent} */
+let graphComponent = null
+
+/** @type {IGraph} */
+let graph = null
+
+/** @type {HTMLSelectElement} */
+let wrappingSelect = null
+
+function run(licenseData) {
+  License.value = licenseData
+  // Initialize the GraphComponent and place it in the div with CSS selector #graphComponent
+  graphComponent = new GraphComponent('#graphComponent')
+  // conveniently store a reference to the graph that is displayed
+  graph = graphComponent.graph
+
+  // initialize the graph
+  initializeGraph()
+
+  // initialize the input mode
+  graphComponent.inputMode = createEditorMode()
+
+  // initialize the select box
+  wrappingSelect = document.querySelector("select[data-command='SetWrapping']")
+  wrappingSelect.selectedIndex = 4
+  setLabelWrapping(TextWrapping.WORD_ELLIPSIS)
+
+  graphComponent.fitGraphBounds()
+
+  // bind the demo buttons to their commands
+  registerCommands()
+
+  // Initialize the demo application's CSS and Javascript for the description
+  showApp(graphComponent)
+}
+
+// ////////////// New in this sample ////////////////
+/**
+ * Changes the label wrapping for the default label style.
+ */
+function setLabelWrapping(wrapping) {
+  if (labelStyle !== null && labelStyle.wrapping !== wrapping) {
+    labelStyle.wrapping = wrapping
+    graphComponent.invalidate()
+  }
+}
+
+// //////////////////////////////////////////////////
+/**
+ * Helper method that binds the various commands available in yFiles for HTML to the buttons
+ * in the demo's toolbar.
+ */
+function registerCommands() {
+  bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent)
+  bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent)
+  bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent)
+  bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
+  wrappingSelect.addEventListener('change', onWrappingSelectChanged)
+}
+
+function onWrappingSelectChanged() {
+  // Change the wrapping of the label style
+  const value = wrappingSelect.options[wrappingSelect.selectedIndex].value
+  if (value) {
+    switch (value) {
+      case 'none':
+        setLabelWrapping(TextWrapping.NONE)
+        break
+      case 'character':
+        setLabelWrapping(TextWrapping.CHARACTER)
+        break
+      case 'word':
+        setLabelWrapping(TextWrapping.WORD)
+        break
+      case 'characterEllipsis':
+        setLabelWrapping(TextWrapping.CHARACTER_ELLIPSIS)
+        break
+      case 'wordEllipsis':
+        setLabelWrapping(TextWrapping.WORD_ELLIPSIS)
+        break
+      default:
+        setLabelWrapping(TextWrapping.WORD)
+    }
+  }
+}
 
 /**
- * This demo show how to create and use a relatively simple, non-interactive custom style
- * for nodes, labels, edges, and ports, as well as a custom arrow.
+ * Sets a custom NodeStyle instance as a template for newly created
+ * nodes in the graph.
  */
-require.config({
-  paths: {
-    yfiles: '../../../lib/umd/yfiles/',
-    utils: '../../utils/',
-    resources: '../../resources/'
-  }
-})
+function initializeGraph() {
+  // Create a new style and use it as default node style
+  graph.nodeDefaults.style = new MySimpleNodeStyle()
+  // Create a new style and use it as default edge style
+  graph.edgeDefaults.style = new MySimpleEdgeStyle()
+  // Create a new style and use it as default label style
+  labelStyle = new MySimpleLabelStyle()
+  graph.nodeDefaults.labels.style = labelStyle
+  // Place labels above nodes, with a small gap
+  const labelModel = new ExteriorLabelModel({ insets: 5 })
+  graph.nodeDefaults.labels.layoutParameter = labelModel.createParameter(
+    ExteriorLabelModelPosition.NORTH
+  )
 
-require([
-  'yfiles/view-editor',
-  'resources/demo-app',
-  'MySimpleNodeStyle.js',
-  'MySimpleEdgeStyle.js',
-  'MySimpleLabelStyle.js',
-  'yfiles/view-folding',
-  'resources/license'
-], (
-  /** @type {yfiles_namespace} */ /** typeof yfiles */ yfiles,
-  app,
-  MySimpleNodeStyle,
-  MySimpleEdgeStyle,
-  MySimpleLabelStyle
-) => {
-  let labelStyle = null
+  graph.edgeDefaults.labels.style = new MySimpleLabelStyle()
 
-  /** @type {yfiles.view.GraphComponent} */
-  let graphComponent = null
+  graph.nodeDefaults.size = new Size(50, 50)
 
-  /** @type {yfiles.graph.IGraph} */
-  let graph = null
+  // Create some graph elements with the above defined styles.
+  createSampleGraph()
+}
 
-  /** @type {HTMLSelectElement} */
-  let wrappingSelect = null
+/**
+ * Creates the default input mode for the graphComponent,
+ * a {@link GraphEditorInputMode}.
+ * @return {IInputMode} a new GraphEditorInputMode instance
+ */
+function createEditorMode() {
+  return new GraphEditorInputMode({
+    allowEditLabel: true
+  })
+}
 
-  function run() {
-    // Initialize the GraphComponent and place it in the div with CSS selector #graphComponent
-    graphComponent = new yfiles.view.GraphComponent('#graphComponent')
-    // conveniently store a reference to the graph that is displayed
-    graph = graphComponent.graph
+/**
+ * Creates the initial sample graph.
+ */
+function createSampleGraph() {
+  const node0 = graph.createNode(new Rect(180, 40, 30, 30))
+  const node1 = graph.createNode(new Rect(260, 50, 30, 30))
+  const node2 = graph.createNode(new Rect(284, 200, 30, 30))
+  const node3 = graph.createNode(new Rect(350, 40, 30, 30))
+  const edge0 = graph.createEdge(node1, node2)
+  // Add some bends
+  graph.addBend(edge0, new Point(350, 130))
+  graph.addBend(edge0, new Point(230, 170))
+  graph.createEdge(node1, node0)
+  graph.createEdge(node1, node3)
 
-    // initialize the graph
-    initializeGraph()
+  // Create a node label with a long text that does not fit the label bounds
+  graph.addLabel(node1, 'Lorem ipsum dolor sit amet, consetetur sadipscing elitr')
+}
 
-    // initialize the input mode
-    graphComponent.inputMode = createEditorMode()
-
-    // initialize the select box
-    wrappingSelect = document.querySelector("select[data-command='SetWrapping']")
-    wrappingSelect.selectedIndex = 4
-    setLabelWrapping(yfiles.view.TextWrapping.WORD_ELLIPSIS)
-
-    graphComponent.fitGraphBounds()
-
-    // bind the demo buttons to their commands
-    registerCommands()
-
-    // Initialize the demo application's CSS and Javascript for the description
-    app.show(graphComponent)
-  }
-
-  // ////////////// New in this sample ////////////////
-  /**
-   * Changes the label wrapping for the default label style.
-   */
-  function setLabelWrapping(wrapping) {
-    if (labelStyle !== null && labelStyle.wrapping !== wrapping) {
-      labelStyle.wrapping = wrapping
-      graphComponent.invalidate()
-    }
-  }
-
-  // //////////////////////////////////////////////////
-  /**
-   * Helper method that binds the various commands available in yFiles for HTML to the buttons
-   * in the demo's toolbar.
-   */
-  function registerCommands() {
-    const ICommand = yfiles.input.ICommand
-    app.bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent)
-    app.bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent)
-    app.bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent)
-    app.bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
-    wrappingSelect.addEventListener('change', onWrappingSelectChanged)
-  }
-
-  function onWrappingSelectChanged() {
-    // Change the wrapping of the label style
-    const value = wrappingSelect.options[wrappingSelect.selectedIndex].value
-    if (value) {
-      switch (value) {
-        case 'none':
-          setLabelWrapping(yfiles.view.TextWrapping.NONE)
-          break
-        case 'character':
-          setLabelWrapping(yfiles.view.TextWrapping.CHARACTER)
-          break
-        case 'word':
-          setLabelWrapping(yfiles.view.TextWrapping.WORD)
-          break
-        case 'characterEllipsis':
-          setLabelWrapping(yfiles.view.TextWrapping.CHARACTER_ELLIPSIS)
-          break
-        case 'wordEllipsis':
-          setLabelWrapping(yfiles.view.TextWrapping.WORD_ELLIPSIS)
-          break
-        default:
-          setLabelWrapping(yfiles.view.TextWrapping.WORD)
-      }
-    }
-  }
-
-  /**
-   * Sets a custom NodeStyle instance as a template for newly created
-   * nodes in the graph.
-   */
-  function initializeGraph() {
-    // Create a new style and use it as default node style
-    graph.nodeDefaults.style = new MySimpleNodeStyle()
-    // Create a new style and use it as default edge style
-    graph.edgeDefaults.style = new MySimpleEdgeStyle()
-    // Create a new style and use it as default label style
-    labelStyle = new MySimpleLabelStyle()
-    graph.nodeDefaults.labels.style = labelStyle
-    // Place labels above nodes, with a small gap
-    const labelModel = new yfiles.graph.ExteriorLabelModel({ insets: 5 })
-    graph.nodeDefaults.labels.layoutParameter = labelModel.createParameter(
-      yfiles.graph.ExteriorLabelModelPosition.NORTH
-    )
-
-    graph.edgeDefaults.labels.style = new MySimpleLabelStyle()
-
-    graph.nodeDefaults.size = new yfiles.geometry.Size(50, 50)
-
-    // Create some graph elements with the above defined styles.
-    createSampleGraph()
-  }
-
-  /**
-   * Creates the default input mode for the graphComponent,
-   * a {@link yfiles.input.GraphEditorInputMode}.
-   * @return {yfiles.input.IInputMode} a new GraphEditorInputMode instance
-   */
-  function createEditorMode() {
-    return new yfiles.input.GraphEditorInputMode({
-      allowEditLabel: true
-    })
-  }
-
-  /**
-   * Creates the initial sample graph.
-   */
-  function createSampleGraph() {
-    const node0 = graph.createNode(new yfiles.geometry.Rect(180, 40, 30, 30))
-    const node1 = graph.createNode(new yfiles.geometry.Rect(260, 50, 30, 30))
-    const node2 = graph.createNode(new yfiles.geometry.Rect(284, 200, 30, 30))
-    const node3 = graph.createNode(new yfiles.geometry.Rect(350, 40, 30, 30))
-    const edge0 = graph.createEdge(node1, node2)
-    // Add some bends
-    graph.addBend(edge0, new yfiles.geometry.Point(350, 130))
-    graph.addBend(edge0, new yfiles.geometry.Point(230, 170))
-    graph.createEdge(node1, node0)
-    graph.createEdge(node1, node3)
-
-    // Create a node label with a long text that does not fit the label bounds
-    graph.addLabel(node1, 'Lorem ipsum dolor sit amet, consetetur sadipscing elitr')
-  }
-
-  // Start demo
-  run()
-})
+// Start demo
+loadJson().then(run)

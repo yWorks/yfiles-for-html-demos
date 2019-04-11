@@ -1,20 +1,32 @@
+import 'yfiles/yfiles.css'
+import '../../resources/style/demo.css'
+
 import {
+  License,
+  CanvasComponent,
+  DefaultLabelStyle,
+  Fill,
   GraphComponent,
   GraphOverviewComponent,
+  ICommand,
   IGraph,
-  Size,
-  DefaultLabelStyle,
-  PolylineEdgeStyle,
   INode,
   Point,
-  ICommand,
-  CanvasComponent,
-  Fill
-} from 'yfiles/view-component'
-import { GraphEditorInputMode } from 'yfiles/view-editor'
+  PolylineEdgeStyle,
+  Size,
+  GraphEditorInputMode
+} from 'yfiles'
 import { MySimpleArrow } from './MyArrow'
 import { MyMarqueeTemplate } from './MyMarqueeTemplate'
 import { MyNodeStyle } from './MyNodeStyle'
+// @ts-ignore: no declarations available for this plain js file
+import { enableWorkarounds } from '../../utils/Workarounds'
+import licenseData from '../../../lib/license.json'
+
+License.value = licenseData
+
+// enable browser-bug workarounds
+enableWorkarounds()
 
 function run() {
   document.getElementById('graphOverviewComponent').style.display = 'block'

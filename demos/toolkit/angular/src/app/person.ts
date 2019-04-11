@@ -1,11 +1,10 @@
-import { BaseClass } from 'yfiles/lang'
-import { IPropertyObservable, PropertyChangedEventArgs } from 'yfiles/core'
+import { BaseClass, IPropertyObservable, PropertyChangedEventArgs } from 'yfiles'
 
 /**
  * Class for representing one person. It implements {@link IPropertyObservable} so that {@link TemplateNodeStyle} can
  * listen to changes and update the node visualization accordingly.
  */
-export class Person extends BaseClass(IPropertyObservable) implements IPropertyObservable {
+export class Person {
   private listeners = []
   private _position: string
   private _name: string
@@ -43,39 +42,24 @@ export class Person extends BaseClass(IPropertyObservable) implements IPropertyO
 
   set name(value) {
     this._name = value
-    this.listeners.forEach(listener => listener(this, new PropertyChangedEventArgs('name')))
   }
   set position(value) {
     this._position = value
-    this.listeners.forEach(listener => listener(this, new PropertyChangedEventArgs('position')))
   }
   set email(value) {
     this._email = value
-    this.listeners.forEach(listener => listener(this, new PropertyChangedEventArgs('email')))
   }
   set phone(value) {
     this._phone = value
-    this.listeners.forEach(listener => listener(this, new PropertyChangedEventArgs('phone')))
   }
   set fax(value) {
     this._fax = value
-    this.listeners.forEach(listener => listener(this, new PropertyChangedEventArgs('fax')))
   }
   set businessUnit(value) {
     this._businessUnit = value
-    this.listeners.forEach(listener => listener(this, new PropertyChangedEventArgs('businessUnit')))
-  }
-
-  addPropertyChangedListener(listener) {
-    this.listeners.push(listener)
-  }
-
-  removePropertyChangedListener(listener) {
-    this.listeners.splice(this.listeners.indexOf(listener), 1)
   }
 
   constructor({ position, name, email, phone, fax, businessUnit, status, icon }) {
-    super()
     this._position = position
     this._name = name
     this._email = email

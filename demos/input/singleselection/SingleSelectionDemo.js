@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.1.
- ** Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.2.
+ ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,219 +26,201 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-'use strict'
+import {
+  EventRecognizers,
+  GraphComponent,
+  GraphEditorInputMode,
+  GraphItemTypes,
+  ICommand,
+  IGraph,
+  IModelItem,
+  License,
+  Rect
+} from 'yfiles'
 
-require.config({
-  paths: {
-    yfiles: '../../../lib/umd/yfiles/',
-    utils: '../../utils/',
-    resources: '../../resources/'
-  }
-})
+import { bindAction, showApp } from '../../resources/demo-app.js'
+import { initDemoStyles } from '../../resources/demo-styles.js'
+import loadJson from '../../resources/load-json.js'
+let commandBindings = []
 
 /**
- * Shows how to configure GraphEditorInputMode to limit the selection to a single graph item.
+ * The previously set multiselection recognizer
  */
-require([
-  'yfiles/view-editor',
-  'resources/demo-app',
-  'resources/demo-styles',
-  'resources/license'
-], (/** @type {yfiles_namespace} */ /** typeof yfiles */ yfiles, app, DemoStyles) => {
-  let commandBindings = []
+let oldMultiSelectionRecognizer = null
 
-  /**
-   * The previously set multiselection recognizer
-   */
-  let oldMultiSelectionRecognizer = null
+let singleSelectionEnabled = false
 
-  let singleSelectionEnabled = false
+/**
+ * Changes the selection mode.
+ * @param {GraphComponent} graphComponent
+ */
+function toggleSingleSelection(graphComponent) {
+  const toggleSelection = document.querySelector('#toggleSingleSelection')
+  singleSelectionEnabled = toggleSelection.checked
 
-  /**
-   * Changes the selection mode.
-   * @param {yfiles.view.GraphComponent} graphComponent
-   */
-  function toggleSingleSelection(graphComponent) {
-    const toggleSelection = document.querySelector('#toggleSingleSelection')
-    singleSelectionEnabled = toggleSelection.checked
+  const mode = graphComponent.inputMode
+  if (singleSelectionEnabled) {
+    // remember old recognizer so we can restore it later
+    oldMultiSelectionRecognizer = mode.multiSelectionRecognizer
 
-    const mode = graphComponent.inputMode
-    if (singleSelectionEnabled) {
-      // remember old recognizer so we can restore it later
-      oldMultiSelectionRecognizer = mode.multiSelectionRecognizer
+    // disable marquee selection
+    mode.marqueeSelectionInputMode.enabled = false
+    // disable multi selection with Ctrl-Click
+    mode.multiSelectionRecognizer = EventRecognizers.NEVER
 
-      // disable marquee selection
-      mode.marqueeSelectionInputMode.enabled = false
-      // disable multi selection with Ctrl-Click
-      mode.multiSelectionRecognizer = yfiles.input.EventRecognizers.NEVER
+    // deactivate commands that can lead to multi selection
+    mode.availableCommands.remove(ICommand.TOGGLE_ITEM_SELECTION)
+    mode.availableCommands.remove(ICommand.SELECT_ALL)
 
-      // deactivate commands that can lead to multi selection
-      mode.availableCommands.remove(yfiles.input.ICommand.TOGGLE_ITEM_SELECTION)
-      mode.availableCommands.remove(yfiles.input.ICommand.SELECT_ALL)
+    mode.navigationInputMode.availableCommands.remove(ICommand.EXTEND_SELECTION_LEFT)
+    mode.navigationInputMode.availableCommands.remove(ICommand.EXTEND_SELECTION_UP)
+    mode.navigationInputMode.availableCommands.remove(ICommand.EXTEND_SELECTION_DOWN)
+    mode.navigationInputMode.availableCommands.remove(ICommand.EXTEND_SELECTION_RIGHT)
 
-      mode.navigationInputMode.availableCommands.remove(yfiles.input.ICommand.EXTEND_SELECTION_LEFT)
-      mode.navigationInputMode.availableCommands.remove(yfiles.input.ICommand.EXTEND_SELECTION_UP)
-      mode.navigationInputMode.availableCommands.remove(yfiles.input.ICommand.EXTEND_SELECTION_DOWN)
-      mode.navigationInputMode.availableCommands.remove(
-        yfiles.input.ICommand.EXTEND_SELECTION_RIGHT
+    // add dummy command bindings that do nothing in order to prevent default behavior
+    commandBindings.push(mode.keyboardInputMode.addCommandBinding(ICommand.EXTEND_SELECTION_LEFT))
+    commandBindings.push(mode.keyboardInputMode.addCommandBinding(ICommand.EXTEND_SELECTION_UP))
+    commandBindings.push(mode.keyboardInputMode.addCommandBinding(ICommand.EXTEND_SELECTION_DOWN))
+    commandBindings.push(mode.keyboardInputMode.addCommandBinding(ICommand.EXTEND_SELECTION_RIGHT))
+
+    // add custom binding for toggle item selection
+    commandBindings.push(
+      mode.keyboardInputMode.addCommandBinding(
+        ICommand.TOGGLE_ITEM_SELECTION,
+        (command, parameter, source) => toggleItemSelectionExecuted(graphComponent, parameter),
+        (command, parameter, source) => toggleItemSelectionCanExecute(graphComponent, parameter)
       )
-
-      // add dummy command bindings that do nothing in order to prevent default behavior
-      commandBindings.push(
-        mode.keyboardInputMode.addCommandBinding(yfiles.input.ICommand.EXTEND_SELECTION_LEFT)
-      )
-      commandBindings.push(
-        mode.keyboardInputMode.addCommandBinding(yfiles.input.ICommand.EXTEND_SELECTION_UP)
-      )
-      commandBindings.push(
-        mode.keyboardInputMode.addCommandBinding(yfiles.input.ICommand.EXTEND_SELECTION_DOWN)
-      )
-      commandBindings.push(
-        mode.keyboardInputMode.addCommandBinding(yfiles.input.ICommand.EXTEND_SELECTION_RIGHT)
-      )
-
-      // add custom binding for toggle item selection
-      commandBindings.push(
-        mode.keyboardInputMode.addCommandBinding(
-          yfiles.input.ICommand.TOGGLE_ITEM_SELECTION,
-          (command, parameter, source) => toggleItemSelectionExecuted(graphComponent, parameter),
-          (command, parameter, source) => toggleItemSelectionCanExecute(graphComponent, parameter)
-        )
-      )
-      // Also clear the selection - even though the setup works when more than one item is selected, it looks a bit
-      // strange
-      graphComponent.selection.clear()
-    } else {
-      // restore old settings
-      mode.marqueeSelectionInputMode.enabled = true
-      mode.multiSelectionRecognizer = oldMultiSelectionRecognizer
-
-      // re-activate commands
-      mode.availableCommands.add(yfiles.input.ICommand.TOGGLE_ITEM_SELECTION)
-      mode.availableCommands.add(yfiles.input.ICommand.SELECT_ALL)
-
-      mode.navigationInputMode.availableCommands.add(yfiles.input.ICommand.EXTEND_SELECTION_LEFT)
-      mode.navigationInputMode.availableCommands.add(yfiles.input.ICommand.EXTEND_SELECTION_UP)
-      mode.navigationInputMode.availableCommands.add(yfiles.input.ICommand.EXTEND_SELECTION_DOWN)
-      mode.navigationInputMode.availableCommands.add(yfiles.input.ICommand.EXTEND_SELECTION_RIGHT)
-
-      // remove the previously registered command bindings
-      for (let i = 0; i < commandBindings.length; i++) {
-        commandBindings[i].remove()
-      }
-      commandBindings = []
-    }
-  }
-
-  /**
-   * Checks if toggling the selection state of an item respecting the single selection policy is allowed
-   * @param {yfiles.view.GraphComponent} graphComponent The given graphComponent
-   * @param {Object} parameter The given parameter
-   */
-  function toggleItemSelectionCanExecute(graphComponent, parameter) {
-    // if we have an item, the command can be executed
-    const modelItem = yfiles.graph.IModelItem.isInstance(parameter)
-      ? parameter
-      : graphComponent.currentItem
-    return modelItem !== null
-  }
-
-  /**
-   * Custom command handler that allows toggling the selection state of an item
-   * respecting the single selection policy.
-   * @param {yfiles.view.GraphComponent} graphComponent The given graphComponent
-   * @param {Object} parameter The given parameter
-   */
-  function toggleItemSelectionExecuted(graphComponent, parameter) {
-    // get the item
-    const modelItem = yfiles.graph.IModelItem.isInstance(parameter)
-      ? parameter
-      : graphComponent.currentItem
-    const inputMode = graphComponent.inputMode
-
-    // check if it allowed to be selected
-    if (
-      modelItem === null ||
-      !graphComponent.graph.contains(modelItem) ||
-      !yfiles.graph.GraphItemTypes.itemIsOfTypes(inputMode.selectableItems, modelItem)
-    ) {
-      return
-    }
-
-    const isSelected = inputMode.graphSelection.isSelected(modelItem)
-    if (isSelected) {
-      // the item is selected and needs to be unselected - just clear the selection
-      inputMode.graphSelection.clear()
-    } else {
-      // the items is unselected - unselect all other items and select the currentItem
-      inputMode.graphSelection.clear()
-      inputMode.setSelected(modelItem, true)
-    }
-  }
-
-  function run() {
-    // initialize the GraphComponent
-    const graphComponent = new yfiles.view.GraphComponent('graphComponent')
-    const graph = graphComponent.graph
-
-    graphComponent.inputMode = new yfiles.input.GraphEditorInputMode()
-
-    // enable the undo feature
-    graph.undoEngineEnabled = true
-    // Initialize the default style of the nodes and edges
-    DemoStyles.initDemoStyles(graph)
-
-    createSampleGraph(graph)
-    graphComponent.fitGraphBounds()
-
-    // wire up the UI
-    app.bindAction("input[data-command='ToggleSingleSelection']", () =>
-      toggleSingleSelection(graphComponent)
     )
+    // Also clear the selection - even though the setup works when more than one item is selected, it looks a bit
+    // strange
+    graphComponent.selection.clear()
+  } else {
+    // restore old settings
+    mode.marqueeSelectionInputMode.enabled = true
+    mode.multiSelectionRecognizer = oldMultiSelectionRecognizer
 
-    toggleSingleSelection(graphComponent)
+    // re-activate commands
+    mode.availableCommands.add(ICommand.TOGGLE_ITEM_SELECTION)
+    mode.availableCommands.add(ICommand.SELECT_ALL)
 
-    app.show(graphComponent)
-  }
+    mode.navigationInputMode.availableCommands.add(ICommand.EXTEND_SELECTION_LEFT)
+    mode.navigationInputMode.availableCommands.add(ICommand.EXTEND_SELECTION_UP)
+    mode.navigationInputMode.availableCommands.add(ICommand.EXTEND_SELECTION_DOWN)
+    mode.navigationInputMode.availableCommands.add(ICommand.EXTEND_SELECTION_RIGHT)
 
-  /**
-   * @type {number[]}
-   */
-  const sampleX = [317, 291, 220, 246, 221, 150, 142, 213, 232, 71, 0]
-
-  /**
-   * @type {number[]}
-   */
-  const sampleY = [87, 2, 0, 73, 144, 180, 251, 286, 215, 285, 320]
-
-  /**
-   * Creates the sample graph.
-   * @param {yfiles.graph.IGraph} graph
-   */
-  function createSampleGraph(graph) {
-    graph.clear()
-    const nodes = new Array(sampleX.length)
-    for (let i = 0; i < nodes.length; i++) {
-      nodes[i] = graph.createNode(new yfiles.geometry.Rect(sampleX[i], sampleY[i], 30, 30))
+    // remove the previously registered command bindings
+    for (let i = 0; i < commandBindings.length; i++) {
+      commandBindings[i].remove()
     }
+    commandBindings = []
+  }
+}
 
-    graph.createEdge(nodes[2], nodes[1])
-    graph.createEdge(nodes[1], nodes[0])
-    graph.createEdge(nodes[0], nodes[3])
-    graph.createEdge(nodes[3], nodes[2])
-    graph.createEdge(nodes[3], nodes[1])
-    graph.createEdge(nodes[4], nodes[3])
-    graph.createEdge(nodes[4], nodes[5])
-    graph.createEdge(nodes[8], nodes[4])
-    graph.createEdge(nodes[7], nodes[8])
-    graph.createEdge(nodes[7], nodes[6])
-    graph.createEdge(nodes[6], nodes[5])
-    graph.createEdge(nodes[6], nodes[9])
-    graph.createEdge(nodes[9], nodes[10])
+/**
+ * Checks if toggling the selection state of an item respecting the single selection policy is allowed
+ * @param {GraphComponent} graphComponent The given graphComponent
+ * @param {Object} parameter The given parameter
+ */
+function toggleItemSelectionCanExecute(graphComponent, parameter) {
+  // if we have an item, the command can be executed
+  const modelItem = IModelItem.isInstance(parameter) ? parameter : graphComponent.currentItem
+  return modelItem !== null
+}
 
-    // reset undo after initial graph loading
-    graph.undoEngine.clear()
+/**
+ * Custom command handler that allows toggling the selection state of an item
+ * respecting the single selection policy.
+ * @param {GraphComponent} graphComponent The given graphComponent
+ * @param {Object} parameter The given parameter
+ */
+function toggleItemSelectionExecuted(graphComponent, parameter) {
+  // get the item
+  const modelItem = IModelItem.isInstance(parameter) ? parameter : graphComponent.currentItem
+  const inputMode = graphComponent.inputMode
+
+  // check if it allowed to be selected
+  if (
+    modelItem === null ||
+    !graphComponent.graph.contains(modelItem) ||
+    !GraphItemTypes.itemIsOfTypes(inputMode.selectableItems, modelItem)
+  ) {
+    return
   }
 
-  run()
-})
+  const isSelected = inputMode.graphSelection.isSelected(modelItem)
+  if (isSelected) {
+    // the item is selected and needs to be unselected - just clear the selection
+    inputMode.graphSelection.clear()
+  } else {
+    // the items is unselected - unselect all other items and select the currentItem
+    inputMode.graphSelection.clear()
+    inputMode.setSelected(modelItem, true)
+  }
+}
+
+function run(licenseData) {
+  License.value = licenseData
+  // initialize the GraphComponent
+  const graphComponent = new GraphComponent('graphComponent')
+  const graph = graphComponent.graph
+
+  graphComponent.inputMode = new GraphEditorInputMode()
+
+  // enable the undo feature
+  graph.undoEngineEnabled = true
+  // Initialize the default style of the nodes and edges
+  initDemoStyles(graph)
+
+  createSampleGraph(graph)
+  graphComponent.fitGraphBounds()
+
+  // wire up the UI
+  bindAction("input[data-command='ToggleSingleSelection']", () =>
+    toggleSingleSelection(graphComponent)
+  )
+
+  toggleSingleSelection(graphComponent)
+
+  showApp(graphComponent)
+}
+
+/**
+ * @type {number[]}
+ */
+const sampleX = [317, 291, 220, 246, 221, 150, 142, 213, 232, 71, 0]
+
+/**
+ * @type {number[]}
+ */
+const sampleY = [87, 2, 0, 73, 144, 180, 251, 286, 215, 285, 320]
+
+/**
+ * Creates the sample graph.
+ * @param {IGraph} graph
+ */
+function createSampleGraph(graph) {
+  graph.clear()
+  const nodes = new Array(sampleX.length)
+  for (let i = 0; i < nodes.length; i++) {
+    nodes[i] = graph.createNode(new Rect(sampleX[i], sampleY[i], 30, 30))
+  }
+
+  graph.createEdge(nodes[2], nodes[1])
+  graph.createEdge(nodes[1], nodes[0])
+  graph.createEdge(nodes[0], nodes[3])
+  graph.createEdge(nodes[3], nodes[2])
+  graph.createEdge(nodes[3], nodes[1])
+  graph.createEdge(nodes[4], nodes[3])
+  graph.createEdge(nodes[4], nodes[5])
+  graph.createEdge(nodes[8], nodes[4])
+  graph.createEdge(nodes[7], nodes[8])
+  graph.createEdge(nodes[7], nodes[6])
+  graph.createEdge(nodes[6], nodes[5])
+  graph.createEdge(nodes[6], nodes[9])
+  graph.createEdge(nodes[9], nodes[10])
+
+  // reset undo after initial graph loading
+  graph.undoEngine.clear()
+}
+
+loadJson().then(run)

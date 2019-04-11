@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.1.
- ** Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.2.
+ ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,83 +26,61 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-'use strict'
+// This file contains a generator for random user data objects for this demo.
 
-define([], () => {
-  /**
-   * Creates random user data objects for this demo.
-   */
-  class UserDataFactory {
-    /** @type {string} */
-    static get FIRST_NAMES() {
-      return [
-        'Alexander',
-        'Amy',
-        'Dorothy',
-        'Edward',
-        'Eric',
-        'Gary',
-        'Linda',
-        'Lisa',
-        'Kathy',
-        'Richard',
-        'Thomas',
-        'Valerie'
-      ]
-    }
+/** @type {string} */
+const FIRST_NAMES = [
+  'Alexander',
+  'Amy',
+  'Dorothy',
+  'Edward',
+  'Eric',
+  'Gary',
+  'Linda',
+  'Lisa',
+  'Kathy',
+  'Richard',
+  'Thomas',
+  'Valerie'
+]
 
-    /** @type {string} */
-    static get FAMILY_NAMES() {
-      return [
-        'Burns',
-        'Burnett',
-        'Jensen',
-        'Joplin',
-        'Kain',
-        'Lacey',
-        'Monge',
-        'Newland',
-        'Roberts'
-      ]
-    }
+/** @type {string} */
+const FAMILY_NAMES = [
+  'Burns',
+  'Burnett',
+  'Jensen',
+  'Joplin',
+  'Kain',
+  'Lacey',
+  'Monge',
+  'Newland',
+  'Roberts'
+]
 
-    /** @type {string} */
-    static get UNITS() {
-      return ['Development', 'Management', 'Marketing', 'R&D', 'Sales']
-    }
+/** @type {string} */
+const UNITS = ['Development', 'Management', 'Marketing', 'R&D', 'Sales']
 
-    /**
-     * @return {Object}
-     */
-    static getNewRandomUserData() {
-      const userData = {}
-      const firstName =
-        UserDataFactory.FIRST_NAMES[
-          UserDataFactory.getRandomInt(UserDataFactory.FIRST_NAMES.length)
-        ]
-      const familyName =
-        UserDataFactory.FAMILY_NAMES[
-          UserDataFactory.getRandomInt(UserDataFactory.FAMILY_NAMES.length)
-        ]
-      userData.name = `${firstName} ${familyName}`
-      userData.unit =
-        UserDataFactory.UNITS[UserDataFactory.getRandomInt(UserDataFactory.UNITS.length)]
-      userData.email = `${firstName.toLowerCase() + familyName.toLowerCase()}@yoyodyne.com`
-      const phoneNumber = UserDataFactory.getRandomInt(90000) + 10000
-      userData.phone = `555-${phoneNumber}`
-      userData.fax = `555-${phoneNumber + 1}`
-      return userData
-    }
+/**
+ * @return {Object}
+ */
+export default function createNewRandomUserData() {
+  const userData = {}
+  const firstName = FIRST_NAMES[getRandomInt(FIRST_NAMES.length)]
+  const familyName = FAMILY_NAMES[getRandomInt(FAMILY_NAMES.length)]
+  userData.name = `${firstName} ${familyName}`
+  userData.unit = UNITS[getRandomInt(UNITS.length)]
+  userData.email = `${firstName.toLowerCase() + familyName.toLowerCase()}@yoyodyne.com`
+  const phoneNumber = getRandomInt(90000) + 10000
+  userData.phone = `555-${phoneNumber}`
+  userData.fax = `555-${phoneNumber + 1}`
+  return userData
+}
 
-    /**
-     * Returns a random integer.
-     * @param {number} upper
-     * @return {number}
-     */
-    static getRandomInt(upper) {
-      return Math.floor(Math.random() * upper)
-    }
-  }
-
-  return UserDataFactory
-})
+/**
+ * Returns a random integer.
+ * @param {number} upper
+ * @return {number}
+ */
+function getRandomInt(upper) {
+  return Math.floor(Math.random() * upper)
+}

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.1.
- ** Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.2.
+ ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,241 +26,247 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-'use strict'
+import {
+  BaseClass,
+  ConstrainedHandle,
+  IBend,
+  ICanvasObjectDescriptor,
+  IEdge,
+  IHandle,
+  IInputModeContext,
+  IRenderContext,
+  IVisualCreator,
+  Matrix,
+  Point,
+  PortConstraint,
+  PortSide,
+  SvgVisual,
+  Visual
+} from 'yfiles'
 
-define(['yfiles/view-component'], /** @type {yfiles_namespace} */ /** typeof yfiles */ yfiles => {
+/**
+ * Helper class that provides a handle for the first and last bend of an edge
+ * that interactively determines the port constraint.
+ */
+export default class PortConstraintBendHandle extends BaseClass(ConstrainedHandle, IVisualCreator) {
   /**
-   * Helper class that provides a handle for the first and last bend of an edge
-   * that interactively determines the port constraint.
+   * Creates a new handle that wraps the base handle.
+   * @param {IHandle} baseHandle
+   * @param {boolean} sourceEnd
+   * @param {IBend} bend
+   * @param {IMapper.<IEdge,PortConstraint>} portConstraints
    */
-  class PortConstraintBendHandle extends yfiles.lang.Class(
-    yfiles.input.ConstrainedHandle,
-    yfiles.view.IVisualCreator
-  ) {
-    /**
-     * Creates a new handle that wraps the base handle.
-     * @param {yfiles.input.IHandle} baseHandle
-     * @param {boolean} sourceEnd
-     * @param {yfiles.graph.IBend} bend
-     * @param {yfiles.collections.IMapper.<yfiles.graph.IEdge,yfiles.layout.PortConstraint>} portConstraints
-     */
-    constructor(baseHandle, sourceEnd, bend, portConstraints) {
-      super(baseHandle)
-      this.sourceEnd = sourceEnd
-      this.bend = bend
-      this.portConstraints = portConstraints
-    }
+  constructor(baseHandle, sourceEnd, bend, portConstraints) {
+    super(baseHandle)
+    this.sourceEnd = sourceEnd
+    this.bend = bend
+    this.portConstraints = portConstraints
+  }
 
-    /**
-     * Called when a drag of the handle is initialized.
-     * To indicate in which direction the port constraint will be assigned, an arrow visual is added.
-     * @see overrides {@link yfiles.input.ConstrainedHandle#onInitialized}
-     * @param {yfiles.input.IInputModeContext} inputModeContext
-     * @param {yfiles.geometry.Point} originalLocation
-     */
-    onInitialized(inputModeContext, originalLocation) {
-      super.onInitialized(inputModeContext, originalLocation)
-      // render the indicator
-      this.installArrowPath(inputModeContext)
-      const rootGroup = inputModeContext.canvasComponent.rootGroup
-      this.canvasObject = rootGroup.addChild(
-        this,
-        yfiles.view.ICanvasObjectDescriptor.ALWAYS_DIRTY_INSTANCE
-      )
-    }
+  /**
+   * Called when a drag of the handle is initialized.
+   * To indicate in which direction the port constraint will be assigned, an arrow visual is added.
+   * @see overrides {@link ConstrainedHandle#onInitialized}
+   * @param {IInputModeContext} inputModeContext
+   * @param {Point} originalLocation
+   */
+  onInitialized(inputModeContext, originalLocation) {
+    super.onInitialized(inputModeContext, originalLocation)
+    // render the indicator
+    this.installArrowPath(inputModeContext)
+    const rootGroup = inputModeContext.canvasComponent.rootGroup
+    this.canvasObject = rootGroup.addChild(this, ICanvasObjectDescriptor.ALWAYS_DIRTY_INSTANCE)
+  }
 
-    /**
-     * Called when a drag of the handle is canceled.
-     * The arrow visual is removed.
-     * @see overrides {@link yfiles.input.ConstrainedHandle#onCanceled}
-     * @param {yfiles.input.IInputModeContext} inputModeContext
-     * @param {yfiles.geometry.Point} originalLocation
-     */
-    onCanceled(inputModeContext, originalLocation) {
-      super.onCanceled(inputModeContext, originalLocation)
-      // remove the indicator
-      this.deinstallArrowPath(inputModeContext)
-      this.canvasObject.remove()
-    }
+  /**
+   * Called when a drag of the handle is canceled.
+   * The arrow visual is removed.
+   * @see overrides {@link ConstrainedHandle#onCanceled}
+   * @param {IInputModeContext} inputModeContext
+   * @param {Point} originalLocation
+   */
+  onCanceled(inputModeContext, originalLocation) {
+    super.onCanceled(inputModeContext, originalLocation)
+    // remove the indicator
+    this.deinstallArrowPath(inputModeContext)
+    this.canvasObject.remove()
+  }
 
-    /**
-     * Called when a drag of the handle is canceled.
-     * The port constraints are assigned and the arrow visual is removed.
-     * @see overrides {@link yfiles.input.ConstrainedHandle#onFinished}
-     * @param {yfiles.input.IInputModeContext} inputModeContext
-     * @param {yfiles.geometry.Point} originalLocation
-     * @param {yfiles.geometry.Point} newLocation
-     */
-    onFinished(inputModeContext, originalLocation, newLocation) {
-      super.onFinished(inputModeContext, originalLocation, newLocation)
-      // remove the indicator
-      this.deinstallArrowPath(inputModeContext)
-      this.canvasObject.remove()
+  /**
+   * Called when a drag of the handle is canceled.
+   * The port constraints are assigned and the arrow visual is removed.
+   * @see overrides {@link ConstrainedHandle#onFinished}
+   * @param {IInputModeContext} inputModeContext
+   * @param {Point} originalLocation
+   * @param {Point} newLocation
+   */
+  onFinished(inputModeContext, originalLocation, newLocation) {
+    super.onFinished(inputModeContext, originalLocation, newLocation)
+    // remove the indicator
+    this.deinstallArrowPath(inputModeContext)
+    this.canvasObject.remove()
 
-      // calculate the direction
-      const port = this.sourceEnd ? this.bend.owner.sourcePort : this.bend.owner.targetPort
-      const nodeLayout = port.owner.layout
-      const portLocation = nodeLayout.center
-      const bendLocation = this.bend.location.toPoint()
-      const delta = bendLocation.subtract(portLocation)
-      let pc = null
-      if (delta.vectorLength > MIN_DISTANCE && !nodeLayout.contains(bendLocation)) {
-        const direction = delta.normalized
-        if (direction.isHorizontalVector) {
-          if (direction.x > 0) {
-            pc = yfiles.layout.PortConstraint.create(yfiles.layout.PortSide.EAST)
-          } else {
-            pc = yfiles.layout.PortConstraint.create(yfiles.layout.PortSide.WEST)
-          }
-        } else if (direction.y > 0) {
-          pc = yfiles.layout.PortConstraint.create(yfiles.layout.PortSide.SOUTH)
+    // calculate the direction
+    const port = this.sourceEnd ? this.bend.owner.sourcePort : this.bend.owner.targetPort
+    const nodeLayout = port.owner.layout
+    const portLocation = nodeLayout.center
+    const bendLocation = this.bend.location.toPoint()
+    const delta = bendLocation.subtract(portLocation)
+    let pc = null
+    if (delta.vectorLength > MIN_DISTANCE && !nodeLayout.contains(bendLocation)) {
+      const direction = delta.normalized
+      if (direction.isHorizontalVector) {
+        if (direction.x > 0) {
+          pc = PortConstraint.create(PortSide.EAST)
         } else {
-          pc = yfiles.layout.PortConstraint.create(yfiles.layout.PortSide.NORTH)
+          pc = PortConstraint.create(PortSide.WEST)
         }
-      }
-
-      // and set the port constraint
-      if (pc === null) {
-        this.portConstraints.delete(this.bend.owner)
+      } else if (direction.y > 0) {
+        pc = PortConstraint.create(PortSide.SOUTH)
       } else {
-        this.portConstraints.set(this.bend.owner, pc)
+        pc = PortConstraint.create(PortSide.NORTH)
       }
     }
 
-    /**
-     * Returns the unconstrained location.
-     * @see overrides {@link yfiles.input.ConstrainedHandle#constrainNewLocation}
-     * @param {yfiles.input.IInputModeContext} inputModeContext
-     * @param {yfiles.geometry.Point} originalLocation
-     * @param {yfiles.geometry.Point} newLocation
-     */
-    constrainNewLocation(context, originalLocation, newLocation) {
-      return newLocation
-    }
-
-    /**
-     * Creates a visual that contains an arrow visualization for the direction of port constraints.
-     * @return {yfiles.view.Visual}
-     * @see overrides {@link yfiles.view.IVisualCreator#createVisual}
-     * @param {yfiles.view.IRenderContext} context
-     */
-    createVisual(context) {
-      const a = window.document.createElementNS('http://www.w3.org/2000/svg', 'use')
-      a.href.baseVal = `#${BEND_HANDLE_PORT_CONSTRAINT_ARROW_TEMPLATE_KEY}`
-      const transform = this.getArrowTransform()
-      a.setAttribute('transform', transform.toSvgTransform())
-      return new yfiles.view.SvgVisual(a)
-    }
-
-    /**
-     * Updates the arrow visualization for the direction of port constraints.
-     * @return {yfiles.view.Visual}
-     * @see overrides {@link yfiles.view.IVisualCreator#createVisual}
-     * @param {yfiles.view.IRenderContext} context
-     * @param {yfiles.view.Visual} oldVisual
-     * @return {yfiles.view.Visual}
-     */
-    updateVisual(context, oldVisual) {
-      const a = oldVisual.svgElement
-      const transform = this.getArrowTransform()
-      a.setAttribute('transform', transform.toSvgTransform())
-      return oldVisual
-    }
-
-    /**
-     * Returns a transform that put the arrow visualization in place.
-     * The arrow is moved to the respective node and rotated in the according direction.
-     * @return {yfiles.geometry.Matrix}
-     */
-    getArrowTransform() {
-      let transform = new yfiles.geometry.Matrix()
-      const port = this.sourceEnd ? this.bend.owner.sourcePort : this.bend.owner.targetPort
-      const nodeLayout = port.owner.layout
-      const portLocation = nodeLayout.center
-      let { x: dx, y: dy } = portLocation
-      const bendLocation = this.bend.location.toPoint()
-      const delta = bendLocation.subtract(portLocation)
-      if (delta.vectorLength > MIN_DISTANCE && !nodeLayout.contains(bendLocation)) {
-        const direction = delta.normalized
-
-        // rotate and translate arrow
-        const arrowOffset = 11
-        if (direction.isHorizontalVector) {
-          if (direction.x > 0) {
-            dx = nodeLayout.maxX + arrowOffset
-            transform = this.sourceEnd
-              ? new yfiles.geometry.Matrix(-1, 0, 0, 1, dx, dy)
-              : new yfiles.geometry.Matrix(1, 0, 0, 1, dx, dy)
-          } else {
-            dx = nodeLayout.x - arrowOffset
-            transform = this.sourceEnd
-              ? new yfiles.geometry.Matrix(1, 0, 0, -1, dx, dy)
-              : new yfiles.geometry.Matrix(-1, 0, 0, 1, dx, dy)
-          }
-        } else if (direction.y < 0) {
-          dy = nodeLayout.y - arrowOffset
-          transform = this.sourceEnd
-            ? new yfiles.geometry.Matrix(0, 1, 1, 0, dx, dy)
-            : new yfiles.geometry.Matrix(0, 1, -1, 0, dx, dy)
-        } else {
-          dy = nodeLayout.maxY + arrowOffset
-          transform = this.sourceEnd
-            ? new yfiles.geometry.Matrix(0, -1, -1, 0, dx, dy)
-            : new yfiles.geometry.Matrix(0, -1, 1, 0, dx, dy)
-        }
-      }
-      return transform
-    }
-
-    /**
-     * Creates the arrow path and stores it in the defs section of the CanvasComponent.
-     * @param {yfiles.input.IInputModeContext} context
-     */
-    installArrowPath(context) {
-      if (window.document.getElementById(BEND_HANDLE_PORT_CONSTRAINT_ARROW_TEMPLATE_KEY) !== null) {
-        // early exit if template has already been created
-        return
-      }
-      const defs = context.canvasComponent.svgDefsManager.defs
-      if (defs !== null) {
-        const svgPath = window.document.createElementNS('http://www.w3.org/2000/svg', 'path')
-        svgPath.setAttribute('fill', 'green')
-        svgPath.setAttribute('d', 'M-15,0 L-5,10 L-2,7 L-5,4 L8,4 L8,-4 L-5,-4 L-2,-7 L-5,-10 Z')
-        svgPath.setAttribute('id', BEND_HANDLE_PORT_CONSTRAINT_ARROW_TEMPLATE_KEY)
-
-        defs.appendChild(svgPath)
-      }
-    }
-
-    /**
-     * Removes the arrow path from the defs section of the CanvasComponent.
-     * @param {yfiles.input.IInputModeContext} context
-     */
-    deinstallArrowPath(context) {
-      const arrowPathElement = window.document.getElementById(
-        BEND_HANDLE_PORT_CONSTRAINT_ARROW_TEMPLATE_KEY
-      )
-      if (arrowPathElement !== null) {
-        const defs = context.canvasComponent.svgDefsManager.defs
-        if (defs !== null) {
-          defs.removeChild(arrowPathElement)
-        }
-      }
+    // and set the port constraint
+    if (pc === null) {
+      this.portConstraints.delete(this.bend.owner)
+    } else {
+      this.portConstraints.set(this.bend.owner, pc)
     }
   }
 
   /**
-   * The minimum distance to require for a port constraint
-   * @type {number}
+   * Returns the unconstrained location.
+   * @see overrides {@link ConstrainedHandle#constrainNewLocation}
+   * @param {IInputModeContext} inputModeContext
+   * @param {Point} originalLocation
+   * @param {Point} newLocation
    */
-  const MIN_DISTANCE = 12
+  constrainNewLocation(context, originalLocation, newLocation) {
+    return newLocation
+  }
 
   /**
-   * The key to access the path element for the port constraint arrow in defs
-   * @type {string}
+   * Creates a visual that contains an arrow visualization for the direction of port constraints.
+   * @return {Visual}
+   * @see overrides {@link IVisualCreator#createVisual}
+   * @param {IRenderContext} context
    */
-  const BEND_HANDLE_PORT_CONSTRAINT_ARROW_TEMPLATE_KEY =
-    'BEND_HANDLE_PORT_CONSTRAINT_ARROW_TEMPLATE_KEY'
+  createVisual(context) {
+    const a = window.document.createElementNS('http://www.w3.org/2000/svg', 'use')
+    a.href.baseVal = `#${BEND_HANDLE_PORT_CONSTRAINT_ARROW_TEMPLATE_KEY}`
+    const transform = this.getArrowTransform()
+    a.setAttribute('transform', transform.toSvgTransform())
+    return new SvgVisual(a)
+  }
 
-  return PortConstraintBendHandle
-})
+  /**
+   * Updates the arrow visualization for the direction of port constraints.
+   * @return {Visual}
+   * @see overrides {@link IVisualCreator#createVisual}
+   * @param {IRenderContext} context
+   * @param {Visual} oldVisual
+   * @return {Visual}
+   */
+  updateVisual(context, oldVisual) {
+    const a = oldVisual.svgElement
+    const transform = this.getArrowTransform()
+    a.setAttribute('transform', transform.toSvgTransform())
+    return oldVisual
+  }
+
+  /**
+   * Returns a transform that put the arrow visualization in place.
+   * The arrow is moved to the respective node and rotated in the according direction.
+   * @return {Matrix}
+   */
+  getArrowTransform() {
+    let transform = new Matrix()
+    const port = this.sourceEnd ? this.bend.owner.sourcePort : this.bend.owner.targetPort
+    const nodeLayout = port.owner.layout
+    const portLocation = nodeLayout.center
+    let { x: dx, y: dy } = portLocation
+    const bendLocation = this.bend.location.toPoint()
+    const delta = bendLocation.subtract(portLocation)
+    if (delta.vectorLength > MIN_DISTANCE && !nodeLayout.contains(bendLocation)) {
+      const direction = delta.normalized
+
+      // rotate and translate arrow
+      const arrowOffset = 11
+      if (direction.isHorizontalVector) {
+        if (direction.x > 0) {
+          dx = nodeLayout.maxX + arrowOffset
+          transform = this.sourceEnd
+            ? new Matrix(-1, 0, 0, 1, dx, dy)
+            : new Matrix(1, 0, 0, 1, dx, dy)
+        } else {
+          dx = nodeLayout.x - arrowOffset
+          transform = this.sourceEnd
+            ? new Matrix(1, 0, 0, -1, dx, dy)
+            : new Matrix(-1, 0, 0, 1, dx, dy)
+        }
+      } else if (direction.y < 0) {
+        dy = nodeLayout.y - arrowOffset
+        transform = this.sourceEnd
+          ? new Matrix(0, 1, 1, 0, dx, dy)
+          : new Matrix(0, 1, -1, 0, dx, dy)
+      } else {
+        dy = nodeLayout.maxY + arrowOffset
+        transform = this.sourceEnd
+          ? new Matrix(0, -1, -1, 0, dx, dy)
+          : new Matrix(0, -1, 1, 0, dx, dy)
+      }
+    }
+    return transform
+  }
+
+  /**
+   * Creates the arrow path and stores it in the defs section of the CanvasComponent.
+   * @param {IInputModeContext} context
+   */
+  installArrowPath(context) {
+    if (window.document.getElementById(BEND_HANDLE_PORT_CONSTRAINT_ARROW_TEMPLATE_KEY) !== null) {
+      // early exit if template has already been created
+      return
+    }
+    const defs = context.canvasComponent.svgDefsManager.defs
+    if (defs !== null) {
+      const svgPath = window.document.createElementNS('http://www.w3.org/2000/svg', 'path')
+      svgPath.setAttribute('fill', 'green')
+      svgPath.setAttribute('d', 'M-15,0 L-5,10 L-2,7 L-5,4 L8,4 L8,-4 L-5,-4 L-2,-7 L-5,-10 Z')
+      svgPath.setAttribute('id', BEND_HANDLE_PORT_CONSTRAINT_ARROW_TEMPLATE_KEY)
+
+      defs.appendChild(svgPath)
+    }
+  }
+
+  /**
+   * Removes the arrow path from the defs section of the CanvasComponent.
+   * @param {IInputModeContext} context
+   */
+  deinstallArrowPath(context) {
+    const arrowPathElement = window.document.getElementById(
+      BEND_HANDLE_PORT_CONSTRAINT_ARROW_TEMPLATE_KEY
+    )
+    if (arrowPathElement !== null) {
+      const defs = context.canvasComponent.svgDefsManager.defs
+      if (defs !== null) {
+        defs.removeChild(arrowPathElement)
+      }
+    }
+  }
+}
+
+/**
+ * The minimum distance to require for a port constraint
+ * @type {number}
+ */
+const MIN_DISTANCE = 12
+
+/**
+ * The key to access the path element for the port constraint arrow in defs
+ * @type {string}
+ */
+const BEND_HANDLE_PORT_CONSTRAINT_ARROW_TEMPLATE_KEY =
+  'BEND_HANDLE_PORT_CONSTRAINT_ARROW_TEMPLATE_KEY'

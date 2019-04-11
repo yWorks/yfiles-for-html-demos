@@ -7,8 +7,8 @@
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.1.
-     // Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML 2.2.
+     // Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -36,7 +36,7 @@
 
   <title>PDF Export Demo [yFiles for HTML]</title>
 
-  <link rel="stylesheet" href="../../../lib/yfiles.css">
+  <link rel="stylesheet" href="../../node_modules/yfiles/yfiles.css">
   <link rel="stylesheet" href="../../resources/style/demo.css">
 
   <style>
@@ -130,21 +130,38 @@
     .hidden {
       display: none;
     }
+
+    /*
+     * Custom fonts need to be loaded before their usage in the GraphComponent,
+     * otherwise the initial measurement of the font may use a system font.
+     * We pre-load the fonts by applying them to a hidden dummy element.
+     */
+    .font-preload {
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 1px;
+      height: 1px;
+      opacity: 0;
+      pointer-events: none;
+    }
   </style>
 
   <!-- enable debugging -->
   <script src="../../../ide-support/yfiles-typeinfo.js"></script>
+  <script src="../../resources/filesystem-warning.js"></script>
 
   <!-- the actual pdf export libraries -->
-  <script src="https://www.yworks.com/resources/scripts/jspdf.min.dfa618c.js"></script>
-  <script src="https://www.yworks.com/resources/scripts/svg2pdf.min.a955ee8.js"></script>
+  <script src="https://www.yworks.com/resources/scripts/jspdf.min.62b03dc.js"></script>
+  <script src="https://www.yworks.com/resources/scripts/svg2pdf.min.f964acc.js"></script>
 
   <!-- Load custom fonts for the custom-fonts sample graph. This is ONLY required if you want to export Cyrillic or Hiragana characters. -->
   <!-- jsPDF supports the most common fonts out of the box, however to register other custom fonts, please see -->
   <!-- https://github.com/yWorks/jsPDF#custom-fonts and https://github.com/yWorks/svg2pdf.js#concerning-custom-fonts -->
   <link href="https://fonts.googleapis.com/css?family=Prata" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/earlyaccess/roundedmplus1c.css" rel="stylesheet" />
-  <script src="https://www.yworks.com/resources/scripts/custom-fonts-yjs5922.js"></script>
+  <link href="https://fonts.googleapis.com/css?family=Kosugi" rel="stylesheet">
+  <script src="https://www.yworks.com/resources/scripts/prata-regular-yjs6441.js"></script>
+  <script src="https://www.yworks.com/resources/scripts/kosugi-yjs6441.js"></script>
 </head>
 
 <body class="demo-has-left demo-has-right">
@@ -215,6 +232,12 @@
 
   <div class="demo-content">
 
+    <!-- pre-load custom fonts -->
+    <div class="font-preload">
+      <span style="font-family: Prata, sans-serif">Кирилица</span>
+      <span style="font-family: Kosugi, sans-serif">平仮名</span>
+    </div>
+
     <div class="demo-toolbar">
       <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
       <button data-command="ZoomOriginal" title="Zoom to original size" class="demo-icon-yIconZoomOriginal"></button>
@@ -270,8 +293,7 @@
   </div>
 </div>
 
-<script src="../../resources/require.js"></script>
-<script src="PdfExportDemo.js"></script>
+<script type="module" crossorigin="anonymous" src="PdfExportDemo.js"></script>
 
 </body>
 </html>

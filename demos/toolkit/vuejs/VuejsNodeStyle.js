@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.1.
- ** Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.2.
+ ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,78 +26,73 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-'use strict'
+import { INode, IRenderContext, NodeStyleBase, SvgVisual } from 'yfiles'
 
-define(['yfiles/view-component'], /** @type {yfiles_namespace} */ /** typeof yfiles */ yfiles => {
+/**
+ * A node style which uses a Vuejs component to display a node.
+ */
+export default class VuejsNodeStyle extends NodeStyleBase {
   /**
-   * A node style which uses a Vuejs component to display a node.
-   * @extends yfiles.styles.NodeStyleBase
+   * @param {function} vueComponentConstructor
    */
-  class VuejsNodeStyle extends yfiles.styles.NodeStyleBase {
-    /**
-     * @param {function} vueComponentConstructor
-     */
-    constructor(vueComponentConstructor) {
-      super()
-      this.$vueComponentConstructor = vueComponentConstructor
-    }
-
-    /**
-     * Creates a visual that uses a Vuejs component to display a node.
-     * @see Overrides {@link yfiles.styles.LabelStyleBase#createVisual}
-     * @param {yfiles.view.IRenderContext} context
-     * @param {yfiles.graph.INode} node
-     * @return {yfiles.view.SvgVisual}
-     */
-    createVisual(context, node) {
-      // create the Vue component
-      const component = new this.$vueComponentConstructor()
-      // Populate it with the node data.
-      // The properties are reactive, which means the view will be automatically updated by Vue.js when the data
-      // changes.
-      component.$props.tag = node.tag
-      component.$data.zoom = context.zoom
-      // mount the component without passing in a DOM element
-      component.$mount()
-
-      const svgElement = component.$el
-
-      // set the location
-      yfiles.view.SvgVisual.setTranslate(svgElement, node.layout.x, node.layout.y)
-
-      // save the component instance with the DOM element so we can retrieve it later
-      svgElement['data-vueComponent'] = component
-
-      // return an SvgVisual that uses the DOM element of the component
-      const svgVisual = new yfiles.view.SvgVisual(svgElement)
-      context.setDisposeCallback(svgVisual, (context, visual) => {
-        // clean up vue component instance after the visual is disposed
-        visual.svgElement['data-vueComponent'].$destroy()
-      })
-      return svgVisual
-    }
-
-    /**
-     * Updates the visual by returning the old visual, as Vuejs handles updating the component.
-     * @see Overrides {@link yfiles.styles.LabelStyleBase#updateVisual}
-     * @param {yfiles.view.IRenderContext} context
-     * @param {yfiles.view.SvgVisual} oldVisual
-     * @param {yfiles.graph.INode} node
-     * @return {yfiles.view.SvgVisual}
-     */
-    updateVisual(context, oldVisual, node) {
-      const svgElement = oldVisual.svgElement
-
-      // Update the location
-      yfiles.view.SvgVisual.setTranslate(svgElement, node.layout.x, node.layout.y)
-      // the zoom property is a primitive value, so we must update it manually on the component
-      svgElement['data-vueComponent'].$data.zoom = context.zoom
-      // set the focused property of each component
-      svgElement['data-vueComponent'].$data.focused =
-        context.canvasComponent.focusIndicatorManager.focusedItem === node
-      return oldVisual
-    }
+  constructor(vueComponentConstructor) {
+    super()
+    this.$vueComponentConstructor = vueComponentConstructor
   }
 
-  return VuejsNodeStyle
-})
+  /**
+   * Creates a visual that uses a Vuejs component to display a node.
+   * @see Overrides {@link LabelStyleBase#createVisual}
+   * @param {IRenderContext} context
+   * @param {INode} node
+   * @return {SvgVisual}
+   */
+  createVisual(context, node) {
+    // create the Vue component
+    const component = new this.$vueComponentConstructor()
+    // Populate it with the node data.
+    // The properties are reactive, which means the view will be automatically updated by Vue.js when the data
+    // changes.
+    component.$props.tag = node.tag
+    component.$data.zoom = context.zoom
+    // mount the component without passing in a DOM element
+    component.$mount()
+
+    const svgElement = component.$el
+
+    // set the location
+    SvgVisual.setTranslate(svgElement, node.layout.x, node.layout.y)
+
+    // save the component instance with the DOM element so we can retrieve it later
+    svgElement['data-vueComponent'] = component
+
+    // return an SvgVisual that uses the DOM element of the component
+    const svgVisual = new SvgVisual(svgElement)
+    context.setDisposeCallback(svgVisual, (context, visual) => {
+      // clean up vue component instance after the visual is disposed
+      visual.svgElement['data-vueComponent'].$destroy()
+    })
+    return svgVisual
+  }
+
+  /**
+   * Updates the visual by returning the old visual, as Vuejs handles updating the component.
+   * @see Overrides {@link LabelStyleBase#updateVisual}
+   * @param {IRenderContext} context
+   * @param {SvgVisual} oldVisual
+   * @param {INode} node
+   * @return {SvgVisual}
+   */
+  updateVisual(context, oldVisual, node) {
+    const svgElement = oldVisual.svgElement
+
+    // Update the location
+    SvgVisual.setTranslate(svgElement, node.layout.x, node.layout.y)
+    // the zoom property is a primitive value, so we must update it manually on the component
+    svgElement['data-vueComponent'].$data.zoom = context.zoom
+    // set the focused property of each component
+    svgElement['data-vueComponent'].$data.focused =
+      context.canvasComponent.focusIndicatorManager.focusedItem === node
+    return oldVisual
+  }
+}

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.1.
- ** Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.2.
+ ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,208 +26,199 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-'use strict'
+import {
+  ArcEdgeStyle,
+  ExteriorLabelModel,
+  ExteriorLabelModelPosition,
+  GraphComponent,
+  GraphEditorInputMode,
+  ICommand,
+  IEdge,
+  ILabel,
+  INode,
+  License,
+  PolylineEdgeStyle,
+  ShapeNodeStyle,
+  SmartEdgeLabelModel
+} from 'yfiles'
 
-require.config({
-  paths: {
-    yfiles: '../../../lib/umd/yfiles/',
-    utils: '../../utils/',
-    resources: '../../resources/'
-  }
-})
+import { bindCommand, showApp } from '../../resources/demo-app.js'
+import ContextualToolbar from './ContextualToolbar.js'
+import loadJson from '../../resources/load-json.js'
 
-require([
-  'yfiles/view-editor',
-  'resources/demo-app',
-  'resources/demo-styles',
-  './ContextualToolbar.js',
-  'yfiles/view-folding',
-  'resources/license'
-], (
-  /** @type {yfiles_namespace} */ /** typeof yfiles */ yfiles,
-  app,
-  DemoStyles,
-  ContextualToolbar
-) => {
-  /** @type {yfiles.view.GraphComponent} */
-  let graphComponent = null
+/** @type {GraphComponent} */
+let graphComponent = null
 
-  /** @type {ContextualToolbar} */
-  let contextualToolbar = null
+/** @type {ContextualToolbar} */
+let contextualToolbar = null
 
-  function run() {
-    graphComponent = new yfiles.view.GraphComponent('graphComponent')
+function run(licenseData) {
+  License.value = licenseData
+  graphComponent = new GraphComponent('graphComponent')
 
-    // enable folding
-    graphComponent.graph.undoEngineEnabled = true
+  // enable folding
+  graphComponent.graph.undoEngineEnabled = true
 
-    // initialize the contextual toolbar
-    contextualToolbar = new ContextualToolbar(
-      graphComponent,
-      window.document.getElementById('contextualToolbar')
-    )
+  // initialize the contextual toolbar
+  contextualToolbar = new ContextualToolbar(
+    graphComponent,
+    window.document.getElementById('contextualToolbar')
+  )
 
-    initializeDefaultStyles()
-    initializeInputMode()
-    createSampleGraph()
+  initializeDefaultStyles()
+  initializeInputMode()
+  createSampleGraph()
 
-    graphComponent.fitGraphBounds()
+  graphComponent.fitGraphBounds()
 
-    registerCommands()
+  registerCommands()
 
-    app.show(graphComponent)
-  }
+  showApp(graphComponent)
+}
 
-  /**
-   * Initializes the default styles.
-   */
-  function initializeDefaultStyles() {
-    graphComponent.graph.nodeDefaults.style = new yfiles.styles.ShapeNodeStyle({
-      fill: '#228B22',
-      stroke: '#228B22'
+/**
+ * Initializes the default styles.
+ */
+function initializeDefaultStyles() {
+  graphComponent.graph.nodeDefaults.style = new ShapeNodeStyle({
+    fill: '#228B22',
+    stroke: '#228B22'
+  })
+  graphComponent.graph.edgeDefaults.style = new PolylineEdgeStyle({
+    stroke: 'thick #333',
+    targetArrow: '#333 large triangle'
+  })
+  graphComponent.graph.nodeDefaults.size = [45, 45]
+  graphComponent.graph.nodeDefaults.labels.layoutParameter = new ExteriorLabelModel({
+    insets: 5
+  }).createParameter(ExteriorLabelModelPosition.NORTH)
+  graphComponent.graph.edgeDefaults.labels.layoutParameter = new SmartEdgeLabelModel().createParameterFromSource(
+    0,
+    5
+  )
+}
+
+/**
+ * Creates and configures an editor input mode for the GraphComponent of this demo.
+ */
+function initializeInputMode() {
+  const mode = new GraphEditorInputMode()
+
+  // update the contextual toolbar when the selection changes ...
+  mode.addMultiSelectionFinishedListener((src, args) => {
+    // this implementation of the contextual toolbar only supports nodes, edges and labels
+    contextualToolbar.selectedItems = args.selection
+      .filter(item => INode.isInstance(item) || ILabel.isInstance(item) || IEdge.isInstance(item))
+      .toArray()
+  })
+  // ... or when an item is right clicked
+  mode.addItemRightClickedListener((src, args) => {
+    // this implementation of the contextual toolbar only supports nodes, edges and labels
+    graphComponent.selection.clear()
+    graphComponent.selection.setSelected(args.item, true)
+    contextualToolbar.selectedItems = [args.item]
+  })
+
+  // if an item is deselected or deleted, we remove that element from the selectedItems
+  graphComponent.selection.addItemSelectionChangedListener((src, args) => {
+    if (!args.itemSelected) {
+      // remove the element from the selectedItems of the contextual toolbar
+      const idx = contextualToolbar.selectedItems.findIndex(item => item === args.item)
+      const newSelection = contextualToolbar.selectedItems.slice()
+      newSelection.splice(idx, 1)
+      contextualToolbar.selectedItems = newSelection
+    }
+  })
+
+  graphComponent.inputMode = mode
+}
+
+/**
+ * Wires up the UI toolbar buttons with the graph component.
+ */
+function registerCommands() {
+  bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent)
+  bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent)
+  bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent)
+  bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
+  bindCommand("button[data-command='Undo']", ICommand.UNDO, graphComponent)
+  bindCommand("button[data-command='Redo']", ICommand.REDO, graphComponent)
+}
+
+/**
+ * Creates the initial graph.
+ */
+function createSampleGraph() {
+  const graph = graphComponent.graph
+  graph.clear()
+
+  const n1 = graph.createNodeAt({
+    location: [-130, -150],
+    labels: 'Node',
+    style: new ShapeNodeStyle({
+      fill: '#DC143C',
+      stroke: '#DC143C',
+      shape: 'ellipse'
     })
-    graphComponent.graph.edgeDefaults.style = new yfiles.styles.PolylineEdgeStyle({
+  })
+  const n2 = graph.createNodeAt([-70, -80])
+  const n3 = graph.createNodeAt({
+    location: [0, 0],
+    style: new ShapeNodeStyle({
+      fill: '#336699',
+      stroke: '#336699',
+      shape: 'ellipse'
+    })
+  })
+  const n4 = graph.createNodeAt([70, -80])
+  const n5 = graph.createNodeAt({
+    location: [130, -150],
+    labels: 'Node',
+    style: new ShapeNodeStyle({
+      fill: '#DC143C',
+      stroke: '#DC143C',
+      shape: 'ellipse'
+    })
+  })
+  const n6 = graph.createNodeAt([-60, 70])
+  const n7 = graph.createNodeAt([-120, 140])
+  const n8 = graph.createNodeAt({
+    location: [-200, 120],
+    labels: 'Node',
+    style: new ShapeNodeStyle({
+      fill: '#336699',
+      stroke: '#336699',
+      shape: 'ellipse'
+    })
+  })
+
+  graph.createEdge({
+    source: n1,
+    target: n2,
+    labels: 'Edge'
+  })
+  graph.createEdge(n2, n3)
+  graph.createEdge(n3, n4)
+  graph.createEdge({
+    source: n4,
+    target: n5,
+    labels: 'Edge'
+  })
+  graph.createEdge(n3, n6)
+  graph.createEdge(n6, n7)
+  graph.createEdge({
+    source: n7,
+    target: n8,
+    style: new ArcEdgeStyle({
+      height: 50,
       stroke: 'thick #333',
       targetArrow: '#333 large triangle'
     })
-    graphComponent.graph.nodeDefaults.size = [45, 45]
-    graphComponent.graph.nodeDefaults.labels.layoutParameter = new yfiles.graph.ExteriorLabelModel({
-      insets: 5
-    }).createParameter(yfiles.graph.ExteriorLabelModelPosition.NORTH)
-    graphComponent.graph.edgeDefaults.labels.layoutParameter = new yfiles.graph.SmartEdgeLabelModel().createParameterFromSource(
-      0,
-      5
-    )
-  }
+  })
 
-  /**
-   * Creates and configures an editor input mode for the GraphComponent of this demo.
-   */
-  function initializeInputMode() {
-    const mode = new yfiles.input.GraphEditorInputMode()
+  // clear the undo engine
+  graphComponent.graph.undoEngine.clear()
+}
 
-    // update the contextual toolbar when the selection changes ...
-    mode.addMultiSelectionFinishedListener((src, args) => {
-      // this implementation of the contextual toolbar only supports nodes, edges and labels
-      contextualToolbar.selectedItems = args.selection
-        .filter(
-          item =>
-            yfiles.graph.INode.isInstance(item) ||
-            yfiles.graph.ILabel.isInstance(item) ||
-            yfiles.graph.IEdge.isInstance(item)
-        )
-        .toArray()
-    })
-    // ... or when an item is right clicked
-    mode.addItemRightClickedListener((src, args) => {
-      // this implementation of the contextual toolbar only supports nodes, edges and labels
-      graphComponent.selection.clear()
-      graphComponent.selection.setSelected(args.item, true)
-      contextualToolbar.selectedItems = [args.item]
-    })
-
-    // if an item is deselected or deleted, we remove that element from the selectedItems
-    graphComponent.selection.addItemSelectionChangedListener((src, args) => {
-      if (!args.itemSelected) {
-        // remove the element from the selectedItems of the contextual toolbar
-        const idx = contextualToolbar.selectedItems.findIndex(item => item === args.item)
-        const newSelection = contextualToolbar.selectedItems.slice()
-        newSelection.splice(idx, 1)
-        contextualToolbar.selectedItems = newSelection
-      }
-    })
-
-    graphComponent.inputMode = mode
-  }
-
-  /**
-   * Wires up the UI toolbar buttons with the graph component.
-   */
-  function registerCommands() {
-    const iCommand = yfiles.input.ICommand
-    app.bindCommand("button[data-command='ZoomIn']", iCommand.INCREASE_ZOOM, graphComponent)
-    app.bindCommand("button[data-command='ZoomOut']", iCommand.DECREASE_ZOOM, graphComponent)
-    app.bindCommand("button[data-command='FitContent']", iCommand.FIT_GRAPH_BOUNDS, graphComponent)
-    app.bindCommand("button[data-command='ZoomOriginal']", iCommand.ZOOM, graphComponent, 1.0)
-    app.bindCommand("button[data-command='Undo']", iCommand.UNDO, graphComponent)
-    app.bindCommand("button[data-command='Redo']", iCommand.REDO, graphComponent)
-  }
-
-  /**
-   * Creates the initial graph.
-   */
-  function createSampleGraph() {
-    const graph = graphComponent.graph
-    graph.clear()
-
-    const n1 = graph.createNodeAt({
-      location: [-130, -150],
-      labels: 'Node',
-      style: new yfiles.styles.ShapeNodeStyle({
-        fill: '#DC143C',
-        stroke: '#DC143C',
-        shape: 'ellipse'
-      })
-    })
-    const n2 = graph.createNodeAt([-70, -80])
-    const n3 = graph.createNodeAt({
-      location: [0, 0],
-      style: new yfiles.styles.ShapeNodeStyle({
-        fill: '#336699',
-        stroke: '#336699',
-        shape: 'ellipse'
-      })
-    })
-    const n4 = graph.createNodeAt([70, -80])
-    const n5 = graph.createNodeAt({
-      location: [130, -150],
-      labels: 'Node',
-      style: new yfiles.styles.ShapeNodeStyle({
-        fill: '#DC143C',
-        stroke: '#DC143C',
-        shape: 'ellipse'
-      })
-    })
-    const n6 = graph.createNodeAt([-60, 70])
-    const n7 = graph.createNodeAt([-120, 140])
-    const n8 = graph.createNodeAt({
-      location: [-200, 120],
-      labels: 'Node',
-      style: new yfiles.styles.ShapeNodeStyle({
-        fill: '#336699',
-        stroke: '#336699',
-        shape: 'ellipse'
-      })
-    })
-
-    graph.createEdge({
-      source: n1,
-      target: n2,
-      labels: 'Edge'
-    })
-    graph.createEdge(n2, n3)
-    graph.createEdge(n3, n4)
-    graph.createEdge({
-      source: n4,
-      target: n5,
-      labels: 'Edge'
-    })
-    graph.createEdge(n3, n6)
-    graph.createEdge(n6, n7)
-    graph.createEdge({
-      source: n7,
-      target: n8,
-      style: new yfiles.styles.ArcEdgeStyle({
-        height: 50,
-        stroke: 'thick #333',
-        targetArrow: '#333 large triangle'
-      })
-    })
-
-    // clear the undo engine
-    graphComponent.graph.undoEngine.clear()
-  }
-
-  // Start the demo
-  run()
-})
+// Start the demo
+loadJson().then(run)

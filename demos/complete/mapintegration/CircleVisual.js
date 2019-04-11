@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.1.
- ** Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.2.
+ ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,140 +26,145 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-'use strict'
+import {
+  BaseClass,
+  IGraph,
+  IRenderContext,
+  IVisualCreator,
+  Point,
+  RadialLayout,
+  SvgVisual,
+  Visual
+} from 'yfiles'
 
-define(['yfiles/view-component'], yfiles => {
-  /**
-   * A visualization for the circles in the radial layout to emphasize the hops between airports.
-   */
-  class CircleVisual extends yfiles.lang.Class(yfiles.view.IVisualCreator) {
-    constructor(graphMode) {
-      super()
-      this.$graphMode = graphMode
-    }
-
-    /**
-     * Returns whether or not the demo is in the graph mode.
-     * @return {boolean}
-     */
-    get graphMode() {
-      return this.$graphMode
-    }
-
-    /**
-     * Sets whether or not the demo is in the graph mode.
-     * @param {boolean} value
-     */
-    set graphMode(value) {
-      this.$graphMode = value
-    }
-
-    /**
-     * @param {yfiles.view.IRenderContext} context
-     */
-    createVisual(context) {
-      const graph = context.canvasComponent.graph
-      const container = document.createElementNS('http://www.w3.org/2000/svg', 'g')
-
-      this.updateCircleInformation(graph)
-
-      this.radii.forEach(radius => {
-        const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle')
-        circle.setAttribute('cx', this.center.x)
-        circle.setAttribute('cy', this.center.y)
-        circle.setAttribute('r', radius)
-        circle.setAttribute('class', 'circle')
-        container.appendChild(circle)
-      })
-
-      const visual = new yfiles.view.SvgVisual(container)
-      visual['render-data-cache'] = {
-        center: this.center,
-        radii: this.radii,
-        graphMode: this.graphMode
-      }
-
-      return visual
-    }
-
-    /**
-     * @param {yfiles.view.IRenderContext} context
-     * @param {yfiles.view.Visual} oldVisual
-     */
-    updateVisual(context, oldVisual) {
-      const renderDataCache = oldVisual['render-data-cache']
-      this.updateCircleInformation(context.canvasComponent.graph)
-
-      if (
-        renderDataCache.graphMode !== this.graphMode ||
-        renderDataCache.center !== this.center ||
-        this.equalsArray(renderDataCache.radii, this.radii)
-      ) {
-        return this.createVisual(context)
-      }
-
-      return oldVisual
-    }
-
-    /**
-     * Checks if the two arrays are equal.
-     * @param {Array} array1
-     * @param {Array} array2
-     * @return {boolean}
-     */
-    equalsArray(array1, array2) {
-      if (array1 === array2) {
-        return true
-      }
-      if (array1 === null || array2 === null) {
-        return false
-      }
-      if (array1.length !== array2.length) {
-        return false
-      }
-
-      // the radii in the arrays are sorted
-      for (let i = 0; i < array1.length; ++i) {
-        if (array1[i] !== array2[i]) {
-          return false
-        }
-      }
-      return true
-    }
-
-    /**
-     * Updates the center and radii of the circles.
-     * @param {yfiles.graph.IGraph} graph
-     */
-    updateCircleInformation(graph) {
-      const circleInfo = graph.mapperRegistry.getMapper(yfiles.radial.RadialLayout.NODE_INFO_DP_KEY)
-
-      this.center = null
-      this.radii = []
-      if (!this.graphMode) {
-        graph.nodes.forEach(node => {
-          const info = circleInfo.get(node)
-          if (info) {
-            if (this.center === null) {
-              // only calculate the center once
-              const nodeCenter = node.layout.center
-              this.center = new yfiles.geometry.Point(
-                nodeCenter.x - info.centerOffset.x,
-                nodeCenter.y - info.centerOffset.y
-              )
-            }
-
-            if (this.radii.indexOf(info.radius) < 0) {
-              // we collect the radii of all circles the  nodes are placed on
-              this.radii.push(info.radius)
-            }
-          }
-        })
-
-        this.radii.sort()
-      }
-    }
+/**
+ * A visualization for the circles in the radial layout to emphasize the hops between airports.
+ */
+export default class CircleVisual extends BaseClass(IVisualCreator) {
+  constructor(graphMode) {
+    super()
+    this.$graphMode = graphMode
   }
 
-  return CircleVisual
-})
+  /**
+   * Returns whether or not the demo is in the graph mode.
+   * @return {boolean}
+   */
+  get graphMode() {
+    return this.$graphMode
+  }
+
+  /**
+   * Sets whether or not the demo is in the graph mode.
+   * @param {boolean} value
+   */
+  set graphMode(value) {
+    this.$graphMode = value
+  }
+
+  /**
+   * @param {IRenderContext} context
+   */
+  createVisual(context) {
+    const graph = context.canvasComponent.graph
+    const container = document.createElementNS('http://www.w3.org/2000/svg', 'g')
+
+    this.updateCircleInformation(graph)
+
+    this.radii.forEach(radius => {
+      const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle')
+      circle.setAttribute('cx', this.center.x)
+      circle.setAttribute('cy', this.center.y)
+      circle.setAttribute('r', radius)
+      circle.setAttribute('class', 'circle')
+      container.appendChild(circle)
+    })
+
+    const visual = new SvgVisual(container)
+    visual['render-data-cache'] = {
+      center: this.center,
+      radii: this.radii,
+      graphMode: this.graphMode
+    }
+
+    return visual
+  }
+
+  /**
+   * @param {IRenderContext} context
+   * @param {Visual} oldVisual
+   */
+  updateVisual(context, oldVisual) {
+    const renderDataCache = oldVisual['render-data-cache']
+    this.updateCircleInformation(context.canvasComponent.graph)
+
+    if (
+      renderDataCache.graphMode !== this.graphMode ||
+      renderDataCache.center !== this.center ||
+      this.equalsArray(renderDataCache.radii, this.radii)
+    ) {
+      return this.createVisual(context)
+    }
+
+    return oldVisual
+  }
+
+  /**
+   * Checks if the two arrays are equal.
+   * @param {Array} array1
+   * @param {Array} array2
+   * @return {boolean}
+   */
+  equalsArray(array1, array2) {
+    if (array1 === array2) {
+      return true
+    }
+    if (array1 === null || array2 === null) {
+      return false
+    }
+    if (array1.length !== array2.length) {
+      return false
+    }
+
+    // the radii in the arrays are sorted
+    for (let i = 0; i < array1.length; ++i) {
+      if (array1[i] !== array2[i]) {
+        return false
+      }
+    }
+    return true
+  }
+
+  /**
+   * Updates the center and radii of the circles.
+   * @param {IGraph} graph
+   */
+  updateCircleInformation(graph) {
+    const circleInfo = graph.mapperRegistry.getMapper(RadialLayout.NODE_INFO_DP_KEY)
+
+    this.center = null
+    this.radii = []
+    if (!this.graphMode) {
+      graph.nodes.forEach(node => {
+        const info = circleInfo.get(node)
+        if (info) {
+          if (this.center === null) {
+            // only calculate the center once
+            const nodeCenter = node.layout.center
+            this.center = new Point(
+              nodeCenter.x - info.centerOffset.x,
+              nodeCenter.y - info.centerOffset.y
+            )
+          }
+
+          if (this.radii.indexOf(info.radius) < 0) {
+            // we collect the radii of all circles the  nodes are placed on
+            this.radii.push(info.radius)
+          }
+        }
+      })
+
+      this.radii.sort()
+    }
+  }
+}

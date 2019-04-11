@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.1.
- ** Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.2.
+ ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,60 +26,60 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-'use strict'
+import {
+  BaseClass,
+  INode,
+  INodeSizeConstraintProvider,
+  InteriorLabelModel,
+  Rect,
+  Size
+} from 'yfiles'
 
-define(['yfiles/view-editor'], /** @type {yfiles_namespace} */ /** typeof yfiles */ yfiles => {
+/**
+ * An {@link INodeSizeConstraintProvider} that returns the size of the
+ * first label as minimum size. The maximum size is not limited.
+ */
+export default class GreenSizeConstraintProvider extends BaseClass(INodeSizeConstraintProvider) {
   /**
-   * An {@link yfiles.input.INodeSizeConstraintProvider} that returns the size of the
-   * first label as minimum size. The maximum size is not limited.
-   * @implements {yfiles.input.INodeSizeConstraintProvider.<yfiles.graph.INode>}
+   * Returns the label size to prevent the shrinking of nodes beyond their
+   * label's size.
+   * @param {INode} item
+   * @see Specified by {@link INodeSizeConstraintProvider#getMinimumSize}.
+   * @return {Size}
    */
-  class GreenSizeConstraintProvider extends yfiles.lang.Class(
-    yfiles.input.INodeSizeConstraintProvider
-  ) {
-    /**
-     * Returns the label size to prevent the shrinking of nodes beyond their
-     * label's size.
-     * @param {yfiles.graph.INode} item
-     * @see Specified by {@link yfiles.input.INodeSizeConstraintProvider#getMinimumSize}.
-     * @return {yfiles.geometry.Size}
-     */
-    getMinimumSize(item) {
-      if (item.labels.size > 0) {
-        const labels = item.labels.toArray()
-        for (let i = 0; i < labels.length; i++) {
-          const label = labels[i]
-          const labelProvider = label.lookup(yfiles.input.INodeSizeConstraintProvider.$class)
-          if (labelProvider !== null) {
-            return labelProvider.getMinimumSize(item)
-          }
+  getMinimumSize(item) {
+    if (item.labels.size > 0) {
+      const labels = item.labels.toArray()
+      for (let i = 0; i < labels.length; i++) {
+        const label = labels[i]
+        const labelProvider = label.lookup(INodeSizeConstraintProvider.$class)
+        if (labelProvider !== null) {
+          return labelProvider.getMinimumSize(item)
+        }
 
-          if (label.layoutParameter.model instanceof yfiles.graph.InteriorLabelModel) {
-            return label.preferredSize
-          }
+        if (label.layoutParameter.model instanceof InteriorLabelModel) {
+          return label.preferredSize
         }
       }
-      return new yfiles.geometry.Size(1, 1)
     }
-
-    /**
-     * Returns the infinite size since the maximum size is not limited.
-     * @see Specified by {@link yfiles.input.INodeSizeConstraintProvider#getMaximumSize}.
-     * @return {yfiles.geometry.Size}
-     */
-    getMaximumSize(item) {
-      return yfiles.geometry.Size.INFINITE
-    }
-
-    /**
-     * Returns an empty rectangle since this area is not constraint.
-     * @see Specified by {@link yfiles.input.INodeSizeConstraintProvider#getMinimumEnclosedArea}.
-     * @return {yfiles.geometry.Rect}
-     */
-    getMinimumEnclosedArea(item) {
-      return yfiles.geometry.Rect.EMPTY
-    }
+    return new Size(1, 1)
   }
 
-  return GreenSizeConstraintProvider
-})
+  /**
+   * Returns the infinite size since the maximum size is not limited.
+   * @see Specified by {@link INodeSizeConstraintProvider#getMaximumSize}.
+   * @return {Size}
+   */
+  getMaximumSize(item) {
+    return Size.INFINITE
+  }
+
+  /**
+   * Returns an empty rectangle since this area is not constraint.
+   * @see Specified by {@link INodeSizeConstraintProvider#getMinimumEnclosedArea}.
+   * @return {Rect}
+   */
+  getMinimumEnclosedArea(item) {
+    return Rect.EMPTY
+  }
+}

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.1.
- ** Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.2.
+ ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,60 +26,53 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-'use strict'
+import { GraphOverviewCanvasVisualCreator, IEdge, INode, IRenderContext } from 'yfiles'
+import { Structure } from './MindmapUtil.js'
 
-define(['yfiles/view-component', 'MindmapUtil.js'], (
-  /** @type {yfiles_namespace} */ /** typeof yfiles */ yfiles,
-  MindmapUtil
-) => {
+/**
+ * The class provides functionality for custom style of overview control.
+ */
+export default class MindmapOverviewGraphVisualCreator extends GraphOverviewCanvasVisualCreator {
   /**
-   * The class provides functionality for custom style of overview control.
-   * @extends yfiles.view.GraphOverviewCanvasVisualCreator
+   * Custom node painting code.
+   * @param {IRenderContext} renderContext The render context.
+   * @param {CanvasRenderingContext2D} ctx The HTML canvas rendering context.
+   * @param {INode} node The node to which this style instance is assigned.
+   * @see Overrides {@link GraphOverviewCanvasVisualCreator#paintNode}
    */
-  class MindmapOverviewGraphVisualCreator extends yfiles.view.GraphOverviewCanvasVisualCreator {
-    /**
-     * Custom node painting code.
-     * @param {yfiles.view.IRenderContext} renderContext The render context.
-     * @param {CanvasRenderingContext2D} ctx The HTML canvas rendering context.
-     * @param {yfiles.graph.INode} node The node to which this style instance is assigned.
-     * @see Overrides {@link yfiles.view.GraphOverviewCanvasVisualCreator#paintNode}
-     */
-    paintNode(renderContext, ctx, node) {
-      ctx.fillStyle = 'rgb(200, 200, 200)'
-      ctx.strokeStyle = 'rgb(0,0,0)'
-      const layout = node.layout
-      if (MindmapUtil.Structure.isRoot(node)) {
-        ctx.save()
-        ctx.translate(layout.center.x, layout.center.y)
-        ctx.scale(1, layout.height / layout.width)
-        ctx.beginPath()
-        ctx.arc(0, 0, layout.width / 2, 0, 2 * Math.PI, false)
-        ctx.fill()
-        ctx.stroke()
-        ctx.restore()
-      } else {
-        ctx.fillRect(layout.x, layout.y, layout.width, layout.height)
-        ctx.beginPath()
-        ctx.moveTo(layout.bottomLeft.x, layout.bottomLeft.y)
-        ctx.lineTo(layout.bottomRight.x, layout.bottomRight.y)
-        ctx.stroke()
-      }
-    }
-
-    /**
-     * Custom edge painting code.
-     * @param {yfiles.view.IRenderContext} renderContext The render context.
-     * @param {CanvasRenderingContext2D} ctx The HTML canvas rendering context.
-     * @param {yfiles.graph.IEdge} edge The edge to which this style instance is assigned.
-     * @see Overrides {@link yfiles.view.GraphOverviewCanvasVisualCreator#paintEdge}
-     */
-    paintEdge(renderContext, ctx, edge) {
+  paintNode(renderContext, ctx, node) {
+    ctx.fillStyle = 'rgb(200, 200, 200)'
+    ctx.strokeStyle = 'rgb(0,0,0)'
+    const layout = node.layout
+    if (Structure.isRoot(node)) {
+      ctx.save()
+      ctx.translate(layout.center.x, layout.center.y)
+      ctx.scale(1, layout.height / layout.width)
       ctx.beginPath()
-      ctx.moveTo(edge.sourcePort.location.x, edge.sourcePort.location.y)
-      ctx.lineTo(edge.targetPort.location.x, edge.targetPort.location.y)
+      ctx.arc(0, 0, layout.width / 2, 0, 2 * Math.PI, false)
+      ctx.fill()
+      ctx.stroke()
+      ctx.restore()
+    } else {
+      ctx.fillRect(layout.x, layout.y, layout.width, layout.height)
+      ctx.beginPath()
+      ctx.moveTo(layout.bottomLeft.x, layout.bottomLeft.y)
+      ctx.lineTo(layout.bottomRight.x, layout.bottomRight.y)
       ctx.stroke()
     }
   }
 
-  return MindmapOverviewGraphVisualCreator
-})
+  /**
+   * Custom edge painting code.
+   * @param {IRenderContext} renderContext The render context.
+   * @param {CanvasRenderingContext2D} ctx The HTML canvas rendering context.
+   * @param {IEdge} edge The edge to which this style instance is assigned.
+   * @see Overrides {@link GraphOverviewCanvasVisualCreator#paintEdge}
+   */
+  paintEdge(renderContext, ctx, edge) {
+    ctx.beginPath()
+    ctx.moveTo(edge.sourcePort.location.x, edge.sourcePort.location.y)
+    ctx.lineTo(edge.targetPort.location.x, edge.targetPort.location.y)
+    ctx.stroke()
+  }
+}

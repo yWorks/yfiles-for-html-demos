@@ -1,8 +1,0 @@
-{
-  "port": 8001,
-  "files": ["./**/*.{html,htm,css,js}"],
-  "startPath": "demos/toolkit/angular-systemjs/index.html",
-  "server": {
-    "baseDir": ["./../../../"]
-  }
-}

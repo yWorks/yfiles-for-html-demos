@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.1.
- ** Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.2.
+ ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,121 +26,99 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-'use strict'
+import { FreeNodePortLocationModel, GraphComponent, IGraph, License, Point, Rect } from 'yfiles'
+import { showApp } from '../../resources/demo-app.js'
+import loadJson from '../../resources/load-json.js'
+/** @type {GraphComponent} */
+let graphComponent = null
 
-require.config({
-  paths: {
-    yfiles: '../../../lib/umd/yfiles/',
-    utils: '../../utils/',
-    resources: '../../resources/'
-  }
-})
+/** @type {IGraph} */
+let graph = null
 
-/**
- * Getting Started - 02 Creating Graph Elements
- * This demo shows how to create the basic graph elements in yFiles for HTML:
- * nodes, edges, bends, ports, and labels.
- */
-require(['yfiles/view-editor', 'resources/demo-app', 'resources/license'], (
-  /** @type {yfiles_namespace} */ /** typeof yfiles */ yfiles,
-  app
-) => {
-  /** @type {yfiles.view.GraphComponent} */
-  let graphComponent = null
-
-  /** @type {yfiles.graph.IGraph} */
-  let graph = null
-
-  function run() {
-    // Initialize the GraphComponent and place it in the div with CSS selector #graphComponent
-    graphComponent = new yfiles.view.GraphComponent('#graphComponent')
-    // conveniently store a reference to the graph that is displayed in the closure variable
-    graph = graphComponent.graph
-
-    // /////////////// New in this Sample /////////////////
-
-    // Populates the graph and overrides some styles and label models
-    populateGraph()
-
-    // ////////////////////////////////////////////////////
-
-    // Initialize the demo application's CSS and Javascript for the description
-    // this is specific for the tiny little demo framework we are using
-    // and not relevant in other applications.
-    app.show(graphComponent)
-  }
+function run(licenseData) {
+  License.value = licenseData
+  // Initialize the GraphComponent and place it in the div with CSS selector #graphComponent
+  graphComponent = new GraphComponent('#graphComponent')
+  // conveniently store a reference to the graph that is displayed in the closure variable
+  graph = graphComponent.graph
 
   // /////////////// New in this Sample /////////////////
 
-  /**
-   * Creates a sample graph and introduces all important graph elements present in
-   * yFiles for HTML. Additionally, this method now overrides the label placement for some specific labels.
-   */
-  function populateGraph() {
-    // ////////// Sample node creation ///////////////////
-
-    // Creates two nodes with the default node size
-    // The location is specified for the _center_
-    const node1 = graph.createNodeAt(new yfiles.geometry.Point(30, 30))
-    const node2 = graph.createNodeAt(new yfiles.geometry.Point(150, 30))
-    // Creates a third node with a different size of 60x30
-    // In this case, the location of (400,400) describes the _upper left_
-    // corner of the node bounds
-    const node3 = graph.createNode(new yfiles.geometry.Rect(230, 200, 60, 30))
-
-    // ///////////////////////////////////////////////////
-
-    // ////////// Sample edge creation ///////////////////
-
-    // Creates some edges between the nodes
-    graph.createEdge(node1, node2)
-    const edge = graph.createEdge(node2, node3)
-
-    // ///////////////////////////////////////////////////
-
-    // ////////// Using Bends ////////////////////////////
-
-    // Creates the first bend for edge at (260, 30)
-    graph.addBend(edge, new yfiles.geometry.Point(260, 30))
-
-    // ///////////////////////////////////////////////////
-
-    // ////////// Using Ports ////////////////////////////
-
-    // Actually, edges connect "ports", not nodes directly.
-    // If necessary, you can manually create ports at nodes
-    // and let the edges connect to these.
-    // Creates a port in the center of the node layout
-    const port1AtNode1 = graph.addPort(
-      node1,
-      yfiles.graph.FreeNodePortLocationModel.NODE_CENTER_ANCHORED
-    )
-
-    // Creates a port at the middle of the left border
-    // Note to use absolute locations when placing ports using PointD.
-    const port1AtNode3 = graph.addPortAt(
-      node3,
-      new yfiles.geometry.Point(node3.layout.x, node3.layout.center.y)
-    )
-
-    // Creates an edge that connects these specific ports
-    const edgeAtPorts = graph.createEdge(port1AtNode1, port1AtNode3)
-
-    // ///////////////////////////////////////////////////
-
-    // ////////// Sample label creation ///////////////////
-
-    // Adds labels to several graph elements
-    graph.addLabel(node1, 'n1')
-    graph.addLabel(node2, 'n2')
-    graph.addLabel(node3, 'n3')
-    graph.addLabel(edgeAtPorts, 'Edge at Ports')
-
-    // ///////////////////////////////////////////////////
-  }
+  // Populates the graph and overrides some styles and label models
+  populateGraph()
 
   // ////////////////////////////////////////////////////
 
-  // start tutorial
-  run()
-})
+  // Initialize the demo application's CSS and Javascript for the description
+  // this is specific for the tiny little demo framework we are using
+  // and not relevant in other applications.
+  showApp(graphComponent)
+}
+
+// /////////////// New in this Sample /////////////////
+
+/**
+ * Creates a sample graph and introduces all important graph elements present in
+ * yFiles for HTML. Additionally, this method now overrides the label placement for some specific labels.
+ */
+function populateGraph() {
+  // ////////// Sample node creation ///////////////////
+
+  // Creates two nodes with the default node size
+  // The location is specified for the _center_
+  const node1 = graph.createNodeAt(new Point(30, 30))
+  const node2 = graph.createNodeAt(new Point(150, 30))
+  // Creates a third node with a different size of 60x30
+  // In this case, the location of (400,400) describes the _upper left_
+  // corner of the node bounds
+  const node3 = graph.createNode(new Rect(230, 200, 60, 30))
+
+  // ///////////////////////////////////////////////////
+
+  // ////////// Sample edge creation ///////////////////
+
+  // Creates some edges between the nodes
+  graph.createEdge(node1, node2)
+  const edge = graph.createEdge(node2, node3)
+
+  // ///////////////////////////////////////////////////
+
+  // ////////// Using Bends ////////////////////////////
+
+  // Creates the first bend for edge at (260, 30)
+  graph.addBend(edge, new Point(260, 30))
+
+  // ///////////////////////////////////////////////////
+
+  // ////////// Using Ports ////////////////////////////
+
+  // Actually, edges connect "ports", not nodes directly.
+  // If necessary, you can manually create ports at nodes
+  // and let the edges connect to these.
+  // Creates a port in the center of the node layout
+  const port1AtNode1 = graph.addPort(node1, FreeNodePortLocationModel.NODE_CENTER_ANCHORED)
+
+  // Creates a port at the middle of the left border
+  // Note to use absolute locations when placing ports using PointD.
+  const port1AtNode3 = graph.addPortAt(node3, new Point(node3.layout.x, node3.layout.center.y))
+
+  // Creates an edge that connects these specific ports
+  const edgeAtPorts = graph.createEdge(port1AtNode1, port1AtNode3)
+
+  // ///////////////////////////////////////////////////
+
+  // ////////// Sample label creation ///////////////////
+
+  // Adds labels to several graph elements
+  graph.addLabel(node1, 'n1')
+  graph.addLabel(node2, 'n2')
+  graph.addLabel(node3, 'n3')
+  graph.addLabel(edgeAtPorts, 'Edge at Ports')
+
+  // ///////////////////////////////////////////////////
+}
+
+// ////////////////////////////////////////////////////
+
+// start tutorial
+loadJson().then(run)

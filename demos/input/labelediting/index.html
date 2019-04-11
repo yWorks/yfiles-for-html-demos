@@ -7,8 +7,8 @@
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.1.
-     // Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML 2.2.
+     // Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -36,7 +36,7 @@
 
   <title>Label Editing Demo [yFiles for HTML]</title>
 
-  <link rel="stylesheet" href="../../../lib/yfiles.css">
+  <link rel="stylesheet" href="../../node_modules/yfiles/yfiles.css">
   <link rel="stylesheet" href="../../resources/style/demo.css">
 
   <style type="text/css">
@@ -49,6 +49,7 @@
 
   <!-- enable debugging -->
   <script src="../../../ide-support/yfiles-typeinfo.js"></script>
+  <script src="../../resources/filesystem-warning.js"></script>
 
 </head>
 <body class="demo-has-left demo-has-right">
@@ -63,10 +64,10 @@
       </p>
       <ul>
         <li>
-          The related properties of <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.input.GraphEditorInputMode" target="_blank">yfiles.input.GraphEditorInputMode</a>.
+          The related properties of <a href="https://docs.yworks.com/yfileshtml/#/api/GraphEditorInputMode" target="_blank">GraphEditorInputMode</a>.
         </li>
         <li>
-          A <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.input.IEditLabelHelper" target="_blank">yfiles.input.IEditLabelHelper</a> that customizes label editing for individual labels and label owners.
+          A <a href="https://docs.yworks.com/yfileshtml/#/api/IEditLabelHelper" target="_blank">IEditLabelHelper</a> that customizes label editing for individual labels and label owners.
         </li>
         <li>
           Input validation.
@@ -104,7 +105,7 @@
         </dd>
         <dt>Custom Label Helper</dt>
         <dd>
-          Enables a custom <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.input.IEditLabelHelper" target="_blank">yfiles.input.IEditLabelHelper</a> for node labels. This helper has the following
+          Enables a custom <a href="https://docs.yworks.com/yfileshtml/#/api/IEditLabelHelper" target="_blank">IEditLabelHelper</a> for node labels. This helper has the following
           features:
           <ul>
             <li>Each node can have at most two labels.</li>
@@ -210,8 +211,7 @@
     </div>
   </div>
 
-  <script src="../../resources/require.js"></script>
-  <script src="LabelEditingDemo.js"></script>
+  <script type="module" crossorigin="anonymous" src="LabelEditingDemo.js"></script>
 
 </body>
 </html>

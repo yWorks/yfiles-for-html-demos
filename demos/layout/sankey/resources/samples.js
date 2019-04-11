@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.1.
- ** Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.2.
+ ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,11 +26,8 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-'use strict'
-
-define(['yfiles/view-component'], /** @type {yfiles_namespace} */ /** typeof yfiles */ yfiles => {
-  /* @yjs:keep */
-  const nodes = [
+export default {
+  nodes: [
     {
       id: 0,
       label: ['Black Party'],
@@ -157,9 +154,9 @@ define(['yfiles/view-component'], /** @type {yfiles_namespace} */ /** typeof yfi
       y: 600,
       colorId: 7
     }
-  ]
+  ],
 
-  const edges = [
+  edges: [
     {
       from: 0,
       to: 5,
@@ -391,9 +388,4 @@ define(['yfiles/view-component'], /** @type {yfiles_namespace} */ /** typeof yfi
       label: 210000
     }
   ]
-
-  return {
-    nodes,
-    edges
-  }
-})
+}

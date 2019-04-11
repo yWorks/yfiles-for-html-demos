@@ -5,13 +5,13 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 
-  <link rel="stylesheet" href="../../../lib/yfiles.css">
+  <link rel="stylesheet" href="../../node_modules/yfiles/yfiles.css">
   <link rel="stylesheet" href="../../resources/style/demo.css">
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.1.
-     // Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML 2.2.
+     // Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -41,8 +41,9 @@
 
   <!-- enable debugging -->
   <script src="../../../ide-support/yfiles-typeinfo.js"></script>
+  <script src="../../resources/filesystem-warning.js"></script>
 </head>
-<body class="demo-has-left">
+<body class="demo-has-left demo-hide-left-when-small loaded">
 
 <aside data-type="BorderLayout" class="demo-sidebar demo-left">
   <h1 class="demo-sidebar-header">Description</h1>
@@ -76,6 +77,10 @@
 </aside>
 
 <div class="demo-content">
+  <div class="demo-header">
+    <a href="https://www.yworks.com" target="_blank"> <img src="../../resources/image/ylogo.svg" class="demo-y-logo"> </a> <a
+    href="../../README.html" target="_blank">yFiles for HTML</a> <span class="demo-title">AMD Loading Demo [yFiles for HTML]</span>
+  </div>
   <div class="demo-toolbar">
 
     <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
@@ -108,7 +113,7 @@
     data-dojo-config="async:true, parseOnLoad:true,
      baseUrl: location.pathname.replace(/\/[^/]+$/, '/'),
      packages: [
-       { name: 'yfiles', location: '../../../lib/umd/yfiles' },
+       { name: 'yfiles', location: '../../../lib/umd' },
        { name: 'utils', location: '../../utils' },
        { name: 'resources', location: '../../resources' }
      ]"

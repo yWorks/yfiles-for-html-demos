@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.1.
- ** Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.2.
+ ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,392 +26,389 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-'use strict'
+import {
+  ChannelEdgeRouter,
+  ChannelEdgeRouterData,
+  Class,
+  EdgeRouterScope,
+  GraphComponent,
+  OrthogonalPatternEdgeRouter,
+  OrthogonalSegmentDistributionStage,
+  YBoolean,
+  YNumber,
+  YString
+} from 'yfiles'
 
-/*eslint-disable*/
-;(function(r) {
-  ;(function(f) {
-    if ('function' === typeof define && define.amd) {
-      define(['yfiles/lang', 'yfiles/view-component', 'LayoutConfiguration.js'], f)
+import LayoutConfiguration from './LayoutConfiguration.js'
+import {
+  ComponentAttribute,
+  Components,
+  EnumValuesAttribute,
+  LabelAttribute,
+  MinMaxAttribute,
+  OptionGroup,
+  OptionGroupAttribute,
+  TypeAttribute
+} from '../../resources/demo-option-editor.js'
+
+/**
+ * Configuration options for the layout algorithm of the same name.
+ */
+const ChannelEdgeRouterConfig = Class('ChannelEdgeRouterConfig', {
+  $extends: LayoutConfiguration,
+
+  $meta: [LabelAttribute('ChannelEdgeRouter')],
+
+  /**
+   * Setup default values for various configuration parameters.
+   */
+  constructor: function() {
+    LayoutConfiguration.call(this)
+    this.scopeItem = EdgeRouterScope.ROUTE_ALL_EDGES
+    this.minimumDistanceItem = 10
+    this.activateGridRoutingItem = true
+    this.gridSpacingItem = 20
+
+    this.bendCostItem = 1.0
+    this.edgeCrossingCostItem = 5.0
+    this.nodeCrossingCostItem = 50.0
+  },
+
+  /**
+   * Creates and configures a layout and the graph's {@link IGraph#mapperRegistry} if necessary.
+   * @param {GraphComponent} graphComponent The <code>GraphComponent</code> to apply the
+   *   configuration on.
+   * @return {ILayoutAlgorithm} The configured layout.
+   */
+  createConfiguredLayout: function(graphComponent) {
+    const router = new ChannelEdgeRouter()
+
+    const orthogonalPatternEdgeRouter = new OrthogonalPatternEdgeRouter()
+
+    orthogonalPatternEdgeRouter.affectedEdgesDpKey = ChannelEdgeRouter.AFFECTED_EDGES_DP_KEY
+    orthogonalPatternEdgeRouter.minimumDistance = this.minimumDistanceItem
+    orthogonalPatternEdgeRouter.gridRouting = this.activateGridRoutingItem
+    orthogonalPatternEdgeRouter.gridSpacing = this.gridSpacingItem
+
+    orthogonalPatternEdgeRouter.bendCost = this.bendCostItem
+    orthogonalPatternEdgeRouter.edgeCrossingCost = this.edgeCrossingCostItem
+    orthogonalPatternEdgeRouter.nodeCrossingCost = this.nodeCrossingCostItem
+
+    // disable edge overlap costs when Edge distribution will run afterwards anyway
+    orthogonalPatternEdgeRouter.edgeOverlapCost = 0.0
+
+    router.pathFinderStrategy = orthogonalPatternEdgeRouter
+
+    const segmentDistributionStage = new OrthogonalSegmentDistributionStage()
+    segmentDistributionStage.affectedEdgesDpKey = ChannelEdgeRouter.AFFECTED_EDGES_DP_KEY
+    segmentDistributionStage.preferredDistance = this.minimumDistanceItem
+    segmentDistributionStage.gridRouting = this.activateGridRoutingItem
+    segmentDistributionStage.gridSpacing = this.gridSpacingItem
+
+    router.edgeDistributionStrategy = segmentDistributionStage
+
+    return router
+  },
+
+  /**
+   * Called by {@link LayoutConfiguration#apply} to create the layout data of the configuration. This
+   * method is typically overridden to provide mappers for the different layouts.
+   */
+  createConfiguredLayoutData: function(graphComponent, layout) {
+    const layoutData = new ChannelEdgeRouterData()
+    const selection = graphComponent.selection
+    if (this.scopeItem === EdgeRouterScope.ROUTE_EDGES_AT_AFFECTED_NODES) {
+      layoutData.affectedEdges = edge =>
+        selection.isSelected(edge.sourceNode) || selection.isSelected(edge.targetNode)
+    } else if (this.scopeItem === EdgeRouterScope.ROUTE_AFFECTED_EDGES) {
+      layoutData.affectedEdges = edge => selection.isSelected(edge)
     } else {
-      f(r.yfiles.lang, r.yfiles)
+      layoutData.affectedEdges = edge => true
     }
-  })((lang, yfiles) => {
-    const demo = yfiles.module('demo')
-    yfiles.module('demo', exports => {
-      /**
-       * Configuration options for the layout algorithm of the same name.
-       * @class
-       * @extends demo.LayoutConfiguration
-       */
-      exports.ChannelEdgeRouterConfig = new yfiles.lang.ClassDefinition(() => {
-        /** @lends {demo.ChannelEdgeRouterConfig.prototype} */
-        return {
-          $extends: demo.LayoutConfiguration,
+    return layoutData
+  },
 
-          $meta: [demo.options.LabelAttribute('ChannelEdgeRouter')],
+  /**
+   * Called after the layout animation is done.
+   * @see Overrides {@link LayoutConfiguration#postProcess}
+   */
+  postProcess: function(graphComponent) {},
 
-          /**
-           * Setup default values for various configuration parameters.
-           */
-          constructor: function() {
-            demo.LayoutConfiguration.call(this)
-            this.scopeItem = yfiles.router.Scope.ROUTE_ALL_EDGES
-            this.minimumDistanceItem = 10
-            this.activateGridRoutingItem = true
-            this.gridSpacingItem = 20
+  /** @type {OptionGroup} */
+  DescriptionGroup: {
+    $meta: function() {
+      return [
+        LabelAttribute('Description'),
+        OptionGroupAttribute('RootGroup', 5),
+        TypeAttribute(OptionGroup.$class)
+      ]
+    },
+    value: null
+  },
 
-            this.bendCostItem = 1.0
-            this.edgeCrossingCostItem = 5.0
-            this.nodeCrossingCostItem = 50.0
-          },
+  /** @type {OptionGroup} */
+  LayoutGroup: {
+    $meta: function() {
+      return [
+        LabelAttribute('General'),
+        OptionGroupAttribute('RootGroup', 10),
+        TypeAttribute(OptionGroup.$class)
+      ]
+    },
+    value: null
+  },
 
-          /**
-           * Creates and configures a layout and the graph's {@link yfiles.graph.IGraph#mapperRegistry} if necessary.
-           * @param {yfiles.view.GraphComponent} graphComponent The <code>GraphComponent</code> to apply the
-           *   configuration on.
-           * @return {yfiles.layout.ILayoutAlgorithm} The configured layout.
-           */
-          createConfiguredLayout: function(graphComponent) {
-            const router = new yfiles.router.ChannelEdgeRouter()
+  /** @type {OptionGroup} */
+  CostsGroup: {
+    $meta: function() {
+      return [
+        LabelAttribute('Costs'),
+        OptionGroupAttribute('RootGroup', 20),
+        TypeAttribute(OptionGroup.$class)
+      ]
+    },
+    value: null
+  },
 
-            const orthogonalPatternEdgeRouter = new yfiles.router.OrthogonalPatternEdgeRouter()
+  /** @type {string} */
+  descriptionText: {
+    $meta: function() {
+      return [
+        OptionGroupAttribute('DescriptionGroup', 10),
+        ComponentAttribute(Components.HTML_BLOCK),
+        TypeAttribute(YString.$class)
+      ]
+    },
+    get: function() {
+      return "<p style='margin - top:0'>Channel edge router uses a rather fast but simple algorithm for finding orthogonal edge routes. Compared to polyline and orthogonal edge router, edge segments can be very close to each other and edges may also overlap with nodes. However, this algorithm is faster in many situations.</p>"
+    }
+  },
 
-            orthogonalPatternEdgeRouter.affectedEdgesDpKey =
-              yfiles.router.ChannelEdgeRouter.AFFECTED_EDGES_DP_KEY
-            orthogonalPatternEdgeRouter.minimumDistance = this.minimumDistanceItem
-            orthogonalPatternEdgeRouter.gridRouting = this.activateGridRoutingItem
-            orthogonalPatternEdgeRouter.gridSpacing = this.gridSpacingItem
+  /**
+   * Backing field for below property
+   * @type {EdgeRouterScope}
+   */
+  $scopeItem: null,
 
-            orthogonalPatternEdgeRouter.bendCost = this.bendCostItem
-            orthogonalPatternEdgeRouter.edgeCrossingCost = this.edgeCrossingCostItem
-            orthogonalPatternEdgeRouter.nodeCrossingCost = this.nodeCrossingCostItem
+  /** @type {EdgeRouterScope} */
+  scopeItem: {
+    $meta: function() {
+      return [
+        LabelAttribute(
+          'Scope',
+          '#/api/ChannelEdgeRouterData#ChannelEdgeRouterData-property-affectedEdges'
+        ),
+        OptionGroupAttribute('LayoutGroup', 10),
+        EnumValuesAttribute().init({
+          values: [
+            ['All Edges', EdgeRouterScope.ROUTE_ALL_EDGES],
+            ['Selected Edges', EdgeRouterScope.ROUTE_AFFECTED_EDGES],
+            ['Edges at Selected Nodes', EdgeRouterScope.ROUTE_EDGES_AT_AFFECTED_NODES]
+          ]
+        }),
+        TypeAttribute(EdgeRouterScope.$class)
+      ]
+    },
+    get: function() {
+      return this.$scopeItem
+    },
+    set: function(value) {
+      this.$scopeItem = value
+    }
+  },
 
-            // disable edge overlap costs when Edge distribution will run afterwards anyway
-            orthogonalPatternEdgeRouter.edgeOverlapCost = 0.0
+  /**
+   * Backing field for below property
+   * @type {number}
+   */
+  $minimumDistanceItem: 0,
 
-            router.pathFinderStrategy = orthogonalPatternEdgeRouter
+  /** @type {number} */
+  minimumDistanceItem: {
+    $meta: function() {
+      return [
+        LabelAttribute(
+          'Minimum Distance',
+          '#/api/OrthogonalPatternEdgeRouter#OrthogonalPatternEdgeRouter-property-minimumDistance'
+        ),
+        OptionGroupAttribute('LayoutGroup', 30),
+        MinMaxAttribute().init({
+          min: 0.0,
+          max: 100.0
+        }),
+        ComponentAttribute(Components.SLIDER),
+        TypeAttribute(YNumber.$class)
+      ]
+    },
+    get: function() {
+      return this.$minimumDistanceItem
+    },
+    set: function(value) {
+      this.$minimumDistanceItem = value
+    }
+  },
 
-            const segmentDistributionStage = new yfiles.router.OrthogonalSegmentDistributionStage()
-            segmentDistributionStage.affectedEdgesDpKey =
-              yfiles.router.ChannelEdgeRouter.AFFECTED_EDGES_DP_KEY
-            segmentDistributionStage.preferredDistance = this.minimumDistanceItem
-            segmentDistributionStage.gridRouting = this.activateGridRoutingItem
-            segmentDistributionStage.gridSpacing = this.gridSpacingItem
+  /**
+   * Backing field for below property
+   * @type {boolean}
+   */
+  $activateGridRoutingItem: false,
 
-            router.edgeDistributionStrategy = segmentDistributionStage
+  /** @type {boolean} */
+  activateGridRoutingItem: {
+    $meta: function() {
+      return [
+        LabelAttribute(
+          'Route on Grid',
+          '#/api/OrthogonalPatternEdgeRouter#OrthogonalPatternEdgeRouter-property-gridRouting'
+        ),
+        OptionGroupAttribute('LayoutGroup', 40),
+        TypeAttribute(YBoolean.$class)
+      ]
+    },
+    get: function() {
+      return this.$activateGridRoutingItem
+    },
+    set: function(value) {
+      this.$activateGridRoutingItem = value
+    }
+  },
 
-            return router
-          },
+  /**
+   * Backing field for below property
+   * @type {number}
+   */
+  $gridSpacingItem: 0,
 
-          /**
-           * Called by {@link demo.LayoutConfiguration#apply} to create the layout data of the configuration. This
-           * method is typically overridden to provide mappers for the different layouts.
-           */
-          createConfiguredLayoutData: function(graphComponent, layout) {
-            const layoutData = new yfiles.router.ChannelEdgeRouterData()
-            const selection = graphComponent.selection
-            if (this.scopeItem === yfiles.router.Scope.ROUTE_EDGES_AT_AFFECTED_NODES) {
-              layoutData.affectedEdges.delegate = edge =>
-                selection.isSelected(edge.sourceNode) || selection.isSelected(edge.targetNode)
-            } else if (this.scopeItem === yfiles.router.Scope.ROUTE_AFFECTED_EDGES) {
-              layoutData.affectedEdges.delegate = edge => selection.isSelected(edge)
-            } else {
-              layoutData.affectedEdges.delegate = edge => true
-            }
-            return layoutData
-          },
+  /** @type {number} */
+  gridSpacingItem: {
+    $meta: function() {
+      return [
+        LabelAttribute(
+          'Grid Spacing',
+          '#/api/OrthogonalPatternEdgeRouter#OrthogonalPatternEdgeRouter-property-gridSpacing'
+        ),
+        OptionGroupAttribute('LayoutGroup', 50),
+        MinMaxAttribute().init({
+          min: 2,
+          max: 100
+        }),
+        ComponentAttribute(Components.SLIDER),
+        TypeAttribute(YNumber.$class)
+      ]
+    },
+    get: function() {
+      return this.$gridSpacingItem
+    },
+    set: function(value) {
+      this.$gridSpacingItem = value
+    }
+  },
 
-          /**
-           * Called after the layout animation is done.
-           * @see Overrides {@link demo.LayoutConfiguration#postProcess}
-           */
-          postProcess: function(graphComponent) {},
+  /** @type {boolean} */
+  shouldDisableGridSpacingItem: {
+    $meta: function() {
+      return [TypeAttribute(YBoolean.$class)]
+    },
+    get: function() {
+      return !this.activateGridRoutingItem
+    }
+  },
 
-          /** @type {demo.options.OptionGroup} */
-          DescriptionGroup: {
-            $meta: function() {
-              return [
-                demo.options.LabelAttribute('Description'),
-                demo.options.OptionGroupAttribute('RootGroup', 5),
-                demo.options.TypeAttribute(demo.options.OptionGroup.$class)
-              ]
-            },
-            value: null
-          },
+  /**
+   * Backing field for below property
+   * @type {number}
+   */
+  $bendCostItem: 0,
 
-          /** @type {demo.options.OptionGroup} */
-          LayoutGroup: {
-            $meta: function() {
-              return [
-                demo.options.LabelAttribute('General'),
-                demo.options.OptionGroupAttribute('RootGroup', 10),
-                demo.options.TypeAttribute(demo.options.OptionGroup.$class)
-              ]
-            },
-            value: null
-          },
+  /** @type {number} */
+  bendCostItem: {
+    $meta: function() {
+      return [
+        LabelAttribute(
+          'Bend Cost',
+          '#/api/OrthogonalPatternEdgeRouter#OrthogonalPatternEdgeRouter-property-bendCost'
+        ),
+        OptionGroupAttribute('CostsGroup', 10),
+        MinMaxAttribute().init({
+          min: 0,
+          max: 100
+        }),
+        ComponentAttribute(Components.SLIDER),
+        TypeAttribute(YNumber.$class)
+      ]
+    },
+    get: function() {
+      return this.$bendCostItem
+    },
+    set: function(value) {
+      this.$bendCostItem = value
+    }
+  },
 
-          /** @type {demo.options.OptionGroup} */
-          CostsGroup: {
-            $meta: function() {
-              return [
-                demo.options.LabelAttribute('Costs'),
-                demo.options.OptionGroupAttribute('RootGroup', 20),
-                demo.options.TypeAttribute(demo.options.OptionGroup.$class)
-              ]
-            },
-            value: null
-          },
+  /**
+   * Backing field for below property
+   * @type {number}
+   */
+  $edgeCrossingCostItem: 0,
 
-          /** @type {string} */
-          descriptionText: {
-            $meta: function() {
-              return [
-                demo.options.OptionGroupAttribute('DescriptionGroup', 10),
-                demo.options.ComponentAttribute(demo.options.Components.HTML_BLOCK),
-                demo.options.TypeAttribute(yfiles.lang.String.$class)
-              ]
-            },
-            get: function() {
-              return "<p style='margin-top:0'>Channel edge router uses a rather fast but simple algorithm for finding orthogonal edge routes. Compared to polyline and orthogonal edge router, edge segments can be very close to each other and edges may also overlap with nodes. However, this algorithm is faster in many situations.</p>"
-            }
-          },
+  /** @type {number} */
+  edgeCrossingCostItem: {
+    $meta: function() {
+      return [
+        LabelAttribute(
+          'Edge Crossing Cost',
+          '#/api/OrthogonalPatternEdgeRouter#OrthogonalPatternEdgeRouter-property-edgeCrossingCost'
+        ),
+        OptionGroupAttribute('CostsGroup', 20),
+        MinMaxAttribute().init({
+          min: 0,
+          max: 100
+        }),
+        ComponentAttribute(Components.SLIDER),
+        TypeAttribute(YNumber.$class)
+      ]
+    },
+    get: function() {
+      return this.$edgeCrossingCostItem
+    },
+    set: function(value) {
+      this.$edgeCrossingCostItem = value
+    }
+  },
 
-          /**
-           * Backing field for below property
-           * @type {yfiles.router.Scope}
-           */
-          $scopeItem: null,
+  /**
+   * Backing field for below property
+   * @type {number}
+   */
+  $nodeCrossingCostItem: 0,
 
-          /** @type {yfiles.router.Scope} */
-          scopeItem: {
-            $meta: function() {
-              return [
-                demo.options.LabelAttribute(
-                  'Scope',
-                  '#/api/yfiles.router.ChannelEdgeRouterData#ChannelEdgeRouterData-property-affectedEdges'
-                ),
-                demo.options.OptionGroupAttribute('LayoutGroup', 10),
-                demo.options.EnumValuesAttribute().init({
-                  values: [
-                    ['All Edges', yfiles.router.Scope.ROUTE_ALL_EDGES],
-                    ['Selected Edges', yfiles.router.Scope.ROUTE_AFFECTED_EDGES],
-                    ['Edges at Selected Nodes', yfiles.router.Scope.ROUTE_EDGES_AT_AFFECTED_NODES]
-                  ]
-                }),
-                demo.options.TypeAttribute(yfiles.router.Scope.$class)
-              ]
-            },
-            get: function() {
-              return this.$scopeItem
-            },
-            set: function(value) {
-              this.$scopeItem = value
-            }
-          },
-
-          /**
-           * Backing field for below property
-           * @type {number}
-           */
-          $minimumDistanceItem: 0,
-
-          /** @type {number} */
-          minimumDistanceItem: {
-            $meta: function() {
-              return [
-                demo.options.LabelAttribute(
-                  'Minimum Distance',
-                  '#/api/yfiles.router.OrthogonalPatternEdgeRouter#OrthogonalPatternEdgeRouter-property-minimumDistance'
-                ),
-                demo.options.OptionGroupAttribute('LayoutGroup', 30),
-                demo.options.MinMaxAttribute().init({
-                  min: 0.0,
-                  max: 100.0
-                }),
-                demo.options.ComponentAttribute(demo.options.Components.SLIDER),
-                demo.options.TypeAttribute(yfiles.lang.Number.$class)
-              ]
-            },
-            get: function() {
-              return this.$minimumDistanceItem
-            },
-            set: function(value) {
-              this.$minimumDistanceItem = value
-            }
-          },
-
-          /**
-           * Backing field for below property
-           * @type {boolean}
-           */
-          $activateGridRoutingItem: false,
-
-          /** @type {boolean} */
-          activateGridRoutingItem: {
-            $meta: function() {
-              return [
-                demo.options.LabelAttribute(
-                  'Route on Grid',
-                  '#/api/yfiles.router.OrthogonalPatternEdgeRouter#OrthogonalPatternEdgeRouter-property-gridRouting'
-                ),
-                demo.options.OptionGroupAttribute('LayoutGroup', 40),
-                demo.options.TypeAttribute(yfiles.lang.Boolean.$class)
-              ]
-            },
-            get: function() {
-              return this.$activateGridRoutingItem
-            },
-            set: function(value) {
-              this.$activateGridRoutingItem = value
-            }
-          },
-
-          /**
-           * Backing field for below property
-           * @type {number}
-           */
-          $gridSpacingItem: 0,
-
-          /** @type {number} */
-          gridSpacingItem: {
-            $meta: function() {
-              return [
-                demo.options.LabelAttribute(
-                  'Grid Spacing',
-                  '#/api/yfiles.router.OrthogonalPatternEdgeRouter#OrthogonalPatternEdgeRouter-property-gridSpacing'
-                ),
-                demo.options.OptionGroupAttribute('LayoutGroup', 50),
-                demo.options.MinMaxAttribute().init({
-                  min: 2,
-                  max: 100
-                }),
-                demo.options.ComponentAttribute(demo.options.Components.SLIDER),
-                demo.options.TypeAttribute(yfiles.lang.Number.$class)
-              ]
-            },
-            get: function() {
-              return this.$gridSpacingItem
-            },
-            set: function(value) {
-              this.$gridSpacingItem = value
-            }
-          },
-
-          /** @type {boolean} */
-          shouldDisableGridSpacingItem: {
-            $meta: function() {
-              return [demo.options.TypeAttribute(yfiles.lang.Boolean.$class)]
-            },
-            get: function() {
-              return !this.activateGridRoutingItem
-            }
-          },
-
-          /**
-           * Backing field for below property
-           * @type {number}
-           */
-          $bendCostItem: 0,
-
-          /** @type {number} */
-          bendCostItem: {
-            $meta: function() {
-              return [
-                demo.options.LabelAttribute(
-                  'Bend Cost',
-                  '#/api/yfiles.router.OrthogonalPatternEdgeRouter#OrthogonalPatternEdgeRouter-property-bendCost'
-                ),
-                demo.options.OptionGroupAttribute('CostsGroup', 10),
-                demo.options.MinMaxAttribute().init({
-                  min: 0,
-                  max: 100
-                }),
-                demo.options.ComponentAttribute(demo.options.Components.SLIDER),
-                demo.options.TypeAttribute(yfiles.lang.Number.$class)
-              ]
-            },
-            get: function() {
-              return this.$bendCostItem
-            },
-            set: function(value) {
-              this.$bendCostItem = value
-            }
-          },
-
-          /**
-           * Backing field for below property
-           * @type {number}
-           */
-          $edgeCrossingCostItem: 0,
-
-          /** @type {number} */
-          edgeCrossingCostItem: {
-            $meta: function() {
-              return [
-                demo.options.LabelAttribute(
-                  'Edge Crossing Cost',
-                  '#/api/yfiles.router.OrthogonalPatternEdgeRouter#OrthogonalPatternEdgeRouter-property-edgeCrossingCost'
-                ),
-                demo.options.OptionGroupAttribute('CostsGroup', 20),
-                demo.options.MinMaxAttribute().init({
-                  min: 0,
-                  max: 100
-                }),
-                demo.options.ComponentAttribute(demo.options.Components.SLIDER),
-                demo.options.TypeAttribute(yfiles.lang.Number.$class)
-              ]
-            },
-            get: function() {
-              return this.$edgeCrossingCostItem
-            },
-            set: function(value) {
-              this.$edgeCrossingCostItem = value
-            }
-          },
-
-          /**
-           * Backing field for below property
-           * @type {number}
-           */
-          $nodeCrossingCostItem: 0,
-
-          /** @type {number} */
-          nodeCrossingCostItem: {
-            $meta: function() {
-              return [
-                demo.options.LabelAttribute(
-                  'Node Overlap Cost',
-                  '#/api/yfiles.router.OrthogonalPatternEdgeRouter#OrthogonalPatternEdgeRouter-property-nodeCrossingCost'
-                ),
-                demo.options.OptionGroupAttribute('CostsGroup', 30),
-                demo.options.MinMaxAttribute().init({
-                  min: 0,
-                  max: 100
-                }),
-                demo.options.ComponentAttribute(demo.options.Components.SLIDER),
-                demo.options.TypeAttribute(yfiles.lang.Number.$class)
-              ]
-            },
-            get: function() {
-              return this.$nodeCrossingCostItem
-            },
-            set: function(value) {
-              this.$nodeCrossingCostItem = value
-            }
-          }
-        }
-      })
-    })
-    return yfiles.module('demo')
-  })
-})(
-  'undefined' !== typeof window
-    ? window
-    : 'undefined' !== typeof global
-      ? global
-      : 'undefined' !== typeof self
-        ? self
-        : this
-)
+  /** @type {number} */
+  nodeCrossingCostItem: {
+    $meta: function() {
+      return [
+        LabelAttribute(
+          'Node Overlap Cost',
+          '#/api/OrthogonalPatternEdgeRouter#OrthogonalPatternEdgeRouter-property-nodeCrossingCost'
+        ),
+        OptionGroupAttribute('CostsGroup', 30),
+        MinMaxAttribute().init({
+          min: 0,
+          max: 100
+        }),
+        ComponentAttribute(Components.SLIDER),
+        TypeAttribute(YNumber.$class)
+      ]
+    },
+    get: function() {
+      return this.$nodeCrossingCostItem
+    },
+    set: function(value) {
+      this.$nodeCrossingCostItem = value
+    }
+  },
+  $initChannelEdgeRouterConfig: function() {
+    this.$scopeItem = EdgeRouterScope.ROUTE_ALL_EDGES
+  }
+})
+export default ChannelEdgeRouterConfig

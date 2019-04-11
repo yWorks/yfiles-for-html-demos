@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.1.
- ** Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.2.
+ ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,472 +26,478 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-'use strict'
+import {
+  BaseClass,
+  Class,
+  FreeNodeLabelModel,
+  GraphMLAttribute,
+  ILabel,
+  ILabelModel,
+  ILabelModelParameter,
+  ILabelModelParameterFinder,
+  ILabelModelParameterProvider,
+  ILookup,
+  IMarkupExtensionConverter,
+  INode,
+  IOrientedRectangle,
+  IWriteContext,
+  List,
+  MarkupExtension,
+  OrientedRectangle,
+  TypeAttribute,
+  YBoolean
+} from 'yfiles'
 
-define(['yfiles/view-component', 'RotatableNodes.js'], (yfiles, RotatableNodes) => {
+import { RotatableNodeStyleDecorator } from './RotatableNodes.js'
+
+/**
+ * A {@link ILabelModel} decorator for node labels that wraps another label model and considers the
+ * {@link RotatableNodes.RotatableNodeStyleDecorator#angle rotation angle} of the label owner when a
+ * {@link RotatableNodes.RotatableNodeStyleDecorator} is used.
+ * This will make the node labels rotate with the node's rotation.
+ */
+export class RotatableNodeLabelModelDecorator extends BaseClass(
+  ILabelModel,
+  IMarkupExtensionConverter
+) {
   /**
-   * A {@link yfiles.graph.ILabelModel} decorator for node labels that wraps another label model and considers the
-   * {@link RotatableNodes.RotatableNodeStyleDecorator#angle rotation angle} of the label owner when a
-   * {@link RotatableNodes.RotatableNodeStyleDecorator} is used.
-   * This will make the node labels rotate with the node's rotation.
+   * Returns whether or not the rotation of the label owner should be considered.
+   * @return {boolean}
    */
-  class RotatableNodeLabelModelDecorator extends yfiles.lang.Class(
-    yfiles.graph.ILabelModel,
-    yfiles.graphml.IMarkupExtensionConverter
-  ) {
-    /**
-     * Returns whether or not the rotation of the label owner should be considered.
-     * @return {boolean}
-     */
-    get useNodeRotation() {
-      return this.$useNodeRotation
-    }
-
-    /**
-     * Specifies whether or not the rotation of the label owner should be considered.
-     * @param {boolean} useNodeRotation
-     */
-    set useNodeRotation(useNodeRotation) {
-      this.$useNodeRotation = useNodeRotation
-    }
-
-    /**
-     * Returns the wrapped label model.
-     * @return {yfiles.graph.ILabelModel}
-     */
-    get wrapped() {
-      return this.$wrapped
-    }
-
-    /**
-     * Specifies the wrapped label model.
-     * @param {yfiles.graph.ILabelModel} wrapped
-     */
-    set wrapped(wrapped) {
-      this.$wrapped = wrapped
-    }
-
-    /**
-     * Creates a new instance of {@link RotatableNodeLabelModelDecorator}.
-     * @param {yfiles.graph.ILabelModel} wrapped
-     */
-    constructor(wrapped) {
-      super()
-      this.$wrapped = wrapped || yfiles.graph.FreeNodeLabelModel.INSTANCE
-      this.$useNodeRotation = true
-    }
-
-    /**
-     * Provides custom implementations of {@link yfiles.graph.ILabelModelParameterProvider} and
-     * {@link yfiles.graph.ILabelModelParameterFinder} that consider the nodes rotation.
-     * @param {yfiles.lang.Class} type
-     * @return {yfiles.graph.ILabelModelParameterProvider|yfiles.graph.ILabelModelParameterFinder|null}
-     */
-    lookup(type) {
-      if (type === yfiles.graph.ILabelModelParameterProvider.$class) {
-        const provider = this.wrapped.lookup(yfiles.graph.ILabelModelParameterProvider.$class)
-        if (provider) {
-          return new RotatedNodeLabelModelParameterProvider(provider)
-        }
-      }
-      if (type === yfiles.graph.ILabelModelParameterFinder.$class) {
-        const finder = this.wrapped.lookup(yfiles.graph.ILabelModelParameterFinder.$class)
-        if (finder) {
-          return new RotatedNodeLabelModelParameterFinder(finder)
-        }
-      }
-      return null
-    }
-
-    /**
-     * Returns the current geometry of the given label.
-     * @param {yfiles.graph.ILabel} label
-     * @param {yfiles.graph.ILabelModelParameter} parameter
-     * @return {yfiles.geometry.IOrientedRectangle}
-     */
-    getGeometry(label, parameter) {
-      const styleWrapper = this.getNodeStyleWrapper(label)
-      const wrappedParameter = this.getWrappedParameter(parameter)
-      const orientedRectangle = wrappedParameter.model.getGeometry(label, wrappedParameter)
-      if (
-        !this.useNodeRotation ||
-        !yfiles.graph.INode.isInstance(label.owner) ||
-        styleWrapper === null ||
-        styleWrapper.angle === 0
-      ) {
-        return orientedRectangle
-      }
-
-      const rotatedCenter = styleWrapper.getRotatedPoint(
-        orientedRectangle.orientedRectangleCenter,
-        label.owner,
-        true
-      )
-      const rotatedLayout = styleWrapper.getRotatedLayout(label.owner)
-
-      const rectangle = new yfiles.geometry.OrientedRectangle(orientedRectangle)
-      rectangle.angle += rotatedLayout.getRadians()
-      rectangle.setCenter(rotatedCenter)
-      return rectangle
-    }
-
-    /**
-     * Creates a wrapped instance of the wrapped label model's default parameter.
-     * @return {RotatableNodeLabelModelDecoratorParameter}
-     */
-    createDefaultParameter() {
-      return new RotatableNodeLabelModelDecoratorParameter(
-        this.wrapped.createDefaultParameter(),
-        this
-      )
-    }
-
-    /**
-     * Creates a wrapped parameter containing the given parameter.
-     * @param {yfiles.graph.ILabelModelParameter} wrapped
-     * @return {RotatableNodeLabelModelDecoratorParameter}
-     */
-    createWrappingParameter(wrapped) {
-      return new RotatableNodeLabelModelDecoratorParameter(wrapped, this)
-    }
-
-    /**
-     * Provides a lookup context for the given combination of label and parameter.
-     * @param {yfiles.graph.ILabel} label
-     * @param {yfiles.graph.ILabelModelParameter} parameter
-     * @return {yfiles.graph.ILookup}
-     */
-    getContext(label, parameter) {
-      const wrappedParameter = this.getWrappedParameter(parameter)
-      return wrappedParameter.model.getContext(label, wrappedParameter)
-    }
-
-    /**
-     * Returns the wrapped label model parameter
-     * @param {yfiles.graph.ILabelModelParameter} parameter
-     * @return {yfiles.graph.ILabelModelParameter}
-     */
-    getWrappedParameter(parameter) {
-      return parameter.wrapped
-    }
-
-    /**
-     * Returns the wrapping style for nodes when {@link RotatableNodes.RotatableNodeStyleDecorator} is used, null
-     * otherwise.
-     * @param {yfiles.graph.ILabel} label
-     * @return {RotatableNodes.RotatableNodeStyleDecorator|null}
-     */
-    getNodeStyleWrapper(label) {
-      const node = label.owner
-      if (yfiles.graph.INode.isInstance(node)) {
-        return node.style instanceof RotatableNodes.RotatableNodeStyleDecorator ? node.style : null
-      }
-      return null
-    }
-
-    /**
-     * Returns that this label model can be converted.
-     * @param {yfiles.graphml.IWriteContext} context
-     * @param {object} value
-     * @return {boolean}
-     */
-    canConvert(context, value) {
-      return true
-    }
-
-    /**
-     * Converts this label model using {@link RotatableNodeLabelModelDecoratorExtension}.
-     * @param {yfiles.graphml.IWriteContext} context
-     * @param {object} value
-     * @return {RotatableNodeLabelModelDecoratorParameterExtension}
-     */
-    convert(context, value) {
-      const extension = new RotatableNodeLabelModelDecoratorExtension()
-      extension.wrapped = this.wrapped
-      extension.useNodeRotation = this.useNodeRotation
-      return extension
-    }
+  get useNodeRotation() {
+    return this.$useNodeRotation
   }
 
   /**
-   * A {@link yfiles.graph.ILabelModelParameter} decorator for node labels using
-   * {@link RotatableNodeLabelModelDecorator} to adjust the label rotation to the node rotation.
+   * Specifies whether or not the rotation of the label owner should be considered.
+   * @param {boolean} useNodeRotation
    */
-  class RotatableNodeLabelModelDecoratorParameter extends yfiles.lang.Class(
-    yfiles.graph.ILabelModelParameter,
-    yfiles.graphml.IMarkupExtensionConverter
-  ) {
-    /**
-     * Creates a new instance wrapping the given parameter.
-     * @param {yfiles.graph.ILabelModelParameter} wrapped
-     * @param {yfiles.graph.ILabelModel} model
-     */
-    constructor(wrapped, model) {
-      super()
-      this.$wrapped = wrapped
-      this.$model = model
-    }
-
-    /**
-     * Returns a copy of this label model parameter.
-     * @return {RotatableNodeLabelModelDecoratorParameter}
-     */
-    clone() {
-      return new RotatableNodeLabelModelDecoratorParameter(this.wrapped, this.model)
-    }
-
-    /**
-     * Returns the label model.
-     * @return {yfiles.graph.ILabelModel}
-     */
-    get model() {
-      return this.$model
-    }
-
-    /**
-     * Specifies the label model.
-     * @param {yfiles.graph.ILabelModel} model
-     */
-    set model(model) {
-      this.$model = model
-    }
-
-    /**
-     * Returns the wrapped label model parameter.
-     * @return {yfiles.graph.ILabelModelParameter}
-     */
-    get wrapped() {
-      return this.$wrapped
-    }
-
-    /**
-     * Specifies the wrapped label model parameter.
-     * @param {yfiles.graph.ILabelModelParameter} wrapped
-     */
-    set wrapped(wrapped) {
-      this.$wrapped = wrapped
-    }
-
-    /**
-     * Accepts node labels that are supported by the wrapped label model parameter.
-     * @param {yfiles.graph.ILabel} label
-     * @return {boolean}
-     */
-    supports(label) {
-      return yfiles.graph.INode.isInstance(label.owner) && this.wrapped.supports(label)
-    }
-
-    /**
-     * Returns that this label model parameter can be converted.
-     * @param {yfiles.graphml.IWriteContext} context
-     * @param {object} value
-     * @return {boolean}
-     */
-    canConvert(context, value) {
-      return true
-    }
-
-    /**
-     * Converts this label model parameter using {@link RotatableNodeLabelModelDecoratorParameterExtension}.
-     * @param {yfiles.graphml.IWriteContext} context
-     * @param {object} value
-     * @return {RotatableNodeLabelModelDecoratorParameterExtension}
-     */
-    convert(context, value) {
-      const extension = new RotatableNodeLabelModelDecoratorParameterExtension()
-      extension.model = this.model
-      extension.wrapped = this.wrapped
-      return extension
-    }
+  set useNodeRotation(useNodeRotation) {
+    this.$useNodeRotation = useNodeRotation
   }
 
   /**
-   * Provides candidate parameters for rotated label models.
+   * Returns the wrapped label model.
+   * @return {ILabelModel}
    */
-  class RotatedNodeLabelModelParameterProvider extends yfiles.lang.Class(
-    yfiles.graph.ILabelModelParameterProvider
-  ) {
-    /**
-     * Returns a new instance using the given parameter provider.
-     * @param {yfiles.graph.ILabelModelParameterProvider} wrapped
-     */
-    constructor(wrapped) {
-      super()
-      this.wrappedProvider = wrapped
-    }
-
-    /**
-     * Returns a set of possible wrapped {@link yfiles.graph.ILabelModelParameter} instances.
-     * @param {yfiles.graph.ILabel} label
-     * @param {yfiles.graph.ILabelModel} model
-     * @return {yfiles.collections.IEnumerable}
-     */
-    getParameters(label, model) {
-      const wrapperModel = model
-      const parameters = this.wrappedProvider.getParameters(label, wrapperModel.wrapped)
-      const result = new yfiles.collections.List()
-      parameters.forEach(parameter => {
-        result.add(wrapperModel.createWrappingParameter(parameter))
-      })
-      return result
-    }
+  get wrapped() {
+    return this.$wrapped
   }
 
   /**
-   * Finds the best {@link yfiles.graph.ILabelModelParameter} to approximate a specific rotated layout.
+   * Specifies the wrapped label model.
+   * @param {ILabelModel} wrapped
    */
-  class RotatedNodeLabelModelParameterFinder extends yfiles.lang.Class(
-    yfiles.graph.ILabelModelParameterFinder
-  ) {
-    /**
-     * Creates a new instance using the given parameter finder.
-     * @param {yfiles.graph.ILabelModelParameterFinder} wrapped
-     */
-    constructor(wrapped) {
-      super()
-      this.wrappedFinder = wrapped
-    }
+  set wrapped(wrapped) {
+    this.$wrapped = wrapped
+  }
 
-    /**
-     * Finds the label model parameter that describes the given label layout best. Sometimes the layout cannot be met
-     * exactly, then the nearest location is used.
-     * @param {yfiles.graph.ILabel} label
-     * @param {yfiles.graph.ILabelModel} model
-     * @param {yfiles.geometry.IOrientedRectangle} labelLayout
-     * @return {RotatableNodeLabelModelDecoratorParameter|yfiles.graph.IPortLocationModelParameter}
-     */
-    findBestParameter(label, model, labelLayout) {
-      const wrapperModel = model
-      const styleWrapper = wrapperModel.getNodeStyleWrapper(label)
-      if (!wrapperModel.useNodeRotation || styleWrapper === null || styleWrapper.angle === 0) {
-        return wrapperModel.createWrappingParameter(
-          this.wrappedFinder.findBestParameter(label, wrapperModel.wrapped, labelLayout)
-        )
+  /**
+   * Creates a new instance of {@link RotatableNodeLabelModelDecorator}.
+   * @param {ILabelModel} wrapped
+   */
+  constructor(wrapped) {
+    super()
+    this.$wrapped = wrapped || FreeNodeLabelModel.INSTANCE
+    this.$useNodeRotation = true
+  }
+
+  /**
+   * Provides custom implementations of {@link ILabelModelParameterProvider} and
+   * {@link ILabelModelParameterFinder} that consider the nodes rotation.
+   * @param {Class} type
+   * @return {ILabelModelParameterProvider|ILabelModelParameterFinder|null}
+   */
+  lookup(type) {
+    if (type === ILabelModelParameterProvider.$class) {
+      const provider = this.wrapped.lookup(ILabelModelParameterProvider.$class)
+      if (provider) {
+        return new RotatedNodeLabelModelParameterProvider(provider)
       }
+    }
+    if (type === ILabelModelParameterFinder.$class) {
+      const finder = this.wrapped.lookup(ILabelModelParameterFinder.$class)
+      if (finder) {
+        return new RotatedNodeLabelModelParameterFinder(finder)
+      }
+    }
+    return null
+  }
 
-      /** @type {yfiles.graph.INode} */
-      const node = label.owner
-      const rotatedCenter = styleWrapper.getRotatedPoint(
-        labelLayout.orientedRectangleCenter,
-        node,
-        false
-      )
-      const rotatedLayout = styleWrapper.getRotatedLayout(node)
+  /**
+   * Returns the current geometry of the given label.
+   * @param {ILabel} label
+   * @param {ILabelModelParameter} parameter
+   * @return {IOrientedRectangle}
+   */
+  getGeometry(label, parameter) {
+    const styleWrapper = this.getNodeStyleWrapper(label)
+    const wrappedParameter = this.getWrappedParameter(parameter)
+    const orientedRectangle = wrappedParameter.model.getGeometry(label, wrappedParameter)
+    if (
+      !this.useNodeRotation ||
+      !INode.isInstance(label.owner) ||
+      styleWrapper === null ||
+      styleWrapper.angle === 0
+    ) {
+      return orientedRectangle
+    }
 
-      const rectangle = new yfiles.geometry.OrientedRectangle(labelLayout)
-      rectangle.angle -= rotatedLayout.getRadians()
-      rectangle.setCenter(rotatedCenter)
+    const rotatedCenter = styleWrapper.getRotatedPoint(
+      orientedRectangle.orientedRectangleCenter,
+      label.owner,
+      true
+    )
+    const rotatedLayout = styleWrapper.getRotatedLayout(label.owner)
 
+    const rectangle = new OrientedRectangle(orientedRectangle)
+    rectangle.angle += rotatedLayout.getRadians()
+    rectangle.setCenter(rotatedCenter)
+    return rectangle
+  }
+
+  /**
+   * Creates a wrapped instance of the wrapped label model's default parameter.
+   * @return {RotatableNodeLabelModelDecoratorParameter}
+   */
+  createDefaultParameter() {
+    return new RotatableNodeLabelModelDecoratorParameter(
+      this.wrapped.createDefaultParameter(),
+      this
+    )
+  }
+
+  /**
+   * Creates a wrapped parameter containing the given parameter.
+   * @param {ILabelModelParameter} wrapped
+   * @return {RotatableNodeLabelModelDecoratorParameter}
+   */
+  createWrappingParameter(wrapped) {
+    return new RotatableNodeLabelModelDecoratorParameter(wrapped, this)
+  }
+
+  /**
+   * Provides a lookup context for the given combination of label and parameter.
+   * @param {ILabel} label
+   * @param {ILabelModelParameter} parameter
+   * @return {ILookup}
+   */
+  getContext(label, parameter) {
+    const wrappedParameter = this.getWrappedParameter(parameter)
+    return wrappedParameter.model.getContext(label, wrappedParameter)
+  }
+
+  /**
+   * Returns the wrapped label model parameter
+   * @param {ILabelModelParameter} parameter
+   * @return {ILabelModelParameter}
+   */
+  getWrappedParameter(parameter) {
+    return parameter.wrapped
+  }
+
+  /**
+   * Returns the wrapping style for nodes when {@link RotatableNodes.RotatableNodeStyleDecorator} is used, null
+   * otherwise.
+   * @param {ILabel} label
+   * @return {RotatableNodes.RotatableNodeStyleDecorator|null}
+   */
+  getNodeStyleWrapper(label) {
+    const node = label.owner
+    if (INode.isInstance(node)) {
+      return node.style instanceof RotatableNodeStyleDecorator ? node.style : null
+    }
+    return null
+  }
+
+  /**
+   * Returns that this label model can be converted.
+   * @param {IWriteContext} context
+   * @param {object} value
+   * @return {boolean}
+   */
+  canConvert(context, value) {
+    return true
+  }
+
+  /**
+   * Converts this label model using {@link RotatableNodeLabelModelDecoratorExtension}.
+   * @param {IWriteContext} context
+   * @param {object} value
+   * @return {RotatableNodeLabelModelDecoratorParameterExtension}
+   */
+  convert(context, value) {
+    const extension = new RotatableNodeLabelModelDecoratorExtension()
+    extension.wrapped = this.wrapped
+    extension.useNodeRotation = this.useNodeRotation
+    return extension
+  }
+}
+
+/**
+ * A {@link ILabelModelParameter} decorator for node labels using
+ * {@link RotatableNodeLabelModelDecorator} to adjust the label rotation to the node rotation.
+ */
+export class RotatableNodeLabelModelDecoratorParameter extends BaseClass(
+  ILabelModelParameter,
+  IMarkupExtensionConverter
+) {
+  /**
+   * Creates a new instance wrapping the given parameter.
+   * @param {ILabelModelParameter} wrapped
+   * @param {ILabelModel} model
+   */
+  constructor(wrapped, model) {
+    super()
+    this.$wrapped = wrapped
+    this.$model = model
+  }
+
+  /**
+   * Returns a copy of this label model parameter.
+   * @return {RotatableNodeLabelModelDecoratorParameter}
+   */
+  clone() {
+    return new RotatableNodeLabelModelDecoratorParameter(this.wrapped, this.model)
+  }
+
+  /**
+   * Returns the label model.
+   * @return {ILabelModel}
+   */
+  get model() {
+    return this.$model
+  }
+
+  /**
+   * Specifies the label model.
+   * @param {ILabelModel} model
+   */
+  set model(model) {
+    this.$model = model
+  }
+
+  /**
+   * Returns the wrapped label model parameter.
+   * @return {ILabelModelParameter}
+   */
+  get wrapped() {
+    return this.$wrapped
+  }
+
+  /**
+   * Specifies the wrapped label model parameter.
+   * @param {ILabelModelParameter} wrapped
+   */
+  set wrapped(wrapped) {
+    this.$wrapped = wrapped
+  }
+
+  /**
+   * Accepts node labels that are supported by the wrapped label model parameter.
+   * @param {ILabel} label
+   * @return {boolean}
+   */
+  supports(label) {
+    return INode.isInstance(label.owner) && this.wrapped.supports(label)
+  }
+
+  /**
+   * Returns that this label model parameter can be converted.
+   * @param {IWriteContext} context
+   * @param {object} value
+   * @return {boolean}
+   */
+  canConvert(context, value) {
+    return true
+  }
+
+  /**
+   * Converts this label model parameter using {@link RotatableNodeLabelModelDecoratorParameterExtension}.
+   * @param {IWriteContext} context
+   * @param {object} value
+   * @return {RotatableNodeLabelModelDecoratorParameterExtension}
+   */
+  convert(context, value) {
+    const extension = new RotatableNodeLabelModelDecoratorParameterExtension()
+    extension.model = this.model
+    extension.wrapped = this.wrapped
+    return extension
+  }
+}
+
+/**
+ * Provides candidate parameters for rotated label models.
+ */
+class RotatedNodeLabelModelParameterProvider extends BaseClass(ILabelModelParameterProvider) {
+  /**
+   * Returns a new instance using the given parameter provider.
+   * @param {ILabelModelParameterProvider} wrapped
+   */
+  constructor(wrapped) {
+    super()
+    this.wrappedProvider = wrapped
+  }
+
+  /**
+   * Returns a set of possible wrapped {@link ILabelModelParameter} instances.
+   * @param {ILabel} label
+   * @param {ILabelModel} model
+   * @return {IEnumerable}
+   */
+  getParameters(label, model) {
+    const wrapperModel = model
+    const parameters = this.wrappedProvider.getParameters(label, wrapperModel.wrapped)
+    const result = new List()
+    parameters.forEach(parameter => {
+      result.add(wrapperModel.createWrappingParameter(parameter))
+    })
+    return result
+  }
+}
+
+/**
+ * Finds the best {@link ILabelModelParameter} to approximate a specific rotated layout.
+ */
+class RotatedNodeLabelModelParameterFinder extends BaseClass(ILabelModelParameterFinder) {
+  /**
+   * Creates a new instance using the given parameter finder.
+   * @param {ILabelModelParameterFinder} wrapped
+   */
+  constructor(wrapped) {
+    super()
+    this.wrappedFinder = wrapped
+  }
+
+  /**
+   * Finds the label model parameter that describes the given label layout best. Sometimes the layout cannot be met
+   * exactly, then the nearest location is used.
+   * @param {ILabel} label
+   * @param {ILabelModel} model
+   * @param {IOrientedRectangle} labelLayout
+   * @return {RotatableNodeLabelModelDecoratorParameter|IPortLocationModelParameter}
+   */
+  findBestParameter(label, model, labelLayout) {
+    const wrapperModel = model
+    const styleWrapper = wrapperModel.getNodeStyleWrapper(label)
+    if (!wrapperModel.useNodeRotation || styleWrapper === null || styleWrapper.angle === 0) {
       return wrapperModel.createWrappingParameter(
-        this.wrappedFinder.findBestParameter(label, wrapperModel.wrapped, rectangle)
+        this.wrappedFinder.findBestParameter(label, wrapperModel.wrapped, labelLayout)
       )
     }
+
+    /** @type {INode} */
+    const node = label.owner
+    const rotatedCenter = styleWrapper.getRotatedPoint(
+      labelLayout.orientedRectangleCenter,
+      node,
+      false
+    )
+    const rotatedLayout = styleWrapper.getRotatedLayout(node)
+
+    const rectangle = new OrientedRectangle(labelLayout)
+    rectangle.angle -= rotatedLayout.getRadians()
+    rectangle.setCenter(rotatedCenter)
+
+    return wrapperModel.createWrappingParameter(
+      this.wrappedFinder.findBestParameter(label, wrapperModel.wrapped, rectangle)
+    )
   }
+}
 
-  /**
-   * Markup extension that helps (de-)serializing a {@link RotatableNodeLabelModelDecorator).
-   */
-  const RotatableNodeLabelModelDecoratorExtension = yfiles.lang.Class(
-    'RotatableNodeLabelModelDecoratorExtension',
-    {
-      $extends: yfiles.graphml.MarkupExtension,
+/**
+ * Markup extension that helps (de-)serializing a {@link RotatableNodeLabelModelDecorator).
+ */
+export const RotatableNodeLabelModelDecoratorExtension = Class(
+  'RotatableNodeLabelModelDecoratorExtension',
+  {
+    $extends: MarkupExtension,
 
-      $wrapped: null,
-      /**
-       * @type {yfiles.graph.ILabelModel}
-       */
-      wrapped: {
-        get() {
-          return this.$wrapped
-        },
-        set(value) {
-          this.$wrapped = value
-        }
+    $wrapped: null,
+    /**
+     * @type {ILabelModel}
+     */
+    wrapped: {
+      get() {
+        return this.$wrapped
       },
-
-      $useNodeRotation: true,
-      /**
-       * @type {boolean}
-       */
-      useNodeRotation: {
-        $meta() {
-          return [
-            yfiles.graphml.GraphMLAttribute().init({ defaultValue: true }),
-            yfiles.lang.TypeAttribute(yfiles.lang.Boolean.$class)
-          ]
-        },
-        get() {
-          return this.$useNodeRotation
-        },
-        set(value) {
-          this.$useNodeRotation = value
-        }
-      },
-
-      /**
-       * @param {yfiles.graph.ILookup} serviceProvider
-       * @return {object}
-       */
-      provideValue(serviceProvider) {
-        const labelModel = new RotatableNodeLabelModelDecorator(this.wrapped)
-        labelModel.useNodeRotation = this.useNodeRotation
-        return labelModel
+      set(value) {
+        this.$wrapped = value
       }
-    }
-  )
+    },
 
-  /**
-   * Markup extension that helps (de-)serializing a {@link RotatableNodeLabelModelDecoratorParameter).
-   */
-  const RotatableNodeLabelModelDecoratorParameterExtension = yfiles.lang.Class(
-    'RotatableNodeLabelModelDecoratorParameterExtension',
-    {
-      $extends: yfiles.graphml.MarkupExtension,
-
-      $model: null,
-      /**
-       * @type {yfiles.graph.ILabelModel}
-       */
-      model: {
-        get() {
-          return this.$model
-        },
-        set(value) {
-          this.$model = value
-        }
+    $useNodeRotation: true,
+    /**
+     * @type {boolean}
+     */
+    useNodeRotation: {
+      $meta() {
+        return [GraphMLAttribute().init({ defaultValue: true }), TypeAttribute(YBoolean.$class)]
       },
-
-      $wrapped: null,
-      /**
-       * @type {yfiles.graph.ILabelModelParameter}
-       */
-      wrapped: {
-        get() {
-          return this.$wrapped
-        },
-        set(value) {
-          this.$wrapped = value
-        }
+      get() {
+        return this.$useNodeRotation
       },
-
-      /**
-       * @param {yfiles.graph.ILookup} serviceProvider
-       * @return {object}
-       */
-      provideValue(serviceProvider) {
-        const rotatableModel = this.model
-        if (rotatableModel instanceof RotatableNodeLabelModelDecorator) {
-          return rotatableModel.createWrappingParameter(this.wrapped)
-        }
-        return this.wrapped
+      set(value) {
+        this.$useNodeRotation = value
       }
-    }
-  )
+    },
 
-  return {
-    RotatableNodeLabelModelDecorator,
-    RotatableNodeLabelModelDecoratorParameter,
-    RotatableNodeLabelModelDecoratorExtension,
-    RotatableNodeLabelModelDecoratorParameterExtension
+    /**
+     * @param {ILookup} serviceProvider
+     * @return {object}
+     */
+    provideValue(serviceProvider) {
+      const labelModel = new RotatableNodeLabelModelDecorator(this.wrapped)
+      labelModel.useNodeRotation = this.useNodeRotation
+      return labelModel
+    }
   }
-})
+)
+
+/**
+ * Markup extension that helps (de-)serializing a {@link RotatableNodeLabelModelDecoratorParameter).
+ */
+export const RotatableNodeLabelModelDecoratorParameterExtension = Class(
+  'RotatableNodeLabelModelDecoratorParameterExtension',
+  {
+    $extends: MarkupExtension,
+
+    $model: null,
+    /**
+     * @type {ILabelModel}
+     */
+    model: {
+      get() {
+        return this.$model
+      },
+      set(value) {
+        this.$model = value
+      }
+    },
+
+    $wrapped: null,
+    /**
+     * @type {ILabelModelParameter}
+     */
+    wrapped: {
+      get() {
+        return this.$wrapped
+      },
+      set(value) {
+        this.$wrapped = value
+      }
+    },
+
+    /**
+     * @param {ILookup} serviceProvider
+     * @return {object}
+     */
+    provideValue(serviceProvider) {
+      const rotatableModel = this.model
+      if (rotatableModel instanceof RotatableNodeLabelModelDecorator) {
+        return rotatableModel.createWrappingParameter(this.wrapped)
+      }
+      return this.wrapped
+    }
+  }
+)

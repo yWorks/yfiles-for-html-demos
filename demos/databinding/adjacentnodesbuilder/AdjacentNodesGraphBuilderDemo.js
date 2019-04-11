@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.1.
- ** Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.2.
+ ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,372 +26,372 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-'use strict'
+import {
+  AdjacentNodesGraphBuilder,
+  FreeEdgeLabelModel,
+  GraphComponent,
+  GraphViewerInputMode,
+  HierarchicLayout,
+  HierarchicLayoutData,
+  HierarchicLayoutLayeringStrategy,
+  ICommand,
+  ILabel,
+  INode,
+  LabelPlacements,
+  LabelSideReferences,
+  LayoutGraphAdapter,
+  LayoutMode,
+  License,
+  PreferredPlacementDescriptor,
+  Size,
+  StringTemplateNodeStyle
+} from 'yfiles'
 
-/* eslint-disable no-new-func */
+import Samples from './samples.js'
+import { bindAction, bindChangeListener, bindCommand, showApp } from '../../resources/demo-app.js'
+import { initDemoStyles } from '../../resources/demo-styles.js'
+import loadJson from '../../resources/load-json.js'
 
-require.config({
-  paths: {
-    yfiles: '../../../lib/umd/yfiles/',
-    utils: '../../utils/',
-    resources: '../../resources/'
-  }
-})
+/**
+ * This demo shows building a graph from business data with class
+ * {@link AdjacentNodesGraphBuilder}.
+ * This demo provides text input elements for interactive changes of the
+ * sample data that is used to build a graph.
+ *
+ * In order to visualize the nodes, {@link TemplateNodeStyle} is
+ * used. The style's node template can also be changed interactively in
+ * order to display arbitrary data of the business data associated with the
+ * node.
+ */
+function run(licenseData) {
+  License.value = licenseData
+  // initialize GUI elements
+  graphComponent = new GraphComponent('graphComponent')
+  samplesComboBox = window.document.getElementById('samplesComboBox')
 
-require([
-  'yfiles/view-editor',
-  'resources/demo-app',
-  'resources/demo-styles',
-  './samples.js',
-  'yfiles/layout-hierarchic',
-  'yfiles/view-layout-bridge',
-  'resources/license'
-], (/** @type {yfiles_namespace} */ /** typeof yfiles */ yfiles, app, DemoStyles, Samples) => {
-  /**
-   * This demo shows building a graph from business data with class
-   * {@link yfiles.binding.AdjacentNodesGraphBuilder}.
-   * This demo provides text input elements for interactive changes of the
-   * sample data that is used to build a graph.
-   *
-   * In order to visualize the nodes, {@link yfiles.styles.TemplateNodeStyle} is
-   * used. The style's node template can also be changed interactively in
-   * order to display arbitrary data of the business data associated with the
-   * node.
-   */
-  function run() {
-    // initialize GUI elements
-    graphComponent = new yfiles.view.GraphComponent('graphComponent')
-    samplesComboBox = window.document.getElementById('samplesComboBox')
+  // configure the defaults for nodes and edges on the graph to be used by the graph builder
+  const graph = graphComponent.graph
 
-    // configure the defaults for nodes and edges on the graph to be used by the graph builder
-    const graph = graphComponent.graph
+  // Assign the default demo styles.
+  // In this demo, these are used for groups and edges, normal nodes get an individual template style
+  initDemoStyles(graph)
 
-    // Assign the default demo styles.
-    // In this demo, these are used for groups and edges, normal nodes get an individual template style
-    DemoStyles.initDemoStyles(graph)
+  graph.nodeDefaults.size = new Size(150, 60)
+  graph.edgeDefaults.labels.layoutParameter = new FreeEdgeLabelModel().createDefaultParameter()
 
-    graph.nodeDefaults.size = new yfiles.geometry.Size(150, 60)
-    graph.edgeDefaults.labels.layoutParameter = new yfiles.graph.FreeEdgeLabelModel().createDefaultParameter()
+  // configure the input mode
+  graphComponent.inputMode = new GraphViewerInputMode()
 
-    // configure the input mode
-    graphComponent.inputMode = new yfiles.input.GraphViewerInputMode()
+  // create the GraphBuilder
+  graphBuilder = new AdjacentNodesGraphBuilder(graph)
+  graphComponent.graph = graphBuilder.graph
 
-    // create the GraphBuilder
-    graphBuilder = new yfiles.binding.AdjacentNodesGraphBuilder(graph)
-    graphComponent.graph = graphBuilder.graph
+  // configure label placement
+  const preferredPlacementDescriptor = new PreferredPlacementDescriptor({
+    sideOfEdge: LabelPlacements.RIGHT_OF_EDGE,
+    sideReference: LabelSideReferences.ABSOLUTE_WITH_RIGHT_IN_NORTH,
+    distanceToEdge: 5
+  })
+  preferredPlacementDescriptor.freeze()
+  graph.mapperRegistry.createConstantMapper(
+    ILabel.$class,
+    PreferredPlacementDescriptor.$class,
+    LayoutGraphAdapter.EDGE_LABEL_LAYOUT_PREFERRED_PLACEMENT_DESCRIPTOR_DP_KEY,
+    preferredPlacementDescriptor
+  )
 
-    // configure label placement
-    const preferredPlacementDescriptor = new yfiles.layout.PreferredPlacementDescriptor({
-      sideOfEdge: yfiles.layout.LabelPlacements.RIGHT_OF_EDGE,
-      sideReference: yfiles.layout.LabelSideReferences.ABSOLUTE_WITH_RIGHT_IN_NORTH,
-      distanceToEdge: 5
-    })
-    preferredPlacementDescriptor.freeze()
-    graph.mapperRegistry.createConstantMapper(
-      yfiles.graph.ILabel.$class,
-      yfiles.layout.PreferredPlacementDescriptor.$class,
-      yfiles.layout.LayoutGraphAdapter.EDGE_LABEL_LAYOUT_PREFERRED_PLACEMENT_DESCRIPTOR_DP_KEY,
-      preferredPlacementDescriptor
-    )
+  // create a layout
+  layout = createLayout()
 
-    // create a layout
-    layout = createLayout()
+  // load the initial data
+  loadSampleData()
 
-    // load the initial data
-    loadSampleData()
+  // register toolbar and other GUI element commands
+  registerCommands()
 
-    // register toolbar and other GUI element commands
-    registerCommands()
+  // initialize the demo
+  showApp(graphComponent)
+}
 
-    // initialize the demo
-    app.show(graphComponent)
-  }
+/**
+ * The graph builder.
+ * @type {AdjacentNodesGraphBuilder}
+ */
+let graphBuilder = null
 
-  /**
-   * The graph builder.
-   * @type {yfiles.binding.AdjacentNodesGraphBuilder}
-   */
-  let graphBuilder = null
+/**
+ * A flag to prevent re-entrant layouts.
+ * @type {boolean}
+ */
+let layouting = false
 
-  /**
-   * A flag to prevent re-entrant layouts.
-   * @type {boolean}
-   */
-  let layouting = false
+/**
+ * The hierarchic layout.
+ * @type {HierarchicLayout}
+ */
+let layout = null
 
-  /**
-   * The hierarchic layout.
-   * @type {yfiles.hierarchic.HierarchicLayout}
-   */
-  let layout = null
+/**
+ * A list that collects all existing nodes to consider them in the layout
+ * @type {List.<INode>}
+ */
+let existingNodes = null
 
-  /**
-   * A list that collects all existing nodes to consider them in the layout
-   * @type {yfiles.collections.List.<yfiles.graph.INode>}
-   */
-  let existingNodes = null
+/**
+ * The graph component.
+ * @type {GraphComponent}
+ */
+let graphComponent = null
 
-  /**
-   * The graph component.
-   * @type {yfiles.view.GraphComponent}
-   */
-  let graphComponent = null
+/**
+ * The combo-box to switch through the samples.
+ * @type {Object}
+ */
+let samplesComboBox = null
 
-  /**
-   * The combo-box to switch through the samples.
-   * @type {Object}
-   */
-  let samplesComboBox = null
+/**
+ * Registers the JavaScript commands for the GUI elements, typically the
+ * tool bar buttons, during the creation of this application.
+ */
+function registerCommands() {
+  bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent, null)
+  bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent, null)
+  bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
+  bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent, null)
 
-  /**
-   * Registers the JavaScript commands for the GUI elements, typically the
-   * tool bar buttons, during the creation of this application.
-   */
-  function registerCommands() {
-    const iCommand = yfiles.input.ICommand
-    app.bindCommand("button[data-command='ZoomIn']", iCommand.INCREASE_ZOOM, graphComponent, null)
-    app.bindCommand("button[data-command='ZoomOut']", iCommand.DECREASE_ZOOM, graphComponent, null)
-    app.bindCommand("button[data-command='ZoomOriginal']", iCommand.ZOOM, graphComponent, 1.0)
-    app.bindCommand(
-      "button[data-command='FitContent']",
-      iCommand.FIT_GRAPH_BOUNDS,
-      graphComponent,
-      null
-    )
-
-    app.bindAction("button[data-command='BuildGraph']", () => {
+  bindAction("button[data-command='BuildGraph']", () => {
+    buildGraphFromData(false)
+  })
+  bindAction("button[data-command='UpdateGraph']", () => {
+    buildGraphFromData(true)
+  })
+  bindChangeListener("select[data-command='SetSampleData']", () => {
+    const i = samplesComboBox.selectedIndex
+    if (Samples && Samples[i]) {
+      updateFormElements(Samples[i])
       buildGraphFromData(false)
-    })
-    app.bindAction("button[data-command='UpdateGraph']", () => {
-      buildGraphFromData(true)
-    })
-    app.bindChangeListener("select[data-command='SetSampleData']", () => {
-      const i = samplesComboBox.selectedIndex
-      if (Samples && Samples[i]) {
-        updateFormElements(Samples[i])
-        buildGraphFromData(false)
-      }
-    })
+    }
+  })
+}
+
+/**
+ * Builds the graph from data.
+ * @param {Boolean} update <code>true</code> when the following layout should be incremental, <code>false</code>
+ *   otherwise
+ */
+function buildGraphFromData(update) {
+  if (layouting) {
+    return
+  }
+  bindingErrorCaught = false
+  updateNodeTemplate(update)
+  try {
+    const nodesSourceValue = document.getElementById('nodesSourceTextArea').value.trim()
+    graphBuilder.nodesSource = nodesSourceValue
+      ? new Function(`return ${nodesSourceValue}`)()
+      : null
+  } catch (e) {
+    alert(`Evaluating the nodes source failed: ${e}`)
+    return
   }
 
-  /**
-   * Builds the graph from data.
-   * @param {Boolean} update <code>true</code> when the following layout should be incremental, <code>false</code>
-   *   otherwise
-   */
-  function buildGraphFromData(update) {
-    if (layouting) {
-      return
-    }
-    bindingErrorCaught = false
-    updateNodeTemplate(update)
+  // assign the bindings
+  graphBuilder.predecessorsBinding = getBindingFromInputElement('predecessorsBindingTextField')
+  graphBuilder.successorsBinding = getBindingFromInputElement('successorsBindingTextField')
+  graphBuilder.nodeIdBinding = getBindingFromInputElement('nodeIdBindingTextField')
+  if (update) {
+    // preserve the layout of already existing nodes
+    layout.layoutMode = LayoutMode.INCREMENTAL
+    // remember existing nodes
+    existingNodes = graphComponent.graph.nodes.toList()
+
+    // update the graph with the new nodes source data
     try {
-      const nodesSourceValue = document.getElementById('nodesSourceTextArea').value.trim()
-      graphBuilder.nodesSource = nodesSourceValue
-        ? new Function(`return ${nodesSourceValue}`)()
-        : null
+      graphBuilder.updateGraph()
     } catch (e) {
-      alert(`Evaluating the nodes source failed: ${e}`)
-      return
+      alert(`${e.message}`)
     }
-
-    // assign the bindings
-    graphBuilder.predecessorsBinding = getBindingFromInputElement('predecessorsBindingTextField')
-    graphBuilder.successorsBinding = getBindingFromInputElement('successorsBindingTextField')
-    graphBuilder.nodeIdBinding = getBindingFromInputElement('nodeIdBindingTextField')
-    if (update) {
-      // preserve the layout of already existing nodes
-      layout.layoutMode = yfiles.hierarchic.LayoutMode.INCREMENTAL
-      // remember existing nodes
-      existingNodes = graphComponent.graph.nodes.toList()
-
-      // update the graph with the new nodes source data
-      try {
-        graphBuilder.updateGraph()
-      } catch (e) {
-        alert(`${e.message}`)
-      }
-    } else {
-      layout.layoutMode = yfiles.hierarchic.LayoutMode.FROM_SCRATCH
-      try {
-        graphBuilder.buildGraph()
-      } catch (e) {
-        alert(`${e.message}`)
-      }
-      graphComponent.fitGraphBounds()
-    }
-
-    applyLayout()
-  }
-
-  /**
-   * Reads the node template XML as specified in the input element
-   * and creates a new style instance using this template.
-   * The style is set as the default and existing nodes are updated if
-   * <code>updateExistingNodes</code> is true.
-   * @param {boolean} updateExistingNodes
-   */
-  function updateNodeTemplate(updateExistingNodes) {
-    const nodeTemplateTextArea = window.document.getElementById('nodeTemplateTextArea')
-    const templateString = nodeTemplateTextArea.value
-
-    // create a new style instance
-    let nodeStyle
+  } else {
+    layout.layoutMode = LayoutMode.FROM_SCRATCH
     try {
-      nodeStyle = new yfiles.styles.StringTemplateNodeStyle(templateString)
-    } catch (ignored) {
-      alert('Parsing of the node template failed. Is it valid XML?')
-      return
+      graphBuilder.buildGraph()
+    } catch (e) {
+      alert(`${e.message}`)
     }
-
-    // set the new style as default
-    graphComponent.graph.nodeDefaults.style = nodeStyle
-
-    if (updateExistingNodes) {
-      // update the existing regular nodes
-      const graph = graphComponent.graph
-      graph.nodes.forEach(node => {
-        if (!graph.isGroupNode(node)) {
-          graph.setStyle(node, nodeStyle)
-        }
-      })
-    }
+    graphComponent.fitGraphBounds()
   }
 
-  /**
-   * flag to prevent error messages from being repeatedly displayed for each graph item
-   * @type {boolean}
-   */
-  let bindingErrorCaught = false
+  applyLayout()
+}
 
-  /**
-   * Returns a binding for the given string.
-   * If the parameter is a function definition, a function object is
-   * returned. Otherwise, a binding is created using the parameter as the
-   * property path.
-   * @param {string} bindingString
-   * @return {Object} The source or target binding
-   */
-  function getBinding(bindingString) {
-    if (bindingString.indexOf('function(', 0) === 0 || bindingString.indexOf('=>') >= 0) {
-      bindingString = `(${bindingString})`
-    }
-    if (bindingString.indexOf('(function(', 0) === 0 || bindingString.indexOf('=>') >= 0) {
-      try {
-        // eval the string to get the function object
-        const func = new Function(`return ${bindingString}`)()
-        // wrap the binding function with a function that catches and reports errors
-        // that occur in the binding functions
-        return edge => {
-          try {
-            return func.apply(this, [edge])
-          } catch (e) {
-            if (!bindingErrorCaught) {
-              alert(`Evaluating the binding function ${bindingString} failed: ${e}`)
-              bindingErrorCaught = true
-            }
-            return null
-          }
-        }
-      } catch (exception) {
-        return bindingString.length > 0 ? bindingString : null
+/**
+ * Reads the node template XML as specified in the input element
+ * and creates a new style instance using this template.
+ * The style is set as the default and existing nodes are updated if
+ * <code>updateExistingNodes</code> is true.
+ * @param {boolean} updateExistingNodes
+ */
+function updateNodeTemplate(updateExistingNodes) {
+  const nodeTemplateTextArea = window.document.getElementById('nodeTemplateTextArea')
+  const templateString = nodeTemplateTextArea.value
+
+  // create a new style instance
+  let nodeStyle
+  try {
+    nodeStyle = new StringTemplateNodeStyle(templateString)
+  } catch (ignored) {
+    alert('Parsing of the node template failed. Is it valid XML?')
+    return
+  }
+
+  // set the new style as default
+  graphComponent.graph.nodeDefaults.style = nodeStyle
+
+  if (updateExistingNodes) {
+    // update the existing regular nodes
+    const graph = graphComponent.graph
+    graph.nodes.forEach(node => {
+      if (!graph.isGroupNode(node)) {
+        graph.setStyle(node, nodeStyle)
       }
+    })
+  }
+}
+
+/**
+ * flag to prevent error messages from being repeatedly displayed for each graph item
+ * @type {boolean}
+ */
+let bindingErrorCaught = false
+
+/**
+ * Returns a binding for the given string.
+ * If the parameter is a function definition, a function object is
+ * returned. Otherwise, a binding is created using the parameter as the
+ * property path.
+ * @param {string} bindingString
+ * @return {Object} The source or target binding
+ */
+function getBinding(bindingString) {
+  if (bindingString.indexOf('function(', 0) === 0 || bindingString.indexOf('=>') >= 0) {
+    bindingString = `(${bindingString})`
+  }
+  if (bindingString.indexOf('(function(', 0) === 0 || bindingString.indexOf('=>') >= 0) {
+    try {
+      // eval the string to get the function object
+      const func = new Function(`return ${bindingString}`)()
+      // wrap the binding function with a function that catches and reports errors
+      // that occur in the binding functions
+      return edge => {
+        try {
+          return func.apply(this, [edge])
+        } catch (e) {
+          if (!bindingErrorCaught) {
+            alert(`Evaluating the binding function ${bindingString} failed: ${e}`)
+            bindingErrorCaught = true
+          }
+          return null
+        }
+      }
+    } catch (exception) {
+      return bindingString.length > 0 ? bindingString : null
     }
-    return bindingString.length > 0 ? bindingString : null
+  }
+  return bindingString.length > 0 ? bindingString : null
+}
+
+/**
+ * Returns the binding for the given element.
+ * @param {string} elementId
+ * @return {Object}
+ */
+function getBindingFromInputElement(elementId) {
+  return getBinding(document.getElementById(elementId).value)
+}
+
+/**
+ * Applies a layout to the graph considering fixed elements.
+ */
+function applyLayout() {
+  if (layouting) {
+    return
   }
 
-  /**
-   * Returns the binding for the given element.
-   * @param {string} elementId
-   * @return {Object}
-   */
-  function getBindingFromInputElement(elementId) {
-    return getBinding(document.getElementById(elementId).value)
-  }
-
-  /**
-   * Applies a layout to the graph considering fixed elements.
-   */
-  function applyLayout() {
-    if (layouting) {
-      return
-    }
-
-    const hintsFactory = layout.createIncrementalHintsFactory()
-    const layoutData = new yfiles.hierarchic.HierarchicLayoutData()
-    layoutData.incrementalHints.delegate = item => {
-      if (yfiles.graph.INode.isInstance(item) && !existingNodes.includes(item)) {
+  const layoutData = new HierarchicLayoutData({
+    incrementalHints: (item, hintsFactory) => {
+      if (INode.isInstance(item) && !existingNodes.includes(item)) {
         return hintsFactory.createLayerIncrementallyHint(item)
       }
       return null
     }
+  })
 
-    layouting = true
-    graphComponent
-      .morphLayout(layout, '1s', layoutData)
-      .then(() => {
-        layouting = false
-        return null
-      })
-      .catch(error => {
-        layouting = false
-        if (typeof window.reportError === 'function') {
-          window.reportError(error)
-        }
-      })
+  layouting = true
+  graphComponent
+    .morphLayout(layout, '1s', layoutData)
+    .then(() => {
+      layouting = false
+      return null
+    })
+    .catch(error => {
+      layouting = false
+      if (typeof window.reportError === 'function') {
+        window.reportError(error)
+      } else {
+        throw error
+      }
+    })
+}
+
+/**
+ * Creates and configures a hierarchic layout.
+ * @return {HierarchicLayout}
+ */
+function createLayout() {
+  const hierarchicLayout = new HierarchicLayout()
+  hierarchicLayout.orthogonalRouting = true
+  hierarchicLayout.integratedEdgeLabeling = true
+  hierarchicLayout.nodePlacer.barycenterMode = true
+  hierarchicLayout.fromScratchLayeringStrategy =
+    HierarchicLayoutLayeringStrategy.HIERARCHICAL_TOPMOST
+  return hierarchicLayout
+}
+
+/**
+ * Retrieves the sample data from the window object and initializes the
+ * samples combo-box.
+ */
+function loadSampleData() {
+  for (let i = 0; i < Samples.length; i++) {
+    const option = window.document.createElement('option')
+    option.textContent = Samples[i].name
+    option.value = Samples[i]
+    samplesComboBox.appendChild(option)
   }
+  updateFormElements(Samples[0])
+  buildGraphFromData(false)
+}
 
-  /**
-   * Creates and configures a hierarchic layout.
-   * @return {yfiles.hierarchic.HierarchicLayout}
-   */
-  function createLayout() {
-    const hierarchicLayout = new yfiles.hierarchic.HierarchicLayout()
-    hierarchicLayout.orthogonalRouting = true
-    hierarchicLayout.integratedEdgeLabeling = true
-    hierarchicLayout.nodePlacer.barycenterMode = true
-    hierarchicLayout.fromScratchLayeringStrategy =
-      yfiles.hierarchic.LayeringStrategy.HIERARCHICAL_TOPMOST
-    return hierarchicLayout
+/**
+ * Updates the HTML elements of the configuration form with the data of the
+ * given sample.
+ * @param {Object} sample
+ */
+function updateFormElements(sample) {
+  window.document.getElementById('nodesSourceTextArea').value = sample.nodesSource
+  window.document.getElementById('predecessorsBindingTextField').value = sample.predecessorsBinding
+  window.document.getElementById('successorsBindingTextField').value = sample.successorsBinding
+  window.document.getElementById('nodeIdBindingTextField').value = sample.nodeIdBinding
+  window.document.getElementById('nodeTemplateTextArea').value = sample.nodeTemplate
+  const updateGraphButton = window.document.getElementById('updateGraphButton')
+  if (sample.updateEnabled) {
+    updateGraphButton.removeAttribute('disabled')
+    updateGraphButton.removeAttribute('class')
+  } else {
+    updateGraphButton.setAttribute('class', 'demo-disabled')
+    updateGraphButton.setAttribute('disabled', 'true')
   }
+}
 
-  /**
-   * Retrieves the sample data from the window object and initializes the
-   * samples combo-box.
-   */
-  function loadSampleData() {
-    for (let i = 0; i < Samples.length; i++) {
-      const option = window.document.createElement('option')
-      option.textContent = Samples[i].name
-      option.value = Samples[i]
-      samplesComboBox.appendChild(option)
-    }
-    updateFormElements(Samples[0])
-    buildGraphFromData(false)
-  }
-
-  /**
-   * Updates the HTML elements of the configuration form with the data of the
-   * given sample.
-   * @param {Object} sample
-   */
-  function updateFormElements(sample) {
-    window.document.getElementById('nodesSourceTextArea').value = sample.nodesSource
-    window.document.getElementById('predecessorsBindingTextField').value =
-      sample.predecessorsBinding
-    window.document.getElementById('successorsBindingTextField').value = sample.successorsBinding
-    window.document.getElementById('nodeIdBindingTextField').value = sample.nodeIdBinding
-    window.document.getElementById('nodeTemplateTextArea').value = sample.nodeTemplate
-    const updateGraphButton = window.document.getElementById('updateGraphButton')
-    if (sample.updateEnabled) {
-      updateGraphButton.removeAttribute('disabled')
-      updateGraphButton.removeAttribute('class')
-    } else {
-      updateGraphButton.setAttribute('class', 'demo-disabled')
-      updateGraphButton.setAttribute('disabled', 'true')
-    }
-  }
-
-  // run the demo
-  run()
-})
+// run the demo
+loadJson().then(run)

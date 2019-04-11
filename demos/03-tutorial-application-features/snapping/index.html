@@ -7,8 +7,8 @@
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.1.
-     // Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML 2.2.
+     // Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -36,11 +36,12 @@
 
   <title>Snapping - Application Features Tutorial [yFiles for HTML]</title>
 
-  <link rel="stylesheet" href="../../../lib/yfiles.css">
+  <link rel="stylesheet" href="../../node_modules/yfiles/yfiles.css">
   <link rel="stylesheet" href="../../resources/style/demo.css">
 
   <!-- enable debugging -->
   <script src="../../../ide-support/yfiles-typeinfo.js"></script>
+  <script src="../../resources/filesystem-warning.js"></script>
 </head>
 <body class="demo-has-left">
 
@@ -48,16 +49,14 @@
   <h1 class="demo-sidebar-header">Description</h1>
   <div class="demo-sidebar-content">
     <h2>Snapping</h2>
-    <p>This demo shows how to enable <a href="https://docs.yworks.com/yfileshtml/#/dguide/interaction-snapping" target="_blank">snapping</a>
-      (guide lines) for graph elements. This is provided through class
-      <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.input.GraphSnapContext" target="_blank">yfiles.input.GraphSnapContext</a>.
+    <p>This demo shows how to enable <a href="https://docs.yworks.com/yfileshtml/#/dguide/interaction-snapping" target="_blank">snapping</a> (guide lines) for graph
+      elements. This is provided through class <a href="https://docs.yworks.com/yfileshtml/#/api/GraphSnapContext" target="_blank">GraphSnapContext</a>.
     </p>
     <p>Snapping helps you to arrange graph items interactively without running an automatic layout by providing useful
       lines and position hints that elements snap to.</p>
     <p>
       In addition to this, labels with certain label models can snap to particular positions relative to their owner,
-      for example to the corners of a node or along the edge path. This can be enabled with class
-      <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.input.LabelSnapContext" target="_blank">yfiles.input.LabelSnapContext</a>.
+      for example to the corners of a node or along the edge path. This can be enabled with class <a href="https://docs.yworks.com/yfileshtml/#/api/LabelSnapContext" target="_blank">LabelSnapContext</a>.
     </p>
 
     <p>See the sources for details.</p>
@@ -69,7 +68,7 @@
     <button data-command="New" title="New" class="demo-icon-yIconNew"></button>
     <span class="demo-separator"></span>
     <button data-command="ZoomOriginal" title="Zoom to original size"
-        class="demo-icon-yIconZoomOriginal"></button>
+      class="demo-icon-yIconZoomOriginal"></button>
     <button data-command="FitContent" title="Fit Content" class="demo-icon-yIconZoomFit"></button>
     <span class="demo-separator"></span>
     <button data-command="Cut" title="Cut" class="demo-icon-yIconCut"></button>
@@ -86,7 +85,6 @@
   <div id="graphComponent"></div>
 </div>
 
-<script src="../../resources/require.js"></script>
-<script src="SampleApplication.js"></script>
+<script type="module" crossorigin="anonymous" src="SampleApplication.js"></script>
 </body>
 </html>

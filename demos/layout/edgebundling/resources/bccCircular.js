@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.1.
- ** Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.2.
+ ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,10 +26,8 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-'use strict'
-
-define([], () => {
-  const nodes = [
+export default {
+  nodes: [
     {
       id: 0,
       layout: {
@@ -1416,8 +1414,9 @@ define([], () => {
         h: 30
       }
     }
-  ]
-  const edges = [
+  ],
+
+  edges: [
     {
       source: 1,
       target: 70
@@ -2371,8 +2370,4 @@ define([], () => {
       target: 108
     }
   ]
-  return {
-    nodes,
-    edges
-  }
-})
+}

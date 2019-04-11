@@ -7,8 +7,8 @@
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.1.
-     // Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML 2.2.
+     // Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -36,11 +36,12 @@
 
   <title>Split Edges Demo [yFiles for HTML]</title>
 
-  <link rel="stylesheet" href="../../../lib/yfiles.css">
+  <link rel="stylesheet" href="../../node_modules/yfiles/yfiles.css">
   <link rel="stylesheet" href="../../resources/style/demo.css">
 
   <!-- enable debugging -->
   <script src="../../../ide-support/yfiles-typeinfo.js"></script>
+  <script src="../../resources/filesystem-warning.js"></script>
 
   <style>
     .demo-context-menu *:focus {
@@ -65,15 +66,15 @@
   <h1 class="demo-sidebar-header">Description</h1>
   <div class="demo-sidebar-content">
     <p>
-      This demo shows how to use split ids to align edges outside with edges inside a group nodes in <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.layout.RecursiveGroupLayout" target="_blank">yfiles.layout.RecursiveGroupLayout</a>.
-      In <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.layout.RecursiveGroupLayout" target="_blank">yfiles.layout.RecursiveGroupLayout</a> the routing for inter-edges is sometimes not satisfactory.
+      This demo shows how to use split ids to align edges outside with edges inside a group nodes in <a href="https://docs.yworks.com/yfileshtml/#/api/RecursiveGroupLayout" target="_blank">RecursiveGroupLayout</a>.
+      In <a href="https://docs.yworks.com/yfileshtml/#/api/RecursiveGroupLayout" target="_blank">RecursiveGroupLayout</a> the routing for inter-edges is sometimes not satisfactory.
       Inter-edges are edges that connect nodes outside of a group with nodes inside of this group. Since
       RecursiveGroupLayout routes these edges after the rest of the graph is arranged, they sometimes don't fit into the
       overall layout style.
     </p>
     <p>
-      In combination with <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.hierarchic.HierarchicLayout" target="_blank">yfiles.hierarchic.HierarchicLayout</a>, inter-edges can be replaced with two edges that
-      are aligned at the group node. <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.hierarchic.HierarchicLayout" target="_blank">yfiles.hierarchic.HierarchicLayout</a> provides the option that an edge is
+      In combination with <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicLayout" target="_blank">HierarchicLayout</a>, inter-edges can be replaced with two edges that
+      are aligned at the group node. <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicLayout" target="_blank">HierarchicLayout</a> provides the option that an edge is
       routed directly from the border of a group nodes to a node inside of this group node instead of leaving the group node first.
     </p>
 
@@ -128,8 +129,7 @@
   <div id="graphComponent"></div>
 </div>
 
-<script src="../../resources/require.js"></script>
-<script src="SplitEdgesDemo.js"></script>
+<script type="module" crossorigin="anonymous" src="SplitEdgesDemo.js"></script>
 
 </body>
 </html>

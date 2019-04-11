@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.1.
- ** Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.2.
+ ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,266 +26,265 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-'use strict'
+import {
+  Font,
+  LabelStyleBase,
+  Point,
+  Rect,
+  Size,
+  SvgVisual,
+  TextRenderSupport,
+  TextWrapping
+} from 'yfiles'
 
-define(['yfiles/view-component'], /** @type {yfiles_namespace} */ /** typeof yfiles */ yfiles => {
-  const HORIZONTAL_INSET = 2
-  const VERTICAL_INSET = 2
+const HORIZONTAL_INSET = 2
+const VERTICAL_INSET = 2
+
+/**
+ * This class is an example for a custom style based on the {@link LabelStyleBase}.
+ * The font for the label text can be set. The label text is drawn with black letters inside a blue rounded rectangle.
+ * This implementation returns a fixed desired size without taking the actual text size into account.
+ * This is done to showcase the built-in line wrapping (trimming) feature of this style.
+ */
+export default class MySimpleLabelStyle extends LabelStyleBase {
+  /**
+   * Initializes a new instance of the {@link MySimpleLabelStyle} class using the "Arial" font.
+   */
+  constructor() {
+    super()
+    this.$font = new Font({
+      fontFamily: 'Arial',
+      fontSize: 12,
+      lineSpacing: 0.3
+    })
+
+    this.wrapping = TextWrapping.NONE
+  }
+
+  get font() {
+    return this.$font
+  }
+
+  set font(value) {
+    this.$font = value
+  }
+
+  // ////////////// New in this sample ////////////////
+  /**
+   * Gets or sets the wrapping style.
+   */
+  get wrapping() {
+    return this.$wrapping
+  }
+
+  set wrapping(value) {
+    this.$wrapping = value
+  }
+
+  // //////////////////////////////////////////////////
 
   /**
-   * This class is an example for a custom style based on the {@link yfiles.styles.LabelStyleBase}.
-   * The font for the label text can be set. The label text is drawn with black letters inside a blue rounded rectangle.
-   * This implementation returns a fixed desired size without taking the actual text size into account.
-   * This is done to showcase the built-in line wrapping (trimming) feature of this style.
-   * @extends yfiles.styles.LabelStyleBase
+   * Creates the visual for a label to be drawn.
+   * @see Overrides {@link LabelStyleBase#createVisual}
+   * @return {SvgVisual}
    */
-  class MySimpleLabelStyle extends yfiles.styles.LabelStyleBase {
-    /**
-     * Initializes a new instance of the {@link MySimpleLabelStyle} class using the "Arial" font.
-     */
-    constructor() {
-      super()
-      this.$font = new yfiles.view.Font({
-        fontFamily: 'Arial',
-        fontSize: 12,
-        lineSpacing: 0.3
-      })
+  createVisual(context, label) {
+    // This implementation creates a 'g' element and uses it for the rendering of the label.
+    const g = window.document.createElementNS('http://www.w3.org/2000/svg', 'g')
+    // Get the necessary data for rendering of the label
+    const cache = this.createRenderDataCache(context, label, this.font, this.wrapping)
+    // Render the label
+    this.render(context, g, label.layout, cache)
+    // move container to correct location
+    const transform = LabelStyleBase.createLayoutTransform(label.layout, true)
+    transform.applyTo(g)
 
-      this.wrapping = yfiles.view.TextWrapping.NONE
+    // set data item
+    g.setAttribute('data-internalId', 'MySimpleLabel')
+    g['data-item'] = label
+
+    return new SvgVisual(g)
+  }
+
+  /**
+   * Re-renders the label using the old visual for performance reasons.
+   * @see Overrides {@link LabelStyleBase#updateVisual}
+   * @return {SvgVisual}
+   */
+  updateVisual(context, oldVisual, label) {
+    const container = oldVisual.svgElement
+    // get the data with which the oldvisual was created
+    const oldCache = container['data-renderDataCache']
+    // get the data for the new visual
+    const newCache = this.createRenderDataCache(context, label, this.font, this.wrapping)
+    if (!oldCache.equals(oldCache, newCache)) {
+      // something changed - re-render the visual
+      this.render(context, container, label.layout, newCache)
     }
+    // nothing changed, return the old visual
+    // arrange because the layout might have changed
+    const transform = LabelStyleBase.createLayoutTransform(label.layout, true)
+    transform.applyTo(container)
+    return oldVisual
+  }
 
-    get font() {
-      return this.$font
-    }
-
-    set font(value) {
-      this.$font = value
-    }
-
-    // ////////////// New in this sample ////////////////
-    /**
-     * Gets or sets the wrapping style.
-     */
-    get wrapping() {
-      return this.$wrapping
-    }
-
-    set wrapping(value) {
-      this.$wrapping = value
-    }
-
-    // //////////////////////////////////////////////////
-
-    /**
-     * Creates the visual for a label to be drawn.
-     * @see Overrides {@link yfiles.styles.LabelStyleBase#createVisual}
-     * @return {yfiles.view.SvgVisual}
-     */
-    createVisual(context, label) {
-      // This implementation creates a 'g' element and uses it for the rendering of the label.
-      const g = window.document.createElementNS('http://www.w3.org/2000/svg', 'g')
-      // Get the necessary data for rendering of the label
-      const cache = this.createRenderDataCache(context, label, this.font, this.wrapping)
-      // Render the label
-      this.render(context, g, label.layout, cache)
-      // move container to correct location
-      const transform = yfiles.styles.LabelStyleBase.createLayoutTransform(label.layout, true)
-      transform.applyTo(g)
-
-      // set data item
-      g.setAttribute('data-internalId', 'MySimpleLabel')
-      g['data-item'] = label
-
-      return new yfiles.view.SvgVisual(g)
-    }
-
-    /**
-     * Re-renders the label using the old visual for performance reasons.
-     * @see Overrides {@link yfiles.styles.LabelStyleBase#updateVisual}
-     * @return {yfiles.view.SvgVisual}
-     */
-    updateVisual(context, oldVisual, label) {
-      const container = oldVisual.svgElement
-      // get the data with which the oldvisual was created
-      const oldCache = container['data-renderDataCache']
-      // get the data for the new visual
-      const newCache = this.createRenderDataCache(context, label, this.font, this.wrapping)
-      if (!oldCache.equals(oldCache, newCache)) {
-        // something changed - re-render the visual
-        this.render(context, container, label.layout, newCache)
-      }
-      // nothing changed, return the old visual
-      // arrange because the layout might have changed
-      const transform = yfiles.styles.LabelStyleBase.createLayoutTransform(label.layout, true)
-      transform.applyTo(container)
-      return oldVisual
-    }
-
-    /**
-     * Creates an object containing all necessary data to create a label visual.
-     * @return {object}
-     */
-    createRenderDataCache(context, label, font, wrapping) {
-      return {
-        text: label.text,
-        font,
-        wrapping,
-        equals: (self, other) =>
-          self.text === other.text &&
-          self.font.equals(other.font) &&
-          self.wrapping === other.wrapping
-      }
-    }
-
-    /**
-     * Creates the visual appearance of a label.
-     * @param context {yfiles.view.IRenderContext}
-     * @param container {SVGGElement}
-     * @param labelLayout {yfiles.geometry.IOrientedRectangle}
-     * @param cache {object}
-     */
-    render(context, container, labelLayout, cache) {
-      // store information with the visual on how we created it
-      container['data-renderDataCache'] = cache
-
-      // background rectangle
-      let rect
-      if (container.childElementCount > 0) {
-        rect = container.childNodes.item(0)
-      } else {
-        rect = window.document.createElementNS('http://www.w3.org/2000/svg', 'rect')
-        rect.rx.baseVal.value = 5
-        rect.ry.baseVal.value = 5
-        container.appendChild(rect)
-      }
-      rect.width.baseVal.value = labelLayout.width
-      rect.height.baseVal.value = labelLayout.height
-      rect.setAttribute('stroke', 'skyblue')
-      rect.setAttribute('stroke-width', 1)
-      rect.setAttribute('fill', 'rgb(155,226,255)')
-
-      let text
-      if (container.childElementCount > 1) {
-        text = container.childNodes.item(1)
-      } else {
-        text = window.document.createElementNS('http://www.w3.org/2000/svg', 'text')
-        text.setAttribute('fill', '#000')
-        container.appendChild(text)
-      }
-      // assign all the values of the font to the text element's attributes
-      cache.font.applyTo(text)
-
-      const textSize = new yfiles.geometry.Size(
-        labelLayout.width - HORIZONTAL_INSET * 2,
-        labelLayout.height - VERTICAL_INSET * 2
-      )
-
-      // //////////////////////////////////////////////////
-      // ////////////// New in this sample ////////////////
-      // //////////////////////////////////////////////////
-
-      // SVG does not provide out-of-the box text wrapping.
-      // The following line uses a convenience method that implements text wrapping
-      // with ellipsis by splitting the text and inserting tspan elements as children
-      // of the text element. It is not mandatory to use this method, since the same
-      // things could be done manually.
-      const textContent = yfiles.styles.TextRenderSupport.addText(
-        text,
-        cache.text,
-        cache.font,
-        labelLayout.toSize(),
-        this.wrapping
-      )
-
-      // calculate the size of the text element
-      const measuredTextSize = yfiles.styles.TextRenderSupport.measureText(textContent, cache.font)
-
-      text.setAttribute('transform', `translate(${HORIZONTAL_INSET} ${VERTICAL_INSET})`)
-      while (container.childElementCount > 2) {
-        container.removeChild(container.childNodes.item(2))
-      }
-      // add a clip-path, if necessary
-      this.clipText(
-        context,
-        text,
-        new yfiles.geometry.Rect(
-          new yfiles.geometry.Point(HORIZONTAL_INSET, VERTICAL_INSET),
-          textSize
-        ),
-        measuredTextSize,
-        container
-      )
-
-      // //////////////////////////////////////////////////
-    }
-
-    // ////////////// New in this sample ////////////////
-    /**
-     * Adds a clip-path to the container that clips the given text element at the clip bounds.
-     * The clip-path is only added if necessary, i.e. if the measured bounds are larger than the clip bounds.
-     * If a clip-path already exists, it is re-used.
-     * @param context {yfiles.view.IRenderContext}
-     * @param textElement {SVGTextElement}
-     * @param clipBounds {yfiles.geometry.Rect}
-     * @param measuredBounds {yfiles.geometry.Size}
-     * @param container {SVGGElement}
-     */
-    clipText(context, textElement, clipBounds, measuredBounds, container) {
-      let clip = null
-      // try to find an existing clip-path element
-      if (container.childNodes.length > 2) {
-        clip = container.childNodes.item(2)
-      }
-
-      // check if the measured text bounds exceed the clip bounds
-      if (measuredBounds.width > clipBounds.width || measuredBounds.height > clipBounds.height) {
-        let clipRect
-        if (clip === null) {
-          // create clip-path element
-          clip = window.document.createElementNS('http://www.w3.org/2000/svg', 'clipPath')
-          // create a unique id which can be used to reference the clip-path
-          const clipId = context.svgDefsManager.generateUniqueDefsId()
-          clip.setAttribute('id', clipId)
-          // create the rect at which the text is clipped
-          clipRect = window.document.createElementNS('http://www.w3.org/2000/svg', 'rect')
-          clip.appendChild(clipRect)
-          container.appendChild(clip)
-          // reference the clip-path on the text element
-          textElement.setAttribute('clip-path', `url(#${clipId})`)
-        } else {
-          clipRect = clip.childNodes.item(0)
-        }
-        // update the clip bounds
-        clipRect.x.baseVal.value = -clipBounds.x
-        clipRect.y.baseVal.value = -clipBounds.y
-        clipRect.width.baseVal.value = clipBounds.width
-        clipRect.height.baseVal.value = clipBounds.height
-      } else if (clip !== null) {
-        // no clip-path is needed
-        // remove the existing clip-path
-        container.removeChild(container.lastChild)
-        textElement.removeAttribute('clip-path')
-      }
-    }
-
-    // //////////////////////////////////////////////////
-
-    /**
-     * Calculates the preferred size for the given label if this style is used for the rendering.
-     * The size is calculated from the label's text.
-     * @see Overrides {@link yfiles.styles.LabelStyleBase#getPreferredSize}
-     * @return {yfiles.geometry.Size}
-     */
-    getPreferredSize(label) {
-      // //////////////////////////////////////////////////
-      // ////////////// New in this sample ////////////////
-      // //////////////////////////////////////////////////
-
-      return new yfiles.geometry.Size(50, 50)
-
-      // //////////////////////////////////////////////////
+  /**
+   * Creates an object containing all necessary data to create a label visual.
+   * @return {object}
+   */
+  createRenderDataCache(context, label, font, wrapping) {
+    return {
+      text: label.text,
+      font,
+      wrapping,
+      equals: (self, other) =>
+        self.text === other.text && self.font.equals(other.font) && self.wrapping === other.wrapping
     }
   }
 
-  return MySimpleLabelStyle
-})
+  /**
+   * Creates the visual appearance of a label.
+   * @param context {IRenderContext}
+   * @param container {SVGGElement}
+   * @param labelLayout {IOrientedRectangle}
+   * @param cache {object}
+   */
+  render(context, container, labelLayout, cache) {
+    // store information with the visual on how we created it
+    container['data-renderDataCache'] = cache
+
+    // background rectangle
+    let rect
+    if (container.childElementCount > 0) {
+      rect = container.childNodes.item(0)
+    } else {
+      rect = window.document.createElementNS('http://www.w3.org/2000/svg', 'rect')
+      rect.rx.baseVal.value = 5
+      rect.ry.baseVal.value = 5
+      container.appendChild(rect)
+    }
+    rect.width.baseVal.value = labelLayout.width
+    rect.height.baseVal.value = labelLayout.height
+    rect.setAttribute('stroke', 'skyblue')
+    rect.setAttribute('stroke-width', 1)
+    rect.setAttribute('fill', 'rgb(155,226,255)')
+
+    let text
+    if (container.childElementCount > 1) {
+      text = container.childNodes.item(1)
+    } else {
+      text = window.document.createElementNS('http://www.w3.org/2000/svg', 'text')
+      text.setAttribute('fill', '#000')
+      container.appendChild(text)
+    }
+    // assign all the values of the font to the text element's attributes
+    cache.font.applyTo(text)
+
+    const textSize = new Size(
+      labelLayout.width - HORIZONTAL_INSET * 2,
+      labelLayout.height - VERTICAL_INSET * 2
+    )
+
+    // //////////////////////////////////////////////////
+    // ////////////// New in this sample ////////////////
+    // //////////////////////////////////////////////////
+
+    // SVG does not provide out-of-the box text wrapping.
+    // The following line uses a convenience method that implements text wrapping
+    // with ellipsis by splitting the text and inserting tspan elements as children
+    // of the text element. It is not mandatory to use this method, since the same
+    // things could be done manually.
+    const textContent = TextRenderSupport.addText(
+      text,
+      cache.text,
+      cache.font,
+      textSize,
+      this.wrapping
+    )
+
+    // calculate the size of the text element
+    const measuredTextSize = TextRenderSupport.measureText(textContent, cache.font)
+
+    text.setAttribute('transform', `translate(${HORIZONTAL_INSET} ${VERTICAL_INSET})`)
+    while (container.childElementCount > 2) {
+      container.removeChild(container.childNodes.item(2))
+    }
+    // add a clip-path, if necessary
+    this.clipText(
+      context,
+      text,
+      new Rect(new Point(HORIZONTAL_INSET, VERTICAL_INSET), textSize),
+      measuredTextSize,
+      container
+    )
+
+    // //////////////////////////////////////////////////
+  }
+
+  // ////////////// New in this sample ////////////////
+  /**
+   * Adds a clip-path to the container that clips the given text element at the clip bounds.
+   * The clip-path is only added if necessary, i.e. if the measured bounds are larger than the clip bounds.
+   * If a clip-path already exists, it is re-used.
+   * @param context {IRenderContext}
+   * @param textElement {SVGTextElement}
+   * @param clipBounds {Rect}
+   * @param measuredBounds {Size}
+   * @param container {SVGGElement}
+   */
+  clipText(context, textElement, clipBounds, measuredBounds, container) {
+    let clip = null
+    // try to find an existing clip-path element
+    if (container.childNodes.length > 2) {
+      clip = container.childNodes.item(2)
+    }
+
+    // check if the measured text bounds exceed the clip bounds
+    if (measuredBounds.width > clipBounds.width || measuredBounds.height > clipBounds.height) {
+      let clipRect
+      if (clip === null) {
+        // create clip-path element
+        clip = window.document.createElementNS('http://www.w3.org/2000/svg', 'clipPath')
+        // create a unique id which can be used to reference the clip-path
+        const clipId = context.svgDefsManager.generateUniqueDefsId()
+        clip.setAttribute('id', clipId)
+        // create the rect at which the text is clipped
+        clipRect = window.document.createElementNS('http://www.w3.org/2000/svg', 'rect')
+        clip.appendChild(clipRect)
+        container.appendChild(clip)
+        // reference the clip-path on the text element
+        textElement.setAttribute('clip-path', `url(#${clipId})`)
+      } else {
+        clipRect = clip.childNodes.item(0)
+      }
+      // update the clip bounds
+      clipRect.x.baseVal.value = -clipBounds.x
+      clipRect.y.baseVal.value = -clipBounds.y
+      clipRect.width.baseVal.value = clipBounds.width
+      clipRect.height.baseVal.value = clipBounds.height
+    } else if (clip !== null) {
+      // no clip-path is needed
+      // remove the existing clip-path
+      container.removeChild(container.lastChild)
+      textElement.removeAttribute('clip-path')
+    }
+  }
+
+  // //////////////////////////////////////////////////
+
+  /**
+   * Calculates the preferred size for the given label if this style is used for the rendering.
+   * The size is calculated from the label's text.
+   * @see Overrides {@link LabelStyleBase#getPreferredSize}
+   * @return {Size}
+   */
+  getPreferredSize(label) {
+    // //////////////////////////////////////////////////
+    // ////////////// New in this sample ////////////////
+    // //////////////////////////////////////////////////
+
+    return new Size(50, 50)
+
+    // //////////////////////////////////////////////////
+  }
+}

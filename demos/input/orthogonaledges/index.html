@@ -7,8 +7,8 @@
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.1.
-     // Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML 2.2.
+     // Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -36,7 +36,7 @@
 
   <title>Orthogonal Edge Editing Demo [yFiles for HTML]</title>
 
-  <link rel="stylesheet" href="../../../lib/yfiles.css">
+  <link rel="stylesheet" href="../../node_modules/yfiles/yfiles.css">
   <link rel="stylesheet" href="../../resources/style/demo.css">
 
   <style type="text/css">
@@ -78,6 +78,7 @@
 
   <!-- enable debugging -->
   <script src="../../../ide-support/yfiles-typeinfo.js"></script>
+  <script src="../../resources/filesystem-warning.js"></script>
 </head>
 <body class="demo-has-left">
 <aside class="demo-sidebar demo-left">
@@ -86,8 +87,8 @@
 
     <p>This demo shows the customization of orthogonal edge editing.</p>
 
-    <p>Using the <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.graph.GraphDecorator" target="_blank">yfiles.graph.GraphDecorator</a>, the edge is decorated with custom implementations of
-       the <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.input.IOrthogonalEdgeHelper" target="_blank">yfiles.input.IOrthogonalEdgeHelper</a> interface.
+    <p>Using the <a href="https://docs.yworks.com/yfileshtml/#/api/GraphDecorator" target="_blank">GraphDecorator</a>, the edge is decorated with custom implementations of
+       the <a href="https://docs.yworks.com/yfileshtml/#/api/IOrthogonalEdgeHelper" target="_blank">IOrthogonalEdgeHelper</a> interface.
     </p>
 
     <h2>Things to Try</h2>
@@ -126,8 +127,7 @@
   <div id="graphComponent"></div>
 </div>
 
-<script src="../../resources/require.js"></script>
-<script src="OrthogonalEdgesDemo.js"></script>
+<script type="module" crossorigin="anonymous" src="OrthogonalEdgesDemo.js"></script>
 
 </body>
 </html>

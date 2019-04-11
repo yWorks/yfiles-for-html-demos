@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.1.
- ** Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.2.
+ ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,11 +26,8 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-'use strict'
-
-define([], () => {
-  /* @yjs:keep */
-  const groupsSource = [
+export default {
+  groupsSource: [
     {
       groupTag: 'yFiles-for-HTML-Complete/demos/layout/layoutstyles',
       label: 'layoutstyles',
@@ -754,17 +751,17 @@ define([], () => {
       color: 'rgb(0, 112, 227)'
     },
     {
-      groupTag: 'yFiles-for-HTML-Complete/demos/complete/orgchart',
-      label: 'orgchart',
+      groupTag: 'yFiles-for-HTML-Complete/demos/complete/interactiveorgchart',
+      label: 'interactiveorgchart',
       parentGroupRef: 'yFiles-for-HTML-Complete/demos/complete',
       isGroup: true,
       size: 121582,
       color: 'rgb(0, 102, 121)'
     },
     {
-      groupTag: 'yFiles-for-HTML-Complete/demos/complete/orgchart/resources',
+      groupTag: 'yFiles-for-HTML-Complete/demos/complete/interactiveorgchart/resources',
       label: 'resources',
-      parentGroupRef: 'yFiles-for-HTML-Complete/demos/complete/orgchart',
+      parentGroupRef: 'yFiles-for-HTML-Complete/demos/complete/interactiveorgchart',
       isGroup: true,
       size: 32133,
       color: 'rgb(0, 106, 196)'
@@ -1885,8 +1882,9 @@ define([], () => {
       isGroup: true,
       size: 55304312
     }
-  ]
-  const nodesSource = [
+  ],
+
+  nodesSource: [
     {
       id: 'yFiles-for-HTML-Complete/README.html',
       label: 'README.html\n(4.91kb)',
@@ -4361,58 +4359,58 @@ define([], () => {
       color: 'rgb(0, 162, 191)'
     },
     {
-      id: 'yFiles-for-HTML-Complete/demos/complete/orgchart/LevelOfDetailNodeStyle.js',
+      id: 'yFiles-for-HTML-Complete/demos/complete/interactiveorgchart/LevelOfDetailNodeStyle.js',
       label: 'LevelOfDetailNodeStyle.js\n(4.49kb)',
-      groupRef: 'yFiles-for-HTML-Complete/demos/complete/orgchart',
+      groupRef: 'yFiles-for-HTML-Complete/demos/complete/interactiveorgchart',
       size: '4494',
       color: 'rgb(0, 106, 196)'
     },
     {
-      id: 'yFiles-for-HTML-Complete/demos/complete/orgchart/OrgChartDemo.js',
+      id: 'yFiles-for-HTML-Complete/demos/complete/interactiveorgchart/OrgChartDemo.js',
       label: 'OrgChartDemo.js\n(24.88kb)',
-      groupRef: 'yFiles-for-HTML-Complete/demos/complete/orgchart',
+      groupRef: 'yFiles-for-HTML-Complete/demos/complete/interactiveorgchart',
       size: '24882',
       color: 'rgb(0, 106, 196)'
     },
     {
-      id: 'yFiles-for-HTML-Complete/demos/complete/orgchart/OrgChartPrintingSupport.js',
+      id: 'yFiles-for-HTML-Complete/demos/complete/interactiveorgchart/OrgChartPrintingSupport.js',
       label: 'OrgChartPrintingSupport.js\n(8.17kb)',
-      groupRef: 'yFiles-for-HTML-Complete/demos/complete/orgchart',
+      groupRef: 'yFiles-for-HTML-Complete/demos/complete/interactiveorgchart',
       size: '8174',
       color: 'rgb(0, 106, 196)'
     },
     {
-      id: 'yFiles-for-HTML-Complete/demos/complete/orgchart/OrgChartPropertiesView.js',
+      id: 'yFiles-for-HTML-Complete/demos/complete/interactiveorgchart/OrgChartPropertiesView.js',
       label: 'OrgChartPropertiesView.js\n(8.21kb)',
-      groupRef: 'yFiles-for-HTML-Complete/demos/complete/orgchart',
+      groupRef: 'yFiles-for-HTML-Complete/demos/complete/interactiveorgchart',
       size: '8214',
       color: 'rgb(0, 106, 196)'
     },
     {
-      id: 'yFiles-for-HTML-Complete/demos/complete/orgchart/index.html',
+      id: 'yFiles-for-HTML-Complete/demos/complete/interactiveorgchart/index.html',
       label: 'index.html\n(45.52kb)',
-      groupRef: 'yFiles-for-HTML-Complete/demos/complete/orgchart',
+      groupRef: 'yFiles-for-HTML-Complete/demos/complete/interactiveorgchart',
       size: '45520',
       color: 'rgb(0, 106, 196)'
     },
     {
-      id: 'yFiles-for-HTML-Complete/demos/complete/orgchart/printdocument.html',
+      id: 'yFiles-for-HTML-Complete/demos/complete/interactiveorgchart/printdocument.html',
       label: 'printdocument.html\n(30.30kb)',
-      groupRef: 'yFiles-for-HTML-Complete/demos/complete/orgchart',
+      groupRef: 'yFiles-for-HTML-Complete/demos/complete/interactiveorgchart',
       size: '30298',
       color: 'rgb(0, 106, 196)'
     },
     {
-      id: 'yFiles-for-HTML-Complete/demos/complete/orgchart/resources/OrgChartData.js',
+      id: 'yFiles-for-HTML-Complete/demos/complete/interactiveorgchart/resources/OrgChartData.js',
       label: 'OrgChartData.js\n(29.53kb)',
-      groupRef: 'yFiles-for-HTML-Complete/demos/complete/orgchart/resources',
+      groupRef: 'yFiles-for-HTML-Complete/demos/complete/interactiveorgchart/resources',
       size: '29532',
       color: 'rgb(0, 166, 221)'
     },
     {
-      id: 'yFiles-for-HTML-Complete/demos/complete/orgchart/resources/orgchartstyle.css',
+      id: 'yFiles-for-HTML-Complete/demos/complete/interactiveorgchart/resources/orgchartstyle.css',
       label: 'orgchartstyle.css\n(2.60kb)',
-      groupRef: 'yFiles-for-HTML-Complete/demos/complete/orgchart/resources',
+      groupRef: 'yFiles-for-HTML-Complete/demos/complete/interactiveorgchart/resources',
       size: '2601',
       color: 'rgb(0, 166, 221)'
     },
@@ -6256,7 +6254,7 @@ define([], () => {
       color: 'rgb(0, 102, 110)'
     },
     {
-      id: 'yFiles-for-HTML-Complete/demos/resources/image/orgchart.png',
+      id: 'yFiles-for-HTML-Complete/demos/resources/image/interactiveorgchart.png',
       label: 'orgchart.png\n(48.20kb)',
       groupRef: 'yFiles-for-HTML-Complete/demos/resources/image',
       size: '48198',
@@ -6443,13 +6441,6 @@ define([], () => {
       groupRef: 'yFiles-for-HTML-Complete/demos/resources/image',
       size: '2920',
       color: 'rgb(0, 102, 110)'
-    },
-    {
-      id: 'yFiles-for-HTML-Complete/demos/resources/license.js',
-      label: 'license.js\n(810byte)',
-      groupRef: 'yFiles-for-HTML-Complete/demos/resources',
-      size: '810',
-      color: 'rgb(0, 170, 223)'
     },
     {
       id: 'yFiles-for-HTML-Complete/demos/resources/readme-demo-data.js',
@@ -12045,8 +12036,8 @@ define([], () => {
       color: 'rgb(0, 205, 198)'
     },
     {
-      id: 'yFiles-for-HTML-Complete/ide-support/yfiles-api.js',
-      label: 'yfiles-api.js\n(5.94mb)',
+      id: 'yFiles-for-HTML-Complete/ide-support/yfiles-api-umd-jsdoc.js',
+      label: 'yfiles-api-umd-jsdoc.js\n(5.94mb)',
       groupRef: 'yFiles-for-HTML-Complete/ide-support',
       size: '5938073',
       color: 'rgb(0, 205, 198)'
@@ -12423,9 +12414,4 @@ define([], () => {
       color: 'rgb(0, 167, 212)'
     }
   ]
-
-  return {
-    nodesSource,
-    groupsSource
-  }
-})
+}

@@ -1,15 +1,15 @@
-import { BaseClass } from 'yfiles/lang'
 import {
-  IArrow,
-  IVisualCreator,
-  IBoundsProvider,
-  Point,
+  BaseClass,
   GeneralPath,
+  IArrow,
+  IBoundsProvider,
   IEdge,
   IRenderContext,
-  SvgVisual,
-  Rect
-} from 'yfiles/view-component'
+  IVisualCreator,
+  Point,
+  Rect,
+  SvgVisual
+} from 'yfiles'
 
 export class MySimpleArrow extends BaseClass(IArrow, IVisualCreator, IBoundsProvider)
   implements IArrow, IVisualCreator, IBoundsProvider {

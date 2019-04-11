@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- ////////////////////////////////////////////////////////////////////////
+     // @license
+     // This demo file is part of yFiles for HTML 2.2.
+     // Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // 72070 Tuebingen, Germany. All rights reserved.
+     //
+     // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+     // of demo files in source code or binary form, with or without
+     // modification, is not permitted.
+     //
+     // Owners of a valid software license for a yFiles for HTML version that this
+     // demo is shipped with are allowed to use the demo source code as basis
+     // for their own yFiles for HTML powered applications. Use of such programs is
+     // governed by the rights and conditions as set out in the yFiles for HTML
+     // license agreement.
+     //
+     // THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+     // WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+     // MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+     // NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+     // SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+     // TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+     // PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+     // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+     // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+     // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+     // 
+     ////////////////////////////////////////////////////////////////////////-->
+
+<svg version="1.1" id="usericon_female4" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="75px" height="75px" viewBox="0 0 75 75" xml:space="preserve">
+  <circle fill="#E0DCBF" stroke="#DBD6B9" stroke-miterlimit="10" cx="37.5" cy="37.5" r="37"/>
+  <rect x="18.45" y="29.92" fill="#68625E" width="37.66" height="26.31"/>
+  <path fill="#EAD6BE" d="M47.17,52.55h-5.69v-5.67h-8.39v5.67h-6.52c-7.17,0-13.09,5.25-14.17,12.12c6.6,6.1,15.42,9.83,25.11,9.83
+      c9.15,0,17.51-3.33,23.97-8.82C60.84,58.32,54.68,52.55,47.17,52.55z"/>
+  <path fill="#E2CCB7" d="M47.17,52.55h-5.69v-5.67H37.5v27.64c9.15,0,17.51-3.33,23.97-8.82C60.85,58.33,54.69,52.55,47.17,52.55z"
+  />
+  <circle opacity="0.05" cx="37.28" cy="33.88" r="15.62"/>
+  <circle fill="#EAD6BE" cx="36.86" cy="32.55" r="15.62"/>
+  <path fill="#E2CCB7" d="M37.28,16.94v31.2c8.43-0.22,15.21-7.11,15.21-15.6S45.71,17.17,37.28,16.94z"/>
+  <path fill="#89827D" d="M57.01,58.69l-0.44-31.24c-1.23-9.81-9.59-16.07-19.74-16.07c-9.9,0-18.09,6.6-19.62,16.07l-0.49,31.24
+      l8.22,4.93c0,0,0-30.69,0-30.67c0,1.33,5.55-4.71,12.13-5c9.45-0.42,11.72-4.36,11.72-5.69c0-0.02,0,41.35,0,41.35L57.01,58.69z"
+  />
+  <path fill="#685F58" d="M57.01,58.69l-0.44-31.24c-0.66-5.32-3.43-9.58-7.43-12.37c-1.31,5.98-5.87,10.84-11.85,12.83v0.04
+      c9.27-0.47,11.51-4.36,11.51-5.68c0-0.02,0,41.35,0,41.35L57.01,58.69z"/>
+  <path fill="#6DB555" d="M47.17,52.55l-9.53,15.62L26.56,52.55c-7.17,0-13.1,5.26-14.17,12.14c6.6,6.1,15.42,9.84,25.11,9.84
+      c9.15,0,17.51-3.33,23.97-8.82C60.85,58.33,54.69,52.55,47.17,52.55z"/>
+  <path fill="#429B42" d="M47.17,52.55l-9.53,15.62l-0.13-0.19v6.54c9.15,0,17.51-3.33,23.97-8.82
+      C60.85,58.33,54.69,52.55,47.17,52.55z"/>
+</svg>

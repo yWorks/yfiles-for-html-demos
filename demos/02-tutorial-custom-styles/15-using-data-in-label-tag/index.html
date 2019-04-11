@@ -7,8 +7,8 @@
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.1.
-     // Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML 2.2.
+     // Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -36,11 +36,12 @@
 
   <title>Using Data in Label Tag - Custom Styles Tutorial [yFiles for HTML]</title>
 
-  <link rel="stylesheet" href="../../../lib/yfiles.css">
+  <link rel="stylesheet" href="../../node_modules/yfiles/yfiles.css">
   <link rel="stylesheet" href="../../resources/style/demo.css">
 
   <!-- enable debugging -->
   <script src="../../../ide-support/yfiles-typeinfo.js"></script>
+  <script src="../../resources/filesystem-warning.js"></script>
 
 </head>
 <body class="demo-has-left">
@@ -54,8 +55,8 @@ The sidebar for the description
       mechanism also applies to nodes, edges and ports. In this example, a dummy business object, which only defines a
       color, is stored. This color is used to set the background of the label. You can store any object you like in the
       tag in order to use its data in the style.</p>
-    <p>Note that, in contrast to <code>MySimpleNodeStyle</code>, you can change the color of each label separately without affecting
-      other labels that use the same style instance.</p>
+    <p>Note that, in contrast to <code>MySimpleNodeStyle</code>, you can change the color of each label separately
+      without affecting other labels that use the same style instance.</p>
 
     <h2>Things to Try</h2>
 
@@ -102,8 +103,7 @@ The sidebar for the description
 </div>
 
 
-<script src="../../resources/require.js"></script>
-<script src="SampleApplication.js"></script>
+<script type="module" crossorigin="anonymous" src="SampleApplication.js"></script>
 
 </body>
 </html>

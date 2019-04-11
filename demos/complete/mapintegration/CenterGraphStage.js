@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.1.
- ** Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.2.
+ ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,41 +26,36 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-'use strict'
+import { ILayoutAlgorithm, LayoutGraph, LayoutGraphUtilities, LayoutStageBase, Point } from 'yfiles'
 
-define(['yfiles/view-layout-bridge'], yfiles => {
+/**
+ * A layout stage that centers the graph around the given center point.
+ * It is applied to center the layout inside the viewport without changing the viewport of the graph component.
+ */
+export default class CenterGraphStage extends LayoutStageBase {
   /**
-   * A layout stage that centers the graph around the given center point.
-   * It is applied to center the layout inside the viewport without changing the viewport of the graph component.
+   * Creates a new instance with a center point.
+   * @param {ILayoutAlgorithm} coreLayout
+   * @param {Point} centerPoint
    */
-  class CenterGraphStage extends yfiles.layout.LayoutStageBase {
-    /**
-     * Creates a new instance with a center point.
-     * @param {yfiles.layout.ILayoutAlgorithm} coreLayout
-     * @param {yfiles.geometry.Point} centerPoint
-     */
-    constructor(coreLayout, centerPoint) {
-      super(coreLayout)
-      this.centerPoint = centerPoint
-    }
-
-    /**
-     * Centers the graph after calculating the core layout.
-     * @param {yfiles.layout.LayoutGraph} graph
-     */
-    applyLayout(graph) {
-      this.applyLayoutCore(graph)
-
-      const layoutGraphUtilities = yfiles.layout.LayoutGraphUtilities
-      const bounds = layoutGraphUtilities.getBoundingBoxOfNodes(graph, graph.getNodeCursor())
-      layoutGraphUtilities.moveSubgraph(
-        graph,
-        graph.getNodeCursor(),
-        this.centerPoint.x - bounds.centerX,
-        this.centerPoint.y - bounds.centerY
-      )
-    }
+  constructor(coreLayout, centerPoint) {
+    super(coreLayout)
+    this.centerPoint = centerPoint
   }
 
-  return CenterGraphStage
-})
+  /**
+   * Centers the graph after calculating the core layout.
+   * @param {LayoutGraph} graph
+   */
+  applyLayout(graph) {
+    this.applyLayoutCore(graph)
+
+    const bounds = LayoutGraphUtilities.getBoundingBoxOfNodes(graph, graph.getNodeCursor())
+    LayoutGraphUtilities.moveSubgraph(
+      graph,
+      graph.getNodeCursor(),
+      this.centerPoint.x - bounds.centerX,
+      this.centerPoint.y - bounds.centerY
+    )
+  }
+}

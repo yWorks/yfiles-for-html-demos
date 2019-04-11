@@ -1,5 +1,5 @@
 import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core'
-import { GraphComponent, GraphViewerInputMode } from 'yfiles/view-component'
+import { GraphComponent, GraphViewerInputMode } from 'yfiles'
 
 @Component({
   selector: 'graph-component',

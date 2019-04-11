@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.1.
- ** Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.2.
+ ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,36 +26,32 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-'use strict'
+import { BaseClass, IRenderContext, IVisualCreator, SvgVisual, Visual } from 'yfiles'
 
-define(['yfiles/view-component'], /** @type {yfiles_namespace} */ /** typeof yfiles */ yfiles => {
+/**
+ * This class renders the map used as background in this demo.
+ */
+export default class MapVisualCreator extends BaseClass(IVisualCreator) {
   /**
-   * This class renders the map used as background in this demo.
+   * Creates the visual for the background map.
+   * @param {IRenderContext} context The context that describes where the visual will be used
+   * return {Visual} The visual for the background map
    */
-  class MapVisualCreator extends yfiles.lang.Class(yfiles.view.IVisualCreator) {
-    /**
-     * Creates the visual for the background map.
-     * @param {yfiles.view.IRenderContext} context The context that describes where the visual will be used
-     * return {yfiles.view.Visual} The visual for the background map
-     */
-    createVisual(context) {
-      const image = window.document.createElementNS('http://www.w3.org/2000/svg', 'image')
-      image.setAttribute('width', '640')
-      image.setAttribute('height', '480')
-      image.setAttributeNS('http://www.w3.org/1999/xlink', 'href', 'resources/usamap.svg')
-      return new yfiles.view.SvgVisual(image)
-    }
-
-    /**
-     * Updates the visual for the background map.
-     * @param {yfiles.view.IRenderContext} context The context that describes where the visual will be used
-     * @param {yfiles.view.Visual} oldVisual The old visual
-     * return {yfiles.view.Visual} The visual for the background map
-     */
-    updateVisual(context, oldVisual) {
-      return oldVisual
-    }
+  createVisual(context) {
+    const image = window.document.createElementNS('http://www.w3.org/2000/svg', 'image')
+    image.setAttribute('width', '640')
+    image.setAttribute('height', '480')
+    image.setAttributeNS('http://www.w3.org/1999/xlink', 'href', 'resources/usamap.svg')
+    return new SvgVisual(image)
   }
 
-  return MapVisualCreator
-})
+  /**
+   * Updates the visual for the background map.
+   * @param {IRenderContext} context The context that describes where the visual will be used
+   * @param {Visual} oldVisual The old visual
+   * return {Visual} The visual for the background map
+   */
+  updateVisual(context, oldVisual) {
+    return oldVisual
+  }
+}

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.1.
- ** Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.2.
+ ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,110 +26,110 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-'use strict'
+import {
+  BaseClass,
+  ConstrainedHandle,
+  Cursor,
+  HandlePositions,
+  HandleTypes,
+  IHandle,
+  IInputModeContext,
+  INode,
+  IReshapeHandleProvider,
+  Point
+} from 'yfiles'
 
-define(['yfiles/view-component'], /** @type {yfiles_namespace} */ /** typeof yfiles */ yfiles => {
+/**
+ * Provides the special node resize handles at the east and west side of a node.
+ */
+export class NodeReshapeHandleProvider extends BaseClass(IReshapeHandleProvider) {
   /**
-   * Provides the special node resize handles at the east and west side of a node.
-   * @class NodeReshapeHandleProvider
-   * @implements {yfiles.input.IReshapeHandleProvider}
+   * Creates a new instance.
+   * @param {INode} node
+   * @param {IReshapeHandleProvider} wrapped
    */
-  class NodeReshapeHandleProvider extends yfiles.lang.Class(yfiles.input.IReshapeHandleProvider) {
-    /**
-     * Creates a new instance.
-     * @param {yfiles.graph.INode} node
-     * @param {yfiles.input.IReshapeHandleProvider} wrapped
-     */
-    constructor(node, wrapped) {
-      super()
-      this.node = node
-      this.wrapped = wrapped
-    }
-
-    /**
-     * @param {yfiles.input.IInputModeContext} context - The context for which the handles are queried.
-     * @returns {yfiles.input.HandlePositions}
-     */
-    getAvailableHandles(context) {
-      return yfiles.input.HandlePositions.EAST | yfiles.input.HandlePositions.WEST
-    }
-
-    /**
-     * @param {yfiles.input.IInputModeContext} context - The context for which the handles are queried.
-     * @param {yfiles.input.HandlePositions} position - The single position a handle implementation should be returned
-     *   for.
-     * @returns {yfiles.input.IHandle}
-     */
-    getHandle(context, position) {
-      return new NodeResizeHandle(this.node, this.wrapped.getHandle(context, position), position)
-    }
+  constructor(node, wrapped) {
+    super()
+    this.node = node
+    this.wrapped = wrapped
   }
 
   /**
-   * A special, invisible node resize handle that allows to change the width of a node.
-   * @class NodeResizeHandle
-   * @extends {yfiles.input.ConstrainedHandle}
+   * @param {IInputModeContext} context - The context for which the handles are queried.
+   * @returns {HandlePositions}
    */
-  class NodeResizeHandle extends yfiles.input.ConstrainedHandle {
-    /**
-     * @constructs
-     * @param {yfiles.graph.INode} node The node that is resized.
-     * @param {yfiles.input.IHandle} wrappedHandle The handle to wrap.
-     * @param {yfiles.input.HandlePositions} position The handle position.
-     */
-    constructor(node, wrappedHandle, position) {
-      super(wrappedHandle)
-      this.$node = node
-      this.$position = position
-    }
-
-    /**
-     * Constrains the location to the original y coordinate
-     * @param {yfiles.input.IInputModeContext} context - The context in which the drag will be performed.
-     * @param {yfiles.geometry.Point} originalLocation - The value of the
-     *   {@link yfiles.input.ConstrainedDragHandler<TWrapped>#location} property at the time of
-     *   {@link yfiles.input.ConstrainedDragHandler<TWrapped>#initializeDrag}.
-     * @param {yfiles.geometry.Point} newLocation - The coordinates in the world coordinate system that the client
-     *   wants the handle to be at. Depending on the implementation the
-     *   {@link yfiles.input.ConstrainedDragHandler<TWrapped>#location} may or may not be modified to reflect the new
-     *   value.
-     * @returns {yfiles.geometry.Point}
-     */
-    constrainNewLocation(context, originalLocation, newLocation) {
-      return new yfiles.geometry.Point(newLocation.x, originalLocation.y)
-    }
-
-    /**
-     * @returns {yfiles.view.Cursor}
-     */
-    get cursor() {
-      return yfiles.view.Cursor.EW_RESIZE
-    }
-
-    /**
-     * @returns {yfiles.input.HandlePositions}
-     */
-    get position() {
-      return this.$position
-    }
-
-    /**
-     * @returns {yfiles.input.HandleTypes}
-     */
-    get type() {
-      return yfiles.input.HandleTypes.INVISIBLE
-    }
-
-    /**
-     * @returns {yfiles.input.IModelItem}
-     */
-    get item() {
-      return this.$node
-    }
+  getAvailableHandles(context) {
+    return HandlePositions.EAST | HandlePositions.WEST
   }
 
-  return {
-    NodeReshapeHandleProvider,
-    NodeResizeHandle
+  /**
+   * @param {IInputModeContext} context - The context for which the handles are queried.
+   * @param {HandlePositions} position - The single position a handle implementation should be returned
+   *   for.
+   * @returns {IHandle}
+   */
+  getHandle(context, position) {
+    return new NodeResizeHandle(this.node, this.wrapped.getHandle(context, position), position)
   }
-})
+}
+
+/**
+ * A special, invisible node resize handle that allows to change the width of a node.
+ */
+export class NodeResizeHandle extends ConstrainedHandle {
+  /**
+   * @constructs
+   * @param {INode} node The node that is resized.
+   * @param {IHandle} wrappedHandle The handle to wrap.
+   * @param {HandlePositions} position The handle position.
+   */
+  constructor(node, wrappedHandle, position) {
+    super(wrappedHandle)
+    this.$node = node
+    this.$position = position
+  }
+
+  /**
+   * Constrains the location to the original y coordinate
+   * @param {IInputModeContext} context - The context in which the drag will be performed.
+   * @param {Point} originalLocation - The value of the
+   *   {@link ConstrainedDragHandler<TWrapped>#location} property at the time of
+   *   {@link ConstrainedDragHandler<TWrapped>#initializeDrag}.
+   * @param {Point} newLocation - The coordinates in the world coordinate system that the client
+   *   wants the handle to be at. Depending on the implementation the
+   *   {@link ConstrainedDragHandler<TWrapped>#location} may or may not be modified to reflect the new
+   *   value.
+   * @returns {Point}
+   */
+  constrainNewLocation(context, originalLocation, newLocation) {
+    return new Point(newLocation.x, originalLocation.y)
+  }
+
+  /**
+   * @returns {Cursor}
+   */
+  get cursor() {
+    return Cursor.EW_RESIZE
+  }
+
+  /**
+   * @returns {HandlePositions}
+   */
+  get position() {
+    return this.$position
+  }
+
+  /**
+   * @returns {HandleTypes}
+   */
+  get type() {
+    return HandleTypes.INVISIBLE
+  }
+
+  /**
+   * @returns {IModelItem}
+   */
+  get item() {
+    return this.$node
+  }
+}

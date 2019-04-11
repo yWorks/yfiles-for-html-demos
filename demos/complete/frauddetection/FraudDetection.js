@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.1.
- ** Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.2.
+ ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,230 +26,215 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-'use strict'
+import {
+  ConnectedComponents,
+  CycleEdges,
+  FilteredGraphWrapper,
+  GraphComponent,
+  IGraph,
+  Mapper
+} from 'yfiles'
 
-define(['yfiles/view-component'], /** @type {yfiles_namespace} */ /** typeof yfiles */ yfiles => {
+/**
+ * A simple fraud detection that scans for cycles where persons share phone numbers and addresses.
+ */
+export default class FraudDetection {
   /**
-   * A simple fraud detection that scans for cycles where persons share phone numbers and addresses.
+   * Creates a new FraudDetection.
+   * @param {GraphComponent} graphComponent The graph component which contains the graph which is checked
+   *   for fraud.
    */
-  class FraudDetection {
-    /**
-     * Creates a new FraudDetection.
-     * @param {yfiles.view.GraphComopnent} graphComponent The graph component which contains the graph which is checked
-     *   for fraud.
-     */
-    constructor(graphComponent) {
-      this.graphComponent = graphComponent
-    }
+  constructor(graphComponent) {
+    this.graphComponent = graphComponent
+  }
 
-    /** @type {boolean} */
-    set bankFraud(value) {
-      this.bankFraudField = value
-    }
+  /** @type {boolean} */
+  set bankFraud(value) {
+    this.bankFraudField = value
+  }
 
-    /** @type {boolean} */
-    get bankFraud() {
-      return this.bankFraudField
-    }
+  /** @type {boolean} */
+  get bankFraud() {
+    return this.bankFraudField
+  }
 
-    detectFraud() {
-      if (this.bankFraud) {
-        return this.detectBankFraud()
+  detectFraud() {
+    if (this.bankFraud) {
+      return this.detectBankFraud()
+    }
+    return this.detectInsuranceFraud()
+  }
+
+  /**
+   * Scans the graph for cycles that only contain persons, phone numbers and addresses.
+   */
+  detectBankFraud() {
+    const graph = this.graphComponent.graph
+
+    const highlightPaintManager = this.graphComponent.highlightIndicatorManager
+    highlightPaintManager.clearHighlights()
+
+    const fraudsterNodes = []
+
+    resetTags(graph)
+
+    // hide bank branch nodes to avoid finding cycles other than fraud cycles
+    const filteredGraph = new FilteredGraphWrapper(
+      graph,
+      node => node.tag.type !== 'Bank Branch',
+      edge => true
+    )
+
+    // run the algorithm on the filtered graph
+    const result = new CycleEdges({ directed: false }).run(filteredGraph)
+    result.edges.forEach(edge => {
+      const source = edge.sourceNode
+      const target = edge.targetNode
+      const sourceType = source.tag.type
+      const targetType = target.tag.type
+
+      if (
+        (sourceType === 'Account Holder' ||
+          sourceType === 'Phone Number' ||
+          sourceType === 'Address') &&
+        (targetType === 'Account Holder' ||
+          targetType === 'Phone Number' ||
+          targetType === 'Address')
+      ) {
+        source.tag.fraud = true
+        target.tag.fraud = true
+        fraudsterNodes.push(source)
+        fraudsterNodes.push(target)
+        if (edge.tag) {
+          edge.tag.fraud = true
+        }
       }
-      return this.detectInsuranceFraud()
-    }
+    })
+    // dispose the filtered graph
+    filteredGraph.dispose()
+    return fraudsterNodes
+  }
 
-    /**
-     * Scans the graph for cycles that only contain persons, phone numbers and addresses.
-     */
-    detectBankFraud() {
-      const graph = this.graphComponent.graph
+  /**
+   * Checks in each connected component if the same persons are involved in more than one accidents
+   * and then checks if some of these persons have the same lawyer or doctor.
+   */
+  detectInsuranceFraud() {
+    const graph = this.graphComponent.graph
+    resetTags(graph)
 
-      const adapter = new yfiles.layout.YGraphAdapter(graph)
-      const highlightPaintManager = this.graphComponent.highlightIndicatorManager
-      highlightPaintManager.clearHighlights()
+    const fraudsterNodes = []
+    const result = new ConnectedComponents().run(graph)
+    result.components.forEach(component => {
+      const node2Accidents = new Mapper()
 
-      const fraudsterNodes = []
-
-      resetTags(graph)
-
-      // hide bank branch nodes to avoid finding cycles other than fraud cycles
-      const algorithmGraph = adapter.yGraph
-      const graphHider = new yfiles.algorithms.LayoutGraphHider(algorithmGraph)
-      algorithmGraph.nodes.forEach(node => {
-        if (adapter.getOriginalNode(node).tag.type === 'Bank Branch') {
-          node.edges.forEach(edge => {
-            graphHider.hide(edge)
-          })
-          graphHider.hide(node)
+      let involvedAccidents = 0
+      component.nodes.forEach(node => {
+        if (node.tag.type === 'Accident') {
+          involvedAccidents++
         }
       })
 
-      const cycleEdges = yfiles.algorithms.Cycles.findAllCycleEdges(adapter.yGraph, false)
-      const edges = adapter.createEdgeEnumerable(cycleEdges)
-      edges.forEach(edge => {
-        const source = edge.sourceNode
-        const target = edge.targetNode
-        const sourceType = source.tag.type
-        const targetType = target.tag.type
+      // if the person is involved in only one accident => no fraud
+      if (involvedAccidents > 1) {
+        const suspiciousPersons = []
+        const lawyers = []
+        const doctors = []
+        const lawyerSet = new Set()
+        const doctorSet = new Set()
 
-        if (
-          (sourceType === 'Account Holder' ||
-            sourceType === 'Phone Number' ||
-            sourceType === 'Address') &&
-          (targetType === 'Account Holder' ||
-            targetType === 'Phone Number' ||
-            targetType === 'Address')
-        ) {
-          source.tag.fraud = true
-          target.tag.fraud = true
-          fraudsterNodes.push(source)
-          fraudsterNodes.push(target)
-          if (edge.tag) {
-            edge.tag.fraud = true
-          }
-        }
-      })
+        component.nodes.forEach(node => {
+          if (node.tag.type === 'Participant') {
+            const accidents = []
 
-      graphHider.unhideAll()
-      return fraudsterNodes
-    }
+            // determine if the person is involved in more than one accidents
+            graph.outEdgesAt(node).forEach(edge => {
+              const targetNode = edge.targetNode
 
-    /**
-     * Checks in each connected component if the same persons are involved in more than one accidents
-     * and then checks if some of these persons have the same lawyer or doctor.
-     */
-    detectInsuranceFraud() {
-      const graph = this.graphComponent.graph
-      const adapter = new yfiles.layout.YGraphAdapter(graph)
+              if (targetNode.tag.type === 'Car') {
+                const accident = this.graphComponent.graph.outEdgesAt(targetNode).firstOrDefault()
+                if (accident) {
+                  accidents.push(accident)
+                }
+              } else if (targetNode.tag.type === 'Accident') {
+                accidents.push(targetNode)
+              }
+            })
 
-      resetTags(graph)
+            // if the person is involved in all accidents of the component => fraud
+            if (accidents.length === involvedAccidents) {
+              node2Accidents.set(node, accidents)
+              suspiciousPersons.push(node)
 
-      const fraudsterNodes = []
-      const connectedComponents = yfiles.algorithms.GraphConnectivity.connectedComponents(
-        adapter.yGraph
-      )
+              graph.inEdgesAt(node).forEach(edge => {
+                const oppositeNode = edge.sourceNode
 
-      for (let i = 0; i < connectedComponents.length; i++) {
-        const component = connectedComponents[i]
-        const node2Accidents = new yfiles.collections.Mapper()
-
-        let involvedAccidents = 0
-        component.forEach(node => {
-          const originalNode = adapter.getOriginalNode(node)
-          const nodeType = originalNode.tag.type
-
-          if (nodeType === 'Accident') {
-            involvedAccidents++
+                if (oppositeNode.tag.type === 'Lawyer') {
+                  if (lawyerSet.add(oppositeNode)) {
+                    lawyers.push(oppositeNode)
+                  }
+                } else if (oppositeNode.tag.type === 'Doctor') {
+                  if (doctorSet.add(oppositeNode)) {
+                    doctors.push(oppositeNode)
+                  }
+                }
+              })
+            }
           }
         })
 
-        // if the person is involved in only one accident => no fraud
-        if (involvedAccidents > 1) {
-          const suspiciousPersons = []
-          const lawyers = []
-          const doctors = []
-          const lawyerSet = new Set()
-          const doctorSet = new Set()
+        // if the suspicious persons share lawyers or doctors => fraud
+        if (
+          suspiciousPersons.length > lawyers.length ||
+          suspiciousPersons.length > doctors.length
+        ) {
+          for (let j = 0; j < suspiciousPersons.length; j++) {
+            const person = suspiciousPersons[j]
+            person.tag.fraud = true
+            fraudsterNodes.push(person)
 
-          component.forEach(node => {
-            const originalNode = adapter.getOriginalNode(node)
-            const nodeType = originalNode.tag.type
+            graph.edgesAt(person).forEach(edge => {
+              edge.tag.fraud = true
+            })
+          }
 
-            if (nodeType === 'Participant') {
-              const accidents = []
-
-              // determine if the person is involved in more than one accidents
-              this.graphComponent.graph.outEdgesAt(originalNode).forEach(edge => {
-                const targetNode = edge.targetNode
-
-                if (targetNode.tag.type === 'Car') {
-                  const accident = this.graphComponent.graph.outEdgesAt(targetNode).firstOrDefault()
-                  if (accident) {
-                    accidents.push(accident)
-                  }
-                } else if (targetNode.tag.type === 'Accident') {
-                  accidents.push(targetNode)
-                }
-              })
-
-              // if the person is involved in all accidents of the component => fraud
-              if (accidents.length === involvedAccidents) {
-                node2Accidents.set(originalNode, accidents)
-                suspiciousPersons.push(originalNode)
-
-                this.graphComponent.graph.inEdgesAt(originalNode).forEach(edge => {
-                  const oppositeNode = edge.sourceNode
-
-                  if (oppositeNode.tag.type === 'Lawyer') {
-                    if (lawyerSet.add(oppositeNode)) {
-                      lawyers.push(oppositeNode)
-                    }
-                  } else if (oppositeNode.tag.type === 'Doctor') {
-                    if (doctorSet.add(oppositeNode)) {
-                      doctors.push(oppositeNode)
-                    }
-                  }
-                })
-              }
+          for (let j = 0; j < doctors.length; j++) {
+            const doctor = doctors[j]
+            if (graph.edgesAt(doctor).size > 1) {
+              doctor.tag.fraud = true
+              fraudsterNodes.push(doctor)
             }
-          })
+          }
 
-          // if the suspicious persons share lawyers or doctors => fraud
-          if (
-            suspiciousPersons.length > lawyers.length ||
-            suspiciousPersons.length > doctors.length
-          ) {
-            for (let j = 0; j < suspiciousPersons.length; j++) {
-              const person = suspiciousPersons[j]
-              person.tag.fraud = true
-              fraudsterNodes.push(person)
-
-              graph.edgesAt(person).forEach(edge => {
-                edge.tag.fraud = true
-              })
-            }
-
-            for (let j = 0; j < doctors.length; j++) {
-              const doctor = doctors[j]
-              if (graph.edgesAt(doctor).size > 1) {
-                doctor.tag.fraud = true
-                fraudsterNodes.push(doctor)
-              }
-            }
-
-            for (let j = 0; j < lawyers.length; j++) {
-              const lawyer = lawyers[j]
-              if (graph.edgesAt(lawyer).size > 1) {
-                lawyer.tag.fraud = true
-                fraudsterNodes.push(lawyer)
-              }
+          for (let j = 0; j < lawyers.length; j++) {
+            const lawyer = lawyers[j]
+            if (graph.edgesAt(lawyer).size > 1) {
+              lawyer.tag.fraud = true
+              fraudsterNodes.push(lawyer)
             }
           }
         }
       }
-      return fraudsterNodes
+    })
+    return fraudsterNodes
+  }
+}
+
+/**
+ * Resets the tags of nodes and edges to no fraud.
+ * @param {IGraph} graph
+ */
+function resetTags(graph) {
+  const nodes = graph.nodes
+  const edges = graph.edges
+  nodes.forEach(node => {
+    if (node.tag) {
+      node.tag.fraud = false
     }
-  }
-
-  /**
-   * Resets the tags of nodes and edges to no fraud.
-   * @param {yfiles.graph.IGraph} graph
-   */
-  function resetTags(graph) {
-    const nodes = graph.nodes
-    const edges = graph.edges
-    nodes.forEach(node => {
-      if (node.tag) {
-        node.tag.fraud = false
-      }
-    })
-    edges.forEach(edge => {
-      if (edge.tag) {
-        edge.tag.fraud = false
-      }
-    })
-  }
-
-  return FraudDetection
-})
+  })
+  edges.forEach(edge => {
+    if (edge.tag) {
+      edge.tag.fraud = false
+    }
+  })
+}

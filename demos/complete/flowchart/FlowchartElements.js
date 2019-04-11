@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.1.
- ** Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.2.
+ ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,257 +26,202 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-'use strict'
+// This file provides type constants and corresponding isXYZType() methods for Flowchart symbols.
+// These constants and methods are used by FlowchartLayout and its associated classes to identify specific
+// nodes and handle them appropriately.
 
-define([
-  'yfiles/view-layout-bridge'
-], /** @type {yfiles_namespace} */ /** typeof yfiles */ yfiles => {
-  /**
-   * Provides type constants and corresponding <code>isXYZType()</code> methods for Flowchart symbols.
-   * These constants and
-   * methods are used by {@link FlowchartLayout} and its associated classes to identify specific nodes and handle them
-   * appropriately.
-   * ImplicitNumericConversion
-   */
-  class FlowchartElements {
-    /**
-     * {@link yfiles.algorithms.IDataProvider} key used to specify the flowchart specific type of each node.
-     * Valid are all node type constants specified by class {@link FlowchartElements}.
-     * @type {Object}
-     */
-    static get NODE_TYPE_DP_KEY() {
-      return 'FlowchartLayout.NODE_TYPE_DP_KEY'
-    }
+/**
+ * {@link IDataProvider} key used to specify the flowchart specific type of each node.
+ * Valid are all node type constants specified by class {@link FlowchartElements}.
+ * @type {Object}
+ */
+export const NODE_TYPE_DP_KEY = 'FlowchartLayout.NODE_TYPE_DP_KEY'
 
-    /**
-     * {@link yfiles.algorithms.IDataProvider} key used to specify the flowchart specific type of each edge.
-     * Valid are all edge type constants specified by class {@link FlowchartElements}.
-     * @type {Object}
-     */
-    static get EDGE_TYPE_DP_KEY() {
-      return 'FlowchartLayout.EDGE_TYPE_DP_KEY'
-    }
+/**
+ * {@link IDataProvider} key used to specify the flowchart specific type of each edge.
+ * Valid are all edge type constants specified by class {@link FlowchartElements}.
+ * @type {Object}
+ */
+export const EDGE_TYPE_DP_KEY = 'FlowchartLayout.EDGE_TYPE_DP_KEY'
 
-    /**
-     * Type constant for an invalid type.
-     * @type {number}
-     */
-    static get TYPE_INVALID() {
-      return 0
-    }
+/**
+ * Type constant for an invalid type.
+ * @type {number}
+ */
+export const TYPE_INVALID = 0
 
-    /**
-     * Type constant for an event type.
-     * @type {number}
-     */
-    static get NODE_TYPE_EVENT() {
-      return 1
-    }
+/**
+ * Type constant for an event type.
+ * @type {number}
+ */
+export const NODE_TYPE_EVENT = 1
 
-    /**
-     * Type constant for a start event type.
-     * @type {number}
-     */
-    static get NODE_TYPE_START_EVENT() {
-      return 7
-    }
+/**
+ * Type constant for a start event type.
+ * @type {number}
+ */
+export const NODE_TYPE_START_EVENT = 7
 
-    /**
-     * Type constant for a end event type.
-     * @type {number}
-     */
-    static get NODE_TYPE_END_EVENT() {
-      return 9
-    }
+/**
+ * Type constant for a end event type.
+ * @type {number}
+ */
+export const NODE_TYPE_END_EVENT = 9
 
-    /**
-     * Type constant for a decision type.
-     * @type {number}
-     */
-    static get NODE_TYPE_DECISION() {
-      return 2
-    }
+/**
+ * Type constant for a decision type.
+ * @type {number}
+ */
+export const NODE_TYPE_DECISION = 2
 
-    /**
-     * Type constant for a process type.
-     * @type {number}
-     */
-    static get NODE_TYPE_PROCESS() {
-      return 3
-    }
+/**
+ * Type constant for a process type.
+ * @type {number}
+ */
+export const NODE_TYPE_PROCESS = 3
 
-    /**
-     * Type constant for a group type.
-     * @type {number}
-     */
-    static get NODE_TYPE_GROUP() {
-      return 8
-    }
+/**
+ * Type constant for a group type.
+ * @type {number}
+ */
+export const NODE_TYPE_GROUP = 8
 
-    /**
-     * Type constant for a annotation type.
-     * @type {number}
-     */
-    static get NODE_TYPE_ANNOTATION() {
-      return 10
-    }
+/**
+ * Type constant for a annotation type.
+ * @type {number}
+ */
+export const NODE_TYPE_ANNOTATION = 10
 
-    /**
-     * Type constant for a pool type.
-     * @type {number}
-     */
-    static get NODE_TYPE_POOL() {
-      return 12
-    }
+/**
+ * Type constant for a pool type.
+ * @type {number}
+ */
+export const NODE_TYPE_POOL = 12
 
-    /**
-     * Type constant for a data type.
-     * @type {number}
-     */
-    static get NODE_TYPE_DATA() {
-      return 11
-    }
+/**
+ * Type constant for a data type.
+ * @type {number}
+ */
+export const NODE_TYPE_DATA = 11
 
-    /**
-     * Type constant for a connection type (sequence flow).
-     * @type {number}
-     */
-    static get EDGE_TYPE_SEQUENCE_FLOW() {
-      return 4
-    }
+/**
+ * Type constant for a connection type (sequence flow).
+ * @type {number}
+ */
+export const EDGE_TYPE_SEQUENCE_FLOW = 4
 
-    /**
-     * Type constant for a connection type (message flow).
-     * @type {number}
-     */
-    static get EDGE_TYPE_MESSAGE_FLOW() {
-      return 5
-    }
+/**
+ * Type constant for a connection type (message flow).
+ * @type {number}
+ */
+export const EDGE_TYPE_MESSAGE_FLOW = 5
 
-    /**
-     * Type constant for a connection type (association).
-     * @type {number}
-     */
-    static get EDGE_TYPE_ASSOCIATION() {
-      return 6
-    }
+/**
+ * Type constant for a connection type (association).
+ * @type {number}
+ */
+export const EDGE_TYPE_ASSOCIATION = 6
 
-    /**
-     * Returns true for activity nodes.
-     * For Flowcharts, this are Process, Data, and Group. For BPMN, this are Task and
-     * Sub-Process.
-     * @param {yfiles.algorithms.Graph} graph
-     * @param {yfiles.algorithms.Node} node
-     * @return {boolean}
-     */
-    static isActivity(graph, node) {
-      const type = FlowchartElements.getType1(graph, node)
-      return (
-        type === FlowchartElements.NODE_TYPE_PROCESS ||
-        type === FlowchartElements.NODE_TYPE_DATA ||
-        type === FlowchartElements.NODE_TYPE_GROUP
-      )
-    }
+/**
+ * Returns true for activity nodes.
+ * For Flowcharts, this are Process, Data, and Group. For BPMN, this are Task and
+ * Sub-Process.
+ * @param {Graph} graph
+ * @param {YNode} node
+ * @return {boolean}
+ */
+export function isActivity(graph, node) {
+  const type = getType(graph, node)
+  return type === NODE_TYPE_PROCESS || type === NODE_TYPE_DATA || type === NODE_TYPE_GROUP
+}
 
-    /**
-     * Returns true for group nodes.
-     * For BPMN, this is Sub-Process.
-     * @param {yfiles.algorithms.Graph} graph
-     * @param {yfiles.algorithms.Node} node
-     * @return {boolean}
-     */
-    static isGroup(graph, node) {
-      return FlowchartElements.getType1(graph, node) === FlowchartElements.NODE_TYPE_GROUP
-    }
+/**
+ * Returns true for group nodes.
+ * For BPMN, this is Sub-Process.
+ * @param {Graph} graph
+ * @param {YNode} node
+ * @return {boolean}
+ */
+export function isGroup(graph, node) {
+  return getType(graph, node) === NODE_TYPE_GROUP
+}
 
-    /**
-     * Returns true for annotation nodes.
-     * @param {yfiles.algorithms.Graph} graph
-     * @param {yfiles.algorithms.Node} node
-     * @return {boolean}
-     */
-    static isAnnotation(graph, node) {
-      return FlowchartElements.getType1(graph, node) === FlowchartElements.NODE_TYPE_ANNOTATION
-    }
+/**
+ * Returns true for annotation nodes.
+ * @param {Graph} graph
+ * @param {YNode} node
+ * @return {boolean}
+ */
+export function isAnnotation(graph, node) {
+  return getType(graph, node) === NODE_TYPE_ANNOTATION
+}
 
-    /**
-     * Returns true for event nodes.
-     * For Flowchart, this are start and terminator, delay, display, manual operation and
-     * preparation. For BPMN, this are start, end and other events.
-     * @param {yfiles.algorithms.Graph} graph
-     * @param {yfiles.algorithms.Node} node
-     * @return {boolean}
-     */
-    static isEvent(graph, node) {
-      const type = FlowchartElements.getType1(graph, node)
-      return (
-        type === FlowchartElements.NODE_TYPE_START_EVENT ||
-        type === FlowchartElements.NODE_TYPE_EVENT ||
-        type === FlowchartElements.NODE_TYPE_END_EVENT
-      )
-    }
+/**
+ * Returns true for event nodes.
+ * For Flowchart, this are start and terminator, delay, display, manual operation and
+ * preparation. For BPMN, this are start, end and other events.
+ * @param {Graph} graph
+ * @param {YNode} node
+ * @return {boolean}
+ */
+export function isEvent(graph, node) {
+  const type = getType(graph, node)
+  return type === NODE_TYPE_START_EVENT || type === NODE_TYPE_EVENT || type === NODE_TYPE_END_EVENT
+}
 
-    /**
-     * Returns true for start event nodes.
-     * @param {yfiles.algorithms.Graph} graph
-     * @param {yfiles.algorithms.Node} node
-     * @return {boolean}
-     */
-    static isStartEvent(graph, node) {
-      return FlowchartElements.getType1(graph, node) === FlowchartElements.NODE_TYPE_START_EVENT
-    }
+/**
+ * Returns true for start event nodes.
+ * @param {Graph} graph
+ * @param {YNode} node
+ * @return {boolean}
+ */
+export function isStartEvent(graph, node) {
+  return getType(graph, node) === NODE_TYPE_START_EVENT
+}
 
-    /**
-     * @param {yfiles.algorithms.Graph} graph
-     * @param {yfiles.algorithms.Edge} edge
-     * @return {boolean}
-     */
-    static isUndefined(graph, edge) {
-      return FlowchartElements.getType(graph, edge) === FlowchartElements.TYPE_INVALID
-    }
+/**
+ * @param {Graph} graph
+ * @param {Edge} edge
+ * @return {boolean}
+ */
+export function isUndefined(graph, edge) {
+  return getType(graph, edge) === TYPE_INVALID
+}
 
-    /**
-     * @param {yfiles.algorithms.Graph} graph
-     * @param {yfiles.algorithms.Edge} edge
-     * @return {boolean}
-     */
-    static isRegularEdge(graph, edge) {
-      return FlowchartElements.getType(graph, edge) === FlowchartElements.EDGE_TYPE_SEQUENCE_FLOW
-    }
+/**
+ * @param {Graph} graph
+ * @param {Edge} edge
+ * @return {boolean}
+ */
+export function isRegularEdge(graph, edge) {
+  return getType(graph, edge) === EDGE_TYPE_SEQUENCE_FLOW
+}
 
-    /**
-     * @param {yfiles.algorithms.Graph} graph
-     * @param {yfiles.algorithms.Edge} edge
-     * @return {boolean}
-     */
-    static isMessageFlow(graph, edge) {
-      return FlowchartElements.getType(graph, edge) === FlowchartElements.EDGE_TYPE_MESSAGE_FLOW
-    }
+/**
+ * @param {Graph} graph
+ * @param {Edge} edge
+ * @return {boolean}
+ */
+export function isMessageFlow(graph, edge) {
+  return getType(graph, edge) === EDGE_TYPE_MESSAGE_FLOW
+}
 
-    /**
-     * @param {yfiles.algorithms.Graph} graph
-     * @param {yfiles.algorithms.Edge} edge
-     * @return {number}
-     */
-    static getType(graph, dataHolder) {
-      const dataProvider = graph.getDataProvider(FlowchartElements.EDGE_TYPE_DP_KEY)
-      return dataProvider === null
-        ? FlowchartElements.TYPE_INVALID
-        : dataProvider.getInt(dataHolder)
-    }
+/**
+ * @param {Graph} graph
+ * @param {Edge} edge
+ * @return {number}
+ */
+export function getFlowchartEdgeType(graph, edge) {
+  const dataProvider = graph.getDataProvider(EDGE_TYPE_DP_KEY)
+  return dataProvider === null ? TYPE_INVALID : dataProvider.getInt(edge)
+}
 
-    /**
-     * @param {yfiles.algorithms.Graph} graph
-     * @param {yfiles.algorithms.Node} dataHolder
-     * @return {number}
-     */
-    static getType1(graph, dataHolder) {
-      const dataProvider = graph.getDataProvider(FlowchartElements.NODE_TYPE_DP_KEY)
-      return dataProvider === null
-        ? FlowchartElements.TYPE_INVALID
-        : dataProvider.getInt(dataHolder)
-    }
-  }
-
-  return FlowchartElements
-})
+/**
+ * @param {Graph} graph
+ * @param {YNode} dataHolder
+ * @return {number}
+ */
+function getType(graph, dataHolder) {
+  const dataProvider = graph.getDataProvider(NODE_TYPE_DP_KEY)
+  return dataProvider === null ? TYPE_INVALID : dataProvider.getInt(dataHolder)
+}

@@ -7,8 +7,8 @@
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.1.
-     // Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML 2.2.
+     // Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -36,11 +36,12 @@
 
   <title>HTML Popup Demo [yFiles for HTML]</title>
 
-  <link rel="stylesheet" href="../../../lib/yfiles.css">
+  <link rel="stylesheet" href="../../node_modules/yfiles/yfiles.css">
   <link rel="stylesheet" href="../../resources/style/demo.css">
 
   <!-- enable debugging -->
   <script src="../../../ide-support/yfiles-typeinfo.js"></script>
+  <script src="../../resources/filesystem-warning.js"></script>
 
   <style type="text/css">
     .popupContent {
@@ -51,6 +52,12 @@
       padding: 5px;
       overflow: hidden;
       background: rgba(255, 255, 255, .85);
+      opacity: 0; /* will be faded in */
+      transition: opacity 0.2s ease-in;
+    }
+
+    .popupContent.popupContentClone {
+      transition: opacity 0.2s ease-out;
     }
 
     .popupContentLeft {
@@ -85,19 +92,19 @@
       This demo shows HTML pop-up panels that display additional information about a clicked node or edge.</p>
 
     <p>
-      The pop-up is displayed in the <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.view.GraphComponent" target="_blank">yfiles.view.GraphComponent</a> above the graph items but below the
+      The pop-up is displayed in the <a href="https://docs.yworks.com/yfileshtml/#/api/GraphComponent" target="_blank">GraphComponent</a> above the graph items but below the
       scrollbars, and rendered zoom-invariant with a fixed size.
     </p>
     <p>
       In this demo, a <em>pop-up</em> is shown when clicking a node or an edge. The data are retrieved from a graph item's
-      <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.graph.ITagOwner#tag" target="_blank">yfiles.graph.ITagOwner#tag</a> property. The template for these pop-ups is defined in the GraphComponent's
-      div and is automatically added to the <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.view.CanvasComponent#overlayPanel" target="_blank">yfiles.view.CanvasComponent#overlayPanel</a> element by the
+      <a href="https://docs.yworks.com/yfileshtml/#/api/ITagOwner#tag" target="_blank">ITagOwner#tag</a> property. The template for these pop-ups is defined in the GraphComponent's
+      div and is automatically added to the <a href="https://docs.yworks.com/yfileshtml/#/api/CanvasComponent#overlayPanel" target="_blank">CanvasComponent#overlayPanel</a> element by the
       GraphComponent's constructor.
     </p>
     <p>
       In general, a pop-up can contain arbitrary HTML content, it can be created through JavaScript code or copied over
       from another part of the DOM, and it can be manually added to the
-      <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.view.CanvasComponent#overlayPanel" target="_blank">yfiles.view.CanvasComponent#overlayPanel</a> of the GraphComponent at any time.</p>
+      <a href="https://docs.yworks.com/yfileshtml/#/api/CanvasComponent#overlayPanel" target="_blank">CanvasComponent#overlayPanel</a> of the GraphComponent at any time.</p>
 
     <h2>Things to Try</h2>
 
@@ -153,8 +160,7 @@
   </div>
 </div>
 
-<script src="../../resources/require.js"></script>
-<script src="HTMLPopupDemo.js"></script>
+<script type="module" crossorigin="anonymous" src="HTMLPopupDemo.js"></script>
 
 </body>
 </html>

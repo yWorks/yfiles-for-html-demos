@@ -7,8 +7,8 @@
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.1.
-     // Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML 2.2.
+     // Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -36,11 +36,12 @@
 
   <title>Custom Edge Style - Custom Styles Tutorial [yFiles for HTML]</title>
 
-  <link rel="stylesheet" href="../../../lib/yfiles.css">
+  <link rel="stylesheet" href="../../node_modules/yfiles/yfiles.css">
   <link rel="stylesheet" href="../../resources/style/demo.css">
 
   <!-- enable debugging -->
   <script src="../../../ide-support/yfiles-typeinfo.js"></script>
+  <script src="../../resources/filesystem-warning.js"></script>
 
 </head>
 <body class="demo-has-left">
@@ -52,7 +53,7 @@
   <div class="demo-sidebar-content">
 
     <p>This step shows how to create a custom edge style which allows to specify the edge thickness by setting a
-      property on the style. The <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.styles.EdgeStyleBase#createVisual" target="_blank">yfiles.styles.EdgeStyleBase#createVisual</a> and <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.styles.EdgeStyleBase#updateVisual" target="_blank">yfiles.styles.EdgeStyleBase#updateVisual</a>
+      property on the style. The <a href="https://docs.yworks.com/yfileshtml/#/api/EdgeStyleBase#createVisual" target="_blank">EdgeStyleBase#createVisual</a> and <a href="https://docs.yworks.com/yfileshtml/#/api/EdgeStyleBase#updateVisual" target="_blank">EdgeStyleBase#updateVisual</a>
       methods are implemented like in <code>MySimpleNodeStyle</code> and <code>MySimpleLabelStyle</code>.</p>
 
     <h2>Things to Try</h2>
@@ -106,8 +107,7 @@
 </div>
 
 
-<script src="../../resources/require.js"></script>
-<script src="SampleApplication.js"></script>
+<script type="module" crossorigin="anonymous" src="SampleApplication.js"></script>
 
 </body>
 </html>

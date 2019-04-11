@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.1.
- ** Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.2.
+ ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -52,15 +52,15 @@
 }
 
 #costMinus {
-  background: url('../resources/minus-16.svg') no-repeat;
+  background: url('./minus-16.svg') no-repeat;
 }
 
 #costPlus {
-  background: url('../resources/plus-16.svg') no-repeat;
+  background: url('./plus-16.svg') no-repeat;
 }
 
 #apply {
-  background: url('../resources/apply-16.svg');
+  background: url('./apply-16.svg');
   border-left: 1px inset;
 }
 

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.1.
- ** Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.2.
+ ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,61 +26,64 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-'use strict'
+import {
+  ConstrainedPositionHandler,
+  IInputModeContext,
+  INode,
+  IPositionHandler,
+  MutableRectangle,
+  Point,
+  Rect
+} from 'yfiles'
 
-define(['yfiles/view-editor'], /** @type {yfiles_namespace} */ /** typeof yfiles */ yfiles => {
+/**
+ * A {@link ConstrainedPositionHandler} that limits the movement of a
+ * node to be within an rectangle and delegates for other aspects to
+ * another (the original) handler.
+ */
+export default class OrangePositionHandler extends ConstrainedPositionHandler {
   /**
-   * A {@link yfiles.input.ConstrainedPositionHandler} that limits the movement of a
-   * node to be within an rectangle and delegates for other aspects to
-   * another (the original) handler.
-   * @extends yfiles.input.ConstrainedPositionHandler
+   * Creates a new instance of <code>OrangePositionHandler</code>
+   * @param {MutableRectangle} boundaryRectangle The boundary rectangle
+   * @param {INode} node The given node
+   * @param {IPositionHandler} delegateHandler The default handler
    */
-  class OrangePositionHandler extends yfiles.input.ConstrainedPositionHandler {
-    /**
-     * Creates a new instance of <code>OrangePositionHandler</code>
-     * @param {yfiles.geometry.MutableRectangle} boundaryRectangle The boundary rectangle
-     * @param {yfiles.graph.INode} node The given node
-     * @param {yfiles.input.IPositionHandler} delegateHandler The default handler
-     */
-    constructor(boundaryRectangle, node, delegateHandler) {
-      super(delegateHandler)
-      this.boundaryPositionRectangle = null
-      this.boundaryRectangle = boundaryRectangle
-      this.node = node
-    }
-
-    /**
-     * Prepares the rectangle that is actually used to limit the node
-     * position, besides the base functionality. Since a position handler
-     * works on points, the actual rectangle must be a limit for the upper
-     * left corner of the node and not for the node's bounding box.
-     * @param {yfiles.input.IInputModeContext} inputModeContext The input mode context
-     * @param {yfiles.geometry.Point} originalLocation The original location
-     * @see Overrides {@link yfiles.input.ConstrainedDragHandler#onInitialized}
-     */
-    onInitialized(inputModeContext, originalLocation) {
-      super.onInitialized.call(this, inputModeContext, originalLocation)
-      // Shrink the rectangle by the node size to get the limits for the upper left node corner
-      this.boundaryPositionRectangle = new yfiles.geometry.Rect(
-        this.boundaryRectangle.x,
-        this.boundaryRectangle.y,
-        this.boundaryRectangle.width - this.node.layout.width,
-        this.boundaryRectangle.height - this.node.layout.height
-      )
-    }
-
-    /**
-     * Returns the position that is constrained by the rectangle.
-     * @param {yfiles.input.IInputModeContext} context The context in which the drag will be performed
-     * @param {yfiles.geometry.Point} originalLocation The value of the location property at the time of initializeDrag
-     * @param {yfiles.geometry.Point} newLocation The new location of the handler
-     * @see Overrides {@link yfiles.input.ConstrainedDragHandler#constrainNewLocation}
-     * @return {yfiles.geometry.Point}
-     */
-    constrainNewLocation(context, originalLocation, newLocation) {
-      return newLocation.getConstrained(this.boundaryPositionRectangle)
-    }
+  constructor(boundaryRectangle, node, delegateHandler) {
+    super(delegateHandler)
+    this.boundaryPositionRectangle = null
+    this.boundaryRectangle = boundaryRectangle
+    this.node = node
   }
 
-  return OrangePositionHandler
-})
+  /**
+   * Prepares the rectangle that is actually used to limit the node
+   * position, besides the base functionality. Since a position handler
+   * works on points, the actual rectangle must be a limit for the upper
+   * left corner of the node and not for the node's bounding box.
+   * @param {IInputModeContext} inputModeContext The input mode context
+   * @param {Point} originalLocation The original location
+   * @see Overrides {@link ConstrainedDragHandler#onInitialized}
+   */
+  onInitialized(inputModeContext, originalLocation) {
+    super.onInitialized.call(this, inputModeContext, originalLocation)
+    // Shrink the rectangle by the node size to get the limits for the upper left node corner
+    this.boundaryPositionRectangle = new Rect(
+      this.boundaryRectangle.x,
+      this.boundaryRectangle.y,
+      this.boundaryRectangle.width - this.node.layout.width,
+      this.boundaryRectangle.height - this.node.layout.height
+    )
+  }
+
+  /**
+   * Returns the position that is constrained by the rectangle.
+   * @param {IInputModeContext} context The context in which the drag will be performed
+   * @param {Point} originalLocation The value of the location property at the time of initializeDrag
+   * @param {Point} newLocation The new location of the handler
+   * @see Overrides {@link ConstrainedDragHandler#constrainNewLocation}
+   * @return {Point}
+   */
+  constrainNewLocation(context, originalLocation, newLocation) {
+    return newLocation.getConstrained(this.boundaryPositionRectangle)
+  }
+}

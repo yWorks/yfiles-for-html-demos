@@ -7,8 +7,8 @@
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.1.
-     // Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML 2.2.
+     // Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -36,11 +36,12 @@
 
   <title>Dropshadow Performance - Custom Styles Tutorial [yFiles for HTML]</title>
 
-  <link rel="stylesheet" href="../../../lib/yfiles.css">
+  <link rel="stylesheet" href="../../node_modules/yfiles/yfiles.css">
   <link rel="stylesheet" href="../../resources/style/demo.css">
 
   <!-- enable debugging -->
   <script src="../../../ide-support/yfiles-typeinfo.js"></script>
+  <script src="../../resources/filesystem-warning.js"></script>
 </head>
 <body class="demo-has-left">
 <!--
@@ -52,9 +53,8 @@
     <p>This step replaces the simple drop shadow in the last steps with a more visually appealing, blurred one. The
       dropshadow is pre-rendered into an image using a HTML canvas drawing. This image is placed in the defs section of
       the svg and referenced in each node visualization using a use element. </p>
-    <p>For this purpose, we need an implementation
-      of <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.view.ISvgDefsCreator" target="_blank">yfiles.view.ISvgDefsCreator</a> which in this demo is performed in
-      <code>MySimpleNodeStyle#createDropShadow</code>.</p>
+    <p>For this purpose, we need an implementation of <a href="https://docs.yworks.com/yfileshtml/#/api/ISvgDefsCreator" target="_blank">ISvgDefsCreator</a> which in this demo is
+      performed in <code>MySimpleNodeStyle#createDropShadow</code>.</p>
 
     <h2>Things to Try</h2>
 
@@ -63,8 +63,8 @@
         Take a look at the blurred drop shadow of the nodes.
       </li>
       <li>
-        Take a look at the methods <code>createDropShadow()</code>, <code>drawShadow()</code> and <code>render()</code> of
-        class <code>MySimpleNodeStyle</code>.
+        Take a look at the methods <code>createDropShadow()</code>, <code>drawShadow()</code> and <code>render()</code>
+        of class <code>MySimpleNodeStyle</code>.
       </li>
     </ul>
 
@@ -104,8 +104,7 @@
   <div id="graphComponent"></div>
 </div>
 
-<script src="../../resources/require.js"></script>
-<script src="SampleApplication.js"></script>
+<script type="module" crossorigin="anonymous" src="SampleApplication.js"></script>
 
 </body>
 </html>

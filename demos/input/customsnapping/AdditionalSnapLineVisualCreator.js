@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.1.
- ** Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.2.
+ ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,124 +26,131 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-'use strict'
+import {
+  BaseClass,
+  IRenderContext,
+  IVisualCreator,
+  List,
+  OrthogonalSnapLine,
+  Point,
+  SnapLineOrientation,
+  SnapLineSnapTypes,
+  SnapLineVisualizationType,
+  SvgVisual,
+  Visual
+} from 'yfiles'
 
-define(['yfiles/view-editor'], /** @type {yfiles_namespace} */ /** typeof yfiles */ yfiles => {
+/**
+ * A visual creator for orthogonal snap lines.
+ */
+export default class AdditionalSnapLineVisualCreator extends BaseClass(IVisualCreator) {
   /**
-   * A visual creator for orthogonal snap lines.
-   * @implements {yfiles.view.IVisualCreator}
+   * Creates a new instance of <code>AdditionalSnapLineVisualCreator</code>.
+   * @param {Point} from The start point
+   * @param {Point} to The end point
    */
-  class AdditionalSnapLineVisualCreator extends yfiles.lang.Class(yfiles.view.IVisualCreator) {
-    /**
-     * Creates a new instance of <code>AdditionalSnapLineVisualCreator</code>.
-     * @param {yfiles.geometry.Point} from The start point
-     * @param {yfiles.geometry.Point} to The end point
-     */
-    constructor(from, to) {
-      super()
-      this.from = from
-      this.to = to
-    }
-
-    /**
-     * Creates the {@link yfiles.input.OrthogonalSnapLine}s that are displayed by this visual creator.
-     * Since items should be able to snap from both sides to this line, two snap lines with the same location and
-     * different {@link yfiles.input.SnapLineSnapTypes}s are created.
-     * @return {yfiles.collections.IEnumerable.<yfiles.input.OrthogonalSnapLine>}
-     */
-    createSnapLines() {
-      const lines = new yfiles.collections.List()
-      if (this.from.x === this.to.x) {
-        // it's vertical
-        lines.add(
-          new yfiles.input.OrthogonalSnapLine(
-            yfiles.input.SnapLineOrientation.VERTICAL,
-            yfiles.input.SnapLineSnapTypes.LEFT,
-            yfiles.input.SnapLine.SNAP_LINE_FIXED_LINE_KEY,
-            this.from.add(this.to).multiply(0.5),
-            this.from.y,
-            this.to.y,
-            this,
-            50
-          )
-        )
-        lines.add(
-          new yfiles.input.OrthogonalSnapLine(
-            yfiles.input.SnapLineOrientation.VERTICAL,
-            yfiles.input.SnapLineSnapTypes.RIGHT,
-            yfiles.input.SnapLine.SNAP_LINE_FIXED_LINE_KEY,
-            this.from.add(this.to).multiply(0.5),
-            this.from.y,
-            this.to.y,
-            this,
-            50
-          )
-        )
-      } else if (this.from.y === this.to.y) {
-        // it's horizontal
-        lines.add(
-          new yfiles.input.OrthogonalSnapLine(
-            yfiles.input.SnapLineOrientation.HORIZONTAL,
-            yfiles.input.SnapLineSnapTypes.TOP,
-            yfiles.input.SnapLine.SNAP_LINE_FIXED_LINE_KEY,
-            this.from.add(this.to).multiply(0.5),
-            this.from.x,
-            this.to.x,
-            this,
-            50
-          )
-        )
-        lines.add(
-          new yfiles.input.OrthogonalSnapLine(
-            yfiles.input.SnapLineOrientation.HORIZONTAL,
-            yfiles.input.SnapLineSnapTypes.BOTTOM,
-            yfiles.input.SnapLine.SNAP_LINE_FIXED_LINE_KEY,
-            this.from.add(this.to).multiply(0.5),
-            this.from.x,
-            this.to.x,
-            this,
-            50
-          )
-        )
-      }
-      return lines
-    }
-
-    /**
-     * Creates the visual for the orthogonal snap lines.
-     * @param {yfiles.view.IRenderContext} ctx
-     * @return {yfiles.view.Visual}
-     */
-    createVisual(ctx) {
-      const line = window.document.createElementNS('http://www.w3.org/2000/svg', 'line')
-      line.setAttribute('x1', this.from.x)
-      line.setAttribute('y1', this.from.y)
-      line.setAttribute('x2', this.to.x)
-      line.setAttribute('y2', this.to.y)
-      line.setAttribute('stroke-width', 2)
-      line.setAttribute('stroke', 'firebrick')
-      return new yfiles.view.SvgVisual(line)
-    }
-
-    /**
-     * Updates a previously created visual.
-     * @param {yfiles.view.IRenderContext} ctx
-     * @param {yfiles.view.Visual} oldVisual
-     * @return {yfiles.view.Visual}
-     */
-    updateVisual(ctx, oldVisual) {
-      const visual = oldVisual instanceof yfiles.view.SvgVisual ? oldVisual : null
-      if (visual === null || visual.svgElement === null || visual.svgElement.tagName !== 'line') {
-        return this.createVisual(ctx)
-      }
-      const line = visual.svgElement
-      line.setAttribute('x1', this.from.x)
-      line.setAttribute('y1', this.from.y)
-      line.setAttribute('x2', this.to.x)
-      line.setAttribute('y2', this.to.y)
-      return oldVisual
-    }
+  constructor(from, to) {
+    super()
+    this.from = from
+    this.to = to
   }
 
-  return AdditionalSnapLineVisualCreator
-})
+  /**
+   * Creates the {@link OrthogonalSnapLine}s that are displayed by this visual creator.
+   * Since items should be able to snap from both sides to this line, two snap lines with the same location and
+   * different {@link SnapLineSnapTypes}s are created.
+   * @return {IEnumerable.<OrthogonalSnapLine>}
+   */
+  createSnapLines() {
+    const lines = new List()
+    if (this.from.x === this.to.x) {
+      // it's vertical
+      lines.add(
+        new OrthogonalSnapLine(
+          SnapLineOrientation.VERTICAL,
+          SnapLineSnapTypes.LEFT,
+          SnapLineVisualizationType.FIXED_LINE,
+          this.from.add(this.to).multiply(0.5),
+          this.from.y,
+          this.to.y,
+          this,
+          50
+        )
+      )
+      lines.add(
+        new OrthogonalSnapLine(
+          SnapLineOrientation.VERTICAL,
+          SnapLineSnapTypes.RIGHT,
+          SnapLineVisualizationType.FIXED_LINE,
+          this.from.add(this.to).multiply(0.5),
+          this.from.y,
+          this.to.y,
+          this,
+          50
+        )
+      )
+    } else if (this.from.y === this.to.y) {
+      // it's horizontal
+      lines.add(
+        new OrthogonalSnapLine(
+          SnapLineOrientation.HORIZONTAL,
+          SnapLineSnapTypes.TOP,
+          SnapLineVisualizationType.FIXED_LINE,
+          this.from.add(this.to).multiply(0.5),
+          this.from.x,
+          this.to.x,
+          this,
+          50
+        )
+      )
+      lines.add(
+        new OrthogonalSnapLine(
+          SnapLineOrientation.HORIZONTAL,
+          SnapLineSnapTypes.BOTTOM,
+          SnapLineVisualizationType.FIXED_LINE,
+          this.from.add(this.to).multiply(0.5),
+          this.from.x,
+          this.to.x,
+          this,
+          50
+        )
+      )
+    }
+    return lines
+  }
+
+  /**
+   * Creates the visual for the orthogonal snap lines.
+   * @param {IRenderContext} ctx
+   * @return {Visual}
+   */
+  createVisual(ctx) {
+    const line = window.document.createElementNS('http://www.w3.org/2000/svg', 'line')
+    line.setAttribute('x1', this.from.x)
+    line.setAttribute('y1', this.from.y)
+    line.setAttribute('x2', this.to.x)
+    line.setAttribute('y2', this.to.y)
+    line.setAttribute('stroke-width', 2)
+    line.setAttribute('stroke', 'firebrick')
+    return new SvgVisual(line)
+  }
+
+  /**
+   * Updates a previously created visual.
+   * @param {IRenderContext} ctx
+   * @param {Visual} oldVisual
+   * @return {Visual}
+   */
+  updateVisual(ctx, oldVisual) {
+    const visual = oldVisual instanceof SvgVisual ? oldVisual : null
+    if (visual === null || visual.svgElement === null || visual.svgElement.tagName !== 'line') {
+      return this.createVisual(ctx)
+    }
+    const line = visual.svgElement
+    line.setAttribute('x1', this.from.x)
+    line.setAttribute('y1', this.from.y)
+    line.setAttribute('x2', this.to.x)
+    line.setAttribute('y2', this.to.y)
+    return oldVisual
+  }
+}

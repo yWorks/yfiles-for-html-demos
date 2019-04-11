@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.1.
- ** Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.2.
+ ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,17 +26,11 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-/**
- * This file contains helper functions for the demos/README.html file.
- */
-
-/* eslint-disable no-shadow-restricted-names,no-var,no-eval,no-undef */
-
-'use strict'
+/* eslint-disable no-var,no-eval */
 ;(function() {
   var enableES6warning =
     window.location.hostname.indexOf('yworks.') < 0 &&
-    window.location.pathname.indexOf('demos-es5') < 0 &&
+    window.location.pathname.indexOf('es5/demos') < 0 &&
     !hasEs6Support()
 
   if (enableES6warning) {
@@ -47,10 +41,6 @@
     demoGrid && blockEs6Demos(demoGrid.getElementsByTagName('a'))
     var sidebar = document.getElementById('sidebar')
     sidebar && blockEs6Demos(sidebar.getElementsByTagName('a'))
-  }
-
-  if (window.location.protocol.indexOf('file') >= 0) {
-    document.getElementById('localhost-notice').removeAttribute('style')
   }
 
   function hasEs6Support() {
@@ -91,9 +81,48 @@
     return
   }
 
+  var categoryNames = {
+    'tutorial-getting-started': 'Tutorial: Getting Started',
+    'tutorial-custom-styles': 'Tutorial: Custom Styles',
+    'tutorial-application-features': 'Tutorial: Application Features',
+    layout: 'Layout',
+    complete: 'Complete',
+    view: 'View',
+    analysis: 'Analysis',
+    style: 'Style',
+    input: 'Input',
+    databinding: 'Data Binding',
+    integration: 'Integration',
+    loading: 'Loading'
+  }
+
+  var tutorialIds = [
+    'tutorial-application-features',
+    'tutorial-custom-styles',
+    'tutorial-getting-started'
+  ]
+
   var isViewerPackage = document.title.indexOf('Viewer') > -1
-  var viewerCategories = ['tutorial', 'input', 'style', 'integration', 'view']
-  var excludeLayoutDemos = ['Angular CLI', 'AngularJS 1', 'Neo4j']
+  var viewerCategories = [
+    'tutorial-getting-started',
+    'tutorial-custom-styles',
+    'tutorial-application-features',
+    'input',
+    'style',
+    'integration',
+    'view'
+  ]
+  var excludeLayoutDemos = [
+    'Angular CLI',
+    'AngularJS 1',
+    'Building Swimlanes From Data',
+    'Neo4j',
+    'Template Styles',
+    'Vue.js',
+    '10 Layout',
+    '11 Layout Data',
+    '13 Analysis Algorithms'
+  ]
 
   var demos = window.getDemoData().filter(function(item) {
     if (isViewerPackage) {
@@ -102,7 +131,7 @@
         excludeLayoutDemos.indexOf(item.name) === -1
       )
     } else {
-      return item.category !== 'tutorial step'
+      return true
     }
   })
 
@@ -118,10 +147,11 @@
     ) {
       if (propertyName === 'index') {
         return index + 2
+      } else if (propertyName === 'video' && demo.thumbnailPath.indexOf('.mp4') > -1) {
+        return '<video src="' + demo.thumbnailPath + '" loop="true" autoplay="true">'
       } else if (demo.hasOwnProperty(propertyName)) {
         return demo[propertyName]
       } else {
-        // console.warn("Property '" + propertyName + "' not found in demo: " + demo.name);
         return ''
       }
     })
@@ -141,8 +171,8 @@
   }
 
   function createAccordionItem(category) {
-    var item = document.createElement('div')
-    item.innerHTML = accordionItemTemplate.innerHTML.replace(/{{([^}]+)}}/gi, function(
+    var tmpDiv = document.createElement('div')
+    tmpDiv.innerHTML = accordionItemTemplate.innerHTML.replace(/{{([^}]+)}}/gi, function(
       match,
       propertyName
     ) {
@@ -153,7 +183,23 @@
         return ''
       }
     })
-    return item.firstElementChild
+    var item = tmpDiv.firstElementChild
+    item.querySelector('.accordion-title').addEventListener('click', function() {
+      if (item.className.indexOf('expanded') >= 0) {
+        item.className = item.className.replace(' expanded', '')
+        if (searchBox.value.indexOf(category.identifier) === 0) {
+          searchBox.value = searchBox.value.replace(category.identifier, '').trim()
+          searchBoxChanged()
+        }
+      } else {
+        item.className += ' expanded'
+        if (/tutorial/i.test(category.title)) {
+          searchBox.value = category.identifier
+          searchBoxChanged()
+        }
+      }
+    })
+    return item
   }
 
   function createSidebarItem(demo) {
@@ -182,7 +228,7 @@
    * @param {string} needle A whitespace-separated list of search terms
    */
   function matchDemo(demo, needle) {
-    const words = needle.split(/\s+/)
+    var words = needle.split(/\s+/)
     return words
       .map(function(word) {
         return matchWord(demo, word)
@@ -223,36 +269,57 @@
     return regex.test(demo.summary)
   }
 
-  var demoGrid = document.querySelector('.demo-grid')
+  var demoGrid = document.getElementById('non-tutorial-grid')
+  var tutGettingStartedGrid = document.getElementById('tutorial-getting-started-grid')
+  var tutCustomStylesGrid = document.getElementById('tutorial-custom-styles-grid')
+  var tutApplicationFeaturesGrid = document.getElementById('tutorial-application-features-grid')
+  var searchBox = document.querySelector('#search')
+  var noSearchResultsElement = document.querySelector('#no-search-results')
+  var resetSearchButton = document.querySelector('.reset-search')
+
   demos.forEach(function(demo, index) {
     var gridItem = createGridItem(demo, index)
-    demoGrid.appendChild(gridItem)
+    if (demo.category === 'tutorial-getting-started') {
+      tutGettingStartedGrid.appendChild(gridItem)
+    } else if (demo.category === 'tutorial-custom-styles') {
+      tutCustomStylesGrid.appendChild(gridItem)
+    } else if (demo.category === 'tutorial-application-features') {
+      tutApplicationFeaturesGrid.appendChild(gridItem)
+    } else {
+      demoGrid.appendChild(gridItem)
+    }
     demo.element = gridItem
     var sidebarItem = createSidebarItem(demo)
     var element = document.querySelector('.demo-items-' + demo.category)
     if (!element) {
-      document.querySelector('.sidebar').appendChild(createAccordionItem({ title: demo.category }))
+      var categoryName = categoryNames[demo.category] || demo.category
+      document
+        .querySelector('.sidebar')
+        .appendChild(createAccordionItem({ title: categoryName, identifier: demo.category }))
       element = document.querySelector('.demo-items-' + demo.category)
     }
     insertSortedChild(element, sidebarItem)
     demo.sidebarElement = sidebarItem
   })
 
-  var searchBox = document.querySelector('#search')
   searchBox.addEventListener('input', searchBoxChanged)
   searchBox.addEventListener('click', searchBoxClicked)
   searchBox.addEventListener('blur', function(e) {
     searchBox.addEventListener('click', searchBoxClicked)
   })
+  resetSearchButton.addEventListener('click', function() {
+    searchBox.value = ''
+    searchBoxChanged()
+  })
 
   function onHashChange() {
     if (location.hash && location.hash.length > 1 && location.hash.charAt(0) === '#') {
-      searchBox.value = decodeURIComponent(location.hash.substr(1))
-      searchBoxChanged()
+      var text = decodeURIComponent(location.hash.substr(1))
+      searchBox.value = text
     } else {
       searchBox.value = ''
-      searchBoxChanged()
     }
+    searchBoxChanged()
   }
 
   window.onhashchange = onHashChange
@@ -266,14 +333,56 @@
   }
 
   function searchBoxChanged(evt) {
+    var noSearchResults = true
+    tutorialIds.forEach(function(id) {
+      document.getElementById(id).style.display = 'none'
+      document.getElementById(id + '-header').style.display = 'block'
+    })
+    document.getElementById('general-intro').style.display = 'block'
     demos.forEach(function(demo) {
       if (matchDemo(demo, searchBox.value)) {
         demo.element.className = 'grid-item'
         demo.sidebarElement.className = ''
+        noSearchResults = false
       } else {
         demo.element.className = 'grid-item filtered'
         demo.sidebarElement.className = 'filtered'
       }
     })
+    tutorialIds.forEach(function(id) {
+      var children = document.getElementById(id + '-grid').childNodes
+      var allHidden = true
+      for (var i = 0; i < children.length; i++) {
+        if (children[i].getAttribute('class').indexOf('filtered') === -1) {
+          allHidden = false
+        }
+      }
+      if (allHidden) {
+        document.getElementById(id + '-header').style.display = 'none'
+      } else {
+        document.getElementById(id + '-header').style.display = 'block'
+      }
+    })
+    noSearchResultsElement.style.display = noSearchResults ? 'block' : 'none'
+    changeTextContent(searchBox.value)
+  }
+
+  function changeTextContent(text) {
+    tutorialIds.forEach(function(id) {
+      document.getElementById(id).style.display = 'none'
+    })
+    if (text.indexOf('tutorial-') === 0) {
+      var content = document.getElementById(text)
+      if (content != null) {
+        tutorialIds.forEach(function(id) {
+          document.getElementById(id + '-header').style.display = 'none'
+        })
+        document.getElementById('general-intro').style.display = 'none'
+        document.getElementById(text + '-header').style.display = 'block'
+        content.style.display = 'block'
+        return
+      }
+    }
+    document.getElementById('general-intro').style.display = 'block'
   }
 })()

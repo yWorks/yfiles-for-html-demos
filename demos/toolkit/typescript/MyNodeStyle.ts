@@ -1,4 +1,4 @@
-import { NodeStyleBase, IRenderContext, INode, Visual, SvgVisual } from 'yfiles/view-component'
+import { INode, IRenderContext, NodeStyleBase, SvgVisual, Visual } from 'yfiles'
 
 export class MyNodeStyle extends NodeStyleBase {
   constructor() {

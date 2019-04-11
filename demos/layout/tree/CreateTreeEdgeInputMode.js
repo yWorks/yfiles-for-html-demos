@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.1.
- ** Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.2.
+ ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,162 +26,168 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-'use strict'
+import {
+  CreateEdgeInputMode,
+  DefaultPortCandidate,
+  EdgeEventArgs,
+  FreeNodePortLocationModel,
+  ICanvasObjectDescriptor,
+  IHighlightIndicatorInstaller,
+  IHitTestable,
+  ILookup,
+  NodeStyleDecorationInstaller,
+  Point,
+  Rect,
+  ShapeNodeShape,
+  ShapeNodeStyle,
+  SimpleNode,
+  Size,
+  VoidNodeStyle
+} from 'yfiles'
 
-define(['yfiles/view-editor', 'NodePlacerPanel.js'], (
-  /** @type {yfiles_namespace} */ /** typeof yfiles */ yfiles,
-  NodePlacerPanel
-) => {
+import NodePlacerPanel from './NodePlacerPanel.js'
+
+/**
+ * An {@link IInputMode} which creates an edge along with a target node when dragging on an unselected
+ * node. This will keep the tree-structure of the graph intact.
+ */
+export default class CreateTreeEdgeInputMode extends CreateEdgeInputMode {
   /**
-   * An {@link yfiles.input.IInputMode} which creates an edge along with a target node when dragging on an unselected
-   * node. This will keep the tree-structure of the graph intact.
+   * Creates a new instance of this input mode.
    */
-  class CreateTreeEdgeInputMode extends yfiles.input.CreateEdgeInputMode {
-    /**
-     * Creates a new instance of this input mode.
-     */
-    constructor() {
-      super()
-      this.targetNode = null
+  constructor() {
+    super()
+    this.targetNode = null
 
-      // edge creation can end anytime because the target node is also created by this input mode
-      this.endHitTestable = yfiles.input.IHitTestable.ALWAYS
-      // this input mode doesn't create bends
-      this.validBendHitTestable = yfiles.input.IHitTestable.NEVER
-    }
+    // edge creation can end anytime because the target node is also created by this input mode
+    this.endHitTestable = IHitTestable.ALWAYS
+    // this input mode doesn't create bends
+    this.validBendHitTestable = IHitTestable.NEVER
+  }
 
-    /**
-     * Creates the dummy edge and the dummy node that are used as a preview during edge creation.
-     * @return {yfiles.graph.IEdge}
-     */
-    createDummyEdge() {
-      const dummyEdge = super.createDummyEdge()
+  /**
+   * Creates the dummy edge and the dummy node that are used as a preview during edge creation.
+   * @return {IEdge}
+   */
+  createDummyEdge() {
+    const dummyEdge = super.createDummyEdge()
 
-      // create a target node
-      this.targetNode = new yfiles.graph.SimpleNode()
+    // create a target node
+    this.targetNode = new SimpleNode()
 
-      return dummyEdge
-    }
+    return dummyEdge
+  }
 
-    /**
-     * Adds the visualization for the target node when the edge creation gesture started.
-     * @param {yfiles.input.EdgeEventArgs} event
-     */
-    onEdgeCreationStarted(event) {
-      super.onEdgeCreationStarted(event)
+  /**
+   * Adds the visualization for the target node when the edge creation gesture started.
+   * @param {EdgeEventArgs} event
+   */
+  onEdgeCreationStarted(event) {
+    super.onEdgeCreationStarted(event)
 
-      if (this.targetNode) {
-        // only create a target node visualization when there is an actual source node
-        const sourceNode = this.getSource(this.startPoint)
-        if (sourceNode) {
-          this.targetNode.layout = yfiles.geometry.Rect.fromCenter(
-            this.dummyEdge.sourcePort.location,
-            new yfiles.geometry.Size(60, 30)
-          )
-
-          // initialize style so it matches the other nodes in this new layer
-          this.targetNode.tag = { layer: sourceNode.tag.layer + 1 }
-          this.targetNode.style = new yfiles.styles.ShapeNodeStyle({
-            shape: yfiles.styles.ShapeNodeShape.ROUND_RECTANGLE,
-            stroke: 'white',
-            fill:
-              NodePlacerPanel.layerFills[
-                this.targetNode.tag.layer % NodePlacerPanel.layerFills.length
-              ]
-          })
-
-          // do not show a target indicator, it is obvious that the new node will be the target
-          this.targetNode.lookupImplementation = yfiles.graph.ILookup.createCascadingLookup(
-            this.targetNode.lookupImplementation,
-            yfiles.graph.ILookup.createSingleLookup(
-              new yfiles.view.NodeStyleDecorationInstaller({
-                nodeStyle: yfiles.styles.VoidNodeStyle.INSTANCE
-              }),
-              yfiles.view.IHighlightIndicatorInstaller.$class
-            )
-          )
-
-          // visualize the dummy node in the input mode group
-          const inputModeGroup = this.inputModeContext.canvasComponent.inputModeGroup
-          this.canvasObject = inputModeGroup.addChild(
-            this.targetNode.style.renderer.getVisualCreator(this.targetNode, this.targetNode.style),
-            yfiles.view.ICanvasObjectDescriptor.ALWAYS_DIRTY_INSTANCE
-          )
-        }
-      }
-    }
-
-    /**
-     * Updates the target location and the position of the dummy node.
-     * @param {yfiles.geometry.Point} location
-     */
-    updateTargetLocation(location) {
-      super.updateTargetLocation(location)
-      if (this.targetNode) {
-        this.targetNode.layout = yfiles.geometry.Rect.fromCenter(
-          location,
-          this.targetNode.layout.toSize()
+    if (this.targetNode) {
+      // only create a target node visualization when there is an actual source node
+      const sourceNode = this.getSource(this.startPoint)
+      if (sourceNode) {
+        this.targetNode.layout = Rect.fromCenter(
+          this.dummyEdge.sourcePort.location,
+          new Size(60, 30)
         )
-      }
-    }
 
-    /**
-     * Returns the current dummy node since it is always the target for the created edge.
-     * @param {yfiles.geometry.Point} location The location is ignored in this implementation.
-     * @return {yfiles.graph.INode}
-     */
-    getTarget(location) {
-      return this.targetNode
-    }
+        // initialize style so it matches the other nodes in this new layer
+        this.targetNode.tag = { layer: sourceNode.tag.layer + 1 }
+        this.targetNode.style = new ShapeNodeStyle({
+          shape: ShapeNodeShape.ROUND_RECTANGLE,
+          stroke: 'white',
+          fill:
+            NodePlacerPanel.layerFills[
+              this.targetNode.tag.layer % NodePlacerPanel.layerFills.length
+            ]
+        })
 
-    /**
-     * Creates the actual edge and target node after edge creation is finished.
-     * @return {yfiles.graph.IEdge}
-     */
-    createEdge() {
-      const graph = this.inputModeContext.graph
-
-      // create the target node
-      const node = graph.createNode(
-        this.targetNode.layout,
-        this.targetNode.style,
-        this.targetNode.tag
-      )
-
-      // clean up the dummy node visualization
-      this.canvasObject.remove()
-      this.canvasObject = null
-      this.targetNode = null
-
-      // create the edge
-      const edge = super.createEdge(
-        graph,
-        this.sourcePortCandidate,
-        new yfiles.input.DefaultPortCandidate(
-          node,
-          yfiles.graph.FreeNodePortLocationModel.NODE_CENTER_ANCHORED
+        // do not show a target indicator, it is obvious that the new node will be the target
+        this.targetNode.lookupImplementation = ILookup.createCascadingLookup(
+          this.targetNode.lookupImplementation,
+          ILookup.createSingleLookup(
+            new NodeStyleDecorationInstaller({
+              nodeStyle: VoidNodeStyle.INSTANCE
+            }),
+            IHighlightIndicatorInstaller.$class
+          )
         )
-      )
 
-      // fire edge created event
-      this.onEdgeCreated(new yfiles.graph.EdgeEventArgs(edge))
-      return edge
-    }
-
-    /**
-     * Cleans up after edge creation is canceled.
-     */
-    onCanceled() {
-      super.onCanceled()
-
-      // clean up the dummy node visualization
-      this.targetNode = null
-      if (this.canvasObject) {
-        this.canvasObject.remove()
-        this.canvasObject = null
+        // visualize the dummy node in the input mode group
+        const inputModeGroup = this.inputModeContext.canvasComponent.inputModeGroup
+        this.canvasObject = inputModeGroup.addChild(
+          this.targetNode.style.renderer.getVisualCreator(this.targetNode, this.targetNode.style),
+          ICanvasObjectDescriptor.ALWAYS_DIRTY_INSTANCE
+        )
       }
     }
   }
 
-  return CreateTreeEdgeInputMode
-})
+  /**
+   * Updates the target location and the position of the dummy node.
+   * @param {Point} location
+   */
+  updateTargetLocation(location) {
+    super.updateTargetLocation(location)
+    if (this.targetNode) {
+      this.targetNode.layout = Rect.fromCenter(location, this.targetNode.layout.toSize())
+    }
+  }
+
+  /**
+   * Returns the current dummy node since it is always the target for the created edge.
+   * @param {Point} location The location is ignored in this implementation.
+   * @return {INode}
+   */
+  getTarget(location) {
+    return this.targetNode
+  }
+
+  /**
+   * Creates the actual edge and target node after edge creation is finished.
+   * @return {IEdge}
+   */
+  createEdge() {
+    const graph = this.inputModeContext.graph
+
+    // create the target node
+    const node = graph.createNode(
+      this.targetNode.layout,
+      this.targetNode.style,
+      this.targetNode.tag
+    )
+
+    // clean up the dummy node visualization
+    this.canvasObject.remove()
+    this.canvasObject = null
+    this.targetNode = null
+
+    // create the edge
+    const edge = super.createEdge(
+      graph,
+      this.sourcePortCandidate,
+      new DefaultPortCandidate(node, FreeNodePortLocationModel.NODE_CENTER_ANCHORED)
+    )
+
+    // fire edge created event
+    this.onEdgeCreated(new EdgeEventArgs(edge))
+    return edge
+  }
+
+  /**
+   * Cleans up after edge creation is canceled.
+   */
+  onCanceled() {
+    super.onCanceled()
+
+    // clean up the dummy node visualization
+    this.targetNode = null
+    if (this.canvasObject) {
+      this.canvasObject.remove()
+      this.canvasObject = null
+    }
+  }
+}

@@ -7,8 +7,8 @@
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.1.
-     // Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML 2.2.
+     // Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -36,13 +36,12 @@
 
   <title>React Demo [yFiles for HTML]</title>
 
-  <link rel="stylesheet" href="../../../lib/yfiles.css">
+  <link rel="stylesheet" href="../../node_modules/yfiles/yfiles.css">
   <link rel="stylesheet" href="../../resources/style/demo.css">
 
-  <!-- enable debugging -->
-  <script src="../../../ide-support/yfiles-typeinfo.js"></script>
+  <script src="../../resources/filesystem-warning.js"></script>
 </head>
-<body class="demo-has-left">
+<body class="demo-has-left loaded">
 <!--
   The sidebar for the description
 -->
@@ -51,7 +50,7 @@
   <div class="demo-sidebar-content">
     <p>
       This demo shows how to create a <a href="https://facebook.github.io/react/" target="_blank">React</a> Component that
-      renders the yFiles <a href="https://docs.yworks.com/yfileshtml/#/api/yfiles.view.GraphComponent" target="_blank">yfiles.view.GraphComponent</a>. </p>
+      renders the yFiles <a href="https://docs.yworks.com/yfileshtml/#/api/GraphComponent" target="_blank">GraphComponent</a>. </p>
     <p>
       React component properties and states are used in order to interact with the GraphComponent programmatically. </p>
     <h2>Building the demo</h2>
@@ -88,12 +87,15 @@
 
 
 <div class="demo-content">
+  <div class="demo-header">
+    <a href="https://www.yworks.com" target="_blank"> <img src="../../resources/image/ylogo.svg" class="demo-y-logo"> </a> <a
+    href="../../README.html" target="_blank">yFiles for HTML</a> <span class="demo-title">React Demo [yFiles for HTML]</span>
+  </div>
   <div id="react-app"></div>
 </div>
 
 <!-- files created as result of the build process -->
 <script src="dist/vendors.js"></script>
-<script src="dist/yfiles.js"></script>
 <script src="dist/app.js"></script>
 </body>
 </html>

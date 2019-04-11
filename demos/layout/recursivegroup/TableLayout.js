@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.1.
- ** Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.2.
+ ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,62 +26,72 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-'use strict'
+import {
+  CompositeLayoutData,
+  HierarchicLayout,
+  IComparer,
+  LayoutMode,
+  LayoutOrientation,
+  LayoutStageBase,
+  PartitionGrid,
+  PortCandidate,
+  PortDirections,
+  RecursiveGroupLayout,
+  RecursiveGroupLayoutData,
+  TabularLayout,
+  TabularLayoutData,
+  TabularLayoutPolicy
+} from 'yfiles'
 
-define([
-  'yfiles/view-layout-bridge',
-  'yfiles/layout-hierarchic'
-], /** @type {yfiles_namespace} */ /** typeof yfiles */ yfiles => {
+/**
+ * Demonstrates how to realize a table node structure, i.e., each group node in the drawing represents a table
+ * and the nodes within the groups the table rows. Edges are connected to specific rows.
+ * The rows are sorted according to their y-coordinate in the initial drawing.
+ */
+export default class TableLayout extends LayoutStageBase {
   /**
-   * Demonstrates how to realize a table node structure, i.e., each group node in the drawing represents a table
-   * and the nodes within the groups the table rows. Edges are connected to specific rows.
-   * The rows are sorted according to their y-coordinate in the initial drawing.
+   * Creates a new instance of TableLayout.
+   * @param {boolean} fromSketch
    */
-  class TableLayout extends yfiles.layout.LayoutStageBase {
-    /**
-     * Creates a new instance of TableLayout.
-     * @param {boolean} fromSketch
-     */
-    constructor(fromSketch) {
-      super()
+  constructor(fromSketch) {
+    super()
 
-      // incremental hierarchic layout is used for the core layout that connects the table nodes
-      const hierarchicLayout = new yfiles.hierarchic.HierarchicLayout()
-      hierarchicLayout.layoutOrientation = yfiles.layout.LayoutOrientation.LEFT_TO_RIGHT
-      hierarchicLayout.layoutMode = fromSketch
-        ? yfiles.hierarchic.LayoutMode.INCREMENTAL
-        : yfiles.hierarchic.LayoutMode.FROM_SCRATCH
-      hierarchicLayout.orthogonalRouting = true
-
+    // incremental hierarchic layout is used for the core layout that connects the table nodes
+    const hierarchicLayout = new HierarchicLayout({
+      layoutOrientation: LayoutOrientation.LEFT_TO_RIGHT,
+      layoutMode: fromSketch ? LayoutMode.INCREMENTAL : LayoutMode.FROM_SCRATCH,
+      orthogonalRouting: true,
       // in case there are a lot of inter-edges, port optimization can take a while
       // then we want to take cut the calculation short and get a less optimized result
-      hierarchicLayout.maximumDuration = 5000
+      maximumDuration: 5000
+    })
 
-      const recursiveGroupLayout = new yfiles.layout.RecursiveGroupLayout(hierarchicLayout)
-      recursiveGroupLayout.autoAssignPortCandidates = true
-      recursiveGroupLayout.fromSketchMode = true
-      this.coreLayout = recursiveGroupLayout
-    }
+    this.coreLayout = new RecursiveGroupLayout({
+      coreLayout: hierarchicLayout,
+      autoAssignPortCandidates: true,
+      fromSketchMode: true
+    })
+  }
 
-    /**
-     * @param {yfiles.layout.LayoutGraph} graph
-     */
-    applyLayout(graph) {
-      this.applyLayoutCore(graph)
-    }
+  /**
+   * @param {yfiles.layout.LayoutGraph} graph
+   */
+  applyLayout(graph) {
+    this.applyLayoutCore(graph)
+  }
 
-    /**
-     * Gets the layout data that shall be used for the TableLayout.
-     * @return {yfiles.layout.LayoutData}
-     */
-    static get LAYOUT_DATA() {
-      if (!TableLayout.$layoutData) {
-        // configure layout algorithms
-        // used for laying out the nodes (rows) within the group nodes (tables)
-        const rowLayout = new yfiles.layout.TabularLayout()
-        rowLayout.layoutPolicy = yfiles.layout.TabularLayoutPolicy.FIXED_SIZE
+  /**
+   * Gets the layout data that shall be used for the TableLayout.
+   * @return {yfiles.layout.LayoutData}
+   */
+  static get LAYOUT_DATA() {
+    if (!TableLayout.$layoutData) {
+      // configure layout algorithms
+      // used for laying out the nodes (rows) within the group nodes (tables)
+      const rowLayout = new TabularLayout({
+        layoutPolicy: TabularLayoutPolicy.FIXED_SIZE,
         // keep the order of the nodes in the initial layout
-        rowLayout.nodeComparer = new yfiles.collections.IComparer((n1, n2) => {
+        nodeComparer: new IComparer((n1, n2) => {
           const y1 = n1.graph.getCenter(n1).y
           const y2 = n2.graph.getCenter(n2).y
           if (y1 === y2) {
@@ -89,40 +99,33 @@ define([
           }
           return y1 > y2 ? 1 : -1
         })
+      })
 
-        // use a grid with one column and a lot of rows. It must have enough cells for the nodes
-        const grid = new yfiles.layout.PartitionGrid(1000, 1)
-        grid.rows.forEach(row => {
-          row.topInset = 2.5
-          row.bottomInset = 2.5
+      // use a grid with one column and a lot of rows. It must have enough cells for the nodes
+      const grid = new PartitionGrid(1000, 1)
+      grid.rows.forEach(row => {
+        row.topInset = 2.5
+        row.bottomInset = 2.5
+      })
+      // set up port candidates for edges (edges should be attached to the left/right side of the corresponding node
+      const candidates = [
+        PortCandidate.createCandidate(PortDirections.WEST),
+        PortCandidate.createCandidate(PortDirections.EAST)
+      ]
+
+      TableLayout.$layoutData = new CompositeLayoutData(
+        new RecursiveGroupLayoutData({
+          sourcePortCandidates: candidates,
+          targetPortCandidates: candidates,
+          // map each group node to its corresponding layout algorithm;
+          // in this case each group node shall be laid out using the row layout
+          groupNodeLayouts: rowLayout
+        }),
+        new TabularLayoutData({
+          partitionGridData: { grid: grid }
         })
-        const rowLayoutData = new yfiles.layout.TabularLayoutData()
-        rowLayoutData.partitionGridData.grid = grid
-
-        // set up port candidates for edges (edges should be attached to the left/right side of the corresponding node
-        const candidates = yfiles.collections.List.fromArray([
-          yfiles.layout.PortCandidate.createCandidate(yfiles.layout.PortDirections.WEST),
-          yfiles.layout.PortCandidate.createCandidate(yfiles.layout.PortDirections.EAST)
-        ])
-
-        const recursiveGroupLayoutData = new yfiles.layout.RecursiveGroupLayoutData()
-        recursiveGroupLayoutData.sourcePortCandidates.constant = candidates
-        recursiveGroupLayoutData.targetPortCandidates.constant = candidates
-
-        // map each group node to its corresponding layout algorithm;
-        // in this case each group node shall be laid out using the row layout
-        recursiveGroupLayoutData.groupNodeLayouts.constant = rowLayout
-
-        // combine the layout data objects
-        const layoutData = new yfiles.layout.CompositeLayoutData()
-        layoutData.items = new yfiles.collections.List({
-          items: [recursiveGroupLayoutData, rowLayoutData]
-        })
-        TableLayout.$layoutData = layoutData
-      }
-      return TableLayout.$layoutData
+      )
     }
+    return TableLayout.$layoutData
   }
-
-  return TableLayout
-})
+}

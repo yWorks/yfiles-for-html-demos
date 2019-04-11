@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.1.
- ** Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.2.
+ ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,62 +26,52 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-'use strict'
+import {
+  HandleInputMode,
+  HandlePositions,
+  INodeHitTester,
+  IReshapeHandleProvider,
+  Point
+} from 'yfiles'
+import { TimeHandle } from './TimeHandle.js'
 
-define(['yfiles/view-component', 'TimeHandle.js'], (
-  /** @type {yfiles_namespace} */ /** typeof yfiles */ yfiles,
-  TimeHandle
-) => {
-  const fuzzyness = 3
+const fuzzyness = 3
 
+/**
+ * An customized HandleInputMode that overrides which handle is hit by the mouse cursor.
+ * The whole left and right border to the node is a hit region for the resize handles.
+ */
+export default class NodeResizeHandleInputMode extends HandleInputMode {
   /**
-   * An customized HandleInputMode that overrides which handle is hit by the mouse cursor.
-   * The whole left and right border to the node is a hit region for the resize handles.
-   * @class NodeResizeHandleInputMode
-   * @extends {yfiles.input.HandleInputMode}
+   * @param {Point} location - The coordinates in the world coordinate system.
+   * @returns {IHandle}
    */
-  class NodeResizeHandleInputMode extends yfiles.input.HandleInputMode {
-    /**
-     * @param {yfiles.geometry.Point} location - The coordinates in the world coordinate system.
-     * @returns {yfiles.input.IHandle}
-     */
-    getClosestHitHandle(location) {
-      const handle = super.getClosestHitHandle(location)
-      if (handle instanceof TimeHandle.TimeHandle) {
-        // if a time handle is hit, it has priority over the resize handles
-        return handle
-      }
-      // get the node in the location
-      const hitTestEnumerator = this.inputModeContext.lookup(yfiles.input.INodeHitTester.$class)
-      if (hitTestEnumerator !== null) {
-        const hits = hitTestEnumerator
-          .enumerateHits(this.inputModeContext, location)
-          .getEnumerator()
-        if (hits.moveNext()) {
-          // there is a node in the location
-          const node = hits.current
-          // get the IReshapeHandleProvider
-          const handleProvider = node.lookup(yfiles.input.IReshapeHandleProvider.$class)
-          const { x, width } = node.layout
-          if (Math.abs(x - location.x) < fuzzyness) {
-            // mouse is over left border - get west handle
-            return handleProvider.getHandle(
-              this.inputModeContext,
-              yfiles.input.HandlePositions.WEST
-            )
-          }
-          if (Math.abs(x + (width - location.x)) < fuzzyness) {
-            // mouse is over right border - get east handle
-            return handleProvider.getHandle(
-              this.inputModeContext,
-              yfiles.input.HandlePositions.EAST
-            )
-          }
+  getClosestHitHandle(location) {
+    const handle = super.getClosestHitHandle(location)
+    if (handle instanceof TimeHandle) {
+      // if a time handle is hit, it has priority over the resize handles
+      return handle
+    }
+    // get the node in the location
+    const hitTestEnumerator = this.inputModeContext.lookup(INodeHitTester.$class)
+    if (hitTestEnumerator !== null) {
+      const hits = hitTestEnumerator.enumerateHits(this.inputModeContext, location).getEnumerator()
+      if (hits.moveNext()) {
+        // there is a node in the location
+        const node = hits.current
+        // get the IReshapeHandleProvider
+        const handleProvider = node.lookup(IReshapeHandleProvider.$class)
+        const { x, width } = node.layout
+        if (Math.abs(x - location.x) < fuzzyness) {
+          // mouse is over left border - get west handle
+          return handleProvider.getHandle(this.inputModeContext, HandlePositions.WEST)
+        }
+        if (Math.abs(x + (width - location.x)) < fuzzyness) {
+          // mouse is over right border - get east handle
+          return handleProvider.getHandle(this.inputModeContext, HandlePositions.EAST)
         }
       }
-      return null
     }
+    return null
   }
-
-  return NodeResizeHandleInputMode
-})
+}

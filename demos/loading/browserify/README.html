@@ -5,8 +5,8 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.1.
-     // Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML 2.2.
+     // Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -51,11 +51,7 @@
       This demo shows how to bundle the yFiles library in a <a href="https://browserify.org/">browserify</a> project.</p>
 
     <p>
-      First, the build process creates minified and optimized yFiles modules with the <em>yFiles deployment tool</em>.
-    </p>
-
-    <p>
-      The optimized modules are <code>require</code>d in the demo sources in addition to an <code>npm</code> library (<a
+      The yFiles modules are <code>require</code>d in the demo sources in addition to an <code>npm</code> library (<a
         href="https://www.npmjs.com/package/color">color</a>), so browserify will add the yfiles modules and the npm
       library to the generated <code>bundle.js</code>. </p>
 
@@ -72,7 +68,7 @@
 </pre>
     <h2>Run</h2>
 
-    <p>The grunt build will place the output files in the <code>dist/</code> directory inside this demo folder. To run
+    <p>Browserify will place the output files in the <code>dist/</code> directory inside this demo folder. To run
       the demo, open <code>./index.html</code> in a browser.</p>
   </div>
 </div>
@@ -106,7 +102,7 @@
       <a href="https://www.youtube.com/user/yWorksTube" target="_blank" class="yt">YouTube</a>
     </div>
     <br><br>
-    <span class="copyright">COPYRIGHT &#x00A9; 2018 yWorks</span><br>
+    <span class="copyright">COPYRIGHT &#x00A9; 2019 yWorks</span><br>
     <a href="https://www.yworks.com/company/legal/imprint">Imprint</a> |
     <a href="https://www.yworks.com/company/legal/terms-of-use">Terms of Use</a> |
     <a href="https://www.yworks.com/company/legal/privacy">Privacy Policy</a>

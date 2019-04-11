@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.1.
- ** Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.2.
+ ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -190,7 +190,7 @@ form.option-ui-combobox div.combobox-container label {
 
 .option-ui-api-link {
   background-color: #5cb85c;
-  color: #FFF;
+  color: #FFF !important;
   font-size: 10px;
   margin-left: 5px;
   padding: 1px 2px;
@@ -359,6 +359,7 @@ input[type='range']::-ms-thumb {
   width: 14px;
   border-radius: 50%;
   background: #a0a0a0;
+  margin-top: 0px;
 }
 
 form.option-ui-spinner input[type='number'] {
@@ -527,11 +528,13 @@ form.option-ui-spinner input {
 form.option-ui-slider input[type='range'] {
   width: 100%;
   margin: 0;
+  vertical-align: middle;
 }
 
 form.option-ui-slider input[type='number'] {
   width: 90%;
   margin: 0;
+  vertical-align: middle;
 }
 
 .option-ui-item {
@@ -604,16 +607,6 @@ form.option-ui-slider input[type='number'] {
     margin: 0;
     font-family: sans-serif;
     font-size: 12px;
-  }
-
-  input[type='range']::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    border: none;
-    height: 20px;
-    width: 20px;
-    border-radius: 50%;
-    background: #a0a0a0;
-    margin-top: -9px;
   }
 
   .option-ui-form-group .option-ui-form-group .option-ui-form-section {

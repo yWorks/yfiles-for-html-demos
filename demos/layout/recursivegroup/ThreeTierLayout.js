@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.1.
- ** Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.2.
+ ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,193 +26,201 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-'use strict'
+import {
+  CompositeLayoutData,
+  Enum,
+  HierarchicLayout,
+  HierarchicLayoutData,
+  HierarchicLayoutNodeLayoutDescriptor,
+  IGraph,
+  INode,
+  LayoutGraph,
+  LayoutMode,
+  LayoutOrientation,
+  LayoutStageBase,
+  PortCandidate,
+  PortDirections,
+  RecursiveGroupLayout,
+  RecursiveGroupLayoutData,
+  TreeLayout,
+  TreeReductionStage
+} from 'yfiles'
 
-define([
-  'yfiles/view-layout-bridge',
-  'yfiles/layout-hierarchic',
-  'yfiles/layout-tree'
-], /** @type {yfiles_namespace} */ /** typeof yfiles */ yfiles => {
+/**
+ * Demonstrates how to use the recursive group layout to realize different layouts of elements assigned
+ * to different tiers.
+ *
+ * Each group node can be assigned to the left, right or middle tier.
+ *
+ * All group nodes mapped to {@link LEFT_TREE_GROUP_NODE} are placed on the left side. Their content is
+ * drawn using a {@link TreeLayout} with layout orientation left-to-right.
+ * Analogously, all group nodes mapped to {link TierType.RIGHT_TREE_GROUP_NODE} are placed on the right side.
+ * Their content is drawn using a {@link TreeLayout} with layout orientation right-to-left.
+ * Elements not assigned to left or right group nodes are always lay out in the middle using the
+ * {@link HierarchicLayout} with layout orientation left-to-right. Note that group nodes of type
+ * {@link COMMON_NODE} are handled non-recursively.
+ */
+export default class ThreeTierLayout extends LayoutStageBase {
   /**
-   * Demonstrates how to use the recursive group layout to realize different layouts of elements assigned
-   * to different tiers.
-   *
-   * Each group node can be assigned to the left, right or middle tier.
-   *
-   * All group nodes mapped to {@link LEFT_TREE_GROUP_NODE} are placed on the left side. Their content is
-   * drawn using a {@link yfiles.tree.TreeLayout} with layout orientation left-to-right.
-   * Analogously, all group nodes mapped to {link TierType.RIGHT_TREE_GROUP_NODE} are placed on the right side.
-   * Their content is drawn using a {@link yfiles.tree.TreeLayout} with layout orientation right-to-left.
-   * Elements not assigned to left or right group nodes are always lay out in the middle using the
-   * {@link yfiles.hierarchic.HierarchicLayout} with layout orientation left-to-right. Note that group nodes of type
-   * {@link COMMON_NODE} are handled non-recursively.
+   * Creates a new instance of <code>ThreeTierLayout</code>.
+   * @param {boolean} fromSketch - Whether the {@link HierarchicLayout} shall be run in incremental
+   *   layout mode.
    */
-  class ThreeTierLayout extends yfiles.layout.LayoutStageBase {
-    /**
-     * Creates a new instance of <code>ThreeTierLayout</code>.
-     * @param {boolean} fromSketch - Whether the {@link yfiles.hierarchic.HierarchicLayout} shall be run in incremental
-     *   layout mode.
-     */
-    constructor(fromSketch) {
-      super()
+  constructor(fromSketch) {
+    super()
 
-      const hierarchicLayout = new yfiles.hierarchic.HierarchicLayout()
-      hierarchicLayout.layoutOrientation = yfiles.layout.LayoutOrientation.LEFT_TO_RIGHT
-      hierarchicLayout.layoutMode = fromSketch
-        ? yfiles.hierarchic.LayoutMode.INCREMENTAL
-        : yfiles.hierarchic.LayoutMode.FROM_SCRATCH
-
+    const hierarchicLayout = new HierarchicLayout({
+      layoutOrientation: LayoutOrientation.LEFT_TO_RIGHT,
+      layoutMode: fromSketch ? LayoutMode.INCREMENTAL : LayoutMode.FROM_SCRATCH,
       // in case there are a lot of inter-edges, port optimization can take a while
       // then we want to take cut the calculation short and get a less optimized result
-      hierarchicLayout.maximumDuration = 2000
+      maximumDuration: 2000
+    })
 
-      const recursiveGroupLayout = new yfiles.layout.RecursiveGroupLayout(hierarchicLayout)
-      recursiveGroupLayout.autoAssignPortCandidates = true
-      recursiveGroupLayout.fromSketchMode = true
-
-      this.coreLayout = recursiveGroupLayout
-    }
-
-    /**
-     * @param {yfiles.layout.LayoutGraph} graph
-     */
-    applyLayout(graph) {
-      this.applyLayoutCore(graph)
-    }
-
-    /**
-     * Returns the layout data that shall be used for the ThreeTierLayout with the specified graph.
-     * @param {yfiles.graph.IGraph} graph
-     * @param {boolean} fromSketch
-     * @return {LayoutData}
-     */
-    static LAYOUT_DATA(graph, fromSketch) {
-      return new LayoutData(graph, fromSketch)
-    }
+    this.coreLayout = new RecursiveGroupLayout({
+      coreLayout: hierarchicLayout,
+      autoAssignPortCandidates: true,
+      fromSketchMode: true
+    })
   }
 
   /**
-   * The layout data that shall be used for the ThreeTierLayout with the specified graph.
+   * @param {LayoutGraph} graph
    */
-  class LayoutData extends yfiles.layout.CompositeLayoutData {
-    /**
-     * Creates a new instance configured for the specified graph.
-     * @param {yfiles.graph.IGraph} graph The graph to configure the layout data for.
-     * @param {boolean} fromSketch Whether the {@link yfiles.hierarchic.HierarchicLayout} shall be run in incremental
-     *   layout mode.
-     */
-    constructor(graph, fromSketch) {
-      super()
+  applyLayout(graph) {
+    this.applyLayoutCore(graph)
+  }
 
-      // set up port candidates for edges (edges should be attached to the left/right side of the corresponding node
-      const candidates = yfiles.collections.List.fromArray([
-        yfiles.layout.PortCandidate.createCandidate(yfiles.layout.PortDirections.WEST),
-        yfiles.layout.PortCandidate.createCandidate(yfiles.layout.PortDirections.EAST)
-      ])
+  /**
+   * Returns the layout data that shall be used for the ThreeTierLayout with the specified graph.
+   * @param {IGraph} graph
+   * @param {boolean} fromSketch
+   * @return {LayoutData}
+   */
+  static LAYOUT_DATA(graph, fromSketch) {
+    return new LayoutData(graph, fromSketch)
+  }
+}
 
-      // configure the different sub group layout settings
-      const leftToRightTreeLayout = new yfiles.tree.TreeReductionStage()
-      leftToRightTreeLayout.nonTreeEdgeRouter = leftToRightTreeLayout.createStraightLineRouter()
-      leftToRightTreeLayout.coreLayout = new yfiles.tree.TreeLayout()
-      leftToRightTreeLayout.coreLayout.layoutOrientation =
-        yfiles.layout.LayoutOrientation.LEFT_TO_RIGHT
+/**
+ * The layout data that shall be used for the ThreeTierLayout with the specified graph.
+ */
+class LayoutData extends CompositeLayoutData {
+  /**
+   * Creates a new instance configured for the specified graph.
+   * @param {IGraph} graph The graph to configure the layout data for.
+   * @param {boolean} fromSketch Whether the {@link HierarchicLayout} shall be run in incremental
+   *   layout mode.
+   */
+  constructor(graph, fromSketch) {
+    super()
 
-      const rightToLeftTreeLayout = new yfiles.tree.TreeReductionStage()
-      rightToLeftTreeLayout.nonTreeEdgeRouter = rightToLeftTreeLayout.createStraightLineRouter()
-      rightToLeftTreeLayout.coreLayout = new yfiles.tree.TreeLayout()
-      rightToLeftTreeLayout.coreLayout.layoutOrientation =
-        yfiles.layout.LayoutOrientation.RIGHT_TO_LEFT
+    // set up port candidates for edges (edges should be attached to the left/right side of the corresponding node
+    const candidates = [
+      PortCandidate.createCandidate(PortDirections.WEST),
+      PortCandidate.createCandidate(PortDirections.EAST)
+    ]
 
-      const recursiveGroupLayoutData = new yfiles.layout.RecursiveGroupLayoutData()
-      recursiveGroupLayoutData.sourcePortCandidates.constant = candidates
-      recursiveGroupLayoutData.targetPortCandidates.constant = candidates
+    // configure the different sub group layout settings
+    const leftToRightTreeLayout = new TreeReductionStage({
+      coreLayout: new TreeLayout({
+        layoutOrientation: LayoutOrientation.LEFT_TO_RIGHT
+      })
+    })
+    leftToRightTreeLayout.nonTreeEdgeRouter = leftToRightTreeLayout.createStraightLineRouter()
 
-      // map each group node to the layout algorithm that should be used for its content
-      recursiveGroupLayoutData.groupNodeLayouts.delegate = node => {
-        switch (getTierType(node, graph)) {
-          case TierType.LEFT_TREE_GROUP_NODE:
-            return leftToRightTreeLayout
-          case TierType.RIGHT_TREE_GROUP_NODE:
-            return rightToLeftTreeLayout
-          default:
-            return null
+    const rightToLeftTreeLayout = new TreeReductionStage({
+      coreLayout: new TreeLayout({
+        layoutOrientation: LayoutOrientation.RIGHT_TO_LEFT
+      })
+    })
+    rightToLeftTreeLayout.nonTreeEdgeRouter = rightToLeftTreeLayout.createStraightLineRouter()
+
+    this.items.add(
+      new RecursiveGroupLayoutData({
+        sourcePortCandidates: candidates,
+        targetPortCandidates: candidates,
+
+        // map each group node to the layout algorithm that should be used for its content
+        groupNodeLayouts: node => {
+          switch (getTierType(node, graph)) {
+            case TierType.LEFT_TREE_GROUP_NODE:
+              return leftToRightTreeLayout
+            case TierType.RIGHT_TREE_GROUP_NODE:
+              return rightToLeftTreeLayout
+            default:
+              return null
+          }
         }
-      }
+      })
+    )
 
-      this.items.add(recursiveGroupLayoutData)
-
-      const hierarchicLayoutData = new yfiles.hierarchic.HierarchicLayoutData()
-      hierarchicLayoutData.nodeLayoutDescriptors.delegate = node => {
+    const hierarchicLayoutData = new HierarchicLayoutData({
+      nodeLayoutDescriptors: node => {
         // align tree group nodes within their layer
         switch (getTierType(node, graph)) {
           case TierType.LEFT_TREE_GROUP_NODE: {
-            const descriptor = new yfiles.hierarchic.NodeLayoutDescriptor()
-            descriptor.layerAlignment = 1
-            return descriptor
+            return new HierarchicLayoutNodeLayoutDescriptor({ layerAlignment: 1 })
           }
           case TierType.RIGHT_TREE_GROUP_NODE: {
-            const descriptor = new yfiles.hierarchic.NodeLayoutDescriptor()
-            descriptor.layerAlignment = 0
-            return descriptor
+            return new HierarchicLayoutNodeLayoutDescriptor({ layerAlignment: 0 })
           }
           default:
             return null
         }
       }
+    })
 
-      if (!fromSketch) {
-        // insert layer constraints to guarantee the desired placement for "left" and "right" group nodes
-        const layerConstraints = hierarchicLayoutData.layerConstraints
-        graph.nodes.forEach(node => {
-          // align tree group nodes within their layer
-          const type = getTierType(node, graph)
-          if (type === TierType.LEFT_TREE_GROUP_NODE) {
-            layerConstraints.placeAtTop(node)
-          } else if (type === TierType.RIGHT_TREE_GROUP_NODE) {
-            layerConstraints.placeAtBottom(node)
-          }
-        })
-      }
-      this.items.add(hierarchicLayoutData)
+    if (!fromSketch) {
+      // insert layer constraints to guarantee the desired placement for "left" and "right" group nodes
+      const layerConstraints = hierarchicLayoutData.layerConstraints
+      graph.nodes.forEach(node => {
+        // align tree group nodes within their layer
+        const type = getTierType(node, graph)
+        if (type === TierType.LEFT_TREE_GROUP_NODE) {
+          layerConstraints.placeAtTop(node)
+        } else if (type === TierType.RIGHT_TREE_GROUP_NODE) {
+          layerConstraints.placeAtBottom(node)
+        }
+      })
+    }
+    this.items.add(hierarchicLayoutData)
+  }
+}
+
+/**
+ * Returns the type of tier the node is assigned to.
+ * @param {INode} node
+ * @param {IGraph} graph
+ * @return {TierType}
+ */
+function getTierType(node, graph) {
+  const foldingView = graph.foldingView
+
+  if (
+    graph.isGroupNode(node) ||
+    // node is an expanded group node
+    foldingView.isInFoldingState(node)
+  ) {
+    const labelText = node.labels.size > 0 ? node.labels.first().text : ''
+    switch (labelText) {
+      case 'left':
+        return TierType.LEFT_TREE_GROUP_NODE
+      case 'right':
+        return TierType.RIGHT_TREE_GROUP_NODE
+      default:
+        return TierType.COMMON_NODE
     }
   }
+  return TierType.COMMON_NODE
+}
 
-  /**
-   * Returns the type of tier the node is assigned to.
-   * @param {yfiles.graph.INode} node
-   * @param {yfiles.graph.IGraph} graph
-   * @return {TierType}
-   */
-  function getTierType(node, graph) {
-    const foldingView = graph.foldingView
-
-    if (
-      graph.isGroupNode(node) ||
-      // node is an expanded group node
-      foldingView.isInFoldingState(node)
-    ) {
-      const labelText = node.labels.size > 0 ? node.labels.first().text : ''
-      switch (labelText) {
-        case 'left':
-          return TierType.LEFT_TREE_GROUP_NODE
-        case 'right':
-          return TierType.RIGHT_TREE_GROUP_NODE
-        default:
-          return TierType.COMMON_NODE
-      }
-    }
-    return TierType.COMMON_NODE
-  }
-
-  /**
-   * @typedef TierType
-   * @enum {number}
-   */
-  const TierType = yfiles.lang.Enum('TierType', {
-    COMMON_NODE: 0,
-    LEFT_TREE_GROUP_NODE: 1,
-    RIGHT_TREE_GROUP_NODE: 2
-  })
-
-  return ThreeTierLayout
+/**
+ * @typedef TierType
+ * @enum {number}
+ */
+const TierType = Enum('TierType', {
+  COMMON_NODE: 0,
+  LEFT_TREE_GROUP_NODE: 1,
+  RIGHT_TREE_GROUP_NODE: 2
 })

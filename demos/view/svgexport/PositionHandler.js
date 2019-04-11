@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.1.
- ** Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.2.
+ ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,76 +26,72 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-'use strict'
+import { BaseClass, IInputModeContext, IPositionHandler, MutablePoint, Point, Rect } from 'yfiles'
 
-define(['yfiles/view-editor'], /** @type {yfiles_namespace} */ /** typeof yfiles */ yfiles => {
+/**
+ * A position handler that moves a given rectangle.
+ */
+export default class PositionHandler extends BaseClass(IPositionHandler) {
   /**
-   * A position handler that moves a given rectangle.
+   * @param {Rect} rectangle
    */
-  class PositionHandler extends yfiles.lang.Class(yfiles.input.IPositionHandler) {
-    /**
-     * @param {yfiles.geometry.Rect} rectangle
-     */
-    constructor(rectangle) {
-      super()
-      this.rectangle = rectangle
-      this.$offset = new yfiles.geometry.MutablePoint()
-    }
-
-    /** @type {yfiles.geometry.Point} */
-    get location() {
-      return this.rectangle.topLeft
-    }
-
-    /** @type {number} */
-    get offset() {
-      return this.$offset
-    }
-
-    /** @type {number} */
-    set offset(value) {
-      this.$offset = value
-    }
-
-    /**
-     * @param {yfiles.input.IInputModeContext} context
-     */
-    initializeDrag(context) {
-      const x = this.rectangle.x - context.canvasComponent.lastEventLocation.x
-      const y = this.rectangle.y - context.canvasComponent.lastEventLocation.y
-      this.offset.relocate(x, y)
-    }
-
-    /**
-     * @param {yfiles.input.IInputModeContext} context
-     * @param {yfiles.geometry.Point} originalLocation
-     * @param {yfiles.geometry.Point} newLocation
-     */
-    handleMove(context, originalLocation, newLocation) {
-      const newX = newLocation.x + this.offset.x
-      const newY = newLocation.y + this.offset.y
-      this.rectangle.relocate(new yfiles.geometry.Point(newX, newY))
-    }
-
-    /**
-     * @param {yfiles.input.IInputModeContext} context
-     * @param {yfiles.geometry.Point} originalLocation
-     */
-    cancelDrag(context, originalLocation) {
-      this.rectangle.relocate(originalLocation)
-    }
-
-    /**
-     * @param {yfiles.input.IInputModeContext} context
-     * @param {yfiles.geometry.Point} originalLocation
-     * @param {yfiles.geometry.Point} newLocation
-     */
-    dragFinished(context, originalLocation, newLocation) {
-      const newX = newLocation.x + this.offset.x
-      const newY = newLocation.y + this.offset.y
-      this.rectangle.relocate(new yfiles.geometry.Point(newX, newY))
-    }
+  constructor(rectangle) {
+    super()
+    this.rectangle = rectangle
+    this.$offset = new MutablePoint()
   }
 
-  return PositionHandler
-})
+  /** @type {Point} */
+  get location() {
+    return this.rectangle.topLeft
+  }
+
+  /** @type {number} */
+  get offset() {
+    return this.$offset
+  }
+
+  /** @type {number} */
+  set offset(value) {
+    this.$offset = value
+  }
+
+  /**
+   * @param {IInputModeContext} context
+   */
+  initializeDrag(context) {
+    const x = this.rectangle.x - context.canvasComponent.lastEventLocation.x
+    const y = this.rectangle.y - context.canvasComponent.lastEventLocation.y
+    this.offset.relocate(x, y)
+  }
+
+  /**
+   * @param {IInputModeContext} context
+   * @param {Point} originalLocation
+   * @param {Point} newLocation
+   */
+  handleMove(context, originalLocation, newLocation) {
+    const newX = newLocation.x + this.offset.x
+    const newY = newLocation.y + this.offset.y
+    this.rectangle.relocate(new Point(newX, newY))
+  }
+
+  /**
+   * @param {IInputModeContext} context
+   * @param {Point} originalLocation
+   */
+  cancelDrag(context, originalLocation) {
+    this.rectangle.relocate(originalLocation)
+  }
+
+  /**
+   * @param {IInputModeContext} context
+   * @param {Point} originalLocation
+   * @param {Point} newLocation
+   */
+  dragFinished(context, originalLocation, newLocation) {
+    const newX = newLocation.x + this.offset.x
+    const newY = newLocation.y + this.offset.y
+    this.rectangle.relocate(new Point(newX, newY))
+  }
+}

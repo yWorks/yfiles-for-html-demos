@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.1.
- ** Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.2.
+ ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,305 +26,290 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-'use strict'
+import {
+  DefaultLabelStyle,
+  ExteriorLabelModel,
+  GraphComponent,
+  GraphEditorInputMode,
+  GraphItemTypes,
+  GraphMLIOHandler,
+  GraphMLSupport,
+  ICommand,
+  INode,
+  InteriorStretchLabelModel,
+  License,
+  KeyType,
+  PanelNodeStyle,
+  Point,
+  ShapeNodeStyle,
+  Size,
+  StorageLocation,
+  YObject
+} from 'yfiles'
 
-require.config({
-  paths: {
-    yfiles: '../../../lib/umd/yfiles/',
-    utils: '../../utils/',
-    resources: '../../resources/'
-  }
-})
+import { bindAction, bindCommand, showApp } from '../../resources/demo-app.js'
+import loadJson from '../../resources/load-json.js'
+
+/** @type {GraphComponent} */
+let graphComponent = null
 
 /**
- * Application Features - GraphML IO for Custom Data
- *
- * This demo shows how to read and write data that is bound to graph elements
- * to/from a graphml file.
- * In GraphML, data that is associated with graph elements is stored in
- * <code>data</code> tags. Class {@link yfiles.graphml.GraphMLIOHandler} provides several convenience
- * methods to create these tags from a given {@link yfiles.model.IMapper} instance, or to
- * read these data into a mapper instance.
+ * Symbolic name for the mapper that allows transparent access to the correct implementation even across
+ * wrapped graphs.
+ * @type {string}
  */
-require(['yfiles/view-editor', 'resources/demo-app', 'yfiles/view-graphml', 'resources/license'], (
-  /** @type {yfiles_namespace} */ /** typeof yfiles */ yfiles,
-  app
-) => {
-  /** @type {yfiles.view.GraphComponent} */
-  let graphComponent = null
+const DATE_TIME_MAPPER_KEY = 'DateTimeMapperKey'
 
-  /**
-   * Symbolic name for the mapper that allows transparent access to the correct implementation even across
-   * wrapped graphs.
-   * @type {string}
-   */
-  const DATE_TIME_MAPPER_KEY = 'DateTimeMapperKey'
+/**
+ * Bootstraps the demo.
+ */
+function run(licenseData) {
+  License.value = licenseData
+  // initialize graph component
+  graphComponent = new GraphComponent('#graphComponent')
+  graphComponent.inputMode = new GraphEditorInputMode({
+    allowGroupingOperations: true
+  })
+  graphComponent.graph.undoEngineEnabled = true
 
-  /**
-   * Bootstraps the demo.
-   */
-  function run() {
-    // initialize graph component
-    graphComponent = new yfiles.view.GraphComponent('#graphComponent')
-    graphComponent.inputMode = new yfiles.input.GraphEditorInputMode({
-      allowGroupingOperations: true
-    })
-    graphComponent.graph.undoEngineEnabled = true
+  // configures default styles for newly created graph elements
+  initTutorialDefaults()
 
-    // configures default styles for newly created graph elements
-    initTutorialDefaults()
+  // sets up the a data binding that stores the current date when a node is created
+  enableDataBinding()
 
-    // sets up the a data binding that stores the current date when a node is created
-    enableDataBinding()
+  // enable GraphML IO
+  enableGraphML()
 
-    // enable GraphML IO
-    enableGraphML()
+  // displays tooltips for the stored data items, so that something is visible to the user
+  setupTooltips()
 
-    // displays tooltips for the stored data items, so that something is visible to the user
-    setupTooltips()
+  // add a sample graph
+  createGraph()
 
-    // add a sample graph
-    createGraph()
+  // bind the buttons to their commands
+  registerCommands()
 
-    // bind the buttons to their commands
-    registerCommands()
+  // initialize the application's CSS and JavaScript for the description
+  showApp(graphComponent)
+}
 
-    // initialize the application's CSS and JavaScript for the description
-    app.show(graphComponent)
-  }
+/**
+ * Sets up simple data binding - creates an IMapper, registers it and subscribe to the node creation event
+ * on the graph.
+ */
+function enableDataBinding() {
+  const graph = graphComponent.graph
+  // Creates a specialized IMapper instance, and registers it under a symbolic name.
+  const dateMapper = graph.mapperRegistry.createMapper(
+    INode.$class,
+    YObject.$class,
+    DATE_TIME_MAPPER_KEY
+  )
 
-  /**
-   * Sets up simple data binding - creates an IMapper, registers it and subscribe to the node creation event
-   * on the graph.
-   */
-  function enableDataBinding() {
-    const graph = graphComponent.graph
-    // Creates a specialized IMapper instance, and registers it under a symbolic name.
-    const dateMapper = graph.mapperRegistry.createMapper(
-      yfiles.graph.INode.$class,
-      yfiles.lang.Object.$class,
-      DATE_TIME_MAPPER_KEY
+  // Subscribes to the node creation event to record the node creation time.
+  // Note that since this event is triggered after undo/redo, the time will
+  // be updated during redo of node creations and undo of node deletions.
+  // If this is unwanted behavior, you can customize the node creation itself
+  // to associate this data with the element at the time of its initial creation,
+  // e.g. by listening to the NodeCreated event of GraphEditorInputMode, see below
+  graph.addNodeCreatedListener((source, eventArgs) => {
+    // Stores the current time as node creation time.
+    dateMapper.set(eventArgs.item, new Date())
+  })
+}
+
+/**
+ * Enables loading and saving the graph to GraphML.
+ */
+function enableGraphML() {
+  // create a new GraphMLSupport instance that handles save and load operations
+  new GraphMLSupport({
+    graphComponent,
+    // configure to load and save to the file system
+    storageLocation: StorageLocation.FILE_SYSTEM,
+    // set a custom GraphMLIOHandler
+    graphMLIOHandler: createGraphMLIOHandler()
+  })
+}
+
+/**
+ * Register input and output handlers that store the data in the mapper as GraphMLAttributes resp. can read them
+ * back.
+ */
+function createGraphMLIOHandler() {
+  // create an IOHandler that will be used for all IO operations
+  const graphMLIOHandler = new GraphMLIOHandler()
+
+  const registry = graphComponent.graph.mapperRegistry
+  const dateMapper = registry.getMapper(DATE_TIME_MAPPER_KEY)
+  if (dateMapper !== null) {
+    // The OutputHandler just stores the string value of the attribute
+    // We need to provide the symbolic name of the attribute in the graphml file, the data source as an IMapper and the
+    // GraphML type of the attribute
+    graphMLIOHandler.addOutputMapper(
+      INode.$class,
+      YObject.$class,
+      DATE_TIME_MAPPER_KEY,
+      'demo',
+      dateMapper,
+      (args, e) => {
+        if (e.item instanceof Date) {
+          e.writer.writeString(JSON.stringify(e.item))
+        }
+        e.handled = true
+      },
+      KeyType.STRING
     )
 
-    // Subscribes to the node creation event to record the node creation time.
-    // Note that since this event is triggered after undo/redo, the time will
-    // be updated during redo of node creations and undo of node deletions.
-    // If this is unwanted behavior, you can customize the node creation itself
-    // to associate this data with the element at the time of its initial creation,
-    // e.g. by listening to the NodeCreated event of GraphEditorInputMode, see below
-    graph.addNodeCreatedListener((source, eventArgs) => {
-      // Stores the current time as node creation time.
-      dateMapper.set(eventArgs.item, new Date())
-    })
-  }
-
-  /**
-   * Enables loading and saving the graph to GraphML.
-   */
-  function enableGraphML() {
-    // create a new GraphMLSupport instance that handles save and load operations
-    new yfiles.graphml.GraphMLSupport({
-      graphComponent,
-      // configure to load and save to the file system
-      storageLocation: yfiles.graphml.StorageLocation.FILE_SYSTEM,
-      // set a custom GraphMLIOHandler
-      graphMLIOHandler: createGraphMLIOHandler()
-    })
-  }
-
-  /**
-   * Register input and output handlers that store the data in the mapper as GraphMLAttributes resp. can read them
-   * back.
-   */
-  function createGraphMLIOHandler() {
-    // create an IOHandler that will be used for all IO operations
-    const graphMLIOHandler = new yfiles.graphml.GraphMLIOHandler()
-
-    const registry = graphComponent.graph.mapperRegistry
-    const dateMapper = registry.getMapper(DATE_TIME_MAPPER_KEY)
-    if (dateMapper !== null) {
-      // The OutputHandler just stores the string value of the attribute
-      // We need to provide the symbolic name of the attribute in the graphml file, the data source as an IMapper and the
-      // GraphML type of the attribute
-      graphMLIOHandler.addOutputMapper(
-        yfiles.graph.INode.$class,
-        yfiles.lang.Object.$class,
-        DATE_TIME_MAPPER_KEY,
-        'demo',
-        dateMapper,
-        (args, e) => {
-          if (e.item instanceof Date) {
-            e.writer.writeString(JSON.stringify(e.item))
+    // To read back a DateTime value from a string GraphML attribute, we have to provide an additional callback method.
+    graphMLIOHandler.addInputMapper(
+      INode.$class,
+      YObject.$class,
+      element => GraphMLIOHandler.matchesName(element, DATE_TIME_MAPPER_KEY),
+      dateMapper,
+      (sender, e) => {
+        // The actual value is a text node that can be retrieved from the event
+        try {
+          const stringValue = e.xmlNode.textContent
+          const dateTime = JSON.parse(stringValue, (key, val) => new Date(val))
+          e.result = dateTime
+        } catch (exception) {
+          if (typeof window.console !== 'undefined') {
+            window.console.log(exception)
           }
-          e.handled = true
-        },
-        yfiles.graphml.KeyType.STRING
-      )
-
-      // To read back a DateTime value from a string GraphML attribute, we have to provide an additional callback method.
-      graphMLIOHandler.addInputMapper(
-        yfiles.graph.INode.$class,
-        yfiles.lang.Object.$class,
-        element => yfiles.graphml.GraphMLIOHandler.matchesName(element, DATE_TIME_MAPPER_KEY),
-        dateMapper,
-        (sender, e) => {
-          // The actual value is a text node that can be retrieved from the event
-          try {
-            const stringValue = e.xmlNode.textContent
-            const dateTime = JSON.parse(stringValue, (key, val) => new Date(val))
-            e.result = dateTime
-          } catch (exception) {
-            if (typeof window.console !== 'undefined') {
-              console.log(exception)
-            }
-            e.result = new Date()
-          }
+          e.result = new Date()
         }
-      )
+      }
+    )
+  }
+  return graphMLIOHandler
+}
+
+/**
+ * Setup tooltips that return the value that is stored in the mapper.
+ * Dynamic tooltips are implemented by adding a tooltip provider as an event handler for
+ * the {@link MouseHoverInputMode#addQueryToolTipListener QueryToolTip} event of the
+ * GraphEditorInputMode using the
+ * {@link ToolTipQueryEventArgs} parameter.
+ * The {@link ToolTipQueryEventArgs} parameter provides three relevant properties:
+ * Handled, QueryLocation, and ToolTip. The Handled property is a flag which indicates
+ * whether the tooltip was already set by one of possibly several tooltip providers. The
+ * QueryLocation property contains the mouse position for the query in world coordinates.
+ * The tooltip is set by setting the ToolTip property.
+ */
+function setupTooltips() {
+  const graphEditorInputMode = graphComponent.inputMode
+  graphEditorInputMode.toolTipItems = GraphItemTypes.NODE
+  graphEditorInputMode.addQueryItemToolTipListener((src, eventArgs) => {
+    if (eventArgs.handled) {
+      // A tooltip has already been assigned -> nothing to do.
+      return
     }
-    return graphMLIOHandler
-  }
-
-  /**
-   * Setup tooltips that return the value that is stored in the mapper.
-   * Dynamic tooltips are implemented by adding a tooltip provider as an event handler for
-   * the {@link yfiles.input.MouseHoverInputMode#addQueryToolTipListener QueryToolTip} event of the
-   * GraphEditorInputMode using the
-   * {@link yfiles.input.ToolTipQueryEventArgs} parameter.
-   * The {@link yfiles.input.ToolTipQueryEventArgs} parameter provides three relevant properties:
-   * Handled, QueryLocation, and ToolTip. The Handled property is a flag which indicates
-   * whether the tooltip was already set by one of possibly several tooltip providers. The
-   * QueryLocation property contains the mouse position for the query in world coordinates.
-   * The tooltip is set by setting the ToolTip property.
-   */
-  function setupTooltips() {
-    const graphEditorInputMode = graphComponent.inputMode
-    graphEditorInputMode.toolTipItems = yfiles.graph.GraphItemTypes.NODE
-    graphEditorInputMode.addQueryItemToolTipListener((src, eventArgs) => {
-      if (eventArgs.handled) {
-        // A tooltip has already been assigned -> nothing to do.
-        return
+    const item = eventArgs.item
+    if (INode.isInstance(item)) {
+      const dateMapper = graphComponent.graph.mapperRegistry.getMapper(DATE_TIME_MAPPER_KEY)
+      if (dateMapper !== null) {
+        // Found a suitable mapper. Set the tooltip.
+        eventArgs.toolTip = dateMapper.get(item).toLocaleString()
+        // Indicate that the tooltip has been set.
+        eventArgs.handled = true
       }
-      const item = eventArgs.item
-      if (yfiles.graph.INode.isInstance(item)) {
-        const dateMapper = graphComponent.graph.mapperRegistry.getMapper(DATE_TIME_MAPPER_KEY)
-        if (dateMapper !== null) {
-          // Found a suitable mapper. Set the tooltip.
-          eventArgs.toolTip = dateMapper.get(item).toLocaleString()
-          // Indicate that the tooltip has been set.
-          eventArgs.handled = true
-        }
-      }
-    })
+    }
+  })
 
-    // Add a little offset to the tooltip such that it is not obscured by the mouse pointer.
-    graphEditorInputMode.mouseHoverInputMode.toolTipLocationOffset = new yfiles.geometry.Point(
-      20,
-      20
-    )
-  }
+  // Add a little offset to the tooltip such that it is not obscured by the mouse pointer.
+  graphEditorInputMode.mouseHoverInputMode.toolTipLocationOffset = new Point(20, 20)
+}
 
-  /**
-   * Initializes the defaults for the styles in this tutorial.
-   */
-  function initTutorialDefaults() {
-    const graph = graphComponent.graph
+/**
+ * Initializes the defaults for the styles in this tutorial.
+ */
+function initTutorialDefaults() {
+  const graph = graphComponent.graph
 
-    // configure defaults normal nodes and their labels
-    graph.nodeDefaults.style = new yfiles.styles.ShapeNodeStyle({
-      fill: 'darkorange',
-      stroke: 'white'
-    })
-    graph.nodeDefaults.size = new yfiles.geometry.Size(40, 40)
-    graph.nodeDefaults.labels.style = new yfiles.styles.DefaultLabelStyle({
-      verticalTextAlignment: 'center',
-      wrapping: 'word_ellipsis'
-    })
-    graph.nodeDefaults.labels.layoutParameter = yfiles.graph.ExteriorLabelModel.SOUTH
+  // configure defaults normal nodes and their labels
+  graph.nodeDefaults.style = new ShapeNodeStyle({
+    fill: 'darkorange',
+    stroke: 'white'
+  })
+  graph.nodeDefaults.size = new Size(40, 40)
+  graph.nodeDefaults.labels.style = new DefaultLabelStyle({
+    verticalTextAlignment: 'center',
+    wrapping: 'word_ellipsis'
+  })
+  graph.nodeDefaults.labels.layoutParameter = ExteriorLabelModel.SOUTH
 
-    // configure defaults group nodes and their labels
-    graph.groupNodeDefaults.style = new yfiles.styles.PanelNodeStyle({
-      color: 'rgb(214, 229, 248)',
-      insets: [18, 5, 5, 5],
-      labelInsetsColor: 'rgb(214, 229, 248)'
-    })
-    graph.groupNodeDefaults.labels.style = new yfiles.styles.DefaultLabelStyle({
-      horizontalTextAlignment: 'right'
-    })
-    graph.groupNodeDefaults.labels.layoutParameter = yfiles.graph.InteriorStretchLabelModel.NORTH
-  }
+  // configure defaults group nodes and their labels
+  graph.groupNodeDefaults.style = new PanelNodeStyle({
+    color: 'rgb(214, 229, 248)',
+    insets: [18, 5, 5, 5],
+    labelInsetsColor: 'rgb(214, 229, 248)'
+  })
+  graph.groupNodeDefaults.labels.style = new DefaultLabelStyle({
+    horizontalTextAlignment: 'right'
+  })
+  graph.groupNodeDefaults.labels.layoutParameter = InteriorStretchLabelModel.NORTH
+}
 
-  /**
-   * Creates a simple sample graph.
-   */
-  function createGraph() {
-    const graph = graphComponent.graph
+/**
+ * Creates a simple sample graph.
+ */
+function createGraph() {
+  const graph = graphComponent.graph
 
-    const node1 = graph.createNodeAt([110, 20])
-    const node2 = graph.createNodeAt([145, 95])
-    const node3 = graph.createNodeAt([75, 95])
-    const node4 = graph.createNodeAt([30, 175])
-    const node5 = graph.createNodeAt([100, 175])
+  const node1 = graph.createNodeAt([110, 20])
+  const node2 = graph.createNodeAt([145, 95])
+  const node3 = graph.createNodeAt([75, 95])
+  const node4 = graph.createNodeAt([30, 175])
+  const node5 = graph.createNodeAt([100, 175])
 
-    graph.groupNodes({ children: [node1, node2, node3], labels: 'Group 1' })
+  graph.groupNodes({ children: [node1, node2, node3], labels: 'Group 1' })
 
-    const edge1 = graph.createEdge(node1, node2)
-    const edge2 = graph.createEdge(node1, node3)
-    const edge3 = graph.createEdge(node3, node4)
-    const edge4 = graph.createEdge(node3, node5)
-    const edge5 = graph.createEdge(node1, node5)
-    graph.setPortLocation(edge1.sourcePort, new yfiles.geometry.Point(123.33, 40))
-    graph.setPortLocation(edge1.targetPort, new yfiles.geometry.Point(145, 75))
-    graph.setPortLocation(edge2.sourcePort, new yfiles.geometry.Point(96.67, 40))
-    graph.setPortLocation(edge2.targetPort, new yfiles.geometry.Point(75, 75))
-    graph.setPortLocation(edge3.sourcePort, new yfiles.geometry.Point(65, 115))
-    graph.setPortLocation(edge3.targetPort, new yfiles.geometry.Point(30, 155))
-    graph.setPortLocation(edge4.sourcePort, new yfiles.geometry.Point(85, 115))
-    graph.setPortLocation(edge4.targetPort, new yfiles.geometry.Point(90, 155))
-    graph.setPortLocation(edge5.sourcePort, new yfiles.geometry.Point(110, 40))
-    graph.setPortLocation(edge5.targetPort, new yfiles.geometry.Point(110, 155))
-    graph.addBends(edge1, [
-      new yfiles.geometry.Point(123.33, 55),
-      new yfiles.geometry.Point(145, 55)
-    ])
-    graph.addBends(edge2, [new yfiles.geometry.Point(96.67, 55), new yfiles.geometry.Point(75, 55)])
-    graph.addBends(edge3, [new yfiles.geometry.Point(65, 130), new yfiles.geometry.Point(30, 130)])
-    graph.addBends(edge4, [new yfiles.geometry.Point(85, 130), new yfiles.geometry.Point(90, 130)])
+  const edge1 = graph.createEdge(node1, node2)
+  const edge2 = graph.createEdge(node1, node3)
+  const edge3 = graph.createEdge(node3, node4)
+  const edge4 = graph.createEdge(node3, node5)
+  const edge5 = graph.createEdge(node1, node5)
+  graph.setPortLocation(edge1.sourcePort, new Point(123.33, 40))
+  graph.setPortLocation(edge1.targetPort, new Point(145, 75))
+  graph.setPortLocation(edge2.sourcePort, new Point(96.67, 40))
+  graph.setPortLocation(edge2.targetPort, new Point(75, 75))
+  graph.setPortLocation(edge3.sourcePort, new Point(65, 115))
+  graph.setPortLocation(edge3.targetPort, new Point(30, 155))
+  graph.setPortLocation(edge4.sourcePort, new Point(85, 115))
+  graph.setPortLocation(edge4.targetPort, new Point(90, 155))
+  graph.setPortLocation(edge5.sourcePort, new Point(110, 40))
+  graph.setPortLocation(edge5.targetPort, new Point(110, 155))
+  graph.addBends(edge1, [new Point(123.33, 55), new Point(145, 55)])
+  graph.addBends(edge2, [new Point(96.67, 55), new Point(75, 55)])
+  graph.addBends(edge3, [new Point(65, 130), new Point(30, 130)])
+  graph.addBends(edge4, [new Point(85, 130), new Point(90, 130)])
 
-    graphComponent.fitGraphBounds()
-    graph.undoEngine.clear()
-  }
+  graphComponent.fitGraphBounds()
+  graph.undoEngine.clear()
+}
 
-  /**
-   * Binds the various commands available in yFiles for HTML to the buttons in the tutorial's toolbar.
-   */
-  function registerCommands() {
-    const ICommand = yfiles.input.ICommand
-    app.bindAction("button[data-command='New']", () => {
-      graphComponent.graph.clear()
-      yfiles.input.ICommand.FIT_GRAPH_BOUNDS.execute(null, graphComponent)
-    })
-    app.bindCommand("button[data-command='Open']", ICommand.OPEN, graphComponent)
-    app.bindCommand("button[data-command='Save']", ICommand.SAVE, graphComponent)
-    app.bindCommand("button[data-command='Cut']", ICommand.CUT, graphComponent)
-    app.bindCommand("button[data-command='Copy']", ICommand.COPY, graphComponent)
-    app.bindCommand("button[data-command='Paste']", ICommand.PASTE, graphComponent)
-    app.bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent)
-    app.bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
-    app.bindCommand("button[data-command='Undo']", ICommand.UNDO, graphComponent)
-    app.bindCommand("button[data-command='Redo']", ICommand.REDO, graphComponent)
-    app.bindCommand(
-      "button[data-command='GroupSelection']",
-      ICommand.GROUP_SELECTION,
-      graphComponent
-    )
-    app.bindCommand(
-      "button[data-command='UngroupSelection']",
-      ICommand.UNGROUP_SELECTION,
-      graphComponent
-    )
-  }
+/**
+ * Binds the various commands available in yFiles for HTML to the buttons in the tutorial's toolbar.
+ */
+function registerCommands() {
+  bindAction("button[data-command='New']", () => {
+    graphComponent.graph.clear()
+    ICommand.FIT_GRAPH_BOUNDS.execute(null, graphComponent)
+  })
+  bindCommand("button[data-command='Open']", ICommand.OPEN, graphComponent)
+  bindCommand("button[data-command='Save']", ICommand.SAVE, graphComponent)
+  bindCommand("button[data-command='Cut']", ICommand.CUT, graphComponent)
+  bindCommand("button[data-command='Copy']", ICommand.COPY, graphComponent)
+  bindCommand("button[data-command='Paste']", ICommand.PASTE, graphComponent)
+  bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent)
+  bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
+  bindCommand("button[data-command='Undo']", ICommand.UNDO, graphComponent)
+  bindCommand("button[data-command='Redo']", ICommand.REDO, graphComponent)
+  bindCommand("button[data-command='GroupSelection']", ICommand.GROUP_SELECTION, graphComponent)
+  bindCommand("button[data-command='UngroupSelection']", ICommand.UNGROUP_SELECTION, graphComponent)
+}
 
-  // start tutorial
-  run()
-})
+// start tutorial
+loadJson().then(run)
