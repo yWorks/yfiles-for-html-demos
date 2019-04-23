@@ -26,6 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
+const path = require('path')
 const CleanWebpackPlugin = require('clean-webpack-plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 
@@ -71,7 +72,12 @@ const baseConfig = {
       },
       {
         test: /\.(png|svg|jpg|gif)$/,
-        use: ['file-loader']
+        use: {
+          loader: 'file-loader',
+          options: {
+            publicPath: '.'
+          }
+        }
       }
     ]
   },
@@ -81,7 +87,14 @@ const baseConfig = {
       filename: '[name].css',
       chunkFilename: '[id].css'
     })
-  ]
+  ],
+  output: {
+    filename: '[name].js',
+    path: path.resolve(__dirname, 'dist'), // This is necessary when using the webpack dev server, so the bundles can
+    // be loaded from dist/
+    // https://webpack.js.org/configuration/output/#output-publicpath
+    publicPath: 'dist'
+  }
 }
 
 module.exports = function(env, options) {

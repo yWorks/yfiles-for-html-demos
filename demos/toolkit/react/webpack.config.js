@@ -26,6 +26,8 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
+const CleanWebpackPlugin = require('clean-webpack-plugin')
+const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const path = require('path')
 
 const YWorksOptimizer = require('@yworks/optimizer/webpack-plugin')
@@ -36,7 +38,13 @@ module.exports = function(env, options) {
       app: ['./src/main.jsx']
     },
 
-    plugins: [],
+    plugins: [
+      new CleanWebpackPlugin(),
+      new MiniCssExtractPlugin({
+        filename: '[name].css',
+        chunkFilename: '[id].css'
+      })
+    ],
 
     optimization: {
       minimize: false,
@@ -54,6 +62,11 @@ module.exports = function(env, options) {
     module: {
       rules: [
         {
+          test: /\.css$/,
+          use: [MiniCssExtractPlugin.loader, 'css-loader'],
+          sideEffects: true
+        },
+        {
           test: /\.(js|jsx)$/,
           exclude: /node_modules/,
           use: {
@@ -62,6 +75,10 @@ module.exports = function(env, options) {
               presets: ['@babel/preset-env']
             }
           }
+        },
+        {
+          test: /\.(png|svg|jpg|gif)$/,
+          use: ['file-loader']
         }
       ]
     },

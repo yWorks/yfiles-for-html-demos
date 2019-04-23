@@ -67,12 +67,5 @@ module.exports = {
       // add source maps for non-library code to enable convenient debugging
       exclude: ['yfiles.js']
     })
-  ],
-  output: {
-    filename: '[name].js',
-    path: path.resolve(__dirname, 'dist'), // This is necessary when using the webpack dev server, so the bundles can
-    // be loaded from dist/
-    // https://webpack.js.org/configuration/output/#output-publicpath
-    publicPath: 'dist'
-  }
+  ]
 }

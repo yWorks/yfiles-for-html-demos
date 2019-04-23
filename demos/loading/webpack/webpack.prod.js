@@ -49,11 +49,6 @@ module.exports = {
     })
   ],
   output: {
-    filename: '[name].[hash].js',
-    path: path.resolve(__dirname, 'dist'),
-    // This is necessary when using the webpack dev server, so the bundles can
-    // be loaded from dist/
-    // https://webpack.js.org/configuration/output/#output-publicpath
-    publicPath: 'dist'
+    filename: '[name].[hash].js'
   }
 }

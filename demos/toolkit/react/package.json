@@ -17,12 +17,16 @@
     "yfiles": "^2.2.0"
   },
   "devDependencies": {
-    "@yworks/optimizer": "^1.0.0",
     "@babel/cli": "^7.2.3",
     "@babel/core": "^7.4.0",
     "@babel/preset-env": "^7.4.2",
     "@babel/preset-react": "^7.0.0",
+    "@yworks/optimizer": "^1.0.0",
     "babel-loader": "^8.0.5",
+    "clean-webpack-plugin": "^2.0.1",
+    "css-loader": "^2.1.1",
+    "file-loader": "^3.0.1",
+    "mini-css-extract-plugin": "^0.5.0",
     "webpack": "4.17.1",
     "webpack-cli": "3.1.0"
   }

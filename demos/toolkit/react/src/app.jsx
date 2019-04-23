@@ -1,3 +1,6 @@
+import 'yfiles/yfiles.css'
+import '../../../resources/style/demo.css'
+
 import React from 'react'
 import ReactGraphComponent from './ReactGraphComponent.jsx'
 import {DefaultGraph, ShapeNodeStyle} from 'yfiles'

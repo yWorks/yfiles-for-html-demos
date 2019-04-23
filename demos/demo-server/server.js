@@ -59,6 +59,12 @@ app.use((req, res, next) => {
   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept')
   res.header('Access-Control-Expose-Headers', 'X-Powered-By, X-yFiles-for-HTML-Demo-Server')
   res.header('X-yFiles-for-HTML-Demo-Server', 'true')
+  if (req.path && /demos[\\/](?!node_modules).*\.js$/i.test(req.path)) {
+    // disables caching
+    res.header('Cache-Control', 'no-store')
+  } else {
+    res.header('Cache-Control', 'public, max-age=31536000')
+  }
   next()
 })
 
