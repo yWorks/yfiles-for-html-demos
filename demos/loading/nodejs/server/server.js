@@ -52,7 +52,7 @@ const server = app.listen(3001, () => {
   console.log('Layout server listening at http://%s:%s', host, port)
 })
 
-// Listen to localhost:3000/layout POST requests
+// Listen to /layout POST requests
 app.post('/layout', (req, res) => {
   // Allow cross-origin requests
   res.header('Access-Control-Allow-Origin', '*')

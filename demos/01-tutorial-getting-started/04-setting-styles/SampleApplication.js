@@ -33,6 +33,7 @@ import {
   Fill,
   FreeNodePortLocationModel,
   GraphComponent,
+  GraphOverviewComponent,
   ICommand,
   IGraph,
   License,

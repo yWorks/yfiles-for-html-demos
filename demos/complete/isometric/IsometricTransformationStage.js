@@ -28,7 +28,9 @@
  ***************************************************************************/
 import {
   GroupingKeys,
+  IDataProvider,
   ILayoutAlgorithm,
+  ILayoutStage,
   LabelLayoutData,
   LabelLayoutKeys,
   LayoutGraph,

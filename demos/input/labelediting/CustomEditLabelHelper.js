@@ -78,7 +78,7 @@ export default class CustomEditLabelHelper extends EditLabelHelper {
       args.cancel = true
       return
     }
-    CustomEditLabelHelper.$super.onLabelAdding.call(this, args)
+    super.onLabelAdding(args)
   }
 
   /**
@@ -94,7 +94,7 @@ export default class CustomEditLabelHelper extends EditLabelHelper {
     if (owner.labels.size === 0 || !(this.$firstLabelStyle === owner.labels.get(0).style)) {
       return this.$firstLabelStyle
     }
-    return CustomEditLabelHelper.$super.getLabelStyle.call(this, context, owner)
+    return super.getLabelStyle(context, owner)
   }
 
   /**
@@ -113,7 +113,7 @@ export default class CustomEditLabelHelper extends EditLabelHelper {
     ) {
       return this.$firstLabelParam
     }
-    return CustomEditLabelHelper.$super.getLabelParameter.call(this, context, owner)
+    return super.getLabelParameter(context, owner)
   }
 
   /**
@@ -144,7 +144,7 @@ export default class CustomEditLabelHelper extends EditLabelHelper {
     // Implicit editing - this is only reached if we are trying to edit labels for an owner which does not yet have
     // any labels
     if (this.$owner === null) {
-      CustomEditLabelHelper.$super.onLabelEditing.call(this, args)
+      super.onLabelEditing(args)
       return
     }
     if (this.$owner.labels.size <= 1) {

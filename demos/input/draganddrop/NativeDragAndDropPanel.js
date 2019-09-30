@@ -29,15 +29,20 @@
 import {
   GraphComponent,
   GraphEditorInputMode,
+  IEdge,
   ILabel,
   ILabelModelParameterFinder,
   IListEnumerable,
   INode,
   Insets,
   IPort,
+  Point,
+  Rect,
   SimpleNode,
-  SvgExport
+  SvgExport,
+  VoidNodeStyle
 } from 'yfiles'
+import EdgeDropInputMode from './EdgeDropInputMode.js'
 
 // @yjs:keep=effectAllowed
 /**
@@ -104,39 +109,45 @@ export default class NativeDragAndDropPanel {
     const noPreviewElement = document.createElement('div')
     for (let i = 0; i < items.length; i++) {
       const item = items[i]
-      const node = item.element
+      const modelItem = item.element
 
-      // The node ID is used to get the node instance from the data transfer during 'drop'
-      const nodeID = `node ${i}`
-      const visual = this.createNodeVisual(item, exportGraphComponent)
+      // The item ID is used to get the node instance from the data transfer during 'drop'
+      const itemId = `item ${i}`
+      const visual = INode.isInstance(modelItem)
+        ? this.createNodeVisual(item, exportGraphComponent)
+        : this.createEdgeVisual(item, exportGraphComponent)
 
-      if (IPort.isInstance(node.tag)) {
-        id2items.set(nodeID, node.tag)
-      } else if (ILabel.isInstance(node.tag)) {
-        id2items.set(nodeID, node.tag)
+      if (IPort.isInstance(modelItem.tag)) {
+        id2items.set(itemId, modelItem.tag)
+      } else if (ILabel.isInstance(modelItem.tag)) {
+        id2items.set(itemId, modelItem.tag)
+      } else if (IEdge.isInstance(modelItem)) {
+        id2items.set(itemId, modelItem)
       } else {
         // Store a node without labels to create a plain node on drop
         const modifiedNode = new SimpleNode()
-        modifiedNode.layout = node.layout
-        modifiedNode.style = node.style
-        modifiedNode.ports = node.ports
-        modifiedNode.tag = node.tag
-        modifiedNode.labels = this.$copyNodeLabels ? node.labels : IListEnumerable.EMPTY
-        id2items.set(nodeID, modifiedNode)
+        modifiedNode.layout = modelItem.layout
+        modifiedNode.style = modelItem.style
+        modifiedNode.ports = modelItem.ports
+        modifiedNode.tag = modelItem.tag
+        modifiedNode.labels = this.$copyNodeLabels ? modelItem.labels : IListEnumerable.EMPTY
+        id2items.set(itemId, modifiedNode)
       }
 
-      // Set the node ID as data of the data transfer and configure some other drop properties according to the
+      // Set the item ID as data of the data transfer and configure some other drop properties according to the
       // dragged type
       visual.addEventListener('dragstart', e => {
         e.dataTransfer.dropEffect = 'copy'
         e.dataTransfer.effectAllowed = 'copy'
 
-        if (IPort.isInstance(node.tag)) {
-          e.dataTransfer.setData(IPort.$class.name, nodeID)
-        } else if (ILabel.isInstance(node.tag)) {
-          e.dataTransfer.setData(ILabel.$class.name, nodeID)
+        if (IPort.isInstance(modelItem.tag)) {
+          e.dataTransfer.setData(IPort.$class.name, itemId)
+        } else if (ILabel.isInstance(modelItem.tag)) {
+          e.dataTransfer.setData(ILabel.$class.name, itemId)
+        } else if (IEdge.isInstance(modelItem)) {
+          e.dataTransfer.setData(IEdge.$class.name, itemId)
         } else {
-          e.dataTransfer.setData(INode.$class.name, nodeID)
+          e.dataTransfer.setData(INode.$class.name, itemId)
         }
         if (!this.showPreview) {
           document.body.appendChild(noPreviewElement)
@@ -207,6 +218,22 @@ export default class NativeDragAndDropPanel {
         // the old item creator handles the placement of the new node in the graph
         return oldLabelCreator(context, graph, label, dropTarget, dropLocation)
       }
+
+      const edgeDropInputMode = this.graphComponent.inputMode
+        .getSortedModes()
+        .find(mode => mode instanceof EdgeDropInputMode)
+      if (edgeDropInputMode) {
+        const oldEdgeCreator = edgeDropInputMode.itemCreator
+        edgeDropInputMode.itemCreator = (context, graph, info, dropTarget, dropLocation) => {
+          let edge = info
+          if (typeof info === 'string') {
+            edge = id2items.get(info)
+          }
+
+          // the old item creator handles the placement of the new node in the graph
+          return oldEdgeCreator(context, graph, edge, dropTarget, dropLocation)
+        }
+      }
     }
   }
 
@@ -242,21 +269,42 @@ export default class NativeDragAndDropPanel {
       exportGraph.addPort(node, port.locationParameter, port.style, port.tag)
     })
 
-    exportGraphComponent.updateContentRect(new Insets(5))
-    const exporter = new SvgExport(exportGraphComponent.contentRect)
-    const element = exporter.exportSvg(exportGraphComponent)
+    return exportAndWrap(exportGraphComponent, original.tooltip)
+  }
 
-    // Firefox does not display the SVG correctly because of the clip - so we remove it.
-    element.removeAttribute('clip-path')
-    return wrapNodeVisual(element, original.tooltip)
+  /**
+   * Creates an element that contains the visualization of the given edge.
+   * @return {HTMLElement}
+   */
+  createEdgeVisual(original, graphComponent) {
+    const exportGraph = graphComponent.graph
+    exportGraph.clear()
+
+    const originalEdge = original.element
+
+    const n1 = exportGraph.createNode(new Rect(0, 10, 0, 0), VoidNodeStyle.INSTANCE)
+    const n2 = exportGraph.createNode(new Rect(50, 40, 0, 0), VoidNodeStyle.INSTANCE)
+    const edge = exportGraph.createEdge(n1, n2, originalEdge.style)
+    exportGraph.addBend(edge, new Point(25, 10))
+    exportGraph.addBend(edge, new Point(25, 40))
+
+    return exportAndWrap(graphComponent, original.tooltip)
   }
 }
 
 /**
- * Wraps the original visualization in an HTML element.
+ * Exports and wraps the original visualization in an HTML element.
  * @return {HTMLElement}
  */
-function wrapNodeVisual(nodeVisual, tooltip) {
+function exportAndWrap(graphComponent, tooltip) {
+  graphComponent.updateContentRect(new Insets(5))
+  const exporter = new SvgExport(graphComponent.contentRect)
+  const nodeVisual = exporter.exportSvg(graphComponent)
+
+  // Firefox does not display the SVG correctly because of the clip - so we remove it.
+  nodeVisual.removeAttribute('clip-path')
+
+  // create the HTML element
   const div = document.createElement('div')
   div.setAttribute('class', 'dndPanelItem')
   div.appendChild(nodeVisual)

@@ -42,6 +42,7 @@ import {
   INode,
   InteriorStretchLabelModel,
   License,
+  MouseEventRecognizers,
   PopulateItemContextMenuEventArgs,
   ShapeNodeStyle,
   Size,
@@ -49,12 +50,31 @@ import {
 } from 'yfiles'
 
 import GraphBuilderData from './resources/samples.js'
-import { SankeyPopupSupport, TagUndoUnit } from './SankeyHelper.js'
+import { ConstrainedPositionHandler, SankeyPopupSupport, TagUndoUnit } from './SankeyHelper.js'
 import ContextMenu from '../../utils/ContextMenu.js'
-import { DemoEdgeStyle, HighlightManager } from './DemoStyles.js'
+import { HighlightManager, SankeyEdgeStyle } from './SankeyEdgeStyle.js'
 import { SankeyLayout } from './SankeyLayout.js'
 import { bindAction, bindCommand, showApp } from '../../resources/demo-app.js'
 import loadJson from '../../resources/load-json.js'
+
+const colors = [
+  { dark: new Color(102, 153, 204), light: new Color(194, 221, 249) },
+  { dark: new Color(55, 55, 55), light: new Color(161, 161, 161) },
+  { dark: Color.FIREBRICK, light: new Color(254, 128, 128) },
+  { dark: Color.GOLDENROD, light: new Color(254, 229, 128) },
+  { dark: Color.FOREST_GREEN, light: new Color(203, 229, 128) },
+  { dark: new Color(153, 51, 102), light: new Color(203, 153, 178) },
+  { dark: new Color(51, 102, 255), light: new Color(101, 136, 252) },
+  { dark: new Color(102, 102, 153), light: new Color(160, 160, 209) },
+  { dark: new Color(255, 145, 255), light: new Color(249, 207, 249) },
+  { dark: new Color(128, 255, 128), light: new Color(199, 250, 199) },
+  { dark: new Color(255, 101, 2), light: new Color(246, 200, 169) },
+  { dark: new Color(87, 173, 87), light: new Color(164, 240, 164) },
+  { dark: new Color(44, 174, 212), light: new Color(163, 221, 239) },
+  { dark: new Color(139, 69, 19), light: new Color(222, 178, 144) }
+]
+
+const colorDirectionBox = document.getElementById('colorDirection')
 
 /**
  * Creates and configures the layout algorithm for the Sankey visualization.
@@ -68,28 +88,10 @@ let sankeyLayout = null
 let graphComponent = null
 
 /**
- * Holds the colors for the nodes.
- * @type {Array}
- */
-let nodeColors = null
-
-/**
- * Holds the colors for the nodes.
- * @type {Array}
- */
-let edgeColors = null
-
-/**
  * The node popup that will provide the available node colors.
  * @type {SankeyPopupSupport}
  */
 let nodePopup = null
-
-/**
- * The edge popup that will provide the available edge colors.
- * @type {SankeyPopupSupport}
- */
-let edgePopup = null
 
 /**
  * Holds whether or not a layout is running.
@@ -118,18 +120,20 @@ function run(licenseData) {
 }
 
 /**
- * Initializes the default styles for nodes, edges and labels, the undo engine and the necessary listeners.
+ * Initializes the default styles for nodes, edges and labels, the undo engine and the necessary
+ * listeners.
  */
 function initializeGraph() {
   const graph = graphComponent.graph
 
+  graph.nodeDefaults.shareStyleInstance = false
   // set the default style for the nodes and edges
   graph.nodeDefaults.style = new ShapeNodeStyle({
     fill: 'rgb(102, 153, 204)',
     stroke: null
   })
 
-  graph.edgeDefaults.style = new DemoEdgeStyle()
+  graph.edgeDefaults.style = new SankeyEdgeStyle()
 
   // use a label model that stretches the label over the full node layout, with small insets
   const centerLabelModel = new InteriorStretchLabelModel({ insets: 3 })
@@ -138,7 +142,7 @@ function initializeGraph() {
   // set the default style for the node labels
   graph.nodeDefaults.labels.style = new DefaultLabelStyle({
     textFill: 'white',
-    font: '12px bold Arial',
+    font: '16px Arial',
     wrapping: 'word',
     verticalTextAlignment: 'center',
     horizontalTextAlignment: 'center'
@@ -159,6 +163,11 @@ function initializeGraph() {
   // enable the undo engine
   graph.undoEngineEnabled = true
 
+  // nodes should only be moved along the y axis
+  graph.decorator.nodeDecorator.positionHandlerDecorator.setImplementationWrapper(
+    (node, handler) => new ConstrainedPositionHandler(handler)
+  )
+
   // disable all edge handles
   graph.decorator.edgeDecorator.handleProviderDecorator.hideImplementation()
   graph.decorator.edgeDecorator.selectionDecorator.hideImplementation()
@@ -173,54 +182,33 @@ function createInputMode() {
   // initialize input mode
   const mode = new GraphEditorInputMode({
     // disable selection for labels
-    selectableItems: GraphItemTypes.ALL & ~GraphItemTypes.LABEL
+    selectableItems: GraphItemTypes.NONE,
+    deletableItems: GraphItemTypes.NONE,
+    allowCreateEdge: false,
+    allowCreateNode: false,
+    movableItems: GraphItemTypes.NODE
   })
 
-  // edge creation started
-  mode.createEdgeInputMode.addEdgeCreationStartedListener((sender, args) => {
-    const edge = args.item
-    const sourceNode = edge.sourceNode
-    edge.tag = {
-      thickness: 1,
-      color:
-        sourceNode.tag && sourceNode.tag.colorId
-          ? edgeColors[sourceNode.tag.colorId]
-          : new Color(170, 207, 243)
-    }
-  })
+  mode.moveUnselectedInputMode.enabled = true
+  mode.moveInputMode.enabled = false
+  mode.moveUnselectedInputMode.addDragFinishedListener(() => runLayout())
 
-  // edge creation finished
-  mode.createEdgeInputMode.addEdgeCreatedListener(() => runLayout())
-
-  // node creation
-  mode.addNodeCreatedListener((sender, args) => {
-    args.item.tag = { colorId: 0 }
-  })
+  mode.marqueeSelectionInputMode.enabled = false
+  mode.moveViewportInputMode.pressedRecognizer = MouseEventRecognizers.LEFT_DOWN
+  mode.moveUnselectedInputMode.priority = mode.moveViewportInputMode.priority - 1
 
   // listener to react in edge label text changing
   mode.addLabelTextChangedListener((sender, args) => {
     if (IEdge.isInstance(args.item.owner)) {
-      onLabelChanged(args.item)
+      onEdgeLabelChanged(args.item)
     }
   })
 
   // listener to react in edge label addition
   mode.addLabelAddedListener((sender, args) => {
     if (args.item.owner && IEdge.isInstance(args.item.owner)) {
-      onLabelChanged(args.item)
+      onEdgeLabelChanged(args.item)
     }
-  })
-
-  // listener to react to item deletion
-  mode.addDeletedSelectionListener(() => {
-    // start a compound edit to merge thickness changes and layout
-    const compoundEdit = graphComponent.graph.beginEdit('Deletion', 'Deletion')
-    normalizeThickness()
-    runLayout(() => {
-      if (compoundEdit) {
-        compoundEdit.commit()
-      }
-    })
   })
 
   mode.itemHoverInputMode.enabled = true
@@ -272,12 +260,10 @@ function createInputMode() {
 
   mode.addCanvasClickedListener(() => {
     nodePopup.currentItem = null
-    edgePopup.currentItem = null
   })
 
   mode.addItemClickedListener(() => {
     nodePopup.currentItem = null
-    edgePopup.currentItem = null
   })
 
   graphComponent.inputMode = mode
@@ -293,7 +279,6 @@ function populateContextMenu(contextMenu, args) {
 
   contextMenu.clearItems()
   nodePopup.currentItem = null
-  edgePopup.currentItem = null
 
   // In this demo, we use the following custom hit testing to prefer nodes.
   const hits = graphComponent.graphModelManager.hitElementsAt(args.queryLocation)
@@ -305,25 +290,6 @@ function populateContextMenu(contextMenu, args) {
   if (INode.isInstance(hit)) {
     contextMenu.addMenuItem('Change Node Color', () => {
       nodePopup.currentItem = hit
-    })
-    contextMenu.addMenuItem('Apply Node Color to Outgoing Edges', () => {
-      graphSelection.selectedNodes.forEach(node => {
-        applySelectedColorToEdges(node, getNodeColor(node))
-      })
-    })
-    contextMenu.addMenuItem('Apply Best Matching Color to Outgoing Edges', () => {
-      graphSelection.selectedNodes.forEach(node => {
-        applySelectedColorToEdges(node, edgeColors[node.tag.colorId])
-      })
-    })
-    // if the item is not selected, select it
-    if (!graphSelection.isSelected(hit)) {
-      graphSelection.clear()
-    }
-    graphSelection.setSelected(hit, true)
-  } else if (IEdge.isInstance(hit)) {
-    contextMenu.addMenuItem('Change Edge Color', () => {
-      edgePopup.currentItem = hit
     })
     // if the item is not selected, select it
     if (!graphSelection.isSelected(hit)) {
@@ -352,17 +318,6 @@ function initializePopupMenus() {
     autoRotation: false
   })
 
-  // initialize the edge popup menu
-  const edgePopupContent = window.document.getElementById('edgeColorPopupContent')
-  edgePopup = new SankeyPopupSupport(
-    graphComponent,
-    edgePopupContent,
-    edgeLabelModel.createDefaultParameter()
-  )
-
-  // initializes the color arrays
-  initializeColorArrays()
-
   const nodeColorContainer = nodePopup.div
   nodeColorContainer.addEventListener(
     'click',
@@ -372,31 +327,9 @@ function initializePopupMenus() {
     false
   )
 
-  nodeColors.forEach(color => {
-    createColorPopupMenu(color, true)
-  })
-
-  const edgeColorContainer = edgePopup.div
-  edgeColorContainer.addEventListener(
-    'click',
-    () => {
-      edgePopup.currentItem = null
-    },
-    false
-  )
-
-  edgeColors.forEach(color => {
-    createColorPopupMenu(color, false)
-  })
-}
-
-/**
- * Disables the HTML elements of the UI and the input mode.
- *
- * @param disabled true if the elements should be disabled, false otherwise
- */
-function setUIDisabled(disabled) {
-  document.getElementById('layoutButton').disabled = disabled
+  for (const color of colors.map(c => c.dark)) {
+    createColorPopupMenu(color)
+  }
 }
 
 /**
@@ -411,13 +344,15 @@ function registerCommands() {
   bindCommand("button[data-command='Undo']", ICommand.UNDO, graphComponent)
   bindCommand("button[data-command='Redo']", ICommand.REDO, graphComponent)
 
-  bindAction("button[data-command='Layout']", () => runLayout())
+  colorDirectionBox.addEventListener('change', () => {
+    assignEdgeColors()
+  })
 }
 
 /**
  * Creates the sample graph.
  */
-function createSampleGraph() {
+async function createSampleGraph() {
   const builder = new GraphBuilder({
     graph: graphComponent.graph,
     nodesSource: GraphBuilderData.nodes,
@@ -443,48 +378,48 @@ function createSampleGraph() {
     graph.setStyle(node, nodeStyle)
 
     graph.outEdgesAt(node).forEach(edge => {
-      edge.tag = { color: edgeColors[node.tag.colorId] }
+      edge.tag = { color: colors[node.tag.colorId].light }
     })
   })
 
   // assign label styles
   graph.edges.forEach(edge => {
     edge.labels.forEach(label => {
-      setLabelStyle(label)
+      setEdgeLabelStyle(label)
     })
   })
 
   // normalize the edges' thickness and run a new layout
   normalizeThickness()
-  runLayout(() => {
-    graphComponent.graph.undoEngine.clear()
-  })
+  await runLayout()
+  graphComponent.graph.undoEngine.clear()
 }
 
 /**
  * Adds the given color to the popup menu.
  * @param {Color} color The color to be added
- * @param {boolean} forNode True if the color should be added to the node popup menu, false otherwise
  */
-function createColorPopupMenu(color, forNode) {
+function createColorPopupMenu(color) {
   const div = window.document.createElement('div')
   div.setAttribute('style', `background-color:rgb(${color.r},${color.g},${color.b})`)
   div.setAttribute('class', 'colorButton')
 
-  if (forNode) {
-    nodePopup.div.appendChild(div)
-  } else {
-    edgePopup.div.appendChild(div)
-  }
+  nodePopup.div.appendChild(div)
 
   // add the event listener that will change the node/edge color when the particular color button is pressed
   div.addEventListener(
     'click',
     () => {
-      if (forNode) {
-        graphComponent.selection.selectedNodes.forEach(node => {
+      const selectedNode = graphComponent.selection.selectedNodes.firstOrDefault()
+      if (!selectedNode) {
+        return
+      }
+      const oldColorId = selectedNode.tag.colorId
+      graphComponent.graph.nodes
+        .filter(node => node.tag.colorId === oldColorId)
+        .forEach(node => {
           const oldTag = Object.assign({}, node.tag)
-          node.tag = { colorId: nodeColors.indexOf(color) }
+          node.tag = { colorId: colors.map(c => c.dark).indexOf(color) }
           graphComponent.invalidate()
           const tagUndoUnit = new TagUndoUnit(
             'Color changed',
@@ -495,21 +430,7 @@ function createColorPopupMenu(color, forNode) {
           )
           graphComponent.graph.undoEngine.addUnit(tagUndoUnit)
         })
-      } else {
-        graphComponent.selection.selectedEdges.forEach(edge => {
-          const oldTag = Object.assign({}, edge.tag)
-          edge.tag.color = color
-          graphComponent.invalidate()
-          const tagUndoUnit = new TagUndoUnit(
-            'Color changed',
-            'Color changed',
-            oldTag,
-            edge.tag,
-            edge
-          )
-          graphComponent.graph.undoEngine.addUnit(tagUndoUnit)
-        })
-      }
+      assignEdgeColors()
     },
     false
   )
@@ -517,9 +438,8 @@ function createColorPopupMenu(color, forNode) {
 
 /**
  * Applies the layout algorithm to the given graphComponent.
- * @param {function} callBack A function to be called when the layout has finished
  */
-function runLayout(callBack) {
+async function runLayout() {
   const graph = graphComponent.graph
   if (graph.nodes.size === 0 || inLayout) {
     return
@@ -528,36 +448,27 @@ function runLayout(callBack) {
     sankeyLayout = new SankeyLayout(graphComponent)
   }
   inLayout = true
-  setUIDisabled(true)
 
   // configure the layout algorithm
-  const fromSketchMode = document.getElementById('UseDrawingAsSketch').checked
-  const hierarchicLayout = sankeyLayout.configureHierarchicLayout(fromSketchMode)
+  const hierarchicLayout = sankeyLayout.configureHierarchicLayout(true)
   const hierarchicLayoutData = sankeyLayout.createHierarchicLayoutData()
-
-  // run the layout and animate the result
-  graphComponent
-    .morphLayout(hierarchicLayout, '1s', hierarchicLayoutData)
-    .then(() => {
-      setUIDisabled(false)
-      inLayout = false
-      if (callBack) {
-        callBack()
-      }
-    })
-    .catch(error => {
-      setUIDisabled(false)
-      inLayout = false
-      if (typeof window.reportError === 'function') {
-        window.reportError(error)
-      } else {
-        throw error
-      }
-    })
+  try {
+    // run the layout and animate the result
+    await graphComponent.morphLayout(hierarchicLayout, '1s', hierarchicLayoutData)
+  } catch (error) {
+    if (typeof window.reportError === 'function') {
+      window.reportError(error)
+    } else {
+      throw error
+    }
+  } finally {
+    inLayout = false
+  }
 }
 
 /**
- * Normalizes the thickness of the edges of the graph based on the current label texts. The largest thickness is
+ * Normalizes the thickness of the edges of the graph based on the current label texts. The largest
+ * thickness is
  * 400, while the smallest 1. If the label text is not a number, edge thickness 1 will be assigned.
  */
 function normalizeThickness() {
@@ -569,8 +480,11 @@ function normalizeThickness() {
     const labels = edge.labels
 
     if (labels.size > 0) {
-      const labelText = !isNaN(labels.get(0).text) ? labels.get(0).text : 1
-      const value = Math.max(0, parseFloat(labelText))
+      let value = parseFloat(labels.get(0).text)
+      if (Number.isNaN(value)) {
+        value = 1
+      }
+      value = Math.max(0, value)
       min = Math.min(min, value)
       max = Math.max(max, Math.abs(value))
     }
@@ -608,11 +522,12 @@ function normalizeThickness() {
  * Assigns a new style to the given label.
  * @param {ILabel} label The given label
  */
-function setLabelStyle(label) {
+function setEdgeLabelStyle(label) {
+  const color = colors[getColorId(label.owner.tag.color)].dark
   // set the default style for the node labels
   const labelStyle = new DefaultLabelStyle({
-    textFill: new SolidColorFill(getNodeColor(label.owner.sourceNode)),
-    font: '9px bold Arial'
+    textFill: new SolidColorFill(color),
+    font: '14px Arial'
   })
   graphComponent.graph.setStyle(label, labelStyle)
 }
@@ -622,87 +537,44 @@ function setLabelStyle(label) {
  * @param {INode} node The given node
  */
 function getNodeColor(node) {
-  return !node.tag ? new Color(102, 153, 204) : nodeColors[node.tag.colorId]
+  return !node.tag ? colors[0].dark : colors[node.tag.colorId].dark
 }
 
-/**
- * Initializes the color arrays.
- */
-function initializeColorArrays() {
-  // available node colors
-  nodeColors = [
-    new Color(102, 153, 204),
-    new Color(55, 55, 55),
-    Color.FIREBRICK,
-    Color.GOLDENROD,
-    Color.FOREST_GREEN,
-    new Color(153, 51, 102),
-    new Color(51, 102, 255),
-    new Color(102, 102, 153),
-    new Color(255, 145, 255),
-    new Color(128, 255, 128),
-    new Color(255, 101, 2),
-    new Color(87, 173, 87),
-    new Color(44, 174, 212),
-    new Color(139, 69, 19)
-  ]
-
-  // available edge colors
-  edgeColors = [
-    new Color(194, 221, 249),
-    new Color(161, 161, 161),
-    new Color(254, 128, 128),
-    new Color(254, 229, 128),
-    new Color(203, 229, 128),
-    new Color(203, 153, 178),
-    new Color(101, 136, 252),
-    new Color(160, 160, 209),
-    new Color(249, 207, 249),
-    new Color(199, 250, 199),
-    new Color(246, 200, 169),
-    new Color(164, 240, 164),
-    new Color(163, 221, 239),
-    new Color(222, 178, 144)
-  ]
+function getColorId(color) {
+  return colors.findIndex(({ dark, light }) => dark === color || light === color)
 }
 
 /**
  * Updates the graph based on the given label's text change.
  * @param {ILabel} label The given label
  */
-function onLabelChanged(label) {
+async function onEdgeLabelChanged(label) {
   // start a compound edit to merge thickness changes and layout
   const compoundEdit = graphComponent.graph.beginEdit(
     'Edge Label Text Changed',
     'Edge Label Text Changed'
   )
-  setLabelStyle(label)
+  setEdgeLabelStyle(label)
   normalizeThickness()
-  runLayout(() => {
-    if (compoundEdit) {
-      compoundEdit.commit()
-    }
-  })
+  await runLayout()
+  if (compoundEdit) {
+    compoundEdit.commit()
+  }
 }
 
-/**
- * Applies selected color to the edges adjacent to the given node.
- * @param {INode} node The given node
- * @param {Color} color The desired color
- */
-function applySelectedColorToEdges(node, color) {
+function assignEdgeColors() {
+  const outgoing = colorDirectionBox.value === 'outgoing'
   const graph = graphComponent.graph
-  const compoundEdit = graph.beginEdit('Edge Color changed', 'Edge Color changed')
-  graph.edgesAt(node).forEach(edge => {
-    // copy the old tag
-    const oldTag = Object.assign({}, edge.tag)
-    edge.tag.color = color
-    // create an undo unit to be able to apply undo/redo operations
-    const tagUndoUnit = new TagUndoUnit('Color changed', 'Color changed', oldTag, edge.tag, edge)
-    graphComponent.graph.undoEngine.addUnit(tagUndoUnit)
-  })
+  for (const node of graph.nodes) {
+    const edges = outgoing ? graph.outEdgesAt(node) : graph.inEdgesAt(node)
+    for (const edge of edges) {
+      edge.tag.color = colors[node.tag.colorId].light
+      edge.labels.forEach(label => {
+        setEdgeLabelStyle(label)
+      })
+    }
+  }
   graphComponent.invalidate()
-  compoundEdit.commit()
 }
 
 // runs the demo

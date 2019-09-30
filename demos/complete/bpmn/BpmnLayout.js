@@ -30,6 +30,7 @@ import {
   AsIsLayerer,
   BaseClass,
   ConstraintIncrementalLayerer,
+  Edge,
   Enum,
   GenericLabeling,
   HierarchicLayout,
@@ -552,13 +553,13 @@ const NodeState = Enum('NodeState', {
 class BalancingPortOptimizer extends PortConstraintOptimizerBase {
   constructor(coreOptimizer) {
     super()
-    // @type {IPortConstraintOptimizer}
+    /** @type {IPortConstraintOptimizer} */
     this.coreOptimizer = coreOptimizer
-    // @type {PortConstraintOptimizerSameLayerData}
+    /** @type {PortConstraintOptimizerSameLayerData} */
     this.sameLayerData = null
-    // @type {IEdgeMap}
+    /** @type {IEdgeMap} */
     this.edge2LaneCrossing = null
-    // @type {INodeMap}
+    /** @type {INodeMap} */
     this.node2LaneAlignment = null
   }
 

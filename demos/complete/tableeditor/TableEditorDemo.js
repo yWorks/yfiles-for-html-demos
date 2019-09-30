@@ -122,7 +122,7 @@ function run(licenseData) {
 /**
  * Reads the default sample graph.
  */
-function createGraph() {
+async function createGraph() {
   // enable loading and saving, and load a sample graph
   const graphMLSupport = new GraphMLSupport({
     graphComponent,
@@ -137,11 +137,8 @@ function createGraph() {
     DemoStyles
   )
   graphMLSupport.graphMLIOHandler.addHandleSerializationListener(DemoSerializationListener)
-  readGraph(graphMLSupport.graphMLIOHandler, graphComponent.graph, 'resources/sample.graphml').then(
-    () => {
-      graphComponent.fitGraphBounds()
-    }
-  )
+  await readGraph(graphMLSupport.graphMLIOHandler, graphComponent.graph, 'resources/sample.graphml')
+  graphComponent.fitGraphBounds()
 }
 
 /**
@@ -318,7 +315,7 @@ function populateContextMenu(contextMenu, args, tableEditorInputMode) {
  *   {@link TableLayoutConfigurator#compaction} allows to shrink table cells, otherwise, table cells
  *   can only grow.
  */
-function applyLayout() {
+async function applyLayout() {
   const layout = new HierarchicLayout({
     componentLayoutEnabled: false,
     layoutOrientation: LayoutOrientation.LEFT_TO_RIGHT,
@@ -343,20 +340,18 @@ function applyLayout() {
     // do not start another layout if it is running already.
     isLayoutRunning = true
     setUIDisabled(true)
-    layoutExecutor
-      .start()
-      .then(() => {
-        isLayoutRunning = false
-        setUIDisabled(false)
-      })
-      .catch(error => {
-        setUIDisabled(false)
-        if (typeof window.reportError === 'function') {
-          window.reportError(error)
-        } else {
-          throw error
-        }
-      })
+    try {
+      await layoutExecutor.start()
+    } catch (error) {
+      if (typeof window.reportError === 'function') {
+        window.reportError(error)
+      } else {
+        throw error
+      }
+    } finally {
+      isLayoutRunning = false
+      setUIDisabled(false)
+    }
   }
 }
 

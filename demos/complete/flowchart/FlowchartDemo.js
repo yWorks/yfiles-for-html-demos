@@ -91,7 +91,7 @@ function run(licenseData) {
   showApp(graphComponent)
 }
 
-function runLayout() {
+async function runLayout() {
   setUIDisabled(true)
 
   const allowFlatwiseEdges = document.getElementById('allow-flatwise-edges').checked
@@ -103,19 +103,21 @@ function runLayout() {
   flowchartLayoutData.preferredPositiveBranchDirection = getBranchDirection(true)
   flowchartLayoutData.preferredNegativeBranchDirection = getBranchDirection(false)
   flowchartLayoutData.inEdgeGrouping = getInEdgeGroupingStyle()
-  graphComponent
-    .morphLayout(new MinimumNodeSizeStage(flowchartLayout), '0.5s', flowchartLayoutData)
-    .then(() => {
-      setUIDisabled(false)
-    })
-    .catch(error => {
-      setUIDisabled(false)
-      if (typeof window.reportError === 'function') {
-        window.reportError(error)
-      } else {
-        throw error
-      }
-    })
+  try {
+    await graphComponent.morphLayout(
+      new MinimumNodeSizeStage(flowchartLayout),
+      '0.5s',
+      flowchartLayoutData
+    )
+  } catch (error) {
+    if (typeof window.reportError === 'function') {
+      window.reportError(error)
+    } else {
+      throw error
+    }
+  } finally {
+    setUIDisabled(false)
+  }
 }
 
 /**

@@ -27,6 +27,7 @@
  **
  ***************************************************************************/
 import {
+  CanvasComponent,
   Color,
   EdgeStyleBase,
   HtmlCanvasVisual,

@@ -32,6 +32,7 @@ import {
   GeneralPath,
   GraphComponent,
   GraphEditorInputMode,
+  GraphInputMode,
   HandleInputMode,
   HandlePositions,
   IArrow,
@@ -40,7 +41,6 @@ import {
   Insets,
   License,
   MoveInputMode,
-  MultiplexingInputMode,
   MutableRectangle,
   ObservableCollection,
   PolylineEdgeStyle,
@@ -65,7 +65,7 @@ import {
 import loadJson from '../../resources/load-json.js'
 
 /** the server urls */
-const PHANTOM_JS_URL = 'http://localhost:8081'
+const NODE_SERVER_URL = 'http://localhost:3000'
 const JAVA_SERVLET_URL = 'http://localhost:8080/BatikServlet/BatikServlet'
 
 /** @type {GraphComponent} */
@@ -106,28 +106,48 @@ function run(licenseData) {
 
   initializeGraph()
 
-  // disable the client sided save button in IE9
+  // disable the client-side save button in IE9
   if (ieVersion !== -1 && ieVersion <= 9) {
-    const clientSaveButton = document.getElementById('clientPngSaveButton')
-    clientSaveButton.setAttribute('style', 'display: none')
-    const dummySaveButton = document.getElementById('dummySaveButton')
-    dummySaveButton.setAttribute('style', 'display: none')
+    disableClientSaveButton()
   }
 
-  // disable server sided export in IE9 due to limited XHR CORS support
+  // disable server-side export in IE9 due to limited XHR CORS support
   if (ieVersion === -1 || (ieVersion !== -1 && ieVersion > 9)) {
-    // if a server is available, enable the server export button
-    isServerAlive(JAVA_SERVLET_URL).then(isAlive => {
-      document.getElementById('BatikServerExportButton').disabled = !isAlive
-    })
-    isServerAlive(PHANTOM_JS_URL).then(isAlive => {
-      document.getElementById('PhantomServerExportButton').disabled = !isAlive
-    })
+    enableServerSideExportButtons()
   }
 
   registerCommands()
 
   showApp(graphComponent)
+}
+
+/**
+ * Disables the client-side save button in IE9 and hints to the browser native save option.
+ */
+function disableClientSaveButton() {
+  const clientSaveButton = document.getElementById('clientPngSaveButton')
+  clientSaveButton.setAttribute('style', 'display: none')
+  // add save hint
+  const hint = document.createElement('p')
+  hint.innerHTML = 'Right-click the image and hit "Save As&hellip;" to save the png file.'
+  hint.setAttribute('style', 'margin: 0')
+  const container = document.getElementById('outerClientExport')
+  const title = container.querySelector('h2')
+  title.setAttribute('style', 'margin-bottom: 0;')
+  container.insertBefore(hint, document.getElementById('imageContainer'))
+  container.insertBefore(hint, document.getElementById('imageContainer'))
+}
+
+/**
+ * Enables server-side export buttons
+ */
+async function enableServerSideExportButtons() {
+  // if a server is available, enable the server export button
+  const isAliveJava = await isServerAlive(JAVA_SERVLET_URL)
+  document.getElementById('BatikServerExportButton').disabled = !isAliveJava
+
+  const isAliveNode = await isServerAlive(NODE_SERVER_URL)
+  document.getElementById('NodeServerServerExportButton').disabled = !isAliveNode
 }
 
 /**
@@ -150,7 +170,7 @@ function registerCommands() {
   const inputMargin = document.getElementById('margin')
   const inputUseRect = document.getElementById('useRect')
 
-  bindAction("button[data-command='Export']", () => {
+  bindAction("button[data-command='Export']", async () => {
     const scale = parseFloat(inputScale.value)
     const margin = parseFloat(inputMargin.value)
     if (checkInputValues(scale, margin)) {
@@ -159,38 +179,38 @@ function registerCommands() {
       // configure export, export the image and show a dialog to save the image
       clientSideImageExport.scale = scale
       clientSideImageExport.margins = new Insets(margin)
-      clientSideImageExport
-        .exportImage(graphComponent.graph, rectangle)
-        .then(showClientExportDialog)
+      const image = await clientSideImageExport.exportImage(graphComponent.graph, rectangle)
+      showClientExportDialog(image)
     }
   })
 
-  bindAction("button[data-command='BatikServerExportButton']", () => {
+  bindAction("button[data-command='BatikServerExportButton']", async () => {
     const scale = parseFloat(inputScale.value)
     const margin = parseFloat(inputMargin.value)
     if (checkInputValues(scale, margin)) {
       const rectangle = inputUseRect && inputUseRect.checked ? new Rect(exportRect) : null
 
-      // configure export, export the svg and show a dialog to download the image
+      // configure export, export the SVG and show a dialog to download the image
       serverSideImageExport.scale = scale
       serverSideImageExport.margins = new Insets(margin)
-      serverSideImageExport.exportSvg(graphComponent.graph, rectangle).then(svg => {
-        showServerExportDialog(svg.element, svg.size, JAVA_SERVLET_URL)
-      })
+      const svg = await serverSideImageExport.exportSvg(graphComponent.graph, rectangle)
+      const svgString = SvgExport.exportSvgString(svg.element)
+      requestServerExport(svgString, svg.size, JAVA_SERVLET_URL)
     }
   })
-  bindAction("button[data-command='PhantomServerExportButton']", () => {
+  bindAction("button[data-command='NodeServerServerExportButton']", async () => {
     const scale = parseFloat(inputScale.value)
     const margin = parseFloat(inputMargin.value)
     if (checkInputValues(scale, margin)) {
       const rectangle = inputUseRect && inputUseRect.checked ? new Rect(exportRect) : null
 
-      // configure export, export the svg and show a dialog to download the image
+      // configure export, export the SVG and show a dialog to download the image
       serverSideImageExport.scale = scale
       serverSideImageExport.margins = new Insets(margin)
-      serverSideImageExport.exportSvg(graphComponent.graph, rectangle).then(svg => {
-        showServerExportDialog(svg.element, svg.size, PHANTOM_JS_URL)
-      })
+      const svg = await serverSideImageExport.exportSvg(graphComponent.graph, rectangle)
+      const svgString = SvgExport.exportSvgString(svg.element)
+      const svgData = SvgExport.encodeSvgDataUrl(svgString)
+      requestServerExport(svgData, svg.size, NODE_SERVER_URL)
     }
   })
 
@@ -222,20 +242,18 @@ function checkInputValues(scale, margin) {
 }
 
 /**
- * Shows the export dialog for the server sided graph exports.
- * @param {Element} svgElement
+ * Requests a server-side export.
+ * @param {String} svgData
  * @param {Size} size
  * @param {string} url
  */
-function showServerExportDialog(svgElement, size, url) {
-  const svgString = SvgExport.exportSvgString(svgElement)
-  serverSideImageExport.requestFile(url, 'png', svgString, size)
-
+function requestServerExport(svgData, size, url) {
+  serverSideImageExport.requestFile(url, 'png', svgData, size)
   hidePopup()
 }
 
 /**
- * Shows the export dialog for the client sided graph exports.
+ * Shows the export dialog for the client-side graph exports.
  * @param {HTMLImageElement} pngImage
  */
 function showClientExportDialog(pngImage) {
@@ -263,7 +281,6 @@ function showClientExportDialog(pngImage) {
  * Initializes the input modes.
  */
 function initializeInputModes() {
-  // Add a GraphEditorInputMode
   graphComponent.inputMode = new GraphEditorInputMode()
 
   // create the model for the export rectangle
@@ -282,7 +299,7 @@ function initializeInputModes() {
 
 /**
  * Adds the view modes that handle the resizing and movement of the export rectangle.
- * @param {MultiplexingInputMode} inputMode
+ * @param {GraphInputMode} inputMode
  */
 function addExportRectInputModes(inputMode) {
   // create a mode that deals with the handles

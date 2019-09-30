@@ -316,7 +316,7 @@ export default class RandomGraphGenerator {
     if (this.allowMultipleEdges) {
       return Number.MAX_SAFE_INTEGER
     }
-    let maxEdges = this.nodeCount * (this.nodeCount - 1) / 2
+    let maxEdges = (this.nodeCount * (this.nodeCount - 1)) / 2
     if (this.allowCycles && this.allowSelfLoops) {
       maxEdges += this.nodeCount
     }

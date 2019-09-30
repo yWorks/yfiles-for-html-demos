@@ -245,8 +245,8 @@ const RadialLayoutConfig = Class('RadialLayoutConfig', {
     },
     get: function() {
       return (
-        '<p>The radial layout style arranges the nodes of a graph on concentric circles. Similar to hierarchic layouts, the overall flow of the graph is nicely visualized.</p>' +
-        '<p>This style is well suited for the visualization of directed graphs and tree-like structures.</p>'
+        ('<p>The radial layout style arranges the nodes of a graph on concentric circles. Similar to hierarchic layouts, the overall flow of the graph is nicely visualized.</p>' +
+        '<p>This style is well suited for the visualization of directed graphs and tree-like structures.</p>')
       )
     }
   },
@@ -677,7 +677,9 @@ const RadialLayoutConfig = Class('RadialLayoutConfig', {
           values: [
             ['Anywhere', LayoutConfiguration.EnumLabelPlacementAlongEdge.ANYWHERE],
             ['At Source', LayoutConfiguration.EnumLabelPlacementAlongEdge.AT_SOURCE],
+            ['At Source Port', LayoutConfiguration.EnumLabelPlacementAlongEdge.AT_SOURCE_PORT],
             ['At Target', LayoutConfiguration.EnumLabelPlacementAlongEdge.AT_TARGET],
+            ['At Target Port', LayoutConfiguration.EnumLabelPlacementAlongEdge.AT_TARGET_PORT],
             ['Centered', LayoutConfiguration.EnumLabelPlacementAlongEdge.CENTERED]
           ]
         }),
@@ -785,9 +787,9 @@ const RadialLayoutConfig = Class('RadialLayoutConfig', {
     },
     get: function() {
       return (
-        !this.edgeLabelingItem ||
+        (!this.edgeLabelingItem ||
         this.labelPlacementSideOfEdgeItem ===
-          LayoutConfiguration.EnumLabelPlacementSideOfEdge.ON_EDGE
+          LayoutConfiguration.EnumLabelPlacementSideOfEdge.ON_EDGE)
       )
     }
   },

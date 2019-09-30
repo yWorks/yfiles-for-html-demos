@@ -1,13 +1,13 @@
 {
-  "name": "layout-server",
-  "version": "2.0.0",
-  "description": "Minimal yFiles layout server using node.js express",
-  "main": "server.js",
-  "author": "yfileshtml@yworks.com",
+  "name": "layout-server-for-yfiles-for-html",
+  "version": "1.0.0",
+  "description": "Minimal yFiles for HTML layout server using Node.js express",
+  "author": "yWorks GmbH <yfileshtml@yworks.com>",
   "license": "https://www.yworks.com/products/yfiles-for-html/sla",
   "private": true,
+  "main": "server.js",
   "dependencies": {
-    "express": "4.16.3",
-    "body-parser": "1.18.3"
+    "express": "4.17.1",
+    "body-parser": "1.19.0"
   }
 }

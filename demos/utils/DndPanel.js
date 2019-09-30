@@ -28,6 +28,7 @@
  ***************************************************************************/
 import {
   GraphComponent,
+  IEdge,
   ILabel,
   IListEnumerable,
   INode,
@@ -35,9 +36,11 @@ import {
   IPort,
   IStripe,
   ListEnumerable,
+  Point,
   Rect,
   SimpleNode,
-  SvgExport
+  SvgExport,
+  VoidNodeStyle
 } from 'yfiles'
 
 /**
@@ -120,9 +123,11 @@ export class DragAndDropPanel {
     const graphComponent = new GraphComponent()
     for (let i = 0; i < items.length; i++) {
       const item = items[i]
-      const node = INode.isInstance(item) ? item : item.element
-      const visual = this.createNodeVisual(item, graphComponent)
-      this.addPointerDownListener(node, visual, this.beginDragCallback)
+      const modelItem = INode.isInstance(item) || IEdge.isInstance(item) ? item : item.element
+      const visual = INode.isInstance(modelItem)
+        ? this.createNodeVisual(item, graphComponent)
+        : this.createEdgeVisual(item, graphComponent)
+      this.addPointerDownListener(modelItem, visual, this.beginDragCallback)
       this.div.appendChild(visual)
     }
   }
@@ -158,17 +163,31 @@ export class DragAndDropPanel {
     })
     this.updateViewport(graphComponent)
 
-    const exporter = new SvgExport(graphComponent.contentRect)
-    exporter.margins = new Insets(5)
+    return this.exportAndWrap(graphComponent, original.tooltip)
+  }
 
-    exporter.scale = exporter.calculateScaleForWidth(
-      Math.min(this.maxItemWidth, graphComponent.contentRect.width)
-    )
-    const element = exporter.exportSvg(graphComponent)
+  /**
+   * Creates an element that contains the visualization of the given edge.
+   * @return {HTMLDivElement}
+   */
+  createEdgeVisual(original, graphComponent) {
+    const graph = graphComponent.graph
+    graph.clear()
 
-    // Firefox does not display the SVG correctly because of the clip - so we remove it.
-    element.removeAttribute('clip-path')
-    return this.wrapNodeVisual(element, original.tooltip)
+    const originalEdge = IEdge.isInstance(original) ? original : original.element
+
+    const n1 = graph.createNode(new Rect(0, 10, 0, 0), VoidNodeStyle.INSTANCE)
+    const n2 = graph.createNode(new Rect(50, 40, 0, 0), VoidNodeStyle.INSTANCE)
+    const edge = graph.createEdge(n1, n2, originalEdge.style)
+    graph.addBend(edge, new Point(25, 10))
+    graph.addBend(edge, new Point(25, 40))
+
+    this.updateViewport(graphComponent)
+
+    // provide some more insets to account for the arrow heads
+    graphComponent.updateContentRect(new Insets(5))
+
+    return this.exportAndWrap(graphComponent, original.tooltip)
   }
 
   updateViewport(graphComponent) {
@@ -184,24 +203,35 @@ export class DragAndDropPanel {
       viewport = viewport.add(edge.sourcePort.location)
       viewport = viewport.add(edge.targetPort.location)
       edge.bends.forEach(bend => {
-        viewport = viewport.add(bend.location)
+        viewport = viewport.add(bend.location.toPoint())
       })
     })
-    viewport = viewport.getEnlarged(2)
+    viewport = viewport.getEnlarged(5)
     graphComponent.contentRect = viewport
     graphComponent.zoomTo(viewport)
   }
 
   /**
-   * Wraps the original visualization in an HTML element.
+   * Exports and wraps the original visualization in an HTML element.
    * @return {HTMLDivElement}
    */
-  wrapNodeVisual(nodeVisual, tooltip) {
+  exportAndWrap(graphComponent, tooltip) {
+    const exporter = new SvgExport(graphComponent.contentRect)
+    exporter.margins = new Insets(5)
+
+    exporter.scale = exporter.calculateScaleForWidth(
+      Math.min(this.maxItemWidth, graphComponent.contentRect.width)
+    )
+    const visual = exporter.exportSvg(graphComponent)
+
+    // Firefox does not display the SVG correctly because of the clip - so we remove it.
+    visual.removeAttribute('clip-path')
+
     const div = document.createElement('div')
     div.setAttribute('class', 'demo-dndPanelItem')
-    div.appendChild(nodeVisual)
-    div.style.setProperty('width', nodeVisual.getAttribute('width'), '')
-    div.style.setProperty('height', nodeVisual.getAttribute('height'), '')
+    div.appendChild(visual)
+    div.style.setProperty('width', visual.getAttribute('width'), '')
+    div.style.setProperty('height', visual.getAttribute('height'), '')
     div.style.setProperty('touch-action', 'none')
     try {
       div.style.setProperty('cursor', 'grab', '')
@@ -217,28 +247,30 @@ export class DragAndDropPanel {
   /**
    * Adds a mousedown listener to the given element that starts the drag operation.
    */
-  addPointerDownListener(node, element, callback) {
+  addPointerDownListener(item, element, callback) {
     if (!callback) {
       return
     }
 
     // the actual drag operation
     const doDragOperation = () => {
-      if (typeof IStripe !== 'undefined' && IStripe.isInstance(node.tag)) {
+      if (typeof IStripe !== 'undefined' && IStripe.isInstance(item.tag)) {
         // If the dummy node has a stripe as its tag, we use the stripe directly
         // This allows StripeDropInputMode to take over
-        callback(element, node.tag)
-      } else if (ILabel.isInstance(node.tag) || IPort.isInstance(node.tag)) {
-        callback(element, node.tag)
+        callback(element, item.tag)
+      } else if (ILabel.isInstance(item.tag) || IPort.isInstance(item.tag)) {
+        callback(element, item.tag)
+      } else if (IEdge.isInstance(item)) {
+        callback(element, item)
       } else {
         // Otherwise, we just use the node itself and let (hopefully) NodeDropInputMode take over
         const simpleNode = new SimpleNode()
-        simpleNode.layout = node.layout
-        simpleNode.style = node.style.clone()
-        simpleNode.tag = node.tag
-        simpleNode.labels = this.$copyNodeLabels ? node.labels : IListEnumerable.EMPTY
-        if (node.ports.size > 0) {
-          simpleNode.ports = new ListEnumerable(node.ports)
+        simpleNode.layout = item.layout
+        simpleNode.style = item.style.clone()
+        simpleNode.tag = item.tag
+        simpleNode.labels = this.$copyNodeLabels ? item.labels : IListEnumerable.EMPTY
+        if (item.ports.size > 0) {
+          simpleNode.ports = new ListEnumerable(item.ports)
         }
         callback(element, simpleNode)
       }

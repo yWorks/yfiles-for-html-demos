@@ -41,7 +41,7 @@ export default class SaveViaServerOperation {
    * @param {string|null} [fileServerUrl] The URL the file server runs on.
    */
   constructor(fileServerUrl) {
-    this.$fileServerUrl = fileServerUrl || 'http://localhost:3000/file/'
+    this.$fileServerUrl = fileServerUrl || 'http://localhost:4242/file/'
     this.$executable = false
   }
 

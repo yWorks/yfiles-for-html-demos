@@ -45,6 +45,7 @@ import {
   NodeStyleDecorationInstaller,
   Point,
   PolylineEdgeStyle,
+  Rect,
   ShapeNodeStyle,
   Size
 } from 'yfiles'
@@ -109,17 +110,14 @@ function createSampleGraph() {
     sourceNodeBinding: 'source',
     targetNodeBinding: 'target',
     nodeIdBinding: 'id',
-    nodeLabelBinding: data => data.label,
-    locationXBinding: data => data.layout.x,
-    locationYBinding: data => data.layout.y
+    nodeLabelBinding: data => data.label
   })
 
   builder.buildGraph()
 
   // Sets the sizes of the nodes
   graph.nodes.forEach(node => {
-    node.layout.width = node.tag.layout.width
-    node.layout.height = node.tag.layout.height
+    graph.setNodeLayout(node, Rect.from(node.tag.layout))
   })
 }
 

@@ -173,16 +173,14 @@ function registerCommands() {
 /**
  * Opens a new graphml file and checks whether the labels should be visible or not.
  */
-function openFile() {
-  gs
-    .openFile(graphComponent)
-    .then(() => {
-      onToggleLabels()
-      graphComponent.fitGraphBounds()
-    })
-    .catch(error => {
-      alert(`Error occurred during loading file: ${error}`)
-    })
+async function openFile() {
+  try {
+    await gs.openFile(graphComponent)
+    onToggleLabels()
+    graphComponent.fitGraphBounds()
+  } catch (error) {
+    alert(`Error occurred during loading file: ${error}`)
+  }
 }
 
 /**

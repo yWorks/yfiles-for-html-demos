@@ -42,6 +42,7 @@ import {
   IArrow,
   ICommand,
   IEdge,
+  IGraph,
   ILabel,
   INode,
   LabelPlacements,
@@ -384,8 +385,8 @@ function initializeAlgorithms() {
 /**
  * Creates the default input mode for the graph component,
  * a {@link GraphEditorInputMode}.
- * @return {GraphEditorInputMode} a new <code>GraphEditorInputMode</code> instance and configures snapping and
- *   orthogonal edge editing
+ * @return {GraphEditorInputMode} a new <code>GraphEditorInputMode</code> instance and configures
+ *   snapping and orthogonal edge editing
  */
 function createEditorMode() {
   incrementalElements = new Mapper()
@@ -462,13 +463,8 @@ function createEditorMode() {
   })
 
   inputMode.moveInputMode.addDragFinishedListener((sender, eventArgs) => {
-    let count = 0
-    sender.affectedItems.forEach(item => {
-      if (INode.isInstance(item)) {
-        count++
-      }
-    })
-    if (count < graphComponent.graph.nodes.count) {
+    const affectedNodes = sender.affectedItems.filter(item => INode.isInstance(item))
+    if (affectedNodes.size < graphComponent.graph.nodes.size) {
       runLayout(true, false, true)
     }
   })
@@ -652,7 +648,7 @@ function applyAlgorithm() {
  * @param {boolean} clearUndo true if the undo engine should be cleared, false otherwise
  * @param {boolean} runAlgorithm true if the algorithm should be applied, false otherwise
  */
-function runLayout(incremental, clearUndo, runAlgorithm) {
+async function runLayout(incremental, clearUndo, runAlgorithm) {
   let layoutAlgorithm = new OrganicLayout()
   layoutAlgorithm.deterministic = true
   layoutAlgorithm.considerNodeSizes = true
@@ -686,77 +682,71 @@ function runLayout(incremental, clearUndo, runAlgorithm) {
 
   inLayout = true
   setUIDisabled(true)
+  try {
+    await graphComponent.morphLayout(layoutAlgorithm, '0.5s', organicLayoutData)
+    // apply graph algorithms after layout
+    if (runAlgorithm) {
+      applyAlgorithm()
+    }
 
-  graphComponent
-    .morphLayout(layoutAlgorithm, '0.5s', organicLayoutData)
-    .then(() => {
-      // apply graph algorithms after layout
-      if (runAlgorithm) {
-        applyAlgorithm()
-      }
+    const genericLabeling = new GenericLabeling()
+    genericLabeling.placeEdgeLabels = true
+    genericLabeling.placeNodeLabels = false
+    genericLabeling.deterministicMode = true
 
-      const genericLabeling = new GenericLabeling()
-      genericLabeling.placeEdgeLabels = true
-      genericLabeling.placeNodeLabels = false
-      genericLabeling.deterministicMode = true
-
-      const mapper = new Mapper()
-      graph.labels.forEach(label => {
-        const preferredPlacementDescriptor = new PreferredPlacementDescriptor()
-        if (IEdge.isInstance(label.owner)) {
-          if (label.tag === 'centrality') {
-            preferredPlacementDescriptor.sideOfEdge = LabelPlacements.ON_EDGE
-          } else {
-            preferredPlacementDescriptor.sideOfEdge =
-              LabelPlacements.RIGHT_OF_EDGE | LabelPlacements.LEFT_OF_EDGE
-            preferredPlacementDescriptor.distanceToEdge = 5
-          }
-          preferredPlacementDescriptor.freeze()
-          mapper.set(label, preferredPlacementDescriptor)
+    const mapper = new Mapper()
+    graph.labels.forEach(label => {
+      const preferredPlacementDescriptor = new PreferredPlacementDescriptor()
+      if (IEdge.isInstance(label.owner)) {
+        if (label.tag === 'centrality') {
+          preferredPlacementDescriptor.sideOfEdge = LabelPlacements.ON_EDGE
+        } else {
+          preferredPlacementDescriptor.sideOfEdge =
+            LabelPlacements.RIGHT_OF_EDGE | LabelPlacements.LEFT_OF_EDGE
+          preferredPlacementDescriptor.distanceToEdge = 5
         }
-      })
-      graph.mapperRegistry.addMapper(
-        ILabel.$class,
-        PreferredPlacementDescriptor.$class,
-        LayoutGraphAdapter.EDGE_LABEL_LAYOUT_PREFERRED_PLACEMENT_DESCRIPTOR_DP_KEY,
-        mapper
-      )
-
-      graphComponent
-        .morphLayout(genericLabeling, '0.2s')
-        .then(() => {
-          if (clearUndo) {
-            graph.undoEngine.clear()
-          }
-          // clean up data provider
-          graph.mapperRegistry.removeMapper(OrganicLayout.AFFECTED_NODES_DP_KEY)
-          graph.mapperRegistry.removeMapper(
-            LayoutGraphAdapter.EDGE_LABEL_LAYOUT_PREFERRED_PLACEMENT_DESCRIPTOR_DP_KEY
-          )
-          incrementalNodesMapper.clear()
-
-          // enable the UI's buttons
-          releaseLocks()
-          setTimeout(() => {
-            setUIDisabled(false)
-            updateUIState()
-          }, 10)
-        })
-        .catch(error => {
-          if (typeof window.reportError === 'function') {
-            window.reportError(error)
-          } else {
-            throw error
-          }
-        })
+        preferredPlacementDescriptor.freeze()
+        mapper.set(label, preferredPlacementDescriptor)
+      }
     })
-    .catch(error => {
+    graph.mapperRegistry.addMapper(
+      ILabel.$class,
+      PreferredPlacementDescriptor.$class,
+      LayoutGraphAdapter.EDGE_LABEL_LAYOUT_PREFERRED_PLACEMENT_DESCRIPTOR_DP_KEY,
+      mapper
+    )
+    try {
+      await graphComponent.morphLayout(genericLabeling, '0.2s')
+      if (clearUndo) {
+        graph.undoEngine.clear()
+      }
+      // clean up data provider
+      graph.mapperRegistry.removeMapper(OrganicLayout.AFFECTED_NODES_DP_KEY)
+      graph.mapperRegistry.removeMapper(
+        LayoutGraphAdapter.EDGE_LABEL_LAYOUT_PREFERRED_PLACEMENT_DESCRIPTOR_DP_KEY
+      )
+      incrementalNodesMapper.clear()
+
+      // enable the UI's buttons
+      releaseLocks()
+      setTimeout(() => {
+        setUIDisabled(false)
+        updateUIState()
+      }, 10)
+    } catch (error) {
       if (typeof window.reportError === 'function') {
         window.reportError(error)
       } else {
         throw error
       }
-    })
+    }
+  } catch (error) {
+    if (typeof window.reportError === 'function') {
+      window.reportError(error)
+    } else {
+      throw error
+    }
+  }
 }
 
 /**
@@ -820,7 +810,7 @@ function resetConfig() {
 /**
  * Handles a selection change in the sample combo box.
  */
-function onSampleChanged() {
+async function onSampleChanged() {
   if (inLayout || inLoadSample) {
     return
   }
@@ -853,30 +843,29 @@ function onSampleChanged() {
     }`
     fileName = fileName.replace('-', '')
     fileName = `${fileName.replace(/\s+/g, '')}.graphml`
-    // load the sample graph and start the layout algorithm in the done handler
-    const graphMLIOHandler = new GraphMLIOHandler()
-    graphMLIOHandler
-      .readFromURL(graph, fileName)
-      .then(() => {
+    try {
+      // load the sample graph and start the layout algorithm in the done handler
+      const graphMLIOHandler = new GraphMLIOHandler()
+      await graphMLIOHandler.readFromURL(graph, fileName)
+
+      applyAlgorithmForKey(sampleSelectedIndex)
+    } catch (error) {
+      if (graph.nodes.size === 0 && window.location.protocol.toLowerCase().indexOf('file') >= 0) {
+        alert(
+          'Unable to open the sample graph. A default graph will be loaded instead. Perhaps your browser does not ' +
+            'allow handling cross domain HTTP requests. Please see the demo readme for details.'
+        )
+        // the sample graph cannot be loaded, so we run the default graph
+        createSampleGraph(graph)
         applyAlgorithmForKey(sampleSelectedIndex)
-      })
-      .catch(error => {
-        if (graph.nodes.size === 0 && window.location.protocol.toLowerCase().indexOf('file') >= 0) {
-          alert(
-            'Unable to open the sample graph. A default graph will be loaded instead. Perhaps your browser does not ' +
-              'allow handling cross domain HTTP requests. Please see the demo readme for details.'
-          )
-          // the sample graph cannot be loaded, so we run the default graph
-          createSampleGraph(graph)
-          applyAlgorithmForKey(sampleSelectedIndex)
-          return
-        }
-        if (typeof window.reportError === 'function') {
-          window.reportError(error)
-        } else {
-          throw error
-        }
-      })
+        return
+      }
+      if (typeof window.reportError === 'function') {
+        window.reportError(error)
+      } else {
+        throw error
+      }
+    }
   }
 }
 
@@ -1052,8 +1041,8 @@ function updateDescriptionText() {
 /**
  * Returns the graph information according to the given type.
  *
- * @param graph the given graph
- * @param type the algorithm type
+ * @param {IGraph} graph the given graph
+ * @param {string} type the algorithm type
  *
  * @returns {boolean, Object, string}
  */
@@ -1127,7 +1116,7 @@ function getGraphInformation(graph, type) {
     default:
       return {
         booleanValue: false,
-        value: graph.nodes.count
+        value: graph.nodes.size
       }
   }
 }
@@ -1279,7 +1268,8 @@ function fillComboBox(combobox, content) {
 
 /**
  * Returns true if the algorithm can take the edge direction into consideration, false otherwise.
- * @return {boolean} true if the algorithm can take the edge direction into consideration, false otherwise
+ * @return {boolean} true if the algorithm can take the edge direction into consideration, false
+ *   otherwise
  */
 function algorithmSupportsDirectedEdges() {
   const selectedIndex = algorithmComboBox.selectedIndex
@@ -1288,7 +1278,8 @@ function algorithmSupportsDirectedEdges() {
 
 /**
  * Returns true if the algorithm can take the edge weights into consideration, false otherwise.
- * @return {boolean} true if the algorithm can take the edge weights into consideration, false otherwise
+ * @return {boolean} true if the algorithm can take the edge weights into consideration, false
+ *   otherwise
  */
 function algorithmSupportsWeights() {
   const selectedIndex = algorithmComboBox.selectedIndex

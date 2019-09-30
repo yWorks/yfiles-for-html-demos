@@ -32,6 +32,7 @@ import {
   GraphEditorInputMode,
   GraphItemTypes,
   IGraph,
+  INodeSizeConstraintProvider,
   License,
   MutableRectangle,
   NodeSizeConstraintProvider,

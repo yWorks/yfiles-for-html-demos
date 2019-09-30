@@ -45,7 +45,6 @@ import {
   HierarchicLayoutLayeringStrategy,
   HierarchicalClusteringResult,
   HighlightIndicatorManager,
-  HoveredItemChangedEventArgs,
   ICanvasObjectDescriptor,
   IEdge,
   IHitTestable,
@@ -116,7 +115,9 @@ export class DendrogramComponent {
     })
     mode.itemHoverInputMode.hoverItems = GraphItemTypes.NODE
     mode.itemHoverInputMode.discardInvalidItems = false
-    mode.itemHoverInputMode.addHoveredItemChangedListener(this.onHoveredItemChanged.bind(this))
+    mode.itemHoverInputMode.addHoveredItemChangedListener((sender, evt) =>
+      this.onHoveredItemChanged(evt.item)
+    )
 
     mode.moveInputMode.moveCursor = Cursor.NS_RESIZE
     this.dendrogramComponent.inputMode = mode
@@ -391,13 +392,11 @@ export class DendrogramComponent {
   /**
    * Called when a node of the hierarchical clustered graph is hovered to highlight the corresponding nodes of the
    * original graph.
-   * @param {Object} sender The source of the event
-   * @param {HoveredItemChangedEventArgs} event The hover event
+   * @param {IModelItem} item The hovered item
    */
-  onHoveredItemChanged(sender, event) {
+  onHoveredItemChanged(item) {
     const highlightIndicatorManager = this.dendrogramComponent.highlightIndicatorManager
     highlightIndicatorManager.clearHighlights()
-    const item = event.item
     let nodesToHighlight
     if (item && INode.isInstance(item)) {
       // highlight the node of the hierarchical clustered graph

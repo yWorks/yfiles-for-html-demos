@@ -40,6 +40,7 @@ import {
   INode,
   LayoutOrientation,
   License,
+  MinimumNodeSizeStage,
   OrganicLayout,
   OrthogonalLayout,
   StraightLineEdgeRouter,
@@ -112,7 +113,11 @@ function runLayout() {
     hierarchicLayoutData.subComponents.add(component.layout).items = component.nodes
   })
 
-  graphComponent.morphLayout(hierarchicLayout, '700ms', hierarchicLayoutData)
+  graphComponent.morphLayout(
+    new MinimumNodeSizeStage(hierarchicLayout),
+    '700ms',
+    hierarchicLayoutData
+  )
 }
 
 /**
@@ -121,7 +126,7 @@ function runLayout() {
  * @param {ILayoutAlgorithm} layout
  * @param {boolean} applyLayout
  */
-function createSubcomponent(nodes, layout, applyLayout = false) {
+async function createSubcomponent(nodes, layout, applyLayout = false) {
   if (nodes.size > 0) {
     // find the next free subcomponent index
     let newSubcomponent
@@ -159,12 +164,11 @@ function createSubcomponent(nodes, layout, applyLayout = false) {
     })
 
     // first let the graph component update the nodes' colors
-    graphComponent.updateVisualAsync().then(() => {
-      if (applyLayout) {
-        // then apply the layout
-        runLayout()
-      }
-    })
+    await graphComponent.updateVisualAsync()
+    if (applyLayout) {
+      // then apply the layout
+      runLayout()
+    }
   }
 }
 

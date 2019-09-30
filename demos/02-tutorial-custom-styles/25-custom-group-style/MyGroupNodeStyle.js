@@ -30,6 +30,7 @@ import {
   Color,
   GeneralPath,
   GraphComponent,
+  ILayoutGroupBoundsCalculator,
   INode,
   INodeInsetsProvider,
   INodeSizeConstraintProvider,

@@ -32,6 +32,7 @@ import {
   IRectangle,
   IRenderContext,
   LabelStyleBase,
+  Size,
   SvgVisual,
   TextRenderSupport,
   TextWrapping,

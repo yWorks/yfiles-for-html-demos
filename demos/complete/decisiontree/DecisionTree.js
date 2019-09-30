@@ -204,7 +204,7 @@ export default class DecisionTree {
           zoom = this.$graphComponent.size.width / nodeArea.width
         }
         if (animateScroll) {
-          this.$graphComponent.zoomToAnimated(new Point(nodeArea.center.x, nodeArea.center.y), zoom)
+          this.$graphComponent.zoomToAnimated(Point.from(nodeArea.center), zoom)
         } else {
           this.$graphComponent.zoomTo(nodeArea.center, zoom)
         }
@@ -447,7 +447,7 @@ export default class DecisionTree {
    * @param animated Whether to use a layout animation
    * @return {Promise}
    */
-  runLayout(incrementalNodes, animated) {
+  async runLayout(incrementalNodes, animated) {
     if (!this.runningLayout) {
       const layout = new HierarchicLayout()
       layout.edgeLayoutDescriptor.minimumSlope = 0
@@ -487,20 +487,18 @@ export default class DecisionTree {
         layoutData,
         duration: animated ? '0.2s' : 0
       })
-      return layoutExecutor
-        .start()
-        .then(() => {
-          this.runningLayout = false
-        })
-        .catch(error => {
-          if (typeof window.reportError === 'function') {
-            window.reportError(error)
-          } else {
-            throw error
-          }
-        })
+      try {
+        await layoutExecutor.start()
+      } catch (error) {
+        if (typeof window.reportError === 'function') {
+          window.reportError(error)
+        } else {
+          throw error
+        }
+      } finally {
+        this.runningLayout = false
+      }
     }
-    return Promise.resolve()
   }
 
   /**

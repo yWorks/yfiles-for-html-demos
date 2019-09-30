@@ -50,7 +50,7 @@ let graphComponent = null
 /**
  * Bootstraps the demo.
  */
-function run(licenseData) {
+async function run(licenseData) {
   License.value = licenseData
   graphComponent = new GraphComponent('#graphComponent')
 
@@ -60,26 +60,25 @@ function run(licenseData) {
 
   // configures default styles for newly created graph elements
   initTutorialDefaults(graphComponent.graph)
+  try {
+    // load the graph data from the given JSON file
+    const graphData = await loadJSON('./GraphData.json')
 
-  // load the graph data from the given JSON file
-  loadJSON('./GraphData.json')
-    .then(graphData => {
-      // then build the graph with the given data set
-      buildGraph(graphComponent.graph, graphData)
+    // then build the graph with the given data set
+    buildGraph(graphComponent.graph, graphData)
 
-      graphComponent.fitGraphBounds()
+    graphComponent.fitGraphBounds()
 
-      // Often, the input data has no layout information at all. In this case you can apply any of the automatic layout
-      // algorithms, to automatically layout your input data, e.g. with HierarchicLayout. Make sure to require the
-      // relevant modules for example yfiles/view-layout-bridge and yfiles/layout-hierarchic
-      // graphComponent.morphLayout(new HierarchicLayout(), '500ms');
+    // Often, the input data has no layout information at all. In this case you can apply any of the automatic layout
+    // algorithms, to automatically layout your input data, e.g. with HierarchicLayout. Make sure to require the
+    // relevant modules for example yfiles/view-layout-bridge and yfiles/layout-hierarchic
+    // graphComponent.morphLayout(new HierarchicLayout(), '500ms');
 
-      // Finally, enable the undo engine. This prevents undoing of the graph creation
-      graphComponent.graph.undoEngineEnabled = true
-    })
-    .catch(e => {
-      alert(e)
-    })
+    // Finally, enable the undo engine. This prevents undoing of the graph creation
+    graphComponent.graph.undoEngineEnabled = true
+  } catch (e) {
+    alert(e)
+  }
 
   // bind the buttons to their commands
   registerCommands()
@@ -161,16 +160,10 @@ function buildGraph(graph, graphData) {
   graph.edges.forEach(edge => {
     const edgeData = edge.tag
     if (edgeData.sourcePort) {
-      graph.setPortLocation(
-        edge.sourcePort,
-        new Point(edgeData.sourcePort.x, edgeData.sourcePort.y)
-      )
+      graph.setPortLocation(edge.sourcePort, Point.from(edgeData.sourcePort))
     }
     if (edgeData.targetPort) {
-      graph.setPortLocation(
-        edge.targetPort,
-        new Point(edgeData.targetPort.x, edgeData.targetPort.y)
-      )
+      graph.setPortLocation(edge.targetPort, Point.from(edgeData.targetPort))
     }
     if (edgeData.bends) {
       edgeData.bends.forEach(bendLocation => {
@@ -240,8 +233,9 @@ function registerCommands() {
  * @returns {Promise<object>} A promise with the loaded data.
  */
 
-function loadJSON(url) {
-  return fetch(url).then(response => response.json())
+async function loadJSON(url) {
+  const response = await fetch(url)
+  return response.json()
 }
 
 // start tutorial

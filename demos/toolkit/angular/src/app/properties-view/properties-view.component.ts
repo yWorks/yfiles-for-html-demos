@@ -7,5 +7,5 @@ import { Person } from '../person'
   styleUrls: ['./properties-view.component.css']
 })
 export class PropertiesViewComponent {
-  @Input() person: Person
+  @Input() person!: Person
 }

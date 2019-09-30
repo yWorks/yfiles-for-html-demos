@@ -55,6 +55,7 @@ import {
   SolidColorFill,
   Stroke,
   SvgVisual,
+  TextEditorInputMode,
   TextRenderSupport,
   TypeAttribute,
   VerticalTextAlignment,
@@ -414,15 +415,13 @@ export class UMLNodeStyle extends NodeStyleBase {
     if (type === IEditLabelHelper.$class) {
       const oldData = this.$model.clone()
       return new IEditLabelHelper({
-        onLabelAdding(evt) {
-          outerThis.editLabel(evt, node, true).then(newData => {
-            outerThis.handleUndo(evt.context.canvasComponent.inputMode, node, newData, oldData)
-          })
+        async onLabelAdding(evt) {
+          const newData = await outerThis.editLabel(evt, node, true)
+          outerThis.handleUndo(evt.context.canvasComponent.inputMode, node, newData, oldData)
         },
-        onLabelEditing(evt) {
-          outerThis.editLabel(evt, node, false).then(newData => {
-            outerThis.handleUndo(evt.context.canvasComponent.inputMode, node, newData, oldData)
-          })
+        async onLabelEditing(evt) {
+          const newData = await outerThis.editLabel(evt, node, false)
+          outerThis.handleUndo(evt.context.canvasComponent.inputMode, node, newData, oldData)
         }
       })
     } else if (type === INodeSizeConstraintProvider.$class) {
@@ -463,7 +462,7 @@ export class UMLNodeStyle extends NodeStyleBase {
    * @return {Promise}
    * @private
    */
-  editLabel(evt, node, adding) {
+  async editLabel(evt, node, adding) {
     const data = this.$model
     const index = data.selectedIndex
     const categoryHit = data.selectedCategory
@@ -505,41 +504,40 @@ export class UMLNodeStyle extends NodeStyleBase {
     editorInputMode.textEditorInputMode.anchor = new Point(0, 1)
 
     // actually edit the text and update the UML data model
-    return editorInputMode.textEditorInputMode.edit().then(res => {
-      if (res !== null) {
-        if (index < 0) {
-          data.className = res
-        } else if (categoryHit === 1) {
-          if (adding) {
-            data.attributes[data.attributes.length - 1] = res
-            data.selectedIndex = data.attributes.length - 1
-          } else {
-            data.attributes[index] = res
-          }
-        } else if (categoryHit === 2) {
-          if (adding) {
-            data.operations[data.operations.length - 1] = res
-            data.selectedIndex = data.attributes.length + (data.operations.length - 1)
-          } else {
-            data.operations[index - data.attributes.length] = res
-          }
-        }
-      } else {
-        // canceled, maybe remove the dummy entry
-        // eslint-disable-next-line no-lonely-if
+    const res = await editorInputMode.textEditorInputMode.edit()
+    if (res !== null) {
+      if (index < 0) {
+        data.className = res
+      } else if (categoryHit === 1) {
         if (adding) {
-          if (categoryHit === 1) {
-            data.attributes.splice(data.attributes.length - 1, 1)
-          } else if (categoryHit === 2) {
-            data.operations.splice(data.operations.length - 1, 1)
-          }
-          this.adjustSize(node, editorInputMode)
+          data.attributes[data.attributes.length - 1] = res
+          data.selectedIndex = data.attributes.length - 1
+        } else {
+          data.attributes[index] = res
+        }
+      } else if (categoryHit === 2) {
+        if (adding) {
+          data.operations[data.operations.length - 1] = res
+          data.selectedIndex = data.attributes.length + (data.operations.length - 1)
+        } else {
+          data.operations[index - data.attributes.length] = res
         }
       }
-      data.modify()
-      evt.context.canvasComponent.invalidate()
-      return data
-    })
+    } else {
+      // canceled, maybe remove the dummy entry
+      // eslint-disable-next-line no-lonely-if
+      if (adding) {
+        if (categoryHit === 1) {
+          data.attributes.splice(data.attributes.length - 1, 1)
+        } else if (categoryHit === 2) {
+          data.operations.splice(data.operations.length - 1, 1)
+        }
+        this.adjustSize(node, editorInputMode)
+      }
+    }
+    data.modify()
+    evt.context.canvasComponent.invalidate()
+    return data
   }
 
   /**

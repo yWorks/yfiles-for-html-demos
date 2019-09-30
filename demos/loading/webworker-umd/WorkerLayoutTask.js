@@ -61,14 +61,13 @@
       const jsonData = e.data
       const jsonGraph = jsonData.graph
 
-      require(['./WebWorkerJsonIO.js', 'yfiles/layout-hierarchic', 'yfiles/view-layout-bridge'], (
-        WebWorkerJsonIO,
-        /** @type {yfiles_namespace} */ /** typeof yfiles */ yfiles
-      ) => {
-        loadLicense().then(licenseData => {
-          yfiles.lang.License.value = licenseData
-          runLayout(jsonGraph, WebWorkerJsonIO, yfiles)
-        })
+      require([
+        './WebWorkerJsonIO.js',
+        'yfiles/layout-hierarchic',
+        'yfiles/view-layout-bridge'
+      ], async (WebWorkerJsonIO, /** @type {yfiles_namespace} */ /** typeof yfiles */ yfiles) => {
+        yfiles.lang.License.value = await loadLicense()
+        runLayout(jsonGraph, WebWorkerJsonIO, yfiles)
       })
     },
     false
@@ -93,7 +92,8 @@
     self.postMessage(reply)
   }
 
-  function loadLicense() {
-    return fetch('../../../lib/license.json').then(response => response.json())
+  async function loadLicense() {
+    const response = await fetch('../../../lib/license.json')
+    return response.json()
   }
 })()

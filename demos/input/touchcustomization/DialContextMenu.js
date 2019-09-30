@@ -83,8 +83,8 @@ function createMenu(items, location) {
       path.setAttribute('d', d)
       path.setAttribute('fill-rule', 'evenodd')
     } else {
-      const leftAngle = i * pi2 / n
-      const rightAngle = i * pi2 / n + pi2 / n
+      const leftAngle = (i * pi2) / n
+      const rightAngle = (i * pi2) / n + pi2 / n
       middleAngle = (leftAngle + rightAngle) * 0.5
 
       const innerLeftPoint = new Point(
@@ -104,13 +104,7 @@ function createMenu(items, location) {
         -Math.cos(rightAngle) * outerRadius
       )
 
-      const d = `M ${innerLeftPoint.x} ${innerLeftPoint.y} L ${outerLeftPoint.x} ${
-        outerLeftPoint.y
-      } A ${outerRadius} ${outerRadius} 0 0 1 ${outerRightPoint.x} ${outerRightPoint.y} L ${
-        innerRightPoint.x
-      } ${innerRightPoint.y} A ${innerRadius} ${innerRadius} 0 0 0 ${innerLeftPoint.x} ${
-        innerLeftPoint.y
-      }`
+      const d = `M ${innerLeftPoint.x} ${innerLeftPoint.y} L ${outerLeftPoint.x} ${outerLeftPoint.y} A ${outerRadius} ${outerRadius} 0 0 1 ${outerRightPoint.x} ${outerRightPoint.y} L ${innerRightPoint.x} ${innerRightPoint.y} A ${innerRadius} ${innerRadius} 0 0 0 ${innerLeftPoint.x} ${innerLeftPoint.y}`
       path.setAttribute('d', d)
       path.setAttribute('clip-path', 'url(#dial-menu-clip)')
 
@@ -125,9 +119,7 @@ function createMenu(items, location) {
       const bottomRight = innerRightPoint.add(rightVectorOrthogonalNormalized.multiply(spacing))
       const topRight = bottomRight.add(rightVector)
       const topLeft = bottomLeft.add(leftVector)
-      const clipD = `M ${bottomLeft.x} ${bottomLeft.y} L ${bottomRight.x} ${bottomRight.y} L ${
-        topRight.x
-      } ${topRight.y} A ${outerRadius} ${outerRadius} 0 0 0 ${topLeft.x} ${topLeft.y} Z`
+      const clipD = `M ${bottomLeft.x} ${bottomLeft.y} L ${bottomRight.x} ${bottomRight.y} L ${topRight.x} ${topRight.y} A ${outerRadius} ${outerRadius} 0 0 0 ${topLeft.x} ${topLeft.y} Z`
       clipElement.setAttribute('d', clipD)
       clipElement.setAttribute('fill', 'none')
       clipPath.appendChild(clipElement)

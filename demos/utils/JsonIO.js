@@ -396,15 +396,15 @@ export class JSONReader {
     })
 
     for (const bendData of JSONReader.resolveProvider(this.edgeBendsProvider, edgeData) || []) {
-      graph.addBend(edge, new Point(bendData.x, bendData.y))
+      graph.addBend(edge, Point.from(bendData))
     }
 
     JSONReader.resolveProvider(this.edgeSourcePortLocationProvider, edgeData, location => {
-      graph.setPortLocation(edge.sourcePort, new Point(location.x, location.y))
+      graph.setPortLocation(edge.sourcePort, Point.from(location))
     })
 
     JSONReader.resolveProvider(this.edgeTargetPortLocationProvider, edgeData, location => {
-      graph.setPortLocation(edge.targetPort, new Point(location.x, location.y))
+      graph.setPortLocation(edge.targetPort, Point.from(location))
     })
 
     for (const data of JSONReader.resolveProvider(this.edgeLabelsProvider, edgeData) || []) {
@@ -507,7 +507,7 @@ export class JSONReader {
       ? graph.addLabel({
           owner: owner,
           text: labelData.text,
-          preferredSize: new Size(layout.width, layout.height)
+          preferredSize: Size.from(layout)
         })
       : graph.addLabel(owner, labelData.text)
 
@@ -545,7 +545,7 @@ export class JSONReader {
       ? table.addLabel({
           owner: owner,
           text: labelData.text,
-          preferredSize: new Size(layout.width, layout.height)
+          preferredSize: Size.from(layout)
         })
       : table.addLabel(owner, labelData.text)
 

@@ -26,22 +26,34 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { BaseClass, HtmlCanvasVisual, IRenderContext, IVisualCreator } from 'yfiles'
-import Mapper from './Mapper.js'
+/* global moment */
+import {
+  BaseClass,
+  CanvasComponent,
+  HtmlCanvasVisual,
+  IRenderContext,
+  IVisualCreator
+} from 'yfiles'
+import GanttMapper from './GanttMapper.js'
 
 /**
  * Manages and renders the background of the main component.
  */
 export default class GridVisual extends BaseClass(HtmlCanvasVisual, IVisualCreator) {
+  /**
+   * Creates a new instance.
+   * @param {GanttMapper} mapper The mapper.
+   * @param dataModel
+   */
   constructor(mapper, dataModel) {
     super()
+    /** @type {GanttMapper} */
     this.mapper = mapper
     this.dataModel = dataModel
   }
 
   /**
-   * @param {IRenderContext} renderContext - The render context of the
-   *   {@link CanvasComponent}
+   * @param {IRenderContext} renderContext - The render context of the {@link CanvasComponent}
    * @param {CanvasRenderingContext2D} canvasContext - The HTML5 Canvas context to use for rendering.
    */
   paint(renderContext, canvasContext) {
@@ -77,7 +89,7 @@ export default class GridVisual extends BaseClass(HtmlCanvasVisual, IVisualCreat
     while (x < endX) {
       canvasContext.moveTo(x, y1)
       canvasContext.lineTo(x, y2)
-      x += Mapper.dayWidth
+      x += GanttMapper.dayWidth
       date.add(1, 'days')
     }
     canvasContext.stroke()
@@ -99,7 +111,7 @@ export default class GridVisual extends BaseClass(HtmlCanvasVisual, IVisualCreat
       canvasContext.moveTo(x, y1)
       canvasContext.lineTo(x, y2)
       const monthDays = date.daysInMonth()
-      x += Mapper.dayWidth * monthDays
+      x += GanttMapper.dayWidth * monthDays
       date.add(1, 'months')
     }
     canvasContext.stroke()
@@ -126,7 +138,7 @@ export default class GridVisual extends BaseClass(HtmlCanvasVisual, IVisualCreat
       const y =
         this.mapper.getTaskY(task) +
         this.mapper.getCompleteTaskHeight(task) +
-        Mapper.taskSpacing * 0.5
+        GanttMapper.taskSpacing * 0.5
       canvasContext.moveTo(x1, y)
       canvasContext.lineTo(x2, y)
     })

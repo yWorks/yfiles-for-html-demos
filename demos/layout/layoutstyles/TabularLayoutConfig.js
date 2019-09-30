@@ -226,9 +226,9 @@ const TabularLayoutConfig = Class('TabularLayoutConfig', {
     },
     get: function() {
       return (
-        "<p style='margin-top:0'>The tabular layout style arranges the nodes in rows and columns. This is a" +
+        ("<p style='margin-top:0'>The tabular layout style arranges the nodes in rows and columns. This is a" +
         ' very simple layout which is useful when nodes should be placed under/next to each other.</p>' +
-        '<p>Edges are ignored in this layout style. Their bends are removed.</p>'
+        '<p>Edges are ignored in this layout style. Their bends are removed.</p>')
       )
     }
   },

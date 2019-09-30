@@ -27,7 +27,6 @@
  **
  ***************************************************************************/
 import {
-  FreeEdgeLabelModel,
   GraphComponent,
   GraphEditorInputMode,
   GraphInputMode,
@@ -47,10 +46,12 @@ import {
   LabelSnapContext,
   License,
   List,
+  MinimumNodeSizeStage,
   OrthogonalEdgeEditingContext,
   PolylineEdgeStyle,
   PopulateItemContextMenuEventArgs,
   RenderModes,
+  SmartEdgeLabelModel,
   StorageLocation,
   Stroke
 } from 'yfiles'
@@ -85,6 +86,10 @@ import DemoStyles, {
 import { bindAction, bindChangeListener, bindCommand, showApp } from '../../resources/demo-app.js'
 import loadJson from '../../resources/load-json.js'
 import { webGlSupported } from '../../utils/Workarounds.js'
+import {
+  FaultTolerantGraphMLIOHandler,
+  ensureDefaultStyles
+} from './FaultTolerantGraphMLIOHandler.js'
 
 /**
  * The GraphComponent
@@ -171,7 +176,7 @@ function run(licenseData) {
     'Balloon',
     'Radial',
     'Series-Parallel',
-    'Polyline Router',
+    'Edge Router',
     'Bus Router',
     'Components',
     'Tabular',
@@ -211,11 +216,11 @@ function run(licenseData) {
  * Enables loading and saving the graph to GraphML.
  */
 function enableGraphML() {
-  // create a new GraphMLSupport instance that handles save and load operations
   const gs = new GraphMLSupport({
     graphComponent,
     // configure to load and save to the file system
-    storageLocation: StorageLocation.FILE_SYSTEM
+    storageLocation: StorageLocation.FILE_SYSTEM,
+    graphMLIOHandler: new FaultTolerantGraphMLIOHandler()
   })
   gs.graphMLIOHandler.addXamlNamespaceMapping(
     'http://www.yworks.com/yFilesHTML/demos/FlatDemoStyle/1.0',
@@ -244,7 +249,7 @@ function initializeLayoutAlgorithms() {
     'Radial',
     'Series-Parallel',
     '-----------',
-    'Polyline Router',
+    'Edge Router',
     'Channel Router',
     'Bus Router',
     'Organic Router',
@@ -305,8 +310,8 @@ function initializeLayoutAlgorithms() {
   maybeLoadAsInitialSample('series-parallel')
 
   // load polyline router module
-  availableLayouts.set('Polyline Router', new PolylineEdgeRouterConfig())
-  maybeLoadAsInitialSample('polyline router')
+  availableLayouts.set('Edge Router', new PolylineEdgeRouterConfig())
+  maybeLoadAsInitialSample('edge router')
 
   // load channel router module
   availableLayouts.set('Channel Router', new ChannelEdgeRouterConfig())
@@ -384,7 +389,7 @@ function resetConfig() {
         case 'Graph Transform':
           availableLayouts.set(key, new GraphTransformerConfig())
           break
-        case 'Polyline Router':
+        case 'Edge Router':
           availableLayouts.set(key, new PolylineEdgeRouterConfig())
           break
         case 'Channel Router':
@@ -449,7 +454,8 @@ function applyLayoutForKey(key) {
  * Returns the index of the first option with the given text (ignoring case).
  * @param {string} text The text to match.
  * @param {HTMLSelectElement} combobox The combobox to search.
- * @return {number} The index of the first option with the given text (ignoring case), or -1 if no such option exists.
+ * @return {number} The index of the first option with the given text (ignoring case), or -1 if no
+ *   such option exists.
  */
 function getIndexInComboBox(text, combobox) {
   const lowerCaseText = text.toLowerCase()
@@ -543,7 +549,7 @@ function onLayoutChanged() {
 /**
  * Handles a selection change in the sample combo box.
  */
-function onSampleChanged() {
+async function onSampleChanged() {
   if (inLayout || inLoadSample) {
     return
   }
@@ -585,37 +591,35 @@ function onSampleChanged() {
     // derive the file name from the key and
     const fileName = key.toLowerCase().replace(/[-\s]/g, '')
     const filePath = `resources/${fileName}.graphml`
-    // load the sample graph and start the layout algorithm in the done handler
-    const ioh = new GraphMLIOHandler()
-    ioh.addXamlNamespaceMapping(
-      'http://www.yworks.com/yFilesHTML/demos/FlatDemoStyle/1.0',
-      DemoStyles
-    )
-    ioh.addHandleSerializationListener(DemoSerializationListener)
-    ioh
-      .readFromURL(graph, filePath)
-      .then(() => {
+    try {
+      // load the sample graph and start the layout algorithm in the done handler
+      const ioh = new GraphMLIOHandler()
+      ioh.addXamlNamespaceMapping(
+        'http://www.yworks.com/yFilesHTML/demos/FlatDemoStyle/1.0',
+        DemoStyles
+      )
+      ioh.addHandleSerializationListener(DemoSerializationListener)
+      await ioh.readFromURL(graph, filePath)
+      applyLayoutForKey(key)
+    } catch (error) {
+      if (graph.nodes.size === 0 && window.location.protocol.toLowerCase().indexOf('file') >= 0) {
+        alert(
+          'Unable to open the sample graph. A default graph will be loaded instead. Perhaps your browser does not ' +
+            'allow handling cross domain HTTP requests. Please see the demo readme for details.'
+        )
+        // the sample graph cannot be loaded, so we run the default graph
+        createSampleGraph(graph)
+        if (sampleComboBox.selectedIndex === 9 || sampleComboBox.selectedIndex === 10) {
+          graph.applyLayout(new MinimumNodeSizeStage(new HierarchicLayout()))
+        }
         applyLayoutForKey(key)
-      })
-      .catch(error => {
-        if (graph.nodes.size === 0 && window.location.protocol.toLowerCase().indexOf('file') >= 0) {
-          alert(
-            'Unable to open the sample graph. A default graph will be loaded instead. Perhaps your browser does not ' +
-              'allow handling cross domain HTTP requests. Please see the demo readme for details.'
-          )
-          // the sample graph cannot be loaded, so we run the default graph
-          createSampleGraph(graph)
-          if (sampleComboBox.selectedIndex === 9 || sampleComboBox.selectedIndex === 10) {
-            graph.applyLayout(new HierarchicLayout())
-          }
-          applyLayoutForKey(key)
-        }
-        if (typeof window.reportError === 'function') {
-          window.reportError(error)
-        } else {
-          throw error
-        }
-      })
+      }
+      if (typeof window.reportError === 'function') {
+        window.reportError(error)
+      } else {
+        throw error
+      }
+    }
   }
 }
 
@@ -763,8 +767,9 @@ function initializeGraph() {
   // set some nice defaults
   initDemoStyles(graph)
 
-  // use a free label model to support integrated labeling
-  graph.edgeDefaults.labels.layoutParameter = FreeEdgeLabelModel.INSTANCE.createDefaultParameter()
+  // use a smart label model to support integrated labeling
+  const model = new SmartEdgeLabelModel({ autoRotation: false })
+  graph.edgeDefaults.labels.layoutParameter = model.createDefaultParameter()
 }
 
 /**
@@ -868,7 +873,7 @@ function populateContextMenu(contextMenu, args) {
 
   if (hit === null) {
     // empty canvas hit: provide 'select all'
-    contextMenu.addMenuItem('Select All', evt => {
+    contextMenu.addMenuItem('Select All', () => {
       ICommand.SELECT_ALL.execute(null, graphComponent)
     })
   }
@@ -878,7 +883,7 @@ function populateContextMenu(contextMenu, args) {
   // if a node or an edge is hit: provide 'Select All Nodes' or 'Select All Edges', respectively
   // also: select the hit item
   if (INode.isInstance(hit)) {
-    contextMenu.addMenuItem('Select All Nodes', evt => {
+    contextMenu.addMenuItem('Select All Nodes', () => {
       graphComponent.selection.clear()
       graphComponent.graph.nodes.forEach(node => {
         graphComponent.selection.setSelected(node, true)
@@ -889,7 +894,7 @@ function populateContextMenu(contextMenu, args) {
     }
     graphSelection.setSelected(hit, true)
   } else if (IEdge.isInstance(hit)) {
-    contextMenu.addMenuItem('Select All Edges', evt => {
+    contextMenu.addMenuItem('Select All Edges', () => {
       graphComponent.selection.clear()
       graphComponent.graph.edges.forEach(edge => {
         graphComponent.selection.setSelected(edge, true)
@@ -901,17 +906,17 @@ function populateContextMenu(contextMenu, args) {
     graphSelection.setSelected(hit, true)
   }
   // if one or more nodes are selected: add options to cut and copy
-  if (graphSelection.selectedNodes.count > 0) {
-    contextMenu.addMenuItem('Cut', evt => {
+  if (graphSelection.selectedNodes.size > 0) {
+    contextMenu.addMenuItem('Cut', () => {
       ICommand.CUT.execute(null, graphComponent)
     })
-    contextMenu.addMenuItem('Copy', evt => {
+    contextMenu.addMenuItem('Copy', () => {
       ICommand.COPY.execute(null, graphComponent)
     })
   }
   if (!graphComponent.clipboard.empty) {
     // clipboard is not empty: add option to paste
-    contextMenu.addMenuItem('Paste', evt => {
+    contextMenu.addMenuItem('Paste', () => {
       ICommand.PASTE.execute(args.queryLocation, graphComponent)
     })
   }
@@ -1022,7 +1027,8 @@ function registerCommands() {
 }
 
 /**
- * Checks whether the given sample is the one that is requested in the hash part of the URL, and loads it if it is.
+ * Checks whether the given sample is the one that is requested in the hash part of the URL, and
+ * loads it if it is.
  * @param {string} sample The name of the sample to check.
  * @param {boolean} isDefault Whether the given sample is the default one.
  */

@@ -79,9 +79,9 @@ export default class ServerSidePdfExport {
    * This function returns a Promise to allow showing the SVG in a popup with a save button, afterwards.
    * @param {IGraph} graph
    * @param {Rect} exportRect
-   * @return {Promise.<{element:SVGElement,size:Size}|Error>}
+   * @return {Promise.<{element:SVGElement,size:Size}>}
    */
-  exportSvg(graph, exportRect) {
+  async exportSvg(graph, exportRect) {
     // Create a new graph component for exporting the original SVG content
     const exportComponent = new GraphComponent()
     // ... and assign it the same graph.
@@ -103,11 +103,11 @@ export default class ServerSidePdfExport {
       exporter.encodeImagesBase64 = true
       exporter.inlineSvgImages = true
     }
-
-    return exporter.exportSvgAsync(exportComponent).then(svgElement => ({
+    const svgElement = await exporter.exportSvgAsync(exportComponent)
+    return {
       element: svgElement,
       size: new Size(exporter.viewWidth, exporter.viewHeight)
-    }))
+    }
   }
 
   /**

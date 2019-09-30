@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- ////////////////////////////////////////////////////////////////////////
+     // @license
+     // This demo file is part of yFiles for HTML 2.2.
+     // Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // 72070 Tuebingen, Germany. All rights reserved.
+     //
+     // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+     // of demo files in source code or binary form, with or without
+     // modification, is not permitted.
+     //
+     // Owners of a valid software license for a yFiles for HTML version that this
+     // demo is shipped with are allowed to use the demo source code as basis
+     // for their own yFiles for HTML powered applications. Use of such programs is
+     // governed by the rights and conditions as set out in the yFiles for HTML
+     // license agreement.
+     //
+     // THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+     // WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+     // MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+     // NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+     // SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+     // TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+     // PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+     // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+     // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+     // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+     // 
+     ////////////////////////////////////////////////////////////////////////-->
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 23.64 25.02" id="svg5105">
+  <g id="layer1" transform="translate(-93.81 -111.13)">
+    <g id="g5736" transform="matrix(.26458 0 0 .26458 90.63 108.65)">
+      <path id="path5652" d="M12.39 47.29l.1 19.3a27.74 27.74 0 0 0 13.9 23.8l16.8 9.6a27.32 27.32 0 0 0 27.5-.2L87.39 90A27.44 27.44 0 0 0 101 66.09l-.1-19.4A27.86 27.86 0 0 0 87 22.89l-16.7-9.5a27.32 27.32 0 0 0-27.5.2l-16.7 9.8a27.5 27.5 0 0 0-13.7 23.9" fill="#242265"/>
+      <g id="g5676" transform="translate(15 9)">
+        <g id="g5674" transform="rotate(54)">
+          <path id="path5654" d="M66.89-20.04l.1 4.8c.2 2.4.8 4.5 2.3 6.5 1.3 1.8 3 3 5 4l2.5 1.5c2 1.5 1.3 3.2-2.3 1.2l-3-1.6a11.6 11.6 0 0 0-10.4-.3l-3.9 2.1c-4 1-2.5-1 1-3.1 3-1.5 5.1-4.1 6-7.3.4-1.5.6-3 .5-4.6v-3.7c-.5-4 2.8-4 2.2.5z" fill="#00d8ff"/>
+          <g id="g5660">
+            <g id="g5658" class="wobble" style="transform-origin:67px 0px;animation-delay:.125s">
+              <path id="path5656" d="M65.61-38.34c-1.3 0-2.5.6-3.5 1.5a6 6 0 0 0-1.6 6.3c.4 1.2 1 2.3 1.8 3.4l1.2 2.2c.8 1.6 1.2 3.3 1.4 5v3.1c0 1-.3 4.9 1 4.9 1.4 0 1.3-3.8 1.2-4.9v-2.6c0-1.6.4-3.2 1-4.7.5-1.2 1.2-2.3 1.8-3.4.7-1.2 1.4-2.5 1.6-3.9a6 6 0 0 0-1.7-5.4 5.6 5.6 0 0 0-4.2-1.5" fill="#00d8ff"/>
+            </g>
+          </g>
+          <g id="g5666" transform="rotate(120 45.9 48.7)">
+            <g id="g5664" class="wobble" style="transform-origin:-14.5px 48px;animation-delay:.45s">
+              <path id="path5662" d="M-13.98 30.32c-1.3 0-2.5.6-3.5 1.5a6 6 0 0 0-1.6 6.3c.4 1.2 1 2.3 1.8 3.4l1.2 2.2c.8 1.6 1.2 3.3 1.4 5v3.1c0 1-.3 4.9 1 4.9 1.4 0 1.3-3.8 1.2-4.9v-2.6c0-1.6.4-3.2 1-4.7.5-1.2 1.2-2.3 1.8-3.4.7-1.2 1.4-2.5 1.6-3.9a6 6 0 0 0-1.7-5.4 5.6 5.6 0 0 0-4.2-1.5" fill="#00d8ff"/>
+            </g>
+          </g>
+          <g id="g5672" transform="rotate(-120 45.9 48.7)">
+            <g id="g5670" class="wobble" style="transform-origin:86px 89px;animation-delay:.79s">
+              <path id="path5668" d="M84.85 64.75c-1.3 0-2.5.6-3.5 1.5a6 6 0 0 0-1.6 6.3c.4 1.2 1 2.3 1.8 3.4l1.2 2.2c.8 1.6 1.2 3.3 1.4 5v3.1c0 1-.3 4.9 1 4.9 1.4 0 1.3-3.8 1.2-4.9v-2.6c0-1.6.4-3.2 1-4.7.5-1.2 1.2-2.3 1.8-3.4.7-1.2 1.4-2.5 1.6-3.9a6 6 0 0 0-1.7-5.4 5.6 5.6 0 0 0-4.2-1.5" fill="#00d8ff"/>
+            </g>
+          </g>
+        </g>
+      </g>
+      <g id="g5700" transform="translate(9 6)">
+        <g id="g5698" transform="rotate(10)">
+          <path id="path5678" d="M54.23 28.35l.1 4.8c.2 2.4.8 4.5 2.3 6.5 1.3 1.8 3 3 5 4l2.5 1.5c2 1.5 1.3 3.2-2.3 1.2l-3-1.6a11.6 11.6 0 0 0-10.4-.3l-3.9 2.1c-4 1-2.5-1 1-3.1 3-1.5 5.1-4.1 6-7.3.4-1.5.6-3 .5-4.6v-3.7c-.5-4 2.8-4 2.2.5z" fill="#00d8ff"/>
+          <g id="g5684">
+            <g id="g5682" class="wobble" style="transform-origin: 53px 33px;">
+              <path id="path5680" d="M52.71 10.09c-1.3 0-2.5.6-3.5 1.5a6 6 0 0 0-1.6 6.3c.4 1.2 1 2.3 1.8 3.4l1.2 2.2c.8 1.6 1.2 3.3 1.4 5v3.1c0 1-.3 4.9 1 4.9 1.4 0 1.3-3.8 1.2-4.9v-2.6c0-1.6.4-3.2 1-4.7.5-1.2 1.2-2.3 1.8-3.4.7-1.2 1.4-2.5 1.6-3.9a6 6 0 0 0-1.7-5.4 5.6 5.6 0 0 0-4.2-1.5" fill="#00d8ff"/>
+            </g>
+          </g>
+          <g id="g5690" transform="rotate(120 45.9 48.7)">
+            <g id="g5688" class="wobble" style="transform-origin:37px 50px;animation-delay:.3333s">
+              <path id="path5686" d="M34.34 16.39c-1.3 0-2.5.6-3.5 1.5a6 6 0 0 0-1.6 6.3c.4 1.2 1 2.3 1.8 3.4l1.2 2.2c.8 1.6 1.2 3.3 1.4 5v3.1c0 1-.3 4.9 1 4.9 1.4 0 1.3-3.8 1.2-4.9v-2.6c0-1.6.4-3.2 1-4.7.5-1.2 1.2-2.3 1.8-3.4.7-1.2 1.4-2.5 1.6-3.9a6 6 0 0 0-1.7-5.4 5.6 5.6 0 0 0-4.2-1.5" fill="#00d8ff"/>
+            </g>
+          </g>
+          <g id="g5696" transform="rotate(-120 45.9 48.7)">
+            <g id="g5694" class="wobble" style="transform-origin:49px 53px;animation-delay:.666s">
+              <path id="path5692" d="M49.01 28.92c-1.3 0-2.5.6-3.5 1.5a6 6 0 0 0-1.6 6.3c.4 1.2 1 2.3 1.8 3.4l1.2 2.2c.8 1.6 1.2 3.3 1.4 5v3.1c0 1-.3 4.9 1 4.9 1.4 0 1.3-3.8 1.2-4.9v-2.6c0-1.6.4-3.2 1-4.7.5-1.2 1.2-2.3 1.8-3.4.7-1.2 1.4-2.5 1.6-3.9a6 6 0 0 0-1.7-5.4 5.6 5.6 0 0 0-4.2-1.5" fill="#00d8ff"/>
+            </g>
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+  <style id="style5650">
+    @keyframes wobble {
+    0%,
+    33%,
+    to {
+    transform: scale(1);
+    }
+    50% {
+    transform: scale(0.95);
+    }
+    66% {
+    transform: scale(1.15);
+    }
+    }
+    .wobble {
+    animation: wobble 1s ease-in-out infinite;
+    transform-origin: 52.3px 34.45px;
+    }
+  </style>
+</svg>

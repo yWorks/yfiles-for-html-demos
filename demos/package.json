@@ -1,19 +1,26 @@
 {
-  "name": "demo-server",
+  "name": "demo-server-for-yfiles-for-html",
   "version": "2.0.1",
-  "description": "A Node.js Express server that serves the yFiles for HTML demo and tutorial applications.",
-  "main": "demo-server/server.js",
-  "scripts": {
-    "start": "node demo-server/server.js"
-  },
   "author": "yWorks GmbH <yfileshtml@yworks.com>",
   "license": "https://www.yworks.com/products/yfiles-for-html/sla",
   "private": true,
+  "scripts": {
+    "preinstall": "cd ../lib/es-modules && npm pack",
+    "postinstall": "cd ./demo-server && npm install",
+    "start": "node demo-server/server.js"
+  },
   "dependencies": {
-    "yfiles": "../lib/es-modules",
-    "express": "4.16.4",
-    "multer": "1.4.1",
-    "opn": "5.4.0",
-    "serve-favicon": "2.5.0"
+    "yfiles": "../lib/es-modules/yfiles-22.0.2.tgz"
+  },
+  "devDependencies": {
+    "eslint": "^6.1.0",
+    "eslint-config-prettier": "^6.0.0",
+    "eslint-config-standard": "^13.0.1",
+    "eslint-plugin-import": "^2.18.2",
+    "eslint-plugin-node": "^9.1.0",
+    "eslint-plugin-prettier": "^3.1.0",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-standard": "^4.0.0",
+    "prettier": "^1.18.2"
   }
 }

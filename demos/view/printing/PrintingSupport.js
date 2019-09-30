@@ -71,7 +71,7 @@ export default class PrintingSupport {
    * @param {GraphComponent} graphComponent
    * @param {Rect} clippingRectangle
    */
-  print(graphComponent, clippingRectangle) {
+  async print(graphComponent, clippingRectangle) {
     const targetRect = clippingRectangle != null ? clippingRectangle : graphComponent.contentRect
 
     let /** @type {number} */ rows
@@ -89,8 +89,8 @@ export default class PrintingSupport {
       const tileSizeScaled = new Size(tileSize.width / this.scale, tileSize.height / this.scale)
 
       // calculate number of rows and columns
-      rows = Math.ceil(targetRect.height * this.scale / tileSize.height)
-      columns = Math.ceil(targetRect.width * this.scale / tileSize.width)
+      rows = Math.ceil((targetRect.height * this.scale) / tileSize.height)
+      columns = Math.ceil((targetRect.width * this.scale) / tileSize.width)
 
       // calculate tile bounds
       tiles = []
@@ -144,6 +144,8 @@ export default class PrintingSupport {
 
         const exporter = new SvgExport(tiles[i][k], this.scale)
         exporter.copyDefsElements = true
+        exporter.encodeImagesBase64 = true
+        exporter.inlineSvgImages = true
         this.configureMargin(exporter, i === 0, lastRow, k === 0, lastColumn)
 
         if (!lastRow || !lastColumn) {
@@ -152,7 +154,8 @@ export default class PrintingSupport {
           resultingHTML += '<div>'
         }
         // export the svg to an XML string
-        resultingHTML += SvgExport.exportSvgString(exporter.exportSvg(graphComponent))
+        const svgElement = await exporter.exportSvgAsync(graphComponent)
+        resultingHTML += SvgExport.exportSvgString(svgElement)
         resultingHTML += '</div>'
       }
     }

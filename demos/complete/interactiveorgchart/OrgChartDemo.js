@@ -49,13 +49,13 @@ import {
 import ContextMenu from '../../utils/ContextMenu.js'
 import GraphSearch from '../../utils/GraphSearch.js'
 import ClickablePortsSupport from './ClickablePortsSupport.js'
-import OrgChartPrintingSupport from './OrgChartPrintingSupport.js'
+import PrintingSupport from '../../view/printing/PrintingSupport.js'
 import OrgChartPropertiesView from './OrgChartPropertiesView.js'
 import { bindAction, bindCommand, showApp } from '../../resources/demo-app.js'
 import OrgChartData from './resources/OrgChartData.js'
 import OrgChartGraph from './OrgChartGraph.js'
 import loadJson from '../../resources/load-json.js'
-import VuejsNodeStyle from '../../resources/VuejsNodeStyle.js'
+import VuejsNodeStyle from '../../utils/VuejsNodeStyle.js'
 
 let graphComponent = null
 
@@ -134,7 +134,7 @@ function createPropertiesView() {
     }
   })
 
-  graphComponent.addCurrentItemChangedListener((sender, args) => {
+  graphComponent.addCurrentItemChangedListener(() => {
     propertiesView.showProperties(graphComponent.currentItem)
   })
 }
@@ -197,51 +197,45 @@ function populateContextMenu(contextMenu, graphComponent, args) {
     graphComponent.currentItem = node
     // Create the context menu items
     if (orgChartGraph.canExecuteHideParent(node)) {
-      contextMenu.addMenuItem('Hide Parent', () =>
-        orgChartGraph
-          .executeHideParent(node)
-          .then(() => graphSearch.updateSearch(document.getElementById('searchBox').value))
-      )
+      contextMenu.addMenuItem('Hide Parent', async () => {
+        await orgChartGraph.executeHideParent(node)
+        graphSearch.updateSearch(document.getElementById('searchBox').value)
+      })
     }
     if (orgChartGraph.canExecuteShowParent(node)) {
-      contextMenu.addMenuItem('Show Parent', () =>
-        orgChartGraph
-          .executeShowParent(node)
-          .then(() => graphSearch.updateSearch(document.getElementById('searchBox').value))
-      )
+      contextMenu.addMenuItem('Show Parent', async () => {
+        await orgChartGraph.executeShowParent(node)
+        graphSearch.updateSearch(document.getElementById('searchBox').value)
+      })
     }
     if (orgChartGraph.canExecuteHideChildren(node)) {
-      contextMenu.addMenuItem('Hide Children', () => {
-        orgChartGraph
-          .executeHideChildren(node)
-          .then(() => graphSearch.updateSearch(document.getElementById('searchBox').value))
+      contextMenu.addMenuItem('Hide Children', async () => {
+        await orgChartGraph.executeHideChildren(node)
+        graphSearch.updateSearch(document.getElementById('searchBox').value)
         clickablePortsSupport.setCollapsedStyleToChildren(node)
       })
     }
     if (orgChartGraph.canExecuteShowChildren(node)) {
-      contextMenu.addMenuItem('Show Children', () => {
-        orgChartGraph
-          .executeShowChildren(node)
-          .then(() => graphSearch.updateSearch(document.getElementById('searchBox').value))
+      contextMenu.addMenuItem('Show Children', async () => {
+        await orgChartGraph.executeShowChildren(node)
+        graphSearch.updateSearch(document.getElementById('searchBox').value)
         clickablePortsSupport.setExpandStyleToNode(node)
       })
     }
 
     if (orgChartGraph.canExecuteShowAll()) {
-      contextMenu.addMenuItem('Show all', () =>
-        orgChartGraph
-          .executeShowAll()
-          .then(() => graphSearch.updateSearch(document.getElementById('searchBox').value))
-      )
+      contextMenu.addMenuItem('Show all', async () => {
+        await orgChartGraph.executeShowAll()
+        graphSearch.updateSearch(document.getElementById('searchBox').value)
+      })
     }
   } else {
     // no node has been hit
     if (orgChartGraph.canExecuteShowAll())
-      contextMenu.addMenuItem('Show all', () =>
-        orgChartGraph
-          .executeShowAll()
-          .then(() => graphSearch.updateSearch(document.getElementById('searchBox').value))
-      )
+      contextMenu.addMenuItem('Show all', async () => {
+        await orgChartGraph.executeShowAll()
+        graphSearch.updateSearch(document.getElementById('searchBox').value)
+      })
   }
 }
 
@@ -261,10 +255,9 @@ function registerCommands() {
   const showAllCommand = ICommand.createCommand()
   kim.addCommandBinding(
     showAllCommand,
-    () => {
-      orgChartGraph
-        .executeShowAll()
-        .then(() => graphSearch.updateSearch(document.getElementById('searchBox').value))
+    async () => {
+      await orgChartGraph.executeShowAll()
+      graphSearch.updateSearch(document.getElementById('searchBox').value)
     },
     () => orgChartGraph.canExecuteShowAll()
   )
@@ -273,37 +266,33 @@ function registerCommands() {
 
   kim.addKeyBinding({
     key: Key.SUBTRACT,
-    execute: () => {
-      orgChartGraph
-        .executeHideChildren(graphComponent.currentItem)
-        .then(() => graphSearch.updateSearch(document.getElementById('searchBox').value))
+    execute: async () => {
+      await orgChartGraph.executeHideChildren(graphComponent.currentItem)
+      graphSearch.updateSearch(document.getElementById('searchBox').value)
     },
     canExecute: () => orgChartGraph.canExecuteHideChildren(graphComponent.currentItem)
   })
   kim.addKeyBinding({
     key: Key.ADD,
-    execute: () => {
-      orgChartGraph
-        .executeShowChildren(graphComponent.currentItem)
-        .then(() => graphSearch.updateSearch(document.getElementById('searchBox').value))
+    execute: async () => {
+      await orgChartGraph.executeShowChildren(graphComponent.currentItem)
+      graphSearch.updateSearch(document.getElementById('searchBox').value)
     },
     canExecute: () => orgChartGraph.canExecuteShowChildren(graphComponent.currentItem)
   })
   kim.addKeyBinding({
     key: Key.PAGE_DOWN,
-    execute: () => {
-      orgChartGraph
-        .executeHideParent(graphComponent.currentItem)
-        .then(() => graphSearch.updateSearch(document.getElementById('searchBox').value))
+    execute: async () => {
+      await orgChartGraph.executeHideParent(graphComponent.currentItem)
+      graphSearch.updateSearch(document.getElementById('searchBox').value)
     },
     canExecute: () => orgChartGraph.canExecuteHideParent(graphComponent.currentItem)
   })
   kim.addKeyBinding({
     key: Key.PAGE_UP,
-    execute: () => {
-      orgChartGraph
-        .executeShowParent(graphComponent.currentItem)
-        .then(() => graphSearch.updateSearch(document.getElementById('searchBox').value))
+    execute: async () => {
+      await orgChartGraph.executeShowParent(graphComponent.currentItem)
+      graphSearch.updateSearch(document.getElementById('searchBox').value)
     },
     canExecute: () => orgChartGraph.canExecuteShowParent(graphComponent.currentItem)
   })
@@ -359,12 +348,12 @@ function initializeInputMode() {
 }
 
 const nodeStyleTemplate = `<g>
-<rect fill="#C0C0C0" :width="layout.width" :height="layout.height" x="2" y="2"></rect>
+<use href="#node-dropshadow" x="-10" y="-5"></use>
 <rect fill="#FFFFFF" stroke="#C0C0C0" :width="layout.width" :height="layout.height"></rect>
-<rect v-if="tag.status === 'present'" :width="layout.width" height="2" fill="#55B757"></rect>
-<rect v-else-if="tag.status === 'busy'" :width="layout.width" height="2" fill="#E7527C"></rect>
-<rect v-else-if="tag.status === 'travel'" :width="layout.width" height="2" fill="#9945E9"></rect>
-<rect v-else-if="tag.status === 'unavailable'" :width="layout.width" height="2" fill="#8D8F91"></rect>
+<rect v-if="tag.status === 'present'" :width="layout.width" :height="zoom < 0.4 ? layout.height : zoom < 0.7 ? '10' : '5'" fill="#55B757" class="node-background"></rect>
+<rect v-else-if="tag.status === 'busy'" :width="layout.width" :height="zoom < 0.4 ? layout.height : zoom < 0.7 ? '10' : '5'" fill="#E7527C" class="node-background"></rect>
+<rect v-else-if="tag.status === 'travel'" :width="layout.width" :height="zoom < 0.4 ? layout.height : zoom < 0.7 ? '10' : '5'" fill="#9945E9" class="node-background"></rect>
+<rect v-else-if="tag.status === 'unavailable'" :width="layout.width" :height="zoom < 0.4 ? layout.height : zoom < 0.7 ? '10' : '5'" fill="#8D8F91" class="node-background"></rect>
 <rect v-if="highlighted || selected" fill="transparent" :stroke="selected ? '#FFBB33' : '#249ae7'" stroke-width="3" 
   :width="layout.width-3" :height="layout.height-3" x="1.5" y="1.5"></rect>
 <!--the template for detailNodeStyle-->
@@ -372,31 +361,9 @@ const nodeStyleTemplate = `<g>
   <image :xlink:href="'./resources/' + tag.icon + '.svg'" x="15" y="10" width="63.75" height="63.75"></image>
   <image :xlink:href="'./resources/' + tag.status + '_icon.svg'" x="25" y="80" height="15" width="60"></image>
   <g style="font-size:10px; font-family:Roboto,sans-serif; font-weight: 300; fill: #444">
-    <text transform="translate(100 25)" style="font-size:16px; fill:#336699">{{tag.name}}</text>   
-    <text v-if="tag.position.length < 20"  transform="translate(100 45)" style="text-transform: uppercase; font-weight: 400" >{{tag.position}}</text>  
-    <g v-else >
-      <!-- cut the position string in two lines -->
-      <text  transform="translate(100 45)" style="text-transform: uppercase; font-weight: 400">{{
-        tag.position.split(' ').reduce(function(acc, current) {
-          if (acc.firstline.length + current.length < 20) {
-            acc.firstline = acc.firstline + ' ' + current
-          } else {
-            acc.secondline = acc.secondline + ' ' + current
-          }
-          return acc
-        }, {firstline: '', secondline: ''}).firstline}}
-      </text>  
-      <text  transform="translate(100 57)" style=" text-transform: uppercase; font-weight: 400">{{
-        tag.position.split(' ').reduce(function(acc, current) {
-          if (acc.firstline.length + current.length < 20) {
-            acc.firstline = acc.firstline + ' ' + current
-          } else {
-            acc.secondline = acc.secondline + ' ' + current
-          }
-          return acc
-        }, {firstline: '', secondline: ''}).secondline}}
-      </text>  
-    </g>
+    <text transform="translate(100 25)" style="font-size:16px; fill:#336699">{{tag.name}}</text> 
+    <!-- use the VuejsNodeStyle svg-text template which supports wrapping -->
+    <svg-text x="100" y="35" :width="layout.width - 140" :content="tag.position.toUpperCase()" :line-spacing="0.2" font-size="10" font-family="Roboto,sans-serif" :wrapping="3"></svg-text>  
     <text transform="translate(100 72)" >{{tag.email}}</text>
     <text transform="translate(100 88)" >{{tag.phone}}</text>
     <text transform="translate(170 88)" >{{tag.fax}}</text>
@@ -404,43 +371,22 @@ const nodeStyleTemplate = `<g>
 </template>
 <!--the template for intermediateNodeStyle-->
 <template v-else-if="zoom >= 0.4">
-  <image :xlink:href="'./resources/' + tag.icon + '.svg'" x="15" y="20" width="56.25" height="56.25"></image>
+  <image :xlink:href="'./resources/' + tag.icon + '.svg'" x="15" y="20" width="56.25" height="56.25"/>
   <g style="font-size:15px; font-family:Roboto,sans-serif; fill:#444" width="185">
-    <text transform="translate(75 40)" style="font-size:26px; font-family:Roboto,sans-serif; fill:#336699">{{tag.name}}</text> 
-    <text v-if="tag.position.length < 20"  transform="translate(75 70)" style="font-size:15px; font-family:Roboto,sans-serif; text-transform: uppercase; font-weight: 400">{{tag.position}}</text>  
-    <g v-else >
-      <!-- cut the position string in two lines -->
-      <text  transform="translate(75 70)" style="font-size:15px; font-family:Roboto,sans-serif; text-transform: uppercase; font-weight: 400">{{
-        tag.position.split(' ').reduce(function(acc, current) {
-          if (acc.firstline.length + current.length < 20) {
-            acc.firstline = acc.firstline + ' ' + current
-          } else {
-            acc.secondline = acc.secondline + ' ' + current
-          }
-          return acc
-        }, {firstline: '', secondline: ''}).firstline}}
-      </text>   
-      <text  transform="translate(75 90)" style="font-size:15px; font-family:Roboto,sans-serif; text-transform: uppercase; font-weight: 400">{{
-        tag.position.split(' ').reduce(function(acc, current) {
-          if (acc.firstline.length + current.length < 20) {
-            acc.firstline = acc.firstline + ' ' + current
-          } else {
-            acc.secondline = acc.secondline + ' ' + current
-          }
-          return acc
-        }, {firstline: '', secondline: ''}).secondline}}
-      </text>  
-    </g>
+    <text transform="translate(75 40)" style="font-size:26px; font-family:Roboto,sans-serif; fill:#336699">{{tag.name}}</text>
+    <!-- use the VuejsNodeStyle svg-text template which supports wrapping --> 
+    <svg-text x="75" y="50" :width="layout.width - 85" :content="tag.position.toUpperCase()" :line-spacing="0.2" font-size="15" font-family="Roboto,sans-serif" :wrapping="3"></svg-text>  
   </g>
 </template>
 <!--the template for overviewNodeStyle-->
 <template v-else>
   <!--converts a name to an abbreviated name-->
-  <text transform="translate(30 50)" style="font-size:40px; font-family:Roboto,sans-serif; fill:#336699; dominant-baseline: central;">
+  <text transform="translate(30 50)" style="font-size:40px; font-family:Roboto,sans-serif; fill:#fff; dominant-baseline: central;">
     {{tag.name.replace(/^(.)(\\S*)(.*)/, '$1.$3')}}
   </text>
 </template>
 </g>`
+
 /**
  * Sets style defaults for nodes and edges.
  * @param {IGraph} graph
@@ -449,11 +395,14 @@ function registerElementDefaults(graph) {
   // use the VuejsNodeStyle to display the nodes through a svg template
   // in this svg template you can see three styles in three zoom levels
   graph.nodeDefaults.style = new VuejsNodeStyle(nodeStyleTemplate)
-  graph.nodeDefaults.size = new Size(285, 100)
+  const nodeSize = new Size(285, 100)
+  graph.nodeDefaults.size = nodeSize
   graph.edgeDefaults.style = new PolylineEdgeStyle({
     stroke: '2px rgb(170, 170, 170)',
     targetArrow: IArrow.NONE
   })
+
+  graphComponent.svgDefsManager.defs.appendChild(createDropShadowElement(nodeSize))
 
   // Hide the default highlight in favor of the CSS highlighting from the template styles
   graph.decorator.nodeDecorator.highlightDecorator.hideImplementation()
@@ -497,13 +446,67 @@ function createGraph(nodesSource) {
  * Prints the graph, separated in tiles.
  */
 function print() {
-  const printingSupport = new OrgChartPrintingSupport()
+  const printingSupport = new PrintingSupport()
   printingSupport.tiledPrinting = true
   printingSupport.scale = 0.29
   printingSupport.margin = 1
   printingSupport.tileWidth = 842
   printingSupport.tileHeight = 595
   printingSupport.print(graphComponent, null)
+}
+
+/**
+ * Helper function to draw a round rectangle on a given canvas context.
+ */
+function roundRect(ctx, x, y, width, height, radius) {
+  if (typeof radius === 'undefined') {
+    radius = 5
+  }
+  radius = {
+    tl: radius,
+    tr: radius,
+    br: radius,
+    bl: radius
+  }
+  ctx.beginPath()
+  ctx.moveTo(x + radius.tl, y)
+  ctx.lineTo(x + width - radius.tr, y)
+  ctx.quadraticCurveTo(x + width, y, x + width, y + radius.tr)
+  ctx.lineTo(x + width, y + height - radius.br)
+  ctx.quadraticCurveTo(x + width, y + height, x + width - radius.br, y + height)
+  ctx.lineTo(x + radius.bl, y + height)
+  ctx.quadraticCurveTo(x, y + height, x, y + height - radius.bl)
+  ctx.lineTo(x, y + radius.tl)
+  ctx.quadraticCurveTo(x, y, x + radius.tl, y)
+  ctx.closePath()
+}
+
+/**
+ * Creates the dropshadow element for the nodes
+ * @param {Size} nodeSize
+ * @return {SVGImageElement}
+ */
+function createDropShadowElement(nodeSize) {
+  // pre-render the node's drop shadow using HTML5 canvas rendering
+  const canvas = window.document.createElement('canvas')
+  canvas.width = nodeSize.width + 30
+  canvas.height = nodeSize.height + 30
+  const context = canvas.getContext('2d')
+  context.fillStyle = 'rgba(0,0,0,0.4)'
+  context.filter = 'blur(4px)'
+  context.globalAlpha = 0.6
+  roundRect(context, 10, 10, nodeSize.width, nodeSize.height)
+  context.fill()
+  const dataUrl = canvas.toDataURL('image/png')
+  // put the drop-shadow in an SVG image element
+  const image = window.document.createElementNS('http://www.w3.org/2000/svg', 'image')
+  image.setAttribute('width', canvas.width)
+  image.setAttribute('height', canvas.height)
+  image.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', dataUrl)
+  // switch off pointer events on the drop shadow
+  image.setAttribute('style', 'pointer-events: none')
+  image.setAttribute('id', 'node-dropshadow')
+  return image
 }
 
 /**

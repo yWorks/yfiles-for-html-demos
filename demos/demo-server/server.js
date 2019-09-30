@@ -34,24 +34,13 @@ const express = require('express')
 const multer = require('multer') // multipart/form-data parsing
 const opn = require('opn')
 const favicon = require('serve-favicon')
-
-const es6ModuleMappings = require('../../tools/common/ES6ModuleMappings.json')
+const resolveYfiles = require('./resolve-yfiles')
 
 const defaultPage = '/README.html'
 const app = express()
-const staticRoot = path.join(__dirname, '../..')
-const importYfilesRegex = /import\s+([\s\S]*?)\s+from\s+['"]yfiles\/?([^'"]*)['"]/g
-
-const es6NameToEsModule = {
-  yfiles: 'lang'
-}
-
-for (const [esModuleName, implModuleMap] of Object.entries(es6ModuleMappings)) {
-  for (const nameMap of Object.values(implModuleMap)) {
-    for (const es6Name of Object.values(nameMap)) {
-      es6NameToEsModule[es6Name] = esModuleName
-    }
-  }
+let staticRoot = path.join(__dirname, '../..')
+if (typeof process.env.DEMO_SERVER_ROOT !== 'undefined') {
+  staticRoot = path.resolve(process.env.DEMO_SERVER_ROOT)
 }
 
 app.use((req, res, next) => {
@@ -59,104 +48,23 @@ app.use((req, res, next) => {
   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept')
   res.header('Access-Control-Expose-Headers', 'X-Powered-By, X-yFiles-for-HTML-Demo-Server')
   res.header('X-yFiles-for-HTML-Demo-Server', 'true')
-  if (req.path && /demos[\\/](?!node_modules).*\.js$/i.test(req.path)) {
+  if (req.path && req.path.includes('node_modules/yfiles')) {
     // disables caching
     res.header('Cache-Control', 'no-store')
-  } else {
-    res.header('Cache-Control', 'public, max-age=31536000')
   }
   next()
 })
 
-app.use(favicon(path.join(staticRoot, 'demos/resources/image', 'favicon.ico')))
+const favIconPath = path.join(staticRoot, 'demos/resources/image', 'favicon.ico')
+if (fs.existsSync(favIconPath)) {
+  app.use(favicon(favIconPath))
+}
 
 const serveStatic = express.static(staticRoot, {
   index: ['README.html', 'index.html', 'index.htm']
 })
 
-function resolveModuleName(moduleName, basePath) {
-  return path
-    .join(
-      path.relative(path.dirname(basePath), staticRoot),
-      `demos/node_modules/yfiles/${moduleName}.js`
-    )
-    .replace(/\\/g, '/')
-}
-
-function transformFile(data, filePath) {
-  return data.replace(importYfilesRegex, (match, imports, from) => {
-    const module = from || 'yfiles'
-    if (module === 'yfiles') {
-      const neededModules = {}
-      const [defaultImport] = imports.match(/^[^{,]*/) || []
-      let [fullMatch, namedImportsMatch] = imports.match(/{((?:.|\n|\r|\t)*)}/) || []
-      const numLines = fullMatch.split('\n').length
-      if (namedImportsMatch) {
-        namedImportsMatch = namedImportsMatch.replace(/\s*\/\/.*/g, '')
-
-        const namedImports = namedImportsMatch.replace(/\s/g, '').split(',')
-        for (const namedImport of namedImports) {
-          const module = es6NameToEsModule[namedImport]
-          if (!module) {
-            console.error('Named import not found in module mappings:', namedImport)
-          } else {
-            if (!neededModules[module]) {
-              neededModules[module] = []
-            }
-            neededModules[module].push(namedImport)
-          }
-        }
-      }
-
-      if (defaultImport) {
-        if (!neededModules['lang']) {
-          neededModules['lang'] = []
-        }
-        if (defaultImport === 'yfiles') {
-          neededModules['lang'].push(defaultImport)
-        } else {
-          neededModules['lang'].push('yfiles as ' + defaultImport)
-        }
-      }
-
-      const trailingComments = new Array(numLines - 1)
-        .fill('// keep linenumbers with imports adapted by demoserver')
-        .join('\n')
-
-      return (
-        Object.entries(neededModules)
-          .map(
-            ([moduleName, imports]) =>
-              `import {${imports.join(',')}} from '${resolveModuleName(moduleName, filePath)}'`
-          )
-          .join(';') +
-        (numLines > 1 ? '\n' : '') +
-        trailingComments
-      )
-    } else {
-      return `import ${imports} from '${resolveModuleName(module, filePath)}'`
-    }
-  })
-}
-
-app.use('/', (req, res, next) => {
-  const filePath = path.join(staticRoot, req.path)
-  const ext = path.extname(filePath)
-  if ((/demos[\\/]/i.test(filePath) || /compatibility[\\/]/i.test(filePath)) && ext === '.js') {
-    fs.readFile(filePath, 'utf8', (err, data) => {
-      if (err) {
-        return res.sendStatus(404)
-      }
-      res.type(ext)
-      if (importYfilesRegex.test(data)) {
-        data = transformFile(data, filePath)
-      }
-      res.send(data)
-    })
-  } else {
-    next()
-  }
-})
+app.use(resolveYfiles({ staticRoot }))
 
 app.use('/', serveStatic)
 
@@ -250,7 +158,10 @@ app.post('/file/load', upload.single(inputFormName), (req, res) => {
     .send(`<html><body><script>window.parent.postMessage('${message}', '*')</script></body></html>`)
 })
 
-let port = 3000
+let port = 4242
+if (typeof process.env.DEMO_SERVER_PORT !== 'undefined') {
+  port = parseInt(process.env.DEMO_SERVER_PORT, 10)
+}
 const server = http.createServer(app)
 
 server.on('error', e => {
@@ -273,3 +184,5 @@ server.on('listening', () => {
 })
 
 server.listen(port)
+
+module.exports = app

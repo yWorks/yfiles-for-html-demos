@@ -26,7 +26,9 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
+/// #if USE_TYPEINFO
 import '../../../ide-support/yfiles-typeinfo'
+/// #endif
 import licenseData from '../../../lib/license.json'
 import { Class, HierarchicLayout, LayoutExecutor, License, MinimumNodeSizeStage } from 'yfiles'
 import { readJSON, writeJSON } from './WebWorkerJsonIO'

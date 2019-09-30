@@ -14,7 +14,8 @@ import {
   OrganicEdgeRouter,
   Size,
   TreeLayout,
-  TreeReductionStage
+  TreeReductionStage,
+  INode
 } from 'yfiles'
 import { GraphComponentComponent } from './graph-component/graph-component.component'
 import { EDGE_DATA, NODE_DATA } from './data'
@@ -30,9 +31,10 @@ import { NodeComponentStyle } from './NodeComponentStyle'
 export class AppComponent implements AfterViewInit {
   title = 'app'
 
-  @ViewChild(GraphComponentComponent) private gcComponent: GraphComponentComponent
+  @ViewChild(GraphComponentComponent, { static: false })
+  private gcComponent!: GraphComponentComponent
 
-  public currentPerson: Person
+  public currentPerson?: Person
 
   constructor(
     private _injector: Injector,
@@ -53,7 +55,7 @@ export class AppComponent implements AfterViewInit {
     })
 
     graphComponent.addCurrentItemChangedListener(() => {
-      this.currentPerson = graphComponent.currentItem.tag
+      this.currentPerson = graphComponent.currentItem!.tag
     })
 
     createSampleGraph(graph)
@@ -78,7 +80,7 @@ export class AppComponent implements AfterViewInit {
 }
 
 function createSampleGraph(graph: IGraph) {
-  const nodeMap = {}
+  const nodeMap: { [name: string]: INode } = {}
 
   NODE_DATA.forEach(nodeData => {
     nodeMap[nodeData.name] = graph.createNode({

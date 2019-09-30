@@ -34,12 +34,15 @@ import {
   FreeNodePortLocationModel,
   GraphEditorInputMode,
   ICanvasObjectDescriptor,
+  IInputMode,
   IInputModeContext,
+  IModelItem,
   INode,
   ISelectionIndicatorInstaller,
   InputModeBase,
   ItemSelectionChangedEventArgs,
   ModelManager,
+  Point,
   SolidColorFill,
   delegate
 } from 'yfiles'
@@ -54,6 +57,12 @@ export default class UMLContextButtonsInputMode extends InputModeBase {
   constructor() {
     super()
     this.buttonNodes = new DefaultSelectionModel()
+
+    // initializes listener functions in order to install/uninstall them
+    this.onCurrentItemChangedListener = () => this.onCurrentItemChanged()
+    this.onCanvasClickedListener = (sender, evt) => this.onCanvasClicked(evt.location)
+    this.onNodeRemovedListener = (sender, evt) => this.onNodeRemoved(evt.item)
+    this.startEdgeCreationListener = (sender, evt) => this.startEdgeCreation(evt.location)
   }
 
   /**
@@ -71,13 +80,13 @@ export default class UMLContextButtonsInputMode extends InputModeBase {
     this.manager = new MySelectionIndicatorManager(graphComponent, this.buttonNodes)
 
     // keep buttons updated and their add interaction
-    graphComponent.addCurrentItemChangedListener(delegate(this.onCurrentItemChanged, this))
-    graphComponent.addMouseDragListener(delegate(this.startEdgeCreation, this))
-    graphComponent.addMouseClickListener(delegate(this.startEdgeCreation, this))
-    graphComponent.addTouchMoveListener(delegate(this.startEdgeCreation, this))
-    graphComponent.addTouchDownListener(delegate(this.startEdgeCreation, this))
-    graphComponent.inputMode.addCanvasClickedListener(delegate(this.onCanvasClicked, this))
-    graphComponent.graph.addNodeRemovedListener(delegate(this.onNodeRemoved, this))
+    graphComponent.addCurrentItemChangedListener(this.onCurrentItemChangedListener)
+    graphComponent.addMouseDragListener(this.startEdgeCreationListener)
+    graphComponent.addMouseClickListener(this.startEdgeCreationListener)
+    graphComponent.addTouchMoveListener(this.startEdgeCreationListener)
+    graphComponent.addTouchDownListener(this.startEdgeCreationListener)
+    graphComponent.inputMode.addCanvasClickedListener(this.onCanvasClickedListener)
+    graphComponent.graph.addNodeRemovedListener(this.onNodeRemovedListener)
   }
 
   /**
@@ -95,23 +104,28 @@ export default class UMLContextButtonsInputMode extends InputModeBase {
 
   /**
    * Remove the button visuals when the node is deleted.
+   * @param {IModelItem} item
    */
-  onNodeRemoved(src, args) {
-    this.buttonNodes.setSelected(args.item, false)
+  onNodeRemoved(item) {
+    this.buttonNodes.setSelected(item, false)
   }
 
   /**
    * Called when the mouse button is pressed to initiate edge creation in case a button is hit.
+   * @param {Point} location
    */
-  startEdgeCreation(src, args) {
+  startEdgeCreation(location) {
     if (this.active && this.canRequestMutex()) {
-      const p = args.location
       const graphComponent = this.inputModeContext.canvasComponent
 
       // check which node currently has the buttons and invoke create edge input mode to create a new edge
       for (let enumerator = this.buttonNodes.getEnumerator(); enumerator.moveNext(); ) {
         const buttonNode = enumerator.current
-        const styleButton = ButtonVisualCreator.getStyleButtonAt(graphComponent, buttonNode, p)
+        const styleButton = ButtonVisualCreator.getStyleButtonAt(
+          graphComponent,
+          buttonNode,
+          location
+        )
         if (styleButton) {
           const parentInputMode = this.inputModeContext.parentInputMode
           if (parentInputMode instanceof GraphEditorInputMode) {
@@ -146,14 +160,14 @@ export default class UMLContextButtonsInputMode extends InputModeBase {
 
   /**
    * Check whether a context button has been clicked.
+   * @param {Point} location
    */
-  onCanvasClicked(src, args) {
+  onCanvasClicked(location) {
     if (this.active && this.canRequestMutex()) {
-      const p = args.location
       const graphComponent = this.inputModeContext.canvasComponent
       for (let enumerator = this.buttonNodes.getEnumerator(); enumerator.moveNext(); ) {
         const buttonNode = enumerator.current
-        const contextButton = ButtonVisualCreator.getContextButtonAt(buttonNode, p)
+        const contextButton = ButtonVisualCreator.getContextButtonAt(buttonNode, location)
         if (contextButton) {
           if (contextButton === 'interface') {
             const isInterface = buttonNode.style.model.stereotype === 'interface'
@@ -169,7 +183,6 @@ export default class UMLContextButtonsInputMode extends InputModeBase {
             buttonNode.style.fill = isAbstract ? new SolidColorFill(0x60, 0x7d, 0x8b) : Fill.CRIMSON
           }
           buttonNode.style.model.modify()
-          args.handled = true
           graphComponent.invalidate()
           graphComponent.inputMode.clickInputMode.preventNextDoubleClick()
         }
@@ -184,13 +197,13 @@ export default class UMLContextButtonsInputMode extends InputModeBase {
    */
   uninstall(context) {
     const graphComponent = context.canvasComponent
-    graphComponent.removeCurrentItemChangedListener(delegate(this.onCurrentItemChanged, this))
-    graphComponent.removeMouseDragListener(delegate(this.startEdgeCreation, this))
-    graphComponent.removeMouseClickListener(delegate(this.startEdgeCreation, this))
-    graphComponent.removeTouchMoveListener(delegate(this.startEdgeCreation, this))
-    graphComponent.removeTouchDownListener(delegate(this.startEdgeCreation, this))
-    graphComponent.inputMode.removeCanvasClickedListener(delegate(this.onCanvasClicked, this))
-    graphComponent.graph.removeNodeRemovedListener(delegate(this.onNodeRemoved, this))
+    graphComponent.removeCurrentItemChangedListener(this.onCurrentItemChangedListener)
+    graphComponent.removeMouseDragListener(this.startEdgeCreationListener)
+    graphComponent.removeMouseClickListener(this.startEdgeCreationListener)
+    graphComponent.removeTouchMoveListener(this.startEdgeCreationListener)
+    graphComponent.removeTouchDownListener(this.startEdgeCreationListener)
+    graphComponent.inputMode.removeCanvasClickedListener(this.onCanvasClickedListener)
+    graphComponent.graph.removeNodeRemovedListener(this.onNodeRemovedListener)
     this.buttonNodes.clear()
     this.manager.dispose()
     this.manager = null
@@ -207,7 +220,9 @@ class MySelectionIndicatorManager extends ModelManager {
     super(canvas)
     this.model = model
     this.buttonGroup = canvas.inputModeGroup.addGroup()
-    this.model.addItemSelectionChangedListener(delegate(this.selectionChanged, this))
+    this.selectionChangedListener = (sender, evt) =>
+      this.selectionChanged(evt.item, evt.itemSelected)
+    this.model.addItemSelectionChangedListener(this.selectionChangedListener)
   }
 
   /**
@@ -233,14 +248,14 @@ class MySelectionIndicatorManager extends ModelManager {
 
   /**
    * Called when the selection of the internal model changes.
-   * @param {Object} src
-   * @param {ItemSelectionChangedEventArgs} args
+   * @param {IModelItem} item The item that is the subject of the event
+   * @param {boolean} itemSelected Whether the item is selected
    */
-  selectionChanged(src, args) {
-    if (args.itemSelected) {
-      this.add(args.item)
+  selectionChanged(item, itemSelected) {
+    if (itemSelected) {
+      this.add(item)
     } else {
-      this.remove(args.item)
+      this.remove(item)
     }
   }
 
@@ -248,7 +263,7 @@ class MySelectionIndicatorManager extends ModelManager {
    * Cleanup the selection manager.
    */
   dispose() {
-    this.model.removeItemSelectionChangedListener(delegate(this.selectionChanged, this))
+    this.model.removeItemSelectionChangedListener(this.selectionChangedListener)
     this.buttonGroup.remove()
   }
 

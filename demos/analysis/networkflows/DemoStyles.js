@@ -279,28 +279,20 @@ export class NetworkFlowNodeStyle extends NodeStyleBase {
       let startPoint = new Point(layout.width * 0.5, layout.height * 0.33)
       let endPoint = new Point(layout.width, 5)
       let controlPoint = new Point((startPoint.x + endPoint.x) * 0.5, startPoint.y)
-      path = `M${startPoint.x},${startPoint.y} Q${controlPoint.x},${controlPoint.y} ${endPoint.x},${
-        endPoint.y
-      }`
+      path = `M${startPoint.x},${startPoint.y} Q${controlPoint.x},${controlPoint.y} ${endPoint.x},${endPoint.y}`
       startPoint = new Point(layout.width, layout.height - 5)
       endPoint = new Point(layout.width * 0.5, layout.height * 0.666)
       controlPoint = new Point((startPoint.x + endPoint.x) * 0.5, endPoint.y)
-      path += ` L${startPoint.x},${startPoint.y} Q${controlPoint.x},${controlPoint.y} ${
-        endPoint.x
-      },${endPoint.y} z`
+      path += ` L${startPoint.x},${startPoint.y} Q${controlPoint.x},${controlPoint.y} ${endPoint.x},${endPoint.y} z`
     } else {
       let startPoint = new Point(layout.width * 0.5, layout.height * 0.33)
       let endPoint = new Point(0, 5)
       let controlPoint = new Point((startPoint.x + endPoint.x) * 0.5, startPoint.y)
-      path = `M${startPoint.x},${startPoint.y} Q${controlPoint.x},${controlPoint.y} ${endPoint.x},${
-        endPoint.y
-      }`
+      path = `M${startPoint.x},${startPoint.y} Q${controlPoint.x},${controlPoint.y} ${endPoint.x},${endPoint.y}`
       startPoint = new Point(0, layout.height - 5)
       endPoint = new Point(layout.width * 0.5, layout.height * 0.666)
       controlPoint = new Point((startPoint.x + endPoint.x) * 0.5, endPoint.y)
-      path += ` L${startPoint.x},${startPoint.y} Q${controlPoint.x},${controlPoint.y} ${
-        endPoint.x
-      },${endPoint.y} z`
+      path += ` L${startPoint.x},${startPoint.y} Q${controlPoint.x},${controlPoint.y} ${endPoint.x},${endPoint.y} z`
     }
     return path
   }
@@ -443,7 +435,7 @@ export class NetworkFlowEdgeStyle extends EdgeStyleBase {
 
     let flowPercentage = Math.max(cache.capacity, 1)
     if (!this.highlightColor) {
-      flowPercentage = cache.capacity !== 0 ? cache.edgeFlow * cache.capacity / cache.capacity : 0
+      flowPercentage = cache.capacity !== 0 ? (cache.edgeFlow * cache.capacity) / cache.capacity : 0
     }
 
     const path = cache.path.createSvgPath()
@@ -560,9 +552,11 @@ export class NetworkFlowEdgeStyle extends EdgeStyleBase {
     // Create a general path from the locations of the ports and the bends of the edge.
     const path = new GeneralPath()
     path.moveTo(edge.sourcePort.location)
+    path.lineTo(edge.sourcePort.location.add(new Point(5, 0)))
     edge.bends.forEach(bend => {
       path.lineTo(bend.location)
     })
+    path.lineTo(edge.targetPort.location.subtract(new Point(5, 0)))
     path.lineTo(edge.targetPort.location)
     return path
   }

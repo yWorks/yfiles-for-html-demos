@@ -36,7 +36,8 @@ import {
   PropertyInfo,
   YBoolean,
   YNumber,
-  YString
+  YString,
+  yfiles
 } from 'yfiles'
 
 /**
@@ -193,10 +194,10 @@ export const TypeAttribute = Attribute('TypeAttribute', {
 
 /**
  * ConfigConverter is used to convert an input configuration into a configuration object usable by
- * yFilesOptionUI. The output configuration object is later interpreted by yFilesOptionUI and turned into ui
- * components. The input configuration is a regular class with additional attributes attached to public member
- * declarations. These attributes specify how a member is turned into an ui component. The input configuration
- * format
+ * yFilesOptionUI. The output configuration object is later interpreted by yFilesOptionUI and
+ * turned into ui components. The input configuration is a regular class with additional attributes
+ * attached to public member declarations. These attributes specify how a member is turned into an
+ * ui component. The input configuration format
  *
  *  Components:
  *  - a default component is created for each public property according to the property's type.
@@ -215,18 +216,18 @@ export const TypeAttribute = Attribute('TypeAttribute', {
  *  - public fields of type OptionGroup are interpreted as ui groups
  *  - components or OptionGroups are assigned to another OptionGroup using the
  * {@link OptionGroupAttribute}
- *  - if a fields OptionGroup attribute has name "RootGroup" the corresponding component is added to the
- * toplevel group.
+ *  - if a fields OptionGroup attribute has name "RootGroup" the corresponding component is added
+ * to the toplevel group.
  *  - display order of components is defined through position parameter of
  * {@link OptionGroupAttribute}
  *
  *  Conditionally disabling a component:
- *  - a public boolean property named "shouldDisable[memberName]" defines a condition to disable the component
- * created for the corresponding member.
+ *  - a public boolean property named "shouldDisable[memberName]" defines a condition to disable
+ * the component created for the corresponding member.
  *
  *  Conditionally hiding a component:
- *  - a public boolean property named "shouldHide[memberName]" defines a condition to hide the component
- * created for the corresponding member.
+ *  - a public boolean property named "shouldHide[memberName]" defines a condition to hide the
+ * component created for the corresponding member.
  */
 export const ConfigConverter = Class('ConfigConverter', {
   constructor: function() {
@@ -283,9 +284,9 @@ export const ConfigConverter = Class('ConfigConverter', {
   /**
    * Convert the input configuration into an output configuration object usable by yFilesOptionUI.
    * First, all members are *collected* and stored in their respective maps and lists.
-   * Next, members are sorted by the position information contained in the corresponding OptionGroupAttribute.
-   * Finally, all members are visited and the extracted data relevant to build ui components are written to
-   * a JSObject.
+   * Next, members are sorted by the position information contained in the corresponding
+   * OptionGroupAttribute. Finally, all members are visited and the extracted data relevant to
+   * build ui components are written to a JSObject.
    * @param {Object} config The input configuration written by the developer.
    * @return {Object} The output configuration usable by yFilesOptionUI.
    */
@@ -396,10 +397,14 @@ export const ConfigConverter = Class('ConfigConverter', {
       // determine type
       const objectDescriptor = Object.getOwnPropertyDescriptor(type.Object.prototype, name)
       const isProperty = objectDescriptor.hasOwnProperty('get')
+      const valueType = typeOf(objectDescriptor.value)
       const isField =
-        objectDescriptor.hasOwnProperty('value') && typeOf(objectDescriptor.value) !== 'function'
+        objectDescriptor.hasOwnProperty('value') &&
+        valueType !== 'function' &&
+        valueType !== 'asyncfunction'
       const isMethod =
-        objectDescriptor.hasOwnProperty('value') && typeOf(objectDescriptor.value) === 'function'
+        objectDescriptor.hasOwnProperty('value') &&
+        (valueType === 'function' || valueType === 'asyncfunction')
 
       const member = {
         name: name,
@@ -618,10 +623,8 @@ export const ConfigConverter = Class('ConfigConverter', {
     this.writeDefault(field, f, yFilesObj)
     this.writeComponent(field, field.fieldType, f)
     this.writeUtilityProperties(field, f, yFilesObj)
-    let /** Object[] */
-    arr
-    let /** number */
-    i
+    /* Object[] */ let arr
+    /* number */ let i
     for (i = 0, arr = field._attributes; i < arr.length; i++) {
       const attribute = arr[i]
       this.visitAttribute(attribute, f)
@@ -783,8 +786,7 @@ export const ConfigConverter = Class('ConfigConverter', {
     const attributes = this.getCustomAttributesOfType(member, EnumValuesAttribute.$class)
     if (attributes.length > 0) {
       var values = attributes[0].values
-      let /** number */
-      i1
+      /* number */ let i1
       for (i1 = 0; i1 < values.length; i1++) {
         const value = values[i1]
         options.push(this.createOption(value[0], value[1]))
@@ -1113,8 +1115,8 @@ export const OptionEditor = Class('OptionEditor', {
   validateCallback: null,
 
   /**
-   * Get or set the configuration object in yFilesOptionUI. The configuration object is first converted into a
-   * Javascript Object using {@link ConfigConverter} before setting it.
+   * Get or set the configuration object in yFilesOptionUI. The configuration object is first
+   * converted into a Javascript Object using {@link ConfigConverter} before setting it.
    * @type {Object}
    */
   config: {
@@ -1131,8 +1133,8 @@ export const OptionEditor = Class('OptionEditor', {
   },
 
   /**
-   * Get or set the form validation callback which is called when the validation result of yFilesOptionUI
-   * changes.
+   * Get or set the form validation callback which is called when the validation result of
+   * yFilesOptionUI changes.
    * @type {function(boolean)}
    */
   validateConfigCallback: {
@@ -1149,7 +1151,8 @@ export const OptionEditor = Class('OptionEditor', {
 })
 
 /**
- * An attribute that determines the type of ui component that will be generated for the attributed member.
+ * An attribute that determines the type of ui component that will be generated for the attributed
+ * member.
  */
 export const ComponentAttribute = Attribute('ComponentAttribute', {
   $extends: Attribute,

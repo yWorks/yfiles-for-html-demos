@@ -28,22 +28,20 @@
  ***************************************************************************/
 import {
   Animator,
-  ConstrainedPositionHandler,
   CopiedLayoutGraph,
-  EventArgs,
   GraphComponent,
   GraphConnectivity,
   GraphEditorInputMode,
   GraphItemTypes,
   ICommand,
+  IEnumerable,
   IGraph,
+  IModelItem,
   INode,
-  InputModeEventArgs,
   InteractiveOrganicLayout,
   InteractiveOrganicLayoutExecutionContext,
   LayoutGraphAdapter,
   License,
-  List,
   MoveInputMode,
   YNode
 } from 'yfiles'
@@ -126,7 +124,7 @@ function initializeGraph() {
 
   // create and start the layout algorithm
   layout = startLayout()
-  wakeUp(this, EventArgs.EMPTY)
+  wakeUp()
 
   // register a listener so that structure updates are handled automatically
   graph.addNodeCreatedListener((source, args) => {
@@ -191,7 +189,7 @@ function createEditorMode() {
  */
 function initMoveMode(moveInputMode) {
   // register callbacks to notify the organic layout of changes
-  moveInputMode.addDragStartedListener(onMoveInitialized)
+  moveInputMode.addDragStartedListener((sender, args) => onMoveInitialized(sender.affectedItems))
   moveInputMode.addDragCanceledListener(onMoveCanceled)
   moveInputMode.addDraggedListener(onMoving)
   moveInputMode.addDragFinishedListener(onMovedFinished)
@@ -200,17 +198,16 @@ function initMoveMode(moveInputMode) {
 /**
  * Called once the move operation has been initialized.
  * Calculates which components stay fixed and which nodes will be moved by the user.
- * @param {object} sender
- * @param {InputModeEventArgs} args
+ * @param {IEnumerable.<IModelItem>} affectedItems The dragged items
  */
-function onMoveInitialized(sender, args) {
+function onMoveInitialized(affectedItems) {
   if (layout !== null) {
     const copy = copiedLayoutGraph
     const componentNumber = copy.createNodeMap()
     GraphConnectivity.connectedComponents(copy, componentNumber)
     const movedComponents = new Set()
     const selectedNodes = new Set()
-    movedNodes = sender.affectedItems.filter(item => INode.isInstance(item)).toArray()
+    movedNodes = affectedItems.filter(item => INode.isInstance(item)).toArray()
     movedNodes.forEach(node => {
       const copiedNode = copy.getCopiedNode(node)
       if (copiedNode !== null) {
@@ -249,10 +246,8 @@ function onMoveInitialized(sender, args) {
 
 /**
  * Notifies the layout of the new positions of the interactively moved nodes.
- * @param {object} sender
- * @param {InputModeEventArgs} args
  */
-function onMoving(sender, args) {
+function onMoving() {
   if (layout !== null) {
     const copy = copiedLayoutGraph
     movedNodes.forEach(node => {
@@ -271,10 +266,8 @@ function onMoving(sender, args) {
 
 /**
  * Resets the state in the layout when the user cancels the move operation.
- * @param {object} sender
- * @param {InputModeEventArgs} args
  */
-function onMoveCanceled(sender, args) {
+function onMoveCanceled() {
   if (layout !== null) {
     const copy = copiedLayoutGraph
     movedNodes.forEach(node => {
@@ -296,10 +289,8 @@ function onMoveCanceled(sender, args) {
 /**
  * Called once the interactive move is finished.
  * Updates the state of the interactive layout.
- * @param {object} sender
- * @param {InputModeEventArgs} args
  */
-function onMovedFinished(sender, args) {
+function onMovedFinished() {
   if (layout !== null) {
     const copy = copiedLayoutGraph
     movedNodes.forEach(node => {
@@ -359,10 +350,8 @@ function startLayout() {
 
 /**
  * Wakes up the layout algorithm.
- * @param {object} sender
- * @param {EventArgs} args
  */
-function wakeUp(sender, args) {
+function wakeUp() {
   if (layout !== null) {
     // we make all nodes freely movable
     copiedLayoutGraph.nodes.forEach(copiedNode => {

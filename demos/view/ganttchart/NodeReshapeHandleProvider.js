@@ -28,6 +28,7 @@
  ***************************************************************************/
 import {
   BaseClass,
+  ConstrainedDragHandler,
   ConstrainedHandle,
   Cursor,
   HandlePositions,

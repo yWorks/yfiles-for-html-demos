@@ -211,7 +211,7 @@ function initializeInputMode() {
 /**
  * Configures the label models and runs the labeling algorithm.
  */
-function placeLabels() {
+async function placeLabels() {
   if (inLayout) {
     return
   }
@@ -261,24 +261,22 @@ function placeLabels() {
     removeEdgeOverlaps: true,
     profitModel: new ExtendedLabelCandidateProfitModel()
   })
-
-  new LayoutExecutor({
-    graphComponent,
-    layout: labelingAlgorithm,
-    duration: '0.5s',
-    easedAnimation: true
-  })
-    .start()
-    .then(() => {
-      setUIDisabled(false)
-    })
-    .catch(error => {
-      if (typeof window.reportError === 'function') {
-        window.reportError(error)
-      } else {
-        throw error
-      }
-    })
+  try {
+    await new LayoutExecutor({
+      graphComponent,
+      layout: labelingAlgorithm,
+      duration: '0.5s',
+      easedAnimation: true
+    }).start()
+  } catch (error) {
+    if (typeof window.reportError === 'function') {
+      window.reportError(error)
+    } else {
+      throw error
+    }
+  } finally {
+    setUIDisabled(false)
+  }
 }
 
 /**

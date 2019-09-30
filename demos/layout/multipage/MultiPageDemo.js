@@ -251,11 +251,12 @@ function applyLayoutResult(multiPageLayoutResult, pageWidth, pageHeight) {
 
   // create the graphs
   viewGraphs = builder.createViewGraphs()
-  setPageNumber(0, null)
+  setPageNumber(0)
 
-  // set the new page bounds
-  pageBoundsVisualCreator.pageWidth = pageWidth
-  pageBoundsVisualCreator.pageHeight = pageHeight
+  if (pageBoundsVisualCreator != null) {
+    pageBoundsVisualCreator.pageWidth = pageWidth
+    pageBoundsVisualCreator.pageHeight = pageHeight
+  }
 
   document.getElementById('previousPage').disabled = true
   document.getElementById('nextPage').disabled = viewGraphs.length <= 1
@@ -267,7 +268,7 @@ function applyLayoutResult(multiPageLayoutResult, pageWidth, pageHeight) {
  * @param {number} newPageNumber
  * @param {INode} targetNode
  */
-function setPageNumber(newPageNumber, targetNode) {
+function setPageNumber(newPageNumber, targetNode = null) {
   graphComponent.highlightIndicatorManager.clearHighlights()
   graphComponent.focusIndicatorManager.focusedItem = null
 
@@ -281,8 +282,8 @@ function setPageNumber(newPageNumber, targetNode) {
     newPageNumber < 0
       ? 0
       : newPageNumber > viewGraphs.length - 1
-        ? viewGraphs.length - 1
-        : newPageNumber
+      ? viewGraphs.length - 1
+      : newPageNumber
 
   const pageNumberTextBox = document.getElementById('pageNumberTextBox')
   pageNumberTextBox.value = (pageNumber + 1).toString()
@@ -369,18 +370,18 @@ function registerCommands() {
 
   bindAction("button[data-command='PreviousPage']", () => {
     if (checkPageNumber(pageNumber - 1)) {
-      setPageNumber(pageNumber - 1, null)
+      setPageNumber(pageNumber - 1)
     }
   })
   bindAction("button[data-command='NextPage']", () => {
     if (checkPageNumber(pageNumber + 1)) {
-      setPageNumber(pageNumber + 1, null)
+      setPageNumber(pageNumber + 1)
     }
   })
   bindChangeListener("input[data-command='PageNumberTextBox']", page => {
     const pageNo = parseInt(page) - 1
     if (!isNaN(pageNo) && checkPageNumber(pageNo)) {
-      setPageNumber(pageNo, null)
+      setPageNumber(pageNo)
     }
   })
 
@@ -476,7 +477,7 @@ function initializeInputModes() {
     focusableItems: GraphItemTypes.NONE
   })
   // fit bounds on double-click
-  modelInputMode.clickInputMode.addDoubleClickedListener((sender, event) => {
+  modelInputMode.clickInputMode.addDoubleClickedListener((sender, args) => {
     modelGraphComponent.fitGraphBounds()
   })
   modelGraphComponent.inputMode = modelInputMode
@@ -525,7 +526,7 @@ function initConverters() {
 /**
  * Loads the model graph and applies an initial multi-page layout.
  */
-function loadModelGraph(graphId) {
+async function loadModelGraph(graphId) {
   // show a notification because the multi-page layout takes some time
   showLoadingIndicator(true)
 
@@ -540,16 +541,15 @@ function loadModelGraph(graphId) {
     DemoStyles
   )
   graphMLIOHandler.addHandleSerializationListener(DemoSerializationListener)
-  readGraph(graphMLIOHandler, modelGraphComponent.graph, filename).then(() => {
-    // fit model graph to the component
-    modelGraphComponent.fitGraphBounds()
+  await readGraph(graphMLIOHandler, modelGraphComponent.graph, filename)
+  // fit model graph to the component
+  modelGraphComponent.fitGraphBounds()
 
-    // fit the graph to the component
-    graphComponent.fitGraphBounds()
+  // fit the graph to the component
+  graphComponent.fitGraphBounds()
 
-    // calculate the multi-page layout
-    runMultiPageLayout()
-  })
+  // calculate the multi-page layout
+  runMultiPageLayout()
 }
 
 loadJson().then(run)

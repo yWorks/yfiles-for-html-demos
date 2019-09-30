@@ -1800,7 +1800,9 @@ const HierarchicLayoutConfig = Class('HierarchicLayoutConfig', {
           values: [
             ['Anywhere', LayoutConfiguration.EnumLabelPlacementAlongEdge.ANYWHERE],
             ['At Source', LayoutConfiguration.EnumLabelPlacementAlongEdge.AT_SOURCE],
+            ['At Source Port', LayoutConfiguration.EnumLabelPlacementAlongEdge.AT_SOURCE_PORT],
             ['At Target', LayoutConfiguration.EnumLabelPlacementAlongEdge.AT_TARGET],
+            ['At Target Port', LayoutConfiguration.EnumLabelPlacementAlongEdge.AT_TARGET_PORT],
             ['Centered', LayoutConfiguration.EnumLabelPlacementAlongEdge.CENTERED]
           ]
         }),
@@ -1908,9 +1910,9 @@ const HierarchicLayoutConfig = Class('HierarchicLayoutConfig', {
     },
     get: function() {
       return (
-        this.edgeLabelingItem === HierarchicLayoutConfig.EnumEdgeLabeling.NONE ||
+        (this.edgeLabelingItem === HierarchicLayoutConfig.EnumEdgeLabeling.NONE ||
         this.labelPlacementSideOfEdgeItem ===
-          LayoutConfiguration.EnumLabelPlacementSideOfEdge.ON_EDGE
+          LayoutConfiguration.EnumLabelPlacementSideOfEdge.ON_EDGE)
       )
     }
   },
@@ -1995,9 +1997,9 @@ const HierarchicLayoutConfig = Class('HierarchicLayoutConfig', {
   shouldDisableGroupAlignmentItem: {
     get: function() {
       return (
-        this.groupLayeringStrategyItem !==
+        (this.groupLayeringStrategyItem !==
           HierarchicLayoutConfig.GroupLayeringStrategyOptions.LAYOUT_GROUPS ||
-        this.groupEnableCompactionItem
+        this.groupEnableCompactionItem)
       )
     }
   },
@@ -2034,9 +2036,9 @@ const HierarchicLayoutConfig = Class('HierarchicLayoutConfig', {
   shouldDisableGroupEnableCompactionItem: {
     get: function() {
       return (
-        this.groupLayeringStrategyItem !==
+        (this.groupLayeringStrategyItem !==
           HierarchicLayoutConfig.GroupLayeringStrategyOptions.LAYOUT_GROUPS ||
-        this.UseDrawingAsSketchItem
+        this.UseDrawingAsSketchItem)
       )
     }
   },

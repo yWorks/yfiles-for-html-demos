@@ -93,7 +93,8 @@
     input: 'Input',
     databinding: 'Data Binding',
     integration: 'Integration',
-    loading: 'Loading'
+    loading: 'Loading',
+    testing: 'Testing'
   }
 
   var tutorialIds = [
@@ -110,29 +111,28 @@
     'input',
     'style',
     'integration',
+    'testing',
     'view'
   ]
   var excludeLayoutDemos = [
-    'Angular CLI',
-    'AngularJS 1',
-    'Building Swimlanes From Data',
-    'Neo4j',
-    'Template Styles',
-    'Vue.js',
-    '10 Layout',
-    '11 Layout Data',
-    '13 Analysis Algorithms'
+    'angular-cli',
+    'angularjs-1',
+    'tutorial-application-features--building-swimlanes-from-data',
+    'graphql',
+    'neo4j',
+    'react-typescript',
+    'react',
+    'template-styles',
+    'vue.js',
+    'tutorial-getting-started--layout',
+    'tutorial-getting-started--layout-data',
+    'tutorial-getting-started--graph-analysis'
   ]
 
-  var demos = window.getDemoData().filter(function(item) {
-    if (isViewerPackage) {
-      return (
-        viewerCategories.indexOf(item.category) !== -1 &&
-        excludeLayoutDemos.indexOf(item.name) === -1
-      )
-    } else {
-      return true
-    }
+  var demos = window.getDemoData()
+  demos.forEach(function(item) {
+    item.notAvailableInViewerPackage =
+      viewerCategories.indexOf(item.category) === -1 || excludeLayoutDemos.indexOf(item.id) !== -1
   })
 
   var gridItemTemplate = document.querySelector('#grid-item-template')
@@ -166,6 +166,16 @@
         tagItem.appendChild(anchor)
         tagContainer.appendChild(tagItem)
       })
+    }
+    if (isViewerPackage && demo.notAvailableInViewerPackage) {
+      gridItem.className += ' not-available'
+      const notAvailableNotice = document.createElement('div')
+      notAvailableNotice.className = 'not-available-notice'
+      notAvailableNotice.innerHTML =
+        'Not available in Viewer package.<br><a href="https://live.yworks.com/demos/' +
+        demo.demoPath +
+        '">See online version.</a>'
+      gridItem.appendChild(notAvailableNotice)
     }
     return gridItem
   }
@@ -204,6 +214,10 @@
 
   function createSidebarItem(demo) {
     var sidebarItem = document.createElement('div')
+    sidebarItem.className = 'demo-sidebar-item'
+    if (isViewerPackage && demo.notAvailableInViewerPackage) {
+      sidebarItem.className += ' not-available'
+    }
     var link = document.createElement('a')
     link.textContent = demo.name
     link.setAttribute('href', demo.demoPath)
@@ -228,7 +242,7 @@
    * @param {string} needle A whitespace-separated list of search terms
    */
   function matchDemo(demo, needle) {
-    var words = needle.split(/\s+/)
+    var words = needle.split(/[^.\w]/)
     return words
       .map(function(word) {
         return matchWord(demo, word)
@@ -243,8 +257,7 @@
    * @param {string} word A single search term
    */
   function matchWord(demo, word) {
-    var modWord = word.replace(/-/g, '')
-    var regex = new RegExp(modWord + '|' + word, 'gi')
+    var regex = new RegExp(word, 'gi')
     if (regex.test(demo.name)) {
       return true
     }
@@ -276,6 +289,13 @@
   var searchBox = document.querySelector('#search')
   var noSearchResultsElement = document.querySelector('#no-search-results')
   var resetSearchButton = document.querySelector('.reset-search')
+  var unAvailableGrid = document.getElementById('unavailable-grid')
+  var unAvailableGridHeader = document.getElementById('unavailable-header')
+
+  if (isViewerPackage) {
+    unAvailableGrid.style.display = 'block'
+    unAvailableGridHeader.style.display = 'block'
+  }
 
   demos.forEach(function(demo, index) {
     var gridItem = createGridItem(demo, index)
@@ -285,6 +305,8 @@
       tutCustomStylesGrid.appendChild(gridItem)
     } else if (demo.category === 'tutorial-application-features') {
       tutApplicationFeaturesGrid.appendChild(gridItem)
+    } else if (isViewerPackage && demo.notAvailableInViewerPackage) {
+      unAvailableGrid.appendChild(gridItem)
     } else {
       demoGrid.appendChild(gridItem)
     }
@@ -341,12 +363,14 @@
     document.getElementById('general-intro').style.display = 'block'
     demos.forEach(function(demo) {
       if (matchDemo(demo, searchBox.value)) {
-        demo.element.className = 'grid-item'
-        demo.sidebarElement.className = ''
+        demo.element.className = demo.element.className.replace(' filtered', '')
+        demo.sidebarElement.className = demo.sidebarElement.className.replace(' filtered', '')
         noSearchResults = false
       } else {
-        demo.element.className = 'grid-item filtered'
-        demo.sidebarElement.className = 'filtered'
+        if (demo.element.className.indexOf('filtered') === -1) {
+          demo.element.className += ' filtered'
+          demo.sidebarElement.className += ' filtered'
+        }
       }
     })
     tutorialIds.forEach(function(id) {

@@ -26,7 +26,13 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { BaseClass, IInputModeContext, IPositionHandler, Point } from 'yfiles'
+import {
+  BaseClass,
+  ConstrainedPositionHandler,
+  IInputModeContext,
+  IPositionHandler,
+  Point
+} from 'yfiles'
 
 /**
  * A position handler that constrains the movement of a node to one axis

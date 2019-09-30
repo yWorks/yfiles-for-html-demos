@@ -57,6 +57,7 @@ import {
   LayoutMode,
   License,
   NodeAlignmentPolicy,
+  NodeHalo,
   OrthogonalLayout,
   OrthogonalLayoutData,
   Point,
@@ -155,6 +156,10 @@ function run(licenseData) {
   // load sample graph
   loadGraph()
 
+  // moves the group nodes to the start of the rendering list, causing it to be drawn
+  // first and therefore to be rendered in the back.
+  graphComponent.graphModelManager.groupNodeGroup.toBack()
+
   // bind commands to toolbar buttons
   registerCommands()
 
@@ -216,7 +221,7 @@ function getPreferredLabelPlacement() {
  * @param {INode} fixedNode if defined the layout will be incrementally and this node remains at its
  *                                       location
  */
-function runLayout(fixedNode) {
+async function runLayout(fixedNode) {
   if (layoutRunning) {
     return Promise.reject(new Error('layout is running'))
   }
@@ -246,6 +251,15 @@ function runLayout(fixedNode) {
       : getOrthogonalLayoutConfiguration()
   let layout = new IsometricTransformationStage(configuration.layout, incremental)
   let layoutData = configuration.layoutData
+
+  // add NodeHalos around the group nodes so the layout keeps space under the group nodes
+  // to let the label of the group nodes visible
+  for (const node of graphComponent.graph.nodes) {
+    if (graphComponent.graph.isGroupNode(node)) {
+      layoutData.nodeHalos.mapper.set(node, NodeHalo.create(0, 0, 20, 0))
+    }
+  }
+
   if (incremental) {
     // fixate the location of the given fixed node
     layout = new FixGroupStateIconStage(layout)
@@ -270,14 +284,14 @@ function runLayout(fixedNode) {
   })
 
   // start layout
-  return executor.start().then(() => {
-    mapperRegistry.removeMapper(IsometricTransformationStage.TRANSFORMATION_DATA_DP_KEY)
-    mapperRegistry.removeMapper(
-      LayoutGraphAdapter.EDGE_LABEL_LAYOUT_PREFERRED_PLACEMENT_DESCRIPTOR_DP_KEY
-    )
-    layoutRunning = false
-    setUIDisabled(false)
-  })
+  const promise = await executor.start()
+  mapperRegistry.removeMapper(IsometricTransformationStage.TRANSFORMATION_DATA_DP_KEY)
+  mapperRegistry.removeMapper(
+    LayoutGraphAdapter.EDGE_LABEL_LAYOUT_PREFERRED_PLACEMENT_DESCRIPTOR_DP_KEY
+  )
+  layoutRunning = false
+  setUIDisabled(false)
+  return promise
 }
 
 /**
@@ -417,25 +431,23 @@ function registerCommands() {
     SerializationProperties.IGNORE_XAML_DESERIALIZATION_ERRORS,
     true
   )
-  bindAction("button[data-command='Open']", () => {
-    graphmlSupport
-      .openFile(graphComponent.graph, StorageLocation.FILE_SYSTEM)
-      .then(() => {
-        setUIDisabled(true)
-        // after loading apply isometric styles and geometry to the nodes and labels
-        applyIsometricStyles()
-        runLayout().then(() => {
-          setUIDisabled(false)
-        })
-      })
-      .catch(error => {
-        setUIDisabled(false)
-        if (typeof window.reportError === 'function') {
-          window.reportError(error)
-        } else {
-          throw error
-        }
-      })
+  bindAction("button[data-command='Open']", async () => {
+    try {
+      await graphmlSupport.openFile(graphComponent.graph, StorageLocation.FILE_SYSTEM)
+
+      setUIDisabled(true)
+      // after loading apply isometric styles and geometry to the nodes and labels
+      applyIsometricStyles()
+      await runLayout()
+    } catch (error) {
+      if (typeof window.reportError === 'function') {
+        window.reportError(error)
+      } else {
+        throw error
+      }
+    } finally {
+      setUIDisabled(false)
+    }
   })
 
   bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent)

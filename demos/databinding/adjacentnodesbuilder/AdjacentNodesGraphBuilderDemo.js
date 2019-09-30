@@ -44,7 +44,8 @@ import {
   License,
   PreferredPlacementDescriptor,
   Size,
-  StringTemplateNodeStyle
+  StringTemplateNodeStyle,
+  TemplateNodeStyle
 } from 'yfiles'
 
 import Samples from './samples.js'
@@ -312,7 +313,7 @@ function getBindingFromInputElement(elementId) {
 /**
  * Applies a layout to the graph considering fixed elements.
  */
-function applyLayout() {
+async function applyLayout() {
   if (layouting) {
     return
   }
@@ -327,20 +328,17 @@ function applyLayout() {
   })
 
   layouting = true
-  graphComponent
-    .morphLayout(layout, '1s', layoutData)
-    .then(() => {
-      layouting = false
-      return null
-    })
-    .catch(error => {
-      layouting = false
-      if (typeof window.reportError === 'function') {
-        window.reportError(error)
-      } else {
-        throw error
-      }
-    })
+  try {
+    await graphComponent.morphLayout(layout, '1s', layoutData)
+  } catch (error) {
+    if (typeof window.reportError === 'function') {
+      window.reportError(error)
+    } else {
+      throw error
+    }
+  } finally {
+    layouting = false
+  }
 }
 
 /**

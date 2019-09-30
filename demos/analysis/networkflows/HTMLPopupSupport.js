@@ -26,7 +26,15 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { GraphComponent, IEdge, IModelItem, Point, SimpleLabel, Size } from 'yfiles'
+import {
+  GraphComponent,
+  IEdge,
+  ILabelModelParameter,
+  IModelItem,
+  Point,
+  SimpleLabel,
+  Size
+} from 'yfiles'
 
 /**
  * This class adds an HTML panel on top of the contents of the GraphComponent that can

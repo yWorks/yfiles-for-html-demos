@@ -17,7 +17,7 @@ export class MySimpleArrow extends BaseClass(IArrow, IVisualCreator, IBoundsProv
   direction: Point
   arrowThickness: number
   private $thickness: number
-  private $arrowFigure: GeneralPath
+  private $arrowFigure: GeneralPath | null
 
   /**
    * Initializes a new instance of the  class.
@@ -129,7 +129,7 @@ export class MySimpleArrow extends BaseClass(IArrow, IVisualCreator, IBoundsProv
       this.$arrowFigure.close()
     }
 
-    const path = this.arrowFigure.createSvgPath()
+    const path = this.arrowFigure!.createSvgPath()
 
     // Remember thickness for update
     ;(<any>path)['data-renderDataCache'] = this.arrowThickness

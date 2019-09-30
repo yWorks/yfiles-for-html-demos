@@ -27,8 +27,13 @@
  **
  ***************************************************************************/
 import {
+  Arrow,
+  Class,
   DefaultLabelStyle,
+  DefaultPortCandidate,
   DragDropEffects,
+  DragDropItem,
+  DragSource,
   ExteriorLabelModel,
   FreeEdgeLabelModel,
   FreeNodeLabelModel,
@@ -50,11 +55,13 @@ import {
   ListEnumerable,
   NodeDropInputMode,
   NodeStylePortStyleAdapter,
+  PolylineEdgeStyle,
   PortDropInputMode,
   Rect,
   ShapeNodeShape,
   ShapeNodeStyle,
   ShinyPlateNodeStyle,
+  SimpleEdge,
   SimpleLabel,
   SimpleNode,
   SimplePort,
@@ -75,6 +82,9 @@ import {
 } from '../../resources/demo-app.js'
 import { DemoGroupStyle, DemoNodeStyle, initDemoStyles } from '../../resources/demo-styles.js'
 import loadJson from '../../resources/load-json.js'
+import EdgeDropInputMode from './EdgeDropInputMode.js'
+
+Class.ensure(Arrow)
 
 /**
  * The panel containing the palette of elements to drop onto the graph component using yFiles drag and drop.
@@ -151,7 +161,7 @@ function initializeDnDPanel(graphComponent) {
     document.getElementById('nativeDndPanel'),
     graphComponent
   )
-  nativeDragAndDropPanel.populatePanel(() => createDnDPanelNodes(true))
+  nativeDragAndDropPanel.populatePanel(createDnDPanelItems)
 
   // initialize panel for yFiles drag and drop
   dragAndDropPanel = new DragAndDropPanel(document.getElementById('dndPanel'), passiveSupported)
@@ -176,6 +186,11 @@ function initializeDnDPanel(graphComponent) {
         true,
         dragPreview
       )
+    } else if (IEdge.isInstance(data)) {
+      new DragSource(element).startDrag(
+        new DragDropItem('yfiles.graph.IEdge', data),
+        DragDropEffects.ALL
+      )
     } else {
       dragSource = NodeDropInputMode.startDrag(
         element,
@@ -187,26 +202,27 @@ function initializeDnDPanel(graphComponent) {
     }
 
     // let the GraphComponent handle the preview rendering if possible
-    dragSource.addQueryContinueDragListener((src, args) => {
-      if (args.dropTarget === null) {
-        removeClass(dragPreview, 'hidden')
-      } else {
-        addClass(dragPreview, 'hidden')
-      }
-    })
+    if (dragSource) {
+      dragSource.addQueryContinueDragListener((src, args) => {
+        if (args.dropTarget === null) {
+          removeClass(dragPreview, 'hidden')
+        } else {
+          addClass(dragPreview, 'hidden')
+        }
+      })
+    }
   }
 
   dragAndDropPanel.maxItemWidth = 160
-  dragAndDropPanel.populatePanel(createDnDPanelNodes)
+  dragAndDropPanel.populatePanel(createDnDPanelItems)
 }
 
 /**
- * Creates the nodes that provide the visualizations for the style panel.
- * @param {boolean} native
- * @return {INode[]}
+ * Creates the items that provide the visualizations for the style panel.
+ * @return {IModelItem[]}
  */
-function createDnDPanelNodes(native) {
-  const nodeContainer = []
+function createDnDPanelItems() {
+  const itemContainer = []
 
   // Create some nodes
   const groupNodeStyle = new DemoGroupStyle()
@@ -228,12 +244,12 @@ function createDnDPanelNodes(native) {
   )
   groupLabel.style = groupLabelStyle
   groupNode.labels = new ListEnumerable([groupLabel])
-  nodeContainer.push({ element: groupNode, tooltip: 'Group Node' })
+  itemContainer.push({ element: groupNode, tooltip: 'Group Node' })
 
   const demoStyleNode = new SimpleNode()
   demoStyleNode.layout = new Rect(0, 0, 60, 40)
   demoStyleNode.style = new DemoNodeStyle()
-  nodeContainer.push({ element: demoStyleNode, tooltip: 'Demo Node' })
+  itemContainer.push({ element: demoStyleNode, tooltip: 'Demo Node' })
 
   const shapeStyleNode = new SimpleNode()
   shapeStyleNode.layout = new Rect(0, 0, 60, 40)
@@ -242,7 +258,7 @@ function createDnDPanelNodes(native) {
     stroke: 'rgb(255, 140, 0)',
     fill: 'rgb(255, 140, 0)'
   })
-  nodeContainer.push({ element: shapeStyleNode, tooltip: 'Shape Node' })
+  itemContainer.push({ element: shapeStyleNode, tooltip: 'Shape Node' })
 
   const shinyPlateNode = new SimpleNode()
   shinyPlateNode.layout = new Rect(0, 0, 60, 40)
@@ -250,12 +266,12 @@ function createDnDPanelNodes(native) {
     fill: 'rgb(255, 140, 0)',
     drawShadow: false
   })
-  nodeContainer.push({ element: shinyPlateNode, tooltip: 'Shiny Plate Node' })
+  itemContainer.push({ element: shinyPlateNode, tooltip: 'Shiny Plate Node' })
 
   const imageStyleNode = new SimpleNode()
   imageStyleNode.layout = new Rect(0, 0, 60, 60)
   imageStyleNode.style = new ImageNodeStyle('resources/y.svg')
-  nodeContainer.push({ element: imageStyleNode, tooltip: 'Image Node' })
+  itemContainer.push({ element: imageStyleNode, tooltip: 'Image Node' })
 
   const portNode = new SimpleNode()
   portNode.layout = new Rect(0, 0, 5, 5)
@@ -270,7 +286,7 @@ function createDnDPanelNodes(native) {
   )
   portNode.tag = port
   portNode.ports = new ListEnumerable([port])
-  nodeContainer.push({ element: portNode, tooltip: 'Port' })
+  itemContainer.push({ element: portNode, tooltip: 'Port' })
 
   const labelNode = new SimpleNode()
   labelNode.layout = new Rect(0, 0, 5, 5)
@@ -291,9 +307,85 @@ function createDnDPanelNodes(native) {
   label.preferredSize = labelStyle.renderer.getPreferredSize(label, labelStyle)
   labelNode.tag = label
   labelNode.labels = new ListEnumerable([label])
-  nodeContainer.push({ element: labelNode, tooltip: 'Label' })
+  itemContainer.push({ element: labelNode, tooltip: 'Label' })
 
-  return nodeContainer
+  const edge1 = new SimpleEdge({
+    style: new PolylineEdgeStyle({
+      smoothingLength: 100,
+      targetArrow: 'triangle'
+    })
+  })
+  const edge2 = new SimpleEdge({
+    style: new PolylineEdgeStyle({
+      sourceArrow: 'triangle',
+      targetArrow: 'triangle'
+    })
+  })
+  const edge3 = new SimpleEdge({
+    style: new PolylineEdgeStyle({
+      stroke: '2px dashed gray'
+    })
+  })
+
+  itemContainer.push({ element: edge1, tooltip: 'Default' })
+  itemContainer.push({ element: edge2, tooltip: 'Bidirectional' })
+  itemContainer.push({ element: edge3, tooltip: 'Dashed' })
+
+  return itemContainer
+}
+
+/**
+ * Enables support for dropping edges on the given {@link GraphEditorInputMode}.
+ * @param {GraphEditorInputMode} mode
+ */
+function configureEdgeDropInputMode(mode) {
+  const edgeDropInputMode = new EdgeDropInputMode()
+  let originalEdgeDefaultStyle = null
+
+  // This method is called when an edge style is dropped onto the canvas. The edge
+  // may be dropped onto a node, another edge or onto the empty canvas.
+  edgeDropInputMode.itemCreator = (ctx, graph, draggedItem, dropTarget, dropLocation) => {
+    if (!(draggedItem instanceof IEdge)) {
+      return
+    }
+    // Use the dropped edge style for changed/created edges.
+    const style = draggedItem.style
+
+    if (IEdge.isInstance(dropTarget)) {
+      // Set the style of the edge at the drop location to the dropped style.
+      graph.setStyle(dropTarget, style)
+    } else {
+      // Look for a node at the drop location.
+      const node = INode.isInstance(dropTarget) ? dropTarget : graph.createNodeAt(dropLocation)
+      // Start the creation of an edge from the node at a suitable port candidate
+      // for the drop location with the dropped edge style.
+      const candidateLocation = graph.nodeDefaults.ports.getLocationParameterInstance(node)
+      const candidate = new DefaultPortCandidate(node, candidateLocation)
+
+      const createEdgeInputMode = ctx.canvasComponent.inputMode.createEdgeInputMode
+
+      // store the previous edge style
+      originalEdgeDefaultStyle = createEdgeInputMode.edgeDefaults.style
+      // change the edge style only for the one dropped onto the canvas
+      createEdgeInputMode.edgeDefaults.style = style
+      // change the edge style only for the one dropped onto the canvas
+      createEdgeInputMode.dummyEdgeGraph.setStyle(createEdgeInputMode.dummyEdge, style)
+
+      createEdgeInputMode.doStartEdgeCreation(candidate)
+    }
+    ctx.canvasComponent.focus()
+  }
+
+  // register the EdgeDropInputMode on the GraphEditorInputMode
+  mode.add(edgeDropInputMode)
+
+  const createEdgeInputMode = mode.createEdgeInputMode
+  createEdgeInputMode.addEdgeCreatedListener(() => {
+    if (originalEdgeDefaultStyle) {
+      createEdgeInputMode.edgeDefaults.style = originalEdgeDefaultStyle
+      originalEdgeDefaultStyle = null
+    }
+  })
 }
 
 /**
@@ -334,7 +426,7 @@ function configureInputModes(graphComponent) {
   labelDropInputMode.enabled = true
   labelDropInputMode.useBestMatchingParameter = true
   // allow for nodes and edges to be the new label owner
-  labelDropInputMode.isValidLabelOwnerPredicate = (labelOwner, label) =>
+  labelDropInputMode.isValidLabelOwnerPredicate = labelOwner =>
     INode.isInstance(labelOwner) || IEdge.isInstance(labelOwner) || IPort.isInstance(labelOwner)
   mode.labelDropInputMode = labelDropInputMode
 
@@ -344,8 +436,11 @@ function configureInputModes(graphComponent) {
   portDropInputMode.enabled = true
   portDropInputMode.useBestMatchingParameter = true
   // allow only for nodes to be the new port owner
-  portDropInputMode.isValidPortOwnerPredicate = (portOwner, port) => INode.isInstance(portOwner)
+  portDropInputMode.isValidPortOwnerPredicate = portOwner => INode.isInstance(portOwner)
   mode.portDropInputMode = portDropInputMode
+
+  // configure the edge drop input mode
+  configureEdgeDropInputMode(mode)
 
   graphComponent.inputMode = mode
 }

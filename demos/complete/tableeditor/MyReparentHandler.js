@@ -26,7 +26,14 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { BaseClass, IInputModeContext, INode, IReparentNodeHandler, ITable } from 'yfiles'
+import {
+  BaseClass,
+  IInputModeContext,
+  INode,
+  IReparentNodeHandler,
+  ITable,
+  NodeDropInputMode
+} from 'yfiles'
 
 /**
  * Custom {@link NodeDropInputMode} that disallows to reparent a table node.

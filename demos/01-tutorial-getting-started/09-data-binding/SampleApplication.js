@@ -34,6 +34,7 @@ import {
   GraphComponent,
   GraphEditorInputMode,
   GraphItemTypes,
+  GraphOverviewComponent,
   ICommand,
   IGraph,
   IMapper,
@@ -45,7 +46,8 @@ import {
   PanelNodeStyle,
   Point,
   ShapeNodeStyle,
-  Size
+  Size,
+  ToolTipQueryEventArgs
 } from 'yfiles'
 
 import ContextMenu from '../../utils/ContextMenu.js'
@@ -157,15 +159,15 @@ function setupTooltips() {
     graphEditorInputMode.toolTipItems = GraphItemTypes.NODE
     graphEditorInputMode.addQueryItemToolTipListener((src, eventArgs) => {
       if (eventArgs.handled) {
-        // A tooltip has already been assigned -> nothing to do.
+        // Tooltip content has already been assigned -> nothing to do.
         return
       }
       const item = eventArgs.item
       if (INode.isInstance(item)) {
-        // Set the tooltip.
+        // Set the tooltip content.
         eventArgs.toolTip = dateMapper.get(item).toLocaleString()
 
-        // Indicate that the tooltip has been set.
+        // Indicate that the tooltip content has been set.
         eventArgs.handled = true
       }
     })

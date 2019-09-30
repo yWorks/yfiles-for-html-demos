@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { HtmlCanvasVisual, IRectangle, IRenderContext } from 'yfiles'
+import { CanvasComponent, HtmlCanvasVisual, IRectangle, IRenderContext } from 'yfiles'
 
 /**
  * Renders a circle with the given layout and color on a HTML5 Canvas.

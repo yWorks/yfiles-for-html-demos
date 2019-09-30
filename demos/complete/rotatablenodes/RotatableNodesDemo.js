@@ -77,9 +77,11 @@ import * as RotatablePorts from './RotatablePorts.js'
 import DemoStyles, {
   DemoEdgeStyle,
   DemoGroupStyle,
-  DemoNodeStyle
+  DemoNodeStyle,
+  DemoSerializationListener
 } from '../../resources/demo-styles.js'
 import * as RotatableNodes from './RotatableNodes.js'
+import { RotatableNodesSerializationListener } from './RotatableNodes.js'
 import { bindAction, bindChangeListener, bindCommand, showApp } from '../../resources/demo-app.js'
 import loadJson from '../../resources/load-json.js'
 
@@ -160,6 +162,10 @@ function initializeGraphML() {
   graphmlSupport.graphMLIOHandler.addXamlNamespaceMapping(xmlNamespace, RotatableNodes)
   graphmlSupport.graphMLIOHandler.addXamlNamespaceMapping(xmlNamespace, RotatablePorts)
   graphmlSupport.graphMLIOHandler.addXamlNamespaceMapping(xmlNamespace, RotatableNodeLabels)
+  graphmlSupport.graphMLIOHandler.addHandleSerializationListener(DemoSerializationListener)
+  graphmlSupport.graphMLIOHandler.addHandleSerializationListener(
+    RotatableNodesSerializationListener
+  )
 }
 
 /**
@@ -422,7 +428,7 @@ function loadGraph(sample) {
 /**
  * Runs a layout algorithm which is configured to consider node rotations.
  */
-function applyLayout() {
+async function applyLayout() {
   const graph = graphComponent.graph
 
   // provide the rotated outline and layout for the layout algorithm
@@ -448,21 +454,19 @@ function applyLayout() {
   // wrap the algorithm in RotatedNodeLayoutStage to make it aware of the node rotations
   layout = new RotatedNodeLayoutStage(layout)
   layout.edgeRoutingMode = getRoutingMode()
+  try {
+    // apply the layout
+    await graphComponent.morphLayout(layout, '700ms')
 
-  // apply the layout
-  graphComponent
-    .morphLayout(layout, '700ms')
-    .then(() => {
-      // clean up mapper registry
-      graph.mapperRegistry.removeMapper(RotatedNodeLayoutStage.ROTATED_NODE_LAYOUT_DP_KEY)
-    })
-    .catch(error => {
-      if (typeof window.reportError === 'function') {
-        window.reportError(error)
-      } else {
-        throw error
-      }
-    })
+    // clean up mapper registry
+    graph.mapperRegistry.removeMapper(RotatedNodeLayoutStage.ROTATED_NODE_LAYOUT_DP_KEY)
+  } catch (error) {
+    if (typeof window.reportError === 'function') {
+      window.reportError(error)
+    } else {
+      throw error
+    }
+  }
 }
 
 /**
@@ -534,13 +538,12 @@ function getRoutingMode() {
  * Wires up the UI.
  */
 function registerCommands() {
-  bindAction("button[data-command='Open']", () => {
-    graphmlSupport.openFile(graphComponent.graph, StorageLocation.FILE_SYSTEM).then(() => {
-      // after loading apply wrap node styles, node label models and port location models in rotatable decorators
-      addRotatedStyles()
+  bindAction("button[data-command='Open']", async () => {
+    await graphmlSupport.openFile(graphComponent.graph, StorageLocation.FILE_SYSTEM)
+    // after loading apply wrap node styles, node label models and port location models in rotatable decorators
+    addRotatedStyles()
 
-      graphComponent.fitGraphBounds()
-    })
+    graphComponent.fitGraphBounds()
   })
   bindCommand("button[data-command='Save']", ICommand.SAVE, graphComponent)
   bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent)

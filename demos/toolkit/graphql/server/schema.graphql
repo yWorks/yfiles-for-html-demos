@@ -1,0 +1,12 @@
+type Query {
+  persons: [Person!]
+  person(id: ID!): Person
+}
+
+type Person {
+  id: ID!
+  name: String!
+  icon: String!
+  friendsCount: Int!
+  friends: [Person!]!
+}

@@ -27,8 +27,6 @@
  **
  ***************************************************************************/
 import {
-  CollectGraphSnapLinesEventArgs,
-  CollectLabelSnapLineEventArgs,
   DefaultLabelStyle,
   FreeNodeLabelModel,
   GraphComponent,
@@ -127,7 +125,17 @@ function createGraphSnapContext() {
     snapDistance: 10
   })
   // use the free additional snap lines
-  context.addCollectSnapLinesListener(collectAdditionalGraphSnapLines)
+  context.addCollectSnapLinesListener((sender, evt) => {
+    // Creates and adds Snaplines for the free AdditionalSnapLineVisualCreator to a GraphSnapContext.
+    // While the AdditionalSnapLineVisualCreators are used to visualize and represent free snap lines,
+    // according OrthogonalSnapLines have to be added to the snapping mechanism to describe their
+    // snapping behavior.
+    additionalSnapLineVisualCreators.forEach(creator => {
+      creator.createSnapLines().forEach(snapLine => {
+        evt.addAdditionalSnapLine(snapLine)
+      })
+    })
+  })
   return context
 }
 
@@ -141,7 +149,17 @@ function createLabelSnapContext() {
     collectInitialLocationSnapLines: false
   })
 
-  snapContext.addCollectSnapLinesListener(collectAdditionalLabelSnapLines)
+  snapContext.addCollectSnapLinesListener((sender, evt) => {
+    // Creates and adds SnapLines for the free AdditionalSnapLineVisualCreator to a LabelSnapContext.
+    // While the AdditionalSnapLineVisualCreators are used to visualize and represent free snap lines,
+    // according OrthogonalSnapLines have to be added to the snapping mechanism to describe their
+    // snapping behavior.
+    additionalSnapLineVisualCreators.forEach(creator => {
+      creator.createSnapLines().forEach(snapLine => {
+        evt.addSnapLine(snapLine)
+      })
+    })
+  })
 
   return snapContext
 }
@@ -232,40 +250,6 @@ function addAdditionalSnapLineVisualCreator(graphComponent, from, to) {
     lineVisualCreator,
     ICanvasObjectDescriptor.ALWAYS_DIRTY_INSTANCE
   )
-}
-
-/**
- * Creates and adds {@link SnapLine}s for the free {@link AdditionalSnapLineVisualCreator}
- * to a {@link GraphSnapContext}.
- * While the {@link AdditionalSnapLineVisualCreator}s are used to visualize and represent free snap lines,
- * according {@link OrthogonalSnapLine}s have to be added to the snapping mechanism to describe their
- * snapping behavior.
- * @param {Object} sender The snap context sending this event.
- * @param {CollectGraphSnapLinesEventArgs} e The event arguments to add the snap lines to.
- */
-function collectAdditionalGraphSnapLines(sender, e) {
-  additionalSnapLineVisualCreators.forEach(creator => {
-    creator.createSnapLines().forEach(snapLine => {
-      e.addAdditionalSnapLine(snapLine)
-    })
-  })
-}
-
-/**
- * Creates and adds {@link SnapLine}s for the free {@link AdditionalSnapLineVisualCreator}
- * to a {@link LabelSnapContext}.
- * While the {@link AdditionalSnapLineVisualCreator}s are used to visualize and represent free snap lines,
- * according {@link OrthogonalSnapLine}s have to be added to the snapping mechanism to describe their
- * snapping behavior.
- * @param {Object} sender The snap context sending this event.
- * @param {CollectLabelSnapLineEventArgs} e The event arguments to add the snap lines to.
- */
-function collectAdditionalLabelSnapLines(sender, e) {
-  additionalSnapLineVisualCreators.forEach(creator => {
-    creator.createSnapLines().forEach(snapLine => {
-      e.addSnapLine(snapLine)
-    })
-  })
 }
 
 /**

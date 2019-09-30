@@ -38,7 +38,7 @@ require.config({
   }
 })
 
-require(['yfiles/view-component'], (
+require(['yfiles/view-component'], async (
   /** @type {yfiles_namespace} */ /** typeof yfiles */ yfiles
 ) => {
   /** @type {yfiles.view.GraphComponent} */
@@ -118,30 +118,28 @@ require(['yfiles/view-component'], (
 
   function applyLayout() {
     // eslint-disable-next-line global-require
-    require(['yfiles/layout-hierarchic', 'yfiles/view-layout-bridge'], () => {
+    require(['yfiles/layout-hierarchic', 'yfiles/view-layout-bridge'], async () => {
       const layoutButton = document.getElementById('layoutButton')
       layoutButton.disabled = true
       const layout = new yfiles.layout.MinimumNodeSizeStage(
         new yfiles.hierarchic.HierarchicLayout()
       )
-      graphComponent
-        .morphLayout(layout, '1s')
-        .then(() => {
-          layoutButton.disabled = false
-        })
-        .catch(error => {
-          layoutButton.disabled = false
-          if (typeof window.reportError === 'function') {
-            window.reportError(error)
-          } else {
-            throw error
-          }
-        })
+      try {
+        await graphComponent.morphLayout(layout, '1s')
+      } catch (error) {
+        if (typeof window.reportError === 'function') {
+          window.reportError(error)
+        } else {
+          throw error
+        }
+      } finally {
+        layoutButton.disabled = false
+      }
     })
   }
 
   // start demo
-  fetch('../../../lib/license.json')
-    .then(response => response.json())
-    .then(run)
+  const response = await fetch('../../../lib/license.json')
+  const json = await response.json()
+  run(json)
 })

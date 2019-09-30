@@ -40,6 +40,7 @@ import {
 
 /**
  * This class handles synchronization of the GraphML editor with the view graph.
+ * @yjs:keep=setValue,getValue
  */
 export default class EditorSync {
   constructor() {

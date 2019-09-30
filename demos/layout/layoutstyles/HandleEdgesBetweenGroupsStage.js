@@ -33,7 +33,8 @@ import {
   LayoutGroupingSupport,
   LayoutStageBase,
   Maps,
-  StraightLineEdgeRouter
+  StraightLineEdgeRouter,
+  TreeReductionStage
 } from 'yfiles'
 
 /**

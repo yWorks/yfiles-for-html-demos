@@ -26,7 +26,14 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { ConstrainedHandle, IHandle, IInputModeContext, Point, Rect } from 'yfiles'
+import {
+  ConstrainedDragHandler,
+  ConstrainedHandle,
+  IHandle,
+  IInputModeContext,
+  Point,
+  Rect
+} from 'yfiles'
 
 /**
  * A {@link ConstrainedHandle} that is limited to the interior of a

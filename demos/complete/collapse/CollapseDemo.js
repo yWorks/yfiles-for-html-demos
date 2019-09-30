@@ -157,7 +157,7 @@ function initializeInputModes() {
   })
 
   // Add an event listener that expands or collapses the clicked node.
-  graphViewerInputMode.addItemClickedListener((sender, args) => {
+  graphViewerInputMode.addItemClickedListener(async (sender, args) => {
     if (!INode.isInstance(args.item)) {
       return
     }
@@ -167,12 +167,11 @@ function initializeInputModes() {
     if (canExpand) {
       collapseAndExpandNodes.expand(node)
       filteredGraph.nodePredicateChanged()
-      runLayout(node, true)
+      await runLayout(node, true)
     } else {
       collapseAndExpandNodes.collapse(node)
-      runLayout(node, false).then(() => {
-        filteredGraph.nodePredicateChanged()
-      })
+      await runLayout(node, false)
+      filteredGraph.nodePredicateChanged()
     }
   })
 
@@ -222,7 +221,7 @@ function initializeLayouts() {
  *   incremental items. Without affected node, a 'from scratch' layout is calculated.
  * @param {boolean} expand Whether this is part of an expand or a collapse action.
  */
-function runLayout(toggledNode, expand) {
+async function runLayout(toggledNode, expand) {
   if (runningLayout) {
     return Promise.resolve()
   }
@@ -242,19 +241,18 @@ function runLayout(toggledNode, expand) {
     duration: '0.3s',
     animateViewport: toggledNode == null
   })
-  return layoutExecutor
-    .start()
-    .then(() => {
-      runningLayout = false
-      layoutComboBox.disabled = false
-    })
-    .catch(error => {
-      if (typeof window.reportError === 'function') {
-        window.reportError(error)
-      } else {
-        throw error
-      }
-    })
+  try {
+    await layoutExecutor.start()
+  } catch (error) {
+    if (typeof window.reportError === 'function') {
+      window.reportError(error)
+    } else {
+      throw error
+    }
+  } finally {
+    runningLayout = false
+    layoutComboBox.disabled = false
+  }
 }
 
 /**

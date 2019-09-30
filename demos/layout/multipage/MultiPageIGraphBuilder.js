@@ -49,6 +49,7 @@ import {
   INodeStyle,
   LayoutGraph,
   Mapper,
+  MultiPageLayout,
   MultiPageLayoutResult,
   NodeDefaults,
   NodeType,

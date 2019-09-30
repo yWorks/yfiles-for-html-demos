@@ -29,15 +29,18 @@
 import {
   DefaultLabelStyle,
   ExteriorLabelModel,
+  Fill,
   GraphComponent,
   GraphEditorInputMode,
   GraphSnapContext,
+  Grid,
   GridConstraintProvider,
   GridInfo,
   GridSnapTypes,
   GridStyle,
   GridVisualCreator,
   HashMap,
+  ICanvasContext,
   ICommand,
   InteriorStretchLabelModel,
   LabelSnapContext,
@@ -45,21 +48,18 @@ import {
   PanelNodeStyle,
   Point,
   Rect,
+  RenderModes,
   ShapeNodeStyle,
-  Size
+  Size,
+  Stroke
 } from 'yfiles'
 
 import { bindAction, bindChangeListener, bindCommand, showApp } from '../../resources/demo-app.js'
 import loadJson from '../../resources/load-json.js'
+import { webGlSupported } from '../../utils/Workarounds.js'
 
 /** @type {GraphComponent} */
 let graphComponent = null
-
-/**
- * The available {@link GridSnapTypes} for this demo.
- * @type {IMap.<string,GridSnapTypes>}
- */
-let gridSnapTypes = null
 
 /**
  * Holds information about the grid spacing.
@@ -73,12 +73,16 @@ let gridInfo = null
  */
 let grid = null
 
-/**
- * The grid snapping combobox.
- * @type {HTMLElement}
- */
-const gridSnapTypeComboBox = document.getElementById('gridSnapTypeComboBox')
-
+/** @type {HTMLFormElement} */
+const gridSnapTypeRadioGroup = document.getElementById('gridSnapTypeRadioGroup')
+/** @type {HTMLFormElement} */
+const gridStyleRadioGroup = document.getElementById('gridStyleRadioGroup')
+/** @type {HTMLFormElement} */
+const gridRenderModeRadioGroup = document.getElementById('gridRenderModeRadioGroup')
+/** @type {SVGSVGElement} */
+const gridColorPicker = document.getElementById('gridColorPicker')
+/** @type {HTMLInputElement} */
+const thicknessSlider = document.getElementById('thickness')
 /**
  * Bootstraps the demo.
  */
@@ -109,11 +113,11 @@ function run(licenseData) {
 }
 
 /**
- * Initializes snapping for labels and other graph items. The default snapping behavior can easily be enabled by
- * setting the according snap context. Those snap contexts provide many options to fine tune their behavior, in
- * this case we use it to make the items snap only to the given grid but not to other graph items. Please see the
- * documentation of {@link GraphSnapContext} and {@link LabelSnapContext} for more
- * information.
+ * Initializes snapping for labels and other graph items. The default snapping behavior can easily
+ * be enabled by setting the according snap context. Those snap contexts provide many options to
+ * fine tune their behavior, in this case we use it to make the items snap only to the given grid
+ * but not to other graph items. Please see the documentation of {@link GraphSnapContext} and
+ * {@link LabelSnapContext} for more information.
  */
 function initializeSnapping() {
   const geim = graphComponent.inputMode
@@ -137,7 +141,7 @@ function initializeSnapping() {
  * which items can snap.
  */
 function initializeGrid() {
-  gridSnapTypes = new HashMap()
+  const gridSnapTypes = new HashMap()
 
   // Adds the grid snap types to a dictionary
   gridSnapTypes.set('None', GridSnapTypes.NONE)
@@ -147,14 +151,74 @@ function initializeGrid() {
   gridSnapTypes.set('Points', GridSnapTypes.GRID_POINTS)
   gridSnapTypes.set('All', GridSnapTypes.ALL)
 
-  // Assigns the grid snap types to the combo box
-  if (gridSnapTypeComboBox !== null) {
-    ;['None', 'Horizontal Lines', 'Vertical Lines', 'Lines', 'Points', 'All'].forEach(sample => {
-      const option = document.createElement('option')
-      option.text = sample
-      option.value = sample
-      gridSnapTypeComboBox.add(option)
-    })
+  const gridStyles = new HashMap()
+  gridStyles.set('Dots', GridStyle.DOTS)
+  gridStyles.set('Lines', GridStyle.LINES)
+  gridStyles.set('Crosses', GridStyle.CROSSES)
+
+  const gridColors = new HashMap()
+
+  // Adds the grid colors to a dictionary
+  const sortedGridColors = [
+    'Black',
+    'Gray',
+    'Light Gray',
+    'Pink',
+    'Orange',
+    'Yellow',
+    'Green',
+    'Blue',
+    'Violet'
+  ]
+  gridColors.set('Black', Fill.BLACK)
+  gridColors.set('Gray', Fill.GRAY)
+  gridColors.set('Light Gray', Fill.LIGHT_GRAY)
+  gridColors.set('Pink', Fill.PINK)
+  gridColors.set('Orange', Fill.ORANGE)
+  gridColors.set('Yellow', Fill.YELLOW)
+  gridColors.set('Green', Fill.LIGHT_GREEN)
+  gridColors.set('Blue', Fill.LIGHT_BLUE)
+  gridColors.set('Violet', Fill.VIOLET)
+
+  const gridRenderModes = new HashMap()
+
+  // Adds the grid render modes to a dictionary
+  gridRenderModes.set('Canvas', RenderModes.CANVAS)
+  gridRenderModes.set('Svg', RenderModes.SVG)
+  // add WebGL only if the browser supports WebGL rendering
+  if (webGlSupported) {
+    gridRenderModes.set('Web GL', RenderModes.WEB_GL)
+  }
+
+  // creates a radio group for the snap types
+  if (gridSnapTypeRadioGroup !== null) {
+    createRadioGroup(
+      gridSnapTypeRadioGroup,
+      'gridSnapType',
+      gridSnapTypes,
+      'Points',
+      updateSnapType
+    )
+  }
+
+  if (gridStyleRadioGroup !== null) {
+    createRadioGroup(gridStyleRadioGroup, 'gridStyle', gridStyles, 'Dots', updateGridStyle)
+  }
+
+  // populates the color picker
+  if (gridColorPicker !== null) {
+    createColorPicker(sortedGridColors, gridColors)
+  }
+
+  // creates a radio group for the render mode
+  if (gridRenderModeRadioGroup !== null) {
+    createRadioGroup(
+      gridRenderModeRadioGroup,
+      'gridRenderMode',
+      gridRenderModes,
+      'Canvas',
+      updateRenderMode
+    )
   }
 
   // Initializes GridInfo which holds the basic information about the grid
@@ -166,36 +230,152 @@ function initializeGrid() {
   // Creates grid visualization and adds it to graphComponent
   grid = new GridVisualCreator(gridInfo)
   grid.gridStyle = GridStyle.LINES
-
+  grid.stroke = new Stroke(Fill.GRAY, 1)
   graphComponent.backgroundGroup.addChild(grid)
   // Sets constraint provider to make nodes and bends snap to grid
   const graphSnapContext = graphComponent.inputMode.snapContext
   graphSnapContext.nodeGridConstraintProvider = new GridConstraintProvider(gridInfo)
   graphSnapContext.bendGridConstraintProvider = new GridConstraintProvider(gridInfo)
 
-  gridSnapTypeComboBox.selectedIndex = 3
-  updateSnapType()
+  updateSnapType(GridSnapTypes.GRID_POINTS)
+  updateGridStyle(GridStyle.DOTS)
+  updateRenderMode(RenderModes.CANVAS)
+  updateGridColor(Fill.GRAY)
+  updateGridThickness()
+}
+
+/**
+ * Creates a radio group and populates it with values from the passed map.
+ * @template T
+ * @param {HTMLElement} containerElement
+ * @param {string} groupName
+ * @param {HashMap<string,T>} map
+ * @param {string} checkedKey
+ * @param {function(T)} callback
+ */
+function createRadioGroup(containerElement, groupName, map, checkedKey, callback) {
+  for (const key of map.keys) {
+    const label = document.createElement('label')
+
+    const input = document.createElement('input')
+    input.setAttribute('type', 'radio')
+    input.setAttribute('name', groupName)
+    if (key === checkedKey) {
+      input.setAttribute('checked', '')
+    }
+    input.addEventListener(
+      'change',
+      function(value) {
+        callback(value)
+      }.bind(null, map.get(key))
+    )
+
+    label.appendChild(input)
+    label.appendChild(document.createTextNode(key))
+
+    containerElement.appendChild(label)
+    containerElement.appendChild(document.createElement('br'))
+  }
+}
+
+/**
+ * Populates the grid color picker with colors from the passed array/map.
+ * @param {string[]} sortedGridColors
+ * @param {HashMap<string,Fill>} gridColors
+ */
+function createColorPicker(sortedGridColors, gridColors) {
+  let xOffset = 0
+  const size = 25
+  for (const color of sortedGridColors) {
+    const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect')
+    rect.setAttribute('x', `${xOffset}px`)
+    rect.setAttribute('width', `${size}px`)
+    rect.setAttribute('height', `${size}px`)
+
+    const title = document.createElementNS('http://www.w3.org/2000/svg', 'title')
+    title.textContent = color
+    rect.appendChild(title)
+
+    if (color === 'Gray') {
+      rect.classList.add('selectedColor')
+    }
+
+    gridColors.get(color).applyTo(rect, ICanvasContext.DEFAULT)
+
+    rect.addEventListener(
+      'click',
+      function(fill, rect) {
+        gridColorPicker
+          .querySelectorAll('.selectedColor')
+          .forEach(rect => rect.classList.remove('selectedColor'))
+        rect.classList.add('selectedColor')
+        updateGridColor(fill)
+      }.bind(null, gridColors.get(color), rect)
+    )
+
+    gridColorPicker.appendChild(rect)
+    xOffset += size + 2
+  }
 }
 
 /**
  * Sets the chosen grid snap type on the grid.
+ * @param {GridSnapTypes} gridSnapType
  */
-function updateSnapType() {
-  const selectedIndex = gridSnapTypeComboBox.selectedIndex
-  const item = gridSnapTypeComboBox[selectedIndex].value
-  let gridSnapType = GridSnapTypes.LINES
-  if (gridSnapTypes.has(item)) {
-    gridSnapType = gridSnapTypes.get(item)
-  }
-
+function updateSnapType(gridSnapType) {
   const graphSnapContext = graphComponent.inputMode.snapContext
   graphSnapContext.gridSnapType = gridSnapType
+}
 
-  if (gridSnapType === GridSnapTypes.GRID_POINTS) {
-    grid.gridStyle = GridStyle.DOTS
-  } else {
-    grid.gridStyle = GridStyle.LINES
+function updateGridStyle(gridStyle) {
+  grid.gridStyle = gridStyle
+  updateGridThickness()
+  graphComponent.invalidate()
+}
+
+/**
+ * Sets the chosen render mode on the grid.
+ */
+function updateRenderMode(renderMode) {
+  grid.renderMode = renderMode
+  graphComponent.invalidate()
+}
+
+/**
+ * Updates the svg template.
+ */
+function updateSvgTemplate() {
+  if (grid.renderMode === RenderModes.SVG) {
+    grid.renderMode = RenderModes.CANVAS
+    graphComponent.updateVisual()
+    grid.renderMode = RenderModes.SVG
   }
+}
+
+/**
+ * Sets the chosen color to the grid.
+ * @param {Fill} fill
+ */
+function updateGridColor(fill) {
+  grid.stroke.fill = fill
+  updateSvgTemplate()
+  graphComponent.invalidate()
+}
+
+/**
+ * Sets the chosen thickness to the grid.
+ */
+function updateGridThickness() {
+  let thickness = parseInt(thicknessSlider.value)
+
+  if (grid.gridStyle === GridStyle.DOTS) {
+    // make sure the grid is at least 2 pixels thick when 'Dots' is selected
+    thickness = Math.max(2, thickness)
+  }
+
+  document.getElementById('thickness-label').textContent = thicknessSlider.value
+  grid.stroke.thickness = thickness
+  updateSvgTemplate()
   graphComponent.invalidate()
 }
 
@@ -291,6 +471,9 @@ function registerCommands() {
     graphComponent.invalidate() // triggers repaint
   })
   bindChangeListener("select[data-command='GridSnapTypeChanged']", updateSnapType)
+  bindChangeListener("select[data-command='GridRenderModeChanged']", updateRenderMode)
+  bindChangeListener("select[data-command='GridColorChanged']", updateGridColor)
+  bindChangeListener('#thickness', updateGridThickness)
 }
 
 // start tutorial

@@ -470,6 +470,18 @@ function runFlowAlgorithm() {
 function calculateMaxFlowMinCut(minCut) {
   const graph = graphComponent.graph
 
+  if (graph.nodes.size === 1) {
+    graph.nodes.first().tag = {
+      flow: 0,
+      supply: 0,
+      adjustable: false,
+      cut: false,
+      source: false,
+      target: false
+    }
+    return 0
+  }
+
   graph.edges.forEach(edge => {
     const labels = edge.labels
     if (labels.size > 1) {
@@ -625,7 +637,7 @@ function getDemandNodes(graph) {
  * @param {Array} additionalIncrementalNodes An array of the incremental nodes
  * @param {function} finishHandler The handler that will be executed when the layout has finished.
  */
-function runLayout(incremental, finishHandler, additionalIncrementalNodes) {
+async function runLayout(incremental, finishHandler, additionalIncrementalNodes) {
   const graph = graphComponent.graph
   const algorithmComboBox = document.getElementById('algorithmComboBox')
 
@@ -684,29 +696,28 @@ function runLayout(incremental, finishHandler, additionalIncrementalNodes) {
     })
   }
 
-  graphComponent.morphLayout(layoutAlgorithm, '1s', layoutData).then(() => {
-    graph.edges.forEach(edge => {
-      if (lastFlowMap.get(edge) !== edge.tag.flow) {
-        graphComponent.highlightIndicatorManager.addHighlight(edge)
-        lastFlowMap.set(edge, edge.tag.flow)
-      }
-    })
-
-    setTimeout(() => {
-      graphComponent.highlightIndicatorManager.clearHighlights()
-    }, 1000)
-
-    inLayout = false
-    setUIDisabled(false)
-
-    if (algorithmComboBox.selectedIndex === MAX_FLOW_MIN_CUT) {
-      updateMinCutLine()
-    }
-
-    if (finishHandler) {
-      finishHandler()
+  await graphComponent.morphLayout(layoutAlgorithm, '1s', layoutData)
+  graph.edges.forEach(edge => {
+    if (lastFlowMap.get(edge) !== edge.tag.flow) {
+      graphComponent.highlightIndicatorManager.addHighlight(edge)
+      lastFlowMap.set(edge, edge.tag.flow)
     }
   })
+
+  setTimeout(() => {
+    graphComponent.highlightIndicatorManager.clearHighlights()
+  }, 1000)
+
+  inLayout = false
+  setUIDisabled(false)
+
+  if (algorithmComboBox.selectedIndex === MAX_FLOW_MIN_CUT) {
+    updateMinCutLine()
+  }
+
+  if (finishHandler) {
+    finishHandler()
+  }
 }
 
 /**
@@ -811,7 +822,7 @@ function visualizeResult() {
       if (diff === 0) {
         colorIndex = gradientCount - 1
       } else {
-        const flowPercentage = edge.tag.flow * 100 / edge.tag.capacity
+        const flowPercentage = (edge.tag.flow * 100) / edge.tag.capacity
         const colorScale = (gradientCount - 1) / diff
         colorIndex = parseInt((flowPercentage - extrema.min) * colorScale) % gradientCount
       }
@@ -843,7 +854,7 @@ function calculateExtrema(graph, useCapacity) {
   graph.edges.forEach(edge => {
     let value = 0
     if (edge.tag && edge.tag.capacity !== 0) {
-      value = useCapacity ? edge.tag.capacity : edge.tag.flow * 100 / edge.tag.capacity
+      value = useCapacity ? edge.tag.capacity : (edge.tag.flow * 100) / edge.tag.capacity
     }
 
     min = Math.min(min, value)

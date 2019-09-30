@@ -475,7 +475,7 @@ export default class StructureView {
     const groupLabel = this.getLabelElement(groupLi)
     const checkboxId = groupLabel.getAttribute('data-groupelement')
     const checkboxElement = document.getElementById(checkboxId)
-    checkboxElement.checked = this.foldingView.isExpanded(args.item)
+    checkboxElement.checked = this.foldingView.isExpanded(groupNode)
     groupLabel.setAttribute(
       'class',
       !checkboxElement.checked ? 'structure-view-collapsed' : 'structure-view-expanded'

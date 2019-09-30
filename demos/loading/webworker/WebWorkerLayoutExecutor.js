@@ -64,12 +64,11 @@ export default class WebWorkerLayoutExecutor {
    */
   start() {
     return new Promise((resolve, reject) => {
-      this.worker.onmessage = e => {
+      this.worker.onmessage = async e => {
         const compoundEdit = this.graphComponent.graph.beginEdit('Layout', 'Layout')
-        applyCalculatedLayout(e.data, this.graphComponent).then(() => {
-          compoundEdit.commit()
-          resolve()
-        })
+        await applyCalculatedLayout(e.data, this.graphComponent)
+        compoundEdit.commit()
+        resolve()
       }
       this.worker.onerror = e => {
         e.preventDefault()

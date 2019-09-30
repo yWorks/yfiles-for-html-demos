@@ -108,7 +108,7 @@ function run(licenseData) {
 /**
  * Initializes the open and save operations.
  */
-function initializeOperations() {
+async function initializeOperations() {
   // Initialize OpenFromFileOperation
   openFileReaderOperation = new OpenFromFileOperation()
   if (!openFileReaderOperation.isAvailable()) {
@@ -136,17 +136,14 @@ function initializeOperations() {
 
   // Initialize SaveViaServerOperation
   saveViaServerOperation = new SaveViaServerOperation()
-
-  // check server availability (default: disabled)
-  openViaServerOperation
-    .checkServer()
-    .then(executable => {
-      document.querySelector('#openViaServerButton').disabled = !executable
-      document.querySelector('#saveViaServerButton').disabled = !executable
-    })
-    .catch(e => {
-      alert(e)
-    })
+  try {
+    // check server availability (default: disabled)
+    const executable = await openViaServerOperation.checkServer()
+    document.querySelector('#openViaServerButton').disabled = !executable
+    document.querySelector('#saveViaServerButton').disabled = !executable
+  } catch (e) {
+    alert(e)
+  }
 }
 
 /**
@@ -163,18 +160,19 @@ function updateLocalStorageButtons() {
  * Parses the graphml file.
  * @param {string} text
  */
-function parseGraphMLText(text) {
+async function parseGraphMLText(text) {
   const doc = new DOMParser().parseFromString(text, 'text/xml')
   if (doc.documentElement === null || doc.documentElement.nodeName === 'parsererror') {
     alert('Error parsing XML.')
     return
   }
-
-  // read the graph
-  ioh
-    .readFromDocument(graphComponent.graph, doc)
-    .then(() => graphComponent.fitGraphBounds())
-    .catch(e => alert(`Error parsing GraphML: ${e.message}`))
+  try {
+    // read the graph
+    await ioh.readFromDocument(graphComponent.graph, doc)
+    graphComponent.fitGraphBounds()
+  } catch (e) {
+    alert(`Error parsing GraphML: ${e.message}`)
+  }
 }
 
 /**
@@ -185,47 +183,59 @@ function registerCommands() {
     graphComponent.graph.clear()
     graphComponent.fitGraphBounds()
   })
-  bindAction("button[data-command='OpenFromFile']", () => {
-    openFileReaderOperation
-      .open()
-      .then(graphMLText => parseGraphMLText(graphMLText))
-      .catch(msg => alert(msg))
+  bindAction("button[data-command='OpenFromFile']", async () => {
+    try {
+      const graphMLText = await openFileReaderOperation.open()
+      parseGraphMLText(graphMLText)
+    } catch (msg) {
+      alert(msg)
+    }
   })
-  bindAction("button[data-command='OpenViaServer']", () => {
-    openViaServerOperation
-      .open()
-      .then(graphMLText => parseGraphMLText(graphMLText))
-      .catch(msg => alert(msg))
+  bindAction("button[data-command='OpenViaServer']", async () => {
+    try {
+      const graphMLText = await openViaServerOperation.open()
+      parseGraphMLText(graphMLText)
+    } catch (msg) {
+      alert(msg)
+    }
   })
-  bindAction("button[data-command='OpenFromStorage']", () => {
-    openFromStorageOperation
-      .open()
-      .then(graphMLText => parseGraphMLText(graphMLText))
-      .catch(msg => alert(msg))
+  bindAction("button[data-command='OpenFromStorage']", async () => {
+    try {
+      const graphMLText = await openFromStorageOperation.open()
+      parseGraphMLText(graphMLText)
+    } catch (msg) {
+      alert(msg)
+    }
   })
-  bindAction("button[data-command='SaveToFile']", () => {
-    ioh
-      .write(graphComponent.graph)
-      .then(result => saveToFileOperation.save(result, 'unnamed.graphml').catch(msg => alert(msg)))
+  bindAction("button[data-command='SaveToFile']", async () => {
+    try {
+      const result = await ioh.write(graphComponent.graph)
+      saveToFileOperation.save(result, 'unnamed.graphml')
+    } catch (msg) {
+      alert(msg)
+    }
   })
-  bindAction("button[data-command='SaveToWindow']", () => {
-    ioh.write(graphComponent.graph).then(result => saveToWindowOperation.save(result))
+  bindAction("button[data-command='SaveToWindow']", async () => {
+    const result = await ioh.write(graphComponent.graph)
+    saveToWindowOperation.save(result)
   })
-  bindAction("button[data-command='SaveViaServer']", () => {
-    ioh
-      .write(graphComponent.graph)
-      .then(result => saveViaServerOperation.save(result).catch(msg => alert(msg)))
+
+  bindAction("button[data-command='SaveViaServer']", async () => {
+    try {
+      const result = await ioh.write(graphComponent.graph)
+      saveViaServerOperation.save(result)
+    } catch (msg) {
+      alert(msg)
+    }
   })
-  bindAction("button[data-command='SaveToStorage']", () => {
-    ioh.write(graphComponent.graph).then(result =>
-      saveToStorageOperation
-        .save(result)
-        .then(() => updateLocalStorageButtons())
-        .catch(msg => {
-          updateLocalStorageButtons()
-          alert(msg)
-        })
-    )
+  bindAction("button[data-command='SaveToStorage']", async () => {
+    try {
+      const result = await ioh.write(graphComponent.graph)
+      await saveToStorageOperation.save(result)
+    } catch (msg) {
+      alert(msg)
+    }
+    updateLocalStorageButtons()
   })
 }
 

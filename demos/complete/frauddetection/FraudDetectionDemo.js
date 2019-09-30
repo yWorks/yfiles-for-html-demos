@@ -599,16 +599,16 @@ function initializeGraph() {
  */
 function loadSampleGraph(fraudData) {
   setBusy(true)
+  if (layout) {
+    layout.stopLayout()
+  }
+
+  timelineComponent.removeTimelineComponent()
+
   graphComponent.graph.clear()
 
   // execute the actual loading with a timeout to give the UI a chance to update
   setTimeout(() => {
-    if (layout) {
-      layout.stopLayout()
-    }
-
-    timelineComponent.removeTimelineComponent()
-
     const builder = new GraphBuilder(timelineComponent.filteredGraph.wrappedGraph)
     builder.nodesSource = fraudData.nodesSource
     builder.edgesSource = fraudData.edgesSource

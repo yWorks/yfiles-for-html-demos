@@ -280,20 +280,20 @@ export default class PathsConfig extends AlgorithmConfiguration {
               node,
               this.getMarkedNodeStyle(0, {
                 lightToDark: false,
-                count: maxDistance + 1
+                size: maxDistance + 1
               })
             )
           } else if (distToSource < Number.POSITIVE_INFINITY) {
             markedNodeStyle = this.getMarkedNodeStyle(Math.round(distToSource), {
               lightToDark: false,
-              count: maxDistance + 1
+              size: maxDistance + 1
             })
             graph.setStyle(node, markedNodeStyle)
             graph.setStyle(
               predEdge,
               this.getMarkedEdgeStyle(this.directed, Math.round(distToSource), {
                 lightToDark: false,
-                count: maxDistance + 1
+                size: maxDistance + 1
               })
             )
             predEdge.tag = {

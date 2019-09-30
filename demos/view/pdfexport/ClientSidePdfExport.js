@@ -76,9 +76,9 @@ export default class ClientSidePdfExport {
    * Exports the graph to a PDF.
    * @param {IGraph} graph
    * @param {Rect} exportRect
-   * @return {Promise.<string>}
+   * @return {Promise.<{raw: string, uri: string}>}
    */
-  exportPdf(graph, exportRect) {
+  async exportPdf(graph, exportRect) {
     // Create a new graph component for exporting the original SVG content
     const exportComponent = new GraphComponent()
     // ... and assign it the same graph.
@@ -101,19 +101,23 @@ export default class ClientSidePdfExport {
       exporter.inlineSvgImages = true
     }
 
-    return exporter.exportSvgAsync(exportComponent).then(svgElement =>
-      // convert svgElement to PDF
-      convertSvgToPdf(svgElement, new Size(exporter.viewWidth, exporter.viewHeight), this.margins)
+    // export the component to svg
+    const svgElement = await exporter.exportSvgAsync(exportComponent)
+
+    return convertSvgToPdf(
+      svgElement,
+      new Size(exporter.viewWidth, exporter.viewHeight),
+      this.margins
     )
   }
 }
 
 /**
- * Converts an SvgElement to PDF.
+ * Converts the given SVG element to PDF.
  * @param {SVGElement} svgElement
  * @param {Size} size
  * @param {Insets} margins
- * @return {string}
+ * @return {{raw: string, uri: string}}
  * @yjs:keep=compress,orientation
  */
 function convertSvgToPdf(svgElement, size, margins) {
@@ -132,12 +136,6 @@ function convertSvgToPdf(svgElement, size, margins) {
     floatPrecision: 'smart'
   })
 
-  // Register custom fonts that are provided in the custom-fonts.js file. Please see
-  // the https://github.com/yWorks/jsPDF readme on how to create a JS file that can be included to provide
-  // custom fonts.
-  jsPdf.addFont('Prata-Regular.ttf', 'Prata', 'normal') // Cyrillic
-  jsPdf.addFont('kosugi-v3-japanese-regular.ttf', 'Kosugi', 'normal') // Hiragana
-
   const offsets = {}
   offsets.xOffset = margin
   offsets.yOffset = margin
@@ -145,5 +143,5 @@ function convertSvgToPdf(svgElement, size, margins) {
   // eslint-disable-next-line no-undef
   svg2pdf(svgElement, jsPdf, offsets)
 
-  return jsPdf.output('datauristring')
+  return { raw: jsPdf.output(), uri: jsPdf.output('datauristring') }
 }

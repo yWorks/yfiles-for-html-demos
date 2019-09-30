@@ -34,6 +34,7 @@ import {
   ICanvasObjectDescriptor,
   IHighlightIndicatorInstaller,
   IHitTestable,
+  IInputMode,
   ILookup,
   NodeStyleDecorationInstaller,
   Point,

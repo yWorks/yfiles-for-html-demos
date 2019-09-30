@@ -34,6 +34,7 @@ import {
   GeneralPath,
   GraphComponent,
   GraphEditorInputMode,
+  GraphInputMode,
   HandleInputMode,
   HandlePositions,
   IArrow,
@@ -43,7 +44,6 @@ import {
   Insets,
   License,
   MoveInputMode,
-  MultiplexingInputMode,
   MutableRectangle,
   ObservableCollection,
   PolylineEdgeStyle,
@@ -71,7 +71,7 @@ import {
 import loadJson from '../../resources/load-json.js'
 
 /** the server urls */
-const PHANTOM_JS_URL = 'http://localhost:8081'
+const NODE_SERVER_URL = 'http://localhost:3001'
 const JAVA_SERVLET_URL = 'http://localhost:8080/BatikServlet/BatikServlet'
 
 /** @type {GraphComponent} */
@@ -95,15 +95,13 @@ let exportRect = null
  */
 let ieVersion = -1
 
-function run(licenseData) {
+async function run(licenseData) {
   License.value = licenseData
   if (window.location.protocol === 'file:') {
     alert(
-      new Error(
-        'This demo features image export with inlined images. ' +
-          'Due to the browsers security settings, images can not be inlined if the demo is started from the file system. ' +
-          'Please start the demo from a web server.'
-      )
+      'This demo features image export with inlined images. ' +
+        'Due to the browsers security settings, images can not be inlined if the demo is started from the file system. ' +
+        'Please start the demo from a web server.'
     )
   }
 
@@ -115,26 +113,29 @@ function run(licenseData) {
   createNetworkGraph()
 
   if (ieVersion !== -1 && ieVersion <= 9) {
-    // disable client side export button in IE9 and hide the save buttons
+    // disable client-side export button in IE9 and hide the save buttons
     document.getElementById('ExportButton').disabled = true
     const clientSaveButton = document.getElementById('clientPdfSaveButton')
     clientSaveButton.setAttribute('style', 'display: none')
   }
 
-  // disable server sided export in IE9 due to limited XHR CORS support
+  // disable server-side export in IE9 due to limited XHR CORS support
   if (ieVersion === -1 || (ieVersion !== -1 && ieVersion > 9)) {
-    // if a server is available, enable the server export button
-    isServerAlive(JAVA_SERVLET_URL).then(isAlive => {
-      document.getElementById('BatikServerExportButton').disabled = !isAlive
-    })
-    isServerAlive(PHANTOM_JS_URL).then(isAlive => {
-      document.getElementById('PhantomServerExportButton').disabled = !isAlive
-    })
+    enableServerSideExportButtons()
   }
 
   registerCommands()
 
   showApp(graphComponent)
+}
+
+async function enableServerSideExportButtons() {
+  // if a server is available, enable the server export button
+  const isAliveJava = await isServerAlive(JAVA_SERVLET_URL)
+  document.getElementById('BatikServerExportButton').disabled = !isAliveJava
+
+  const isAliveNode = await isServerAlive(NODE_SERVER_URL)
+  document.getElementById('NodeServerServerExportButton').disabled = !isAliveNode
 }
 
 /**
@@ -169,7 +170,7 @@ function registerCommands() {
   const inputMargin = document.getElementById('margin')
   const inputUseRect = document.getElementById('useRect')
 
-  bindAction("button[data-command='Export']", () => {
+  bindAction("button[data-command='Export']", async () => {
     const scale = parseFloat(inputScale.value)
     const margin = parseFloat(inputMargin.value)
     if (checkInputValues(scale, margin)) {
@@ -178,47 +179,44 @@ function registerCommands() {
       // configure export, export the image and show a dialog to save the image
       clientSidePdfExport.scale = scale
       clientSidePdfExport.margins = new Insets(margin)
-      clientSidePdfExport.exportPdf(graphComponent.graph, rectangle).then(pdfUrl => {
-        if (ieVersion !== -1) {
-          // disable HTML preview in IE
-          FileSaveSupport.save(pdfUrl, 'graph.pdf').catch(() => {
-            alert(
-              'Saving directly to the filesystem is not supported by this browser. Please use the server based export instead.'
-            )
-          })
-        } else {
-          showClientExportDialog(pdfUrl)
-        }
-      })
+      const { raw, uri } = await clientSidePdfExport.exportPdf(graphComponent.graph, rectangle)
+      if (ieVersion !== -1) {
+        // disable HTML preview in IE
+        FileSaveSupport.save(raw, 'graph.pdf').catch(() => {
+          alert(
+            'Saving directly to the filesystem is not supported by this browser. Please use the server based export instead.'
+          )
+        })
+      } else {
+        showClientExportDialog(raw, uri)
+      }
     }
   })
 
-  bindAction("button[data-command='BatikServerExportButton']", () => {
+  bindAction("button[data-command='BatikServerExportButton']", async () => {
     const scale = parseFloat(inputScale.value)
     const margin = parseFloat(inputMargin.value)
     if (checkInputValues(scale, margin)) {
       const rectangle = inputUseRect && inputUseRect.checked ? new Rect(exportRect) : null
 
-      // configure export, export the image and show a dialog to save the image
+      // configure export, export the SVG and show a dialog to download the image
       serverSidePdfExport.scale = scale
       serverSidePdfExport.margins = new Insets(margin)
-      serverSidePdfExport.exportSvg(graphComponent.graph, rectangle).then(pdf => {
-        showServerExportDialog(pdf.element, pdf.size, JAVA_SERVLET_URL)
-      })
+      const pdf = await serverSidePdfExport.exportSvg(graphComponent.graph, rectangle)
+      requestServerExport(pdf.element, pdf.size, JAVA_SERVLET_URL)
     }
   })
-  bindAction("button[data-command='PhantomServerExportButton']", () => {
+  bindAction("button[data-command='NodeServerServerExportButton']", async () => {
     const scale = parseFloat(inputScale.value)
     const margin = parseFloat(inputMargin.value)
     if (checkInputValues(scale, margin)) {
       const rectangle = inputUseRect && inputUseRect.checked ? new Rect(exportRect) : null
 
-      // configure export, export the image and show a dialog to save the image
+      // configure export, export the SVG and show a dialog to download the image
       serverSidePdfExport.scale = scale
       serverSidePdfExport.margins = new Insets(margin)
-      serverSidePdfExport.exportSvg(graphComponent.graph, rectangle).then(pdf => {
-        showServerExportDialog(pdf.element, pdf.size, PHANTOM_JS_URL)
-      })
+      const pdf = await serverSidePdfExport.exportSvg(graphComponent.graph, rectangle)
+      requestServerExport(pdf.element, pdf.size, NODE_SERVER_URL)
     }
   })
 
@@ -250,12 +248,12 @@ function checkInputValues(scale, margin) {
 }
 
 /**
- * Requests the pdf export from the server, the file-dialog is displayed afterwards to save the graph.
+ * Requests the PDF export from the server.
  * @param {Element} svgElement
  * @param {Size} size
  * @param {string} serverUrl
  */
-function showServerExportDialog(svgElement, size, serverUrl) {
+function requestServerExport(svgElement, size, serverUrl) {
   const svgString = SvgExport.exportSvgString(svgElement)
   serverSidePdfExport.requestFile(serverUrl, 'pdf', svgString, size)
 
@@ -263,10 +261,11 @@ function showServerExportDialog(svgElement, size, serverUrl) {
 }
 
 /**
- * Shows the export dialog for the client sided graph exports.
+ * Shows the export dialog for the client-side graph exports.
+ * @param {string} raw
  * @param {string} pdfUrl
  */
-function showClientExportDialog(pdfUrl) {
+function showClientExportDialog(raw, pdfUrl) {
   const pdfIframe = document.createElement('iframe')
   pdfIframe.setAttribute('style', 'width: 99%; height: 99%')
   pdfIframe.src = pdfUrl
@@ -278,7 +277,7 @@ function showClientExportDialog(pdfUrl) {
   pdfButton.addEventListener(
     'click',
     () => {
-      FileSaveSupport.save(pdfUrl, 'graph.pdf').catch(() => {
+      FileSaveSupport.save(raw, 'graph.pdf').catch(() => {
         alert(
           'Saving directly to the filesystem is not supported by this browser. Please use the server based export instead.'
         )
@@ -294,11 +293,7 @@ function showClientExportDialog(pdfUrl) {
  * Initializes the input modes.
  */
 function initializeInputModes() {
-  // Create a GraphEditorInputMode instance
-  const editMode = new GraphEditorInputMode()
-
-  // and install the edit mode into the canvas.
-  graphComponent.inputMode = editMode
+  graphComponent.inputMode = new GraphEditorInputMode()
 
   // create the model for the export rectangle
   exportRect = new MutableRectangle(-10, 0, 300, 160)
@@ -311,12 +306,12 @@ function initializeInputModes() {
     exportRect
   )
 
-  addExportRectInputModes(editMode)
+  addExportRectInputModes(graphComponent.inputMode)
 }
 
 /**
  * Adds the view modes that handle the resizing and movement of the export rectangle.
- * @param {MultiplexingInputMode} inputMode
+ * @param {GraphInputMode} inputMode
  */
 function addExportRectInputModes(inputMode) {
   // create a mode that deals with the handles

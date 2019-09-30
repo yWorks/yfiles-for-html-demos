@@ -122,18 +122,17 @@ function tryLocalStorage() {
   })
 }
 
-export default function loadLicenseJSON() {
-  return fetch('../../../lib/license.json')
-    .then(response => {
-      if (response.ok) {
-        return response.json()
-      } else {
-        console.log('Could not load license json')
-        return tryLocalStorage()
-      }
-    })
-    .catch(e => {
-      console.log('Could not load license json', e)
+export default async function loadLicenseJSON() {
+  try {
+    const response = await fetch('../../../lib/license.json')
+    if (response.ok) {
+      return response.json()
+    } else {
+      console.log('Could not load license json')
       return tryLocalStorage()
-    })
+    }
+  } catch (e) {
+    console.log('Could not load license json', e)
+    return tryLocalStorage()
+  }
 }

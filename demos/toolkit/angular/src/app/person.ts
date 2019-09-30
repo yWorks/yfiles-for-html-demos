@@ -1,4 +1,4 @@
-import { BaseClass, IPropertyObservable, PropertyChangedEventArgs } from 'yfiles'
+import { IPropertyObservable } from 'yfiles'
 
 /**
  * Class for representing one person. It implements {@link IPropertyObservable} so that {@link TemplateNodeStyle} can
@@ -12,8 +12,8 @@ export class Person {
   private _phone: string
   private _fax: string
   private _businessUnit: string
-  private _status: string
-  private _icon: string
+  private readonly _status: string
+  private readonly _icon: string
 
   get position() {
     return this._position
@@ -59,7 +59,25 @@ export class Person {
     this._businessUnit = value
   }
 
-  constructor({ position, name, email, phone, fax, businessUnit, status, icon }) {
+  constructor({
+    position,
+    name,
+    email,
+    phone,
+    fax,
+    businessUnit,
+    status,
+    icon
+  }: {
+    position: string
+    name: string
+    email: string
+    phone: string
+    fax: string
+    businessUnit: string
+    status: string
+    icon: string
+  }) {
     this._position = position
     this._name = name
     this._email = email

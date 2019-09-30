@@ -30,6 +30,7 @@ import {
   ExteriorLabelModel,
   FreeNodePortLocationModel,
   GraphComponent,
+  GraphOverviewComponent,
   ICommand,
   IGraph,
   License,

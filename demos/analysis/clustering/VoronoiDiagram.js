@@ -45,7 +45,7 @@ import {
 } from 'yfiles'
 
 /**
- * Creates a Voronoi diagram from a delauney triangulation. The result is returns as a sequence of
+ * Creates a Voronoi diagram from a Delauney triangulation. The result is returns as a sequence of
  * {@link GeneralPath}s that define the Voronoi faces. This class is built upon the notions of
  * triangulations, planar embedding and faces and presupposes that the user is familiar with these notions.
  */
@@ -498,10 +498,10 @@ export default class VoronoiDiagram {
    * @param {Array} mark Holds the edges that have already been visited
    * @param {IEdgeMap} reversedEdgesMap An edge map that holds for each edge the corresponding
    * reversed edge
-   * @return {Face}
+   * @return {VoronoiFace}
    */
   createFace(edge, mark, reversedEdgesMap) {
-    const face = new Face()
+    const face = new VoronoiFace()
     const startEdge = edge
     let ok = true
     while (ok) {
@@ -523,7 +523,7 @@ export default class VoronoiDiagram {
   /**
    * Adds an edge to the given face.
    * @param {Edge} edge The given edge
-   * @param {Face} face The face to which the edge belongs
+   * @param {VoronoiFace} face The face to which the edge belongs
    * @param {IEdgeMap} edge2face An edge map that holds for each edge the face(s) to which the edge
    * belongs
    */
@@ -609,9 +609,9 @@ export default class VoronoiDiagram {
     voronoiGraph.edges.forEach(edge => {
       const source = edge.source
       const target = edge.target
-      const dart1 = new Dart(source, target, edge, index++)
+      const dart1 = new VoronoiDart(source, target, edge, index++)
       darts.push(dart1)
-      const dart2 = new Dart(target, source, edge, index++)
+      const dart2 = new VoronoiDart(target, source, edge, index++)
       darts.push(dart2)
 
       // store the dart to its origin node's list
@@ -775,7 +775,7 @@ export default class VoronoiDiagram {
  * two darts, one that represents the edge in its original direction (i.e., from source to target) and one that
  * represents its reverse.
  */
-class Dart {
+class VoronoiDart {
   /**
    * Creates a new instance of Dart
    * @param {YNode} source
@@ -796,7 +796,7 @@ class Dart {
 
   /**
    * Gets the next dart in counter-clockwise order.
-   * @return {Dart} The next dart
+   * @return {VoronoiDart} The next dart
    */
   get next() {
     return this.$next
@@ -804,7 +804,7 @@ class Dart {
 
   /**
    * Sets the next dart in counter-clockwise order.
-   * @param {Dart} next The next dart
+   * @param {VoronoiDart} next The next dart
    */
   set next(next) {
     this.$next = next
@@ -828,7 +828,7 @@ class Dart {
 
   /**
    * Gets the reversed dart for this dart.
-   * @return {Dart} The reversed dart
+   * @return {VoronoiDart} The reversed dart
    */
   get reversed() {
     return this.$reversed
@@ -836,7 +836,7 @@ class Dart {
 
   /**
    * Sets the reversed dart for this dart.
-   * @param {Dart} reversed The reversed dart
+   * @param {VoronoiDart} reversed The reversed dart
    */
   set reversed(reversed) {
     this.$reversed = reversed
@@ -862,7 +862,7 @@ class Dart {
 /**
  * This class models a triangular face.
  */
-class Face {
+class VoronoiFace {
   constructor() {
     this.$voronoiNode = null
     this.$edges = []

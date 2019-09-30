@@ -42,6 +42,7 @@ export class NodeComponent {
 
   constructor(private changeDetector: ChangeDetectorRef) {
     this.item = <Person>{}
+    this.zoom = 1
   }
 
   get zoomDetail() {

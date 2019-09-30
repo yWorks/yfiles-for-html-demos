@@ -887,10 +887,10 @@ const TreeLayoutConfig = Class('TreeLayoutConfig', {
     },
     get: function() {
       return (
-        this.nodePlacerItem === TreeLayoutConfig.EnumNodePlacer.ASPECT_RATIO ||
+        (this.nodePlacerItem === TreeLayoutConfig.EnumNodePlacer.ASPECT_RATIO ||
         this.nodePlacerItem === TreeLayoutConfig.EnumNodePlacer.BUS ||
         this.nodePlacerItem === TreeLayoutConfig.EnumNodePlacer.DENDROGRAM ||
-        this.nodePlacerItem === TreeLayoutConfig.EnumNodePlacer.COMPACT
+        this.nodePlacerItem === TreeLayoutConfig.EnumNodePlacer.COMPACT)
       )
     }
   },
@@ -936,8 +936,8 @@ const TreeLayoutConfig = Class('TreeLayoutConfig', {
     },
     get: function() {
       return (
-        this.nodePlacerItem === TreeLayoutConfig.EnumNodePlacer.ASPECT_RATIO ||
-        this.nodePlacerItem === TreeLayoutConfig.EnumNodePlacer.COMPACT
+        (this.nodePlacerItem === TreeLayoutConfig.EnumNodePlacer.ASPECT_RATIO ||
+        this.nodePlacerItem === TreeLayoutConfig.EnumNodePlacer.COMPACT)
       )
     }
   },
@@ -981,8 +981,8 @@ const TreeLayoutConfig = Class('TreeLayoutConfig', {
     },
     get: function() {
       return (
-        this.nodePlacerItem !== TreeLayoutConfig.EnumNodePlacer.ASPECT_RATIO &&
-        this.nodePlacerItem !== TreeLayoutConfig.EnumNodePlacer.COMPACT
+        (this.nodePlacerItem !== TreeLayoutConfig.EnumNodePlacer.ASPECT_RATIO &&
+        this.nodePlacerItem !== TreeLayoutConfig.EnumNodePlacer.COMPACT)
       )
     }
   },
@@ -1020,10 +1020,10 @@ const TreeLayoutConfig = Class('TreeLayoutConfig', {
     },
     get: function() {
       return (
-        this.nodePlacerItem !== TreeLayoutConfig.EnumNodePlacer.DEFAULT &&
+        (this.nodePlacerItem !== TreeLayoutConfig.EnumNodePlacer.DEFAULT &&
         this.nodePlacerItem !== TreeLayoutConfig.EnumNodePlacer.DENDROGRAM &&
         this.nodePlacerItem !== TreeLayoutConfig.EnumNodePlacer.BUS &&
-        this.nodePlacerItem !== TreeLayoutConfig.EnumNodePlacer.LEFT_RIGHT
+        this.nodePlacerItem !== TreeLayoutConfig.EnumNodePlacer.LEFT_RIGHT)
       )
     }
   },
@@ -1475,9 +1475,9 @@ const TreeLayoutConfig = Class('TreeLayoutConfig', {
     },
     get: function() {
       return (
-        this.orthogonalEdgeRoutingItem === false ||
+        (this.orthogonalEdgeRoutingItem === false ||
         (this.enforceGlobalLayeringItem === false &&
-          this.childPlacementPolicyItem !== LeafPlacement.ALL_LEAVES_ON_SAME_LAYER)
+          this.childPlacementPolicyItem !== LeafPlacement.ALL_LEAVES_ON_SAME_LAYER))
       )
     }
   },
@@ -1697,7 +1697,9 @@ const TreeLayoutConfig = Class('TreeLayoutConfig', {
           values: [
             ['Anywhere', LayoutConfiguration.EnumLabelPlacementAlongEdge.ANYWHERE],
             ['At Source', LayoutConfiguration.EnumLabelPlacementAlongEdge.AT_SOURCE],
+            ['At Source Port', LayoutConfiguration.EnumLabelPlacementAlongEdge.AT_SOURCE_PORT],
             ['At Target', LayoutConfiguration.EnumLabelPlacementAlongEdge.AT_TARGET],
+            ['At Target Port', LayoutConfiguration.EnumLabelPlacementAlongEdge.AT_TARGET_PORT],
             ['Centered', LayoutConfiguration.EnumLabelPlacementAlongEdge.CENTERED]
           ]
         }),
@@ -1805,9 +1807,9 @@ const TreeLayoutConfig = Class('TreeLayoutConfig', {
     },
     get: function() {
       return (
-        this.edgeLabelingItem === TreeLayoutConfig.EnumEdgeLabeling.NONE ||
+        (this.edgeLabelingItem === TreeLayoutConfig.EnumEdgeLabeling.NONE ||
         this.labelPlacementSideOfEdgeItem ===
-          LayoutConfiguration.EnumLabelPlacementSideOfEdge.ON_EDGE
+          LayoutConfiguration.EnumLabelPlacementSideOfEdge.ON_EDGE)
       )
     }
   },

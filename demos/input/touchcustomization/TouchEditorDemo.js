@@ -31,8 +31,10 @@ import {
   ArrowType,
   BevelNodeStyle,
   Color,
+  ContextMenuInputMode,
   DefaultGraph,
   DefaultLabelStyle,
+  DefaultPortCandidateDescriptor,
   DragDropEffects,
   EdgeStyleDecorationInstaller,
   Fill,
@@ -79,7 +81,11 @@ import { DemoGroupStyle, initDemoStyles, DemoNodeStyle } from '../../resources/d
 import TouchHandleInputMode from './TouchHandleInputMode.js'
 import { showApp } from '../../resources/demo-app.js'
 import loadJson from '../../resources/load-json.js'
+import PortCandidateTemplate from './PortCandidateTemplate.js'
+
+/** @type {GraphComponent} */
 let graphComponent = null
+
 const handleRadius = 15
 
 function run(licenseData) {
@@ -98,6 +104,8 @@ function run(licenseData) {
   initializePanSnapping(inputMode)
   // configure the custom handles
   initializeCustomHandles()
+  // configure the custom port candidates
+  initializeCustomPortCandidates()
   // configure the selection decoration
   configureSelectionDecoration()
   // configure edge reconnection
@@ -280,8 +288,8 @@ function initializeContextMenu(mode) {
   contextMenu.addEventListeners(graphComponent, handleContextMenuTrigger)
 
   /**
-   * This listener function informs the ContextMenuInputMode that a context menu should be opened. If that is
-   * permitted by ContextMenuInputMode, this method actually makes the HTML elements of the menu visible.
+   * This listener function informs the {@link ContextMenuInputMode} that a context menu should be opened. If that is
+   * permitted by {@link ContextMenuInputMode}, this method actually makes the HTML elements of the menu visible.
    * @param {Point} location
    */
   function handleContextMenuTrigger(location) {
@@ -516,6 +524,32 @@ function initializeCustomHandles() {
   // use variant 2 of move handle for bends
   graphComponent.graph.decorator.bendDecorator.handleDecorator.setImplementationWrapper(
     (bend, handle) => new WrappingHandle(handle, HandleTypes.MOVE | HandleTypes.VARIANT2)
+  )
+}
+
+/**
+ * Installs custom port candidate visualizations for interactive edge creation.
+ */
+function initializeCustomPortCandidates() {
+  const validFocusedStyle = new ShapeNodeStyle({
+    shape: 'ellipse',
+    fill: 'rgba(11, 85, 23, 0.9)',
+    stroke: 'rgba(255, 255, 255, 0.7)'
+  })
+  const validNonFocusedStyle = new ShapeNodeStyle({
+    shape: 'ellipse',
+    fill: 'rgba(11, 85, 23, 0.5)',
+    stroke: 'rgba(255, 255, 255, 0.3)'
+  })
+
+  // use adapter class with the ShapeNodeStyle instances to style the port candidates
+  graphComponent.resources.set(
+    DefaultPortCandidateDescriptor.CANDIDATE_DRAWING_VALID_FOCUSED_KEY,
+    new PortCandidateTemplate(validFocusedStyle)
+  )
+  graphComponent.resources.set(
+    DefaultPortCandidateDescriptor.CANDIDATE_DRAWING_VALID_NON_FOCUSED_KEY,
+    new PortCandidateTemplate(validNonFocusedStyle)
   )
 }
 

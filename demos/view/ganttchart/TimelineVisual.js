@@ -26,8 +26,10 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { HtmlCanvasVisual, IRenderContext } from 'yfiles'
-import Mapper from './Mapper.js'
+/* global moment */
+
+import { CanvasComponent, HtmlCanvasVisual, IRenderContext } from 'yfiles'
+import GanttMapper from './GanttMapper.js'
 
 const colors = ['#6991ff', '#9bc3ff']
 
@@ -35,14 +37,18 @@ const colors = ['#6991ff', '#9bc3ff']
  * Manages and renders the timeline ruler
  */
 export default class TimelineVisual extends HtmlCanvasVisual {
+  /**
+   * Creates a new instance.
+   * @param {GanttMapper} mapper The mapper.
+   */
   constructor(mapper) {
     super()
+    /** @type {GanttMapper} */
     this.mapper = mapper
   }
 
   /**
-   * @param {IRenderContext} renderContext - The render context of the
-   *   {@link CanvasComponent}
+   * @param {IRenderContext} renderContext - The render context of the {@link CanvasComponent}
    * @param {CanvasRenderingContext2D} canvasContext - The HTML5 Canvas context to use for rendering.
    */
   paint(renderContext, canvasContext) {
@@ -74,7 +80,7 @@ export default class TimelineVisual extends HtmlCanvasVisual {
     canvasContext.strokeStyle = 'white'
     canvasContext.lineWidth = 3
     const y = 35
-    const width = Mapper.dayWidth
+    const width = GanttMapper.dayWidth
     const halfWidth = width * 0.5
     const height = 30
     const halfHeight = height * 0.5
@@ -87,7 +93,7 @@ export default class TimelineVisual extends HtmlCanvasVisual {
       canvasContext.strokeRect(x, y, width, height)
       canvasContext.fillStyle = 'white'
       canvasContext.fillText(date.format('DD'), x + halfWidth, y + halfHeight)
-      x += Mapper.dayWidth
+      x += GanttMapper.dayWidth
       date.add(1, 'days')
       odd = !odd
     }
@@ -109,14 +115,14 @@ export default class TimelineVisual extends HtmlCanvasVisual {
     canvasContext.font = '14px sans-serif'
     while (x < endX) {
       const monthDays = date.daysInMonth()
-      const width = Mapper.dayWidth * monthDays
+      const width = GanttMapper.dayWidth * monthDays
       const halfWidth = width * 0.5
       canvasContext.fillStyle = odd ? colors[0] : colors[1]
       canvasContext.fillRect(x, y, width, height)
       canvasContext.strokeRect(x, y, width, height)
       canvasContext.fillStyle = 'white'
       canvasContext.fillText(date.format('MMMM YYYY'), x + halfWidth, y + halfHeight)
-      x += Mapper.dayWidth * monthDays
+      x += GanttMapper.dayWidth * monthDays
       date.add(1, 'months')
       odd = !odd
     }

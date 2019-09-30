@@ -780,9 +780,9 @@ const OrganicLayoutConfig = Class('OrganicLayoutConfig', {
     },
     get: function() {
       return (
-        this.restrictOutputItem !== OrganicLayoutConfig.EnumOutputRestrictions.OUTPUT_CAGE &&
+        (this.restrictOutputItem !== OrganicLayoutConfig.EnumOutputRestrictions.OUTPUT_CAGE &&
         this.restrictOutputItem !==
-          OrganicLayoutConfig.EnumOutputRestrictions.OUTPUT_ELLIPTICAL_CAGE
+          OrganicLayoutConfig.EnumOutputRestrictions.OUTPUT_ELLIPTICAL_CAGE)
       )
     }
   },
@@ -1462,7 +1462,9 @@ const OrganicLayoutConfig = Class('OrganicLayoutConfig', {
           values: [
             ['Anywhere', LayoutConfiguration.EnumLabelPlacementAlongEdge.ANYWHERE],
             ['At Source', LayoutConfiguration.EnumLabelPlacementAlongEdge.AT_SOURCE],
+            ['At Source Port', LayoutConfiguration.EnumLabelPlacementAlongEdge.AT_SOURCE_PORT],
             ['At Target', LayoutConfiguration.EnumLabelPlacementAlongEdge.AT_TARGET],
+            ['At Target Port', LayoutConfiguration.EnumLabelPlacementAlongEdge.AT_TARGET_PORT],
             ['Centered', LayoutConfiguration.EnumLabelPlacementAlongEdge.CENTERED]
           ]
         }),
@@ -1570,9 +1572,9 @@ const OrganicLayoutConfig = Class('OrganicLayoutConfig', {
     },
     get: function() {
       return (
-        !this.edgeLabelingItem ||
+        (!this.edgeLabelingItem ||
         this.labelPlacementSideOfEdgeItem ===
-          LayoutConfiguration.EnumLabelPlacementSideOfEdge.ON_EDGE
+          LayoutConfiguration.EnumLabelPlacementSideOfEdge.ON_EDGE)
       )
     }
   },

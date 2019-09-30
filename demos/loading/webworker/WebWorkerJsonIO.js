@@ -98,7 +98,7 @@ export function readJSON(jsonGraph) {
   jsonReader.nodeCreated = (node, nodeData) => {
     const insets = nodeData.insets
     if (insets) {
-      insetsMapper.set(node, new Insets(insets.left, insets.top, insets.right, insets.bottom))
+      insetsMapper.set(node, Insets.from(insets))
     }
   }
 

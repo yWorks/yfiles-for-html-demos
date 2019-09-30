@@ -67,7 +67,7 @@ import loadJson from '../../resources/load-json.js'
 /** @type {GraphComponent} */
 let graphComponent = null
 
-function run(licenseData) {
+async function run(licenseData) {
   License.value = licenseData
   graphComponent = new GraphComponent('#graphComponent')
   graphComponent.graph.undoEngineEnabled = true
@@ -82,10 +82,9 @@ function run(licenseData) {
 
   // bootstrap the sample graph
   generateSampleGraph()
-  executeLayout().then(() => {
-    // the sample graph bootstrapping should not be undoable
-    graphComponent.graph.undoEngine.clear()
-  })
+  await executeLayout()
+  // the sample graph bootstrapping should not be undoable
+  graphComponent.graph.undoEngine.clear()
 
   // bind the demo buttons to their commands
   registerCommands()

@@ -35,7 +35,6 @@ import {
   ILabel,
   INode,
   ISelectionModel,
-  ItemCopiedEventArgs,
   License,
   NinePositionsEdgeLabelModel,
   Point,
@@ -110,8 +109,12 @@ function initializeGraph() {
   graphComponent.enabled = true
 
   // Register specialized copiers that can deal with our business objects
-  graphComponent.clipboard.fromClipboardCopier.addNodeCopiedListener(nodeCopiedOnPaste)
-  graphComponent.clipboard.toClipboardCopier.addNodeCopiedListener(nodeCopiedOnCopy)
+  graphComponent.clipboard.fromClipboardCopier.addNodeCopiedListener((sender, evt) => {
+    evt.copy.tag = nodeCopiedOnPaste(evt.original)
+  })
+  graphComponent.clipboard.toClipboardCopier.addNodeCopiedListener((sender, evt) => {
+    evt.copy.tag = nodeCopiedOnCopy(evt.original)
+  })
 
   // Initialize the right graph
   const graph2 = graphComponent2.graph
@@ -131,33 +134,35 @@ function initializeGraph() {
 
 /**
  * Called when a node is pasted.
- * @param {object} sender The source of the even
- * @param {ItemCopiedEventArgs<INode>} e An object that contains the event data
+ * Either yields a previously cached copy for the given original or uses the copyDelegate to create the copy of the original.
+ * @param {Object} original The original item
+ * @return {Object} A copy of the original, either cached, or newly created and then cached
  */
-function nodeCopiedOnPaste(sender, e) {
-  e.copy.tag = graphComponent.clipboard.fromClipboardCopier.getOrCreateCopy(
+function nodeCopiedOnPaste(original) {
+  return graphComponent.clipboard.fromClipboardCopier.getOrCreateCopy(
     YObject.$class,
-    e.original.tag,
+    original.tag,
     createBusinessObjectFromTagCopyItem
   )
 }
 
 /**
  * Called when a node is copied.
- * @param {object} sender The source of the even
- * @param {ItemCopiedEventArgs<INode>} e An object that contains the event data
+ * Either yields a previously cached copy for the given original or uses the copyDelegate to create the copy of the original.
+ * @param {Object} original The original item
+ * @return {Object} A copy of the original, either cached, or newly created and then cached
  */
-function nodeCopiedOnCopy(sender, e) {
-  e.copy.tag = graphComponent.clipboard.toClipboardCopier.getOrCreateCopy(
+function nodeCopiedOnCopy(original) {
+  return graphComponent.clipboard.toClipboardCopier.getOrCreateCopy(
     YObject.$class,
-    e.original.tag,
+    original.tag,
     value => new TagCopyItem(value)
   )
 }
 
 /**
  * Creates a business object from the given tag.
- * @param {object} tag
+ * @param {Object} tag
  * @return {Object}
  */
 function createBusinessObjectFromTagCopyItem(tag) {

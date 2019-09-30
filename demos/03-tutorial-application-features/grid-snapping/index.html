@@ -42,6 +42,26 @@
   <!-- enable debugging -->
   <script src="../../../ide-support/yfiles-typeinfo.js"></script>
   <script src="../../resources/filesystem-warning.js"></script>
+
+  <style>
+    .selectedColor {
+      stroke: #6c6c6c;
+      stroke-width: 2px;
+      width: 24px;
+      height: 24px;
+    }
+
+    #gridColorPicker {
+      padding: 5px;
+      width: 250px;
+      height: 30px;
+    }
+
+    .demo-right fieldset {
+      width: 260px;
+    }
+  </style>
+
 </head>
 <body class="demo-has-left">
 
@@ -49,19 +69,74 @@
   <h1 class="demo-sidebar-header">Description</h1>
   <div class="demo-sidebar-content">
     <h2>Grid Snapping</h2>
-    <p>This demo shows how to enable <a href="https://docs.yworks.com/yfileshtml/#/dguide/interaction-grid_snapping" target="_blank"> grid snapping</a> for graph
-      elements. Also class <a href="https://docs.yworks.com/yfileshtml/#/api/GridVisualCreator" target="_blank">GridVisualCreator</a> provides the visualization of the grid.</p>
+    <p>
+      This demo shows the <a href="https://docs.yworks.com/yfileshtml/#/dguide/interaction-grid_snapping" target="_blank">grid snapping</a> feature which enables
+      snapping graph items to grid points. Grid snapping not only works for moving or resizing nodes, but also for
+      creating edges and adding and moving bends.
+    </p>
+
+    <h3>Things to Try</h3>
 
     <ul>
-      <li>Click the 'Show Grid' button in the toolbar to toggle the grid's visibility. The snapping feature is
-        unaffected.
+      <li>
+        Toggle the grid's visibility with the 'Show Grid' icon in the toolbar. The snapping feature itself is unaffected
+        by the visibility.
       </li>
-      <li>Use the 'Grid Snapping' box to choose how items snap to the grid.</li>
-      <li>Select and move a node or bend to make it snap to the grid.</li>
-      <li>Select and resize a node to make it snap to the grid.</li>
+      <li>
+        Specify how items snap to the grid with the 'Grid Snapping' options on the right. The
+        grid visualization is not affected by this snap type.
+      </li>
+      <li>
+        Select and move a node or bend to make it snap to the grid.
+      </li>
+      <li>
+        Select and resize a node to make it snap to the grid.
+      </li>
+      <li>
+        Change the grid visualization.
+      </li>
+      <li>
+        Choose a different color for the grid.
+      </li>
+      <li>
+        Change the thickness of the grid.
+      </li>
+      <li>
+        Test the different render modes for the grid.
+      </li>
     </ul>
 
     <p>See the sources for details.</p>
+  </div>
+</aside>
+
+<aside class="demo-sidebar demo-right">
+  <h1 class="demo-sidebar-header">Grid Snapping Options</h1>
+
+  <div class="demo-sidebar-content">
+
+    <fieldset>
+      <legend>Grid Snapping</legend>
+      <form id="gridSnapTypeRadioGroup"></form>
+    </fieldset>
+    <fieldset>
+      <legend>Grid Appearance</legend>
+      <form id="gridStyleRadioGroup"></form>
+      <p>
+        <span>Color</span><br>
+        <svg xmlns="http://www.w3.org/2000/svg" id="gridColorPicker"></svg>
+      </p>
+      <label>
+        Thickness<br>
+        <input type="range" min="1" max="5" value="1" id="thickness" />
+        <span id="thickness-label">1</span>
+      </label>
+    </fieldset>
+
+    <fieldset>
+      <legend>Grid Render Mode</legend>
+      <form id="gridRenderModeRadioGroup"></form>
+    </fieldset>
   </div>
 </aside>
 
@@ -83,11 +158,8 @@
     <button data-command="GroupSelection" title="Group selected element" class="demo-icon-yIconGroup"></button>
     <button data-command="UngroupSelection" title="Ungroup selected element" class="demo-icon-yIconUngroup"></button>
 
-    <input type="checkbox" id="grid-button" class="demo-toggle-button" checked><label for="grid-button"
-    class="demo-icon-yIconGrid" title="Show Grid"></label>
-
-    <span class="demo-separator"></span> Grid Snapping <select data-type="ComboBox" data-command="GridSnapTypeChanged"
-    id="gridSnapTypeComboBox" title="Set the Grid Snapping Type"></select>
+    <span class="demo-separator"></span> <input type="checkbox" id="grid-button" class="demo-toggle-button"
+    checked><label for="grid-button" class="demo-icon-yIconGrid" title="Show Grid"></label>
   </div>
 
   <div id="graphComponent"></div>

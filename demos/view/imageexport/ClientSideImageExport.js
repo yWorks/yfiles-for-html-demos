@@ -74,12 +74,12 @@ export default class ClientSideImageExport {
   }
 
   /**
-   * Exports the graph to a png-image.
+   * Exports the graph to a PNG image.
    * @param {IGraph} graph
    * @param {Rect} exportRect
    * @return {Promise.<HTMLImageElement>}
    */
-  exportImage(graph, exportRect) {
+  async exportImage(graph, exportRect) {
     // Create a new graph component for exporting the original SVG content
     const exportComponent = new GraphComponent()
     // ... and assign it the same graph.
@@ -103,11 +103,13 @@ export default class ClientSideImageExport {
     }
 
     // export the component to svg
-    return exporter.exportSvgAsync(exportComponent).then(svgElement => {
-      // convert svgElement to png-image
-      const size = new Size(exporter.viewWidth, exporter.viewHeight)
-      return renderSvgToPng(svgElement, size, this.margins)
-    })
+    const svgElement = await exporter.exportSvgAsync(exportComponent)
+
+    return renderSvgToPng(
+      svgElement,
+      new Size(exporter.viewWidth, exporter.viewHeight),
+      this.margins
+    )
   }
 }
 
@@ -115,7 +117,7 @@ const ieVersion = detectInternetExplorerVersion()
 const ffVersion = detectFirefoxVersion()
 
 /**
- * Renders the given svg-element to a png-image.
+ * Renders the given SVG element to a PNG image.
  * @param {SVGElement} svgElement
  * @param {Size} size
  * @param {Insets} margins
@@ -152,22 +154,25 @@ function renderSvgToPng(svgElement, size, margins) {
       targetCanvas.height = size.height + (margins.top + margins.bottom)
 
       // IE 11 on Windows 7 needs a timeout here
-      setTimeout(() => {
-        try {
-          targetContext.drawImage(svgImage, margins.left, margins.top)
-          // When the svg image has been rendered to the Canvas,
-          // the raster image can be exported from the Canvas.
-          const pngImage = new Image()
-          // The following 'toDataURL' function throws a security error in IE
-          pngImage.src = targetCanvas.toDataURL('image/png')
-          pngImage.onload = () => {
-            resolve(pngImage)
+      setTimeout(
+        () => {
+          try {
+            targetContext.drawImage(svgImage, margins.left, margins.top)
+            // When the svg image has been rendered to the Canvas,
+            // the raster image can be exported from the Canvas.
+            const pngImage = new Image()
+            // The following 'toDataURL' function throws a security error in IE
+            pngImage.src = targetCanvas.toDataURL('image/png')
+            pngImage.onload = () => {
+              resolve(pngImage)
+            }
+          } catch (error) {
+            // Use the canvg fall-back when the above solution doesn't work
+            resolve(exportImageWithCanvg(svgElement, targetCanvas, error))
           }
-        } catch (error) {
-          // Use the canvg fall-back when the above solution doesn't work
-          resolve(exportImageWithCanvg(svgElement, targetCanvas, error))
-        }
-      }, ieVersion > -1 ? 100 : 0)
+        },
+        ieVersion > -1 ? 100 : 0
+      )
     }
 
     // workaround for the following Firefox bug: https://bugzilla.mozilla.org/show_bug.cgi?id=1365622

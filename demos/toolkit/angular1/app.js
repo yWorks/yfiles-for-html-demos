@@ -27,8 +27,8 @@
  **
  ***************************************************************************/
 /*
-* @yjs:keep=command,commandParameter,commandTarget,controller,directive,link,module,restrict,scope
-*/
+ * @yjs:keep=command,commandParameter,commandTarget,controller,directive,link,module,restrict,scope
+ */
 import {
   AssistantNodePlacer,
   ChildPlacement,
@@ -151,7 +151,7 @@ module.directive('graphComponent', [
           // update the graph if the nodesFilter has changed
           let inLayout = false
           let modified = false
-          const updateGraph = () => {
+          const updateGraph = async () => {
             // prevent re-entrant layout
             if (!inLayout) {
               inLayout = true
@@ -159,24 +159,24 @@ module.directive('graphComponent', [
               graphBuilder.nodesSource = $filter('filter')(scope.nodesModel, scope.nodesFilter)
               // update the graph
               graphBuilder.updateGraph()
-              // refresh layout
-              Layout.morphLayout(graphComponent)
-                .then(() => {
-                  inLayout = false
-                  if (modified) {
-                    // call this method again if nodesSource was modified while in layout
-                    modified = false
-                    updateGraph()
-                  }
-                })
-                .catch(error => {
-                  inLayout = false
-                  if (typeof window.reportError === 'function') {
-                    window.reportError(error)
-                  } else {
-                    throw error
-                  }
-                })
+              try {
+                // refresh layout
+                await Layout.morphLayout(graphComponent)
+              } catch (error) {
+                if (typeof window.reportError === 'function') {
+                  window.reportError(error)
+                  return
+                } else {
+                  throw error
+                }
+              } finally {
+                inLayout = false
+              }
+              if (modified) {
+                // call this method again if nodesSource was modified while in layout
+                modified = false
+                return updateGraph()
+              }
             } else {
               // remember when we reach this code path when a layout is already running
               modified = true
@@ -253,7 +253,7 @@ module.directive('graphComponent', [
      * @param {function} compile
      */
     function setupTooltips(graphComponent, scope, compile) {
-      // use an AngularJS template for the tooltip
+      // use an AngularJS template for the tooltip content
       const template = '<div><div>{{item.name}}</div><div>{{item.position}}</div></div>'
       if (graphComponent.inputMode instanceof GraphViewerInputMode) {
         const inputMode = graphComponent.inputMode
@@ -271,7 +271,7 @@ module.directive('graphComponent', [
             // compile the template
             const templateElement = compile(template)(childScope)[0]
             scope.$digest()
-            // set the template element as the tooltip
+            // set the template element as the tooltip content
             eventArgs.toolTip = templateElement
             eventArgs.handled = true
           }
@@ -385,21 +385,19 @@ module.factory('Layout', () => {
     /**
      * @param {GraphComponent} graphComponent
      */
-    morphLayout(graphComponent) {
-      this.configureLayout(graphComponent.graph)
-      return graphComponent
-        .morphLayout(this.treeLayout, '0.5s')
-        .then(() => {
-          this.cleanUp(graphComponent.graph)
-        })
-        .catch(error => {
-          this.cleanUp(graphComponent.graph)
-          if (typeof window.reportError === 'function') {
-            window.reportError(error)
-          } else {
-            throw error
-          }
-        })
+    async morphLayout(graphComponent) {
+      try {
+        this.configureLayout(graphComponent.graph)
+        await graphComponent.morphLayout(this.treeLayout, '0.5s')
+      } catch (error) {
+        if (typeof window.reportError === 'function') {
+          window.reportError(error)
+        } else {
+          throw error
+        }
+      } finally {
+        this.cleanUp(graphComponent.graph)
+      }
     }
   }
 

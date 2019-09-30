@@ -32,6 +32,7 @@ import {
   GeneralPath,
   GraphComponent,
   GraphEditorInputMode,
+  GraphInputMode,
   HandleInputMode,
   HandlePositions,
   ICommand,
@@ -40,7 +41,6 @@ import {
   InteriorStretchLabelModel,
   License,
   MoveInputMode,
-  MultiplexingInputMode,
   MutableRectangle,
   ObservableCollection,
   PanelNodeStyle,
@@ -123,7 +123,7 @@ function initializeInputModes() {
 
 /**
  * Adds the view modes that handle the resizing and movement of the export rectangle.
- * @param {MultiplexingInputMode} inputMode
+ * @param {GraphInputMode} inputMode
  */
 function addExportRectInputModes(inputMode) {
   // create a mode that deals with the handles

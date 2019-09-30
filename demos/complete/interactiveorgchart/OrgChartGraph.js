@@ -83,7 +83,7 @@ export default class OrgChartGraph {
    * Hides the children of the given node or port.
    * @param {INode|IPort} item
    */
-  executeHideChildren(item) {
+  async executeHideChildren(item) {
     if (!this.canExecuteHideChildren(item)) {
       return Promise.resolve()
     }
@@ -103,10 +103,10 @@ export default class OrgChartGraph {
       this.hiddenNodesSet.add(n)
     })
     this.filteredGraph.nodePredicateChanged()
-    return this.refreshLayout(item, incrementalNodes, true).then(() => {
-      incrementalNodes.forEach(n => {
-        this.hiddenNodesSet.add(n)
-      })
+    await this.refreshLayout(item, incrementalNodes, true)
+    incrementalNodes.forEach(n => {
+      this.hiddenNodesSet.add(n)
+
       // inform the filter that the predicate changed and thus the graphs needs to be updates
       this.filteredGraph.nodePredicateChanged()
     })
@@ -204,7 +204,7 @@ export default class OrgChartGraph {
    * Hides the parent of the given node.
    * @param {INode} node
    */
-  executeHideParent(node) {
+  async executeHideParent(node) {
     if (!INode.isInstance(node) || this.doingLayout) {
       return Promise.resolve()
     }
@@ -214,10 +214,11 @@ export default class OrgChartGraph {
       this.hiddenNodesSet.add(n)
     })
     this.filteredGraph.nodePredicateChanged()
-    return this.refreshLayout(node, nodes, true).then(() => {
-      nodes.forEach(n => {
-        this.hiddenNodesSet.add(n)
-      })
+    await this.refreshLayout(node, nodes, true)
+
+    nodes.forEach(n => {
+      this.hiddenNodesSet.add(n)
+
       // inform the filter that the predicate changed and thus the graphs needs to be updates
       this.filteredGraph.nodePredicateChanged()
     })
@@ -322,13 +323,13 @@ export default class OrgChartGraph {
 
   /**
    * Refreshes the node after modifications on the tree.
-   * @param {INode} centerNode
+   * @param {INode|null} centerNode
    * @param {INode[]} incrementalNodes
    * @param {boolean} collapse
    * @param {INode} centerNode
    * @return {Promise} a promise which is resolved when the layout has been executed.
    */
-  refreshLayout(centerNode, incrementalNodes, collapse) {
+  async refreshLayout(centerNode, incrementalNodes, collapse) {
     if (this.doingLayout) {
       return Promise.resolve()
     }
@@ -352,8 +353,10 @@ export default class OrgChartGraph {
     const layout = new FixNodeLayoutStage(new TreeReductionStage(treeLayout))
 
     const layoutData = new CompositeLayoutData()
-    // we mark a node as the center node
-    layoutData.items.add(new FixNodeLayoutData({ fixedNodes: centerNode }))
+    if (centerNode) {
+      // we mark a node as the center node
+      layoutData.items.add(new FixNodeLayoutData({ fixedNodes: centerNode }))
+    }
     if (collapse) {
       // configure PlaceNodesAtBarycenterStage for a smooth animation
       layoutData.items.add(
@@ -377,21 +380,20 @@ export default class OrgChartGraph {
       duration: '0.5s',
       fixPorts: true
     })
-    return executor
-      .start()
-      .then(() => {
-        this.doingLayout = false
-        this.limitViewport()
-        // the commands CanExecute state might have changed - trigger a requery
-        ICommand.invalidateRequerySuggested()
-      })
-      .catch(error => {
-        if (typeof window.reportError === 'function') {
-          window.reportError(error)
-        } else {
-          throw error
-        }
-      })
+
+    try {
+      await executor.start()
+      this.limitViewport()
+      // the commands CanExecute state might have changed - trigger a requery
+      ICommand.invalidateRequerySuggested()
+    } catch (error) {
+      if (typeof window.reportError === 'function') {
+        window.reportError(error)
+      } else {
+        throw error
+      }
+    }
+    this.doingLayout = false
   }
 
   /**
@@ -421,9 +423,37 @@ export default class OrgChartGraph {
   static createConfiguredLayoutData(graph = null, incrementalNodes = []) {
     const hasIncrementalParent = node =>
       graph.inDegree(node) > 0 && incrementalNodes.indexOf(graph.predecessors(node).first()) !== -1
+    const firstLevelOutEdgeComparer = (edge1, edge2) => {
+      // order of the first level person names
+      const firstLevelOrder = [
+        'Mildred Shark',
+        'Amy Kain',
+        'David Kerry',
+        'Richard Fuller',
+        'Angela Haase'
+      ]
+      const targetNode1 = edge1.targetNode
+      const targetNode2 = edge2.targetNode
+      if (targetNode1.tag && targetNode2.tag) {
+        const name1 = targetNode1.tag.name
+        const name2 = targetNode2.tag.name
+        const name1Idx = firstLevelOrder.indexOf(name1)
+        const name2Idx = firstLevelOrder.indexOf(name2)
+        if (name1Idx !== -1 && name2Idx !== -1) {
+          return name1Idx - name2Idx
+        }
+      }
+      return 0
+    }
     return new TreeLayoutData({
       assistantNodes: node =>
-        node.tag && node.tag.assistant && graph.inDegree(node) > 0 && !hasIncrementalParent(node)
+        node.tag && node.tag.assistant && graph.inDegree(node) > 0 && !hasIncrementalParent(node),
+      outEdgeComparers: node => {
+        if (node.tag && node.tag.name === 'Eric Joplin') {
+          return firstLevelOutEdgeComparer
+        }
+        return () => 0
+      }
     })
   }
 

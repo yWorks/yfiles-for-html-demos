@@ -49,8 +49,8 @@ export default class OpenViaServerOperation {
   constructor(fileServerUrl, responseOrigin, clearInputElementValueAfterOpen) {
     this.targetName = 'demo-open-iframe'
     this.uploadFormId = 'demo-upload-form'
-    this.$fileServerUrl = fileServerUrl || 'http://localhost:3000/file/'
-    this.$responseOrigin = responseOrigin || 'http://localhost:3000'
+    this.$fileServerUrl = fileServerUrl || 'http://localhost:4242/file/'
+    this.$responseOrigin = responseOrigin || 'http://localhost:4242'
     this.$executable = false
     this.$inputElement = null
 

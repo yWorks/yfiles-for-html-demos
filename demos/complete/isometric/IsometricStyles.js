@@ -1083,12 +1083,12 @@ export class EdgeLabelStyle extends LabelStyleBase {
     const matrix = new Matrix()
     if (label.tag.geometry && label.tag.geometry.horizontal) {
       // transformation to the left backside of the 3-dimensional label box
-      matrix.translate(new Point(anchor.x, anchor.y))
+      matrix.translate(Point.from(anchor))
       matrix.multiply(new Matrix(0.87, 0, -0.5, 1, 0, 0))
       matrix.translate(new Point(-anchor.x, -anchor.y))
     } else {
       // transformation to the right backside of the 3-dimensional label box
-      matrix.translate(new Point(anchor.x, anchor.y))
+      matrix.translate(Point.from(anchor))
       matrix.multiply(new Matrix(0.87, 0, 0.5, 1, 0, 0))
       matrix.translate(new Point(-anchor.x, -anchor.y))
     }

@@ -29,7 +29,7 @@ License.value = licenseData
 enableWorkarounds()
 
 function run() {
-  document.getElementById('graphOverviewComponent').style.display = 'block'
+  document.getElementById('graphOverviewComponent')!.style.display = 'block'
   const demo = new TypeScript2Demo()
   demo.initializeGraph()
   demo.registerCommands()
@@ -68,7 +68,7 @@ export class TypeScript2Demo {
   }
 
   initializeGraph() {
-    let n: INode = null
+    let n: INode | null = null
     for (let i = 0; i < 5; i++) {
       for (let j = 0; j < 5; j++) {
         let p = this.graph.createNodeAt(new Point(100 * j, 100 * i))
@@ -99,9 +99,9 @@ function bindCommand(
   selector: string,
   command: ICommand,
   target: CanvasComponent,
-  parameter: Object
+  parameter: Object | null
 ) {
-  const element = document.querySelector(selector)
+  const element = document.querySelector(selector)!
   command.addCanExecuteChangedListener((sender, e) => {
     if (command.canExecute(parameter, target)) {
       element.removeAttribute('disabled')

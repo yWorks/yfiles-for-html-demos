@@ -30,6 +30,7 @@ import {
   FreeNodePortLocationModel,
   GraphComponent,
   GraphEditorInputMode,
+  IEdgeReconnectionPortCandidateProvider,
   IGraph,
   IPortCandidateProvider,
   License,

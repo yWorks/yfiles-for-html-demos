@@ -160,232 +160,237 @@ export default {
     {
       from: 0,
       to: 5,
-      label: 13654000
+      label: 13654
     },
     {
       from: 0,
       to: 7,
-      label: 1140000
+      label: 1140
     },
     {
       from: 0,
       to: 8,
-      label: 50000
+      label: 50
     },
     {
       from: 0,
       to: 9,
-      label: 40000
+      label: 40
     },
     {
       from: 0,
       to: 10,
-      label: 1080000
+      label: 1080
     },
     {
       from: 1,
       to: 5,
-      label: 880000
+      label: 880
     },
     {
       from: 1,
       to: 6,
-      label: 9890000
+      label: 9890
     },
     {
       from: 1,
       to: 7,
-      label: 530000
+      label: 530
     },
     {
       from: 1,
       to: 8,
-      label: 870000
+      label: 870
     },
     {
       from: 1,
       to: 9,
-      label: 1100000
+      label: 1100
     },
     {
       from: 1,
       to: 10,
-      label: 2040000
+      label: 2040
     },
     {
       from: 2,
       to: 7,
-      label: 6278000
+      label: 6278
     },
     {
       from: 2,
       to: 10,
-      label: 70000
+      label: 70
     },
     {
       from: 3,
       to: 7,
-      label: 30000
+      label: 30
     },
     {
       from: 3,
       to: 8,
-      label: 3681000
+      label: 3681
     },
     {
       from: 3,
       to: 9,
-      label: 140000
+      label: 140
     },
     {
       from: 3,
       to: 10,
-      label: 30000
+      label: 30
     },
     {
       from: 4,
       to: 7,
-      label: 20000
+      label: 20
     },
     {
       from: 4,
       to: 9,
-      label: 3837000
+      label: 3837
     },
     {
       from: 4,
       to: 10,
-      label: 300000
+      label: 300
     },
     {
       from: 5,
       to: 11,
-      label: 14685000
+      label: 14685
     },
     {
       from: 5,
       to: 16,
-      label: 290000
+      label: 290
     },
     {
       from: 6,
       to: 11,
-      label: 210000
+      label: 210
     },
     {
       from: 6,
       to: 12,
-      label: 9755000
+      label: 9755
     },
     {
       from: 6,
       to: 16,
-      label: 180000
+      label: 180
     },
     {
       from: 7,
       to: 11,
-      label: 2110000
+      label: 2110
     },
     {
       from: 7,
       to: 12,
-      label: 530000
+      label: 530
     },
     {
       from: 7,
       to: 13,
-      label: 2084000
+      label: 2084
     },
     {
       from: 7,
       to: 14,
-      label: 170000
+      label: 170
     },
     {
       from: 7,
       to: 15,
-      label: 90000
+      label: 90
     },
     {
       from: 7,
       to: 16,
-      label: 430000
+      label: 430
     },
     {
       from: 7,
       to: 17,
-      label: 460000
+      label: 460
     },
     {
       from: 8,
       to: 11,
-      label: 420000
+      label: 420
     },
     {
       from: 8,
       to: 12,
-      label: 550000
+      label: 550
     },
     {
       from: 8,
       to: 14,
-      label: 3570000
+      label: 3570
     },
     {
       from: 8,
       to: 16,
-      label: 90000
+      label: 90
     },
     {
       from: 8,
       to: 17,
-      label: 40000
+      label: 40
     },
     {
       from: 9,
       to: 11,
-      label: 120000
+      label: 120
     },
     {
       from: 9,
       to: 12,
-      label: 370000
+      label: 370
     },
     {
       from: 9,
       to: 14,
-      label: 40000
+      label: 40
     },
     {
       from: 9,
       to: 15,
-      label: 3780000
+      label: 3780
     },
     {
       from: 9,
       to: 16,
-      label: 340000
+      label: 340
     },
     {
       from: 9,
       to: 17,
-      label: 320000
+      label: 320
     },
     {
       from: 10,
       to: 11,
-      label: 1130000
+      label: 1130
     },
     {
       from: 10,
       to: 12,
-      label: 360000
+      label: 360
     },
     {
       from: 10,
       to: 16,
-      label: 210000
+      label: 210
+    },
+    {
+      from: 10,
+      to: 17,
+      label: 1800
     }
   ]
 }

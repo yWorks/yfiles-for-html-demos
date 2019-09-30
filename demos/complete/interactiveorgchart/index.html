@@ -46,68 +46,6 @@
 
   <!-- load Vue.js, a helper package and the demo -->
   <script src="https://unpkg.com/vue@2.5.17"></script>
-
-<!-- Please note: The following script is used to store templates to be used in the node style.     -->
-<!-- These templates are copied into the graph components's svg for each node that uses this style. -->
-<!-- The script containing the templates has to have the type "text/yfiles-template".               -->
-<!-- Also, please note that there are bindings in some elements' attributes. The bindings are       -->
-<!-- dynamically replaced with the bound values by the binding engine at runtime.                   -->
-<!-- Normal bindings are resolved on the node's tag. That means if there is an object stored in the -->
-<!-- node's tag that has the property "foo", you can bind to the value of this                      -->
-<!-- property with the string {Binding foo}.                                                        -->
-<!-- Template bindings are resolved on the NodeTemplateContext. This can be used to modify an       -->
-<!-- element based on the selection state of the node etc. Also, custom data can be stored in       -->
-<!-- the NodeTemplateContext's styleTag which you can also bind to using a TemplateBinding.         -->
-<!-- Bindings can specify converters and converter parameters. A converter first has to be          -->
-<!-- registered under it's name as shown in the source code of this demo.                           -->
-<!-- If a binding is specified in a standard attribute, the attribute value is replaced with the    -->
-<!-- resolved binding value at runtime. If the binding is contained in the custom attribute         -->
-<!-- "data-content", the content of the node is replaced with the binding value. In this case,      -->
-<!-- the converter can also return an SVG element that is set as the child of the element that      -->
-<!-- specifies the binding. If no converter is specified, or the converter returns a string,        -->
-<!-- a new text node is added.                                                                      -->
-<script type="text/yfiles-template">
-<g id="PortStyleTemplate">
-  <g class="port">
-    <ellipse rx="8" ry="8"/>
-    <line x1="-6" y1="0" x2="6" y2="0" class="port-icon"></line>
-    <line x1="0" y1="-1" x2="0" y2="1"
-      class="{TemplateBinding styleTag, Converter=orgChartConverters.portIconStateConverter}"></line>
-  </g>
-</g>
-</script>
-
-  <style>
-    #graphComponent {
-      background-color: #EEEEEE;
-    }
-
-    .port {
-      transform: scale(1);
-      transition: 0.2s ease-in-out;
-      fill: #AAAAAA;
-    }
-
-    .port:hover {
-      cursor: pointer;
-      transform: scale(1.5);
-      transition: 0.2s ease-in-out;
-    }
-
-    .port-icon {
-      stroke: white;
-      stroke-width: 2px;
-      transition: 1s ease-in-out;
-    }
-
-    .port-icon-expand {
-      transform: scaleY(6);
-    }
-
-    .port-icon-collapse {
-      transform: scaleY(0);
-    }
-  </style>
 </head>
 
 <body class="demo-has-left demo-has-right">

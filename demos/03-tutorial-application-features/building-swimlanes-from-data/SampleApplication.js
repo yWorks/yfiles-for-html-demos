@@ -75,6 +75,7 @@ function run(licenseData) {
 
   graphComponent.inputMode = new GraphEditorInputMode({
     allowGroupingOperations: true,
+    allowGroupSelection: false,
     orthogonalEdgeEditingContext: new OrthogonalEdgeEditingContext()
   })
 
@@ -83,28 +84,31 @@ function run(licenseData) {
   // configures default styles for newly created graph elements
   initTutorialDefaults(graphComponent.graph)
 
-  // load the graph data from the given JSON file
-  loadJSON('./GraphData.json')
-    .then(graphData => {
-      // then build the graph with the given data set
-      buildGraph(graphComponent.graph, graphData)
-
-      // Automatically layout the swimlanes. The HierarchicLayout respects the node to cell assignment based on the
-      // node's center position.
-      runLayout('0s').then(() => {
-        // Finally, enable the undo engine. This prevents undoing of the graph creation
-        graphComponent.graph.undoEngineEnabled = true
-      })
-    })
-    .catch(e => {
-      alert(e)
-    })
+  guildGraph()
 
   // bind the buttons to their commands
   registerCommands()
 
   // initialize the application's CSS and JavaScript for the description
   showApp(graphComponent)
+}
+
+async function guildGraph() {
+  try {
+    // load the graph data from the given JSON file
+    const graphData = await loadJSON('./GraphData.json')
+
+    // then build the graph with the given data set
+    buildGraph(graphComponent.graph, graphData)
+
+    // Automatically layout the swimlanes. The HierarchicLayout respects the node to cell assignment based on the
+    // node's center position.
+    await runLayout('0s')
+    // Finally, enable the undo engine. This prevents undoing of the graph creation
+    graphComponent.graph.undoEngineEnabled = true
+  } catch (e) {
+    alert(e)
+  }
 }
 
 function configureTableEditing(graphEditorInputMode) {
@@ -276,7 +280,7 @@ function writeToJSON(graph) {
 
   // find the table, we assume there is only one
   const tableNode = graph.nodes.find(node => !!node.lookup(ITable.$class))
-  const table = tableNode.lookup(ITable.$class)
+  const table = tableNode ? tableNode.lookup(ITable.$class) : null
 
   // serialize the nodes with their swimlane information
   const node2id = new HashMap()
@@ -301,17 +305,19 @@ function writeToJSON(graph) {
     jsonOutput.nodesSource.push(jsonNode)
 
     // store the lane of the node
-    const column = table.findColumn(tableNode, node.layout.center)
-    if (column) {
-      const columnId = `lane${table.findColumn(tableNode, node.layout.center).index}`
-      jsonNode.lane = columnId
-      // store new lanes in the json
-      if (!jsonOutput.lanesSource.find(lane => lane.id === columnId)) {
-        const jsonLane = { id: columnId }
-        if (column.labels.size > 0) {
-          jsonLane.label = column.labels.first().text
+    if (table) {
+      const column = table.findColumn(tableNode, node.layout.center)
+      if (column) {
+        const columnId = `lane${table.findColumn(tableNode, node.layout.center).index}`
+        jsonNode.lane = columnId
+        // store new lanes in the json
+        if (!jsonOutput.lanesSource.find(lane => lane.id === columnId)) {
+          const jsonLane = { id: columnId }
+          if (column.labels.size > 0) {
+            jsonLane.label = column.labels.first().text
+          }
+          jsonOutput.lanesSource.push(jsonLane)
         }
-        jsonOutput.lanesSource.push(jsonLane)
       }
     }
   })
@@ -419,7 +425,8 @@ function registerCommands() {
     ICommand.FIT_GRAPH_BOUNDS.execute(null, graphComponent)
   })
   bindAction("button[data-command='Save']", () => {
-    const json = writeToJSON(graphComponent.graph)
+    const graph = graphComponent.graph
+    const json = writeToJSON(graph)
     FileSaveSupport.save(JSON.stringify(json), 'graph.json')
   })
   bindCommand("button[data-command='Cut']", ICommand.CUT, graphComponent)
@@ -444,8 +451,9 @@ function registerCommands() {
  *
  * @returns {Promise<object>} A promise with the loaded data.
  */
-function loadJSON(url) {
-  return fetch(url).then(response => response.json())
+async function loadJSON(url) {
+  const response = await fetch(url)
+  return response.json()
 }
 
 // start tutorial

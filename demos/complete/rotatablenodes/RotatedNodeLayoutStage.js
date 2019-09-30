@@ -31,6 +31,7 @@ import {
   GeneralPath,
   GroupingKeys,
   IDataMap,
+  IDataProvider,
   ILayoutAlgorithm,
   LayoutGraph,
   LayoutStageBase,

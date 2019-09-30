@@ -81,7 +81,7 @@ export default class ServerSideImageExport {
    * @param {Rect} exportRect
    * @return {Promise.<{element:SVGElement,size:Size}|Error>}
    */
-  exportSvg(graph, exportRect) {
+  async exportSvg(graph, exportRect) {
     // Create a new graph component for exporting the original SVG content
     const exportComponent = new GraphComponent()
     // ... and assign it the same graph.
@@ -98,11 +98,11 @@ export default class ServerSideImageExport {
     exporter.margins = this.margins
     exporter.encodeImagesBase64 = true
     exporter.inlineSvgImages = true
-
-    return exporter.exportSvgAsync(exportComponent).then(svgElement => ({
+    const svgElement = await exporter.exportSvgAsync(exportComponent)
+    return {
       element: svgElement,
       size: new Size(exporter.viewWidth, exporter.viewHeight)
-    }))
+    }
   }
 
   /**

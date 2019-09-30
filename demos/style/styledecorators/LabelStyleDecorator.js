@@ -38,6 +38,7 @@ import {
   LabelStyleBase,
   Point,
   Rect,
+  Size,
   SvgVisual,
   SvgVisualGroup
 } from 'yfiles'

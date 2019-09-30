@@ -347,16 +347,15 @@ function registerCommands() {
     applyLayout(false)
   })
 
-  bindAction("input[data-command='ShowTransitiveEdges']", () => {
+  bindAction("input[data-command='ShowTransitiveEdges']", async () => {
     const button = document.getElementById('showTransitiveEdgesButton')
     showTransitiveEdges = button.checked
     if (algorithmComboBox.selectedIndex === 2) {
       const undoEdit = beginUndoEdit('undoShowTransitiveEdges', 'redoShowTransitiveEdges')
       resetGraph()
       applyAlgorithm()
-      applyLayout(true, () => {
-        commitUndoEdit(undoEdit)
-      })
+      await applyLayout(true)
+      commitUndoEdit(undoEdit)
     }
   })
 
@@ -491,7 +490,7 @@ function initializeInputModes() {
  * @param {INode} item the node whose dependencies are completed.
  * @param {Map} existingPackages A mapping of existing packages.
  */
-function handlePendingDependencies(item, existingPackages) {
+async function handlePendingDependencies(item, existingPackages) {
   const undoEdit = beginUndoEdit('undoLoadPendingDependencies', 'redoLoadPendingDependencies')
   graphComponent.graph.undoEngine.addUnit(new ChangedSetUndoUnit())
 
@@ -500,26 +499,24 @@ function handlePendingDependencies(item, existingPackages) {
     filteredNodes.add(node)
   })
   setBusy(true)
-  onAddDependencies(item.labels.get(0).text, item, true)
-    .then(() => {
-      addedNodes.forEach(node => {
-        filteredNodes.add(node)
-        incrementalNodes.push(node)
-      })
-      filteredGraph.nodePredicateChanged()
-      filteredGraph.edgePredicateChanged()
-      applyAlgorithm()
-      applyLayout(true, () => {
-        setBusy(false)
-        commitUndoEdit(undoEdit)
-        animateViewPort(item)
-        addedNodes = []
-      })
+  try {
+    await onAddDependencies(item.labels.get(0).text, item, true)
+    addedNodes.forEach(node => {
+      filteredNodes.add(node)
+      incrementalNodes.push(node)
     })
-    .catch(() => {
-      setBusy(false)
-      cancelUndoEdit(undoEdit)
-    })
+    filteredGraph.nodePredicateChanged()
+    filteredGraph.edgePredicateChanged()
+    applyAlgorithm()
+    await applyLayout(true)
+    commitUndoEdit(undoEdit)
+    animateViewPort(item)
+    addedNodes = []
+  } catch (e) {
+    cancelUndoEdit(undoEdit)
+  } finally {
+    setBusy(false)
+  }
 }
 
 /**
@@ -634,7 +631,7 @@ function initializeLayout() {
  * Loads a new dependency graph according to which sample is selected.
  * This function is also called if a new start package is chosen.
  */
-function loadGraph() {
+async function loadGraph() {
   filteredGraph.wrappedGraph.clear()
   filteredNodes = null
   filteredEdges = null
@@ -671,9 +668,8 @@ function loadGraph() {
     dependenciesNo = filteredGraph.nodes.size - 1
 
     applyAlgorithm()
-    applyLayout(false, () => {
-      graph.undoEngine.clear()
-    })
+    await applyLayout(false)
+    graph.undoEngine.clear()
   } else {
     const packageText = packageTextBox.value
     // check for empty package name
@@ -687,9 +683,8 @@ function loadGraph() {
       filteredNodes = new Set()
       filteredEdges = new Set()
       visitedPackages = new HashMap()
-      updateGraph(packageText, false, () => {
-        graphComponent.graph.undoEngine.clear()
-      })
+      await updateGraph(packageText, false)
+      graphComponent.graph.undoEngine.clear()
     }
   }
 }
@@ -699,113 +694,93 @@ function loadGraph() {
  * The packages are loaded asynchronously from the internet.
  * @param {string} packageText the name of the start package
  * @param {boolean} incremental <code>true</code> if the layouts should be incremental
- * @param {function} callback A callback-function which is invoked when the graph is updated and has a new layout.
  */
-function updateGraph(packageText, incremental, callback) {
+async function updateGraph(packageText, incremental) {
   setBusy(true)
 
   // reset the table with the graph information
   resetTable(packageText)
 
   incrementalNodes = []
-
-  getStartNode(packageText)
-    .then(start => {
-      startNode = start.startNode
-      const startNodeDependencies = start.startNodeDependencies
-      addDependencies(startNode, startNodeDependencies, incremental).then(() => {
-        addedNodes.forEach(node => {
-          filteredNodes.add(node)
-          incrementalNodes.push(node)
-        })
-        addedNodes = []
-        filteredGraph.nodePredicateChanged()
-        filteredGraph.edgePredicateChanged()
-        applyAlgorithm()
-        applyLayout(incremental, () => {
-          incrementalNodes = []
-          setBusy(false)
-          if (callback) {
-            callback()
-          }
-        })
-      })
+  try {
+    const start = await getStartNode(packageText)
+    startNode = start.startNode
+    const startNodeDependencies = start.startNodeDependencies
+    await addDependencies(startNode, startNodeDependencies, incremental)
+    addedNodes.forEach(node => {
+      filteredNodes.add(node)
+      incrementalNodes.push(node)
     })
-    .catch(() => {
-      const errorMessage = ' - Invalid Package'
-      if (packageTextBox.value.indexOf(errorMessage) === -1) {
-        packageTextBox.value = packageText + errorMessage
-        packageTextBox.className = 'error'
-
-        setBusy(false)
-        if (callback) {
-          callback()
-        }
-      }
-    })
+    addedNodes = []
+    filteredGraph.nodePredicateChanged()
+    filteredGraph.edgePredicateChanged()
+    applyAlgorithm()
+    await applyLayout(incremental)
+    incrementalNodes = []
+  } catch (e) {
+    const errorMessage = ' - Invalid Package'
+    if (packageTextBox.value.indexOf(errorMessage) === -1) {
+      packageTextBox.value = packageText + errorMessage
+      packageTextBox.className = 'error'
+    }
+  } finally {
+    setBusy(false)
+  }
 }
 
 /**
  * Retrieves the node from where the dependencies unfold, asynchronously.
  * @param {string} packageName the name of the package represented by the start node
- * @return {Promise}
  */
-function getStartNode(packageName) {
-  return new Promise((resolve, reject) => {
-    const url = `http://localhost:3000/npm-request?type=dependencies&package=${packageName}`
-    requestData(url)
-      .then(data => {
-        try {
-          const object = JSON.parse(JSON.stringify(data))
-          if (object.error) {
-            reject(new Error('Failed to parse JSON data'))
-          } else {
-            let node = visitedPackages.get(packageName)
-            if (!node) {
-              const wrappedGraph = filteredGraph.wrappedGraph
-              node = wrappedGraph.createNode({
-                tag: {
-                  highlight: false,
-                  pendingDependencies: false
-                }
-              })
-              const label = wrappedGraph.addLabel(node, packageName, nodeLabelParameter)
-              wrappedGraph.setNodeLayout(
-                node,
-                new Rect(0, 0, label.layout.width + 50, node.layout.height)
-              )
-              wrappedGraph.setNodeCenter(node, graphComponent.contentRect.center)
-              node.tag.highlight = false
-            }
-            filteredNodes.add(node)
-            filteredGraph.nodePredicateChanged(node)
-            graphComponent.currentItem = node
-            incrementalNodes.push(node)
-            visitedPackages.set(packageName, node)
+async function getStartNode(packageName) {
+  const url = `http://localhost:4242/npm-request?type=dependencies&package=${packageName}`
+  let data
+  try {
+    data = await requestData(url)
+  } catch (e) {
+    throw new Error(
+      'Failed to load NPM Graph. Did you start the Demo Server (see description text)?'
+    )
+  }
+  let object
+  try {
+    object = JSON.parse(JSON.stringify(data))
+  } catch (e) {
+    throw new Error('Failed to parse JSON data')
+  }
+  if (object.error) {
+    throw new Error('Failed to parse JSON data')
+  }
+  let node = visitedPackages.get(packageName)
+  if (!node) {
+    const wrappedGraph = filteredGraph.wrappedGraph
+    node = wrappedGraph.createNode({
+      tag: {
+        highlight: false,
+        pendingDependencies: false
+      }
+    })
+    const label = wrappedGraph.addLabel(node, packageName, nodeLabelParameter)
+    wrappedGraph.setNodeLayout(node, new Rect(0, 0, label.layout.width + 50, node.layout.height))
+    wrappedGraph.setNodeCenter(node, graphComponent.contentRect.center)
+    node.tag.highlight = false
+  }
+  filteredNodes.add(node)
+  filteredGraph.nodePredicateChanged(node)
+  graphComponent.currentItem = node
+  incrementalNodes.push(node)
+  visitedPackages.set(packageName, node)
 
-            let dependencies
-            if (object.dependencies) {
-              dependencies = Object.keys(object.dependencies)
-            } else {
-              dependencies = []
-            }
-            resolve({
-              startNode: node,
-              startNodeDependencies: dependencies
-            })
-          }
-        } catch (e) {
-          reject(new Error('Failed to parse JSON data'))
-        }
-      })
-      .catch(() => {
-        reject(
-          new Error(
-            'Failed to load NPM Graph. Did you start the Demo Server (see description text)?'
-          )
-        )
-      })
-  })
+  let dependencies
+  if (object.dependencies) {
+    dependencies = Object.keys(object.dependencies)
+  } else {
+    dependencies = []
+  }
+  return {
+    startNode: node,
+    startNodeDependencies: dependencies
+  }
 }
 
 /**
@@ -831,112 +806,87 @@ function getInitialPackage(packageName) {
  * @return {Promise}
  */
 function addDependencies(pred, predDependencies, incremental) {
-  return new Promise((resolve, reject) => {
-    const promises = []
-    predDependencies.forEach(dependency => {
-      let node = visitedPackages.get(dependency)
-      const wrappedGraph = filteredGraph.wrappedGraph
-      if (!node) {
-        node = wrappedGraph.createNode({
-          tag: {
-            highlight: false,
-            pendingDependencies: false
-          }
-        })
-        const label = wrappedGraph.addLabel(node, dependency, nodeLabelParameter)
-        wrappedGraph.setNodeLayout(
-          node,
-          new Rect(0, 0, label.layout.width + 50, node.layout.height)
-        )
-        node.tag.highlight = false
-        dependenciesNo++
+  const promises = predDependencies.map(async dependency => {
+    let node = visitedPackages.get(dependency)
+    const wrappedGraph = filteredGraph.wrappedGraph
+    if (!node) {
+      node = wrappedGraph.createNode({
+        tag: {
+          highlight: false,
+          pendingDependencies: false
+        }
+      })
+      const label = wrappedGraph.addLabel(node, dependency, nodeLabelParameter)
+      wrappedGraph.setNodeLayout(node, new Rect(0, 0, label.layout.width + 50, node.layout.height))
+      node.tag.highlight = false
+      dependenciesNo++
 
+      addedNodes.push(node)
+      visitedPackages.set(dependency, node)
+    } else {
+      node.tag.pendingDependencies = false
+      if (addedNodes.indexOf(node) < 0 && !filteredNodes.has(node)) {
         addedNodes.push(node)
-        visitedPackages.set(dependency, node)
-      } else {
-        node.tag.pendingDependencies = false
-        if (addedNodes.indexOf(node) < 0 && !filteredNodes.has(node)) {
-          addedNodes.push(node)
-          dependenciesNo++
-        }
+        dependenciesNo++
       }
+    }
 
-      if (pred && pred !== node) {
-        let edge = getEdge(wrappedGraph, pred, node)
-        if (edge === null) {
-          edge = wrappedGraph.createEdge(pred, node)
-        }
-        filteredEdges.add(edge)
+    if (pred && pred !== node) {
+      let edge = getEdge(wrappedGraph, pred, node)
+      if (edge === null) {
+        edge = wrappedGraph.createEdge(pred, node)
       }
+      filteredEdges.add(edge)
+    }
 
-      const layoutPromise = tryLayout(incremental)
-      promises.push(layoutPromise)
+    await tryLayout(incremental)
 
-      if (wrappedGraph.outDegree(node) > 0) {
-        const dependencies = []
-        wrappedGraph.outEdgesAt(node).forEach(edge => {
-          dependencies.push(edge.targetNode.labels.get(0).text)
-        })
-        if (dependencies.length > 0) {
-          if (filteredGraph.nodes.size + addedNodes.length < 100) {
-            promises.push(addDependencies(node, dependencies, incremental))
-          } else {
-            node.tag.pendingDependencies = true
-          }
-        }
-      } else {
-        promises.push(
-          new Promise((resolve, reject) => {
-            const url = `http://localhost:3000/npm-request?type=dependencies&package=${dependency}`
-            requestData(url)
-              .then(data => {
-                try {
-                  const object = JSON.parse(JSON.stringify(data))
-                  if (object.error) {
-                    reject(new Error('Failed to parse JSON data'))
-                  } else {
-                    const dependencies = object.dependencies
-                    if (dependencies && Object.keys(dependencies).length > 0) {
-                      if (filteredGraph.nodes.size + addedNodes.length < 100) {
-                        addDependencies(node, Object.keys(dependencies), incremental)
-                          .then(() => {
-                            resolve()
-                          })
-                          .catch(() => {
-                            reject(new Error('Error during adding the nodes for all dependencies'))
-                          })
-                      } else {
-                        node.tag.pendingDependencies = Object.keys(dependencies).length > 0
-                        resolve()
-                      }
-                    } else {
-                      resolve()
-                    }
-                  }
-                } catch (e) {
-                  reject(new Error('Failed to parse JSON data'))
-                }
-              })
-              .catch(() => {
-                reject(
-                  new Error(
-                    'Failed to load NPM Graph. Did you start the Demo Server (see description text)?'
-                  )
-                )
-              })
-          })
-        )
-      }
-    })
-
-    Promise.all(promises)
-      .then(() => {
-        resolve()
+    if (wrappedGraph.outDegree(node) > 0) {
+      const dependencies = []
+      wrappedGraph.outEdgesAt(node).forEach(edge => {
+        dependencies.push(edge.targetNode.labels.get(0).text)
       })
-      .catch(e => {
-        reject(e)
-      })
+      if (dependencies.length > 0) {
+        if (filteredGraph.nodes.size + addedNodes.length < 100) {
+          await addDependencies(node, dependencies, incremental)
+        } else {
+          node.tag.pendingDependencies = true
+        }
+      }
+      return
+    }
+    const url = `http://localhost:4242/npm-request?type=dependencies&package=${dependency}`
+    let data
+    try {
+      data = await requestData(url)
+    } catch (e) {
+      throw new Error(
+        'Failed to load NPM Graph. Did you start the Demo Server (see description text)?'
+      )
+    }
+    let object
+    try {
+      object = JSON.parse(JSON.stringify(data))
+    } catch (e) {
+      throw new Error('Failed to parse JSON data')
+    }
+    if (object.error) {
+      throw new Error('Failed to parse JSON data')
+    }
+    const dependencies = object.dependencies
+    if (dependencies && Object.keys(dependencies).length > 0) {
+      if (filteredGraph.nodes.size + addedNodes.length < 100) {
+        try {
+          await addDependencies(node, Object.keys(dependencies), incremental)
+        } catch (e) {
+          throw new Error('Error while adding the nodes for all dependencies')
+        }
+      } else {
+        node.tag.pendingDependencies = Object.keys(dependencies).length > 0
+      }
+    }
   })
+  return Promise.all(promises)
 }
 
 /**
@@ -965,11 +915,12 @@ function getEdge(graph, node1, node2) {
  * @param {boolean} incremental whether or not the layout should be incremental
  * @return {Promise}
  */
-function onAddDependencies(packageName, pred, incremental) {
-  return new Promise((resolve, reject) => {
-    if (filteredGraph.wrappedGraph.outDegree(pred) > 0) {
-      const promises = []
-      filteredGraph.wrappedGraph.outEdgesAt(pred).forEach(edge => {
+async function onAddDependencies(packageName, pred, incremental) {
+  if (filteredGraph.wrappedGraph.outDegree(pred) > 0) {
+    const promises = filteredGraph.wrappedGraph
+      .outEdgesAt(pred)
+      .toArray()
+      .map(async edge => {
         filteredEdges.add(edge)
         pred.tag.pendingDependencies = false
         const target = edge.targetNode
@@ -978,189 +929,150 @@ function onAddDependencies(packageName, pred, incremental) {
           addedNodes.push(target)
         }
 
-        if (
-          filteredGraph.wrappedGraph.outDegree(target) > 0 ||
-          (target.tag && target.tag.pendingDependencies)
-        ) {
+        const hasOutEdges = filteredGraph.wrappedGraph.outDegree(target) > 0
+        const hasPendingDependencies = target.tag && target.tag.pendingDependencies
+        if (hasOutEdges || hasPendingDependencies) {
           target.tag.pendingDependencies = true
-        } else {
-          promises.push(
-            new Promise((resolve, reject) => {
-              const dependencyUrl = `http://localhost:3000/npm-request?type=dependencies&package=${
-                target.labels.get(0).text
-              }`
-              requestData(dependencyUrl)
-                .then(data => {
-                  try {
-                    const object = JSON.parse(JSON.stringify(data))
-                    if (object.error) {
-                      reject(new Error('Failed to parse JSON data'))
-                    } else {
-                      if (object.dependencies) {
-                        const pendingDependencies =
-                          Object.keys(object.dependencies).length > filteredGraph.outDegree(target)
-                        target.tag.pendingDependencies = pendingDependencies
-                      }
-                      resolve()
-                    }
-                  } catch (e) {
-                    reject(new Error('Failed to parse JSON data'))
-                  }
-                })
-                .catch(() => {
-                  reject(
-                    new Error(
-                      'Failed to load NPM Graph. Did you start the Demo Server (see description text)?'
-                    )
-                  )
-                })
-            })
+          return
+        }
+        const url = `http://localhost:4242/npm-request?type=dependencies&package=${
+          target.labels.get(0).text
+        }`
+        let data
+        try {
+          data = await requestData(url)
+        } catch (e) {
+          throw new Error(
+            'Failed to load NPM Graph. Did you start the Demo Server (see description text)?'
           )
         }
+        let parsed
+        try {
+          parsed = JSON.parse(JSON.stringify(data))
+        } catch (e) {
+          throw new Error('Failed to parse JSON data')
+        }
+        if (parsed.error) {
+          throw new Error('Failed to parse JSON data')
+        }
+        if (parsed.dependencies) {
+          target.tag.pendingDependencies =
+            Object.keys(parsed.dependencies).length > filteredGraph.outDegree(target)
+        }
       })
-      Promise.all(promises)
-        .then(() => {
-          resolve()
-        })
-        .catch(e => {
-          reject(new Error(e))
-        })
-    } else {
-      const url = `http://localhost:3000/npm-request?type=dependencies&package=${packageName}`
-      requestData(url)
-        .then(data => {
-          try {
-            const object = JSON.parse(JSON.stringify(data))
-            if (object.error) {
-              reject(new Error('Failed to parse JSON data'))
-            } else {
-              const promises = []
-              const dependencies = object.dependencies
-              if (pred.tag) {
-                pred.tag.pendingDependencies = false
-              }
-              Object.keys(dependencies).forEach(dependency => {
-                let node = visitedPackages.get(dependency)
-                const wrappedGraph = filteredGraph.wrappedGraph
-                if (!node) {
-                  node = wrappedGraph.createNode({
-                    tag: {
-                      highlight: false,
-                      pendingDependencies: false
-                    }
-                  })
-                  const label = wrappedGraph.addLabel(node, dependency, nodeLabelParameter)
-                  wrappedGraph.setNodeLayout(
-                    node,
-                    new Rect(0, 0, label.layout.width + 50, node.layout.height)
-                  )
-                  node.tag.highlight = false
-                  dependenciesNo++
-
-                  addedNodes.push(node)
-                  visitedPackages.set(dependency, node)
-                } else if (addedNodes.indexOf(node) < 0 && !filteredNodes.has(node)) {
-                  addedNodes.push(node)
-                  dependenciesNo++
-                }
-                let edge = getEdge(wrappedGraph, pred, node)
-                if (edge === null) {
-                  edge = wrappedGraph.createEdge(pred, node)
-                }
-                filteredEdges.add(edge)
-
-                const layoutPromise = tryLayout(incremental)
-                promises.push(layoutPromise)
-
-                promises.push(
-                  new Promise((resolve, reject) => {
-                    const dependencyUrl = `http://localhost:3000/npm-request?type=dependencies&package=${dependency}`
-                    requestData(dependencyUrl)
-                      .then(jsonData => {
-                        const jsonObject = JSON.parse(JSON.stringify(jsonData))
-                        if (jsonObject.error) {
-                          reject(new Error('Failed to parse JSON data'))
-                        } else {
-                          if (jsonObject.dependencies) {
-                            const pendingDependencies =
-                              Object.keys(jsonObject.dependencies).length >
-                              filteredGraph.wrappedGraph.outDegree(node)
-                            node.tag.pendingDependencies = pendingDependencies
-                          }
-                          resolve()
-                        }
-                      })
-                      .catch(() => {
-                        reject(
-                          new Error(
-                            'Failed to load NPM Graph. Did you start the Demo Server (see description text)?'
-                          )
-                        )
-                      })
-                  })
-                )
-              })
-
-              Promise.all(promises)
-                .then(() => {
-                  resolve()
-                })
-                .catch(e => {
-                  reject(new Error(e))
-                })
-            }
-          } catch (e) {
-            reject(new Error('Failed to parse JSON data'))
+    return Promise.all(promises)
+  } else {
+    const url = `http://localhost:4242/npm-request?type=dependencies&package=${packageName}`
+    let data
+    try {
+      data = await requestData(url)
+    } catch (e) {
+      throw new Error(
+        'Failed to load NPM Graph. Did you start the Demo Server (see description text)?'
+      )
+    }
+    let parsed
+    try {
+      parsed = JSON.parse(JSON.stringify(data))
+    } catch (e) {
+      throw new Error('Failed to parse JSON data')
+    }
+    if (parsed.error) {
+      throw new Error('Failed to parse JSON data')
+    }
+    const dependencies = parsed.dependencies
+    if (pred.tag) {
+      pred.tag.pendingDependencies = false
+    }
+    const promises = Object.keys(dependencies).map(async dependency => {
+      let node = visitedPackages.get(dependency)
+      const wrappedGraph = filteredGraph.wrappedGraph
+      if (!node) {
+        node = wrappedGraph.createNode({
+          tag: {
+            highlight: false,
+            pendingDependencies: false
           }
         })
-        .catch(() => {
-          reject(
-            new Error(
-              'Failed to load NPM Graph. Did you start the Demo Server (see description text)?'
-            )
-          )
-        })
-    }
-  })
+        const label = wrappedGraph.addLabel(node, dependency, nodeLabelParameter)
+        wrappedGraph.setNodeLayout(
+          node,
+          new Rect(0, 0, label.layout.width + 50, node.layout.height)
+        )
+        node.tag.highlight = false
+        dependenciesNo++
+
+        addedNodes.push(node)
+        visitedPackages.set(dependency, node)
+      } else if (addedNodes.indexOf(node) < 0 && !filteredNodes.has(node)) {
+        addedNodes.push(node)
+        dependenciesNo++
+      }
+      let edge = getEdge(wrappedGraph, pred, node)
+      if (edge === null) {
+        edge = wrappedGraph.createEdge(pred, node)
+      }
+      filteredEdges.add(edge)
+
+      await tryLayout(incremental)
+
+      const dependencyUrl = `http://localhost:4242/npm-request?type=dependencies&package=${dependency}`
+      let jsonData
+      try {
+        jsonData = await requestData(dependencyUrl)
+      } catch (e) {
+        throw new Error(
+          'Failed to load NPM Graph. Did you start the Demo Server (see description text)?'
+        )
+      }
+      const jsonObject = JSON.parse(JSON.stringify(jsonData))
+      if (jsonObject.error) {
+        throw new Error('Failed to parse JSON data')
+      } else {
+        if (jsonObject.dependencies) {
+          node.tag.pendingDependencies =
+            Object.keys(jsonObject.dependencies).length > filteredGraph.wrappedGraph.outDegree(node)
+        }
+      }
+    })
+    return Promise.all(promises)
+  }
 }
 
 /**
  * Invokes a layout if there are enough new nodes in the graph and no previous layout is running.
  * @param {boolean} incremental whether or not the layout is calculated incrementally
  */
-function tryLayout(incremental) {
+async function tryLayout(incremental) {
   // this method should return a promise so that resolve in method addDependencies is called
   // only if layout is done
-  return new Promise((resolve, reject) => {
-    if (!layouting && addedNodes.length > 5) {
-      let i = 5
-      while (i > 0) {
-        const node = addedNodes.shift()
-        filteredNodes.add(node)
-        incrementalNodes.push(node)
-        filteredGraph.nodePredicateChanged(node)
-        i--
-      }
-      applyLayout(incremental, () => resolve())
-    } else {
-      resolve()
+  if (!layouting && addedNodes.length > 5) {
+    let i = 5
+    while (i > 0) {
+      const node = addedNodes.shift()
+      filteredNodes.add(node)
+      incrementalNodes.push(node)
+      filteredGraph.nodePredicateChanged(node)
+      i--
     }
-  })
+    await applyLayout(incremental)
+  }
 }
 
 /**
  * Send a query for the given url that requests data about npm-packages.
- * @param {string} url The urls that is used to request data about npm-packages.
+ * @param {string} url The url that is used to request data about npm-packages.
  * @return {Promise}
  */
-function requestData(url) {
-  return fetch(url).then(response => response.json())
+async function requestData(url) {
+  const response = await fetch(url)
+  return response.json()
 }
 
 /**
  * Invokes the selected algorithms when another algorithm is chosen in the combo box.
  */
-function onAlgorithmChanged() {
+async function onAlgorithmChanged() {
   if (!algorithmComboBox) {
     return
   }
@@ -1176,9 +1088,8 @@ function onAlgorithmChanged() {
 
   resetGraph()
   applyAlgorithm()
-  applyLayout(true, () => {
-    graphComponent.graph.undoEngine.clear()
-  })
+  await applyLayout(true)
+  graphComponent.graph.undoEngine.clear()
 }
 
 /**
@@ -1278,9 +1189,8 @@ function nodePredicate(node) {
 /**
  * Filters the graph after selecting a different start node interactively.
  * @param {INode} clickedNode The new start node.
- * @param {function} callback A callback-function which is invoked when the graph is updated and has a new layout.
  */
-function filterGraph(clickedNode, callback) {
+async function filterGraph(clickedNode) {
   resetGraph()
   incrementalNodes = []
 
@@ -1338,7 +1248,7 @@ function filterGraph(clickedNode, callback) {
     if (algorithmComboBox.selectedIndex !== AlgorithmName.ORIGINAL_GRAPH) {
       applyAlgorithm()
     }
-    applyLayout(true, callback)
+    return applyLayout(true)
   } else {
     const packageNode = graphComponent.currentItem
     filteredNodes.add(packageNode)
@@ -1372,7 +1282,7 @@ function filterGraph(clickedNode, callback) {
     filteredGraph.edgePredicateChanged()
 
     const packageText = packageNode.labels.get(0).text
-    updateGraph(packageText, true, callback)
+    return updateGraph(packageText, true)
   }
 }
 
@@ -1437,7 +1347,7 @@ function resetGraph() {
  * @param {boolean} incremental <code>true</code> if an incremental layout is desired, <code>false</code> otherwise
  * @param {function} callback a callback function that will be invoked after finishing the layout
  */
-function applyLayout(incremental, callback) {
+async function applyLayout(incremental) {
   // if is in layout or the graph has no nodes then return.
   // it is important to check if nodes === 0, since else Exceptions can occur due to asynchronous
   // calls of this function
@@ -1489,41 +1399,30 @@ function applyLayout(incremental, callback) {
       }
     })
   }
+  try {
+    await new LayoutExecutor({
+      graphComponent,
+      layout,
+      layoutData,
+      duration: '0.5s',
+      animateViewport: true,
+      portAdjustmentPolicy: PortAdjustmentPolicy.ALWAYS
+    }).start()
 
-  new LayoutExecutor({
-    graphComponent,
-    layout,
-    layoutData,
-    duration: '0.5s',
-    animateViewport: true,
-    portAdjustmentPolicy: PortAdjustmentPolicy.ALWAYS
-  })
-    .start()
-    .then(() => {
-      // update the graph information with (intermediate) results
-      updateGraphInformation(startNode)
+    // update the graph information with (intermediate) results
+    updateGraphInformation(startNode)
 
-      // check where the mouse is located after layout and adjust highlight
-      graphComponent.inputMode.itemHoverInputMode.updateHover()
-
-      setLayouting(false)
-
-      if (callback) {
-        callback()
-      }
-    })
-    .catch(error => {
-      if (typeof window.reportError === 'function') {
-        window.reportError(error)
-      } else {
-        throw error
-      }
-      setLayouting(false)
-
-      if (callback) {
-        callback()
-      }
-    })
+    // check where the mouse is located after layout and adjust highlight
+    graphComponent.inputMode.itemHoverInputMode.updateHover()
+  } catch (error) {
+    if (typeof window.reportError === 'function') {
+      window.reportError(error)
+    } else {
+      throw error
+    }
+  } finally {
+    setLayouting(false)
+  }
 }
 
 /**
@@ -1680,7 +1579,7 @@ function beginUndoEdit(undoName, redoName) {
     'undoTags',
     'redoTags',
     filteredGraph.wrappedGraph.nodes,
-    node => new TagMementoSupport()
+    () => new TagMementoSupport()
   )
 
   return {

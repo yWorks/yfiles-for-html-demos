@@ -94,7 +94,7 @@ export default class DemoCommands {
    * @param {INode} node The given node.
    * @param {boolean} collapsed True if the node is collapsed, false otherwise.
    */
-  collapseNode(node, collapsed) {
+  async collapseNode(node, collapsed) {
     const fullGraph = this.getFullGraph()
     const compoundEdit = this.graphComponent.graph.beginEdit(
       'Collapse/Expand',
@@ -119,15 +119,14 @@ export default class DemoCommands {
     Structure.getSubtree(fullGraph, node, subtreeNodes, subTreeEdges)
     subtreeNodes = subtreeNodes.filter(subtreeNode => subtreeNode !== node)
 
-    MindmapLayout.instance.layout(this.graphComponent, subtreeNodes, collapsed).then(() => {
-      if (collapsed) {
-        // when a subtree is collapsed, update the collapsed state after the layout to have the
-        // animation before the nodes disappear
-        this.setCollapsedState(node, collapsed)
-      }
-      this.limitViewport()
-      compoundEdit.commit()
-    })
+    await MindmapLayout.instance.layout(this.graphComponent, subtreeNodes, collapsed)
+    if (collapsed) {
+      // when a subtree is collapsed, update the collapsed state after the layout to have the
+      // animation before the nodes disappear
+      this.setCollapsedState(node, collapsed)
+    }
+    this.limitViewport()
+    compoundEdit.commit()
   }
 
   /**
@@ -181,7 +180,7 @@ export default class DemoCommands {
    * Executes CreateChild Command.
    * @return {boolean} True if the command is executed, false otherwise.
    */
-  executeCreateChildren(nodeStyle, edgeStyle, labelStyle) {
+  async executeCreateChildren(nodeStyle, edgeStyle, labelStyle) {
     const parent = this.graphComponent.currentItem
     const compoundEdit = this.graphComponent.graph.beginEdit('CreateChild', 'CreateChild')
     if (parent !== null) {
@@ -196,13 +195,12 @@ export default class DemoCommands {
       this.adjustNodeBounds()
       nodeData.isCollapsed = false
       this.graphComponent.graph.nodePredicateChanged()
-      MindmapLayout.instance.layout(this.graphComponent).then(() => {
-        this.limitViewport()
-        if (this.graphComponent.inputMode instanceof GraphEditorInputMode && node.labels.size > 0) {
-          this.graphComponent.inputMode.editLabel(node.labels.get(0))
-        }
-        compoundEdit.commit()
-      })
+      await MindmapLayout.instance.layout(this.graphComponent)
+      this.limitViewport()
+      if (this.graphComponent.inputMode instanceof GraphEditorInputMode && node.labels.size > 0) {
+        this.graphComponent.inputMode.editLabel(node.labels.get(0))
+      }
+      compoundEdit.commit()
       return true
     }
     compoundEdit.cancel()
@@ -253,24 +251,22 @@ export default class DemoCommands {
    * Executes DeleteItem Command.
    * @return {boolean} True if the command is executed, false otherwise.
    */
-  executeDeleteItem() {
+  async executeDeleteItem() {
     const edge = this.graphComponent.selection.selectedEdges.firstOrDefault()
     const compoundEdit = this.graphComponent.graph.beginEdit('DeleteItem', 'DeleteItem')
     if (edge !== null) {
       this.graphComponent.graph.remove(edge)
-      MindmapLayout.instance.layout(this.graphComponent).then(() => {
-        this.limitViewport()
-        compoundEdit.commit()
-      })
+      await MindmapLayout.instance.layout(this.graphComponent)
+      this.limitViewport()
+      compoundEdit.commit()
     }
 
     const node = this.graphComponent.selection.selectedNodes.firstOrDefault()
     if (node !== null) {
       Structure.removeSubtree(this.graphComponent.graph, node)
-      MindmapLayout.instance.layout(this.graphComponent).then(() => {
-        this.limitViewport()
-        compoundEdit.commit()
-      })
+      await MindmapLayout.instance.layout(this.graphComponent)
+      this.limitViewport()
+      compoundEdit.commit()
     }
     return true
   }
@@ -335,7 +331,7 @@ export default class DemoCommands {
    * @param {ILabelStyle} labelStyle The desired label style.
    * @return {boolean} True if the command is executed, false otherwise.
    */
-  executeCreateSibling(nodeStyle, edgeStyle, labelStyle) {
+  async executeCreateSibling(nodeStyle, edgeStyle, labelStyle) {
     const node = this.graphComponent.selection.selectedNodes.firstOrDefault()
     const nodeData = node.tag
     const sibling = Structure.createSibling(
@@ -349,15 +345,14 @@ export default class DemoCommands {
       this.adjustNodeBounds()
       nodeData.isCollapsed = false
       this.graphComponent.graph.nodePredicateChanged()
-      MindmapLayout.instance.layout(this.graphComponent).then(() => {
-        this.limitViewport()
-        if (
-          this.graphComponent.inputMode instanceof GraphEditorInputMode &&
-          sibling.labels.size > 0
-        ) {
-          this.graphComponent.inputMode.editLabel(sibling.labels.get(0))
-        }
-      })
+      await MindmapLayout.instance.layout(this.graphComponent)
+      this.limitViewport()
+      if (
+        this.graphComponent.inputMode instanceof GraphEditorInputMode &&
+        sibling.labels.size > 0
+      ) {
+        this.graphComponent.inputMode.editLabel(sibling.labels.get(0))
+      }
       return true
     }
     return false
@@ -367,7 +362,7 @@ export default class DemoCommands {
    * The click handler for a click on a state label in the state label popup menu.
    * @param {number} stateLabelIndex The index into the icon list {@link StateLabelDecorator#STATE_ICONS}.
    */
-  onStateLabelClicked(stateLabelIndex) {
+  async onStateLabelClicked(stateLabelIndex) {
     const node = this.graphComponent.currentItem
     if (node !== null) {
       const compoundEdit = this.getFullGraph().beginEdit(
@@ -376,10 +371,9 @@ export default class DemoCommands {
         this.getFullGraph().nodes
       )
       this.setStateLabel(node, stateLabelIndex)
-      MindmapLayout.instance.layout(this.graphComponent).then(() => {
-        compoundEdit.commit()
-        this.limitViewport()
-      })
+      await MindmapLayout.instance.layout(this.graphComponent)
+      compoundEdit.commit()
+      this.limitViewport()
     }
   }
 

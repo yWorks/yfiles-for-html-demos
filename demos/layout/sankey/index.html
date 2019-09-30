@@ -69,22 +69,27 @@
     <p>
       Sankey diagrams are used for visualizing flow information in which the thickness of the edges is proportional
       to the flow quantity. Such diagrams can be produced by means of the hierarchic layout algorithm (see
-      <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicLayout" target="_blank">HierarchicLayout</a>). </p>
+      <a href="https://docs.yworks.com/yfileshtml/#/api/HierarchicLayout" target="_blank">HierarchicLayout</a>).
+    </p>
     <p>
       The example diagram shows a voters' migration flow between different political parties over the course of three
-      elections (each column represents an election). The flow is depicted from left to right. </p>
+      elections (each column represents an election). The flow is depicted from left to right.
+    </p>
 
     <h2>Things to Try</h2>
     <p>
-      Select using the toggle button in toolbar, whether or not the layout algorithm should use the existing drawing as
-      sketch for the next layout run. If not selected, the layout algorithm can reduce the number of edge crossings (not
-      considering the edge thickness). </p>
+      Change the number displayed in each edge label to modify the thickness of a particular edge.
+    </p>
     <p>
-      Change the number displayed in each edge label to modify the thickness of a particular edge. </p>
+      Right-click on a node to modify its color.
+    </p>
     <p>
-      Right-click on a node to modify its color or the color of its adjacent edges. </p>
-    <p>
-      Right-click on an edge to modify its color. </p>
+      Use the dropdown to switch how the colors of edges are determined:
+    </p>
+    <ul>
+      <li>With the 'outgoing' setting, it is easier to see where edges come from.</li>
+      <li>With the 'incoming' setting, it is easier to see where edges go to.</li>
+    </ul>
   </div>
 </aside>
 
@@ -103,11 +108,7 @@
 
     <span class="demo-separator"></span>
 
-    <input type="checkbox" id="UseDrawingAsSketch" class="demo-toggle-button labeled" title="Use Drawing as Sketch"
-        data-command="UseDrawingAsSketch" checked/><label for="UseDrawingAsSketch">Use Drawing as Sketch</label>
-
-    <button data-command="Layout" title="Layout" id="layoutButton" class="demo-icon-yIconLayout labeled">Layout</button>
-
+    <span>Nodes determine the color of <select id="colorDirection"><option>outgoing</option><option>incoming</option></select> edges</span>
   </div>
 
   <div id="graphComponent">

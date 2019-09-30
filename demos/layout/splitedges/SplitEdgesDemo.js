@@ -78,7 +78,7 @@ function run(licenseData) {
  * Runs a {@link RecursiveGroupLayout} with {@link HierarchicLayout} as its core
  * layout.
  */
-function runLayout() {
+async function runLayout() {
   const hierarchicLayout = new HierarchicLayout({
     layoutOrientation: LayoutOrientation.LEFT_TO_RIGHT
   })
@@ -113,9 +113,8 @@ function runLayout() {
   )
 
   setUIDisabled(true)
-  graphComponent.morphLayout(recursiveGroupLayout, '700ms', layoutData).then(() => {
-    setUIDisabled(false)
-  })
+  await graphComponent.morphLayout(recursiveGroupLayout, '700ms', layoutData)
+  setUIDisabled(false)
 }
 
 /**

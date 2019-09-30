@@ -30,6 +30,7 @@ import {
   GeneralPath,
   GeomUtilities,
   INode,
+  INodeStyle,
   MutablePoint,
   NodeStyleBase,
   Point,
@@ -284,8 +285,8 @@ export default class MySimpleNodeStyle extends NodeStyleBase {
     reflection2.setAttribute('fill', 'aliceblue')
 
     const reflection3Path = new GeneralPath()
-    const startPoint = new MutablePoint(nodeSize.width / 2.5, nodeSize.height / 10 * 9)
-    const endPoint = new MutablePoint(nodeSize.width / 10 * 9, nodeSize.height / 2.5)
+    const startPoint = new MutablePoint(nodeSize.width / 2.5, (nodeSize.height / 10) * 9)
+    const endPoint = new MutablePoint((nodeSize.width / 10) * 9, nodeSize.height / 2.5)
     const ctrlPoint1 = new MutablePoint(
       startPoint.x + (endPoint.x - startPoint.x) / 2,
       nodeSize.height

@@ -1,78 +1,152 @@
-import 'yfiles/yfiles.css'
-import '../../../resources/style/demo.css'
+import React, { Component } from 'react'
+import './App.css'
+import ReactGraphComponent from './components/ReactGraphComponent.jsx'
+import DemoDescription from './components/DemoDescription.jsx'
+import yLogo from './assets/ylogo.svg'
+import DemoDataPanel from './components/DemoDataPanel.jsx'
 
-import React from 'react'
-import ReactGraphComponent from './ReactGraphComponent.jsx'
-import {DefaultGraph, ShapeNodeStyle} from 'yfiles'
-
-class App extends React.Component {
-  /**
-   * Create a new graph with nicer default node and edge styles,
-   * and create a simple graph structure
-   * @returns {DefaultGraph}
-   */
-  static createDefaultGraph() {
-    const graph = new DefaultGraph()
-    graph.nodeDefaults.style = new ShapeNodeStyle({
-      fill: 'orange',
-      stroke: 'orange',
-      shape: 'rectangle'
-    })
-    const n1 = graph.createNodeAt([150, 150])
-    const n2 = graph.createNodeAt([250, 150])
-    const n3 = graph.createNodeAt([150, 250])
-    graph.createEdge(n1, n2)
-    graph.createEdge(n1, n3)
-    graph.createEdge(n2, n3)
-    return graph
-  }
-
-  constructor() {
-    super()
-    // The app state consists of the "editable" and "graph" properties.
-    // State changes are propagated to GraphComponent properties
-    // in the app's render function.
+export default class App extends Component {
+  constructor(props) {
+    super(props)
     this.state = {
-      editable: true,
-      graph: App.createDefaultGraph()
+      graphData: {
+        nodesSource: [
+          {
+            id: 0,
+            name: 'Node 0'
+          },
+          {
+            id: 1,
+            name: 'Node 1'
+          },
+          {
+            id: 2,
+            name: 'Node 2'
+          }
+        ],
+        edgesSource: [
+          {
+            fromNode: 0,
+            toNode: 1
+          },
+          {
+            fromNode: 0,
+            toNode: 2
+          }
+        ]
+      }
     }
-    this.toggleEditable = this.toggleEditable.bind(this)
-    this.resetGraph = this.resetGraph.bind(this)
   }
 
-  /**
-   * Toggle state.editable
-   */
-  toggleEditable() {
-    const editable = this.state.editable
-    this.setState({ editable: !editable })
+  addNode() {
+    const newIdx = this.state.graphData.nodesSource.reduce((maxId, item) => Math.max(maxId, item.id), 0) + 1
+    const parentNodeIdx = Math.floor(Math.random() * (this.state.graphData.nodesSource.length - 1))
+    this.setState(state => {
+      const nodesSource = state.graphData.nodesSource.concat({
+        id: newIdx,
+        name: `Node ${newIdx}`
+      })
+
+      // Create an edge if the graph was not empty
+      let edgesSource = state.graphData.edgesSource
+      if (parentNodeIdx > -1) {
+        edgesSource = state.graphData.edgesSource.concat({
+          fromNode: nodesSource[parentNodeIdx].id,
+          toNode: newIdx
+        })
+      }
+
+      return {
+        graphData: {
+          nodesSource,
+          edgesSource
+        }
+      }
+    })
   }
 
-  /**
-   * Restore the default graph
-   */
-  resetGraph() {
-    this.setState({ graph: App.createDefaultGraph() })
+  removeNode() {
+    this.setState(state => {
+      const randomNodeIdx = Math.floor(Math.random() * (this.state.graphData.nodesSource.length - 1))
+      const newNodesSource = [...state.graphData.nodesSource]
+      newNodesSource.splice(randomNodeIdx, 1)
+
+      const nodeId = this.state.graphData.nodesSource[randomNodeIdx].id
+      const newEdgesSource = state.graphData.edgesSource.filter(
+        edge => edge.fromNode !== nodeId && edge.toNode !== nodeId
+      )
+      return {
+        graphData: {
+          nodesSource: newNodesSource,
+          edgesSource: newEdgesSource
+        }
+      }
+    })
+  }
+
+  resetData() {
+    this.setState({
+      graphData: {
+        nodesSource: [
+          {
+            id: 0,
+            name: 'Node 0'
+          },
+          {
+            id: 1,
+            name: 'Node 1'
+          },
+          {
+            id: 2,
+            name: 'Node 2'
+          }
+        ],
+        edgesSource: [
+          {
+            fromNode: 0,
+            toNode: 1
+          },
+          {
+            fromNode: 0,
+            toNode: 2
+          }
+        ]
+      }
+    })
   }
 
   render() {
     return (
-      <div>
-        <div className="demo-toolbar">
-          <button className="demo-icon-yIconReload" onClick={this.resetGraph} />
-          <span className="demo-separator" />
-          <input
-            type="checkbox"
-            id="toggleEditable"
-            className="demo-toggle-button labeled"
-            onClick={this.toggleEditable}
+      <div className="App">
+        <aside className="demo-sidebar left">
+          <DemoDescription />
+        </aside>
+        <aside className="demo-sidebar right">
+          <DemoDataPanel
+            graphData={this.state.graphData}
+            onAddNode={() => this.addNode()}
+            onRemoveNode={() => this.removeNode()}
           />
-          <label htmlFor="toggleEditable">Toggle Editing</label>
+        </aside>
+
+        <div className="demo-content">
+          <div className="demo-header">
+            <a href="https://www.yworks.com" target="_blank" rel="noopener noreferrer">
+              {' '}
+              <img src={yLogo} className="demo-y-logo" alt="yWorks Logo" />{' '}
+            </a>{' '}
+            <a href="../../../README.html" target="_blank">
+              yFiles for HTML
+            </a>{' '}
+            <span className="demo-title">React Demo [yFiles for HTML]</span>
+          </div>
+
+          <ReactGraphComponent
+            graphData={this.state.graphData}
+            onResetData={() => this.resetData()}
+          />
         </div>
-        <ReactGraphComponent graph={this.state.graph} editable={this.state.editable} />
       </div>
     )
   }
 }
-
-export default App

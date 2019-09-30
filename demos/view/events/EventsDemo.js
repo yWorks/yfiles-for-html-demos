@@ -2084,9 +2084,8 @@ function geimOnNodeReparented(sender, args) {
 function geimOnEdgePortsChanged(sender, args) {
   log(
     sender,
-    `GraphEditorInputMode Edge ${args.item} Ports Changed from ${args.sourcePort}->${
-      args.targetPort
-    } to ${args.item.sourcePort}->${args.item.targetPort}`
+    `GraphEditorInputMode Edge ${args.item} Ports Changed from ${args.sourcePort}->${args.targetPort}` +
+      ` to ${args.item.sourcePort}->${args.item.targetPort}`
   )
 }
 
@@ -3376,9 +3375,10 @@ function getAffectedItems(sender) {
     const bendCount = items.ofType(IBend.$class).size
     const labelCount = items.ofType(ILabel.$class).size
     const portCount = items.ofType(IPort.$class).size
-    return `(${
-      items.size
-    } items: ${nodeCount} nodes, ${bendCount} bends, ${edgeCount} edges, ${labelCount} labels, ${portCount} ports)`
+    return (
+      `(${items.size} items: ${nodeCount} nodes, ${bendCount} bends, ${edgeCount} edges,` +
+      ` ${labelCount} labels, ${portCount} ports)`
+    )
   }
   return ''
 }

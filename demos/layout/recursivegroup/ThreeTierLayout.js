@@ -34,10 +34,9 @@ import {
   HierarchicLayoutNodeLayoutDescriptor,
   IGraph,
   INode,
-  LayoutGraph,
+  LayoutData,
   LayoutMode,
   LayoutOrientation,
-  LayoutStageBase,
   PortCandidate,
   PortDirections,
   RecursiveGroupLayout,
@@ -59,133 +58,107 @@ import {
  * Elements not assigned to left or right group nodes are always lay out in the middle using the
  * {@link HierarchicLayout} with layout orientation left-to-right. Note that group nodes of type
  * {@link COMMON_NODE} are handled non-recursively.
+ *
+ * @param {boolean} fromSketch - Whether the {@link HierarchicLayout} shall be run in incremental
+ *   layout mode.
  */
-export default class ThreeTierLayout extends LayoutStageBase {
-  /**
-   * Creates a new instance of <code>ThreeTierLayout</code>.
-   * @param {boolean} fromSketch - Whether the {@link HierarchicLayout} shall be run in incremental
-   *   layout mode.
-   */
-  constructor(fromSketch) {
-    super()
+export function createThreeTierLayout(fromSketch) {
+  const hierarchicLayout = new HierarchicLayout({
+    layoutOrientation: LayoutOrientation.LEFT_TO_RIGHT,
+    layoutMode: fromSketch ? LayoutMode.INCREMENTAL : LayoutMode.FROM_SCRATCH,
+    // in case there are a lot of inter-edges, port optimization can take a while
+    // then we want to take cut the calculation short and get a less optimized result
+    maximumDuration: 2000
+  })
 
-    const hierarchicLayout = new HierarchicLayout({
-      layoutOrientation: LayoutOrientation.LEFT_TO_RIGHT,
-      layoutMode: fromSketch ? LayoutMode.INCREMENTAL : LayoutMode.FROM_SCRATCH,
-      // in case there are a lot of inter-edges, port optimization can take a while
-      // then we want to take cut the calculation short and get a less optimized result
-      maximumDuration: 2000
-    })
-
-    this.coreLayout = new RecursiveGroupLayout({
-      coreLayout: hierarchicLayout,
-      autoAssignPortCandidates: true,
-      fromSketchMode: true
-    })
-  }
-
-  /**
-   * @param {LayoutGraph} graph
-   */
-  applyLayout(graph) {
-    this.applyLayoutCore(graph)
-  }
-
-  /**
-   * Returns the layout data that shall be used for the ThreeTierLayout with the specified graph.
-   * @param {IGraph} graph
-   * @param {boolean} fromSketch
-   * @return {LayoutData}
-   */
-  static LAYOUT_DATA(graph, fromSketch) {
-    return new LayoutData(graph, fromSketch)
-  }
+  return new RecursiveGroupLayout({
+    coreLayout: hierarchicLayout,
+    autoAssignPortCandidates: true,
+    fromSketchMode: true
+  })
 }
 
 /**
- * The layout data that shall be used for the ThreeTierLayout with the specified graph.
+ * Returns the layout data that shall be used for the three tier layout with the specified graph.
+ * @param {IGraph} graph
+ * @param {boolean} fromSketch
+ * @return {LayoutData}
  */
-class LayoutData extends CompositeLayoutData {
-  /**
-   * Creates a new instance configured for the specified graph.
-   * @param {IGraph} graph The graph to configure the layout data for.
-   * @param {boolean} fromSketch Whether the {@link HierarchicLayout} shall be run in incremental
-   *   layout mode.
-   */
-  constructor(graph, fromSketch) {
-    super()
+export function createThreeTierLayoutData(graph, fromSketch) {
+  const ld = new CompositeLayoutData()
 
-    // set up port candidates for edges (edges should be attached to the left/right side of the corresponding node
-    const candidates = [
-      PortCandidate.createCandidate(PortDirections.WEST),
-      PortCandidate.createCandidate(PortDirections.EAST)
-    ]
+  // set up port candidates for edges (edges should be attached to the left/right side of the corresponding node
+  const candidates = [
+    PortCandidate.createCandidate(PortDirections.WEST),
+    PortCandidate.createCandidate(PortDirections.EAST)
+  ]
 
-    // configure the different sub group layout settings
-    const leftToRightTreeLayout = new TreeReductionStage({
-      coreLayout: new TreeLayout({
-        layoutOrientation: LayoutOrientation.LEFT_TO_RIGHT
-      })
+  // configure the different sub group layout settings
+  const leftToRightTreeLayout = new TreeReductionStage({
+    coreLayout: new TreeLayout({
+      layoutOrientation: LayoutOrientation.LEFT_TO_RIGHT
     })
-    leftToRightTreeLayout.nonTreeEdgeRouter = leftToRightTreeLayout.createStraightLineRouter()
+  })
+  leftToRightTreeLayout.nonTreeEdgeRouter = leftToRightTreeLayout.createStraightLineRouter()
 
-    const rightToLeftTreeLayout = new TreeReductionStage({
-      coreLayout: new TreeLayout({
-        layoutOrientation: LayoutOrientation.RIGHT_TO_LEFT
-      })
+  const rightToLeftTreeLayout = new TreeReductionStage({
+    coreLayout: new TreeLayout({
+      layoutOrientation: LayoutOrientation.RIGHT_TO_LEFT
     })
-    rightToLeftTreeLayout.nonTreeEdgeRouter = rightToLeftTreeLayout.createStraightLineRouter()
+  })
+  rightToLeftTreeLayout.nonTreeEdgeRouter = rightToLeftTreeLayout.createStraightLineRouter()
 
-    this.items.add(
-      new RecursiveGroupLayoutData({
-        sourcePortCandidates: candidates,
-        targetPortCandidates: candidates,
+  ld.items.add(
+    new RecursiveGroupLayoutData({
+      sourcePortCandidates: candidates,
+      targetPortCandidates: candidates,
 
-        // map each group node to the layout algorithm that should be used for its content
-        groupNodeLayouts: node => {
-          switch (getTierType(node, graph)) {
-            case TierType.LEFT_TREE_GROUP_NODE:
-              return leftToRightTreeLayout
-            case TierType.RIGHT_TREE_GROUP_NODE:
-              return rightToLeftTreeLayout
-            default:
-              return null
-          }
-        }
-      })
-    )
-
-    const hierarchicLayoutData = new HierarchicLayoutData({
-      nodeLayoutDescriptors: node => {
-        // align tree group nodes within their layer
+      // map each group node to the layout algorithm that should be used for its content
+      groupNodeLayouts: node => {
         switch (getTierType(node, graph)) {
-          case TierType.LEFT_TREE_GROUP_NODE: {
-            return new HierarchicLayoutNodeLayoutDescriptor({ layerAlignment: 1 })
-          }
-          case TierType.RIGHT_TREE_GROUP_NODE: {
-            return new HierarchicLayoutNodeLayoutDescriptor({ layerAlignment: 0 })
-          }
+          case TierType.LEFT_TREE_GROUP_NODE:
+            return leftToRightTreeLayout
+          case TierType.RIGHT_TREE_GROUP_NODE:
+            return rightToLeftTreeLayout
           default:
             return null
         }
       }
     })
+  )
 
-    if (!fromSketch) {
-      // insert layer constraints to guarantee the desired placement for "left" and "right" group nodes
-      const layerConstraints = hierarchicLayoutData.layerConstraints
-      graph.nodes.forEach(node => {
-        // align tree group nodes within their layer
-        const type = getTierType(node, graph)
-        if (type === TierType.LEFT_TREE_GROUP_NODE) {
-          layerConstraints.placeAtTop(node)
-        } else if (type === TierType.RIGHT_TREE_GROUP_NODE) {
-          layerConstraints.placeAtBottom(node)
+  const hierarchicLayoutData = new HierarchicLayoutData({
+    nodeLayoutDescriptors: node => {
+      // align tree group nodes within their layer
+      switch (getTierType(node, graph)) {
+        case TierType.LEFT_TREE_GROUP_NODE: {
+          return new HierarchicLayoutNodeLayoutDescriptor({ layerAlignment: 1 })
         }
-      })
+        case TierType.RIGHT_TREE_GROUP_NODE: {
+          return new HierarchicLayoutNodeLayoutDescriptor({ layerAlignment: 0 })
+        }
+        default:
+          return null
+      }
     }
-    this.items.add(hierarchicLayoutData)
+  })
+
+  if (!fromSketch) {
+    // insert layer constraints to guarantee the desired placement for "left" and "right" group nodes
+    const layerConstraints = hierarchicLayoutData.layerConstraints
+    graph.nodes.forEach(node => {
+      // align tree group nodes within their layer
+      const type = getTierType(node, graph)
+      if (type === TierType.LEFT_TREE_GROUP_NODE) {
+        layerConstraints.placeAtTop(node)
+      } else if (type === TierType.RIGHT_TREE_GROUP_NODE) {
+        layerConstraints.placeAtBottom(node)
+      }
+    })
   }
+  ld.items.add(hierarchicLayoutData)
+
+  return ld
 }
 
 /**

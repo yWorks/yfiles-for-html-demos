@@ -154,7 +154,7 @@ function getStroke(priority) {
 /**
  * Applies a hierarchic layout considering the edge priorities.
  */
-function runLayout() {
+async function runLayout() {
   if (layoutRunning) {
     return
   }
@@ -163,12 +163,11 @@ function runLayout() {
   const { layout, layoutData } =
     layoutStyle === 'hierarchic' ? configureHierarchicLayout() : configureTreeLayout()
 
-  graphComponent.morphLayout(layout, '700ms', layoutData).then(() => {
-    if (layoutStyle === 'tree') {
-      graphComponent.graph.mapperRegistry.removeMapper(TreeLayout.CRITICAL_EDGE_DP_KEY)
-    }
-    layoutRunning = false
-  })
+  await graphComponent.morphLayout(layout, '700ms', layoutData)
+  if (layoutStyle === 'tree') {
+    graphComponent.graph.mapperRegistry.removeMapper(TreeLayout.CRITICAL_EDGE_DP_KEY)
+  }
+  layoutRunning = false
 }
 
 /**
@@ -237,7 +236,7 @@ function markRandomPredecessorsPaths() {
     return
   }
 
-  const leafs = graphComponent.graph.nodes.filter(node => {
+  const leaves = graphComponent.graph.nodes.filter(node => {
     return graphComponent.graph.outEdgesAt(node).size === 0
   })
 
@@ -247,12 +246,12 @@ function markRandomPredecessorsPaths() {
   })
 
   // mark the upstream path of random leaf nodes
-  let randomNodeCount = Math.min(10, leafs.size)
+  let randomNodeCount = Math.min(10, leaves.size)
   while (randomNodeCount > 0) {
     randomNodeCount--
-    const rndNodeIdx = Math.floor(Math.random() * leafs.size)
+    const rndNodeIdx = Math.floor(Math.random() * leaves.size)
     const rndPriority = Math.floor(Math.random() * 5) + 1
-    markPredecessorsPath(leafs.elementAt(rndNodeIdx), rndPriority)
+    markPredecessorsPath(leaves.elementAt(rndNodeIdx), rndPriority)
   }
 
   runLayout()

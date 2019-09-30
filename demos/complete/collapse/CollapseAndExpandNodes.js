@@ -28,6 +28,7 @@
  ***************************************************************************/
 /* eslint-disable no-unused-vars */
 import {
+  Bfs,
   CompositeLayoutData,
   FixNodeLayoutData,
   GraphComponent,
@@ -44,8 +45,7 @@ import {
   OrganicLayoutData,
   OrganicLayoutScope,
   PlaceNodesAtBarycenterStage,
-  PlaceNodesAtBarycenterStageData,
-  StraightLineEdgeRouterData
+  PlaceNodesAtBarycenterStageData
 } from 'yfiles'
 
 /**
@@ -70,6 +70,7 @@ export default class CollapseAndExpandNodes {
   setNodeVisibility(node, visible) {
     this.nodeVisibility.set(node, visible)
   }
+
   getNodeVisibility(node) {
     return !!this.nodeVisibility.get(node)
   }
@@ -182,12 +183,7 @@ export default class CollapseAndExpandNodes {
         // move the incremental nodes between their neighbors before expanding for a smooth animation
         this.prepareSmoothExpandLayoutAnimation(incrementalMap)
       } else {
-        // configure StraightLineEdgeRouter and PlaceNodesAtBarycenterStage for a smooth animation
-        currentLayoutData.items.add(
-          new StraightLineEdgeRouterData({
-            affectedNodes: node => incrementalMap.has(node)
-          })
-        )
+        // configure PlaceNodesAtBarycenterStage for a smooth animation
         currentLayoutData.items.add(
           new PlaceNodesAtBarycenterStageData({
             affectedNodes: node => incrementalMap.has(node)
@@ -195,9 +191,27 @@ export default class CollapseAndExpandNodes {
         )
       }
       if (currentLayout instanceof OrganicLayout) {
-        currentLayout.scope = OrganicLayoutScope.MAINLY_SUBSET
+        currentLayout.compactnessFactor = 0.7
+        currentLayout.preferredEdgeLength = 60
 
-        currentLayoutData.items.add(new OrganicLayoutData({ affectedNodes: graph.nodes.toList() }))
+        currentLayout.considerNodeSizes = false
+        currentLayout.nodeOverlapsAllowed = false
+        currentLayout.minimumNodeDistance = 10
+        currentLayout.qualityTimeRatio = 1
+        currentLayout.maximumDuration = 1000 + graph.nodes.size * 50
+        currentLayout.scope = OrganicLayoutScope.ALL
+
+        const layerIds = new Bfs({
+          coreNodes: incrementalNodes.concat(toggledNode),
+          traversalDirection: 'both'
+        }).run(graph).nodeLayerIds
+
+        currentLayoutData.items.add(
+          new OrganicLayoutData({
+            nodeInertia: obj => 1 - 1 / (layerIds.get(obj) + 1),
+            nodeStress: obj => 1 / (layerIds.get(obj) + 1)
+          })
+        )
       } else if (currentLayout instanceof HierarchicLayout) {
         currentLayout.layoutMode = LayoutMode.INCREMENTAL
 

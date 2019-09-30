@@ -497,7 +497,9 @@ const LabelingConfig = Class('LabelingConfig', {
           values: [
             ['Anywhere', LayoutConfiguration.EnumLabelPlacementAlongEdge.ANYWHERE],
             ['At Source', LayoutConfiguration.EnumLabelPlacementAlongEdge.AT_SOURCE],
+            ['At Source Port', LayoutConfiguration.EnumLabelPlacementAlongEdge.AT_SOURCE_PORT],
             ['At Target', LayoutConfiguration.EnumLabelPlacementAlongEdge.AT_TARGET],
+            ['At Target Port', LayoutConfiguration.EnumLabelPlacementAlongEdge.AT_TARGET_PORT],
             ['Centered', LayoutConfiguration.EnumLabelPlacementAlongEdge.CENTERED]
           ]
         }),
@@ -585,8 +587,8 @@ const LabelingConfig = Class('LabelingConfig', {
     },
     get: function() {
       return (
-        this.labelPlacementSideOfEdgeItem ===
-        LayoutConfiguration.EnumLabelPlacementSideOfEdge.ON_EDGE
+        (this.labelPlacementSideOfEdgeItem ===
+        LayoutConfiguration.EnumLabelPlacementSideOfEdge.ON_EDGE)
       )
     }
   }

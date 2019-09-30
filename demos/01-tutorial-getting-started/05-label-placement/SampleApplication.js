@@ -32,6 +32,7 @@ import {
   ExteriorLabelModelPosition,
   FreeNodePortLocationModel,
   GraphComponent,
+  GraphOverviewComponent,
   ICommand,
   IGraph,
   Insets,

@@ -67,8 +67,19 @@
 
     <h2>Integrating yFiles</h2>
     <p>
-      To include the library css file, it was added to the <code>styles</code> array in <code>.angular.json</code>.
+      To include the library css file, it was added to the <code>styles</code> array in <code>angular.json</code>.
       The license files can be imported in the <code>main.ts</code> file.
+    </p>
+    <p>
+      The build process uses a custom webpack configuration file with the help of the
+      <code>@angular-builders/custom-webpack:browser</code> builder. This allows the use of the
+      <a href="https://www.npmjs.com/package/@yworks/optimizer">@yworks/optimizer</a> package in production,
+      adding yfiles-typeinfo support during development, and a separate yFiles chunk.
+    </p>
+    <p>
+      You could also add yfiles-typeinfo support by adding it to the <code>scripts</code> section
+      of the <code>angular.json</code> file. However, this would also add debugging support to the
+      production build, which is usually undesirable.
     </p>
     <p>
       To run and build the app, you can use the regular <code>ng serve</code> and <code>ng build</code> commands.

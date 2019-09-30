@@ -27,9 +27,12 @@
  **
  ***************************************************************************/
 import {
+  EdgeStyleBase,
   FreeNodePortLocationModel,
   INodeStyle,
+  LabelStyleBase,
   NodeStyleBase,
+  PortStyleBase,
   Rect,
   SimpleEdge,
   SimpleNode,

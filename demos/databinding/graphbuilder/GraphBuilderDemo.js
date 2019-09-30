@@ -44,7 +44,8 @@ import {
   License,
   PreferredPlacementDescriptor,
   Size,
-  StringTemplateNodeStyle
+  StringTemplateNodeStyle,
+  TemplateNodeStyle
 } from 'yfiles'
 
 import Samples from './samples.js'
@@ -281,7 +282,7 @@ function getBinding(bindingString) {
  * @param {boolean} update <code>true</code> when the following layout should be incremental, <code>false</code>
  *   otherwise
  */
-function applyLayout(update) {
+async function applyLayout(update) {
   if (layouting) {
     return
   }
@@ -301,22 +302,18 @@ function applyLayout(update) {
       return null
     }
   })
-
   layouting = true
-  graphComponent
-    .morphLayout(layout, '1s', layoutData)
-    .then(() => {
-      layouting = false
-      return null
-    })
-    .catch(error => {
-      layouting = false
-      if (typeof window.reportError === 'function') {
-        window.reportError(error)
-      } else {
-        throw error
-      }
-    })
+  try {
+    await graphComponent.morphLayout(layout, '1s', layoutData)
+  } catch (error) {
+    if (typeof window.reportError === 'function') {
+      window.reportError(error)
+    } else {
+      throw error
+    }
+  } finally {
+    layouting = false
+  }
 }
 
 /**

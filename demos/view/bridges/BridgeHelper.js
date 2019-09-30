@@ -33,6 +33,7 @@ import {
   INode,
   IObstacleProvider,
   IRenderContext,
+  IShapeGeometry,
   Insets,
   MutableRectangle,
   Point

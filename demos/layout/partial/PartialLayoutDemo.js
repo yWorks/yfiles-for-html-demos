@@ -107,7 +107,7 @@ Class.ensure(EdgeRouter, OrganicEdgeRouter)
 /**
  * Runs a partial layout considering all selected options and partial/fixed nodes.
  */
-function runLayout() {
+async function runLayout() {
   setUIDisabled(true)
 
   // configure layout
@@ -129,14 +129,12 @@ function runLayout() {
     affectedEdges: edge => !isFixed(edge)
   })
   // run layout algorithm
-  graphComponent
-    .morphLayout(partialLayout, '0.5s', partialLayoutData)
-    .then(() => {
-      setUIDisabled(false)
-    })
-    .catch(() => {
-      setUIDisabled(false)
-    })
+  try {
+    await graphComponent.morphLayout(partialLayout, '0.5s', partialLayoutData)
+  } catch (e) {
+  } finally {
+    setUIDisabled(false)
+  }
 }
 
 /**
@@ -431,7 +429,7 @@ function registerCommands() {
 /**
  * Loads one of four scenarios that come with a sample graph and a layout configuration.
  */
-function loadScenario() {
+async function loadScenario() {
   partialNodesMapper.clear()
   partialEdgesMapper.clear()
 
@@ -480,16 +478,15 @@ function loadScenario() {
   }
 
   const graph = graphComponent.graph
-  readGraph(ioHandler, graph, path).then(() => {
-    graph.nodes.forEach(node => {
-      const fixed = isFixed(node)
-      updateStyle(node, fixed)
-    })
-    graph.edges.forEach(edge => {
-      updateStyle(edge, isFixed(edge))
-    })
-    graphComponent.fitGraphBounds()
+  await readGraph(ioHandler, graph, path)
+  graph.nodes.forEach(node => {
+    const fixed = isFixed(node)
+    updateStyle(node, fixed)
   })
+  graph.edges.forEach(edge => {
+    updateStyle(edge, isFixed(edge))
+  })
+  graphComponent.fitGraphBounds()
 }
 
 /**

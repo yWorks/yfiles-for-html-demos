@@ -1,0 +1,110 @@
+/****************************************************************************
+ ** @license
+ ** This demo file is part of yFiles for HTML 2.2.
+ ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** 72070 Tuebingen, Germany. All rights reserved.
+ **
+ ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+ ** of demo files in source code or binary form, with or without
+ ** modification, is not permitted.
+ **
+ ** Owners of a valid software license for a yFiles for HTML version that this
+ ** demo is shipped with are allowed to use the demo source code as basis
+ ** for their own yFiles for HTML powered applications. Use of such programs is
+ ** governed by the rights and conditions as set out in the yFiles for HTML
+ ** license agreement.
+ **
+ ** THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+ ** WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ ** MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+ ** NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ ** SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+ ** TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ ** PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+ ** LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+ ** NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ **
+ ***************************************************************************/
+.demo-content {
+  position: absolute;
+  top: 0;
+  left: 320px;
+  right: 0;
+  bottom: 0;
+}
+.demo-header {
+  position: absolute;
+  top: 0;
+  height: 60px;
+  left: 0;
+  right: 0;
+  background-color: #336699;
+  color: white;
+}
+.demo-y-logo {
+  width: 60px;
+  height: 60px;
+  display: inline-block;
+  padding: 5px;
+  box-sizing: border-box;
+  border-color: transparent;
+}
+.demo-header a {
+  display: inline-block;
+  height: 60px;
+  text-decoration: none;
+  color: white;
+  line-height: 60px;
+  padding: 0 5px;
+  vertical-align: top;
+  font-size: 1.5em;
+}
+.demo-title {
+  display: inline-block;
+  padding: 0 5px 0 30px;
+  height: 60px;
+  line-height: 60px;
+  color: white;
+  cursor: default;
+  font-size: 1.5em;
+  letter-spacing: 1px;
+  background: url('./assets/header-angle.svg') no-repeat 5px 50%;
+  background-size: 20px 20px;
+  vertical-align: top;
+}
+.demo-sidebar {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 320px;
+  box-sizing: border-box;
+  background: #f7f7f7;
+  z-index: 15;
+  line-height: 150%;
+  overflow-y: auto;
+}
+.demo-sidebar.left {
+  left: 0;
+}
+.demo-sidebar.right {
+  right: 0;
+}
+@media screen and (max-height: 500px) {
+  .demo-header {
+    height: 30px;
+    font-size: 10px;
+  }
+  .demo-header .demo-y-logo {
+    height: 30px;
+    line-height: 30px;
+  }
+  .demo-header a {
+    height: 30px;
+    line-height: 30px;
+  }
+  .demo-title {
+    height: 30px;
+    line-height: 30px;
+  }
+}

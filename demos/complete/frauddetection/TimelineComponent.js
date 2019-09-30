@@ -29,7 +29,6 @@
 import {
   Animator,
   BaseClass,
-  ClickEventArgs,
   EventRecognizers,
   Fill,
   FilteredGraphWrapper,
@@ -41,7 +40,6 @@ import {
   HandleInputMode,
   HandlePositions,
   HighlightIndicatorManager,
-  HoveredItemChangedEventArgs,
   ICanvasObjectDescriptor,
   ICollection,
   IComparer,
@@ -55,10 +53,8 @@ import {
   IRenderContext,
   IVisualCreator,
   Insets,
-  ItemSelectionChangedEventArgs,
   List,
   Mapper,
-  MouseEventArgs,
   MouseWheelBehaviors,
   MoveInputMode,
   MutablePoint,
@@ -199,9 +195,13 @@ export default class TimelineComponent {
     this.$zoomLevelEnabled = zoomLevelEnabled
     if (!this.$zoomLevelEnabled) {
       this.zoomLevel = ZoomLevel.ZOOM_MONTHS
-      this.timelineComponent.removeMouseWheelListener(this.onMouseWheel.bind(this))
+      this.timelineComponent.removeMouseWheelListener((sender, evt) =>
+        this.onMouseWheel(evt.wheelDelta, evt.location)
+      )
     } else {
-      this.timelineComponent.addMouseWheelListener(this.onMouseWheel.bind(this))
+      this.timelineComponent.addMouseWheelListener((sender, evt) =>
+        this.onMouseWheel(evt.wheelDelta, evt.location)
+      )
     }
   }
 
@@ -280,15 +280,13 @@ export default class TimelineComponent {
 
   /**
    * Fired when the selected nodes of the timeline graph change.
-   * @param {object} sender
-   * @param {ItemSelectionChangedEventArgs} args
+   * @param {IModelItem} item
    */
-  onItemSelectionChanged(sender, args) {
+  onItemSelectionChanged(item) {
     if (!this.selectionListener) {
       return
     }
     const graphNodesSelected = []
-    const item = args.item
     if (item && INode.isInstance(item)) {
       const graphNodes = this.timelineNodes2graphNodes.get(item)
       if (graphNodes) {
@@ -300,11 +298,9 @@ export default class TimelineComponent {
 
   /**
    * Fired when the hovered nodes of the timeline graph change.
-   * @param {object} sender
-   * @param {HoveredItemChangedEventArgs} args
+   * @param {IModelItem} item
    */
-  onHoveredItemChanged(sender, args) {
-    const item = args.item
+  onHoveredItemChanged(item) {
     if (!this.busy) {
       const graphNodesSelected = []
       const highlightIndicatorManager = this.timelineComponent.highlightIndicatorManager
@@ -443,14 +439,16 @@ export default class TimelineComponent {
     inputMode.moveViewportInputMode.priority = 2
     inputMode.navigationInputMode.enabled = false
     inputMode.marqueeSelectionInputMode.enabled = false
-    inputMode.addItemClickedListener(this.onItemSelectionChanged.bind(this))
-    inputMode.addCanvasClickedListener(this.onCanvasClicked.bind(this))
+    inputMode.addItemClickedListener((sender, evt) => this.onItemSelectionChanged(evt.item))
+    inputMode.addCanvasClickedListener((sender, evt) => this.onCanvasClicked(evt.clickCount))
 
     // add hover input mode
     const timelineItemHoverInputMode = inputMode.itemHoverInputMode
     timelineItemHoverInputMode.hoverItems = GraphItemTypes.NODE
     timelineItemHoverInputMode.discardInvalidItems = false
-    timelineItemHoverInputMode.addHoveredItemChangedListener(this.onHoveredItemChanged.bind(this))
+    timelineItemHoverInputMode.addHoveredItemChangedListener((sender, evt) =>
+      this.onHoveredItemChanged(evt.item)
+    )
     this.timelineComponent.inputMode = inputMode
 
     // configure mouse wheel and size changed listener
@@ -956,7 +954,7 @@ export default class TimelineComponent {
     const newZoomFactor = (this.timelineComponent.size.height - 15) / contentRect.height
     // we calculate the new view port based on the new zoom level
     const newViewPointX =
-      hitNodeX - (lastMouseLocationX - oldViewPointX) / newZoomFactor * oldZoomFactor
+      hitNodeX - ((lastMouseLocationX - oldViewPointX) / newZoomFactor) * oldZoomFactor
 
     // the width of new rectangle is calculated by the width of the nodes included in each interval of the current
     // new zoom level
@@ -1172,13 +1170,13 @@ export default class TimelineComponent {
   /**
    * Changes the zoom level of the timeline view so that more information about time intervals is displayed. The
    * order is years (zoom level 0.8) -> months (zoom level 1) -> days (zoom level 1.2). By default zoom === 1.
-   * @param {object} sender
-   * @param {MouseEventArgs} args
+   * @param {number} wheelDelta The signed number of mouse wheel turn units
+   * @param {Point} location The coordinates in the world coordinate space associated with the event
    */
-  onMouseWheel(sender, args) {
+  onMouseWheel(wheelDelta, location) {
     if (!this.busy) {
       const oldZoomFactor = this.zoomFactor
-      if (args.wheelDelta === 1) {
+      if (wheelDelta === 1) {
         this.zoomFactor = Math.min(this.zoomFactor + 0.2, 1.2)
       } else {
         this.zoomFactor = Math.max(this.zoomFactor - 0.2, 0.8)
@@ -1190,7 +1188,7 @@ export default class TimelineComponent {
         this.hitNode = null
 
         if (this.timelineNodes) {
-          this.hitPoint = args.location
+          this.hitPoint = location
           const boundary = this.calculateBoundaryCoordinates(this.timelineComponent.graph.nodes)
           const maxY = boundary.maxY
           const minY = boundary.minY
@@ -1223,16 +1221,15 @@ export default class TimelineComponent {
   /**
    * Clicking on the canvas moves the rectangle to the mouse location and clears all selections and highlights
    * from the nodes.
-   * @param {object} sender
-   * @param {ClickEventArgs} args
+   * @param {number} clickCount The number of clicks associated with the event
    */
-  onCanvasClicked(sender, args) {
+  onCanvasClicked(clickCount) {
     this.timelineComponent.selection.clear()
     if (this.selectionListener) {
       this.selectionListener.call(this, [])
     }
 
-    if (args.clickCount === 2) {
+    if (clickCount === 2) {
       this.displayTimeline(true)
     }
   }
@@ -1299,14 +1296,14 @@ export default class TimelineComponent {
   }
 
   /**
-   * Sets the tooltips that display information about the hovered nodes.
+   * Sets the tooltip content that displays information about the hovered nodes.
    */
   setupTooltips() {
     const inputMode = this.timelineComponent.inputMode
     inputMode.toolTipItems = GraphItemTypes.NODE
     inputMode.addQueryItemToolTipListener((src, eventArgs) => {
       if (eventArgs.handled) {
-        // A tooltip has already been assigned -> nothing to do.
+        // Tooltip content has already been assigned -> nothing to do.
         return
       }
       const item = eventArgs.item
@@ -1509,6 +1506,7 @@ export default class TimelineComponent {
     if (animation.animating) {
       animation.stopAnimation()
     } else {
+      this.graphComponent.fitGraphBounds()
       animation.playAnimation()
     }
     const videoButton = document.getElementById(`${this.selector}-video-button`)

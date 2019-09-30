@@ -72,20 +72,16 @@ export default class OpenFromWebStorageOperation {
    * Opens the file stored in local storage.
    * @return {Promise} A Promise that resolves with the file content.
    */
-  open() {
-    return new Promise((resolve, reject) => {
-      if (!this.isAvailable()) {
-        reject(new Error('Web storage is not available'))
-        return
-      }
+  async open() {
+    if (!this.isAvailable()) {
+      throw new Error('Web storage is not available')
+    }
 
-      const item = this.getItem()
-      if (typeof item === 'undefined' || item === null) {
-        reject(new Error(`No item found in local storage for key ${this.storageKey}`))
-      } else {
-        resolve(item)
-      }
-    })
+    const item = this.getItem()
+    if (typeof item === 'undefined' || item === null) {
+      throw new Error(`No item found in local storage for key ${this.storageKey}`)
+    }
+    return item
   }
 
   /**

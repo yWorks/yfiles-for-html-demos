@@ -214,7 +214,7 @@ function registerCommands() {
  * @param {boolean} clearUndo True if the undo engine should be cleared, false otherwise
  * @return {Promise} A promise which resolves after the layout is applied without errors.
  */
-function route(clearUndo) {
+async function route(clearUndo) {
   const config = optionEditor.config
   const graph = graphComponent.graph
   // prevent starting another layout calculation
@@ -231,24 +231,23 @@ function route(clearUndo) {
     }
   })
 
-  return config
-    .apply(graphComponent)
-    .then(() => {
-      inLayout = false
-      // call to nodePredicateChanged() to remove the nodes of the maze
-      filteredGraph.nodePredicateChanged()
-      layoutEdit.commit()
-      if (clearUndo) {
-        graph.undoEngine.clear()
-      }
-      setUIDisabled(false)
-    })
-    .catch(ignored => {
-      layoutEdit.cancel()
-      if (clearUndo) {
-        graph.undoEngine.clear()
-      }
-    })
+  try {
+    const result = await config.apply(graphComponent)
+    inLayout = false
+    // call to nodePredicateChanged() to remove the nodes of the maze
+    filteredGraph.nodePredicateChanged()
+    layoutEdit.commit()
+    if (clearUndo) {
+      graph.undoEngine.clear()
+    }
+    setUIDisabled(false)
+    return result
+  } catch (ignored) {
+    layoutEdit.cancel()
+    if (clearUndo) {
+      graph.undoEngine.clear()
+    }
+  }
 }
 
 /**
@@ -270,7 +269,7 @@ function routeAll(clearUndo) {
  * @param {List} affectedEdges The list of edges to be routed
  * @return {Promise} A promise which resolves after the layout is applied without errors.
  */
-function routeAffectedEdges(affectedEdges) {
+async function routeAffectedEdges(affectedEdges) {
   if (inLayout) {
     return Promise.reject(new Error('Edge routing already in progress'))
   }
@@ -280,13 +279,10 @@ function routeAffectedEdges(affectedEdges) {
   const layoutData = config.createConfiguration(graphComponent)
   // overwrite the default implementation that uses only the selected edges
   layoutData.affectedEdges = edge => affectedEdges.includes(edge)
-  return route(false)
-    .then(() => {
-      config.scopeItem = oldScope
-    })
-    .catch(() => {
-      config.scopeItem = oldScope
-    })
+  try {
+    await route(false)
+  } catch (e) {}
+  config.scopeItem = oldScope
 }
 
 /**
@@ -294,7 +290,7 @@ function routeAffectedEdges(affectedEdges) {
  * @param {List} affectedNodes The list of nodes whose edges will be routed
  * @return {Promise} A promise which resolves after the layout is applied without errors.
  */
-function routeEdgesAtAffectedNodes(affectedNodes) {
+async function routeEdgesAtAffectedNodes(affectedNodes) {
   if (inLayout) {
     return Promise.reject(new Error('Edge routing already in progress'))
   }
@@ -304,13 +300,10 @@ function routeEdgesAtAffectedNodes(affectedNodes) {
   const layoutData = config.createConfiguration(graphComponent)
   // overwrite the default implementation that routes the edges only from the selected nodes
   layoutData.affectedEdges = node => affectedNodes.includes(node)
-  return route(false)
-    .then(() => {
-      config.scopeItem = oldScope
-    })
-    .catch(() => {
-      config.scopeItem = oldScope
-    })
+  try {
+    await route(false)
+  } catch (e) {}
+  config.scopeItem = oldScope
 }
 
 /**
@@ -361,19 +354,13 @@ function createSampleGraph() {
 
   graph.edges.forEach(edge => {
     if (edge.tag.sourcePort) {
-      graph.setPortLocation(
-        edge.sourcePort,
-        new Point(edge.tag.sourcePort.x, edge.tag.sourcePort.y)
-      )
-      graph.setPortLocation(
-        edge.targetPort,
-        new Point(edge.tag.targetPort.x, edge.tag.targetPort.y)
-      )
+      graph.setPortLocation(edge.sourcePort, Point.from(edge.tag.sourcePort))
+      graph.setPortLocation(edge.targetPort, Point.from(edge.tag.targetPort))
     }
 
     const bends = edge.tag.bends
     bends.forEach(bend => {
-      graph.addBend(edge, new Point(bend.x, bend.y))
+      graph.addBend(edge, Point.from(bend))
     })
   })
 

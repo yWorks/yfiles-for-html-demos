@@ -31,8 +31,9 @@ import {
   Fill,
   GeneralPath,
   GraphMLAttribute,
-  IBend,
+  IEdge,
   INode,
+  INodeStyle,
   IRenderContext,
   MarkupExtension,
   NodeStyleBase,
@@ -1085,6 +1086,9 @@ function determineBracketOrientation(node, context) {
 
 /**
  * Returns the point where the edge intersects with the node.
+ *
+ * @param {IEdge} edge
+ * @param {INode} node
  */
 function getIntersection(edge, node) {
   let bends
@@ -1102,8 +1106,8 @@ function getIntersection(edge, node) {
 
   let lastBend = firstPort
   let bend
-  for (let i = 0; i < bends.size; i++) {
-    bend = bends.get(i)
+  for (let enumerator = bends.getEnumerator(); enumerator.moveNext(); ) {
+    bend = enumerator.current
 
     if (!node.layout.contains(bend.location)) {
       break
@@ -1113,10 +1117,7 @@ function getIntersection(edge, node) {
   }
 
   if (bend) {
-    const lastBendLocation = IBend.isInstance(lastBend)
-      ? lastBend.location.toPoint()
-      : lastBend.location
-    return node.layout.toRect().findLineIntersection(lastBendLocation, bend.location.toPoint())
+    return node.layout.toRect().findLineIntersection(lastBend.location, bend.location)
   }
   return node.layout.toRect().findLineIntersection(lastBend.location, secondPort.location)
 }

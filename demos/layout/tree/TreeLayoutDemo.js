@@ -35,25 +35,29 @@ import {
   ICommand,
   IEdge,
   INode,
-  LeafNodePlacer,
+  ITreeLayoutNodePlacer,
   License,
-  Mapper,
-  MinimumNodeSizeStage,
   PolylineEdgeStyle,
   ShapeNodeShape,
   ShapeNodeStyle,
   Size,
   Stroke,
   TreeBuilder,
-  TreeLayout,
-  TreeLayoutData
+  TreeLayout
 } from 'yfiles'
-
-import TreeData from './resources/TreeData.js'
+import {
+  createDefaultTreeConfiguration,
+  createGeneralGraphConfiguration,
+  createGenericConfiguration,
+  createLargeTreeConfiguration,
+  createCategoryTreeConfiguration,
+  createWideTreeConfiguration
+} from './TreeLayoutConfigurations.js'
+import * as TreeData from './resources/TreeData.js'
 import CreateTreeEdgeInputMode from './CreateTreeEdgeInputMode.js'
-import { bindCommand, showApp } from '../../resources/demo-app.js'
-import NodePlacerPanel from './NodePlacerPanel.js'
+import { bindAction, bindChangeListener, bindCommand, showApp } from '../../resources/demo-app.js'
 import loadJson from '../../resources/load-json.js'
+import NodePlacerPanel from './NodePlacerPanel.js'
 
 /**
  * The graph component which contains the tree graph.
@@ -82,7 +86,7 @@ function run(licenseData) {
   graphComponent = new GraphComponent('graphComponent')
 
   // initialize the settings panel and registers a listener which updates the layout if settings were changed
-  nodePlacerPanel = new NodePlacerPanel(graphComponent.graph)
+  nodePlacerPanel = new NodePlacerPanel(graphComponent)
   nodePlacerPanel.addChangeListener(runLayout)
 
   // initialize interactive behavior and toolbar buttons
@@ -90,7 +94,7 @@ function run(licenseData) {
   registerCommands()
 
   // load a sample graph
-  loadInitialGraph()
+  loadGraph('Default Tree')
 
   showApp(graphComponent)
 }
@@ -98,7 +102,7 @@ function run(licenseData) {
 /**
  * Runs a {@link TreeLayout} using the specified {@link ITreeLayoutNodePlacer}s.
  */
-function runLayout() {
+async function runLayout(sample) {
   if (busy) {
     // there is already a layout calculating do not start another one
     return
@@ -106,35 +110,32 @@ function runLayout() {
 
   setBusy(true)
 
-  // create layout algorithm
-  const layout = new TreeLayout()
-
-  // configure layout data with node placers, assistant markers and edge order
-  const layoutData = new TreeLayoutData({
-    nodePlacers: node => {
-      if (graphComponent.graph.outDegree(node) > 0) {
-        // return the node placer specified for the layer that contains this node
-        return nodePlacerPanel.nodePlacers.get(node.tag.layer.toString())
-      }
-
-      // use LeafNodePlacer for all nodes without children to avoid weird node connectors
-      return new LeafNodePlacer()
-    },
-    assistantNodes: node => node.tag.assistant,
-    outEdgeComparers: node => {
-      return (edge1, edge2) => {
-        const value1 = getOrdinal(edge1)
-        const value2 = getOrdinal(edge2)
-        return value1 - value2
-      }
-    },
-    compactNodePlacerStrategyMementos: new Mapper()
-  })
+  // create a layout configuration according to the current sample
+  let configuration
+  switch (sample) {
+    default:
+      configuration = createGenericConfiguration(graphComponent.graph, nodePlacerPanel)
+      break
+    case 'Default Tree':
+      configuration = createDefaultTreeConfiguration(graphComponent.graph, nodePlacerPanel)
+      break
+    case 'Wide Tree':
+      configuration = createWideTreeConfiguration(graphComponent.graph, nodePlacerPanel)
+      break
+    case 'Category Tree':
+      configuration = createCategoryTreeConfiguration(graphComponent.graph, nodePlacerPanel)
+      break
+    case 'General Graph':
+      configuration = createGeneralGraphConfiguration(graphComponent.graph, nodePlacerPanel)
+      break
+    case 'Large Tree':
+      configuration = createLargeTreeConfiguration(graphComponent.graph, nodePlacerPanel)
+      break
+  }
 
   // run the layout animated
-  graphComponent.morphLayout(new MinimumNodeSizeStage(layout), '0.5s', layoutData).then(() => {
-    setBusy(false)
-  })
+  await graphComponent.morphLayout(configuration.layout, '0.5s', configuration.layoutData)
+  setBusy(false)
 }
 
 /**
@@ -198,20 +199,16 @@ function initializesInputModes() {
   // update the layout and the settings panel when nodes are deleted
   inputMode.addDeletedSelectionListener(() => {
     runLayout()
-    nodePlacerPanel.updateMaxLayer(graphComponent.graph)
-    nodePlacerPanel.layer = Math.min(nodePlacerPanel.layer, nodePlacerPanel.maxLayer)
   })
 
-  // run a layout everytime a node/bend is dragged or a node is resized
+  // run a layout every time a node/bend is dragged or a node is resized
   inputMode.moveInputMode.addDragFinishedListener(runLayout)
   inputMode.handleInputMode.addDragFinishedListener(runLayout)
 
-  // change the layer in the settings panel when a node is clicked to be able to edit the node placer for this layer
-  inputMode.addItemClickedListener((sender, args) => {
-    if (INode.isInstance(args.item)) {
-      nodePlacerPanel.layer = args.item.tag.layer
-    }
-  })
+  // update the settings panel when selection changed to be able to edit its node placer
+  inputMode.addMultiSelectionFinishedListener((sender, args) =>
+    nodePlacerPanel.onNodeSelectionChanged(args.selection)
+  )
 
   // toggle the assistant marking for the double-clicked node
   inputMode.addItemDoubleClickedListener((sender, args) => {
@@ -247,8 +244,6 @@ function initializesInputModes() {
 
   // update layout and settings panel when an edge was created
   inputMode.createEdgeInputMode.addEdgeCreatedListener((sender, args) => {
-    nodePlacerPanel.updateMaxLayer(graphComponent.graph)
-    nodePlacerPanel.layer = args.item.targetNode.tag.layer
     runLayout()
   })
 
@@ -271,9 +266,9 @@ function collectSubtreeNodes(selectedNode, nodesToDelete) {
 }
 
 /**
- * Reads an initial tree graph from file
+ * Reads a tree graph from file
  */
-function loadInitialGraph() {
+function loadGraph(sample) {
   const graph = graphComponent.graph
 
   // initialize the node and edge default styles, they will be applied to the newly created graph
@@ -289,27 +284,54 @@ function loadInitialGraph() {
     targetArrow: IArrow.TRIANGLE
   })
 
+  // select tree data
+  let nodesSource
+  switch (sample) {
+    default:
+    case 'Default Tree':
+      nodesSource = TreeData.DefaultTree.nodesSource
+      break
+    case 'Wide Tree':
+      nodesSource = TreeData.DefaultTree.nodesSource
+      break
+    case 'Category Tree':
+      nodesSource = TreeData.CategoryTree.nodesSource
+      break
+    case 'General Graph':
+      nodesSource = TreeData.GeneralGraph.nodesSource
+      break
+    case 'Large Tree':
+      nodesSource = TreeData.LargeTree.nodesSource
+      break
+  }
+
   // configure the tree builder
   const builder = new TreeBuilder({
     graph,
-    childBinding: 'children',
-    nodesSource: TreeData.nodesSource
+    nodesSource,
+    childBinding: 'children'
   })
 
   // create the graph
   builder.buildGraph()
 
+  if (sample === 'General Graph') {
+    // add some non-tree edges
+    graph.createEdge(graph.nodes.get(1), graph.nodes.get(22))
+    graph.createEdge(graph.nodes.get(3), graph.nodes.get(16))
+    graph.createEdge(graph.nodes.get(28), graph.nodes.get(26))
+  }
+
   // update the node fill colors according to their layers
   graph.nodes.forEach(node => {
-    node.style.fill = NodePlacerPanel.layerFills[node.tag.layer]
+    node.style.fill = NodePlacerPanel.layerFills[node.tag.layer % NodePlacerPanel.layerFills.length]
     if (node.tag.assistant) {
       node.style.stroke = '2px dashed black'
     }
   })
 
-  // update settings panel and layout
-  nodePlacerPanel.updateMaxLayer(graph)
-  runLayout()
+  // apply layout
+  runLayout(sample)
 }
 
 /**
@@ -329,6 +351,24 @@ function registerCommands() {
   bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent)
   bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent)
   bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
+
+  bindChangeListener("select[data-command='SelectSample']", loadGraph)
+
+  const samples = document.getElementById('select-sample')
+  const previousSample = document.getElementById('previous-sample')
+  const nextSample = document.getElementById('next-sample')
+  bindAction("button[data-command='PreviousSample']", () => {
+    samples.selectedIndex = Math.max(samples.selectedIndex - 1, 0)
+    loadGraph(samples.options[samples.selectedIndex].text)
+    previousSample.disabled = samples.selectedIndex === 0
+    nextSample.disabled = samples.selectedIndex === samples.options.length - 1
+  })
+  bindAction("button[data-command='NextSample']", () => {
+    samples.selectedIndex = Math.min(samples.selectedIndex + 1, samples.options.length - 1)
+    loadGraph(samples.options[samples.selectedIndex].text)
+    previousSample.disabled = samples.selectedIndex === 0
+    nextSample.disabled = samples.selectedIndex === samples.options.length - 1
+  })
 }
 
 loadJson().then(run)

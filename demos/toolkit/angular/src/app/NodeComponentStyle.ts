@@ -22,7 +22,7 @@ export class NodeComponentStyle extends NodeStyleBase {
     compRef.instance.item = node.tag as Person
     compRef.instance.zoom = renderContext.zoom
 
-    g['data-compRef'] = compRef
+    ;(g as any)['data-compRef'] = compRef
 
     const svgVisual = new SvgVisual(g)
     renderContext.setDisposeCallback(svgVisual, (context: IRenderContext, visual: Visual, dispose: boolean) => {
@@ -30,9 +30,9 @@ export class NodeComponentStyle extends NodeStyleBase {
       const listener = () => {
         this.appRef.detachView(compRef.hostView)
         compRef.destroy()
-        context.canvasComponent.removeUpdatedVisualListener(listener)
+        context.canvasComponent!.removeUpdatedVisualListener(listener)
       }
-      context.canvasComponent.addUpdatedVisualListener(listener)
+      context.canvasComponent!.addUpdatedVisualListener(listener)
       return null
     })
 
@@ -47,7 +47,7 @@ export class NodeComponentStyle extends NodeStyleBase {
     if (oldVisual && oldVisual.svgElement) {
       let g = oldVisual.svgElement
       g.setAttribute('transform', 'translate(' + node.layout.x + ' ' + node.layout.y + ')')
-      g['data-compRef'].instance.zoom = renderContext.zoom
+      ;(g as any)['data-compRef'].instance.zoom = renderContext.zoom
       return oldVisual
     }
     return this.createVisual(renderContext, node)

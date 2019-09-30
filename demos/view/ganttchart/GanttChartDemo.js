@@ -81,7 +81,7 @@ import ActivityNodePortLocationModel from './ActivityNodePortLocationModel.js'
 import ActivityNodeStyle from './ActivityNodeStyle.js'
 import { showApp } from '../../resources/demo-app.js'
 import dataModel from './resources/datamodel.js'
-import Mapper from './Mapper.js'
+import GanttMapper from './GanttMapper.js'
 import loadJson from '../../resources/load-json.js'
 
 /** @type {GraphComponent} */
@@ -95,9 +95,9 @@ let timelineComponent = null
 
 /**
  * A helper class that handles the data model and maps graph coordinates to the corresponding dates.
- * @type {Mapper}
+ * @type {GanttMapper}
  */
-const mapper = new Mapper(dataModel)
+const mapper = new GanttMapper(dataModel)
 
 function run(licenseData) {
   License.value = licenseData
@@ -161,7 +161,7 @@ function createGraph() {
     const minX = mapper.getX(activity.startDate)
     const maxX = mapper.getX(activity.endDate)
     const y = mapper.getActivityY(activity)
-    const height = Mapper.activityHeight
+    const height = GanttMapper.activityHeight
 
     const leadTimeWidth = mapper.hoursToWorldLength(activity.leadTime || 0)
     const followUpTimeWidth = mapper.hoursToWorldLength(activity.followUpTime || 0)
@@ -209,9 +209,9 @@ function updateTasks() {
   taskComponent.graph.clear()
   dataModel.tasks.forEach(task => {
     // get the y coordinate
-    const from = mapper.getTaskY(task) - Mapper.taskSpacing * 0.5 + 1
+    const from = mapper.getTaskY(task) - GanttMapper.taskSpacing * 0.5 + 1
     // get the height
-    const height = mapper.getCompleteTaskHeight(task) + Mapper.taskSpacing
+    const height = mapper.getCompleteTaskHeight(task) + GanttMapper.taskSpacing
 
     // create the node
     const color = task.color || new Color(51, 102, 255)
@@ -266,7 +266,7 @@ function updateSubrowMappings() {
  * and splits up those nodes in subrows.
  * @param animate Whether to animate the resulting node layout change
  */
-function updateSubrows(animate) {
+async function updateSubrows(animate) {
   // update the information mapping the tasks to subrows and rows to the number of subrows
   updateSubrowMappings()
   // a list of node animations used to collect and execute them all at the same time
@@ -308,9 +308,8 @@ function updateSubrows(animate) {
     const compositeAnimation = IAnimation.createParallelAnimation(animations)
     mainComponent.inputMode.waiting = true
     // start the animation
-    new Animator(mainComponent).animate(compositeAnimation).then(() => {
-      mainComponent.inputMode.waiting = false
-    })
+    await new Animator(mainComponent).animate(compositeAnimation)
+    mainComponent.inputMode.waiting = false
   }
 }
 
@@ -527,7 +526,7 @@ function initializeSnapping(graphEditorInputMode) {
 
   // install a grid to enable snapping to hours
   const gridInfo = new GridInfo()
-  gridInfo.horizontalSpacing = Mapper.dayWidth
+  gridInfo.horizontalSpacing = GanttMapper.dayWidth
 
   snapContext.gridSnapType = GridSnapTypes.VERTICAL_LINES
   snapContext.visualizeSnapResults = false
@@ -687,11 +686,11 @@ function showActivityInfo(activity, location) {
   const duration = mapper.getTotalActivityDuration(activity)
 
   document.querySelector('#nodeInfo span[data-name="name"]').textContent = activity.name
-  document.querySelector('#nodeInfo span[data-name="start"]').textContent = Mapper.format(
+  document.querySelector('#nodeInfo span[data-name="start"]').textContent = GanttMapper.format(
     activity.startDate,
     'dddd, LL, HH:mm:ss'
   )
-  document.querySelector('#nodeInfo span[data-name="end"]').textContent = Mapper.format(
+  document.querySelector('#nodeInfo span[data-name="end"]').textContent = GanttMapper.format(
     activity.endDate,
     'dddd, LL, HH:mm:ss'
   )

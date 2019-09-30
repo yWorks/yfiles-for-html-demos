@@ -39,8 +39,8 @@ import {
 } from 'yfiles'
 
 import { initDemoStyles } from '../../resources/demo-styles.js'
-import ThreeTierLayout from './ThreeTierLayout.js'
-import TableLayout from './TableLayout.js'
+import { createThreeTierLayout, createThreeTierLayoutData } from './ThreeTierLayout.js'
+import { createTableLayout, createTableLayoutData } from './TableLayout.js'
 import {
   bindAction,
   bindChangeListener,
@@ -73,9 +73,9 @@ function run(licenseData) {
 }
 
 /**
- * Runs a {@link TableLayout} or a {@link ThreeTierLayout} depending on the selected sample.
+ * Runs a table layout or a three tier layout depending on the selected sample.
  */
-function runLayout() {
+async function runLayout() {
   setUIDisabled(true)
 
   const selectedLayout = document.getElementById('select-sample').value.substring(8)
@@ -85,42 +85,28 @@ function runLayout() {
   let layoutData
   switch (selectedLayout) {
     case 'Table':
-      layout = new TableLayout(fromSketch)
-      layoutData = TableLayout.LAYOUT_DATA
-      graphComponent
-        .morphLayout(layout, '0.5s', layoutData)
-        .then(() => {
-          setUIDisabled(false)
-        })
-        .catch(error => {
-          setUIDisabled(false)
-          if (typeof window.reportError === 'function') {
-            window.reportError(error)
-          } else {
-            throw error
-          }
-        })
+      layout = createTableLayout(fromSketch)
+      layoutData = createTableLayoutData()
       break
     case 'Three-Tier':
-      layout = new ThreeTierLayout(fromSketch)
-      layoutData = ThreeTierLayout.LAYOUT_DATA(graphComponent.graph, fromSketch)
-      graphComponent
-        .morphLayout(layout, '0.5s', layoutData)
-        .then(() => {
-          setUIDisabled(false)
-        })
-        .catch(error => {
-          setUIDisabled(false)
-          if (typeof window.reportError === 'function') {
-            window.reportError(error)
-          } else {
-            throw error
-          }
-        })
+      layout = createThreeTierLayout(fromSketch)
+      layoutData = createThreeTierLayoutData(graphComponent.graph, fromSketch)
       break
     default:
       setUIDisabled(false)
+      return
   }
+  try {
+    graphComponent.fitGraphBounds()
+    await graphComponent.morphLayout(layout, '0.5s', layoutData)
+  } catch (error) {
+    if (typeof window.reportError === 'function') {
+      window.reportError(error)
+    } else {
+      throw error
+    }
+  }
+  setUIDisabled(false)
 }
 
 /**
@@ -169,25 +155,22 @@ function registerCommands() {
 /**
  * Loads the table or three-tire.
  */
-function loadSample() {
+async function loadSample() {
   const filename = document.getElementById('select-sample').value.substring(8)
   const path = `resources/${filename}.graphml`
 
   const ioHandler = new GraphMLIOHandler()
-  readGraph(ioHandler, graphComponent.graph, path).then(() => {
-    // adjust default size and style to match the first leaf in the loaded graph to have new nodes match the graph's
-    // style
-    const graph = graphComponent.graph
-    const firstLeaf = graph.groupingSupport
-      .getDescendants(null)
-      .find(node => !graph.isGroupNode(node))
-    if (firstLeaf) {
-      graphComponent.graph.nodeDefaults.size = firstLeaf.layout.toSize()
-      graphComponent.graph.nodeDefaults.style = firstLeaf.style
-    }
-
-    runLayout()
-  })
+  await readGraph(ioHandler, graphComponent.graph, path)
+  // adjust default size and style to match the first leaf in the loaded graph to have new nodes match the graph's style
+  const graph = graphComponent.graph
+  const firstLeaf = graph.groupingSupport
+    .getDescendants(null)
+    .find(node => !graph.isGroupNode(node))
+  if (firstLeaf) {
+    graphComponent.graph.nodeDefaults.size = firstLeaf.layout.toSize()
+    graphComponent.graph.nodeDefaults.style = firstLeaf.style
+  }
+  runLayout()
 }
 
 /**

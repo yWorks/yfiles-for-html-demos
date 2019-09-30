@@ -239,7 +239,7 @@ export default class MindmapLayout {
 
     // fix node layout stage - mark subtree root node as fixed
     const layoutData = new FixNodeLayoutData({
-      fixedNode: subtreeRoot
+      fixedNodes: subtreeRoot
     })
 
     this.adjustPortLocations(graph, edges)
@@ -256,7 +256,7 @@ export default class MindmapLayout {
    * @param {boolean?} collapse
    * @return {Promise}
    */
-  layout(graphComponent, incrementalNodes, collapse) {
+  async layout(graphComponent, incrementalNodes, collapse) {
     // check a layout is currently in progress
     if (this.inLayout) {
       return Promise.resolve()
@@ -294,23 +294,20 @@ export default class MindmapLayout {
       layoutData,
       duration: '0.2s'
     })
-    return newLayoutExecutor
-      .start()
-      .then(() => {
-        this.inLayout = false
-        inputMode.enabled = true
-      })
-      .catch(error => {
-        this.inLayout = false
-        inputMode.enabled = true
-        if (error.name === 'AlgorithmAbortedError') {
-          alert(
-            'The layout computation was canceled because the maximum configured runtime was exceeded.'
-          )
-        } else if (typeof window.reportError === 'function') {
-          window.reportError(error)
-        }
-      })
+    try {
+      await newLayoutExecutor.start()
+    } catch (error) {
+      if (error.name === 'AlgorithmAbortedError') {
+        alert(
+          'The layout computation was canceled because the maximum configured runtime was exceeded.'
+        )
+      } else if (typeof window.reportError === 'function') {
+        window.reportError(error)
+      }
+    } finally {
+      this.inLayout = false
+      inputMode.enabled = true
+    }
   }
 
   /**

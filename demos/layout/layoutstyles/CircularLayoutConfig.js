@@ -555,8 +555,8 @@ const CircularLayoutConfig = Class('CircularLayoutConfig', {
     },
     get: function() {
       return (
-        this.partitionLayoutStyleItem !== PartitionStyle.CYCLE ||
-        this.layoutStyleItem === CircularLayoutStyle.BCC_ISOLATED
+        (this.partitionLayoutStyleItem !== PartitionStyle.CYCLE ||
+        this.layoutStyleItem === CircularLayoutStyle.BCC_ISOLATED)
       )
     }
   },
@@ -600,8 +600,8 @@ const CircularLayoutConfig = Class('CircularLayoutConfig', {
     },
     get: function() {
       return (
-        this.partitionLayoutStyleItem !== PartitionStyle.CYCLE ||
-        this.layoutStyleItem === CircularLayoutStyle.BCC_ISOLATED
+        (this.partitionLayoutStyleItem !== PartitionStyle.CYCLE ||
+        this.layoutStyleItem === CircularLayoutStyle.BCC_ISOLATED)
       )
     }
   },
@@ -975,7 +975,9 @@ const CircularLayoutConfig = Class('CircularLayoutConfig', {
           values: [
             ['Anywhere', LayoutConfiguration.EnumLabelPlacementAlongEdge.ANYWHERE],
             ['At Source', LayoutConfiguration.EnumLabelPlacementAlongEdge.AT_SOURCE],
+            ['At Source Port', LayoutConfiguration.EnumLabelPlacementAlongEdge.AT_SOURCE_PORT],
             ['At Target', LayoutConfiguration.EnumLabelPlacementAlongEdge.AT_TARGET],
+            ['At Target Port', LayoutConfiguration.EnumLabelPlacementAlongEdge.AT_TARGET_PORT],
             ['Centered', LayoutConfiguration.EnumLabelPlacementAlongEdge.CENTERED]
           ]
         }),
@@ -1083,9 +1085,9 @@ const CircularLayoutConfig = Class('CircularLayoutConfig', {
     },
     get: function() {
       return (
-        !this.edgeLabelingItem ||
+        (!this.edgeLabelingItem ||
         this.labelPlacementSideOfEdgeItem ===
-          LayoutConfiguration.EnumLabelPlacementSideOfEdge.ON_EDGE
+          LayoutConfiguration.EnumLabelPlacementSideOfEdge.ON_EDGE)
       )
     }
   }

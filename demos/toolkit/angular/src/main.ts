@@ -5,6 +5,7 @@ import { AppModule } from './app/app.module'
 import { environment } from './environments/environment'
 import { Class, LayoutExecutor, License } from 'yfiles'
 import licenseData from '../../../../lib/license.json'
+// @ts-ignore
 import { enableWorkarounds } from '../../../utils/Workarounds'
 
 // We need to load the yfiles/view-layout-bridge module explicitly to prevent the webpack

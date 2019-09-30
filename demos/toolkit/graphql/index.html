@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+
+<!-- ////////////////////////////////////////////////////////////////////////
+     // @license
+     // This demo file is part of yFiles for HTML 2.2.
+     // Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // 72070 Tuebingen, Germany. All rights reserved.
+     //
+     // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+     // of demo files in source code or binary form, with or without
+     // modification, is not permitted.
+     //
+     // Owners of a valid software license for a yFiles for HTML version that this
+     // demo is shipped with are allowed to use the demo source code as basis
+     // for their own yFiles for HTML powered applications. Use of such programs is
+     // governed by the rights and conditions as set out in the yFiles for HTML
+     // license agreement.
+     //
+     // THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+     // WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+     // MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+     // NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+     // SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+     // TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+     // PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+     // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+     // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+     // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+     // 
+     ////////////////////////////////////////////////////////////////////////-->
+
+  <title>GraphQL Demo [yFiles for HTML]</title>
+
+  <link rel="stylesheet" href="../../node_modules/yfiles/yfiles.css">
+  <link rel="stylesheet" href="../../resources/style/demo.css">
+  <link rel="stylesheet" href="./resources/properties-panel.css">
+
+  <!-- enable debugging -->
+  <script src="../../../ide-support/yfiles-typeinfo.js"></script>
+  <script src="../../resources/filesystem-warning.js"></script>
+
+  <style>
+    #fetchError {
+      position: absolute;
+      left: calc(50% - 250px);
+      top: 100px;
+      width: 500px;
+      z-index: 1000;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+      padding: 20px;
+      background: #f7f7f7;
+      color: #666666;
+      font-family: Tahoma, Verdana, sans-serif;
+      font-size: 12px;
+    }
+
+    #fetchError pre {
+      background-color: #fefefe;
+      padding: 10px;
+    }
+  </style>
+</head>
+<body class="demo-has-left">
+<aside class="demo-sidebar demo-left">
+  <h1 class="demo-sidebar-header">Description</h1>
+  <div class="demo-sidebar-content">
+    <p>
+      This demo shows how to load data from a <a href="https://www.graphql.org/" target="_blank">GraphQL</a> endpoint.
+      You can navigate through a social network while lazily fetching new data.
+    </p>
+    <h2>Things to Try</h2>
+    <ul>
+      <li>
+        Double click on persons to load their friends and expand the social network graph.
+      </li>
+      <li>
+        Click on a node to see its properties on the Properties panel.
+      </li>
+      <li>
+        Click the <code>Load complete graph</code> button to load the whole social network.
+      </li>
+      <li>
+        Click the <code>Reset</code> button to reset the graph.
+      </li>
+    </ul>
+
+    <h2>Details</h2>
+    <p>
+      This demo fetches its data from the server using the <a href="https://www.graphql.org/" target="_blank">GraphQL</a>
+      query language. You can start the server by changing to the <code>./server/</code> directory and running
+    </p>
+    <pre>
+> npm install
+> npm start</pre>
+    <p>
+      The GraphQL endpoint defines this schema which models a social network with persons and their friends:
+    </p>
+    <pre>
+type Query {
+  persons: [Person!]
+  person(id: ID!): Person
+}
+
+type Person {
+  id: ID!
+  name: String!
+  icon: String!
+  friendsCount: Int!
+  friends: [Person!]!
+}</pre>
+    <p>
+      The client fetches its data lazily on demand: When nodes are expanded, it
+      issues a query that only fetches the friends of the expanded person.
+    </p>
+    <p>
+      The GraphQL endpoint is a simple <a href="https://expressjs.com/" target="_blank">Express</a>
+      server that utilizes the <a href="https://github.com/graphql/graphql-js" target="_blank">GraphQL
+      reference implementation</a> and is backed by simple JSON data.
+    </p>
+    <p>
+      Have a look at the source code to see the specific GraphQL queries and
+      backend implementation.
+    </p>
+  </div>
+</aside>
+
+<aside class="demo-sidebar demo-right">
+  <h1 class="demo-sidebar-header">Properties</h1>
+  <div class="demo-sidebar-content">
+    <div style="width:100%">
+      <div id="propertiesView">
+        <p>Select a person in the social network to show his properties.</p>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<div class="demo-content">
+  <div id="graphPane">
+    <div class="demo-toolbar">
+      <button data-command="ZoomIn" title="Zoom In" class="demo-icon demo-icon-yIconZoomIn"></button>
+      <button data-command="ZoomOriginal" title="Zoom to original size" class="demo-icon-yIconZoomOriginal"></button>
+      <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
+      <button data-command="FitContent" title="Fit Content" class="demo-icon-yIconZoomFit"></button>
+
+      <span class="demo-separator"></span>
+
+      <button data-command="LoadAll" title="Load complete graph" class="labeled">Load complete graph</button>
+      <button data-command="Reset" title="Reset" class="demo-icon-yIconReload labeled">Reset</button>
+    </div>
+
+    <div id="graphComponent">
+      <div id="fetchError" style="display: none">
+        <h2>Unable to reach GraphQL endpoint</h2>
+        <p>This demo requires the GraphQL server located in <code>./server/</code> to run. You can start the server by changing to the server directory and running</p>
+        <pre>
+> npm install
+> npm start</pre>
+        <p>Reload this page afterwards.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<script type="module" crossorigin="anonymous" src="GraphQLDemo.js"></script>
+</body>
+</html>

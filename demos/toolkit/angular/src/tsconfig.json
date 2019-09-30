@@ -1,6 +1,7 @@
 {
   "compileOnSave": false,
   "compilerOptions": {
+    "strict": true,
     "outDir": "../dist/out-tsc",
     "baseUrl": "./",
     "sourceMap": true,
@@ -12,7 +13,7 @@
     "esModuleInterop": true,
     "target": "es5",
     "types": [],
-    "lib": ["es2017", "dom"]
+    "lib": ["es2018", "dom"]
   },
   "include": ["**/*.ts"]
 }

@@ -103,7 +103,7 @@ function configureInputMode() {
     if (event.handled) {
       return
     }
-    event.toolTip = createTooltip(event.item)
+    event.toolTip = createTooltipContent(event.item)
     event.handled = true
   })
 
@@ -123,7 +123,7 @@ function configureInputMode() {
  * @param {IModelItem} item
  * @returns {?string}
  */
-function createTooltip(item) {
+function createTooltipContent(item) {
   if (INode.isInstance(item)) {
     return 'Node Tooltip'
   } else if (IEdge.isInstance(item)) {

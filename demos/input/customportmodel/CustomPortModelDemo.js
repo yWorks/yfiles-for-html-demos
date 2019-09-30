@@ -93,6 +93,7 @@ function run(licenseData) {
  */
 function getPortCandidateProvider(forNode) {
   const model = new CustomNodePortLocationModel(10)
+  // noinspection JSCheckFunctionSignatures
   return IPortCandidateProvider.fromCandidates([
     new DefaultPortCandidate(
       forNode,

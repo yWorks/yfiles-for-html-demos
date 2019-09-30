@@ -28,6 +28,7 @@
  ***************************************************************************/
 import {
   BaseClass,
+  CanvasComponent,
   Class,
   ConstantLabelCandidateDescriptorProvider,
   CreateEdgeInputMode,
@@ -55,6 +56,7 @@ import {
   IArrow,
   IBoundsProvider,
   ICanvasContext,
+  ICanvasObjectDescriptor,
   ICloneable,
   IColumn,
   ICommand,
@@ -64,6 +66,7 @@ import {
   IEditLabelHelper,
   IGraph,
   IHandle,
+  IHitTestable,
   IInputModeContext,
   ILabel,
   ILabelCandidateDescriptorProvider,
@@ -75,6 +78,7 @@ import {
   ILabelStyleRenderer,
   IList,
   ILookup,
+  IMarqueeTestable,
   IModelItem,
   INode,
   INodeInsetsProvider,
@@ -93,6 +97,7 @@ import {
   IShapeGeometry,
   IStripe,
   ITable,
+  IVisibilityTestable,
   IVisualCreator,
   IVisualTemplate,
   Insets,
@@ -114,6 +119,7 @@ import {
   NodeStylePortStyleAdapter,
   OrientedRectangle,
   Point,
+  PolylineEdgeStyle,
   PortCandidateProviderBase,
   Rect,
   SandwichLabelModel,
@@ -2210,7 +2216,7 @@ class IconBuilder {
     const x1 = r * Math.cos(a)
     const y1 = -r * Math.sin(a)
 
-    const m = (Math.sqrt(2) - 1) * 4 / 3
+    const m = ((Math.sqrt(2) - 1) * 4) / 3
     const mTanA = m * Math.tan(a)
 
     const x2 = x1 - mTanA * y1
@@ -2532,10 +2538,10 @@ class IconFactory {
           BUILDER.lineTo(0, 0.701)
           BUILDER.quadTo(0.13, 0.5, 0.316, 0.443)
           BUILDER.lineTo(
-            0.5 + 0.224 * Math.cos(3.0 / 4.0 * Math.PI),
-            0.224 + 0.224 * Math.sin(3.0 / 4.0 * Math.PI)
+            0.5 + 0.224 * Math.cos((3.0 / 4.0) * Math.PI),
+            0.224 + 0.224 * Math.sin((3.0 / 4.0) * Math.PI)
           )
-          BUILDER.arcTo(0.224, 0.5, 0.224, 3.0 / 4.0 * Math.PI, 9.0 / 4.0 * Math.PI)
+          BUILDER.arcTo(0.224, 0.5, 0.224, (3.0 / 4.0) * Math.PI, (9.0 / 4.0) * Math.PI)
           BUILDER.lineTo(0.684, 0.443)
           BUILDER.quadTo(0.87, 0.5, 1, 0.701)
           BUILDER.close()
@@ -2546,7 +2552,7 @@ class IconFactory {
           BUILDER.fill = Fill.BLACK
           BUILDER.moveTo(0.287, 0.229)
           BUILDER.cubicTo(0.48, 0.053, 0.52, 0.253, 0.713, 0.137)
-          BUILDER.arcTo(0.224, 0.5, 0.224, 31.0 / 16.0 * Math.PI, Math.PI)
+          BUILDER.arcTo(0.224, 0.5, 0.224, (31.0 / 16.0) * Math.PI, Math.PI)
           BUILDER.close()
           icons.add(BUILDER.getPathIcon())
 
@@ -2802,10 +2808,10 @@ class IconFactory {
       const BUILDER = IconFactory.BUILDER
       BUILDER.fill = Fill.BLACK
 
-      const fromAngle1 = 5.0 / 4.0 * Math.PI
-      const toAngle1 = 7.0 / 4.0 * Math.PI
-      const fromAngle2 = 1.0 / 4.0 * Math.PI
-      const toAngle2 = 3.0 / 4.0 * Math.PI
+      const fromAngle1 = (5.0 / 4.0) * Math.PI
+      const toAngle1 = (7.0 / 4.0) * Math.PI
+      const fromAngle2 = (1.0 / 4.0) * Math.PI
+      const toAngle2 = (3.0 / 4.0) * Math.PI
 
       const smallR = 0.25 / (1 - Math.sqrt(1.5 - Math.sqrt(2)))
       const co = smallR * IconFactory.RADIUS_TO_CORNER_OFFSET
@@ -3558,7 +3564,7 @@ class IconFactory {
   /** @return {Point[]} */
   static createPolygon(sideCount, radius, rotation) {
     const result = new Array(sideCount)
-    const delta = Math.PI * 2.0 / sideCount
+    const delta = (Math.PI * 2.0) / sideCount
 
     for (let i = 0; i < sideCount; i++) {
       const angle = delta * i + rotation
@@ -3634,18 +3640,18 @@ function createGear(radius, centerX, centerY, stroke, fill) {
   BUILDER.fill = fill
   const smallR = 0.7 * radius
 
-  let angle = -2 * Math.PI / 48
+  let angle = (-2 * Math.PI) / 48
   BUILDER.moveTo(centerX + radius * Math.cos(angle), centerY + radius * Math.sin(angle))
   for (let i = 0; i < 8; i++) {
-    BUILDER.arcTo(radius, centerX, centerY, angle, angle + 4 * Math.PI / 48)
+    BUILDER.arcTo(radius, centerX, centerY, angle, angle + (4 * Math.PI) / 48)
     BUILDER.lineTo(
-      centerX + smallR * Math.cos(angle + 5 * Math.PI / 48),
-      centerY + smallR * Math.sin(angle + 5 * Math.PI / 48)
+      centerX + smallR * Math.cos(angle + (5 * Math.PI) / 48),
+      centerY + smallR * Math.sin(angle + (5 * Math.PI) / 48)
     )
-    BUILDER.arcTo(smallR, centerX, centerY, angle + 5 * Math.PI / 48, angle + 11 * Math.PI / 48)
+    BUILDER.arcTo(smallR, centerX, centerY, angle + (5 * Math.PI) / 48, angle + (11 * Math.PI) / 48)
     BUILDER.lineTo(
-      centerX + radius * Math.cos(angle + 12 * Math.PI / 48),
-      centerY + radius * Math.sin(angle + 12 * Math.PI / 48)
+      centerX + radius * Math.cos(angle + (12 * Math.PI) / 48),
+      centerY + radius * Math.sin(angle + (12 * Math.PI) / 48)
     )
     angle += Math.PI / 4
   }
@@ -3986,8 +3992,8 @@ export class ChoreographyNodeStyle extends BpmnNodeStyle {
    */
   get showTopMessage() {
     return (
-      (this.initiatingMessage && this.initiatingAtTop) ||
-      (this.responseMessage && !this.initiatingAtTop)
+      ((this.initiatingMessage && this.initiatingAtTop) ||
+      (this.responseMessage && !this.initiatingAtTop))
     )
   }
 
@@ -3996,8 +4002,8 @@ export class ChoreographyNodeStyle extends BpmnNodeStyle {
    */
   get showBottomMessage() {
     return (
-      (this.initiatingMessage && !this.initiatingAtTop) ||
-      (this.responseMessage && this.initiatingAtTop)
+      ((this.initiatingMessage && !this.initiatingAtTop) ||
+      (this.responseMessage && this.initiatingAtTop))
     )
   }
 
@@ -6009,7 +6015,7 @@ export class AlternatingLeafStripeStyle extends StripeStyleBase {
   }
 
   /**
-   * Visualization for all stripes that are not leafs.
+   * Visualization for all stripes that are not leaves.
    * @type {StripeDescriptor}
    */
   get parentDescriptor() {
@@ -6017,7 +6023,7 @@ export class AlternatingLeafStripeStyle extends StripeStyleBase {
   }
 
   /**
-   * Visualization for all stripes that are not leafs.
+   * Visualization for all stripes that are not leaves.
    * @type {StripeDescriptor}
    */
   set parentDescriptor(value) {
@@ -6075,16 +6081,16 @@ export class AlternatingLeafStripeStyle extends StripeStyleBase {
         if (IColumn.isInstance(stripe)) {
           const col = stripe
           // Get all leaf columns
-          const leafs = col.table.rootColumn.leaves.toList()
+          const leaves = col.table.rootColumn.leaves.toList()
           // Determine the index
-          index = leafs.findIndex(curr => col === curr)
+          index = leaves.findIndex(curr => col === curr)
           // Use the correct descriptor
           descriptor = index % 2 === 0 ? this.evenLeafDescriptor : this.oddLeafDescriptor
           actualBorderThickness = descriptor.borderThickness
         } else {
           const row = stripe
-          const leafs = row.table.rootRow.leaves.toList()
-          index = leafs.findIndex(curr => row === curr)
+          const leaves = row.table.rootRow.leaves.toList()
+          index = leaves.findIndex(curr => row === curr)
           descriptor = index % 2 === 0 ? this.evenLeafDescriptor : this.oddLeafDescriptor
           actualBorderThickness = descriptor.borderThickness
         }
@@ -6149,14 +6155,14 @@ export class AlternatingLeafStripeStyle extends StripeStyleBase {
         let index
         if (IColumn.isInstance(stripe)) {
           const col = stripe
-          const leafs = col.table.rootColumn.leaves.toList()
-          index = leafs.findIndex(curr => col === curr)
+          const leaves = col.table.rootColumn.leaves.toList()
+          index = leaves.findIndex(curr => col === curr)
           descriptor = index % 2 === 0 ? this.evenLeafDescriptor : this.oddLeafDescriptor
           actualBorderThickness = descriptor.borderThickness
         } else {
           const row = stripe
-          const leafs = row.table.rootRow.leaves.toList()
-          index = leafs.findIndex(curr => row === curr)
+          const leaves = row.table.rootRow.leaves.toList()
+          index = leaves.findIndex(curr => row === curr)
           descriptor = index % 2 === 0 ? this.evenLeafDescriptor : this.oddLeafDescriptor
           actualBorderThickness = descriptor.borderThickness
         }

@@ -419,7 +419,7 @@ function updateNodeFill(node) {
  * will be used.
  * @param {ILayoutAlgorithm} algorithm The given layout algorithm
  */
-function runLayout(algorithm) {
+async function runLayout(algorithm) {
   const layoutAlgorithm = algorithm || lastAppliedLayoutAlgorithm
   if (layoutAlgorithm instanceof OrganicLayout && !canExecuteOrganicLayout()) {
     alert('Group nodes cannot span more multiple grid cells.')
@@ -445,32 +445,26 @@ function runLayout(algorithm) {
 
   // configure the layout algorithm
   configureAlgorithm(layoutAlgorithm)
-
-  // configure the layout executor and start the layout
-  const executor = new CustomLayoutExecutor(graphComponent, layoutAlgorithm)
-  executor.duration = '1s'
-  executor.layoutData = partitionGridData
-  executor.animateViewport = true
-  executor
-    .start()
-    .then(() => {
-      setUIDisabled(false)
-      // adjust the bounds of the graph component so that empty rows/columns are also taken under consideration
-      adjustGraphComponentBounds()
-      layoutRunning = false
-      lastAppliedLayoutAlgorithm = layoutAlgorithm
-    })
-    .catch(error => {
-      setUIDisabled(false)
-      adjustGraphComponentBounds()
-      layoutRunning = false
-      lastAppliedLayoutAlgorithm = layoutAlgorithm
-      if (typeof window.reportError === 'function') {
-        window.reportError(error)
-      } else {
-        throw error
-      }
-    })
+  try {
+    // configure the layout executor and start the layout
+    const executor = new CustomLayoutExecutor(graphComponent, layoutAlgorithm)
+    executor.duration = '1s'
+    executor.layoutData = partitionGridData
+    executor.animateViewport = true
+    await executor.start()
+  } catch (error) {
+    if (typeof window.reportError === 'function') {
+      window.reportError(error)
+    } else {
+      throw error
+    }
+  } finally {
+    setUIDisabled(false)
+    // adjust the bounds of the graph component so that empty rows/columns are also taken under consideration
+    adjustGraphComponentBounds()
+    layoutRunning = false
+    lastAppliedLayoutAlgorithm = layoutAlgorithm
+  }
 }
 
 /**

@@ -34,7 +34,7 @@ function getDemoData() {
       name: 'Layout Styles',
       demoPath: 'layout/layoutstyles/index.html',
       summary:
-        'Showcases the most used layout algorithms of yFiles, including hierarchic, organic, orthogonal, tree, circular and balloon styles.',
+        'Showcases the most used layout algorithms of yFiles, including hierarchic, organic, orthogonal, tree, circular, balloon, and several edge routing styles.',
       category: 'layout',
       thumbnailPath: 'resources/image/layoutstyles.png',
       sourcePath: 'layout/layoutstyles/LayoutStylesDemo.js',
@@ -86,6 +86,7 @@ function getDemoData() {
       sourcePath: 'complete/interactiveorgchart/OrgChartDemo.js',
       tags: ['styles', 'layout', 'interaction'],
       keywords: [
+        'orgchart',
         'animation',
         'filtering',
         'search',
@@ -251,7 +252,7 @@ function getDemoData() {
       thumbnailPath: 'resources/image/metaballgroups.png',
       sourcePath: 'complete/metaballgroups/MetaballGroupsDemo.js',
       tags: ['background', 'WebGL'],
-      keywords: ['v2.2.0.0', 'overlapping']
+      keywords: ['v2.2.0.0', 'overlapping', 'heatmap']
     },
     {
       id: 'maze-routing',
@@ -376,7 +377,7 @@ function getDemoData() {
       thumbnailPath: 'resources/image/orgchart.png',
       sourcePath: 'complete/orgchartviewer/OrgChartViewerDemo.js',
       tags: ['styles', 'layout'],
-      keywords: ['search', 'template', 'datapanel', 'v2.2.0.0', 'structure']
+      keywords: ['orgchart', 'search', 'template', 'datapanel', 'v2.2.0.0', 'structure']
     },
     {
       id: 'collapsible-trees',
@@ -495,6 +496,24 @@ function getDemoData() {
       sourcePath: 'view/events/EventsDemo.js',
       tags: ['interaction'],
       keywords: ['palette', 'draganddrop']
+    },
+    {
+      id: 'custom-edge-creation',
+      name: 'Custom Edge Creation',
+      demoPath: 'complete/customedgecreation/index.html',
+      summary:
+        'Shows how to provide directional ports and demonstrates interactive routing during edge creation.',
+      category: 'complete',
+      thumbnailPath: 'resources/image/customedgecreation.png',
+      sourcePath: 'complete/customedgecreation/CustonEdgeCreationDemo.js',
+      tags: ['layout', 'interaction', 'ports', 'styles'],
+      keywords: [
+        'v2.2.0.2',
+        'edgerouter',
+        'channel-edge-router',
+        'orthogonal',
+        'portcandidateprovider'
+      ]
     },
     {
       id: 'touch-interaction',
@@ -630,6 +649,37 @@ function getDemoData() {
         'groups',
         'bridges'
       ]
+    },
+    {
+      id: 'edge-router-grouping',
+      name: 'EdgeRouter Grouping',
+      demoPath: 'layout/edgeroutergrouping/index.html',
+      summary: 'The EdgeRouter can group the paths or ports of edges.',
+      category: 'layout',
+      thumbnailPath: 'resources/image/edgeroutergrouping.png',
+      sourcePath: 'layout/edgeroutergrouping/EdgeRouterGroupingDemo.js.js',
+      tags: ['layout', 'edgerouter'],
+      keywords: [
+        'v2.2.0.2',
+        'edgegroups',
+        'portgroups',
+        'edgerouter',
+        'polyline',
+        'ports',
+        'contextmenu',
+        'bridges'
+      ]
+    },
+    {
+      id: 'hierarchic-busstructures',
+      name: 'Hierarchic Bus Structures',
+      demoPath: 'layout/busstructures/index.html',
+      summary: 'Bus structures in the hierarchic layout result in more compact arrangements.',
+      category: 'layout',
+      thumbnailPath: 'resources/image/busstructures.png',
+      sourcePath: 'layout/subcomponents/BusStructuresDemo.js',
+      tags: ['layout', 'hierarchic', 'bus'],
+      keywords: ['v2.2.0.2', 'bus structures', 'orthogonal', 'compact']
     },
     {
       id: 'hierarchic-subcomponents',
@@ -775,8 +825,8 @@ function getDemoData() {
       category: 'view',
       thumbnailPath: 'resources/image/export.png',
       sourcePath: 'view/imageexport/ImageExportDemo.js',
-      tags: ['PNG', 'JPEG', 'bitmap'],
-      keywords: ['JPG', 'save', 'handles']
+      tags: ['export', 'PNG', 'JPEG'],
+      keywords: ['JPG', 'bitmap', 'save', 'handles']
     },
     {
       id: 'svg-export',
@@ -786,7 +836,7 @@ function getDemoData() {
       category: 'view',
       thumbnailPath: 'resources/image/svgexport.png',
       sourcePath: 'view/svgexport/SvgExportDemo.js',
-      tags: ['SVG', 'vector graphics'],
+      tags: ['export', 'SVG', 'vector graphics'],
       keywords: ['scalable vector graphics', 'save', 'handles']
     },
     {
@@ -797,8 +847,8 @@ function getDemoData() {
       category: 'view',
       thumbnailPath: 'resources/image/pdfexport.png',
       sourcePath: 'view/pdfexport/PdfExportDemo.js',
-      tags: ['PDF', 'vector graphics'],
-      keywords: ['save', 'handles']
+      tags: ['export', 'PDF'],
+      keywords: ['vector graphics', 'handles']
     },
     {
       id: 'printing',
@@ -882,6 +932,17 @@ function getDemoData() {
       keywords: ['styles', 'tree', 'datapanel']
     },
     {
+      id: 'graphql',
+      name: 'GraphQL',
+      demoPath: 'toolkit/graphql/index.html',
+      summary: 'Shows how to load data from a GraphQL service and display it with yFiles for HTML.',
+      category: 'integration',
+      thumbnailPath: 'resources/image/graphql.png',
+      sourcePath: 'toolkit/graphql/GraphQlDemo.js',
+      tags: ['graphql', 'database'],
+      keywords: ['v2.2.0.2', 'remote', 'organic', 'layout']
+    },
+    {
       id: 'neo4j',
       name: 'Neo4j',
       demoPath: 'toolkit/neo4j/index.html',
@@ -889,8 +950,8 @@ function getDemoData() {
       category: 'integration',
       thumbnailPath: 'resources/image/neo4j.png',
       sourcePath: 'integration/neo4j/Neo4jDemo.js',
-      tags: ['neo4j', 'database', 'layout'],
-      keywords: ['organic', 'remote']
+      tags: ['neo4j', 'database'],
+      keywords: ['remote', 'organic', 'layout']
     },
     {
       id: 'nodejs',
@@ -912,7 +973,19 @@ function getDemoData() {
       category: 'integration',
       thumbnailPath: 'resources/image/react.png',
       sourcePath: '',
-      tags: ['react', 'webpack']
+      tags: ['react', 'json', 'data', 'webpack']
+    },
+    {
+      id: 'react-typescript',
+      name: 'React With TypeScript',
+      demoPath: 'toolkit/react-typescript/README.html',
+      summary:
+        'Shows how to integrate yFiles in a basic React application with TypeScript based on Create React App.',
+      category: 'integration',
+      thumbnailPath: 'resources/image/react.png',
+      sourcePath: '',
+      tags: ['react', 'json', 'data', 'typescript'],
+      keywords: ['v2.2.0.2']
     },
     {
       id: 'typescript',
@@ -923,8 +996,31 @@ function getDemoData() {
       category: 'integration',
       thumbnailPath: 'resources/image/typescript.png',
       sourcePath: '',
-      tags: ['typescript', 'styles', 'ES modules'],
-      keywords: ['overview']
+      tags: ['typescript', 'styles'],
+      keywords: ['overview', 'esmodules']
+    },
+    {
+      id: 'electron',
+      name: 'Electron',
+      demoPath: 'toolkit/electron/README.html',
+      summary: 'Shows how to create a desktop app with Electron and yFiles for HTML.',
+      category: 'integration',
+      thumbnailPath: 'resources/image/electron.png',
+      sourcePath: '',
+      tags: ['electron', 'webpack', 'nodejs'],
+      keywords: ['v2.2.0.2', 'esmodules']
+    },
+    {
+      id: 'dojo',
+      name: 'Dojo',
+      demoPath: 'toolkit/dojo/README.html',
+      summary:
+        "Shows the integration of yFiles for HTML in a basic Dojo app based on Dojo's cli-create-app.",
+      category: 'integration',
+      thumbnailPath: 'resources/image/demo-dojo.png',
+      sourcePath: '',
+      tags: ['dojo', 'typescript'],
+      keywords: ['v2.2.0.2', 'overview', 'esmodules']
     },
     {
       id: 'vue.js',
@@ -938,6 +1034,17 @@ function getDemoData() {
       keywords: ['template', 'datapanel', 'tree', 'detail']
     },
     {
+      id: 'vue-cli',
+      name: 'Vue-CLI',
+      demoPath: 'toolkit/vue-cli/README.html',
+      summary: 'Shows how to integrate yFiles for HTML in a basic Vue-CLI setup.',
+      category: 'integration',
+      thumbnailPath: 'resources/image/vuecli.png',
+      sourcePath: '',
+      tags: ['vuejs', 'vue-cli'],
+      keywords: ['v2.2.0.2', 'component', 'single', 'file']
+    },
+    {
       id: 'web-components',
       name: 'Web Components',
       demoPath: 'toolkit/webcomponents/index.html',
@@ -946,6 +1053,18 @@ function getDemoData() {
       thumbnailPath: 'resources/image/web_components.png',
       sourcePath: 'toolkit/webcomponents/WebComponentsDemo.js',
       tags: ['webcomponents', 'shadowdom', 'html import']
+    },
+    {
+      id: 'html-popup',
+      name: 'HTML Popup',
+      demoPath: 'view/htmlpopup/index.html',
+      summary:
+        'Shows HTML pop-up panels that displays additional information about a clicked node or edge.',
+      category: 'view',
+      thumbnailPath: 'resources/image/htmlpopup.png',
+      sourcePath: 'view/htmlpopup/HTMLPopupDemo.js',
+      tags: ['interaction', 'overlay'],
+      keywords: ['htmlpopup', 'datapanel', 'tooltip', 'structure', 'detail']
     },
     {
       id: 'css3-animations-and-transitions',
@@ -982,40 +1101,6 @@ function getDemoData() {
       keywords: ['v2.1.0.0', 'databinding', 'datapanel', 'tree']
     },
     {
-      id: 'data-table',
-      name: 'Data Table',
-      demoPath: 'style/datatable/index.html',
-      summary: 'Shows a node style and a label style that display data in a tabular fashion.',
-      category: 'style',
-      thumbnailPath: 'resources/image/datatable.png',
-      sourcePath: 'style/datatable/DataTableDemo.js',
-      tags: ['styles', 'labels'],
-      keywords: ['datatable', 'structure']
-    },
-    {
-      id: 'html-label',
-      name: 'HTML Label',
-      demoPath: 'style/htmllabel/index.html',
-      summary: 'Shows how HTML can be used in label text with a custom label style.',
-      category: 'style',
-      thumbnailPath: 'resources/image/htmllabel.png',
-      sourcePath: 'style/htmllabel/HtmlLabelDemo.js',
-      tags: ['styles', 'labels'],
-      keywords: ['foreignObject']
-    },
-    {
-      id: 'html-popup',
-      name: 'HTML Popup',
-      demoPath: 'view/htmlpopup/index.html',
-      summary:
-        'Shows HTML pop-up panels that displays additional information about a clicked node or edge.',
-      category: 'view',
-      thumbnailPath: 'resources/image/htmlpopup.png',
-      sourcePath: 'view/htmlpopup/HTMLPopupDemo.js',
-      tags: ['interaction', 'overlay'],
-      keywords: ['htmlpopup', 'datapanel', 'tooltip', 'structure', 'detail']
-    },
-    {
       id: 'selection-styling',
       name: 'Selection Styling',
       demoPath: 'style/selectionstyling/index.html',
@@ -1038,6 +1123,39 @@ function getDemoData() {
       sourcePath: 'style/styledecorators/StyleDecoratorsDemo.js',
       tags: ['styles', 'decorators'],
       keywords: ['ports']
+    },
+    {
+      id: 'data-table',
+      name: 'Data Table',
+      demoPath: 'style/datatable/index.html',
+      summary: 'Shows a node style and a label style that display data in a tabular fashion.',
+      category: 'style',
+      thumbnailPath: 'resources/image/datatable.png',
+      sourcePath: 'style/datatable/DataTableDemo.js',
+      tags: ['styles', 'labels'],
+      keywords: ['datatable', 'structure']
+    },
+    {
+      id: 'html-label',
+      name: 'HTML Label',
+      demoPath: 'style/htmllabel/index.html',
+      summary: 'Shows how HTML can be used in label text with a custom label style.',
+      category: 'style',
+      thumbnailPath: 'resources/image/htmllabel.png',
+      sourcePath: 'style/htmllabel/HtmlLabelDemo.js',
+      tags: ['styles', 'labels'],
+      keywords: ['foreignObject']
+    },
+    {
+      id: 'invariant-label-style',
+      name: 'Zoom-invariant Label Style',
+      demoPath: 'style/invariant-label/index.html',
+      summary: 'Shows label styles that are independent of the zoom level.',
+      category: 'style',
+      thumbnailPath: 'resources/image/invariant-label.png',
+      sourcePath: 'style/invariant-label/ZoomInvariantLabelStyleDemo.js',
+      tags: ['styles', 'labels', 'zoom'],
+      keywords: ['v2.2.0.2', 'size', 'fit']
     },
     {
       id: 'bridges',
@@ -1401,6 +1519,28 @@ function getDemoData() {
       keywords: ['sizeconstraintprovider', 'handles']
     },
     {
+      id: 'webdriverio',
+      name: 'WebdriverIO',
+      demoPath: 'testing/wdio/README.html',
+      summary: 'Shows how to test a yFiles for HTML app in multiple browsers using WebdriverIO.',
+      category: 'testing',
+      thumbnailPath: 'resources/image/wdio.png',
+      sourcePath: 'testing/wdio/integration/specs/WdioDemo.spec.js',
+      tags: ['testing', 'wdio', 'selenium'],
+      keywords: ['v2.2.0.2', 'integration', 'webdriver', 'end-to-end']
+    },
+    {
+      id: 'jest-puppeteer',
+      name: 'Jest Puppeteer',
+      demoPath: 'testing/jest-puppeteer/README.html',
+      summary: 'Shows how to test a yFiles for HTML app using Jest with the Puppeteer environment.',
+      category: 'testing',
+      thumbnailPath: 'resources/image/jest-puppeteer.png',
+      sourcePath: 'testing/jest/integration/app.test.js',
+      tags: ['testing', 'jest', 'puppeteer'],
+      keywords: ['v2.2.0.2', 'integration', 'end-to-end']
+    },
+    {
       id: 'tutorial-getting-started--graphcomponent',
       name: '01 Creating the View',
       summary:
@@ -1519,20 +1659,10 @@ function getDemoData() {
       keywords: ['v2.2.0.0', 'hierarchic']
     },
     {
-      id: 'tutorial-getting-started--custom-ports',
-      name: '12 Custom Ports',
-      summary: 'This step presents the ILookup interface.',
-      demoPath: '01-tutorial-getting-started/12-custom-ports/index.html',
-      thumbnailPath: 'resources/image/tutorial1step12.png',
-      category: 'tutorial-getting-started',
-      tags: ['tutorial', 'getting started'],
-      keywords: ['decorator', 'candidate', 'provider']
-    },
-    {
-      id: 'tutorial-getting-started--layout',
-      name: '13 Analysis Algorithms',
+      id: 'tutorial-getting-started--graph-analysis',
+      name: '12 Analysis Algorithms',
       summary: 'Shows how to use the graph analysis algorithms.',
-      demoPath: '01-tutorial-getting-started/13-graph-analysis/index.html',
+      demoPath: '01-tutorial-getting-started/12-graph-analysis/index.html',
       thumbnailPath: 'resources/image/tutorial1step10.png',
       category: 'tutorial-getting-started',
       tags: ['tutorial', 'getting started', 'analysis'],
@@ -1940,6 +2070,24 @@ function getDemoData() {
       category: 'tutorial-application-features',
       tags: ['clipboard', 'cut', 'paste'],
       keywords: ['v2.2.0.0', 'GraphCopier', 'copy']
+    },
+    {
+      id: 'tutorial-application-features--graph-decorator',
+      name: 'Graph Decorator',
+      summary: 'Shows how to decorate graph items to change their behavior or visualization.',
+      demoPath: '03-tutorial-application-features/graph-decorator/index.html',
+      thumbnailPath: 'resources/image/demo-graph-decorator.png',
+      category: 'tutorial-application-features',
+      tags: ['interaction'],
+      keywords: [
+        'v2.2.0.2',
+        'GraphDecorator',
+        'NodeDecorator',
+        'ILookupDecorator',
+        'ports',
+        'IPortCandidate',
+        'portcandidateprovider'
+      ]
     },
     {
       id: 'tutorial-application-features--graph-search',

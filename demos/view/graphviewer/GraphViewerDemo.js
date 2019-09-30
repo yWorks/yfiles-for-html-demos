@@ -29,7 +29,6 @@
 import {
   Arrow,
   ArrowType,
-  ClickEventArgs,
   Color,
   EdgeStyleDecorationInstaller,
   FoldingManager,
@@ -40,10 +39,10 @@ import {
   GraphMLSupport,
   GraphOverviewComponent,
   GraphViewerInputMode,
-  HoveredItemChangedEventArgs,
   ICommand,
   IEdge,
   IGraph,
+  IInputModeContext,
   IModelItem,
   INode,
   License,
@@ -53,7 +52,6 @@ import {
   Point,
   PolylineEdgeStyle,
   PopulateItemContextMenuEventArgs,
-  PropertyChangedEventArgs,
   ShapeNodeShape,
   ShapeNodeStyle,
   StorageLocation,
@@ -265,21 +263,33 @@ function initializeInputMode() {
   // they should be discarded, rather than be reported as "null"
   graphViewerInputMode.itemHoverInputMode.discardInvalidItems = false
   // whenever the currently hovered item changes call our method
-  graphViewerInputMode.itemHoverInputMode.addHoveredItemChangedListener(onHoveredItemChanged)
+  graphViewerInputMode.itemHoverInputMode.addHoveredItemChangedListener((sender, evt) =>
+    onHoveredItemChanged(evt.item)
+  )
 
   // when the mouse hovers for a longer time over an item we may optionally display a
   // tooltip. Use this callback for querying the tooltip contents.
-  graphViewerInputMode.addQueryItemToolTipListener(onQueryItemToolTip)
+  graphViewerInputMode.addQueryItemToolTipListener((sender, evt) => {
+    evt.toolTip = onQueryItemToolTip(evt.item)
+  })
   // slightly offset the tooltip so that it does not interfere with the mouse
   graphViewerInputMode.mouseHoverInputMode.toolTipLocationOffset = new Point(0, 10)
   // we show the tooltip for a very long time...
   graphViewerInputMode.mouseHoverInputMode.duration = '10s'
 
   // if we click on an item we want to perform a custom action, so register a callback
-  graphViewerInputMode.addItemClickedListener(onItemClicked)
+  graphViewerInputMode.addItemClickedListener((sender, evt) => onItemClicked(evt.item))
 
   // also if someone clicked on an empty area we want to perform a custom group action
-  graphViewerInputMode.clickInputMode.addClickedListener(onClickInputModeOnClicked)
+  graphViewerInputMode.clickInputMode.addClickedListener((sender, args) => {
+    // if the user pressed a modifier key during the click...
+    if (
+      (args.modifiers & (ModifierKeys.SHIFT | ModifierKeys.CONTROL)) ===
+      (ModifierKeys.SHIFT | ModifierKeys.CONTROL)
+    ) {
+      onClickInputModeOnClicked(args.context, args.location)
+    }
+  })
 
   initializeContextMenu(graphViewerInputMode)
 
@@ -328,17 +338,16 @@ function initializeContextMenu(inputMode) {
  * Called when the mouse hovers over a different item.
  * This method will be called whenever the mouse moves over a different item. We show a highlight indicator
  * to make it easier for the user to understand the graph's structure.
- * @param {object} sender
- * @param {HoveredItemChangedEventArgs} hoveredItemChangedEventArgs
+ * @param {IModelItem} item
  */
-function onHoveredItemChanged(sender, hoveredItemChangedEventArgs) {
+function onHoveredItemChanged(item) {
   // we use the highlight manager of the GraphComponent to highlight related items
   const manager = graphComponent.highlightIndicatorManager
 
   // first remove previous highlights
   manager.clearHighlights()
   // then see where we are hovering over, now
-  const newItem = hoveredItemChangedEventArgs.item
+  const newItem = item
   if (newItem !== null) {
     // we highlight the item itself
     manager.addHighlight(newItem)
@@ -369,7 +378,7 @@ function populateContextMenu(contextMenu, e) {
     contextMenu.clearItems()
     // if the selected item is a node and has an URL mapped to it:
     // create a context menu item to open the link
-    contextMenu.addMenuItem('Open External Link', evt => {
+    contextMenu.addMenuItem('Open External Link', () => {
       window.open(url, '_blank')
     })
     // we don't want to be queried again if there are more items at this location
@@ -379,26 +388,15 @@ function populateContextMenu(contextMenu, e) {
 
 /**
  * Called when the mouse has been clicked somewhere.
- * @param {object} sender
- * @param {ClickEventArgs} args
+ * @param {IInputModeContext} context The context for the current event
+ * @param {Point} location The location of the click
  */
-function onClickInputModeOnClicked(sender, args) {
-  // if the user pressed a modifier key during the click...
-  if (
-    !args.handled &&
-    (args.modifiers & (ModifierKeys.SHIFT | ModifierKeys.CONTROL)) ===
-      (ModifierKeys.SHIFT | ModifierKeys.CONTROL)
-  ) {
-    // we check if there was something at the provided location..
-    if (
-      graphComponent.graphModelManager.hitTester.enumerateHits(args.context, args.location).size ===
-      0
-    ) {
-      // an if there wasn't we try to exit the current group in case we are inside a folder node
-      if (ICommand.EXIT_GROUP.canExecute(null, graphComponent)) {
-        ICommand.EXIT_GROUP.execute(null, graphComponent)
-        args.handled = true
-      }
+function onClickInputModeOnClicked(context, location) {
+  // we check if there was something at the provided location..
+  if (graphComponent.graphModelManager.hitTester.enumerateHits(context, location).size === 0) {
+    // and if there wasn't we try to exit the current group in case we are inside a folder node
+    if (ICommand.EXIT_GROUP.canExecute(null, graphComponent)) {
+      ICommand.EXIT_GROUP.execute(null, graphComponent)
     }
   }
 }
@@ -416,10 +414,8 @@ function enableFolding() {
 
 /**
  * If the currentItem property on GraphComponent's changes we adjust the details panel.
- * @param {object} sender
- * @param {PropertyChangedEventArgs} propertyChangedEventArgs
  */
-function onCurrentItemChanged(sender, propertyChangedEventArgs) {
+function onCurrentItemChanged() {
   // clear the current display
   nodeInfo.innerHTML = 'Empty'
   nodeInfoDescription.innerHTML = 'Empty'
@@ -446,50 +442,47 @@ function onCurrentItemChanged(sender, propertyChangedEventArgs) {
 
 /**
  * If an item has been clicked, we can execute a custom command.
- * @param {object} sender
- * @param {ItemClickedEventArgs.<IModelItem>} e
+ * @param {IModelItem} item The item that it has been clicked
  */
-function onItemClicked(sender, e) {
-  if (!e.handled && INode.isInstance(e.item)) {
+function onItemClicked(item) {
+  if (INode.isInstance(item)) {
     // we adjust the currentItem property
-    graphComponent.currentItem = e.item
+    graphComponent.currentItem = item
     // if the shift and control key had been pressed, we enter the group node if possible
     if (
       (graphComponent.lastMouseEvent.modifiers & (ModifierKeys.SHIFT | ModifierKeys.CONTROL)) ===
       (ModifierKeys.SHIFT | ModifierKeys.CONTROL)
     ) {
-      if (ICommand.ENTER_GROUP.canExecute(e.item, graphComponent)) {
-        ICommand.ENTER_GROUP.execute(e.item, graphComponent)
-        e.handled = true
+      if (ICommand.ENTER_GROUP.canExecute(item, graphComponent)) {
+        ICommand.ENTER_GROUP.execute(item, graphComponent)
       }
     }
   }
 }
 
 /**
- * Callback that will determine the tooltip when the mouse hovers over a node.
- * @param {Object} sender
- * @param {QueryItemToolTipEventArgs.<IModelItem>} queryItemToolTipEventArgs
+ * Callback that will determine the tooltip content when the mouse hovers over a node.
+ * @param {IModelItem} item The item for which the tooltip is queried
+ * @return {Element | null} The tooltip element or null if no tooltip is available
  */
-function onQueryItemToolTip(sender, queryItemToolTipEventArgs) {
-  if (INode.isInstance(queryItemToolTipEventArgs.item) && !queryItemToolTipEventArgs.handled) {
-    const node = queryItemToolTipEventArgs.item
+function onQueryItemToolTip(item) {
+  if (INode.isInstance(item)) {
+    const node = item
     const descriptionMapper = getDescriptionMapper()
     const description = descriptionMapper !== null ? descriptionMapper.get(node) : null
     const toolTipText =
       getToolTipMapper().get(node) !== null ? getToolTipMapper().get(node) : description
-    if (toolTipText !== null) {
-      queryItemToolTipEventArgs.toolTip = createTooltip(toolTipText)
-      queryItemToolTipEventArgs.handled = true
-    }
+    return toolTipText !== null ? createTooltipContent(toolTipText) : null
   }
+  return null
 }
 
 /**
  * Create the toolTip as a rich HTML element.
  * @param {string} toolTipText
+ * @return {Element} The tooltip element
  */
-function createTooltip(toolTipText) {
+function createTooltipContent(toolTipText) {
   const text = document.createElement('p')
   text.innerHTML = toolTipText
   const tooltip = document.createElement('div')
@@ -501,7 +494,7 @@ function createTooltip(toolTipText) {
 /**
  * Helper method that reads the currently selected graphml from the combobox.
  */
-function readSampleGraph() {
+async function readSampleGraph() {
   // Disable navigation buttons while graph is loaded
   setUIDisabled(true)
   searchBox.value = ''
@@ -511,15 +504,14 @@ function readSampleGraph() {
   const selectedItem = graphChooserBox.options[graphChooserBox.selectedIndex].value
   const fileName = `resources/${selectedItem}.graphml`
   // then load the graph
-  readGraph(createGraphMLIOHandler(), graphComponent.graph, fileName).then(() => {
-    // when done - fit the bounds
-    ICommand.FIT_GRAPH_BOUNDS.execute(null, graphComponent)
-    // and update the graph description pane
-    const desc = graphDescriptionMapper.get(graphComponent.graph.foldingView.manager.masterGraph)
-    graphDescription.innerHTML = desc !== null ? desc : ''
-    // re-enable navigation buttons
-    setUIDisabled(false)
-  })
+  await readGraph(createGraphMLIOHandler(), graphComponent.graph, fileName)
+  // when done - fit the bounds
+  ICommand.FIT_GRAPH_BOUNDS.execute(null, graphComponent)
+  // and update the graph description pane
+  const desc = graphDescriptionMapper.get(graphComponent.graph.foldingView.manager.masterGraph)
+  graphDescription.innerHTML = desc !== null ? desc : ''
+  // re-enable navigation buttons
+  setUIDisabled(false)
 }
 
 /**

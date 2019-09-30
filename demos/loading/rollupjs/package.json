@@ -1,19 +1,17 @@
 {
-  "name": "yfiles-rollupjs-demo",
-  "description": "Using yFiles and rollupjs.",
+  "name": "rollupjs-demo-for-yfiles-for-html",
   "version": "1.0.0",
-  "homepage": "https://www.yworks.com/products/yfiles-for-html",
-  "author": "yfileshtml@yworks.com",
+  "author": "yWorks GmbH <yfileshtml@yworks.com>",
   "license": "https://www.yworks.com/products/yfiles-for-html/sla",
+  "private": true,
   "scripts": {
     "build": "node --max-old-space-size=2048 ./node_modules/grunt/bin/grunt"
   },
-  "private": true,
   "devDependencies": {
-    "@yworks/optimizer": "^1.0.0",
-    "grunt": "^1.0.3",
+    "@yworks/optimizer": "^1.0.5",
+    "grunt": "^1.0.4",
     "grunt-contrib-clean": "^2.0.0",
     "grunt-contrib-copy": "^1.0.0",
-    "rollup": "^1.2.2"
+    "rollup": "^1.21.4"
   }
 }

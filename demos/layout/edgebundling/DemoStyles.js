@@ -152,7 +152,9 @@ export class DemoEdgeStyle extends EdgeStyleBase {
         generalPath.cubicTo(controlPoints[i + 1], controlPoints[i + 2], controlPoints[i + 3])
         const path = generalPath.createSvgPath()
         path.setAttribute('fill', 'none')
-        const colorIndex = Math.floor(i * (gradientColors.length - 1) / (controlPoints.length - 1))
+        const colorIndex = Math.floor(
+          (i * (gradientColors.length - 1)) / (controlPoints.length - 1)
+        )
         path.setAttribute(
           'stroke',
           !cache.selected ? gradientColors[colorIndex] : selectionColors[colorIndex]
@@ -175,7 +177,7 @@ export class DemoEdgeStyle extends EdgeStyleBase {
         line.setAttribute('x2', points[i].x)
         line.setAttribute('y2', points[i].y)
         line.setAttribute('fill', 'none')
-        const colorIndex = Math.floor(i * (gradientColors.length - 1) / (points.length - 1))
+        const colorIndex = Math.floor((i * (gradientColors.length - 1)) / (points.length - 1))
         line.setAttribute(
           'stroke',
           !cache.selected ? gradientColors[colorIndex] : selectionColors[colorIndex]
@@ -253,8 +255,8 @@ export class DemoEdgeStyle extends EdgeStyleBase {
 export class DemoNodeStyle extends NodeStyleBase {
   /**
    * Initializes a new DemoNodeStyle.
-   * @param {Color} color The given color
-   * @param {Number} thickness The thickness of the segment
+   * @param {Color} color? The given color
+   * @param {Number} thickness? The thickness of the segment
    */
   constructor(color, thickness) {
     super()
@@ -269,10 +271,10 @@ export class DemoNodeStyle extends NodeStyleBase {
    * @return {SvgVisual}
    */
   createVisual(context, node) {
-    // This implementation creates a CanvasContainer and uses it for the rendering of the edge.
+    // This implementation creates a CanvasContainer and uses it for the rendering of the node.
     const path = window.document.createElementNS('http://www.w3.org/2000/svg', 'path')
 
-    const cache = DemoNodeStyle.createRenderDataCache(context, node)
+    const cache = this.createRenderDataCache(context, node)
     this.render(path, node, cache)
     return new SvgVisual(path)
   }
@@ -289,7 +291,7 @@ export class DemoNodeStyle extends NodeStyleBase {
     // get the data with which the oldvisual was created
     const oldCache = container['data-renderDataCache']
     // get the data for the new visual
-    const newCache = DemoNodeStyle.createRenderDataCache(context, node)
+    const newCache = this.createRenderDataCache(context, node)
     // check if something changed
     if (newCache.equals(newCache, oldCache)) {
       // nothing changed, return the old visual
@@ -304,7 +306,7 @@ export class DemoNodeStyle extends NodeStyleBase {
    * @param {INode} node The given node
    * @return {Object} The render data cache
    */
-  static createRenderDataCache(context, node) {
+  createRenderDataCache(context, node) {
     const selection = context.canvasComponent.selection
     const selected = selection !== null && selection.isSelected(node)
     return {

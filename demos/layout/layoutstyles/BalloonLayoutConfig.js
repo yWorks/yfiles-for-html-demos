@@ -315,8 +315,9 @@ const BalloonLayoutConfig = Class('BalloonLayoutConfig', {
     },
     get: function() {
       return (
-        "<p style='margin-top:0'>The balloon layout style is a tree layout style that positions the subtrees in a radial " +
-        'fashion around their root nodes. It is ideally suited for larger trees.</p>'
+        ("<p style='margin-top:0'>The balloon layout style is a tree layout style that" +
+        ' positions the subtrees in a radial fashion around their root nodes. It is ideally' +
+        ' suited for larger trees.</p>')
       )
     }
   },
@@ -838,8 +839,8 @@ const BalloonLayoutConfig = Class('BalloonLayoutConfig', {
     },
     get: function() {
       return (
-        this.edgeLabelingItem === BalloonLayoutConfig.EnumEdgeLabeling.NONE ||
-        this.edgeLabelingItem === BalloonLayoutConfig.EnumEdgeLabeling.INTEGRATED
+        (this.edgeLabelingItem === BalloonLayoutConfig.EnumEdgeLabeling.NONE ||
+        this.edgeLabelingItem === BalloonLayoutConfig.EnumEdgeLabeling.INTEGRATED)
       )
     }
   },
@@ -863,7 +864,9 @@ const BalloonLayoutConfig = Class('BalloonLayoutConfig', {
           values: [
             ['Anywhere', LayoutConfiguration.EnumLabelPlacementAlongEdge.ANYWHERE],
             ['At Source', LayoutConfiguration.EnumLabelPlacementAlongEdge.AT_SOURCE],
+            ['At Source Port', LayoutConfiguration.EnumLabelPlacementAlongEdge.AT_SOURCE_PORT],
             ['At Target', LayoutConfiguration.EnumLabelPlacementAlongEdge.AT_TARGET],
+            ['At Target Port', LayoutConfiguration.EnumLabelPlacementAlongEdge.AT_TARGET_PORT],
             ['Centered', LayoutConfiguration.EnumLabelPlacementAlongEdge.CENTERED]
           ]
         }),
@@ -885,8 +888,8 @@ const BalloonLayoutConfig = Class('BalloonLayoutConfig', {
     },
     get: function() {
       return (
-        this.edgeLabelingItem === BalloonLayoutConfig.EnumEdgeLabeling.NONE ||
-        this.edgeLabelingItem === BalloonLayoutConfig.EnumEdgeLabeling.INTEGRATED
+        (this.edgeLabelingItem === BalloonLayoutConfig.EnumEdgeLabeling.NONE ||
+        this.edgeLabelingItem === BalloonLayoutConfig.EnumEdgeLabeling.INTEGRATED)
       )
     }
   },
@@ -974,10 +977,10 @@ const BalloonLayoutConfig = Class('BalloonLayoutConfig', {
     },
     get: function() {
       return (
-        this.edgeLabelingItem === BalloonLayoutConfig.EnumEdgeLabeling.NONE ||
+        (this.edgeLabelingItem === BalloonLayoutConfig.EnumEdgeLabeling.NONE ||
         this.edgeLabelingItem === BalloonLayoutConfig.EnumEdgeLabeling.INTEGRATED ||
         this.labelPlacementSideOfEdgeItem ===
-          LayoutConfiguration.EnumLabelPlacementSideOfEdge.ON_EDGE
+          LayoutConfiguration.EnumLabelPlacementSideOfEdge.ON_EDGE)
       )
     }
   },

@@ -51,6 +51,7 @@ import {
   ICollection,
   IComparer,
   IDataProvider,
+  IEdgeData,
   IEdgeLabelLayout,
   IItemFactory,
   ILayerer,
@@ -58,6 +59,7 @@ import {
   ILayoutAlgorithm,
   ILayoutDataProvider,
   ILayoutStage,
+  INodeData,
   INodeLabelLayout,
   IProfitModel,
   LabelingBase,
@@ -72,6 +74,7 @@ import {
   List,
   Maps,
   NodeDataType,
+  OrientationLayout,
   PartitionGrid,
   PathAlgorithm,
   PortCalculator,
@@ -3047,7 +3050,7 @@ class FlowchartLabelProfitModel extends BaseClass(IProfitModel) {
       pX = x2 - pX
       pY = y2 - pY
       const tmp = pX * x2 + pY * y2
-      projSquaredDist = tmp <= 0.0 ? 0.0 : tmp * tmp / (x2 * x2 + y2 * y2)
+      projSquaredDist = tmp <= 0.0 ? 0.0 : (tmp * tmp) / (x2 * x2 + y2 * y2)
     }
     const squaredDist = pX * pX + (pY * pY - projSquaredDist)
     return squaredDist < 0.0 ? 0.0 : Math.sqrt(squaredDist)

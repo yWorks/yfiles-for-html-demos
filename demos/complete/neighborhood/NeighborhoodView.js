@@ -36,16 +36,14 @@ import {
   HierarchicLayout,
   IEdge,
   IGraph,
+  IModelItem,
   INode,
   INodeStyle,
   Insets,
-  ItemEventArgs,
-  ItemSelectionChangedEventArgs,
   List,
   Mapper,
   MouseWheelBehaviors,
   Neighborhood,
-  NodeEventArgs,
   NodeStyleDecorationInstaller,
   Point,
   ShapeNodeStyle,
@@ -108,6 +106,7 @@ export default class NeighborhoodView {
     this.initializeHighlightStyle()
 
     this.createEditListeners()
+    this.$graphChangeListener = () => this.onGraphChanged()
   }
 
   /**
@@ -125,7 +124,7 @@ export default class NeighborhoodView {
   set graphComponent(value) {
     this.selectedNodes = null
     if (this.$graphComponent !== null) {
-      this.$graphComponent.removeGraphChangedListener(this.onGraphChanged.bind(this))
+      this.$graphComponent.removeGraphChangedListener(this.$graphChangeListener)
       if (this.useSelection) {
         this.uninstallItemSelectionChangedListener()
       }
@@ -139,7 +138,7 @@ export default class NeighborhoodView {
       if (this.$sourceGraph !== null) {
         this.installEditListeners()
       }
-      this.$graphComponent.addGraphChangedListener(this.onGraphChanged.bind(this))
+      this.$graphComponent.addGraphChangedListener(this.$graphChangeListener)
       if (this.useSelection) {
         this.installItemSelectionChangedListener()
       }
@@ -165,7 +164,7 @@ export default class NeighborhoodView {
       this.uninstallEditListeners()
     }
     if (this.graphComponent !== null) {
-      this.graphComponent.removeGraphChangedListener(this.onGraphChanged.bind(this))
+      this.graphComponent.removeGraphChangedListener(this.$graphChangeListener)
       if (this.useSelection) {
         this.uninstallItemSelectionChangedListener()
       }
@@ -324,10 +323,10 @@ export default class NeighborhoodView {
     this.editListeners.set('labelStyleChanged', () => this.onLabelEdited())
     this.editListeners.set('labelTextChanged', () => this.onLabelEdited())
 
-    this.editListeners.set('isGroupNodeChanged', (source, args) => this.onItemEdited(source, args))
-    this.editListeners.set('parentChanged', (source, args) => this.onItemEdited(source, args))
+    this.editListeners.set('isGroupNodeChanged', () => this.onItemEdited())
+    this.editListeners.set('parentChanged', () => this.onItemEdited())
     this.editListeners.set('itemSelectionChanged', (source, args) =>
-      this.onItemSelectionChanged(source, args)
+      this.onItemSelectionChanged(args.item)
     )
   }
 
@@ -384,11 +383,7 @@ export default class NeighborhoodView {
     this.sourceGraph.removeParentChangedListener(this.editListeners.get('parentChanged'))
   }
 
-  /**
-   * @param {object} source
-   * @param {NodeEventArgs} args
-   */
-  onItemEdited(source, args) {
+  onItemEdited() {
     if (this.autoUpdatesEnabled) {
       this.scheduleUpdate()
     }
@@ -427,11 +422,10 @@ export default class NeighborhoodView {
 
   /**
    * Called whenever the selection changes.
-   * @param {object} sender
-   * @param {ItemSelectionChangedEventArgs} args
+   * @param {IModelItem} item
    */
-  onItemSelectionChanged(sender, args) {
-    if (this.autoUpdatesEnabled && INode.isInstance(args.item)) {
+  onItemSelectionChanged(item) {
+    if (this.autoUpdatesEnabled && INode.isInstance(item)) {
       this.$selectedNodes = new List(this.graphComponent.selection.selectedNodes)
       this.scheduleUpdate()
     }
@@ -461,10 +455,8 @@ export default class NeighborhoodView {
 
   /**
    * Called when the graph property of the source graph is changed.
-   * @param {object} sender
-   * @param {ItemEventArgs} args
    */
-  onGraphChanged(sender, args) {
+  onGraphChanged() {
     this.sourceGraph = this.graphComponent.graph
   }
 

@@ -27,175 +27,17 @@
  **
  ***************************************************************************/
 import {
+  BaseClass,
   GraphComponent,
-  HierarchicLayout,
   IEdge,
-  IEnumerable,
   ILabelModelParameter,
-  ILayoutAlgorithm,
   IModelItem,
-  LayoutGraph,
-  LayoutOrientation,
-  LayoutStageBase,
+  IPositionHandler,
   Point,
-  PortConstraint,
   SimpleLabel,
   Size,
-  UndoUnitBase,
-  YNode
+  UndoUnitBase
 } from 'yfiles'
-
-/**
- * This layout stage ensures that the size of the nodes is large enough such that
- * all edges can be placed without overlaps.
- */
-export class NodeResizingStage extends LayoutStageBase {
-  /**
-   * Creates a new instance of NodeResizingStage.
-   * @param {ILayoutAlgorithm} layout
-   */
-  constructor(layout) {
-    super(layout)
-    this.layout = layout
-    this.$layoutOrientation = LayoutOrientation.LEFT_TO_RIGHT
-    this.$portBorderGapRatio = 0
-    this.$minimumPortDistance = 0
-  }
-
-  /**
-   * Gets the main orientation of the layout. Should be the same value as for the associated core layout
-   * algorithm.
-   * @return {LayoutOrientation} The main orientation of the layout
-   */
-  get layoutOrientation() {
-    return this.$layoutOrientation
-  }
-
-  /**
-   * Gets the main orientation of the layout. Should be the same value as for the associated core layout
-   * algorithm.
-   * @param {LayoutOrientation} orientation One of the default layout orientations
-   */
-  set layoutOrientation(orientation) {
-    this.$layoutOrientation = orientation
-  }
-
-  /**
-   * Gets the port border gap ratio for the port distribution at the sides of the nodes.
-   * Should be the same value as for the associated core layout algorithm.
-   * @return {number} The port border gap ratio
-   */
-  get portBorderGapRatio() {
-    return this.$portBorderGapRatio
-  }
-
-  /**
-   * Sets the port border gap ratio for the port distribution at the sides of the nodes. Should be the same value
-   * as for the associated core layout algorithm.
-   * @param {number} portBorderGapRatio The given ratio
-   */
-  set portBorderGapRatio(portBorderGapRatio) {
-    this.$portBorderGapRatio = portBorderGapRatio
-  }
-
-  /**
-   * Returns the minimum distance between two ports on the same node side.
-   * @return {number} The minimum distance between two ports
-   */
-  get minimumPortDistance() {
-    return this.$minimumPortDistance
-  }
-
-  /**
-   * Gets the minimum distance between two ports on the same node side.
-   * @param {number} minimumPortDistance The minimum distance
-   */
-  set minimumPortDistance(minimumPortDistance) {
-    this.$minimumPortDistance = minimumPortDistance
-  }
-
-  /**
-   * Applies the layout to the given graph.
-   * @param {LayoutGraph} graph The given graph
-   */
-  applyLayout(graph) {
-    graph.nodes.forEach(node => {
-      this.adjustNodeSize(node, graph)
-    })
-
-    // run the core layout
-    this.applyLayoutCore(graph)
-  }
-
-  /**
-   * Adjusts the size of the given node.
-   * @param {YNode} node The given node
-   * @param {LayoutGraph} graph The given graph
-   */
-  adjustNodeSize(node, graph) {
-    let width = 60
-    let height = 40
-
-    const leftEdgeSpace = this.calcRequiredSpace(node.inEdges, graph)
-    const rightEdgeSpace = this.calcRequiredSpace(node.outEdges, graph)
-    if (
-      this.layoutOrientation === LayoutOrientation.TOP_TO_BOTTOM ||
-      this.layoutOrientation === LayoutOrientation.BOTTOM_TO_TOP
-    ) {
-      // we have to enlarge the width such that the in-/out-edges can be placed side by side without overlaps
-      width = Math.max(width, leftEdgeSpace)
-      width = Math.max(width, rightEdgeSpace)
-    } else {
-      // we have to enlarge the height such that the in-/out-edges can be placed side by side without overlaps
-      height = Math.max(height, leftEdgeSpace)
-      height = Math.max(height, rightEdgeSpace)
-    }
-
-    // adjust size for edges with strong port constraints
-    const edgeThicknessDP = graph.getDataProvider(HierarchicLayout.EDGE_THICKNESS_DP_KEY)
-    if (edgeThicknessDP !== null) {
-      node.edges.forEach(edge => {
-        const thickness = edgeThicknessDP.getNumber(edge)
-
-        const spc = PortConstraint.getSPC(graph, edge)
-        if (edge.source === node && spc !== null && spc.strong) {
-          const sourcePoint = graph.getSourcePointRel(edge)
-          width = Math.max(width, Math.abs(sourcePoint.x) * 2 + thickness)
-          height = Math.max(height, Math.abs(sourcePoint.y) * 2 + thickness)
-        }
-
-        const tpc = PortConstraint.getTPC(graph, edge)
-        if (edge.target === node && tpc !== null && tpc.strong) {
-          const targetPoint = graph.getTargetPointRel(edge)
-          width = Math.max(width, Math.abs(targetPoint.x) * 2 + thickness)
-          height = Math.max(height, Math.abs(targetPoint.y) * 2 + thickness)
-        }
-      })
-    }
-    graph.setSize(node, width, height)
-  }
-
-  /**
-   * Calculates the space required when placing the given edge side by side without overlaps and considering
-   * the specified minimum port distance and edge thickness.
-   * @param {IEnumerable} edges The edges to calculate the space for
-   * @param {LayoutGraph} graph The given graph
-   */
-  calcRequiredSpace(edges, graph) {
-    let requiredSpace = 0
-    const edgeThicknessDP = graph.getDataProvider(HierarchicLayout.EDGE_THICKNESS_DP_KEY)
-    let count = 0
-    edges.forEach(edge => {
-      const thickness = edgeThicknessDP === null ? 0 : edgeThicknessDP.getNumber(edge)
-      requiredSpace += Math.max(thickness, 1)
-      count++
-    })
-
-    requiredSpace += (count - 1) * this.minimumPortDistance
-    requiredSpace += 2 * this.portBorderGapRatio * this.minimumPortDistance
-    return requiredSpace
-  }
-}
 
 /**
  * This class adds an HTML panel on top of the contents of the graphComponent that can
@@ -208,8 +50,8 @@ export class NodeResizingStage extends LayoutStageBase {
  */
 export class SankeyPopupSupport {
   /**
-   * Constructor that takes the graphComponent, the container div element and an ILabelModelParameter
-   * to determine the relative position of the popup.
+   * Constructor that takes the graphComponent, the container div element and an
+   * ILabelModelParameter to determine the relative position of the popup.
    * @param {GraphComponent} graphComponent The given graphComponent.
    * @param {Element} div The div element.
    * @param {ILabelModelParameter} labelModelParameter The label model parameter that determines
@@ -336,7 +178,8 @@ export class SankeyPopupSupport {
 
   /**
    * Changes the location of this pop-up to the location calculated by the
-   * {@link HTMLPopupSupport#labelModelParameter}. Currently, this implementation does not support rotated pop-ups.
+   * {@link HTMLPopupSupport#labelModelParameter}. Currently, this implementation does not support
+   * rotated pop-ups.
    */
   updateLocation() {
     if (!this.currentItem && !this.labelModelParameter) {
@@ -401,5 +244,44 @@ export class TagUndoUnit extends UndoUnitBase {
    */
   redo() {
     this.item.tag = this.newTag
+  }
+}
+
+/**
+ * A custom position handler which constrains the movement along the y axis.
+ * This implementation wraps the default position handler and delegates most of the work to it.
+ */
+export class ConstrainedPositionHandler extends BaseClass(IPositionHandler) {
+  constructor(handler) {
+    super()
+    this.handler = handler
+  }
+
+  get location() {
+    return this.handler.location
+  }
+
+  initializeDrag(context) {
+    this.handler.initializeDrag(context)
+    this.lastLocation = this.handler.location.toPoint()
+  }
+
+  handleMove(context, originalLocation, newLocation) {
+    // only move along the y axis, keep the original x coordinate
+    newLocation = new Point(originalLocation.x, newLocation.y)
+    if (!newLocation.equalsEps(this.lastLocation, 0)) {
+      // delegate to the wrapped handler for the actual move
+      this.handler.handleMove(context, originalLocation, newLocation)
+      // remember the location
+      this.lastLocation = newLocation
+    }
+  }
+
+  cancelDrag(context, originalLocation) {
+    this.handler.cancelDrag(context, originalLocation)
+  }
+
+  dragFinished(context, originalLocation, newLocation) {
+    this.handler.dragFinished(context, originalLocation, newLocation)
   }
 }

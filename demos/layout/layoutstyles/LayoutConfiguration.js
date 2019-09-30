@@ -65,7 +65,7 @@ const LayoutConfiguration = Class('LayoutConfiguration', {
    *   configuration on.
    * @param {function()} doneHandler An optional function that is invoked after the layout finished
    */
-  apply: function(graphComponent, doneHandler) {
+  apply: async function(graphComponent, doneHandler) {
     if (this.$layoutRunning) {
       setTimeout(doneHandler, 10)
       return
@@ -96,27 +96,22 @@ const LayoutConfiguration = Class('LayoutConfiguration', {
     if (layoutData) {
       layoutExecutor.layoutData = layoutData
     }
-
     // start the LayoutExecutor with finish and error handling code
-    layoutExecutor
-      .start()
-      .then(() => {
-        this.$layoutRunning = false
-        this.postProcess(graphComponent)
-        doneHandler()
-      })
-      .catch(error => {
-        this.$layoutRunning = false
-        this.postProcess(graphComponent)
-        if (error.name === 'AlgorithmAbortedError') {
-          alert(
-            'The layout computation was canceled because the maximum configured runtime of 20 seconds was exceeded.'
-          )
-        } else if (typeof window.reportError === 'function') {
-          window.reportError(error)
-        }
-        doneHandler()
-      })
+    try {
+      await layoutExecutor.start()
+    } catch (error) {
+      if (error.name === 'AlgorithmAbortedError') {
+        alert(
+          'The layout computation was canceled because the maximum configured runtime of 20 seconds was exceeded.'
+        )
+      } else if (typeof window.reportError === 'function') {
+        window.reportError(error)
+      }
+    } finally {
+      this.$layoutRunning = false
+      this.postProcess(graphComponent)
+    }
+    doneHandler()
   },
 
   /**
@@ -219,8 +214,14 @@ const LayoutConfiguration = Class('LayoutConfiguration', {
         case LayoutConfiguration.EnumLabelPlacementAlongEdge.AT_SOURCE:
           descriptor.placeAlongEdge = LabelPlacements.AT_SOURCE
           break
+        case LayoutConfiguration.EnumLabelPlacementAlongEdge.AT_SOURCE_PORT:
+          descriptor.placeAlongEdge = LabelPlacements.AT_SOURCE_PORT
+          break
         case LayoutConfiguration.EnumLabelPlacementAlongEdge.AT_TARGET:
           descriptor.placeAlongEdge = LabelPlacements.AT_TARGET
+          break
+        case LayoutConfiguration.EnumLabelPlacementAlongEdge.AT_TARGET_PORT:
+          descriptor.placeAlongEdge = LabelPlacements.AT_TARGET_PORT
           break
         case LayoutConfiguration.EnumLabelPlacementAlongEdge.CENTERED:
           descriptor.placeAlongEdge = LabelPlacements.AT_CENTER
@@ -264,7 +265,9 @@ const LayoutConfiguration = Class('LayoutConfiguration', {
       ANYWHERE: 0,
       AT_SOURCE: 1,
       AT_TARGET: 2,
-      CENTERED: 3
+      CENTERED: 3,
+      AT_SOURCE_PORT: 4,
+      AT_TARGET_PORT: 5
     }),
 
     /**

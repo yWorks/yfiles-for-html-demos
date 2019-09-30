@@ -30,6 +30,7 @@ import {
   ExteriorLabelModel,
   ExteriorLabelModelPosition,
   GraphComponent,
+  ILabelModelParameter,
   IModelItem,
   Point,
   SimpleLabel,

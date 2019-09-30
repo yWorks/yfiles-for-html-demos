@@ -72,7 +72,7 @@ function run() {
  * calculation. This is set to <code>true</code> if this method is called directly after
  * loading a new sample graph.
  */
-function runWebWorkerLayout(clearUndo) {
+async function runWebWorkerLayout(clearUndo) {
   // create a new web worker
   const worker = tryCreateWorker()
   if (worker === null) {
@@ -83,25 +83,20 @@ function runWebWorkerLayout(clearUndo) {
 
   // execute layout calculation of the worker
   const layoutExecutor = new WebWorkerLayoutExecutor(graphComponent, worker)
-  layoutExecutor
-    .start()
-    .then(() => {
-      if (clearUndo) {
-        graphComponent.graph.undoEngine.clear()
-      }
-      hideLoading()
-    })
-    .catch(error => {
-      if (clearUndo) {
-        graphComponent.graph.undoEngine.clear()
-      }
-      hideLoading()
-      if (typeof window.reportError === 'function') {
-        window.reportError(error)
-      } else {
-        throw error
-      }
-    })
+  try {
+    await layoutExecutor.start()
+  } catch (error) {
+    if (typeof window.reportError === 'function') {
+      window.reportError(error)
+    } else {
+      throw error
+    }
+  } finally {
+    if (clearUndo) {
+      graphComponent.graph.undoEngine.clear()
+    }
+    hideLoading()
+  }
 }
 
 /**

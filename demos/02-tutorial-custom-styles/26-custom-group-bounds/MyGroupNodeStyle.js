@@ -31,6 +31,7 @@ import {
   GeneralPath,
   GraphComponent,
   IGroupBoundsCalculator,
+  ILayoutGroupBoundsCalculator,
   INode,
   INodeInsetsProvider,
   INodeSizeConstraintProvider,

@@ -173,7 +173,7 @@ export default class CentralityConfig extends AlgorithmConfiguration {
           node,
           this.getMarkedNodeStyle(0, {
             lightToDark: true,
-            count: 50
+            size: 50
           })
         )
         graph.setNodeLayout(
@@ -188,7 +188,7 @@ export default class CentralityConfig extends AlgorithmConfiguration {
           node,
           this.getMarkedNodeStyle(index, {
             lightToDark: true,
-            count: 50
+            size: 50
           })
         )
 

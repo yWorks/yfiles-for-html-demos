@@ -257,13 +257,13 @@ function loadGraphCore(data) {
     // create the source and target port
     const sp = e.sourcePort
     const tp = e.targetPort
-    const sourcePort = graph.addPortAt(sourceNode, new Point(sp.x, sp.y))
-    const targetPort = graph.addPortAt(targetNode, new Point(tp.x, tp.y))
+    const sourcePort = graph.addPortAt(sourceNode, Point.from(sp))
+    const targetPort = graph.addPortAt(targetNode, Point.from(tp))
     // create the edge
     const edge = graph.createEdge(sourcePort, targetPort)
     // add the bends
     const bends = e.bends
-    bends.forEach(bend => graph.addBend(edge, new Point(bend.x, bend.y)))
+    bends.forEach(bend => graph.addBend(edge, Point.from(bend)))
   }
 }
 
@@ -457,7 +457,7 @@ function onNetworkFailure(sender, args) {
 }
 
 /**
- * Assigns the tooltip for the queried graph item.
+ * Assigns the tooltip content for the queried graph item.
  * @param {object} sender
  * @param {ToolTipQueryEventArgs} args
  */

@@ -150,13 +150,15 @@ const BusEdgeRouterConfig = Class('BusEdgeRouterConfig', {
         layoutData.affectedEdges = edge => graphSelection.isSelected(edge)
         break
       case BusEdgeRouterConfig.EnumScope.SUBSET_BUS:
-        graph.edges.filter(item => graphSelection.isSelected(item)).forEach(edge => {
-          const busId = busIds.get(edge).busId
+        graph.edges
+          .filter(item => graphSelection.isSelected(item))
+          .forEach(edge => {
+            const busId = busIds.get(edge).busId
 
-          if (!selectedIds.has(busId)) {
-            selectedIds.add(busId)
-          }
-        })
+            if (!selectedIds.has(busId)) {
+              selectedIds.add(busId)
+            }
+          })
 
         layoutData.affectedEdges = edge => selectedIds.has(busIds.get(edge).busId)
         break

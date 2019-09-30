@@ -33,6 +33,7 @@ import {
   GraphBuilder,
   GraphComponent,
   GraphEditorInputMode,
+  GraphOverviewComponent,
   HierarchicLayout,
   HierarchicLayoutData,
   HierarchicLayoutNodeLayoutDescriptor,
@@ -163,35 +164,31 @@ function createSampleGraph() {
     nodeIdBinding: 'id',
     nodeLabelBinding: 'alignment',
     groupBinding: 'parent',
-    groupIdBinding: 'id',
-    locationXBinding: data => data.layout.x,
-    locationYBinding: data => data.layout.y
+    groupIdBinding: 'id'
   })
 
   builder.buildGraph()
 
   // Sets the sizes of the nodes
   graph.nodes.forEach(node => {
-    node.layout.width = node.tag.layout.width
-    node.layout.height = node.tag.layout.height
+    graph.setNodeLayout(node, Rect.from(node.tag.layout))
   })
 
   // Iterate the edge data and create the according bends and Ports
   graph.edges.forEach(edge => {
     if (edge.tag.bends) {
       edge.tag.bends.forEach(bend => {
-        graph.addBend(edge, new Point(bend.x, bend.y))
+        graph.addBend(edge, Point.from(bend))
       })
     }
-    graph.setPortLocation(edge.sourcePort, new Point(edge.tag.sourcePort.x, edge.tag.sourcePort.y))
-    graph.setPortLocation(edge.targetPort, new Point(edge.tag.targetPort.x, edge.tag.targetPort.y))
+    graph.setPortLocation(edge.sourcePort, Point.from(edge.tag.sourcePort))
+    graph.setPortLocation(edge.targetPort, Point.from(edge.tag.targetPort))
   })
 
   // Sets the location of the groups
   graph.nodes.forEach(node => {
     if (graph.isGroupNode(node)) {
-      const layout = node.tag.layout
-      graph.setNodeLayout(node, new Rect(layout.x, layout.y, layout.width, layout.height))
+      graph.setNodeLayout(node, Rect.from(node.tag.layout))
     }
   })
 

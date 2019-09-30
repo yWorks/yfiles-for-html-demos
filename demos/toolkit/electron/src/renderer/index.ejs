@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+        <meta charset="UTF-8">
+        <title>Electron Demo [yFiles for HTML]</title>
+
+        <% if (htmlWebpackPlugin.options.nodeModules) { %>
+                <!-- Add `node_modules/` to global paths so `require` works properly in development -->
+                <script>
+                        require('module').globalPaths.push('<%= htmlWebpackPlugin.options.nodeModules.replace(/\\/g, '\\\\') %>');
+                        require('source-map-support/source-map-support.js').install();
+                </script>
+        <% } %>
+</head>
+<body>
+<div class="demo-content">
+        <div class="demo-toolbar">
+                <button id="btn-new" title="New" class="demo-icon-yIconNew"></button>
+                <button id="btn-open" title="Open a GraphML file" class="demo-icon-yIconOpen"></button>
+                <button id="btn-save" title="Save a GraphML file" class="demo-icon-yIconSave"></button>
+                <span class="demo-separator"></span>
+                <button id="btn-reset-zoom" title="Zoom to original size" class="demo-icon-yIconZoomOriginal"></button>
+                <button id="btn-fit-content" title="Fit Content" class="demo-icon-yIconZoomFit"></button>
+        </div>
+
+        <div id="graphComponent"></div>
+</div>
+</body>
+</html>

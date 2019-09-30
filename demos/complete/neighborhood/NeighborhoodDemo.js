@@ -35,7 +35,6 @@ import {
   GraphViewerInputMode,
   ICommand,
   INode,
-  ItemSelectionChangedEventArgs,
   License,
   List,
   NodeStyleDecorationInstaller,
@@ -172,10 +171,8 @@ function initializeGraphComponent() {
 
 /**
  * Called when the graph selection changes, e.g. nodes/edges are selected/deselected.
- * @param {object} sender
- * @param {ItemSelectionChangedEventArgs} args
  */
-function onItemSelectedDeselected(sender, args) {
+function onItemSelectedDeselected() {
   if (INode.isInstance(graphComponent.currentItem)) {
     const nodes = new List(graphComponent.selection.selectedNodes)
     highlightNodes(nodes)
@@ -334,7 +331,7 @@ function onNeighborhoodModeChanged() {
 /**
  * Helper method that reads the currently selected graphml from the combobox.
  */
-function readSampleGraph() {
+async function readSampleGraph() {
   // Disable navigation buttons while graph is loaded
   nextButton.disabled = true
   previousButton.disabled = true
@@ -349,18 +346,17 @@ function readSampleGraph() {
     DemoStyles
   )
   ioh.addHandleSerializationListener(DemoSerializationListener)
-  readGraph(ioh, graphComponent.graph, fileName).then(() => {
-    // when done - fit the bounds
-    ICommand.FIT_GRAPH_BOUNDS.execute(null, graphComponent)
-    // re-enable navigation buttons
-    setTimeout(updateButtons, 10)
-    // update NeighborhoodView
-    graphComponent.currentItem = graphComponent.graph.nodes.firstOrDefault()
-    if (INode.isInstance(graphComponent.currentItem)) {
-      const nodes = new List(graphComponent.selection.selectedNodes)
-      highlightNodes(nodes)
-    }
-  })
+  await readGraph(ioh, graphComponent.graph, fileName)
+  // when done - fit the bounds
+  ICommand.FIT_GRAPH_BOUNDS.execute(null, graphComponent)
+  // re-enable navigation buttons
+  setTimeout(updateButtons, 10)
+  // update NeighborhoodView
+  graphComponent.currentItem = graphComponent.graph.nodes.firstOrDefault()
+  if (INode.isInstance(graphComponent.currentItem)) {
+    const nodes = new List(graphComponent.selection.selectedNodes)
+    highlightNodes(nodes)
+  }
 }
 
 /**

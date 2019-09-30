@@ -1205,7 +1205,9 @@ const PolylineEdgeRouterConfig = Class('PolylineEdgeRouterConfig', {
           values: [
             ['Anywhere', LayoutConfiguration.EnumLabelPlacementAlongEdge.ANYWHERE],
             ['At Source', LayoutConfiguration.EnumLabelPlacementAlongEdge.AT_SOURCE],
+            ['At Source Port', LayoutConfiguration.EnumLabelPlacementAlongEdge.AT_SOURCE_PORT],
             ['At Target', LayoutConfiguration.EnumLabelPlacementAlongEdge.AT_TARGET],
+            ['At Target Port', LayoutConfiguration.EnumLabelPlacementAlongEdge.AT_TARGET_PORT],
             ['Centered', LayoutConfiguration.EnumLabelPlacementAlongEdge.CENTERED]
           ]
         }),
@@ -1313,9 +1315,9 @@ const PolylineEdgeRouterConfig = Class('PolylineEdgeRouterConfig', {
     },
     get: function() {
       return (
-        this.edgeLabelingItem === PolylineEdgeRouterConfig.EnumEdgeLabeling.NONE ||
+        (this.edgeLabelingItem === PolylineEdgeRouterConfig.EnumEdgeLabeling.NONE ||
         this.labelPlacementSideOfEdgeItem ===
-          LayoutConfiguration.EnumLabelPlacementSideOfEdge.ON_EDGE
+          LayoutConfiguration.EnumLabelPlacementSideOfEdge.ON_EDGE)
       )
     }
   },

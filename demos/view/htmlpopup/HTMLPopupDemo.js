@@ -201,7 +201,7 @@ Class.ensure(ImageNodeStyle)
 /**
  * Reads the source graph from a graphml file.
  */
-function readSampleGraph() {
+async function readSampleGraph() {
   // Enables the graphml support
   const gs = new GraphMLSupport({
     graphComponent,
@@ -214,11 +214,8 @@ function readSampleGraph() {
   )
   gs.graphMLIOHandler.addHandleSerializationListener(DemoSerializationListener)
 
-  // Reads the graph
-  readGraph(gs.graphMLIOHandler, graphComponent.graph, 'resources/sample.graphml').then(() => {
-    // when done - fit the bounds
-    graphComponent.fitGraphBounds()
-  })
+  await readGraph(gs.graphMLIOHandler, graphComponent.graph, 'resources/sample.graphml')
+  graphComponent.fitGraphBounds()
 }
 
 /**

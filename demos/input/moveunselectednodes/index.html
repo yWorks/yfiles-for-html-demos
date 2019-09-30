@@ -70,14 +70,18 @@
         Try the different modes provided by the <em>Move Unselected Nodes</em> combo box.
       </li>
       <li>
-        Disable the <em>Default Move Mode</em> which is the out of the box <a href="https://docs.yworks.com/yfileshtml/#/api/MoveInputMode" target="_blank">MoveInputMode</a> to
+        Try setting the <em>Edge Creation Mode</em> to <em>At Port Candidates</em> and see how it works in conjunction
+        with moving unselected nodes.
+      </li>
+      <li>
+        Disable <em>Move Selected Nodes</em> which is the out of the box <a href="https://docs.yworks.com/yfileshtml/#/api/MoveInputMode" target="_blank">MoveInputMode</a> to
         move selected nodes. When disabled, only the current <em>Move Unselected Nodes</em> setting is considered,
         therefore selected nodes may not be draggable. <br>Note that both, the standard and the special move input mode,
         can be enabled at the same time.
       </li>
     </ul>
 
-    <h2>Input Mode Properties</h2>
+    <h2>Move Unselected Settings</h2>
 
     <p>
       The <em>Move Unselected Nodes</em> combo box provides different modes which determine whether a node can be moved.
@@ -90,7 +94,8 @@
       </dd>
       <dt>Shift Not Pressed</dt>
       <dd>
-        Nodes cannot be moved if the Shift key is held down while dragging. Instead, this gesture starts edge creation.
+        Nodes cannot be moved if the Shift key is held down while dragging. Instead, this gesture may start edge
+        creation if the <em>Edge Creation Mode</em> is set to default.
       </dd>
       <dt>Top of Node</dt>
       <dd>
@@ -104,6 +109,24 @@
       <dt>Never</dt>
       <dd>
         Unselected nodes cannot be moved.
+      </dd>
+    </dl>
+
+    <h2>Edge Creation Settings</h2>
+
+    <p>
+      The <em>Edge Creation Mode</em> combo box provides different behaviors for the edge creation gesture.
+    </p>
+    <dl>
+      <dt>Default</dt>
+      <dd>
+        The default edge creation behavior. When this is set, users may not be able to create edges because the node may
+        be moved instead.
+      </dd>
+      <dt>At Port Candidates</dt>
+      <dd>
+        This allows edge creation to start at distinct port candidates which also works in conjunction with moving
+        unselected nodes.
       </dd>
     </dl>
   </div>
@@ -127,13 +150,21 @@
       <option>Never
     </select>
 
-    <input type="checkbox" id="toggleMoveEnabled" class="demo-toggle-button labeled" data-command="ToggleMoveEnabled" disabled/>
+    <input type="checkbox" id="toggleMoveEnabled" class="demo-toggle-button labeled" data-command="ToggleMoveEnabled"/>
     <label for="toggleMoveEnabled">Move Enabled</label>
 
     <span class="demo-separator"></span>
 
     <input type="checkbox" id="toggleClassicMode" class="demo-toggle-button labeled" data-command="ToggleClassicMode" checked/>
-    <label for="toggleClassicMode" title="Enables/Disables the out of the box MoveInputMode">Default Move Mode</label>
+    <label for="toggleClassicMode" title="Enables/Disables the out of the box MoveInputMode">Move Selected Nodes</label>
+
+    <span class="demo-separator"></span>
+    <span>Edge Creation Mode:</span>
+    <select data-command="edgeCreationModeChanged" id="edgeCreationModeComboBox">
+      <option>Default
+      <option>At Port Candidates
+    </select>
+
   </div>
 
   <div id="graphComponent"></div>

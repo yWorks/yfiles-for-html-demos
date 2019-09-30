@@ -1308,7 +1308,7 @@ export class NodeRotateHandle extends BaseClass(IHandle, IPoint) {
    * @return {number}
    */
   calculateAngle(upVector) {
-    return normalizeAngle(-(Math.atan2(upVector.y, upVector.x) / Math.PI * 180 + 90))
+    return normalizeAngle(-((Math.atan2(upVector.y, upVector.x) / Math.PI) * 180 + 90))
   }
 
   /**
@@ -1893,7 +1893,7 @@ function normalizeAngle(angle) {
  * @return {number}
  */
 function toDegrees(radians) {
-  return radians * 180 / Math.PI
+  return (radians * 180) / Math.PI
 }
 
 /**
@@ -1902,5 +1902,24 @@ function toDegrees(radians) {
  * @return {number}
  */
 function toRadians(degrees) {
-  return degrees / 180 * Math.PI
+  return (degrees / 180) * Math.PI
+}
+
+export const RotatableNodesSerializationListener = (source, args) => {
+  const item = args.item
+
+  let markupExtension
+  let markupExtensionClass
+  if (item instanceof RotatableNodeStyleDecorator) {
+    markupExtension = new RotatableNodeStyleDecoratorExtension()
+    markupExtension.angle = item.angle
+    markupExtension.wrapped = item.wrapped
+    markupExtensionClass = RotatableNodeStyleDecoratorExtension.$class
+  }
+
+  if (markupExtension && markupExtensionClass) {
+    const context = args.context
+    context.serializeReplacement(markupExtensionClass, item, markupExtension)
+    args.handled = true
+  }
 }

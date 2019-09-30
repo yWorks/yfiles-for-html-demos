@@ -33,6 +33,7 @@ import {
   IHandle,
   IInputModeContext,
   ILabel,
+  ILabelModelParameterFinder,
   IPoint,
   OrientedRectangle,
   OrientedRectangleIndicatorInstaller,
@@ -41,7 +42,8 @@ import {
 } from 'yfiles'
 
 /**
- * A custom {@link IHandle} implementation that implements the functionality needed for resizing a label.
+ * A custom {@link IHandle} implementation that implements the functionality needed for resizing a
+ * label.
  */
 export default class LabelResizeHandle extends BaseClass(IHandle) {
   /**
@@ -113,7 +115,8 @@ export default class LabelResizeHandle extends BaseClass(IHandle) {
   /**
    * Invoked when an element has been dragged and its position should be updated.
    * @param {IInputModeContext} context The context to retrieve information
-   * @param {Point} originalLocation The value of the location property at the time of initializeDrag
+   * @param {Point} originalLocation The value of the location property at the time of
+   *   initializeDrag
    * @param {Point} newLocation The new location in the world coordinate system
    */
   handleMove(context, originalLocation, newLocation) {
@@ -139,7 +142,8 @@ export default class LabelResizeHandle extends BaseClass(IHandle) {
   /**
    * Invoked when dragging has canceled.
    * @param {IInputModeContext} context The context to retrieve information
-   * @param {Point} originalLocation The value of the location property at the time of initializeDrag
+   * @param {Point} originalLocation The value of the location property at the time of
+   *   initializeDrag
    */
   cancelDrag(context, originalLocation) {
     // use the normal label bounds if the drag gesture is over
@@ -154,16 +158,27 @@ export default class LabelResizeHandle extends BaseClass(IHandle) {
   /**
    * Invoked when dragging has finished.
    * @param {IInputModeContext} context The context to retrieve information
-   * @param {Point} originalLocation The value of the location property at the time of initializeDrag
+   * @param {Point} originalLocation The value of the location property at the time of
+   *   initializeDrag
    * @param {Point} newLocation The new location in the world coordinate system
    */
   dragFinished(context, originalLocation, newLocation) {
-    this.cancelDrag(context, originalLocation)
     const graph = context.graph
     if (graph !== null) {
       // assign the new size
       graph.setLabelPreferredSize(this.$label, this.$dummyPreferredSize)
+
+      // Use the layout of the resize rectangle to find a new labelLayoutParameter. This ensures
+      // that the resize rectangle which acts as user feedback is in sync with the actual
+      // labelLayoutParameter that is assigned to the label.
+      const model = this.$label.layoutParameter.model
+      const finder = model.lookup(ILabelModelParameterFinder.$class)
+      if (finder !== null) {
+        const param = finder.findBestParameter(this.$label, model, this.getCurrentLabelLayout())
+        graph.setLabelLayoutParameter(this.$label, param)
+      }
     }
+    this.cancelDrag(context, originalLocation)
   }
 
   /**
@@ -207,7 +222,8 @@ class LabelResizeHandleLivePoint extends BaseClass(IPoint) {
   }
 
   /**
-   * Returns the x-coordinate of the location of the handle from the anchor, the size and the orientation.
+   * Returns the x-coordinate of the location of the handle from the anchor, the size and the
+   * orientation.
    * @return {number}
    */
   get x() {
@@ -222,7 +238,8 @@ class LabelResizeHandleLivePoint extends BaseClass(IPoint) {
   }
 
   /**
-   * Returns the y-coordinate of the location of the handle from the anchor, the size and the orientation.
+   * Returns the y-coordinate of the location of the handle from the anchor, the size and the
+   * orientation.
    * @return {number}
    */
   get y() {

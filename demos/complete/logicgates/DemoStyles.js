@@ -31,6 +31,7 @@ import {
   FontWeight,
   GeneralPath,
   INode,
+  INodeStyle,
   IRenderContext,
   NodeStyleBase,
   Point,

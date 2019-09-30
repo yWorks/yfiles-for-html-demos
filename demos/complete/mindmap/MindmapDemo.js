@@ -30,6 +30,8 @@ import {
   ArcEdgeStyle,
   Arrow,
   ArrowType,
+  Color,
+  Component,
   DefaultLabelStyle,
   DefaultPortCandidate,
   EdgeStyleDecorationInstaller,
@@ -47,16 +49,13 @@ import {
   ICommand,
   IEdge,
   ILabel,
+  IModelItem,
   INode,
-  InputModeEventArgs,
   Insets,
   InteriorLabelModel,
-  ItemClickedEventArgs,
   Key,
-  LabelEventArgs,
   License,
   List,
-  ModifierKeys,
   MouseEventRecognizers,
   NinePositionsEdgeLabelModel,
   Rect,
@@ -208,7 +207,7 @@ function run(licenseData) {
   const graph = graphComponent.graph
 
   // Register selection events
-  graphComponent.selection.addItemSelectionChangedListener(onItemClicked)
+  graphComponent.selection.addItemSelectionChangedListener((sender, evt) => onItemClicked(evt.item))
 
   // Set maximum zoom factor of viewport to 2.0
   graphComponent.maximumZoom = 2.0
@@ -254,9 +253,13 @@ function initializeInputModes() {
     allowClipboardOperations: false,
     autoRemoveEmptyLabels: false
   })
-  graphEditorInputMode.addItemLeftClickedListener(onItemClicked)
-  graphEditorInputMode.addItemDoubleClickedListener(onItemDoubleClicked)
-  graphEditorInputMode.addLabelTextChangedListener(onLabelTextChanged)
+  graphEditorInputMode.addItemLeftClickedListener((sender, evt) => onItemClicked(evt.item))
+  graphEditorInputMode.addItemDoubleClickedListener((sender, evt) => onItemDoubleClicked(evt.item))
+  graphEditorInputMode.addLabelTextChangedListener(async () => {
+    adjustNodeBounds()
+    await MindmapLayout.instance.layout(graphComponent)
+    limitViewport()
+  })
 
   // enable panning without ctrl-key pressed
   graphEditorInputMode.moveViewportInputMode.pressedRecognizer = MouseEventRecognizers.LEFT_DOWN
@@ -403,7 +406,7 @@ function initializeEdgeStyle() {
 function initializeGraphFiltering() {
   const graph = graphComponent.graph
 
-  filteredGraph = new FilteredGraphWrapper(graph, nodePredicate, edge => true)
+  filteredGraph = new FilteredGraphWrapper(graph, nodePredicate, () => true)
   graphComponent.graph = filteredGraph
 }
 
@@ -713,31 +716,28 @@ function enableGraphML() {
  * Reads the given graphml file. If the loading fails, a default graph will be loading.
  * @param {string} fileName The file url.
  */
-function readGraph(fileName) {
+async function readGraph(fileName) {
   const graph = graphComponent.graph
   graph.clear()
-
-  ioh
-    .readFromURL(graph, fileName)
-    .then(() => {
-      graphComponent.graph.nodes.forEach(node => {
-        const nodeData = node.tag
-        node.tag = {
-          depth: nodeData.depth,
-          isLeft: nodeData.isLeft,
-          color: nodeData.color,
-          isCollapsed: nodeData.isCollapsed,
-          stateIcon: nodeData.stateIcon
-        }
-      })
-      // when done - fit the bounds and clear the undo engine
-      onGraphChanged()
+  try {
+    await ioh.readFromURL(graph, fileName)
+    graphComponent.graph.nodes.forEach(node => {
+      const nodeData = node.tag
+      node.tag = {
+        depth: nodeData.depth,
+        isLeft: nodeData.isLeft,
+        color: nodeData.color,
+        isCollapsed: nodeData.isCollapsed,
+        stateIcon: nodeData.stateIcon
+      }
     })
-    .catch(error => {
-      alert(`Unable to open the graph. Perhaps your browser does not allow handling cross domain HTTP requests. 
+    // when done - fit the bounds and clear the undo engine
+    onGraphChanged()
+  } catch (error) {
+    alert(`Unable to open the graph. Perhaps your browser does not allow handling cross domain HTTP requests. 
       Please see the demo readme for details: ${error}`)
-      loadFallbackGraph()
-    })
+    loadFallbackGraph()
+  }
 }
 
 /**
@@ -752,16 +752,15 @@ function loadFallbackGraph() {
 /**
  * Called when the graph has changed.
  */
-function onGraphChanged() {
+async function onGraphChanged() {
   graphComponent.updateContentRect()
   graphComponent.fitContent()
   filteredGraph.nodePredicateChanged()
   adjustNodeBounds()
-  MindmapLayout.instance.layout(graphComponent).then(() => {
-    limitViewport()
-    graphComponent.fitContent()
-    graphComponent.graph.undoEngine.clear()
-  })
+  await MindmapLayout.instance.layout(graphComponent)
+  limitViewport()
+  graphComponent.fitContent()
+  graphComponent.graph.undoEngine.clear()
 }
 
 /**
@@ -860,28 +859,27 @@ function registerCommands() {
 /**
  * Opens a new graphml file. Only mindmap diagrams that have been created with this demo can be displayed.
  */
-function openFile() {
-  gs
-    .openFile(filteredGraph.wrappedGraph)
-    .then(() => {
-      graphComponent.graph.nodes.forEach(node => {
-        const nodeData = node.tag
-        node.tag = {
-          depth: nodeData.depth,
-          isLeft: nodeData.isLeft,
-          color: nodeData.color,
-          isCollapsed: nodeData.isCollapsed,
-          stateIcon: nodeData.stateIcon
-        }
-      })
-      onGraphChanged()
+async function openFile() {
+  try {
+    await gs.openFile(filteredGraph.wrappedGraph)
+
+    graphComponent.graph.nodes.forEach(node => {
+      const nodeData = node.tag
+      node.tag = {
+        depth: nodeData.depth,
+        isLeft: nodeData.isLeft,
+        color: nodeData.color,
+        isCollapsed: nodeData.isCollapsed,
+        stateIcon: nodeData.stateIcon
+      }
     })
-    .catch(error => {
-      alert(
-        `Unsupported Diagram File. Only mindmap diagrams that have been created with this demo can be opened: ${error}`
-      )
-      loadFallbackGraph()
-    })
+    onGraphChanged()
+  } catch (error) {
+    alert(
+      `Unsupported Diagram File. Only mindmap diagrams that have been created with this demo can be opened: ${error}`
+    )
+    loadFallbackGraph()
+  }
 }
 
 /**
@@ -956,34 +954,26 @@ function hidePopups() {
 
 /**
  * Shows the popup menu when an item is selected.
- * @param {Object} sender The source of the event.
- * @param {ItemClickedEventArgs} e The event.
+ * @param {IModelItem} item The clicked item
  */
-function onItemClicked(sender, e) {
+function onItemClicked(item) {
   hidePopups()
-  if (INode.isInstance(e.item) && graphComponent.selection.isSelected(e.item)) {
+  if (INode.isInstance(item) && graphComponent.selection.isSelected(item)) {
     // show or hide pop-up
-    nodePopupMain.currentItem = e.item
+    nodePopupMain.currentItem = item
   }
 }
 
 /**
  * Edits node- or cross reference edge-labels when double-clicking node/edge.
- * @param {Object} sender The source of the event.
- * @param {ItemClickedEventArgs} e The event.
+ * @param {IModelItem} item The clicked item
  */
-function onItemDoubleClicked(sender, e) {
-  let modelItem = e.item
-
-  if (ILabel.isInstance(modelItem)) {
-    modelItem = modelItem.owner
+function onItemDoubleClicked(item) {
+  if (ILabel.isInstance(item)) {
+    item = item.owner
   }
 
-  if (
-    (INode.isInstance(modelItem) || IEdge.isInstance(modelItem)) &&
-    Structure.isCrossReference(modelItem)
-  ) {
-    const item = modelItem
+  if ((INode.isInstance(item) || IEdge.isInstance(item)) && Structure.isCrossReference(item)) {
     const inputMode = graphComponent.inputMode
     if (item.labels.size > 0) {
       inputMode.editLabel(item.labels.get(0))
@@ -991,18 +981,6 @@ function onItemDoubleClicked(sender, e) {
       inputMode.addLabel(item)
     }
   }
-}
-
-/**
- * Executes layout when the text of a label has changed.
- * @param {Object} sender The source of the event.
- * @param {LabelEventArgs} e The event.
- */
-function onLabelTextChanged(sender, e) {
-  adjustNodeBounds()
-  MindmapLayout.instance.layout(graphComponent).then(() => {
-    limitViewport()
-  })
 }
 
 /**
@@ -1041,10 +1019,8 @@ function onDragged() {
  * The handler executed when a node drag is finished.
  * If a new parent candidate was found the subtree is relocated,
  * otherwise the node is deleted.
- * @param {Object} sender The source of the event.
- * @param {InputModeEventArgs} e The event.
  */
-function onDragFinished(sender, e) {
+async function onDragFinished() {
   graphComponent.selection.clear()
   // begin a compound undo operation
   const compoundEdit = graphComponent.graph.beginEdit('Set State Label', 'Set State Label')
@@ -1090,10 +1066,10 @@ function onDragFinished(sender, e) {
     )
     Structure.removeSubtree(fullGraph, movedNode)
   }
-  MindmapLayout.instance.layout(graphComponent).then(() => {
-    compoundEdit.commit()
-    limitViewport()
-  })
+  await MindmapLayout.instance.layout(graphComponent)
+  compoundEdit.commit()
+  limitViewport()
+
   movedNode = null
 }
 

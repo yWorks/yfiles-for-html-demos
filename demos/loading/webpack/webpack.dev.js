@@ -35,7 +35,7 @@ module.exports = {
   mode: 'development',
   entry: {
     app: [
-      '@babel/polyfill',
+      'regenerator-runtime/runtime',
       // Add yFiles debugging support for development build
       '../../../ide-support/yfiles-typeinfo.js',
       './src/webpack-demo.js'

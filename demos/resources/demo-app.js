@@ -27,7 +27,7 @@
  **
  ***************************************************************************/
 import { registerErrorDialog } from './demo-error.js'
-import { enableWorkarounds } from '../utils/Workarounds.js'
+import { detectiOSVersion, enableWorkarounds, detectSafariVersion } from '../utils/Workarounds.js'
 
 // match CSS media query
 const SIDEBAR_WIDTH = 320
@@ -91,6 +91,18 @@ function initializeDemo() {
   demoNameElement.textContent = getDemoName(isTutorial)
   header.appendChild(demoNameElement)
 
+  const showSourceButton = document.createElement('div')
+  showSourceButton.setAttribute('class', 'demo-show-source-button')
+  header.appendChild(showSourceButton)
+
+  const showSourceContent = document.createElement('div')
+  showSourceContent.setAttribute('class', 'demo-show-source-content hidden')
+  const demoPath = location.toString().replace(/.*\/demos\/([^/]+)\/([^/]+).*/i, '$1/$2')
+  showSourceContent.innerHTML = `The source code for this demo is available in your yFiles&nbsp;for&nbsp;HTML package in the following folder:<br><div class="demo-source-path">/demos/${demoPath}</div>`
+  showSourceButton.appendChild(showSourceContent)
+
+  showSourceButton.addEventListener('click', () => toggleClass(showSourceContent, 'hidden'))
+
   if (demoContentElement) {
     demoContentElement.insertBefore(header, demoContentElement.firstChild)
   } else {
@@ -142,52 +154,55 @@ function initializeDemo() {
   }
 
   // add fullscreen button
-  const fullscreenButton = document.createElement('button')
-  fullscreenButton.setAttribute('class', 'demo-fullscreen-button')
-  fullscreenButton.setAttribute('title', 'Toggle fullscreen mode')
-  fullscreenButton.addEventListener('click', () => {
-    if (
-      !document.fullscreenElement &&
-      !document.mozFullScreenElement &&
-      !document.webkitFullscreenElement &&
-      !document.msFullscreenElement
-    ) {
-      if (window.innerWidth < SMALL_WIDTH) {
-        addClass(document.body, 'demo-left-hidden')
-        addClass(document.body, 'demo-right-hidden')
+  if (detectiOSVersion() === -1 && detectSafariVersion() === -1) {
+    const fullscreenButton = document.createElement('button')
+    fullscreenButton.setAttribute('class', 'demo-fullscreen-button')
+    fullscreenButton.setAttribute('title', 'Toggle fullscreen mode')
+    fullscreenButton.addEventListener('click', () => {
+      if (
+        !document.fullscreenElement &&
+        !document.mozFullScreenElement &&
+        !document.webkitFullscreenElement &&
+        !document.msFullscreenElement
+      ) {
+        if (window.innerWidth < SMALL_WIDTH) {
+          addClass(document.body, 'demo-left-hidden')
+          addClass(document.body, 'demo-right-hidden')
+        }
+        if (document.documentElement.requestFullscreen) {
+          document.documentElement.requestFullscreen()
+        } else if (document.documentElement.msRequestFullscreen) {
+          document.body.msRequestFullscreen()
+        } else if (document.documentElement.mozRequestFullScreen) {
+          document.documentElement.mozRequestFullScreen()
+        } else if (document.documentElement.webkitRequestFullscreen) {
+          document.documentElement.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT)
+        }
+      } else {
+        if (window.innerWidth < SMALL_WIDTH) {
+          removeClass(document.body, 'demo-left-hidden')
+          removeClass(document.body, 'demo-right-hidden')
+        }
+        if (document.exitFullscreen) {
+          document.exitFullscreen()
+        } else if (document.msExitFullscreen) {
+          document.msExitFullscreen()
+        } else if (document.mozCancelFullScreen) {
+          document.mozCancelFullScreen()
+        } else if (document.webkitExitFullscreen) {
+          document.webkitExitFullscreen()
+        }
       }
-      if (document.documentElement.requestFullscreen) {
-        document.documentElement.requestFullscreen()
-      } else if (document.documentElement.msRequestFullscreen) {
-        document.body.msRequestFullscreen()
-      } else if (document.documentElement.mozRequestFullScreen) {
-        document.documentElement.mozRequestFullScreen()
-      } else if (document.documentElement.webkitRequestFullscreen) {
-        document.documentElement.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT)
-      }
-    } else {
-      if (window.innerWidth < SMALL_WIDTH) {
-        removeClass(document.body, 'demo-left-hidden')
-        removeClass(document.body, 'demo-right-hidden')
-      }
-      if (document.exitFullscreen) {
-        document.exitFullscreen()
-      } else if (document.msExitFullscreen) {
-        document.msExitFullscreen()
-      } else if (document.mozCancelFullScreen) {
-        document.mozCancelFullScreen()
-      } else if (document.webkitExitFullscreen) {
-        document.webkitExitFullscreen()
-      }
-    }
-  })
-  demoContentElement.appendChild(fullscreenButton)
+    })
+    demoContentElement.appendChild(fullscreenButton)
+  }
 
   enableWorkarounds()
 }
 
 /**
- * Initializes responsive toolbar behavior (i.e. puts overflowing toolbar items in a separate overflow menu).
+ * Initializes responsive toolbar behavior (i.e. puts overflowing toolbar items in a separate
+ * overflow menu).
  * @param {Element} toolbar
  */
 function initResponsiveToolbar(toolbar) {

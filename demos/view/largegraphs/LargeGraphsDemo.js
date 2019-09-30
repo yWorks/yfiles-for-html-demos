@@ -38,6 +38,7 @@ import {
   GraphComponent,
   GraphEditorInputMode,
   GraphItemTypes,
+  GraphModelManager,
   GraphViewerInputMode,
   IAnimation,
   ICommand,
@@ -176,6 +177,9 @@ function run(licenseData) {
   // assign the custom GraphModelManager
   installGraphModelManager()
 
+  // initialize fps meter
+  mainFrameRate = new FPSMeter()
+
   registerListeners()
   preConfigurator = new PreConfigurator(graphComponent)
 
@@ -190,9 +194,6 @@ function run(licenseData) {
   // initialize information fields
   zoomLevel.textContent = Math.floor(graphComponent.zoom * 100).toString()
   selectionCount.textContent = graphComponent.selection.size.toString()
-
-  // initialize fps meter
-  mainFrameRate = new FPSMeter()
 
   // get the buttons that need to be disabled during animation
   disabledButtonsDuringAnimation = [
@@ -401,7 +402,7 @@ function scheduleRedraw() {
  * The loading indicator is shown prior to loading and hidden afterwards
  * @param {string} fileName The file name of the file with the sample graph
  */
-function loadGraph(fileName) {
+async function loadGraph(fileName) {
   graphChooserBox.disabled = true
   nextButton.disabled = true
   previousButton.disabled = true
@@ -414,30 +415,29 @@ function loadGraph(fileName) {
   const graph = fv.graph
   updateDefaultStyles(graph)
 
-  loadJSONData(`resources/${fileName}.json`).then(graphData => {
-    // load the graph from the data
-    loadGraphCore(graph, graphData)
+  const graphData = await loadJSONData(`resources/${fileName}.json`)
+  // load the graph from the data
+  loadGraphCore(graph, graphData)
 
-    graphChooserBox.disabled = false
-    updateButtons()
+  graphChooserBox.disabled = false
+  updateButtons()
 
-    graphModelManager.dirty = true
+  graphModelManager.dirty = true
 
-    // hide the loading indicator after the graphComponent has finished rendering
-    graphComponent.addUpdatedVisualListener(onGraphComponentRendered)
+  // hide the loading indicator after the graphComponent has finished rendering
+  graphComponent.addUpdatedVisualListener(onGraphComponentRendered)
 
-    graphComponent.graph = graph
+  graphComponent.graph = graph
 
-    // check for labels
-    onEdgeLabelsChanged()
-    onNodeLabelsChanged()
+  // check for labels
+  onEdgeLabelsChanged()
+  onNodeLabelsChanged()
 
-    initializeAutoUpdates()
+  initializeAutoUpdates()
 
-    preConfigurator.updatePreConfiguration()
+  preConfigurator.updatePreConfiguration()
 
-    graphComponent.fitGraphBounds()
-  })
+  graphComponent.fitGraphBounds()
 }
 
 /**
@@ -489,7 +489,7 @@ function loadGraphCore(graph, graphData) {
     const bends = e.b
     if (bends) {
       bends.forEach(bend => {
-        graph.addBend(edge, new Point(bend.x, bend.y))
+        graph.addBend(edge, Point.from(bend))
       })
     }
   }
@@ -504,8 +504,9 @@ function loadGraphCore(graph, graphData) {
  * @param {string} url The URL of the file
  * @returns {Promise} A promise that resolves when the data is loaded correctly
  */
-function loadJSONData(url) {
-  return fetch(url).then(response => response.json())
+async function loadJSONData(url) {
+  const response = await fetch(url)
+  return response.json()
 }
 
 /**
@@ -536,6 +537,7 @@ function createEditorInputMode(isMoveMode) {
     graphEditorInputMode.allowAddLabel = false
     graphEditorInputMode.allowEditLabel = false
     graphEditorInputMode.allowCreateNode = false
+    graphEditorInputMode.createEdgeInputMode.enabled = false
   }
 
   // use WebGL rendering for handles if possible, otherwise the handles are rendered using SVG
@@ -773,30 +775,32 @@ function onFpsCheckboxChanged() {
 /**
  * Called when The 'Zoom animation' button was clicked.
  */
-function onZoomAnimationClicked() {
+async function onZoomAnimationClicked() {
   startAnimation()
   const node = getRandomNode()
   graphComponent.center = node.layout.center
 
   const animation = new ZoomInAndBackAnimation(graphComponent, 10, TimeSpan.fromSeconds(5))
   const animator = new Animator(graphComponent)
-  animator.animate(animation).then(endAnimation)
+  const result = await animator.animate(animation)
+  endAnimation(result)
 }
 
 /**
  * Called when the 'Pan animation' button was clicked.
  */
-function onPanAnimationClicked() {
+async function onPanAnimationClicked() {
   startAnimation()
   const animation = new CirclePanAnimation(graphComponent, 2, TimeSpan.fromSeconds(2))
   const animator = new Animator(graphComponent)
-  animator.animate(animation).then(endAnimation)
+  const result = await animator.animate(animation)
+  endAnimation(result)
 }
 
 /**
  * Called when the 'Spiral zoom animation' button was clicked.
  */
-function onSpiralZoomAnimationClicked() {
+async function onSpiralZoomAnimationClicked() {
   startAnimation()
   const node = getRandomNode()
   graphComponent.center = node.layout.center.add(new Point(graphComponent.viewport.width / 4, 0))
@@ -805,13 +809,14 @@ function onSpiralZoomAnimationClicked() {
   const pan = new CirclePanAnimation(graphComponent, 14, TimeSpan.fromSeconds(10))
   const animation = IAnimation.createParallelAnimation([zoom, pan])
   const animator = new Animator(graphComponent)
-  animator.animate(animation).then(endAnimation)
+  const result = await animator.animate(animation)
+  endAnimation(result)
 }
 
 /**
  * Called when 'Move nodes' button was clicked.
  */
-function onNodeAnimationClicked() {
+async function onNodeAnimationClicked() {
   startAnimation()
   const selection = graphComponent.selection
   // If there is nothing selected, just use a random node
@@ -827,10 +832,9 @@ function onNodeAnimationClicked() {
     TimeSpan.fromSeconds(2)
   )
   const animator = new Animator(graphComponent)
-  animator.animate(animation).then(() => {
-    endAnimation()
-    redrawGraph()
-  })
+  const result = await animator.animate(animation)
+  endAnimation(result)
+  redrawGraph()
 }
 
 /**

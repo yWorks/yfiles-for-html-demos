@@ -1,0 +1,24 @@
+{
+  "name": "wdio-demo-for-yfiles-for-html",
+  "version": "1.0.0",
+  "author": "yWorks GmbH <yfileshtml@yworks.com>",
+  "license": "https://www.yworks.com/products/yfiles-for-html/sla",
+  "private": true,
+  "scripts": {
+    "postinstall": "cd ../.. && yarn || npm i",
+    "test": "wdio wdio.conf.js"
+  },
+  "peerDependencies": {
+    "yfiles": "22.0.2"
+  },
+  "devDependencies": {
+    "@wdio/cli": "^5.12.5",
+    "@wdio/junit-reporter": "^5.12.3",
+    "@wdio/local-runner": "^5.12.5",
+    "@wdio/mocha-framework": "^5.12.1",
+    "@wdio/selenium-standalone-service": "^5.12.1",
+    "@wdio/spec-reporter": "^5.12.1",
+    "chai": "^4.2.0",
+    "express": "^4.17.1"
+  }
+}

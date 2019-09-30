@@ -32,6 +32,7 @@ import {
   GeneralPath,
   GraphComponent,
   GraphEditorInputMode,
+  GraphInputMode,
   HandleInputMode,
   HandlePositions,
   IArrow,
@@ -39,7 +40,6 @@ import {
   ImageNodeStyle,
   License,
   MoveInputMode,
-  MultiplexingInputMode,
   MutableRectangle,
   ObservableCollection,
   PolylineEdgeStyle,
@@ -49,8 +49,8 @@ import {
   SvgExport
 } from 'yfiles'
 
-import FileSaveSupport from '../../utils/FileSaveSupport.js'
 import PositionHandler from './PositionHandler.js'
+import FileSaveSupport from '../../utils/FileSaveSupport.js'
 import {
   addClass,
   bindAction,
@@ -62,10 +62,6 @@ import loadJson from '../../resources/load-json.js'
 
 /** @type {GraphComponent} */
 let graphComponent = null
-
-let inputScale = null
-
-let inputUseRect = null
 
 /**
  * region that will be exported
@@ -81,10 +77,12 @@ let ieVersion = -1
 
 function run(licenseData) {
   License.value = licenseData
-  // initialize the UI's elements
-  init()
+  graphComponent = new GraphComponent('graphComponent')
+
+  ieVersion = detectInternetExplorerVersion()
 
   initializeInputModes()
+
   initializeGraph()
 
   // disable the save button in IE9
@@ -93,29 +91,30 @@ function run(licenseData) {
     saveButton.setAttribute('style', 'display: none')
     // add save hint
     const hint = document.createElement('p')
-    hint.innerHTML = 'Right-click the image and hit "Save As&hellip;" to save the svg file.'
+    hint.innerHTML = 'Right-click the image and hit "Save As&hellip;" to save the SVG file.'
     const container = document.getElementById('outerExport')
     container.insertBefore(hint, document.getElementById('svgContainer'))
   }
 
-  bindAction("button[data-command='Export']", () => {
+  bindAction("button[data-command='Export']", async () => {
     if (window.location.protocol === 'file:') {
       alert(
-        new Error(
-          'This demo features image export with inlined images. ' +
-            'Due to the browsers security settings, images can not be inlined if the demo is started from the file system. ' +
-            'Please start the demo from a web server.'
-        )
+        'This demo features SVG export with inlined images. ' +
+          'Due to the browsers security settings, images can not be inlined if the demo is started from the file system. ' +
+          'Please start the demo from a web server.'
       )
       return
     }
-    const scale = parseFloat(inputScale.value)
+    const scale = parseFloat(document.getElementById('scale').value)
     if (isNaN(scale) || scale <= 0) {
       alert('Scale must be a positive number.')
       return
     }
+
+    const inputUseRect = document.getElementById('useRect')
     const rectangle = inputUseRect && inputUseRect.checked ? new Rect(exportRect) : null
-    exportSvg(scale, rectangle).then(showExportDialog)
+    const svg = await exportSvg(scale, rectangle)
+    showExportDialog(svg)
   })
 
   document.getElementById('closeButton').addEventListener('click', hidePopup, false)
@@ -124,113 +123,9 @@ function run(licenseData) {
 }
 
 /**
- * Initializes the UI's elements.
- */
-function init() {
-  graphComponent = new GraphComponent('graphComponent')
-  inputScale = document.getElementById('scale')
-  inputUseRect = document.getElementById('useRect')
-
-  ieVersion = detectInternetExplorerVersion()
-}
-
-/**
- * Initializes the graph instance and set default styles.
- */
-function initializeGraph() {
-  const graph = graphComponent.graph
-  const newPolylineEdgeStyle = new PolylineEdgeStyle()
-  newPolylineEdgeStyle.targetArrow = IArrow.DEFAULT
-  graph.edgeDefaults.style = newPolylineEdgeStyle
-
-  const switchStyle = new ImageNodeStyle('./resources/switch.svg')
-  const workstationStyle = new ImageNodeStyle('./resources/workstation.svg')
-
-  const labelModel = new ExteriorLabelModel()
-  const labelModelParameter1 = labelModel.createParameter(ExteriorLabelModelPosition.SOUTH)
-  const labelModelParameter2 = labelModel.createParameter(ExteriorLabelModelPosition.NORTH)
-
-  // create sample graph
-  const n1 = graph.createNode(new Rect(170, 20, 40, 40), switchStyle)
-  const n2 = graph.createNode(new Rect(20, 100, 40, 40), workstationStyle)
-  const n3 = graph.createNode(new Rect(120, 100, 40, 40), workstationStyle)
-  const n4 = graph.createNode(new Rect(220, 100, 40, 40), workstationStyle)
-  const n5 = graph.createNode(new Rect(320, 100, 40, 40), workstationStyle)
-
-  graph.createEdge(n1, n2)
-  graph.createEdge(n1, n3)
-  graph.createEdge(n1, n4)
-  graph.createEdge(n1, n5)
-
-  graph.addLabel(n1, 'Switch', labelModelParameter2)
-  graph.addLabel(n2, 'Workstation 1', labelModelParameter1)
-  graph.addLabel(n3, 'Workstation 2', labelModelParameter1)
-  graph.addLabel(n4, 'Workstation 3', labelModelParameter1)
-  graph.addLabel(n5, 'Workstation 4', labelModelParameter1)
-
-  // set the workstation as default node style
-  graph.nodeDefaults.style = workstationStyle
-
-  graphComponent.fitGraphBounds()
-}
-
-function initializeInputModes() {
-  // Create a GraphEditorInputMode instance
-  const editMode = new GraphEditorInputMode()
-
-  // and install the edit mode into the canvas.
-  graphComponent.inputMode = editMode
-
-  // create the model for the export rectangle
-  exportRect = new MutableRectangle(-10, 0, 300, 160)
-
-  // visualize it
-  const installer = new RectangleIndicatorInstaller(exportRect)
-  installer.addCanvasObject(
-    graphComponent.createRenderContext(),
-    graphComponent.backgroundGroup,
-    exportRect
-  )
-
-  addExportRectInputModes(editMode)
-}
-
-/**
- * Adds the view modes that handle the resizing and movement of the export rectangle.
- * @param {MultiplexingInputMode} inputMode
- */
-function addExportRectInputModes(inputMode) {
-  // create a mode that deals with the handles
-  const exportHandleInputMode = new HandleInputMode()
-  exportHandleInputMode.priority = 1
-  // add it to the graph editor mode
-  inputMode.add(exportHandleInputMode)
-
-  // now the handles
-  const newDefaultCollectionModel = new ObservableCollection()
-  newDefaultCollectionModel.add(new RectangleHandle(HandlePositions.NORTH_EAST, exportRect))
-  newDefaultCollectionModel.add(new RectangleHandle(HandlePositions.NORTH_WEST, exportRect))
-  newDefaultCollectionModel.add(new RectangleHandle(HandlePositions.SOUTH_EAST, exportRect))
-  newDefaultCollectionModel.add(new RectangleHandle(HandlePositions.SOUTH_WEST, exportRect))
-  exportHandleInputMode.handles = newDefaultCollectionModel
-
-  // create a mode that allows for dragging the export rectangle at the sides
-  const moveInputMode = new MoveInputMode()
-  moveInputMode.positionHandler = new PositionHandler(exportRect)
-  moveInputMode.hitTestable = IHitTestable.create((context, location) => {
-    const path = new GeneralPath(5)
-    path.appendRectangle(exportRect, false)
-    return path.pathContains(location, context.hitTestRadius + 3 / context.zoom)
-  })
-
-  // add it to the edit mode
-  moveInputMode.priority = 41
-  inputMode.add(moveInputMode)
-}
-
-/**
- * Exports the graph to an svg element.
- * This function returns a Promise to allow showing the SVG in a popup with a save button, afterwards.
+ * Exports the graph to an SVG element.
+ * This function returns a Promise to allow showing the SVG in a popup with a save button,
+ * afterwards.
  * @param {number} scale
  * @param {Rect} rectangle
  * @return {Promise}
@@ -275,7 +170,7 @@ function showExportDialog(svgElement) {
       }
       FileSaveSupport.save(fileContent, 'graph.svg').catch(() => {
         alert(
-          'Saving directly to the filesystem is not supported by this browser. Please use the server based export instead.'
+          'Saving directly to the filesystem is not supported by this browser. Please use the server-based export instead.'
         )
       })
     },
@@ -286,6 +181,100 @@ function showExportDialog(svgElement) {
 }
 
 /**
+ * Initializes the input modes.
+ */
+function initializeInputModes() {
+  graphComponent.inputMode = new GraphEditorInputMode()
+
+  // create the model for the export rectangle
+  exportRect = new MutableRectangle(-10, 0, 300, 160)
+
+  // visualize it
+  const installer = new RectangleIndicatorInstaller(exportRect)
+  installer.addCanvasObject(
+    graphComponent.createRenderContext(),
+    graphComponent.backgroundGroup,
+    exportRect
+  )
+
+  addExportRectInputModes(graphComponent.inputMode)
+}
+
+/**
+ * Adds the view modes that handle the resizing and movement of the export rectangle.
+ * @param {GraphInputMode} inputMode
+ */
+function addExportRectInputModes(inputMode) {
+  // create a mode that deals with the handles
+  const exportHandleInputMode = new HandleInputMode()
+  exportHandleInputMode.priority = 1
+  // add it to the graph editor mode
+  inputMode.add(exportHandleInputMode)
+
+  // now the handles
+  const newDefaultCollectionModel = new ObservableCollection()
+  newDefaultCollectionModel.add(new RectangleHandle(HandlePositions.NORTH_EAST, exportRect))
+  newDefaultCollectionModel.add(new RectangleHandle(HandlePositions.NORTH_WEST, exportRect))
+  newDefaultCollectionModel.add(new RectangleHandle(HandlePositions.SOUTH_EAST, exportRect))
+  newDefaultCollectionModel.add(new RectangleHandle(HandlePositions.SOUTH_WEST, exportRect))
+  exportHandleInputMode.handles = newDefaultCollectionModel
+
+  // create a mode that allows for dragging the export rectangle at the sides
+  const moveInputMode = new MoveInputMode()
+  moveInputMode.positionHandler = new PositionHandler(exportRect)
+  moveInputMode.hitTestable = IHitTestable.create((context, location) => {
+    const path = new GeneralPath(5)
+    path.appendRectangle(exportRect, false)
+    return path.pathContains(location, context.hitTestRadius + 3 / context.zoom)
+  })
+
+  // add it to the edit mode
+  moveInputMode.priority = 41
+  inputMode.add(moveInputMode)
+}
+
+/**
+ * Initializes the graph instance and set default styles.
+ */
+function initializeGraph() {
+  const graph = graphComponent.graph
+  const newPolylineEdgeStyle = new PolylineEdgeStyle()
+  newPolylineEdgeStyle.targetArrow = IArrow.DEFAULT
+  graph.edgeDefaults.style = newPolylineEdgeStyle
+
+  const switchStyle = new ImageNodeStyle('./resources/switch.svg')
+  const workstationStyle = new ImageNodeStyle('./resources/workstation.svg')
+
+  const labelModel = new ExteriorLabelModel()
+  const labelModelParameter1 = labelModel.createParameter(ExteriorLabelModelPosition.SOUTH)
+  const labelModelParameter2 = labelModel.createParameter(ExteriorLabelModelPosition.NORTH)
+
+  // create sample graph
+  const n1 = graph.createNode(new Rect(170, 20, 40, 40), switchStyle)
+  const n2 = graph.createNode(new Rect(20, 100, 40, 40), workstationStyle)
+  const n3 = graph.createNode(new Rect(120, 100, 40, 40), workstationStyle)
+  const n4 = graph.createNode(new Rect(220, 100, 40, 40), workstationStyle)
+  const n5 = graph.createNode(new Rect(320, 100, 40, 40), workstationStyle)
+
+  graph.createEdge(n1, n2)
+  graph.createEdge(n1, n3)
+  graph.createEdge(n1, n4)
+  graph.createEdge(n1, n5)
+
+  graph.addLabel(n1, 'Switch', labelModelParameter2)
+  graph.addLabel(n2, 'Workstation 1', labelModelParameter1)
+  graph.addLabel(n3, 'Workstation 2', labelModelParameter1)
+  graph.addLabel(n4, 'Workstation 3', labelModelParameter1)
+  graph.addLabel(n5, 'Workstation 4', labelModelParameter1)
+
+  // set the workstation as default node style
+  graph.nodeDefaults.style = workstationStyle
+
+  graphComponent.fitGraphBounds()
+}
+
+/**
+ * Replaces the given element with a clone. This prevents adding multiple listeners to a button.
  * @param {HTMLElement} element
  * @return {HTMLElement}
  */
@@ -295,12 +284,19 @@ function cloneAndReplace(element) {
   return clone
 }
 
+/**
+ * Hides the export dialog.
+ */
 function hidePopup() {
   addClass(document.getElementById('popup'), 'hidden')
 }
 
+/**
+ * Shows the export dialog.
+ */
 function showPopup() {
   removeClass(document.getElementById('popup'), 'hidden')
 }
 
+// run the demo
 loadJson().then(run)

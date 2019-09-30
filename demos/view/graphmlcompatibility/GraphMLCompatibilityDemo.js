@@ -126,7 +126,7 @@ function enableGraphML() {
 /**
  * Helper method that reads the currently selected graphml from the combobox.
  */
-function readSampleGraph() {
+async function readSampleGraph() {
   // Disable navigation buttons while graph is loaded
   nextButton.disabled = true
   previousButton.disabled = true
@@ -135,12 +135,11 @@ function readSampleGraph() {
   const selectedItem = graphChooserBox.options[graphChooserBox.selectedIndex].value
   const fileName = `resources/${selectedItem}.graphml`
   // then load the graph
-  readGraph(graphMLSupport.graphMLIOHandler, graphComponent.graph, fileName).then(() => {
-    // when done - fit the bounds
-    ICommand.FIT_GRAPH_BOUNDS.execute(null, graphComponent)
-    // re-enable navigation buttons
-    setTimeout(updateButtons, 10)
-  })
+  await readGraph(graphMLSupport.graphMLIOHandler, graphComponent.graph, fileName)
+  // when done - fit the bounds
+  ICommand.FIT_GRAPH_BOUNDS.execute(null, graphComponent)
+  // re-enable navigation buttons
+  setTimeout(updateButtons, 10)
 }
 
 function registerCommands() {

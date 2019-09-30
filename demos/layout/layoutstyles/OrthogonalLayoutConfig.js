@@ -545,9 +545,9 @@ const OrthogonalLayoutConfig = Class('OrthogonalLayoutConfig', {
     },
     get: function() {
       return (
-        !this.useExistingDrawingAsSketchItem &&
+        (!this.useExistingDrawingAsSketchItem &&
         this.styleItem !== OrthogonalLayoutStyle.NORMAL &&
-        this.styleItem !== OrthogonalLayoutStyle.UNIFORM
+        this.styleItem !== OrthogonalLayoutStyle.UNIFORM)
       )
     }
   },
@@ -772,7 +772,9 @@ const OrthogonalLayoutConfig = Class('OrthogonalLayoutConfig', {
           values: [
             ['Anywhere', LayoutConfiguration.EnumLabelPlacementAlongEdge.ANYWHERE],
             ['At Source', LayoutConfiguration.EnumLabelPlacementAlongEdge.AT_SOURCE],
+            ['At Source Port', LayoutConfiguration.EnumLabelPlacementAlongEdge.AT_SOURCE_PORT],
             ['At Target', LayoutConfiguration.EnumLabelPlacementAlongEdge.AT_TARGET],
+            ['At Target Port', LayoutConfiguration.EnumLabelPlacementAlongEdge.AT_TARGET_PORT],
             ['Centered', LayoutConfiguration.EnumLabelPlacementAlongEdge.CENTERED]
           ]
         }),
@@ -880,9 +882,9 @@ const OrthogonalLayoutConfig = Class('OrthogonalLayoutConfig', {
     },
     get: function() {
       return (
-        this.edgeLabelingItem === OrthogonalLayoutConfig.EnumEdgeLabeling.NONE ||
+        (this.edgeLabelingItem === OrthogonalLayoutConfig.EnumEdgeLabeling.NONE ||
         this.labelPlacementSideOfEdgeItem ===
-          LayoutConfiguration.EnumLabelPlacementSideOfEdge.ON_EDGE
+          LayoutConfiguration.EnumLabelPlacementSideOfEdge.ON_EDGE)
       )
     }
   },

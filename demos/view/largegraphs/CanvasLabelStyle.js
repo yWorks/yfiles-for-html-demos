@@ -27,6 +27,7 @@
  **
  ***************************************************************************/
 import {
+  CanvasComponent,
   Font,
   FontStyle,
   FontWeight,
@@ -35,6 +36,7 @@ import {
   IOrientedRectangle,
   IRenderContext,
   LabelStyleBase,
+  Size,
   TextMeasurePolicy,
   TextRenderSupport,
   TextWrapping,

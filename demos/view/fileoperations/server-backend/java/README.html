@@ -58,8 +58,8 @@
     <div class="note">
     <p>The deployment descriptor (web.xml) maps the <code>com.yworks.demo.SimpleLoadSaveServlet</code> to the
       <code>/isAlive, /load,</code> and <code>/save</code> url patterns.
-      Therefore, to properly handle the demo requests (e.g. <code>http://localhost:3000/file/isAlive</code>), the web application should be deployed with <b><code>/file</code>
-      as the application context</b>, and the servlet container should <b>listen on <code>localhost:3000</code></b>.</p>
+      Therefore, to properly handle the demo requests (e.g. <code>http://localhost:4242/file/isAlive</code>), the web application should be deployed with <b><code>/file</code>
+      as the application context</b>, and the servlet container should <b>listen on <code>localhost:4242</code></b>.</p>
     </div>
 
     <h2>Demo Requests</h2>
@@ -67,11 +67,11 @@
       The File Operations Demo uses the following requests:
     </p>
     <dl>
-     <dt><code>http://localhost:3000/file/isAlive</code></dt><dd><code>GET</code> request to check whether a file load/save server is running
+     <dt><code>http://localhost:4242/file/isAlive</code></dt><dd><code>GET</code> request to check whether a file load/save server is running
      (used to enable the corresponding actions if an "OK" (200) response code is received).</dd>
-     <dt><code>http://localhost:3000/file/load</code></dt><dd><code>POST</code> request to upload a file from
+     <dt><code>http://localhost:4242/file/load</code></dt><dd><code>POST</code> request to upload a file from
      the filesystem and send the file contents to the client.</dd>
-     <dt><code>http://localhost:3000/file/save</code></dt><dd><code>POST</code> request to send the current graph
+     <dt><code>http://localhost:4242/file/save</code></dt><dd><code>POST</code> request to send the current graph
      to the server and download it as a GraphML file.</dd>
     </dl>
   </div>

@@ -71,7 +71,7 @@ export class InteractiveOrganicFastNodeStyle extends NodeStyleBase {
 class NodeRenderVisual extends HtmlCanvasVisual {
   /**
    * Creates a new instance of NodeRenderVisual.
-   * @param {IRectangle} layout
+   * @param {IRectangle} layout A live view of the layout of a node.
    */
   constructor(layout) {
     super()

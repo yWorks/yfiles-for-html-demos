@@ -762,7 +762,7 @@ export default class BpmnPopupSupport {
     }
     const node = this.activePopup.currentItem
     this.graphComponent.graph.setStyle(node, node.style.clone())
-    const value = Enum.parse(enumType, comboBox.value)
+    const value = Enum.parse(enumType, comboBox.value, true)
     setter(node, value)
     this.graphComponent.invalidate()
   }
@@ -779,7 +779,7 @@ export default class BpmnPopupSupport {
     }
     const port = this.activePopup.currentItem
     this.graphComponent.graph.setStyle(port, port.style.clone())
-    const value = Enum.parse(enumType, comboBox.value)
+    const value = Enum.parse(enumType, comboBox.value, true)
     setter(port, value)
     this.graphComponent.invalidate()
   }
@@ -794,7 +794,7 @@ export default class BpmnPopupSupport {
     }
     const edge = this.activePopup.currentItem
     this.graphComponent.graph.setStyle(edge, edge.style.clone())
-    edge.style.type = Enum.parse(EdgeType.$class, this.edgeTypeBox.value)
+    edge.style.type = Enum.parse(EdgeType.$class, this.edgeTypeBox.value, true)
     this.graphComponent.invalidate()
   }
 }

@@ -36,13 +36,14 @@ import {
   IEdge,
   IInputModeContext,
   ILabel,
+  IListEnumerable,
   INode,
+  IOrientedRectangle,
+  IRectangle,
   IRenderContext,
   LabelStyleBase,
   NodeStyleBase,
-  OrientedRectangle,
   Point,
-  Rect,
   Size,
   Visual
 } from 'yfiles'
@@ -64,6 +65,7 @@ export class FastNodeStyle extends NodeStyleBase {
    * @return {Visual}
    */
   updateVisual(renderContext, oldVisual, node) {
+    oldVisual.layout = node.layout
     return oldVisual
   }
 }
@@ -73,11 +75,19 @@ export class FastNodeStyle extends NodeStyleBase {
  */
 class NodeCanvasVisual extends HtmlCanvasVisual {
   /**
-   * @param {Rect} layout
+   * @param {IRectangle} layout A live view of the layout of a node.
    */
   constructor(layout) {
     super()
     this.$layout = layout
+  }
+
+  set layout(value) {
+    this.$layout = value
+  }
+
+  get layout() {
+    return this.$layout
   }
 
   /**
@@ -115,7 +125,7 @@ export class FastEdgeStyle extends EdgeStyleBase {
    */
   isHit(inputContext, location, edge) {
     // we use a very simple hit logic here (the base implementation)
-    if (!FastEdgeStyle.$super.isHit.call(this, inputContext, location, edge)) {
+    if (!super.isHit(inputContext, location, edge)) {
       return false
     }
     // but we exclude hits on the source and target node
@@ -134,6 +144,9 @@ export class FastEdgeStyle extends EdgeStyleBase {
    * @return {Visual}
    */
   updateVisual(renderContext, oldVisual, edge) {
+    oldVisual.bends = edge.bends
+    oldVisual.sourcePortLocation = edge.sourcePort.location
+    oldVisual.targetPortLocation = edge.targetPort.location
     return oldVisual
   }
 }
@@ -152,6 +165,30 @@ class EdgeCanvasVisual extends HtmlCanvasVisual {
     this.$bends = bends
     this.$sourcePortLocation = sourcePortLocation
     this.$targetPortLocation = targetPortLocation
+  }
+
+  get bends() {
+    return this.$bends
+  }
+
+  set bends(value) {
+    this.$bends = value
+  }
+
+  get sourcePortLocation() {
+    return this.$sourcePortLocation
+  }
+
+  set sourcePortLocation(value) {
+    this.$sourcePortLocation = value
+  }
+
+  get targetPortLocation() {
+    return this.$targetPortLocation
+  }
+
+  set targetPortLocation(value) {
+    this.$targetPortLocation = value
   }
 
   /**
@@ -224,6 +261,10 @@ export class FastLabelStyle extends LabelStyleBase {
    * @return {Visual}
    */
   updateVisual(renderContext, oldVisual, label) {
+    oldVisual.text = label.text
+    oldVisual.layout = label.layout
+    oldVisual.font = this.font
+    oldVisual.zoomThreshold = this.zoomThreshold
     return oldVisual
   }
 
@@ -313,7 +354,7 @@ export class FastLabelStyle extends LabelStyleBase {
 class LabelCanvasVisual extends HtmlCanvasVisual {
   /**
    * @param {string} text
-   * @param {OrientedRectangle} layout
+   * @param {IOrientedRectangle} layout A live view of the layout of a label.
    * @param {Font} font
    * @param {number} zoomThreshold
    */
@@ -323,6 +364,38 @@ class LabelCanvasVisual extends HtmlCanvasVisual {
     this.$layout = layout
     this.$font = font
     this.$zoomThreshold = zoomThreshold
+  }
+
+  get text() {
+    return this.$text
+  }
+
+  set text(value) {
+    this.$text = value
+  }
+
+  get layout() {
+    return this.$layout
+  }
+
+  set layout(value) {
+    this.$layout = value
+  }
+
+  get font() {
+    return this.$font
+  }
+
+  set font(value) {
+    this.$font = value
+  }
+
+  get zoomThreshold() {
+    return this.$zoomThreshold
+  }
+
+  set zoomThreshold(value) {
+    this.$zoomThreshold = value
   }
 
   /**

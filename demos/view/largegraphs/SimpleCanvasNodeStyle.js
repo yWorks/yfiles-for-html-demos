@@ -31,7 +31,9 @@ import {
   HtmlCanvasVisual,
   IInputModeContext,
   INode,
+  IRectangle,
   IRenderContext,
+  IVisualCreator,
   NodeStyleBase,
   Point,
   Rect,
@@ -140,7 +142,7 @@ export default class SimpleCanvasNodeStyle extends NodeStyleBase {
 class NodeRenderVisual extends HtmlCanvasVisual {
   /**
    * Creates an instance of the render visual.
-   * @param {Rect} layout The layout of the node.
+   * @param {IRectangle} layout A live view of the layout of a node.
    * @param {Color} color The color for the node.
    */
   constructor(layout, color) {

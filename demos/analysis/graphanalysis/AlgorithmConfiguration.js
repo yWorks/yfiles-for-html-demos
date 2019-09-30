@@ -227,11 +227,11 @@ export default class AlgorithmConfiguration {
   generateColors(gradient) {
     if (gradient != null) {
       const colors = []
-      const stepCount = gradient.count - 1
+      const stepCount = gradient.size - 1
       const c1 = Color.LIGHT_BLUE
       const c2 = Color.BLUE
 
-      for (let i = 0; i < gradient.count; i++) {
+      for (let i = 0; i < gradient.size; i++) {
         const r = (c1.r * (stepCount - i) + c2.r * i) / stepCount
         const g = (c1.g * (stepCount - i) + c2.g * i) / stepCount
         const b = (c1.b * (stepCount - i) + c2.b * i) / stepCount

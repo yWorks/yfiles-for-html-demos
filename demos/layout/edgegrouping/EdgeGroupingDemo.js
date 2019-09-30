@@ -90,7 +90,7 @@ function run(licenseData) {
  * Applies a layout to the current graph including the edge/port group information in the edges' tags.
  * @param {boolean} incremental
  */
-function runLayout(incremental) {
+async function runLayout(incremental) {
   setUIDisabled(true)
   const layout = new HierarchicLayout({
     orthogonalRouting: true,
@@ -116,9 +116,8 @@ function runLayout(incremental) {
       edge.tag && edge.tag.targetGroupId ? edge.tag.targetGroupId : null
   }
 
-  graphComponent.morphLayout(layout, '700ms', layoutData).then(() => {
-    setUIDisabled(false)
-  })
+  await graphComponent.morphLayout(layout, '700ms', layoutData)
+  setUIDisabled(false)
 }
 
 function createSampleGraph() {

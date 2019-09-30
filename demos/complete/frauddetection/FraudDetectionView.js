@@ -35,10 +35,10 @@ import {
   GraphItemTypes,
   HierarchicLayout,
   HierarchicLayoutData,
-  HoveredItemChangedEventArgs,
   IEdge,
   ILayoutAlgorithm,
   IMapper,
+  IModelItem,
   INode,
   LayoutGraph,
   LayoutMode,
@@ -131,9 +131,7 @@ export default class FraudDetectionView {
         !INode.isInstance(item) ||
         (this.componentNodes.has(item) && item.tag.type !== 'Bank Branch'),
       this.fraudDetectionComponent.graph,
-      null,
-      Point.ORIGIN,
-      (original, copy) => {}
+      null
     )
   }
 
@@ -145,7 +143,7 @@ export default class FraudDetectionView {
     this.filteredGraph = new FilteredGraphWrapper(
       this.fraudDetectionTimeline.filteredGraph.wrappedGraph,
       this.nodePredicate.bind(this),
-      edge => true
+      () => true
     )
     this.fraudDetectionComponent.graph = this.filteredGraph
 
@@ -176,7 +174,7 @@ export default class FraudDetectionView {
       }
     })
 
-    this.filteredGraph.addNodeRemovedListener((sender, args) => {
+    this.filteredGraph.addNodeRemovedListener(() => {
       this.graphChanged = true
     })
 
@@ -390,7 +388,7 @@ export default class FraudDetectionView {
     // create the node popup
     this.nodePopup = new NodePopup(this.fraudDetectionComponent, 'fraudPopup')
 
-    inputMode.addCanvasClickedListener((sender, event) => {
+    inputMode.addCanvasClickedListener(() => {
       // remove the node popup
       this.nodePopup.updatePopup(null)
     })
@@ -404,14 +402,14 @@ export default class FraudDetectionView {
     inputMode.toolTipItems = GraphItemTypes.EDGE
     inputMode.addQueryItemToolTipListener((src, eventArgs) => {
       if (eventArgs.handled) {
-        // A tooltip has already been assigned -> nothing to do.
+        // Tooltip content has already been assigned -> nothing to do.
         return
       }
       const item = eventArgs.item
       if (IEdge.isInstance(item) && this.layoutAlgorithm === FraudDetectionView.HIERARCHIC) {
         eventArgs.toolTip = item.tag.type
 
-        // Indicate that the tooltip has been set.
+        // Indicate that the tooltip content has been set.
         eventArgs.handled = true
       } else {
         eventArgs.handled = false
@@ -426,12 +424,12 @@ export default class FraudDetectionView {
     graphItemHoverInputMode.hoverItems = GraphItemTypes.NODE
     graphItemHoverInputMode.discardInvalidItems = false
     // add listener to react to hover changes
-    graphItemHoverInputMode.addHoveredItemChangedListener((sender, event) => {
-      this.updateHighlights(sender, event)
-    })
+    graphItemHoverInputMode.addHoveredItemChangedListener((sender, event) =>
+      this.updateHighlights(event.oldItem, event.item)
+    )
 
     const moveInputMode = inputMode.moveInputMode
-    moveInputMode.addDragStartedListener((sender, event) => {
+    moveInputMode.addDragStartedListener(() => {
       // remove the node popup
       this.nodePopup.updatePopup(null)
     })
@@ -448,24 +446,21 @@ export default class FraudDetectionView {
 
   /**
    * Updates the highlights of the hovered node.
-   * @param {object} sender
-   * @param {HoveredItemChangedEventArgs} event
+   * @param {IModelItem} oldItem The item that was previously hovered, possibly null
+   * @param {IModelItem} currentItem The currently hovered item
    */
-  updateHighlights(sender, event) {
-    const item = event.item
-    const oldItem = event.oldItem
-
+  updateHighlights(oldItem, currentItem) {
     const highlightManager = this.fraudDetectionComponent.highlightIndicatorManager
 
-    if (item) {
-      highlightManager.addHighlight(item)
+    if (currentItem) {
+      highlightManager.addHighlight(currentItem)
     }
 
     if (oldItem) {
       highlightManager.removeHighlight(oldItem)
     }
 
-    this.fraudDetectionTimeline.updateHighlight(item)
+    this.fraudDetectionTimeline.updateHighlight(currentItem)
   }
 
   /**

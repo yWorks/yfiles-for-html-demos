@@ -32,6 +32,8 @@ import {
   ChainSubstructureStyle,
   Color,
   CycleSubstructureStyle,
+  DefaultLabelStyle,
+  EdgePathLabelModel,
   EdgeStyleDecorationInstaller,
   ExteriorLabelModel,
   ExteriorLabelModelPosition,
@@ -41,7 +43,7 @@ import {
   GraphViewerInputMode,
   ICommand,
   IEdge,
-  IGraph,
+  IModelItem,
   INode,
   LayoutExecutor,
   License,
@@ -54,32 +56,35 @@ import {
   Size,
   StarSubstructureStyle,
   Stroke,
-  StyleDecorationZoomPolicy
+  StyleDecorationZoomPolicy,
+  VoidLabelStyle
 } from 'yfiles'
 
 import { DemoEdgeStyle, DemoNodeStyle } from '../../resources/demo-styles.js'
-import {
-  addClass,
-  bindAction,
-  bindCommand,
-  removeClass,
-  showApp
-} from '../../resources/demo-app.js'
+import { bindAction, bindCommand, showApp } from '../../resources/demo-app.js'
 import loadJson from '../../resources/load-json.js'
+import { createGraphBuilder } from './Neo4jGraphBuilder.js'
+import { connectToDB, Neo4jEdge, Neo4jNode } from './Neo4jUtil.js'
 
 /** @type {GraphComponent} */
 let graphComponent = null
 
-/** The Neo4j driver */
-let neo4jDriver = null
+/** @type {function} */
+let runCypherQuery = null
+
+/** @type {GraphBuilder} */
+let graphBuilder = null
 
 // get hold of some UI elements
 const loadingIndicator = document.getElementById('loadingIndicator')
 const labelsContainer = document.getElementById('labels')
+const selectedNodeContainer = document.getElementById('selected-node-container')
 const propertyTable = document.getElementById('propertyTable')
 const propertyTableHeader = propertyTable.firstElementChild
 const numNodesInput = document.getElementById('numNodes')
 const numLabelsInput = document.getElementById('numLabels')
+const showEdgeLabelsCheckbox = document.getElementById('showEdgeLabels')
+const queryErrorContainer = document.getElementById('queryError')
 
 /**
  * Runs the demo.
@@ -88,52 +93,34 @@ function run(licenseData) {
   License.value = licenseData
   if (!('WebSocket' in window)) {
     // early exit the application if WebSockets are not supported
-    addClass(document.getElementById('login'), 'hidden')
-    removeClass(document.getElementById('noWebSocketAPI'), 'hidden')
+    document.getElementById('login').hidden = true
+    document.getElementById('noWebSocketAPI').hidden = false
     showApp(graphComponent)
     return
   }
 
-  // switch on encryption if served on https
-  document.querySelector('#encryptionInput').checked = window.location.protocol === 'https:'
-
   graphComponent = new GraphComponent('graphComponent')
 
-  initializeGraph()
-
+  initializeGraphDefaults()
   initializeHighlighting()
-
   createInputMode()
-
   registerCommands()
-
-  numNodesInput.addEventListener(
-    'change',
-    () => {
-      document.getElementById('numNodesLabel').textContent = numNodesInput.value.toString()
-    },
-    true
-  )
-
-  numLabelsInput.addEventListener(
-    'change',
-    () => {
-      document.getElementById('numLabelsLabel').textContent = numLabelsInput.value.toString()
-    },
-    true
-  )
-
   showApp(graphComponent)
 }
 
 /**
  * Initializes the styles for the graph nodes, edges, labels.
  */
-function initializeGraph() {
+function initializeGraphDefaults() {
   const graph = graphComponent.graph
 
   graph.nodeDefaults.style = new DemoNodeStyle()
   graph.nodeDefaults.size = new Size(30, 30)
+
+  graph.edgeDefaults.labels.style = new DefaultLabelStyle({
+    backgroundFill: 'rgba(255,255,255,0.85)',
+    textFill: '#336699'
+  })
 
   const newExteriorLabelModel = new ExteriorLabelModel({ insets: 5 })
   graph.nodeDefaults.labels.layoutParameter = newExteriorLabelModel.createParameter(
@@ -141,6 +128,7 @@ function initializeGraph() {
   )
 
   graph.edgeDefaults.style = new DemoEdgeStyle()
+  graph.edgeDefaults.labels.layoutParameter = new EdgePathLabelModel().createDefaultParameter()
 }
 
 /**
@@ -181,7 +169,7 @@ function initializeHighlighting() {
   })
   decorator.edgeDecorator.highlightDecorator.setImplementation(edgeStyleHighlight)
 
-  graphComponent.addCurrentItemChangedListener(onCurrentItemChanged)
+  graphComponent.addCurrentItemChangedListener(() => onCurrentItemChanged())
 }
 
 /**
@@ -198,54 +186,44 @@ function createInputMode() {
   mode.itemHoverInputMode.enabled = true
   mode.itemHoverInputMode.hoverItems = GraphItemTypes.EDGE | GraphItemTypes.NODE
   mode.itemHoverInputMode.discardInvalidItems = false
-  mode.itemHoverInputMode.addHoveredItemChangedListener(onHoveredItemChanged)
+  mode.itemHoverInputMode.addHoveredItemChangedListener((sender, evt) =>
+    onHoveredItemChanged(evt.item)
+  )
+
+  // load more data on double click
+  mode.addItemDoubleClickedListener(async (sender, { item }) => {
+    const result = await runCypherQuery(
+      `MATCH (n)-[e]-(m) 
+       WHERE id(n) = $nodeId
+       RETURN DISTINCT e, m LIMIT 50`,
+      { nodeId: item.tag.identity }
+    )
+    let updated = false
+    for (const record of result.records) {
+      const node = record.get('m')
+      const edge = record.get('e')
+      if (graphBuilder.nodesSource.every(n => !n.identity.equals(node.identity))) {
+        graphBuilder.nodesSource.push(node)
+        updated = true
+      }
+      if (graphBuilder.edgesSource.every(e => !e.identity.equals(edge.identity))) {
+        graphBuilder.edgesSource.push(edge)
+        updated = true
+      }
+    }
+    if (updated) {
+      graphBuilder.updateGraph()
+      await doLayout()
+    }
+  })
 
   graphComponent.inputMode = mode
 }
 
 /**
- * Establishes a connection to a Neo4j database.
- * @param {string} url The URL to connect to, usually through the bolt protocol (bolt://)
- * @param {string} user The username to use.
- * @param {string} pass The password to use.
- */
-function connectToDB(url, user, pass) {
-  const encrypted = document.querySelector('#encryptionInput').checked
-
-  // create a new Neo4j driver instance
-  neo4jDriver = neo4j.v1.driver(url, neo4j.v1.auth.basic(user, pass), {
-    encrypted: encrypted,
-    trust: 'TRUST_CUSTOM_CA_SIGNED_CERTIFICATES'
-  })
-
-  const errorHandler = () => {
-    if (window.location.protocol === 'https:') {
-      document.querySelector('#openInHttp').style.visibility = 'visible'
-      document
-        .querySelector('#openInHttp>a')
-        .setAttribute('href', window.location.href.replace('https:', 'http:'))
-    }
-  }
-
-  try {
-    runCypherQuery('MATCH (n) RETURN n LIMIT 1')
-      .then(result => {
-        // hide the login form and show the graph component
-        document.querySelector('#loginPane').setAttribute('style', 'display: none;')
-        document.querySelector('#graphPane').removeAttribute('style')
-        loadGraph()
-      })
-      .catch(errorHandler)
-  } catch (e) {
-    // In some cases (connecting from https to http) an exception is thrown outside the promise
-    errorHandler()
-  }
-}
-
-/**
  * If the currentItem property on GraphComponent's changes we adjust the details panel.
  */
-function onCurrentItemChanged(sender, propertyChangedEventArgs) {
+function onCurrentItemChanged() {
   // clear the current display
   labelsContainer.innerHTML = ''
   while (propertyTable.hasChildNodes()) {
@@ -253,7 +231,9 @@ function onCurrentItemChanged(sender, propertyChangedEventArgs) {
   }
 
   const currentItem = graphComponent.currentItem
-  if (INode.isInstance(currentItem)) {
+  const isNode = INode.isInstance(currentItem)
+  selectedNodeContainer.hidden = !isNode
+  if (isNode) {
     const node = currentItem
     // show all labels of the current node
     labelsContainer.textContent = node.tag.labels.join(', ')
@@ -261,7 +241,7 @@ function onCurrentItemChanged(sender, propertyChangedEventArgs) {
     if (properties && Object.keys(properties).length > 0) {
       propertyTable.appendChild(propertyTableHeader)
       // add a table row for each property
-      Object.keys(properties).forEach(propertyName => {
+      for (const propertyName of Object.keys(properties)) {
         const tr = document.createElement('tr')
         const nameTd = document.createElement('td')
         nameTd.textContent = propertyName
@@ -270,7 +250,7 @@ function onCurrentItemChanged(sender, propertyChangedEventArgs) {
         tr.appendChild(nameTd)
         tr.appendChild(valueTd)
         propertyTable.appendChild(tr)
-      })
+      }
     }
   }
 }
@@ -280,12 +260,11 @@ function onCurrentItemChanged(sender, propertyChangedEventArgs) {
  * {@link GraphBuilder}.
  * @yjs:keep=nodeIds,end
  */
-function loadGraph() {
+async function loadGraph() {
   // show a loading indicator, as the queries can take a while to complete
-  loadingIndicator.setAttribute('style', 'display: block;')
+  loadingIndicator.hidden = false
   setUIDisabled(true)
 
-  // clear the graph
   graphComponent.graph.clear()
   // maximum number of nodes that should be fetched
   const numNodes = numNodesInput.value
@@ -293,7 +272,7 @@ function loadGraph() {
   const numLabels = numLabelsInput.value
 
   // letters that are used as names for nodes in the cypher query
-  const letters = 'abcde'.split('').slice(0, numLabels)
+  const letters = ['a', 'b', 'c', 'd', 'e'].slice(0, numLabels)
   // we match a chain of nodes that is at least numLabels long
   const matchClause = letters.map(letter => `(${letter})`).join('--')
   const whereClauses = []
@@ -306,203 +285,65 @@ function loadGraph() {
     }
   }
   // run the query to get the nodes
-  runCypherQuery(
+  const nodeResult = await runCypherQuery(
     `MATCH ${matchClause} 
       WHERE ${whereClauses.join(' AND ')} 
       WITH [${letters.join(',')}] AS nodes LIMIT ${numNodes * numLabels}
       UNWIND nodes AS node
       RETURN DISTINCT node`
-  ).then(nodeResult => {
-    // extract the nodes from the query result
-    const nodes = nodeResult.records.map(record => record.get('node'))
-    // obtain an array of all node ids
-    const nodeIds = nodes.map(node => node.identity)
-    // get all edges between all nodes that we have, omitting self loops and limiting the overall number of
-    // results to a multiple of numNodes, as some graphs have nodes wth degrees in the thousands
-    runCypherQuery(
-      `MATCH (n)-[edge]-(m) 
+  )
+  // extract the nodes from the query result
+  const nodes = nodeResult.records.map(record => record.get('node'))
+  // obtain an array of all node ids
+  const nodeIds = nodes.map(node => node.identity)
+  // get all edges between all nodes that we have, omitting self loops and limiting the overall number of
+  // results to a multiple of numNodes, as some graphs have nodes wth degrees in the thousands
+  const edgeResult = await runCypherQuery(
+    `MATCH (n)-[edge]-(m) 
             WHERE id(n) IN $nodeIds 
             AND id(m) IN $nodeIds
             AND startNode(edge) <> endNode(edge)
             RETURN DISTINCT edge LIMIT ${numNodes * 5}`,
-      { nodeIds }
-    ).then(edgeResult => {
-      // extract the edges from the query result
-      const edges = edgeResult.records.map(record => record.get('edge'))
-      // custom GraphBuilder that assigns nodes different styles based on their labels
-      const graphBuilder = new Neo4jGraphBuilder(
-        graphComponent.graph,
-        createNodeStyleMapping(nodes.map(node => node.labels))
-      )
-      graphBuilder.nodesSource = nodes
-      graphBuilder.edgesSource = edges
+    { nodeIds }
+  )
+  // extract the edges from the query result
+  const edges = edgeResult.records.map(record => record.get('edge'))
+  // custom GraphBuilder that assigns nodes different styles based on their labels
+  graphBuilder = createGraphBuilder(graphComponent, nodes, edges)
 
-      // helper method to convert the neo4j "long" ids, to a simple JavaScript object (string)
-      function getId(identity) {
-        return `${identity.low.toString()}:${identity.high.toString()}`
-      }
+  graphBuilder.buildGraph()
 
-      graphBuilder.nodeIdBinding = node => getId(node.identity)
-      graphBuilder.sourceNodeBinding = edge => getId(edge.start)
-      graphBuilder.targetNodeBinding = edge => getId(edge.end)
-      graphBuilder.nodeLabelBinding = node => {
-        if (node.properties) {
-          const propertyNames = Object.keys(node.properties)
-          for (let i = 0; i < propertyNames.length; ++i) {
-            const propertyName = propertyNames[i]
-            // try to find a suitable node label
-            if (
-              ['name', 'title', 'firstName', 'lastName', 'email', 'content'].indexOf(propertyName) >
-              -1
-            ) {
-              // trim the label
-              return node.properties[propertyName].substring(0, 30)
-            }
-          }
-        }
-        return node.labels && node.labels.length > 0 ? node.labels.join(' - ') : null
-      }
+  // apply a layout to the new graph
+  await doLayout()
 
-      graphBuilder.buildGraph()
-
-      // apply a layout to the new graph
-      doLayout()
-    })
-  })
+  loadingIndicator.hidden = true
+  setUIDisabled(false)
 }
 
 /**
- * A custom {@link GraphBuilder} that can assign different node styles based on their labels.
+ * This method will be called whenever the mouse moves over a different item. We show a highlight
+ * indicator to make it easier for the user to understand the graph's structure.
+ * @param {IModelItem} hoveredItem The currently hovered item
  */
-class Neo4jGraphBuilder extends GraphBuilder {
-  /**
-   * @param {IGraph} graph
-   * @param {Array<{labelName, style}>} nodeStyleMapping
-   */
-  constructor(graph, nodeStyleMapping) {
-    super(graph)
-    this.nodeStyleMapping = nodeStyleMapping
-  }
-
-  /**
-   * Override the default createNode method of GraphBuilder to assign styles to nodes based on their labels.
-   * @see {@link GraphBuilder#createNode}
-   */
-  createNode(graph, parent, location, labelData, businessObject) {
-    // get the default style to use as a fallback
-    let style = graph.nodeDefaults.style
-
-    // look for a mapping for any of the nodes labels and use the mapped style
-    for (let i = 0; i < this.nodeStyleMapping.length; ++i) {
-      if (businessObject.labels.indexOf(this.nodeStyleMapping[i].labelName) > -1) {
-        style = this.nodeStyleMapping[i].style
-        break
-      }
-    }
-    // create the node and set its label
-    const newNode = graph.createNodeAt(location, style, businessObject)
-    graph.addLabel(newNode, labelData)
-    return newNode
-  }
-}
-
-/**
- * Creates a mapping between node labels and node styles.
- * @param {Array<Array<String>>} nodeLabels
- * @return {Array<Object<String, INodeStyle>>}
- */
-function createNodeStyleMapping(nodeLabels) {
-  // flatten arrays
-  const flatNodeLabels = nodeLabels.reduce((a, b) => a.concat(b), [])
-  const labelCount = {}
-  const labels = []
-  // count labels
-  flatNodeLabels.forEach(label => {
-    if (!(label in labelCount)) {
-      labelCount[label] = 0
-      labels.push(label)
-    }
-    labelCount[label] += 1
-  })
-  // sort unique labels by their frequency
-  labels.sort((a, b) => labelCount[a] - labelCount[b])
-  // define some distinct looking styles
-  const styles = [
-    new ShapeNodeStyle({
-      shape: 'triangle',
-      fill: 'darkorange'
-    }),
-    new ShapeNodeStyle({
-      shape: 'diamond',
-      fill: 'limegreen'
-    }),
-    new ShapeNodeStyle({
-      shape: 'rectangle',
-      fill: 'blue'
-    }),
-    new ShapeNodeStyle({
-      shape: 'hexagon',
-      fill: 'darkviolet'
-    }),
-    new ShapeNodeStyle({
-      shape: 'ellipse',
-      fill: 'azure'
-    })
-  ]
-  // map label names to styles
-  return labels.map((label, i) => ({
-    labelName: label,
-    style: styles[i % styles.length]
-  }))
-}
-
-/**
- * Runs a cypher query using the currently available Neo4j diver.
- * @param {string} query
- * @param {Object} params
- * @return {Promise}
- * @yjs:keep=run
- */
-function runCypherQuery(query, params) {
-  const session = neo4jDriver.session('READ')
-  return session
-    .run(query, params || {})
-    .then(result => {
-      session.close()
-      return result
-    })
-    .catch(error => {
-      session.close()
-      document.querySelector('#connectionError').innerHTML = `An error occurred: ${error}`
-      throw error
-    })
-}
-
-/**
- * Called when the mouse hovers over a different item.
- * This method will be called whenever the mouse moves over a different item. We show a highlight indicator
- * to make it easier for the user to understand the graph's structure.
- */
-function onHoveredItemChanged(sender, hoveredItemChangedEventArgs) {
+function onHoveredItemChanged(hoveredItem) {
   // we use the highlight manager of the GraphComponent to highlight related items
   const manager = graphComponent.highlightIndicatorManager
 
   // first remove previous highlights
   manager.clearHighlights()
   // then see where we are hovering over, now
-  const newItem = hoveredItemChangedEventArgs.item
-  if (newItem !== null) {
+  if (hoveredItem !== null) {
     // we highlight the item itself
-    manager.addHighlight(newItem)
-    if (INode.isInstance(newItem)) {
+    manager.addHighlight(hoveredItem)
+    if (INode.isInstance(hoveredItem)) {
       // and if it's a node, we highlight all adjacent edges, too
-      graphComponent.graph.edgesAt(newItem).forEach(edge => {
+      graphComponent.graph.edgesAt(hoveredItem).forEach(edge => {
         manager.addHighlight(edge)
       })
-    } else if (IEdge.isInstance(newItem)) {
+    } else if (IEdge.isInstance(hoveredItem)) {
       // if it's an edge - we highlight the adjacent nodes
-      manager.addHighlight(newItem.sourceNode)
-      manager.addHighlight(newItem.targetNode)
+      manager.addHighlight(hoveredItem.sourceNode)
+      manager.addHighlight(hoveredItem.targetNode)
     }
   }
 }
@@ -510,54 +351,52 @@ function onHoveredItemChanged(sender, hoveredItemChangedEventArgs) {
 /**
  * Applies an organic layout to the current graph. Tries to highlight substructures in the process.
  */
-function doLayout() {
+async function doLayout() {
+  setUIDisabled(true)
   const organicLayout = new OrganicLayout()
   organicLayout.chainSubstructureStyle = ChainSubstructureStyle.STRAIGHT_LINE
   organicLayout.cycleSubstructureStyle = CycleSubstructureStyle.CIRCULAR
   organicLayout.parallelSubstructureStyle = ParallelSubstructureStyle.STRAIGHT_LINE
-  organicLayout.starSubstructureStyle = StarSubstructureStyle.SEPARATED_RADIAL
+  organicLayout.starSubstructureStyle = StarSubstructureStyle.CIRCULAR
   organicLayout.minimumNodeDistance = 60
   organicLayout.considerNodeLabels = true
   organicLayout.considerNodeSizes = true
   organicLayout.deterministic = true
-  organicLayout.parallelEdgeRouterEnabled = false
-  return new LayoutExecutor({
-    graphComponent,
-    layout: organicLayout,
-    duration: '1s'
-  })
-    .start()
-    .then(() => {
-      setUIDisabled(false)
-      graphComponent.fitGraphBounds()
-      // hide the loading indicator
-      loadingIndicator.setAttribute('style', 'display: none;')
-    })
-    .catch(error => {
-      setUIDisabled(false)
-      // hide the loading indicator
-      loadingIndicator.setAttribute('style', 'display: none;')
-      if (typeof window.reportError === 'function') {
-        window.reportError(error)
-      } else {
-        throw error
-      }
-    })
+  organicLayout.nodeEdgeOverlapAvoided = true
+  organicLayout.qualityTimeRatio = 0.8
+  organicLayout.parallelEdgeRouter.joinEnds = true
+  organicLayout.parallelEdgeRouter.lineDistance = 15
+  try {
+    await new LayoutExecutor({
+      graphComponent,
+      layout: organicLayout,
+      duration: '1s',
+      animateViewport: true
+    }).start()
+  } catch (error) {
+    if (typeof window.reportError === 'function') {
+      window.reportError(error)
+    } else {
+      throw error
+    }
+  } finally {
+    setUIDisabled(false)
+  }
 }
 
 /**
  * Disables the HTML elements of the UI.
- *
- * @param disabled true if the elements should be disabled, false otherwise
+ * @param {boolean} value Whether the elements should be disabled.
  */
-function setUIDisabled(disabled) {
-  document.getElementById('reloadDataButton').disabled = disabled
-  document.getElementById('numNodes').disabled = disabled
-  document.getElementById('numLabels').disabled = disabled
+function setUIDisabled(value) {
+  document.getElementById('reloadDataButton').disabled = value
+  document.getElementById('numNodes').disabled = value
+  document.getElementById('numLabels').disabled = value
 }
 
 /**
  * Wires up the UI.
+ * @yjs:keep=setValue,getValue
  */
 function registerCommands() {
   bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent, null)
@@ -566,14 +405,114 @@ function registerCommands() {
   bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
   bindAction("button[data-command='ReloadData']", loadGraph)
 
-  bindAction('#connectButton', () => {
-    let url = document.querySelector('#hostInput').value
+  // toggle edge label display
+  showEdgeLabelsCheckbox.addEventListener('input', () => {
+    const graph = graphComponent.graph
+    const style = showEdgeLabelsCheckbox.checked
+      ? graph.edgeDefaults.labels.style
+      : new VoidLabelStyle()
+    for (const label of graph.edgeLabels) {
+      graph.setStyle(label, style)
+    }
+  })
+
+  const userEl = document.querySelector('#userInput')
+  const hostEl = document.querySelector('#hostInput')
+  const passwordEl = document.querySelector('#passwordInput')
+  const encryptionEl = document.querySelector('#encryptionInput')
+
+  // Encryption not supported for connections to localhost
+  // => uncheck and disable the encryption checkbox for localhost urls.
+  function setEncryptionInput(event) {
+    const url = event.target.value
+    const isLocalhost = /^(bolt:\/\/)?((localhost)|(127\.0\.0\.1($|\D)))/.test(url)
+    encryptionEl.checked = encryptionEl.checked && !isLocalhost
+    encryptionEl.disabled = isLocalhost
+  }
+
+  hostEl.addEventListener('change', setEncryptionInput)
+  hostEl.addEventListener('keyup', setEncryptionInput)
+
+  document.getElementById('login-form').addEventListener('submit', async e => {
+    e.preventDefault()
+    let url = hostEl.value
     if (url.indexOf('bolt') < 0) {
       url = `bolt://${url}`
     }
-    const user = document.querySelector('#userInput').value
-    const pass = document.querySelector('#passwordInput').value
-    connectToDB(url, user, pass)
+    const user = userEl.value
+    const pass = passwordEl.value
+    const encrypted = encryptionEl.checked
+    try {
+      runCypherQuery = await connectToDB(url, user, pass, encrypted)
+
+      // hide the login form and show the graph component
+      document.querySelector('#loginPane').setAttribute('style', 'display: none;')
+      document.querySelector('#graphPane').removeAttribute('style')
+      await loadGraph()
+    } catch (e) {
+      document.querySelector('#connectionError').innerHTML = `An error occurred: ${e}`
+      // In some cases (connecting from https to http) an exception is thrown outside the promise
+      if (window.location.protocol === 'https:') {
+        document.querySelector('#openInHttp').hidden = false
+        document
+          .querySelector('#openInHttp>a')
+          .setAttribute('href', window.location.href.replace('https:', 'http:'))
+      }
+    }
+  })
+
+  numNodesInput.addEventListener(
+    'input',
+    () => {
+      document.getElementById('numNodesLabel').textContent = numNodesInput.value.toString()
+    },
+    true
+  )
+
+  numLabelsInput.addEventListener(
+    'input',
+    () => {
+      document.getElementById('numLabelsLabel').textContent = numLabelsInput.value.toString()
+    },
+    true
+  )
+
+  // create cypher query editor
+  const cypherInput = document.getElementById('cypher-input')
+  const { editor } = window.CypherCodeMirror.createCypherEditor(cypherInput, {
+    mode: 'cypher',
+    theme: 'cypher',
+    lineNumbers: true
+  })
+  // sample query
+  editor.setValue('MATCH (n)-[e]-(m)\nRETURN * LIMIT 150')
+
+  bindAction('#run-cypher-button', async () => {
+    const query = editor.getValue()
+    let result
+    try {
+      result = await runCypherQuery(query)
+    } catch (e) {
+      queryErrorContainer.textContent = `Query failed: ${e}`
+      return
+    }
+    queryErrorContainer.textContent = ''
+    const nodes = []
+    const edges = []
+    for (const record of result.records) {
+      record.forEach(field => {
+        if (field instanceof Neo4jNode) {
+          nodes.push(field)
+        } else if (field instanceof Neo4jEdge) {
+          edges.push(field)
+        }
+      })
+    }
+    graphComponent.graph.clear()
+    graphBuilder = createGraphBuilder(graphComponent, nodes, edges)
+    graphBuilder.buildGraph()
+    // apply a layout to the new graph
+    await doLayout()
   })
 }
 

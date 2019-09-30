@@ -1,0 +1,53 @@
+{
+  "name": "jest-puppeteer-demo-for-yfiles-for-html",
+  "version": "1.0.0",
+  "author": "yWorks GmbH <yfileshtml@yworks.com>",
+  "license": "https://www.yworks.com/products/yfiles-for-html/sla",
+  "private": true,
+  "scripts": {
+    "preinstall": "node -e \"require('fs').copyFileSync('../../../lib/license.json','./src/license.json'); require('fs').copyFileSync('../../../ide-support/yfiles-typeinfo.js','./public/yfiles-typeinfo.js')\"",
+    "postinstall": "cd ../.. && yarn || npm i",
+    "start": "react-scripts start",
+    "start-test": "cross-env REACT_APP_INTEGRATION_TEST=true react-scripts start",
+    "build": "react-scripts build",
+    "test:integration": "jest -c integration/jest.config.js",
+    "test:integrationWithWatch": "jest -c integration/jest.config.js --watch",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": "react-app",
+    "env": {
+      "jest": true
+    },
+    "globals": {
+      "page": true,
+      "browser": true,
+      "context": true
+    }
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "peerDependencies": {
+    "yfiles": "22.0.2"
+  },
+  "dependencies": {
+    "react": "^16.9.0",
+    "react-dom": "^16.9.0",
+    "react-scripts": "3.1.1"
+  },
+  "devDependencies": {
+    "cross-env": "^5.2.1",
+    "jest-puppeteer": "^4.3.0",
+    "puppeteer": "^1.19.0"
+  }
+}

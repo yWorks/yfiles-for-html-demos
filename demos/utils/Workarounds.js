@@ -169,8 +169,11 @@ export function detectArmDevice() {
  *   <li>5: iOS 5</li>
  *   <li>6: iOS 6</li>
  *   <li>7: iOS 7</li>
- *   <li>8: iOS 8 or higher</li>
+ *   <li>8: iOS 8 - 12</li>
  * </ul>
+ * NOTE: Since iOS 13, the user agent changed such that iOS and Mac OS X cannot be
+ * distinguished anymore, therefore this will return -1 for Safari on iOS 13. However, it still
+ * works on e.g. Chrome on iOS.
  */
 export function detectiOSVersion() {
   const ua = window.navigator.userAgent

@@ -137,13 +137,13 @@ function createInputMode() {
   // when an item is deleted, calculate the new components and apply the layout
   mode.addDeletedSelectionListener(() => {
     calculateConnectedComponents()
-    applyLayout(false)
+    applyLayout()
   })
 
   // when an edge is created, calculate the new components and apply the layout
   mode.createEdgeInputMode.addEdgeCreatedListener(() => {
     calculateConnectedComponents()
-    applyLayout(false)
+    applyLayout()
   })
 
   // when a node is created, calculate the new components
@@ -222,7 +222,7 @@ function populateContextMenu(contextMenu, args) {
   // In this demo, we use the following custom hit testing to prefer nodes.
   const hits = graphComponent.graphModelManager.hitElementsAt(args.queryLocation)
 
-  // Check whether an edge was hit
+  // Check whether an edge or a node was hit
   const hit = hits.firstOrDefault()
 
   if (IEdge.isInstance(hit) || INode.isInstance(hit)) {
@@ -405,7 +405,7 @@ function loadGraph(graph, graphData) {
 /**
  * Runs the layout.
  */
-function runLayout() {
+async function runLayout() {
   const selectedIndex = document.getElementById('sample-combo-box').selectedIndex
   let layoutAlgorithm
   let layoutData
@@ -445,16 +445,15 @@ function runLayout() {
   layoutAlgorithm.prependStage(curveFittingStage)
 
   // run the layout
-  graphComponent.morphLayout(layoutAlgorithm, '0.1s', layoutData).then(() => {
-    setBusy(false)
-    // if the selected algorithm is circular, change the node style to circular sectors
-    if (
-      selectedIndex === LayoutAlgorithm.SINGLE_CYCLE ||
-      selectedIndex === LayoutAlgorithm.CIRCULAR
-    ) {
-      updateNodeInformation(layoutData)
-    }
-  })
+  await graphComponent.morphLayout(layoutAlgorithm, '0.1s', layoutData)
+  setBusy(false)
+  // if the selected algorithm is circular, change the node style to circular sectors
+  if (
+    selectedIndex === LayoutAlgorithm.SINGLE_CYCLE ||
+    selectedIndex === LayoutAlgorithm.CIRCULAR
+  ) {
+    updateNodeInformation(layoutData)
+  }
 }
 
 /**
@@ -666,7 +665,7 @@ function registerCommands() {
   const bundlingStrength = document.getElementById('bundling-strength-slider')
   bundlingStrength.addEventListener(
     'change',
-    evt => {
+    () => {
       document.getElementById(
         'bundling-strength-label'
       ).textContent = bundlingStrength.value.toString()
@@ -726,7 +725,6 @@ function setUIDisabled(disabled) {
   document.getElementById('sample-combo-box').disabled = disabled
   document.getElementById('previous-sample-button').disabled = disabled
   document.getElementById('next-sample-button').disabled = disabled
-  document.getElementById('sample-combo-box').disabled = disabled
   document.getElementById('bundling-strength-slider').disabled = disabled
   document.getElementById('bundling-strength-label').disabled = disabled
 }

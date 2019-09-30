@@ -118,3 +118,10 @@ dd {
 .demo-overview-container .yfiles-canvascomponent {
   height: 500px;
 }
+
+#no-webgl-support {
+  display: none;
+  border-left: 4px solid red;
+  padding: 2px 5px;
+  background-color: #FFEBEE;
+}

@@ -1,0 +1,35 @@
+{
+  "name": "electron-demo-for-yfiles-for-html",
+  "version": "1.0.0",
+  "author": "yWorks GmbH <yfileshtml@yworks.com>",
+  "license": "https://www.yworks.com/products/yfiles-for-html/sla",
+  "private": true,
+  "scripts": {
+    "postinstall": "node -e \"require('fs').copyFileSync('./node_modules/yfiles/yfiles.css','./src/static/yfiles.css')\"",
+    "dev": "electron-webpack dev",
+    "compile": "electron-webpack",
+    "dist": "yarn compile && electron-builder"
+  },
+  "dependencies": {
+    "ejs-loader": "^0.3.3",
+    "source-map-support": "^0.5.12",
+    "yfiles": "../../../lib/es-modules/yfiles-22.0.2.tgz"
+  },
+  "devDependencies": {
+    "@yworks/optimizer": "1.0.5",
+    "ejs": "2.7.1",
+    "ejs-html-loader": "4.0.1",
+    "electron": "6.0.10",
+    "electron-builder": "21.2.0",
+    "electron-webpack": "2.7.4",
+    "webpack": "4.40.2"
+  },
+  "electronWebpack": {
+    "whiteListedModules": [
+      "yfiles"
+    ],
+    "renderer": {
+      "webpackConfig": "webpack.renderer.additions.js"
+    }
+  }
+}

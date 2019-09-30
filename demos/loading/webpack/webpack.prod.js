@@ -34,7 +34,7 @@ const OptimizerPlugin = require('@yworks/optimizer/webpack-plugin')
 module.exports = {
   mode: 'production',
   entry: {
-    app: './src/webpack-demo.js'
+    app: ['core-js/stable', 'regenerator-runtime/runtime', './src/webpack-demo.js']
   },
   plugins: [
     new OptimizerPlugin({

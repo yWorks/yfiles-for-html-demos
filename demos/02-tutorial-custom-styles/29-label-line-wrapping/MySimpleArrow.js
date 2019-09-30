@@ -28,15 +28,19 @@
  ***************************************************************************/
 import {
   BaseClass,
+  CanvasComponent,
   GeneralPath,
   IArrow,
   IBoundsProvider,
+  ICanvasObjectDescriptor,
   IEdge,
+  IEdgeStyle,
   IRenderContext,
   ISvgDefsCreator,
   IVisualCreator,
   Point,
   Rect,
+  SvgDefsManager,
   SvgVisual,
   Visual
 } from 'yfiles'

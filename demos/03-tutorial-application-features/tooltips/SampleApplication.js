@@ -44,7 +44,8 @@ import {
   Point,
   Rect,
   ShapeNodeStyle,
-  Size
+  Size,
+  ToolTipQueryEventArgs
 } from 'yfiles'
 
 import { addClass, bindAction, bindCommand, showApp } from '../../resources/demo-app.js'
@@ -104,24 +105,25 @@ function initializeTooltips() {
   // Register a listener for when a tooltip should be shown.
   inputMode.addQueryItemToolTipListener((src, eventArgs) => {
     if (eventArgs.handled) {
-      // A tooltip has already been assigned => nothing to do.
+      // Tooltip content has already been assigned -> nothing to do.
       return
     }
 
-    // We create a rich HTML element as tooltip. Alternatively, it may be a plain string, too.
-    eventArgs.toolTip = createTooltip(eventArgs.item)
+    // Use a rich HTML element as tooltip content. Alternatively, a plain string would do as well.
+    eventArgs.toolTip = createTooltipContent(eventArgs.item)
 
-    // Indicate that the tooltip has been set.
+    // Indicate that the tooltip content has been set.
     eventArgs.handled = true
   })
 }
 
 /**
- * The tooltip may either be a plain string or it can also be a rich HTML element. In this case, we show the latter.
- * We just extract the first label text from the given item and show it as tooltip.
+ * The tooltip may either be a plain string or it can also be a rich HTML element. In this case, we
+ * show the latter. We just extract the first label text from the given item and show it as
+ * tooltip.
  * @param {IModelItem} item
  */
-function createTooltip(item) {
+function createTooltipContent(item) {
   const title = document.createElement('h4')
 
   // depending on the item, show a different title

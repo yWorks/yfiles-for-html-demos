@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+<!-- ////////////////////////////////////////////////////////////////////////
+     // @license
+     // This demo file is part of yFiles for HTML 2.2.
+     // Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // 72070 Tuebingen, Germany. All rights reserved.
+     //
+     // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+     // of demo files in source code or binary form, with or without
+     // modification, is not permitted.
+     //
+     // Owners of a valid software license for a yFiles for HTML version that this
+     // demo is shipped with are allowed to use the demo source code as basis
+     // for their own yFiles for HTML powered applications. Use of such programs is
+     // governed by the rights and conditions as set out in the yFiles for HTML
+     // license agreement.
+     //
+     // THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+     // WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+     // MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+     // NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+     // SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+     // TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+     // PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+     // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+     // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+     // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+     // 
+     ////////////////////////////////////////////////////////////////////////-->
+
+  <title>Electron Demo</title>
+  <link rel="stylesheet" type="text/css" href="../../../doc/documentation-style.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+</head>
+<body>
+<header>
+  <div class="content-centered">
+    <div class="logo"></div>
+    <div class="title">
+      <a href="../../README.html">yFiles for HTML</a> <span class="angle-right"></span> Electron Demo
+    </div>
+  </div>
+</header>
+<div class="content">
+  <div class="content-centered">
+    <h1>Electron Demo</h1>
+
+    <p>
+      This demo shows how to integrate yFiles for HTML in a basic <a href="https://electronjs.org/" target="_blank">Electron</a>
+      desktop application. It uses <a href="https://github.com/electron-userland/electron-webpack">electron-webpack</a>
+      for support for ES module imports.
+    </p>
+
+    <div class="block-space-header">
+      <h2>Building the Demo</h2>
+      <ol>
+        <li>
+          Go to the demo's directory <code>demos/toolkit/electron</code>.
+        </li>
+        <li>
+          Run <code>yarn install</code>.
+        </li>
+        <li>
+          Run <code>yarn dev</code>.
+        </li>
+      </ol>
+      <p>This will start the development server of the Electron application which creates a desktop application with
+        integrated hot reloading.</p>
+
+      <h2>Deployment</h2>
+      <p>
+        A binary of the application can be built with <code>yarn dist</code>. This will run the <a
+        href="https://github.com/electron-userland/electron-builder" target="_blank">electron-builder</a> that creates
+        an executable in the <code>dist</code> directory.
+      </p>
+      <p>
+        yFiles modules and usages are obfuscated in the production build with the <a
+        href="https://www.npmjs.com/package/@yworks/optimizer" target="_blank">yFiles for HTML Optimizer</a>.
+      </p>
+
+      <h2>Things to Note</h2>
+      <p>
+        In order to load ES modules from external libraries such as yFiles, they must be whitelisted in the <code>electronWebpack</code>
+        configuration, see also <a href="https://webpack.electron.build/configuration.html#white-listing-externals"
+        target="_blank">White-listing Externals</a>:
+      </p>
+      <pre>
+"electronWebpack": {
+  "whiteListedModules": [
+    "yfiles"
+  ],
+  ...
+}
+  </pre>
+
+      <p>
+        Also, in order to use <code>*.ejs</code> templates, the <a href="https://webpack.electron.build/add-ons#ejs"
+        target="_blank">EJS</a> loader needs to be registered explicitly in an additional webpack configuration:
+      </p>
+      <pre>
+"electronWebpack": {
+  ...
+  "renderer": {
+    "webpackConfig": "webpack.renderer.additions.js"
+  }
+}
+  </pre>
+    </div>
+  </div>
+<footer class="default-footer">
+  <div class="footer-block">
+    <h4>Contents</h4>
+    <a href="../../../README.html">Welcome Page</a><br> <a href="../../../doc/api/index.html">API Documentation</a><br>
+    <a href="../../../doc/api/index.html#/dguide/getting_started">Getting Started</a><br> <a
+    href="../../../doc/readme/legal/SOFTWARE_LICENSE_AGREEMENT.html">License Agreement</a><br> <a
+    href="../../../doc/readme/support.html">Help and Support</a>
+  </div>
+  <div class="footer-block">
+    <h4>Contact</h4>
+    yWorks GmbH<br> Vor dem Kreuzberg 28<br> 72070 T&uuml;bingen<br> Germany<br> Phone: <a href="tel:+497071979050">+49
+    7071 979050</a><br> Email: <a href="https://www.yworks.com/contact">contact(at)yworks.com</a>
+  </div>
+  <div class="footer-block">
+    <h4>Follow Us</h4>
+    <div class="social">
+      <a href="https://www.yworks.com/products/yfiles-for-html" target="_blank" class="web">Homepage</a> <a href="https://www.yworks.com/newsfeed"
+      target="_blank" class="rss">RSS Feed</a>
+    </div>
+    <div>
+      <a href="https://github.com/yWorks" target="_blank" class="gh">GitHub</a> <a href="https://twitter.com/yworks"
+      target="_blank" class="tw">Twitter</a> <a href="https://www.youtube.com/user/yWorksTube" target="_blank"
+      class="yt">YouTube</a>
+    </div>
+    <br><br> <span class="copyright">COPYRIGHT &#x00A9; 2019 yWorks</span><br> <a
+    href="https://www.yworks.com/company/legal/imprint">Imprint</a> | <a
+    href="https://www.yworks.com/company/legal/terms-of-use">Terms of Use</a> | <a
+    href="https://www.yworks.com/company/legal/privacy">Privacy Policy</a>
+  </div>
+  <div class="footer-block logo"></div>
+</footer>
+</body>
+</html>

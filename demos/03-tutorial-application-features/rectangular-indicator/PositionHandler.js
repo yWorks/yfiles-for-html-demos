@@ -26,31 +26,31 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { BaseClass, IInputModeContext, IPositionHandler, MutablePoint, Point, Rect } from 'yfiles'
+import {
+  BaseClass,
+  IInputModeContext,
+  IPositionHandler,
+  MutablePoint,
+  MutableRectangle,
+  Point
+} from 'yfiles'
 
+/**
+ * A position handler that moves a given rectangle.
+ */
 export default class PositionHandler extends BaseClass(IPositionHandler) {
   /**
-   * @param {Rect} rectangle
+   * @param {MutableRectangle} rectangle
    */
   constructor(rectangle) {
     super()
     this.rectangle = rectangle
-    this.$offset = new MutablePoint()
+    this.offset = new MutablePoint()
   }
 
   /** @type {Point} */
   get location() {
     return this.rectangle.topLeft
-  }
-
-  /** @type {number} */
-  get offset() {
-    return this.$offset
-  }
-
-  /** @type {number} */
-  set offset(value) {
-    this.$offset = value
   }
 
   /**

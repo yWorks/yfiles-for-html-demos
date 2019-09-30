@@ -32,6 +32,7 @@ import {
   GraphEditorInputMode,
   GraphItemTypes,
   IGraph,
+  IPositionHandler,
   License,
   MutableRectangle,
   Rect

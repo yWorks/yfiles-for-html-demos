@@ -30,9 +30,9 @@ import {
   CompositeLayoutData,
   HierarchicLayout,
   IComparer,
+  LayoutData,
   LayoutMode,
   LayoutOrientation,
-  LayoutStageBase,
   PartitionGrid,
   PortCandidate,
   PortDirections,
@@ -48,84 +48,70 @@ import {
  * and the nodes within the groups the table rows. Edges are connected to specific rows.
  * The rows are sorted according to their y-coordinate in the initial drawing.
  */
-export default class TableLayout extends LayoutStageBase {
-  /**
-   * Creates a new instance of TableLayout.
-   * @param {boolean} fromSketch
-   */
-  constructor(fromSketch) {
-    super()
+export function createTableLayout(fromSketch) {
+  // incremental hierarchic layout is used for the core layout that connects the table nodes
+  const hierarchicLayout = new HierarchicLayout({
+    layoutOrientation: LayoutOrientation.LEFT_TO_RIGHT,
+    layoutMode: fromSketch ? LayoutMode.INCREMENTAL : LayoutMode.FROM_SCRATCH,
+    orthogonalRouting: true,
+    // in case there are a lot of inter-edges, port optimization can take a while
+    // then we want to take cut the calculation short and get a less optimized result
+    maximumDuration: 5000
+  })
 
-    // incremental hierarchic layout is used for the core layout that connects the table nodes
-    const hierarchicLayout = new HierarchicLayout({
-      layoutOrientation: LayoutOrientation.LEFT_TO_RIGHT,
-      layoutMode: fromSketch ? LayoutMode.INCREMENTAL : LayoutMode.FROM_SCRATCH,
-      orthogonalRouting: true,
-      // in case there are a lot of inter-edges, port optimization can take a while
-      // then we want to take cut the calculation short and get a less optimized result
-      maximumDuration: 5000
+  return new RecursiveGroupLayout({
+    coreLayout: hierarchicLayout,
+    autoAssignPortCandidates: true,
+    fromSketchMode: true
+  })
+}
+
+let layoutData
+/**
+ * Gets the layout data that shall be used for the table layout.
+ * @return {LayoutData}
+ */
+export function createTableLayoutData() {
+  if (!layoutData) {
+    // configure layout algorithms
+    // used for laying out the nodes (rows) within the group nodes (tables)
+    const rowLayout = new TabularLayout({
+      layoutPolicy: TabularLayoutPolicy.FIXED_SIZE,
+      // keep the order of the nodes in the initial layout
+      nodeComparer: new IComparer((n1, n2) => {
+        const y1 = n1.graph.getCenter(n1).y
+        const y2 = n2.graph.getCenter(n2).y
+        if (y1 === y2) {
+          return 0
+        }
+        return y1 > y2 ? 1 : -1
+      })
     })
 
-    this.coreLayout = new RecursiveGroupLayout({
-      coreLayout: hierarchicLayout,
-      autoAssignPortCandidates: true,
-      fromSketchMode: true
+    // use a grid with one column and a lot of rows. It must have enough cells for the nodes
+    const grid = new PartitionGrid(1000, 1)
+    grid.rows.forEach(row => {
+      row.topInset = 2.5
+      row.bottomInset = 2.5
     })
-  }
+    // set up port candidates for edges (edges should be attached to the left/right side of the corresponding node
+    const candidates = [
+      PortCandidate.createCandidate(PortDirections.WEST),
+      PortCandidate.createCandidate(PortDirections.EAST)
+    ]
 
-  /**
-   * @param {yfiles.layout.LayoutGraph} graph
-   */
-  applyLayout(graph) {
-    this.applyLayoutCore(graph)
-  }
-
-  /**
-   * Gets the layout data that shall be used for the TableLayout.
-   * @return {yfiles.layout.LayoutData}
-   */
-  static get LAYOUT_DATA() {
-    if (!TableLayout.$layoutData) {
-      // configure layout algorithms
-      // used for laying out the nodes (rows) within the group nodes (tables)
-      const rowLayout = new TabularLayout({
-        layoutPolicy: TabularLayoutPolicy.FIXED_SIZE,
-        // keep the order of the nodes in the initial layout
-        nodeComparer: new IComparer((n1, n2) => {
-          const y1 = n1.graph.getCenter(n1).y
-          const y2 = n2.graph.getCenter(n2).y
-          if (y1 === y2) {
-            return 0
-          }
-          return y1 > y2 ? 1 : -1
-        })
+    layoutData = new CompositeLayoutData(
+      new RecursiveGroupLayoutData({
+        sourcePortCandidates: candidates,
+        targetPortCandidates: candidates,
+        // map each group node to its corresponding layout algorithm;
+        // in this case each group node shall be laid out using the row layout
+        groupNodeLayouts: rowLayout
+      }),
+      new TabularLayoutData({
+        partitionGridData: { grid: grid }
       })
-
-      // use a grid with one column and a lot of rows. It must have enough cells for the nodes
-      const grid = new PartitionGrid(1000, 1)
-      grid.rows.forEach(row => {
-        row.topInset = 2.5
-        row.bottomInset = 2.5
-      })
-      // set up port candidates for edges (edges should be attached to the left/right side of the corresponding node
-      const candidates = [
-        PortCandidate.createCandidate(PortDirections.WEST),
-        PortCandidate.createCandidate(PortDirections.EAST)
-      ]
-
-      TableLayout.$layoutData = new CompositeLayoutData(
-        new RecursiveGroupLayoutData({
-          sourcePortCandidates: candidates,
-          targetPortCandidates: candidates,
-          // map each group node to its corresponding layout algorithm;
-          // in this case each group node shall be laid out using the row layout
-          groupNodeLayouts: rowLayout
-        }),
-        new TabularLayoutData({
-          partitionGridData: { grid: grid }
-        })
-      )
-    }
-    return TableLayout.$layoutData
+    )
   }
+  return layoutData
 }

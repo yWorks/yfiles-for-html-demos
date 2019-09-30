@@ -342,17 +342,11 @@ function initializeEditorSynchronization() {
  * successful.
  * @param {string} value The new editor content.
  */
-function onEditorContentChanged(value) {
+async function onEditorContentChanged(value) {
   graphComponent.selection.clear()
   try {
-    graphmlSupport.graphMLIOHandler
-      .readFromGraphMLText(graphComponent.graph, value)
-      .then(() => {
-        editorSync.onGraphMLParsed()
-      })
-      .catch(error => {
-        editorSync.onGraphMLError(error)
-      })
+    await graphmlSupport.graphMLIOHandler.readFromGraphMLText(graphComponent.graph, value)
+    editorSync.onGraphMLParsed()
   } catch (error) {
     editorSync.onGraphMLError(error)
   }
@@ -425,22 +419,21 @@ function onGraphModified() {
   let graphChanged = true
 
   // Use a timeout, so we don't synchronize too often (e.g. for each node move event)
-  setTimeout(() => {
+  setTimeout(async () => {
     if (graphChanged) {
       graphChanged = false
 
-      graphmlSupport.graphMLIOHandler.write(graphComponent.graph).then(str => {
-        let selectedMasterItem = null
-        if (graphComponent.selection.size > 0) {
-          selectedMasterItem = getMasterItem(graphComponent.selection.first())
-        }
-        if (graphModifiedListener !== null) {
-          graphModifiedListener({
-            graphml: str,
-            selectedItem: selectedMasterItem
-          })
-        }
-      })
+      const str = await graphmlSupport.graphMLIOHandler.write(graphComponent.graph)
+      let selectedMasterItem = null
+      if (graphComponent.selection.size > 0) {
+        selectedMasterItem = getMasterItem(graphComponent.selection.first())
+      }
+      if (graphModifiedListener !== null) {
+        graphModifiedListener({
+          graphml: str,
+          selectedItem: selectedMasterItem
+        })
+      }
     }
   }, 100)
 }
@@ -523,34 +516,32 @@ function clearGraph() {
  * Reads the default sample graph.
  * @param {IGraph} graph The graph instance that will be populated with the parsed graph.
  */
-function loadSampleGraph(graph) {
+async function loadSampleGraph(graph) {
   // Temporarily disconnect editor synchronization, so the graph isn't
   // serialized repeatedly while loading.
   graphModifiedListener = null
 
-  readGraph(graphmlSupport.graphMLIOHandler, graph, 'resources/sample-graph.graphml').then(() => {
-    // when done - fit the bounds
-    graphComponent.fitGraphBounds()
-    graphComponent.graph.undoEngine.clear()
-    // Trigger synchronization of the GraphML editor
-    onGraphModified()
-    // reconnect editor synchronization
-    graphModifiedListener = editorSync.onGraphModified.bind(editorSync)
-    graphComponent.graph.undoEngine.clear()
-  })
+  await readGraph(graphmlSupport.graphMLIOHandler, graph, 'resources/sample-graph.graphml')
+  // when done - fit the bounds
+  graphComponent.fitGraphBounds()
+  graphComponent.graph.undoEngine.clear()
+  // Trigger synchronization of the GraphML editor
+  onGraphModified()
+  // reconnect editor synchronization
+  graphModifiedListener = editorSync.onGraphModified.bind(editorSync)
+  graphComponent.graph.undoEngine.clear()
 }
 
 /**
  * Called when the open command executed is executed and applies a layout after loading the graph.
  */
-function onOpenCommandExecuted() {
+async function onOpenCommandExecuted() {
   // Temporarily disconnect editor synchronization, so the graph isn't
   // serialized repeatedly while loading.
   graphModifiedListener = null
-  graphmlSupport.openFile(graphComponent.graph).then(() => {
-    onGraphModified()
-    graphModifiedListener = editorSync.onGraphModified.bind(editorSync)
-  })
+  await graphmlSupport.openFile(graphComponent.graph)
+  onGraphModified()
+  graphModifiedListener = editorSync.onGraphModified.bind(editorSync)
 }
 
 /**

@@ -1,6 +1,9 @@
 {
-  "name": "yfiles.demo.angular-cli",
+  "name": "angular-cli-demo-for-yfiles-for-html",
   "version": "1.0.0",
+  "author": "yWorks GmbH <yfileshtml@yworks.com>",
+  "license": "https://www.yworks.com/products/yfiles-for-html/sla",
+  "private": true,
   "scripts": {
     "postinstall": "cd ../.. && yarn || npm i",
     "ng": "ng",
@@ -8,36 +11,35 @@
     "build-dev": "ng build",
     "build": "ng build --prod"
   },
-  "private": true,
   "peerDependencies": {
-    "yfiles": "^2.2.0"
+    "yfiles": "22.0.2"
   },
   "dependencies": {
-    "@angular/animations": "7.0.2",
-    "@angular/common": "7.0.2",
-    "@angular/compiler": "7.0.2",
-    "@angular/core": "7.0.2",
-    "@angular/forms": "7.0.2",
+    "@angular/animations": "8.2.6",
+    "@angular/common": "8.2.6",
+    "@angular/compiler": "8.2.6",
+    "@angular/core": "8.2.6",
+    "@angular/forms": "8.2.6",
     "@angular/http": "7.0.2",
-    "@angular/platform-browser": "7.0.2",
-    "@angular/platform-browser-dynamic": "7.0.2",
-    "@angular/router": "7.0.2",
+    "@angular/platform-browser": "8.2.6",
+    "@angular/platform-browser-dynamic": "8.2.6",
+    "@angular/router": "8.2.6",
     "classlist.js": "^1.1.20150312",
     "core-js": "2.5.7",
-    "rxjs": "6.3.3",
-    "zone.js": "0.8.26"
+    "rxjs": "6.5.3",
+    "zone.js": "0.9.1"
   },
   "devDependencies": {
-    "@angular-builders/custom-webpack": "^7.4.3",
-    "@angular-devkit/build-angular": "0.13.5",
-    "@angular/cli": "7.0.4",
-    "@angular/compiler-cli": "7.0.2",
-    "@angular/language-service": "7.0.2",
+    "@angular-builders/custom-webpack": "^8.0.0",
+    "@angular-devkit/build-angular": "0.800.0",
+    "@angular/cli": "8.0.0",
+    "@angular/compiler-cli": "8.0.0",
+    "@angular/language-service": "8.0.0",
     "@babel/core": "^7.4.0",
     "@babel/preset-env": "^7.4.2",
     "@babel/preset-typescript": "^7.3.3",
-    "typescript": "3.1.6",
+    "typescript": "3.4.5",
     "babel-loader": "^8.0.5",
-    "@yworks/optimizer": "^1.0.0"
+    "@yworks/optimizer": "^1.0.5"
   }
 }

@@ -33,11 +33,12 @@
 
   var possibleServerUrl = window.location
     .toString()
-    .replace(/.*?\/demos\/(.*)/, 'http://localhost:3000/demos/$1')
+    .replace(/.*?\/demos\/(.*)/, 'http://localhost:4242/demos/$1')
 
   var showES6warning =
     window.location.hostname.indexOf('yworks.') < 0 &&
     window.location.pathname.indexOf('es5/demos') < 0 &&
+    window.location.pathname.indexOf('README.html') < 0 &&
     !hasEs6Support()
 
   var fileSystemWarning =
@@ -46,7 +47,7 @@
     '    <p>' +
     '      Most demos in this package use yFiles as a local NPM dependency with ES Module imports.' +
     '      Hence, a preprocessing is necessary to resolve the ES Module imports. Usually, this is done by' +
-    '      bundling the application e.g. with Webpack. Alternatively, the imports can be resolved with ' +
+    '      bundling the application e.g. with webpack. Alternatively, the imports can be resolved with ' +
     '      a preconfigured server. A <a href="../../demo-server/README.html" style="color: #ffaf00; text-decoration: underline;">local Node.js Express server</a>' +
     '      is included in the yFiles for HTML package and can be run with: ' +
     '    </p>' +
@@ -62,7 +63,7 @@
       : '') +
     '</p>' +
     '    <div style="padding: 10px; border: 3px solid #f7f7f7;">' +
-    '      <svg version="1.1" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="64px" height="64px" viewBox="0 0 24 24" xml:space="preserve" style="float: left;margin-right: 1em; padding-top: 15px;padding-left: 10px;">' +
+    '      <svg version="1.1" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="64px" height="64px" viewBox="0 0 24 24" xml:space="preserve" style="float: left;margin-right: 1em;padding-left: 10px;">' +
     '        <path stroke="white" fill="#336699" d="M3 22.5c-0.708 0-1.27-0.276-1.55-0.759-0.278-0.481-0.235-1.11 0.119-1.72l9-15.6c0.354-0.613 0.876-0.965 1.43-0.965s1.08 0.352 1.43 0.965l9 15.6c0.354 0.613 0.397 1.24 0.119 1.72-0.279 0.482-0.844 0.759-1.55 0.759h-18"/>' +
     '        <ellipse fill="white" rx="1.25" ry="1.25" cx="12.00" cy="18.40"/>' +
     '        <path fill="white" d="M12 8.69c-0.6 0-1 0.45-1 1v5.01c0 0.5 0.4 1 1 1s1-0.5 1-1v-5.01c0-0.55-0.4-1-1-1z"/>' +
@@ -73,6 +74,13 @@
     '         <a href="https://requirejs.org/" style="color: #ffaf00; text-decoration: underline;">require.js</a>)' +
     "         or globally with script tags, which both don't require any preprocessing or bundling at all." +
     '        </p>' +
+    '        <p style="margin-bottom: 0">For example, browsers that support ES Module imports can import modules directly from a relative path. Thus replacing</p>' +
+    '        <pre style="color: #333;background-color: #f7f7f7;margin: 5px 0;">\n' +
+    "  import { ... } from 'yfiles' </pre>" +
+    '        <p style="margin: 0">with</p>' +
+    '        <pre style="color: #333;background-color: #f7f7f7;margin: 5px 0;">\n' +
+    "  import { ... } from '../../../lib/es-modules/yfiles.js' </pre>" +
+    '        <p style="margin-top: 0;">removes the need of resolving symbolic module names.</p>' +
     '        <p style="margin-bottom: 0;">' +
     '         For more information see the <a href="../../../doc/api/index.html#/dguide/getting_started-application#getting_started-module_loading" style="color: #ffaf00; text-decoration: underline;">Module Loading</a> ' +
     "         chapter in the Developer's Guide." +
@@ -98,11 +106,13 @@
   if (showES6warning) {
     showWarningTemplate(missingEs6Support)
   } else {
-    setTimeout(function() {
-      if (window.yfiles && !(window.yfiles.collections && window.yfiles.collections.List)) {
-        showWarningTemplate(fileSystemWarning)
-      }
-    }, 6000)
+    if (!/notimeout/.test(location.search)) {
+      setTimeout(function() {
+        if (window.yfiles && !(window.yfiles.collections && window.yfiles.collections.List)) {
+          showWarningTemplate(fileSystemWarning)
+        }
+      }, 10000)
+    }
   }
 
   function hasEs6Support() {

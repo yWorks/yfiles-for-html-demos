@@ -66,7 +66,7 @@ function run(licenseData) {
   showApp(graphComponent)
 }
 
-function runLayout() {
+async function runLayout() {
   // create a new layout algorithm
   const hierarchicLayout = new HierarchicLayout({
     orthogonalRouting: true
@@ -129,19 +129,17 @@ function runLayout() {
 
   // perform the layout operation
   setUIDisabled(true)
-  graphComponent
-    .morphLayout(hierarchicLayout, '1s', hierarchicLayoutData)
-    .then(() => {
-      setUIDisabled(false)
-    })
-    .catch(error => {
-      setUIDisabled(false)
-      if (typeof window.reportError === 'function') {
-        window.reportError(error)
-      } else {
-        throw error
-      }
-    })
+  try {
+    await graphComponent.morphLayout(hierarchicLayout, '1s', hierarchicLayoutData)
+  } catch (error) {
+    if (typeof window.reportError === 'function') {
+      window.reportError(error)
+    } else {
+      throw error
+    }
+  } finally {
+    setUIDisabled(false)
+  }
 }
 
 /**
@@ -303,7 +301,7 @@ function initializeConverters() {
         case 7:
           return 'indianred'
         default: {
-          return `rgb(${Math.round(value * 255 / 7)}, ${Math.round(value * 255 / 7)}, 255)`
+          return `rgb(${Math.round((value * 255) / 7)}, ${Math.round((value * 255) / 7)}, 255)`
         }
       }
     }

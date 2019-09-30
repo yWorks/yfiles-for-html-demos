@@ -44,7 +44,14 @@ export default class FileSaveSupport {
       const format = fileName.split('.')[1].toLowerCase()
 
       if (FileSaveSupport.isFileConstructorAvailable()) {
-        if (format === 'txt' || format === 'json' || format === 'svg' || format === 'graphml') {
+        if (
+          format === 'txt' ||
+          format === 'json' ||
+          format === 'svg' ||
+          format === 'graphml' ||
+          format === 'pdf' ||
+          format === 'png'
+        ) {
           let mimeType = ''
           switch (format) {
             case 'txt':
@@ -55,13 +62,40 @@ export default class FileSaveSupport {
             case 'svg':
               mimeType = 'image/svg+xml'
               break
+            case 'png':
+              mimeType = 'image/png'
+              break
             case 'graphml':
               mimeType = 'application/xml'
               break
+            case 'pdf':
+              mimeType = 'text/plain; charset=x-user-defined'
+              break
+          }
+
+          let blob = null
+          if (format === 'pdf') {
+            // encode content to make transparent images work correctly
+            const uint8Array = new Uint8Array(fileContent.length)
+            for (let i = 0; i < fileContent.length; i++) {
+              uint8Array[i] = fileContent.charCodeAt(i)
+            }
+            blob = new Blob([uint8Array], { type: mimeType })
+          } else if (format === 'png') {
+            // save as binary data
+            const dataUrlParts = fileContent.split(',')
+            const bString = window.atob(dataUrlParts[1])
+            const byteArray = []
+            for (let i = 0; i < bString.length; i++) {
+              byteArray.push(bString.charCodeAt(i))
+            }
+            blob = new Blob([new Uint8Array(byteArray)], { type: mimeType })
+          } else {
+            blob = new Blob([fileContent], { type: mimeType })
           }
 
           // workaround for supporting non-binary data
-          fileContent = URL.createObjectURL(new Blob([fileContent], { type: mimeType }))
+          fileContent = URL.createObjectURL(blob)
         }
 
         const aElement = document.createElement('a')
@@ -88,6 +122,13 @@ export default class FileSaveSupport {
           blob = new Blob([new Uint8Array(byteArray)], {
             type: dataUrlParts[0].match(/:(.*?);/, '')[1]
           })
+        } else if (format === 'pdf') {
+          // encode content to make transparent images work correctly
+          const uint8Array = new Uint8Array(fileContent.length)
+          for (let i = 0; i < fileContent.length; i++) {
+            uint8Array[i] = fileContent.charCodeAt(i)
+          }
+          blob = new Blob([uint8Array], { type: 'text/plain; charset=x-user-defined' })
         } else {
           blob = new Blob([fileContent])
         }

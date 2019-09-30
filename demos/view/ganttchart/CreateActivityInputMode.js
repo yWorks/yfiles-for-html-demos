@@ -35,7 +35,7 @@ import {
   SimpleNode
 } from 'yfiles'
 
-import Mapper from './Mapper.js'
+import GanttMapper from './GanttMapper.js'
 import ActivityNodeStyle from './ActivityNodeStyle.js'
 
 /**
@@ -49,13 +49,15 @@ import ActivityNodeStyle from './ActivityNodeStyle.js'
 export default class CreateActivityInputMode extends MarqueeSelectionInputMode {
   /**
    * Creates a new instance.
-   * @param mapper The mapper.
-   * @param applyCallback The callback that is executed when the gesture is finished.
+   * @param {GanttMapper} mapper The mapper.
+   * @param {function(INode):void} applyCallback The callback that is executed when the gesture is finished.
    */
   constructor(mapper, applyCallback) {
     super()
 
+    /** @type {GanttMapper} */
     this.mapper = mapper
+    /** @type {function(INode):void} */
     this.applyCallback = applyCallback
 
     // create the dummy node
@@ -168,9 +170,9 @@ export default class CreateActivityInputMode extends MarqueeSelectionInputMode {
   getDummyNodeLayout(marqueeRect) {
     const x = marqueeRect.x
     // get the y coordinate of the task the drag was started in
-    const y = this.mapper.getTaskY(this.task) + Mapper.activitySpacing
+    const y = this.mapper.getTaskY(this.task) + GanttMapper.activitySpacing
     const width = marqueeRect.width
-    const height = Mapper.activityHeight
+    const height = GanttMapper.activityHeight
     return new Rect(x, y, width, height)
   }
 }

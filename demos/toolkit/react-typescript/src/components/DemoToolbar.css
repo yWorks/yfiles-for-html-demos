@@ -1,0 +1,108 @@
+/****************************************************************************
+ ** @license
+ ** This demo file is part of yFiles for HTML 2.2.
+ ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** 72070 Tuebingen, Germany. All rights reserved.
+ **
+ ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+ ** of demo files in source code or binary form, with or without
+ ** modification, is not permitted.
+ **
+ ** Owners of a valid software license for a yFiles for HTML version that this
+ ** demo is shipped with are allowed to use the demo source code as basis
+ ** for their own yFiles for HTML powered applications. Use of such programs is
+ ** governed by the rights and conditions as set out in the yFiles for HTML
+ ** license agreement.
+ **
+ ** THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+ ** WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ ** MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+ ** NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ ** SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+ ** TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ ** PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+ ** LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+ ** NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ **
+ ***************************************************************************/
+.demo-toolbar > * {
+  vertical-align: middle;
+}
+.demo-toolbar button {
+  line-height: normal;
+  height: 24px;
+}
+.demo-toolbar button,
+.demo-toolbar > label {
+  display: inline-block;
+  outline: none;
+  border: none;
+  background-repeat: no-repeat;
+  background-position: 50% 50%;
+  background-color: transparent;
+  height: 24px;
+  width: 24px;
+  line-height: 24px;
+  box-sizing: border-box;
+  padding: 0;
+  cursor: pointer;
+}
+.demo-toolbar button:hover,
+.demo-toolbar > label:hover {
+  background-color: #dedede;
+}
+.demo-toggle-button {
+  display: none !important;
+}
+.demo-toggle-button:checked + label {
+  background-color: #dedede;
+}
+.demo-toggle-button:checked:hover + label {
+  background-color: #b2b2b2;
+}
+.demo-toggle-button:disabled + label {
+  opacity: 0.5;
+  cursor: default;
+  background-color: transparent;
+}
+.demo-toggle-button.labeled + label {
+  background-position-x: left;
+  width: inherit;
+  padding: 0 2px;
+  line-height: 24px;
+}
+.demo-toolbar button:active,
+.demo-toolbar > label:active,
+.demo-toolbar .demo-toggle-button:checked:active + label {
+  background-color: #b2b2b2;
+}
+.demo-toolbar button:disabled,
+.demo-toolbar > .demo-toggle-button:disabled + label {
+  opacity: 0.5;
+  cursor: default;
+  background-color: transparent;
+}
+.demo-separator {
+  height: 20px;
+  width: 1px;
+  background: #999;
+  display: inline-block;
+  vertical-align: middle;
+  margin: 0 2px;
+}
+.demo-icon-yIconReload {
+  background-image: url('../assets/reload-16.svg');
+}
+.demo-icon-yIconZoomOriginal {
+  background-image: url('../assets/zoom-original-16.svg');
+}
+.demo-icon-yIconZoomIn {
+  background-image: url('../assets/magnify-16.svg');
+}
+.demo-icon-yIconZoomOut {
+  background-image: url('../assets/demagnify-16.svg');
+}
+.demo-icon-yIconZoomFit {
+  background-image: url('../assets/fit-16.svg');
+}

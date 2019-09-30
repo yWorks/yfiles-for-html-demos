@@ -73,22 +73,20 @@ function run(licenseData) {
 /**
  * Calculates a hierarchic layout for the current graph.
  */
-function applyLayout() {
+async function applyLayout() {
   setUIDisabled(true)
   const layout = new yfiles.layout.MinimumNodeSizeStage(new yfiles.hierarchic.HierarchicLayout())
-  graphComponent
-    .morphLayout(layout, '1s')
-    .then(() => {
-      setUIDisabled(false)
-    })
-    .catch(error => {
-      setUIDisabled(false)
-      if (typeof window.reportError === 'function') {
-        window.reportError(error)
-      } else {
-        throw error
-      }
-    })
+  try {
+    graphComponent.morphLayout(layout, '1s')
+  } catch (error) {
+    if (typeof window.reportError === 'function') {
+      window.reportError(error)
+    } else {
+      throw error
+    }
+  } finally {
+    setUIDisabled(false)
+  }
 }
 
 /**

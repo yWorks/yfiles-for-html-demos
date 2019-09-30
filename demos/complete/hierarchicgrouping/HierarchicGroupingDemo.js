@@ -37,6 +37,7 @@ import {
   HierarchicLayoutEdgeRoutingStyle,
   HierarchicLayoutRoutingStyle,
   ICommand,
+  IGraph,
   LayoutMode,
   License,
   Point,
@@ -80,6 +81,15 @@ function run(licenseData) {
   // styling the overviewComponent
   overviewComponent.graphVisualCreator = new DemoStyleOverviewPaintable(graphComponent.graph)
 
+  // Assign the default demo styles
+  initDemoStyles(graphComponent.graph)
+
+  // managing the appearance of folder nodes
+  const defaultFolderNodeConverter = new DefaultFolderNodeConverter()
+  defaultFolderNodeConverter.copyFirstLabel = true
+  defaultFolderNodeConverter.folderNodeSize = new Size(110, 60)
+  foldingManager.folderNodeConverter = defaultFolderNodeConverter
+
   // build the graph from the JSON data and display it at the top
   buildGraph(graphComponent.graph)
   centerAtTop(graphComponent)
@@ -94,39 +104,30 @@ function run(licenseData) {
 /**
  * Builds the graph using the JSON Data
  * After building the graph, a hierarchic layout is applied.
+ * @param {IGraph} graph The folding view
  */
 function buildGraph(graph) {
-  // Assign the default demo styles
-  initDemoStyles(graph)
+  // Create the builder on the master graph
+  const builder = createGraphBuilder(graph.foldingView.manager.masterGraph)
 
-  // managing the appearance of folder nodes
-  const defaultFolderNodeConverter = new DefaultFolderNodeConverter()
-  defaultFolderNodeConverter.copyFirstLabel = true
-  defaultFolderNodeConverter.folderNodeSize = new Size(110, 60)
-  graph.foldingView.manager.folderNodeConverter = defaultFolderNodeConverter
-
-  // Create the builder
-  const builder = createGraphBuilder()
-
-  // Build the graph from the data
-  graph = builder.buildGraph()
+  // Build the master graph from the data
+  builder.buildGraph()
 
   // Iterate the edge data and create the according bends and Ports
   graph.edges.forEach(edge => {
     if (edge.tag.bends) {
       edge.tag.bends.forEach(bend => {
-        graph.addBend(edge, new Point(bend.x, bend.y))
+        graph.addBend(edge, Point.from(bend))
       })
     }
-    graph.setPortLocation(edge.sourcePort, new Point(edge.tag.sourcePort.x, edge.tag.sourcePort.y))
-    graph.setPortLocation(edge.targetPort, new Point(edge.tag.targetPort.x, edge.tag.targetPort.y))
+    graph.setPortLocation(edge.sourcePort, Point.from(edge.tag.sourcePort))
+    graph.setPortLocation(edge.targetPort, Point.from(edge.tag.targetPort))
   })
 
   // set the location of the groups
   graph.nodes.forEach(node => {
     if (graph.isGroupNode(node)) {
-      const layout = node.tag.layout
-      graph.setNodeLayout(node, new Rect(layout.x, layout.y, layout.width, layout.height))
+      graph.setNodeLayout(node, Rect.from(node.tag.layout))
     }
   })
 
@@ -153,10 +154,11 @@ function buildGraph(graph) {
 
 /**
  * Creates and configures the {@link GraphBuilder}.
+ * @param {IGraph} masterGraph The master graph of the {@link GraphComponent}
  * @return {GraphBuilder}
  */
-function createGraphBuilder() {
-  const graphBuilder = new GraphBuilder(graphComponent.graph)
+function createGraphBuilder(masterGraph) {
+  const graphBuilder = new GraphBuilder(masterGraph)
   // Stores the nodes of the graph
   graphBuilder.nodesSource = GraphData.nodesSource
   // Stores the edges of the graph

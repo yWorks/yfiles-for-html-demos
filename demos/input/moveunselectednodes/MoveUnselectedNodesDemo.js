@@ -132,16 +132,42 @@ function initializeInputModes() {
 function onMoveModeChanged() {
   const selectedIndex = document.getElementById('moveModeComboBox').selectedIndex
   if (selectedIndex === 2) {
-    // mode 2 (only top region): set a custom hit testable which detects hits only at the top of the nodes
+    // mode 2 (only top region): set a custom hit testable which detects hits only at the top of
+    // the nodes
     moveUnselectedInputMode.hitTestable = new TopInsetsHitTestable(
       moveUnselectedInputMode.hitTestable,
       graphComponent.inputMode
     )
   } else if (moveUnselectedInputMode.hitTestable instanceof TopInsetsHitTestable) {
-    // all other modes: if a TopInsetsHitTestable is the current hit testable, restore the original hit testable
+    // all other modes: if a TopInsetsHitTestable is the current hit testable, restore the original
+    // hit testable
     moveUnselectedInputMode.hitTestable = moveUnselectedInputMode.hitTestable.original
   }
-  document.getElementById('toggleMoveEnabled').disabled = selectedIndex !== 3
+  const moveEnabledButton = document.getElementById('toggleMoveEnabled')
+  const moveEnabledLabel = document.querySelector('label[for="toggleMoveEnabled"]')
+  const showMoveEnabledButton = selectedIndex === 3
+  moveEnabledButton.style.display = showMoveEnabledButton ? 'inline-block' : 'none'
+  moveEnabledLabel.style.display = showMoveEnabledButton ? 'inline-block' : 'none'
+}
+
+/**
+ * Called when the edge creation mode combo box has changed:
+ * Adjusts the edge creation behavior.
+ */
+function onEdgeCreationModeChanged() {
+  const selectedIndex = document.getElementById('edgeCreationModeComboBox').selectedIndex
+  const /** @type GraphEditorInputMode */ geim = graphComponent.inputMode
+  if (selectedIndex === 0) {
+    geim.moveUnselectedInputMode.priority = 41
+    geim.moveInputMode.priority = 40
+    geim.createEdgeInputMode.startOverCandidateOnly = false
+    geim.createEdgeInputMode.showPortCandidates = 'TARGET'
+  } else if (selectedIndex === 1) {
+    geim.moveUnselectedInputMode.priority = 47
+    geim.moveInputMode.priority = 46
+    geim.createEdgeInputMode.startOverCandidateOnly = true
+    geim.createEdgeInputMode.showPortCandidates = 'ALL'
+  }
 }
 
 /**
@@ -177,6 +203,7 @@ function registerCommands() {
   bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent)
   bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
   bindChangeListener("select[data-command='moveModeChanged']", onMoveModeChanged)
+  bindChangeListener("select[data-command='edgeCreationModeChanged']", onEdgeCreationModeChanged)
 
   bindAction("input[data-command='ToggleClassicMode']", () => {
     graphComponent.inputMode.moveInputMode.enabled = !graphComponent.inputMode.moveInputMode.enabled
@@ -218,10 +245,11 @@ class TopInsetsHitTestable extends BaseClass(IHitTestable) {
    * @return {boolean}
    */
   isHit(context, location) {
-    // Get the current hit tester from the input mode context
-    const /** @type {IHitTester} */ hitTester = this.$inputMode.inputModeContext.lookup(
-      IHitTester.$class
-    )
+    /*
+      Get the current hit tester from the input mode context
+      @type {IHitTester}
+     */
+    const hitTester = this.$inputMode.inputModeContext.lookup(IHitTester.$class)
     if (hitTester !== null) {
       // get an enumerator over all elements at the given location
       const hits = hitTester.enumerateHits(this.$inputMode.inputModeContext, location)

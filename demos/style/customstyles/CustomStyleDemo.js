@@ -28,6 +28,7 @@
  ***************************************************************************/
 import {
   CollapsibleNodeStyleDecorator,
+  CollapsibleNodeStyleDecoratorRenderer,
   ExteriorLabelModel,
   ExteriorLabelModelPosition,
   FoldingManager,

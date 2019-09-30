@@ -234,8 +234,8 @@ export default class HierarchicGrouping {
         })
         // store coordinates and center node afterwards
         const layout = childNode.layout
-        nodesCoordinates.set(childNode, new Point(layout.x, layout.y))
-        nodeSizes.set(childNode, new Size(layout.width, layout.height))
+        nodesCoordinates.set(childNode, Point.from(layout))
+        nodeSizes.set(childNode, Size.from(layout))
         graph.setNodeLayout(childNode, new Rect(group.layout.center.x, group.layout.center.y, 1, 1))
       })
     }

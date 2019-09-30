@@ -1,0 +1,38 @@
+{
+  "name": "react-typescript-demo-for-yfiles-for-html",
+  "version": "1.0.0",
+  "author": "yWorks GmbH <yfileshtml@yworks.com>",
+  "license": "https://www.yworks.com/products/yfiles-for-html/sla",
+  "private": true,
+  "dependencies": {
+    "@types/jest": "24.0.17",
+    "@types/node": "12.7.1",
+    "@types/react": "16.9.0",
+    "@types/react-dom": "16.8.5",
+    "react": "^16.9.0",
+    "react-dom": "^16.9.0",
+    "react-scripts": "3.0.1",
+    "typescript": "3.4.5"
+  },
+  "peerDependencies": {
+    "yfiles": "22.0.2"
+  },
+  "scripts": {
+    "preinstall": "node -e \"require('fs').copyFileSync('../../../lib/license.json','./src/license.json'); require('fs').copyFileSync('../../../ide-support/yfiles-typeinfo.js','./public/yfiles-typeinfo.js')\"",
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "eject": "react-scripts eject"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}

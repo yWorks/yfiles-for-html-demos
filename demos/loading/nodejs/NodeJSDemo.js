@@ -87,7 +87,7 @@ function run(licenseData) {
  * calculation. This is set to <code>true</code> if this method is called directly after
  * loading a new sample graph.
  */
-function runNodeJSLayout(clearUndo) {
+async function runNodeJSLayout(clearUndo) {
   showLoading()
 
   // transfer the graph structure and layout in JSON format
@@ -114,25 +114,20 @@ function runNodeJSLayout(clearUndo) {
     },
     body: JSON.stringify(jsonWriter.write(graphComponent.graph))
   }
-
-  fetch('http://localhost:3001/layout', initObject)
-    .then(response => response.json())
-    .then(function(data) {
-      if (clearUndo) {
-        graphComponent.graph.undoEngine.clear()
-      }
-      applyCalculatedLayout(data, clearUndo)
-      hideLoading()
-    })
-    .catch(() => {
-      if (clearUndo) {
-        graphComponent.graph.undoEngine.clear()
-      }
-      hideLoading()
-      alert(
-        'Layout request failed. Is the layout server running? \n\nPlease start the layout server and reload the demo.\n'
-      )
-    })
+  try {
+    const response = await fetch('http://localhost:3001/layout', initObject)
+    const data = await response.json()
+    applyCalculatedLayout(data, clearUndo)
+  } catch (e) {
+    alert(
+      'Layout request failed. Is the layout server running? \n\nPlease start the layout server and reload the demo.\n'
+    )
+  } finally {
+    if (clearUndo) {
+      graphComponent.graph.undoEngine.clear()
+    }
+    hideLoading()
+  }
 }
 
 /**
@@ -143,7 +138,7 @@ function runNodeJSLayout(clearUndo) {
  * calculation. This is set to <code>true</code> if this method is called directly after
  * loading a new sample graph.
  */
-function applyCalculatedLayout(response, clearUndo) {
+async function applyCalculatedLayout(response, clearUndo) {
   const nodes = response.nodeList
   const edges = response.edgeList
 
@@ -204,14 +199,13 @@ function applyCalculatedLayout(response, clearUndo) {
   const parallelAnimation = IAnimation.createParallelAnimation([graphAnimation, viewportAnimation])
   const animator = new Animator(graphComponent)
 
-  animator.animate(parallelAnimation).then(() => {
-    compoundEdit.commit()
-    if (clearUndo) {
-      compoundEdit.cancel()
-      graphComponent.graph.undoEngine.clear()
-    }
-    graphComponent.contentRect = targetBounds
-  })
+  await animator.animate(parallelAnimation)
+  compoundEdit.commit()
+  if (clearUndo) {
+    compoundEdit.cancel()
+    graphComponent.graph.undoEngine.clear()
+  }
+  graphComponent.contentRect = targetBounds
 }
 
 /**

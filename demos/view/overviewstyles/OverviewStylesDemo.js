@@ -31,11 +31,13 @@ import {
   GraphMLIOHandler,
   GraphOverviewComponent,
   GraphOverviewSvgVisualCreator,
+  GraphOverviewWebGLVisualCreator,
   GraphViewerInputMode,
   ICommand,
   License,
   OverviewInputMode,
   PolylineEdgeStyle,
+  RenderModes,
   ShowFocusPolicy,
   TemplateNodeStyle
 } from 'yfiles'
@@ -48,6 +50,7 @@ import {
   showApp
 } from '../../resources/demo-app.js'
 import loadJson from '../../resources/load-json.js'
+import { webGlSupported } from '../../utils/Workarounds.js'
 
 /**
  * The GraphComponent
@@ -62,8 +65,8 @@ let graphComponent = null
 let overviewComponent = null
 
 /**
- * The graph component that use the overview inputMode to let the overview graph use the same styles as the
- * graphComponent.
+ * The graph component that use the overview inputMode to let the overview graph use the same
+ * styles as the graphComponent.
  * @type {GraphComponent}
  **/
 let overviewGraphComponent = null
@@ -102,6 +105,20 @@ function run(licenseData) {
 
   registerCommands()
 
+  const overViewStyleBox = document.getElementById('graphChooserBox')
+
+  if (!webGlSupported) {
+    // remove WebGL option if not supported by client
+    document.getElementById('no-webgl-support').style.display = 'block'
+    const webGLOption = overViewStyleBox.querySelector(
+      "option[value='GraphOverviewWebGLVisualCreator']"
+    )
+    overViewStyleBox.removeChild(webGLOption)
+  }
+
+  const initialStyle = overViewStyleBox.value
+  overviewStyling(initialStyle)
+
   showApp(graphComponent, overviewComponent)
 }
 
@@ -112,23 +129,25 @@ function run(licenseData) {
 function overviewStyling(styleType) {
   switch (styleType) {
     case 'GraphOverviewSvgVisualCreator':
+      overviewComponent.renderMode = RenderModes.SVG
       // creates the style to the overview using the svg visual creator
       overviewComponent.graphVisualCreator = getOverviewSvgVisualCreator()
 
       // updates the overview component then show the overview graph
       overviewComponent.updateVisualAsync().then(() => {
-        // hide the overview graph that use the GraphComponent styles and show the overview graph that use the canvas or Svg visual creator
+        // hide the overview graph that use the GraphComponent styles and show the overview graph that use the canvas, SVG or WebGL creator
         document.getElementById('overviewGraphComponent').style.display = 'none'
         document.getElementById('overviewComponent').style.display = 'block'
       })
       break
     case 'GraphOverviewCanvasVisualCreator':
+      overviewComponent.renderMode = RenderModes.CANVAS
       // creates the style to the overview using the canvas visual creator
       overviewComponent.graphVisualCreator = new OverviewCanvasVisualCreator(graphComponent.graph)
 
       // updates the overview component then show the overview graph
       overviewComponent.updateVisualAsync().then(() => {
-        // hides the overview graph that use the GraphComponent styles and show the overview graph that use the canvas or Svg visual creator
+        // hides the overview graph that use the GraphComponent styles and show the overview graph that use the canvas, SVG or WebGL creator
         document.getElementById('overviewGraphComponent').style.display = 'none'
         document.getElementById('overviewComponent').style.display = 'block'
       })
@@ -145,6 +164,18 @@ function overviewStyling(styleType) {
         overviewGraphComponent.fitGraphBounds()
       })
       break
+    case 'GraphOverviewWebGLVisualCreator':
+      overviewComponent.renderMode = RenderModes.WEB_GL
+      // creates the style to the overview using the svg visual creator
+      overviewComponent.graphVisualCreator = getOverviewWebGLVisualCreator()
+
+      // updates the overview component then show the overview graph
+      overviewComponent.updateVisualAsync().then(() => {
+        // hide the overview graph that use the GraphComponent styles and show the overview graph that use the canvas, SVG or WebGL visual creator
+        document.getElementById('overviewGraphComponent').style.display = 'none'
+        document.getElementById('overviewComponent').style.display = 'block'
+      })
+      break
   }
 }
 
@@ -157,6 +188,13 @@ function getOverviewSvgVisualCreator() {
   overviewSvgVisualCreator.nodeStyle = new TemplateNodeStyle('overViewNodeStyle')
   overviewSvgVisualCreator.edgeStyle = new PolylineEdgeStyle({ stroke: '#336699' })
   return overviewSvgVisualCreator
+}
+/**
+ * Creates the visual creator that uses WebGL rendering.
+ * @return {GraphOverviewWebGLVisualCreator} The visual creator that uses SVG rendering.
+ */
+function getOverviewWebGLVisualCreator() {
+  return new GraphOverviewWebGLVisualCreator(graphComponent.graph)
 }
 /**
  * Registers the JavaScript commands for the GUI elements, typically the

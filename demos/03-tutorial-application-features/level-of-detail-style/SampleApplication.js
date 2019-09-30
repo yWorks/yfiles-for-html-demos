@@ -28,6 +28,7 @@
  ***************************************************************************/
 import {
   GraphComponent,
+  GraphOverviewComponent,
   GraphViewerInputMode,
   IArrow,
   ICommand,

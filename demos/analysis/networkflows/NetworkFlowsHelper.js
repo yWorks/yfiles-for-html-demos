@@ -40,6 +40,7 @@ import {
   InputModeBase,
   MouseButtons,
   MouseEventArgs,
+  Point,
   Rect,
   UndoUnitBase
 } from 'yfiles'
@@ -154,6 +155,12 @@ export class NetworkFlowInputMode extends InputModeBase {
     this.initialSupply = 0
     this.dragFinishedListener = null
     this.oldtag = null
+
+    // initializes listener functions in order to install/uninstall them
+    this.onMouseMoveListener = (sender, evt) => this.onMouseMove(evt.location)
+    this.onMouseDownListener = (sender, evt) => this.onMouseDown(evt.location, evt.buttons)
+    this.onMouseUpListener = (sender, evt) => this.onMouseUp(evt.location)
+    this.onMouseDragListener = (sender, evt) => this.onMouseDrag(evt.location)
   }
 
   /**
@@ -164,20 +171,19 @@ export class NetworkFlowInputMode extends InputModeBase {
   install(context, controller) {
     super.install(context, controller)
     this.graphComponent = context.canvasComponent
-    this.graphComponent.addMouseMoveListener(this.onMouseMove.bind(this))
-    this.graphComponent.addMouseDownListener(this.onMouseDown.bind(this))
-    this.graphComponent.addMouseUpListener(this.onMouseUp.bind(this))
-    this.graphComponent.addMouseDragListener(this.onMouseDrag.bind(this))
+    this.graphComponent.addMouseMoveListener(this.onMouseMoveListener)
+    this.graphComponent.addMouseDownListener(this.onMouseDownListener)
+    this.graphComponent.addMouseUpListener(this.onMouseUpListener)
+    this.graphComponent.addMouseDragListener(this.onMouseDragListener)
     this.state = 'start'
   }
 
   /**
    * Occurs when the mouse has been moved in world coordinates.
-   * @param {Object} sender The source of the event
-   * @param {MouseEventArgs} evt The mouse event data
+   * @param {Point} location The event location in world coordinates
    */
-  onMouseMove(sender, evt) {
-    if (this.controller.active && this.isValidHover(sender, evt)) {
+  onMouseMove(location) {
+    if (this.controller.active && this.isValidHover(location)) {
       this.state = 'hover'
       this.controller.preferredCursor = Cursor.NS_RESIZE
     } else {
@@ -189,18 +195,16 @@ export class NetworkFlowInputMode extends InputModeBase {
   /**
    * Checks whether the mouse hover occurred on a valid position. Valid positions are the edges and the area of a node
    * that represents the flow supply/demand (if the flow can be adjusted like in Minimum Cost flow algorithm).
-   * @param {Object} sender The source of the event
-   * @param {MouseEventArgs} evt The mouse event data
+   * @param {Point} location The event location in world coordinates
    * @return {boolean} True if the mouse hover occurred on a valid position, false otherwise
    */
-  isValidHover(sender, evt) {
-    const location = evt.location
+  isValidHover(location) {
     const hits = this.graphComponent.graphModelManager.hitTester.enumerateHits(
       this.inputModeContext,
       location
     )
 
-    this.hitItem = hits.find(item => hits.firstOrDefault())
+    this.hitItem = hits.firstOrDefault()
 
     if (INode.isInstance(this.hitItem)) {
       if (this.hitItem.tag.adjustable) {
@@ -220,26 +224,25 @@ export class NetworkFlowInputMode extends InputModeBase {
 
   /**
    * Occurs when a mouse button has been pressed.
-   * @param {Object} sender The source of the event
-   * @param {MouseEventArgs} evt The mouse event data
+   * @param {MouseButtons} buttons The state of the mouse buttons at the time of the event creation
+   * @param {Point} location The event location in world coordinates
    */
-  onMouseDown(sender, evt) {
-    if (this.controller.active && this.hitItem && evt.buttons === MouseButtons.LEFT) {
+  onMouseDown(location, buttons) {
+    if (this.controller.active && this.hitItem && buttons === MouseButtons.LEFT) {
       this.state = 'down'
-      this.initialLocation = evt.location
+      this.initialLocation = location
     }
   }
 
   /**
    * Occurs when the mouse is being moved while at least one of the mouse buttons is pressed.
-   * @param {Object} sender The source of the event
-   * @param {MouseEventArgs} evt The mouse event data
+   * @param {Point} location The event location in world coordinates
    */
-  onMouseDrag(sender, evt) {
+  onMouseDrag(location) {
     if (this.controller.active && this.hitItem && this.state === 'down') {
       super.requestMutex()
       this.state = 'drag'
-      this.initialLocation = evt.location
+      this.initialLocation = location
       // drag has started, fire the event
       if (this.dragStartedListener) {
         this.dragStartedListener()
@@ -254,7 +257,7 @@ export class NetworkFlowInputMode extends InputModeBase {
       this.oldTag = Object.assign({}, this.hitItem.tag)
     }
     if (this.state === 'drag') {
-      const delta = this.initialLocation.y - evt.location.y
+      const delta = this.initialLocation.y - location.y
 
       if (INode.isInstance(this.hitItem)) {
         const flow = this.hitItem.tag.flow / this.hitItem.layout.height
@@ -277,10 +280,9 @@ export class NetworkFlowInputMode extends InputModeBase {
 
   /**
    * Occurs when the mouse button has been released.
-   * @param {Object} sender The source of the event
-   * @param {MouseEventArgs} evt The mouse event data
+   * @param {Point} location The event location in world coordinates
    */
-  onMouseUp(sender, evt) {
+  onMouseUp(location) {
     if (this.controller.active && this.state === 'drag') {
       super.releaseMutex()
 
@@ -290,7 +292,7 @@ export class NetworkFlowInputMode extends InputModeBase {
       }
       // reset the state and the cursor
       // if the last position is valid, reset to hover state, else to start state
-      if (this.isValidHover(sender, evt)) {
+      if (this.isValidHover(location)) {
         this.state = 'hover'
         this.controller.preferredCursor = Cursor.NS_RESIZE
       } else {
@@ -346,10 +348,10 @@ export class NetworkFlowInputMode extends InputModeBase {
    */
   uninstall(context) {
     super.uninstall(context)
-    this.graphComponent.removeMouseMoveListener(this.onMouseMove.bind(this))
-    this.graphComponent.removeMouseDownListener(this.onMouseDown.bind(this))
-    this.graphComponent.removeMouseUpListener(this.onMouseUp.bind(this))
-    this.graphComponent.removeMouseDragListener(this.onMouseDrag.bind(this))
+    this.graphComponent.removeMouseMoveListener(this.onMouseMoveListener)
+    this.graphComponent.removeMouseDownListener(this.onMouseDownListener)
+    this.graphComponent.removeMouseUpListener(this.onMouseUpListener)
+    this.graphComponent.removeMouseDragListener(this.onMouseDragListener)
     this.graphComponent = null
   }
 }

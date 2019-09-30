@@ -28,6 +28,7 @@
  ***************************************************************************/
 import {
   Arrow,
+  DefaultLabelStyle,
   EdgePathLabelModel,
   ExteriorLabelModel,
   ExteriorLabelModelPosition,
@@ -38,11 +39,14 @@ import {
   ICommand,
   IEdge,
   ILabel,
+  ILabelModelParameter,
   INode,
   IOrientedRectangle,
   MutableRectangle,
   Point,
+  PolylineEdgeStyle,
   Rect,
+  ShapeNodeStyle,
   SimpleLabel,
   SimpleNode,
   Size,

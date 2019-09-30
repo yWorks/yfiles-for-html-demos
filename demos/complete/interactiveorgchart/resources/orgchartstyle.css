@@ -110,3 +110,33 @@ dd {
   fill-opacity: 1;
   transform: scale(1);
 }
+
+.port {
+  transform: scale(1);
+  transition: 0.2s ease-in-out;
+  fill: #AAAAAA;
+}
+
+.port:hover {
+  cursor: pointer;
+  transform: scale(1.5);
+  transition: 0.2s ease-in-out;
+}
+
+.port-icon {
+  stroke: white;
+  stroke-width: 2px;
+  transition: 1s ease-in-out;
+}
+
+.port-icon-expand {
+  transform: scaleY(6);
+}
+
+.port-icon-collapse {
+  transform: scaleY(0);
+}
+
+.node-background {
+  transition: height 0.2s ease;
+}

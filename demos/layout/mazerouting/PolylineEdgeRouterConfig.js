@@ -134,7 +134,7 @@ export const PolylineEdgeRouterConfig = Class('PolylineEdgeRouterConfig', {
    *  configuration on
    * @return {Promise} A promise which resolves after the layout is applied without errors.
    */
-  apply: function(graphComponent) {
+  apply: async function(graphComponent) {
     if (this.$layoutRunning) {
       return Promise.reject(new Error('Edge routing already in progress'))
     }
@@ -165,25 +165,22 @@ export const PolylineEdgeRouterConfig = Class('PolylineEdgeRouterConfig', {
     if (this.layoutData) {
       layoutExecutor.layoutData = this.layoutData
     }
-
-    // start the LayoutExecutor with finish and error handling code
-    return layoutExecutor
-      .start()
-      .then(() => {
-        this.$layoutRunning = false
-        this.postProcess(graphComponent)
-      })
-      .catch(error => {
-        this.$layoutRunning = false
-        this.postProcess()
-        if (error.name === 'AlgorithmAbortedError') {
-          alert(
-            'The layout computation was canceled because the maximum configured runtime of 20 seconds was exceeded.'
-          )
-        } else if (typeof window.reportError === 'function') {
-          window.reportError(error)
-        }
-      })
+    try {
+      // start the LayoutExecutor with finish and error handling code
+      await layoutExecutor.start()
+      this.postProcess(graphComponent)
+    } catch (error) {
+      this.postProcess()
+      if (error.name === 'AlgorithmAbortedError') {
+        alert(
+          'The layout computation was canceled because the maximum configured runtime of 20 seconds was exceeded.'
+        )
+      } else if (typeof window.reportError === 'function') {
+        window.reportError(error)
+      }
+    } finally {
+      this.$layoutRunning = false
+    }
   },
 
   /**
@@ -1133,9 +1130,9 @@ export const PolylineEdgeRouterConfig = Class('PolylineEdgeRouterConfig', {
     },
     get: function() {
       return (
-        !this.edgeLabelingItem ||
+        (!this.edgeLabelingItem ||
         this.labelPlacementSideOfEdgeItem ===
-          PolylineEdgeRouterConfig.EnumLabelPlacementSideOfEdge.ON_EDGE
+          PolylineEdgeRouterConfig.EnumLabelPlacementSideOfEdge.ON_EDGE)
       )
     }
   },

@@ -32,6 +32,7 @@ import {
   Enum,
   Exception,
   HandleSerializationEventArgs,
+  HandleDeserializationEventArgs,
   ILabelModelParameter,
   ILookup,
   INode,
@@ -100,8 +101,10 @@ export default class CustomNodePortLocationModel extends BaseClass(IPortLocation
    * @return {Point}
    */
   getLocation(port, locationParameter) {
-    const /** @type {CustomNodePortLocationModel} */ modelParameter = locationParameter
-    const /** @type {INode} */ ownerNode = port.owner
+    /** @type {CustomNodePortLocationModel} */
+    const modelParameter = locationParameter
+    /** @type {INode} */
+    const ownerNode = port.owner
     if (modelParameter !== null && ownerNode !== null) {
       // If we have an actual owner node and the parameter can be really used by this model,
       // we just calculate the correct location, based on the node's layout.
@@ -158,7 +161,8 @@ export default class CustomNodePortLocationModel extends BaseClass(IPortLocation
    * an {@link IPort} at the given owner
    */
   createParameter(owner, location) {
-    const /** @type {INode} */ ownerNode = owner
+    /** @type {INode} */
+    const ownerNode = owner
     if (ownerNode !== null) {
       // determine the distance of the specified location to the node layout center
       const delta = location.subtract(ownerNode.layout.center)
@@ -260,7 +264,7 @@ class CustomNodePortLocationModelParameter extends BaseClass(IPortLocationModelP
     // only serialize items that are of the specific type
     if (args.item instanceof CustomNodePortLocationModelParameter) {
       const /** @type {CustomNodeLabelModel.CustomNodeLabelModelParameter} */ modelParameter =
-        args.item
+          args.item
       const writer = args.writer
       writer.writeStartElement(
         'CustomNodePortLocationModelParameter',
@@ -279,7 +283,7 @@ class CustomNodePortLocationModelParameter extends BaseClass(IPortLocationModelP
 
   /**
    * @param {object} source The source of the event
-   * @param {HandleSerializationEventArgs} args An object that contains the event data
+   * @param {HandleDeserializationEventArgs} args An object that contains the event data
    */
   static deserializationHandler(source, args) {
     if (args.xmlNode instanceof Element) {
@@ -293,7 +297,7 @@ class CustomNodePortLocationModelParameter extends BaseClass(IPortLocationModelP
         const model = new CustomNodePortLocationModel(parseFloat(element.getAttribute('inset')))
         args.result = new CustomNodePortLocationModelParameter(
           model,
-          Enum.parse(PortLocation.$class, element.getAttribute('portLocation'))
+          Enum.parse(PortLocation.$class, element.getAttribute('portLocation'), true)
         )
       }
     }

@@ -26,6 +26,8 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
+/* global L */
+
 import {
   Animator,
   ArcEdgeStyle,
@@ -265,14 +267,13 @@ L.GraphLayer = L.Layer.extend({
       // zoom and location
       graph.nodePredicateChanged()
       graph.edgePredicateChanged()
-      setTimeout(() => {
+      setTimeout(async () => {
         if (layoutRunning) {
           return
         }
         layoutRunning = true
-        runLayout().then(() => {
-          layoutRunning = false
-        })
+        await runLayout()
+        layoutRunning = false
       }, 5)
     }
   },
@@ -308,7 +309,7 @@ L.ToggleGraphControl = L.Control.extend({
     toggleButtonLabel.title = 'Toggle Graph Mode'
 
     // @yjs:keep=enable
-    toggleButton.addEventListener('change', () => {
+    toggleButton.addEventListener('change', async () => {
       graphMode = !graphMode
       shortestPathSupport.graphMode = graphMode
       circleVisual.graphMode = graphMode
@@ -348,10 +349,9 @@ L.ToggleGraphControl = L.Control.extend({
         graphComponent.graph.edges.forEach(edge => graphComponent.graph.clearBends(edge))
         const animation = IAnimation.createParallelAnimation([zoomAnimation, graphAnimation])
         const animator = new Animator(graphComponent)
-        animator.animate(animation).then(() => {
-          applyMapStyles(graph.wrappedGraph)
-          toggleButton.disabled = false
-        })
+        await animator.animate(animation)
+        applyMapStyles(graph.wrappedGraph)
+        toggleButton.disabled = false
       } else {
         // disable the map when the graph is shown with radial layout
         worldMap.dragging.disable()
@@ -376,10 +376,9 @@ L.ToggleGraphControl = L.Control.extend({
         if (!layoutRunning) {
           layoutRunning = true
           graphComponent.graph.edges.forEach(edge => graphComponent.graph.clearBends(edge))
-          runLayout().then(() => {
-            toggleButton.disabled = false
-            layoutRunning = false
-          })
+          await runLayout()
+          toggleButton.disabled = false
+          layoutRunning = false
         }
       }
     })
@@ -449,7 +448,7 @@ function run(licenseData) {
  * @param {INode?} centerNode
  * @return {Promise}
  */
-function runLayout(centerNode) {
+async function runLayout(centerNode) {
   const highlightManager = graphComponent.highlightIndicatorManager
   highlightManager.clearHighlights()
   const layout = new RadialLayout({
@@ -470,10 +469,10 @@ function runLayout(centerNode) {
   // center the graph inside the viewport to avoid nodes flying in from the sides when switched back to map mode
   const centerGraphStage = new CenterGraphStage(layout, graphComponent.viewport.center)
 
-  return graphComponent.morphLayout(centerGraphStage, '700ms', layoutData).then(() => {
-    highlightManager.addHighlight(center)
-    highlightManager.addHighlight(center.labels.first())
-  })
+  const promise = await graphComponent.morphLayout(centerGraphStage, '700ms', layoutData)
+  highlightManager.addHighlight(center)
+  highlightManager.addHighlight(center.labels.first())
+  return promise
 }
 
 /**

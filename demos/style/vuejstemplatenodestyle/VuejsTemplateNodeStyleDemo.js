@@ -41,8 +41,8 @@ import {
 } from 'yfiles'
 
 import SampleData from './resources/sample.js'
-import VuejsNodeStyleMarkupExtension from '../../resources/VuejsNodeStyleMarkupExtension.js'
-import VuejsNodeStyle from '../../resources/VuejsNodeStyle.js'
+import VuejsNodeStyleMarkupExtension from '../../utils/VuejsNodeStyleMarkupExtension.js'
+import VuejsNodeStyle from '../../utils/VuejsNodeStyle.js'
 import {
   addClass,
   bindAction,
@@ -177,7 +177,7 @@ function initializeStyles() {
 }
 
 /**
- * Initializes graphml-writing and -reading for files containing VuejsNodeStyle.
+ * Initializes GraphML writing and reading for files containing VuejsNodeStyle.
  */
 function initializeIO() {
   graphmlHandler = new GraphMLIOHandler()
@@ -199,7 +199,7 @@ function initializeIO() {
       context.serializeReplacement(
         VuejsNodeStyleMarkupExtension.$class,
         item,
-        VuejsNodeStyleMarkupExtension
+        vuejsNodeStyleMarkupExtension
       )
       args.handled = true
     }
@@ -247,18 +247,16 @@ function loadSampleGraph() {
  * Wires up the UI. Buttons are linked with their according actions.
  */
 function registerCommands() {
-  bindAction("button[data-command='Open']", () => {
-    gs
-      .openFile(graphComponent.graph)
-      .then(() => {
-        graphComponent.fitGraphBounds()
-      })
-      .catch(ignored => {
-        alert(
-          'The graph contains styles that are not supported by this demo. This demo works best when nodes have VuejsNodeStyle created by this demo or "Node Template Designer".'
-        )
-        graphComponent.graph.clear()
-      })
+  bindAction("button[data-command='Open']", async () => {
+    try {
+      await gs.openFile(graphComponent.graph)
+      graphComponent.fitGraphBounds()
+    } catch (ignored) {
+      alert(
+        'The graph contains styles that are not supported by this demo. This demo works best when nodes have VuejsNodeStyle created by this demo or "Node Template Designer".'
+      )
+      graphComponent.graph.clear()
+    }
   })
   bindCommand("button[data-command='Save']", ICommand.SAVE, graphComponent)
   bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent)

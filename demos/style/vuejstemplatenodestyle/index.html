@@ -115,7 +115,7 @@
       color: #ffffff;
       font-size: 16px;
       font-weight: bold;
-      vertical-align: b;
+      vertical-align: baseline;
       text-align: center;
       height: 0;
       box-sizing: border-box;
@@ -141,7 +141,7 @@
       cursor: pointer;
     }
 
-    .apply-button:hover  {
+    .apply-button:hover {
       background-color: #328AD5;
     }
 
@@ -162,30 +162,49 @@
   <h1 class="demo-sidebar-header">Description</h1>
   <div class="demo-sidebar-content">
     <p>
-      This demo presents a very versatile and easily customizable <a href="https://docs.yworks.com/yfileshtml/#/api/INodeStyle" target="_blank">INodeStyle</a>.
+      This demo presents the Vue.js Template Node Style that leverages the powerful data binding and condition rendering
+      features of the <a href="https://vuejs.org/v2/guide/index.html" target="_blank">Vue.js framework</a>.
     </p>
     <p>
-      The visualization of the node is defined by an svg-template which is interpreted by the node style using the
-      <a href="https://vuejs.org/v2/guide/index.html" target="_blank">Vue.js-framework</a>. Thus, it has access to the whole binding
-      functionality of <code>Vue.js</code> as well as conditional rendering.
+      With this style, node visualizations are defined by SVG templates, similar to the template styles that are
+      included in the library. However, since the templates of this style can use the powerful data binding of Vue.js,
+      complex requirements are more easy to realize.
     </p>
-      The node style provides the following properties available for binding:
-      <ul>
-        <li><b>layout:</b> The layout of the styled node, consisting of x, y, width and height</li>
-        <li><b>tag:</b> The user data associated with the node</li>
-        <li><b>zoom:</b> The zoom level of the graph component</li>
-        <li><b>selected:</b> Whether the node is selected</li>
-        <li><b>focused:</b> Whether the node is focused</li>
-        <li><b>highlighted:</b> Whether the node is highlighted</li>
-      </ul>
+    <p>
+      This style provides the following properties for data binding:
+    </p>
+    <ul>
+      <li><b>layout:</b> The layout of the styled node, consisting of x, y, width and height</li>
+      <li><b>tag:</b> The user data associated with the node</li>
+      <li><b>zoom:</b> The zoom level of the graph component</li>
+      <li><b>selected:</b> Whether the node is selected</li>
+      <li><b>focused:</b> Whether the node is focused</li>
+      <li><b>highlighted:</b> Whether the node is highlighted</li>
+    </ul>
+
+    <h2>Things to Try</h2>
+
     <p>
       Change the template of one or more nodes. Bind colors or text to properties in the tag. Then, apply the new
       template by pressing the button. Or modify the tag and see how the style changes.
     </p>
+
+    <h2>Related Documentation</h2>
+
+    <ul>
+      <li><dguide section="custom-styles_vuejs-template-styles"/>Vue.js Templates in Styles</li>
+      <li><dguide section="custom-styles_template-styles"/>SVG Templates in Styles</li>
+    </ul>
+
+    <h2>Template Designer</h2>
+
     <p>
-      For interactive creation of templates you can use
-      <a href="https://www.yworks.com/node-template-designer/" target="_blank">Node Template Designer</a>. Graphs containing this template
-      node style can also be viewed with <a href="https://www.yworks.com/yed-live/" target="_blank">yEd Live</a>.
+      For interactive creation of templates you can use <a href="https://www.yworks.com/node-template-designer/"
+      target="_blank">Node Template Designer</a>.
+    </p>
+    <p>
+      Graphs containing this node style are compatible with <a href="https://www.yworks.com/yed-live/"
+      target="_blank">yEd Live</a>.
     </p>
   </div>
 </aside>
@@ -206,7 +225,10 @@
   <div id="graphComponent" class="left"></div>
 
   <div class="right">
-    <h2>Template String</h2><button data-command="ApplyTemplate" id="apply-template-button" class="apply-button" title="Applies the current Template to all selected nodes">Apply Template</button>
+    <h2>Template String</h2>
+    <button data-command="ApplyTemplate" id="apply-template-button" class="apply-button"
+      title="Applies the current Template to all selected nodes">Apply Template
+    </button>
     <div id="template-text-area-error" class="error">
       Could not compile template string!
     </div>
@@ -214,7 +236,10 @@
       <textarea id="template-text-area" style="width:100%;height:100%"></textarea>
     </div>
 
-    <h2>Tag Object</h2><button data-command="ApplyTag" id="apply-tag-button" class="apply-button" title="Applies the current Tag to all selected nodes">Apply Tag</button>
+    <h2>Tag Object</h2>
+    <button data-command="ApplyTag" id="apply-tag-button" class="apply-button"
+      title="Applies the current Tag to all selected nodes">Apply Tag
+    </button>
     <div id="tag-text-area-error" class="error">
       Could not parse tag object!
     </div>

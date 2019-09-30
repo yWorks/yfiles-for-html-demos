@@ -27,6 +27,7 @@
  **
  ***************************************************************************/
 import { GraphComponent, Point } from 'yfiles'
+import { detectSafariVersion, detectiOSVersion } from './Workarounds.js'
 
 /**
  * A demo implementation of a context menu that is used in various yFiles demos.
@@ -80,6 +81,10 @@ export default class ContextMenu {
         this.closeListener(evt)
       }
     }
+
+    // We lower the default long-press duration to 100ms to avoid conflicts between the context menu and
+    // other gestures on long-press, e.g. edge creation.
+    graphComponent.longPressTime = '100ms'
   }
 
   /**
@@ -251,14 +256,27 @@ export default class ContextMenu {
     }
 
     // Listen for the contextmenu event
+    // Note: On Linux based systems (e.g. Ubuntu), the contextmenu event is fired on mouse down
+    // which triggers the ContextMenuInputMode before the ClickInputMode. Therefore handling the
+    // event, will prevent the ItemRightClicked event from firing.
+    // For more information, see https://docs.yworks.com/yfileshtml/#/kb/article/780/
     componentDiv.addEventListener('contextmenu', contextMenuListener, false)
-    // Listen for the GraphComponent's TouchLongPress event since long touch events don't trigger a contextmenu event
-    // on all platforms
-    graphComponent.addTouchLongPressListener((sender, args) => {
-      openingCallback(
-        graphComponent.toPageFromView(graphComponent.toViewCoordinates(args.location))
-      )
-    })
+
+    if (detectSafariVersion() > 0 || detectiOSVersion() > 0) {
+      // Additionally add a long press listener especially for iOS, since it does not fire the contextmenu event.
+      let contextMenuTimer = null
+      graphComponent.addTouchDownListener((sender, args) => {
+        contextMenuTimer = setTimeout(() => {
+          openingCallback(
+            graphComponent.toPageFromView(graphComponent.toViewCoordinates(args.location))
+          )
+        }, 500)
+      })
+      graphComponent.addTouchUpListener(() => {
+        clearTimeout(contextMenuTimer)
+      })
+    }
+
     // Listen to the context menu key to make it work in Chrome
     componentDiv.addEventListener('keyup', evt => {
       if (evt.keyCode === 93) {
@@ -288,7 +306,7 @@ export default class ContextMenu {
       this.element.addEventListener('focusin', this.focusInListener)
       this.blurredTimeout = setTimeout(() => {
         this.close()
-      }, 150)
+      }, 350)
     }
   }
 

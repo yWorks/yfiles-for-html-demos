@@ -37,13 +37,14 @@ import {
   ICommand,
   INode,
   InteriorStretchLabelModel,
-  License,
   KeyType,
+  License,
   PanelNodeStyle,
   Point,
   ShapeNodeStyle,
   Size,
   StorageLocation,
+  ToolTipQueryEventArgs,
   YObject
 } from 'yfiles'
 
@@ -203,16 +204,16 @@ function setupTooltips() {
   graphEditorInputMode.toolTipItems = GraphItemTypes.NODE
   graphEditorInputMode.addQueryItemToolTipListener((src, eventArgs) => {
     if (eventArgs.handled) {
-      // A tooltip has already been assigned -> nothing to do.
+      // Tooltip content has already been assigned -> nothing to do.
       return
     }
     const item = eventArgs.item
     if (INode.isInstance(item)) {
       const dateMapper = graphComponent.graph.mapperRegistry.getMapper(DATE_TIME_MAPPER_KEY)
       if (dateMapper !== null) {
-        // Found a suitable mapper. Set the tooltip.
+        // Found a suitable mapper. Set the tooltip content.
         eventArgs.toolTip = dateMapper.get(item).toLocaleString()
-        // Indicate that the tooltip has been set.
+        // Indicate that the tooltip content has been set.
         eventArgs.handled = true
       }
     }

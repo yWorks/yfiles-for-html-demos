@@ -38,9 +38,11 @@
 </head>
 <body>
 <header>
-  <div class="logo"></div>
-  <div class="title">
-    <a href="../README.html">yFiles for HTML</a> <span class="angle-right"></span>Demo Utility Files
+  <div class="content-centered">
+    <div class="logo"></div>
+    <div class="title">
+      <a href="../README.html">yFiles for HTML</a> <span class="angle-right"></span>Demo Utility Files
+    </div>
   </div>
 </header>
 <div class="content">
@@ -58,13 +60,13 @@
 
       <h4>ContextMenu.js</h4>
       <p>
-        A simple context menu implementation that provides methods to add context menu entries with specific listeners
+        A simple context menu that provides methods to add context menu entries with specific listeners
         and means to open or close the context menu. It is used in any demo that requires a context menu and is
         especially featured in the <a href="../input/contextmenu/index.html">Context Menu</a> demo.</p>
 
       <h4>DndPanel.js</h4>
       <p>
-        A drag and drop panel implementation which can be used to populate a given element with node visuals and the
+        A drag and drop panel which can be used to populate a given element with node visuals and the
         necessary listeners. This panel is demonstrated in the <a href="../input/draganddrop/index.html">Drag and
         Drop</a> demo and is also used in any other demo that supports drag and drop of graph elements.</p>
 
@@ -73,15 +75,24 @@
         Provides a static helper function to save files to the local filesystem. It makes use of the HTML5 file download
         or a proprietary approach in Internet Explorer. It is mainly used in the export demos, like the <a
         href="">Image Export</a> or <a href="">PDF Export</a> demo, though there is also a dedicated <a href="">File
-        Operations</a> demo that illustrates how to save a GraphML file besides using implicit approaches with <code>yICommand.Save</code>
+        Operations</a> demo that illustrates how to save a GraphML file besides using implicit approaches with <code>ICommand.SAVE</code>
         or the methods of <code>GraphMLSupport</code>.</p>
 
       <h4>JsonIO.js</h4>
       <p>
         A helper class that provides methods for JSON I/O of an <code>IGraph</code>. This implementation only supports
         de-/serialization of structural information but it can also be used as a starting point to also include other
-        information e.g. item styles. For instance, the <a href="../loading/webworker/index.html">Web Worker</a> demo
+        information e.g. item styles. For instance, the <a href="../loading/webworker/README.html">Web Worker</a> demo
         uses this JSON format to exchange the graph information with the web worker.</p>
+
+      <h4>VuejsNodeStyle.js</h4>
+      <p>
+        A template node style that leverages the powerful data binding and condition rendering features of the <a
+        href="https://vuejs.org/v2/guide/index.html" target="_blank">Vue.js framework</a>. See the corresponding <a
+        href="https://docs.yworks.com/yfileshtml/#/dguide/custom-styles_vuejs-template-styles">template styles section
+        in the developer's guide</a> and the <a href="../style/vuejstemplatenodestyle/index.html">Vue.js Template Node
+        Style Demo</a> for more details.
+      </p>
 
       <h4>Workarounds.js</h4>
       <p>

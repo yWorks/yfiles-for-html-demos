@@ -43,6 +43,7 @@ import {
   ICanvasObjectDescriptor,
   ICommand,
   IEdge,
+  IGraph,
   Insets,
   KMeansClustering,
   KMeansClusteringDistanceMetric,

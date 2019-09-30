@@ -48,24 +48,6 @@ input[type='range'] {
   color: black;
 }
 
-.reset-node-placer-white {
-  width: 21px;
-  height: 21px;
-  background: transparent url('reload-white-16.svg') no-repeat center;
-  vertical-align: bottom;
-  border: none;
-  float: right;
-}
-
-.reset-node-placer-black {
-  width: 21px;
-  height: 21px;
-  background: transparent url('reload-black-16.svg') no-repeat center;
-  vertical-align: bottom;
-  border: none;
-  float: right;
-}
-
 .settings-button {
   width: 21px;
   height: 21px;

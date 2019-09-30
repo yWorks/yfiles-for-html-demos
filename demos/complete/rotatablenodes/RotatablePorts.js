@@ -349,5 +349,5 @@ function getAngle(node) {
  * @return {number}
  */
 function toRadians(degrees) {
-  return degrees / 180 * Math.PI
+  return (degrees / 180) * Math.PI
 }

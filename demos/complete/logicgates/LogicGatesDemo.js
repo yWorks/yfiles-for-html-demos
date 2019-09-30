@@ -269,7 +269,7 @@ function createInputMode() {
  * Applies the selected layout algorithm.
  * @param {boolean} clearUndo True if the undo engine should be cleared, false otherwise
  */
-function runLayout(clearUndo) {
+async function runLayout(clearUndo) {
   const selectedIndex = document.getElementById('algorithm-select-box').selectedIndex
   let layout
   let layoutData
@@ -290,27 +290,21 @@ function runLayout(clearUndo) {
     })
   }
   setUIDisabled(true)
-
-  graphComponent
-    .morphLayout(layout, '1s', layoutData)
-    .then(() => {
-      graphComponent.fitGraphBounds()
-      setUIDisabled(false)
-      if (clearUndo) {
-        graphComponent.graph.undoEngine.clear()
-      }
-    })
-    .catch(error => {
-      setUIDisabled(false)
-      if (clearUndo) {
-        graphComponent.graph.undoEngine.clear()
-      }
-      if (typeof window.reportError === 'function') {
-        window.reportError(error)
-      } else {
-        throw error
-      }
-    })
+  try {
+    await graphComponent.morphLayout(layout, '1s', layoutData)
+    graphComponent.fitGraphBounds()
+  } catch (error) {
+    if (typeof window.reportError === 'function') {
+      window.reportError(error)
+    } else {
+      throw error
+    }
+  } finally {
+    setUIDisabled(false)
+    if (clearUndo) {
+      graphComponent.graph.undoEngine.clear()
+    }
+  }
 }
 
 /**

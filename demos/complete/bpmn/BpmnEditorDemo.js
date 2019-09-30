@@ -150,7 +150,7 @@ let popupSupport = null
 /**
  * Starts the BPMN editor.
  */
-function run(licenseData) {
+async function run(licenseData) {
   License.value = licenseData
   // initialize UI elements
   graphComponent = new GraphComponent('graphComponent')
@@ -224,14 +224,13 @@ function run(licenseData) {
   graphmlSupport.graphMLIOHandler.addHandleSerializationListener(BpmnHandleSerializationListener)
 
   // load initial graph
-  DemoApp.readGraph(
+  await DemoApp.readGraph(
     graphmlSupport.graphMLIOHandler,
     graphComponent.graph,
     'resources/business.graphml'
-  ).then(() => {
-    graphComponent.fitGraphBounds()
-    graphComponent.graph.undoEngine.clear()
-  })
+  )
+  graphComponent.fitGraphBounds()
+  graphComponent.graph.undoEngine.clear()
 
   // initialize UI elements and interaction for the popups
   popupSupport = new PopupSupport(graphComponent, contextMenu)
@@ -415,7 +414,7 @@ function enableFolding() {
 /**
  * Helper method that reads the currently selected GraphML from the combo box.
  */
-function onGraphChooserBoxSelectionChanged() {
+async function onGraphChooserBoxSelectionChanged() {
   // hide any property popup that might be visible
   popupSupport.hidePropertyPopup()
 
@@ -433,17 +432,16 @@ function onGraphChooserBoxSelectionChanged() {
 
   // and then load the graph and when done - fit the bounds
   setUIDisabled(true)
-  DemoApp.readGraph(graphmlHandler, graphComponent.graph, fileName).then(() => {
-    graphComponent.fitGraphBounds()
-    graphComponent.graph.undoEngine.clear()
-    setUIDisabled(false)
-  })
+  await DemoApp.readGraph(graphmlHandler, graphComponent.graph, fileName)
+  graphComponent.fitGraphBounds()
+  graphComponent.graph.undoEngine.clear()
+  setUIDisabled(false)
 }
 
 /**
  * Helper method that tries to layout the current graph using the BpmnLayout.
  */
-function onLayoutButtonClicked() {
+async function onLayoutButtonClicked() {
   if (layoutIsRunning) {
     // if there is already a layout running, do not start another one
     return
@@ -468,20 +466,18 @@ function onLayoutButtonClicked() {
   })
   layoutExecutor.tableLayoutConfigurator.horizontalLayout = true
   layoutExecutor.tableLayoutConfigurator.fromSketch = true
-  layoutExecutor
-    .start()
-    .then(() => {
-      layoutIsRunning = false
-      setUIDisabled(false)
-    })
-    .catch(error => {
-      setUIDisabled(false)
-      if (typeof window.reportError === 'function') {
-        window.reportError(error)
-      } else {
-        throw error
-      }
-    })
+  try {
+    await layoutExecutor.start()
+  } catch (error) {
+    if (typeof window.reportError === 'function') {
+      window.reportError(error)
+    } else {
+      throw error
+    }
+  } finally {
+    layoutIsRunning = false
+    setUIDisabled(false)
+  }
 }
 
 /**

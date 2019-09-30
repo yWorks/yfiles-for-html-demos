@@ -212,7 +212,7 @@ function createEditorMode() {
 /**
  * Core method that recalculates and updates the layout.
  */
-function updateLayout() {
+async function updateLayout() {
   // make sure we are not re-entrant
   if (layouting) {
     return
@@ -255,21 +255,19 @@ function updateLayout() {
   })
 
   // apply the layout
-  graphComponent
-    .morphLayout(new MinimumNodeSizeStage(layout), '1s', layoutData)
-    .then(() => {
-      layerVisual.updateLayers(graph, layerMapper)
-      layouting = false
-      graphComponent.inputMode.enabled = true
-    })
-    .catch(error => {
-      graphComponent.inputMode.enabled = true
-      if (typeof window.reportError === 'function') {
-        window.reportError(error)
-      } else {
-        throw error
-      }
-    })
+  try {
+    await graphComponent.morphLayout(new MinimumNodeSizeStage(layout), '1s', layoutData)
+    layerVisual.updateLayers(graph, layerMapper)
+  } catch (error) {
+    if (typeof window.reportError === 'function') {
+      window.reportError(error)
+    } else {
+      throw error
+    }
+  } finally {
+    layouting = false
+    graphComponent.inputMode.enabled = true
+  }
 }
 
 /**

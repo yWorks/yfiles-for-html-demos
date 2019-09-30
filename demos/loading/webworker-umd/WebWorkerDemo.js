@@ -43,7 +43,7 @@ require([
   'WebWorkerLayoutExecutor.js',
   'yfiles/view-folding',
   'yfiles/view-layout-bridge'
-], (/** @type {yfiles_namespace} */ /** typeof yfiles */ yfiles, WebWorkerLayoutExecutor) => {
+], async (/** @type {yfiles_namespace} */ /** typeof yfiles */ yfiles, WebWorkerLayoutExecutor) => {
   let graphComponent = null
 
   function run(licenseData) {
@@ -66,7 +66,7 @@ require([
    * calculation. This is set to <code>true</code> if this method is called directly after
    * loading a new sample graph.
    */
-  function runWebWorkerLayout(clearUndo) {
+  async function runWebWorkerLayout(clearUndo) {
     // create a new web worker
     const worker = tryCreateWorker()
     if (worker === null) {
@@ -77,25 +77,20 @@ require([
 
     // execute layout calculation of the worker
     const layoutExecutor = new WebWorkerLayoutExecutor(graphComponent, worker)
-    layoutExecutor
-      .start()
-      .then(() => {
-        if (clearUndo) {
-          graphComponent.graph.undoEngine.clear()
-        }
-        hideLoading()
-      })
-      .catch(error => {
-        if (clearUndo) {
-          graphComponent.graph.undoEngine.clear()
-        }
-        hideLoading()
-        if (typeof window.reportError === 'function') {
-          window.reportError(error)
-        } else {
-          throw error
-        }
-      })
+    try {
+      await layoutExecutor.start()
+    } catch (error) {
+      if (typeof window.reportError === 'function') {
+        window.reportError(error)
+      } else {
+        throw error
+      }
+    } finally {
+      if (clearUndo) {
+        graphComponent.graph.undoEngine.clear()
+      }
+      hideLoading()
+    }
   }
 
   /**
@@ -849,7 +844,7 @@ require([
   }
 
   // start demo
-  fetch('../../../lib/license.json')
-    .then(response => response.json())
-    .then(run)
+  const response = await fetch('../../../lib/license.json')
+  const json = await response.json()
+  run(json)
 })

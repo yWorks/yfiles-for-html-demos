@@ -300,8 +300,8 @@ function updateGraph(root, clickedNode, isDrillDown) {
           if (graphComponent.graph.isGroupNode(clickedNode)) {
             // also transfer the layout of the children
             graphComponent.graph.getChildren(clickedNode).forEach(child => {
-              const copiedChild = graph.nodes.find(
-                n => (n.tag.id ? n.tag.id === child.tag.id : n.tag.groupTag === child.tag.groupTag)
+              const copiedChild = graph.nodes.find(n =>
+                n.tag.id ? n.tag.id === child.tag.id : n.tag.groupTag === child.tag.groupTag
               )
               graph.setNodeLayout(copiedChild, child.layout.toRect())
             })
@@ -410,7 +410,7 @@ function getSizeString(size) {
 /**
  * Applies a TreeMapLayout to the current graph. The configuration is derived from the information in the module.
  */
-function applyLayout() {
+async function applyLayout() {
   const graph = graphComponent.graph
 
   // register a mapper providing group node insets to avoid children overlapping group labels
@@ -464,21 +464,20 @@ function applyLayout() {
   // hide labels during layout
   const nodeLabelGroup = graphComponent.graphModelManager.nodeLabelGroup
   nodeLabelGroup.visible = false
-  graphComponent.morphLayout(layout, '0.7s', layoutData).then(() => {
-    // clean up previously added mappers
-    graph.mapperRegistry.removeMapper(GroupingKeys.GROUP_NODE_INSETS_DP_KEY)
-    graph.mapperRegistry.removeMapper('NODE_TO_NAME')
+  await graphComponent.morphLayout(layout, '0.7s', layoutData)
+  // clean up previously added mappers
+  graph.mapperRegistry.removeMapper(GroupingKeys.GROUP_NODE_INSETS_DP_KEY)
+  graph.mapperRegistry.removeMapper('NODE_TO_NAME')
 
-    // update text sizes and show labels again
-    updateLabelTextSizes(graph)
-    nodeLabelGroup.visible = true
+  // update text sizes and show labels again
+  updateLabelTextSizes(graph)
+  nodeLabelGroup.visible = true
 
-    // update the hover, it may have changed depending on the new graph
-    graphComponent.inputMode.itemHoverInputMode.updateHover()
+  // update the hover, it may have changed depending on the new graph
+  graphComponent.inputMode.itemHoverInputMode.updateHover()
 
-    // update the viewport limiter
-    graphComponent.viewportLimiter.bounds = graphComponent.viewport
-  })
+  // update the viewport limiter
+  graphComponent.viewportLimiter.bounds = graphComponent.viewport
 }
 
 /**
@@ -530,7 +529,7 @@ function getNodeComparer(graph) {
   const ascending = sortingCriterion.indexOf('ascending') !== -1
   const useNameAsCriterion = sortingCriterion.startsWith('Name')
   const considerLeafState = fileDirectoryOrder.startsWith('Files')
-  const leafsTrailing = fileDirectoryOrder.indexOf('after') !== -1
+  const leavesTrailing = fileDirectoryOrder.indexOf('after') !== -1
   if (useNameAsCriterion) {
     graph.mapperRegistry.createDelegateMapper(
       INode.$class,
@@ -539,7 +538,7 @@ function getNodeComparer(graph) {
       node => node.labels.first().text
     )
   }
-  return new TreeMapNodeComparator(ascending, useNameAsCriterion, considerLeafState, leafsTrailing)
+  return new TreeMapNodeComparator(ascending, useNameAsCriterion, considerLeafState, leavesTrailing)
 }
 
 /**
@@ -630,30 +629,30 @@ function registerCommands() {
  * A flexible comparer which can be used for sorting groups and leaf nodes using different criteria.
  */
 class TreeMapNodeComparator extends NodeWeightComparer {
-  constructor(ascending, useNameAsCriterion, considerLeafState, leafsTrailing) {
+  constructor(ascending, useNameAsCriterion, considerLeafState, leavesTrailing) {
     super()
     this.ascending = ascending
     this.useNameAsCriterion = useNameAsCriterion
     this.considerLeafState = considerLeafState
-    this.leafsTrailing = leafsTrailing
+    this.leavesTrailing = leavesTrailing
   }
 
   compare(node1, node2) {
     if (this.considerLeafState) {
-      // leafs should either come last (trailing) or first (leading)
+      // leaves should either come last (trailing) or first (leading)
       const degree1 = node1.outDegree
       const degree2 = node2.outDegree
       if (degree1 === 0 && degree2 > 0) {
         // only first node is a leaf
-        return this.leafsTrailing ? 1 : -1
+        return this.leavesTrailing ? 1 : -1
       }
       if (degree1 > 0 && degree2 === 0) {
         // only second node is a leaf
-        return this.leafsTrailing ? -1 : 1
+        return this.leavesTrailing ? -1 : 1
       }
-    } // else: leafs are handled the same way as non-leafs
+    } // else: leaves are handled the same way as non-leaves
 
-    // both are non-leafs or leafs, or leaf state is ignored
+    // both are non-leaves or leaves, or leaf state is ignored
     // a) compare by name
     if (this.useNameAsCriterion) {
       const names = node1.graph.getDataProvider('NODE_TO_NAME')

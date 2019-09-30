@@ -27,12 +27,12 @@
  **
  ***************************************************************************/
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
-const CleanWebpackPlugin = require('clean-webpack-plugin')
+const { CleanWebpackPlugin } = require('clean-webpack-plugin')
 const yWorksOptimizer = require('@yworks/optimizer/webpack-plugin')
 
 module.exports = function(env, options) {
   const config = {
-    entry: ['./TypeScript2Demo.ts'],
+    entry: ['core-js/stable', 'regenerator-runtime/runtime', './TypeScript2Demo.ts'],
 
     output: {
       filename: './bundle.js'

@@ -33,6 +33,7 @@ import {
   FreeNodePortLocationModel,
   GraphComponent,
   GraphEditorInputMode,
+  GraphOverviewComponent,
   ICommand,
   IGraph,
   InteriorLabelModel,

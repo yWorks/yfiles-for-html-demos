@@ -116,7 +116,7 @@ function run(licenseData) {
  * @see {@link #updateLabelProperties}
  * @param {boolean} fitViewToContent Whether to animate the viewport
  */
-function doLayout(fitViewToContent) {
+async function doLayout(fitViewToContent) {
   if (!layouting) {
     layouting = true
     setUIDisabled(true)
@@ -135,21 +135,18 @@ function doLayout(fitViewToContent) {
     })
 
     // apply layout
-    layoutExecutor
-      .start()
-      .then(() => {
-        layouting = false
-        setUIDisabled(false)
-      })
-      .catch(error => {
-        layouting = false
-        setUIDisabled(false)
-        if (typeof window.reportError === 'function') {
-          window.reportError(error)
-        } else {
-          throw error
-        }
-      })
+    try {
+      await layoutExecutor.start()
+    } catch (error) {
+      if (typeof window.reportError === 'function') {
+        window.reportError(error)
+      } else {
+        throw error
+      }
+    } finally {
+      layouting = false
+      setUIDisabled(false)
+    }
   }
 }
 

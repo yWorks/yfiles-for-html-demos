@@ -7,8 +7,8 @@ import { GraphComponent, GraphViewerInputMode } from 'yfiles'
   styleUrls: ['./graph-component.component.css']
 })
 export class GraphComponentComponent implements AfterViewInit {
-  @ViewChild('graphComponentRef') graphComponentRef: ElementRef
-  graphComponent: GraphComponent
+  @ViewChild('graphComponentRef', { static: false }) graphComponentRef!: ElementRef
+  graphComponent!: GraphComponent
 
   ngAfterViewInit() {
     this.graphComponent = new GraphComponent(this.graphComponentRef.nativeElement)

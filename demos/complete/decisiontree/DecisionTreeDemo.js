@@ -105,8 +105,9 @@ function run(licenseData) {
     option.value = graph
     graphChooserBox.add(option)
   })
-  setTimeout(() => {
-    readSampleGraph().then(showDecisionTree)
+  setTimeout(async () => {
+    const sample = await readSampleGraph()
+    showDecisionTree(sample)
   }, 500)
 
   registerCommands()
@@ -279,7 +280,7 @@ function updateSelection(node) {
  */
 let runningLayout = false
 
-function runLayout(animated) {
+async function runLayout(animated) {
   const layout = new HierarchicLayout({
     backLoopRouting: true
   })
@@ -293,22 +294,21 @@ function runLayout(animated) {
       duration: animated ? '0.3s' : 0,
       animateViewport: true
     })
-    const promise = layoutExecutor.start()
-    promise
-      .then(o => {
-        runningLayout = false
-      })
-      .catch(error => {
-        if (typeof window.reportError === 'function') {
-          window.reportError(error)
-        } else {
-          throw error
-        }
-      })
+    try {
+      await layoutExecutor.start()
+    } catch (error) {
+      if (typeof window.reportError === 'function') {
+        window.reportError(error)
+      } else {
+        throw error
+      }
+    } finally {
+      runningLayout = false
+    }
   }
 }
 
-function runIncrementalLayout(incrementalNodes) {
+async function runIncrementalLayout(incrementalNodes) {
   const layout = new HierarchicLayout({
     layoutMode: LayoutMode.INCREMENTAL,
     backLoopRouting: true
@@ -330,18 +330,17 @@ function runIncrementalLayout(incrementalNodes) {
       duration: '0.3s',
       animateViewport: true
     })
-    const promise = layoutExecutor.start()
-    promise
-      .then(o => {
-        runningLayout = false
-      })
-      .catch(error => {
-        if (typeof window.reportError === 'function') {
-          window.reportError(error)
-        } else {
-          throw error
-        }
-      })
+    try {
+      await layoutExecutor.start()
+    } catch (error) {
+      if (typeof window.reportError === 'function') {
+        window.reportError(error)
+      } else {
+        throw error
+      }
+    } finally {
+      runningLayout = false
+    }
   }
 }
 
@@ -457,10 +456,14 @@ function registerCommands() {
   })
   bindAction("#toolbar-decisiontree button[data-command='PreviousFile']", onPreviousButtonClicked)
   bindAction("#toolbar-decisiontree button[data-command='NextFile']", onNextButtonClicked)
-  bindChangeListener("#toolbar-decisiontree select[data-command='SelectedFileChanged']", () => {
-    setAsRootNode(null)
-    readSampleGraph().then(showDecisionTree)
-  })
+  bindChangeListener(
+    "#toolbar-decisiontree select[data-command='SelectedFileChanged']",
+    async () => {
+      setAsRootNode(null)
+      const sample = await readSampleGraph()
+      showDecisionTree(sample)
+    }
+  )
   bindAction("#toolbar-decisiontree button[data-command='Restart']", showDecisionTree)
 
   bindAction("*[data-command='ShowDecisionTree']", showDecisionTree)
@@ -497,19 +500,21 @@ function updateButtons() {
 /**
  * Switches to the previous graph.
  */
-function onPreviousButtonClicked() {
+async function onPreviousButtonClicked() {
   graphChooserBox.selectedIndex--
   setAsRootNode(null)
-  readSampleGraph().then(showDecisionTree)
+  const sample = await readSampleGraph()
+  showDecisionTree(sample)
 }
 
 /**
  * Switches to the next graph.
  */
-function onNextButtonClicked() {
+async function onNextButtonClicked() {
   graphChooserBox.selectedIndex++
   setAsRootNode(null)
-  readSampleGraph().then(showDecisionTree)
+  const sample = await readSampleGraph()
+  showDecisionTree(sample)
 }
 
 /**
@@ -538,7 +543,7 @@ function updateShowDecisionTreeButton() {
  * Helper method that reads the currently selected graphml from the combobox.
  * @return {Promise} A promise that is resolved when the graph is parsed.
  */
-function readSampleGraph() {
+async function readSampleGraph() {
   // Disable navigation buttons while graph is loaded
   nextButton.disabled = true
   previousButton.disabled = true
@@ -547,12 +552,12 @@ function readSampleGraph() {
   const selectedItem = graphChooserBox.options[graphChooserBox.selectedIndex].value
   const fileName = `resources/${selectedItem}.graphml`
   // then load the graph
-  return readGraph(graphMLSupport.graphMLIOHandler, graphComponent.graph, fileName).then(() => {
-    // when done - fit the bounds
-    ICommand.FIT_GRAPH_BOUNDS.execute(null, graphComponent)
-    // re-enable navigation buttons
-    setTimeout(updateButtons, 100)
-  })
+  const graph = await readGraph(graphMLSupport.graphMLIOHandler, graphComponent.graph, fileName)
+  // when done - fit the bounds
+  ICommand.FIT_GRAPH_BOUNDS.execute(null, graphComponent)
+  // re-enable navigation buttons
+  setTimeout(updateButtons, 100)
+  return graph
 }
 
 // run the demo

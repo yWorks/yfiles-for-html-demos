@@ -32,7 +32,7 @@ const yWorksOptimizer = require('@yworks/optimizer/webpack-plugin')
 module.exports = (env, options) => {
   const config = {
     entry: {
-      app: ['./WebWorkerDemo.js']
+      app: ['regenerator-runtime/runtime', './WebWorkerDemo.js']
     },
     optimization: {
       splitChunks: {
@@ -68,7 +68,8 @@ module.exports = (env, options) => {
               options: {
                 presets: ['@babel/preset-env']
               }
-            }
+            },
+            { loader: 'ifdef-loader', options: { USE_TYPEINFO: options.mode !== 'production' } }
           ]
         }
       ]
@@ -81,6 +82,8 @@ module.exports = (env, options) => {
   }
 
   if (options.mode === 'production') {
+    // add polyfills
+    config.entry.app.unshift('core-js/stable')
     // Obfuscate yFiles modules and usages for production build
     config.plugins.push(
       new yWorksOptimizer({
