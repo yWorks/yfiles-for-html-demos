@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.1.
- ** Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -97,8 +97,8 @@ require([
         return
       }
       const scale = parseFloat(inputScale.value)
-      if (isNaN(scale)) {
-        alert('Scale must be a valid number.')
+      if (isNaN(scale) || scale <= 0) {
+        alert('Scale must be a positive number.')
         return
       }
       const rectangle =

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.1.
- ** Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -1168,7 +1168,10 @@ define(['yfiles/view-editor', './SimpleSvgNodeStyle.js', './SvgEdgeStyle.js'], (
       // calculate the scale to draw the graph in world coordinates into the target image
       const scaleX = targetWidth / exportRect.width
       const scaleY = targetHeight / exportRect.height
-      const scale = Math.min(scaleX, scaleY)
+      let scale = Math.min(scaleX, scaleY)
+      if (scale <= 0 || isNaN(scale)) {
+        scale = 1
+      }
 
       // create the canvas element
       const canvas = window.document.createElement('canvas')
@@ -1309,7 +1312,10 @@ define(['yfiles/view-editor', './SimpleSvgNodeStyle.js', './SvgEdgeStyle.js'], (
       // calculate the scale to draw the graph in world coordinates into the target image
       const scaleX = targetWidth / exportRect.width
       const scaleY = targetHeight / exportRect.height
-      const scale = Math.min(scaleX, scaleY)
+      let scale = Math.min(scaleX, scaleY)
+      if (scale <= 0 || isNaN(scale)) {
+        scale = 1
+      }
 
       // export the graph to svg
       const svgElement = this.exportRectToSvg(exportRect, scale)
@@ -1353,7 +1359,11 @@ define(['yfiles/view-editor', './SimpleSvgNodeStyle.js', './SvgEdgeStyle.js'], (
       const scaleX = exportRect.width > maxSize.width ? maxSize.width / exportRect.width : 1
       const scaleY = exportRect.height > maxSize.height ? maxSize.height / exportRect.height : 1
 
-      return Math.min(scaleX, scaleY)
+      let scale = Math.min(scaleX, scaleY)
+      if (scale <= 0 || isNaN(scale)) {
+        scale = 1
+      }
+      return scale
     }
   }
 

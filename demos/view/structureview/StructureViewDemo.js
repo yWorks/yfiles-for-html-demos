@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.1.
- ** Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -94,10 +94,12 @@ require([
       const viewNode = graphComponent.graph.foldingView
         ? graphComponent.graph.foldingView.getViewItem(node)
         : node
-      graphComponent.currentItem = viewNode
-      graphComponent.selection.clear()
-      graphComponent.selection.setSelected(viewNode, true)
-      yfiles.input.ICommand.ZOOM_TO_CURRENT_ITEM.execute(null, graphComponent)
+      if (viewNode) {
+        graphComponent.currentItem = viewNode
+        graphComponent.selection.clear()
+        graphComponent.selection.setSelected(viewNode, true)
+        yfiles.input.ICommand.ZOOM_TO_CURRENT_ITEM.execute(null, graphComponent)
+      }
     }
   }
 

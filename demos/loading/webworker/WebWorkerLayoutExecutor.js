@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.1.
- ** Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -235,6 +235,8 @@ define(['yfiles/view-layout-bridge', 'WebWorkerJsonIO.js'], (yfiles, WebWorkerJs
           bends.push(getLocationFromObj(edgeObj.bends[i]))
         }
         edge2Bends.set(edge, bends)
+      } else {
+        edge2Bends.set(edge, [])
       }
 
       port2Location.set(edge.sourcePort, getLocationFromObj(edgeObj.sourcePort))

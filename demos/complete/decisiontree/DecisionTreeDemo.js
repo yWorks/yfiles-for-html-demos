@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.1.
- ** Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -268,7 +268,10 @@ require([
     layout.backLoopRouting = true
     if (layout !== null && !runningLayout) {
       runningLayout = true
-      const layoutExecutor = new yfiles.layout.LayoutExecutor(graphComponent, layout)
+      const layoutExecutor = new yfiles.layout.LayoutExecutor(
+        graphComponent,
+        new yfiles.layout.MinimumNodeSizeStage(layout)
+      )
       layoutExecutor.animateViewport = false
       layoutExecutor.duration = animated ? '0.3s' : 0
       const promise = layoutExecutor.start()

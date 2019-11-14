@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.1.
- ** Copyright (c) 2000-2018 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -461,7 +461,10 @@ define([
           this.pathNodes.has(edge.sourceNode) && this.pathNodes.has(edge.targetNode) ? 1 : 0
 
         this.runningLayout = true
-        const layoutExecutor = new yfiles.layout.LayoutExecutor(this.$graphComponent, layout)
+        const layoutExecutor = new yfiles.layout.LayoutExecutor(
+          this.$graphComponent,
+          new yfiles.layout.MinimumNodeSizeStage(layout)
+        )
         layoutExecutor.layoutData = layoutData
 
         layoutExecutor.animateViewport = false
