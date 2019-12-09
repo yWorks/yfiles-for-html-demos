@@ -74,7 +74,8 @@ import {
   TransitiveClosure,
   TransitiveReduction,
   UndoUnitBase,
-  ViewportAnimation
+  ViewportAnimation,
+  Cycle
 } from 'yfiles'
 
 import GraphData from './resources/yfiles-modules-data.js'
@@ -89,6 +90,24 @@ import {
   showApp
 } from '../../resources/demo-app.js'
 import loadJson from '../../resources/load-json.js'
+
+/**
+ * @typedef {Object} NpmPackageInfo
+ * @property {String} name
+ * @property {String} version
+ */
+
+/**
+ * The port of the proxy server for the npm package API.
+ * @type {string}
+ */
+const proxyPort = location.protocol !== 'file:' && location.port !== 80 ? location.port : '4242'
+
+/**
+ * Maximum number of npm modules to add before resorting to expand-functionality
+ * @type {number}
+ */
+const maxNpmModules = 50
 
 /**
  * The {@link GraphComponent} which contains the {@link IGraph}.
@@ -125,15 +144,15 @@ let nodeLabelParameter = null
 let normalEdgeStyle = null
 
 /**
- * The edge style that is applied to all edges that were added when calculating the transitive closure.
- * Those edges are visualized with a solid blue line and arrow.
+ * The edge style that is applied to all edges that were added when calculating the transitive
+ * closure. Those edges are visualized with a solid blue line and arrow.
  * @type {IEdgeStyle}
  */
 let addedEdgeStyle = null
 
 /**
- * The edge style that is applied to all edges that were removed when calculating the transitive reduction.
- * Those edges are visualized with a dashed grey line and an arrow.
+ * The edge style that is applied to all edges that were removed when calculating the transitive
+ * reduction. Those edges are visualized with a dashed grey line and an arrow.
  * @type {IEdgeStyle}
  */
 let removedEdgeStyle = null
@@ -184,7 +203,8 @@ function setBusy(isBusy) {
 
 /**
  * Combo box to select one of the different algorithms.
- * It provides access to transitive reduction, transitive closure and returning to the original graph.
+ * It provides access to transitive reduction, transitive closure and returning to the original
+ * graph.
  * @type {HTMLElement}
  */
 let algorithmComboBox = null
@@ -198,8 +218,8 @@ let packageTextBox = null
 
 /**
  * Combo box to select one of the two samples.
- * There is an dependency graph of the <em>yFiles for HTML</em> modules as well as the possibility to browse
- * npm-packages with their dependencies.
+ * There is an dependency graph of the <em>yFiles for HTML</em> modules as well as the possibility
+ * to browse npm-packages with their dependencies.
  * @type {HTMLElement}
  */
 let samplesComboBox = null
@@ -213,13 +233,15 @@ let addedEdges = []
 
 /**
  * Holds all nodes that are added when loading npm-packages and are not part of the layout, yet.
- * If the number of these nodes reaches a certain limit, they are inserted in the layout incrementally.
+ * If the number of these nodes reaches a certain limit, they are inserted in the layout
+ * incrementally.
  * @type {Array.<INode>}
  */
 let addedNodes = []
 
 /**
- * Stores all edges that where removed when calculation the transitive reduction in case they should be invisible.
+ * Stores all edges that where removed when calculation the transitive reduction in case they
+ * should be invisible.
  * @type {Set.<IEdge>}
  */
 let removedEdgesSet = null
@@ -264,8 +286,9 @@ let incrementalEdges = []
 let showTransitiveEdges = true
 
 /**
- * Stores all npm-packages that have been visited to be able to reuse those nodes instead of reloading them.
- * This mapper will be cleared when switching samples or loading a new npm-package graph.
+ * Stores all npm-packages that have been visited to be able to reuse those nodes instead of
+ * reloading them. This mapper will be cleared when switching samples or loading a new npm-package
+ * graph.
  * @type {Map.<string, INode>}
  */
 let visitedPackages = null
@@ -445,10 +468,12 @@ function initializeInputModes() {
     new MagnifyNodeHighlightInstaller()
   )
 
-  mode.addItemClickedListener((sender, e) => {
+  mode.addItemClickedListener(async (sender, e) => {
     // check if the clicked item is a node or if the loaded graph is yfiles/modules, since this graph has
     // no pending dependencies... in this case, we have to execute the code in addItemSelectedListener.
     if (INode.isInstance(e.item)) {
+      e.handled = true
+
       const item = e.item
       const clickPoint = graphComponent.inputMode.clickInputMode.clickLocation
 
@@ -457,28 +482,22 @@ function initializeInputModes() {
       const existingPackages = new HashMap()
 
       // check if dependencies' circle was hit
-      let handled = false
       if (
         item.tag &&
         item.tag.pendingDependencies &&
         clickIsInCircle(nodeBounds, clickPoint, nodeBounds.width)
       ) {
         handlePendingDependencies(item, existingPackages)
-        handled = true
-      }
-
-      if (!handled && item !== startNode) {
+      } else if (item !== startNode) {
         const undoEdit = beginUndoEdit('undoChangeStartNode', 'redoChangeStartNode')
         graphComponent.graph.undoEngine.addUnit(new ChangedSetUndoUnit())
         graphComponent.currentItem = item
         filteredGraph.nodes.forEach(node => {
           node.tag.pendingDependencies = false
         })
-        filterGraph(item, () => {
-          commitUndoEdit(undoEdit)
-        })
+        await filterGraph(item)
+        commitUndoEdit(undoEdit)
       }
-      e.handled = true
     }
   })
 
@@ -486,7 +505,8 @@ function initializeInputModes() {
 }
 
 /**
- * Loads pending dependencies for the given node in case the click-point is located in the according circle.
+ * Loads pending dependencies for the given node in case the click-point is located in the
+ * according circle.
  * @param {INode} item the node whose dependencies are completed.
  * @param {Map} existingPackages A mapping of existing packages.
  */
@@ -500,7 +520,7 @@ async function handlePendingDependencies(item, existingPackages) {
   })
   setBusy(true)
   try {
-    await onAddDependencies(item.labels.get(0).text, item, true)
+    await onAddDependencies(item, true)
     addedNodes.forEach(node => {
       filteredNodes.add(node)
       incrementalNodes.push(node)
@@ -655,7 +675,13 @@ async function loadGraph() {
 
     graph.nodes.forEach(node => {
       const label = node.labels.first()
-      node.layout.width = label.layout.width + 50
+      const nodeLayout = new Rect(
+        node.layout.x,
+        node.layout.y,
+        label.layout.width + 50,
+        node.layout.height
+      )
+      graph.setNodeLayout(node, nodeLayout)
       graph.setLabelLayoutParameter(label, nodeLabelParameter)
       node.tag = { highlight: false }
     })
@@ -683,7 +709,7 @@ async function loadGraph() {
       filteredNodes = new Set()
       filteredEdges = new Set()
       visitedPackages = new HashMap()
-      await updateGraph(packageText, false)
+      await updateGraph({ name: packageText, version: 'latest' }, false)
       graphComponent.graph.undoEngine.clear()
     }
   }
@@ -692,20 +718,20 @@ async function loadGraph() {
 /**
  * Updates the graph by filling it with nodes that represent npm-packages.
  * The packages are loaded asynchronously from the internet.
- * @param {string} packageText the name of the start package
+ * @param {NpmPackageInfo} pckg - the start package info
  * @param {boolean} incremental <code>true</code> if the layouts should be incremental
  */
-async function updateGraph(packageText, incremental) {
+async function updateGraph(pckg, incremental) {
   setBusy(true)
 
   // reset the table with the graph information
-  resetTable(packageText)
+  resetTable(pckg.name)
 
   incrementalNodes = []
   try {
-    const start = await getStartNode(packageText)
-    startNode = start.startNode
-    const startNodeDependencies = start.startNodeDependencies
+    startNode = createModuleNode(pckg)
+    graphComponent.currentItem = startNode
+    const startNodeDependencies = await fetchDependencies(pckg)
     await addDependencies(startNode, startNodeDependencies, incremental)
     addedNodes.forEach(node => {
       filteredNodes.add(node)
@@ -720,7 +746,7 @@ async function updateGraph(packageText, incremental) {
   } catch (e) {
     const errorMessage = ' - Invalid Package'
     if (packageTextBox.value.indexOf(errorMessage) === -1) {
-      packageTextBox.value = packageText + errorMessage
+      packageTextBox.value = pckg.name + errorMessage
       packageTextBox.className = 'error'
     }
   } finally {
@@ -730,57 +756,30 @@ async function updateGraph(packageText, incremental) {
 
 /**
  * Retrieves the node from where the dependencies unfold, asynchronously.
- * @param {string} packageName the name of the package represented by the start node
+ * @param {NpmPackageInfo} pckg the package info represented by the start node
  */
-async function getStartNode(packageName) {
-  const url = `http://localhost:4242/npm-request?type=dependencies&package=${packageName}`
-  let data
-  try {
-    data = await requestData(url)
-  } catch (e) {
-    throw new Error(
-      'Failed to load NPM Graph. Did you start the Demo Server (see description text)?'
-    )
-  }
-  let object
-  try {
-    object = JSON.parse(JSON.stringify(data))
-  } catch (e) {
-    throw new Error('Failed to parse JSON data')
-  }
-  if (object.error) {
-    throw new Error('Failed to parse JSON data')
-  }
-  let node = visitedPackages.get(packageName)
+function createModuleNode(pckg) {
+  let node = visitedPackages.get(pckg.name)
   if (!node) {
     const wrappedGraph = filteredGraph.wrappedGraph
     node = wrappedGraph.createNode({
       tag: {
         highlight: false,
-        pendingDependencies: false
+        pendingDependencies: false,
+        pkg: pckg
       }
     })
-    const label = wrappedGraph.addLabel(node, packageName, nodeLabelParameter)
+    const label = wrappedGraph.addLabel(node, pckg.name, nodeLabelParameter)
     wrappedGraph.setNodeLayout(node, new Rect(0, 0, label.layout.width + 50, node.layout.height))
-    wrappedGraph.setNodeCenter(node, graphComponent.contentRect.center)
     node.tag.highlight = false
+    dependenciesNo++
+    addedNodes.push(node)
   }
-  filteredNodes.add(node)
   filteredGraph.nodePredicateChanged(node)
-  graphComponent.currentItem = node
   incrementalNodes.push(node)
-  visitedPackages.set(packageName, node)
+  visitedPackages.set(pckg.name, node)
 
-  let dependencies
-  if (object.dependencies) {
-    dependencies = Object.keys(object.dependencies)
-  } else {
-    dependencies = []
-  }
-  return {
-    startNode: node,
-    startNodeDependencies: dependencies
-  }
+  return node
 }
 
 /**
@@ -801,92 +800,53 @@ function getInitialPackage(packageName) {
 /**
  * Adds nodes for all dependencies asynchronously.
  * @param {INode} pred the predecessor node
- * @param {Array} predDependencies all dependencies of pred
+ * @param {Array.<NpmPackageInfo>} predDependencies all dependencies of pred
  * @param {boolean} incremental whether or not the layout is applied incrementally
  * @return {Promise}
  */
-function addDependencies(pred, predDependencies, incremental) {
-  const promises = predDependencies.map(async dependency => {
-    let node = visitedPackages.get(dependency)
-    const wrappedGraph = filteredGraph.wrappedGraph
-    if (!node) {
-      node = wrappedGraph.createNode({
-        tag: {
-          highlight: false,
-          pendingDependencies: false
-        }
-      })
-      const label = wrappedGraph.addLabel(node, dependency, nodeLabelParameter)
-      wrappedGraph.setNodeLayout(node, new Rect(0, 0, label.layout.width + 50, node.layout.height))
-      node.tag.highlight = false
-      dependenciesNo++
-
-      addedNodes.push(node)
-      visitedPackages.set(dependency, node)
+async function addDependencies(pred, predDependencies, incremental) {
+  const next = []
+  let pendingDeps = 0
+  for (const dependency of predDependencies) {
+    if (addedNodes.length + filteredGraph.nodes.size > maxNpmModules) {
+      pred.tag.pendingDependencies = true
     } else {
-      node.tag.pendingDependencies = false
-      if (addedNodes.indexOf(node) < 0 && !filteredNodes.has(node)) {
-        addedNodes.push(node)
-        dependenciesNo++
-      }
-    }
-
-    if (pred && pred !== node) {
-      let edge = getEdge(wrappedGraph, pred, node)
-      if (edge === null) {
-        edge = wrappedGraph.createEdge(pred, node)
-      }
-      filteredEdges.add(edge)
-    }
-
-    await tryLayout(incremental)
-
-    if (wrappedGraph.outDegree(node) > 0) {
-      const dependencies = []
-      wrappedGraph.outEdgesAt(node).forEach(edge => {
-        dependencies.push(edge.targetNode.labels.get(0).text)
-      })
-      if (dependencies.length > 0) {
-        if (filteredGraph.nodes.size + addedNodes.length < 100) {
-          await addDependencies(node, dependencies, incremental)
-        } else {
-          node.tag.pendingDependencies = true
-        }
-      }
-      return
-    }
-    const url = `http://localhost:4242/npm-request?type=dependencies&package=${dependency}`
-    let data
-    try {
-      data = await requestData(url)
-    } catch (e) {
-      throw new Error(
-        'Failed to load NPM Graph. Did you start the Demo Server (see description text)?'
-      )
-    }
-    let object
-    try {
-      object = JSON.parse(JSON.stringify(data))
-    } catch (e) {
-      throw new Error('Failed to parse JSON data')
-    }
-    if (object.error) {
-      throw new Error('Failed to parse JSON data')
-    }
-    const dependencies = object.dependencies
-    if (dependencies && Object.keys(dependencies).length > 0) {
-      if (filteredGraph.nodes.size + addedNodes.length < 100) {
-        try {
-          await addDependencies(node, Object.keys(dependencies), incremental)
-        } catch (e) {
-          throw new Error('Error while adding the nodes for all dependencies')
+      let node = visitedPackages.get(dependency.name)
+      const wrappedGraph = filteredGraph.wrappedGraph
+      if (!node) {
+        node = createModuleNode(dependency)
+        const dependencies = await fetchDependencies(dependency)
+        if (dependencies.length > 0) {
+          next.push([node, dependencies])
+          pendingDeps += dependencies.length
         }
       } else {
-        node.tag.pendingDependencies = Object.keys(dependencies).length > 0
+        node.tag.pendingDependencies = false
+        if (addedNodes.indexOf(node) < 0 && !filteredNodes.has(node)) {
+          addedNodes.push(node)
+          dependenciesNo++
+        }
       }
+
+      if (pred && pred !== node) {
+        let edge = getEdge(wrappedGraph, pred, node)
+        if (edge === null) {
+          edge = wrappedGraph.createEdge(pred, node)
+          const cycleResult = new Cycle().run(wrappedGraph)
+          if (cycleResult.edges.size > 0) {
+            console.log(`removing cyclic edge from ${pred.tag.pkg.name} to ${dependency.name}`)
+            wrappedGraph.remove(edge)
+          }
+        }
+        filteredEdges.add(edge)
+      }
+
+      await tryLayout(incremental)
     }
-  })
-  return Promise.all(promises)
+  }
+  for (const info of next) {
+    await addDependencies(info[0], info[1], incremental)
+  }
 }
 
 /**
@@ -898,9 +858,8 @@ function addDependencies(pred, predDependencies, incremental) {
  */
 function getEdge(graph, node1, node2) {
   const outEdges = graph.outEdgesAt(node1)
-  for (let i = 0; i < outEdges.size; i++) {
-    const outEdge = outEdges.get(i)
-    if (outEdge.equals(node2)) {
+  for (const outEdge of outEdges) {
+    if (outEdge.targetNode.equals(node2)) {
       return outEdge
     }
   }
@@ -908,102 +867,45 @@ function getEdge(graph, node1, node2) {
 }
 
 /**
- * Unfolds dependencies in the npm-graph that were not loaded because the graph was already large, asynchronously.
- * This function is called when the plus-sign on the right of the node is clicked.
- * @param {string} packageName the name of the previous package
- * @param {INode}pred the node that represents the predecessor
+ * Unfolds dependencies in the npm-graph that were not loaded because the graph was already large,
+ * asynchronously. This function is called when the plus-sign on the right of the node is clicked.
+ * @param {INode} pred the node that represents the predecessor
  * @param {boolean} incremental whether or not the layout should be incremental
  * @return {Promise}
  */
-async function onAddDependencies(packageName, pred, incremental) {
-  if (filteredGraph.wrappedGraph.outDegree(pred) > 0) {
-    const promises = filteredGraph.wrappedGraph
-      .outEdgesAt(pred)
-      .toArray()
-      .map(async edge => {
-        filteredEdges.add(edge)
-        pred.tag.pendingDependencies = false
-        const target = edge.targetNode
-        if (!filteredNodes.has(target)) {
-          filteredNodes.add(target)
-          addedNodes.push(target)
-        }
-
-        const hasOutEdges = filteredGraph.wrappedGraph.outDegree(target) > 0
-        const hasPendingDependencies = target.tag && target.tag.pendingDependencies
-        if (hasOutEdges || hasPendingDependencies) {
-          target.tag.pendingDependencies = true
-          return
-        }
-        const url = `http://localhost:4242/npm-request?type=dependencies&package=${
-          target.labels.get(0).text
-        }`
-        let data
-        try {
-          data = await requestData(url)
-        } catch (e) {
-          throw new Error(
-            'Failed to load NPM Graph. Did you start the Demo Server (see description text)?'
-          )
-        }
-        let parsed
-        try {
-          parsed = JSON.parse(JSON.stringify(data))
-        } catch (e) {
-          throw new Error('Failed to parse JSON data')
-        }
-        if (parsed.error) {
-          throw new Error('Failed to parse JSON data')
-        }
-        if (parsed.dependencies) {
-          target.tag.pendingDependencies =
-            Object.keys(parsed.dependencies).length > filteredGraph.outDegree(target)
-        }
-      })
-    return Promise.all(promises)
-  } else {
-    const url = `http://localhost:4242/npm-request?type=dependencies&package=${packageName}`
-    let data
-    try {
-      data = await requestData(url)
-    } catch (e) {
-      throw new Error(
-        'Failed to load NPM Graph. Did you start the Demo Server (see description text)?'
-      )
-    }
-    let parsed
-    try {
-      parsed = JSON.parse(JSON.stringify(data))
-    } catch (e) {
-      throw new Error('Failed to parse JSON data')
-    }
-    if (parsed.error) {
-      throw new Error('Failed to parse JSON data')
-    }
-    const dependencies = parsed.dependencies
-    if (pred.tag) {
+async function onAddDependencies(pred, incremental) {
+  const promises = filteredGraph.wrappedGraph
+    .outEdgesAt(pred)
+    .toArray()
+    .map(async edge => {
+      filteredEdges.add(edge)
       pred.tag.pendingDependencies = false
-    }
-    const promises = Object.keys(dependencies).map(async dependency => {
-      let node = visitedPackages.get(dependency)
+      const target = edge.targetNode
+      if (!filteredNodes.has(target)) {
+        filteredNodes.add(target)
+        addedNodes.push(target)
+      }
+
+      const hasOutEdges = filteredGraph.wrappedGraph.outDegree(target) > 0
+      const hasPendingDependencies = target.tag && target.tag.pendingDependencies
+      if (hasOutEdges || hasPendingDependencies) {
+        target.tag.pendingDependencies = true
+        return
+      }
+      const dependencies = await fetchDependencies(target.tag.pkg)
+      target.tag.pendingDependencies =
+        Object.keys(dependencies).length > filteredGraph.outDegree(target)
+    })
+  const dependencies = await fetchDependencies(pred.tag.pkg)
+  if (pred.tag) {
+    pred.tag.pendingDependencies = false
+  }
+  promises.push(
+    ...dependencies.map(async dependency => {
+      let node = visitedPackages.get(dependency.name)
       const wrappedGraph = filteredGraph.wrappedGraph
       if (!node) {
-        node = wrappedGraph.createNode({
-          tag: {
-            highlight: false,
-            pendingDependencies: false
-          }
-        })
-        const label = wrappedGraph.addLabel(node, dependency, nodeLabelParameter)
-        wrappedGraph.setNodeLayout(
-          node,
-          new Rect(0, 0, label.layout.width + 50, node.layout.height)
-        )
-        node.tag.highlight = false
-        dependenciesNo++
-
-        addedNodes.push(node)
-        visitedPackages.set(dependency, node)
+        node = createModuleNode(dependency)
       } else if (addedNodes.indexOf(node) < 0 && !filteredNodes.has(node)) {
         addedNodes.push(node)
         dependenciesNo++
@@ -1016,27 +918,12 @@ async function onAddDependencies(packageName, pred, incremental) {
 
       await tryLayout(incremental)
 
-      const dependencyUrl = `http://localhost:4242/npm-request?type=dependencies&package=${dependency}`
-      let jsonData
-      try {
-        jsonData = await requestData(dependencyUrl)
-      } catch (e) {
-        throw new Error(
-          'Failed to load NPM Graph. Did you start the Demo Server (see description text)?'
-        )
-      }
-      const jsonObject = JSON.parse(JSON.stringify(jsonData))
-      if (jsonObject.error) {
-        throw new Error('Failed to parse JSON data')
-      } else {
-        if (jsonObject.dependencies) {
-          node.tag.pendingDependencies =
-            Object.keys(jsonObject.dependencies).length > filteredGraph.wrappedGraph.outDegree(node)
-        }
-      }
+      const dependencies = await fetchDependencies(dependency)
+      node.tag.pendingDependencies =
+        dependencies.length > filteredGraph.wrappedGraph.outDegree(node)
     })
-    return Promise.all(promises)
-  }
+  )
+  return Promise.all(promises)
 }
 
 /**
@@ -1066,7 +953,40 @@ async function tryLayout(incremental) {
  */
 async function requestData(url) {
   const response = await fetch(url)
-  return response.json()
+  if (!response.ok) {
+    const text = await response.text()
+    const message = text || response.status
+    throw new Error(`Failed to load package: ${message}`)
+  }
+  try {
+    return await response.json()
+  } catch (e) {
+    throw new Error('Failed to parse JSON data')
+  }
+}
+
+/**
+ * @param {object} pckg
+ * @return {Promise<object[]>}
+ */
+async function fetchDependencies(pckg) {
+  const url = `http://localhost:${proxyPort}/npm-request?type=dependencies&package=${pckg.name}&version=${pckg.version}`
+  let data
+  try {
+    data = await requestData(url)
+  } catch (e) {
+    throw new Error(
+      'Failed to load NPM Graph. Did you start the Demo Server (see description text)?'
+    )
+  }
+  if (data.error) {
+    throw new Error('Failed to parse JSON data')
+  }
+  return data.dependencies
+    ? Object.keys(data.dependencies).map(key => {
+        return { name: key, version: data.dependencies[key].replace(/^[\^~]/, '') }
+      })
+    : []
 }
 
 /**
@@ -1198,7 +1118,7 @@ async function filterGraph(clickedNode) {
   dependentsNo = 0
   dependenciesNo = 0
 
-  // marks the nodes of the current instance of the  graph, so that the new nodes if any to be marked as incremental
+  // marks the nodes of the current instance of the graph, so that the new nodes if any are marked as incremental
   const existingNodes = new Set(filteredGraph.nodes.toArray())
   const fullGraph = filteredGraph.wrappedGraph
 
@@ -1274,21 +1194,22 @@ async function filterGraph(clickedNode) {
       }
 
       filteredGraph.outEdgesAt(target).forEach(outEdge => {
-        edgeStack.push(outEdge)
+        if (!visited.includes(outEdge.targetNode)) {
+          edgeStack.push(outEdge)
+        }
       })
     }
 
     filteredGraph.nodePredicateChanged()
     filteredGraph.edgePredicateChanged()
 
-    const packageText = packageNode.labels.get(0).text
-    return updateGraph(packageText, true)
+    return updateGraph(packageNode.tag.pkg, true)
   }
 }
 
 /**
- * Collects and changes the visible state of the nodes/edges connected to the given node, recursively.
- * Depending on the out-parameter dependents or dependencies are collected.
+ * Collects and changes the visible state of the nodes/edges connected to the given node,
+ * recursively. Depending on the out-parameter dependents or dependencies are collected.
  * @param {INode} initialNode The node to start collecting of nodes.
  * @param {IGraph} graph The graph.
  * @param {boolean} out whether or not to collect dependents or dependencies.
@@ -1344,8 +1265,8 @@ function resetGraph() {
 
 /**
  * Applies the layout to the current graph.
- * @param {boolean} incremental <code>true</code> if an incremental layout is desired, <code>false</code> otherwise
- * @param {function} callback a callback function that will be invoked after finishing the layout
+ * @param {boolean} incremental <code>true</code> if an incremental layout is desired,
+ *   <code>false</code> otherwise
  */
 async function applyLayout(incremental) {
   // if is in layout or the graph has no nodes then return.
@@ -1457,7 +1378,8 @@ function setUIDisabled(disabled) {
 }
 
 /**
- * Checks if the given click-point belongs to one of the circles representing the dependencies of the node.
+ * Checks if the given click-point belongs to one of the circles representing the dependencies of
+ * the node.
  * @param {Rect} nodeBounds the enlarged node bounds
  * @param {Point} clickPoint the clicked point
  * @param {number} x the starting x-coordinate for defining the circle
@@ -1607,8 +1529,8 @@ function cancelUndoEdit(edit) {
 }
 
 /**
- * An undo unit that handles the undo/redo of the currentItem and all sets that determine whether or not a node or
- * edge is currently visible (part of the filtered graph).
+ * An undo unit that handles the undo/redo of the currentItem and all sets that determine whether
+ * or not a node or edge is currently visible (part of the filtered graph).
  */
 class ChangedSetUndoUnit extends UndoUnitBase {
   constructor() {

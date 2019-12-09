@@ -5,13 +5,25 @@
   "license": "https://www.yworks.com/products/yfiles-for-html/sla",
   "private": true,
   "scripts": {
+    "preinstall": "cd ../../../lib/es-modules && npm pack",
     "build": "node --max-old-space-size=2048 ./node_modules/grunt/bin/grunt"
   },
   "devDependencies": {
+    "@babel/core": "^7.7.4",
+    "@babel/preset-env": "^7.7.4",
     "@yworks/optimizer": "^1.0.5",
     "grunt": "^1.0.4",
     "grunt-contrib-clean": "^2.0.0",
     "grunt-contrib-copy": "^1.0.0",
-    "rollup": "^1.21.4"
+    "rollup": "^1.21.4",
+    "rollup-plugin-babel": "^4.3.3",
+    "rollup-plugin-commonjs": "^10.1.0",
+    "rollup-plugin-node-resolve": "^5.2.0"
+  },
+  "dependencies": {
+    "core-js": "^3.4.5",
+    "regenerator-runtime": "^0.13.3",
+    "unfetch": "^4.1.0",
+    "yfiles": "../../../lib/es-modules/yfiles-22.0.3-eval.tgz"
   }
 }

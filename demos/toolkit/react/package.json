@@ -7,14 +7,11 @@
   "dependencies": {
     "react": "16.9.0",
     "react-dom": "16.9.0",
-    "react-scripts": "3.1.2"
-  },
-  "peerDependencies": {
-    "yfiles": "22.0.2"
+    "react-scripts": "3.1.2",
+    "yfiles": "../../../lib/es-modules/yfiles-22.0.3-eval.tgz"
   },
   "scripts": {
-    "preinstall": "node -e \"require('fs').copyFileSync('../../../lib/license.json','./src/license.json'); require('fs').copyFileSync('../../../ide-support/yfiles-typeinfo.js','./public/yfiles-typeinfo.js')\"",
-    "postinstall": "cd ../.. && yarn || npm i",
+    "preinstall": "node -e \"require('fs').copyFileSync('../../../lib/license.json','./src/license.json'); require('fs').copyFileSync('../../../ide-support/yfiles-typeinfo.js','./public/yfiles-typeinfo.js')\" && cd ../../../lib/es-modules && npm pack",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "eject": "react-scripts eject"

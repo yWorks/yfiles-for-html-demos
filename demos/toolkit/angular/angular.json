@@ -19,13 +19,8 @@
             "main": "src/main.ts",
             "tsConfig": "src/tsconfig.json",
             "polyfills": "src/polyfills.ts",
-            "assets": [
-              "src/assets"
-            ],
-            "styles": [
-              "../../resources/style/demo.css",
-              "../../../lib/es-modules/yfiles.css"
-            ]
+            "assets": ["src/assets"],
+            "styles": ["../../resources/style/demo.css", "../../../lib/es-modules/yfiles.css"]
           },
           "configurations": {
             "production": {

@@ -61,7 +61,8 @@ function getDemoData() {
         'component',
         'tabular',
         'partial',
-        'graph-transform'
+        'graph-transform',
+        'label placement'
       ]
     },
     {
@@ -90,6 +91,7 @@ function getDemoData() {
         'animation',
         'filtering',
         'search',
+        'highlight',
         'template',
         'print',
         'datapanel',
@@ -141,7 +143,7 @@ function getDemoData() {
       thumbnailPath: 'resources/image/networkmonitoring.png',
       sourcePath: 'complete/networkmonitoring/NetworkMonitoringDemo.js',
       tags: ['styles', 'viewer', 'animation'],
-      keywords: ['tooltip', 'datapanel', 'chart', 'structure']
+      keywords: ['tooltip', 'datapanel', 'chart', 'structure', 'd3js']
     },
     {
       id: 'graph-analysis',
@@ -208,7 +210,7 @@ function getDemoData() {
       thumbnailPath: 'resources/image/familyTree.png',
       sourcePath: 'layout/familytree/FamilyTreeDemo.js',
       tags: ['layout', 'genealogy'],
-      keywords: ['familytree', 'tree', 'layout', 'genealogical', 'v2.2.0.0', 'structure']
+      keywords: ['familytree', 'tree', 'layout', 'genealogical', 'v2.2.0.0', 'structure', 'labels']
     },
     {
       id: 'template-styles',
@@ -230,7 +232,7 @@ function getDemoData() {
       thumbnailPath: 'resources/image/cssstyling.png',
       sourcePath: 'style/cssstyling/CSSStylingDemo.js',
       tags: ['css', 'indicators', 'theme'],
-      keywords: ['stylesheet', 'v2.2.0.0']
+      keywords: ['stylesheet', 'v2.2.0.0', 'labels']
     },
     {
       id: 'overview',
@@ -241,7 +243,7 @@ function getDemoData() {
       thumbnailPath: 'resources/image/overview.png',
       sourcePath: 'view/overviewstyles/OverviewStylesDemo.js',
       tags: ['styles', 'Canvas'],
-      keywords: ['v2.2.0.0', 'overviewinputmode', 'svg']
+      keywords: ['v2.2.0.0', 'overviewinputmode', 'svg', 'labels']
     },
     {
       id: 'metaball-groups',
@@ -333,7 +335,7 @@ function getDemoData() {
       thumbnailPath: 'resources/image/mindmap.png',
       sourcePath: 'complete/mindmap/MindmapDemo.js',
       tags: ['styles', 'layout'],
-      keywords: ['contextmenu', 'tree', 'structure']
+      keywords: ['contextmenu', 'tree', 'structure', 'labels']
     },
     {
       id: 'd3-chart-nodes',
@@ -377,7 +379,15 @@ function getDemoData() {
       thumbnailPath: 'resources/image/orgchart.png',
       sourcePath: 'complete/orgchartviewer/OrgChartViewerDemo.js',
       tags: ['styles', 'layout'],
-      keywords: ['orgchart', 'search', 'template', 'datapanel', 'v2.2.0.0', 'structure']
+      keywords: [
+        'orgchart',
+        'search',
+        'template',
+        'datapanel',
+        'v2.2.0.0',
+        'structure',
+        'highlight'
+      ]
     },
     {
       id: 'collapsible-trees',
@@ -440,7 +450,7 @@ function getDemoData() {
       thumbnailPath: 'resources/image/simpleeditor.png',
       sourcePath: 'view/grapheditor/GraphEditorDemo.js',
       tags: ['interaction'],
-      keywords: ['contextmenu', 'groups', 'folding', 'overview']
+      keywords: ['contextmenu', 'groups', 'folding', 'overview', 'Labels']
     },
     {
       id: 'table-editor',
@@ -460,7 +470,8 @@ function getDemoData() {
         'hierarchic',
         'groups',
         'contextmenu',
-        'move'
+        'move',
+        'labels'
       ]
     },
     {
@@ -472,7 +483,7 @@ function getDemoData() {
       thumbnailPath: 'resources/image/graphviewer.png',
       sourcePath: 'view/graphviewer/GraphViewerDemo.js',
       tags: ['styles', 'overview'],
-      keywords: ['tooltip', 'contextmenu', 'datapanel', 'search']
+      keywords: ['tooltip', 'contextmenu', 'datapanel', 'search', 'highlight']
     },
     {
       id: 'large-graphs',
@@ -559,7 +570,7 @@ function getDemoData() {
       thumbnailPath: 'resources/image/networkflows.png',
       sourcePath: 'analysis/networkflows/NetworkFlowsDemo.js',
       tags: ['algorithms', 'styles'],
-      keywords: ['networkflows', 'maximum', 'minimum', 'cut']
+      keywords: ['networkflows', 'maximum', 'minimum', 'cut', 'labels']
     },
     {
       id: 'transitivity',
@@ -571,7 +582,7 @@ function getDemoData() {
       thumbnailPath: 'resources/image/transitivity.png',
       sourcePath: 'analysis/transitivity/TransitivityDemo.js',
       tags: ['analysis'],
-      keywords: ['transitive', 'closure', 'reduction', 'npm', 'filtering', 'structure']
+      keywords: ['transitive', 'closure', 'reduction', 'npm', 'filtering', 'structure', 'highlight']
     },
     {
       id: 'edge-label-placement',
@@ -804,7 +815,7 @@ function getDemoData() {
       thumbnailPath: 'resources/image/treelayout.png',
       sourcePath: 'layout/tree/TreeLayoutDemo.js',
       tags: ['layout', 'tree'],
-      keywords: ['nodeplacer']
+      keywords: ['nodeplacer', 'v2.2.0.2']
     },
     {
       id: 'partial-layout',
@@ -870,7 +881,7 @@ function getDemoData() {
       thumbnailPath: 'resources/image/structureview.png',
       sourcePath: 'view/structureview/StructureViewDemo.js',
       tags: ['interaction'],
-      keywords: ['list', 'tree', 'overview', 'structure', 'v2.1.0.3']
+      keywords: ['list', 'tree', 'overview', 'structure', 'v2.1.0.3', 'labels']
     },
     {
       id: 'graph-builder',
@@ -882,7 +893,7 @@ function getDemoData() {
       thumbnailPath: 'resources/image/graphbuilder.png',
       sourcePath: 'databinding/graphbuilder/GraphBuilderDemo.js',
       tags: ['JSON', 'binding', 'layout'],
-      keywords: ['hierarchic', 'structure']
+      keywords: ['hierarchic', 'structure', 'labels']
     },
     {
       id: 'adjacent-nodes-graph-builder',
@@ -906,7 +917,7 @@ function getDemoData() {
       thumbnailPath: 'resources/image/simplegraphbuilder.png',
       sourcePath: 'databinding/simplegraphbuilder/SimpleGraphBuilderDemo.js',
       tags: ['JSON', 'binding', 'layout'],
-      keywords: ['hierarchic']
+      keywords: ['hierarchic', 'labels']
     },
     {
       id: 'angular-cli',
@@ -973,7 +984,8 @@ function getDemoData() {
       category: 'integration',
       thumbnailPath: 'resources/image/react.png',
       sourcePath: '',
-      tags: ['react', 'json', 'data', 'webpack']
+      tags: ['react', 'json', 'data', 'webpack'],
+      keywords: ['v2.2.0.2']
     },
     {
       id: 'react-typescript',
@@ -1200,7 +1212,7 @@ function getDemoData() {
       thumbnailPath: 'resources/image/graphml.png',
       sourcePath: 'view/graphml/GraphMLDemo.html',
       tags: ['GraphML', 'I/O'],
-      keywords: ['load', 'save', 'IO', 'datapanel', 'groups', 'folding']
+      keywords: ['load', 'save', 'IO', 'datapanel', 'groups', 'folding', 'labels']
     },
     {
       id: 'graphml-compatibility',
@@ -1315,7 +1327,8 @@ function getDemoData() {
       category: 'view',
       thumbnailPath: 'resources/image/clipboard.png',
       sourcePath: 'view/clipboard/ClipboardDemo.js',
-      tags: ['interaction', 'copy', 'paste']
+      tags: ['interaction', 'copy', 'paste'],
+      keywords: ['labels']
     },
     {
       id: 'rendering-order',

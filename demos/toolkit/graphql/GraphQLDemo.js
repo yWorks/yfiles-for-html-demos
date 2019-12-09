@@ -231,7 +231,7 @@ query loadSinglePerson ($id: ID!) {
  * @return {Promise<void>} The layout animation promise
  */
 async function loadFriends(item) {
-  if (!(item instanceof INode)) {
+  if (!INode.isInstance(item)) {
     return
   }
 

@@ -109,7 +109,7 @@ export default class D3BarChart {
     const remainingLoads = node.tag.loadHistory.slice(0, node.tag.loadHistory.length - 1)
 
     // Width of each bar
-    const currentBarWidth = this.chartWidth / remainingLoads.length * 2
+    const currentBarWidth = (this.chartWidth / remainingLoads.length) * 2
     const barWidth = (this.chartWidth - currentBarWidth) / remainingLoads.length
 
     // Use linear y-axis scaling from 0 to 1

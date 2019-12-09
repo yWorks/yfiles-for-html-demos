@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import {
+import yfiles, {
   Arrow,
   ArrowType,
   BaseClass,
@@ -34,7 +34,6 @@ import {
   CanvasComponent,
   Class,
   CollapsibleNodeStyleDecoratorRenderer,
-  CreateEdgeInputMode,
   DefaultLabelStyle,
   DropInputMode,
   EdgeStyleBase,
@@ -670,8 +669,8 @@ export class DemoGroupStyle extends NodeStyleBase {
       return layout.containsWithEps(p, inputModeContext.hitTestRadius)
     } else {
       if (
-        (CreateEdgeInputMode &&
-          inputModeContext.parentInputMode instanceof CreateEdgeInputMode &&
+        (yfiles.input.CreateEdgeInputMode &&
+          inputModeContext.parentInputMode instanceof yfiles.input.CreateEdgeInputMode &&
           inputModeContext.parentInputMode.isCreationInProgress) ||
         (inputModeContext.parentInputMode instanceof MoveInputMode &&
           inputModeContext.parentInputMode.isDragging) ||

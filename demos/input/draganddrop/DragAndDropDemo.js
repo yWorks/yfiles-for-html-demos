@@ -345,7 +345,7 @@ function configureEdgeDropInputMode(mode) {
   // This method is called when an edge style is dropped onto the canvas. The edge
   // may be dropped onto a node, another edge or onto the empty canvas.
   edgeDropInputMode.itemCreator = (ctx, graph, draggedItem, dropTarget, dropLocation) => {
-    if (!(draggedItem instanceof IEdge)) {
+    if (!IEdge.isInstance(draggedItem)) {
       return
     }
     // Use the dropped edge style for changed/created edges.

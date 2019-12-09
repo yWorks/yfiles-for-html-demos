@@ -28,7 +28,6 @@
  ***************************************************************************/
 import {
   BaseClass,
-  CanvasComponent,
   Class,
   ConstantLabelCandidateDescriptorProvider,
   CreateEdgeInputMode,
@@ -51,24 +50,17 @@ import {
   GraphMLAttribute,
   GraphMLMemberVisibility,
   HandlePositions,
-  HandleTypes,
   HashMap,
+  HorizontalTextAlignment,
   IArrow,
   IBoundsProvider,
-  ICanvasContext,
-  ICanvasObjectDescriptor,
   ICloneable,
   IColumn,
   ICommand,
-  IEdge,
   IEdgePathCropper,
-  IEdgeStyle,
   IEditLabelHelper,
   IGraph,
   IHandle,
-  IHitTestable,
-  IInputModeContext,
-  ILabel,
   ILabelCandidateDescriptorProvider,
   ILabelModel,
   ILabelModelParameter,
@@ -78,35 +70,28 @@ import {
   ILabelStyleRenderer,
   IList,
   ILookup,
-  IMarqueeTestable,
-  IModelItem,
   INode,
   INodeInsetsProvider,
   INodeSizeConstraintProvider,
   INodeStyle,
   INodeStyleRenderer,
-  IOrientedRectangle,
-  IPoint,
-  IPort,
-  IPortLocationModelParameter,
-  IPortStyle,
-  IPortStyleRenderer,
-  IRectangle,
-  IRenderContext,
-  IReshapeHandleProvider,
-  IShapeGeometry,
-  IStripe,
-  ITable,
-  IVisibilityTestable,
-  IVisualCreator,
-  IVisualTemplate,
   Insets,
   InteriorLabelModel,
   InteriorLabelModelPosition,
   InteriorStretchLabelModel,
   InteriorStretchLabelModelPosition,
+  IOrientedRectangle,
+  IPortStyle,
+  IPortStyleRenderer,
+  IReshapeHandleProvider,
+  IShapeGeometry,
+  IStripe,
+  ITable,
+  IVisualCreator,
+  IVisualTemplate,
   KeyEventRecognizers,
   LabelStyleBase,
+  LinearGradient,
   LineCap,
   LineJoin,
   List,
@@ -119,8 +104,8 @@ import {
   NodeStylePortStyleAdapter,
   OrientedRectangle,
   Point,
-  PolylineEdgeStyle,
   PortCandidateProviderBase,
+  RadialGradient,
   Rect,
   SandwichLabelModel,
   ShapeNodeShape,
@@ -141,6 +126,7 @@ import {
   TableNodeStyle,
   TableRenderingOrder,
   TypeAttribute,
+  VerticalTextAlignment,
   Visual,
   VoidLabelStyle,
   YBoolean,
@@ -148,7 +134,8 @@ import {
   YObject
 } from 'yfiles'
 
-let passiveSupported
+/** Feature detection whether or not the browser supports active and passive event listeners. */
+let passiveSupported = false
 try {
   const opts = Object.defineProperty({}, 'passive', {
     get: () => {
@@ -156,9 +143,110 @@ try {
     }
   })
   window.addEventListener('test', null, opts)
-} catch (e) {
-  passiveSupported = false
+} catch (e) {}
+
+function getAsFrozen(fill) {
+  fill.freeze()
+  return fill
 }
+
+/**
+ * The namespace URI for yFiles BPMN extensions to GraphML.
+ * This field has the constant value "http://www.yworks.com/xml/yfiles-bpmn/2.0"
+ * @type {string}
+ */
+export const YFILES_BPMN_NS = 'http://www.yworks.com/xml/yfiles-bpmn/2.0'
+
+/**
+ * The default namespace prefix for {@link YFILES_BPMN_NS}.
+ * This field has the constant value "bpmn"
+ * @type {string}
+ */
+export const YFILES_BPMN_PREFIX = 'bpmn'
+
+///////////////////////////////////////////////////////////////////////
+// BPMN constants which determine the default behavior of this style //
+///////////////////////////////////////////////////////////////////////
+const BPMN_CONSTANTS_DOUBLE_LINE_OFFSET = 2
+const BPMN_CONSTANTS_CHOREOGRAPHY_CORNER_RADIUS = 6
+const BPMN_CONSTANTS_GROUP_NODE_CORNER_RADIUS = 3
+const BPMN_CONSTANTS_DEFAULT_BACKGROUND = getAsFrozen(new SolidColorFill(250, 250, 250))
+const BPMN_CONSTANTS_DEFAULT_ICON_COLOR = Fill.BLACK
+const BPMN_CONSTANTS_DEFAULT_EVENT_OUTLINE = null // null triggers fallback to characteristic-specific colors
+const BPMN_CONSTANTS_DEFAULT_MESSAGE_OUTLINE = Fill.BLACK
+const BPMN_CONSTANTS_DEFAULT_INITIATING_COLOR = Fill.WHITE
+const BPMN_CONSTANTS_DEFAULT_RECEIVING_COLOR = Fill.GRAY
+// Activity
+const BPMN_CONSTANTS_ACTIVITY_CORNER_RADIUS = 6
+const BPMN_CONSTANTS_ACTIVITY_DEFAULT_BACKGROUND = BPMN_CONSTANTS_DEFAULT_BACKGROUND
+const BPMN_CONSTANTS_ACTIVITY_DEFAULT_OUTLINE = Fill.DARK_BLUE
+// Gateway
+const BPMN_CONSTANTS_GATEWAY_DEFAULT_BACKGROUND = BPMN_CONSTANTS_DEFAULT_BACKGROUND
+const BPMN_CONSTANTS_GATEWAY_DEFAULT_OUTLINE = Fill.DARK_ORANGE
+// Annotation
+const BPMN_CONSTANTS_ANNOTATION_DEFAULT_BACKGROUND = BPMN_CONSTANTS_DEFAULT_BACKGROUND
+const BPMN_CONSTANTS_ANNOTATION_DEFAULT_OUTLINE = Fill.BLACK
+// Edges
+const BPMN_CONSTANTS_EDGE_DEFAULT_COLOR = Fill.BLACK
+const BPMN_CONSTANTS_EDGE_DEFAULT_INNER_COLOR = Fill.WHITE
+// Choreography
+const BPMN_CONSTANTS_CHOREOGRAPHY_DEFAULT_BACKGROUND = BPMN_CONSTANTS_DEFAULT_BACKGROUND
+const BPMN_CONSTANTS_CHOREOGRAPHY_DEFAULT_OUTLINE = Fill.DARK_GREEN
+const BPMN_CONSTANTS_CHOREOGRAPHY_DEFAULT_ICON_COLOR = Fill.BLACK
+const BPMN_CONSTANTS_CHOREOGRAPHY_DEFAULT_MESSAGE_OUTLINE = BPMN_CONSTANTS_DEFAULT_MESSAGE_OUTLINE
+const BPMN_CONSTANTS_CHOREOGRAPHY_DEFAULT_INITIATING_COLOR = BPMN_CONSTANTS_DEFAULT_INITIATING_COLOR
+const BPMN_CONSTANTS_CHOREOGRAPHY_DEFAULT_RESPONSE_COLOR = BPMN_CONSTANTS_DEFAULT_RECEIVING_COLOR
+// Conversation
+const BPMN_CONSTANTS_CONVERSATION_DEFAULT_OUTLINE = Fill.DARK_GREEN
+const BPMN_CONSTANTS_CONVERSATION_DEFAULT_BACKGROUND = BPMN_CONSTANTS_DEFAULT_BACKGROUND
+// Data object
+const BPMN_CONSTANTS_DATA_OBJECT_DEFAULT_BACKGROUND = Fill.WHITE
+const BPMN_CONSTANTS_DATA_OBJECT_DEFAULT_OUTLINE = Fill.BLACK
+// Data store
+const BPMN_CONSTANTS_DATA_STORE_DEFAULT_OUTLINE = Fill.BLACK
+const BPMN_CONSTANTS_DATA_STORE_DEFAULT_BACKGROUND = Fill.WHITE
+// Event
+const BPMN_CONSTANTS_DEFAULT_EVENT_BACKGROUND = BPMN_CONSTANTS_DEFAULT_BACKGROUND
+// Group
+const BPMN_CONSTANTS_GROUP_DEFAULT_BACKGROUND = Fill.TRANSPARENT
+const BPMN_CONSTANTS_GROUP_DEFAULT_OUTLINE = Fill.BLACK
+// Messages
+const BPMN_CONSTANTS_DEFAULT_INITIATING_MESSAGE_COLOR = BPMN_CONSTANTS_DEFAULT_INITIATING_COLOR
+const BPMN_CONSTANTS_DEFAULT_RECEIVING_MESSAGE_COLOR = BPMN_CONSTANTS_DEFAULT_RECEIVING_COLOR
+// Pools
+const BPMN_CONSTANTS_DEFAULT_POOL_NODE_BACKGROUND = getAsFrozen(
+  new SolidColorFill(0xe0, 0xe0, 0xe0)
+)
+const BPMN_CONSTANTS_DEFAULT_POOL_NODE_EVEN_LEAF_BACKGROUND = getAsFrozen(
+  new SolidColorFill(196, 215, 237)
+)
+const BPMN_CONSTANTS_DEFAULT_POOL_NODE_EVEN_LEAF_INSET = getAsFrozen(
+  new SolidColorFill(0xe0, 0xe0, 0xe0)
+)
+const BPMN_CONSTANTS_DEFAULT_POOL_NODE_ODD_LEAF_BACKGROUND = getAsFrozen(
+  new SolidColorFill(171, 200, 226)
+)
+const BPMN_CONSTANTS_DEFAULT_POOL_NODE_ODD_LEAF_INSET = getAsFrozen(
+  new SolidColorFill(0xe0, 0xe0, 0xe0)
+)
+const BPMN_CONSTANTS_DEFAULT_POOL_NODE_PARENT_BACKGROUND = getAsFrozen(
+  new SolidColorFill(113, 146, 178)
+)
+const BPMN_CONSTANTS_DEFAULT_POOL_NODE_PARENT_INSET = getAsFrozen(
+  new SolidColorFill(0xe0, 0xe0, 0xe0)
+)
+// Default sizes for different items
+const BPMN_CONSTANTS_SIZES_MARKER = new Size(10, 10)
+const BPMN_CONSTANTS_SIZES_TASK_TYPE = new Size(15, 15)
+const BPMN_CONSTANTS_SIZES_MESSAGE = new Size(20, 14)
+const BPMN_CONSTANTS_SIZES_CONVERSATION_WIDTH_HEIGHT_RATIO = Math.sin(Math.PI / 3.0)
+const BPMN_CONSTANTS_SIZES_CONVERSATION = new Size(
+  20,
+  20 * BPMN_CONSTANTS_SIZES_CONVERSATION_WIDTH_HEIGHT_RATIO
+)
+const BPMN_CONSTANTS_SIZES_DATA_OBJECT_TYPE = new Size(10, 8)
+const BPMN_CONSTANTS_SIZES_EVENT_PORT = new Size(20, 20)
+///////////////////////////////////////////////////////////////////////
 
 /**
  * Specifies if an Activity is an expanded or collapsed Sub-Process according to BPMN.
@@ -166,7 +254,8 @@ try {
  */
 export const SubState = Enum('SubState', {
   /**
-   * Specifies that an Activity is either no Sub-Process according to BPMN or should use no Sub-Process marker.
+   * Specifies that an Activity is either no Sub-Process according to BPMN or should use no
+   * Sub-Process marker.
    * @see {@link ActivityNodeStyle}
    */
   NONE: 0,
@@ -338,106 +427,6 @@ export const ActivityType = Enum('ActivityType', {
    * @see {@link ActivityNodeStyle}
    */
   CALL_ACTIVITY: 4
-})
-
-// General constants
-const BPMN_CONSTANTS_DOUBLE_LINE_OFFSET = 2
-const BPMN_CONSTANTS_ACTIVITY_CORNER_RADIUS = 6
-const BPMN_CONSTANTS_CHOREOGRAPHY_CORNER_RADIUS = 6
-const BPMN_CONSTANTS_GROUP_NODE_CORNER_RADIUS = 3
-
-// Stroke constants
-const BPMN_CONSTANTS_STROKES_TASK = Stroke.DARK_BLUE
-const BPMN_CONSTANTS_STROKES_CALL_ACTIVITY = new Stroke(Fill.DARK_BLUE, 3)
-const BPMN_CONSTANTS_STROKES_ACTIVITY_EVENT_SUB_PROCESS = new Stroke({
-  fill: Fill.DARK_BLUE,
-  dashStyle: new DashStyle([1, 1], 0),
-  lineCap: LineCap.FLAT
-})
-const BPMN_CONSTANTS_STROKES_ACTIVITY_TASK_ROUND = new Stroke({
-  fill: Fill.BLACK,
-  lineCap: LineCap.ROUND,
-  lineJoin: LineJoin.ROUND
-})
-const BPMN_CONSTANTS_STROKES_TASK_TYPE_SERVICE = new Stroke({
-  fill: Fill.BLACK
-})
-const BPMN_CONSTANTS_STROKES_ANNOTATION = Stroke.BLACK
-const BPMN_CONSTANTS_STROKES_CHOREOGRAPHY_TASK = Stroke.DARK_GREEN
-const BPMN_CONSTANTS_STROKES_CHOREOGRAPHY_CALL = new Stroke({
-  fill: Fill.DARK_GREEN,
-  thickness: 3
-})
-const BPMN_CONSTANTS_STROKES_CHOREOGRAPHY_MESSAGE_LINK = new Stroke({
-  fill: Fill.BLACK,
-  dashStyle: new DashStyle([1, 1], 0),
-  lineCap: LineCap.FLAT
-})
-const BPMN_CONSTANTS_STROKES_CONVERSATION = Stroke.DARK_GREEN
-const BPMN_CONSTANTS_STROKES_CALLING_CONVERSATION = new Stroke({
-  fill: Fill.DARK_GREEN,
-  thickness: 3
-})
-const BPMN_CONSTANTS_STROKES_DATA_OBJECT = Stroke.BLACK
-const BPMN_CONSTANTS_STROKES_DATA_STORE = Stroke.BLACK
-const BPMN_CONSTANTS_STROKES_EVENT_START = Stroke.GREEN
-const BPMN_CONSTANTS_STROKES_EVENT_SUB_PROCESS_NON_INTERRUPTING = new Stroke({
-  fill: Fill.GREEN,
-  dashStyle: DashStyle.DASH
-})
-const BPMN_CONSTANTS_STROKES_EVENT_INTERMEDIATE = Stroke.GOLDENROD
-const BPMN_CONSTANTS_STROKES_EVENT_BOUNDARY_NON_INTERRUPTING = new Stroke({
-  fill: Fill.GOLDENROD,
-  dashStyle: DashStyle.DASH
-})
-const BPMN_CONSTANTS_STROKES_EVENT_END = new Stroke({
-  fill: Fill.RED,
-  thickness: 3
-})
-const BPMN_CONSTANTS_STROKES_EVENT_TYPE = new Stroke(Fill.BLACK)
-const BPMN_CONSTANTS_STROKES_EVENT_TYPE_DETAIL = new Stroke({
-  fill: Fill.BLACK,
-  lineCap: LineCap.ROUND
-})
-const BPMN_CONSTANTS_STROKES_EVENT_TYPE_DETAIL_INVERTED = new Stroke({
-  fill: Fill.WHITE,
-  lineCap: LineCap.ROUND
-})
-const BPMN_CONSTANTS_STROKES_GATEWAY = Stroke.DARK_ORANGE
-const BPMN_CONSTANTS_STROKES_GATEWAY_TYPE_INCLUSIVE = new Stroke({
-  fill: Fill.BLACK,
-  thickness: 3
-})
-const BPMN_CONSTANTS_STROKES_GROUP_NODE = new Stroke({
-  dashStyle: DashStyle.DASH_DOT,
-  lineCap: LineCap.ROUND,
-  fill: Fill.BLACK
-})
-const BPMN_CONSTANTS_STROKES_MESSAGE = Stroke.BLACK
-const BPMN_CONSTANTS_STROKES_MESSAGE_INVERTED = Stroke.WHITE
-const BPMN_CONSTANTS_STROKES_ARROW = new Stroke({
-  fill: Fill.BLACK,
-  lineCap: LineCap.ROUND,
-  lineJoin: LineJoin.ROUND
-})
-const BPMN_CONSTANTS_STROKES_ASSOCIATION_EDGE_STYLE = new Stroke({
-  fill: Fill.BLACK,
-  dashStyle: new DashStyle([1, 1], 0),
-  lineCap: LineCap.FLAT
-})
-const BPMN_CONSTANTS_STROKES_B_P_M_N_EDGE_STYLE = Stroke.BLACK
-const BPMN_CONSTANTS_STROKES_CONVERSATION_DOUBLE_LINE = new Stroke({
-  fill: Fill.BLACK,
-  lineJoin: LineJoin.ROUND,
-  thickness: 3
-})
-const BPMN_CONSTANTS_STROKES_CONVERSATION_CENTER_LINE = new Stroke({
-  fill: Fill.WHITE,
-  lineJoin: LineJoin.ROUND
-})
-const BPMN_CONSTANTS_STROKES_MESSAGE_EDGE_STYLE = new Stroke({
-  fill: Fill.BLACK,
-  dashStyle: DashStyle.DASH
 })
 
 class ScalingLabelModel extends BaseClass(ILabelModel) {
@@ -659,110 +648,10 @@ class ScalingLabelModelParameter extends BaseClass(ILabelModelParameter) {
   }
 }
 
-// Helper constants
-const ILM2 = new InteriorLabelModel({ insets: new Insets(2) })
-const ILM6 = new InteriorLabelModel({ insets: new Insets(6) })
-const ISLM_INSIDE_DOUBLE_LINE = new InteriorStretchLabelModel({
-  insets: new Insets(2 * BPMN_CONSTANTS_DOUBLE_LINE_OFFSET + 1)
-})
-const ELM15 = new ExteriorLabelModel({ insets: new Insets(15) })
-const SLM = new ScalingLabelModel()
-const SLM3 = new ScalingLabelModel(new Insets(3))
-
-// Constant placements
-const BPMN_CONSTANTS_PLACEMENTS_POOL_NODE_MARKER = ILM2.createParameter(
-  InteriorLabelModelPosition.SOUTH
-)
-const BPMN_CONSTANTS_PLACEMENTS_TASK_TYPE = ILM6.createParameter(
-  InteriorLabelModelPosition.NORTH_WEST
-)
-const BPMN_CONSTANTS_PLACEMENTS_TASK_MARKER = ISLM_INSIDE_DOUBLE_LINE.createParameter(
-  InteriorStretchLabelModelPosition.SOUTH
-)
-const BPMN_CONSTANTS_PLACEMENTS_CHOROGRAPHY_MARKER = ILM2.createParameter(
-  InteriorLabelModelPosition.SOUTH
-)
-const BPMN_CONSTANTS_PLACEMENTS_CHOREOGRAPHY_TOP_MESSAGE = ELM15.createParameter(
-  ExteriorLabelModelPosition.NORTH
-)
-const BPMN_CONSTANTS_PLACEMENTS_CHOREOGRAPHY_BOTTOM_MESSAGE = ELM15.createParameter(
-  ExteriorLabelModelPosition.SOUTH
-)
-const RATIO_WIDTH_HEIGHT = 1 / Math.sin(Math.PI / 3.0)
-const BPMN_CONSTANTS_PLACEMENTS_CONVERSATION = SLM.createScaledParameterWithRatio(
-  1,
-  RATIO_WIDTH_HEIGHT
-)
-const BPMN_CONSTANTS_PLACEMENTS_CONVERSATION_MARKER = ILM2.createParameter(
-  InteriorLabelModelPosition.SOUTH
-)
-const BPMN_CONSTANTS_PLACEMENTS_DATA_OBJECT_TYPE = ILM2.createParameter(
-  InteriorLabelModelPosition.NORTH_WEST
-)
-const BPMN_CONSTANTS_PLACEMENTS_DATA_OBJECT_MARKER = ILM2.createParameter(
-  InteriorLabelModelPosition.SOUTH
-)
-const BPMN_CONSTANTS_PLACEMENTS_EVENT = SLM.createScaledParameterWithRatio(1, 1)
-const BPMN_CONSTANTS_PLACEMENTS_EVENT_TYPE = SLM3.createScaledParameterWithRatio(0.9, 1)
-const BPMN_CONSTANTS_PLACEMENTS_GATEWAY = SLM.createScaledParameterWithRatio(1, 1)
-const BPMN_CONSTANTS_PLACEMENTS_GATEWAY_TYPE = SLM.createScaledParameterWithRatio(0.6, 1)
-const BPMN_CONSTANTS_PLACEMENTS_EVENT_TYPE_MESSAGE = SLM.createScaledParameterWithRatio(0.8, 1.4)
-const BPMN_CONSTANTS_PLACEMENTS_ACTIVITY_TASK_TYPE_MESSAGE = SLM.createScaledParameterWithRatio(
-  1,
-  1.4
-)
-const BPMN_CONSTANTS_PLACEMENTS_DOUBLE_LINE = new InteriorStretchLabelModel({
-  insets: new Insets(BPMN_CONSTANTS_DOUBLE_LINE_OFFSET)
-}).createParameter(InteriorStretchLabelModelPosition.CENTER)
-const BPMN_CONSTANTS_PLACEMENTS_THICK_LINE = new InteriorStretchLabelModel({
-  insets: new Insets(BPMN_CONSTANTS_DOUBLE_LINE_OFFSET * 0.5)
-}).createParameter(InteriorStretchLabelModelPosition.CENTER)
-const BPMN_CONSTANTS_PLACEMENTS_INSIDE_DOUBLE_LINE = ISLM_INSIDE_DOUBLE_LINE.createParameter(
-  InteriorStretchLabelModelPosition.CENTER
-)
-
-// Size constants
-const BPMN_CONSTANTS_SIZES_MARKER = new Size(10, 10)
-const BPMN_CONSTANTS_SIZES_TASK_TYPE = new Size(15, 15)
-const BPMN_CONSTANTS_SIZES_MESSAGE = new Size(20, 14)
-const BPMN_CONSTANTS_SIZES_CONVERSATION_WIDTH_HEIGHT_RATIO = Math.sin(Math.PI / 3.0)
-const BPMN_CONSTANTS_SIZES_CONVERSATION = new Size(
-  20,
-  20 * BPMN_CONSTANTS_SIZES_CONVERSATION_WIDTH_HEIGHT_RATIO
-)
-const BPMN_CONSTANTS_SIZES_DATA_OBJECT_TYPE = new Size(10, 8)
-const BPMN_CONSTANTS_SIZES_EVENT_PORT = new Size(20, 20)
-
-// Fill constants
-const BPMN_CONSTANTS_FILLS_ACTIVITY = new SolidColorFill(250, 250, 250)
-const BPMN_CONSTANTS_FILLS_ACTIVITY_TASK_LIGHT = Fill.LIGHT_GRAY
-const BPMN_CONSTANTS_FILLS_ACTIVITY_TASK_DARK = Fill.GRAY
-const BPMN_CONSTANTS_FILLS_ANNOTATION = new SolidColorFill(250, 250, 250)
-const BPMN_CONSTANTS_FILLS_CONVERSATION = new SolidColorFill(250, 250, 250)
-const BPMN_CONSTANTS_FILLS_CHOREOGRAPHY_TASK_BAND = new SolidColorFill(250, 250, 250)
-const BPMN_CONSTANTS_FILLS_CHOREOGRAPHY_INITIALIZING_PARTICIPANT = Fill.LIGHT_GRAY
-const BPMN_CONSTANTS_FILLS_CHOREOGRAPHY_RECEIVING_PARTICIPANT = Fill.GRAY
-const BPMN_CONSTANTS_FILLS_DATA_OBJECT = Fill.WHITE
-const BPMN_CONSTANTS_FILLS_DATA_STORE = Fill.WHITE
-const BPMN_CONSTANTS_FILLS_EVENT = new SolidColorFill(250, 250, 250)
-const BPMN_CONSTANTS_FILLS_EVENT_TYPE_CATCHING = Fill.TRANSPARENT
-const BPMN_CONSTANTS_FILLS_EVENT_TYPE_THROWING = Fill.BLACK
-const BPMN_CONSTANTS_FILLS_GATEWAY = new SolidColorFill(250, 250, 250)
-const BPMN_CONSTANTS_FILLS_GROUP_NODE = Fill.TRANSPARENT
-const BPMN_CONSTANTS_FILLS_MESSAGE = Fill.WHITE
-const BPMN_CONSTANTS_FILLS_MESSAGE_INVERTED = Fill.BLACK
-const BPMN_CONSTANTS_FILLS_POOL_NODE_BACKGROUND = new SolidColorFill(224, 224, 224)
-const BPMN_CONSTANTS_FILLS_POOL_NODE_EVEN_LEAF_BACKGROUND = new SolidColorFill(196, 215, 237)
-const BPMN_CONSTANTS_FILLS_POOL_NODE_EVEN_LEAF_INSET = new SolidColorFill(224, 224, 224)
-const BPMN_CONSTANTS_FILLS_POOL_NODE_ODD_LEAF_BACKGROUND = new SolidColorFill(171, 200, 226)
-const BPMN_CONSTANTS_FILLS_POOL_NODE_ODD_LEAF_INSET = new SolidColorFill(224, 224, 224)
-const BPMN_CONSTANTS_FILLS_POOL_NODE_PARENT_BACKGROUND = new SolidColorFill(113, 146, 178)
-const BPMN_CONSTANTS_FILLS_POOL_NODE_PARENT_INSET = new SolidColorFill(224, 224, 224)
-const BPMN_CONSTANTS_FILLS_SUB_STATE_BACKGROUND = new SolidColorFill(224, 224, 224, 20)
-
 /**
- * Provides some existing ports as well as ports on the north, south, east and west center of the visual bounds of a
- * BPMN node. An existing port is provided if it either uses an {@link EventPortStyle} and have no edges attached.
+ * Provides some existing ports as well as ports on the north, south, east and west center of the
+ * visual bounds of a BPMN node. An existing port is provided if it either uses an
+ * {@link EventPortStyle} and have no edges attached.
  */
 export class BpmnPortCandidateProvider extends PortCandidateProviderBase {
   constructor(owner) {
@@ -807,9 +696,11 @@ export class BpmnPortCandidateProvider extends PortCandidateProviderBase {
 
 /**
  * An {@link IReshapeHandleProvider} that restricts the available
- * handles provided by the wrapped handler to the ones in the four corners for nodes with {@link GatewayNodeStyle},
- * {@link EventNodeStyle} or {@link ConversationNodeStyle}. The handles have maintain the current aspect ratio of the
- * node for these node styles because those styles keep the aspect ratio for their icons.
+ * handles provided by the wrapped handler to the ones in the four corners for nodes with
+ * {@link GatewayNodeStyle},
+ * {@link EventNodeStyle} or {@link ConversationNodeStyle}. The handles have maintain the current
+ * aspect ratio of the node for these node styles because those styles keep the aspect ratio for
+ * their icons.
  */
 export class BpmnReshapeHandleProvider extends BaseClass(IReshapeHandleProvider) {
   constructor(wrappedHandler, node) {
@@ -845,7 +736,8 @@ export class BpmnReshapeHandleProvider extends BaseClass(IReshapeHandleProvider)
   }
 
   /**
-   * Returns a custom handle that maintains the aspect ratio of the node with {@link GatewayNodeStyle},
+   * Returns a custom handle that maintains the aspect ratio of the node with
+   * {@link GatewayNodeStyle},
    * {@link EventNodeStyle} or {@link ConversationNodeStyle}.
    * @see Specified by {@link IReshapeHandleProvider#getHandle}.
    * @return {IHandle}
@@ -972,11 +864,74 @@ class AspectRatioHandle extends BaseClass(IHandle) {
     return this.handle.type
   }
 
-  /** @type {.Cursor} */
+  /** @type {Cursor} */
   get cursor() {
     return this.handle.cursor
   }
 }
+
+/////////////////////////////////////////////////////////////////////////////////
+// BPMN placement constants which determine the default behavior of this style //
+/////////////////////////////////////////////////////////////////////////////////
+const ILM2 = new InteriorLabelModel({ insets: new Insets(2) })
+const ILM6 = new InteriorLabelModel({ insets: new Insets(6) })
+const ISLM_INSIDE_DOUBLE_LINE = new InteriorStretchLabelModel({
+  insets: new Insets(2 * BPMN_CONSTANTS_DOUBLE_LINE_OFFSET + 1)
+})
+const ELM15 = new ExteriorLabelModel({ insets: new Insets(15) })
+const SLM = new ScalingLabelModel()
+const SLM3 = new ScalingLabelModel(new Insets(3))
+const BPMN_CONSTANTS_PLACEMENTS_TASK_TYPE = ILM6.createParameter(
+  InteriorLabelModelPosition.NORTH_WEST
+)
+const BPMN_CONSTANTS_PLACEMENTS_TASK_MARKER = ISLM_INSIDE_DOUBLE_LINE.createParameter(
+  InteriorStretchLabelModelPosition.SOUTH
+)
+const BPMN_CONSTANTS_PLACEMENTS_CHOREOGRAPHY_MARKER = ILM2.createParameter(
+  InteriorLabelModelPosition.SOUTH
+)
+const BPMN_CONSTANTS_PLACEMENTS_CHOREOGRAPHY_TOP_MESSAGE = ELM15.createParameter(
+  ExteriorLabelModelPosition.NORTH
+)
+const BPMN_CONSTANTS_PLACEMENTS_CHOREOGRAPHY_BOTTOM_MESSAGE = ELM15.createParameter(
+  ExteriorLabelModelPosition.SOUTH
+)
+const RATIO_WIDTH_HEIGHT = 1 / Math.sin(Math.PI / 3.0)
+const BPMN_CONSTANTS_PLACEMENTS_CONVERSATION = SLM.createScaledParameterWithRatio(
+  1,
+  RATIO_WIDTH_HEIGHT
+)
+const BPMN_CONSTANTS_PLACEMENTS_CONVERSATION_MARKER = ILM2.createParameter(
+  InteriorLabelModelPosition.SOUTH
+)
+const BPMN_CONSTANTS_PLACEMENTS_DATA_OBJECT_TYPE = ILM2.createParameter(
+  InteriorLabelModelPosition.NORTH_WEST
+)
+const BPMN_CONSTANTS_PLACEMENTS_DATA_OBJECT_MARKER = ILM2.createParameter(
+  InteriorLabelModelPosition.SOUTH
+)
+const BPMN_CONSTANTS_PLACEMENTS_EVENT = SLM.createScaledParameterWithRatio(1, 1)
+const BPMN_CONSTANTS_PLACEMENTS_EVENT_TYPE = SLM3.createScaledParameterWithRatio(0.9, 1)
+const BPMN_CONSTANTS_PLACEMENTS_GATEWAY = SLM.createScaledParameterWithRatio(1, 1)
+const BPMN_CONSTANTS_PLACEMENTS_GATEWAY_TYPE = SLM.createScaledParameterWithRatio(0.6, 1)
+const BPMN_CONSTANTS_PLACEMENTS_EVENT_TYPE_MESSAGE = SLM.createScaledParameterWithRatio(0.8, 1.4)
+const BPMN_CONSTANTS_PLACEMENTS_ACTIVITY_TASK_TYPE_MESSAGE = SLM.createScaledParameterWithRatio(
+  1,
+  1.4
+)
+const BPMN_CONSTANTS_PLACEMENTS_DOUBLE_LINE = new InteriorStretchLabelModel({
+  insets: new Insets(BPMN_CONSTANTS_DOUBLE_LINE_OFFSET)
+}).createParameter(InteriorStretchLabelModelPosition.CENTER)
+const BPMN_CONSTANTS_PLACEMENTS_THICK_LINE = new InteriorStretchLabelModel({
+  insets: new Insets(BPMN_CONSTANTS_DOUBLE_LINE_OFFSET * 0.5)
+}).createParameter(InteriorStretchLabelModelPosition.CENTER)
+const BPMN_CONSTANTS_PLACEMENTS_INSIDE_DOUBLE_LINE = ISLM_INSIDE_DOUBLE_LINE.createParameter(
+  InteriorStretchLabelModelPosition.CENTER
+)
+const BPMN_CONSTANTS_PLACEMENTS_POOL_NODE_MARKER = ILM2.createParameter(
+  InteriorLabelModelPosition.SOUTH
+)
+/////////////////////////////////////////////////////////////////////////////////
 
 /**
  * Specifies the Loop Characteristic of an Activity or Choreography according to BPMN.
@@ -991,19 +946,22 @@ export const LoopCharacteristic = Enum('LoopCharacteristic', {
    */
   NONE: 0,
   /**
-   * Specifies that an Activity or Choreography has a Standard Loop Characteristic according to BPMN.
+   * Specifies that an Activity or Choreography has a Standard Loop Characteristic according to
+   * BPMN.
    * @see {@link ActivityNodeStyle}
    * @see {@link ChoreographyNodeStyle}
    */
   LOOP: 1,
   /**
-   * Specifies that an Activity or Choreography has a parallel Multi-Instance Loop Characteristic according to BPMN.
+   * Specifies that an Activity or Choreography has a parallel Multi-Instance Loop Characteristic
+   * according to BPMN.
    * @see {@link ActivityNodeStyle}
    * @see {@link ChoreographyNodeStyle}
    */
   PARALLEL: 2,
   /**
-   * Specifies that an Activity or Choreography has a sequential Multi-Instance Loop Characteristic according to BPMN.
+   * Specifies that an Activity or Choreography has a sequential Multi-Instance Loop Characteristic
+   * according to BPMN.
    * @see {@link ActivityNodeStyle}
    * @see {@link ChoreographyNodeStyle}
    */
@@ -1111,7 +1069,8 @@ const ParticipantParameter = Class('ChoreographyParameter', {
   /**
    * Creates a new instance of {@link ParticipantParameter}.
    * @param {boolean} top whether or not the label belongs to a top participant.
-   * @param {number} index the position of the participant in its group (top or bottom participants).
+   * @param {number} index the position of the participant in its group (top or bottom
+   *   participants).
    */
   constructor: function(top, index) {
     ChoreographyParameter.call(this)
@@ -1151,7 +1110,7 @@ const ParticipantParameter = Class('ChoreographyParameter', {
   $static: {
     INTERIOR_LABEL_MODEL: {
       // '$meta': function() {
-      //   return [TypeAttribute(.DashStyle.$class)];},
+      //   return [TypeAttribute(DashStyle.$class)];},
       get: function() {
         return (
           ParticipantParameter.$interiorLabelModel ||
@@ -1164,7 +1123,7 @@ const ParticipantParameter = Class('ChoreographyParameter', {
 
     PLACEMENT: {
       // '$meta': function() {
-      //   return [TypeAttribute(.DashStyle.$class)];},
+      //   return [TypeAttribute(DashStyle.$class)];},
       get: function() {
         return (
           ParticipantParameter.$placement ||
@@ -1178,8 +1137,8 @@ const ParticipantParameter = Class('ChoreographyParameter', {
 })
 
 /**
- * A label model for nodes using a {@link ChoreographyNodeStyle} that position labels on the participant or task name
- * bands.
+ * A label model for nodes using a {@link ChoreographyNodeStyle} that position labels on the
+ * participant or task name bands.
  */
 export const ChoreographyLabelModel = Class('ChoreographyLabelModel', {
   $with: [ILabelModel, ILabelModelParameterProvider],
@@ -1221,7 +1180,8 @@ export const ChoreographyLabelModel = Class('ChoreographyLabelModel', {
 
   /**
    * Creates the parameter for the participant at the given position.
-   * @param {boolean} top Whether the index refers to {@link ChoreographyNodeStyle#topParticipants} or
+   * @param {boolean} top Whether the index refers to {@link ChoreographyNodeStyle#topParticipants}
+   *   or
    *   {@link ChoreographyNodeStyle#bottomParticipants}.
    * @param {number} index The index of the participant band the label shall be placed in.
    * @return {ILabelModelParameter}
@@ -1301,7 +1261,8 @@ export const ChoreographyLabelModel = Class('ChoreographyLabelModel', {
 
   /**
    * Finds the parameter for the next free location at a node with {@link ChoreographyNodeStyle}.
-   * This function will traverse all valid positions in the following order until it finds a free location:
+   * This function will traverse all valid positions in the following order until it finds a free
+   * location:
    * <ul>
    *   <li>Task band</li>
    *   <li>Participant bands</li>
@@ -1458,7 +1419,8 @@ export const ChoreographyLabelModel = Class('ChoreographyLabelModel', {
 })
 
 /**
- * {@link ILabelModelParameter} that places the label on the task name band in the center of the node.
+ * {@link ILabelModelParameter} that places the label on the task name band in the center of the
+ * node.
  */
 const TaskNameBandParameter = Class('TaskNameBandParameter', {
   $extends: ChoreographyParameter,
@@ -1471,8 +1433,7 @@ const TaskNameBandParameter = Class('TaskNameBandParameter', {
   getGeometry: function(label) {
     const owner = label.owner
     const nodeStyle = owner.style
-    const bandBounds = nodeStyle.getTaskNameBandBounds(owner)
-    ChoreographyLabelModel.DUMMY_NODE.layout = bandBounds
+    ChoreographyLabelModel.DUMMY_NODE.layout = nodeStyle.getTaskNameBandBounds(owner)
     ChoreographyLabelModel.DUMMY_LABEL.preferredSize = label.preferredSize
     return ChoreographyLabelModel.INTERIOR_LABEL_MODEL.getGeometry(
       ChoreographyLabelModel.DUMMY_LABEL,
@@ -1580,13 +1541,13 @@ class BpmnNodeStyle extends NodeStyleBase {
   /**
    * Callback that creates the visual.
    * @param {INode} node The node to which this style instance is assigned.
-   * @param {.IRenderContext} renderContext The render context.
-   * @return {.Visual} The visual as required by the {@link .IVisualCreator#createVisual}
+   * @param {IRenderContext} renderContext The render context.
+   * @return {Visual} The visual as required by the {@link IVisualCreator#createVisual}
    *   interface.
    * @see {@link NodeStyleBase#updateVisual}
    */
   createVisual(renderContext, node) {
-    this.updateIcon()
+    this.updateIcon(node)
     if (this.icon === null) {
       return null
     }
@@ -1613,10 +1574,10 @@ class BpmnNodeStyle extends NodeStyleBase {
   /**
    * Callback that updates the visual previously created by {@link NodeStyleBase#createVisual}.
    * @param {INode} node The node to which this style instance is assigned.
-   * @param {.IRenderContext} renderContext The render context.
-   * @param {.Visual} oldVisual The visual that has been created in the call to
-   *   {@link NodeStyleBase#createVisual}.
-   * @return {.Visual} The visual as required by the {@link .IVisualCreator#createVisual}
+   * @param {IRenderContext} renderContext The render context.
+   * @param {Visual} oldVisual The visual that has been created in the call to {@link
+   *   NodeStyleBase#createVisual}.
+   * @return {Visual} The visual as required by the {@link IVisualCreator#createVisual}
    *   interface.
    * @see {@link NodeStyleBase#createVisual}
    */
@@ -1643,9 +1604,9 @@ class BpmnNodeStyle extends NodeStyleBase {
       const iconBounds = new Rect(0, 0, newBounds.width, newBounds.height)
       this.icon.setBounds(iconBounds)
 
-      /** @type {.Visual} */
+      /** @type {Visual} */
       let oldIconVisual = null
-      /** @type {.Visual} */
+      /** @type {Visual} */
       let newIconVisual = null
       if (container.children.size === 0) {
         newIconVisual = this.icon.createVisual(renderContext)
@@ -1678,7 +1639,7 @@ class BpmnNodeStyle extends NodeStyleBase {
    * Updates the {@link BpmnNodeStyle#icon}.
    * This method is called by {@link BpmnNodeStyle#createVisual}.
    */
-  updateIcon() {}
+  updateIcon(node) {}
 
   /**
    * Performs the {@link ILookup#lookup} operation for the
@@ -1756,9 +1717,9 @@ export class Participant extends BaseClass(ICloneable) {
 }
 
 /**
- * An {@link .IVisualCreator} that allows to set bounds for the visualization.
- * To use this class for the flyweight pattern, {@link Icon#setBounds} should be called before creating or updating
- * the visuals.
+ * An {@link IVisualCreator} that allows to set bounds for the visualization.
+ * To use this class for the flyweight pattern, {@link Icon#setBounds} should be called before
+ * creating or updating the visuals.
  */
 class Icon extends BaseClass(IVisualCreator) {
   constructor() {
@@ -1790,7 +1751,7 @@ class LineUpIcon extends Icon {
     this.combinedSize = new Size(combinedWidth, innerIconSize.height)
   }
 
-  /** @return {.Visual} */
+  /** @return {Visual} */
   createVisual(context) {
     if (this.bounds === null) {
       return null
@@ -1818,7 +1779,7 @@ class LineUpIcon extends Icon {
     return container
   }
 
-  /** @return {.Visual} */
+  /** @return {Visual} */
   updateVisual(context, oldVisual) {
     const container = oldVisual instanceof SvgVisualGroup ? oldVisual : null
     if (container === null || container.children.size !== this.icons.size) {
@@ -1860,12 +1821,12 @@ class PlacedIcon extends Icon {
     this.dummyLabel = dummyLabel
   }
 
-  /** @return {.Visual} */
+  /** @return {Visual} */
   createVisual(context) {
     return this.innerIcon.createVisual(context)
   }
 
-  /** @return {.Visual} */
+  /** @return {Visual} */
   updateVisual(context, oldVisual) {
     return this.innerIcon.updateVisual(context, oldVisual)
   }
@@ -1889,7 +1850,7 @@ class RectIcon extends Icon {
     this.stroke = null
   }
 
-  /** @return {.Visual} */
+  /** @return {Visual} */
   createVisual(context) {
     const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect')
     rect.setAttribute('x', this.bounds.x)
@@ -1910,7 +1871,7 @@ class RectIcon extends Icon {
     return new SvgVisual(rect)
   }
 
-  /** @return {.Visual} */
+  /** @return {Visual} */
   updateVisual(context, oldVisual) {
     const rect = oldVisual.svgElement
     const oldCache = rect['render-data-cache']
@@ -1937,7 +1898,8 @@ class RectIcon extends Icon {
 }
 
 /**
- * An {@link Icon} that combines multiple icons. This can be useful when creating complex images like a timer.
+ * An {@link Icon} that combines multiple icons. This can be useful when creating complex images
+ * like a timer.
  */
 class CombinedIcon extends Icon {
   constructor(icons) {
@@ -1945,7 +1907,7 @@ class CombinedIcon extends Icon {
     this.icons = icons
   }
 
-  /** @return {.Visual} */
+  /** @return {Visual} */
   createVisual(context) {
     if (this.bounds === null) {
       return null
@@ -1972,7 +1934,7 @@ class CombinedIcon extends Icon {
     return container
   }
 
-  /** @return {.Visual} */
+  /** @return {Visual} */
   updateVisual(context, oldVisual) {
     const container = oldVisual instanceof SvgVisualGroup ? oldVisual : null
     if (container === null || container.children.size !== this.icons.size) {
@@ -2023,7 +1985,7 @@ class PathIcon extends Icon {
     this.path = null
   }
 
-  /** @return {.Visual} */
+  /** @return {Visual} */
   createVisual(context) {
     const matrix2D = new Matrix()
     matrix2D.scale(Math.max(0, this.bounds.width), Math.max(0, this.bounds.height))
@@ -2044,7 +2006,7 @@ class PathIcon extends Icon {
     return new SvgVisual(path)
   }
 
-  /** @return {.Visual} */
+  /** @return {Visual} */
   updateVisual(context, oldVisual) {
     const path = oldVisual.svgElement
     if (path === null) {
@@ -2091,7 +2053,7 @@ class VariableRectIcon extends Icon {
     this.stroke = null
   }
 
-  /** @return {.Visual} */
+  /** @return {Visual} */
   createVisual(context) {
     const path = document.createElementNS('http://www.w3.org/2000/svg', 'path')
     path.setAttribute(
@@ -2119,7 +2081,7 @@ class VariableRectIcon extends Icon {
     return new SvgVisual(path)
   }
 
-  /** @return {.Visual} */
+  /** @return {Visual} */
   updateVisual(context, oldVisual) {
     const path = oldVisual.svgElement
     if (!path) {
@@ -2345,56 +2307,36 @@ export const ConversationType = Enum('ConversationType', {
    */
   SUB_CONVERSATION: 1,
   /**
-   * Specifies that a Conversation is a Call Conversation according to BPMN where a Global Conversation is called.
+   * Specifies that a Conversation is a Call Conversation according to BPMN where a Global
+   * Conversation is called.
    * @see {@link ConversationNodeStyle}
    */
   CALLING_GLOBAL_CONVERSATION: 2,
   /**
-   * Specifies that a Conversation is a Call Conversation according to BPMN where a Collaboration is called.
+   * Specifies that a Conversation is a Call Conversation according to BPMN where a Collaboration
+   * is called.
    * @see {@link ConversationNodeStyle}
    */
   CALLING_COLLABORATION: 3
 })
 
 /**
- * A class that combines a stroke with a fill to be used as a key in a map.
- */
-class StrokeAndFill {
-  constructor(stroke, fill) {
-    this.stroke = stroke
-    this.fill = fill
-  }
-
-  equals(obj) {
-    if (!(obj instanceof StrokeAndFill)) {
-      return false
-    }
-    return obj.stroke === this.stroke && obj.fill === this.fill
-  }
-
-  /** @return {number} */
-  hashCode() {
-    return (this.stroke.hashCode() * 397) ^ this.fill.hashCode()
-  }
-}
-
-/**
  * A class that stores the important information about a participant to be used as a key in a map.
  */
 class ParticipantBandType {
-  constructor(sending, topRadius, bottomRadius) {
-    this.sending = sending
+  constructor(fill, topRadius, bottomRadius) {
+    this.fill = fill
     this.topRadius = topRadius
     this.bottomRadius = bottomRadius
   }
 
   /** @return {boolean} */
   equals(obj) {
-    if (!(obj instanceof ParticipantBandType)) {
+    if (obj instanceof ParticipantBandType) {
       return false
     }
     return (
-      obj.sending === this.sending &&
+      obj.fill === this.fill &&
       obj.topRadius === this.topRadius &&
       obj.bottomRadius === this.bottomRadius
     )
@@ -2402,7 +2344,7 @@ class ParticipantBandType {
 
   /** @return {number} */
   hashCode() {
-    return ((this.sending ? 1 : 0) * 397) ^ (this.topRadius * 397) ^ this.bottomRadius
+    return (this.fill.hashCode() * 397) ^ (this.topRadius * 397) ^ this.bottomRadius
   }
 }
 
@@ -2450,841 +2392,1076 @@ class IconFactory {
     return IconFactory.BUILDER.createLineUpIcon(icons, innerIconSize, gap)
   }
 
-  /** @return {Icon} */
-  static createActivity(type) {
+  /**
+   * @param {ActivityType} type
+   * @param {Fill} background
+   * @param {Fill} outlineFill
+   * @return {Icon}
+   */
+  static createActivity(type, background, outlineFill) {
+    const hasDefaultColors =
+      IconFactory.equalFill(background, BPMN_CONSTANTS_ACTIVITY_DEFAULT_BACKGROUND) &&
+      IconFactory.equalFill(outlineFill, BPMN_CONSTANTS_ACTIVITY_DEFAULT_OUTLINE)
+
     let result = IconFactory.ACTIVITY_ICONS.get(type)
-    if (!result) {
-      const BUILDER = IconFactory.BUILDER
-      BUILDER.fill = BPMN_CONSTANTS_FILLS_ACTIVITY
+    if (hasDefaultColors && result) {
+      return result
+    }
 
-      switch (type) {
-        case ActivityType.CALL_ACTIVITY: {
-          BUILDER.stroke = BPMN_CONSTANTS_STROKES_CALL_ACTIVITY
-          result = BUILDER.createRectIcon(BPMN_CONSTANTS_ACTIVITY_CORNER_RADIUS)
-          break
-        }
-        case ActivityType.TRANSACTION: {
-          BUILDER.stroke = BPMN_CONSTANTS_STROKES_TASK
-          const icons = new List()
-          icons.add(this.BUILDER.createRectIcon(BPMN_CONSTANTS_ACTIVITY_CORNER_RADIUS))
-
-          BUILDER.stroke = BPMN_CONSTANTS_STROKES_TASK
-          BUILDER.fill = BPMN_CONSTANTS_FILLS_ACTIVITY
-          const rectIcon = BUILDER.createRectIcon(
-            BPMN_CONSTANTS_ACTIVITY_CORNER_RADIUS - BPMN_CONSTANTS_DOUBLE_LINE_OFFSET
-          )
-          icons.add(
-            IconFactory.createPlacedIcon(
-              rectIcon,
-              BPMN_CONSTANTS_PLACEMENTS_DOUBLE_LINE,
-              Size.EMPTY
-            )
-          )
-          result = BUILDER.combineIcons(icons)
-          break
-        }
-        case ActivityType.EVENT_SUB_PROCESS: {
-          BUILDER.stroke = BPMN_CONSTANTS_STROKES_ACTIVITY_EVENT_SUB_PROCESS
-          result = BUILDER.createRectIcon(BPMN_CONSTANTS_ACTIVITY_CORNER_RADIUS)
-          break
-        }
-        default: {
-          // Task, SubProcess
-          BUILDER.stroke = BPMN_CONSTANTS_STROKES_TASK
-          result = BUILDER.createRectIcon(BPMN_CONSTANTS_ACTIVITY_CORNER_RADIUS)
-          break
-        }
+    let outlineStroke
+    switch (type) {
+      case ActivityType.EVENT_SUB_PROCESS: {
+        outlineStroke = new Stroke({
+          fill: outlineFill,
+          thickness: 1,
+          dashStyle: DashStyle.DOT,
+          lineCap: LineCap.ROUND
+        })
+        break
       }
+      case ActivityType.CALL_ACTIVITY: {
+        outlineStroke = new Stroke(outlineFill, 3)
+        break
+      }
+      default:
+        outlineStroke = new Stroke(outlineFill)
+        break
+    }
+    outlineStroke.freeze()
+
+    const BUILDER = IconFactory.BUILDER
+    BUILDER.stroke = outlineStroke
+    BUILDER.fill = background
+
+    if (type === ActivityType.TRANSACTION) {
+      const icons = new List()
+      icons.add(BUILDER.createRectIcon(BPMN_CONSTANTS_ACTIVITY_CORNER_RADIUS))
+
+      BUILDER.fill = background
+      BUILDER.stroke = outlineStroke
+      const rectIcon = BUILDER.createRectIcon(
+        BPMN_CONSTANTS_ACTIVITY_CORNER_RADIUS - BPMN_CONSTANTS_DOUBLE_LINE_OFFSET
+      )
+      icons.add(
+        IconFactory.createPlacedIcon(rectIcon, BPMN_CONSTANTS_PLACEMENTS_DOUBLE_LINE, Size.EMPTY)
+      )
+      result = BUILDER.combineIcons(icons)
+    } else {
+      result = BUILDER.createRectIcon(BPMN_CONSTANTS_ACTIVITY_CORNER_RADIUS)
+    }
+
+    if (hasDefaultColors) {
       IconFactory.ACTIVITY_ICONS.set(type, result)
     }
+
     return result
   }
 
-  /** @return {Icon} */
-  static createActivityTaskType(type) {
-    const BUILDER = IconFactory.BUILDER
+  /**
+   * @param {TaskType} type
+   * @param {Fill} iconFill
+   * @param {Fill} background
+   * @return {Icon}
+   */
+  static createActivityTaskType(type, iconFill, background) {
+    const hasDefaultColor = IconFactory.equalFill(iconFill, BPMN_CONSTANTS_DEFAULT_ICON_COLOR)
+
     let result = IconFactory.TASK_ICONS.get(type)
-    if (!result) {
-      /** @type {List.<Icon>} */
-      let icons = null
-      switch (type) {
-        case TaskType.SEND: {
-          result = IconFactory.createPlacedIcon(
-            IconFactory.createMessage(
-              BPMN_CONSTANTS_STROKES_MESSAGE_INVERTED,
-              BPMN_CONSTANTS_FILLS_MESSAGE_INVERTED
-            ),
-            BPMN_CONSTANTS_PLACEMENTS_ACTIVITY_TASK_TYPE_MESSAGE,
-            Size.EMPTY
-          )
-          break
-        }
-        case TaskType.RECEIVE: {
-          result = IconFactory.createPlacedIcon(
-            IconFactory.createMessage(BPMN_CONSTANTS_STROKES_MESSAGE, BPMN_CONSTANTS_FILLS_MESSAGE),
-            BPMN_CONSTANTS_PLACEMENTS_ACTIVITY_TASK_TYPE_MESSAGE,
-            Size.EMPTY
-          )
-          break
-        }
-        case TaskType.USER: {
-          BUILDER.stroke = BPMN_CONSTANTS_STROKES_ACTIVITY_TASK_ROUND
-          BUILDER.fill = BPMN_CONSTANTS_FILLS_ACTIVITY_TASK_LIGHT
+    if (hasDefaultColor && result) {
+      return result
+    }
 
-          // body + head
-          icons = new List()
-          BUILDER.moveTo(1, 1)
-          BUILDER.lineTo(0, 1)
-          BUILDER.lineTo(0, 0.701)
-          BUILDER.quadTo(0.13, 0.5, 0.316, 0.443)
-          BUILDER.lineTo(
-            0.5 + 0.224 * Math.cos((3.0 / 4.0) * Math.PI),
-            0.224 + 0.224 * Math.sin((3.0 / 4.0) * Math.PI)
-          )
-          BUILDER.arcTo(0.224, 0.5, 0.224, (3.0 / 4.0) * Math.PI, (9.0 / 4.0) * Math.PI)
-          BUILDER.lineTo(0.684, 0.443)
-          BUILDER.quadTo(0.87, 0.5, 1, 0.701)
-          BUILDER.close()
-          icons.add(BUILDER.getPathIcon())
-
-          // hair
-          BUILDER.stroke = BPMN_CONSTANTS_STROKES_ACTIVITY_TASK_ROUND
-          BUILDER.fill = Fill.BLACK
-          BUILDER.moveTo(0.287, 0.229)
-          BUILDER.cubicTo(0.48, 0.053, 0.52, 0.253, 0.713, 0.137)
-          BUILDER.arcTo(0.224, 0.5, 0.224, (31.0 / 16.0) * Math.PI, Math.PI)
-          BUILDER.close()
-          icons.add(BUILDER.getPathIcon())
-
-          BUILDER.stroke = BPMN_CONSTANTS_STROKES_ACTIVITY_TASK_ROUND
-
-          // arms
-          BUILDER.moveTo(0.19, 1)
-          BUILDER.lineTo(0.19, 0.816)
-          BUILDER.moveTo(0.81, 1)
-          BUILDER.lineTo(0.81, 0.816)
-
-          // collar
-          BUILDER.moveTo(0.316, 0.443)
-          BUILDER.cubicTo(0.3, 0.672, 0.7, 0.672, 0.684, 0.443)
-          icons.add(BUILDER.getPathIcon())
-
-          result = BUILDER.combineIcons(icons)
-          break
-        }
-        case TaskType.MANUAL: {
-          BUILDER.stroke = BPMN_CONSTANTS_STROKES_ACTIVITY_TASK_ROUND
-          BUILDER.moveTo(0, 0.286)
-          BUILDER.quadTo(0.037, 0.175, 0.147, 0.143)
-
-          // thumb
-          BUILDER.lineTo(0.584, 0.143)
-          BUILDER.quadTo(0.602, 0.225, 0.451, 0.286)
-          BUILDER.lineTo(0.265, 0.286)
-
-          // index finger
-          BUILDER.lineTo(0.95, 0.286)
-          BUILDER.quadTo(1, 0.358, 0.95, 0.429)
-          BUILDER.lineTo(0.472, 0.429)
-
-          // middle finger
-          BUILDER.lineTo(0.915, 0.429)
-          BUILDER.quadTo(0.965, 0.5, 0.915, 0.571)
-          BUILDER.lineTo(0.531, 0.571)
-
-          // ring finger
-          BUILDER.lineTo(0.879, 0.571)
-          BUILDER.quadTo(0.929, 0.642, 0.879, 0.714)
-          BUILDER.lineTo(0.502, 0.714)
-
-          // pinkie
-          BUILDER.lineTo(0.796, 0.714)
-          BUILDER.quadTo(0.847, 0.786, 0.796, 0.857)
-          BUILDER.lineTo(0.088, 0.857)
-
-          BUILDER.quadTo(0.022, 0.833, 0, 0.759)
-          BUILDER.close()
-          result = BUILDER.getPathIcon()
-          break
-        }
-        case TaskType.BUSINESS_RULE: {
-          const headHeight = 0.192
-          const rowHeight = 0.304
-          const column1Width = 0.264
-
-          icons = new List()
-          BUILDER.fill = BPMN_CONSTANTS_FILLS_ACTIVITY_TASK_DARK
-
-          // outline
-          BUILDER.moveTo(0, 0.1)
-          BUILDER.lineTo(1, 0.1)
-          BUILDER.lineTo(1, 0.9)
-          BUILDER.lineTo(0, 0.9)
-          BUILDER.close()
-          icons.add(BUILDER.getPathIcon())
-
-          // rows outline
-          BUILDER.fill = BPMN_CONSTANTS_FILLS_ACTIVITY_TASK_LIGHT
-          BUILDER.moveTo(0, 0.1 + headHeight)
-          BUILDER.lineTo(1, 0.1 + headHeight)
-          BUILDER.lineTo(1, 0.9)
-          BUILDER.lineTo(0, 0.9)
-          BUILDER.close()
-          icons.add(BUILDER.getPathIcon())
-
-          // line between second and third row
-          BUILDER.moveTo(0, 0.1 + headHeight + rowHeight)
-          BUILDER.lineTo(1, 0.1 + headHeight + rowHeight)
-
-          // line between first and second column
-          BUILDER.moveTo(column1Width, 0.1 + headHeight)
-          BUILDER.lineTo(column1Width, 0.9)
-          icons.add(BUILDER.getPathIcon())
-
-          result = BUILDER.combineIcons(icons)
-          break
-        }
-        case TaskType.SERVICE: {
-          icons = new List()
-          // top gear
-          icons.add(
-            createGear(
-              0.4,
-              0.4,
-              0.4,
-              BPMN_CONSTANTS_STROKES_TASK_TYPE_SERVICE,
-              BPMN_CONSTANTS_FILLS_ACTIVITY_TASK_DARK
-            )
-          )
-          icons.add(
-            createGear(
-              0.16,
-              0.4,
-              0.4,
-              BPMN_CONSTANTS_STROKES_TASK_TYPE_SERVICE,
-              BPMN_CONSTANTS_FILLS_ACTIVITY_TASK_LIGHT
-            )
-          )
-
-          // bottom gear
-          icons.add(
-            createGear(
-              0.4,
-              0.6,
-              0.6,
-              BPMN_CONSTANTS_STROKES_TASK_TYPE_SERVICE,
-              BPMN_CONSTANTS_FILLS_ACTIVITY_TASK_DARK
-            )
-          )
-          icons.add(
-            createGear(
-              0.16,
-              0.6,
-              0.6,
-              BPMN_CONSTANTS_STROKES_TASK_TYPE_SERVICE,
-              BPMN_CONSTANTS_FILLS_ACTIVITY_TASK_LIGHT
-            )
-          )
-
-          result = BUILDER.combineIcons(icons)
-          break
-        }
-        case TaskType.SCRIPT: {
-          BUILDER.stroke = BPMN_CONSTANTS_STROKES_ACTIVITY_TASK_ROUND
-
-          // outline
-          const size = 0.5
-          const curveEndX = 0.235
-          const curveEndY = size
-          const curveCenterX = curveEndX + (size - curveEndX) * 0.5
-          const curveDeltaX = 0.5
-          const curveDeltaY = size * 0.5
-
-          BUILDER.moveTo(0.5 + size, 0.5 - size)
-          BUILDER.cubicTo(
-            0.5 + curveCenterX - curveDeltaX,
-            0.5 - curveDeltaY,
-            0.5 + curveCenterX + curveDeltaX,
-            0.5 + curveDeltaY,
-            0.5 + curveEndX,
-            0.5 + curveEndY
-          )
-          BUILDER.lineTo(0.5 - size, 0.5 + size)
-          BUILDER.cubicTo(
-            0.5 - curveCenterX + curveDeltaX,
-            0.5 + curveDeltaY,
-            0.5 - curveCenterX - curveDeltaX,
-            0.5 - curveDeltaY,
-            0.5 - curveEndX,
-            0.5 - curveEndY
-          )
-          BUILDER.close()
-
-          // inner lines
-          const deltaY2 = size * 0.2
-          const deltaX1 = 0.045
-          const deltaX2 = 0.085
-          const length = 0.3 * (size + curveEndX)
-
-          BUILDER.moveTo(0.5 - length - deltaX2, 0.5 - 3 * deltaY2)
-          BUILDER.lineTo(0.5 + length - deltaX2, 0.5 - 3 * deltaY2)
-          BUILDER.moveTo(0.5 - length - deltaX1, 0.5 - deltaY2)
-          BUILDER.lineTo(0.5 + length - deltaX1, 0.5 - deltaY2)
-          BUILDER.moveTo(0.5 - length + deltaX1, 0.5 + deltaY2)
-          BUILDER.lineTo(0.5 + length + deltaX1, 0.5 + deltaY2)
-          BUILDER.moveTo(0.5 - length + deltaX2, 0.5 + 3 * deltaY2)
-          BUILDER.lineTo(0.5 + length + deltaX2, 0.5 + 3 * deltaY2)
-          result = BUILDER.getPathIcon()
-          break
-        }
-        case TaskType.EVENT_TRIGGERED:
-        default:
-          break
+    const BUILDER = IconFactory.BUILDER
+    let /** List.<Icon> */ icons = null
+    switch (type) {
+      case TaskType.SEND: {
+        result = IconFactory.createPlacedIcon(
+          IconFactory.createMessage(Stroke.TRANSPARENT, iconFill, true),
+          BPMN_CONSTANTS_PLACEMENTS_ACTIVITY_TASK_TYPE_MESSAGE,
+          Size.EMPTY
+        )
+        break
       }
+      case TaskType.RECEIVE: {
+        const stroke = new Stroke(iconFill)
+        stroke.freeze()
+        result = IconFactory.createPlacedIcon(
+          IconFactory.createMessage(stroke, Fill.TRANSPARENT),
+          BPMN_CONSTANTS_PLACEMENTS_ACTIVITY_TASK_TYPE_MESSAGE,
+          Size.EMPTY
+        )
+        break
+      }
+      case TaskType.USER: {
+        const stroke = new Stroke({
+          fill: iconFill,
+          lineCap: LineCap.ROUND,
+          lineJoin: LineJoin.ROUND
+        })
+        stroke.freeze()
+        BUILDER.stroke = stroke
+
+        iconFill = iconFill || Fill.BLACK
+        const lightFill = new SolidColorFill(
+          iconFill.color.r,
+          iconFill.color.g,
+          iconFill.color.b,
+          255 * 0.17
+        )
+        lightFill.freeze()
+        BUILDER.fill = lightFill
+
+        // body + head
+        icons = new List()
+        BUILDER.moveTo(1, 1)
+        BUILDER.lineTo(0, 1)
+        BUILDER.lineTo(0, 0.701)
+        BUILDER.quadTo(0.13, 0.5, 0.316, 0.443)
+        BUILDER.lineTo(
+          0.5 + 0.224 * Math.cos((3.0 / 4.0) * Math.PI),
+          0.224 + 0.224 * Math.sin((3.0 / 4.0) * Math.PI)
+        )
+        BUILDER.arcTo(0.224, 0.5, 0.224, (3.0 / 4.0) * Math.PI, (9.0 / 4.0) * Math.PI)
+        BUILDER.lineTo(0.684, 0.443)
+        BUILDER.quadTo(0.87, 0.5, 1, 0.701)
+        BUILDER.close()
+        icons.add(BUILDER.getPathIcon())
+
+        // hair
+        BUILDER.stroke = stroke
+        BUILDER.fill = iconFill
+        BUILDER.moveTo(0.287, 0.229)
+        BUILDER.cubicTo(0.48, 0.053, 0.52, 0.253, 0.713, 0.137)
+        BUILDER.arcTo(0.224, 0.5, 0.224, (31.0 / 16.0) * Math.PI, Math.PI)
+        BUILDER.close()
+        icons.add(BUILDER.getPathIcon())
+
+        BUILDER.stroke = stroke
+
+        // arms
+        BUILDER.moveTo(0.19, 1)
+        BUILDER.lineTo(0.19, 0.816)
+        BUILDER.moveTo(0.81, 1)
+        BUILDER.lineTo(0.81, 0.816)
+
+        // collar
+        BUILDER.moveTo(0.316, 0.443)
+        BUILDER.cubicTo(0.3, 0.672, 0.7, 0.672, 0.684, 0.443)
+        icons.add(BUILDER.getPathIcon())
+
+        result = BUILDER.combineIcons(icons)
+        break
+      }
+      case TaskType.MANUAL: {
+        const stroke = new Stroke({
+          fill: iconFill,
+          lineCap: LineCap.ROUND,
+          lineJoin: LineJoin.ROUND
+        })
+        stroke.freeze()
+        BUILDER.stroke = stroke
+        BUILDER.moveTo(0, 0.286)
+        BUILDER.quadTo(0.037, 0.175, 0.147, 0.143)
+
+        // thumb
+        BUILDER.lineTo(0.584, 0.143)
+        BUILDER.quadTo(0.602, 0.225, 0.451, 0.286)
+        BUILDER.lineTo(0.265, 0.286)
+
+        // index finger
+        BUILDER.lineTo(0.95, 0.286)
+        BUILDER.quadTo(1, 0.358, 0.95, 0.429)
+        BUILDER.lineTo(0.472, 0.429)
+
+        // middle finger
+        BUILDER.lineTo(0.915, 0.429)
+        BUILDER.quadTo(0.965, 0.5, 0.915, 0.571)
+        BUILDER.lineTo(0.531, 0.571)
+
+        // ring finger
+        BUILDER.lineTo(0.879, 0.571)
+        BUILDER.quadTo(0.929, 0.642, 0.879, 0.714)
+        BUILDER.lineTo(0.502, 0.714)
+
+        // pinkie
+        BUILDER.lineTo(0.796, 0.714)
+        BUILDER.quadTo(0.847, 0.786, 0.796, 0.857)
+        BUILDER.lineTo(0.088, 0.857)
+
+        BUILDER.quadTo(0.022, 0.833, 0, 0.759)
+        BUILDER.close()
+        result = BUILDER.getPathIcon()
+        break
+      }
+      case TaskType.BUSINESS_RULE: {
+        const headHeight = 0.192
+        const rowHeight = 0.304
+        const column1Width = 0.264
+
+        icons = new List()
+        iconFill = iconFill || Fill.BLACK
+        const darkFill = new SolidColorFill(
+          iconFill.color.r,
+          iconFill.color.g,
+          iconFill.color.b,
+          255 * 0.5
+        )
+        darkFill.freeze()
+        const lightFill = new SolidColorFill(
+          iconFill.color.r,
+          iconFill.color.g,
+          iconFill.color.b,
+          255 * 0.17
+        )
+        lightFill.freeze()
+        const stroke = new Stroke(iconFill)
+        stroke.freeze()
+        BUILDER.fill = darkFill
+        BUILDER.stroke = stroke
+
+        // outline
+        BUILDER.moveTo(0, 0.1)
+        BUILDER.lineTo(1, 0.1)
+        BUILDER.lineTo(1, headHeight + 0.1)
+        BUILDER.lineTo(0, headHeight + 0.1)
+        BUILDER.close()
+        icons.add(BUILDER.getPathIcon())
+
+        // rows outline
+        BUILDER.fill = lightFill
+        BUILDER.stroke = stroke
+        BUILDER.moveTo(0, 0.1 + headHeight)
+        BUILDER.lineTo(1, 0.1 + headHeight)
+        BUILDER.lineTo(1, 0.9)
+        BUILDER.lineTo(0, 0.9)
+        BUILDER.close()
+        icons.add(BUILDER.getPathIcon())
+
+        // line between second and third row
+        BUILDER.stroke = stroke
+        BUILDER.moveTo(0, 0.1 + headHeight + rowHeight)
+        BUILDER.lineTo(1, 0.1 + headHeight + rowHeight)
+
+        // line between first and second column
+        BUILDER.moveTo(column1Width, 0.1 + headHeight)
+        BUILDER.lineTo(column1Width, 0.9)
+        icons.add(BUILDER.getPathIcon())
+
+        result = BUILDER.combineIcons(icons)
+        break
+      }
+      case TaskType.SERVICE: {
+        icons = new List()
+        const stroke = new Stroke(iconFill, 0.3)
+        stroke.freeze()
+        const darkFill = new SolidColorFill(
+          iconFill.color.r,
+          iconFill.color.g,
+          iconFill.color.b,
+          255 * 0.5
+        )
+        darkFill.freeze()
+        const lightFill = new SolidColorFill(
+          iconFill.color.r,
+          iconFill.color.g,
+          iconFill.color.b,
+          255 * 0.17
+        )
+        lightFill.freeze()
+
+        // top gear
+        icons.add(createGear(0.4, 0.4, 0.4, stroke, darkFill))
+        icons.add(
+          createGear(
+            0.16,
+            0.4,
+            0.4,
+            null,
+            background // background-colored gear to make shading work
+          )
+        )
+        icons.add(createGear(0.16, 0.4, 0.4, stroke, lightFill))
+
+        // bottom gear
+        icons.add(
+          createGear(
+            0.4,
+            0.6,
+            0.6,
+            null,
+            background // background-colored gear to make shading work
+          )
+        )
+        icons.add(createGear(0.4, 0.6, 0.6, stroke, darkFill))
+        icons.add(
+          createGear(
+            0.16,
+            0.6,
+            0.6,
+            null,
+            background // background-colored gear to make shading work
+          )
+        )
+        icons.add(createGear(0.16, 0.6, 0.6, stroke, lightFill))
+
+        result = BUILDER.combineIcons(icons)
+        break
+      }
+      case TaskType.SCRIPT: {
+        const stroke = new Stroke({
+          fill: iconFill,
+          lineCap: LineCap.ROUND,
+          loneJoin: LineJoin.ROUND
+        })
+        stroke.freeze()
+        BUILDER.stroke = stroke
+
+        // outline
+        const size = 0.5
+        const curveEndX = 0.235
+        const curveEndY = size
+        const curveCenterX = curveEndX + (size - curveEndX) * 0.5
+        const curveDeltaX = 0.5
+        const curveDeltaY = size * 0.5
+
+        BUILDER.moveTo(0.5 + size, 0.5 - size)
+        BUILDER.cubicTo(
+          0.5 + curveCenterX - curveDeltaX,
+          0.5 - curveDeltaY,
+          0.5 + curveCenterX + curveDeltaX,
+          0.5 + curveDeltaY,
+          0.5 + curveEndX,
+          0.5 + curveEndY
+        )
+        BUILDER.lineTo(0.5 - size, 0.5 + size)
+        BUILDER.cubicTo(
+          0.5 - curveCenterX + curveDeltaX,
+          0.5 + curveDeltaY,
+          0.5 - curveCenterX - curveDeltaX,
+          0.5 - curveDeltaY,
+          0.5 - curveEndX,
+          0.5 - curveEndY
+        )
+        BUILDER.close()
+
+        // inner lines
+        const deltaY2 = size * 0.2
+        const deltaX1 = 0.045
+        const deltaX2 = 0.085
+        const length = 0.3 * (size + curveEndX)
+
+        BUILDER.moveTo(0.5 - length - deltaX2, 0.5 - 3 * deltaY2)
+        BUILDER.lineTo(0.5 + length - deltaX2, 0.5 - 3 * deltaY2)
+        BUILDER.moveTo(0.5 - length - deltaX1, 0.5 - deltaY2)
+        BUILDER.lineTo(0.5 + length - deltaX1, 0.5 - deltaY2)
+        BUILDER.moveTo(0.5 - length + deltaX1, 0.5 + deltaY2)
+        BUILDER.lineTo(0.5 + length + deltaX1, 0.5 + deltaY2)
+        BUILDER.moveTo(0.5 - length + deltaX2, 0.5 + 3 * deltaY2)
+        BUILDER.lineTo(0.5 + length + deltaX2, 0.5 + 3 * deltaY2)
+        result = BUILDER.getPathIcon()
+        break
+      }
+      case TaskType.EVENT_TRIGGERED:
+      default:
+        result = null
+        break
+    }
+    if (hasDefaultColor) {
       IconFactory.TASK_ICONS.set(type, result)
     }
+
     return result
   }
 
-  /** @return {Icon} */
-  static createLoopCharacteristic(loopCharacteristic) {
-    const BUILDER = IconFactory.BUILDER
+  /**
+   * @param {LoopCharacteristic} loopCharacteristic
+   * @param {Fill} iconFill
+   * @return {Icon | null}
+   */
+  static createLoopCharacteristic(loopCharacteristic, iconFill) {
+    const hasDefaultColor = IconFactory.equalFill(iconFill, BPMN_CONSTANTS_DEFAULT_ICON_COLOR)
+
     let result = IconFactory.LOOP_TYPES.get(loopCharacteristic)
-    if (!result) {
-      switch (loopCharacteristic) {
-        case LoopCharacteristic.LOOP: {
-          const fromAngle = 0.65 * Math.PI
-          const toAngle = 2.4 * Math.PI
+    if (hasDefaultColor && result) {
+      return result
+    }
 
-          const x = 0.5 + 0.5 * Math.cos(fromAngle)
-          const y = 0.5 + 0.5 * Math.sin(fromAngle)
-          BUILDER.moveTo(x, y)
-          BUILDER.arcTo(0.5, 0.5, 0.5, fromAngle, toAngle)
-          BUILDER.moveTo(x - 0.25, y + 0.05)
-          BUILDER.lineTo(x, y)
-          BUILDER.lineTo(x, y - 0.3)
+    const BUILDER = IconFactory.BUILDER
+    const frozenStroke = new Stroke(iconFill)
+    frozenStroke.freeze()
+    BUILDER.stroke = frozenStroke
 
-          result = BUILDER.getPathIcon()
-          break
-        }
-        case LoopCharacteristic.PARALLEL: {
-          BUILDER.fill = Fill.BLACK
+    switch (loopCharacteristic) {
+      case LoopCharacteristic.LOOP: {
+        const fromAngle = 0.65 * Math.PI
+        const toAngle = 2.4 * Math.PI
 
-          for (let xOffset = 0; xOffset < 1; xOffset += 0.4) {
-            BUILDER.moveTo(xOffset, 0)
-            BUILDER.lineTo(xOffset + 0.2, 0)
-            BUILDER.lineTo(xOffset + 0.2, 1)
-            BUILDER.lineTo(xOffset, 1)
-            BUILDER.close()
-          }
-          result = BUILDER.getPathIcon()
-          break
-        }
-        case LoopCharacteristic.SEQUENTIAL: {
-          BUILDER.fill = Fill.BLACK
+        const x = 0.5 + 0.5 * Math.cos(fromAngle)
+        const y = 0.5 + 0.5 * Math.sin(fromAngle)
+        BUILDER.moveTo(x, y)
+        BUILDER.arcTo(0.5, 0.5, 0.5, fromAngle, toAngle)
+        BUILDER.moveTo(x - 0.25, y + 0.05)
+        BUILDER.lineTo(x, y)
+        BUILDER.lineTo(x, y - 0.3)
 
-          for (let yOffset = 0; yOffset < 1; yOffset += 0.4) {
-            BUILDER.moveTo(0, yOffset)
-            BUILDER.lineTo(0, yOffset + 0.2)
-            BUILDER.lineTo(1, yOffset + 0.2)
-            BUILDER.lineTo(1, yOffset)
-            BUILDER.close()
-          }
-          result = BUILDER.getPathIcon()
-          break
-        }
-        case LoopCharacteristic.NONE:
-        default:
-          break
+        result = BUILDER.getPathIcon()
+        break
       }
+      case LoopCharacteristic.PARALLEL: {
+        BUILDER.fill = iconFill
+
+        for (let xOffset = 0; xOffset < 1; xOffset += 0.4) {
+          BUILDER.moveTo(xOffset, 0)
+          BUILDER.lineTo(xOffset + 0.2, 0)
+          BUILDER.lineTo(xOffset + 0.2, 1)
+          BUILDER.lineTo(xOffset, 1)
+          BUILDER.close()
+        }
+        result = BUILDER.getPathIcon()
+        break
+      }
+      case LoopCharacteristic.SEQUENTIAL: {
+        BUILDER.fill = iconFill
+
+        for (let yOffset = 0; yOffset < 1; yOffset += 0.4) {
+          BUILDER.moveTo(0, yOffset)
+          BUILDER.lineTo(0, yOffset + 0.2)
+          BUILDER.lineTo(1, yOffset + 0.2)
+          BUILDER.lineTo(1, yOffset)
+          BUILDER.close()
+        }
+        result = BUILDER.getPathIcon()
+        break
+      }
+      case LoopCharacteristic.NONE:
+      default:
+        break
+    }
+
+    if (hasDefaultColor) {
       IconFactory.LOOP_TYPES.set(loopCharacteristic, result)
     }
     return result
   }
 
-  /** @return {Icon} */
-  static createAdHoc() {
-    if (!IconFactory.$adHoc) {
-      const BUILDER = IconFactory.BUILDER
-      BUILDER.fill = Fill.BLACK
+  /**
+   * @param {Fill} iconFill
+   * @return {Icon}
+   */
+  static createAdHoc(iconFill) {
+    const hasDefaultColor = IconFactory.equalFill(iconFill, BPMN_CONSTANTS_DEFAULT_ICON_COLOR)
 
-      const fromAngle1 = (5.0 / 4.0) * Math.PI
-      const toAngle1 = (7.0 / 4.0) * Math.PI
-      const fromAngle2 = (1.0 / 4.0) * Math.PI
-      const toAngle2 = (3.0 / 4.0) * Math.PI
-
-      const smallR = 0.25 / (1 - Math.sqrt(1.5 - Math.sqrt(2)))
-      const co = smallR * IconFactory.RADIUS_TO_CORNER_OFFSET
-      const dy = 0.1
-
-      const c1x = smallR - co
-      const c1y = 0.35 + smallR
-      const x1 = c1x + smallR * Math.cos(fromAngle1)
-      const y1 = c1y + smallR * Math.sin(fromAngle1)
-
-      const c2x = c1x + (2 * smallR - 2 * co)
-      const c2y = c1y - 2 * smallR + 2 * co
-
-      const x2 = c2x + smallR * Math.cos(fromAngle2)
-      const y2 = c2y + smallR * Math.sin(fromAngle2)
-      BUILDER.moveTo(x1, y1 + dy)
-      BUILDER.lineTo(x1, y1)
-      BUILDER.arcTo(smallR, c1x, c1y, fromAngle1, toAngle1)
-      BUILDER.arcTo(smallR, c2x, c2y, toAngle2, fromAngle2)
-      BUILDER.lineTo(x2, y2 + dy)
-      BUILDER.arcTo(smallR, c2x, c2y + dy, fromAngle2, toAngle2)
-      BUILDER.arcTo(smallR, c1x, c1y + dy, toAngle1, fromAngle1)
-      BUILDER.close()
-      IconFactory.$adHoc = BUILDER.getPathIcon()
+    if (hasDefaultColor && IconFactory.$adHoc) {
+      return IconFactory.$adHoc
     }
-    return IconFactory.$adHoc
-  }
 
-  /** @return {Icon} */
-  static createCompensation(filled) {
-    if ((!filled && !IconFactory.$comparison) || (filled && !IconFactory.$filledComparison)) {
-      const BUILDER = IconFactory.BUILDER
-      BUILDER.fill = filled
-        ? BPMN_CONSTANTS_FILLS_EVENT_TYPE_THROWING
-        : BPMN_CONSTANTS_FILLS_EVENT_TYPE_CATCHING
-      const sqrt3inv = 1 / Math.sqrt(3)
-      const halfSqurt3 = sqrt3inv / 2
-      const xOff = 0.5 / (2 * sqrt3inv)
-      BUILDER.moveTo(0, 0.5)
-      BUILDER.lineTo(xOff, 0.5 - halfSqurt3)
-      BUILDER.lineTo(xOff, 0.5)
-      BUILDER.lineTo(2 * xOff, 0.5 - halfSqurt3)
-      BUILDER.lineTo(2 * xOff, 0.5 + halfSqurt3)
-      BUILDER.lineTo(xOff, 0.5)
-      BUILDER.lineTo(xOff, 0.5 + halfSqurt3)
-      BUILDER.close()
-      if (filled) {
-        IconFactory.$filledComparison = BUILDER.getPathIcon()
-      } else {
-        IconFactory.$comparison = BUILDER.getPathIcon()
-      }
-    }
-    return filled ? IconFactory.$filledComparison : IconFactory.$comparison
-  }
-
-  /** @return {Icon} */
-  static createStaticSubState(subState) {
     const BUILDER = IconFactory.BUILDER
-    let result = IconFactory.SUB_STATES.get(subState)
-    if (!result) {
-      switch (subState) {
-        case SubState.EXPANDED: {
-          const icons = new List()
-          BUILDER.fill = BPMN_CONSTANTS_FILLS_SUB_STATE_BACKGROUND
-          icons.add(BUILDER.createRectIcon(0))
-          BUILDER.moveTo(0.2, 0.5)
-          BUILDER.lineTo(0.8, 0.5)
-          icons.add(BUILDER.getPathIcon())
-          result = BUILDER.combineIcons(icons)
-          break
-        }
-        case SubState.COLLAPSED: {
-          const icons2 = new List()
-          BUILDER.fill = BPMN_CONSTANTS_FILLS_SUB_STATE_BACKGROUND
-          icons2.add(BUILDER.createRectIcon(0))
-          BUILDER.moveTo(0.2, 0.5)
-          BUILDER.lineTo(0.8, 0.5)
-          BUILDER.moveTo(0.5, 0.2)
-          BUILDER.lineTo(0.5, 0.8)
-          icons2.add(BUILDER.getPathIcon())
-          result = BUILDER.combineIcons(icons2)
-          break
-        }
-        case SubState.NONE:
-        default:
-          break
+    const frozenStroke = new Stroke(iconFill)
+    frozenStroke.freeze()
+    BUILDER.stroke = frozenStroke
+    BUILDER.fill = iconFill
+
+    const fromAngle1 = (5.0 / 4.0) * Math.PI
+    const toAngle1 = (7.0 / 4.0) * Math.PI
+    const fromAngle2 = (1.0 / 4.0) * Math.PI
+    const toAngle2 = (3.0 / 4.0) * Math.PI
+
+    const smallR = 0.25 / (1 - Math.sqrt(1.5 - Math.sqrt(2)))
+    const co = smallR * IconFactory.RADIUS_TO_CORNER_OFFSET
+    const dy = 0.1
+
+    const c1x = smallR - co
+    const c1y = 0.35 + smallR
+    const x1 = c1x + smallR * Math.cos(fromAngle1)
+    const y1 = c1y + smallR * Math.sin(fromAngle1)
+
+    const c2x = c1x + (2 * smallR - 2 * co)
+    const c2y = c1y - 2 * smallR + 2 * co
+
+    const x2 = c2x + smallR * Math.cos(fromAngle2)
+    const y2 = c2y + smallR * Math.sin(fromAngle2)
+    BUILDER.moveTo(x1, y1 + dy)
+    BUILDER.lineTo(x1, y1)
+    BUILDER.arcTo(smallR, c1x, c1y, fromAngle1, toAngle1)
+    BUILDER.arcTo(smallR, c2x, c2y, toAngle2, fromAngle2)
+    BUILDER.lineTo(x2, y2 + dy)
+    BUILDER.arcTo(smallR, c2x, c2y + dy, fromAngle2, toAngle2)
+    BUILDER.arcTo(smallR, c1x, c1y + dy, toAngle1, fromAngle1)
+    BUILDER.close()
+
+    const icon = BUILDER.getPathIcon()
+    if (hasDefaultColor) {
+      IconFactory.$adHoc = icon
+    }
+    return icon
+  }
+
+  /**
+   * @param {boolean} filled
+   * @param {Fill} iconFill
+   * @return {Icon}
+   */
+  static createCompensation(filled, iconFill) {
+    const hasDefaultColor = IconFactory.equalFill(iconFill, BPMN_CONSTANTS_DEFAULT_ICON_COLOR)
+
+    if (hasDefaultColor) {
+      if (filled && IconFactory.$filledComparison) {
+        return IconFactory.$filledComparison
       }
+      if (!filled && IconFactory.$comparison) {
+        return IconFactory.$comparison
+      }
+    }
+
+    const frozenStroke = new Stroke(iconFill)
+    frozenStroke.freeze()
+    const BUILDER = IconFactory.BUILDER
+    BUILDER.stroke = frozenStroke
+    BUILDER.fill = filled ? iconFill : Fill.TRANSPARENT
+
+    const sqrt3inv = 1 / Math.sqrt(3)
+    const halfSqurt3 = sqrt3inv / 2
+    const xOff = 0.5 / (2 * sqrt3inv)
+    BUILDER.moveTo(0, 0.5)
+    BUILDER.lineTo(xOff, 0.5 - halfSqurt3)
+    BUILDER.lineTo(xOff, 0.5)
+    BUILDER.lineTo(2 * xOff, 0.5 - halfSqurt3)
+    BUILDER.lineTo(2 * xOff, 0.5 + halfSqurt3)
+    BUILDER.lineTo(xOff, 0.5)
+    BUILDER.lineTo(xOff, 0.5 + halfSqurt3)
+    BUILDER.close()
+
+    const icon = BUILDER.getPathIcon()
+    if (hasDefaultColor) {
+      if (filled) {
+        IconFactory.$filledComparison = icon
+      } else {
+        IconFactory.$comparison = icon
+      }
+    }
+
+    return icon
+  }
+
+  /**
+   * @param {SubState} subState
+   * @param {Fill} iconFill
+   * @return {Icon}
+   */
+  static createStaticSubState(subState, iconFill) {
+    const hasDefaultColor = IconFactory.equalFill(iconFill, BPMN_CONSTANTS_DEFAULT_ICON_COLOR)
+
+    let result = IconFactory.SUB_STATES.get(subState)
+    if (hasDefaultColor && result) {
+      return result
+    }
+
+    const iconStroke = new Stroke(iconFill)
+    iconStroke.freeze()
+    const BUILDER = IconFactory.BUILDER
+    BUILDER.stroke = iconStroke
+
+    switch (subState) {
+      case SubState.EXPANDED: {
+        const icons = new List()
+        BUILDER.fill = Fill.TRANSPARENT
+        icons.add(BUILDER.createRectIcon(0))
+        BUILDER.stroke = iconStroke
+        BUILDER.moveTo(0.2, 0.5)
+        BUILDER.lineTo(0.8, 0.5)
+        icons.add(BUILDER.getPathIcon())
+        result = BUILDER.combineIcons(icons)
+        break
+      }
+      case SubState.COLLAPSED: {
+        const icons2 = new List()
+        BUILDER.fill = Fill.TRANSPARENT
+        icons2.add(BUILDER.createRectIcon(0))
+        BUILDER.stroke = iconStroke
+        BUILDER.moveTo(0.2, 0.5)
+        BUILDER.lineTo(0.8, 0.5)
+        BUILDER.moveTo(0.5, 0.2)
+        BUILDER.lineTo(0.5, 0.8)
+        icons2.add(BUILDER.getPathIcon())
+        result = BUILDER.combineIcons(icons2)
+        break
+      }
+      case SubState.NONE:
+      default:
+        break
+    }
+
+    if (hasDefaultColor) {
       IconFactory.SUB_STATES.set(subState, result)
     }
+
     return result
   }
 
-  /** @return {Icon} */
-  static createDynamicSubState(node) {
-    return new CollapseButtonIcon(node)
+  /**
+   * @param {INode} node
+   * @param {Fill} iconFill
+   * @return {CollapseButtonIcon}
+   */
+  static createDynamicSubState(node, iconFill) {
+    return new CollapseButtonIcon(node, iconFill)
   }
 
-  /** @return {Icon} */
-  static createGateway() {
-    if (!IconFactory.$gateway) {
-      const BUILDER = IconFactory.BUILDER
-      BUILDER.stroke = BPMN_CONSTANTS_STROKES_GATEWAY
-      BUILDER.fill = BPMN_CONSTANTS_FILLS_GATEWAY
-      BUILDER.moveTo(0.5, 0)
-      BUILDER.lineTo(1, 0.5)
-      BUILDER.lineTo(0.5, 1)
-      BUILDER.lineTo(0, 0.5)
-      BUILDER.close()
-      IconFactory.$gateway = BUILDER.getPathIcon()
+  /**
+   * @param {Fill} background
+   * @param {Fill} outline
+   * @return {Icon}
+   */
+  static createGateway(background, outline) {
+    const hasDefaultColors =
+      IconFactory.equalFill(background, BPMN_CONSTANTS_GATEWAY_DEFAULT_BACKGROUND) &&
+      IconFactory.equalFill(outline, BPMN_CONSTANTS_GATEWAY_DEFAULT_OUTLINE)
+
+    if (hasDefaultColors && IconFactory.$gateway) {
+      return IconFactory.$gateway
     }
-    return IconFactory.$gateway
-  }
 
-  /** @return {Icon} */
-  static createGatewayType(type) {
-    let result = IconFactory.GATEWAY_TYPES.get(type)
-    if (!result) {
-      const BUILDER = IconFactory.BUILDER
-      /** @type {List.<Icon>} */
-      switch (type) {
-        case GatewayType.EXCLUSIVE_WITHOUT_MARKER: {
-          result = null
-          break
-        }
-        case GatewayType.EXCLUSIVE_WITH_MARKER: {
-          IconFactory.BUILDER.fill = Fill.BLACK
-          const cornerOffY = 0.5 - 0.5 * Math.sin(Math.PI / 4)
-          const cornerOffX = cornerOffY + 0.1
-          const xOff = 0.06
-
-          const x1 = cornerOffX
-          const x2 = cornerOffX + 2 * xOff
-
-          const y1 = cornerOffY
-          const y2 = 0.5 - (0.5 * xOff - cornerOffY * xOff) / (0.5 - cornerOffX - xOff)
-
-          BUILDER.moveTo(x1, y1)
-          BUILDER.lineTo(x2, y1)
-          BUILDER.lineTo(0.5, y2)
-          BUILDER.lineTo(1 - x2, y1)
-          BUILDER.lineTo(1 - x1, y1)
-          BUILDER.lineTo(0.5 + xOff, 0.5)
-          BUILDER.lineTo(1 - x1, 1 - y1)
-          BUILDER.lineTo(1 - x2, 1 - y1)
-          BUILDER.lineTo(0.5, 1 - y2)
-          BUILDER.lineTo(x2, 1 - y1)
-          BUILDER.lineTo(x1, 1 - y1)
-          BUILDER.lineTo(0.5 - xOff, 0.5)
-          BUILDER.close()
-          result = BUILDER.getPathIcon()
-          break
-        }
-        case GatewayType.INCLUSIVE: {
-          BUILDER.stroke = BPMN_CONSTANTS_STROKES_GATEWAY_TYPE_INCLUSIVE
-          result = IconFactory.createPlacedIcon(
-            BUILDER.createEllipseIcon(),
-            BPMN_CONSTANTS_PLACEMENTS_THICK_LINE,
-            Size.EMPTY
-          )
-          break
-        }
-        case GatewayType.EVENT_BASED:
-        case GatewayType.EXCLUSIVE_EVENT_BASED: {
-          const icons = new List()
-          icons.add(BUILDER.createEllipseIcon())
-
-          if (type === GatewayType.EVENT_BASED) {
-            const innerCircleIcon = BUILDER.createEllipseIcon()
-            icons.add(
-              IconFactory.createPlacedIcon(
-                innerCircleIcon,
-                BPMN_CONSTANTS_PLACEMENTS_DOUBLE_LINE,
-                Size.EMPTY
-              )
-            )
-          }
-
-          const polygon = List.fromArray(IconFactory.createPolygon(5, 0.5, 0))
-          BUILDER.moveTo(polygon.get(0).x, polygon.get(0).y)
-          for (let i = 1; i < 5; i++) {
-            BUILDER.lineTo(polygon.get(i).x, polygon.get(i).y)
-          }
-          BUILDER.close()
-          const innerIcon = BUILDER.getPathIcon()
-          icons.add(
-            IconFactory.createPlacedIcon(
-              innerIcon,
-              BPMN_CONSTANTS_PLACEMENTS_INSIDE_DOUBLE_LINE,
-              Size.EMPTY
-            )
-          )
-          result = BUILDER.combineIcons(icons)
-          break
-        }
-        case GatewayType.PARALLEL: {
-          result = createPlusIcon(0.8, Stroke.BLACK, Fill.BLACK)
-          break
-        }
-        case GatewayType.PARALLEL_EVENT_BASED: {
-          const icons = new List()
-          icons.add(BUILDER.createEllipseIcon())
-          icons.add(createPlusIcon(0.6, Stroke.BLACK, Fill.TRANSPARENT))
-          result = BUILDER.combineIcons(icons)
-          break
-        }
-        case GatewayType.COMPLEX: {
-          BUILDER.fill = Fill.BLACK
-          const outer = IconFactory.createPolygon(24, 0.5, Math.PI / 24)
-          const width = Math.sqrt(0.5 - 0.5 * Math.cos(Math.PI / 12))
-          const rInner = width * Math.sqrt(1 + Math.sqrt(2) / 2)
-          const inner = IconFactory.createPolygon(8, rInner, Math.PI / 8)
-
-          BUILDER.moveTo(outer[0].x, outer[0].y)
-          for (let i = 0; i < 8; i++) {
-            BUILDER.lineTo(outer[3 * i].x, outer[3 * i].y)
-            BUILDER.lineTo(inner[i].x, inner[i].y)
-            BUILDER.lineTo(outer[3 * i + 2].x, outer[3 * i + 2].y)
-          }
-          BUILDER.close()
-          result = BUILDER.getPathIcon()
-          break
-        }
-        default:
-          break
-      }
-      IconFactory.GATEWAY_TYPES.set(type, result)
-    }
-    return result
-  }
-
-  /** @return {Icon} */
-  static createEvent(characteristic) {
     const BUILDER = IconFactory.BUILDER
-    let result = IconFactory.EVENT_CHARACTERISTICS.get(characteristic)
-    if (!result) {
-      /** @type {.Stroke} */
-      let stroke
-      switch (characteristic) {
-        case EventCharacteristic.START:
-        case EventCharacteristic.SUB_PROCESS_INTERRUPTING:
-          stroke = BPMN_CONSTANTS_STROKES_EVENT_START
-          break
-        case EventCharacteristic.SUB_PROCESS_NON_INTERRUPTING:
-          stroke = BPMN_CONSTANTS_STROKES_EVENT_SUB_PROCESS_NON_INTERRUPTING
-          break
-        case EventCharacteristic.CATCHING:
-        case EventCharacteristic.BOUNDARY_INTERRUPTING:
-        case EventCharacteristic.THROWING:
-          stroke = BPMN_CONSTANTS_STROKES_EVENT_INTERMEDIATE
-          break
-        case EventCharacteristic.BOUNDARY_NON_INTERRUPTING:
-          stroke = BPMN_CONSTANTS_STROKES_EVENT_BOUNDARY_NON_INTERRUPTING
-          break
-        case EventCharacteristic.END:
-          stroke = BPMN_CONSTANTS_STROKES_EVENT_END
-          break
-        default:
-          break
+    const stroke = new Stroke(outline)
+    stroke.freeze()
+    BUILDER.stroke = stroke
+    BUILDER.fill = background
+    BUILDER.moveTo(0.5, 0)
+    BUILDER.lineTo(1, 0.5)
+    BUILDER.lineTo(0.5, 1)
+    BUILDER.lineTo(0, 0.5)
+    BUILDER.close()
+    const gatewayIcon = BUILDER.getPathIcon()
+    if (hasDefaultColors) {
+      IconFactory.$gateway = gatewayIcon
+    }
+    return gatewayIcon
+  }
+
+  /**
+   * @param {GatewayType} type
+   * @param {Fill} fill
+   * @return {Icon}
+   */
+  static createGatewayType(type, fill) {
+    const hasDefaultColor = IconFactory.equalFill(fill, BPMN_CONSTANTS_DEFAULT_ICON_COLOR)
+
+    let result = IconFactory.GATEWAY_TYPES.get(type)
+    if (hasDefaultColor && result) {
+      return result
+    }
+
+    const stroke = new Stroke(fill)
+    stroke.freeze()
+    const thickStroke = new Stroke(fill, 3)
+    thickStroke.freeze()
+
+    const BUILDER = IconFactory.BUILDER
+    switch (type) {
+      case GatewayType.EXCLUSIVE_WITHOUT_MARKER: {
+        result = null
+        break
       }
+      case GatewayType.EXCLUSIVE_WITH_MARKER: {
+        BUILDER.fill = fill
+        BUILDER.stroke = stroke
+        const cornerOffY = 0.5 - 0.5 * Math.sin(Math.PI / 4)
+        const cornerOffX = cornerOffY + 0.1
+        const xOff = 0.06
 
-      BUILDER.stroke = stroke
-      BUILDER.fill = BPMN_CONSTANTS_FILLS_EVENT
-      const ellipseIcon = BUILDER.createEllipseIcon()
+        const x1 = cornerOffX
+        const x2 = cornerOffX + 2 * xOff
 
-      switch (characteristic) {
-        case EventCharacteristic.CATCHING:
-        case EventCharacteristic.BOUNDARY_INTERRUPTING:
-        case EventCharacteristic.BOUNDARY_NON_INTERRUPTING:
-        case EventCharacteristic.THROWING: {
-          const icons = new List()
-          icons.add(ellipseIcon)
+        const y1 = cornerOffY
+        const y2 = 0.5 - (0.5 * xOff - cornerOffY * xOff) / (0.5 - cornerOffX - xOff)
 
+        BUILDER.moveTo(x1, y1)
+        BUILDER.lineTo(x2, y1)
+        BUILDER.lineTo(0.5, y2)
+        BUILDER.lineTo(1 - x2, y1)
+        BUILDER.lineTo(1 - x1, y1)
+        BUILDER.lineTo(0.5 + xOff, 0.5)
+        BUILDER.lineTo(1 - x1, 1 - y1)
+        BUILDER.lineTo(1 - x2, 1 - y1)
+        BUILDER.lineTo(0.5, 1 - y2)
+        BUILDER.lineTo(x2, 1 - y1)
+        BUILDER.lineTo(x1, 1 - y1)
+        BUILDER.lineTo(0.5 - xOff, 0.5)
+        BUILDER.close()
+        result = BUILDER.getPathIcon()
+        break
+      }
+      case GatewayType.INCLUSIVE: {
+        BUILDER.stroke = thickStroke
+        result = IconFactory.createPlacedIcon(
+          BUILDER.createEllipseIcon(),
+          BPMN_CONSTANTS_PLACEMENTS_THICK_LINE,
+          Size.EMPTY
+        )
+        break
+      }
+      case GatewayType.EVENT_BASED:
+      case GatewayType.EXCLUSIVE_EVENT_BASED: {
+        const icons = new List()
+        BUILDER.stroke = stroke
+        icons.add(BUILDER.createEllipseIcon())
+
+        if (type === GatewayType.EVENT_BASED) {
           BUILDER.stroke = stroke
-          BUILDER.fill = BPMN_CONSTANTS_FILLS_EVENT
-          const innerEllipseIcon = BUILDER.createEllipseIcon()
+          const innerCircleIcon = BUILDER.createEllipseIcon()
           icons.add(
             IconFactory.createPlacedIcon(
-              innerEllipseIcon,
+              innerCircleIcon,
               BPMN_CONSTANTS_PLACEMENTS_DOUBLE_LINE,
               Size.EMPTY
             )
           )
-          result = IconFactory.createCombinedIcon(icons)
-          break
         }
-        default:
-          result = ellipseIcon
-          break
-      }
-      IconFactory.EVENT_CHARACTERISTICS.set(characteristic, result)
-    }
-    return result
-  }
 
-  /** @return {Icon} */
-  static createEventType(type, filled) {
-    const BUILDER = IconFactory.BUILDER
-    const eventTypeWithFill = new EventTypeWithFill(type, filled)
-    let result = IconFactory.EVENT_TYPES.get(eventTypeWithFill)
-    if (!result) {
-      BUILDER.stroke = BPMN_CONSTANTS_STROKES_EVENT_TYPE
-      BUILDER.fill = filled
-        ? BPMN_CONSTANTS_FILLS_EVENT_TYPE_THROWING
-        : BPMN_CONSTANTS_FILLS_EVENT_TYPE_CATCHING
-
-      /** @type {List.<Icon>} */
-      let icons
-      switch (type) {
-        case EventType.PLAIN:
-          result = null
-          break
-        case EventType.MESSAGE: {
-          const messagePen = filled
-            ? BPMN_CONSTANTS_STROKES_MESSAGE_INVERTED
-            : BPMN_CONSTANTS_STROKES_MESSAGE
-          const messageFill = filled
-            ? BPMN_CONSTANTS_FILLS_MESSAGE_INVERTED
-            : BPMN_CONSTANTS_FILLS_MESSAGE
-          const combinedIcons = IconFactory.createMessage(messagePen, messageFill)
-          result = IconFactory.createPlacedIcon(
-            combinedIcons,
-            BPMN_CONSTANTS_PLACEMENTS_EVENT_TYPE_MESSAGE,
+        BUILDER.stroke = stroke
+        const polygon = List.fromArray(IconFactory.createPolygon(5, 0.5, 0))
+        BUILDER.moveTo(polygon.get(0).x, polygon.get(0).y)
+        for (let i = 1; i < 5; i++) {
+          BUILDER.lineTo(polygon.get(i).x, polygon.get(i).y)
+        }
+        BUILDER.close()
+        const innerIcon = BUILDER.getPathIcon()
+        icons.add(
+          IconFactory.createPlacedIcon(
+            innerIcon,
+            BPMN_CONSTANTS_PLACEMENTS_INSIDE_DOUBLE_LINE,
             Size.EMPTY
           )
-          break
-        }
-        case EventType.TIMER: {
-          icons = new List()
-          icons.add(BUILDER.createEllipseIcon())
-          BUILDER.stroke = filled
-            ? BPMN_CONSTANTS_STROKES_EVENT_TYPE_DETAIL_INVERTED
-            : BPMN_CONSTANTS_STROKES_EVENT_TYPE_DETAIL
-          const outerPoints = IconFactory.createPolygon(12, 0.5, 0)
-          const innerPoints = IconFactory.createPolygon(12, 0.4, 0)
-          for (let i = 0; i < 12; i++) {
-            BUILDER.moveTo(outerPoints[i].x, outerPoints[i].y)
-            BUILDER.lineTo(innerPoints[i].x, innerPoints[i].y)
-          }
-          BUILDER.moveTo(0.5, 0.5)
-          BUILDER.lineTo(0.8, 0.5)
-          BUILDER.moveTo(0.5, 0.5)
-          BUILDER.lineTo(0.6, 0.1)
-          icons.add(BUILDER.getPathIcon())
-          result = IconFactory.createCombinedIcon(icons)
-          break
-        }
-        case EventType.ESCALATION: {
-          const cornerOnCircle = 0.5 - 0.5 * IconFactory.RADIUS_TO_CORNER_OFFSET
-          BUILDER.moveTo(0.5, 0)
-          BUILDER.lineTo(0.5 + cornerOnCircle, 0.5 + cornerOnCircle)
-          BUILDER.lineTo(0.5, 0.5)
-          BUILDER.lineTo(0.5 - cornerOnCircle, 0.5 + cornerOnCircle)
-          BUILDER.close()
-          result = BUILDER.getPathIcon()
-          break
-        }
-        case EventType.CONDITIONAL:
-          icons = new List()
-          BUILDER.moveTo(0.217, 0.147)
-          BUILDER.lineTo(0.783, 0.147)
-          BUILDER.lineTo(0.783, 0.853)
-          BUILDER.lineTo(0.217, 0.853)
-          BUILDER.close()
-          icons.add(BUILDER.getPathIcon())
-
-          BUILDER.stroke = filled
-            ? BPMN_CONSTANTS_STROKES_EVENT_TYPE_DETAIL_INVERTED
-            : BPMN_CONSTANTS_STROKES_EVENT_TYPE_DETAIL
-          for (let i = 0; i < 4; i++) {
-            const y = 0.235 + i * 0.177
-            BUILDER.moveTo(0.274, y)
-            BUILDER.lineTo(0.726, y)
-          }
-          icons.add(BUILDER.getPathIcon())
-          result = BUILDER.combineIcons(icons)
-          break
-        case EventType.LINK:
-          BUILDER.moveTo(0.1, 0.38)
-          BUILDER.lineTo(0.5, 0.38)
-          BUILDER.lineTo(0.5, 0.1)
-          BUILDER.lineTo(0.9, 0.5)
-          BUILDER.lineTo(0.5, 0.9)
-          BUILDER.lineTo(0.5, 0.62)
-          BUILDER.lineTo(0.1, 0.62)
-          BUILDER.close()
-          result = BUILDER.getPathIcon()
-          break
-        case EventType.ERROR: {
-          const x1 = 0.354
-          const x2 = 0.084
-          const x3 = 0.115
-          const y1 = 0.354
-          const y2 = 0.049
-          const y3 = 0.26
-
-          BUILDER.moveTo(0.5 + x1, 0.5 - y1)
-          BUILDER.lineTo(0.5 + x2, 0.5 + y2)
-          BUILDER.lineTo(0.5 - x3, 0.5 - y3)
-          BUILDER.lineTo(0.5 - x1, 0.5 + y1)
-          BUILDER.lineTo(0.5 - x2, 0.5 - y2)
-          BUILDER.lineTo(0.5 + x3, 0.5 + y3)
-          BUILDER.close()
-          result = BUILDER.getPathIcon()
-          break
-        }
-        case EventType.CANCEL: {
-          const bigD = 0.5 - 0.5 * IconFactory.RADIUS_TO_CORNER_OFFSET
-          const smallD = 0.05
-          BUILDER.moveTo(0.5 - bigD - smallD, 0.5 - bigD + smallD)
-          BUILDER.lineTo(0.5 - bigD + smallD, 0.5 - bigD - smallD)
-          BUILDER.lineTo(0.5, 0.5 - 2 * smallD)
-          BUILDER.lineTo(0.5 + (bigD - smallD), 0.5 - bigD - smallD)
-          BUILDER.lineTo(0.5 + bigD + smallD, 0.5 - bigD + smallD)
-          BUILDER.lineTo(0.5 + 2 * smallD, 0.5)
-          BUILDER.lineTo(0.5 + bigD + smallD, 0.5 + bigD - smallD)
-          BUILDER.lineTo(0.5 + bigD - smallD, 0.5 + bigD + smallD)
-          BUILDER.lineTo(0.5, 0.5 + 2 * smallD)
-          BUILDER.lineTo(0.5 - bigD + smallD, 0.5 + bigD + smallD)
-          BUILDER.lineTo(0.5 - bigD - smallD, 0.5 + bigD - smallD)
-          BUILDER.lineTo(0.5 - 2 * smallD, 0.5)
-          BUILDER.close()
-          result = BUILDER.getPathIcon()
-          break
-        }
-        case EventType.COMPENSATION:
-          result = IconFactory.createCompensation(filled)
-          break
-        case EventType.SIGNAL: {
-          const triangle = IconFactory.createPolygon(3, 0.5, 0)
-          BUILDER.moveTo(triangle[0].x, triangle[0].y)
-          BUILDER.lineTo(triangle[1].x, triangle[1].y)
-          BUILDER.lineTo(triangle[2].x, triangle[2].y)
-          BUILDER.close()
-          result = BUILDER.getPathIcon()
-          break
-        }
-        case EventType.MULTIPLE: {
-          const pentagram = IconFactory.createPolygon(5, 0.5, 0)
-          BUILDER.moveTo(pentagram[0].x, pentagram[0].y)
-          BUILDER.lineTo(pentagram[1].x, pentagram[1].y)
-          BUILDER.lineTo(pentagram[2].x, pentagram[2].y)
-          BUILDER.lineTo(pentagram[3].x, pentagram[3].y)
-          BUILDER.lineTo(pentagram[4].x, pentagram[4].y)
-          BUILDER.close()
-          result = BUILDER.getPathIcon()
-          break
-        }
-        case EventType.PARALLEL_MULTIPLE: {
-          const fill = filled
-            ? BPMN_CONSTANTS_FILLS_EVENT_TYPE_THROWING
-            : BPMN_CONSTANTS_FILLS_EVENT_TYPE_CATCHING
-          result = createPlusIcon(1.0, BPMN_CONSTANTS_STROKES_EVENT_TYPE, fill)
-          break
-        }
-        case EventType.TERMINATE:
-          result = BUILDER.createEllipseIcon()
-          break
-        default:
-          break
+        )
+        result = BUILDER.combineIcons(icons)
+        break
       }
-      IconFactory.EVENT_TYPES.set(eventTypeWithFill, result)
+      case GatewayType.PARALLEL: {
+        result = createPlusIcon(0.8, stroke, fill)
+        break
+      }
+      case GatewayType.PARALLEL_EVENT_BASED: {
+        const icons = new List()
+        BUILDER.stroke = stroke
+        icons.add(BUILDER.createEllipseIcon())
+        icons.add(createPlusIcon(0.6, stroke, Fill.TRANSPARENT))
+        result = BUILDER.combineIcons(icons)
+        break
+      }
+      case GatewayType.COMPLEX: {
+        BUILDER.fill = fill
+        BUILDER.stroke = stroke
+        const outer = IconFactory.createPolygon(24, 0.5, Math.PI / 24)
+        const width = Math.sqrt(0.5 - 0.5 * Math.cos(Math.PI / 12))
+        const rInner = width * Math.sqrt(1 + Math.sqrt(2) / 2)
+        const inner = IconFactory.createPolygon(8, rInner, Math.PI / 8)
+
+        BUILDER.moveTo(outer[0].x, outer[0].y)
+        for (let i = 0; i < 8; i++) {
+          BUILDER.lineTo(outer[3 * i].x, outer[3 * i].y)
+          BUILDER.lineTo(inner[i].x, inner[i].y)
+          BUILDER.lineTo(outer[3 * i + 2].x, outer[3 * i + 2].y)
+        }
+        BUILDER.close()
+        result = BUILDER.getPathIcon()
+        break
+      }
+      default:
+        break
     }
+
+    if (hasDefaultColor) {
+      IconFactory.GATEWAY_TYPES.set(type, result)
+    }
+
     return result
   }
 
-  /** @return {Icon} */
-  static createMessage(stroke, fill) {
-    const BUILDER = IconFactory.BUILDER
-    const strokeAndFill = new StrokeAndFill(stroke, fill)
-    let result = IconFactory.MESSAGES.get(strokeAndFill)
-    if (!result) {
-      const icons = new List()
+  /**
+   * @param {EventCharacteristic} characteristic
+   * @param {Fill} background
+   * @param {Fill} outline
+   * @return {Icon}
+   */
+  static createEvent(characteristic, background, outline) {
+    const hasDefaultColors =
+      IconFactory.equalFill(background, BPMN_CONSTANTS_DEFAULT_EVENT_BACKGROUND) &&
+      IconFactory.equalFill(outline, BPMN_CONSTANTS_DEFAULT_EVENT_OUTLINE)
 
+    let result = IconFactory.EVENT_CHARACTERISTICS.get(characteristic)
+    if (hasDefaultColors && result) {
+      return result
+    }
+
+    const BUILDER = IconFactory.BUILDER
+    let stroke
+    switch (characteristic) {
+      case EventCharacteristic.START:
+      case EventCharacteristic.SUB_PROCESS_INTERRUPTING:
+        stroke = new Stroke(outline || Fill.GREEN)
+        break
+      case EventCharacteristic.SUB_PROCESS_NON_INTERRUPTING:
+        stroke = new Stroke({
+          fill: outline || Fill.GREEN,
+          dashStyle: DashStyle.DASH
+        })
+        break
+      case EventCharacteristic.CATCHING:
+      case EventCharacteristic.BOUNDARY_INTERRUPTING:
+      case EventCharacteristic.THROWING:
+        stroke = new Stroke(outline || Fill.GOLDENROD)
+        break
+      case EventCharacteristic.BOUNDARY_NON_INTERRUPTING:
+        stroke = new Stroke({
+          fill: outline || Fill.GOLDENROD,
+          dashStyle: DashStyle.DASH
+        })
+        break
+      case EventCharacteristic.END:
+        stroke = new Stroke(outline || Fill.RED, 3)
+        break
+      default:
+        break
+    }
+    stroke.freeze()
+
+    BUILDER.stroke = stroke
+    BUILDER.fill = background
+    const ellipseIcon = BUILDER.createEllipseIcon()
+
+    switch (characteristic) {
+      case EventCharacteristic.CATCHING:
+      case EventCharacteristic.BOUNDARY_INTERRUPTING:
+      case EventCharacteristic.BOUNDARY_NON_INTERRUPTING:
+      case EventCharacteristic.THROWING: {
+        const icons = new List()
+        icons.add(ellipseIcon)
+
+        BUILDER.stroke = stroke
+        BUILDER.fill = background
+        const innerEllipseIcon = BUILDER.createEllipseIcon()
+        icons.add(
+          IconFactory.createPlacedIcon(
+            innerEllipseIcon,
+            BPMN_CONSTANTS_PLACEMENTS_DOUBLE_LINE,
+            Size.EMPTY
+          )
+        )
+        result = IconFactory.createCombinedIcon(icons)
+        break
+      }
+      default:
+        result = ellipseIcon
+        break
+    }
+
+    if (hasDefaultColors) {
+      IconFactory.EVENT_CHARACTERISTICS.set(characteristic, result)
+    }
+
+    return result
+  }
+
+  /**
+   * @param {EventType} type
+   * @param {boolean} filled
+   * @param {Fill} fill
+   * @param {Fill} background
+   * @return {Icon}
+   */
+  static createEventType(type, filled, fill, background) {
+    const hasDefaultColors =
+      IconFactory.equalFill(fill, BPMN_CONSTANTS_DEFAULT_ICON_COLOR) &&
+      IconFactory.equalFill(background, BPMN_CONSTANTS_DEFAULT_EVENT_BACKGROUND)
+
+    const eventTypeWithFill = new EventTypeWithFill(type, filled)
+    let result = IconFactory.EVENT_TYPES.get(eventTypeWithFill)
+
+    if (hasDefaultColors && result) {
+      return result
+    }
+
+    const stroke = new Stroke(fill)
+    stroke.freeze()
+    const roundStroke = new Stroke({
+      fill: fill,
+      lineJoin: LineJoin.ROUND,
+      lineCap: LineCap.ROUND
+    })
+    roundStroke.freeze()
+    const backgroundRoundStroke = new Stroke({
+      fill: background,
+      lineJoin: LineJoin.ROUND,
+      lineCap: LineCap.ROUND
+    })
+    backgroundRoundStroke.freeze()
+
+    const BUILDER = IconFactory.BUILDER
+    BUILDER.stroke = stroke
+    BUILDER.fill = filled ? fill : Fill.TRANSPARENT
+
+    let /** List.<Icon> */ icons
+    switch (type) {
+      case EventType.MESSAGE: {
+        const combinedIcons = IconFactory.createMessage(
+          !filled ? stroke : Stroke.TRANSPARENT,
+          filled ? fill : Fill.TRANSPARENT,
+          filled
+        )
+        result = IconFactory.createPlacedIcon(
+          combinedIcons,
+          BPMN_CONSTANTS_PLACEMENTS_EVENT_TYPE_MESSAGE,
+          Size.EMPTY
+        )
+        break
+      }
+      case EventType.TIMER: {
+        icons = new List()
+        BUILDER.stroke = filled ? backgroundRoundStroke : roundStroke
+        icons.add(BUILDER.createEllipseIcon())
+        BUILDER.stroke = filled ? backgroundRoundStroke : roundStroke
+        const outerPoints = IconFactory.createPolygon(12, 0.5, 0)
+        const innerPoints = IconFactory.createPolygon(12, 0.4, 0)
+        for (let i = 0; i < 12; i++) {
+          BUILDER.moveTo(outerPoints[i].x, outerPoints[i].y)
+          BUILDER.lineTo(innerPoints[i].x, innerPoints[i].y)
+        }
+        BUILDER.moveTo(0.75, 0.52)
+        BUILDER.lineTo(0.5, 0.5)
+        BUILDER.lineTo(0.6, 0.15)
+        icons.add(BUILDER.getPathIcon())
+        result = IconFactory.createCombinedIcon(icons)
+        break
+      }
+      case EventType.ESCALATION: {
+        const cornerOnCircle = 0.5 - 0.5 * IconFactory.RADIUS_TO_CORNER_OFFSET
+        BUILDER.moveTo(0.5, 0)
+        BUILDER.lineTo(0.5 + cornerOnCircle, 0.5 + cornerOnCircle)
+        BUILDER.lineTo(0.5, 0.5)
+        BUILDER.lineTo(0.5 - cornerOnCircle, 0.5 + cornerOnCircle)
+        BUILDER.close()
+        result = BUILDER.getPathIcon()
+        break
+      }
+      case EventType.CONDITIONAL:
+        icons = new List()
+        BUILDER.moveTo(0.217, 0.147)
+        BUILDER.lineTo(0.783, 0.147)
+        BUILDER.lineTo(0.783, 0.853)
+        BUILDER.lineTo(0.217, 0.853)
+        BUILDER.close()
+        icons.add(BUILDER.getPathIcon())
+
+        BUILDER.stroke = filled ? backgroundRoundStroke : roundStroke
+        for (let i = 0; i < 4; i++) {
+          const y = 0.235 + i * 0.177
+          BUILDER.moveTo(0.274, y)
+          BUILDER.lineTo(0.726, y)
+        }
+        icons.add(BUILDER.getPathIcon())
+        result = BUILDER.combineIcons(icons)
+        break
+      case EventType.LINK:
+        BUILDER.moveTo(0.1, 0.38)
+        BUILDER.lineTo(0.5, 0.38)
+        BUILDER.lineTo(0.5, 0.1)
+        BUILDER.lineTo(0.9, 0.5)
+        BUILDER.lineTo(0.5, 0.9)
+        BUILDER.lineTo(0.5, 0.62)
+        BUILDER.lineTo(0.1, 0.62)
+        BUILDER.close()
+        result = BUILDER.getPathIcon()
+        break
+      case EventType.ERROR: {
+        const x1 = 0.354
+        const x2 = 0.084
+        const x3 = 0.115
+        const y1 = 0.354
+        const y2 = 0.049
+        const y3 = 0.26
+
+        BUILDER.moveTo(0.5 + x1, 0.5 - y1)
+        BUILDER.lineTo(0.5 + x2, 0.5 + y2)
+        BUILDER.lineTo(0.5 - x3, 0.5 - y3)
+        BUILDER.lineTo(0.5 - x1, 0.5 + y1)
+        BUILDER.lineTo(0.5 - x2, 0.5 - y2)
+        BUILDER.lineTo(0.5 + x3, 0.5 + y3)
+        BUILDER.close()
+        result = BUILDER.getPathIcon()
+        break
+      }
+      case EventType.CANCEL: {
+        const bigD = 0.5 - 0.5 * IconFactory.RADIUS_TO_CORNER_OFFSET
+        const smallD = 0.05
+        BUILDER.moveTo(0.5 - bigD - smallD, 0.5 - bigD + smallD)
+        BUILDER.lineTo(0.5 - bigD + smallD, 0.5 - bigD - smallD)
+        BUILDER.lineTo(0.5, 0.5 - 2 * smallD)
+        BUILDER.lineTo(0.5 + (bigD - smallD), 0.5 - bigD - smallD)
+        BUILDER.lineTo(0.5 + bigD + smallD, 0.5 - bigD + smallD)
+        BUILDER.lineTo(0.5 + 2 * smallD, 0.5)
+        BUILDER.lineTo(0.5 + bigD + smallD, 0.5 + bigD - smallD)
+        BUILDER.lineTo(0.5 + bigD - smallD, 0.5 + bigD + smallD)
+        BUILDER.lineTo(0.5, 0.5 + 2 * smallD)
+        BUILDER.lineTo(0.5 - bigD + smallD, 0.5 + bigD + smallD)
+        BUILDER.lineTo(0.5 - bigD - smallD, 0.5 + bigD - smallD)
+        BUILDER.lineTo(0.5 - 2 * smallD, 0.5)
+        BUILDER.close()
+        result = BUILDER.getPathIcon()
+        break
+      }
+      case EventType.COMPENSATION:
+        result = IconFactory.createCompensation(filled, fill)
+        break
+      case EventType.SIGNAL: {
+        const triangle = IconFactory.createPolygon(3, 0.5, 0)
+        BUILDER.moveTo(triangle[0].x, triangle[0].y)
+        BUILDER.lineTo(triangle[1].x, triangle[1].y)
+        BUILDER.lineTo(triangle[2].x, triangle[2].y)
+        BUILDER.close()
+        result = BUILDER.getPathIcon()
+        break
+      }
+      case EventType.MULTIPLE: {
+        const pentagram = IconFactory.createPolygon(5, 0.5, 0)
+        BUILDER.moveTo(pentagram[0].x, pentagram[0].y)
+        BUILDER.lineTo(pentagram[1].x, pentagram[1].y)
+        BUILDER.lineTo(pentagram[2].x, pentagram[2].y)
+        BUILDER.lineTo(pentagram[3].x, pentagram[3].y)
+        BUILDER.lineTo(pentagram[4].x, pentagram[4].y)
+        BUILDER.close()
+        result = BUILDER.getPathIcon()
+        break
+      }
+      case EventType.PARALLEL_MULTIPLE: {
+        result = createPlusIcon(1.0, stroke, filled ? fill : background)
+        break
+      }
+      case EventType.TERMINATE:
+        result = BUILDER.createEllipseIcon()
+        break
+      case EventType.PLAIN:
+      default:
+        result = null
+        break
+    }
+
+    if (hasDefaultColors) {
+      IconFactory.EVENT_TYPES.set(eventTypeWithFill, result)
+    }
+
+    return result
+  }
+
+  /**
+   * @param {Stroke} stroke
+   * @param {Fill} fill
+   * @param {boolean?} inverted
+   * @return {Icon}
+   */
+  static createMessage(stroke, fill, inverted = false) {
+    const BUILDER = IconFactory.BUILDER
+    const icons = new List()
+    if (!inverted) {
       BUILDER.stroke = stroke
       BUILDER.fill = fill
       BUILDER.moveTo(0, 0)
@@ -3299,254 +3476,454 @@ class IconFactory {
       BUILDER.lineTo(0.5, 0.5)
       BUILDER.lineTo(1, 0)
       icons.add(BUILDER.getPathIcon())
-      result = BUILDER.combineIcons(icons)
-      IconFactory.MESSAGES.set(strokeAndFill, result)
+    } else {
+      // Just the two envelope shapes without the pen
+      BUILDER.fill = fill
+      BUILDER.stroke = null
+      BUILDER.moveTo(0, 0)
+      BUILDER.lineTo(1, 0)
+      BUILDER.lineTo(0.5, 0.45)
+      BUILDER.close()
+      icons.add(BUILDER.getPathIcon())
+
+      BUILDER.fill = fill
+      BUILDER.stroke = null
+      BUILDER.moveTo(0, 0.1)
+      BUILDER.lineTo(0.5, 0.55)
+      BUILDER.lineTo(1, 0.1)
+      BUILDER.lineTo(1, 1)
+      BUILDER.lineTo(0, 1)
+      BUILDER.close()
+      icons.add(BUILDER.getPathIcon())
     }
-    return result
+    return BUILDER.combineIcons(icons)
   }
 
-  /** @return {Icon} */
-  static createChoreography(type) {
-    const BUILDER = IconFactory.BUILDER
-    if (type === ChoreographyType.TASK) {
-      if (!IconFactory.$choreographyTask) {
-        BUILDER.stroke = BPMN_CONSTANTS_STROKES_CHOREOGRAPHY_TASK
-        IconFactory.$choreographyTask = BUILDER.createRectIcon(
-          BPMN_CONSTANTS_CHOREOGRAPHY_CORNER_RADIUS
-        )
+  /**
+   * @param {ChoreographyType} type
+   * @param {Fill} outline
+   * @return {Icon}
+   */
+  static createChoreography(type, outline) {
+    const hasDefaultColor = IconFactory.equalFill(
+      outline,
+      BPMN_CONSTANTS_CHOREOGRAPHY_DEFAULT_OUTLINE
+    )
+
+    if (hasDefaultColor) {
+      if (type === ChoreographyType.TASK && IconFactory.$choreographyTask) {
+        return IconFactory.$choreographyTask
       }
-      return IconFactory.$choreographyTask
+      if (type === ChoreographyType.CALL && IconFactory.$choreographyCall) {
+        return IconFactory.$choreographyCall
+      }
     }
-    if (!IconFactory.$choreographyCall) {
-      BUILDER.stroke = BPMN_CONSTANTS_STROKES_CHOREOGRAPHY_CALL
-      IconFactory.$choreographyCall = BUILDER.createRectIcon(
-        BPMN_CONSTANTS_CHOREOGRAPHY_CORNER_RADIUS
-      )
+
+    const stroke = new Stroke(outline, type === ChoreographyType.TASK ? 1 : 3)
+    stroke.freeze()
+    const BUILDER = IconFactory.BUILDER
+    BUILDER.stroke = stroke
+
+    // Needs all four arguments instead of one because the path is drawn differently in both cases
+    // on some platforms ...
+    const icon = BUILDER.createVariableRectIcon(
+      BPMN_CONSTANTS_CHOREOGRAPHY_CORNER_RADIUS,
+      BPMN_CONSTANTS_CHOREOGRAPHY_CORNER_RADIUS,
+      BPMN_CONSTANTS_CHOREOGRAPHY_CORNER_RADIUS,
+      BPMN_CONSTANTS_CHOREOGRAPHY_CORNER_RADIUS
+    )
+
+    if (hasDefaultColor) {
+      if (type === ChoreographyType.TASK) {
+        IconFactory.$choreographyTask = icon
+      }
+      if (type === ChoreographyType.CALL) {
+        IconFactory.$choreographyCall = icon
+      }
     }
-    return IconFactory.$choreographyCall
+    return icon
   }
 
-  /** @return {Icon} */
-  static createChoreographyParticipant(sending, topRadius, bottomRadius) {
-    const BUILDER = IconFactory.BUILDER
-    const participantBandType = new ParticipantBandType(sending, topRadius, bottomRadius)
+  /**
+   * @param {Fill} outline
+   * @param {Fill} background
+   * @param {number} topRadius
+   * @param {number} bottomRadius
+   * @return {Icon}
+   */
+  static createChoreographyParticipant(outline, background, topRadius, bottomRadius) {
+    const hasDefaultColors =
+      IconFactory.equalFill(outline, BPMN_CONSTANTS_CHOREOGRAPHY_DEFAULT_OUTLINE) &&
+      (IconFactory.equalFill(background, BPMN_CONSTANTS_CHOREOGRAPHY_DEFAULT_INITIATING_COLOR) ||
+        IconFactory.equalFill(background, BPMN_CONSTANTS_CHOREOGRAPHY_DEFAULT_RESPONSE_COLOR))
+
+    const participantBandType = new ParticipantBandType(background, topRadius, bottomRadius)
     let result = IconFactory.PARTICIPANT_BANDS.get(participantBandType)
-    if (!result) {
-      BUILDER.stroke = BPMN_CONSTANTS_STROKES_CHOREOGRAPHY_TASK
-      BUILDER.fill = sending
-        ? BPMN_CONSTANTS_FILLS_CHOREOGRAPHY_INITIALIZING_PARTICIPANT
-        : BPMN_CONSTANTS_FILLS_CHOREOGRAPHY_RECEIVING_PARTICIPANT
-      result = BUILDER.createVariableRectIcon(topRadius, topRadius, bottomRadius, bottomRadius)
+    if (hasDefaultColors && result) {
+      return result
+    }
+
+    const stroke = new Stroke(outline)
+    stroke.freeze()
+    const BUILDER = IconFactory.BUILDER
+    BUILDER.stroke = stroke
+    BUILDER.fill = background
+    result = BUILDER.createVariableRectIcon(topRadius, topRadius, bottomRadius, bottomRadius)
+
+    if (hasDefaultColors) {
       IconFactory.PARTICIPANT_BANDS.set(participantBandType, result)
     }
+
     return result
   }
 
-  /** @return {Icon} */
-  static createChoreographyTaskBand() {
-    const BUILDER = IconFactory.BUILDER
-    if (!IconFactory.$taskBand) {
-      BUILDER.stroke = Stroke.TRANSPARENT
-      BUILDER.fill = BPMN_CONSTANTS_FILLS_CHOREOGRAPHY_TASK_BAND
-      IconFactory.$taskBand = BUILDER.createRectIcon(0)
+  /**
+   * @param {Fill} fill
+   * @return {Icon}
+   */
+  static createChoreographyTaskBand(fill) {
+    const hasDefaultColor = IconFactory.equalFill(
+      fill,
+      BPMN_CONSTANTS_CHOREOGRAPHY_DEFAULT_BACKGROUND
+    )
+
+    if (hasDefaultColor && IconFactory.$taskBand) {
+      return IconFactory.$taskBand
     }
-    return IconFactory.$taskBand
+
+    const BUILDER = IconFactory.BUILDER
+    BUILDER.stroke = Stroke.TRANSPARENT
+    BUILDER.fill = fill
+
+    const icon = BUILDER.createRectIcon(0)
+
+    if (hasDefaultColor) {
+      IconFactory.$taskBand = icon
+    }
+
+    return icon
   }
 
-  /** @return {Icon} */
-  static createConversation(type) {
-    const BUILDER = IconFactory.BUILDER
-    let result = IconFactory.CONVERSATIONS.get(type)
-    if (!result) {
-      switch (type) {
-        default:
-        case ConversationType.CONVERSATION:
-        case ConversationType.SUB_CONVERSATION:
-          BUILDER.stroke = BPMN_CONSTANTS_STROKES_CONVERSATION
-          break
-        case ConversationType.CALLING_GLOBAL_CONVERSATION:
-        case ConversationType.CALLING_COLLABORATION:
-          BUILDER.stroke = BPMN_CONSTANTS_STROKES_CALLING_CONVERSATION
-          break
-      }
-      BUILDER.fill = BPMN_CONSTANTS_FILLS_CONVERSATION
+  /**
+   * @param {ConversationType} type
+   * @param {Fill} background
+   * @param {Fill} outline
+   * @return {Icon}
+   */
+  static createConversation(type, background, outline) {
+    const hasDefaultColors =
+      IconFactory.equalFill(background, BPMN_CONSTANTS_CONVERSATION_DEFAULT_BACKGROUND) &&
+      IconFactory.equalFill(outline, BPMN_CONSTANTS_CONVERSATION_DEFAULT_OUTLINE)
 
-      BUILDER.moveTo(0, 0.5)
-      BUILDER.lineTo(0.25, 0)
-      BUILDER.lineTo(0.75, 0)
-      BUILDER.lineTo(1, 0.5)
-      BUILDER.lineTo(0.75, 1)
-      BUILDER.lineTo(0.25, 1)
-      BUILDER.close()
-      result = BUILDER.getPathIcon()
+    let result = IconFactory.CONVERSATIONS.get(type)
+    if (hasDefaultColors && result) {
+      return result
+    }
+
+    const BUILDER = IconFactory.BUILDER
+    switch (type) {
+      default:
+      case ConversationType.CONVERSATION:
+      case ConversationType.SUB_CONVERSATION: {
+        const stroke = new Stroke(outline)
+        stroke.freeze()
+        BUILDER.stroke = stroke
+        break
+      }
+      case ConversationType.CALLING_GLOBAL_CONVERSATION:
+      case ConversationType.CALLING_COLLABORATION: {
+        const stroke = new Stroke(outline, 3)
+        stroke.freeze()
+        BUILDER.stroke = stroke
+        break
+      }
+    }
+    BUILDER.fill = background
+
+    BUILDER.moveTo(0, 0.5)
+    BUILDER.lineTo(0.25, 0)
+    BUILDER.lineTo(0.75, 0)
+    BUILDER.lineTo(1, 0.5)
+    BUILDER.lineTo(0.75, 1)
+    BUILDER.lineTo(0.25, 1)
+    BUILDER.close()
+    result = BUILDER.getPathIcon()
+
+    if (hasDefaultColors) {
       IconFactory.CONVERSATIONS.set(type, result)
     }
+
     return result
   }
 
-  /** @return {Icon} */
-  static createConversationMarker(type) {
+  /**
+   * @param {ConversationType} type
+   * @param {Fill} fill
+   * @return {null | Icon}
+   */
+  static createConversationMarker(type, fill) {
+    const hasDefaultColor = IconFactory.equalFill(fill, BPMN_CONSTANTS_DEFAULT_ICON_COLOR)
+
+    if (
+      hasDefaultColor &&
+      IconFactory.$conversationSubState &&
+      (type === ConversationType.SUB_CONVERSATION ||
+        type === ConversationType.CALLING_COLLABORATION)
+    ) {
+      return IconFactory.$conversationSubState
+    }
+
     switch (type) {
       case ConversationType.SUB_CONVERSATION:
       case ConversationType.CALLING_COLLABORATION:
-        return (
-          IconFactory.$conversationSubState ||
-          (IconFactory.$conversationSubState = IconFactory.createStaticSubState(SubState.COLLAPSED))
-        )
+        const icon = IconFactory.createStaticSubState(SubState.COLLAPSED, fill)
+        if (hasDefaultColor) {
+          IconFactory.$conversationSubState = icon
+        }
+        return icon
       default:
         return null
     }
   }
 
-  /** @return {Icon} */
-  static createDataObject() {
-    const dataObjectIcon = new DataObjectIcon()
-    dataObjectIcon.stroke = BPMN_CONSTANTS_STROKES_DATA_OBJECT
-    dataObjectIcon.fill = BPMN_CONSTANTS_FILLS_DATA_OBJECT
-    return IconFactory.$dataObject || (IconFactory.$dataObject = dataObjectIcon)
+  /**
+   * @param {Fill} background
+   * @param {Fill} outline
+   * @return {DataObjectIcon}
+   */
+  static createDataObject(background, outline) {
+    const hasDefaultColors =
+      IconFactory.equalFill(background, BPMN_CONSTANTS_DATA_OBJECT_DEFAULT_BACKGROUND) &&
+      IconFactory.equalFill(outline, BPMN_CONSTANTS_DATA_OBJECT_DEFAULT_OUTLINE)
+
+    if (hasDefaultColors && IconFactory.$dataObject) {
+      return IconFactory.$dataObject
+    }
+
+    const stroke = new Stroke(outline)
+    stroke.freeze()
+    const icon = new DataObjectIcon()
+    icon.stroke = stroke
+    icon.fill = background
+
+    if (hasDefaultColors) {
+      IconFactory.$dataObject = icon
+    }
+
+    return icon
   }
 
-  /** @return {Icon} */
-  static createDataObjectType(type) {
+  /**
+   * @param {DataObjectType} type
+   * @param {Fill} fill
+   * @return {null | Icon}
+   */
+  static createDataObjectType(type, fill) {
+    const hasDefaultColor = IconFactory.equalFill(fill, BPMN_CONSTANTS_DEFAULT_ICON_COLOR)
+
+    if (hasDefaultColor) {
+      if (type === DataObjectType.INPUT && IconFactory.$dataObjectInputType) {
+        return IconFactory.$dataObjectInputType
+      }
+      if (type === DataObjectType.OUTPUT && IconFactory.$dataObjectOutputType) {
+        return IconFactory.$dataObjectOutputType
+      }
+    }
+
+    let icon
     switch (type) {
       case DataObjectType.INPUT:
-        return (
-          IconFactory.$dataObjectInputType ||
-          (IconFactory.$dataObjectInputType = IconFactory.createEventType(EventType.LINK, false))
-        )
+        icon = IconFactory.createEventType(EventType.LINK, false, fill, Fill.TRANSPARENT)
+        if (hasDefaultColor) {
+          IconFactory.$dataObjectInputType = icon
+        }
+        return icon
       case DataObjectType.OUTPUT:
-        return (
-          IconFactory.$dataObjectOutputType ||
-          (IconFactory.$dataObjectOutputType = IconFactory.createEventType(EventType.LINK, true))
-        )
+        icon = IconFactory.createEventType(EventType.LINK, true, fill, fill)
+        if (hasDefaultColor) {
+          IconFactory.$dataObjectOutputType = icon
+        }
+        return icon
       case DataObjectType.NONE:
       default:
         return null
     }
   }
 
-  /** @return {Icon} */
-  static createAnnotation(left) {
-    const BUILDER = IconFactory.BUILDER
-    if (left) {
-      if (!IconFactory.$leftAnnotation) {
-        const icons = new List()
-        BUILDER.stroke = Stroke.TRANSPARENT
-        BUILDER.fill = BPMN_CONSTANTS_FILLS_ANNOTATION
-        icons.add(BUILDER.createRectIcon(0))
-        BUILDER.stroke = BPMN_CONSTANTS_STROKES_ANNOTATION
-        BUILDER.moveTo(0.1, 0)
-        BUILDER.lineTo(0, 0)
-        BUILDER.lineTo(0, 1)
-        BUILDER.lineTo(0.1, 1)
-        icons.add(BUILDER.getPathIcon())
-        IconFactory.$leftAnnotation = BUILDER.combineIcons(icons)
-      }
+  /**
+   * @param {boolean} left
+   * @param {Fill} background
+   * @param {Fill} outline
+   * @return {Icon}
+   */
+  static createAnnotation(left, background, outline) {
+    const hasDefaultColors =
+      IconFactory.equalFill(background, BPMN_CONSTANTS_ANNOTATION_DEFAULT_BACKGROUND) &&
+      IconFactory.equalFill(outline, BPMN_CONSTANTS_ANNOTATION_DEFAULT_OUTLINE)
+
+    if (hasDefaultColors && left && IconFactory.$leftAnnotation) {
       return IconFactory.$leftAnnotation
     }
-    if (!IconFactory.$rightAnnotation) {
-      const icons = new List()
-      BUILDER.stroke = Stroke.TRANSPARENT
-      BUILDER.fill = BPMN_CONSTANTS_FILLS_ANNOTATION
-      icons.add(BUILDER.createRectIcon(0))
-      BUILDER.stroke = BPMN_CONSTANTS_STROKES_ANNOTATION
+    if (hasDefaultColors && !left && IconFactory.$rightAnnotation) {
+      return IconFactory.$rightAnnotation
+    }
+
+    const stroke = new Stroke(outline)
+    stroke.freeze()
+
+    const icons = new List()
+    const BUILDER = IconFactory.BUILDER
+    BUILDER.stroke = Stroke.TRANSPARENT
+    BUILDER.fill = background
+    icons.add(BUILDER.createRectIcon(0))
+    BUILDER.stroke = stroke
+
+    if (left) {
+      BUILDER.moveTo(0.1, 0)
+      BUILDER.lineTo(0, 0)
+      BUILDER.lineTo(0, 1)
+      BUILDER.lineTo(0.1, 1)
+    } else {
       BUILDER.moveTo(0.9, 0)
       BUILDER.lineTo(1, 0)
       BUILDER.lineTo(1, 1)
       BUILDER.lineTo(0.9, 1)
-      icons.add(BUILDER.getPathIcon())
-      IconFactory.$rightAnnotation = BUILDER.combineIcons(icons)
     }
-    return IconFactory.$rightAnnotation
-  }
+    icons.add(BUILDER.getPathIcon())
+    const icon = BUILDER.combineIcons(icons)
 
-  /** @return {Icon} */
-  static createDataStore() {
-    const BUILDER = IconFactory.BUILDER
-    if (!IconFactory.$dataStore) {
-      const halfEllipseHeight = 0.125
-      const ringOffset = 0.07
-
-      const icons = new List()
-      BUILDER.stroke = BPMN_CONSTANTS_STROKES_DATA_STORE
-      BUILDER.fill = BPMN_CONSTANTS_FILLS_DATA_STORE
-
-      BUILDER.moveTo(0, halfEllipseHeight)
-      BUILDER.lineTo(0, 1 - halfEllipseHeight)
-      BUILDER.cubicTo(0, 1, 1, 1, 1, 1 - halfEllipseHeight)
-      BUILDER.lineTo(1, halfEllipseHeight)
-      BUILDER.cubicTo(1, 0, 0, 0, 0, halfEllipseHeight)
-      BUILDER.close()
-      icons.add(BUILDER.getPathIcon())
-
-      BUILDER.stroke = BPMN_CONSTANTS_STROKES_DATA_STORE
-      let ellipseCenterY = halfEllipseHeight
-      for (let i = 0; i < 3; i++) {
-        BUILDER.moveTo(0, ellipseCenterY)
-        BUILDER.cubicTo(
-          0,
-          ellipseCenterY + halfEllipseHeight,
-          1,
-          ellipseCenterY + halfEllipseHeight,
-          1,
-          ellipseCenterY
-        )
-        ellipseCenterY += ringOffset
+    if (hasDefaultColors) {
+      if (left) {
+        IconFactory.$leftAnnotation = icon
+      } else {
+        IconFactory.$rightAnnotation = icon
       }
-      icons.add(BUILDER.getPathIcon())
-      IconFactory.$dataStore = BUILDER.combineIcons(icons)
     }
-    return IconFactory.$dataStore
+    return icon
   }
 
-  /** @return {Icon} */
-  static createArrowIcon(type) {
+  /**
+   * @param {Fill} background
+   * @param {Fill} outline
+   * @return {Icon}
+   */
+  static createDataStore(background, outline) {
+    const hasDefaultColors =
+      IconFactory.equalFill(background, BPMN_CONSTANTS_DATA_STORE_DEFAULT_BACKGROUND) &&
+      IconFactory.equalFill(outline, BPMN_CONSTANTS_DATA_STORE_DEFAULT_OUTLINE)
+
+    if (hasDefaultColors && IconFactory.$dataStore) {
+      return IconFactory.$dataStore
+    }
+
+    const stroke = new Stroke(outline)
+    stroke.freeze()
+
+    const halfEllipseHeight = 0.125
+    const ringOffset = 0.07
+
+    const icons = new List()
     const BUILDER = IconFactory.BUILDER
+    BUILDER.stroke = stroke
+    BUILDER.fill = background
+
+    BUILDER.moveTo(0, halfEllipseHeight)
+    BUILDER.lineTo(0, 1 - halfEllipseHeight)
+    BUILDER.cubicTo(0, 1, 1, 1, 1, 1 - halfEllipseHeight)
+    BUILDER.lineTo(1, halfEllipseHeight)
+    BUILDER.cubicTo(1, 0, 0, 0, 0, halfEllipseHeight)
+    BUILDER.close()
+    icons.add(BUILDER.getPathIcon())
+
+    BUILDER.stroke = stroke
+    let ellipseCenterY = halfEllipseHeight
+    for (let i = 0; i < 3; i++) {
+      BUILDER.moveTo(0, ellipseCenterY)
+      BUILDER.cubicTo(
+        0,
+        ellipseCenterY + halfEllipseHeight,
+        1,
+        ellipseCenterY + halfEllipseHeight,
+        1,
+        ellipseCenterY
+      )
+      ellipseCenterY += ringOffset
+    }
+    icons.add(BUILDER.getPathIcon())
+
+    const icon = BUILDER.combineIcons(icons)
+
+    if (hasDefaultColors) {
+      IconFactory.$dataStore = icon
+    }
+
+    return icon
+  }
+
+  /**
+   * @param {EdgeType} type
+   * @param {Fill} fill
+   * @return {Icon}
+   */
+  static createArrowIcon(type, fill) {
+    const hasDefaultColor = IconFactory.equalFill(fill, BPMN_CONSTANTS_DEFAULT_ICON_COLOR)
+
     let result = IconFactory.ARROWS.get(type)
-    if (!result) {
-      BUILDER.stroke = BPMN_CONSTANTS_STROKES_ARROW
-      switch (type) {
-        case ArrowType.DEFAULT_SOURCE:
-          BUILDER.moveTo(0.1, 0.1)
-          BUILDER.lineTo(0.9, 0.9)
-          result = BUILDER.getPathIcon()
-          break
-        case ArrowType.ASSOCIATION:
-          BUILDER.moveTo(0.5, 0)
-          BUILDER.lineTo(1, 0.5)
-          BUILDER.lineTo(0.5, 1)
-          result = BUILDER.getPathIcon()
-          break
-        case ArrowType.CONDITIONAL_SOURCE:
-          BUILDER.moveTo(0, 0.5)
-          BUILDER.lineTo(0.5, 0)
-          BUILDER.lineTo(1, 0.5)
-          BUILDER.lineTo(0.5, 1)
-          BUILDER.close()
-          result = BUILDER.getPathIcon()
-          break
-        case ArrowType.MESSAGE_SOURCE:
-          result = BUILDER.createEllipseIcon()
-          break
-        case ArrowType.MESSAGE_TARGET:
-          BUILDER.moveTo(0, 0)
-          BUILDER.lineTo(1, 0.5)
-          BUILDER.lineTo(0, 1)
-          BUILDER.close()
-          result = BUILDER.getPathIcon()
-          break
-        default:
-        case ArrowType.SEQUENCE_TARGET:
-        case ArrowType.DEFAULT_TARGET:
-        case ArrowType.CONDITIONAL_TARGET:
-          BUILDER.fill = Fill.BLACK
-          BUILDER.moveTo(0, 0)
-          BUILDER.lineTo(1, 0.5)
-          BUILDER.lineTo(0, 1)
-          BUILDER.close()
-          result = BUILDER.getPathIcon()
-          break
-      }
+    if (hasDefaultColor && result) {
+      return result
+    }
+
+    const stroke = new Stroke({
+      fill: fill,
+      lineCap: LineCap.ROUND,
+      lineJoin: LineJoin.ROUND
+    })
+    stroke.freeze()
+    const BUILDER = IconFactory.BUILDER
+    BUILDER.stroke = stroke
+    switch (type) {
+      case ArrowType.DEFAULT_SOURCE:
+        BUILDER.moveTo(0.1, 0.1)
+        BUILDER.lineTo(0.9, 0.9)
+        result = BUILDER.getPathIcon()
+        break
+      case ArrowType.ASSOCIATION:
+        BUILDER.moveTo(0.5, 0)
+        BUILDER.lineTo(1, 0.5)
+        BUILDER.lineTo(0.5, 1)
+        result = BUILDER.getPathIcon()
+        break
+      case ArrowType.CONDITIONAL_SOURCE:
+        BUILDER.moveTo(0, 0.5)
+        BUILDER.lineTo(0.5, 0)
+        BUILDER.lineTo(1, 0.5)
+        BUILDER.lineTo(0.5, 1)
+        BUILDER.close()
+        result = BUILDER.getPathIcon()
+        break
+      case ArrowType.MESSAGE_SOURCE:
+        result = BUILDER.createEllipseIcon()
+        break
+      case ArrowType.MESSAGE_TARGET:
+        BUILDER.moveTo(0, 0)
+        BUILDER.lineTo(1, 0.5)
+        BUILDER.lineTo(0, 1)
+        BUILDER.close()
+        result = BUILDER.getPathIcon()
+        break
+      default:
+      case ArrowType.SEQUENCE_TARGET:
+      case ArrowType.DEFAULT_TARGET:
+      case ArrowType.CONDITIONAL_TARGET:
+        BUILDER.fill = fill
+        BUILDER.moveTo(0, 0)
+        BUILDER.lineTo(1, 0.5)
+        BUILDER.lineTo(0, 1)
+        BUILDER.close()
+        result = BUILDER.getPathIcon()
+        break
+    }
+    if (hasDefaultColor) {
       IconFactory.ARROWS.set(type, result)
     }
     return result
@@ -3604,10 +3981,6 @@ class IconFactory {
     return IconFactory.$eventTypes || (IconFactory.$eventTypes = new HashMap())
   }
 
-  static get MESSAGES() {
-    return IconFactory.$messages || (IconFactory.$messages = new HashMap())
-  }
-
   static get PLUS_ICONS() {
     return IconFactory.$plusIcons || (IconFactory.$plusIcons = new HashMap())
   }
@@ -3630,6 +4003,136 @@ class IconFactory {
 
   static get BUILDER() {
     return IconFactory.$builder || (IconFactory.$builder = new IconBuilder())
+  }
+
+  /**
+   * Compares two {@link Fill}s for the same color value
+   * @param {Fill} fill1
+   * @param {Fill} fill2
+   * @return {boolean}
+   */
+  static equalFill(fill1, fill2) {
+    if (!fill1 && !fill2) {
+      return true
+    } else if ((!fill1 && fill2) || (fill1 && !fill2)) {
+      return false
+    }
+
+    if (!(Object.getPrototypeOf(fill1) === Object.getPrototypeOf(fill2))) {
+      return false
+    }
+
+    if (fill1 instanceof SolidColorFill && fill2 instanceof SolidColorFill) {
+      return IconFactory.equalSolidColorFill(fill1, fill2)
+    } else if (fill1 instanceof LinearGradient && fill2 instanceof LinearGradient) {
+      return IconFactory.equalLinearGradient(fill1, fill2)
+    } else if (fill1 instanceof RadialGradient && fill2 instanceof RadialGradient) {
+      return IconFactory.equalRadialGradient(fill1, fill2)
+    }
+
+    return false
+  }
+
+  /**
+   * Compares two {@link SolidColorFill}s for the same color value
+   * @param {SolidColorFill} fill1
+   * @param {SolidColorFill} fill2
+   * @return {boolean}
+   */
+  static equalSolidColorFill(fill1, fill2) {
+    if (fill1 === fill2) {
+      return true
+    }
+    const color1 = fill1 ? fill1.color : null
+    const color2 = fill2 ? fill2.color : null
+    if (!color1 && !color2) {
+      return true
+    }
+    if (!color1 || !color2) {
+      return false
+    }
+    return color1.equals(color2)
+  }
+
+  /**
+   * Compares two {@link LinearGradient}s for value equality
+   * @param {LinearGradient} fill1
+   * @param {LinearGradient} fill2
+   * @return {boolean}
+   */
+  static equalLinearGradient(fill1, fill2) {
+    const sameEndPoint = fill1.endPoint.equals(fill2.endPoint)
+    const sameStartPoint = fill1.startPoint.equals(fill2.startPoint)
+    const sameSpreadMethod = fill1.spreadMethod === fill2.spreadMethod
+    const sameGradientStops = IconFactory.sameGradientStops(
+      fill1.gradientStops,
+      fill2.gradientStops
+    )
+    return sameEndPoint && sameStartPoint && sameSpreadMethod && sameGradientStops
+  }
+
+  /**
+   * Compares two {@link RadialGradient}s for value equality
+   * @param {RadialGradient} fill1
+   * @param {RadialGradient} fill2
+   * @return {boolean}
+   */
+  static equalRadialGradient(fill1, fill2) {
+    const sameCenter = fill1.center.equals(fill2.center)
+    const sameOrigin = fill1.gradientOrigin.equals(fill2.gradientOrigin)
+    const sameRadiusX = fill1.radiusX === fill2.radiusX
+    const sameRadiusY = fill1.radiusY === fill2.radiusY
+    const sameSpreadMethod = fill1.spreadMethod === fill2.spreadMethod
+    const sameGradientStops = IconFactory.sameGradientStops(
+      fill1.gradientStops,
+      fill2.gradientStops
+    )
+    return (
+      sameCenter &&
+      sameOrigin &&
+      sameRadiusX &&
+      sameRadiusY &&
+      sameSpreadMethod &&
+      sameGradientStops
+    )
+  }
+
+  /**
+   * Compares whether both {@link GradientStop} lists are the same
+   * @param {List.<GradientStop>} stops1
+   * @param {List.<GradientStop>} stops2
+   * @return {boolean}
+   */
+  static sameGradientStops(stops1, stops2) {
+    if (stops1.size !== stops2.size) {
+      return false
+    }
+
+    let sameStops = true
+    stops1.forEach((stop1, idx) => {
+      const stop2 = stops2.elementAt(idx)
+      const sameColor = stop1.color.equals(stop2.color)
+      const sameOffset = stop1.offset === stop2.offset
+      sameStops = sameStops && sameColor && sameOffset
+    })
+
+    return sameStops
+  }
+
+  /**
+   * Compares two {@link Stroke}s for the same fill value
+   * @param {Stroke} stroke1
+   * @param {Stroke} stroke2
+   * @return {boolean}
+   */
+  static equalStroke(stroke1, stroke2) {
+    if (!stroke1.fill && !stroke2.fill) {
+      return true
+    }
+    if (!stroke1.fill || !stroke2.fill) {
+      return false
+    }
+    return IconFactory.equalFill(stroke1.fill, stroke2.fill)
   }
 }
 
@@ -3799,6 +4302,18 @@ export class ChoreographyNodeStyle extends BpmnNodeStyle {
    */
   constructor() {
     super()
+
+    this.$background = BPMN_CONSTANTS_CHOREOGRAPHY_DEFAULT_BACKGROUND
+    this.$outline = BPMN_CONSTANTS_CHOREOGRAPHY_DEFAULT_OUTLINE
+    this.$iconColor = BPMN_CONSTANTS_CHOREOGRAPHY_DEFAULT_ICON_COLOR
+    this.$initiatingColor = BPMN_CONSTANTS_CHOREOGRAPHY_DEFAULT_INITIATING_COLOR
+    this.$responseColor = BPMN_CONSTANTS_CHOREOGRAPHY_DEFAULT_RESPONSE_COLOR
+
+    this.$messageOutline = null
+    this.$messageStroke = null
+    this.$messageLineStroke = null
+    this.messageOutline = BPMN_CONSTANTS_CHOREOGRAPHY_DEFAULT_MESSAGE_OUTLINE
+
     this.$loopCharacteristic = LoopCharacteristic.NONE
     this.$subState = SubState.NONE
     this.$topParticipants = new ParticipantList()
@@ -3810,6 +4325,15 @@ export class ChoreographyNodeStyle extends BpmnNodeStyle {
 
     this.outlineIcon = null
     this.loopIcon = null
+
+    this.$initiatingMessageIcon = null
+    this.$responseMessageIcon = null
+    this.$bottomResponseMessageIcon = null
+    this.$messageLineIcon = null
+    this.$taskBandBackgroundIcon = null
+    this.$topInitiatingMessageIcon = null
+    this.$bottomInitiatingMessageIcon = null
+    this.$multiInstanceIcon = null
 
     this.type = ChoreographyType.TASK
     this.minimumSize = new Size(30, 30)
@@ -3831,14 +4355,7 @@ export class ChoreographyNodeStyle extends BpmnNodeStyle {
     if (this.$type !== value || this.outlineIcon === null) {
       this.modCount++
       this.$type = value
-      this.outlineIcon = IconFactory.createChoreography(this.$type)
-      if (this.$type === ChoreographyType.CALL) {
-        this.outlineIcon = new PlacedIcon(
-          this.outlineIcon,
-          BPMN_CONSTANTS_PLACEMENTS_THICK_LINE,
-          Size.EMPTY
-        )
-      }
+      this.updateOutlineIcon()
     }
   }
 
@@ -3858,7 +4375,7 @@ export class ChoreographyNodeStyle extends BpmnNodeStyle {
     if (this.$loopCharacteristic !== value) {
       this.modCount++
       this.$loopCharacteristic = value
-      this.loopIcon = IconFactory.createLoopCharacteristic(value)
+      this.updateLoopIcon()
     }
   }
 
@@ -3878,6 +4395,7 @@ export class ChoreographyNodeStyle extends BpmnNodeStyle {
     if (this.$subState !== value) {
       this.modCount++
       this.$subState = value
+      this.updateTaskBandIcon()
     }
   }
 
@@ -3920,10 +4438,11 @@ export class ChoreographyNodeStyle extends BpmnNodeStyle {
   }
 
   /**
-   * Gets whether the initiating message icon or the response message icon is displayed on top of the node while the
-   * other one is at the bottom side. Whether the initiating and response message icons are displayed at all depends
-   * on {@link ChoreographyNodeStyle#initiatingMessage} and {@link ChoreographyNodeStyle#responseMessage}. This
-   * property only determines which one is displayed on which side of the node.
+   * Gets whether the initiating message icon or the response message icon is displayed on top of
+   * the node while the other one is at the bottom side. Whether the initiating and response
+   * message icons are displayed at all depends on {@link ChoreographyNodeStyle#initiatingMessage}
+   * and {@link ChoreographyNodeStyle#responseMessage}. This property only determines which one is
+   * displayed on which side of the node.
    * @type {boolean}
    */
   get initiatingAtTop() {
@@ -3931,10 +4450,11 @@ export class ChoreographyNodeStyle extends BpmnNodeStyle {
   }
 
   /**
-   * Sets whether the initiating message icon or the response message icon is displayed on top of the node while the
-   * other one is at the bottom side. Whether the initiating and response message icons are displayed at all depends
-   * on {@link ChoreographyNodeStyle#initiatingMessage} and {@link ChoreographyNodeStyle#responseMessage}. This
-   * property only determines which one is displayed on which side of the node.
+   * Sets whether the initiating message icon or the response message icon is displayed on top of
+   * the node while the other one is at the bottom side. Whether the initiating and response
+   * message icons are displayed at all depends on {@link ChoreographyNodeStyle#initiatingMessage}
+   * and {@link ChoreographyNodeStyle#responseMessage}. This property only determines which one is
+   * displayed on which side of the node.
    * @type {boolean}
    */
   set initiatingAtTop(value) {
@@ -3960,6 +4480,139 @@ export class ChoreographyNodeStyle extends BpmnNodeStyle {
    */
   get bottomParticipants() {
     return this.$bottomParticipants
+  }
+
+  /**
+   * Gets the background color of the choreography.
+   * @return {Fill}
+   */
+  get background() {
+    return this.$background
+  }
+
+  /**
+   * Sets the background color of the choreography.
+   * @param {Fill} value
+   */
+  set background(value) {
+    if (this.$background !== value) {
+      this.modCount++
+      this.$background = value
+      this.updateTaskBandIcon()
+    }
+  }
+
+  /**
+   * Gets the outline color of the choreography.
+   * @return {Fill}
+   */
+  get outline() {
+    return this.$outline
+  }
+
+  /**
+   * Sets the outline color of the choreography.
+   * @param {Fill} value
+   */
+  set outline(value) {
+    if (this.$outline !== value) {
+      this.modCount++
+      this.$outline = value
+      this.updateOutlineIcon()
+    }
+  }
+
+  /**
+   * Gets the primary color for icons and markers.
+   * @return {Fill}
+   */
+  get iconColor() {
+    return this.$iconColor
+  }
+
+  /**
+   * Sets the primary color for icons and markers.
+   * @param {Fill} value
+   */
+  set iconColor(value) {
+    if (this.$iconColor !== value) {
+      this.modCount++
+      this.$iconColor = value
+      this.updateMultiInstanceIcon()
+      this.updateLoopIcon()
+      this.updateTaskBandIcon()
+    }
+  }
+
+  /**
+   * Gets the color for initiating participants and messages.
+   * @return {Fill}
+   */
+  get initiatingColor() {
+    return this.$initiatingColor
+  }
+
+  /**
+   * Sets the color for initiating participants and messages.
+   * @param {Fill} value
+   */
+  set initiatingColor(value) {
+    if (this.$initiatingColor !== value) {
+      this.modCount++
+      this.$initiatingColor = value
+    }
+  }
+
+  /**
+   * Gets the primary color for responding participants and messages.
+   * @return {Fill}
+   */
+  get responseColor() {
+    return this.$responseColor
+  }
+
+  /**
+   * Sets the primary color for responding participants and messages.
+   * @param {Fill} value
+   */
+  set responseColor(value) {
+    if (this.$responseColor !== value) {
+      this.modCount++
+      this.$responseColor = value
+    }
+  }
+
+  /**
+   * Gets the outline color for messages.
+   * @return {Fill}
+   */
+  get messageOutline() {
+    return this.$messageOutline
+  }
+
+  /**
+   * Sets the outline color for messages.
+   * This also influences the color of the line to the message.
+   * @param {Fill} value
+   */
+  set messageOutline(value) {
+    if (this.$messageOutline !== value) {
+      this.modCount++
+      this.$messageOutline = value
+      const messageStroke = new Stroke(this.$messageOutline)
+      messageStroke.freeze()
+      this.$messageStroke = messageStroke
+      const messageLineStroke = new Stroke({
+        fill: this.$messageOutline,
+        dashStyle: DashStyle.DOT,
+        lineCap: LineCap.ROUND
+      })
+      messageLineStroke.freeze()
+      this.$messageLineStroke = messageLineStroke
+      this.updateMessageLineIcon()
+      this.updateInitiatingMessageIcon()
+      this.updateResponseMessageIcon()
+    }
   }
 
   /**
@@ -4008,15 +4661,150 @@ export class ChoreographyNodeStyle extends BpmnNodeStyle {
   }
 
   /**
+   * @return {Stroke}
+   */
+  get messageStroke() {
+    return this.$messageStroke
+  }
+
+  updateOutlineIcon() {
+    this.outlineIcon = IconFactory.createChoreography(this.$type, this.outline)
+    if (this.$type === ChoreographyType.CALL) {
+      this.outlineIcon = new PlacedIcon(
+        this.outlineIcon,
+        BPMN_CONSTANTS_PLACEMENTS_THICK_LINE,
+        Size.EMPTY
+      )
+    }
+  }
+
+  updateTaskBandIcon() {
+    this.$taskBandBackgroundIcon = IconFactory.createChoreographyTaskBand(this.background)
+  }
+
+  updateMessageLineIcon() {
+    this.$messageLineIcon = IconFactory.createLine(this.$messageLineStroke, 0.5, 0, 0.5, 1)
+  }
+
+  updateInitiatingMessageIcon() {
+    this.$initiatingMessageIcon = IconFactory.createMessage(
+      this.$messageStroke,
+      this.initiatingColor
+    )
+    this.updateMessageLineIcon()
+    this.updateTopInitiatingMessageIcon()
+    this.updateBottomInitiatingMessageIcon()
+  }
+
+  updateTopInitiatingMessageIcon() {
+    this.$topInitiatingMessageIcon = IconFactory.createCombinedIcon(
+      new List(
+        List.fromArray([
+          IconFactory.createPlacedIcon(
+            this.$messageLineIcon,
+            ExteriorLabelModel.NORTH,
+            new Size(ChoreographyNodeStyle.MESSAGE_DISTANCE, ChoreographyNodeStyle.MESSAGE_DISTANCE)
+          ),
+          IconFactory.createPlacedIcon(
+            this.$initiatingMessageIcon,
+            BPMN_CONSTANTS_PLACEMENTS_CHOREOGRAPHY_TOP_MESSAGE,
+            BPMN_CONSTANTS_SIZES_MESSAGE
+          )
+        ])
+      )
+    )
+  }
+
+  updateBottomInitiatingMessageIcon() {
+    this.$bottomInitiatingMessageIcon = IconFactory.createCombinedIcon(
+      new List(
+        List.fromArray([
+          IconFactory.createPlacedIcon(
+            this.$messageLineIcon,
+            ExteriorLabelModel.SOUTH,
+            new Size(ChoreographyNodeStyle.MESSAGE_DISTANCE, ChoreographyNodeStyle.MESSAGE_DISTANCE)
+          ),
+          IconFactory.createPlacedIcon(
+            this.$initiatingMessageIcon,
+            BPMN_CONSTANTS_PLACEMENTS_CHOREOGRAPHY_BOTTOM_MESSAGE,
+            BPMN_CONSTANTS_SIZES_MESSAGE
+          )
+        ])
+      )
+    )
+  }
+
+  updateResponseMessageIcon() {
+    this.$responseMessageIcon = IconFactory.createMessage(this.$messageStroke, this.responseColor)
+    this.updateMessageLineIcon()
+    this.updateTopResponseMessageIcon()
+    this.updateBottomResponseMessageIcon()
+  }
+
+  updateTopResponseMessageIcon() {
+    this.$topResponseMessageIcon = IconFactory.createCombinedIcon(
+      new List(
+        List.fromArray([
+          IconFactory.createPlacedIcon(
+            this.$messageLineIcon,
+            ExteriorLabelModel.NORTH,
+            new Size(ChoreographyNodeStyle.MESSAGE_DISTANCE, ChoreographyNodeStyle.MESSAGE_DISTANCE)
+          ),
+          IconFactory.createPlacedIcon(
+            this.$responseMessageIcon,
+            BPMN_CONSTANTS_PLACEMENTS_CHOREOGRAPHY_TOP_MESSAGE,
+            BPMN_CONSTANTS_SIZES_MESSAGE
+          )
+        ])
+      )
+    )
+  }
+
+  updateBottomResponseMessageIcon() {
+    this.$bottomResponseMessageIcon = IconFactory.createCombinedIcon(
+      new List(
+        List.fromArray([
+          IconFactory.createPlacedIcon(
+            this.$messageLineIcon,
+            ExteriorLabelModel.SOUTH,
+            new Size(ChoreographyNodeStyle.MESSAGE_DISTANCE, ChoreographyNodeStyle.MESSAGE_DISTANCE)
+          ),
+          IconFactory.createPlacedIcon(
+            this.$responseMessageIcon,
+            BPMN_CONSTANTS_PLACEMENTS_CHOREOGRAPHY_BOTTOM_MESSAGE,
+            BPMN_CONSTANTS_SIZES_MESSAGE
+          )
+        ])
+      )
+    )
+  }
+
+  updateMultiInstanceIcon() {
+    this.$multiInstanceIcon = IconFactory.createPlacedIcon(
+      IconFactory.createLoopCharacteristic(LoopCharacteristic.PARALLEL, this.iconColor),
+      BPMN_CONSTANTS_PLACEMENTS_CHOREOGRAPHY_MARKER,
+      BPMN_CONSTANTS_SIZES_MARKER
+    )
+  }
+
+  updateLoopIcon() {
+    this.loopIcon = IconFactory.createLoopCharacteristic(this.loopCharacteristic, this.iconColor)
+  }
+
+  /**
    * Callback that creates the visual.
-   * @param {.IRenderContext} renderContext The render context.
+   * @param {IRenderContext} renderContext The render context.
    * @param {INode} node The node to which this style instance is assigned.
-   * @return {.Visual} The visual.
+   * @return {Visual} The visual.
    * @see {@link NodeStyleBase#updateVisual}
    */
   createVisual(renderContext, node) {
     const bounds = node.layout.toRect()
     const container = new SvgVisualGroup()
+
+    // outline
+    this.outlineIcon.setBounds(new Rect(Point.ORIGIN, bounds.size))
+    container.add(this.outlineIcon.createVisual(renderContext))
 
     // task band
     const taskBandContainer = new SvgVisualGroup()
@@ -4054,22 +4842,20 @@ export class ChoreographyNodeStyle extends BpmnNodeStyle {
       first = false
     })
 
-    // outline
-    this.outlineIcon.setBounds(new Rect(Point.ORIGIN, bounds.size))
-    container.add(this.outlineIcon.createVisual(renderContext))
-
     // messages
     if (this.initiatingMessage) {
+      this.updateInitiatingMessageIcon()
       const initiatingMessageIcon = this.initiatingAtTop
-        ? ChoreographyNodeStyle.TOP_INITIATING_MESSAGE_ICON
-        : ChoreographyNodeStyle.BOTTOM_INITIATING_MESSAGE_ICON
+        ? this.$topInitiatingMessageIcon
+        : this.$bottomInitiatingMessageIcon
       initiatingMessageIcon.setBounds(new Rect(0, 0, bounds.width, bounds.height))
       container.add(initiatingMessageIcon.createVisual(renderContext))
     }
     if (this.responseMessage) {
+      this.updateResponseMessageIcon()
       const responseMessageIcon = this.initiatingAtTop
-        ? ChoreographyNodeStyle.BOTTOM_RESPONSE_MESSAGE_ICON
-        : ChoreographyNodeStyle.TOP_RESPONSE_MESSAGE_ICON
+        ? this.$bottomResponseMessageIcon
+        : this.$topResponseMessageIcon
       responseMessageIcon.setBounds(new Rect(0, 0, bounds.width, bounds.height))
       container.add(responseMessageIcon.createVisual(renderContext))
     }
@@ -4089,10 +4875,10 @@ export class ChoreographyNodeStyle extends BpmnNodeStyle {
 
   /**
    * Callback that updates the visual previously created by {@link NodeStyleBase#createVisual}.
-   * @param {.IRenderContext} renderContext The render context.
-   * @param {.Visual} oldVisual The visual that should be updated.
+   * @param {IRenderContext} renderContext The render context.
+   * @param {Visual} oldVisual The visual that should be updated.
    * @param {INode} node The node to which this style instance is assigned.
-   * @return {.Visual} The visual.
+   * @return {Visual} The visual.
    * @see {@link NodeStyleBase#createVisual}
    */
   updateVisual(renderContext, oldVisual, node) {
@@ -4108,6 +4894,10 @@ export class ChoreographyNodeStyle extends BpmnNodeStyle {
     if (cache.bounds.width !== newBounds.width || cache.bounds.height !== newBounds.height) {
       // update icon bounds
       let childIndex = 0
+
+      // outline
+      this.outlineIcon.setBounds(new Rect(Point.ORIGIN, newBounds.size))
+      updateChildVisual(container, childIndex++, this.outlineIcon, renderContext)
 
       // task band
       const taskBandContainer = container.children.elementAt(childIndex++)
@@ -4143,22 +4933,18 @@ export class ChoreographyNodeStyle extends BpmnNodeStyle {
         updateChildVisual(container, childIndex++, participantIcon, renderContext)
       }
 
-      // outline
-      this.outlineIcon.setBounds(new Rect(Point.ORIGIN, newBounds.size))
-      updateChildVisual(container, childIndex++, this.outlineIcon, renderContext)
-
       // messages
       if (this.initiatingMessage) {
         const initiatingMessageIcon = this.initiatingAtTop
-          ? ChoreographyNodeStyle.TOP_INITIATING_MESSAGE_ICON
-          : ChoreographyNodeStyle.BOTTOM_INITIATING_MESSAGE_ICON
+          ? this.$topInitiatingMessageIcon
+          : this.$bottomInitiatingMessageIcon
         initiatingMessageIcon.setBounds(new Rect(0, 0, newBounds.width, newBounds.height))
         updateChildVisual(container, childIndex++, initiatingMessageIcon, renderContext)
       }
       if (this.responseMessage) {
         const responseMessageIcon = this.initiatingAtTop
-          ? ChoreographyNodeStyle.BOTTOM_RESPONSE_MESSAGE_ICON
-          : ChoreographyNodeStyle.TOP_RESPONSE_MESSAGE_ICON
+          ? this.$bottomResponseMessageIcon
+          : this.$topResponseMessageIcon
         responseMessageIcon.setBounds(new Rect(0, 0, newBounds.width, newBounds.height))
         updateChildVisual(container, childIndex++, responseMessageIcon, renderContext)
       }
@@ -4178,62 +4964,67 @@ export class ChoreographyNodeStyle extends BpmnNodeStyle {
   }
 
   /**
-   * Creates the {@link Icon} which visualizes the task band at the center of a {@link ChoreographyNodeStyle}
+   * Creates the {@link Icon} which visualizes the task band at the center of a
+   * {@link ChoreographyNodeStyle}
    * @return {Icon}
    */
   createTaskBandIcon(node) {
-    /** @type {Icon} */
-    let collapseIcon = null
+    if (!this.$taskBandBackgroundIcon) {
+      this.updateTaskBandIcon()
+    }
+    let /** Icon */ subStateIcon = null
     if (this.subState !== SubState.NONE) {
-      collapseIcon =
+      subStateIcon =
         this.subState === SubState.DYNAMIC
-          ? IconFactory.createDynamicSubState(node)
-          : IconFactory.createStaticSubState(this.subState)
+          ? IconFactory.createDynamicSubState(node, this.iconColor)
+          : IconFactory.createStaticSubState(this.subState, this.iconColor)
     }
 
-    /** @type {Icon} */
-    let markerIcon = null
-    if (this.loopIcon !== null && collapseIcon !== null) {
+    let /** Icon */ markerIcon = null
+    if (this.loopIcon && subStateIcon) {
       markerIcon = IconFactory.createLineUpIcon(
-        List.fromArray([this.loopIcon, collapseIcon]),
+        List.fromArray([this.loopIcon, subStateIcon]),
         BPMN_CONSTANTS_SIZES_MARKER,
         5
       )
-    } else if (this.loopIcon !== null) {
+    } else if (this.loopIcon) {
       markerIcon = this.loopIcon
-    } else if (collapseIcon !== null) {
-      markerIcon = collapseIcon
+    } else if (subStateIcon) {
+      markerIcon = subStateIcon
     }
-    if (markerIcon !== null) {
+    if (markerIcon) {
       const placedMarkers = IconFactory.createPlacedIcon(
         markerIcon,
-        BPMN_CONSTANTS_PLACEMENTS_CHOROGRAPHY_MARKER,
+        BPMN_CONSTANTS_PLACEMENTS_CHOREOGRAPHY_MARKER,
         BPMN_CONSTANTS_SIZES_MARKER
       )
       return IconFactory.createCombinedIcon(
-        new List(List.fromArray([ChoreographyNodeStyle.TASK_BAND_BACKGROUND_ICON, placedMarkers]))
+        new List(List.fromArray([this.$taskBandBackgroundIcon, placedMarkers]))
       )
     }
-    return ChoreographyNodeStyle.TASK_BAND_BACKGROUND_ICON
+    return this.$taskBandBackgroundIcon
   }
 
   /**
-   * Creates the {@link Icon} which visualizes a participant band at the top or bottom of a
-   * {@link ChoreographyNodeStyle}
+   * Creates the {@link Icon} which visualizes a participant band at the top or bottom of a {@link
+   * ChoreographyNodeStyle}
    * @return {Icon}
    */
   createParticipantIcon(participant, top, isFirst) {
     const isInitializing = isFirst && top ^ !this.initiatingAtTop
 
+    const radius = BPMN_CONSTANTS_CHOREOGRAPHY_CORNER_RADIUS
     let icon = IconFactory.createChoreographyParticipant(
-      isInitializing,
-      top && isFirst ? BPMN_CONSTANTS_CHOREOGRAPHY_CORNER_RADIUS : 0,
-      !top && isFirst ? BPMN_CONSTANTS_CHOREOGRAPHY_CORNER_RADIUS : 0
+      this.outline,
+      isInitializing ? this.initiatingColor : this.responseColor,
+      top && isFirst ? radius : 0,
+      !top && isFirst ? radius : 0
     )
     if (participant.multiInstance) {
-      icon = IconFactory.createCombinedIcon(
-        List.fromArray([icon, ChoreographyNodeStyle.MULTI_INSTANCE_ICON])
-      )
+      if (!this.$multiInstanceIcon) {
+        this.updateMultiInstanceIcon()
+      }
+      icon = IconFactory.createCombinedIcon(List.fromArray([icon, this.$multiInstanceIcon]))
     }
     return icon
   }
@@ -4386,7 +5177,7 @@ export class ChoreographyNodeStyle extends BpmnNodeStyle {
    * whether the node has been hit.
    * @param {INode} node The node to which this style instance is assigned.
    * @param {Point} p The point to test.
-   * @param {.ICanvasContext} canvasContext The canvas context.
+   * @param {IInputModeContext} canvasContext The canvas context.
    * @return {boolean} whether or not the specified node representation is hit.
    */
   isHit(canvasContext, p, node) {
@@ -4447,11 +5238,11 @@ export class ChoreographyNodeStyle extends BpmnNodeStyle {
 
   /**
    * Gets the bounds of the visual for the node in the given context.
-   * This method is called in response to a {@link .IBoundsProvider#getBounds}
+   * This method is called in response to a {@link IBoundsProvider#getBounds}
    * call to the instance that has been queried from the {@link NodeStyleBase#renderer}.
    * This implementation simply yields the {@link INode#layout}.
    * @param {INode} node The node to which this style instance is assigned.
-   * @param {.ICanvasContext} canvasContext The canvas context.
+   * @param {ICanvasContext} canvasContext The canvas context.
    * @return {Rect} The visual bounds of the visual representation.
    */
   getBounds(canvasContext, node) {
@@ -4520,6 +5311,12 @@ export class ChoreographyNodeStyle extends BpmnNodeStyle {
     clone.responseMessage = this.responseMessage
     clone.subState = this.subState
     clone.type = this.type
+    clone.iconColor = this.iconColor
+    clone.initiatingColor = this.initiatingColor
+    clone.responseColor = this.responseColor
+    clone.outline = this.outline
+    clone.background = this.background
+    clone.messageOutline = this.messageOutline
 
     this.topParticipants.forEach(participant => {
       clone.topParticipants.add(participant.clone())
@@ -4528,39 +5325,6 @@ export class ChoreographyNodeStyle extends BpmnNodeStyle {
       clone.bottomParticipants.add(participant.clone())
     })
     return clone
-  }
-
-  static get lineIcon() {
-    return (
-      ChoreographyNodeStyle.$lineIcon ||
-      (ChoreographyNodeStyle.$lineIcon = IconFactory.createLine(
-        BPMN_CONSTANTS_STROKES_CHOREOGRAPHY_MESSAGE_LINK,
-        0.5,
-        0,
-        0.5,
-        1
-      ))
-    )
-  }
-
-  static get initiatingMessageIcon() {
-    return (
-      ChoreographyNodeStyle.$initiatingMessageIcon ||
-      (ChoreographyNodeStyle.$initiatingMessageIcon = IconFactory.createMessage(
-        BPMN_CONSTANTS_STROKES_MESSAGE,
-        BPMN_CONSTANTS_FILLS_CHOREOGRAPHY_INITIALIZING_PARTICIPANT
-      ))
-    )
-  }
-
-  static get responseMessageIcon() {
-    return (
-      ChoreographyNodeStyle.$responseMessageIcon ||
-      (ChoreographyNodeStyle.$responseMessageIcon = IconFactory.createMessage(
-        BPMN_CONSTANTS_STROKES_MESSAGE,
-        BPMN_CONSTANTS_FILLS_CHOREOGRAPHY_RECEIVING_PARTICIPANT
-      ))
-    )
   }
 
   static get SHAPE_NODE_STYLE() {
@@ -4575,120 +5339,6 @@ export class ChoreographyNodeStyle extends BpmnNodeStyle {
       })
     }
     return ChoreographyNodeStyle.$shapeNodeStyle
-  }
-
-  static get TOP_INITIATING_MESSAGE_ICON() {
-    if (!ChoreographyNodeStyle.$topInitiatingMessageIcon) {
-      const topInitiatingMessageIcons = new List()
-      topInitiatingMessageIcons.add(
-        IconFactory.createPlacedIcon(
-          ChoreographyNodeStyle.lineIcon,
-          ExteriorLabelModel.NORTH,
-          new Size(ChoreographyNodeStyle.MESSAGE_DISTANCE, ChoreographyNodeStyle.MESSAGE_DISTANCE)
-        )
-      )
-      topInitiatingMessageIcons.add(
-        IconFactory.createPlacedIcon(
-          ChoreographyNodeStyle.initiatingMessageIcon,
-          BPMN_CONSTANTS_PLACEMENTS_CHOREOGRAPHY_TOP_MESSAGE,
-          BPMN_CONSTANTS_SIZES_MESSAGE
-        )
-      )
-      ChoreographyNodeStyle.$topInitiatingMessageIcon = IconFactory.createCombinedIcon(
-        topInitiatingMessageIcons
-      )
-    }
-    return ChoreographyNodeStyle.$topInitiatingMessageIcon
-  }
-
-  static get BOTTOM_RESPONSE_MESSAGE_ICON() {
-    if (!ChoreographyNodeStyle.$bottomResponseMessageIcon) {
-      const bottomResponseMessageIcons = new List()
-      bottomResponseMessageIcons.add(
-        IconFactory.createPlacedIcon(
-          ChoreographyNodeStyle.lineIcon,
-          ExteriorLabelModel.SOUTH,
-          new Size(ChoreographyNodeStyle.MESSAGE_DISTANCE, ChoreographyNodeStyle.MESSAGE_DISTANCE)
-        )
-      )
-      bottomResponseMessageIcons.add(
-        IconFactory.createPlacedIcon(
-          ChoreographyNodeStyle.responseMessageIcon,
-          BPMN_CONSTANTS_PLACEMENTS_CHOREOGRAPHY_BOTTOM_MESSAGE,
-          BPMN_CONSTANTS_SIZES_MESSAGE
-        )
-      )
-      ChoreographyNodeStyle.$bottomResponseMessageIcon = IconFactory.createCombinedIcon(
-        bottomResponseMessageIcons
-      )
-    }
-    return ChoreographyNodeStyle.$bottomResponseMessageIcon
-  }
-
-  static get BOTTOM_INITIATING_MESSAGE_ICON() {
-    if (!ChoreographyNodeStyle.$bottomInitiatingMessageIcon) {
-      const bottomInitiatingMessageIcons = new List()
-      bottomInitiatingMessageIcons.add(
-        IconFactory.createPlacedIcon(
-          ChoreographyNodeStyle.lineIcon,
-          ExteriorLabelModel.SOUTH,
-          new Size(ChoreographyNodeStyle.MESSAGE_DISTANCE, ChoreographyNodeStyle.MESSAGE_DISTANCE)
-        )
-      )
-      bottomInitiatingMessageIcons.add(
-        IconFactory.createPlacedIcon(
-          ChoreographyNodeStyle.initiatingMessageIcon,
-          BPMN_CONSTANTS_PLACEMENTS_CHOREOGRAPHY_BOTTOM_MESSAGE,
-          BPMN_CONSTANTS_SIZES_MESSAGE
-        )
-      )
-      ChoreographyNodeStyle.$bottomInitiatingMessageIcon = IconFactory.createCombinedIcon(
-        bottomInitiatingMessageIcons
-      )
-    }
-    return ChoreographyNodeStyle.$bottomInitiatingMessageIcon
-  }
-
-  static get TOP_RESPONSE_MESSAGE_ICON() {
-    if (!ChoreographyNodeStyle.$topResponseMessageIcon) {
-      const topResponseMessageIcons = new List()
-      topResponseMessageIcons.add(
-        IconFactory.createPlacedIcon(
-          ChoreographyNodeStyle.lineIcon,
-          ExteriorLabelModel.NORTH,
-          new Size(ChoreographyNodeStyle.MESSAGE_DISTANCE, ChoreographyNodeStyle.MESSAGE_DISTANCE)
-        )
-      )
-      topResponseMessageIcons.add(
-        IconFactory.createPlacedIcon(
-          ChoreographyNodeStyle.responseMessageIcon,
-          BPMN_CONSTANTS_PLACEMENTS_CHOREOGRAPHY_TOP_MESSAGE,
-          BPMN_CONSTANTS_SIZES_MESSAGE
-        )
-      )
-      ChoreographyNodeStyle.$topResponseMessageIcon = IconFactory.createCombinedIcon(
-        topResponseMessageIcons
-      )
-    }
-    return ChoreographyNodeStyle.$topResponseMessageIcon
-  }
-
-  static get TASK_BAND_BACKGROUND_ICON() {
-    return (
-      ChoreographyNodeStyle.$taskBandBackgroundIcon ||
-      (ChoreographyNodeStyle.$taskBandBackgroundIcon = IconFactory.createChoreographyTaskBand())
-    )
-  }
-
-  static get MULTI_INSTANCE_ICON() {
-    return (
-      ChoreographyNodeStyle.$multiInstanceIcon ||
-      (ChoreographyNodeStyle.$multiInstanceIcon = IconFactory.createPlacedIcon(
-        IconFactory.createLoopCharacteristic(LoopCharacteristic.PARALLEL),
-        BPMN_CONSTANTS_PLACEMENTS_CHOROGRAPHY_MARKER,
-        BPMN_CONSTANTS_SIZES_MARKER
-      ))
-    )
   }
 
   static get MESSAGE_DISTANCE() {
@@ -4714,7 +5364,7 @@ class ChoreographyInsetsProvider extends BaseClass(INodeInsetsProvider) {
       this.style.loopCharacteristic !== LoopCharacteristic.NONE ||
       this.style.subState !== SubState.NONE
         ? BPMN_CONSTANTS_SIZES_MARKER.height +
-          BPMN_CONSTANTS_PLACEMENTS_CHOROGRAPHY_MARKER.model.insets.bottom
+          BPMN_CONSTANTS_PLACEMENTS_CHOREOGRAPHY_MARKER.model.insets.bottom
         : 0
 
     return new Insets(
@@ -4727,8 +5377,10 @@ class ChoreographyInsetsProvider extends BaseClass(INodeInsetsProvider) {
 }
 
 /**
- * A label helper which provides the next free location and the according style for a label added to a node with
- * {@link ChoreographyNodeStyle}. Message labels will be visualized using {@link ChoreographyMessageLabelStyle}.
+ * A label helper which provides the next free location and the according style for a label added
+ * to a node with
+ * {@link ChoreographyNodeStyle}. Message labels will be visualized using
+ * {@link ChoreographyMessageLabelStyle}.
  */
 class ChoreographyEditLabelHelper extends EditLabelHelper {
   constructor(node) {
@@ -4779,9 +5431,13 @@ class ChoreographyMessageLabelStyle extends BaseClass(ILabelStyle) {
    */
   constructor() {
     super()
+
+    this.$messageStyle = new BpmnNodeStyle()
+    this.$messageStyle.minimumSize = BPMN_CONSTANTS_SIZES_MESSAGE
+
     const connectedIconLabelStyle = new ConnectedIconLabelStyle()
     connectedIconLabelStyle.iconSize = BPMN_CONSTANTS_SIZES_MESSAGE
-    connectedIconLabelStyle.iconStyle = ChoreographyMessageLabelStyle.INITIATING_MESSAGE_STYLE
+    connectedIconLabelStyle.iconStyle = this.$messageStyle
     connectedIconLabelStyle.textStyle = ChoreographyMessageLabelStyle.TEXT_STYLE
     connectedIconLabelStyle.connectorStyle = ChoreographyMessageLabelStyle.CONNECTOR_STYLE
     connectedIconLabelStyle.labelConnectorLocation = FreeNodePortLocationModel.NODE_BOTTOM_ANCHORED
@@ -4819,6 +5475,13 @@ class ChoreographyMessageLabelStyle extends BaseClass(ILabelStyle) {
   }
 
   /**
+   * @return {BpmnNodeStyle}
+   */
+  get messageStyle() {
+    return this.$messageStyle
+  }
+
+  /**
    * Create a clone of this object.
    * @return {Object} A clone of this object.
    * @see Specified by {@link ICloneable#clone}.
@@ -4831,7 +5494,7 @@ class ChoreographyMessageLabelStyle extends BaseClass(ILabelStyle) {
    * Gets the renderer implementation that can be queried for implementations
    * that provide details about the visual appearance and visual behavior
    * for a given label and this style instance.
-   * The idiom for retrieving, e.g. an {@link .IVisualCreator} implementation
+   * The idiom for retrieving, e.g. an {@link IVisualCreator} implementation
    * for a given style is:
    * <pre><code>
    * var creator = style.renderer.getVisualCreator(label, style);
@@ -4862,32 +5525,6 @@ class ChoreographyMessageLabelStyle extends BaseClass(ILabelStyle) {
     return ChoreographyMessageLabelStyle.$defaultTextPlacement
   }
 
-  static get INITIATING_MESSAGE_STYLE() {
-    if (!ChoreographyMessageLabelStyle.$initiatingMessageStyle) {
-      const style = new BpmnNodeStyle()
-      style.icon = IconFactory.createMessage(
-        BPMN_CONSTANTS_STROKES_MESSAGE,
-        BPMN_CONSTANTS_FILLS_CHOREOGRAPHY_INITIALIZING_PARTICIPANT
-      )
-      style.minimumSize = BPMN_CONSTANTS_SIZES_MESSAGE
-      ChoreographyMessageLabelStyle.$initiatingMessageStyle = style
-    }
-    return ChoreographyMessageLabelStyle.$initiatingMessageStyle
-  }
-
-  static get RESPONSE_MESSAGE_STYLE() {
-    if (!ChoreographyMessageLabelStyle.$responseMessageStyle) {
-      const style = new BpmnNodeStyle()
-      style.icon = IconFactory.createMessage(
-        BPMN_CONSTANTS_STROKES_MESSAGE,
-        BPMN_CONSTANTS_FILLS_CHOREOGRAPHY_RECEIVING_PARTICIPANT
-      )
-      style.minimumSize = BPMN_CONSTANTS_SIZES_MESSAGE
-      ChoreographyMessageLabelStyle.$responseMessageStyle = style
-    }
-    return ChoreographyMessageLabelStyle.$responseMessageStyle
-  }
-
   static get CONNECTOR_STYLE() {
     if (!ChoreographyMessageLabelStyle.$connectorStyle) {
       const style = new BpmnEdgeStyle()
@@ -4915,6 +5552,8 @@ class ChoreographyMessageLabelStyleRenderer extends BaseClass(ILabelStyleRendere
     this.style = null
     this.north = false
     this.responseMessage = false
+    this.$messageColor = null
+    this.$messageOutline = null
   }
 
   /**
@@ -4927,6 +5566,8 @@ class ChoreographyMessageLabelStyleRenderer extends BaseClass(ILabelStyleRendere
     const labelStyle = style
 
     this.north = true
+    this.$messageColor = BPMN_CONSTANTS_DEFAULT_INITIATING_MESSAGE_COLOR
+    this.$messageOutline = null
     this.responseMessage = false
     if (INode.isInstance(item.owner)) {
       const node = item.owner
@@ -4934,12 +5575,25 @@ class ChoreographyMessageLabelStyleRenderer extends BaseClass(ILabelStyleRendere
 
       if (node.style instanceof ChoreographyNodeStyle) {
         this.responseMessage = node.style.initiatingAtTop ^ this.north
+        this.$messageColor = this.responseMessage
+          ? node.style.responseColor
+          : node.style.initiatingColor
+        this.$messageOutline = node.style.messageStroke
       }
     }
+
+    if (!this.$messageOutline) {
+      const outline = new Stroke(BPMN_CONSTANTS_DEFAULT_MESSAGE_OUTLINE)
+      outline.freeze()
+      this.$messageOutline = outline
+    }
+
     const delegateStyle = labelStyle.delegateStyle
-    delegateStyle.iconStyle = this.responseMessage
-      ? ChoreographyMessageLabelStyle.RESPONSE_MESSAGE_STYLE
-      : ChoreographyMessageLabelStyle.INITIATING_MESSAGE_STYLE
+    delegateStyle.iconStyle = labelStyle.messageStyle
+    labelStyle.messageStyle.icon = IconFactory.createMessage(
+      this.$messageOutline,
+      this.$messageColor
+    )
     delegateStyle.labelConnectorLocation = this.north
       ? FreeNodePortLocationModel.NODE_BOTTOM_ANCHORED
       : FreeNodePortLocationModel.NODE_TOP_ANCHORED
@@ -4950,17 +5604,17 @@ class ChoreographyMessageLabelStyleRenderer extends BaseClass(ILabelStyleRendere
   }
 
   /**
-   * Gets an implementation of the {@link .IVisualCreator} interface that can
+   * Gets an implementation of the {@link IVisualCreator} interface that can
    * handle the provided item and its associated style.
    * This method may return a flyweight implementation, but never <code>null</code>.
    * @param {INode} item The item to provide an instance for
    * @param {INodeStyle} style The style to use for the creation of the visual
-   * @return {.IVisualCreator} An implementation that may be used to subsequently create or update the
-   *   visual for the item. Clients should not cache this instance and must always call this method immediately
-   *   before using the value returned. This enables the use of the flyweight design pattern for implementations.
-   *   This method may not return <code>null</code> but should yield a {@link .VoidVisualCreator#INSTANCE
-   *   void} implementation instead.
-   * @see {@link .VoidVisualCreator#INSTANCE}
+   * @return {IVisualCreator} An implementation that may be used to subsequently create or update
+   *   the visual for the item. Clients should not cache this instance and must always call this
+   *   method immediately before using the value returned. This enables the use of the flyweight
+   *   design pattern for implementations. This method may not return <code>null</code> but should
+   *   yield a {@link VoidVisualCreator#INSTANCE void} implementation instead.
+   * @see {@link VoidVisualCreator#INSTANCE}
    * @see Specified by {@link INodeStyleRenderer#getVisualCreator}.
    */
   getVisualCreator(item, style) {
@@ -4970,12 +5624,12 @@ class ChoreographyMessageLabelStyleRenderer extends BaseClass(ILabelStyleRendere
   }
 
   /**
-   * Gets an implementation of the {@link .IBoundsProvider} interface that can
+   * Gets an implementation of the {@link IBoundsProvider} interface that can
    * handle the provided item and its associated style.
    * This method may return a flyweight implementation.
    * @param {INode} item The item to provide an instance for
    * @param {INodeStyle} style The style to use for the calculating the painting bounds
-   * @return {.IBoundsProvider} An implementation that may be used to subsequently query
+   * @return {IBoundsProvider} An implementation that may be used to subsequently query
    * the item's painting bounds. Clients should not cache this instance and must always call
    * this method immediately before using the value returned. This enables the
    * use of the flyweight design pattern for implementations
@@ -4987,12 +5641,12 @@ class ChoreographyMessageLabelStyleRenderer extends BaseClass(ILabelStyleRendere
   }
 
   /**
-   * Gets an implementation of the {@link .IVisibilityTestable} interface that can
+   * Gets an implementation of the {@link IVisibilityTestable} interface that can
    * handle the provided item and its associated style.
    * This method may return a flyweight implementation.
    * @param {INode} item The item to provide an instance for
    * @param {INodeStyle} style The style to use for the testing the visibility
-   * @return {.IVisibilityTestable} An implementation that may be used to subsequently query
+   * @return {IVisibilityTestable} An implementation that may be used to subsequently query
    * the item's visibility. Clients should not cache this instance and must always call
    * this method immediately before using the value returned. This enables the
    * use of the flyweight design pattern for implementations
@@ -5012,8 +5666,8 @@ class ChoreographyMessageLabelStyleRenderer extends BaseClass(ILabelStyleRendere
    * @return {IHitTestable} An implementation that may be used to subsequently perform
    * hit tests. Clients should not cache this instance and must always call
    * this method immediately before using the value returned. This enables the
-   * use of the flyweight design pattern for implementations. This method may return <code>null</code>
-   * to indicate that the item cannot be hit tested.
+   * use of the flyweight design pattern for implementations. This method may return
+   *   <code>null</code> to indicate that the item cannot be hit tested.
    * @see Specified by {@link INodeStyleRenderer#getHitTestable}.
    */
   getHitTestable(item, style) {
@@ -5071,15 +5725,15 @@ class ChoreographyMessageLabelStyleRenderer extends BaseClass(ILabelStyleRendere
   }
 
   /**
-   * This method is called by the framework to create a {@link .Visual}
-   * that will be included into the {@link .IRenderContext}.
-   * {@link .CanvasComponent} uses this interface through the {@link .ICanvasObjectDescriptor}
+   * This method is called by the framework to create a {@link Visual}
+   * that will be included into the {@link IRenderContext}.
+   * {@link CanvasComponent} uses this interface through the {@link ICanvasObjectDescriptor}
    * to populate the visual canvas object tree.
-   * @param {.IRenderContext} context The context that describes where the visual will be used.
-   * @return {.Visual} The visual to include in the canvas object visual tree. This may be
+   * @param {IRenderContext} context The context that describes where the visual will be used.
+   * @return {Visual} The visual to include in the canvas object visual tree. This may be
    *   <code>null</code>.
-   * @see {@link .IVisualCreator#updateVisual}
-   * @see Specified by {@link .IVisualCreator#createVisual}.
+   * @see {@link IVisualCreator#updateVisual}
+   * @see Specified by {@link IVisualCreator#createVisual}.
    */
   createVisual(context) {
     const container = new SvgVisualGroup()
@@ -5092,30 +5746,31 @@ class ChoreographyMessageLabelStyleRenderer extends BaseClass(ILabelStyleRendere
   }
 
   /**
-   * This method updates or replaces a previously created {@link .Visual} for inclusion
-   * in the {@link .IRenderContext}.
-   * The {@link .CanvasComponent} uses this method to give implementations a chance to
+   * This method updates or replaces a previously created {@link Visual} for inclusion
+   * in the {@link IRenderContext}.
+   * The {@link CanvasComponent} uses this method to give implementations a chance to
    * update an existing Visual that has previously been created by the same instance during a call
-   * to {@link .IVisualCreator#createVisual}. Implementation may update the <code>oldVisual</code>
-   * and return that same reference, or create a new visual and return the new instance or <code>null</code>.
-   * @param {.IRenderContext} context The context that describes where the visual will be used in.
-   * @param {.Visual} oldVisual The visual instance that had been returned the last time the
-   *   {@link .IVisualCreator#createVisual} method was called on this instance.
-   * @return {.Visual} <code>oldVisual</code>, if this instance modified the visual, or a new visual that
-   *   should replace the existing one in the canvas object visual tree.
-   * @see {@link .IVisualCreator#createVisual}
-   * @see {@link .ICanvasObjectDescriptor}
-   * @see {@link .CanvasComponent}
-   * @see Specified by {@link .IVisualCreator#updateVisual}.
+   * to {@link IVisualCreator#createVisual}. Implementation may update the <code>oldVisual</code>
+   * and return that same reference, or create a new visual and return the new instance or
+   * <code>null</code>.
+   * @param {IRenderContext} context The context that describes where the visual will be used in.
+   * @param {Visual} oldVisual The visual instance that had been returned the last time the {@link
+   *   IVisualCreator#createVisual} method was called on this instance.
+   * @return {Visual} <code>oldVisual</code>, if this instance modified the visual, or a new visual
+   *   that should replace the existing one in the canvas object visual tree.
+   * @see {@link IVisualCreator#createVisual}
+   * @see {@link ICanvasObjectDescriptor}
+   * @see {@link CanvasComponent}
+   * @see Specified by {@link IVisualCreator#updateVisual}.
    */
   updateVisual(context, oldVisual) {
     const container = oldVisual instanceof SvgVisualGroup ? oldVisual : null
     const cache = container !== null ? oldVisual['render-data-cache'] : null
-    const delegateStyle = this.getCurrentStyle(this.item, this.style)
     const newCache = this.createRenderData()
     if (cache === null || !cache.equals(newCache) || container.children.size !== 1) {
       return this.createVisual(context)
     }
+    const delegateStyle = this.getCurrentStyle(this.item, this.style)
     const oldDelegateVisual = container.children.get(0)
     const newDelegateVisual = delegateStyle.renderer
       .getVisualCreator(this.item, delegateStyle)
@@ -5127,13 +5782,15 @@ class ChoreographyMessageLabelStyleRenderer extends BaseClass(ILabelStyleRendere
   }
 
   /**
-   * Returns an object that contains all information necessary to determine whether a visual needs to be updated.
+   * Returns an object that contains all information necessary to determine whether a visual needs
+   * to be updated.
    * @return {RenderData}
    */
   createRenderData() {
     const renderData = new RenderData()
     renderData.north = this.north
-    renderData.responseMessage = this.responseMessage
+    renderData.messageColor = this.$messageColor
+    renderData.messageOutline = this.$messageOutline
     renderData.textPlacement = this.style.textPlacement
     return renderData
   }
@@ -5144,6 +5801,8 @@ class RenderData {
     this.textPlacement = null
     this.north = false
     this.responseMessage = false
+    this.messageColor = null
+    this.messageOutline = null
   }
 
   /** @return {boolean} */
@@ -5154,7 +5813,8 @@ class RenderData {
     return (
       this.textPlacement === obj.textPlacement &&
       this.north === obj.north &&
-      this.responseMessage === obj.responseMessage
+      IconFactory.equalFill(this.messageColor, obj.messageColor) &&
+      IconFactory.equalStroke(this.messageOutline, obj.messageOutline)
     )
   }
 
@@ -5180,7 +5840,10 @@ export class BpmnEdgeStyle extends EdgeStyleBase {
     this.$smoothing = 20
     this.$sourceArrow = null
     this.$targetArrow = null
+    this.$innerStroke = null
     this.$stroke = null
+    this.color = BPMN_CONSTANTS_EDGE_DEFAULT_COLOR
+    this.innerColor = BPMN_CONSTANTS_EDGE_DEFAULT_INNER_COLOR
   }
 
   /**
@@ -5197,48 +5860,49 @@ export class BpmnEdgeStyle extends EdgeStyleBase {
    */
   set type(value) {
     this.$type = value
-    switch (value) {
-      case EdgeType.CONDITIONAL_FLOW:
-        this.$stroke = BPMN_CONSTANTS_STROKES_B_P_M_N_EDGE_STYLE
-        this.$sourceArrow = BpmnEdgeStyle.CONDITIONAL_SOURCE_ARROW
-        this.$targetArrow = BpmnEdgeStyle.DEFAULT_TARGET_ARROW
-        break
-      case EdgeType.ASSOCIATION:
-        this.$stroke = BPMN_CONSTANTS_STROKES_ASSOCIATION_EDGE_STYLE
-        this.$sourceArrow = IArrow.NONE
-        this.$targetArrow = IArrow.NONE
-        break
-      case EdgeType.DIRECTED_ASSOCIATION:
-        this.$stroke = BPMN_CONSTANTS_STROKES_ASSOCIATION_EDGE_STYLE
-        this.$sourceArrow = IArrow.NONE
-        this.$targetArrow = BpmnEdgeStyle.ASSOCIATION_ARROW
-        break
-      case EdgeType.BIDIRECTED_ASSOCIATION:
-        this.$stroke = BPMN_CONSTANTS_STROKES_ASSOCIATION_EDGE_STYLE
-        this.$sourceArrow = BpmnEdgeStyle.ASSOCIATION_ARROW
-        this.$targetArrow = BpmnEdgeStyle.ASSOCIATION_ARROW
-        break
-      case EdgeType.MESSAGE_FLOW:
-        this.$stroke = BPMN_CONSTANTS_STROKES_MESSAGE_EDGE_STYLE
-        this.$sourceArrow = BpmnEdgeStyle.MESSAGE_SOURCE_ARROW
-        this.$targetArrow = BpmnEdgeStyle.MESSAGE_TARGET_ARROW
-        break
-      case EdgeType.DEFAULT_FLOW:
-        this.$stroke = BPMN_CONSTANTS_STROKES_B_P_M_N_EDGE_STYLE
-        this.$sourceArrow = BpmnEdgeStyle.DEFAULT_SOURCE_ARROW
-        this.$targetArrow = BpmnEdgeStyle.DEFAULT_TARGET_ARROW
-        break
-      case EdgeType.CONVERSATION:
-        this.$stroke = BPMN_CONSTANTS_STROKES_CONVERSATION_DOUBLE_LINE
-        this.$sourceArrow = IArrow.NONE
-        this.$targetArrow = IArrow.NONE
-        break
-      case EdgeType.SEQUENCE_FLOW:
-      default:
-        this.$stroke = BPMN_CONSTANTS_STROKES_B_P_M_N_EDGE_STYLE
-        this.$sourceArrow = IArrow.NONE
-        this.$targetArrow = BpmnEdgeStyle.DEFAULT_TARGET_ARROW
-        break
+    this.updateStroke(this.color)
+    this.updateArrow(value)
+  }
+
+  /**
+   * Gets the stroke color of the edge.
+   * @return {Fill}
+   */
+  get color() {
+    return this.$stroke ? this.$stroke.fill : null
+  }
+
+  /**
+   * Sets the stroke color of the edge.
+   * @param {Fill} value
+   */
+  set color(value) {
+    if (this.$stroke === null || !IconFactory.equalFill(this.$stroke.fill, value)) {
+      this.updateStroke(value)
+      this.updateArrow(this.type)
+    }
+  }
+
+  /**
+   * Gets the inner stroke color of the edge when {@link BpmnEdgeStyle#type} is
+   * {@type EdgeType.CONVERSATION}.
+   * @return {Fill}
+   */
+  get innerColor() {
+    return this.$innerStroke.fill
+  }
+
+  /**
+   * Sets the inner stroke color of the edge when {@link BpmnEdgeStyle#type} is
+   * {@type EdgeType.CONVERSATION}.
+   * @param {Fill} value
+   */
+  set innerColor(value) {
+    if (this.$innerStroke === null || !IconFactory.equalFill(this.$innerStroke.fill, value)) {
+      const stroke = new Stroke(value)
+      stroke.lineJoin = LineJoin.ROUND
+      stroke.freeze()
+      this.$innerStroke = stroke
     }
   }
 
@@ -5250,6 +5914,9 @@ export class BpmnEdgeStyle extends EdgeStyleBase {
   clone() {
     const bpmnEdgeStyle = new BpmnEdgeStyle()
     bpmnEdgeStyle.type = this.type
+    bpmnEdgeStyle.color = this.color
+    bpmnEdgeStyle.innerColor = this.innerColor
+    bpmnEdgeStyle.smoothing = this.smoothing
     return bpmnEdgeStyle
   }
 
@@ -5272,15 +5939,6 @@ export class BpmnEdgeStyle extends EdgeStyleBase {
   }
 
   /**
-   * Gets the  for the line.
-   * @see Specified by {@link PolylineEdgeStyle#stroke}.
-   * @type {.Stroke}
-   */
-  get stroke() {
-    return this.$stroke
-  }
-
-  /**
    * Gets the smoothing length used for creating smooth bends.
    * A value of <code>0.0d</code> will disable smoothing.
    * @see Specified by {@link PolylineEdgeStyle#smoothing}.
@@ -5300,29 +5958,105 @@ export class BpmnEdgeStyle extends EdgeStyleBase {
     this.$smoothing = value
   }
 
+  /** @param {Fill} fill */
+  updateStroke(fill) {
+    let result
+    switch (this.type) {
+      case EdgeType.CONDITIONAL_FLOW:
+      case EdgeType.DEFAULT_FLOW:
+      case EdgeType.SEQUENCE_FLOW:
+      default:
+        result = new Stroke(fill)
+        break
+      case EdgeType.ASSOCIATION:
+      case EdgeType.DIRECTED_ASSOCIATION:
+      case EdgeType.BIDIRECTED_ASSOCIATION:
+        result = new Stroke({
+          fill: fill,
+          dashStyle: DashStyle.DOT,
+          lineCap: LineCap.ROUND
+        })
+        break
+      case EdgeType.MESSAGE_FLOW:
+        result = new Stroke({
+          fill: fill,
+          dashStyle: DashStyle.DASH
+        })
+        break
+      case EdgeType.CONVERSATION:
+        result = new Stroke({
+          fill: fill,
+          thickness: 3,
+          lineJoin: LineJoin.ROUND
+        })
+        break
+    }
+    result.freeze()
+    this.$stroke = result
+  }
+
+  /** @param {EdgeType} type */
+  updateArrow(type) {
+    switch (type) {
+      case EdgeType.CONDITIONAL_FLOW:
+        this.$sourceArrow = BpmnEdgeStyle.getConditionalSourceArrow(this.color)
+        this.$targetArrow = BpmnEdgeStyle.getDefaultTargetArrow(this.color)
+        break
+      case EdgeType.ASSOCIATION:
+        this.$sourceArrow = IArrow.NONE
+        this.$targetArrow = IArrow.NONE
+        break
+      case EdgeType.DIRECTED_ASSOCIATION:
+        this.$sourceArrow = IArrow.NONE
+        this.$targetArrow = BpmnEdgeStyle.getAssociationArrow(this.color)
+        break
+      case EdgeType.BIDIRECTED_ASSOCIATION:
+        this.$sourceArrow = BpmnEdgeStyle.getAssociationArrow(this.color)
+        this.$targetArrow = BpmnEdgeStyle.getAssociationArrow(this.color)
+        break
+      case EdgeType.MESSAGE_FLOW:
+        this.$sourceArrow = BpmnEdgeStyle.getMessageSourceArrow(this.color)
+        this.$targetArrow = BpmnEdgeStyle.getMessageTargetArrow(this.color)
+        break
+      case EdgeType.DEFAULT_FLOW:
+        this.$sourceArrow = BpmnEdgeStyle.getDefaultSourceArrow(this.color)
+        this.$targetArrow = BpmnEdgeStyle.getDefaultTargetArrow(this.color)
+        break
+      case EdgeType.CONVERSATION:
+        this.$sourceArrow = IArrow.NONE
+        this.$targetArrow = IArrow.NONE
+        break
+      case EdgeType.SEQUENCE_FLOW:
+      default:
+        this.$sourceArrow = IArrow.NONE
+        this.$targetArrow = BpmnEdgeStyle.getDefaultTargetArrow(this.color)
+        break
+    }
+  }
+
   /**
-   * This method is called by the framework to create a {@link .Visual}
-   * that will be included into the {@link .IRenderContext}.
-   * {@link .CanvasComponent} uses this interface through the {@link .ICanvasObjectDescriptor}
+   * This method is called by the framework to create a {@link Visual}
+   * that will be included into the {@link IRenderContext}.
+   * {@link CanvasComponent} uses this interface through the {@link ICanvasObjectDescriptor}
    * to populate the visual canvas object tree.
-   * @param {.IRenderContext} context The context that describes where the visual will be used.
+   * @param {IRenderContext} context The context that describes where the visual will be used.
    * @param {IEdge} edge The edge for which the visual is created.
-   * @return {.Visual} The visual to include in the canvas object visual tree. This may be
+   * @return {Visual} The visual to include in the canvas object visual tree. This may be
    *   <code>null</code>.
-   * @see {@link .IVisualCreator#updateVisual}
+   * @see {@link IVisualCreator#updateVisual}
    */
   createVisual(context, edge) {
     const container = document.createElementNS('http://www.w3.org/2000/svg', 'g')
 
     const smoothedPath = this.getPath(edge)
     const path = smoothedPath.createSvgPath()
-    Stroke.setStroke(this.stroke, path, context)
+    Stroke.setStroke(this.$stroke, path, context)
     path.setAttribute('fill', 'none')
     container.appendChild(path)
 
     if (this.type === EdgeType.CONVERSATION) {
       const doubleLineCenterPath = smoothedPath.createSvgPath()
-      BPMN_CONSTANTS_STROKES_CONVERSATION_CENTER_LINE.applyTo(doubleLineCenterPath, context)
+      Stroke.setStroke(this.$innerStroke, doubleLineCenterPath, context)
       doubleLineCenterPath.setAttribute('fill', 'none')
       container.appendChild(doubleLineCenterPath)
     }
@@ -5331,6 +6065,8 @@ export class BpmnEdgeStyle extends EdgeStyleBase {
 
     container['render-data-cache'] = {
       type: this.type,
+      color: this.color,
+      innerColor: this.innerColor,
       path: smoothedPath
     }
 
@@ -5345,22 +6081,23 @@ export class BpmnEdgeStyle extends EdgeStyleBase {
   }
 
   /**
-   * This method updates or replaces a previously created {@link .Visual} for inclusion
-   * in the {@link .IRenderContext}.
-   * The {@link .CanvasComponent} uses this method to give implementations a chance to
+   * This method updates or replaces a previously created {@link Visual} for inclusion
+   * in the {@link IRenderContext}.
+   * The {@link CanvasComponent} uses this method to give implementations a chance to
    * update an existing Visual that has previously been created by the same instance during a call
-   * to {@link .IVisualCreator#createVisual}. Implementation may update the <code>oldVisual</code>
-   * and return that same reference, or create a new visual and return the new instance or <code>null</code>.
-   * @param {.IRenderContext} context The context that describes where the visual will be used in.
-   * @param {.Visual} oldVisual The visual instance that had been returned the last time the
-   *   {@link .IVisualCreator#createVisual} method was called on this instance.
+   * to {@link IVisualCreator#createVisual}. Implementation may update the <code>oldVisual</code>
+   * and return that same reference, or create a new visual and return the new instance or
+   * <code>null</code>.
+   * @param {IRenderContext} context The context that describes where the visual will be used in.
+   * @param {Visual} oldVisual The visual instance that had been returned the last time the {@link
+   *   IVisualCreator#createVisual} method was called on this instance.
    * @param {IEdge} edge The edge for which the visual is updated.
-   * @return {.Visual} <code>oldVisual</code>, if this instance modified the visual, or a new visual that
-   *   should replace the existing one in the canvas object visual tree.
-   * @see {@link .IVisualCreator#createVisual}
-   * @see {@link .ICanvasObjectDescriptor}
-   * @see {@link .CanvasComponent}
-   * @see Specified by {@link .IVisualCreator#updateVisual}.
+   * @return {Visual} <code>oldVisual</code>, if this instance modified the visual, or a new visual
+   *   that should replace the existing one in the canvas object visual tree.
+   * @see {@link IVisualCreator#createVisual}
+   * @see {@link ICanvasObjectDescriptor}
+   * @see {@link CanvasComponent}
+   * @see Specified by {@link IVisualCreator#updateVisual}.
    */
   updateVisual(context, oldVisual, edge) {
     const container = oldVisual.svgElement
@@ -5377,93 +6114,126 @@ export class BpmnEdgeStyle extends EdgeStyleBase {
       cache.path = newPath
     }
 
-    const oldType = cache.type
-    const newType = this.type
-
-    if (!oldType === newType) {
+    if (
+      cache.type !== this.type ||
+      cache.color !== this.color ||
+      cache.innerColor !== this.innerColor
+    ) {
       const path = container.firstElementChild
-      Stroke.setStroke(this.stroke, path, context)
+      Stroke.setStroke(this.$stroke, path, context)
 
-      if (newType === EdgeType.CONVERSATION) {
+      if (this.type === EdgeType.CONVERSATION) {
         const doubleLineCenterPath = newPath.createSvgPath()
-        BPMN_CONSTANTS_STROKES_CONVERSATION_CENTER_LINE.applyTo(doubleLineCenterPath, context)
+        Stroke.setStroke(this.$innerStroke, doubleLineCenterPath, context)
         container.appendChild(doubleLineCenterPath)
-      } else {
+      } else if (cache.type === EdgeType.CONVERSATION) {
         container.removeChild(container.lastElementChild)
       }
 
-      cache.type = newType
+      if (this.type !== EdgeType.CONVERSATION && cache.color !== this.color) {
+        this.updateArrow(this.type)
+        super.updateArrows(context, container, edge, newPath, IArrow.NONE, IArrow.NONE)
+        super.updateArrows(context, container, edge, newPath, this.sourceArrow, this.targetArrow)
+      }
+
+      cache.type = this.type
+      cache.color = this.color
+      cache.innerColor = this.innerColor
     }
 
     super.updateArrows(context, container, edge, newPath, this.sourceArrow, this.targetArrow)
 
-    return new SvgVisual(container)
+    return oldVisual
   }
 
-  static get DEFAULT_TARGET_ARROW() {
-    if (!BpmnEdgeStyle.$defaultTargetArrow) {
-      const iconArrow = new IconArrow(IconFactory.createArrowIcon(ArrowType.DEFAULT_TARGET))
-      iconArrow.bounds = new Size(8, 6)
-      iconArrow.cropLength = 1
-      iconArrow.length = 8
+  static getDefaultTargetArrow(fill) {
+    const hasDefaultColor = IconFactory.equalFill(fill, Fill.BLACK)
+    if (hasDefaultColor && BpmnEdgeStyle.$defaultTargetArrow) {
+      return BpmnEdgeStyle.$defaultTargetArrow
+    }
+    const iconArrow = new IconArrow(IconFactory.createArrowIcon(ArrowType.DEFAULT_TARGET, fill))
+    iconArrow.bounds = new Size(8, 6)
+    iconArrow.cropLength = 1
+    iconArrow.length = 8
+    if (hasDefaultColor) {
       BpmnEdgeStyle.$defaultTargetArrow = iconArrow
     }
-    return BpmnEdgeStyle.$defaultTargetArrow
+    return iconArrow
   }
 
-  static get DEFAULT_SOURCE_ARROW() {
-    if (!BpmnEdgeStyle.$defaultSourceArrow) {
-      const iconArrow = new IconArrow(IconFactory.createArrowIcon(ArrowType.DEFAULT_SOURCE))
-      iconArrow.bounds = new Size(8, 6)
-      iconArrow.cropLength = 0
-      iconArrow.length = 0
+  static getDefaultSourceArrow(fill) {
+    const hasDefaultColor = IconFactory.equalFill(fill, Fill.BLACK)
+    if (hasDefaultColor && BpmnEdgeStyle.$defaultSourceArrow) {
+      return BpmnEdgeStyle.$defaultSourceArrow
+    }
+    const iconArrow = new IconArrow(IconFactory.createArrowIcon(ArrowType.DEFAULT_SOURCE, fill))
+    iconArrow.bounds = new Size(8, 6)
+    iconArrow.cropLength = 0
+    iconArrow.length = 0
+    if (hasDefaultColor) {
       BpmnEdgeStyle.$defaultSourceArrow = iconArrow
     }
-    return BpmnEdgeStyle.$defaultSourceArrow
+    return iconArrow
   }
 
-  static get ASSOCIATION_ARROW() {
-    if (!BpmnEdgeStyle.$associationArrow) {
-      const iconArrow = new IconArrow(IconFactory.createArrowIcon(ArrowType.ASSOCIATION))
-      iconArrow.bounds = new Size(8, 6)
-      iconArrow.cropLength = 1
-      iconArrow.length = 0
+  static getAssociationArrow(fill) {
+    const hasDefaultColor = IconFactory.equalFill(fill, Fill.BLACK)
+    if (hasDefaultColor && BpmnEdgeStyle.$associationArrow) {
+      return BpmnEdgeStyle.$associationArrow
+    }
+    const iconArrow = new IconArrow(IconFactory.createArrowIcon(ArrowType.ASSOCIATION, fill))
+    iconArrow.bounds = new Size(8, 6)
+    iconArrow.cropLength = 1
+    iconArrow.length = 0
+    if (hasDefaultColor) {
       BpmnEdgeStyle.$associationArrow = iconArrow
     }
-    return BpmnEdgeStyle.$associationArrow
+    return iconArrow
   }
 
-  static get CONDITIONAL_SOURCE_ARROW() {
-    if (!BpmnEdgeStyle.$conditionalSourceArrow) {
-      const iconArrow = new IconArrow(IconFactory.createArrowIcon(ArrowType.CONDITIONAL_SOURCE))
-      iconArrow.bounds = new Size(16, 8)
-      iconArrow.cropLength = 1
-      iconArrow.length = 16
+  static getConditionalSourceArrow(fill) {
+    const hasDefaultColor = IconFactory.equalFill(fill, Fill.BLACK)
+    if (hasDefaultColor && BpmnEdgeStyle.$conditionalSourceArrow) {
+      return BpmnEdgeStyle.$conditionalSourceArrow
+    }
+    const iconArrow = new IconArrow(IconFactory.createArrowIcon(ArrowType.CONDITIONAL_SOURCE, fill))
+    iconArrow.bounds = new Size(16, 8)
+    iconArrow.cropLength = 1
+    iconArrow.length = 16
+    if (hasDefaultColor) {
       BpmnEdgeStyle.$conditionalSourceArrow = iconArrow
     }
-    return BpmnEdgeStyle.$conditionalSourceArrow
+    return iconArrow
   }
 
-  static get MESSAGE_TARGET_ARROW() {
-    if (!BpmnEdgeStyle.$messageTargetArrow) {
-      const iconArrow = new IconArrow(IconFactory.createArrowIcon(ArrowType.MESSAGE_TARGET))
-      iconArrow.bounds = new Size(8, 6)
-      iconArrow.cropLength = 1
-      iconArrow.length = 8
+  static getMessageTargetArrow(fill) {
+    const hasDefaultColor = IconFactory.equalFill(fill, Fill.BLACK)
+    if (hasDefaultColor && BpmnEdgeStyle.$messageTargetArrow) {
+      return BpmnEdgeStyle.$messageTargetArrow
+    }
+    const iconArrow = new IconArrow(IconFactory.createArrowIcon(ArrowType.MESSAGE_TARGET, fill))
+    iconArrow.bounds = new Size(8, 6)
+    iconArrow.cropLength = 1
+    iconArrow.length = 8
+    if (hasDefaultColor) {
       BpmnEdgeStyle.$messageTargetArrow = iconArrow
     }
-    return BpmnEdgeStyle.$messageTargetArrow
+    return iconArrow
   }
 
-  static get MESSAGE_SOURCE_ARROW() {
-    if (!BpmnEdgeStyle.$messageSourceArrow) {
-      const iconArrow = new IconArrow(IconFactory.createArrowIcon(ArrowType.MESSAGE_SOURCE))
-      iconArrow.bounds = new Size(6, 6)
-      iconArrow.cropLength = 1
-      iconArrow.length = 6
+  static getMessageSourceArrow(fill) {
+    const hasDefaultColor = IconFactory.equalFill(fill, Fill.BLACK)
+    if (hasDefaultColor && BpmnEdgeStyle.$messageSourceArrow) {
+      return BpmnEdgeStyle.$messageSourceArrow
+    }
+    const iconArrow = new IconArrow(IconFactory.createArrowIcon(ArrowType.MESSAGE_SOURCE, fill))
+    iconArrow.bounds = new Size(6, 6)
+    iconArrow.cropLength = 1
+    iconArrow.length = 6
+    if (hasDefaultColor) {
       BpmnEdgeStyle.$messageSourceArrow = iconArrow
     }
-    return BpmnEdgeStyle.$messageSourceArrow
+    return iconArrow
   }
 }
 
@@ -5515,12 +6285,18 @@ export class ActivityNodeStyle extends BpmnNodeStyle {
     this.$loopCharacteristic = LoopCharacteristic.NONE
     this.$subState = SubState.NONE
     this.$insets = new Insets(15)
+    this.$background = BPMN_CONSTANTS_ACTIVITY_DEFAULT_BACKGROUND
+    this.$outline = BPMN_CONSTANTS_ACTIVITY_DEFAULT_OUTLINE
+    this.$eventOutline = BPMN_CONSTANTS_DEFAULT_EVENT_OUTLINE
+    this.$iconColor = BPMN_CONSTANTS_DEFAULT_ICON_COLOR
     this.minimumSize = new Size(40, 30)
-    this.activityIcon = null
-    this.taskIcon = null
-    this.loopIcon = null
+    this.$activityIcon = null
+    this.$taskIcon = null
+    this.$loopIcon = null
     this.$adHoc = false
+    this.$adHocIcon = null
     this.$compensation = false
+    this.$compensationIcon = null
     this.activityType = ActivityType.TASK
   }
 
@@ -5537,10 +6313,10 @@ export class ActivityNodeStyle extends BpmnNodeStyle {
    * @type {ActivityType}
    */
   set activityType(value) {
-    if (this.$activityType !== value || this.activityIcon === null) {
+    if (this.$activityType !== value || this.$activityIcon === null) {
       this.modCount++
       this.$activityType = value
-      this.activityIcon = IconFactory.createActivity(this.$activityType)
+      this.updateActivityIcon()
     }
   }
 
@@ -5624,7 +6400,7 @@ export class ActivityNodeStyle extends BpmnNodeStyle {
     if (this.$loopCharacteristic !== value) {
       this.modCount++
       this.$loopCharacteristic = value
-      this.loopIcon = IconFactory.createLoopCharacteristic(value)
+      this.updateLoopIcon()
     }
   }
 
@@ -5663,6 +6439,7 @@ export class ActivityNodeStyle extends BpmnNodeStyle {
     if (this.$adHoc !== value) {
       this.modCount++
       this.$adHoc = value
+      this.updateAdHocIcon()
     }
   }
 
@@ -5682,6 +6459,7 @@ export class ActivityNodeStyle extends BpmnNodeStyle {
     if (this.$compensation !== value) {
       this.modCount++
       this.$compensation = value
+      this.updateCompensationIcon()
     }
   }
 
@@ -5709,79 +6487,144 @@ export class ActivityNodeStyle extends BpmnNodeStyle {
     this.$insets = insets
   }
 
+  /**
+   * Gets the background color of the activity.
+   * @return {Fill}
+   */
+  get background() {
+    return this.$background
+  }
+
+  /**
+   * Sets the background color of the activity.
+   * @param {Fill} value
+   */
+  set background(value) {
+    if (this.$background !== value || this.$activityIcon == null) {
+      this.modCount++
+      this.$background = value
+      this.updateActivityIcon()
+      this.updateTaskIcon()
+    }
+  }
+
+  /**
+   * Gets the outline color of the activity.
+   * @return {Fill}
+   */
+  get outline() {
+    return this.$outline
+  }
+
+  /**
+   * Sets the outline color of the activity.
+   * @param {Fill} value
+   */
+  set outline(value) {
+    if (this.$outline !== value || this.$activityIcon == null) {
+      this.modCount++
+      this.$outline = value
+      this.updateActivityIcon()
+    }
+  }
+
+  /**
+   * Gets the primary color for icons and markers.
+   * @return {Fill}
+   */
+  get iconColor() {
+    return this.$iconColor
+  }
+
+  /**
+   * Sets the primary color for icons and markers.
+   * @param {Fill} value
+   */
+  set iconColor(value) {
+    if (this.$iconColor !== value) {
+      this.modCount++
+      this.$iconColor = value
+      this.updateTaskIcon()
+      this.updateLoopIcon()
+      this.updateAdHocIcon()
+      this.updateCompensationIcon()
+    }
+  }
+
+  /**
+   * Gets the outline color for event icons if {@link ActivityNodeStyle#taskType} is
+   * {@link EventType.EVENT_TRIGGERED}. If this is set to null, the outline color is automatic,
+   * based on the TriggerEventCharacteristic.
+   * @return {SolidColorFill | null}
+   */
+  get eventOutline() {
+    return this.$eventOutline
+  }
+
+  /**
+   * Sets the outline color for the event icon.
+   * @param {SolidColorFill | null} value
+   */
+  set eventOutline(value) {
+    if (this.$eventOutline !== value) {
+      this.modCount++
+      this.$eventOutline = value
+      this.updateTaskIcon()
+    }
+  }
+
+  updateActivityIcon() {
+    this.$activityIcon = IconFactory.createActivity(
+      this.$activityType,
+      this.background,
+      this.outline
+    )
+  }
+
   updateTaskIcon() {
     if (this.taskType === TaskType.EVENT_TRIGGERED) {
       const eventNodeStyle = new EventNodeStyle()
       eventNodeStyle.characteristic = this.triggerEventCharacteristic
       eventNodeStyle.type = this.triggerEventType
+      eventNodeStyle.background = this.background
+      eventNodeStyle.outline = this.eventOutline
+      eventNodeStyle.iconColor = this.iconColor
 
       eventNodeStyle.updateIcon()
-      this.taskIcon = eventNodeStyle.icon
+      this.$taskIcon = eventNodeStyle.icon
     } else {
-      this.taskIcon = IconFactory.createActivityTaskType(this.$taskType)
+      this.$taskIcon = IconFactory.createActivityTaskType(
+        this.$taskType,
+        this.iconColor,
+        this.background
+      )
     }
-    if (this.taskIcon !== null) {
-      this.taskIcon = IconFactory.createPlacedIcon(
-        this.taskIcon,
+    if (this.$taskIcon !== null) {
+      this.$taskIcon = IconFactory.createPlacedIcon(
+        this.$taskIcon,
         BPMN_CONSTANTS_PLACEMENTS_TASK_TYPE,
         BPMN_CONSTANTS_SIZES_TASK_TYPE
       )
     }
   }
 
-  /**
-   * Callback that creates the visual.
-   * @param {.IRenderContext} renderContext The render context.
-   * @param {INode} node The node to which this style instance is assigned.
-   * @return {.Visual} The visual as required by the {@link .IVisualCreator#createVisual}
-   *   interface.
-   * @see {@link NodeStyleBase#updateVisual}
-   */
-  createVisual(renderContext, node) {
-    this.icon = this.createIcon(node)
-    const outerContainer = new SvgVisualGroup()
-    outerContainer['render-data-cache'] = this.icon
-    const visual = super.createVisual(renderContext, node)
-    if (visual !== null) {
-      outerContainer.add(visual)
-    }
-    return outerContainer
+  updateAdHocIcon() {
+    this.$adHocIcon = this.adHoc ? IconFactory.createAdHoc(this.iconColor) : null
   }
 
-  /**
-   * Callback that updates the visual previously created by {@link NodeStyleBase#createVisual}.
-   * @param {IRenderContext} renderContext The render context.
-   * @param {Visual} oldVisual The visual that has been created in the call to
-   *   {@link NodeStyleBase#createVisual}.
-   * @param {INode} node The node to which this style instance is assigned.
-   * @return {Visual} The visual as required by the {@link IVisualCreator#createVisual}
-   *   interface.
-   * @see {@link NodeStyleBase#createVisual}
-   */
-  updateVisual(renderContext, oldVisual, node) {
-    const container = oldVisual instanceof SvgVisualGroup ? oldVisual : null
-    if (container === null) {
-      return this.createVisual(renderContext, node)
-    }
-    const icon = container['render-data-cache']
-    if (icon === null) {
-      return this.createVisual(renderContext, node)
-    }
-    this.icon = icon
+  updateCompensationIcon() {
+    this.$compensationIcon = this.compensation
+      ? IconFactory.createCompensation(false, this.iconColor)
+      : null
+  }
 
-    const oldInnerVisual = container.children.size === 1 ? container.children.elementAt(0) : null
-    const newInnerVisual = super.updateVisual(renderContext, oldInnerVisual, node)
-    if (newInnerVisual === null) {
-      if (oldInnerVisual !== null) {
-        container.children.remove(oldInnerVisual)
-      }
-    } else if (!newInnerVisual.equals(oldInnerVisual)) {
-      if (oldInnerVisual !== null) {
-        container.children.remove(oldInnerVisual)
-      }
-      container.add(newInnerVisual)
-    }
-    return container
+  updateLoopIcon() {
+    this.$loopIcon = IconFactory.createLoopCharacteristic(this.loopCharacteristic, this.iconColor)
+  }
+
+  /** @inheritDoc */
+  updateIcon(node) {
+    this.icon = this.createIcon(node)
   }
 
   /** @return {Icon} */
@@ -5789,32 +6632,32 @@ export class ActivityNodeStyle extends BpmnNodeStyle {
     let minimumWidth = 10.0
 
     const icons = new List()
-    if (this.activityIcon) {
-      icons.add(this.activityIcon)
+    if (this.$activityIcon) {
+      icons.add(this.$activityIcon)
     }
-    if (this.taskIcon) {
-      icons.add(this.taskIcon)
+    if (this.$taskIcon) {
+      icons.add(this.$taskIcon)
     }
 
     const lineUpIcons = new List()
-    if (this.loopIcon) {
+    if (this.$loopIcon) {
       minimumWidth += BPMN_CONSTANTS_SIZES_MARKER.width + 5
-      lineUpIcons.add(this.loopIcon)
+      lineUpIcons.add(this.$loopIcon)
     }
     if (this.adHoc) {
       minimumWidth += BPMN_CONSTANTS_SIZES_MARKER.width + 5
-      lineUpIcons.add(ActivityNodeStyle.AD_HOC_ICON)
+      lineUpIcons.add(this.$adHocIcon)
     }
     if (this.compensation) {
       minimumWidth += BPMN_CONSTANTS_SIZES_MARKER.width + 5
-      lineUpIcons.add(ActivityNodeStyle.COMPENSATION_ICON)
+      lineUpIcons.add(this.$compensationIcon)
     }
     if (this.subState !== SubState.NONE) {
       minimumWidth += BPMN_CONSTANTS_SIZES_MARKER.width + 5
       if (this.subState === SubState.DYNAMIC) {
-        lineUpIcons.add(IconFactory.createDynamicSubState(node))
+        lineUpIcons.add(IconFactory.createDynamicSubState(node, this.iconColor))
       } else {
-        lineUpIcons.add(IconFactory.createStaticSubState(this.subState))
+        lineUpIcons.add(IconFactory.createStaticSubState(this.subState, this.iconColor))
       }
     }
     if (lineUpIcons.size > 0) {
@@ -5854,10 +6697,11 @@ export class ActivityNodeStyle extends BpmnNodeStyle {
 
   /**
    * Determines whether the visual representation of the node has been hit at the given location.
-   * @param {ICanvasContext} canvasContext The canvas context.
+   * @param {IInputModeContext} canvasContext The canvas context.
    * @param {Point} p The point to test.
    * @param {INode} node The node to which this style instance is assigned.
-   * @return {boolean} <code>true</code> if the specified node representation is hit; otherwise, <code>false</code>.
+   * @return {boolean} <code>true</code> if the specified node representation is hit; otherwise,
+   *   <code>false</code>.
    */
   isHit(canvasContext, p, node) {
     return ActivityNodeStyle.SHAPE_NODE_STYLE.renderer
@@ -5908,19 +6752,6 @@ export class ActivityNodeStyle extends BpmnNodeStyle {
       })
     }
     return ActivityNodeStyle.$shapeNodeStyle
-  }
-
-  static get AD_HOC_ICON() {
-    return (
-      ActivityNodeStyle.$adHocIcon || (ActivityNodeStyle.$adHocIcon = IconFactory.createAdHoc())
-    )
-  }
-
-  static get COMPENSATION_ICON() {
-    return (
-      ActivityNodeStyle.$compensationIcon ||
-      (ActivityNodeStyle.$compensationIcon = IconFactory.createCompensation(false))
-    )
   }
 }
 
@@ -5986,8 +6817,8 @@ export const EdgeType = Enum('EdgeType', {
 })
 
 /**
- * Custom stripe style that alternates the visualizations for the leaf nodes and uses a different style for all
- * parent stripes.
+ * Custom stripe style that alternates the visualizations for the leaf nodes and uses a different
+ * style for all parent stripes.
  */
 export class AlternatingLeafStripeStyle extends StripeStyleBase {
   constructor() {
@@ -6048,7 +6879,7 @@ export class AlternatingLeafStripeStyle extends StripeStyleBase {
 
   /**
    * Callback that creates the visual.
-   * @param {INode} node The node to which this style instance is assigned.
+   * @param {IStripe} node The node to which this style instance is assigned.
    * @param {IRenderContext} renderContext The render context.
    * @return {Visual} The visual.
    * @see {@link NodeStyleBase#updateVisual}
@@ -6121,7 +6952,7 @@ export class AlternatingLeafStripeStyle extends StripeStyleBase {
    * call to the instance that has been queried from the {@link NodeStyleBase#renderer}.
    * This implementation simply delegates to {@link NodeStyleBase#createVisual} so subclasses
    * should override to improve rendering performance.
-   * @param {INode} node The node to which this style instance is assigned.
+   * @param {IStripe} node The node to which this style instance is assigned.
    * @param {IRenderContext} renderContext The render context.
    * @param {Visual} oldVisual The visual that should be updated.
    * @return {Visual} The visual.
@@ -6436,22 +7267,53 @@ export class AnnotationNodeStyle extends BpmnNodeStyle {
    */
   constructor() {
     super()
-    this.icon = IconFactory.createAnnotation(true)
+    this.$background = BPMN_CONSTANTS_ANNOTATION_DEFAULT_BACKGROUND
+    this.$outline = BPMN_CONSTANTS_ANNOTATION_DEFAULT_OUTLINE
+    this.icon = IconFactory.createAnnotation(true, this.$background, this.$outline)
     this.minimumSize = new Size(30, 10)
-
     this.left = true
   }
 
-  createVisual(context, node) {
-    return super.createVisual(context, node)
-  }
-
-  updateVisual(context, oldVisual, node) {
-    return super.updateVisual(context, oldVisual, node)
+  /**
+   * Gets the background color of the annotation.
+   * @return {Fill}
+   */
+  get background() {
+    return this.$background
   }
 
   /**
-   * Gets if the bracket of the open rectangle shall be on the left side.
+   * Sets the background color of the annotation.
+   * @param {Fill} value
+   */
+  set background(value) {
+    if (this.$background !== value) {
+      this.modCount++
+      this.$background = value
+    }
+  }
+
+  /**
+   * Gets the outline color of the annotation.
+   * @return {Fill}
+   */
+  get outline() {
+    return this.$outline
+  }
+
+  /**
+   * Sets the outline color of the annotation.
+   * @param {Fill} value
+   */
+  set outline(value) {
+    if (this.$outline !== value) {
+      this.modCount++
+      this.$outline = value
+    }
+  }
+
+  /**
+   * Gets a value indicating whether the bracket of the open rectangle is shown on the left side.
    * @type {boolean}
    */
   get left() {
@@ -6459,21 +7321,25 @@ export class AnnotationNodeStyle extends BpmnNodeStyle {
   }
 
   /**
-   * Sets if the bracket of the open rectangle shall be on the left side.
+   * Sets a value indicating whether the bracket of the open rectangle is shown on the left side.
    * @type {boolean}
    */
   set left(value) {
     if (value !== this.$left) {
       this.modCount++
       this.$left = value
-      this.icon = IconFactory.createAnnotation(value)
     }
+  }
+
+  /** @inheritDoc */
+  updateIcon() {
+    this.icon = IconFactory.createAnnotation(this.left, this.background, this.outline)
   }
 }
 
 /**
- * An {@link ILabelStyle} implementation combining an text label, an icon and a connecting line between
- * the icon and the label owner.
+ * An {@link ILabelStyle} implementation combining an text label, an icon and a connecting line
+ * between the icon and the label owner.
  */
 class ConnectedIconLabelStyle extends LabelStyleBase {
   constructor() {
@@ -6579,13 +7445,14 @@ class ConnectedIconLabelStyle extends LabelStyleBase {
    * The {@link CanvasComponent} uses this method to give implementations a chance to
    * update an existing Visual that has previously been created by the same instance during a call
    * to {@link IVisualCreator#createVisual}. Implementation may update the <code>oldVisual</code>
-   * and return that same reference, or create a new visual and return the new instance or <code>null</code>.
+   * and return that same reference, or create a new visual and return the new instance or
+   * <code>null</code>.
    * @param {IRenderContext} context The context that describes where the visual will be used in.
-   * @param {Visual} oldVisual The visual instance that had been returned the last time the
-   *   {@link IVisualCreator#createVisual} method was called on this instance.
+   * @param {Visual} oldVisual The visual instance that had been returned the last time the {@link
+   *   IVisualCreator#createVisual} method was called on this instance.
    * @param {ILabel} label The label whose visual is updated.
-   * @return {Visual} <code>oldVisual</code>, if this instance modified the visual, or a new visual that
-   *   should replace the existing one in the canvas object visual tree.
+   * @return {Visual} <code>oldVisual</code>, if this instance modified the visual, or a new visual
+   *   that should replace the existing one in the canvas object visual tree.
    */
   updateVisual(context, oldVisual, label) {
     this.configure(label)
@@ -6660,6 +7527,7 @@ class ConnectedIconLabelStyle extends LabelStyleBase {
     // Set source port to the port of the node using a dummy node that is located at the origin.
     ConnectedIconLabelStyle.DUMMY_EDGE.sourcePort.locationParameter = this.labelConnectorLocation
     ConnectedIconLabelStyle.DUMMY_EDGE.targetPort.locationParameter = this.nodeConnectorLocation
+    ConnectedIconLabelStyle.DUMMY_EDGE.style = this.connectorStyle
   }
 
   /**
@@ -6754,8 +7622,8 @@ class ConnectedIconLabelStyle extends LabelStyleBase {
         FreeNodeLabelModel.INSTANCE.createDefaultParameter()
       )
       simpleLabel.style = new DefaultLabelStyle({
-        horizontalTextAlignment: 'center',
-        verticalTextAlignment: 'center'
+        horizontalTextAlignment: HorizontalTextAlignment.CENTER,
+        verticalTextAlignment: VerticalTextAlignment.CENTER
       })
       ConnectedIconLabelStyle.$dummyTextLabel = simpleLabel
     }
@@ -6793,16 +7661,18 @@ class ConnectedIconLabelStyle extends LabelStyleBase {
  * A label style for annotations according to BPMN.
  */
 export class AnnotationLabelStyle extends LabelStyleBase {
-  /**
-   * Creates a new instance.
-   */
   constructor() {
     super()
+    this.$leftAnnotationStyle = new AnnotationNodeStyle()
+    this.$rightAnnotationStyle = new AnnotationNodeStyle()
+    this.$rightAnnotationStyle.left = false
+    this.$connectorStyle = new BpmnEdgeStyle()
+    this.$connectorStyle.type = EdgeType.ASSOCIATION
     const connectedIconLabelStyle = new ConnectedIconLabelStyle()
-    connectedIconLabelStyle.iconStyle = AnnotationLabelStyle.LEFT_ANNOTATION_STYLE
+    connectedIconLabelStyle.iconStyle = this.$leftAnnotationStyle
     connectedIconLabelStyle.textStyle = AnnotationLabelStyle.TEXT_STYLE
     connectedIconLabelStyle.textPlacement = InteriorLabelModel.CENTER
-    connectedIconLabelStyle.connectorStyle = AnnotationLabelStyle.CONNECTOR_STYLE
+    connectedIconLabelStyle.connectorStyle = this.$connectorStyle
     connectedIconLabelStyle.labelConnectorLocation = FreeNodePortLocationModel.NODE_LEFT_ANCHORED
     connectedIconLabelStyle.nodeConnectorLocation = FreeNodePortLocationModel.NODE_CENTER_ANCHORED
     this.$delegateStyle = connectedIconLabelStyle
@@ -6833,54 +7703,75 @@ export class AnnotationLabelStyle extends LabelStyleBase {
   }
 
   /**
+   * Gets the background color of the annotation.
+   * @return {Fill}
+   */
+  get background() {
+    return this.$leftAnnotationStyle.background
+  }
+
+  /**
+   * Sets the background color of the annotation.
+   * @param {Fill} value
+   */
+  set background(value) {
+    if (this.$leftAnnotationStyle.background !== value) {
+      this.$leftAnnotationStyle.background = value
+      this.$rightAnnotationStyle.background = value
+    }
+  }
+
+  /**
+   * Gets the outline color of the annotation.
+   * @return {Fill}
+   */
+  get outline() {
+    return this.$leftAnnotationStyle.outline
+  }
+
+  /**
+   * Sets the outline color of the annotation.
+   * This also influences the color of the line to the annotated element.
+   * @param {Fill} value
+   */
+  set outline(value) {
+    if (this.$leftAnnotationStyle.outline !== value) {
+      this.$leftAnnotationStyle.outline = value
+      this.$rightAnnotationStyle.outline = value
+      this.$connectorStyle.color = value
+    }
+  }
+
+  /**
    * Create a clone of this object.
    * @return {Object} A clone of this object.
    * @see Specified by {@link ICloneable#clone}.
    */
   clone() {
     const style = new AnnotationLabelStyle()
-    style.$delegateStyle = this.$delegateStyle
-    style.$insets = this.$insets
+    style.$connectorStyle = this.$connectorStyle.clone()
+
+    const connectedIconLabelStyle = new ConnectedIconLabelStyle()
+    connectedIconLabelStyle.iconStyle = this.$leftAnnotationStyle.clone()
+    connectedIconLabelStyle.textStyle = AnnotationLabelStyle.TEXT_STYLE
+    connectedIconLabelStyle.textPlacement = InteriorLabelModel.CENTER
+    connectedIconLabelStyle.connectorStyle = style.$connectorStyle
+    connectedIconLabelStyle.labelConnectorLocation = FreeNodePortLocationModel.NODE_LEFT_ANCHORED
+    connectedIconLabelStyle.nodeConnectorLocation = FreeNodePortLocationModel.NODE_CENTER_ANCHORED
+    style.$delegateStyle = connectedIconLabelStyle
+
+    style.insets = this.insets
+    style.outline = this.outline
+    style.background = this.background
     return style
-  }
-
-  /**
-   * @type {BpmnNodeStyle}
-   */
-  static get LEFT_ANNOTATION_STYLE() {
-    if (!AnnotationLabelStyle.$leftAnnotationStyle) {
-      AnnotationLabelStyle.$leftAnnotationStyle = new AnnotationNodeStyle()
-      AnnotationLabelStyle.$leftAnnotationStyle.left = true
-    }
-    return AnnotationLabelStyle.$leftAnnotationStyle
-  }
-
-  /**
-   * @type {BpmnNodeStyle}
-   */
-  static get RIGHT_ANNOTATION_STYLE() {
-    if (!AnnotationLabelStyle.$rightAnnotationStyle) {
-      AnnotationLabelStyle.$rightAnnotationStyle = new AnnotationNodeStyle()
-      AnnotationLabelStyle.$rightAnnotationStyle.left = false
-    }
-    return AnnotationLabelStyle.$rightAnnotationStyle
-  }
-
-  static get CONNECTOR_STYLE() {
-    if (!AnnotationLabelStyle.$connectorStyle) {
-      const bpmnEdgeStyle = new BpmnEdgeStyle()
-      bpmnEdgeStyle.type = EdgeType.ASSOCIATION
-      AnnotationLabelStyle.$connectorStyle = bpmnEdgeStyle
-    }
-    return AnnotationLabelStyle.$connectorStyle
   }
 
   static get TEXT_STYLE() {
     return (
       AnnotationLabelStyle.$textStyle ||
       (AnnotationLabelStyle.$textStyle = new DefaultLabelStyle({
-        horizontalTextAlignment: 'center',
-        verticalTextAlignment: 'center'
+        horizontalTextAlignment: HorizontalTextAlignment.CENTER,
+        verticalTextAlignment: VerticalTextAlignment.CENTER
       }))
     )
   }
@@ -6895,9 +7786,7 @@ export class AnnotationLabelStyle extends LabelStyleBase {
     this.left = item.layout.orientedRectangleCenter.x > nodeOwner.layout.center.x
 
     const delegateStyle = this.delegateStyle
-    delegateStyle.iconStyle = this.left
-      ? AnnotationLabelStyle.LEFT_ANNOTATION_STYLE
-      : AnnotationLabelStyle.RIGHT_ANNOTATION_STYLE
+    delegateStyle.iconStyle = this.left ? this.$leftAnnotationStyle : this.$rightAnnotationStyle
     delegateStyle.labelConnectorLocation = this.left
       ? FreeNodePortLocationModel.NODE_LEFT_ANCHORED
       : FreeNodePortLocationModel.NODE_RIGHT_ANCHORED
@@ -6988,13 +7877,14 @@ export class AnnotationLabelStyle extends LabelStyleBase {
    * The {@link CanvasComponent} uses this method to give implementations a chance to
    * update an existing Visual that has previously been created by the same instance during a call
    * to {@link IVisualCreator#createVisual}. Implementation may update the <code>oldVisual</code>
-   * and return that same reference, or create a new visual and return the new instance or <code>null</code>.
+   * and return that same reference, or create a new visual and return the new instance or
+   * <code>null</code>.
    * @param {IRenderContext} context The context that describes where the visual will be used in.
-   * @param {Visual} oldVisual The visual instance that had been returned the last time the
-   *   {@link IVisualCreator#createVisual} method was called on this instance.
+   * @param {Visual} oldVisual The visual instance that had been returned the last time the {@link
+   *   IVisualCreator#createVisual} method was called on this instance.
    * @param {ILabel} label The label.
-   * @return {Visual} <code>oldVisual</code>, if this instance modified the visual, or a new visual that
-   *   should replace the existing one in the canvas object visual tree.
+   * @return {Visual} <code>oldVisual</code>, if this instance modified the visual, or a new visual
+   *   that should replace the existing one in the canvas object visual tree.
    * @see {@link IVisualCreator#createVisual}
    * @see {@link ICanvasObjectDescriptor}
    * @see {@link CanvasComponent}
@@ -7129,13 +8019,6 @@ export class StripeDescriptor {
   }
 }
 
-const multipleIcon = IconFactory.createLoopCharacteristic(LoopCharacteristic.PARALLEL)
-const POOL_NODE_STYLE_MULTIPLE_INSTANCE_ICON = new PlacedIcon(
-  multipleIcon,
-  BPMN_CONSTANTS_PLACEMENTS_POOL_NODE_MARKER,
-  BPMN_CONSTANTS_SIZES_MARKER
-)
-
 /**
  * An {@link INodeStyle} implementation representing a Pool according to the BPMN.
  * The main visualization is delegated to {@link PoolNodeStyle#tableNodeStyle}.
@@ -7143,13 +8026,16 @@ const POOL_NODE_STYLE_MULTIPLE_INSTANCE_ICON = new PlacedIcon(
 export class PoolNodeStyle extends NodeStyleBase {
   /**
    * Creates a new instance for an oriented pool.
-   * @param {boolean} vertical Whether or not the style represents a vertical pool.
+   * @param {boolean?} vertical Whether or not the style represents a vertical pool.
    */
   constructor(vertical) {
     super()
-    this.$vertical = vertical
+    this.vertical = typeof vertical !== 'undefined' ? vertical : false
     this.$multipleInstance = false
     this.$tableNodeStyle = null
+    this.$iconColor = BPMN_CONSTANTS_DEFAULT_ICON_COLOR
+    this.$multipleInstanceIcon = null
+    this.updateIcon()
   }
 
   /**
@@ -7169,12 +8055,31 @@ export class PoolNodeStyle extends NodeStyleBase {
   }
 
   /**
+   * Gets the color for the icon.
+   * @return {Fill}
+   */
+  get iconColor() {
+    return this.$iconColor
+  }
+
+  /**
+   * Sets the color for the icon.
+   * @param {Fill} value
+   */
+  set iconColor(value) {
+    if (this.$iconColor !== value) {
+      this.$iconColor = value
+      this.updateIcon()
+    }
+  }
+
+  /**
    * Gets the {@link TableNodeStyle} the visualization is delegated to.
    * @type {TableNodeStyle}
    */
   get tableNodeStyle() {
     if (!this.$tableNodeStyle) {
-      this.$tableNodeStyle = createDefaultTableNodeStyle(this.$vertical)
+      this.$tableNodeStyle = createDefaultTableNodeStyle(this.vertical)
     }
     return this.$tableNodeStyle
   }
@@ -7187,13 +8092,25 @@ export class PoolNodeStyle extends NodeStyleBase {
     this.$tableNodeStyle = value
   }
 
+  updateIcon() {
+    const multipleIcon = IconFactory.createLoopCharacteristic(
+      LoopCharacteristic.PARALLEL,
+      this.iconColor
+    )
+    this.$multipleInstanceIcon = new PlacedIcon(
+      multipleIcon,
+      BPMN_CONSTANTS_PLACEMENTS_POOL_NODE_MARKER,
+      BPMN_CONSTANTS_SIZES_MARKER
+    )
+  }
+
   /**
    * This method is called by the framework to create a {@link Visual}
    * that will be included into the {@link IRenderContext}.
    * {@link CanvasComponent} uses this interface through the {@link ICanvasObjectDescriptor}
    * to populate the visual canvas object tree.
    * @param {IRenderContext} renderContext The context that describes where the visual will be used.
-   * @param {INpde} node The node.
+   * @param {INode} node The node.
    * @return {Visual} The visual to include in the canvas object visual tree. This may be
    *   <code>null</code>.
    * @see {@link IVisualCreator#updateVisual}
@@ -7207,8 +8124,8 @@ export class PoolNodeStyle extends NodeStyleBase {
         .createVisual(renderContext)
     )
     if (this.multipleInstance) {
-      POOL_NODE_STYLE_MULTIPLE_INSTANCE_ICON.setBounds(node.layout)
-      container.add(POOL_NODE_STYLE_MULTIPLE_INSTANCE_ICON.createVisual(renderContext))
+      this.$multipleInstanceIcon.setBounds(node.layout)
+      container.add(this.$multipleInstanceIcon.createVisual(renderContext))
     }
     return container
   }
@@ -7219,13 +8136,15 @@ export class PoolNodeStyle extends NodeStyleBase {
    * The {@link CanvasComponent} uses this method to give implementations a chance to
    * update an existing Visual that has previously been created by the same instance during a call
    * to {@link IVisualCreator#createVisual}. Implementation may update the <code>oldVisual</code>
-   * and return that same reference, or create a new visual and return the new instance or <code>null</code>.
-   * @param {IRenderContext} renderContext The context that describes where the visual will be used in.
-   * @param {Visual} oldVisual The visual instance that had been returned the last time the
-   *   {@link IVisualCreator#createVisual} method was called on this instance.
+   * and return that same reference, or create a new visual and return the new instance or
+   * <code>null</code>.
+   * @param {IRenderContext} renderContext The context that describes where the visual will be used
+   *   in.
+   * @param {Visual} oldVisual The visual instance that had been returned the last time the {@link
+   *   IVisualCreator#createVisual} method was called on this instance.
    * @param {INode} node The node
-   * @return {Visual} <code>oldVisual</code>, if this instance modified the visual, or a new visual that
-   *   should replace the existing one in the canvas object visual tree.
+   * @return {Visual} <code>oldVisual</code>, if this instance modified the visual, or a new visual
+   *   that should replace the existing one in the canvas object visual tree.
    * @see {@link IVisualCreator#createVisual}
    * @see {@link ICanvasObjectDescriptor}
    * @see {@link CanvasComponent}
@@ -7248,16 +8167,21 @@ export class PoolNodeStyle extends NodeStyleBase {
 
     const oldMultipleVisual = container.children.size > 1 ? container.children.last() : null
     if (this.multipleInstance) {
-      POOL_NODE_STYLE_MULTIPLE_INSTANCE_ICON.setBounds(node.layout)
-      const newMultipleVisual = POOL_NODE_STYLE_MULTIPLE_INSTANCE_ICON.updateVisual(
-        renderContext,
-        oldMultipleVisual
-      )
-      if (oldMultipleVisual !== newMultipleVisual) {
-        if (oldMultipleVisual !== null) {
-          container.children.remove(oldMultipleVisual)
+      if (oldMultipleVisual === null) {
+        this.$multipleInstanceIcon.setBounds(node.layout)
+        container.add(this.$multipleInstanceIcon.createVisual(renderContext))
+      } else {
+        this.$multipleInstanceIcon.setBounds(node.layout)
+        const newMultipleVisual = this.$multipleInstanceIcon.updateVisual(
+          renderContext,
+          oldMultipleVisual
+        )
+        if (oldMultipleVisual !== newMultipleVisual) {
+          if (oldMultipleVisual !== null) {
+            container.children.remove(oldMultipleVisual)
+          }
+          container.add(newMultipleVisual)
         }
-        container.add(newMultipleVisual)
       }
     } else if (oldMultipleVisual !== null) {
       // there has been a multipleInstance icon before
@@ -7298,6 +8222,7 @@ export class PoolNodeStyle extends NodeStyleBase {
     const clone = new PoolNodeStyle()
     clone.multipleInstance = this.multipleInstance
     clone.tableNodeStyle = this.tableNodeStyle.clone()
+    clone.iconColor = this.iconColor
     return clone
   }
 }
@@ -7328,18 +8253,18 @@ function createDefaultTableNodeStyle(vertical) {
 
   // we'd like to use a special stripe style
   const alternatingLeafStripeStyle = new AlternatingLeafStripeStyle()
-  const stripeDescriptor1 = new StripeDescriptor()
-  stripeDescriptor1.backgroundFill = BPMN_CONSTANTS_FILLS_POOL_NODE_EVEN_LEAF_BACKGROUND
-  stripeDescriptor1.insetFill = BPMN_CONSTANTS_FILLS_POOL_NODE_EVEN_LEAF_INSET
-  alternatingLeafStripeStyle.evenLeafDescriptor = stripeDescriptor1
-  const stripeDescriptor2 = new StripeDescriptor()
-  stripeDescriptor2.backgroundFill = BPMN_CONSTANTS_FILLS_POOL_NODE_ODD_LEAF_BACKGROUND
-  stripeDescriptor2.insetFill = BPMN_CONSTANTS_FILLS_POOL_NODE_ODD_LEAF_INSET
-  alternatingLeafStripeStyle.oddLeafDescriptor = stripeDescriptor2
-  const stripeDescriptor3 = new StripeDescriptor()
-  stripeDescriptor3.backgroundFill = BPMN_CONSTANTS_FILLS_POOL_NODE_PARENT_BACKGROUND
-  stripeDescriptor3.insetFill = BPMN_CONSTANTS_FILLS_POOL_NODE_PARENT_INSET
-  alternatingLeafStripeStyle.parentDescriptor = stripeDescriptor3
+  const evenLeafDescriptor = new StripeDescriptor()
+  evenLeafDescriptor.backgroundFill = BPMN_CONSTANTS_DEFAULT_POOL_NODE_EVEN_LEAF_BACKGROUND
+  evenLeafDescriptor.insetFill = BPMN_CONSTANTS_DEFAULT_POOL_NODE_EVEN_LEAF_INSET
+  alternatingLeafStripeStyle.evenLeafDescriptor = evenLeafDescriptor
+  const oddLeafDescriptor = new StripeDescriptor()
+  oddLeafDescriptor.backgroundFill = BPMN_CONSTANTS_DEFAULT_POOL_NODE_ODD_LEAF_BACKGROUND
+  oddLeafDescriptor.insetFill = BPMN_CONSTANTS_DEFAULT_POOL_NODE_ODD_LEAF_INSET
+  alternatingLeafStripeStyle.oddLeafDescriptor = oddLeafDescriptor
+  const parentDescriptor = new StripeDescriptor()
+  parentDescriptor.backgroundFill = BPMN_CONSTANTS_DEFAULT_POOL_NODE_PARENT_BACKGROUND
+  parentDescriptor.insetFill = BPMN_CONSTANTS_DEFAULT_POOL_NODE_PARENT_INSET
+  alternatingLeafStripeStyle.parentDescriptor = parentDescriptor
 
   if (vertical) {
     table.insets = new Insets(0, 20, 0, 0)
@@ -7347,8 +8272,8 @@ function createDefaultTableNodeStyle(vertical) {
     // set the column defaults
     table.columnDefaults.insets = new Insets(0, 20, 0, 0)
     table.columnDefaults.labels.style = new DefaultLabelStyle({
-      horizontalTextAlignment: 'center',
-      verticalTextAlignment: 'center'
+      horizontalTextAlignment: HorizontalTextAlignment.CENTER,
+      verticalTextAlignment: VerticalTextAlignment.CENTER
     })
 
     table.columnDefaults.labels.layoutParameter = StretchStripeLabelModel.NORTH
@@ -7361,8 +8286,8 @@ function createDefaultTableNodeStyle(vertical) {
     // set the row defaults
     table.rowDefaults.insets = new Insets(20, 0, 0, 0)
     table.rowDefaults.labels.style = new DefaultLabelStyle({
-      horizontalTextAlignment: 'center',
-      verticalTextAlignment: 'center'
+      horizontalTextAlignment: HorizontalTextAlignment.CENTER,
+      verticalTextAlignment: VerticalTextAlignment.CENTER
     })
 
     table.rowDefaults.labels.layoutParameter = StretchStripeLabelModel.WEST
@@ -7371,9 +8296,9 @@ function createDefaultTableNodeStyle(vertical) {
     tableNodeStyle.tableRenderingOrder = TableRenderingOrder.ROWS_FIRST
   }
 
-  const shapeNodeStyle = new ShapeNodeStyle()
-  shapeNodeStyle.fill = BPMN_CONSTANTS_FILLS_POOL_NODE_BACKGROUND
-  tableNodeStyle.backgroundStyle = shapeNodeStyle
+  const backgroundStyle = new ShapeNodeStyle()
+  backgroundStyle.fill = BPMN_CONSTANTS_DEFAULT_POOL_NODE_BACKGROUND
+  tableNodeStyle.backgroundStyle = backgroundStyle
 
   tableNodeStyle.table = table
   return tableNodeStyle
@@ -7431,6 +8356,9 @@ export class PoolHeaderLabelModel extends BaseClass(ILabelModel, ILabelModelPara
     }
 
     const table = owner.lookup(ITable.$class)
+    if (!table) {
+      return new OrientedRectangle()
+    }
     const insets = !table.insets.equals(Insets.EMPTY) ? table.insets : Insets.EMPTY
 
     const orientedRectangle = new OrientedRectangle()
@@ -7678,9 +8606,9 @@ class IconArrow extends BaseClass(IArrow, IVisualCreator, IBoundsProvider) {
    * @param {Point} anchor the anchor point for the tip of the arrow
    * @param {Point} direction the direction the arrow is pointing in
    * @return {IBoundsProvider} an implementation of the {@link IBoundsProvider} interface
-   *   that can subsequently be used to query the bounds. Clients will always call this method before using the
-   *   implementation and may not cache the instance returned. This allows for applying the flyweight design pattern
-   *   to implementations.
+   *   that can subsequently be used to query the bounds. Clients will always call this method
+   *   before using the implementation and may not cache the instance returned. This allows for
+   *   applying the flyweight design pattern to implementations.
    * @see Specified by {@link IArrow#getBoundsProvider}.
    */
   getBoundsProvider(edge, atSource, anchor, direction) {
@@ -7729,12 +8657,13 @@ class IconArrow extends BaseClass(IArrow, IVisualCreator, IBoundsProvider) {
    * The {@link CanvasComponent} uses this method to give implementations a chance to
    * update an existing Visual that has previously been created by the same instance during a call
    * to {@link IconArrow#createVisual}. Implementation may update the <code>oldVisual</code>
-   * and return that same reference, or create a new visual and return the new instance or <code>null</code>.
+   * and return that same reference, or create a new visual and return the new instance or
+   * <code>null</code>.
    * @param {IRenderContext} context The context that describes where the visual will be used in.
-   * @param {Visual} oldVisual The visual instance that had been returned the last time the
-   *   {@link IconArrow#createVisual} method was called on this instance.
-   * @return {Visual} the old visual if this instance modified the visual, or a new visual that should
-   *   replace the existing one in the canvas object visual tree.
+   * @param {Visual} oldVisual The visual instance that had been returned the last time the {@link
+   *   IconArrow#createVisual} method was called on this instance.
+   * @return {Visual} the old visual if this instance modified the visual, or a new visual that
+   *   should replace the existing one in the canvas object visual tree.
    * @see {@link IconArrow#createVisual}
    * @see {@link ICanvasObjectDescriptor}
    * @see {@link CanvasComponent}
@@ -7775,62 +8704,165 @@ class IconArrow extends BaseClass(IArrow, IVisualCreator, IBoundsProvider) {
  * An {@link ILabelStyle} implementation representing a Message according to the BPMN.
  */
 export class MessageLabelStyle extends LabelStyleBase {
+  constructor() {
+    super()
+    this.$isInitiating = true
+    this.$initiatingColor = BPMN_CONSTANTS_DEFAULT_INITIATING_MESSAGE_COLOR
+    this.$responseColor = BPMN_CONSTANTS_DEFAULT_RECEIVING_MESSAGE_COLOR
+
+    this.$outline = null
+    this.$messagePen = null
+
+    const stroke = new Stroke(BPMN_CONSTANTS_DEFAULT_MESSAGE_OUTLINE)
+    stroke.freeze()
+    const messageIcon = IconFactory.createMessage(
+      stroke,
+      BPMN_CONSTANTS_DEFAULT_RECEIVING_MESSAGE_COLOR
+    )
+    const bpmnNodeStyle = new BpmnNodeStyle()
+    bpmnNodeStyle.icon = messageIcon
+    bpmnNodeStyle.minimumSize = BPMN_CONSTANTS_SIZES_MESSAGE
+    const labelStyle = new DefaultLabelStyle()
+    this.$adapter = new NodeStyleLabelStyleAdapter(bpmnNodeStyle, labelStyle)
+    this.outline = BPMN_CONSTANTS_DEFAULT_MESSAGE_OUTLINE
+  }
+
+  /**
+   * Gets whether this message is initiating.
+   * @return {boolean}
+   */
+  get isInitiating() {
+    return this.$isInitiating
+  }
+
+  /**
+   * Sets whether this message is initiating.
+   * @param {boolean} value
+   */
+  set isInitiating(value) {
+    if (this.$isInitiating !== value) {
+      this.$isInitiating = value
+      this.updateIcon()
+    }
+  }
+
+  /**
+   * Gets the outline color of the message.
+   * @return {Fill}
+   */
+  get outline() {
+    return this.$outline
+  }
+
+  /**
+   * Sets the outline color of the message.
+   * @param {Fill} value
+   */
+  set outline(value) {
+    if (this.$outline !== value) {
+      this.$outline = value
+      const stroke = new Stroke(value)
+      stroke.freeze()
+      this.$messagePen = stroke
+      this.updateIcon()
+    }
+  }
+
+  /**
+   * Gets the color for an initiating message.
+   * @return {Fill}
+   */
+  get initiatingColor() {
+    return this.$initiatingColor
+  }
+
+  /**
+   * Sets the color for an initiating message.
+   * @param {Fill} value
+   */
+  set initiatingColor(value) {
+    if (this.$initiatingColor !== value) {
+      this.$initiatingColor = value
+      if (this.$isInitiating) {
+        this.updateIcon()
+      }
+    }
+  }
+
+  /**
+   * Gets the color for a response message.
+   * @return {Fill}
+   */
+  get responseColor() {
+    return this.$responseColor
+  }
+
+  /**
+   * Sets the color for a response message.
+   * @param {Fill} value
+   */
+  set responseColor(value) {
+    if (this.$responseColor !== value) {
+      this.$responseColor = value
+      if (!this.$isInitiating) {
+        this.updateIcon()
+      }
+    }
+  }
+
+  updateIcon() {
+    const nodeStyle = this.$adapter.nodeStyle
+    nodeStyle.icon = IconFactory.createMessage(
+      this.$messagePen,
+      this.isInitiating ? this.initiatingColor : this.responseColor
+    )
+    nodeStyle.modCount++
+  }
+
   createVisual(context, label) {
-    return MessageLabelStyle.ADAPTER.renderer
-      .getVisualCreator(label, MessageLabelStyle.ADAPTER)
-      .createVisual(context)
+    return this.$adapter.renderer.getVisualCreator(label, this.$adapter).createVisual(context)
   }
 
   updateVisual(context, oldVisual, label) {
-    return MessageLabelStyle.ADAPTER.renderer
-      .getVisualCreator(label, MessageLabelStyle.ADAPTER)
+    return this.$adapter.renderer
+      .getVisualCreator(label, this.$adapter)
       .updateVisual(context, oldVisual)
   }
 
   getBounds(context, label) {
-    return MessageLabelStyle.ADAPTER.renderer
-      .getBoundsProvider(label, MessageLabelStyle.ADAPTER)
-      .getBounds(context)
+    return this.$adapter.renderer.getBoundsProvider(label, this.$adapter).getBounds(context)
   }
 
   isVisible(context, rectangle, label) {
-    return MessageLabelStyle.ADAPTER.renderer
-      .getVisibilityTestable(label, MessageLabelStyle.ADAPTER)
+    return this.$adapter.renderer
+      .getVisibilityTestable(label, this.$adapter)
       .isVisible(context, rectangle)
   }
 
   isHit(context, location, label) {
-    return MessageLabelStyle.ADAPTER.renderer
-      .getHitTestable(label, MessageLabelStyle.ADAPTER)
-      .isHit(context, location)
+    return this.$adapter.renderer.getHitTestable(label, this.$adapter).isHit(context, location)
   }
 
   lookup(label, type) {
-    return MessageLabelStyle.ADAPTER.renderer
-      .getContext(label, MessageLabelStyle.ADAPTER)
-      .lookup(type)
+    return this.$adapter.renderer.getContext(label, this.$adapter).lookup(type)
   }
 
   getPreferredSize(label) {
-    return MessageLabelStyle.ADAPTER.renderer.getPreferredSize(label, MessageLabelStyle.ADAPTER)
+    return this.$adapter.renderer.getPreferredSize(label, this.$adapter)
   }
 
-  static get ADAPTER() {
-    if (!MessageLabelStyle.$adapter) {
-      const messageIcon = IconFactory.createMessage(
-        BPMN_CONSTANTS_STROKES_MESSAGE,
-        BPMN_CONSTANTS_FILLS_MESSAGE
-      )
-      const bpmnNodeStyle = new BpmnNodeStyle()
-      bpmnNodeStyle.icon = messageIcon
-      bpmnNodeStyle.minimumSize = BPMN_CONSTANTS_SIZES_MESSAGE
-      const labelStyle = new DefaultLabelStyle({
-        horizontalTextAlignment: 'center',
-        verticalTextAlignment: 'center'
-      })
-      MessageLabelStyle.$adapter = new NodeStyleLabelStyleAdapter(bpmnNodeStyle, labelStyle)
-    }
-    return MessageLabelStyle.$adapter
+  /**
+   * Create a clone of this object.
+   * @return {Object} A clone of this object.
+   * @see Specified by {@link ICloneable#clone}.
+   */
+  clone() {
+    const messageLabelStyle = new MessageLabelStyle()
+    messageLabelStyle.isInitiating = this.isInitiating
+    messageLabelStyle.outline = this.outline
+    messageLabelStyle.initiatingColor = this.initiatingColor
+    messageLabelStyle.responseColor = this.responseColor
+    return messageLabelStyle
   }
 }
 
@@ -7843,16 +8875,53 @@ export class DataStoreNodeStyle extends BpmnNodeStyle {
    */
   constructor() {
     super()
-    this.icon = IconFactory.createDataStore()
+    this.$background = BPMN_CONSTANTS_DATA_STORE_DEFAULT_BACKGROUND
+    this.$outline = BPMN_CONSTANTS_DATA_STORE_DEFAULT_OUTLINE
+    this.icon = IconFactory.createDataStore(this.$background, this.$outline)
     this.minimumSize = new Size(30, 20)
   }
 
-  createVisual(context, node) {
-    return super.createVisual(context, node)
+  /**
+   * Gets the background color of the data store.
+   * @return {Fill}
+   */
+  get background() {
+    return this.$background
   }
 
-  updateVisual(context, oldVisual, node) {
-    return super.updateVisual(context, oldVisual, node)
+  /**
+   * Sets the background color of the data store.
+   * @param {Fill} value
+   */
+  set background(value) {
+    if (this.$background !== value) {
+      this.modCount++
+      this.$background = value
+    }
+  }
+
+  /**
+   * Gets the outline color of the data store.
+   * @return {Fill}
+   */
+  get outline() {
+    return this.$outline
+  }
+
+  /**
+   * Sets the outline color of the data store.
+   * @param {Fill} value
+   */
+  set outline(value) {
+    if (this.$outline !== value) {
+      this.modCount++
+      this.$outline = value
+    }
+  }
+
+  /** @inheritDoc */
+  updateIcon() {
+    this.icon = IconFactory.createDataStore(this.background, this.outline)
   }
 
   /**
@@ -7894,6 +8963,9 @@ export class DataObjectNodeStyle extends BpmnNodeStyle {
     super()
     this.minimumSize = new Size(25, 30)
     this.$collection = false
+    this.$background = BPMN_CONSTANTS_DATA_OBJECT_DEFAULT_BACKGROUND
+    this.$outline = BPMN_CONSTANTS_DATA_OBJECT_DEFAULT_OUTLINE
+    this.$iconColor = BPMN_CONSTANTS_DEFAULT_ICON_COLOR
     this.typeIcon = null
     this.type = DataObjectType.NONE
   }
@@ -7933,23 +9005,92 @@ export class DataObjectNodeStyle extends BpmnNodeStyle {
     if (this.$type !== value) {
       this.modCount++
       this.$type = value
-      this.typeIcon = IconFactory.createDataObjectType(value)
-      if (this.typeIcon) {
-        this.typeIcon = IconFactory.createPlacedIcon(
-          this.typeIcon,
-          BPMN_CONSTANTS_PLACEMENTS_DATA_OBJECT_TYPE,
-          BPMN_CONSTANTS_SIZES_DATA_OBJECT_TYPE
-        )
-      }
+      this.updateTypeIcon()
     }
   }
 
-  createVisual(context, node) {
-    return super.createVisual(context, node)
+  /**
+   * Gets the background color of the data object.
+   * @return {Fill}
+   */
+  get background() {
+    return this.$background
   }
 
-  updateVisual(context, oldVisual, node) {
-    return super.updateVisual(context, oldVisual, node)
+  /**
+   * Sets the background color of the data object.
+   * @param {Fill} value
+   */
+  set background(value) {
+    if (this.$background !== value) {
+      this.modCount++
+      this.$background = value
+      this.updateDataIcon()
+    }
+  }
+
+  /**
+   * Gets the outline color of the data object.
+   * @return {Fill}
+   */
+  get outline() {
+    return this.$outline
+  }
+
+  /**
+   * Sets the outline color of the data object.
+   * @param {Fill} value
+   */
+  set outline(value) {
+    if (this.$outline !== value) {
+      this.modCount++
+      this.$outline = value
+      this.updateDataIcon()
+    }
+  }
+
+  /**
+   * Gets the color for the icon.
+   * @return {Fill}
+   */
+  get iconColor() {
+    return this.$iconColor
+  }
+
+  /**
+   * Sets the color for the icon.
+   * @param {Fill} value
+   */
+  set iconColor(value) {
+    if (this.$iconColor !== value) {
+      this.modCount++
+      this.$iconColor = value
+      this.updateTypeIcon()
+      this.updateCollectionIcon()
+    }
+  }
+
+  updateCollectionIcon() {
+    this.collectionIcon = IconFactory.createPlacedIcon(
+      IconFactory.createLoopCharacteristic(LoopCharacteristic.PARALLEL, this.iconColor),
+      BPMN_CONSTANTS_PLACEMENTS_DATA_OBJECT_MARKER,
+      BPMN_CONSTANTS_SIZES_MARKER
+    )
+  }
+
+  updateTypeIcon() {
+    this.typeIcon = IconFactory.createDataObjectType(this.type, this.iconColor)
+    if (this.typeIcon) {
+      this.typeIcon = IconFactory.createPlacedIcon(
+        this.typeIcon,
+        BPMN_CONSTANTS_PLACEMENTS_DATA_OBJECT_TYPE,
+        BPMN_CONSTANTS_SIZES_DATA_OBJECT_TYPE
+      )
+    }
+  }
+
+  updateDataIcon() {
+    this.dataIcon = IconFactory.createDataObject(this.background, this.outline)
   }
 
   /**
@@ -7957,11 +9098,18 @@ export class DataObjectNodeStyle extends BpmnNodeStyle {
    * This method is called by {@link BpmnNodeStyle#createVisual}.
    */
   updateIcon() {
+    if (!this.dataIcon) {
+      this.updateDataIcon()
+    }
+    if (!this.collectionIcon) {
+      this.updateCollectionIcon()
+    }
+
     const icons = new List()
-    icons.add(DataObjectNodeStyle.DATA_ICON)
+    icons.add(this.dataIcon)
 
     if (this.collection) {
-      icons.add(DataObjectNodeStyle.COLLECTION_ICON)
+      icons.add(this.collectionIcon)
     }
     if (this.typeIcon !== null) {
       icons.add(this.typeIcon)
@@ -7969,7 +9117,7 @@ export class DataObjectNodeStyle extends BpmnNodeStyle {
     if (icons.size > 1) {
       this.icon = IconFactory.createCombinedIcon(icons)
     } else {
-      this.icon = DataObjectNodeStyle.DATA_ICON
+      this.icon = this.dataIcon
     }
   }
 
@@ -7998,24 +9146,6 @@ export class DataObjectNodeStyle extends BpmnNodeStyle {
     path.transform(transform)
     return path
   }
-
-  static get DATA_ICON() {
-    return (
-      DataObjectNodeStyle.$dataIcon ||
-      (DataObjectNodeStyle.$dataIcon = IconFactory.createDataObject())
-    )
-  }
-
-  static get COLLECTION_ICON() {
-    return (
-      DataObjectNodeStyle.$collectionIcon ||
-      (DataObjectNodeStyle.$collectionIcon = IconFactory.createPlacedIcon(
-        IconFactory.createLoopCharacteristic(LoopCharacteristic.PARALLEL),
-        BPMN_CONSTANTS_PLACEMENTS_DATA_OBJECT_MARKER,
-        BPMN_CONSTANTS_SIZES_MARKER
-      ))
-    )
-  }
 }
 
 /**
@@ -8028,6 +9158,9 @@ export class ConversationNodeStyle extends BpmnNodeStyle {
   constructor() {
     super()
     this.$type = -1
+    this.$background = BPMN_CONSTANTS_CONVERSATION_DEFAULT_BACKGROUND
+    this.$outline = BPMN_CONSTANTS_CONVERSATION_DEFAULT_OUTLINE
+    this.$iconColor = BPMN_CONSTANTS_DEFAULT_ICON_COLOR
     this.type = ConversationType.CONVERSATION
     this.minimumSize = BPMN_CONSTANTS_SIZES_CONVERSATION
   }
@@ -8048,33 +9181,85 @@ export class ConversationNodeStyle extends BpmnNodeStyle {
     if (this.$type !== value || !this.icon) {
       this.modCount++
       this.$type = value
-
-      let typeIcon = IconFactory.createConversation(this.$type)
-      let markerIcon = IconFactory.createConversationMarker(this.$type)
-
-      if (markerIcon) {
-        markerIcon = IconFactory.createPlacedIcon(
-          markerIcon,
-          BPMN_CONSTANTS_PLACEMENTS_CONVERSATION_MARKER,
-          BPMN_CONSTANTS_SIZES_MARKER
-        )
-        typeIcon = IconFactory.createCombinedIcon(List.fromArray([typeIcon, markerIcon]))
-      }
-
-      this.icon = IconFactory.createPlacedIcon(
-        typeIcon,
-        BPMN_CONSTANTS_PLACEMENTS_CONVERSATION,
-        BPMN_CONSTANTS_SIZES_CONVERSATION
-      )
     }
   }
 
-  createVisual(context, node) {
-    return super.createVisual(context, node)
+  /**
+   * Gets the background color of the conversation.
+   * @return {Fill}
+   */
+  get background() {
+    return this.$background
   }
 
-  updateVisual(context, oldVisual, node) {
-    return super.updateVisual(context, oldVisual, node)
+  /**
+   * Sets the background color of the conversation.
+   * @param {Fill} value
+   */
+  set background(value) {
+    if (this.$background !== value) {
+      this.modCount++
+      this.$background = value
+    }
+  }
+
+  /**
+   * Gets the outline color of the conversation.
+   * @return {Fill}
+   */
+  get outline() {
+    return this.$outline
+  }
+
+  /**
+   * Sets the outline color of the conversation.
+   * @param {Fill} value
+   */
+  set outline(value) {
+    if (this.$outline !== value) {
+      this.modCount++
+      this.$outline = value
+    }
+  }
+
+  /**
+   * Gets the primary color for icons and markers.
+   * @return {Fill}
+   */
+  get iconColor() {
+    return this.$iconColor
+  }
+
+  /**
+   * Sets the primary color for icons and markers.
+   * @param {Fill} value
+   */
+  set iconColor(value) {
+    if (this.$iconColor !== value) {
+      this.modCount++
+      this.$iconColor = value
+    }
+  }
+
+  /** @inheritDoc */
+  updateIcon() {
+    let typeIcon = IconFactory.createConversation(this.$type, this.background, this.outline)
+    let markerIcon = IconFactory.createConversationMarker(this.$type, this.iconColor)
+
+    if (markerIcon) {
+      markerIcon = IconFactory.createPlacedIcon(
+        markerIcon,
+        BPMN_CONSTANTS_PLACEMENTS_CONVERSATION_MARKER,
+        BPMN_CONSTANTS_SIZES_MARKER
+      )
+      typeIcon = IconFactory.createCombinedIcon(List.fromArray([typeIcon, markerIcon]))
+    }
+
+    this.icon = IconFactory.createPlacedIcon(
+      typeIcon,
+      BPMN_CONSTANTS_PLACEMENTS_CONVERSATION,
+      BPMN_CONSTANTS_SIZES_CONVERSATION
+    )
   }
 
   /**
@@ -8125,6 +9310,9 @@ export class EventNodeStyle extends BpmnNodeStyle {
   constructor() {
     super()
     this.$characteristic = EventCharacteristic.START
+    this.$background = BPMN_CONSTANTS_DEFAULT_EVENT_BACKGROUND
+    this.$outline = BPMN_CONSTANTS_DEFAULT_EVENT_OUTLINE
+    this.$iconColor = BPMN_CONSTANTS_DEFAULT_ICON_COLOR
     this.minimumSize = new Size(20, 20)
     this.eventIcon = null
     this.typeIcon = null
@@ -8173,8 +9361,75 @@ export class EventNodeStyle extends BpmnNodeStyle {
     }
   }
 
+  /**
+   * Gets the background color of the event.
+   * @return {Fill}
+   */
+  get background() {
+    return this.$background
+  }
+
+  /**
+   * Sets the background color of the event.
+   * @param {Fill} value
+   */
+  set background(value) {
+    if (this.$background !== value) {
+      this.modCount++
+      this.$background = value
+      this.createEventIcon()
+    }
+  }
+
+  /**
+   * Gets the outline color of the event icon.
+   * @return {Fill}
+   */
+  get outline() {
+    return this.$outline
+  }
+
+  /**
+   * Sets the outline color of the event icon.
+   * If this is set to null, the outline color is automatic, based on the
+   * {@link EventNodeStyle#characteristic}.
+   * @param {Fill} value
+   */
+  set outline(value) {
+    if (this.$outline !== value) {
+      this.modCount++
+      this.$outline = value
+      this.createEventIcon()
+    }
+  }
+
+  /**
+   * Gets the primary color for icons and markers.
+   * @return {Fill}
+   */
+  get iconColor() {
+    return this.$iconColor
+  }
+
+  /**
+   * Sets the primary color for icons and markers.
+   * @param {Fill} value
+   */
+  set iconColor(value) {
+    if (this.$iconColor !== value) {
+      this.modCount++
+      this.$iconColor = value
+      this.createTypeIcon()
+    }
+  }
+
   createTypeIcon() {
-    this.typeIcon = IconFactory.createEventType(this.type, this.fillTypeIcon)
+    this.typeIcon = IconFactory.createEventType(
+      this.type,
+      this.fillTypeIcon,
+      this.iconColor,
+      this.background
+    )
     if (this.typeIcon) {
       this.typeIcon = IconFactory.createPlacedIcon(
         this.typeIcon,
@@ -8185,7 +9440,7 @@ export class EventNodeStyle extends BpmnNodeStyle {
   }
 
   createEventIcon() {
-    this.eventIcon = IconFactory.createEvent(this.characteristic)
+    this.eventIcon = IconFactory.createEvent(this.characteristic, this.background, this.outline)
     this.eventIcon = IconFactory.createPlacedIcon(
       this.eventIcon,
       BPMN_CONSTANTS_PLACEMENTS_EVENT,
@@ -8205,6 +9460,9 @@ export class EventNodeStyle extends BpmnNodeStyle {
    * This method is called by {@link BpmnNodeStyle#createVisual}.
    */
   updateIcon() {
+    if (!this.eventIcon) {
+      this.createEventIcon()
+    }
     if (this.typeIcon) {
       this.icon = IconFactory.createCombinedIcon(
         new List(List.fromArray([this.eventIcon, this.typeIcon]))
@@ -8275,12 +9533,13 @@ export class GroupNodeStyle extends BaseClass(INodeStyle) {
   constructor() {
     super()
     this.$insets = new Insets(15)
+    this.$renderer = new GroupNodeStyleRenderer()
   }
 
   /**
    * Gets the insets for the node.
-   * These insets are returned via an {@link INodeInsetsProvider} if such an instance is queried through
-   * the
+   * These insets are returned via an {@link INodeInsetsProvider} if such an instance is queried
+   * through the
    * {@link INodeStyleRenderer#getContext context lookup}.
    * @see {@link INodeInsetsProvider}
    * @return {Insets} An insets object that describes the insets of node.
@@ -8291,13 +9550,63 @@ export class GroupNodeStyle extends BaseClass(INodeStyle) {
 
   /**
    * Sets the insets for the node.
-   * These insets are returned via an {@link INodeInsetsProvider} if such an instance is queried through
-   * the
+   * These insets are returned via an {@link INodeInsetsProvider} if such an instance is queried
+   * through the
    * @see {@link INodeInsetsProvider}
    * @param {Insets} insets An insets object that describes the insets of node.
    */
   set insets(insets) {
     this.$insets = insets
+  }
+
+  /**
+   * Gets the background color of the group.
+   * @return {Fill}
+   */
+  get background() {
+    return this.$renderer.shapeNodeStyle.fill
+  }
+
+  /**
+   * Sets the background color of the group.
+   * @param {Fill} value
+   */
+  set background(value) {
+    if (this.$renderer.shapeNodeStyle.fill !== value) {
+      this.$renderer.shapeNodeStyle.fill = value
+    }
+  }
+
+  /**
+   * Gets the outline color of the group.
+   * @return {Fill}
+   */
+  get outline() {
+    return this.$renderer.shapeNodeStyle.stroke.fill
+  }
+
+  /**
+   * Sets the outline color of the group.
+   * @param {Fill} value
+   */
+  set outline(value) {
+    if (this.$renderer.shapeNodeStyle.stroke.fill !== value) {
+      this.$renderer.shapeNodeStyle.stroke = this.getPen(value)
+    }
+  }
+
+  /**
+   * @param {Fill} outline
+   * @return {Stroke}
+   */
+  getPen(outline) {
+    const stroke = new Stroke({
+      fill: outline,
+      dashStyle: DashStyle.DASH_DOT,
+      lineCap: LineCap.ROUND
+    })
+    stroke.freeze()
+    return stroke
   }
 
   /**
@@ -8308,6 +9617,8 @@ export class GroupNodeStyle extends BaseClass(INodeStyle) {
   clone() {
     const groupNodeStyle = new GroupNodeStyle()
     groupNodeStyle.insets = this.insets
+    groupNodeStyle.background = this.background
+    groupNodeStyle.outline = this.outline
     return groupNodeStyle
   }
 
@@ -8325,25 +9636,7 @@ export class GroupNodeStyle extends BaseClass(INodeStyle) {
    * @type {INodeStyleRenderer}
    */
   get renderer() {
-    return GroupNodeStyle.RENDERER
-  }
-
-  /** @type {INodeStyle} */
-  static get SHAPE_NODE_STYLE() {
-    if (!GroupNodeStyle.$shapeNodeStyle) {
-      const shapeNodeStyle = new ShapeNodeStyle({
-        shape: ShapeNodeShape.ROUND_RECTANGLE,
-        stroke: BPMN_CONSTANTS_STROKES_GROUP_NODE,
-        fill: BPMN_CONSTANTS_FILLS_GROUP_NODE
-      })
-      shapeNodeStyle.renderer.roundRectArcRadius = BPMN_CONSTANTS_GROUP_NODE_CORNER_RADIUS
-      GroupNodeStyle.$shapeNodeStyle = shapeNodeStyle
-    }
-    return GroupNodeStyle.$shapeNodeStyle
-  }
-
-  static get RENDERER() {
-    return GroupNodeStyle.$renderer || (GroupNodeStyle.$renderer = new GroupNodeStyleRenderer())
+    return this.$renderer
   }
 }
 
@@ -8355,6 +9648,26 @@ class GroupNodeStyleRenderer extends BaseClass(INodeStyleRenderer, ILookup) {
     super()
     this.lastNode = null
     this.lastStyle = null
+    const groupOutline = new Stroke({
+      fill: BPMN_CONSTANTS_GROUP_DEFAULT_OUTLINE,
+      dashStyle: DashStyle.DASH_DOT,
+      lineCap: LineCap.ROUND
+    })
+    groupOutline.freeze()
+    this.$shapeNodeStyle = new ShapeNodeStyle({
+      shape: ShapeNodeShape.ROUND_RECTANGLE,
+      stroke: groupOutline,
+      fill: BPMN_CONSTANTS_GROUP_DEFAULT_BACKGROUND
+    })
+    this.$shapeNodeStyle.renderer.roundRectArcRadius = BPMN_CONSTANTS_GROUP_NODE_CORNER_RADIUS
+  }
+
+  /**
+   * The ShapeNodeStyle that is used internally to render this group style.
+   * @return {ShapeNodeStyle}
+   */
+  get shapeNodeStyle() {
+    return this.$shapeNodeStyle
   }
 
   /**
@@ -8363,19 +9676,16 @@ class GroupNodeStyleRenderer extends BaseClass(INodeStyleRenderer, ILookup) {
    * This method may return a flyweight implementation, but never <code>null</code>.
    * @param {INode} node The node to provide an instance for
    * @param {INodeStyle} style The style to use for the creation of the visual
-   * @return {IVisualCreator} An implementation that may be used to subsequently create or update the
-   *   visual for the item. Clients should not cache this instance and must always call this method immediately
-   *   before using the value returned. This enables the use of the flyweight design pattern for implementations.
-   *   This method may not return <code>null</code> but should yield a {@link VoidVisualCreator#INSTANCE
-   *   void} implementation instead.
+   * @return {IVisualCreator} An implementation that may be used to subsequently create or update
+   *   the visual for the item. Clients should not cache this instance and must always call this
+   *   method immediately before using the value returned. This enables the use of the flyweight
+   *   design pattern for implementations. This method may not return <code>null</code> but should
+   *   yield a {@link VoidVisualCreator#INSTANCE void} implementation instead.
    * @see {@link VoidVisualCreator#INSTANCE}
    * @see Specified by {@link INodeStyleRenderer#getVisualCreator}.
    */
   getVisualCreator(node, style) {
-    return GroupNodeStyle.SHAPE_NODE_STYLE.renderer.getVisualCreator(
-      node,
-      GroupNodeStyle.SHAPE_NODE_STYLE
-    )
+    return this.$shapeNodeStyle.renderer.getVisualCreator(node, this.$shapeNodeStyle)
   }
 
   /**
@@ -8391,10 +9701,7 @@ class GroupNodeStyleRenderer extends BaseClass(INodeStyleRenderer, ILookup) {
    * @see Specified by {@link INodeStyleRenderer#getBoundsProvider}.
    */
   getBoundsProvider(node, style) {
-    return GroupNodeStyle.SHAPE_NODE_STYLE.renderer.getBoundsProvider(
-      node,
-      GroupNodeStyle.SHAPE_NODE_STYLE
-    )
+    return this.$shapeNodeStyle.renderer.getBoundsProvider(node, this.$shapeNodeStyle)
   }
 
   /**
@@ -8410,10 +9717,7 @@ class GroupNodeStyleRenderer extends BaseClass(INodeStyleRenderer, ILookup) {
    * @see Specified by {@link INodeStyleRenderer#getVisibilityTestable}.
    */
   getVisibilityTestable(node, style) {
-    return GroupNodeStyle.SHAPE_NODE_STYLE.renderer.getVisibilityTestable(
-      node,
-      GroupNodeStyle.SHAPE_NODE_STYLE
-    )
+    return this.$shapeNodeStyle.renderer.getVisibilityTestable(node, this.$shapeNodeStyle)
   }
 
   /**
@@ -8425,15 +9729,12 @@ class GroupNodeStyleRenderer extends BaseClass(INodeStyleRenderer, ILookup) {
    * @return {IHitTestable} An implementation that may be used to subsequently perform
    * hit tests. Clients should not cache this instance and must always call
    * this method immediately before using the value returned. This enables the
-   * use of the flyweight design pattern for implementations. This method may return <code>null</code>
-   * to indicate that the item cannot be hit tested.
+   * use of the flyweight design pattern for implementations. This method may return
+   *   <code>null</code> to indicate that the item cannot be hit tested.
    * @see Specified by {@link INodeStyleRenderer#getHitTestable}.
    */
   getHitTestable(node, style) {
-    return GroupNodeStyle.SHAPE_NODE_STYLE.renderer.getHitTestable(
-      node,
-      GroupNodeStyle.SHAPE_NODE_STYLE
-    )
+    return this.$shapeNodeStyle.renderer.getHitTestable(node, this.$shapeNodeStyle)
   }
 
   /**
@@ -8449,10 +9750,7 @@ class GroupNodeStyleRenderer extends BaseClass(INodeStyleRenderer, ILookup) {
    * @see Specified by {@link INodeStyleRenderer#getMarqueeTestable}.
    */
   getMarqueeTestable(node, style) {
-    return GroupNodeStyle.SHAPE_NODE_STYLE.renderer.getMarqueeTestable(
-      node,
-      GroupNodeStyle.SHAPE_NODE_STYLE
-    )
+    return this.$shapeNodeStyle.renderer.getMarqueeTestable(node, this.$shapeNodeStyle)
   }
 
   /**
@@ -8480,15 +9778,13 @@ class GroupNodeStyleRenderer extends BaseClass(INodeStyleRenderer, ILookup) {
    * @param {INode} node The node to provide an instance for
    * @param {INodeStyle} style The style to use for the painting
    * @return {IShapeGeometry} An implementation that may be used to subsequently query geometry
-   *   information from. Clients should not cache this instance and must always call this method immediately before
-   *   using the value returned. This enables the use of the flyweight design pattern for implementations
+   *   information from. Clients should not cache this instance and must always call this method
+   *   immediately before using the value returned. This enables the use of the flyweight design
+   *   pattern for implementations
    * @see Specified by {@link INodeStyleRenderer#getShapeGeometry}.
    */
   getShapeGeometry(node, style) {
-    return GroupNodeStyle.SHAPE_NODE_STYLE.renderer.getShapeGeometry(
-      node,
-      GroupNodeStyle.SHAPE_NODE_STYLE
-    )
+    return this.$shapeNodeStyle.renderer.getShapeGeometry(node, this.$shapeNodeStyle)
   }
 
   /**
@@ -8509,10 +9805,7 @@ class GroupNodeStyleRenderer extends BaseClass(INodeStyleRenderer, ILookup) {
     if (type === INodeInsetsProvider.$class && this.lastStyle !== null) {
       return new GroupInsetsProvider(this.lastStyle)
     }
-    const lookup = GroupNodeStyle.SHAPE_NODE_STYLE.renderer.getContext(
-      this.lastNode,
-      GroupNodeStyle.SHAPE_NODE_STYLE
-    )
+    const lookup = this.$shapeNodeStyle.renderer.getContext(this.lastNode, this.$shapeNodeStyle)
     return lookup !== null ? lookup.lookup(type) : null
   }
 }
@@ -8527,7 +9820,8 @@ class GroupInsetsProvider extends BaseClass(INodeInsetsProvider) {
   }
 
   /**
-   * Returns the insets from {@link GroupNodeStyle} for the given node to include the size of the participant bands.
+   * Returns the insets from {@link GroupNodeStyle} for the given node to include the size of the
+   * participant bands.
    * @param {INode} node The node for which the insets are provided
    * @return {Insets}
    */
@@ -8546,6 +9840,9 @@ export class GatewayNodeStyle extends BpmnNodeStyle {
   constructor() {
     super()
     this.$type = null
+    this.$outline = BPMN_CONSTANTS_GATEWAY_DEFAULT_OUTLINE
+    this.$iconColor = BPMN_CONSTANTS_DEFAULT_ICON_COLOR
+    this.$background = BPMN_CONSTANTS_GATEWAY_DEFAULT_BACKGROUND
     this.type = GatewayType.EXCLUSIVE_WITHOUT_MARKER
     this.minimumSize = new Size(20, 20)
     this.typeIcon = null
@@ -8567,14 +9864,86 @@ export class GatewayNodeStyle extends BpmnNodeStyle {
     if (this.$type !== value) {
       this.modCount++
       this.$type = value
-      this.typeIcon = IconFactory.createGatewayType(this.$type)
-      if (this.typeIcon) {
-        this.typeIcon = IconFactory.createPlacedIcon(
-          this.typeIcon,
-          BPMN_CONSTANTS_PLACEMENTS_GATEWAY_TYPE,
-          Size.EMPTY
-        )
-      }
+      this.updateTypeIcon()
+    }
+  }
+
+  /**
+   * Gets the background color of the gateway.
+   * @return {Fill}
+   */
+  get background() {
+    return this.$background
+  }
+
+  /**
+   * Sets the background color of the gateway.
+   * @param {Fill} value
+   */
+  set background(value) {
+    if (this.$background !== value) {
+      this.modCount++
+      this.$background = value
+      this.updateGatewayIcon()
+    }
+  }
+
+  /**
+   * Gets the outline color of the gateway.
+   * @return {Fill}
+   */
+  get outline() {
+    return this.$outline
+  }
+
+  /**
+   * Sets the outline color of the gateway.
+   * @param {Fill} value
+   */
+  set outline(value) {
+    if (this.$outline !== value) {
+      this.modCount++
+      this.$outline = value
+      this.updateGatewayIcon()
+    }
+  }
+
+  /**
+   * Gets the color for the icon.
+   * @return {Fill}
+   */
+  get iconColor() {
+    return this.$iconColor
+  }
+
+  /**
+   * Sets the color for the icon.
+   * @param {Fill} value
+   */
+  set iconColor(value) {
+    if (this.$iconColor !== value) {
+      this.modCount++
+      this.$iconColor = value
+      this.updateTypeIcon()
+    }
+  }
+
+  updateGatewayIcon() {
+    this.gatewayIcon = IconFactory.createPlacedIcon(
+      IconFactory.createGateway(this.background, this.outline),
+      BPMN_CONSTANTS_PLACEMENTS_GATEWAY,
+      Size.EMPTY
+    )
+  }
+
+  updateTypeIcon() {
+    this.typeIcon = IconFactory.createGatewayType(this.type, this.iconColor)
+    if (this.typeIcon !== null) {
+      this.typeIcon = IconFactory.createPlacedIcon(
+        this.typeIcon,
+        BPMN_CONSTANTS_PLACEMENTS_GATEWAY_TYPE,
+        Size.EMPTY
+      )
     }
   }
 
@@ -8583,12 +9952,13 @@ export class GatewayNodeStyle extends BpmnNodeStyle {
    * This method is called by {@link BpmnNodeStyle#createVisual}.
    */
   updateIcon() {
+    if (!this.gatewayIcon) {
+      this.updateGatewayIcon()
+    }
     this.icon =
       this.typeIcon !== null
-        ? IconFactory.createCombinedIcon(
-            List.fromArray([GatewayNodeStyle.GATEWAY_ICON, this.typeIcon])
-          )
-        : GatewayNodeStyle.GATEWAY_ICON
+        ? IconFactory.createCombinedIcon(List.fromArray([this.gatewayIcon, this.typeIcon]))
+        : this.gatewayIcon
   }
 
   /**
@@ -8656,17 +10026,6 @@ export class GatewayNodeStyle extends BpmnNodeStyle {
     const dist = Math.abs(distVector.x) + Math.abs(distVector.y)
     return dist < size * 0.5 + canvasContext.hitTestRadius
   }
-
-  static get GATEWAY_ICON() {
-    return (
-      GatewayNodeStyle.$gatewayIcon ||
-      (GatewayNodeStyle.$gatewayIcon = IconFactory.createPlacedIcon(
-        IconFactory.createGateway(),
-        BPMN_CONSTANTS_PLACEMENTS_GATEWAY,
-        Size.EMPTY
-      ))
-    )
-  }
 }
 
 /**
@@ -8679,12 +10038,12 @@ export class EventPortStyle extends BaseClass(IPortStyle) {
    */
   constructor() {
     super()
-    const eventNodeStyle = new EventNodeStyle()
-    eventNodeStyle.characteristic = EventCharacteristic.BOUNDARY_INTERRUPTING
-    eventNodeStyle.type = EventType.COMPENSATION
-    const nodeStylePortStyleAdapter = new NodeStylePortStyleAdapter(eventNodeStyle)
+    this.$nodeStyle = new EventNodeStyle()
+    this.$nodeStyle.characteristic = EventCharacteristic.BOUNDARY_INTERRUPTING
+    this.$nodeStyle.type = EventType.COMPENSATION
+    const nodeStylePortStyleAdapter = new NodeStylePortStyleAdapter(this.$nodeStyle)
     nodeStylePortStyleAdapter.renderSize = BPMN_CONSTANTS_SIZES_EVENT_PORT
-    this.adapter = nodeStylePortStyleAdapter
+    this.$adapter = nodeStylePortStyleAdapter
   }
 
   /**
@@ -8724,7 +10083,7 @@ export class EventPortStyle extends BaseClass(IPortStyle) {
    * @type {Size}
    */
   get renderSize() {
-    return this.adapter.renderSize
+    return this.$adapter.renderSize
   }
 
   /**
@@ -8732,15 +10091,78 @@ export class EventPortStyle extends BaseClass(IPortStyle) {
    * @type {Size}
    */
   set renderSize(value) {
-    this.adapter.renderSize = value
+    this.$adapter.renderSize = value
+  }
+
+  /**
+   * Gets the background color of the event.
+   * @return {Fill}
+   */
+  get background() {
+    return this.$nodeStyle.background
+  }
+
+  /**
+   * Sets the background color of the event.
+   * @param {Fill} value
+   */
+  set background(value) {
+    if (this.$nodeStyle.background !== value) {
+      this.$nodeStyle.background = value
+    }
+  }
+
+  /**
+   * Gets the outline color of the event.
+   * @return {Fill}
+   */
+  get outline() {
+    return this.$nodeStyle.outline
+  }
+
+  /**
+   * Sets the outline color of the event.
+   * If this is set to null, the outline color is automatic, based on the
+   * {@link EventPortStyle#characteristic}.
+   * @param {Fill} value
+   */
+  set outline(value) {
+    if (this.$nodeStyle.outline !== value) {
+      this.$nodeStyle.outline = value
+    }
+  }
+
+  /**
+   * Gets the primary color for icons and markers.
+   * @return {Fill}
+   */
+  get iconColor() {
+    return this.$nodeStyle.iconColor
+  }
+
+  /**
+   * Sets the primary color for icons and markers.
+   * @param {Fill} value
+   */
+  set iconColor(value) {
+    if (this.$nodeStyle.iconColor !== value) {
+      this.$nodeStyle.iconColor = value
+    }
   }
 
   /**
    * @type {EventNodeStyle}
    */
   get eventNodeStyle() {
-    const nodeStyle = this.adapter.nodeStyle
+    const nodeStyle = this.$adapter.nodeStyle
     return nodeStyle instanceof EventNodeStyle ? nodeStyle : null
+  }
+
+  /**
+   * @return {NodeStylePortStyleAdapter}
+   */
+  get adapter() {
+    return this.$adapter
   }
 
   /**
@@ -8778,11 +10200,11 @@ class EventPortStyleRenderer extends BaseClass(IPortStyleRenderer, ILookup) {
    * handle the provided item and its associated style.
    * @param {IPort} port The port to provide an instance for
    * @param {IPortStyle} style The style to use for the creation of the visual
-   * @return {IVisualCreator} An implementation that may be used to subsequently create or update the
-   *   visual for the item. Clients should not cache this instance and must always call this method immediately
-   *   before using the value returned. This enables the use of the flyweight design pattern for implementations.
-   *   This method may not return <code>null</code> but should yield a {@link VoidVisualCreator#INSTANCE
-   *   void} implementation instead.
+   * @return {IVisualCreator} An implementation that may be used to subsequently create or update
+   *   the visual for the item. Clients should not cache this instance and must always call this
+   *   method immediately before using the value returned. This enables the use of the flyweight
+   *   design pattern for implementations. This method may not return <code>null</code> but should
+   *   yield a {@link VoidVisualCreator#INSTANCE void} implementation instead.
    * @see {@link VoidVisualCreator#INSTANCE}
    * @see Specified by {@link IPortStyleRenderer#getVisualCreator}.
    */
@@ -8831,8 +10253,8 @@ class EventPortStyleRenderer extends BaseClass(IPortStyleRenderer, ILookup) {
    * @return {IHitTestable} An implementation that may be used to subsequently perform
    * hit tests. Clients should not cache this instance and must always call
    * this method immediately before using the value returned. This enables the
-   * use of the flyweight design pattern for implementations. This method may return <code>null</code>
-   * to indicate that the item cannot be hit tested.
+   * use of the flyweight design pattern for implementations. This method may return
+   *   <code>null</code> to indicate that the item cannot be hit tested.
    * @see Specified by {@link IPortStyleRenderer#getHitTestable}.
    */
   getHitTestable(port, style) {
@@ -9074,22 +10496,25 @@ class DataObjectIcon extends Icon {
 }
 
 class CollapseButtonIcon extends Icon {
-  constructor(node) {
+  constructor(node, iconFill) {
     super()
     this.node = node
+    this.iconFill = iconFill
+    this.collapsedIcon = IconFactory.createStaticSubState(SubState.COLLAPSED, iconFill)
+    this.expandedIcon = IconFactory.createStaticSubState(SubState.EXPANDED, iconFill)
     this.touchEndRegistered = false
     this.onTouchEndDelegate = null
   }
 
   /** @return {Visual} */
   createVisual(context) {
-    CollapseButtonIcon.COLLAPSED_ICON.setBounds(new Rect(Point.ORIGIN, this.bounds.size))
-    CollapseButtonIcon.EXPANDED_ICON.setBounds(new Rect(Point.ORIGIN, this.bounds.size))
+    this.collapsedIcon.setBounds(new Rect(Point.ORIGIN, this.bounds.size))
+    this.expandedIcon.setBounds(new Rect(Point.ORIGIN, this.bounds.size))
     const button = this.createButton(
       context,
       this.node,
-      CollapseButtonIcon.COLLAPSED_ICON.createVisual(context),
-      CollapseButtonIcon.EXPANDED_ICON.createVisual(context)
+      this.collapsedIcon.createVisual(context),
+      this.expandedIcon.createVisual(context)
     )
     const container = new SvgVisualGroup()
     container.add(new SvgVisual(button.svgElement))
@@ -9112,21 +10537,15 @@ class CollapseButtonIcon extends Icon {
       return this.createVisual(context)
     }
 
-    CollapseButtonIcon.COLLAPSED_ICON.setBounds(new Rect(Point.ORIGIN, this.bounds.size))
-    CollapseButtonIcon.EXPANDED_ICON.setBounds(new Rect(Point.ORIGIN, this.bounds.size))
+    this.collapsedIcon.setBounds(new Rect(Point.ORIGIN, this.bounds.size))
+    this.expandedIcon.setBounds(new Rect(Point.ORIGIN, this.bounds.size))
 
     const button = container.children.get(0)
-    button.checkedVisual = CollapseButtonIcon.COLLAPSED_ICON.updateVisual(
-      context,
-      button.checkedVisual
-    )
-    button.uncheckedVisual = CollapseButtonIcon.EXPANDED_ICON.updateVisual(
-      context,
-      button.uncheckedVisual
-    )
+    button.checkedVisual = this.collapsedIcon.updateVisual(context, button.checkedVisual)
+    button.uncheckedVisual = this.expandedIcon.updateVisual(context, button.uncheckedVisual)
 
     const transform = new Matrix()
-    transform.translate(this.node.layout.topLeft)
+    transform.translate(this.bounds.toRect().topLeft)
     container.transform = transform
 
     button.checked = !isExpanded(context, this.node)
@@ -9194,20 +10613,6 @@ class CollapseButtonIcon extends Icon {
     this.touchEndRegistered = false
     toggleExpansionState(currentItem, context)
   }
-
-  static get COLLAPSED_ICON() {
-    return (
-      CollapseButtonIcon.$collapsedIcon ||
-      (CollapseButtonIcon.$collapsedIcon = IconFactory.createStaticSubState(SubState.COLLAPSED))
-    )
-  }
-
-  static get EXPANDED_ICON() {
-    return (
-      CollapseButtonIcon.$expandedIcon ||
-      (CollapseButtonIcon.$expandedIcon = IconFactory.createStaticSubState(SubState.EXPANDED))
-    )
-  }
 }
 
 /** @return {boolean} */
@@ -9240,7 +10645,8 @@ function toggleExpansionState(currentNode, context) {
 }
 
 /**
- * A class that contains all information to determine whether or not a {@link PathIcon} needs to be updated.
+ * A class that contains all information to determine whether or not a {@link PathIcon} needs to be
+ * updated.
  */
 class PathIconState {
   constructor(width, height, stroke, fill) {
@@ -9286,14 +10692,14 @@ export const EventCharacteristic = Enum('EventCharacteristic', {
    */
   START: 0,
   /**
-   * Specifies that an Event is a Start Event for a Sub-Process according to BPMN that interrupts the containing
-   * Process.
+   * Specifies that an Event is a Start Event for a Sub-Process according to BPMN that interrupts
+   * the containing Process.
    * @see {@link EventNodeStyle}
    */
   SUB_PROCESS_INTERRUPTING: 1,
   /**
-   * Specifies that an Event is a Start Event for a Sub-Process according to BPMN that doesn`t interrupt the
-   * containing Process.
+   * Specifies that an Event is a Start Event for a Sub-Process according to BPMN that doesn`t
+   * interrupt the containing Process.
    * @see {@link EventNodeStyle}
    */
   SUB_PROCESS_NON_INTERRUPTING: 2,
@@ -9303,14 +10709,14 @@ export const EventCharacteristic = Enum('EventCharacteristic', {
    */
   CATCHING: 3,
   /**
-   * Specifies that an Event is an Intermediate Event Attached to an Activity Boundary according to BPMN that
-   * interrupts the Activity.
+   * Specifies that an Event is an Intermediate Event Attached to an Activity Boundary according to
+   * BPMN that interrupts the Activity.
    * @see {@link EventNodeStyle}
    */
   BOUNDARY_INTERRUPTING: 4,
   /**
-   * Specifies that an Event is an Intermediate Event Attached to an Activity Boundary according to BPMN that doesn't
-   * interrupt the Activity.
+   * Specifies that an Event is an Intermediate Event Attached to an Activity Boundary according to
+   * BPMN that doesn't interrupt the Activity.
    * @see {@link EventNodeStyle}
    */
   BOUNDARY_NON_INTERRUPTING: 5,
@@ -9396,10 +10802,27 @@ export const PoolNodeStyleExtension = Class('PoolNodeStyleExtension', {
     }
   },
 
+  $iconColor: BPMN_CONSTANTS_DEFAULT_ICON_COLOR,
+  iconColor: {
+    $meta() {
+      return [
+        GraphMLAttribute().init({ defaultValue: BPMN_CONSTANTS_DEFAULT_ICON_COLOR }),
+        TypeAttribute(Fill.$class)
+      ]
+    },
+    get() {
+      return this.$iconColor
+    },
+    set(iconColor) {
+      this.$iconColor = iconColor
+    }
+  },
+
   provideValue(serviceProvider) {
     const style = new PoolNodeStyle(this.vertical)
     style.multipleInstance = this.multipleInstance
     style.tableNodeStyle = this.tableNodeStyle
+    style.iconColor = this.iconColor
     return style
   }
 })
@@ -9680,6 +11103,70 @@ export const ActivityNodeStyleExtension = Class('ActivityNodeStyleExtension', {
     }
   },
 
+  $background: BPMN_CONSTANTS_ACTIVITY_DEFAULT_BACKGROUND,
+  background: {
+    $meta() {
+      return [
+        GraphMLAttribute().init({ defaultValue: BPMN_CONSTANTS_ACTIVITY_DEFAULT_BACKGROUND }),
+        TypeAttribute(Fill.$class)
+      ]
+    },
+    get() {
+      return this.$background
+    },
+    set(background) {
+      this.$background = background
+    }
+  },
+
+  $outline: BPMN_CONSTANTS_ACTIVITY_DEFAULT_OUTLINE,
+  outline: {
+    $meta() {
+      return [
+        GraphMLAttribute().init({ defaultValue: BPMN_CONSTANTS_ACTIVITY_DEFAULT_OUTLINE }),
+        TypeAttribute(Fill.$class)
+      ]
+    },
+    get() {
+      return this.$outline
+    },
+    set(outline) {
+      this.$outline = outline
+    }
+  },
+
+  $iconColor: BPMN_CONSTANTS_DEFAULT_ICON_COLOR,
+  iconColor: {
+    $meta() {
+      return [
+        GraphMLAttribute().init({ defaultValue: BPMN_CONSTANTS_DEFAULT_ICON_COLOR }),
+        TypeAttribute(Fill.$class)
+      ]
+    },
+    get() {
+      return this.$iconColor
+    },
+    set(iconColor) {
+      this.$iconColor = iconColor
+    }
+  },
+
+  $eventOutline: BPMN_CONSTANTS_DEFAULT_EVENT_OUTLINE,
+  eventOutline: {
+    $meta() {
+      return [
+        GraphMLAttribute().init({ defaultValue: BPMN_CONSTANTS_DEFAULT_EVENT_OUTLINE }),
+        TypeAttribute(Fill.$class)
+      ]
+    },
+    get() {
+      return this.$eventOutline
+    },
+    set(eventOutline) {
+      this.$eventOutline = eventOutline
+    }
+  },
+
   provideValue(serviceProvider) {
     const style = new ActivityNodeStyle()
     style.activityType = this.activityType
@@ -9692,6 +11179,10 @@ export const ActivityNodeStyleExtension = Class('ActivityNodeStyleExtension', {
     style.adHoc = this.adHoc
     style.compensation = this.compensation
     style.minimumSize = this.minimumSize
+    style.background = this.background
+    style.outline = this.outline
+    style.iconColor = this.iconColor
+    style.eventOutline = this.eventOutline
     return style
   }
 })
@@ -9712,9 +11203,43 @@ export const AnnotationNodeStyleExtension = Class('AnnotationNodeStyleExtension'
     }
   },
 
+  $background: BPMN_CONSTANTS_ANNOTATION_DEFAULT_BACKGROUND,
+  background: {
+    $meta() {
+      return [
+        GraphMLAttribute().init({ defaultValue: BPMN_CONSTANTS_ANNOTATION_DEFAULT_BACKGROUND }),
+        TypeAttribute(Fill.$class)
+      ]
+    },
+    get() {
+      return this.$background
+    },
+    set(background) {
+      this.$background = background
+    }
+  },
+
+  $outline: BPMN_CONSTANTS_ANNOTATION_DEFAULT_OUTLINE,
+  outline: {
+    $meta() {
+      return [
+        GraphMLAttribute().init({ defaultValue: BPMN_CONSTANTS_ANNOTATION_DEFAULT_OUTLINE }),
+        TypeAttribute(Fill.$class)
+      ]
+    },
+    get() {
+      return this.$outline
+    },
+    set(outline) {
+      this.$outline = outline
+    }
+  },
+
   provideValue(serviceProvider) {
     const style = new AnnotationNodeStyle()
     style.left = this.left
+    style.background = this.background
+    style.outline = this.outline
     return style
   }
 })
@@ -9738,17 +11263,66 @@ export const ConversationNodeStyleExtension = Class('ConversationNodeStyleExtens
     }
   },
 
+  $background: BPMN_CONSTANTS_CONVERSATION_DEFAULT_BACKGROUND,
+  background: {
+    $meta() {
+      return [
+        GraphMLAttribute().init({ defaultValue: BPMN_CONSTANTS_CONVERSATION_DEFAULT_BACKGROUND }),
+        TypeAttribute(Fill.$class)
+      ]
+    },
+    get() {
+      return this.$background
+    },
+    set(background) {
+      this.$background = background
+    }
+  },
+
+  $outline: BPMN_CONSTANTS_CONVERSATION_DEFAULT_OUTLINE,
+  outline: {
+    $meta() {
+      return [
+        GraphMLAttribute().init({ defaultValue: BPMN_CONSTANTS_CONVERSATION_DEFAULT_OUTLINE }),
+        TypeAttribute(Fill.$class)
+      ]
+    },
+    get() {
+      return this.$outline
+    },
+    set(outline) {
+      this.$outline = outline
+    }
+  },
+
+  $iconColor: BPMN_CONSTANTS_DEFAULT_ICON_COLOR,
+  iconColor: {
+    $meta() {
+      return [
+        GraphMLAttribute().init({ defaultValue: BPMN_CONSTANTS_DEFAULT_ICON_COLOR }),
+        TypeAttribute(Fill.$class)
+      ]
+    },
+    get() {
+      return this.$iconColor
+    },
+    set(iconColor) {
+      this.$iconColor = iconColor
+    }
+  },
+
   provideValue(serviceProvider) {
     const style = new ConversationNodeStyle()
     style.type = this.type
+    style.background = this.background
+    style.outline = this.outline
+    style.iconColor = this.iconColor
     return style
   }
 })
 
 export const ChoreographyNodeStyleExtension = Class('ChoreographyNodeStyleExtension', {
   $extends: MarkupExtension,
-
-  // $meta: [GraphMLAttribute().init({ 'contentProperty' : 'columns' })],
 
   constructor: function() {
     MarkupExtension.call(this)
@@ -9893,6 +11467,108 @@ export const ChoreographyNodeStyleExtension = Class('ChoreographyNodeStyleExtens
     }
   },
 
+  $background: BPMN_CONSTANTS_CHOREOGRAPHY_DEFAULT_BACKGROUND,
+  background: {
+    $meta() {
+      return [
+        GraphMLAttribute().init({ defaultValue: BPMN_CONSTANTS_CHOREOGRAPHY_DEFAULT_BACKGROUND }),
+        TypeAttribute(Fill.$class)
+      ]
+    },
+    get() {
+      return this.$background
+    },
+    set(background) {
+      this.$background = background
+    }
+  },
+
+  $outline: BPMN_CONSTANTS_CHOREOGRAPHY_DEFAULT_OUTLINE,
+  outline: {
+    $meta() {
+      return [
+        GraphMLAttribute().init({ defaultValue: BPMN_CONSTANTS_CHOREOGRAPHY_DEFAULT_OUTLINE }),
+        TypeAttribute(Fill.$class)
+      ]
+    },
+    get() {
+      return this.$outline
+    },
+    set(outline) {
+      this.$outline = outline
+    }
+  },
+
+  $iconColor: BPMN_CONSTANTS_CHOREOGRAPHY_DEFAULT_ICON_COLOR,
+  iconColor: {
+    $meta() {
+      return [
+        GraphMLAttribute().init({ defaultValue: BPMN_CONSTANTS_CHOREOGRAPHY_DEFAULT_ICON_COLOR }),
+        TypeAttribute(Fill.$class)
+      ]
+    },
+    get() {
+      return this.$iconColor
+    },
+    set(iconColor) {
+      this.$iconColor = iconColor
+    }
+  },
+
+  $initiatingColor: BPMN_CONSTANTS_CHOREOGRAPHY_DEFAULT_INITIATING_COLOR,
+  initiatingColor: {
+    $meta() {
+      return [
+        GraphMLAttribute().init({
+          defaultValue: BPMN_CONSTANTS_CHOREOGRAPHY_DEFAULT_INITIATING_COLOR
+        }),
+        TypeAttribute(Fill.$class)
+      ]
+    },
+    get() {
+      return this.$initiatingColor
+    },
+    set(initiatingColor) {
+      this.$initiatingColor = initiatingColor
+    }
+  },
+
+  $responseColor: BPMN_CONSTANTS_CHOREOGRAPHY_DEFAULT_RESPONSE_COLOR,
+  responseColor: {
+    $meta() {
+      return [
+        GraphMLAttribute().init({
+          defaultValue: BPMN_CONSTANTS_CHOREOGRAPHY_DEFAULT_RESPONSE_COLOR
+        }),
+        TypeAttribute(Fill.$class)
+      ]
+    },
+    get() {
+      return this.$responseColor
+    },
+    set(responseColor) {
+      this.$responseColor = responseColor
+    }
+  },
+
+  $messageOutline: BPMN_CONSTANTS_CHOREOGRAPHY_DEFAULT_MESSAGE_OUTLINE,
+  messageOutline: {
+    $meta() {
+      return [
+        GraphMLAttribute().init({
+          defaultValue: BPMN_CONSTANTS_CHOREOGRAPHY_DEFAULT_MESSAGE_OUTLINE
+        }),
+        TypeAttribute(Fill.$class)
+      ]
+    },
+    get() {
+      return this.$messageOutline
+    },
+    set(messageOutline) {
+      this.$messageOutline = messageOutline
+    }
+  },
+
   provideValue(serviceProvider) {
     const style = new ChoreographyNodeStyle()
     style.loopCharacteristic = this.loopCharacteristic
@@ -9909,6 +11585,286 @@ export const ChoreographyNodeStyleExtension = Class('ChoreographyNodeStyleExtens
     style.insets = this.insets
     style.type = this.type
     style.minimumSize = this.minimumSize
+    style.background = this.background
+    style.outline = this.outline
+    style.iconColor = this.iconColor
+    style.initiatingColor = this.initiatingColor
+    style.responseColor = this.responseColor
+    style.messageOutline = this.messageOutline
+    return style
+  }
+})
+
+export const LegacyChoreographyNodeStyleExtension = Class('ChoreographyNodeStyleExtension', {
+  $extends: MarkupExtension,
+
+  constructor: function() {
+    MarkupExtension.call(this)
+    this.$topParticipants = new List()
+    this.$bottomParticipants = new List()
+  },
+
+  $loopCharacteristic: LoopCharacteristic.NONE,
+  loopCharacteristic: {
+    $meta() {
+      return [
+        GraphMLAttribute().init({ defaultValue: LoopCharacteristic.NONE }),
+        TypeAttribute(LoopCharacteristic.$class)
+      ]
+    },
+    get() {
+      return this.$loopCharacteristic
+    },
+    set(characteristic) {
+      this.$loopCharacteristic = characteristic
+    }
+  },
+
+  $subState: SubState.NONE,
+  subState: {
+    $meta() {
+      return [
+        GraphMLAttribute().init({ defaultValue: SubState.NONE }),
+        TypeAttribute(SubState.$class)
+      ]
+    },
+    get() {
+      return this.$subState
+    },
+    set(state) {
+      this.$subState = state
+    }
+  },
+
+  $topParticipants: null,
+  topParticipants: {
+    $meta() {
+      return [
+        GraphMLAttribute().init({ visibility: GraphMLMemberVisibility.CONTENT }),
+        TypeAttribute(IList.$class)
+      ]
+    },
+    get() {
+      return this.$topParticipants
+    }
+  },
+  $bottomParticipants: null,
+  bottomParticipants: {
+    $meta() {
+      return [
+        GraphMLAttribute().init({ visibility: GraphMLMemberVisibility.CONTENT }),
+        TypeAttribute(IList.$class)
+      ]
+    },
+    get() {
+      return this.$bottomParticipants
+    }
+  },
+
+  $initiatingMessage: false,
+  initiatingMessage: {
+    $meta() {
+      return [GraphMLAttribute().init({ defaultValue: false }), TypeAttribute(YBoolean.$class)]
+    },
+    get() {
+      return this.$initiatingMessage
+    },
+    set(initiatingMessage) {
+      this.$initiatingMessage = initiatingMessage
+    }
+  },
+  $responseMessage: false,
+  responseMessage: {
+    $meta() {
+      return [GraphMLAttribute().init({ defaultValue: false }), TypeAttribute(YBoolean.$class)]
+    },
+    get() {
+      return this.$responseMessage
+    },
+    set(responseMessage) {
+      this.$responseMessage = responseMessage
+    }
+  },
+  $initiatingAtTop: true,
+  initiatingAtTop: {
+    $meta() {
+      return [GraphMLAttribute().init({ defaultValue: true }), TypeAttribute(YBoolean.$class)]
+    },
+    get() {
+      return this.$initiatingAtTop
+    },
+    set(initiatingAtTop) {
+      this.$initiatingAtTop = initiatingAtTop
+    }
+  },
+  $insets: new Insets(5),
+  insets: {
+    $meta() {
+      return [
+        GraphMLAttribute().init({ defaultValue: new Insets(5) }),
+        TypeAttribute(Insets.$class)
+      ]
+    },
+    get() {
+      return this.$insets
+    },
+    set(insets) {
+      this.$insets = insets
+    }
+  },
+
+  $type: ChoreographyType.TASK,
+  type: {
+    $meta() {
+      return [
+        GraphMLAttribute().init({ defaultValue: ChoreographyType.TASK }),
+        TypeAttribute(ChoreographyType.$class)
+      ]
+    },
+    get() {
+      return this.$type
+    },
+    set(type) {
+      this.$type = type
+    }
+  },
+  $minimumSize: Size.EMPTY,
+  minimumSize: {
+    $meta() {
+      return [GraphMLAttribute().init({ defaultValue: Size.EMPTY }), TypeAttribute(Size.$class)]
+    },
+    get() {
+      return this.$minimumSize
+    },
+    set(size) {
+      this.$minimumSize = size
+    }
+  },
+
+  $background: BPMN_CONSTANTS_CHOREOGRAPHY_DEFAULT_BACKGROUND,
+  background: {
+    $meta() {
+      return [
+        GraphMLAttribute().init({ defaultValue: BPMN_CONSTANTS_CHOREOGRAPHY_DEFAULT_BACKGROUND }),
+        TypeAttribute(Fill.$class)
+      ]
+    },
+    get() {
+      return this.$background
+    },
+    set(background) {
+      this.$background = background
+    }
+  },
+
+  $outline: BPMN_CONSTANTS_CHOREOGRAPHY_DEFAULT_OUTLINE,
+  outline: {
+    $meta() {
+      return [
+        GraphMLAttribute().init({ defaultValue: BPMN_CONSTANTS_CHOREOGRAPHY_DEFAULT_OUTLINE }),
+        TypeAttribute(Fill.$class)
+      ]
+    },
+    get() {
+      return this.$outline
+    },
+    set(outline) {
+      this.$outline = outline
+    }
+  },
+
+  $iconColor: BPMN_CONSTANTS_CHOREOGRAPHY_DEFAULT_ICON_COLOR,
+  iconColor: {
+    $meta() {
+      return [
+        GraphMLAttribute().init({ defaultValue: BPMN_CONSTANTS_CHOREOGRAPHY_DEFAULT_ICON_COLOR }),
+        TypeAttribute(Fill.$class)
+      ]
+    },
+    get() {
+      return this.$iconColor
+    },
+    set(iconColor) {
+      this.$iconColor = iconColor
+    }
+  },
+
+  $initiatingColor: Fill.LIGHT_GRAY,
+  initiatingColor: {
+    $meta() {
+      return [
+        GraphMLAttribute().init({
+          defaultValue: Fill.LIGHT_GRAY
+        }),
+        TypeAttribute(Fill.$class)
+      ]
+    },
+    get() {
+      return this.$initiatingColor
+    },
+    set(initiatingColor) {
+      this.$initiatingColor = initiatingColor
+    }
+  },
+
+  $responseColor: BPMN_CONSTANTS_CHOREOGRAPHY_DEFAULT_RESPONSE_COLOR,
+  responseColor: {
+    $meta() {
+      return [
+        GraphMLAttribute().init({
+          defaultValue: BPMN_CONSTANTS_CHOREOGRAPHY_DEFAULT_RESPONSE_COLOR
+        }),
+        TypeAttribute(Fill.$class)
+      ]
+    },
+    get() {
+      return this.$responseColor
+    },
+    set(responseColor) {
+      this.$responseColor = responseColor
+    }
+  },
+
+  $messageOutline: BPMN_CONSTANTS_CHOREOGRAPHY_DEFAULT_MESSAGE_OUTLINE,
+  messageOutline: {
+    $meta() {
+      return [
+        GraphMLAttribute().init({
+          defaultValue: BPMN_CONSTANTS_CHOREOGRAPHY_DEFAULT_MESSAGE_OUTLINE
+        }),
+        TypeAttribute(Fill.$class)
+      ]
+    },
+    get() {
+      return this.$messageOutline
+    },
+    set(messageOutline) {
+      this.$messageOutline = messageOutline
+    }
+  },
+
+  provideValue(serviceProvider) {
+    const style = new ChoreographyNodeStyle()
+    style.loopCharacteristic = this.loopCharacteristic
+    style.subState = this.subState
+    this.topParticipants.forEach(participant => {
+      style.topParticipants.add(participant)
+    })
+    this.bottomParticipants.forEach(participant => {
+      style.bottomParticipants.add(participant)
+    })
+    style.initiatingMessage = this.initiatingMessage
+    style.responseMessage = this.responseMessage
+    style.initiatingAtTop = this.initiatingAtTop
+    style.insets = this.insets
+    style.type = this.type
+    style.minimumSize = this.minimumSize
+    style.background = this.background
+    style.outline = this.outline
+    style.iconColor = this.iconColor
+    style.initiatingColor = this.initiatingColor
+    style.responseColor = this.responseColor
+    style.messageOutline = this.messageOutline
     return style
   }
 })
@@ -9981,11 +11937,62 @@ export const DataObjectNodeStyleExtension = Class('DataObjectNodeStyleExtension'
     }
   },
 
+  $background: BPMN_CONSTANTS_DATA_OBJECT_DEFAULT_BACKGROUND,
+  background: {
+    $meta() {
+      return [
+        GraphMLAttribute().init({ defaultValue: BPMN_CONSTANTS_DATA_OBJECT_DEFAULT_BACKGROUND }),
+        TypeAttribute(Fill.$class)
+      ]
+    },
+    get() {
+      return this.$background
+    },
+    set(background) {
+      this.$background = background
+    }
+  },
+
+  $outline: BPMN_CONSTANTS_DATA_OBJECT_DEFAULT_OUTLINE,
+  outline: {
+    $meta() {
+      return [
+        GraphMLAttribute().init({ defaultValue: BPMN_CONSTANTS_DATA_OBJECT_DEFAULT_OUTLINE }),
+        TypeAttribute(Fill.$class)
+      ]
+    },
+    get() {
+      return this.$outline
+    },
+    set(outline) {
+      this.$outline = outline
+    }
+  },
+
+  $iconColor: BPMN_CONSTANTS_DEFAULT_ICON_COLOR,
+  iconColor: {
+    $meta() {
+      return [
+        GraphMLAttribute().init({ defaultValue: BPMN_CONSTANTS_DEFAULT_ICON_COLOR }),
+        TypeAttribute(Fill.$class)
+      ]
+    },
+    get() {
+      return this.$iconColor
+    },
+    set(iconColor) {
+      this.$iconColor = iconColor
+    }
+  },
+
   provideValue(serviceProvider) {
     const style = new DataObjectNodeStyle()
     style.minimumSize = this.minimumSize
     style.collection = this.collection
     style.type = this.type
+    style.background = this.background
+    style.outline = this.outline
+    style.iconColor = this.iconColor
     return style
   }
 })
@@ -10006,9 +12013,43 @@ export const DataStoreNodeStyleExtension = Class('DataStoreNodeStyleExtension', 
     }
   },
 
+  $background: BPMN_CONSTANTS_DATA_STORE_DEFAULT_BACKGROUND,
+  background: {
+    $meta() {
+      return [
+        GraphMLAttribute().init({ defaultValue: BPMN_CONSTANTS_DATA_STORE_DEFAULT_BACKGROUND }),
+        TypeAttribute(Fill.$class)
+      ]
+    },
+    get() {
+      return this.$background
+    },
+    set(background) {
+      this.$background = background
+    }
+  },
+
+  $outline: BPMN_CONSTANTS_DATA_STORE_DEFAULT_OUTLINE,
+  outline: {
+    $meta() {
+      return [
+        GraphMLAttribute().init({ defaultValue: BPMN_CONSTANTS_DATA_STORE_DEFAULT_OUTLINE }),
+        TypeAttribute(Fill.$class)
+      ]
+    },
+    get() {
+      return this.$outline
+    },
+    set(outline) {
+      this.$outline = outline
+    }
+  },
+
   provideValue(serviceProvider) {
     const style = new DataStoreNodeStyle()
     style.minimumSize = this.minimumSize
+    style.background = this.background
+    style.outline = this.outline
     return style
   }
 })
@@ -10059,11 +12100,62 @@ export const EventNodeStyleExtension = Class('EventNodeStyleExtension', {
     }
   },
 
+  $background: BPMN_CONSTANTS_DEFAULT_EVENT_BACKGROUND,
+  background: {
+    $meta() {
+      return [
+        GraphMLAttribute().init({ defaultValue: BPMN_CONSTANTS_DEFAULT_EVENT_BACKGROUND }),
+        TypeAttribute(Fill.$class)
+      ]
+    },
+    get() {
+      return this.$background
+    },
+    set(background) {
+      this.$background = background
+    }
+  },
+
+  $outline: BPMN_CONSTANTS_DEFAULT_EVENT_OUTLINE,
+  outline: {
+    $meta() {
+      return [
+        GraphMLAttribute().init({ defaultValue: BPMN_CONSTANTS_DEFAULT_EVENT_OUTLINE }),
+        TypeAttribute(Fill.$class)
+      ]
+    },
+    get() {
+      return this.$outline
+    },
+    set(outline) {
+      this.$outline = outline
+    }
+  },
+
+  $iconColor: BPMN_CONSTANTS_DEFAULT_ICON_COLOR,
+  iconColor: {
+    $meta() {
+      return [
+        GraphMLAttribute().init({ defaultValue: BPMN_CONSTANTS_DEFAULT_ICON_COLOR }),
+        TypeAttribute(Fill.$class)
+      ]
+    },
+    get() {
+      return this.$iconColor
+    },
+    set(iconColor) {
+      this.$iconColor = iconColor
+    }
+  },
+
   provideValue(serviceProvider) {
     const style = new EventNodeStyle()
     style.type = this.type
     style.characteristic = this.characteristic
     style.minimumSize = this.minimumSize
+    style.background = this.background
+    style.outline = this.outline
+    style.iconColor = this.iconColor
     return style
   }
 })
@@ -10099,10 +12191,61 @@ export const GatewayNodeStyleExtension = Class('GatewayNodeStyleExtension', {
     }
   },
 
+  $background: BPMN_CONSTANTS_GATEWAY_DEFAULT_BACKGROUND,
+  background: {
+    $meta() {
+      return [
+        GraphMLAttribute().init({ defaultValue: BPMN_CONSTANTS_GATEWAY_DEFAULT_BACKGROUND }),
+        TypeAttribute(Fill.$class)
+      ]
+    },
+    get() {
+      return this.$background
+    },
+    set(background) {
+      this.$background = background
+    }
+  },
+
+  $outline: BPMN_CONSTANTS_GATEWAY_DEFAULT_OUTLINE,
+  outline: {
+    $meta() {
+      return [
+        GraphMLAttribute().init({ defaultValue: BPMN_CONSTANTS_GATEWAY_DEFAULT_OUTLINE }),
+        TypeAttribute(Fill.$class)
+      ]
+    },
+    get() {
+      return this.$outline
+    },
+    set(outline) {
+      this.$outline = outline
+    }
+  },
+
+  $iconColor: BPMN_CONSTANTS_DEFAULT_ICON_COLOR,
+  iconColor: {
+    $meta() {
+      return [
+        GraphMLAttribute().init({ defaultValue: BPMN_CONSTANTS_DEFAULT_ICON_COLOR }),
+        TypeAttribute(Fill.$class)
+      ]
+    },
+    get() {
+      return this.$iconColor
+    },
+    set(iconColor) {
+      this.$iconColor = iconColor
+    }
+  },
+
   provideValue(serviceProvider) {
     const style = new GatewayNodeStyle()
     style.type = this.type
     style.minimumSize = this.minimumSize
+    style.background = this.background
+    style.outline = this.outline
+    style.iconColor = this.iconColor
     return style
   }
 })
@@ -10126,9 +12269,43 @@ export const GroupNodeStyleExtension = Class('GroupNodeStyleExtension', {
     }
   },
 
+  $background: BPMN_CONSTANTS_GROUP_DEFAULT_BACKGROUND,
+  background: {
+    $meta() {
+      return [
+        GraphMLAttribute().init({ defaultValue: BPMN_CONSTANTS_GROUP_DEFAULT_BACKGROUND }),
+        TypeAttribute(Fill.$class)
+      ]
+    },
+    get() {
+      return this.$background
+    },
+    set(background) {
+      this.$background = background
+    }
+  },
+
+  $outline: BPMN_CONSTANTS_GROUP_DEFAULT_OUTLINE,
+  outline: {
+    $meta() {
+      return [
+        GraphMLAttribute().init({ defaultValue: BPMN_CONSTANTS_GROUP_DEFAULT_OUTLINE }),
+        TypeAttribute(Fill.$class)
+      ]
+    },
+    get() {
+      return this.$outline
+    },
+    set(outline) {
+      this.$outline = outline
+    }
+  },
+
   provideValue(serviceProvider) {
     const style = new GroupNodeStyle()
     style.insets = this.insets
+    style.background = this.background
+    style.outline = this.outline
     return style
   }
 })
@@ -10165,10 +12342,44 @@ export const BpmnEdgeStyleExtension = Class('BpmnEdgeStyleExtension', {
     }
   },
 
+  $color: BPMN_CONSTANTS_EDGE_DEFAULT_COLOR,
+  color: {
+    $meta() {
+      return [
+        GraphMLAttribute().init({ defaultValue: BPMN_CONSTANTS_EDGE_DEFAULT_COLOR }),
+        TypeAttribute(Fill.$class)
+      ]
+    },
+    get() {
+      return this.$color
+    },
+    set(color) {
+      this.$color = color
+    }
+  },
+
+  $innerColor: BPMN_CONSTANTS_EDGE_DEFAULT_INNER_COLOR,
+  innerColor: {
+    $meta() {
+      return [
+        GraphMLAttribute().init({ defaultValue: BPMN_CONSTANTS_EDGE_DEFAULT_INNER_COLOR }),
+        TypeAttribute(Fill.$class)
+      ]
+    },
+    get() {
+      return this.$innerColor
+    },
+    set(innerColor) {
+      this.$innerColor = innerColor
+    }
+  },
+
   provideValue(serviceProvider) {
     const style = new BpmnEdgeStyle()
     style.type = this.type
     style.smoothing = this.smoothing
+    style.color = this.color
+    style.innerColor = this.innerColor
     return style
   }
 })
@@ -10224,11 +12435,62 @@ export const EventPortStyleExtension = Class('EventPortStyleExtension', {
     }
   },
 
+  $background: BPMN_CONSTANTS_DEFAULT_EVENT_BACKGROUND,
+  background: {
+    $meta() {
+      return [
+        GraphMLAttribute().init({ defaultValue: BPMN_CONSTANTS_DEFAULT_EVENT_BACKGROUND }),
+        TypeAttribute(Fill.$class)
+      ]
+    },
+    get() {
+      return this.$background
+    },
+    set(background) {
+      this.$background = background
+    }
+  },
+
+  $outline: BPMN_CONSTANTS_DEFAULT_EVENT_OUTLINE,
+  outline: {
+    $meta() {
+      return [
+        GraphMLAttribute().init({ defaultValue: BPMN_CONSTANTS_DEFAULT_EVENT_OUTLINE }),
+        TypeAttribute(Fill.$class)
+      ]
+    },
+    get() {
+      return this.$outline
+    },
+    set(outline) {
+      this.$outline = outline
+    }
+  },
+
+  $iconColor: BPMN_CONSTANTS_DEFAULT_ICON_COLOR,
+  iconColor: {
+    $meta() {
+      return [
+        GraphMLAttribute().init({ defaultValue: BPMN_CONSTANTS_DEFAULT_ICON_COLOR }),
+        TypeAttribute(Fill.$class)
+      ]
+    },
+    get() {
+      return this.$iconColor
+    },
+    set(iconColor) {
+      this.$iconColor = iconColor
+    }
+  },
+
   provideValue(serviceProvider) {
     const style = new EventPortStyle()
     style.characteristic = this.characteristic
     style.type = this.type
     style.renderSize = this.renderSize
+    style.background = this.background
+    style.outline = this.outline
+    style.iconColor = this.iconColor
     return style
   }
 })
@@ -10249,9 +12511,117 @@ export const AnnotationLabelStyleExtension = Class('AnnotationLabelStyleExtensio
     }
   },
 
+  $background: BPMN_CONSTANTS_ANNOTATION_DEFAULT_BACKGROUND,
+  background: {
+    $meta() {
+      return [
+        GraphMLAttribute().init({ defaultValue: BPMN_CONSTANTS_ANNOTATION_DEFAULT_BACKGROUND }),
+        TypeAttribute(Fill.$class)
+      ]
+    },
+    get() {
+      return this.$background
+    },
+    set(background) {
+      this.$background = background
+    }
+  },
+
+  $outline: BPMN_CONSTANTS_ANNOTATION_DEFAULT_OUTLINE,
+  outline: {
+    $meta() {
+      return [
+        GraphMLAttribute().init({ defaultValue: BPMN_CONSTANTS_ANNOTATION_DEFAULT_OUTLINE }),
+        TypeAttribute(Fill.$class)
+      ]
+    },
+    get() {
+      return this.$outline
+    },
+    set(outline) {
+      this.$outline = outline
+    }
+  },
+
   provideValue(serviceProvider) {
     const style = new AnnotationLabelStyle()
     style.insets = this.insets
+    style.background = this.background
+    style.outline = this.outline
+    return style
+  }
+})
+
+export const MessageLabelStyleExtension = Class('MessageLabelStyleExtension', {
+  $extends: MarkupExtension,
+
+  $isInitiating: true,
+  isInitiating: {
+    $meta() {
+      return [GraphMLAttribute().init({ defaultValue: true }), TypeAttribute(YBoolean.$class)]
+    },
+    get() {
+      return this.$isInitiating
+    },
+    set(isInitiating) {
+      this.$isInitiating = isInitiating
+    }
+  },
+
+  $outline: BPMN_CONSTANTS_DEFAULT_MESSAGE_OUTLINE,
+  outline: {
+    $meta() {
+      return [
+        GraphMLAttribute().init({ defaultValue: BPMN_CONSTANTS_DEFAULT_MESSAGE_OUTLINE }),
+        TypeAttribute(Fill.$class)
+      ]
+    },
+    get() {
+      return this.$outline
+    },
+    set(outline) {
+      this.$outline = outline
+    }
+  },
+
+  $initiatingColor: BPMN_CONSTANTS_DEFAULT_INITIATING_MESSAGE_COLOR,
+  initiatingColor: {
+    $meta() {
+      return [
+        GraphMLAttribute().init({ defaultValue: BPMN_CONSTANTS_DEFAULT_INITIATING_MESSAGE_COLOR }),
+        TypeAttribute(Fill.$class)
+      ]
+    },
+    get() {
+      return this.$initiatingColor
+    },
+    set(initiatingColor) {
+      this.$initiatingColor = initiatingColor
+    }
+  },
+
+  $responseColor: BPMN_CONSTANTS_DEFAULT_RECEIVING_MESSAGE_COLOR,
+  responseColor: {
+    $meta() {
+      return [
+        GraphMLAttribute().init({ defaultValue: BPMN_CONSTANTS_DEFAULT_RECEIVING_MESSAGE_COLOR }),
+        TypeAttribute(Fill.$class)
+      ]
+    },
+    get() {
+      return this.$responseColor
+    },
+    set(responseColor) {
+      this.$responseColor = responseColor
+    }
+  },
+
+  provideValue(serviceProvider) {
+    const style = new MessageLabelStyle()
+    style.isInitiating = this.isInitiating
+    style.outline = this.outline
+    style.initiatingColor = this.initiatingColor
+    style.responseColor = this.responseColor
     return style
   }
 })
@@ -10300,6 +12670,11 @@ export const PoolHeaderLabelModelExtension = Class('PoolHeaderLabelModelExtensio
     return new PoolHeaderLabelModel()
   }
 })
+
+// ensure that these constants can be deserialized even when they have not yet been used yet
+Class.fixType(MessageParameter)
+Class.fixType(ChoreographyLabelModel)
+Class.fixType(TaskNameBandParameter)
 
 export const ChoreographyLabelModelExtension = Class('ChoreographyLabelModelExtension', {
   $extends: MarkupExtension,
@@ -10431,8 +12806,10 @@ export const BpmnHandleSerializationListener = (source, args) => {
   let markupExtensionClass
   if (item instanceof PoolNodeStyle) {
     markupExtension = new PoolNodeStyleExtension()
+    markupExtension.vertical = item.vertical
     markupExtension.multipleInstance = item.multipleInstance
     markupExtension.tableNodeStyle = item.tableNodeStyle
+    markupExtension.iconColor = item.iconColor
     markupExtensionClass = PoolNodeStyleExtension.$class
   } else if (item instanceof AlternatingLeafStripeStyle) {
     markupExtension = new AlternatingLeafStripeStyleExtension()
@@ -10459,10 +12836,16 @@ export const BpmnHandleSerializationListener = (source, args) => {
     markupExtension.adHoc = item.adHoc
     markupExtension.compensation = item.compensation
     markupExtension.minimumSize = item.minimumSize
+    markupExtension.background = item.background
+    markupExtension.outline = item.outline
+    markupExtension.iconColor = item.iconColor
+    markupExtension.eventOutline = item.eventOutline
     markupExtensionClass = ActivityNodeStyleExtension.$class
   } else if (item instanceof AnnotationNodeStyle) {
     markupExtension = new AnnotationNodeStyleExtension()
     markupExtension.left = item.left
+    markupExtension.background = item.background
+    markupExtension.outline = item.outline
     markupExtensionClass = AnnotationNodeStyleExtension.$class
   } else if (item instanceof ChoreographyNodeStyle) {
     markupExtension = new ChoreographyNodeStyleExtension()
@@ -10480,6 +12863,12 @@ export const BpmnHandleSerializationListener = (source, args) => {
     markupExtension.insets = item.insets
     markupExtension.type = item.type
     markupExtension.minimumSize = item.minimumSize
+    markupExtension.background = item.background
+    markupExtension.outline = item.outline
+    markupExtension.iconColor = item.iconColor
+    markupExtension.initiatingColor = item.initiatingColor
+    markupExtension.responseColor = item.responseColor
+    markupExtension.messageOutline = item.messageOutline
     markupExtensionClass = ChoreographyNodeStyleExtension.$class
   } else if (item instanceof Participant) {
     markupExtension = new ParticipantExtension()
@@ -10488,46 +12877,76 @@ export const BpmnHandleSerializationListener = (source, args) => {
   } else if (item instanceof ConversationNodeStyle) {
     markupExtension = new ConversationNodeStyleExtension()
     markupExtension.type = item.type
+    markupExtension.background = item.background
+    markupExtension.outline = item.outline
+    markupExtension.iconColor = item.iconColor
     markupExtensionClass = ConversationNodeStyleExtension.$class
   } else if (item instanceof DataObjectNodeStyle) {
     markupExtension = new DataObjectNodeStyleExtension()
     markupExtension.minimumSize = item.minimumSize
     markupExtension.collection = item.collection
     markupExtension.type = item.type
+    markupExtension.background = item.background
+    markupExtension.outline = item.outline
+    markupExtension.iconColor = item.iconColor
     markupExtensionClass = DataObjectNodeStyleExtension.$class
   } else if (item instanceof DataStoreNodeStyle) {
     markupExtension = new DataStoreNodeStyleExtension()
     markupExtension.minimumSize = item.minimumSize
+    markupExtension.background = item.background
+    markupExtension.outline = item.outline
     markupExtensionClass = DataStoreNodeStyleExtension.$class
   } else if (item instanceof EventNodeStyle) {
     markupExtension = new EventNodeStyleExtension()
     markupExtension.type = item.type
     markupExtension.characteristic = item.characteristic
     markupExtension.minimumSize = item.minimumSize
+    markupExtension.background = item.background
+    markupExtension.outline = item.outline
+    markupExtension.iconColor = item.iconColor
     markupExtensionClass = EventNodeStyleExtension.$class
   } else if (item instanceof GatewayNodeStyle) {
     markupExtension = new GatewayNodeStyleExtension()
     markupExtension.type = item.type
     markupExtension.minimumSize = item.minimumSize
+    markupExtension.background = item.background
+    markupExtension.outline = item.outline
+    markupExtension.iconColor = item.iconColor
     markupExtensionClass = GatewayNodeStyleExtension.$class
   } else if (item instanceof GroupNodeStyle) {
     markupExtension = new GroupNodeStyleExtension()
     markupExtension.insets = item.insets
+    markupExtension.background = item.background
+    markupExtension.outline = item.outline
     markupExtensionClass = GroupNodeStyleExtension.$class
   } else if (item instanceof BpmnEdgeStyle) {
     markupExtension = new BpmnEdgeStyleExtension()
     markupExtension.type = item.type
+    markupExtension.color = item.color
+    markupExtension.innerColor = item.innerColor
     markupExtensionClass = BpmnEdgeStyleExtension.$class
   } else if (item instanceof EventPortStyle) {
     markupExtension = new EventPortStyleExtension()
     markupExtension.type = item.type
     markupExtension.characteristic = item.characteristic
     markupExtension.renderSize = item.renderSize
+    markupExtension.background = item.background
+    markupExtension.outline = item.outline
+    markupExtension.iconColor = item.iconColor
     markupExtensionClass = EventPortStyleExtension.$class
   } else if (item instanceof AnnotationLabelStyle) {
     markupExtension = new AnnotationLabelStyleExtension()
     markupExtension.insets = item.insets
+    markupExtension.background = item.background
+    markupExtension.outline = item.outline
     markupExtensionClass = AnnotationLabelStyleExtension.$class
+  } else if (item instanceof MessageLabelStyle) {
+    markupExtension = new MessageLabelStyleExtension()
+    markupExtension.isInitiating = item.isInitiating
+    markupExtension.outline = item.outline
+    markupExtension.initiatingColor = item.initiatingColor
+    markupExtension.responseColor = item.responseColor
+    markupExtensionClass = MessageLabelStyleExtension.$class
   } else if (item instanceof PoolHeaderLabelModel) {
     markupExtension = new PoolHeaderLabelModelExtension()
     markupExtensionClass = PoolHeaderLabelModelExtension.$class
@@ -10559,8 +12978,7 @@ export const BpmnHandleSerializationListener = (source, args) => {
   }
 }
 
-// export a default object to be able to map a namespace to this module for serialization
-export default {
+const IO_SUPPORT = {
   SubState,
   GatewayType,
   EventType,
@@ -10609,6 +13027,7 @@ export default {
   BpmnEdgeStyleExtension,
   EventPortStyleExtension,
   AnnotationLabelStyleExtension,
+  MessageLabelStyleExtension,
   PoolHeaderLabelModelExtension,
   ChoreographyLabelModelExtension,
   ParticipantParameterExtension,
@@ -10616,3 +13035,20 @@ export default {
   MessageParameterExtension,
   ChoreographyMessageLabelStyleExtension
 }
+
+/**
+ * The markup extensions to support styles that have been serialized with an older
+ * BPMN Namespace "http://www.yworks.com/xml/yfiles-for-html/bpmn/2.0".
+ *
+ * The only difference is that the new BPMN styles deserialize the
+ * {@link ChoreographyNodeStyle#initiatingColor} as white (which better fits the BPMN specification)
+ * instead of Light.GRAY as it used to be.
+ * @type {object}
+ */
+export const LegacyBpmnExtensions = Object.assign({}, IO_SUPPORT)
+LegacyBpmnExtensions.ChoreographyNodeStyleExtension = LegacyChoreographyNodeStyleExtension
+
+/**
+ * The markup extensions for this BPMN style implementation.
+ */
+export default IO_SUPPORT

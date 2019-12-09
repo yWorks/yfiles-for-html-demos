@@ -526,7 +526,7 @@ body {
   height: 60px;
   width: 60px;
   cursor: pointer;
-  background: transparent url('../../resources/image/sidebar-left.svg') no-repeat 50% 50%;
+  background: transparent url('../icons/sidebar-left.svg') no-repeat 50% 50%;
   background-size: 39px;
   z-index: 99;
 }
@@ -542,7 +542,7 @@ body {
   left: 0;
 }
 .demo-left-hidden .demo-left-sidebar-toggle-button {
-  background-image: url('../../resources/image/sidebar-left_white.svg');
+  background-image: url('../icons/sidebar-left_white.svg');
 }
 @media screen and (max-height: 500px) {
   .demo-left-hidden .demo-left-sidebar-toggle-button {
@@ -570,10 +570,10 @@ body {
 }
 .demo-right-sidebar-toggle-button {
   right: 0;
-  background-image: url('../../resources/image/sidebar-right.svg');
+  background-image: url('../icons/sidebar-right.svg');
 }
 .demo-right-hidden .demo-right-sidebar-toggle-button {
-  background-image: url('../../resources/image/sidebar-right_white.svg');
+  background-image: url('../icons/sidebar-right_white.svg');
 }
 @media screen and (max-height: 500px) {
   .demo-right-hidden .demo-right-sidebar-toggle-button {
@@ -683,7 +683,7 @@ body {
   cursor: default;
   font-size: 1.5em;
   letter-spacing: 1px;
-  background: url('../../resources/image/header-angle.svg') no-repeat 5px 50%;
+  background: url('../icons/header-angle.svg') no-repeat 5px 50%;
   background-size: 20px 20px;
   vertical-align: top;
 }
@@ -939,7 +939,7 @@ body {
 }
 .demo-overview-container .demo-overview-header:after {
   content: '';
-  background: url(../../resources/image/header-angle.svg) no-repeat 80%;
+  background: url(../icons/header-angle.svg) no-repeat 80%;
   background-size: 20px 20px;
   width: 30px;
   height: 30px;

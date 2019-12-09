@@ -64,9 +64,7 @@ export default class LevelOfDetailNodeStyle extends NodeStyleBase {
     // find out which template to use
     const templateMode = this.getTemplateMode(zoom)
     // wrap template in svg element, compile and digest scope
-    const template = `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">${
-      this.templates[templateMode]
-    }</svg>`
+    const template = `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">${this.templates[templateMode]}</svg>`
     const templateElement = this.$compile(template)(scope)[0]
     scope.$digest()
 

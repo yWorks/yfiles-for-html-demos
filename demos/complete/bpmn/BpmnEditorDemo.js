@@ -80,7 +80,8 @@ import {
   StripeTypes,
   Table,
   TableEditorInputMode,
-  VoidStripeStyle
+  VoidStripeStyle,
+  IEdgePathCropper
 } from 'yfiles'
 
 import ContextMenu from '../../utils/ContextMenu.js'
@@ -109,7 +110,10 @@ import BpmnView, {
   MessageLabelStyle,
   Participant,
   PoolHeaderLabelModel,
-  PoolNodeStyle
+  PoolNodeStyle,
+  LegacyBpmnExtensions,
+  YFILES_BPMN_NS,
+  YFILES_BPMN_PREFIX
 } from './bpmn-view.js'
 import * as DemoApp from '../../resources/demo-app.js'
 import { DragAndDropPanel } from '../../utils/DndPanel.js'
@@ -209,18 +213,19 @@ async function run(licenseData) {
     storageLocation: StorageLocation.FILE_SYSTEM
   })
 
+  // support older BPMN style versions (mainly for demo usage)
   graphmlSupport.graphMLIOHandler.addXamlNamespaceMapping(
     'http://www.yworks.com/xml/yfiles-bpmn/1.0',
     BpmnView
   )
   graphmlSupport.graphMLIOHandler.addXamlNamespaceMapping(
     'http://www.yworks.com/xml/yfiles-for-html/bpmn/2.0',
-    BpmnView
+    LegacyBpmnExtensions
   )
-  graphmlSupport.graphMLIOHandler.addNamespace(
-    'http://www.yworks.com/xml/yfiles-for-html/bpmn/2.0',
-    'bpmn'
-  )
+
+  // register the current BPMN styles with the GraphMLIOHandler
+  graphmlSupport.graphMLIOHandler.addXamlNamespaceMapping(YFILES_BPMN_NS, BpmnView)
+  graphmlSupport.graphMLIOHandler.addNamespace(YFILES_BPMN_NS, YFILES_BPMN_PREFIX)
   graphmlSupport.graphMLIOHandler.addHandleSerializationListener(BpmnHandleSerializationListener)
 
   // load initial graph
@@ -255,6 +260,14 @@ function initializeGraphComponent() {
     owner =>
       (owner.style.lookup && owner.style.lookup(owner, IEditLabelHelper.$class)) ||
       new AdditionalEditLabelHelper()
+  )
+
+  // crop edges at the EventPortStyle visual
+  decorator.portDecorator.edgePathCropperDecorator.setFactory(
+    port => port.style instanceof EventPortStyle,
+    eventPort => {
+      return eventPort.style.renderer.lookup(IEdgePathCropper.$class)
+    }
   )
 }
 

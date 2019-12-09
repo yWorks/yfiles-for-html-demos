@@ -610,14 +610,14 @@ function initializeDesignerVueComponents() {
   Vue.component('svg-text', {
     template: `
 <g v-if="visible" :transform="$transform">
-<g v-if="clipped" :transform="'translate('+this.x+' '+this.y+')'">
-  <text dy="1em" :transform="'translate('+this.$dx+' 0)'" :text-anchor="$textAnchor" :clip-path="'url(#'+refId+')'" :fill="fill" :opacity="opacity">{{content}}</text>
+<g v-if="clipped" :transform="'translate('+x+' '+y+')'">
+  <text dy="1em" :transform="'translate('+$dx+' 0)'" :text-anchor="$textAnchor" :clip-path="'url(#'+refId+')'" :fill="fill" :opacity="opacity">{{content}}</text>
   <clipPath :id="refId">
-    <rect :width="width" :height="height" :x="-this.$dx"></rect>
+    <rect :width="width" :height="height" :x="-$dx"></rect>
   </clipPath>
 </g>
-<g v-else :transform="'translate('+this.x+' '+this.y+')'">
-  <text dy="1em" :transform="'translate('+this.$dx+' 0)'" :text-anchor="$textAnchor" :fill="fill" :opacity="opacity">{{content}}</text>
+<g v-else :transform="'translate('+x+' '+y+')'">
+  <text dy="1em" :transform="'translate('+$dx+' 0)'" :text-anchor="$textAnchor" :fill="fill" :opacity="opacity">{{content}}</text>
 </g>
 </g>`,
     data() {

@@ -302,6 +302,8 @@ function storeEdgeLayout(edge2Bends, node2Layout, port2Location, label2Parameter
         bends.push(getLocationFromObj(edgeObj.bends[i]))
       }
       edge2Bends.set(edge, bends)
+    } else {
+      edge2Bends.set(edge, [])
     }
 
     port2Location.set(edge.sourcePort, getLocationFromObj(edgeObj.sourcePort))

@@ -133,7 +133,7 @@ export default class NodePlacerPanel {
 
   /**
    * Returns a map which provides a {@link ITreeLayoutNodePlacer} for each node
-   * @return {Mapper.<ITreeLayoutNodePlacer>}
+   * @return {Mapper.<INode, ITreeLayoutNodePlacer>}
    */
   get nodePlacers() {
     return nodePlacers

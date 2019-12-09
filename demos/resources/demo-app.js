@@ -367,7 +367,11 @@ export function bindCommand(selector, command, target, parameter) {
   })
 }
 
-export function bindAction(/**string*/ selector, /**function(Event)*/ action) {
+/**
+ * @param {string} selector
+ * @param {function(Event)} action
+ */
+export function bindAction(selector, action) {
   const element = document.querySelector(selector)
   if (!element) {
     return
@@ -377,7 +381,11 @@ export function bindAction(/**string*/ selector, /**function(Event)*/ action) {
   })
 }
 
-export function bindActions(/**string*/ selectors, /**function(Event)*/ action) {
+/**
+ * @param {string} selectors
+ * @param {function(Event)} action
+ */
+export function bindActions(selectors, action) {
   const elements = document.querySelectorAll(selectors)
   if (!elements) {
     return
@@ -390,7 +398,11 @@ export function bindActions(/**string*/ selectors, /**function(Event)*/ action) 
   }
 }
 
-export function bindChangeListener(/**string*/ selector, /**function(string|boolean)*/ action) {
+/**
+ * @param {string} selector
+ * @param {function(string|boolean)} action
+ */
+export function bindChangeListener(selector, action) {
   const element = document.querySelector(selector)
   if (!element) {
     return
@@ -404,8 +416,12 @@ export function bindChangeListener(/**string*/ selector, /**function(string|bool
   })
 }
 
-/** @return {Element} */
-export function addClass(/**Element*/ e, /**string*/ className) {
+/**
+ * @param {Element} e
+ * @param {string} className
+ * @return {Element}
+ */
+export function addClass(e, className) {
   const classes = e.getAttribute('class')
   if (classes === null || classes === '') {
     e.setAttribute('class', className)
@@ -415,8 +431,12 @@ export function addClass(/**Element*/ e, /**string*/ className) {
   return e
 }
 
-/** @return {Element} */
-export function removeClass(/**Element*/ e, /**string*/ className) {
+/**
+ * @param {Element} e
+ * @param {string} className
+ * @return {Element}
+ */
+export function removeClass(e, className) {
   const classes = e.getAttribute('class')
   if (classes !== null && classes !== '') {
     if (classes === className) {
@@ -432,15 +452,24 @@ export function removeClass(/**Element*/ e, /**string*/ className) {
   return e
 }
 
-/** @return {boolean} */
-export function hasClass(/**Element*/ e, /**string*/ className) {
+/**
+ * @param {Element} e
+ * @param {string} className
+ * @return {boolean}
+ */
+export function hasClass(e, className) {
   const classes = e.getAttribute('class')
   const r = new RegExp(`\\b${className}\\b`, '')
   return r.test(classes)
 }
 
-/** @return {Element} */
-export function toggleClass(/**Element*/ e, /**string*/ className) {
+/**
+ *
+ * @param {Element} e
+ * @param {string} className
+ * @return {Element}
+ */
+export function toggleClass(e, className) {
   if (hasClass(e, className)) {
     removeClass(e, className)
   } else {

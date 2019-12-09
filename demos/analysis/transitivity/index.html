@@ -151,15 +151,15 @@
     <h3>Transitive Closure</h3>
     <p>
       Transitivity Closure is applied in order to answer the question whether there exists a directed path
-      between two nodes. The algorithm adds an edge to the graph for each pair of nodes (that are not direct
-      neighbors) but are connected by a path in the graph. The transitive edges are visualized in blue color.
+      between two nodes. The algorithm adds an edge to the graph for each pair of nodes, that are not direct
+      neighbors, but connected by a path in the graph. The transitive edges are visualized in blue color.
     </p>
     <h3>Transitive Reduction</h3>
     <p>
       Transitivity Reduction is the reverse operation to transitive closure which removes edges between any
-      two nodes if there exists another path that connects them. This means that at the end, the graph remains with as
-      few edges as possible but has the same reachability relation as before. The user can choose the show hide
-      transitive edges using <img src="../../resources/icons/star-16.svg" style="vertical-align: text-top">-Button of the toolbar.
+      two nodes if there exists another path that connects them. This means that in the end, the graph remains with as
+      few edges as possible but has the same reachability relation as before. The user can choose to show or hide
+      transitive edges using the <img src="../../resources/icons/star-16.svg" style="vertical-align: text-top">-Button of the toolbar.
     </p>
 
     <h2>Graph Information</h2>
@@ -246,13 +246,12 @@
     <p>
       This demo shows how transitive closure and reduction algorithms of yFiles can be applied to a given graph. The
       user can select a graph from the sample graphs' combo box. The first sample graph represents the <em>yfiles for
-      HTML modules</em> dependencies graph, while the second one the <em>npm packages</em> dependencies.
+      HTML modules</em> dependencies graph, while the second one shows the dependencies of <em>npm packages</em>.
     </p>
     <h2>yFiles Modules Graph</h2>
-    <p>This graph presents an overview of the dependencies between the
-      <a href="https://docs.yworks.com/yfileshtml/#/dguide/introduction-modules#introduction-modules" target="_blank">modules</a>
-      of which yFiles for HTML consist. The user can select a node and investigate its dependents and dependencies
-      modules.
+    <p>This graph presents an overview of the dependencies between the different yFiles for HTML
+      <a href="https://docs.yworks.com/yfileshtml/#/dguide/introduction-modules#introduction-modules" target="_blank">modules</a>.
+      The user can select a node and investigate its dependents and dependencies.
     </p>
     <h2>npm Package Graph</h2>
     <p>
@@ -262,11 +261,11 @@
       query more of them by pressing the <em>plus symbol</em> on the right part of the node.
     </p>
     <p>
-      Browsing the npm-packages needs a proxy server which is provided in the Demo Server. In order run the Demo
-      Server, go to execute:
+      Browsing the npm-packages needs a proxy server which is provided by the Demo Server. In order to run the Demo
+      Server, execute:
     </p>
     <pre>> npm install <br>> npm start</pre>
-    <p>in directory <code>%YFILES_HTML_DISTRIBUTION_DIR%/demos/demo-server/</code>.</p>
+    <p>in the <code>%YFILES_HTML_DISTRIBUTION_DIR%/demos/demo-server/</code> directory.</p>
   </div>
 </aside>
 

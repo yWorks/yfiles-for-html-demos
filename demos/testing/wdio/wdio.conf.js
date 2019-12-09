@@ -34,17 +34,21 @@ const resolveYfiles = require('../../demo-server/resolve-yfiles')
 const demoServerPort = 4253
 let demoServer = null
 
+const chromeDriverVersion = fs.readFileSync('./chromedriver-version.txt', 'utf8').trim()
+
 const seleniumStandaloneArgs = {
   // logger: console.log,
   drivers: {
     firefox: {},
     // we need chrome >= 74, as browser.performActions was not supported in previous releases.
     chrome: {
-      version: '76.0.3809.68',
+      version: chromeDriverVersion,
       arch: process.arch
     }
   }
 }
+
+/* eslint-disable no-unused-vars */
 
 exports.config = {
   //
@@ -341,6 +345,6 @@ exports.config = {
    * @param {String} oldSessionId session ID of the old session
    * @param {String} newSessionId session ID of the new session
    */
-  //onReload: function(oldSessionId, newSessionId) {
-  //}
+  // onReload: function(oldSessionId, newSessionId) {
+  // }
 }

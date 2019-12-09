@@ -7,16 +7,14 @@
   "private": true,
   "main": "webpack-demo.js",
   "dependencies": {
-    "color": "3.1.2"
+    "color": "3.1.2",
+    "yfiles": "../../../lib/es-modules/yfiles-22.0.3-eval.tgz"
   },
   "scripts": {
-    "postinstall": "cd ../.. && yarn || npm i",
+    "preinstall": "cd ../../../lib/es-modules && npm pack",
     "production": "webpack --mode production",
     "build": "webpack --mode development",
     "start": "webpack --mode development && webpack-dev-server --mode development --open"
-  },
-  "peerDependencies": {
-    "yfiles": "22.0.2"
   },
   "devDependencies": {
     "@babel/core": "7.6.0",

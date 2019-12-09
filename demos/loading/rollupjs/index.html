@@ -36,11 +36,11 @@
 
   <title>Rollup.js Demo [yFiles for HTML]</title>
 
-  <link rel="stylesheet" href="../../node_modules/yfiles/yfiles.css">
+  <link rel="stylesheet" href="./node_modules/yfiles/yfiles.css">
   <link rel="stylesheet" href="../../resources/style/demo.css">
 
-  <script src="../../resources/filesystem-warning.js"></script>
-
+  <!-- Polyfill the fetch API if necessary -->
+  <script src="https://unpkg.com/unfetch/polyfill"></script>
 </head>
 <body class="demo-has-left demo-hide-left-when-small loaded">
 
@@ -58,23 +58,21 @@
       The HTML file just references the single <code>bundle.js</code> file containing the demo code as well as all
       library code.</p>
 
-    <p>Additionally, the yFiles optimizer is run before bundling to achieve a smaller, production ready bundle.</p>
+    <p>In addition to resolving the module imports and creating a browser-ready bundle, the Grunt build</p>
+    <ul>
+      <li>runs the yFiles optimizer before bundling to achieve a smaller, production ready bundle</li>
+      <li>runs babel on the sources, so the resulting application can be run in older browsers like IE 11.</li>
+    </ul>
 
-    <h2>Build</h2>
-
-    <p>If grunt is not available on the command line, install <code>grunt-cli</code> first: </p>
-
-    <pre>> npm install -g grunt-cli</pre>
-
-    <p>Install the required npm packages and run the default task of the Gruntfile:</p>
-    <code>
-      > npm install <br/>
-      > grunt
-    </code>
+    <h2>Building the demo</h2>
     <p>
-      Note that rollup may require more heap memory when bundling the yFiles library than available by default.
-      To increase the available memory, set the <code>--max-old-space-size</code> Node parameter to at least <code>2048</code>.
+      Install the required npm packages and run the build script:
     </p>
+    <p>Install the required npm packages and run the build script</p>
+    <pre>
+> npm install
+> npm run build
+</pre>
     <h2>Run</h2>
 
     <p>

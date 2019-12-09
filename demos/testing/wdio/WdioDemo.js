@@ -27,8 +27,7 @@
  **
  ***************************************************************************/
 import loadJson from '../../resources/load-json.js'
-import { GraphComponent, GraphEditorInputMode, ICommand, License } from 'yfiles'
-import * as yfiles from 'yfiles'
+import yfiles, { GraphComponent, GraphEditorInputMode, ICommand, License } from 'yfiles'
 import { bindCommand, showApp } from '../../resources/demo-app.js'
 
 function run(licenseData) {

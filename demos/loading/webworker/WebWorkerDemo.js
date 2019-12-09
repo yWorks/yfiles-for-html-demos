@@ -41,9 +41,9 @@ import {
   WaitInputMode
 } from 'yfiles'
 
-import { initDemoStyles } from '../../resources/demo-styles.js'
+import { initDemoStyles } from './resources/demo-styles.js'
 import WebWorkerLayoutExecutor from './WebWorkerLayoutExecutor.js'
-import { bindAction, bindCommand, showApp } from '../../resources/demo-app.js'
+import { bindAction, bindCommand, showApp } from './resources/demo-app.js'
 
 import Worker from './WorkerLayoutTask'
 

@@ -12,10 +12,5 @@
     "resolveJsonModule": true,
     "esModuleInterop": true
   },
-  "files": [
-    "MyNodeStyle.ts",
-    "MyMarqueeTemplate.ts",
-    "MyArrow.ts",
-    "TypeScript2Demo.ts"
-  ]
+  "files": ["MyNodeStyle.ts", "MyMarqueeTemplate.ts", "MyArrow.ts", "TypeScript2Demo.ts"]
 }

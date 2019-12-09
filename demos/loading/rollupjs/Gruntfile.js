@@ -29,6 +29,9 @@
 const path = require('path')
 const { optimize } = require('@yworks/optimizer')
 const rollup = require('rollup')
+const babel = require('rollup-plugin-babel')
+const resolve = require('rollup-plugin-node-resolve')
+const commonjs = require('rollup-plugin-commonjs')
 
 const root = path.join(__dirname, '../../../')
 const build = path.join(__dirname, 'build')
@@ -46,8 +49,8 @@ module.exports = function(grunt) {
       file.source = file.source.replace(/from 'yfiles'/gi, () => {
         const resolvedPath = path
           .join(
-            path.relative(path.dirname(file.src[0]), root),
-            `demos/node_modules/yfiles/yfiles.js`
+            path.relative(path.dirname(file.src[0]), __dirname),
+            `node_modules/yfiles/yfiles.js`
           )
           .replace(/\\/g, '/')
         return `from '${resolvedPath}'`
@@ -56,7 +59,7 @@ module.exports = function(grunt) {
 
     const libFiles = grunt.file
       .expand(
-        path.join(root, 'demos/node_modules/yfiles') + '/**/*.js',
+        path.join(__dirname, 'node_modules/yfiles') + '/**/*.js',
         root + 'ide-support/yfiles-typeinfo.js'
       )
       .map(f => ({
@@ -77,6 +80,13 @@ module.exports = function(grunt) {
     rollup
       .rollup({
         input: path.join(build, 'demos/loading/rollupjs/src/RollupJsDemo.js'),
+        plugins: [
+          resolve(),
+          babel({
+            exclude: '**/node_modules/**'
+          }),
+          commonjs()
+        ],
         onwarn(warning) {
           if (warning.code !== 'THIS_IS_UNDEFINED') {
             console.log(warning.message)

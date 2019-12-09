@@ -38,20 +38,19 @@ import {
   IInputModeContext,
   IModelItem,
   INode,
-  ISelectionIndicatorInstaller,
   InputModeBase,
-  ItemSelectionChangedEventArgs,
+  ISelectionIndicatorInstaller,
   ModelManager,
   Point,
-  SolidColorFill,
-  delegate
+  SolidColorFill
 } from 'yfiles'
 
 import ButtonVisualCreator from './ButtonVisualCreator.js'
 
 /**
- * An {@link IInputMode} which will provide buttons for edge creation for the graph component's current item.
- * When one of the buttons is dragged, a new edge with the specified style is created.
+ * An {@link IInputMode} which will provide buttons for edge creation for the graph component's
+ * current item. When one of the buttons is dragged, a new edge with the specified style is
+ * created.
  */
 export default class UMLContextButtonsInputMode extends InputModeBase {
   constructor() {
@@ -60,7 +59,7 @@ export default class UMLContextButtonsInputMode extends InputModeBase {
 
     // initializes listener functions in order to install/uninstall them
     this.onCurrentItemChangedListener = () => this.onCurrentItemChanged()
-    this.onCanvasClickedListener = (sender, evt) => this.onCanvasClicked(evt.location)
+    this.onCanvasClickedListener = (sender, evt) => this.onCanvasClicked(evt)
     this.onNodeRemovedListener = (sender, evt) => this.onNodeRemoved(evt.item)
     this.startEdgeCreationListener = (sender, evt) => this.startEdgeCreation(evt.location)
   }
@@ -86,6 +85,7 @@ export default class UMLContextButtonsInputMode extends InputModeBase {
     graphComponent.addTouchMoveListener(this.startEdgeCreationListener)
     graphComponent.addTouchDownListener(this.startEdgeCreationListener)
     graphComponent.inputMode.addCanvasClickedListener(this.onCanvasClickedListener)
+    graphComponent.inputMode.addItemClickedListener(this.onCanvasClickedListener)
     graphComponent.graph.addNodeRemovedListener(this.onNodeRemovedListener)
   }
 
@@ -160,9 +160,10 @@ export default class UMLContextButtonsInputMode extends InputModeBase {
 
   /**
    * Check whether a context button has been clicked.
-   * @param {Point} location
+   * @param {ClickEventArgs} evt
    */
-  onCanvasClicked(location) {
+  onCanvasClicked(evt) {
+    const location = evt.location
     if (this.active && this.canRequestMutex()) {
       const graphComponent = this.inputModeContext.canvasComponent
       for (let enumerator = this.buttonNodes.getEnumerator(); enumerator.moveNext(); ) {
@@ -182,6 +183,7 @@ export default class UMLContextButtonsInputMode extends InputModeBase {
             buttonNode.style.model.stereotype = ''
             buttonNode.style.fill = isAbstract ? new SolidColorFill(0x60, 0x7d, 0x8b) : Fill.CRIMSON
           }
+          evt.handled = true
           buttonNode.style.model.modify()
           graphComponent.invalidate()
           graphComponent.inputMode.clickInputMode.preventNextDoubleClick()
@@ -202,6 +204,7 @@ export default class UMLContextButtonsInputMode extends InputModeBase {
     graphComponent.removeMouseClickListener(this.startEdgeCreationListener)
     graphComponent.removeTouchMoveListener(this.startEdgeCreationListener)
     graphComponent.removeTouchDownListener(this.startEdgeCreationListener)
+    graphComponent.inputMode.removeItemClickedListener(this.onCanvasClickedListener)
     graphComponent.inputMode.removeCanvasClickedListener(this.onCanvasClickedListener)
     graphComponent.graph.removeNodeRemovedListener(this.onNodeRemovedListener)
     this.buttonNodes.clear()
@@ -212,8 +215,8 @@ export default class UMLContextButtonsInputMode extends InputModeBase {
 }
 
 /**
- * A selection manager that draws the selection visualization in front of the input mode objects, such that
- * the edge creation buttons are drawn on top of the selected etc.
+ * A selection manager that draws the selection visualization in front of the input mode objects,
+ * such that the edge creation buttons are drawn on top of the selected etc.
  */
 class MySelectionIndicatorManager extends ModelManager {
   constructor(canvas, model) {

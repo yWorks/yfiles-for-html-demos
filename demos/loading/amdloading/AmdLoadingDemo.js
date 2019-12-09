@@ -30,15 +30,19 @@
 
 /* eslint-disable global-require */
 
-require.config({
-  paths: {
-    yfiles: '../../../lib/umd/',
-    utils: '../../utils/',
-    resources: '../../resources/'
-  }
-})
+// when using DOJO AMD loader, require.config is not defined
+if (typeof require.config === 'function') {
+  require.config({
+    paths: {
+      yfiles: '../../../lib/umd/',
+      utils: '../../utils/',
+      resources: '../../resources/'
+    }
+  })
+}
 
-require(['yfiles/view-component'], async (
+// note that requirejs does not allow async functions as require/define callbacks
+require(['yfiles/view-component'], (
   /** @type {yfiles_namespace} */ /** typeof yfiles */ yfiles
 ) => {
   /** @type {yfiles.view.GraphComponent} */
@@ -139,7 +143,7 @@ require(['yfiles/view-component'], async (
   }
 
   // start demo
-  const response = await fetch('../../../lib/license.json')
-  const json = await response.json()
-  run(json)
+  fetch('../../../lib/license.json')
+    .then(response => response.json())
+    .then(run)
 })

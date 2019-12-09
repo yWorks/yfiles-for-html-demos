@@ -39,7 +39,12 @@ import {
   Rect,
   Size
 } from 'yfiles'
-import { FitOwnerLabelStyle, ZoomInvariantLabelStyle } from './ZoomInvariantLabelStyle.js'
+import {
+  FitOwnerLabelStyle,
+  ZoomInvariantBelowThresholdLabelStyle,
+  ZoomInvariantAboveThresholdLabelStyle,
+  ZoomInvariantOutsideRangeLabelStyle
+} from './ZoomInvariantLabelStyle.js'
 import { bindChangeListener, bindCommand, showApp } from '../../resources/demo-app.js'
 import loadJson from '../../resources/load-json.js'
 import { initDemoStyles } from '../../resources/demo-styles.js'
@@ -49,13 +54,17 @@ let graphComponent = null
 
 const ModeDescriptions = {
   DEFAULT: 'Default Label Style',
+  FIXED_ABOVE_THRESHOLD: 'Fixed above zoom threshold',
   FIXED_BELOW_THRESHOLD: 'Fixed below zoom threshold',
+  INVARIANT_OUTSIDE_RANGE: 'Fixed when outside specified range',
   FIT_OWNER: "Fit into the label's owner"
 }
 
 const modeChooserBox = document.getElementById('modeChooserBox')
 const zoomThresholdLabel = document.getElementById('zoomThresholdLabel')
 const zoomThresholdInput = document.getElementById('zoomThreshold')
+const maxScaleLabel = document.getElementById('maxScaleLabel')
+const maxScaleInput = document.getElementById('maxScale')
 const zoomLevelDisplay = document.getElementById('zoomLevel')
 
 function run(licenseData) {
@@ -84,6 +93,14 @@ function run(licenseData) {
     graphComponent.updateVisual()
   })
 
+  maxScaleInput.addEventListener('change', () => {
+    maxScaleLabel.textContent = maxScaleInput.value
+    for (const label of graphComponent.graph.labels) {
+      label.style.maxScale = parseFloat(maxScaleInput.value)
+    }
+    graphComponent.updateVisual()
+  })
+
   // shows the current zoom level in the tool bar
   graphComponent.addZoomChangedListener(() => {
     zoomLevelDisplay.textContent = graphComponent.zoom.toFixed(2)
@@ -107,7 +124,7 @@ function createNode(layout, label) {
     layout: layout,
     labels: {
       text: label,
-      style: new ZoomInvariantLabelStyle(new DefaultLabelStyle(), 1)
+      style: new ZoomInvariantBelowThresholdLabelStyle(new DefaultLabelStyle(), 1)
     }
   })
 }
@@ -122,7 +139,10 @@ function createEdge(source, target, label) {
   return graphComponent.graph.createEdge({
     source: source,
     target: target,
-    labels: { text: label, style: new ZoomInvariantLabelStyle(new DefaultLabelStyle(), 1) }
+    labels: {
+      text: label,
+      style: new ZoomInvariantBelowThresholdLabelStyle(new DefaultLabelStyle(), 1)
+    }
   })
 }
 
@@ -174,8 +194,12 @@ function registerCommands() {
     const mode = modeChooserBox.value
     for (const label of graphComponent.graph.labels) {
       let labelStyle = new DefaultLabelStyle()
-      if (mode === 'FIXED_BELOW_THRESHOLD') {
-        labelStyle = new ZoomInvariantLabelStyle(labelStyle, 1)
+      if (mode === 'FIXED_ABOVE_THRESHOLD') {
+        labelStyle = new ZoomInvariantAboveThresholdLabelStyle(labelStyle, 1)
+      } else if (mode === 'FIXED_BELOW_THRESHOLD') {
+        labelStyle = new ZoomInvariantBelowThresholdLabelStyle(labelStyle, 1)
+      } else if (mode === 'INVARIANT_OUTSIDE_RANGE') {
+        labelStyle = new ZoomInvariantOutsideRangeLabelStyle(labelStyle, 1, 3)
       } else if (mode === 'FIT_OWNER') {
         labelStyle = new FitOwnerLabelStyle(labelStyle)
       }
@@ -183,7 +207,11 @@ function registerCommands() {
     }
 
     // hide the threshold controls if not applicable for the selected zoom style
-    document.getElementById('zoomThresholdControls').hidden = mode !== 'FIXED_BELOW_THRESHOLD'
+    document.getElementById('zoomThresholdControls').hidden =
+      mode === 'DEFAULT' || mode === 'FIT_OWNER'
+
+    // hide the maxScale controls if not applicable for the selected zoom style
+    document.getElementById('maxScaleControls').hidden = mode !== 'INVARIANT_OUTSIDE_RANGE'
 
     graphComponent.updateVisual()
   })

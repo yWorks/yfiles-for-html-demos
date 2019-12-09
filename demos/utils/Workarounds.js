@@ -169,16 +169,21 @@ export function detectArmDevice() {
  *   <li>5: iOS 5</li>
  *   <li>6: iOS 6</li>
  *   <li>7: iOS 7</li>
- *   <li>8: iOS 8 - 12</li>
+ *   <li>8: iOS 8 - 12, iOS 13 on non-Safari browsers</li>
+ *   <li>13: iOS 13+</li>
  * </ul>
- * NOTE: Since iOS 13, the user agent changed such that iOS and Mac OS X cannot be
- * distinguished anymore, therefore this will return -1 for Safari on iOS 13. However, it still
- * works on e.g. Chrome on iOS.
+ * NOTE: Since Safari for iOS 13, the user agent changed such that iOS and Mac OS X cannot be
+ * distinguished anymore. The check still works on other browsers on iOS e.g. Chrome.
+ * Therefore, there is another check for Safari 13+.
  */
 export function detectiOSVersion() {
   const ua = window.navigator.userAgent
 
-  if (/iPad|iPhone|iPod/.test(ua) && !window.MSStream) {
+  if (window.MSStream) {
+    // this is IE
+    return -1
+  }
+  if (/iPad|iPhone|iPod/.test(ua)) {
     if (window.indexedDB) {
       return 8
     }
@@ -196,7 +201,10 @@ export function detectiOSVersion() {
     }
     return 3
   }
-
+  if (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1) {
+    // This works as long as there are no macOS devices with touch
+    return 13
+  }
   return -1
 }
 
@@ -285,6 +293,7 @@ export function enableWorkarounds() {
   const chromeVersion = detectChromeVersion()
   const windowsVersion = detectWindowsVersion()
   const firefoxVersion = detectFirefoxVersion()
+  const iOSVersion = detectiOSVersion()
 
   // Enable support for labels with consecutive spaces in IE
   if (internetExplorerVersion !== -1) {
@@ -311,6 +320,10 @@ export function enableWorkarounds() {
   // Fix SVG transform issue in Chrome 57
   if (chromeVersion === 57) {
     Workarounds.cr701075 = true
+  }
+  // Workaround for bogus mouse events on iOS 13
+  if (iOSVersion !== -1) {
+    Workarounds.wk203237 = 100
   }
 
   // Prevent default for context menu key - it is handled by the context menu implementation

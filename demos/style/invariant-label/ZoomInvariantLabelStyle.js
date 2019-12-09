@@ -283,7 +283,7 @@ class ZoomInvariantLabelStyleBase extends LabelStyleBase {
   }
 }
 
-export class ZoomInvariantLabelStyle extends ZoomInvariantLabelStyleBase {
+export class ZoomInvariantBelowThresholdLabelStyle extends ZoomInvariantLabelStyleBase {
   /**
    * Stops the label from getting smaller in view coordinates if the zoom is smaller than zoomThreshold.
    *
@@ -295,6 +295,45 @@ export class ZoomInvariantLabelStyle extends ZoomInvariantLabelStyleBase {
       return 1
     }
     return this.zoomThreshold / zoom
+  }
+}
+
+export class ZoomInvariantAboveThresholdLabelStyle extends ZoomInvariantLabelStyleBase {
+  /**
+   * Stops the label from getting larger in view coordinates if the zoom is greater than zoomThreshold.
+   *
+   * @param {ILabel} label the current label which will be styled
+   * @param {number} zoom the current zoom level
+   */
+  getScaleForZoom(label, zoom) {
+    if (zoom < this.zoomThreshold) {
+      return 1
+    }
+    return this.zoomThreshold / zoom
+  }
+}
+
+export class ZoomInvariantOutsideRangeLabelStyle extends ZoomInvariantLabelStyleBase {
+  constructor(innerLabelStyle, zoomThreshold, maxScale) {
+    super(innerLabelStyle, zoomThreshold)
+    this.maxScale = maxScale
+  }
+
+  /**
+   * Stops the label from getting smaller in view coordinates if the zoom is smaller than zoomThreshold
+   * and stops it from getting larger in view coordinates if the zoom is greater than maxScale.
+   *
+   * @param {ILabel} label the current label which will be styled
+   * @param {number} zoom the current zoom level
+   */
+  getScaleForZoom(label, zoom) {
+    if (zoom < this.zoomThreshold) {
+      return this.zoomThreshold / zoom
+    }
+    if (zoom > this.maxScale) {
+      return this.maxScale / zoom
+    }
+    return 1
   }
 }
 

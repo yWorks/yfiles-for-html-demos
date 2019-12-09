@@ -5,15 +5,14 @@
   "license": "https://www.yworks.com/products/yfiles-for-html/sla",
   "private": true,
   "scripts": {
+    "preinstall": "cd ../../../lib/es-modules && npm pack",
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build"
   },
-  "peerDependencies": {
-    "yfiles": "22.0.2"
-  },
   "dependencies": {
     "core-js": "^2.6.5",
-    "vue": "^2.6.10"
+    "vue": "^2.6.10",
+    "yfiles": "../../../lib/es-modules/yfiles-22.0.3-eval.tgz"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^3.0.1",

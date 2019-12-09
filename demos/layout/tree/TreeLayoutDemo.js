@@ -78,6 +78,12 @@ let nodePlacerPanel = null
 let busy = false
 
 /**
+ * The currently loaded sample graph
+ * @type {string}
+ */
+let currentSample = 'Default Tree'
+
+/**
  * Launches the TreeLayoutDemo.
  */
 function run(licenseData) {
@@ -94,7 +100,7 @@ function run(licenseData) {
   registerCommands()
 
   // load a sample graph
-  loadGraph('Default Tree')
+  loadGraph(currentSample)
 
   showApp(graphComponent)
 }
@@ -102,7 +108,7 @@ function run(licenseData) {
 /**
  * Runs a {@link TreeLayout} using the specified {@link ITreeLayoutNodePlacer}s.
  */
-async function runLayout(sample) {
+async function runLayout() {
   if (busy) {
     // there is already a layout calculating do not start another one
     return
@@ -112,7 +118,7 @@ async function runLayout(sample) {
 
   // create a layout configuration according to the current sample
   let configuration
-  switch (sample) {
+  switch (currentSample) {
     default:
       configuration = createGenericConfiguration(graphComponent.graph, nodePlacerPanel)
       break
@@ -136,27 +142,6 @@ async function runLayout(sample) {
   // run the layout animated
   await graphComponent.morphLayout(configuration.layout, '0.5s', configuration.layoutData)
   setBusy(false)
-}
-
-/**
- * Returns the ordinal which describes where this edge fits in the edge order.
- * This implementation uses the label text if it is a number or 0.
- * @param {IEdge} edge
- * @return {number}
- */
-function getOrdinal(edge) {
-  if (!edge) {
-    return 0
-  }
-
-  const targetLabels = edge.targetNode.labels
-  if (targetLabels.size > 0) {
-    const number = Number.parseFloat(targetLabels.first().text)
-    if (!isNaN(number)) {
-      return number
-    }
-  }
-  return 0
 }
 
 /**
@@ -269,6 +254,8 @@ function collectSubtreeNodes(selectedNode, nodesToDelete) {
  * Reads a tree graph from file
  */
 function loadGraph(sample) {
+  currentSample = sample
+
   const graph = graphComponent.graph
 
   // initialize the node and edge default styles, they will be applied to the newly created graph
@@ -286,7 +273,7 @@ function loadGraph(sample) {
 
   // select tree data
   let nodesSource
-  switch (sample) {
+  switch (currentSample) {
     default:
     case 'Default Tree':
       nodesSource = TreeData.DefaultTree.nodesSource
@@ -315,7 +302,7 @@ function loadGraph(sample) {
   // create the graph
   builder.buildGraph()
 
-  if (sample === 'General Graph') {
+  if (currentSample === 'General Graph') {
     // add some non-tree edges
     graph.createEdge(graph.nodes.get(1), graph.nodes.get(22))
     graph.createEdge(graph.nodes.get(3), graph.nodes.get(16))
@@ -331,7 +318,7 @@ function loadGraph(sample) {
   })
 
   // apply layout
-  runLayout(sample)
+  runLayout()
 }
 
 /**

@@ -42,7 +42,6 @@ import {
   PopulateItemContextMenuEventArgs,
   ShowFocusPolicy,
   Size,
-  TemplateNodeStyle,
   TreeBuilder
 } from 'yfiles'
 
@@ -98,8 +97,6 @@ function run(licenseData) {
 
   graphSearch = new OrgChartGraphSearch(graphComponent)
   GraphSearch.registerEventListener(document.getElementById('searchBox'), graphSearch)
-
-  initializeConverters()
 
   // Populate the graph with the sample data and initialize the OrgChartGraph helper class
   orgChartGraph = new OrgChartGraph(graphComponent, createGraph(OrgChartData))
@@ -298,22 +295,6 @@ function registerCommands() {
   })
 
   bindAction("button[data-command='Print']", print)
-}
-
-/**
- * Initializes the converters for the bindings of the ports style.
- */
-function initializeConverters() {
-  TemplateNodeStyle.CONVERTERS.orgChartConverters = {
-    // Set the converters for the collapsible node styles
-    portIconConverter: highlighted => {
-      return highlighted ? 'port-icon hover' : 'port-icon'
-    },
-    // Set the converters for the collapsible node styles
-    portIconStateConverter: data => {
-      return data && data.collapsed ? 'port-icon port-icon-expand' : 'port-icon port-icon-collapse'
-    }
-  }
 }
 
 function initializeInputMode() {

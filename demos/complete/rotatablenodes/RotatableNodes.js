@@ -1604,7 +1604,7 @@ class RotatableNodeClipboardHelper extends BaseClass(IClipboardHelper) {
    */
   paste(context, item, userData) {
     const node = item
-    if (node instanceof INode) {
+    if (INode.isInstance(node)) {
       return
     }
     const styleWrapper = node.style

@@ -283,7 +283,7 @@ CustomNodeLabelModel.CustomNodeLabelModelParameter.serializationHandler = (sourc
   // only serialize items that are of the specific type
   if (args.item instanceof CustomNodeLabelModel.CustomNodeLabelModelParameter) {
     const /** @type {CustomNodeLabelModel.CustomNodeLabelModelParameter} */ modelParameter =
-      args.item
+        args.item
     const writer = args.writer
     writer.writeStartElement(
       'CustomNodeLabelModelParameter',

@@ -36,7 +36,11 @@ const opn = require('opn')
 const favicon = require('serve-favicon')
 const resolveYfiles = require('./resolve-yfiles')
 
-const defaultPage = '/README.html'
+let defaultPage = '/README.html'
+if (process.argv.length > 2) {
+  defaultPage = process.argv[2]
+}
+
 const app = express()
 let staticRoot = path.join(__dirname, '../..')
 if (typeof process.env.DEMO_SERVER_ROOT !== 'undefined') {
@@ -105,10 +109,13 @@ app.post('/file/save', upload.single('demo-input-graph'), (req, res) => {
 app.get('/npm-request', (request, outerResponse) => {
   const type = request.query.type
   const npmPackage = request.query.package
+  const version = request.query.version || 'latest'
+
+  const isScoped = npmPackage.startsWith('@')
 
   let url
   if (type === 'dependencies') {
-    url = 'https://registry.npmjs.org/' + npmPackage + '/latest'
+    url = 'https://registry.npmjs.org/' + npmPackage + '/' + (!isScoped ? version : '')
   } else if (type === 'dependents') {
     url =
       'https://registry.npmjs.org/-/_view/dependedUpon?group_level=2&startkey=%5B%22' +
@@ -130,7 +137,16 @@ app.get('/npm-request', (request, outerResponse) => {
           'Access-Control-Allow-Origin': '*',
           'Access-Control-Allow-Headers': 'X-Requested-With'
         })
-        outerResponse.status(200).send(completeResponse)
+        console.log(url)
+        let responseData
+        if (!isScoped) {
+          responseData = completeResponse
+        } else {
+          const responseJSON = JSON.parse(completeResponse)
+          const v = version === 'latest' ? responseJSON['dist-tags'].latest : version
+          responseData = JSON.stringify(responseJSON.versions[v])
+        }
+        outerResponse.status(200).send(responseData)
       })
     })
     .on('error', err => outerResponse.status(500).send(JSON.stringify(err)))

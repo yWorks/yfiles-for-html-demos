@@ -31,7 +31,7 @@
  */
 let id = 0
 module.exports.MouseAction = class MouseAction {
-  constructor(browser) {
+  constructor() {
     this.actions = []
     this.id = id++
   }

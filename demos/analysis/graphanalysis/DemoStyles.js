@@ -258,7 +258,7 @@ export class MultiColorNodeStyle extends NodeStyleBase {
 
       group.appendChild(shape)
     } else {
-      const angle = 2 * Math.PI / components.length
+      const angle = (2 * Math.PI) / components.length
       const x = Math.cos(angle)
       const y = Math.sin(angle)
 
@@ -280,7 +280,10 @@ export class MultiColorNodeStyle extends NodeStyleBase {
             ? component[0].tag.color
             : getColorForComponent(components[i])
         slice.setAttribute('fill', color)
-        slice.setAttribute('transform', `rotate(${i * angle * 180 / Math.PI} ${radius} ${radius})`)
+        slice.setAttribute(
+          'transform',
+          `rotate(${(i * angle * 180) / Math.PI} ${radius} ${radius})`
+        )
 
         slice.addEventListener('click', event => {
           const clickPoint = renderContext.canvasComponent.toWorldFromPage(
@@ -1350,7 +1353,7 @@ export class SourceTargetNodeStyle extends NodeStyleBase {
     g.setAttribute('class', 'multi-color-button')
 
     if (components && components.length > 1) {
-      const angle = 2 * Math.PI / components.length
+      const angle = (2 * Math.PI) / components.length
       const x = Math.cos(angle)
       const y = Math.sin(angle)
       for (let i = 0; i < components.length; i++) {
@@ -1362,7 +1365,10 @@ export class SourceTargetNodeStyle extends NodeStyleBase {
             y * radius},${radius - x * radius} z`
         )
         slice.setAttribute('fill', getColorForComponent(components[i]))
-        slice.setAttribute('transform', `rotate(${i * angle * 180 / Math.PI} ${radius} ${radius})`)
+        slice.setAttribute(
+          'transform',
+          `rotate(${(i * angle * 180) / Math.PI} ${radius} ${radius})`
+        )
 
         slice.addEventListener('click', event => {
           const clickPoint = renderContext.canvasComponent.toWorldFromPage(

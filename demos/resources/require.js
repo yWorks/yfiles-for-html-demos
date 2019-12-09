@@ -535,8 +535,8 @@
   typeof window !== 'undefined'
     ? window
     : typeof global !== 'undefined'
-      ? global
-      : typeof self !== 'undefined'
-        ? self
-        : this
+    ? global
+    : typeof self !== 'undefined'
+    ? self
+    : this
 )

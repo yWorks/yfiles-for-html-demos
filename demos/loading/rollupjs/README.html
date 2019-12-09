@@ -63,7 +63,11 @@
       library code.
     </p>
     <p>
-      Additionally, the yFiles optimizer is run before bundling to achieve a smaller, production ready bundle.
+      In addition to resolving the module imports and creating a browser-ready bundle, the Grunt build
+      <ul>
+        <li>runs the yFiles optimizer before bundling to achieve a smaller, production ready bundle</li>
+        <li>runs babel on the sources, so the resulting application can be run in older browsers like IE 11.</li>
+      </ul>
     </p>
   </div>
 
@@ -71,26 +75,14 @@
   <div class="block-space" style="padding: 40px 0 20px 0">
     <div class="content-centered">
       <h2>Building the demo</h2>
-
-      <p>If grunt is not available on the command line, install <code>grunt-cli</code> first:</p>
-
-      <code>
-        > npm install -g grunt-cli
-      </code>
-
       <p>
-        Install the required npm packages and run the default task of the Gruntfile:
-
+        Install the required npm packages and run the build script:
       </p>
-      <code>
-          > npm install
-          > grunt
-        </code>
-      <p>
-        Note that rollup may require more heap memory when bundling the yFiles library than available by default. To
-        increase the available memory, set the <code>--max-old-space-size</code> Node parameter to at least
-        <code>2048</code>.
-      </p>
+      <p>Install the required npm packages and run the build script</p>
+      <pre>
+> npm install
+> npm run build
+</pre>
     </div>
   </div>
   <div class="block-space" style="padding: 40px 0 20px 0">
@@ -127,7 +119,7 @@
         class="yt">YouTube</a>
       </div>
       <br><br> <span class="copyright">COPYRIGHT &#x00A9; 2019 yWorks</span><br> <a
-      href="https://www.yworks.com/company/legal/imprint">Imprint</a> | <a
+      href="https://www.yworks.com/company/legal/imprint">Legal Disclosure</a> | <a
       href="https://www.yworks.com/company/legal/terms-of-use">Terms of Use</a> | <a
       href="https://www.yworks.com/company/legal/privacy">Privacy Policy</a>
     </div>

@@ -281,9 +281,7 @@ function createErrorDialog(errorMessage, url, lineNumber, columnNumber, error) {
     'system',
     'System Info',
     'textarea',
-    `appVersion: ${window.navigator.appVersion}\nVendor: ${window.navigator.vendor}\nOS: ${
-      window.navigator.platform
-    }\nuserAgent: ${window.navigator.userAgent}`
+    `appVersion: ${window.navigator.appVersion}\nVendor: ${window.navigator.vendor}\nOS: ${window.navigator.platform}\nuserAgent: ${window.navigator.userAgent}`
   )
   systemInfo.rows = 2
   addFormRow(form, 'url', 'URL', 'text', window.top.location.href)

@@ -30,6 +30,8 @@ const fs = require('fs')
 const path = require('path')
 
 const SUPPORTED_YFILES_VERSION = '2.2'
+const ignoredFiles = /filesystem-warning\.js$/
+
 const importYfilesRegex = /import\s+([^'"]*?)\s+from\s+['"]yfiles\/?([^'"]*)['"]/g
 const importYfilesSideEffectRegex = /import\s+['"]yfiles\/?([^'"]*)['"]/g
 const es6NameToEsModule = {
@@ -164,12 +166,15 @@ module.exports = options => (req, res, next) => {
       next()
       return
     }
-    if (importYfilesRegex.test(data)) {
-      if (!yFilesServerPath) {
-        resolveYfilesServerPath(staticRoot, filePath)
-      }
-      if (yFilesServerPath) {
-        data = transformFile(data, filePath)
+
+    if (!ignoredFiles.test(filePath)) {
+      if (importYfilesRegex.test(data)) {
+        if (!yFilesServerPath) {
+          resolveYfilesServerPath(staticRoot, filePath)
+        }
+        if (yFilesServerPath) {
+          data = transformFile(data, filePath)
+        }
       }
     }
     res.type(ext)

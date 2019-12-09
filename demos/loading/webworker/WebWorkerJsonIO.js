@@ -27,7 +27,7 @@
  **
  ***************************************************************************/
 import { Class, DefaultGraph, IMapper, INodeInsetsProvider, Insets, Mapper } from 'yfiles'
-import { JSONReader, JSONWriter } from '../../utils/JsonIO'
+import { JSONReader, JSONWriter } from './utils/JsonIO'
 
 class MapperInsetsProvider extends Class(INodeInsetsProvider) {
   /**

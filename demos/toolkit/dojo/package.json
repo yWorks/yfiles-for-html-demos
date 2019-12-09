@@ -16,7 +16,7 @@
     "@dojo/themes": "^5.0.0",
     "@dojo/widgets": "^5.0.0",
     "tslib": "~1.8.1",
-    "yfiles": "../../../lib/es-modules/yfiles-22.0.2.tgz"
+    "yfiles": "../../../lib/es-modules/yfiles-22.0.3-eval.tgz"
   },
   "devDependencies": {
     "@dojo/cli": "^5.0.0",

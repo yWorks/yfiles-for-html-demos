@@ -91,12 +91,12 @@ export default class EventLog {
       eventType = text
     }
     const /** @type {LogMessage} */ message = {
-      isGroup: false,
-      message: text,
-      date: new Date(),
-      eventType,
-      category
-    }
+        isGroup: false,
+        message: text,
+        date: new Date(),
+        eventType,
+        category
+      }
     this.messages.push(message)
     this.createElementForLogItem(message)
 
@@ -282,10 +282,10 @@ export default class EventLog {
         const ungroupedMessagesRange2 = ungroupedMessages.slice(startIndex2, startIndex2 + length)
         if (this.compareTypes(ungroupedMessagesRange1, ungroupedMessagesRange2)) {
           const /** @type {LogGroup} */ group = {
-            isGroup: true,
-            repeatCount: 2,
-            repeatedMessages: ungroupedMessagesRange2
-          }
+              isGroup: true,
+              repeatCount: 2,
+              repeatedMessages: ungroupedMessagesRange2
+            }
           this.messages.push(group)
           this.removeMessages(ungroupedMessagesRange1)
           this.removeMessages(ungroupedMessagesRange2)
