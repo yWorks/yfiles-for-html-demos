@@ -6,8 +6,8 @@ This repository contains source code demos that use the commercial [yFiles for H
 
 # Running the Demos
 
-Most of the demos are hosted [online here](https://live.yworks.com/yfiles-for-html) for everyone to play with. Developers should [evaluate the library](https://www.yworks.com/products/yfiles-for-html/evaluate), instead. 
-The evaluation version also contains these demos and the necessary library to execute the code. 
+Most of the demos are hosted [online here](https://live.yworks.com/yfiles-for-html) for everyone to play with. Developers *need* to [evaluate the library](https://www.yworks.com/products/yfiles-for-html/evaluate), instead, since it is __*not*__ part of this repository. 
+The evaluation version also contains these demos and the necessary library to execute the code, so *cloning this repository is neither necessary nor will it suffice*. 
 
 # License
 
