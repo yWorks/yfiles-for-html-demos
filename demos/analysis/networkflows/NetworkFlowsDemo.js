@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -237,7 +237,6 @@ function initializeGraphComponent() {
 
 /**
  * Creates and configures the input mode.
- * @return {GraphEditorInputMode}
  */
 function createEditorInputMode() {
   const inputMode = new GraphEditorInputMode({
@@ -329,7 +328,7 @@ function createEditorInputMode() {
       capacity: 10,
       cost: 1,
       color: Color.CORNFLOWER_BLUE,
-      id: graphComponent.graph.edgeCount++
+      id: graphComponent.graph.edges.size
     }
 
     updateEdgeThickness(edge)
@@ -359,7 +358,7 @@ function createEditorInputMode() {
     edgePopup.currentItem = null
   })
 
-  inputMode.addItemClickedListener(onClicked.bind(this))
+  inputMode.addItemClickedListener(onClicked)
   graphComponent.inputMode = inputMode
 }
 
@@ -502,9 +501,10 @@ function calculateMaxFlowMinCut(minCut) {
 
   const maxFlowMinCutResult = maxFlowMinCut.run(graph)
   graph.nodes.forEach(node => {
-    const flow = (graph.inDegree(node) > 0 ? graph.inEdgesAt(node) : graph.outEdgesAt(node)).sum(
-      edge => maxFlowMinCutResult.flow.get(edge)
-    )
+    const flow = (graph.inDegree(node) > 0
+      ? graph.inEdgesAt(node)
+      : graph.outEdgesAt(node)
+    ).sum(edge => maxFlowMinCutResult.flow.get(edge))
     node.tag = {
       flow,
       supply: 0,
@@ -545,7 +545,7 @@ function calculateMaxFlowMinCut(minCut) {
  */
 function calculateMinCostFlow() {
   const graph = graphComponent.graph
-  let minCostFlowResult = -1
+  let minCostFlowResult = null
   try {
     const minCostFlow = new MinimumCostFlow({
       maximumCapacities: edge => edge.tag.capacity,
@@ -598,13 +598,13 @@ function calculateMinCostFlow() {
       demandNode.tag.sink = true
     })
   }
-  return minCostFlowResult.totalCost
+  return minCostFlowResult ? minCostFlowResult.totalCost : null
 }
 
 /**
  * Returns an array of all supply-nodes.
  * @param {IGraph} graph The input graph
- * @returns {Array} An array of all supply-nodes.
+ * @returns {Array<INode>} An array of all supply-nodes.
  */
 function getSupplyNodes(graph) {
   const supplyNodes = []
@@ -619,7 +619,7 @@ function getSupplyNodes(graph) {
 /**
  * Returns an array of all demand-nodes.
  * @param {IGraph} graph The input graph
- * @returns {Array} An array of all demand-nodes.
+ * @returns {Array<INode>} An array of all demand-nodes.
  */
 function getDemandNodes(graph) {
   const demandNodes = []
@@ -634,7 +634,7 @@ function getDemandNodes(graph) {
 /**
  * Run a hierarchic layout.
  * @param {boolean} incremental True if the algorithm should run in incremental mode, false otherwise
- * @param {Array} additionalIncrementalNodes An array of the incremental nodes
+ * @param {Array?} additionalIncrementalNodes An array of the incremental nodes
  * @param {function} finishHandler The handler that will be executed when the layout has finished.
  */
 async function runLayout(incremental, finishHandler, additionalIncrementalNodes) {
@@ -802,6 +802,7 @@ function updateMinCutLine() {
     graphComponent.graph.undoEngine.addUnit(tagUndoUnit)
   } else {
     minCutLine.visible = false
+    graphComponent.invalidate()
   }
 }
 
@@ -902,10 +903,7 @@ function registerCommands() {
   bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
   bindCommand("button[data-command='Undo']", ICommand.UNDO, graphComponent)
   bindCommand("button[data-command='Redo']", ICommand.REDO, graphComponent)
-  bindChangeListener(
-    "select[data-command='AlgorithmSelectionChanged']",
-    onAlgorithmChanged.bind(this)
-  )
+  bindChangeListener("select[data-command='AlgorithmSelectionChanged']", onAlgorithmChanged)
   bindAction("button[data-command='Reload']", () => {
     if (edgePopup) {
       edgePopup.currentItem = null

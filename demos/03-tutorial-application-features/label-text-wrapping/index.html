@@ -7,8 +7,8 @@
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.2.
-     // Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML 2.3.
+     // Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -39,8 +39,6 @@
   <link rel="stylesheet" href="../../node_modules/yfiles/yfiles.css">
   <link rel="stylesheet" href="../../resources/style/demo.css">
 
-  <!-- enable debugging -->
-  <script src="../../../ide-support/yfiles-typeinfo.js"></script>
   <script src="../../resources/filesystem-warning.js"></script>
 </head>
 <body class="demo-has-left">
@@ -55,6 +53,7 @@
     <ul>
       <li>Select and resize the nodes to see how the different wrapping types behave.</li>
       <li>New interactively added labels use word wrapping with ellipsis.</li>
+      <li>Try the right to left text direction. This will rebuild the graph with Hebrew text labels.</li>
     </ul>
 
     <p>See the sources for details.</p>
@@ -78,6 +77,9 @@
     <span class="demo-separator"></span>
     <button data-command="GroupSelection" title="Group selected element" class="demo-icon-yIconGroup"></button>
     <button data-command="UngroupSelection" title="Ungroup selected element" class="demo-icon-yIconUngroup"></button>
+    <span class="demo-separator"></span>
+    <input type="checkbox" id="trl-toggle" class="demo-toggle-button labeled">
+    <label for="trl-toggle" title="Toggle right to left text direction">RTL direction</label>
   </div>
 
   <div id="graphComponent"></div>

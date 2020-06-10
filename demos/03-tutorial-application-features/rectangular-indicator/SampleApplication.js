@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -37,7 +37,9 @@ import {
   HandlePositions,
   ICommand,
   IGraph,
+  IHandle,
   IHitTestable,
+  IInputModeContext,
   InteriorStretchLabelModel,
   License,
   MoveInputMode,
@@ -61,6 +63,7 @@ import loadJson from '../../resources/load-json.js'
  * The base application with a general toolbar and a ready to use {@link GraphComponent} that is
  * initialized with simple styles and a {@link GraphEditorInputMode} to enable default graph editing
  * gestures.
+ * @type {GraphComponent}
  */
 let graphComponent = null
 
@@ -72,6 +75,7 @@ let exportRect = null
 
 /**
  * Bootstraps the demo.
+ * @param {object} licenseData
  */
 function run(licenseData) {
   License.value = licenseData
@@ -143,11 +147,14 @@ function addExportRectInputModes(inputMode) {
   // create a mode that allows for dragging the export rectangle at the sides
   const moveInputMode = new MoveInputMode()
   moveInputMode.positionHandler = new PositionHandler(exportRect)
-  moveInputMode.hitTestable = IHitTestable.create((context, location) => {
-    const path = new GeneralPath(5)
-    path.appendRectangle(exportRect, false)
-    return path.pathContains(location, context.hitTestRadius + 3 / context.zoom)
-  })
+  moveInputMode.hitTestable = IHitTestable.create(
+    // @ts-ignore
+    (context, location) => {
+      const path = new GeneralPath(5)
+      path.appendRectangle(exportRect, false)
+      return path.pathContains(location, context.hitTestRadius + 3 / context.zoom)
+    }
+  )
 
   // add it to the edit mode
   moveInputMode.priority = 41
@@ -168,7 +175,7 @@ function initTutorialDefaults(graph) {
   graph.nodeDefaults.size = new Size(40, 40)
   graph.nodeDefaults.labels.style = new DefaultLabelStyle({
     verticalTextAlignment: 'center',
-    wrapping: 'word_ellipsis'
+    wrapping: 'word-ellipsis'
   })
   graph.nodeDefaults.labels.layoutParameter = ExteriorLabelModel.SOUTH
 
@@ -196,7 +203,7 @@ function createGraph(graph) {
   const node4 = graph.createNodeAt([30, 175])
   const node5 = graph.createNodeAt([100, 175])
 
-  graph.groupNodes({ children: [node1, node2, node3], labels: 'Group 1' })
+  graph.groupNodes({ children: [node1, node2, node3], labels: ['Group 1'] })
 
   const edge1 = graph.createEdge(node1, node2)
   const edge2 = graph.createEdge(node1, node3)

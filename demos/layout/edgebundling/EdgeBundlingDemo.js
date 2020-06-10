@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -35,7 +35,10 @@ import {
   Cursor,
   CurveFittingLayoutStage,
   EdgeBundleDescriptor,
+  EdgeBundlingStage,
+  EdgeBundlingStageData,
   Enum,
+  FreeNodeLabelModel,
   GenericLabeling,
   GraphBuilder,
   GraphComponent,
@@ -53,6 +56,8 @@ import {
   PopulateItemContextMenuEventArgs,
   RadialLayout,
   RadialLayoutData,
+  Rect,
+  StraightLineEdgeRouter,
   TreeLayout,
   TreeLayoutEdgeRoutingStyle,
   TreeReductionStage,
@@ -74,6 +79,7 @@ import BccCircularSampleData from './resources/bccCircular.js'
 import CircularSampleData from './resources/circular.js'
 import RadialSampleData from './resources/radial.js'
 import TreeSampleData from './resources/tree.js'
+import RoutingSampleData from './resources/routing.js'
 import loadJson from '../../resources/load-json.js'
 
 /**
@@ -84,8 +90,8 @@ let graphComponent = null
 
 /**
  * Holds the component index for each node.
- * It is necessary for determining in circular layouts the circle id in graphs with more than one connected
- * components.
+ * It is necessary for determining in circular layouts the circle id in graphs with more than one
+ * connected components.
  * @type {Mapper}
  */
 const componentsMap = new Mapper()
@@ -319,6 +325,7 @@ function initializeGraph() {
   // set the node and edge default styles
   graph.nodeDefaults.style = new DemoNodeStyle()
   graph.edgeDefaults.style = new DemoEdgeStyle()
+  graph.nodeDefaults.labels.layoutParameter = FreeNodeLabelModel.INSTANCE.createDefaultParameter()
 
   // hide the selection decorator
   graph.decorator.nodeDecorator.selectionDecorator.hideImplementation()
@@ -363,6 +370,8 @@ function onSampleChanged() {
     case LayoutAlgorithm.TREE:
       sampleData = TreeSampleData
       break
+    case LayoutAlgorithm.ROUTER:
+      sampleData = RoutingSampleData
   }
   // clear the current graph
   graphComponent.graph.clear()
@@ -384,14 +393,22 @@ function loadGraph(graph, graphData) {
 
   graph.clear()
 
-  const builder = new GraphBuilder({
-    graph,
-    nodesSource: graphData.nodes,
-    edgesSource: graphData.edges,
-    sourceNodeBinding: 'source',
-    targetNodeBinding: 'target',
-    nodeIdBinding: 'id'
+  const builder = new GraphBuilder(graph)
+  builder.createNodesSource({
+    data: graphData.nodes,
+    id: 'id',
+    layout: data => {
+      const layout = data.layout
+      return new Rect(
+        layout.x,
+        layout.y,
+        layout.w || graph.nodeDefaults.size.width,
+        layout.h || graph.nodeDefaults.size.height
+      )
+    },
+    labels: ['name']
   })
+  builder.createEdgesSource(graphData.edges, 'source', 'target')
   graph = builder.buildGraph()
 
   graph.edges.forEach(edge => {
@@ -435,14 +452,18 @@ async function runLayout() {
       })
       break
     }
+    case 5: {
+      layoutAlgorithm = createEdgeBundlingStage()
+      layoutData = new EdgeBundlingStageData({
+        edgeBundleDescriptors: bundleDescriptorMap
+      })
+    }
   }
 
   // to apply bezier fitting, append the CurveFittingLayoutStage to the layout algorithm
   // we could also enable the bezier fitting from the edge bundling descriptor but, we would like for this demo to
   // have small error
-  const curveFittingStage = new CurveFittingLayoutStage()
-  curveFittingStage.maximumError = 1
-  layoutAlgorithm.prependStage(curveFittingStage)
+  layoutAlgorithm = new CurveFittingLayoutStage({ coreLayout: layoutAlgorithm, maximumError: 1 })
 
   // run the layout
   await graphComponent.morphLayout(layoutAlgorithm, '0.1s', layoutData)
@@ -532,6 +553,16 @@ function createTreeReductionStage() {
     nonTreeEdgeLabelingAlgorithm: labelingAlgorithm,
     nonTreeEdgeLabelSelectionKey: labelingAlgorithm.affectedLabelsDpKey
   })
+}
+
+/**
+ * Creates and configures the edge bundling stage
+ * @return {ILayoutAlgorithm}
+ */
+function createEdgeBundlingStage() {
+  const edgeBundlingStage = new EdgeBundlingStage(new StraightLineEdgeRouter())
+  configureEdgeBundling(edgeBundlingStage)
+  return new GenericLabeling({ coreLayout: edgeBundlingStage })
 }
 
 /**
@@ -734,7 +765,8 @@ const LayoutAlgorithm = Enum('LayoutAlgorithm', {
   CIRCULAR: 1,
   RADIAL: 2,
   BALLOON: 3,
-  TREE: 4
+  TREE: 4,
+  ROUTER: 5
 })
 
 // runs the demo

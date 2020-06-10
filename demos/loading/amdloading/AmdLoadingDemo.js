@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -28,52 +28,44 @@
  ***************************************************************************/
 'use strict'
 
-/* eslint-disable global-require */
-
 // when using DOJO AMD loader, require.config is not defined
-if (typeof require.config === 'function') {
-  require.config({
-    paths: {
-      yfiles: '../../../lib/umd/',
-      utils: '../../utils/',
-      resources: '../../resources/'
+require.config({
+  packages: [
+    {
+      name: 'yfiles-umd',
+      location: '../../node_modules/yfiles-umd/',
+      main: 'complete'
     }
-  })
-}
+  ]
+})
 
 // note that requirejs does not allow async functions as require/define callbacks
-require(['yfiles/view-component'], (
-  /** @type {yfiles_namespace} */ /** typeof yfiles */ yfiles
-) => {
-  /** @type {yfiles.view.GraphComponent} */
+require(['yfiles-umd/view-component'], /** @param {yfiles} yfiles */ yfiles => {
+  const { GraphComponent, ShapeNodeStyle, PolylineEdgeStyle, IArrow, ICommand, License } = yfiles
+
   let graphComponent = null
 
   function run(licenseData) {
-    yfiles.lang.License.value = licenseData
+    License.value = licenseData
 
-    graphComponent = new yfiles.view.GraphComponent('graphComponent')
+    graphComponent = new GraphComponent('graphComponent')
     const graph = graphComponent.graph
     graphComponent.graph.undoEngineEnabled = true
 
-    // load the input module and set the input editor
-    require(['yfiles/view-editor'], () => {
-      graphComponent.inputMode = new yfiles.input.GraphEditorInputMode()
-    })
-
     // set a nice default style
-    graph.nodeDefaults.style = new yfiles.styles.ShapeNodeStyle({
+    graph.nodeDefaults.style = new ShapeNodeStyle({
       fill: 'orange',
       stroke: 'orange',
       shape: 'rectangle'
     })
-    graph.edgeDefaults.style = new yfiles.styles.PolylineEdgeStyle({
-      targetArrow: yfiles.styles.IArrow.DEFAULT
+    graph.edgeDefaults.style = new PolylineEdgeStyle({
+      targetArrow: IArrow.DEFAULT
     })
 
     // create small sample graph
-    const node1 = graph.createNode(new yfiles.geometry.Rect(50, 50, 30, 30))
-    const node2 = graph.createNode(new yfiles.geometry.Rect(0, 150, 30, 30))
-    const node3 = graph.createNode(new yfiles.geometry.Rect(100, 150, 30, 30))
+    const node1 = graph.createNode([50, 50, 30, 30])
+    const node2 = graph.createNode([0, 150, 30, 30])
+    const node3 = graph.createNode([100, 150, 30, 30])
     graph.createEdge(node1, node2)
     graph.createEdge(node1, node3)
 
@@ -81,11 +73,15 @@ require(['yfiles/view-component'], (
     graphComponent.fitGraphBounds()
 
     registerCommands()
+
+    // load the input module and set the input editor
+    require(['yfiles-umd/view-editor'], () => {
+      const { GraphEditorInputMode } = yfiles
+      graphComponent.inputMode = new GraphEditorInputMode()
+    })
   }
 
   function registerCommands() {
-    const iCommand = yfiles.input.ICommand
-
     function bindCommand(selector, command, parameter = null) {
       const element = document.querySelector(selector)
       command.addCanExecuteChangedListener(() => {
@@ -95,50 +91,47 @@ require(['yfiles/view-component'], (
           element.setAttribute('disabled', 'disabled')
         }
       })
-      element.addEventListener('click', e => {
+      element.addEventListener('click', () => {
         if (command.canExecute(parameter, graphComponent)) {
           command.execute(parameter, graphComponent)
         }
       })
     }
 
-    bindCommand("button[data-command='FitContent']", iCommand.FIT_GRAPH_BOUNDS)
-    bindCommand("button[data-command='ZoomIn']", iCommand.INCREASE_ZOOM)
-    bindCommand("button[data-command='ZoomOut']", iCommand.DECREASE_ZOOM)
-    bindCommand("button[data-command='ZoomOriginal']", iCommand.ZOOM, 1.0)
+    bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS)
+    bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM)
+    bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM)
+    bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, 1.0)
 
-    bindCommand("button[data-command='Cut']", iCommand.CUT)
-    bindCommand("button[data-command='Copy']", iCommand.COPY)
-    bindCommand("button[data-command='Paste']", iCommand.PASTE)
-    bindCommand("button[data-command='Delete']", iCommand.DELETE)
+    bindCommand("button[data-command='Cut']", ICommand.CUT)
+    bindCommand("button[data-command='Copy']", ICommand.COPY)
+    bindCommand("button[data-command='Paste']", ICommand.PASTE)
+    bindCommand("button[data-command='Delete']", ICommand.DELETE)
 
-    bindCommand("button[data-command='Undo']", iCommand.UNDO)
-    bindCommand("button[data-command='Redo']", iCommand.REDO)
+    bindCommand("button[data-command='Undo']", ICommand.UNDO)
+    bindCommand("button[data-command='Redo']", ICommand.REDO)
 
-    document
-      .querySelector("button[data-command='Layout']")
-      .addEventListener('click', applyLayout.bind(this))
+    document.querySelector("button[data-command='Layout']").addEventListener('click', applyLayout)
   }
 
   function applyLayout() {
-    // eslint-disable-next-line global-require
-    require(['yfiles/layout-hierarchic', 'yfiles/view-layout-bridge'], async () => {
+    require(['yfiles-umd/layout-hierarchic', 'yfiles-umd/view-layout-bridge'], () => {
+      const { HierarchicLayout, MinimumNodeSizeStage } = yfiles
       const layoutButton = document.getElementById('layoutButton')
       layoutButton.disabled = true
-      const layout = new yfiles.layout.MinimumNodeSizeStage(
-        new yfiles.hierarchic.HierarchicLayout()
-      )
-      try {
-        await graphComponent.morphLayout(layout, '1s')
-      } catch (error) {
-        if (typeof window.reportError === 'function') {
-          window.reportError(error)
-        } else {
-          throw error
-        }
-      } finally {
-        layoutButton.disabled = false
-      }
+      const layout = new MinimumNodeSizeStage(new HierarchicLayout())
+      graphComponent
+        .morphLayout(layout, '1s')
+        .catch(error => {
+          if (typeof window.reportError === 'function') {
+            window.reportError(error)
+          } else {
+            throw error
+          }
+        })
+        .then(() => {
+          layoutButton.disabled = false
+        })
     })
   }
 

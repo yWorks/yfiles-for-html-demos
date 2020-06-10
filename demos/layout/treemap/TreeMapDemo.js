@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -127,15 +127,17 @@ function initializeGraph() {
   graphComponent.graphModelManager.hierarchicNestingPolicy = HierarchicNestingPolicy.NONE
 
   // load the sample graph
-  const graphBuilder = new GraphBuilder({
-    graph,
-    nodesSource: TreeMapData.nodesSource,
-    groupsSource: TreeMapData.groupsSource,
-    nodeIdBinding: 'id',
-    groupBinding: 'groupRef',
-    parentGroupBinding: 'parentGroupRef',
-    groupIdBinding: 'groupTag',
-    nodeLabelBinding: tag => tag.label || null
+  const graphBuilder = new GraphBuilder(graph)
+  graphBuilder.createNodesSource({
+    data: TreeMapData.nodesSource,
+    id: 'id',
+    parentId: 'groupRef',
+    labels: ['label']
+  })
+  graphBuilder.createGroupNodesSource({
+    data: TreeMapData.groupsSource,
+    id: 'groupTag',
+    parentId: 'parentGroupRef'
   })
 
   graphBuilder.buildGraph()
@@ -158,8 +160,8 @@ function initializeGraph() {
 
 /**
  * Initializes the input modes.
- * Groups and folders can be navigated by clicking on the respective node. Valid/clickable nodes get a highlight
- * when the mouse hovers over them.
+ * Groups and folders can be navigated by clicking on the respective node. Valid/clickable nodes
+ * get a highlight when the mouse hovers over them.
  */
 function initializeInputModes() {
   const inputMode = new GraphViewerInputMode()
@@ -408,7 +410,8 @@ function getSizeString(size) {
 }
 
 /**
- * Applies a TreeMapLayout to the current graph. The configuration is derived from the information in the module.
+ * Applies a TreeMapLayout to the current graph. The configuration is derived from the information
+ * in the module.
  */
 async function applyLayout() {
   const graph = graphComponent.graph

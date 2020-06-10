@@ -8,8 +8,8 @@
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.2.
-     // Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML 2.3.
+     // Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -42,12 +42,10 @@
 
   <link rel="stylesheet" href="./resources/app.css">
 
-  <!-- enable debugging -->
-  <script src="../../../ide-support/yfiles-typeinfo.js"></script>
   <script src="../../resources/filesystem-warning.js"></script>
 
   <!-- load d3.js for the bar chart and d3-tip for the tooltips -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/5.7.0/d3.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/5.16.0/d3.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-tip/0.9.1/d3-tip.min.js"></script>
 </head>
 <body class="demo-has-left">
@@ -125,6 +123,8 @@
     <input type="checkbox" id="toggleFailures" class="demo-toggle-button labeled" title="Simulate Failures" data-command="ToggleFailures"/><label for="toggleFailures">Simulate Failures</label>
     <span class="demo-separator"></span>
     <input type="checkbox" id="toggleLabels" class="demo-toggle-button labeled" title="Toggle Node Labels" data-command="ToggleLabels"/><label for="toggleLabels">Toggle Labels</label>
+    <span class="demo-separator"></span>
+    <input type="checkbox" id="pause" class="demo-toggle-button labeled" title="Pause Simulation" data-command="PauseSimulation"/><label for="pause">Pause Simulation</label>
   </div>
 
   <div id="graphComponent">

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -56,7 +56,12 @@ import {
   Table,
   TableEditorInputMode,
   TableNodeStyle,
-  VoidStripeStyle
+  VoidStripeStyle,
+  SolidColorFill,
+  TimeSpan,
+  SimplexNodePlacer,
+  IModelItem,
+  IEdge
 } from 'yfiles'
 
 import FileSaveSupport from '../../utils/FileSaveSupport.js'
@@ -68,6 +73,7 @@ let graphComponent = null
 
 /**
  * Bootstraps the demo.
+ * @param {object} licenseData
  */
 function run(licenseData) {
   License.value = licenseData
@@ -84,7 +90,7 @@ function run(licenseData) {
   // configures default styles for newly created graph elements
   initTutorialDefaults(graphComponent.graph)
 
-  guildGraph()
+  loadGraph()
 
   // bind the buttons to their commands
   registerCommands()
@@ -93,7 +99,10 @@ function run(licenseData) {
   showApp(graphComponent)
 }
 
-async function guildGraph() {
+/**
+ * @returns {Promise}
+ */
+async function loadGraph() {
   try {
     // load the graph data from the given JSON file
     const graphData = await loadJSON('./GraphData.json')
@@ -111,6 +120,9 @@ async function guildGraph() {
   }
 }
 
+/**
+ * @param {GraphEditorInputMode} graphEditorInputMode
+ */
 function configureTableEditing(graphEditorInputMode) {
   const reparentStripeHandler = new ReparentStripeHandler()
   reparentStripeHandler.maxColumnLevel = 1
@@ -150,7 +162,7 @@ function configureTableEditing(graphEditorInputMode) {
  * and other {@link IGraph} functions to apply the given information to the graph model.
  *
  * @param {IGraph} graph The graph.
- * @param {object} graphData The graph data that was loaded from the JSON file.
+ * @param {*} graphData The graph data that was loaded from the JSON file.
  * @yjs:keep=nodesSource,edgesSource
  */
 function buildGraph(graph, graphData) {
@@ -269,7 +281,7 @@ function buildGraph(graph, graphData) {
 /**
  * Serializes the graph to JSON.
  * @param {IGraph} graph The graph
- * @return {{nodesSource: Array, edgesSource: Array, lanesSource: Array}}
+ * @returns {*}
  */
 function writeToJSON(graph) {
   const jsonOutput = {
@@ -305,7 +317,7 @@ function writeToJSON(graph) {
     jsonOutput.nodesSource.push(jsonNode)
 
     // store the lane of the node
-    if (table) {
+    if (table && table instanceof ITable) {
       const column = table.findColumn(tableNode, node.layout.center)
       if (column) {
         const columnId = `lane${table.findColumn(tableNode, node.layout.center).index}`
@@ -314,7 +326,7 @@ function writeToJSON(graph) {
         if (!jsonOutput.lanesSource.find(lane => lane.id === columnId)) {
           const jsonLane = { id: columnId }
           if (column.labels.size > 0) {
-            jsonLane.label = column.labels.first().text
+            jsonNode.label = column.labels.first().text
           }
           jsonOutput.lanesSource.push(jsonLane)
         }
@@ -337,8 +349,8 @@ function writeToJSON(graph) {
 
 /**
  * Helper function that converts a {Color} to a hex color string.
- * @param {Color} color
  * @returns {string} hex color
+ * @param {Color} color
  */
 function colorToHex(color) {
   // zero-padding
@@ -361,16 +373,15 @@ function colorToHex(color) {
  * Runs a {@link HierarchicLayout} on the current graph. The
  * {@link HierarchicLayout} respects the node to cell (or swimlane) assignment by considering the
  * nodes location in relation to the swimlane bounds.
- * @param {TimeSpan|string} duration The animation duration of the layout.
- * @return {Promise<>}
+ * @param {(TimeSpan|string)} duration The animation duration of the layout.
+ * @returns {Promise}
  */
 function runLayout(duration) {
   const layout = new HierarchicLayout()
   layout.componentLayoutEnabled = false
   layout.layoutOrientation = LayoutOrientation.TOP_TO_BOTTOM
   layout.orthogonalRouting = true
-  layout.recursiveGroupLayering = false
-  layout.nodePlacer.barycenterMode = true
+  layout.recursiveGroupLayering = layout.nodePlacer.barycenterMode = true
 
   // We use Layout executor convenience method that already sets up the whole layout pipeline correctly
   const layoutExecutor = new LayoutExecutor({
@@ -400,7 +411,7 @@ function initTutorialDefaults(graph) {
   graph.nodeDefaults.size = new Size(40, 40)
   graph.nodeDefaults.labels.style = new DefaultLabelStyle({
     verticalTextAlignment: 'center',
-    wrapping: 'word_ellipsis'
+    wrapping: 'word-ellipsis'
   })
   graph.nodeDefaults.labels.layoutParameter = InteriorLabelModel.CENTER
 
@@ -449,7 +460,7 @@ function registerCommands() {
  *
  * @param {string} url The URL to load.
  *
- * @returns {Promise<object>} A promise with the loaded data.
+ * @returns {Promise.<JSON>} A promise with the loaded data.
  */
 async function loadJSON(url) {
   const response = await fetch(url)

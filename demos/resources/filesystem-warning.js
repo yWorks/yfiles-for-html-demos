@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -33,7 +33,7 @@
 
   var possibleServerUrl = window.location
     .toString()
-    .replace(/.*?\/demos\/(.*)/, 'http://localhost:4242/demos/$1')
+    .replace(/.*?\/demos-js\/(.*)/, 'http://localhost:4242/demos-js/$1')
 
   var showES6warning =
     window.location.hostname.indexOf('yworks.') < 0 &&
@@ -52,7 +52,7 @@
     '      is included in the yFiles for HTML package and can be run with: ' +
     '    </p>' +
     '    <pre style="color: #333;background-color: #f7f7f7;">\n' +
-    '   > cd %YFILES_HTML_DISTRIBUTION_DIR%/demos/\n' +
+    '   > cd %YFILES_HTML_DISTRIBUTION_DIR%/demos-js/\n' +
     '   > npm install\n' +
     '   > npm start</pre>' +
     '    <p>Once the server is running, you can click <a style="color: #ffaf00; text-decoration: underline;" href="' +

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -28,15 +28,35 @@
  ***************************************************************************/
 import {
   BaseClass,
+  BezierEdgeStyle,
+  CanvasComponent,
+  EdgeStyleDecorationInstaller,
+  Exception,
   GraphComponent,
+  HighlightIndicatorManager,
+  ICanvasObjectGroup,
+  ICanvasObjectInstaller,
   IEdge,
+  IInputModeContext,
+  ILabel,
   ILabelModelParameter,
+  ILabelOwner,
   IModelItem,
+  INode,
+  IPoint,
   IPositionHandler,
+  LabelStyleDecorationInstaller,
+  NodeStyleLabelStyleAdapter,
   Point,
+  ShapeNodeShape,
+  ShapeNodeStyle,
   SimpleLabel,
   Size,
-  UndoUnitBase
+  SolidColorFill,
+  Stroke,
+  StyleDecorationZoomPolicy,
+  UndoUnitBase,
+  VoidLabelStyle
 } from 'yfiles'
 
 /**
@@ -53,7 +73,7 @@ export class SankeyPopupSupport {
    * Constructor that takes the graphComponent, the container div element and an
    * ILabelModelParameter to determine the relative position of the popup.
    * @param {GraphComponent} graphComponent The given graphComponent.
-   * @param {Element} div The div element.
+   * @param {HTMLElement} div The div element.
    * @param {ILabelModelParameter} labelModelParameter The label model parameter that determines
    * the position of the pop-up.
    */
@@ -73,7 +93,8 @@ export class SankeyPopupSupport {
 
   /**
    * Sets the container {@link HTMLPopupSupport#div div element}.
-   * @param {HTMLElement} value The div element to be set.
+   * @param value The div element to be set.
+   * @type {HTMLElement}
    */
   set div(value) {
     this.$div = value
@@ -81,7 +102,7 @@ export class SankeyPopupSupport {
 
   /**
    * Gets the container {@link HTMLPopupSupport#div div element}.
-   * @return {HTMLElement}
+   * @type {HTMLElement}
    */
   get div() {
     return this.$div
@@ -91,7 +112,8 @@ export class SankeyPopupSupport {
    * Sets the {@link IModelItem item} to display information for.
    * Setting this property to a value other than null shows the pop-up.
    * Setting the property to null hides the pop-up.
-   * @param {IModelItem} value The current item.
+   * @param value The current item.
+   * @type {?IModelItem}
    */
   set currentItem(value) {
     if (value === this.$currentItem) {
@@ -107,7 +129,8 @@ export class SankeyPopupSupport {
 
   /**
    * Gets the {@link IModelItem item} to display information for.
-   * @return {IModelItem} The item to display information for
+   * @return The item to display information for
+   * @type {?IModelItem}
    */
   get currentItem() {
     return this.$currentItem
@@ -115,7 +138,8 @@ export class SankeyPopupSupport {
 
   /**
    * Sets the flag for the current position is no longer valid.
-   * @param {boolean} value True if the current position is no longer valid, false otherwise.
+   * @param value True if the current position is no longer valid, false otherwise.
+   * @type {boolean}
    */
   set dirty(value) {
     this.$dirty = value
@@ -123,7 +147,8 @@ export class SankeyPopupSupport {
 
   /**
    * Gets the flag for the current position is no longer valid.
-   * @return {boolean} True if the current position is no longer valid, false otherwise
+   * @return True if the current position is no longer valid, false otherwise
+   * @type {boolean}
    */
   get dirty() {
     return this.$dirty
@@ -141,12 +166,21 @@ export class SankeyPopupSupport {
     })
 
     // Adds listeners for node bounds changes
-    this.graphComponent.graph.addNodeLayoutChangedListener(node => {
-      if (
-        ((this.currentItem && this.currentItem === node) || IEdge.isInstance(this.currentItem)) &&
-        (node === this.currentItem.sourcePort.owner || node === this.currentItem.targetPort.owner)
-      ) {
+    this.graphComponent.graph.addNodeLayoutChangedListener((source, node) => {
+      if (this.currentItem && this.currentItem === node) {
         this.dirty = true
+      }
+
+      if (IEdge.isInstance(this.currentItem)) {
+        const sourcePort = this.currentItem.sourcePort
+        const targetPort = this.currentItem.targetPort
+
+        if (
+          (sourcePort && node === sourcePort.owner) ||
+          (targetPort && node === targetPort.owner)
+        ) {
+          this.dirty = true
+        }
       }
     })
 
@@ -221,15 +255,17 @@ export class TagUndoUnit extends UndoUnitBase {
    * The constructor
    * @param {string} undoName Name of the undo operation
    * @param {string} redoName Name of the redo operation
-   * @param {Object} oldTag The data to restore the previous state
-   * @param {Object} newTag The data to restore the next state
+   * @param {object} oldTag The data to restore the previous state
+   * @param {object} newTag The data to restore the next state
    * @param {IModelItem} item The owner of the tag
+   * @param {?Function} undoRedoCallback Callback
    */
-  constructor(undoName, redoName, oldTag, newTag, item) {
+  constructor(undoName, redoName, oldTag, newTag, item, undoRedoCallback) {
     super(undoName, redoName)
     this.oldTag = oldTag
     this.newTag = newTag
     this.item = item
+    this.undoRedoCallback = undoRedoCallback
   }
 
   /**
@@ -237,6 +273,7 @@ export class TagUndoUnit extends UndoUnitBase {
    */
   undo() {
     this.item.tag = this.oldTag
+    this.undoRedoCallback && this.undoRedoCallback()
   }
 
   /**
@@ -244,6 +281,7 @@ export class TagUndoUnit extends UndoUnitBase {
    */
   redo() {
     this.item.tag = this.newTag
+    this.undoRedoCallback && this.undoRedoCallback()
   }
 }
 
@@ -252,21 +290,44 @@ export class TagUndoUnit extends UndoUnitBase {
  * This implementation wraps the default position handler and delegates most of the work to it.
  */
 export class ConstrainedPositionHandler extends BaseClass(IPositionHandler) {
+  /**
+   * @param {?IPositionHandler} handler
+   */
   constructor(handler) {
     super()
     this.handler = handler
   }
 
+  /**
+   * @type {IPoint}
+   */
   get location() {
-    return this.handler.location
+    if (this.handler) {
+      return this.handler.location
+    }
+    throw new Exception('IPositionHandler === null')
   }
 
+  /**
+   * @param {IInputModeContext} context
+   */
   initializeDrag(context) {
+    if (this.handler === null) {
+      return
+    }
     this.handler.initializeDrag(context)
     this.lastLocation = this.handler.location.toPoint()
   }
 
+  /**
+   * @param {IInputModeContext} context
+   * @param {Point} originalLocation
+   * @param {Point} newLocation
+   */
   handleMove(context, originalLocation, newLocation) {
+    if (this.handler === null) {
+      return
+    }
     // only move along the y axis, keep the original x coordinate
     newLocation = new Point(originalLocation.x, newLocation.y)
     if (!newLocation.equalsEps(this.lastLocation, 0)) {
@@ -277,11 +338,93 @@ export class ConstrainedPositionHandler extends BaseClass(IPositionHandler) {
     }
   }
 
+  /**
+   * @param {IInputModeContext} context
+   * @param {Point} originalLocation
+   */
   cancelDrag(context, originalLocation) {
+    if (this.handler === null) {
+      return
+    }
     this.handler.cancelDrag(context, originalLocation)
   }
 
+  /**
+   * @param {IInputModeContext} context
+   * @param {Point} originalLocation
+   * @param {Point} newLocation
+   */
   dragFinished(context, originalLocation, newLocation) {
+    if (this.handler === null) {
+      return
+    }
     this.handler.dragFinished(context, originalLocation, newLocation)
+  }
+}
+
+/**
+ * A highlight manager responsible for highlighting edges and labels. In particular, edge highlighting should remain
+ * below the label group.
+ */
+export class HighlightManager extends HighlightIndicatorManager {
+  /**
+   * Creates a new instance of HighlightManager.
+   * @param {CanvasComponent} canvas
+   */
+  constructor(canvas) {
+    super(canvas)
+    const graphModelManager = this.canvasComponent.graphModelManager
+    this.edgeHighlightGroup = graphModelManager.contentGroup.addGroup()
+    this.edgeHighlightGroup.below(graphModelManager.edgeLabelGroup)
+  }
+
+  /**
+   * This implementation always returns the highlightGroup of the canvasComponent of this instance.
+   * @param {IModelItem} item The item to check
+   * @returns {ICanvasObjectGroup} An ICanvasObjectGroup or null
+   */
+  getCanvasObjectGroup(item) {
+    if (IEdge.isInstance(item)) {
+      return this.edgeHighlightGroup
+    }
+    const canvasObjectGroup = super.getCanvasObjectGroup(item)
+    if (canvasObjectGroup === null) {
+      throw new Exception('ICanvasObjectGroup === null')
+    }
+    return canvasObjectGroup
+  }
+
+  /**
+   * Callback used by install to retrieve the installer for a given item.
+   * @param {IModelItem} item The item to find an installer for
+   * @returns {ICanvasObjectInstaller} The Highlighting installer
+   */
+  getInstaller(item) {
+    if (IEdge.isInstance(item)) {
+      return new EdgeStyleDecorationInstaller({
+        edgeStyle: new BezierEdgeStyle({
+          stroke: new Stroke(new SolidColorFill(item.tag.color), item.tag.thickness)
+        }),
+        zoomPolicy: StyleDecorationZoomPolicy.WORLD_COORDINATES
+      })
+    } else if (ILabel.isInstance(item)) {
+      return new LabelStyleDecorationInstaller({
+        labelStyle: new NodeStyleLabelStyleAdapter(
+          new ShapeNodeStyle({
+            shape: ShapeNodeShape.ROUND_RECTANGLE,
+            stroke: '2px dodgerblue',
+            fill: 'transparent'
+          }),
+          VoidLabelStyle.INSTANCE
+        ),
+        margins: 3,
+        zoomPolicy: StyleDecorationZoomPolicy.WORLD_COORDINATES
+      })
+    }
+    const installer = super.getInstaller(item)
+    if (installer === null) {
+      throw new Exception('ICanvasObjectInstaller === null')
+    }
+    return installer
   }
 }

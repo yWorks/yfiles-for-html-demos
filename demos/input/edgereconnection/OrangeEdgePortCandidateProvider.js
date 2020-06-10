@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -74,7 +74,7 @@ export default class OrangeEdgePortCandidateProvider extends BaseClass(
         const provider = node.lookup(IPortCandidateProvider.$class)
         // If available, use the candidates from the provider. Otherwise, add a default candidate.
         if (provider !== null) {
-          result.addRange(provider.getTargetPortCandidates(context))
+          result.addRange(provider.getAllTargetPortCandidates(context))
         } else {
           result.add(new DefaultPortCandidate(node, FreeNodePortLocationModel.NODE_CENTER_ANCHORED))
         }
@@ -104,7 +104,7 @@ export default class OrangeEdgePortCandidateProvider extends BaseClass(
         const provider = node.lookup(IPortCandidateProvider.$class)
         // If available, use the candidates from the provider. Otherwise, add a default candidate.
         if (provider !== null) {
-          result.addRange(provider.getSourcePortCandidates(context))
+          result.addRange(provider.getAllSourcePortCandidates(context))
         } else {
           result.add(new DefaultPortCandidate(node, FreeNodePortLocationModel.NODE_CENTER_ANCHORED))
         }

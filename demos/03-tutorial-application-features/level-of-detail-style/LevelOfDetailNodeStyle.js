@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { INode, INodeStyle, IRenderContext, NodeStyleBase, Visual } from 'yfiles'
+import { INode, INodeStyle, IRenderContext, NodeStyleBase, SvgVisual, Visual } from 'yfiles'
 
 export default class LevelOfDetailNodeStyle extends NodeStyleBase {
   /**
@@ -47,12 +47,11 @@ export default class LevelOfDetailNodeStyle extends NodeStyleBase {
   /**
    * @param {IRenderContext} renderContext
    * @param {INode} node
-   * @return {Visual}
+   * @returns {SvgVisual}
    */
   createVisual(renderContext, node) {
     const zoom = renderContext.zoom
-    let visual = null
-
+    let visual
     if (zoom >= this.detailThreshold) {
       visual = this.detailNodeStyle.renderer
         .getVisualCreator(node, this.detailNodeStyle)
@@ -75,9 +74,9 @@ export default class LevelOfDetailNodeStyle extends NodeStyleBase {
 
   /**
    * @param {IRenderContext} renderContext
-   * @param {Visual} oldVisual
+   * @param {SvgVisual} oldVisual
    * @param {INode} node
-   * @return {Visual}
+   * @returns {Visual}
    */
   updateVisual(renderContext, oldVisual, node) {
     const zoom = renderContext.zoom

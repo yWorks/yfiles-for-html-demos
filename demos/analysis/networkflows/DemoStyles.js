@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -55,8 +55,8 @@ import {
 export class NetworkFlowNodeStyle extends NodeStyleBase {
   /**
    * Creates a new instance of NetworkFlowNodeStyle.
-   * @param {Color} color1
-   * @param {Color} color2
+   * @param {Color?} color1
+   * @param {Color?} color2
    */
   constructor(color1, color2) {
     super()
@@ -268,7 +268,7 @@ export class NetworkFlowNodeStyle extends NodeStyleBase {
 
     const graph = context.canvasComponent.graph
     // we have to distinguish the real source/sink from the isolated nodes
-    const source = node.tag.source && (graph.inDegree(node) === 0 && graph.outDegree(node) !== 0)
+    const source = node.tag.source && graph.inDegree(node) === 0 && graph.outDegree(node) !== 0
     const sink = node.tag.sink && graph.outDegree(node) === 0 && graph.inDegree(node) !== 0
 
     if (!source && !sink) {
@@ -338,7 +338,7 @@ export class NetworkFlowNodeStyle extends NodeStyleBase {
 export class NetworkFlowEdgeStyle extends EdgeStyleBase {
   /**
    * Creates a new instance of NetworkFlowEdgeStyle.
-   * @param {Color} highlightColor
+   * @param {Color?} highlightColor
    */
   constructor(highlightColor) {
     super()
@@ -580,7 +580,6 @@ class RenderDataCache {
     this.$color = color || (tag !== null ? tag.color : Color.DODGER_BLUE)
     this.$id = null
     this.$path = path
-    this.$color = color
     this.$selected = selected
   }
 

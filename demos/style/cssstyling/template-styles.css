@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -62,7 +62,7 @@
 
 /* Port Handle */
 .yfiles-handle-move-template {
- fill: #b96069;
+  fill: #b96069;
 }
 
 /* Marquee Selection Rectangle */
@@ -132,13 +132,19 @@
 /* Scrollbars */
 .yfiles-canvascomponent .yfiles-scrollbar.yfiles-scrollbar-horizontal,
 .yfiles-canvascomponent .yfiles-scrollbar.yfiles-scrollbar-horizontal div,
-.yfiles-canvascomponent .yfiles-scrollbar-range.yfiles-scrollbar-range-horizontal .yfiles-scrollbar-slider,
-.yfiles-canvascomponent .yfiles-scrollbar .yfiles-scrollbar-range.yfiles-scrollbar-range-horizontal {
+.yfiles-canvascomponent
+  .yfiles-scrollbar-range.yfiles-scrollbar-range-horizontal
+  .yfiles-scrollbar-slider,
+.yfiles-canvascomponent
+  .yfiles-scrollbar
+  .yfiles-scrollbar-range.yfiles-scrollbar-range-horizontal {
   height: 10px;
 }
 .yfiles-canvascomponent .yfiles-scrollbar.yfiles-scrollbar-vertical,
 .yfiles-canvascomponent .yfiles-scrollbar.yfiles-scrollbar-vertical div,
-.yfiles-canvascomponent .yfiles-scrollbar-range.yfiles-scrollbar-range-vertical .yfiles-scrollbar-slider,
+.yfiles-canvascomponent
+  .yfiles-scrollbar-range.yfiles-scrollbar-range-vertical
+  .yfiles-scrollbar-slider,
 .yfiles-canvascomponent .yfiles-scrollbar .yfiles-scrollbar-range.yfiles-scrollbar-range-vertical {
   width: 10px;
 }
@@ -204,8 +210,14 @@
 
 /* Label Editor*/
 @keyframes scaleAnimation {
-  from { opacity: 0; transform: scale(0); }
-  to { opacity: 1; transform: scale(1); }
+  from {
+    opacity: 0;
+    transform: scale(0);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 .yfiles-canvascomponent .yfiles-labeleditbox-container {
   background-color: #282e40;

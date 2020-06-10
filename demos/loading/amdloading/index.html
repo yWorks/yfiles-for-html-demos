@@ -5,13 +5,13 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 
-  <link rel="stylesheet" href="../../node_modules/yfiles/yfiles.css">
+  <link rel="stylesheet" href="../../node_modules/yfiles-umd/yfiles.css">
   <link rel="stylesheet" href="../../resources/style/demo.css">
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.2.
-     // Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML 2.3.
+     // Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -39,8 +39,6 @@
 
   <title>Amd Loading Demo [yFiles for HTML]</title>
 
-  <!-- enable debugging -->
-  <script src="../../../ide-support/yfiles-typeinfo.js"></script>
   <script src="../../resources/filesystem-warning.js"></script>
 </head>
 <body class="demo-has-left demo-hide-left-when-small loaded">
@@ -52,15 +50,15 @@
       This demo loads the yFiles module resources using the <em>require</em> function that is defined in the AMD loading
       standard. </p>
     <p>
-      The default AMD Loader in use by this demo is the one included in the distribution as part of the demos in
-      <em>demos/resources/require.js</em>. </p>
+      In order to run this demo, please run <code>npm install</code> in the demo folder. This will download the require.js AMD loader.
+    </p>
+    <p>
+      The default AMD Loader in use by this demo is the <a href="https://requirejs.org/" target="_blank">RequireJS</a> loader.</p>
     <p>
       Different AMD Loader implementations should work, too. E.g. in the sources of this page below you can find the
-      configuration code for other popular implementations. These can easily be tested by commenting out the current
-      loader and uncommenting one of the alternatives. </p>
-    <p>
-      The alternatives listed in this file are the <a href="https://requirejs.org/" target="_blank">RequireJS</a> loader and the loader
-      included in the <a href="https://dojotoolkit.org/" target="_blank">dojo Toolkit</a>. </p>
+      configuration code for the loader included in the <a href="https://dojotoolkit.org/" target="_blank">dojo
+      Toolkit</a>. This can easily be tested by commenting out the current loader and uncommenting the other loader.
+    </p>
     <p>
       Resources that have a <em>.js</em> ending are loaded as JavaScript files. Loading a
       resource without the <em>.js</em> postfix loads the resource as a module. Only the required top-level modules in
@@ -113,17 +111,12 @@
     data-dojo-config="async:true, parseOnLoad:true,
      baseUrl: location.pathname.replace(/\/[^/]+$/, '/'),
      packages: [
-       { name: 'yfiles', location: '../../../lib/umd' },
-       { name: 'utils', location: '../../utils' },
-       { name: 'resources', location: '../../resources' }
+       { name: 'yfiles', location: './node_modules/yfiles-umd' }
      ]"
     src="https://cdnjs.cloudflare.com/ajax/libs/dojo/1.10.4/dojo.js"></script>-->
 
 <!-- USING RequireJS as the AMD Loader implementation -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.js"></script>
-
-<!-- USING yFiles' demo-framework AMD Loader implementation -->
-<!--<script src="../../resources/require.js"></script>-->
 
 <!-- Load demo -->
 <script src="AmdLoadingDemo.js"></script>

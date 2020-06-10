@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,7 +26,17 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { Font, LabelStyleBase, Size, SvgVisual, TextRenderSupport, TextWrapping } from 'yfiles'
+import {
+  Font,
+  LabelStyleBase,
+  Size,
+  SvgVisual,
+  TextRenderSupport,
+  TextWrapping,
+  ILabel,
+  IRenderContext,
+  IOrientedRectangle
+} from 'yfiles'
 
 /**
  * This class is an example for a custom style based on the {@link LabelStyleBase}.
@@ -62,6 +72,9 @@ export default class MySimpleLabelStyle extends LabelStyleBase {
 
   /**
    * Creates the visual appearance of a label.
+   * @param {ILabel} label
+   * @param {Element} container
+   * @param {IOrientedRectangle} labelLayout
    */
   render(label, container, labelLayout) {
     // background rectangle
@@ -77,7 +90,7 @@ export default class MySimpleLabelStyle extends LabelStyleBase {
     rect.width.baseVal.value = labelLayout.width
     rect.height.baseVal.value = labelLayout.height
     rect.setAttribute('stroke', 'skyblue')
-    rect.setAttribute('stroke-width', 1)
+    rect.setAttribute('stroke-width', '1')
     rect.setAttribute('fill', 'rgb(155,226,255)')
 
     let text
@@ -87,8 +100,6 @@ export default class MySimpleLabelStyle extends LabelStyleBase {
       text = window.document.createElementNS('http://www.w3.org/2000/svg', 'text')
       container.appendChild(text)
     }
-    // assign all the values of the font to the text element's attributes
-    this.font.applyTo(text)
     // SVG does not provide out-of-the box text wrapping.
     // The following line uses a convenience method that implements text wrapping
     // with ellipsis by splitting the text and inserting tspan elements as children
@@ -120,7 +131,9 @@ export default class MySimpleLabelStyle extends LabelStyleBase {
   /**
    * Creates the visual for a label to be drawn.
    * @see Overrides {@link LabelStyleBase#createVisual}
-   * @return {SvgVisual}
+   * @param {IRenderContext} context
+   * @param {ILabel} label
+   * @returns {SvgVisual}
    */
   createVisual(context, label) {
     // This implementation creates a 'g' element and uses it for the rendering of the label.
@@ -128,7 +141,7 @@ export default class MySimpleLabelStyle extends LabelStyleBase {
     // Render the label
     this.render(label, g, label.layout)
     // move container to correct location
-    const transform = LabelStyleBase.createLayoutTransform(label.layout, true)
+    const transform = LabelStyleBase.createLayoutTransform(context, label.layout, true)
     transform.applyTo(g)
     // set data item
     g.setAttribute('data-internalId', 'MySimpleLabel')
@@ -139,7 +152,8 @@ export default class MySimpleLabelStyle extends LabelStyleBase {
   /**
    * Calculates the preferred size for the given label if this style is used for the rendering.
    * @see Overrides {@link LabelStyleBase#getPreferredSize}
-   * @return {Size}
+   * @param {ILabel} label
+   * @returns {Size}
    */
   getPreferredSize(label) {
     return new Size(80, 15)

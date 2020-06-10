@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -32,7 +32,9 @@ import {
   GraphComponent,
   GraphEditorInputMode,
   ICommand,
+  IEdge,
   IGraph,
+  INode,
   InteriorStretchLabelModel,
   License,
   PanelNodeStyle,
@@ -49,6 +51,8 @@ let graphComponent = null
 
 /**
  * Bootstraps the demo.
+ * @param {object} licenseData
+ * @returns {Promise}
  */
 async function run(licenseData) {
   License.value = licenseData
@@ -99,7 +103,7 @@ async function run(licenseData) {
  * and other {@link IGraph} functions to apply the given information to the graph model.
  *
  * @param {IGraph} graph The graph.
- * @param {object} graphData The graph data that was loaded from the JSON file.
+ * @param {*} graphData The graph data that was loaded from the JSON file.
  * @yjs:keep=groupsSource,nodesSource,edgesSource
  */
 function buildGraph(graph, graphData) {
@@ -187,7 +191,7 @@ function initTutorialDefaults(graph) {
   graph.nodeDefaults.size = new Size(40, 40)
   graph.nodeDefaults.labels.style = new DefaultLabelStyle({
     verticalTextAlignment: 'center',
-    wrapping: 'word_ellipsis'
+    wrapping: 'word-ellipsis'
   })
   graph.nodeDefaults.labels.layoutParameter = ExteriorLabelModel.SOUTH
 
@@ -230,7 +234,7 @@ function registerCommands() {
  *
  * @param {string} url The URL to load.
  *
- * @returns {Promise<object>} A promise with the loaded data.
+ * @returns {Promise.<JSON>} A promise with the loaded data.
  */
 
 async function loadJSON(url) {

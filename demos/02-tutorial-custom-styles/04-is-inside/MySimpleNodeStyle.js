@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -29,8 +29,11 @@
 import {
   GeneralPath,
   GeomUtilities,
+  ILabel,
   INode,
   INodeStyle,
+  IRenderContext,
+  ITagOwner,
   MutablePoint,
   NodeStyleBase,
   Point,
@@ -50,7 +53,7 @@ export default class MySimpleNodeStyle extends NodeStyleBase {
 
   /**
    * Counts the number of gradient fills used to generate a unique id.
-   * @return {number}
+   * @type {number}
    */
   static get fillCounter() {
     MySimpleNodeStyle.$fillCounter = (MySimpleNodeStyle.$fillCounter || 0) + 1
@@ -64,7 +67,9 @@ export default class MySimpleNodeStyle extends NodeStyleBase {
    * Exact geometric check whether a point p lies inside the node. This is important for intersection calculation,
    * among others.
    * @see Overrides {@link NodeStyleBase#isInside}
-   * @return {boolean}
+   * @param {INode} node
+   * @param {Point} point
+   * @returns {boolean}
    */
   isInside(node, point) {
     // return super.isInside(node, point);
@@ -76,7 +81,8 @@ export default class MySimpleNodeStyle extends NodeStyleBase {
    * Gets the outline of the node, an ellipse in this case.
    * This allows for correct edge path intersection calculation, among others.
    * @see Overrides {@link NodeStyleBase#getOutline}
-   * @return {GeneralPath}
+   * @param {INode} node
+   * @returns {GeneralPath}
    */
   getOutline(node) {
     // return super.getOutline(node);
@@ -110,7 +116,7 @@ export default class MySimpleNodeStyle extends NodeStyleBase {
    * the {@link ITagOwner#tag} of the {@link INode} is of type {@link string},
    * in which case that color overrides this style's setting.
    * @param {INode} node The node to determine the color for.
-   * @return {string} The color for filling the node.
+   * @returns {string} The color for filling the node.
    */
   getNodeColor(node) {
     // the color can be obtained from the "business data" that can be associated with
@@ -121,7 +127,9 @@ export default class MySimpleNodeStyle extends NodeStyleBase {
   /**
    * Creates the visual for a node.
    * @see Overrides {@link NodeStyleBase#createVisual}
-   * @return {SvgVisual}
+   * @param {IRenderContext} context
+   * @param {INode} node
+   * @returns {SvgVisual}
    */
   createVisual(context, node) {
     // This implementation creates a 'g' element and uses it as a container for the rendering of the node.
@@ -138,7 +146,10 @@ export default class MySimpleNodeStyle extends NodeStyleBase {
   /**
    * Re-renders the node using the old visual for performance reasons.
    * @see Overrides {@link NodeStyleBase#updateVisual}
-   * @return {SvgVisual}
+   * @param {IRenderContext} context
+   * @param {SvgVisual} oldVisual
+   * @param {INode} node
+   * @returns {SvgVisual}
    */
   updateVisual(context, oldVisual, node) {
     const container = oldVisual.svgElement
@@ -163,7 +174,8 @@ export default class MySimpleNodeStyle extends NodeStyleBase {
 
   /**
    * Creates an object containing all necessary data to create a visual for the node.
-   * @return {object}
+   * @param {INode} node
+   * @returns {*}
    */
   createRenderDataCache(node) {
     // If Tag is set to a Color, use it as background color of the node
@@ -208,6 +220,10 @@ export default class MySimpleNodeStyle extends NodeStyleBase {
    * elements to the <code>container</code>. All items are arranged as if the node was located at (0,0).
    * {@link MySimpleNodeStyle#createVisual} and {@link MySimpleNodeStyle#updateVisual} finally arrange the container
    * so that the drawing is translated into the final position.
+   * @param {IRenderContext} context
+   * @param {INode} node
+   * @param {SVGElement} container
+   * @param {*} cache
    */
   render(context, node, container, cache) {
     // store information with the visual on how we created it
@@ -232,7 +248,7 @@ export default class MySimpleNodeStyle extends NodeStyleBase {
     shadow.rx.baseVal.value = shadowWidth
     shadow.ry.baseVal.value = shadowHeight
     shadow.setAttribute('fill', 'black')
-    shadow.setAttribute('fill-opacity', 0.2)
+    shadow.setAttribute('fill-opacity', '0.2')
     shadow.setAttribute('transform', 'translate(3 3)')
     container.appendChild(shadow)
 
@@ -254,10 +270,10 @@ export default class MySimpleNodeStyle extends NodeStyleBase {
         'http://www.w3.org/2000/svg',
         'linearGradient'
       )
-      gradient.setAttribute('x1', 0)
-      gradient.setAttribute('y1', 0)
-      gradient.setAttribute('x2', 0.5 / (nodeSize.width / max))
-      gradient.setAttribute('y2', 1 / (nodeSize.height / max))
+      gradient.setAttribute('x1', '0')
+      gradient.setAttribute('y1', '0')
+      gradient.setAttribute('x2', `${0.5 / (nodeSize.width / max)}`)
+      gradient.setAttribute('y2', `${1 / (nodeSize.height / max)}`)
       gradient.setAttribute('spreadMethod', 'pad')
       const stop1 = window.document.createElementNS('http://www.w3.org/2000/svg', 'stop')
       stop1.setAttribute('stop-color', 'white')

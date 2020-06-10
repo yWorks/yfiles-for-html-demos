@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,11 +27,17 @@
  **
  ***************************************************************************/
 import {
+  Class,
   CollapsibleNodeStyleDecoratorRenderer,
+  ILookup,
   ImageNodeStyle,
   INodeInsetsProvider,
+  IRenderContext,
   Rect,
-  SimpleNode
+  SimpleNode,
+  Size,
+  SvgVisual,
+  Visual
 } from 'yfiles'
 
 /**
@@ -40,6 +46,9 @@ import {
  * state to a node style.
  */
 export default class MyCollapsibleNodeStyleDecoratorRenderer extends CollapsibleNodeStyleDecoratorRenderer {
+  /**
+   * @param {Size} size
+   */
   constructor(size) {
     super()
 
@@ -56,7 +65,12 @@ export default class MyCollapsibleNodeStyleDecoratorRenderer extends Collapsible
     this.dummyNode = new SimpleNode()
   }
 
-  /** @return {Visual} */
+  /**
+   * @param {IRenderContext} context
+   * @param {boolean} expanded
+   * @param {Size} size
+   * @returns {SvgVisual}
+   */
   createButton(context, expanded, size) {
     // Set the dummy node to the desired size
     this.dummyNode.layout = new Rect(0, 0, size.width, size.height)
@@ -70,7 +84,13 @@ export default class MyCollapsibleNodeStyleDecoratorRenderer extends Collapsible
     return visual
   }
 
-  /** @return {Visual} */
+  /**
+   * @param {IRenderContext} context
+   * @param {boolean} expanded
+   * @param {Size} size
+   * @param {Visual} oldVisual
+   * @returns {SvgVisual}
+   */
   updateButton(context, expanded, size, oldVisual) {
     // Set the dummy node to the desired size
     this.dummyNode.layout = new Rect(0, 0, size.width, size.height)
@@ -90,7 +110,9 @@ export default class MyCollapsibleNodeStyleDecoratorRenderer extends Collapsible
     return visual
   }
 
-  /** @return {Size} */
+  /**
+   * @returns {Size}
+   */
   getButtonSize() {
     return this.size
   }
@@ -99,7 +121,8 @@ export default class MyCollapsibleNodeStyleDecoratorRenderer extends Collapsible
    * This is implemented to override the base insets provider, which would add insets for the label.
    * @see Overrides {@link CollapsibleNodeStyleDecoratorRenderer#lookup}
    * @see Specified by {@link ILookup#lookup}.
-   * @return {Object}
+   * @param {Class} type
+   * @returns {?object}
    */
   lookup(type) {
     if (type === INodeInsetsProvider.$class) {

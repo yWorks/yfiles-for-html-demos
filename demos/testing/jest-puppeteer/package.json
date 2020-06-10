@@ -5,7 +5,7 @@
   "license": "https://www.yworks.com/products/yfiles-for-html/sla",
   "private": true,
   "scripts": {
-    "preinstall": "node -e \"require('fs').copyFileSync('../../../lib/license.json','./src/license.json'); require('fs').copyFileSync('../../../ide-support/yfiles-typeinfo.js','./public/yfiles-typeinfo.js')\" && cd ../../../lib/es-modules && npm pack",
+    "preinstall": "node -e \"require('fs').copyFileSync('../../../lib/license.json','./src/license.json')",
     "start": "react-scripts start",
     "start-test": "cross-env REACT_APP_INTEGRATION_TEST=true react-scripts start",
     "build": "react-scripts build",
@@ -37,14 +37,14 @@
     ]
   },
   "dependencies": {
-    "react": "^16.9.0",
-    "react-dom": "^16.9.0",
-    "react-scripts": "3.1.1",
-    "yfiles": "../../../lib/es-modules/yfiles-22.0.3-eval.tgz"
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1",
+    "react-scripts": "3.2.0",
+    "yfiles": "../../../lib-dev/es-modules/yfiles-23.0.0-dev.tgz"
   },
   "devDependencies": {
-    "cross-env": "^5.2.1",
-    "jest-puppeteer": "^4.3.0",
-    "puppeteer": "^1.19.0"
+    "cross-env": "^7.0.2",
+    "jest-puppeteer": "^4.4.0",
+    "puppeteer": "^3.3.0"
   }
 }

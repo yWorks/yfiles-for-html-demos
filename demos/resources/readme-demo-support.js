@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -81,6 +81,14 @@
     return
   }
 
+  var isTsReadme = window.tsReadme
+
+  if (isTsReadme) {
+    document.querySelectorAll('.ts-only').forEach(function(element) {
+      element.className = element.className.replace('hidden', '')
+    })
+  }
+
   var categoryNames = {
     'tutorial-getting-started': 'Tutorial: Getting Started',
     'tutorial-custom-styles': 'Tutorial: Custom Styles',
@@ -130,6 +138,20 @@
   ]
 
   var demos = window.getDemoData()
+
+  if (isTsReadme) {
+    const tsDemosFirst = function(a, b) {
+      if (a.ts && !b.ts) {
+        return -1
+      } else if (b.ts && !a.ts) {
+        return 1
+      } else {
+        return 0
+      }
+    }
+    demos.sort(tsDemosFirst)
+  }
+
   demos.forEach(function(item) {
     item.notAvailableInViewerPackage =
       viewerCategories.indexOf(item.category) === -1 || excludeLayoutDemos.indexOf(item.id) !== -1
@@ -145,11 +167,13 @@
       match,
       propertyName
     ) {
-      if (propertyName === 'index') {
+      if (propertyName === 'demoPath' && isTsReadme && !demo.ts) {
+        return '../demos-js/' + demo.demoPath
+      } else if (propertyName === 'index') {
         return index + 2
       } else if (propertyName === 'video' && demo.thumbnailPath.indexOf('.mp4') > -1) {
         return '<video src="' + demo.thumbnailPath + '" loop="true" autoplay="true">'
-      } else if (demo.hasOwnProperty(propertyName)) {
+      } else if (Object.prototype.hasOwnProperty.call(demo, propertyName)) {
         return demo[propertyName]
       } else {
         return ''
@@ -166,6 +190,21 @@
         tagItem.appendChild(anchor)
         tagContainer.appendChild(tagItem)
       })
+    }
+    if (demo.ts) {
+      var tsBadge = document.createElement('span')
+      tsBadge.className = 'ts-badge'
+      tsBadge.textContent = 'TS'
+      tsBadge.setAttribute('title', 'Available as TypeScript')
+      gridItem.querySelector('.thumbnail').appendChild(tsBadge)
+    }
+    if (isTsReadme && !demo.ts) {
+      var jsBadge = document.createElement('span')
+      jsBadge.className = 'js-badge'
+      jsBadge.textContent = 'JS Only'
+      jsBadge.setAttribute('title', 'Available only as JavaScript')
+      gridItem.querySelector('.thumbnail').appendChild(jsBadge)
+      gridItem.className += ' js-only'
     }
     if (isViewerPackage && demo.notAvailableInViewerPackage) {
       gridItem.className += ' not-available'
@@ -186,7 +225,7 @@
       match,
       propertyName
     ) {
-      if (category.hasOwnProperty(propertyName)) {
+      if (Object.prototype.hasOwnProperty.call(category, propertyName)) {
         return category[propertyName]
       } else {
         // console.warn("Property '" + propertyName + "' not found in demo: " + demo.name);
@@ -221,6 +260,22 @@
     var link = document.createElement('a')
     link.textContent = demo.name
     link.setAttribute('href', demo.demoPath)
+    if (demo.ts) {
+      var tsBadge = document.createElement('span')
+      tsBadge.className = 'ts-badge'
+      tsBadge.textContent = 'TS'
+      tsBadge.setAttribute('title', 'Available in TypeScript')
+      link.appendChild(tsBadge)
+    }
+    if (isTsReadme && !demo.ts) {
+      var jsBadge = document.createElement('span')
+      jsBadge.className = 'js-badge'
+      jsBadge.textContent = 'JS Only'
+      jsBadge.setAttribute('title', 'Available only as JavaScript')
+      link.appendChild(jsBadge)
+      link.className += ' js-only'
+      link.setAttribute('href', '../demos-js/' + link.getAttribute('href'))
+    }
     sidebarItem.appendChild(link)
     return sidebarItem
   }

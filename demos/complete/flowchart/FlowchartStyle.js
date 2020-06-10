@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,7 +27,6 @@
  **
  ***************************************************************************/
 import {
-  Class,
   Fill,
   GeneralPath,
   GraphMLAttribute,
@@ -1161,63 +1160,59 @@ function renderNetworkMessagePath(node) {
 /**
  * Markup extension needed to (de-)serialize the flowchart style.
  */
-export const FlowchartNodeStyleExtension = Class('FlowchartNodeStyleExtension', {
-  $extends: MarkupExtension,
+export class FlowchartNodeStyleExtension extends MarkupExtension {
+  constructor() {
+    super()
+    this.$stroke = Stroke.BLACK
+    this.$fill = new SolidColorFill(183, 201, 227)
+  }
 
-  $type: null,
-  type: {
-    $meta() {
-      return [TypeAttribute(YString.$class)]
-    },
-    get() {
-      return this.$type
-    },
-    set(type) {
-      this.$type = type
-    }
-  },
+  get type() {
+    return this.$type
+  }
 
-  $stroke: Stroke.BLACK,
-  stroke: {
-    $meta() {
-      return [GraphMLAttribute().init({ defaultValue: Stroke.BLACK }), TypeAttribute(Stroke.$class)]
-    },
-    get() {
-      return this.$stroke
-    },
-    set(stroke) {
-      this.$stroke = stroke
-    }
-  },
+  set type(type) {
+    this.$type = type
+  }
 
-  $fill: new SolidColorFill(183, 201, 227),
-  fill: {
-    $meta() {
-      return [
+  get stroke() {
+    return this.$stroke
+  }
+
+  set stroke(stroke) {
+    this.$stroke = stroke
+  }
+
+  get fill() {
+    return this.$fill
+  }
+
+  set fill(fill) {
+    this.$fill = fill
+  }
+
+  get cssClass() {
+    return this.$cssClass
+  }
+
+  set cssClass(value) {
+    this.$cssClass = value
+  }
+
+  static get $meta() {
+    return {
+      type: [TypeAttribute(YString.$class)],
+      stroke: [
+        GraphMLAttribute().init({ defaultValue: Stroke.BLACK }),
+        TypeAttribute(Stroke.$class)
+      ],
+      fill: [
         GraphMLAttribute().init({ defaultValue: new SolidColorFill(183, 201, 227) }),
         TypeAttribute(Fill.$class)
-      ]
-    },
-    get() {
-      return this.$fill
-    },
-    set(fill) {
-      this.$fill = fill
+      ],
+      cssClass: [GraphMLAttribute().init({ defaultValue: null }), TypeAttribute(YString.$class)]
     }
-  },
-
-  $cssClass: null,
-  cssClass: {
-    $meta() {
-      return [GraphMLAttribute().init({ defaultValue: null }), TypeAttribute(YString.$class)]
-    },
-    get() {
-      return this.$cssClass
-    },
-    set(cssClass) {
-      this.$cssClass = cssClass
-    }
-  },
+  }
 
   provideValue(serviceProvider) {
     const style = new FlowchartNodeStyle(this.type)
@@ -1227,7 +1222,7 @@ export const FlowchartNodeStyleExtension = Class('FlowchartNodeStyleExtension', 
     style.cssClass = this.cssClass
     return style
   }
-})
+}
 
 /**
  * Listener that handles the serialization of the flowchart style.

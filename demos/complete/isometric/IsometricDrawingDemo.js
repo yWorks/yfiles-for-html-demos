@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -87,13 +87,15 @@ let graphComponent = null
 let layoutType = 'hierarchic'
 
 /**
- * A flag that signals whether or not a layout is currently running to prevent re-entrant layout calculations.
+ * A flag that signals whether or not a layout is currently running to prevent re-entrant layout
+ * calculations.
  * @type {boolean}
  */
 let layoutRunning = false
 
 /**
- * Starts the demo which displays graphs in an isometric fashion to create an impression of a 3-dimensional view.
+ * Starts the demo which displays graphs in an isometric fashion to create an impression of a
+ * 3-dimensional view.
  */
 function run(licenseData) {
   License.value = licenseData
@@ -206,19 +208,19 @@ function restoreFixPoint(node, fixPoint) {
 }
 
 function getPreferredLabelPlacement() {
-  const descriptor = new PreferredPlacementDescriptor({
+  return new PreferredPlacementDescriptor({
     angle: 0,
     angleReference: LabelAngleReferences.RELATIVE_TO_EDGE_FLOW,
     sideOfEdge: LabelPlacements.LEFT_OF_EDGE,
     sideReference: LabelSideReferences.ABSOLUTE_WITH_RIGHT_IN_NORTH
   })
-  return descriptor
 }
 
 /**
- * Invokes a layout specified by the current {@link layoutType}. If there is a fixed node, the layout is calculated
- * incrementally.
- * @param {INode} fixedNode if defined the layout will be incrementally and this node remains at its
+ * Invokes a layout specified by the current {@link layoutType}. If there is a fixed node, the
+ * layout is calculated incrementally.
+ * @param {INode} fixedNode if defined the layout will be incrementally and this node remains at
+ *   its
  *                                       location
  */
 async function runLayout(fixedNode) {
@@ -296,7 +298,8 @@ async function runLayout(fixedNode) {
 
 /**
  * Creates an hierarchic layout configuration consisting of layout algorithm and layout data.
- * @param {boolean} incremental <code>true</code> in case the layout should be calculated incrementally
+ * @param {boolean} incremental <code>true</code> in case the layout should be calculated
+ *   incrementally
  * @return {{layout: HierarchicLayout, layoutData: HierarchicLayoutData}}
  */
 function getHierarchicLayoutConfiguration(incremental) {
@@ -352,9 +355,9 @@ function getOrthogonalLayoutConfiguration() {
 }
 
 /**
- * This label layout translator does nothing because the TransformationLayoutStage prepares the labels for layout
- * but OrthogonalGroupLayouter needs a label layout translator for integrated edge labeling and node label
- * consideration.
+ * This label layout translator does nothing because the TransformationLayoutStage prepares the
+ * labels for layout but OrthogonalGroupLayouter needs a label layout translator for integrated
+ * edge labeling and node label consideration.
  */
 class IsometricLabelLayoutTranslator extends LabelLayoutTranslator {
   /**
@@ -379,24 +382,22 @@ function loadGraph() {
   graph.groupNodeDefaults.style = new GroupNodeStyle()
   graph.groupNodeDefaults.labels.style = new GroupLabelStyle()
 
-  const graphBuilder = new GraphBuilder({
-    graph,
-    nodesSource: IsometricData.nodesSource,
-    edgesSource: IsometricData.edgesSource,
-    groupsSource: IsometricData.groupsSource,
-    sourceNodeBinding: 'from',
-    targetNodeBinding: 'to',
-    nodeIdBinding: 'id',
-    groupBinding: 'group',
-    parentGroupBinding: 'parentGroup',
-    groupIdBinding: 'id',
-    edgeLabelBinding: tag => tag.label || null,
-    nodeLabelBinding: tag => tag.label || null
+  const graphBuilder = new GraphBuilder(graphComponent.graph)
+  graphBuilder.createNodesSource({
+    data: IsometricData.nodesSource,
+    id: 'id',
+    parentId: 'group',
+    labels: ['label']
   })
-
-  graph = graphBuilder.buildGraph()
-
-  graph.edgeLabels.forEach(label => {
+  graphBuilder.createGroupNodesSource({
+    data: IsometricData.groupsSource,
+    id: 'id',
+    labels: ['label']
+  })
+  const edgesSource = graphBuilder.createEdgesSource(IsometricData.edgesSource, 'from', 'to')
+  const edgeLabelsSource = edgesSource.edgeCreator.createLabelsSource(edgeData => [edgeData.label])
+  edgeLabelsSource.labelCreator.addLabelAddedListener((sender, args) => {
+    const label = args.item
     const layout = label.layout
     const insets = new Insets(3)
     label.tag = {
@@ -410,11 +411,7 @@ function loadGraph() {
     graph.setStyle(label, new EdgeLabelStyle(insets))
   })
 
-  graph.nodes.forEach(node => {
-    if (graph.isGroupNode(node)) {
-      graph.addLabel(node, node.tag.label)
-    }
-  })
+  graph = graphBuilder.buildGraph()
 
   runLayout()
 }
@@ -466,8 +463,9 @@ function registerCommands() {
 }
 
 /**
- * Adds isometric styles and geometry data to nodes and labels of the graph. Also free label and port location models
- * are applied to retrieve the correct positions calculated by the layout algorithm.
+ * Adds isometric styles and geometry data to nodes and labels of the graph. Also free label and
+ * port location models are applied to retrieve the correct positions calculated by the layout
+ * algorithm.
  */
 function applyIsometricStyles() {
   const foldingManager = graphComponent.graph.foldingView.manager

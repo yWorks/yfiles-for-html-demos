@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -51,6 +51,7 @@ let graphComponent = null
 
 /**
  * Bootstraps the demo.
+ * @param {object} licenseData
  */
 function run(licenseData) {
   License.value = licenseData
@@ -107,7 +108,7 @@ function initTutorialDefaults() {
   graph.nodeDefaults.size = new Size(40, 40)
   graph.nodeDefaults.labels.style = new DefaultLabelStyle({
     verticalTextAlignment: 'center',
-    wrapping: 'word_ellipsis'
+    wrapping: 'word-ellipsis'
   })
   graph.nodeDefaults.labels.layoutParameter = ExteriorLabelModel.SOUTH
 
@@ -146,8 +147,13 @@ function createGraph() {
   const centerLabelModel = new InteriorStretchLabelModel({ insets: 5 })
   const centerParameter = centerLabelModel.createParameter(InteriorStretchLabelModelPosition.CENTER)
 
+  // maybe showcase right-to-left text direction
+  const rtlDirection = document.getElementById('trl-toggle').checked
+
   // the text that should be displayed
-  const longText = 'Lorem ipsum dolor sit amet, consetetur sadipscing elitr.'
+  const longText = rtlDirection
+    ? 'סעיף א. כל בני אדם נולדו בני חורין ושווים בערכם ובזכויותיהם. כולם חוננו בתבונה ובמצפון, לפיכך חובה עליהם לנהוג איש ברעהו ברוח של אחוה.'
+    : 'Lorem ipsum dolor sit amet, consetetur sadipscing elitr.'
   const font = new Font({ fontSize: 16 })
 
   // A label that does not wrap at all. By default, it is clipped at the given bounds, though this can also be
@@ -155,7 +161,8 @@ function createGraph() {
   const noWrappingStyle = new DefaultLabelStyle({
     font,
     wrapping: 'none',
-    verticalTextAlignment: 'center'
+    verticalTextAlignment: 'center',
+    horizontalTextAlignment: rtlDirection ? 'right' : 'left'
   })
   graph.addLabel(node1, longText, centerParameter, noWrappingStyle)
   graph.addLabel(node1, 'No Wrapping', northParameter, northLabelStyle)
@@ -164,7 +171,8 @@ function createGraph() {
   const wordWrappingStyle = new DefaultLabelStyle({
     font,
     wrapping: 'word',
-    verticalTextAlignment: 'center'
+    verticalTextAlignment: 'center',
+    horizontalTextAlignment: rtlDirection ? 'right' : 'left'
   })
   graph.addLabel(node2, longText, centerParameter, wordWrappingStyle)
   graph.addLabel(node2, 'Word Wrapping', northParameter, northLabelStyle)
@@ -173,7 +181,8 @@ function createGraph() {
   const characterWrappingStyle = new DefaultLabelStyle({
     font,
     wrapping: 'character',
-    verticalTextAlignment: 'center'
+    verticalTextAlignment: 'center',
+    horizontalTextAlignment: rtlDirection ? 'right' : 'left'
   })
   graph.addLabel(node3, longText, centerParameter, characterWrappingStyle)
   graph.addLabel(node3, 'Character Wrapping', northParameter, northLabelStyle)
@@ -181,8 +190,9 @@ function createGraph() {
   // A label that is wrapped at word boundaries but also renders ellipsis if there is not enough space.
   const ellipsisWordWrappingStyle = new DefaultLabelStyle({
     font,
-    wrapping: 'word_ellipsis',
-    verticalTextAlignment: 'center'
+    wrapping: 'word-ellipsis',
+    verticalTextAlignment: 'center',
+    horizontalTextAlignment: rtlDirection ? 'right' : 'left'
   })
   graph.addLabel(node4, longText, centerParameter, ellipsisWordWrappingStyle)
   graph.addLabel(node4, 'Word Wrapping\nwith Ellipsis', northParameter, northLabelStyle)
@@ -190,14 +200,34 @@ function createGraph() {
   // A label that is wrapped at  single charactes but also renders ellipsis if there is not enough space.
   const ellipsisCharacterWrappingStyle = new DefaultLabelStyle({
     font,
-    wrapping: 'character_ellipsis',
-    verticalTextAlignment: 'center'
+    wrapping: 'character-ellipsis',
+    verticalTextAlignment: 'center',
+    horizontalTextAlignment: rtlDirection ? 'right' : 'left'
   })
   graph.addLabel(node5, longText, centerParameter, ellipsisCharacterWrappingStyle)
   graph.addLabel(node5, 'Character Wrapping\nwith Ellipsis', northParameter, northLabelStyle)
 
   graph.undoEngine.clear()
   graphComponent.fitGraphBounds()
+}
+
+/**
+ * Rebuilds the demo when the text direction changes.
+ */
+function reinitializeDemo() {
+  graphComponent.cleanUp()
+  const gcContainer = document.getElementById('graphComponent')
+  while (gcContainer.childElementCount > 0) {
+    gcContainer.removeChild(gcContainer.firstElementChild)
+  }
+  graphComponent = new GraphComponent('#graphComponent')
+  graphComponent.inputMode = new GraphEditorInputMode({
+    allowGroupingOperations: true
+  })
+  graphComponent.graph.undoEngineEnabled = true
+  initTutorialDefaults()
+  setDefaultLabelLayoutParameters()
+  createGraph()
 }
 
 /**
@@ -217,6 +247,11 @@ function registerCommands() {
   bindCommand("button[data-command='Redo']", ICommand.REDO, graphComponent)
   bindCommand("button[data-command='GroupSelection']", ICommand.GROUP_SELECTION, graphComponent)
   bindCommand("button[data-command='UngroupSelection']", ICommand.UNGROUP_SELECTION, graphComponent)
+  bindAction('#trl-toggle', () => {
+    const gcContainer = document.getElementById('graphComponent')
+    gcContainer.style.direction = document.getElementById('trl-toggle').checked ? 'rtl' : 'ltr'
+    reinitializeDemo()
+  })
 }
 
 // start tutorial

@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+
+<!-- ////////////////////////////////////////////////////////////////////////
+     // @license
+     // This demo file is part of yFiles for HTML 2.3.
+     // Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // 72070 Tuebingen, Germany. All rights reserved.
+     //
+     // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+     // of demo files in source code or binary form, with or without
+     // modification, is not permitted.
+     //
+     // Owners of a valid software license for a yFiles for HTML version that this
+     // demo is shipped with are allowed to use the demo source code as basis
+     // for their own yFiles for HTML powered applications. Use of such programs is
+     // governed by the rights and conditions as set out in the yFiles for HTML
+     // license agreement.
+     //
+     // THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+     // WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+     // MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+     // NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+     // SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+     // TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+     // PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+     // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+     // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+     // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+     // 
+     ////////////////////////////////////////////////////////////////////////-->
+
+  <title>Component Drag and Drop Demo [yFiles for HTML]</title>
+
+  <link rel="stylesheet" href="../../node_modules/yfiles/yfiles.css">
+  <link rel="stylesheet" href="../../resources/style/demo.css">
+
+  <script src="../../resources/filesystem-warning.js"></script>
+
+  <!-- styling for the drag and drop palette -->
+  <style>
+    #palette {
+      position: absolute;
+      top: 100px;
+      bottom: 0;
+      right: 0;
+      width: 170px;
+      border-left: 5px solid #eee;
+      overflow: auto;
+      box-sizing: border-box;
+      z-index: 8;
+    }
+
+    @media screen and (max-height: 500px) {
+      #palette {
+        top: 60px;
+      }
+    }
+
+    #graphComponent,
+    .demo-left-hidden #graphComponent {
+      right: 170px !important;
+    }
+
+    .yfiles-drag {
+      z-index: 15;
+      opacity: 0.35;
+      transition: opacity .2s ease-in-out;
+    }
+
+    .yfiles-drag.hidden {
+      opacity: 0;
+    }
+  </style>
+
+</head>
+<body class="demo-has-left">
+
+<aside class="demo-sidebar demo-left">
+  <h1 class="demo-sidebar-header">Description</h1>
+  <div class="demo-sidebar-content">
+    <p>
+      A demo that shows how to make space for components that you can drag from a palette onto the canvas.
+    </p>
+    <p>
+      If a component is dragged from the palette onto the canvas, the <em>ClearAreaLayout</em> algorithm will push away
+      the other elements so there is a free area for the component. This is also the case when dragging a component that
+      is already part of the graph.
+    </p>
+    <h2>
+      Things to Try
+    </h2>
+    <ul>
+      <li>
+        Drag a component from the palette onto the canvas and watch the graph give way to it.
+      </li>
+      <li>
+        Drop the dragged component at the desired location.
+      </li>
+      <li>
+        Press the ESC key while dragging to cancel the drag and drop operation.
+      </li>
+      <li>
+        Select the button <em>Keep Components</em> to prevent the components from being changed during the drag and
+        drop operation.
+      </li>
+      <li>
+        Select a component by clicking on a node, drag the component through the remaining graph, and watch how the
+        graph changes to provide space for it.
+      </li>
+    </ul>
+  </div>
+</aside>
+
+<div class="demo-content">
+
+  <div class="demo-toolbar">
+    <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
+    <button data-command="ZoomOriginal" title="Zoom to original size" class="demo-icon-yIconZoomOriginal"></button>
+    <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
+    <button data-command="FitContent" title="Fit Content" class="demo-icon-yIconZoomFit"></button>
+
+    <span class="demo-separator"></span>
+
+    <input type="checkbox" id="keep-components" data-command="KeepComponents"
+      title="Components should not be separated while dragging" class="demo-toggle-button labeled"/>
+    <label for="keep-components">Keep Components</label>
+  </div>
+
+  <!-- the panel which contains a palette of components to drop into the graph -->
+  <div id="palette"></div>
+
+  <div id="graphComponent"></div>
+</div>
+
+<script type="module" crossorigin="anonymous" src="ComponentDragAndDropDemo.js"></script>
+
+</body>
+</html>

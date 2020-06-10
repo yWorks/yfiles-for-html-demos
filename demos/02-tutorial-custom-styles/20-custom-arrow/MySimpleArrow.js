@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -31,6 +31,7 @@ import {
   GeneralPath,
   IArrow,
   IBoundsProvider,
+  ICanvasContext,
   IEdge,
   IEdgeStyle,
   IRenderContext,
@@ -57,10 +58,16 @@ export default class MySimpleArrow extends BaseClass(IArrow, IVisualCreator, IBo
     this.$arrowFigure = null
   }
 
+  /**
+   * @type {?GeneralPath}
+   */
   get arrowFigure() {
     return this.$arrowFigure
   }
 
+  /**
+   * @type {?GeneralPath}
+   */
   set arrowFigure(value) {
     this.$arrowFigure = value
   }
@@ -96,9 +103,9 @@ export default class MySimpleArrow extends BaseClass(IArrow, IVisualCreator, IBo
    * @param {boolean} atSource whether this will be the source arrow
    * @param {Point} anchor the anchor point for the tip of the arrow
    * @param {Point} direction the direction the arrow is pointing in
-   * @return {IVisualCreator}
    * Itself as a flyweight.
    * @see Specified by {@link IArrow#getVisualCreator}.
+   * @returns {IVisualCreator}
    */
   getVisualCreator(edge, atSource, anchor, direction) {
     this.anchor = anchor
@@ -114,12 +121,12 @@ export default class MySimpleArrow extends BaseClass(IArrow, IVisualCreator, IBo
    * @param {boolean} atSource whether this will be the source arrow
    * @param {Point} anchor the anchor point for the tip of the arrow
    * @param {Point} direction the direction the arrow is pointing in
-   * @return {IBoundsProvider}
    * an implementation of the {@link IBoundsProvider} interface that can
    * subsequently be used to query the bounds. Clients will always call
    * this method before using the implementation and may not cache the instance returned.
    * This allows for applying the flyweight design pattern to implementations.
    * @see Specified by {@link IArrow#getBoundsProvider}.
+   * @returns {IBoundsProvider}
    */
   getBoundsProvider(edge, atSource, anchor, direction) {
     this.anchor = anchor
@@ -131,9 +138,9 @@ export default class MySimpleArrow extends BaseClass(IArrow, IVisualCreator, IBo
    * Creates the visual for the arrow.
    * @param {IRenderContext} context The context that contains the information needed to create the
    *   visual.
-   * @return {Visual}
    * The arrow visual.
    * @see Specified by {@link IVisualCreator#createVisual}.
+   * @returns {SvgVisual}
    */
   createVisual(context) {
     // create a new path to draw the arrow
@@ -171,9 +178,9 @@ export default class MySimpleArrow extends BaseClass(IArrow, IVisualCreator, IBo
    *   visual.
    * @param {Visual} oldVisual The visual instance that had been returned the last time the
    *   {@link MySimpleArrow#createVisual} method was called.
-   * @return {Visual}
    * The updated visual.
    * @see Specified by {@link IVisualCreator#updateVisual}.
+   * @returns {SvgVisual}
    */
   updateVisual(context, oldVisual) {
     return this.createVisual(context)
@@ -186,7 +193,8 @@ export default class MySimpleArrow extends BaseClass(IArrow, IVisualCreator, IBo
   /**
    * Returns the bounds of the arrow for the current flyweight configuration.
    * @see Specified by {@link IBoundsProvider#getBounds}.
-   * @return {Rect}
+   * @param {ICanvasContext} context
+   * @returns {Rect}
    */
   getBounds(context) {
     return new Rect(this.anchor.x - 8, this.anchor.y - 8, 32, 32)
@@ -204,17 +212,28 @@ export default class MySimpleArrow extends BaseClass(IArrow, IVisualCreator, IBo
  * defined interface to deal with.
  */
 class MyGradientSupport extends BaseClass(ISvgDefsCreator) {
+  /**
+   * @param {SVGElement} gradient
+   */
   constructor(gradient) {
     super()
     this.gradient = gradient
   }
 
-  /** @return {SVGElement} */
+  /**
+   * @param {ICanvasContext} context
+   * @returns {SVGElement}
+   */
   createDefsElement(context) {
     return this.gradient
   }
 
-  /** @return {boolean} */
+  /**
+   * @param {ICanvasContext} context
+   * @param {Node} node
+   * @param {string} id
+   * @returns {boolean}
+   */
   accept(context, node, id) {
     const element = node instanceof Element ? node : null
     if (element !== null) {
@@ -224,13 +243,17 @@ class MyGradientSupport extends BaseClass(ISvgDefsCreator) {
     return false
   }
 
+  /**
+   * @param {ICanvasContext} context
+   * @param {SVGElement} oldElement
+   */
   updateDefsElement(context, oldElement) {}
 }
 
 const GRADIENT = createGradient()
 
 /**
- * @return {MyGradientSupport}
+ * @returns {MyGradientSupport}
  */
 function createGradient() {
   // initialize gradient
@@ -238,10 +261,10 @@ function createGradient() {
     'http://www.w3.org/2000/svg',
     'linearGradient'
   )
-  linearGradient.setAttribute('x1', 0)
-  linearGradient.setAttribute('y1', 0)
-  linearGradient.setAttribute('x2', 0)
-  linearGradient.setAttribute('y2', 1)
+  linearGradient.setAttribute('x1', '0')
+  linearGradient.setAttribute('y1', '0')
+  linearGradient.setAttribute('x2', '0')
+  linearGradient.setAttribute('y2', '1')
   linearGradient.setAttribute('spreadMethod', 'repeat')
   const stop1 = window.document.createElementNS('http://www.w3.org/2000/svg', 'stop')
   stop1.setAttribute('stop-color', 'rgb(180,180,180)')

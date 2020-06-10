@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,7 +26,15 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { DefaultEdgePathCropper, IEdge, INode, IShapeGeometry, Matrix, Point } from 'yfiles'
+import {
+  DefaultEdgePathCropper,
+  GeneralPath,
+  IEdge,
+  INode,
+  IShapeGeometry,
+  Matrix,
+  Point
+} from 'yfiles'
 
 /**
  * Crops adjacent edges at the nodes rotated bounds for internal ports.
@@ -77,7 +85,12 @@ export default class AdjustOutlinePortInsidenessEdgePathCropper extends DefaultE
  * @return {GeneralPath}
  */
 function getScaledOutline(node, nodeShapeGeometry) {
-  const outline = nodeShapeGeometry.getOutline()
+  let outline = nodeShapeGeometry.getOutline()
+  if (!outline) {
+    // use the node layout as outline
+    outline = new GeneralPath()
+    outline.appendRectangle(node.layout, false)
+  }
   const factor = 1.001
   const center = node.layout.center
   const matrix = new Matrix()

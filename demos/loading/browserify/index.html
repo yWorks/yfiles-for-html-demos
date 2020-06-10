@@ -7,8 +7,8 @@
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.2.
-     // Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML 2.3.
+     // Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -47,7 +47,7 @@
   <h1 class="demo-sidebar-header">Description</h1>
   <div class="demo-sidebar-content">
     <p>
-      This demo shows how to bundle the yFiles library in a <a href="https://browserify.org/" target="_blank">browserify</a> project.</p>
+      This demo shows how to bundle the yFiles library in a <a href="http://browserify.org/" target="_blank">browserify</a> project.</p>
 
     <p>
       The yFiles modules are <code>require</code>d in the demo sources in addition to an <code>npm</code> library (<a
@@ -60,19 +60,15 @@
 
     <h2>Build</h2>
 
-    <p>If grunt is not available on the command line, install <code>grunt-cli</code> first: </p>
-
-    <pre>> npm install -g grunt-cli</pre>
-
-    <p>Install the required npm packages and run the default task of the Gruntfile:</p>
+    <p>Install the required npm packages and run the build script:</p>
     <code>
       > npm install <br/>
-      > grunt
+      > npm run build
     </code>
     <h2>Run</h2>
 
     <p>
-      The grunt build will place the output files in the <code>dist/</code> directory inside this demo directory. To run
+      Browserify will place the output files in the <code>dist/</code> directory inside this demo's directory. To run
       the demo, open <code>./index.html</code> in a browser.</p>
   </div>
 </aside>

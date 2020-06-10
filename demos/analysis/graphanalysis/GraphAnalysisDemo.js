@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -30,6 +30,7 @@ import {
   AdjacencyTypes,
   Arrow,
   ComponentArrangementStyles,
+  CycleSubstructureStyle,
   DefaultLabelStyle,
   FreeEdgeLabelModel,
   GenericLabeling,
@@ -67,6 +68,7 @@ import CyclesConfig from './CyclesConfig.js'
 import PathsConfig from './PathsConfig.js'
 import ConnectivityConfig from './ConnectivityConfig.js'
 import MinimumSpanningTreeConfig from './MinimumSpanningTreeConfig.js'
+import SubstructuresConfig from './SubstructuresConfig.js'
 import { bindAction, bindChangeListener, bindCommand, showApp } from '../../resources/demo-app.js'
 import loadJson from '../../resources/load-json.js'
 
@@ -113,6 +115,12 @@ let directed = false
 let useUniformWeights = true
 
 /**
+ * Specifies the k value tu use for k-Core algorithm
+ * @type {number}
+ */
+let kValue = 0
+
+/**
  * Marks the elements that are changed from user actions... like add/remove node, add/remove edge.
  */
 let incrementalNodesMapper = null
@@ -140,6 +148,8 @@ let directionComboBox = null
 
 let uniformEdgeWeightsComboBox = null
 
+let kValueComboBox = null
+
 /** @type {Mapper.<INode, boolean>} */
 let incrementalElements = null
 
@@ -152,7 +162,7 @@ const validationPattern = new RegExp('^(0*[1-9][0-9]*(\\.[0-9]+)?|0+\\.[0-9]*[1-
 /**
  * Main function for running the Graph Analysis demo.
  */
-function run(licenseData) {
+async function run(licenseData) {
   License.value = licenseData
   init()
 
@@ -175,6 +185,7 @@ function run(licenseData) {
       'Sample: Biconnected Components',
       'Sample: Strongly Connected Components',
       'Sample: Reachability',
+      'Sample: k-Core Components',
       'Sample: Shortest Paths',
       'Sample: All Paths',
       'Sample: All Chains',
@@ -184,17 +195,24 @@ function run(licenseData) {
       'Sample: Weight Centrality',
       'Sample: Graph Centrality',
       'Sample: Node Edge Betweeness Centrality',
-      'Sample: Closeness Centrality'
+      'Sample: Closeness Centrality',
+      'Sample: Eigenvector Centrality',
+      'Sample: PageRank',
+      'Sample: Substructures Chains',
+      'Sample: Substructures Cycles',
+      'Sample: Substructures Stars',
+      'Sample: Substructures Trees',
+      'Sample: Substructures Cliques'
     ]
 
     fillComboBox(sampleComboBox, samples)
-    onSampleChanged()
 
     availableSamples.set('Sample: Minimum Spanning Tree', 'minimumspanningtree')
     availableSamples.set('Sample: Connected Components', 'connectivity')
     availableSamples.set('Sample: Biconnected Components', 'connectivity')
     availableSamples.set('Sample: Strongly Connected Components', 'connectivity')
     availableSamples.set('Sample: Reachability', 'connectivity')
+    availableSamples.set('Sample: k-Core Components', 'kcore')
     availableSamples.set('Sample: Shortest Paths', 'paths')
     availableSamples.set('Sample: All Paths', 'paths')
     availableSamples.set('Sample: All Chains', 'paths')
@@ -205,6 +223,13 @@ function run(licenseData) {
     availableSamples.set('Sample: Graph Centrality', 'centrality')
     availableSamples.set('Sample: Node Edge Betweeness Centrality', 'centrality')
     availableSamples.set('Sample: Closeness Centrality', 'centrality')
+    availableSamples.set('Sample: Eigenvector Centrality', 'centrality')
+    availableSamples.set('Sample: PageRank', 'centrality')
+    availableSamples.set('Sample: Substructures Chains', 'substructures')
+    availableSamples.set('Sample: Substructures Cycles', 'substructures')
+    availableSamples.set('Sample: Substructures Stars', 'substructures')
+    availableSamples.set('Sample: Substructures Trees', 'substructures')
+    availableSamples.set('Sample: Substructures Cliques', 'subcliques')
   }
 
   if (directionComboBox !== null) {
@@ -217,17 +242,24 @@ function run(licenseData) {
     uniformEdgeWeightsComboBox.disabled = true
   }
 
+  if (kValueComboBox !== null) {
+    fillComboBox(kValueComboBox, ['1', '2', '3', '4', '5'])
+    kValueComboBox.disabled = true
+  }
+
   // initialize the graph and the defaults
   initializeGraph()
 
   updateGraphInformation()
 
   preventLayout = true
-  initializeAlgorithms()
+  await initializeAlgorithms()
 
   registerCommands()
 
-  runLayout(false, true, true)
+  await onSampleChanged()
+
+  await runLayout(false, true, true)
 
   showApp(graphComponent)
 }
@@ -243,6 +275,7 @@ function init() {
   previousButton = document.getElementById('previousButton')
   directionComboBox = document.getElementById('directionComboBox')
   uniformEdgeWeightsComboBox = document.getElementById('uniformEdgeWeightsComboBox')
+  kValueComboBox = document.getElementById('kValueComboBox')
 }
 
 /**
@@ -298,7 +331,7 @@ function initializeGraph() {
  */
 function initializeAlgorithms() {
   if (algorithmComboBox === null) {
-    return
+    return Promise.resolve()
   }
 
   availableAlgorithms = new HashMap()
@@ -309,6 +342,7 @@ function initializeAlgorithms() {
     'Algorithm: Biconnected Components',
     'Algorithm: Strongly Connected Components',
     'Algorithm: Reachability',
+    'Algorithm: k-Core Components',
     'Algorithm: Shortest Paths',
     'Algorithm: All Paths',
     'Algorithm: All Chains',
@@ -318,7 +352,14 @@ function initializeAlgorithms() {
     'Algorithm: Weight Centrality',
     'Algorithm: Graph Centrality',
     'Algorithm: Node Edge Betweeness Centrality',
-    'Algorithm: Closeness Centrality'
+    'Algorithm: Closeness Centrality',
+    'Algorithm: Eigenvector Centrality',
+    'Algorithm: PageRank',
+    'Algorithm: Substructures Chains',
+    'Algorithm: Substructures Cycles',
+    'Algorithm: Substructures Stars',
+    'Algorithm: Substructures Trees',
+    'Algorithm: Substructures Cliques'
   ]
 
   fillComboBox(algorithmComboBox, algorithmNames)
@@ -341,6 +382,11 @@ function initializeAlgorithms() {
     new ConnectivityConfig(ConnectivityConfig.REACHABILITY)
   )
   availableAlgorithms.set(
+    'Algorithm: k-Core Components',
+    new ConnectivityConfig(ConnectivityConfig.K_CORE_COMPONENTS)
+  )
+
+  availableAlgorithms.set(
     'Algorithm: Shortest Paths',
     new PathsConfig(PathsConfig.ALGORITHM_TYPE_SHORTEST_PATHS)
   )
@@ -356,6 +402,7 @@ function initializeAlgorithms() {
     'Algorithm: Single Source',
     new PathsConfig(PathsConfig.ALGORITHM_TYPE_SINGLE_SOURCE)
   )
+
   availableAlgorithms.set('Algorithm: Cycles', new CyclesConfig())
   availableAlgorithms.set(
     'Algorithm: Degree Centrality',
@@ -377,9 +424,39 @@ function initializeAlgorithms() {
     'Algorithm: Closeness Centrality',
     new CentralityConfig(CentralityConfig.CLOSENESS_CENTRALITY)
   )
+  availableAlgorithms.set(
+    'Algorithm: Eigenvector Centrality',
+    new CentralityConfig(CentralityConfig.EIGENVECTOR_CENTRALITY)
+  )
+  availableAlgorithms.set(
+    'Algorithm: PageRank',
+    new CentralityConfig(CentralityConfig.PAGERANK_CENTRALITY)
+  )
+
+  availableAlgorithms.set(
+    'Algorithm: Substructures Chains',
+    new SubstructuresConfig(SubstructuresConfig.CHAINS_SUBSTRUCTURES)
+  )
+  availableAlgorithms.set(
+    'Algorithm: Substructures Cliques',
+    new SubstructuresConfig(SubstructuresConfig.CLIQUES_SUBSTRUCTURES)
+  )
+  availableAlgorithms.set(
+    'Algorithm: Substructures Cycles',
+    new SubstructuresConfig(SubstructuresConfig.CYCLES_SUBSTRUCTURES)
+  )
+  availableAlgorithms.set(
+    'Algorithm: Substructures Stars',
+    new SubstructuresConfig(SubstructuresConfig.STARS_SUBSTRUCTURES)
+  )
+  availableAlgorithms.set(
+    'Algorithm: Substructures Trees',
+    new SubstructuresConfig(SubstructuresConfig.TREES_SUBSTRUCTURES)
+  )
+
   currentConfig = new MinimumSpanningTreeConfig()
   preventLayout = true
-  onAlgorithmChanged()
+  return onAlgorithmChanged()
 }
 
 /**
@@ -401,6 +478,7 @@ function createEditorMode() {
 
   // deletion
   inputMode.addDeletingSelectionListener((sender, eventArgs) => {
+    /** @type {IGraphSelection} */
     const selection = eventArgs.selection
     currentConfig.edgeRemoved = true
     selection.selectedNodes.forEach(node => {
@@ -426,7 +504,7 @@ function createEditorMode() {
 
   inputMode.addDeletedSelectionListener((sender, eventArgs) => {
     updateGraphInformation()
-    runLayout(true, false, true)
+    runLayout(true, false, true).catch(handleError)
   })
 
   // edge creation
@@ -441,7 +519,7 @@ function createEditorMode() {
 
     currentConfig.incrementalElements = incrementalElements
 
-    runLayout(true, false, true)
+    runLayout(true, false, true).catch(handleError)
   })
 
   inputMode.addNodeCreatedListener((sender, args) => {
@@ -451,34 +529,18 @@ function createEditorMode() {
 
     currentConfig.incrementalElements = incrementalElements
 
-    // prevent a new layout from starting and disable the UI's buttons
-    inLayout = true
-    setUIDisabled(true)
-
     applyAlgorithm()
-
-    // permit a new layout to start and enable the UI's buttons
-    releaseLocks()
-    setUIDisabled(false)
   })
 
   inputMode.moveInputMode.addDragFinishedListener((sender, eventArgs) => {
     const affectedNodes = sender.affectedItems.filter(item => INode.isInstance(item))
     if (affectedNodes.size < graphComponent.graph.nodes.size) {
-      runLayout(true, false, true)
+      runLayout(true, false, true).catch(handleError)
     }
   })
 
   inputMode.addLabelTextChangedListener((sender, eventArgs) => {
-    // prevent a new layout from starting and disable the UI's buttons
-    inLayout = true
-    setUIDisabled(true)
-
     applyAlgorithm()
-
-    // permit a new layout to start and enable the UI's buttons
-    releaseLocks()
-    setUIDisabled(false)
   })
 
   inputMode.addValidateLabelTextListener((sender, args) => {
@@ -582,30 +644,26 @@ function registerCommands() {
     if (sampleComboBox.selectedIndex > 0) {
       sampleComboBox.selectedIndex--
     }
-    onSampleChanged()
+    onSampleChanged().catch(handleError)
   })
 
   bindAction("button[data-command='NextFile']", () => {
     if (sampleComboBox.selectedIndex < sampleComboBox.options.length - 1) {
       sampleComboBox.selectedIndex++
     }
-    onSampleChanged()
-  })
-
-  bindAction("button[data-command='ResetConfigCommand']", () => {
-    resetConfig()
+    onSampleChanged().catch(handleError)
   })
 
   bindChangeListener("select[data-command='AlgorithmSelectionChanged']", () => {
-    onAlgorithmChanged()
+    onAlgorithmChanged().catch(handleError)
   })
 
   bindChangeListener("select[data-command='SampleSelectionChanged']", () => {
-    onSampleChanged()
+    onSampleChanged().catch(handleError)
   })
 
   bindAction("button[data-command='Layout']", () => {
-    runLayout(false, false, false)
+    runLayout(false, false, false).catch(handleError)
   })
 
   bindChangeListener("select[data-command='SetDirection']", () => {
@@ -616,13 +674,17 @@ function registerCommands() {
     onUniformEdgeWeightsComboBoxSelectedIndexChanged()
   })
 
+  bindChangeListener("select[data-command='SetKValue']", () => {
+    onKValueComboBoxSelectedIndexChanged()
+  })
+
   bindAction("button[data-command='GenerateEdgeLabels']", () => {
     onGenerateEdgeLabels()
   })
 
   bindAction("button[data-command='RemoveEdgeLabels']", () => {
     deleteEdgeLabels()
-    runLayout(true, false, true)
+    runLayout(true, false, true).catch(handleError)
   })
 }
 
@@ -636,6 +698,7 @@ function applyAlgorithm() {
 
   currentConfig.directed = directed
   currentConfig.useUniformWeights = useUniformWeights
+  currentConfig.kValue = kValue
 
   // apply the algorithm
   currentConfig.apply(graphComponent)
@@ -715,95 +778,22 @@ async function runLayout(incremental, clearUndo, runAlgorithm) {
       LayoutGraphAdapter.EDGE_LABEL_LAYOUT_PREFERRED_PLACEMENT_DESCRIPTOR_DP_KEY,
       mapper
     )
-    try {
-      await graphComponent.morphLayout(genericLabeling, '0.2s')
-      if (clearUndo) {
-        graph.undoEngine.clear()
-      }
-      // clean up data provider
-      graph.mapperRegistry.removeMapper(OrganicLayout.AFFECTED_NODES_DP_KEY)
-      graph.mapperRegistry.removeMapper(
-        LayoutGraphAdapter.EDGE_LABEL_LAYOUT_PREFERRED_PLACEMENT_DESCRIPTOR_DP_KEY
-      )
-      incrementalNodesMapper.clear()
-
-      // enable the UI's buttons
-      releaseLocks()
-      setTimeout(() => {
-        setUIDisabled(false)
-        updateUIState()
-      }, 10)
-    } catch (error) {
-      if (typeof window.reportError === 'function') {
-        window.reportError(error)
-      } else {
-        throw error
-      }
+    await graphComponent.morphLayout(genericLabeling, '0.2s')
+    if (clearUndo) {
+      graph.undoEngine.clear()
     }
+    // clean up data provider
+    graph.mapperRegistry.removeMapper(OrganicLayout.AFFECTED_NODES_DP_KEY)
+    graph.mapperRegistry.removeMapper(
+      LayoutGraphAdapter.EDGE_LABEL_LAYOUT_PREFERRED_PLACEMENT_DESCRIPTOR_DP_KEY
+    )
+    incrementalNodesMapper.clear()
   } catch (error) {
-    if (typeof window.reportError === 'function') {
-      window.reportError(error)
-    } else {
-      throw error
-    }
-  }
-}
-
-/**
- * Resets the configuration.
- */
-function resetConfig() {
-  const key = algorithmComboBox.selectedItem
-  if (key !== null && availableAlgorithms !== null && availableAlgorithms.keys.includes(key)) {
-    switch (key) {
-      default:
-      case 'Algorithm: Minimum Spanning Tree':
-        availableAlgorithms.set(key, new MinimumSpanningTreeConfig())
-        break
-      case 'Algorithm: Connected Components':
-        availableAlgorithms.set(key, new ConnectivityConfig())
-        break
-      case 'Algorithm: Biconnected Components':
-        availableAlgorithms.set(key, new ConnectivityConfig())
-        break
-      case 'Algorithm: Strongly Connected Components':
-        availableAlgorithms.set(key, new ConnectivityConfig())
-        break
-      case 'Algorithm: Reachability':
-        availableAlgorithms.set(key, new ConnectivityConfig())
-        break
-      case 'Algorithm: Shortest Paths':
-        availableAlgorithms.set(key, new PathsConfig())
-        break
-      case 'Algorithm: All Paths':
-        availableAlgorithms.set(key, new PathsConfig())
-        break
-      case 'Algorithm: All Chains':
-        availableAlgorithms.set(key, new PathsConfig())
-        break
-      case 'Algorithm: Single Source':
-        availableAlgorithms.set(key, new PathsConfig())
-        break
-      case 'Algorithm: Cycles':
-        availableAlgorithms.set(key, new CyclesConfig())
-        break
-      case 'Algorithm: Degree Centrality':
-        availableAlgorithms.set(key, new CentralityConfig())
-        break
-      case 'Algorithm: Weight Centrality':
-        availableAlgorithms.set(key, new CentralityConfig())
-        break
-      case 'Algorithm: Graph Centrality':
-        availableAlgorithms.set(key, new CentralityConfig())
-        break
-      case 'Algorithm: Node Edge Betweeness Centrality':
-        availableAlgorithms.set(key, new CentralityConfig())
-        break
-      case 'Algorithm: Closeness Centrality':
-        availableAlgorithms.set(key, new CentralityConfig())
-        break
-    }
-    onAlgorithmChanged()
+    handleError(error)
+  } finally {
+    releaseLocks()
+    setUIDisabled(false)
+    updateUIState()
   }
 }
 
@@ -833,9 +823,9 @@ async function onSampleChanged() {
   setUIDisabled(true)
   if (key === 'Sample: Minimum Spanning Tree') {
     createSampleGraph(graph)
-    applyAlgorithmForKey(0)
+    await applyAlgorithmForKey(0)
   } else {
-    // derive the file name from the key and
+    // derive the file name from the key
     let fileName = `resources/${
       availableSamples !== null && availableSamples.size > 0
         ? availableSamples.get(key)
@@ -848,7 +838,7 @@ async function onSampleChanged() {
       const graphMLIOHandler = new GraphMLIOHandler()
       await graphMLIOHandler.readFromURL(graph, fileName)
 
-      applyAlgorithmForKey(sampleSelectedIndex)
+      await applyAlgorithmForKey(sampleSelectedIndex)
     } catch (error) {
       if (graph.nodes.size === 0 && window.location.protocol.toLowerCase().indexOf('file') >= 0) {
         alert(
@@ -857,14 +847,13 @@ async function onSampleChanged() {
         )
         // the sample graph cannot be loaded, so we run the default graph
         createSampleGraph(graph)
-        applyAlgorithmForKey(sampleSelectedIndex)
+        await applyAlgorithmForKey(sampleSelectedIndex)
         return
       }
-      if (typeof window.reportError === 'function') {
-        window.reportError(error)
-      } else {
-        throw error
-      }
+      handleError(error)
+    } finally {
+      setUIDisabled(false)
+      updateUIState()
     }
   }
 }
@@ -872,7 +861,7 @@ async function onSampleChanged() {
 /**
  * Applies the algorithm to the selected file and runs the layout.
  */
-function applyAlgorithmForKey(sampleSelectedIndex) {
+async function applyAlgorithmForKey(sampleSelectedIndex) {
   resetStyles()
 
   if (
@@ -891,19 +880,19 @@ function applyAlgorithmForKey(sampleSelectedIndex) {
     preventLayout = true
     // otherwise, change the selection and indirectly trigger the layout
     algorithmComboBox.selectedIndex = sampleSelectedIndex // changing the algorithm will trigger a layout run
-    onAlgorithmChanged()
+    await onAlgorithmChanged()
   } else {
     updateGraphInformation()
   }
 
   preventLayout = false
-  runLayout(false, true, true)
+  await runLayout(false, true, true)
 }
 
 /**
  * Handles a selection change in the algorithm combo box.
  */
-function onAlgorithmChanged() {
+async function onAlgorithmChanged() {
   if (algorithmComboBox === null) {
     return
   }
@@ -915,6 +904,8 @@ function onAlgorithmChanged() {
     }
   }
 
+  updateDirectionCombobox()
+
   directed = algorithmSupportsDirectedEdges() && directionComboBox.selectedIndex === 1
 
   resetStyles()
@@ -922,9 +913,23 @@ function onAlgorithmChanged() {
   updateDescriptionText()
 
   if (!preventLayout) {
-    runLayout(false, false, true)
+    await runLayout(false, false, true)
   }
   preventLayout = false
+}
+
+/**
+ * Sets the value of the direction combobox for algorithms,
+ * that only use specific value
+ */
+function updateDirectionCombobox() {
+  if (algorithmNeedsDirectedEdges()) {
+    directionComboBox.selectedIndex = 1
+  }
+
+  if (!algorithmSupportsDirectedEdges()) {
+    directionComboBox.selectedIndex = 0
+  }
 }
 
 /**
@@ -933,7 +938,7 @@ function onAlgorithmChanged() {
 function onDirectedComboBoxSelectedIndexChanged() {
   if (!directionComboBox.disabled) {
     directed = directionComboBox.selectedIndex === 1
-    runLayout(true, false, true)
+    runLayout(true, false, true).catch(handleError)
   }
 }
 
@@ -944,6 +949,16 @@ function onUniformEdgeWeightsComboBoxSelectedIndexChanged() {
   if (!uniformEdgeWeightsComboBox.disabled) {
     useUniformWeights = uniformEdgeWeightsComboBox.selectedIndex === 0
     onGenerateEdgeLabels()
+  }
+}
+
+/**
+ * Handles a change on the kValueComboBox.
+ */
+function onKValueComboBoxSelectedIndexChanged() {
+  if (!kValueComboBox.disabled) {
+    kValue = kValueComboBox.selectedIndex + 1
+    runLayout(true, false, true).catch(handleError)
   }
 }
 
@@ -1126,7 +1141,7 @@ function getGraphInformation(graph, type) {
  * This implementation retrieves the weights from the labels or alternatively from the edge length.
  *
  * @param {IEdge} edge the edge.
- * @return {number} the weight of the edge
+ * @return {number|null} the weight of the edge
  */
 function getEdgeWeight(edge) {
   if (useUniformWeights) {
@@ -1247,7 +1262,7 @@ function onGenerateEdgeLabels() {
     })
   })
 
-  runLayout(true, false, true)
+  runLayout(true, false, true).catch(handleError)
 }
 
 /**
@@ -1273,7 +1288,23 @@ function fillComboBox(combobox, content) {
  */
 function algorithmSupportsDirectedEdges() {
   const selectedIndex = algorithmComboBox.selectedIndex
-  return selectedIndex > 3 && selectedIndex !== 10 && selectedIndex !== 11
+  return (
+    selectedIndex > 3 &&
+    selectedIndex !== 5 &&
+    selectedIndex !== 11 &&
+    selectedIndex !== 12 &&
+    selectedIndex !== 16 &&
+    selectedIndex !== 22
+  )
+}
+
+/**
+ * Returns true if the algorithm needs directed edges to work
+ * @return {boolean} true if the algorithm needs directed edges
+ */
+function algorithmNeedsDirectedEdges() {
+  const selectedIndex = algorithmComboBox.selectedIndex
+  return selectedIndex === 17
 }
 
 /**
@@ -1288,11 +1319,23 @@ function algorithmSupportsWeights() {
     selectedIndex !== 2 &&
     selectedIndex !== 3 &&
     selectedIndex !== 4 &&
-    selectedIndex !== 6 &&
+    selectedIndex !== 5 &&
     selectedIndex !== 7 &&
-    selectedIndex !== 9 &&
-    selectedIndex !== 10
+    selectedIndex !== 8 &&
+    selectedIndex !== 10 &&
+    selectedIndex !== 11 &&
+    selectedIndex !== 16 &&
+    selectedIndex < 18
   )
+}
+
+/**
+ * Returns true if the algorithm uses the k value. This is only the k-core algorithm
+ * @return {boolean}
+ */
+function algorithmUsesKValue() {
+  const selectedIndex = algorithmComboBox.selectedIndex
+  return selectedIndex === 5
 }
 
 /**
@@ -1315,6 +1358,7 @@ function setUIDisabled(disabled) {
   directionComboBox.disabled = disabled
   algorithmComboBox.disabled = disabled
   uniformEdgeWeightsComboBox.disabled = disabled
+  kValueComboBox.disabled = disabled
   document.getElementById('new').disabled = disabled
   document.getElementById('generateEdgeLabels').disabled = disabled
   document.getElementById('removeEdgeLabels').disabled = disabled
@@ -1331,11 +1375,23 @@ function setUIDisabled(disabled) {
 function updateUIState() {
   sampleComboBox.disabled = false
   algorithmComboBox.disabled = false
+
   nextButton.disabled = sampleComboBox.selectedIndex >= sampleComboBox.options.length - 1
   previousButton.disabled = sampleComboBox.selectedIndex <= 0
-  directionComboBox.disabled = !configOptionsValid || inLayout || !algorithmSupportsDirectedEdges()
+
+  directionComboBox.disabled =
+    !configOptionsValid ||
+    inLayout ||
+    !algorithmSupportsDirectedEdges() ||
+    // some algorithms always run with directed edges,
+    // so there is no reason to enable a choice
+    algorithmNeedsDirectedEdges()
+
   uniformEdgeWeightsComboBox.disabled =
     !configOptionsValid || inLayout || !algorithmSupportsWeights()
+
+  kValueComboBox.disabled = !algorithmUsesKValue()
+
   document.getElementById('new').disabled = false
   document.getElementById('generateEdgeLabels').disabled =
     !configOptionsValid || inLayout || uniformEdgeWeightsComboBox.disabled
@@ -1390,6 +1446,14 @@ function createSampleGraph(graph) {
   graph.createEdge(nodes[23], nodes[22])
   graph.createEdge(nodes[22], nodes[0])
   graph.createEdge(nodes[23], nodes[0])
+}
+
+function handleError(error) {
+  if (typeof window.reportError === 'function') {
+    window.reportError(error)
+  } else {
+    throw error
+  }
 }
 
 // run the demo

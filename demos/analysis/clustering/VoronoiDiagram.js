@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -64,7 +64,6 @@ export default class VoronoiDiagram {
 
   /**
    * Creates the Voronoi graph.
-   * @return {Graph}
    */
   createVoronoiDiagram() {
     // create the delauney triangulation and get the created faces
@@ -460,9 +459,7 @@ export default class VoronoiDiagram {
   calculateOuterface(outerfaceEdge, reversedEdgesMap, edge2face) {
     let eOut = outerfaceEdge
     const outerfaceEdges = new Set()
-    const outerFaceMark = []
     do {
-      outerFaceMark[eOut.index] = true
       eOut = this.cyclicNextEdge(eOut, reversedEdgesMap)
       outerfaceEdges.add(eOut)
       outerfaceEdges.add(reversedEdgesMap.get(eOut))
@@ -581,6 +578,7 @@ export default class VoronoiDiagram {
 
   /**
    * Creates an edge between the two given nodes if the edge does not already exist in the graph.
+   * @param {Graph} voronoiGraph The voronoi diagram
    * @param {YNode} source The source of the edge
    * @param {YNode} target The target of the edge
    * @return {Edge}

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { GraphComponent, Point } from 'yfiles'
+import { GraphComponent, Point, TimeSpan } from 'yfiles'
 import { detectSafariVersion, detectiOSVersion } from './Workarounds.js'
 
 /**
@@ -47,11 +47,14 @@ export default class ContextMenu {
    * Creates a new empty menu.
    *
    * @param {GraphComponent} graphComponent The graph component of this context menu.
+   * @param {GraphComponent} graphComponent
    */
   constructor(graphComponent) {
     const contextMenu = document.createElement('div')
     contextMenu.setAttribute('class', 'demo-context-menu')
     this.element = contextMenu
+    this.blurredTimeout = null
+    this.isOpen = true
 
     // Listeners for focus events since this menu closes itself if it loses the focus.
     this.focusOutListener = evt => {
@@ -84,7 +87,7 @@ export default class ContextMenu {
 
     // We lower the default long-press duration to 100ms to avoid conflicts between the context menu and
     // other gestures on long-press, e.g. edge creation.
-    graphComponent.longPressTime = '100ms'
+    graphComponent.longPressTime = TimeSpan.fromMilliseconds(100)
   }
 
   /**
@@ -99,8 +102,8 @@ export default class ContextMenu {
   /**
    * Adds a new menu entry with the given text and click-listener to this menu.
    * @param {string} label
-   * @param {function(Event)} clickListener
-   * @return {HTMLElement}
+   * @param {function} clickListener
+   * @returns {HTMLElement}
    */
   addMenuItem(label, clickListener) {
     const menuItem = document.createElement('button')
@@ -130,6 +133,7 @@ export default class ContextMenu {
    *
    * @param {Point} location The location of the menu relative to the left edge of the entire
    *   document. This are typically the pageX and pageY coordinates of the contextmenu event.
+   * @param {Point} location
    */
   show(location) {
     if (this.element.childElementCount <= 0) {
@@ -151,7 +155,6 @@ export default class ContextMenu {
     setTimeout(() => {
       this.element.setAttribute('class', `${this.element.getAttribute('class')} visible`)
     }, 0)
-
     this.element.firstElementChild.focus()
     this.isOpen = true
   }
@@ -212,6 +215,9 @@ export default class ContextMenu {
     return this.onClosedCallbackField
   }
 
+  /**
+   * @type {*}
+   */
   set onClosedCallback(callback) {
     this.onClosedCallbackField = callback
   }
@@ -232,6 +238,8 @@ export default class ContextMenu {
    * @param {GraphComponent} graphComponent The graph component of this context menu.
    * @param {function(Point)} openingCallback This function is called when an event that should
    *   open the context menu occurred. It gets the location of the event.
+   * @param {GraphComponent} graphComponent
+   * @param {function} openingCallback
    */
   addOpeningEventListeners(graphComponent, openingCallback) {
     const componentDiv = graphComponent.div
@@ -264,7 +272,7 @@ export default class ContextMenu {
 
     if (detectSafariVersion() > 0 || detectiOSVersion() > 0) {
       // Additionally add a long press listener especially for iOS, since it does not fire the contextmenu event.
-      let contextMenuTimer = null
+      let contextMenuTimer
       graphComponent.addTouchDownListener((sender, args) => {
         contextMenuTimer = setTimeout(() => {
           openingCallback(
@@ -292,6 +300,7 @@ export default class ContextMenu {
    * @param {HTMLElement} relatedTarget The related target of the focus event.
    *
    * @private
+   * @param {HTMLElement} relatedTarget
    */
   onFocusOut(relatedTarget) {
     // focusout can also occur when the focus shifts between the buttons in this context menu.
@@ -314,9 +323,10 @@ export default class ContextMenu {
    * Calculates the location of the center of the given element in absolute coordinates relative to the body element.
    *
    * @param {HTMLElement} element
-   * @return {Point}
+   * @returns {Point} {Point}
    *
    * @private
+   * @param {HTMLElement} element
    */
   static getCenterInPage(element) {
     let left = element.clientWidth / 2.0

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,7 +27,13 @@
  **
  ***************************************************************************/
 import { registerErrorDialog } from './demo-error.js'
-import { detectiOSVersion, enableWorkarounds, detectSafariVersion } from '../utils/Workarounds.js'
+import {
+  detectiOSVersion,
+  enableWorkarounds,
+  detectSafariVersion,
+  detectInternetExplorerVersion
+} from '../utils/Workarounds.js'
+import { GraphMLIOHandler } from 'yfiles'
 
 // match CSS media query
 const SIDEBAR_WIDTH = 320
@@ -98,7 +104,7 @@ function initializeDemo() {
   const showSourceContent = document.createElement('div')
   showSourceContent.setAttribute('class', 'demo-show-source-content hidden')
   const demoPath = location.toString().replace(/.*\/demos\/([^/]+)\/([^/]+).*/i, '$1/$2')
-  showSourceContent.innerHTML = `The source code for this demo is available in your yFiles&nbsp;for&nbsp;HTML package in the following folder:<br><div class="demo-source-path">/demos/${demoPath}</div>`
+  showSourceContent.innerHTML = `The source code for this demo is available in your yFiles&nbsp;for&nbsp;HTML package in the following folder:<br><div class="demo-source-path">/demos-js/${demoPath}</div>`
   showSourceButton.appendChild(showSourceContent)
 
   showSourceButton.addEventListener('click', () => toggleClass(showSourceContent, 'hidden'))
@@ -148,9 +154,12 @@ function initializeDemo() {
   }
 
   // responsive toolbar
-  const toolbar = document.querySelector('.demo-toolbar')
-  if (toolbar && !hasClass(toolbar, 'no-overflow')) {
-    initResponsiveToolbar(toolbar)
+  const toolbars = document.querySelectorAll('.demo-toolbar')
+  for (let i = 0; i < toolbars.length; i++) {
+    const toolbar = toolbars[i]
+    if (!hasClass(toolbar, 'no-overflow')) {
+      initResponsiveToolbar(toolbar)
+    }
   }
 
   // add fullscreen button
@@ -169,14 +178,20 @@ function initializeDemo() {
           addClass(document.body, 'demo-left-hidden')
           addClass(document.body, 'demo-right-hidden')
         }
-        if (document.documentElement.requestFullscreen) {
-          document.documentElement.requestFullscreen()
-        } else if (document.documentElement.msRequestFullscreen) {
+        const documentElement = document.documentElement
+        if (documentElement.requestFullscreen) {
+          // Methods with vendor prefix might not return a Promise, don't add the error handler there
+          documentElement.requestFullscreen().catch(() => {
+            alert(
+              `Error attempting to enable full-screen mode. Perhaps it was blocked by your browser.`
+            )
+          })
+        } else if (documentElement.msRequestFullscreen) {
           document.body.msRequestFullscreen()
-        } else if (document.documentElement.mozRequestFullScreen) {
-          document.documentElement.mozRequestFullScreen()
-        } else if (document.documentElement.webkitRequestFullscreen) {
-          document.documentElement.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT)
+        } else if (documentElement.mozRequestFullScreen) {
+          documentElement.mozRequestFullScreen()
+        } else if (documentElement.webkitRequestFullscreen) {
+          documentElement.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT)
         }
       } else {
         if (window.innerWidth < SMALL_WIDTH) {
@@ -184,7 +199,12 @@ function initializeDemo() {
           removeClass(document.body, 'demo-right-hidden')
         }
         if (document.exitFullscreen) {
-          document.exitFullscreen()
+          // Methods with vendor prefix might not return a Promise, don't add the error handler there
+          document.exitFullscreen().catch(() => {
+            alert(
+              `Error attempting to exit full-screen mode. Perhaps it was blocked by your browser.`
+            )
+          })
         } else if (document.msExitFullscreen) {
           document.msExitFullscreen()
         } else if (document.mozCancelFullScreen) {
@@ -235,7 +255,8 @@ function initResponsiveToolbar(toolbar) {
   toolbar.insertBefore(overflowContainerWrapper, toolbar.firstChild)
   let toolbarWidth = 0
   const resizeHandler = () => {
-    if (toolbarWidth !== toolbar.clientWidth) {
+    // only update if clientWidth is > 0 - this allows to temporarily hide the toolbar with "display:'none'"
+    if (toolbarWidth !== toolbar.clientWidth && toolbar.clientWidth > 0) {
       toolbarWidth = toolbar.clientWidth
       const toolbarBox = toolbar.getBoundingClientRect()
       let toolbarItem = toolbar.lastElementChild
@@ -296,6 +317,9 @@ function initResponsiveToolbar(toolbar) {
   setTimeout(resizeHandler, 1000)
 }
 
+/**
+ * @param {*} body
+ */
 function hideRightResponsive(body) {
   if (
     window.innerWidth < SMALL_WIDTH &&
@@ -306,41 +330,52 @@ function hideRightResponsive(body) {
   }
 }
 
+/**
+ * @param {*} isTutorial
+ * @returns {string}
+ */
 function getDemoName(isTutorial) {
   const title = document.title || ''
   const short = title.replace(/\s*\[yFiles for HTML]\s*/, '')
   return isTutorial ? short.substr(0, short.indexOf(' - ')) : short
 }
 
+/**
+ * @returns {string}
+ */
 function getTutorialName() {
   const demoName = getDemoName(false)
   return demoName.substr(demoName.indexOf(' - ') + 3)
 }
 
+/**
+ * @param {*} graphComponent
+ * @param {*} [overviewComponent]
+ */
 export function showApp(graphComponent, overviewComponent) {
   // Finished loading
   addClass(document.body, 'loaded')
   window['data-demo-status'] = 'OK'
-  if (graphComponent) {
+  if (graphComponent != null) {
     graphComponent.devicePixelRatio = window.devicePixelRatio || 1
   }
-  if (overviewComponent) {
-    overviewComponent.devicePixelRatio = window.devicePixelRatio || 1
-    const overviewContainer = overviewComponent.div.parentElement
-    const overviewHeader = overviewContainer.querySelector('.demo-overview-header')
-    overviewHeader.addEventListener('click', () => {
-      toggleClass(overviewContainer, 'collapsed')
-    })
+  if (overviewComponent == null) {
+    return
   }
+  overviewComponent.devicePixelRatio = window.devicePixelRatio || 1
+  const overviewContainer = overviewComponent.div.parentElement
+  const overviewHeader = overviewContainer.querySelector('.demo-overview-header')
+  overviewHeader.addEventListener('click', () => {
+    toggleClass(overviewContainer, 'collapsed')
+  })
 }
 
 /**
  * Binds the given command to the input element specified by the given selector.
- *
  * @param {string} selector
- * @param {ICommand} command
- * @param {CanvasComponent|GraphComponent} target
- * @param {Object?} parameter
+ * @param {*} command
+ * @param {*} target
+ * @param {*} [parameter]
  */
 export function bindCommand(selector, command, target, parameter) {
   const element = document.querySelector(selector)
@@ -369,7 +404,7 @@ export function bindCommand(selector, command, target, parameter) {
 
 /**
  * @param {string} selector
- * @param {function(Event)} action
+ * @param {function} action
  */
 export function bindAction(selector, action) {
   const element = document.querySelector(selector)
@@ -383,7 +418,7 @@ export function bindAction(selector, action) {
 
 /**
  * @param {string} selectors
- * @param {function(Event)} action
+ * @param {function} action
  */
 export function bindActions(selectors, action) {
   const elements = document.querySelectorAll(selectors)
@@ -400,7 +435,7 @@ export function bindActions(selectors, action) {
 
 /**
  * @param {string} selector
- * @param {function(string|boolean)} action
+ * @param {function} action
  */
 export function bindChangeListener(selector, action) {
   const element = document.querySelector(selector)
@@ -408,18 +443,37 @@ export function bindChangeListener(selector, action) {
     return
   }
   element.addEventListener('change', e => {
-    if (e.target instanceof HTMLInputElement && e.target.type === 'checkbox') {
-      action(e.target.checked)
+    const target = e.target
+    if (target instanceof HTMLInputElement && target.type === 'checkbox') {
+      action(target.checked)
     } else {
-      action(e.target.value)
+      action(target.value)
     }
+  })
+}
+
+/**
+ * @param {string} selector
+ * @param {function} action
+ */
+export function bindInputListener(selector, action) {
+  const element = document.querySelector(selector)
+  if (!element) {
+    return
+  }
+
+  const ieVersion = detectInternetExplorerVersion()
+  const eventKind = ieVersion > -1 && ieVersion <= 11 ? 'change' : 'input'
+  element.addEventListener(eventKind, e => {
+    const target = e.target
+    action(target.value)
   })
 }
 
 /**
  * @param {Element} e
  * @param {string} className
- * @return {Element}
+ * @returns {Element}
  */
 export function addClass(e, className) {
   const classes = e.getAttribute('class')
@@ -434,7 +488,7 @@ export function addClass(e, className) {
 /**
  * @param {Element} e
  * @param {string} className
- * @return {Element}
+ * @returns {Element}
  */
 export function removeClass(e, className) {
   const classes = e.getAttribute('class')
@@ -455,19 +509,18 @@ export function removeClass(e, className) {
 /**
  * @param {Element} e
  * @param {string} className
- * @return {boolean}
+ * @returns {boolean}
  */
 export function hasClass(e, className) {
-  const classes = e.getAttribute('class')
+  const classes = e.getAttribute('class') || ''
   const r = new RegExp(`\\b${className}\\b`, '')
   return r.test(classes)
 }
 
 /**
- *
  * @param {Element} e
  * @param {string} className
- * @return {Element}
+ * @returns {Element}
  */
 export function toggleClass(e, className) {
   if (hasClass(e, className)) {
@@ -480,8 +533,8 @@ export function toggleClass(e, className) {
 
 /**
  * Sets the value of the given combo box.
- * @param comboBoxId
- * @param value
+ * @param {*} comboBoxId
+ * @param {*} value
  */
 export function setComboboxValue(comboBoxId, value) {
   const combobox = document.getElementById(comboBoxId)
@@ -500,9 +553,9 @@ export function setComboboxValue(comboBoxId, value) {
 /**
  * Reads a graph from the given filename.
  * @param {GraphMLIOHandler} graphMLIOHandler The GraphMLIOHandler that is used to read the graph
- * @param {IGraph} graph The graph.
+ * @param {*} graph The graph.
  * @param {string} filename The filename.
- * @return {Promise} A promise that is resolved when the parsing has completed.
+ * @returns {Promise} A promise that is resolved when the parsing has completed.
  */
 export function readGraph(graphMLIOHandler, graph, filename) {
   graph.clear()

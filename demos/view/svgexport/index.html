@@ -7,8 +7,8 @@
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.2.
-     // Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML 2.3.
+     // Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -38,6 +38,7 @@
 
   <link rel="stylesheet" href="../../node_modules/yfiles/yfiles.css">
   <link rel="stylesheet" href="../../resources/style/demo.css">
+  <link rel="stylesheet" href="./resources/styles.css">
 
   <style>
     .demo-properties label.short {
@@ -144,8 +145,6 @@
 
   </style>
 
-  <!-- enable debugging -->
-  <script src="../../../ide-support/yfiles-typeinfo.js"></script>
   <script src="../../resources/filesystem-warning.js"></script>
 
 </head>
@@ -184,6 +183,13 @@
   The GraphComponent
   -->
 <div class="demo-content">
+  <div class="demo-toolbar">
+    <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
+    <button data-command="ZoomOriginal" title="Zoom to original size" class="demo-icon-yIconZoomOriginal"></button>
+    <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
+    <button data-command="FitContent" title="Fit Content" class="demo-icon-yIconZoomFit"></button>
+  </div>
+
   <div id="graphComponent"></div>
 </div>
 

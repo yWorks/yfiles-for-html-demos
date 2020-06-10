@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -68,7 +68,7 @@ export default class HtmlLabelStyle extends LabelStyleBase {
     foreignObject.appendChild(div)
 
     // move container to correct location
-    const transform = LabelStyleBase.createLayoutTransform(label.layout, true)
+    const transform = LabelStyleBase.createLayoutTransform(context, label.layout, true)
     transform.applyTo(foreignObject)
 
     // Get the necessary data for rendering of the label and store information with the visual
@@ -124,7 +124,7 @@ export default class HtmlLabelStyle extends LabelStyleBase {
     element['data-cache'] = newCache
 
     // move container to correct location
-    const transform = LabelStyleBase.createLayoutTransform(label.layout, true)
+    const transform = LabelStyleBase.createLayoutTransform(context, label.layout, true)
     transform.applyTo(foreignObject)
 
     return oldVisual

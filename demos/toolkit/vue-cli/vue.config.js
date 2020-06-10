@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -34,7 +34,7 @@ module.exports = {
     plugins:
       process.env.NODE_ENV !== 'production'
         ? []
-        : [new YWorksOptimizer({ logLevel: 'debug', blacklist: ['render'] })]
+        : [new YWorksOptimizer({ logLevel: 'info', blacklist: ['render'] })]
   },
   chainWebpack: config => {
     /** the yFiles library files are ES5 compatible and don't need to be babeled explicitly */

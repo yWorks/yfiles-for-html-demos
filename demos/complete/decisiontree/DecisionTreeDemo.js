@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -64,7 +64,10 @@ import {
   bindChangeListener,
   bindCommand,
   readGraph,
-  showApp
+  showApp,
+  addClass,
+  hasClass,
+  removeClass
 } from '../../resources/demo-app.js'
 import loadJson from '../../resources/load-json.js'
 
@@ -82,7 +85,7 @@ function run(licenseData) {
       fill: null,
       stroke: '5px rgb(0, 153, 51)'
     }),
-    zoomPolicy: 'world_coordinates',
+    zoomPolicy: 'world-coordinates',
     margins: 1.5
   })
   graphComponent.graph.decorator.nodeDecorator.highlightDecorator.setFactory(
@@ -121,8 +124,11 @@ let graphComponent = null
 /** @type {GraphMLSupport} */
 let graphMLSupport = null
 
+/** @type {HTMLSelectElement} */
 const graphChooserBox = document.querySelector("select[data-command='SelectedFileChanged']")
+/** @type {HTMLButtonElement} */
 const nextButton = document.querySelector("button[data-command='NextFile']")
+/** @type {HTMLButtonElement} */
 const previousButton = document.querySelector("button[data-command='PreviousFile']")
 
 const showDecisionTreeButton = document.getElementById('showDecisionTreeButton')
@@ -286,8 +292,8 @@ async function runLayout(animated) {
   })
   layout.nodePlacer.barycenterMode = false
 
-  if (layout !== null && !runningLayout) {
-    runningLayout = true
+  if (!runningLayout) {
+    setRunningLayout(true)
     const layoutExecutor = new LayoutExecutor({
       graphComponent,
       layout: new MinimumNodeSizeStage(layout),
@@ -303,7 +309,7 @@ async function runLayout(animated) {
         throw error
       }
     } finally {
-      runningLayout = false
+      setRunningLayout(false)
     }
   }
 }
@@ -315,8 +321,8 @@ async function runIncrementalLayout(incrementalNodes) {
   })
   layout.nodePlacer.barycenterMode = false
 
-  if (layout !== null && !runningLayout) {
-    runningLayout = true
+  if (!runningLayout) {
+    setRunningLayout(true)
 
     // configure the incremental hints
     const layoutData = new HierarchicLayoutData({
@@ -339,7 +345,7 @@ async function runIncrementalLayout(incrementalNodes) {
         throw error
       }
     } finally {
-      runningLayout = false
+      setRunningLayout(false)
     }
   }
 }
@@ -362,7 +368,8 @@ function showDecisionTree() {
     decisionTree = new DecisionTree(
       graphComponent.graph,
       rootNode,
-      document.getElementById('decisionTree')
+      document.getElementById('decisionTree'),
+      setRunningLayout
     )
     document.getElementById('graphComponent').style.visibility = 'hidden'
     document.getElementById('decisionTree').style.visibility = 'visible'
@@ -492,9 +499,20 @@ function enableGraphML() {
 /**
  * Updates the previous/next button states.
  */
-function updateButtons() {
+function updatePrevNextButtons() {
   nextButton.disabled = graphChooserBox.selectedIndex >= graphChooserBox.length - 1
   previousButton.disabled = graphChooserBox.selectedIndex <= 0
+}
+
+function setRunningLayout(running) {
+  runningLayout = running
+  if (running) {
+    nextButton.disabled = running
+    previousButton.disabled = running
+  } else {
+    updatePrevNextButtons()
+  }
+  graphChooserBox.disabled = running
 }
 
 /**
@@ -525,14 +543,14 @@ async function onNextButtonClicked() {
 function updateShowDecisionTreeButton() {
   const graph = graphComponent.graph
   if (graph.nodes.find(node => !graph.isGroupNode(node))) {
-    if (showDecisionTreeButton.classList.contains('disabled')) {
-      showDecisionTreeButton.classList.remove('disabled')
+    if (hasClass(showDecisionTreeButton, 'disabled')) {
+      removeClass(showDecisionTreeButton, 'disabled')
       showDecisionTreeButton.disabled = false
       showDecisionTreeButton.title = 'Show Decision Tree'
     }
   } else {
     if (!showDecisionTreeButton.classList.contains('disabled')) {
-      showDecisionTreeButton.classList.add('disabled')
+      addClass(showDecisionTreeButton, 'disabled')
       showDecisionTreeButton.disabled = true
       showDecisionTreeButton.title = 'Graph is Empty'
     }
@@ -556,7 +574,7 @@ async function readSampleGraph() {
   // when done - fit the bounds
   ICommand.FIT_GRAPH_BOUNDS.execute(null, graphComponent)
   // re-enable navigation buttons
-  setTimeout(updateButtons, 100)
+  updatePrevNextButtons()
   return graph
 }
 

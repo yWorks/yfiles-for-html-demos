@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -38,16 +38,19 @@ import {
   GraphOverviewComponent,
   HierarchicLayout,
   ICommand,
-  IGraph,
-  IMapper,
+  IModelItem,
   INode,
   InteriorStretchLabelModel,
+  ItemEventArgs,
   LayoutExecutor,
   License,
   Mapper,
   MinimumNodeSizeStage,
+  MouseHoverInputMode,
   PanelNodeStyle,
   Point,
+  PopulateItemContextMenuEventArgs,
+  QueryItemToolTipEventArgs,
   Rect,
   ShapeNodeStyle,
   Size,
@@ -62,19 +65,16 @@ import GraphBuilderData from './resources/graph.js'
 /** @type {GraphComponent} */
 let graphComponent = null
 
-/** @type {IGraph} */
-let graph = null
-
-/** @type {IMapper} */
+/** @type {Mapper.<IModelItem,Date>} */
 let dateMapper = null
 
+/**
+ * @param {object} licenseData
+ */
 function run(licenseData) {
   License.value = licenseData
   // Initialize the GraphComponent and place it in the div with CSS selector #graphComponent
   graphComponent = new GraphComponent('#graphComponent')
-
-  // conveniently store a reference to the graph that is displayed
-  graph = graphComponent.graph
 
   // Enable grouping
   configureGroupNodeStyles()
@@ -122,27 +122,37 @@ function run(licenseData) {
 // tools it from removing this dependency which is needed for 'morphLayout'.
 Class.ensure(LayoutExecutor)
 
-function runLayout() {
+/**
+ * @returns {Promise}
+ */
+async function runLayout() {
   // Uses the morphLayout method to perform the layout, animate it, manage undo and adjust the content rectangle in
-  // one line. The actual layout is wrapped into a MinimumNodeSizeStage to avoid errors with nodes of size '0'.
+  // one call. Here, the actual layout is wrapped into a MinimumNodeSizeStage to avoid errors with nodes of size '0'.
   // morphLayout runs asynchronously and returns immediately yielding a Promise that we can await or use to catch
   // errors.
-  graphComponent
-    .morphLayout(new MinimumNodeSizeStage(new HierarchicLayout()), '1s')
-    .catch(error => {
-      if (typeof window.reportError === 'function') {
-        window.reportError(error)
-      } else {
-        throw error
-      }
+  try {
+    await graphComponent.morphLayout({
+      layout: new MinimumNodeSizeStage(new HierarchicLayout()),
+      morphDuration: '1s',
+      easedAnimation: true
     })
+  } catch (error) {
+    // this is just for the purpose of the demo - usually you would employ your own
+    // logging or error handling logic, here
+    if (typeof window.reportError === 'function') {
+      window.reportError(error)
+    } else {
+      throw error
+    }
+  }
   /*
   // Alternatively we can do this directly on the graph, without animation
-  graph.applyLayout(new HierarchicLayout());
+  const graph = graphComponent.graph
+  graph.applyLayout(new HierarchicLayout())
 
   // Fitting the graph bounds is done by morphLayout() at the end but not by applyLayout(), which does not know
   // about the component.
-  graphComponent.fitGraphBounds();
+  graphComponent.fitGraphBounds()
   */
 }
 
@@ -150,43 +160,22 @@ function runLayout() {
  * Creates the sample graph.
  */
 function createSampleGraph() {
-  const builder = new GraphBuilder({
-    graph: graphComponent.graph,
-    nodesSource: GraphBuilderData.nodes,
-    edgesSource: GraphBuilderData.edges,
-    groupsSource: GraphBuilderData.groups,
-    sourceNodeBinding: 'source',
-    targetNodeBinding: 'target',
-    nodeIdBinding: 'id',
-    nodeLabelBinding: 'label',
-    groupBinding: 'parent',
-    groupIdBinding: 'id'
+  const builder = new GraphBuilder(graphComponent.graph)
+  builder.createNodesSource({
+    data: GraphBuilderData.nodes,
+    id: 'id',
+    parentId: 'parent',
+    layout: 'layout',
+    labels: ['label']
   })
+  builder.createGroupNodesSource({
+    data: GraphBuilderData.groups,
+    id: 'id',
+    layout: 'layout'
+  })
+  builder.createEdgesSource(GraphBuilderData.edges, 'source', 'target', 'id')
 
   builder.buildGraph()
-
-  // Sets the layout of the nodes
-  graph.nodes.forEach(node => {
-    graph.setNodeLayout(node, Rect.from(node.tag.layout))
-  })
-
-  // Iterate the edge data and create the according bends and Ports
-  graph.edges.forEach(edge => {
-    if (edge.tag.bends) {
-      edge.tag.bends.forEach(bend => {
-        graph.addBend(edge, Point.from(bend))
-      })
-    }
-    graph.setPortLocation(edge.sourcePort, Point.from(edge.tag.sourcePort))
-    graph.setPortLocation(edge.targetPort, Point.from(edge.tag.targetPort))
-  })
-
-  // Sets the location of the groups
-  graph.nodes.forEach(node => {
-    if (graph.isGroupNode(node)) {
-      graph.setNodeLayout(node, Rect.from(node.tag.layout))
-    }
-  })
 }
 
 // ////////////////////////////////////////////////////
@@ -205,7 +194,7 @@ function enableDataBinding() {
   // If this is unwanted behavior, you can customize the node creation itself
   // to associate this data with the element at the time of its initial creation,
   // e.g. by listening to the NodeCreated event of GraphEditorInputMode, see below
-  graph.addNodeCreatedListener((source, eventArgs) => {
+  graphComponent.graph.addNodeCreatedListener((source, eventArgs) => {
     // Stores the current time as node creation time.
     dateMapper.set(eventArgs.item, new Date())
   })
@@ -312,13 +301,14 @@ function setupContextMenu() {
  */
 function enableUndo() {
   // Enables undo on the graph.
-  graph.undoEngineEnabled = true
+  graphComponent.graph.undoEngineEnabled = true
 }
 
 /**
  * Configures the default style for group nodes.
  */
 function configureGroupNodeStyles() {
+  const graph = graphComponent.graph
   // PanelNodeStyle is a style especially suited to group nodes
   // Creates a panel with a light blue background
   graph.groupNodeDefaults.style = new PanelNodeStyle({
@@ -366,7 +356,7 @@ function setDefaultLabelLayoutParameters() {
     sideOfEdge: EdgeSides.LEFT_OF_EDGE | EdgeSides.RIGHT_OF_EDGE
   })
   // Finally, we can set this label model as the default for edge labels
-  graph.edgeDefaults.labels.layoutParameter = edgeLabelModel.createDefaultParameter()
+  graphComponent.graph.edgeDefaults.labels.layoutParameter = edgeLabelModel.createDefaultParameter()
 }
 
 /**
@@ -375,6 +365,7 @@ function setDefaultLabelLayoutParameters() {
  * so typically, you'd set these as early as possible in your application.
  */
 function setDefaultStyles() {
+  const graph = graphComponent.graph
   // configure defaults for normal nodes and their labels
   graph.nodeDefaults.style = new ShapeNodeStyle({
     fill: 'darkorange',
@@ -383,7 +374,7 @@ function setDefaultStyles() {
   graph.nodeDefaults.size = new Size(40, 40)
   graph.nodeDefaults.labels.style = new DefaultLabelStyle({
     verticalTextAlignment: 'center',
-    wrapping: 'word_ellipsis'
+    wrapping: 'word-ellipsis'
   })
   // Sets the defined style as the default for both edge and node labels
   // Creates a label style with the label text color set to dark red
@@ -429,7 +420,8 @@ function updateViewport() {
   graphComponent.fitGraphBounds()
 }
 
-/** Helper method that binds the various commands available in yFiles for HTML to the buttons
+/**
+ * Helper method that binds the various commands available in yFiles for HTML to the buttons
  * in the demo's toolbar.
  */
 function registerCommands() {
@@ -453,7 +445,7 @@ function registerCommands() {
 
   // /////////////// New in this Sample /////////////////
 
-  bindAction("button[data-command='Layout']", () => runLayout())
+  bindAction("button[data-command='Layout']", async () => runLayout())
 
   // ////////////////////////////////////////////////////
 }

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,17 +27,29 @@
  **
  ***************************************************************************/
 import {
+  CanvasComponent,
+  Class,
   EdgeSelectionIndicatorInstaller,
   EdgeStyleBase,
   GeneralPath,
+  GraphComponent,
   IArrow,
+  IBend,
+  ICanvasContext,
   IEdge,
+  IInputModeContext,
+  INode,
+  IRenderContext,
   ISelectionIndicatorInstaller,
+  Point,
   PolylineEdgeStyle,
+  Rect,
+  Stroke,
   SvgVisual
 } from 'yfiles'
 
 import MySimpleArrow from './MySimpleArrow.js'
+import MySimpleNodeStyle from './MySimpleNodeStyle.js'
 
 /**
  * This class is an example for a custom edge style based on {@link EdgeStyleBase}.
@@ -70,7 +82,7 @@ export default class MySimpleEdgeStyle extends EdgeStyleBase {
 
   /**
    * Gets the arrows drawn at the beginning and at the end of the edge.
-   * @type {number}
+   * @type {MySimpleArrow}
    */
   get arrows() {
     return this.$arrows
@@ -78,7 +90,7 @@ export default class MySimpleEdgeStyle extends EdgeStyleBase {
 
   /**
    * Sets the arrows drawn at the beginning and at the end of the edge.
-   * @type {number}
+   * @type {MySimpleArrow}
    */
   set arrows(value) {
     this.$arrows = value
@@ -87,7 +99,9 @@ export default class MySimpleEdgeStyle extends EdgeStyleBase {
   /**
    * Creates the visual for an edge.
    * @see Overrides {@link EdgeStyleBase#createVisual}
-   * @return {Visual}
+   * @param {IRenderContext} context
+   * @param {IEdge} edge
+   * @returns {SvgVisual}
    */
   createVisual(context, edge) {
     // This implementation creates a CanvasContainer and uses it for the rendering of the edge.
@@ -102,7 +116,10 @@ export default class MySimpleEdgeStyle extends EdgeStyleBase {
   /**
    * Re-renders the edge using the old visual for performance reasons.
    * @see Overrides {@link EdgeStyleBase#updateVisual}
-   * @return {Visual}
+   * @param {IRenderContext} context
+   * @param {SvgVisual} oldVisual
+   * @param {IEdge} edge
+   * @returns {SvgVisual}
    */
   updateVisual(context, oldVisual, edge) {
     const container = oldVisual.svgElement
@@ -130,7 +147,9 @@ export default class MySimpleEdgeStyle extends EdgeStyleBase {
 
   /**
    * Creates an object containing all necessary data to create an edge visual.
-   * @return {object}
+   * @param {IRenderContext} context
+   * @param {IEdge} edge
+   * @returns {*}
    */
   createRenderDataCache(context, edge) {
     // Get the owner node's color
@@ -170,12 +189,14 @@ export default class MySimpleEdgeStyle extends EdgeStyleBase {
 
   /**
    * Creates the visual appearance of an edge.
+   * @param {IRenderContext} context
+   * @param {IEdge} edge
+   * @param {SVGGElement} container
+   * @param {*} cache
    */
   render(context, edge, container, cache) {
-    const g = container
-
     // store information with the visual on how we created it
-    g['data-renderDataCache'] = cache
+    container['data-renderDataCache'] = cache
 
     const path = cache.path.createSvgPath()
 
@@ -199,10 +220,10 @@ export default class MySimpleEdgeStyle extends EdgeStyleBase {
 
   /**
    * Updates the edge path data as well as the arrow positions of the visuals stored in <param name="container" />.
-   * @param context {IRenderContext}
-   * @param edge {IEdge}
-   * @param container {SVGElement}
-   * @param cache {RenderDataCache}
+   * @param {IRenderContext} context {IRenderContext}
+   * @param {IEdge} edge {IEdge}
+   * @param {SVGGElement} container {SVGElement}
+   * @param {*} cache {RenderDataCache}
    */
   updatePath(context, edge, container, cache) {
     // The first child must be a path - else re-create the container from scratch
@@ -230,7 +251,7 @@ export default class MySimpleEdgeStyle extends EdgeStyleBase {
   /**
    * Creates a {@link GeneralPath} from the edge's bends.
    * @param {IEdge} edge The edge to create the path for.
-   * @return {GeneralPath} A {@link GeneralPath} following the edge
+   * @returns {GeneralPath} A {@link GeneralPath} following the edge
    * @see Overrides {@link EdgeStyleBase#getPath}
    */
   getPath(edge) {
@@ -243,8 +264,7 @@ export default class MySimpleEdgeStyle extends EdgeStyleBase {
     path.lineTo(edge.targetPort.location)
 
     // shorten the path in order to provide room for drawing the arrows.
-    const croppedPath = super.cropPath(edge, this.arrows, this.arrows, path)
-    return croppedPath
+    return super.cropPath(edge, this.arrows, this.arrows, path)
   }
 
   /**
@@ -252,7 +272,10 @@ export default class MySimpleEdgeStyle extends EdgeStyleBase {
    * Overridden method to include the {@link MySimpleEdgeStyle#pathThickness} and the HitTestRadius specified in the
    * context in the calculation.
    * @see Overrides {@link EdgeStyleBase#isHit}
-   * @return {boolean}
+   * @param {IInputModeContext} canvasContext
+   * @param {Point} p
+   * @param {IEdge} edge
+   * @returns {boolean}
    */
   isHit(canvasContext, p, edge) {
     // Use the convenience method in GeneralPath
@@ -264,9 +287,12 @@ export default class MySimpleEdgeStyle extends EdgeStyleBase {
 
   /**
    * Determines whether the edge is visible in the given rectangle.
-   * Overridden method to improve performance of the suprt implementation
+   * Overridden method to improve performance of the super implementation
    * @see Overrides {@link EdgeStyleBase#isVisible}
-   * @return {boolean}
+   * @param {ICanvasContext} context
+   * @param {Rect} rectangle
+   * @param {IEdge} edge
+   * @returns {boolean}
    */
   isVisible(context, rectangle, edge) {
     // enlarge the test rectangle to include the path thickness
@@ -281,7 +307,9 @@ export default class MySimpleEdgeStyle extends EdgeStyleBase {
    * This implementation of the look up provides a custom implementation of the
    * {@link ISelectionIndicatorInstaller} interface that better suits to this style.
    * @see Overrides {@link EdgeStyleBase#lookup}
-   * @return {Object}
+   * @param {IEdge} edge
+   * @param {Class} type
+   * @returns {object}
    */
   lookup(edge, type) {
     if (type === ISelectionIndicatorInstaller.$class) {
@@ -302,7 +330,11 @@ const helperEdgeStyle = new PolylineEdgeStyle({
  * getStroke method to return <code>null</code>, so that no edge path is rendered if the edge is selected.
  */
 class MySelectionInstaller extends EdgeSelectionIndicatorInstaller {
-  /** @return {Stroke} */
+  /**
+   * @param {CanvasComponent} canvas
+   * @param {IEdge} edge
+   * @returns {?Stroke}
+   */
   getStroke(canvas, edge) {
     return null
   }

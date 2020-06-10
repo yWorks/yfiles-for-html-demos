@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -44,8 +44,8 @@ export interface EdgeData {
 }
 
 export interface GraphData {
-  nodesSource: Array<NodeData>
-  edgesSource: Array<EdgeData>
+  nodesSource: NodeData[]
+  edgesSource: EdgeData[]
 }
 
 export interface AppState {
@@ -53,6 +53,8 @@ export interface AppState {
 }
 
 export default class App extends Component<{}, AppState> {
+  readonly state: AppState
+
   constructor(props: object) {
     super(props)
     this.state = {
@@ -85,7 +87,7 @@ export default class App extends Component<{}, AppState> {
     }
   }
 
-  addNode() {
+  addNode(): void {
     const newIdx =
       this.state.graphData.nodesSource.reduce((maxId, item) => Math.max(maxId, item.id), 0) + 1
     const parentNodeIdx = Math.floor(Math.random() * (this.state.graphData.nodesSource.length - 1))
@@ -113,7 +115,7 @@ export default class App extends Component<{}, AppState> {
     })
   }
 
-  removeNode() {
+  removeNode(): void {
     this.setState(state => {
       const randomNodeIdx = Math.floor(
         Math.random() * (this.state.graphData.nodesSource.length - 1)
@@ -134,7 +136,7 @@ export default class App extends Component<{}, AppState> {
     })
   }
 
-  resetData() {
+  resetData(): void {
     this.setState({
       graphData: {
         nodesSource: [
@@ -165,7 +167,7 @@ export default class App extends Component<{}, AppState> {
     })
   }
 
-  render() {
+  render(): JSX.Element {
     return (
       <div className="App">
         <aside className="demo-sidebar left">
@@ -174,8 +176,8 @@ export default class App extends Component<{}, AppState> {
         <aside className="demo-sidebar right">
           <DemoDataPanel
             graphData={this.state.graphData}
-            onAddNode={() => this.addNode()}
-            onRemoveNode={() => this.removeNode()}
+            onAddNode={(): void => this.addNode()}
+            onRemoveNode={(): void => this.removeNode()}
           />
         </aside>
 
@@ -192,7 +194,7 @@ export default class App extends Component<{}, AppState> {
 
           <ReactGraphComponent
             graphData={this.state.graphData}
-            onResetData={() => this.resetData()}
+            onResetData={(): void => this.resetData()}
           />
         </div>
       </div>

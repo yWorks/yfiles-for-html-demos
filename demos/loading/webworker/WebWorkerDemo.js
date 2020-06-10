@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -210,7 +210,7 @@ function initializeGraph() {
 
 /**
  * Creates the sample graph for this demo.
- * @param {yfiles.graph.IGraph} graph The input graph to be filled.
+ * @param {IGraph} graph The input graph to be filled.
  */
 function createSampleGraph(graph) {
   graph.clear()
@@ -275,14 +275,14 @@ function createSampleGraph(graph) {
     graph.createEdge(nodes[19], nodes[24])
   }
 
-  generateItemLabels(graph.edges)
-  generateItemLabels(graph.nodes.filter(node => !graph.isGroupNode(node)))
+  generateItemLabels(graph.edges.toList())
+  generateItemLabels(graph.nodes.filter(node => !graph.isGroupNode(node)).toList())
 }
 
 /**
  * Generate and add random labels for a collection of ModelItems.
  * Existing items will be deleted before adding the new items.
- * @param {yfiles.collections.IEnumerable.<yfiles.model.IModelItem>} items the collection of items the labels are
+ * @param {IList.<IModelItem>} items the collection of items the labels are
  *   generated for
  */
 function generateItemLabels(items) {
@@ -293,10 +293,6 @@ function generateItemLabels(items) {
   const labelCount = Math.floor(
     items.size * (Math.random() * (labelPercMax - labelPercMin) + labelPercMin)
   )
-  const itemList = new List()
-  items.forEach(item => {
-    itemList.add(item)
-  })
 
   // add random item labels
   const loremList = getLoremIpsum()
@@ -308,9 +304,9 @@ function generateItemLabels(items) {
       label += j === 0 ? '' : ' '
       label += loremList[k]
     }
-    const itemIdx = Math.floor(Math.random() * itemList.size)
-    const item = itemList.get(itemIdx)
-    itemList.removeAt(itemIdx)
+    const itemIdx = Math.floor(Math.random() * items.size)
+    const item = items.get(itemIdx)
+    items.removeAt(itemIdx)
     graphComponent.graph.addLabel(item, label)
   }
 }

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -55,7 +55,8 @@
   box-sizing: border-box;
   user-select: none;
   background-color: #f7f7f7;
-  transition: left 0.5s cubic-bezier(0.23, 1, 0.32, 1) 0s, right 0.5s cubic-bezier(0.23, 1, 0.32, 1) 0s;
+  transition: left 0.5s cubic-bezier(0.23, 1, 0.32, 1) 0s,
+    right 0.5s cubic-bezier(0.23, 1, 0.32, 1) 0s;
 }
 
 .demo-toolbar > * {

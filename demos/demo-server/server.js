@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -32,7 +32,7 @@ const http = require('http')
 const https = require('https')
 const express = require('express')
 const multer = require('multer') // multipart/form-data parsing
-const opn = require('opn')
+const open = require('open')
 const favicon = require('serve-favicon')
 const resolveYfiles = require('./resolve-yfiles')
 
@@ -59,7 +59,7 @@ app.use((req, res, next) => {
   next()
 })
 
-const favIconPath = path.join(staticRoot, 'demos/resources/image', 'favicon.ico')
+const favIconPath = path.join(staticRoot, 'demos-js/resources/image', 'favicon.ico')
 if (fs.existsSync(favIconPath)) {
   app.use(favicon(favIconPath))
 }
@@ -182,7 +182,9 @@ const server = http.createServer(app)
 
 server.on('error', e => {
   if (e.code === 'EADDRINUSE') {
-    console.error(`Port ${port} already in use, retrying to start demo server...`)
+    console.error(
+      `Port ${port} already in use (maybe the demo-server is already running?), retrying to start demo server...`
+    )
     setTimeout(() => {
       server.close()
       server.listen(port)
@@ -191,11 +193,11 @@ server.on('error', e => {
 })
 
 server.on('listening', () => {
-  console.log(`Demo server listening at localhost:${port}`)
+  console.log(`Demo server listening at http://localhost:${port}`)
 
   // open the documentation page (hopefully in a browser)
   if (typeof process.env.NO_OPEN === 'undefined') {
-    opn(`http://localhost:${port}${defaultPage}`)
+    open(`http://localhost:${port}${defaultPage}`)
   }
 })
 

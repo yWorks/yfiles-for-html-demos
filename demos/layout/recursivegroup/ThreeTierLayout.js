@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -28,7 +28,6 @@
  ***************************************************************************/
 import {
   CompositeLayoutData,
-  Enum,
   HierarchicLayout,
   HierarchicLayoutData,
   HierarchicLayoutNodeLayoutDescriptor,
@@ -58,9 +57,8 @@ import {
  * Elements not assigned to left or right group nodes are always lay out in the middle using the
  * {@link HierarchicLayout} with layout orientation left-to-right. Note that group nodes of type
  * {@link COMMON_NODE} are handled non-recursively.
- *
- * @param {boolean} fromSketch - Whether the {@link HierarchicLayout} shall be run in incremental
- *   layout mode.
+ * @param {boolean} fromSketch - Whether the {@link HierarchicLayout} shall be run in incremental layout mode.
+ * @returns {RecursiveGroupLayout}
  */
 export function createThreeTierLayout(fromSketch) {
   const hierarchicLayout = new HierarchicLayout({
@@ -82,7 +80,7 @@ export function createThreeTierLayout(fromSketch) {
  * Returns the layout data that shall be used for the three tier layout with the specified graph.
  * @param {IGraph} graph
  * @param {boolean} fromSketch
- * @return {LayoutData}
+ * @returns {LayoutData}
  */
 export function createThreeTierLayoutData(graph, fromSketch) {
   const ld = new CompositeLayoutData()
@@ -165,7 +163,7 @@ export function createThreeTierLayoutData(graph, fromSketch) {
  * Returns the type of tier the node is assigned to.
  * @param {INode} node
  * @param {IGraph} graph
- * @return {TierType}
+ * @returns {TierType}
  */
 function getTierType(node, graph) {
   const foldingView = graph.foldingView
@@ -189,11 +187,11 @@ function getTierType(node, graph) {
 }
 
 /**
- * @typedef TierType
+ * @readonly
  * @enum {number}
  */
-const TierType = Enum('TierType', {
+const TierType = {
   COMMON_NODE: 0,
   LEFT_TREE_GROUP_NODE: 1,
   RIGHT_TREE_GROUP_NODE: 2
-})
+}

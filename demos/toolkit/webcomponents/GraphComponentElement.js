@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -39,291 +39,9 @@ if (window.customElements) {
     width: 100%;
     height: 100%;
   }
-
-  .yfiles-canvascomponent, .yfiles-svgpanel {
-    position: relative;
-  }
-
-  .yfiles-svgpanel {
-    /*
-      For exact label size measurement, use the below property
-      to emphasize geometric precision over legibility and rendering speed.
-    */
-    /* text-rendering: geometricPrecision; */
-  }
-
-  /* Layout the components of a CanvasComponent in a grid */
-
-  .yfiles-canvascomponent {
-    position: relative;
-    overflow: hidden;
-    -ms-touch-action: none;
-    touch-action: none;
-    /* prevent selecting text by double click */
-    -webkit-touch-callout: none;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-  }
-
-  .yfiles-canvascomponent .yfiles-svgpanel {
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    overflow: hidden;
-  }
-
-  /* this is a dummy animation that is used for detecting element insertion into the DOM */
-  .yfiles-resize-sensor .yfiles-resize-sensor-expand {
-    animation-duration: 0.001s;
-    animation-name: yfiles-dom-sensor-inserted;
-  }
-
-  @keyframes yfiles-dom-sensor-inserted {
-    from { opacity: 0.99; }
-    to { opacity: 1; }
-  }
-
-  /* Style the scrollbars */
-
-  .yfiles-canvascomponent .yfiles-scrollbar.yfiles-scrollbar-vertical {
-    background: #eee;
-    width: 15px;
-    position: absolute;
-    right: 0;
-    top: 0;
-    bottom: 0;
-  }
-
-  .yfiles-canvascomponent .yfiles-scrollbar.yfiles-scrollbar-horizontal {
-    background: #eee;
-    height: 15px;
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 0;
-  }
-
-  .yfiles-canvascomponent .yfiles-scrollbar.yfiles-scrollbar-vertical div {
-    /* set the size to all inner elements as well to ensure that none accidentally enlarges the scrollbar */
-    width: 15px;
-  }
-
-  .yfiles-canvascomponent .yfiles-scrollbar.yfiles-scrollbar-horizontal div {
-    /* set the size to all inner elements as well to ensure that none accidentally enlarges the scrollbar */
-    height: 15px;
-  }
-
-  .yfiles-canvascomponent .yfiles-scrollbar .yfiles-button.yfiles-button-left {
-    background: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2215%22%20height%3D%2215%22%3E%3Cpath%20d%3D%22M5%207.5%20L10%204%20L10%2011%20Z%22/%3E%3C/svg%3E");
-  }
-
-  .yfiles-canvascomponent .yfiles-scrollbar .yfiles-button.yfiles-button-right {
-    background: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2215%22%20height%3D%2215%22%3E%3Cpath%20d%3D%22M5%204%20L10%207.5%20L5%2011%20Z%22/%3E%3C/svg%3E");
-  }
-
-  .yfiles-canvascomponent .yfiles-scrollbar .yfiles-button.yfiles-button-up {
-    background: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2215%22%20height%3D%2215%22%3E%3Cpath%20d%3D%22M4%2010%20L7.5%205%20L11%2010%20Z%22/%3E%3C/svg%3E");
-  }
-
-  .yfiles-canvascomponent .yfiles-scrollbar .yfiles-button.yfiles-button-down {
-    background: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2215%22%20height%3D%2215%22%3E%3Cpath%20d%3D%22M4%205%20L11%205%20L7.5%2010%20Z%22/%3E%3C/svg%3E");
-  }
-
-  .yfiles-canvascomponent .yfiles-scrollbar .yfiles-button:not(.yfiles-button-disabled):hover {
-    background-color: #bbb;
-  }
-
-  .yfiles-canvascomponent .yfiles-scrollbar .yfiles-button.yfiles-button-disabled {
-    opacity: 0.3;
-  }
-
-  .yfiles-canvascomponent .yfiles-scrollbar, .yfiles-canvascomponent .yfiles-scrollbar-range, .yfiles-canvascomponent .yfiles-scrollbar-range-content {
-    background-color: transparent;
-  }
-
-  .yfiles-canvascomponent .yfiles-scrollbar-range.yfiles-scrollbar-range-vertical .yfiles-scrollbar-slider {
-    border: none;
-    background: #cccccc;
-    border-radius: 0;
-    width: 15px;
-  }
-
-  .yfiles-canvascomponent .yfiles-scrollbar-range.yfiles-scrollbar-range-horizontal .yfiles-scrollbar-slider {
-    border: none;
-    background: #cccccc;
-    border-radius: 0;
-    height: 15px;
-  }
-
-  .yfiles-canvascomponent .yfiles-scrollbar-range.yfiles-scrollbar-range-horizontal .yfiles-scrollbar-slider:hover,
-  .yfiles-canvascomponent .yfiles-scrollbar-range.yfiles-scrollbar-range-vertical .yfiles-scrollbar-slider:hover {
-    background: #bbb;
-  }
-
-  .yfiles-canvascomponent .yfiles-scrollbar-range.yfiles-scrollbar-range-horizontal .yfiles-scrollbar-slider .yfiles-scrollbar-slider-dragging,
-  .yfiles-canvascomponent .yfiles-scrollbar-range.yfiles-scrollbar-range-vertical .yfiles-scrollbar-slider .yfiles-scrollbar-slider-dragging {
-    background: #9B9B9B;
-  }
-
-  .yfiles-canvascomponent .yfiles-scrollbar .yfiles-button:not(.yfiles-button-disabled).yfiles-scrollbar-button-down {
-    background-color: #9b9b9b;
-  }
-
-  /* Layout the scrollbars */
-
-  .yfiles-canvascomponent .yfiles-scrollbar div {
-    overflow: hidden;
-    -webkit-box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    box-sizing: border-box;
-  }
-
-  .yfiles-canvascomponent .yfiles-scrollbar-content {
-    cursor: default;
-  }
-
-  .yfiles-canvascomponent .yfiles-scrollbar > div {
-    position: absolute;
-  }
-
-  .yfiles-canvascomponent .yfiles-scrollbar .yfiles-scrollbar-range.yfiles-scrollbar-range-horizontal {
-    left: 15px;
-    right: 15px;
-    top: 0;
-    bottom: 0;
-    height: 15px;
-  }
-
-  .yfiles-canvascomponent .yfiles-scrollbar .yfiles-scrollbar-range.yfiles-scrollbar-range-vertical {
-    width: 15px;
-    left: 0;
-    right: 0;
-    top: 15px;
-    bottom: 15px;
-  }
-
-  .yfiles-canvascomponent .yfiles-scrollbar .yfiles-scrollbar-range-content, .yfiles-canvascomponent .yfiles-scrollbar .yfiles-scrollbar-slider-content {
-    /* set maximum size in both dimension and override for specific elements if required */
-    width: 100%;
-    height: 100%;
-  }
-
-  .yfiles-canvascomponent .yfiles-scrollbar .yfiles-button {
-    color: #000;
-    width: 15px;
-    height: 15px;
-    font-size: 10px;
-    line-height: 15px;
-    text-align: center;
-    vertical-align: middle;
-    position: absolute;
-    border: none;
-    border-radius: 0;
-  }
-
-  .yfiles-canvascomponent .yfiles-scrollbar .yfiles-button-left {
-    left: 0;
-    top: 0;
-    bottom: 0;
-  }
-
-  .yfiles-canvascomponent .yfiles-scrollbar .yfiles-button-right {
-    right: 0;
-    top: 0;
-    bottom: 0;
-  }
-
-  .yfiles-canvascomponent .yfiles-scrollbar .yfiles-button-up {
-    left: 0;
-    right: 0;
-    top: 0;
-  }
-
-  .yfiles-canvascomponent .yfiles-scrollbar .yfiles-button-down {
-    left: 0;
-    right: 0;
-    bottom: 0;
-  }
-
-  /* Misc styling */
-
-  .yfiles-canvascomponent, .yfiles-canvascomponent-svg {
-    outline: 0;
-    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
-  }
-
-  .yfiles-canvascomponent-svg {
-    width: 100%;
-    height: 100%;
-    display: block;
-  }
-
-  .yfiles-tooltip {
-    font-size: 10pt;
-    background-color: #ffffd0;
-    border: 1px solid black;
-    padding: 2px;
-    position: absolute;
-    overflow: visible;
-  }
-
-  .yfiles-dropshadow-image {
-    pointer-events: none;
-  }
-
-  .yfiles-canvascomponent .yfiles-labeleditbox-container {
-    border: 1px solid black;
-    background-color: white;
-    padding: 2px;
-  }
-
-  .yfiles-canvascomponent .yfiles-labeleditbox-container:focus {
-    outline: none;
-  }
-
-  .yfiles-canvascomponent .yfiles-labeleditbox {
-    box-sizing: border-box; /* box model is crucial for measuring */
-    resize: none;
-    overflow: hidden;
-    width: 100%;
-    height: 100%;
-    background-color: transparent;
-    border: 0 none;
-    padding: 0;
-    line-height: normal;
-    font-family: sans-serif;
-    font-size: 10pt;
-    font-stretch: normal;
-    font-style: normal;
-    font-variant: normal;
-    font-weight: 400;
-    text-decoration: none;
-    text-transform: none;
-    letter-spacing: normal;
-    word-spacing: 0;
-    outline: none;
-    white-space: pre;
-  }
-
-  .yfiles-collapsebutton {
-    cursor: pointer;
-  }
-
-  .yfiles-overlaypanel {
-    -webkit-user-select: text;
-    -moz-user-select: text;
-    -ms-user-select: text;
-    user-select: text;
-  }
-
-  .yfiles-canvascomponent ::-webkit-scrollbar {
-    -webkit-appearance: none;
-  }
 </style>
+<!-- The yfiles stylesheet is included for redundancy here if the 'style' property is not set -->
+<link rel="stylesheet" href="../../node_modules/yfiles/yfiles.css">
 <slot></slot>
 `
 
@@ -350,7 +68,13 @@ if (window.customElements) {
 
       // clone the template
       const stamped = template.content.cloneNode(true)
-      this.$yfilesStyles = stamped.querySelector('style')
+      // if there is an external css style, create a new style element
+      if (this.$cssStyle) {
+        const styleEl = document.createElement('style')
+        styleEl.innerHTML = this.$cssStyle
+        stamped.appendChild(styleEl)
+      }
+      this.$componentStyles = stamped.querySelectorAll('style')
 
       // if we reconnect - we clean up the old component.
       if (this.$graphComponent) {
@@ -414,6 +138,15 @@ if (window.customElements) {
       this.$graphComponent.inputMode = value
     }
 
+    get cssStyle() {
+      return this.$cssStyle
+    }
+
+    // sets an external CSS style that is added to the web component
+    set cssStyle(value) {
+      this.$cssStyle = value
+    }
+
     get graph() {
       return this.$graphComponent.graph
     }
@@ -428,11 +161,15 @@ if (window.customElements) {
     toggleShadowRoot() {
       if (this.$isInShadowRoot) {
         this.appendChild(this.$graphComponent.div)
-        this.appendChild(this.$yfilesStyles)
+        Array.prototype.slice.apply(this.$componentStyles).forEach(styleElement => {
+          this.appendChild(styleElement)
+        })
       } else {
         const shadowRoot = this[shadowRootPrivate]
         shadowRoot.appendChild(this.$graphComponent.div)
-        shadowRoot.appendChild(this.$yfilesStyles)
+        Array.prototype.slice.apply(this.$componentStyles).forEach(styleElement => {
+          shadowRoot.appendChild(styleElement)
+        })
       }
       this.$isInShadowRoot = !this.$isInShadowRoot
     }

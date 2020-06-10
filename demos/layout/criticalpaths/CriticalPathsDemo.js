@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -91,20 +91,16 @@ function run(licenseData) {
  */
 function loadGraph(sample) {
   const graph = graphComponent.graph
+  graph.clear()
   graph.nodeDefaults.style = new DemoNodeStyle()
   graph.edgeDefaults.style = new PolylineEdgeStyle()
   graph.edgeDefaults.shareStyleInstance = false
 
   const data = SampleData[sample]
 
-  const builder = new GraphBuilder({
-    graph,
-    nodesSource: data.nodes,
-    edgesSource: data.edges,
-    sourceNodeBinding: 'source',
-    targetNodeBinding: 'target',
-    nodeIdBinding: 'id'
-  })
+  const builder = new GraphBuilder(graph)
+  builder.createNodesSource(data.nodes, 'id')
+  builder.createEdgesSource(data.edges, 'source', 'target')
 
   builder.buildGraph()
 

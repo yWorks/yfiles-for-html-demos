@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -35,7 +35,10 @@ import {
   HierarchicLayoutData,
   HierarchicLayoutLayeringStrategy,
   ICommand,
+  IIncrementalHintsFactory,
   ILabel,
+  IList,
+  IModelItem,
   INode,
   LabelPlacements,
   LabelSideReferences,
@@ -44,14 +47,43 @@ import {
   License,
   PreferredPlacementDescriptor,
   Size,
-  StringTemplateNodeStyle,
   TemplateNodeStyle
 } from 'yfiles'
 
-import Samples from './samples.js'
+import SamplesData from './samples.js'
 import { bindAction, bindChangeListener, bindCommand, showApp } from '../../resources/demo-app.js'
-import { initDemoStyles } from '../../resources/demo-styles.js'
 import loadJson from '../../resources/load-json.js'
+import { EdgesSourceDialog, NodesSourceDialog } from './EditSourceDialog.js'
+import { SourcesListBox } from './SourcesListBox.js'
+import {
+  EdgesSourceDefinition,
+  EdgesSourceDefinitionBuilderConnector,
+  NodesSourceDefinition,
+  NodesSourceDefinitionBuilderConnector,
+  SourcesFactory
+} from './ModelClasses.js'
+
+/**
+ * @typedef {Object} GraphBuilderSample
+ * @property {string} name
+ * @property {Array.<NodesSourceDefinition>} nodesSources
+ * @property {Array.<EdgesSourceDefinition>} edgesSources
+ */
+
+const samples = SamplesData
+
+/** @type {?HierarchicLayout} */
+let layout = null
+/** @type {boolean} */
+let layouting = false
+
+/** @type {?GraphComponent} */
+let graphComponent = null
+/** @type {?GraphBuilder} */
+let graphBuilder = null
+
+/** @type {?IList.<INode>} */
+let existingNodes = null
 
 /**
  * Shows building a graph from business data with class
@@ -62,27 +94,19 @@ import loadJson from '../../resources/load-json.js'
  * In order to visualize the nodes, {@link TemplateNodeStyle} is used. The style's
  * node template can also be changed interactively in order to display arbitrary data
  * of the business data associated with the node.
+ * @param {*} licenseData
  */
 function run(licenseData) {
   License.value = licenseData
-  initializeUI()
 
-  // configure the defaults for nodes and edges on the graph to be used by the graph builder
+  graphComponent = new GraphComponent('graphComponent')
   const graph = graphComponent.graph
-
-  // Assign the default demo styles.
-  // In this demo, these are used for groups and edges, normal nodes get an individual template style
-  initDemoStyles(graphComponent.graph)
 
   graph.nodeDefaults.size = new Size(150, 60)
   graph.edgeDefaults.labels.layoutParameter = new FreeEdgeLabelModel().createDefaultParameter()
 
   // configure the input mode
   graphComponent.inputMode = new GraphViewerInputMode()
-
-  // create the GraphBuilder
-  graphBuilder = new GraphBuilder(graph)
-  graphComponent.graph = graphBuilder.graph
 
   // configure label placement
   const preferredPlacementDescriptor = new PreferredPlacementDescriptor({
@@ -101,8 +125,13 @@ function run(licenseData) {
   // create a layout
   layout = createLayout()
 
-  // load the initial data
-  loadSampleData()
+  initializeSamplesComboBox()
+
+  // load the initial data from samples
+  loadSample(samples[0])
+
+  // noinspection JSIgnoredPromiseFromCall
+  buildGraphFromData(false)
 
   // register toolbar and other GUI element commands
   registerCommands()
@@ -112,15 +141,8 @@ function run(licenseData) {
 }
 
 /**
- * @type {HierarchicLayout}
+ * Bind various UI elements to the appropriate commands
  */
-let layout = null
-
-/**
- * @type {List.<INode>}
- */
-let existingNodes = null
-
 function registerCommands() {
   bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent, null)
   bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent, null)
@@ -128,15 +150,18 @@ function registerCommands() {
   bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent, null)
 
   bindAction("button[data-command='BuildGraph']", () => {
+    // noinspection JSIgnoredPromiseFromCall
     buildGraphFromData(false)
   })
   bindAction("button[data-command='UpdateGraph']", () => {
+    // noinspection JSIgnoredPromiseFromCall
     buildGraphFromData(true)
   })
   bindChangeListener("select[data-command='SetSampleData']", () => {
-    const i = samplesComboBox.selectedIndex
-    if (Samples && Samples[i]) {
-      updateFormElements(Samples[i])
+    const i = document.getElementById('samplesComboBox').selectedIndex
+    if (samples && samples[i]) {
+      loadSample(samples[i])
+      // noinspection JSIgnoredPromiseFromCall
       buildGraphFromData(false)
     }
   })
@@ -144,43 +169,14 @@ function registerCommands() {
 
 /**
  * Builds the graph from data.
- * @param {Boolean} update <code>true</code> when the following layout should be incremental, <code>false</code>
+ * @param {boolean} update <code>true</code> when the following layout should be incremental, <code>false</code>
  *   otherwise
+ * @returns {Promise}
  */
-function buildGraphFromData(update) {
+async function buildGraphFromData(update) {
   if (layouting) {
     return
   }
-  bindingErrorCaught = false
-  updateNodeTemplate(update)
-
-  try {
-    const nodesSourceValue = nodesSourceTextArea.value.trim()
-    graphBuilder.nodesSource = nodesSourceValue
-      ? new Function(`return ${nodesSourceValue}`)()
-      : null
-  } catch (e) {
-    alert(`Evaluating the nodes source failed: ${e}`)
-    return
-  }
-  try {
-    const edgesSourceValue = edgesSourceTextArea.value.trim()
-    graphBuilder.edgesSource = edgesSourceValue
-      ? new Function(`return ${edgesSourceValue}`)()
-      : null
-  } catch (e) {
-    alert(`Evaluating the edges source failed: ${e}`)
-    return
-  }
-
-  // assign the bindings
-  graphBuilder.sourceNodeBinding = getBinding(sourceNodeBindingTextField.value)
-  graphBuilder.targetNodeBinding = getBinding(targetNodeBindingTextField.value)
-  graphBuilder.nodeIdBinding =
-    nodeIdBindingTextField.value.length > 0 ? getBinding(nodeIdBindingTextField.value) : null
-  graphBuilder.edgeLabelBinding =
-    edgeLabelBindingTextField.value.length > 0 ? getBinding(edgeLabelBindingTextField.value) : null
-  graphBuilder.lazyNodeDefinition = lazyNodeDefinitionCheckBox.checked
 
   if (update) {
     // remember existing nodes
@@ -191,6 +187,7 @@ function buildGraphFromData(update) {
       alert(`${e.message}`)
     }
   } else {
+    graphBuilder.graph.clear()
     try {
       graphBuilder.buildGraph()
     } catch (e) {
@@ -199,88 +196,14 @@ function buildGraphFromData(update) {
     graphComponent.fitGraphBounds()
   }
 
-  applyLayout(update)
-}
-
-/**
- * Reads the node template XML as specified in the input element
- * and creates a new style instance using this template.
- * The style is set as the default and existing nodes are updated if
- * <code>updateExistingNodes</code> is true.
- * @param {boolean} updateExistingNodes
- */
-function updateNodeTemplate(updateExistingNodes) {
-  const templateString = nodeTemplateTextArea.value
-
-  // create a new style instance
-  let nodeStyle
-  try {
-    nodeStyle = new StringTemplateNodeStyle(templateString)
-  } catch (e) {
-    alert('Parsing of the node template failed. Is it valid XML?')
-    return
-  }
-
-  // set the new style as default
-  graphComponent.graph.nodeDefaults.style = nodeStyle
-
-  if (updateExistingNodes) {
-    // update the existing regular nodes
-    const graph = graphComponent.graph
-    graph.nodes.forEach(node => {
-      if (!graph.isGroupNode(node)) {
-        graph.setStyle(node, nodeStyle)
-      }
-    })
-  }
-}
-
-/**
- * flag to prevent error messages from being repeatedly displayed for each graph item
- * @type {boolean}
- */
-let bindingErrorCaught = false
-
-/**
- * Returns a binding for the given string.
- * If the parameter is a function definition, a function object is
- * returned. Otherwise, a binding is created using the parameter as the
- * property path.
- * @param {string} bindingString
- * @return {Object} The source or target binding
- */
-function getBinding(bindingString) {
-  if (bindingString.indexOf('function(', 0) === 0 || bindingString.indexOf('=>') >= 0) {
-    bindingString = `(${bindingString})`
-  }
-  if (bindingString.indexOf('(function(', 0) === 0 || bindingString.indexOf('=>') >= 0) {
-    try {
-      // eval the string to get the function object
-      const func = new Function(`return ${bindingString}`)()
-      // wrap the binding function with a function that catches and reports errors
-      // that occur in the binding functions
-      return edge => {
-        try {
-          return func.apply(this, [edge])
-        } catch (e) {
-          if (!bindingErrorCaught) {
-            alert(`Evaluating the binding function ${bindingString} failed: ${e}`)
-            bindingErrorCaught = true
-          }
-          return null
-        }
-      }
-    } catch (ignored) {
-      return bindingString.length > 0 ? bindingString : null
-    }
-  }
-  return bindingString.length > 0 ? bindingString : null
+  await applyLayout(update)
 }
 
 /**
  * Applies the layout.
  * @param {boolean} update <code>true</code> when the following layout should be incremental, <code>false</code>
  *   otherwise
+ * @returns {Promise}
  */
 async function applyLayout(update) {
   if (layouting) {
@@ -295,6 +218,7 @@ async function applyLayout(update) {
   }
 
   const layoutData = new HierarchicLayoutData({
+    // eslint-disable-next-line @typescript-eslint/ban-types
     incrementalHints: (item, hintsFactory) => {
       if (INode.isInstance(item) && !existingNodes.includes(item)) {
         return hintsFactory.createLayerIncrementallyHint(item)
@@ -317,134 +241,100 @@ async function applyLayout(update) {
 }
 
 /**
- * Retrieves the sample data from the window object and initializes the
- * samples combo box.
+ * Instantiates the GraphBuilder and sources list boxes and applies the given sample data
+ * @param {GraphBuilderSample} sample The sample to use for instantiation / initialization
  */
-function loadSampleData() {
-  for (let i = 0; i < Samples.length; i++) {
-    const option = window.document.createElement('option')
-    option.textContent = Samples[i].name
-    option.value = Samples[i]
+function loadSample(sample) {
+  const sampleClone = JSON.parse(JSON.stringify(sample))
+
+  // create the GraphBuilder
+  graphBuilder = new GraphBuilder(graphComponent.graph)
+
+  const sourcesFactory = new SourcesFactory(graphBuilder)
+
+  const { nodesSourcesListBox, edgesSourcesListBox } = createSourcesLists(sourcesFactory)
+
+  sampleClone.nodesSources.forEach(nodesSourceDefinition => {
+    const connector = sourcesFactory.createNodesSourceConnector(
+      nodesSourceDefinition.name,
+      nodesSourceDefinition
+    )
+    connector.applyDefinition()
+    nodesSourcesListBox.addDefinition(connector)
+  })
+
+  sampleClone.edgesSources.forEach(edgesSourceDefinition => {
+    const connector = sourcesFactory.createEdgesSourceConnector(
+      edgesSourceDefinition.name,
+      edgesSourceDefinition
+    )
+    connector.applyDefinition()
+    edgesSourcesListBox.addDefinition(connector)
+  })
+}
+
+/**
+ * Initializes the samples combobox with the loaded sample data
+ */
+function initializeSamplesComboBox() {
+  const samplesComboBox = document.getElementById('samplesComboBox')
+  for (let i = 0; i < samples.length; i++) {
+    const option = document.createElement('option')
+    option.textContent = samples[i].name
+    option.value = samples[i]
     samplesComboBox.appendChild(option)
   }
-  updateFormElements(Samples[0])
-  buildGraphFromData(false)
 }
 
 /**
- * Updates the HTML elements of the configuration form with the data of the
- * given sample.
- * @param {object} sample
+ * @param {HTMLElement} htmlElement
  */
-function updateFormElements(sample) {
-  nodesSourceTextArea.value = sample.nodesSource
-  edgesSourceTextArea.value = sample.edgesSource
-  sourceNodeBindingTextField.value = sample.sourceNodeBinding
-  targetNodeBindingTextField.value = sample.targetNodeBinding
-  edgeLabelBindingTextField.value = sample.edgeLabelBinding
-  nodeIdBindingTextField.value = sample.nodeIdBinding
-  nodeTemplateTextArea.value = sample.nodeTemplate
-  lazyNodeDefinitionCheckBox.checked = sample.lazyNodeDefinition
-  const updateGraphButton = window.document.getElementById('updateGraphButton')
-  if (sample.updateEnabled) {
-    updateGraphButton.removeAttribute('disabled')
-    updateGraphButton.removeAttribute('class')
-  } else {
-    updateGraphButton.setAttribute('class', 'demo-disabled')
-    updateGraphButton.setAttribute('disabled', 'true')
+function removeAllChildren(htmlElement) {
+  while (htmlElement.firstChild) {
+    htmlElement.removeChild(htmlElement.firstChild)
   }
 }
 
 /**
- * Initializes the fields of this class with the corresponding HTML form
- * elements.
+ * Instantiates the sources list boxes
+ * @param {SourcesFactory} sourcesFactory
+ * @returns {object}
  */
-function initializeUI() {
-  graphComponent = new GraphComponent('graphComponent')
-  samplesComboBox = window.document.getElementById('samplesComboBox')
-  nodesSourceTextArea = window.document.getElementById('nodesSourceTextArea')
-  edgesSourceTextArea = window.document.getElementById('edgesSourceTextArea')
-  sourceNodeBindingTextField = window.document.getElementById('sourceNodeBindingTextField')
-  targetNodeBindingTextField = window.document.getElementById('targetNodeBindingTextField')
-  nodeIdBindingTextField = window.document.getElementById('nodeIdBindingTextField')
-  edgeLabelBindingTextField = window.document.getElementById('edgeLabelBindingTextField')
-  nodeTemplateTextArea = window.document.getElementById('nodeTemplateTextArea')
-  lazyNodeDefinitionCheckBox = window.document.getElementById('lazyNodeDefinitionCheckBox')
+function createSourcesLists(sourcesFactory) {
+  const nodeSourcesListRootElement = document.getElementById('nodesSourcesList')
+  const edgesSourcesListRootElement = document.getElementById('edgesSourcesList')
+  removeAllChildren(nodeSourcesListRootElement)
+  removeAllChildren(edgesSourcesListRootElement)
+
+  const nodesSourcesListBox = new SourcesListBox(
+    sourceName => sourcesFactory.createNodesSourceConnector(sourceName),
+    NodesSourceDialog,
+    nodeSourcesListRootElement,
+    () => buildGraphFromData(true)
+  )
+
+  const edgesSourcesListBox = new SourcesListBox(
+    sourceName => sourcesFactory.createEdgesSourceConnector(sourceName),
+    EdgesSourceDialog,
+    edgesSourcesListRootElement,
+    () => buildGraphFromData(true)
+  )
+
+  return { nodesSourcesListBox, edgesSourcesListBox }
 }
 
 /**
  * Creates and configures a hierarchic layout.
- * @return {HierarchicLayout}
+ * @returns {HierarchicLayout}
  */
 function createLayout() {
   const hierarchicLayout = new HierarchicLayout()
   hierarchicLayout.orthogonalRouting = true
   hierarchicLayout.integratedEdgeLabeling = true
-  hierarchicLayout.nodePlacer.barycenterMode = true
   hierarchicLayout.fromScratchLayeringStrategy =
     HierarchicLayoutLayeringStrategy.HIERARCHICAL_TOPMOST
   return hierarchicLayout
 }
-
-/**
- * @type {GraphBuilder}
- */
-let graphBuilder = null
-
-/**
- * @type {HTMLTextAreaElement}
- */
-let nodesSourceTextArea = null
-
-/**
- * @type {HTMLTextAreaElement}
- */
-let edgesSourceTextArea = null
-
-/**
- * @type {HTMLInputElement}
- */
-let sourceNodeBindingTextField = null
-
-/**
- * @type {HTMLInputElement}
- */
-let targetNodeBindingTextField = null
-
-/**
- * @type {HTMLInputElement}
- */
-let nodeIdBindingTextField = null
-
-/**
- * @type {HTMLInputElement}
- */
-let edgeLabelBindingTextField = null
-
-/**
- * @type {HTMLTextAreaElement}
- */
-let nodeTemplateTextArea = null
-
-/**
- * @type {HTMLInputElement}
- */
-let lazyNodeDefinitionCheckBox = null
-
-/**
- * @type {boolean}
- */
-let layouting = false
-
-/**
- * @type {GraphComponent}
- */
-let graphComponent = null
-
-/**
- * @type {Object}
- */
-let samplesComboBox = null
 
 // run the demo
 loadJson().then(run)

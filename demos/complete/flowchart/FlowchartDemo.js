@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -304,16 +304,27 @@ function loadGraph(sampleName) {
     FlowchartData[sampleName.replace('Sample: ', '').replace(' ', '')] ||
     FlowchartData.ProblemSolving
 
+  // clear graph
+  graphComponent.graph.clear()
+
   // initialize graph builder
   const builder = new GraphBuilder({
     graph: graphComponent.graph,
-    nodesSource: sample.nodes,
-    nodeIdBinding: 'id',
-    nodeLabelBinding: tag => tag.label || null,
-    edgesSource: sample.edges,
-    sourceNodeBinding: 'from',
-    targetNodeBinding: 'to',
-    edgeLabelBinding: tag => tag.label || null
+    nodes: [
+      {
+        data: sample.nodes,
+        id: 'id',
+        labels: ['label']
+      }
+    ],
+    edges: [
+      {
+        data: sample.edges,
+        sourceId: 'from',
+        targetId: 'to',
+        labels: ['label']
+      }
+    ]
   })
 
   // create graph
@@ -423,7 +434,8 @@ function updateGraph() {
 
 /**
  * Enables/disabled the toolbar elements and the input mode.
- * @param {boolean} disabled <code>true</code> if the ui should be disabled, <code>false</code> otherwise.
+ * @param {boolean} disabled <code>true</code> if the ui should be disabled, <code>false</code>
+ *   otherwise.
  */
 function setUIDisabled(disabled) {
   // keep the enabled state for the next/previous button when enabling the ui

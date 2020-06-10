@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -29,11 +29,13 @@
 const fs = require('fs')
 const path = require('path')
 
-const SUPPORTED_YFILES_VERSION = '2.2'
-const ignoredFiles = /filesystem-warning\.js$/
+const SUPPORTED_YFILES_VERSION = '2.3'
+const ignoredFiles = /(filesystem-warning|yfiles-typeinfo)\.js$/
 
 const importYfilesRegex = /import\s+([^'"]*?)\s+from\s+['"]yfiles\/?([^'"]*)['"]/g
 const importYfilesSideEffectRegex = /import\s+['"]yfiles\/?([^'"]*)['"]/g
+const otherImportsRegex = /import\s+([^'"]*?)\s+from\s+['"](\.[^'"]*)['"]/g
+const otherImportsSideEffectsRegex = /import\s+['"](\.[^'"]*)['"]/g
 const es6NameToEsModule = {
   yfiles: 'lang'
 }
@@ -70,7 +72,7 @@ function resolveYfilesServerPath(staticRoot, startingPath) {
   const match = content.match(/This file is part of yFiles for HTML (\d\.\d)/)
   if (!match || match[1] !== SUPPORTED_YFILES_VERSION) {
     resolveToSubmodules = false
-    console.warn(`Unexpected yFiles major version: ${match ? match[1] : 'None detected'}. 
+    console.warn(`Unexpected yFiles major version: ${match ? match[1] : 'None detected'}.
     Imports will be resolved to 'yfiles.js'.`)
   }
 
@@ -80,6 +82,10 @@ function resolveYfilesServerPath(staticRoot, startingPath) {
 
 const resolveModuleName = filePath => moduleName => {
   return `${yFilesServerPath}/${moduleName}.js`.replace(/\\/g, '/')
+}
+
+function addJsSuffix(moduleName) {
+  return moduleName.endsWith('.js') ? moduleName : `${moduleName}.js`
 }
 
 function transformFile(data, filePath) {
@@ -151,6 +157,14 @@ function transformFile(data, filePath) {
       importYfilesSideEffectRegex,
       (match, moduleName) => `import '${resolveModule(moduleName)}'`
     )
+    .replace(
+      otherImportsRegex,
+      (match, imports, from) => `import ${imports} from '${addJsSuffix(from)}'`
+    )
+    .replace(
+      otherImportsSideEffectsRegex,
+      (match, moduleName) => `import '${addJsSuffix(moduleName)}'`
+    )
 }
 
 module.exports = options => (req, res, next) => {
@@ -168,7 +182,7 @@ module.exports = options => (req, res, next) => {
     }
 
     if (!ignoredFiles.test(filePath)) {
-      if (importYfilesRegex.test(data)) {
+      if (/^\s*import /m.test(data)) {
         if (!yFilesServerPath) {
           resolveYfilesServerPath(staticRoot, filePath)
         }

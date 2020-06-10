@@ -5,18 +5,18 @@
   "license": "https://www.yworks.com/products/yfiles-for-html/sla",
   "private": true,
   "dependencies": {
-    "@types/jest": "24.0.17",
-    "@types/node": "12.7.1",
-    "@types/react": "16.9.0",
-    "@types/react-dom": "16.8.5",
-    "react": "^16.9.0",
-    "react-dom": "^16.9.0",
-    "react-scripts": "3.0.1",
-    "typescript": "3.4.5",
-    "yfiles": "../../../lib/es-modules/yfiles-22.0.3-eval.tgz"
+    "@types/jest": "25.2.3",
+    "@types/node": "14.0.9",
+    "@types/react": "16.9.35",
+    "@types/react-dom": "16.9.8",
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1",
+    "react-scripts": "3.4.1",
+    "typescript": "3.9.3",
+    "yfiles": "../../../lib-dev/es-modules/yfiles-23.0.0-dev.tgz"
   },
   "scripts": {
-    "preinstall": "node -e \"require('fs').copyFileSync('../../../lib/license.json','./src/license.json'); require('fs').copyFileSync('../../../ide-support/yfiles-typeinfo.js','./public/yfiles-typeinfo.js')\" && cd ../../../lib/es-modules && npm pack",
+    "preinstall": "node -e \"require('fs').copyFileSync('../../../lib/license.json','./src/license.json');\"",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "eject": "react-scripts eject"

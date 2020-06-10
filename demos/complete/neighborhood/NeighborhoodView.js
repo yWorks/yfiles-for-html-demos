@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -35,17 +35,22 @@ import {
   GraphViewerInputMode,
   HierarchicLayout,
   IEdge,
+  IEnumerable,
+  ICollection,
   IGraph,
   IModelItem,
   INode,
   INodeStyle,
   Insets,
+  ItemClickedEventArgs,
+  ItemSelectionChangedEventArgs,
   List,
   Mapper,
   MouseWheelBehaviors,
   Neighborhood,
   NodeStyleDecorationInstaller,
   Point,
+  Rect,
   ShapeNodeStyle,
   Stroke,
   StyleDecorationZoomPolicy,
@@ -70,10 +75,6 @@ export default class NeighborhoodView {
     this.$graphComponent = null
     this.$sourceGraph = null
     this.$neighborhoodMode = NeighborhoodView.MODE_NEIGHBORHOOD
-    this.$highlightStyle = null
-
-    // The insets are applied to the graphComponent of this view.
-    this.insets = null
 
     // Determines if the current root node should be highlighted.
     this.showHighlight = false
@@ -87,9 +88,6 @@ export default class NeighborhoodView {
     // A callback that is invoked on a click in the neighborhood graph with the
     this.clickCallback = null
 
-    // Maps nodes in NeighborhoodComponents's graph to nodes in SourceGraph.
-    this.originalNodes = null
-
     // Timer to control the update scheduling.
     this.updateTimerId = -1
 
@@ -99,6 +97,8 @@ export default class NeighborhoodView {
     this.$maxDistance = 1
     this.$maxSelectedNodesCount = 25
     this.showHighlight = true
+
+    // The insets are applied to the graphComponent of this view.
     this.insets = new Insets(5)
     this.autoUpdatesEnabled = true
 
@@ -111,7 +111,7 @@ export default class NeighborhoodView {
 
   /**
    * Returns the GraphComponent whose graph is displayed in this view.
-   * @type {GraphComponent}
+   * @type {?GraphComponent}
    */
   get graphComponent() {
     return this.$graphComponent
@@ -119,7 +119,7 @@ export default class NeighborhoodView {
 
   /**
    * Specifies the GraphComponent whose graph is displayed in this view.
-   * @type {GraphComponent}
+   * @type {?GraphComponent}
    */
   set graphComponent(value) {
     this.selectedNodes = null
@@ -149,7 +149,7 @@ export default class NeighborhoodView {
 
   /**
    * Returns the graph that's currently displayed by the neighborhood view.
-   * @type {IGraph}
+   * @type {?IGraph}
    */
   get sourceGraph() {
     return this.$sourceGraph
@@ -157,7 +157,7 @@ export default class NeighborhoodView {
 
   /**
    * Specifies the graph that's currently displayed by the neighborhood view.
-   * @type {IGraph}
+   * @type {?IGraph}
    */
   set sourceGraph(value) {
     if (this.$sourceGraph !== null) {
@@ -243,7 +243,7 @@ export default class NeighborhoodView {
 
   /**
    * Gets the nodes whose neighborhoods are shown.
-   * @type {ICollection.<INode>}
+   * @type {?ICollection.<INode>}
    */
   get selectedNodes() {
     return this.$selectedNodes
@@ -251,7 +251,7 @@ export default class NeighborhoodView {
 
   /**
    * Sets the nodes whose neighborhoods are shown.
-   * @type {ICollection.<INode>}
+   * @type {?ICollection.<INode>}
    */
   set selectedNodes(value) {
     if (this.$selectedNodes !== value) {
@@ -470,11 +470,11 @@ export default class NeighborhoodView {
     // freeze it for slightly improved performance
     orangePen.freeze()
 
-    const shapeStyle = new ShapeNodeStyle()
-    shapeStyle.shape = 'rectangle'
-    shapeStyle.stroke = orangePen
-    shapeStyle.fill = null
-    this.highlightStyle = shapeStyle
+    this.highlightStyle = new ShapeNodeStyle({
+      shape: 'rectangle',
+      stroke: orangePen,
+      fill: 'transparent'
+    })
 
     // configure the highlight decoration installer
     this.installHighlightStyle(this.highlightStyle)
@@ -482,6 +482,7 @@ export default class NeighborhoodView {
 
   /**
    * Installs the given highlight style as node decorator.
+   * @param {INodeStyle} highlightStyle
    */
   installHighlightStyle(highlightStyle) {
     const nodeStyleHighlight = new NodeStyleDecorationInstaller({
@@ -510,11 +511,12 @@ export default class NeighborhoodView {
     })
 
     // Disable collapsing and expanding of groups
-    graphViewerInputMode.navigationInputMode.collapsingGroupsAllowed = false
-    graphViewerInputMode.navigationInputMode.expandingGroupsAllowed = false
-    graphViewerInputMode.navigationInputMode.useCurrentItemForCommands = true
+    const navigationInputMode = graphViewerInputMode.navigationInputMode
+    navigationInputMode.allowCollapseGroup = false
+    navigationInputMode.allowExpandGroup = false
+    navigationInputMode.useCurrentItemForCommands = true
     graphViewerInputMode.moveViewportInputMode.enabled = false
-    graphViewerInputMode.navigationInputMode.enabled = false
+    navigationInputMode.enabled = false
 
     // If an item is clicked, we want the view to show the neighborhood
     // of the clicked node, and invoke the click callback with the original
@@ -582,7 +584,7 @@ export default class NeighborhoodView {
 
     // Create a list of start nodes.
     const startNodes = this.selectedNodes
-    let /** @type {IEnumerable.<INode>} */ enumerable = null
+    let enumerable = null
     const copiedStartNodes = new List()
 
     if (this.neighborhoodMode !== NeighborhoodView.MODE_FOLDER_CONTENTS) {
@@ -637,23 +639,22 @@ export default class NeighborhoodView {
         }
       )
     } else {
+      const foldingView = this.sourceGraph.foldingView
       if (this.selectedNodes.size > 1) {
         this.selectedNodes.forEach(node => {
           if (this.sourceGraph.getParent(node) !== null) {
-            nodesToCopy.add(this.sourceGraph.foldingView.getMasterItem(node))
+            nodesToCopy.add(foldingView.getMasterItem(node))
           }
         })
       }
 
       // Get descendants of root nodes.
-      if (this.sourceGraph !== null) {
-        const foldingView = this.sourceGraph.foldingView
+      if (this.sourceGraph) {
         const groupingSupport = foldingView.manager.masterGraph.groupingSupport
-
         this.selectedNodes.forEach(node => {
           enumerable = groupingSupport.getDescendants(foldingView.getMasterItem(node))
 
-          if (enumerable !== null) {
+          if (enumerable) {
             enumerable.forEach(descendant => {
               nodesToCopy.add(descendant)
             })
@@ -668,7 +669,7 @@ export default class NeighborhoodView {
           foldingView.manager.masterGraph,
           item => {
             if (IEdge.isInstance(item)) {
-              const edge = IEdge.isInstance(item) ? item : null
+              const edge = item
               let intraComponentEdge = false
               this.selectedNodes.forEach(node => {
                 if (
@@ -728,17 +729,23 @@ export default class NeighborhoodView {
     return 0
   }
 
-  /** @type {number} */
+  /**
+   * @type {number}
+   */
   static get MODE_PREDECESSORS() {
     return 1
   }
 
-  /** @type {number} */
+  /**
+   * @type {number}
+   */
   static get MODE_SUCCESSORS() {
     return 2
   }
 
-  /** @type {number} */
+  /**
+   * @type {number}
+   */
   static get MODE_FOLDER_CONTENTS() {
     return 3
   }

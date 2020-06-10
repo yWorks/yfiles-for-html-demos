@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -40,7 +40,8 @@ import {
   NodeStyleDecorationInstaller,
   StorageLocation,
   StyleDecorationZoomPolicy,
-  TemplateNodeStyle
+  TemplateNodeStyle,
+  IEnumerable
 } from 'yfiles'
 
 import NeighborhoodView from './NeighborhoodView.js'
@@ -76,6 +77,9 @@ const graphChooserBox = document.getElementById('graphChooserBox')
 const neighborhoodModeChooserBox = document.getElementById('neighborhoodModeChooserBox')
 const neighborhoodMaxDistanceSlider = document.getElementById('neighborhoodMaxDistanceSlider')
 
+/**
+ * @param {object} licenseData
+ */
 function run(licenseData) {
   License.value = licenseData
   // initialize the GraphComponent
@@ -112,13 +116,13 @@ function run(licenseData) {
     })
   }
 
-  neighborhoodMaxDistanceSlider.min = 1
-  neighborhoodMaxDistanceSlider.max = 5
-  neighborhoodMaxDistanceSlider.value = 1
+  neighborhoodMaxDistanceSlider.min = '1'
+  neighborhoodMaxDistanceSlider.max = '5'
+  neighborhoodMaxDistanceSlider.value = '1'
 
   neighborhoodMaxDistanceSlider.addEventListener(
     'change',
-    evt => {
+    () => {
       neighborhoodView.maxDistance = parseInt(neighborhoodMaxDistanceSlider.value)
       document.getElementById(
         'neighborhoodMaxDistanceLabel'
@@ -245,7 +249,7 @@ function initializeHighlighting() {
 
 /**
  * Creates the input mode for the <code>GraphComponent</code>.
- * @return {IInputMode} a new <code>GraphViewerInputMode</code> instance
+ * @returns {GraphViewerInputMode} a new <code>GraphViewerInputMode</code> instance
  */
 function createEditorMode() {
   // create default interaction with snapping and orthogonal edge editing
@@ -277,27 +281,18 @@ function registerCommands() {
 
   bindAction("button[data-command='PreviousFile']", () => {
     graphChooserBox.selectedIndex--
-    onGraphChooserBoxSelectedIndexChanged()
+    readSampleGraph()
   })
   bindAction("button[data-command='NextFile']", () => {
     graphChooserBox.selectedIndex++
-    onGraphChooserBoxSelectedIndexChanged()
+    readSampleGraph()
   })
 
-  bindChangeListener("select[data-command='SelectedFileChanged']", () => {
-    onGraphChooserBoxSelectedIndexChanged()
-  })
+  bindChangeListener("select[data-command='SelectedFileChanged']", readSampleGraph)
 
   bindChangeListener("select[data-command='NeighborhoodModeChanged']", () => {
     onNeighborhoodModeChanged()
   })
-}
-
-/**
- * Read a sample graph if the GraphChooser select box changes.
- */
-function onGraphChooserBoxSelectedIndexChanged() {
-  readSampleGraph()
 }
 
 /**
@@ -330,6 +325,7 @@ function onNeighborhoodModeChanged() {
 
 /**
  * Helper method that reads the currently selected graphml from the combobox.
+ * @returns {Promise}
  */
 async function readSampleGraph() {
   // Disable navigation buttons while graph is loaded
@@ -387,8 +383,6 @@ function initConverters() {
     }
     return ''
   }
-
-  window.relativeTemplatePath = ''
 }
 
 // run the demo

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -35,12 +35,16 @@ import {
   GraphMLIOHandler,
   GraphMLSupport,
   ICommand,
+  IModelItem,
   INode,
   InteriorStretchLabelModel,
+  ItemEventArgs,
   KeyType,
   License,
+  MouseHoverInputMode,
   PanelNodeStyle,
   Point,
+  QueryItemToolTipEventArgs,
   ShapeNodeStyle,
   Size,
   StorageLocation,
@@ -57,12 +61,12 @@ let graphComponent = null
 /**
  * Symbolic name for the mapper that allows transparent access to the correct implementation even across
  * wrapped graphs.
- * @type {string}
  */
 const DATE_TIME_MAPPER_KEY = 'DateTimeMapperKey'
 
 /**
  * Bootstraps the demo.
+ * @param {object} licenseData
  */
 function run(licenseData) {
   License.value = licenseData
@@ -125,6 +129,7 @@ function enableDataBinding() {
  */
 function enableGraphML() {
   // create a new GraphMLSupport instance that handles save and load operations
+  // eslint-disable-next-line no-new
   new GraphMLSupport({
     graphComponent,
     // configure to load and save to the file system
@@ -137,6 +142,7 @@ function enableGraphML() {
 /**
  * Register input and output handlers that store the data in the mapper as GraphMLAttributes resp. can read them
  * back.
+ * @returns {GraphMLIOHandler}
  */
 function createGraphMLIOHandler() {
   // create an IOHandler that will be used for all IO operations
@@ -173,8 +179,7 @@ function createGraphMLIOHandler() {
         // The actual value is a text node that can be retrieved from the event
         try {
           const stringValue = e.xmlNode.textContent
-          const dateTime = JSON.parse(stringValue, (key, val) => new Date(val))
-          e.result = dateTime
+          e.result = JSON.parse(stringValue, (key, val) => new Date(val))
         } catch (exception) {
           if (typeof window.console !== 'undefined') {
             window.console.log(exception)
@@ -237,7 +242,7 @@ function initTutorialDefaults() {
   graph.nodeDefaults.size = new Size(40, 40)
   graph.nodeDefaults.labels.style = new DefaultLabelStyle({
     verticalTextAlignment: 'center',
-    wrapping: 'word_ellipsis'
+    wrapping: 'word-ellipsis'
   })
   graph.nodeDefaults.labels.layoutParameter = ExteriorLabelModel.SOUTH
 
@@ -265,7 +270,7 @@ function createGraph() {
   const node4 = graph.createNodeAt([30, 175])
   const node5 = graph.createNodeAt([100, 175])
 
-  graph.groupNodes({ children: [node1, node2, node3], labels: 'Group 1' })
+  graph.groupNodes({ children: [node1, node2, node3], labels: ['Group 1'] })
 
   const edge1 = graph.createEdge(node1, node2)
   const edge2 = graph.createEdge(node1, node3)

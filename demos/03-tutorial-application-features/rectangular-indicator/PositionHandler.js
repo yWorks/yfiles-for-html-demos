@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -48,7 +48,9 @@ export default class PositionHandler extends BaseClass(IPositionHandler) {
     this.offset = new MutablePoint()
   }
 
-  /** @type {Point} */
+  /**
+   * @type {Point}
+   */
   get location() {
     return this.rectangle.topLeft
   }
@@ -57,8 +59,9 @@ export default class PositionHandler extends BaseClass(IPositionHandler) {
    * @param {IInputModeContext} context
    */
   initializeDrag(context) {
-    const x = this.rectangle.x - context.canvasComponent.lastEventLocation.x
-    const y = this.rectangle.y - context.canvasComponent.lastEventLocation.y
+    const canvasComponent = context.canvasComponent
+    const x = this.rectangle.x - canvasComponent.lastEventLocation.x
+    const y = this.rectangle.y - canvasComponent.lastEventLocation.y
     this.offset.relocate(x, y)
   }
 

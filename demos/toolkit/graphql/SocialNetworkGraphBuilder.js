@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -36,10 +36,13 @@ export class SocialNetworkGraphBuilder {
     this.$persons = []
     this.$seen = new Set()
     this.$graphBuilder = new GraphBuilder(graph)
-    this.$graphBuilder.nodeIdBinding = 'id'
-    this.$graphBuilder.nodeLabelBinding = 'name'
-    this.$graphBuilder.sourceNodeBinding = 'from'
-    this.$graphBuilder.targetNodeBinding = 'to'
+    // create empty NodesSources whose data will be set on updateGraph
+    this.$nodesSource = this.$graphBuilder.createNodesSource({
+      data: [],
+      id: 'id',
+      labels: ['name']
+    })
+    this.$edgesSource = this.$graphBuilder.createEdgesSource([], 'from', 'to')
   }
 
   /**
@@ -103,8 +106,8 @@ export class SocialNetworkGraphBuilder {
    * Updates the diagram with the help of the {@link GraphBuilder}.
    */
   updateGraph() {
-    this.$graphBuilder.nodesSource = this.$persons
-    this.$graphBuilder.edgesSource = this.createEdgesSource()
+    this.$graphBuilder.setData(this.$nodesSource, this.$persons)
+    this.$graphBuilder.setData(this.$edgesSource, this.createEdgesSource())
     this.$graphBuilder.updateGraph()
   }
 

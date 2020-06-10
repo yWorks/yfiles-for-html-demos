@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,9 +27,11 @@
  **
  ***************************************************************************/
 import {
+  Edge,
   GraphComponent,
   HierarchicLayout,
   HierarchicLayoutData,
+  IEdge,
   IEnumerable,
   ILayoutAlgorithm,
   LabelPlacements,
@@ -37,6 +39,7 @@ import {
   LayoutMode,
   LayoutOrientation,
   LayoutStageBase,
+  MISLabelingBase,
   PortConstraint,
   PortSide,
   PreferredPlacementDescriptor,
@@ -58,7 +61,7 @@ export class SankeyLayout {
   /**
    * Configures the hierarchic layout algorithm for the Sankey visualization
    * @param {boolean} fromSketchMode True if the layout should run from sketch, false otherwise
-   * @return {HierarchicLayout} The configured hierarchic layout
+   * @returns {HierarchicLayout} The configured hierarchic layout
    */
   configureHierarchicLayout(fromSketchMode) {
     const hierarchicLayout = new HierarchicLayout({
@@ -92,7 +95,7 @@ export class SankeyLayout {
 
   /**
    * Configures the hierarchic layout data for the Sankey visualization
-   * @return {HierarchicLayoutData} The configured hierarchic Layout data object
+   * @returns {HierarchicLayoutData} The configured hierarchic Layout data object
    */
   createHierarchicLayoutData() {
     // create the layout data
@@ -101,8 +104,8 @@ export class SankeyLayout {
       edgeThickness: edge => edge.tag.thickness,
       // since orientation is LEFT_TO_RIGHT, we add port constraints so that the edges leave the source node at its
       // right side and enter the target node at its left side
-      sourcePortConstraints: edge => PortConstraint.create(PortSide.EAST, false),
-      targetPortConstraints: edge => PortConstraint.create(PortSide.WEST, false),
+      sourcePortConstraints: () => PortConstraint.create(PortSide.EAST, false),
+      targetPortConstraints: () => PortConstraint.create(PortSide.WEST, false),
       edgeLabelPreferredPlacement: new PreferredPlacementDescriptor({
         placeAlongEdge: LabelPlacements.AT_SOURCE
       })
@@ -130,7 +133,8 @@ class NodeResizingStage extends LayoutStageBase {
   /**
    * Gets the main orientation of the layout. Should be the same value as for the associated core layout
    * algorithm.
-   * @return {LayoutOrientation} The main orientation of the layout
+   * @return The main orientation of the layout
+   * @type {LayoutOrientation}
    */
   get layoutOrientation() {
     return this.$layoutOrientation
@@ -139,7 +143,8 @@ class NodeResizingStage extends LayoutStageBase {
   /**
    * Gets the main orientation of the layout. Should be the same value as for the associated core layout
    * algorithm.
-   * @param {LayoutOrientation} orientation One of the default layout orientations
+   * @param orientation One of the default layout orientations
+   * @type {LayoutOrientation}
    */
   set layoutOrientation(orientation) {
     this.$layoutOrientation = orientation
@@ -148,7 +153,8 @@ class NodeResizingStage extends LayoutStageBase {
   /**
    * Gets the port border gap ratio for the port distribution at the sides of the nodes.
    * Should be the same value as for the associated core layout algorithm.
-   * @return {number} The port border gap ratio
+   * @return The port border gap ratio
+   * @type {number}
    */
   get portBorderGapRatio() {
     return this.$portBorderGapRatio
@@ -157,7 +163,8 @@ class NodeResizingStage extends LayoutStageBase {
   /**
    * Sets the port border gap ratio for the port distribution at the sides of the nodes. Should be the same value
    * as for the associated core layout algorithm.
-   * @param {number} portBorderGapRatio The given ratio
+   * @param portBorderGapRatio The given ratio
+   * @type {number}
    */
   set portBorderGapRatio(portBorderGapRatio) {
     this.$portBorderGapRatio = portBorderGapRatio
@@ -165,7 +172,8 @@ class NodeResizingStage extends LayoutStageBase {
 
   /**
    * Returns the minimum distance between two ports on the same node side.
-   * @return {number} The minimum distance between two ports
+   * @return The minimum distance between two ports
+   * @type {number}
    */
   get minimumPortDistance() {
     return this.$minimumPortDistance
@@ -173,7 +181,8 @@ class NodeResizingStage extends LayoutStageBase {
 
   /**
    * Gets the minimum distance between two ports on the same node side.
-   * @param {number} minimumPortDistance The minimum distance
+   * @param minimumPortDistance The minimum distance
+   * @type {number}
    */
   set minimumPortDistance(minimumPortDistance) {
     this.$minimumPortDistance = minimumPortDistance
@@ -219,23 +228,25 @@ class NodeResizingStage extends LayoutStageBase {
     // adjust size for edges with strong port constraints
     const edgeThicknessDP = graph.getDataProvider(HierarchicLayout.EDGE_THICKNESS_DP_KEY)
     if (edgeThicknessDP !== null) {
-      node.edges.forEach(edge => {
-        const thickness = edgeThicknessDP.getNumber(edge)
+      if (node.edges) {
+        node.edges.forEach(edge => {
+          const thickness = edgeThicknessDP.getNumber(edge)
 
-        const spc = PortConstraint.getSPC(graph, edge)
-        if (edge.source === node && spc !== null && spc.strong) {
-          const sourcePoint = graph.getSourcePointRel(edge)
-          width = Math.max(width, Math.abs(sourcePoint.x) * 2 + thickness)
-          height = Math.max(height, Math.abs(sourcePoint.y) * 2 + thickness)
-        }
+          const spc = PortConstraint.getSPC(graph, edge)
+          if (edge.source === node && spc !== null && spc.strong) {
+            const sourcePoint = graph.getSourcePointRel(edge)
+            width = Math.max(width, Math.abs(sourcePoint.x) * 2 + thickness)
+            height = Math.max(height, Math.abs(sourcePoint.y) * 2 + thickness)
+          }
 
-        const tpc = PortConstraint.getTPC(graph, edge)
-        if (edge.target === node && tpc !== null && tpc.strong) {
-          const targetPoint = graph.getTargetPointRel(edge)
-          width = Math.max(width, Math.abs(targetPoint.x) * 2 + thickness)
-          height = Math.max(height, Math.abs(targetPoint.y) * 2 + thickness)
-        }
-      })
+          const tpc = PortConstraint.getTPC(graph, edge)
+          if (edge.target === node && tpc !== null && tpc.strong) {
+            const targetPoint = graph.getTargetPointRel(edge)
+            width = Math.max(width, Math.abs(targetPoint.x) * 2 + thickness)
+            height = Math.max(height, Math.abs(targetPoint.y) * 2 + thickness)
+          }
+        })
+      }
     }
     graph.setSize(node, width, height)
   }
@@ -243,18 +254,22 @@ class NodeResizingStage extends LayoutStageBase {
   /**
    * Calculates the space required when placing the given edge side by side without overlaps and considering
    * the specified minimum port distance and edge thickness.
-   * @param {IEnumerable} edges The edges to calculate the space for
+   * @param {?IEnumerable.<Edge>} edges The edges to calculate the space for
    * @param {LayoutGraph} graph The given graph
+   * @returns {number}
    */
   calcRequiredSpace(edges, graph) {
     let requiredSpace = 0
     const edgeThicknessDP = graph.getDataProvider(HierarchicLayout.EDGE_THICKNESS_DP_KEY)
+
     let count = 0
-    edges.forEach(edge => {
-      const thickness = edgeThicknessDP === null ? 0 : edgeThicknessDP.getNumber(edge)
-      requiredSpace += Math.max(thickness, 1)
-      count++
-    })
+    if (edges) {
+      edges.forEach(edge => {
+        const thickness = edgeThicknessDP === null ? 0 : edgeThicknessDP.getNumber(edge)
+        requiredSpace += Math.max(thickness, 1)
+        count++
+      })
+    }
 
     requiredSpace += (count - 1) * this.minimumPortDistance
     requiredSpace += 2 * this.portBorderGapRatio * this.minimumPortDistance

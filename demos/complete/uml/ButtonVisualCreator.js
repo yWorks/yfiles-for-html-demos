@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -78,7 +78,7 @@ export default class ButtonVisualCreator extends BaseClass(IVisualCreator) {
   /**
    * Creates the visual creator for the edge creation buttons.
    * @param {INode} node The node for which the buttons should be created.
-   * @param {.GraphComponent} graphComponent The graph component in which the node resides.
+   * @param {GraphComponent} graphComponent The graph component in which the node resides.
    */
   constructor(node, graphComponent) {
     super()
@@ -91,8 +91,8 @@ export default class ButtonVisualCreator extends BaseClass(IVisualCreator) {
   }
 
   /**
-   * @param {.IRenderContext} ctx The context that describes where the visual will be used.
-   * @returns {.Visual}
+   * @param {IRenderContext} ctx The context that describes where the visual will be used.
+   * @returns {Visual}
    */
   createVisual(ctx) {
     // save the button elements to conveniently use them for hit testing
@@ -165,10 +165,10 @@ export default class ButtonVisualCreator extends BaseClass(IVisualCreator) {
   }
 
   /**
-   * @param {.IRenderContext} ctx The context that describes where the visual will be used in.
-   * @param {.Visual} oldVisual The visual instance that had been returned the last time the
-   *   {@link .IVisualCreator#createVisual} method was called on this instance.
-   * @returns {.Visual}
+   * @param {IRenderContext} ctx The context that describes where the visual will be used in.
+   * @param {Visual} oldVisual The visual instance that had been returned the last time the
+   *   {@link IVisualCreator#createVisual} method was called on this instance.
+   * @returns {Visual}
    */
   updateVisual(ctx, oldVisual) {
     const layout = this.node.layout
@@ -216,7 +216,7 @@ export default class ButtonVisualCreator extends BaseClass(IVisualCreator) {
 
   /**
    * Helper method to get the edge style of the edge creation button if there is a button at the given location.
-   * @param {.CanvasComponent} canvasComponent The canvas component in which the node resides.
+   * @param {CanvasComponent} canvasComponent The canvas component in which the node resides.
    * @param {INode} node The node who should be checked for a button.
    * @param {IPoint} location The world location to check for a button.
    * @returns {IEdgeStyle} The edge style if there is a button at the given location, otherwise null.

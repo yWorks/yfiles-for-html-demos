@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -543,7 +543,7 @@ class NodePlacerConfiguration {
   }
 
   /**
-   * Creates a configured {@link INodePlacer} according to the current settings.
+   * Creates a configured {@link ITreeLayoutNodePlacer} according to the current settings.
    * This method is called when the map of node placers is updated.
    */
   createNodePlacer() {}
@@ -558,7 +558,7 @@ class NodePlacerConfiguration {
   updateNodePlacers(selectedNodes, nodePlacers) {}
 
   /**
-   * Updates the configuration settings according to the given {@link INodePlacer}.
+   * Updates the configuration settings according to the given {@link ITreeLayoutNodePlacer}.
    * This method is call when the configuration is changed or reset.
    * @param {Array.<ITreeLayoutNodePlacer>} nodePlacers
    */
@@ -679,14 +679,14 @@ class DefaultNodePlacerConfiguration extends NodePlacerConfiguration {
   }
 
   createNodePlacer() {
-    const nodePlacer = new DefaultNodePlacer()
-    nodePlacer.childPlacement = this.childPlacement
-    nodePlacer.routingStyle = this.routingStyle
-    nodePlacer.horizontalDistance = this.horizontalDistance
-    nodePlacer.verticalDistance = this.verticalDistance
-    nodePlacer.minimumChannelSegmentDistance = this.minimumChannelSegmentDistance
-    nodePlacer.rootAlignment = this.rootAlignment
-    return nodePlacer
+    return new DefaultNodePlacer({
+      childPlacement: this.childPlacement,
+      routingStyle: this.routingStyle,
+      horizontalDistance: this.horizontalDistance,
+      verticalDistance: this.verticalDistance,
+      minimumChannelSegmentDistance: this.minimumChannelSegmentDistance,
+      rootAlignment: this.rootAlignment
+    })
   }
 
   updateNodePlacers(selectedNodes, nodePlacers) {
@@ -1025,12 +1025,12 @@ class SimpleNodePlacerConfiguration extends RotatableNodePlacerConfiguration {
   }
 
   createNodePlacer() {
-    const nodePlacer = new SimpleNodePlacer()
-    nodePlacer.createBus = this.createBus
-    nodePlacer.rootAlignment = this.rootAlignment
-    nodePlacer.minimumChannelSegmentDistance = this.minimumChannelSegmentDistance
-    nodePlacer.spacing = this.spacing
-    return nodePlacer
+    return new SimpleNodePlacer({
+      createBus: this.createBus,
+      rootAlignment: this.rootAlignment,
+      minimumChannelSegmentDistance: this.minimumChannelSegmentDistance,
+      spacing: this.spacing
+    })
   }
 
   updateNodePlacers(selectedNodes, nodePlacers) {
@@ -1218,9 +1218,7 @@ class BusNodePlacerConfiguration extends RotatableNodePlacerConfiguration {
   }
 
   createNodePlacer() {
-    const nodePlacer = new BusNodePlacer()
-    nodePlacer.spacing = this.spacing
-    return nodePlacer
+    return new BusNodePlacer({ spacing: this.spacing })
   }
 
   updateNodePlacers(selectedNodes, nodePlacers) {
@@ -1267,12 +1265,12 @@ class GridNodePlacerConfiguration extends RotatableNodePlacerConfiguration {
   }
 
   createNodePlacer() {
-    const nodePlacer = new GridNodePlacer()
-    nodePlacer.spacing = this.spacing
-    nodePlacer.rootAlignment = this.rootAlignment
-    nodePlacer.busPlacement = this.busPlacement
-    nodePlacer.automaticRowAssignment = true
-    return nodePlacer
+    return new GridNodePlacer({
+      spacing: this.spacing,
+      rootAlignment: this.rootAlignment,
+      busPlacement: this.busPlacement,
+      automaticRowAssignment: true
+    })
   }
 
   updateNodePlacers(selectedNodes, nodePlacers) {
@@ -1461,10 +1459,10 @@ class DoubleLineNodePlacerConfiguration extends RotatableNodePlacerConfiguration
   }
 
   createNodePlacer() {
-    const nodePlacer = new DoubleLineNodePlacer()
-    nodePlacer.spacing = this.spacing
-    nodePlacer.rootAlignment = this.rootAlignment
-    return nodePlacer
+    return new DoubleLineNodePlacer({
+      spacing: this.spacing,
+      rootAlignment: this.rootAlignment
+    })
   }
 
   updateNodePlacers(selectedNodes, nodePlacers) {
@@ -1605,11 +1603,11 @@ class LeftRightNodePlacerConfiguration extends RotatableNodePlacerConfiguration 
   }
 
   createNodePlacer() {
-    const nodePlacer = new LeftRightNodePlacer()
-    nodePlacer.spacing = this.spacing
-    nodePlacer.placeLastOnBottom = this.lastOnBottom
-    nodePlacer.branchCount = this.branchCount
-    return nodePlacer
+    return new LeftRightNodePlacer({
+      spacing: this.spacing,
+      placeLastOnBottom: this.lastOnBottom,
+      branchCount: this.branchCount
+    })
   }
 
   updateNodePlacers(selectedNodes, nodePlacers) {
@@ -1733,13 +1731,13 @@ class AspectRatioNodePlacerConfiguration extends NodePlacerConfiguration {
   }
 
   createNodePlacer() {
-    const nodePlacer = new AspectRatioNodePlacer()
-    nodePlacer.aspectRatio = this.aspectRatio
-    nodePlacer.fillStyle = this.fillStyle
-    nodePlacer.horizontalDistance = this.horizontalDistance
-    nodePlacer.verticalDistance = this.verticalDistance
-    nodePlacer.horizontal = this.horizontal
-    return nodePlacer
+    return new AspectRatioNodePlacer({
+      aspectRatio: this.aspectRatio,
+      fillStyle: this.fillStyle,
+      horizontalDistance: this.horizontalDistance,
+      verticalDistance: this.verticalDistance,
+      horizontal: this.horizontal
+    })
   }
 
   updateNodePlacers(selectedNodes, nodePlacers) {
@@ -1778,7 +1776,7 @@ class AspectRatioNodePlacerConfiguration extends NodePlacerConfiguration {
       indeterminateHorizontalDistance: false,
       verticalDistance: nodePlacer.verticalDistance,
       indeterminateVerticalDistance: false,
-      horizontal: nodePlacer.fillStyle,
+      horizontal: nodePlacer.horizontal,
       indeterminateHorizontal: false
     }
     if (nodePlacers.length > 1) {
@@ -1878,7 +1876,7 @@ class AspectRatioNodePlacerConfiguration extends NodePlacerConfiguration {
   bindActions(panel) {
     const aspectRatio = document.getElementById('aspect-ratio')
     aspectRatio.addEventListener('change', () => {
-      this.aspectRatio = aspectRatio.value
+      this.aspectRatio = parseFloat(aspectRatio.value)
       this.indeterminateAspectRatio = false
       panel.panelChanged()
     })
@@ -1961,10 +1959,10 @@ class AssistantNodePlacerConfiguration extends RotatableNodePlacerConfiguration 
   }
 
   createNodePlacer() {
-    const nodePlacer = new AssistantNodePlacer()
-    nodePlacer.spacing = this.spacing
-    nodePlacer.childNodePlacer = this.childNodePlacer
-    return nodePlacer
+    return new AssistantNodePlacer({
+      spacing: this.spacing,
+      childNodePlacer: this.childNodePlacer
+    })
   }
 
   updateNodePlacers(selectedNodes, nodePlacers) {
@@ -2091,13 +2089,13 @@ class CompactNodePlacerConfiguration extends NodePlacerConfiguration {
   }
 
   createNodePlacer() {
-    const nodePlacer = new CompactNodePlacer()
-    nodePlacer.preferredAspectRatio = this.preferredAspectRatio
-    nodePlacer.verticalDistance = this.verticalDistance
-    nodePlacer.horizontalDistance = this.horizontalDistance
-    nodePlacer.minimumFirstSegmentLength = this.minimumFirstSegmentLength
-    nodePlacer.minimumLastSegmentLength = this.minimumLastSegmentLength
-    return nodePlacer
+    return new CompactNodePlacer({
+      preferredAspectRatio: this.preferredAspectRatio,
+      verticalDistance: this.verticalDistance,
+      horizontalDistance: this.horizontalDistance,
+      minimumFirstSegmentLength: this.minimumFirstSegmentLength,
+      minimumLastSegmentLength: this.minimumLastSegmentLength
+    })
   }
 
   updateNodePlacers(selectedNodes, nodePlacers) {

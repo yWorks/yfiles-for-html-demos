@@ -1,0 +1,8 @@
+{
+  "globals": {
+    "y": true
+  },
+  "env": {
+    "mocha": true
+  }
+}

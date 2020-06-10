@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -31,7 +31,9 @@ import {
   ImageNodeStyle,
   INodeInsetsProvider,
   Rect,
-  SimpleNode
+  SimpleNode,
+  Size,
+  SvgVisual
 } from 'yfiles'
 
 /**
@@ -56,7 +58,7 @@ export default class CustomCollapsibleNodeStyleDecoratorRenderer extends Collaps
     this.dumCustomNode = new SimpleNode()
   }
 
-  /** @return {Visual} */
+  /** @return {SvgVisual} */
   createButton(context, expanded, size) {
     // Set the dumCustom node to the desired size
     this.dumCustomNode.layout = new Rect(0, 0, size.width, size.height)
@@ -70,7 +72,7 @@ export default class CustomCollapsibleNodeStyleDecoratorRenderer extends Collaps
     return visual
   }
 
-  /** @return {Visual} */
+  /** @return {SvgVisual} */
   updateButton(context, expanded, size, oldVisual) {
     // Set the dumCustom node to the desired size
     this.dumCustomNode.layout = new Rect(0, 0, size.width, size.height)

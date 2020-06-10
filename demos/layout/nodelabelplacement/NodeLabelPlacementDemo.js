@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -47,6 +47,7 @@ import {
   LabelCandidateDescriptor,
   LayoutExecutor,
   License,
+  Rect,
   SandwichLabelModel,
   ShinyPlateNodeStyle,
   Size
@@ -308,19 +309,15 @@ function registerCommands() {
  * Creates the sample graph.
  */
 function createSampleGraph() {
-  const builder = new GraphBuilder({
-    graph: graphComponent.graph,
-    nodesSource: SampleData.nodes,
-    nodeIdBinding: 'id',
-    locationXBinding: 'x',
-    locationYBinding: 'y'
+  const builder = new GraphBuilder(graphComponent.graph)
+  const defaultNodeSize = graphComponent.graph.nodeDefaults.size
+  builder.createNodesSource({
+    data: SampleData.nodes,
+    id: 'id',
+    layout: data => new Rect(data.x, data.y, defaultNodeSize.width, defaultNodeSize.height),
+    labels: ['label']
   })
-  const graph = builder.buildGraph()
-
-  // adds the node labels
-  graph.nodes.forEach(node => {
-    graph.addLabel(node, `${node.tag.label}`)
-  })
+  builder.buildGraph()
 
   // fit content
   graphComponent.fitGraphBounds()

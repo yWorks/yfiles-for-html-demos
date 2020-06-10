@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -106,10 +106,9 @@ export default class OrgChartGraph {
     await this.refreshLayout(item, incrementalNodes, true)
     incrementalNodes.forEach(n => {
       this.hiddenNodesSet.add(n)
-
-      // inform the filter that the predicate changed and thus the graphs needs to be updates
-      this.filteredGraph.nodePredicateChanged()
     })
+    // inform the filter that the predicate changed and thus the graphs needs to be updated
+    this.filteredGraph.nodePredicateChanged()
   }
 
   /**
@@ -146,7 +145,7 @@ export default class OrgChartGraph {
       // change the tag of the node to collapsed is false to change the style of the port
       childEdge.sourcePort.style.styleTag = { collapsed: false }
     })
-    // inform the filter that the predicate changed and thus the graphs needs to be updates
+    // inform the filter that the predicate changed and thus the graphs needs to be updated
     this.filteredGraph.nodePredicateChanged()
 
     return this.refreshLayout(item, incrementalNodes, false)
@@ -180,7 +179,7 @@ export default class OrgChartGraph {
       OrgChartGraph.restoreGroup(this.completeGraph, this.hiddenNodesSet, parent)
       incrementalNodes.push(parent)
     })
-    // inform the filter that the predicate changed and thus the graphs needs to be updates
+    // inform the filter that the predicate changed and thus the graphs needs to be updated
     this.filteredGraph.nodePredicateChanged()
 
     return this.refreshLayout(node, incrementalNodes, false)
@@ -218,10 +217,9 @@ export default class OrgChartGraph {
 
     nodes.forEach(n => {
       this.hiddenNodesSet.add(n)
-
-      // inform the filter that the predicate changed and thus the graphs needs to be updates
-      this.filteredGraph.nodePredicateChanged()
     })
+    // inform the filter that the predicate changed and thus the graphs needs to be updated
+    this.filteredGraph.nodePredicateChanged()
   }
 
   /**
@@ -249,7 +247,7 @@ export default class OrgChartGraph {
       edge.sourcePort.style.styleTag = { collapsed: false }
     })
 
-    // inform the filter that the predicate changed and thus the graphs needs to be updates
+    // inform the filter that the predicate changed and thus the graphs needs to be updated
     this.filteredGraph.nodePredicateChanged()
 
     return this.refreshLayout(this.graphComponent.currentItem, incrementalNodes, false)
@@ -271,7 +269,7 @@ export default class OrgChartGraph {
       return
     }
     this.hiddenNodesSet.clear()
-    // inform the filter that the predicate changed and thus the graphs needs to be updates
+    // inform the filter that the predicate changed and thus the graphs needs to be updated
     this.filteredGraph.nodePredicateChanged()
 
     // once the nodes have been arranged, remember their arrangement strategy for a more stable layout upon changes
@@ -307,7 +305,7 @@ export default class OrgChartGraph {
           this.hiddenNodesSet.add(n)
         }
       )
-      // inform the filter that the predicate changed and thus the graphs needs to be updates
+      // inform the filter that the predicate changed and thus the graphs needs to be updated
       this.filteredGraph.nodePredicateChanged()
 
       this.filteredGraph.applyLayout(

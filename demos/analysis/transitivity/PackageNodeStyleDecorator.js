@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -39,7 +39,6 @@ import {
   Point,
   Rect,
   ShapeNodeStyle,
-  Size,
   SolidColorFill,
   Stroke,
   SvgVisual,
@@ -65,7 +64,6 @@ export default class PackageNodeStyleDecorator extends NodeStyleBase {
     const selectionFill = new SolidColorFill(Color.fromArgb(255, 255, 140, 0))
     this.selectionStyle.stroke = new Stroke(selectionFill)
     this.selectionStyle.fill = selectionFill
-    this.decoratorSize = new Size(24, 24)
   }
 
   /**
@@ -132,7 +130,7 @@ export default class PackageNodeStyleDecorator extends NodeStyleBase {
    * Updates the given visual.
    * @param {INode} node The node to which this style instance is assigned
    * @param {IRenderContext} context The render context
-   * @param {SvgVisual} oldVisual The existing visual
+   * @param {SvgVisualGroup} oldVisual The existing visual
    * @return {SvgVisual} The updated visual
    */
   updateVisual(context, oldVisual, node) {
@@ -277,8 +275,8 @@ export default class PackageNodeStyleDecorator extends NodeStyleBase {
    * Determines whether the provided point is geometrically inside the visual bounds of the node.
    * @param {INode} node The node to which this style instance is assigned
    * @param {Point} point The point to test
-   * @return {boolean} True if the provided point is geometrically inside the visual bounds of the node, false
-   *   otherwise
+   * @return {boolean} True if the provided point is geometrically inside the visual bounds of the
+   *   node, false otherwise
    */
   isInside(node, point) {
     // delegate this to the wrapped style
@@ -332,11 +330,13 @@ export default class PackageNodeStyleDecorator extends NodeStyleBase {
   }
 
   /**
-   * Determines whether the visualization for the specified node is included in the marquee selection.
-   * @param {ICanvasContext} canvasContext The canvas context
+   * Determines whether the visualization for the specified node is included in the marquee
+   * selection.
+   * @param {IInputModeContext,} canvasContext The canvas context
    * @param {Rect} box The marquee selection box
    * @param {INode} node The node to which this style instance is assigned
-   * @return {boolean} if True the visualization is included in the marquee selection, false otherwise
+   * @return {boolean} if True the visualization is included in the marquee selection, false
+   *   otherwise
    */
   isInBox(canvasContext, box, node) {
     // delegate this to the wrapped style

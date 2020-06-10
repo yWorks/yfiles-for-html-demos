@@ -7,8 +7,8 @@
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.2.
-     // Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML 2.3.
+     // Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -39,7 +39,6 @@
   <link rel="stylesheet" href="../../node_modules/yfiles/yfiles.css">
   <link rel="stylesheet" href="../../resources/style/demo.css">
 
-  <!-- enable debugging -->
   <script src="../../resources/filesystem-warning.js"></script>
 
   <style>
@@ -70,6 +69,7 @@
       <a href="https://html.spec.whatwg.org/multipage/workers.html" target="_blank">Web Worker</a> task
       in order to prevent the layout calculation from blocking the UI.
     </p>
+    <p>Because web workers cannot load ES modules (yet), this demo uses webpack to handle the loading of the yFiles library.</p>
     <p>
       To transfer the graph structure and layout between the worker and the main page, a simple JSON format is used.
       As the web worker environment does not support any DOM-related functionality, the GraphML format can't be used for this purpose.

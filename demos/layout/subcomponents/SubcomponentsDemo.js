@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -63,7 +63,8 @@ let graphComponent = null
 const subcomponents = []
 
 /**
- * The collection of colors (named like the according css-classes) that are assigned to the subcomponents.
+ * The collection of colors (named like the according css-classes) that are assigned to the
+ * subcomponents.
  * @type {string[]}
  */
 const colors = [
@@ -200,35 +201,39 @@ function loadGraph() {
 
   const data = SampleData
 
-  const builder = new GraphBuilder({
-    graph,
-    nodesSource: data.nodes,
-    edgesSource: data.edges,
-    sourceNodeBinding: 'source',
-    targetNodeBinding: 'target',
-    nodeIdBinding: 'id'
+  const builder = new GraphBuilder(graph)
+  builder.createNodesSource({
+    data: data.nodes,
+    id: 'id',
+    tag: data => (typeof data.tag !== 'undefined' ? parseInt(data.tag) : null)
   })
+  builder.createEdgesSource(data.edges, 'source', 'target')
 
   builder.buildGraph()
-
-  graph.nodes.forEach(node => {
-    node.tag = typeof node.tag.tag !== 'undefined' ? parseInt(node.tag.tag) : null
-  })
 
   // create initial subcomponents
   const hierarchicLayout = new HierarchicLayout()
   hierarchicLayout.layoutOrientation = LayoutOrientation.LEFT_TO_RIGHT
-  createSubcomponent(graph.nodes.filter(node => node.tag === 0), hierarchicLayout)
+  createSubcomponent(
+    graph.nodes.filter(node => node.tag === 0),
+    hierarchicLayout
+  )
   const treeLayout = new TreeLayout()
   treeLayout.defaultNodePlacer.routingStyle = TreeLayoutEdgeRoutingStyle.POLYLINE
   const treeReductionStage = new TreeReductionStage()
   treeReductionStage.nonTreeEdgeRouter = new StraightLineEdgeRouter()
   treeLayout.prependStage(treeReductionStage)
-  createSubcomponent(graph.nodes.filter(node => node.tag === 1), treeLayout)
+  createSubcomponent(
+    graph.nodes.filter(node => node.tag === 1),
+    treeLayout
+  )
   const organicLayout = new OrganicLayout()
   organicLayout.deterministic = true
   organicLayout.preferredEdgeLength = 70
-  createSubcomponent(graph.nodes.filter(node => node.tag === 2), organicLayout)
+  createSubcomponent(
+    graph.nodes.filter(node => node.tag === 2),
+    organicLayout
+  )
 
   graphComponent.fitGraphBounds()
 
@@ -285,6 +290,7 @@ function getLayoutAlgorithm() {
     case 'tree':
       layoutAlgorithm = new TreeLayout()
       layoutAlgorithm.defaultNodePlacer.routingStyle = TreeLayoutEdgeRoutingStyle.POLYLINE
+      // eslint-disable-next-line no-case-declarations
       const treeReductionStage = new TreeReductionStage()
       treeReductionStage.nonTreeEdgeRouter = new StraightLineEdgeRouter()
       layoutAlgorithm.prependStage(treeReductionStage)

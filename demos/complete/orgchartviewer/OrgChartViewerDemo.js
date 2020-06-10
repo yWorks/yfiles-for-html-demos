@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -38,8 +38,8 @@ import {
   IGraph,
   IModelItem,
   INode,
-  ITreeLayoutPortAssignment,
   Insets,
+  ITreeLayoutPortAssignment,
   LayoutGraph,
   License,
   PlaceNodesAtBarycenterStage,
@@ -354,8 +354,10 @@ function createGraph(nodesSource) {
 
   const treeBuilder = new TreeBuilder()
   registerElementDefaults(treeBuilder.graph)
-  treeBuilder.childBinding = 'subordinates'
-  treeBuilder.nodesSource = nodesSource
+  // configure the root nodes
+  const rootSource = treeBuilder.createRootNodesSource(nodesSource)
+  // configure the recursive structure of the childs
+  rootSource.addChildNodesSource(data => data.subordinates, rootSource)
   treeBuilder.buildGraph()
 
   return treeBuilder.graph

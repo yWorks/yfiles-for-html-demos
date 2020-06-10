@@ -8,20 +8,19 @@
     "dev": "dojo build --mode dev --watch file --serve",
     "build": "dojo build --mode dist",
     "build:dev": "dojo build --mode dev",
-    "preinstall": "cd ../../../lib/es-modules && npm pack",
     "postinstall": "node -e \"require('fs').copyFileSync('./node_modules/yfiles/yfiles.css','./src/assets/yfiles.css')\""
   },
   "dependencies": {
-    "@dojo/framework": "^5.0.0",
-    "@dojo/themes": "^5.0.0",
-    "@dojo/widgets": "^5.0.0",
-    "tslib": "~1.8.1",
-    "yfiles": "../../../lib/es-modules/yfiles-22.0.3-eval.tgz"
+    "@dojo/framework": "^7.0.0",
+    "@dojo/themes": "^6.0.0",
+    "@dojo/widgets": "^7.0.0",
+    "tslib": "~2.0.0",
+    "yfiles": "../../../lib-dev/es-modules/yfiles-23.0.0-dev.tgz"
   },
   "devDependencies": {
-    "@dojo/cli": "^5.0.0",
-    "@dojo/cli-build-app": "^5.0.0",
-    "@types/node": "~9.6.5",
-    "typescript": "~3.5.0"
+    "@dojo/cli": "^7.0.0",
+    "@dojo/cli-build-app": "^7.0.0",
+    "@types/node": "~14.0.9",
+    "typescript": "~3.9.3"
   }
 }

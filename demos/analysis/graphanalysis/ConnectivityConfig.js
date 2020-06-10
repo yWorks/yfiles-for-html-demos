@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -34,8 +34,8 @@ import {
   IGraph,
   IModelItem,
   INode,
+  KCoreComponents,
   Reachability,
-  ResultItemCollection,
   StronglyConnectedComponents
 } from 'yfiles'
 import AlgorithmConfiguration from './AlgorithmConfiguration.js'
@@ -91,6 +91,9 @@ export default class ConnectivityConfig extends AlgorithmConfiguration {
         break
       case ConnectivityConfig.REACHABILITY:
         this.calculateReachableNodes(graph)
+        break
+      case ConnectivityConfig.K_CORE_COMPONENTS:
+        this.calculateKCoreNodes(graph)
         break
       case ConnectivityConfig.CONNECTED_COMPONENTS:
       case ConnectivityConfig.STRONGLY_CONNECTED_COMPONENTS:
@@ -240,7 +243,7 @@ export default class ConnectivityConfig extends AlgorithmConfiguration {
         const componentIdx = biconnectedComponents.get(edge)
         let color
         if (componentIdx >= 0) {
-          graph.setStyle(edge, this.getMarkedEdgeStyle(false, componentIdx, null))
+          graph.setStyle(edge, this.getMarkedEdgeStyle(false, componentIdx))
           graph.setStyle(edge.sourceNode, new MultiColorNodeStyle())
           graph.setStyle(edge.targetNode, new MultiColorNodeStyle())
 
@@ -347,7 +350,7 @@ export default class ConnectivityConfig extends AlgorithmConfiguration {
       })
       graph.edges.forEach((edge, index) => {
         if (result.isReachable(edge.sourceNode) && result.isReachable(edge.targetNode)) {
-          graph.setStyle(edge, this.getMarkedEdgeStyle(this.directed, 0, null))
+          graph.setStyle(edge, this.getMarkedEdgeStyle(this.directed, 0))
           allReachable[0].push(edge)
           edge.tag = {
             id: index,
@@ -363,11 +366,48 @@ export default class ConnectivityConfig extends AlgorithmConfiguration {
   }
 
   /**
+   * Calculates the k-Core for a given graph and k value
+   * @param {IGraph} graph The graph in which the k-core is visualized
+   */
+  calculateKCoreNodes(graph) {
+    this.resetGraph(graph)
+
+    if (graph.nodes.size > 0) {
+      const result = new KCoreComponents().run(graph).getKCore(this.kValue)
+
+      const allKCoreMembers = []
+      result.forEach((node, index) => {
+        allKCoreMembers.push(node)
+        graph.setStyle(node, new MultiColorNodeStyle())
+        node.tag = {
+          id: index,
+          color: null,
+          components: [allKCoreMembers],
+          nodeComponents: [0]
+        }
+
+        graph.edges.forEach((edge, index) => {
+          if (result.contains(edge.sourceNode) && result.contains(edge.targetNode)) {
+            graph.setStyle(edge, this.getMarkedEdgeStyle(false, 0))
+            allKCoreMembers.push(edge)
+            edge.tag = {
+              id: index,
+              color: null,
+              components: [allKCoreMembers],
+              edgeComponent: 0
+            }
+          }
+        })
+      })
+    }
+  }
+
+  /**
    * Returns the first edge with non-negative component index of the given node.
    * @param {IGraph} graph the given graph
    * @param {INode} node the given node
-   * @param {ResultItemCollection} biconnectedComponents the edge-map that holds the result of the biconnected
-   *   components algorithm
+   * @param {ResultItemMapping<IEdge,number>} biconnectedComponents the edge-map that holds the
+   *   result of the biconnected components algorithm
    */
   findEdgeInBiconnectedComponent(graph, node, biconnectedComponents) {
     let edge = null
@@ -416,6 +456,12 @@ export default class ConnectivityConfig extends AlgorithmConfiguration {
           '<p>This part of the demo highlights the set of nodes that are <em>reachable</em> in the given graph when starting from the marked source. The source can be marked using the <em>Context Menu</em>. If no node is marked as source, a random node will be selected.</p>' +
           '<p>The algorithm can take the direction of edges into account.</p>'
         )
+      case ConnectivityConfig.K_CORE_COMPONENTS:
+        return (
+          '<p>This part of the demo shows the <em>k-core</em> of the given graph.</p>' +
+          '<p>The k-core of an undirected input graph consists of the subgraph components where each node has at least degree k.</p>' +
+          '<p>Use the k-value dropdown box to set various k values.</p>'
+        )
       case ConnectivityConfig.CONNECTED_COMPONENTS:
       default:
         return '<p>This part of the demo shows the <em>connected components</em> of the given graph.</p><p>Nodes and edges that belong to the same component share the same color.</p>'
@@ -452,5 +498,13 @@ export default class ConnectivityConfig extends AlgorithmConfiguration {
    */
   static get REACHABILITY() {
     return 3
+  }
+
+  /**
+   * Static field for K_CORE_COMPONENTS
+   * @return {number}
+   */
+  static get K_CORE_COMPONENTS() {
+    return 4
   }
 }

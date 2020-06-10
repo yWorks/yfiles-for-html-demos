@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -29,9 +29,9 @@
 import {
   AdjacencyTypes,
   BusRouter,
+  BusRouterBusDescriptor,
   BusRouterData,
   Class,
-  EdgeRouterBusDescriptor,
   EdgeRouterScope,
   EnumDefinition,
   GraphComponent,
@@ -139,7 +139,7 @@ const BusEdgeRouterConfig = Class('BusEdgeRouterConfig', {
         !graphSelection.isSelected(edge.sourceNode) &&
         !graphSelection.isSelected(edge.targetNode)
       const id = BusEdgeRouterConfig.getBusId(edge, this.busesItem)
-      busIds.set(edge, new EdgeRouterBusDescriptor(id, isFixed))
+      busIds.set(edge, new BusRouterBusDescriptor(id, isFixed))
     })
 
     const selectedIds = new Set()

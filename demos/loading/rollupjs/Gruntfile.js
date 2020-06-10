@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -30,44 +30,50 @@ const path = require('path')
 const { optimize } = require('@yworks/optimizer')
 const rollup = require('rollup')
 const babel = require('rollup-plugin-babel')
-const resolve = require('rollup-plugin-node-resolve')
-const commonjs = require('rollup-plugin-commonjs')
+const resolve = require('@rollup/plugin-node-resolve')
+const replace = require('@rollup/plugin-replace')
+const commonjs = require('@rollup/plugin-commonjs')
 
 const root = path.join(__dirname, '../../../')
 const build = path.join(__dirname, 'build')
 const dist = path.join(__dirname, 'dist')
 
 module.exports = function(grunt) {
-  grunt.registerTask('default', ['clean', 'optimize', 'rollup'])
+  grunt.registerTask('default', ['clean', 'copy', 'rollup'])
+  grunt.registerTask('production', ['enable-prod', 'clean', 'optimize', 'rollup'])
+  grunt.registerTask('enable-prod', function() {
+    process.env.NODE_ENV = 'production'
+  })
 
   grunt.registerMultiTask('optimize', function() {
     const files = this.files
 
-    for (file of files) {
+    for (const file of files) {
       file.source = grunt.file.read(file.src)
-      // resolve yfiles import
-      file.source = file.source.replace(/from 'yfiles'/gi, () => {
-        const resolvedPath = path
-          .join(
-            path.relative(path.dirname(file.src[0]), __dirname),
-            `node_modules/yfiles/yfiles.js`
-          )
-          .replace(/\\/g, '/')
-        return `from '${resolvedPath}'`
-      })
     }
 
-    const libFiles = grunt.file
-      .expand(
-        path.join(__dirname, 'node_modules/yfiles') + '/**/*.js',
-        root + 'ide-support/yfiles-typeinfo.js'
-      )
-      .map(f => ({
-        source: grunt.file.read(f),
-        dest: path.join(build, path.relative(root, f))
-      }))
+    const libFiles = []
+    const yfilesPackageFiles = grunt.file.expand(
+      { filter: 'isFile' },
+      path.join(__dirname, 'node_modules/yfiles') + '/**/*'
+    )
 
-    optimize(libFiles, files)
+    for (const file of yfilesPackageFiles) {
+      const source = grunt.file.read(file)
+      const destPath = path.join(build, path.relative(root, file))
+      if (file.endsWith('.js')) {
+        libFiles.push({
+          source: source,
+          dest: destPath
+        })
+      } else {
+        grunt.file.write(destPath, source)
+      }
+    }
+
+    optimize(libFiles, files, {
+      logLevel: 'info'
+    })
 
     libFiles.concat(files).forEach(file => {
       grunt.file.write(file.dest, file.result)
@@ -79,8 +85,9 @@ module.exports = function(grunt) {
 
     rollup
       .rollup({
-        input: path.join(build, 'demos/loading/rollupjs/src/RollupJsDemo.js'),
+        input: path.join(build, 'demos-js/loading/rollupjs/src/RollupJsDemo.js'),
         plugins: [
+          replace({ 'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV) }),
           resolve(),
           babel({
             exclude: '**/node_modules/**'
@@ -91,9 +98,7 @@ module.exports = function(grunt) {
           if (warning.code !== 'THIS_IS_UNDEFINED') {
             console.log(warning.message)
           }
-        },
-        // unfortunately, tree-shaking breaks yFiles
-        treeshake: false
+        }
       })
       .then(bundle =>
         bundle.write({
@@ -104,24 +109,32 @@ module.exports = function(grunt) {
       .then(done)
   })
 
+  const gruntDemoFiles = [
+    {
+      expand: true,
+      cwd: root,
+      src: [`demos-js/loading/rollupjs/**/*.js`, `demos-js/resources/**/*.js`],
+      ignore: ['**/node_modules/**', 'demos-js/loading/rollupjs/Gruntfile.js'],
+      dest: build
+    }
+  ]
+
   grunt.initConfig({
-    clean: [build, dist],
+    clean: {
+      all: [build, dist]
+    },
 
     optimize: {
       dist: {
-        files: [
-          {
-            expand: true,
-            cwd: root,
-            src: [`demos/loading/rollupjs/**/*.js`, `demos/{resources,utils}/**/*.js`],
-            ignore: ['**/node_modules/**', 'demos/loading/rollupjs/Gruntfile.js'],
-            dest: build
-          }
-        ]
+        files: gruntDemoFiles
       }
     },
 
-    copy: {}
+    copy: {
+      all: {
+        files: gruntDemoFiles
+      }
+    }
   })
 
   grunt.loadNpmTasks('grunt-contrib-clean')

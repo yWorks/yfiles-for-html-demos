@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -83,7 +83,7 @@ export default class CustomSimpleLabelStyle extends LabelStyleBase {
     // Render the label
     this.render(g, label.layout, cache)
     // move container to correct location
-    const transform = LabelStyleBase.createLayoutTransform(label.layout, true)
+    const transform = LabelStyleBase.createLayoutTransform(renderContext, label.layout, true)
     transform.applyTo(g)
 
     // set data item
@@ -110,7 +110,7 @@ export default class CustomSimpleLabelStyle extends LabelStyleBase {
     }
     // nothing changed, return the old visual
     // arrange because the layout might have changed
-    const transform = LabelStyleBase.createLayoutTransform(label.layout, true)
+    const transform = LabelStyleBase.createLayoutTransform(renderContext, label.layout, true)
     transform.applyTo(container)
     return oldVisual
   }
@@ -164,8 +164,6 @@ export default class CustomSimpleLabelStyle extends LabelStyleBase {
       text.setAttribute('fill', '#000')
       container.appendChild(text)
     }
-    // assign all the values of the font to the text element's attributes
-    cache.font.applyTo(text)
     // SVG does not provide out-of-the box text wrapping.
     // The following line uses a convenience method that implements text wrapping
     // with ellipsis by splitting the text and inserting tspan elements as children

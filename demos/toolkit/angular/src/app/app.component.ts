@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -59,7 +59,7 @@ import { NodeComponentStyle } from './NodeComponentStyle'
 export class AppComponent implements AfterViewInit {
   title = 'app'
 
-  @ViewChild(GraphComponentComponent, { static: false })
+  @ViewChild(GraphComponentComponent)
   private gcComponent!: GraphComponentComponent
 
   public currentPerson?: Person
@@ -107,7 +107,7 @@ export class AppComponent implements AfterViewInit {
   }
 }
 
-function createSampleGraph(graph: IGraph) {
+function createSampleGraph(graph: IGraph): void {
   const nodeMap: { [name: string]: INode } = {}
 
   NODE_DATA.forEach(nodeData => {
@@ -125,7 +125,7 @@ function createSampleGraph(graph: IGraph) {
   })
 }
 
-function runLayout(graph: IGraph) {
+function runLayout(graph: IGraph): void {
   const treeLayout = new TreeLayout()
   const treeReductionStage = new TreeReductionStage()
   treeReductionStage.nonTreeEdgeRouter = new OrganicEdgeRouter()

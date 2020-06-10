@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,12 +27,16 @@
  **
  ***************************************************************************/
 import {
+  DefaultFolderNodeConverter,
   FoldingManager,
   GraphComponent,
   GraphEditorInputMode,
   GraphItemTypes,
   GraphMLIOHandler,
   ICommand,
+  ILayoutAlgorithm,
+  INode,
+  LayoutData,
   License,
   NodeAlignmentPolicy,
   Size
@@ -58,6 +62,7 @@ let graphComponent = null
 
 /**
  * Runs the demo.
+ * @param {object} licenseData
  */
 function run(licenseData) {
   License.value = licenseData
@@ -74,6 +79,7 @@ function run(licenseData) {
 
 /**
  * Runs a table layout or a three tier layout depending on the selected sample.
+ * @returns {Promise}
  */
 async function runLayout() {
   setUIDisabled(true)
@@ -154,6 +160,7 @@ function registerCommands() {
 
 /**
  * Loads the table or three-tire.
+ * @returns {Promise}
  */
 async function loadSample() {
   const filename = document.getElementById('select-sample').value.substring(8)

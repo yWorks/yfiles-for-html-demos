@@ -7,8 +7,8 @@
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.2.
-     // Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML 2.3.
+     // Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -39,8 +39,6 @@
   <link rel="stylesheet" href="../../node_modules/yfiles/yfiles.css">
   <link rel="stylesheet" href="../../resources/style/demo.css">
 
-  <!-- enable debugging -->
-  <script src="../../../ide-support/yfiles-typeinfo.js"></script>
   <script src="../../resources/filesystem-warning.js"></script>
 
   <script type="text/yfiles-template">
@@ -65,31 +63,62 @@
   <h1 class="demo-sidebar-header">Description</h1>
   <div class="demo-sidebar-content">
     <p>
-      This demo uses <a href="https://docs.yworks.com/yfileshtml/#/api/GraphBuilder" target="_blank">GraphBuilder</a>
-      or <a href="https://docs.yworks.com/yfileshtml/#/api/TreeBuilder" target="_blank">TreeBuilder</a>
-      to automatically build a graph from business data. <br/> The business data can be stored in <em>arrays</em> or in
-      <em>JSON</em> format.<br/> The nodes are visualized by a
-      <a href="https://docs.yworks.com/yfileshtml/#/api/TemplateNodeStyle" target="_blank">TemplateNodeStyle</a>
-      instance that binds to the business data objects which
-      <a href="https://docs.yworks.com/yfileshtml/#/api/GraphBuilder" target="_blank">GraphBuilder</a> stores
-      in the graph item's
-      <a href="https://docs.yworks.com/yfileshtml/#/api/ITagOwner#tag" target="_blank">ITagOwner#tag</a>.</p>
+      This demo uses <a href="https://docs.yworks.com/yfileshtml/#/api/GraphBuilder" target="_blank">GraphBuilder</a>, <a href="https://docs.yworks.com/yfileshtml/#/api/TreeBuilder" target="_blank">TreeBuilder</a> or <a href="https://docs.yworks.com/yfileshtml/#/api/AdjacencyGraphBuilder" target="_blank">AdjacencyGraphBuilder</a> to
+      automatically build a graph from business data. <br/> The business data can be stored in <em>arrays</em> or in
+      <em>JSON</em> format.<br/> The nodes are visualized by a <a href="https://docs.yworks.com/yfileshtml/#/api/TemplateNodeStyle" target="_blank">TemplateNodeStyle</a> instance that binds to the
+      business data objects which <a href="https://docs.yworks.com/yfileshtml/#/api/GraphBuilder" target="_blank">GraphBuilder</a>, <a href="https://docs.yworks.com/yfileshtml/#/api/TreeBuilder" target="_blank">TreeBuilder</a> and <a href="https://docs.yworks.com/yfileshtml/#/api/AdjacencyGraphBuilder" target="_blank">AdjacencyGraphBuilder</a>
+      store in the graph item's <a href="https://docs.yworks.com/yfileshtml/#/api/ITagOwner#tag" target="_blank">ITagOwner#tag</a>.
+    </p>
+
+    <p>
+      See the the Developer's Guide section on <a href="https://docs.yworks.com/yfileshtml/#/dguide/graph_builder" target="_blank">creating a Graph from Business
+      Data</a> for an in-depth explanation of the relevant concepts.
+    </p>
+
+    <p>Each builder provides a specific set of methods that allow to configure the builder on the given data source.</p>
+
+    <h3>GraphBuilder</h3>
+    <dl>
+      <dt><code>createNodesSource</code></dt>
+      <dd>Registers a data source that represents the nodes.</dd>
+      <dt><code>createGroupNodesSource</code></dt>
+      <dd>Registers a data source that represents the group nodes.</dd>
+      <dt><code>createEdgesSource</code></dt>
+      <dd>Registers a data source that represent the edges that connect the nodes.</dd>
+    </dl>
+
+    <h3>TreeBuilder</h3>
+    <dl>
+      <dt><code>createRootNodesSource</code></dt>
+      <dd>Registers a data source that represents the root nodes.</dd>
+      <dt><code>TreeNodesSource.createChildNodesSource</code></dt>
+      <dd>Registers a data source as child entities of a <a href="https://docs.yworks.com/yfileshtml/#/api/TreeNodesSource" target="_blank">TreeNodesSource</a>.</dd>
+      <dt><code>TreeNodesSource.addChildNodesSource</code></dt>
+      <dd>Binds a collection of child data objects of a <a href="https://docs.yworks.com/yfileshtml/#/api/TreeNodesSource" target="_blank">TreeNodesSource</a>.</dd>
+    </dl>
+
+    <h3>AdjacencyGraphBuilder</h3>
+    <dl>
+      <dt><code>createNodesSource</code></dt>
+      <dd>Registers a data source that represents the nodes.</dd>
+      <dt><code>createGroupNodesSource</code></dt>
+      <dd>Registers a data source that represents the group nodes.</dd>
+      <dt><code>AdjacencyNodesSource.addPredecessorIds</code></dt>
+      <dd>Registers a provider for source node ids to which edges are created.</dd>
+      <dt><code>AdjacencyNodesSource.addSuccessorIds</code></dt>
+      <dd>Registers a provider for target node ids to which edges are created.</dd>
+    </dl>
+
+    <h3>Input Data</h3>
+    <p>The files</p>
     <ul>
-      <li>
-        <code>nodesSource</code> stores the business objects that represent the nodes.
-      </li>
-      <li>
-        <code>edgesSource</code> stores the business objects that represent the edges that connect the nodes.
-      </li>
-      <li>
-        <code>groupsSource</code> stores the business objects that represent the group nodes.
-      </li>
+      <li><code>graph-builder-data.js</code></li>
+      <li><code>tree-builder-data-array.js</code></li>
+      <li><code>tree-builder-data-json.js</code></li>
+      <li><code>adjacent-builder-id-data-array.js</code></li>
     </ul>
     <p>
-      The files <em>graph-builder-data.js</em>, <em>tree-builder-array-data.js</em>, <em>tree-builder-id-array-data.js</em> and
-      <em>tree-builder-json-data.js</em> show how the data has to be specified for the classes
-      <a href="https://docs.yworks.com/yfileshtml/#/api/GraphBuilder" target="_blank">GraphBuilder</a> and
-      <a href="https://docs.yworks.com/yfileshtml/#/api/TreeBuilder" target="_blank">TreeBuilder</a>.
+      show how the data can be specified for the different builders.
     </p>
   </div>
 </aside>
@@ -104,8 +133,9 @@
     <select data-command="SelectBuilder" title="Select builder type">
       <option>Graph Builder</option>
       <option>Tree Builder (Array)</option>
-      <option>Tree Builder (Array with IDs)</option>
       <option>Tree Builder (JSON)</option>
+      <option>Adjacent Nodes Graph Builder</option>
+      <option>Adjacent Nodes Graph Builder (with IDs)</option>
     </select>
   </div>
 

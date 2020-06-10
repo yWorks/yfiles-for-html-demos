@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -29,6 +29,7 @@
 import {
   CircularLayout,
   CircularLayoutData,
+  CircularLayoutEdgeRoutingPolicy,
   CircularLayoutStyle,
   Class,
   EdgeBundleDescriptor,
@@ -77,6 +78,13 @@ const CircularLayoutConfig = Class('CircularLayoutConfig', {
     this.minimumNodeDistanceItem = 30
     this.chooseRadiusAutomaticallyItem = true
     this.fixedRadiusItem = 200
+
+    this.edgeRoutingItem = CircularLayoutEdgeRoutingPolicy.INTERIOR
+    this.exteriorEdgeToCircleDistanceItem = 20
+    this.exteriorEdgeToEdgeDistanceItem = 10
+    this.exteriorEdgeCornerRadiusItem = 20
+    this.exteriorEdgeAngleItem = 10
+    this.exteriorEdgeSmoothnessItem = 0.7
 
     this.edgeBundlingItem = false
     this.edgeBundlingStrengthItem = 1.0
@@ -135,6 +143,13 @@ const CircularLayoutConfig = Class('CircularLayoutConfig', {
       layout.labeling = genericLabeling
     }
 
+    layout.edgeRoutingPolicy = this.edgeRoutingItem
+    layout.exteriorEdgeLayoutDescriptor.circleDistance = this.exteriorEdgeToCircleDistanceItem
+    layout.exteriorEdgeLayoutDescriptor.edgeToEdgeDistance = this.exteriorEdgeToEdgeDistanceItem
+    layout.exteriorEdgeLayoutDescriptor.preferredCurveLength = this.exteriorEdgeCornerRadiusItem
+    layout.exteriorEdgeLayoutDescriptor.preferredAngle = this.exteriorEdgeAngleItem
+    layout.exteriorEdgeLayoutDescriptor.smoothness = this.exteriorEdgeSmoothnessItem
+
     const ebc = layout.edgeBundling
     ebc.bundlingStrength = this.edgeBundlingStrengthItem
     ebc.defaultBundleDescriptor = new EdgeBundleDescriptor({
@@ -161,6 +176,10 @@ const CircularLayoutConfig = Class('CircularLayoutConfig', {
 
     if (this.layoutStyleItem === CircularLayoutStyle.CUSTOM_GROUPS) {
       layoutData.customGroups = node => graphComponent.graph.getParent(node)
+    }
+
+    if (this.edgeRoutingItem === CircularLayoutEdgeRoutingPolicy.MARKED_EXTERIOR) {
+      layoutData.exteriorEdges = graphComponent.selection.selectedEdges
     }
 
     return layoutData
@@ -211,11 +230,23 @@ const CircularLayoutConfig = Class('CircularLayoutConfig', {
   },
 
   /** @type {OptionGroup} */
-  EdgeBundlingGroup: {
+  EdgesGroup: {
     $meta: function() {
       return [
-        LabelAttribute('Edge Bundling'),
+        LabelAttribute('Edges'),
         OptionGroupAttribute('RootGroup', 30),
+        TypeAttribute(OptionGroup.$class)
+      ]
+    },
+    value: null
+  },
+
+  /** @type {OptionGroup} */
+  ExteriorEdgesGroup: {
+    $meta: function() {
+      return [
+        LabelAttribute('Exterior Edges'),
+        OptionGroupAttribute('EdgesGroup', 20),
         TypeAttribute(OptionGroup.$class)
       ]
     },
@@ -536,7 +567,7 @@ const CircularLayoutConfig = Class('CircularLayoutConfig', {
           'Enable Edge Bundling',
           '#/api/EdgeBundling#EdgeBundling-property-defaultBundleDescriptor'
         ),
-        OptionGroupAttribute('EdgeBundlingGroup', 40),
+        OptionGroupAttribute('EdgesGroup', 40),
         TypeAttribute(YBoolean.$class)
       ]
     },
@@ -563,6 +594,250 @@ const CircularLayoutConfig = Class('CircularLayoutConfig', {
 
   /**
    * Backing field for below property
+   * @type {CircularLayoutEdgeRoutingPolicy}
+   */
+  $edgeRoutingItem: CircularLayoutEdgeRoutingPolicy.INTERIOR,
+
+  /** @type {CircularLayoutEdgeRoutingPolicy} */
+  edgeRoutingItem: {
+    $meta: function() {
+      return [
+        LabelAttribute(
+          'Edge Routing Style',
+          '#/api/CircularLayout#CircularLayout-property-edgeRoutingPolicy'
+        ),
+        OptionGroupAttribute('EdgesGroup', 10),
+        EnumValuesAttribute().init({
+          values: [
+            ['Inside', CircularLayoutEdgeRoutingPolicy.INTERIOR],
+            ['Outside', CircularLayoutEdgeRoutingPolicy.EXTERIOR],
+            ['Automatic', CircularLayoutEdgeRoutingPolicy.AUTOMATIC],
+            ['Selected Edge Outside', CircularLayoutEdgeRoutingPolicy.MARKED_EXTERIOR]
+          ]
+        }),
+        TypeAttribute(CircularLayoutEdgeRoutingPolicy.$class)
+      ]
+    },
+    get: function() {
+      return this.$edgeRoutingItem
+    },
+    set: function(value) {
+      this.$edgeRoutingItem = value
+    }
+  },
+
+  /**
+   * Backing field for below property
+   * @type {number}
+   */
+  $exteriorEdgeToCircleDistanceItem: 20,
+
+  /** @type {number} */
+  exteriorEdgeToCircleDistanceItem: {
+    $meta: function() {
+      return [
+        LabelAttribute(
+          'Distance to Circle',
+          '#/api/ExteriorEdgeLayoutDescriptor#ExteriorEdgeLayoutDescriptor-property-circleDistance'
+        ),
+        OptionGroupAttribute('ExteriorEdgesGroup', 10),
+        MinMaxAttribute().init({
+          min: 10,
+          max: 100,
+          step: 1
+        }),
+        ComponentAttribute(Components.SLIDER),
+        TypeAttribute(YNumber.$class)
+      ]
+    },
+    get: function() {
+      return this.$exteriorEdgeToCircleDistanceItem
+    },
+    set: function(value) {
+      this.$exteriorEdgeToCircleDistanceItem = value
+    }
+  },
+
+  /** @type {boolean} */
+  shouldDisableExteriorEdgeToCircleDistanceItem: {
+    $meta: function() {
+      return [TypeAttribute(YBoolean.$class)]
+    },
+    get: function() {
+      return this.edgeRoutingItem === CircularLayoutEdgeRoutingPolicy.INTERIOR
+    }
+  },
+
+  /**
+   * Backing field for below property
+   * @type {number}
+   */
+  $exteriorEdgeToEdgeDistanceItem: 10,
+
+  /** @type {number} */
+  exteriorEdgeToEdgeDistanceItem: {
+    $meta: function() {
+      return [
+        LabelAttribute(
+          'Edge to Edge Distance',
+          '#/api/ExteriorEdgeLayoutDescriptor#ExteriorEdgeLayoutDescriptor-property-edgeToEdgeDistance'
+        ),
+        OptionGroupAttribute('ExteriorEdgesGroup', 20),
+        MinMaxAttribute().init({
+          min: 5,
+          max: 50,
+          step: 1
+        }),
+        ComponentAttribute(Components.SLIDER),
+        TypeAttribute(YNumber.$class)
+      ]
+    },
+    get: function() {
+      return this.$exteriorEdgeToEdgeDistanceItem
+    },
+    set: function(value) {
+      this.$exteriorEdgeToEdgeDistanceItem = value
+    }
+  },
+
+  /** @type {boolean} */
+  shouldDisableExteriorEdgeToEdgeDistanceItem: {
+    $meta: function() {
+      return [TypeAttribute(YBoolean.$class)]
+    },
+    get: function() {
+      return this.edgeRoutingItem === CircularLayoutEdgeRoutingPolicy.INTERIOR
+    }
+  },
+
+  /**
+   * Backing field for below property
+   * @type {number}
+   */
+  $exteriorEdgeCornerRadiusItem: 20,
+
+  /** @type {number} */
+  exteriorEdgeCornerRadiusItem: {
+    $meta: function() {
+      return [
+        LabelAttribute(
+          'Corner Radius',
+          '#/api/ExteriorEdgeLayoutDescriptor#ExteriorEdgeLayoutDescriptor-property-preferredCurveLength'
+        ),
+        OptionGroupAttribute('ExteriorEdgesGroup', 30),
+        MinMaxAttribute().init({
+          min: 0,
+          max: 100,
+          step: 1
+        }),
+        ComponentAttribute(Components.SLIDER),
+        TypeAttribute(YNumber.$class)
+      ]
+    },
+    get: function() {
+      return this.$exteriorEdgeCornerRadiusItem
+    },
+    set: function(value) {
+      this.$exteriorEdgeCornerRadiusItem = value
+    }
+  },
+
+  /** @type {boolean} */
+  shouldDisableExteriorEdgeCornerRadiusItem: {
+    $meta: function() {
+      return [TypeAttribute(YBoolean.$class)]
+    },
+    get: function() {
+      return this.edgeRoutingItem === CircularLayoutEdgeRoutingPolicy.INTERIOR
+    }
+  },
+
+  /**
+   * Backing field for below property
+   * @type {number}
+   */
+  $exteriorEdgeAngleItem: 10,
+
+  /** @type {number} */
+  exteriorEdgeAngleItem: {
+    $meta: function() {
+      return [
+        LabelAttribute(
+          'Angle',
+          '#/api/ExteriorEdgeLayoutDescriptor#ExteriorEdgeLayoutDescriptor-property-preferredAngle'
+        ),
+        OptionGroupAttribute('ExteriorEdgesGroup', 40),
+        MinMaxAttribute().init({
+          min: 0,
+          max: 45,
+          step: 1
+        }),
+        ComponentAttribute(Components.SLIDER),
+        TypeAttribute(YNumber.$class)
+      ]
+    },
+    get: function() {
+      return this.$exteriorEdgeAngleItem
+    },
+    set: function(value) {
+      this.$exteriorEdgeAngleItem = value
+    }
+  },
+
+  /** @type {boolean} */
+  shouldDisableExteriorEdgeAngleItem: {
+    $meta: function() {
+      return [TypeAttribute(YBoolean.$class)]
+    },
+    get: function() {
+      return this.edgeRoutingItem === CircularLayoutEdgeRoutingPolicy.INTERIOR
+    }
+  },
+
+  /**
+   * Backing field for below property
+   * @type {number}
+   */
+  $exteriorEdgeSmoothnessItem: 0.7,
+
+  /** @type {number} */
+  exteriorEdgeSmoothnessItem: {
+    $meta: function() {
+      return [
+        LabelAttribute(
+          'Smoothness',
+          '#/api/ExteriorEdgeLayoutDescriptor#ExteriorEdgeLayoutDescriptor-property-smoothness'
+        ),
+        OptionGroupAttribute('ExteriorEdgesGroup', 50),
+        MinMaxAttribute().init({
+          min: 0,
+          max: 1,
+          step: 0.01
+        }),
+        ComponentAttribute(Components.SLIDER),
+        TypeAttribute(YNumber.$class)
+      ]
+    },
+    get: function() {
+      return this.$exteriorEdgeSmoothnessItem
+    },
+    set: function(value) {
+      this.$exteriorEdgeSmoothnessItem = value
+    }
+  },
+
+  /** @type {boolean} */
+  shouldDisableExteriorEdgeSmoothnessItem: {
+    $meta: function() {
+      return [TypeAttribute(YBoolean.$class)]
+    },
+    get: function() {
+      return this.edgeRoutingItem === CircularLayoutEdgeRoutingPolicy.INTERIOR
+    }
+  },
+
+  /**
+   * Backing field for below property
    * @type {number}
    */
   $edgeBundlingStrengthItem: 1.0,
@@ -575,7 +850,7 @@ const CircularLayoutConfig = Class('CircularLayoutConfig', {
           'Bundling Strength',
           '#/api/EdgeBundling#EdgeBundling-property-bundlingStrength'
         ),
-        OptionGroupAttribute('EdgeBundlingGroup', 50),
+        OptionGroupAttribute('EdgesGroup', 50),
         MinMaxAttribute().init({
           min: 0,
           max: 1.0,

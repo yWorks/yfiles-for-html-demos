@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.2.
-     // Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML 2.3.
+     // Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -564,16 +564,22 @@
 		</edge>
 		<edge id="e1" source="n5::n0" target="n1" sourceport="p4" targetport="p0">
 			<data key="d10">
-				<yjs:ArcEdgeStyle height="40" targetArrow="DEFAULT">
-					<yjs:ArcEdgeStyle.stroke>
+				<yjs:BezierEdgeStyle targetArrow="DEFAULT">
+					<yjs:BezierEdgeStyle.stroke>
 						<yjs:Stroke fill="#FF000000">
 							<yjs:Stroke.dashStyle>
 								<yjs:DashStyle dashes="3 2" offset="0"/>
 							</yjs:Stroke.dashStyle>
 						</yjs:Stroke>
-					</yjs:ArcEdgeStyle.stroke>
-				</yjs:ArcEdgeStyle>
+					</yjs:BezierEdgeStyle.stroke>
+				</yjs:BezierEdgeStyle>
 			</data>
+      <data key="d9">
+        <x:List>
+          <y:Bend Location="118.68559576361503,-220" />
+          <y:Bend Location="343.2725162766057‬,-230" />
+        </x:List>
+      </data>
 		</edge>
 		<edge id="e2" source="n1" target="n2" sourceport="p1" targetport="p0">
 			<data key="d8">
@@ -618,5 +624,18 @@
 				</yjs:PolylineEdgeStyle>
 			</data>
 		</edge>
+    <edge id="e3" source="n6" target="n7">
+      <data key="d10">
+        <yjs:ArcEdgeStyle height="100" targetArrow="DEFAULT">
+          <yjs:ArcEdgeStyle.stroke>
+            <yjs:Stroke fill="#FF000000">
+              <yjs:Stroke.dashStyle>
+                <yjs:DashStyle dashes="3 2" offset="0"/>
+              </yjs:Stroke.dashStyle>
+            </yjs:Stroke>
+          </yjs:ArcEdgeStyle.stroke>
+        </yjs:ArcEdgeStyle>
+      </data>
+    </edge>
 	</graph>
 </graphml>

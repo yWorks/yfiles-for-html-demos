@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -29,7 +29,7 @@
 import { Component, Input, ChangeDetectorRef } from '@angular/core'
 import { Person } from './person'
 
-function findBreak(text: string) {
+function findBreak(text: string): number {
   let result = Math.max(Math.floor(text.length / 2), 20)
   while (result < text.length && text[result] !== ' ' && result > 0) {
     result -= 1
@@ -72,7 +72,7 @@ function findBreak(text: string) {
         >
           {{ nameAbbreviation }}
         </text>
-        <ng-template [ngIf]="zoom > zoomIntermediate">
+        <ng-container *ngIf="zoom > zoomIntermediate">
           <text
             [attr.transform]="'translate(' + (zoom > zoomDetail ? '100 45' : '75 70') + ')'"
             style="text-transform: uppercase; font-weight: 400"
@@ -85,12 +85,12 @@ function findBreak(text: string) {
           >
             {{ positionSecondLine }}
           </text>
-        </ng-template>
-        <ng-template [ngIf]="zoom > zoomDetail">
+        </ng-container>
+        <ng-container *ngIf="zoom > zoomDetail">
           <text transform="translate(100 75)">{{ item.email }}</text>
           <text transform="translate(100 92)">{{ item.phone }}</text>
           <text transform="translate(170 92)">{{ item.fax }}</text>
-        </ng-template>
+        </ng-container>
       </g>
     </svg:g>
   `

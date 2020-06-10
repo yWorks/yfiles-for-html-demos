@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -33,7 +33,6 @@ import {
   EdgePathLabelModel,
   EdgeSides,
   Enum,
-  GraphBuilder,
   GraphComponent,
   GraphEditorInputMode,
   GraphItemTypes,
@@ -46,12 +45,16 @@ import {
   IGraph,
   Insets,
   KMeansClustering,
-  KMeansClusteringDistanceMetric,
+  DistanceMetric,
+  LabelPropagationClustering,
   License,
   LinkageMethod,
+  LouvainModularityClustering,
   NodeStyleDecorationInstaller,
   PolylineEdgeStyle,
-  ShapeNodeStyle
+  ShapeNodeStyle,
+  GraphBuilder,
+  Rect
 } from 'yfiles'
 
 import * as ClusteringData from './resources/ClusteringData.js'
@@ -103,6 +106,11 @@ let result = null
  */
 let busy = false
 
+/**
+ * The algorithm selected by the user
+ */
+let selectedAlgorithm
+
 function run(licenseData) {
   License.value = licenseData
   graphComponent = new GraphComponent('graphComponent')
@@ -137,6 +145,11 @@ function initializeGraph() {
     stroke: null
   })
 
+  // sets the default edge style as 'undirected'
+  graph.edgeDefaults.style = new PolylineEdgeStyle({
+    targetArrow: IArrow.NONE
+  })
+
   // sets the edge style of the algorithms that support edge direction
   directedEdgeStyle = new PolylineEdgeStyle({
     targetArrow: IArrow.DEFAULT
@@ -169,7 +182,7 @@ function initializeGraph() {
       fill: 'rgb(51, 102, 153)',
       stroke: null
     }),
-    zoomPolicy: 'MIXED',
+    zoomPolicy: 'mixed',
     margins: 3
   })
   graph.decorator.nodeDecorator.highlightDecorator.setImplementation(nodeHighlight)
@@ -187,13 +200,14 @@ function createInputMode() {
   // when an edge is created, run the algorithm if this is EDGE_BETWEENNESS or BICONNECTED_COMPONENTS, since the
   // other are independent of the edges of the graph
   mode.createEdgeInputMode.addEdgeCreatedListener((source, edgeEventArgs) => {
-    const selectedIndex = document.getElementById('algorithmsComboBox').selectedIndex
     if (
-      selectedIndex === ClusteringAlgorithm.EDGE_BETWEENNESS ||
-      selectedIndex === ClusteringAlgorithm.BICONNECTED_COMPONENTS
+      selectedAlgorithm === ClusteringAlgorithm.EDGE_BETWEENNESS ||
+      selectedAlgorithm === ClusteringAlgorithm.BICONNECTED_COMPONENTS ||
+      selectedAlgorithm === ClusteringAlgorithm.LOUVAIN_MODULARITY ||
+      selectedAlgorithm === ClusteringAlgorithm.LABEL_PROPAGATION
     ) {
       if (
-        selectedIndex === ClusteringAlgorithm.EDGE_BETWEENNESS &&
+        selectedAlgorithm === ClusteringAlgorithm.EDGE_BETWEENNESS &&
         document.getElementById('directed').checked
       ) {
         graphComponent.graph.setStyle(edgeEventArgs.item, directedEdgeStyle)
@@ -212,10 +226,9 @@ function createInputMode() {
 
   // when a node is dragged, run the algorithm if this is HIERARCHICAL clustering or kMEANS
   mode.moveInputMode.addDragFinishedListener(() => {
-    const selectedIndex = document.getElementById('algorithmsComboBox').selectedIndex
     if (
-      selectedIndex === ClusteringAlgorithm.HIERARCHICAL ||
-      selectedIndex === ClusteringAlgorithm.kMEANS
+      selectedAlgorithm === ClusteringAlgorithm.HIERARCHICAL ||
+      selectedAlgorithm === ClusteringAlgorithm.kMEANS
     ) {
       runAlgorithm()
     }
@@ -226,10 +239,7 @@ function createInputMode() {
   mode.itemHoverInputMode.discardInvalidItems = false
   mode.itemHoverInputMode.addHoveredItemChangedListener((sender, event) => {
     // if a node is hovered and the algorithm is HIERARCHICAL clustering, hover the corresponding dendrogram node
-    if (
-      document.getElementById('algorithmsComboBox').selectedIndex ===
-      ClusteringAlgorithm.HIERARCHICAL
-    ) {
+    if (selectedAlgorithm === ClusteringAlgorithm.HIERARCHICAL) {
       const node = event.item
       graphComponent.highlightIndicatorManager.clearHighlights()
       if (node && result) {
@@ -282,7 +292,6 @@ function runAlgorithm() {
     graphComponent.updateContentRect(new Insets(10))
     removeClusterVisuals()
 
-    const selectedAlgorithm = document.getElementById('algorithmsComboBox').selectedIndex
     if (graphComponent.graph.nodes.size > 0) {
       switch (selectedAlgorithm) {
         default:
@@ -297,6 +306,12 @@ function runAlgorithm() {
           break
         case ClusteringAlgorithm.BICONNECTED_COMPONENTS:
           runBiconnectedComponentsClustering()
+          break
+        case ClusteringAlgorithm.LOUVAIN_MODULARITY:
+          runLouvainModularityClustering()
+          break
+        case ClusteringAlgorithm.LABEL_PROPAGATION:
+          runLabelPropagationClustering()
           break
       }
     } else {
@@ -357,13 +372,13 @@ function runKMeansClustering() {
   switch (document.getElementById('distanceMetricComboBox').selectedIndex) {
     default:
     case 0:
-      distanceMetric = KMeansClusteringDistanceMetric.EUCLIDEAN
+      distanceMetric = DistanceMetric.EUCLIDEAN
       break
     case 1:
-      distanceMetric = KMeansClusteringDistanceMetric.MANHATTAN
+      distanceMetric = DistanceMetric.MANHATTAN
       break
     case 2:
-      distanceMetric = KMeansClusteringDistanceMetric.CHEBYCHEV
+      distanceMetric = DistanceMetric.CHEBYCHEV
       break
   }
 
@@ -380,7 +395,7 @@ function runKMeansClustering() {
 
 /**
  * Run the hierarchical clustering algorithm.
- * @param {number} cutoff The given cut-off value to run the algorithm
+ * @param {number?} cutoff The given cut-off value to run the algorithm
  */
 function runHierarchicalClustering(cutoff) {
   updateInformationPanel('hierarchical')
@@ -427,16 +442,43 @@ function runBiconnectedComponentsClustering() {
 }
 
 /**
+ * Run the Louvain modularity clustering algorithm.
+ */
+function runLouvainModularityClustering() {
+  updateInformationPanel('louvain-modularity')
+  // run the algorithm
+  result = new LouvainModularityClustering().run(graphComponent.graph)
+  // visualize the result
+  visualizeClusteringResult()
+}
+
+/**
+ * Run the label propagation clustering algorithm.
+ */
+function runLabelPropagationClustering() {
+  updateInformationPanel('label-propagation')
+  // run the algorithm
+  result = new LabelPropagationClustering().run(graphComponent.graph)
+  // visualize the result
+  visualizeClusteringResult()
+}
+
+/**
  * Visualizes the result of the clustering algorithm by adding the appropriate visuals.
  */
 function visualizeClusteringResult() {
   const graph = graphComponent.graph
-  const selectedIndex = document.getElementById('algorithmsComboBox').selectedIndex
 
   // creates a map the holds for each cluster id, the list of nodes that belong to the particular cluster
   const clustering = new Map()
   graph.nodes.forEach(node => {
-    const clusterId = result.nodeClusterIds.get(node)
+    let clusterId = result.nodeClusterIds.get(node)
+    // biconnected components returns -1 as cluster id when only one node is present.
+    // We change the clusterId manually here, as otherwise we'll get an exception in
+    // DemoVisuals.PolygonVisual#createVisual
+    if (clusterId === -1 && selectedAlgorithm === ClusteringAlgorithm.BICONNECTED_COMPONENTS) {
+      clusterId = 0
+    }
     let clusterNodesCoordinates = clustering.get(clusterId)
     if (!clusterNodesCoordinates) {
       clusterNodesCoordinates = []
@@ -448,7 +490,7 @@ function visualizeClusteringResult() {
   if (!clusterVisualObject) {
     let clusterVisual
 
-    switch (selectedIndex) {
+    switch (selectedAlgorithm) {
       default:
       case ClusteringAlgorithm.EDGE_BETWEENNESS:
       case ClusteringAlgorithm.BICONNECTED_COMPONENTS: {
@@ -482,7 +524,7 @@ function visualizeClusteringResult() {
       number: clustering.size,
       clustering,
       centroids: result.centroids,
-      drawCenters: selectedIndex === ClusteringAlgorithm.kMEANS
+      drawCenters: selectedAlgorithm === ClusteringAlgorithm.kMEANS
     }
   }
 
@@ -495,15 +537,15 @@ function visualizeClusteringResult() {
  */
 function onAlgorithmChanged() {
   const algorithmsComboBox = document.getElementById('algorithmsComboBox')
-  const selectedIndex = algorithmsComboBox.selectedIndex
+  selectedAlgorithm = algorithmsComboBox.selectedIndex
 
   // determine the file name that will be used for loading the graph
-  const key = algorithmsComboBox[selectedIndex].value
+  const key = algorithmsComboBox[selectedAlgorithm].value
   const fileName = key.replace(' ', '').replace('-', '')
 
   // Adjusts the window appearance. This method is needed since when the selected clustering algorithm is
   // HIERARCHICAL, the window has to be split to visualize the dendrogram.
-  const showDendrogram = selectedIndex === ClusteringAlgorithm.HIERARCHICAL
+  const showDendrogram = selectedAlgorithm === ClusteringAlgorithm.HIERARCHICAL
   graphComponent.div.style.height = showDendrogram ? '44%' : 'calc(100% - 100px)'
   dendrogramComponent.toggleVisibility(showDendrogram)
   graphComponent.fitGraphBounds(new Insets(10))
@@ -518,38 +560,49 @@ function onAlgorithmChanged() {
  * @param {Object} sampleData The data samples
  */
 function loadGraph(sampleData) {
-  let graph = graphComponent.graph
+  const graph = graphComponent.graph
   graph.clear()
   // remove all previous visuals
   removeClusterVisuals()
 
   // initialize a graph builder to parse the graph from the JSON file
   const builder = new GraphBuilder({
-    graph,
-    nodesSource: sampleData.nodes,
-    edgesSource: sampleData.edges,
-    nodeIdBinding: 'id',
-    sourceNodeBinding: 'source',
-    targetNodeBinding: 'target',
-    locationXBinding: 'x',
-    locationYBinding: 'y'
+    graph: graph,
+    nodes: [
+      {
+        data: sampleData.nodes,
+        id: 'id',
+        layout: data => new Rect(data.x, data.y, data.w, data.h),
+        labels: ['label']
+      }
+    ],
+    edges: [
+      {
+        data: sampleData.edges,
+        sourceId: 'source',
+        targetId: 'target',
+        style: () => {
+          if (
+            selectedAlgorithm === ClusteringAlgorithm.EDGE_BETWEENNESS &&
+            document.getElementById('directed').checked
+          ) {
+            return directedEdgeStyle
+          }
+        },
+        labels: () => {
+          if (
+            selectedAlgorithm === ClusteringAlgorithm.EDGE_BETWEENNESS &&
+            document.getElementById('edgeCosts').checked
+          ) {
+            return Math.floor(Math.random() * 200 + 1)
+          }
+        }
+      }
+    ]
   })
-  graph = builder.buildGraph()
 
-  if (
-    document.getElementById('algorithmsComboBox').selectedIndex ===
-    ClusteringAlgorithm.EDGE_BETWEENNESS
-  ) {
-    graph.edges.forEach(edge => {
-      if (document.getElementById('directed').checked) {
-        graph.setStyle(edge, directedEdgeStyle)
-      }
-      if (document.getElementById('edgeCosts').checked) {
-        const edgeCost = Math.floor(Math.random() * 200 + 1)
-        graph.addLabel(edge, `${edgeCost}`)
-      }
-    })
-  }
+  builder.buildGraph()
+
   graphComponent.fitGraphBounds(new Insets(10))
 }
 
@@ -733,6 +786,8 @@ function updateInformationPanel(panelId) {
   document.getElementById('k-means').style.display = 'none'
   document.getElementById('hierarchical').style.display = 'none'
   document.getElementById('biconnected-components').style.display = 'none'
+  document.getElementById('louvain-modularity').style.display = 'none'
+  document.getElementById('label-propagation').style.display = 'none'
   document.getElementById(panelId).style.display = 'inline-block'
 }
 
@@ -740,7 +795,9 @@ const ClusteringAlgorithm = Enum('ClusteringAlgorithm', {
   EDGE_BETWEENNESS: 0,
   kMEANS: 1,
   HIERARCHICAL: 2,
-  BICONNECTED_COMPONENTS: 3
+  BICONNECTED_COMPONENTS: 3,
+  LOUVAIN_MODULARITY: 4,
+  LABEL_PROPAGATION: 5
 })
 
 // Run the demo

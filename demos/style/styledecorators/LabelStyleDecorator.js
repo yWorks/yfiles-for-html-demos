@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -73,7 +73,7 @@ export default class LabelStyleDecorator extends LabelStyleBase {
     group.add(baseVisual)
 
     // create the decoration
-    group.add(LabelStyleDecorator.createDecoration(label.layout))
+    group.add(LabelStyleDecorator.createDecoration(context, label.layout))
 
     return group
   }
@@ -103,17 +103,18 @@ export default class LabelStyleDecorator extends LabelStyleBase {
     }
 
     // update the decoration visual
-    LabelStyleDecorator.updateDecoration(label.layout, oldVisual.children.get(1))
+    LabelStyleDecorator.updateDecoration(context, label.layout, oldVisual.children.get(1))
 
     return oldVisual
   }
 
   /**
    * Creates the visualization of the decoration.
+   * @param {IRenderContext} context The render context.
    * @param {IOrientedRectangle} layout The label layout.
    * @return {SvgVisual} The visual that provides the decoration.
    */
-  static createDecoration(layout) {
+  static createDecoration(context, layout) {
     const padding = 3
     const line1 = window.document.createElementNS('http://www.w3.org/2000/svg', 'line')
     line1.x1.baseVal.value = -padding
@@ -136,7 +137,7 @@ export default class LabelStyleDecorator extends LabelStyleBase {
     group.appendChild(line2)
 
     // move the group to correct location
-    const transform = LabelStyleBase.createLayoutTransform(layout, true)
+    const transform = LabelStyleBase.createLayoutTransform(context, layout, true)
     transform.applyTo(group)
 
     return new SvgVisual(group)
@@ -144,10 +145,11 @@ export default class LabelStyleDecorator extends LabelStyleBase {
 
   /**
    * Updates the visualization of the decoration.
+   * @param {IRenderContext} context The render context.
    * @param {IOrientedRectangle} layout The label layout.
    * @param {SvgVisualGroup} visualGroup The visual that that provides the decoration.
    */
-  static updateDecoration(layout, visualGroup) {
+  static updateDecoration(context, layout, visualGroup) {
     const group = visualGroup.svgElement
 
     const padding = 3
@@ -159,7 +161,7 @@ export default class LabelStyleDecorator extends LabelStyleBase {
     line2.y2.baseVal.value = layout.height + padding
 
     // move the group to correct location
-    const transform = LabelStyleBase.createLayoutTransform(layout, true)
+    const transform = LabelStyleBase.createLayoutTransform(context, layout, true)
     transform.applyTo(group)
   }
 
@@ -191,7 +193,8 @@ export default class LabelStyleDecorator extends LabelStyleBase {
    * @param {ICanvasContext} context The canvas context.
    * @param {Rect} rectangle The clipping rectangle.
    * @param {ILabel} label The label to which this style instance is assigned.
-   * @return {boolean} <code>true</code> if either the base visualization or the decoration is visible.
+   * @return {boolean} <code>true</code> if either the base visualization or the decoration is
+   *   visible.
    * @see LabelStyleBase#isVisible
    */
   isVisible(context, rectangle, label) {
@@ -215,7 +218,8 @@ export default class LabelStyleDecorator extends LabelStyleBase {
   }
 
   /**
-   * Returns whether the base visualization is in the box, we don't want the decoration to be marquee selectable.
+   * Returns whether the base visualization is in the box, we don't want the decoration to be
+   * marquee selectable.
    * @param {IInputModeContext} context The input mode context.
    * @param {Rect} rectangle The marquee selection box.
    * @param {ILabel} label The label to which this style instance is assigned.

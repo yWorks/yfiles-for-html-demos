@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -263,7 +263,10 @@ const TableBackgroundStyle = Class('TableBackgroundStyle', {
       const rectangleCache = rec.cache
       if (
         !rectangleCache ||
-        (rec.cache.x !== x || rec.cache.y !== y || rec.cache.w !== w || rec.cache.h !== h)
+        rec.cache.x !== x ||
+        rec.cache.y !== y ||
+        rec.cache.w !== w ||
+        rec.cache.h !== h
       ) {
         rec.x.baseVal.value = x
         rec.y.baseVal.value = y
@@ -597,7 +600,10 @@ export const DemoStripeStyle = Class('DemoStripeStyle', {
       }
       if (
         !rectangleCache ||
-        (rec.cache.x !== x || rec.cache.y !== y || rec.cache.w !== w || rec.cache.h !== h)
+        rec.cache.x !== x ||
+        rec.cache.y !== y ||
+        rec.cache.w !== w ||
+        rec.cache.h !== h
       ) {
         rec.x.baseVal.value = x
         rec.y.baseVal.value = y

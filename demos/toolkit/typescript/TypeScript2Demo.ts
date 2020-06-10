@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -56,7 +56,7 @@ License.value = licenseData
 // enable browser-bug workarounds
 enableWorkarounds()
 
-function run() {
+function run(): void {
   document.getElementById('graphOverviewComponent')!.style.display = 'block'
   const demo = new TypeScript2Demo()
   demo.initializeGraph()
@@ -99,7 +99,7 @@ export class TypeScript2Demo {
     let n: INode | null = null
     for (let i = 0; i < 5; i++) {
       for (let j = 0; j < 5; j++) {
-        let p = this.graph.createNodeAt(new Point(100 * j, 100 * i))
+        const p = this.graph.createNodeAt(new Point(100 * j, 100 * i))
         if (n) {
           this.graph.createEdge(n, p)
         }
@@ -127,8 +127,9 @@ function bindCommand(
   selector: string,
   command: ICommand,
   target: CanvasComponent,
-  parameter: Object | null
-) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  parameter: any
+): void {
   const element = document.querySelector(selector)!
   command.addCanExecuteChangedListener((sender, e) => {
     if (command.canExecute(parameter, target)) {

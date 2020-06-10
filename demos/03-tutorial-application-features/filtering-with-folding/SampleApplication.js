@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -37,13 +37,17 @@ import {
   GraphEditorInputMode,
   GraphItemTypes,
   ICommand,
+  IEdge,
+  IFoldingView,
   IGraph,
+  INode,
   InteriorStretchLabelModel,
   License,
   PanelNodeStyle,
   Point,
   ShapeNodeStyle,
-  Size
+  Size,
+  UndoUnitBase
 } from 'yfiles'
 
 import { bindAction, bindCommand, showApp } from '../../resources/demo-app.js'
@@ -54,6 +58,7 @@ let graphComponent = null
 
 /**
  * Bootstraps the demo.
+ * @param {object} licenseData
  */
 function run(licenseData) {
   License.value = licenseData
@@ -72,6 +77,10 @@ function run(licenseData) {
 
   const fullGraph = foldingView.manager.masterGraph.wrappedGraph
 
+  // make sure state tags are on all created items
+  fullGraph.addNodeCreatedListener((sender, evt) => (evt.item.tag = { filtered: false }))
+  fullGraph.addEdgeCreatedListener((sender, evt) => (evt.item.tag = { filtered: false }))
+
   // create an initial sample graph
   createInitialGraph(fullGraph)
 
@@ -79,6 +88,10 @@ function run(licenseData) {
 
   // enable undo after the initial graph was populated since we don't want to allow undoing that
   fullGraph.undoEngineEnabled = true
+
+  // update the reset filter button depending on the current graph state
+  fullGraph.undoEngine.addUnitUndoneListener(updateResetButtonState)
+  fullGraph.undoEngine.addUnitRedoneListener(updateResetButtonState)
 
   // bind the buttons to their commands
   registerCommands()
@@ -93,7 +106,7 @@ function run(licenseData) {
  * use {@link FilteredGraphWrapper} to create a filtered view of the graph and after that, use
  * {@link FoldingManager} to create a folding view of the filtered graph.
  *
- * @return {IFoldingView} The folding view that manages the folded graph.
+ * @returns {IFoldingView} The folding view that manages the folded graph.
  */
 function enableFilteringAndFolding() {
   // the unfiltered, unfolded master graph
@@ -108,8 +121,8 @@ function enableFilteringAndFolding() {
   )
 
   // we want to hide items whose tag contains the string 'filtered'
-  const nodePredicate = node => !node.tag || node.tag !== 'filtered'
-  const edgePredicate = edge => !edge.tag || edge.tag !== 'filtered'
+  const nodePredicate = node => !node.tag || !node.tag.filtered
+  const edgePredicate = edge => !edge.tag || !edge.tag.filtered
 
   // create a filtered graph
   const filteredGraph = new FilteredGraphWrapper(fullGraph, nodePredicate, edgePredicate)
@@ -119,6 +132,18 @@ function enableFilteringAndFolding() {
 
   // create a folding view that manages the folded graph
   return manager.createFoldingView()
+}
+
+/**
+ * Changes the filtered state of the tag of an edge or node while also adding an undo unit for it.
+ * @param {(INode|IEdge)} item
+ * @param {boolean} state
+ */
+function filterItemWithUndoUnit(item, state) {
+  const filteredGraph = graphComponent.graph.foldingView.manager.masterGraph
+  const fullGraph = filteredGraph.wrappedGraph
+  fullGraph.undoEngine.addUnit(new ChangeFilterStateUndoUnit(filteredGraph, item.tag))
+  item.tag.filtered = state
 }
 
 /**
@@ -135,7 +160,7 @@ function initializeTutorialDefaults(graph) {
   graph.nodeDefaults.size = new Size(40, 40)
   graph.nodeDefaults.labels.style = new DefaultLabelStyle({
     verticalTextAlignment: 'center',
-    wrapping: 'word_ellipsis'
+    wrapping: 'word-ellipsis'
   })
   graph.nodeDefaults.labels.layoutParameter = ExteriorLabelModel.SOUTH
 
@@ -163,10 +188,7 @@ function createInitialGraph(graph) {
   const node4 = graph.createNodeAt([30, 175])
   const node5 = graph.createNodeAt([100, 175])
 
-  graph.groupNodes({
-    children: [node1, node2, node3],
-    labels: 'Group 1'
-  })
+  graph.groupNodes({ children: [node1, node2, node3], labels: ['Group 1'] })
 
   const edge1 = graph.createEdge(node1, node2)
   const edge2 = graph.createEdge(node1, node3)
@@ -213,10 +235,10 @@ function registerCommands() {
   bindAction("button[data-command='FilterItems']", () => {
     // mark the selected items such that the nodePredicate or edgePredicate will filter them
     graphComponent.selection.selectedNodes.forEach(node => {
-      node.tag = 'filtered'
+      filterItemWithUndoUnit(node, true)
     })
     graphComponent.selection.selectedEdges.forEach(edge => {
-      edge.tag = 'filtered'
+      filterItemWithUndoUnit(edge, true)
     })
 
     // re-evaluate the filter predicates to actually hide the items
@@ -233,10 +255,10 @@ function registerCommands() {
     const filteredGraph = graphComponent.graph.foldingView.manager.masterGraph
     const fullGraph = filteredGraph.wrappedGraph
     fullGraph.nodes.forEach(node => {
-      node.tag = null
+      filterItemWithUndoUnit(node, false)
     })
     fullGraph.edges.forEach(edge => {
-      edge.tag = null
+      filterItemWithUndoUnit(edge, false)
     })
 
     // re-evaluate the filter predicates to actually show the items again
@@ -252,6 +274,53 @@ function registerCommands() {
     document.querySelector("button[data-command='FilterItems']").disabled =
       graphComponent.selection.size === 0
   })
+}
+
+/**
+ * Updates the 'Reset Filter' button state based on the current graph state.
+ */
+function updateResetButtonState() {
+  const filteredGraph = graphComponent.graph.foldingView.manager.masterGraph
+  const fullGraph = filteredGraph.wrappedGraph
+  const hasFilteredItems =
+    fullGraph.nodes.some(node => node.tag && node.tag.filtered) ||
+    fullGraph.edges.some(edge => edge.tag && edge.tag.filtered)
+  // set the reset button
+  document.querySelector("button[data-command='ResetFilter']").disabled = !hasFilteredItems
+}
+
+/**
+ * An undo unit to keep track of the filtered state changes on the graph items.
+ */
+class ChangeFilterStateUndoUnit extends UndoUnitBase {
+  /**
+   * @param {FilteredGraphWrapper} filteredGraph
+   * @param {object} tag
+   */
+  constructor(filteredGraph, tag) {
+    super('ChangeFilterState')
+    this.filteredGraph = filteredGraph
+    // remember the changed object
+    this.tag = tag
+    // remember the old value
+    this.oldState = this.tag.filtered
+  }
+
+  undo() {
+    // remember the new value for redo
+    this.newState = this.tag.filtered
+    // set the old value
+    this.tag.filtered = this.oldState
+    this.filteredGraph.nodePredicateChanged()
+    this.filteredGraph.edgePredicateChanged()
+  }
+
+  redo() {
+    // set the new value
+    this.tag.filtered = this.newState
+    this.filteredGraph.nodePredicateChanged()
+    this.filteredGraph.edgePredicateChanged()
+  }
 }
 
 // start tutorial

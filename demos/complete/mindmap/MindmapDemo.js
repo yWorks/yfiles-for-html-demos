@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -30,8 +30,7 @@ import {
   ArcEdgeStyle,
   Arrow,
   ArrowType,
-  Color,
-  Component,
+  Class,
   DefaultLabelStyle,
   DefaultPortCandidate,
   EdgeStyleDecorationInstaller,
@@ -671,6 +670,14 @@ function createGraphMLIOHandler() {
       args.handled = true
     }
   })
+
+  // initialize $class on the markup extensions
+  Class.fixType(StateLabelDecoratorExtension)
+  Class.fixType(CollapseDecoratorExtension)
+  Class.fixType(MindmapNodeStyleExtension)
+  Class.fixType(MindmapNodeStyleRootExtension)
+  Class.fixType(MindmapEdgeStyleExtension)
+
   // we add the XamlNamespaceMapping mappings
   ioh.addXamlNamespaceMapping(
     'http://www.yworks.com/yFilesHTML/demos/StateLabelDecorator/1.0',
@@ -734,7 +741,7 @@ async function readGraph(fileName) {
     // when done - fit the bounds and clear the undo engine
     onGraphChanged()
   } catch (error) {
-    alert(`Unable to open the graph. Perhaps your browser does not allow handling cross domain HTTP requests. 
+    alert(`Unable to open the graph. Perhaps your browser does not allow handling cross domain HTTP requests.
       Please see the demo readme for details: ${error}`)
     loadFallbackGraph()
   }

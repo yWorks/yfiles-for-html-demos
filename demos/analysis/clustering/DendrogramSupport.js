@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -61,6 +61,7 @@ import {
   Mapper,
   Maps,
   MoveInputMode,
+  NodeDpKey,
   MutablePoint,
   MutableRectangle,
   NodeStyleDecorationInstaller,
@@ -331,7 +332,7 @@ export class DendrogramComponent {
     const colors = generateColors(Color.DARK_BLUE, Color.CORNFLOWER_BLUE, result.clusters.size + 1)
 
     this.visited = new Set()
-    result.clusters.forEach((cluster, index) => {
+    result.clusters.forEach(cluster => {
       cluster.nodes.forEach(node => {
         // get the color of the cluster in the original graph
         const color = colors[result.nodeClusterIds.get(node)]
@@ -436,6 +437,7 @@ export class DendrogramComponent {
 
   /**
    * Clears the hierarchical clustered graph and removes the visuals.
+   * @param {number?} cutoff the cut-off value
    */
   clearDendrogram(cutoff) {
     const hierarchicalGraph = this.dendrogramComponent.graph
@@ -530,8 +532,6 @@ export class DendrogramComponent {
     this.cutOffCanvasObject = null
     this.dendrogramMaxY = 0
     this.visited = new Set()
-    this.defaultNodeStyle = null
-    this.defaultEdgeStyle = null
   }
 }
 
@@ -584,7 +584,6 @@ class DendrogramLayout extends BaseClass(ILayoutAlgorithm) {
     const hierarchicLayout = new HierarchicLayout()
     hierarchicLayout.orthogonalRouting = true
     hierarchicLayout.minimumLayerDistance = 0
-    hierarchicLayout.minimumNodeDistance = 4
     hierarchicLayout.edgeToEdgeDistance = 0
 
     // use the GivenLayersLayerer, so that the layer of the nodes are consistent to their layers determined by the
@@ -746,7 +745,6 @@ export class CutOffPositionHandler extends BaseClass(IPositionHandler) {
    * @param {Point} originalLocation The value of the location property at the time of
    *   initializeDrag
    * @param {Point} newLocation The new location in the world coordinate system
-   * @return {boolean}
    */
   handleMove(context, originalLocation, newLocation) {
     const newY = this.getY(newLocation.y + this.offset.y)

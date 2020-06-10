@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -134,7 +134,8 @@ function initializeGraph() {
 
 /**
  * Called when a node is pasted.
- * Either yields a previously cached copy for the given original or uses the copyDelegate to create the copy of the original.
+ * Either yields a previously cached copy for the given original or uses the copyDelegate to create
+ * the copy of the original.
  * @param {Object} original The original item
  * @return {Object} A copy of the original, either cached, or newly created and then cached
  */
@@ -148,7 +149,8 @@ function nodeCopiedOnPaste(original) {
 
 /**
  * Called when a node is copied.
- * Either yields a previously cached copy for the given original or uses the copyDelegate to create the copy of the original.
+ * Either yields a previously cached copy for the given original or uses the copyDelegate to create
+ * the copy of the original.
  * @param {Object} original The original item
  * @return {Object} A copy of the original, either cached, or newly created and then cached
  */
@@ -208,6 +210,23 @@ function createEditorMode() {
  * Wires up the UI.
  */
 function registerCommands() {
+  function enablePasteSpecialButton() {
+    document.querySelector("button[data-command='PasteSpecial']").disabled = false
+    document.querySelector("button[data-command='PasteSpecial2']").disabled = false
+  }
+
+  function registerEditNameEnabledListeners(inputMode, buttonCommand) {
+    inputMode.addMultiSelectionFinishedListener((sender, evt) => {
+      const button = document.querySelector(`button[data-command='${buttonCommand}']`)
+      button.disabled = evt.selection.size === 0
+    })
+
+    inputMode.addDeletedSelectionListener((sender, evt) => {
+      const button = document.querySelector(`button[data-command='${buttonCommand}']`)
+      button.disabled = true
+    })
+  }
+
   // Left GraphComponent
   bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent)
   bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent)
@@ -225,6 +244,10 @@ function registerCommands() {
   bindAction("button[data-command='PasteSpecial']", () => onPasteSpecialCommand(graphComponent))
   bindAction("button[data-command='EditName']", () => onEditNameCommand(graphComponent, 'left'))
 
+  graphComponent.clipboard.addElementsCopiedListener(enablePasteSpecialButton)
+  graphComponent.clipboard.addElementsCutListener(enablePasteSpecialButton)
+  registerEditNameEnabledListeners(graphComponent.inputMode, 'EditName')
+
   // Right GraphComponent
   bindCommand("button[data-command='ZoomIn2']", ICommand.INCREASE_ZOOM, graphComponent2)
   bindCommand("button[data-command='ZoomOut2']", ICommand.DECREASE_ZOOM, graphComponent2)
@@ -241,6 +264,10 @@ function registerCommands() {
 
   bindAction("button[data-command='PasteSpecial2']", () => onPasteSpecialCommand(graphComponent2))
   bindAction("button[data-command='EditName2']", () => onEditNameCommand(graphComponent2, 'right'))
+
+  graphComponent2.clipboard.addElementsCopiedListener(enablePasteSpecialButton)
+  graphComponent2.clipboard.addElementsCutListener(enablePasteSpecialButton)
+  registerEditNameEnabledListeners(graphComponent2.inputMode, 'EditName2')
 }
 
 /**

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -315,7 +315,8 @@ export class UMLNodeStyle extends NodeStyleBase {
     if (
       !data ||
       data.dataModCount !== model.modCount ||
-      (data.width !== layout.width || data.height !== layout.height) ||
+      data.width !== layout.width ||
+      data.height !== layout.height ||
       (data.hasSelection && ctx.canvasComponent.currentItem !== node) ||
       data.fill !== node.style.fill ||
       data.highlightFill !== node.style.highlightFill
@@ -926,52 +927,43 @@ export class UMLNodeStyle extends NodeStyleBase {
 /**
  * Markup extension needed to (de-)serialize the UML style.
  */
-export const UMLNodeStyleExtension = Class('UMLNodeStyleExtension', {
-  $extends: MarkupExtension,
+export class UMLNodeStyleExtension extends MarkupExtension {
+  get fill() {
+    return this.$fill
+  }
 
-  $fill: null,
-  fill: {
-    $meta() {
-      return [TypeAttribute(Fill.$class)]
-    },
-    get() {
-      return this.$fill
-    },
-    set(fill) {
-      this.$fill = fill
-    }
-  },
+  set fill(value) {
+    this.$fill = value
+  }
 
-  $highlightFill: null,
-  highlightFill: {
-    $meta() {
-      return [TypeAttribute(Fill.$class)]
-    },
-    get() {
-      return this.$highlightFill
-    },
-    set(fill) {
-      this.$highlightFill = fill
-    }
-  },
+  get highlightFill() {
+    return this.$highlightFill
+  }
 
-  $model: null,
-  model: {
-    $meta() {
-      return [TypeAttribute(YObject.$class)]
-    },
-    get() {
-      return this.$model
-    },
-    set(model) {
-      this.$model = model
+  set highlightFill(value) {
+    this.$highlightFill = value
+  }
+
+  get model() {
+    return this.$model
+  }
+
+  set model(value) {
+    this.$model = value
+  }
+
+  static get $meta() {
+    return {
+      fill: TypeAttribute(Fill.$class),
+      highlightFill: TypeAttribute(Fill.$class),
+      model: TypeAttribute(YObject.$class)
     }
-  },
+  }
 
   provideValue(serviceProvider) {
     return new UMLNodeStyle(this.model, this.fill, this.highlightFill)
   }
-})
+}
 
 /**
  * Listener that handles the serialization of the UML style.

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,14 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import {
-  ConnectedComponents,
-  CycleEdges,
-  FilteredGraphWrapper,
-  GraphComponent,
-  IGraph,
-  Mapper
-} from 'yfiles'
+import { ConnectedComponents, CycleEdges, GraphComponent, IGraph, Mapper } from 'yfiles'
 
 /**
  * A simple fraud detection that scans for cycles where persons share phone numbers and addresses.
@@ -78,15 +71,13 @@ export default class FraudDetection {
 
     resetTags(graph)
 
-    // hide bank branch nodes to avoid finding cycles other than fraud cycles
-    const filteredGraph = new FilteredGraphWrapper(
-      graph,
-      node => node.tag.type !== 'Bank Branch',
-      edge => true
-    )
-
     // run the algorithm on the filtered graph
-    const result = new CycleEdges({ directed: false }).run(filteredGraph)
+    const result = new CycleEdges({
+      directed: false,
+      // only consider "non bank branch" nodes to avoid finding cycles other than fraud cycles
+      subgraphNodes: node => node.tag.type !== 'Bank Branch'
+    }).run(graph)
+
     result.edges.forEach(edge => {
       const source = edge.sourceNode
       const target = edge.targetNode
@@ -110,8 +101,7 @@ export default class FraudDetection {
         }
       }
     })
-    // dispose the filtered graph
-    filteredGraph.dispose()
+
     return fraudsterNodes
   }
 

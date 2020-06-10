@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,6 +27,7 @@
  **
  ***************************************************************************/
 import {
+  EventRecognizers,
   ExteriorLabelModel,
   ExteriorLabelModelPosition,
   GeneralPath,
@@ -39,9 +40,11 @@ import {
   IHitTestable,
   ImageNodeStyle,
   Insets,
+  IReshapeHandler,
   License,
   MoveInputMode,
   MutableRectangle,
+  NodeReshapeHandleProvider,
   ObservableCollection,
   PolylineEdgeStyle,
   Rect,
@@ -103,7 +106,7 @@ function run(licenseData) {
   init()
 
   initializeInputModes()
-
+  keepAspectRatio()
   initializeGraph()
 
   // disable the client-side save button in IE9
@@ -295,6 +298,22 @@ function initializeInputModes() {
   )
 
   addExportRectInputModes(graphComponent.inputMode)
+}
+
+/**
+ * Since this demo uses image nodes, we make sure that they always keep their aspect ratio during
+ * resize.
+ */
+function keepAspectRatio() {
+  graphComponent.graph.decorator.nodeDecorator.reshapeHandleProviderDecorator.setFactory(node => {
+    const keepAspectRatio = new NodeReshapeHandleProvider(
+      node,
+      node.lookup(IReshapeHandler.$class),
+      HandlePositions.CORNERS
+    )
+    keepAspectRatio.ratioReshapeRecognizer = EventRecognizers.ALWAYS
+    return keepAspectRatio
+  })
 }
 
 /**

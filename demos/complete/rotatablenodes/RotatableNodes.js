@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -30,6 +30,7 @@ import {
   BaseClass,
   Class,
   Cursor,
+  GeneralPath,
   GraphMLAttribute,
   HandlePositions,
   HandleTypes,
@@ -83,8 +84,8 @@ import {
 
 /**
  * A node style that displays another wrapped style rotated by a specified rotation angle.
- * The angle is stored in this decorator to keep the tag free for user data. Hence, this decorator should not be
- * shared between nodes if they can have different angles.
+ * The angle is stored in this decorator to keep the tag free for user data. Hence, this decorator
+ * should not be shared between nodes if they can have different angles.
  */
 export class RotatableNodeStyleDecorator extends BaseClass(
   NodeStyleBase,
@@ -242,8 +243,8 @@ export class RotatableNodeStyleDecorator extends BaseClass(
   }
 
   /**
-   * Returns the intersection point of the node's rotated bounds and the segment between the inner and outer point or
-   * null if there is no intersection.
+   * Returns the intersection point of the node's rotated bounds and the segment between the inner
+   * and outer point or null if there is no intersection.
    * @param {INode} node
    * @param {Point} inner
    * @param {Point} outer
@@ -268,11 +269,15 @@ export class RotatableNodeStyleDecorator extends BaseClass(
    * @return {GeneralPath}
    */
   getOutline(node) {
-    const outline = this.wrapped.renderer
-      .getShapeGeometry(node, this.wrapped)
-      .getOutline()
-      .clone()
-    outline.transform(this.getInverseRotationMatrix(node))
+    let outline = this.wrapped.renderer.getShapeGeometry(node, this.wrapped).getOutline()
+    if (outline) {
+      outline = outline.clone()
+      outline.transform(this.getInverseRotationMatrix(node))
+    } else {
+      const layout = this.getRotatedLayout(node)
+      outline = new GeneralPath()
+      outline.appendOrientedRectangle(layout, false)
+    }
     return outline
   }
 
@@ -332,9 +337,9 @@ export class RotatableNodeStyleDecorator extends BaseClass(
   }
 
   /**
-   * Returns customized helpers that consider the node rotation for resizing and rotating gestures, highlight
-   * indicators, and clipboard operations.
-   * Other lookup calls will be delegated to the lookup of the wrapped node style.
+   * Returns customized helpers that consider the node rotation for resizing and rotating gestures,
+   * highlight indicators, and clipboard operations. Other lookup calls will be delegated to the
+   * lookup of the wrapped node style.
    * @param {INode} node
    * @param {Class} type
    * @return {object}
@@ -477,8 +482,10 @@ export class RotatableNodeStyleDecorator extends BaseClass(
 }
 
 /**
- * An extension of {OrientedRectangleIndicatorInstaller} that uses the rotated layout of nodes using a
- * {@link RotatableNodeStyleDecorator}. The indicator will be rotated to fit the rotated bounds of the node.
+ * An extension of {OrientedRectangleIndicatorInstaller} that uses the rotated layout of nodes
+ * using a
+ * {@link RotatableNodeStyleDecorator}. The indicator will be rotated to fit the rotated bounds of
+ * the node.
  */
 class RotatableNodeIndicatorInstaller extends OrientedRectangleIndicatorInstaller {
   /**
@@ -1035,9 +1042,9 @@ class NodeRotateHandleProvider extends BaseClass(IHandleProvider) {
 
   /**
    * Returns the snapping distance when rotation should snap (in degrees).
-   * The rotation will snap if the angle is less than this distance from a <see cref="SnapStep">snapping angle</see>.
-   * Default is 10.
-   * Setting this to a non-positive value will disable snapping to predefined steps.
+   * The rotation will snap if the angle is less than this distance from a <see
+   * cref="SnapStep">snapping angle</see>. Default is 10. Setting this to a non-positive value will
+   * disable snapping to predefined steps.
    * @return {number}
    */
   get snapDelta() {
@@ -1046,9 +1053,9 @@ class NodeRotateHandleProvider extends BaseClass(IHandleProvider) {
 
   /**
    * Specifies the snapping distance when rotation should snap (in degrees).
-   * The rotation will snap if the angle is less than this distance from a <see cref="SnapStep">snapping angle</see>.
-   * Default is 10.
-   * Setting this to a non-positive value will disable snapping to predefined steps.
+   * The rotation will snap if the angle is less than this distance from a <see
+   * cref="SnapStep">snapping angle</see>. Default is 10. Setting this to a non-positive value will
+   * disable snapping to predefined steps.
    * @param {number} value
    */
   set snapDelta(value) {
@@ -1056,9 +1063,10 @@ class NodeRotateHandleProvider extends BaseClass(IHandleProvider) {
   }
 
   /**
-   * Returns the snapping distance (in degrees) for snapping to the same angle as other visible nodes.
-   * Rotation will snap to another node's rotation angle if the current angle differs from the other one by less than
-   * this. The default is 5. Setting this to a non-positive value will disable same angle snapping.
+   * Returns the snapping distance (in degrees) for snapping to the same angle as other visible
+   * nodes. Rotation will snap to another node's rotation angle if the current angle differs from
+   * the other one by less than this. The default is 5. Setting this to a non-positive value will
+   * disable same angle snapping.
    * @return {number}
    */
   get snapToSameAngleDelta() {
@@ -1066,9 +1074,10 @@ class NodeRotateHandleProvider extends BaseClass(IHandleProvider) {
   }
 
   /**
-   * Specifies the snapping distance (in degrees) for snapping to the same angle as other visible nodes.
-   * Rotation will snap to another node's rotation angle if the current angle differs from the other one by less than
-   * this. The default is 5. Setting this to a non-positive value will disable same angle snapping.
+   * Specifies the snapping distance (in degrees) for snapping to the same angle as other visible
+   * nodes. Rotation will snap to another node's rotation angle if the current angle differs from
+   * the other one by less than this. The default is 5. Setting this to a non-positive value will
+   * disable same angle snapping.
    * @param {number} delta
    */
   set snapToSameAngleDelta(delta) {
@@ -1091,7 +1100,8 @@ class NodeRotateHandleProvider extends BaseClass(IHandleProvider) {
 }
 
 /**
- * A custom {@link IHandle} implementation that implements the functionality needed for rotating a label.
+ * A custom {@link IHandle} implementation that implements the functionality needed for rotating a
+ * label.
  */
 export class NodeRotateHandle extends BaseClass(IHandle, IPoint) {
   /**
@@ -1134,8 +1144,9 @@ export class NodeRotateHandle extends BaseClass(IHandle, IPoint) {
   }
 
   /**
-   * Returns the threshold value the specifies whether the angle should snap to the next multiple of {@link #snapStep}
-   * in degrees. Set a value less than or equal to zero to disable this feature.
+   * Returns the threshold value the specifies whether the angle should snap to the next multiple
+   * of {@link #snapStep} in degrees. Set a value less than or equal to zero to disable this
+   * feature.
    * @return {number}
    */
   get snapDelta() {
@@ -1143,7 +1154,8 @@ export class NodeRotateHandle extends BaseClass(IHandle, IPoint) {
   }
 
   /**
-   * Specifies the threshold value the specifies whether the angle should snap to the next multiple of
+   * Specifies the threshold value the specifies whether the angle should snap to the next multiple
+   * of
    * {@link #snapStep} in degrees. Set a value less than or equal to zero to disable this feature.
    * @param {number} delta
    */
@@ -1168,9 +1180,10 @@ export class NodeRotateHandle extends BaseClass(IHandle, IPoint) {
   }
 
   /**
-   * Returns the snapping distance (in degrees) for snapping to the same angle as other visible nodes.
-   * Rotation will snap to another node's rotation angle if the current angle differs from the other one by less than
-   * this. The default is 5. Setting this to a non-positive value will disable same angle snapping.
+   * Returns the snapping distance (in degrees) for snapping to the same angle as other visible
+   * nodes. Rotation will snap to another node's rotation angle if the current angle differs from
+   * the other one by less than this. The default is 5. Setting this to a non-positive value will
+   * disable same angle snapping.
    * @return {number}
    */
   get snapToSameAngleDelta() {
@@ -1178,9 +1191,10 @@ export class NodeRotateHandle extends BaseClass(IHandle, IPoint) {
   }
 
   /**
-   * Specifies the snapping distance (in degrees) for snapping to the same angle as other visible nodes.
-   * Rotation will snap to another node's rotation angle if the current angle differs from the other one by less than
-   * this. The default is 5. Setting this to a non-positive value will disable same angle snapping.
+   * Specifies the snapping distance (in degrees) for snapping to the same angle as other visible
+   * nodes. Rotation will snap to another node's rotation angle if the current angle differs from
+   * the other one by less than this. The default is 5. Setting this to a non-positive value will
+   * disable same angle snapping.
    * @param {number} delta
    */
   set snapToSameAngleDelta(delta) {
@@ -1302,8 +1316,8 @@ export class NodeRotateHandle extends BaseClass(IHandle, IPoint) {
 
   /**
    * Returns the 'snapped' vector for the given up vector.
-   * If the vector is almost horizontal or vertical, this method returns the exact horizontal or vertical up vector
-   * instead.
+   * If the vector is almost horizontal or vertical, this method returns the exact horizontal or
+   * vertical up vector instead.
    * @param {Point} upVector
    * @return {number}
    */
@@ -1597,7 +1611,8 @@ class RotatableNodeClipboardHelper extends BaseClass(IClipboardHelper) {
   }
 
   /**
-   * Copies the node style for the paste-operation because {@link RotatableNodeStyleDecorator} should not be shared.
+   * Copies the node style for the paste-operation because {@link RotatableNodeStyleDecorator}
+   * should not be shared.
    * @param {IGraphClipboardContext} context
    * @param {IModelItem} item
    * @param {object} userData
@@ -1620,8 +1635,9 @@ class RotatableNodeClipboardHelper extends BaseClass(IClipboardHelper) {
 
 /**
  * An oriented rectangle that specifies the location, size and rotation angle of a rotated node.
- * This class is used mainly for performance reasons. It provides cached values. In principle, it would be enough to
- * store just the rotation angle but then, we would have to recalculate all the properties of this class very often.
+ * This class is used mainly for performance reasons. It provides cached values. In principle, it
+ * would be enough to store just the rotation angle but then, we would have to recalculate all the
+ * properties of this class very often.
  */
 class CachingOrientedRectangle extends BaseClass(IOrientedRectangle) {
   /**
@@ -1750,7 +1766,8 @@ class CachingOrientedRectangle extends BaseClass(IOrientedRectangle) {
 }
 
 /**
- * A context that returns no SnapContext in its lookup and delegates its other methods to an inner context.
+ * A context that returns no SnapContext in its lookup and delegates its other methods to an inner
+ * context.
  */
 class DelegatingContext extends BaseClass(IInputModeContext) {
   /**
@@ -1805,9 +1822,10 @@ class DelegatingContext extends BaseClass(IInputModeContext) {
 }
 
 /**
- * This port handle is used only to trigger the updates of the orthogonal edge editing facility of yFiles.
- * In yFiles, all code related to updates of the orthogonal edge editing facility is internal. As a workaround,
- * we explicitly call internal port handles from our custom node handles.
+ * This port handle is used only to trigger the updates of the orthogonal edge editing facility of
+ * yFiles. In yFiles, all code related to updates of the orthogonal edge editing facility is
+ * internal. As a workaround, we explicitly call internal port handles from our custom node
+ * handles.
  */
 class DummyPortLocationModelParameterHandle extends PortLocationModelParameterHandle {
   /**
@@ -1834,37 +1852,49 @@ class DummyPortLocationModelParameterHandle extends PortLocationModelParameterHa
 /**
  * Markup extension that helps (de-)serializing a {@link RotatableNodeStyleDecorator).
  */
-export const RotatableNodeStyleDecoratorExtension = Class('RotatableNodeStyleDecoratorExtension', {
-  $extends: MarkupExtension,
+export class RotatableNodeStyleDecoratorExtension extends MarkupExtension {
+  constructor() {
+    super()
+    this.$angle = 0
+    this.$wrapped = null
+  }
 
-  $angle: 0,
   /**
-   * @type {number}
+   * @return {number}
    */
-  angle: {
-    $meta() {
-      return [GraphMLAttribute().init({ defaultValue: 0 }), TypeAttribute(YNumber.$class)]
-    },
-    get() {
-      return this.$angle
-    },
-    set(value) {
-      this.$angle = value
-    }
-  },
+  get angle() {
+    return this.$angle
+  }
 
-  $wrapped: null,
   /**
-   * @type {INodeStyle}
+   * @param {number} value
    */
-  wrapped: {
-    get() {
-      return this.$wrapped
-    },
-    set(value) {
-      this.$wrapped = value
+  set angle(value) {
+    this.$angle = value
+  }
+
+  /**
+   * @return {INodeStyle}
+   */
+  get wrapped() {
+    return this.$wrapped
+  }
+
+  /**
+   * @param {INodeStyle} value
+   */
+  set wrapped(value) {
+    this.$wrapped = value
+  }
+
+  /**
+   * Meta attributes for the {@link GraphMLIOHandler}.
+   */
+  static get $meta() {
+    return {
+      angle: [GraphMLAttribute().init({ defaultValue: 0 }), TypeAttribute(YNumber.$class)]
     }
-  },
+  }
 
   provideValue(serviceProvider) {
     const style = new RotatableNodeStyleDecorator()
@@ -1872,7 +1902,7 @@ export const RotatableNodeStyleDecoratorExtension = Class('RotatableNodeStyleDec
     style.wrapped = this.wrapped
     return style
   }
-})
+}
 
 /**
  * Normalizes the angle to 0–360°.

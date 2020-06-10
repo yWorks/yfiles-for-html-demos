@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,7 +27,9 @@
  **
  ***************************************************************************/
 import {
+  AdjacencyGraphBuilder,
   Class,
+  EdgeCreator,
   GraphBuilder,
   GraphComponent,
   GraphViewerInputMode,
@@ -42,8 +44,8 @@ import {
 } from 'yfiles'
 
 import TreeBuilderDataJson from './tree-builder-data-json.js'
-import TreeBuilderIdDataArray from './tree-builder-id-data-array.js'
 import TreeBuilderDataArray from './tree-builder-data-array.js'
+import AdjacentBuilderIdDataArray from './adjacent-builder-id-data-array.js'
 import GraphBuilderData from './graph-builder-data.js'
 import { bindChangeListener, bindCommand, showApp } from '../../resources/demo-app.js'
 import { initDemoStyles } from '../../resources/demo-styles.js'
@@ -89,6 +91,11 @@ let graphComponent = null
 let builderType = null
 
 /**
+ * @type {HTMLSelectElement}
+ */
+const selectBox = document.querySelector("select[data-command='SelectBuilder']")
+
+/**
  * Specifier that indicates using a {@link GraphBuilder}.
  * @type {string}
  */
@@ -101,16 +108,22 @@ const TYPE_GRAPH_BUILDER = 'Graph Builder'
 const TYPE_TREE_BUILDER_ARRAY = 'Tree Builder (Array)'
 
 /**
- * Specifier that indicates using a {@link TreeBuilder} with an array input and node IDs.
- * @type {string}
- */
-const TYPE_TREE_BUILDER_ID_ARRAY = 'Tree Builder (Array with IDs)'
-
-/**
  * Specifier that indicates using a {@link TreeBuilder} with a JSON input.
  * @type {string}
  */
 const TYPE_TREE_BUILDER_JSON = 'Tree Builder (JSON)'
+
+/**
+ * Specifier that indicates using a {@link AdjacencyGraphBuilder} with a JSON input.
+ * @type {string}
+ */
+const TYPE_ADJACENT_NODES_BUILDER = 'Adjacent Nodes Graph Builder'
+
+/**
+ * Specifier that indicates using a {@link TreeBuilder} with an array input and node IDs.
+ * @type {string}
+ */
+const TYPE_ADJACENT_NODES_BUILDER_ID_ARRAY = 'Adjacent Nodes Graph Builder (with IDs)'
 
 /**
  * Creates and configures the {@link GraphBuilder}.
@@ -118,26 +131,30 @@ const TYPE_TREE_BUILDER_JSON = 'Tree Builder (JSON)'
  */
 function createGraphBuilder() {
   const graphBuilder = new GraphBuilder(graphComponent.graph)
-  // Stores the nodes of the graph
-  graphBuilder.nodesSource = GraphBuilderData.nodesSource
-  // Stores the edges of the graph
-  graphBuilder.edgesSource = GraphBuilderData.edgesSource
-  // Stores the group nodes of the graph
-  graphBuilder.groupsSource = GraphBuilderData.groupsSource
-  // Identifies the property of an edge object that contains the source node's id
-  graphBuilder.sourceNodeBinding = 'fromNode'
-  // Identifies the property of an edge object that contains the target node's id
-  graphBuilder.targetNodeBinding = 'toNode'
-  // Identifies the id property of a node object
-  graphBuilder.nodeIdBinding = 'id'
-  // Identifies the property of a node object that contains its group's id
-  graphBuilder.groupBinding = 'group'
-  // Identifies the property of a group node object that contains its parent group id
-  graphBuilder.parentGroupBinding = 'parentGroup'
-  // Identifies the id property of a group node object
-  graphBuilder.groupIdBinding = 'id'
-  // Identifies the property of an edge object that contains the text used for the edge's label
-  graphBuilder.edgeLabelBinding = tag => tag.text || null
+  graphBuilder.createNodesSource({
+    // Stores the nodes of the graph
+    data: GraphBuilderData.nodesSource,
+    // Identifies the id property of a node object
+    id: 'id',
+    // Identifies the property of a node object that contains its group's id
+    parentId: 'group'
+  })
+  graphBuilder.createGroupNodesSource({
+    // Stores the group nodes of the graph
+    data: GraphBuilderData.groupsSource,
+    // Identifies the id property of a group node object
+    id: 'id',
+    // Identifies the property of a group node object that contains its parent group id
+    parentId: 'parentGroup'
+  })
+  graphBuilder.createEdgesSource({
+    // Stores the edges of the graph
+    data: GraphBuilderData.edgesSource,
+    // Identifies the property of an edge object that contains the source node's id
+    sourceId: 'fromNode',
+    // Identifies the property of an edge object that contains the target node's id
+    targetId: 'toNode'
+  })
 
   return graphBuilder
 }
@@ -149,20 +166,51 @@ function createGraphBuilder() {
 function createTreeBuilder() {
   const treeBuilder = new TreeBuilder(graphComponent.graph)
 
+  let nodesSource
   // Set the properties of TreeSource that specify your custom data
   if (builderType === TYPE_TREE_BUILDER_ARRAY) {
-    treeBuilder.nodesSource = TreeBuilderDataArray.nodesSource
-  } else if (builderType === TYPE_TREE_BUILDER_ID_ARRAY) {
-    treeBuilder.nodesSource = TreeBuilderIdDataArray.nodesSource
-    // Identifies the ID property of a node
-    treeBuilder.idBinding = 'id'
+    nodesSource = TreeBuilderDataArray.nodesSource
   } else if (builderType === TYPE_TREE_BUILDER_JSON) {
-    treeBuilder.nodesSource = TreeBuilderDataJson.nodesSource
+    nodesSource = TreeBuilderDataJson.nodesSource
   }
+
   // Identifies the property of a node object that contains its child nodes
-  treeBuilder.childBinding = 'children'
+  const rootNodesSource = treeBuilder.createRootNodesSource(nodesSource)
+  // Configure the recursive tree structure
+  rootNodesSource.addChildNodesSource(data => data.children, rootNodesSource)
 
   return treeBuilder
+}
+
+/**
+ * Creates and configures the {@link AdjacencyGraphBuilder}.
+ * @return {AdjacencyGraphBuilder}
+ */
+function createAdjacencyGraphBuilder() {
+  const adjacencyGraphBuilder = new AdjacencyGraphBuilder(graphComponent.graph)
+
+  if (builderType === TYPE_ADJACENT_NODES_BUILDER) {
+    // Stores the nodes of the graph
+    const adjacencyNodesSource = adjacencyGraphBuilder.createNodesSource(
+      TreeBuilderDataArray.nodesSource
+    )
+    // Configure the successor nodes
+    adjacencyNodesSource.addSuccessorsSource(
+      data => data.children,
+      adjacencyNodesSource,
+      new EdgeCreator()
+    )
+  } else if (builderType === TYPE_ADJACENT_NODES_BUILDER_ID_ARRAY) {
+    // Stores the nodes of the graph
+    const adjacencyNodesSource = adjacencyGraphBuilder.createNodesSource(
+      AdjacentBuilderIdDataArray.nodesSource,
+      'id'
+    )
+    // Configure the successor nodes
+    adjacencyNodesSource.addSuccessorIds(data => data.children, new EdgeCreator())
+  }
+
+  return adjacencyGraphBuilder
 }
 
 // We need to load the 'view-layout-bridge' module explicitly to prevent tree-shaking
@@ -173,9 +221,22 @@ Class.ensure(LayoutExecutor)
  * Builds the graph using the selected builder type.
  * After building the graph, a hierarchic layout is applied.
  */
-function buildGraph() {
+async function buildGraph() {
+  // Clear the current graph
+  graphComponent.graph.clear()
+
   // Create the builder
-  const builder = builderType === TYPE_GRAPH_BUILDER ? createGraphBuilder() : createTreeBuilder()
+  let builder
+  if (builderType === TYPE_GRAPH_BUILDER) {
+    builder = createGraphBuilder()
+  } else if (
+    builderType === TYPE_ADJACENT_NODES_BUILDER ||
+    builderType === TYPE_ADJACENT_NODES_BUILDER_ID_ARRAY
+  ) {
+    builder = createAdjacencyGraphBuilder()
+  } else {
+    builder = createTreeBuilder()
+  }
 
   // Build the graph from the data...
   graphComponent.graph = builder.buildGraph()
@@ -185,7 +246,10 @@ function buildGraph() {
   // Layout the graph with the hierarchic layout style
   const hl = new HierarchicLayout()
   hl.layoutOrientation = LayoutOrientation.LEFT_TO_RIGHT
-  graphComponent.morphLayout(hl, '1s')
+
+  selectBox.disabled = true
+  await graphComponent.morphLayout(hl, '1s')
+  selectBox.disabled = false
 }
 
 /**

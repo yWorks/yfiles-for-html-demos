@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -31,22 +31,28 @@ import {
   HierarchicLayout,
   IComparer,
   LayoutData,
+  LayoutGraph,
   LayoutMode,
   LayoutOrientation,
   PartitionGrid,
+  PartitionGridData,
   PortCandidate,
   PortDirections,
   RecursiveGroupLayout,
   RecursiveGroupLayoutData,
+  RowDescriptor,
   TabularLayout,
   TabularLayoutData,
-  TabularLayoutPolicy
+  TabularLayoutPolicy,
+  YNode
 } from 'yfiles'
 
 /**
  * Demonstrates how to realize a table node structure, i.e., each group node in the drawing represents a table
  * and the nodes within the groups the table rows. Edges are connected to specific rows.
  * The rows are sorted according to their y-coordinate in the initial drawing.
+ * @param {boolean} fromSketch
+ * @returns {RecursiveGroupLayout}
  */
 export function createTableLayout(fromSketch) {
   // incremental hierarchic layout is used for the core layout that connects the table nodes
@@ -66,10 +72,12 @@ export function createTableLayout(fromSketch) {
   })
 }
 
+/** @type {LayoutData} */
 let layoutData
+
 /**
  * Gets the layout data that shall be used for the table layout.
- * @return {LayoutData}
+ * @returns {LayoutData}
  */
 export function createTableLayoutData() {
   if (!layoutData) {
@@ -78,7 +86,7 @@ export function createTableLayoutData() {
     const rowLayout = new TabularLayout({
       layoutPolicy: TabularLayoutPolicy.FIXED_SIZE,
       // keep the order of the nodes in the initial layout
-      nodeComparer: new IComparer((n1, n2) => {
+      nodeComparer: IComparer.create((n1, n2) => {
         const y1 = n1.graph.getCenter(n1).y
         const y2 = n2.graph.getCenter(n2).y
         if (y1 === y2) {
@@ -109,7 +117,7 @@ export function createTableLayoutData() {
         groupNodeLayouts: rowLayout
       }),
       new TabularLayoutData({
-        partitionGridData: { grid: grid }
+        partitionGridData: new PartitionGridData({ grid: grid })
       })
     )
   }

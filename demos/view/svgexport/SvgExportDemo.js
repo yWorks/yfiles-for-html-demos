@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,6 +27,8 @@
  **
  ***************************************************************************/
 import {
+  BezierEdgeStyle,
+  EventRecognizers,
   ExteriorLabelModel,
   ExteriorLabelModelPosition,
   GeneralPath,
@@ -36,16 +38,24 @@ import {
   HandleInputMode,
   HandlePositions,
   IArrow,
+  ICommand,
   IHitTestable,
   ImageNodeStyle,
+  IReshapeHandler,
   License,
   MoveInputMode,
   MutableRectangle,
+  NodeReshapeHandleProvider,
   ObservableCollection,
+  Point,
   PolylineEdgeStyle,
   Rect,
   RectangleHandle,
   RectangleIndicatorInstaller,
+  ShapeNodeShape,
+  ShapeNodeStyle,
+  Size,
+  StringTemplateNodeStyle,
   SvgExport
 } from 'yfiles'
 
@@ -54,6 +64,7 @@ import FileSaveSupport from '../../utils/FileSaveSupport.js'
 import {
   addClass,
   bindAction,
+  bindCommand,
   detectInternetExplorerVersion,
   removeClass,
   showApp
@@ -82,8 +93,21 @@ function run(licenseData) {
   ieVersion = detectInternetExplorerVersion()
 
   initializeInputModes()
+  keepAspectRatio()
+  registerCommands()
 
-  initializeGraph()
+  createNetworkGraph()
+  createCssStyleGraph()
+  createBezierEdgesGraph()
+
+  showApp(graphComponent)
+}
+
+function registerCommands() {
+  bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent)
+  bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent)
+  bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent)
+  bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
 
   // disable the save button in IE9
   if (ieVersion !== -1 && ieVersion <= 9) {
@@ -92,11 +116,13 @@ function run(licenseData) {
     // add save hint
     const hint = document.createElement('p')
     hint.innerHTML = 'Right-click the image and hit "Save As&hellip;" to save the SVG file.'
-    const container = document.getElementById('outerExport')
+    const container = document.getElementById('outerClientExport')
     container.insertBefore(hint, document.getElementById('svgContainer'))
   }
 
   bindAction("button[data-command='Export']", async () => {
+    hidePopup()
+
     if (window.location.protocol === 'file:') {
       alert(
         'This demo features SVG export with inlined images. ' +
@@ -118,8 +144,6 @@ function run(licenseData) {
   })
 
   document.getElementById('closeButton').addEventListener('click', hidePopup, false)
-
-  showApp(graphComponent)
 }
 
 /**
@@ -147,6 +171,9 @@ function exportSvg(scale, rectangle) {
   exporter.encodeImagesBase64 = true
   exporter.inlineSvgImages = true
 
+  // set cssStyleSheets to null so the SvgExport will automatically collect all style sheets
+  exporter.cssStyleSheet = null
+
   return exporter.exportSvgAsync(exportComponent)
 }
 
@@ -157,7 +184,6 @@ function exportSvg(scale, rectangle) {
 function showExportDialog(svgElement) {
   svgElement.setAttribute('style', 'width: 100%; height: auto')
   const svgContainerInner = document.getElementById('svgContainerInner')
-  svgContainerInner.innerHTML = ''
   svgContainerInner.appendChild(svgElement)
 
   const svgButton = cloneAndReplace(document.getElementById('svgSaveButton'))
@@ -187,7 +213,7 @@ function initializeInputModes() {
   graphComponent.inputMode = new GraphEditorInputMode()
 
   // create the model for the export rectangle
-  exportRect = new MutableRectangle(-10, 0, 300, 160)
+  exportRect = new MutableRectangle(-20, 0, 300, 160)
 
   // visualize it
   const installer = new RectangleIndicatorInstaller(exportRect)
@@ -198,6 +224,25 @@ function initializeInputModes() {
   )
 
   addExportRectInputModes(graphComponent.inputMode)
+}
+
+/**
+ * Since this demo uses image nodes, we make sure that they always keep their aspect ratio during
+ * resize.
+ */
+function keepAspectRatio() {
+  graphComponent.graph.decorator.nodeDecorator.reshapeHandleProviderDecorator.setFactory(
+    node => node.style instanceof ImageNodeStyle,
+    node => {
+      const keepAspectRatio = new NodeReshapeHandleProvider(
+        node,
+        node.lookup(IReshapeHandler.$class),
+        HandlePositions.CORNERS
+      )
+      keepAspectRatio.ratioReshapeRecognizer = EventRecognizers.ALWAYS
+      return keepAspectRatio
+    }
+  )
 }
 
 /**
@@ -233,14 +278,37 @@ function addExportRectInputModes(inputMode) {
   inputMode.add(moveInputMode)
 }
 
+function createCssStyleGraph() {
+  const graph = graphComponent.graph
+
+  graph.nodeDefaults.style = new StringTemplateNodeStyle(
+    '<rect class="{Binding}" fill="lightgray" width="{TemplateBinding width}" height="{TemplateBinding height}"></rect>'
+  )
+  graph.nodeDefaults.size = new Size(40, 40)
+  graph.edgeDefaults.style = new PolylineEdgeStyle({ targetArrow: IArrow.DEFAULT })
+
+  graph.createNode({ layout: new Rect(10, 200, 40, 40), tag: 'node red' })
+  graph.createNode({ layout: new Rect(110, 200, 40, 40), tag: 'node green' })
+  graph.createNode({ layout: new Rect(210, 200, 40, 40), tag: 'node blue' })
+  graph.createNode({ layout: new Rect(10, 300, 40, 40), tag: 'node red' })
+  graph.createNode({ layout: new Rect(110, 300, 40, 40), tag: 'node green' })
+  graph.createNode({ layout: new Rect(210, 300, 40, 40), tag: 'node blue' })
+
+  graphComponent.fitGraphBounds()
+}
+
 /**
  * Initializes the graph instance and set default styles.
  */
-function initializeGraph() {
+function createNetworkGraph() {
   const graph = graphComponent.graph
-  const newPolylineEdgeStyle = new PolylineEdgeStyle()
-  newPolylineEdgeStyle.targetArrow = IArrow.DEFAULT
-  graph.edgeDefaults.style = newPolylineEdgeStyle
+
+  // set the workstation as default node style
+  graph.nodeDefaults.style = new ImageNodeStyle('./resources/workstation.svg')
+  graph.nodeDefaults.size = new Size(40, 40)
+  graph.edgeDefaults.style = new PolylineEdgeStyle({
+    targetArrow: IArrow.DEFAULT
+  })
 
   const switchStyle = new ImageNodeStyle('./resources/switch.svg')
   const workstationStyle = new ImageNodeStyle('./resources/workstation.svg')
@@ -250,11 +318,11 @@ function initializeGraph() {
   const labelModelParameter2 = labelModel.createParameter(ExteriorLabelModelPosition.NORTH)
 
   // create sample graph
-  const n1 = graph.createNode(new Rect(170, 20, 40, 40), switchStyle)
-  const n2 = graph.createNode(new Rect(20, 100, 40, 40), workstationStyle)
-  const n3 = graph.createNode(new Rect(120, 100, 40, 40), workstationStyle)
-  const n4 = graph.createNode(new Rect(220, 100, 40, 40), workstationStyle)
-  const n5 = graph.createNode(new Rect(320, 100, 40, 40), workstationStyle)
+  const n1 = graph.createNodeAt(new Point(170, 20), switchStyle)
+  const n2 = graph.createNodeAt(new Point(20, 100), workstationStyle)
+  const n3 = graph.createNodeAt(new Point(120, 100), workstationStyle)
+  const n4 = graph.createNodeAt(new Point(220, 100), workstationStyle)
+  const n5 = graph.createNodeAt(new Point(320, 100), workstationStyle)
 
   graph.createEdge(n1, n2)
   graph.createEdge(n1, n3)
@@ -267,8 +335,65 @@ function initializeGraph() {
   graph.addLabel(n4, 'Workstation 3', labelModelParameter1)
   graph.addLabel(n5, 'Workstation 4', labelModelParameter1)
 
-  // set the workstation as default node style
-  graph.nodeDefaults.style = workstationStyle
+  graphComponent.fitGraphBounds()
+}
+
+/**
+ * Creates a graph that uses curved edges.
+ */
+function createBezierEdgesGraph() {
+  const graph = graphComponent.graph
+
+  graph.nodeDefaults.style = new ShapeNodeStyle({
+    shape: ShapeNodeShape.ROUND_RECTANGLE,
+    fill: 'lightgrey',
+    stroke: '2px white'
+  })
+  graph.nodeDefaults.size = new Size(30, 30)
+  graph.edgeDefaults.style = new BezierEdgeStyle({
+    stroke: '28px #66dc143c'
+  })
+
+  const node1 = graph.createNode([0, 400, 30, 60])
+  const node2 = graph.createNode([0, 475, 30, 90])
+  const node3 = graph.createNode([0, 580, 30, 60])
+  const node4 = graph.createNode([230, 400, 30, 110])
+  const node5 = graph.createNode([230, 530, 30, 110])
+
+  const edge1 = graph.createEdge({ source: node1, target: node4, bends: [] })
+  graph.setPortLocation(edge1.sourcePort, new Point(30, 415))
+  graph.setPortLocation(edge1.targetPort, new Point(230, 415))
+  const edge2 = graph.createEdge({
+    source: node1,
+    target: node5,
+    bends: [new Point(80, 445), new Point(180, 545)]
+  })
+  graph.setPortLocation(edge2.sourcePort, new Point(30, 445))
+  graph.setPortLocation(edge2.targetPort, new Point(230, 545))
+  const edge3 = graph.createEdge({
+    source: node2,
+    target: node4,
+    bends: [new Point(80, 550), new Point(180, 455)]
+  })
+  graph.setPortLocation(edge3.sourcePort, new Point(30, 550))
+  graph.setPortLocation(edge3.targetPort, new Point(230, 455))
+  const edge4 = graph.createEdge({
+    source: node2,
+    target: node5,
+    bends: [new Point(80, 490), new Point(180, 585)]
+  })
+  graph.setPortLocation(edge4.sourcePort, new Point(30, 490))
+  graph.setPortLocation(edge4.targetPort, new Point(230, 585))
+  const edge5 = graph.createEdge({
+    source: node3,
+    target: node4,
+    bends: [new Point(80, 595), new Point(180, 495)]
+  })
+  graph.setPortLocation(edge5.sourcePort, new Point(30, 595))
+  graph.setPortLocation(edge5.targetPort, new Point(230, 495))
+  const edge6 = graph.createEdge({ source: node3, target: node5, bends: [] })
+  graph.setPortLocation(edge6.sourcePort, new Point(30, 625))
+  graph.setPortLocation(edge6.targetPort, new Point(230, 625))
 
   graphComponent.fitGraphBounds()
 }
@@ -289,6 +414,7 @@ function cloneAndReplace(element) {
  */
 function hidePopup() {
   addClass(document.getElementById('popup'), 'hidden')
+  document.getElementById('svgContainerInner').innerHTML = ''
 }
 
 /**

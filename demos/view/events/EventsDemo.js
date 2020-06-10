@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -111,7 +111,7 @@ import {
   removeClass,
   showApp
 } from '../../resources/demo-app.js'
-import EventLog from './EventLog.js'
+import EventView from './EventView.js'
 import loadJson from '../../resources/load-json.js'
 
 /**
@@ -120,7 +120,7 @@ import loadJson from '../../resources/load-json.js'
  */
 function run(licenseData) {
   License.value = licenseData
-  eventLog = new EventLog()
+  eventView = new EventView()
 
   // initialize the GraphComponent
   initializeGraphComponent()
@@ -149,9 +149,9 @@ function run(licenseData) {
 }
 
 /**
- * @type {EventLog}
+ * @type {EventView}
  */
-let eventLog = null
+let eventView = null
 
 /**
  * @type {GraphEditorInputMode}
@@ -2951,7 +2951,7 @@ function onItemSelectionChanged(sender, args) {
 }
 
 function clearButtonClick() {
-  eventLog.clear()
+  eventView.clear()
 }
 
 /**
@@ -2987,7 +2987,7 @@ function logWithType(sender, message, type) {
     category = 'Graph'
   }
 
-  eventLog.addMessage(message, type, category)
+  eventView.addMessage(message, type, category)
 }
 
 function initializeGraphComponent() {
@@ -3344,7 +3344,7 @@ function registerCommands() {
   })
 
   bindAction("input[data-command='ToggleLogGrouping']", () => {
-    eventLog.groupEvents = document.getElementById('toggle-log-grouping').checked
+    eventView.groupEvents = document.getElementById('toggle-log-grouping').checked
   })
 }
 

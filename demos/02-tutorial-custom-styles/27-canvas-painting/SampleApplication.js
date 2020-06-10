@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -32,8 +32,8 @@ import {
   GraphEditorInputMode,
   IAnimation,
   ICommand,
-  IGraph,
   IMapper,
+  INode,
   License,
   Rect,
   Size
@@ -46,15 +46,13 @@ import loadJson from '../../resources/load-json.js'
 /** @type {GraphComponent} */
 let graphComponent = null
 
-/** @type {IGraph} */
-let graph = null
-
+/**
+ * @param {object} licenseData
+ */
 function run(licenseData) {
   License.value = licenseData
   // Initialize the GraphComponent and place it in the div with CSS selector #graphComponent
   graphComponent = new GraphComponent('#graphComponent')
-  // conveniently store a reference to the graph that is displayed
-  graph = graphComponent.graph
 
   // initialize the graph
   initializeGraph()
@@ -91,6 +89,7 @@ function registerCommands() {
  * nodes in the graph.
  */
 function initializeGraph() {
+  const graph = graphComponent.graph
   // Create a new style and use it as default node style
   graph.nodeDefaults.style = new MySimpleNodeStyle()
   graph.nodeDefaults.size = new Size(50, 50)
@@ -102,7 +101,7 @@ function initializeGraph() {
 /**
  * Creates the default input mode for the graphComponent,
  * a {@link GraphEditorInputMode}.
- * @return {IInputMode} a new GraphEditorInputMode instance
+ * @returns {GraphEditorInputMode} a new GraphEditorInputMode instance
  */
 function createEditorMode() {
   return new GraphEditorInputMode({
@@ -116,14 +115,15 @@ function createEditorMode() {
 function createSampleGraph() {
   for (let i = 1; i <= 40; i++) {
     for (let j = 1; j <= 40; j++) {
-      graph.createNode(new Rect(60 * i, 60 * j, 30, 30))
+      graphComponent.graph.createNode(new Rect(60 * i, 60 * j, 30, 30))
     }
   }
 }
 
 function performanceButtonClick() {
   // switch canvas painting on/off
-  const style = graphComponent.graph.nodeDefaults.style
+  const graph = graphComponent.graph
+  const style = graph.nodeDefaults.style
   if (style instanceof MySimpleNodeStyle) {
     // /////////////// New in this Sample /////////////////
     // this code is only included in this tutorial step. It is necessary to
@@ -134,6 +134,7 @@ function performanceButtonClick() {
   }
 }
 
+/** @type {Animator} */
 let animator = null
 
 function animationButtonClick() {
@@ -146,7 +147,7 @@ function startAnimation() {
     animator = new Animator(graphComponent)
   }
   const graphAnimation = IAnimation.createGraphAnimation(
-    graph,
+    graphComponent.graph,
     IMapper.fromDelegate(
       node =>
         new Rect(Math.random() * 2400, Math.random() * 2400, node.layout.width, node.layout.height)

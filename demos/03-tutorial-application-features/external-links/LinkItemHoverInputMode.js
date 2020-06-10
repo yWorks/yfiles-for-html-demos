@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,6 +27,8 @@
  **
  ***************************************************************************/
 import {
+  Cursor,
+  DefaultLabelStyle,
   HoveredItemChangedEventArgs,
   IEdge,
   ILabel,
@@ -45,7 +47,7 @@ export default class LinkItemHoverInputMode extends ItemHoverInputMode {
   constructor() {
     super()
     this.priority = 54
-    this.hoverCursor = 'pointer'
+    this.hoverCursor = Cursor.POINTER
   }
 
   /**
@@ -70,23 +72,21 @@ export default class LinkItemHoverInputMode extends ItemHoverInputMode {
     const labelLink = this.getLabelLink(evt.item)
 
     // the toggle of underlined text should not be added to the undo queue
-    const edit = this.inputModeContext.graph.beginEdit('LinkDecoration', 'LinkDecoration')
+    const graph = this.inputModeContext.graph
+    const edit = graph.beginEdit('LinkDecoration', 'LinkDecoration')
 
     if (oldLabelLink) {
       // re-apply the original style
-      this.inputModeContext.graph.setStyle(
-        oldLabelLink,
-        this.inputModeContext.graph.nodeDefaults.labels.getStyleInstance(oldLabelLink.owner)
-      )
+      graph.setStyle(oldLabelLink, graph.nodeDefaults.labels.getStyleInstance(oldLabelLink.owner))
     }
 
     if (labelLink) {
       // underline the text of the link
       const clone = labelLink.style.clone()
       clone.font = clone.font.createCopy({
-        textDecoration: 'UNDERLINE'
+        textDecoration: 'underline'
       })
-      this.inputModeContext.graph.setStyle(labelLink, clone)
+      graph.setStyle(labelLink, clone)
     }
 
     // we cancel the edit to not add it to the undo queue
@@ -94,10 +94,10 @@ export default class LinkItemHoverInputMode extends ItemHoverInputMode {
   }
 
   /**
-   * Returns the {@linke ILabel} that represents a link, otherwise null. Nodes and edges are checked for
+   * Returns the {@link ILabel} that represents a link, otherwise null. Nodes and edges are checked for
    * any label that represents a link, too.
-   * @param {IModelItem} item The item that should be checked for an external link.
-   * @returns {ILabel} The label that represents a link or null.
+   * @param {?IModelItem} item The item that should be checked for an external link.
+   * @returns {?ILabel} The label that represents a link or null.
    */
   getLabelLink(item) {
     let labelLink = null

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -1024,65 +1024,55 @@ export const TaskType = Enum('TaskType', {
  * Base-class for {@link ILabelModelParameter}s that are used for label placement at nodes with
  * {@link ChoreographyNodeStyle}.
  */
-const ChoreographyParameter = Class('ChoreographyParameter', {
-  $with: [ILabelModelParameter],
-
-  $meta() {
-    // use GraphMLAttribute to be able to use the static getters of ChoreographyLabelModel during (de-)serialization
-    return [GraphMLAttribute().init({ singletonContainers: [ChoreographyLabelModel.$class] })]
-  },
-
-  constructor: function() {
-    // eslint-disable-line
-  },
-
-  /** @type {ILabelModel} */
-  model: {
-    get() {
-      return ChoreographyLabelModel.INSTANCE
+class ChoreographyParameter extends BaseClass(ILabelModelParameter) {
+  static get $meta() {
+    return {
+      $self: [GraphMLAttribute().init({ singletonContainers: [ChoreographyLabelModel.$class] })]
     }
-  },
+  }
 
-  /** @return {IOrientedRectangle} */
-  getGeometry(label, parameter) {},
+  /**
+   * @returns {ILabelModel}
+   */
+  get model() {
+    return ChoreographyLabelModel.INSTANCE
+  }
 
-  clone() {},
+  clone() {
+    return this
+  }
 
-  /** @return {boolean} */
+  /**
+   * @param {ILabel} label - The label to test.
+   * @returns {boolean}
+   */
   supports(label) {
     return INode.isInstance(label.owner)
   }
-})
+}
 
 /**
  * {@link ILabelModelParameter} to place participant labels at the participant bands of
  * {@link ChoreographyNodeStyle}.
  */
-const ParticipantParameter = Class('ChoreographyParameter', {
-  $extends: ChoreographyParameter,
-
-  $meta() {
-    // use GraphMLAttribute to be able to use the static getters of ChoreographyLabelModel during (de-)serialization
-    return [GraphMLAttribute().init({ singletonContainers: [ChoreographyLabelModel.$class] })]
-  },
-
+class ParticipantParameter extends ChoreographyParameter {
   /**
    * Creates a new instance of {@link ParticipantParameter}.
    * @param {boolean} top whether or not the label belongs to a top participant.
    * @param {number} index the position of the participant in its group (top or bottom
    *   participants).
    */
-  constructor: function(top, index) {
-    ChoreographyParameter.call(this)
+  constructor(top, index) {
+    super()
     this.top = top
     this.index = index
-  },
+  }
 
   /**
    * Creates a positioned rectangle that is placed on the according participant band.
    * @return {IOrientedRectangle}
    */
-  getGeometry: function(label, parameter) {
+  getGeometry(label, parameter) {
     if (INode.isInstance(label.owner)) {
       const owner = label.owner
       if (owner.style instanceof ChoreographyNodeStyle) {
@@ -1100,49 +1090,43 @@ const ParticipantParameter = Class('ChoreographyParameter', {
       }
     }
     return IOrientedRectangle.EMPTY
-  },
+  }
 
   /** @return {ParticipantParameter} */
-  clone: function() {
+  clone() {
     return new ParticipantParameter(this.top, this.index)
-  },
+  }
 
-  $static: {
-    INTERIOR_LABEL_MODEL: {
-      // '$meta': function() {
-      //   return [TypeAttribute(DashStyle.$class)];},
-      get: function() {
-        return (
-          ParticipantParameter.$interiorLabelModel ||
-          (ParticipantParameter.$interiorLabelModel = new InteriorLabelModel({
-            insets: new Insets(3)
-          }))
-        )
-      }
-    },
-
-    PLACEMENT: {
-      // '$meta': function() {
-      //   return [TypeAttribute(DashStyle.$class)];},
-      get: function() {
-        return (
-          ParticipantParameter.$placement ||
-          (ParticipantParameter.$placement = ParticipantParameter.INTERIOR_LABEL_MODEL.createParameter(
-            InteriorLabelModelPosition.NORTH
-          ))
-        )
-      }
+  static get $meta() {
+    return {
+      $self: [GraphMLAttribute().init({ singletonContainers: [ChoreographyLabelModel.$class] })]
     }
   }
-})
+
+  static get INTERIOR_LABEL_MODEL() {
+    return (
+      ParticipantParameter.$interiorLabelModel ||
+      (ParticipantParameter.$interiorLabelModel = new InteriorLabelModel({
+        insets: new Insets(3)
+      }))
+    )
+  }
+
+  static get PLACEMENT() {
+    return (
+      ParticipantParameter.$placement ||
+      (ParticipantParameter.$placement = ParticipantParameter.INTERIOR_LABEL_MODEL.createParameter(
+        InteriorLabelModelPosition.NORTH
+      ))
+    )
+  }
+}
 
 /**
  * A label model for nodes using a {@link ChoreographyNodeStyle} that position labels on the
  * participant or task name bands.
  */
-export const ChoreographyLabelModel = Class('ChoreographyLabelModel', {
-  $with: [ILabelModel, ILabelModelParameterProvider],
-
+export class ChoreographyLabelModel extends BaseClass(ILabelModel, ILabelModelParameterProvider) {
   /**
    * Calculates the geometry in form of an {@link IOrientedRectangle}
    * for a given label using the given model parameter.
@@ -1155,7 +1139,7 @@ export const ChoreographyLabelModel = Class('ChoreographyLabelModel', {
    * instance but store the values if they need a snapshot for later use
    * @see Specified by {@link ILabelModel#getGeometry}.
    */
-  getGeometry: function(label, parameter) {
+  getGeometry(label, parameter) {
     if (
       INode.isInstance(label.owner) &&
       label.owner.style instanceof ChoreographyNodeStyle &&
@@ -1167,16 +1151,16 @@ export const ChoreographyLabelModel = Class('ChoreographyLabelModel', {
       return new OrientedRectangle(layout.x, layout.y + layout.height, layout.width, layout.height)
     }
     return IOrientedRectangle.EMPTY
-  },
+  }
 
   /**
    * Returns {@link ChoreographyLabelModel#TASK_NAME_BAND} as default parameter.
    * @return {ILabelModelParameter}
    * @see Specified by {@link ILabelModel#createDefaultParameter}.
    */
-  createDefaultParameter: function() {
+  createDefaultParameter() {
     return ChoreographyLabelModel.TASK_NAME_BAND
-  },
+  }
 
   /**
    * Creates the parameter for the participant at the given position.
@@ -1186,9 +1170,9 @@ export const ChoreographyLabelModel = Class('ChoreographyLabelModel', {
    * @param {number} index The index of the participant band the label shall be placed in.
    * @return {ILabelModelParameter}
    */
-  createParticipantParameter: function(top, index) {
+  createParticipantParameter(top, index) {
     return new ParticipantParameter(top, index)
-  },
+  }
 
   /**
    * Provides a {@link ILookup lookup context} for the given combination of label
@@ -1200,9 +1184,9 @@ export const ChoreographyLabelModel = Class('ChoreographyLabelModel', {
    * @see {@link ILookup#EMPTY}
    * @see Specified by {@link ILabelModel#getContext}.
    */
-  getContext: function(label, parameter) {
+  getContext(label, parameter) {
     return InteriorLabelModel.CENTER.model.getContext(label, parameter)
-  },
+  }
 
   /**
    * Returns an instance that implements the given type or <code>null</code>.
@@ -1218,7 +1202,7 @@ export const ChoreographyLabelModel = Class('ChoreographyLabelModel', {
    * @return {Object} an instance that is assignable to type or <code>null</code>
    * @see Specified by {@link ILookup#lookup}.
    */
-  lookup: function(type) {
+  lookup(type) {
     if (type === ILabelModelParameterProvider.$class) {
       return this
     }
@@ -1229,7 +1213,7 @@ export const ChoreographyLabelModel = Class('ChoreographyLabelModel', {
       return ConstantLabelCandidateDescriptorProvider.INTERNAL_DESCRIPTOR_PROVIDER
     }
     return null
-  },
+  }
 
   /**
    * Returns an enumerator over a set of possible {@link ILabelModelParameter}
@@ -1240,7 +1224,7 @@ export const ChoreographyLabelModel = Class('ChoreographyLabelModel', {
    *   set of label model parameters.
    * @see Specified by {@link ILabelModelParameterProvider#getParameters}.
    */
-  getParameters: function(label, model) {
+  getParameters(label, model) {
     const parameters = new List()
     if (INode.isInstance(label.owner) && label.owner.style instanceof ChoreographyNodeStyle) {
       const node = label.owner
@@ -1257,7 +1241,7 @@ export const ChoreographyLabelModel = Class('ChoreographyLabelModel', {
     }
 
     return parameters
-  },
+  }
 
   /**
    * Finds the parameter for the next free location at a node with {@link ChoreographyNodeStyle}.
@@ -1271,7 +1255,7 @@ export const ChoreographyLabelModel = Class('ChoreographyLabelModel', {
    * <ul>
    * @return {ILabelModelParameter}
    */
-  findNextParameter: function(node) {
+  findNextParameter(node) {
     if (node.style instanceof ChoreographyNodeStyle) {
       const nodeStyle = node.style
       const taskNameBandCount = 1
@@ -1330,107 +1314,84 @@ export const ChoreographyLabelModel = Class('ChoreographyLabelModel', {
       }
     }
     return null
-  },
-
-  $static: {
-    /**
-     * The {@link ChoreographyLabelModel} singleton.
-     * @return {ChoreographyLabelModel}
-     */
-    INSTANCE: {
-      get: function() {
-        return (
-          ChoreographyLabelModel.$instance ||
-          (ChoreographyLabelModel.$instance = new ChoreographyLabelModel())
-        )
-      }
-    },
-
-    INTERIOR_LABEL_MODEL: {
-      get: function() {
-        return (
-          ChoreographyLabelModel.$interiorLabel ||
-          (ChoreographyLabelModel.$interiorLabel = new InteriorLabelModel())
-        )
-      }
-    },
-
-    DUMMY_NODE: {
-      get: function() {
-        return (
-          ChoreographyLabelModel.$dummyNode ||
-          (ChoreographyLabelModel.$dummyNode = new SimpleNode())
-        )
-      }
-    },
-
-    DUMMY_LABEL: {
-      get: function() {
-        return (
-          ChoreographyLabelModel.$dummyLabel ||
-          (ChoreographyLabelModel.$dummyLabel = new SimpleLabel(
-            ChoreographyLabelModel.DUMMY_NODE,
-            '',
-            InteriorLabelModel.CENTER
-          ))
-        )
-      }
-    },
-
-    TASK_NAME_BAND: {
-      get: function() {
-        return (
-          ChoreographyLabelModel.$taskNameBand ||
-          (ChoreographyLabelModel.$taskNameBand = new TaskNameBandParameter())
-        )
-      }
-    },
-
-    /**
-     * Returns a layout parameter that describes a position north of the node.
-     * @return {MessageParameter}
-     */
-    NORTH_MESSAGE: {
-      get: function() {
-        if (!ChoreographyLabelModel.$northMessage) {
-          const messageParameter = new MessageParameter()
-          messageParameter.north = true
-          ChoreographyLabelModel.$northMessage = messageParameter
-        }
-        return ChoreographyLabelModel.$northMessage
-      }
-    },
-
-    /**
-     * Returns a layout parameter that describes a position south of the node.
-     * @return {MessageParameter}
-     */
-    SOUTH_MESSAGE: {
-      get: function() {
-        if (!ChoreographyLabelModel.$southMessage) {
-          const messageParameter = new MessageParameter()
-          messageParameter.north = false
-          ChoreographyLabelModel.$southMessage = messageParameter
-        }
-        return ChoreographyLabelModel.$southMessage
-      }
-    }
   }
-})
 
+  static get INSTANCE() {
+    return (
+      ChoreographyLabelModel.$instance ||
+      (ChoreographyLabelModel.$instance = new ChoreographyLabelModel())
+    )
+  }
+
+  static get INTERIOR_LABEL_MODEL() {
+    return (
+      ChoreographyLabelModel.$interiorLabel ||
+      (ChoreographyLabelModel.$interiorLabel = new InteriorLabelModel())
+    )
+  }
+
+  static get DUMMY_NODE() {
+    return (
+      ChoreographyLabelModel.$dummyNode || (ChoreographyLabelModel.$dummyNode = new SimpleNode())
+    )
+  }
+
+  static get DUMMY_LABEL() {
+    return (
+      ChoreographyLabelModel.$dummyLabel ||
+      (ChoreographyLabelModel.$dummyLabel = new SimpleLabel(
+        ChoreographyLabelModel.DUMMY_NODE,
+        '',
+        InteriorLabelModel.CENTER
+      ))
+    )
+  }
+
+  static get TASK_NAME_BAND() {
+    return (
+      ChoreographyLabelModel.$taskNameBand ||
+      (ChoreographyLabelModel.$taskNameBand = new TaskNameBandParameter())
+    )
+  }
+
+  /**
+   * Returns a layout parameter that describes a position north of the node.
+   * @return {MessageParameter}
+   */
+  static get NORTH_MESSAGE() {
+    if (!ChoreographyLabelModel.$northMessage) {
+      const messageParameter = new MessageParameter()
+      messageParameter.north = true
+      ChoreographyLabelModel.$northMessage = messageParameter
+    }
+    return ChoreographyLabelModel.$northMessage
+  }
+
+  /**
+   * Returns a layout parameter that describes a position south of the node.
+   * @return {MessageParameter}
+   */
+  static get SOUTH_MESSAGE() {
+    if (!ChoreographyLabelModel.$southMessage) {
+      const messageParameter = new MessageParameter()
+      messageParameter.north = false
+      ChoreographyLabelModel.$southMessage = messageParameter
+    }
+    return ChoreographyLabelModel.$southMessage
+  }
+}
 /**
  * {@link ILabelModelParameter} that places the label on the task name band in the center of the
  * node.
  */
-const TaskNameBandParameter = Class('TaskNameBandParameter', {
-  $extends: ChoreographyParameter,
+class TaskNameBandParameter extends ChoreographyParameter {
+  static get $meta() {
+    return {
+      $self: [GraphMLAttribute().init({ singletonContainers: [ChoreographyLabelModel.$class] })]
+    }
+  }
 
-  $meta: function() {
-    // use GraphMLAttribute to be able to use the static getters of ChoreographyLabelModel during (de-)serialization
-    return [GraphMLAttribute().init({ singletonContainers: [ChoreographyLabelModel.$class] })]
-  },
-
-  getGeometry: function(label) {
+  getGeometry(label) {
     const owner = label.owner
     const nodeStyle = owner.style
     ChoreographyLabelModel.DUMMY_NODE.layout = nodeStyle.getTaskNameBandBounds(owner)
@@ -1439,12 +1400,12 @@ const TaskNameBandParameter = Class('TaskNameBandParameter', {
       ChoreographyLabelModel.DUMMY_LABEL,
       InteriorLabelModel.CENTER
     )
-  },
+  }
 
-  clone: function() {
+  clone() {
     return new TaskNameBandParameter()
   }
-})
+}
 
 /**
  * {@link ILabelModelParameter} that places the label above or below the node.
@@ -1453,10 +1414,6 @@ class MessageParameter extends ChoreographyParameter {
   constructor() {
     super()
     this.north = false
-  }
-
-  get model() {
-    return super.model
   }
 
   /** @return {IOrientedRectangle} */
@@ -1515,10 +1472,10 @@ class BpmnNodeStyle extends NodeStyleBase {
     this.$minimumSize = Size.EMPTY
 
     // the icon that determines the look and shape of the node.
-    // @type {Icon}
+    /** @type {Icon} */
     this.icon = null
     // the counter of modifications
-    // {number}
+    /** @type {number} */
     this.modCount = 0
   }
 
@@ -5885,7 +5842,7 @@ export class BpmnEdgeStyle extends EdgeStyleBase {
 
   /**
    * Gets the inner stroke color of the edge when {@link BpmnEdgeStyle#type} is
-   * {@type EdgeType.CONVERSATION}.
+   * {@link EdgeType.CONVERSATION}.
    * @return {Fill}
    */
   get innerColor() {
@@ -5894,7 +5851,7 @@ export class BpmnEdgeStyle extends EdgeStyleBase {
 
   /**
    * Sets the inner stroke color of the edge when {@link BpmnEdgeStyle#type} is
-   * {@type EdgeType.CONVERSATION}.
+   * {@link EdgeType.CONVERSATION}.
    * @param {Fill} value
    */
   set innerColor(value) {
@@ -8469,49 +8426,44 @@ export class PoolHeaderLabelModel extends BaseClass(ILabelModel, ILabelModelPara
   }
 }
 
-const PoolHeaderLabelModelParameter = Class('PoolHeaderLabelModelParameter', {
-  $meta() {
-    return [
-      GraphMLAttribute().init({ singletonContainers: [PoolHeaderLabelModelExtension.$class] })
-    ]
-  },
+class PoolHeaderLabelModelParameter extends BaseClass(ILabelModelParameter) {
+  static get $meta() {
+    return {
+      $self: [
+        GraphMLAttribute().init({ singletonContainers: [PoolHeaderLabelModelExtension.$class] })
+      ]
+    }
+  }
 
-  $with: [ILabelModelParameter],
+  constructor(side) {
+    super()
+    this.$side = side || 0
+  }
 
-  constructor: function(side) {
-    // eslint-disable-line
-    this.$side = side
-  },
+  get side() {
+    return this.$side
+  }
 
   /**
-   * @type {number}
+   * @returns {ILabelModel}
    */
-  $side: 0,
-
-  /** @type {number} */
-  side: {
-    get() {
-      return this.$side
-    }
-  },
+  get model() {
+    return PoolHeaderLabelModel.INSTANCE
+  }
 
   /** @return {Object} */
   clone() {
     return this
-  },
+  }
 
-  /** @type {ILabelModel} */
-  model: {
-    get() {
-      return PoolHeaderLabelModel.INSTANCE
-    }
-  },
-
-  /** @return {boolean} */
+  /**
+   * @param {ILabel} label - The label to test.
+   * @returns {boolean}
+   */
   supports(label) {
     return label.owner.lookup(ITable.$class) !== null
   }
-})
+}
 
 const POOL_HEADER_LABEL_MODEL_PARAMETER_NORTH = new PoolHeaderLabelModelParameter(0)
 const POOL_HEADER_LABEL_MODEL_PARAMETER_EAST = new PoolHeaderLabelModelParameter(1)
@@ -10340,9 +10292,7 @@ class EventPortEdgeIntersectionCalculator extends DefaultEdgePathCropper {
   getPortGeometry(port) {
     if (port.style instanceof EventPortStyle) {
       const eventPortStyle = port.style
-      if (IShapeGeometry.isInstance(eventPortStyle.adapter.renderer)) {
-        return eventPortStyle.adapter.renderer
-      }
+      return eventPortStyle.renderer.getContext(port, eventPortStyle).lookup(IShapeGeometry.$class)
     }
     return null
   }
@@ -10756,67 +10706,62 @@ export const DataObjectType = Enum('DataObjectType', {
 
 // The following extensions are needed for (de-)serialization.
 
-export const PoolNodeStyleExtension = Class('PoolNodeStyleExtension', {
-  $extends: MarkupExtension,
+export class PoolNodeStyleExtension extends MarkupExtension {
+  constructor() {
+    super()
+    this.$vertical = false
+    this.$multipleInstance = false
+    this.$tableNodeStyle = null
+    this.$iconColor = BPMN_CONSTANTS_DEFAULT_ICON_COLOR
+  }
 
-  $meta() {
-    return [GraphMLAttribute().init({ contentProperty: 'tableNodeStyle' })]
-  },
+  get vertical() {
+    return this.$vertical
+  }
 
-  $vertical: false,
-  vertical: {
-    $meta() {
-      return [GraphMLAttribute().init({ defaultValue: false }), TypeAttribute(YBoolean.$class)]
-    },
-    get() {
-      return this.$vertical
-    },
-    set(vertical) {
-      this.$vertical = vertical
-    }
-  },
+  set vertical(value) {
+    this.$vertical = value
+  }
 
-  $multipleInstance: false,
-  multipleInstance: {
-    $meta() {
-      return [GraphMLAttribute().init({ defaultValue: false }), TypeAttribute(YBoolean.$class)]
-    },
-    get() {
-      return this.$multipleInstance
-    },
-    set(multipleInstance) {
-      this.$multipleInstance = multipleInstance
-    }
-  },
+  get multipleInstance() {
+    return this.$multipleInstance
+  }
 
-  $tableNodeStyle: null,
-  tableNodeStyle: {
-    $meta() {
-      return [TypeAttribute(TableNodeStyle.$class)]
-    },
-    get() {
-      return this.$tableNodeStyle
-    },
-    set(style) {
-      this.$tableNodeStyle = style
-    }
-  },
+  set multipleInstance(value) {
+    this.$multipleInstance = value
+  }
 
-  $iconColor: BPMN_CONSTANTS_DEFAULT_ICON_COLOR,
-  iconColor: {
-    $meta() {
-      return [
+  get tableNodeStyle() {
+    return this.$tableNodeStyle
+  }
+
+  set tableNodeStyle(value) {
+    this.$tableNodeStyle = value
+  }
+
+  get iconColor() {
+    return this.$iconColor
+  }
+
+  set iconColor(value) {
+    this.$iconColor = value
+  }
+
+  static get $meta() {
+    return {
+      $self: [GraphMLAttribute().init({ contentProperty: 'tableNodeStyle' })],
+      vertical: [GraphMLAttribute().init({ defaultValue: false }), TypeAttribute(YBoolean.$class)],
+      multipleInstance: [
+        GraphMLAttribute().init({ defaultValue: false }),
+        TypeAttribute(YBoolean.$class)
+      ],
+      tableNodeStyle: TypeAttribute(TableNodeStyle.$class),
+      iconColor: [
         GraphMLAttribute().init({ defaultValue: BPMN_CONSTANTS_DEFAULT_ICON_COLOR }),
         TypeAttribute(Fill.$class)
       ]
-    },
-    get() {
-      return this.$iconColor
-    },
-    set(iconColor) {
-      this.$iconColor = iconColor
     }
-  },
+  }
 
   provideValue(serviceProvider) {
     const style = new PoolNodeStyle(this.vertical)
@@ -10825,49 +10770,40 @@ export const PoolNodeStyleExtension = Class('PoolNodeStyleExtension', {
     style.iconColor = this.iconColor
     return style
   }
-})
+}
 
-export const AlternatingLeafStripeStyleExtension = Class('AlternatingLeafStripeStyleExtension', {
-  $extends: MarkupExtension,
+export class AlternatingLeafStripeStyleExtension extends MarkupExtension {
+  get evenLeafDescriptor() {
+    return this.$evenLeafDescriptor
+  }
 
-  $evenLeafDescriptor: null,
-  evenLeafDescriptor: {
-    $meta() {
-      return [TypeAttribute(YObject.$class)]
-    },
-    get() {
-      return this.$evenLeafDescriptor
-    },
-    set(descriptor) {
-      this.$evenLeafDescriptor = descriptor
+  set evenLeafDescriptor(value) {
+    this.$evenLeafDescriptor = value
+  }
+
+  get parentDescriptor() {
+    return this.$parentDescriptor
+  }
+
+  set parentDescriptor(value) {
+    this.$parentDescriptor = value
+  }
+
+  get oddLeafDescriptor() {
+    return this.$oddLeafDescriptor
+  }
+
+  set oddLeafDescriptor(value) {
+    this.$oddLeafDescriptor = value
+  }
+
+  static get $meta() {
+    return {
+      evenLeafDescriptor: TypeAttribute(YObject.$class),
+      parentDescriptor: TypeAttribute(YObject.$class),
+      oddLeafDescriptor: TypeAttribute(YObject.$class)
     }
-  },
-
-  $parentDescriptor: null,
-  parentDescriptor: {
-    $meta() {
-      return [TypeAttribute(YObject.$class)]
-    },
-    get() {
-      return this.$parentDescriptor
-    },
-    set(descriptor) {
-      this.$parentDescriptor = descriptor
-    }
-  },
-
-  $oddLeafDescriptor: null,
-  oddLeafDescriptor: {
-    $meta() {
-      return [TypeAttribute(YObject.$class)]
-    },
-    get() {
-      return this.$oddLeafDescriptor
-    },
-    set(descriptor) {
-      this.$oddLeafDescriptor = descriptor
-    }
-  },
+  }
 
   provideValue(serviceProvider) {
     const style = new AlternatingLeafStripeStyle(this.vertical)
@@ -10876,71 +10812,69 @@ export const AlternatingLeafStripeStyleExtension = Class('AlternatingLeafStripeS
     style.oddLeafDescriptor = this.oddLeafDescriptor
     return style
   }
-})
+}
 
-export const StripeDescriptorExtension = Class('StripeDescriptorExtension', {
-  $extends: MarkupExtension,
+export class StripeDescriptorExtension extends MarkupExtension {
+  constructor() {
+    super()
+    this.$backgroundFill = Fill.TRANSPARENT
+    this.$insetFill = Fill.TRANSPARENT
+    this.$borderFill = Fill.BLACK
+    this.$borderThickness = new Insets(1)
+  }
 
-  $backgroundFill: Fill.TRANSPARENT,
-  backgroundFill: {
-    $meta() {
-      return [
+  get backgroundFill() {
+    return this.$backgroundFill
+  }
+
+  set backgroundFill(value) {
+    this.$backgroundFill = value
+  }
+
+  get insetFill() {
+    return this.$insetFill
+  }
+
+  set insetFill(value) {
+    this.$insetFill = value
+  }
+
+  get borderFill() {
+    return this.$borderFill
+  }
+
+  set borderFill(value) {
+    this.$borderFill = value
+  }
+
+  get borderThickness() {
+    return this.$borderThickness
+  }
+
+  set borderThickness(value) {
+    this.$borderThickness = value
+  }
+
+  static get $meta() {
+    return {
+      backgroundFill: [
         GraphMLAttribute().init({ defaultValue: Fill.TRANSPARENT }),
         TypeAttribute(Fill.$class)
-      ]
-    },
-    get() {
-      return this.$backgroundFill
-    },
-    set(fill) {
-      this.$backgroundFill = fill
-    }
-  },
-
-  $insetFill: Fill.TRANSPARENT,
-  insetFill: {
-    $meta() {
-      return [
+      ],
+      insetFill: [
         GraphMLAttribute().init({ defaultValue: Fill.TRANSPARENT }),
         TypeAttribute(Fill.$class)
-      ]
-    },
-    get() {
-      return this.$insetFill
-    },
-    set(fill) {
-      this.$insetFill = fill
-    }
-  },
-
-  $borderFill: Fill.BLACK,
-  borderFill: {
-    $meta() {
-      return [GraphMLAttribute().init({ defaultValue: Fill.BLACK }), TypeAttribute(Fill.$class)]
-    },
-    get() {
-      return this.$borderFill
-    },
-    set(fill) {
-      this.$borderFill = fill
-    }
-  },
-
-  $borderThickness: new Insets(1),
-  borderThickness: {
-    $meta() {
-      return [
+      ],
+      borderFill: [
+        GraphMLAttribute().init({ defaultValue: Fill.BLACK }),
+        TypeAttribute(Fill.$class)
+      ],
+      borderThickness: [
         GraphMLAttribute().init({ defaultValue: new Insets(1) }),
         TypeAttribute(Insets.$class)
       ]
-    },
-    get() {
-      return this.$borderThickness
-    },
-    set(fill) {
-      this.$borderThickness = fill
     }
-  },
+  }
 
   provideValue(serviceProvider) {
     const descriptor = new StripeDescriptor()
@@ -10950,222 +10884,198 @@ export const StripeDescriptorExtension = Class('StripeDescriptorExtension', {
     descriptor.borderThickness = this.borderThickness
     return descriptor
   }
-})
+}
 
-export const ActivityNodeStyleExtension = Class('ActivityNodeStyleExtension', {
-  $extends: MarkupExtension,
+export class ActivityNodeStyleExtension extends MarkupExtension {
+  constructor() {
+    super()
+    this.$activityType = ActivityType.TASK
+    this.$taskType = TaskType.ABSTRACT
+    this.$triggerEventType = EventType.MESSAGE
+    this.$triggerEventCharacteristic = EventCharacteristic.SUB_PROCESS_INTERRUPTING
+    this.$loopCharacteristic = LoopCharacteristic.NONE
+    this.$subState = SubState.NONE
+    this.$insets = new Insets(15)
+    this.$adHoc = false
+    this.$compensation = false
+    this.$minimumSize = Size.EMPTY
+    this.$background = BPMN_CONSTANTS_ACTIVITY_DEFAULT_BACKGROUND
+    this.$outline = BPMN_CONSTANTS_ACTIVITY_DEFAULT_OUTLINE
+    this.$iconColor = BPMN_CONSTANTS_DEFAULT_ICON_COLOR
+    this.$eventOutline = BPMN_CONSTANTS_DEFAULT_EVENT_OUTLINE
+  }
 
-  $activityType: ActivityType.TASK,
-  activityType: {
-    $meta() {
-      return [
+  get activityType() {
+    return this.$activityType
+  }
+
+  set activityType(value) {
+    this.$activityType = value
+  }
+
+  get taskType() {
+    return this.$taskType
+  }
+
+  set taskType(value) {
+    this.$taskType = value
+  }
+
+  get triggerEventType() {
+    return this.$triggerEventType
+  }
+
+  set triggerEventType(value) {
+    this.$triggerEventType = value
+  }
+
+  get triggerEventCharacteristic() {
+    return this.$triggerEventCharacteristic
+  }
+
+  set triggerEventCharacteristic(value) {
+    this.$triggerEventCharacteristic = value
+  }
+
+  get loopCharacteristic() {
+    return this.$loopCharacteristic
+  }
+
+  set loopCharacteristic(value) {
+    this.$loopCharacteristic = value
+  }
+
+  get subState() {
+    return this.$subState
+  }
+
+  set subState(value) {
+    this.$subState = value
+  }
+
+  get insets() {
+    return this.$insets
+  }
+
+  set insets(value) {
+    this.$insets = value
+  }
+
+  get adHoc() {
+    return this.$adHoc
+  }
+
+  set adHoc(value) {
+    this.$adHoc = value
+  }
+
+  get compensation() {
+    return this.$compensation
+  }
+
+  set compensation(value) {
+    this.$compensation = value
+  }
+
+  get minimumSize() {
+    return this.$minimumSize
+  }
+
+  set minimumSize(value) {
+    this.$minimumSize = value
+  }
+
+  get background() {
+    return this.$background
+  }
+
+  set background(value) {
+    this.$background = value
+  }
+
+  get outline() {
+    return this.$outline
+  }
+
+  set outline(value) {
+    this.$outline = value
+  }
+
+  get iconColor() {
+    return this.$iconColor
+  }
+
+  set iconColor(value) {
+    this.$iconColor = value
+  }
+
+  get eventOutline() {
+    return this.$eventOutline
+  }
+
+  set eventOutline(value) {
+    this.$eventOutline = value
+  }
+
+  static get $meta() {
+    return {
+      activityType: [
         GraphMLAttribute().init({ defaultValue: ActivityType.TASK }),
         TypeAttribute(ActivityType.$class)
-      ]
-    },
-    get() {
-      return this.$activityType
-    },
-    set(type) {
-      this.$activityType = type
-    }
-  },
+      ],
 
-  $taskType: TaskType.ABSTRACT,
-  taskType: {
-    $meta() {
-      return [
+      taskType: [
         GraphMLAttribute().init({ defaultValue: TaskType.ABSTRACT }),
         TypeAttribute(TaskType.$class)
-      ]
-    },
-    get() {
-      return this.$taskType
-    },
-    set(type) {
-      this.$taskType = type
-    }
-  },
+      ],
 
-  $triggerEventType: EventType.MESSAGE,
-  triggerEventType: {
-    $meta() {
-      return [
+      triggerEventType: [
         GraphMLAttribute().init({ defaultValue: EventType.MESSAGE }),
         TypeAttribute(EventType.$class)
-      ]
-    },
-    get() {
-      return this.$triggerEventType
-    },
-    set(type) {
-      this.$triggerEventType = type
-    }
-  },
-
-  $triggerEventCharacteristic: EventCharacteristic.SUB_PROCESS_INTERRUPTING,
-  triggerEventCharacteristic: {
-    $meta() {
-      return [
+      ],
+      triggerEventCharacteristic: [
         GraphMLAttribute().init({ defaultValue: EventCharacteristic.SUB_PROCESS_INTERRUPTING }),
         TypeAttribute(EventCharacteristic.$class)
-      ]
-    },
-    get() {
-      return this.$triggerEventCharacteristic
-    },
-    set(characteristic) {
-      this.$triggerEventCharacteristic = characteristic
-    }
-  },
-  $loopCharacteristic: LoopCharacteristic.NONE,
-  loopCharacteristic: {
-    $meta() {
-      return [
+      ],
+      loopCharacteristic: [
         GraphMLAttribute().init({ defaultValue: LoopCharacteristic.NONE }),
         TypeAttribute(LoopCharacteristic.$class)
-      ]
-    },
-    get() {
-      return this.$loopCharacteristic
-    },
-    set(characteristic) {
-      this.$loopCharacteristic = characteristic
-    }
-  },
-
-  $subState: SubState.NONE,
-  subState: {
-    $meta() {
-      return [
+      ],
+      subState: [
         GraphMLAttribute().init({ defaultValue: SubState.NONE }),
         TypeAttribute(SubState.$class)
-      ]
-    },
-    get() {
-      return this.$subState
-    },
-    set(state) {
-      this.$subState = state
-    }
-  },
-  $insets: new Insets(15),
-  insets: {
-    $meta() {
-      return [
+      ],
+      insets: [
         GraphMLAttribute().init({ defaultValue: new Insets(15) }),
         TypeAttribute(Insets.$class)
-      ]
-    },
-    get() {
-      return this.$insets
-    },
-    set(insets) {
-      this.$insets = insets
-    }
-  },
-  $adHoc: false,
-  adHoc: {
-    $meta() {
-      return [GraphMLAttribute().init({ defaultValue: false }), TypeAttribute(YBoolean.$class)]
-    },
-    get() {
-      return this.$adHoc
-    },
-    set(value) {
-      this.$adHoc = value
-    }
-  },
-
-  $compensation: false,
-  compensation: {
-    $meta() {
-      return [GraphMLAttribute().init({ defaultValue: false }), TypeAttribute(YBoolean.$class)]
-    },
-    get() {
-      return this.$compensation
-    },
-    set(compensation) {
-      this.$compensation = compensation
-    }
-  },
-
-  $minimumSize: Size.EMPTY,
-  minimumSize: {
-    $meta() {
-      return [GraphMLAttribute().init({ defaultValue: Size.EMPTY }), TypeAttribute(Size.$class)]
-    },
-    get() {
-      return this.$minimumSize
-    },
-    set(size) {
-      this.$minimumSize = size
-    }
-  },
-
-  $background: BPMN_CONSTANTS_ACTIVITY_DEFAULT_BACKGROUND,
-  background: {
-    $meta() {
-      return [
+      ],
+      adHoc: [GraphMLAttribute().init({ defaultValue: false }), TypeAttribute(YBoolean.$class)],
+      compensation: [
+        GraphMLAttribute().init({ defaultValue: false }),
+        TypeAttribute(YBoolean.$class)
+      ],
+      minimumSize: [
+        GraphMLAttribute().init({ defaultValue: Size.EMPTY }),
+        TypeAttribute(Size.$class)
+      ],
+      background: [
         GraphMLAttribute().init({ defaultValue: BPMN_CONSTANTS_ACTIVITY_DEFAULT_BACKGROUND }),
         TypeAttribute(Fill.$class)
-      ]
-    },
-    get() {
-      return this.$background
-    },
-    set(background) {
-      this.$background = background
-    }
-  },
-
-  $outline: BPMN_CONSTANTS_ACTIVITY_DEFAULT_OUTLINE,
-  outline: {
-    $meta() {
-      return [
+      ],
+      outline: [
         GraphMLAttribute().init({ defaultValue: BPMN_CONSTANTS_ACTIVITY_DEFAULT_OUTLINE }),
         TypeAttribute(Fill.$class)
-      ]
-    },
-    get() {
-      return this.$outline
-    },
-    set(outline) {
-      this.$outline = outline
-    }
-  },
-
-  $iconColor: BPMN_CONSTANTS_DEFAULT_ICON_COLOR,
-  iconColor: {
-    $meta() {
-      return [
+      ],
+      iconColor: [
         GraphMLAttribute().init({ defaultValue: BPMN_CONSTANTS_DEFAULT_ICON_COLOR }),
         TypeAttribute(Fill.$class)
-      ]
-    },
-    get() {
-      return this.$iconColor
-    },
-    set(iconColor) {
-      this.$iconColor = iconColor
-    }
-  },
-
-  $eventOutline: BPMN_CONSTANTS_DEFAULT_EVENT_OUTLINE,
-  eventOutline: {
-    $meta() {
-      return [
+      ],
+      eventOutline: [
         GraphMLAttribute().init({ defaultValue: BPMN_CONSTANTS_DEFAULT_EVENT_OUTLINE }),
         TypeAttribute(Fill.$class)
       ]
-    },
-    get() {
-      return this.$eventOutline
-    },
-    set(eventOutline) {
-      this.$eventOutline = eventOutline
     }
-  },
+  }
 
   provideValue(serviceProvider) {
     const style = new ActivityNodeStyle()
@@ -11185,55 +11095,53 @@ export const ActivityNodeStyleExtension = Class('ActivityNodeStyleExtension', {
     style.eventOutline = this.eventOutline
     return style
   }
-})
+}
 
-export const AnnotationNodeStyleExtension = Class('AnnotationNodeStyleExtension', {
-  $extends: MarkupExtension,
+export class AnnotationNodeStyleExtension extends MarkupExtension {
+  constructor() {
+    super()
+    this.$left = true
+    this.$background = BPMN_CONSTANTS_ANNOTATION_DEFAULT_BACKGROUND
+    this.$outline = BPMN_CONSTANTS_ANNOTATION_DEFAULT_OUTLINE
+  }
 
-  $left: true,
-  left: {
-    $meta() {
-      return [GraphMLAttribute().init({ defaultValue: true }), TypeAttribute(YBoolean.$class)]
-    },
-    get() {
-      return this.$left
-    },
-    set(left) {
-      this.$left = left
-    }
-  },
+  get left() {
+    return this.$left
+  }
 
-  $background: BPMN_CONSTANTS_ANNOTATION_DEFAULT_BACKGROUND,
-  background: {
-    $meta() {
-      return [
+  set left(value) {
+    this.$left = value
+  }
+
+  get background() {
+    return this.$background
+  }
+
+  set background(value) {
+    this.$background = value
+  }
+
+  get outline() {
+    return this.$outline
+  }
+
+  set outline(value) {
+    this.$outline = value
+  }
+
+  static get $meta() {
+    return {
+      left: [GraphMLAttribute().init({ defaultValue: true }), TypeAttribute(YBoolean.$class)],
+      background: [
         GraphMLAttribute().init({ defaultValue: BPMN_CONSTANTS_ANNOTATION_DEFAULT_BACKGROUND }),
         TypeAttribute(Fill.$class)
-      ]
-    },
-    get() {
-      return this.$background
-    },
-    set(background) {
-      this.$background = background
-    }
-  },
-
-  $outline: BPMN_CONSTANTS_ANNOTATION_DEFAULT_OUTLINE,
-  outline: {
-    $meta() {
-      return [
+      ],
+      outline: [
         GraphMLAttribute().init({ defaultValue: BPMN_CONSTANTS_ANNOTATION_DEFAULT_OUTLINE }),
         TypeAttribute(Fill.$class)
       ]
-    },
-    get() {
-      return this.$outline
-    },
-    set(outline) {
-      this.$outline = outline
     }
-  },
+  }
 
   provideValue(serviceProvider) {
     const style = new AnnotationNodeStyle()
@@ -11242,74 +11150,69 @@ export const AnnotationNodeStyleExtension = Class('AnnotationNodeStyleExtension'
     style.outline = this.outline
     return style
   }
-})
+}
 
-export const ConversationNodeStyleExtension = Class('ConversationNodeStyleExtension', {
-  $extends: MarkupExtension,
+export class ConversationNodeStyleExtension extends MarkupExtension {
+  constructor() {
+    super()
+    this.$type = ConversationType.CONVERSATION
+    this.$background = BPMN_CONSTANTS_CONVERSATION_DEFAULT_BACKGROUND
+    this.$outline = BPMN_CONSTANTS_CONVERSATION_DEFAULT_OUTLINE
+    this.$iconColor = BPMN_CONSTANTS_DEFAULT_ICON_COLOR
+  }
 
-  $type: ConversationType.CONVERSATION,
-  type: {
-    $meta() {
-      return [
+  get type() {
+    return this.$type
+  }
+
+  set type(value) {
+    this.$type = value
+  }
+
+  get background() {
+    return this.$background
+  }
+
+  set background(value) {
+    this.$background = value
+  }
+
+  get outline() {
+    return this.$outline
+  }
+
+  set outline(value) {
+    this.$outline = value
+  }
+
+  get iconColor() {
+    return this.$iconColor
+  }
+
+  set iconColor(value) {
+    this.$iconColor = value
+  }
+
+  static get $meta() {
+    return {
+      type: [
         GraphMLAttribute().init({ defaultValue: ConversationType.CONVERSATION }),
         TypeAttribute(ConversationType.$class)
-      ]
-    },
-    get() {
-      return this.$type
-    },
-    set(type) {
-      this.$type = type
-    }
-  },
-
-  $background: BPMN_CONSTANTS_CONVERSATION_DEFAULT_BACKGROUND,
-  background: {
-    $meta() {
-      return [
+      ],
+      background: [
         GraphMLAttribute().init({ defaultValue: BPMN_CONSTANTS_CONVERSATION_DEFAULT_BACKGROUND }),
         TypeAttribute(Fill.$class)
-      ]
-    },
-    get() {
-      return this.$background
-    },
-    set(background) {
-      this.$background = background
-    }
-  },
-
-  $outline: BPMN_CONSTANTS_CONVERSATION_DEFAULT_OUTLINE,
-  outline: {
-    $meta() {
-      return [
+      ],
+      outline: [
         GraphMLAttribute().init({ defaultValue: BPMN_CONSTANTS_CONVERSATION_DEFAULT_OUTLINE }),
         TypeAttribute(Fill.$class)
-      ]
-    },
-    get() {
-      return this.$outline
-    },
-    set(outline) {
-      this.$outline = outline
-    }
-  },
-
-  $iconColor: BPMN_CONSTANTS_DEFAULT_ICON_COLOR,
-  iconColor: {
-    $meta() {
-      return [
+      ],
+      iconColor: [
         GraphMLAttribute().init({ defaultValue: BPMN_CONSTANTS_DEFAULT_ICON_COLOR }),
         TypeAttribute(Fill.$class)
       ]
-    },
-    get() {
-      return this.$iconColor
-    },
-    set(iconColor) {
-      this.$iconColor = iconColor
     }
-  },
+  }
 
   provideValue(serviceProvider) {
     const style = new ConversationNodeStyle()
@@ -11319,255 +11222,231 @@ export const ConversationNodeStyleExtension = Class('ConversationNodeStyleExtens
     style.iconColor = this.iconColor
     return style
   }
-})
+}
 
-export const ChoreographyNodeStyleExtension = Class('ChoreographyNodeStyleExtension', {
-  $extends: MarkupExtension,
-
-  constructor: function() {
-    MarkupExtension.call(this)
+export class ChoreographyNodeStyleExtension extends MarkupExtension {
+  constructor() {
+    super()
     this.$topParticipants = new List()
     this.$bottomParticipants = new List()
-  },
+    this.$loopCharacteristic = LoopCharacteristic.NONE
+    this.$subState = SubState.NONE
+    this.$initiatingMessage = false
+    this.$responseMessage = false
+    this.$initiatingAtTop = true
+    this.$insets = new Insets(5)
+    this.$type = ChoreographyType.TASK
+    this.$minimumSize = Size.EMPTY
+    this.$background = BPMN_CONSTANTS_CHOREOGRAPHY_DEFAULT_BACKGROUND
+    this.$outline = BPMN_CONSTANTS_CHOREOGRAPHY_DEFAULT_OUTLINE
+    this.$iconColor = BPMN_CONSTANTS_CHOREOGRAPHY_DEFAULT_ICON_COLOR
+    this.$initiatingColor = BPMN_CONSTANTS_CHOREOGRAPHY_DEFAULT_INITIATING_COLOR
+    this.$responseColor = BPMN_CONSTANTS_CHOREOGRAPHY_DEFAULT_RESPONSE_COLOR
+    this.$messageOutline = BPMN_CONSTANTS_CHOREOGRAPHY_DEFAULT_MESSAGE_OUTLINE
+  }
 
-  $loopCharacteristic: LoopCharacteristic.NONE,
-  loopCharacteristic: {
-    $meta() {
-      return [
+  get loopCharacteristic() {
+    return this.$loopCharacteristic
+  }
+
+  set loopCharacteristic(value) {
+    this.$loopCharacteristic = value
+  }
+
+  get subState() {
+    return this.$subState
+  }
+
+  set subState(value) {
+    this.$subState = value
+  }
+
+  get topParticipants() {
+    return this.$topParticipants
+  }
+
+  set topParticipants(value) {
+    this.$topParticipants = value
+  }
+
+  get bottomParticipants() {
+    return this.$bottomParticipants
+  }
+
+  set bottomParticipants(value) {
+    this.$bottomParticipants = value
+  }
+
+  get initiatingMessage() {
+    return this.$initiatingMessage
+  }
+
+  set initiatingMessage(value) {
+    this.$initiatingMessage = value
+  }
+
+  get responseMessage() {
+    return this.$responseMessage
+  }
+
+  set responseMessage(value) {
+    this.$responseMessage = value
+  }
+
+  get initiatingAtTop() {
+    return this.$initiatingAtTop
+  }
+
+  set initiatingAtTop(value) {
+    this.$initiatingAtTop = value
+  }
+
+  get insets() {
+    return this.$insets
+  }
+
+  set insets(value) {
+    this.$insets = value
+  }
+
+  get type() {
+    return this.$type
+  }
+
+  set type(value) {
+    this.$type = value
+  }
+
+  get minimumSize() {
+    return this.$minimumSize
+  }
+
+  set minimumSize(value) {
+    this.$minimumSize = value
+  }
+
+  get background() {
+    return this.$background
+  }
+
+  set background(value) {
+    this.$background = value
+  }
+
+  get outline() {
+    return this.$outline
+  }
+
+  set outline(value) {
+    this.$outline = value
+  }
+
+  get iconColor() {
+    return this.$iconColor
+  }
+
+  set iconColor(value) {
+    this.$iconColor = value
+  }
+
+  get initiatingColor() {
+    return this.$initiatingColor
+  }
+
+  set initiatingColor(value) {
+    this.$initiatingColor = value
+  }
+
+  get responseColor() {
+    return this.$responseColor
+  }
+
+  set responseColor(value) {
+    this.$responseColor = value
+  }
+
+  get messageOutline() {
+    return this.$messageOutline
+  }
+
+  set messageOutline(value) {
+    this.$messageOutline = value
+  }
+
+  static get $meta() {
+    return {
+      loopCharacteristic: [
         GraphMLAttribute().init({ defaultValue: LoopCharacteristic.NONE }),
         TypeAttribute(LoopCharacteristic.$class)
-      ]
-    },
-    get() {
-      return this.$loopCharacteristic
-    },
-    set(characteristic) {
-      this.$loopCharacteristic = characteristic
-    }
-  },
-
-  $subState: SubState.NONE,
-  subState: {
-    $meta() {
-      return [
+      ],
+      subState: [
         GraphMLAttribute().init({ defaultValue: SubState.NONE }),
         TypeAttribute(SubState.$class)
-      ]
-    },
-    get() {
-      return this.$subState
-    },
-    set(state) {
-      this.$subState = state
-    }
-  },
-
-  $topParticipants: null,
-  topParticipants: {
-    $meta() {
-      return [
+      ],
+      topParticipants: [
         GraphMLAttribute().init({ visibility: GraphMLMemberVisibility.CONTENT }),
         TypeAttribute(IList.$class)
-      ]
-    },
-    get() {
-      return this.$topParticipants
-    }
-  },
-  $bottomParticipants: null,
-  bottomParticipants: {
-    $meta() {
-      return [
+      ],
+      bottomParticipants: [
         GraphMLAttribute().init({ visibility: GraphMLMemberVisibility.CONTENT }),
         TypeAttribute(IList.$class)
-      ]
-    },
-    get() {
-      return this.$bottomParticipants
-    }
-  },
-
-  $initiatingMessage: false,
-  initiatingMessage: {
-    $meta() {
-      return [GraphMLAttribute().init({ defaultValue: false }), TypeAttribute(YBoolean.$class)]
-    },
-    get() {
-      return this.$initiatingMessage
-    },
-    set(initiatingMessage) {
-      this.$initiatingMessage = initiatingMessage
-    }
-  },
-  $responseMessage: false,
-  responseMessage: {
-    $meta() {
-      return [GraphMLAttribute().init({ defaultValue: false }), TypeAttribute(YBoolean.$class)]
-    },
-    get() {
-      return this.$responseMessage
-    },
-    set(responseMessage) {
-      this.$responseMessage = responseMessage
-    }
-  },
-  $initiatingAtTop: true,
-  initiatingAtTop: {
-    $meta() {
-      return [GraphMLAttribute().init({ defaultValue: true }), TypeAttribute(YBoolean.$class)]
-    },
-    get() {
-      return this.$initiatingAtTop
-    },
-    set(initiatingAtTop) {
-      this.$initiatingAtTop = initiatingAtTop
-    }
-  },
-  $insets: new Insets(5),
-  insets: {
-    $meta() {
-      return [
+      ],
+      initiatingMessage: [
+        GraphMLAttribute().init({ defaultValue: false }),
+        TypeAttribute(YBoolean.$class)
+      ],
+      responseMessage: [
+        GraphMLAttribute().init({ defaultValue: false }),
+        TypeAttribute(YBoolean.$class)
+      ],
+      initiatingAtTop: [
+        GraphMLAttribute().init({ defaultValue: true }),
+        TypeAttribute(YBoolean.$class)
+      ],
+      insets: [
         GraphMLAttribute().init({ defaultValue: new Insets(5) }),
         TypeAttribute(Insets.$class)
-      ]
-    },
-    get() {
-      return this.$insets
-    },
-    set(insets) {
-      this.$insets = insets
-    }
-  },
-
-  $type: ChoreographyType.TASK,
-  type: {
-    $meta() {
-      return [
+      ],
+      type: [
         GraphMLAttribute().init({ defaultValue: ChoreographyType.TASK }),
         TypeAttribute(ChoreographyType.$class)
-      ]
-    },
-    get() {
-      return this.$type
-    },
-    set(type) {
-      this.$type = type
-    }
-  },
-  $minimumSize: Size.EMPTY,
-  minimumSize: {
-    $meta() {
-      return [GraphMLAttribute().init({ defaultValue: Size.EMPTY }), TypeAttribute(Size.$class)]
-    },
-    get() {
-      return this.$minimumSize
-    },
-    set(size) {
-      this.$minimumSize = size
-    }
-  },
-
-  $background: BPMN_CONSTANTS_CHOREOGRAPHY_DEFAULT_BACKGROUND,
-  background: {
-    $meta() {
-      return [
+      ],
+      minimumSize: [
+        GraphMLAttribute().init({ defaultValue: Size.EMPTY }),
+        TypeAttribute(Size.$class)
+      ],
+      background: [
         GraphMLAttribute().init({ defaultValue: BPMN_CONSTANTS_CHOREOGRAPHY_DEFAULT_BACKGROUND }),
         TypeAttribute(Fill.$class)
-      ]
-    },
-    get() {
-      return this.$background
-    },
-    set(background) {
-      this.$background = background
-    }
-  },
-
-  $outline: BPMN_CONSTANTS_CHOREOGRAPHY_DEFAULT_OUTLINE,
-  outline: {
-    $meta() {
-      return [
+      ],
+      outline: [
         GraphMLAttribute().init({ defaultValue: BPMN_CONSTANTS_CHOREOGRAPHY_DEFAULT_OUTLINE }),
         TypeAttribute(Fill.$class)
-      ]
-    },
-    get() {
-      return this.$outline
-    },
-    set(outline) {
-      this.$outline = outline
-    }
-  },
-
-  $iconColor: BPMN_CONSTANTS_CHOREOGRAPHY_DEFAULT_ICON_COLOR,
-  iconColor: {
-    $meta() {
-      return [
+      ],
+      iconColor: [
         GraphMLAttribute().init({ defaultValue: BPMN_CONSTANTS_CHOREOGRAPHY_DEFAULT_ICON_COLOR }),
         TypeAttribute(Fill.$class)
-      ]
-    },
-    get() {
-      return this.$iconColor
-    },
-    set(iconColor) {
-      this.$iconColor = iconColor
-    }
-  },
-
-  $initiatingColor: BPMN_CONSTANTS_CHOREOGRAPHY_DEFAULT_INITIATING_COLOR,
-  initiatingColor: {
-    $meta() {
-      return [
+      ],
+      initiatingColor: [
         GraphMLAttribute().init({
           defaultValue: BPMN_CONSTANTS_CHOREOGRAPHY_DEFAULT_INITIATING_COLOR
         }),
         TypeAttribute(Fill.$class)
-      ]
-    },
-    get() {
-      return this.$initiatingColor
-    },
-    set(initiatingColor) {
-      this.$initiatingColor = initiatingColor
-    }
-  },
-
-  $responseColor: BPMN_CONSTANTS_CHOREOGRAPHY_DEFAULT_RESPONSE_COLOR,
-  responseColor: {
-    $meta() {
-      return [
+      ],
+      responseColor: [
         GraphMLAttribute().init({
           defaultValue: BPMN_CONSTANTS_CHOREOGRAPHY_DEFAULT_RESPONSE_COLOR
         }),
         TypeAttribute(Fill.$class)
-      ]
-    },
-    get() {
-      return this.$responseColor
-    },
-    set(responseColor) {
-      this.$responseColor = responseColor
-    }
-  },
-
-  $messageOutline: BPMN_CONSTANTS_CHOREOGRAPHY_DEFAULT_MESSAGE_OUTLINE,
-  messageOutline: {
-    $meta() {
-      return [
+      ],
+      messageOutline: [
         GraphMLAttribute().init({
           defaultValue: BPMN_CONSTANTS_CHOREOGRAPHY_DEFAULT_MESSAGE_OUTLINE
         }),
         TypeAttribute(Fill.$class)
       ]
-    },
-    get() {
-      return this.$messageOutline
-    },
-    set(messageOutline) {
-      this.$messageOutline = messageOutline
     }
-  },
+  }
 
   provideValue(serviceProvider) {
     const style = new ChoreographyNodeStyle()
@@ -11593,255 +11472,233 @@ export const ChoreographyNodeStyleExtension = Class('ChoreographyNodeStyleExtens
     style.messageOutline = this.messageOutline
     return style
   }
-})
+}
 
-export const LegacyChoreographyNodeStyleExtension = Class('ChoreographyNodeStyleExtension', {
-  $extends: MarkupExtension,
-
-  constructor: function() {
-    MarkupExtension.call(this)
+export class LegacyChoreographyNodeStyleExtension extends MarkupExtension {
+  constructor() {
+    super()
     this.$topParticipants = new List()
     this.$bottomParticipants = new List()
-  },
+    this.$loopCharacteristic = LoopCharacteristic.NONE
+    this.$subState = SubState.NONE
+    this.$topParticipants = null
+    this.$bottomParticipants = null
+    this.$initiatingMessage = false
+    this.$responseMessage = false
+    this.$initiatingAtTop = true
+    this.$insets = new Insets(5)
+    this.$type = ChoreographyType.TASK
+    this.$minimumSize = Size.EMPTY
+    this.$background = BPMN_CONSTANTS_CHOREOGRAPHY_DEFAULT_BACKGROUND
+    this.$outline = BPMN_CONSTANTS_CHOREOGRAPHY_DEFAULT_OUTLINE
+    this.$iconColor = BPMN_CONSTANTS_CHOREOGRAPHY_DEFAULT_ICON_COLOR
+    this.$initiatingColor = Fill.LIGHT_GRAY
+    this.$responseColor = BPMN_CONSTANTS_CHOREOGRAPHY_DEFAULT_RESPONSE_COLOR
+    this.$messageOutline = BPMN_CONSTANTS_CHOREOGRAPHY_DEFAULT_MESSAGE_OUTLINE
+  }
 
-  $loopCharacteristic: LoopCharacteristic.NONE,
-  loopCharacteristic: {
-    $meta() {
-      return [
+  get loopCharacteristic() {
+    return this.$loopCharacteristic
+  }
+
+  set loopCharacteristic(value) {
+    this.$loopCharacteristic = value
+  }
+
+  get subState() {
+    return this.$subState
+  }
+
+  set subState(value) {
+    this.$subState = value
+  }
+
+  get topParticipants() {
+    return this.$topParticipants
+  }
+
+  set topParticipants(value) {
+    this.$topParticipants = value
+  }
+
+  get bottomParticipants() {
+    return this.$bottomParticipants
+  }
+
+  set bottomParticipants(value) {
+    this.$bottomParticipants = value
+  }
+
+  get initiatingMessage() {
+    return this.$initiatingMessage
+  }
+
+  set initiatingMessage(value) {
+    this.$initiatingMessage = value
+  }
+
+  get responseMessage() {
+    return this.$responseMessage
+  }
+
+  set responseMessage(value) {
+    this.$responseMessage = value
+  }
+
+  get initiatingAtTop() {
+    return this.$initiatingAtTop
+  }
+
+  set initiatingAtTop(value) {
+    this.$initiatingAtTop = value
+  }
+
+  get insets() {
+    return this.$insets
+  }
+
+  set insets(value) {
+    this.$insets = value
+  }
+
+  get type() {
+    return this.$type
+  }
+
+  set type(value) {
+    this.$type = value
+  }
+
+  get minimumSize() {
+    return this.$minimumSize
+  }
+
+  set minimumSize(value) {
+    this.$minimumSize = value
+  }
+
+  get background() {
+    return this.$background
+  }
+
+  set background(value) {
+    this.$background = value
+  }
+
+  get outline() {
+    return this.$outline
+  }
+
+  set outline(value) {
+    this.$outline = value
+  }
+
+  get iconColor() {
+    return this.$iconColor
+  }
+
+  set iconColor(value) {
+    this.$iconColor = value
+  }
+
+  get initiatingColor() {
+    return this.$initiatingColor
+  }
+
+  set initiatingColor(value) {
+    this.$initiatingColor = value
+  }
+
+  get responseColor() {
+    return this.$responseColor
+  }
+
+  set responseColor(value) {
+    this.$responseColor = value
+  }
+
+  get messageOutline() {
+    return this.$messageOutline
+  }
+
+  set messageOutline(value) {
+    this.$messageOutline = value
+  }
+
+  static get $meta() {
+    return {
+      loopCharacteristic: [
         GraphMLAttribute().init({ defaultValue: LoopCharacteristic.NONE }),
         TypeAttribute(LoopCharacteristic.$class)
-      ]
-    },
-    get() {
-      return this.$loopCharacteristic
-    },
-    set(characteristic) {
-      this.$loopCharacteristic = characteristic
-    }
-  },
-
-  $subState: SubState.NONE,
-  subState: {
-    $meta() {
-      return [
+      ],
+      subState: [
         GraphMLAttribute().init({ defaultValue: SubState.NONE }),
         TypeAttribute(SubState.$class)
-      ]
-    },
-    get() {
-      return this.$subState
-    },
-    set(state) {
-      this.$subState = state
-    }
-  },
-
-  $topParticipants: null,
-  topParticipants: {
-    $meta() {
-      return [
+      ],
+      topParticipants: [
         GraphMLAttribute().init({ visibility: GraphMLMemberVisibility.CONTENT }),
         TypeAttribute(IList.$class)
-      ]
-    },
-    get() {
-      return this.$topParticipants
-    }
-  },
-  $bottomParticipants: null,
-  bottomParticipants: {
-    $meta() {
-      return [
+      ],
+      bottomParticipants: [
         GraphMLAttribute().init({ visibility: GraphMLMemberVisibility.CONTENT }),
         TypeAttribute(IList.$class)
-      ]
-    },
-    get() {
-      return this.$bottomParticipants
-    }
-  },
-
-  $initiatingMessage: false,
-  initiatingMessage: {
-    $meta() {
-      return [GraphMLAttribute().init({ defaultValue: false }), TypeAttribute(YBoolean.$class)]
-    },
-    get() {
-      return this.$initiatingMessage
-    },
-    set(initiatingMessage) {
-      this.$initiatingMessage = initiatingMessage
-    }
-  },
-  $responseMessage: false,
-  responseMessage: {
-    $meta() {
-      return [GraphMLAttribute().init({ defaultValue: false }), TypeAttribute(YBoolean.$class)]
-    },
-    get() {
-      return this.$responseMessage
-    },
-    set(responseMessage) {
-      this.$responseMessage = responseMessage
-    }
-  },
-  $initiatingAtTop: true,
-  initiatingAtTop: {
-    $meta() {
-      return [GraphMLAttribute().init({ defaultValue: true }), TypeAttribute(YBoolean.$class)]
-    },
-    get() {
-      return this.$initiatingAtTop
-    },
-    set(initiatingAtTop) {
-      this.$initiatingAtTop = initiatingAtTop
-    }
-  },
-  $insets: new Insets(5),
-  insets: {
-    $meta() {
-      return [
+      ],
+      initiatingMessage: [
+        GraphMLAttribute().init({ defaultValue: false }),
+        TypeAttribute(YBoolean.$class)
+      ],
+      responseMessage: [
+        GraphMLAttribute().init({ defaultValue: false }),
+        TypeAttribute(YBoolean.$class)
+      ],
+      initiatingAtTop: [
+        GraphMLAttribute().init({ defaultValue: true }),
+        TypeAttribute(YBoolean.$class)
+      ],
+      insets: [
         GraphMLAttribute().init({ defaultValue: new Insets(5) }),
         TypeAttribute(Insets.$class)
-      ]
-    },
-    get() {
-      return this.$insets
-    },
-    set(insets) {
-      this.$insets = insets
-    }
-  },
-
-  $type: ChoreographyType.TASK,
-  type: {
-    $meta() {
-      return [
+      ],
+      type: [
         GraphMLAttribute().init({ defaultValue: ChoreographyType.TASK }),
         TypeAttribute(ChoreographyType.$class)
-      ]
-    },
-    get() {
-      return this.$type
-    },
-    set(type) {
-      this.$type = type
-    }
-  },
-  $minimumSize: Size.EMPTY,
-  minimumSize: {
-    $meta() {
-      return [GraphMLAttribute().init({ defaultValue: Size.EMPTY }), TypeAttribute(Size.$class)]
-    },
-    get() {
-      return this.$minimumSize
-    },
-    set(size) {
-      this.$minimumSize = size
-    }
-  },
-
-  $background: BPMN_CONSTANTS_CHOREOGRAPHY_DEFAULT_BACKGROUND,
-  background: {
-    $meta() {
-      return [
+      ],
+      minimumSize: [
+        GraphMLAttribute().init({ defaultValue: Size.EMPTY }),
+        TypeAttribute(Size.$class)
+      ],
+      background: [
         GraphMLAttribute().init({ defaultValue: BPMN_CONSTANTS_CHOREOGRAPHY_DEFAULT_BACKGROUND }),
         TypeAttribute(Fill.$class)
-      ]
-    },
-    get() {
-      return this.$background
-    },
-    set(background) {
-      this.$background = background
-    }
-  },
-
-  $outline: BPMN_CONSTANTS_CHOREOGRAPHY_DEFAULT_OUTLINE,
-  outline: {
-    $meta() {
-      return [
+      ],
+      outline: [
         GraphMLAttribute().init({ defaultValue: BPMN_CONSTANTS_CHOREOGRAPHY_DEFAULT_OUTLINE }),
         TypeAttribute(Fill.$class)
-      ]
-    },
-    get() {
-      return this.$outline
-    },
-    set(outline) {
-      this.$outline = outline
-    }
-  },
-
-  $iconColor: BPMN_CONSTANTS_CHOREOGRAPHY_DEFAULT_ICON_COLOR,
-  iconColor: {
-    $meta() {
-      return [
+      ],
+      iconColor: [
         GraphMLAttribute().init({ defaultValue: BPMN_CONSTANTS_CHOREOGRAPHY_DEFAULT_ICON_COLOR }),
         TypeAttribute(Fill.$class)
-      ]
-    },
-    get() {
-      return this.$iconColor
-    },
-    set(iconColor) {
-      this.$iconColor = iconColor
-    }
-  },
-
-  $initiatingColor: Fill.LIGHT_GRAY,
-  initiatingColor: {
-    $meta() {
-      return [
+      ],
+      initiatingColor: [
         GraphMLAttribute().init({
           defaultValue: Fill.LIGHT_GRAY
         }),
         TypeAttribute(Fill.$class)
-      ]
-    },
-    get() {
-      return this.$initiatingColor
-    },
-    set(initiatingColor) {
-      this.$initiatingColor = initiatingColor
-    }
-  },
-
-  $responseColor: BPMN_CONSTANTS_CHOREOGRAPHY_DEFAULT_RESPONSE_COLOR,
-  responseColor: {
-    $meta() {
-      return [
+      ],
+      responseColor: [
         GraphMLAttribute().init({
           defaultValue: BPMN_CONSTANTS_CHOREOGRAPHY_DEFAULT_RESPONSE_COLOR
         }),
         TypeAttribute(Fill.$class)
-      ]
-    },
-    get() {
-      return this.$responseColor
-    },
-    set(responseColor) {
-      this.$responseColor = responseColor
-    }
-  },
-
-  $messageOutline: BPMN_CONSTANTS_CHOREOGRAPHY_DEFAULT_MESSAGE_OUTLINE,
-  messageOutline: {
-    $meta() {
-      return [
+      ],
+      messageOutline: [
         GraphMLAttribute().init({
           defaultValue: BPMN_CONSTANTS_CHOREOGRAPHY_DEFAULT_MESSAGE_OUTLINE
         }),
         TypeAttribute(Fill.$class)
       ]
-    },
-    get() {
-      return this.$messageOutline
-    },
-    set(messageOutline) {
-      this.$messageOutline = messageOutline
     }
-  },
+  }
 
   provideValue(serviceProvider) {
     const style = new ChoreographyNodeStyle()
@@ -11867,123 +11724,126 @@ export const LegacyChoreographyNodeStyleExtension = Class('ChoreographyNodeStyle
     style.messageOutline = this.messageOutline
     return style
   }
-})
+}
 
-export const ParticipantExtension = Class('ParticipantExtension', {
-  $extends: MarkupExtension,
+export class ParticipantExtension extends MarkupExtension {
+  constructor() {
+    super()
+    this.$multiInstance = false
+  }
 
-  $multiInstance: false,
-  multiInstance: {
-    $meta() {
-      return [GraphMLAttribute().init({ defaultValue: false }), TypeAttribute(YBoolean.$class)]
-    },
-    get() {
-      return this.$multiInstance
-    },
-    set(multiInstance) {
-      this.$multiInstance = multiInstance
+  get multiInstance() {
+    return this.$multiInstance
+  }
+
+  set multiInstance(value) {
+    this.$multiInstance = value
+  }
+
+  static get $meta() {
+    return {
+      multiInstance: [
+        GraphMLAttribute().init({ defaultValue: false }),
+        TypeAttribute(YBoolean.$class)
+      ]
     }
-  },
+  }
 
   provideValue(serviceProvider) {
     const participant = new Participant()
     participant.multiInstance = this.multiInstance
     return participant
   }
-})
+}
 
-export const DataObjectNodeStyleExtension = Class('DataObjectNodeStyleExtension', {
-  $extends: MarkupExtension,
+export class DataObjectNodeStyleExtension extends MarkupExtension {
+  constructor() {
+    super()
+    this.$minimumSize = Size.EMPTY
+    this.$collection = false
+    this.$type = DataObjectType.NONE
+    this.$background = BPMN_CONSTANTS_DATA_OBJECT_DEFAULT_BACKGROUND
+    this.$outline = BPMN_CONSTANTS_DATA_OBJECT_DEFAULT_OUTLINE
+    this.$iconColor = BPMN_CONSTANTS_DEFAULT_ICON_COLOR
+  }
 
-  $minimumSize: Size.EMPTY,
-  minimumSize: {
-    $meta() {
-      return [GraphMLAttribute().init({ defaultValue: Size.EMPTY }), TypeAttribute(Size.$class)]
-    },
-    get() {
-      return this.$minimumSize
-    },
-    set(size) {
-      this.$minimumSize = size
-    }
-  },
+  get minimumSize() {
+    return this.$minimumSize
+  }
 
-  $collection: false,
-  collection: {
-    $meta() {
-      return [GraphMLAttribute().init({ defaultValue: false }), TypeAttribute(YBoolean.$class)]
-    },
-    get() {
-      return this.$collection
-    },
-    set(collection) {
-      this.$collection = collection
-    }
-  },
+  set minimumSize(value) {
+    this.$minimumSize = value
+  }
 
-  $type: DataObjectType.NONE,
-  type: {
-    $meta() {
-      return [
+  get collection() {
+    return this.$collection
+  }
+
+  set collection(value) {
+    this.$collection = value
+  }
+
+  get type() {
+    return this.$type
+  }
+
+  set type(value) {
+    this.$type = value
+  }
+
+  get background() {
+    return this.$background
+  }
+
+  set background(value) {
+    this.$background = value
+  }
+
+  get outline() {
+    return this.$outline
+  }
+
+  set outline(value) {
+    this.$outline = value
+  }
+
+  get iconColor() {
+    return this.$iconColor
+  }
+
+  set iconColor(value) {
+    this.$iconColor = value
+  }
+
+  static get $meta() {
+    return {
+      minimumSize: [
+        GraphMLAttribute().init({ defaultValue: Size.EMPTY }),
+        TypeAttribute(Size.$class)
+      ],
+      collection: [
+        GraphMLAttribute().init({ defaultValue: false }),
+        TypeAttribute(YBoolean.$class)
+      ],
+      type: [
         GraphMLAttribute().init({ defaultValue: DataObjectType.NONE }),
         TypeAttribute(DataObjectType.$class)
-      ]
-    },
-    get() {
-      return this.$type
-    },
-    set(type) {
-      this.$type = type
-    }
-  },
-
-  $background: BPMN_CONSTANTS_DATA_OBJECT_DEFAULT_BACKGROUND,
-  background: {
-    $meta() {
-      return [
+      ],
+      background: [
         GraphMLAttribute().init({ defaultValue: BPMN_CONSTANTS_DATA_OBJECT_DEFAULT_BACKGROUND }),
         TypeAttribute(Fill.$class)
-      ]
-    },
-    get() {
-      return this.$background
-    },
-    set(background) {
-      this.$background = background
-    }
-  },
+      ],
 
-  $outline: BPMN_CONSTANTS_DATA_OBJECT_DEFAULT_OUTLINE,
-  outline: {
-    $meta() {
-      return [
+      outline: [
         GraphMLAttribute().init({ defaultValue: BPMN_CONSTANTS_DATA_OBJECT_DEFAULT_OUTLINE }),
         TypeAttribute(Fill.$class)
-      ]
-    },
-    get() {
-      return this.$outline
-    },
-    set(outline) {
-      this.$outline = outline
-    }
-  },
-
-  $iconColor: BPMN_CONSTANTS_DEFAULT_ICON_COLOR,
-  iconColor: {
-    $meta() {
-      return [
+      ],
+      iconColor: [
         GraphMLAttribute().init({ defaultValue: BPMN_CONSTANTS_DEFAULT_ICON_COLOR }),
         TypeAttribute(Fill.$class)
       ]
-    },
-    get() {
-      return this.$iconColor
-    },
-    set(iconColor) {
-      this.$iconColor = iconColor
     }
-  },
+  }
 
   provideValue(serviceProvider) {
     const style = new DataObjectNodeStyle()
@@ -11995,55 +11855,56 @@ export const DataObjectNodeStyleExtension = Class('DataObjectNodeStyleExtension'
     style.iconColor = this.iconColor
     return style
   }
-})
+}
 
-export const DataStoreNodeStyleExtension = Class('DataStoreNodeStyleExtension', {
-  $extends: MarkupExtension,
+export class DataStoreNodeStyleExtension extends MarkupExtension {
+  constructor() {
+    super()
+    this.$minimumSize = Size.EMPTY
+    this.$background = BPMN_CONSTANTS_DATA_STORE_DEFAULT_BACKGROUND
+    this.$outline = BPMN_CONSTANTS_DATA_STORE_DEFAULT_OUTLINE
+  }
 
-  $minimumSize: Size.EMPTY,
-  minimumSize: {
-    $meta() {
-      return [GraphMLAttribute().init({ defaultValue: Size.EMPTY }), TypeAttribute(Size.$class)]
-    },
-    get() {
-      return this.$minimumSize
-    },
-    set(size) {
-      this.$minimumSize = size
-    }
-  },
+  get minimumSize() {
+    return this.$minimumSize
+  }
 
-  $background: BPMN_CONSTANTS_DATA_STORE_DEFAULT_BACKGROUND,
-  background: {
-    $meta() {
-      return [
+  set minimumSize(value) {
+    this.$minimumSize = value
+  }
+
+  get background() {
+    return this.$background
+  }
+
+  set background(value) {
+    this.$background = value
+  }
+
+  get outline() {
+    return this.$outline
+  }
+
+  set outline(value) {
+    this.$outline = value
+  }
+
+  static get $meta() {
+    return {
+      minimumSize: [
+        GraphMLAttribute().init({ defaultValue: Size.EMPTY }),
+        TypeAttribute(Size.$class)
+      ],
+      background: [
         GraphMLAttribute().init({ defaultValue: BPMN_CONSTANTS_DATA_STORE_DEFAULT_BACKGROUND }),
         TypeAttribute(Fill.$class)
-      ]
-    },
-    get() {
-      return this.$background
-    },
-    set(background) {
-      this.$background = background
-    }
-  },
-
-  $outline: BPMN_CONSTANTS_DATA_STORE_DEFAULT_OUTLINE,
-  outline: {
-    $meta() {
-      return [
+      ],
+      outline: [
         GraphMLAttribute().init({ defaultValue: BPMN_CONSTANTS_DATA_STORE_DEFAULT_OUTLINE }),
         TypeAttribute(Fill.$class)
       ]
-    },
-    get() {
-      return this.$outline
-    },
-    set(outline) {
-      this.$outline = outline
     }
-  },
+  }
 
   provideValue(serviceProvider) {
     const style = new DataStoreNodeStyle()
@@ -12052,101 +11913,95 @@ export const DataStoreNodeStyleExtension = Class('DataStoreNodeStyleExtension', 
     style.outline = this.outline
     return style
   }
-})
+}
 
-export const EventNodeStyleExtension = Class('EventNodeStyleExtension', {
-  $extends: MarkupExtension,
+export class EventNodeStyleExtension extends MarkupExtension {
+  constructor() {
+    super()
+    this.$type = EventType.PLAIN
+    this.$characteristic = EventCharacteristic.START
+    this.$minimumSize = Size.EMPTY
+    this.$background = BPMN_CONSTANTS_DEFAULT_EVENT_BACKGROUND
+    this.$outline = BPMN_CONSTANTS_DEFAULT_EVENT_OUTLINE
+    this.$iconColor = BPMN_CONSTANTS_DEFAULT_ICON_COLOR
+  }
 
-  $type: EventType.PLAIN,
-  type: {
-    $meta() {
-      return [
+  get type() {
+    return this.$type
+  }
+
+  set type(value) {
+    this.$type = value
+  }
+
+  get characteristic() {
+    return this.$characteristic
+  }
+
+  set characteristic(value) {
+    this.$characteristic = value
+  }
+
+  get minimumSize() {
+    return this.$minimumSize
+  }
+
+  set minimumSize(value) {
+    this.$minimumSize = value
+  }
+
+  get background() {
+    return this.$background
+  }
+
+  set background(value) {
+    this.$background = value
+  }
+
+  get outline() {
+    return this.$outline
+  }
+
+  set outline(value) {
+    this.$outline = value
+  }
+
+  get iconColor() {
+    return this.$iconColor
+  }
+
+  set iconColor(value) {
+    this.$iconColor = value
+  }
+
+  static get $meta() {
+    return {
+      type: [
         GraphMLAttribute().init({ defaultValue: EventType.PLAIN }),
         TypeAttribute(EventType.$class)
-      ]
-    },
-    get() {
-      return this.$type
-    },
-    set(type) {
-      this.$type = type
-    }
-  },
-  $characteristic: EventCharacteristic.START,
-  characteristic: {
-    $meta() {
-      return [
+      ],
+      characteristic: [
         GraphMLAttribute().init({ defaultValue: EventCharacteristic.START }),
         TypeAttribute(EventCharacteristic.$class)
-      ]
-    },
-    get() {
-      return this.$characteristic
-    },
-    set(characteristic) {
-      this.$characteristic = characteristic
-    }
-  },
-  $minimumSize: Size.EMPTY,
-  minimumSize: {
-    $meta() {
-      return [GraphMLAttribute().init({ defaultValue: Size.EMPTY }), TypeAttribute(Size.$class)]
-    },
-    get() {
-      return this.$minimumSize
-    },
-    set(minimumSize) {
-      this.$minimumSize = minimumSize
-    }
-  },
-
-  $background: BPMN_CONSTANTS_DEFAULT_EVENT_BACKGROUND,
-  background: {
-    $meta() {
-      return [
+      ],
+      minimumSize: [
+        GraphMLAttribute().init({ defaultValue: Size.EMPTY }),
+        TypeAttribute(Size.$class)
+      ],
+      background: [
         GraphMLAttribute().init({ defaultValue: BPMN_CONSTANTS_DEFAULT_EVENT_BACKGROUND }),
         TypeAttribute(Fill.$class)
-      ]
-    },
-    get() {
-      return this.$background
-    },
-    set(background) {
-      this.$background = background
-    }
-  },
-
-  $outline: BPMN_CONSTANTS_DEFAULT_EVENT_OUTLINE,
-  outline: {
-    $meta() {
-      return [
+      ],
+      outline: [
         GraphMLAttribute().init({ defaultValue: BPMN_CONSTANTS_DEFAULT_EVENT_OUTLINE }),
         TypeAttribute(Fill.$class)
-      ]
-    },
-    get() {
-      return this.$outline
-    },
-    set(outline) {
-      this.$outline = outline
-    }
-  },
-
-  $iconColor: BPMN_CONSTANTS_DEFAULT_ICON_COLOR,
-  iconColor: {
-    $meta() {
-      return [
+      ],
+      iconColor: [
         GraphMLAttribute().init({ defaultValue: BPMN_CONSTANTS_DEFAULT_ICON_COLOR }),
         TypeAttribute(Fill.$class)
       ]
-    },
-    get() {
-      return this.$iconColor
-    },
-    set(iconColor) {
-      this.$iconColor = iconColor
     }
-  },
+  }
 
   provideValue(serviceProvider) {
     const style = new EventNodeStyle()
@@ -12158,86 +12013,82 @@ export const EventNodeStyleExtension = Class('EventNodeStyleExtension', {
     style.iconColor = this.iconColor
     return style
   }
-})
+}
 
-export const GatewayNodeStyleExtension = Class('GatewayNodeStyleExtension', {
-  $extends: MarkupExtension,
+export class GatewayNodeStyleExtension extends MarkupExtension {
+  constructor() {
+    super()
+    this.$type = GatewayType.EXCLUSIVE_WITHOUT_MARKER
+    this.$minimumSize = Size.EMPTY
+    this.$background = BPMN_CONSTANTS_GATEWAY_DEFAULT_BACKGROUND
+    this.$outline = BPMN_CONSTANTS_GATEWAY_DEFAULT_OUTLINE
+    this.$iconColor = BPMN_CONSTANTS_DEFAULT_ICON_COLOR
+  }
 
-  $type: GatewayType.EXCLUSIVE_WITHOUT_MARKER,
-  type: {
-    $meta() {
-      return [
+  get type() {
+    return this.$type
+  }
+
+  set type(value) {
+    this.$type = value
+  }
+
+  get minimumSize() {
+    return this.$minimumSize
+  }
+
+  set minimumSize(value) {
+    this.$minimumSize = value
+  }
+
+  get background() {
+    return this.$background
+  }
+
+  set background(value) {
+    this.$background = value
+  }
+
+  get outline() {
+    return this.$outline
+  }
+
+  set outline(value) {
+    this.$outline = value
+  }
+
+  get iconColor() {
+    return this.$iconColor
+  }
+
+  set iconColor(value) {
+    this.$iconColor = value
+  }
+
+  static get $meta() {
+    return {
+      type: [
         GraphMLAttribute().init({ defaultValue: GatewayType.EXCLUSIVE_WITHOUT_MARKER }),
         TypeAttribute(GatewayType.$class)
-      ]
-    },
-    get() {
-      return this.$type
-    },
-    set(type) {
-      this.$type = type
-    }
-  },
-  $minimumSize: Size.EMPTY,
-  minimumSize: {
-    $meta() {
-      return [GraphMLAttribute().init({ defaultValue: Size.EMPTY }), TypeAttribute(Size.$class)]
-    },
-    get() {
-      return this.$minimumSize
-    },
-    set(minimumSize) {
-      this.$minimumSize = minimumSize
-    }
-  },
-
-  $background: BPMN_CONSTANTS_GATEWAY_DEFAULT_BACKGROUND,
-  background: {
-    $meta() {
-      return [
+      ],
+      minimumSize: [
+        GraphMLAttribute().init({ defaultValue: Size.EMPTY }),
+        TypeAttribute(Size.$class)
+      ],
+      background: [
         GraphMLAttribute().init({ defaultValue: BPMN_CONSTANTS_GATEWAY_DEFAULT_BACKGROUND }),
         TypeAttribute(Fill.$class)
-      ]
-    },
-    get() {
-      return this.$background
-    },
-    set(background) {
-      this.$background = background
-    }
-  },
-
-  $outline: BPMN_CONSTANTS_GATEWAY_DEFAULT_OUTLINE,
-  outline: {
-    $meta() {
-      return [
+      ],
+      outline: [
         GraphMLAttribute().init({ defaultValue: BPMN_CONSTANTS_GATEWAY_DEFAULT_OUTLINE }),
         TypeAttribute(Fill.$class)
-      ]
-    },
-    get() {
-      return this.$outline
-    },
-    set(outline) {
-      this.$outline = outline
-    }
-  },
-
-  $iconColor: BPMN_CONSTANTS_DEFAULT_ICON_COLOR,
-  iconColor: {
-    $meta() {
-      return [
+      ],
+      iconColor: [
         GraphMLAttribute().init({ defaultValue: BPMN_CONSTANTS_DEFAULT_ICON_COLOR }),
         TypeAttribute(Fill.$class)
       ]
-    },
-    get() {
-      return this.$iconColor
-    },
-    set(iconColor) {
-      this.$iconColor = iconColor
     }
-  },
+  }
 
   provideValue(serviceProvider) {
     const style = new GatewayNodeStyle()
@@ -12248,58 +12099,56 @@ export const GatewayNodeStyleExtension = Class('GatewayNodeStyleExtension', {
     style.iconColor = this.iconColor
     return style
   }
-})
+}
 
-export const GroupNodeStyleExtension = Class('GroupNodeStyleExtension', {
-  $extends: MarkupExtension,
+export class GroupNodeStyleExtension extends MarkupExtension {
+  constructor() {
+    super()
+    this.$insets = new Insets(15)
+    this.$background = BPMN_CONSTANTS_GROUP_DEFAULT_BACKGROUND
+    this.$outline = BPMN_CONSTANTS_GROUP_DEFAULT_OUTLINE
+  }
 
-  $insets: new Insets(15),
-  insets: {
-    $meta() {
-      return [
+  get insets() {
+    return this.$insets
+  }
+
+  set insets(value) {
+    this.$insets = value
+  }
+
+  get background() {
+    return this.$background
+  }
+
+  set background(value) {
+    this.$background = value
+  }
+
+  get outline() {
+    return this.$outline
+  }
+
+  set outline(value) {
+    this.$outline = value
+  }
+
+  static get $meta() {
+    return {
+      insets: [
         GraphMLAttribute().init({ defaultValue: new Insets(15) }),
         TypeAttribute(Insets.$class)
-      ]
-    },
-    get() {
-      return this.$insets
-    },
-    set(insets) {
-      this.$insets = insets
-    }
-  },
-
-  $background: BPMN_CONSTANTS_GROUP_DEFAULT_BACKGROUND,
-  background: {
-    $meta() {
-      return [
+      ],
+      background: [
         GraphMLAttribute().init({ defaultValue: BPMN_CONSTANTS_GROUP_DEFAULT_BACKGROUND }),
         TypeAttribute(Fill.$class)
-      ]
-    },
-    get() {
-      return this.$background
-    },
-    set(background) {
-      this.$background = background
-    }
-  },
-
-  $outline: BPMN_CONSTANTS_GROUP_DEFAULT_OUTLINE,
-  outline: {
-    $meta() {
-      return [
+      ],
+      outline: [
         GraphMLAttribute().init({ defaultValue: BPMN_CONSTANTS_GROUP_DEFAULT_OUTLINE }),
         TypeAttribute(Fill.$class)
       ]
-    },
-    get() {
-      return this.$outline
-    },
-    set(outline) {
-      this.$outline = outline
     }
-  },
+  }
 
   provideValue(serviceProvider) {
     const style = new GroupNodeStyle()
@@ -12308,71 +12157,66 @@ export const GroupNodeStyleExtension = Class('GroupNodeStyleExtension', {
     style.outline = this.outline
     return style
   }
-})
+}
 
-export const BpmnEdgeStyleExtension = Class('BpmnEdgeStyleExtension', {
-  $extends: MarkupExtension,
+export class BpmnEdgeStyleExtension extends MarkupExtension {
+  constructor() {
+    super()
+    this.$type = EdgeType.SEQUENCE_FLOW
+    this.$smoothing = 20
+    this.$color = BPMN_CONSTANTS_EDGE_DEFAULT_COLOR
+    this.$innerColor = BPMN_CONSTANTS_EDGE_DEFAULT_INNER_COLOR
+  }
 
-  $type: EdgeType.SEQUENCE_FLOW,
-  type: {
-    $meta() {
-      return [
+  get type() {
+    return this.$type
+  }
+
+  set type(value) {
+    this.$type = value
+  }
+
+  get smoothing() {
+    return this.$smoothing
+  }
+
+  set smoothing(value) {
+    this.$smoothing = value
+  }
+
+  get color() {
+    return this.$color
+  }
+
+  set color(value) {
+    this.$color = value
+  }
+
+  get innerColor() {
+    return this.$innerColor
+  }
+
+  set innerColor(value) {
+    this.$innerColor = value
+  }
+
+  static get $meta() {
+    return {
+      type: [
         GraphMLAttribute().init({ defaultValue: EdgeType.SEQUENCE_FLOW }),
         TypeAttribute(EdgeType.$class)
-      ]
-    },
-    get() {
-      return this.$type
-    },
-    set(type) {
-      this.$type = type
-    }
-  },
-
-  $smoothing: 20,
-  smoothing: {
-    $meta() {
-      return [GraphMLAttribute().init({ defaultValue: 20.0 }), TypeAttribute(YNumber.$class)]
-    },
-    get() {
-      return this.$smoothing
-    },
-    set(smoothing) {
-      this.$smoothing = smoothing
-    }
-  },
-
-  $color: BPMN_CONSTANTS_EDGE_DEFAULT_COLOR,
-  color: {
-    $meta() {
-      return [
+      ],
+      smoothing: [GraphMLAttribute().init({ defaultValue: 20.0 }), TypeAttribute(YNumber.$class)],
+      color: [
         GraphMLAttribute().init({ defaultValue: BPMN_CONSTANTS_EDGE_DEFAULT_COLOR }),
         TypeAttribute(Fill.$class)
-      ]
-    },
-    get() {
-      return this.$color
-    },
-    set(color) {
-      this.$color = color
-    }
-  },
-
-  $innerColor: BPMN_CONSTANTS_EDGE_DEFAULT_INNER_COLOR,
-  innerColor: {
-    $meta() {
-      return [
+      ],
+      innerColor: [
         GraphMLAttribute().init({ defaultValue: BPMN_CONSTANTS_EDGE_DEFAULT_INNER_COLOR }),
         TypeAttribute(Fill.$class)
       ]
-    },
-    get() {
-      return this.$innerColor
-    },
-    set(innerColor) {
-      this.$innerColor = innerColor
     }
-  },
+  }
 
   provideValue(serviceProvider) {
     const style = new BpmnEdgeStyle()
@@ -12382,106 +12226,95 @@ export const BpmnEdgeStyleExtension = Class('BpmnEdgeStyleExtension', {
     style.innerColor = this.innerColor
     return style
   }
-})
+}
 
-export const EventPortStyleExtension = Class('EventPortStyleExtension', {
-  $extends: MarkupExtension,
+export class EventPortStyleExtension extends MarkupExtension {
+  constructor() {
+    super()
+    this.$type = EventType.COMPENSATION
+    this.$characteristic = EventCharacteristic.BOUNDARY_INTERRUPTING
+    this.$renderSize = new Size(20, 20)
+    this.$background = BPMN_CONSTANTS_DEFAULT_EVENT_BACKGROUND
+    this.$outline = BPMN_CONSTANTS_DEFAULT_EVENT_OUTLINE
+    this.$iconColor = BPMN_CONSTANTS_DEFAULT_ICON_COLOR
+  }
 
-  $type: EventType.COMPENSATION,
-  type: {
-    $meta() {
-      return [
+  get type() {
+    return this.$type
+  }
+
+  set type(value) {
+    this.$type = value
+  }
+
+  get characteristic() {
+    return this.$characteristic
+  }
+
+  set characteristic(value) {
+    this.$characteristic = value
+  }
+
+  get renderSize() {
+    return this.$renderSize
+  }
+
+  set renderSize(value) {
+    this.$renderSize = value
+  }
+
+  get background() {
+    return this.$background
+  }
+
+  set background(value) {
+    this.$background = value
+  }
+
+  get outline() {
+    return this.$outline
+  }
+
+  set outline(value) {
+    this.$outline = value
+  }
+
+  get iconColor() {
+    return this.$iconColor
+  }
+
+  set iconColor(value) {
+    this.$iconColor = value
+  }
+
+  static get $meta() {
+    return {
+      type: [
         GraphMLAttribute().init({ defaultValue: EventType.COMPENSATION }),
         TypeAttribute(EventType.$class)
-      ]
-    },
-    get() {
-      return this.$type
-    },
-    set(type) {
-      this.$type = type
-    }
-  },
-
-  $characteristic: EventCharacteristic.BOUNDARY_INTERRUPTING,
-  characteristic: {
-    $meta() {
-      return [
+      ],
+      characteristic: [
         GraphMLAttribute().init({ defaultValue: EventCharacteristic.BOUNDARY_INTERRUPTING }),
         TypeAttribute(EventCharacteristic.$class)
-      ]
-    },
-    get() {
-      return this.$characteristic
-    },
-    set(characteristic) {
-      this.$characteristic = characteristic
-    }
-  },
-
-  $renderSize: new Size(20, 20),
-  renderSize: {
-    $meta() {
-      return [
+      ],
+      renderSize: [
         GraphMLAttribute().init({ defaultValue: new Size(20, 20) }),
         TypeAttribute(Size.$class)
-      ]
-    },
-    get() {
-      return this.$renderSize
-    },
-    set(size) {
-      this.$renderSize = size
-    }
-  },
-
-  $background: BPMN_CONSTANTS_DEFAULT_EVENT_BACKGROUND,
-  background: {
-    $meta() {
-      return [
+      ],
+      background: [
         GraphMLAttribute().init({ defaultValue: BPMN_CONSTANTS_DEFAULT_EVENT_BACKGROUND }),
         TypeAttribute(Fill.$class)
-      ]
-    },
-    get() {
-      return this.$background
-    },
-    set(background) {
-      this.$background = background
-    }
-  },
-
-  $outline: BPMN_CONSTANTS_DEFAULT_EVENT_OUTLINE,
-  outline: {
-    $meta() {
-      return [
+      ],
+      outline: [
         GraphMLAttribute().init({ defaultValue: BPMN_CONSTANTS_DEFAULT_EVENT_OUTLINE }),
         TypeAttribute(Fill.$class)
-      ]
-    },
-    get() {
-      return this.$outline
-    },
-    set(outline) {
-      this.$outline = outline
-    }
-  },
-
-  $iconColor: BPMN_CONSTANTS_DEFAULT_ICON_COLOR,
-  iconColor: {
-    $meta() {
-      return [
+      ],
+      iconColor: [
         GraphMLAttribute().init({ defaultValue: BPMN_CONSTANTS_DEFAULT_ICON_COLOR }),
         TypeAttribute(Fill.$class)
       ]
-    },
-    get() {
-      return this.$iconColor
-    },
-    set(iconColor) {
-      this.$iconColor = iconColor
     }
-  },
+  }
 
   provideValue(serviceProvider) {
     const style = new EventPortStyle()
@@ -12493,55 +12326,53 @@ export const EventPortStyleExtension = Class('EventPortStyleExtension', {
     style.iconColor = this.iconColor
     return style
   }
-})
+}
 
-export const AnnotationLabelStyleExtension = Class('AnnotationLabelStyleExtension', {
-  $extends: MarkupExtension,
+export class AnnotationLabelStyleExtension extends MarkupExtension {
+  constructor() {
+    super()
+    this.$insets = 5
+    this.$background = BPMN_CONSTANTS_ANNOTATION_DEFAULT_BACKGROUND
+    this.$outline = BPMN_CONSTANTS_ANNOTATION_DEFAULT_OUTLINE
+  }
 
-  $insets: 5,
-  insets: {
-    $meta() {
-      return [GraphMLAttribute().init({ defaultValue: 5 }), TypeAttribute(YNumber.$class)]
-    },
-    get() {
-      return this.$insets
-    },
-    set(insets) {
-      this.$insets = insets
-    }
-  },
+  get insets() {
+    return this.$insets
+  }
 
-  $background: BPMN_CONSTANTS_ANNOTATION_DEFAULT_BACKGROUND,
-  background: {
-    $meta() {
-      return [
+  set insets(value) {
+    this.$insets = value
+  }
+
+  get background() {
+    return this.$background
+  }
+
+  set background(value) {
+    this.$background = value
+  }
+
+  get outline() {
+    return this.$outline
+  }
+
+  set outline(value) {
+    this.$outline = value
+  }
+
+  static get $meta() {
+    return {
+      insets: [GraphMLAttribute().init({ defaultValue: 5 }), TypeAttribute(YNumber.$class)],
+      background: [
         GraphMLAttribute().init({ defaultValue: BPMN_CONSTANTS_ANNOTATION_DEFAULT_BACKGROUND }),
         TypeAttribute(Fill.$class)
-      ]
-    },
-    get() {
-      return this.$background
-    },
-    set(background) {
-      this.$background = background
-    }
-  },
-
-  $outline: BPMN_CONSTANTS_ANNOTATION_DEFAULT_OUTLINE,
-  outline: {
-    $meta() {
-      return [
+      ],
+      outline: [
         GraphMLAttribute().init({ defaultValue: BPMN_CONSTANTS_ANNOTATION_DEFAULT_OUTLINE }),
         TypeAttribute(Fill.$class)
       ]
-    },
-    get() {
-      return this.$outline
-    },
-    set(outline) {
-      this.$outline = outline
     }
-  },
+  }
 
   provideValue(serviceProvider) {
     const style = new AnnotationLabelStyle()
@@ -12550,71 +12381,69 @@ export const AnnotationLabelStyleExtension = Class('AnnotationLabelStyleExtensio
     style.outline = this.outline
     return style
   }
-})
+}
 
-export const MessageLabelStyleExtension = Class('MessageLabelStyleExtension', {
-  $extends: MarkupExtension,
+export class MessageLabelStyleExtension extends MarkupExtension {
+  constructor() {
+    super()
+    this.$isInitiating = true
+    this.$outline = BPMN_CONSTANTS_DEFAULT_MESSAGE_OUTLINE
+    this.$initiatingColor = BPMN_CONSTANTS_DEFAULT_INITIATING_MESSAGE_COLOR
+    this.$responseColor = BPMN_CONSTANTS_DEFAULT_RECEIVING_MESSAGE_COLOR
+  }
 
-  $isInitiating: true,
-  isInitiating: {
-    $meta() {
-      return [GraphMLAttribute().init({ defaultValue: true }), TypeAttribute(YBoolean.$class)]
-    },
-    get() {
-      return this.$isInitiating
-    },
-    set(isInitiating) {
-      this.$isInitiating = isInitiating
-    }
-  },
+  get isInitiating() {
+    return this.$isInitiating
+  }
 
-  $outline: BPMN_CONSTANTS_DEFAULT_MESSAGE_OUTLINE,
-  outline: {
-    $meta() {
-      return [
+  set isInitiating(value) {
+    this.$isInitiating = value
+  }
+
+  get outline() {
+    return this.$outline
+  }
+
+  set outline(value) {
+    this.$outline = value
+  }
+
+  get initiatingColor() {
+    return this.$initiatingColor
+  }
+
+  set initiatingColor(value) {
+    this.$initiatingColor = value
+  }
+
+  get responseColor() {
+    return this.$responseColor
+  }
+
+  set responseColor(value) {
+    this.$responseColor = value
+  }
+
+  static get $meta() {
+    return {
+      isInitiating: [
+        GraphMLAttribute().init({ defaultValue: true }),
+        TypeAttribute(YBoolean.$class)
+      ],
+      outline: [
         GraphMLAttribute().init({ defaultValue: BPMN_CONSTANTS_DEFAULT_MESSAGE_OUTLINE }),
         TypeAttribute(Fill.$class)
-      ]
-    },
-    get() {
-      return this.$outline
-    },
-    set(outline) {
-      this.$outline = outline
-    }
-  },
-
-  $initiatingColor: BPMN_CONSTANTS_DEFAULT_INITIATING_MESSAGE_COLOR,
-  initiatingColor: {
-    $meta() {
-      return [
+      ],
+      initiatingColor: [
         GraphMLAttribute().init({ defaultValue: BPMN_CONSTANTS_DEFAULT_INITIATING_MESSAGE_COLOR }),
         TypeAttribute(Fill.$class)
-      ]
-    },
-    get() {
-      return this.$initiatingColor
-    },
-    set(initiatingColor) {
-      this.$initiatingColor = initiatingColor
-    }
-  },
-
-  $responseColor: BPMN_CONSTANTS_DEFAULT_RECEIVING_MESSAGE_COLOR,
-  responseColor: {
-    $meta() {
-      return [
+      ],
+      responseColor: [
         GraphMLAttribute().init({ defaultValue: BPMN_CONSTANTS_DEFAULT_RECEIVING_MESSAGE_COLOR }),
         TypeAttribute(Fill.$class)
       ]
-    },
-    get() {
-      return this.$responseColor
-    },
-    set(responseColor) {
-      this.$responseColor = responseColor
     }
-  },
+  }
 
   provideValue(serviceProvider) {
     const style = new MessageLabelStyle()
@@ -12624,177 +12453,157 @@ export const MessageLabelStyleExtension = Class('MessageLabelStyleExtension', {
     style.responseColor = this.responseColor
     return style
   }
-})
+}
 
-export const PoolHeaderLabelModelExtension = Class('PoolHeaderLabelModelExtension', {
-  $extends: MarkupExtension,
+export class PoolHeaderLabelModelExtension extends MarkupExtension {
+  static get INSTANCE() {
+    return new PoolHeaderLabelModel()
+  }
 
-  $static: {
-    INSTANCE: {
-      $meta() {
-        return [TypeAttribute(PoolHeaderLabelModel.$class)]
-      },
-      value: new PoolHeaderLabelModel()
-    },
+  static get NORTH() {
+    return PoolHeaderLabelModel.NORTH
+  }
 
-    NORTH: {
-      $meta() {
-        return [TypeAttribute(ILabelModelParameter.$class)]
-      },
-      value: PoolHeaderLabelModel.NORTH
-    },
+  static get EAST() {
+    return PoolHeaderLabelModel.EAST
+  }
 
-    EAST: {
-      $meta() {
-        return [TypeAttribute(ILabelModelParameter.$class)]
-      },
-      value: PoolHeaderLabelModel.EAST
-    },
+  static get SOUTH() {
+    return PoolHeaderLabelModel.SOUTH
+  }
 
-    SOUTH: {
-      $meta() {
-        return [TypeAttribute(ILabelModelParameter.$class)]
-      },
-      value: PoolHeaderLabelModel.SOUTH
-    },
+  static get WEST() {
+    return PoolHeaderLabelModel.WEST
+  }
 
-    WEST: {
-      $meta() {
-        return [TypeAttribute(ILabelModelParameter.$class)]
-      },
-      value: PoolHeaderLabelModel.WEST
+  static get $meta() {
+    return {
+      INSTANCE: TypeAttribute(PoolHeaderLabelModel.$class),
+      NORTH: TypeAttribute(ILabelModelParameter.$class),
+      EAST: TypeAttribute(ILabelModelParameter.$class),
+      SOUTH: TypeAttribute(ILabelModelParameter.$class),
+      WEST: TypeAttribute(ILabelModelParameter.$class)
     }
-  },
+  }
 
   provideValue(serviceProvider) {
     return new PoolHeaderLabelModel()
   }
-})
+}
 
 // ensure that these constants can be deserialized even when they have not yet been used yet
-Class.fixType(MessageParameter)
 Class.fixType(ChoreographyLabelModel)
+Class.fixType(MessageParameter)
 Class.fixType(TaskNameBandParameter)
 
-export const ChoreographyLabelModelExtension = Class('ChoreographyLabelModelExtension', {
-  $extends: MarkupExtension,
+export class ChoreographyLabelModelExtension extends MarkupExtension {
+  static get INSTANCE() {
+    return new ChoreographyLabelModel()
+  }
 
-  $static: {
-    INSTANCE: {
-      $meta() {
-        return [TypeAttribute(ChoreographyLabelModel.$class)]
-      },
-      value: new ChoreographyLabelModel()
-    },
-    TASK_NAME_BAND: {
-      $meta() {
-        return [TypeAttribute(TaskNameBandParameter.$class)]
-      },
-      value: ChoreographyLabelModel.TASK_NAME_BAND
-    },
-    NORTH_MESSAGE: {
-      $meta() {
-        return [TypeAttribute(MessageParameter.$class)]
-      },
-      value: ChoreographyLabelModel.NORTH_MESSAGE
-    },
-    SOUTH_MESSAGE: {
-      $meta() {
-        return [TypeAttribute(MessageParameter.$class)]
-      },
-      value: ChoreographyLabelModel.SOUTH_MESSAGE
+  static get TASK_NAME_BAND() {
+    return ChoreographyLabelModel.TASK_NAME_BAND
+  }
+
+  static get NORTH_MESSAGE() {
+    return ChoreographyLabelModel.NORTH_MESSAGE
+  }
+
+  static get SOUTH_MESSAGE() {
+    return ChoreographyLabelModel.SOUTH_MESSAGE
+  }
+
+  static get $meta() {
+    return {
+      INSTANCE: TypeAttribute(ChoreographyLabelModel.$class),
+      TASK_NAME_BAND: TypeAttribute(TaskNameBandParameter.$class),
+      NORTH_MESSAGE: TypeAttribute(MessageParameter.$class),
+      SOUTH_MESSAGE: TypeAttribute(MessageParameter.$class)
     }
-  },
+  }
 
   provideValue(serviceProvider) {
     return new ChoreographyLabelModel()
   }
-})
+}
 
-export const ParticipantParameterExtension = Class('ParticipantParameterExtension', {
-  $extends: MarkupExtension,
+export class ParticipantParameterExtension extends MarkupExtension {
+  constructor() {
+    super()
+    this.$top = false
+    this.$index = false
+  }
 
-  $top: false,
-  top: {
-    $meta() {
-      return [TypeAttribute(YBoolean.$class)]
-    },
-    get() {
-      return this.$top
-    },
-    set(top) {
-      this.$top = top
+  get top() {
+    return this.$top
+  }
+
+  set top(value) {
+    this.$top = value
+  }
+
+  get index() {
+    return this.$index
+  }
+
+  set index(value) {
+    this.$index = value
+  }
+
+  static get $meta() {
+    return {
+      top: TypeAttribute(YBoolean.$class),
+      index: TypeAttribute(YNumber.$class)
     }
-  },
-
-  $index: false,
-  index: {
-    $meta() {
-      return [TypeAttribute(YNumber.$class)]
-    },
-    get() {
-      return this.$index
-    },
-    set(index) {
-      this.$index = index
-    }
-  },
+  }
 
   provideValue(serviceProvider) {
     return new ParticipantParameter(this.top, this.index)
   }
-})
+}
 
-export const TaskNameBandParameterExtension = Class('TaskNameBandParameterExtension', {
-  $extends: MarkupExtension,
-
+export class TaskNameBandParameterExtension extends MarkupExtension {
   provideValue(serviceProvider) {
     return new TaskNameBandParameter()
   }
-})
+}
 
-export const MessageParameterExtension = Class('MessageParameterExtension', {
-  $extends: MarkupExtension,
+export class MessageParameterExtension extends MarkupExtension {
+  constructor() {
+    super()
+    this.$north = false
+  }
 
-  $north: false,
-  north: {
-    get() {
-      return this.$north
-    },
-    set(north) {
-      this.$north = north
-    }
-  },
+  get north() {
+    return this.$north
+  }
+
+  set north(value) {
+    this.$north = value
+  }
 
   provideValue(serviceProvider) {
     const parameter = new MessageParameter()
     parameter.north = this.north
     return parameter
   }
-})
+}
 
-export const ChoreographyMessageLabelStyleExtension = Class(
-  'ChoreographyMessageLabelStyleExtension',
-  {
-    $extends: MarkupExtension,
-
-    $textPlacement: null,
-    textPlacement: {
-      get() {
-        return this.$textPlacement
-      },
-      set(placement) {
-        this.$textPlacement = placement
-      }
-    },
-
-    provideValue(serviceProvider) {
-      const style = new ChoreographyMessageLabelStyle()
-      style.textPlacement = this.textPlacement
-      return style
-    }
+export class ChoreographyMessageLabelStyleExtension extends MarkupExtension {
+  get textPlacement() {
+    return this.$textPlacement
   }
-)
+
+  set textPlacement(value) {
+    this.$textPlacement = value
+  }
+
+  provideValue(serviceProvider) {
+    const style = new ChoreographyMessageLabelStyle()
+    style.textPlacement = this.textPlacement
+    return style
+  }
+}
 
 /**
  * A serialization listener that must be added when BPMN styles are serialized.

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -45,7 +45,6 @@ import yfiles, {
   IArrow,
   IBoundsProvider,
   ICanvasContext,
-  ICanvasObjectDescriptor,
   IEdge,
   IGraph,
   IInputModeContext,
@@ -159,38 +158,6 @@ export class DemoNodeStyle extends NodeStyleBase {
     }
 
     return oldVisual
-  }
-
-  /**
-   * Gets the outline of the node, a round rect in this case.
-   * @param {INode} node
-   * @return {GeneralPath}
-   */
-  getOutline(node) {
-    const path = new GeneralPath()
-    path.appendRectangle(node.layout, false)
-    return path
-  }
-
-  /**
-   * Hit test which considers HitTestRadius specified in CanvasContext.
-   * @param {IInputModeContext} inputModeContext
-   * @param {Point} p
-   * @param {INode} node
-   * @return {boolean} True if p is inside node.
-   */
-  isHit(inputModeContext, p, node) {
-    return super.isHit(inputModeContext, p, node)
-  }
-
-  /**
-   * Exact geometric check whether a point p lies inside the node.
-   * @param {INode} node
-   * @param {Point} point
-   * @return {boolean}
-   */
-  isInside(node, point) {
-    return super.isInside(node, point)
   }
 }
 
@@ -697,17 +664,6 @@ export class DemoGroupStyle extends NodeStyleBase {
   }
 
   /**
-   * Gets the outline of the node, a round rect in this case.
-   * @param {INode} node
-   * @return {GeneralPath}
-   */
-  getOutline(node) {
-    const path = new GeneralPath()
-    path.appendRectangle(node.layout, false)
-    return path
-  }
-
-  /**
    * Returns whether or not the given group node is collapsed.
    * @param {INode} node
    * @param {GraphComponent} gc
@@ -1059,9 +1015,9 @@ export class DemoEdgeStyle extends EdgeStyleBase {
 
     let path = oldVisual.svgElement
     const cache = path['data-renderDataCache']
-    if (!renderPath.hasSameValue(cache['path']) || cache['obstacleHash'] !== newObstacleHash) {
-      cache['path'] = renderPath
-      cache['obstacleHash'] = newObstacleHash
+    if (!renderPath.hasSameValue(cache.path) || cache.obstacleHash !== newObstacleHash) {
+      cache.path = renderPath
+      cache.obstacleHash = newObstacleHash
       const gp = this.createPathWithBridges(renderPath, renderContext)
       const pathData = gp.size === 0 ? '' : gp.createSvgPathData()
       if (!isBrowserWithBadMarkerSupport && this.useMarkerArrows) {
@@ -1434,78 +1390,78 @@ export function initDemoStyles(graph) {
   graph.groupNodeDefaults.labels.style = groupLabelStyle
 }
 
-const DemoNodeStyleExtension = BaseClass('DemoNodeStyleExtension', {
-  $extends: MarkupExtension,
+class DemoNodeStyleExtension extends MarkupExtension {
+  constructor() {
+    super()
+    this.$cssClass = ''
+  }
 
-  constructor: function() {
-    MarkupExtension.call(this)
-  },
+  get cssClass() {
+    return this.$cssClass
+  }
 
-  $cssClass: '',
-  cssClass: {
-    $meta: function() {
-      return [GraphMLAttribute().init({ defaultValue: '' }), TypeAttribute(YString.$class)]
-    },
-    get: function() {
-      return this.$cssClass
-    },
-    set: function(value) {
-      this.$cssClass = value
+  set cssClass(value) {
+    this.$cssClass = value
+  }
+
+  static get $meta() {
+    return {
+      cssClass: [GraphMLAttribute().init({ defaultValue: '' }), TypeAttribute(YString.$class)]
     }
-  },
+  }
 
   provideValue(serviceProvider) {
     const style = new DemoNodeStyle()
     style.cssClass = this.cssClass
     return style
   }
-})
+}
 
-const DemoGroupStyleExtension = BaseClass('DemoGroupStyleExtension', {
-  $extends: MarkupExtension,
+class DemoGroupStyleExtension extends MarkupExtension {
+  constructor() {
+    super()
+    this.$cssClass = ''
+    this.$isCollapsible = false
+    this.$solidHitTest = false
+  }
 
-  constructor: function() {
-    MarkupExtension.call(this)
-  },
+  get cssClass() {
+    return this.$cssClass
+  }
 
-  $cssClass: '',
-  cssClass: {
-    $meta: function() {
-      return [GraphMLAttribute().init({ defaultValue: '' }), TypeAttribute(YString.$class)]
-    },
-    get: function() {
-      return this.$cssClass
-    },
-    set: function(value) {
-      this.$cssClass = value
+  set cssClass(value) {
+    this.$cssClass = value
+  }
+
+  get isCollapsible() {
+    return this.$isCollapsible
+  }
+
+  set isCollapsible(value) {
+    this.$isCollapsible = value
+  }
+
+  get solidHitTest() {
+    return this.$solidHitTest
+  }
+
+  set solidHitTest(value) {
+    this.$solidHitTest = value
+  }
+
+  static get $meta() {
+    return {
+      cssClass: [GraphMLAttribute().init({ defaultValue: '' }), TypeAttribute(YString.$class)],
+      isCollapsible: [
+        GraphMLAttribute().init({ defaultValue: false }),
+        TypeAttribute(YBoolean.$class)
+      ],
+      solidHitTest: [
+        GraphMLAttribute().init({ defaultValue: false }),
+        TypeAttribute(YBoolean.$class)
+      ]
     }
-  },
-
-  $isCollapsible: '',
-  isCollapsible: {
-    $meta: function() {
-      return [GraphMLAttribute().init({ defaultValue: false }), TypeAttribute(YBoolean.$class)]
-    },
-    get: function() {
-      return this.$isCollapsible
-    },
-    set: function(value) {
-      this.$isCollapsible = value
-    }
-  },
-
-  $solidHitTest: '',
-  solidHitTest: {
-    $meta: function() {
-      return [GraphMLAttribute().init({ defaultValue: false }), TypeAttribute(YBoolean.$class)]
-    },
-    get: function() {
-      return this.$solidHitTest
-    },
-    set: function(value) {
-      this.$solidHitTest = value
-    }
-  },
+  }
 
   provideValue(serviceProvider) {
     const style = new DemoGroupStyle()
@@ -1514,53 +1470,53 @@ const DemoGroupStyleExtension = BaseClass('DemoGroupStyleExtension', {
     style.solidHitTest = this.solidHitTest
     return style
   }
-})
+}
 
-const DemoEdgeStyleExtension = BaseClass('DemoEdgeStyleExtension', {
-  $extends: MarkupExtension,
+class DemoEdgeStyleExtension extends MarkupExtension {
+  constructor() {
+    super()
+    this.$cssClass = ''
+    this.$showTargetArrows = true
+    this.$useMarkerArrows = true
+  }
 
-  constructor: function() {
-    MarkupExtension.call(this)
-  },
+  get cssClass() {
+    return this.$cssClass
+  }
 
-  $cssClass: '',
-  cssClass: {
-    $meta: function() {
-      return [GraphMLAttribute().init({ defaultValue: '' }), TypeAttribute(YString.$class)]
-    },
-    get: function() {
-      return this.$cssClass
-    },
-    set: function(value) {
-      this.$cssClass = value
+  set cssClass(value) {
+    this.$cssClass = value
+  }
+
+  get showTargetArrows() {
+    return this.$showTargetArrows
+  }
+
+  set showTargetArrows(value) {
+    this.$showTargetArrows = value
+  }
+
+  get useMarkerArrows() {
+    return this.$useMarkerArrows
+  }
+
+  set useMarkerArrows(value) {
+    this.$useMarkerArrows = value
+  }
+
+  static get $meta() {
+    return {
+      cssClass: [GraphMLAttribute().init({ defaultValue: '' }), TypeAttribute(YString.$class)],
+      showTargetArrows: [
+        GraphMLAttribute().init({ defaultValue: true }),
+        TypeAttribute(YBoolean.$class)
+      ],
+      useMarkerArrows: [
+        GraphMLAttribute().init({ defaultValue: true }),
+        TypeAttribute(YBoolean.$class)
+      ]
     }
-  },
-
-  $showTargetArrows: true,
-  showTargetArrows: {
-    $meta: function() {
-      return [GraphMLAttribute().init({ defaultValue: true }), TypeAttribute(YBoolean.$class)]
-    },
-    get: function() {
-      return this.$showTargetArrows
-    },
-    set: function(value) {
-      this.$showTargetArrows = value
-    }
-  },
-
-  $useMarkerArrows: true,
-  useMarkerArrows: {
-    $meta: function() {
-      return [GraphMLAttribute().init({ defaultValue: true }), TypeAttribute(YBoolean.$class)]
-    },
-    get: function() {
-      return this.$useMarkerArrows
-    },
-    set: function(value) {
-      this.$useMarkerArrows = value
-    }
-  },
+  }
 
   provideValue(serviceProvider) {
     const style = new DemoEdgeStyle()
@@ -1569,34 +1525,34 @@ const DemoEdgeStyleExtension = BaseClass('DemoEdgeStyleExtension', {
     style.useMarkerArrows = this.useMarkerArrows
     return style
   }
-})
+}
 
-const DemoArrowExtension = BaseClass('DemoArrowExtension', {
-  $extends: MarkupExtension,
+class DemoArrowExtension extends MarkupExtension {
+  constructor() {
+    super()
+    this.$cssClass = ''
+  }
 
-  constructor: function() {
-    MarkupExtension.call(this)
-  },
+  get cssClass() {
+    return this.$cssClass
+  }
 
-  $cssClass: '',
-  cssClass: {
-    $meta: function() {
-      return [GraphMLAttribute().init({ defaultValue: '' }), TypeAttribute(YString.$class)]
-    },
-    get: function() {
-      return this.$cssClass
-    },
-    set: function(value) {
-      this.$cssClass = value
+  set cssClass(value) {
+    this.$cssClass = value
+  }
+
+  static get $meta() {
+    return {
+      cssClass: [GraphMLAttribute().init({ defaultValue: '' }), TypeAttribute(YString.$class)]
     }
-  },
+  }
 
   provideValue(serviceProvider) {
     const arrow = new DemoArrow()
     arrow.cssClass = this.cssClass
     return arrow
   }
-})
+}
 
 export const DemoSerializationListener = (source, args) => {
   const item = args.item

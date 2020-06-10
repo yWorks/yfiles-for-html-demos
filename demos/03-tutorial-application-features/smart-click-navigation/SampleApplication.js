@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -41,11 +41,11 @@ import {
   IModelItem,
   INode,
   InteriorLabelModel,
+  ItemClickedEventArgs,
   License,
   NodeStyleDecorationInstaller,
   Point,
   PolylineEdgeStyle,
-  Rect,
   ShapeNodeStyle,
   Size
 } from 'yfiles'
@@ -59,17 +59,14 @@ const graphChooserBox = document.getElementById('graphChooserBox')
 /** @type {GraphComponent} */
 let graphComponent = null
 
-/** @type {IGraph} */
-let graph = null
-
 /**
  * Bootstraps the demo.
+ * @param {object} licenseData
  */
 function run(licenseData) {
   License.value = licenseData
   graphComponent = new GraphComponent('#graphComponent')
   // Conveniently store a reference to the graph that is displayed
-  graph = graphComponent.graph
   graphComponent.selectionIndicatorManager.enabled = false
   graphComponent.focusIndicatorManager.enabled = false
 
@@ -77,7 +74,7 @@ function run(licenseData) {
   initializeInputMode()
 
   // Initializes the highlight style
-  initHighlightingStyle(graph)
+  initHighlightingStyle(graphComponent.graph)
 
   // Configures default styles for newly created graph elements
   initTutorialDefaults(graphComponent.graph)
@@ -105,20 +102,25 @@ function run(licenseData) {
 function createSampleGraph() {
   const builder = new GraphBuilder({
     graph: graphComponent.graph,
-    nodesSource: GraphBuilderData.nodes,
-    edgesSource: GraphBuilderData.edges,
-    sourceNodeBinding: 'source',
-    targetNodeBinding: 'target',
-    nodeIdBinding: 'id',
-    nodeLabelBinding: data => data.label
+    nodes: [
+      {
+        data: GraphBuilderData.nodes,
+        id: 'id',
+        layout: 'layout',
+        labels: ['label']
+      }
+    ],
+    edges: [
+      {
+        data: GraphBuilderData.edges,
+        sourceId: 'source',
+        targetId: 'target',
+        id: 'id'
+      }
+    ]
   })
 
   builder.buildGraph()
-
-  // Sets the sizes of the nodes
-  graph.nodes.forEach(node => {
-    graph.setNodeLayout(node, Rect.from(node.tag.layout))
-  })
 }
 
 /**
@@ -191,7 +193,7 @@ function zoomToLocation(item, currentMouseClickLocation) {
 /**
  * Gets the focus point.
  * @param {IModelItem} item The element that we clicked.
- * @return {Point} The point that we should zoom to.
+ * @returns {?Point} The point that we should zoom to.
  */
 function getFocusPoint(item) {
   if (IEdge.isInstance(item)) {
@@ -219,10 +221,12 @@ function getFocusPoint(item) {
   } else if (INode.isInstance(item)) {
     return item.layout.center
   }
+  return null
 }
 
 /**
  * Initializes the input mode for this component.
+ * @param {IModelItem} item
  */
 function updateHighlight(item) {
   const manager = graphComponent.highlightIndicatorManager
@@ -253,7 +257,7 @@ function initTutorialDefaults(graph) {
   graph.nodeDefaults.size = new Size(40, 40)
   graph.nodeDefaults.labels.style = new DefaultLabelStyle({
     verticalTextAlignment: 'center',
-    wrapping: 'word_ellipsis'
+    wrapping: 'word-ellipsis'
   })
   graph.nodeDefaults.labels.layoutParameter = InteriorLabelModel.CENTER
 

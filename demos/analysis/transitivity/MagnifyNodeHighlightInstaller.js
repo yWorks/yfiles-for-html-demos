@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -68,7 +68,7 @@ export default class MagnifyNodeHighlightInstaller extends BaseClass(IHighlightI
    */
   addCanvasObject(context, group, item) {
     if (INode.isInstance(item)) {
-      return group.addChild(item, new NodeStyleDescriptor(this))
+      return group.addChild(item, new NodeStyleDescriptor())
     }
     return null
   }
@@ -87,6 +87,7 @@ class NodeStyleDescriptor extends BaseClass(
     super()
     // create a dummy node that will be drawn as highlight above the original node.
     this.$item = new SimpleNode()
+    this.$original = null
   }
 
   /**

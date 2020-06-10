@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -29,31 +29,33 @@
 import React, { Component } from 'react'
 import ReactDOM from 'react-dom'
 import {
+  Arrow,
   DefaultLabelStyle,
+  EdgesSource,
   Font,
   GraphBuilder,
   GraphComponent,
   GraphViewerInputMode,
   HierarchicLayout,
   ICommand,
+  IModelItem,
   LayoutExecutor,
   License,
+  MouseHoverInputMode,
+  NodesSource,
+  Point,
   PolylineEdgeStyle,
+  QueryItemToolTipEventArgs,
   ShapeNodeStyle,
   Size,
-  Point,
-  TimeSpan,
-  MouseHoverInputMode,
-  QueryItemToolTipEventArgs,
-  IModelItem,
-  Arrow
+  TimeSpan
 } from 'yfiles'
 import 'yfiles/yfiles.css'
 import './ReactGraphComponent.css'
 import ItemElement from './ItemElement'
 import DemoToolbar from './DemoToolbar'
 import yFilesLicense from '../license.json'
-import { GraphData, NodeData } from '../App'
+import { EdgeData, GraphData, NodeData } from '../App'
 
 interface ReactGraphComponentProps {
   graphData: GraphData
@@ -74,6 +76,9 @@ export default class ReactGraphComponent extends Component<ReactGraphComponentPr
     }
   }
 
+  private nodesSource: NodesSource<NodeData> | null
+  private edgesSource: EdgesSource<EdgeData> | null
+
   constructor(props: ReactGraphComponentProps) {
     super(props)
     this.div = React.createRef<HTMLDivElement>()
@@ -81,6 +86,8 @@ export default class ReactGraphComponent extends Component<ReactGraphComponentPr
     // Newly created elements are animated during which the graph data should not be modified
     this.updating = false
     this.scheduledUpdate = null
+    this.nodesSource = null
+    this.edgesSource = null
 
     // include the yFiles License
     License.value = yFilesLicense
@@ -92,7 +99,7 @@ export default class ReactGraphComponent extends Component<ReactGraphComponentPr
     this.initializeDefaultStyles()
   }
 
-  async componentDidMount() {
+  async componentDidMount(): Promise<void> {
     // Append the GraphComponent to the DOM
     this.div.current!.appendChild(this.graphComponent.div)
 
@@ -111,7 +118,7 @@ export default class ReactGraphComponent extends Component<ReactGraphComponentPr
   /**
    * Sets default styles for the graph.
    */
-  initializeDefaultStyles() {
+  initializeDefaultStyles(): void {
     this.graphComponent.graph.nodeDefaults.size = new Size(60, 40)
     this.graphComponent.graph.nodeDefaults.style = new ShapeNodeStyle({
       fill: '#00d7ff',
@@ -137,7 +144,7 @@ export default class ReactGraphComponent extends Component<ReactGraphComponentPr
    * Set ups the tooltips for nodes and edges.
    * @param {GraphViewerInputMode} inputMode
    */
-  initializeTooltips(inputMode: GraphViewerInputMode) {
+  initializeTooltips(inputMode: GraphViewerInputMode): void {
     // Customize the tooltip's behavior to our liking.
     const mouseHoverInputMode = inputMode.mouseHoverInputMode
     mouseHoverInputMode.toolTipLocationOffset = new Point(15, 15)
@@ -167,20 +174,24 @@ export default class ReactGraphComponent extends Component<ReactGraphComponentPr
    * Creates and configures the {@link GraphBuilder}.
    * @return {GraphBuilder}
    */
-  createGraphBuilder() {
+  createGraphBuilder(): GraphBuilder {
     const graphBuilder = new GraphBuilder(this.graphComponent.graph)
-    // Stores the nodes of the graph
-    graphBuilder.nodesSource = this.props.graphData.nodesSource
-    // Stores the edges of the graph
-    graphBuilder.edgesSource = this.props.graphData.edgesSource
-    // Identifies the property of an edge object that contains the source node's id
-    graphBuilder.sourceNodeBinding = 'fromNode'
-    // Identifies the property of an edge object that contains the target node's id
-    graphBuilder.targetNodeBinding = 'toNode'
-    // Identifies the id property of a node object
-    graphBuilder.nodeIdBinding = 'id'
-    // Use the 'name' property as node label
-    graphBuilder.nodeLabelBinding = (data: NodeData) => data.name
+    this.nodesSource = graphBuilder.createNodesSource({
+      // Stores the nodes of the graph
+      data: this.props.graphData.nodesSource,
+      // Identifies the id property of a node object
+      id: 'id',
+      // Use the 'name' property as node label
+      labels: ['name']
+    })
+    this.edgesSource = graphBuilder.createEdgesSource({
+      // Stores the edges of the graph
+      data: this.props.graphData.edgesSource,
+      // Identifies the property of an edge object that contains the source node's id
+      sourceId: 'fromNode',
+      // Identifies the property of an edge object that contains the target node's id
+      targetId: 'toNode'
+    })
     return graphBuilder
   }
 
@@ -189,7 +200,7 @@ export default class ReactGraphComponent extends Component<ReactGraphComponentPr
    * we compare the property states and set the corresponding properties
    * of the GraphComponent instance
    */
-  async componentDidUpdate(prevProps: ReactGraphComponentProps) {
+  componentDidUpdate(prevProps: ReactGraphComponentProps): void {
     if (
       this.props.graphData.nodesSource.length !== prevProps.graphData.nodesSource.length ||
       this.props.graphData.edgesSource.length !== prevProps.graphData.edgesSource.length
@@ -212,11 +223,11 @@ export default class ReactGraphComponent extends Component<ReactGraphComponentPr
    * Updates the graph based on the current graphData and applies a layout afterwards.
    * @return {Promise}
    */
-  async updateGraph() {
+  async updateGraph(): Promise<void> {
     this.updating = true
     // update the graph based on the given graph data
-    this.graphBuilder!.nodesSource = this.props.graphData.nodesSource
-    this.graphBuilder!.edgesSource = this.props.graphData.edgesSource
+    this.graphBuilder!.setData(this.nodesSource!, this.props.graphData.nodesSource)
+    this.graphBuilder!.setData(this.edgesSource!, this.props.graphData.edgesSource)
     this.graphBuilder!.updateGraph()
 
     // apply a layout to re-arrange the new elements
@@ -228,16 +239,16 @@ export default class ReactGraphComponent extends Component<ReactGraphComponentPr
     this.updating = false
   }
 
-  render() {
+  render(): JSX.Element {
     return (
       <div>
         <div className="toolbar">
           <DemoToolbar
             resetData={this.props.onResetData}
-            zoomIn={() => ICommand.INCREASE_ZOOM.execute(null, this.graphComponent)}
-            zoomOut={() => ICommand.DECREASE_ZOOM.execute(null, this.graphComponent)}
-            resetZoom={() => ICommand.ZOOM.execute(1.0, this.graphComponent)}
-            fitContent={() => ICommand.FIT_GRAPH_BOUNDS.execute(null, this.graphComponent)}
+            zoomIn={(): void => ICommand.INCREASE_ZOOM.execute(null, this.graphComponent)}
+            zoomOut={(): void => ICommand.DECREASE_ZOOM.execute(null, this.graphComponent)}
+            resetZoom={(): void => ICommand.ZOOM.execute(1.0, this.graphComponent)}
+            fitContent={(): void => ICommand.FIT_GRAPH_BOUNDS.execute(null, this.graphComponent)}
           />
         </div>
         <div className="graph-component-container" ref={this.div} />

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -141,18 +141,22 @@ export default class ReactGraphComponent extends Component {
    */
   createGraphBuilder() {
     const graphBuilder = new GraphBuilder(this.graphComponent.graph)
-    // Stores the nodes of the graph
-    graphBuilder.nodesSource = this.props.graphData.nodesSource
-    // Stores the edges of the graph
-    graphBuilder.edgesSource = this.props.graphData.edgesSource
-    // Identifies the property of an edge object that contains the source node's id
-    graphBuilder.sourceNodeBinding = 'fromNode'
-    // Identifies the property of an edge object that contains the target node's id
-    graphBuilder.targetNodeBinding = 'toNode'
-    // Identifies the id property of a node object
-    graphBuilder.nodeIdBinding = 'id'
-    // Use the 'name' property as node label
-    graphBuilder.nodeLabelBinding = data => data.name
+    this.nodesSource = graphBuilder.createNodesSource({
+      // Stores the nodes of the graph
+      data: this.props.graphData.nodesSource,
+      // Identifies the id property of a node object
+      id: 'id',
+      // Use the 'name' property as node label
+      labels: ['name']
+    })
+    this.edgesSource = graphBuilder.createEdgesSource({
+      // Stores the edges of the graph
+      data: this.props.graphData.edgesSource,
+      // Identifies the property of an edge object that contains the source node's id
+      sourceId: 'fromNode',
+      // Identifies the property of an edge object that contains the target node's id
+      targetId: 'toNode'
+    })
     return graphBuilder
   }
 
@@ -187,8 +191,8 @@ export default class ReactGraphComponent extends Component {
   async updateGraph() {
     this.updating = true
     // update the graph based on the given graph data
-    this.graphBuilder.nodesSource = this.props.graphData.nodesSource
-    this.graphBuilder.edgesSource = this.props.graphData.edgesSource
+    this.graphBuilder.setData(this.nodesSource, this.props.graphData.nodesSource)
+    this.graphBuilder.setData(this.edgesSource, this.props.graphData.edgesSource)
     this.graphBuilder.updateGraph()
 
     // apply a layout to re-arrange the new elements

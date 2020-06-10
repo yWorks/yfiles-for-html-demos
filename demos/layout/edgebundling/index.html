@@ -7,8 +7,8 @@
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.2.
-     // Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML 2.3.
+     // Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -39,8 +39,6 @@
   <link rel="stylesheet" href="../../node_modules/yfiles/yfiles.css">
   <link rel="stylesheet" href="../../resources/style/demo.css">
 
-  <!-- enable debugging -->
-  <script src="../../../ide-support/yfiles-typeinfo.js"></script>
   <script src="../../resources/filesystem-warning.js"></script>
 
   <style type="text/css">
@@ -106,7 +104,6 @@
         close to <code>0</code> lead to straight-line non-bundled edges. Values larger than <code>0.85</code> are
         recommended.
       </li>
-      <li>Press the 'Layout' button to apply a new layout.</li>
       <li>
         Hover over an edge to highlight its path and its source and target nodes. The edges are highlighted also with
         gradient colors from red (source node) to gold (target node).
@@ -144,6 +141,7 @@
       <option>Radial Layout</option>
       <option>Balloon Layout</option>
       <option>Tree Layout</option>
+      <option>Bundled Routing</option>
     </select>
     <button data-command="NextFile" title="Open next graph" class="demo-icon-yIconNext"
         id="next-sample-button"></button>

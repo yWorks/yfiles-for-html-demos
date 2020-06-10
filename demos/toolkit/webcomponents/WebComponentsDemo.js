@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -51,20 +51,30 @@ if (window.customElements) {
   warningDiv.outerHTML = `
     <div style="padding: 50px; margin-top: 100px;">
       <p style="font-size: 2rem;">Your browser doesn't support Web Components.</p>
-      <p> See <a href="https://www.webcomponents.org/">webcomponents.org</a> and 
+      <p> See <a href="https://www.webcomponents.org/">webcomponents.org</a> and
         <a href="https://caniuse.com/#search=web%20components">caniuse.com</a> for details on browser support for Web Components.
       </p>
     </div>
 `
 }
 
-function run(licenseData) {
+async function run(licenseData) {
   License.value = licenseData
   enableWorkarounds()
 
   // create a custom graph component element
   const graphComponent = document.createElement('graph-component')
   graphComponent.setAttribute('id', 'graphComponent')
+
+  // load yFiles.css since the CSS has to be set when the GraphComponent is initialized
+  // simply including a <link> in the webcomponent is not enough, since it is loaded in a non-blocking way
+  const response = await fetch('../../node_modules/yfiles/yfiles.css')
+
+  if (response.status === 200) {
+    // set loaded CSS
+    graphComponent.cssStyle = await response.text()
+  }
+
   document.querySelector('.demo-content').appendChild(graphComponent)
 
   graphComponent.inputMode = new GraphEditorInputMode()

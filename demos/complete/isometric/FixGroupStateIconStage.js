@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -32,7 +32,7 @@ import IsometricTransformationStage from './IsometricTransformationStage.js'
 
 /**
  * When the user opens/closes a folder/group node by clicking its state icon, the layout algorithm calculates a new
- * layout. This {@link y.layout.ILayoutStage} moves the graph afterwards so, that the state icon of the group/folder
+ * layout. This {@link ILayoutStage} moves the graph afterwards so, that the state icon of the group/folder
  * node remains under the mouse cursor.
  */
 export default class FixGroupStateIconStage extends FixNodeLayoutStage {

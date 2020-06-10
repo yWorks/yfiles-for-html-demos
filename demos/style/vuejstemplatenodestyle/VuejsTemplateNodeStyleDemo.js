@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -36,6 +36,7 @@ import {
   ICommand,
   License,
   PolylineEdgeStyle,
+  Rect,
   Size,
   StorageLocation
 } from 'yfiles'
@@ -83,10 +84,12 @@ function run(licenseData) {
 }
 
 /**
- * Initializes text areas to use CodeMirror and to update when the selection in the graph has changed.
+ * Initializes text areas to use CodeMirror and to update when the selection in the graph has
+ * changed.
  */
 function initializeTextAreas() {
   templateTextArea = document.getElementById('template-text-area')
+  // eslint-disable-next-line no-undef
   templateTextArea = CodeMirror.fromTextArea(templateTextArea, {
     lineNumbers: true,
     mode: 'application/xml',
@@ -94,6 +97,7 @@ function initializeTextAreas() {
     lint: true
   })
   tagTextArea = document.getElementById('tag-text-area')
+  // eslint-disable-next-line no-undef
   tagTextArea = CodeMirror.fromTextArea(tagTextArea, {
     lineNumbers: true,
     mode: 'application/json',
@@ -142,7 +146,7 @@ function initializeStyles() {
   <image :xlink:href="'./resources/' + tag.icon + '.svg'" x="15" y="10" width="63.75" height="63.75"></image>
   <image :xlink:href="'./resources/' + tag.status + '_icon.svg'" x="25" y="80" height="15" width="60"></image>
   <g style="font-family: Roboto,sans-serif; fill: #444" width="185">
-    <text transform="translate(90 25)" style="font-size: 16px; fill: #336699">{{tag.name}}</text> 
+    <text transform="translate(90 25)" style="font-size: 16px; fill: #336699">{{tag.name}}</text>
     <text transform="translate(90 45)" style="text-transform: uppercase">{{tag.position}}</text>
     <text transform="translate(90 72)">{{tag.email}}</text>
     <text transform="translate(90 88)">{{tag.phone}}</text>
@@ -152,7 +156,7 @@ function initializeStyles() {
 <template v-else>
   <image :xlink:href="'./resources/' + tag.icon + '.svg'" x="15" y="20" width="56.25" height="56.25"></image>
   <g style="font-size: 15px; font-family: Roboto,sans-serif; fill: #444" width="185">
-    <text transform="translate(85 40)" style="font-size: 26px; fill: #336699">{{tag.name}}</text> 
+    <text transform="translate(85 40)" style="font-size: 26px; fill: #336699">{{tag.name}}</text>
     <svg-text :content="tag.position.toUpperCase()" x="85" y="50" :width="layout.width - 100" :height="50" :wrapping="4" font-family="sans-serif" :font-size="14" :font-style="0" :font-weight="0" :text-decoration="0" fill="black" :opacity="1" visible="true" :clipped="true" align="start" transform=""></svg-text>
   </g>
 </template>
@@ -183,8 +187,7 @@ function initializeIO() {
   graphmlHandler = new GraphMLIOHandler()
   graphmlHandler.addXamlNamespaceMapping(
     'http://www.yworks.com/demos/yfiles-vuejs-node-style/1.0',
-    'VuejsNodeStyle',
-    VuejsNodeStyleMarkupExtension.$class
+    { VuejsNodeStyle: VuejsNodeStyleMarkupExtension }
   )
   graphmlHandler.addNamespace(
     'http://www.yworks.com/demos/yfiles-vuejs-node-style/1.0',
@@ -215,19 +218,20 @@ function initializeIO() {
  * Loads the sample graph.
  */
 function loadSampleGraph() {
-  const graphBuilder = new GraphBuilder({
-    graph: graphComponent.graph,
-    nodesSource: SampleData.nodes,
-    nodeIdBinding: 'id',
-    edgesSource: SampleData.edges,
-    sourceNodeBinding: 'src',
-    targetNodeBinding: 'tgt',
+  graphComponent.graph.clear()
+  const defaultNodeSize = graphComponent.graph.nodeDefaults.size
+  const graphBuilder = new GraphBuilder(graphComponent.graph)
+  graphBuilder.createNodesSource({
+    data: SampleData.nodes,
+    id: 'id',
     // This example uses hard coded locations. If no predefined layout data is given, an automatic layout could have
     // been applied to the graph after buildGraph, which is a common use case. For example, see the OrgChart Demo
-    // (/demos/complete/interactiveorgchart/)
-    locationXBinding: data => data.layout.x,
-    locationYBinding: data => data.layout.y
+    // (/demos-js/complete/interactiveorgchart/)
+    layout: data =>
+      new Rect(data.layout.x, data.layout.y, defaultNodeSize.width, defaultNodeSize.height)
   })
+  graphBuilder.createEdgesSource(SampleData.edges, 'src', 'tgt')
+
   graphBuilder.addEdgeCreatedListener((src, args) => {
     const edge = args.item
     if (edge.tag.bends) {

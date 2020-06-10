@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,17 +27,23 @@
  **
  ***************************************************************************/
 import {
+  Class,
   Color,
   GeneralPath,
   GraphComponent,
+  IGraph,
   IGroupBoundsCalculator,
+  IInputModeContext,
+  ILabel,
   ILayoutGroupBoundsCalculator,
   INode,
   INodeInsetsProvider,
   INodeSizeConstraintProvider,
   Insets,
+  IRenderContext,
   Matrix,
   NodeStyleBase,
+  Point,
   Rect,
   Size,
   SvgVisual
@@ -70,7 +76,11 @@ export default class MyGroupNodeStyle extends NodeStyleBase {
     this.$nodeColor = 'rgba(0, 130, 180, 1)'
   }
 
-  /** @return {SvgVisual} */
+  /**
+   * @param {IRenderContext} context
+   * @param {INode} node
+   * @returns {SvgVisual}
+   */
   createVisual(context, node) {
     const g = window.document.createElementNS('http://www.w3.org/2000/svg', 'g')
     this.render(g, this.createRenderDataCache(node, context))
@@ -78,7 +88,12 @@ export default class MyGroupNodeStyle extends NodeStyleBase {
     return new SvgVisual(g)
   }
 
-  /** @return {SvgVisual} */
+  /**
+   * @param {IRenderContext} context
+   * @param {SvgVisual} oldVisual
+   * @param {INode} node
+   * @returns {SvgVisual}
+   */
   updateVisual(context, oldVisual, node) {
     const container = oldVisual.svgElement
     // get the data with which the oldvisual was created
@@ -102,6 +117,8 @@ export default class MyGroupNodeStyle extends NodeStyleBase {
 
   /**
    * Creates the actual visualization of this style and adds it to the given container.
+   * @param {SVGElement} container
+   * @param {*} cache
    */
   render(container, cache) {
     container['data-renderDataCache'] = cache
@@ -147,7 +164,9 @@ export default class MyGroupNodeStyle extends NodeStyleBase {
 
   /**
    * Creates an object containing all necessary data to create a visual for the node.
-   * @return {object}
+   * @param {INode} node
+   * @param {IRenderContext} context
+   * @returns {*}
    */
   createRenderDataCache(node, context) {
     return {
@@ -166,7 +185,9 @@ export default class MyGroupNodeStyle extends NodeStyleBase {
   /**
    * Overridden to customize the behavior of this style with respect to certain user interaction.
    * @see Overrides {@link NodeStyleBase#lookup}
-   * @return {Object}
+   * @param {INode} node
+   * @param {Class} type
+   * @returns {object}
    */
   lookup(node, type) {
     // //////////////////////////////////////////////////
@@ -177,7 +198,7 @@ export default class MyGroupNodeStyle extends NodeStyleBase {
     // children of a group and all the children's labels.
     if (type === IGroupBoundsCalculator.$class) {
       // use a custom group bounds calculator that takes labels into account
-      return new IGroupBoundsCalculator((graph, groupNode) => {
+      return IGroupBoundsCalculator.create((graph, groupNode) => {
         let bounds = Rect.EMPTY
         const children = graph.getChildren(groupNode)
         children.forEach(child => {
@@ -199,7 +220,7 @@ export default class MyGroupNodeStyle extends NodeStyleBase {
     // Determines the insets used for the group contents.
     if (type === INodeInsetsProvider.$class) {
       // use a custom insets provider that reserves space for the tab and the toggle button
-      return new INodeInsetsProvider(
+      return INodeInsetsProvider.create(
         group => new Insets(6, TAB_H + 6, CORNER_SIZE - 1, CORNER_SIZE - 1)
       )
     }
@@ -208,7 +229,7 @@ export default class MyGroupNodeStyle extends NodeStyleBase {
     if (type === INodeSizeConstraintProvider.$class) {
       // use a custom size constraint provider to make sure that the tab
       // and the toggle button are always visible
-      return new INodeSizeConstraintProvider({
+      return INodeSizeConstraintProvider.create({
         // Returns a reasonable minimum size to show the tab and the toggle button.
         getMinimumSize: item =>
           new Size(
@@ -230,7 +251,10 @@ export default class MyGroupNodeStyle extends NodeStyleBase {
    * <code>true</code> for the main rectangle and the tab area, but not
    * for the empty space to the left of the tab.
    * @see Overrides {@link NodeStyleBase#isHit}
-   * @return {boolean}
+   * @param {IInputModeContext} canvasContext
+   * @param {Point} p
+   * @param {INode} node
+   * @returns {boolean}
    */
   isHit(canvasContext, p, node) {
     const rect = new Rect(
@@ -255,7 +279,8 @@ export default class MyGroupNodeStyle extends NodeStyleBase {
    * Returns the exact outline for the given node. This information is used
    * to clip the node's edges correctly.
    * @see Overrides {@link NodeStyleBase#getOutline}
-   * @return {GeneralPath}
+   * @param {INode} node
+   * @returns {GeneralPath}
    */
   getOutline(node) {
     const path = createOuterPath(node.layout.width, node.layout.height)
@@ -265,7 +290,7 @@ export default class MyGroupNodeStyle extends NodeStyleBase {
 
   /**
    * Gets the fill color of the node.
-   * @type {Color}
+   * @type {string}
    */
   get nodeColor() {
     return this.$nodeColor
@@ -273,7 +298,7 @@ export default class MyGroupNodeStyle extends NodeStyleBase {
 
   /**
    * Sets the fill color of the node.
-   * @type {Color}
+   * @type {string}
    */
   set nodeColor(value) {
     this.$nodeColor = value
@@ -285,7 +310,7 @@ export default class MyGroupNodeStyle extends NodeStyleBase {
    * the {@link ITagOwner#tag} of the {@link INode} is of type {@link Color},
    * in which case that color overrides this style's setting.
    * @param {INode} node The node to determine the color for.
-   * @return {Color} The color for filling the node.
+   * @returns {string} The color for filling the node.
    */
   getNodeColor(node) {
     return typeof node.tag === 'string' ? node.tag : this.nodeColor
@@ -294,7 +319,9 @@ export default class MyGroupNodeStyle extends NodeStyleBase {
 
 /**
  * Returns whether or not the given group node is collapsed.
- * @return {boolean}
+ * @param {INode} node
+ * @param {IRenderContext} context
+ * @returns {boolean}
  */
 function isCollapsed(node, context) {
   if (!(context.canvasComponent instanceof GraphComponent)) {
@@ -311,6 +338,9 @@ function isCollapsed(node, context) {
 
 /**
  * Creates the inner group path
+ * @param {number} w
+ * @param {number} h
+ * @returns {GeneralPath}
  */
 function createInnerPath(w, h) {
   const i = INSET
@@ -349,6 +379,9 @@ function createInnerPath(w, h) {
 
 /**
  * Creates the outer group path
+ * @param {number} w
+ * @param {number} h
+ * @returns {GeneralPath}
  */
 function createOuterPath(w, h) {
   const r = OUTER_RADIUS
@@ -375,7 +408,7 @@ function createOuterPath(w, h) {
 /**
  * Checks whether the node is wide enough to display the large tab.
  * @param {number} w The node width.
- * @return {boolean}
+ * @returns {boolean}
  */
 function displayTextInTab(w) {
   return w >= TAB_W + OUTER_RADIUS + OUTER_RADIUS

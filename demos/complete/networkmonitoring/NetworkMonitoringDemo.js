@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -84,6 +84,12 @@ let model = null
 let simulator = null
 
 /**
+ * Whether the simulator is paused.
+ * @type {boolean}
+ */
+let simulatorPaused = false
+
+/**
  * Maps the network model edges to the graph control edges.
  * @type {Mapper.<ModelEdge,IEdge>}
  */
@@ -112,6 +118,12 @@ let barChart = null
  * @type {boolean}
  */
 let d3Loaded = false
+
+/**
+ * Manages the animation of packets that travel along the edges.
+ * @type {Animator}
+ */
+let edgeAnimator = null
 
 function run(licenseData) {
   License.value = licenseData
@@ -174,14 +186,14 @@ function initializeInputMode() {
 
 /**
  * Initializes the graph from the supplied GraphML file and creates the model from it.
- * While this reads the graph from a GraphML file and constructs the model from an already-finished graph, a
- * real-world application would likely create the model from whichever data source is available and then create
- * the graph from it.
+ * While this reads the graph from a GraphML file and constructs the model from an already-finished
+ * graph, a real-world application would likely create the model from whichever data source is
+ * available and then create the graph from it.
  * @param {function} loadedCallback
  */
 function initGraphAndModel(loadedCallback) {
   // create an animator instance that can be used by the edge style
-  const edgeAnimator = new Animator(graphComponent)
+  edgeAnimator = new Animator(graphComponent)
   edgeAnimator.allowUserInteraction = true
   edgeAnimator.autoInvalidation = false
 
@@ -278,7 +290,8 @@ function loadGraph(sampleData, loadedCallBack) {
 }
 
 /**
- * Populates the model and initializes the mapping based on the nodes and edges of the original IGraph.
+ * Populates the model and initializes the mapping based on the nodes and edges of the original
+ * IGraph.
  * @param {IGraph} graph
  */
 function populateModel(graph) {
@@ -333,9 +346,13 @@ function setupSimulator() {
 /**
  * Starts the simulator.
  */
-function startSimulator() {
+function startSimulator(timeout) {
+  if (simulatorPaused) {
+    return
+  }
+  const simulatorTimeout = typeof timeout !== 'undefined' ? timeout : 1500
   window.setTimeout(() => {
-    simulator.tick()
+    !simulatorPaused && simulator.tick()
     // update the bar chart
     if (d3Loaded) {
       barChart.updateCurrentChart()
@@ -344,7 +361,7 @@ function startSimulator() {
     graphComponent.invalidate()
     // continuously run the simulation
     startSimulator()
-  }, 1500)
+  }, simulatorTimeout)
 }
 
 /**
@@ -419,7 +436,8 @@ function updateNodePopupContent(node) {
 
 /**
  * Event handler for failures in the network during the simulation.
- * The effect is a viewport animation to bring the failed object into view, if it is not visible already.
+ * The effect is a viewport animation to bring the failed object into view, if it is not visible
+ * already.
  * @param {Object} sender The object that raised the event.
  * @param {EventArgs} args Event arguments.
  */
@@ -497,6 +515,14 @@ function registerCommands() {
   bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent)
   bindAction("input[data-command='ToggleFailures']", onToggleFailuresClicked)
   bindAction("input[data-command='ToggleLabels']", toggleLabels)
+  bindAction("input[data-command='PauseSimulation']", e => {
+    const paused = e.target.checked
+    simulatorPaused = paused
+    edgeAnimator.paused = paused
+    if (!paused) {
+      startSimulator(0)
+    }
+  })
 }
 
 // 'export' just the run function

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -28,6 +28,7 @@
  ***************************************************************************/
 import {
   CanvasComponent,
+  ICanvasContext,
   CollapsibleNodeStyleDecoratorRenderer,
   Fill,
   Font,
@@ -378,7 +379,7 @@ export class NodeStyle extends NodeStyleBase {
   }
 
   /**
-   * @param {CanvasContext} context
+   * @param {ICanvasContext} context
    * @param {INode} node
    * @return {Rect}
    */
@@ -389,14 +390,14 @@ export class NodeStyle extends NodeStyleBase {
   /**
    * @param {IInputModeContext} context
    * @param {Point} location
-   * @return {INode} node
+   * @param {INode} node
    */
   isHit(context, location, node) {
     return this.getOutline(node).areaContains(location)
   }
 
   /**
-   * @return {INode} node
+   * @param {INode} node
    * @param {Point} location
    */
   isInside(node, location) {
@@ -404,7 +405,7 @@ export class NodeStyle extends NodeStyleBase {
   }
 
   /**
-   * @param {CanvasContext} context
+   * @param {ICanvasContext} context
    * @param {Rect} rectangle
    * @param {INode} node
    * @return {boolean}
@@ -864,7 +865,7 @@ export class GroupLabelStyle extends LabelStyleBase {
   }
 
   /**
-   * @param {CanvasContext} context
+   * @param {ICanvasContext} context
    * @param {Rect} rectangle
    * @param {ILabel} label
    */
@@ -1110,7 +1111,7 @@ export class EdgeLabelStyle extends LabelStyleBase {
 
 /**
  * Transforms the given element into view space.
- * @param {HtmlElement} element the element to transform.
+ * @param {Element} element the element to transform.
  * @param {number} anchorX the x-coordinate of the anchor.
  * @param {number} anchorY the y-coordinate of the anchor.
  */

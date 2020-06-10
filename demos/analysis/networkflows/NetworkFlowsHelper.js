@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -32,14 +32,14 @@ import {
   Cursor,
   HandlePositions,
   IEdge,
+  IHandle,
   IInputModeContext,
   IModelItem,
   INode,
+  InputModeBase,
   IReshapeHandleProvider,
   IVisualCreator,
-  InputModeBase,
   MouseButtons,
-  MouseEventArgs,
   Point,
   Rect,
   UndoUnitBase
@@ -130,7 +130,8 @@ export class EmptyReshapeHandleProvider extends BaseClass(IReshapeHandleProvider
   /**
    * This method is never called since getAvailableHandles returns no valid position.
    * @param {IInputModeContext} inputModeContext The context for which the handles are queried
-   * @param {HandlePositions} position The single position a handle implementation should be returned for
+   * @param {HandlePositions} position The single position a handle implementation should be
+   *   returned for
    * @return {IHandle} Null since getAvailableHandles returns no valid position.
    */
   getHandle(inputModeContext, position) {
@@ -141,8 +142,8 @@ export class EmptyReshapeHandleProvider extends BaseClass(IReshapeHandleProvider
 
 /**
  * This input mode handles dragging events on nodes and edges.
- * Dragging events at the area visualizing the flow at a node increase/decrease the node supply or demand.
- * Dragging events on edges increase/decrease the edge capacity.
+ * Dragging events at the area visualizing the flow at a node increase/decrease the node supply or
+ * demand. Dragging events on edges increase/decrease the edge capacity.
  */
 export class NetworkFlowInputMode extends InputModeBase {
   constructor() {
@@ -193,8 +194,9 @@ export class NetworkFlowInputMode extends InputModeBase {
   }
 
   /**
-   * Checks whether the mouse hover occurred on a valid position. Valid positions are the edges and the area of a node
-   * that represents the flow supply/demand (if the flow can be adjusted like in Minimum Cost flow algorithm).
+   * Checks whether the mouse hover occurred on a valid position. Valid positions are the edges and
+   * the area of a node that represents the flow supply/demand (if the flow can be adjusted like in
+   * Minimum Cost flow algorithm).
    * @param {Point} location The event location in world coordinates
    * @return {boolean} True if the mouse hover occurred on a valid position, false otherwise
    */

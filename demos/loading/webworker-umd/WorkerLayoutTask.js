@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -32,26 +32,20 @@
 /* eslint-disable global-require */
 /* eslint-disable import/no-dynamic-require */
 ;(() => {
-  // noinspection EmptyCatchBlockJS
-  try {
-    // Try to enable development support
-    importScripts('../../../ide-support/yfiles-typeinfo.js')
-  } catch (ignored) {
-    // Development support not available, probably because we're in a production environment.
-    // Just proceed without it.
-  }
-
-  importScripts('../../resources/require.js')
+  importScripts('./node_modules/requirejs/require.js')
 
   // @yjs:keep=onError
   require.onError = error => {
     throw error
   }
   require.config({
-    paths: {
-      yfiles: '../../../lib/umd/',
-      utils: '../../utils/'
-    }
+    packages: [
+      {
+        name: 'yfiles-umd',
+        location: './node_modules/yfiles-umd/',
+        main: 'complete'
+      }
+    ]
   })
 
   // Require imports
@@ -63,11 +57,13 @@
 
       require([
         './WebWorkerJsonIO.js',
-        'yfiles/layout-hierarchic',
-        'yfiles/view-layout-bridge'
-      ], async (WebWorkerJsonIO, /** @type {yfiles_namespace} */ /** typeof yfiles */ yfiles) => {
-        yfiles.lang.License.value = await loadLicense()
-        runLayout(jsonGraph, WebWorkerJsonIO, yfiles)
+        'yfiles-umd/layout-hierarchic',
+        'yfiles-umd/view-layout-bridge'
+      ], (WebWorkerJsonIO, /** @param {yfiles} yfiles */ yfiles) => {
+        loadLicense().then(licenseData => {
+          yfiles.License.value = licenseData
+          runLayout(jsonGraph, WebWorkerJsonIO, yfiles)
+        })
       })
     },
     false
@@ -75,17 +71,18 @@
 
   /**
    * @param {JSONGraph} jsonGraph
-   * @param {ServerJsonIO} WebWorkerJsonIO
+   * @param WebWorkerJsonIO
    * @param {yfiles} yfiles
    */
   function runLayout(jsonGraph, WebWorkerJsonIO, yfiles) {
+    const { HierarchicLayout, MinimumNodeSizeStage } = yfiles
     const graph = WebWorkerJsonIO.read(jsonGraph)
 
-    const layout = new yfiles.hierarchic.HierarchicLayout()
+    const layout = new HierarchicLayout()
     layout.minimumNodeDistance = 50
     layout.considerNodeLabels = true
     layout.integratedEdgeLabeling = true
-    graph.applyLayout(new yfiles.layout.MinimumNodeSizeStage(layout))
+    graph.applyLayout(new MinimumNodeSizeStage(layout))
 
     const reply = WebWorkerJsonIO.write(graph)
 

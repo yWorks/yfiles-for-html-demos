@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -146,14 +146,9 @@ function loadGraph(graph) {
   graph.edgeDefaults.shareStyleInstance = false
 
   const data = SampleData
-  const builder = new GraphBuilder({
-    graph,
-    nodesSource: data.nodes,
-    edgesSource: data.edges,
-    sourceNodeBinding: 'source',
-    targetNodeBinding: 'target',
-    nodeIdBinding: 'id'
-  })
+  const builder = new GraphBuilder(graph)
+  builder.createNodesSource(data.nodes, 'id')
+  builder.createEdgesSource(data.edges, 'source', 'target')
   builder.buildGraph()
 }
 
@@ -205,6 +200,7 @@ function getBusSettings(preset, elementCount) {
     case 'balanced':
       return null // the default bus structure setting without further configuration
     case 'squares':
+      // eslint-disable-next-line no-case-declarations
       const rowLength = Math.ceil(Math.sqrt(elementCount))
       beforeBusValue = Math.floor(rowLength / 2)
       afterBusValue = Math.ceil(rowLength / 2)

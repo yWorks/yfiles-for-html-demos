@@ -5,28 +5,27 @@
   "license": "https://www.yworks.com/products/yfiles-for-html/sla",
   "private": true,
   "dependencies": {
-    "yfiles": "../../../lib/es-modules/yfiles-22.0.3-eval.tgz"
+    "yfiles": "../../../lib-dev/es-modules/yfiles-23.0.0-dev.tgz"
   },
   "devDependencies": {
-    "@babel/cli": "^7.6.0",
-    "@babel/core": "^7.6.0",
-    "@babel/preset-env": "^7.6.0",
-    "@babel/preset-typescript": "^7.6.0",
-    "@yworks/optimizer": "^1.0.5",
-    "babel-loader": "^8.0.6",
-    "core-js": "^3.2.1",
+    "@babel/cli": "^7.10.1",
+    "@babel/core": "^7.10.2",
+    "@babel/preset-env": "^7.10.2",
+    "@babel/preset-typescript": "^7.10.1",
+    "@yworks/optimizer": "^1.3.0",
+    "babel-loader": "^8.1.0",
+    "core-js": "^3.6.5",
     "clean-webpack-plugin": "^3.0.0",
-    "css-loader": "^3.2.0",
-    "file-loader": "^4.2.0",
-    "fs-extra": "^8.1.0",
-    "mini-css-extract-plugin": "^0.8.0",
-    "regenerator-runtime": "^0.13.3",
-    "typescript": "^3.6.3",
-    "webpack": "^4.40.2",
-    "webpack-cli": "^3.3.9"
+    "css-loader": "^3.5.3",
+    "file-loader": "^4.3.0",
+    "fs-extra": "^9.0.0",
+    "mini-css-extract-plugin": "^0.9.0",
+    "regenerator-runtime": "^0.13.5",
+    "typescript": "^3.9.3",
+    "webpack": "^4.43.0",
+    "webpack-cli": "^3.3.11"
   },
   "scripts": {
-    "preinstall": "cd ../../../lib/es-modules && npm pack",
     "postinstall": "node -e \"require('fs-extra').copySync('../../utils/Workarounds.js', './utils/Workarounds.js')\"",
     "production": "webpack --mode production",
     "build": "webpack --mode development"

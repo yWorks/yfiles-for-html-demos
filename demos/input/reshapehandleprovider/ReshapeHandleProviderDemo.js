@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,147 +27,145 @@
  **
  ***************************************************************************/
 import {
-  DefaultLabelStyle,
   GraphComponent,
   GraphEditorInputMode,
   GraphItemTypes,
-  IGraph,
+  GraphMLIOHandler,
+  IPort,
   IReshapeHandleProvider,
+  Key,
+  KeyEventArgs,
   License,
-  MutableRectangle,
-  Rect
+  NodeStylePortStyleAdapter,
+  OrthogonalEdgeEditingContext,
+  PolylineEdgeStyle,
+  ShapeNodeStyle,
+  Size
 } from 'yfiles'
 
-import { DemoNodeStyle } from '../../resources/demo-styles.js'
-import { showApp } from '../../resources/demo-app.js'
-import LimitingRectangleDescriptor from './LimitingRectangleDescriptor.js'
-import GreenReshapeHandleProvider from './GreenReshapeHandleProvider.js'
-import RedReshapeHandleProvider from './RedReshapeHandleProvider.js'
-import OrangeReshapeHandleProvider from './OrangeReshapeHandleProvider.js'
+import { readGraph, showApp } from '../../resources/demo-app.js'
 import loadJson from '../../resources/load-json.js'
-/**
- * Registers a callback function as a decorator that provides a custom
- * {@link IReshapeHandleProvider} for each node.
- * This callback function is called whenever a node in the graph is queried
- * for its <code>IReshapeHandleProvider</code>. In this case, the 'node'
- * parameter will be set to that node and the 'delegateHandler' parameter
- * will be set to the reshape handle provider that would have been returned
- * without setting this function as a decorator.
- * @param {IGraph} graph The given graph
- * @param {MutableRectangle} boundaryRectangle The rectangle that limits the node's size.
- */
-function registerReshapeHandleProvider(graph, boundaryRectangle) {
-  const nodeDecorator = graph.decorator.nodeDecorator
-  nodeDecorator.reshapeHandleProviderDecorator.setImplementationWrapper(
-    (node, delegateProvider) => {
-      // Obtain the tag from the node
-      const nodeTag = node.tag
+import { PortReshapeHandleProvider } from './PortReshapeHandlerProvider.js'
 
-      // Check if it is a known tag and choose the respective implementation.
-      // Fallback to the default behavior otherwise.
-      if (typeof nodeTag !== 'string') {
-        return delegateProvider
-      } else if (nodeTag === 'orange') {
-        // An implementation that delegates certain behavior to the default implementation
-        return new OrangeReshapeHandleProvider(boundaryRectangle, delegateProvider)
-      } else if (nodeTag === 'firebrick') {
-        // A simple implementation that prohibits resizing
-        return new RedReshapeHandleProvider()
-      } else if (nodeTag === 'royalblue') {
-        // An implementationOne that uses two levels of delegation to create a combined behavior
-        return new OrangeReshapeHandleProvider(
-          boundaryRectangle,
-          new GreenReshapeHandleProvider(delegateProvider, node)
-        )
-      } else if (nodeTag === 'green') {
-        // Another implementation that delegates certain behavior to the default implementation
-        return new GreenReshapeHandleProvider(delegateProvider, node)
-      }
-      return delegateProvider
+/** @type {GraphComponent} */
+let graphComponent
+/** @type {GraphEditorInputMode} */
+let graphEditorInputMode
+
+// a flag that indicates whether the CTRL key is currently pressed
+/** @type {boolean} */
+let ctrlPressed = false
+
+/**
+ * Registers a callback function as a decorator that provides a customized
+ * {@link IReshapeHandleProvider} for each port with a {@link NodeStylePortStyleAdapter}.
+ * This callback function is called whenever a node in the graph is queried
+ * for its <code>IReshapeHandleProvider</code>. In this case, the 'port'
+ * parameter will be set to that port.
+ */
+function registerReshapeHandleProvider() {
+  const portDecorator = graphComponent.graph.decorator.portDecorator
+  portDecorator.getDecoratorFor(IReshapeHandleProvider.$class).setFactory(
+    port => port.style instanceof NodeStylePortStyleAdapter,
+    port => {
+      const portReshapeHandleProvider = new PortReshapeHandleProvider(port, port.style)
+      portReshapeHandleProvider.minimumSize = new Size(5, 5)
+      return portReshapeHandleProvider
     }
   )
 }
 
-function run(licenseData) {
+/**
+ * @param {object} licenseData
+ * @returns {Promise}
+ */
+async function run(licenseData) {
   License.value = licenseData
   // initialize the GraphComponent
-  const graphComponent = new GraphComponent('graphComponent')
+  graphComponent = new GraphComponent('graphComponent')
   const graph = graphComponent.graph
 
-  // Create a default editor input mode
-  const graphEditorInputMode = new GraphEditorInputMode({
-    // Just for user convenience: disable node, edge creation and clipboard operations,
-    allowCreateEdge: false,
-    allowCreateNode: false,
-    allowClipboardOperations: false, // don't allow moving nodes,
-    movableItems: GraphItemTypes.NONE
+  // initialize graph defaults
+  const adaptedStyle = new ShapeNodeStyle({
+    fill: 'green',
+    stroke: 'transparent'
   })
-  // and enable the undo feature.
-  graph.undoEngineEnabled = true
+  graph.nodeDefaults.ports.style = new NodeStylePortStyleAdapter({
+    nodeStyle: adaptedStyle,
+    renderSize: new Size(7, 7)
+  })
+  // each port needs its own style instance to have its own render size
+  graph.nodeDefaults.ports.shareStyleInstance = false
+  // disable removing ports when all attached edges have been removed
+  graph.nodeDefaults.ports.autoCleanUp = false
 
-  // Finally, set the input mode to the graph component.
+  graph.edgeDefaults.style = new PolylineEdgeStyle({
+    stroke: '3px solid black'
+  })
+
+  // create a default editor input mode
+  graphEditorInputMode = new GraphEditorInputMode()
+
+  // ports are preferred for clicks
+  graphEditorInputMode.clickHitTestOrder = [
+    GraphItemTypes.PORT,
+    GraphItemTypes.PORT_LABEL,
+    GraphItemTypes.BEND,
+    GraphItemTypes.EDGE_LABEL,
+    GraphItemTypes.EDGE,
+    GraphItemTypes.NODE,
+    GraphItemTypes.NODE_LABEL
+  ]
+  // enable orthogonal edge editing
+  graphEditorInputMode.orthogonalEdgeEditingContext = new OrthogonalEdgeEditingContext()
+
+  // PortReshapeHandlerProvider considers pressed Ctrl keys. Whenever Ctrl is pressed or released,
+  // we force GraphEditorInputMode to requery the handles of selected items
+  graphComponent.addKeyDownListener(onKeyDown)
+  graphComponent.addKeyUpListener(onKeyUp)
+  graphComponent.div.addEventListener('blur', onBlur)
+
+  // finally, set the input mode to the graph control.
   graphComponent.inputMode = graphEditorInputMode
 
-  // Create the rectangle that limits the movement of some nodes
-  // and add it to the graphComponent.
-  const boundaryRectangle = new MutableRectangle(20, 20, 480, 400)
-  graphComponent.backgroundGroup.addChild(boundaryRectangle, new LimitingRectangleDescriptor())
+  // register the reshape handle provider for ports
+  registerReshapeHandleProvider()
 
-  registerReshapeHandleProvider(graph, boundaryRectangle)
-
-  createSampleGraph(graph)
+  // create initial graph
+  await readGraph(new GraphMLIOHandler(), graphComponent.graph, 'resources/sample.graphml')
+  graphComponent.fitGraphBounds()
 
   showApp(graphComponent)
 }
 
 /**
- * Creates the sample graph of this demo.
- * @param {IGraph} graph The input graph
+ * @param {object} sender
+ * @param {KeyEventArgs} e
  */
-function createSampleGraph(graph) {
-  createNode(graph, 80, 100, 140, 30, 'firebrick', 'whitesmoke', 'Fixed Size')
-  createNode(graph, 300, 100, 140, 30, 'green', 'whitesmoke', 'Keep Aspect Ratio')
-  createNode(graph, 80, 260, 140, 30, 'orange', 'black', 'Limited to Rectangle')
-  createNode(
-    graph,
-    300,
-    250,
-    140,
-    50,
-    'royalblue',
-    'whitesmoke',
-    'Limited to Rectangle\nand Keep Aspect Ratio'
-  )
-
-  // clear undo after initial graph loading
-  graph.undoEngine.clear()
+function onKeyDown(sender, e) {
+  if (e.key === Key.CTRL && !ctrlPressed) {
+    ctrlPressed = true
+    // update handles
+    graphEditorInputMode.requeryHandles()
+  }
 }
 
 /**
- * Creates a sample node for this demo.
- * @param {IGraph} graph The given graph
- * @param {number} x The node's x-coordinate
- * @param {number} y The node's y-coordinate
- * @param {number} w The node's width
- * @param {number} h The node's height
- * @param {string} cssClass The given css class
- * @param {string} textColor The color of the text
- * @param {string} labelText The nodes label's text
+ * @param {object} sender
+ * @param {KeyEventArgs} e
  */
-function createNode(graph, x, y, w, h, cssClass, textColor, labelText) {
-  const textLabelStyle = new DefaultLabelStyle({
-    textFill: textColor
-  })
+function onKeyUp(sender, e) {
+  if (e.key === Key.CTRL) {
+    ctrlPressed = false
+    // update handles
+    graphEditorInputMode.requeryHandles()
+  }
+}
 
-  const nodeStyle = new DemoNodeStyle()
-  nodeStyle.cssClass = cssClass
-
-  const node = graph.createNode(new Rect(x, y, w, h), nodeStyle, cssClass)
-  graph.addLabel({
-    owner: node,
-    text: labelText,
-    style: textLabelStyle
-  })
+function onBlur() {
+  ctrlPressed = false
+  // update handles
+  graphEditorInputMode.requeryHandles()
 }
 
 loadJson().then(run)

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -28,7 +28,9 @@
  ***************************************************************************/
 import { Workarounds } from 'yfiles'
 
-/** @return {number} */
+/**
+ * @returns {number}
+ */
 export function detectChromeVersion() {
   // Edge pretends to be every browser...
   const ieVersion = detectInternetExplorerVersion()
@@ -47,7 +49,7 @@ export function detectChromeVersion() {
 
 /**
  * Returns version of Firefox.
- * @return {number} Version of Firefox or -1 if browser is not Firefox.
+ * @returns {number} {number} Version of Firefox or -1 if browser is not Firefox.
  */
 export function detectFirefoxVersion() {
   if (typeof window === 'undefined' || typeof window.navigator === 'undefined') {
@@ -63,9 +65,9 @@ export function detectFirefoxVersion() {
 
 /**
  * Returns version of IE if browser is MS Internet Explorer.
- * @return {number}
  * Version of IE if browser is MS Internet Explorer/Edge or
  * -1 if browser is not InternetExplorer/Edge.
+ * @returns {number}
  */
 export function detectInternetExplorerVersion() {
   // environments without window object
@@ -98,7 +100,6 @@ export function detectInternetExplorerVersion() {
 /**
  * Returns the windows NT version or -1 if it is lower than windows 95 or another OS.
  * See also https://stackoverflow.com/questions/228256/operating-system-from-user-agent-http-header
- * @return {number}
  * The windows NT version or the windows version for windows 98 or older:
  * <ul>
  *   <li>95: Windows 95</li>
@@ -112,6 +113,7 @@ export function detectInternetExplorerVersion() {
  *   <li>6.2: Windows 8</li>
  *   <li>10.0: Windows 10</li>
  * </ul>
+ * @returns {number}
  */
 export function detectWindowsVersion() {
   // environments without window object
@@ -151,7 +153,7 @@ export function detectWindowsVersion() {
 
 /**
  * Returns whether this is an ARM device.
- * @return {boolean} true if ARM device, false otherwise
+ * @returns {boolean} {boolean} true if ARM device, false otherwise
  */
 export function detectArmDevice() {
   const ua = window.navigator.userAgent
@@ -161,7 +163,6 @@ export function detectArmDevice() {
 /**
  * Returns the iOS version or -1 if it is another OS.
  * See also https://stackoverflow.com/questions/9038625/detect-if-device-is-ios
- * @return {number}
  * The iOS version:
  * <ul>
  *   <li>3: iOS 3 or less</li>
@@ -175,6 +176,7 @@ export function detectArmDevice() {
  * NOTE: Since Safari for iOS 13, the user agent changed such that iOS and Mac OS X cannot be
  * distinguished anymore. The check still works on other browsers on iOS e.g. Chrome.
  * Therefore, there is another check for Safari 13+.
+ * @returns {number}
  */
 export function detectiOSVersion() {
   const ua = window.navigator.userAgent
@@ -210,7 +212,7 @@ export function detectiOSVersion() {
 
 /**
  * Returns version of Safari.
- * @return {number} Version of Safari or -1 if browser is not Safari.
+ * @returns {number} {number} Version of Safari or -1 if browser is not Safari.
  */
 export function detectSafariVersion() {
   const ua = window.navigator.userAgent
@@ -228,7 +230,7 @@ export function detectSafariVersion() {
  * Returns true for browsers that use the Safari 11 Webkit engine.
  *
  * In detail, these are Safari 11 on either macOS or iOS, Chrome on iOS 11, and Firefox on iOS 11.
- * @return {boolean}
+ * @returns {boolean}
  */
 export function detectSafari11Webkit() {
   return (
@@ -238,7 +240,7 @@ export function detectSafari11Webkit() {
 
 /**
  * Returns whether or not the browser supports active and passive event listeners. Feature Detection.
- * @return {boolean}
+ * @returns {boolean}
  */
 function detectPassiveSupported() {
   let supported = false
@@ -259,7 +261,7 @@ function detectPassiveSupported() {
 
 /**
  * Returns whether or not the browser supports native drag and drop events and custom dataTransfer types.
- * @return {boolean}
+ * @returns {boolean}
  */
 function detectNativeDragAndDropSupported() {
   const div = document.createElement('div')
@@ -271,7 +273,7 @@ function detectNativeDragAndDropSupported() {
 
 /**
  * Returns whether or not the browser supports the pointer-events CSS property.
- * @return {boolean}
+ * @returns {boolean}
  */
 function detectPointerEventsSupported() {
   const testDiv = document.createElement('div')
@@ -281,7 +283,7 @@ function detectPointerEventsSupported() {
 
 /**
  * Returns whether or not the browser supports WebGL rendering.
- * @return {boolean}
+ * @returns {boolean}
  */
 function detectWebGlSupported() {
   const canvas = document.createElement('canvas')
@@ -304,7 +306,7 @@ export function enableWorkarounds() {
   //    https://bugzilla.mozilla.org/show_bug.cgi?id=1419764
   // 2) A transform caching regression in Safari 11 and all WebKit browsers on iOS 11.
   if (firefoxVersion !== -1 || detectSafari11Webkit()) {
-    Workarounds.CR320635 = true
+    Workarounds.cr320635 = true
   }
   // Fix uppercase attribute names in Edge
   if (internetExplorerVersion >= 12) {

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -45,7 +45,10 @@ import {
   Rect,
   ShapeNodeStyle,
   Size,
-  ToolTipQueryEventArgs
+  ToolTipQueryEventArgs,
+  MouseHoverInputMode,
+  QueryItemToolTipEventArgs,
+  TimeSpan
 } from 'yfiles'
 
 import { addClass, bindAction, bindCommand, showApp } from '../../resources/demo-app.js'
@@ -56,6 +59,7 @@ let graphComponent = null
 
 /**
  * Bootstraps the demo.
+ * @param {object} licenseData
  */
 function run(licenseData) {
   License.value = licenseData
@@ -98,9 +102,9 @@ function initializeTooltips() {
 
   // Customize the tooltip's behavior to our liking.
   const mouseHoverInputMode = inputMode.mouseHoverInputMode
-  mouseHoverInputMode.toolTipLocationOffset = [15, 15]
-  mouseHoverInputMode.delay = '500ms'
-  mouseHoverInputMode.duration = '5s'
+  mouseHoverInputMode.toolTipLocationOffset = new Point(15, 15)
+  mouseHoverInputMode.delay = TimeSpan.fromMilliseconds(500)
+  mouseHoverInputMode.duration = TimeSpan.fromSeconds(5)
 
   // Register a listener for when a tooltip should be shown.
   inputMode.addQueryItemToolTipListener((src, eventArgs) => {
@@ -122,6 +126,7 @@ function initializeTooltips() {
  * show the latter. We just extract the first label text from the given item and show it as
  * tooltip.
  * @param {IModelItem} item
+ * @returns {HTMLElement}
  */
 function createTooltipContent(item) {
   const title = document.createElement('h4')
@@ -171,7 +176,7 @@ function initTutorialDefaults() {
   graph.nodeDefaults.size = new Size(40, 40)
   graph.nodeDefaults.labels.style = new DefaultLabelStyle({
     verticalTextAlignment: 'center',
-    wrapping: 'word_ellipsis'
+    wrapping: 'word-ellipsis'
   })
   graph.nodeDefaults.labels.layoutParameter = ExteriorLabelModel.SOUTH
 
@@ -193,20 +198,20 @@ function initTutorialDefaults() {
 function createGraph() {
   const graph = graphComponent.graph
 
-  const node1 = graph.createNodeAt({ location: [127.07, 20], labels: 'Node 1' })
-  const node2 = graph.createNodeAt({ location: [181.09, 138], labels: 'Node 2' })
-  const node3 = graph.createNodeAt({ location: [73.05, 138], labels: 'Node 3' })
-  const node4 = graph.createNodeAt({ location: [30, 281], labels: 'Node 4' })
-  const node5 = graph.createNodeAt({ location: [100, 281], labels: 'Node 5' })
+  const node1 = graph.createNodeAt({ location: [127.07, 20], labels: ['Node 1'] })
+  const node2 = graph.createNodeAt({ location: [181.09, 138], labels: ['Node 2'] })
+  const node3 = graph.createNodeAt({ location: [73.05, 138], labels: ['Node 3'] })
+  const node4 = graph.createNodeAt({ location: [30, 281], labels: ['Node 4'] })
+  const node5 = graph.createNodeAt({ location: [100, 281], labels: ['Node 5'] })
 
-  const group = graph.groupNodes({ children: [node1, node2, node3], labels: 'Group 1' })
+  const group = graph.groupNodes({ children: [node1, node2, node3], labels: ['Group 1'] })
   graph.setNodeLayout(group, new Rect(47.05, -18, 160.05, 195))
 
-  const edge1 = graph.createEdge({ source: node1, target: node2, labels: 'Edge 1' })
-  const edge2 = graph.createEdge({ source: node1, target: node3, labels: 'Edge 2' })
-  const edge3 = graph.createEdge({ source: node3, target: node4, labels: 'Edge 3' })
-  const edge4 = graph.createEdge({ source: node3, target: node5, labels: 'Edge 4' })
-  const edge5 = graph.createEdge({ source: node1, target: node5, labels: 'Edge 5' })
+  const edge1 = graph.createEdge({ source: node1, target: node2, labels: ['Edge 1'] })
+  const edge2 = graph.createEdge({ source: node1, target: node3, labels: ['Edge 2'] })
+  const edge3 = graph.createEdge({ source: node3, target: node4, labels: ['Edge 3'] })
+  const edge4 = graph.createEdge({ source: node3, target: node5, labels: ['Edge 4'] })
+  const edge5 = graph.createEdge({ source: node1, target: node5, labels: ['Edge 5'] })
 
   graph.setPortLocation(edge1.sourcePort, new Point(140.1, 40))
   graph.setPortLocation(edge1.targetPort, new Point(181.09, 118))
@@ -236,9 +241,6 @@ function createGraph() {
       labelModel.createParameterFromSource(label.text !== 'Edge 5' ? 2 : 0, 0.5)
     )
   })
-
-  graphComponent.fitGraphBounds()
-  graph.undoEngine.clear()
 
   graphComponent.fitGraphBounds()
   graph.undoEngine.clear()

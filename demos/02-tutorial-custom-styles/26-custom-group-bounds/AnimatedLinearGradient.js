@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,13 +26,13 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { ISvgDefsCreator, Matrix } from 'yfiles'
+import { ICanvasContext, IRenderContext, ISvgDefsCreator, Matrix } from 'yfiles'
 // create the gradient element
 const gradient = window.document.createElementNS('http://www.w3.org/2000/svg', 'linearGradient')
-gradient.setAttribute('x1', 0)
-gradient.setAttribute('y1', 0)
-gradient.setAttribute('x2', 30)
-gradient.setAttribute('y2', 30)
+gradient.setAttribute('x1', '0')
+gradient.setAttribute('y1', '0')
+gradient.setAttribute('x2', '30')
+gradient.setAttribute('y2', '30')
 gradient.setAttribute('spreadMethod', 'repeat')
 const stop1 = window.document.createElementNS('http://www.w3.org/2000/svg', 'stop')
 stop1.setAttribute('stop-color', 'rgb(255, 215, 0)')
@@ -50,20 +50,21 @@ gradient.appendChild(stop3)
 // set gradient units to userSpaceOnUse in order to be interpreted globally
 gradient.setAttribute('gradientUnits', 'userSpaceOnUse')
 
-const defsCreator = new ISvgDefsCreator({
-  /** @return {Element} */
+const defsCreator = ISvgDefsCreator.create({
   createDefsElement: context => gradient,
 
-  /** @return {boolean} */
   accept: (context, node, id) =>
     node instanceof Element &&
     node.localName === 'path' &&
     node.hasAttribute('stroke') &&
     node.getAttribute('stroke') === `url(#${id})`,
 
-  updateDefsElement: (context, oldElement) => {}
+  updateDefsElement: (context, oldElement) => {
+    /* do nothing */
+  }
 })
 
+/** @type {number} */
 let animationFrameId = -1
 const startGradientAnimation = () => {
   let offset = 0
@@ -71,7 +72,7 @@ const startGradientAnimation = () => {
   // get current timestamp
   let t = new Date().getTime()
   // create the animation callback
-  const frameRequestCallback = timestamp => {
+  const frameRequestCallback = () => {
     // calculate the milliseconds since the last animation frame
     const currentTime = new Date().getTime()
     const dt = currentTime - t

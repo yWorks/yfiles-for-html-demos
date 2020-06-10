@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -44,16 +44,15 @@ export default class WebglBlobVisual extends WebGLVisual {
     if (!this.buffer) {
       // initialize and cache all the data that we need for the first time
       const maxUniformVectors = gl.getParameter(gl.MAX_FRAGMENT_UNIFORM_VECTORS)
-      const blobCount = Math.min(this.maxBlobCount, maxUniformVectors - 8)
+      const blobCount = (this.maxBlobCount = Math.min(this.maxBlobCount, maxUniformVectors - 10))
 
       this.dataToSend = new Float32Array(blobCount * 2)
       this.fragmentShader = `
-        precision mediump float;
-        
-        uniform vec2 centers[${blobCount}];
+        precision lowp float;
+
         uniform float scale;
+        uniform vec2 centers[${blobCount}];
         uniform vec4 color;
-        uniform float comp;
         uniform int count;
         void main() {
           vec2 frag = vec2(gl_FragCoord);
@@ -64,10 +63,10 @@ export default class WebglBlobVisual extends WebGLVisual {
               return;
             }
             vec2 mb = centers[i];
-            vec2 d = mb - frag;
-            float r = dot(d,d) * scale;
+            vec2 d = (mb - frag) * scale;
+            float r = dot(d,d);
             if (r < 1.0){
-              r = 1.0 - r;
+              r = (1.0 - r);
               v += r * r;
               if (v > 0.5) {
                 gl_FragColor = color;
@@ -92,7 +91,7 @@ export default class WebglBlobVisual extends WebGLVisual {
     }
 
     const program = renderContext.webGLSupport.useProgram(
-      ` 
+      `
         attribute vec2 position;
         void main() {
           gl_Position = vec4(vec3(position, 1), 1);
@@ -143,9 +142,9 @@ export default class WebglBlobVisual extends WebGLVisual {
 
       const factor = 1 / (ballSize * renderContext.zoom * pixelRatio)
 
-      gl.uniform1f(scaleLoc, factor * factor)
+      gl.uniform1f(scaleLoc, factor)
 
-      gl.uniform1i(countLoc, count / 2)
+      gl.uniform1i(countLoc, Math.min(this.maxBlobCount, count / 2))
       gl.uniform2fv(centersLoc, dataToSend)
       gl.uniform4f(
         colorLoc,

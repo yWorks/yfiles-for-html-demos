@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -184,20 +184,23 @@ form.option-ui-combobox div.combobox-container label {
   vertical-align: middle;
 }
 
-.option-ui-combobox:hover a.option-ui-api-link, .option-ui-slider:hover a.option-ui-api-link, .option-ui-checkbox:hover a.option-ui-api-link, .option-ui-spinner:hover a.option-ui-api-link {
+.option-ui-combobox:hover a.option-ui-api-link,
+.option-ui-slider:hover a.option-ui-api-link,
+.option-ui-checkbox:hover a.option-ui-api-link,
+.option-ui-spinner:hover a.option-ui-api-link {
   opacity: 1;
 }
 
 .option-ui-api-link {
   background-color: #5cb85c;
-  color: #FFF !important;
+  color: #fff !important;
   font-size: 10px;
   margin-left: 5px;
   padding: 1px 2px;
   font-family: monospace;
   vertical-align: middle;
   opacity: 0;
-  transition: opacity .2s ease-in-out;
+  transition: opacity 0.2s ease-in-out;
 }
 
 .option-ui-dropdown {

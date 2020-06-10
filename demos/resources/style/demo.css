@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -143,6 +143,18 @@
 .demo-icon-yIconEdgeDirection {
   background-image: url('../icons/edge-direction-16.svg');
 }
+.demo-icon-yIconZOrderUp {
+  background-image: url('../icons/z-order-up-16.svg');
+}
+.demo-icon-yIconZOrderDown {
+  background-image: url('../icons/z-order-down-16.svg');
+}
+.demo-icon-yIconZOrderTop {
+  background-image: url('../icons/z-order-top-16.svg');
+}
+.demo-icon-yIconZOrderBottom {
+  background-image: url('../icons/z-order-bottom-16.svg');
+}
 html,
 body {
   /* make the body expand to fill the visible window */
@@ -171,7 +183,7 @@ body:not(.loaded):not(.file-system-warning):after {
   background-size: 200px;
 }
 body.loaded {
-  background: none;
+  background: initial;
 }
 body.loaded > * {
   visibility: visible;

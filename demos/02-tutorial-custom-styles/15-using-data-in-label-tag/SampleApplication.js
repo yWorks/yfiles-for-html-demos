@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -35,6 +35,7 @@ import {
   GraphEditorInputMode,
   IArrow,
   ICommand,
+  ILabel,
   Insets,
   License,
   Point,
@@ -53,6 +54,8 @@ import loadJson from '../../resources/load-json.js'
 /**
  * Create some exemplary business objects which are used by the label style
  * to get the background color and put them into the labels' tags.
+ * @param {ILabel} label0
+ * @param {ILabel} label1
  */
 function createLabelTags(label0, label1) {
   label0.tag = new BusinessObject(Color.ORANGE)
@@ -63,6 +66,9 @@ function createLabelTags(label0, label1) {
 /** @type {GraphComponent} */
 let graphComponent = null
 
+/**
+ * @param {object} licenseData
+ */
 function run(licenseData) {
   License.value = licenseData
   // initialize the graph component
@@ -134,7 +140,7 @@ function initializeGraph() {
 /**
  * Creates the default input mode for the GraphComponent,
  * a {@link GraphEditorInputMode}.
- * @return {IInputMode} a new GraphEditorInputMode instance
+ * @returns {GraphEditorInputMode} a new GraphEditorInputMode instance
  */
 function createEditorMode() {
   return new GraphEditorInputMode({

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -33,6 +33,7 @@ export default class ImageVisualCreator extends BaseClass(IVisualCreator) {
    * Creates the visual for the background.
    * @param {IRenderContext} context The context that describes where the visual will be used
    * return {Visual} The visual for the background
+   * @returns {SvgVisual}
    */
   createVisual(context) {
     const image = window.document.createElementNS('http://www.w3.org/2000/svg', 'image')
@@ -50,6 +51,7 @@ export default class ImageVisualCreator extends BaseClass(IVisualCreator) {
    * @param {IRenderContext} context The context that describes where the visual will be used
    * @param {Visual} oldVisual The old visual
    * return {Visual} The visual for the background
+   * @returns {Visual}
    */
   updateVisual(context, oldVisual) {
     return oldVisual

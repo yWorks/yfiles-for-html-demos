@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -7193,8 +7193,8 @@ export default {
       color: 'rgb(0, 129, 190)'
     },
     {
-      id: 'yFiles-for-HTML-Complete/demos/view/events/EventLog.js',
-      label: 'EventLog.js\n(9.79kb)',
+      id: 'yFiles-for-HTML-Complete/demos/view/events/EventView.js',
+      label: 'EventView.js\n(9.79kb)',
       groupRef: 'yFiles-for-HTML-Complete/demos/view/events',
       size: '9795',
       color: 'rgb(0, 180, 160)'

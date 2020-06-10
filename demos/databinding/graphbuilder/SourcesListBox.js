@@ -1,0 +1,120 @@
+/****************************************************************************
+ ** @license
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** 72070 Tuebingen, Germany. All rights reserved.
+ **
+ ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+ ** of demo files in source code or binary form, with or without
+ ** modification, is not permitted.
+ **
+ ** Owners of a valid software license for a yFiles for HTML version that this
+ ** demo is shipped with are allowed to use the demo source code as basis
+ ** for their own yFiles for HTML powered applications. Use of such programs is
+ ** governed by the rights and conditions as set out in the yFiles for HTML
+ ** license agreement.
+ **
+ ** THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+ ** WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ ** MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+ ** NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ ** SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+ ** TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ ** PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+ ** LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+ ** NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ **
+ ***************************************************************************/
+import { SourceDialog } from './EditSourceDialog.js'
+import { SourceDefinition, SourceDefinitionBuilderConnector } from './ModelClasses.js'
+import { addClass } from '../../resources/demo-app.js'
+
+/**
+ * Control containing a list of sub controls for every {link SourceDefinition} added to it
+ * The sub controls provide Edit- and Remove- buttons
+ */
+export class SourcesListBox {
+  /**
+   * Sources list box constructor
+   * @param {function} factory the arrow function providing an appropriate {@link SourceDefinitionBuilderConnector}
+   *        connector via the factory class
+   * @param {object} dialogFactory the Node- or Edge- {@link SourceDialog} to use
+   * @param {HTMLElement} rootElement the HTMLElement used to display the list box
+   * @param {function} dataUpdatedCallback the callback arrow function used to update the graph after the
+   *        the SourceDialog was closed as accepted
+   */
+  constructor(factory, dialogFactory, rootElement, dataUpdatedCallback) {
+    this.dataUpdatedCallback = dataUpdatedCallback
+    this.sources = []
+    this.Factory = factory
+    this.DialogFactory = dialogFactory
+    this.rootElement = rootElement
+    this.lastSourceIndex = 1
+
+    this.addButton = document.createElement('button')
+    this.addButton.textContent = 'Add Source'
+    this.addButton.addEventListener('click', () => this.createDefinition())
+    this.rootElement.appendChild(this.addButton)
+  }
+
+  /**
+   * Event handler for "Add Source" button
+   * Generates a new definition via the provided connector Factory
+   * and add ist to the list box
+   * @returns {TSourceConnector}
+   */
+  createDefinition() {
+    const newDefinition = this.Factory(`Source ${this.lastSourceIndex++}`)
+    this.addDefinition(newDefinition)
+    return newDefinition
+  }
+
+  /**
+   * Adds a new definition using the provided {@link SourceDefinitionBuilderConnector} to the list box
+   * @param {TSourceConnector} newDefinition the {@link SourceDefinitionBuilderConnector}
+   */
+  addDefinition(newDefinition) {
+    this.sources.push(newDefinition)
+
+    const container = document.createElement('div')
+    addClass(container, 'sourceCard')
+
+    const label = document.createElement('span')
+    label.textContent = newDefinition.sourceDefinition.name
+
+    const editButton = document.createElement('button')
+    addClass(editButton, 'editButton')
+    editButton.addEventListener('click', () =>
+      new this.DialogFactory(newDefinition, () => {
+        label.textContent = newDefinition.sourceDefinition.name
+        this.dataUpdatedCallback()
+      }).show()
+    )
+    editButton.textContent = 'Edit'
+
+    const removeButton = document.createElement('button')
+    addClass(removeButton, 'removeButton')
+    removeButton.addEventListener('click', () => this.removeDefinition(newDefinition, container))
+    removeButton.textContent = 'Remove'
+
+    container.appendChild(label)
+    container.appendChild(editButton)
+    container.appendChild(removeButton)
+
+    this.rootElement.insertBefore(container, this.addButton)
+  }
+
+  /**
+   * Removes the provided definition from the list box
+   * @param {TSourceConnector} definition the {@link SourceDefinitionBuilderConnector}
+   * @param {HTMLDivElement} container the list box div container
+   */
+  removeDefinition(definition, container) {
+    // The GraphBuilder does not support removing sources - for simplicity of this demo simply set
+    // the data to ""
+    definition.reset()
+    this.sources.splice(this.sources.indexOf(definition), 1)
+    this.rootElement.removeChild(container)
+  }
+}

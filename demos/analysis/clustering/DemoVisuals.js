@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -42,13 +42,15 @@ import {
   YPoint
 } from 'yfiles'
 
+import VoronoiDiagram from './VoronoiDiagram.js'
+
 /**
  * This visual draws a Voronoi diagram.
  */
 export class VoronoiVisual extends BaseClass(IVisualCreator) {
   /**
    * Creates a new VoronoiVisual that draws the faces of the given voronoi diagram.
-   * @param voronoiDiagram
+   * @param {VoronoiDiagram} voronoiDiagram
    */
   constructor(voronoiDiagram) {
     super()

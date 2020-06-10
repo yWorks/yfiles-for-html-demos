@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -60,7 +60,8 @@ export default class ActivityNodeStyle extends NodeStyleBase {
    * Creates the visual element for the node.
    * @param {IRenderContext} context - The render context.
    * @param {INode} node - The node to which this style instance is assigned.
-   * @returns {SvgVisual} */
+   * @returns {SvgVisual}
+   */
   createVisual(context, node) {
     // get the activity data
     const tag = node.tag
@@ -134,7 +135,8 @@ export default class ActivityNodeStyle extends NodeStyleBase {
    * @param {Visual} oldVisual - The visual that has been created in the call to
    *   {@link NodeStyleBase#createVisual}.
    * @param {INode} node - The node to which this style instance is assigned.
-   * @returns {SvgVisual} */
+   * @returns {SvgVisual}
+   */
   updateVisual(context, oldVisual, node) {
     const tag = node.tag
     const layout = node.layout

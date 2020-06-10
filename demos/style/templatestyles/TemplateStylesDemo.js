@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,9 +27,11 @@
  **
  ***************************************************************************/
 import {
+  AdjacencyGraphBuilder,
   BalloonLayout,
   BfsAlgorithm,
   DashStyle,
+  EdgeCreator,
   EdgePathLabelModel,
   EdgeSides,
   FreeNodePortLocationModel,
@@ -49,12 +51,10 @@ import {
   TemplateLabelStyle,
   TemplateNodeStyle,
   TemplatePortStyle,
-  TreeBuilder,
   YNodeList
 } from 'yfiles'
 
 import PropertiesView from './PropertiesView.js'
-import Employee from './Employee.js'
 import OrgChartData from './resources/OrgChartData.js'
 import { bindCommand, showApp } from '../../resources/demo-app.js'
 import loadJson from '../../resources/load-json.js'
@@ -212,8 +212,8 @@ function initialize() {
 }
 
 /**
- * Customizes the graph - in this case, the default node size is set and the default decoration for selection and
- * focus is removed.
+ * Customizes the graph - in this case, the default node size is set and the default decoration for
+ * selection and focus is removed.
  */
 function initializeGraph() {
   const graph = graphComponent.graph
@@ -231,23 +231,39 @@ function initializeGraph() {
 function createSampleGraph() {
   const graph = graphComponent.graph
 
-  // use TreeBuilder to automatically create a graph from the data
-  const treeBuilder = new TreeBuilder({
-    graph,
-    nodesSource: OrgChartData.map(data => new Employee(data)),
-    childBinding: 'subordinates',
-    // create edge labels for assistant nodes only
-    edgeLabelBinding: val => (val.assistant ? 'Assistant' : null),
-    idBinding: 'email'
+  // make each data item observable to be able to update the template style bindings
+  const dataSource = OrgChartData.map(data => TemplateNodeStyle.makeObservable(data))
+
+  // use AdjacencyGraphBuilder to automatically create a graph from the data
+  const adjacencyGraphBuilder = new AdjacencyGraphBuilder(graph)
+
+  // stores the nodes of the graph
+  const adjacencyNodesSource = adjacencyGraphBuilder.createNodesSource(dataSource, 'email')
+
+  // configure the successor nodes
+  const edgeCreator = new EdgeCreator()
+  // use the same edge defaults as in the graph
+  edgeCreator.defaults = graph.edgeDefaults
+  // label edges that point to assistants
+  edgeCreator.addEdgeCreatedListener((sender, args) => {
+    const edge = args.item
+    const targetData = edge.targetNode.tag
+    if (targetData && targetData.assistant) {
+      args.graph.addLabel(edge, 'Assistant')
+    }
   })
-  treeBuilder.buildGraph()
+  adjacencyNodesSource.addSuccessorIds(data => data.subordinates, edgeCreator)
+
+  // create the graph from the given data
+  adjacencyGraphBuilder.buildGraph()
 
   // adjust the node sizes to match their hierarchy level
   adjustNodeSizes(graph)
 }
 
 /**
- * Calculates the tree level of each node. Nodes higher up in the hierarchy are enlarged accordingly.
+ * Calculates the tree level of each node. Nodes higher up in the hierarchy are enlarged
+ * accordingly.
  * @param graph The graph
  */
 function adjustNodeSizes(graph) {

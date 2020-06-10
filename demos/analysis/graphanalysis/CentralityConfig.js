@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -32,11 +32,13 @@ import {
   ConnectedComponents,
   DefaultLabelStyle,
   DegreeCentrality,
+  EigenvectorCentrality,
   FilteredGraphWrapper,
   GraphCentrality,
   GraphStructureAnalyzer,
   IGraph,
   ILayoutAlgorithm,
+  PageRank,
   Rect,
   ResultItemMapping,
   WeightCentrality
@@ -98,38 +100,46 @@ export default class CentralityConfig extends AlgorithmConfiguration {
 
           this.applyNodeCentralityColor(graph, result.normalizedNodeCentrality)
         } else {
-          let componentsSet = new Set()
-          const filteredGraph = new FilteredGraphWrapper(
-            graph,
-            node => componentsSet.has(node),
-            edge => true
-          )
           // if the graph in not connected, we run the algorithm separately to each connected component
           const connectedComponentsResult = new ConnectedComponents().run(graph)
-          connectedComponentsResult.components.forEach(component => {
-            // update the filtered graph so that it contains only the nodes of the current component
-            componentsSet = new Set(component.nodes.toArray())
-            filteredGraph.nodePredicateChanged()
 
+          connectedComponentsResult.components.forEach(component => {
             result = new ClosenessCentrality({
               weights: edge => this.getEdgeWeight(edge),
-              directed: this.directed
-            }).run(filteredGraph)
+              directed: this.directed,
+              subgraphNodes: component.nodes
+            }).run(graph)
 
+            // we only want to apply the styling to the components' nodes
+            const filteredGraph = new FilteredGraphWrapper(
+              graph,
+              node => component.nodes.contains(node),
+              edge => true
+            )
             this.applyNodeCentralityColor(filteredGraph, result.normalizedNodeCentrality)
           })
-          // dispose the filtered graph
-          filteredGraph.dispose()
         }
         break
       }
-      case CentralityConfig.DEGREE_CENTRALITY:
-      default: {
+      case CentralityConfig.DEGREE_CENTRALITY: {
         result = new DegreeCentrality({
           considerOutgoingEdges: true,
           considerIncomingEdges: true
         }).run(graph)
         this.applyNodeCentralityColor(graph, result.normalizedNodeCentrality)
+        break
+      }
+      case CentralityConfig.EIGENVECTOR_CENTRALITY: {
+        result = new EigenvectorCentrality().run(graph)
+        this.applyNodeCentralityColor(graph, result.nodeCentrality)
+        break
+      }
+      case CentralityConfig.PAGERANK_CENTRALITY:
+      default: {
+        result = new PageRank({
+          edgeWeights: edge => this.getEdgeWeight(edge)
+        }).run(graph)
+        this.applyNodeCentralityColor(graph, result.pageRank)
         break
       }
     }
@@ -156,19 +166,19 @@ export default class CentralityConfig extends AlgorithmConfiguration {
 
       node.tag = { id: index }
 
-      let centralityValue = `${Math.round(centralityId * 100) / 100}`
-      if (isNaN(centralityValue) || isNaN(diff)) {
+      let centralityValue = Math.round(centralityId * 100) / 100
+      if (!Number.isFinite(centralityValue) || !Number.isFinite(diff)) {
         centralityValue = 'Inf'
       }
 
       graph.addLabel({
         owner: node,
-        text: centralityValue,
+        text: centralityValue.toString(),
         style: textLabelStyle,
         tag: 'centrality'
       })
 
-      if (diff === 0 || isNaN(diff)) {
+      if (diff === 0 || !Number.isFinite(diff)) {
         graph.setStyle(
           node,
           this.getMarkedNodeStyle(0, {
@@ -208,10 +218,9 @@ export default class CentralityConfig extends AlgorithmConfiguration {
   applyEdgeCentralityColor(graph, centrality) {
     graph.edges.forEach(edge => {
       const centralityId = centrality.get(edge)
-      edge.tag = `${Math.round(centralityId * 100) / 100}`
       graph.addLabel({
         owner: edge,
-        text: edge.tag,
+        text: `${Math.round(centralityId * 100) / 100}`,
         style: new DefaultLabelStyle({
           font: '10px bold Tahoma',
           backgroundStroke: '2px lightskyblue',
@@ -233,8 +242,8 @@ export default class CentralityConfig extends AlgorithmConfiguration {
    */
   getCentralityStage(coreLayout, directed) {
     const centralityStage = new CentralityStage(coreLayout)
-    centralityStage.$centrality = this.$algorithmType
-    centralityStage.$directed = directed
+    centralityStage.centrality = this.$algorithmType
+    centralityStage.directed = directed
     return centralityStage
   }
 
@@ -302,11 +311,31 @@ export default class CentralityConfig extends AlgorithmConfiguration {
           '<p>Larger and darker nodes are more central than small, light ones. The label shows the exact centrality value.</p>'
         )
       case CentralityConfig.DEGREE_CENTRALITY:
-      default:
         return (
           '<p>This part of the demo shows the <em>degree centrality</em> for the nodes of the given graph. This algorithm ' +
           'uses the degree of the nodes (incoming and outgoing edges) to determine the centrality value for each node.</p>' +
           '<p>Larger and darker nodes are more central than small, light ones. The label shows the exact centrality value.</p>'
+        )
+      case CentralityConfig.EIGENVECTOR_CENTRALITY:
+        return (
+          '<p>This part of the demo shows the <em>Eigenvector centrality</em> for the nodes of the given graph.' +
+          '<p>Eigenvector centrality is a measure of the influence a node has on a network: ' +
+          "The more nodes point to a node, the higher is that node's centrality.</p>" +
+          '<p>The centrality values are scaled so that the largest centrality value is 1.0.</p>' +
+          '<p>Larger and darker nodes are more central than small, light ones. The label shows the exact centrality value.</p>'
+        )
+      case CentralityConfig.PAGERANK_CENTRALITY:
+      default:
+        return (
+          '<p>This part of the demo shows the <em>PageRank</em> values for the nodes of the given graph.' +
+          '<p>The algorithm starts by initializing the rank value for each node. ' +
+          'After that it uses multiple iterations to propagate the rank of a node to its successors. ' +
+          'The base factor for each successor is 1. These base factors are multiplied by edge weights and node weights if specified. </p>' +
+          '<p>The final node factors are scaled afterwards to sum up to 1 so the overall rank stays the same after each iteration. ' +
+          'The old rank value of the node multiplied with these scaled factors are then distributed to the successors. </p>' +
+          "<p>After each iteration, the relative change of each node's rank value ((newRank - oldRank)/oldRank) is calculated. " +
+          'If all rank value changes are below the specified precision or if the maximal iterations are reached, the algorithm stops.</p>' +
+          '<p>Larger and darker nodes have a higher PageRank value than small, light ones. The label shows the exact PageRank value.</p>'
         )
     }
   }
@@ -349,5 +378,21 @@ export default class CentralityConfig extends AlgorithmConfiguration {
    */
   static get CLOSENESS_CENTRALITY() {
     return 4
+  }
+
+  /**
+   * Static field for eigenvector centrality.
+   * @return {number}
+   */
+  static get EIGENVECTOR_CENTRALITY() {
+    return 5
+  }
+
+  /**
+   * Static field for PageRank centrality.
+   * @return {number}
+   */
+  static get PAGERANK_CENTRALITY() {
+    return 6
   }
 }

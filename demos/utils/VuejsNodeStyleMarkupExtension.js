@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -37,38 +37,34 @@ import {
 
 import VuejsNodeStyle from './VuejsNodeStyle.js'
 
-const VuejsNodeStyleMarkupExtension = Class('VuejsNodeStyleMarkupExtension', {
-  $extends: MarkupExtension,
+export default class VuejsNodeStyleMarkupExtension extends MarkupExtension {
+  constructor() {
+    super()
+    this.$template = ''
+  }
 
-  $meta() {
-    return [GraphMLAttribute().init({ contentProperty: 'template' })]
-  },
+  get template() {
+    return this.$template
+  }
 
-  $template: '',
+  set template(value) {
+    this.$template = value
+  }
 
-  template: {
-    $meta() {
-      return [
+  static get $meta() {
+    return {
+      $self: [GraphMLAttribute().init({ contentProperty: 'template' })],
+      template: [
         GraphMLAttribute().init({
           defaultValue: '',
           writeAsAttribute: XamlAttributeWritePolicy.NEVER
         }),
         TypeAttribute(YString.$class)
       ]
-    },
-    get() {
-      return this.$template
-    },
-    set(value) {
-      this.$template = value
     }
-  },
+  }
 
   provideValue(serviceProvider) {
-    const style = new VuejsNodeStyle()
-    style.template = this.$template
-    return style
+    return new VuejsNodeStyle(this.template)
   }
-})
-
-export default VuejsNodeStyleMarkupExtension
+}

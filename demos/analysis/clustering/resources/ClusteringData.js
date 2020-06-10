@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -3264,8 +3264,8 @@ export const BiconnectedComponents = {
     },
     {
       id: 25,
-      x: 418,
-      y: 547,
+      x: 465,
+      y: 542,
       w: 30,
       h: 30
     },
@@ -3607,28 +3607,28 @@ export const BiconnectedComponents = {
     },
     {
       id: 74,
-      x: 951.1916593108787,
+      x: 961.1916593108787,
       y: 59.41590708478512,
       w: 30,
       h: 30
     },
     {
       id: 75,
-      x: 885.7640154858692,
-      y: 158.31551993805653,
+      x: 905.7640154858692,
+      y: 110.31551993805653,
       w: 30,
       h: 30
     },
     {
       id: 76,
-      x: 975.1916593108787,
+      x: 985.1916593108787,
       y: 120.41590708478512,
       w: 30,
       h: 30
     },
     {
       id: 77,
-      x: 1012.1916593108787,
+      x: 1032.1916593108787,
       y: 56.41590708478512,
       w: 30,
       h: 30
@@ -4250,3 +4250,9 @@ export const BiconnectedComponents = {
     }
   ]
 }
+
+// @yjs:keep=LouvainModularity,BiconnectedComponents
+export const LouvainModularity = BiconnectedComponents
+
+// @yjs:keep=LabelPropagation,BiconnectedComponents
+export const LabelPropagation = BiconnectedComponents

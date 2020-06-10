@@ -1,0 +1,53 @@
+{
+  "plugins": ["prettier", "standard", "wdio"],
+  "parser": "@typescript-eslint/parser",
+  "extends": [
+    "standard",
+    "plugin:prettier/recommended",
+    "prettier/standard",
+    "plugin:wdio/recommended"
+  ],
+  "env": {
+    "amd": true,
+    "browser": true,
+    "es6": true,
+    "node": true
+  },
+  "rules": {
+    "prettier/prettier": "warn",
+    "no-var": "error",
+    "no-unused-vars": [
+      "warn",
+      {
+        "varsIgnorePattern": "[A-Z]\\w+",
+        "argsIgnorePattern": "\\w*[Cc]ontext|sender|\\w*[Aa]rgs|evt|[Pp]arameter"
+      }
+    ],
+    "prefer-const": "error"
+  },
+  "overrides": [
+    {
+      "files": ["*.ts", "*.tsx", ".*.ts", ".*.tsx"],
+      "extends": [
+        "standard",
+        "plugin:prettier/recommended",
+        "prettier/standard",
+        "plugin:@typescript-eslint/recommended",
+        "plugin:wdio/recommended"
+      ],
+      "rules": {
+        "@typescript-eslint/ban-ts-ignore": "off",
+        "@typescript-eslint/no-use-before-define": "off",
+        "@typescript-eslint/no-non-null-assertion": "off",
+        "@typescript-eslint/member-delimiter-style": "off",
+        "@typescript-eslint/no-unused-vars": [
+          "warn",
+          {
+            "varsIgnorePattern": "[A-Z]\\w+",
+            "argsIgnorePattern": "\\w*[Cc]ontext|sender|\\w*[Aa]rgs|evt|[Pp]arameter"
+          }
+        ]
+      }
+    }
+  ]
+}

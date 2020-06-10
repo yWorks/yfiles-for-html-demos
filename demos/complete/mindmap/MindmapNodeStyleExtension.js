@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,44 +26,42 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { Class, ILookup, MarkupExtension } from 'yfiles'
+import { ILookup, MarkupExtension } from 'yfiles'
 import MindmapNodeStyle from './MindmapNodeStyle.js'
 
 /**
  * A markup extension class used for (de-)serializing a custom node style, namely
  * MindmapNodeStyle class, that is written in ECMAScript 6.
  */
-const MindmapNodeStyleExtension = Class('MindmapNodeStyleExtension', {
-  $extends: MarkupExtension,
+export default class MindmapNodeStyleExtension extends MarkupExtension {
+  constructor() {
+    super()
+    this.$className = ''
+  }
 
   /**
-   * Backing field for below property
-   * @type {string}
-   */
-  $className: '',
-
-  /**
-   * Gets or sets the class name.
+   * Gets the class name.
    * The explicit getter/setter is needed to support (de-)serialization.
-   * @type {string}
+   * @return {string}
    */
-  className: {
-    get: function() {
-      return this.$className
-    },
-    set: function(value) {
-      this.$className = value
-    }
-  },
+  get className() {
+    return this.$className
+  }
+
+  /**
+   * Sets the class name.
+   * The explicit getter/setter is needed to support (de-)serialization.
+   * @param {string} value
+   */
+  set className(value) {
+    this.$className = value
+  }
 
   /**
    * @param {ILookup} lookup
    * @return {MindmapNodeStyle}
    */
-  provideValue: function(lookup) {
-    let mindmapNodeStyle = new MindmapNodeStyle(this.className)
-    return mindmapNodeStyle
+  provideValue(lookup) {
+    return new MindmapNodeStyle(this.className)
   }
-})
-
-export default MindmapNodeStyleExtension
+}

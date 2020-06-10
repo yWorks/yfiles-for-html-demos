@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -211,18 +211,16 @@ function initializeGraph() {
  * Loads the sample graph.
  */
 function loadSampleGraph() {
-  const graphBuilder = new GraphBuilder({
-    graph: graphComponent.graph,
-    nodesSource: GraphData.nodes,
-    edgesSource: GraphData.edges,
-    groupsSource: GraphData.groups,
-    sourceNodeBinding: 'source',
-    targetNodeBinding: 'target',
-    nodeIdBinding: 'id',
-    groupBinding: 'group',
-    parentGroupBinding: 'parentGroup',
-    groupIdBinding: 'id'
+  const graphBuilder = new GraphBuilder(graphComponent.graph)
+  graphBuilder.createNodesSource({
+    data: GraphData.nodes,
+    id: 'id',
+    parentId: 'group',
+    labels: ['label']
   })
+  const groupNodeCreator = graphBuilder.createGroupNodesSource(GraphData.groups, 'id').nodeCreator
+  groupNodeCreator.createLabelBinding(() => 'Group')
+  graphBuilder.createEdgesSource(GraphData.edges, 'source', 'target')
 
   const graph = graphBuilder.buildGraph()
 
@@ -244,8 +242,6 @@ function loadSampleGraph() {
         columnCount = Math.max(columnIndex, columnCount)
         rowCount = Math.max(rowIndex, rowCount)
       }
-    } else {
-      graph.addLabel(node, 'Group')
     }
   })
   columnCount++
@@ -262,7 +258,8 @@ function loadSampleGraph() {
 }
 
 /**
- * Initializes the visual creator for the partition grid and adds it to the background of the graph component.
+ * Initializes the visual creator for the partition grid and adds it to the background of the graph
+ * component.
  */
 function initializePartitionGridVisual() {
   // if there exists a partition grid object, remove it
@@ -415,8 +412,8 @@ function updateNodeFill(node) {
 }
 
 /**
- * Arranges the graph with the given layout algorithm. If no argument is given, the last applied layout algorithm
- * will be used.
+ * Arranges the graph with the given layout algorithm. If no argument is given, the last applied
+ * layout algorithm will be used.
  * @param {ILayoutAlgorithm} algorithm The given layout algorithm
  */
 async function runLayout(algorithm) {
@@ -489,8 +486,8 @@ function configureAlgorithm(layoutAlgorithm) {
 }
 
 /**
- * Updates the mapping between the columns/rows and the number of nodes the each column/row contains.
- * It has to be called whenever a node changes a column/row.
+ * Updates the mapping between the columns/rows and the number of nodes the each column/row
+ * contains. It has to be called whenever a node changes a column/row.
  * @param {INode} node The given node
  * @param {Object} oldTag The given node's old tag
  */
@@ -607,13 +604,13 @@ function determineCellIndex(point) {
 }
 
 /**
- * Adjusts the bounds of the graph component so that possible empty rows/columns on the top/bottom or left/right
- * are also included in the graphComponent's bounds.
- * This is necessary since method {@link GraphComponent#fitGraphBounds} considers only the content
- * rectangle of the graph component which is defined from the positions of graph elements (nodes, edges,
- * bends, etc) but, not from visual objects, like the partition grid visual. This means that possible empty
- * rows on the top/bottom or columns on the left/right have to be manually included in the graphComponent's bounds
- * using special insets.
+ * Adjusts the bounds of the graph component so that possible empty rows/columns on the top/bottom
+ * or left/right are also included in the graphComponent's bounds. This is necessary since method
+ * {@link GraphComponent#fitGraphBounds} considers only the content rectangle of the graph
+ * component which is defined from the positions of graph elements (nodes, edges, bends, etc) but,
+ * not from visual objects, like the partition grid visual. This means that possible empty rows on
+ * the top/bottom or columns on the left/right have to be manually included in the graphComponent's
+ * bounds using special insets.
  */
 function adjustGraphComponentBounds() {
   if (existsPartitionGrid()) {
@@ -646,7 +643,8 @@ function adjustGraphComponentBounds() {
 }
 
 /**
- * Returns a partition cell for the given node if it has valid row/column indices or <code>null</code> otherwise.
+ * Returns a partition cell for the given node if it has valid row/column indices or
+ * <code>null</code> otherwise.
  * @param {INode} node The given node to create the cell id for
  * @return {PartitionCellId} A partition cell for the given node if it has valid row/column indices
  * or <code>null</code> otherwise
@@ -659,7 +657,8 @@ function createNodeCellId(node) {
 }
 
 /**
- * Returns a partition cell for the given group node if any of its descendants has a valid partition cell id or
+ * Returns a partition cell for the given group node if any of its descendants has a valid
+ * partition cell id or
  * <code>null</code> otherwise.
  * @param {INode} node The group node to create the cell id for
  * @return {PartitionCellId} A partition cell id for the given group node if any of its descendants
@@ -697,7 +696,8 @@ function getGroupNodeCellId(node) {
 /**
  * Returns whether or not a given node has valid row/column indices.
  * @param {INode} node The given node
- * @return {boolean} <code>True</code> if the given node has valid row/column indices, <code>false</code> otherwise
+ * @return {boolean} <code>True</code> if the given node has valid row/column indices,
+ *   <code>false</code> otherwise
  */
 function hasActiveRestrictions(node) {
   return node.tag && node.tag.rowIndex >= 0 && node.tag.columnIndex >= 0
@@ -975,8 +975,8 @@ function updateGrid() {
  * Checks whether the input provided by the user is valid, i.e., not larger than the desired value.
  * @param {number} input The user's input
  * @param {number} maxValue The maximum expected value
- * @return {boolean} <code>True</code> if the input provided by the user is valid, i.e., not larger than the
- * desired value, <code>false</code> otherwise
+ * @return {boolean} <code>True</code> if the input provided by the user is valid, i.e., not larger
+ *   than the desired value, <code>false</code> otherwise
  */
 function isValidInput(input, maxValue) {
   if (input.target.value > maxValue) {
@@ -993,8 +993,8 @@ function isValidInput(input, maxValue) {
 }
 
 /**
- * Checks whether or not a layout algorithm can be executed. A layout algorithm cannot be executed when the graph is
- * empty or a layout algorithm is already running.
+ * Checks whether or not a layout algorithm can be executed. A layout algorithm cannot be executed
+ * when the graph is empty or a layout algorithm is already running.
  */
 function canExecuteAnyLayout() {
   // don't allow layouts for empty graphs
@@ -1069,8 +1069,8 @@ function getFirstChildActiveRestriction(groupNode) {
 }
 
 /**
- * Determines whether the remove restrictions command can be executed. This can occur only if there exists at least
- * one selected node (that is not a group node) with active grid restrictions.
+ * Determines whether the remove restrictions command can be executed. This can occur only if there
+ * exists at least one selected node (that is not a group node) with active grid restrictions.
  */
 function canExecuteRemoveRestrictions() {
   const selection = graphComponent.selection.selectedNodes
@@ -1098,8 +1098,9 @@ function executeRemoveRestrictions() {
 }
 
 /**
- * Determines whether the add restrictions command can be executed. This can occur only if there exists at least
- * one selected node (that is not a group node) and has no active grid restrictions.
+ * Determines whether the add restrictions command can be executed. This can occur only if there
+ * exists at least one selected node (that is not a group node) and has no active grid
+ * restrictions.
  */
 function canExecuteAddRestrictions() {
   const selection = graphComponent.selection.selectedNodes
@@ -1112,8 +1113,8 @@ function canExecuteAddRestrictions() {
 }
 
 /**
- * Executes the add restrictions command. Each node with no active restrictions will be assigned to the cell
- * that belongs based on its current position.
+ * Executes the add restrictions command. Each node with no active restrictions will be assigned to
+ * the cell that belongs based on its current position.
  */
 function executeAddRestrictions() {
   // if there exists no grid, initialize it with some default values
@@ -1162,7 +1163,8 @@ function generateGradientColor(startColor, endColor) {
 
 /**
  * Enables/Disables some toolbar elements and the input mode of the graph component.
- * @param {boolean} disabled <code>True</code> if the UI should be disabled, <code>false</code> otherwise.
+ * @param {boolean} disabled <code>True</code> if the UI should be disabled, <code>false</code>
+ *   otherwise.
  */
 function setUIDisabled(disabled) {
   document.getElementById('AddRow').disabled = disabled
@@ -1172,7 +1174,8 @@ function setUIDisabled(disabled) {
 
 /**
  * Enables/disables the delete column/row buttons and updates the partition grid visual
- * @param {boolean} disabled <code>True</code> if the buttons should be disabled, <code>false</code> otherwise.
+ * @param {boolean} disabled <code>True</code> if the buttons should be disabled,
+ *   <code>false</code> otherwise.
  * @param {Point} location The location of the last mouse event
  */
 function toggleDeleteButtonsVisibility(disabled, location) {
@@ -1197,8 +1200,8 @@ function getRandomInt(upper) {
 }
 
 /**
- * A class for implementing a layout executor that runs two parallel animations, i.e., animate the graph itself as
- * well as the partition grid visualization.
+ * A class for implementing a layout executor that runs two parallel animations, i.e., animate the
+ * graph itself as well as the partition grid visualization.
  */
 class CustomLayoutExecutor extends LayoutExecutor {
   createMorphAnimation() {

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -878,7 +878,8 @@ const HierarchicLayoutConfig = Class('HierarchicLayoutConfig', {
           values: [
             ['Octilinear', HierarchicLayoutEdgeRoutingStyle.OCTILINEAR],
             ['Orthogonal', HierarchicLayoutEdgeRoutingStyle.ORTHOGONAL],
-            ['Polyline', HierarchicLayoutEdgeRoutingStyle.POLYLINE]
+            ['Polyline', HierarchicLayoutEdgeRoutingStyle.POLYLINE],
+            ['Curved', HierarchicLayoutEdgeRoutingStyle.CURVED]
           ]
         }),
         TypeAttribute(HierarchicLayoutEdgeRoutingStyle.$class)
@@ -2059,7 +2060,10 @@ const HierarchicLayoutConfig = Class('HierarchicLayoutConfig', {
           '#/api/SimplexNodePlacer#SimplexNodePlacer-property-groupCompactionStrategy'
         ),
         EnumValuesAttribute().init({
-          values: [['Weak', GroupCompactionPolicy.NONE], ['Strong', GroupCompactionPolicy.MAXIMAL]]
+          values: [
+            ['Weak', GroupCompactionPolicy.NONE],
+            ['Strong', GroupCompactionPolicy.MAXIMAL]
+          ]
         }),
         TypeAttribute(GroupCompactionPolicy.$class)
       ]
@@ -2234,6 +2238,15 @@ const HierarchicLayoutConfig = Class('HierarchicLayoutConfig', {
   },
 
   /**
+   * @type {boolean}
+   */
+  shouldDisableGridSpacingItem: {
+    get: function() {
+      return !this.$gridEnabledItem
+    }
+  },
+
+  /**
    * Backing field for below property
    * @type {HierarchicLayoutPortAssignmentMode}
    */
@@ -2263,6 +2276,15 @@ const HierarchicLayoutConfig = Class('HierarchicLayoutConfig', {
     },
     set: function(value) {
       this.$gridPortAssignmentItem = value
+    }
+  },
+
+  /**
+   * @type {boolean}
+   */
+  shouldDisableGridPortAssignmentItem: {
+    get: function() {
+      return !this.$gridEnabledItem
     }
   },
 

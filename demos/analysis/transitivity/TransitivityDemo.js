@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -32,6 +32,7 @@ import {
   ArrowType,
   BaseClass,
   Cursor,
+  Cycle,
   DefaultLabelStyle,
   Enum,
   FilteredGraphWrapper,
@@ -74,8 +75,7 @@ import {
   TransitiveClosure,
   TransitiveReduction,
   UndoUnitBase,
-  ViewportAnimation,
-  Cycle
+  ViewportAnimation
 } from 'yfiles'
 
 import GraphData from './resources/yfiles-modules-data.js'
@@ -414,7 +414,7 @@ function registerCommands() {
 
 /**
  * Returns enlarged bounds for the given item that correspond to the highlight bounds.
- * @param {IGraph} item The item whose bounds are enlarged.
+ * @param {INode} item The item whose bounds are enlarged.
  * @return {Rect} The new bounds.
  */
 function getEnlargedNodeBounds(item) {
@@ -661,15 +661,13 @@ async function loadGraph() {
   if (samplesComboBox.selectedIndex === SampleName.YFILES_MODULES_SAMPLE) {
     resetGraph()
 
-    const builder = new GraphBuilder({
-      graph: graphComponent.graph,
-      nodesSource: GraphData.nodes,
-      edgesSource: GraphData.edges,
-      sourceNodeBinding: 'from',
-      targetNodeBinding: 'to',
-      nodeIdBinding: 'id',
-      nodeLabelBinding: tag => tag.label || null
+    const builder = new GraphBuilder(graphComponent.graph)
+    builder.createNodesSource({
+      data: GraphData.nodes,
+      id: 'id',
+      labels: ['label']
     })
+    builder.createEdgesSource(GraphData.edges, 'from', 'to')
 
     const graph = builder.buildGraph()
 

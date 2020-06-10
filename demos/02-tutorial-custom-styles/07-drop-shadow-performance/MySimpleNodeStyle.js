@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -29,14 +29,19 @@
 import {
   GeneralPath,
   GeomUtilities,
+  ICanvasContext,
+  IInputModeContext,
+  ILabel,
   INode,
   INodeStyle,
+  IRenderContext,
   ISvgDefsCreator,
+  ITagOwner,
   MutablePoint,
   NodeStyleBase,
   Point,
   Rect,
-  SvgDefsManager,
+  Size,
   SvgVisual
 } from 'yfiles'
 
@@ -53,7 +58,7 @@ export default class MySimpleNodeStyle extends NodeStyleBase {
 
   /**
    * Counts the number of gradient fills used to generate a unique id.
-   * @return {number}
+   * @type {number}
    */
   static get fillCounter() {
     MySimpleNodeStyle.$fillCounter = (MySimpleNodeStyle.$fillCounter || 0) + 1
@@ -65,6 +70,9 @@ export default class MySimpleNodeStyle extends NodeStyleBase {
   // //////////////////////////////////////////////////
   /**
    * Draws the pre-rendered drop-shadow image at the given size.
+   * @param {IRenderContext} context
+   * @param {SVGElement} visual
+   * @param {Size} size
    */
   drawShadow(context, visual, size) {
     const tileSize = 32
@@ -109,7 +117,7 @@ export default class MySimpleNodeStyle extends NodeStyleBase {
    * the {@link ITagOwner#tag} of the {@link INode} is of type {@link string},
    * in which case that color overrides this style's setting.
    * @param {INode} node The node to determine the color for.
-   * @return {string} The color for filling the node.
+   * @returns {string} The color for filling the node.
    */
   getNodeColor(node) {
     // the color can be obtained from the "business data" that can be associated with
@@ -120,7 +128,9 @@ export default class MySimpleNodeStyle extends NodeStyleBase {
   /**
    * Creates the visual for a node.
    * @see Overrides {@link NodeStyleBase#createVisual}
-   * @return {SvgVisual}
+   * @param {IRenderContext} context
+   * @param {INode} node
+   * @returns {SvgVisual}
    */
   createVisual(context, node) {
     // This implementation creates a 'g' element and uses it as a container for the rendering of the node.
@@ -137,7 +147,10 @@ export default class MySimpleNodeStyle extends NodeStyleBase {
   /**
    * Re-renders the node using the old visual for performance reasons.
    * @see Overrides {@link NodeStyleBase#updateVisual}
-   * @return {SvgVisual}
+   * @param {IRenderContext} context
+   * @param {SvgVisual} oldVisual
+   * @param {INode} node
+   * @returns {SvgVisual}
    */
   updateVisual(context, oldVisual, node) {
     const container = oldVisual.svgElement
@@ -162,7 +175,8 @@ export default class MySimpleNodeStyle extends NodeStyleBase {
 
   /**
    * Creates an object containing all necessary data to create a visual for the node.
-   * @return {object}
+   * @param {INode} node
+   * @returns {*}
    */
   createRenderDataCache(node) {
     // If Tag is set to a Color, use it as background color of the node
@@ -207,6 +221,10 @@ export default class MySimpleNodeStyle extends NodeStyleBase {
    * elements to the <code>container</code>. All items are arranged as if the node was located at (0,0).
    * {@link MySimpleNodeStyle#createVisual} and {@link MySimpleNodeStyle#updateVisual} finally arrange the container
    * so that the drawing is translated into the final position.
+   * @param {IRenderContext} context
+   * @param {INode} node
+   * @param {SVGElement} container
+   * @param {*} cache
    */
   render(context, node, container, cache) {
     // store information with the visual on how we created it
@@ -244,10 +262,10 @@ export default class MySimpleNodeStyle extends NodeStyleBase {
         'http://www.w3.org/2000/svg',
         'linearGradient'
       )
-      gradient.setAttribute('x1', 0)
-      gradient.setAttribute('y1', 0)
-      gradient.setAttribute('x2', 0.5 / (nodeSize.width / max))
-      gradient.setAttribute('y2', 1 / (nodeSize.height / max))
+      gradient.setAttribute('x1', '0')
+      gradient.setAttribute('y1', '0')
+      gradient.setAttribute('x2', `${0.5 / (nodeSize.width / max)}`)
+      gradient.setAttribute('y2', `${1 / (nodeSize.height / max)}`)
       gradient.setAttribute('spreadMethod', 'pad')
       const stop1 = window.document.createElementNS('http://www.w3.org/2000/svg', 'stop')
       stop1.setAttribute('stop-color', 'white')
@@ -323,7 +341,8 @@ export default class MySimpleNodeStyle extends NodeStyleBase {
    * Gets the outline of the node, an ellipse in this case.
    * This allows for correct edge path intersection calculation, among others.
    * @see Overrides {@link NodeStyleBase#getOutline}
-   * @return {GeneralPath}
+   * @param {INode} node
+   * @returns {GeneralPath}
    */
   getOutline(node) {
     const outline = new GeneralPath()
@@ -335,7 +354,9 @@ export default class MySimpleNodeStyle extends NodeStyleBase {
    * Get the bounding box of the node.
    * This is used for bounding box calculations and includes the visual shadow.
    * @see Overrides {@link NodeStyleBase#getBounds}
-   * @return {Rect}
+   * @param {IInputModeContext} canvasContext
+   * @param {INode} node
+   * @returns {Rect}
    */
   getBounds(canvasContext, node) {
     return new Rect(node.layout.x, node.layout.y, node.layout.width + 3, node.layout.height + 3)
@@ -343,8 +364,11 @@ export default class MySimpleNodeStyle extends NodeStyleBase {
 
   /**
    * Hit test which considers HitTestRadius specified in CanvasContext.
-   * @return {boolean} True if p is inside node.
+   * @returns {boolean} True if p is inside node.
    * @see Overrides {@link NodeStyleBase#isHit}
+   * @param {IInputModeContext} canvasContext
+   * @param {Point} p
+   * @param {INode} node
    */
   isHit(canvasContext, p, node) {
     return GeomUtilities.ellipseContains(node.layout.toRect(), p, canvasContext.hitTestRadius)
@@ -352,9 +376,12 @@ export default class MySimpleNodeStyle extends NodeStyleBase {
 
   /**
    * Checks if a node is inside a certain box. Considers HitTestRadius.
-   * @return {boolean} True if the box intersects the elliptical shape of the node. Also true if box lies completely
+   * @returns {boolean} True if the box intersects the elliptical shape of the node. Also true if box lies completely
    *   inside node.
    * @see Overrides {@link NodeStyleBase#isInBox}
+   * @param {IInputModeContext} canvasContext
+   * @param {Rect} box
+   * @param {INode} node
    */
   isInBox(canvasContext, box, node) {
     // early exit if not even the bounds are contained in the box
@@ -382,7 +409,9 @@ export default class MySimpleNodeStyle extends NodeStyleBase {
    * Exact geometric check whether a point p lies inside the node. This is important for intersection calculation,
    * among others.
    * @see Overrides {@link NodeStyleBase#isInside}
-   * @return {boolean}
+   * @param {INode} node
+   * @param {Point} point
+   * @returns {boolean}
    */
   isInside(node, point) {
     return GeomUtilities.ellipseContains(node.layout.toRect(), point, 0)
@@ -391,6 +420,9 @@ export default class MySimpleNodeStyle extends NodeStyleBase {
 
 const dropShadowDefsCreator = createDropShadow()
 
+/**
+ * @returns {ISvgDefsCreator}
+ */
 function createDropShadow() {
   // This instance is needed in order to support automatic cleanup of the global defs section.
   // In order to improve performance in some browsers, elements needed more than once can be
@@ -403,17 +435,18 @@ function createDropShadow() {
   // the defs elements, those have to implement {@link ISvgDefsCreator} that offers a
   // defined interface to deal with.
   // This code uses an anonymous interface implementation of ISvgDefsCreator.
-  return new ISvgDefsCreator({
-    /** @return {Element} */
+  return ISvgDefsCreator.create({
     createDefsElement: ctx => createDropShadowElement(),
 
-    /** @return {boolean} */
     accept: (ctx, node, id) => ISvgDefsCreator.isUseReference(node, id),
 
-    updateDefsElement: (oldElement, ctx) => {}
+    updateDefsElement: (ctx, oldElement) => {}
   })
 }
 
+/**
+ * @returns {SVGElement}
+ */
 function createDropShadowElement() {
   // pre-render the node's drop shadow using HTML5 canvas rendering
   const canvas = window.document.createElement('canvas')

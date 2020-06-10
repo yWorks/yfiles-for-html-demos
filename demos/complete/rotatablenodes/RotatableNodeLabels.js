@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -197,8 +197,8 @@ export class RotatableNodeLabelModelDecorator extends BaseClass(
   }
 
   /**
-   * Returns the wrapping style for nodes when {@link RotatableNodes.RotatableNodeStyleDecorator} is used, null
-   * otherwise.
+   * Returns the wrapping style for nodes when {@link RotatableNodes.RotatableNodeStyleDecorator}
+   * is used, null otherwise.
    * @param {ILabel} label
    * @return {RotatableNodes.RotatableNodeStyleDecorator|null}
    */
@@ -313,7 +313,8 @@ export class RotatableNodeLabelModelDecoratorParameter extends BaseClass(
   }
 
   /**
-   * Converts this label model parameter using {@link RotatableNodeLabelModelDecoratorParameterExtension}.
+   * Converts this label model parameter using
+   * {@link RotatableNodeLabelModelDecoratorParameterExtension}.
    * @param {IWriteContext} context
    * @param {object} value
    * @return {RotatableNodeLabelModelDecoratorParameterExtension}
@@ -370,8 +371,8 @@ class RotatedNodeLabelModelParameterFinder extends BaseClass(ILabelModelParamete
   }
 
   /**
-   * Finds the label model parameter that describes the given label layout best. Sometimes the layout cannot be met
-   * exactly, then the nearest location is used.
+   * Finds the label model parameter that describes the given label layout best. Sometimes the
+   * layout cannot be met exactly, then the nearest location is used.
    * @param {ILabel} label
    * @param {ILabelModel} model
    * @param {IOrientedRectangle} labelLayout
@@ -408,96 +409,105 @@ class RotatedNodeLabelModelParameterFinder extends BaseClass(ILabelModelParamete
 /**
  * Markup extension that helps (de-)serializing a {@link RotatableNodeLabelModelDecorator).
  */
-export const RotatableNodeLabelModelDecoratorExtension = Class(
-  'RotatableNodeLabelModelDecoratorExtension',
-  {
-    $extends: MarkupExtension,
+export class RotatableNodeLabelModelDecoratorExtension extends MarkupExtension {
+  constructor() {
+    super()
+    this.$useNodeRotation = true
+    this.$wrapped = null
+  }
 
-    $wrapped: null,
-    /**
-     * @type {ILabelModel}
-     */
-    wrapped: {
-      get() {
-        return this.$wrapped
-      },
-      set(value) {
-        this.$wrapped = value
-      }
-    },
+  /**
+   * @return {boolean}
+   */
+  get useNodeRotation() {
+    return this.$useNodeRotation
+  }
 
-    $useNodeRotation: true,
-    /**
-     * @type {boolean}
-     */
-    useNodeRotation: {
-      $meta() {
-        return [GraphMLAttribute().init({ defaultValue: true }), TypeAttribute(YBoolean.$class)]
-      },
-      get() {
-        return this.$useNodeRotation
-      },
-      set(value) {
-        this.$useNodeRotation = value
-      }
-    },
+  /**
+   * @param {boolean} value
+   */
+  set useNodeRotation(value) {
+    this.$useNodeRotation = value
+  }
 
-    /**
-     * @param {ILookup} serviceProvider
-     * @return {object}
-     */
-    provideValue(serviceProvider) {
-      const labelModel = new RotatableNodeLabelModelDecorator(this.wrapped)
-      labelModel.useNodeRotation = this.useNodeRotation
-      return labelModel
+  /**
+   * @return {ILabelModel}
+   */
+  get wrapped() {
+    return this.$wrapped
+  }
+
+  /**
+   * @param {ILabelModel} value
+   */
+  set wrapped(value) {
+    this.$wrapped = value
+  }
+
+  /**
+   * Meta attributes for the {@link GraphMLIOHandler}.
+   */
+  static get $meta() {
+    return {
+      useNodeRotation: [
+        GraphMLAttribute().init({ defaultValue: true }),
+        TypeAttribute(YBoolean.$class)
+      ]
     }
   }
-)
+
+  /**
+   * @param {ILookup} serviceProvider
+   * @return {object}
+   */
+  provideValue(serviceProvider) {
+    const labelModel = new RotatableNodeLabelModelDecorator(this.wrapped)
+    labelModel.useNodeRotation = this.useNodeRotation
+    return labelModel
+  }
+}
 
 /**
  * Markup extension that helps (de-)serializing a {@link RotatableNodeLabelModelDecoratorParameter).
  */
-export const RotatableNodeLabelModelDecoratorParameterExtension = Class(
-  'RotatableNodeLabelModelDecoratorParameterExtension',
-  {
-    $extends: MarkupExtension,
-
-    $model: null,
-    /**
-     * @type {ILabelModel}
-     */
-    model: {
-      get() {
-        return this.$model
-      },
-      set(value) {
-        this.$model = value
-      }
-    },
-
-    $wrapped: null,
-    /**
-     * @type {ILabelModelParameter}
-     */
-    wrapped: {
-      get() {
-        return this.$wrapped
-      },
-      set(value) {
-        this.$wrapped = value
-      }
-    },
-
-    /**
-     * @param {ILookup} serviceProvider
-     * @return {object}
-     */
-    provideValue(serviceProvider) {
-      const rotatableModel = this.model
-      if (rotatableModel instanceof RotatableNodeLabelModelDecorator) {
-        return rotatableModel.createWrappingParameter(this.wrapped)
-      }
-      return this.wrapped
-    }
+export class RotatableNodeLabelModelDecoratorParameterExtension extends MarkupExtension {
+  /**
+   * @return {ILabelModel}
+   */
+  get model() {
+    return this.$model
   }
-)
+
+  /**
+   * @param {ILabelModel} value
+   */
+  set model(value) {
+    this.$model = value
+  }
+
+  /**
+   * @return {ILabelModelParameter}
+   */
+  get wrapped() {
+    return this.$wrapped
+  }
+
+  /**
+   * @param {ILabelModelParameter} value
+   */
+  set wrapped(value) {
+    this.$wrapped = value
+  }
+
+  /**
+   * @param {ILookup} serviceProvider
+   * @return {object}
+   */
+  provideValue(serviceProvider) {
+    const rotatableModel = this.model
+    if (rotatableModel instanceof RotatableNodeLabelModelDecorator) {
+      return rotatableModel.createWrappingParameter(this.wrapped)
+    }
+    return this.wrapped
+  }
+}

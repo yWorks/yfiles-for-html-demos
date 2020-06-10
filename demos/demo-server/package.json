@@ -13,7 +13,7 @@
   "dependencies": {
     "express": "4.17.1",
     "multer": "1.4.2",
-    "opn": "6.0.0",
+    "open": "7.0.3",
     "serve-favicon": "2.5.0"
   }
 }

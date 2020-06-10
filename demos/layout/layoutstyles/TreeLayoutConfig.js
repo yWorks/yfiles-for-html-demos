@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -343,70 +343,68 @@ const TreeLayoutConfig = Class('TreeLayoutConfig', {
     switch (this.nodePlacerItem) {
       default:
       case TreeLayoutConfig.EnumNodePlacer.DEFAULT:
-        const defaultNodePlacer = new DefaultNodePlacer()
-        defaultNodePlacer.horizontalDistance = spacing
-        defaultNodePlacer.verticalDistance = spacing
-        defaultNodePlacer.rootAlignment = rootAlignment
-        layout.defaultNodePlacer = defaultNodePlacer
+        layout.defaultNodePlacer = new DefaultNodePlacer({
+          horizontalDistance: spacing,
+          verticalDistance: spacing,
+          rootAlignment
+        })
         layout.multiParentAllowed = allowMultiParents
         break
       case TreeLayoutConfig.EnumNodePlacer.SIMPLE:
-        const simpleNodePlacer = new SimpleNodePlacer()
-        simpleNodePlacer.spacing = spacing
-        simpleNodePlacer.rootAlignment = rootAlignment
-        layout.defaultNodePlacer = simpleNodePlacer
+        layout.defaultNodePlacer = new SimpleNodePlacer({
+          spacing,
+          rootAlignment
+        })
         break
       case TreeLayoutConfig.EnumNodePlacer.BUS:
-        const busNodePlacer = new BusNodePlacer()
-        busNodePlacer.spacing = spacing
-        layout.defaultNodePlacer = busNodePlacer
+        layout.defaultNodePlacer = new BusNodePlacer({
+          spacing
+        })
         layout.multiParentAllowed = allowMultiParents
         break
       case TreeLayoutConfig.EnumNodePlacer.DOUBLE_LINE:
-        const doubleLineNodePlacer = new DoubleLineNodePlacer()
-        doubleLineNodePlacer.spacing = spacing
-        doubleLineNodePlacer.rootAlignment = rootAlignment
-        layout.defaultNodePlacer = doubleLineNodePlacer
+        layout.defaultNodePlacer = new DoubleLineNodePlacer({
+          spacing,
+          rootAlignment
+        })
         break
       case TreeLayoutConfig.EnumNodePlacer.LEFT_RIGHT:
-        const leftRightNodePlacer = new LeftRightNodePlacer()
-        leftRightNodePlacer.spacing = spacing
-        layout.defaultNodePlacer = leftRightNodePlacer
+        layout.defaultNodePlacer = new LeftRightNodePlacer({ spacing })
         layout.multiParentAllowed = allowMultiParents
         break
       case TreeLayoutConfig.EnumNodePlacer.LAYERED:
-        const layeredNodePlacer = new LayeredNodePlacer()
-        layeredNodePlacer.spacing = spacing
-        layeredNodePlacer.layerSpacing = spacing
-        layeredNodePlacer.rootAlignment = rootAlignment
-        layout.defaultNodePlacer = layeredNodePlacer
+        layout.defaultNodePlacer = new LayeredNodePlacer({
+          spacing,
+          layerSpacing: spacing,
+          rootAlignment
+        })
         break
       case TreeLayoutConfig.EnumNodePlacer.ASPECT_RATIO:
-        const aspectRatioNodePlacer = new AspectRatioNodePlacer()
-        aspectRatioNodePlacer.horizontalDistance = spacing
-        aspectRatioNodePlacer.verticalDistance = spacing
-        aspectRatioNodePlacer.aspectRatio = aspectRatio
-        layout.defaultNodePlacer = aspectRatioNodePlacer
+        layout.defaultNodePlacer = new AspectRatioNodePlacer({
+          horizontalDistance: spacing,
+          verticalDistance: spacing,
+          aspectRatio
+        })
         break
       case TreeLayoutConfig.EnumNodePlacer.DENDROGRAM:
-        const dendrogramNodePlacer = new DendrogramNodePlacer()
-        dendrogramNodePlacer.minimumRootDistance = spacing
-        dendrogramNodePlacer.minimumSubtreeDistance = spacing
-        layout.defaultNodePlacer = dendrogramNodePlacer
+        layout.defaultNodePlacer = new DendrogramNodePlacer({
+          minimumRootDistance: spacing,
+          minimumSubtreeDistance: spacing
+        })
         layout.multiParentAllowed = allowMultiParents
         break
       case TreeLayoutConfig.EnumNodePlacer.GRID:
-        const gridNodePlacer = new GridNodePlacer()
-        gridNodePlacer.spacing = spacing
-        gridNodePlacer.rootAlignment = rootAlignment
-        layout.defaultNodePlacer = gridNodePlacer
+        layout.defaultNodePlacer = new GridNodePlacer({
+          spacing,
+          rootAlignment
+        })
         break
       case TreeLayoutConfig.EnumNodePlacer.COMPACT:
-        const compactNodePlacer = new CompactNodePlacer()
-        compactNodePlacer.horizontalDistance = spacing
-        compactNodePlacer.verticalDistance = spacing
-        compactNodePlacer.preferredAspectRatio = aspectRatio
-        layout.defaultNodePlacer = compactNodePlacer
+        layout.defaultNodePlacer = new CompactNodePlacer({
+          horizontalDistance: spacing,
+          verticalDistance: spacing,
+          preferredAspectRatio: aspectRatio
+        })
         break
     }
 

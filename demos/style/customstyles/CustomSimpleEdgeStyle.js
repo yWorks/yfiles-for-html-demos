@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -71,7 +71,7 @@ export default class CustomSimpleEdgeStyle extends EdgeStyleBase {
 
   /**
    * Gets the arrows drawn at the beginning and at the end of the edge.
-   * @type {number}
+   * @type {CustomSimpleArrow}
    */
   get arrows() {
     return this.$arrows
@@ -79,7 +79,7 @@ export default class CustomSimpleEdgeStyle extends EdgeStyleBase {
 
   /**
    * Sets the arrows drawn at the beginning and at the end of the edge.
-   * @type {number}
+   * @type {CustomSimpleArrow}
    */
   set arrows(value) {
     this.$arrows = value
@@ -88,7 +88,7 @@ export default class CustomSimpleEdgeStyle extends EdgeStyleBase {
   /**
    * Creates the visual for an edge.
    * @see Overrides {@link EdgeStyleBase#createVisual}
-   * @return {Visual}
+   * @return {SvgVisual}
    */
   createVisual(renderContext, edge) {
     // This implementation creates a CanvasContainer and uses it for the rendering of the edge.
@@ -103,7 +103,7 @@ export default class CustomSimpleEdgeStyle extends EdgeStyleBase {
   /**
    * Re-renders the edge using the old visual for performance reasons.
    * @see Overrides {@link EdgeStyleBase#updateVisual}
-   * @return {Visual}
+   * @return {SvgVisual}
    */
   updateVisual(renderContext, oldVisual, edge) {
     const container = oldVisual.svgElement
@@ -205,10 +205,10 @@ export default class CustomSimpleEdgeStyle extends EdgeStyleBase {
 
   /**
    * Updates the edge path data as well as the arrow positions of the visuals stored in <param name="container" />.
-   * @param context {IRenderContext}
-   * @param edge {IEdge}
-   * @param container {SVGElement}
-   * @param cache {RenderDataCache}
+   * @param {IRenderContext} context
+   * @param {IEdge} edge
+   * @param {SVGElement} container
+   * @param {RenderDataCache} cache
    */
   updatePath(context, edge, container, cache) {
     // The first child must be a path - else re-create the container from scratch

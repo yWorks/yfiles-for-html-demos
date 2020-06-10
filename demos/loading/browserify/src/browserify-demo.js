@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,23 +26,28 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-// All yfiles modules return the yfiles namespace object
-const yfiles = require('../../../../lib/umd/view-editor')
-require('../../../../lib/umd/view-layout-bridge')
-require('../../../../lib/umd/layout-organic')
+const {
+  License,
+  GraphComponent,
+  GraphEditorInputMode,
+  PolylineEdgeStyle,
+  SolidColorFill,
+  ShapeNodeStyle
+} = require('yfiles-umd/view-editor')
+const { OrganicLayout, MinimumNodeSizeStage } = require('yfiles-umd/layout-organic')
+require('yfiles-umd/view-layout-bridge')
 
-// https://github.com/harthur/color
 const Color = require('color')
 
 const licenseData = require('../../../../lib/license.json')
-yfiles.lang.License.value = licenseData
+License.value = licenseData
 
-const graphComponent = new yfiles.view.GraphComponent('graphComponent')
+const graphComponent = new GraphComponent('graphComponent')
 
-graphComponent.inputMode = new yfiles.input.GraphEditorInputMode()
+graphComponent.inputMode = new GraphEditorInputMode()
 
 // Set the default edge- and node styles
-graphComponent.graph.edgeDefaults.style = new yfiles.styles.PolylineEdgeStyle()
+graphComponent.graph.edgeDefaults.style = new PolylineEdgeStyle()
 const color = Color('#2c3e50')
 const defaultColor = color.rotate(-75).lighten(0.75)
 graphComponent.graph.nodeDefaults.style = createStyle(defaultColor)
@@ -52,7 +57,7 @@ layout()
 graphComponent.fitGraphBounds()
 
 function layout() {
-  const layoutAlgorithm = new yfiles.layout.MinimumNodeSizeStage(new yfiles.organic.OrganicLayout())
+  const layoutAlgorithm = new MinimumNodeSizeStage(new OrganicLayout())
   graphComponent.morphLayout(layoutAlgorithm, '2s')
 }
 
@@ -114,8 +119,8 @@ function createSampleGraph(graph, styleColor) {
  */
 function createStyle(styleColor) {
   const c = styleColor.rgb().round()
-  const brush = new yfiles.view.SolidColorFill(c.red(), c.green(), c.blue(), c.alpha() * 255)
-  return new yfiles.styles.ShapeNodeStyle({
+  const brush = new SolidColorFill(c.red(), c.green(), c.blue(), c.alpha() * 255)
+  return new ShapeNodeStyle({
     shape: 'ellipse',
     stroke: null,
     fill: brush

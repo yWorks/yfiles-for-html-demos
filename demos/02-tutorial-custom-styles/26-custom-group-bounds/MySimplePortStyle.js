@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { PortStyleBase, Rect, Size, SvgVisual } from 'yfiles'
+import { ICanvasContext, IPort, IRenderContext, PortStyleBase, Rect, Size, SvgVisual } from 'yfiles'
 
 /** the size of the port rendering */
 const WIDTH = 4
@@ -37,13 +37,17 @@ const HEIGHT = 4
  * The port is rendered as a circle.
  */
 export default class MySimplePortStyle extends PortStyleBase {
-  /** @return {SvgVisual} */
+  /**
+   * @param {IRenderContext} context
+   * @param {IPort} port
+   * @returns {SvgVisual}
+   */
   createVisual(context, port) {
     // create the ellipse
     const ellipse = window.document.createElementNS('http://www.w3.org/2000/svg', 'ellipse')
     ellipse.setAttribute('fill', 'none')
     ellipse.setAttribute('stroke', 'rgb(255,255,255)')
-    ellipse.setAttribute('stroke-opacity', 0.31)
+    ellipse.setAttribute('stroke-opacity', '0.31')
     ellipse.cx.baseVal.value = WIDTH * 0.5
     ellipse.cy.baseVal.value = HEIGHT * 0.5
     ellipse.rx.baseVal.value = WIDTH * 0.5
@@ -56,7 +60,12 @@ export default class MySimplePortStyle extends PortStyleBase {
     return new SvgVisual(ellipse)
   }
 
-  /** @return {SvgVisual} */
+  /**
+   * @param {IRenderContext} context
+   * @param {SvgVisual} oldVisual
+   * @param {IPort} port
+   * @returns {SvgVisual}
+   */
   updateVisual(context, oldVisual, port) {
     const ellipse = oldVisual.svgElement
     const portLocation = port.locationParameter.model.getLocation(port, port.locationParameter)
@@ -71,7 +80,9 @@ export default class MySimplePortStyle extends PortStyleBase {
    * Calculates the bounds of this port.
    * These are also used for arranging the visual, hit testing, visibility testing, and marquee box tests.
    * @see Overrides {@link PortStyleBase#getBounds}
-   * @return {Rect}
+   * @param {ICanvasContext} canvasContext
+   * @param {IPort} port
+   * @returns {Rect}
    */
   getBounds(canvasContext, port) {
     const portLocation = port.locationParameter.model.getLocation(port, port.locationParameter)

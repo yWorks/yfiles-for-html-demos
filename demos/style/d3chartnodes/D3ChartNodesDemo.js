@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -35,7 +35,8 @@ import {
   GraphEditorInputMode,
   ICommand,
   License,
-  PolylineEdgeStyle
+  PolylineEdgeStyle,
+  Rect
 } from 'yfiles'
 import SampleData from './D3ChartNodesData.js'
 import D3ChartNodeStyle from './D3ChartNodeStyle.js'
@@ -113,24 +114,19 @@ function loadSampleGraph() {
   })
   graph.edgeDefaults.style = new PolylineEdgeStyle()
 
-  const builder = new GraphBuilder({
-    graph: graphComponent.graph,
-    nodesSource: SampleData.nodes,
-    edgesSource: SampleData.edges,
-    sourceNodeBinding: 'source',
-    targetNodeBinding: 'target',
-    nodeIdBinding: 'id',
-    nodeLabelBinding: tag => tag.label,
-    locationXBinding: 'x',
-    locationYBinding: 'y'
+  const defaultNodeSize = graphComponent.graph.nodeDefaults.size
+  const builder = new GraphBuilder(graphComponent.graph)
+  builder.createNodesSource({
+    data: SampleData.nodes,
+    id: 'id',
+    layout: data => new Rect(data.x, data.y, defaultNodeSize.width, defaultNodeSize.height),
+    labels: ['label'],
+    // put random data in tag of each node
+    tag: () => createRandomSparklineData()
   })
+  builder.createEdgesSource(SampleData.edges, 'source', 'target', 'id')
 
   builder.buildGraph()
-
-  // put random data in tag of each node
-  graph.nodes.forEach(node => {
-    node.tag = createRandomSparklineData()
-  })
 
   graphComponent.fitGraphBounds()
 }

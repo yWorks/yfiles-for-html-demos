@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -1537,7 +1537,7 @@ function restoreOriginalGraph(/** LayoutGraph */ graph) {
       outPath.set(0, graph.getCenter(node))
       new EdgeList(node.getInEdgeCursor()).forEach(edge => {
         const inPath = graph.getPathList(edge)
-        inPath.popLast()
+        inPath.pop()
         graph.changeEdge(edge, edge.source, outEdge.target)
         graph.setPath(edge, FlowchartTransformerStage.createCombinedList(inPath, outPath))
       })

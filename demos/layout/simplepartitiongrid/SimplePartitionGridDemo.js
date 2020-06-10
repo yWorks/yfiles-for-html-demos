@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -160,7 +160,8 @@ function runLayout() {
 }
 
 /**
- * Initializes the visual creator for the partition grid and adds it to the background of the graph component.
+ * Initializes the visual creator for the partition grid and adds it to the background of the graph
+ * component.
  */
 function initializePartitionGridVisual() {
   // adds the visual object to the canvas
@@ -175,19 +176,15 @@ function initializePartitionGridVisual() {
  * Loads the sample graph.
  */
 function loadSampleGraph() {
-  const graphBuilder = new GraphBuilder({
-    graph: graphComponent.graph,
-    nodesSource: GraphData.nodes,
-    edgesSource: GraphData.edges,
-    groupsSource: GraphData.groups,
-    sourceNodeBinding: 'source',
-    targetNodeBinding: 'target',
-    nodeIdBinding: 'id',
-    groupBinding: 'group',
-    parentGroupBinding: 'parentGroup',
-    groupIdBinding: 'id',
-    nodeLabelBinding: 'label'
+  const graphBuilder = new GraphBuilder(graphComponent.graph)
+  graphBuilder.createNodesSource({
+    data: GraphData.nodes,
+    id: 'id',
+    parentId: 'group',
+    labels: ['label']
   })
+  graphBuilder.createGroupNodesSource(GraphData.groups, 'id')
+  graphBuilder.createEdgesSource(GraphData.edges, 'source', 'target')
 
   graphBuilder.buildGraph()
 }

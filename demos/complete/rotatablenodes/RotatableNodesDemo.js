@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -36,6 +36,7 @@ import {
   EdgeRouter,
   FoldingManager,
   FreeNodePortLocationModel,
+  GeneralPath,
   GraphBuilder,
   GraphComponent,
   GraphEditorInputMode,
@@ -57,6 +58,7 @@ import {
   OrthogonalLayout,
   Point,
   RadialLayout,
+  Rect,
   ShapeNodeShape,
   ShapeNodeStyle,
   ShinyPlateNodeStyle,
@@ -383,23 +385,25 @@ Class.ensure(LayoutExecutor)
  */
 function loadGraph(sample) {
   const graph = graphComponent.graph
+  graph.clear()
   const data = sample === 'sine' ? SineSample : CircleSample
 
-  const builder = new GraphBuilder({
-    graph,
-    nodesSource: data.nodes,
-    edgesSource: data.edges,
-    sourceNodeBinding: 'source',
-    targetNodeBinding: 'target',
-    nodeIdBinding: 'id',
-    nodeLabelBinding: n => `${n.angle}°`
+  const defaultNodeSize = graph.nodeDefaults.size
+  const builder = new GraphBuilder(graph)
+  const nodesSource = builder.createNodesSource({
+    data: data.nodes,
+    id: 'id',
+    layout: data => new Rect(data.cx, data.cy, defaultNodeSize.width, defaultNodeSize.height),
+    style: data => {
+      const nodeStyle = graph.nodeDefaults.getStyleInstance()
+      nodeStyle.angle = data.angle
+      return nodeStyle
+    }
   })
-  builder.buildGraph()
+  nodesSource.nodeCreator.createLabelBinding(data => `${data.angle}°`)
+  builder.createEdgesSource(data.edges, 'source', 'target')
 
-  graph.nodes.forEach(node => {
-    graph.setNodeCenter(node, new Point(node.tag.cx, node.tag.cy))
-    node.style.angle = node.tag.angle
-  })
+  builder.buildGraph()
 
   // apply an initial edge routing
   graph.mapperRegistry.createDelegateMapper(
@@ -409,11 +413,8 @@ function loadGraph(sample) {
     node => {
       const style = node.style
       return {
-        outline: style.renderer.getShapeGeometry(node, style).getOutline(),
-        orientedLayout:
-          style instanceof RotatableNodes.RotatableNodeStyleDecorator
-            ? style.getRotatedLayout(node)
-            : new OrientedRectangle(style.renderer.getBoundsProvider(node, style).getBounds())
+        outline: getOutline(style, node),
+        orientedLayout: getOrientedLayout(style, node)
       }
     }
   )
@@ -423,6 +424,23 @@ function loadGraph(sample) {
 
   // clear undo-queue
   graphComponent.graph.undoEngine.clear()
+}
+
+function getOutline(style, node) {
+  let outline = style.renderer.getShapeGeometry(node, style).getOutline()
+  if (!outline) {
+    // style is rectangular use the oriented layout as outline
+    const layout = getOrientedLayout(style, node)
+    outline = new GeneralPath()
+    outline.appendOrientedRectangle(layout, false)
+  }
+  return outline
+}
+
+function getOrientedLayout(style, node) {
+  return style instanceof RotatableNodes.RotatableNodeStyleDecorator
+    ? style.getRotatedLayout(node)
+    : new OrientedRectangle(node.layout)
 }
 
 /**
@@ -439,11 +457,8 @@ async function applyLayout() {
     node => {
       const style = node.style
       return {
-        outline: style.renderer.getShapeGeometry(node, style).getOutline(),
-        orientedLayout:
-          style instanceof RotatableNodes.RotatableNodeStyleDecorator
-            ? style.getRotatedLayout(node)
-            : new OrientedRectangle(node.layout)
+        outline: getOutline(style, node),
+        orientedLayout: getOrientedLayout(style, node)
       }
     }
   )
@@ -516,8 +531,8 @@ function getLayoutAlgorithm() {
 }
 
 /**
- * Get the routing mode that suits the selected layout algorithm. Layout algorithm that place edge ports in the
- * center of the node don't need to add a routing step.
+ * Get the routing mode that suits the selected layout algorithm. Layout algorithm that place edge
+ * ports in the center of the node don't need to add a routing step.
  * @return {string}
  */
 function getRoutingMode() {
@@ -582,8 +597,8 @@ function registerCommands() {
 }
 
 /**
- * When loading a graph without rotatable nodes, the node styles, node label models and port location models are
- * wrapped so they can be rotated in this demo.
+ * When loading a graph without rotatable nodes, the node styles, node label models and port
+ * location models are wrapped so they can be rotated in this demo.
  */
 function addRotatedStyles() {
   const graph = graphComponent.graph

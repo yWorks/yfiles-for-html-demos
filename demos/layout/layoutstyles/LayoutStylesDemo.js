@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,6 +27,7 @@
  **
  ***************************************************************************/
 import {
+  Color,
   GraphComponent,
   GraphEditorInputMode,
   GraphInputMode,
@@ -185,7 +186,8 @@ function run(licenseData) {
     'Hierarchic with Subcomponents',
     'Orthogonal with Substructures',
     '-----------',
-    'Hierarchic with Buses'
+    'Hierarchic with Buses',
+    'Edge Router with Buses'
   ].forEach(sample => {
     const option = document.createElement('option')
     option.text = sample
@@ -312,6 +314,7 @@ function initializeLayoutAlgorithms() {
   // load polyline router module
   availableLayouts.set('Edge Router', new PolylineEdgeRouterConfig())
   maybeLoadAsInitialSample('edge router')
+  maybeLoadAsInitialSample('edge router with buses')
 
   // load channel router module
   availableLayouts.set('Channel Router', new ChannelEdgeRouterConfig())
@@ -438,6 +441,10 @@ function applyLayoutForKey(key) {
     key = 'Orthogonal'
     forceUpdateConfigPanel = true
   }
+  if (key === 'Edge Router with Buses') {
+    key = 'Edge Router'
+    forceUpdateConfigPanel = true
+  }
   // get the layout and use 'Hierarchic' if the key is unknown (shouldn't happen in this demo)
   const actualKey = availableLayouts !== null && availableLayouts.has(key) ? key : 'Hierarchic'
   const actualIndex = getIndexInComboBox(actualKey, layoutComboBox)
@@ -536,6 +543,16 @@ function onLayoutChanged() {
     }
     if (sampleGraphKey === 'Hierarchic with Buses' && key === 'Hierarchic') {
       config.enableAutomaticBusRouting()
+    }
+    if (sampleGraphKey === 'Edge Router with Buses' && key === 'Edge Router') {
+      onResetEdgeDirections(graphComponent.graph, false)
+      graphComponent.graph.edges.forEach(edge => {
+        if (edge.style instanceof PolylineEdgeStyle) {
+          const color = edge.style.stroke.fill.color
+          edge.tag = `rgb(${color.r},${color.g},${color.b})`
+        }
+      })
+      config.enableBusRouting()
     }
 
     optionEditor.config = config
@@ -709,13 +726,28 @@ function onResetEdgeThicknesses(graph) {
     let showTargetArrow = false
     const oldStyle = edge.style
     if (oldStyle instanceof PolylineEdgeStyle) {
-      showTargetArrow = oldStyle.targetArrow !== IArrow.NONE
+      const edgeStyle = new DemoEdgeStyle()
+      edgeStyle.showTargetArrows = showTargetArrow
+      graph.setStyle(edge, edgeStyle)
     } else if (oldStyle instanceof DemoEdgeStyle) {
       showTargetArrow = oldStyle.showTargetArrows
     }
-    const edgeStyle = new DemoEdgeStyle()
-    edgeStyle.showTargetArrows = showTargetArrow
-    graph.setStyle(edge, edgeStyle)
+    if (
+      oldStyle instanceof PolylineEdgeStyle &&
+      oldStyle.stroke.fill.color !== Color.fromRGBA(51, 102, 153)
+    ) {
+      graph.setStyle(
+        edge,
+        new PolylineEdgeStyle({
+          stroke: new Stroke(oldStyle.stroke.fill),
+          targetArrow: oldStyle.targetArrow
+        })
+      )
+    } else {
+      const edgeStyle = new DemoEdgeStyle()
+      edgeStyle.showTargetArrows = showTargetArrow
+      graph.setStyle(edge, edgeStyle)
+    }
   })
   graph.invalidateDisplays()
 }
@@ -739,13 +771,16 @@ function onGenerateEdgeDirections(graph) {
 
 /**
  * @param {IGraph} graph
+ * @param {boolean} [directed]
  */
 function onResetEdgeDirections(graph, directed) {
   graph.edges.forEach(edge => {
     const style = edge.style
     if (style instanceof PolylineEdgeStyle) {
       style.targetArrow =
-        typeof directed !== 'undefined' || style.targetArrow !== null ? new DemoArrow() : null
+        typeof directed === 'undefined' || !directed || style.targetArrow === null
+          ? IArrow.NONE
+          : new DemoArrow()
     } else {
       graph.setStyle(edge, new DemoEdgeStyle())
       edge.style.showTargetArrows =
@@ -1095,7 +1130,12 @@ function updateUIState() {
  * @return {boolean}
  */
 function isLayoutDirected(key) {
-  return key !== 'Organic' && key !== 'Orthogonal' && key !== 'Circular'
+  return (
+    key !== 'Organic' &&
+    key !== 'Orthogonal' &&
+    key !== 'Circular' &&
+    key !== 'Edge Router with Buses'
+  )
 }
 
 /**

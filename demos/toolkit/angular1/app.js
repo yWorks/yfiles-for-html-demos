@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -34,6 +34,7 @@ import {
   ChildPlacement,
   Class,
   DefaultNodePlacer,
+  GraphBuilder,
   GraphComponent,
   GraphItemTypes,
   GraphViewerInputMode,
@@ -59,7 +60,6 @@ import {
 
 import { detailTemplate, intermediateTemplate, overviewTemplate } from './resources/templates.js'
 import LevelOfDetailNodeStyle from './LevelOfDetailNodeStyle.js'
-import ScopeGraphBuilder from './ScopeGraphBuilder.js'
 import GraphData from './resources/data.js'
 import { showApp } from '../../resources/demo-app.js'
 import loadJson from '../../resources/load-json.js'
@@ -120,28 +120,42 @@ module.directive('graphComponent', [
 
         // if a nodesSource is defined, initialize the graph
         if (scope.nodesModel) {
-          const graphBuilder = new ScopeGraphBuilder(graphComponent.graph, scope)
-          // assign the bindings, if set
-          if (scope.nodeBinding) {
-            graphBuilder.nodeIdBinding = scope.nodeBinding
-          }
-          if (scope.sourceBinding) {
-            graphBuilder.sourceNodeBinding = scope.sourceBinding
-          }
-          if (scope.targetBinding) {
-            graphBuilder.targetNodeBinding = scope.targetBinding
-          }
+          const graphBuilder = new GraphBuilder(graphComponent.graph)
 
           // initialize the graph defaults
           initializeGraphDefaults(graphBuilder.graph)
 
           // assign the nodes and edges source - filter the nodes
-          graphBuilder.nodesSource = $filter('filter')(scope.nodesModel, scope.nodesFilter)
-          if (scope.edgesModel) {
-            graphBuilder.edgesSource = scope.edgesModel
+          const nodesSource = graphBuilder.createNodesSource({
+            id: null,
+            data: $filter('filter')(scope.nodesModel, scope.nodesFilter),
+            // store a scope object in the node's tag instead of the plain data object since the
+            // node style of this demo compiles against the ng scope in the node's tag
+            tag: data => {
+              // create a new child scope
+              const childScope = scope.$new(false)
+              // assign the business data
+              childScope.item = data
+              // put the child scope in the node's tag
+              return childScope
+            }
+          })
+
+          // assign the binding, if set
+          if (scope.nodeBinding) {
+            nodesSource.idProvider = scope.nodeBinding
           }
 
-          // build the graph from the source data
+          // configure the EdgesSource
+          if (scope.edgesModel && scope.sourceBinding && scope.targetBinding) {
+            graphBuilder.createEdgesSource(
+              scope.edgesModel,
+              scope.sourceBinding,
+              scope.targetBinding
+            )
+          }
+
+          // clear the graph build the graph from the source data
           graphComponent.graph = graphBuilder.buildGraph()
 
           // calculate the initial layout
@@ -156,7 +170,10 @@ module.directive('graphComponent', [
             if (!inLayout) {
               inLayout = true
               // re-assign filtered nodesSource
-              graphBuilder.nodesSource = $filter('filter')(scope.nodesModel, scope.nodesFilter)
+              graphBuilder.setData(
+                nodesSource,
+                $filter('filter')(scope.nodesModel, scope.nodesFilter)
+              )
               // update the graph
               graphBuilder.updateGraph()
               try {

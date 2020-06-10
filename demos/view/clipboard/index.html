@@ -7,8 +7,8 @@
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.2.
-     // Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML 2.3.
+     // Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -39,8 +39,6 @@
   <link rel="stylesheet" href="../../node_modules/yfiles/yfiles.css">
   <link rel="stylesheet" href="../../resources/style/demo.css">
 
-  <!-- enable debugging -->
-  <script src="../../../ide-support/yfiles-typeinfo.js"></script>
   <script src="../../resources/filesystem-warning.js"></script>
 
   <script type="text/yfiles-template">
@@ -198,7 +196,7 @@
       <button data-command="Copy" title="Copy" class="demo-icon-yIconCopy"></button>
       <button data-command="Paste" title="Paste" class="demo-icon-yIconPaste"></button>
       <button data-command="Delete" title="Delete" class="demo-icon-yIconDelete"></button>
-      <button data-command="PasteSpecial" title="Paste Special" class="labeled">Paste Special</button>
+      <button data-command="PasteSpecial" title="Paste Special" class="labeled" disabled>Paste Special</button>
 
       <span class="demo-separator"></span>
 
@@ -207,7 +205,7 @@
 
       <span class="demo-separator"></span>
 
-      <button data-command="EditName" title="Edit Name" class="labeled">Edit Name</button>
+      <button data-command="EditName" title="Edit Name" class="labeled" disabled>Edit Name</button>
     </div>
     <div id="graphComponent" class="component">
       <div id="nameDialog" class="demo-dialog" style="display: none">
@@ -238,7 +236,7 @@
       <button data-command="Copy2" title="Copy" class="demo-icon-yIconCopy"></button>
       <button data-command="Paste2" title="Paste" class="demo-icon-yIconPaste"></button>
       <button data-command="Delete2" title="Delete" class="demo-icon-yIconDelete"></button>
-      <button data-command="PasteSpecial2" title="Paste Special" class="labeled">Paste Special</button>
+      <button data-command="PasteSpecial2" title="Paste Special" class="labeled" disabled>Paste Special</button>
 
       <span class="demo-separator"></span>
 
@@ -247,7 +245,7 @@
 
       <span class="demo-separator"></span>
 
-      <button data-command="EditName2" title="Edit Name" class="labeled">Edit Name</button>
+      <button data-command="EditName2" title="Edit Name" class="labeled" disabled>Edit Name</button>
     </div>
     <div id="graphComponent2" class="component"></div>
   </div>

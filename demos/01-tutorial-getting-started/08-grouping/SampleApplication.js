@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -35,7 +35,6 @@ import {
   GraphEditorInputMode,
   GraphOverviewComponent,
   ICommand,
-  IGraph,
   InteriorLabelModel,
   InteriorStretchLabelModel,
   License,
@@ -51,15 +50,13 @@ import loadJson from '../../resources/load-json.js'
 /** @type {GraphComponent} */
 let graphComponent = null
 
-/** @type {IGraph} */
-let graph = null
-
+/**
+ * @param {object} licenseData
+ */
 function run(licenseData) {
   License.value = licenseData
   // Initialize the GraphComponent and place it in the div with CSS selector #graphComponent
   graphComponent = new GraphComponent('#graphComponent')
-  // conveniently store a reference to the graph that is displayed
-  graph = graphComponent.graph
 
   // Enable grouping
   configureGroupNodeStyles()
@@ -96,6 +93,7 @@ function run(licenseData) {
  * Configures the default style for group nodes.
  */
 function configureGroupNodeStyles() {
+  const graph = graphComponent.graph
   // PanelNodeStyle is a style especially suited to group nodes
   // Creates a panel with a light blue background
   graph.groupNodeDefaults.style = new PanelNodeStyle({
@@ -119,6 +117,7 @@ function configureGroupNodeStyles() {
  * Creates a couple of nodes and puts them into a group node.
  */
 function createGroupNodes() {
+  const graph = graphComponent.graph
   const n1 = graph.createNodeAt(new Point(30, -200))
   const n2 = graph.createNodeAt(new Point(170, -200))
   const n3 = graph.createNodeAt(new Point(30, -100))
@@ -144,7 +143,7 @@ function createGroupNodes() {
  */
 function enableUndo() {
   // Enables undo on the graph. This will make the graph store the edits and will make the undo/redo commands work.
-  graph.undoEngineEnabled = true
+  graphComponent.graph.undoEngineEnabled = true
 }
 
 /**
@@ -168,6 +167,7 @@ function configureInteraction() {
  * placement candidates when moving the label interactively.
  */
 function setDefaultLabelParameters() {
+  const graph = graphComponent.graph
   // For node labels, the default is a label position at the node center
   // Let's keep the default.  Here is how to set it manually
   graph.nodeDefaults.labels.layoutParameter = InteriorLabelModel.CENTER
@@ -189,6 +189,7 @@ function setDefaultLabelParameters() {
  */
 function populateGraph() {
   // ////////// Sample node creation ///////////////////
+  const graph = graphComponent.graph
 
   // Creates two nodes with the default node size
   // The location is specified for the _center_
@@ -245,6 +246,7 @@ function populateGraph() {
  * so typically, you'd set these as early as possible in your application.
  */
 function setDefaultStyles() {
+  const graph = graphComponent.graph
   // configure defaults for normal nodes and their labels
   graph.nodeDefaults.style = new ShapeNodeStyle({
     fill: 'darkorange',
@@ -254,7 +256,7 @@ function setDefaultStyles() {
   graph.nodeDefaults.size = new Size(40, 40)
   graph.nodeDefaults.labels.style = new DefaultLabelStyle({
     verticalTextAlignment: 'center',
-    wrapping: 'word_ellipsis'
+    wrapping: 'word-ellipsis'
   })
   // Sets the defined style as the default for both edge and node labels
   // Creates a label style with the label text color set to dark red

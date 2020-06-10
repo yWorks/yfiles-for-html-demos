@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -50,7 +50,7 @@ export default class HTMLPopupSupport {
    * to determine the relative position of the popup.
    * @param {GraphComponent} graphComponent
    * @param {HTMLElement} div
-   * @param {ILabelModelParameter] labelModelParameter
+   * @param {ILabelModelParameter} labelModelParameter
    */
   constructor(graphComponent, div, labelModelParameter) {
     this.graphComponent = graphComponent
@@ -136,7 +136,7 @@ export default class HTMLPopupSupport {
     })
 
     // Adds listeners for node bounds changes
-    this.graphComponent.graph.addNodeLayoutChangedListener((node, oldLayout) => {
+    this.graphComponent.graph.addNodeLayoutChangedListener((sender, node, oldLayout) => {
       if (
         ((this.currentItem && this.currentItem === node) || IEdge.isInstance(this.currentItem)) &&
         (node === this.currentItem.sourcePort.owner || node === this.currentItem.targetPort.owner)

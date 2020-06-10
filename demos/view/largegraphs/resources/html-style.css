@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -41,7 +41,7 @@
   box-sizing: border-box;
   margin-top: -100px;
   background-color: rgba(0, 0, 0, 0.6);
-  color: #FFFFFF;
+  color: #ffffff;
   padding-top: 80px;
   text-align: center;
 }
@@ -71,8 +71,8 @@ aside input {
 }
 aside label {
   vertical-align: text-bottom;
-  margin: .75ex 0 .25ex 0;
-  display: inline-block
+  margin: 0.75ex 0 0.25ex 0;
+  display: inline-block;
 }
 .form-border {
   padding: 10px;
@@ -120,7 +120,7 @@ aside label {
 }
 .demo-properties fieldset {
   border: 1px solid #888;
-  background: #FFFFFF;
+  background: #ffffff;
   margin-bottom: 1ex;
 }
 .demo-properties label {
@@ -130,7 +130,8 @@ aside label {
   display: block;
   margin-bottom: 0.25em;
 }
-.information label,input {
+.information label,
+input {
   margin: 0;
 }
 .selection-title td {
@@ -169,11 +170,11 @@ legend {
   margin: 5px;
   width: 300px;
   z-index: 999;
-  -webkit-transition: opacity .3s ease-in-out;
-  -moz-transition: opacity .3s ease-in-out;
-  -ms-transition: opacity .3s ease-in-out;
-  -o-transition: opacity .3s ease-in-out;
-  transition: opacity .3s ease-in-out;
+  -webkit-transition: opacity 0.3s ease-in-out;
+  -moz-transition: opacity 0.3s ease-in-out;
+  -ms-transition: opacity 0.3s ease-in-out;
+  -o-transition: opacity 0.3s ease-in-out;
+  transition: opacity 0.3s ease-in-out;
 }
 #tooltip p {
   padding: 5px;
@@ -186,8 +187,8 @@ legend {
   border: 2px solid #adadad;
 }
 .tooltip-green {
-   border: 2px solid #6da663;
- }
+  border: 2px solid #6da663;
+}
 .info-visible {
   opacity: 1;
 }
@@ -195,24 +196,24 @@ legend {
   opacity: 0;
 }
 .unrecommended::after {
-  content: "";
-  background-image: url("exclamation.svg");
+  content: '';
+  background-image: url('exclamation.svg');
   position: absolute;
   background-size: 20px 20px;
   width: 20px;
   height: 20px;
 }
 .warning::after {
-  content: "";
-  background-image: url("warning.svg");
+  content: '';
+  background-image: url('warning.svg');
   position: absolute;
   background-size: 20px 20px;
   width: 20px;
   height: 20px;
 }
 .warning.unrecommended::after {
-  content: "";
-  background: url("warning-unrecommended.svg") no-repeat;
+  content: '';
+  background: url('warning-unrecommended.svg') no-repeat;
   position: absolute;
   background-size: 38px 16px;
   width: 46px;
@@ -238,13 +239,13 @@ legend {
 }
 .arrow {
   display: inline-block;
-  background: #EFEFEF;
+  background: #efefef;
   padding: 15px;
 }
 .arrow:after {
   content: '';
   border: 10px solid transparent;
-  border-left-color: #EFEFEF;
+  border-left-color: #efefef;
   display: block;
   position: absolute;
   left: 100%;
@@ -278,7 +279,7 @@ legend {
   height: 16px;
   background-size: cover;
   background-repeat: no-repeat;
-  content:"";
+  content: '';
   position: absolute;
   margin: 4px 0 0 5px;
 }
@@ -286,37 +287,57 @@ legend {
   background-color: rgb(140, 18, 4);
 }
 .styleSample.complexSvg::after {
-  background-image: url("complexSvg.svg");
+  background-image: url('complexSvg.svg');
 }
 .styleSample.simpleCanvas::after {
   background-color: rgb(6, 93, 147);
 }
 .styleSample.complexCanvas::after {
-  background-image: url("complexCanvas.svg");
+  background-image: url('complexCanvas.svg');
 }
 .styleSample.simpleWebgl::after {
   background-color: rgb(91, 81, 22);
 }
 
 @-webkit-keyframes highlight {
-  from { background-color: rgb(255, 212, 0); }
-  to { background-color: rgba(255, 255, 255, 0.6); }
+  from {
+    background-color: rgb(255, 212, 0);
+  }
+  to {
+    background-color: rgba(255, 255, 255, 0.6);
+  }
 }
 @-moz-keyframes highlight {
-  from { background-color: rgb(255, 212, 0); }
-  to { background-color: rgba(255, 255, 255, 0.6); }
+  from {
+    background-color: rgb(255, 212, 0);
+  }
+  to {
+    background-color: rgba(255, 255, 255, 0.6);
+  }
 }
 @-ms-keyframes highlight {
-  from { background-color: rgb(255, 212, 0); }
-  to { background-color: rgba(255, 255, 255, 0.6); }
+  from {
+    background-color: rgb(255, 212, 0);
+  }
+  to {
+    background-color: rgba(255, 255, 255, 0.6);
+  }
 }
 @-o-keyframes highlight {
-  from { background-color: rgb(255, 212, 0); }
-  to { background-color: rgba(255, 255, 255, 0.6); }
+  from {
+    background-color: rgb(255, 212, 0);
+  }
+  to {
+    background-color: rgba(255, 255, 255, 0.6);
+  }
 }
 @keyframes highlight {
-  from { background-color: rgb(255, 212, 0); }
-  to { background-color: rgba(255, 255, 255, 0.6); }
+  from {
+    background-color: rgb(255, 212, 0);
+  }
+  to {
+    background-color: rgba(255, 255, 255, 0.6);
+  }
 }
 
 .demo-sidebar button {

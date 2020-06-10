@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -50,7 +50,15 @@ import {
  */
 export function createGenericConfiguration(graph, nodePlacerPanel) {
   // create layout algorithm
-  const layout = new MinimumNodeSizeStage(new TreeLayout())
+  const treeLayout = new TreeLayout()
+  if (document.getElementById('select-sample').value === 'General Graph') {
+    // add the tree reduction stage for the case where the graph is not a tree
+    const treeReductionStage = new TreeReductionStage()
+    treeReductionStage.nonTreeEdgeRouter = new OrganicEdgeRouter()
+    treeReductionStage.nonTreeEdgeSelectionKey = OrganicEdgeRouter.AFFECTED_EDGES_DP_KEY
+    treeLayout.prependStage(treeReductionStage)
+  }
+  const layout = new MinimumNodeSizeStage(treeLayout)
 
   // configure layout data with node placers, assistant markers and edge order
   const layoutData = new TreeLayoutData({
@@ -116,9 +124,8 @@ export function createDefaultTreeConfiguration(graph, nodePlacerPanel) {
 
   // create layout data
   const layoutData = new TreeLayoutData({
-    nodePlacers: node => {
-      return node.tag.layer === 3 ? new LeftRightNodePlacer() : new DefaultNodePlacer()
-    }
+    nodePlacers: node =>
+      node.tag.layer === 3 ? new LeftRightNodePlacer() : new DefaultNodePlacer()
   })
 
   // update node placers with the same values to keep the panel intact
@@ -152,9 +159,9 @@ export function createCategoryTreeConfiguration(graph, nodePlacerPanel) {
       if (node.tag.layer === 0) {
         return new DefaultNodePlacer()
       }
-      const leftRightNodePlacer = new LeftRightNodePlacer()
-      leftRightNodePlacer.placeLastOnBottom = false
-      return leftRightNodePlacer
+      return new LeftRightNodePlacer({
+        placeLastOnBottom: false
+      })
     }
   })
 
@@ -163,8 +170,9 @@ export function createCategoryTreeConfiguration(graph, nodePlacerPanel) {
     if (node.tag.layer === 0) {
       nodePlacerPanel.nodePlacers.set(node, new DefaultNodePlacer())
     } else {
-      const leftRightNodePlacer = new LeftRightNodePlacer()
-      leftRightNodePlacer.placeLastOnBottom = false
+      const leftRightNodePlacer = new LeftRightNodePlacer({
+        placeLastOnBottom: false
+      })
       nodePlacerPanel.nodePlacers.set(node, leftRightNodePlacer)
     }
   })
@@ -242,9 +250,9 @@ export function createLargeTreeConfiguration(graph, nodePlacerPanel) {
  * @returns {{layout: MinimumNodeSizeStage, layoutData: TreeLayoutData}}
  */
 export function createWideTreeConfiguration(graph, nodePlacerPanel) {
-  const layout = new TreeLayout()
-  layout.defaultNodePlacer = new DefaultNodePlacer()
-
+  const layout = new TreeLayout({
+    defaultNodePlacer: new DefaultNodePlacer()
+  })
   // update node placers with the same values to keep the panel intact
   graph.nodes.forEach(node => nodePlacerPanel.nodePlacers.set(node, new DefaultNodePlacer()))
 

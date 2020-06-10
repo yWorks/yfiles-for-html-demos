@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -32,6 +32,7 @@ import {
   Animator,
   ArcEdgeStyle,
   CenterNodesPolicy,
+  CurveFittingLayoutStage,
   DefaultLabelStyle,
   EdgeStyleDecorationInstaller,
   FilteredGraphWrapper,
@@ -42,8 +43,8 @@ import {
   IAnimation,
   ICanvasObjectDescriptor,
   IEdge,
-  INode,
   ImageNodeStyle,
+  INode,
   LabelStyleDecorationInstaller,
   License,
   Mapper,
@@ -99,6 +100,9 @@ let circleVisual = null
 
 // define the GraphLayer yFiles for HTML extension
 L.GraphLayer = L.Layer.extend({
+  /**
+   * @yjs:keep=animate
+   */
   onAdd(map) {
     // Initialize the GraphComponent and place it in the div with CSS selector #graphComponent
     this.graphComponent = new GraphComponent()
@@ -252,7 +256,7 @@ L.GraphLayer = L.Layer.extend({
       updateEdgeArcs(graph)
 
       // adjust the viewPoint in the graphComponent
-      this.graphComponent.viewPoint = new Point(topLeft.x, topLeft.y)
+      this.graphComponent.viewPoint = Point.from(topLeft)
 
       graph.nodePredicateChanged()
       graph.edgePredicateChanged()
@@ -451,9 +455,11 @@ function run(licenseData) {
 async function runLayout(centerNode) {
   const highlightManager = graphComponent.highlightIndicatorManager
   highlightManager.clearHighlights()
-  const layout = new RadialLayout({
-    centerNodesPolicy: CenterNodesPolicy.CUSTOM
-  })
+  const layout = new CurveFittingLayoutStage(
+    new RadialLayout({
+      centerNodesPolicy: CenterNodesPolicy.CUSTOM
+    })
+  )
   const center =
     centerNode ||
     graphComponent.graph.wrappedGraph.nodes.find(node => node.tag.name === 'Frankfurt')
@@ -469,14 +475,14 @@ async function runLayout(centerNode) {
   // center the graph inside the viewport to avoid nodes flying in from the sides when switched back to map mode
   const centerGraphStage = new CenterGraphStage(layout, graphComponent.viewport.center)
 
-  const promise = await graphComponent.morphLayout(centerGraphStage, '700ms', layoutData)
+  await graphComponent.morphLayout(centerGraphStage, '700ms', layoutData)
   highlightManager.addHighlight(center)
   highlightManager.addHighlight(center.labels.first())
-  return promise
 }
 
 /**
- * Uses BFS to find the edges between the center node and the other nodes in the graph and makes them visible.
+ * Uses BFS to find the edges between the center node and the other nodes in the graph and makes
+ * them visible.
  * @param {INode} centerNode
  */
 function showBfsEdges(centerNode) {
@@ -552,16 +558,15 @@ function createGraph() {
   initializeDefaultMapStyles(graph)
 
   // read the graph from the data
-  const builder = new GraphBuilder({
-    graph,
-    nodesSource: FlightData.nodes,
-    nodeIdBinding: 'id',
-    nodeLabelBinding: tag => tag.name || null,
-    edgesSource: FlightData.edges,
-    sourceNodeBinding: 'from',
-    targetNodeBinding: 'to'
+  const builder = new GraphBuilder(graph)
+  builder.createNodesSource({
+    data: FlightData.nodes,
+    id: 'id',
+    labels: ['name']
   })
-  graphComponent.graph = builder.buildGraph()
+  builder.createEdgesSource(FlightData.edges, 'from', 'to')
+
+  builder.buildGraph()
 }
 
 loadJson().then(run)

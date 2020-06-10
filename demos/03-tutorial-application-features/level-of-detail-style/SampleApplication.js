@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -28,7 +28,6 @@
  ***************************************************************************/
 import {
   GraphComponent,
-  GraphOverviewComponent,
   GraphViewerInputMode,
   IArrow,
   ICommand,
@@ -44,12 +43,13 @@ import LevelOfDetailNodeStyle from './LevelOfDetailNodeStyle.js'
 import { bindAction, bindCommand, showApp } from '../../resources/demo-app.js'
 import loadJson from '../../resources/load-json.js'
 
+/** @type {GraphComponent} */
 let graphComponent = null
 
 /**
  * Support three styles for different zoom level.
- * @type LevelOfDetailNodeStyle
- **/
+ ** @type {LevelOfDetailNodeStyle}
+ */
 let levelOfDetailNodeStyle = null
 
 /**
@@ -57,6 +57,9 @@ let levelOfDetailNodeStyle = null
  */
 const detailLevelPopup = document.querySelector('#detailLevelPopup')
 
+/**
+ * @param {object} licenseData
+ */
 function run(licenseData) {
   License.value = licenseData
   // initialize the GraphComponent and GraphOverviewComponent
@@ -88,7 +91,7 @@ function run(licenseData) {
  * Updates the indicator for the level of details to the current graph.
  */
 function updateDetailLevelIndicator() {
-  let zoomLevelChangedTimer = -1
+  let zoomLevelChangedTimer
   graphComponent.addZoomChangedListener(() => {
     // update the zoom level display after 200ms
     if (zoomLevelChangedTimer >= 0) {
@@ -115,8 +118,7 @@ function updateIndicator() {
   }
   const oldZoomState = detailLevelPopup.zoomState
   if (oldZoomState !== zoomState) {
-    detailLevelPopup.textContent = zoomState
-    detailLevelPopup.zoomState = zoomState
+    detailLevelPopup.textContent = detailLevelPopup.zoomState = zoomState
     detailLevelPopup.className = 'visible'
     setTimeout(() => {
       detailLevelPopup.className = ''

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,21 +26,20 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { FreeNodePortLocationModel, GraphComponent, IGraph, License, Point, Rect } from 'yfiles'
+import { FreeNodePortLocationModel, GraphComponent, License, Point, Rect } from 'yfiles'
 import { showApp } from '../../resources/demo-app.js'
 import loadJson from '../../resources/load-json.js'
+
 /** @type {GraphComponent} */
 let graphComponent = null
 
-/** @type {IGraph} */
-let graph = null
-
+/**
+ * @param {object} licenseData
+ */
 function run(licenseData) {
   License.value = licenseData
   // Initialize the GraphComponent and place it in the div with CSS selector #graphComponent
   graphComponent = new GraphComponent('#graphComponent')
-  // conveniently store a reference to the graph that is displayed in the closure variable
-  graph = graphComponent.graph
 
   // /////////////// New in this Sample /////////////////
 
@@ -63,6 +62,7 @@ function run(licenseData) {
  */
 function populateGraph() {
   // ////////// Sample node creation ///////////////////
+  const graph = graphComponent.graph
 
   // Creates two nodes with the default node size
   // The location is specified for the _center_

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,7 +27,9 @@
  **
  ***************************************************************************/
 import {
+  BezierEdgeStyle,
   DefaultLabelStyle,
+  EventRecognizers,
   ExteriorLabelModel,
   ExteriorLabelModelPosition,
   Font,
@@ -42,14 +44,18 @@ import {
   IHitTestable,
   ImageNodeStyle,
   Insets,
+  IReshapeHandler,
   License,
   MoveInputMode,
   MutableRectangle,
+  NodeReshapeHandleProvider,
   ObservableCollection,
+  Point,
   PolylineEdgeStyle,
   Rect,
   RectangleHandle,
   RectangleIndicatorInstaller,
+  ShapeNodeShape,
   ShapeNodeStyle,
   Size,
   SvgExport
@@ -105,15 +111,22 @@ async function run(licenseData) {
     )
   }
 
-  // initialize the UI's elements
-  init()
+  // bootstrap application
+  graphComponent = new GraphComponent('graphComponent')
+  clientSidePdfExport = new ClientSidePdfExport()
+  serverSidePdfExport = new ServerSidePdfExport()
+  ieVersion = detectInternetExplorerVersion()
 
   initializeInputModes()
-  initializeDefaultStyles()
-  createNetworkGraph()
+  keepAspectRatio()
 
+  // create sample graph
+  createNetworkGraph()
+  createCustomFontGraph()
+  createBezierEdgesGraph()
+
+  // disable client-side export button in IE9 and hide the save buttons
   if (ieVersion !== -1 && ieVersion <= 9) {
-    // disable client-side export button in IE9 and hide the save buttons
     document.getElementById('ExportButton').disabled = true
     const clientSaveButton = document.getElementById('clientPdfSaveButton')
     clientSaveButton.setAttribute('style', 'display: none')
@@ -139,18 +152,6 @@ async function enableServerSideExportButtons() {
 }
 
 /**
- * Initializes the UI's elements.
- */
-function init() {
-  graphComponent = new GraphComponent('graphComponent')
-
-  clientSidePdfExport = new ClientSidePdfExport()
-  serverSidePdfExport = new ServerSidePdfExport()
-
-  ieVersion = detectInternetExplorerVersion()
-}
-
-/**
  * Wires up the UI.
  */
 function registerCommands() {
@@ -158,13 +159,6 @@ function registerCommands() {
   bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent)
   bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent)
   bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
-  bindChangeListener('#graphChooserBox', value => {
-    if (value === 'custom-fonts') {
-      createCustomFontGraph()
-    } else {
-      createNetworkGraph()
-    }
-  })
 
   const inputScale = document.getElementById('scale')
   const inputMargin = document.getElementById('margin')
@@ -296,7 +290,7 @@ function initializeInputModes() {
   graphComponent.inputMode = new GraphEditorInputMode()
 
   // create the model for the export rectangle
-  exportRect = new MutableRectangle(-10, 0, 300, 160)
+  exportRect = new MutableRectangle(-20, 0, 300, 160)
 
   // visualize it
   const installer = new RectangleIndicatorInstaller(exportRect)
@@ -307,6 +301,25 @@ function initializeInputModes() {
   )
 
   addExportRectInputModes(graphComponent.inputMode)
+}
+
+/**
+ * Since this demo uses image nodes, we make sure that they always keep their aspect ratio during
+ * resize.
+ */
+function keepAspectRatio() {
+  graphComponent.graph.decorator.nodeDecorator.reshapeHandleProviderDecorator.setFactory(
+    node => node.style instanceof ImageNodeStyle,
+    node => {
+      const keepAspectRatio = new NodeReshapeHandleProvider(
+        node,
+        node.lookup(IReshapeHandler.$class),
+        HandlePositions.CORNERS
+      )
+      keepAspectRatio.ratioReshapeRecognizer = EventRecognizers.ALWAYS
+      return keepAspectRatio
+    }
+  )
 }
 
 /**
@@ -343,24 +356,17 @@ function addExportRectInputModes(inputMode) {
 }
 
 /**
- * Initializes the graph instance and set default styles.
- */
-function initializeDefaultStyles() {
-  const graph = graphComponent.graph
-  const newPolylineEdgeStyle = new PolylineEdgeStyle()
-  newPolylineEdgeStyle.targetArrow = IArrow.DEFAULT
-  graph.edgeDefaults.style = newPolylineEdgeStyle
-
-  // set the workstation as default node style
-  graph.nodeDefaults.style = new ImageNodeStyle('./resources/workstation.svg')
-}
-
-/**
  * Create a graph with network style nodes.
  */
 function createNetworkGraph() {
   const graph = graphComponent.graph
-  graph.clear()
+
+  // set the workstation as default node style
+  graph.nodeDefaults.style = new ImageNodeStyle('./resources/workstation.svg')
+  graph.nodeDefaults.size = new Size(40, 40)
+  graph.edgeDefaults.style = new PolylineEdgeStyle({
+    targetArrow: IArrow.DEFAULT
+  })
 
   const switchStyle = new ImageNodeStyle('./resources/switch.svg')
   const workstationStyle = new ImageNodeStyle('./resources/workstation.svg')
@@ -370,11 +376,11 @@ function createNetworkGraph() {
   const labelModelParameter2 = labelModel.createParameter(ExteriorLabelModelPosition.NORTH)
 
   // create sample graph
-  const n1 = graph.createNode(new Rect(170, 20, 40, 40), switchStyle)
-  const n2 = graph.createNode(new Rect(20, 100, 40, 40), workstationStyle)
-  const n3 = graph.createNode(new Rect(120, 100, 40, 40), workstationStyle)
-  const n4 = graph.createNode(new Rect(220, 100, 40, 40), workstationStyle)
-  const n5 = graph.createNode(new Rect(320, 100, 40, 40), workstationStyle)
+  const n1 = graph.createNodeAt(new Point(170, 20), switchStyle)
+  const n2 = graph.createNodeAt(new Point(20, 100), workstationStyle)
+  const n3 = graph.createNodeAt(new Point(120, 100), workstationStyle)
+  const n4 = graph.createNodeAt(new Point(220, 100), workstationStyle)
+  const n5 = graph.createNodeAt(new Point(320, 100), workstationStyle)
 
   graph.createEdge(n1, n2)
   graph.createEdge(n1, n3)
@@ -395,13 +401,15 @@ function createNetworkGraph() {
  */
 function createCustomFontGraph() {
   const graph = graphComponent.graph
-  graph.clear()
+
+  graph.nodeDefaults.style = new ShapeNodeStyle({ fill: 'orange' })
+  graph.nodeDefaults.size = new Size(50, 50)
+  graph.edgeDefaults.style = new PolylineEdgeStyle({ targetArrow: IArrow.DEFAULT })
 
   const labelModel = new ExteriorLabelModel({ insets: 10 })
 
-  graph.createNode({
-    layout: [40, 50, 50, 50],
-    style: new ShapeNodeStyle({ fill: 'orange' }),
+  graph.createNodeAt({
+    location: [55, 210],
     labels: [
       {
         text: 'Кирилица',
@@ -416,9 +424,8 @@ function createCustomFontGraph() {
     ]
   })
 
-  graph.createNode({
-    layout: [190, 50, 50, 50],
-    style: new ShapeNodeStyle({ fill: 'orange' }),
+  graph.createNodeAt({
+    location: [205, 210],
     labels: [
       {
         text: '平仮名',
@@ -432,6 +439,66 @@ function createCustomFontGraph() {
       }
     ]
   })
+
+  graphComponent.fitGraphBounds()
+}
+
+/**
+ * Creates a graph that uses curved edges.
+ */
+function createBezierEdgesGraph() {
+  const graph = graphComponent.graph
+
+  graph.nodeDefaults.style = new ShapeNodeStyle({
+    shape: ShapeNodeShape.ROUND_RECTANGLE,
+    fill: 'lightgrey',
+    stroke: '2px white'
+  })
+  graph.nodeDefaults.size = new Size(30, 30)
+  graph.edgeDefaults.style = new BezierEdgeStyle({
+    stroke: '28px #66dc143c'
+  })
+
+  const node1 = graph.createNode([0, 300, 30, 60])
+  const node2 = graph.createNode([0, 375, 30, 90])
+  const node3 = graph.createNode([0, 480, 30, 60])
+  const node4 = graph.createNode([230, 300, 30, 110])
+  const node5 = graph.createNode([230, 430, 30, 110])
+
+  const edge1 = graph.createEdge({ source: node1, target: node4, bends: [] })
+  graph.setPortLocation(edge1.sourcePort, new Point(30, 315))
+  graph.setPortLocation(edge1.targetPort, new Point(230, 315))
+  const edge2 = graph.createEdge({
+    source: node1,
+    target: node5,
+    bends: [new Point(80, 345), new Point(180, 445)]
+  })
+  graph.setPortLocation(edge2.sourcePort, new Point(30, 345))
+  graph.setPortLocation(edge2.targetPort, new Point(230, 445))
+  const edge3 = graph.createEdge({
+    source: node2,
+    target: node4,
+    bends: [new Point(80, 450), new Point(180, 355)]
+  })
+  graph.setPortLocation(edge3.sourcePort, new Point(30, 450))
+  graph.setPortLocation(edge3.targetPort, new Point(230, 355))
+  const edge4 = graph.createEdge({
+    source: node2,
+    target: node5,
+    bends: [new Point(80, 390), new Point(180, 485)]
+  })
+  graph.setPortLocation(edge4.sourcePort, new Point(30, 390))
+  graph.setPortLocation(edge4.targetPort, new Point(230, 485))
+  const edge5 = graph.createEdge({
+    source: node3,
+    target: node4,
+    bends: [new Point(80, 495), new Point(180, 395)]
+  })
+  graph.setPortLocation(edge5.sourcePort, new Point(30, 495))
+  graph.setPortLocation(edge5.targetPort, new Point(230, 395))
+  const edge6 = graph.createEdge({ source: node3, target: node5, bends: [] })
+  graph.setPortLocation(edge6.sourcePort, new Point(30, 525))
+  graph.setPortLocation(edge6.targetPort, new Point(230, 525))
 
   graphComponent.fitGraphBounds()
 }

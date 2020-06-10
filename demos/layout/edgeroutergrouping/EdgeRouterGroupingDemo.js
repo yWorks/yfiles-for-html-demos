@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -114,6 +114,7 @@ async function runEdgeRouter() {
 
 function createSampleGraph() {
   const graph = graphComponent.graph
+  graph.clear()
   initDemoStyles(graph)
   graph.nodeDefaults.style.cssClass = 'node-color'
   graph.nodeDefaults.size = [50, 30]
@@ -140,28 +141,18 @@ function createSampleGraph() {
   })
   bridgeManager.addObstacleProvider(new GraphObstacleProvider())
 
-  const builder = new GraphBuilder({
-    graph,
-    nodesSource: SampleData.nodes,
-    edgesSource: SampleData.edges,
-    nodeIdBinding: 'id',
-    edgeIdBinding: 'id',
-    sourceNodeBinding: 'from',
-    targetNodeBinding: 'to'
+  const defaultNodeSize = graph.nodeDefaults.size
+  const builder = new GraphBuilder(graph)
+  builder.createNodesSource({
+    data: SampleData.nodes,
+    id: 'id',
+    layout: data =>
+      new Rect(data.location.x, data.location.y, defaultNodeSize.width, defaultNodeSize.height),
+    tag: data => ({
+      id: data.id
+    })
   })
-  builder.addNodeCreatedListener((builder, evt) => {
-    const { item: node, sourceObject } = evt
-    node.tag = { id: sourceObject.id }
-    graph.setNodeLayout(
-      node,
-      new Rect(
-        sourceObject.location.x,
-        sourceObject.location.y,
-        node.layout.width,
-        node.layout.height
-      )
-    )
-  })
+  builder.createEdgesSource(SampleData.edges, 'from', 'to', 'id')
   builder.buildGraph()
 
   graph.edges.forEach(edge => {

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -188,7 +188,7 @@ function initializeDnDPanel(graphComponent) {
       )
     } else if (IEdge.isInstance(data)) {
       new DragSource(element).startDrag(
-        new DragDropItem('yfiles.graph.IEdge', data),
+        new DragDropItem(IEdge.$class.name, data),
         DragDropEffects.ALL
       )
     } else {

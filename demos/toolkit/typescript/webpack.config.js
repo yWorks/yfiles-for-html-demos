@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -75,9 +75,6 @@ module.exports = function(env, options) {
   if (options.mode === 'production') {
     // Obfuscate yFiles modules and usages for production build
     config.plugins.unshift(new yWorksOptimizer())
-  } else {
-    // Add yFiles debugging support for development build
-    config.entry.unshift('../../../ide-support/yfiles-typeinfo.js')
   }
 
   return config

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -33,7 +33,6 @@ import {
   GraphComponent,
   GraphEditorInputMode,
   GraphSnapContext,
-  Grid,
   GridConstraintProvider,
   GridInfo,
   GridSnapTypes,
@@ -54,7 +53,14 @@ import {
   Stroke
 } from 'yfiles'
 
-import { bindAction, bindChangeListener, bindCommand, showApp } from '../../resources/demo-app.js'
+import {
+  addClass,
+  bindAction,
+  bindChangeListener,
+  bindCommand,
+  removeClass,
+  showApp
+} from '../../resources/demo-app.js'
 import loadJson from '../../resources/load-json.js'
 import { webGlSupported } from '../../utils/Workarounds.js'
 
@@ -73,18 +79,14 @@ let gridInfo = null
  */
 let grid = null
 
-/** @type {HTMLFormElement} */
 const gridSnapTypeRadioGroup = document.getElementById('gridSnapTypeRadioGroup')
-/** @type {HTMLFormElement} */
 const gridStyleRadioGroup = document.getElementById('gridStyleRadioGroup')
-/** @type {HTMLFormElement} */
 const gridRenderModeRadioGroup = document.getElementById('gridRenderModeRadioGroup')
-/** @type {SVGSVGElement} */
 const gridColorPicker = document.getElementById('gridColorPicker')
-/** @type {HTMLInputElement} */
 const thicknessSlider = document.getElementById('thickness')
 /**
  * Bootstraps the demo.
+ * @param {object} licenseData
  */
 function run(licenseData) {
   License.value = licenseData
@@ -154,6 +156,8 @@ function initializeGrid() {
   const gridStyles = new HashMap()
   gridStyles.set('Dots', GridStyle.DOTS)
   gridStyles.set('Lines', GridStyle.LINES)
+  gridStyles.set('Horizontal Lines', GridStyle.HORIZONTAL_LINES)
+  gridStyles.set('Vertical Lines', GridStyle.VERTICAL_LINES)
   gridStyles.set('Crosses', GridStyle.CROSSES)
 
   const gridColors = new HashMap()
@@ -246,12 +250,11 @@ function initializeGrid() {
 
 /**
  * Creates a radio group and populates it with values from the passed map.
- * @template T
- * @param {HTMLElement} containerElement
+ * @param {Element} containerElement
  * @param {string} groupName
- * @param {HashMap<string,T>} map
+ * @param {HashMap.<string,*>} map
  * @param {string} checkedKey
- * @param {function(T)} callback
+ * @param {function} callback
  */
 function createRadioGroup(containerElement, groupName, map, checkedKey, callback) {
   for (const key of map.keys) {
@@ -280,8 +283,8 @@ function createRadioGroup(containerElement, groupName, map, checkedKey, callback
 
 /**
  * Populates the grid color picker with colors from the passed array/map.
- * @param {string[]} sortedGridColors
- * @param {HashMap<string,Fill>} gridColors
+ * @param {Array.<string>} sortedGridColors
+ * @param {HashMap.<string,Fill>} gridColors
  */
 function createColorPicker(sortedGridColors, gridColors) {
   let xOffset = 0
@@ -297,7 +300,7 @@ function createColorPicker(sortedGridColors, gridColors) {
     rect.appendChild(title)
 
     if (color === 'Gray') {
-      rect.classList.add('selectedColor')
+      addClass(rect, 'selectedColor')
     }
 
     gridColors.get(color).applyTo(rect, ICanvasContext.DEFAULT)
@@ -305,10 +308,9 @@ function createColorPicker(sortedGridColors, gridColors) {
     rect.addEventListener(
       'click',
       function(fill, rect) {
-        gridColorPicker
-          .querySelectorAll('.selectedColor')
-          .forEach(rect => rect.classList.remove('selectedColor'))
-        rect.classList.add('selectedColor')
+        const selectedColors = Array.from(gridColorPicker.querySelectorAll('.selectedColor'))
+        selectedColors.forEach(rect => removeClass(rect, 'selectedColor'))
+        addClass(rect, 'selectedColor')
         updateGridColor(fill)
       }.bind(null, gridColors.get(color), rect)
     )
@@ -327,6 +329,9 @@ function updateSnapType(gridSnapType) {
   graphSnapContext.gridSnapType = gridSnapType
 }
 
+/**
+ * @param {GridStyle} gridStyle
+ */
 function updateGridStyle(gridStyle) {
   grid.gridStyle = gridStyle
   updateGridThickness()
@@ -335,6 +340,7 @@ function updateGridStyle(gridStyle) {
 
 /**
  * Sets the chosen render mode on the grid.
+ * @param {RenderModes} renderMode
  */
 function updateRenderMode(renderMode) {
   grid.renderMode = renderMode
@@ -393,7 +399,7 @@ function initTutorialDefaults() {
   graph.nodeDefaults.size = new Size(40, 40)
   graph.nodeDefaults.labels.style = new DefaultLabelStyle({
     verticalTextAlignment: 'center',
-    wrapping: 'word_ellipsis'
+    wrapping: 'word-ellipsis'
   })
   graph.nodeDefaults.labels.layoutParameter = ExteriorLabelModel.SOUTH
 
@@ -421,7 +427,7 @@ function createGraph() {
   const node4 = graph.createNodeAt([50, 300])
   const node5 = graph.createNodeAt([150, 300])
 
-  const group = graph.groupNodes({ children: [node1, node2, node3], labels: 'Group 1' })
+  const group = graph.groupNodes({ children: [node1, node2, node3], labels: ['Group 1'] })
   graph.setNodeLayout(group, new Rect(50, 0, 200, 200))
 
   const edge1 = graph.createEdge(node1, node2)

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -29,6 +29,7 @@
 import {
   Arrow,
   ArrowType,
+  BezierEdgeStyle,
   Color,
   EdgeStyleDecorationInstaller,
   FoldingManager,
@@ -132,7 +133,8 @@ function run(licenseData) {
     'nesting',
     'social-network',
     'uml-diagram',
-    'large-tree'
+    'large-tree',
+    'bezier-style'
   ].forEach(graph => {
     const option = document.createElement('option')
     option.text = graph
@@ -212,6 +214,7 @@ function initializeHighlightStyles() {
     type: ArrowType.NONE,
     cropLength: 5
   })
+
   const edgeStyle = new PolylineEdgeStyle({
     stroke: orangeStroke,
     targetArrow: dummyCroppingArrow,
@@ -221,7 +224,20 @@ function initializeHighlightStyles() {
     edgeStyle,
     zoomPolicy: StyleDecorationZoomPolicy.VIEW_COORDINATES
   })
-  decorator.edgeDecorator.highlightDecorator.setImplementation(edgeStyleHighlight)
+
+  const bezierEdgeStyle = new BezierEdgeStyle({
+    stroke: orangeStroke,
+    targetArrow: dummyCroppingArrow,
+    sourceArrow: dummyCroppingArrow
+  })
+  const bezierEdgeStyleHighlight = new EdgeStyleDecorationInstaller({
+    edgeStyle: bezierEdgeStyle,
+    zoomPolicy: StyleDecorationZoomPolicy.VIEW_COORDINATES
+  })
+
+  decorator.edgeDecorator.highlightDecorator.setFactory(edge => {
+    return edge.style instanceof BezierEdgeStyle ? bezierEdgeStyleHighlight : edgeStyleHighlight
+  })
 }
 
 /**
@@ -336,8 +352,8 @@ function initializeContextMenu(inputMode) {
 
 /**
  * Called when the mouse hovers over a different item.
- * This method will be called whenever the mouse moves over a different item. We show a highlight indicator
- * to make it easier for the user to understand the graph's structure.
+ * This method will be called whenever the mouse moves over a different item. We show a highlight
+ * indicator to make it easier for the user to understand the graph's structure.
  * @param {IModelItem} item
  */
 function onHoveredItemChanged(item) {
@@ -611,7 +627,8 @@ function enableGraphML() {
 }
 
 /**
- * Updates the elements of the UI's state and the input mode and checks whether the buttons should be enabled or not.
+ * Updates the elements of the UI's state and the input mode and checks whether the buttons should
+ * be enabled or not.
  * @param {boolean} disabled
  */
 function setUIDisabled(disabled) {

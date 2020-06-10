@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+
+<!-- ////////////////////////////////////////////////////////////////////////
+     // @license
+     // This demo file is part of yFiles for HTML 2.3.
+     // Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // 72070 Tuebingen, Germany. All rights reserved.
+     //
+     // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+     // of demo files in source code or binary form, with or without
+     // modification, is not permitted.
+     //
+     // Owners of a valid software license for a yFiles for HTML version that this
+     // demo is shipped with are allowed to use the demo source code as basis
+     // for their own yFiles for HTML powered applications. Use of such programs is
+     // governed by the rights and conditions as set out in the yFiles for HTML
+     // license agreement.
+     //
+     // THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+     // WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+     // MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+     // NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+     // SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+     // TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+     // PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+     // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+     // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+     // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+     // 
+     ////////////////////////////////////////////////////////////////////////-->
+
+  <title>Rich Text Label Demo [yFiles for HTML]</title>
+
+  <link rel="stylesheet" href="../../node_modules/yfiles/yfiles.css">
+  <link rel="stylesheet" href="../../resources/style/demo.css">
+
+  <!--Add stylesheet for rich text labels-->
+  <link rel="stylesheet" href="rich-text-label.css">
+
+  <!-- Include dependencies of the rich text editor Quill.js -->
+  <link href="https://cdn.quilljs.com/1.3.7/quill.snow.css" rel="stylesheet">
+  <script src="https://cdn.quilljs.com/1.3.7/quill.js"></script>
+
+  <script src="../../resources/filesystem-warning.js"></script>
+</head>
+<body class="demo-has-left">
+<aside class="demo-sidebar demo-left">
+  <h1 class="demo-sidebar-header">Description</h1>
+  <div class="demo-sidebar-content">
+    <p>
+      This demo shows how to create labels with rich text features using <code>MarkupLabelStyle</code>.
+    </p>
+
+    <p>
+      The demo also utilizes <a href="https://quilljs.com/">Quill</a>, an open source WYSIWYG text editor that lets you
+      easily edit labels in the graph.
+    </p>
+
+    <h2>Label Editor</h2>
+
+    <h4>Creating and Editing Labels</h4>
+
+    <p>Press <kbd>F2</kbd> or double click a label to open the text editor.</p>
+
+    <p>
+      Note how the editor is hooked up with yFiles such that user don't need to write HTML markup themselves but can
+      rely on commonly known editor functions to format the text.
+    </p>
+
+    <h4>The MarkupLabelStyle</h4>
+
+    <p>
+      Internally, the HTML markup that is created from the Quill editor is added as <a href="https://docs.yworks.com/yfileshtml/#/api/ILabel" target="_blank">ILabel</a> with the <a href="https://docs.yworks.com/yfileshtml/#/api/MarkupLabelStyle" target="_blank">MarkupLabelStyle</a>
+      to the graph.
+    </p>
+
+    <p>In general, the <code>MarkupLabelStyle</code> could also be used without a WYSIWYG editor. It supports the following tags:</p>
+
+    <ul>
+      <li><code>&lt;span&gt;</code>: A stylable element.</li>
+      <li><code>&lt;br&gt;</code>: Adds a line break</li>
+      <li><code>&lt;em&gt;</code>: Italic text</li>
+      <li><code>&lt;strong&gt;</code>: Bold text</li>
+      <li><code>&lt;del&gt;</code>: Strikethrough text</li>
+      <li><code>&lt;u&gt;</code>: Underline text</li>
+      <li><code>&lt;h1&gt;-&lt;h6&gt;</code>: Heading 1-6</li>
+      <li><code>&lt;p&gt;</code>: A paragraph element.</li>
+      <li><code>&lt;pre&gt;</code>: A preformatted element which preserves newlines.</li>
+      <li><code>&lt;code&gt;</code>: A code element.</li>
+      <li><code>&lt;small&gt;</code>: Small font-size</li>
+      <li><code>&lt;large&gt;</code>: Large font-size</li>
+      <li><code>&lt;[html color name]&gt;</code>: Colored text, e.g. &lt;blue&gt;</li>
+    </ul>
+
+    <h4>Styling Labels with CSS</h4>
+
+    <p>Tags can be styled with inline CSS. Also tags can be given CSS classes to use external CSS.</p>
+    <p>The stylesheet for labels <em>markup-label.css</em> shows how the label texts are styled with external CSS.</p>
+
+    <h4>Text Wrapping</h4>
+
+    <p>
+      Markup labels can use line wrapping. In this demo application, the labels use word wrapping with ellipsis.
+      Select and resize a node to observe the interactive text wrapping. Rich text labels can also be wrapped at
+      character boundaries.
+    </p>
+  </div>
+</aside>
+
+<div class="demo-content">
+
+  <div class="demo-toolbar">
+    <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
+    <button data-command="ZoomOriginal" title="Zoom to original size" class="demo-icon-yIconZoomOriginal"></button>
+    <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
+    <button data-command="FitContent" title="Fit Content" class="demo-icon-yIconZoomFit"></button>
+  </div>
+
+  <div id="graphComponent"></div>
+</div>
+
+<script type="module" crossorigin="anonymous" src="RichTextLabelDemo.js"></script>
+</body>
+</html>

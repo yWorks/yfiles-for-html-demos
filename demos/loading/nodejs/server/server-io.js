@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,15 +26,21 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-// All yfiles modules return the yfiles namespace object
-const yfiles = require('../../../../lib/umd/view-component')
+const {
+  BaseClass,
+  INodeInsetsProvider,
+  IMapper,
+  Insets,
+  IGraph,
+  DefaultGraph,
+  Mapper
+} = require('yfiles-umd')
+const jsonIO = require('./JsonIO')
 
-const jsonIO = require('../../../utils/JsonIO-umd.js')
-
-class MapperInsetsProvider extends yfiles.lang.Class(yfiles.input.INodeInsetsProvider) {
+class MapperInsetsProvider extends BaseClass(INodeInsetsProvider) {
   /**
    * Creates a new instance that uses the insets of the given mapper.
-   * @param {yfiles.collections.IMapper} insetsMapper
+   * @param {IMapper} insetsMapper
    */
   constructor(insetsMapper) {
     super()
@@ -44,7 +50,7 @@ class MapperInsetsProvider extends yfiles.lang.Class(yfiles.input.INodeInsetsPro
   /**
    * Returns the insets for the given item.
    * @param {T} item
-   * @returns {yfiles.geometry.Insets}
+   * @returns {Insets}
    */
   getInsets(item) {
     return this.insetsMapper.get(item)
@@ -54,7 +60,7 @@ class MapperInsetsProvider extends yfiles.lang.Class(yfiles.input.INodeInsetsPro
 /**
  * Returns a JSON object that describes the structure and layout information of the given graph.
  *
- * @param graph {yfiles.graph.IGraph} The graph.
+ * @param graph {IGraph} The graph.
  * @returns {object} A JSON object that describes the structure and layout information of the given graph.
  */
 const write = function(graph) {
@@ -63,7 +69,7 @@ const write = function(graph) {
 
   // In addition to the default data, we need the insets for the layout calculation
   jsonWriter.nodeDataCreated = (data, node, graph) => {
-    const insetsProvider = node.lookup(yfiles.input.INodeInsetsProvider.$class)
+    const insetsProvider = node.lookup(INodeInsetsProvider.$class)
     if (insetsProvider !== null) {
       const insets = insetsProvider.getInsets(node)
       data.insets = {
@@ -79,17 +85,17 @@ const write = function(graph) {
 }
 
 /**
- * Creates a yfiles.graph.IGraph from JSON data.
+ * Creates a IGraph from JSON data.
  *
  * @param {JSONGraph} jsonGraph the JSON representation of the graph
- * @returns {yfiles.graph.IGraph}
+ * @returns {IGraph}
  */
 const read = function(jsonGraph) {
-  const graph = new yfiles.graph.DefaultGraph()
+  const graph = new DefaultGraph()
 
   // In addition to the default data, we get the insets from the layout calculation
-  const insetsMapper = new yfiles.collections.Mapper({
-    defaultValue: yfiles.geometry.Insets.EMPTY
+  const insetsMapper = new Mapper({
+    defaultValue: Insets.EMPTY
   })
   graph.decorator.nodeDecorator.insetsProviderDecorator.setImplementation(
     new MapperInsetsProvider(insetsMapper)
@@ -100,10 +106,7 @@ const read = function(jsonGraph) {
   jsonReader.nodeCreated = (node, nodeData) => {
     const insets = nodeData.insets
     if (insets) {
-      insetsMapper.set(
-        node,
-        new yfiles.geometry.Insets(insets.left, insets.top, insets.right, insets.bottom)
-      )
+      insetsMapper.set(node, new Insets(insets.left, insets.top, insets.right, insets.bottom))
     }
   }
 

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { ConnectedComponents, CycleEdges, FilteredGraphWrapper, IGraph } from 'yfiles'
+import { ConnectedComponents, CycleEdges, IGraph } from 'yfiles'
 import AlgorithmConfiguration from './AlgorithmConfiguration.js'
 import { MultiColorNodeStyle } from './DemoStyles.js'
 
@@ -64,19 +64,10 @@ export default class CyclesConfig extends AlgorithmConfiguration {
   markCycles(graph) {
     const cycleEdges = this.$cycleEdges.toArray()
 
-    // hides all non-cycle edges to be able to find independent cycles
-    const cycleEdgeSet = new Set(cycleEdges)
-    const filteredGraph = new FilteredGraphWrapper(
-      graph,
-      node => true,
-      edge => cycleEdgeSet.has(edge)
-    )
-
     // finds the edges that belong to the same component (without non-cycle edges) and treats them as dependent
-    const result = new ConnectedComponents().run(filteredGraph)
-
-    // dispose the filtered graph
-    filteredGraph.dispose()
+    const result = new ConnectedComponents({
+      subgraphEdges: cycleEdges
+    }).run(graph)
 
     // find the components that are affected by the use move, if any
     const affectedComponents = this.getAffectedNodeComponents(result.nodeComponentIds, graph)
@@ -114,6 +105,8 @@ export default class CyclesConfig extends AlgorithmConfiguration {
       node.tag.id = index
     })
 
+    const cycleEdgeSet = new Set(cycleEdges)
+
     // change the styles for the nodes and edges that belong to a cycle
     graph.edges.forEach((edge, index) => {
       const source = edge.sourceNode
@@ -132,7 +125,7 @@ export default class CyclesConfig extends AlgorithmConfiguration {
           graph,
           edge
         )
-        graph.setStyle(edge, this.getMarkedEdgeStyle(this.directed, componentIndex, null))
+        graph.setStyle(edge, this.getMarkedEdgeStyle(this.directed, componentIndex))
         edge.tag = {
           id: index,
           color,
@@ -206,9 +199,6 @@ export default class CyclesConfig extends AlgorithmConfiguration {
           graph.setStyle(targetNode, defaultNodeStyle)
         }
       })
-
-      // clear cycle edges
-      cycleEdges.length = 0
     }
   }
 

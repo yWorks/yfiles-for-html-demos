@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,15 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import {
-  FoldingManager,
-  GraphComponent,
-  GraphEditorInputMode,
-  ICommand,
-  License,
-  Point,
-  Size
-} from 'yfiles'
+import { GraphComponent, GraphEditorInputMode, ICommand, License, Point, Size } from 'yfiles'
 
 import CSS3NodeStyle from './CSS3NodeStyle.js'
 import { initDemoStyles } from '../../resources/demo-styles.js'
@@ -47,8 +39,6 @@ let graphComponent = null
 function run(licenseData) {
   License.value = licenseData
   graphComponent = new GraphComponent('graphComponent')
-
-  enableFolding()
 
   initializeGraph()
 
@@ -78,9 +68,6 @@ function initializeGraph() {
 
   graph.nodeDefaults.size = new Size(80, 80)
 
-  // set the CSS class to use for group nodes
-  graph.groupNodeDefaults.style.cssClass = 'group-node'
-
   // Create some graph elements with the above defined styles.
   createSampleGraph()
 }
@@ -91,8 +78,7 @@ function initializeGraph() {
  */
 function createEditorMode() {
   const mode = new GraphEditorInputMode({
-    hideLabelDuringEditing: false,
-    allowGroupingOperations: true
+    hideLabelDuringEditing: false
   })
 
   // whenever a node is created by the user, we set a created flag on its tag data object, which will then be used
@@ -130,9 +116,6 @@ function createSampleGraph() {
   graph.createEdge(n3, n7)
   graph.createEdge(n9, n4)
   graph.createEdge(n1, n8)
-
-  // put all nodes into a group
-  graph.groupNodes(graph.nodes)
 }
 
 /**
@@ -143,20 +126,6 @@ function registerCommands() {
   bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent, null)
   bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent, null)
   bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
-}
-
-/**
- * @type {FoldingManager}
- */
-let foldingManager = null
-
-/**
- * Enables folding - changes the graphComponent's graph to a managed view
- * that provides the actual collapse/expand state.
- */
-function enableFolding() {
-  foldingManager = new FoldingManager(graphComponent.graph)
-  graphComponent.graph = foldingManager.createFoldingView().graph
 }
 
 // start demo

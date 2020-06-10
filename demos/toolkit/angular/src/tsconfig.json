@@ -11,9 +11,11 @@
     "experimentalDecorators": true,
     "resolveJsonModule": true,
     "esModuleInterop": true,
-    "target": "es5",
+    "target": "es6",
+    "module": "esnext",
     "types": [],
     "lib": ["es2018", "dom"]
   },
-  "include": ["**/*.ts"]
+  "include": ["**/*.ts"],
+  "exclude": ["**/environments/**"]
 }

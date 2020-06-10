@@ -5,19 +5,19 @@
   "license": "https://www.yworks.com/products/yfiles-for-html/sla",
   "private": true,
   "scripts": {
-    "preinstall": "cd ../../../lib/es-modules && npm pack",
+    "postinstall": "node -e \"require('fs-extra').copySync('../../utils/Workarounds.js', './src/utils/Workarounds.js')\"",
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build"
   },
   "dependencies": {
-    "core-js": "^2.6.5",
-    "vue": "^2.6.10",
-    "yfiles": "../../../lib/es-modules/yfiles-22.0.3-eval.tgz"
+    "core-js": "^2.6.11",
+    "vue": "^2.6.11",
+    "yfiles": "../../../lib-dev/es-modules/yfiles-23.0.0-dev.tgz"
   },
   "devDependencies": {
-    "@vue/cli-plugin-babel": "^3.0.1",
-    "@vue/cli-service": "^3.0.1",
-    "@yworks/optimizer": "^1.0.3",
-    "vue-template-compiler": "^2.6.10"
+    "@vue/cli-plugin-babel": "^3.12.1",
+    "@vue/cli-service": "^3.12.1",
+    "@yworks/optimizer": "^1.3.0",
+    "vue-template-compiler": "^2.6.11"
   }
 }

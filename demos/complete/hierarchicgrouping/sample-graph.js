@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -57,14 +57,22 @@ export default {
       to: '50',
       sourcePort: { x: 305, y: 142 },
       targetPort: { x: 105, y: 388 },
-      bends: [{ x: 305, y: 152 }, { x: 105, y: 152 }]
+      bends: [
+        { x: 305, y: 152 },
+        { x: 105, y: 152 }
+      ]
     },
     {
       from: '10',
       to: '12',
       sourcePort: { x: 325, y: 142 },
       targetPort: { x: 180, y: 732 },
-      bends: [{ x: 325, y: 152 }, { x: 402.5, y: 152 }, { x: 402.5, y: 717 }, { x: 180, y: 717 }]
+      bends: [
+        { x: 325, y: 152 },
+        { x: 402.5, y: 152 },
+        { x: 402.5, y: 717 },
+        { x: 180, y: 717 }
+      ]
     },
     { from: '11', to: '20', sourcePort: { x: 315, y: 192 }, targetPort: { x: 315, y: 224 } },
     {
@@ -72,28 +80,40 @@ export default {
       to: '21',
       sourcePort: { x: 307.5, y: 254 },
       targetPort: { x: 262.5, y: 648 },
-      bends: [{ x: 307.5, y: 274 }, { x: 262.5, y: 274 }]
+      bends: [
+        { x: 307.5, y: 274 },
+        { x: 262.5, y: 274 }
+      ]
     },
     {
       from: '20',
       to: '30',
       sourcePort: { x: 322.5, y: 254 },
       targetPort: { x: 320, y: 311 },
-      bends: [{ x: 322.5, y: 264 }, { x: 320, y: 264 }]
+      bends: [
+        { x: 322.5, y: 264 },
+        { x: 320, y: 264 }
+      ]
     },
     {
       from: '21',
       to: '12',
       sourcePort: { x: 270, y: 678 },
       targetPort: { x: 175, y: 732 },
-      bends: [{ x: 270, y: 707 }, { x: 175, y: 707 }]
+      bends: [
+        { x: 270, y: 707 },
+        { x: 175, y: 707 }
+      ]
     },
     {
       from: '22',
       to: '12',
       sourcePort: { x: 255, y: 254 },
       targetPort: { x: 170, y: 732 },
-      bends: [{ x: 440, y: 697 }, { x: 170, y: 697 }]
+      bends: [
+        { x: 440, y: 697 },
+        { x: 170, y: 697 }
+      ]
     },
     {
       from: '30',
@@ -113,21 +133,30 @@ export default {
       to: '21',
       sourcePort: { x: 312.5, y: 614 },
       targetPort: { x: 277.5, y: 648 },
-      bends: [{ x: 312.5, y: 633 }, { x: 277.5, y: 633 }]
+      bends: [
+        { x: 312.5, y: 633 },
+        { x: 277.5, y: 633 }
+      ]
     },
     {
       from: '40',
       to: '41',
       sourcePort: { x: 335, y: 418 },
       targetPort: { x: 342.5, y: 465 },
-      bends: [{ x: 335, y: 428 }, { x: 342.5, y: 428 }]
+      bends: [
+        { x: 335, y: 428 },
+        { x: 342.5, y: 428 }
+      ]
     },
     {
       from: '40',
       to: '31',
       sourcePort: { x: 320, y: 418 },
       targetPort: { x: 312.5, y: 584 },
-      bends: [{ x: 320, y: 428 }, { x: 312.5, y: 428 }]
+      bends: [
+        { x: 320, y: 428 },
+        { x: 312.5, y: 428 }
+      ]
     },
     { from: '41', to: '42', sourcePort: { x: 342.5, y: 495 }, targetPort: { x: 342.5, y: 520 } },
     {
@@ -135,7 +164,10 @@ export default {
       to: '31',
       sourcePort: { x: 342.5, y: 550 },
       targetPort: { x: 322.5, y: 584 },
-      bends: [{ x: 342.5, y: 569 }, { x: 322.5, y: 569 }]
+      bends: [
+        { x: 342.5, y: 569 },
+        { x: 322.5, y: 569 }
+      ]
     },
     { from: '50', to: '60', sourcePort: { x: 112.5, y: 418 }, targetPort: { x: 112.5, y: 465 } },
     {
@@ -143,14 +175,20 @@ export default {
       to: '51',
       sourcePort: { x: 97.5, y: 418 },
       targetPort: { x: 35, y: 520 },
-      bends: [{ x: 97.5, y: 428 }, { x: 35, y: 428 }]
+      bends: [
+        { x: 97.5, y: 428 },
+        { x: 35, y: 428 }
+      ]
     },
     {
       from: '51',
       to: '12',
       sourcePort: { x: 35, y: 550 },
       targetPort: { x: 155, y: 732 },
-      bends: [{ x: 35, y: 683 }, { x: 155, y: 683 }]
+      bends: [
+        { x: 35, y: 683 },
+        { x: 155, y: 683 }
+      ]
     },
     { from: '60', to: '61', sourcePort: { x: 105, y: 495 }, targetPort: { x: 105, y: 520 } },
     {
@@ -158,14 +196,20 @@ export default {
       to: '62',
       sourcePort: { x: 120, y: 495 },
       targetPort: { x: 165, y: 520 },
-      bends: [{ x: 120, y: 505 }, { x: 165, y: 505 }]
+      bends: [
+        { x: 120, y: 505 },
+        { x: 165, y: 505 }
+      ]
     },
     {
       from: '61',
       to: '12',
       sourcePort: { x: 105, y: 550 },
       targetPort: { x: 160, y: 732 },
-      bends: [{ x: 105, y: 673 }, { x: 160, y: 673 }]
+      bends: [
+        { x: 105, y: 673 },
+        { x: 160, y: 673 }
+      ]
     },
     { from: '62', to: '12', sourcePort: { x: 165, y: 550 }, targetPort: { x: 165, y: 732 } },
     { from: '20', to: '50', sourcePort: { x: 165, y: 550 }, targetPort: { x: 165, y: 732 } }

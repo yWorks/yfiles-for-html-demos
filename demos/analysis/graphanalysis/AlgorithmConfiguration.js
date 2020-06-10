@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -34,6 +34,7 @@ import {
   GraphComponent,
   IArrow,
   IEdge,
+  IEdgeStyle,
   IGraph,
   IModelItem,
   INode,
@@ -54,12 +55,12 @@ import {
  */
 export default class AlgorithmConfiguration {
   constructor() {
-    this.$running = false
     this.$directed = false
     this.$useUniformWeights = false
     this.$incrementalElements = null
     this.$descriptionText = ''
     this.$edgeRemoved = false
+    this.$kValue = 0
   }
 
   /**
@@ -92,6 +93,22 @@ export default class AlgorithmConfiguration {
    */
   get useUniformWeights() {
     return this.$useUniformWeights
+  }
+
+  /**
+   * Sets the k value for use in the k-Core algorithm
+   * @param k value
+   */
+  set kValue(kValue) {
+    this.$kValue = kValue
+  }
+
+  /**
+   * Returns the k value for use in the k-Core algorithm
+   * @returns {number} k value
+   */
+  get kValue() {
+    return this.$kValue
   }
 
   /**
@@ -189,11 +206,11 @@ export default class AlgorithmConfiguration {
    * Returns a node style for marked edges.
    * @param {boolean} isDirected whether or not the style draws an arrow
    * @param {number} type the type of node which determines the color of the style
-   * @param {object} gradient whether or not the color is chosen as a gradient or different colors are applied
-   * @param {string} svgColor the color for the edge
+   * @param {object} [gradient] whether or not the color is chosen as a gradient or different colors are applied
+   * @param {string} [svgColor] the color for the edge
    * @returns {IEdgeStyle} the marked edges' style
    */
-  getMarkedEdgeStyle(isDirected, type, gradient, svgColor) {
+  getMarkedEdgeStyle(isDirected, type, gradient = null, svgColor = null) {
     if (!svgColor) {
       const colors = this.generateColors(gradient)
       svgColor = colors[type % colors.length]
@@ -299,20 +316,6 @@ export default class AlgorithmConfiguration {
       totalEdgeLength += edgePoints[i].distanceTo(edgePoints[i + 1])
     }
     return totalEdgeLength
-  }
-
-  /**
-   * Applies the desired style to the edge arrows.
-   * @param {GraphComponent} graphComponent the given graph component
-   */
-  applyArrowEdgeStyle(graphComponent) {
-    graphComponent.graph.edges.forEach(edge => {
-      if (edge.style instanceof MultiColorEdgeStyle || edge.style instanceof SingleColorEdgeStyle) {
-        edge.style.targetArrow = this.directed ? IArrow.DEFAULT : IArrow.NONE
-      } else {
-        edge.style.targetArrow = this.directed ? IArrow.DEFAULT : IArrow.NONE
-      }
-    })
   }
 
   /**

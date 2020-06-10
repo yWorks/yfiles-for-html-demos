@@ -8,8 +8,8 @@
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.2.
-     // Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML 2.3.
+     // Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -145,8 +145,6 @@
 
   </style>
 
-  <!-- enable debugging -->
-  <script src="../../../ide-support/yfiles-typeinfo.js"></script>
   <script src="../../resources/filesystem-warning.js"></script>
 
   <!-- import canvg as fallback -->
@@ -189,7 +187,7 @@
 
     <p>
       For more details concerning the shortcomings of the client-side export in this demo's approach and on the related
-      browser deficiencies, see <a href="https://svgopen.org/2010/papers/62-From_SVG_to_Canvas_and_Back/"
+      browser deficiencies, see <a href="http://www.graphicalweb.org/2010/papers/62-From_SVG_to_Canvas_and_Back/"
       target="_blank">"From SVG to Canvas and Back"</a>. Currently, only a server-based image export solution would work
       in all out-of-date browsers which is also shown in this demo. </p>
 
@@ -200,8 +198,7 @@
       href="https://github.com/sampumon/SVG.toDataURL" target="_blank">SVG.toDataURL</a> project as a fallback strategy on client-side
       export. canvg provides a viable workaround for Internet Explorer whose security settings do not allow the creation
       of a data URL of a HTML Canvas.</p>
-    <p>This fallback is also used for Microsoft Edge because of a <a
-      href="https://developer.microsoft.com/en-us/microsoft-edge/platform/issues/18024519/" target="_blank">bug</a> that does not allow
+    <p>This fallback is also used for Microsoft Edge because of a bug that does not allow
       to draw gradients to a Canvas.</p>
     <p>Please note that the canvg result might differ from the original graph visualisation and from the output produced
       by the primary solution. </p>

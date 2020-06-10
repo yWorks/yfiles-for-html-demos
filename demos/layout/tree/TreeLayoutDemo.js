@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -33,7 +33,6 @@ import {
   GraphItemTypes,
   IArrow,
   ICommand,
-  IEdge,
   INode,
   ITreeLayoutNodePlacer,
   License,
@@ -46,11 +45,11 @@ import {
   TreeLayout
 } from 'yfiles'
 import {
+  createCategoryTreeConfiguration,
   createDefaultTreeConfiguration,
   createGeneralGraphConfiguration,
   createGenericConfiguration,
   createLargeTreeConfiguration,
-  createCategoryTreeConfiguration,
   createWideTreeConfiguration
 } from './TreeLayoutConfigurations.js'
 import * as TreeData from './resources/TreeData.js'
@@ -78,12 +77,6 @@ let nodePlacerPanel = null
 let busy = false
 
 /**
- * The currently loaded sample graph
- * @type {string}
- */
-let currentSample = 'Default Tree'
-
-/**
  * Launches the TreeLayoutDemo.
  */
 function run(licenseData) {
@@ -93,14 +86,14 @@ function run(licenseData) {
 
   // initialize the settings panel and registers a listener which updates the layout if settings were changed
   nodePlacerPanel = new NodePlacerPanel(graphComponent)
-  nodePlacerPanel.addChangeListener(runLayout)
+  nodePlacerPanel.addChangeListener(() => runLayout(false))
 
   // initialize interactive behavior and toolbar buttons
   initializesInputModes()
   registerCommands()
 
   // load a sample graph
-  loadGraph(currentSample)
+  loadGraph()
 
   showApp(graphComponent)
 }
@@ -108,7 +101,7 @@ function run(licenseData) {
 /**
  * Runs a {@link TreeLayout} using the specified {@link ITreeLayoutNodePlacer}s.
  */
-async function runLayout() {
+async function runLayout(initConfig) {
   if (busy) {
     // there is already a layout calculating do not start another one
     return
@@ -116,27 +109,32 @@ async function runLayout() {
 
   setBusy(true)
 
-  // create a layout configuration according to the current sample
   let configuration
-  switch (currentSample) {
-    default:
-      configuration = createGenericConfiguration(graphComponent.graph, nodePlacerPanel)
-      break
-    case 'Default Tree':
-      configuration = createDefaultTreeConfiguration(graphComponent.graph, nodePlacerPanel)
-      break
-    case 'Wide Tree':
-      configuration = createWideTreeConfiguration(graphComponent.graph, nodePlacerPanel)
-      break
-    case 'Category Tree':
-      configuration = createCategoryTreeConfiguration(graphComponent.graph, nodePlacerPanel)
-      break
-    case 'General Graph':
-      configuration = createGeneralGraphConfiguration(graphComponent.graph, nodePlacerPanel)
-      break
-    case 'Large Tree':
-      configuration = createLargeTreeConfiguration(graphComponent.graph, nodePlacerPanel)
-      break
+  if (!initConfig) {
+    // use the current configuration from the panel
+    configuration = createGenericConfiguration(graphComponent.graph, nodePlacerPanel)
+  } else {
+    // create a layout configuration according to the current sample
+    switch (document.getElementById('select-sample').value) {
+      default:
+        configuration = createGenericConfiguration(graphComponent.graph, nodePlacerPanel)
+        break
+      case 'Default Tree':
+        configuration = createDefaultTreeConfiguration(graphComponent.graph, nodePlacerPanel)
+        break
+      case 'Wide Tree':
+        configuration = createWideTreeConfiguration(graphComponent.graph, nodePlacerPanel)
+        break
+      case 'Category Tree':
+        configuration = createCategoryTreeConfiguration(graphComponent.graph, nodePlacerPanel)
+        break
+      case 'General Graph':
+        configuration = createGeneralGraphConfiguration(graphComponent.graph, nodePlacerPanel)
+        break
+      case 'Large Tree':
+        configuration = createLargeTreeConfiguration(graphComponent.graph, nodePlacerPanel)
+        break
+    }
   }
 
   // run the layout animated
@@ -182,13 +180,11 @@ function initializesInputModes() {
     })
   })
   // update the layout and the settings panel when nodes are deleted
-  inputMode.addDeletedSelectionListener(() => {
-    runLayout()
-  })
+  inputMode.addDeletedSelectionListener(() => runLayout(false))
 
   // run a layout every time a node/bend is dragged or a node is resized
-  inputMode.moveInputMode.addDragFinishedListener(runLayout)
-  inputMode.handleInputMode.addDragFinishedListener(runLayout)
+  inputMode.moveInputMode.addDragFinishedListener(() => runLayout(false))
+  inputMode.handleInputMode.addDragFinishedListener(() => runLayout(false))
 
   // update the settings panel when selection changed to be able to edit its node placer
   inputMode.addMultiSelectionFinishedListener((sender, args) =>
@@ -211,25 +207,25 @@ function initializesInputModes() {
             })
         graphComponent.graph.setStyle(node, nodeStyle)
       }
-      runLayout()
+      runLayout(false)
     }
   })
 
   // labels may influence the order of child nodes, if they are changed a new layout should be calculated
   inputMode.addLabelAddedListener((sender, args) => {
     if (!isNaN(args.item.text)) {
-      runLayout()
+      runLayout(false)
     }
   })
   inputMode.addLabelTextChangedListener((sender, args) => {
     if (!isNaN(args.item.text)) {
-      runLayout()
+      runLayout(false)
     }
   })
 
   // update layout and settings panel when an edge was created
   inputMode.createEdgeInputMode.addEdgeCreatedListener((sender, args) => {
-    runLayout()
+    runLayout(false)
   })
 
   // assign the input mode to the graph component
@@ -253,10 +249,9 @@ function collectSubtreeNodes(selectedNode, nodesToDelete) {
 /**
  * Reads a tree graph from file
  */
-function loadGraph(sample) {
-  currentSample = sample
-
+function loadGraph() {
   const graph = graphComponent.graph
+  graph.clear()
 
   // initialize the node and edge default styles, they will be applied to the newly created graph
   graph.nodeDefaults.style = new ShapeNodeStyle({
@@ -273,7 +268,8 @@ function loadGraph(sample) {
 
   // select tree data
   let nodesSource
-  switch (currentSample) {
+  const sample = document.getElementById('select-sample').value
+  switch (sample) {
     default:
     case 'Default Tree':
       nodesSource = TreeData.DefaultTree.nodesSource
@@ -293,16 +289,14 @@ function loadGraph(sample) {
   }
 
   // configure the tree builder
-  const builder = new TreeBuilder({
-    graph,
-    nodesSource,
-    childBinding: 'children'
-  })
+  const builder = new TreeBuilder(graph)
+  const rootNodesSource = builder.createRootNodesSource(nodesSource, 'id')
+  rootNodesSource.addChildNodesSource(data => data.children, rootNodesSource)
 
   // create the graph
   builder.buildGraph()
 
-  if (currentSample === 'General Graph') {
+  if (sample === 'General Graph') {
     // add some non-tree edges
     graph.createEdge(graph.nodes.get(1), graph.nodes.get(22))
     graph.createEdge(graph.nodes.get(3), graph.nodes.get(16))
@@ -318,7 +312,7 @@ function loadGraph(sample) {
   })
 
   // apply layout
-  runLayout()
+  runLayout(true)
 }
 
 /**

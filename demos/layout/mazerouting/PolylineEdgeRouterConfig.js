@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -235,7 +235,7 @@ export const PolylineEdgeRouterConfig = Class('PolylineEdgeRouterConfig', {
     router.considerEdgeLabels = this.considerEdgeLabelsItem
     router.rerouting = this.enableReroutingItem
 
-    router.polylineRouting = this.enablePolylineRoutingItem
+    router.polylineRouting = this.routingStyleItem
     router.preferredPolylineSegmentLength = this.preferredPolylineSegmentLengthItem
     router.maximumDuration = this.maximumDurationItem * 1000
 
@@ -785,10 +785,10 @@ export const PolylineEdgeRouterConfig = Class('PolylineEdgeRouterConfig', {
    * Backing field for below property
    * @type {boolean}
    */
-  $enablePolylineRoutingItem: false,
+  $routingStyleItem: false,
 
   /** @type {boolean} */
-  enablePolylineRoutingItem: {
+  routingStyleItem: {
     $meta: function() {
       return [
         LabelAttribute(
@@ -800,10 +800,10 @@ export const PolylineEdgeRouterConfig = Class('PolylineEdgeRouterConfig', {
       ]
     },
     get: function() {
-      return this.$enablePolylineRoutingItem
+      return this.$routingStyleItem
     },
     set: function(value) {
-      this.$enablePolylineRoutingItem = value
+      this.$routingStyleItem = value
     }
   },
 
@@ -844,7 +844,7 @@ export const PolylineEdgeRouterConfig = Class('PolylineEdgeRouterConfig', {
       return [TypeAttribute(YBoolean.$class)]
     },
     get: function() {
-      return this.enablePolylineRoutingItem === false
+      return this.routingStyleItem === false
     }
   },
 

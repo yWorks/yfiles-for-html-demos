@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { Class, MarkupExtension, TypeAttribute, YBoolean, YObject, YString } from 'yfiles'
+import { MarkupExtension, TypeAttribute, YBoolean, YObject, YString } from 'yfiles'
 
 /**
  * The data model of the UML node style.
@@ -80,99 +80,74 @@ export class UMLClassModel {
 /**
  * Markup extension needed to (de-)serialize the UML model.
  */
-export const UMLClassModelExtension = Class('UMLClassModelExtension', {
-  $extends: MarkupExtension,
+export class UMLClassModelExtension extends MarkupExtension {
+  get stereotype() {
+    return this.$stereotype
+  }
 
-  $stereotype: null,
-  stereotype: {
-    $meta() {
-      return [TypeAttribute(YString.$class)]
-    },
-    get() {
-      return this.$stereotype
-    },
-    set(stereotype) {
-      this.$stereotype = stereotype
-    }
-  },
+  set stereotype(value) {
+    this.$stereotype = value
+  }
 
-  $constraint: null,
-  constraint: {
-    $meta() {
-      return [TypeAttribute(YString.$class)]
-    },
-    get() {
-      return this.$constraint
-    },
-    set(constraint) {
-      this.$constraint = constraint
-    }
-  },
+  get constraint() {
+    return this.$constraint
+  }
 
-  $className: null,
-  className: {
-    $meta() {
-      return [TypeAttribute(YString.$class)]
-    },
-    get() {
-      return this.$className
-    },
-    set(className) {
-      this.$className = className
-    }
-  },
+  set constraint(value) {
+    this.$constraint = value
+  }
 
-  $attributes: null,
-  attributes: {
-    $meta() {
-      return [TypeAttribute(YObject.$class)]
-    },
-    get() {
-      return this.$attributes
-    },
-    set(attributes) {
-      this.$attributes = attributes
-    }
-  },
+  get className() {
+    return this.$className
+  }
 
-  $operations: null,
-  operations: {
-    $meta() {
-      return [TypeAttribute(YObject.$class)]
-    },
-    get() {
-      return this.$operations
-    },
-    set(operations) {
-      this.$operations = operations
-    }
-  },
+  set className(value) {
+    this.$className = value
+  }
 
-  $attributesOpen: null,
-  attributesOpen: {
-    $meta() {
-      return [TypeAttribute(YBoolean.$class)]
-    },
-    get() {
-      return this.$attributesOpen
-    },
-    set(attributesOpen) {
-      this.$attributesOpen = attributesOpen
-    }
-  },
+  get attributes() {
+    return this.$attributes
+  }
 
-  $operationsOpen: null,
-  operationsOpen: {
-    $meta() {
-      return [TypeAttribute(YBoolean.$class)]
-    },
-    get() {
-      return this.$operationsOpen
-    },
-    set(operationsOpen) {
-      this.$operationsOpen = operationsOpen
+  set attributes(value) {
+    this.$attributes = value
+  }
+
+  get operations() {
+    return this.$operations
+  }
+
+  set operations(value) {
+    this.$operations = value
+  }
+
+  get attributesOpen() {
+    return this.$attributesOpen
+  }
+
+  set attributesOpen(value) {
+    this.$attributesOpen = value
+  }
+
+  get operationsOpen() {
+    return this.$operationsOpen
+  }
+
+  set operationsOpen(value) {
+    this.$operationsOpen = value
+  }
+
+  static get $meta() {
+    return {
+      stereotype: TypeAttribute(YString.$class),
+      constraint: TypeAttribute(YString.$class),
+      className: TypeAttribute(YString.$class),
+      attributes: TypeAttribute(YObject.$class),
+      operations: TypeAttribute(YObject.$class),
+      attributesOpen: TypeAttribute(YBoolean.$class),
+      operationsOpen: TypeAttribute(YBoolean.$class)
     }
-  },
+  }
 
   provideValue(serviceProvider) {
     const umlClassModel = new UMLClassModel()
@@ -185,7 +160,7 @@ export const UMLClassModelExtension = Class('UMLClassModelExtension', {
     umlClassModel.operationsOpen = this.operationsOpen
     return umlClassModel
   }
-})
+}
 
 /**
  * Listener that handles the serialization of the UML model.

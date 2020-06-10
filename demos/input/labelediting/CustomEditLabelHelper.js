@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -36,6 +36,7 @@ import {
   LabelEditingEventArgs,
   TextEditorInputMode
 } from 'yfiles'
+import { addClass, removeClass } from '../../resources/demo-app.js'
 
 /**
  * Custom label edit helper.
@@ -169,11 +170,11 @@ export default class CustomEditLabelHelper extends EditLabelHelper {
    */
   configureTextEditorInputMode(context, mode, labelToEdit) {
     const textBox = mode.editorContainer
-    textBox.setAttribute('class', 'custom-label-editor')
+    addClass(textBox, 'custom-label-editor')
 
     // Restore after editing
     const afterEditing = () => {
-      textBox.setAttribute('class', '')
+      removeClass(textBox, 'custom-label-editor')
       mode.removeTextEditedListener(afterEditing)
       mode.removeEditingCanceledListener(afterEditing)
     }

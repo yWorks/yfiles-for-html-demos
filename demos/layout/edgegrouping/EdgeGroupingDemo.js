@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -87,7 +87,8 @@ function run(licenseData) {
 }
 
 /**
- * Applies a layout to the current graph including the edge/port group information in the edges' tags.
+ * Applies a layout to the current graph including the edge/port group information in the edges'
+ * tags.
  * @param {boolean} incremental
  */
 async function runLayout(incremental) {
@@ -122,6 +123,7 @@ async function runLayout(incremental) {
 
 function createSampleGraph() {
   const graph = graphComponent.graph
+  graph.clear()
   initDemoStyles(graph)
   graph.nodeDefaults.style.cssClass = 'node-color'
   graph.nodeDefaults.size = [50, 30]
@@ -148,15 +150,9 @@ function createSampleGraph() {
   })
   bridgeManager.addObstacleProvider(new GraphObstacleProvider())
 
-  const builder = new GraphBuilder({
-    graph,
-    nodesSource: SampleData.nodes,
-    edgesSource: SampleData.edges,
-    nodeIdBinding: 'id',
-    edgeIdBinding: 'id',
-    sourceNodeBinding: 'from',
-    targetNodeBinding: 'to'
-  })
+  const builder = new GraphBuilder(graph)
+  builder.createNodesSource(SampleData.nodes, 'id')
+  builder.createEdgesSource(SampleData.edges, 'from', 'to', 'id')
   builder.buildGraph()
 
   graph.edges.forEach(edge => {

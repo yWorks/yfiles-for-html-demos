@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -81,8 +81,9 @@ export default class DecisionTree {
    * @param rootNode The root node that the decision tree starts with
    * @param containerElement The element to display the decision tree in
    */
-  constructor(graph, rootNode, containerElement) {
+  constructor(graph, rootNode, containerElement, onLayout) {
     this.originalGraph = graph
+    this.onLayout = onLayout
     // initialize the GraphComponent
     const graphComponent = new GraphComponent(containerElement)
     this.graph = graphComponent.graph
@@ -481,6 +482,7 @@ export default class DecisionTree {
         this.pathNodes.has(edge.sourceNode) && this.pathNodes.has(edge.targetNode) ? 1 : 0
 
       this.runningLayout = true
+      this.onLayout(true)
       const layoutExecutor = new LayoutExecutor({
         graphComponent: this.$graphComponent,
         layout: new MinimumNodeSizeStage(layout),
@@ -497,6 +499,7 @@ export default class DecisionTree {
         }
       } finally {
         this.runningLayout = false
+        this.onLayout(false)
       }
     }
   }

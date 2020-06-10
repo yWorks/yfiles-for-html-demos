@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -32,7 +32,6 @@ import {
   GraphComponent,
   GraphEditorInputMode,
   ICommand,
-  IGraph,
   License,
   Point,
   Rect,
@@ -46,23 +45,21 @@ import MySimpleNodeStyle from './MySimpleNodeStyle.js'
 import { bindCommand, showApp } from '../../resources/demo-app.js'
 import loadJson from '../../resources/load-json.js'
 
+/** @type {MySimpleLabelStyle} */
 let labelStyle = null
 
 /** @type {GraphComponent} */
 let graphComponent = null
 
-/** @type {IGraph} */
-let graph = null
+const wrappingSelect = document.querySelector("select[data-command='SetWrapping']")
 
-/** @type {HTMLSelectElement} */
-let wrappingSelect = null
-
+/**
+ * @param {object} licenseData
+ */
 function run(licenseData) {
   License.value = licenseData
   // Initialize the GraphComponent and place it in the div with CSS selector #graphComponent
   graphComponent = new GraphComponent('#graphComponent')
-  // conveniently store a reference to the graph that is displayed
-  graph = graphComponent.graph
 
   // initialize the graph
   initializeGraph()
@@ -71,7 +68,6 @@ function run(licenseData) {
   graphComponent.inputMode = createEditorMode()
 
   // initialize the select box
-  wrappingSelect = document.querySelector("select[data-command='SetWrapping']")
   wrappingSelect.selectedIndex = 4
   setLabelWrapping(TextWrapping.WORD_ELLIPSIS)
 
@@ -87,6 +83,7 @@ function run(licenseData) {
 // ////////////// New in this sample ////////////////
 /**
  * Changes the label wrapping for the default label style.
+ * @param {TextWrapping} wrapping
  */
 function setLabelWrapping(wrapping) {
   if (labelStyle !== null && labelStyle.wrapping !== wrapping) {
@@ -139,6 +136,7 @@ function onWrappingSelectChanged() {
  * nodes in the graph.
  */
 function initializeGraph() {
+  const graph = graphComponent.graph
   // Create a new style and use it as default node style
   graph.nodeDefaults.style = new MySimpleNodeStyle()
   // Create a new style and use it as default edge style
@@ -163,7 +161,7 @@ function initializeGraph() {
 /**
  * Creates the default input mode for the graphComponent,
  * a {@link GraphEditorInputMode}.
- * @return {IInputMode} a new GraphEditorInputMode instance
+ * @returns {GraphEditorInputMode} a new GraphEditorInputMode instance
  */
 function createEditorMode() {
   return new GraphEditorInputMode({
@@ -175,6 +173,7 @@ function createEditorMode() {
  * Creates the initial sample graph.
  */
 function createSampleGraph() {
+  const graph = graphComponent.graph
   const node0 = graph.createNode(new Rect(180, 40, 30, 30))
   const node1 = graph.createNode(new Rect(260, 50, 30, 30))
   const node2 = graph.createNode(new Rect(284, 200, 30, 30))

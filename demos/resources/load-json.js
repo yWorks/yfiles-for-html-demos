@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,6 +26,10 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
+/**
+ * @param {string} licenseString
+ * @returns {(object|string)}
+ */
 function parseLicense(licenseString) {
   try {
     return JSON.parse(licenseString)
@@ -40,6 +44,9 @@ function parseLicense(licenseString) {
   return licenseString
 }
 
+/**
+ * @returns {(object|)}
+ */
 function tryGetLicenseFromLocalStorage() {
   if (isLocalStorageSupported() && window.localStorage.getItem('yFiles_for_HTML_license')) {
     const licenseObject = parseLicense(window.localStorage.getItem('yFiles_for_HTML_license'))
@@ -50,10 +57,13 @@ function tryGetLicenseFromLocalStorage() {
   return false
 }
 
+/**
+ * @returns {boolean}
+ */
 function isLocalStorageSupported() {
   if (!window.localStorage) return false
   try {
-    window.localStorage.setItem('probe', true)
+    window.localStorage.setItem('probe', String(true))
     window.localStorage.removeItem('probe')
     return true
   } catch (error) {
@@ -61,8 +71,11 @@ function isLocalStorageSupported() {
   }
 }
 
+/**
+ * @returns {Promise.<(object|string)>}
+ */
 function tryLocalStorage() {
-  return new Promise((resolve, reject) => {
+  return new Promise(resolve => {
     if (typeof window !== 'undefined') {
       const storedLicense = tryGetLicenseFromLocalStorage()
       if (storedLicense) {

@@ -5,8 +5,8 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.2.
-     // Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML 2.3.
+     // Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -76,6 +76,7 @@
     }
   </style>
   <script src="resources/filesystem-warning.js"></script>
+  <script>window.tsReadme=true</script>
 </head>
 <body>
 <header style="padding-left: 20px;">
@@ -96,9 +97,19 @@
     </div>
   </aside>
   <div class="content">
-    <p id="general-intro" class="first-paragraph">
-      The <a href="https://www.yworks.com/products/yfiles-for-html">yFiles for HTML 2.2.0.3</a> demos and tutorials are extensive sample applications that
-      present the features of the yFiles for HTML diagramming library.</p>
+    <div id="general-intro">
+      <p class="first-paragraph">
+        This page lists all <a href="https://www.yworks.com/products/yfiles-for-html">yFiles for HTML 2.3</a> demo applications.
+      </p>
+      <p>
+        All demos are available as JavaScript. For many of these demos, the TypeScript sources are also available in the
+        <a href="../demos-ts/README.html"><code>demos-ts/</code></a> directory.
+      </p>
+      <p class="ts-only hidden">
+        The demos that are available only as JavaScript are labeled as such. Browse the <a href="../demos-js/README.html">JavaScript demos here</a>.
+      </p>
+    </div>
+
     <div id="tutorial-getting-started" class="hidden">
       <p>
         This Getting Started Tutorial is a step-by-step introduction to the concepts and main features of the yFiles for HTML
@@ -136,7 +147,7 @@
       <p>
         It is intended for developers who are interested in how to implement specific application features. If you are
         new to the yFiles for HTML diagramming library, we recommend to start with the <a
-        href="../01-tutorial-getting-started">Getting Started</a> tutorial. Then, have a look at the samples of this
+        href="#tutorial-getting-started">Getting Started</a> tutorial. Then, have a look at the samples of this
         tutorial that cover the features you are interested in.</p>
       <p>
         To make full use of this tutorial, we also recommend to review and possibly modify the source code for each
@@ -145,8 +156,7 @@
     <p>
       The complete source code of all of these samples is part of the yFiles for HTML package and available at <a
       href="https://github.com/yWorks/yfiles-for-html-demos">GitHub</a>.</p>
-    <p>
-      To execute a specific sample, click on its card below.</p>
+
     <p id="online-notice">
       All of these demos are also hosted at the <a href="https://live.yworks.com/demos/" target="_blank">yFiles for HTML
       Online Demos page</a>.</p>
@@ -154,8 +164,8 @@
     <div class="important" id="no-ecmascript6" style="display: none">
       <p>These demos use ECMAScript 6 features that your browser does not support.</p>
       <p>
-        Please switch to a browser with support for ECMAScript 6 (Chrome, Firefox, Edge, Safari 10) or use the included
-        <a href="../deployment/README.html#demos-es5">deployment tool</a> to convert the demos to ECMAScript 5. The
+        Please switch to a browser with support for ECMAScript 6, for example Chrome, Firefox, Edge, or Safari, or use the included
+        <a href="../deployment/demos-es5/README.html">deployment tool</a> to convert the demos to ECMAScript 5. The
         converted demos are also <a href="https://live.yworks.com/demos/" target="_blank">available online</a>. </p>
       <p>
         Note that ECMAScript 6 is a requirement of the demos, only. The yFiles for HTML library itself is compatible
@@ -207,7 +217,7 @@
       target="_blank" class="tw">Twitter</a> <a href="https://www.youtube.com/user/yWorksTube" target="_blank"
       class="yt">YouTube</a>
     </div>
-    <br><br> <span class="copyright">COPYRIGHT &#x00A9; 2019 yWorks</span><br> <a
+    <br><br> <span class="copyright">COPYRIGHT &#x00A9; 2020 yWorks</span><br> <a
     href="https://www.yworks.com/company/legal/imprint">Legal Disclosure</a> | <a
     href="https://www.yworks.com/company/legal/terms-of-use">Terms of Use</a> | <a
     href="https://www.yworks.com/company/legal/privacy">Privacy Policy</a>

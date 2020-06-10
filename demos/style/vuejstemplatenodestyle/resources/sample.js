@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -104,8 +104,22 @@ export default {
   ],
 
   edges: [
-    { src: '0', tgt: '1', bends: [{ x: 382.5, y: 141 }, { x: 145, y: 141 }] },
-    { src: '0', tgt: '3', bends: [{ x: 382.5, y: 141 }, { x: 620, y: 141 }] },
+    {
+      src: '0',
+      tgt: '1',
+      bends: [
+        { x: 382.5, y: 141 },
+        { x: 145, y: 141 }
+      ]
+    },
+    {
+      src: '0',
+      tgt: '3',
+      bends: [
+        { x: 382.5, y: 141 },
+        { x: 620, y: 141 }
+      ]
+    },
     { src: '1', tgt: '2' },
     { src: '3', tgt: '4' },
     { src: '3', tgt: '5', bends: [{ x: 620, y: 331 }] }

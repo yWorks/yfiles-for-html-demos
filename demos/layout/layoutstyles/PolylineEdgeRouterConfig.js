@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -28,9 +28,11 @@
  ***************************************************************************/
 import {
   Class,
+  CurveConnectionStyle,
   EdgeRouter,
   EdgeRouterBusDescriptor,
   EdgeRouterEdgeLayoutDescriptor,
+  EdgeRouterEdgeRoutingStyle,
   EdgeRouterScope,
   EnumDefinition,
   GenericLabeling,
@@ -61,7 +63,7 @@ import {
 
 /**
  * Configuration options for the layout algorithm of the same name.
- * @yjs:keep=DescriptionGroup,DistancesGroup,EdgePropertiesGroup,GridGroup,LabelingGroup,LayoutGroup,NodePropertiesGroup,PolylineGroup,PreferredPlacementGroup,descriptionText,considerEdgeLabelsItem,considerNodeLabelsItem,edgeLabelingItem,enablePolylineRoutingItem,enableReroutingItem,gridEnabledItem,gridSpacingItem,labelPlacementAlongEdgeItem,labelPlacementDistanceItem,labelPlacementOrientationItem,labelPlacementSideOfEdgeItem,maximumDurationItem,minimumEdgeToEdgeDistanceItem,minimumFirstSegmentLengthItem,minimumLastSegmentLengthItem,useIntermediatePointsItem,minimumNodeCornerDistanceItem,minimumNodeToEdgeDistanceItem,monotonicRestrictionItem,optimizationStrategyItem,preferredPolylineSegmentLengthItem,scopeItem,shouldDisableGridSpacingItem,shouldDisableLabelPlacementAlongEdgeItem,shouldDisableLabelPlacementDistanceItem,shouldDisableLabelPlacementOrientationItem,shouldDisableLabelPlacementSideOfEdgeItem,shouldDisablePreferredPolylineSegmentLengthItem
+ * @yjs:keep=DescriptionGroup,DistancesGroup,EdgePropertiesGroup,GridGroup,LabelingGroup,LayoutGroup,NodePropertiesGroup,PolylineGroup,PreferredPlacementGroup,descriptionText,considerEdgeLabelsItem,considerNodeLabelsItem,edgeLabelingItem,routingStyleItem,enableReroutingItem,gridEnabledItem,gridSpacingItem,labelPlacementAlongEdgeItem,labelPlacementDistanceItem,labelPlacementOrientationItem,labelPlacementSideOfEdgeItem,maximumDurationItem,minimumEdgeToEdgeDistanceItem,minimumFirstSegmentLengthItem,minimumLastSegmentLengthItem,useIntermediatePointsItem,minimumNodeCornerDistanceItem,minimumNodeToEdgeDistanceItem,monotonicRestrictionItem,optimizationStrategyItem,preferredPolylineSegmentLengthItem,scopeItem,shouldDisableGridSpacingItem,shouldDisableLabelPlacementAlongEdgeItem,shouldDisableLabelPlacementDistanceItem,shouldDisableLabelPlacementOrientationItem,shouldDisableLabelPlacementSideOfEdgeItem,shouldDisablePreferredPolylineSegmentLengthItem, busMembershipItem, enableBusRouting, preferredPolylineSegmentLengthItem, preferredPolylineSegmentRatioItem, curveAtSourceItem, curveAtTargetItem, shouldDisableCurveAtSourceItem, shouldDisableCurveAtTargetItem
  */
 const PolylineEdgeRouterConfig = Class('PolylineEdgeRouterConfig', {
   $extends: LayoutConfiguration,
@@ -94,8 +96,11 @@ const PolylineEdgeRouterConfig = Class('PolylineEdgeRouterConfig', {
     this.gridEnabledItem = grid !== null
     this.gridSpacingItem = grid !== null ? grid.spacing : 10
 
-    this.enablePolylineRoutingItem = true
-    this.preferredPolylineSegmentLengthItem = router.preferredPolylineSegmentLength
+    this.routingStyleItem = EdgeRouterEdgeRoutingStyle.ORTHOGONAL
+    this.preferredPolylineSegmentLengthItem = descriptor.preferredOctilinearSegmentLength
+    this.preferredPolylineSegmentRatioItem = descriptor.maximumOctilinearSegmentRatio
+    this.curveAtSourceItem = descriptor.sourceCurveConnectionStyle
+    this.curveAtTargetItem = descriptor.targetCurveConnectionStyle
 
     this.busMembershipItem = PolylineEdgeRouterConfig.EnumBusMembership.NONE
 
@@ -132,8 +137,6 @@ const PolylineEdgeRouterConfig = Class('PolylineEdgeRouterConfig', {
     router.considerEdgeLabels = this.considerEdgeLabelsItem
     router.rerouting = this.enableReroutingItem
 
-    router.polylineRouting = this.enablePolylineRoutingItem
-    router.preferredPolylineSegmentLength = this.preferredPolylineSegmentLengthItem
     router.maximumDuration = this.maximumDurationItem * 1000
 
     const layout = new SequentialLayout()
@@ -161,8 +164,8 @@ const PolylineEdgeRouterConfig = Class('PolylineEdgeRouterConfig', {
   },
 
   /**
-   * Called by {@link LayoutConfiguration#apply} to create the layout data of the configuration. This
-   * method is typically overridden to provide mappers for the different layouts.
+   * Called by {@link LayoutConfiguration#apply} to create the layout data of the configuration.
+   * This method is typically overridden to provide mappers for the different layouts.
    */
   createConfiguredLayoutData: function(graphComponent, layout) {
     const layoutData = new PolylineEdgeRouterData({
@@ -171,7 +174,12 @@ const PolylineEdgeRouterConfig = Class('PolylineEdgeRouterConfig', {
           minimumEdgeToEdgeDistance: this.minimumEdgeToEdgeDistanceItem,
           minimumNodeCornerDistance: this.minimumNodeCornerDistanceItem,
           minimumFirstSegmentLength: this.minimumFirstSegmentLengthItem,
-          minimumLastSegmentLength: this.minimumLastSegmentLengthItem
+          minimumLastSegmentLength: this.minimumLastSegmentLengthItem,
+          preferredOctilinearSegmentLength: this.$preferredPolylineSegmentLengthItem,
+          maximumOctilinearSegmentRatio: this.$preferredPolylineSegmentRatioItem,
+          sourceCurveConnectionStyle: this.curveAtSourceItem,
+          targetCurveConnectionStyle: this.curveAtTargetItem,
+          routingStyle: this.routingStyleItem
         })
 
         if (this.optimizationStrategyItem === PolylineEdgeRouterConfig.EnumStrategies.BALANCED) {
@@ -247,7 +255,10 @@ const PolylineEdgeRouterConfig = Class('PolylineEdgeRouterConfig', {
         const visitedTags = new Set()
         graphComponent.graph.edges.forEach(edge => {
           const tag = edge.tag
-          if (!visitedTags.has(tag)) {
+          if (!tag) {
+            const busDescriptor = this.createBusDescriptor()
+            layoutData.buses.add(busDescriptor).item = edge
+          } else if (!visitedTags.has(tag)) {
             visitedTags.add(tag)
 
             const busDescriptor = this.createBusDescriptor()
@@ -266,6 +277,13 @@ const PolylineEdgeRouterConfig = Class('PolylineEdgeRouterConfig', {
       minimumBackboneSegmentLength: this.minimumBackboneSegmentLengthItem,
       multipleBackboneSegments: this.allowMultipleBackboneSegmentsItem
     })
+  },
+
+  /**
+   * Enables automatic bus routing.
+   */
+  enableBusRouting: function() {
+    this.busMembershipItem = PolylineEdgeRouterConfig.EnumBusMembership.TAG
   },
 
   // ReSharper disable UnusedMember.Global
@@ -322,7 +340,7 @@ const PolylineEdgeRouterConfig = Class('PolylineEdgeRouterConfig', {
   PolylineGroup: {
     $meta: function() {
       return [
-        LabelAttribute('Octilinear Routing'),
+        LabelAttribute('Routing Style'),
         OptionGroupAttribute('RootGroup', 40),
         TypeAttribute(OptionGroup.$class)
       ]
@@ -347,7 +365,7 @@ const PolylineEdgeRouterConfig = Class('PolylineEdgeRouterConfig', {
     $meta: function() {
       return [
         LabelAttribute('Bus Routing'),
-        OptionGroupAttribute('RootGroup', 45),
+        OptionGroupAttribute('PolylineGroup', 60),
         TypeAttribute(OptionGroup.$class)
       ]
     },
@@ -809,27 +827,34 @@ const PolylineEdgeRouterConfig = Class('PolylineEdgeRouterConfig', {
 
   /**
    * Backing field for below property
-   * @type {boolean}
+   * @type {EdgeRouterEdgeRoutingStyle}
    */
-  $enablePolylineRoutingItem: false,
+  $routingStyleItem: null,
 
-  /** @type {boolean} */
-  enablePolylineRoutingItem: {
+  /** @type {EdgeRouterEdgeRoutingStyle} */
+  routingStyleItem: {
     $meta: function() {
       return [
         LabelAttribute(
-          'Octilinear Routing',
-          '#/api/EdgeRouter#EdgeRouter-property-polylineRouting'
+          'RoutingStyle',
+          '#/api/EdgeRouterEdgeLayoutDescriptor#EdgeLayoutDescriptor-property-routingStyle'
         ),
         OptionGroupAttribute('PolylineGroup', 10),
-        TypeAttribute(YBoolean.$class)
+        EnumValuesAttribute().init({
+          values: [
+            ['Orthogonal', EdgeRouterEdgeRoutingStyle.ORTHOGONAL],
+            ['Octilinear', EdgeRouterEdgeRoutingStyle.OCTILINEAR],
+            ['Curved', EdgeRouterEdgeRoutingStyle.CURVED]
+          ]
+        }),
+        TypeAttribute(EdgeRouterEdgeRoutingStyle.$class)
       ]
     },
     get: function() {
-      return this.$enablePolylineRoutingItem
+      return this.$routingStyleItem
     },
     set: function(value) {
-      this.$enablePolylineRoutingItem = value
+      this.$routingStyleItem = value
     }
   },
 
@@ -844,7 +869,7 @@ const PolylineEdgeRouterConfig = Class('PolylineEdgeRouterConfig', {
     $meta: function() {
       return [
         LabelAttribute(
-          'Preferred Polyline Segment Length',
+          'Preferred Octilinear Segment Length',
           '#/api/EdgeRouter#EdgeRouter-property-preferredPolylineSegmentLength'
         ),
         OptionGroupAttribute('PolylineGroup', 20),
@@ -870,7 +895,133 @@ const PolylineEdgeRouterConfig = Class('PolylineEdgeRouterConfig', {
       return [TypeAttribute(YBoolean.$class)]
     },
     get: function() {
-      return this.enablePolylineRoutingItem === false
+      return this.routingStyleItem !== EdgeRouterEdgeRoutingStyle.OCTILINEAR
+    }
+  },
+
+  /**
+   * Backing field for below property
+   * @type {number}
+   */
+  $preferredPolylineSegmentRatioItem: 0.3,
+
+  /** @type {number} */
+  preferredPolylineSegmentRatioItem: {
+    $meta: function() {
+      return [
+        LabelAttribute(
+          'Preferred Octilinear Segment Ratio',
+          '#/api/EdgeRouter#EdgeRouter-property-maximumOctilinearSegmentRatio'
+        ),
+        OptionGroupAttribute('PolylineGroup', 30),
+        MinMaxAttribute().init({
+          min: 0,
+          max: 0.5,
+          step: 0.01
+        }),
+        ComponentAttribute(Components.SLIDER),
+        TypeAttribute(YNumber.$class)
+      ]
+    },
+    get: function() {
+      return this.$preferredPolylineSegmentRatioItem
+    },
+    set: function(value) {
+      this.$preferredPolylineSegmentRatioItem = value
+    }
+  },
+
+  /** @type {boolean} */
+  shouldDisablePreferredPolylineSegmentRatioItem: {
+    $meta: function() {
+      return [TypeAttribute(YBoolean.$class)]
+    },
+    get: function() {
+      return this.routingStyleItem !== EdgeRouterEdgeRoutingStyle.OCTILINEAR
+    }
+  },
+
+  /**
+   * Backing field for below property
+   * @type {CurveConnectionStyle}
+   */
+  $curveAtSourceItem: null,
+
+  /** @type {CurveConnectionStyle} */
+  curveAtSourceItem: {
+    $meta: function() {
+      return [
+        LabelAttribute(
+          'Curve Connection at Source',
+          '#/api/EdgeRouterEdgeLayoutDescriptor#EdgeRouterEdgeLayoutDescriptor-property-sourceCurveConnectionStyle'
+        ),
+        OptionGroupAttribute('PolylineGroup', 40),
+        EnumValuesAttribute().init({
+          values: [
+            ['Straight', CurveConnectionStyle.KEEP_PORT],
+            ['Organic', CurveConnectionStyle.ORGANIC]
+          ]
+        }),
+        TypeAttribute(CurveConnectionStyle.$class)
+      ]
+    },
+    get: function() {
+      return this.$curveAtSourceItem
+    },
+    set: function(value) {
+      this.$curveAtSourceItem = value
+    }
+  },
+
+  /** @type {boolean} */
+  shouldDisableCurveAtSourceItem: {
+    $meta: function() {
+      return [TypeAttribute(YBoolean.$class)]
+    },
+    get: function() {
+      return this.routingStyleItem !== EdgeRouterEdgeRoutingStyle.CURVED
+    }
+  },
+
+  /**
+   * Backing field for below property
+   * @type {CurveConnectionStyle}
+   */
+  $curveAtTargetItem: null,
+
+  /** @type {CurveConnectionStyle} */
+  curveAtTargetItem: {
+    $meta: function() {
+      return [
+        LabelAttribute(
+          'Curve Connection at Target',
+          '#/api/EdgeRouterEdgeLayoutDescriptor#EdgeRouterEdgeLayoutDescriptor-property-targetCurveConnectionStyle'
+        ),
+        OptionGroupAttribute('PolylineGroup', 50),
+        EnumValuesAttribute().init({
+          values: [
+            ['Straight', CurveConnectionStyle.KEEP_PORT],
+            ['Organic', CurveConnectionStyle.ORGANIC]
+          ]
+        }),
+        TypeAttribute(CurveConnectionStyle.$class)
+      ]
+    },
+    get: function() {
+      return this.$curveAtTargetItem
+    },
+    set: function(value) {
+      this.$curveAtTargetItem = value
+    }
+  },
+
+  /** @type {boolean} */
+  shouldDisableCurveAtTargetItem: {
+    $meta: function() {
+      return [TypeAttribute(YBoolean.$class)]
+    },
+    get: function() {
+      return this.routingStyleItem !== EdgeRouterEdgeRoutingStyle.CURVED
     }
   },
 
@@ -914,7 +1065,7 @@ const PolylineEdgeRouterConfig = Class('PolylineEdgeRouterConfig', {
    */
   $automaticEdgeGroupingItem: true,
 
-  /** @type {number} */
+  /** @type {boolean} */
   automaticEdgeGroupingItem: {
     $meta: function() {
       return [
@@ -991,7 +1142,7 @@ const PolylineEdgeRouterConfig = Class('PolylineEdgeRouterConfig', {
    */
   $allowMultipleBackboneSegmentsItem: true,
 
-  /** @type {number} */
+  /** @type {boolean} */
   allowMultipleBackboneSegmentsItem: {
     $meta: function() {
       return [

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -28,37 +28,48 @@
  ***************************************************************************/
 'use strict'
 
-/* eslint-disable no-nested-ternary */
-/* eslint-disable no-undef */
+/* global yfiles */
 
-/** @type {yfiles.view.GraphComponent} */
+/** @type {GraphComponent} */
 let graphComponent = null
 
+const {
+  GraphComponent,
+  GraphEditorInputMode,
+  HierarchicLayout,
+  IArrow,
+  License,
+  MinimumNodeSizeStage,
+  PolylineEdgeStyle,
+  Rect,
+  ShapeNodeStyle
+} = yfiles
+
 function run(licenseData) {
-  yfiles.lang.License.value = licenseData
+  License.value = licenseData
 
   // initialize graph component
-  graphComponent = new yfiles.view.GraphComponent('graphComponent')
-  graphComponent.inputMode = new yfiles.input.GraphEditorInputMode()
+  graphComponent = new GraphComponent('graphComponent')
+  graphComponent.inputMode = new GraphEditorInputMode()
 
   // initialize graph
   const graph = graphComponent.graph
   graph.undoEngineEnabled = true
 
   // initialize default styles
-  graph.nodeDefaults.style = new yfiles.styles.ShapeNodeStyle({
+  graph.nodeDefaults.style = new ShapeNodeStyle({
     fill: 'orange',
     stroke: 'orange',
     shape: 'rectangle'
   })
-  graph.edgeDefaults.style = new yfiles.styles.PolylineEdgeStyle({
-    targetArrow: yfiles.styles.IArrow.DEFAULT
+  graph.edgeDefaults.style = new PolylineEdgeStyle({
+    targetArrow: IArrow.DEFAULT
   })
 
   // create small sample graph
-  const node1 = graph.createNode(new yfiles.geometry.Rect(50, 50, 30, 30))
-  const node2 = graph.createNode(new yfiles.geometry.Rect(0, 150, 30, 30))
-  const node3 = graph.createNode(new yfiles.geometry.Rect(100, 150, 30, 30))
+  const node1 = graph.createNode(new Rect(50, 50, 30, 30))
+  const node2 = graph.createNode(new Rect(0, 150, 30, 30))
+  const node3 = graph.createNode(new Rect(100, 150, 30, 30))
   graph.createEdge(node1, node2)
   graph.createEdge(node1, node3)
 
@@ -75,7 +86,7 @@ function run(licenseData) {
  */
 async function applyLayout() {
   setUIDisabled(true)
-  const layout = new yfiles.layout.MinimumNodeSizeStage(new yfiles.hierarchic.HierarchicLayout())
+  const layout = new MinimumNodeSizeStage(new HierarchicLayout())
   try {
     graphComponent.morphLayout(layout, '1s')
   } catch (error) {

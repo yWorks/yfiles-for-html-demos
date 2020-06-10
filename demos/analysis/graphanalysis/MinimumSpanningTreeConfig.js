@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -51,8 +51,12 @@ export default class MinimumSpanningTreeConfig extends AlgorithmConfiguration {
       return
     }
     // reset edge styles
-    graph.edges.forEach(edge => {
+    graph.edges.forEach((edge, index) => {
       graph.setStyle(edge, graph.edgeDefaults.style)
+      if (!edge.tag) {
+        edge.tag = {}
+      }
+      edge.tag.id = index
     })
     // calculate the edges of a minimum spanning tree
     const result = new SpanningTree({ costs: edge => this.getEdgeWeight(edge) }).run(graph)
@@ -68,7 +72,7 @@ export default class MinimumSpanningTreeConfig extends AlgorithmConfiguration {
     // mark those edges with the color style
     result.edges.forEach(edge => {
       if (graph.contains(edge)) {
-        graph.setStyle(edge, this.getMarkedEdgeStyle(false, 0, null))
+        graph.setStyle(edge, this.getMarkedEdgeStyle(false, 0))
         const source = edge.sourceNode
         const target = edge.targetNode
 
@@ -80,7 +84,7 @@ export default class MinimumSpanningTreeConfig extends AlgorithmConfiguration {
         mst[0].push(target)
 
         edge.tag = {
-          id: edge.index,
+          id: edge.tag.id,
           color: null,
           components: mst,
           edgeComponent: 0

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -36,7 +36,9 @@ export default class FileSaveSupport {
    *
    * @param {string} fileContent The file contents to be saved.
    * @param {string} fileName The default filename for the downloaded file.
-   * @return {Promise} A promise which resolves when the save operation is complete.
+   * @returns {Promise.<string>} {Promise} A promise which resolves when the save operation is complete.
+   * @param {string} fileContent
+   * @param {string} fileName
    */
   static save(fileContent, fileName) {
     return new Promise((resolve, reject) => {
@@ -120,7 +122,7 @@ export default class FileSaveSupport {
           }
           // For the options, extract the mime type from the Data URL
           blob = new Blob([new Uint8Array(byteArray)], {
-            type: dataUrlParts[0].match(/:(.*?);/, '')[1]
+            type: dataUrlParts[0].match(/:(.*?);/)[1]
           })
         } else if (format === 'pdf') {
           // encode content to make transparent images work correctly
@@ -144,6 +146,9 @@ export default class FileSaveSupport {
     })
   }
 
+  /**
+   * @returns {boolean}
+   */
   static isFileConstructorAvailable() {
     // Test whether required functions exist
     if (
@@ -171,7 +176,7 @@ export default class FileSaveSupport {
    * Returns whether the MS Internet Explorer specific save technique is available.
    * This works in IE 10+. See the related demo for more details.
    * for more details.
-   * @return {boolean}
+   * @returns {boolean} {boolean}
    */
   static isMsSaveAvailable() {
     return (

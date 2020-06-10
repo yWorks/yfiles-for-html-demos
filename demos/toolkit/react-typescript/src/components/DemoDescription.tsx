@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -31,7 +31,7 @@ import reloadIcon from '../assets/reload-16.svg'
 import './DemoDescription.css'
 
 export default class DemoDescription extends Component {
-  render() {
+  render(): JSX.Element {
     const iconStyle = {
       verticalAlign: 'middle'
     }
@@ -82,7 +82,8 @@ export default class DemoDescription extends Component {
           </p>
           <code>
             {' '}
-            > npm install <br />> npm run start{' '}
+            &gt; npm install <br />
+            &gt; npm run start{' '}
           </code>
           <p>This will start the development server of the toolkit.</p>
 

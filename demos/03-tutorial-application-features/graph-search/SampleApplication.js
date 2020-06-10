@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -32,6 +32,7 @@ import {
   GraphComponent,
   ICommand,
   IGraph,
+  ILabel,
   INode,
   InteriorStretchLabelModel,
   License,
@@ -48,11 +49,13 @@ import loadJson from '../../resources/load-json.js'
  * Application Features - Graph Search
  *
  * This demo shows an implementation of the search functionality on the nodes of a graph.
+ * @type {GraphComponent}
  */
 let graphComponent = null
 
 /**
  * Bootstraps the demo.
+ * @param {object} licenseData
  */
 function run(licenseData) {
   License.value = licenseData
@@ -118,7 +121,7 @@ function updateSearch(searchText) {
  * Returns whether the given node is a match when searching for the given text in the label of the node.
  * @param {INode} node The node to be examined
  * @param {string} text The text to be queried
- * @return {boolean} True if the node matches the text, false otherwise
+ * @returns {boolean} True if the node matches the text, false otherwise
  */
 function matches(node, text) {
   return node.labels.some(label => label.text.toLowerCase().indexOf(text.toLowerCase()) !== -1)
@@ -161,7 +164,6 @@ function registerCommands() {
   bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent, null)
   bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
   bindCommand("button[data-command='Open']", ICommand.OPEN, graphComponent, null)
-
   // adds the listener to the search box
   document.getElementById('searchBox').addEventListener('input', e => {
     updateSearch(e.target.value)
@@ -175,83 +177,83 @@ function registerCommands() {
 function createGraph(graph) {
   const node1 = graph.createNode({
     layout: new Rect(241, 273, 130, 70),
-    labels: 'Hobbies'
+    labels: ['Hobbies']
   })
   const node2 = graph.createNode({
     layout: new Rect(309, 126, 70, 40),
-    labels: 'Games'
+    labels: ['Games']
   })
   const node3 = graph.createNode({
     layout: new Rect(435, 318, 70, 40),
-    labels: 'Sport'
+    labels: ['Sport']
   })
   const node4 = graph.createNode({
     layout: new Rect(249, 451, 70, 40),
-    labels: 'Books'
+    labels: ['Books']
   })
   const node5 = graph.createNode({
     layout: new Rect(116, 323, 70, 40),
-    labels: 'Diy'
+    labels: ['Diy']
   })
   const node6 = graph.createNode({
     layout: new Rect(157, 187, 70, 40),
-    labels: 'Collecting'
+    labels: ['Collecting']
   })
   const node7 = graph.createNode({
     layout: new Rect(232, 579, 70, 40),
-    labels: 'Fantasy'
+    labels: ['Fantasy']
   })
   const node8 = graph.createNode({
     layout: new Rect(343, 530, 70, 40),
-    labels: 'Science Fiction'
+    labels: ['Science Fiction']
   })
   const node9 = graph.createNode({
     layout: new Rect(137, 503, 70, 40),
-    labels: 'Thriller'
+    labels: ['Thriller']
   })
   const node10 = graph.createNode({
     layout: new Rect(201, 30, 100, 40),
-    labels: 'Cops and Robbers'
+    labels: ['Cops and Robbers']
   })
   const node11 = graph.createNode({
     layout: new Rect(422, 85, 90, 40),
-    labels: 'The Settlers of Catan'
+    labels: ['The Settlers of Catan']
   })
   const node12 = graph.createNode({
     layout: new Rect(341, 0, 70, 40),
-    labels: 'Computer'
+    labels: ['Computer']
   })
   const node13 = graph.createNode({
     layout: new Rect(61, 109, 70, 40),
-    labels: 'Stamps'
+    labels: ['Stamps']
   })
   const node14 = graph.createNode({
     layout: new Rect(463, 435, 70, 40),
-    labels: 'Dancing'
+    labels: ['Dancing']
   })
   const node15 = graph.createNode({
     layout: new Rect(568, 349, 70, 40),
-    labels: 'Climbing'
+    labels: ['Climbing']
   })
   const node16 = graph.createNode({
     layout: new Rect(508, 222, 70, 40),
-    labels: 'Soccer'
+    labels: ['Soccer']
   })
   const node17 = graph.createNode({
     layout: new Rect(654, 442, 70, 40),
-    labels: 'Rock'
+    labels: ['Rock']
   })
   const node18 = graph.createNode({
     layout: new Rect(679, 294, 70, 40),
-    labels: 'Ice'
+    labels: ['Ice']
   })
   const node19 = graph.createNode({
     layout: new Rect(0, 272, 70, 40),
-    labels: 'Planes'
+    labels: ['Planes']
   })
   const node20 = graph.createNode({
     layout: new Rect(16, 403, 70, 40),
-    labels: 'Cars'
+    labels: ['Cars']
   })
 
   graph.createEdge(node1, node2)

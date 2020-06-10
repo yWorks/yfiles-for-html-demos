@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -29,11 +29,11 @@
 /**
  * @yjs:keep=types,Node
  */
-export const Neo4jNode = neo4j.v1.types.Node
+export const Neo4jNode = neo4j.types.Node
 /**
  * @yjs:keep=types,Relationship
  */
-export const Neo4jEdge = neo4j.v1.types.Relationship
+export const Neo4jEdge = neo4j.types.Relationship
 
 /**
  * Establishes a connection to a Neo4j database.
@@ -44,7 +44,7 @@ export const Neo4jEdge = neo4j.v1.types.Relationship
  */
 export async function connectToDB(url, user, pass, encrypted) {
   // create a new Neo4j driver instance
-  const neo4jDriver = neo4j.v1.driver(url, neo4j.v1.auth.basic(user, pass), {
+  const neo4jDriver = neo4j.driver(url, neo4j.auth.basic(user, pass), {
     encrypted: encrypted,
     trust: 'TRUST_CUSTOM_CA_SIGNED_CERTIFICATES'
   })

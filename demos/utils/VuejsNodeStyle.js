@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -541,9 +541,6 @@ function initializeDesignerVueComponents() {
     }
     const font = new Font(fontSettings)
     let textWrapping = TextWrapping.CHARACTER_ELLIPSIS
-
-    // apply the font
-    font.applyTo(textElement)
 
     if (typeof wrapping !== 'undefined' && wrapping !== null) {
       switch (wrapping) {

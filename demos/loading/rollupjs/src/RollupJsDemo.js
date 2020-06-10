@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,23 +26,14 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import {
-  Class,
-  GraphComponent,
-  GraphEditorInputMode,
-  HierarchicLayout,
-  ICommand,
-  LayoutExecutor,
-  License,
-  MinimumNodeSizeStage,
-  Rect,
-  ShapeNodeStyle
-} from 'yfiles'
-import { showApp, bindCommand, bindAction } from '../../../resources/demo-app.js'
+import { GraphComponent, GraphEditorInputMode, License, Rect, ShapeNodeStyle } from 'yfiles'
 import loadJson from '../../../resources/load-json.js'
+import { enableWorkarounds } from './utils/Workarounds'
 
 function run(licenseData) {
   License.value = licenseData
+
+  enableWorkarounds()
 
   // Create a GraphComponent and enable interactive editing
   const graphComponent = new GraphComponent('graphComponent')
@@ -62,11 +53,6 @@ function run(licenseData) {
   // Enable undo and center the graph in the view
   graph.undoEngineEnabled = true
   graphComponent.fitGraphBounds()
-
-  // Wire up the UI
-  registerCommands(graphComponent)
-
-  showApp(graphComponent)
 }
 
 function initializeGraph(graph) {
@@ -75,40 +61,6 @@ function initializeGraph(graph) {
   const node3 = graph.createNode(new Rect(100, 150, 30, 30))
   graph.createEdge(node1, node2)
   graph.createEdge(node1, node3)
-}
-
-// We need to load the 'view-layout-bridge' module explicitly to prevent tree-shaking
-// tools it from removing this dependency which is needed for 'morphLayout'.
-Class.ensure(LayoutExecutor)
-
-function applyLayout(graphComponent) {
-  graphComponent
-    .morphLayout(new MinimumNodeSizeStage(new HierarchicLayout()), '1s')
-    .catch(error => {
-      // If present, show the common demo error reporting dialog
-      if (typeof window.reportError === 'function') {
-        window.reportError(error)
-      } else {
-        throw error
-      }
-    })
-}
-
-function registerCommands(graphComponent) {
-  bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent)
-  bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
-
-  bindCommand("button[data-command='Cut']", ICommand.CUT, graphComponent)
-  bindCommand("button[data-command='Copy']", ICommand.COPY, graphComponent)
-  bindCommand("button[data-command='Paste']", ICommand.PASTE, graphComponent)
-  bindCommand("button[data-command='Delete']", ICommand.DELETE, graphComponent)
-
-  bindCommand("button[data-command='Undo']", ICommand.UNDO, graphComponent)
-  bindCommand("button[data-command='Redo']", ICommand.REDO, graphComponent)
-
-  bindAction("button[data-command='Layout']", () => applyLayout(graphComponent))
 }
 
 loadJson().then(run)

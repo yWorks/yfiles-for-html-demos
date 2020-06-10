@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,63 +26,61 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { Class, ILookup, MarkupExtension } from 'yfiles'
+import { ILookup, MarkupExtension } from 'yfiles'
 import MindmapEdgeStyle from './MindmapEdgeStyle.js'
 
 /**
  * A markup extension class used for (de-)serializing a custom edge style, namely
  * MindmapEdgeStyle class, that is written in ECMAScript 6.
  */
-const MindmapEdgeStyleExtension = Class('MindmapEdgeStyleExtension', {
-  $extends: MarkupExtension,
+export default class MindmapEdgeStyleExtension extends MarkupExtension {
+  constructor() {
+    super()
+    this.$thicknessStart = 1
+    this.$thicknessEnd = 1
+  }
 
   /**
-   * Backing field for below property
-   * @type {number}
-   */
-  $thicknessStart: 1,
-
-  /**
-   * Gets or sets the start thickness of an edge.
+   * Gets the start thickness of an edge.
    * The explicit getter/setter is needed to support (de-)serialization.
-   * @type {number}
+   * @return {number}
    */
-  thicknessStart: {
-    get: function() {
-      return this.$thicknessStart
-    },
-    set: function(value) {
-      this.$thicknessStart = value
-    }
-  },
+  get thicknessStart() {
+    return this.$thicknessStart
+  }
 
   /**
-   * Backing field for below property
-   * @type {number}
-   */
-  $thicknessEnd: 1,
-
-  /**
-   * Gets or sets the end thickness of an edge.
+   * Sets the start thickness of an edge.
    * The explicit getter/setter is needed to support (de-)serialization.
-   * @type {number}
+   * @param {number} value
    */
-  thicknessEnd: {
-    get: function() {
-      return this.$thicknessEnd
-    },
-    set: function(value) {
-      this.$thicknessEnd = value
-    }
-  },
+  set thicknessStart(value) {
+    this.$thicknessStart = value
+  }
+
+  /**
+   * Gets the end thickness of an edge.
+   * The explicit getter/setter is needed to support (de-)serialization.
+   * @return {number}
+   */
+  get thicknessEnd() {
+    return this.$thicknessEnd
+  }
+
+  /**
+   * Sets the end thickness of an edge.
+   * The explicit getter/setter is needed to support (de-)serialization.
+   * @param {number} value
+   */
+  set thicknessEnd(value) {
+    this.$thicknessEnd = value
+  }
 
   /**
    * @param {ILookup} lookup
    * @return {MindmapEdgeStyle}
    */
-  provideValue: function(lookup) {
+  provideValue(lookup) {
     return new MindmapEdgeStyle(this.thicknessStart, this.thicknessEnd)
   }
-})
-
-export default MindmapEdgeStyleExtension
+}

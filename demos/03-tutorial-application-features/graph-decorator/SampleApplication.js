@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -33,6 +33,7 @@ import {
   GraphEditorInputMode,
   ICommand,
   IGraph,
+  INode,
   InteriorStretchLabelModel,
   IPortCandidateProvider,
   License,
@@ -51,6 +52,7 @@ let graphComponent = null
 
 /**
  * Bootstraps the demo.
+ * @param {object} licenseData
  */
 function run(licenseData) {
   License.value = licenseData
@@ -82,6 +84,7 @@ function run(licenseData) {
 
 /**
  * Configures custom port candidates by utilizing the portCandidateProviderDecorator of the {@link NodeDecorator}.
+ * @param {IGraph} graph
  */
 function configurePortCandidateProvider(graph) {
   // Don't remove unoccupied ports.
@@ -131,7 +134,7 @@ function initTutorialDefaults(graph) {
   graph.nodeDefaults.size = new Size(40, 40)
   graph.nodeDefaults.labels.style = new DefaultLabelStyle({
     verticalTextAlignment: 'center',
-    wrapping: 'word_ellipsis'
+    wrapping: 'word-ellipsis'
   })
   graph.nodeDefaults.labels.layoutParameter = ExteriorLabelModel.SOUTH
 
@@ -159,7 +162,7 @@ function createGraph(graph) {
   const node4 = graph.createNodeAt([30, 175])
   const node5 = graph.createNodeAt([100, 175])
 
-  graph.groupNodes({ children: [node1, node2, node3], labels: 'Group 1' })
+  graph.groupNodes({ children: [node1, node2, node3], labels: ['Group 1'] })
 
   const edge1 = graph.createEdge(node1, node2)
   const edge2 = graph.createEdge(node1, node3)

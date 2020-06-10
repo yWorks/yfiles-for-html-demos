@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -35,7 +35,6 @@ import {
   GraphComponent,
   GraphOverviewComponent,
   ICommand,
-  IGraph,
   License,
   Point,
   PolylineEdgeStyle,
@@ -51,15 +50,13 @@ import loadJson from '../../resources/load-json.js'
 /** @type {GraphComponent} */
 let graphComponent = null
 
-/** @type {IGraph} */
-let graph = null
-
+/**
+ * @param {object} licenseData
+ */
 function run(licenseData) {
   License.value = licenseData
   // Initialize the GraphComponent and place it in the div with CSS selector #graphComponent
   graphComponent = new GraphComponent('#graphComponent')
-  // conveniently store a reference to the graph that is displayed
-  graph = graphComponent.graph
 
   // /////////////// New in this Sample /////////////////
 
@@ -87,6 +84,7 @@ function run(licenseData) {
  */
 function populateGraph() {
   // ////////// Sample node creation ///////////////////
+  const graph = graphComponent.graph
 
   // Creates two nodes with the default node size
   // The location is specified for the _center_
@@ -196,6 +194,7 @@ function populateGraph() {
  * so typically, you'd set these as early as possible in your application.
  */
 function setDefaultStyles() {
+  const graph = graphComponent.graph
   // Sets the default style for nodes
   // Creates a nice ShinyPlateNodeStyle instance, using an orange Fill.
   // Sets this style as the default for all nodes that don't have another
@@ -209,13 +208,13 @@ function setDefaultStyles() {
   graph.nodeDefaults.size = new Size(40, 40)
   graph.nodeDefaults.labels.style = new DefaultLabelStyle({
     verticalTextAlignment: 'center',
-    wrapping: 'word_ellipsis'
+    wrapping: 'word-ellipsis'
   })
   // Sets the default style for labels
   // Creates a label style with the label text color set to dark red
   const defaultLabelStyle = new DefaultLabelStyle({
     font: '12px Tahoma',
-    textFill: Fill.Black
+    textFill: Fill.BLACK
   })
 
   // Sets the defined style as the default for both edge and node labels:

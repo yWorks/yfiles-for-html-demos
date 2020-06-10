@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -335,16 +335,16 @@ const nodeStyleTemplate = `<g>
 <rect v-else-if="tag.status === 'busy'" :width="layout.width" :height="zoom < 0.4 ? layout.height : zoom < 0.7 ? '10' : '5'" fill="#E7527C" class="node-background"></rect>
 <rect v-else-if="tag.status === 'travel'" :width="layout.width" :height="zoom < 0.4 ? layout.height : zoom < 0.7 ? '10' : '5'" fill="#9945E9" class="node-background"></rect>
 <rect v-else-if="tag.status === 'unavailable'" :width="layout.width" :height="zoom < 0.4 ? layout.height : zoom < 0.7 ? '10' : '5'" fill="#8D8F91" class="node-background"></rect>
-<rect v-if="highlighted || selected" fill="transparent" :stroke="selected ? '#FFBB33' : '#249ae7'" stroke-width="3" 
+<rect v-if="highlighted || selected" fill="transparent" :stroke="selected ? '#FFBB33' : '#249ae7'" stroke-width="3"
   :width="layout.width-3" :height="layout.height-3" x="1.5" y="1.5"></rect>
 <!--the template for detailNodeStyle-->
 <template v-if="zoom >= 0.7">
   <image :xlink:href="'./resources/' + tag.icon + '.svg'" x="15" y="10" width="63.75" height="63.75"></image>
   <image :xlink:href="'./resources/' + tag.status + '_icon.svg'" x="25" y="80" height="15" width="60"></image>
   <g style="font-size:10px; font-family:Roboto,sans-serif; font-weight: 300; fill: #444">
-    <text transform="translate(100 25)" style="font-size:16px; fill:#336699">{{tag.name}}</text> 
+    <text transform="translate(100 25)" style="font-size:16px; fill:#336699">{{tag.name}}</text>
     <!-- use the VuejsNodeStyle svg-text template which supports wrapping -->
-    <svg-text x="100" y="35" :width="layout.width - 140" :content="tag.position.toUpperCase()" :line-spacing="0.2" font-size="10" font-family="Roboto,sans-serif" :wrapping="3"></svg-text>  
+    <svg-text x="100" y="35" :width="layout.width - 140" :content="tag.position.toUpperCase()" :line-spacing="0.2" font-size="10" font-family="Roboto,sans-serif" :wrapping="3"></svg-text>
     <text transform="translate(100 72)" >{{tag.email}}</text>
     <text transform="translate(100 88)" >{{tag.phone}}</text>
     <text transform="translate(170 88)" >{{tag.fax}}</text>
@@ -355,8 +355,8 @@ const nodeStyleTemplate = `<g>
   <image :xlink:href="'./resources/' + tag.icon + '.svg'" x="15" y="20" width="56.25" height="56.25"/>
   <g style="font-size:15px; font-family:Roboto,sans-serif; fill:#444" width="185">
     <text transform="translate(75 40)" style="font-size:26px; font-family:Roboto,sans-serif; fill:#336699">{{tag.name}}</text>
-    <!-- use the VuejsNodeStyle svg-text template which supports wrapping --> 
-    <svg-text x="75" y="50" :width="layout.width - 85" :content="tag.position.toUpperCase()" :line-spacing="0.2" font-size="15" font-family="Roboto,sans-serif" :wrapping="3"></svg-text>  
+    <!-- use the VuejsNodeStyle svg-text template which supports wrapping -->
+    <svg-text x="75" y="50" :width="layout.width - 85" :content="tag.position.toUpperCase()" :line-spacing="0.2" font-size="15" font-family="Roboto,sans-serif" :wrapping="3"></svg-text>
   </g>
 </template>
 <!--the template for overviewNodeStyle-->
@@ -416,8 +416,10 @@ function createGraph(nodesSource) {
 
   const treeBuilder = new TreeBuilder()
   registerElementDefaults(treeBuilder.graph)
-  treeBuilder.childBinding = 'subordinates'
-  treeBuilder.nodesSource = nodesSource
+  // configure the root nodes
+  const rootSource = treeBuilder.createRootNodesSource(nodesSource)
+  // configure the recursive structure of the childs
+  rootSource.addChildNodesSource(data => data.subordinates, rootSource)
   treeBuilder.buildGraph()
 
   return treeBuilder.graph

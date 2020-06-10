@@ -7,8 +7,8 @@
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.2.
-     // Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML 2.3.
+     // Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -40,25 +40,14 @@
   <link rel="stylesheet" href="../../resources/style/demo.css">
 
   <style type="text/css">
-    .firebrick {
-      fill: #B02222;
-    }
-
-    .orange {
-      fill: #FF8C00;
-    }
-
     .green {
-      fill: #008000;
+      color: green;
     }
-
-    .royalblue {
-      fill: #007FFF;
+    .blue {
+      color: blue;
     }
   </style>
 
-  <!-- enable debugging -->
-  <script src="../../../ide-support/yfiles-typeinfo.js"></script>
   <script src="../../resources/filesystem-warning.js"></script>
 </head>
 <body class="demo-has-left">
@@ -66,33 +55,31 @@
   <h1 class="demo-sidebar-header">Description</h1>
   <div class="demo-sidebar-content">
 
-    <p>This demo shows how resizing of nodes can be customized.</p>
+    <p>This demo shows how to implement a custom <a href="https://docs.yworks.com/yfileshtml/#/api/IReshapeHandleProvider" target="_blank">IReshapeHandleProvider</a>.</p>
 
-    <p>This is done with custom implementations of the interface <a href="https://docs.yworks.com/yfileshtml/#/api/IReshapeHandleProvider" target="_blank">IReshapeHandleProvider</a>
-      that are
-      added to the lookup of the nodes. </p>
+    <p>This <em>IReshapeHandleProvider</em> is provided for ports to reshape their
+      port visualization.</p>
 
     <h2>Things to Try</h2>
 
-    <p>Select and resize the nodes.</p>
-
-    <h2>Node Types</h2>
     <ul>
-      <li>
-        <em class="demo-red demo-bold">Red nodes</em> cannot be resized. They don't display resize handles.
+      <li>Select a <em class="green">green</em>
+        or <em class="blue">blue</em> port
+        and see its reshape handles at its corners. Also note that there
+        is a different handle at the center that was provided by the
+        <em>IHandleProvider</em> to change the port location.
       </li>
       <li>
-        <em class="demo-green demo-bold">Green nodes</em> show only four handles at the corners. During resizing,
-        these handles maintain the aspect ratio of the node.
+        Drag one of the reshape handles to change the size of the port visualization. Note that
+        the size can't be decreased below a specific minimum size.
       </li>
       <li>
-        <em class="demo-orange demo-bold">Orange nodes</em> cannot extend beyond the black rectangle. Note that
-        orange nodes can only be resized so that the new bounding box stays withing the enclosing black rectangle.
-      </li>
-      <li>
-        <em class="demo-blue demo-bold">Blue nodes</em> combine the behavior of the orange and green nodes.
+        Press and hold <strong>Ctrl</strong> and see that further reshape handles
+        appear on the left, right, top and bottom side of selected ports. These handles reshape the
+        port either horizontally or vertically.
       </li>
     </ul>
+
   </div>
 </aside>
 

@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+
+<!-- ////////////////////////////////////////////////////////////////////////
+     // @license
+     // This demo file is part of yFiles for HTML 2.3.
+     // Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // 72070 Tuebingen, Germany. All rights reserved.
+     //
+     // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+     // of demo files in source code or binary form, with or without
+     // modification, is not permitted.
+     //
+     // Owners of a valid software license for a yFiles for HTML version that this
+     // demo is shipped with are allowed to use the demo source code as basis
+     // for their own yFiles for HTML powered applications. Use of such programs is
+     // governed by the rights and conditions as set out in the yFiles for HTML
+     // license agreement.
+     //
+     // THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+     // WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+     // MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+     // NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+     // SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+     // TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+     // PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+     // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+     // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+     // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+     // 
+     ////////////////////////////////////////////////////////////////////////-->
+
+  <title>Isometric WebGL Drawing Demo [yFiles for HTML]</title>
+
+  <link rel="stylesheet" href="../../node_modules/yfiles/yfiles.css">
+  <link rel="stylesheet" href="../../resources/style/demo.css">
+
+  <script src="../../resources/filesystem-warning.js"></script>
+</head>
+<body class="demo-has-left">
+<aside class="demo-sidebar demo-left">
+  <h1 class="demo-sidebar-header">Description</h1>
+  <div class="demo-sidebar-content">
+    <p>
+      This demo displays graphs isometrically using WebGL, adding another dimension to the node visualizations that can be
+    used to represent an additional characteristic of the business data.</p>
+
+    <h2>Interaction</h2>
+    This demo features the full range of interactions using <a href="https://docs.yworks.com/yfileshtml/#/api/GraphEditorInputMode" target="_blank">GraphEditorInputMode</a>.
+    Also, each node has an additional handle at the "top" which, when dragged, will change the height of the node.
+
+    <h2>Things to Try</h2>
+    <ul>
+      <li>Select a node and drag the handle at the "top" to change the height of that node.</li>
+      <li>Drag the "Rotation" slider in the toolbar to change the rotation of the scene.</li>
+      <li>Press the "Toggle Grid" button in the toolbar to turn the grid on or off.</li>
+      <li>Click on an empty space in the canvas to create a new node with a random color and width.</li>
+    </ul>
+
+    <h2>Layout</h2>
+    There are two suitable layout algorithms to apply to the graph.
+    <ul>
+      <li>Hierarchic layout</li>
+      <li>Orthogonal layout</li>
+    </ul>
+
+    <h2>Loading Graphs</h2>
+    <p>
+      Load your own graph and display it isometrically.
+    </p>
+  </div>
+</aside>
+
+<div class="demo-content">
+  <div class="demo-toolbar">
+    <button id="open-file" data-command="Open" title="Open a GraphML file" class="demo-icon-yIconOpen"></button>
+
+    <button data-command="FitContent" title="Fit Content" class="demo-icon-yIconZoomFit"></button>
+
+    <span class="demo-separator"></span>
+
+    <button id="hierarchic-layout" data-command="HierarchicLayout" title="Calculates a hierarchic layout"
+      class="demo-icon-yIconLayout labeled">Hierarchic
+    </button>
+    <button id="orthogonal-layout" data-command="OrthogonalLayout" title="Calculates an orthogonal layout"
+      class="demo-icon-yIconLayout labeled">Orthogonal
+    </button>
+    <span class="demo-separator"></span>
+    Rotation:
+    <input style="width: 200px;" type="range" min="-3.14" max="3.14" step="0.01" id="rotation">
+    <span class="demo-separator"></span>
+    <button id="grid-toggle" class="demo-icon-yIconGrid labeled">Toggle Grid</button>
+  </div>
+
+  <div id="graphComponent"></div>
+</div>
+
+<script type="module" crossorigin="anonymous" src="IsometricWebGLDrawingDemo.js"></script>
+</body>
+</html>

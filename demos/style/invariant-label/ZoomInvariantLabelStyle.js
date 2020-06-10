@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -42,6 +42,7 @@ import {
   IVisualCreator,
   LabelStyleBase,
   Matrix,
+  MatrixOrder,
   OrientedRectangle,
   OrientedRectangleIndicatorInstaller,
   Point,
@@ -124,8 +125,11 @@ class ZoomInvariantLabelStyleBase extends LabelStyleBase {
       this.innerLabelStyle
     )
 
-    // create a new IRenderContext with a zoom of 1
-    const innerContext = new DummyContext(ctx, scale)
+    // pass inverse transform to nullify the scaling and translation on the context
+    // therefor inner styles can use the context's methods without considering the current transform
+    const inverseTransform = container.transform.clone()
+    inverseTransform.invert()
+    const innerContext = new DummyContext(ctx, scale * ctx.zoom, inverseTransform)
 
     // the wrapped style should always think it's rendering with the zoom level set in this.zoomThreshold
     const visual = creator.createVisual(innerContext)
@@ -155,9 +159,6 @@ class ZoomInvariantLabelStyleBase extends LabelStyleBase {
 
     const scale = this.getScaleForZoom(label, ctx.zoom)
 
-    // create a new IRenderContext with a zoom of this.zoomThreshold
-    const innerContext = new DummyContext(ctx, scale)
-
     oldVisual.transform = new Matrix(
       scale,
       0,
@@ -172,6 +173,13 @@ class ZoomInvariantLabelStyleBase extends LabelStyleBase {
       this.dummyLabel,
       this.innerLabelStyle
     )
+
+    // pass inverse transform to nullify the scaling and translation on the context
+    // therefor inner styles can use the context's methods without considering the current transform
+    const inverseTransform = oldVisual.transform.clone()
+    inverseTransform.invert()
+    const innerContext = new DummyContext(ctx, scale * ctx.zoom, inverseTransform)
+
     const updatedVisual = creator.updateVisual(innerContext, visual)
     if (updatedVisual === null) {
       // nothing to display -> return nothing
@@ -368,37 +376,38 @@ class DummyContext extends BaseClass(IRenderContext) {
   /**
    * @param {IRenderContext} innerContext
    * @param {number} zoom
+   * @param {Matrix} inverseTransform
    */
-  constructor(innerContext, zoom) {
+  constructor(innerContext, zoom, inverseTransform) {
     super()
-    const canvas = innerContext.canvasComponent
-    const worldBounds = canvas.contentRect
     this.innerContext = innerContext
-    this.$canvas = canvas
-    this.$clip = canvas.contentRect
     this.$zoom = zoom
-    const transform = new Matrix(zoom, 0, 0, zoom, -worldBounds.x * zoom, -worldBounds.y * zoom)
-    const viewTransform = new Matrix()
-    viewTransform.set(transform)
-    viewTransform.invert()
-    this.$viewTransform = viewTransform
-    this.$transform = transform
+    this.$transform = inverseTransform
+
+    // multiply all necessary transforms with the given inverse transform to nullify the outer transform
+    this.$viewTransform = this.$transformMatrix(this.innerContext.viewTransform)
+    this.$intermediateTransform = this.$transformMatrix(this.innerContext.intermediateTransform)
+    this.$projection = this.$transformMatrix(this.innerContext.projection)
   }
 
   get canvasComponent() {
-    return this.$canvas
+    return this.innerContext.canvasComponent
   }
 
   get clip() {
-    return this.$clip
+    return this.innerContext.clip
   }
 
   get viewTransform() {
     return this.$viewTransform
   }
 
-  get transform() {
-    return this.$transform
+  get intermediateTransform() {
+    return this.$intermediateTransform
+  }
+
+  get projection() {
+    return this.$projection
   }
 
   get defsElement() {
@@ -418,10 +427,27 @@ class DummyContext extends BaseClass(IRenderContext) {
   }
 
   /**
-   * @param {Point} world
+   * @param {Point} worldPoint
+   * @returns {Point}
    */
-  toViewCoordinates(world) {
-    return this.$transform.transform(world)
+  toViewCoordinates(worldPoint) {
+    return this.$viewTransform.transform(worldPoint)
+  }
+
+  /**
+   * @param {Point} intermediatePoint
+   * @returns {Point}
+   */
+  intermediateToViewCoordinates(intermediatePoint) {
+    return this.$projection.transform(intermediatePoint)
+  }
+
+  /**
+   * @param {Point} worldPoint
+   * @returns {Point}
+   */
+  worldToIntermediateCoordinates(worldPoint) {
+    return this.$intermediateTransform.transform(worldPoint)
   }
 
   /**
@@ -436,5 +462,16 @@ class DummyContext extends BaseClass(IRenderContext) {
    */
   lookup(type) {
     return this.innerContext.lookup(type)
+  }
+
+  /**
+   * Multiplies the given matrix with the inverse transform of the invariant label style.
+   * @param {Matrix} matrix
+   * @returns {Matrix}
+   */
+  $transformMatrix(matrix) {
+    const transformed = matrix.clone()
+    transformed.multiply(this.$transform, MatrixOrder.APPEND)
+    return transformed
   }
 }

@@ -5,12 +5,11 @@
   "license": "https://www.yworks.com/products/yfiles-for-html/sla",
   "private": true,
   "scripts": {
-    "preinstall": "cd ../../../lib/es-modules && npm pack",
     "pretest": "node fetch-latest-chromedriver-version.js",
     "test": "wdio wdio.conf.js"
   },
   "dependencies": {
-    "yfiles": "../../../lib/es-modules/yfiles-22.0.3-eval.tgz"
+    "yfiles": "../../../lib-dev/es-modules/yfiles-23.0.0-dev.tgz"
   },
   "devDependencies": {
     "@wdio/cli": "^5.12.5",

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -28,6 +28,9 @@
  ***************************************************************************/
 import {
   Font,
+  ILabel,
+  IOrientedRectangle,
+  IRenderContext,
   LabelStyleBase,
   Point,
   Rect,
@@ -58,13 +61,19 @@ export default class MySimpleLabelStyle extends LabelStyleBase {
       lineSpacing: 0.3
     })
 
-    this.wrapping = TextWrapping.NONE
+    this.$wrapping = TextWrapping.NONE
   }
 
+  /**
+   * @type {Font}
+   */
   get font() {
     return this.$font
   }
 
+  /**
+   * @type {Font}
+   */
   set font(value) {
     this.$font = value
   }
@@ -72,11 +81,15 @@ export default class MySimpleLabelStyle extends LabelStyleBase {
   // ////////////// New in this sample ////////////////
   /**
    * Gets or sets the wrapping style.
+   * @type {TextWrapping}
    */
   get wrapping() {
     return this.$wrapping
   }
 
+  /**
+   * @type {TextWrapping}
+   */
   set wrapping(value) {
     this.$wrapping = value
   }
@@ -86,7 +99,9 @@ export default class MySimpleLabelStyle extends LabelStyleBase {
   /**
    * Creates the visual for a label to be drawn.
    * @see Overrides {@link LabelStyleBase#createVisual}
-   * @return {SvgVisual}
+   * @param {IRenderContext} context
+   * @param {ILabel} label
+   * @returns {SvgVisual}
    */
   createVisual(context, label) {
     // This implementation creates a 'g' element and uses it for the rendering of the label.
@@ -96,7 +111,7 @@ export default class MySimpleLabelStyle extends LabelStyleBase {
     // Render the label
     this.render(context, g, label.layout, cache)
     // move container to correct location
-    const transform = LabelStyleBase.createLayoutTransform(label.layout, true)
+    const transform = LabelStyleBase.createLayoutTransform(context, label.layout, true)
     transform.applyTo(g)
 
     // set data item
@@ -109,7 +124,10 @@ export default class MySimpleLabelStyle extends LabelStyleBase {
   /**
    * Re-renders the label using the old visual for performance reasons.
    * @see Overrides {@link LabelStyleBase#updateVisual}
-   * @return {SvgVisual}
+   * @param {IRenderContext} context
+   * @param {SvgVisual} oldVisual
+   * @param {ILabel} label
+   * @returns {SvgVisual}
    */
   updateVisual(context, oldVisual, label) {
     const container = oldVisual.svgElement
@@ -123,14 +141,18 @@ export default class MySimpleLabelStyle extends LabelStyleBase {
     }
     // nothing changed, return the old visual
     // arrange because the layout might have changed
-    const transform = LabelStyleBase.createLayoutTransform(label.layout, true)
+    const transform = LabelStyleBase.createLayoutTransform(context, label.layout, true)
     transform.applyTo(container)
     return oldVisual
   }
 
   /**
    * Creates an object containing all necessary data to create a label visual.
-   * @return {object}
+   * @param {IRenderContext} context
+   * @param {ILabel} label
+   * @param {Font} font
+   * @param {TextWrapping} wrapping
+   * @returns {object}
    */
   createRenderDataCache(context, label, font, wrapping) {
     return {
@@ -144,10 +166,10 @@ export default class MySimpleLabelStyle extends LabelStyleBase {
 
   /**
    * Creates the visual appearance of a label.
-   * @param context {IRenderContext}
-   * @param container {SVGGElement}
-   * @param labelLayout {IOrientedRectangle}
-   * @param cache {object}
+   * @param {IRenderContext} context {IRenderContext}
+   * @param {SVGGElement} container {SVGGElement}
+   * @param {IOrientedRectangle} labelLayout {IOrientedRectangle}
+   * @param {*} cache {object}
    */
   render(context, container, labelLayout, cache) {
     // store information with the visual on how we created it
@@ -166,7 +188,7 @@ export default class MySimpleLabelStyle extends LabelStyleBase {
     rect.width.baseVal.value = labelLayout.width
     rect.height.baseVal.value = labelLayout.height
     rect.setAttribute('stroke', 'skyblue')
-    rect.setAttribute('stroke-width', 1)
+    rect.setAttribute('stroke-width', '1')
     rect.setAttribute('fill', 'rgb(155,226,255)')
 
     let text
@@ -177,8 +199,6 @@ export default class MySimpleLabelStyle extends LabelStyleBase {
       text.setAttribute('fill', '#000')
       container.appendChild(text)
     }
-    // assign all the values of the font to the text element's attributes
-    cache.font.applyTo(text)
 
     const textSize = new Size(
       labelLayout.width - HORIZONTAL_INSET * 2,
@@ -226,11 +246,11 @@ export default class MySimpleLabelStyle extends LabelStyleBase {
    * Adds a clip-path to the container that clips the given text element at the clip bounds.
    * The clip-path is only added if necessary, i.e. if the measured bounds are larger than the clip bounds.
    * If a clip-path already exists, it is re-used.
-   * @param context {IRenderContext}
-   * @param textElement {SVGTextElement}
-   * @param clipBounds {Rect}
-   * @param measuredBounds {Size}
-   * @param container {SVGGElement}
+   * @param {IRenderContext} context {IRenderContext}
+   * @param {SVGTextElement} textElement {SVGTextElement}
+   * @param {Rect} clipBounds {Rect}
+   * @param {Size} measuredBounds {Size}
+   * @param {SVGGElement} container {SVGGElement}
    */
   clipText(context, textElement, clipBounds, measuredBounds, container) {
     let clip = null
@@ -276,7 +296,8 @@ export default class MySimpleLabelStyle extends LabelStyleBase {
    * Calculates the preferred size for the given label if this style is used for the rendering.
    * The size is calculated from the label's text.
    * @see Overrides {@link LabelStyleBase#getPreferredSize}
-   * @return {Size}
+   * @param {ILabel} label
+   * @returns {Size}
    */
   getPreferredSize(label) {
     // //////////////////////////////////////////////////

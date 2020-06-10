@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+
+<!-- ////////////////////////////////////////////////////////////////////////
+     // @license
+     // This demo file is part of yFiles for HTML 2.3.
+     // Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // 72070 Tuebingen, Germany. All rights reserved.
+     //
+     // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+     // of demo files in source code or binary form, with or without
+     // modification, is not permitted.
+     //
+     // Owners of a valid software license for a yFiles for HTML version that this
+     // demo is shipped with are allowed to use the demo source code as basis
+     // for their own yFiles for HTML powered applications. Use of such programs is
+     // governed by the rights and conditions as set out in the yFiles for HTML
+     // license agreement.
+     //
+     // THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+     // WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+     // MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+     // NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+     // SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+     // TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+     // PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+     // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+     // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+     // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+     // 
+     ////////////////////////////////////////////////////////////////////////-->
+
+  <title>Tree Builder Demo [yFiles for HTML]</title>
+
+  <link rel="stylesheet" href="../../node_modules/yfiles/yfiles.css">
+  <link rel="stylesheet" href="../../resources/style/demo.css">
+
+  <script src="../../resources/filesystem-warning.js"></script>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.54.0/codemirror.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.54.0/addon/dialog/dialog.css">
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.54.0/codemirror.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.54.0/addon/dialog/dialog.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.54.0/mode/xml/xml.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.54.0/mode/javascript/javascript.min.js"></script>
+
+  <style>
+    #schemaGraphComponent {
+      background: white;
+      box-shadow: rgba(0, 0, 0, 0.3) 0 9px 10px -7px inset;
+      position: absolute;
+      top: 100px;
+      bottom: 0;
+      left: 10px;
+      right: 10px;
+    }
+
+    #editSourceDialogModal {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      z-index: 100000;
+      background: rgba(0,0,0,0.3);
+      overflow: auto;
+    }
+
+    #editSourceDialog {
+      display: flex;
+      flex-direction: column;
+      padding: 20px;
+      position: absolute;
+      top: 50px;
+      left: 25%;
+      right: 25%;
+      z-index: 100001;
+      background: #F9F9F9;
+      border: 1px solid #ccc;
+      box-shadow: 0 0 12px rgba(0, 0, 0, .3);
+    }
+
+    @media (max-width: 700px) {
+      #editSourceDialog {
+        left: 5px;
+        right: 5px;
+      }
+    }
+
+    #editSourceDialog>* {
+      margin: 10px 0;
+    }
+
+    #editSourceDialog h2 {
+      margin: 10px auto;
+    }
+
+    #editSourceDialog textarea {
+      width: 100%;
+      height: 150px;
+    }
+
+    #editSourceDialog .CodeMirror {
+      height: 200px;
+    }
+
+    #editSourceDialog input[type="text"] {
+      max-width: 100%;
+      width: 300px;
+    }
+
+    .buttonsContainer {
+      display: flex;
+      flex-direction: row;
+      justify-content: flex-end;
+      width: 100%;
+    }
+
+    button.acceptButton {
+      margin-right: 0;
+    }
+
+  </style>
+
+</head>
+<body class="demo-has-left demo-has-right">
+<aside class="demo-sidebar demo-left">
+  <h1 class="demo-sidebar-header">Description</h1>
+  <div class="demo-sidebar-content">
+    <p>
+      This demo uses the class <a href="https://docs.yworks.com/yfileshtml/#/api/TreeBuilder" target="_blank">TreeBuilder</a> to
+      interactively build and modify a graph from business data.
+    </p>
+
+    <p>
+      See the the Developer's Guide section on the <a href="https://docs.yworks.com/yfileshtml/#/dguide/graph_builder-TreeBuilder" target="_blank">TreeBuilder</a>
+      for an in-depth explanation of the involved concepts.
+    </p>
+
+    <p>
+      The demo allows to define nodes sources and edges bindings using the schema
+      graph component on the right.
+    </p>
+
+    <h2>Things to Try</h2>
+    <ul>
+      <li>Select a sample in the combo box and inspect its data and sources on the right.</li>
+      <li>Double click on a node in the schema graph and edit the schema nodes' business data.</li>
+      <li>Octagonal schema nodes represent root nodes sources that provide business data
+        for the result graph structure and the visual configuration of the root nodes.</li>
+      <li>Circular schema nodes represent child nodes sources that provide data for the
+      visual representation of the child nodes.</li>
+      <li>The schema graph edges and labels define the result graph edge bindings.</li>
+      <li>Click on an edge or its label to edit the edge binding.</li>
+      <li>Enter an empty edge label content to remove the edge and thus the result graph edge binding.</li>
+      <li>Click into the empty space of the schema graph to create a new schema graph node.</li>
+      <li>Drag from an existing schema graph node and drop on the empty space to create a new node connected to it.</li>
+      <li>Connect existing schema graph nodes by dragging and dropping between them.</li>
+      <li>Build a graph from your own data and bindings.</li>
+    </ul>
+
+    <p>
+      Since this demo evaluates the complete data source texts every time a source is edited, <em>Update Graph</em>
+      works as expected only for node data items of primitive type or if the node id binding resolves to primitive ids.
+      Note that this restriction applies only to the demo, not the class <a href="https://docs.yworks.com/yfileshtml/#/api/TreeBuilder" target="_blank">TreeBuilder</a>.
+    </p>
+  </div>
+</aside>
+
+<aside class="demo-sidebar demo-right">
+  <h1 class="demo-sidebar-header">Tree Builder Settings</h1>
+  <div class="demo-properties" style="margin:10px; height: 100%">
+    <div class="demo-form-block">
+      <button data-command="BuildGraph" title="Build a new graph" id="buildGraphButton">New Graph</button>
+      <button data-command="UpdateGraph" title="Update the current graph" id="updateGraphButton">Update Graph
+      </button>
+    </div>
+    <div id="schemaGraphComponent"></div>
+  </div>
+</aside>
+
+<div class="demo-content">
+
+  <!-- The toolbar -->
+  <div class="demo-toolbar">
+    <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
+    <button data-command="ZoomOriginal" title="Zoom to original size" class="demo-icon-yIconZoomOriginal"></button>
+    <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
+    <button data-command="FitContent" title="Fit Content" class="demo-icon-yIconZoomFit"></button>
+    <span class="demo-separator"></span>
+
+    <!-- combo-box for sample data -->
+    <select id="samplesComboBox" data-command="SetSampleData"></select>
+  </div>
+
+  <!-- The graph component -->
+  <div id="graphComponent"></div>
+</div>
+
+<div id="editSourceDialogModal" style="display: none">
+  <div id="editSourceDialog" class="demo-properties"></div>
+</div>
+
+<script type="module" crossorigin="anonymous" src="TreeBuilderDemo.js"></script>
+</body>
+</html>

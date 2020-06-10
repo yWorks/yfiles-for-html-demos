@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -31,26 +31,43 @@
 /* eslint-disable no-alert */
 
 require.config({
-  paths: {
-    yfiles: '../../../lib/umd/',
-    utils: '../../utils/',
-    resources: '../../resources/'
-  }
+  packages: [
+    {
+      name: 'yfiles-umd',
+      location: './node_modules/yfiles-umd/',
+      main: 'complete'
+    }
+  ]
 })
 
 require([
-  'yfiles/view-editor',
+  'yfiles-umd/view-editor',
   'WebWorkerLayoutExecutor.js',
-  'yfiles/view-folding',
-  'yfiles/view-layout-bridge'
-], async (/** @type {yfiles_namespace} */ /** typeof yfiles */ yfiles, WebWorkerLayoutExecutor) => {
+  'yfiles-umd/view-folding',
+  'yfiles-umd/view-layout-bridge'
+], (/** @param {yfiles} yfiles */ yfiles, WebWorkerLayoutExecutor) => {
+  const {
+    License,
+    GraphComponent,
+    GraphEditorInputMode,
+    WaitInputMode,
+    ICommand,
+    FoldingManager,
+    DefaultFolderNodeConverter,
+    ShapeNodeStyle,
+    PolylineEdgeStyle,
+    IArrow,
+    FreeEdgeLabelModel,
+    List,
+    InteriorLabelModel
+  } = yfiles
   let graphComponent = null
 
   function run(licenseData) {
-    yfiles.lang.License.value = licenseData
-    graphComponent = new yfiles.view.GraphComponent('graphComponent')
+    License.value = licenseData
+    graphComponent = new GraphComponent('graphComponent')
     // initialize styles as well as graph
-    graphComponent.inputMode = new yfiles.input.GraphEditorInputMode()
+    graphComponent.inputMode = new GraphEditorInputMode()
     initializeGraph()
     createSampleGraph(graphComponent.graph)
     graphComponent.fitGraphBounds()
@@ -125,7 +142,7 @@ require([
   function showLoading() {
     const statusElement = document.getElementById('graphComponentStatus')
     statusElement.style.setProperty('visibility', 'visible', '')
-    const waitMode = graphComponent.lookup(yfiles.input.WaitInputMode.$class)
+    const waitMode = graphComponent.lookup(WaitInputMode.$class)
     if (waitMode !== null && !waitMode.waiting) {
       if (waitMode.controller !== null && waitMode.controller.canRequestMutex()) {
         waitMode.waiting = true
@@ -141,7 +158,7 @@ require([
     if (statusElement !== null) {
       statusElement.style.setProperty('visibility', 'hidden', '')
     }
-    const waitMode = graphComponent.lookup(yfiles.input.WaitInputMode.$class)
+    const waitMode = graphComponent.lookup(WaitInputMode.$class)
     if (waitMode !== null) {
       waitMode.waiting = false
     }
@@ -152,8 +169,6 @@ require([
    * tool bar buttons, during the creation of this application.
    */
   function registerCommands() {
-    const iCommand = yfiles.input.ICommand
-
     function bindCommand(selector, command, parameter = null) {
       const element = document.querySelector(selector)
       command.addCanExecuteChangedListener(() => {
@@ -170,12 +185,12 @@ require([
       })
     }
 
-    bindCommand("button[data-command='ZoomIn']", iCommand.INCREASE_ZOOM, graphComponent)
-    bindCommand("button[data-command='ZoomOut']", iCommand.DECREASE_ZOOM, graphComponent)
-    bindCommand("button[data-command='FitContent']", iCommand.FIT_GRAPH_BOUNDS, graphComponent)
-    bindCommand("button[data-command='ZoomOriginal']", iCommand.ZOOM, graphComponent, 1.0)
-    bindCommand("button[data-command='Undo']", iCommand.UNDO, graphComponent)
-    bindCommand("button[data-command='Redo']", iCommand.REDO, graphComponent)
+    bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent)
+    bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent)
+    bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent)
+    bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
+    bindCommand("button[data-command='Undo']", ICommand.UNDO, graphComponent)
+    bindCommand("button[data-command='Redo']", ICommand.REDO, graphComponent)
     document
       .querySelector("button[data-command='WebWorkerLayout']")
       .addEventListener('click', () => {
@@ -189,9 +204,9 @@ require([
    */
   function initializeGraph() {
     // Configure folding
-    const manager = new yfiles.graph.FoldingManager()
-    const dummyNodeConverter = new yfiles.graph.DefaultFolderNodeConverter()
-    dummyNodeConverter.folderNodeSize = new yfiles.geometry.Size(150, 100)
+    const manager = new FoldingManager()
+    const dummyNodeConverter = new DefaultFolderNodeConverter()
+    dummyNodeConverter.folderNodeSize = [150, 100]
     manager.folderNodeConverter = dummyNodeConverter
 
     const foldingView = manager.createFoldingView()
@@ -202,19 +217,18 @@ require([
     manager.masterGraph.undoEngineEnabled = true
 
     // Configure default styling etc.
-    graphComponent.graph.nodeDefaults.style = new yfiles.styles.ShapeNodeStyle({
+    graphComponent.graph.nodeDefaults.style = new ShapeNodeStyle({
       fill: 'orange',
       stroke: 'orange',
       shape: 'rectangle'
     })
-    graphComponent.graph.edgeDefaults.style = new yfiles.styles.PolylineEdgeStyle({
-      targetArrow: yfiles.styles.IArrow.DEFAULT
+    graphComponent.graph.edgeDefaults.style = new PolylineEdgeStyle({
+      targetArrow: IArrow.DEFAULT
     })
 
     // set default label styles
-    graphComponent.graph.nodeDefaults.labels.layoutParameter =
-      yfiles.graph.InteriorLabelModel.CENTER
-    graphComponent.graph.edgeDefaults.labels.layoutParameter = yfiles.graph.FreeEdgeLabelModel.INSTANCE.createDefaultParameter()
+    graphComponent.graph.nodeDefaults.labels.layoutParameter = InteriorLabelModel.CENTER
+    graphComponent.graph.edgeDefaults.labels.layoutParameter = FreeEdgeLabelModel.INSTANCE.createDefaultParameter()
 
     // Add listeners for item created events to add a tag to each new item
     const masterGraph = manager.masterGraph
@@ -232,7 +246,7 @@ require([
 
   /**
    * Creates the sample graph for this demo.
-   * @param {yfiles.graph.IGraph} graph The input graph to be filled.
+   * @param {IGraph} graph The input graph to be filled.
    */
   function createSampleGraph(graph) {
     graph.clear()
@@ -297,14 +311,14 @@ require([
       graph.createEdge(nodes[19], nodes[24])
     }
 
-    generateItemLabels(graph.edges)
-    generateItemLabels(graph.nodes.filter(node => !graph.isGroupNode(node)))
+    generateItemLabels(graph.edges.toList())
+    generateItemLabels(graph.nodes.filter(node => !graph.isGroupNode(node)).toList())
   }
 
   /**
    * Generate and add random labels for a collection of ModelItems.
    * Existing items will be deleted before adding the new items.
-   * @param {yfiles.collections.IEnumerable.<yfiles.model.IModelItem>} items the collection of items the labels are
+   * @param {IList.<ILabelOwner>} items the collection of items the labels are
    *   generated for
    */
   function generateItemLabels(items) {
@@ -315,10 +329,6 @@ require([
     const labelCount = Math.floor(
       items.size * (Math.random() * (labelPercMax - labelPercMin) + labelPercMin)
     )
-    const itemList = new yfiles.collections.List()
-    items.forEach(item => {
-      itemList.add(item)
-    })
 
     // add random item labels
     const loremList = getLoremIpsum()
@@ -330,9 +340,9 @@ require([
         label += j === 0 ? '' : ' '
         label += loremList[k]
       }
-      const itemIdx = Math.floor(Math.random() * itemList.size)
-      const item = itemList.get(itemIdx)
-      itemList.removeAt(itemIdx)
+      const itemIdx = Math.floor(Math.random() * items.size)
+      const item = items.get(itemIdx)
+      items.removeAt(itemIdx)
       graphComponent.graph.addLabel(item, label)
     }
   }
@@ -844,7 +854,9 @@ require([
   }
 
   // start demo
-  const response = await fetch('../../../lib/license.json')
-  const json = await response.json()
-  run(json)
+  fetch('../../../lib/license.json').then(response => {
+    response.json().then(json => {
+      run(json)
+    })
+  })
 })

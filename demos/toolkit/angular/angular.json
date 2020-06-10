@@ -20,7 +20,7 @@
             "tsConfig": "src/tsconfig.json",
             "polyfills": "src/polyfills.ts",
             "assets": ["src/assets"],
-            "styles": ["../../resources/style/demo.css", "../../../lib/es-modules/yfiles.css"]
+            "styles": ["../../resources/style/demo.css", "../../../lib-dev/es-modules/yfiles.css"]
           },
           "configurations": {
             "production": {
@@ -43,7 +43,7 @@
           }
         },
         "serve": {
-          "builder": "@angular-devkit/build-angular:dev-server",
+          "builder": "@angular-builders/custom-webpack:dev-server",
           "options": {
             "browserTarget": "angular-cli:build"
           },
@@ -67,18 +67,13 @@
           }
         }
       }
-    },
-    "angular-cli-e2e": {
-      "root": "",
-      "sourceRoot": "",
-      "projectType": "application"
     }
   },
   "defaultProject": "angular-cli",
   "schematics": {
     "@schematics/angular:component": {
       "prefix": "app",
-      "styleext": "css"
+      "style": "css"
     },
     "@schematics/angular:directive": {
       "prefix": "app"

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,6 +27,7 @@
  **
  ***************************************************************************/
 import { GraphComponent, IGraph, Insets, Rect, Size, SvgExport } from 'yfiles'
+import { detectSafariVersion } from '../../utils/Workarounds.js'
 
 /**
  * A class that provides PDF-image export. The image is exported to svg and converted to PDF.
@@ -132,7 +133,9 @@ function convertSvgToPdf(svgElement, size, margins) {
     orientation: sizeArray[0] > sizeArray[1] ? 'l' : 'p',
     unit: 'pt',
     format: sizeArray,
-    compress: true,
+    // when compressed, the custom font is garbled up in the resulting PDF when viewed in Safari's
+    // PDF viewer
+    compress: detectSafariVersion() === -1,
     floatPrecision: 'smart'
   })
 

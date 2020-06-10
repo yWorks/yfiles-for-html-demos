@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -39,6 +39,7 @@ import {
   InteriorLabelModel,
   License,
   PolylineEdgeStyle,
+  Rect,
   ShapeNodeShape,
   ShapeNodeStyle
 } from 'yfiles'
@@ -112,23 +113,6 @@ function runLayout() {
  */
 function createSampleGraph() {
   const graph = graphComponent.graph
-  const builder = new GraphBuilder({
-    graph,
-    nodesSource: GraphBuilderData.nodes,
-    edgesSource: GraphBuilderData.edges,
-    sourceNodeBinding: 'source',
-    targetNodeBinding: 'target',
-    nodeIdBinding: 'id',
-    nodeLabelBinding: data => data.labels.text
-  })
-
-  builder.buildGraph()
-
-  // Sets the sizes of the nodes
-  graph.nodes.forEach(node => {
-    node.layout.width = node.tag.layout.width
-    node.layout.height = node.tag.layout.height
-  })
 
   // Creates styles for the labels in the nodes
   const namesStyle = new DefaultLabelStyle({
@@ -137,32 +121,46 @@ function createSampleGraph() {
     horizontalTextAlignment: 'Center',
     insets: [-10, 0, 0, 0]
   })
-
   const dateStyle = new DefaultLabelStyle({
     font: '11px Tahoma',
     textFill: 'rgb(119,136,153)',
     insets: [5, 5, 5, 5]
   })
 
-  // Iterate the node data and create the labels of the node
-  graph.nodes.forEach(node => {
-    if (node.tag.labels) {
-      node.tag.labels.forEach(label => {
-        if (label.text.includes('*'))
-          graph.addLabel(node, label.text, InteriorLabelModel.SOUTH_WEST, dateStyle)
-        else {
-          if (label.text.includes('✝'))
-            graph.addLabel(node, label.text, InteriorLabelModel.SOUTH_EAST, dateStyle)
-          else graph.addLabel(node, label.text, InteriorLabelModel.CENTER, namesStyle)
-        }
-      })
-    }
+  // Use the GraphBuilder to create the graph items from data
+  const builder = new GraphBuilder(graph)
+  const nodesSource = builder.createNodesSource({
+    data: GraphBuilderData.nodes,
+    id: 'id',
+    layout: data => new Rect(0, 0, data.layout.width, data.layout.height)
   })
+  const labelCreator = nodesSource.nodeCreator.createLabelsSource(data => data.labels).labelCreator
+  labelCreator.textProvider = 'text'
+  labelCreator.layoutParameterProvider = data => {
+    const text = data.text
+    if (text.indexOf('*') !== -1) {
+      return InteriorLabelModel.SOUTH_WEST
+    } else if (text.indexOf('✝') !== -1) {
+      return InteriorLabelModel.SOUTH_EAST
+    }
+    return InteriorLabelModel.CENTER
+  }
+  labelCreator.styleProvider = data => {
+    const text = data.text
+    if (text.indexOf('*') !== -1 || text.indexOf('✝') !== -1) {
+      return dateStyle
+    }
+    return namesStyle
+  }
+  builder.createEdgesSource(GraphBuilderData.edges, 'source', 'target', 'id')
+
+  builder.buildGraph()
 }
 
 /**
- * Assigns the style to the family tree nodes. Males will be visualized in blue color, females in pink and the
- * family nodes that connect partners with each other and their children will be circular with gray color.
+ * Assigns the style to the family tree nodes. Males will be visualized in blue color, females in
+ * pink and the family nodes that connect partners with each other and their children will be
+ * circular with gray color.
  */
 function setFamilyNodesStyle() {
   const maleStyle = new ShapeNodeStyle({

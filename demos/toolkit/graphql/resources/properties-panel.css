@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-@import url(https://fonts.googleapis.com/css?family=Roboto:400,300,100);
+@import url(https://fonts.googleapis.com/css?family=Roboto:400, 300, 100);
 
 dt {
   font-weight: bold;
@@ -102,32 +102,32 @@ dd {
   border-radius: 50%;
 }
 .usericon_female1 {
-  background-image: url("./usericon_female1.svg");
+  background-image: url('./usericon_female1.svg');
 }
 .usericon_female2 {
-  background-image: url("./usericon_female2.svg");
+  background-image: url('./usericon_female2.svg');
 }
 .usericon_female3 {
-  background-image: url("./usericon_female3.svg");
+  background-image: url('./usericon_female3.svg');
 }
 .usericon_female4 {
-  background-image: url("./usericon_female4.svg");
+  background-image: url('./usericon_female4.svg');
 }
 .usericon_female5 {
-  background-image: url("./usericon_female5.svg");
+  background-image: url('./usericon_female5.svg');
 }
 .usericon_male1 {
-  background-image: url("./usericon_male1.svg");
+  background-image: url('./usericon_male1.svg');
 }
 .usericon_male2 {
-  background-image: url("./usericon_male2.svg");
+  background-image: url('./usericon_male2.svg');
 }
 .usericon_male3 {
-  background-image: url("./usericon_male3.svg");
+  background-image: url('./usericon_male3.svg');
 }
 .usericon_male4 {
-  background-image: url("./usericon_male4.svg");
+  background-image: url('./usericon_male4.svg');
 }
 .usericon_male5 {
-  background-image: url("./usericon_male5.svg");
+  background-image: url('./usericon_male5.svg');
 }

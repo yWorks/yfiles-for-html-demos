@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -48,7 +48,7 @@ import {
 
 import MazeData from './resources/maze.js'
 import { initDemoStyles } from '../../resources/demo-styles.js'
-import { showApp, bindCommand, bindAction } from '../../resources/demo-app.js'
+import { bindAction, bindCommand, showApp } from '../../resources/demo-app.js'
 import { OptionEditor } from '../../resources/demo-option-editor.js'
 import loadJson from '../../resources/load-json.js'
 import { PolylineEdgeRouterConfig } from './PolylineEdgeRouterConfig.js'
@@ -72,8 +72,9 @@ let inLayout = false
 let optionEditor = null
 
 /**
- * Holds the filtered graph. The graph consists of the maze graph nodes which are the ones that form the maze and
- * the normal graph nodes. The maze nodes are visible only during the layout to simulate the maze.
+ * Holds the filtered graph. The graph consists of the maze graph nodes which are the ones that
+ * form the maze and the normal graph nodes. The maze nodes are visible only during the layout to
+ * simulate the maze.
  * @type {FilteredGraphWrapper}
  */
 let filteredGraph = null
@@ -318,39 +319,30 @@ function setUIDisabled(disabled) {
 }
 
 /**
- * Creates the sample graph. The graph consists of the maze graph nodes which are the ones that form the maze and
- * the normal graph nodes. The maze nodes are visible only during the layout to simulate the maze.
+ * Creates the sample graph. The graph consists of the maze graph nodes which are the ones that
+ * form the maze and the normal graph nodes. The maze nodes are visible only during the layout to
+ * simulate the maze.
  */
 function createSampleGraph() {
-  const builder = new GraphBuilder({
-    graph: graphComponent.graph,
-    nodesSource: MazeData.nodes,
-    edgesSource: MazeData.edges,
-    nodeIdBinding: 'id',
-    sourceNodeBinding: 'from',
-    targetNodeBinding: 'to',
-    locationXBinding: 'x',
-    locationYBinding: 'y'
-  })
-  const graph = builder.buildGraph()
-
   const mazeNodeStyle = new ShapeNodeStyle({
     fill: 'rgb(102, 153, 204)',
     stroke: null
   })
 
-  const mazeNodes = []
-  graph.nodes.forEach(node => {
-    if (node.tag.maze) {
-      graph.setNodeLayout(
-        node,
-        new Rect(node.layout.x, node.layout.y, node.tag.width, node.tag.height)
-      )
-      graph.setStyle(node, mazeNodeStyle)
-      mazeNodes.push(node)
-    }
-    node.tag = { maze: node.tag.maze }
+  const builder = new GraphBuilder(graphComponent.graph)
+  builder.createNodesSource({
+    data: MazeData.nodes,
+    id: 'id',
+    layout: data => Rect.from(data),
+    style: data => {
+      if (data.maze) {
+        return mazeNodeStyle
+      }
+    },
+    tag: data => ({ maze: data.maze })
   })
+  builder.createEdgesSource(MazeData.edges, 'from', 'to')
+  const graph = builder.buildGraph()
 
   graph.edges.forEach(edge => {
     if (edge.tag.sourcePort) {
@@ -365,6 +357,7 @@ function createSampleGraph() {
   })
 
   // adds the maze visual
+  const mazeNodes = graph.nodes.filter(node => node.tag.maze)
   const mazeVisual = new MazeVisual(mazeNodes)
   graphComponent.backgroundGroup.addChild(mazeVisual, ICanvasObjectDescriptor.ALWAYS_DIRTY_INSTANCE)
 
@@ -411,7 +404,8 @@ class MazeVisual extends BaseClass(IVisualCreator) {
   }
 
   /**
-   * Updates the maze visual. As the maze cannot be changed in this demo, the old visual is returned.
+   * Updates the maze visual. As the maze cannot be changed in this demo, the old visual is
+   * returned.
    * @param {IRenderContext} context The render context
    * @param {SvgVisual} oldVisual The old visual
    * @return {SvgVisual} The updated visual

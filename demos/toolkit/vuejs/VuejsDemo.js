@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -80,9 +80,11 @@ function run(licenseData) {
   License.value = licenseData
 
   /**
-   * This Vue component is used to display the graph nodes. Its template is based on the Orgchart Demo node template,
-   * but instead of using Template Bindings, Vuejs is used to keep the view in sync with the data.
+   * This Vue component is used to display the graph nodes. Its template is based on the Orgchart
+   * Demo node template, but instead of using Template Bindings, Vuejs is used to keep the view in
+   * sync with the data.
    */
+  // eslint-disable-next-line no-undef
   Vue.component('node', {
     template: '#vueNodeStyleTemplate',
     data: () => ({
@@ -115,8 +117,10 @@ function run(licenseData) {
 
   /**
    * This Vue component wraps a {@link GraphComponent}. It takes an {@link IGraph} as a prop
-   * and emits a custom event <code>focused-item-changed</code> when the focused item of the GraphComponent changes.
+   * and emits a custom event <code>focused-item-changed</code> when the focused item of the
+   * GraphComponent changes.
    */
+  // eslint-disable-next-line no-undef
   Vue.component('graph-component', {
     template: '<div class="graph-component"></div>',
     created() {
@@ -174,7 +178,8 @@ function run(licenseData) {
         ICommand.FIT_GRAPH_BOUNDS.execute(null, this.$refs.graphComponent.$graphComponent)
       },
       /**
-       * This is called when the custom <code>focused-item-changed</code> event is emitted on the graph-control.
+       * This is called when the custom <code>focused-item-changed</code> event is emitted on the
+       * graph-control.
        * @param {Object} tag - The tag of the currently focused node.
        */
       focusedItemChanged(tag) {
@@ -189,8 +194,8 @@ function run(licenseData) {
   })
 
   /**
-   * Vue instance for the properties view in the right sidebar. Used to edit the data of the currently selected graph
-   * item.
+   * Vue instance for the properties view in the right sidebar. Used to edit the data of the
+   * currently selected graph item.
    */
   // eslint-disable-next-line no-undef,no-new
   new Vue({
@@ -206,7 +211,7 @@ function run(licenseData) {
    * @return {GraphViewerInputMode}
    */
   function createViewerInputMode() {
-    const inputMode = new GraphViewerInputMode({
+    return new GraphViewerInputMode({
       clickableItems: GraphItemTypes.NODE,
       selectableItems: GraphItemTypes.NONE,
       marqueeSelectableItems: GraphItemTypes.NONE,
@@ -214,7 +219,6 @@ function run(licenseData) {
       contextMenuItems: GraphItemTypes.NONE,
       focusableItems: GraphItemTypes.NODE
     })
-    return inputMode
   }
 
   /**
@@ -224,13 +228,13 @@ function run(licenseData) {
    * @return {IGraph}
    */
   function createGraph(nodesSource, graph) {
-    const treeBuilder = new TreeBuilder({
-      graph,
-      childBinding: 'subordinates',
-      nodesSource: nodesSource
-    })
+    const treeBuilder = new TreeBuilder(graph)
+    const rootNodesSource = treeBuilder.createRootNodesSource(nodesSource)
+    const childNodesSource = rootNodesSource.createChildNodesSource(data => data.subordinates)
+    childNodesSource.addChildNodesSource(data => data.subordinates, childNodesSource)
 
     // use the VuejsNodeStyle, which uses a Vue component to display nodes
+    // eslint-disable-next-line no-undef
     treeBuilder.graph.nodeDefaults.style = new VuejsNodeStyle(Vue.component('node'))
     treeBuilder.graph.nodeDefaults.size = new Size(285, 100)
     treeBuilder.graph.edgeDefaults.style = new PolylineEdgeStyle({

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -37,15 +37,20 @@ import {
   GraphItemTypes,
   GraphOverviewComponent,
   ICommand,
-  IGraph,
+  IEdge,
   IMapper,
+  IModelItem,
   INode,
   InteriorStretchLabelModel,
+  ItemEventArgs,
   LayoutExecutor,
   License,
   Mapper,
+  MouseHoverInputMode,
   PanelNodeStyle,
   Point,
+  PopulateItemContextMenuEventArgs,
+  QueryItemToolTipEventArgs,
   Reachability,
   Rect,
   ShapeNodeStyle,
@@ -65,19 +70,16 @@ Class.ensure(LayoutExecutor)
 /** @type {GraphComponent} */
 let graphComponent
 
-/** @type {IGraph} */
-let graph
-
-/** @type {IMapper} */
+/** @type {IMapper.<INode,Date>} */
 let dateMapper
 
+/**
+ * @param {object} licenseData
+ */
 function run(licenseData) {
   License.value = licenseData
   // Initialize the GraphComponent and place it in the div with CSS selector #graphComponent
   graphComponent = new GraphComponent('#graphComponent')
-
-  // conveniently store a reference to the graph that is displayed
-  graph = graphComponent.graph
 
   // Enable grouping
   configureGroupNodeStyles()
@@ -106,6 +108,7 @@ function run(licenseData) {
   createSampleGraph()
 
   // select a node so that the user can run the algorithms immediately
+  const graph = graphComponent.graph
   const startNode = graph.nodes.firstOrDefault(n => graph.outDegree(n) > 0)
   if (startNode) {
     graphComponent.selection.selectedNodes.setSelected(startNode, true)
@@ -132,6 +135,7 @@ function run(licenseData) {
  * Demonstrates how to quickly configure and run the Reachability algorithm
  */
 function runReachabilityAlgorithm() {
+  const graph = graphComponent.graph
   // create, configure and run the algorithm in a single step
   const results = new Reachability({
     // we set the options in the constructor
@@ -146,9 +150,9 @@ function runReachabilityAlgorithm() {
   graphComponent.selection.clear()
 
   // iterate over the results and select the reachable nodes
-  for (const n of results.reachableNodes) {
+  results.reachableNodes.forEach(n => {
     graphComponent.selection.setSelected(n, true)
-  }
+  })
 }
 
 /**
@@ -156,6 +160,7 @@ function runReachabilityAlgorithm() {
  * using different ways for the configuration
  */
 function runShortestPathAlgorithm() {
+  const graph = graphComponent.graph
   // choose a random sink node for the path finding algorithm
   const sinkNode = graph.nodes.lastOrDefault()
   // and see if the user selected a source node
@@ -165,22 +170,19 @@ function runShortestPathAlgorithm() {
     graphComponent.highlightIndicatorManager.clearHighlights()
 
     // then we create the algorithm
-    const algorithm = new ShortestPath()
-
-    // this time we use the properties on the instance for the configuration
-    algorithm.directed = false
-
-    // for the costs we setup a function to calculate the cost per edge
-    algorithm.costs = edge =>
-      edge.sourceNode.layout.center.subtract(edge.targetNode.layout.center).vectorLength
-
-    // for the source we use a predicate to determine the source to use
-    // of course in this case, setting the source to graphComponent.currentItem
-    // would have been easier and more efficient. This is just to demonstrate predicates
-    algorithm.source = node => node === graphComponent.currentItem
-
-    // for the single sink, we just set the property
-    algorithm.sink = sinkNode
+    const algorithm = new ShortestPath({
+      // this time we use the properties on the instance for the configuration
+      directed: false,
+      // for the costs we setup a function to calculate the cost per edge
+      costs: edge =>
+        edge.sourceNode.layout.center.subtract(edge.targetNode.layout.center).vectorLength,
+      // for the source we use a predicate to determine the source to use
+      // of course in this case, setting the source to graphComponent.currentItem
+      // would have been easier and more efficient. This is just to demonstrate predicates
+      source: node => node === graphComponent.currentItem,
+      // for the single sink, we just set the property
+      sink: sinkNode
+    })
 
     // now run the configured algorithm and remember the results
     const result = algorithm.run(graph)
@@ -193,9 +195,9 @@ function runShortestPathAlgorithm() {
       graphComponent.selection.clear()
 
       // and we iterate over all nodes in the path and highlight them
-      for (const n of result.path.nodes) {
+      result.path.nodes.forEach(n => {
         graphComponent.highlightIndicatorManager.addHighlight(n)
-      }
+      })
 
       // for the edges we use the predicate provided by the result
       // iterating directly over the result.edges would have been easier, of course
@@ -218,36 +220,22 @@ function runShortestPathAlgorithm() {
  * Creates the sample graph.
  */
 function createSampleGraph() {
-  const builder = new GraphBuilder({
-    graph: graphComponent.graph,
-    nodesSource: GraphBuilderData.nodes,
-    edgesSource: GraphBuilderData.edges,
-    groupsSource: GraphBuilderData.groups,
-    sourceNodeBinding: 'source',
-    targetNodeBinding: 'target',
-    nodeIdBinding: 'id',
-    nodeLabelBinding: 'label',
-    groupBinding: 'parent',
-    groupIdBinding: 'id'
+  const builder = new GraphBuilder(graphComponent.graph)
+  builder.createNodesSource({
+    data: GraphBuilderData.nodes,
+    id: 'id',
+    parentId: 'parent',
+    layout: 'layout',
+    labels: ['label']
   })
+  builder.createGroupNodesSource({
+    data: GraphBuilderData.groups,
+    id: 'id',
+    layout: 'layout'
+  })
+  builder.createEdgesSource(GraphBuilderData.edges, 'source', 'target', 'id')
 
   builder.buildGraph()
-
-  // Sets the sizes of the nodes
-  graph.nodes.forEach(node => {
-    graph.setNodeLayout(node, Rect.from(node.tag.layout))
-  })
-
-  // Iterate the edge data and create the according bends and Ports
-  graph.edges.forEach(edge => {
-    if (edge.tag.bends) {
-      edge.tag.bends.forEach(bend => {
-        graph.addBend(edge, Point.from(bend))
-      })
-    }
-    graph.setPortLocation(edge.sourcePort, Point.from(edge.tag.sourcePort))
-    graph.setPortLocation(edge.targetPort, Point.from(edge.tag.targetPort))
-  })
 }
 
 // ////////////////////////////////////////////////////
@@ -266,7 +254,7 @@ function enableDataBinding() {
   // If this is unwanted behavior, you can customize the node creation itself
   // to associate this data with the element at the time of its initial creation,
   // e.g. by listening to the NodeCreated event of GraphEditorInputMode, see below
-  graph.addNodeCreatedListener((source, eventArgs) => {
+  graphComponent.graph.addNodeCreatedListener((source, eventArgs) => {
     // Stores the current time as node creation time.
     dateMapper.set(eventArgs.item, new Date())
   })
@@ -373,13 +361,14 @@ function setupContextMenu() {
  */
 function enableUndo() {
   // Enables undo on the graph.
-  graph.undoEngineEnabled = true
+  graphComponent.graph.undoEngineEnabled = true
 }
 
 /**
  * Configures the default style for group nodes.
  */
 function configureGroupNodeStyles() {
+  const graph = graphComponent.graph
   // PanelNodeStyle is a style especially suited to group nodes
   // Creates a panel with a light blue background
   graph.groupNodeDefaults.style = new PanelNodeStyle({
@@ -427,7 +416,7 @@ function setDefaultLabelLayoutParameters() {
     sideOfEdge: EdgeSides.LEFT_OF_EDGE | EdgeSides.RIGHT_OF_EDGE
   })
   // Finally, we can set this label model as the default for edge labels
-  graph.edgeDefaults.labels.layoutParameter = edgeLabelModel.createDefaultParameter()
+  graphComponent.graph.edgeDefaults.labels.layoutParameter = edgeLabelModel.createDefaultParameter()
 }
 
 /**
@@ -436,6 +425,7 @@ function setDefaultLabelLayoutParameters() {
  * so typically, you'd set these as early as possible in your application.
  */
 function setDefaultStyles() {
+  const graph = graphComponent.graph
   // configure defaults for normal nodes and their labels
   graph.nodeDefaults.style = new ShapeNodeStyle({
     fill: 'darkorange',
@@ -444,7 +434,7 @@ function setDefaultStyles() {
   graph.nodeDefaults.size = new Size(40, 40)
   graph.nodeDefaults.labels.style = new DefaultLabelStyle({
     verticalTextAlignment: 'center',
-    wrapping: 'word_ellipsis'
+    wrapping: 'word-ellipsis'
   })
   // Sets the defined style as the default for both edge and node labels
   // Creates a label style with the label text color set to dark red
@@ -490,7 +480,8 @@ function updateViewport() {
   graphComponent.fitGraphBounds()
 }
 
-/** Helper method that binds the various commands available in yFiles for HTML to the buttons
+/**
+ * Helper method that binds the various commands available in yFiles for HTML to the buttons
  * in the demo's toolbar.
  */
 function registerCommands() {

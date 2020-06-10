@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -29,7 +29,6 @@
 import {
   Animator,
   ConnectedComponents,
-  FilteredGraphWrapper,
   GraphBuilder,
   GraphComponent,
   GraphEditorInputMode,
@@ -148,9 +147,9 @@ let zoomAnimator = null
 let fraudHighlightManager = null
 
 /**
- * Starts a demo which shows fraud detection on a graph with changing time-frames. Since the nodes have different
- * timestamps (defined in their tag object), they will only appear in some time-frames. Time-frames are chosen using
- * a timeline component.
+ * Starts a demo which shows fraud detection on a graph with changing time-frames. Since the nodes
+ * have different timestamps (defined in their tag object), they will only appear in some
+ * time-frames. Time-frames are chosen using a timeline component.
  */
 function run(licenseData) {
   License.value = licenseData
@@ -253,7 +252,7 @@ function initializeGraphComponent() {
   // add input mode to be able to move non-selected nodes
   const moveUnselectedInputMode = inputMode.moveUnselectedInputMode
   moveUnselectedInputMode.enabled = true
-  moveUnselectedInputMode.addDragStartedListener((sender, event) => {
+  moveUnselectedInputMode.addDragStartedListener((sender, evt) => {
     nodePopup.updatePopup(null)
     if (!busy) {
       layout.onDragStarted(sender.affectedItems)
@@ -609,16 +608,18 @@ function loadSampleGraph(fraudData) {
 
   // execute the actual loading with a timeout to give the UI a chance to update
   setTimeout(() => {
+    const defaultNodeSize = timelineComponent.filteredGraph.wrappedGraph.nodeDefaults.size
+    timelineComponent.filteredGraph.wrappedGraph.clear()
     const builder = new GraphBuilder(timelineComponent.filteredGraph.wrappedGraph)
-    builder.nodesSource = fraudData.nodesSource
-    builder.edgesSource = fraudData.edgesSource
-    builder.sourceNodeBinding = 'from'
-    builder.targetNodeBinding = 'to'
-    builder.nodeIdBinding = 'id'
-    builder.locationXBinding = 'x'
-    builder.locationYBinding = 'y'
+    builder.createNodesSource({
+      data: fraudData.nodesSource,
+      id: 'id',
+      layout: data => new Rect(data.x, data.y, defaultNodeSize.width, defaultNodeSize.height)
+    })
+    builder.createEdgesSource(fraudData.edgesSource, 'from', 'to')
 
     builder.buildGraph()
+
     graphComponent.fitGraphBounds()
 
     // calculate the connected components of the given graph
@@ -667,24 +668,21 @@ function setBusy(value) {
 }
 
 /**
- * Calculates the connected components of the input graph and holds the index of the component to which each
- * component belongs.
+ * Calculates the connected components of the input graph and holds
+ * the index of the component to which each component belongs.
  */
 function calculateComponents() {
   component2Nodes.clear()
 
   const fullGraph = graphComponent.graph.wrappedGraph
   const bankFraud = document.getElementById('sampleSelect').value === 'bank-fraud'
-  // for bank fraud, we remove the bank branch nodes to avoid having large components that contain nodes that have
-  // no actual relationship with each other
-  const filteredGraph = new FilteredGraphWrapper(
-    fullGraph,
-    node => !bankFraud || node.tag.type !== 'Bank Branch',
-    edge => true
-  )
 
-  // find the connected components
-  const result = new ConnectedComponents().run(filteredGraph)
+  // for bank fraud, we remove the bank branch nodes to avoid having
+  // large components that contain nodes that have no actual relationship with each other
+  const result = new ConnectedComponents({
+    subgraphNodes: node => !bankFraud || node.tag.type !== 'Bank Branch'
+  }).run(fullGraph)
+
   fullGraph.nodes.forEach(node => {
     const componentIdx = result.nodeComponentIds.get(node)
     node2Component.set(node, componentIdx)
@@ -711,8 +709,6 @@ function calculateComponents() {
       }
     })
   }
-  // dispose the filtered graph
-  filteredGraph.dispose()
 }
 
 /**

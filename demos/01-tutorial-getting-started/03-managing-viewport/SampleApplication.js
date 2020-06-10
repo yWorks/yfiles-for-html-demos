@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -32,7 +32,6 @@ import {
   GraphComponent,
   GraphOverviewComponent,
   ICommand,
-  IGraph,
   License,
   Point,
   Rect
@@ -44,15 +43,13 @@ import loadJson from '../../resources/load-json.js'
 /** @type {GraphComponent} */
 let graphComponent = null
 
-/** @type {IGraph} */
-let graph = null
-
+/**
+ * @param {object} licenseData
+ */
 function run(licenseData) {
   License.value = licenseData
   // Initialize the GraphComponent and place it in the div with CSS selector #graphComponent
   graphComponent = new GraphComponent('#graphComponent')
-  // conveniently store a reference to the graph that is displayed
-  graph = graphComponent.graph
 
   // Populates the graph and overrides some styles and label models
   populateGraph()
@@ -63,6 +60,7 @@ function run(licenseData) {
   updateViewport()
 
   // Creates a node outside the initial content rectangle
+  const graph = graphComponent.graph
   graph.addLabel(
     graph.createNodeAt(new Point(-500, -500)),
     'Outside initial viewport',
@@ -84,6 +82,7 @@ function run(licenseData) {
  */
 function populateGraph() {
   // ////////// Sample node creation ///////////////////
+  const graph = graphComponent.graph
 
   // Creates two nodes with the default node size
   // The location is specified for the _center_

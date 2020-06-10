@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,9 +26,9 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { tsx } from '@dojo/framework/widget-core/tsx'
-import WidgetBase from '@dojo/framework/widget-core/WidgetBase'
-import { DNode } from '@dojo/framework/widget-core/interfaces'
+import { tsx } from '@dojo/framework/core/vdom'
+import WidgetBase from '@dojo/framework/core/WidgetBase'
+import { DNode } from '@dojo/framework/core/interfaces'
 import './App.css'
 import DemoSidebar from './widgets/DemoSidebar'
 import GraphWidget from './widgets/GraphWidget'

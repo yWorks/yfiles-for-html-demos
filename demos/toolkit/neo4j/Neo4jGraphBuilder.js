@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -77,33 +77,37 @@ export function createGraphBuilder(graphComponent, nodes, edges) {
   let nodeStyleCounter = 0
   const graph = graphComponent.graph
 
-  const graphBuilder = new GraphBuilder({
-    graph,
-    nodesSource: nodes,
-    edgesSource: edges,
-    nodeIdBinding: node => getId(node.identity),
-    sourceNodeBinding: edge => getId(edge.start),
-    targetNodeBinding: edge => getId(edge.end),
-    nodeLabelBinding: node => {
-      if (node.properties) {
-        for (const propertyName of Object.keys(node.properties)) {
-          // try to find a suitable node label
-          if (labelNameCandidates.includes(propertyName)) {
-            // trim the label
-            return node.properties[propertyName].substring(0, 30)
-          }
+  const graphBuilder = new GraphBuilder(graph)
+  const nodeCreator = graphBuilder.createNodesSource({
+    data: nodes,
+    id: node => getId(node.identity),
+    layout: 'layout',
+    labels: ['label']
+  }).nodeCreator
+  nodeCreator.createLabelBinding(node => {
+    if (node.properties) {
+      for (const propertyName of Object.keys(node.properties)) {
+        // try to find a suitable node label
+        if (labelNameCandidates.includes(propertyName)) {
+          // trim the label
+          return node.properties[propertyName].substring(0, 30)
         }
       }
-      return node.labels && node.labels.length > 0 ? node.labels.join(' - ') : null
-    },
-    edgeLabelBinding: edge => edge.type
+    }
+    return node.labels && node.labels.length > 0 ? node.labels.join(' - ') : null
+  })
+  graphBuilder.createEdgesSource({
+    data: edges,
+    sourceId: edge => getId(edge.start),
+    targetId: edge => getId(edge.end),
+    labels: ['type']
   })
 
-  graphBuilder.addNodeCreatedListener((sender, { graph, item, sourceObject }) => {
+  graphBuilder.addNodeCreatedListener((sender, { graph, item, dataItem }) => {
     // look for a mapping for any of the nodes labels and use the mapped style
-    let matchingLabel = sourceObject.labels.find(label => label in nodeStyleMapping)
+    let matchingLabel = dataItem.labels.find(label => label in nodeStyleMapping)
     if (!matchingLabel) {
-      matchingLabel = sourceObject.labels[0]
+      matchingLabel = dataItem.labels[0]
       nodeStyleMapping[matchingLabel] = predefinedNodesStyles[nodeStyleCounter]
       nodeStyleCounter = (nodeStyleCounter + 1) % predefinedNodesStyles.length
     }

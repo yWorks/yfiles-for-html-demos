@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -37,7 +37,6 @@ import {
   GraphComponent,
   GraphEditorInputMode,
   ICommand,
-  IGraph,
   License,
   Point,
   Rect,
@@ -56,9 +55,9 @@ import loadJson from '../../resources/load-json.js'
 /** @type {GraphComponent} */
 let graphComponent = null
 
-/** @type {IGraph} */
-let graph = null
-
+/**
+ * @param {object} licenseData
+ */
 function run(licenseData) {
   License.value = licenseData
   // Initialize the GraphComponent and place it in the div with CSS selector #graphComponent
@@ -68,9 +67,6 @@ function run(licenseData) {
 
   // From now on, everything can be done on the actual managed view instance
   enableFolding()
-
-  // conveniently store a reference to the graph that is displayed
-  graph = graphComponent.graph
 
   // initialize the input mode
   graphComponent.inputMode = createEditorMode()
@@ -103,6 +99,7 @@ function registerCommands() {
  * nodes in the graph.
  */
 function initializeGraph() {
+  const graph = graphComponent.graph
   // Create a new style and use it as default port style
   graph.nodeDefaults.ports.style = new MySimplePortStyle()
   // Create a new style and use it as default node style
@@ -136,9 +133,7 @@ function initializeGraph() {
   createSampleGraph()
 }
 
-/**
- * @type {FoldingManager}
- */
+/** @type {FoldingManager} */
 let manager = null
 
 /**
@@ -192,7 +187,7 @@ function wrapGroupNodeStyles() {
 /**
  * Creates the default input mode for the graphComponent,
  * a {@link GraphEditorInputMode}.
- * @return {IInputMode} a new GraphEditorInputMode instance
+ * @returns {GraphEditorInputMode} a new GraphEditorInputMode instance
  */
 function createEditorMode() {
   return new GraphEditorInputMode({
@@ -204,6 +199,7 @@ function createEditorMode() {
  * Creates the initial sample graph.
  */
 function createSampleGraph() {
+  const graph = graphComponent.graph
   const node0 = graph.createNode(new Rect(180, 40, 30, 30))
   const node1 = graph.createNode(new Rect(260, 50, 30, 30))
   const node2 = graph.createNode(new Rect(284, 200, 30, 30))

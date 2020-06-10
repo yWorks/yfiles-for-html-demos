@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -265,74 +265,58 @@ export class RotatablePortLocationModelDecoratorParameter extends BaseClass(
 /**
  * Markup extension that helps (de-)serializing a {@link RotatablePortLocationModelDecorator).
  */
-export const RotatablePortLocationModelDecoratorExtension = Class(
-  'RotatablePortLocationModelDecoratorExtension',
-  {
-    $extends: MarkupExtension,
-
-    $wrapped: null,
-    wrapped: {
-      get() {
-        return this.$wrapped
-      },
-      set(value) {
-        this.$wrapped = value
-      }
-    },
-
-    /**
-     * @param {ILookup} serviceProvider
-     * @return {object}
-     */
-    provideValue(serviceProvider) {
-      const model = new RotatablePortLocationModelDecorator()
-      model.wrapped = this.wrapped
-      return model
-    }
+export class RotatablePortLocationModelDecoratorExtension extends MarkupExtension {
+  get wrapped() {
+    return this.$wrapped
   }
-)
+
+  set wrapped(value) {
+    this.$wrapped = value
+  }
+
+  /**
+   * @param {ILookup} serviceProvider
+   * @return {object}
+   */
+  provideValue(serviceProvider) {
+    const model = new RotatablePortLocationModelDecorator()
+    model.wrapped = this.wrapped
+    return model
+  }
+}
 
 /**
  * Markup extension that helps (de-)serializing a {@link RotatablePortLocationModelDecoratorParameter).
  */
-export const RotatablePortLocationModelDecoratorParameterExtension = Class(
-  'RotatablePortLocationModelDecoratorParameterExtension',
-  {
-    $extends: MarkupExtension,
-
-    $model: null,
-    model: {
-      get() {
-        return this.$model
-      },
-      set(value) {
-        this.$model = value
-      }
-    },
-
-    $wrapped: null,
-    wrapped: {
-      get() {
-        return this.$wrapped
-      },
-      set(value) {
-        this.$wrapped = value
-      }
-    },
-
-    /**
-     * @param {ILookup} serviceProvider
-     * @return {object}
-     */
-    provideValue(serviceProvider) {
-      const model =
-        this.model instanceof RotatablePortLocationModelDecorator
-          ? this.model
-          : RotatablePortLocationModelDecorator.INSTANCE
-      return model.createWrappingParameter(this.wrapped)
-    }
+export class RotatablePortLocationModelDecoratorParameterExtension extends MarkupExtension {
+  get model() {
+    return this.$model
   }
-)
+
+  set model(value) {
+    this.$model = value
+  }
+
+  get wrapped() {
+    return this.$wrapped
+  }
+
+  set wrapped(value) {
+    this.$wrapped = value
+  }
+
+  /**
+   * @param {ILookup} serviceProvider
+   * @return {object}
+   */
+  provideValue(serviceProvider) {
+    const model =
+      this.model instanceof RotatablePortLocationModelDecorator
+        ? this.model
+        : RotatablePortLocationModelDecorator.INSTANCE
+    return model.createWrappingParameter(this.wrapped)
+  }
+}
 
 /**
  * Returns the current angle of the given rotated node.

@@ -7,8 +7,8 @@
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.2.
-     // Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // This demo file is part of yFiles for HTML 2.3.
+     // Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -39,8 +39,6 @@
   <link rel="stylesheet" href="../../node_modules/yfiles/yfiles.css">
   <link rel="stylesheet" href="../../resources/style/demo.css">
 
-  <!-- enable debugging -->
-  <script src="../../../ide-support/yfiles-typeinfo.js"></script>
   <script src="../../resources/filesystem-warning.js"></script>
 
   <style type="text/css">
@@ -140,6 +138,8 @@
     <option>k-Means</option>
     <option>Hierarchical</option>
     <option>Biconnected Components</option>
+    <option>Louvain Modularity</option>
+    <option>Label Propagation</option>
   </select>
 
     <button data-command="NextFile" title="Open next graph" id="nextButton"
@@ -278,6 +278,43 @@
         </ul>
       </div>
     </div>
+
+    <div id="louvain-modularity">
+      <h2>Louvain Modularity</h2>
+      <div class="description">
+        <p>Partitions the graph by using the <em>Louvain Modularity</em> algorithm.</p>
+        <p>
+          The algorithm starts by assigning each node to its own community. Then, iteratively tries
+          to construct communities by moving nodes from their current community to another until
+          the modularity is locally optimized. At the next step, the small communities found are
+          merged to a single node and the algorithm starts from the beginning until the modularity
+          of the graph cannot be further improved.
+        </p>
+
+        <h3>Things to try</h3>
+        <ul>
+          <li>Create/Remove nodes or edges to see how the result of the algorithm is influenced.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div id="label-propagation">
+      <h2>Label Propagation</h2>
+      <div class="description">
+        <p>Partitions the graph by using the <em>Label Propagation</em> algorithm.</p>
+        <p>
+          Label Propagation iteratively assigns a label to each node. The label of a node
+          is set to the most frequent label among its neighbors. If there are multiple
+          candidates the algorithm randomly chooses one of them. After applying the algorithm,
+          all nodes with the same label belong to the same community.
+        </p>
+        <h3>Things to try</h3>
+        <ul>
+          <li>Create/Remove nodes or edges to see how the result of the algorithm is influenced.</li>
+        </ul>
+      </div>
+    </div>
+
   </div>
 </aside>
 

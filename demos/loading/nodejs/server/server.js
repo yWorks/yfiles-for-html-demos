@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.2.
- ** Copyright (c) 2000-2019 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** This demo file is part of yFiles for HTML 2.3.
+ ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -26,16 +26,10 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-// Make references to "self" in the yFiles library work
-global.self = global
-
 const licenseData = require('../../../../lib/license')
 const jsonIO = require('./server-io')
 
-// All yfiles modules return the yfiles namespace object
-const yfiles = require('../../../../lib/umd/view-component')
-require('../../../../lib/umd/layout-hierarchic')
-require('../../../../lib/umd/view-layout-bridge')
+const { License, HierarchicLayout, MinimumNodeSizeStage, DefaultGraph } = require('yfiles-umd')
 
 // Create a minimal Express server
 const express = require('express')
@@ -58,7 +52,7 @@ app.post('/layout', (req, res) => {
   res.header('Access-Control-Allow-Origin', '*')
   res.header('Access-Control-Allow-Headers', 'X-Requested-With')
 
-  yfiles.lang.License.value = licenseData
+  License.value = licenseData
 
   if (!checkLicense()) {
     const message =
@@ -84,17 +78,17 @@ app.post('/layout', (req, res) => {
 function runLayout(inputGraph) {
   const graph = jsonIO.read(inputGraph)
 
-  const layout = new yfiles.hierarchic.HierarchicLayout()
-  layout.minimumNodeDistance = 50
+  const layout = new HierarchicLayout()
+  layout.nodeToNodeDistance = 50
   layout.considerNodeLabels = true
   layout.integratedEdgeLabeling = true
-  graph.applyLayout(new yfiles.layout.MinimumNodeSizeStage(layout))
+  graph.applyLayout(new MinimumNodeSizeStage(layout))
 
   return jsonIO.write(graph)
 }
 
 function checkLicense() {
-  const g = new yfiles.graph.DefaultGraph()
+  const g = new DefaultGraph()
   g.createNode()
   return g.nodes.size > 0
 }

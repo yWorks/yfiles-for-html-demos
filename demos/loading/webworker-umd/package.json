@@ -1,0 +1,11 @@
+{
+  "name": "webworker-umd-demo-for-yfiles-for-html",
+  "version": "1.0.0",
+  "author": "yWorks GmbH <yfileshtml@yworks.com>",
+  "homepage": "https://www.yworks.com/products/yfiles-for-html",
+  "private": true,
+  "dependencies": {
+    "requirejs": "^2.3.6",
+    "yfiles-umd": "../../../lib-dev/umd/yfiles-umd-23.0.0-dev.tgz"
+  }
+}
