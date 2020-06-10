@@ -1,8 +1,8 @@
 # yFiles for HTML Demo Applications
 
-The [@PRODUCT@ @VERSION@](@PRODUCT_URL@) demos and tutorials are extensive sample applications that present the features of the @PRODUCT@ diagramming library.
+The [yFiles for HTML 2.3](https://www.yworks.com/products/yfiles-for-html) demos and tutorials are extensive sample applications that present the features of the yFiles for HTML diagramming library.
 
-The complete source code of all of these samples is part of the @PRODUCT@ package and available at [Github](https://github.com/yWorks/yfiles-for-html-demos)
+The complete source code of all of these samples is part of the yFiles for HTML package and available at [Github](https://github.com/yWorks/yfiles-for-html-demos)
 
 To execute a specific sample, click on its card below. All of these demos are also hosted at the [yFiles for HTML Online Demos page](https://live.yworks.com/demos/).
 
