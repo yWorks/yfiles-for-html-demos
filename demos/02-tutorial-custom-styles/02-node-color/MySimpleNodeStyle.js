@@ -63,7 +63,7 @@ export default class MySimpleNodeStyle extends NodeStyleBase {
 
   /**
    * Gets the node's color.
-   * @type {string}
+   * @type {!string}
    */
   get nodeColor() {
     return this.$nodeColor
@@ -71,7 +71,7 @@ export default class MySimpleNodeStyle extends NodeStyleBase {
 
   /**
    * Sets the node's color.
-   * @type {string}
+   * @type {!string}
    */
   set nodeColor(value) {
     this.$nodeColor = value
@@ -82,8 +82,8 @@ export default class MySimpleNodeStyle extends NodeStyleBase {
    * This implementation uses the {@link #nodeColor} property unless
    * the {@link ITagOwner#tag} of the {@link INode} is of type {@link string},
    * in which case that color overrides this style's setting.
-   * @param {INode} node The node to determine the color for.
-   * @returns {string} The color for filling the node.
+   * @param {!INode} node The node to determine the color for.
+   * @returns {!string} The color for filling the node.
    */
   getNodeColor(node) {
     // the color can be obtained from the "business data" that can be associated with
@@ -96,9 +96,9 @@ export default class MySimpleNodeStyle extends NodeStyleBase {
   /**
    * Creates the visual for a node.
    * @see Overrides {@link NodeStyleBase#createVisual}
-   * @param {IRenderContext} context
-   * @param {INode} node
-   * @returns {SvgVisual}
+   * @param {!IRenderContext} context
+   * @param {!INode} node
+   * @returns {!SvgVisual}
    */
   createVisual(context, node) {
     // This implementation creates a 'g' element and uses it as a container for the rendering of the node.
@@ -116,9 +116,9 @@ export default class MySimpleNodeStyle extends NodeStyleBase {
    * elements to the <code>container</code>. All items are arranged as if the node was located at (0,0).
    * {@link MySimpleNodeStyle#createVisual} and {@link MySimpleNodeStyle#updateVisual} finally arrange the container
    * so that the drawing is translated into the final position.
-   * @param {IRenderContext} context
-   * @param {INode} node
-   * @param {Element} container
+   * @param {!IRenderContext} context
+   * @param {!INode} node
+   * @param {!Element} container
    */
   render(context, node, container) {
     // Create Defs section in container

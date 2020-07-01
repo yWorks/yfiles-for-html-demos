@@ -60,7 +60,7 @@ import GraphBuilderData from './resources/graph.js'
 let graphComponent = null
 
 /**
- * @param {object} licenseData
+ * @param {!object} licenseData
  */
 function run(licenseData) {
   License.value = licenseData
@@ -98,7 +98,7 @@ function run(licenseData) {
 
 /**
  * Applies a hierarchic layout and uses the data of the layout from the tags of the nodes.
- * @returns {Promise}
+ * @returns {!Promise}
  */
 async function runLayout() {
   const hierarchicLayout = new HierarchicLayout()
@@ -139,7 +139,7 @@ async function runLayout() {
 
 /**
  * Returns the alignment value based on the data stored in the given node's tag.
- * @param {INode} node The given node
+ * @param {!INode} node The given node
  * @returns {number}
  */
 function getAlignment(node) {

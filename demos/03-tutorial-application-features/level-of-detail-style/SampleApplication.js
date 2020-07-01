@@ -58,7 +58,7 @@ let levelOfDetailNodeStyle = null
 const detailLevelPopup = document.querySelector('#detailLevelPopup')
 
 /**
- * @param {object} licenseData
+ * @param {!object} licenseData
  */
 function run(licenseData) {
   License.value = licenseData
@@ -141,7 +141,7 @@ function registerCommands() {
 
 /**
  * Sets style defaults for nodes and edges.
- * @param {IGraph} graph
+ * @param {!IGraph} graph
  */
 function registerElementDefaults(graph) {
   levelOfDetailNodeStyle = new LevelOfDetailNodeStyle(

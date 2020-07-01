@@ -11,8 +11,8 @@
     "tsc": "tsc"
   },
   "dependencies": {
-    "yfiles": "../lib-dev/es-modules/yfiles-23.0.0-dev.tgz",
-    "yfiles-umd": "../lib-dev/umd/yfiles-umd-23.0.0-dev.tgz"
+    "yfiles": "../lib-dev/es-modules/yfiles-23.0.1-dev.tgz",
+    "yfiles-umd": "../lib-dev/umd/yfiles-umd-23.0.1-dev.tgz"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^2.23.0",

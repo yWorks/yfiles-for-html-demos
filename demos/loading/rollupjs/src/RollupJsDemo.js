@@ -27,33 +27,31 @@
  **
  ***************************************************************************/
 import { GraphComponent, GraphEditorInputMode, License, Rect, ShapeNodeStyle } from 'yfiles'
-import loadJson from '../../../resources/load-json.js'
+import license from './license.json'
 import { enableWorkarounds } from './utils/Workarounds'
 
-function run(licenseData) {
-  License.value = licenseData
+License.value = license
 
-  enableWorkarounds()
+enableWorkarounds()
 
-  // Create a GraphComponent and enable interactive editing
-  const graphComponent = new GraphComponent('graphComponent')
-  const graph = graphComponent.graph
-  graphComponent.inputMode = new GraphEditorInputMode()
+// Create a GraphComponent and enable interactive editing
+const graphComponent = new GraphComponent('graphComponent')
+const graph = graphComponent.graph
+graphComponent.inputMode = new GraphEditorInputMode()
 
-  // Set the default node style for new nodes
-  graph.nodeDefaults.style = new ShapeNodeStyle({
-    fill: 'orange',
-    stroke: 'orange',
-    shape: 'rectangle'
-  })
+// Set the default node style for new nodes
+graph.nodeDefaults.style = new ShapeNodeStyle({
+  fill: 'orange',
+  stroke: 'orange',
+  shape: 'rectangle'
+})
 
-  // Create small sample graph
-  initializeGraph(graph)
+// Create small sample graph
+initializeGraph(graph)
 
-  // Enable undo and center the graph in the view
-  graph.undoEngineEnabled = true
-  graphComponent.fitGraphBounds()
-}
+// Enable undo and center the graph in the view
+graph.undoEngineEnabled = true
+graphComponent.fitGraphBounds()
 
 function initializeGraph(graph) {
   const node1 = graph.createNode(new Rect(50, 50, 30, 30))
@@ -62,5 +60,3 @@ function initializeGraph(graph) {
   graph.createEdge(node1, node2)
   graph.createEdge(node1, node3)
 }
-
-loadJson().then(run)

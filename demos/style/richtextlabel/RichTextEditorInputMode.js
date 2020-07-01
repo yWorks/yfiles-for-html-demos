@@ -37,7 +37,7 @@ export class RichTextEditorInputMode extends TextEditorInputMode {
   /**
    * Wire up Quill with the {@link TextEditorInputMode#editorText}.
    * @yjs:keep=root
-   * @type {string}
+   * @type {!string}
    */
   get editorText() {
     return this.quill.root.innerHTML
@@ -46,7 +46,7 @@ export class RichTextEditorInputMode extends TextEditorInputMode {
   /**
    * Wire up Quill with the {@link TextEditorInputMode#editorText}.
    * @yjs:keep=root
-   * @type {string}
+   * @type {!string}
    */
   set editorText(value) {
     this.quill.setContents([])
@@ -109,7 +109,7 @@ export class RichTextEditorInputMode extends TextEditorInputMode {
 
   /**
    * Initializes an {@link HTMLDivElement} in which Quill can be
-   * @returns {HTMLDivElement}
+   * @returns {!HTMLDivElement}
    */
   static initializeQuillContainer() {
     const container = document.createElement('div')

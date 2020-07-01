@@ -159,26 +159,41 @@ function initializeInputModes(): void {
   graphDropInputMode.addDragLeftListener(onDragCanceled)
   graphEditorInputMode.add(graphDropInputMode)
 
+  let deleting = false
+  graphEditorInputMode.addDeletingSelectionListener(() => (deleting = true))
+  graphEditorInputMode.addDeletedSelectionListener(() => (deleting = false))
+
   // select the whole component when selecting a graph element
   graphComponent.selection.addItemSelectionChangedListener((sender, event) => {
+    if (deleting) {
+      return
+    }
+
     let changedNode: INode | null = null
     if (event.item instanceof INode) {
       changedNode = event.item
     } else if (event.item instanceof IEdge) {
-      changedNode = event.item.sourceNode
+      changedNode =
+        event.item.sourceNode!.tag.component === event.item.targetNode!.tag.component
+          ? event.item.sourceNode
+          : null
     }
 
     if (changedNode) {
-      graphComponent.graph.nodes
-        .filter((node: INode) => node.tag.component === changedNode!.tag.component)
-        .forEach((node: INode) => {
-          graphComponent.selection.setSelected(node, event.itemSelected)
-          graphComponent.graph.edgesAt(node).forEach(edge => {
+      const component = graphComponent.graph.nodes.filter(
+        (node: INode) => node.tag.component === changedNode!.tag.component
+      )
+      component.forEach((node: INode) => {
+        graphComponent.selection.setSelected(node, event.itemSelected)
+        graphComponent.graph.edgesAt(node).forEach(edge => {
+          if (component.includes(edge.sourceNode!) && component.includes(edge.targetNode!)) {
             edge.bends.forEach(bend => {
               graphComponent.selection.setSelected(bend, event.itemSelected)
             })
-          })
+            graphComponent.selection.setSelected(edge, event.itemSelected)
+          }
         })
+      })
     }
   })
 
@@ -189,7 +204,10 @@ function initializeInputModes(): void {
  * Updates the graph after a component was added using clipboard operations
  */
 function updateGraph(): void {
-  const component = graphComponent.graph.nodes.filter(node => node.tag.component === componentCount)
+  const component = graphComponent.graph.nodes
+    .filter(node => node.tag.component === componentCount)
+    .toList()
+
   const layoutHelper = new ClearAreaLayoutHelper(graphComponent, component, keepComponents)
   layoutHelper.initializeLayout()
   layoutHelper.runLayout()

@@ -63,10 +63,10 @@ export default class MySimpleLabelStyle extends LabelStyleBase {
   /**
    * Re-renders the label using the old visual for performance reasons.
    * @see Overrides {@link LabelStyleBase#updateVisual}
-   * @param {IRenderContext} context
-   * @param {SvgVisual} oldVisual
-   * @param {ILabel} label
-   * @returns {SvgVisual}
+   * @param {!IRenderContext} context
+   * @param {!SvgVisual} oldVisual
+   * @param {!ILabel} label
+   * @returns {!SvgVisual}
    */
   updateVisual(context, oldVisual, label) {
     const container = oldVisual.svgElement
@@ -87,9 +87,9 @@ export default class MySimpleLabelStyle extends LabelStyleBase {
 
   /**
    * Creates an object containing all necessary data to create a label visual.
-   * @param {IRenderContext} context
-   * @param {ILabel} label
-   * @param {Font} font
+   * @param {!IRenderContext} context
+   * @param {!ILabel} label
+   * @param {!Font} font
    * @returns {*}
    */
   createRenderDataCache(context, label, font) {
@@ -104,7 +104,7 @@ export default class MySimpleLabelStyle extends LabelStyleBase {
 
   /**
    * Gets the font used for rendering the label text.
-   * @type {Font}
+   * @type {!Font}
    */
   get font() {
     return this.$font
@@ -112,7 +112,7 @@ export default class MySimpleLabelStyle extends LabelStyleBase {
 
   /**
    * Sets the typeface used for rendering the label text.
-   * @type {Font}
+   * @type {!Font}
    */
   set font(value) {
     this.$font = value
@@ -120,8 +120,8 @@ export default class MySimpleLabelStyle extends LabelStyleBase {
 
   /**
    * Creates the visual appearance of a label.
-   * @param {SVGElement} container
-   * @param {IOrientedRectangle} labelLayout
+   * @param {!SVGElement} container
+   * @param {!IOrientedRectangle} labelLayout
    * @param {*} cache
    */
   render(container, labelLayout, cache) {
@@ -183,9 +183,9 @@ export default class MySimpleLabelStyle extends LabelStyleBase {
   /**
    * Creates the visual for a label to be drawn.
    * @see Overrides {@link LabelStyleBase#createVisual}
-   * @param {IRenderContext} context
-   * @param {ILabel} label
-   * @returns {SvgVisual}
+   * @param {!IRenderContext} context
+   * @param {!ILabel} label
+   * @returns {!SvgVisual}
    */
   createVisual(context, label) {
     // This implementation creates a 'g' element and uses it for the rendering of the label.
@@ -207,8 +207,8 @@ export default class MySimpleLabelStyle extends LabelStyleBase {
    * Calculates the preferred size for the given label if this style is used for the rendering.
    * The size is calculated from the label's text.
    * @see Overrides {@link LabelStyleBase#getPreferredSize}
-   * @param {ILabel} label
-   * @returns {Size}
+   * @param {!ILabel} label
+   * @returns {!Size}
    */
   getPreferredSize(label) {
     // first measure

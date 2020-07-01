@@ -59,7 +59,7 @@ let graphComponent = null
 
 /**
  * Bootstraps the demo.
- * @param {object} licenseData
+ * @param {!object} licenseData
  */
 function run(licenseData) {
   License.value = licenseData
@@ -125,8 +125,8 @@ function initializeTooltips() {
  * The tooltip may either be a plain string or it can also be a rich HTML element. In this case, we
  * show the latter. We just extract the first label text from the given item and show it as
  * tooltip.
- * @param {IModelItem} item
- * @returns {HTMLElement}
+ * @param {!IModelItem} item
+ * @returns {!HTMLElement}
  */
 function createTooltipContent(item) {
   const title = document.createElement('h4')

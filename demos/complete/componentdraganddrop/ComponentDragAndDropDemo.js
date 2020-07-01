@@ -87,8 +87,8 @@ let keepComponents = false
 let componentCount = 0
 
 /**
- * @param {object} licenseData
- * @returns {Promise}
+ * @param {!object} licenseData
+ * @returns {!Promise}
  */
 async function run(licenseData) {
   License.value = licenseData
@@ -164,26 +164,41 @@ function initializeInputModes() {
   graphDropInputMode.addDragLeftListener(onDragCanceled)
   graphEditorInputMode.add(graphDropInputMode)
 
+  let deleting = false
+  graphEditorInputMode.addDeletingSelectionListener(() => (deleting = true))
+  graphEditorInputMode.addDeletedSelectionListener(() => (deleting = false))
+
   // select the whole component when selecting a graph element
   graphComponent.selection.addItemSelectionChangedListener((sender, event) => {
+    if (deleting) {
+      return
+    }
+
     let changedNode = null
     if (event.item instanceof INode) {
       changedNode = event.item
     } else if (event.item instanceof IEdge) {
-      changedNode = event.item.sourceNode
+      changedNode =
+        event.item.sourceNode.tag.component === event.item.targetNode.tag.component
+          ? event.item.sourceNode
+          : null
     }
 
     if (changedNode) {
-      graphComponent.graph.nodes
-        .filter(node => node.tag.component === changedNode.tag.component)
-        .forEach(node => {
-          graphComponent.selection.setSelected(node, event.itemSelected)
-          graphComponent.graph.edgesAt(node).forEach(edge => {
+      const component = graphComponent.graph.nodes.filter(
+        node => node.tag.component === changedNode.tag.component
+      )
+      component.forEach(node => {
+        graphComponent.selection.setSelected(node, event.itemSelected)
+        graphComponent.graph.edgesAt(node).forEach(edge => {
+          if (component.includes(edge.sourceNode) && component.includes(edge.targetNode)) {
             edge.bends.forEach(bend => {
               graphComponent.selection.setSelected(bend, event.itemSelected)
             })
-          })
+            graphComponent.selection.setSelected(edge, event.itemSelected)
+          }
         })
+      })
     }
   })
 
@@ -194,7 +209,10 @@ function initializeInputModes() {
  * Updates the graph after a component was added using clipboard operations
  */
 function updateGraph() {
-  const component = graphComponent.graph.nodes.filter(node => node.tag.component === componentCount)
+  const component = graphComponent.graph.nodes
+    .filter(node => node.tag.component === componentCount)
+    .toList()
+
   const layoutHelper = new ClearAreaLayoutHelper(graphComponent, component, keepComponents)
   layoutHelper.initializeLayout()
   layoutHelper.runLayout()
@@ -223,7 +241,7 @@ function initializeGraph() {
 
 /**
  * Populates the palette with the graphs stored in the resources folder.
- * @returns {Promise}
+ * @returns {!Promise}
  */
 async function initializePalette() {
   // retrieve the panel element
@@ -244,7 +262,7 @@ async function initializePalette() {
 /**
  * Creates and adds a visual for the given style in the drag and drop panel.
  * @param {*} component
- * @param {HTMLElement} panel
+ * @param {!HTMLElement} panel
  */
 function addComponentVisual(component, panel) {
   const componentGraph = getComponentGraph(component)
@@ -299,7 +317,7 @@ function addComponentVisual(component, panel) {
  * Builds a graph from the given component.
  * @yjs:keep=nodeData,edgeData
  * @param {*} component
- * @returns {IGraph}
+ * @returns {!IGraph}
  */
 function getComponentGraph(component) {
   const componentGraph = new DefaultGraph()
@@ -324,8 +342,8 @@ function getComponentGraph(component) {
 
 /**
  * Creates an SVG data string for a node with the given style.
- * @param {IGraph} componentGraph
- * @returns {string}
+ * @param {!IGraph} componentGraph
+ * @returns {!string}
  */
 function createComponentVisual(componentGraph) {
   const exportComponent = new GraphComponent()
@@ -341,7 +359,7 @@ function createComponentVisual(componentGraph) {
 
 /**
  * The component is upon to be moved or resized.
- * @param {object} sender
+ * @param {!object} sender
  */
 function onDragStarted(sender) {
   let component
@@ -360,7 +378,7 @@ function onDragStarted(sender) {
 /**
  * The component is currently be moved or resized.
  * For each drag a new layout is calculated and applied if the previous one is completed.
- * @param {object} sender
+ * @param {!object} sender
  */
 function onDragged(sender) {
   if (sender instanceof ComponentDropInputMode) {
@@ -384,8 +402,8 @@ function onDragCanceled() {
 /**
  * The component has been dropped.
  * We execute the layout to the final state.
- * @param {object} sender
- * @param {(ItemEventArgs.<IGraph>|InputModeEventArgs)} itemEventArgs
+ * @param {!object} sender
+ * @param {!(ItemEventArgs.<IGraph>|InputModeEventArgs)} itemEventArgs
  */
 function onDragFinished(sender, itemEventArgs) {
   if (sender instanceof ComponentDropInputMode) {
@@ -409,7 +427,7 @@ function onDragFinished(sender, itemEventArgs) {
 /**
  * Loads the initial graph.
  * @yjs:keep=nodeData,edgeData
- * @returns {Promise}
+ * @returns {!Promise}
  */
 async function loadSampleGraph() {
   const response = await fetch('./resources/SampleGraph.json')

@@ -45,7 +45,7 @@ import { BezierCreateEdgeInputMode } from './BezierCreateEdgeInputMode.js'
 
 export class BezierGraphEditorInputMode extends GraphEditorInputMode {
   /**
-   * @param {object} config
+   * @param {!object} config
    */
   constructor(config) {
     super()
@@ -59,7 +59,7 @@ export class BezierGraphEditorInputMode extends GraphEditorInputMode {
    * - if there are bezier control points selected where the middle control point is NOT selected, they are deselected.
    * So in effect, either a complete triple is removed (when the middle point is selected), or nothing (when ONLY one of the outer points is selected)
    * Exception: When only two control points are left, both are deleted together
-   * @param {SelectionEventArgs.<IModelItem>} args
+   * @param {!SelectionEventArgs.<IModelItem>} args
    */
   onDeletingSelection(args) {
     const selectedCurveBends = args.selection
@@ -106,8 +106,8 @@ export class BezierGraphEditorInputMode extends GraphEditorInputMode {
   }
 
   /**
-   * @param {object} sender
-   * @param {ItemEventArgs.<IBend>} event
+   * @param {!object} sender
+   * @param {!ItemEventArgs.<IBend>} event
    */
   onCreateBendInputModeBendCreated(sender, event) {
     const bend = event.item
@@ -143,7 +143,7 @@ export class BezierGraphEditorInputMode extends GraphEditorInputMode {
    * the newly created bend.
    *
    * This implementation also removes the additionally created bends for a bezier edge and resets the positions of the control points.
-   * @returns {CreateBendInputMode}
+   * @returns {!CreateBendInputMode}
    */
   createCreateBendInputMode() {
     const inputMode = new BezierCreateBendInputMode()
@@ -152,7 +152,7 @@ export class BezierGraphEditorInputMode extends GraphEditorInputMode {
   }
 
   /**
-   * @returns {CreateEdgeInputMode}
+   * @returns {!CreateEdgeInputMode}
    */
   createCreateEdgeInputMode() {
     const inputMode = new BezierCreateEdgeInputMode()
@@ -168,7 +168,7 @@ export class BezierGraphEditorInputMode extends GraphEditorInputMode {
  */
 class BezierCreateBendInputMode extends CreateBendInputMode {
   /**
-   * @type {Map.<IBend,Point>}
+   * @type {!Map.<IBend,Point>}
    */
   get locationMementos() {
     return this.$locationMementos
@@ -180,8 +180,8 @@ class BezierCreateBendInputMode extends CreateBendInputMode {
   }
 
   /**
-   * @param {IEdge} edge
-   * @param {Point} location
+   * @param {!IEdge} edge
+   * @param {!Point} location
    * @returns {?IBend}
    */
   createBend(edge, location) {
@@ -195,9 +195,9 @@ class BezierCreateBendInputMode extends CreateBendInputMode {
 
 class BendCreationHandler {
   /**
-   * @param {IBend} bend
-   * @param {IGraph} graph
-   * @param {BezierCreateBendInputMode} bendInputMode
+   * @param {!IBend} bend
+   * @param {!IGraph} graph
+   * @param {!BezierCreateBendInputMode} bendInputMode
    */
   constructor(bend, graph, bendInputMode) {
     this.bend = bend
@@ -212,7 +212,7 @@ class BendCreationHandler {
   }
 
   /**
-   * @param {HandleInputMode} inputMode
+   * @param {!HandleInputMode} inputMode
    */
   register(inputMode) {
     this.inputMode = inputMode
@@ -225,16 +225,16 @@ class BendCreationHandler {
   }
 
   /**
-   * @param {object} sender
-   * @param {InputModeEventArgs} args
+   * @param {!object} sender
+   * @param {!InputModeEventArgs} args
    */
   inputModeOnDragFinished(sender, args) {
     this.unregister()
   }
 
   /**
-   * @param {object} sender
-   * @param {InputModeEventArgs} args
+   * @param {!object} sender
+   * @param {!InputModeEventArgs} args
    */
   inputModeOnDragCanceled(sender, args) {
     this.unregister()
@@ -282,8 +282,8 @@ class BendCreationHandler {
   }
 
   /**
-   * @param {object} sender
-   * @param {InputModeEventArgs} args
+   * @param {!object} sender
+   * @param {!InputModeEventArgs} args
    */
   inputModeOnDragStarted(sender, args) {
     this.initialized = true

@@ -598,7 +598,7 @@ export default class AlgorithmConfiguration {
         // remove labels
         const labels = node.labels.toArray()
         for (let i = 0; i < labels.length; i++) {
-          if (labels[i].tag === 'centrality') {
+          if (labels[i].tag === 'centrality' || labels[i].tag === 'k-core') {
             graph.remove(labels[i])
           }
         }

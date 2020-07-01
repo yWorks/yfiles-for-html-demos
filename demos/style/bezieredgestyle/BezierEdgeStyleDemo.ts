@@ -129,16 +129,6 @@ function initializeGraph(): void {
   // We need to provide our own handles for bezier edge bends:
   registerBezierDecorators()
 
-  graph.addBendRemovedListener((sender: object, args: BendEventArgs) => {
-    // Trigger reselection of edge to remove stale handles
-    const edge = args.owner
-    if (graph.contains(edge)) {
-      const selected = graphComponent.selection.isSelected(edge)
-      graphComponent.selection.setSelected(edge, false)
-      graphComponent.selection.setSelected(edge, selected)
-    }
-  })
-
   graph.nodeDefaults.style = new ShapeNodeStyle({
     shape: ShapeNodeShape.ELLIPSE,
     fill: 'lightgray',
@@ -204,6 +194,15 @@ function registerBezierDecorators(): void {
     e => e.style instanceof BezierEdgeStyle,
     (e, coreImpl) => new BezierSelectionIndicatorInstaller(coreImpl)
   )
+
+  // since removing bends also affects our handles, we need to let the input mode
+  // requery the handles to get the fresh ones.
+  function requeryHandles(): void {
+    ;(graphComponent.inputMode as GraphEditorInputMode).requeryHandles()
+  }
+
+  graph.addBendRemovedListener(requeryHandles)
+  graph.addBendAddedListener(requeryHandles)
 }
 
 function loadSample(sample: any): void {

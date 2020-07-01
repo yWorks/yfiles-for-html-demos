@@ -60,7 +60,7 @@ let graphComponent = null
  * The stylesheet CSS shows how to style label elements using external CSS.
  * The label style uses interactive text wrapping, which means you can resize nodes interactively
  * and the label text will be wrapped at word boundaries.
- * @param {object} licenseData
+ * @param {!object} licenseData
  */
 function run(licenseData) {
   License.value = licenseData

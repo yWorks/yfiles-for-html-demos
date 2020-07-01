@@ -47,7 +47,7 @@ import {
  */
 export default class MyCollapsibleNodeStyleDecoratorRenderer extends CollapsibleNodeStyleDecoratorRenderer {
   /**
-   * @param {Size} size
+   * @param {!Size} size
    */
   constructor(size) {
     super()
@@ -66,10 +66,10 @@ export default class MyCollapsibleNodeStyleDecoratorRenderer extends Collapsible
   }
 
   /**
-   * @param {IRenderContext} context
+   * @param {!IRenderContext} context
    * @param {boolean} expanded
-   * @param {Size} size
-   * @returns {SvgVisual}
+   * @param {!Size} size
+   * @returns {!SvgVisual}
    */
   createButton(context, expanded, size) {
     // Set the dummy node to the desired size
@@ -85,11 +85,11 @@ export default class MyCollapsibleNodeStyleDecoratorRenderer extends Collapsible
   }
 
   /**
-   * @param {IRenderContext} context
+   * @param {!IRenderContext} context
    * @param {boolean} expanded
-   * @param {Size} size
-   * @param {Visual} oldVisual
-   * @returns {SvgVisual}
+   * @param {!Size} size
+   * @param {!Visual} oldVisual
+   * @returns {!SvgVisual}
    */
   updateButton(context, expanded, size, oldVisual) {
     // Set the dummy node to the desired size
@@ -111,7 +111,7 @@ export default class MyCollapsibleNodeStyleDecoratorRenderer extends Collapsible
   }
 
   /**
-   * @returns {Size}
+   * @returns {!Size}
    */
   getButtonSize() {
     return this.size
@@ -121,7 +121,7 @@ export default class MyCollapsibleNodeStyleDecoratorRenderer extends Collapsible
    * This is implemented to override the base insets provider, which would add insets for the label.
    * @see Overrides {@link CollapsibleNodeStyleDecoratorRenderer#lookup}
    * @see Specified by {@link ILookup#lookup}.
-   * @param {Class} type
+   * @param {!Class} type
    * @returns {?object}
    */
   lookup(type) {

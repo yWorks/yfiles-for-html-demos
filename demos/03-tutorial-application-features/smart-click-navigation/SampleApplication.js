@@ -61,7 +61,7 @@ let graphComponent = null
 
 /**
  * Bootstraps the demo.
- * @param {object} licenseData
+ * @param {!object} licenseData
  */
 function run(licenseData) {
   License.value = licenseData
@@ -125,7 +125,7 @@ function createSampleGraph() {
 
 /**
  * Configures the highlight style that will be used for the nodes that match the searched query.
- * @param {IGraph} graph The graph.
+ * @param {!IGraph} graph The graph.
  */
 function initHighlightingStyle(graph) {
   const nodeHighlightStyle = new NodeStyleDecorationInstaller({
@@ -172,8 +172,8 @@ function initializeInputMode() {
 
 /**
  * Zooms to the suitable point.
- * @param {IModelItem} item The element that we clicked.
- * @param {Point} currentMouseClickLocation The arguments that is used by the event.
+ * @param {!IModelItem} item The element that we clicked.
+ * @param {!Point} currentMouseClickLocation The arguments that is used by the event.
  */
 function zoomToLocation(item, currentMouseClickLocation) {
   // Get the point where we should zoom in
@@ -192,7 +192,7 @@ function zoomToLocation(item, currentMouseClickLocation) {
 
 /**
  * Gets the focus point.
- * @param {IModelItem} item The element that we clicked.
+ * @param {!IModelItem} item The element that we clicked.
  * @returns {?Point} The point that we should zoom to.
  */
 function getFocusPoint(item) {
@@ -226,7 +226,7 @@ function getFocusPoint(item) {
 
 /**
  * Initializes the input mode for this component.
- * @param {IModelItem} item
+ * @param {!IModelItem} item
  */
 function updateHighlight(item) {
   const manager = graphComponent.highlightIndicatorManager
@@ -246,7 +246,7 @@ function updateHighlight(item) {
 
 /**
  * Initializes the defaults for the styles in this tutorial.
- * @param {IGraph} graph The graph.
+ * @param {!IGraph} graph The graph.
  */
 function initTutorialDefaults(graph) {
   // Configure defaults for normal nodes and their labels

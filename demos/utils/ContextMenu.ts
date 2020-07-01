@@ -61,7 +61,7 @@ export default class ContextMenu {
     contextMenu.setAttribute('class', 'demo-context-menu')
     this.element = contextMenu
     this.blurredTimeout = null
-    this.isOpen = true
+    this.isOpen = false
 
     // Listeners for focus events since this menu closes itself if it loses the focus.
     this.focusOutListener = (evt: FocusEvent): void => {

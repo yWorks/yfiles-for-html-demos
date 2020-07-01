@@ -43,8 +43,8 @@ import HeightHandle from './HeightHandle.js'
  */
 export default class HeightHandleProvider extends BaseClass(IHandleProvider) {
   /**
-   * @param {INode} node
-   * @param {IHandleProvider} delegateHandler
+   * @param {!INode} node
+   * @param {!IHandleProvider} delegateHandler
    * @param {number} minimumHeight
    */
   constructor(node, delegateHandler, minimumHeight) {
@@ -55,8 +55,8 @@ export default class HeightHandleProvider extends BaseClass(IHandleProvider) {
   }
 
   /**
-   * @param {IInputModeContext} context
-   * @returns {IEnumerable.<IHandle>}
+   * @param {!IInputModeContext} context
+   * @returns {!IEnumerable.<IHandle>}
    */
   getHandles(context) {
     const result = new List()

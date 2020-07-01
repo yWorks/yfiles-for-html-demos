@@ -58,7 +58,7 @@ export default class SubtreePositionHandler extends BaseClass(IPositionHandler) 
 
   /**
    * Returns the location of the selected node.
-   * @type {IPoint}
+   * @type {!IPoint}
    */
   get location() {
     return this.nodePositionHandler.location
@@ -66,7 +66,7 @@ export default class SubtreePositionHandler extends BaseClass(IPositionHandler) 
 
   /**
    * The subtree is upon to be dragged.
-   * @param {IInputModeContext} context The context to retrieve information about the drag from
+   * @param {!IInputModeContext} context The context to retrieve information about the drag from
    */
   initializeDrag(context) {
     this.subtree = new Subtree(context.graph, this.node)
@@ -85,9 +85,9 @@ export default class SubtreePositionHandler extends BaseClass(IPositionHandler) 
 
   /**
    * The subtree is dragged.
-   * @param {IInputModeContext} context The context to retrieve information about the drag from
-   * @param {Point} originalLocation The value of the location property at the time of initializeDrag
-   * @param {Point} newLocation The coordinates in the world coordinate system that the client wants the handle to be at
+   * @param {!IInputModeContext} context The context to retrieve information about the drag from
+   * @param {!Point} originalLocation The value of the location property at the time of initializeDrag
+   * @param {!Point} newLocation The coordinates in the world coordinate system that the client wants the handle to be at
    */
   handleMove(context, originalLocation, newLocation) {
     this.compositeHandler.handleMove(context, originalLocation, newLocation)
@@ -96,8 +96,8 @@ export default class SubtreePositionHandler extends BaseClass(IPositionHandler) 
 
   /**
    * The drag is canceled.
-   * @param {IInputModeContext} context The context to retrieve information about the drag from
-   * @param {Point} originalLocation The value of the coordinate of the location property at the time of initializeDrag
+   * @param {!IInputModeContext} context The context to retrieve information about the drag from
+   * @param {!Point} originalLocation The value of the coordinate of the location property at the time of initializeDrag
    */
   cancelDrag(context, originalLocation) {
     this.compositeHandler.cancelDrag(context, originalLocation)
@@ -110,9 +110,9 @@ export default class SubtreePositionHandler extends BaseClass(IPositionHandler) 
 
   /**
    * The drag is finished.
-   * @param {IInputModeContext} context The context to retrieve information about the drag from
-   * @param {Point} originalLocation The value of the location property at the time of initializeDrag
-   * @param {Point} newLocation The coordinates in the world coordinate system that the client wants the handle to be at
+   * @param {!IInputModeContext} context The context to retrieve information about the drag from
+   * @param {!Point} originalLocation The value of the location property at the time of initializeDrag
+   * @param {!Point} newLocation The coordinates in the world coordinate system that the client wants the handle to be at
    */
   dragFinished(context, originalLocation, newLocation) {
     this.compositeHandler.dragFinished(context, originalLocation, newLocation)
@@ -125,8 +125,8 @@ export default class SubtreePositionHandler extends BaseClass(IPositionHandler) 
 
   /**
    * Creates an {@link IPositionHandler} that moves the whole subtree.
-   * @param {Subtree} subtree The nodes and edges of the subtree
-   * @returns {IPositionHandler} An {@link IPositionHandler} that moves the whole subtree
+   * @param {!Subtree} subtree The nodes and edges of the subtree
+   * @returns {!IPositionHandler} An {@link IPositionHandler} that moves the whole subtree
    */
   static createCompositeHandler(subtree) {
     const positionHandlers = new List()

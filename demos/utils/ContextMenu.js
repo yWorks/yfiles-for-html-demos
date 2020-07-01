@@ -47,14 +47,14 @@ export default class ContextMenu {
    * Creates a new empty menu.
    *
    * @param {GraphComponent} graphComponent The graph component of this context menu.
-   * @param {GraphComponent} graphComponent
+   * @param {!GraphComponent} graphComponent
    */
   constructor(graphComponent) {
     const contextMenu = document.createElement('div')
     contextMenu.setAttribute('class', 'demo-context-menu')
     this.element = contextMenu
     this.blurredTimeout = null
-    this.isOpen = true
+    this.isOpen = false
 
     // Listeners for focus events since this menu closes itself if it loses the focus.
     this.focusOutListener = evt => {
@@ -101,9 +101,9 @@ export default class ContextMenu {
 
   /**
    * Adds a new menu entry with the given text and click-listener to this menu.
-   * @param {string} label
-   * @param {function} clickListener
-   * @returns {HTMLElement}
+   * @param {!string} label
+   * @param {!function} clickListener
+   * @returns {!HTMLElement}
    */
   addMenuItem(label, clickListener) {
     const menuItem = document.createElement('button')
@@ -133,7 +133,7 @@ export default class ContextMenu {
    *
    * @param {Point} location The location of the menu relative to the left edge of the entire
    *   document. This are typically the pageX and pageY coordinates of the contextmenu event.
-   * @param {Point} location
+   * @param {!Point} location
    */
   show(location) {
     if (this.element.childElementCount <= 0) {
@@ -238,8 +238,8 @@ export default class ContextMenu {
    * @param {GraphComponent} graphComponent The graph component of this context menu.
    * @param {function(Point)} openingCallback This function is called when an event that should
    *   open the context menu occurred. It gets the location of the event.
-   * @param {GraphComponent} graphComponent
-   * @param {function} openingCallback
+   * @param {!GraphComponent} graphComponent
+   * @param {!function} openingCallback
    */
   addOpeningEventListeners(graphComponent, openingCallback) {
     const componentDiv = graphComponent.div
@@ -300,7 +300,7 @@ export default class ContextMenu {
    * @param {HTMLElement} relatedTarget The related target of the focus event.
    *
    * @private
-   * @param {HTMLElement} relatedTarget
+   * @param {!HTMLElement} relatedTarget
    */
   onFocusOut(relatedTarget) {
     // focusout can also occur when the focus shifts between the buttons in this context menu.
@@ -323,10 +323,10 @@ export default class ContextMenu {
    * Calculates the location of the center of the given element in absolute coordinates relative to the body element.
    *
    * @param {HTMLElement} element
-   * @returns {Point} {Point}
+   * @returns {!Point} {Point}
    *
    * @private
-   * @param {HTMLElement} element
+   * @param {!HTMLElement} element
    */
   static getCenterInPage(element) {
     let left = element.clientWidth / 2.0

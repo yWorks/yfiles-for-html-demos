@@ -66,7 +66,7 @@ import MySimpleEdgeStyle from './MySimpleEdgeStyle.js'
 export default class MyNodeStyleDecorator extends NodeStyleBase {
   /**
    * Creates a new instance of this style using the given wrapped style.
-   * @param {INodeStyle} wrappedStyle The style that is decorated by this instance.
+   * @param {!INodeStyle} wrappedStyle The style that is decorated by this instance.
    */
   constructor(wrappedStyle) {
     super()
@@ -76,9 +76,9 @@ export default class MyNodeStyleDecorator extends NodeStyleBase {
   /**
    * Creates the visual for a node rendering the decorator element on top of the wrapped element.
    * @see Overrides {@link NodeStyleBase#createVisual}
-   * @param {IRenderContext} context
-   * @param {INode} node
-   * @returns {SvgVisual}
+   * @param {!IRenderContext} context
+   * @param {!INode} node
+   * @returns {!SvgVisual}
    */
   createVisual(context, node) {
     // create the outer g element
@@ -111,10 +111,10 @@ export default class MyNodeStyleDecorator extends NodeStyleBase {
    * Re-renders the node using the old visual containing the decorator and the wrapped element for performance
    * reasons.
    * @see Overrides {@link NodeStyleBase#updateVisual}
-   * @param {IRenderContext} context
-   * @param {SvgVisual} oldVisual
-   * @param {INode} node
-   * @returns {SvgVisual}
+   * @param {!IRenderContext} context
+   * @param {!SvgVisual} oldVisual
+   * @param {!INode} node
+   * @returns {!SvgVisual}
    */
   updateVisual(context, oldVisual, node) {
     const container = oldVisual.svgElement
@@ -149,9 +149,9 @@ export default class MyNodeStyleDecorator extends NodeStyleBase {
 
   /**
    * Draws the edge-like connectors from a node to its labels.
-   * @param {INode} node
-   * @param {IRenderContext} context
-   * @param {Element} container
+   * @param {!INode} node
+   * @param {!IRenderContext} context
+   * @param {!Element} container
    * @param {*} cache
    */
   renderLabelEdges(node, context, container, cache) {
@@ -198,7 +198,7 @@ export default class MyNodeStyleDecorator extends NodeStyleBase {
 
   /**
    * Creates an object containing all necessary data to create a visual for the node.
-   * @param {INode} node
+   * @param {!INode} node
    * @returns {*}
    */
   createRenderDataCache(node) {
@@ -227,9 +227,9 @@ export default class MyNodeStyleDecorator extends NodeStyleBase {
   /**
    * Get the bounding box of the node.
    * @see Overrides {@link NodeStyleBase#getBounds}
-   * @param {IInputModeContext} canvasContext
-   * @param {INode} node
-   * @returns {Rect}
+   * @param {!IInputModeContext} canvasContext
+   * @param {!INode} node
+   * @returns {!Rect}
    */
   getBounds(canvasContext, node) {
     // delegate this to the wrapped style
@@ -241,9 +241,9 @@ export default class MyNodeStyleDecorator extends NodeStyleBase {
    * Otherwise label intersection lines might not be painted if the node is outside
    * of the clipping bounds.
    * @see Overrides {@link NodeStyleBase#isVisible}
-   * @param {ICanvasContext} canvasContext
-   * @param {Rect} clip
-   * @param {INode} node
+   * @param {!ICanvasContext} canvasContext
+   * @param {!Rect} clip
+   * @param {!INode} node
    * @returns {boolean}
    */
   isVisible(canvasContext, clip, node) {
@@ -268,9 +268,9 @@ export default class MyNodeStyleDecorator extends NodeStyleBase {
    * Hit test which considers HitTestRadius specified in CanvasContext.
    * @returns {boolean} True if p is inside node.
    * @see Overrides {@link NodeStyleBase#isHit}
-   * @param {IInputModeContext} canvasContext
-   * @param {Point} p
-   * @param {INode} node
+   * @param {!IInputModeContext} canvasContext
+   * @param {!Point} p
+   * @param {!INode} node
    */
   isHit(canvasContext, p, node) {
     // delegate this to the wrapped style since we don't want the visual decorator to be hit testable
@@ -282,9 +282,9 @@ export default class MyNodeStyleDecorator extends NodeStyleBase {
    * @returns {boolean} True if the box intersects the elliptical shape of the node. Also true if box lies completely
    *   inside node.
    * @see Overrides {@link NodeStyleBase#isInBox}
-   * @param {IInputModeContext} canvasContext
-   * @param {Rect} box
-   * @param {INode} node
+   * @param {!IInputModeContext} canvasContext
+   * @param {!Rect} box
+   * @param {!INode} node
    */
   isInBox(canvasContext, box, node) {
     // delegate this to the wrapped style
@@ -294,8 +294,8 @@ export default class MyNodeStyleDecorator extends NodeStyleBase {
   /**
    * Performs the lookup operation.
    * @see Overrides {@link NodeStyleBase#lookup}
-   * @param {INode} node
-   * @param {Class} type
+   * @param {!INode} node
+   * @param {!Class} type
    * @returns {*}
    */
   lookup(node, type) {
@@ -306,9 +306,9 @@ export default class MyNodeStyleDecorator extends NodeStyleBase {
   /**
    * Gets the intersection of a line with the node.
    * @see Overrides {@link NodeStyleBase#getIntersection}
-   * @param {INode} node
-   * @param {Point} inner
-   * @param {Point} outer
+   * @param {!INode} node
+   * @param {!Point} inner
+   * @param {!Point} outer
    * @returns {?Point}
    */
   getIntersection(node, inner, outer) {
@@ -320,8 +320,8 @@ export default class MyNodeStyleDecorator extends NodeStyleBase {
    * Exact geometric check whether a point p lies inside the node. This is important for intersection calculation,
    * among others.
    * @see Overrides {@link NodeStyleBase#isInside}
-   * @param {INode} node
-   * @param {Point} point
+   * @param {!INode} node
+   * @param {!Point} point
    * @returns {boolean}
    */
   isInside(node, point) {
@@ -333,7 +333,7 @@ export default class MyNodeStyleDecorator extends NodeStyleBase {
    * Gets the outline of the node.
    * This allows for correct edge path intersection calculation, among others.
    * @see Overrides {@link NodeStyleBase#getOutline}
-   * @param {INode} node
+   * @param {!INode} node
    * @returns {?GeneralPath}
    */
   getOutline(node) {

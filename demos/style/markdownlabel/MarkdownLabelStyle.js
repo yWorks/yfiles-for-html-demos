@@ -51,7 +51,7 @@ export class MarkdownLabelStyle extends MarkupLabelStyle {
 class MarkdownLabelStyleRenderer extends MarkupLabelStyleRenderer {
   /**
    * Converts the given markdown text into HTML markup.
-   * @param {string} markdownText The label markdown text
+   * @param {!string} markdownText The label markdown text
    * @yjs:keep=render
    * @returns {*}
    */
@@ -63,13 +63,13 @@ class MarkdownLabelStyleRenderer extends MarkupLabelStyleRenderer {
   }
 
   /**
-   * @param {SVGTextElement} textElement
-   * @param {Font} font
-   * @param {string} text
-   * @param {Size} maxSize
-   * @param {(TextWrapping|||||)} wrapping
+   * @param {!SVGTextElement} textElement
+   * @param {!Font} font
+   * @param {!string} text
+   * @param {!Size} maxSize
+   * @param {!(TextWrapping|'none'|'character'|'character-ellipsis'|'word'|'word-ellipsis')} wrapping
    * @param {boolean} rightToLeft
-   * @returns {string}
+   * @returns {!string}
    */
   addTextElements(textElement, font, text, maxSize, wrapping, rightToLeft) {
     // call the super implementation with the converted markdown text
@@ -85,10 +85,10 @@ class MarkdownLabelStyleRenderer extends MarkupLabelStyleRenderer {
   }
 
   /**
-   * @param {string} text
-   * @param {Font} font
-   * @param {Size} maximumSize
-   * @returns {Size}
+   * @param {!string} text
+   * @param {!Font} font
+   * @param {!Size} maximumSize
+   * @returns {!Size}
    */
   measureText(text, font, maximumSize) {
     // call the super implementation with the converted markdown text

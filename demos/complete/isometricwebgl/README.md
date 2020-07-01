@@ -15,7 +15,7 @@ This demo features the full range of interactions using [GraphEditorInputMode](h
 - Select a node and drag the handle at the "top" to change the height of that node.
 - Drag the "Rotation" slider in the toolbar to change the rotation of the scene.
 - Press the "Toggle Grid" button in the toolbar to turn the grid on or off.
-- Click on an empty space in the canvas to create a new node with a random color and width.
+- Click on an empty space in the canvas to create a new node with a random color and height.
 
 ## Layout
 

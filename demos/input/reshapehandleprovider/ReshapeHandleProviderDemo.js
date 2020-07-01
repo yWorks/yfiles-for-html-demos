@@ -76,8 +76,8 @@ function registerReshapeHandleProvider() {
 }
 
 /**
- * @param {object} licenseData
- * @returns {Promise}
+ * @param {!object} licenseData
+ * @returns {!Promise}
  */
 async function run(licenseData) {
   License.value = licenseData
@@ -139,8 +139,8 @@ async function run(licenseData) {
 }
 
 /**
- * @param {object} sender
- * @param {KeyEventArgs} e
+ * @param {!object} sender
+ * @param {!KeyEventArgs} e
  */
 function onKeyDown(sender, e) {
   if (e.key === Key.CTRL && !ctrlPressed) {
@@ -151,8 +151,8 @@ function onKeyDown(sender, e) {
 }
 
 /**
- * @param {object} sender
- * @param {KeyEventArgs} e
+ * @param {!object} sender
+ * @param {!KeyEventArgs} e
  */
 function onKeyUp(sender, e) {
   if (e.key === Key.CTRL) {

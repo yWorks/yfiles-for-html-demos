@@ -40,7 +40,7 @@ import {
  */
 export default class PositionHandler extends BaseClass(IPositionHandler) {
   /**
-   * @param {MutableRectangle} rectangle
+   * @param {!MutableRectangle} rectangle
    */
   constructor(rectangle) {
     super()
@@ -49,14 +49,14 @@ export default class PositionHandler extends BaseClass(IPositionHandler) {
   }
 
   /**
-   * @type {Point}
+   * @type {!Point}
    */
   get location() {
     return this.rectangle.topLeft
   }
 
   /**
-   * @param {IInputModeContext} context
+   * @param {!IInputModeContext} context
    */
   initializeDrag(context) {
     const canvasComponent = context.canvasComponent
@@ -66,9 +66,9 @@ export default class PositionHandler extends BaseClass(IPositionHandler) {
   }
 
   /**
-   * @param {IInputModeContext} context
-   * @param {Point} originalLocation
-   * @param {Point} newLocation
+   * @param {!IInputModeContext} context
+   * @param {!Point} originalLocation
+   * @param {!Point} newLocation
    */
   handleMove(context, originalLocation, newLocation) {
     const newX = newLocation.x + this.offset.x
@@ -77,17 +77,17 @@ export default class PositionHandler extends BaseClass(IPositionHandler) {
   }
 
   /**
-   * @param {IInputModeContext} context
-   * @param {Point} originalLocation
+   * @param {!IInputModeContext} context
+   * @param {!Point} originalLocation
    */
   cancelDrag(context, originalLocation) {
     this.rectangle.relocate(originalLocation)
   }
 
   /**
-   * @param {IInputModeContext} context
-   * @param {Point} originalLocation
-   * @param {Point} newLocation
+   * @param {!IInputModeContext} context
+   * @param {!Point} originalLocation
+   * @param {!Point} newLocation
    */
   dragFinished(context, originalLocation, newLocation) {
     const newX = newLocation.x + this.offset.x

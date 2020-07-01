@@ -1080,12 +1080,13 @@ class ScalingReshapeHandler extends ReshapeHandlerBase {
   public handleReshape(context: IInputModeContext, originalBounds: Rect, newBounds: Rect): void {
     super.handleReshape(context, originalBounds, newBounds)
     const graph = context.graph
-    const groupingSupport = graph?.groupingSupport
-    if (groupingSupport) {
-      for (const node of this.reshapeNodes) {
-        if (graph?.isGroupNode(node)) {
-          groupingSupport.enlargeGroupNode(context, node, true)
-        }
+    if (graph == null) {
+      return
+    }
+    const groupingSupport = graph!.groupingSupport
+    for (const node of this.reshapeNodes) {
+      if (graph!.isGroupNode(node)) {
+        groupingSupport.enlargeGroupNode(context, node, true)
       }
     }
   }

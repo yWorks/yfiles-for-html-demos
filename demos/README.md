@@ -66,6 +66,7 @@ No Preview | [Interactive Organic Layout](layout/interactiveorganic) | Shows the
 <img src="resources/image/multipage.png" alt="Multi-Page Layout screenshot" width="128" height="96" /> | [Multi-Page Layout](layout/multipage) | Shows how to divide a large model graph into several smaller page graphs, for example to print to multiple pages.
 <img src="resources/image/treelayout.png" alt="Tree Layout screenshot" width="128" height="96" /> | [Tree Layout](layout/tree) | Shows how to use different node placer in TreeLayout.
 <img src="resources/image/partiallayout.png" alt="Partial Layout screenshot" width="128" height="96" /> | [Partial Layout](layout/partial) | Shows how to integrate new graph elements into an existing graph layout.
+<img src="resources/image/without-view.png" alt="Layout Without View screenshot" width="128" height="96" /> | [Layout Without View](layout/without-view) | Shows how to use the graph analysis and layout algorithms without a view and without the IGraph API
 # [View](view)
 
 This folder and its subfolders contain demo applications which make use of the different features of the viewer component of yFiles for HTML.
@@ -192,15 +193,15 @@ This folder and its subfolders contain demo applications which illustrate the di
 <img src="resources/image/webworker.png" alt="Web Worker screenshot" width="128" height="96" /> | [Web Worker](loading/webworker/README.html) | Shows how to run a yFiles layout algorithm in a Web Worker task in order to prevent the layout calculation from blocking the UI.
 <img src="resources/image/webworker.png" alt="Web Worker UMD screenshot" width="128" height="96" /> | [Web Worker UMD](loading/webworker-umd) | Shows how to run a yFiles layout algorithm in a Web Worker task in order to prevent the layout calculation from blocking the UI.
 <img src="resources/image/webpack.png" alt="webpack screenshot" width="128" height="96" /> | [webpack](loading/webpack/README.html) | Shows how to integrate the yFiles library in a <a href="https://webpack.js.org" target="_blank">webpack</a> project using ES modules.
-<img src="resources/image/webpack.png" alt="Webpack Lazy Load yFiles screenshot" width="128" height="96" /> | [Webpack Lazy Load yFiles](loading/webpack-lazy-yfiles/README.html) | Shows how to lazy load yFiles in a <a href="https://webpack.js.org/" target="_blank">webpack</a> project with dynamic imports.
-<img src="resources/image/webpack.png" alt="Webpack Lazy Load Layout screenshot" width="128" height="96" /> | [Webpack Lazy Load Layout](loading/webpack-lazy-layout/README.html) | Shows shows how to lazy load specific yFiles modules in a <a href="https://webpack.js.org" target="_blank">webpack</a> project with dynamic imports.
+<img src="resources/image/webpack.png" alt="Webpack Lazy Load yFiles screenshot" width="128" height="96" /> | [Webpack Lazy Load yFiles](loading/webpack-lazy-yfiles/README.html) | Shows how to lazily load yFiles in a <a href="https://webpack.js.org/" target="_blank">webpack</a> project with dynamic imports.
+<img src="resources/image/webpack.png" alt="Webpack Lazy Load Layout screenshot" width="128" height="96" /> | [Webpack Lazy Load Layout](loading/webpack-lazy-layout/README.html) | Shows how to lazily load selected yFiles modules in a <a href="https://webpack.js.org" target="_blank">webpack</a> project with dynamic imports.
 # [Tutorial Getting Started](01-tutorial-getting-started)
 
 This Getting Started Tutorial is a step-by-step introduction to the concepts and main features of the yFiles for HTML diagramming library. Topics include basic styling, user interaction, Undo/Redo, clipboard, group nodes and folding.
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | Demo | Description
 --- | --- | ---
-<img src="resources/image/tutorial1step1.png" alt="01 Creating the View screenshot" width="128" height="96" /> | [01 Creating the View](01-tutorial-getting-started/01-graphcomponent) | Introduces class GraphComponent, which is the central UI element for working with graphs.
+<img src="resources/image/tutorial1step1.png" alt="01 Creating the View screenshot" width="128" height="96" /> | [01 Creating the View](01-tutorial-getting-started/01-graphcomponent) | Introduces the GraphComponent class, the central UI element for working with graphs.
 <img src="resources/image/tutorial1step2.png" alt="02 Creating Graph Elements screenshot" width="128" height="96" /> | [02 Creating Graph Elements](01-tutorial-getting-started/02-graph-element-creation) | Shows how to create the basic graph elements.
 <img src="resources/image/tutorial1step2.png" alt="03 Managing Viewport screenshot" width="128" height="96" /> | [03 Managing Viewport](01-tutorial-getting-started/03-managing-viewport) | Shows how to work with the viewport.
 <img src="resources/image/tutorial1step4.png" alt="04 Setting Styles screenshot" width="128" height="96" /> | [04 Setting Styles](01-tutorial-getting-started/04-setting-styles) | Shows how to configure the visual appearance of graph elements using styles.

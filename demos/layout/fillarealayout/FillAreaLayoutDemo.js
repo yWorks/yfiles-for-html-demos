@@ -58,7 +58,7 @@ let graphComponent = null
 
 /**
  * Stores the bounding rectangle of the selected nodes that get deleted.
- * @type {?Rect}
+ * @type {Rect}
  */
 let selectionRect = null
 
@@ -69,8 +69,8 @@ let selectionRect = null
 let componentAssignmentStrategy = ComponentAssignmentStrategy.SINGLE
 
 /**
- * @param {object} licenseData
- * @returns {Promise}
+ * @param {!object} licenseData
+ * @returns {!Promise}
  */
 async function run(licenseData) {
   License.value = licenseData
@@ -107,8 +107,8 @@ function initializeInputModes() {
 
 /**
  * Prepares the {@link LayoutExecutor} that is called after the selection is deleted.
- * @param {object} sender
- * @param {SelectionEventArgs.<IModelItem>} event
+ * @param {!object} sender
+ * @param {!SelectionEventArgs.<IModelItem>} event
  */
 function onDeletingSelection(sender, event) {
   // determine the bounds of the selection
@@ -117,9 +117,9 @@ function onDeletingSelection(sender, event) {
 
 /**
  * Calls the prepared {@link LayoutExecutor}.
- * @param {object} sender
- * @param {SelectionEventArgs.<IModelItem>} evt
- * @returns {Promise}
+ * @param {!object} sender
+ * @param {!SelectionEventArgs.<IModelItem>} evt
+ * @returns {!Promise}
  */
 async function onDeletedSelection(sender, evt) {
   // configure the layout that will fill free space
@@ -137,8 +137,8 @@ async function onDeletedSelection(sender, evt) {
 
 /**
  * The bounds including the nodes of the selection.
- * @param {ISelectionModel.<IModelItem>} selection
- * @returns {Rect}
+ * @param {!ISelectionModel.<IModelItem>} selection
+ * @returns {!Rect}
  */
 function getBounds(selection) {
   let bounds = Rect.EMPTY
@@ -168,7 +168,7 @@ function initializeGraph() {
 
 /**
  * Loads the sample graph associated with the given name
- * @param {string} sampleName
+ * @param {!string} sampleName
  */
 function loadGraph(sampleName) {
   const data = SampleData[sampleName]
@@ -265,7 +265,7 @@ function registerCommands() {
 
 /**
  * Updates the enabled state of the next- and previous-sample-button according to which sample is currently used.
- * @param {HTMLSelectElement} sampleGraphs
+ * @param {!HTMLSelectElement} sampleGraphs
  */
 function updateButtons(sampleGraphs) {
   const selectedIndex = sampleGraphs.selectedIndex

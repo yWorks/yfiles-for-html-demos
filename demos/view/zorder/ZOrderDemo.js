@@ -64,7 +64,7 @@ let zOrderSupport = null
 
 /**
  * Bootstraps the demo.
- * @param {object} licenseData
+ * @param {!object} licenseData
  */
 function run(licenseData) {
   License.value = licenseData
@@ -144,7 +144,7 @@ function initializeGraph() {
 }
 
 /**
- * @param {IGraph} graph
+ * @param {!IGraph} graph
  */
 function createGraph(graph) {
   const g1 = graph.createGroupNode(null, new Rect(350, 300, 250, 150))
@@ -187,7 +187,7 @@ function createGraph(graph) {
 
 /**
  * Updates the label text to show the current z-index of the node.
- * @param {INode} node
+ * @param {!INode} node
  * @param {number} zIndex
  */
 function updateLabel(node, zIndex) {

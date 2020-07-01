@@ -82,6 +82,7 @@ import { addClass } from '../../resources/demo-app.js'
  */
 
 /**
+ * Tree builder sample data
  * @typedef {Object} TreeBuilderSample
  * @property {string} name
  * @property {Array.<TreeNodesSourceDefinition>} nodesSources
@@ -95,9 +96,9 @@ import { addClass } from '../../resources/demo-app.js'
  */
 export class SchemaComponent {
   /**
-   * @param {string} selector
-   * @param {IGraph} graph
-   * @param {function} schemaChangedCallback
+   * @param {!string} selector
+   * @param {!IGraph} graph
+   * @param {!function} schemaChangedCallback
    */
   constructor(selector, graph, schemaChangedCallback) {
     this.resultGraph = graph
@@ -152,8 +153,8 @@ export class SchemaComponent {
 
   /**
    * Configures the input mode of the schema graph
-   * @param {IGraph} graph
-   * @returns {IInputMode}
+   * @param {!IGraph} graph
+   * @returns {!IInputMode}
    */
   configureInputMode(graph) {
     const inputMode = new GraphEditorInputMode()
@@ -270,9 +271,8 @@ export class SchemaComponent {
 
   /**
    * Creates the tooltip content for a node
-   * @param {TreeNodesSourceDefinitionBuilderConnector} sourceConnector the
-   *   {@link TreeNodesSourceDefinitionBuilderConnector} to get the data from
-   * @returns {HTMLElement}
+   * @param {!TreeNodesSourceDefinitionBuilderConnector} sourceConnector the {@link TreeNodesSourceDefinitionBuilderConnector} to get the data from
+   * @returns {!HTMLElement}
    */
   static createToolTip(sourceConnector) {
     const toolTip = document.createElement('div')
@@ -290,7 +290,7 @@ export class SchemaComponent {
 
   /**
    * Builds the schema graph using the provided {@link TreeBuilderSample}
-   * @param {TreeBuilderSample} sample the sample data used for the graphs
+   * @param {!TreeBuilderSample} sample the sample data used for the graphs
    */
   loadSample(sample) {
     this.schemaGraphComponent.graph.clear()
@@ -364,8 +364,8 @@ export class SchemaComponent {
 
   /**
    * Creates the child relations between to schema graph nodes connected by an edge.
-   * @param {string} childDataProvider the binding string for the child relation
-   * @param {IEdge} edge the edge to connecting the nodes with child relations
+   * @param {!string} childDataProvider the binding string for the child relation
+   * @param {!IEdge} edge the edge to connecting the nodes with child relations
    */
   createChildRelationship(childDataProvider, edge) {
     const sourceConnector = edge.sourceNode.tag
@@ -388,7 +388,7 @@ export class SchemaComponent {
 
   /**
    * Creates a new {@link TreeNodesSourceDefinition} for use in the schema graph
-   * @param {INode} node the schema graph node to attach the definition to
+   * @param {!INode} node the schema graph node to attach the definition to
    * @param {boolean} isRoot whether the schema graph node is a root node or not
    */
   createNewTreeNodesSource(node, isRoot) {
@@ -405,11 +405,9 @@ export class SchemaComponent {
   }
 
   /**
-   * Creates a {@link TreeNodesSourceDefinitionBuilderConnector} for a
-   * {@link TreeNodesSourceDefinition}
-   * @param {TreeNodesSourceDefinition} sourceDefinition the TreeNodesSourceDefinition to create
-   *   the connector for
-   * @returns {TreeNodesSourceDefinitionBuilderConnector}
+   * Creates a {@link TreeNodesSourceDefinitionBuilderConnector} for a {@link TreeNodesSourceDefinition}
+   * @param {!TreeNodesSourceDefinition} sourceDefinition the TreeNodesSourceDefinition to create the connector for
+   * @returns {!TreeNodesSourceDefinitionBuilderConnector}
    */
   createTreeNodesSourceConnector(sourceDefinition) {
     const data = SchemaComponent.isRootNodesSourceDefinition(sourceDefinition)
@@ -435,25 +433,21 @@ export class SchemaComponent {
 
   /**
    * Applies the layout for the schema graph component
-   * @returns {Promise}
+   * @returns {!Promise}
    */
   async applySchemaLayout() {
-    const layoutData = new HierarchicLayoutData({
-      sourcePortConstraints: () => PortConstraint.create(PortSide.NORTH),
-      targetPortConstraints: () => PortConstraint.create(PortSide.SOUTH)
-    })
-
     const layout = new HierarchicLayout({
       considerNodeLabels: true,
-      integratedEdgeLabeling: true
+      integratedEdgeLabeling: true,
+      backLoopRoutingForSelfLoops: true
     })
-    await this.schemaGraphComponent.morphLayout(new PortCalculator(layout), null, layoutData)
+    await this.schemaGraphComponent.morphLayout(new PortCalculator(layout))
     this.schemaGraphComponent.updateContentRect()
   }
 
   /**
    * Opens the {@link EditTreeNodesSourceDialog} for editing a schema nodes' business data
-   * @param {INode} schemaNode the schema node to edit
+   * @param {!INode} schemaNode the schema node to edit
    */
   openEditNodeSourceDialog(schemaNode) {
     const sourceDefinitionConnector = schemaNode.tag
@@ -471,7 +465,7 @@ export class SchemaComponent {
   /**
    * Returns whether a {@link TreeNodesSourceDefinition} represents a root node or not.
    * A root node definition sources' data is non empty
-   * @param {TreeNodesSourceDefinition} nodesSourceDefinition
+   * @param {!TreeNodesSourceDefinition} nodesSourceDefinition
    * @returns {boolean}
    */
   static isRootNodesSourceDefinition(nodesSourceDefinition) {
@@ -482,7 +476,7 @@ export class SchemaComponent {
    * Configures the given {@link CreateEdgeInputMode} to be able to finish the gesture on an empty
    * canvas with a newly created node.
    * @param {CreateEdgeInputMode} createEdgeInputMode
-   * @param {CreateEdgeInputMode} createEdgeInputMode
+   * @param {!CreateEdgeInputMode} createEdgeInputMode
    */
   enableTargetNodeCreation(createEdgeInputMode) {
     createEdgeInputMode.dummyEdgeGraph.nodeDefaults.size = this.schemaGraphComponent.graph.nodeDefaults.size
@@ -549,7 +543,7 @@ export class SchemaComponent {
   /**
    * Sets the style for a node in the schema graph
    * Root nodes have a different style than non-root nodes (octagon vs. circle)
-   * @param {INode} node the node to set the style for
+   * @param {!INode} node the node to set the style for
    */
   setSchemaNodeStyle(node) {
     this.schemaGraphComponent.graph.setStyle(
@@ -559,8 +553,8 @@ export class SchemaComponent {
   }
 
   /**
-   * @param {TreeNodesSourceDefinition} nodesSourceDefinition
-   * @returns {INodeStyle}
+   * @param {!TreeNodesSourceDefinition} nodesSourceDefinition
+   * @returns {!INodeStyle}
    */
   static createSchemaNodeStyle(nodesSourceDefinition) {
     if (SchemaComponent.isRootNodesSourceDefinition(nodesSourceDefinition)) {

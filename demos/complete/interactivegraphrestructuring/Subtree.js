@@ -34,8 +34,8 @@ import { IEdge, IGraph, INode, Rect } from 'yfiles'
 export default class Subtree {
   /**
    * Initializes a subtree with the given root node.
-   * @param {IGraph} graph The graph in which the subtree lives
-   * @param {INode} root The root of the subtree
+   * @param {!IGraph} graph The graph in which the subtree lives
+   * @param {!INode} root The root of the subtree
    */
   constructor(graph, root) {
     this.graph = graph
@@ -96,7 +96,7 @@ export default class Subtree {
 
   /**
    * Returns the bounds including the nodes of the subtree.
-   * @type {Rect}
+   * @type {!Rect}
    */
   get bounds() {
     let subtreeBounds = Rect.EMPTY
@@ -108,7 +108,7 @@ export default class Subtree {
 
   /**
    * Determines the nodes and edges of a subtree of a given root.
-   * @param {INode} root The root node of the subtree
+   * @param {!INode} root The root node of the subtree
    */
   initializeSubtree(root) {
     this.graph.outEdgesAt(root).forEach(outEdge => {

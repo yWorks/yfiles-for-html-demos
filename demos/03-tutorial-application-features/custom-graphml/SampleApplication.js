@@ -66,7 +66,7 @@ const DATE_TIME_MAPPER_KEY = 'DateTimeMapperKey'
 
 /**
  * Bootstraps the demo.
- * @param {object} licenseData
+ * @param {!object} licenseData
  */
 function run(licenseData) {
   License.value = licenseData
@@ -142,7 +142,7 @@ function enableGraphML() {
 /**
  * Register input and output handlers that store the data in the mapper as GraphMLAttributes resp. can read them
  * back.
- * @returns {GraphMLIOHandler}
+ * @returns {!GraphMLIOHandler}
  */
 function createGraphMLIOHandler() {
   // create an IOHandler that will be used for all IO operations

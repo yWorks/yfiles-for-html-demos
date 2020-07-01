@@ -55,7 +55,7 @@ let graphComponent = null
 
 /**
  * Bootstraps the demo.
- * @param {object} licenseData
+ * @param {!object} licenseData
  */
 function run(licenseData) {
   License.value = licenseData
@@ -81,7 +81,7 @@ function run(licenseData) {
 
 /**
  * Configures the highlight style that will be used for the nodes that match the searched query.
- * @param {IGraph} graph The graph.
+ * @param {!IGraph} graph The graph.
  */
 function initSearchHighlightingStyle(graph) {
   const searchHighlightStyle = new NodeStyleDecorationInstaller({
@@ -99,7 +99,7 @@ function initSearchHighlightingStyle(graph) {
 
 /**
  * Updates the search results by using the given string.
- * @param {string} searchText The text to be queried
+ * @param {!string} searchText The text to be queried
  */
 function updateSearch(searchText) {
   // we use the search highlight manager to highlight matching items
@@ -119,8 +119,8 @@ function updateSearch(searchText) {
 
 /**
  * Returns whether the given node is a match when searching for the given text in the label of the node.
- * @param {INode} node The node to be examined
- * @param {string} text The text to be queried
+ * @param {!INode} node The node to be examined
+ * @param {!string} text The text to be queried
  * @returns {boolean} True if the node matches the text, false otherwise
  */
 function matches(node, text) {
@@ -129,7 +129,7 @@ function matches(node, text) {
 
 /**
  * Initializes the defaults for the styles in this tutorial.
- * @param {IGraph} graph The graph.
+ * @param {!IGraph} graph The graph.
  */
 function initTutorialDefaults(graph) {
   // configure the styles of the nodes and their labels
@@ -172,7 +172,7 @@ function registerCommands() {
 
 /**
  * Creates an initial sample graph.
- * @param {IGraph} graph The graph.
+ * @param {!IGraph} graph The graph.
  */
 function createGraph(graph) {
   const node1 = graph.createNode({

@@ -203,82 +203,47 @@ export default {
     },
     {
       id: 'hub1',
-      color: {
-        r: 0.7529411764705882,
-        g: 0.7529411764705882,
-        b: 0.7529411764705882,
-        a: 1
-      },
+      color: { r: 0.7529411764705882, g: 0.7529411764705882, b: 0.7529411764705882, a: 1 },
       label: 'Hub',
       group: 'development',
       ...sizes.Hub
     },
     {
       id: 'hub2',
-      color: {
-        r: 0.7529411764705882,
-        g: 0.7529411764705882,
-        b: 0.7529411764705882,
-        a: 1
-      },
+      color: { r: 0.7529411764705882, g: 0.7529411764705882, b: 0.7529411764705882, a: 1 },
       label: 'Hub',
       group: 'management',
       ...sizes.Hub
     },
     {
       id: 'hub3',
-      color: {
-        r: 0.7529411764705882,
-        g: 0.7529411764705882,
-        b: 0.7529411764705882,
-        a: 1
-      },
+      color: { r: 0.7529411764705882, g: 0.7529411764705882, b: 0.7529411764705882, a: 1 },
       label: 'Hub',
       group: 'production',
       ...sizes.Hub
     },
     {
       id: 'hub4',
-      color: {
-        r: 0.7529411764705882,
-        g: 0.7529411764705882,
-        b: 0.7529411764705882,
-        a: 1
-      },
+      color: { r: 0.7529411764705882, g: 0.7529411764705882, b: 0.7529411764705882, a: 1 },
       label: 'Hub',
       group: 'sales',
       ...sizes.Hub
     },
     {
       id: 'hub5',
-      color: {
-        r: 0.7529411764705882,
-        g: 0.7529411764705882,
-        b: 0.7529411764705882,
-        a: 1
-      },
+      color: { r: 0.7529411764705882, g: 0.7529411764705882, b: 0.7529411764705882, a: 1 },
       label: 'Hub',
       group: 'it',
       ...sizes.Hub
     },
-    {
-      id: 'switch',
-      color: { r: 1, g: 0.4, b: 0, a: 1 },
-      label: 'Switch',
-      ...sizes.Switch
-    },
+    { id: 'switch', color: { r: 1, g: 0.4, b: 0, a: 1 }, label: 'Switch', ...sizes.Switch },
     {
       id: 'gateway',
       color: { r: 0.6, g: 0.2, b: 1, a: 1 },
       label: 'Gateway',
       ...sizes.Gateway
     },
-    {
-      id: 'firewall',
-      color: { r: 1, g: 0, b: 0, a: 1 },
-      label: 'Firewall',
-      ...sizes.Firewall
-    }
+    { id: 'firewall', color: { r: 1, g: 0, b: 0, a: 1 }, label: 'Firewall', ...sizes.Firewall }
   ],
   edgesSource: [
     { from: 'server1', to: 'hub1' },

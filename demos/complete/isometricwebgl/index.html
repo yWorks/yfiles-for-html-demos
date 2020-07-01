@@ -39,6 +39,19 @@
   <link rel="stylesheet" href="../../node_modules/yfiles/yfiles.css">
   <link rel="stylesheet" href="../../resources/style/demo.css">
 
+  <style>
+    #no-webgl-support {
+      text-align: center;
+      font-size: 24px;
+      position: absolute;
+      top: 100px;
+      padding: 2em;
+      left: 0;
+      right: 0;
+      line-height: 2;
+    }
+  </style>
+
   <script src="../../resources/filesystem-warning.js"></script>
 </head>
 <body class="demo-has-left">
@@ -58,7 +71,7 @@
       <li>Select a node and drag the handle at the "top" to change the height of that node.</li>
       <li>Drag the "Rotation" slider in the toolbar to change the rotation of the scene.</li>
       <li>Press the "Toggle Grid" button in the toolbar to turn the grid on or off.</li>
-      <li>Click on an empty space in the canvas to create a new node with a random color and width.</li>
+      <li>Click on an empty space in the canvas to create a new node with a random color and height.</li>
     </ul>
 
     <h2>Layout</h2>
@@ -79,7 +92,7 @@
   <div class="demo-toolbar">
     <button id="open-file" data-command="Open" title="Open a GraphML file" class="demo-icon-yIconOpen"></button>
 
-    <button data-command="FitContent" title="Fit Content" class="demo-icon-yIconZoomFit"></button>
+    <button id="fit-content" data-command="FitContent" title="Fit Content" class="demo-icon-yIconZoomFit"></button>
 
     <span class="demo-separator"></span>
 
@@ -97,6 +110,10 @@
   </div>
 
   <div id="graphComponent"></div>
+  <div id="no-webgl-support" style="display:none;">
+    Your browser or device does not support WebGL.<br>
+    This demo only works if WebGL is available.
+  </div>
 </div>
 
 <script type="module" crossorigin="anonymous" src="IsometricWebGLDrawingDemo.js"></script>

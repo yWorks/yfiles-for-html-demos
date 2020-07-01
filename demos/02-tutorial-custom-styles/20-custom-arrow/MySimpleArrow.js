@@ -99,13 +99,13 @@ export default class MySimpleArrow extends BaseClass(IArrow, IVisualCreator, IBo
    * Gets an {@link IVisualCreator} implementation that will create
    * the {@link IVisualCreator} for this arrow
    * at the given location using the given direction for the given edge.
-   * @param {IEdge} edge the edge this arrow belongs to
+   * @param {!IEdge} edge the edge this arrow belongs to
    * @param {boolean} atSource whether this will be the source arrow
-   * @param {Point} anchor the anchor point for the tip of the arrow
-   * @param {Point} direction the direction the arrow is pointing in
+   * @param {!Point} anchor the anchor point for the tip of the arrow
+   * @param {!Point} direction the direction the arrow is pointing in
    * Itself as a flyweight.
    * @see Specified by {@link IArrow#getVisualCreator}.
-   * @returns {IVisualCreator}
+   * @returns {!IVisualCreator}
    */
   getVisualCreator(edge, atSource, anchor, direction) {
     this.anchor = anchor
@@ -117,16 +117,16 @@ export default class MySimpleArrow extends BaseClass(IArrow, IVisualCreator, IBo
    * Gets an {@link IBoundsProvider} implementation that can yield
    * this arrow's bounds if painted at the given location using the
    * given direction for the given edge.
-   * @param {IEdge} edge the edge this arrow belongs to
+   * @param {!IEdge} edge the edge this arrow belongs to
    * @param {boolean} atSource whether this will be the source arrow
-   * @param {Point} anchor the anchor point for the tip of the arrow
-   * @param {Point} direction the direction the arrow is pointing in
+   * @param {!Point} anchor the anchor point for the tip of the arrow
+   * @param {!Point} direction the direction the arrow is pointing in
    * an implementation of the {@link IBoundsProvider} interface that can
    * subsequently be used to query the bounds. Clients will always call
    * this method before using the implementation and may not cache the instance returned.
    * This allows for applying the flyweight design pattern to implementations.
    * @see Specified by {@link IArrow#getBoundsProvider}.
-   * @returns {IBoundsProvider}
+   * @returns {!IBoundsProvider}
    */
   getBoundsProvider(edge, atSource, anchor, direction) {
     this.anchor = anchor
@@ -136,11 +136,11 @@ export default class MySimpleArrow extends BaseClass(IArrow, IVisualCreator, IBo
 
   /**
    * Creates the visual for the arrow.
-   * @param {IRenderContext} context The context that contains the information needed to create the
+   * @param {!IRenderContext} context The context that contains the information needed to create the
    *   visual.
    * The arrow visual.
    * @see Specified by {@link IVisualCreator#createVisual}.
-   * @returns {SvgVisual}
+   * @returns {!SvgVisual}
    */
   createVisual(context) {
     // create a new path to draw the arrow
@@ -174,13 +174,13 @@ export default class MySimpleArrow extends BaseClass(IArrow, IVisualCreator, IBo
   /**
    * This method updates or replaces a previously created {@link Visual}.
    * In this case, the implementation simply calls {@link MySimpleArrow#createVisual}.
-   * @param {IRenderContext} context The context that contains the information needed to create the
+   * @param {!IRenderContext} context The context that contains the information needed to create the
    *   visual.
-   * @param {Visual} oldVisual The visual instance that had been returned the last time the
+   * @param {!Visual} oldVisual The visual instance that had been returned the last time the
    *   {@link MySimpleArrow#createVisual} method was called.
    * The updated visual.
    * @see Specified by {@link IVisualCreator#updateVisual}.
-   * @returns {SvgVisual}
+   * @returns {!SvgVisual}
    */
   updateVisual(context, oldVisual) {
     return this.createVisual(context)
@@ -193,8 +193,8 @@ export default class MySimpleArrow extends BaseClass(IArrow, IVisualCreator, IBo
   /**
    * Returns the bounds of the arrow for the current flyweight configuration.
    * @see Specified by {@link IBoundsProvider#getBounds}.
-   * @param {ICanvasContext} context
-   * @returns {Rect}
+   * @param {!ICanvasContext} context
+   * @returns {!Rect}
    */
   getBounds(context) {
     return new Rect(this.anchor.x - 8, this.anchor.y - 8, 32, 32)
@@ -213,7 +213,7 @@ export default class MySimpleArrow extends BaseClass(IArrow, IVisualCreator, IBo
  */
 class MyGradientSupport extends BaseClass(ISvgDefsCreator) {
   /**
-   * @param {SVGElement} gradient
+   * @param {!SVGElement} gradient
    */
   constructor(gradient) {
     super()
@@ -221,17 +221,17 @@ class MyGradientSupport extends BaseClass(ISvgDefsCreator) {
   }
 
   /**
-   * @param {ICanvasContext} context
-   * @returns {SVGElement}
+   * @param {!ICanvasContext} context
+   * @returns {!SVGElement}
    */
   createDefsElement(context) {
     return this.gradient
   }
 
   /**
-   * @param {ICanvasContext} context
-   * @param {Node} node
-   * @param {string} id
+   * @param {!ICanvasContext} context
+   * @param {!Node} node
+   * @param {!string} id
    * @returns {boolean}
    */
   accept(context, node, id) {
@@ -244,8 +244,8 @@ class MyGradientSupport extends BaseClass(ISvgDefsCreator) {
   }
 
   /**
-   * @param {ICanvasContext} context
-   * @param {SVGElement} oldElement
+   * @param {!ICanvasContext} context
+   * @param {!SVGElement} oldElement
    */
   updateDefsElement(context, oldElement) {}
 }
@@ -253,7 +253,7 @@ class MyGradientSupport extends BaseClass(ISvgDefsCreator) {
 const GRADIENT = createGradient()
 
 /**
- * @returns {MyGradientSupport}
+ * @returns {!MyGradientSupport}
  */
 function createGradient() {
   // initialize gradient

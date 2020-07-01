@@ -1,13 +1,13 @@
 {
   "name": "webpack-demo-for-yfiles-for-html",
   "version": "1.0.0",
-  "description": "Sows how to dynamically import yFiles modules with webpack",
+  "description": "Shows how to dynamically import yFiles modules with webpack",
   "author": "yWorks GmbH <yfileshtml@yworks.com>",
   "license": "https://www.yworks.com/products/yfiles-for-html/sla",
   "private": true,
   "main": "webpack-demo.js",
   "dependencies": {
-    "yfiles": "../../../lib-dev/es-modules/yfiles-23.0.0-dev.tgz"
+    "yfiles": "../../../lib-dev/es-modules/yfiles-23.0.1-dev.tgz"
   },
   "scripts": {
     "production": "webpack --mode production",

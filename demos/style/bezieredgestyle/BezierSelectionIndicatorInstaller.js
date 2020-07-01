@@ -45,7 +45,7 @@ import {
  */
 class SelectionRenderer extends PolylineEdgeStyleRenderer {
   /**
-   * @returns {GeneralPath}
+   * @returns {!GeneralPath}
    */
   createPath() {
     const pathPoints = IEdge.getPathPoints(this.edge)
@@ -65,8 +65,8 @@ class SelectionRenderer extends PolylineEdgeStyleRenderer {
   }
 
   /**
-   * @param {GeneralPath} path
-   * @returns {GeneralPath}
+   * @param {!GeneralPath} path
+   * @returns {!GeneralPath}
    */
   cropPath(path) {
     // Don't crop
@@ -82,7 +82,7 @@ export class BezierSelectionIndicatorInstaller extends BaseClass(ISelectionIndic
   /**
    * The style for the control point segments
    * We just use a polyline edge style with a custom renderer so that we can reuse most of the existing rendering implementations.
-   * @type {PolylineEdgeStyle}
+   * @type {!PolylineEdgeStyle}
    */
   static get selectionDecoratorStyle() {
     return new PolylineEdgeStyle({
@@ -106,10 +106,10 @@ export class BezierSelectionIndicatorInstaller extends BaseClass(ISelectionIndic
 
   /**
    * Combines the rendering by the wrapped core indicator with our own control segment rendering
-   * @param {ICanvasContext} context
-   * @param {ICanvasObjectGroup} group
-   * @param {object} item
-   * @returns {ICanvasObject}
+   * @param {!ICanvasContext} context
+   * @param {!ICanvasObjectGroup} group
+   * @param {!object} item
+   * @returns {!ICanvasObject}
    */
   addCanvasObject(context, group, item) {
     const newGroup = group.addGroup()

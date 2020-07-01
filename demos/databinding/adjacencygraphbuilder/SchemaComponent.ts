@@ -548,16 +548,12 @@ export class SchemaComponent {
    * Applies the layout for the schema graph component
    */
   private async applySchemaLayout(): Promise<void> {
-    const layoutData = new HierarchicLayoutData({
-      sourcePortConstraints: () => PortConstraint.create(PortSide.NORTH),
-      targetPortConstraints: () => PortConstraint.create(PortSide.SOUTH)
-    })
-
     const layout = new HierarchicLayout({
       considerNodeLabels: true,
-      integratedEdgeLabeling: true
+      integratedEdgeLabeling: true,
+      backLoopRoutingForSelfLoops: true
     })
-    await this.schemaGraphComponent.morphLayout(new PortCalculator(layout), null, layoutData)
+    await this.schemaGraphComponent.morphLayout(new PortCalculator(layout))
     this.schemaGraphComponent.updateContentRect()
   }
 

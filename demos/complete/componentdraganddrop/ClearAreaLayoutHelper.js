@@ -54,7 +54,7 @@ import {
 export class ClearAreaLayoutHelper {
   /**
    * The graph that is displayed.
-   * @type {IGraph}
+   * @type {!IGraph}
    */
   get graph() {
     return this.graphComponent.graph
@@ -62,8 +62,8 @@ export class ClearAreaLayoutHelper {
 
   /**
    * Initializes the helper.
-   * @param {GraphComponent} graphComponent The control that displays the graph.
-   * @param {IEnumerable.<INode>} component The component the is dragged.
+   * @param {!GraphComponent} graphComponent The control that displays the graph.
+   * @param {!IEnumerable.<INode>} component The component the is dragged.
    * @param {boolean} keepComponents Defines whether or not components should not be separated by the layout algorithm.
    */
   constructor(graphComponent, component, keepComponents) {
@@ -91,8 +91,8 @@ export class ClearAreaLayoutHelper {
 
   /**
    * Returns the center of the {@link ClearAreaLayoutHelper#graph}.
-   * @param {IEnumerable.<INode>} nodes
-   * @returns {Point}
+   * @param {!IEnumerable.<INode>} nodes
+   * @returns {!Point}
    */
   getCenter(nodes) {
     const bounds = this.getRect(nodes)
@@ -101,8 +101,8 @@ export class ClearAreaLayoutHelper {
 
   /**
    * Returns the rectangle enclosing the given nodes.
-   * @param {IEnumerable.<INode>} nodes
-   * @returns {Rect}
+   * @param {!IEnumerable.<INode>} nodes
+   * @returns {!Rect}
    */
   getRect(nodes) {
     let bounds = Rect.EMPTY
@@ -114,7 +114,7 @@ export class ClearAreaLayoutHelper {
 
   /**
    * Creates a {@link GivenCoordinatesStageData} that store the layout of nodes and edges.
-   * @returns {GivenCoordinatesStageData}
+   * @returns {!GivenCoordinatesStageData}
    */
   createGivenCoordinateStageData() {
     const givenCoordinatesStageData = new GivenCoordinatesStageData()
@@ -139,8 +139,8 @@ export class ClearAreaLayoutHelper {
 
   /**
    * Gets the edge path including the source and target ports.
-   * @param {IEdge} edge
-   * @returns {List.<Point>}
+   * @param {!IEdge} edge
+   * @returns {!List.<Point>}
    */
   getEdgePath(edge) {
     const points = new List()
@@ -157,7 +157,7 @@ export class ClearAreaLayoutHelper {
    * First, all nodes and edges are pushed back into place before the drag started. Then space
    * is made for the component at its current position. The animation morphs all elements to the
    * calculated positions.
-   * @returns {LayoutExecutor}
+   * @returns {!LayoutExecutor}
    */
   createDraggingLayoutExecutor() {
     const clearAreaLayout = new ClearAreaLayout({
@@ -193,7 +193,7 @@ export class ClearAreaLayoutHelper {
    * A {@link LayoutExecutor} that is used after the drag and drop operation has been
    * canceled.
    * All nodes and edges are pushed back into place before the drag started.
-   * @returns {LayoutExecutor}
+   * @returns {!LayoutExecutor}
    */
   createCanceledLayoutExecutor() {
     return new LayoutExecutor({
@@ -208,7 +208,7 @@ export class ClearAreaLayoutHelper {
    * A {@link LayoutExecutor} that is used after the drag and drop operation is finished.
    * All nodes and edges are pushed back into place before the drag started. Then space is made
    * for the component that has been dropped.
-   * @returns {LayoutExecutor}
+   * @returns {!LayoutExecutor}
    */
   createFinishedLayoutExecutor() {
     const layout = new GivenCoordinatesStage(
@@ -247,7 +247,7 @@ export class ClearAreaLayoutHelper {
   }
 
   /**
-   * @returns {Promise}
+   * @returns {!Promise}
    */
   async runLayoutCore() {
     do {

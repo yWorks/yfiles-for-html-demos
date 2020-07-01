@@ -33,8 +33,8 @@ import { BaseClass, Cursor, HandleTypes, IHandle, IInputModeContext, INode, Poin
  */
 export default class HeightHandle extends BaseClass(IHandle) {
   /**
-   * @param {INode} node
-   * @param {IInputModeContext} inputModeContext
+   * @param {!INode} node
+   * @param {!IInputModeContext} inputModeContext
    * @param {number} minimumHeight
    */
   constructor(node, inputModeContext, minimumHeight) {
@@ -46,21 +46,21 @@ export default class HeightHandle extends BaseClass(IHandle) {
   }
 
   /**
-   * @type {HandleTypes}
+   * @type {!HandleTypes}
    */
   get type() {
     return HandleTypes.RESIZE
   }
 
   /**
-   * @type {Cursor}
+   * @type {!Cursor}
    */
   get cursor() {
     return this.dragging ? Cursor.GRABBING : Cursor.GRAB
   }
 
   /**
-   * @type {Point}
+   * @type {!Point}
    */
   get location() {
     const height = this.node.tag.height
@@ -72,7 +72,7 @@ export default class HeightHandle extends BaseClass(IHandle) {
 
   /**
    * Initializes the drag.
-   * @param {IInputModeContext} inputModeContext
+   * @param {!IInputModeContext} inputModeContext
    */
   initializeDrag(inputModeContext) {
     this.originalHeight = this.node.tag.height
@@ -81,9 +81,9 @@ export default class HeightHandle extends BaseClass(IHandle) {
 
   /**
    * Updates the node according to the moving handle.
-   * @param {IInputModeContext} inputModeContext
-   * @param {Point} originalLocation
-   * @param {Point} newLocation
+   * @param {!IInputModeContext} inputModeContext
+   * @param {!Point} originalLocation
+   * @param {!Point} newLocation
    */
   handleMove(inputModeContext, originalLocation, newLocation) {
     this.adjustNodeHeight(inputModeContext, originalLocation, newLocation)
@@ -91,7 +91,7 @@ export default class HeightHandle extends BaseClass(IHandle) {
 
   /**
    * Cancels the drag and cleans up.
-   * @param {IInputModeContext} context
+   * @param {!IInputModeContext} context
    */
   cancelDrag(context) {
     this.node.tag.height = this.originalHeight
@@ -100,9 +100,9 @@ export default class HeightHandle extends BaseClass(IHandle) {
 
   /**
    * Finishes the drag an applies changes.
-   * @param {IInputModeContext} context
-   * @param {Point} originalLocation
-   * @param {Point} newLocation
+   * @param {!IInputModeContext} context
+   * @param {!Point} originalLocation
+   * @param {!Point} newLocation
    */
   dragFinished(context, originalLocation, newLocation) {
     this.adjustNodeHeight(context, originalLocation, newLocation)
@@ -111,9 +111,9 @@ export default class HeightHandle extends BaseClass(IHandle) {
 
   /**
    * Adjusts the node height according to how much the handle was moved.
-   * @param {IInputModeContext} context
-   * @param {Point} oldLocation
-   * @param {Point} newLocation
+   * @param {!IInputModeContext} context
+   * @param {!Point} oldLocation
+   * @param {!Point} newLocation
    */
   adjustNodeHeight(context, oldLocation, newLocation) {
     const newY = context.canvasComponent.toViewCoordinates(newLocation).y

@@ -31,7 +31,7 @@ import { GraphComponent, License } from 'yfiles'
 import loadJson from '../../resources/load-json.js'
 
 /**
- * @param {object} licenseData
+ * @param {!object} licenseData
  */
 function run(licenseData) {
   License.value = licenseData

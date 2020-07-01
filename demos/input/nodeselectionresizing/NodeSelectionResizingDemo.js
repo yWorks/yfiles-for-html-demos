@@ -53,7 +53,7 @@ let graphComponent = null
 let nodeSelectionResizingInputMode = null
 
 /**
- * @param {object} licenseData
+ * @param {!object} licenseData
  */
 function run(licenseData) {
   License.value = licenseData

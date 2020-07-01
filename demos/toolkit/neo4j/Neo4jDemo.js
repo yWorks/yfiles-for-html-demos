@@ -75,6 +75,12 @@ let runCypherQuery = null
 /** @type {GraphBuilder} */
 let graphBuilder = null
 
+/** @type {Array} */
+let nodes = []
+
+/** @type {Array} */
+let edges = []
+
 // get hold of some UI elements
 const loadingIndicator = document.getElementById('loadingIndicator')
 const labelsContainer = document.getElementById('labels')
@@ -193,7 +199,7 @@ function createInputMode() {
   // load more data on double click
   mode.addItemDoubleClickedListener(async (sender, { item }) => {
     const result = await runCypherQuery(
-      `MATCH (n)-[e]-(m) 
+      `MATCH (n)-[e]-(m)
        WHERE id(n) = $nodeId
        RETURN DISTINCT e, m LIMIT 50`,
       { nodeId: item.tag.identity }
@@ -202,12 +208,12 @@ function createInputMode() {
     for (const record of result.records) {
       const node = record.get('m')
       const edge = record.get('e')
-      if (graphBuilder.nodesSource.every(n => !n.identity.equals(node.identity))) {
-        graphBuilder.nodesSource.push(node)
+      if (nodes.every(n => !n.identity.equals(node.identity))) {
+        nodes.push(node)
         updated = true
       }
-      if (graphBuilder.edgesSource.every(e => !e.identity.equals(edge.identity))) {
-        graphBuilder.edgesSource.push(edge)
+      if (edges.every(e => !e.identity.equals(edge.identity))) {
+        edges.push(edge)
         updated = true
       }
     }
@@ -286,28 +292,28 @@ async function loadGraph() {
   }
   // run the query to get the nodes
   const nodeResult = await runCypherQuery(
-    `MATCH ${matchClause} 
-      WHERE ${whereClauses.join(' AND ')} 
+    `MATCH ${matchClause}
+      WHERE ${whereClauses.join(' AND ')}
       WITH [${letters.join(',')}] AS nodes LIMIT ${numNodes * numLabels}
       UNWIND nodes AS node
       RETURN DISTINCT node`
   )
   // extract the nodes from the query result
-  const nodes = nodeResult.records.map(record => record.get('node'))
+  nodes = nodeResult.records.map(record => record.get('node'))
   // obtain an array of all node ids
   const nodeIds = nodes.map(node => node.identity)
   // get all edges between all nodes that we have, omitting self loops and limiting the overall number of
   // results to a multiple of numNodes, as some graphs have nodes wth degrees in the thousands
   const edgeResult = await runCypherQuery(
-    `MATCH (n)-[edge]-(m) 
-            WHERE id(n) IN $nodeIds 
+    `MATCH (n)-[edge]-(m)
+            WHERE id(n) IN $nodeIds
             AND id(m) IN $nodeIds
             AND startNode(edge) <> endNode(edge)
             RETURN DISTINCT edge LIMIT ${numNodes * 5}`,
     { nodeIds }
   )
   // extract the edges from the query result
-  const edges = edgeResult.records.map(record => record.get('edge'))
+  edges = edgeResult.records.map(record => record.get('edge'))
   // custom GraphBuilder that assigns nodes different styles based on their labels
   graphBuilder = createGraphBuilder(graphComponent, nodes, edges)
 
@@ -497,8 +503,8 @@ function registerCommands() {
       return
     }
     queryErrorContainer.textContent = ''
-    const nodes = []
-    const edges = []
+    nodes = []
+    edges = []
     for (const record of result.records) {
       record.forEach(field => {
         if (field instanceof Neo4jNode) {

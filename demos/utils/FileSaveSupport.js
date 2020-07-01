@@ -36,9 +36,9 @@ export default class FileSaveSupport {
    *
    * @param {string} fileContent The file contents to be saved.
    * @param {string} fileName The default filename for the downloaded file.
-   * @returns {Promise.<string>} {Promise} A promise which resolves when the save operation is complete.
-   * @param {string} fileContent
-   * @param {string} fileName
+   * @returns {!Promise.<string>} {Promise} A promise which resolves when the save operation is complete.
+   * @param {!string} fileContent
+   * @param {!string} fileName
    */
   static save(fileContent, fileName) {
     return new Promise((resolve, reject) => {

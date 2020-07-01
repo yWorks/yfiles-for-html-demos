@@ -47,8 +47,8 @@ import { PortReshapeHandle } from './PortReshapeHandle.js'
 export class PortReshapeHandleProvider extends BaseClass(IReshapeHandleProvider) {
   /**
    * Creates a new instance for port and its adapter.
-   * @param {IPort} port The port whose visualization shall be resized.
-   * @param {NodeStylePortStyleAdapter} adapter The adapter whose render size shall be changed.
+   * @param {!IPort} port The port whose visualization shall be resized.
+   * @param {!NodeStylePortStyleAdapter} adapter The adapter whose render size shall be changed.
    */
   constructor(port, adapter) {
     super()
@@ -59,8 +59,8 @@ export class PortReshapeHandleProvider extends BaseClass(IReshapeHandleProvider)
   /**
    * Returns {@link HandlePositions.CORNERS} or {@link HandlePositions.BORDER} as available handle
    * positions depending on the modifier state of <c>Ctrl</c>.
-   * @param {IInputModeContext} context The context the handles are created in.
-   * @returns {HandlePositions} {@link HandlePositions.CORNERS} or {@link HandlePositions.BORDER}
+   * @param {!IInputModeContext} context The context the handles are created in.
+   * @returns {!HandlePositions} {@link HandlePositions.CORNERS} or {@link HandlePositions.BORDER}
    */
   getAvailableHandles(context) {
     const ctrlPressed = KeyEventRecognizers.CTRL_IS_DOWN(
@@ -76,9 +76,9 @@ export class PortReshapeHandleProvider extends BaseClass(IReshapeHandleProvider)
   /**
    * Returns a {@link PortReshapeHandle} for the port at the given position and
    * sets its {@link PortReshapeHandle.minimumSize} to {@link minimumSize}.
-   * @param {IInputModeContext} context The context the handles are created in.
-   * @param {HandlePositions} position The position the handle shall be created for.
-   * @returns {IHandle} A {@link PortReshapeHandle} for the port at the given position.
+   * @param {!IInputModeContext} context The context the handles are created in.
+   * @param {!HandlePositions} position The position the handle shall be created for.
+   * @returns {!IHandle} A {@link PortReshapeHandle} for the port at the given position.
    */
   getHandle(context, position) {
     const portReshapeHandle = new PortReshapeHandle(context, this.port, this.adapter, position)

@@ -52,7 +52,7 @@ export default class LinkItemHoverInputMode extends ItemHoverInputMode {
 
   /**
    * It is only a valid hover when the CTRL modifier is active and there is actually a link that can be clicked.
-   * @param {IModelItem} item - The item to check.
+   * @param {!IModelItem} item - The item to check.
    * @returns {boolean}
    */
   isValidHoverItem(item) {
@@ -64,7 +64,7 @@ export default class LinkItemHoverInputMode extends ItemHoverInputMode {
 
   /**
    * Toggles the underline text decoration for valid links.
-   * @param {HoveredItemChangedEventArgs} evt - The {@link HoveredItemChangedEventArgs}
+   * @param {!HoveredItemChangedEventArgs} evt - The {@link HoveredItemChangedEventArgs}
    *   instance containing the event data.
    */
   onHoveredItemChanged(evt) {

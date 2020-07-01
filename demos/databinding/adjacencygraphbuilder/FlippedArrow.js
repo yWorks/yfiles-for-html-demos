@@ -34,7 +34,7 @@ import { BaseClass, IArrow, IBoundsProvider, IEdge, IVisualCreator, Point } from
 export class FlippedArrow extends BaseClass(IArrow) {
   /**
    * Creates a new instance.
-   * @param {IArrow} wrappedArrow The arrow to wrap.
+   * @param {!IArrow} wrappedArrow The arrow to wrap.
    * @param {number} offset A location offset that is applied in flipped direction of the arrow.
    */
   constructor(wrappedArrow, offset) {
@@ -58,11 +58,11 @@ export class FlippedArrow extends BaseClass(IArrow) {
   }
 
   /**
-   * @param {IEdge} edge
+   * @param {!IEdge} edge
    * @param {boolean} atSource
-   * @param {Point} anchor
-   * @param {Point} direction
-   * @returns {IBoundsProvider}
+   * @param {!Point} anchor
+   * @param {!Point} direction
+   * @returns {!IBoundsProvider}
    */
   getBoundsProvider(edge, atSource, anchor, direction) {
     return this.wrappedArrow.getBoundsProvider(
@@ -74,11 +74,11 @@ export class FlippedArrow extends BaseClass(IArrow) {
   }
 
   /**
-   * @param {IEdge} edge
+   * @param {!IEdge} edge
    * @param {boolean} atSource
-   * @param {Point} anchor
-   * @param {Point} direction
-   * @returns {IVisualCreator}
+   * @param {!Point} anchor
+   * @param {!Point} direction
+   * @returns {!IVisualCreator}
    */
   getVisualCreator(edge, atSource, anchor, direction) {
     return this.wrappedArrow.getVisualCreator(
@@ -91,8 +91,8 @@ export class FlippedArrow extends BaseClass(IArrow) {
 
   /**
    * Rotates the direction vector by 180 degrees.
-   * @param {Point} direction The original direction vector
-   * @returns {Point}
+   * @param {!Point} direction The original direction vector
+   * @returns {!Point}
    */
   static getFlippedDirection(direction) {
     return direction.multiply(-1)
@@ -100,9 +100,9 @@ export class FlippedArrow extends BaseClass(IArrow) {
 
   /**
    * Returns the new anchor for the flipped arrow.
-   * @param {Point} anchor The original anchor
-   * @param {Point} direction The original direction vector
-   * @returns {Point}
+   * @param {!Point} anchor The original anchor
+   * @param {!Point} direction The original direction vector
+   * @returns {!Point}
    */
   getFlippedAnchor(anchor, direction) {
     return anchor.subtract(

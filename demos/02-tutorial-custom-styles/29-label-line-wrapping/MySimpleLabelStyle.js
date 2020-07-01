@@ -65,14 +65,14 @@ export default class MySimpleLabelStyle extends LabelStyleBase {
   }
 
   /**
-   * @type {Font}
+   * @type {!Font}
    */
   get font() {
     return this.$font
   }
 
   /**
-   * @type {Font}
+   * @type {!Font}
    */
   set font(value) {
     this.$font = value
@@ -81,14 +81,14 @@ export default class MySimpleLabelStyle extends LabelStyleBase {
   // ////////////// New in this sample ////////////////
   /**
    * Gets or sets the wrapping style.
-   * @type {TextWrapping}
+   * @type {!TextWrapping}
    */
   get wrapping() {
     return this.$wrapping
   }
 
   /**
-   * @type {TextWrapping}
+   * @type {!TextWrapping}
    */
   set wrapping(value) {
     this.$wrapping = value
@@ -99,9 +99,9 @@ export default class MySimpleLabelStyle extends LabelStyleBase {
   /**
    * Creates the visual for a label to be drawn.
    * @see Overrides {@link LabelStyleBase#createVisual}
-   * @param {IRenderContext} context
-   * @param {ILabel} label
-   * @returns {SvgVisual}
+   * @param {!IRenderContext} context
+   * @param {!ILabel} label
+   * @returns {!SvgVisual}
    */
   createVisual(context, label) {
     // This implementation creates a 'g' element and uses it for the rendering of the label.
@@ -124,10 +124,10 @@ export default class MySimpleLabelStyle extends LabelStyleBase {
   /**
    * Re-renders the label using the old visual for performance reasons.
    * @see Overrides {@link LabelStyleBase#updateVisual}
-   * @param {IRenderContext} context
-   * @param {SvgVisual} oldVisual
-   * @param {ILabel} label
-   * @returns {SvgVisual}
+   * @param {!IRenderContext} context
+   * @param {!SvgVisual} oldVisual
+   * @param {!ILabel} label
+   * @returns {!SvgVisual}
    */
   updateVisual(context, oldVisual, label) {
     const container = oldVisual.svgElement
@@ -148,11 +148,11 @@ export default class MySimpleLabelStyle extends LabelStyleBase {
 
   /**
    * Creates an object containing all necessary data to create a label visual.
-   * @param {IRenderContext} context
-   * @param {ILabel} label
-   * @param {Font} font
-   * @param {TextWrapping} wrapping
-   * @returns {object}
+   * @param {!IRenderContext} context
+   * @param {!ILabel} label
+   * @param {!Font} font
+   * @param {!TextWrapping} wrapping
+   * @returns {!object}
    */
   createRenderDataCache(context, label, font, wrapping) {
     return {
@@ -166,9 +166,9 @@ export default class MySimpleLabelStyle extends LabelStyleBase {
 
   /**
    * Creates the visual appearance of a label.
-   * @param {IRenderContext} context {IRenderContext}
-   * @param {SVGGElement} container {SVGGElement}
-   * @param {IOrientedRectangle} labelLayout {IOrientedRectangle}
+   * @param {!IRenderContext} context {IRenderContext}
+   * @param {!SVGGElement} container {SVGGElement}
+   * @param {!IOrientedRectangle} labelLayout {IOrientedRectangle}
    * @param {*} cache {object}
    */
   render(context, container, labelLayout, cache) {
@@ -246,11 +246,11 @@ export default class MySimpleLabelStyle extends LabelStyleBase {
    * Adds a clip-path to the container that clips the given text element at the clip bounds.
    * The clip-path is only added if necessary, i.e. if the measured bounds are larger than the clip bounds.
    * If a clip-path already exists, it is re-used.
-   * @param {IRenderContext} context {IRenderContext}
-   * @param {SVGTextElement} textElement {SVGTextElement}
-   * @param {Rect} clipBounds {Rect}
-   * @param {Size} measuredBounds {Size}
-   * @param {SVGGElement} container {SVGGElement}
+   * @param {!IRenderContext} context {IRenderContext}
+   * @param {!SVGTextElement} textElement {SVGTextElement}
+   * @param {!Rect} clipBounds {Rect}
+   * @param {!Size} measuredBounds {Size}
+   * @param {!SVGGElement} container {SVGGElement}
    */
   clipText(context, textElement, clipBounds, measuredBounds, container) {
     let clip = null
@@ -296,8 +296,8 @@ export default class MySimpleLabelStyle extends LabelStyleBase {
    * Calculates the preferred size for the given label if this style is used for the rendering.
    * The size is calculated from the label's text.
    * @see Overrides {@link LabelStyleBase#getPreferredSize}
-   * @param {ILabel} label
-   * @returns {Size}
+   * @param {!ILabel} label
+   * @returns {!Size}
    */
   getPreferredSize(label) {
     // //////////////////////////////////////////////////

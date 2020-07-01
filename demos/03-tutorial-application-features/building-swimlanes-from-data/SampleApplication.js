@@ -73,7 +73,7 @@ let graphComponent = null
 
 /**
  * Bootstraps the demo.
- * @param {object} licenseData
+ * @param {!object} licenseData
  */
 function run(licenseData) {
   License.value = licenseData
@@ -100,7 +100,7 @@ function run(licenseData) {
 }
 
 /**
- * @returns {Promise}
+ * @returns {!Promise}
  */
 async function loadGraph() {
   try {
@@ -121,7 +121,7 @@ async function loadGraph() {
 }
 
 /**
- * @param {GraphEditorInputMode} graphEditorInputMode
+ * @param {!GraphEditorInputMode} graphEditorInputMode
  */
 function configureTableEditing(graphEditorInputMode) {
   const reparentStripeHandler = new ReparentStripeHandler()
@@ -161,7 +161,7 @@ function configureTableEditing(graphEditorInputMode) {
  * {@link IGraph.addLabel()}
  * and other {@link IGraph} functions to apply the given information to the graph model.
  *
- * @param {IGraph} graph The graph.
+ * @param {!IGraph} graph The graph.
  * @param {*} graphData The graph data that was loaded from the JSON file.
  * @yjs:keep=nodesSource,edgesSource
  */
@@ -280,7 +280,7 @@ function buildGraph(graph, graphData) {
 
 /**
  * Serializes the graph to JSON.
- * @param {IGraph} graph The graph
+ * @param {!IGraph} graph The graph
  * @returns {*}
  */
 function writeToJSON(graph) {
@@ -349,8 +349,8 @@ function writeToJSON(graph) {
 
 /**
  * Helper function that converts a {Color} to a hex color string.
- * @returns {string} hex color
- * @param {Color} color
+ * @returns {!string} hex color
+ * @param {!Color} color
  */
 function colorToHex(color) {
   // zero-padding
@@ -373,8 +373,8 @@ function colorToHex(color) {
  * Runs a {@link HierarchicLayout} on the current graph. The
  * {@link HierarchicLayout} respects the node to cell (or swimlane) assignment by considering the
  * nodes location in relation to the swimlane bounds.
- * @param {(TimeSpan|string)} duration The animation duration of the layout.
- * @returns {Promise}
+ * @param {!(TimeSpan|string)} duration The animation duration of the layout.
+ * @returns {!Promise}
  */
 function runLayout(duration) {
   const layout = new HierarchicLayout()
@@ -400,7 +400,7 @@ function runLayout(duration) {
 /**
  * Initializes the defaults for the styles in this tutorial.
  *
- * @param {IGraph} graph The graph.
+ * @param {!IGraph} graph The graph.
  */
 function initTutorialDefaults(graph) {
   // configure defaults for normal nodes and their labels
@@ -458,9 +458,9 @@ function registerCommands() {
  * before usage you need to parse the file content which is done by JSON.parse in case of a JSON file as
  * demonstrated here.
  *
- * @param {string} url The URL to load.
+ * @param {!string} url The URL to load.
  *
- * @returns {Promise.<JSON>} A promise with the loaded data.
+ * @returns {!Promise.<JSON>} A promise with the loaded data.
  */
 async function loadJSON(url) {
   const response = await fetch(url)

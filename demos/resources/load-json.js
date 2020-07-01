@@ -27,8 +27,8 @@
  **
  ***************************************************************************/
 /**
- * @param {string} licenseString
- * @returns {(object|string)}
+ * @param {!string} licenseString
+ * @returns {!(object|string)}
  */
 function parseLicense(licenseString) {
   try {
@@ -45,7 +45,7 @@ function parseLicense(licenseString) {
 }
 
 /**
- * @returns {(object|)}
+ * @returns {!(object|boolean)}
  */
 function tryGetLicenseFromLocalStorage() {
   if (isLocalStorageSupported() && window.localStorage.getItem('yFiles_for_HTML_license')) {
@@ -72,7 +72,7 @@ function isLocalStorageSupported() {
 }
 
 /**
- * @returns {Promise.<(object|string)>}
+ * @returns {!Promise.<(object|string)>}
  */
 function tryLocalStorage() {
   return new Promise(resolve => {

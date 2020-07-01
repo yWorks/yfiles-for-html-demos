@@ -31,9 +31,9 @@ import { BaseClass, IRenderContext, IVisualCreator, SvgVisual } from 'yfiles'
 export default class RectangleVisualCreator extends BaseClass(IVisualCreator) {
   /**
    * Creates the visual for the background.
-   * @param {IRenderContext} context The context that describes where the visual will be used
+   * @param {!IRenderContext} context The context that describes where the visual will be used
    * return {Visual} The visual for the background
-   * @returns {SvgVisual}
+   * @returns {!SvgVisual}
    */
   createVisual(context) {
     const svgVisual = new SvgVisual(
@@ -45,10 +45,10 @@ export default class RectangleVisualCreator extends BaseClass(IVisualCreator) {
 
   /**
    * Updates the visual for the background.
-   * @param {IRenderContext} context The context that describes where the visual will be used
-   * @param {SvgVisual} oldVisual The old visual
+   * @param {!IRenderContext} context The context that describes where the visual will be used
+   * @param {!SvgVisual} oldVisual The old visual
    * return {Visual} The visual for the background
-   * @returns {SvgVisual}
+   * @returns {!SvgVisual}
    */
   updateVisual(context, oldVisual) {
     const rect = context.canvasComponent.contentRect.getEnlarged(20)

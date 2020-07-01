@@ -33,6 +33,7 @@ const babel = require('rollup-plugin-babel')
 const resolve = require('@rollup/plugin-node-resolve')
 const replace = require('@rollup/plugin-replace')
 const commonjs = require('@rollup/plugin-commonjs')
+const json = require('@rollup/plugin-json')
 
 const root = path.join(__dirname, '../../../')
 const build = path.join(__dirname, 'build')
@@ -50,6 +51,10 @@ module.exports = function(grunt) {
 
     for (const file of files) {
       file.source = grunt.file.read(file.src)
+      if (!file.src.some(s => s.endsWith('.js'))) {
+        // don't process non-js files, just copy them
+        file.result = file.source
+      }
     }
 
     const libFiles = []
@@ -71,9 +76,13 @@ module.exports = function(grunt) {
       }
     }
 
-    optimize(libFiles, files, {
-      logLevel: 'info'
-    })
+    optimize(
+      libFiles,
+      files.filter(f => f.src.every(s => s.endsWith('.js'))),
+      {
+        logLevel: 'info'
+      }
+    )
 
     libFiles.concat(files).forEach(file => {
       grunt.file.write(file.dest, file.result)
@@ -89,6 +98,7 @@ module.exports = function(grunt) {
         plugins: [
           replace({ 'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV) }),
           resolve(),
+          json(),
           babel({
             exclude: '**/node_modules/**'
           }),
@@ -113,7 +123,7 @@ module.exports = function(grunt) {
     {
       expand: true,
       cwd: root,
-      src: [`demos-js/loading/rollupjs/**/*.js`, `demos-js/resources/**/*.js`],
+      src: [`demos-js/loading/rollupjs/**/*.js`, `demos-js/loading/rollupjs/**/*.json`],
       ignore: ['**/node_modules/**', 'demos-js/loading/rollupjs/Gruntfile.js'],
       dest: build
     }

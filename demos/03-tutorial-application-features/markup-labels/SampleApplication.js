@@ -53,7 +53,7 @@ let graphComponent = null
 
 /**
  * Bootstraps the demo.
- * @param {object} licenseData
+ * @param {!object} licenseData
  */
 function run(licenseData) {
   License.value = licenseData
@@ -86,7 +86,7 @@ function run(licenseData) {
 
 /**
  * Sets the {@link MarkupLabelStyle} as default label style for nodes and edges.
- * @param {IGraph} graph
+ * @param {!IGraph} graph
  */
 function configureMarkupLabelStyle(graph) {
   graph.nodeDefaults.labels.layoutParameter = InteriorStretchLabelModel.CENTER
@@ -102,7 +102,7 @@ function configureMarkupLabelStyle(graph) {
 /**
  * Initializes the defaults for the styles in this tutorial.
  *
- * @param {IGraph} graph The graph.
+ * @param {!IGraph} graph The graph.
  */
 function initTutorialDefaults(graph) {
   // configure defaults for normal nodes and their labels
@@ -132,7 +132,7 @@ function initTutorialDefaults(graph) {
 /**
  * Creates an initial sample graph.
  *
- * @param {IGraph} graph The graph.
+ * @param {!IGraph} graph The graph.
  */
 function createGraph(graph) {
   const node1 = graph.createNodeAt([110, 20])

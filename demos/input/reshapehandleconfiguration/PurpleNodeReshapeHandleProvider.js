@@ -45,17 +45,17 @@ import {
  */
 export default class PurpleNodeReshapeHandleProvider extends NodeReshapeHandleProvider {
   /**
-   * @param {INode} node
-   * @param {IReshapeHandler} reshapeHandler
+   * @param {!INode} node
+   * @param {!IReshapeHandler} reshapeHandler
    */
   constructor(node, reshapeHandler) {
     super(node, reshapeHandler, HandlePositions.BORDER)
   }
 
   /**
-   * @param {IInputModeContext} inputModeContext
-   * @param {HandlePositions} position
-   * @returns {IHandle}
+   * @param {!IInputModeContext} inputModeContext
+   * @param {!HandlePositions} position
+   * @returns {!IHandle}
    */
   getHandle(inputModeContext, position) {
     const handle = new NodeReshapeHandlerHandle(this.node, this.reshapeHandler, position)

@@ -75,7 +75,7 @@ let exportRect = null
 
 /**
  * Bootstraps the demo.
- * @param {object} licenseData
+ * @param {!object} licenseData
  */
 function run(licenseData) {
   License.value = licenseData
@@ -127,7 +127,7 @@ function initializeInputModes() {
 
 /**
  * Adds the view modes that handle the resizing and movement of the export rectangle.
- * @param {GraphInputMode} inputMode
+ * @param {!GraphInputMode} inputMode
  */
 function addExportRectInputModes(inputMode) {
   // create a mode that deals with the handles
@@ -147,14 +147,11 @@ function addExportRectInputModes(inputMode) {
   // create a mode that allows for dragging the export rectangle at the sides
   const moveInputMode = new MoveInputMode()
   moveInputMode.positionHandler = new PositionHandler(exportRect)
-  moveInputMode.hitTestable = IHitTestable.create(
-    // @ts-ignore
-    (context, location) => {
-      const path = new GeneralPath(5)
-      path.appendRectangle(exportRect, false)
-      return path.pathContains(location, context.hitTestRadius + 3 / context.zoom)
-    }
-  )
+  moveInputMode.hitTestable = IHitTestable.create((context, location) => {
+    const path = new GeneralPath(5)
+    path.appendRectangle(exportRect, false)
+    return path.pathContains(location, context.hitTestRadius + 3 / context.zoom)
+  })
 
   // add it to the edit mode
   moveInputMode.priority = 41
@@ -164,7 +161,7 @@ function addExportRectInputModes(inputMode) {
 /**
  * Initializes the defaults for the styles in this tutorial.
  *
- * @param {IGraph} graph The graph.
+ * @param {!IGraph} graph The graph.
  */
 function initTutorialDefaults(graph) {
   // configure defaults for normal nodes and their labels
@@ -194,7 +191,7 @@ function initTutorialDefaults(graph) {
 /**
  * Creates an initial sample graph.
  *
- * @param {IGraph} graph The graph.
+ * @param {!IGraph} graph The graph.
  */
 function createGraph(graph) {
   const node1 = graph.createNodeAt([110, 20])

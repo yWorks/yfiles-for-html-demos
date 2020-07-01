@@ -52,7 +52,7 @@ import {
  * and the nodes within the groups the table rows. Edges are connected to specific rows.
  * The rows are sorted according to their y-coordinate in the initial drawing.
  * @param {boolean} fromSketch
- * @returns {RecursiveGroupLayout}
+ * @returns {!RecursiveGroupLayout}
  */
 export function createTableLayout(fromSketch) {
   // incremental hierarchic layout is used for the core layout that connects the table nodes
@@ -77,7 +77,7 @@ let layoutData
 
 /**
  * Gets the layout data that shall be used for the table layout.
- * @returns {LayoutData}
+ * @returns {!LayoutData}
  */
 export function createTableLayoutData() {
   if (!layoutData) {

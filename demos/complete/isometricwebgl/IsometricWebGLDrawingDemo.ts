@@ -45,7 +45,6 @@ import {
   HierarchicLayout,
   HierarchicLayoutData,
   ICanvasObjectDescriptor,
-  ICommand,
   IEdge,
   IIncrementalHintsFactory,
   ILayoutAlgorithm,
@@ -75,10 +74,11 @@ import {
   WebGLPolylineEdgeStyle
 } from 'yfiles'
 import IsometricData from './resources/IsometricData.js'
-import { bindAction, bindCommand, bindInputListener, showApp } from '../../resources/demo-app.js'
+import { bindAction, bindInputListener, showApp } from '../../resources/demo-app.js'
 import loadJson from '../../resources/load-json.js'
 import IsometricWebGLNodeStyle from './IsometricWebGLNodeStyle'
 import HeightHandleProvider from './HeightHandleProvider'
+import { webGlSupported } from '../../utils/Workarounds'
 
 const MINIMUM_NODE_HEIGHT = 3
 
@@ -97,6 +97,11 @@ let gridVisualCreator: GridVisualCreator = null!
  * 3-dimensional view.
  */
 function run(licenseData: object): void {
+  if (!webGlSupported) {
+    document.getElementById('no-webgl-support')!.removeAttribute('style')
+    showApp(null)
+    return
+  }
   License.value = licenseData
   graphComponent = new GraphComponent('graphComponent')
 
@@ -160,6 +165,7 @@ function runOrthogonalLayout(): Promise<void> {
   const layoutData = new OrthogonalLayoutData({
     edgeLabelPreferredPlacement: new PreferredPlacementDescriptor({
       angle: 0,
+      distanceToEdge: 10,
       angleReference: LabelAngleReferences.RELATIVE_TO_EDGE_FLOW,
       sideOfEdge: LabelPlacements.LEFT_OF_EDGE,
       sideReference: LabelSideReferences.ABSOLUTE_WITH_RIGHT_IN_NORTH
@@ -371,7 +377,7 @@ function registerCommands(): void {
     }
   })
 
-  bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent)
+  bindAction("button[data-command='FitContent']", () => graphComponent.fitGraphBounds())
 
   bindAction("button[data-command='HierarchicLayout']", () => runHierarchicLayout())
   bindAction("button[data-command='OrthogonalLayout']", () => runOrthogonalLayout())
@@ -386,8 +392,11 @@ function registerCommands(): void {
  */
 function setUIDisabled(disabled: boolean): void {
   ;(document.getElementById('open-file') as HTMLInputElement).disabled = disabled
+  ;(document.getElementById('fit-content') as HTMLInputElement).disabled = disabled
   ;(document.getElementById('hierarchic-layout') as HTMLInputElement).disabled = disabled
   ;(document.getElementById('orthogonal-layout') as HTMLInputElement).disabled = disabled
+  ;(document.getElementById('grid-toggle') as HTMLInputElement).disabled = disabled
+  ;(document.getElementById('rotation') as HTMLInputElement).disabled = disabled
 }
 
 loadJson().then(run)

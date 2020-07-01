@@ -50,6 +50,33 @@ import {
 } from 'yfiles'
 
 /**
+ * @typedef {Object} GraphBuilderOptionArgs
+ * @property {IGraph} [graph]
+ * @property {boolean} [lazyNodeDefinition]
+ * @property {*} [nodesSource]
+ * @property {*} [edgesSource]
+ * @property {*} [groupsSource]
+ * @property {*} [nodeIdBinding]
+ * @property {*} [edgeIdBinding]
+ * @property {*} [nodeLabelBinding]
+ * @property {*} [groupBinding]
+ * @property {*} [edgeLabelBinding]
+ * @property {*} [sourceNodeBinding]
+ * @property {*} [targetNodeBinding]
+ * @property {*} [groupIdBinding]
+ * @property {*} [groupLabelBinding]
+ * @property {*} [parentGroupBinding]
+ * @property {*} [locationXBinding]
+ * @property {*} [locationYBinding]
+ */
+/**
+ * @typedef {function} SimpleNodeListener
+ */
+/**
+ * @typedef {function} SimpleEdgeListener
+ */
+
+/**
  Populates a graph from custom data.
  This class can be used when the data specifies a collection of nodes, a collection of edges, and optionally a collection
  of groups. The properties {@link SimpleGraphBuilder#nodesSource}, {@link SimpleGraphBuilder#groupsSource}, and {@link SimpleGraphBuilder#edgesSource} define the source collections from which nodes, groups, and edges will be created.
@@ -181,7 +208,7 @@ export class SimpleGraphBuilder {
   }
 
   /**
-   * @param {GraphBuilderOptionArgs} options
+   * @param {!GraphBuilderOptionArgs} options
    */
   $applyOptions(options) {
     if (options.lazyNodeDefinition) this.lazyNodeDefinition = options.lazyNodeDefinition
@@ -205,7 +232,7 @@ export class SimpleGraphBuilder {
   /**
      Populates the graph with items generated from the bound data.
      The graph is cleared, and then new nodes, groups, and edges are created as defined by the source collections.
-     @returns {IGraph} The created graph.
+     @returns {!IGraph} The created graph.
      @see SimpleGraphBuilder#updateGraph */
   buildGraph() {
     this.graph.clear()
@@ -273,7 +300,7 @@ export class SimpleGraphBuilder {
   }
 
   /**
-   * @returns {object}
+   * @returns {!object}
    */
   $maybeExtractLazyNodes() {
     if (!this.$lazyNodeDefinition || !this.$edgesSource) {
@@ -345,7 +372,7 @@ export class SimpleGraphBuilder {
      <code>labelData</code>, if present.
      Customizing how edges are created is usually easier by adding an event handler to the {@link SimpleGraphBuilder#addEdgeCreatedListener EdgeCreated}
      event than by overriding this method.
-     @param {IGraph} graph The graph in which to create the edge.
+     @param {!IGraph} graph The graph in which to create the edge.
      @param {?INode} source The source node for the edge.
      @param {?INode} target The target node for the edge.
      @param {*} labelData The optional label data of the edge if an {@link SimpleGraphBuilder#edgeLabelBinding} is specified.
@@ -363,10 +390,10 @@ export class SimpleGraphBuilder {
      label from <code>labelData</code>, if present.
      Customizing how group nodes are created is usually easier by adding an event handler to the {@link SimpleGraphBuilder#addGroupNodeCreatedListener GroupNodeCreated}
      event than by overriding this method.
-     @param {IGraph} graph The graph in which to create the group node.
+     @param {!IGraph} graph The graph in which to create the group node.
      @param {*} labelData The optional label data of the group node if an {@link SimpleGraphBuilder#groupLabelBinding} is specified.
      @param {*} groupObject The object from {@link SimpleGraphBuilder#groupsSource} from which to create the group node.
-     @returns {INode} The created group node. */
+     @returns {!INode} The created group node. */
   createGroupNode(graph, labelData, groupObject) {
     return this.$graphBuilderHelper.createGroupNode(graph, labelData, groupObject)
   }
@@ -379,19 +406,19 @@ export class SimpleGraphBuilder {
      and create a label from <code>labelData</code>, if present.
      Customizing how nodes are created is usually easier by adding an event handler to the {@link SimpleGraphBuilder#addNodeCreatedListener NodeCreated}
      event than by overriding this method.
-     @param {IGraph} graph The graph in which to create the node.
+     @param {!IGraph} graph The graph in which to create the node.
      @param {?INode} parent The node's parent node.
-     @param {Point} location The location of the node.
+     @param {!Point} location The location of the node.
      @param {*} labelData The optional label data of the node if an {@link SimpleGraphBuilder#nodeLabelBinding} is specified.
      @param {*} nodeObject The object from {@link SimpleGraphBuilder#nodesSource} from which to create the node.
-     @returns {INode} The created node. */
+     @returns {!INode} The created node. */
   createNode(graph, parent, location, labelData, nodeObject) {
     return this.$graphBuilderHelper.createNode(graph, parent, location, labelData, nodeObject)
   }
 
   /**
      Retrieves the object from which a given item has been created.
-     @param {IModelItem} item The item to get the object for.
+     @param {!IModelItem} item The item to get the object for.
      @returns {*} The object from which the graph item has been created.
      @see SimpleGraphBuilder#getNode
      @see SimpleGraphBuilder#getEdge
@@ -442,8 +469,8 @@ export class SimpleGraphBuilder {
      object from {@link SimpleGraphBuilder#edgesSource} is also still present.
      Customizing how edges are updated is usually easier by adding an event handler to the {@link SimpleGraphBuilder#addEdgeUpdatedListener EdgeUpdated}
      event than by overriding this method.
-     @param {IGraph} graph The edge's containing graph.
-     @param {IEdge} edge The edge to update.
+     @param {!IGraph} graph The edge's containing graph.
+     @param {!IEdge} edge The edge to update.
      @param {*} labelData The optional label data of the edge if an {@link SimpleGraphBuilder#edgeLabelBinding} is specified.
      @param {*} edgeObject The object from {@link SimpleGraphBuilder#edgesSource} from which the edge has been created. */
   updateEdge(graph, edge, labelData, edgeObject) {
@@ -456,8 +483,8 @@ export class SimpleGraphBuilder {
      corresponding object from {@link SimpleGraphBuilder#groupsSource} is also still present.
      Customizing how group nodes are updated is usually easier by adding an event handler to the {@link SimpleGraphBuilder#addGroupNodeUpdatedListener GroupNodeUpdated}
      event than by overriding this method.
-     @param {IGraph} graph The group node's containing graph.
-     @param {INode} groupNode The group node to update.
+     @param {!IGraph} graph The group node's containing graph.
+     @param {!INode} groupNode The group node to update.
      @param {*} labelData The optional label data of the group node if an {@link SimpleGraphBuilder#groupLabelBinding} is specified.
      @param {*} groupObject The object from {@link SimpleGraphBuilder#groupsSource} from which the group node has been created. */
   updateGroupNode(graph, groupNode, labelData, groupObject) {
@@ -470,10 +497,10 @@ export class SimpleGraphBuilder {
      object from {@link SimpleGraphBuilder#nodesSource} is also still present.
      Customizing how nodes are updated is usually easier by adding an event handler to the {@link SimpleGraphBuilder#addNodeUpdatedListener NodeUpdated}
      event than by overriding this method.
-     @param {IGraph} graph The node's containing graph.
-     @param {INode} node The node to update.
+     @param {!IGraph} graph The node's containing graph.
+     @param {!INode} node The node to update.
      @param {?INode} parent The node's parent node.
-     @param {Point} location The location of the node.
+     @param {!Point} location The location of the node.
      @param {*} labelData The optional label data of the node if an {@link SimpleGraphBuilder#nodeLabelBinding} is specified.
      @param {*} nodeObject The object from {@link SimpleGraphBuilder#nodesSource} from which the node has been created. */
   updateNode(graph, node, parent, location, labelData, nodeObject) {
@@ -481,7 +508,7 @@ export class SimpleGraphBuilder {
   }
 
   /**
-     Gets the {@link IGraph graph} used by this class. * @type {IGraph}
+     Gets the {@link IGraph graph} used by this class. * @type {!IGraph}
   */
   get graph() {
     return this.$graphBuilder.graph
@@ -826,7 +853,7 @@ export class SimpleGraphBuilder {
      This event can be used to further customize the created node.
      New nodes are created either in response to calling {@link SimpleGraphBuilder#buildGraph}, or in response to calling {@link SimpleGraphBuilder#updateGraph}
      when there are new items in {@link SimpleGraphBuilder#nodesSource}.
-     @param {SimpleNodeListener} listener The listener to add.
+     @param {!SimpleNodeListener} listener The listener to add.
      @see SimpleGraphBuilder#addNodeUpdatedListener
      @see SimpleGraphBuilder#removeNodeCreatedListener */
   addNodeCreatedListener(listener) {
@@ -838,7 +865,7 @@ export class SimpleGraphBuilder {
      This event can be used to further customize the created node.
      New nodes are created either in response to calling {@link SimpleGraphBuilder#buildGraph}, or in response to calling {@link SimpleGraphBuilder#updateGraph}
      when there are new items in {@link SimpleGraphBuilder#nodesSource}.
-     @param {SimpleNodeListener} listener The listener to remove.
+     @param {!SimpleNodeListener} listener The listener to remove.
      @see SimpleGraphBuilder#addNodeUpdatedListener
      @see SimpleGraphBuilder#addNodeCreatedListener */
   removeNodeCreatedListener(listener) {
@@ -851,7 +878,7 @@ export class SimpleGraphBuilder {
      {@link SimpleGraphBuilder#addNodeCreatedListener NodeCreated}.
      Nodes are updated in response to calling {@link SimpleGraphBuilder#updateGraph} for items that haven't been added anew
      in {@link SimpleGraphBuilder#nodesSource} since the last call to {@link SimpleGraphBuilder#buildGraph} or {@link SimpleGraphBuilder#updateGraph}.
-     @param {SimpleNodeListener} listener The listener to add.
+     @param {!SimpleNodeListener} listener The listener to add.
      @see SimpleGraphBuilder#addNodeCreatedListener
      @see SimpleGraphBuilder#removeNodeUpdatedListener */
   addNodeUpdatedListener(listener) {
@@ -864,7 +891,7 @@ export class SimpleGraphBuilder {
      {@link SimpleGraphBuilder#addNodeCreatedListener NodeCreated}.
      Nodes are updated in response to calling {@link SimpleGraphBuilder#updateGraph} for items that haven't been added anew
      in {@link SimpleGraphBuilder#nodesSource} since the last call to {@link SimpleGraphBuilder#buildGraph} or {@link SimpleGraphBuilder#updateGraph}.
-     @param {SimpleNodeListener} listener The listener to remove.
+     @param {!SimpleNodeListener} listener The listener to remove.
      @see SimpleGraphBuilder#addNodeCreatedListener
      @see SimpleGraphBuilder#addNodeUpdatedListener */
   removeNodeUpdatedListener(listener) {
@@ -876,7 +903,7 @@ export class SimpleGraphBuilder {
      This event can be used to further customize the created edge.
      New edges are created either in response to calling {@link SimpleGraphBuilder#buildGraph}, or in response to calling {@link SimpleGraphBuilder#updateGraph}
      when there are new items in {@link SimpleGraphBuilder#edgesSource}.
-     @param {SimpleEdgeListener} listener The listener to add.
+     @param {!SimpleEdgeListener} listener The listener to add.
      @see SimpleGraphBuilder#addEdgeUpdatedListener
      @see SimpleGraphBuilder#removeEdgeCreatedListener */
   addEdgeCreatedListener(listener) {
@@ -888,7 +915,7 @@ export class SimpleGraphBuilder {
      This event can be used to further customize the created edge.
      New edges are created either in response to calling {@link SimpleGraphBuilder#buildGraph}, or in response to calling {@link SimpleGraphBuilder#updateGraph}
      when there are new items in {@link SimpleGraphBuilder#edgesSource}.
-     @param {SimpleEdgeListener} listener The listener to remove.
+     @param {!SimpleEdgeListener} listener The listener to remove.
      @see SimpleGraphBuilder#addEdgeUpdatedListener
      @see SimpleGraphBuilder#addEdgeCreatedListener */
   removeEdgeCreatedListener(listener) {
@@ -901,7 +928,7 @@ export class SimpleGraphBuilder {
      {@link SimpleGraphBuilder#addEdgeCreatedListener EdgeCreated}.
      Edges are updated in response to calling {@link SimpleGraphBuilder#updateGraph} for items that haven't been added anew
      in {@link SimpleGraphBuilder#edgesSource} since the last call to {@link SimpleGraphBuilder#buildGraph} or {@link SimpleGraphBuilder#updateGraph}.
-     @param {SimpleEdgeListener} listener The listener to add.
+     @param {!SimpleEdgeListener} listener The listener to add.
      @see SimpleGraphBuilder#addEdgeCreatedListener
      @see SimpleGraphBuilder#removeEdgeUpdatedListener */
   addEdgeUpdatedListener(listener) {
@@ -914,7 +941,7 @@ export class SimpleGraphBuilder {
      {@link SimpleGraphBuilder#addEdgeCreatedListener EdgeCreated}.
      Edges are updated in response to calling {@link SimpleGraphBuilder#updateGraph} for items that haven't been added anew
      in {@link SimpleGraphBuilder#edgesSource} since the last call to {@link SimpleGraphBuilder#buildGraph} or {@link SimpleGraphBuilder#updateGraph}.
-     @param {SimpleEdgeListener} listener The listener to remove.
+     @param {!SimpleEdgeListener} listener The listener to remove.
      @see SimpleGraphBuilder#addEdgeCreatedListener
      @see SimpleGraphBuilder#addEdgeUpdatedListener */
   removeEdgeUpdatedListener(listener) {
@@ -926,7 +953,7 @@ export class SimpleGraphBuilder {
      This event can be used to further customize the created group node.
      New group nodes are created either in response to calling {@link SimpleGraphBuilder#buildGraph}, or in response to
      calling {@link SimpleGraphBuilder#updateGraph} when there are new items in {@link SimpleGraphBuilder#groupsSource}.
-     @param {SimpleNodeListener} listener The listener to add.
+     @param {!SimpleNodeListener} listener The listener to add.
      @see SimpleGraphBuilder#addGroupNodeUpdatedListener
      @see SimpleGraphBuilder#removeGroupNodeCreatedListener */
   addGroupNodeCreatedListener(listener) {
@@ -938,7 +965,7 @@ export class SimpleGraphBuilder {
      This event can be used to further customize the created group node.
      New group nodes are created either in response to calling {@link SimpleGraphBuilder#buildGraph}, or in response to
      calling {@link SimpleGraphBuilder#updateGraph} when there are new items in {@link SimpleGraphBuilder#groupsSource}.
-     @param {SimpleNodeListener} listener The listener to remove.
+     @param {!SimpleNodeListener} listener The listener to remove.
      @see SimpleGraphBuilder#addGroupNodeUpdatedListener
      @see SimpleGraphBuilder#addGroupNodeCreatedListener */
   removeGroupNodeCreatedListener(listener) {
@@ -951,7 +978,7 @@ export class SimpleGraphBuilder {
      {@link SimpleGraphBuilder#addGroupNodeCreatedListener GroupNodeCreated}.
      Group nodes are updated in response to calling {@link SimpleGraphBuilder#updateGraph} for items that haven't been added
      anew in {@link SimpleGraphBuilder#groupsSource} since the last call to {@link SimpleGraphBuilder#buildGraph} or {@link SimpleGraphBuilder#updateGraph}.
-     @param {SimpleNodeListener} listener The listener to add.
+     @param {!SimpleNodeListener} listener The listener to add.
      @see SimpleGraphBuilder#addGroupNodeCreatedListener
      @see SimpleGraphBuilder#removeGroupNodeUpdatedListener */
   addGroupNodeUpdatedListener(listener) {
@@ -964,7 +991,7 @@ export class SimpleGraphBuilder {
      {@link SimpleGraphBuilder#addGroupNodeCreatedListener GroupNodeCreated}.
      Group nodes are updated in response to calling {@link SimpleGraphBuilder#updateGraph} for items that haven't been added
      anew in {@link SimpleGraphBuilder#groupsSource} since the last call to {@link SimpleGraphBuilder#buildGraph} or {@link SimpleGraphBuilder#updateGraph}.
-     @param {SimpleNodeListener} listener The listener to remove.
+     @param {!SimpleNodeListener} listener The listener to remove.
      @see SimpleGraphBuilder#addGroupNodeCreatedListener
      @see SimpleGraphBuilder#addGroupNodeUpdatedListener */
   removeGroupNodeUpdatedListener(listener) {
@@ -975,9 +1002,9 @@ export class SimpleGraphBuilder {
 export class SimpleGraphBuilderItemEventArgs extends ItemEventArgs {
   /**
      Creates a new instance of the {@link SimpleGraphBuilderItemEventArgs} class with the given graph, item, and source object.
-     @param {IGraph} graph The graph that can be used to modify <code>item</code>.
-     @param {TItem} item The item created from <code>itemData</code>.
-     @param {TSourceObject} sourceObject The object <code>item</code> was created from. */
+     @param {!IGraph} graph The graph that can be used to modify <code>item</code>.
+     @param {!TItem} item The item created from <code>itemData</code>.
+     @param {!TSourceObject} sourceObject The object <code>item</code> was created from. */
   constructor(graph, item, sourceObject) {
     super(item)
     // Gets the graph that can be used to modify the {@link ItemEventArgs#item}.
@@ -989,7 +1016,7 @@ export class SimpleGraphBuilderItemEventArgs extends ItemEventArgs {
 
 /**
  * @param {*} collection
- * @returns {Iterable}
+ * @returns {!Iterable}
  */
 function createIterable(collection) {
   if (collection[Symbol.iterator]) {
@@ -1001,7 +1028,7 @@ function createIterable(collection) {
 
 /**
  * @param {*} originalCollection
- * @returns {NodeCollectionCloner}
+ * @returns {!NodeCollectionCloner}
  */
 function createNodeCollectionCloner(originalCollection) {
   if (originalCollection[Symbol.iterator]) {
@@ -1027,7 +1054,7 @@ class IterableNodeCollectionCloner {
   }
 
   /**
-   * @param {(IEnumerable|Array.<*>|Iterable)} originalCollection
+   * @param {!(IEnumerable|Array.<*>|Iterable)} originalCollection
    */
   constructor(originalCollection) {
     this.$array = []
@@ -1066,7 +1093,7 @@ class ObjectNodeCollectionCloner {
   }
 
   /**
-   * @param {Record.<string,*>} originalCollection
+   * @param {!Record.<string,*>} originalCollection
    */
   constructor(originalCollection) {
     this.$currentIndex = 0
@@ -1103,7 +1130,7 @@ class ObjectNodeCollectionCloner {
   }
 
   /**
-   * @returns {string}
+   * @returns {!string}
    */
   $newKey() {
     return (++this.$currentIndex).toString(10)
@@ -1112,7 +1139,7 @@ class ObjectNodeCollectionCloner {
 
 /**
  * @param {*} originalCollection
- * @returns {EdgeCollectionCloner}
+ * @returns {!EdgeCollectionCloner}
  */
 function createEdgeCollectionCloner(originalCollection) {
   if (originalCollection[Symbol.iterator]) {
@@ -1130,7 +1157,7 @@ function createEdgeCollectionCloner(originalCollection) {
 
 class IterableEdgeCollectionCloner {
   /**
-   * @param {Iterable} originalCollection
+   * @param {!Iterable} originalCollection
    */
   constructor(originalCollection) {
     this.$originalCollection = originalCollection
@@ -1145,7 +1172,7 @@ class IterableEdgeCollectionCloner {
   }
 
   /**
-   * @returns {Generator}
+   * @returns {!Generator}
    */
   *generator() {
     for (const edgeDataItem of this.$originalCollection) {
@@ -1163,7 +1190,7 @@ class ObjectEdgeCollectionCloner {
   }
 
   /**
-   * @param {Record.<string,*>} originalCollection
+   * @param {!Record.<string,*>} originalCollection
    */
   constructor(originalCollection) {
     this.$originalCollection = originalCollection
@@ -1171,7 +1198,7 @@ class ObjectEdgeCollectionCloner {
   }
 
   /**
-   * @returns {Generator}
+   * @returns {!Generator}
    */
   *generator() {
     for (const [id, edgeDataItem] of Object.entries(this.$originalCollection)) {
@@ -1179,6 +1206,29 @@ class ObjectEdgeCollectionCloner {
     }
   }
 }
+
+/**
+ * @typedef {Object} SimpleTreeBuilderOptionArgs
+ * @property {IGraph} [graph]
+ * @property {*} [nodesSource]
+ * @property {*} [groupsSource]
+ * @property {*} [idBinding]
+ * @property {*} [nodeLabelBinding]
+ * @property {*} [locationXBinding]
+ * @property {*} [locationYBinding]
+ * @property {*} [childBinding]
+ * @property {*} [groupBinding]
+ * @property {*} [edgeLabelBinding]
+ * @property {*} [groupIdBinding]
+ * @property {*} [groupLabelBinding]
+ * @property {*} [parentGroupBinding]
+ */
+
+/**
+ * @typedef {Object} NodeType
+ * @property {*} dataItem
+ * @property {Array.<NodeType>} children
+ */
 
 /**
  * @typedef {Object} AdjacentNodesGraphBuilderBaseCalls
@@ -1283,7 +1333,7 @@ export class SimpleTreeBuilder {
   }
 
   /**
-   * @param {SimpleTreeBuilderOptionArgs} options
+   * @param {!SimpleTreeBuilderOptionArgs} options
    */
   $applyOptions(options) {
     if (options.nodesSource) this.nodesSource = options.nodesSource
@@ -1301,14 +1351,14 @@ export class SimpleTreeBuilder {
   }
 
   /**
-   * @param {IGraph} graph
+   * @param {!IGraph} graph
    * @returns {*}
    */
   $createAdjacentNodesGraphBuilderWrapper(graph) {
     class AdjacentNodesGraphBuilderWrapper extends SimpleAdjacentNodesGraphBuilder {
       /**
        * @param {?(IGraph|AdjacentNodesGraphBuilderOptionArgs)} graphOrOptions
-       * @param {SimpleTreeBuilder} treeBuilder
+       * @param {!SimpleTreeBuilder} treeBuilder
        */
       constructor(graphOrOptions, treeBuilder) {
         super(graphOrOptions)
@@ -1316,41 +1366,41 @@ export class SimpleTreeBuilder {
       }
 
       /**
-       * @param {IGraph} graph
-       * @param {INode} source
-       * @param {INode} target
+       * @param {!IGraph} graph
+       * @param {!INode} source
+       * @param {!INode} target
        * @param {*} labelData
-       * @returns {IEdge}
+       * @returns {!IEdge}
        */
       createEdge(graph, source, target, labelData) {
         return this.$treeBuilder.createEdge(graph, source, target, labelData)
       }
 
       /**
-       * @param {IGraph} graph
+       * @param {!IGraph} graph
        * @param {*} labelData
        * @param {*} groupObject
-       * @returns {INode}
+       * @returns {!INode}
        */
       createGroupNode(graph, labelData, groupObject) {
         return this.$treeBuilder.createGroupNode(graph, labelData, groupObject)
       }
 
       /**
-       * @param {IGraph} graph
+       * @param {!IGraph} graph
        * @param {?INode} parent
-       * @param {Point} location
+       * @param {!Point} location
        * @param {*} labelData
        * @param {*} nodeObject
-       * @returns {INode}
+       * @returns {!INode}
        */
       createNode(graph, parent, location, labelData, nodeObject) {
         return this.$treeBuilder.createNode(graph, parent, location, labelData, nodeObject)
       }
 
       /**
-       * @param {IGraph} graph
-       * @param {IEdge} edge
+       * @param {!IGraph} graph
+       * @param {!IEdge} edge
        * @param {*} labelData
        */
       updateEdge(graph, edge, labelData) {
@@ -1358,8 +1408,8 @@ export class SimpleTreeBuilder {
       }
 
       /**
-       * @param {IGraph} graph
-       * @param {INode} groupNode
+       * @param {!IGraph} graph
+       * @param {!INode} groupNode
        * @param {*} labelData
        * @param {*} groupObject
        */
@@ -1368,10 +1418,10 @@ export class SimpleTreeBuilder {
       }
 
       /**
-       * @param {IGraph} graph
-       * @param {INode} node
+       * @param {!IGraph} graph
+       * @param {!INode} node
        * @param {?INode} parent
-       * @param {Point} location
+       * @param {!Point} location
        * @param {*} labelData
        * @param {*} nodeObject
        */
@@ -1380,41 +1430,41 @@ export class SimpleTreeBuilder {
       }
 
       /**
-       * @param {IGraph} graph
-       * @param {INode} source
-       * @param {INode} target
+       * @param {!IGraph} graph
+       * @param {!INode} source
+       * @param {!INode} target
        * @param {*} labelData
-       * @returns {IEdge}
+       * @returns {!IEdge}
        */
       createEdgeBase(graph, source, target, labelData) {
         return super.createEdge(graph, source, target, labelData)
       }
 
       /**
-       * @param {IGraph} graph
+       * @param {!IGraph} graph
        * @param {*} labelData
        * @param {*} groupObject
-       * @returns {INode}
+       * @returns {!INode}
        */
       createGroupNodeBase(graph, labelData, groupObject) {
         return super.createGroupNode(graph, labelData, groupObject)
       }
 
       /**
-       * @param {IGraph} graph
+       * @param {!IGraph} graph
        * @param {?INode} parent
-       * @param {Point} location
+       * @param {!Point} location
        * @param {*} labelData
        * @param {*} nodeObject
-       * @returns {INode}
+       * @returns {!INode}
        */
       createNodeBase(graph, parent, location, labelData, nodeObject) {
         return super.createNode(graph, parent, location, labelData, nodeObject)
       }
 
       /**
-       * @param {IGraph} graph
-       * @param {IEdge} edge
+       * @param {!IGraph} graph
+       * @param {!IEdge} edge
        * @param {*} labelData
        */
       updateEdgeBase(graph, edge, labelData) {
@@ -1422,8 +1472,8 @@ export class SimpleTreeBuilder {
       }
 
       /**
-       * @param {IGraph} graph
-       * @param {INode} groupNode
+       * @param {!IGraph} graph
+       * @param {!INode} groupNode
        * @param {*} labelData
        * @param {*} groupObject
        */
@@ -1432,10 +1482,10 @@ export class SimpleTreeBuilder {
       }
 
       /**
-       * @param {IGraph} graph
-       * @param {INode} node
+       * @param {!IGraph} graph
+       * @param {!INode} node
        * @param {?INode} parent
-       * @param {Point} location
+       * @param {!Point} location
        * @param {*} labelData
        * @param {*} nodeObject
        */
@@ -1450,7 +1500,7 @@ export class SimpleTreeBuilder {
   /**
      Populates the graph with items generated from the bound data.
      The graph is cleared, and then new nodes, groups, and edges are created as defined by the source collections.
-     @returns {IGraph} The created graph.
+     @returns {!IGraph} The created graph.
      @see SimpleTreeBuilder#updateGraph */
   buildGraph() {
     if (this.nodesSource == null || this.childBinding == null) {
@@ -1479,11 +1529,11 @@ export class SimpleTreeBuilder {
      The default behavior is to create the edge and create a label from <code>labelData</code>, if present.
      Customizing how edges are created is usually easier by adding an event handler to the {@link SimpleTreeBuilder#addEdgeCreatedListener EdgeCreated}
      event than by overriding this method.
-     @param {IGraph} graph The graph in which to create the edge.
-     @param {INode} source The source node for the edge.
-     @param {INode} target The target node for the edge.
+     @param {!IGraph} graph The graph in which to create the edge.
+     @param {!INode} source The source node for the edge.
+     @param {!INode} target The target node for the edge.
      @param {*} labelData The optional label data of the edge if an {@link SimpleTreeBuilder#edgeLabelBinding} is specified.
-     @returns {IEdge} The created edge. */
+     @returns {!IEdge} The created edge. */
   createEdge(graph, source, target, labelData) {
     return this.$adjacentNodesGraphBuilder.createEdgeBase(graph, source, target, labelData)
   }
@@ -1496,10 +1546,10 @@ export class SimpleTreeBuilder {
      label from <code>labelData</code>, if present.
      Customizing how group nodes are created is usually easier by adding an event handler to the {@link SimpleTreeBuilder#addGroupNodeCreatedListener GroupNodeCreated}
      event than by overriding this method.
-     @param {IGraph} graph The graph in which to create the group node.
+     @param {!IGraph} graph The graph in which to create the group node.
      @param {*} labelData The optional label data of the group node if an {@link SimpleTreeBuilder#groupLabelBinding} is specified.
      @param {*} groupObject The object from {@link SimpleTreeBuilder#groupsSource} from which to create the group node.
-     @returns {INode} The created group node. */
+     @returns {!INode} The created group node. */
   createGroupNode(graph, labelData, groupObject) {
     return this.$adjacentNodesGraphBuilder.createGroupNodeBase(graph, labelData, groupObject)
   }
@@ -1512,12 +1562,12 @@ export class SimpleTreeBuilder {
      and create a label from <code>labelData</code>, if present.
      Customizing how nodes are created is usually easier by adding an event handler to the {@link SimpleTreeBuilder#addNodeCreatedListener NodeCreated}
      event than by overriding this method.
-     @param {IGraph} graph The graph in which to create the node.
+     @param {!IGraph} graph The graph in which to create the node.
      @param {?INode} parent The node's parent node.
-     @param {Point} location The location of the node.
+     @param {!Point} location The location of the node.
      @param {*} labelData The optional label data of the node if an {@link SimpleTreeBuilder#nodeLabelBinding} is specified.
      @param {*} nodeObject The object from {@link SimpleTreeBuilder#nodesSource} from which to create the node.
-     @returns {INode} The created node. */
+     @returns {!INode} The created node. */
   createNode(graph, parent, location, labelData, nodeObject) {
     return this.$adjacentNodesGraphBuilder.createNodeBase(
       graph,
@@ -1530,7 +1580,7 @@ export class SimpleTreeBuilder {
 
   /**
      Retrieves the object from which a given item has been created.
-     @param {IModelItem} item The item to get the object for.
+     @param {!IModelItem} item The item to get the object for.
      @returns {*} The object from which the graph item has been created.
      @see SimpleTreeBuilder#getNode
      @see SimpleTreeBuilder#getGroup */
@@ -1566,8 +1616,8 @@ export class SimpleTreeBuilder {
      source and target node objects also still exist.
      Customizing how edges are updated is usually easier by adding an event handler to the {@link SimpleTreeBuilder#addEdgeUpdatedListener EdgeUpdated}
      event than by overriding this method.
-     @param {IGraph} graph The edge's containing graph.
-     @param {IEdge} edge The edge to update.
+     @param {!IGraph} graph The edge's containing graph.
+     @param {!IEdge} edge The edge to update.
      @param {*} labelData The optional label data of the edge if an {@link SimpleTreeBuilder#nodeLabelBinding} is specified. */
   updateEdge(graph, edge, labelData) {
     this.$adjacentNodesGraphBuilder.updateEdgeBase(graph, edge, labelData)
@@ -1579,8 +1629,8 @@ export class SimpleTreeBuilder {
      corresponding object from {@link SimpleTreeBuilder#groupsSource} is also still present.
      Customizing how group nodes are updated is usually easier by adding an event handler to the {@link SimpleTreeBuilder#addGroupNodeUpdatedListener GroupNodeUpdated}
      event than by overriding this method.
-     @param {IGraph} graph The group node's containing graph.
-     @param {INode} groupNode The group node to update.
+     @param {!IGraph} graph The group node's containing graph.
+     @param {!INode} groupNode The group node to update.
      @param {*} labelData The optional label data of the group node if an {@link SimpleTreeBuilder#groupLabelBinding} is specified.
      @param {*} groupObject The object from {@link SimpleTreeBuilder#groupsSource} from which the group node has been created. */
   updateGroupNode(graph, groupNode, labelData, groupObject) {
@@ -1593,10 +1643,10 @@ export class SimpleTreeBuilder {
      object from {@link SimpleTreeBuilder#nodesSource} is also still present.
      Customizing how nodes are updated is usually easier by adding an event handler to the {@link SimpleTreeBuilder#addNodeUpdatedListener NodeUpdated}
      event than by overriding this method.
-     @param {IGraph} graph The node's containing graph.
-     @param {INode} node The node to update.
+     @param {!IGraph} graph The node's containing graph.
+     @param {!INode} node The node to update.
      @param {?INode} parent The node's parent node.
-     @param {Point} location The location of the node.
+     @param {!Point} location The location of the node.
      @param {*} labelData The optional label data of the node if an {@link SimpleTreeBuilder#nodeLabelBinding} is specified.
      @param {*} nodeObject The object from {@link SimpleTreeBuilder#nodesSource} from which the node has been created. */
   updateNode(graph, node, parent, location, labelData, nodeObject) {
@@ -1611,7 +1661,7 @@ export class SimpleTreeBuilder {
   }
 
   /**
-     Gets the {@link IGraph graph} used by this class. * @type {IGraph}
+     Gets the {@link IGraph graph} used by this class. * @type {!IGraph}
   */
   get graph() {
     return this.$adjacentNodesGraphBuilder.graph
@@ -1883,7 +1933,7 @@ export class SimpleTreeBuilder {
      This event can be used to further customize the created node.
      New nodes are created either in response to calling {@link SimpleTreeBuilder#buildGraph}, or in response to calling {@link SimpleTreeBuilder#updateGraph}
      when there are new items in {@link SimpleTreeBuilder#nodesSource}.
-     @param {SimpleNodeListener} listener The listener to add.
+     @param {!SimpleNodeListener} listener The listener to add.
      @see SimpleTreeBuilder#addNodeUpdatedListener
      @see SimpleTreeBuilder#removeNodeCreatedListener */
   addNodeCreatedListener(listener) {
@@ -1895,7 +1945,7 @@ export class SimpleTreeBuilder {
      This event can be used to further customize the created node.
      New nodes are created either in response to calling {@link SimpleTreeBuilder#buildGraph}, or in response to calling {@link SimpleTreeBuilder#updateGraph}
      when there are new items in {@link SimpleTreeBuilder#nodesSource}.
-     @param {SimpleNodeListener} listener The listener to remove.
+     @param {!SimpleNodeListener} listener The listener to remove.
      @see SimpleTreeBuilder#addNodeUpdatedListener
      @see SimpleTreeBuilder#addNodeCreatedListener */
   removeNodeCreatedListener(listener) {
@@ -1908,7 +1958,7 @@ export class SimpleTreeBuilder {
      {@link SimpleTreeBuilder#addNodeCreatedListener NodeCreated}.
      Nodes are updated in response to calling {@link SimpleTreeBuilder#updateGraph} for items that haven't been added anew
      in {@link SimpleTreeBuilder#nodesSource} since the last call to {@link SimpleTreeBuilder#buildGraph} or {@link SimpleTreeBuilder#updateGraph}.
-     @param {SimpleNodeListener} listener The listener to add.
+     @param {!SimpleNodeListener} listener The listener to add.
      @see SimpleTreeBuilder#addNodeCreatedListener
      @see SimpleTreeBuilder#removeNodeUpdatedListener */
   addNodeUpdatedListener(listener) {
@@ -1921,7 +1971,7 @@ export class SimpleTreeBuilder {
      {@link SimpleTreeBuilder#addNodeCreatedListener NodeCreated}.
      Nodes are updated in response to calling {@link SimpleTreeBuilder#updateGraph} for items that haven't been added anew
      in {@link SimpleTreeBuilder#nodesSource} since the last call to {@link SimpleTreeBuilder#buildGraph} or {@link SimpleTreeBuilder#updateGraph}.
-     @param {SimpleNodeListener} listener The listener to remove.
+     @param {!SimpleNodeListener} listener The listener to remove.
      @see SimpleTreeBuilder#addNodeCreatedListener
      @see SimpleTreeBuilder#addNodeUpdatedListener */
   removeNodeUpdatedListener(listener) {
@@ -1933,7 +1983,7 @@ export class SimpleTreeBuilder {
      This event can be used to further customize the created edge.
      New edges are created either in response to calling {@link SimpleTreeBuilder#buildGraph}, or in response to calling {@link SimpleTreeBuilder#updateGraph}
      when there are new items in {@link SimpleTreeBuilder#childBinding}.
-     @param {SimpleEdgeListener} listener The listener to add.
+     @param {!SimpleEdgeListener} listener The listener to add.
      @see SimpleTreeBuilder#addEdgeUpdatedListener
      @see SimpleTreeBuilder#removeEdgeCreatedListener */
   addEdgeCreatedListener(listener) {
@@ -1945,7 +1995,7 @@ export class SimpleTreeBuilder {
      This event can be used to further customize the created edge.
      New edges are created either in response to calling {@link SimpleTreeBuilder#buildGraph}, or in response to calling {@link SimpleTreeBuilder#updateGraph}
      when there are new items in {@link SimpleTreeBuilder#childBinding}.
-     @param {SimpleEdgeListener} listener The listener to remove.
+     @param {!SimpleEdgeListener} listener The listener to remove.
      @see SimpleTreeBuilder#addEdgeUpdatedListener
      @see SimpleTreeBuilder#addEdgeCreatedListener */
   removeEdgeCreatedListener(listener) {
@@ -1958,7 +2008,7 @@ export class SimpleTreeBuilder {
      {@link SimpleTreeBuilder#addEdgeCreatedListener EdgeCreated}.
      Edges are updated in response to calling {@link SimpleTreeBuilder#updateGraph} for items that haven't been added anew
      in {@link SimpleTreeBuilder#childBinding} since the last call to {@link SimpleTreeBuilder#buildGraph} or {@link SimpleTreeBuilder#updateGraph}.
-     @param {SimpleEdgeListener} listener The listener to add.
+     @param {!SimpleEdgeListener} listener The listener to add.
      @see SimpleTreeBuilder#addEdgeCreatedListener
      @see SimpleTreeBuilder#removeEdgeUpdatedListener */
   addEdgeUpdatedListener(listener) {
@@ -1971,7 +2021,7 @@ export class SimpleTreeBuilder {
      {@link SimpleTreeBuilder#addEdgeCreatedListener EdgeCreated}.
      Edges are updated in response to calling {@link SimpleTreeBuilder#updateGraph} for items that haven't been added anew
      in {@link SimpleTreeBuilder#childBinding} since the last call to {@link SimpleTreeBuilder#buildGraph} or {@link SimpleTreeBuilder#updateGraph}.
-     @param {SimpleEdgeListener} listener The listener to remove.
+     @param {!SimpleEdgeListener} listener The listener to remove.
      @see SimpleTreeBuilder#addEdgeCreatedListener
      @see SimpleTreeBuilder#addEdgeUpdatedListener */
   removeEdgeUpdatedListener(listener) {
@@ -1983,7 +2033,7 @@ export class SimpleTreeBuilder {
      This event can be used to further customize the created group node.
      New group nodes are created either in response to calling {@link SimpleTreeBuilder#buildGraph}, or in response to
      calling {@link SimpleTreeBuilder#updateGraph} when there are new items in {@link SimpleTreeBuilder#groupsSource}.
-     @param {SimpleNodeListener} listener The listener to add.
+     @param {!SimpleNodeListener} listener The listener to add.
      @see SimpleTreeBuilder#addGroupNodeUpdatedListener
      @see SimpleTreeBuilder#removeGroupNodeCreatedListener */
   addGroupNodeCreatedListener(listener) {
@@ -1995,7 +2045,7 @@ export class SimpleTreeBuilder {
      This event can be used to further customize the created group node.
      New group nodes are created either in response to calling {@link SimpleTreeBuilder#buildGraph}, or in response to
      calling {@link SimpleTreeBuilder#updateGraph} when there are new items in {@link SimpleTreeBuilder#groupsSource}.
-     @param {SimpleNodeListener} listener The listener to remove.
+     @param {!SimpleNodeListener} listener The listener to remove.
      @see SimpleTreeBuilder#addGroupNodeUpdatedListener
      @see SimpleTreeBuilder#addGroupNodeCreatedListener */
   removeGroupNodeCreatedListener(listener) {
@@ -2008,7 +2058,7 @@ export class SimpleTreeBuilder {
      {@link SimpleTreeBuilder#addGroupNodeCreatedListener GroupNodeCreated}.
      Group nodes are updated in response to calling {@link SimpleTreeBuilder#updateGraph} for items that haven't been added
      anew in {@link SimpleTreeBuilder#groupsSource} since the last call to {@link SimpleTreeBuilder#buildGraph} or {@link SimpleTreeBuilder#updateGraph}.
-     @param {SimpleNodeListener} listener The listener to add.
+     @param {!SimpleNodeListener} listener The listener to add.
      @see SimpleTreeBuilder#addGroupNodeCreatedListener
      @see SimpleTreeBuilder#removeGroupNodeUpdatedListener */
   addGroupNodeUpdatedListener(listener) {
@@ -2021,13 +2071,31 @@ export class SimpleTreeBuilder {
      {@link SimpleTreeBuilder#addGroupNodeCreatedListener GroupNodeCreated}.
      Group nodes are updated in response to calling {@link SimpleTreeBuilder#updateGraph} for items that haven't been added
      anew in {@link SimpleTreeBuilder#groupsSource} since the last call to {@link SimpleTreeBuilder#buildGraph} or {@link SimpleTreeBuilder#updateGraph}.
-     @param {SimpleNodeListener} listener The listener to remove.
+     @param {!SimpleNodeListener} listener The listener to remove.
      @see SimpleTreeBuilder#addGroupNodeCreatedListener
      @see SimpleTreeBuilder#addGroupNodeUpdatedListener */
   removeGroupNodeUpdatedListener(listener) {
     this.$adjacentNodesGraphBuilder.removeGroupNodeUpdatedListener(listener)
   }
 }
+
+/**
+ * @typedef {Object} AdjacentNodesGraphBuilderOptionArgs
+ * @property {IGraph} [graph]
+ * @property {*} [nodesSource]
+ * @property {*} [groupsSource]
+ * @property {*} [nodeIdBinding]
+ * @property {*} [nodeLabelBinding]
+ * @property {*} [locationXBinding]
+ * @property {*} [locationYBinding]
+ * @property {*} [groupBinding]
+ * @property {function} [edgeLabelBinding]
+ * @property {*} [groupIdBinding]
+ * @property {*} [groupLabelBinding]
+ * @property {*} [parentGroupBinding]
+ * @property {*} [successorsBinding]
+ * @property {*} [predecessorsBinding]
+ */
 
 /**
  Populates a graph from custom data where objects corresponding to nodes know their neighbors.
@@ -2191,7 +2259,7 @@ export class SimpleAdjacentNodesGraphBuilder {
   }
 
   /**
-   * @param {AdjacentNodesGraphBuilderOptionArgs} options
+   * @param {!AdjacentNodesGraphBuilderOptionArgs} options
    */
   $applyOptions(options) {
     if (options.nodesSource) this.nodesSource = options.nodesSource
@@ -2213,7 +2281,7 @@ export class SimpleAdjacentNodesGraphBuilder {
      Populates the graph with items generated from the bound data.
      The graph is cleared, and then new nodes, groups, and edges are created as defined by the source collections.
 
-     @returns {IGraph} The created graph.
+     @returns {!IGraph} The created graph.
      @see SimpleAdjacentNodesGraphBuilder#updateGraph
      @see SimpleAdjacentNodesGraphBuilder */
   buildGraph() {
@@ -2384,11 +2452,11 @@ export class SimpleAdjacentNodesGraphBuilder {
      Creates a new edge connecting the given nodes.
      This class calls this method to create all new edges, and customers may override it to customize edge creation.
 
-     @param {IGraph} graph The graph.
-     @param {INode} source The source node of the edge.
-     @param {INode} target The target node of the edge.
+     @param {!IGraph} graph The graph.
+     @param {!INode} source The source node of the edge.
+     @param {!INode} target The target node of the edge.
      @param {*} labelData The optional label data of the edge if an {@link SimpleAdjacentNodesGraphBuilder#edgeLabelBinding} is specified.
-     @returns {IEdge} The created edge.
+     @returns {!IEdge} The created edge.
      @see SimpleAdjacentNodesGraphBuilder */
   createEdge(graph, source, target, labelData) {
     return this.$graphBuilderHelper.createEdge(graph, source, target, labelData, null)
@@ -2397,9 +2465,9 @@ export class SimpleAdjacentNodesGraphBuilder {
   /**
    * @param {?INode} source
    * @param {?INode} target
-   * @param {IGraph} graph
+   * @param {!IGraph} graph
    * @param {*} labelData
-   * @returns {IEdge}
+   * @returns {!IEdge}
    */
   $createEdgeAndMirrorEdge(source, target, graph, labelData) {
     const sourceMirrorNode = this.$nodeToMirrorNodeMap.get(source)
@@ -2421,10 +2489,10 @@ export class SimpleAdjacentNodesGraphBuilder {
      Customizing how group nodes are created is usually easier by adding an event handler to the {@link SimpleAdjacentNodesGraphBuilder#addGroupNodeCreatedListener GroupNodeCreated}
      event than by overriding this method.
 
-     @param {IGraph} graph The graph in which to create the group node.
+     @param {!IGraph} graph The graph in which to create the group node.
      @param {*} labelData The optional label data of the group node if an {@link SimpleAdjacentNodesGraphBuilder#groupLabelBinding} is specified.
      @param {*} groupObject The object from {@link SimpleAdjacentNodesGraphBuilder#groupsSource} from which to create the group node.
-     @returns {INode} The created group node.
+     @returns {!INode} The created group node.
      @see SimpleAdjacentNodesGraphBuilder */
   createGroupNode(graph, labelData, groupObject) {
     return this.$graphBuilderHelper.createGroupNode(graph, labelData, groupObject)
@@ -2441,24 +2509,24 @@ export class SimpleAdjacentNodesGraphBuilder {
      Customizing how nodes are created is usually easier by adding an event handler to the {@link SimpleAdjacentNodesGraphBuilder#addNodeCreatedListener NodeCreated}
      event than by overriding this method.
 
-     @param {IGraph} graph The graph in which to create the node.
+     @param {!IGraph} graph The graph in which to create the node.
      @param {?INode} parent The node's parent node.
-     @param {Point} location The location of the node.
+     @param {!Point} location The location of the node.
      @param {*} labelData The optional label data of the node if an {@link SimpleAdjacentNodesGraphBuilder#nodeLabelBinding} is specified.
      @param {*} nodeObject The object from {@link SimpleAdjacentNodesGraphBuilder#nodesSource} from which to create the node.
-     @returns {INode} The created node.
+     @returns {!INode} The created node.
      @see SimpleAdjacentNodesGraphBuilder */
   createNode(graph, parent, location, labelData, nodeObject) {
     return this.$graphBuilderHelper.createNode(graph, parent, location, labelData, nodeObject)
   }
 
   /**
-   * @param {IGraph} graph
+   * @param {!IGraph} graph
    * @param {?INode} parent
-   * @param {Point} location
+   * @param {!Point} location
    * @param {*} labelData
    * @param {*} nodeObject
-   * @returns {INode}
+   * @returns {!INode}
    */
   $createNodeAndMirrorNode(graph, parent, location, labelData, nodeObject) {
     const node = this.createNode(graph, parent, location, labelData, nodeObject)
@@ -2469,7 +2537,7 @@ export class SimpleAdjacentNodesGraphBuilder {
 
   /**
      Retrieves the object from which a given item has been created.
-     @param {IModelItem} item The item to get the object for.
+     @param {!IModelItem} item The item to get the object for.
      @returns {*} The object from which the graph item has been created.
      @see SimpleAdjacentNodesGraphBuilder#getNode
      @see SimpleAdjacentNodesGraphBuilder#getGroup
@@ -2508,8 +2576,8 @@ export class SimpleAdjacentNodesGraphBuilder {
      This implementation updates the label of the <code>edge</code> with the given <code>labelData</code> and fires the {@link SimpleAdjacentNodesGraphBuilder#addEdgeUpdatedListener EdgeUpdated}
      event.
 
-     @param {IGraph} graph The graph.
-     @param {IEdge} edge The edge to update.
+     @param {!IGraph} graph The graph.
+     @param {!IEdge} edge The edge to update.
      @param {*} labelData The optional label data of the edge if an {@link SimpleAdjacentNodesGraphBuilder#edgeLabelBinding} is specified.
      @see SimpleAdjacentNodesGraphBuilder */
   updateEdge(graph, edge, labelData) {
@@ -2517,8 +2585,8 @@ export class SimpleAdjacentNodesGraphBuilder {
   }
 
   /**
-   * @param {IEdge} edge
-   * @param {IGraph} graph
+   * @param {!IEdge} edge
+   * @param {!IGraph} graph
    * @param {*} labelData
    */
   $updateEdgeAndCreateMirrorEdge(edge, graph, labelData) {
@@ -2538,8 +2606,8 @@ export class SimpleAdjacentNodesGraphBuilder {
      Customizing how group nodes are updated is usually easier by adding an event handler to the {@link SimpleAdjacentNodesGraphBuilder#addGroupNodeUpdatedListener GroupNodeUpdated}
      event than by overriding this method.
 
-     @param {IGraph} graph The group node's containing graph.
-     @param {INode} groupNode The group node to update.
+     @param {!IGraph} graph The group node's containing graph.
+     @param {!INode} groupNode The group node to update.
      @param {*} labelData The optional label data of the group node if an {@link SimpleAdjacentNodesGraphBuilder#groupLabelBinding} is specified.
      @param {*} groupObject The object from {@link SimpleAdjacentNodesGraphBuilder#groupsSource} from which the group node has been created.
      @see SimpleAdjacentNodesGraphBuilder */
@@ -2555,10 +2623,10 @@ export class SimpleAdjacentNodesGraphBuilder {
      Customizing how nodes are updated is usually easier by adding an event handler to the {@link SimpleAdjacentNodesGraphBuilder#addNodeUpdatedListener NodeUpdated}
      event than by overriding this method.
 
-     @param {IGraph} graph The node's containing graph.
-     @param {INode} node The node to update.
+     @param {!IGraph} graph The node's containing graph.
+     @param {!INode} node The node to update.
      @param {?INode} parent The node's parent node.
-     @param {Point} location The location of the node.
+     @param {!Point} location The location of the node.
      @param {*} labelData The optional label data of the node if an {@link SimpleAdjacentNodesGraphBuilder#nodeLabelBinding} is specified.
      @param {*} nodeObject The object from {@link SimpleAdjacentNodesGraphBuilder#nodesSource} from which the node has been created.
      @see SimpleAdjacentNodesGraphBuilder */
@@ -2567,10 +2635,10 @@ export class SimpleAdjacentNodesGraphBuilder {
   }
 
   /**
-   * @param {IGraph} graph
-   * @param {INode} node
+   * @param {!IGraph} graph
+   * @param {!INode} node
    * @param {?INode} parent
-   * @param {Point} location
+   * @param {!Point} location
    * @param {*} labelData
    * @param {*} nodeObject
    */
@@ -2582,7 +2650,7 @@ export class SimpleAdjacentNodesGraphBuilder {
 
   /**
      Gets the {@link IGraph graph} used by this class.
-     @see SimpleAdjacentNodesGraphBuilder * @type {IGraph}
+     @see SimpleAdjacentNodesGraphBuilder * @type {!IGraph}
   */
   get graph() {
     return this.$graphBuilder.graph
@@ -2906,7 +2974,7 @@ export class SimpleAdjacentNodesGraphBuilder {
      New nodes are created either in response to calling {@link SimpleAdjacentNodesGraphBuilder#buildGraph}, or in response
      to calling {@link SimpleAdjacentNodesGraphBuilder#updateGraph} when there are new items in {@link SimpleAdjacentNodesGraphBuilder#nodesSource}.
 
-     @param {function} listener The listener to add.
+     @param {!function} listener The listener to add.
      @see SimpleAdjacentNodesGraphBuilder#addNodeUpdatedListener
      @see SimpleAdjacentNodesGraphBuilder#removeNodeCreatedListener
      @see SimpleAdjacentNodesGraphBuilder */
@@ -2921,7 +2989,7 @@ export class SimpleAdjacentNodesGraphBuilder {
      New nodes are created either in response to calling {@link SimpleAdjacentNodesGraphBuilder#buildGraph}, or in response
      to calling {@link SimpleAdjacentNodesGraphBuilder#updateGraph} when there are new items in {@link SimpleAdjacentNodesGraphBuilder#nodesSource}.
 
-     @param {function} listener The listener to remove.
+     @param {!function} listener The listener to remove.
      @see SimpleAdjacentNodesGraphBuilder#addNodeUpdatedListener
      @see SimpleAdjacentNodesGraphBuilder#addNodeCreatedListener
      @see SimpleAdjacentNodesGraphBuilder */
@@ -2938,7 +3006,7 @@ export class SimpleAdjacentNodesGraphBuilder {
      been added anew in {@link SimpleAdjacentNodesGraphBuilder#nodesSource} since the last call to {@link SimpleAdjacentNodesGraphBuilder#buildGraph} or
      {@link SimpleAdjacentNodesGraphBuilder#updateGraph}.
 
-     @param {function} listener The listener to add.
+     @param {!function} listener The listener to add.
      @see SimpleAdjacentNodesGraphBuilder#addNodeCreatedListener
      @see SimpleAdjacentNodesGraphBuilder#removeNodeUpdatedListener
      @see SimpleAdjacentNodesGraphBuilder */
@@ -2955,7 +3023,7 @@ export class SimpleAdjacentNodesGraphBuilder {
      been added anew in {@link SimpleAdjacentNodesGraphBuilder#nodesSource} since the last call to {@link SimpleAdjacentNodesGraphBuilder#buildGraph} or
      {@link SimpleAdjacentNodesGraphBuilder#updateGraph}.
 
-     @param {function} listener The listener to remove.
+     @param {!function} listener The listener to remove.
      @see SimpleAdjacentNodesGraphBuilder#addNodeCreatedListener
      @see SimpleAdjacentNodesGraphBuilder#addNodeUpdatedListener
      @see SimpleAdjacentNodesGraphBuilder */
@@ -2970,7 +3038,7 @@ export class SimpleAdjacentNodesGraphBuilder {
      New edges are created either in response to calling {@link SimpleAdjacentNodesGraphBuilder#buildGraph}, or in response
      to calling {@link SimpleAdjacentNodesGraphBuilder#updateGraph} when there are new items in {@link SimpleAdjacentNodesGraphBuilder#predecessorsBinding} or {@link SimpleAdjacentNodesGraphBuilder#successorsBinding}.
 
-     @param {function} listener The listener to add.
+     @param {!function} listener The listener to add.
      @see SimpleAdjacentNodesGraphBuilder#addEdgeUpdatedListener
      @see SimpleAdjacentNodesGraphBuilder#removeEdgeCreatedListener
      @see SimpleAdjacentNodesGraphBuilder */
@@ -2985,7 +3053,7 @@ export class SimpleAdjacentNodesGraphBuilder {
      New edges are created either in response to calling {@link SimpleAdjacentNodesGraphBuilder#buildGraph}, or in response
      to calling {@link SimpleAdjacentNodesGraphBuilder#updateGraph} when there are new items in {@link SimpleAdjacentNodesGraphBuilder#predecessorsBinding} or {@link SimpleAdjacentNodesGraphBuilder#successorsBinding}.
 
-     @param {function} listener The listener to remove.
+     @param {!function} listener The listener to remove.
      @see SimpleAdjacentNodesGraphBuilder#addEdgeUpdatedListener
      @see SimpleAdjacentNodesGraphBuilder#addEdgeCreatedListener
      @see SimpleAdjacentNodesGraphBuilder */
@@ -3006,7 +3074,7 @@ export class SimpleAdjacentNodesGraphBuilder {
      {@link SimpleAdjacentNodesGraphBuilder#buildGraph}, or multiple times for the same edge during
      {@link SimpleAdjacentNodesGraphBuilder#updateGraph}.
 
-     @param {function} listener The listener to add.
+     @param {!function} listener The listener to add.
      @see SimpleAdjacentNodesGraphBuilder#addEdgeCreatedListener
      @see SimpleAdjacentNodesGraphBuilder#removeEdgeUpdatedListener
      @see SimpleAdjacentNodesGraphBuilder */
@@ -3027,7 +3095,7 @@ export class SimpleAdjacentNodesGraphBuilder {
      {@link SimpleAdjacentNodesGraphBuilder#buildGraph}, or multiple times for the same edge during
      {@link SimpleAdjacentNodesGraphBuilder#updateGraph}.
 
-     @param {function} listener The listener to remove.
+     @param {!function} listener The listener to remove.
      @see SimpleAdjacentNodesGraphBuilder#addEdgeCreatedListener
      @see SimpleAdjacentNodesGraphBuilder#addEdgeUpdatedListener
      @see SimpleAdjacentNodesGraphBuilder */
@@ -3042,7 +3110,7 @@ export class SimpleAdjacentNodesGraphBuilder {
      New group nodes are created either in response to calling {@link SimpleAdjacentNodesGraphBuilder#buildGraph}, or in
      response to calling {@link SimpleAdjacentNodesGraphBuilder#updateGraph} when there are new items in {@link SimpleAdjacentNodesGraphBuilder#groupsSource}.
 
-     @param {function} listener The listener to add.
+     @param {!function} listener The listener to add.
      @see SimpleAdjacentNodesGraphBuilder#addGroupNodeUpdatedListener
      @see SimpleAdjacentNodesGraphBuilder#removeGroupNodeCreatedListener
      @see SimpleAdjacentNodesGraphBuilder */
@@ -3057,7 +3125,7 @@ export class SimpleAdjacentNodesGraphBuilder {
      New group nodes are created either in response to calling {@link SimpleAdjacentNodesGraphBuilder#buildGraph}, or in
      response to calling {@link SimpleAdjacentNodesGraphBuilder#updateGraph} when there are new items in {@link SimpleAdjacentNodesGraphBuilder#groupsSource}.
 
-     @param {function} listener The listener to remove.
+     @param {!function} listener The listener to remove.
      @see SimpleAdjacentNodesGraphBuilder#addGroupNodeUpdatedListener
      @see SimpleAdjacentNodesGraphBuilder#addGroupNodeCreatedListener
      @see SimpleAdjacentNodesGraphBuilder */
@@ -3074,7 +3142,7 @@ export class SimpleAdjacentNodesGraphBuilder {
      haven't been added anew in {@link SimpleAdjacentNodesGraphBuilder#groupsSource} since the last call to {@link SimpleAdjacentNodesGraphBuilder#buildGraph} or
      {@link SimpleAdjacentNodesGraphBuilder#updateGraph}.
 
-     @param {function} listener The listener to add.
+     @param {!function} listener The listener to add.
      @see SimpleAdjacentNodesGraphBuilder#addGroupNodeCreatedListener
      @see SimpleAdjacentNodesGraphBuilder#removeGroupNodeUpdatedListener
      @see SimpleAdjacentNodesGraphBuilder */
@@ -3091,7 +3159,7 @@ export class SimpleAdjacentNodesGraphBuilder {
      haven't been added anew in {@link SimpleAdjacentNodesGraphBuilder#groupsSource} since the last call to {@link SimpleAdjacentNodesGraphBuilder#buildGraph} or
      {@link SimpleAdjacentNodesGraphBuilder#updateGraph}.
 
-     @param {function} listener The listener to remove.
+     @param {!function} listener The listener to remove.
      @see SimpleAdjacentNodesGraphBuilder#addGroupNodeCreatedListener
      @see SimpleAdjacentNodesGraphBuilder#addGroupNodeUpdatedListener
      @see SimpleAdjacentNodesGraphBuilder */
@@ -3100,16 +3168,40 @@ export class SimpleAdjacentNodesGraphBuilder {
   }
 }
 
+/**
+ * @typedef {function} CreateNodeSignature
+ */
+
+/**
+ * @typedef {function} UpdateNodeSignature
+ */
+
+/**
+ * @typedef {function} CreateGroupNodeSignature
+ */
+
+/**
+ * @typedef {function} UpdateGroupNodeSignature
+ */
+
+/**
+ * @typedef {function} CreateEdgeSignature
+ */
+
+/**
+ * @typedef {function} UpdateEdgeSignature
+ */
+
 class GraphBuilderHelper {
   /**
-   * @param {object} eventSender
-   * @param {IGraph} graph
-   * @param {CreateNodeSignature} createNode
-   * @param {UpdateNodeSignature} updateNode
-   * @param {CreateGroupNodeSignature} createGroupNode
-   * @param {UpdateGroupNodeSignature} updateGroupNode
-   * @param {CreateEdgeSignature} createEdge
-   * @param {UpdateEdgeSignature} updateEdge
+   * @param {!object} eventSender
+   * @param {!IGraph} graph
+   * @param {!CreateNodeSignature} createNode
+   * @param {!UpdateNodeSignature} updateNode
+   * @param {!CreateGroupNodeSignature} createGroupNode
+   * @param {!UpdateGroupNodeSignature} updateGroupNode
+   * @param {!CreateEdgeSignature} createEdge
+   * @param {!UpdateEdgeSignature} updateEdge
    */
   constructor(
     eventSender,
@@ -3158,7 +3250,7 @@ class GraphBuilderHelper {
   }
 
   /**
-   * @param {IGraph} graph
+   * @param {!IGraph} graph
    * @param {?INode} source
    * @param {?INode} target
    * @param {*} labelData
@@ -3178,10 +3270,10 @@ class GraphBuilderHelper {
   }
 
   /**
-   * @param {IGraph} graph
+   * @param {!IGraph} graph
    * @param {*} labelData
    * @param {*} groupObject
-   * @returns {INode}
+   * @returns {!INode}
    */
   createGroupNode(graph, labelData, groupObject) {
     const nodeDefaults = graph.groupNodeDefaults
@@ -3198,12 +3290,12 @@ class GraphBuilderHelper {
   }
 
   /**
-   * @param {IGraph} graph
+   * @param {!IGraph} graph
    * @param {?INode} parent
-   * @param {Point} location
+   * @param {!Point} location
    * @param {*} labelData
    * @param {*} nodeObject
-   * @returns {INode}
+   * @returns {!INode}
    */
   createNode(graph, parent, location, labelData, nodeObject) {
     const nodeDefaults = graph.nodeDefaults
@@ -3232,8 +3324,8 @@ class GraphBuilderHelper {
   }
 
   /**
-   * @param {IGraph} graph
-   * @param {IEdge} edge
+   * @param {!IGraph} graph
+   * @param {!IEdge} edge
    * @param {*} labelData
    * @param {*} edgeObject
    */
@@ -3246,8 +3338,8 @@ class GraphBuilderHelper {
   }
 
   /**
-   * @param {IGraph} graph
-   * @param {INode} groupNode
+   * @param {!IGraph} graph
+   * @param {!INode} groupNode
    * @param {*} labelData
    * @param {*} groupObject
    */
@@ -3260,10 +3352,10 @@ class GraphBuilderHelper {
   }
 
   /**
-   * @param {IGraph} graph
-   * @param {INode} node
+   * @param {!IGraph} graph
+   * @param {!INode} node
    * @param {?INode} parent
-   * @param {Point} location
+   * @param {!Point} location
    * @param {*} labelData
    * @param {*} nodeObject
    */
@@ -3282,9 +3374,9 @@ class GraphBuilderHelper {
   }
 
   /**
-   * @param {IGraph} graph
-   * @param {ILabelDefaults} labelDefaults
-   * @param {ILabelOwner} item
+   * @param {!IGraph} graph
+   * @param {!ILabelDefaults} labelDefaults
+   * @param {!ILabelOwner} item
    * @param {*} labelData
    */
   static $updateLabels(graph, labelDefaults, item, labelData) {
@@ -3314,7 +3406,7 @@ class GraphBuilderHelper {
   }
 
   /**
-   * @param {IModelItem} item
+   * @param {!IModelItem} item
    * @returns {*}
    */
   getBusinessObject(item) {
@@ -3374,12 +3466,12 @@ class GraphBuilderHelper {
   }
 
   /**
-   * @returns {NodeCreator}
+   * @returns {!NodeCreator}
    */
   createNodeCreator() {
     class SimpleGraphBuilderNodeCreator extends NodeCreator {
       /**
-       * @param {GraphBuilderHelper} graphBuilder
+       * @param {!GraphBuilderHelper} graphBuilder
        */
       constructor(graphBuilder) {
         super()
@@ -3387,10 +3479,10 @@ class GraphBuilderHelper {
       }
 
       /**
-       * @param {IGraph} graph
+       * @param {!IGraph} graph
        * @param {?INode} parent
        * @param {*} dataItem
-       * @returns {INode}
+       * @returns {!INode}
        */
       createNode(graph, parent, dataItem) {
         const location = this.$getLocation(dataItem, Point.ORIGIN)
@@ -3400,8 +3492,8 @@ class GraphBuilderHelper {
       }
 
       /**
-       * @param {IGraph} graph
-       * @param {INode} node
+       * @param {!IGraph} graph
+       * @param {!INode} node
        * @param {?INode} parent
        * @param {*} dataItem
        */
@@ -3435,8 +3527,8 @@ class GraphBuilderHelper {
 
       /**
        * @param {*} dataItem
-       * @param {Point} fallback
-       * @returns {Point}
+       * @param {!Point} fallback
+       * @returns {!Point}
        */
       $getLocation(dataItem, fallback) {
         return new Point(
@@ -3454,12 +3546,12 @@ class GraphBuilderHelper {
   }
 
   /**
-   * @returns {NodeCreator}
+   * @returns {!NodeCreator}
    */
   createGroupCreator() {
     class SimpleGraphBuilderGroupCreator extends NodeCreator {
       /**
-       * @param {GraphBuilderHelper} graphBuilder
+       * @param {!GraphBuilderHelper} graphBuilder
        */
       constructor(graphBuilder) {
         super()
@@ -3467,10 +3559,10 @@ class GraphBuilderHelper {
       }
 
       /**
-       * @param {IGraph} graph
+       * @param {!IGraph} graph
        * @param {?INode} parent
        * @param {*} dataItem
-       * @returns {INode}
+       * @returns {!INode}
        */
       createNode(graph, parent, dataItem) {
         const labelData = this.$getLabelData(dataItem)
@@ -3481,8 +3573,8 @@ class GraphBuilderHelper {
       }
 
       /**
-       * @param {IGraph} graph
-       * @param {INode} node
+       * @param {!IGraph} graph
+       * @param {!INode} node
        * @param {?INode} parent
        * @param {*} dataItem
        */
@@ -3522,12 +3614,12 @@ class GraphBuilderHelper {
 
   /**
    * @param {boolean} [labelDataFromSourceAndTarget=false]
-   * @returns {EdgeCreator}
+   * @returns {!EdgeCreator}
    */
   createEdgeCreator(labelDataFromSourceAndTarget = false) {
     class SimpleGraphBuilderEdgeCreator extends EdgeCreator {
       /**
-       * @param {GraphBuilderHelper} graphBuilder
+       * @param {!GraphBuilderHelper} graphBuilder
        * @param {boolean} labelDataFromSourceAndTarget
        */
       constructor(graphBuilder, labelDataFromSourceAndTarget) {
@@ -3537,11 +3629,11 @@ class GraphBuilderHelper {
       }
 
       /**
-       * @param {IGraph} graph
-       * @param {INode} source
-       * @param {INode} target
+       * @param {!IGraph} graph
+       * @param {!INode} source
+       * @param {!INode} target
        * @param {*} dataItem
-       * @returns {IEdge}
+       * @returns {!IEdge}
        */
       createEdge(graph, source, target, dataItem) {
         const labelData = this.$getLabelData(dataItem, source, target)
@@ -3560,8 +3652,8 @@ class GraphBuilderHelper {
       }
 
       /**
-       * @param {IGraph} graph
-       * @param {IEdge} edge
+       * @param {!IGraph} graph
+       * @param {!IEdge} edge
        * @param {*} dataItem
        */
       updateEdge(graph, edge, dataItem) {
@@ -3583,8 +3675,8 @@ class GraphBuilderHelper {
 
       /**
        * @param {*} dataItem
-       * @param {INode} source
-       * @param {INode} target
+       * @param {!INode} source
+       * @param {!INode} target
        * @returns {*}
        */
       $getLabelData(dataItem, source, target) {
@@ -3604,16 +3696,16 @@ class GraphBuilderHelper {
   }
 
   /**
-   * @param {Array.<T>} listeners
-   * @param {T} listener
+   * @param {!Array.<T>} listeners
+   * @param {!T} listener
    */
   static $addEventListener(listeners, listener) {
     listeners.push(listener)
   }
 
   /**
-   * @param {Array.<T>} listeners
-   * @param {T} listener
+   * @param {!Array.<T>} listeners
+   * @param {!T} listener
    */
   static $removeEventListener(listeners, listener) {
     const index = listeners.indexOf(listener)
@@ -3623,17 +3715,17 @@ class GraphBuilderHelper {
   }
 
   /**
-   * @param {Array.<function>} listeners
-   * @param {TEvent} evt
+   * @param {!Array.<function>} listeners
+   * @param {!TEvent} evt
    */
   $fireEvent(listeners, evt) {
     listeners.forEach(l => l(this.$eventSender, evt))
   }
 
   /**
-   * @param {INode} node
+   * @param {!INode} node
    * @param {*} dataItem
-   * @returns {INode}
+   * @returns {!INode}
    */
   $onNodeCreated(node, dataItem) {
     if (this.$nodeCreatedListeners.length > 0) {
@@ -3645,9 +3737,9 @@ class GraphBuilderHelper {
   }
 
   /**
-   * @param {INode} node
+   * @param {!INode} node
    * @param {*} dataItem
-   * @returns {INode}
+   * @returns {!INode}
    */
   $onNodeUpdated(node, dataItem) {
     if (this.$nodeUpdatedListeners.length > 0) {
@@ -3659,9 +3751,9 @@ class GraphBuilderHelper {
   }
 
   /**
-   * @param {INode} group
+   * @param {!INode} group
    * @param {*} dataItem
-   * @returns {INode}
+   * @returns {!INode}
    */
   $onGroupCreated(group, dataItem) {
     if (this.$groupCreatedListeners.length > 0) {
@@ -3673,9 +3765,9 @@ class GraphBuilderHelper {
   }
 
   /**
-   * @param {INode} group
+   * @param {!INode} group
    * @param {*} dataItem
-   * @returns {INode}
+   * @returns {!INode}
    */
   $onGroupUpdated(group, dataItem) {
     if (this.$groupUpdatedListeners.length > 0) {
@@ -3687,9 +3779,9 @@ class GraphBuilderHelper {
   }
 
   /**
-   * @param {IEdge} edge
+   * @param {!IEdge} edge
    * @param {*} dataItem
-   * @returns {IEdge}
+   * @returns {!IEdge}
    */
   $onEdgeCreated(edge, dataItem) {
     if (this.$edgeCreatedListeners.length > 0) {
@@ -3701,9 +3793,9 @@ class GraphBuilderHelper {
   }
 
   /**
-   * @param {IEdge} edge
+   * @param {!IEdge} edge
    * @param {*} dataItem
-   * @returns {IEdge}
+   * @returns {!IEdge}
    */
   $onEdgeUpdated(edge, dataItem) {
     if (this.$edgeUpdatedListeners.length > 0) {
@@ -3715,84 +3807,84 @@ class GraphBuilderHelper {
   }
 
   /**
-   * @param {SimpleNodeListener} listener
+   * @param {!SimpleNodeListener} listener
    */
   addNodeCreatedListener(listener) {
     GraphBuilderHelper.$addEventListener(this.$nodeCreatedListeners, listener)
   }
 
   /**
-   * @param {SimpleNodeListener} listener
+   * @param {!SimpleNodeListener} listener
    */
   removeNodeCreatedListener(listener) {
     GraphBuilderHelper.$removeEventListener(this.$nodeCreatedListeners, listener)
   }
 
   /**
-   * @param {SimpleNodeListener} listener
+   * @param {!SimpleNodeListener} listener
    */
   addNodeUpdatedListener(listener) {
     GraphBuilderHelper.$addEventListener(this.$nodeUpdatedListeners, listener)
   }
 
   /**
-   * @param {SimpleNodeListener} listener
+   * @param {!SimpleNodeListener} listener
    */
   removeNodeUpdatedListener(listener) {
     GraphBuilderHelper.$removeEventListener(this.$nodeUpdatedListeners, listener)
   }
 
   /**
-   * @param {SimpleEdgeListener} listener
+   * @param {!SimpleEdgeListener} listener
    */
   addEdgeCreatedListener(listener) {
     GraphBuilderHelper.$addEventListener(this.$edgeCreatedListeners, listener)
   }
 
   /**
-   * @param {SimpleEdgeListener} listener
+   * @param {!SimpleEdgeListener} listener
    */
   removeEdgeCreatedListener(listener) {
     GraphBuilderHelper.$removeEventListener(this.$edgeCreatedListeners, listener)
   }
 
   /**
-   * @param {SimpleEdgeListener} listener
+   * @param {!SimpleEdgeListener} listener
    */
   addEdgeUpdatedListener(listener) {
     GraphBuilderHelper.$addEventListener(this.$edgeUpdatedListeners, listener)
   }
 
   /**
-   * @param {SimpleEdgeListener} listener
+   * @param {!SimpleEdgeListener} listener
    */
   removeEdgeUpdatedListener(listener) {
     GraphBuilderHelper.$removeEventListener(this.$edgeUpdatedListeners, listener)
   }
 
   /**
-   * @param {SimpleNodeListener} listener
+   * @param {!SimpleNodeListener} listener
    */
   addGroupNodeCreatedListener(listener) {
     GraphBuilderHelper.$addEventListener(this.$groupCreatedListeners, listener)
   }
 
   /**
-   * @param {SimpleNodeListener} listener
+   * @param {!SimpleNodeListener} listener
    */
   removeGroupNodeCreatedListener(listener) {
     GraphBuilderHelper.$removeEventListener(this.$groupCreatedListeners, listener)
   }
 
   /**
-   * @param {SimpleNodeListener} listener
+   * @param {!SimpleNodeListener} listener
    */
   addGroupNodeUpdatedListener(listener) {
     GraphBuilderHelper.$addEventListener(this.$groupUpdatedListeners, listener)
   }
 
   /**
-   * @param {SimpleNodeListener} listener
+   * @param {!SimpleNodeListener} listener
    */
   removeGroupNodeUpdatedListener(listener) {
     GraphBuilderHelper.$removeEventListener(this.$groupUpdatedListeners, listener)

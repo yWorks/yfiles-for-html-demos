@@ -81,12 +81,8 @@ const config = {
   enableEditing: true
 }
 
-const bezierEdgeSegmentLabelModel = new BezierEdgeSegmentLabelModel({
-  autoSnapping: true
-})
-const bezierPathLabelModel = new BezierEdgePathLabelModel({
-  autoSnapping: true
-})
+const bezierEdgeSegmentLabelModel = new BezierEdgeSegmentLabelModel({ autoSnapping: true })
+const bezierPathLabelModel = new BezierEdgePathLabelModel({ autoSnapping: true })
 const bezierEdgeStyle = new BezierEdgeStyle({
   stroke: '3px #4169E1',
   targetArrow: new Arrow({
@@ -97,7 +93,7 @@ const bezierEdgeStyle = new BezierEdgeStyle({
 })
 
 /**
- * @param {object} licenseData
+ * @param {!object} licenseData
  */
 function run(licenseData) {
   License.value = licenseData
@@ -120,7 +116,7 @@ function run(licenseData) {
 /**
  * Creates the default input mode for the GraphComponent, a {@link GraphEditorInputMode}.
  * a new GraphEditorInputMode instance and configures snapping and orthogonal edge editing
- * @returns {IInputMode}
+ * @returns {!IInputMode}
  */
 function createEditorMode() {
   return new BezierGraphEditorInputMode(config)
@@ -135,16 +131,6 @@ function initializeGraph() {
 
   // We need to provide our own handles for bezier edge bends:
   registerBezierDecorators()
-
-  graph.addBendRemovedListener((sender, args) => {
-    // Trigger reselection of edge to remove stale handles
-    const edge = args.owner
-    if (graph.contains(edge)) {
-      const selected = graphComponent.selection.isSelected(edge)
-      graphComponent.selection.setSelected(edge, false)
-      graphComponent.selection.setSelected(edge, selected)
-    }
-  })
 
   graph.nodeDefaults.style = new ShapeNodeStyle({
     shape: ShapeNodeShape.ELLIPSE,
@@ -211,6 +197,15 @@ function registerBezierDecorators() {
     e => e.style instanceof BezierEdgeStyle,
     (e, coreImpl) => new BezierSelectionIndicatorInstaller(coreImpl)
   )
+
+  // since removing bends also affects our handles, we need to let the input mode
+  // requery the handles to get the fresh ones.
+  function requeryHandles() {
+    graphComponent.inputMode.requeryHandles()
+  }
+
+  graph.addBendRemovedListener(requeryHandles)
+  graph.addBendAddedListener(requeryHandles)
 }
 
 /**

@@ -43,10 +43,10 @@ import {
 export class PortReshapeHandle extends BaseClass(IHandle) {
   /**
    * Creates a new instance for port and its adapter.
-   * @param {IInputModeContext} context The context of the reshape gesture.
-   * @param {IPort} port The port whose visualization shall be resized.
-   * @param {NodeStylePortStyleAdapter} adapter The adapter whose render size shall be changed.
-   * @param {HandlePositions} position The position of the handle.
+   * @param {!IInputModeContext} context The context of the reshape gesture.
+   * @param {!IPort} port The port whose visualization shall be resized.
+   * @param {!NodeStylePortStyleAdapter} adapter The adapter whose render size shall be changed.
+   * @param {!HandlePositions} position The position of the handle.
    */
   constructor(context, port, adapter, position) {
     super()
@@ -61,7 +61,7 @@ export class PortReshapeHandle extends BaseClass(IHandle) {
 
   /**
    * Returns the current location of the handle.
-   * @type {IPoint}
+   * @type {!IPoint}
    */
   get location() {
     return this.calculateLocation()
@@ -70,7 +70,7 @@ export class PortReshapeHandle extends BaseClass(IHandle) {
   /**
    * Calculates the location of the handle considering the {@link IPort.location port location},
    * {@link NodeStylePortStyleAdapter.renderSize} and {@link margins}.
-   * @returns {Point}
+   * @returns {!Point}
    */
   calculateLocation() {
     const portLocation = this.port.location
@@ -108,7 +108,7 @@ export class PortReshapeHandle extends BaseClass(IHandle) {
 
   /**
    * Stores the initial {@link NodeStylePortStyleAdapter.renderSize}.
-   * @param {IInputModeContext} context The context of the reshape gesture.
+   * @param {!IInputModeContext} context The context of the reshape gesture.
    */
   initializeDrag(context) {
     this.initialRenderSize = this.adapter.renderSize
@@ -116,9 +116,9 @@ export class PortReshapeHandle extends BaseClass(IHandle) {
 
   /**
    * Calculates and applies the new {@link NodeStylePortStyleAdapter.renderSize}.
-   * @param {IInputModeContext} context The context of the reshape gesture.
-   * @param {Point} originalLocation The value of the {@link location} property at the time of {@link initializeDrag}.
-   * @param {Point} newLocation The coordinates in the world coordinate system that the client wants the handle to be at.
+   * @param {!IInputModeContext} context The context of the reshape gesture.
+   * @param {!Point} originalLocation The value of the {@link location} property at the time of {@link initializeDrag}.
+   * @param {!Point} newLocation The coordinates in the world coordinate system that the client wants the handle to be at.
    */
   handleMove(context, originalLocation, newLocation) {
     // calculate the size delta implied by the originalLocation and newLocation
@@ -128,9 +128,9 @@ export class PortReshapeHandle extends BaseClass(IHandle) {
   }
 
   /**
-   * @param {Point} originalLocation
-   * @param {Point} newLocation
-   * @returns {Size}
+   * @param {!Point} originalLocation
+   * @param {!Point} newLocation
+   * @returns {!Size}
    */
   calculateDelta(originalLocation, newLocation) {
     // calculate the delta the mouse has been moved since InitializeDrag
@@ -158,8 +158,8 @@ export class PortReshapeHandle extends BaseClass(IHandle) {
   }
 
   /**
-   * @param {Size} delta
-   * @returns {Size}
+   * @param {!Size} delta
+   * @returns {!Size}
    */
   calculateNewSize(delta) {
     const newWidth = Math.max(this.minimumSize.width, this.initialRenderSize.width + delta.width)
@@ -172,8 +172,8 @@ export class PortReshapeHandle extends BaseClass(IHandle) {
 
   /**
    * Resets {@link NodeStylePortStyleAdapter.renderSize} to its initial value.
-   * @param {IInputModeContext} context The context of the reshape gesture.
-   * @param {Point} originalLocation The value of the {@link location} property at the time of {@link initializeDrag}.
+   * @param {!IInputModeContext} context The context of the reshape gesture.
+   * @param {!Point} originalLocation The value of the {@link location} property at the time of {@link initializeDrag}.
    */
   cancelDrag(context, originalLocation) {
     this.adapter.renderSize = this.initialRenderSize
@@ -181,9 +181,9 @@ export class PortReshapeHandle extends BaseClass(IHandle) {
 
   /**
    * Calculates and applies the final {@link NodeStylePortStyleAdapter.renderSize}.
-   * @param {IInputModeContext} context The context of the reshape gesture.
-   * @param {Point} originalLocation The value of the {@link location} property at the time of {@link initializeDrag}.
-   * @param {Point} newLocation The coordinates in the world coordinate system that the client wants the handle to be at.
+   * @param {!IInputModeContext} context The context of the reshape gesture.
+   * @param {!Point} originalLocation The value of the {@link location} property at the time of {@link initializeDrag}.
+   * @param {!Point} newLocation The coordinates in the world coordinate system that the client wants the handle to be at.
    */
   dragFinished(context, originalLocation, newLocation) {
     const delta = this.calculateDelta(originalLocation, newLocation)
@@ -192,7 +192,7 @@ export class PortReshapeHandle extends BaseClass(IHandle) {
 
   /**
    * Returns {@link HandleTypes.RESIZE}.
-   * @type {HandleTypes}
+   * @type {!HandleTypes}
    */
   get type() {
     return HandleTypes.RESIZE
@@ -200,7 +200,7 @@ export class PortReshapeHandle extends BaseClass(IHandle) {
 
   /**
    * Returns a resize cursor matching the handle position.
-   * @type {Cursor}
+   * @type {!Cursor}
    */
   get cursor() {
     switch (this.position) {

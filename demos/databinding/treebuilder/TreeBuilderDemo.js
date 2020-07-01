@@ -51,17 +51,17 @@ import loadJson from '../../resources/load-json.js'
 import { SchemaComponent } from './SchemaComponent.js'
 import samples from './samples.js'
 
-/** @type {?HierarchicLayout} */
+/** @type {HierarchicLayout} */
 let layout = null
 /** @type {boolean} */
 let layouting = false
 
-/** @type {?GraphComponent} */
+/** @type {GraphComponent} */
 let graphComponent = null
-/** @type {?SchemaComponent} */
+/** @type {SchemaComponent} */
 let schemaComponent = null
 
-/** @type {?IList.<INode>} */
+/** @type {IList.<INode>} */
 let existingNodes = null
 
 /**
@@ -152,7 +152,7 @@ function registerCommands() {
  * Builds the graph from data.
  * @param {boolean} update <code>true</code> when the following layout should be incremental, <code>false</code>
  *   otherwise
- * @returns {Promise}
+ * @returns {!Promise}
  */
 async function buildGraphFromData(update) {
   if (layouting) {
@@ -184,7 +184,7 @@ async function buildGraphFromData(update) {
  * Applies the layout.
  * @param {boolean} update <code>true</code> when the following layout should be incremental, <code>false</code>
  *   otherwise
- * @returns {Promise}
+ * @returns {!Promise}
  */
 async function applyLayout(update) {
   if (layouting) {
@@ -199,7 +199,6 @@ async function applyLayout(update) {
   }
 
   const layoutData = new HierarchicLayoutData({
-    // eslint-disable-next-line @typescript-eslint/ban-types
     incrementalHints: (item, hintsFactory) => {
       if (INode.isInstance(item) && !existingNodes.includes(item)) {
         return hintsFactory.createLayerIncrementallyHint(item)
@@ -223,8 +222,8 @@ async function applyLayout(update) {
 
 /**
  * Loads the given sample data and builds the graph using the {@link SchemaComponent}
- * @param {object} sample The sample to use for instantiation / initialization
- * @returns {Promise}
+ * @param {!object} sample The sample to use for instantiation / initialization
+ * @returns {!Promise}
  */
 async function loadSample(sample) {
   graphComponent.graph.clear()
@@ -250,7 +249,7 @@ function initializeSamplesComboBox() {
 
 /**
  * Creates and configures a hierarchic layout.
- * @returns {HierarchicLayout}
+ * @returns {!HierarchicLayout}
  */
 function createLayout() {
   const hierarchicLayout = new HierarchicLayout()

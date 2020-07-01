@@ -31,9 +31,9 @@ import { INode, INodeStyle, IRenderContext, NodeStyleBase, SvgVisual, Visual } f
 export default class LevelOfDetailNodeStyle extends NodeStyleBase {
   /**
    * Creates a new instance of LevelOfDetailNodeStyle which combines three styles for different zoom level.
-   * @param {INodeStyle} detailNodeStyle
-   * @param {INodeStyle} intermediateNodeStyle
-   * @param {INodeStyle} overviewNodeStyle
+   * @param {!INodeStyle} detailNodeStyle
+   * @param {!INodeStyle} intermediateNodeStyle
+   * @param {!INodeStyle} overviewNodeStyle
    */
   constructor(detailNodeStyle, intermediateNodeStyle, overviewNodeStyle) {
     super()
@@ -45,9 +45,9 @@ export default class LevelOfDetailNodeStyle extends NodeStyleBase {
   }
 
   /**
-   * @param {IRenderContext} renderContext
-   * @param {INode} node
-   * @returns {SvgVisual}
+   * @param {!IRenderContext} renderContext
+   * @param {!INode} node
+   * @returns {!SvgVisual}
    */
   createVisual(renderContext, node) {
     const zoom = renderContext.zoom
@@ -73,10 +73,10 @@ export default class LevelOfDetailNodeStyle extends NodeStyleBase {
   }
 
   /**
-   * @param {IRenderContext} renderContext
-   * @param {SvgVisual} oldVisual
-   * @param {INode} node
-   * @returns {Visual}
+   * @param {!IRenderContext} renderContext
+   * @param {!SvgVisual} oldVisual
+   * @param {!INode} node
+   * @returns {!Visual}
    */
   updateVisual(renderContext, oldVisual, node) {
     const zoom = renderContext.zoom

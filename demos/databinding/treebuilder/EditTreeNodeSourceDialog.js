@@ -34,8 +34,8 @@ import { TreeNodesSourceDefinitionBuilderConnector } from './ModelClasses.js'
 export class EditTreeNodesSourceDialog {
   /**
    * Constructor for EditTreeNodesSourceDialog
-   * @param {TreeNodesSourceDefinitionBuilderConnector} nodesSourceConnector the connector providing the business data
-   * @param {function} acceptCallback the callback to call on accept (for updating the graph)
+   * @param {!TreeNodesSourceDefinitionBuilderConnector} nodesSourceConnector the connector providing the business data
+   * @param {!function} acceptCallback the callback to call on accept (for updating the graph)
    */
   constructor(nodesSourceConnector, acceptCallback) {
     this.acceptCallback = acceptCallback
@@ -97,7 +97,7 @@ export class EditTreeNodesSourceDialog {
 
   /**
    * Sets the dialog's div to visible and adds the accept and cancel buttons
-   * @returns {Promise}
+   * @returns {!Promise}
    */
   async show() {
     // CodeMirror requires the textArea to be in the DOM and visible already when instantiating
@@ -146,8 +146,8 @@ export class EditTreeNodesSourceDialog {
 
   /**
    * creates a simple HTMLHeadingElement
-   * @param {string} text the text used in the heading
-   * @returns {HTMLHeadingElement}
+   * @param {!string} text the text used in the heading
+   * @returns {!HTMLHeadingElement}
    */
   createHeading(text) {
     const heading = document.createElement('h2')
@@ -158,9 +158,9 @@ export class EditTreeNodesSourceDialog {
 
   /**
    * creates a simple HTMLInputElement adorned with heading and documentation
-   * @param {string} labelText the heading text for the input
-   * @param {string} doc the documentation text. Can be longer as it is rendered as a HTML paragraph
-   * @returns {HTMLInputElement}
+   * @param {!string} labelText the heading text for the input
+   * @param {!string} doc the documentation text. Can be longer as it is rendered as a HTML paragraph
+   * @returns {!HTMLInputElement}
    */
   createInputField(labelText, doc) {
     const label = this.createDescription(labelText, doc)
@@ -172,10 +172,10 @@ export class EditTreeNodesSourceDialog {
 
   /**
    * creates an CodeMirror text/code input field component adorned with heading and documentation
-   * @param {string} labelText the heading label
-   * @param {string} doc the documentation text. Can be longer as it is rendered as a HTML paragraph
-   * @param {(string|object)} mode the language syntax configuration object for CodeMirror
-   * @returns {CodeMirror}
+   * @param {!string} labelText the heading label
+   * @param {!string} doc the documentation text. Can be longer as it is rendered as a HTML paragraph
+   * @param {!(string|object)} mode the language syntax configuration object for CodeMirror
+   * @returns {!CodeMirror}
    */
   createEditorField(labelText, doc, mode) {
     const container = this.createDescription(labelText, doc)
@@ -190,9 +190,9 @@ export class EditTreeNodesSourceDialog {
 
   /**
    * Creates a HTMLDivElement containing a heading and a documentation paragraph
-   * @param {string} labelText the heading text
-   * @param {string} doc the documentation text. Can be longer as it is rendered as a HTML paragraph
-   * @returns {HTMLDivElement}
+   * @param {!string} labelText the heading text
+   * @param {!string} doc the documentation text. Can be longer as it is rendered as a HTML paragraph
+   * @returns {!HTMLDivElement}
    */
   createDescription(labelText, doc) {
     const container = document.createElement('div')

@@ -54,8 +54,8 @@ import loadJson from '../../resources/load-json.js'
  * This callback function is called whenever a node in the graph is queried
  * for its <code>IReshapeHandleProvider</code>. In this case, the 'node'
  * parameter will be set to that node.
- * @param {IGraph} graph The given graph
- * @param {Rect} boundaryRectangle The rectangle that limits the node's size.
+ * @param {!IGraph} graph The given graph
+ * @param {!Rect} boundaryRectangle The rectangle that limits the node's size.
  */
 function registerReshapeHandleProvider(graph, boundaryRectangle) {
   const nodeDecorator = graph.decorator.nodeDecorator
@@ -141,7 +141,7 @@ function run(licenseData) {
 
 /**
  * Creates the sample graph of this demo.
- * @param {IGraph} graph The input graph
+ * @param {!IGraph} graph The input graph
  */
 function createSampleGraph(graph) {
   createNode(graph, 80, 100, 140, 30, 'firebrick', 'whitesmoke', 'Fixed Size')
@@ -166,14 +166,14 @@ function createSampleGraph(graph) {
 
 /**
  * Creates a sample node for this demo.
- * @param {IGraph} graph The given graph
+ * @param {!IGraph} graph The given graph
  * @param {number} x The node's x-coordinate
  * @param {number} y The node's y-coordinate
  * @param {number} w The node's width
  * @param {number} h The node's height
- * @param {string} cssClass The given css class
- * @param {string} textColor The color of the text
- * @param {string} labelText The nodes label's text
+ * @param {!string} cssClass The given css class
+ * @param {!string} textColor The color of the text
+ * @param {!string} labelText The nodes label's text
  */
 function createNode(graph, x, y, w, h, cssClass, textColor, labelText) {
   const textLabelStyle = new DefaultLabelStyle({

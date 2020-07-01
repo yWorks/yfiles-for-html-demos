@@ -59,7 +59,7 @@ let graphComponent = null
 
 /**
  * Bootstraps the demo.
- * @param {object} licenseData
+ * @param {!object} licenseData
  */
 function run(licenseData) {
   License.value = licenseData
@@ -155,7 +155,7 @@ function initializeLiveRegion() {
 
 /**
  * Sets the given element as the current aria-live region content.
- * @param {HTMLElement} element
+ * @param {!HTMLElement} element
  */
 function setLiveRegionContent(element) {
   const ariaLiveRegion = graphComponent.ariaLiveRegion
@@ -168,7 +168,7 @@ function setLiveRegionContent(element) {
  * show the latter. We just extract the first label text from the given item and show it as
  * tooltip.
  * @param {?IModelItem} item
- * @returns {HTMLDivElement}
+ * @returns {!HTMLDivElement}
  */
 function createTooltipContent(item) {
   const title = document.createElement('h4')

@@ -38,9 +38,9 @@ const HEIGHT = 4
  */
 export default class MySimplePortStyle extends PortStyleBase {
   /**
-   * @param {IRenderContext} context
-   * @param {IPort} port
-   * @returns {SvgVisual}
+   * @param {!IRenderContext} context
+   * @param {!IPort} port
+   * @returns {!SvgVisual}
    */
   createVisual(context, port) {
     // create the ellipse
@@ -61,10 +61,10 @@ export default class MySimplePortStyle extends PortStyleBase {
   }
 
   /**
-   * @param {IRenderContext} context
-   * @param {SvgVisual} oldVisual
-   * @param {IPort} port
-   * @returns {SvgVisual}
+   * @param {!IRenderContext} context
+   * @param {!SvgVisual} oldVisual
+   * @param {!IPort} port
+   * @returns {!SvgVisual}
    */
   updateVisual(context, oldVisual, port) {
     const ellipse = oldVisual.svgElement
@@ -80,9 +80,9 @@ export default class MySimplePortStyle extends PortStyleBase {
    * Calculates the bounds of this port.
    * These are also used for arranging the visual, hit testing, visibility testing, and marquee box tests.
    * @see Overrides {@link PortStyleBase#getBounds}
-   * @param {ICanvasContext} canvasContext
-   * @param {IPort} port
-   * @returns {Rect}
+   * @param {!ICanvasContext} canvasContext
+   * @param {!IPort} port
+   * @returns {!Rect}
    */
   getBounds(canvasContext, port) {
     const portLocation = port.locationParameter.model.getLocation(port, port.locationParameter)

@@ -50,8 +50,8 @@ export default class LimitingRectangleDescriptor extends BaseClass(
 ) {
   /**
    * Gets the <code>IVisualCreator</code> for a given <code>ICanvasObject</code>.
-   * @param {object} forUserObject
-   * @returns {IVisualCreator}
+   * @param {!object} forUserObject
+   * @returns {!IVisualCreator}
    */
   getVisualCreator(forUserObject) {
     this.rectangle = forUserObject
@@ -60,8 +60,8 @@ export default class LimitingRectangleDescriptor extends BaseClass(
 
   /**
    * Determines whether the given canvas object is deemed dirty and needs updating.
-   * @param {ICanvasObject} canvasObject The object to check
-   * @param {ICanvasContext} context The context that will be used for the update
+   * @param {!ICanvasObject} canvasObject The object to check
+   * @param {!ICanvasContext} context The context that will be used for the update
    * @returns {boolean} True if the given canvas object needs updating, false otherwise
    */
   isDirty(context, canvasObject) {
@@ -71,8 +71,8 @@ export default class LimitingRectangleDescriptor extends BaseClass(
   /**
    * Returns an implementation of IBoundsProvider that can determine the visible bounds of the rendering of the user
    * object.
-   * @param {object} forUserObject The user object to query the bounds for
-   * @returns {IBoundsProvider} An implementation of IBoundsProvider
+   * @param {!object} forUserObject The user object to query the bounds for
+   * @returns {!IBoundsProvider} An implementation of IBoundsProvider
    */
   getBoundsProvider(forUserObject) {
     return IBoundsProvider.UNBOUNDED
@@ -81,8 +81,8 @@ export default class LimitingRectangleDescriptor extends BaseClass(
   /**
    * Returns an implementation of IVisibilityTestable that can determine if the rendering of the user object would be
    * visible in a given context.
-   * @param {object} forUserObject The user object to query the visibility test for
-   * @returns {IVisibilityTestable} An implementation of IVisibilityTestable
+   * @param {!object} forUserObject The user object to query the visibility test for
+   * @returns {!IVisibilityTestable} An implementation of IVisibilityTestable
    */
   getVisibilityTestable(forUserObject) {
     return IVisibilityTestable.ALWAYS
@@ -91,8 +91,8 @@ export default class LimitingRectangleDescriptor extends BaseClass(
   /**
    * Returns an implementation of IHitTestable that can determine whether the rendering of the user object has
    * been hit at a given coordinate.
-   * @param {object} forUserObject The user object to do the hit testing for
-   * @returns {IHitTestable} An implementation of IHitTestable
+   * @param {!object} forUserObject The user object to do the hit testing for
+   * @returns {!IHitTestable} An implementation of IHitTestable
    */
   getHitTestable(forUserObject) {
     return IHitTestable.NEVER
@@ -100,8 +100,8 @@ export default class LimitingRectangleDescriptor extends BaseClass(
 
   /**
    * Creates the descriptor's visual.
-   * @param {IRenderContext} ctx The context that describes where the visual will be used
-   * @returns {Visual} The newly created visual
+   * @param {!IRenderContext} ctx The context that describes where the visual will be used
+   * @returns {!Visual} The newly created visual
    */
   createVisual(ctx) {
     const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect')
@@ -119,9 +119,9 @@ export default class LimitingRectangleDescriptor extends BaseClass(
 
   /**
    * Updates the descriptor's visual.
-   * @param {IRenderContext} ctx The context that describes where the visual will be used
-   * @param {SvgVisual} oldVisual The old visual
-   * @returns {Visual} The newly created visual
+   * @param {!IRenderContext} ctx The context that describes where the visual will be used
+   * @param {!SvgVisual} oldVisual The old visual
+   * @returns {!Visual} The newly created visual
    */
   updateVisual(ctx, oldVisual) {
     const rect = oldVisual.svgElement

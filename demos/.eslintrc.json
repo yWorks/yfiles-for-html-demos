@@ -20,7 +20,7 @@
       "warn",
       {
         "varsIgnorePattern": "[A-Z]\\w+",
-        "argsIgnorePattern": "\\w*[Cc]ontext|sender|\\w*[Aa]rgs|evt|[Pp]arameter"
+        "argsIgnorePattern": ".*"
       }
     ],
     "prefer-const": "error"
@@ -44,7 +44,7 @@
           "warn",
           {
             "varsIgnorePattern": "[A-Z]\\w+",
-            "argsIgnorePattern": "\\w*[Cc]ontext|sender|\\w*[Aa]rgs|evt|[Pp]arameter"
+            "argsIgnorePattern": ".*"
           }
         ]
       }

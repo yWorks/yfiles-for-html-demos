@@ -53,7 +53,7 @@ let graphComponent = null
 
 /**
  * Bootstraps the demo.
- * @param {object} licenseData
+ * @param {!object} licenseData
  */
 function run(licenseData) {
   License.value = licenseData
@@ -87,7 +87,7 @@ function run(licenseData) {
 /**
  * Enables folding.
  *
- * @returns {IFoldingView} The folding view that manages the folded graph.
+ * @returns {!IFoldingView} The folding view that manages the folded graph.
  */
 function enableFolding() {
   const masterGraph = new DefaultGraph()
@@ -115,7 +115,7 @@ function enableFolding() {
  * provides such a decorated group node style by default.
  * Although this demo does not use a custom group node style, we still wrap it for demonstration purpose.
  *
- * @param {IGraph} graph The graph.
+ * @param {!IGraph} graph The graph.
  */
 function wrapGroupNodeStyle(graph) {
   graph.groupNodeDefaults.style = new CollapsibleNodeStyleDecorator(graph.groupNodeDefaults.style)
@@ -124,7 +124,7 @@ function wrapGroupNodeStyle(graph) {
 /**
  * Initializes the defaults for the styles in this tutorial.
  *
- * @param {IGraph} graph The graph.
+ * @param {!IGraph} graph The graph.
  */
 function initializeTutorialDefaults(graph) {
   // configure defaults for normal nodes and their labels
@@ -154,7 +154,7 @@ function initializeTutorialDefaults(graph) {
 /**
  * Creates an initial sample graph.
  *
- * @param {IGraph} graph The graph.
+ * @param {!IGraph} graph The graph.
  */
 function createInitialGraph(graph) {
   const node1 = graph.createNodeAt([110, 20])

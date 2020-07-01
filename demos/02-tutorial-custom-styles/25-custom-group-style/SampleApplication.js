@@ -56,7 +56,7 @@ import loadJson from '../../resources/load-json.js'
 let graphComponent = null
 
 /**
- * @param {object} licenseData
+ * @param {!object} licenseData
  */
 function run(licenseData) {
   License.value = licenseData
@@ -187,7 +187,7 @@ function wrapGroupNodeStyles() {
 /**
  * Creates the default input mode for the graphComponent,
  * a {@link GraphEditorInputMode}.
- * @returns {GraphEditorInputMode} a new GraphEditorInputMode instance
+ * @returns {!GraphEditorInputMode} a new GraphEditorInputMode instance
  */
 function createEditorMode() {
   return new GraphEditorInputMode({

@@ -82,7 +82,7 @@ import {
  */
 export class ZOrderSupport extends BaseClass(IComparer) {
   /**
-   * @type {GraphComponent}
+   * @type {!GraphComponent}
    */
   get graphComponent() {
     return this.$graphComponent
@@ -90,7 +90,7 @@ export class ZOrderSupport extends BaseClass(IComparer) {
 
   /**
    * Creates a new instance and installs it on the given {@link ZOrderSupport#graphComponent}.
-   * @param {GraphComponent} graphComponent
+   * @param {!GraphComponent} graphComponent
    */
   constructor(graphComponent) {
     super()
@@ -132,8 +132,8 @@ export class ZOrderSupport extends BaseClass(IComparer) {
   }
 
   /**
-   * @param {INode} x
-   * @param {INode} y
+   * @param {!INode} x
+   * @param {!INode} y
    * @returns {number}
    */
   compare(x, y) {
@@ -160,7 +160,7 @@ export class ZOrderSupport extends BaseClass(IComparer) {
 
   /**
    * Gets the z-order value stored for <code>node</code>.
-   * @param {INode} node
+   * @param {!INode} node
    * @returns {number}
    */
   getZOrder(node) {
@@ -170,7 +170,7 @@ export class ZOrderSupport extends BaseClass(IComparer) {
   /**
    * Sets the new z-order value stored for <code>key</code>.
    * An {@link IUndoUnit} for the changed z-order is added as well if undo is enabled.
-   * @param {INode} key
+   * @param {!INode} key
    * @param {number} newZOrder
    */
   setZOrder(key, newZOrder) {
@@ -197,7 +197,7 @@ export class ZOrderSupport extends BaseClass(IComparer) {
   }
 
   /**
-   * @param {IModelItem} item
+   * @param {!IModelItem} item
    * @param {number} newValue
    * @param {?number} oldValue
    */
@@ -209,14 +209,14 @@ export class ZOrderSupport extends BaseClass(IComparer) {
   }
 
   /**
-   * @param {function} listener
+   * @param {!function} listener
    */
   addZIndexChangedLister(listener) {
     this.zOrderChangedListeners.push(listener)
   }
 
   /**
-   * @param {function} listener
+   * @param {!function} listener
    */
   removeZIndexChangedLister(listener) {
     const index = this.zOrderChangedListeners.indexOf(listener)
@@ -227,7 +227,7 @@ export class ZOrderSupport extends BaseClass(IComparer) {
 
   /**
    * Arranges the <code>node</code> according to its {@link ZOrderSupport#getZOrder z-order}.
-   * @param {INode} node
+   * @param {!INode} node
    */
   update(node) {
     // the update call triggers a new installation of the node visualization that considers the z-order
@@ -237,7 +237,7 @@ export class ZOrderSupport extends BaseClass(IComparer) {
   /**
    * Sets new ascending z-orders for <code>viewNodes</code> starting from <code>zOrder</code> and sorts their
    * {@link GraphModelManager#getMainCanvasObject canvas objects} as well.
-   * @param {IEnumerable.<INode>} viewNodes
+   * @param {!IEnumerable.<INode>} viewNodes
    * @param {number} zOrder
    */
   arrangeNodes(viewNodes, zOrder) {
@@ -256,7 +256,7 @@ export class ZOrderSupport extends BaseClass(IComparer) {
 
   /**
    * Sets a temporary z-order for <code>node</code> for a temporary <code>tempParent</code>.
-   * @param {INode} node
+   * @param {!INode} node
    * @param {?INode} tempParent
    * @param {number} newZOrder
    */
@@ -288,7 +288,7 @@ export class ZOrderSupport extends BaseClass(IComparer) {
 
   /**
    * Removes a temporary z-order for <code>node</code> that has been set previously via {@link ZOrderSupport#setTempZOrder}.
-   * @param {INode} node
+   * @param {!INode} node
    */
   removeTempZOrder(node) {
     const master = this.getMasterNode(node)
@@ -315,7 +315,7 @@ export class ZOrderSupport extends BaseClass(IComparer) {
   }
 
   /**
-   * @param {List.<INode>} nodes
+   * @param {!List.<INode>} nodes
    */
   raise(nodes) {
     nodes.sort(this)
@@ -341,7 +341,7 @@ export class ZOrderSupport extends BaseClass(IComparer) {
   }
 
   /**
-   * @param {List.<INode>} nodes
+   * @param {!List.<INode>} nodes
    */
   lower(nodes) {
     nodes.sort(this)
@@ -366,7 +366,7 @@ export class ZOrderSupport extends BaseClass(IComparer) {
   }
 
   /**
-   * @param {List.<INode>} nodes
+   * @param {!List.<INode>} nodes
    */
   toFront(nodes) {
     for (const grouping of nodes.groupBy(
@@ -396,7 +396,7 @@ export class ZOrderSupport extends BaseClass(IComparer) {
   }
 
   /**
-   * @param {List.<INode>} nodes
+   * @param {!List.<INode>} nodes
    */
   toBack(nodes) {
     for (const grouping of nodes.groupBy(
@@ -428,8 +428,8 @@ export class ZOrderSupport extends BaseClass(IComparer) {
   }
 
   /**
-   * @param {object} sender
-   * @param {ItemEventArgs.<INode>} evt
+   * @param {!object} sender
+   * @param {!ItemEventArgs.<INode>} evt
    */
   onNodeCreated(sender, evt) {
     const undoEngine = this.graphComponent.graph.undoEngine
@@ -455,8 +455,8 @@ export class ZOrderSupport extends BaseClass(IComparer) {
 
   /**
    * Returns the master item of <code>node</code> if folding is enabled and <code>node</code> itself otherwise.
-   * @param {INode} node
-   * @returns {INode}
+   * @param {!INode} node
+   * @returns {!INode}
    */
   getMasterNode(node) {
     const foldingView = this.graphComponent.graph.foldingView
@@ -475,7 +475,7 @@ export class ZOrderSupport extends BaseClass(IComparer) {
 
   /**
    * Returns the view item of <code>node</code> if folding is enabled and <code>node</code> itself otherwise.
-   * @param {INode} node
+   * @param {!INode} node
    * @returns {?INode}
    */
   getViewNode(node) {
@@ -492,7 +492,7 @@ export class ZOrderSupport extends BaseClass(IComparer) {
   }
 
   /**
-   * @param {INode} masterNode
+   * @param {!INode} masterNode
    * @returns {?INode}
    */
   getParent(masterNode) {
@@ -505,7 +505,7 @@ export class ZOrderSupport extends BaseClass(IComparer) {
   }
 
   /**
-   * @param {INode} node
+   * @param {!INode} node
    * @returns {number}
    */
   zOrderOf(node) {
@@ -522,8 +522,8 @@ export class ZOrderSupport extends BaseClass(IComparer) {
   }
 
   /**
-   * @param {INode} node1
-   * @param {INode} node2
+   * @param {!INode} node1
+   * @param {!INode} node2
    */
   swapZOrder(node1, node2) {
     const zOrder1 = this.getZOrder(node1)
@@ -535,7 +535,7 @@ export class ZOrderSupport extends BaseClass(IComparer) {
 
 export class ZIndexChangedEventArgs extends EventArgs {
   /**
-   * @param {IModelItem} item
+   * @param {!IModelItem} item
    * @param {number} newZIndex
    * @param {?number} oldZIndex
    */
@@ -547,7 +547,7 @@ export class ZIndexChangedEventArgs extends EventArgs {
   }
 
   /**
-   * @type {IModelItem}
+   * @type {!IModelItem}
    */
   get item() {
     return this.$item
@@ -574,8 +574,8 @@ export class ZIndexChangedEventArgs extends EventArgs {
  */
 export class ZOrderNodePositionHandler extends GroupingNodePositionHandler {
   /**
-   * @param {INode} node
-   * @param {ZOrderSupport} zOrderSupport
+   * @param {!INode} node
+   * @param {!ZOrderSupport} zOrderSupport
    * @param {?IPositionHandler} [wrappedHandler=null]
    */
   constructor(node, zOrderSupport, wrappedHandler = null) {
@@ -588,7 +588,7 @@ export class ZOrderNodePositionHandler extends GroupingNodePositionHandler {
   }
 
   /**
-   * @param {IInputModeContext} context
+   * @param {!IInputModeContext} context
    */
   initializeDrag(context) {
     const graph = context.graph
@@ -602,9 +602,9 @@ export class ZOrderNodePositionHandler extends GroupingNodePositionHandler {
 
   /**
    * Customizes the temporary new parent of <code>node</code> and its z-order in its new {@link ICanvasObjectGroup}
-   * @param {IInputModeContext} context
-   * @param {INode} node
-   * @param {INode} parent
+   * @param {!IInputModeContext} context
+   * @param {!INode} node
+   * @param {!INode} parent
    */
   setCurrentParent(context, node, parent) {
     if (parent !== this.$initialParent) {
@@ -629,9 +629,9 @@ export class ZOrderNodePositionHandler extends GroupingNodePositionHandler {
   }
 
   /**
-   * @param {IInputModeContext} context
-   * @param {Point} originalLocation
-   * @param {Point} newLocation
+   * @param {!IInputModeContext} context
+   * @param {!Point} originalLocation
+   * @param {!Point} newLocation
    */
   dragFinished(context, originalLocation, newLocation) {
     super.dragFinished(context, originalLocation, newLocation)
@@ -639,8 +639,8 @@ export class ZOrderNodePositionHandler extends GroupingNodePositionHandler {
   }
 
   /**
-   * @param {IInputModeContext} context
-   * @param {Point} originalLocation
+   * @param {!IInputModeContext} context
+   * @param {!Point} originalLocation
    */
   cancelDrag(context, originalLocation) {
     super.cancelDrag(context, originalLocation)
@@ -659,8 +659,8 @@ export class ZOrderNodePositionHandler extends GroupingNodePositionHandler {
  */
 export class ZOrderGraphModelManager extends GraphModelManager {
   /**
-   * @param {GraphComponent} graphComponent
-   * @param {ZOrderSupport} zOrderSupport
+   * @param {!GraphComponent} graphComponent
+   * @param {!ZOrderSupport} zOrderSupport
    */
   constructor(graphComponent, zOrderSupport) {
     super(graphComponent, graphComponent.contentGroup)
@@ -670,9 +670,9 @@ export class ZOrderGraphModelManager extends GraphModelManager {
   }
 
   /**
-   * @param {ICanvasObjectDescriptor} descriptor
-   * @param {function} callback
-   * @returns {ItemModelManager.<INode>}
+   * @param {!ICanvasObjectDescriptor} descriptor
+   * @param {!function} callback
+   * @returns {!ItemModelManager.<INode>}
    */
   createNodeModelManager(descriptor, callback) {
     const nodeModelManager = super.createNodeModelManager(descriptor, callback)
@@ -686,7 +686,7 @@ export class ZOrderGraphModelManager extends GraphModelManager {
  */
 export class ZOrderGraphMLIOHandler extends GraphMLIOHandler {
   /**
-   * @param {ZOrderSupport} zOrderSupport
+   * @param {!ZOrderSupport} zOrderSupport
    */
   constructor(zOrderSupport) {
     super()
@@ -697,8 +697,8 @@ export class ZOrderGraphMLIOHandler extends GraphMLIOHandler {
   }
 
   /**
-   * @param {IGraph} graph
-   * @param {GraphMLWriter} writer
+   * @param {!IGraph} graph
+   * @param {!GraphMLWriter} writer
    */
   configureOutputHandlers(graph, writer) {
     super.configureOutputHandlers(graph, writer)
@@ -710,8 +710,8 @@ export class ZOrderGraphMLIOHandler extends GraphMLIOHandler {
   /**
    * Predefined output handler that writes z-orders.
    * This handler is by default registered for the {@link GraphMLWriter#addQueryOutputHandlersListener QueryOutputHandlers} event
-   * @param {object} sender
-   * @param {QueryOutputHandlersEventArgs} evt
+   * @param {!object} sender
+   * @param {!QueryOutputHandlersEventArgs} evt
    */
   registerZOrderOutputHandler(sender, evt) {
     if (evt.scope === KeyScope.NODE) {
@@ -720,7 +720,7 @@ export class ZOrderGraphMLIOHandler extends GraphMLIOHandler {
   }
 
   /**
-   * @param {GraphMLParser} parser
+   * @param {!GraphMLParser} parser
    */
   configureInputHandlers(parser) {
     super.configureInputHandlers(parser)
@@ -732,8 +732,8 @@ export class ZOrderGraphMLIOHandler extends GraphMLIOHandler {
   /**
    * Predefined input handler that reads z-orders.
    * This handler is by default registered for the {@link GraphMLParser#addQueryInputHandlersListener QueryInputHandlers} event
-   * @param {object} sender
-   * @param {QueryInputHandlersEventArgs} evt
+   * @param {!object} sender
+   * @param {!QueryInputHandlersEventArgs} evt
    */
   registerZOrderInputHandler(sender, evt) {
     if (
@@ -748,7 +748,7 @@ export class ZOrderGraphMLIOHandler extends GraphMLIOHandler {
   }
 
   /**
-   * @param {ParseEventArgs} evt
+   * @param {!ParseEventArgs} evt
    */
   onParsing(evt) {
     super.onParsing(evt)
@@ -762,7 +762,7 @@ export class ZOrderGraphMLIOHandler extends GraphMLIOHandler {
   }
 
   /**
-   * @param {ParseEventArgs} evt
+   * @param {!ParseEventArgs} evt
    */
   onParsed(evt) {
     super.onParsed(evt)
@@ -783,7 +783,7 @@ export class ZOrderGraphMLIOHandler extends GraphMLIOHandler {
  */
 class ZOrderInputHandler extends InputHandlerBase {
   /**
-   * @param {ZOrderSupport} zOrderSupport
+   * @param {!ZOrderSupport} zOrderSupport
    */
   constructor(zOrderSupport) {
     super(INode.$class, YNumber.$class)
@@ -791,8 +791,8 @@ class ZOrderInputHandler extends InputHandlerBase {
   }
 
   /**
-   * @param {IParseContext} context
-   * @param {Node} node
+   * @param {!IParseContext} context
+   * @param {!Node} node
    * @returns {number}
    */
   parseDataCore(context, node) {
@@ -800,8 +800,8 @@ class ZOrderInputHandler extends InputHandlerBase {
   }
 
   /**
-   * @param {IParseContext} context
-   * @param {INode} key
+   * @param {!IParseContext} context
+   * @param {!INode} key
    * @param {number} data
    */
   setValue(context, key, data) {
@@ -817,7 +817,7 @@ class ZOrderInputHandler extends InputHandlerBase {
  */
 class ZOrderOutputHandler extends OutputHandlerBase {
   /**
-   * @type {string}
+   * @type {!string}
    */
   static get Z_ORDER_KEY_NAME() {
     return 'zOrder'
@@ -826,14 +826,14 @@ class ZOrderOutputHandler extends OutputHandlerBase {
   /**
    * The namespace URI for z-order extensions to GraphML.
    * This field has the constant value <code>http://www.yworks.com/xml/yfiles-bpmn/1.0</code>
-   * @type {string}
+   * @type {!string}
    */
   static get Z_ORDER_N_S() {
     return 'http://www.yworks.com/xml/yfiles-z-order/1.0'
   }
 
   /**
-   * @param {ZOrderSupport} zOrderSupport
+   * @param {!ZOrderSupport} zOrderSupport
    */
   constructor(zOrderSupport) {
     super(
@@ -852,7 +852,7 @@ class ZOrderOutputHandler extends OutputHandlerBase {
   }
 
   /**
-   * @param {IWriteContext} context
+   * @param {!IWriteContext} context
    * @param {number} data
    */
   writeValueCore(context, data) {
@@ -860,8 +860,8 @@ class ZOrderOutputHandler extends OutputHandlerBase {
   }
 
   /**
-   * @param {IWriteContext} context
-   * @param {INode} key
+   * @param {!IWriteContext} context
+   * @param {!INode} key
    * @returns {number}
    */
   getValue(context, key) {
@@ -877,7 +877,7 @@ class ZOrderOutputHandler extends OutputHandlerBase {
  */
 export class ZOrderGraphEditorInputMode extends GraphEditorInputMode {
   /**
-   * @param {ZOrderSupport} zOrderSupport
+   * @param {!ZOrderSupport} zOrderSupport
    */
   constructor(zOrderSupport) {
     super()
@@ -904,8 +904,8 @@ export class ZOrderGraphEditorInputMode extends GraphEditorInputMode {
   }
 
   /**
-   * @param {ICommand} newCommand
-   * @param {function} method
+   * @param {!ICommand} newCommand
+   * @param {!function} method
    */
   addCommandBinding(newCommand, method) {
     this.keyboardInputMode.addCommandBinding(
@@ -926,7 +926,7 @@ export class ZOrderGraphEditorInputMode extends GraphEditorInputMode {
   }
 
   /**
-   * @param {object} parameter
+   * @param {!object} parameter
    * @returns {?List.<INode>}
    */
   resolveParameter(parameter) {
@@ -1004,7 +1004,7 @@ export class ZOrderGraphEditorInputMode extends GraphEditorInputMode {
   }
 
   /**
-   * @returns {MoveInputMode}
+   * @returns {!MoveInputMode}
    */
   createMoveInputMode() {
     const zOrderMoveInputMode = new ZOrderMoveInputMode(this, this.zOrderSupport)
@@ -1044,8 +1044,8 @@ export class ZOrderGraphEditorInputMode extends GraphEditorInputMode {
   }
 
   /**
-   * @param {object} sender
-   * @param {NodeEventArgs} evt
+   * @param {!object} sender
+   * @param {!NodeEventArgs} evt
    */
   onParentChanged(sender, evt) {
     const newParent = this.graph.getParent(evt.item)
@@ -1053,7 +1053,7 @@ export class ZOrderGraphEditorInputMode extends GraphEditorInputMode {
   }
 
   /**
-   * @param {NodeEventArgs} evt
+   * @param {!NodeEventArgs} evt
    */
   onNodeReparented(evt) {
     super.onNodeReparented(evt)
@@ -1064,7 +1064,7 @@ export class ZOrderGraphEditorInputMode extends GraphEditorInputMode {
   }
 
   /**
-   * @param {INode} node
+   * @param {!INode} node
    * @param {?INode} parent
    * @returns {number}
    */
@@ -1095,8 +1095,8 @@ ZOrderGraphEditorInputMode.TO_BACK = ICommand.createCommand('ToBack')
  */
 export class ZOrderMoveInputMode extends MoveInputMode {
   /**
-   * @param {GraphEditorInputMode} geim
-   * @param {ZOrderSupport} zOrderSupport
+   * @param {!GraphEditorInputMode} geim
+   * @param {!ZOrderSupport} zOrderSupport
    */
   constructor(geim, zOrderSupport) {
     super()
@@ -1118,7 +1118,7 @@ export class ZOrderMoveInputMode extends MoveInputMode {
   /**
    * Stores all moved nodes, their parents and the maximum z-order of children of their parents before the move gesture
    * starts.
-   * @param {InputModeEventArgs} evt
+   * @param {!InputModeEventArgs} evt
    */
   onDragStarting(evt) {
     super.onDragStarting(evt)
@@ -1179,7 +1179,7 @@ export class ZOrderMoveInputMode extends MoveInputMode {
    * As all MovedNodes will be reparented to the same parent, those nodes that had this parent initially will keep their
    * old z-order. Therefore the new z-order can be calculated by adding the old max z-order of parent's children to the
    * number of nodes in MovedNodes that were below node and would be reparented as well.
-   * @param {INode} node
+   * @param {!INode} node
    * @param {?INode} parent
    * @returns {number}
    */
@@ -1199,7 +1199,7 @@ export class ZOrderMoveInputMode extends MoveInputMode {
   }
 
   /**
-   * @param {InputModeEventArgs} evt
+   * @param {!InputModeEventArgs} evt
    */
   onDragFinished(evt) {
     super.onDragFinished(evt)
@@ -1210,7 +1210,7 @@ export class ZOrderMoveInputMode extends MoveInputMode {
   }
 
   /**
-   * @param {InputModeEventArgs} evt
+   * @param {!InputModeEventArgs} evt
    */
   onDragCanceled(evt) {
     super.onDragCanceled(evt)
@@ -1235,7 +1235,7 @@ export class ZOrderMoveInputMode extends MoveInputMode {
  */
 export class ZOrderGraphClipboard extends GraphClipboard {
   /**
-   * @param {ZOrderSupport} support
+   * @param {!ZOrderSupport} support
    */
   constructor(support) {
     super()
@@ -1254,8 +1254,8 @@ export class ZOrderGraphClipboard extends GraphClipboard {
   }
 
   /**
-   * @param {object} sender
-   * @param {ItemCopiedEventArgs.<INode>} evt
+   * @param {!object} sender
+   * @param {!ItemCopiedEventArgs.<INode>} evt
    */
   onCopiedToClipboard(sender, evt) {
     // transfer relative z-order from original node to the copy in the clipboard graph
@@ -1263,8 +1263,8 @@ export class ZOrderGraphClipboard extends GraphClipboard {
   }
 
   /**
-   * @param {object} sender
-   * @param {ItemCopiedEventArgs.<INode>} evt
+   * @param {!object} sender
+   * @param {!ItemCopiedEventArgs.<INode>} evt
    */
   onCopiedFromClipboard(sender, evt) {
     // store new node to use in ArrangeItems
@@ -1276,7 +1276,7 @@ export class ZOrderGraphClipboard extends GraphClipboard {
   /**
    * Returns the z-order previously stored for the <code>node</code>.
    * The z-order stored in the {@link ZOrderSupport} is used as fallback for items currently not in the view.
-   * @param {INode} node
+   * @param {!INode} node
    * @returns {number}
    */
   getZOrder(node) {
@@ -1285,8 +1285,8 @@ export class ZOrderGraphClipboard extends GraphClipboard {
   }
 
   /**
-   * @param {IGraph} sourceGraph
-   * @param {function} filter
+   * @param {!IGraph} sourceGraph
+   * @param {!function} filter
    */
   cut(sourceGraph, filter) {
     // store the relative z-order for cut items
@@ -1295,8 +1295,8 @@ export class ZOrderGraphClipboard extends GraphClipboard {
   }
 
   /**
-   * @param {IGraph} sourceGraph
-   * @param {function} filter
+   * @param {!IGraph} sourceGraph
+   * @param {!function} filter
    */
   copy(sourceGraph, filter) {
     // store the relative z-order for copied items
@@ -1305,7 +1305,7 @@ export class ZOrderGraphClipboard extends GraphClipboard {
   }
 
   /**
-   * @param {(IGraph|object)} targetGraph
+   * @param {!(IGraph|object)} targetGraph
    * @param {?function} [filter]
    * @param {?function} [elementPasted]
    * @param {?function} [targetFilter]
@@ -1330,10 +1330,10 @@ export class ZOrderGraphClipboard extends GraphClipboard {
   }
 
   /**
-   * @param {IInputModeContext} context
-   * @param {IGraph} sourceGraph
-   * @param {function} filter
-   * @param {function} elementDuplicated
+   * @param {!IInputModeContext} context
+   * @param {!IGraph} sourceGraph
+   * @param {!function} filter
+   * @param {!function} elementDuplicated
    */
   duplicate(context, sourceGraph, filter, elementDuplicated) {
     // store the relative z-order for duplicated items
@@ -1347,8 +1347,8 @@ export class ZOrderGraphClipboard extends GraphClipboard {
   }
 
   /**
-   * @param {IGraph} sourceGraph
-   * @param {function} filter
+   * @param {!IGraph} sourceGraph
+   * @param {!function} filter
    */
   storeInitialZOrder(sourceGraph, filter) {
     // determine the view items involved in the clipboard operation and sort them by their visual z-order
@@ -1366,8 +1366,8 @@ export class ZOrderGraphClipboard extends GraphClipboard {
   }
 
   /**
-   * @param {List.<INode>} newMasterItems
-   * @param {IFoldingView} foldingView
+   * @param {!List.<INode>} newMasterItems
+   * @param {!IFoldingView} foldingView
    */
   arrangeItems(newMasterItems, foldingView) {
     // sort new items by the relative z-order transferred in onCopiedFromClipboard

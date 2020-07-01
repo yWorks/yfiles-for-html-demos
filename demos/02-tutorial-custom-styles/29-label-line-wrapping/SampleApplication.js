@@ -54,7 +54,7 @@ let graphComponent = null
 const wrappingSelect = document.querySelector("select[data-command='SetWrapping']")
 
 /**
- * @param {object} licenseData
+ * @param {!object} licenseData
  */
 function run(licenseData) {
   License.value = licenseData
@@ -83,7 +83,7 @@ function run(licenseData) {
 // ////////////// New in this sample ////////////////
 /**
  * Changes the label wrapping for the default label style.
- * @param {TextWrapping} wrapping
+ * @param {!TextWrapping} wrapping
  */
 function setLabelWrapping(wrapping) {
   if (labelStyle !== null && labelStyle.wrapping !== wrapping) {
@@ -161,7 +161,7 @@ function initializeGraph() {
 /**
  * Creates the default input mode for the graphComponent,
  * a {@link GraphEditorInputMode}.
- * @returns {GraphEditorInputMode} a new GraphEditorInputMode instance
+ * @returns {!GraphEditorInputMode} a new GraphEditorInputMode instance
  */
 function createEditorMode() {
   return new GraphEditorInputMode({

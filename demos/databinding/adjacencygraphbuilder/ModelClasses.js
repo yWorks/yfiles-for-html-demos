@@ -49,9 +49,9 @@ export class AdjacencyNodesSourceDefinition {
  */
 export class AdjacencyNodesSourceDefinitionBuilderConnector {
   /**
-   * @param {AdjacencyNodesSourceDefinition} nodesSourceDefinition the {@link AdjacencyNodesSourceDefinition} to connect
-   * @param {AdjacencyNodesSource} nodesSource the {@link AdjacencyNodesSource} to connect
-   * @param {AdjacencyGraphBuilder} graphBuilder the {@link AdjacencyGraphBuilder} to set the updated data to
+   * @param {!AdjacencyNodesSourceDefinition} nodesSourceDefinition the {@link AdjacencyNodesSourceDefinition} to connect
+   * @param {!AdjacencyNodesSource} nodesSource the {@link AdjacencyNodesSource} to connect
+   * @param {!AdjacencyGraphBuilder} graphBuilder the {@link AdjacencyGraphBuilder} to set the updated data to
    */
   constructor(nodesSourceDefinition, nodesSource, graphBuilder) {
     this.sourceDefinition = nodesSourceDefinition
@@ -91,8 +91,8 @@ let bindingErrorCaught = false
  * If the parameter is a function definition, a function object is
  * returned. Otherwise, a binding is created using the parameter as the
  * property path.
- * @returns {function} The source or target binding
- * @param {string} bindingString
+ * @returns {!function} The source or target binding
+ * @param {!string} bindingString
  */
 export function createBinding(bindingString) {
   if (bindingString.indexOf('function') >= 0 || bindingString.indexOf('=>') >= 0) {
@@ -125,8 +125,8 @@ export function createBinding(bindingString) {
 /**
  * Parses the string entered by the user and returns the parsed object
  * @param data the data entered by the user
- * @returns {Array.<*>} the parsed data
- * @param {string} [data]
+ * @returns {!Array.<*>} the parsed data
+ * @param {!string} [data]
  */
 export function parseData(data) {
   try {

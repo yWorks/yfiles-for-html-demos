@@ -78,7 +78,7 @@ const neighborhoodModeChooserBox = document.getElementById('neighborhoodModeChoo
 const neighborhoodMaxDistanceSlider = document.getElementById('neighborhoodMaxDistanceSlider')
 
 /**
- * @param {object} licenseData
+ * @param {!object} licenseData
  */
 function run(licenseData) {
   License.value = licenseData
@@ -213,7 +213,7 @@ function initializeNeighborhoodView() {
 
 /**
  * Helper method to highlight a given node.
- * @param {IEnumerable.<INode>} nodes
+ * @param {!IEnumerable.<INode>} nodes
  */
 function highlightNodes(nodes) {
   const manager = graphComponent.highlightIndicatorManager
@@ -249,7 +249,7 @@ function initializeHighlighting() {
 
 /**
  * Creates the input mode for the <code>GraphComponent</code>.
- * @returns {GraphViewerInputMode} a new <code>GraphViewerInputMode</code> instance
+ * @returns {!GraphViewerInputMode} a new <code>GraphViewerInputMode</code> instance
  */
 function createEditorMode() {
   // create default interaction with snapping and orthogonal edge editing
@@ -325,7 +325,7 @@ function onNeighborhoodModeChanged() {
 
 /**
  * Helper method that reads the currently selected graphml from the combobox.
- * @returns {Promise}
+ * @returns {!Promise}
  */
 async function readSampleGraph() {
   // Disable navigation buttons while graph is loaded

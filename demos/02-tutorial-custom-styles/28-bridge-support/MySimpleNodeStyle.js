@@ -74,7 +74,7 @@ export default class MySimpleNodeStyle extends NodeStyleBase {
 
   /**
    * Gets the node's color.
-   * @type {string}
+   * @type {!string}
    */
   get nodeColor() {
     return this.$nodeColor
@@ -82,7 +82,7 @@ export default class MySimpleNodeStyle extends NodeStyleBase {
 
   /**
    * Sets the node's color.
-   * @type {string}
+   * @type {!string}
    */
   set nodeColor(value) {
     this.$nodeColor = value
@@ -93,8 +93,8 @@ export default class MySimpleNodeStyle extends NodeStyleBase {
    * This implementation uses the {@link MySimpleNodeStyle#nodeColor} property unless
    * the {@link ITagOwner#tag} of the {@link INode} is of type {@link Color},
    * in which case that color overrides this style's setting.
-   * @param {INode} node The node to determine the color for.
-   * @returns {string} The color for filling the node.
+   * @param {!INode} node The node to determine the color for.
+   * @returns {!string} The color for filling the node.
    */
   getNodeColor(node) {
     // the color can be obtained from the "business data" that can be associated with
@@ -105,9 +105,9 @@ export default class MySimpleNodeStyle extends NodeStyleBase {
   /**
    * Creates the visual for a node.
    * @see Overrides {@link NodeStyleBase#createVisual}
-   * @param {IRenderContext} context
-   * @param {INode} node
-   * @returns {SvgVisual}
+   * @param {!IRenderContext} context
+   * @param {!INode} node
+   * @returns {!SvgVisual}
    */
   createVisual(context, node) {
     // This implementation creates a 'g' element and uses it as a container for the rendering of the node.
@@ -124,10 +124,10 @@ export default class MySimpleNodeStyle extends NodeStyleBase {
   /**
    * Re-renders the node using the old visual for performance reasons.
    * @see Overrides {@link NodeStyleBase#updateVisual}
-   * @param {IRenderContext} context
-   * @param {SvgVisual} oldVisual
-   * @param {INode} node
-   * @returns {SvgVisual}
+   * @param {!IRenderContext} context
+   * @param {!SvgVisual} oldVisual
+   * @param {!INode} node
+   * @returns {!SvgVisual}
    */
   updateVisual(context, oldVisual, node) {
     const container = oldVisual.svgElement
@@ -152,7 +152,7 @@ export default class MySimpleNodeStyle extends NodeStyleBase {
 
   /**
    * Creates an object containing all necessary data to create a visual for the node.
-   * @param {INode} node
+   * @param {!INode} node
    * @returns {*}
    */
   createRenderDataCache(node) {
@@ -198,9 +198,9 @@ export default class MySimpleNodeStyle extends NodeStyleBase {
    * elements to the <code>container</code>. All items are arranged as if the node was located at (0,0).
    * {@link MySimpleNodeStyle#createVisual} and {@link MySimpleNodeStyle#updateVisual} finally arrange the container
    * so that the drawing is translated into the final position.
-   * @param {IRenderContext} context
-   * @param {INode} node
-   * @param {SVGElement} container
+   * @param {!IRenderContext} context
+   * @param {!INode} node
+   * @param {!SVGElement} container
    * @param {*} cache
    */
   render(context, node, container, cache) {
@@ -315,9 +315,9 @@ export default class MySimpleNodeStyle extends NodeStyleBase {
 
   /**
    * Draws the pre-rendered drop-shadow image at the given size.
-   * @param {IRenderContext} context
-   * @param {SVGElement} container
-   * @param {Size} size
+   * @param {!IRenderContext} context
+   * @param {!SVGElement} container
+   * @param {!Size} size
    */
   drawShadow(context, container, size) {
     const tileSize = 32
@@ -342,9 +342,9 @@ export default class MySimpleNodeStyle extends NodeStyleBase {
 
   /**
    * Draws the edge-like connectors from a node to its labels.
-   * @param {INode} node
-   * @param {IRenderContext} context
-   * @param {Element} container
+   * @param {!INode} node
+   * @param {!IRenderContext} context
+   * @param {!Element} container
    * @param {*} cache
    */
   renderLabelEdges(node, context, container, cache) {
@@ -393,8 +393,8 @@ export default class MySimpleNodeStyle extends NodeStyleBase {
    * Gets the outline of the node, an ellipse in this case.
    * This allows for correct edge path intersection calculation, among others.
    * @see Overrides {@link NodeStyleBase#getOutline}
-   * @param {INode} node
-   * @returns {GeneralPath}
+   * @param {!INode} node
+   * @returns {!GeneralPath}
    */
   getOutline(node) {
     const outline = new GeneralPath()
@@ -406,9 +406,9 @@ export default class MySimpleNodeStyle extends NodeStyleBase {
    * Get the bounding box of the node.
    * This is used for bounding box calculations and includes the visual shadow.
    * @see Overrides {@link NodeStyleBase#getBounds}
-   * @param {IInputModeContext} canvasContext
-   * @param {INode} node
-   * @returns {Rect}
+   * @param {!IInputModeContext} canvasContext
+   * @param {!INode} node
+   * @returns {!Rect}
    */
   getBounds(canvasContext, node) {
     return new Rect(node.layout.x, node.layout.y, node.layout.width + 3, node.layout.height + 3)
@@ -419,9 +419,9 @@ export default class MySimpleNodeStyle extends NodeStyleBase {
    * Otherwise label intersection lines might not be painted if the node is outside
    * of the clipping bounds.
    * @see Overrides {@link NodeStyleBase#isVisible}
-   * @param {ICanvasContext} canvasContext
-   * @param {Rect} clip
-   * @param {INode} node
+   * @param {!ICanvasContext} canvasContext
+   * @param {!Rect} clip
+   * @param {!INode} node
    * @returns {boolean}
    */
   isVisible(canvasContext, clip, node) {
@@ -439,9 +439,9 @@ export default class MySimpleNodeStyle extends NodeStyleBase {
    * Hit test which considers HitTestRadius specified in CanvasContext.
    * @returns {boolean} True if p is inside node.
    * @see Overrides {@link NodeStyleBase#isHit}
-   * @param {IInputModeContext} canvasContext
-   * @param {Point} p
-   * @param {INode} node
+   * @param {!IInputModeContext} canvasContext
+   * @param {!Point} p
+   * @param {!INode} node
    */
   isHit(canvasContext, p, node) {
     return GeomUtilities.ellipseContains(node.layout.toRect(), p, canvasContext.hitTestRadius)
@@ -452,9 +452,9 @@ export default class MySimpleNodeStyle extends NodeStyleBase {
    * @returns {boolean} True if the box intersects the elliptical shape of the node. Also true if box lies completely
    *   inside node.
    * @see Overrides {@link NodeStyleBase#isInBox}
-   * @param {IInputModeContext} canvasContext
-   * @param {Rect} box
-   * @param {INode} node
+   * @param {!IInputModeContext} canvasContext
+   * @param {!Rect} box
+   * @param {!INode} node
    */
   isInBox(canvasContext, box, node) {
     // early exit if not even the bounds are contained in the box
@@ -482,8 +482,8 @@ export default class MySimpleNodeStyle extends NodeStyleBase {
    * Exact geometric check whether a point p lies inside the node. This is important for intersection calculation,
    * among others.
    * @see Overrides {@link NodeStyleBase#isInside}
-   * @param {INode} node
-   * @param {Point} point
+   * @param {!INode} node
+   * @param {!Point} point
    * @returns {boolean}
    */
   isInside(node, point) {
@@ -494,7 +494,7 @@ export default class MySimpleNodeStyle extends NodeStyleBase {
 const dropShadowDefsCreator = createDropShadow()
 
 /**
- * @returns {ISvgDefsCreator}
+ * @returns {!ISvgDefsCreator}
  */
 function createDropShadow() {
   // This instance is needed in order to support automatic cleanup of the global defs section.
@@ -518,7 +518,7 @@ function createDropShadow() {
 }
 
 /**
- * @returns {SVGElement}
+ * @returns {!SVGElement}
  */
 function createDropShadowElement() {
   // pre-render the node's drop shadow using HTML5 canvas rendering

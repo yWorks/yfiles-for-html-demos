@@ -53,7 +53,7 @@ import loadJson from '../../resources/load-json.js'
  * The stylesheet CSS shows how to style label elements using external CSS.
  * The label style uses interactive text wrapping, which means you can resize nodes interactively
  * and the label text will be wrapped at word boundaries.
- * @param {object} licenseData
+ * @param {!object} licenseData
  */
 function run(licenseData) {
   License.value = licenseData
@@ -203,7 +203,7 @@ const bend = graph.addBend(edge, new Point(50, 20))
 }
 
 /**
- * @param {GraphComponent} graphComponent
+ * @param {!GraphComponent} graphComponent
  */
 function registerCommands(graphComponent) {
   bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent)

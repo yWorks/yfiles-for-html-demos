@@ -86,7 +86,7 @@ import {
 export class NodeSelectionResizingInputMode extends BaseClass(IInputMode) {
   /**
    * Gets the margins between the handle rectangle and the bounds of the selected nodes.
-   * @type {Insets}
+   * @type {!Insets}
    */
   get margins() {
     return this.$margins
@@ -94,7 +94,7 @@ export class NodeSelectionResizingInputMode extends BaseClass(IInputMode) {
 
   /**
    * Sets the margins between the handle rectangle and the bounds of the selected nodes.
-   * @type {Insets}
+   * @type {!Insets}
    */
   set margins(value) {
     this.$margins = value
@@ -102,7 +102,7 @@ export class NodeSelectionResizingInputMode extends BaseClass(IInputMode) {
 
   /**
    * Gets the current resize mode
-   * @type {(|)}
+   * @type {!('scale'|'resize')}
    */
   get mode() {
     return this.$mode
@@ -110,7 +110,7 @@ export class NodeSelectionResizingInputMode extends BaseClass(IInputMode) {
 
   /**
    * Sets the current resize mode
-   * @type {(|)}
+   * @type {!('scale'|'resize')}
    */
   set mode(value) {
     this.$mode = value
@@ -141,8 +141,8 @@ export class NodeSelectionResizingInputMode extends BaseClass(IInputMode) {
   }
 
   /**
-   * @param {(|)} [mode]
-   * @param {Insets} [margins]
+   * @param {!('scale'|'resize')} [mode]
+   * @param {!Insets} [margins]
    */
   constructor(mode, margins) {
     super()
@@ -158,8 +158,8 @@ export class NodeSelectionResizingInputMode extends BaseClass(IInputMode) {
   }
 
   /**
-   * @param {IInputModeContext} context
-   * @param {ConcurrencyController} controller
+   * @param {!IInputModeContext} context
+   * @param {!ConcurrencyController} controller
    */
   install(context, controller) {
     this.$inputModeContext = context
@@ -217,8 +217,8 @@ export class NodeSelectionResizingInputMode extends BaseClass(IInputMode) {
 
   /**
    * Notifies the current {@link GraphSnapContext} which nodes are going to be reshaped.
-   * @param {object} sender
-   * @param {InputModeEventArgs} event
+   * @param {!object} sender
+   * @param {!InputModeEventArgs} event
    */
   registerReshapedNodes(sender, event) {
     // register reshaped nodes
@@ -233,9 +233,9 @@ export class NodeSelectionResizingInputMode extends BaseClass(IInputMode) {
   /**
    * Invalidates the (bounds of the) {@link EncompassingRectangle} when any node layout is changed
    * but not by this input mode.
-   * @param {object} sender
-   * @param {INode} node
-   * @param {Rect} oldLayout
+   * @param {!object} sender
+   * @param {!INode} node
+   * @param {!Rect} oldLayout
    */
   nodeLayoutChanged(sender, node, oldLayout) {
     if (this.rectangle && !this.handleInputMode.isDragging) {
@@ -257,7 +257,7 @@ export class NodeSelectionResizingInputMode extends BaseClass(IInputMode) {
   }
 
   /**
-   * @param {IInputModeContext} context
+   * @param {!IInputModeContext} context
    */
   uninstall(context) {
     context.graph.removeNodeLayoutChangedListener(this.onNodeLayoutChanged)
@@ -294,8 +294,8 @@ export class NodeSelectionResizingInputMode extends BaseClass(IInputMode) {
   }
 
   /**
-   * @param {object} sender
-   * @param {SelectionEventArgs.<IModelItem>} args
+   * @param {!object} sender
+   * @param {!SelectionEventArgs.<IModelItem>} args
    */
   multiSelectionStarted(sender, args) {
     // a multi-selection started so the ItemSelectionChanged events can be ignored until MultiSelectionFinished
@@ -303,8 +303,8 @@ export class NodeSelectionResizingInputMode extends BaseClass(IInputMode) {
   }
 
   /**
-   * @param {object} sender
-   * @param {SelectionEventArgs.<IModelItem>} args
+   * @param {!object} sender
+   * @param {!SelectionEventArgs.<IModelItem>} args
    */
   multiSelectionFinished(sender, args) {
     this.ignoreSingleSelectionEvents = false
@@ -312,8 +312,8 @@ export class NodeSelectionResizingInputMode extends BaseClass(IInputMode) {
   }
 
   /**
-   * @param {object} sender
-   * @param {ItemSelectionChangedEventArgs.<IModelItem>} evt
+   * @param {!object} sender
+   * @param {!ItemSelectionChangedEventArgs.<IModelItem>} evt
    */
   itemSelectionChanged(sender, evt) {
     this.updateHandles()
@@ -394,9 +394,9 @@ export class NodeSelectionResizingInputMode extends BaseClass(IInputMode) {
 
   /**
    * Collect all {@link IGraphSelection#selectedNodes | selected nodes} and their descendents.
-   * @param {IGraph} graph
-   * @param {IGraphSelection} selection
-   * @returns {IList.<INode>}
+   * @param {!IGraph} graph
+   * @param {!IGraphSelection} selection
+   * @returns {!IList.<INode>}
    */
   collectReshapeNodes(graph, selection) {
     const nodes = new Set()
@@ -411,9 +411,9 @@ export class NodeSelectionResizingInputMode extends BaseClass(IInputMode) {
   }
 
   /**
-   * @param {HandlePositions} position
-   * @param {Function} reshapeHandlerFactory
-   * @returns {IHandle}
+   * @param {!HandlePositions} position
+   * @param {!Function} reshapeHandlerFactory
+   * @returns {!IHandle}
    */
   createHandle(position, reshapeHandlerFactory) {
     const reshapeHandler = reshapeHandlerFactory()
@@ -449,8 +449,8 @@ class OrthogonalEdgeEditingHelper {
   }
 
   /**
-   * @param {object} sender
-   * @param {InputModeEventArgs} event
+   * @param {!object} sender
+   * @param {!InputModeEventArgs} event
    */
   starting(sender, event) {
     const context = event.context
@@ -468,8 +468,8 @@ class OrthogonalEdgeEditingHelper {
   }
 
   /**
-   * @param {object} sender
-   * @param {InputModeEventArgs} evt
+   * @param {!object} sender
+   * @param {!InputModeEventArgs} evt
    */
   started(sender, evt) {
     if (this.editingContext) {
@@ -478,8 +478,8 @@ class OrthogonalEdgeEditingHelper {
   }
 
   /**
-   * @param {object} sender
-   * @param {InputModeEventArgs} evt
+   * @param {!object} sender
+   * @param {!InputModeEventArgs} evt
    */
   finished(sender, evt) {
     if (this.editingContext) {
@@ -489,8 +489,8 @@ class OrthogonalEdgeEditingHelper {
   }
 
   /**
-   * @param {object} sender
-   * @param {InputModeEventArgs} evt
+   * @param {!object} sender
+   * @param {!InputModeEventArgs} evt
    */
   canceled(sender, evt) {
     if (this.editingContext) {
@@ -503,7 +503,7 @@ class OrthogonalEdgeEditingHelper {
 /**
  * Returns if <code>position</code> is {@link HandlePositions#NORTH_WEST},
  * {@link HandlePositions#NORTH} or {@link HandlePositions#NORTH_EAST}
- * @param {HandlePositions} position The position to check.
+ * @param {!HandlePositions} position The position to check.
  * @returns {boolean} If the position is at any of the north sides.
  */
 function isAnyNorth(position) {
@@ -517,7 +517,7 @@ function isAnyNorth(position) {
 /**
  * Returns if <code>position</code> is {@link HandlePositions#SOUTH_WEST},
  * {@link HandlePositions#SOUTH} or {@link HandlePositions#SOUTH_EAST}
- * @param {HandlePositions} position The position to check.
+ * @param {!HandlePositions} position The position to check.
  * @returns {boolean} If the position is at any of the south sides.
  */
 function isAnySouth(position) {
@@ -531,7 +531,7 @@ function isAnySouth(position) {
 /**
  * Returns if <code>position</code> is {@link HandlePositions#NORTH_WEST},
  * {@link HandlePositions#WEST} or {@link HandlePositions#SOUTH_WEST}
- * @param {HandlePositions} position The position to check.
+ * @param {!HandlePositions} position The position to check.
  * @returns {boolean} If the position is at any of the west sides.
  */
 function isAnyWest(position) {
@@ -545,7 +545,7 @@ function isAnyWest(position) {
 /**
  * Returns if <code>position</code> is {@link HandlePositions#NORTH_EAST},
  * {@link HandlePositions#EAST} or {@link HandlePositions#SOUTH_EAST}
- * @param {HandlePositions} position The position to check.
+ * @param {!HandlePositions} position The position to check.
  * @returns {boolean} If the position is at any of the east sides.
  */
 function isAnyEast(position) {
@@ -563,8 +563,8 @@ function isAnyEast(position) {
  */
 class EncompassingRectangle extends BaseClass(IRectangle) {
   /**
-   * @param {IEnumerable.<INode>} nodes
-   * @param {Insets} margins
+   * @param {!IEnumerable.<INode>} nodes
+   * @param {!Insets} margins
    */
   constructor(nodes, margins) {
     super()
@@ -580,7 +580,7 @@ class EncompassingRectangle extends BaseClass(IRectangle) {
   }
 
   /**
-   * @param {IRectangle} newRectangle
+   * @param {!IRectangle} newRectangle
    */
   reshape(newRectangle) {
     this.tightRect = newRectangle.toRect()
@@ -644,21 +644,21 @@ class EncompassingRectangle extends BaseClass(IRectangle) {
   }
 
   /**
-   * @type {IEnumerable.<INode>}
+   * @type {!IEnumerable.<INode>}
    */
   get nodes() {
     return this.$nodes
   }
 
   /**
-   * @type {Insets}
+   * @type {!Insets}
    */
   get margins() {
     return this.$margins
   }
 
   /**
-   * @type {Rect}
+   * @type {!Rect}
    */
   get tightRectangle() {
     this.update()
@@ -674,7 +674,7 @@ class EncompassingRectangle extends BaseClass(IRectangle) {
 class ReshapeHandlerBase extends BaseClass(IReshapeHandler) {
   /**
    * Gets a view of the bounds of the item.
-   * @type {IRectangle}
+   * @type {!IRectangle}
    */
   get bounds() {
     return this.rectangle.tightRectangle
@@ -682,7 +682,7 @@ class ReshapeHandlerBase extends BaseClass(IReshapeHandler) {
 
   /**
    * Returns the original bounds of the reshaped {@link EncompassingRectangle} without its margins.
-   * @type {Rect}
+   * @type {!Rect}
    */
   get originalBounds() {
     return this.$originalBounds
@@ -690,7 +690,7 @@ class ReshapeHandlerBase extends BaseClass(IReshapeHandler) {
 
   /**
    * Returns the nodes to be reshaped.
-   * @type {IEnumerable.<INode>}
+   * @type {!IEnumerable.<INode>}
    */
   get reshapeNodes() {
     return this.rectangle.nodes
@@ -713,7 +713,7 @@ class ReshapeHandlerBase extends BaseClass(IReshapeHandler) {
   }
 
   /**
-   * @param {EncompassingRectangle} rectangle
+   * @param {!EncompassingRectangle} rectangle
    */
   constructor(rectangle) {
     super()
@@ -729,7 +729,7 @@ class ReshapeHandlerBase extends BaseClass(IReshapeHandler) {
   }
 
   /**
-   * @param {IInputModeContext} context
+   * @param {!IInputModeContext} context
    */
   initializeReshape(context) {
     this.$originalBounds = this.rectangle.tightRectangle
@@ -775,8 +775,8 @@ class ReshapeHandlerBase extends BaseClass(IReshapeHandler) {
   }
 
   /**
-   * @param {object} sender
-   * @param {CollectSnapResultsEventArgs} args
+   * @param {!object} sender
+   * @param {!CollectSnapResultsEventArgs} args
    */
   collectSnapResults(sender, args) {
     const lastEvent = args.context.canvasComponent.lastInputEvent
@@ -831,7 +831,7 @@ class ReshapeHandlerBase extends BaseClass(IReshapeHandler) {
 
   /**
    * Calculates the {@link ReshapeHandlerHandle#minimumSize} considering all reshaped nodes.
-   * @returns {ISize}
+   * @returns {!ISize}
    */
   calculateMinimumSize() {
     return Size.EMPTY
@@ -839,7 +839,7 @@ class ReshapeHandlerBase extends BaseClass(IReshapeHandler) {
 
   /**
    * Calculates the {@link ReshapeHandlerHandle#maximumSize} considering all reshaped nodes.
-   * @returns {ISize}
+   * @returns {!ISize}
    */
   calculateMaximumSize() {
     return Size.EMPTY
@@ -850,10 +850,10 @@ class ReshapeHandlerBase extends BaseClass(IReshapeHandler) {
    * horizontal and vertical delta for the point (x,y) inside the <code>originalNodeLayout</code>.
    * @param {number} x The horizontal location inside <code>originalNodeLayout</code>.
    * @param {number} y The vertical location inside <code>originalNodeLayout</code>.
-   * @param {Rect} originalNodeLayout The original layout of the node to calculate the factors for.
+   * @param {!Rect} originalNodeLayout The original layout of the node to calculate the factors for.
    * @param {boolean} centered Whether center resizing is active.
-   * @param {HandlePositions} position The handle position to calculate the factor for.
-   * @returns {Point}
+   * @param {!HandlePositions} position The handle position to calculate the factor for.
+   * @returns {!Point}
    */
   getFactor(x, y, originalNodeLayout, centered, position) {
     return Point.ORIGIN
@@ -872,9 +872,9 @@ class ReshapeHandlerBase extends BaseClass(IReshapeHandler) {
    * </p>
    * @param {number} x The horizontal location inside <code>originalNodeLayout</code>.
    * @param {number} y The vertical location inside <code>originalNodeLayout</code>.
-   * @param {Rect} originalNodeLayout The original layout of the node to calculate the factors for.
+   * @param {!Rect} originalNodeLayout The original layout of the node to calculate the factors for.
    * @param {boolean} centered Whether center resizing is active.
-   * @returns {Point}
+   * @returns {!Point}
    */
   getOrthogonalFactor(x, y, originalNodeLayout, centered) {
     const ratio = this.originalBounds.width / this.originalBounds.height
@@ -897,9 +897,9 @@ class ReshapeHandlerBase extends BaseClass(IReshapeHandler) {
   }
 
   /**
-   * @param {IInputModeContext} context
-   * @param {Rect} originalBounds
-   * @param {Rect} newBounds
+   * @param {!IInputModeContext} context
+   * @param {!Rect} originalBounds
+   * @param {!Rect} newBounds
    */
   handleReshape(context, originalBounds, newBounds) {
     // reshape the encompassing rectangle
@@ -910,9 +910,9 @@ class ReshapeHandlerBase extends BaseClass(IReshapeHandler) {
   }
 
   /**
-   * @param {IInputModeContext} context
-   * @param {Rect} originalBounds
-   * @param {Rect} newBounds
+   * @param {!IInputModeContext} context
+   * @param {!Rect} originalBounds
+   * @param {!Rect} newBounds
    */
   updateNodeLayouts(context, originalBounds, newBounds) {
     const dMinX = newBounds.x - originalBounds.x
@@ -998,8 +998,8 @@ class ReshapeHandlerBase extends BaseClass(IReshapeHandler) {
   }
 
   /**
-   * @param {IInputModeContext} context
-   * @param {Rect} originalBounds
+   * @param {!IInputModeContext} context
+   * @param {!Rect} originalBounds
    */
   cancelReshape(context, originalBounds) {
     this.rectangle.reshape(originalBounds)
@@ -1014,9 +1014,9 @@ class ReshapeHandlerBase extends BaseClass(IReshapeHandler) {
   }
 
   /**
-   * @param {IInputModeContext} context
-   * @param {Rect} originalBounds
-   * @param {Rect} newBounds
+   * @param {!IInputModeContext} context
+   * @param {!Rect} originalBounds
+   * @param {!Rect} newBounds
    */
   reshapeFinished(context, originalBounds, newBounds) {
     this.reshapeHandlers.forEach((handler, node) => {
@@ -1031,7 +1031,7 @@ class ReshapeHandlerBase extends BaseClass(IReshapeHandler) {
   }
 
   /**
-   * @param {IInputModeContext} context
+   * @param {!IInputModeContext} context
    */
   clear(context) {
     const snapContext = context.lookup(GraphSnapContext.$class)
@@ -1047,8 +1047,8 @@ class ReshapeHandlerBase extends BaseClass(IReshapeHandler) {
 
   /**
    * Sets x or y values that are close to 0 to be 0.
-   * @param {Point} p
-   * @returns {Point}
+   * @param {!Point} p
+   * @returns {!Point}
    */
   static fixZero(p) {
     const fixedX = Math.abs(p.x) < 0.0001 ? 0 : p.x
@@ -1065,7 +1065,7 @@ class ScalingReshapeHandler extends ReshapeHandlerBase {
   /**
    * Returns the size of the smallest node (the reshape rect cannot get smaller than this, since the
    * sizes of the nodes are not modified).
-   * @returns {ISize}
+   * @returns {!ISize}
    */
   calculateMinimumSize() {
     const minSize = new MutableSize()
@@ -1077,7 +1077,7 @@ class ScalingReshapeHandler extends ReshapeHandlerBase {
   }
 
   /**
-   * @returns {ISize}
+   * @returns {!ISize}
    */
   calculateMaximumSize() {
     return Size.INFINITE
@@ -1086,10 +1086,10 @@ class ScalingReshapeHandler extends ReshapeHandlerBase {
   /**
    * @param {number} x
    * @param {number} y
-   * @param {Rect} originalNodeLayout
+   * @param {!Rect} originalNodeLayout
    * @param {boolean} centered
-   * @param {HandlePositions} position
-   * @returns {Point}
+   * @param {!HandlePositions} position
+   * @returns {!Point}
    */
   getFactor(x, y, originalNodeLayout, centered, position) {
     let fx = 0
@@ -1129,19 +1129,20 @@ class ScalingReshapeHandler extends ReshapeHandlerBase {
   }
 
   /**
-   * @param {IInputModeContext} context
-   * @param {Rect} originalBounds
-   * @param {Rect} newBounds
+   * @param {!IInputModeContext} context
+   * @param {!Rect} originalBounds
+   * @param {!Rect} newBounds
    */
   handleReshape(context, originalBounds, newBounds) {
     super.handleReshape(context, originalBounds, newBounds)
     const graph = context.graph
-    const groupingSupport = graph?.groupingSupport
-    if (groupingSupport) {
-      for (const node of this.reshapeNodes) {
-        if (graph?.isGroupNode(node)) {
-          groupingSupport.enlargeGroupNode(context, node, true)
-        }
+    if (graph == null) {
+      return
+    }
+    const groupingSupport = graph.groupingSupport
+    for (const node of this.reshapeNodes) {
+      if (graph.isGroupNode(node)) {
+        groupingSupport.enlargeGroupNode(context, node, true)
       }
     }
   }
@@ -1155,7 +1156,7 @@ class ResizingReshapeHandler extends ReshapeHandlerBase {
   /**
    * Considers the minimum scale factors for each node to respect its {@link INodeSizeConstraintProvider#getMinimumSize}
    * and combine them to a general minimum size.
-   * @returns {ISize}
+   * @returns {!ISize}
    */
   calculateMinimumSize() {
     let minScaleX = 0
@@ -1181,7 +1182,7 @@ class ResizingReshapeHandler extends ReshapeHandlerBase {
   /**
    * Considers the maximum scale factors for each node to respect its {@link INodeSizeConstraintProvider#getMaximumSize}
    * and combine them to a general maximum size.
-   * @returns {ISize}
+   * @returns {!ISize}
    */
   calculateMaximumSize() {
     let maxScaleX = Number.POSITIVE_INFINITY
@@ -1207,10 +1208,10 @@ class ResizingReshapeHandler extends ReshapeHandlerBase {
   /**
    * @param {number} x
    * @param {number} y
-   * @param {Rect} originalNodeLayout
+   * @param {!Rect} originalNodeLayout
    * @param {boolean} centered
-   * @param {HandlePositions} position
-   * @returns {Point}
+   * @param {!HandlePositions} position
+   * @returns {!Point}
    */
   getFactor(x, y, originalNodeLayout, centered, position) {
     const xRatio = centered
@@ -1242,10 +1243,10 @@ class ResizingReshapeHandler extends ReshapeHandlerBase {
  */
 class NodeSelectionReshapeHandle extends BaseClass(IHandle) {
   /**
-   * @param {IInputModeContext} context
-   * @param {HandlePositions} position
-   * @param {IReshapeHandler} reshapeHandler
-   * @param {Insets} margins
+   * @param {!IInputModeContext} context
+   * @param {!HandlePositions} position
+   * @param {!IReshapeHandler} reshapeHandler
+   * @param {!Insets} margins
    */
   constructor(context, position, reshapeHandler, margins) {
     super()
@@ -1264,7 +1265,7 @@ class NodeSelectionReshapeHandle extends BaseClass(IHandle) {
   }
 
   /**
-   * @type {IPoint}
+   * @type {!IPoint}
    */
   get location() {
     if (this.$location == null) {
@@ -1274,56 +1275,56 @@ class NodeSelectionReshapeHandle extends BaseClass(IHandle) {
   }
 
   /**
-   * @type {IReshapeHandler}
+   * @type {!IReshapeHandler}
    */
   get reshapeHandler() {
     return this.reshapeHandlerHandle.reshapeHandler
   }
 
   /**
-   * @type {HandlePositions}
+   * @type {!HandlePositions}
    */
   get position() {
     return this.reshapeHandlerHandle.position
   }
 
   /**
-   * @type {ReshapePolicy}
+   * @type {!ReshapePolicy}
    */
   get reshapePolicy() {
     return this.reshapeHandlerHandle.reshapePolicy
   }
 
   /**
-   * @type {ReshapePolicy}
+   * @type {!ReshapePolicy}
    */
   set reshapePolicy(value) {
     this.reshapeHandlerHandle.reshapePolicy = value
   }
 
   /**
-   * @type {ISize}
+   * @type {!ISize}
    */
   get maximumSize() {
     return this.reshapeHandlerHandle.maximumSize
   }
 
   /**
-   * @type {ISize}
+   * @type {!ISize}
    */
   set maximumSize(value) {
     this.reshapeHandlerHandle.maximumSize = value
   }
 
   /**
-   * @type {ISize}
+   * @type {!ISize}
    */
   get minimumSize() {
     return this.reshapeHandlerHandle.minimumSize
   }
 
   /**
-   * @type {ISize}
+   * @type {!ISize}
    */
   set minimumSize(value) {
     this.reshapeHandlerHandle.minimumSize = value
@@ -1348,47 +1349,47 @@ class NodeSelectionReshapeHandle extends BaseClass(IHandle) {
   }
 
   /**
-   * @param {IInputModeContext} context
-   * @param {Point} originalLocation
+   * @param {!IInputModeContext} context
+   * @param {!Point} originalLocation
    */
   cancelDrag(context, originalLocation) {
     this.reshapeHandlerHandle.cancelDrag(context, originalLocation)
   }
 
   /**
-   * @param {IInputModeContext} context
-   * @param {Point} originalLocation
-   * @param {Point} newLocation
+   * @param {!IInputModeContext} context
+   * @param {!Point} originalLocation
+   * @param {!Point} newLocation
    */
   dragFinished(context, originalLocation, newLocation) {
     this.reshapeHandlerHandle.dragFinished(context, originalLocation, newLocation)
   }
 
   /**
-   * @param {IInputModeContext} context
-   * @param {Point} originalLocation
-   * @param {Point} newLocation
+   * @param {!IInputModeContext} context
+   * @param {!Point} originalLocation
+   * @param {!Point} newLocation
    */
   handleMove(context, originalLocation, newLocation) {
     this.reshapeHandlerHandle.handleMove(context, originalLocation, newLocation)
   }
 
   /**
-   * @param {IInputModeContext} context
+   * @param {!IInputModeContext} context
    */
   initializeDrag(context) {
     this.reshapeHandlerHandle.initializeDrag(context)
   }
 
   /**
-   * @type {Cursor}
+   * @type {!Cursor}
    */
   get cursor() {
     return this.reshapeHandlerHandle.cursor
   }
 
   /**
-   * @type {HandleTypes}
+   * @type {!HandleTypes}
    */
   get type() {
     return this.reshapeHandlerHandle.type
@@ -1403,7 +1404,7 @@ class NodeSelectionReshapeHandle extends BaseClass(IHandle) {
  */
 class HandleLocation extends BaseClass(IPoint) {
   /**
-   * @param {NodeSelectionReshapeHandle} nodeSelectionReshapeHandle
+   * @param {!NodeSelectionReshapeHandle} nodeSelectionReshapeHandle
    */
   constructor(nodeSelectionReshapeHandle) {
     super()
@@ -1420,9 +1421,7 @@ class HandleLocation extends BaseClass(IPoint) {
       case HandlePositions.NORTH_WEST:
       case HandlePositions.WEST:
       case HandlePositions.SOUTH_WEST:
-        return (
-          (bounds.x - (this.outerThis.margins.left + this.offset / this.outerThis.context.zoom))
-        )
+        return bounds.x - (this.outerThis.margins.left + this.offset / this.outerThis.context.zoom)
       case HandlePositions.NORTH:
       case HandlePositions.CENTER:
       case HandlePositions.SOUTH:
@@ -1448,7 +1447,7 @@ class HandleLocation extends BaseClass(IPoint) {
       case HandlePositions.NORTH_WEST:
       case HandlePositions.NORTH:
       case HandlePositions.NORTH_EAST:
-        return (bounds.y - (this.outerThis.margins.top + this.offset / this.outerThis.context.zoom))
+        return bounds.y - (this.outerThis.margins.top + this.offset / this.outerThis.context.zoom)
       case HandlePositions.WEST:
       case HandlePositions.CENTER:
       case HandlePositions.EAST:

@@ -64,8 +64,8 @@ import Subtree from './Subtree.js'
 export default class RelocateSubtreeLayoutHelper {
   /**
    * Creates a new instance of {@link RelocateSubtreeLayoutHelper}.
-   * @param {GraphComponent} graphComponent The given graphComponent
-   * @param {Subtree} subtree The subtree to be moved
+   * @param {!GraphComponent} graphComponent The given graphComponent
+   * @param {!Subtree} subtree The subtree to be moved
    */
   constructor(graphComponent, subtree) {
     // The component that displays the graph.
@@ -89,7 +89,7 @@ export default class RelocateSubtreeLayoutHelper {
   }
 
   /**
-   * @returns {Promise}
+   * @returns {!Promise}
    */
   async runLayoutCore() {
     do {
@@ -287,9 +287,9 @@ export default class RelocateSubtreeLayoutHelper {
 
   /**
    * Creates a {@link GivenCoordinatesStageData} that stores the layout of nodes and edges.
-   * @param {function} nodePredicate Determines the nodes to store
-   * @param {function} edgePredicate Determines the edges to store
-   * @returns {GivenCoordinatesStageData} The {@link GivenCoordinatesStageData}
+   * @param {!function} nodePredicate Determines the nodes to store
+   * @param {!function} edgePredicate Determines the edges to store
+   * @returns {!GivenCoordinatesStageData} The {@link GivenCoordinatesStageData}
    */
   createGivenCoordinatesStageData(nodePredicate, edgePredicate) {
     const layoutData = new GivenCoordinatesStageData()
@@ -319,7 +319,7 @@ export default class RelocateSubtreeLayoutHelper {
    * A {@link LayoutExecutor} that is used when the subtree dragging starts.
    * When the drag begins, the {@link FillAreaLayout} fills up the space that was covered by the subtree.
    * This state is the initial layout for the {@link ClearAreaLayout} during the drag.
-   * @returns {LayoutExecutor}
+   * @returns {!LayoutExecutor}
    */
   createInitializingLayoutExecutor() {
     return new LayoutExecutor({
@@ -348,7 +348,7 @@ export default class RelocateSubtreeLayoutHelper {
    * First, all nodes and edges are pushed back into place before the drag started, except the
    * elements of the subtree. Then space is made for the subtree at its current position. The
    * animation morphs all elements, except those in the subtree, to the calculated positions.
-   * @returns {LayoutExecutor}
+   * @returns {!LayoutExecutor}
    */
   createDraggingLayoutExecutor() {
     const draggingLayoutExecutor = new DraggingLayoutExecutor(
@@ -366,7 +366,7 @@ export default class RelocateSubtreeLayoutHelper {
    * First, all nodes and edges are pushed back into place before the drag started, except the
    * element of the subtree. Then space is made for the subtree at its current position. The
    * animation morphs all elements to the calculated positions.
-   * @returns {LayoutExecutor}
+   * @returns {!LayoutExecutor}
    */
   createFinishedLayoutExecutor() {
     return new LayoutExecutor({
@@ -380,7 +380,7 @@ export default class RelocateSubtreeLayoutHelper {
   /**
    * A {@link LayoutExecutor} that is used after the drag is canceled.
    * All nodes and edges are pushed back into place before the drag started.
-   * @returns {LayoutExecutor}
+   * @returns {!LayoutExecutor}
    */
   createCanceledLayoutExecutor() {
     return new LayoutExecutor({
@@ -394,7 +394,7 @@ export default class RelocateSubtreeLayoutHelper {
   /**
    * Creates the {@link ILayoutAlgorithm} used while dragging and finishing the gesture.
    * @param {boolean} dragging
-   * @returns {ILayoutAlgorithm}
+   * @returns {!ILayoutAlgorithm}
    */
   static createClearAreaLayout(dragging) {
     if (dragging) {
@@ -421,7 +421,7 @@ export default class RelocateSubtreeLayoutHelper {
 
   /**
    * Creates the {@link LayoutData} used while dragging and finishing the gesture.
-   * @returns {LayoutData}
+   * @returns {!LayoutData}
    */
   createClearAreaLayoutData() {
     return new CompositeLayoutData(
@@ -445,9 +445,9 @@ export default class RelocateSubtreeLayoutHelper {
 class DraggingLayoutExecutor extends LayoutExecutor {
   /**
    * Creates a new instance of {@link DraggingLayoutExecutor}.
-   * @param {GraphComponent} graphComponent The given graphComponent
-   * @param {ILayoutAlgorithm} layout The layout algorithm to apply
-   * @param {Set.<INode>} nodes The subgraph on which the layout will be applied
+   * @param {!GraphComponent} graphComponent The given graphComponent
+   * @param {!ILayoutAlgorithm} layout The layout algorithm to apply
+   * @param {!Set.<INode>} nodes The subgraph on which the layout will be applied
    */
   constructor(graphComponent, layout, nodes) {
     super(graphComponent, layout)
@@ -463,7 +463,7 @@ class DraggingLayoutExecutor extends LayoutExecutor {
   /**
    * Creates an {@link IAnimation} that morphs all graph elements except the subgraph to
    * the new layout.
-   * @returns {IAnimation}
+   * @returns {!IAnimation}
    */
   createMorphAnimation() {
     return IAnimation.createLayoutAnimation(this.filteredGraph, this.layoutGraph, this.duration)

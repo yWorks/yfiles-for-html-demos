@@ -30,7 +30,9 @@ import {
   AdjacencyTypes,
   BiconnectedComponents,
   ConnectedComponents,
+  DefaultLabelStyle,
   GraphComponent,
+  IArrow,
   IGraph,
   IModelItem,
   INode,
@@ -39,7 +41,7 @@ import {
   StronglyConnectedComponents
 } from 'yfiles'
 import AlgorithmConfiguration from './AlgorithmConfiguration.js'
-import { MultiColorNodeStyle } from './DemoStyles.js'
+import { getColorForComponent, MultiColorEdgeStyle, MultiColorNodeStyle } from './DemoStyles.js'
 
 /**
  * Configuration options for the Connectivity Algorithms.
@@ -366,39 +368,121 @@ export default class ConnectivityConfig extends AlgorithmConfiguration {
   }
 
   /**
-   * Calculates the k-Core for a given graph and k value
-   * @param {IGraph} graph The graph in which the k-core is visualized
+   * Calculates the k-cores and visualizes them
+   * @param {IGraph} graph The graph in which the k-cores are visualized
    */
   calculateKCoreNodes(graph) {
     this.resetGraph(graph)
-
     if (graph.nodes.size > 0) {
-      const result = new KCoreComponents().run(graph).getKCore(this.kValue)
+      const labelStyle = new DefaultLabelStyle({
+        textFill: 'white'
+      })
 
-      const allKCoreMembers = []
-      result.forEach((node, index) => {
-        allKCoreMembers.push(node)
-        graph.setStyle(node, new MultiColorNodeStyle())
-        node.tag = {
-          id: index,
-          color: null,
-          components: [allKCoreMembers],
-          nodeComponents: [0]
+      const kCoreComponentsResult = new KCoreComponents().run(graph)
+
+      const maximumK = kCoreComponentsResult.maximumK
+      if (maximumK > 0) {
+        const allCores = []
+        for (let coreCount = 1; coreCount <= maximumK; coreCount++) {
+          allCores[coreCount] = []
         }
 
-        graph.edges.forEach((edge, index) => {
-          if (result.contains(edge.sourceNode) && result.contains(edge.targetNode)) {
-            graph.setStyle(edge, this.getMarkedEdgeStyle(false, 0))
-            allKCoreMembers.push(edge)
-            edge.tag = {
-              id: index,
-              color: null,
-              components: [allKCoreMembers],
-              edgeComponent: 0
+        // change the styles for the nodes and edges to the k cores
+        for (let k = 1; k <= maximumK; k++) {
+          const edges = []
+
+          // get all edges from this core
+          const kCore = kCoreComponentsResult.getKCore(k)
+          graph.edges.forEach(edge => {
+            if (kCore.contains(edge.sourceNode) && kCore.contains(edge.targetNode)) {
+              edges.push(edge)
+            }
+          })
+
+          edges.forEach((edge, index) => {
+            const source = edge.sourceNode
+            const target = edge.targetNode
+
+            const sourceStyle = new MultiColorNodeStyle()
+            sourceStyle.useGradient = true
+            graph.setStyle(source, sourceStyle)
+
+            const targetStyle = new MultiColorNodeStyle()
+            targetStyle.useGradient = true
+            graph.setStyle(target, targetStyle)
+
+            const edgeStyle = new MultiColorEdgeStyle(getColorForComponent(k, true))
+            edgeStyle.thickness = 5
+            edgeStyle.targetArrow = IArrow.NONE
+            edgeStyle.useGradient = true
+            graph.setStyle(edge, edgeStyle)
+
+            if (
+              edges.length === 1 ||
+              (index === 0 &&
+                (target === edges[index + 1].sourceNode ||
+                  target === edges[index + 1].targetNode)) ||
+              (index > 0 &&
+                (source === edges[index - 1].sourceNode || source === edges[index - 1].targetNode))
+            ) {
+              allCores[k].push(source)
+              allCores[k].push(edge)
+              allCores[k].push(target)
+            } else {
+              allCores[k].push(target)
+              allCores[k].push(edge)
+              allCores[k].push(source)
+            }
+          })
+        }
+
+        graph.nodes.forEach((node, index) => {
+          const component = []
+          let k
+          for (k = 1; k <= maximumK; k++) {
+            if (allCores[k].indexOf(node) >= 0) {
+              component.push(k)
+            } else {
+              break
             }
           }
+
+          graph.addLabel({
+            owner: node,
+            text: (k - 1).toString(),
+            style: labelStyle,
+            tag: 'k-core' // needed for cleanup in resetGraph
+          })
+
+          node.tag = {
+            id: index,
+            color: null,
+            components: allCores,
+            nodeComponents: component
+          }
         })
-      })
+
+        graph.edges.forEach((edge, index) => {
+          let component = -1
+          for (let i = 1; i <= maximumK; i++) {
+            if (allCores[i].indexOf(edge) > 0) {
+              component = i
+            }
+          }
+          edge.tag = {
+            id: index,
+            color: null,
+            components: allCores,
+            edgeComponent: component
+          }
+        })
+      } else {
+        graph.nodes.forEach((node, index) => {
+          node.tag = {
+            id: index
+          }
+        })
+      }
     }
   }
 
@@ -460,7 +544,9 @@ export default class ConnectivityConfig extends AlgorithmConfiguration {
         return (
           '<p>This part of the demo shows the <em>k-core</em> of the given graph.</p>' +
           '<p>The k-core of an undirected input graph consists of the subgraph components where each node has at least degree k.</p>' +
-          '<p>Use the k-value dropdown box to set various k values.</p>'
+          "<p>Nodes and edges can be members of multiple k-cores. Choose a nodes' color to highlight the k-core related to this color.</p>" +
+          '<p>The number in every node represents the <em>highest</em> k-Core the node belongs to.</p>' +
+          '<p>The k-Core for k=0 is not visualized in this demo, as <em>every</em> node is a member.</p>'
         )
       case ConnectivityConfig.CONNECTED_COMPONENTS:
       default:

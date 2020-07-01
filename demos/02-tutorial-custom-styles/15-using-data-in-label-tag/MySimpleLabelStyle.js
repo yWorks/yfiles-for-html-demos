@@ -67,8 +67,8 @@ export class MySimpleLabelStyle extends LabelStyleBase {
 
   /**
    * Creates the visual appearance of a label.
-   * @param {SVGElement} container
-   * @param {IOrientedRectangle} labelLayout
+   * @param {!SVGElement} container
+   * @param {!IOrientedRectangle} labelLayout
    * @param {*} cache
    */
   render(container, labelLayout, cache) {
@@ -154,7 +154,7 @@ export class MySimpleLabelStyle extends LabelStyleBase {
 
   /**
    * Gets the font used for rendering the label text.
-   * @type {Font}
+   * @type {!Font}
    */
   get font() {
     return this.$font
@@ -162,7 +162,7 @@ export class MySimpleLabelStyle extends LabelStyleBase {
 
   /**
    * Sets the font used for rendering the label text.
-   * @type {Font}
+   * @type {!Font}
    */
   set font(value) {
     this.$font = value
@@ -171,9 +171,9 @@ export class MySimpleLabelStyle extends LabelStyleBase {
   /**
    * Creates the visual for a label to be drawn.
    * @see Overrides {@link LabelStyleBase#createVisual}
-   * @param {IRenderContext} context
-   * @param {ILabel} label
-   * @returns {SvgVisual}
+   * @param {!IRenderContext} context
+   * @param {!ILabel} label
+   * @returns {!SvgVisual}
    */
   createVisual(context, label) {
     // This implementation creates a 'g' element and uses it for the rendering of the label.
@@ -194,10 +194,10 @@ export class MySimpleLabelStyle extends LabelStyleBase {
   /**
    * Re-renders the label using the old visual for performance reasons.
    * @see Overrides {@link LabelStyleBase#updateVisual}
-   * @param {IRenderContext} context
-   * @param {SvgVisual} oldVisual
-   * @param {ILabel} label
-   * @returns {SvgVisual}
+   * @param {!IRenderContext} context
+   * @param {!SvgVisual} oldVisual
+   * @param {!ILabel} label
+   * @returns {!SvgVisual}
    */
   updateVisual(context, oldVisual, label) {
     const container = oldVisual.svgElement
@@ -218,10 +218,10 @@ export class MySimpleLabelStyle extends LabelStyleBase {
 
   /**
    * Creates an object containing all necessary data to create a label visual.
-   * @param {IRenderContext} context
-   * @param {ILabel} label
-   * @param {Font} font
-   * @returns {object}
+   * @param {!IRenderContext} context
+   * @param {!ILabel} label
+   * @param {!Font} font
+   * @returns {!object}
    */
   createRenderDataCache(context, label, font) {
     // //////////////////////////////////////////////////
@@ -260,8 +260,8 @@ export class MySimpleLabelStyle extends LabelStyleBase {
    * Calculates the preferred size for the given label if this style is used for the rendering.
    * The size is calculated from the label's text.
    * @see Overrides {@link LabelStyleBase#getPreferredSize}
-   * @param {ILabel} label
-   * @returns {Size}
+   * @param {!ILabel} label
+   * @returns {!Size}
    */
   getPreferredSize(label) {
     // return size of the textblock plus some space for the button
@@ -285,14 +285,14 @@ export class MySimpleLabelStyle extends LabelStyleBase {
  */
 export class BusinessObject {
   /**
-   * @param {Color} color
+   * @param {!Color} color
    */
   constructor(color) {
     this.$color = color
   }
 
   /**
-   * @type {Color}
+   * @type {!Color}
    */
   get color() {
     return this.$color
@@ -302,7 +302,7 @@ export class BusinessObject {
 // //////////////////////////////////////////////////
 
 /**
- * @returns {SVGGElement}
+ * @returns {!SVGGElement}
  */
 function createButton() {
   const image = window.document.createElementNS('http://www.w3.org/2000/svg', 'image')
@@ -328,7 +328,7 @@ function createButton() {
 
 /**
  * Called when the edit label button inside a label has been clicked.
- * @param {MouseEvent} evt
+ * @param {!MouseEvent} evt
  */
 function onMouseDown(evt) {
   const graphComponentElement = getAncestorElementByAttribute(evt.target, 'id', 'graphComponent')
@@ -349,9 +349,9 @@ function onMouseDown(evt) {
 }
 
 /**
- * @param {Element} descendant
- * @param {string} attributeName
- * @param {string} attributeValue
+ * @param {!Element} descendant
+ * @param {!string} attributeName
+ * @param {!string} attributeValue
  * @returns {?Element}
  */
 function getAncestorElementByAttribute(descendant, attributeName, attributeValue) {

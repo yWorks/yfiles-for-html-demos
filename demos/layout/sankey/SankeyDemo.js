@@ -90,7 +90,7 @@ const colorDirectionBox = document.getElementById('colorDirection')
 
 /**
  * Creates and configures the layout algorithm for the Sankey visualization.
- * @type {?SankeyLayout}
+ * @type {SankeyLayout}
  */
 let sankeyLayout
 /**
@@ -113,7 +113,7 @@ let inLayout = false
 
 /**
  * Runs the demo.
- * @param {object} licenseData
+ * @param {!object} licenseData
  */
 function run(licenseData) {
   License.value = licenseData
@@ -294,8 +294,8 @@ function createInputMode() {
 
 /**
  * Populates the context menu based on the item that is right-clicked.
- * @param {ContextMenu} contextMenu The context menu
- * @param {PopulateItemContextMenuEventArgs.<IModelItem>} args The event args
+ * @param {!ContextMenu} contextMenu The context menu
+ * @param {!PopulateItemContextMenuEventArgs.<IModelItem>} args The event args
  */
 function populateContextMenu(contextMenu, args) {
   args.showMenu = true
@@ -369,7 +369,7 @@ function registerCommands() {
 
 /**
  * Creates the sample graph.
- * @returns {Promise}
+ * @returns {!Promise}
  */
 async function createSampleGraph() {
   const defaultNodeSize = graphComponent.graph.nodeDefaults.size
@@ -428,7 +428,7 @@ async function createSampleGraph() {
 
 /**
  * Adds the given color to the popup menu.
- * @param {Color} color The color to be added
+ * @param {!Color} color The color to be added
  */
 function createColorPopupMenu(color) {
   const div = window.document.createElement('div')
@@ -472,7 +472,7 @@ function createColorPopupMenu(color) {
 
 /**
  * Applies the layout algorithm to the given graphComponent.
- * @returns {Promise}
+ * @returns {!Promise}
  */
 async function runLayout() {
   const graph = graphComponent.graph
@@ -556,7 +556,7 @@ function normalizeThickness() {
 
 /**
  * Assigns a new style to the given label.
- * @param {ILabel} label The given label
+ * @param {!ILabel} label The given label
  */
 function setEdgeLabelColor(label) {
   if (label.owner) {
@@ -570,7 +570,7 @@ function setEdgeLabelColor(label) {
 
 /**
  * Updates the edge stroke to the appropriate color and thickness
- * @param {IEdge} edge The edge to update the stroke
+ * @param {!IEdge} edge The edge to update the stroke
  */
 function updateEdgeStroke(edge) {
   const stroke = edge.style.stroke
@@ -583,7 +583,7 @@ function updateEdgeStroke(edge) {
 /**
  * Sets the style of an edge to {@link BezierEdgeStyle} with the appropriate
  * color and thickness
- * @param {IEdge} edge The edge to set the new style on
+ * @param {!IEdge} edge The edge to set the new style on
  */
 function setEdgeStyle(edge) {
   graphComponent.graph.setStyle(
@@ -596,15 +596,15 @@ function setEdgeStyle(edge) {
 
 /**
  * Returns the color for the given node.
- * @param {INode} node The given node
- * @returns {Color}
+ * @param {!INode} node The given node
+ * @returns {!Color}
  */
 function getNodeColor(node) {
   return !node.tag ? colors[0].dark : colors[node.tag.colorId].dark
 }
 
 /**
- * @param {Color} color
+ * @param {!Color} color
  * @returns {number}
  */
 function getColorId(color) {
@@ -613,8 +613,8 @@ function getColorId(color) {
 
 /**
  * Updates the graph based on the given label's text change.
- * @param {ILabel} label The given label
- * @returns {Promise}
+ * @param {!ILabel} label The given label
+ * @returns {!Promise}
  */
 async function onEdgeLabelChanged(label) {
   // for cosmetic reasons only
@@ -650,7 +650,7 @@ function assignEdgeColors() {
 }
 
 /**
- * @param {INode} node
+ * @param {!INode} node
  */
 function assignEdgeColorsAtNode(node) {
   const outgoing = colorDirectionBox.value === 'outgoing'

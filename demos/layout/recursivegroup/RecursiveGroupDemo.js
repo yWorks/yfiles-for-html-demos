@@ -62,7 +62,7 @@ let graphComponent = null
 
 /**
  * Runs the demo.
- * @param {object} licenseData
+ * @param {!object} licenseData
  */
 function run(licenseData) {
   License.value = licenseData
@@ -79,7 +79,7 @@ function run(licenseData) {
 
 /**
  * Runs a table layout or a three tier layout depending on the selected sample.
- * @returns {Promise}
+ * @returns {!Promise}
  */
 async function runLayout() {
   setUIDisabled(true)
@@ -160,7 +160,7 @@ function registerCommands() {
 
 /**
  * Loads the table or three-tire.
- * @returns {Promise}
+ * @returns {!Promise}
  */
 async function loadSample() {
   const filename = document.getElementById('select-sample').value.substring(8)

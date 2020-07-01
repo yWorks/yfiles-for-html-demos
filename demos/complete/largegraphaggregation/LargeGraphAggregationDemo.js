@@ -126,8 +126,8 @@ const maximumClusterSizeRange = document.getElementById('maximum-cluster-size-ra
 
 /**
  * Bootstraps the demo.
- * @param {object} licenseData
- * @returns {Promise}
+ * @param {!object} licenseData
+ * @returns {!Promise}
  */
 async function run(licenseData) {
   License.value = licenseData
@@ -197,7 +197,7 @@ function initializeToggleAggregation() {
 
 /**
  * Toggles the aggregation of a node, runs a layout and sets the current item.
- * @param {INode} node
+ * @param {!INode} node
  */
 function toggleAggregationNode(node) {
   if (!aggregationHelper.aggregateGraph.isAggregationItem(node)) {
@@ -231,8 +231,8 @@ function initializeSmartNavigation() {
 
 /**
  * Zooms to the suitable point.
- * @param {IEdge} edge The element that we clicked.
- * @param {Point} currentMouseClickLocation The arguments that is used by the event.
+ * @param {!IEdge} edge The element that we clicked.
+ * @param {!Point} currentMouseClickLocation The arguments that is used by the event.
  */
 function zoomToLocation(edge, currentMouseClickLocation) {
   // Get the point where we should zoom in
@@ -245,8 +245,8 @@ function zoomToLocation(edge, currentMouseClickLocation) {
 
 /**
  * Gets the focus point.
- * @param {IEdge} edge The element that we clicked.
- * @returns {Point} The point that we should zoom to.
+ * @param {!IEdge} edge The element that we clicked.
+ * @returns {!Point} The point that we should zoom to.
  */
 function getFocusPoint(edge) {
   // if the source and the target node are in the view port, then zoom to the middle point of the edge
@@ -292,8 +292,8 @@ function initializeHighlight() {
 }
 
 /**
- * @param {object} sender
- * @param {HoveredItemChangedEventArgs} evt
+ * @param {!object} sender
+ * @param {!HoveredItemChangedEventArgs} evt
  */
 function onHoveredItemChanged(sender, evt) {
   // first remove previous highlights
@@ -326,7 +326,7 @@ function onHoveredItemChanged(sender, evt) {
 }
 
 /**
- * @param {(INode|IEdge)} item
+ * @param {!(INode|IEdge)} item
  */
 function addHighlight(item) {
   if (
@@ -398,7 +398,7 @@ function initializeHighlightStyles() {
 
 /**
  * Runs the smart {@link NodeAggregation} algorithm with the settings from the properties panel.
- * @returns {Promise}
+ * @returns {!Promise}
  */
 async function runAggregation() {
   await setUiDisabled(true)
@@ -416,7 +416,7 @@ async function runAggregation() {
 
 /**
  * Switches between the view with hierarchy nodes and without and runs an appropriate layout.
- * @returns {Promise}
+ * @returns {!Promise}
  */
 async function switchView() {
   if (graphComponent.graph instanceof AggregationGraphWrapper) {
@@ -433,7 +433,7 @@ async function switchView() {
 /**
  * Creates a new {@link FilteredGraphWrapper} that shows the currently visible original nodes.
  * Nodes without currently visible edges are also filtered out.
- * @returns {FilteredGraphWrapper}
+ * @returns {!FilteredGraphWrapper}
  */
 function createFilteredView() {
   // create a new FilteredGraphWrapper that filters the original graph and shows only the currently visible nodes
@@ -465,8 +465,8 @@ function createFilteredView() {
 
 /**
  * Creates a new {@link AggregationGraphWrapper} and runs the aggregation algorithm.
- * @param {IGraph} originalGraph
- * @returns {Promise}
+ * @param {!IGraph} originalGraph
+ * @returns {!Promise}
  */
 async function runAggregationAndReplaceGraph(originalGraph) {
   const aggregateGraph = new AggregationGraphWrapper(originalGraph)
@@ -483,9 +483,9 @@ async function runAggregationAndReplaceGraph(originalGraph) {
 /**
  * Asynchronously runs the {@link NodeAggregation} algorithm with the settings from the properties panel.
  * Afterwards, the {@link NodeAggregationResult} is applied to the <code>aggregateGraph</code>.
- * @param {IGraph} originalGraph
- * @param {AggregationGraphWrapper} aggregateGraph
- * @returns {Promise}
+ * @param {!IGraph} originalGraph
+ * @param {!AggregationGraphWrapper} aggregateGraph
+ * @returns {!Promise}
  */
 async function applyAggregation(originalGraph, aggregateGraph) {
   return new Promise(resolve => {
@@ -502,7 +502,7 @@ async function applyAggregation(originalGraph, aggregateGraph) {
 }
 
 /**
- * @returns {NodeAggregation}
+ * @returns {!NodeAggregation}
  */
 function createConfiguredAggregation() {
   const aggregationMode = aggregationModeSelect.value
@@ -523,8 +523,8 @@ function createConfiguredAggregation() {
 
 /**
  * Runs a balloon layout where the hierarchy edges are the tree edges and original edges are bundled.
- * @param {IListEnumerable.<INode>} [affectedNodes]
- * @returns {Promise}
+ * @param {!IListEnumerable.<INode>} [affectedNodes]
+ * @returns {!Promise}
  */
 async function runBalloonLayout(affectedNodes) {
   // create the balloon layout
@@ -568,7 +568,7 @@ async function runBalloonLayout(affectedNodes) {
 }
 
 /**
- * @returns {Promise}
+ * @returns {!Promise}
  */
 async function runCircularLayout() {
   const circularLayout = new CircularLayout()
@@ -646,7 +646,7 @@ function initializeStyles() {
 /**
  * Enables/disables the UI.
  * @param {boolean} disabled
- * @returns {Promise}
+ * @returns {!Promise}
  */
 function setUiDisabled(disabled) {
   return new Promise(resolve => {
@@ -672,8 +672,8 @@ function setUiDisabled(disabled) {
 
 /**
  * Creates an initial sample graph.
- * @param {IGraph} graph
- * @returns {IGraph}
+ * @param {!IGraph} graph
+ * @returns {!IGraph}
  */
 function loadGraph(graph) {
   // set default styles that are applied to the loaded graph
@@ -754,9 +754,9 @@ function onInfoPanelPropertiesChanged() {
  */
 class ZoomToNodesLayoutExecutor extends LayoutExecutor {
   /**
-   * @param {IListEnumerable.<INode>} nodes
-   * @param {GraphComponent} graphComponent
-   * @param {ILayoutAlgorithm} layout
+   * @param {!IListEnumerable.<INode>} nodes
+   * @param {!GraphComponent} graphComponent
+   * @param {!ILayoutAlgorithm} layout
    */
   constructor(nodes, graphComponent, layout) {
     super(graphComponent, layout)
@@ -764,8 +764,8 @@ class ZoomToNodesLayoutExecutor extends LayoutExecutor {
   }
 
   /**
-   * @param {Rect} targetBounds
-   * @returns {IAnimation}
+   * @param {!Rect} targetBounds
+   * @returns {!IAnimation}
    */
   createViewportAnimation(targetBounds) {
     if (this.nodes.size === 0) {

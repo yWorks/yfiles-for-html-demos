@@ -30,25 +30,28 @@ import { INode, IRenderContext, NodeStyleBase, Visual, WebGLVisual } from 'yfile
 
 export default class IsometricWebGLNodeStyle extends NodeStyleBase {
   /**
-   * @param {IRenderContext} context
-   * @param {INode} node
-   * @returns {Visual}
+   * @param {!IRenderContext} context
+   * @param {!INode} node
+   * @returns {!Visual}
    */
   createVisual(context, node) {
     return new IsometricWebGLNodeStyleVisual(node)
   }
 
   /**
-   * @param {IRenderContext} context
-   * @param {Visual} oldVisual
-   * @param {INode} node
-   * @returns {Visual}
+   * @param {!IRenderContext} context
+   * @param {!Visual} oldVisual
+   * @param {!INode} node
+   * @returns {!Visual}
    */
   updateVisual(context, oldVisual, node) {
     return oldVisual
   }
 }
 
+/**
+ * @typedef {Array.<number>} VertexTuple
+ */
 /**
  * @typedef {Object} ColorLike
  * @property {number} r
@@ -62,7 +65,7 @@ export default class IsometricWebGLNodeStyle extends NodeStyleBase {
  */
 class IsometricWebGLNodeStyleVisual extends WebGLVisual {
   /**
-   * @param {INode} node
+   * @param {!INode} node
    */
   constructor(node) {
     super()
@@ -70,8 +73,8 @@ class IsometricWebGLNodeStyleVisual extends WebGLVisual {
   }
 
   /**
-   * @param {IRenderContext} ctx
-   * @param {WebGLRenderingContext} gl
+   * @param {!IRenderContext} ctx
+   * @param {!WebGLRenderingContext} gl
    */
   render(ctx, gl) {
     // a vertex consists of 7 float values, 3 for position (x, y, z) and 4 for the color (r, g, b, a)
@@ -210,9 +213,9 @@ class IsometricWebGLNodeStyleVisual extends WebGLVisual {
 }
 
 /**
- * @param {ColorLike} c
+ * @param {!ColorLike} c
  * @param {number} factor
- * @returns {ColorLike}
+ * @returns {!ColorLike}
  */
 function multiplyColor(c, factor) {
   return {

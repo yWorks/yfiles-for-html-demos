@@ -59,7 +59,7 @@ export class ComponentDropInputMode extends ItemDropInputMode {
 
   /**
    * Gets the currently dragged component from the drop data.
-   * @type {IGraph}
+   * @type {!IGraph}
    */
   get draggedItem() {
     return this.dropData
@@ -69,12 +69,12 @@ export class ComponentDropInputMode extends ItemDropInputMode {
    * Creates the component in the graph after it has been dropped.
    * This method is called by the  {@link ItemDropInputMode#itemCreator} that
    * is set as default on this class.
-   * @param {IInputModeContext} context The context for which the component should be created.
-   * @param {IGraph} graph The  {@link IGraph Graph} in which to create the component.
+   * @param {!IInputModeContext} context The context for which the component should be created.
+   * @param {!IGraph} graph The  {@link IGraph Graph} in which to create the component.
    * @param {*} draggedGraph The component that was dragged and should therefore be created.
    * The nodes and edges of the component will be copied into the {@link ComponentDropInputMode#graph}.
    * @param {?IModelItem} dropTarget The  {@link IModelItem} on which the component is dropped. This is ignored here.
-   * @param {Point} dropLocation The location where the component has been dropped.
+   * @param {!Point} dropLocation The location where the component has been dropped.
    * @returns {?IGraph} A newly created component.
    */
   createComponent(context, graph, draggedGraph, dropTarget, dropLocation) {
@@ -109,7 +109,7 @@ export class ComponentDropInputMode extends ItemDropInputMode {
 
   /**
    * Fills the specified graph that is used to preview the dragged component.
-   * @param {IGraph} previewGraph The preview graph to fill.
+   * @param {!IGraph} previewGraph The preview graph to fill.
    */
   populatePreviewGraph(previewGraph) {
     const draggedGraph = this.draggedItem
@@ -126,8 +126,8 @@ export class ComponentDropInputMode extends ItemDropInputMode {
   /**
    * Updates the {@link ComponentDropInputMode#previewGraph preview graph} so the dragged component is
    * displayed at the specified {@link ComponentDropInputMode#setDragLocation}.
-   * @param {IGraph} previewGraph The preview graph to update.
-   * @param {Point} dragLocation The current drag location.
+   * @param {!IGraph} previewGraph The preview graph to update.
+   * @param {!Point} dragLocation The current drag location.
    */
   updatePreview(previewGraph, dragLocation) {
     // move the preview graph to the drag location
@@ -147,8 +147,8 @@ export class ComponentDropInputMode extends ItemDropInputMode {
 
   /**
    * Returns the center of the {@link ComponentDropInputMode#graph}.
-   * @param {IGraph} graph
-   * @returns {Point}
+   * @param {!IGraph} graph
+   * @returns {!Point}
    */
   getCenter(graph) {
     let bounds = Rect.EMPTY
@@ -162,8 +162,8 @@ export class ComponentDropInputMode extends ItemDropInputMode {
 
   /**
    * Moves the {@link ComponentDropInputMode#graph} by {@link ComponentDropInputMode#delta}.
-   * @param {IGraph} graph
-   * @param {Point} delta
+   * @param {!IGraph} graph
+   * @param {!Point} delta
    */
   move(graph, delta) {
     graph.nodes.forEach(node => {
@@ -173,12 +173,12 @@ export class ComponentDropInputMode extends ItemDropInputMode {
 
   /**
    * Initializes the information for a drag and drop operation from the component palette and starts the operation.
-   * @param {HTMLElement} dragSource
-   * @param {IGraph} component
-   * @param {DragDropEffects} dragDropEffects
+   * @param {!HTMLElement} dragSource
+   * @param {!IGraph} component
+   * @param {!DragDropEffects} dragDropEffects
    * @param {boolean} [useCssCursors=true]
    * @param {?HTMLElement} [dragPreview=null]
-   * @returns {DragSource}
+   * @returns {!DragSource}
    */
   static startDrag(
     dragSource,

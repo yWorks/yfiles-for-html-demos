@@ -359,6 +359,7 @@ function getDemoData() {
     "demoPath": "style/templatestyles/index.html",
     "summary": "Shows SVG template styles for nodes, labels and ports.",
     "category": "style",
+    "packageType": "no-viewer",
     "thumbnailPath": "resources/image/templatestyles.png",
     "sourcePath": "style/templatestyles/TemplateStylesDemo.js",
     "tags": [
@@ -1617,6 +1618,7 @@ function getDemoData() {
     "demoPath": "toolkit/angular/README.html",
     "summary": "Shows how to use yFiles for HTML in an Angular app (Angular 2 and newer) using Angular CLI.",
     "category": "integration",
+    "packageType": "no-viewer",
     "thumbnailPath": "resources/image/angular.png",
     "sourcePath": "",
     "tags": [
@@ -1638,6 +1640,7 @@ function getDemoData() {
     "demoPath": "toolkit/angular1/index.html",
     "summary": "Shows how to use yFiles for HTML in an AngularJS 1 app.",
     "category": "integration",
+    "packageType": "no-viewer",
     "thumbnailPath": "resources/image/angularjs1.png",
     "sourcePath": "toolkit/angular1/app.js",
     "tags": [
@@ -1656,6 +1659,7 @@ function getDemoData() {
     "demoPath": "toolkit/graphql/index.html",
     "summary": "Shows how to load data from a GraphQL service and display it with yFiles for HTML.",
     "category": "integration",
+    "packageType": "no-viewer",
     "thumbnailPath": "resources/image/graphql.png",
     "sourcePath": "toolkit/graphql/GraphQlDemo.js",
     "tags": [
@@ -1675,6 +1679,7 @@ function getDemoData() {
     "demoPath": "toolkit/neo4j/index.html",
     "summary": "Shows how to load data from a Neo4j database and display it with yFiles for HTML.",
     "category": "integration",
+    "packageType": "no-viewer",
     "thumbnailPath": "resources/image/neo4j.png",
     "sourcePath": "integration/neo4j/Neo4jDemo.js",
     "tags": [
@@ -1711,6 +1716,7 @@ function getDemoData() {
     "demoPath": "toolkit/react/README.html",
     "summary": "Shows how to use yFiles for HTML with the React library.",
     "category": "integration",
+    "packageType": "no-viewer",
     "thumbnailPath": "resources/image/react.png",
     "sourcePath": "",
     "tags": [
@@ -1729,6 +1735,7 @@ function getDemoData() {
     "demoPath": "toolkit/react-typescript/README.html",
     "summary": "Shows how to integrate yFiles in a basic React application with TypeScript based on Create React App.",
     "category": "integration",
+    "packageType": "no-viewer",
     "thumbnailPath": "resources/image/react.png",
     "sourcePath": "",
     "tags": [
@@ -1803,6 +1810,7 @@ function getDemoData() {
     "demoPath": "toolkit/vuejs/index.html",
     "summary": "Shows how to use yFiles for HTML with Vue.js.",
     "category": "integration",
+    "packageType": "no-viewer",
     "thumbnailPath": "resources/image/vuejs.png",
     "sourcePath": "toolkit/vuejs/VuejsDemo.js",
     "tags": [
@@ -2256,7 +2264,7 @@ function getDemoData() {
     "id": "webpack-lazy-yfiles",
     "name": "Webpack Lazy Load yFiles",
     "demoPath": "loading/webpack-lazy-yfiles/README.html",
-    "summary": "Shows how to lazy load yFiles in a <a href=\"https://webpack.js.org/\" target=\"_blank\">webpack</a> project with dynamic imports.",
+    "summary": "Shows how to lazily load yFiles in a <a href=\"https://webpack.js.org/\" target=\"_blank\">webpack</a> project with dynamic imports.",
     "category": "loading",
     "thumbnailPath": "resources/image/webpack.png",
     "sourcePath": "loading/webpack-lazy-loading/src/webpack-demo.js",
@@ -2266,6 +2274,7 @@ function getDemoData() {
       "deployment"
     ],
     "keywords": [
+      "v2.3.0.0",
       "hierarchic",
       "dynamic imports"
     ]
@@ -2274,7 +2283,7 @@ function getDemoData() {
     "id": "webpack-lazy-layout",
     "name": "Webpack Lazy Load Layout",
     "demoPath": "loading/webpack-lazy-layout/README.html",
-    "summary": "Shows shows how to lazy load specific yFiles modules in a <a href=\"https://webpack.js.org\" target=\"_blank\">webpack</a> project with dynamic imports.",
+    "summary": "Shows how to lazily load selected yFiles modules in a <a href=\"https://webpack.js.org\" target=\"_blank\">webpack</a> project with dynamic imports.",
     "category": "loading",
     "thumbnailPath": "resources/image/webpack.png",
     "sourcePath": "loading/webpack-lazy-layout/src/webpack-demo.js",
@@ -2284,6 +2293,7 @@ function getDemoData() {
       "deployment"
     ],
     "keywords": [
+      "v2.3.0.0",
       "hierarchic",
       "dynamic imports"
     ]
@@ -2697,9 +2707,32 @@ function getDemoData() {
     ]
   },
   {
+    "id": "without-view",
+    "name": "Layout Without View",
+    "demoPath": "layout/without-view/index.html",
+    "summary": "Shows how to use the graph analysis and layout algorithms without a view and without the IGraph API",
+    "category": "layout",
+    "packageType": "layout",
+    "thumbnailPath": "resources/image/without-view.png",
+    "tags": [
+      "headless",
+      "layout",
+      "analysis"
+    ],
+    "keywords": [
+      "invisible",
+      "background",
+      "memory",
+      "centrality",
+      "hierarchic",
+      "typescript"
+    ],
+    "ts": true
+  },
+  {
     "id": "tutorial-getting-started--graphcomponent",
     "name": "01 Creating the View",
-    "summary": "Introduces class GraphComponent, which is the central UI element for working with graphs.",
+    "summary": "Introduces the GraphComponent class, the central UI element for working with graphs.",
     "demoPath": "01-tutorial-getting-started/01-graphcomponent/index.html",
     "thumbnailPath": "resources/image/tutorial1step1.png",
     "category": "tutorial-getting-started",
@@ -2853,6 +2886,7 @@ function getDemoData() {
     "demoPath": "01-tutorial-getting-started/10-layout/index.html",
     "thumbnailPath": "resources/image/tutorial1step10.png",
     "category": "tutorial-getting-started",
+    "packageType": "no-viewer",
     "tags": [
       "tutorial",
       "getting started",
@@ -2870,6 +2904,7 @@ function getDemoData() {
     "demoPath": "01-tutorial-getting-started/11-layout-data/index.html",
     "thumbnailPath": "resources/image/tutorial1step11.png",
     "category": "tutorial-getting-started",
+    "packageType": "no-viewer",
     "tags": [
       "tutorial",
       "getting started"
@@ -2887,6 +2922,7 @@ function getDemoData() {
     "demoPath": "01-tutorial-getting-started/12-graph-analysis/index.html",
     "thumbnailPath": "resources/image/tutorial1step10.png",
     "category": "tutorial-getting-started",
+    "packageType": "no-viewer",
     "tags": [
       "tutorial",
       "getting started",
@@ -3350,6 +3386,7 @@ function getDemoData() {
     "demoPath": "03-tutorial-application-features/building-swimlanes-from-data/index.html",
     "thumbnailPath": "resources/image/tutorial3step4.png",
     "category": "tutorial-application-features",
+    "packageType": "no-viewer",
     "tags": [
       "JSON",
       "lanes",

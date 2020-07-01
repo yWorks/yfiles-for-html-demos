@@ -62,7 +62,7 @@ let copyGraphComponent = null
 
 /**
  * Bootstraps the demo.
- * @param {object} licenseData
+ * @param {!object} licenseData
  */
 function run(licenseData) {
   License.value = licenseData
@@ -129,7 +129,7 @@ function copyGraph() {
 /**
  * Initializes the defaults for the styles in this tutorial.
  *
- * @param {IGraph} graph The graph.
+ * @param {!IGraph} graph The graph.
  */
 function initTutorialDefaults(graph) {
   // configure defaults for normal nodes and their labels
@@ -159,7 +159,7 @@ function initTutorialDefaults(graph) {
 /**
  * Creates an initial sample graph.
  *
- * @param {IGraph} graph The graph.
+ * @param {!IGraph} graph The graph.
  */
 function createGraph(graph) {
   const node1 = graph.createNodeAt([110, 20])

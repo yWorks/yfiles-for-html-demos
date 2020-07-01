@@ -34,8 +34,8 @@ import { CanvasComponent, HtmlCanvasVisual, IRectangle, IRenderContext } from 'y
 export default class CircleVisual extends HtmlCanvasVisual {
   /**
    * Creates a new instance.
-   * @param {IRectangle} layout The layout of the node to render.
-   * @param {string} color The color of the node to render.
+   * @param {!IRectangle} layout The layout of the node to render.
+   * @param {!string} color The color of the node to render.
    */
   constructor(layout, color) {
     super()
@@ -46,8 +46,8 @@ export default class CircleVisual extends HtmlCanvasVisual {
   /**
    * Paints onto the context using HTML5 Canvas operations.
    * Paints a simple filled ellipse with the layout and color.
-   * @param {IRenderContext} context The render context of the {@link CanvasComponent}
-   * @param {CanvasRenderingContext2D} canvas2d The HTML5 Canvas context to use for rendering.
+   * @param {!IRenderContext} context The render context of the {@link CanvasComponent}
+   * @param {!CanvasRenderingContext2D} canvas2d The HTML5 Canvas context to use for rendering.
    * @see Overrides {@link HtmlCanvasVisual#paint}
    */
   paint(context, canvas2d) {

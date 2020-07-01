@@ -91,9 +91,9 @@ export class SourceDefinitionBuilderConnector {
  */
 export class NodesSourceDefinitionBuilderConnector extends SourceDefinitionBuilderConnector {
   /**
-   * @param {NodesSourceDefinition} nodesSourceDefinition the {@link NodesSourceDefinition} to connect
-   * @param {NodesSource} nodesSource the {@link NodesSource} to connect
-   * @param {GraphBuilder} graphBuilder the {@link GraphBuilder} to set the updated data to
+   * @param {!NodesSourceDefinition} nodesSourceDefinition the {@link NodesSourceDefinition} to connect
+   * @param {!NodesSource} nodesSource the {@link NodesSource} to connect
+   * @param {!GraphBuilder} graphBuilder the {@link GraphBuilder} to set the updated data to
    */
   constructor(nodesSourceDefinition, nodesSource, graphBuilder) {
     super()
@@ -128,9 +128,9 @@ export class NodesSourceDefinitionBuilderConnector extends SourceDefinitionBuild
  */
 export class EdgesSourceDefinitionBuilderConnector extends SourceDefinitionBuilderConnector {
   /**
-   * @param {EdgesSourceDefinition} edgesSourceDefinition the {@link EdgesSourceDefinition} to connect
-   * @param {EdgesSource} edgesSource the {@link EdgesSource} to connect
-   * @param {GraphBuilder} graphBuilder the {@link GraphBuilder} to set the updated data to
+   * @param {!EdgesSourceDefinition} edgesSourceDefinition the {@link EdgesSourceDefinition} to connect
+   * @param {!EdgesSource} edgesSource the {@link EdgesSource} to connect
+   * @param {!GraphBuilder} graphBuilder the {@link GraphBuilder} to set the updated data to
    */
   constructor(edgesSourceDefinition, edgesSource, graphBuilder) {
     super()
@@ -167,8 +167,8 @@ let bindingErrorCaught = false
  * If the parameter is a function definition, a function object is
  * returned. Otherwise, a binding is created using the parameter as the
  * property path.
- * @returns {function} The source or target binding
- * @param {string} bindingString
+ * @returns {!function} The source or target binding
+ * @param {!string} bindingString
  */
 function createBinding(bindingString) {
   if (bindingString.indexOf('function') >= 0 || bindingString.indexOf('=>') >= 0) {
@@ -201,8 +201,8 @@ function createBinding(bindingString) {
 
 /**
  * Parses the string entered by the user and returns the parsed object
- * @param {string} data the data entered by the user
- * @returns {Array.<*>} the parsed data
+ * @param {!string} data the data entered by the user
+ * @returns {!Array.<*>} the parsed data
  */
 function parseData(data) {
   try {
@@ -227,7 +227,7 @@ function parseData(data) {
  */
 export class SourcesFactory {
   /**
-   * @param {GraphBuilder} graphBuilder
+   * @param {!GraphBuilder} graphBuilder
    */
   constructor(graphBuilder) {
     this.graphBuilder = graphBuilder
@@ -235,10 +235,10 @@ export class SourcesFactory {
 
   /**
    * Creates a {link NodesSourceDefinitionBuilderConnector}
-   * @param {string} sourceName the name of the source
+   * @param {!string} sourceName the name of the source
    * @param nodesSourceDefinition the {@link NodesSourceDefinition} to use
-   * @param {NodesSourceDefinition} [nodesSourceDefinition]
-   * @returns {NodesSourceDefinitionBuilderConnector}
+   * @param {!NodesSourceDefinition} [nodesSourceDefinition]
+   * @returns {!NodesSourceDefinitionBuilderConnector}
    */
   createNodesSourceConnector(sourceName, nodesSourceDefinition) {
     const definition =
@@ -263,10 +263,10 @@ export class SourcesFactory {
 
   /**
    * Creates a {link EdgesSourceDefinitionBuilderConnector}
-   * @param {string} sourceName the name of the source
+   * @param {!string} sourceName the name of the source
    * @param edgesSourceDefinition the {@link EdgesSourceDefinition} to use
-   * @param {EdgesSourceDefinition} [edgesSourceDefinition]
-   * @returns {EdgesSourceDefinitionBuilderConnector}
+   * @param {!EdgesSourceDefinition} [edgesSourceDefinition]
+   * @returns {!EdgesSourceDefinitionBuilderConnector}
    */
   createEdgesSourceConnector(sourceName, edgesSourceDefinition) {
     const definition =
@@ -311,8 +311,8 @@ export class SourcesFactory {
   /**
    * Creates an example {link NodesSourceDefinition} for use in a newly created nodes sources
    * {@link NodesSourceDefinitionBuilderConnector}
-   * @param {string} sourceName the name of the source
-   * @returns {NodesSourceDefinition}
+   * @param {!string} sourceName the name of the source
+   * @returns {!NodesSourceDefinition}
    */
   static createDefaultNodesSourceDefinition(sourceName) {
     const nodesSourceDefinition = new NodesSourceDefinition()
@@ -327,8 +327,8 @@ export class SourcesFactory {
   /**
    * Creates an example {link EdgesSourceDefinition} for use in a newly created edges sources
    * {@link EdgesSourceDefinitionBuilderConnector}
-   * @param {string} sourceName
-   * @returns {EdgesSourceDefinition}
+   * @param {!string} sourceName
+   * @returns {!EdgesSourceDefinition}
    */
   static createDefaultEdgesSourceDefinition(sourceName) {
     const edgesSourceDefinition = new EdgesSourceDefinition()

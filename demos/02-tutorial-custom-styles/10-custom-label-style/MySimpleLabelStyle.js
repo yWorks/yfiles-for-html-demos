@@ -56,7 +56,7 @@ export default class MySimpleLabelStyle extends LabelStyleBase {
 
   /**
    * Gets the font used for rendering the label text.
-   * @type {Font}
+   * @type {!Font}
    */
   get font() {
     return this.$font
@@ -64,7 +64,7 @@ export default class MySimpleLabelStyle extends LabelStyleBase {
 
   /**
    * Sets the typeface used for rendering the label text.
-   * @type {Font}
+   * @type {!Font}
    */
   set font(value) {
     this.$font = value
@@ -72,9 +72,9 @@ export default class MySimpleLabelStyle extends LabelStyleBase {
 
   /**
    * Creates the visual appearance of a label.
-   * @param {ILabel} label
-   * @param {Element} container
-   * @param {IOrientedRectangle} labelLayout
+   * @param {!ILabel} label
+   * @param {!Element} container
+   * @param {!IOrientedRectangle} labelLayout
    */
   render(label, container, labelLayout) {
     // background rectangle
@@ -131,9 +131,9 @@ export default class MySimpleLabelStyle extends LabelStyleBase {
   /**
    * Creates the visual for a label to be drawn.
    * @see Overrides {@link LabelStyleBase#createVisual}
-   * @param {IRenderContext} context
-   * @param {ILabel} label
-   * @returns {SvgVisual}
+   * @param {!IRenderContext} context
+   * @param {!ILabel} label
+   * @returns {!SvgVisual}
    */
   createVisual(context, label) {
     // This implementation creates a 'g' element and uses it for the rendering of the label.
@@ -152,8 +152,8 @@ export default class MySimpleLabelStyle extends LabelStyleBase {
   /**
    * Calculates the preferred size for the given label if this style is used for the rendering.
    * @see Overrides {@link LabelStyleBase#getPreferredSize}
-   * @param {ILabel} label
-   * @returns {Size}
+   * @param {!ILabel} label
+   * @returns {!Size}
    */
   getPreferredSize(label) {
     return new Size(80, 15)

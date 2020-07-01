@@ -115,12 +115,6 @@ let directed = false
 let useUniformWeights = true
 
 /**
- * Specifies the k value tu use for k-Core algorithm
- * @type {number}
- */
-let kValue = 0
-
-/**
  * Marks the elements that are changed from user actions... like add/remove node, add/remove edge.
  */
 let incrementalNodesMapper = null
@@ -147,8 +141,6 @@ let sampleComboBox = null
 let directionComboBox = null
 
 let uniformEdgeWeightsComboBox = null
-
-let kValueComboBox = null
 
 /** @type {Mapper.<INode, boolean>} */
 let incrementalElements = null
@@ -242,11 +234,6 @@ async function run(licenseData) {
     uniformEdgeWeightsComboBox.disabled = true
   }
 
-  if (kValueComboBox !== null) {
-    fillComboBox(kValueComboBox, ['1', '2', '3', '4', '5'])
-    kValueComboBox.disabled = true
-  }
-
   // initialize the graph and the defaults
   initializeGraph()
 
@@ -275,7 +262,6 @@ function init() {
   previousButton = document.getElementById('previousButton')
   directionComboBox = document.getElementById('directionComboBox')
   uniformEdgeWeightsComboBox = document.getElementById('uniformEdgeWeightsComboBox')
-  kValueComboBox = document.getElementById('kValueComboBox')
 }
 
 /**
@@ -674,10 +660,6 @@ function registerCommands() {
     onUniformEdgeWeightsComboBoxSelectedIndexChanged()
   })
 
-  bindChangeListener("select[data-command='SetKValue']", () => {
-    onKValueComboBoxSelectedIndexChanged()
-  })
-
   bindAction("button[data-command='GenerateEdgeLabels']", () => {
     onGenerateEdgeLabels()
   })
@@ -698,7 +680,6 @@ function applyAlgorithm() {
 
   currentConfig.directed = directed
   currentConfig.useUniformWeights = useUniformWeights
-  currentConfig.kValue = kValue
 
   // apply the algorithm
   currentConfig.apply(graphComponent)
@@ -949,16 +930,6 @@ function onUniformEdgeWeightsComboBoxSelectedIndexChanged() {
   if (!uniformEdgeWeightsComboBox.disabled) {
     useUniformWeights = uniformEdgeWeightsComboBox.selectedIndex === 0
     onGenerateEdgeLabels()
-  }
-}
-
-/**
- * Handles a change on the kValueComboBox.
- */
-function onKValueComboBoxSelectedIndexChanged() {
-  if (!kValueComboBox.disabled) {
-    kValue = kValueComboBox.selectedIndex + 1
-    runLayout(true, false, true).catch(handleError)
   }
 }
 
@@ -1330,15 +1301,6 @@ function algorithmSupportsWeights() {
 }
 
 /**
- * Returns true if the algorithm uses the k value. This is only the k-core algorithm
- * @return {boolean}
- */
-function algorithmUsesKValue() {
-  const selectedIndex = algorithmComboBox.selectedIndex
-  return selectedIndex === 5
-}
-
-/**
  * Releases the locks of the demo.
  */
 function releaseLocks() {
@@ -1358,7 +1320,6 @@ function setUIDisabled(disabled) {
   directionComboBox.disabled = disabled
   algorithmComboBox.disabled = disabled
   uniformEdgeWeightsComboBox.disabled = disabled
-  kValueComboBox.disabled = disabled
   document.getElementById('new').disabled = disabled
   document.getElementById('generateEdgeLabels').disabled = disabled
   document.getElementById('removeEdgeLabels').disabled = disabled
@@ -1389,8 +1350,6 @@ function updateUIState() {
 
   uniformEdgeWeightsComboBox.disabled =
     !configOptionsValid || inLayout || !algorithmSupportsWeights()
-
-  kValueComboBox.disabled = !algorithmUsesKValue()
 
   document.getElementById('new').disabled = false
   document.getElementById('generateEdgeLabels').disabled =

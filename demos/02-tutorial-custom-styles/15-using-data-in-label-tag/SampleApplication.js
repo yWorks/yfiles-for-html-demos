@@ -54,8 +54,8 @@ import loadJson from '../../resources/load-json.js'
 /**
  * Create some exemplary business objects which are used by the label style
  * to get the background color and put them into the labels' tags.
- * @param {ILabel} label0
- * @param {ILabel} label1
+ * @param {!ILabel} label0
+ * @param {!ILabel} label1
  */
 function createLabelTags(label0, label1) {
   label0.tag = new BusinessObject(Color.ORANGE)
@@ -67,7 +67,7 @@ function createLabelTags(label0, label1) {
 let graphComponent = null
 
 /**
- * @param {object} licenseData
+ * @param {!object} licenseData
  */
 function run(licenseData) {
   License.value = licenseData
@@ -140,7 +140,7 @@ function initializeGraph() {
 /**
  * Creates the default input mode for the GraphComponent,
  * a {@link GraphEditorInputMode}.
- * @returns {GraphEditorInputMode} a new GraphEditorInputMode instance
+ * @returns {!GraphEditorInputMode} a new GraphEditorInputMode instance
  */
 function createEditorMode() {
   return new GraphEditorInputMode({

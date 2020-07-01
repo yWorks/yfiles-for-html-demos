@@ -35,8 +35,8 @@ import { IHandleProvider, BaseClass, IEdge, IInputModeContext, IEnumerable, IHan
  */
 export class BezierEdgeHandleProvider extends BaseClass(IHandleProvider) {
   /**
-   * @param {IEdge} edge
-   * @param {IHandleProvider} coreImpl
+   * @param {!IEdge} edge
+   * @param {!IHandleProvider} coreImpl
    */
   constructor(edge, coreImpl) {
     super()
@@ -45,8 +45,8 @@ export class BezierEdgeHandleProvider extends BaseClass(IHandleProvider) {
   }
 
   /**
-   * @param {IInputModeContext} context
-   * @returns {IEnumerable.<IHandle>}
+   * @param {!IInputModeContext} context
+   * @returns {!IEnumerable.<IHandle>}
    */
   getHandles(context) {
     return this.coreImpl

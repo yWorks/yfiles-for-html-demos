@@ -114,7 +114,7 @@ export class BezierCreateEdgeInputMode extends CreateEdgeInputMode {
   /**
    * If we have a bezier edge style, we decorate it so that we can also show the control points.
    * A better solution that would however be more involved would be to show the decoration.
-   * @returns {IEdge}
+   * @returns {!IEdge}
    */
   createDummyEdge() {
     const dummyEdge = super.createDummyEdge()
@@ -134,7 +134,7 @@ export class BezierCreateEdgeInputMode extends CreateEdgeInputMode {
   }
 
   /**
-   * @param {InputModeEventArgs} inputModeEventArgs
+   * @param {!InputModeEventArgs} inputModeEventArgs
    */
   onGestureCanceling(inputModeEventArgs) {
     if (this.controlPointHighlight) {
@@ -145,7 +145,7 @@ export class BezierCreateEdgeInputMode extends CreateEdgeInputMode {
   }
 
   /**
-   * @param {InputModeEventArgs} inputModeEventArgs
+   * @param {!InputModeEventArgs} inputModeEventArgs
    */
   onGestureFinishing(inputModeEventArgs) {
     if (this.controlPointHighlight) {
@@ -156,7 +156,7 @@ export class BezierCreateEdgeInputMode extends CreateEdgeInputMode {
   }
 
   /**
-   * @param {IInputModeContext} context
+   * @param {!IInputModeContext} context
    */
   uninstall(context) {
     if (this.controlPointHighlight) {
@@ -167,7 +167,7 @@ export class BezierCreateEdgeInputMode extends CreateEdgeInputMode {
   }
 
   /**
-   * @returns {IGraph}
+   * @returns {!IGraph}
    */
   createDummyEdgeGraph() {
     const dummyGraph = super.createDummyEdgeGraph()
@@ -180,8 +180,8 @@ export class BezierCreateEdgeInputMode extends CreateEdgeInputMode {
   }
 
   /**
-   * @param {object} sender
-   * @param {BendEventArgs} args
+   * @param {!object} sender
+   * @param {!BendEventArgs} args
    */
   onBendRemoved(sender, args) {
     if (!this.augmenting) {
@@ -200,8 +200,8 @@ export class BezierCreateEdgeInputMode extends CreateEdgeInputMode {
   }
 
   /**
-   * @param {object} sender
-   * @param {ItemEventArgs.<IBend>} args
+   * @param {!object} sender
+   * @param {!ItemEventArgs.<IBend>} args
    */
   onBendAdded(sender, args) {
     if (!this.augmenting) {
@@ -228,9 +228,9 @@ export class BezierCreateEdgeInputMode extends CreateEdgeInputMode {
 
   /**
    * Overridden to pad the number of bends so that there are always 2 mod 3 by duplicating the last location, if necessary.
-   * @param {IGraph} graph
-   * @param {IPortCandidate} sourcePortCandidate
-   * @param {IPortCandidate} targetPortCandidate
+   * @param {!IGraph} graph
+   * @param {!IPortCandidate} sourcePortCandidate
+   * @param {!IPortCandidate} targetPortCandidate
    * @returns {?IEdge}
    */
   createEdge(graph, sourcePortCandidate, targetPortCandidate) {

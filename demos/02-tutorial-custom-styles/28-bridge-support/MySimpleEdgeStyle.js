@@ -85,7 +85,7 @@ export default class MySimpleEdgeStyle extends EdgeStyleBase {
 
   /**
    * Gets the arrows drawn at the beginning and at the end of the edge.
-   * @type {MySimpleArrow}
+   * @type {!MySimpleArrow}
    */
   get arrows() {
     return this.$arrows
@@ -93,7 +93,7 @@ export default class MySimpleEdgeStyle extends EdgeStyleBase {
 
   /**
    * Sets the arrows drawn at the beginning and at the end of the edge.
-   * @type {MySimpleArrow}
+   * @type {!MySimpleArrow}
    */
   set arrows(value) {
     this.$arrows = value
@@ -102,9 +102,9 @@ export default class MySimpleEdgeStyle extends EdgeStyleBase {
   /**
    * Creates the visual for an edge.
    * @see Overrides {@link EdgeStyleBase#createVisual}
-   * @param {IRenderContext} context
-   * @param {IEdge} edge
-   * @returns {SvgVisual}
+   * @param {!IRenderContext} context
+   * @param {!IEdge} edge
+   * @returns {!SvgVisual}
    */
   createVisual(context, edge) {
     // This implementation creates a CanvasContainer and uses it for the rendering of the edge.
@@ -119,10 +119,10 @@ export default class MySimpleEdgeStyle extends EdgeStyleBase {
   /**
    * Re-renders the edge using the old visual for performance reasons.
    * @see Overrides {@link EdgeStyleBase#updateVisual}
-   * @param {IRenderContext} context
-   * @param {SvgVisual} oldVisual
-   * @param {IEdge} edge
-   * @returns {SvgVisual}
+   * @param {!IRenderContext} context
+   * @param {!SvgVisual} oldVisual
+   * @param {!IEdge} edge
+   * @returns {!SvgVisual}
    */
   updateVisual(context, oldVisual, edge) {
     const container = oldVisual.svgElement
@@ -150,8 +150,8 @@ export default class MySimpleEdgeStyle extends EdgeStyleBase {
 
   /**
    * Creates an object containing all necessary data to create an edge visual.
-   * @param {IRenderContext} context
-   * @param {IEdge} edge
+   * @param {!IRenderContext} context
+   * @param {!IEdge} edge
    * @returns {*}
    */
   createRenderDataCache(context, edge) {
@@ -184,9 +184,9 @@ export default class MySimpleEdgeStyle extends EdgeStyleBase {
 
   /**
    * Creates the visual appearance of an edge.
-   * @param {IRenderContext} context
-   * @param {IEdge} edge
-   * @param {SVGGElement} container
+   * @param {!IRenderContext} context
+   * @param {!IEdge} edge
+   * @param {!SVGGElement} container
    * @param {*} cache
    */
   render(context, edge, container, cache) {
@@ -222,10 +222,10 @@ export default class MySimpleEdgeStyle extends EdgeStyleBase {
 
   /**
    * Updates the edge path data as well as the arrow positions of the visuals stored in <param name="container" />.
-   * @param {IRenderContext} context {IRenderContext}
-   * @param {IEdge} edge {IEdge}
-   * @param {SVGGElement} container {SVGElement}
-   * @param {RenderDataCache} cache {RenderDataCache}
+   * @param {!IRenderContext} context {IRenderContext}
+   * @param {!IEdge} edge {IEdge}
+   * @param {!SVGGElement} container {SVGElement}
+   * @param {!RenderDataCache} cache {RenderDataCache}
    */
   updatePath(context, edge, container, cache) {
     // The first child must be a path - else re-create the container from scratch
@@ -255,8 +255,8 @@ export default class MySimpleEdgeStyle extends EdgeStyleBase {
 
   /**
    * Creates a {@link GeneralPath} from the edge's bends.
-   * @param {IEdge} edge The edge to create the path for.
-   * @returns {GeneralPath} A {@link GeneralPath} following the edge
+   * @param {!IEdge} edge The edge to create the path for.
+   * @returns {!GeneralPath} A {@link GeneralPath} following the edge
    * @see Overrides {@link EdgeStyleBase#getPath}
    */
   getPath(edge) {
@@ -274,9 +274,9 @@ export default class MySimpleEdgeStyle extends EdgeStyleBase {
   /**
    * Decorates a given path with bridges.
    * All work is delegated to the BridgeManager's addBridges() method.
-   * @param {GeneralPath} path The path to decorate.
-   * @param {IRenderContext} context The render context.
-   * @returns {GeneralPath} A copy of the given path with bridges.
+   * @param {!GeneralPath} path The path to decorate.
+   * @param {!IRenderContext} context The render context.
+   * @returns {!GeneralPath} A copy of the given path with bridges.
    */
   static createPathWithBridges(path, context) {
     const manager = getBridgeManager(context)
@@ -289,7 +289,7 @@ export default class MySimpleEdgeStyle extends EdgeStyleBase {
    * The obstacle hash changes if any obstacle has changed on the entire graph.
    * The hash is used to avoid re-rendering the edge if nothing has changed.
    * This method gets the obstacle hash from the BridgeManager.
-   * @param {IRenderContext} context The context to get the obstacle hash for.
+   * @param {!IRenderContext} context The context to get the obstacle hash for.
    * @returns {number} A hash value which represents the state of the obstacles.
    */
   static getObstacleHash(context) {
@@ -306,9 +306,9 @@ export default class MySimpleEdgeStyle extends EdgeStyleBase {
    * Overridden method to include the {@link MySimpleEdgeStyle#pathThickness} and the HitTestRadius specified in the
    * context in the calculation.
    * @see Overrides {@link EdgeStyleBase#isHit}
-   * @param {IInputModeContext} canvasContext
-   * @param {Point} p
-   * @param {IEdge} edge
+   * @param {!IInputModeContext} canvasContext
+   * @param {!Point} p
+   * @param {!IEdge} edge
    * @returns {boolean}
    */
   isHit(canvasContext, p, edge) {
@@ -323,9 +323,9 @@ export default class MySimpleEdgeStyle extends EdgeStyleBase {
    * Determines whether the edge is visible in the given rectangle.
    * Overridden method to improve performance of the super implementation
    * @see Overrides {@link EdgeStyleBase#isVisible}
-   * @param {ICanvasContext} context
-   * @param {Rect} rectangle
-   * @param {IEdge} edge
+   * @param {!ICanvasContext} context
+   * @param {!Rect} rectangle
+   * @param {!IEdge} edge
    * @returns {boolean}
    */
   isVisible(context, rectangle, edge) {
@@ -341,9 +341,9 @@ export default class MySimpleEdgeStyle extends EdgeStyleBase {
    * This implementation of the look up provides a custom implementation of the
    * {@link ISelectionIndicatorInstaller} interface that better suits to this style.
    * @see Overrides {@link EdgeStyleBase#lookup}
-   * @param {IEdge} edge
-   * @param {Class} type
-   * @returns {object}
+   * @param {!IEdge} edge
+   * @param {!Class} type
+   * @returns {!object}
    */
   lookup(edge, type) {
     if (type === ISelectionIndicatorInstaller.$class) {
@@ -365,8 +365,8 @@ export default class MySimpleEdgeStyle extends EdgeStyleBase {
   // Path creation has been extracted into method CreatePath
   /**
    * Creates a general path for the locations of the ports and the bends of the edge.
-   * @param {IEdge} edge The edge.
-   * @returns {GeneralPath} A general path for the locations of the ports and the bends of the edge.
+   * @param {!IEdge} edge The edge.
+   * @returns {!GeneralPath} A general path for the locations of the ports and the bends of the edge.
    */
   static createPath(edge) {
     const path = new GeneralPath()
@@ -390,8 +390,8 @@ const helperEdgeStyle = new PolylineEdgeStyle({
  */
 class MySelectionInstaller extends EdgeSelectionIndicatorInstaller {
   /**
-   * @param {CanvasComponent} canvas
-   * @param {IEdge} edge
+   * @param {!CanvasComponent} canvas
+   * @param {!IEdge} edge
    * @returns {?Stroke}
    */
   getStroke(canvas, edge) {
@@ -406,9 +406,9 @@ class RenderDataCache {
   /**
    * @param {number} pathThickness
    * @param {boolean} selected
-   * @param {string} color
-   * @param {GeneralPath} generalPath
-   * @param {MySimpleArrow} arrows
+   * @param {!string} color
+   * @param {!GeneralPath} generalPath
+   * @param {!MySimpleArrow} arrows
    * @param {number} obstacleHash
    */
   constructor(pathThickness, selected, color, generalPath, arrows, obstacleHash) {
@@ -472,7 +472,7 @@ class RenderDataCache {
  */
 class BasicEdgeObstacleProvider extends BaseClass(IObstacleProvider) {
   /**
-   * @param {IEdge} edge
+   * @param {!IEdge} edge
    */
   constructor(edge) {
     super()
@@ -483,9 +483,9 @@ class BasicEdgeObstacleProvider extends BaseClass(IObstacleProvider) {
    * Returns this edge's path as obstacle.
    * Generally spoken, an obstacle is a path for which other edges
    * might have to draw bridges when crossing it.
-   * @returns {GeneralPath} The edge's path.
+   * @returns {!GeneralPath} The edge's path.
    * @see Specified by {@link IObstacleProvider#getObstacles}.
-   * @param {IRenderContext} canvasContext
+   * @param {!IRenderContext} canvasContext
    */
   getObstacles(canvasContext) {
     // simply delegate to CreatePath
@@ -495,7 +495,7 @@ class BasicEdgeObstacleProvider extends BaseClass(IObstacleProvider) {
 
 /**
  * Queries the context's lookup for a BridgeManager instance.
- * @param {IRenderContext} context The context to get the BridgeManager from.
+ * @param {!IRenderContext} context The context to get the BridgeManager from.
  * @returns {?BridgeManager} The BridgeManager for the given context instance or null
  */
 function getBridgeManager(context) {

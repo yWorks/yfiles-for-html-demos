@@ -112,6 +112,8 @@
   ]
 
   var isViewerPackage = document.title.indexOf('Viewer') > -1
+  var isLayoutPackage = document.title.indexOf('Layout') > -1
+  var isCompletePackage = !isViewerPackage && !isLayoutPackage
   var viewerCategories = [
     'tutorial-getting-started',
     'tutorial-custom-styles',
@@ -121,20 +123,6 @@
     'integration',
     'testing',
     'view'
-  ]
-  var excludeLayoutDemos = [
-    'angular-cli',
-    'angularjs-1',
-    'tutorial-application-features--building-swimlanes-from-data',
-    'graphql',
-    'neo4j',
-    'react-typescript',
-    'react',
-    'template-styles',
-    'vue.js',
-    'tutorial-getting-started--layout',
-    'tutorial-getting-started--layout-data',
-    'tutorial-getting-started--graph-analysis'
   ]
 
   var demos = window.getDemoData()
@@ -153,8 +141,12 @@
   }
 
   demos.forEach(function(item) {
-    item.notAvailableInViewerPackage =
-      viewerCategories.indexOf(item.category) === -1 || excludeLayoutDemos.indexOf(item.id) !== -1
+    item.availableInPackage =
+      isCompletePackage ||
+      (isViewerPackage &&
+        viewerCategories.indexOf(item.category) !== -1 &&
+        item.packageType !== 'no-viewer') ||
+      (isLayoutPackage && item.packageType === 'layout')
   })
 
   var gridItemTemplate = document.querySelector('#grid-item-template')
@@ -206,14 +198,15 @@
       gridItem.querySelector('.thumbnail').appendChild(jsBadge)
       gridItem.className += ' js-only'
     }
-    if (isViewerPackage && demo.notAvailableInViewerPackage) {
+    if (!demo.availableInPackage) {
       gridItem.className += ' not-available'
       const notAvailableNotice = document.createElement('div')
       notAvailableNotice.className = 'not-available-notice'
-      notAvailableNotice.innerHTML =
-        'Not available in Viewer package.<br><a href="https://live.yworks.com/demos/' +
-        demo.demoPath +
-        '">See online version.</a>'
+      notAvailableNotice.innerHTML = `Not available in "${
+        isViewerPackage ? 'Viewer' : 'Layout'
+      }" packages.<br><a href="https://live.yworks.com/demos/${
+        demo.demoPath
+      }">See online version.</a>`
       gridItem.appendChild(notAvailableNotice)
     }
     return gridItem
@@ -254,8 +247,9 @@
   function createSidebarItem(demo) {
     var sidebarItem = document.createElement('div')
     sidebarItem.className = 'demo-sidebar-item'
-    if (isViewerPackage && demo.notAvailableInViewerPackage) {
+    if (!demo.availableInPackage) {
       sidebarItem.className += ' not-available'
+      sidebarItem.className += isViewerPackage ? ' viewer-package' : ' layout-package'
     }
     var link = document.createElement('a')
     link.textContent = demo.name
@@ -347,7 +341,7 @@
   var unAvailableGrid = document.getElementById('unavailable-grid')
   var unAvailableGridHeader = document.getElementById('unavailable-header')
 
-  if (isViewerPackage) {
+  if (isViewerPackage || isLayoutPackage) {
     unAvailableGrid.style.display = 'block'
     unAvailableGridHeader.style.display = 'block'
   }
@@ -360,7 +354,7 @@
       tutCustomStylesGrid.appendChild(gridItem)
     } else if (demo.category === 'tutorial-application-features') {
       tutApplicationFeaturesGrid.appendChild(gridItem)
-    } else if (isViewerPackage && demo.notAvailableInViewerPackage) {
+    } else if (!demo.availableInPackage) {
       unAvailableGrid.appendChild(gridItem)
     } else {
       demoGrid.appendChild(gridItem)
@@ -370,9 +364,12 @@
     var element = document.querySelector('.demo-items-' + demo.category)
     if (!element) {
       var categoryName = categoryNames[demo.category] || demo.category
-      document
-        .querySelector('.sidebar')
-        .appendChild(createAccordionItem({ title: categoryName, identifier: demo.category }))
+      document.querySelector('.sidebar').appendChild(
+        createAccordionItem({
+          title: categoryName,
+          identifier: demo.category
+        })
+      )
       element = document.querySelector('.demo-items-' + demo.category)
     }
     insertSortedChild(element, sidebarItem)

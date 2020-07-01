@@ -82,14 +82,30 @@ import { FlippedArrow } from './FlippedArrow.js'
 import ContextMenu from '../../utils/ContextMenu.js'
 
 /**
- * @typedef {('successor' | 'predecessor')} NeighborType
+ * @typedef {('successor'|'predecessor')} NeighborType
  */
 
 /**
+ * @typedef {Object} SchemaEdge
+ * @property {NeighborType} neighborType
+ * @property {string} thisSource
+ * @property {string} neighborSource
+ * @property {string} neighborBinding
+ */
+
+/**
+ * Adjacency graph builder sample data
  * @typedef {Object} AdjacencyGraphBuilderSample
  * @property {string} name
  * @property {Array.<AdjacencyNodesSourceDefinition>} nodesSources
  * @property {Array.<SchemaEdge>} edgesSource
+ */
+
+/**
+ * @typedef {*} DataItemType
+ */
+/**
+ * @typedef {(Array.<DataItemType>|Record.<string,DataItemType>)} DataType
  */
 
 const arrow = new Arrow({
@@ -116,9 +132,9 @@ const predecessorEdgeStyle = new PolylineEdgeStyle({
  */
 export class SchemaComponent {
   /**
-   * @param {string} selector
-   * @param {IGraph} graph
-   * @param {function} schemaChangedCallback
+   * @param {!string} selector
+   * @param {!IGraph} graph
+   * @param {!function} schemaChangedCallback
    */
   constructor(selector, graph, schemaChangedCallback) {
     this.resultGraph = graph
@@ -168,8 +184,8 @@ export class SchemaComponent {
 
   /**
    * Configures the input mode of the schema graph
-   * @param {IGraph} graph
-   * @returns {IInputMode}
+   * @param {!IGraph} graph
+   * @returns {!IInputMode}
    */
   configureInputMode(graph) {
     const inputMode = new GraphEditorInputMode()
@@ -294,7 +310,7 @@ export class SchemaComponent {
 
   /**
    * Initializes the context menu for schema edges.
-   * @param {GraphEditorInputMode} inputMode
+   * @param {!GraphEditorInputMode} inputMode
    */
   setupEdgeContextMenu(inputMode) {
     const graphComponent = this.schemaGraphComponent
@@ -338,9 +354,8 @@ export class SchemaComponent {
 
   /**
    * Creates the tooltip content for a node
-   * @param {AdjacencyNodesSourceDefinitionBuilderConnector} sourceConnector the
-   *   {@link AdjacencyNodesSourceDefinitionBuilderConnector} to get the data from
-   * @returns {HTMLElement}
+   * @param {!AdjacencyNodesSourceDefinitionBuilderConnector} sourceConnector the {@link AdjacencyNodesSourceDefinitionBuilderConnector} to get the data from
+   * @returns {!HTMLElement}
    */
   static createToolTip(sourceConnector) {
     const toolTip = document.createElement('div')
@@ -358,7 +373,7 @@ export class SchemaComponent {
 
   /**
    * Builds the schema graph using the provided {@link AdjacencyGraphBuilderSample}
-   * @param {AdjacencyGraphBuilderSample} sample the sample data used for the graphs
+   * @param {!AdjacencyGraphBuilderSample} sample the sample data used for the graphs
    */
   loadSample(sample) {
     this.schemaGraphComponent.graph.clear()
@@ -437,9 +452,9 @@ export class SchemaComponent {
 
   /**
    * Creates the neighbor relations between to schema graph nodes connected by an edge.
-   * @param {string} neighborDataProvider the binding string for the neighbor relation
-   * @param {IEdge} edge the edge to connecting the nodes with neighbor relations
-   * @param {NeighborType} neighborType whether to add the source as successor or predecessor
+   * @param {!string} neighborDataProvider the binding string for the neighbor relation
+   * @param {!IEdge} edge the edge to connecting the nodes with neighbor relations
+   * @param {!NeighborType} neighborType whether to add the source as successor or predecessor
    */
   createNeighborRelationship(neighborDataProvider, edge, neighborType) {
     const sourceConnector = edge.sourceNode.tag
@@ -483,7 +498,7 @@ export class SchemaComponent {
 
   /**
    * Creates a new {@link AdjacencyNodesSourceDefinition} for use in the schema graph
-   * @param {INode} node the schema graph node to attach the definition to
+   * @param {!INode} node the schema graph node to attach the definition to
    */
   createNewAdjacencyNodesSource(node) {
     const adjacencyNodesSourceDefinition = new AdjacencyNodesSourceDefinition()
@@ -499,11 +514,9 @@ export class SchemaComponent {
   }
 
   /**
-   * Creates a {@link AdjacencyNodesSourceDefinitionBuilderConnector} for a
-   * {@link AdjacencyNodesSourceDefinition}
-   * @param {AdjacencyNodesSourceDefinition} sourceDefinition the AdjacencyNodesSourceDefinition to
-   *   create the connector for
-   * @returns {AdjacencyNodesSourceDefinitionBuilderConnector}
+   * Creates a {@link AdjacencyNodesSourceDefinitionBuilderConnector} for a {@link AdjacencyNodesSourceDefinition}
+   * @param {!AdjacencyNodesSourceDefinition} sourceDefinition the AdjacencyNodesSourceDefinition to create the connector for
+   * @returns {!AdjacencyNodesSourceDefinitionBuilderConnector}
    */
   createAdjacencyNodesSourceConnector(sourceDefinition) {
     const data = SchemaComponent.hasData(sourceDefinition) ? parseData(sourceDefinition.data) : []
@@ -526,25 +539,21 @@ export class SchemaComponent {
 
   /**
    * Applies the layout for the schema graph component
-   * @returns {Promise}
+   * @returns {!Promise}
    */
   async applySchemaLayout() {
-    const layoutData = new HierarchicLayoutData({
-      sourcePortConstraints: () => PortConstraint.create(PortSide.NORTH),
-      targetPortConstraints: () => PortConstraint.create(PortSide.SOUTH)
-    })
-
     const layout = new HierarchicLayout({
       considerNodeLabels: true,
-      integratedEdgeLabeling: true
+      integratedEdgeLabeling: true,
+      backLoopRoutingForSelfLoops: true
     })
-    await this.schemaGraphComponent.morphLayout(new PortCalculator(layout), null, layoutData)
+    await this.schemaGraphComponent.morphLayout(new PortCalculator(layout))
     this.schemaGraphComponent.updateContentRect()
   }
 
   /**
    * Opens the {@link EditAdjacencyNodesSourceDialog} for editing a schema nodes' business data
-   * @param {INode} schemaNode the schema node to edit
+   * @param {!INode} schemaNode the schema node to edit
    */
   openEditNodeSourceDialog(schemaNode) {
     const sourceDefinitionConnector = schemaNode.tag
@@ -561,7 +570,7 @@ export class SchemaComponent {
 
   /**
    * Returns whether a {@link AdjacencyNodesSourceDefinition} has its own data or not.
-   * @param {AdjacencyNodesSourceDefinition} nodesSourceDefinition
+   * @param {!AdjacencyNodesSourceDefinition} nodesSourceDefinition
    * @returns {boolean}
    */
   static hasData(nodesSourceDefinition) {
@@ -572,7 +581,7 @@ export class SchemaComponent {
    * Configures the given {@link CreateEdgeInputMode} to be able to finish the gesture on an empty
    * canvas with a newly created node.
    * @param {CreateEdgeInputMode} createEdgeInputMode
-   * @param {CreateEdgeInputMode} createEdgeInputMode
+   * @param {!CreateEdgeInputMode} createEdgeInputMode
    */
   enableTargetNodeCreation(createEdgeInputMode) {
     createEdgeInputMode.dummyEdgeGraph.nodeDefaults.size = this.schemaGraphComponent.graph.nodeDefaults.size
@@ -639,7 +648,7 @@ export class SchemaComponent {
   /**
    * Sets the style for a node in the schema graph
    * Sources with own data have a different style than sources without (octagon vs. circle)
-   * @param {INode} node the node to set the style for
+   * @param {!INode} node the node to set the style for
    */
   setSchemaNodeStyle(node) {
     this.schemaGraphComponent.graph.setStyle(
@@ -650,8 +659,8 @@ export class SchemaComponent {
 
   /**
    * Creates a new {@link INodeStyle} depending on the nodesSourceDefinition.
-   * @param {AdjacencyNodesSourceDefinition} nodesSourceDefinition
-   * @returns {INodeStyle}
+   * @param {!AdjacencyNodesSourceDefinition} nodesSourceDefinition
+   * @returns {!INodeStyle}
    */
   static createSchemaNodeStyle(nodesSourceDefinition) {
     if (SchemaComponent.hasData(nodesSourceDefinition)) {

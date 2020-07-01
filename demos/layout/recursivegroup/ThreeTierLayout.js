@@ -58,7 +58,7 @@ import {
  * {@link HierarchicLayout} with layout orientation left-to-right. Note that group nodes of type
  * {@link COMMON_NODE} are handled non-recursively.
  * @param {boolean} fromSketch - Whether the {@link HierarchicLayout} shall be run in incremental layout mode.
- * @returns {RecursiveGroupLayout}
+ * @returns {!RecursiveGroupLayout}
  */
 export function createThreeTierLayout(fromSketch) {
   const hierarchicLayout = new HierarchicLayout({
@@ -78,9 +78,9 @@ export function createThreeTierLayout(fromSketch) {
 
 /**
  * Returns the layout data that shall be used for the three tier layout with the specified graph.
- * @param {IGraph} graph
+ * @param {!IGraph} graph
  * @param {boolean} fromSketch
- * @returns {LayoutData}
+ * @returns {!LayoutData}
  */
 export function createThreeTierLayoutData(graph, fromSketch) {
   const ld = new CompositeLayoutData()
@@ -161,9 +161,9 @@ export function createThreeTierLayoutData(graph, fromSketch) {
 
 /**
  * Returns the type of tier the node is assigned to.
- * @param {INode} node
- * @param {IGraph} graph
- * @returns {TierType}
+ * @param {!INode} node
+ * @param {!IGraph} graph
+ * @returns {!TierType}
  */
 function getTierType(node, graph) {
   const foldingView = graph.foldingView

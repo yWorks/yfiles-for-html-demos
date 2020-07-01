@@ -86,7 +86,7 @@ const gridColorPicker = document.getElementById('gridColorPicker')
 const thicknessSlider = document.getElementById('thickness')
 /**
  * Bootstraps the demo.
- * @param {object} licenseData
+ * @param {!object} licenseData
  */
 function run(licenseData) {
   License.value = licenseData
@@ -250,11 +250,11 @@ function initializeGrid() {
 
 /**
  * Creates a radio group and populates it with values from the passed map.
- * @param {Element} containerElement
- * @param {string} groupName
- * @param {HashMap.<string,*>} map
- * @param {string} checkedKey
- * @param {function} callback
+ * @param {!Element} containerElement
+ * @param {!string} groupName
+ * @param {!HashMap.<string,*>} map
+ * @param {!string} checkedKey
+ * @param {!function} callback
  */
 function createRadioGroup(containerElement, groupName, map, checkedKey, callback) {
   for (const key of map.keys) {
@@ -283,8 +283,8 @@ function createRadioGroup(containerElement, groupName, map, checkedKey, callback
 
 /**
  * Populates the grid color picker with colors from the passed array/map.
- * @param {Array.<string>} sortedGridColors
- * @param {HashMap.<string,Fill>} gridColors
+ * @param {!Array.<string>} sortedGridColors
+ * @param {!HashMap.<string,Fill>} gridColors
  */
 function createColorPicker(sortedGridColors, gridColors) {
   let xOffset = 0
@@ -322,7 +322,7 @@ function createColorPicker(sortedGridColors, gridColors) {
 
 /**
  * Sets the chosen grid snap type on the grid.
- * @param {GridSnapTypes} gridSnapType
+ * @param {!GridSnapTypes} gridSnapType
  */
 function updateSnapType(gridSnapType) {
   const graphSnapContext = graphComponent.inputMode.snapContext
@@ -330,7 +330,7 @@ function updateSnapType(gridSnapType) {
 }
 
 /**
- * @param {GridStyle} gridStyle
+ * @param {!GridStyle} gridStyle
  */
 function updateGridStyle(gridStyle) {
   grid.gridStyle = gridStyle
@@ -340,7 +340,7 @@ function updateGridStyle(gridStyle) {
 
 /**
  * Sets the chosen render mode on the grid.
- * @param {RenderModes} renderMode
+ * @param {!RenderModes} renderMode
  */
 function updateRenderMode(renderMode) {
   grid.renderMode = renderMode
@@ -360,7 +360,7 @@ function updateSvgTemplate() {
 
 /**
  * Sets the chosen color to the grid.
- * @param {Fill} fill
+ * @param {!Fill} fill
  */
 function updateGridColor(fill) {
   grid.stroke.fill = fill

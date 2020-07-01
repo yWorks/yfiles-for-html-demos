@@ -37,11 +37,11 @@ import { addClass } from '../../resources/demo-app.js'
 export class SourcesListBox {
   /**
    * Sources list box constructor
-   * @param {function} factory the arrow function providing an appropriate {@link SourceDefinitionBuilderConnector}
+   * @param {!function} factory the arrow function providing an appropriate {@link SourceDefinitionBuilderConnector}
    *        connector via the factory class
-   * @param {object} dialogFactory the Node- or Edge- {@link SourceDialog} to use
-   * @param {HTMLElement} rootElement the HTMLElement used to display the list box
-   * @param {function} dataUpdatedCallback the callback arrow function used to update the graph after the
+   * @param {!object} dialogFactory the Node- or Edge- {@link SourceDialog} to use
+   * @param {!HTMLElement} rootElement the HTMLElement used to display the list box
+   * @param {!function} dataUpdatedCallback the callback arrow function used to update the graph after the
    *        the SourceDialog was closed as accepted
    */
   constructor(factory, dialogFactory, rootElement, dataUpdatedCallback) {
@@ -62,7 +62,7 @@ export class SourcesListBox {
    * Event handler for "Add Source" button
    * Generates a new definition via the provided connector Factory
    * and add ist to the list box
-   * @returns {TSourceConnector}
+   * @returns {!TSourceConnector}
    */
   createDefinition() {
     const newDefinition = this.Factory(`Source ${this.lastSourceIndex++}`)
@@ -72,7 +72,7 @@ export class SourcesListBox {
 
   /**
    * Adds a new definition using the provided {@link SourceDefinitionBuilderConnector} to the list box
-   * @param {TSourceConnector} newDefinition the {@link SourceDefinitionBuilderConnector}
+   * @param {!TSourceConnector} newDefinition the {@link SourceDefinitionBuilderConnector}
    */
   addDefinition(newDefinition) {
     this.sources.push(newDefinition)
@@ -107,8 +107,8 @@ export class SourcesListBox {
 
   /**
    * Removes the provided definition from the list box
-   * @param {TSourceConnector} definition the {@link SourceDefinitionBuilderConnector}
-   * @param {HTMLDivElement} container the list box div container
+   * @param {!TSourceConnector} definition the {@link SourceDefinitionBuilderConnector}
+   * @param {!HTMLDivElement} container the list box div container
    */
   removeDefinition(definition, container) {
     // The GraphBuilder does not support removing sources - for simplicity of this demo simply set

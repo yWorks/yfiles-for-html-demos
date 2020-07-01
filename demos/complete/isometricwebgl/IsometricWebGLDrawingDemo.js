@@ -44,7 +44,6 @@ import {
   HierarchicLayout,
   HierarchicLayoutData,
   ICanvasObjectDescriptor,
-  ICommand,
   IEdge,
   IIncrementalHintsFactory,
   ILayoutAlgorithm,
@@ -74,10 +73,11 @@ import {
   WebGLPolylineEdgeStyle
 } from 'yfiles'
 import IsometricData from './resources/IsometricData.js'
-import { bindAction, bindCommand, bindInputListener, showApp } from '../../resources/demo-app.js'
+import { bindAction, bindInputListener, showApp } from '../../resources/demo-app.js'
 import loadJson from '../../resources/load-json.js'
 import IsometricWebGLNodeStyle from './IsometricWebGLNodeStyle.js'
 import HeightHandleProvider from './HeightHandleProvider.js'
+import { webGlSupported } from '../../utils/Workarounds.js'
 
 const MINIMUM_NODE_HEIGHT = 3
 
@@ -97,9 +97,14 @@ let gridVisualCreator = null
 /**
  * Starts the demo which displays graphs in an isometric fashion to create an impression of a
  * 3-dimensional view.
- * @param {object} licenseData
+ * @param {!object} licenseData
  */
 function run(licenseData) {
+  if (!webGlSupported) {
+    document.getElementById('no-webgl-support').removeAttribute('style')
+    showApp(null)
+    return
+  }
   License.value = licenseData
   graphComponent = new GraphComponent('graphComponent')
 
@@ -130,7 +135,7 @@ function run(licenseData) {
 }
 
 /**
- * @returns {Promise}
+ * @returns {!Promise}
  */
 function runHierarchicLayout() {
   const layout = new HierarchicLayout({
@@ -157,7 +162,7 @@ function runHierarchicLayout() {
 }
 
 /**
- * @returns {Promise}
+ * @returns {!Promise}
  */
 function runOrthogonalLayout() {
   const layout = new OrthogonalLayout({
@@ -169,6 +174,7 @@ function runOrthogonalLayout() {
   const layoutData = new OrthogonalLayoutData({
     edgeLabelPreferredPlacement: new PreferredPlacementDescriptor({
       angle: 0,
+      distanceToEdge: 10,
       angleReference: LabelAngleReferences.RELATIVE_TO_EDGE_FLOW,
       sideOfEdge: LabelPlacements.LEFT_OF_EDGE,
       sideReference: LabelSideReferences.ABSOLUTE_WITH_RIGHT_IN_NORTH
@@ -178,9 +184,9 @@ function runOrthogonalLayout() {
 }
 
 /**
- * @param {ILayoutAlgorithm} layout
- * @param {LayoutData} layoutData
- * @returns {Promise}
+ * @param {!ILayoutAlgorithm} layout
+ * @param {!LayoutData} layoutData
+ * @returns {!Promise}
  */
 async function runLayout(layout, layoutData) {
   if (layoutRunning) {
@@ -316,7 +322,7 @@ function adaptGroupNodes() {
 /**
  * Ensures that the node has geometry and color information present in its tag.
  * @param {INode} node
- * @param {INode} node
+ * @param {!INode} node
  */
 function ensureNodeTag(node) {
   if (!node.tag || typeof node.tag !== 'object') {
@@ -386,7 +392,7 @@ function registerCommands() {
     }
   })
 
-  bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent)
+  bindAction("button[data-command='FitContent']", () => graphComponent.fitGraphBounds())
 
   bindAction("button[data-command='HierarchicLayout']", () => runHierarchicLayout())
   bindAction("button[data-command='OrthogonalLayout']", () => runOrthogonalLayout())
@@ -402,8 +408,11 @@ function registerCommands() {
  */
 function setUIDisabled(disabled) {
   document.getElementById('open-file').disabled = disabled
+  document.getElementById('fit-content').disabled = disabled
   document.getElementById('hierarchic-layout').disabled = disabled
   document.getElementById('orthogonal-layout').disabled = disabled
+  document.getElementById('grid-toggle').disabled = disabled
+  document.getElementById('rotation').disabled = disabled
 }
 
 loadJson().then(run)

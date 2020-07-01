@@ -61,7 +61,7 @@ let graphComponent = null
 
 /**
  * Bootstraps the demo.
- * @param {object} licenseData
+ * @param {!object} licenseData
  */
 function run(licenseData) {
   License.value = licenseData
@@ -109,7 +109,7 @@ function run(licenseData) {
 /**
  * Creates a filtered graph which wraps the full graph.
  *
- * @returns {FilteredGraphWrapper} The filtered graph.
+ * @returns {!FilteredGraphWrapper} The filtered graph.
  */
 function createFilterGraph() {
   // the unfiltered, unfolded master graph
@@ -165,7 +165,7 @@ function restoreItems() {
 
 /**
  * Changes the filtered state of the tag of an edge or node while also adding an undo unit for it.
- * @param {(INode|IEdge)} item
+ * @param {!(INode|IEdge)} item
  * @param {boolean} state
  */
 function filterItemWithUndoUnit(item, state) {
@@ -178,7 +178,7 @@ function filterItemWithUndoUnit(item, state) {
 /**
  * Initializes the defaults for the styles in this tutorial.
  *
- * @param {IGraph} graph The graph.
+ * @param {!IGraph} graph The graph.
  */
 function initializeTutorialDefaults(graph) {
   // configure defaults for normal nodes and their labels
@@ -208,7 +208,7 @@ function initializeTutorialDefaults(graph) {
 /**
  * Creates an initial sample graph.
  *
- * @param {IGraph} graph The graph.
+ * @param {!IGraph} graph The graph.
  */
 function createInitialGraph(graph) {
   const node1 = graph.createNodeAt([110, 20])
@@ -296,8 +296,8 @@ function updateResetButtonState() {
  */
 class ChangeFilterStateUndoUnit extends UndoUnitBase {
   /**
-   * @param {FilteredGraphWrapper} filteredGraph
-   * @param {object} tag
+   * @param {!FilteredGraphWrapper} filteredGraph
+   * @param {!object} tag
    */
   constructor(filteredGraph, tag) {
     super('ChangeFilterState')

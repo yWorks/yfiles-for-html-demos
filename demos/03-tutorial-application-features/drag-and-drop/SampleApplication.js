@@ -65,7 +65,7 @@ let graphComponent = null
 
 /**
  * Bootstraps the demo.
- * @param {object} licenseData
+ * @param {!object} licenseData
  */
 function run(licenseData) {
   License.value = licenseData
@@ -134,8 +134,8 @@ function initializeDragAndDropPanel() {
 
 /**
  * Creates and adds a visual for the given style in the drag and drop panel.
- * @param {INodeStyle} style
- * @param {Element} panel
+ * @param {!INodeStyle} style
+ * @param {!Element} panel
  */
 function addNodeVisual(style, panel) {
   // Create the HTML element for the visual.
@@ -201,8 +201,8 @@ function addNodeVisual(style, panel) {
 
 /**
  * Creates an SVG data string for a node with the given style.
- * @param {INodeStyle} style
- * @returns {string}
+ * @param {!INodeStyle} style
+ * @returns {!string}
  */
 function createNodeVisual(style) {
   // another GraphComponent is utilized to export a visual of the given style

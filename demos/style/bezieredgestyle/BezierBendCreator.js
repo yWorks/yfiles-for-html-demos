@@ -49,7 +49,7 @@ import {
 export class BezierBendCreator extends BaseClass(IBendCreator) {
   /**
    * Fallback for bend creation if the existing model is not consistent
-   * @type {IBendCreator}
+   * @type {!IBendCreator}
    */
   static get fallBackCreator() {
     return new DefaultBendCreator()
@@ -62,10 +62,10 @@ export class BezierBendCreator extends BaseClass(IBendCreator) {
    * in a way that the shape of the curve is not changed initially and returns the middle bend.
    * If there are no bends at all, it creates a triple plus two initial and final control bends, all of them collinear.
    * Otherwise, the fallback bend creator is used to create a bend with its default strategy.
-   * @param {IInputModeContext} context the input mode context
-   * @param {IGraph} graph the graph
-   * @param {IEdge} edge the edge
-   * @param {Point} location the bend location
+   * @param {!IInputModeContext} context the input mode context
+   * @param {!IGraph} graph the graph
+   * @param {!IEdge} edge the edge
+   * @param {!Point} location the bend location
    * @returns {number} The index of middle bend of a control point triple if such a triple was created,
    * or the index of the newly created single bend.
    */
@@ -185,12 +185,12 @@ export class BezierBendCreator extends BaseClass(IBendCreator) {
 
   /**
    * Create a triple of control bends and adjust the neighboring bends
-   * @param {IGraph} graph The graph where the bends are created
-   * @param {IEdge} edge The edge where the bends are created
+   * @param {!IGraph} graph The graph where the bends are created
+   * @param {!IEdge} edge The edge where the bends are created
    * @param {number} segmentIndex The segment index
    * @param {number} ratio The ratio on the segment
-   * @param {IListEnumerable.<IPoint>} pathPoints The existing control points
-   * @returns {IBend} The middle bend of a control point triple
+   * @param {!IListEnumerable.<IPoint>} pathPoints The existing control points
+   * @returns {!IBend} The middle bend of a control point triple
    */
   static createBends(graph, edge, segmentIndex, ratio, pathPoints) {
     // Create 3 bends and adjust the neighbors
@@ -266,9 +266,9 @@ export class BezierBendCreator extends BaseClass(IBendCreator) {
    * and <code>right</code> arrays with new control points so that the cubic can be
    * split smoothly at the <code>ratio<code/>
    * @param {number} ratio
-   * @param {Array.<Point>} controlPoints
-   * @param {Array.<Point>} left
-   * @param {Array.<Point>} right
+   * @param {!Array.<Point>} controlPoints
+   * @param {!Array.<Point>} left
+   * @param {!Array.<Point>} right
    */
   static getCubicSplitPoints(ratio, controlPoints, left, right) {
     // Determine the new control points
@@ -292,9 +292,9 @@ export class BezierBendCreator extends BaseClass(IBendCreator) {
  */
 class BendLocationUndoUnit extends UndoUnitBase {
   /**
-   * @param {IGraph} graph
-   * @param {IBend} bend
-   * @param {Point} oldValue
+   * @param {!IGraph} graph
+   * @param {!IBend} bend
+   * @param {!Point} oldValue
    */
   constructor(graph, bend, oldValue) {
     super('Set bend location')

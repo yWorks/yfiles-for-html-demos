@@ -64,7 +64,7 @@ import {
 export default class NeighborhoodView {
   /**
    * Creates a new instance of NeighborhoodView.
-   * @param {string} id
+   * @param {!string} id
    */
   constructor(id) {
     const component = new GraphComponent(document.getElementById(id))
@@ -226,7 +226,7 @@ export default class NeighborhoodView {
 
   /**
    * Returns the configurable highlight style. If none is assigned, a default highlight style is used.
-   * @type {INodeStyle}
+   * @type {!INodeStyle}
    */
   get highlightStyle() {
     return this.$highlightStyle
@@ -234,7 +234,7 @@ export default class NeighborhoodView {
 
   /**
    * Specifies the configurable highlight style. If none is assigned, a default highlight style is used.
-   * @type {INodeStyle}
+   * @type {!INodeStyle}
    */
   set highlightStyle(value) {
     this.$highlightStyle = value
@@ -422,7 +422,7 @@ export default class NeighborhoodView {
 
   /**
    * Called whenever the selection changes.
-   * @param {IModelItem} item
+   * @param {!IModelItem} item
    */
   onItemSelectionChanged(item) {
     if (this.autoUpdatesEnabled && INode.isInstance(item)) {
@@ -482,7 +482,7 @@ export default class NeighborhoodView {
 
   /**
    * Installs the given highlight style as node decorator.
-   * @param {INodeStyle} highlightStyle
+   * @param {!INodeStyle} highlightStyle
    */
   installHighlightStyle(highlightStyle) {
     const nodeStyleHighlight = new NodeStyleDecorationInstaller({

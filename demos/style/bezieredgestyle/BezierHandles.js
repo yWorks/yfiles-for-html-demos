@@ -51,8 +51,8 @@ const EPS = 1e-6
 export class OuterControlPointHandle extends BaseClass(IHandle) {
   /**
    * Creates a new instance that wraps the original <code>coreHandle</code> for the given <code>bend</code>.
-   * @param {IHandle} coreHandle
-   * @param {IBend} bend
+   * @param {!IHandle} coreHandle
+   * @param {!IBend} bend
    */
   constructor(coreHandle, bend) {
     super()
@@ -70,7 +70,7 @@ export class OuterControlPointHandle extends BaseClass(IHandle) {
 
   /**
    * Initializes our own drag and determines whether we are a slave or the master and if there are actual slvae handles in that case
-   * @param {IInputModeContext} context
+   * @param {!IInputModeContext} context
    */
   initializeDrag(context) {
     this.coreHandle.initializeDrag(context)
@@ -133,9 +133,9 @@ export class OuterControlPointHandle extends BaseClass(IHandle) {
 
   /**
    * Move the core handle and if present also the slave handle in a way that the control point triple is collinear.
-   * @param {IInputModeContext} context
-   * @param {Point} originalLocation
-   * @param {Point} newLocation
+   * @param {!IInputModeContext} context
+   * @param {!Point} originalLocation
+   * @param {!Point} newLocation
    */
   handleMove(context, originalLocation, newLocation) {
     this.coreHandle.handleMove(context, originalLocation, newLocation)
@@ -157,8 +157,8 @@ export class OuterControlPointHandle extends BaseClass(IHandle) {
 
   /**
    * Cancel the movement on the core handle and if present also on the slave handle
-   * @param {IInputModeContext} context
-   * @param {Point} originalLocation
+   * @param {!IInputModeContext} context
+   * @param {!Point} originalLocation
    */
   cancelDrag(context, originalLocation) {
     this.coreHandle.cancelDrag(context, originalLocation)
@@ -173,9 +173,9 @@ export class OuterControlPointHandle extends BaseClass(IHandle) {
 
   /**
    * Finish the movement on the core handle and if present also on the slave handle
-   * @param {IInputModeContext} context
-   * @param {Point} originalLocation
-   * @param {Point} newLocation
+   * @param {!IInputModeContext} context
+   * @param {!Point} originalLocation
+   * @param {!Point} newLocation
    */
   dragFinished(context, originalLocation, newLocation) {
     this.coreHandle.dragFinished(context, originalLocation, newLocation)
@@ -203,7 +203,7 @@ export class OuterControlPointHandle extends BaseClass(IHandle) {
 
   /**
    * We use a slightly different visualization
-   * @type {HandleTypes}
+   * @type {!HandleTypes}
    */
   get type() {
     return HandleTypes.DEFAULT | HandleTypes.VARIANT1
@@ -211,7 +211,7 @@ export class OuterControlPointHandle extends BaseClass(IHandle) {
 
   /**
    * Use the core handle's cursor
-   * @type {Cursor}
+   * @type {!Cursor}
    */
   get cursor() {
     return this.coreHandle.cursor
@@ -219,7 +219,7 @@ export class OuterControlPointHandle extends BaseClass(IHandle) {
 
   /**
    * Use the core handle's location
-   * @type {IPoint}
+   * @type {!IPoint}
    */
   get location() {
     return this.coreHandle.location
@@ -235,8 +235,8 @@ export class OuterControlPointHandle extends BaseClass(IHandle) {
 export class InnerControlPointHandle extends BaseClass(IHandle) {
   /**
    * Creates a new instance that wraps the original <code>coreHandle</code> for the given <code>bend<code/>.
-   * @param {IHandle} coreHandle
-   * @param {IBend} bend
+   * @param {!IHandle} coreHandle
+   * @param {!IBend} bend
    */
   constructor(coreHandle, bend) {
     super()
@@ -257,7 +257,7 @@ export class InnerControlPointHandle extends BaseClass(IHandle) {
 
   /**
    * Initializes our own drag and determines whether we are a slave or the master and if there are actual slvae handles in that case
-   * @param {IInputModeContext} context
+   * @param {!IInputModeContext} context
    */
   initializeDrag(context) {
     this.coreHandle.initializeDrag(context)
@@ -301,9 +301,9 @@ export class InnerControlPointHandle extends BaseClass(IHandle) {
 
   /**
    * Move the core handle and if present also the slave handles in a way that the control point triple is collinear.
-   * @param {IInputModeContext} context
-   * @param {Point} originalLocation
-   * @param {Point} newLocation
+   * @param {!IInputModeContext} context
+   * @param {!Point} originalLocation
+   * @param {!Point} newLocation
    */
   handleMove(context, originalLocation, newLocation) {
     const delta = newLocation.subtract(originalLocation)
@@ -318,8 +318,8 @@ export class InnerControlPointHandle extends BaseClass(IHandle) {
 
   /**
    * Cancel the movement on the core handle and if present also on the slave handles
-   * @param {IInputModeContext} context
-   * @param {Point} originalLocation
+   * @param {!IInputModeContext} context
+   * @param {!Point} originalLocation
    */
   cancelDrag(context, originalLocation) {
     const childContext = IInputModeContext.createInputModeContext(
@@ -338,9 +338,9 @@ export class InnerControlPointHandle extends BaseClass(IHandle) {
 
   /**
    * Finish the movement on the core handle and if present also on the slave handles
-   * @param {IInputModeContext} context
-   * @param {Point} originalLocation
-   * @param {Point} newLocation
+   * @param {!IInputModeContext} context
+   * @param {!Point} originalLocation
+   * @param {!Point} newLocation
    */
   dragFinished(context, originalLocation, newLocation) {
     const delta = newLocation.subtract(originalLocation)
@@ -364,7 +364,7 @@ export class InnerControlPointHandle extends BaseClass(IHandle) {
 
   /**
    * Use the core handle's type
-   * @type {HandleTypes}
+   * @type {!HandleTypes}
    */
   get type() {
     return this.coreHandle.type
@@ -372,7 +372,7 @@ export class InnerControlPointHandle extends BaseClass(IHandle) {
 
   /**
    * Use the core handle's cursor
-   * @type {Cursor}
+   * @type {!Cursor}
    */
   get cursor() {
     return this.coreHandle.cursor
@@ -380,7 +380,7 @@ export class InnerControlPointHandle extends BaseClass(IHandle) {
 
   /**
    * Use the core handle's location
-   * @type {IPoint}
+   * @type {!IPoint}
    */
   get location() {
     return this.coreHandle.location
@@ -389,9 +389,9 @@ export class InnerControlPointHandle extends BaseClass(IHandle) {
 
 /**
  * Checks whether three points are collinear.
- * @param {IPoint} p1 the first point
- * @param {IPoint} p2 the second point
- * @param {IPoint} p3 the third point
+ * @param {!IPoint} p1 the first point
+ * @param {!IPoint} p2 the second point
+ * @param {!IPoint} p3 the third point
  * @returns {boolean} true iff all three points are (approximately) collinear.
  */
 function areCollinear(p1, p2, p3) {

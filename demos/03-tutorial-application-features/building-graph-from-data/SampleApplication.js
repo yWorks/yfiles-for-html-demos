@@ -51,8 +51,8 @@ let graphComponent = null
 
 /**
  * Bootstraps the demo.
- * @param {object} licenseData
- * @returns {Promise}
+ * @param {!object} licenseData
+ * @returns {!Promise}
  */
 async function run(licenseData) {
   License.value = licenseData
@@ -102,7 +102,7 @@ async function run(licenseData) {
  * {@link IGraph.addLabel()}
  * and other {@link IGraph} functions to apply the given information to the graph model.
  *
- * @param {IGraph} graph The graph.
+ * @param {!IGraph} graph The graph.
  * @param {*} graphData The graph data that was loaded from the JSON file.
  * @yjs:keep=groupsSource,nodesSource,edgesSource
  */
@@ -180,7 +180,7 @@ function buildGraph(graph, graphData) {
 /**
  * Initializes the defaults for the styles in this tutorial.
  *
- * @param {IGraph} graph The graph.
+ * @param {!IGraph} graph The graph.
  */
 function initTutorialDefaults(graph) {
   // configure defaults for normal nodes and their labels
@@ -232,9 +232,9 @@ function registerCommands() {
  * before usage you need to parse the file content which is done by JSON.parse in case of a JSON file as
  * demonstrated here.
  *
- * @param {string} url The URL to load.
+ * @param {!string} url The URL to load.
  *
- * @returns {Promise.<JSON>} A promise with the loaded data.
+ * @returns {!Promise.<JSON>} A promise with the loaded data.
  */
 
 async function loadJSON(url) {

@@ -223,7 +223,7 @@ function initializeDemo() {
 /**
  * Initializes responsive toolbar behavior (i.e. puts overflowing toolbar items in a separate
  * overflow menu).
- * @param {Element} toolbar
+ * @param {!Element} toolbar
  */
 function initResponsiveToolbar(toolbar) {
   const overflowContainerWrapper = document.createElement('div')
@@ -332,7 +332,7 @@ function hideRightResponsive(body) {
 
 /**
  * @param {*} isTutorial
- * @returns {string}
+ * @returns {!string}
  */
 function getDemoName(isTutorial) {
   const title = document.title || ''
@@ -341,7 +341,7 @@ function getDemoName(isTutorial) {
 }
 
 /**
- * @returns {string}
+ * @returns {!string}
  */
 function getTutorialName() {
   const demoName = getDemoName(false)
@@ -372,7 +372,7 @@ export function showApp(graphComponent, overviewComponent) {
 
 /**
  * Binds the given command to the input element specified by the given selector.
- * @param {string} selector
+ * @param {!string} selector
  * @param {*} command
  * @param {*} target
  * @param {*} [parameter]
@@ -403,8 +403,8 @@ export function bindCommand(selector, command, target, parameter) {
 }
 
 /**
- * @param {string} selector
- * @param {function} action
+ * @param {!string} selector
+ * @param {!function} action
  */
 export function bindAction(selector, action) {
   const element = document.querySelector(selector)
@@ -417,8 +417,8 @@ export function bindAction(selector, action) {
 }
 
 /**
- * @param {string} selectors
- * @param {function} action
+ * @param {!string} selectors
+ * @param {!function} action
  */
 export function bindActions(selectors, action) {
   const elements = document.querySelectorAll(selectors)
@@ -434,8 +434,8 @@ export function bindActions(selectors, action) {
 }
 
 /**
- * @param {string} selector
- * @param {function} action
+ * @param {!string} selector
+ * @param {!function} action
  */
 export function bindChangeListener(selector, action) {
   const element = document.querySelector(selector)
@@ -453,8 +453,8 @@ export function bindChangeListener(selector, action) {
 }
 
 /**
- * @param {string} selector
- * @param {function} action
+ * @param {!string} selector
+ * @param {!function} action
  */
 export function bindInputListener(selector, action) {
   const element = document.querySelector(selector)
@@ -471,9 +471,9 @@ export function bindInputListener(selector, action) {
 }
 
 /**
- * @param {Element} e
- * @param {string} className
- * @returns {Element}
+ * @param {!Element} e
+ * @param {!string} className
+ * @returns {!Element}
  */
 export function addClass(e, className) {
   const classes = e.getAttribute('class')
@@ -486,9 +486,9 @@ export function addClass(e, className) {
 }
 
 /**
- * @param {Element} e
- * @param {string} className
- * @returns {Element}
+ * @param {!Element} e
+ * @param {!string} className
+ * @returns {!Element}
  */
 export function removeClass(e, className) {
   const classes = e.getAttribute('class')
@@ -507,8 +507,8 @@ export function removeClass(e, className) {
 }
 
 /**
- * @param {Element} e
- * @param {string} className
+ * @param {!Element} e
+ * @param {!string} className
  * @returns {boolean}
  */
 export function hasClass(e, className) {
@@ -518,9 +518,9 @@ export function hasClass(e, className) {
 }
 
 /**
- * @param {Element} e
- * @param {string} className
- * @returns {Element}
+ * @param {!Element} e
+ * @param {!string} className
+ * @returns {!Element}
  */
 export function toggleClass(e, className) {
   if (hasClass(e, className)) {
@@ -552,10 +552,10 @@ export function setComboboxValue(comboBoxId, value) {
 
 /**
  * Reads a graph from the given filename.
- * @param {GraphMLIOHandler} graphMLIOHandler The GraphMLIOHandler that is used to read the graph
+ * @param {!GraphMLIOHandler} graphMLIOHandler The GraphMLIOHandler that is used to read the graph
  * @param {*} graph The graph.
- * @param {string} filename The filename.
- * @returns {Promise} A promise that is resolved when the parsing has completed.
+ * @param {!string} filename The filename.
+ * @returns {!Promise} A promise that is resolved when the parsing has completed.
  */
 export function readGraph(graphMLIOHandler, graph, filename) {
   graph.clear()

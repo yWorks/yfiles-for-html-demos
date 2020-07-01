@@ -20,7 +20,7 @@
     "@angular/platform-browser-dynamic": "9.1.9",
     "rxjs": "6.5.5",
     "tslib": "^2.0.0",
-    "yfiles": "../../../lib-dev/es-modules/yfiles-23.0.0-dev.tgz",
+    "yfiles": "../../../lib-dev/es-modules/yfiles-23.0.1-dev.tgz",
     "zone.js": "~0.10.3"
   },
   "devDependencies": {

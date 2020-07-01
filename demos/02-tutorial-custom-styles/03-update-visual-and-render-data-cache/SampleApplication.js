@@ -53,7 +53,7 @@ import loadJson from '../../resources/load-json.js'
 let graphComponent = null
 
 /**
- * @param {object} licenseData
+ * @param {!object} licenseData
  */
 function run(licenseData) {
   License.value = licenseData
@@ -173,7 +173,7 @@ function initializeGraph() {
 /**
  * Creates the default input mode for the GraphComponent,
  * a {@link GraphEditorInputMode}.
- * @returns {GraphEditorInputMode} a new GraphEditorInputMode instance
+ * @returns {!GraphEditorInputMode} a new GraphEditorInputMode instance
  */
 function createEditorMode() {
   return new GraphEditorInputMode({

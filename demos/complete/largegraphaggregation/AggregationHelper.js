@@ -75,7 +75,7 @@ export class AggregationHelper {
   }
 
   /**
-   * @param {INode} node
+   * @param {!INode} node
    * @returns {boolean}
    */
   isOriginalNodeOrPlaceHolder(node) {
@@ -83,7 +83,7 @@ export class AggregationHelper {
   }
 
   /**
-   * @param {IEdge} edge
+   * @param {!IEdge} edge
    * @returns {boolean}
    */
   isHierarchyEdge(edge) {
@@ -99,8 +99,8 @@ export class AggregationHelper {
 
   /**
    * Creates a new instance of this class.
-   * @param {NodeAggregationResult} aggregationResult
-   * @param {AggregationGraphWrapper} aggregateGraph
+   * @param {!NodeAggregationResult} aggregationResult
+   * @param {!AggregationGraphWrapper} aggregateGraph
    */
   constructor(aggregationResult, aggregateGraph) {
     // The {@link AggregationGraphWrapper} this instance uses.
@@ -124,8 +124,8 @@ export class AggregationHelper {
 
   /**
    * Returns the {@link NodeAggregate} for a node.
-   * @param {INode} node
-   * @returns {NodeAggregate}
+   * @param {!INode} node
+   * @returns {!NodeAggregate}
    */
   getAggregateForNode(node) {
     if (this.aggregateGraph.isAggregationItem(node)) {
@@ -137,8 +137,8 @@ export class AggregationHelper {
 
   /**
    * Returns the placeholder node for an original node or the original node itself if there is no placeholder.
-   * @param {INode} originalNode
-   * @returns {INode}
+   * @param {!INode} originalNode
+   * @returns {!INode}
    */
   getPlaceholder(originalNode) {
     const placeHolder = this.$placeholderMap.get(originalNode)
@@ -147,8 +147,8 @@ export class AggregationHelper {
 
   /**
    * If a node is aggregated, calls {@link AggregationHelper#separate}, if not calls {@link AggregationHelper#aggregate}.
-   * @param {INode} node The node.
-   * @returns {IListEnumerable.<INode>} The nodes affected by this operation. The created aggregation node is always the first item.
+   * @param {!INode} node The node.
+   * @returns {!IListEnumerable.<INode>} The nodes affected by this operation. The created aggregation node is always the first item.
    */
   toggleAggregation(node) {
     const aggregationNodeInfo = node.tag
@@ -157,8 +157,8 @@ export class AggregationHelper {
 
   /**
    * Replaces a separated node and its hierarchy children with a new aggregation node.
-   * @param {INode} node The node.
-   * @returns {IListEnumerable.<INode>} The nodes affected by this operation. The created aggregation node is always the first item.
+   * @param {!INode} node The node.
+   * @returns {!IListEnumerable.<INode>} The nodes affected by this operation. The created aggregation node is always the first item.
    */
   aggregate(node) {
     const aggregationInfo = node.tag
@@ -193,8 +193,8 @@ export class AggregationHelper {
    * <p>
    * Can be used to apply the initial aggregation. If this is not the initial aggregation run, it will reuse existing aggregation nodes.
    * </p>
-   * @param {NodeAggregate} aggregate The "root" aggregate.
-   * @returns {INode} The aggregation node representing the passed <code>aggregate</code>
+   * @param {!NodeAggregate} aggregate The "root" aggregate.
+   * @returns {!INode} The aggregation node representing the passed <code>aggregate</code>
    */
   aggregateRecursively(aggregate) {
     if (aggregate.children.size === 0) {
@@ -251,8 +251,8 @@ export class AggregationHelper {
 
   /**
    * Gets the descendant {@link NodeAggregate} with the highest {@link NodeAggregate#descendantWeightSum}.
-   * @param {NodeAggregate} aggregate
-   * @returns {NodeAggregate}
+   * @param {!NodeAggregate} aggregate
+   * @returns {!NodeAggregate}
    */
   static getMostImportantDescendant(aggregate) {
     while (true) {
@@ -268,8 +268,8 @@ export class AggregationHelper {
 
   /**
    * Copies the labels from <code>source</code> to <code>target</code>.
-   * @param {INode} source
-   * @param {INode} target
+   * @param {!INode} source
+   * @param {!INode} target
    */
   $copyLabels(source, target) {
     for (const label of source.labels) {
@@ -287,8 +287,8 @@ export class AggregationHelper {
    * <p>
    * Creates hierarchy edges between the new aggregation node and its children.
    * </p>
-   * @param {INode} node The node.
-   * @returns {IListEnumerable.<INode>} The nodes affected by this operation. The created aggregation node is always the first item.
+   * @param {!INode} node The node.
+   * @returns {!IListEnumerable.<INode>} The nodes affected by this operation. The created aggregation node is always the first item.
    */
   separate(node) {
     const aggregationInfo = node.tag
@@ -352,9 +352,9 @@ export class AggregationHelper {
   }
 
   /**
-   * @param {List.<INode>} instance
-   * @param {INode} p1
-   * @returns {List.<INode>}
+   * @param {!List.<INode>} instance
+   * @param {!INode} p1
+   * @returns {!List.<INode>}
    */
   static initializer(instance, p1) {
     instance.add(p1)
@@ -363,7 +363,7 @@ export class AggregationHelper {
 
   /**
    * Replaces original edges adjacent to a placeholder node with aggregation edges when source and target are currently visible.
-   * @param {INode} node
+   * @param {!INode} node
    */
   $replaceEdges(node) {
     let originalNode
@@ -392,9 +392,9 @@ export class AggregationHelper {
   }
 
   /**
-   * @param {INode} sourceNode
-   * @param {INode} targetNode
-   * @param {IEdge} edge
+   * @param {!INode} sourceNode
+   * @param {!INode} targetNode
+   * @param {!IEdge} edge
    * @param {boolean} newSource
    */
   $createReplacementEdge(sourceNode, targetNode, edge, newSource) {
@@ -419,9 +419,9 @@ export class AggregationHelper {
   }
 
   /**
-   * @param {INode} sourceNode
-   * @param {INode} targetNode
-   * @param {IEdge} edge
+   * @param {!INode} sourceNode
+   * @param {!INode} targetNode
+   * @param {!IEdge} edge
    */
   $createReplacementEdgeCore(sourceNode, targetNode, edge) {
     if (
@@ -440,14 +440,14 @@ export class AggregationHelper {
  */
 export class AggregationNodeInfo {
   /**
-   * @type {NodeAggregate}
+   * @type {!NodeAggregate}
    */
   get aggregate() {
     return this.$aggregate
   }
 
   /**
-   * @param {NodeAggregate} aggregate
+   * @param {!NodeAggregate} aggregate
    * @param {boolean} isAggregated
    */
   constructor(aggregate, isAggregated) {

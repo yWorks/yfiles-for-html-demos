@@ -69,7 +69,7 @@ let graphComponent = null
 let dateMapper = null
 
 /**
- * @param {object} licenseData
+ * @param {!object} licenseData
  */
 function run(licenseData) {
   License.value = licenseData
@@ -123,7 +123,7 @@ function run(licenseData) {
 Class.ensure(LayoutExecutor)
 
 /**
- * @returns {Promise}
+ * @returns {!Promise}
  */
 async function runLayout() {
   // Uses the morphLayout method to perform the layout, animate it, manage undo and adjust the content rectangle in

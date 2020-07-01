@@ -74,7 +74,7 @@ let graphComponent
 let dateMapper
 
 /**
- * @param {object} licenseData
+ * @param {!object} licenseData
  */
 function run(licenseData) {
   License.value = licenseData

@@ -72,17 +72,17 @@ import {
 
 const samples = SamplesData
 
-/** @type {?HierarchicLayout} */
+/** @type {HierarchicLayout} */
 let layout = null
 /** @type {boolean} */
 let layouting = false
 
-/** @type {?GraphComponent} */
+/** @type {GraphComponent} */
 let graphComponent = null
-/** @type {?GraphBuilder} */
+/** @type {GraphBuilder} */
 let graphBuilder = null
 
-/** @type {?IList.<INode>} */
+/** @type {IList.<INode>} */
 let existingNodes = null
 
 /**
@@ -171,7 +171,7 @@ function registerCommands() {
  * Builds the graph from data.
  * @param {boolean} update <code>true</code> when the following layout should be incremental, <code>false</code>
  *   otherwise
- * @returns {Promise}
+ * @returns {!Promise}
  */
 async function buildGraphFromData(update) {
   if (layouting) {
@@ -203,7 +203,7 @@ async function buildGraphFromData(update) {
  * Applies the layout.
  * @param {boolean} update <code>true</code> when the following layout should be incremental, <code>false</code>
  *   otherwise
- * @returns {Promise}
+ * @returns {!Promise}
  */
 async function applyLayout(update) {
   if (layouting) {
@@ -218,7 +218,6 @@ async function applyLayout(update) {
   }
 
   const layoutData = new HierarchicLayoutData({
-    // eslint-disable-next-line @typescript-eslint/ban-types
     incrementalHints: (item, hintsFactory) => {
       if (INode.isInstance(item) && !existingNodes.includes(item)) {
         return hintsFactory.createLayerIncrementallyHint(item)
@@ -242,7 +241,7 @@ async function applyLayout(update) {
 
 /**
  * Instantiates the GraphBuilder and sources list boxes and applies the given sample data
- * @param {GraphBuilderSample} sample The sample to use for instantiation / initialization
+ * @param {!GraphBuilderSample} sample The sample to use for instantiation / initialization
  */
 function loadSample(sample) {
   const sampleClone = JSON.parse(JSON.stringify(sample))
@@ -287,7 +286,7 @@ function initializeSamplesComboBox() {
 }
 
 /**
- * @param {HTMLElement} htmlElement
+ * @param {!HTMLElement} htmlElement
  */
 function removeAllChildren(htmlElement) {
   while (htmlElement.firstChild) {
@@ -297,8 +296,8 @@ function removeAllChildren(htmlElement) {
 
 /**
  * Instantiates the sources list boxes
- * @param {SourcesFactory} sourcesFactory
- * @returns {object}
+ * @param {!SourcesFactory} sourcesFactory
+ * @returns {!object}
  */
 function createSourcesLists(sourcesFactory) {
   const nodeSourcesListRootElement = document.getElementById('nodesSourcesList')
@@ -325,7 +324,7 @@ function createSourcesLists(sourcesFactory) {
 
 /**
  * Creates and configures a hierarchic layout.
- * @returns {HierarchicLayout}
+ * @returns {!HierarchicLayout}
  */
 function createLayout() {
   const hierarchicLayout = new HierarchicLayout()

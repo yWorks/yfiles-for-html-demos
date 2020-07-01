@@ -52,7 +52,7 @@ import {
 export class SankeyLayout {
   /**
    * Creates the SankeyLayout for the given graphComponent
-   * @param {GraphComponent} graphComponent The given graphComponent
+   * @param {!GraphComponent} graphComponent The given graphComponent
    */
   constructor(graphComponent) {
     this.graphComponent = graphComponent
@@ -61,7 +61,7 @@ export class SankeyLayout {
   /**
    * Configures the hierarchic layout algorithm for the Sankey visualization
    * @param {boolean} fromSketchMode True if the layout should run from sketch, false otherwise
-   * @returns {HierarchicLayout} The configured hierarchic layout
+   * @returns {!HierarchicLayout} The configured hierarchic layout
    */
   configureHierarchicLayout(fromSketchMode) {
     const hierarchicLayout = new HierarchicLayout({
@@ -95,7 +95,7 @@ export class SankeyLayout {
 
   /**
    * Configures the hierarchic layout data for the Sankey visualization
-   * @returns {HierarchicLayoutData} The configured hierarchic Layout data object
+   * @returns {!HierarchicLayoutData} The configured hierarchic Layout data object
    */
   createHierarchicLayoutData() {
     // create the layout data
@@ -120,7 +120,7 @@ export class SankeyLayout {
 class NodeResizingStage extends LayoutStageBase {
   /**
    * Creates a new instance of NodeResizingStage.
-   * @param {ILayoutAlgorithm} layout
+   * @param {!ILayoutAlgorithm} layout
    */
   constructor(layout) {
     super(layout)
@@ -134,7 +134,7 @@ class NodeResizingStage extends LayoutStageBase {
    * Gets the main orientation of the layout. Should be the same value as for the associated core layout
    * algorithm.
    * @return The main orientation of the layout
-   * @type {LayoutOrientation}
+   * @type {!LayoutOrientation}
    */
   get layoutOrientation() {
     return this.$layoutOrientation
@@ -144,7 +144,7 @@ class NodeResizingStage extends LayoutStageBase {
    * Gets the main orientation of the layout. Should be the same value as for the associated core layout
    * algorithm.
    * @param orientation One of the default layout orientations
-   * @type {LayoutOrientation}
+   * @type {!LayoutOrientation}
    */
   set layoutOrientation(orientation) {
     this.$layoutOrientation = orientation
@@ -190,7 +190,7 @@ class NodeResizingStage extends LayoutStageBase {
 
   /**
    * Applies the layout to the given graph.
-   * @param {LayoutGraph} graph The given graph
+   * @param {!LayoutGraph} graph The given graph
    */
   applyLayout(graph) {
     graph.nodes.forEach(node => {
@@ -203,8 +203,8 @@ class NodeResizingStage extends LayoutStageBase {
 
   /**
    * Adjusts the size of the given node.
-   * @param {YNode} node The given node
-   * @param {LayoutGraph} graph The given graph
+   * @param {!YNode} node The given node
+   * @param {!LayoutGraph} graph The given graph
    */
   adjustNodeSize(node, graph) {
     let width = 60
@@ -255,7 +255,7 @@ class NodeResizingStage extends LayoutStageBase {
    * Calculates the space required when placing the given edge side by side without overlaps and considering
    * the specified minimum port distance and edge thickness.
    * @param {?IEnumerable.<Edge>} edges The edges to calculate the space for
-   * @param {LayoutGraph} graph The given graph
+   * @param {!LayoutGraph} graph The given graph
    * @returns {number}
    */
   calcRequiredSpace(edges, graph) {

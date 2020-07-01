@@ -38,9 +38,9 @@ export class ContentRectViewportLimiter extends ViewportLimiter {
    * Limits the viewport to the area which contains nodes.
    * @param {CanvasComponent} canvas - The canvas control on which the viewport should be applied.
    * @param {Rect} suggestedViewport - The suggested viewport.
-   * @returns {Rect} {Rect} - The actual limited viewport to use
-   * @param {CanvasComponent} canvas
-   * @param {Rect} suggestedViewport
+   * @returns {!Rect} {Rect} - The actual limited viewport to use
+   * @param {!CanvasComponent} canvas
+   * @param {!Rect} suggestedViewport
    */
   limitViewport(canvas, suggestedViewport) {
     const leftX = canvas.contentRect.x

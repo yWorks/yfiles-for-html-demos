@@ -72,9 +72,9 @@ export class SankeyPopupSupport {
   /**
    * Constructor that takes the graphComponent, the container div element and an
    * ILabelModelParameter to determine the relative position of the popup.
-   * @param {GraphComponent} graphComponent The given graphComponent.
-   * @param {HTMLElement} div The div element.
-   * @param {ILabelModelParameter} labelModelParameter The label model parameter that determines
+   * @param {!GraphComponent} graphComponent The given graphComponent.
+   * @param {!HTMLElement} div The div element.
+   * @param {!ILabelModelParameter} labelModelParameter The label model parameter that determines
    * the position of the pop-up.
    */
   constructor(graphComponent, div, labelModelParameter) {
@@ -94,7 +94,7 @@ export class SankeyPopupSupport {
   /**
    * Sets the container {@link HTMLPopupSupport#div div element}.
    * @param value The div element to be set.
-   * @type {HTMLElement}
+   * @type {!HTMLElement}
    */
   set div(value) {
     this.$div = value
@@ -102,7 +102,7 @@ export class SankeyPopupSupport {
 
   /**
    * Gets the container {@link HTMLPopupSupport#div div element}.
-   * @type {HTMLElement}
+   * @type {!HTMLElement}
    */
   get div() {
     return this.$div
@@ -253,11 +253,11 @@ export class SankeyPopupSupport {
 export class TagUndoUnit extends UndoUnitBase {
   /**
    * The constructor
-   * @param {string} undoName Name of the undo operation
-   * @param {string} redoName Name of the redo operation
-   * @param {object} oldTag The data to restore the previous state
-   * @param {object} newTag The data to restore the next state
-   * @param {IModelItem} item The owner of the tag
+   * @param {!string} undoName Name of the undo operation
+   * @param {!string} redoName Name of the redo operation
+   * @param {!object} oldTag The data to restore the previous state
+   * @param {!object} newTag The data to restore the next state
+   * @param {!IModelItem} item The owner of the tag
    * @param {?Function} undoRedoCallback Callback
    */
   constructor(undoName, redoName, oldTag, newTag, item, undoRedoCallback) {
@@ -299,7 +299,7 @@ export class ConstrainedPositionHandler extends BaseClass(IPositionHandler) {
   }
 
   /**
-   * @type {IPoint}
+   * @type {!IPoint}
    */
   get location() {
     if (this.handler) {
@@ -309,7 +309,7 @@ export class ConstrainedPositionHandler extends BaseClass(IPositionHandler) {
   }
 
   /**
-   * @param {IInputModeContext} context
+   * @param {!IInputModeContext} context
    */
   initializeDrag(context) {
     if (this.handler === null) {
@@ -320,9 +320,9 @@ export class ConstrainedPositionHandler extends BaseClass(IPositionHandler) {
   }
 
   /**
-   * @param {IInputModeContext} context
-   * @param {Point} originalLocation
-   * @param {Point} newLocation
+   * @param {!IInputModeContext} context
+   * @param {!Point} originalLocation
+   * @param {!Point} newLocation
    */
   handleMove(context, originalLocation, newLocation) {
     if (this.handler === null) {
@@ -339,8 +339,8 @@ export class ConstrainedPositionHandler extends BaseClass(IPositionHandler) {
   }
 
   /**
-   * @param {IInputModeContext} context
-   * @param {Point} originalLocation
+   * @param {!IInputModeContext} context
+   * @param {!Point} originalLocation
    */
   cancelDrag(context, originalLocation) {
     if (this.handler === null) {
@@ -350,9 +350,9 @@ export class ConstrainedPositionHandler extends BaseClass(IPositionHandler) {
   }
 
   /**
-   * @param {IInputModeContext} context
-   * @param {Point} originalLocation
-   * @param {Point} newLocation
+   * @param {!IInputModeContext} context
+   * @param {!Point} originalLocation
+   * @param {!Point} newLocation
    */
   dragFinished(context, originalLocation, newLocation) {
     if (this.handler === null) {
@@ -369,7 +369,7 @@ export class ConstrainedPositionHandler extends BaseClass(IPositionHandler) {
 export class HighlightManager extends HighlightIndicatorManager {
   /**
    * Creates a new instance of HighlightManager.
-   * @param {CanvasComponent} canvas
+   * @param {!CanvasComponent} canvas
    */
   constructor(canvas) {
     super(canvas)
@@ -380,8 +380,8 @@ export class HighlightManager extends HighlightIndicatorManager {
 
   /**
    * This implementation always returns the highlightGroup of the canvasComponent of this instance.
-   * @param {IModelItem} item The item to check
-   * @returns {ICanvasObjectGroup} An ICanvasObjectGroup or null
+   * @param {!IModelItem} item The item to check
+   * @returns {!ICanvasObjectGroup} An ICanvasObjectGroup or null
    */
   getCanvasObjectGroup(item) {
     if (IEdge.isInstance(item)) {
@@ -396,8 +396,8 @@ export class HighlightManager extends HighlightIndicatorManager {
 
   /**
    * Callback used by install to retrieve the installer for a given item.
-   * @param {IModelItem} item The item to find an installer for
-   * @returns {ICanvasObjectInstaller} The Highlighting installer
+   * @param {!IModelItem} item The item to find an installer for
+   * @returns {!ICanvasObjectInstaller} The Highlighting installer
    */
   getInstaller(item) {
     if (IEdge.isInstance(item)) {

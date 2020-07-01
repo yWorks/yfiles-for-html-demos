@@ -40,43 +40,59 @@ import {
   Matrix,
   NodeStyleBase,
   Point,
-  Rect,
   SvgVisual,
   Visual,
   YObject
 } from 'yfiles'
 
+const colors = [
+  'rgba(65,105,225,1)', // royalblue
+  'rgba(255,215,0,1)', // gold
+  'rgba(220,20,60,1)', // crimson
+  'rgba(0,206,209,1)', // darkturquoise
+  'rgba(100,149,237,1)', // cornflowerblue
+  'rgba(72,61,139,1)', // darkslateblue
+  'rgba(255,69,0,1)', // orangered
+  'rgba(123,104,238,1)', // mediumslateblue
+  'rgba(34,139,34,1)', // forestgreen
+  'rgba(99,21,133,1)', // mediumvioletred
+  'rgba(0,139,139,1)', // darkcyan
+  'rgba(210,105,30,1)', // chocolate
+  'rgba(255,165,0,1)', // orange
+  'rgba(50,205,50,1)', // limegreen
+  'rgba(186,85,211,1)' // mediumorchid
+]
+
+const gradientColors = [
+  'rgba(0, 64, 255, 1)',
+  'rgba(64, 81, 191, 1)',
+  'rgba(128, 98, 128, 1)',
+  'rgba(191, 115, 64, 1)',
+  'rgba(255, 132, 0, 1)',
+  'rgba(203,56,0, 1)',
+  'rgba(158,0,0, 1)'
+]
+
 /**
  * Returns the color for the given component.
  * Colors are represented like this: "rbg(r,g,b)".
  * @param {number} componentId The id of the component.
+ * @param {boolean} useGradient Whether to use gradient colors
  * @return {string}   The color for the component.
  */
-function getColorForComponent(componentId) {
-  const colors = [
-    'rgba(65,105,225,1)', // royalblue
-    'rgba(255,215,0,1)', // gold
-    'rgba(220,20,60,1)', // crimson
-    'rgba(0,206,209,1)', // darkturquoise
-    'rgba(100,149,237,1)', // cornflowerblue
-    'rgba(72,61,139,1)', // darkslateblue
-    'rgba(255,69,0,1)', // orangered
-    'rgba(123,104,238,1)', // mediumslateblue
-    'rgba(34,139,34,1)', // forestgreen
-    'rgba(99,21,133,1)', // mediumvioletred
-    'rgba(0,139,139,1)', // darkcyan
-    'rgba(210,105,30,1)', // chocolate
-    'rgba(255,165,0,1)', // orange
-    'rgba(50,205,50,1)', // limegreen
-    'rgba(186,85,211,1)' // mediumorchid
-  ]
-  return colors[componentId % colors.length]
+export function getColorForComponent(componentId, useGradient) {
+  if (useGradient) {
+    return gradientColors[componentId % gradientColors.length]
+  } else {
+    return colors[componentId % colors.length]
+  }
 }
 
 /**
  * Checks whether or not the given item has a valid color in its tag.
  * @param {IModelItem} item The item to be checked.
- * @return {boolean} <code>true</code> if the node's tag contains a valid color, <code>false</code> otherwise.
+ * @return {boolean} <code>true</code> if the node's tag contains a valid color, <code>false</code>
+ *   otherwise.
  */
 function hasValidColorTag(item) {
   return item.tag !== null && item.tag.color !== null && item.tag.color !== undefined
@@ -113,6 +129,7 @@ export class MultiColorNodeStyle extends NodeStyleBase {
     this.$currentColor = null
     this.$oldColor = null
     this.$hovered = false
+    this.$useGradient = false
   }
 
   /** @type {string} */
@@ -133,6 +150,16 @@ export class MultiColorNodeStyle extends NodeStyleBase {
   /** @type {string} */
   get oldColor() {
     return this.$oldColor
+  }
+
+  /** @type {boolean} */
+  set useGradient(useGradient) {
+    this.$useGradient = useGradient
+  }
+
+  /** @type {boolean} */
+  get useGradient() {
+    return this.$useGradient
   }
 
   /** @type {boolean} */
@@ -196,11 +223,12 @@ export class MultiColorNodeStyle extends NodeStyleBase {
   }
 
   /**
-   * Actually creates the visual appearance of a node given the values provided by <code>RenderDataCache</code>.
-   * This renders the node and the edges to the labels and adds the elements to the <code>container</code>.
-   * All items are arranged as if the node was located at (0,0). {@link MultiColorNodeStyle#createVisual} and
-   * <code>UpdateVisual</code> finally arrange the container so that the drawing is translated into the final
-   * position.
+   * Actually creates the visual appearance of a node given the values provided by
+   * <code>RenderDataCache</code>. This renders the node and the edges to the labels and adds the
+   * elements to the <code>container</code>. All items are arranged as if the node was located at
+   * (0,0). {@link MultiColorNodeStyle#createVisual} and
+   * <code>UpdateVisual</code> finally arrange the container so that the drawing is translated into
+   * the final position.
    * @param {IRenderContext} renderContext
    * @param {INode} node
    * @param {Element} visual
@@ -235,7 +263,7 @@ export class MultiColorNodeStyle extends NodeStyleBase {
       if (this.currentColor === null) {
         this.currentColor = hasValidColorTag(node)
           ? node.tag.color
-          : getColorForComponent(components[0])
+          : getColorForComponent(components[0], this.useGradient)
       }
 
       const shape = window.document.createElementNS('http://www.w3.org/2000/svg', 'ellipse')
@@ -278,7 +306,7 @@ export class MultiColorNodeStyle extends NodeStyleBase {
         const color =
           component[0].tag.color !== null
             ? component[0].tag.color
-            : getColorForComponent(components[i])
+            : getColorForComponent(components[i], this.useGradient)
         slice.setAttribute('fill', color)
         slice.setAttribute(
           'transform',
@@ -320,7 +348,7 @@ export class MultiColorNodeStyle extends NodeStyleBase {
         this.currentColor =
           component[0].tag.color !== null
             ? component[0].tag.color
-            : getColorForComponent(components[components.length - 1])
+            : getColorForComponent(components[components.length - 1], this.useGradient)
       }
       const color = this.currentColor
       const circle = window.document.createElementNS('http://www.w3.org/2000/svg', 'ellipse')
@@ -392,7 +420,7 @@ export class MultiColorNodeStyle extends NodeStyleBase {
               if (object.style instanceof MultiColorNodeStyle) {
                 const color = hasValidColorTag(component[0])
                   ? component[0].tag.color
-                  : getColorForComponent(componentId)
+                  : getColorForComponent(componentId, this.useGradient)
                 circle.setAttribute('fill', color)
               }
             }
@@ -406,7 +434,7 @@ export class MultiColorNodeStyle extends NodeStyleBase {
             object.style.oldColor = object.style.currentColor
             const color = hasValidColorTag(component[0])
               ? component[0].tag.color
-              : getColorForComponent(componentId)
+              : getColorForComponent(componentId, this.useGradient)
             path.setAttribute('stroke', color)
             path.setAttribute('stroke-width', '7')
           }
@@ -476,7 +504,7 @@ export class MultiColorNodeStyle extends NodeStyleBase {
       this.currentColor =
         currentComponent[0].tag.color !== null
           ? currentComponent[0].tag.color
-          : getColorForComponent(componentId)
+          : getColorForComponent(componentId, this.useGradient)
 
       currentComponent.forEach(object => {
         if (INode.isInstance(object) && object.style instanceof MultiColorNodeStyle) {
@@ -537,6 +565,7 @@ export class MultiColorEdgeStyle extends EdgeStyleBase {
     this.$currentColor = color
     this.$oldColor = null
     this.$thickness = 1
+    this.$useGradient = false
     this.$targetArrow = null
   }
 
@@ -568,6 +597,16 @@ export class MultiColorEdgeStyle extends EdgeStyleBase {
   /** @type {string} */
   get oldColor() {
     return this.$oldColor
+  }
+
+  /** @type {boolean} */
+  set useGradient(useGradient) {
+    this.$useGradient = useGradient
+  }
+
+  /** @type {boolean} */
+  get useGradient() {
+    return this.$useGradient
   }
 
   /** @type {IArrow} */
@@ -711,7 +750,8 @@ export class MultiColorEdgeStyle extends EdgeStyleBase {
       },
 
       /**
-       * Check if the path of this instance is equals to another {@link MultiColorEdgeStyle.RenderDataCache}'s path.
+       * Check if the path of this instance is equals to another
+       * {@link MultiColorEdgeStyle.RenderDataCache}'s path.
        * @return {boolean}
        */
       pathEquals(other) {
@@ -737,7 +777,8 @@ export class MultiColorEdgeStyle extends EdgeStyleBase {
   }
 
   /**
-   * Updates the edge path data as well as the arrow positions of the visuals stored in <param name="container" />.
+   * Updates the edge path data as well as the arrow positions of the visuals stored in <param
+   * name="container" />.
    * @param {IRenderContext} context
    * @param {IEdge} edge
    * @param {Visual} visual
@@ -788,7 +829,7 @@ export class MultiColorEdgeStyle extends EdgeStyleBase {
           if (object.style instanceof MultiColorNodeStyle) {
             const color = hasValidColorTag(component[0])
               ? component[0].tag.color
-              : getColorForComponent(componentId)
+              : getColorForComponent(componentId, this.useGradient)
             circle.setAttribute('fill', color)
           }
         }
@@ -798,7 +839,7 @@ export class MultiColorEdgeStyle extends EdgeStyleBase {
           object.style.oldColor = object.style.currentColor
           const color = hasValidColorTag(object)
             ? object.tag.color
-            : getColorForComponent(componentId)
+            : getColorForComponent(componentId, this.useGradient)
           path.setAttribute('stroke', color)
           path.setAttribute('stroke-width', '7')
         }
@@ -844,7 +885,9 @@ export class MultiColorEdgeStyle extends EdgeStyleBase {
    */
   onMouseClicked(edge, svgElement) {
     const componentId = svgElement.getAttribute('component')
-    this.currentColor = hasValidColorTag(edge) ? edge.tag.color : getColorForComponent(componentId)
+    this.currentColor = hasValidColorTag(edge)
+      ? edge.tag.color
+      : getColorForComponent(componentId, this.useGradient)
     const currentComponent = edge.tag.components[componentId]
     currentComponent.forEach(object => {
       if (INode.isInstance(object) && object.style instanceof MultiColorNodeStyle) {
@@ -867,8 +910,8 @@ export class MultiColorEdgeStyle extends EdgeStyleBase {
 
   /**
    * Determines whether the visual representation of the edge has been hit at the given location.
-   * Overridden method to include the {@link MultiColorEdgeStyle#thickness} and the HitTestRadius specified in the
-   * context in the calculation.
+   * Overridden method to include the {@link MultiColorEdgeStyle#thickness} and the HitTestRadius
+   * specified in the context in the calculation.
    * @param {IRenderContext} context
    * @param {Point} point
    * @param {IEdge} edge
@@ -1150,7 +1193,8 @@ export class SingleColorEdgeStyle extends EdgeStyleBase {
       },
 
       /**
-       * Check if the path of this instance is equals to another {@link SingleColorNodeStyle.RenderDataCache}'s path.
+       * Check if the path of this instance is equals to another
+       * {@link SingleColorNodeStyle.RenderDataCache}'s path.
        * @return {boolean}
        */
       pathEquals(other) {
@@ -1174,7 +1218,8 @@ export class SingleColorEdgeStyle extends EdgeStyleBase {
   }
 
   /**
-   * Updates the edge path data as well as the arrow positions of the visuals stored in <param name="visual"/>.
+   * Updates the edge path data as well as the arrow positions of the visuals stored in <param
+   * name="visual"/>.
    * @param {IRenderContext} context
    * @param {IEdge} edge
    * @param {Visual} visual
@@ -1316,11 +1361,12 @@ export class SourceTargetNodeStyle extends NodeStyleBase {
   }
 
   /**
-   * Actually creates the visual appearance of a node given the values provided by <code>RenderDataCache</code>.
-   * This renders the node and the edges to the labels and adds the elements to the <code>container</code>.
-   * All items are arranged as if the node was located at (0,0). {@link SourceTargetNodeStyle#createVisual} and
-   * <code>UpdateVisual</code> finally arrange the container so that the drawing is translated into the final
-   * position.
+   * Actually creates the visual appearance of a node given the values provided by
+   * <code>RenderDataCache</code>. This renders the node and the edges to the labels and adds the
+   * elements to the <code>container</code>. All items are arranged as if the node was located at
+   * (0,0). {@link SourceTargetNodeStyle#createVisual} and
+   * <code>UpdateVisual</code> finally arrange the container so that the drawing is translated into
+   * the final position.
    * @param {IRenderContext} renderContext
    * @param {INode} node
    * @param {Element} visual
@@ -1364,7 +1410,7 @@ export class SourceTargetNodeStyle extends NodeStyleBase {
           `M${radius},${radius} L${radius},${0} A${radius},${radius} 0 0,1 ${radius +
             y * radius},${radius - x * radius} z`
         )
-        slice.setAttribute('fill', getColorForComponent(components[i]))
+        slice.setAttribute('fill', getColorForComponent(components[i]), this.useGradient)
         slice.setAttribute(
           'transform',
           `rotate(${(i * angle * 180) / Math.PI} ${radius} ${radius})`
@@ -1483,7 +1529,7 @@ export class SourceTargetNodeStyle extends NodeStyleBase {
               object.style instanceof MultiColorNodeStyle ||
               SourceTargetNodeStyle.notSourceOrTarget(object, component)
             ) {
-              circle.setAttribute('fill', getColorForComponent(componentId))
+              circle.setAttribute('fill', getColorForComponent(componentId), this.useGradient)
             }
           }
         } else if (componentElement !== null) {
@@ -1494,7 +1540,7 @@ export class SourceTargetNodeStyle extends NodeStyleBase {
         const path = window.document.getElementById(`edge${object.tag.id}path`)
         if (path !== null) {
           object.style.oldColor = object.style.currentColor
-          path.setAttribute('stroke', getColorForComponent(componentId))
+          path.setAttribute('stroke', getColorForComponent(componentId), this.useGradient)
           path.setAttribute('stroke-width', '7')
         }
       }
@@ -1555,7 +1601,7 @@ export class SourceTargetNodeStyle extends NodeStyleBase {
       Math.pow(radius, 2)
     if (!isInCircle || node.tag.nodeComponents.length === 1) {
       const component = svgElement.getAttribute('component')
-      const color = getColorForComponent(component)
+      const color = getColorForComponent(component, this.useGradient)
       const currentComponent = node.tag.components[component]
       currentComponent.forEach(object => {
         if (INode.isInstance(object) && object.style instanceof MultiColorNodeStyle) {
@@ -1589,8 +1635,8 @@ export class SourceTargetNodeStyle extends NodeStyleBase {
   }
 
   /**
-   * Exact geometric check whether a point p lies inside the node. This is important for intersection calculation,
-   * among others.
+   * Exact geometric check whether a point p lies inside the node. This is important for
+   * intersection calculation, among others.
    * @param {INode} node
    * @param {Point} point
    * @return {boolean}

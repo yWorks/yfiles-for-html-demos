@@ -49,7 +49,7 @@ import loadJson from '../../resources/load-json.js'
 let graphComponent = null
 
 /**
- * @param {object} licenseData
+ * @param {!object} licenseData
  */
 function run(licenseData) {
   License.value = licenseData

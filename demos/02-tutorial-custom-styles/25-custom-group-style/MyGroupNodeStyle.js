@@ -72,9 +72,9 @@ export default class MyGroupNodeStyle extends NodeStyleBase {
   }
 
   /**
-   * @param {IRenderContext} context
-   * @param {INode} node
-   * @returns {SvgVisual}
+   * @param {!IRenderContext} context
+   * @param {!INode} node
+   * @returns {!SvgVisual}
    */
   createVisual(context, node) {
     const g = window.document.createElementNS('http://www.w3.org/2000/svg', 'g')
@@ -84,10 +84,10 @@ export default class MyGroupNodeStyle extends NodeStyleBase {
   }
 
   /**
-   * @param {IRenderContext} context
-   * @param {SvgVisual} oldVisual
-   * @param {INode} node
-   * @returns {SvgVisual}
+   * @param {!IRenderContext} context
+   * @param {!SvgVisual} oldVisual
+   * @param {!INode} node
+   * @returns {!SvgVisual}
    */
   updateVisual(context, oldVisual, node) {
     const container = oldVisual.svgElement
@@ -112,7 +112,7 @@ export default class MyGroupNodeStyle extends NodeStyleBase {
 
   /**
    * Creates the actual visualization of this style and adds it to the given container.
-   * @param {SVGElement} container
+   * @param {!SVGElement} container
    * @param {*} cache
    */
   render(container, cache) {
@@ -159,8 +159,8 @@ export default class MyGroupNodeStyle extends NodeStyleBase {
 
   /**
    * Creates an object containing all necessary data to create a visual for the node.
-   * @param {INode} node
-   * @param {IRenderContext} context
+   * @param {!INode} node
+   * @param {!IRenderContext} context
    * @returns {*}
    */
   createRenderDataCache(node, context) {
@@ -180,9 +180,9 @@ export default class MyGroupNodeStyle extends NodeStyleBase {
   /**
    * Overridden to customize the behavior of this style with respect to certain user interaction.
    * @see Overrides {@link NodeStyleBase#lookup}
-   * @param {INode} node
-   * @param {Class} type
-   * @returns {object}
+   * @param {!INode} node
+   * @param {!Class} type
+   * @returns {!object}
    */
   lookup(node, type) {
     // Determines the insets used for the group contents.
@@ -214,9 +214,9 @@ export default class MyGroupNodeStyle extends NodeStyleBase {
    * <code>true</code> for the main rectangle and the tab area, but not
    * for the empty space to the left of the tab.
    * @see Overrides {@link NodeStyleBase#isHit}
-   * @param {IInputModeContext} canvasContext
-   * @param {Point} p
-   * @param {INode} node
+   * @param {!IInputModeContext} canvasContext
+   * @param {!Point} p
+   * @param {!INode} node
    * @returns {boolean}
    */
   isHit(canvasContext, p, node) {
@@ -242,8 +242,8 @@ export default class MyGroupNodeStyle extends NodeStyleBase {
    * Returns the exact outline for the given node. This information is used
    * to clip the node's edges correctly.
    * @see Overrides {@link NodeStyleBase#getOutline}
-   * @param {INode} node
-   * @returns {GeneralPath}
+   * @param {!INode} node
+   * @returns {!GeneralPath}
    */
   getOutline(node) {
     const path = createOuterPath(node.layout.width, node.layout.height)
@@ -253,7 +253,7 @@ export default class MyGroupNodeStyle extends NodeStyleBase {
 
   /**
    * Gets the fill color of the node.
-   * @type {string}
+   * @type {!string}
    */
   get nodeColor() {
     return this.$nodeColor
@@ -261,7 +261,7 @@ export default class MyGroupNodeStyle extends NodeStyleBase {
 
   /**
    * Sets the fill color of the node.
-   * @type {string}
+   * @type {!string}
    */
   set nodeColor(value) {
     this.$nodeColor = value
@@ -272,8 +272,8 @@ export default class MyGroupNodeStyle extends NodeStyleBase {
    * This implementation uses the {@link MyGroupNodeStyle#nodeColor} property unless
    * the {@link ITagOwner#tag} of the {@link INode} is of type {@link Color},
    * in which case that color overrides this style's setting.
-   * @param {INode} node The node to determine the color for.
-   * @returns {string} The color for filling the node.
+   * @param {!INode} node The node to determine the color for.
+   * @returns {!string} The color for filling the node.
    */
   getNodeColor(node) {
     return typeof node.tag === 'string' ? node.tag : this.nodeColor
@@ -282,8 +282,8 @@ export default class MyGroupNodeStyle extends NodeStyleBase {
 
 /**
  * Returns whether or not the given group node is collapsed.
- * @param {INode} node
- * @param {IRenderContext} context
+ * @param {!INode} node
+ * @param {!IRenderContext} context
  * @returns {boolean}
  */
 function isCollapsed(node, context) {
@@ -303,7 +303,7 @@ function isCollapsed(node, context) {
  * Creates the inner group path
  * @param {number} w
  * @param {number} h
- * @returns {GeneralPath}
+ * @returns {!GeneralPath}
  */
 function createInnerPath(w, h) {
   const i = INSET
@@ -326,7 +326,7 @@ function createInnerPath(w, h) {
  * Creates the outer group path
  * @param {number} w
  * @param {number} h
- * @returns {GeneralPath}
+ * @returns {!GeneralPath}
  */
 function createOuterPath(w, h) {
   const r = OUTER_RADIUS
