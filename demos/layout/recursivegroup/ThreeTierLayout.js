@@ -45,6 +45,16 @@ import {
 } from 'yfiles'
 
 /**
+ * @readonly
+ * @enum {number}
+ */
+const TierType = {
+  COMMON_NODE: 0,
+  LEFT_TREE_GROUP_NODE: 1,
+  RIGHT_TREE_GROUP_NODE: 2
+}
+
+/**
  * Demonstrates how to use the recursive group layout to realize different layouts of elements assigned
  * to different tiers.
  *
@@ -184,14 +194,4 @@ function getTierType(node, graph) {
     }
   }
   return TierType.COMMON_NODE
-}
-
-/**
- * @readonly
- * @enum {number}
- */
-const TierType = {
-  COMMON_NODE: 0,
-  LEFT_TREE_GROUP_NODE: 1,
-  RIGHT_TREE_GROUP_NODE: 2
 }

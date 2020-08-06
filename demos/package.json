@@ -1,32 +1,16 @@
 {
-  "name": "demo-server-for-yfiles-for-html",
-  "version": "2.0.1",
+  "name": "demos-for-yfiles-for-html",
+  "version": "23.0.0",
   "author": "yWorks GmbH <yfileshtml@yworks.com>",
   "license": "https://www.yworks.com/products/yfiles-for-html/sla",
   "private": true,
   "scripts": {
-    "prepare-package": "cd ../tools/prepare-package && npm i && npm run prepare-package",
-    "preinstall": "npm run prepare-package",
-    "start": "node demo-server/server.js",
+    "preinstall": "cd .. && npm run prepare-package",
+    "start": "cd .. && npm start",
     "tsc": "tsc"
   },
   "dependencies": {
-    "yfiles": "../lib-dev/es-modules/yfiles-23.0.1-dev.tgz",
-    "yfiles-umd": "../lib-dev/umd/yfiles-umd-23.0.1-dev.tgz"
-  },
-  "devDependencies": {
-    "@typescript-eslint/eslint-plugin": "^2.23.0",
-    "@typescript-eslint/parser": "^2.23.0",
-    "eslint": "^6.8.0",
-    "eslint-config-prettier": "^6.10.0",
-    "eslint-config-standard": "^14.1.0",
-    "eslint-plugin-import": "^2.20.1",
-    "eslint-plugin-node": "^11.0.0",
-    "eslint-plugin-prettier": "^3.1.2",
-    "eslint-plugin-promise": "^4.2.1",
-    "eslint-plugin-standard": "^4.0.1",
-    "eslint-plugin-wdio": "^5.13.2",
-    "prettier": "1.19.1",
-    "typescript": "~3.7.5"
+    "yfiles": "../lib-dev/es-modules/yfiles-23.0.2-dev.tgz",
+    "yfiles-umd": "../lib-dev/umd/yfiles-umd-23.0.2-dev.tgz"
   }
 }

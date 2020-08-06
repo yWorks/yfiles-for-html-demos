@@ -42,6 +42,15 @@
   <script src="../../resources/filesystem-warning.js"></script>
 
   <style type="text/css">
+    .popupContainer {
+      /*
+       Make the outer popup container large enough so the popup content has enough space even
+       if the graphComponent is very small.
+      */
+      position: relative;
+      width: 300%;
+      min-width: 600px;
+    }
     .popupContent {
       position: absolute;
       display: none; /* during runtime, the display value is overridden by class HTMLPopupSupport */
@@ -133,26 +142,28 @@
   The GraphComponent
   -->
   <div id="graphComponent">
-    <div id="nodePopupContent" class="popupContent" tabindex="0">
-      <!-- The content template for the node popup panel -->
-      <div class="popupContentLeft">
-        <img id="icon" style="position:relative;top:6px;">
+    <div class="popupContainer">
+      <div id="nodePopupContent" class="popupContent" tabindex="0">
+        <!-- The content template for the node popup panel -->
+        <div class="popupContentLeft">
+          <img id="icon" style="position:relative;top:6px;">
+        </div>
+        <div class="popupContentRight">
+          <div data-id="name" style="font-size:14px;font-weight:bold;margin-bottom:4px;"></div>
+          <div data-id="position" style="margin-bottom:4px;"></div>
+          <div data-id="email"></div>
+          <div data-id="phone"></div>
+          <div data-id="fax"></div>
+        </div>
       </div>
-      <div class="popupContentRight">
-        <div data-id="name" style="font-size:14px;font-weight:bold;margin-bottom:4px;"></div>
-        <div data-id="position" style="margin-bottom:4px;"></div>
-        <div data-id="email"></div>
-        <div data-id="phone"></div>
-        <div data-id="fax"></div>
-      </div>
-    </div>
 
-    <div id="edgePopupContent" class="popupContent" style="text-align: center" tabindex="0">
-      <!-- The content template for the edge popup panel -->
-      <div style="display: inline-block;">
-        <div data-id="sourceName" style="font-weight:bold;float:left"></div>
-        <div style="float:left; margin-left:5px; margin-right: 5px">-></div>
-        <div data-id="targetName" style="font-weight:bold;float:left"></div>
+      <div id="edgePopupContent" class="popupContent" style="text-align: center" tabindex="0">
+        <!-- The content template for the edge popup panel -->
+        <div style="display: inline-block;">
+          <div data-id="sourceName" style="font-weight:bold;float:left"></div>
+          <div style="float:left; margin-left:5px; margin-right: 5px">-></div>
+          <div data-id="targetName" style="font-weight:bold;float:left"></div>
+        </div>
       </div>
     </div>
   </div>

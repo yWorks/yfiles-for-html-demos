@@ -288,9 +288,9 @@ function updateResetButtonState(): void {
     .masterGraph as FilteredGraphWrapper
   const fullGraph = filteredGraph.wrappedGraph!
   const hasFilteredItems =
-      fullGraph.nodes.some(node => node.tag && node.tag.filtered) ||
-      fullGraph.edges.some(edge => edge.tag && edge.tag.filtered)
-    // set the reset button
+    fullGraph.nodes.some(node => node.tag && node.tag.filtered) ||
+    fullGraph.edges.some(edge => edge.tag && edge.tag.filtered)
+  // set the reset button
   ;(document.querySelector(
     "button[data-command='ResetFilter']"
   ) as HTMLButtonElement)!.disabled = !hasFilteredItems

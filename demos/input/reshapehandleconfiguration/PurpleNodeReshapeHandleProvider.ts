@@ -49,11 +49,7 @@ export default class PurpleNodeReshapeHandleProvider extends NodeReshapeHandlePr
   }
 
   getHandle(inputModeContext: IInputModeContext, position: HandlePositions): IHandle {
-    const handle = new NodeReshapeHandlerHandle(
-      this.node,
-      this.reshapeHandler,
-      position
-    )
+    const handle = new NodeReshapeHandlerHandle(this.node, this.reshapeHandler, position)
 
     const atCorner = (position & HandlePositions.CORNERS) !== HandlePositions.NONE
     if (atCorner) {

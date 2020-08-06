@@ -115,6 +115,24 @@ function getDemoData() {
     ]
   },
   {
+    "id": "process-mining",
+    "name": "Process Mining",
+    "demoPath": "complete/processmining/index.html",
+    "summary": "Shows how to create an animated visualization of a process flow.",
+    "category": "complete",
+    "thumbnailPath": "resources/image/processmining.png",
+    "sourcePath": "complete/processmining/ProcessMiningDemo.js",
+    "tags": [
+      "WebGL",
+      "animation",
+      "heatmap"
+    ],
+    "keywords": [
+      "v2.3.0.2"
+    ],
+    "ts": true
+  },
+  {
     "id": "gantt-chart",
     "name": "Gantt Chart",
     "demoPath": "view/ganttchart/index.html",
@@ -159,37 +177,16 @@ function getDemoData() {
   {
     "id": "isometric-drawing",
     "name": "Isometric Drawing",
-    "demoPath": "complete/isometric/index.html",
-    "summary": "Displays graphs in an isometric fashion to create the impression of a 3-dimensional view.",
-    "category": "complete",
-    "thumbnailPath": "resources/image/isometric.png",
-    "sourcePath": "complete/isometric/IsometricDrawingDemo.js",
-    "tags": [
-      "styles",
-      "layout",
-      "viewer"
-    ],
-    "keywords": [
-      "groups",
-      "folding",
-      "hierarchic",
-      "orthogonal",
-      "labels"
-    ]
-  },
-  {
-    "id": "isometric-webgl",
-    "name": "Isometric WebGL Drawing",
-    "demoPath": "complete/isometricwebgl/index.html",
+    "demoPath": "complete/isometricdrawing/index.html",
     "summary": "Displays graphs in 3D using an arbitrary projection and WebGL rendering.",
     "category": "complete",
-    "thumbnailPath": "resources/image/isometricwebgl.png",
-    "sourcePath": "complete/isometricwebgl/IsometricWebGLDrawingDemo.js",
+    "thumbnailPath": "resources/image/isometric-drawing.png",
+    "sourcePath": "complete/isometricdrawing/IsometricDrawingDemo.js",
     "tags": [
       "WebGL",
       "styles",
       "layout",
-      "viewer"
+      "projection"
     ],
     "keywords": [
       "v2.3.0.0",
@@ -274,7 +271,7 @@ function getDemoData() {
     "id": "large-graph-aggregation",
     "name": "Large Graph Aggregation",
     "demoPath": "complete/largegraphaggregation/index.html",
-    "summary": "This demo shows how to use the smart node aggregation for drill down exploration of a large graph.",
+    "summary": "Shows how to use the smart node aggregation for drill-down exploration of a large graph.",
     "category": "complete",
     "thumbnailPath": "resources/image/largegraphaggregation.png",
     "sourcePath": "complete/largegraphaggregation/LargeGraphAggregationDemo.js",
@@ -289,6 +286,25 @@ function getDemoData() {
       "AggregationGraphWrapper",
       "curve",
       "bezier"
+    ],
+    "ts": true
+  },
+  {
+    "id": "interactive-aggregation",
+    "name": "Interactive Aggregation",
+    "demoPath": "complete/interactiveaggregation/index.html",
+    "summary": "Shows how to analyze a graph by interactively aggregating nodes with common properties.",
+    "category": "complete",
+    "thumbnailPath": "resources/image/interactiveaggregation.png",
+    "sourcePath": "complete/interactiveaggregation/InteractiveAggregationDemo.js",
+    "tags": [
+      "exploration",
+      "layout"
+    ],
+    "keywords": [
+      "v2.3.0.2",
+      "AggregationGraphWrapper",
+      "contextmenu"
     ],
     "ts": true
   },
@@ -639,7 +655,13 @@ function getDemoData() {
       "drag",
       "drop",
       "dropinputmode",
+      "create",
+      "space",
+      "clear",
+      "fill",
+      "area",
       "cleararealayout",
+      "fillarealayout",
       "draganddrop",
       "palette",
       "interactive"
@@ -1100,6 +1122,33 @@ function getDemoData() {
     ]
   },
   {
+    "id": "folding-with-layout",
+    "name": "Folding With Layout",
+    "demoPath": "layout/foldingwithlayout/index.html",
+    "summary": "Shows how an automatic layout makes space for opening groups and reclaims the space of closing groups.",
+    "category": "layout",
+    "thumbnailPath": "resources/image/foldingwithlayout.png",
+    "sourcePath": "layout/foldingwithlayout/FoldingWithLayoutDemo.js",
+    "tags": [
+      "layout",
+      "hierarchic",
+      "animation"
+    ],
+    "keywords": [
+      "folding",
+      "hide",
+      "create",
+      "space",
+      "clear",
+      "fill",
+      "area",
+      "cleararealayout",
+      "fillarealayout",
+      "v2.3.0.2"
+    ],
+    "ts": true
+  },
+  {
     "id": "incremental-hierarchic-layout",
     "name": "Incremental Hierarchic Layout",
     "demoPath": "layout/incrementalhierarchic/index.html",
@@ -1177,6 +1226,86 @@ function getDemoData() {
     "keywords": [
       "v2.3.0.0",
       "deletion",
+      "adjustment",
+      "interactive"
+    ],
+    "ts": true
+  },
+  {
+    "id": "clear-marquee-area",
+    "name": "Clear Marquee Area",
+    "demoPath": "layout/clearmarqueearea/index.html",
+    "summary": "Shows how to automatically keep a marquee area clear of graph elements.",
+    "category": "layout",
+    "thumbnailPath": "resources/image/clearmarqueearea.png",
+    "sourcePath": "layout/clearmarqueearea/ClearMarqueeAreaDemo.js",
+    "tags": [
+      "layout",
+      "interaction",
+      "clear area"
+    ],
+    "keywords": [
+      "v2.3.0.2",
+      "create",
+      "space",
+      "clear",
+      "fill",
+      "area",
+      "cleararealayout",
+      "fillarealayout",
+      "adjustment",
+      "interactive"
+    ],
+    "ts": true
+  },
+  {
+    "id": "clear-rectangle-area",
+    "name": "Clear Rectangle Area",
+    "demoPath": "layout/clearrectanglearea/index.html",
+    "summary": "Shows how to automatically keep a user-defined rectangular area clear of graph elements.",
+    "category": "layout",
+    "thumbnailPath": "resources/image/clearrectanglearea.png",
+    "sourcePath": "layout/clearrectanglearea/ClearRectangleAreaDemo.js",
+    "tags": [
+      "layout",
+      "interaction",
+      "clear area"
+    ],
+    "keywords": [
+      "v2.3.0.2",
+      "create",
+      "space",
+      "clear",
+      "fill",
+      "area",
+      "cleararealayout",
+      "fillarealayout",
+      "adjustment",
+      "interactive"
+    ],
+    "ts": true
+  },
+  {
+    "id": "node-overlap-avoiding",
+    "name": "Node Overlap Avoiding",
+    "demoPath": "layout/nodeoverlapavoiding/index.html",
+    "summary": "Shows how an automatic layout can remove node overlaps while a user interactively edits a graph.",
+    "category": "layout",
+    "thumbnailPath": "resources/image/nodeoverlapavoiding.png",
+    "sourcePath": "layout/nodeoverlapavoiding/NodeOverlapAvoidingDemo.js",
+    "tags": [
+      "layout",
+      "interaction"
+    ],
+    "keywords": [
+      "v2.3.0.2",
+      "move",
+      "resize",
+      "space",
+      "clear",
+      "fill",
+      "cleararealayout",
+      "fillarealayout",
       "adjustment",
       "interactive"
     ],
@@ -1893,6 +2022,29 @@ function getDemoData() {
     "keywords": [
       "curves"
     ]
+  },
+  {
+    "id": "editable-path-style",
+    "name": "Editable Path Node Style",
+    "demoPath": "style/editablepathstyle/index.html",
+    "summary": "Shows a path-based node style whose control points can be moved by users.",
+    "category": "style",
+    "thumbnailPath": "resources/image/editablepath.png",
+    "sourcePath": "style/editablepathstyle/EditablePathNodeStyle.js",
+    "tags": [
+      "node",
+      "path",
+      "editing"
+    ],
+    "keywords": [
+      "v2.3.0.2",
+      "handles",
+      "GeneralPath",
+      "path",
+      "interaction",
+      "editing"
+    ],
+    "ts": true
   },
   {
     "id": "custom-styles",
@@ -2720,6 +2872,7 @@ function getDemoData() {
       "analysis"
     ],
     "keywords": [
+      "v2.3.0.1",
       "invisible",
       "background",
       "memory",

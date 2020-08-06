@@ -64,7 +64,7 @@ const CircularLayoutConfig = Class('CircularLayoutConfig', {
   /**
    * Setup default values for various configuration parameters.
    */
-  constructor: function() {
+  constructor: function () {
     LayoutConfiguration.call(this)
     const layout = new CircularLayout()
     const treeLayout = layout.balloonLayout
@@ -111,7 +111,7 @@ const CircularLayoutConfig = Class('CircularLayoutConfig', {
    *   configuration on.
    * @return {ILayoutAlgorithm} The configured layout algorithm.
    */
-  createConfiguredLayout: function(graphComponent) {
+  createConfiguredLayout: function (graphComponent) {
     const layout = new CircularLayout()
     const balloonLayout = layout.balloonLayout
 
@@ -171,7 +171,7 @@ const CircularLayoutConfig = Class('CircularLayoutConfig', {
    * Creates and configures the layout data.
    * @return {LayoutData} The configured layout data.
    */
-  createConfiguredLayoutData: function(graphComponent, layout) {
+  createConfiguredLayoutData: function (graphComponent, layout) {
     const layoutData = new CircularLayoutData()
 
     if (this.layoutStyleItem === CircularLayoutStyle.CUSTOM_GROUPS) {
@@ -189,13 +189,13 @@ const CircularLayoutConfig = Class('CircularLayoutConfig', {
    * Called after the layout animation is done.
    * @see Overrides {@link LayoutConfiguration#postProcess}
    */
-  postProcess: function(graphComponent) {},
+  postProcess: function (graphComponent) {},
 
   // ReSharper disable UnusedMember.Global
   // ReSharper disable InconsistentNaming
   /** @type {OptionGroup} */
   DescriptionGroup: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute('Description'),
         OptionGroupAttribute('RootGroup', 5),
@@ -207,7 +207,7 @@ const CircularLayoutConfig = Class('CircularLayoutConfig', {
 
   /** @type {OptionGroup} */
   GeneralGroup: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute('General'),
         OptionGroupAttribute('RootGroup', 10),
@@ -219,7 +219,7 @@ const CircularLayoutConfig = Class('CircularLayoutConfig', {
 
   /** @type {OptionGroup} */
   CycleGroup: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute('Partition'),
         OptionGroupAttribute('RootGroup', 20),
@@ -231,7 +231,7 @@ const CircularLayoutConfig = Class('CircularLayoutConfig', {
 
   /** @type {OptionGroup} */
   EdgesGroup: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute('Edges'),
         OptionGroupAttribute('RootGroup', 30),
@@ -243,7 +243,7 @@ const CircularLayoutConfig = Class('CircularLayoutConfig', {
 
   /** @type {OptionGroup} */
   ExteriorEdgesGroup: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute('Exterior Edges'),
         OptionGroupAttribute('EdgesGroup', 20),
@@ -255,7 +255,7 @@ const CircularLayoutConfig = Class('CircularLayoutConfig', {
 
   /** @type {OptionGroup} */
   TreeGroup: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute('Tree'),
         OptionGroupAttribute('RootGroup', 30),
@@ -267,7 +267,7 @@ const CircularLayoutConfig = Class('CircularLayoutConfig', {
 
   /** @type {OptionGroup} */
   LabelingGroup: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute('Labeling'),
         OptionGroupAttribute('RootGroup', 50),
@@ -279,7 +279,7 @@ const CircularLayoutConfig = Class('CircularLayoutConfig', {
 
   /** @type {OptionGroup} */
   NodePropertiesGroup: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute('Node Settings'),
         OptionGroupAttribute('LabelingGroup', 10),
@@ -291,7 +291,7 @@ const CircularLayoutConfig = Class('CircularLayoutConfig', {
 
   /** @type {OptionGroup} */
   EdgePropertiesGroup: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute('Edge Settings'),
         OptionGroupAttribute('LabelingGroup', 20),
@@ -303,7 +303,7 @@ const CircularLayoutConfig = Class('CircularLayoutConfig', {
 
   /** @type {OptionGroup} */
   PreferredPlacementGroup: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute('Preferred Edge Label Placement'),
         OptionGroupAttribute('LabelingGroup', 30),
@@ -317,14 +317,14 @@ const CircularLayoutConfig = Class('CircularLayoutConfig', {
   // ReSharper restore InconsistentNaming
   /** @type {string} */
   descriptionText: {
-    $meta: function() {
+    $meta: function () {
       return [
         OptionGroupAttribute('DescriptionGroup', 10),
         ComponentAttribute(Components.HTML_BLOCK),
         TypeAttribute(YString.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return "<p style='margin-top:0'>The circular layout style emphasizes group and tree structures within a network. It creates node partitions by analyzing the connectivity structure of the network, and arranges the partitions as separate circles. The circles themselves are arranged in a radial tree layout fashion.</p><p>This layout style portraits interconnected ring and star topologies and is excellent for applications in:</p><ul><li>Social networking (criminology, economics, fraud detection, etc.)</li><li>Network management</li><li>WWW visualization</li><li>eCommerce</li></ul>"
     }
   },
@@ -337,7 +337,7 @@ const CircularLayoutConfig = Class('CircularLayoutConfig', {
 
   /** @type {CircularLayoutStyle} */
   layoutStyleItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute('Layout Style', '#/api/CircularLayout#CircularLayout-property-layoutStyle'),
         OptionGroupAttribute('GeneralGroup', 10),
@@ -352,10 +352,10 @@ const CircularLayoutConfig = Class('CircularLayoutConfig', {
         TypeAttribute(CircularLayoutStyle.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$layoutStyleItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$layoutStyleItem = value
     }
   },
@@ -368,7 +368,7 @@ const CircularLayoutConfig = Class('CircularLayoutConfig', {
 
   /** @type {boolean} */
   actOnSelectionOnlyItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Act on Selection Only',
@@ -378,10 +378,10 @@ const CircularLayoutConfig = Class('CircularLayoutConfig', {
         TypeAttribute(YBoolean.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$actOnSelectionOnlyItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$actOnSelectionOnlyItem = value
     }
   },
@@ -394,7 +394,7 @@ const CircularLayoutConfig = Class('CircularLayoutConfig', {
 
   /** @type {boolean} */
   fromSketchItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Use Drawing as Sketch',
@@ -404,10 +404,10 @@ const CircularLayoutConfig = Class('CircularLayoutConfig', {
         TypeAttribute(YBoolean.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$fromSketchItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$fromSketchItem = value
     }
   },
@@ -420,7 +420,7 @@ const CircularLayoutConfig = Class('CircularLayoutConfig', {
 
   /** @type {PartitionLayoutStyle} */
   partitionLayoutStyleItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Partition Layout Style',
@@ -437,10 +437,10 @@ const CircularLayoutConfig = Class('CircularLayoutConfig', {
         TypeAttribute(PartitionStyle.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$partitionLayoutStyleItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$partitionLayoutStyleItem = value
     }
   },
@@ -453,7 +453,7 @@ const CircularLayoutConfig = Class('CircularLayoutConfig', {
 
   /** @type {number} */
   minimumNodeDistanceItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Minimum Node Distance',
@@ -468,20 +468,20 @@ const CircularLayoutConfig = Class('CircularLayoutConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$minimumNodeDistanceItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$minimumNodeDistanceItem = value
     }
   },
 
   /** @type {boolean} */
   shouldDisableMinimumNodeDistanceItem: {
-    $meta: function() {
+    $meta: function () {
       return [TypeAttribute(YBoolean.$class)]
     },
-    get: function() {
+    get: function () {
       return this.chooseRadiusAutomaticallyItem === false
     }
   },
@@ -494,7 +494,7 @@ const CircularLayoutConfig = Class('CircularLayoutConfig', {
 
   /** @type {boolean} */
   chooseRadiusAutomaticallyItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Choose Radius Automatically',
@@ -504,10 +504,10 @@ const CircularLayoutConfig = Class('CircularLayoutConfig', {
         TypeAttribute(YBoolean.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$chooseRadiusAutomaticallyItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$chooseRadiusAutomaticallyItem = value
     }
   },
@@ -520,7 +520,7 @@ const CircularLayoutConfig = Class('CircularLayoutConfig', {
 
   /** @type {number} */
   fixedRadiusItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Fixed Radius',
@@ -535,20 +535,20 @@ const CircularLayoutConfig = Class('CircularLayoutConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$fixedRadiusItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$fixedRadiusItem = value
     }
   },
 
   /** @type {boolean} */
   shouldDisableFixedRadiusItem: {
-    $meta: function() {
+    $meta: function () {
       return [TypeAttribute(YBoolean.$class)]
     },
-    get: function() {
+    get: function () {
       return this.chooseRadiusAutomaticallyItem
     }
   },
@@ -561,7 +561,7 @@ const CircularLayoutConfig = Class('CircularLayoutConfig', {
 
   /** @type {boolean} */
   edgeBundlingItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Enable Edge Bundling',
@@ -571,23 +571,23 @@ const CircularLayoutConfig = Class('CircularLayoutConfig', {
         TypeAttribute(YBoolean.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$edgeBundlingItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$edgeBundlingItem = value
     }
   },
 
   /** @type {boolean} */
   shouldDisableEdgeBundlingItem: {
-    $meta: function() {
+    $meta: function () {
       return [TypeAttribute(YBoolean.$class)]
     },
-    get: function() {
+    get: function () {
       return (
-        (this.partitionLayoutStyleItem !== PartitionStyle.CYCLE ||
-        this.layoutStyleItem === CircularLayoutStyle.BCC_ISOLATED)
+        this.partitionLayoutStyleItem !== PartitionStyle.CYCLE ||
+        this.layoutStyleItem === CircularLayoutStyle.BCC_ISOLATED
       )
     }
   },
@@ -600,7 +600,7 @@ const CircularLayoutConfig = Class('CircularLayoutConfig', {
 
   /** @type {CircularLayoutEdgeRoutingPolicy} */
   edgeRoutingItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Edge Routing Style',
@@ -618,10 +618,10 @@ const CircularLayoutConfig = Class('CircularLayoutConfig', {
         TypeAttribute(CircularLayoutEdgeRoutingPolicy.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$edgeRoutingItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$edgeRoutingItem = value
     }
   },
@@ -634,7 +634,7 @@ const CircularLayoutConfig = Class('CircularLayoutConfig', {
 
   /** @type {number} */
   exteriorEdgeToCircleDistanceItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Distance to Circle',
@@ -650,20 +650,20 @@ const CircularLayoutConfig = Class('CircularLayoutConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$exteriorEdgeToCircleDistanceItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$exteriorEdgeToCircleDistanceItem = value
     }
   },
 
   /** @type {boolean} */
   shouldDisableExteriorEdgeToCircleDistanceItem: {
-    $meta: function() {
+    $meta: function () {
       return [TypeAttribute(YBoolean.$class)]
     },
-    get: function() {
+    get: function () {
       return this.edgeRoutingItem === CircularLayoutEdgeRoutingPolicy.INTERIOR
     }
   },
@@ -676,7 +676,7 @@ const CircularLayoutConfig = Class('CircularLayoutConfig', {
 
   /** @type {number} */
   exteriorEdgeToEdgeDistanceItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Edge to Edge Distance',
@@ -692,20 +692,20 @@ const CircularLayoutConfig = Class('CircularLayoutConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$exteriorEdgeToEdgeDistanceItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$exteriorEdgeToEdgeDistanceItem = value
     }
   },
 
   /** @type {boolean} */
   shouldDisableExteriorEdgeToEdgeDistanceItem: {
-    $meta: function() {
+    $meta: function () {
       return [TypeAttribute(YBoolean.$class)]
     },
-    get: function() {
+    get: function () {
       return this.edgeRoutingItem === CircularLayoutEdgeRoutingPolicy.INTERIOR
     }
   },
@@ -718,7 +718,7 @@ const CircularLayoutConfig = Class('CircularLayoutConfig', {
 
   /** @type {number} */
   exteriorEdgeCornerRadiusItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Corner Radius',
@@ -734,20 +734,20 @@ const CircularLayoutConfig = Class('CircularLayoutConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$exteriorEdgeCornerRadiusItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$exteriorEdgeCornerRadiusItem = value
     }
   },
 
   /** @type {boolean} */
   shouldDisableExteriorEdgeCornerRadiusItem: {
-    $meta: function() {
+    $meta: function () {
       return [TypeAttribute(YBoolean.$class)]
     },
-    get: function() {
+    get: function () {
       return this.edgeRoutingItem === CircularLayoutEdgeRoutingPolicy.INTERIOR
     }
   },
@@ -760,7 +760,7 @@ const CircularLayoutConfig = Class('CircularLayoutConfig', {
 
   /** @type {number} */
   exteriorEdgeAngleItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Angle',
@@ -776,20 +776,20 @@ const CircularLayoutConfig = Class('CircularLayoutConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$exteriorEdgeAngleItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$exteriorEdgeAngleItem = value
     }
   },
 
   /** @type {boolean} */
   shouldDisableExteriorEdgeAngleItem: {
-    $meta: function() {
+    $meta: function () {
       return [TypeAttribute(YBoolean.$class)]
     },
-    get: function() {
+    get: function () {
       return this.edgeRoutingItem === CircularLayoutEdgeRoutingPolicy.INTERIOR
     }
   },
@@ -802,7 +802,7 @@ const CircularLayoutConfig = Class('CircularLayoutConfig', {
 
   /** @type {number} */
   exteriorEdgeSmoothnessItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Smoothness',
@@ -818,20 +818,20 @@ const CircularLayoutConfig = Class('CircularLayoutConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$exteriorEdgeSmoothnessItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$exteriorEdgeSmoothnessItem = value
     }
   },
 
   /** @type {boolean} */
   shouldDisableExteriorEdgeSmoothnessItem: {
-    $meta: function() {
+    $meta: function () {
       return [TypeAttribute(YBoolean.$class)]
     },
-    get: function() {
+    get: function () {
       return this.edgeRoutingItem === CircularLayoutEdgeRoutingPolicy.INTERIOR
     }
   },
@@ -844,7 +844,7 @@ const CircularLayoutConfig = Class('CircularLayoutConfig', {
 
   /** @type {number} */
   edgeBundlingStrengthItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Bundling Strength',
@@ -860,23 +860,23 @@ const CircularLayoutConfig = Class('CircularLayoutConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$edgeBundlingStrengthItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$edgeBundlingStrengthItem = value
     }
   },
 
   /** @type {boolean} */
   shouldDisableEdgeBundlingStrengthItem: {
-    $meta: function() {
+    $meta: function () {
       return [TypeAttribute(YBoolean.$class)]
     },
-    get: function() {
+    get: function () {
       return (
-        (this.partitionLayoutStyleItem !== PartitionStyle.CYCLE ||
-        this.layoutStyleItem === CircularLayoutStyle.BCC_ISOLATED)
+        this.partitionLayoutStyleItem !== PartitionStyle.CYCLE ||
+        this.layoutStyleItem === CircularLayoutStyle.BCC_ISOLATED
       )
     }
   },
@@ -889,7 +889,7 @@ const CircularLayoutConfig = Class('CircularLayoutConfig', {
 
   /** @type {number} */
   preferredChildWedgeItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Preferred Child Wedge',
@@ -904,10 +904,10 @@ const CircularLayoutConfig = Class('CircularLayoutConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$preferredChildWedgeItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$preferredChildWedgeItem = value
     }
   },
@@ -920,7 +920,7 @@ const CircularLayoutConfig = Class('CircularLayoutConfig', {
 
   /** @type {number} */
   minimumEdgeLengthItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Minimum Edge Length',
@@ -935,10 +935,10 @@ const CircularLayoutConfig = Class('CircularLayoutConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$minimumEdgeLengthItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$minimumEdgeLengthItem = value
     }
   },
@@ -951,7 +951,7 @@ const CircularLayoutConfig = Class('CircularLayoutConfig', {
 
   /** @type {number} */
   maximumDeviationAngleItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Maximum Deviation Angle',
@@ -966,10 +966,10 @@ const CircularLayoutConfig = Class('CircularLayoutConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$maximumDeviationAngleItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$maximumDeviationAngleItem = value
     }
   },
@@ -982,7 +982,7 @@ const CircularLayoutConfig = Class('CircularLayoutConfig', {
 
   /** @type {number} */
   compactnessFactorItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Compactness Factor',
@@ -998,10 +998,10 @@ const CircularLayoutConfig = Class('CircularLayoutConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$compactnessFactorItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$compactnessFactorItem = value
     }
   },
@@ -1014,7 +1014,7 @@ const CircularLayoutConfig = Class('CircularLayoutConfig', {
 
   /** @type {number} */
   minimumTreeNodeDistanceItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Minimum Node Distance',
@@ -1029,10 +1029,10 @@ const CircularLayoutConfig = Class('CircularLayoutConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$minimumTreeNodeDistanceItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$minimumTreeNodeDistanceItem = value
     }
   },
@@ -1045,7 +1045,7 @@ const CircularLayoutConfig = Class('CircularLayoutConfig', {
 
   /** @type {boolean} */
   allowOverlapsItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Allow Overlaps',
@@ -1055,10 +1055,10 @@ const CircularLayoutConfig = Class('CircularLayoutConfig', {
         TypeAttribute(YBoolean.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$allowOverlapsItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$allowOverlapsItem = value
     }
   },
@@ -1071,7 +1071,7 @@ const CircularLayoutConfig = Class('CircularLayoutConfig', {
 
   /** @type {boolean} */
   placeChildrenOnCommonRadiusItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Place Children on Common Radius',
@@ -1081,20 +1081,20 @@ const CircularLayoutConfig = Class('CircularLayoutConfig', {
         TypeAttribute(YBoolean.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$placeChildrenOnCommonRadiusItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$placeChildrenOnCommonRadiusItem = value
     }
   },
 
   /** @type {boolean} */
   shouldDisableTreeGroupItem: {
-    $meta: function() {
+    $meta: function () {
       return [TypeAttribute(YBoolean.$class)]
     },
-    get: function() {
+    get: function () {
       return this.layoutStyleItem === CircularLayoutStyle.SINGLE_CYCLE
     }
   },
@@ -1107,7 +1107,7 @@ const CircularLayoutConfig = Class('CircularLayoutConfig', {
 
   /** @type {boolean} */
   handleNodeLabelsItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Consider Node Labels',
@@ -1117,10 +1117,10 @@ const CircularLayoutConfig = Class('CircularLayoutConfig', {
         TypeAttribute(YBoolean.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$handleNodeLabelsItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$handleNodeLabelsItem = value
     }
   },
@@ -1133,7 +1133,7 @@ const CircularLayoutConfig = Class('CircularLayoutConfig', {
 
   /** @type {boolean} */
   edgeLabelingItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Edge Labeling',
@@ -1143,10 +1143,10 @@ const CircularLayoutConfig = Class('CircularLayoutConfig', {
         TypeAttribute(YBoolean.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$edgeLabelingItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$edgeLabelingItem = value
     }
   },
@@ -1159,7 +1159,7 @@ const CircularLayoutConfig = Class('CircularLayoutConfig', {
 
   /** @type {boolean} */
   reduceAmbiguityItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Reduce Ambiguity',
@@ -1169,20 +1169,20 @@ const CircularLayoutConfig = Class('CircularLayoutConfig', {
         TypeAttribute(YBoolean.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$reduceAmbiguityItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$reduceAmbiguityItem = value
     }
   },
 
   /** @type {boolean} */
   shouldDisableReduceAmbiguityItem: {
-    $meta: function() {
+    $meta: function () {
       return [TypeAttribute(YBoolean.$class)]
     },
-    get: function() {
+    get: function () {
       return !this.edgeLabelingItem
     }
   },
@@ -1195,7 +1195,7 @@ const CircularLayoutConfig = Class('CircularLayoutConfig', {
 
   /** @type {LayoutConfiguration.EnumLabelPlacementOrientation} */
   labelPlacementOrientationItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Orientation',
@@ -1213,20 +1213,20 @@ const CircularLayoutConfig = Class('CircularLayoutConfig', {
         TypeAttribute(LayoutConfiguration.EnumLabelPlacementOrientation.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$labelPlacementOrientationItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$labelPlacementOrientationItem = value
     }
   },
 
   /** @type {boolean} */
   shouldDisableLabelPlacementOrientationItem: {
-    $meta: function() {
+    $meta: function () {
       return [TypeAttribute(YBoolean.$class)]
     },
-    get: function() {
+    get: function () {
       return !this.edgeLabelingItem
     }
   },
@@ -1239,7 +1239,7 @@ const CircularLayoutConfig = Class('CircularLayoutConfig', {
 
   /** @type {LayoutConfiguration.EnumLabelPlacementAlongEdge} */
   labelPlacementAlongEdgeItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Along Edge',
@@ -1259,20 +1259,20 @@ const CircularLayoutConfig = Class('CircularLayoutConfig', {
         TypeAttribute(LayoutConfiguration.EnumLabelPlacementAlongEdge.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$labelPlacementAlongEdgeItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$labelPlacementAlongEdgeItem = value
     }
   },
 
   /** @type {boolean} */
   shouldDisableLabelPlacementAlongEdgeItem: {
-    $meta: function() {
+    $meta: function () {
       return [TypeAttribute(YBoolean.$class)]
     },
-    get: function() {
+    get: function () {
       return !this.edgeLabelingItem
     }
   },
@@ -1285,7 +1285,7 @@ const CircularLayoutConfig = Class('CircularLayoutConfig', {
 
   /** @type {LayoutConfiguration.EnumLabelPlacementSideOfEdge} */
   labelPlacementSideOfEdgeItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Side of Edge',
@@ -1304,20 +1304,20 @@ const CircularLayoutConfig = Class('CircularLayoutConfig', {
         TypeAttribute(LayoutConfiguration.EnumLabelPlacementSideOfEdge.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$labelPlacementSideOfEdgeItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$labelPlacementSideOfEdgeItem = value
     }
   },
 
   /** @type {boolean} */
   shouldDisableLabelPlacementSideOfEdgeItem: {
-    $meta: function() {
+    $meta: function () {
       return [TypeAttribute(YBoolean.$class)]
     },
-    get: function() {
+    get: function () {
       return !this.edgeLabelingItem
     }
   },
@@ -1330,7 +1330,7 @@ const CircularLayoutConfig = Class('CircularLayoutConfig', {
 
   /** @type {number} */
   labelPlacementDistanceItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Distance',
@@ -1345,24 +1345,24 @@ const CircularLayoutConfig = Class('CircularLayoutConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$labelPlacementDistanceItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$labelPlacementDistanceItem = value
     }
   },
 
   /** @type {boolean} */
   shouldDisableLabelPlacementDistanceItem: {
-    $meta: function() {
+    $meta: function () {
       return [TypeAttribute(YBoolean.$class)]
     },
-    get: function() {
+    get: function () {
       return (
-        (!this.edgeLabelingItem ||
+        !this.edgeLabelingItem ||
         this.labelPlacementSideOfEdgeItem ===
-          LayoutConfiguration.EnumLabelPlacementSideOfEdge.ON_EDGE)
+          LayoutConfiguration.EnumLabelPlacementSideOfEdge.ON_EDGE
       )
     }
   }

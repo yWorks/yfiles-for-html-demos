@@ -72,8 +72,11 @@ export default class DemoDescription extends Component {
             updated when the given <code>graphData</code> changes.
           </p>
           <p>
+            The nodes are rendered via the <code>NodeTemplate</code> react component class.
+          </p>
+          <p>
             The node and edge tooltips are also dynamically rendered React components. In fact, they
-            are reused components that are also rendered in the 'Graph Data' sidebar.
+            are reused components that are also rendered in the &apos;Graph Data&apos; sidebar.
           </p>
           <h2>Running the demo</h2>
           <p>
@@ -96,8 +99,8 @@ export default class DemoDescription extends Component {
             </li>
             <li>
               The bound <code>graphData</code> can be changed with the panel on the right hand side.
-              'Add Node' creates a random child node in the diagram and 'Remove Node' removes a
-              random node of the diagram.
+              &apos;Add Node&apos; creates a random child node in the diagram and &apos;Remove
+              Node&apos; removes a random node of the diagram.
             </li>
             <li>
               The graph is automatically updated when the attached <code>graphData</code> changes.

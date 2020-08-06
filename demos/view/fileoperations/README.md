@@ -33,7 +33,7 @@ Open the last graph that was saved using the [HTML5 Storage feature](https://www
 
 #### Download
 
-Download the graph using the [HTML5 File API](https://caniuse.com/#search=file) or the IE-specific [msSaveOrOpenBlob](<https://msdn.microsoft.com/en-us/library/hh779016(v=vs.85).aspx>) function. This provides a natural file download experience in IE 10+, Firefox 28+, Chrome 38+, Opera 25+, recent versions of the related mobile browsers and Android Browser 4.4.4. It doesn't work in Safari (neither Mac OS X nor iOS).
+Download the graph using the [HTML5 File API](https://caniuse.com/#search=file) or the IE-specific [msSaveOrOpenBlob](<https://docs.microsoft.com/en-us/previous-versions/windows/internet-explorer/ie-developer/samples/hh779016(v=vs.85)>) function. This provides a natural file download experience in IE 10+, Firefox 28+, Chrome 38+, Opera 25+, recent versions of the related mobile browsers and Android Browser 4.4.4. It doesn't work in Safari (neither Mac OS X nor iOS).
 
 #### New Tab
 

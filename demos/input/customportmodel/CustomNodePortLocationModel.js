@@ -113,10 +113,7 @@ export default class CustomNodePortLocationModel extends BaseClass(IPortLocation
         case PortLocation.CENTER:
           return layout.center
         case PortLocation.NORTH:
-          return layout.topLeft
-            .add(layout.topRight)
-            .multiply(0.5)
-            .add(new Point(0, this.inset))
+          return layout.topLeft.add(layout.topRight).multiply(0.5).add(new Point(0, this.inset))
         case PortLocation.SOUTH:
           return layout.bottomLeft
             .add(layout.bottomRight)
@@ -128,10 +125,7 @@ export default class CustomNodePortLocationModel extends BaseClass(IPortLocation
             .multiply(0.5)
             .add(new Point(-this.inset, 0))
         case PortLocation.WEST:
-          return layout.topLeft
-            .add(layout.bottomLeft)
-            .multiply(0.5)
-            .add(new Point(this.inset, 0))
+          return layout.topLeft.add(layout.bottomLeft).multiply(0.5).add(new Point(this.inset, 0))
         default:
           throw new Exception('Unknown PortLocation', 'ArgumentOutOfRangeError')
       }

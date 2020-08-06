@@ -41,10 +41,7 @@ const xHelper = d3.scaleBand().padding(0.1)
 
 const yHelper = d3.scaleLinear().nice()
 
-const color = d3
-  .scaleLinear()
-  .range(['#1dccc2', '#2f5b88'])
-  .interpolate(d3.interpolateHcl)
+const color = d3.scaleLinear().range(['#1dccc2', '#2f5b88']).interpolate(d3.interpolateHcl)
 
 /**
  * A node style that triggers the sparkline rendering and includes the result in
@@ -133,10 +130,7 @@ export default class D3ChartNodeStyle extends NodeStyleBase {
         height,
         data
       })
-      const dataSelection = group
-        .select('g')
-        .selectAll('rect')
-        .data(data)
+      const dataSelection = group.select('g').selectAll('rect').data(data)
 
       dataSelection
         .enter()

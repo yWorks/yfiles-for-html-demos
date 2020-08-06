@@ -73,7 +73,7 @@ const PolylineEdgeRouterConfig = Class('PolylineEdgeRouterConfig', {
   /**
    * Setup default values for various configuration parameters.
    */
-  constructor: function() {
+  constructor: function () {
     LayoutConfiguration.call(this)
     const router = new EdgeRouter()
 
@@ -120,7 +120,7 @@ const PolylineEdgeRouterConfig = Class('PolylineEdgeRouterConfig', {
    *   configuration on.
    * @return {ILayoutAlgorithm} The configured layout.
    */
-  createConfiguredLayout: function(graphComponent) {
+  createConfiguredLayout: function (graphComponent) {
     const router = new EdgeRouter()
 
     router.scope = this.scopeItem
@@ -167,7 +167,7 @@ const PolylineEdgeRouterConfig = Class('PolylineEdgeRouterConfig', {
    * Called by {@link LayoutConfiguration#apply} to create the layout data of the configuration.
    * This method is typically overridden to provide mappers for the different layouts.
    */
-  createConfiguredLayoutData: function(graphComponent, layout) {
+  createConfiguredLayoutData: function (graphComponent, layout) {
     const layoutData = new PolylineEdgeRouterData({
       edgeLayoutDescriptors: edge => {
         const descriptor = new EdgeRouterEdgeLayoutDescriptor({
@@ -236,11 +236,12 @@ const PolylineEdgeRouterConfig = Class('PolylineEdgeRouterConfig', {
     }
 
     switch (this.busMembershipItem) {
-      case PolylineEdgeRouterConfig.EnumBusMembership.SINGLE:
+      case PolylineEdgeRouterConfig.EnumBusMembership.SINGLE: {
         const busDescriptor = this.createBusDescriptor()
         layoutData.buses.add(busDescriptor).source = graphComponent.graph.edges
         break
-      case PolylineEdgeRouterConfig.EnumBusMembership.LABEL:
+      }
+      case PolylineEdgeRouterConfig.EnumBusMembership.LABEL: {
         const visitedLabels = new Set()
         graphComponent.graph.edgeLabels.forEach(label => {
           if (!visitedLabels.has(label.text)) {
@@ -251,7 +252,8 @@ const PolylineEdgeRouterConfig = Class('PolylineEdgeRouterConfig', {
           }
         })
         break
-      case PolylineEdgeRouterConfig.EnumBusMembership.TAG:
+      }
+      case PolylineEdgeRouterConfig.EnumBusMembership.TAG: {
         const visitedTags = new Set()
         graphComponent.graph.edges.forEach(edge => {
           const tag = edge.tag
@@ -266,12 +268,13 @@ const PolylineEdgeRouterConfig = Class('PolylineEdgeRouterConfig', {
           }
         })
         break
+      }
     }
 
     return layoutData
   },
 
-  createBusDescriptor: function() {
+  createBusDescriptor: function () {
     return new EdgeRouterBusDescriptor({
       automaticEdgeGrouping: this.automaticEdgeGroupingItem,
       minimumBackboneSegmentLength: this.minimumBackboneSegmentLengthItem,
@@ -282,7 +285,7 @@ const PolylineEdgeRouterConfig = Class('PolylineEdgeRouterConfig', {
   /**
    * Enables automatic bus routing.
    */
-  enableBusRouting: function() {
+  enableBusRouting: function () {
     this.busMembershipItem = PolylineEdgeRouterConfig.EnumBusMembership.TAG
   },
 
@@ -290,7 +293,7 @@ const PolylineEdgeRouterConfig = Class('PolylineEdgeRouterConfig', {
   // ReSharper disable InconsistentNaming
   /** @type {OptionGroup} */
   DescriptionGroup: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute('Description'),
         OptionGroupAttribute('RootGroup', 5),
@@ -302,7 +305,7 @@ const PolylineEdgeRouterConfig = Class('PolylineEdgeRouterConfig', {
 
   /** @type {OptionGroup} */
   LayoutGroup: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute('General'),
         OptionGroupAttribute('RootGroup', 10),
@@ -314,7 +317,7 @@ const PolylineEdgeRouterConfig = Class('PolylineEdgeRouterConfig', {
 
   /** @type {OptionGroup} */
   DistancesGroup: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute('Minimum Distances'),
         OptionGroupAttribute('RootGroup', 20),
@@ -326,7 +329,7 @@ const PolylineEdgeRouterConfig = Class('PolylineEdgeRouterConfig', {
 
   /** @type {OptionGroup} */
   GridGroup: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute('Grid'),
         OptionGroupAttribute('RootGroup', 30),
@@ -338,7 +341,7 @@ const PolylineEdgeRouterConfig = Class('PolylineEdgeRouterConfig', {
 
   /** @type {OptionGroup} */
   PolylineGroup: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute('Routing Style'),
         OptionGroupAttribute('RootGroup', 40),
@@ -350,7 +353,7 @@ const PolylineEdgeRouterConfig = Class('PolylineEdgeRouterConfig', {
 
   /** @type {OptionGroup} */
   LabelingGroup: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute('Labeling'),
         OptionGroupAttribute('RootGroup', 50),
@@ -362,7 +365,7 @@ const PolylineEdgeRouterConfig = Class('PolylineEdgeRouterConfig', {
 
   /** @type {OptionGroup} */
   BusGroup: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute('Bus Routing'),
         OptionGroupAttribute('PolylineGroup', 60),
@@ -374,7 +377,7 @@ const PolylineEdgeRouterConfig = Class('PolylineEdgeRouterConfig', {
 
   /** @type {OptionGroup} */
   NodePropertiesGroup: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute('Node Settings'),
         OptionGroupAttribute('LabelingGroup', 10),
@@ -386,7 +389,7 @@ const PolylineEdgeRouterConfig = Class('PolylineEdgeRouterConfig', {
 
   /** @type {OptionGroup} */
   EdgePropertiesGroup: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute('Edge Settings'),
         OptionGroupAttribute('LabelingGroup', 20),
@@ -398,7 +401,7 @@ const PolylineEdgeRouterConfig = Class('PolylineEdgeRouterConfig', {
 
   /** @type {OptionGroup} */
   PreferredPlacementGroup: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute('Preferred Edge Label Placement'),
         OptionGroupAttribute('LabelingGroup', 30),
@@ -412,14 +415,14 @@ const PolylineEdgeRouterConfig = Class('PolylineEdgeRouterConfig', {
   // ReSharper restore InconsistentNaming
   /** @type {string} */
   descriptionText: {
-    $meta: function() {
+    $meta: function () {
       return [
         OptionGroupAttribute('DescriptionGroup', 10),
         ComponentAttribute(Components.HTML_BLOCK),
         TypeAttribute(YString.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return "<p style='margin-top:0'>Polyline edge routing calculates polyline edge paths for a diagram's edges. The positions of the nodes are not changed by this algorithm.</p><p>Edges will be routed orthogonally, that is each edge path consists of horizontal and vertical segments, or octilinear. Octilinear means that the slope of each segment of an edge path is a multiple of 45 degrees.</p><p>This type of edge routing is especially well suited for technical diagrams.</p>"
     }
   },
@@ -432,7 +435,7 @@ const PolylineEdgeRouterConfig = Class('PolylineEdgeRouterConfig', {
 
   /** @type {EdgeRouterScope} */
   scopeItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute('Scope', '#/api/EdgeRouter#EdgeRouter-property-scope'),
         OptionGroupAttribute('LayoutGroup', 10),
@@ -446,10 +449,10 @@ const PolylineEdgeRouterConfig = Class('PolylineEdgeRouterConfig', {
         TypeAttribute(EdgeRouterScope.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$scopeItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$scopeItem = value
     }
   },
@@ -462,7 +465,7 @@ const PolylineEdgeRouterConfig = Class('PolylineEdgeRouterConfig', {
 
   /** @type {PolylineEdgeRouterConfig.EnumStrategies} */
   optimizationStrategyItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Optimization Strategy',
@@ -480,10 +483,10 @@ const PolylineEdgeRouterConfig = Class('PolylineEdgeRouterConfig', {
         TypeAttribute(PolylineEdgeRouterConfig.EnumStrategies.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$optimizationStrategyItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$optimizationStrategyItem = value
     }
   },
@@ -496,7 +499,7 @@ const PolylineEdgeRouterConfig = Class('PolylineEdgeRouterConfig', {
 
   /** @type {PolylineEdgeRouterConfig.EnumMonotonyFlags} */
   monotonicRestrictionItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Monotonic Restriction',
@@ -514,10 +517,10 @@ const PolylineEdgeRouterConfig = Class('PolylineEdgeRouterConfig', {
         TypeAttribute(PolylineEdgeRouterConfig.EnumMonotonyFlags.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$monotonicRestrictionItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$monotonicRestrictionItem = value
     }
   },
@@ -530,17 +533,17 @@ const PolylineEdgeRouterConfig = Class('PolylineEdgeRouterConfig', {
 
   /** @type {boolean} */
   enableReroutingItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute('Reroute Crossing Edges', '#/api/EdgeRouter#EdgeRouter-property-rerouting'),
         OptionGroupAttribute('LayoutGroup', 60),
         TypeAttribute(YBoolean.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$enableReroutingItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$enableReroutingItem = value
     }
   },
@@ -553,7 +556,7 @@ const PolylineEdgeRouterConfig = Class('PolylineEdgeRouterConfig', {
 
   /** @type {boolean} */
   useIntermediatePointsItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Keep Bends as Intermediate Points',
@@ -563,20 +566,20 @@ const PolylineEdgeRouterConfig = Class('PolylineEdgeRouterConfig', {
         TypeAttribute(YBoolean.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$useIntermediatePointsItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$useIntermediatePointsItem = value
     }
   },
 
   /** @type {boolean} */
   shouldDisableUseIntermediatePointsItem: {
-    $meta: function() {
+    $meta: function () {
       return [TypeAttribute(YBoolean.$class)]
     },
-    get: function() {
+    get: function () {
       return this.busMembershipItem !== PolylineEdgeRouterConfig.EnumBusMembership.NONE
     }
   },
@@ -589,7 +592,7 @@ const PolylineEdgeRouterConfig = Class('PolylineEdgeRouterConfig', {
 
   /** @type {number} */
   maximumDurationItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute('Maximum Duration', '#/api/EdgeRouter#EdgeRouter-property-maximumDuration'),
         OptionGroupAttribute('LayoutGroup', 70),
@@ -601,10 +604,10 @@ const PolylineEdgeRouterConfig = Class('PolylineEdgeRouterConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$maximumDurationItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$maximumDurationItem = value
     }
   },
@@ -617,7 +620,7 @@ const PolylineEdgeRouterConfig = Class('PolylineEdgeRouterConfig', {
 
   /** @type {number} */
   minimumEdgeToEdgeDistanceItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Edge to Edge',
@@ -632,10 +635,10 @@ const PolylineEdgeRouterConfig = Class('PolylineEdgeRouterConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$minimumEdgeToEdgeDistanceItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$minimumEdgeToEdgeDistanceItem = value
     }
   },
@@ -648,7 +651,7 @@ const PolylineEdgeRouterConfig = Class('PolylineEdgeRouterConfig', {
 
   /** @type {number} */
   minimumNodeToEdgeDistanceItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Node to Edge',
@@ -663,10 +666,10 @@ const PolylineEdgeRouterConfig = Class('PolylineEdgeRouterConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$minimumNodeToEdgeDistanceItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$minimumNodeToEdgeDistanceItem = value
     }
   },
@@ -679,7 +682,7 @@ const PolylineEdgeRouterConfig = Class('PolylineEdgeRouterConfig', {
 
   /** @type {number} */
   minimumNodeCornerDistanceItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Port to Node Corner',
@@ -694,10 +697,10 @@ const PolylineEdgeRouterConfig = Class('PolylineEdgeRouterConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$minimumNodeCornerDistanceItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$minimumNodeCornerDistanceItem = value
     }
   },
@@ -710,7 +713,7 @@ const PolylineEdgeRouterConfig = Class('PolylineEdgeRouterConfig', {
 
   /** @type {number} */
   minimumFirstSegmentLengthItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'First Segment Length',
@@ -725,10 +728,10 @@ const PolylineEdgeRouterConfig = Class('PolylineEdgeRouterConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$minimumFirstSegmentLengthItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$minimumFirstSegmentLengthItem = value
     }
   },
@@ -741,7 +744,7 @@ const PolylineEdgeRouterConfig = Class('PolylineEdgeRouterConfig', {
 
   /** @type {number} */
   minimumLastSegmentLengthItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Last Segment Length',
@@ -756,10 +759,10 @@ const PolylineEdgeRouterConfig = Class('PolylineEdgeRouterConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$minimumLastSegmentLengthItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$minimumLastSegmentLengthItem = value
     }
   },
@@ -772,17 +775,17 @@ const PolylineEdgeRouterConfig = Class('PolylineEdgeRouterConfig', {
 
   /** @type {boolean} */
   gridEnabledItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute('Route on Grid', '#/api/EdgeRouter#EdgeRouter-property-grid'),
         OptionGroupAttribute('GridGroup', 10),
         TypeAttribute(YBoolean.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$gridEnabledItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$gridEnabledItem = value
     }
   },
@@ -795,7 +798,7 @@ const PolylineEdgeRouterConfig = Class('PolylineEdgeRouterConfig', {
 
   /** @type {number} */
   gridSpacingItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute('Grid Spacing', '#/api/Grid#Grid-property-spacing'),
         OptionGroupAttribute('GridGroup', 20),
@@ -807,20 +810,20 @@ const PolylineEdgeRouterConfig = Class('PolylineEdgeRouterConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$gridSpacingItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$gridSpacingItem = value
     }
   },
 
   /** @type {boolean} */
   shouldDisableGridSpacingItem: {
-    $meta: function() {
+    $meta: function () {
       return [TypeAttribute(YBoolean.$class)]
     },
-    get: function() {
+    get: function () {
       return this.gridEnabledItem === false
     }
   },
@@ -833,7 +836,7 @@ const PolylineEdgeRouterConfig = Class('PolylineEdgeRouterConfig', {
 
   /** @type {EdgeRouterEdgeRoutingStyle} */
   routingStyleItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'RoutingStyle',
@@ -850,10 +853,10 @@ const PolylineEdgeRouterConfig = Class('PolylineEdgeRouterConfig', {
         TypeAttribute(EdgeRouterEdgeRoutingStyle.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$routingStyleItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$routingStyleItem = value
     }
   },
@@ -866,7 +869,7 @@ const PolylineEdgeRouterConfig = Class('PolylineEdgeRouterConfig', {
 
   /** @type {number} */
   preferredPolylineSegmentLengthItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Preferred Octilinear Segment Length',
@@ -881,20 +884,20 @@ const PolylineEdgeRouterConfig = Class('PolylineEdgeRouterConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$preferredPolylineSegmentLengthItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$preferredPolylineSegmentLengthItem = value
     }
   },
 
   /** @type {boolean} */
   shouldDisablePreferredPolylineSegmentLengthItem: {
-    $meta: function() {
+    $meta: function () {
       return [TypeAttribute(YBoolean.$class)]
     },
-    get: function() {
+    get: function () {
       return this.routingStyleItem !== EdgeRouterEdgeRoutingStyle.OCTILINEAR
     }
   },
@@ -907,7 +910,7 @@ const PolylineEdgeRouterConfig = Class('PolylineEdgeRouterConfig', {
 
   /** @type {number} */
   preferredPolylineSegmentRatioItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Preferred Octilinear Segment Ratio',
@@ -923,20 +926,20 @@ const PolylineEdgeRouterConfig = Class('PolylineEdgeRouterConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$preferredPolylineSegmentRatioItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$preferredPolylineSegmentRatioItem = value
     }
   },
 
   /** @type {boolean} */
   shouldDisablePreferredPolylineSegmentRatioItem: {
-    $meta: function() {
+    $meta: function () {
       return [TypeAttribute(YBoolean.$class)]
     },
-    get: function() {
+    get: function () {
       return this.routingStyleItem !== EdgeRouterEdgeRoutingStyle.OCTILINEAR
     }
   },
@@ -949,7 +952,7 @@ const PolylineEdgeRouterConfig = Class('PolylineEdgeRouterConfig', {
 
   /** @type {CurveConnectionStyle} */
   curveAtSourceItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Curve Connection at Source',
@@ -965,20 +968,20 @@ const PolylineEdgeRouterConfig = Class('PolylineEdgeRouterConfig', {
         TypeAttribute(CurveConnectionStyle.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$curveAtSourceItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$curveAtSourceItem = value
     }
   },
 
   /** @type {boolean} */
   shouldDisableCurveAtSourceItem: {
-    $meta: function() {
+    $meta: function () {
       return [TypeAttribute(YBoolean.$class)]
     },
-    get: function() {
+    get: function () {
       return this.routingStyleItem !== EdgeRouterEdgeRoutingStyle.CURVED
     }
   },
@@ -991,7 +994,7 @@ const PolylineEdgeRouterConfig = Class('PolylineEdgeRouterConfig', {
 
   /** @type {CurveConnectionStyle} */
   curveAtTargetItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Curve Connection at Target',
@@ -1007,20 +1010,20 @@ const PolylineEdgeRouterConfig = Class('PolylineEdgeRouterConfig', {
         TypeAttribute(CurveConnectionStyle.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$curveAtTargetItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$curveAtTargetItem = value
     }
   },
 
   /** @type {boolean} */
   shouldDisableCurveAtTargetItem: {
-    $meta: function() {
+    $meta: function () {
       return [TypeAttribute(YBoolean.$class)]
     },
-    get: function() {
+    get: function () {
       return this.routingStyleItem !== EdgeRouterEdgeRoutingStyle.CURVED
     }
   },
@@ -1033,7 +1036,7 @@ const PolylineEdgeRouterConfig = Class('PolylineEdgeRouterConfig', {
 
   /** @type {PolylineEdgeRouterConfig.EnumStrategies} */
   busMembershipItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Membership',
@@ -1051,10 +1054,10 @@ const PolylineEdgeRouterConfig = Class('PolylineEdgeRouterConfig', {
         TypeAttribute(PolylineEdgeRouterConfig.EnumBusMembership.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$busMembershipItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$busMembershipItem = value
     }
   },
@@ -1067,7 +1070,7 @@ const PolylineEdgeRouterConfig = Class('PolylineEdgeRouterConfig', {
 
   /** @type {boolean} */
   automaticEdgeGroupingItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Automatic Edge Grouping',
@@ -1077,20 +1080,20 @@ const PolylineEdgeRouterConfig = Class('PolylineEdgeRouterConfig', {
         TypeAttribute(YBoolean.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$automaticEdgeGroupingItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$automaticEdgeGroupingItem = value
     }
   },
 
   /** @type {boolean} */
   shouldDisableAutomaticEdgeGroupingItem: {
-    $meta: function() {
+    $meta: function () {
       return [TypeAttribute(YBoolean.$class)]
     },
-    get: function() {
+    get: function () {
       return this.busMembershipItem === PolylineEdgeRouterConfig.EnumBusMembership.NONE
     }
   },
@@ -1103,7 +1106,7 @@ const PolylineEdgeRouterConfig = Class('PolylineEdgeRouterConfig', {
 
   /** @type {number} */
   minimumBackboneSegmentLengthItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Minimum Backbone Segment Length',
@@ -1118,20 +1121,20 @@ const PolylineEdgeRouterConfig = Class('PolylineEdgeRouterConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$minimumBackboneSegmentLengthItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$minimumBackboneSegmentLengthItem = value
     }
   },
 
   /** @type {boolean} */
   shouldDisableMinimumBackboneSegmentLengthItem: {
-    $meta: function() {
+    $meta: function () {
       return [TypeAttribute(YBoolean.$class)]
     },
-    get: function() {
+    get: function () {
       return this.busMembershipItem === PolylineEdgeRouterConfig.EnumBusMembership.NONE
     }
   },
@@ -1144,7 +1147,7 @@ const PolylineEdgeRouterConfig = Class('PolylineEdgeRouterConfig', {
 
   /** @type {boolean} */
   allowMultipleBackboneSegmentsItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Multiple Backbone Segments',
@@ -1154,20 +1157,20 @@ const PolylineEdgeRouterConfig = Class('PolylineEdgeRouterConfig', {
         TypeAttribute(YBoolean.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$allowMultipleBackboneSegmentsItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$allowMultipleBackboneSegmentsItem = value
     }
   },
 
   /** @type {boolean} */
   shouldDisableAllowMultipleBackboneSegmentsItem: {
-    $meta: function() {
+    $meta: function () {
       return [TypeAttribute(YBoolean.$class)]
     },
-    get: function() {
+    get: function () {
       return this.busMembershipItem === PolylineEdgeRouterConfig.EnumBusMembership.NONE
     }
   },
@@ -1180,7 +1183,7 @@ const PolylineEdgeRouterConfig = Class('PolylineEdgeRouterConfig', {
 
   /** @type {boolean} */
   considerNodeLabelsItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Consider Node Labels',
@@ -1190,10 +1193,10 @@ const PolylineEdgeRouterConfig = Class('PolylineEdgeRouterConfig', {
         TypeAttribute(YBoolean.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$considerNodeLabelsItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$considerNodeLabelsItem = value
     }
   },
@@ -1206,7 +1209,7 @@ const PolylineEdgeRouterConfig = Class('PolylineEdgeRouterConfig', {
 
   /** @type {boolean} */
   considerEdgeLabelsItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Consider Fixed Edges Labels',
@@ -1216,10 +1219,10 @@ const PolylineEdgeRouterConfig = Class('PolylineEdgeRouterConfig', {
         TypeAttribute(YBoolean.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$considerEdgeLabelsItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$considerEdgeLabelsItem = value
     }
   },
@@ -1232,7 +1235,7 @@ const PolylineEdgeRouterConfig = Class('PolylineEdgeRouterConfig', {
 
   /** @type {boolean} */
   edgeLabelingItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Edge Labeling',
@@ -1249,10 +1252,10 @@ const PolylineEdgeRouterConfig = Class('PolylineEdgeRouterConfig', {
         TypeAttribute(PolylineEdgeRouterConfig.EnumEdgeLabeling.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$edgeLabelingItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$edgeLabelingItem = value
     }
   },
@@ -1265,7 +1268,7 @@ const PolylineEdgeRouterConfig = Class('PolylineEdgeRouterConfig', {
 
   /** @type {boolean} */
   reduceAmbiguityItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Reduce Ambiguity',
@@ -1275,20 +1278,20 @@ const PolylineEdgeRouterConfig = Class('PolylineEdgeRouterConfig', {
         TypeAttribute(YBoolean.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$reduceAmbiguityItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$reduceAmbiguityItem = value
     }
   },
 
   /** @type {boolean} */
   shouldDisableReduceAmbiguityItem: {
-    $meta: function() {
+    $meta: function () {
       return [TypeAttribute(YBoolean.$class)]
     },
-    get: function() {
+    get: function () {
       return this.edgeLabelingItem !== PolylineEdgeRouterConfig.EnumEdgeLabeling.GENERIC
     }
   },
@@ -1301,7 +1304,7 @@ const PolylineEdgeRouterConfig = Class('PolylineEdgeRouterConfig', {
 
   /** @type {LayoutConfiguration.EnumLabelPlacementOrientation} */
   labelPlacementOrientationItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Orientation',
@@ -1319,20 +1322,20 @@ const PolylineEdgeRouterConfig = Class('PolylineEdgeRouterConfig', {
         TypeAttribute(LayoutConfiguration.EnumLabelPlacementOrientation.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$labelPlacementOrientationItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$labelPlacementOrientationItem = value
     }
   },
 
   /** @type {boolean} */
   shouldDisableLabelPlacementOrientationItem: {
-    $meta: function() {
+    $meta: function () {
       return [TypeAttribute(YBoolean.$class)]
     },
-    get: function() {
+    get: function () {
       return this.edgeLabelingItem === PolylineEdgeRouterConfig.EnumEdgeLabeling.NONE
     }
   },
@@ -1345,7 +1348,7 @@ const PolylineEdgeRouterConfig = Class('PolylineEdgeRouterConfig', {
 
   /** @type {LayoutConfiguration.EnumLabelPlacementAlongEdge} */
   labelPlacementAlongEdgeItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Along Edge',
@@ -1365,20 +1368,20 @@ const PolylineEdgeRouterConfig = Class('PolylineEdgeRouterConfig', {
         TypeAttribute(LayoutConfiguration.EnumLabelPlacementAlongEdge.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$labelPlacementAlongEdgeItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$labelPlacementAlongEdgeItem = value
     }
   },
 
   /** @type {boolean} */
   shouldDisableLabelPlacementAlongEdgeItem: {
-    $meta: function() {
+    $meta: function () {
       return [TypeAttribute(YBoolean.$class)]
     },
-    get: function() {
+    get: function () {
       return this.edgeLabelingItem === PolylineEdgeRouterConfig.EnumEdgeLabeling.NONE
     }
   },
@@ -1391,7 +1394,7 @@ const PolylineEdgeRouterConfig = Class('PolylineEdgeRouterConfig', {
 
   /** @type {LayoutConfiguration.EnumLabelPlacementSideOfEdge} */
   labelPlacementSideOfEdgeItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Side of Edge',
@@ -1410,20 +1413,20 @@ const PolylineEdgeRouterConfig = Class('PolylineEdgeRouterConfig', {
         TypeAttribute(LayoutConfiguration.EnumLabelPlacementSideOfEdge.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$labelPlacementSideOfEdgeItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$labelPlacementSideOfEdgeItem = value
     }
   },
 
   /** @type {boolean} */
   shouldDisableLabelPlacementSideOfEdgeItem: {
-    $meta: function() {
+    $meta: function () {
       return [TypeAttribute(YBoolean.$class)]
     },
-    get: function() {
+    get: function () {
       return this.edgeLabelingItem === PolylineEdgeRouterConfig.EnumEdgeLabeling.NONE
     }
   },
@@ -1436,7 +1439,7 @@ const PolylineEdgeRouterConfig = Class('PolylineEdgeRouterConfig', {
 
   /** @type {number} */
   labelPlacementDistanceItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Distance',
@@ -1451,24 +1454,24 @@ const PolylineEdgeRouterConfig = Class('PolylineEdgeRouterConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$labelPlacementDistanceItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$labelPlacementDistanceItem = value
     }
   },
 
   /** @type {boolean} */
   shouldDisableLabelPlacementDistanceItem: {
-    $meta: function() {
+    $meta: function () {
       return [TypeAttribute(YBoolean.$class)]
     },
-    get: function() {
+    get: function () {
       return (
-        (this.edgeLabelingItem === PolylineEdgeRouterConfig.EnumEdgeLabeling.NONE ||
+        this.edgeLabelingItem === PolylineEdgeRouterConfig.EnumEdgeLabeling.NONE ||
         this.labelPlacementSideOfEdgeItem ===
-          LayoutConfiguration.EnumLabelPlacementSideOfEdge.ON_EDGE)
+          LayoutConfiguration.EnumLabelPlacementSideOfEdge.ON_EDGE
       )
     }
   },

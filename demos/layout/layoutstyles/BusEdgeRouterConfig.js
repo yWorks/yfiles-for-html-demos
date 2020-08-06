@@ -66,7 +66,7 @@ const BusEdgeRouterConfig = Class('BusEdgeRouterConfig', {
   /**
    * Setup default values for various configuration parameters.
    */
-  constructor: function() {
+  constructor: function () {
     LayoutConfiguration.call(this)
     const router = new BusRouter()
     this.scopeItem = BusEdgeRouterConfig.EnumScope.ALL
@@ -90,7 +90,7 @@ const BusEdgeRouterConfig = Class('BusEdgeRouterConfig', {
    *   configuration on.
    * @return {ILayoutAlgorithm} The configured layout algorithm.
    */
-  createConfiguredLayout: function(graphComponent) {
+  createConfiguredLayout: function (graphComponent) {
     const router = new BusRouter()
     switch (this.scopeItem) {
       case BusEdgeRouterConfig.EnumScope.ALL:
@@ -126,7 +126,7 @@ const BusEdgeRouterConfig = Class('BusEdgeRouterConfig', {
    * Creates and configures the layout data.
    * @return {LayoutData} The configured layout data.
    */
-  createConfiguredLayoutData: function(graphComponent, layout) {
+  createConfiguredLayoutData: function (graphComponent, layout) {
     const graph = graphComponent.graph
     const graphSelection = graphComponent.selection
     const scopePartial = this.scopeItem === BusEdgeRouterConfig.EnumScope.PARTIAL
@@ -193,7 +193,7 @@ const BusEdgeRouterConfig = Class('BusEdgeRouterConfig', {
    * Called after the layout animation is done.
    * @see Overrides {@link LayoutConfiguration#postProcess}
    */
-  postProcess: function(graphComponent) {
+  postProcess: function (graphComponent) {
     graphComponent.graph.mapperRegistry.removeMapper(BusRouter.EDGE_DESCRIPTOR_DP_KEY)
     graphComponent.graph.mapperRegistry.removeMapper(BusRouter.DEFAULT_AFFECTED_EDGES_DP_KEY)
   },
@@ -202,7 +202,7 @@ const BusEdgeRouterConfig = Class('BusEdgeRouterConfig', {
   // ReSharper disable InconsistentNaming
   /** @type {OptionGroup} */
   DescriptionGroup: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute('Description'),
         OptionGroupAttribute('RootGroup', 5),
@@ -214,7 +214,7 @@ const BusEdgeRouterConfig = Class('BusEdgeRouterConfig', {
 
   /** @type {OptionGroup} */
   LayoutGroup: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute('General'),
         OptionGroupAttribute('RootGroup', 10),
@@ -226,7 +226,7 @@ const BusEdgeRouterConfig = Class('BusEdgeRouterConfig', {
 
   /** @type {OptionGroup} */
   SelectionGroup: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute('Backbone Selection'),
         OptionGroupAttribute('RootGroup', 20),
@@ -238,7 +238,7 @@ const BusEdgeRouterConfig = Class('BusEdgeRouterConfig', {
 
   /** @type {OptionGroup} */
   RoutingGroup: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute('Routing and Recombination'),
         OptionGroupAttribute('RootGroup', 30),
@@ -250,14 +250,14 @@ const BusEdgeRouterConfig = Class('BusEdgeRouterConfig', {
 
   /** @type {string} */
   descriptionText: {
-    $meta: function() {
+    $meta: function () {
       return [
         OptionGroupAttribute('DescriptionGroup', 10),
         ComponentAttribute(Components.HTML_BLOCK),
         TypeAttribute(YString.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return "<p style='margin-top:0'>Orthogonal bus-style edge routing combines the (likely confusing) mass of edges in parts of a diagram where each node is connected to each other node in a concise, orthogonal tree-like structure. This algorithm does not change the positions of the nodes.</p><p>The algorithm aims to find routes where all edge paths share as much way as possible. It yields long line segments where ideally all but the first and last segments of all edge paths are drawn on top of each other, with short connections branching off to the nodes. The short connections bundle the respective first or last segments of a node's incident edges.</p>"
     }
   },
@@ -270,7 +270,7 @@ const BusEdgeRouterConfig = Class('BusEdgeRouterConfig', {
 
   /** @type {BusEdgeRouterConfig.EnumScope} */
   scopeItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute('Scope', '#/api/BusRouter#BusRouter-property-scope'),
         OptionGroupAttribute('LayoutGroup', 10),
@@ -285,10 +285,10 @@ const BusEdgeRouterConfig = Class('BusEdgeRouterConfig', {
         TypeAttribute(BusEdgeRouterConfig.EnumScope.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$scopeItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$scopeItem = value
     }
   },
@@ -301,7 +301,7 @@ const BusEdgeRouterConfig = Class('BusEdgeRouterConfig', {
 
   /** @type {BusEdgeRouterConfig.EnumBuses} */
   busesItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute('Bus Membership', '#/api/BusRouter#BusRouter-field-EDGE_DESCRIPTOR_DP_KEY'),
         OptionGroupAttribute('LayoutGroup', 20),
@@ -315,10 +315,10 @@ const BusEdgeRouterConfig = Class('BusEdgeRouterConfig', {
         TypeAttribute(BusEdgeRouterConfig.EnumBuses.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$busesItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$busesItem = value
     }
   },
@@ -331,17 +331,17 @@ const BusEdgeRouterConfig = Class('BusEdgeRouterConfig', {
 
   /** @type {boolean} */
   gridEnabledItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute('Route on Grid', '#/api/BusRouter#BusRouter-property-gridRouting'),
         OptionGroupAttribute('LayoutGroup', 30),
         TypeAttribute(YBoolean.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$gridEnabledItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$gridEnabledItem = value
     }
   },
@@ -354,7 +354,7 @@ const BusEdgeRouterConfig = Class('BusEdgeRouterConfig', {
 
   /** @type {number} */
   gridSpacingItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute('Grid Spacing', '#/api/BusRouter#BusRouter-property-gridSpacing'),
         OptionGroupAttribute('LayoutGroup', 40),
@@ -366,20 +366,20 @@ const BusEdgeRouterConfig = Class('BusEdgeRouterConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$gridSpacingItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$gridSpacingItem = value
     }
   },
 
   /** @type {boolean} */
   shouldDisableGridSpacingItem: {
-    $meta: function() {
+    $meta: function () {
       return [TypeAttribute(YBoolean.$class)]
     },
-    get: function() {
+    get: function () {
       return !this.gridEnabledItem
     }
   },
@@ -392,7 +392,7 @@ const BusEdgeRouterConfig = Class('BusEdgeRouterConfig', {
 
   /** @type {number} */
   minDistanceToNodesItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Minimum Node Distance',
@@ -407,10 +407,10 @@ const BusEdgeRouterConfig = Class('BusEdgeRouterConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$minDistanceToNodesItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$minDistanceToNodesItem = value
     }
   },
@@ -423,7 +423,7 @@ const BusEdgeRouterConfig = Class('BusEdgeRouterConfig', {
 
   /** @type {number} */
   minDistanceToEdgesItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Minimum Edge Distance',
@@ -438,10 +438,10 @@ const BusEdgeRouterConfig = Class('BusEdgeRouterConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$minDistanceToEdgesItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$minDistanceToEdgesItem = value
     }
   },
@@ -454,7 +454,7 @@ const BusEdgeRouterConfig = Class('BusEdgeRouterConfig', {
 
   /** @type {number} */
   preferredBackboneCountItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Preferred Segment Count',
@@ -469,10 +469,10 @@ const BusEdgeRouterConfig = Class('BusEdgeRouterConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$preferredBackboneCountItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$preferredBackboneCountItem = value
     }
   },
@@ -485,7 +485,7 @@ const BusEdgeRouterConfig = Class('BusEdgeRouterConfig', {
 
   /** @type {number} */
   minimumBackboneLengthItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Minimum Segment Length',
@@ -500,10 +500,10 @@ const BusEdgeRouterConfig = Class('BusEdgeRouterConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$minimumBackboneLengthItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$minimumBackboneLengthItem = value
     }
   },
@@ -516,7 +516,7 @@ const BusEdgeRouterConfig = Class('BusEdgeRouterConfig', {
 
   /** @type {number} */
   crossingCostItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute('Crossing Cost', '#/api/BusRouter#BusRouter-property-crossingCost'),
         OptionGroupAttribute('RoutingGroup', 10),
@@ -528,10 +528,10 @@ const BusEdgeRouterConfig = Class('BusEdgeRouterConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$crossingCostItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$crossingCostItem = value
     }
   },
@@ -544,17 +544,17 @@ const BusEdgeRouterConfig = Class('BusEdgeRouterConfig', {
 
   /** @type {boolean} */
   crossingReroutingItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute('Reroute Crossing Edges', '#/api/BusRouter#BusRouter-property-rerouting'),
         OptionGroupAttribute('RoutingGroup', 20),
         TypeAttribute(YBoolean.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$crossingReroutingItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$crossingReroutingItem = value
     }
   },
@@ -567,7 +567,7 @@ const BusEdgeRouterConfig = Class('BusEdgeRouterConfig', {
 
   /** @type {number} */
   minimumConnectionsCountItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Minimum Bus Connections Count',
@@ -582,10 +582,10 @@ const BusEdgeRouterConfig = Class('BusEdgeRouterConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$minimumConnectionsCountItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$minimumConnectionsCountItem = value
     }
   },
@@ -594,7 +594,7 @@ const BusEdgeRouterConfig = Class('BusEdgeRouterConfig', {
     /**
      * @return {Object}
      */
-    getBusId: function(e, busDetermination) {
+    getBusId: function (e, busDetermination) {
       switch (busDetermination) {
         case BusEdgeRouterConfig.EnumBuses.LABEL:
           return e.labels.size > 0 ? e.labels.elementAt(0).text : ''
@@ -629,7 +629,7 @@ const BusEdgeRouterConfig = Class('BusEdgeRouterConfig', {
       }
     }),
 
-    $clinit: function() {
+    $clinit: function () {
       BusEdgeRouterConfig.SINGLE_BUS_ID = {}
     }
   }

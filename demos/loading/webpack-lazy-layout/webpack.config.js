@@ -81,7 +81,7 @@ const baseConfig = {
   }
 }
 
-module.exports = function(env, options) {
+module.exports = function (env, options) {
   if (options.mode === 'development') {
     console.log('Running webpack in development mode...')
     return merge(baseConfig, devConfig)

@@ -63,7 +63,7 @@ class MapperInsetsProvider extends BaseClass(INodeInsetsProvider) {
  * @param graph {IGraph} The graph.
  * @returns {object} A JSON object that describes the structure and layout information of the given graph.
  */
-const write = function(graph) {
+const write = function (graph) {
   const jsonWriter = new jsonIO.JSONWriter()
   jsonWriter.nodeIdProvider = n => n.tag.id
 
@@ -90,7 +90,7 @@ const write = function(graph) {
  * @param {JSONGraph} jsonGraph the JSON representation of the graph
  * @returns {IGraph}
  */
-const read = function(jsonGraph) {
+const read = function (jsonGraph) {
   const graph = new DefaultGraph()
 
   // In addition to the default data, we get the insets from the layout calculation

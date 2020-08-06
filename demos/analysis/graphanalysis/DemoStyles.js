@@ -298,8 +298,9 @@ export class MultiColorNodeStyle extends NodeStyleBase {
         slice.setAttribute('component', components[i])
         slice.setAttribute(
           'd',
-          `M${radius},${radius} L${radius},${0} A${radius},${radius} 0 0,1 ${radius +
-            y * radius},${radius - x * radius} z`
+          `M${radius},${radius} L${radius},${0} A${radius},${radius} 0 0,1 ${radius + y * radius},${
+            radius - x * radius
+          } z`
         )
 
         const component = node.tag.components[components[i]]
@@ -1407,8 +1408,9 @@ export class SourceTargetNodeStyle extends NodeStyleBase {
         slice.setAttribute('component', components[i])
         slice.setAttribute(
           'd',
-          `M${radius},${radius} L${radius},${0} A${radius},${radius} 0 0,1 ${radius +
-            y * radius},${radius - x * radius} z`
+          `M${radius},${radius} L${radius},${0} A${radius},${radius} 0 0,1 ${radius + y * radius},${
+            radius - x * radius
+          } z`
         )
         slice.setAttribute('fill', getColorForComponent(components[i]), this.useGradient)
         slice.setAttribute(

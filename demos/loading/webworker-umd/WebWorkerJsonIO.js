@@ -68,7 +68,7 @@ define(['yfiles-umd/view-component', './JsonIO'], (
    * @param graph {IGraph} The graph.
    * @returns {JSONGraph} a JSON object that describes the structure and layout information of the given graph.
    */
-  const write = function(graph) {
+  const write = function (graph) {
     const jsonWriter = new jsonIO.JSONWriter()
     jsonWriter.nodeIdProvider = n => n.tag.id
 
@@ -95,7 +95,7 @@ define(['yfiles-umd/view-component', './JsonIO'], (
    * @param {JSONGraph} jsonGraph the JSON representation of the graph
    * @returns {IGraph}
    */
-  const read = function(jsonGraph) {
+  const read = function (jsonGraph) {
     const graph = new DefaultGraph()
 
     // In addition to the default data, we get the insets from the layout calculation

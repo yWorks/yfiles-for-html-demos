@@ -88,7 +88,7 @@ import {
 import { bindAction, bindChangeListener, bindCommand, showApp } from '../../resources/demo-app'
 import loadJson from '../../resources/load-json'
 import { AggregationHelper, AggregationNodeInfo } from './AggregationHelper'
-import { AggregationGraphWrapper, EdgeReplacementPolicy } from './AggregationGraphWrapper'
+import { AggregationGraphWrapper, EdgeReplacementPolicy } from '../../utils/AggregationGraphWrapper'
 import SampleGraph from './resources/SampleGraph'
 
 // @ts-ignore

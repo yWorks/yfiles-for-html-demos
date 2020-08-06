@@ -694,12 +694,13 @@ function showActivityInfo(activity, location) {
     activity.endDate,
     'dddd, LL, HH:mm:ss'
   )
-  document.querySelector('#nodeInfo span[data-name="lead"]').textContent = `${activity.leadTime ||
-    0}`
+  document.querySelector('#nodeInfo span[data-name="lead"]').textContent = `${
+    activity.leadTime || 0
+  }`
   document.querySelector('#nodeInfo span[data-name="duration"]').textContent = `${duration}`
-  document.querySelector(
-    '#nodeInfo span[data-name="followUp"]'
-  ).textContent = `${activity.followUpTime || 0}`
+  document.querySelector('#nodeInfo span[data-name="followUp"]').textContent = `${
+    activity.followUpTime || 0
+  }`
   document.querySelector('#nodeInfo span[data-name="task"]').textContent = `${
     mapper.getTaskForId(activity.taskId).name
   }`

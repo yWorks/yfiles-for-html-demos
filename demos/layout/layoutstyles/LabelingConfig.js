@@ -66,7 +66,7 @@ const LabelingConfig = Class('LabelingConfig', {
   /**
    * Setup default values for various configuration parameters.
    */
-  constructor: function() {
+  constructor: function () {
     LayoutConfiguration.call(this)
     this.placeNodeLabelsItem = true
     this.placeEdgeLabelsItem = true
@@ -91,7 +91,7 @@ const LabelingConfig = Class('LabelingConfig', {
    *   configuration on.
    * @return {ILayoutAlgorithm} The configured layout.
    */
-  createConfiguredLayout: function(graphComponent) {
+  createConfiguredLayout: function (graphComponent) {
     let labeling = new GenericLabeling()
     labeling.autoFlipping = true
     labeling.optimizationStrategy = this.optimizationStrategyItem
@@ -129,7 +129,7 @@ const LabelingConfig = Class('LabelingConfig', {
    * Creates and configures the layout data.
    * @return {LayoutData} The configured layout data.
    */
-  createConfiguredLayoutData: function(graphComponent, layout) {
+  createConfiguredLayoutData: function (graphComponent, layout) {
     const layoutData = new LabelingData()
 
     const selection = graphComponent.selection
@@ -140,7 +140,7 @@ const LabelingConfig = Class('LabelingConfig', {
         ILabelOwner.$class,
         YObject.$class,
         SelectedLabelsStage.SELECTED_LABELS_AT_ITEM_KEY,
-        function(item) {
+        function (item) {
           const bools = []
           for (let i = 0; i < item.labels.size; i++) {
             bools.push(selection.isSelected(item.labels.get(i)) || selection.isSelected(item))
@@ -157,13 +157,13 @@ const LabelingConfig = Class('LabelingConfig', {
    * Called after the layout animation is done.
    * @see Overrides {@link LayoutConfiguration#postProcess}
    */
-  postProcess: function(graphComponent) {
+  postProcess: function (graphComponent) {
     graphComponent.graph.mapperRegistry.removeMapper(
       SelectedLabelsStage.SELECTED_LABELS_AT_ITEM_KEY
     )
   },
 
-  $setupEdgeLabelModels: function(graphComponent) {
+  $setupEdgeLabelModels: function (graphComponent) {
     const model = new FreeEdgeLabelModel()
 
     const selectionOnly = this.considerSelectedFeaturesOnlyItem
@@ -193,7 +193,7 @@ const LabelingConfig = Class('LabelingConfig', {
 
   /** @type {OptionGroup} */
   DescriptionGroup: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute('Description'),
         OptionGroupAttribute('RootGroup', 5),
@@ -205,7 +205,7 @@ const LabelingConfig = Class('LabelingConfig', {
 
   /** @type {OptionGroup} */
   GeneralGroup: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute('General'),
         OptionGroupAttribute('RootGroup', 10),
@@ -217,7 +217,7 @@ const LabelingConfig = Class('LabelingConfig', {
 
   /** @type {OptionGroup} */
   QualityGroup: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute('Quality'),
         OptionGroupAttribute('RootGroup', 20),
@@ -229,7 +229,7 @@ const LabelingConfig = Class('LabelingConfig', {
 
   /** @type {OptionGroup} */
   PreferredPlacementGroup: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute('Preferred Edge Label Placement'),
         OptionGroupAttribute('RootGroup', 30),
@@ -241,14 +241,14 @@ const LabelingConfig = Class('LabelingConfig', {
 
   /** @type {string} */
   descriptionText: {
-    $meta: function() {
+    $meta: function () {
       return [
         OptionGroupAttribute('DescriptionGroup', 10),
         ComponentAttribute(Components.HTML_BLOCK),
         TypeAttribute(YString.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return "<p style='margin-top:0'>This algorithm finds good positions for the labels of nodes and edges. Typically, a label should be placed near the item it belongs to and it should not overlap with other labels. Optionally, overlaps with nodes and edges can be avoided as well.</p>"
     }
   },
@@ -261,7 +261,7 @@ const LabelingConfig = Class('LabelingConfig', {
 
   /** @type {boolean} */
   placeNodeLabelsItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Place Node Labels',
@@ -271,10 +271,10 @@ const LabelingConfig = Class('LabelingConfig', {
         TypeAttribute(YBoolean.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$placeNodeLabelsItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$placeNodeLabelsItem = value
     }
   },
@@ -287,7 +287,7 @@ const LabelingConfig = Class('LabelingConfig', {
 
   /** @type {boolean} */
   placeEdgeLabelsItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Place Edge Labels',
@@ -297,10 +297,10 @@ const LabelingConfig = Class('LabelingConfig', {
         TypeAttribute(YBoolean.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$placeEdgeLabelsItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$placeEdgeLabelsItem = value
     }
   },
@@ -313,7 +313,7 @@ const LabelingConfig = Class('LabelingConfig', {
 
   /** @type {boolean} */
   considerSelectedFeaturesOnlyItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Consider Selected Features Only',
@@ -323,10 +323,10 @@ const LabelingConfig = Class('LabelingConfig', {
         TypeAttribute(YBoolean.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$considerSelectedFeaturesOnlyItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$considerSelectedFeaturesOnlyItem = value
     }
   },
@@ -339,7 +339,7 @@ const LabelingConfig = Class('LabelingConfig', {
 
   /** @type {boolean} */
   allowNodeOverlapsItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Allow Node Overlaps',
@@ -349,10 +349,10 @@ const LabelingConfig = Class('LabelingConfig', {
         TypeAttribute(YBoolean.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$allowNodeOverlapsItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$allowNodeOverlapsItem = value
     }
   },
@@ -365,7 +365,7 @@ const LabelingConfig = Class('LabelingConfig', {
 
   /** @type {boolean} */
   allowEdgeOverlapsItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Allow Edge Overlaps',
@@ -375,10 +375,10 @@ const LabelingConfig = Class('LabelingConfig', {
         TypeAttribute(YBoolean.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$allowEdgeOverlapsItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$allowEdgeOverlapsItem = value
     }
   },
@@ -391,7 +391,7 @@ const LabelingConfig = Class('LabelingConfig', {
 
   /** @type {OptimizationStrategy} */
   optimizationStrategyItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Reduce overlaps',
@@ -410,10 +410,10 @@ const LabelingConfig = Class('LabelingConfig', {
         TypeAttribute(OptimizationStrategy.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$optimizationStrategyItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$optimizationStrategyItem = value
     }
   },
@@ -426,7 +426,7 @@ const LabelingConfig = Class('LabelingConfig', {
 
   /** @type {boolean} */
   reduceAmbiguityItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Reduce Ambiguity',
@@ -436,10 +436,10 @@ const LabelingConfig = Class('LabelingConfig', {
         TypeAttribute(YBoolean.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$reduceAmbiguityItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$reduceAmbiguityItem = value
     }
   },
@@ -452,7 +452,7 @@ const LabelingConfig = Class('LabelingConfig', {
 
   /** @type {LayoutConfiguration.EnumLabelPlacementOrientation} */
   labelPlacementOrientationItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Orientation',
@@ -470,10 +470,10 @@ const LabelingConfig = Class('LabelingConfig', {
         TypeAttribute(LayoutConfiguration.EnumLabelPlacementOrientation.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$labelPlacementOrientationItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$labelPlacementOrientationItem = value
     }
   },
@@ -486,7 +486,7 @@ const LabelingConfig = Class('LabelingConfig', {
 
   /** @type {LayoutConfiguration.EnumLabelPlacementAlongEdge} */
   labelPlacementAlongEdgeItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Along Edge',
@@ -506,10 +506,10 @@ const LabelingConfig = Class('LabelingConfig', {
         TypeAttribute(LayoutConfiguration.EnumLabelPlacementAlongEdge.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$labelPlacementAlongEdgeItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$labelPlacementAlongEdgeItem = value
     }
   },
@@ -522,7 +522,7 @@ const LabelingConfig = Class('LabelingConfig', {
 
   /** @type {LayoutConfiguration.EnumLabelPlacementSideOfEdge} */
   labelPlacementSideOfEdgeItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Side of Edge',
@@ -541,10 +541,10 @@ const LabelingConfig = Class('LabelingConfig', {
         TypeAttribute(LayoutConfiguration.EnumLabelPlacementSideOfEdge.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$labelPlacementSideOfEdgeItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$labelPlacementSideOfEdgeItem = value
     }
   },
@@ -557,7 +557,7 @@ const LabelingConfig = Class('LabelingConfig', {
 
   /** @type {number} */
   labelPlacementDistanceItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Distance',
@@ -572,23 +572,23 @@ const LabelingConfig = Class('LabelingConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$labelPlacementDistanceItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$labelPlacementDistanceItem = value
     }
   },
 
   /** @type {boolean} */
   shouldDisableLabelPlacementDistanceItem: {
-    $meta: function() {
+    $meta: function () {
       return [TypeAttribute(YBoolean.$class)]
     },
-    get: function() {
+    get: function () {
       return (
-        (this.labelPlacementSideOfEdgeItem ===
-        LayoutConfiguration.EnumLabelPlacementSideOfEdge.ON_EDGE)
+        this.labelPlacementSideOfEdgeItem ===
+        LayoutConfiguration.EnumLabelPlacementSideOfEdge.ON_EDGE
       )
     }
   }

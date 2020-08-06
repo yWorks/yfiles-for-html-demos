@@ -124,13 +124,13 @@ function transformFile(data, filePath) {
         }
 
         if (defaultImport) {
-          if (!neededModules['lang']) {
-            neededModules['lang'] = []
+          if (!neededModules.lang) {
+            neededModules.lang = []
           }
           if (defaultImport === 'yfiles') {
-            neededModules['lang'].push(defaultImport)
+            neededModules.lang.push(defaultImport)
           } else {
-            neededModules['lang'].push('yfiles as ' + defaultImport)
+            neededModules.lang.push('yfiles as ' + defaultImport)
           }
         }
 

@@ -162,7 +162,7 @@ export function configureIOHandler(ioh) {
     'http://www.yworks.com/xml/yfiles-for-html/1.0/xaml',
     compat.graphml.xaml
   )
-  ioh.addHandleDeserializationListener(function(sender, evt) {
+  ioh.addHandleDeserializationListener(function (sender, evt) {
     if (!evt.handled && evt.xmlNode.nodeType === Node.ELEMENT_NODE) {
       var /*Element*/ elem = /*(Element)*/ evt.xmlNode
       if (elem.namespaceURI === 'http://www.yworks.com/xml/yfiles-common/2.0') {
@@ -202,7 +202,7 @@ export function configureIOHandler(ioh) {
       }
     }
   })
-  ioh.addHandleDeserializationListener(function(sender, evt) {
+  ioh.addHandleDeserializationListener(function (sender, evt) {
     if (!evt.handled && evt.xmlNode.nodeType === Node.ELEMENT_NODE) {
       var /*Element*/ element = /*(Element)*/ evt.xmlNode
       if (
@@ -218,12 +218,12 @@ export function configureIOHandler(ioh) {
   })
 }
 
-yfiles.lang.module('compat.graphml.common', function(exports) {
-  exports.NodeViewStateExtension = new ClassDefinition(function() {
+yfiles.lang.module('compat.graphml.common', function (exports) {
+  exports.NodeViewStateExtension = new ClassDefinition(function () {
     return {
       $extends: MarkupExtension,
 
-      constructor: function() {
+      constructor: function () {
         MarkupExtension.call(this)
         this.$initNodeViewStateExtension()
         this.$layout = new Rect(0, 0, -1, -1)
@@ -234,25 +234,25 @@ yfiles.lang.module('compat.graphml.common', function(exports) {
       $layout: null,
 
       layout: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(Rect.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$layout
         },
-        set: function(/*Rect*/ value) {
+        set: function (/*Rect*/ value) {
           this.$layout = value
         }
       },
 
       labels: {
-        $meta: function() {
+        $meta: function () {
           return [
             GraphMLAttribute().init({ visibility: GraphMLMemberVisibility.CONTENT }),
             TypeAttribute(IList.$class)
           ]
         },
-        get: function() {
+        get: function () {
           return this.$labels
         }
       },
@@ -260,18 +260,18 @@ yfiles.lang.module('compat.graphml.common', function(exports) {
       $style: null,
 
       style: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(INodeStyle.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$style
         },
-        set: function(/*yfiles.styles.INodeStyle*/ value) {
+        set: function (/*yfiles.styles.INodeStyle*/ value) {
           this.$style = value
         }
       },
 
-      provideValue: function(/*yfiles.graph.ILookup*/ serviceProvider) {
+      provideValue: function (/*yfiles.graph.ILookup*/ serviceProvider) {
         var /*yfiles.graphml.FolderNodeStateExtension*/ newInstance = new yfiles.graphml.FolderNodeStateExtension()
         {
           newInstance.style = this.$style
@@ -288,19 +288,19 @@ yfiles.lang.module('compat.graphml.common', function(exports) {
         return folderNodeStateExtension.provideValue(serviceProvider)
       },
 
-      $initNodeViewStateExtension: function() {
+      $initNodeViewStateExtension: function () {
         this.$labels = new List()
         this.$layout = new Rect(0, 0, 0, 0)
       }
     }
   })
 })
-yfiles.lang.module('compat.graphml.common', function(exports) {
-  exports.EdgeDefaultsExtension = new ClassDefinition(function() {
+yfiles.lang.module('compat.graphml.common', function (exports) {
+  exports.EdgeDefaultsExtension = new ClassDefinition(function () {
     return {
       $extends: MarkupExtension,
 
-      constructor: function() {
+      constructor: function () {
         MarkupExtension.call(this)
         this.$shareStyleInstance = true
       },
@@ -308,13 +308,13 @@ yfiles.lang.module('compat.graphml.common', function(exports) {
       $labels: null,
 
       labels: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(ILabelDefaults.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$labels
         },
-        set: function(/*yfiles.graph.ILabelDefaults*/ value) {
+        set: function (/*yfiles.graph.ILabelDefaults*/ value) {
           this.$labels = value
         }
       },
@@ -322,13 +322,13 @@ yfiles.lang.module('compat.graphml.common', function(exports) {
       $ports: null,
 
       ports: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(IPortDefaults.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$ports
         },
-        set: function(/*yfiles.graph.IPortDefaults*/ value) {
+        set: function (/*yfiles.graph.IPortDefaults*/ value) {
           this.$ports = value
         }
       },
@@ -336,13 +336,13 @@ yfiles.lang.module('compat.graphml.common', function(exports) {
       $style: null,
 
       style: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(IEdgeStyle.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$style
         },
-        set: function(/*yfiles.styles.IEdgeStyle*/ value) {
+        set: function (/*yfiles.styles.IEdgeStyle*/ value) {
           this.$style = value
         }
       },
@@ -350,18 +350,18 @@ yfiles.lang.module('compat.graphml.common', function(exports) {
       $shareStyleInstance: false,
 
       shareStyleInstance: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(YBoolean.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$shareStyleInstance
         },
-        set: function(/*boolean*/ value) {
+        set: function (/*boolean*/ value) {
           this.$shareStyleInstance = value
         }
       },
 
-      provideValue: function(/*yfiles.graph.ILookup*/ serviceProvider) {
+      provideValue: function (/*yfiles.graph.ILookup*/ serviceProvider) {
         var /*yfiles.graph.EdgeDefaults*/ newInstance = new EdgeDefaults()
         {
           newInstance.shareStyleInstance = this.$shareStyleInstance
@@ -374,12 +374,12 @@ yfiles.lang.module('compat.graphml.common', function(exports) {
     }
   })
 })
-yfiles.lang.module('compat.graphml.common', function(exports) {
-  exports.LabelDefaultsExtension = new ClassDefinition(function() {
+yfiles.lang.module('compat.graphml.common', function (exports) {
+  exports.LabelDefaultsExtension = new ClassDefinition(function () {
     return {
       $extends: MarkupExtension,
 
-      constructor: function() {
+      constructor: function () {
         MarkupExtension.call(this)
         this.$shareStyleInstance = true
         this.$shareLabelModelParameterInstance = true
@@ -389,13 +389,13 @@ yfiles.lang.module('compat.graphml.common', function(exports) {
       $autoAdjustPreferredSize: false,
 
       autoAdjustPreferredSize: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(YBoolean.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$autoAdjustPreferredSize
         },
-        set: function(/*boolean*/ value) {
+        set: function (/*boolean*/ value) {
           this.$autoAdjustPreferredSize = value
         }
       },
@@ -403,13 +403,13 @@ yfiles.lang.module('compat.graphml.common', function(exports) {
       $shareLabelModelParameterInstance: false,
 
       shareLabelModelParameterInstance: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(YBoolean.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$shareLabelModelParameterInstance
         },
-        set: function(/*boolean*/ value) {
+        set: function (/*boolean*/ value) {
           this.$shareLabelModelParameterInstance = value
         }
       },
@@ -417,13 +417,13 @@ yfiles.lang.module('compat.graphml.common', function(exports) {
       $labelModelParameter: null,
 
       labelModelParameter: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(ILabelModelParameter.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$labelModelParameter
         },
-        set: function(/*yfiles.graph.ILabelModelParameter*/ value) {
+        set: function (/*yfiles.graph.ILabelModelParameter*/ value) {
           this.$labelModelParameter = value
         }
       },
@@ -431,13 +431,13 @@ yfiles.lang.module('compat.graphml.common', function(exports) {
       $style: null,
 
       style: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(ILabelStyle.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$style
         },
-        set: function(/*yfiles.styles.ILabelStyle*/ value) {
+        set: function (/*yfiles.styles.ILabelStyle*/ value) {
           this.$style = value
         }
       },
@@ -445,18 +445,18 @@ yfiles.lang.module('compat.graphml.common', function(exports) {
       $shareStyleInstance: false,
 
       shareStyleInstance: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(YBoolean.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$shareStyleInstance
         },
-        set: function(/*boolean*/ value) {
+        set: function (/*boolean*/ value) {
           this.$shareStyleInstance = value
         }
       },
 
-      provideValue: function(/*yfiles.graph.ILookup*/ serviceProvider) {
+      provideValue: function (/*yfiles.graph.ILookup*/ serviceProvider) {
         var /*yfiles.graph.LabelDefaults*/ newInstance = new LabelDefaults()
         {
           newInstance.shareStyleInstance = this.$shareStyleInstance
@@ -470,12 +470,12 @@ yfiles.lang.module('compat.graphml.common', function(exports) {
     }
   })
 })
-yfiles.lang.module('compat.graphml.common', function(exports) {
-  exports.TableExtension = new ClassDefinition(function() {
+yfiles.lang.module('compat.graphml.common', function (exports) {
+  exports.TableExtension = new ClassDefinition(function () {
     return {
       $extends: MarkupExtension,
 
-      constructor: function() {
+      constructor: function () {
         MarkupExtension.call(this)
         this.$initTableExtension()
         this.$relativeLocation = Point.ORIGIN
@@ -487,25 +487,25 @@ yfiles.lang.module('compat.graphml.common', function(exports) {
       $columns: null,
 
       rows: {
-        $meta: function() {
+        $meta: function () {
           return [
             GraphMLAttribute().init({ visibility: GraphMLMemberVisibility.CONTENT }),
             TypeAttribute(ICollection.$class)
           ]
         },
-        get: function() {
+        get: function () {
           return this.$rows
         }
       },
 
       columns: {
-        $meta: function() {
+        $meta: function () {
           return [
             GraphMLAttribute().init({ visibility: GraphMLMemberVisibility.CONTENT }),
             TypeAttribute(ICollection.$class)
           ]
         },
-        get: function() {
+        get: function () {
           return this.$columns
         }
       },
@@ -513,13 +513,13 @@ yfiles.lang.module('compat.graphml.common', function(exports) {
       $insets: null,
 
       insets: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(Insets.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$insets
         },
-        set: function(/*yfiles.geometry.Insets*/ value) {
+        set: function (/*yfiles.geometry.Insets*/ value) {
           this.$insets = value
         }
       },
@@ -527,13 +527,13 @@ yfiles.lang.module('compat.graphml.common', function(exports) {
       $relativeLocation: null,
 
       relativeLocation: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(Point.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$relativeLocation
         },
-        set: function(/*yfiles.geometry.Point*/ value) {
+        set: function (/*yfiles.geometry.Point*/ value) {
           this.$relativeLocation = value
         }
       },
@@ -541,13 +541,13 @@ yfiles.lang.module('compat.graphml.common', function(exports) {
       $rowDefaults: null,
 
       rowDefaults: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(IStripeDefaults.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$rowDefaults
         },
-        set: function(/*yfiles.graph.IStripeDefaults*/ value) {
+        set: function (/*yfiles.graph.IStripeDefaults*/ value) {
           this.$rowDefaults = value
         }
       },
@@ -555,18 +555,18 @@ yfiles.lang.module('compat.graphml.common', function(exports) {
       $columnDefaults: null,
 
       columnDefaults: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(IStripeDefaults.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$columnDefaults
         },
-        set: function(/*yfiles.graph.IStripeDefaults*/ value) {
+        set: function (/*yfiles.graph.IStripeDefaults*/ value) {
           this.$columnDefaults = value
         }
       },
 
-      provideValue: function(/*yfiles.graph.ILookup*/ serviceProvider) {
+      provideValue: function (/*yfiles.graph.ILookup*/ serviceProvider) {
         var /*yfiles.graphml.TableExtension*/ newInstance = new yfiles.graphml.TableExtension()
         {
           newInstance.insets = this.$insets
@@ -592,7 +592,7 @@ yfiles.lang.module('compat.graphml.common', function(exports) {
         return tableExtension.provideValue(serviceProvider)
       },
 
-      $initTableExtension: function() {
+      $initTableExtension: function () {
         this.$rows = new List()
         this.$columns = new List()
         this.$insets = new Insets(0)
@@ -601,12 +601,12 @@ yfiles.lang.module('compat.graphml.common', function(exports) {
     }
   })
 })
-yfiles.lang.module('compat.graphml.common', function(exports) {
-  exports.StripeDefaultsExtension = new ClassDefinition(function() {
+yfiles.lang.module('compat.graphml.common', function (exports) {
+  exports.StripeDefaultsExtension = new ClassDefinition(function () {
     return {
       $extends: MarkupExtension,
 
-      constructor: function() {
+      constructor: function () {
         MarkupExtension.call(this)
         this.$initStripeDefaultsExtension()
         this.$size = 100
@@ -618,13 +618,13 @@ yfiles.lang.module('compat.graphml.common', function(exports) {
       $insets: null,
 
       insets: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(Insets.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$insets
         },
-        set: function(/*yfiles.geometry.Insets*/ value) {
+        set: function (/*yfiles.geometry.Insets*/ value) {
           this.$insets = value
         }
       },
@@ -632,13 +632,13 @@ yfiles.lang.module('compat.graphml.common', function(exports) {
       $size: 0,
 
       size: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(YNumber.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$size
         },
-        set: function(/*number*/ value) {
+        set: function (/*number*/ value) {
           this.$size = value
         }
       },
@@ -646,13 +646,13 @@ yfiles.lang.module('compat.graphml.common', function(exports) {
       $minimumSize: 0,
 
       minimumSize: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(YNumber.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$minimumSize
         },
-        set: function(/*number*/ value) {
+        set: function (/*number*/ value) {
           this.$minimumSize = value
         }
       },
@@ -660,13 +660,13 @@ yfiles.lang.module('compat.graphml.common', function(exports) {
       $labels: null,
 
       labels: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(ILabelDefaults.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$labels
         },
-        set: function(/*yfiles.graph.ILabelDefaults*/ value) {
+        set: function (/*yfiles.graph.ILabelDefaults*/ value) {
           this.$labels = value
         }
       },
@@ -674,13 +674,13 @@ yfiles.lang.module('compat.graphml.common', function(exports) {
       $style: null,
 
       style: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(INodeStyle.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$style
         },
-        set: function(/*yfiles.styles.INodeStyle*/ value) {
+        set: function (/*yfiles.styles.INodeStyle*/ value) {
           this.$style = value
         }
       },
@@ -688,18 +688,18 @@ yfiles.lang.module('compat.graphml.common', function(exports) {
       $shareStyleInstance: false,
 
       shareStyleInstance: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(YBoolean.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$shareStyleInstance
         },
-        set: function(/*boolean*/ value) {
+        set: function (/*boolean*/ value) {
           this.$shareStyleInstance = value
         }
       },
 
-      provideValue: function(/*yfiles.graph.ILookup*/ serviceProvider) {
+      provideValue: function (/*yfiles.graph.ILookup*/ serviceProvider) {
         var /*yfiles.graph.StripeDefaults*/ newInstance = new StripeDefaults()
         {
           newInstance.shareStyleInstance = this.$shareStyleInstance
@@ -712,18 +712,18 @@ yfiles.lang.module('compat.graphml.common', function(exports) {
         return newInstance
       },
 
-      $initStripeDefaultsExtension: function() {
+      $initStripeDefaultsExtension: function () {
         this.$insets = new Insets(0)
       }
     }
   })
 })
-yfiles.lang.module('compat.graphml.common', function(exports) {
-  exports.PortDefaultsExtension = new ClassDefinition(function() {
+yfiles.lang.module('compat.graphml.common', function (exports) {
+  exports.PortDefaultsExtension = new ClassDefinition(function () {
     return {
       $extends: MarkupExtension,
 
-      constructor: function() {
+      constructor: function () {
         MarkupExtension.call(this)
         this.$shareStyleInstance = true
         this.$shareLocationModelParameterInstance = true
@@ -733,13 +733,13 @@ yfiles.lang.module('compat.graphml.common', function(exports) {
       $autoCleanup: false,
 
       autoCleanup: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(YBoolean.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$autoCleanup
         },
-        set: function(/*boolean*/ value) {
+        set: function (/*boolean*/ value) {
           this.$autoCleanup = value
         }
       },
@@ -747,13 +747,13 @@ yfiles.lang.module('compat.graphml.common', function(exports) {
       $locationModelParameter: null,
 
       locationModelParameter: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(IPortLocationModelParameter.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$locationModelParameter
         },
-        set: function(/*yfiles.graph.IPortLocationModelParameter*/ value) {
+        set: function (/*yfiles.graph.IPortLocationModelParameter*/ value) {
           this.$locationModelParameter = value
         }
       },
@@ -761,13 +761,13 @@ yfiles.lang.module('compat.graphml.common', function(exports) {
       $shareLocationModelParameterInstance: false,
 
       shareLocationModelParameterInstance: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(YBoolean.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$shareLocationModelParameterInstance
         },
-        set: function(/*boolean*/ value) {
+        set: function (/*boolean*/ value) {
           this.$shareLocationModelParameterInstance = value
         }
       },
@@ -775,13 +775,13 @@ yfiles.lang.module('compat.graphml.common', function(exports) {
       $style: null,
 
       style: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(IPortStyle.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$style
         },
-        set: function(/*yfiles.styles.IPortStyle*/ value) {
+        set: function (/*yfiles.styles.IPortStyle*/ value) {
           this.$style = value
         }
       },
@@ -789,18 +789,18 @@ yfiles.lang.module('compat.graphml.common', function(exports) {
       $shareStyleInstance: false,
 
       shareStyleInstance: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(YBoolean.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$shareStyleInstance
         },
-        set: function(/*boolean*/ value) {
+        set: function (/*boolean*/ value) {
           this.$shareStyleInstance = value
         }
       },
 
-      provideValue: function(/*yfiles.graph.ILookup*/ serviceProvider) {
+      provideValue: function (/*yfiles.graph.ILookup*/ serviceProvider) {
         var /*yfiles.graph.PortDefaults*/ newInstance = new PortDefaults()
         {
           newInstance.autoCleanUp = this.$autoCleanup
@@ -814,30 +814,30 @@ yfiles.lang.module('compat.graphml.common', function(exports) {
     }
   })
 })
-yfiles.lang.module('compat.graphml.common', function(exports) {
-  exports.GraphMLReferenceExtension = new ClassDefinition(function() {
+yfiles.lang.module('compat.graphml.common', function (exports) {
+  exports.GraphMLReferenceExtension = new ClassDefinition(function () {
     return {
       $extends: MarkupExtension,
 
-      constructor: function() {
+      constructor: function () {
         MarkupExtension.call(this)
       },
 
       $resourceKey: null,
 
       resourceKey: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(YString.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$resourceKey
         },
-        set: function(/*string*/ value) {
+        set: function (/*string*/ value) {
           this.$resourceKey = value
         }
       },
 
-      provideValue: function(/*yfiles.graph.ILookup*/ serviceProvider) {
+      provideValue: function (/*yfiles.graph.ILookup*/ serviceProvider) {
         return new yfiles.graphml.GraphMLReferenceExtension(this.$resourceKey).provideValue(
           serviceProvider
         )
@@ -845,25 +845,25 @@ yfiles.lang.module('compat.graphml.common', function(exports) {
     }
   })
 })
-yfiles.lang.module('compat.graphml.common', function(exports) {
-  exports.GraphSettingsExtension = new ClassDefinition(function() {
+yfiles.lang.module('compat.graphml.common', function (exports) {
+  exports.GraphSettingsExtension = new ClassDefinition(function () {
     return {
       $extends: MarkupExtension,
 
-      constructor: function() {
+      constructor: function () {
         MarkupExtension.call(this)
       },
 
       $nodeDefaults: null,
 
       nodeDefaults: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(INodeDefaults.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$nodeDefaults
         },
-        set: function(/*yfiles.graph.INodeDefaults*/ value) {
+        set: function (/*yfiles.graph.INodeDefaults*/ value) {
           this.$nodeDefaults = value
         }
       },
@@ -871,13 +871,13 @@ yfiles.lang.module('compat.graphml.common', function(exports) {
       $groupNodeDefaults: null,
 
       groupNodeDefaults: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(INodeDefaults.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$groupNodeDefaults
         },
-        set: function(/*yfiles.graph.INodeDefaults*/ value) {
+        set: function (/*yfiles.graph.INodeDefaults*/ value) {
           this.$groupNodeDefaults = value
         }
       },
@@ -885,13 +885,13 @@ yfiles.lang.module('compat.graphml.common', function(exports) {
       $edgeDefaults: null,
 
       edgeDefaults: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(IEdgeDefaults.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$edgeDefaults
         },
-        set: function(/*yfiles.graph.IEdgeDefaults*/ value) {
+        set: function (/*yfiles.graph.IEdgeDefaults*/ value) {
           this.$edgeDefaults = value
         }
       },
@@ -899,18 +899,18 @@ yfiles.lang.module('compat.graphml.common', function(exports) {
       $usePortCandidateProviders: false,
 
       usePortCandidateProviders: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(YBoolean.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$usePortCandidateProviders
         },
-        set: function(/*boolean*/ value) {
+        set: function (/*boolean*/ value) {
           this.$usePortCandidateProviders = value
         }
       },
 
-      provideValue: function(/*yfiles.graph.ILookup*/ serviceProvider) {
+      provideValue: function (/*yfiles.graph.ILookup*/ serviceProvider) {
         var /*yfiles.graphml.GraphSettings*/ newInstance = new yfiles.graphml.GraphSettings()
         {
           newInstance.edgeDefaults = this.$edgeDefaults
@@ -923,14 +923,14 @@ yfiles.lang.module('compat.graphml.common', function(exports) {
     }
   })
 })
-yfiles.lang.module('compat.graphml.common', function(exports) {
-  exports.ColumnExtension = new ClassDefinition(function() {
+yfiles.lang.module('compat.graphml.common', function (exports) {
+  exports.ColumnExtension = new ClassDefinition(function () {
     return {
       $extends: MarkupExtension,
 
       $meta: [GraphMLAttribute().init({ contentProperty: 'columns' })],
 
-      constructor: function() {
+      constructor: function () {
         MarkupExtension.call(this)
         this.$initColumnExtension()
         this.$minimumSize = -1.0
@@ -942,13 +942,13 @@ yfiles.lang.module('compat.graphml.common', function(exports) {
       $labels: null,
 
       columns: {
-        $meta: function() {
+        $meta: function () {
           return [
             GraphMLAttribute().init({ visibility: GraphMLMemberVisibility.CONTENT }),
             TypeAttribute(ICollection.$class)
           ]
         },
-        get: function() {
+        get: function () {
           return this.$columns
         }
       },
@@ -956,13 +956,13 @@ yfiles.lang.module('compat.graphml.common', function(exports) {
       $style: null,
 
       style: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(INodeStyle.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$style
         },
-        set: function(/*yfiles.styles.INodeStyle*/ value) {
+        set: function (/*yfiles.styles.INodeStyle*/ value) {
           this.$style = value
         }
       },
@@ -970,13 +970,13 @@ yfiles.lang.module('compat.graphml.common', function(exports) {
       $minimumSize: 0,
 
       minimumSize: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(YNumber.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$minimumSize
         },
-        set: function(/*number*/ value) {
+        set: function (/*number*/ value) {
           this.$minimumSize = value
         }
       },
@@ -984,13 +984,13 @@ yfiles.lang.module('compat.graphml.common', function(exports) {
       $size: 0,
 
       size: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(YNumber.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$size
         },
-        set: function(/*number*/ value) {
+        set: function (/*number*/ value) {
           this.$size = value
         }
       },
@@ -998,25 +998,25 @@ yfiles.lang.module('compat.graphml.common', function(exports) {
       $insets: null,
 
       insets: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(Insets.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$insets
         },
-        set: function(/*yfiles.geometry.Insets*/ value) {
+        set: function (/*yfiles.geometry.Insets*/ value) {
           this.$insets = value
         }
       },
 
       labels: {
-        $meta: function() {
+        $meta: function () {
           return [
             GraphMLAttribute().init({ visibility: GraphMLMemberVisibility.CONTENT }),
             TypeAttribute(ICollection.$class)
           ]
         },
-        get: function() {
+        get: function () {
           return this.$labels
         }
       },
@@ -1024,18 +1024,18 @@ yfiles.lang.module('compat.graphml.common', function(exports) {
       $tag: null,
 
       tag: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(YObject.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$tag
         },
-        set: function(/*Object*/ value) {
+        set: function (/*Object*/ value) {
           this.$tag = value
         }
       },
 
-      provideValue: function(/*yfiles.graph.ILookup*/ serviceProvider) {
+      provideValue: function (/*yfiles.graph.ILookup*/ serviceProvider) {
         var /*yfiles.graphml.ColumnExtension*/ newInstance = new yfiles.graphml.ColumnExtension()
         {
           newInstance.minimumSize = this.$minimumSize
@@ -1062,7 +1062,7 @@ yfiles.lang.module('compat.graphml.common', function(exports) {
         return columnExtension.provideValue(serviceProvider)
       },
 
-      $initColumnExtension: function() {
+      $initColumnExtension: function () {
         this.$columns = new List()
         this.$labels = new List()
         this.$insets = new Insets(0)
@@ -1070,12 +1070,12 @@ yfiles.lang.module('compat.graphml.common', function(exports) {
     }
   })
 })
-yfiles.lang.module('compat.graphml.common', function(exports) {
-  exports.LabelExtension = new ClassDefinition(function() {
+yfiles.lang.module('compat.graphml.common', function (exports) {
+  exports.LabelExtension = new ClassDefinition(function () {
     return {
       $extends: MarkupExtension,
 
-      constructor: function() {
+      constructor: function () {
         MarkupExtension.call(this)
         this.$initLabelExtension()
       },
@@ -1087,13 +1087,13 @@ yfiles.lang.module('compat.graphml.common', function(exports) {
       $text: null,
 
       text: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(YString.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$text
         },
-        set: function(/*string*/ value) {
+        set: function (/*string*/ value) {
           this.$text = value
         }
       },
@@ -1103,13 +1103,13 @@ yfiles.lang.module('compat.graphml.common', function(exports) {
       $labelModelParameter: null,
 
       labelModelParameter: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(ILabelModelParameter.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$labelModelParameter
         },
-        set: function(/*yfiles.graph.ILabelModelParameter*/ value) {
+        set: function (/*yfiles.graph.ILabelModelParameter*/ value) {
           this.$paramSet = true
           this.$labelModelParameter = value
         }
@@ -1118,25 +1118,25 @@ yfiles.lang.module('compat.graphml.common', function(exports) {
       $style: null,
 
       style: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(ILabelStyle.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$style
         },
-        set: function(/*yfiles.styles.ILabelStyle*/ value) {
+        set: function (/*yfiles.styles.ILabelStyle*/ value) {
           this.$style = value
         }
       },
 
       preferredSize: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(Size.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$preferredSize
         },
-        set: function(/*yfiles.geometry.Size*/ value) {
+        set: function (/*yfiles.geometry.Size*/ value) {
           this.$preferredSize = value
           this.$preferredSizeSet = true
         }
@@ -1145,18 +1145,18 @@ yfiles.lang.module('compat.graphml.common', function(exports) {
       $tag: null,
 
       tag: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(YObject.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$tag
         },
-        set: function(/*Object*/ value) {
+        set: function (/*Object*/ value) {
           this.$tag = value
         }
       },
 
-      provideValue: function(/*yfiles.graph.ILookup*/ serviceProvider) {
+      provideValue: function (/*yfiles.graph.ILookup*/ serviceProvider) {
         var /*yfiles.graphml.LabelExtension*/ newInstance = new yfiles.graphml.LabelExtension()
         {
           newInstance.text = this.$text
@@ -1175,18 +1175,18 @@ yfiles.lang.module('compat.graphml.common', function(exports) {
         return labelExtension.provideValue(serviceProvider)
       },
 
-      $initLabelExtension: function() {
+      $initLabelExtension: function () {
         this.$preferredSize = new Size(0, 0)
       }
     }
   })
 })
-yfiles.lang.module('compat.graphml.common', function(exports) {
-  exports.PortExtension = new ClassDefinition(function() {
+yfiles.lang.module('compat.graphml.common', function (exports) {
+  exports.PortExtension = new ClassDefinition(function () {
     return {
       $extends: MarkupExtension,
 
-      constructor: function() {
+      constructor: function () {
         MarkupExtension.call(this)
       },
 
@@ -1195,13 +1195,13 @@ yfiles.lang.module('compat.graphml.common', function(exports) {
       $tagSet: false,
 
       tag: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(YObject.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$tag
         },
-        set: function(/*Object*/ value) {
+        set: function (/*Object*/ value) {
           this.$tagSet = true
           this.$tag = value
         }
@@ -1210,13 +1210,13 @@ yfiles.lang.module('compat.graphml.common', function(exports) {
       $style: null,
 
       style: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(IPortStyle.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$style
         },
-        set: function(/*yfiles.styles.IPortStyle*/ value) {
+        set: function (/*yfiles.styles.IPortStyle*/ value) {
           this.$style = value
         }
       },
@@ -1224,18 +1224,18 @@ yfiles.lang.module('compat.graphml.common', function(exports) {
       $locationModelParameter: null,
 
       locationModelParameter: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(IPortLocationModelParameter.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$locationModelParameter
         },
-        set: function(/*yfiles.graph.IPortLocationModelParameter*/ value) {
+        set: function (/*yfiles.graph.IPortLocationModelParameter*/ value) {
           this.$locationModelParameter = value
         }
       },
 
-      provideValue: function(/*yfiles.graph.ILookup*/ serviceProvider) {
+      provideValue: function (/*yfiles.graph.ILookup*/ serviceProvider) {
         var /*yfiles.graphml.PortExtension*/ newInstance = new yfiles.graphml.PortExtension()
         {
           newInstance.style = this.$style
@@ -1250,30 +1250,30 @@ yfiles.lang.module('compat.graphml.common', function(exports) {
     }
   })
 })
-yfiles.lang.module('compat.graphml.common', function(exports) {
-  exports.VoidEdgeStyleExtension = new ClassDefinition(function() {
+yfiles.lang.module('compat.graphml.common', function (exports) {
+  exports.VoidEdgeStyleExtension = new ClassDefinition(function () {
     return {
       $static: {
         INSTANCE: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(IEdgeStyle.$class)]
           },
           value: null
         },
 
-        $clinit: function() {
+        $clinit: function () {
           compat.graphml.common.VoidEdgeStyleExtension.INSTANCE = VoidEdgeStyle.INSTANCE
         }
       }
     }
   })
 })
-yfiles.lang.module('compat.graphml.common', function(exports) {
-  exports.EdgeViewStateExtension = new ClassDefinition(function() {
+yfiles.lang.module('compat.graphml.common', function (exports) {
+  exports.EdgeViewStateExtension = new ClassDefinition(function () {
     return {
       $extends: MarkupExtension,
 
-      constructor: function() {
+      constructor: function () {
         MarkupExtension.call(this)
         this.$initEdgeViewStateExtension()
       },
@@ -1283,13 +1283,13 @@ yfiles.lang.module('compat.graphml.common', function(exports) {
       $bends: null,
 
       labels: {
-        $meta: function() {
+        $meta: function () {
           return [
             GraphMLAttribute().init({ visibility: GraphMLMemberVisibility.CONTENT }),
             TypeAttribute(IList.$class)
           ]
         },
-        get: function() {
+        get: function () {
           return this.$labels
         }
       },
@@ -1297,25 +1297,25 @@ yfiles.lang.module('compat.graphml.common', function(exports) {
       $style: null,
 
       style: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(IEdgeStyle.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$style
         },
-        set: function(/*yfiles.styles.IEdgeStyle*/ value) {
+        set: function (/*yfiles.styles.IEdgeStyle*/ value) {
           this.$style = value
         }
       },
 
       bends: {
-        $meta: function() {
+        $meta: function () {
           return [
             GraphMLAttribute().init({ visibility: GraphMLMemberVisibility.CONTENT }),
             TypeAttribute(IList.$class)
           ]
         },
-        get: function() {
+        get: function () {
           return this.$bends
         }
       },
@@ -1323,13 +1323,13 @@ yfiles.lang.module('compat.graphml.common', function(exports) {
       $sourcePort: null,
 
       sourcePort: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(IPort.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$sourcePort
         },
-        set: function(/*yfiles.graph.IPort*/ value) {
+        set: function (/*yfiles.graph.IPort*/ value) {
           this.$sourcePort = value
         }
       },
@@ -1337,13 +1337,13 @@ yfiles.lang.module('compat.graphml.common', function(exports) {
       $targetPort: null,
 
       targetPort: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(IPort.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$targetPort
         },
-        set: function(/*yfiles.graph.IPort*/ value) {
+        set: function (/*yfiles.graph.IPort*/ value) {
           this.$targetPort = value
         }
       },
@@ -1353,19 +1353,19 @@ yfiles.lang.module('compat.graphml.common', function(exports) {
       $tagSet: false,
 
       tag: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(YObject.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$tag
         },
-        set: function(/*Object*/ value) {
+        set: function (/*Object*/ value) {
           this.$tagSet = true
           this.$tag = value
         }
       },
 
-      provideValue: function(/*yfiles.graph.ILookup*/ serviceProvider) {
+      provideValue: function (/*yfiles.graph.ILookup*/ serviceProvider) {
         var /*yfiles.graphml.FoldingEdgeStateExtension*/
           newInstance = new yfiles.graphml.FoldingEdgeStateExtension()
         {
@@ -1394,19 +1394,19 @@ yfiles.lang.module('compat.graphml.common', function(exports) {
         return foldingEdgeStateExtension.provideValue(serviceProvider)
       },
 
-      $initEdgeViewStateExtension: function() {
+      $initEdgeViewStateExtension: function () {
         this.$labels = new List()
         this.$bends = new List()
       }
     }
   })
 })
-yfiles.lang.module('compat.graphml.common', function(exports) {
-  exports.LabelCandidateDescriptorExtension = new ClassDefinition(function() {
+yfiles.lang.module('compat.graphml.common', function (exports) {
+  exports.LabelCandidateDescriptorExtension = new ClassDefinition(function () {
     return {
       $extends: MarkupExtension,
 
-      constructor: function() {
+      constructor: function () {
         MarkupExtension.call(this)
         this.$nodeOverlapPenalty = 0.0
         this.$profit = 1.0
@@ -1416,13 +1416,13 @@ yfiles.lang.module('compat.graphml.common', function(exports) {
       $externalCandidate: false,
 
       externalCandidate: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(YBoolean.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$externalCandidate
         },
-        set: function(/*boolean*/ value) {
+        set: function (/*boolean*/ value) {
           this.$externalCandidate = value
         }
       },
@@ -1430,13 +1430,13 @@ yfiles.lang.module('compat.graphml.common', function(exports) {
       $edgeOverlapPenalty: 0,
 
       edgeOverlapPenalty: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(YNumber.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$edgeOverlapPenalty
         },
-        set: function(/*number*/ value) {
+        set: function (/*number*/ value) {
           this.$edgeOverlapPenalty = value
         }
       },
@@ -1444,13 +1444,13 @@ yfiles.lang.module('compat.graphml.common', function(exports) {
       $nodeOverlapPenalty: 0,
 
       nodeOverlapPenalty: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(YNumber.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$nodeOverlapPenalty
         },
-        set: function(/*number*/ value) {
+        set: function (/*number*/ value) {
           this.$nodeOverlapPenalty = value
         }
       },
@@ -1458,18 +1458,18 @@ yfiles.lang.module('compat.graphml.common', function(exports) {
       $profit: 0,
 
       profit: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(YNumber.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$profit
         },
-        set: function(/*number*/ value) {
+        set: function (/*number*/ value) {
           this.$profit = value
         }
       },
 
-      provideValue: function(/*yfiles.graph.ILookup*/ serviceProvider) {
+      provideValue: function (/*yfiles.graph.ILookup*/ serviceProvider) {
         var /*yfiles.graph.LabelCandidateDescriptor*/ newInstance = new LabelCandidateDescriptor()
         {
           newInstance.edgeOverlapPenalty = this.$edgeOverlapPenalty
@@ -1482,19 +1482,19 @@ yfiles.lang.module('compat.graphml.common', function(exports) {
 
       $static: {
         EXTERNAL_DESCRIPTOR: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(ILabelCandidateDescriptor.$class)]
           },
-          get: function() {
+          get: function () {
             return LabelCandidateDescriptor.EXTERNAL_DESCRIPTOR
           }
         },
 
         INTERNAL_DESCRIPTOR: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(ILabelCandidateDescriptor.$class)]
           },
-          get: function() {
+          get: function () {
             return LabelCandidateDescriptor.INTERNAL_DESCRIPTOR
           }
         }
@@ -1502,50 +1502,50 @@ yfiles.lang.module('compat.graphml.common', function(exports) {
     }
   })
 })
-yfiles.lang.module('compat.graphml.common', function(exports) {
-  exports.VoidNodeStyleExtension = new ClassDefinition(function() {
+yfiles.lang.module('compat.graphml.common', function (exports) {
+  exports.VoidNodeStyleExtension = new ClassDefinition(function () {
     return {
       $static: {
         INSTANCE: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(INodeStyle.$class)]
           },
           value: null
         },
 
-        $clinit: function() {
+        $clinit: function () {
           compat.graphml.common.VoidNodeStyleExtension.INSTANCE = VoidNodeStyle.INSTANCE
         }
       }
     }
   })
 })
-yfiles.lang.module('compat.graphml.common', function(exports) {
-  exports.VoidPortStyleExtension = new ClassDefinition(function() {
+yfiles.lang.module('compat.graphml.common', function (exports) {
+  exports.VoidPortStyleExtension = new ClassDefinition(function () {
     return {
       $static: {
         INSTANCE: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(IPortStyle.$class)]
           },
           value: null
         },
 
-        $clinit: function() {
+        $clinit: function () {
           compat.graphml.common.VoidPortStyleExtension.INSTANCE = VoidPortStyle.INSTANCE
         }
       }
     }
   })
 })
-yfiles.lang.module('compat.graphml.common', function(exports) {
-  exports.RowExtension = new ClassDefinition(function() {
+yfiles.lang.module('compat.graphml.common', function (exports) {
+  exports.RowExtension = new ClassDefinition(function () {
     return {
       $extends: MarkupExtension,
 
       $meta: [GraphMLAttribute().init({ contentProperty: 'rows' })],
 
-      constructor: function() {
+      constructor: function () {
         MarkupExtension.call(this)
         this.$initRowExtension()
         this.$minimumSize = -1.0
@@ -1557,13 +1557,13 @@ yfiles.lang.module('compat.graphml.common', function(exports) {
       $rows: null,
 
       rows: {
-        $meta: function() {
+        $meta: function () {
           return [
             GraphMLAttribute().init({ visibility: GraphMLMemberVisibility.CONTENT }),
             TypeAttribute(ICollection.$class)
           ]
         },
-        get: function() {
+        get: function () {
           return this.$rows
         }
       },
@@ -1571,13 +1571,13 @@ yfiles.lang.module('compat.graphml.common', function(exports) {
       $minimumSize: 0,
 
       minimumSize: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(YNumber.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$minimumSize
         },
-        set: function(/*number*/ value) {
+        set: function (/*number*/ value) {
           this.$minimumSize = value
         }
       },
@@ -1585,13 +1585,13 @@ yfiles.lang.module('compat.graphml.common', function(exports) {
       $size: 0,
 
       size: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(YNumber.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$size
         },
-        set: function(/*number*/ value) {
+        set: function (/*number*/ value) {
           this.$size = value
         }
       },
@@ -1599,25 +1599,25 @@ yfiles.lang.module('compat.graphml.common', function(exports) {
       $insets: null,
 
       insets: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(Insets.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$insets
         },
-        set: function(/*yfiles.geometry.Insets*/ value) {
+        set: function (/*yfiles.geometry.Insets*/ value) {
           this.$insets = value
         }
       },
 
       labels: {
-        $meta: function() {
+        $meta: function () {
           return [
             GraphMLAttribute().init({ visibility: GraphMLMemberVisibility.CONTENT }),
             TypeAttribute(ICollection.$class)
           ]
         },
-        get: function() {
+        get: function () {
           return this.$labels
         }
       },
@@ -1625,13 +1625,13 @@ yfiles.lang.module('compat.graphml.common', function(exports) {
       $style: null,
 
       style: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(INodeStyle.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$style
         },
-        set: function(/*yfiles.styles.INodeStyle*/ value) {
+        set: function (/*yfiles.styles.INodeStyle*/ value) {
           this.$style = value
         }
       },
@@ -1639,18 +1639,18 @@ yfiles.lang.module('compat.graphml.common', function(exports) {
       $tag: null,
 
       tag: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(YObject.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$tag
         },
-        set: function(/*Object*/ value) {
+        set: function (/*Object*/ value) {
           this.$tag = value
         }
       },
 
-      provideValue: function(/*yfiles.graph.ILookup*/ serviceProvider) {
+      provideValue: function (/*yfiles.graph.ILookup*/ serviceProvider) {
         var /*yfiles.graphml.RowExtension*/ newInstance = new yfiles.graphml.RowExtension()
         {
           newInstance.minimumSize = this.$minimumSize
@@ -1677,7 +1677,7 @@ yfiles.lang.module('compat.graphml.common', function(exports) {
         return rowExtension.provideValue(serviceProvider)
       },
 
-      $initRowExtension: function() {
+      $initRowExtension: function () {
         this.$labels = new List()
         this.$rows = new List()
         this.$insets = new Insets(0)
@@ -1685,12 +1685,12 @@ yfiles.lang.module('compat.graphml.common', function(exports) {
     }
   })
 })
-yfiles.lang.module('compat.graphml.common', function(exports) {
-  exports.BendExtension = new ClassDefinition(function() {
+yfiles.lang.module('compat.graphml.common', function (exports) {
+  exports.BendExtension = new ClassDefinition(function () {
     return {
       $extends: MarkupExtension,
 
-      constructor: function() {
+      constructor: function () {
         MarkupExtension.call(this)
         this.$initBendExtension()
       },
@@ -1699,7 +1699,7 @@ yfiles.lang.module('compat.graphml.common', function(exports) {
 
       $tag: null,
 
-      provideValue: function(/*yfiles.graph.ILookup*/ serviceProvider) {
+      provideValue: function (/*yfiles.graph.ILookup*/ serviceProvider) {
         var /*yfiles.graphml.BendExtension*/ newInstance = new yfiles.graphml.BendExtension()
         {
           newInstance.location = this.$location
@@ -1714,60 +1714,60 @@ yfiles.lang.module('compat.graphml.common', function(exports) {
       $location: null,
 
       location: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(Point.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$location
         },
-        set: function(/*yfiles.geometry.Point*/ value) {
+        set: function (/*yfiles.geometry.Point*/ value) {
           this.$location = value
         }
       },
 
       tag: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(YObject.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$tag
         },
-        set: function(/*Object*/ value) {
+        set: function (/*Object*/ value) {
           this.$tagSet = true
           this.$tag = value
         }
       },
 
-      $initBendExtension: function() {
+      $initBendExtension: function () {
         this.$location = new Point(0, 0)
       }
     }
   })
 })
-yfiles.lang.module('compat.graphml.common', function(exports) {
-  exports.VoidLabelStyleExtension = new ClassDefinition(function() {
+yfiles.lang.module('compat.graphml.common', function (exports) {
+  exports.VoidLabelStyleExtension = new ClassDefinition(function () {
     return {
       $static: {
         INSTANCE: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(ILabelStyle.$class)]
           },
           value: null
         },
 
-        $clinit: function() {
+        $clinit: function () {
           compat.graphml.common.VoidLabelStyleExtension.INSTANCE = VoidLabelStyle.INSTANCE
         }
       }
     }
   })
 })
-yfiles.lang.module('compat.graphml.common', function(exports) {
-  exports.NodeDefaultsExtension = new ClassDefinition(function() {
+yfiles.lang.module('compat.graphml.common', function (exports) {
+  exports.NodeDefaultsExtension = new ClassDefinition(function () {
     return {
       $extends: MarkupExtension,
 
-      constructor: function() {
+      constructor: function () {
         MarkupExtension.call(this)
         this.$initNodeDefaultsExtension()
         this.$shareStyleInstance = true
@@ -1776,13 +1776,13 @@ yfiles.lang.module('compat.graphml.common', function(exports) {
       $size: null,
 
       size: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(Size.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$size
         },
-        set: function(/*yfiles.geometry.Size*/ value) {
+        set: function (/*yfiles.geometry.Size*/ value) {
           this.$size = value
         }
       },
@@ -1790,13 +1790,13 @@ yfiles.lang.module('compat.graphml.common', function(exports) {
       $labels: null,
 
       labels: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(ILabelDefaults.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$labels
         },
-        set: function(/*yfiles.graph.ILabelDefaults*/ value) {
+        set: function (/*yfiles.graph.ILabelDefaults*/ value) {
           this.$labels = value
         }
       },
@@ -1804,13 +1804,13 @@ yfiles.lang.module('compat.graphml.common', function(exports) {
       $ports: null,
 
       ports: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(IPortDefaults.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$ports
         },
-        set: function(/*yfiles.graph.IPortDefaults*/ value) {
+        set: function (/*yfiles.graph.IPortDefaults*/ value) {
           this.$ports = value
         }
       },
@@ -1818,13 +1818,13 @@ yfiles.lang.module('compat.graphml.common', function(exports) {
       $style: null,
 
       style: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(INodeStyle.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$style
         },
-        set: function(/*yfiles.styles.INodeStyle*/ value) {
+        set: function (/*yfiles.styles.INodeStyle*/ value) {
           this.$style = value
         }
       },
@@ -1832,18 +1832,18 @@ yfiles.lang.module('compat.graphml.common', function(exports) {
       $shareStyleInstance: false,
 
       shareStyleInstance: {
-        $meta: function() {
+        $meta: function () {
           return [GraphMLAttribute().init({ defaultValue: true }), TypeAttribute(YBoolean.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$shareStyleInstance
         },
-        set: function(/*boolean*/ value) {
+        set: function (/*boolean*/ value) {
           this.$shareStyleInstance = value
         }
       },
 
-      provideValue: function(/*yfiles.graph.ILookup*/ serviceProvider) {
+      provideValue: function (/*yfiles.graph.ILookup*/ serviceProvider) {
         var /*yfiles.graph.NodeDefaults*/ newInstance = new NodeDefaults()
         {
           newInstance.shareStyleInstance = this.$shareStyleInstance
@@ -1855,20 +1855,20 @@ yfiles.lang.module('compat.graphml.common', function(exports) {
         return newInstance
       },
 
-      $initNodeDefaultsExtension: function() {
+      $initNodeDefaultsExtension: function () {
         this.$size = new Size(0, 0)
       }
     }
   })
 })
-yfiles.lang.module('compat.graphml.commonmarkup', function(exports) {
-  exports.ListExtension = new ClassDefinition(function() {
+yfiles.lang.module('compat.graphml.commonmarkup', function (exports) {
+  exports.ListExtension = new ClassDefinition(function () {
     return {
       $extends: MarkupExtension,
 
       $meta: [GraphMLAttribute().init({ contentProperty: 'items' })],
 
-      constructor: function() {
+      constructor: function () {
         MarkupExtension.call(this)
         this.$initListExtension()
       },
@@ -1876,18 +1876,18 @@ yfiles.lang.module('compat.graphml.commonmarkup', function(exports) {
       $enumerable: null,
 
       items: {
-        $meta: function() {
+        $meta: function () {
           return [
             GraphMLAttribute().init({ visibility: GraphMLMemberVisibility.CONTENT }),
             TypeAttribute(IList.$class)
           ]
         },
-        get: function() {
+        get: function () {
           return this.$enumerable
         }
       },
 
-      provideValue: function(/*yfiles.graph.ILookup*/ serviceProvider) {
+      provideValue: function (/*yfiles.graph.ILookup*/ serviceProvider) {
         var /*yfiles.graphml.ListExtension*/ listExtension = new yfiles.graphml.ListExtension()
         var /*yfiles.collections.IEnumerator*/ tmpEnumerator
         for (tmpEnumerator = this.$enumerable.getEnumerator(); tmpEnumerator.moveNext(); ) {
@@ -1899,33 +1899,33 @@ yfiles.lang.module('compat.graphml.commonmarkup', function(exports) {
         return listExtension.provideValue(serviceProvider)
       },
 
-      $initListExtension: function() {
+      $initListExtension: function () {
         this.$enumerable = new List()
       }
     }
   })
 })
-yfiles.lang.module('compat.graphml.commonmarkup', function(exports) {
-  exports.GenericListExtension = new ClassDefinition(function() {
+yfiles.lang.module('compat.graphml.commonmarkup', function (exports) {
+  exports.GenericListExtension = new ClassDefinition(function () {
     return {
       $extends: MarkupExtension,
 
       $meta: [GraphMLAttribute().init({ contentProperty: 'items' })],
 
-      constructor: function() {
+      constructor: function () {
         MarkupExtension.call(this)
       },
 
       $items: null,
 
       items: {
-        $meta: function() {
+        $meta: function () {
           return [
             GraphMLAttribute().init({ visibility: GraphMLMemberVisibility.CONTENT }),
             TypeAttribute(IList.$class)
           ]
         },
-        get: function() {
+        get: function () {
           return this.$items
         }
       },
@@ -1933,18 +1933,18 @@ yfiles.lang.module('compat.graphml.commonmarkup', function(exports) {
       $type: null,
 
       type: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(Class.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$type
         },
-        set: function(/*yfiles.lang.Class*/ value) {
+        set: function (/*yfiles.lang.Class*/ value) {
           this.$type = value
         }
       },
 
-      provideValue: function(/*yfiles.graph.ILookup*/ serviceProvider) {
+      provideValue: function (/*yfiles.graph.ILookup*/ serviceProvider) {
         var /*yfiles.graphml.ListExtension*/ listExtension = new yfiles.graphml.ListExtension()
         var /*yfiles.collections.IEnumerator*/ tmpEnumerator
         for (tmpEnumerator = this.$items.getEnumerator(); tmpEnumerator.moveNext(); ) {
@@ -1958,102 +1958,102 @@ yfiles.lang.module('compat.graphml.commonmarkup', function(exports) {
     }
   })
 })
-yfiles.lang.module('compat.graphml.commonmarkup', function(exports) {
-  exports.TypeExtension = new ClassDefinition(function() {
+yfiles.lang.module('compat.graphml.commonmarkup', function (exports) {
+  exports.TypeExtension = new ClassDefinition(function () {
     return {
       $extends: MarkupExtension,
 
-      constructor: function() {
+      constructor: function () {
         MarkupExtension.call(this)
       },
 
       $typeName: null,
 
       typeName: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(YString.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$typeName
         },
-        set: function(/*string*/ value) {
+        set: function (/*string*/ value) {
           this.$typeName = value
         }
       },
 
-      provideValue: function(/*yfiles.graph.ILookup*/ serviceProvider) {
+      provideValue: function (/*yfiles.graph.ILookup*/ serviceProvider) {
         return new yfiles.graphml.TypeExtension(this.$typeName).provideValue(serviceProvider)
       }
     }
   })
 })
-yfiles.lang.module('compat.graphml.commonmarkup', function(exports) {
-  exports.NullExtension = new ClassDefinition(function() {
+yfiles.lang.module('compat.graphml.commonmarkup', function (exports) {
+  exports.NullExtension = new ClassDefinition(function () {
     return {
       $extends: MarkupExtension,
 
-      constructor: function() {
+      constructor: function () {
         MarkupExtension.call(this)
       },
 
-      provideValue: function(/*yfiles.graph.ILookup*/ serviceProvider) {
+      provideValue: function (/*yfiles.graph.ILookup*/ serviceProvider) {
         return null
       }
     }
   })
 })
-yfiles.lang.module('compat.graphml.commonmarkup', function(exports) {
-  exports.StaticExtension = new ClassDefinition(function() {
+yfiles.lang.module('compat.graphml.commonmarkup', function (exports) {
+  exports.StaticExtension = new ClassDefinition(function () {
     return {
       $extends: MarkupExtension,
 
-      constructor: function() {
+      constructor: function () {
         MarkupExtension.call(this)
       },
 
       $member: null,
 
       member: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(Property.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$member
         },
-        set: function(/*yfiles.graphml.Property*/ value) {
+        set: function (/*yfiles.graphml.Property*/ value) {
           this.$member = value
         }
       },
 
-      provideValue: function(/*yfiles.graph.ILookup*/ serviceProvider) {
+      provideValue: function (/*yfiles.graph.ILookup*/ serviceProvider) {
         return new yfiles.graphml.StaticExtension(this.$member).provideValue(serviceProvider)
       }
     }
   })
 })
-yfiles.lang.module('compat.graphml.commonmarkup', function(exports) {
-  exports.UndefinedExtension = new ClassDefinition(function() {
+yfiles.lang.module('compat.graphml.commonmarkup', function (exports) {
+  exports.UndefinedExtension = new ClassDefinition(function () {
     return {
       $extends: MarkupExtension,
 
-      constructor: function() {
+      constructor: function () {
         MarkupExtension.call(this)
       },
 
-      provideValue: function(/*yfiles.graph.ILookup*/ serviceProvider) {
+      provideValue: function (/*yfiles.graph.ILookup*/ serviceProvider) {
         return undefined
       }
     }
   })
 })
-yfiles.lang.module('compat.graphml.commonmarkup', function(exports) {
-  exports.ArrayExtension = new ClassDefinition(function() {
+yfiles.lang.module('compat.graphml.commonmarkup', function (exports) {
+  exports.ArrayExtension = new ClassDefinition(function () {
     return {
       $extends: MarkupExtension,
 
       $meta: [GraphMLAttribute().init({ contentProperty: 'items' })],
 
-      constructor: function() {
+      constructor: function () {
         MarkupExtension.call(this)
         this.$initArrayExtension()
       },
@@ -2061,32 +2061,32 @@ yfiles.lang.module('compat.graphml.commonmarkup', function(exports) {
       $type: null,
 
       type: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(Class.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$type
         },
-        set: function(/*yfiles.lang.Class*/ value) {
+        set: function (/*yfiles.lang.Class*/ value) {
           this.$type = value
         }
       },
 
       items: {
-        $meta: function() {
+        $meta: function () {
           return [
             GraphMLAttribute().init({ visibility: GraphMLMemberVisibility.CONTENT }),
             TypeAttribute(IList.$class)
           ]
         },
-        get: function() {
+        get: function () {
           return this.$items
         }
       },
 
       $items: null,
 
-      provideValue: function(/*yfiles.graph.ILookup*/ serviceProvider) {
+      provideValue: function (/*yfiles.graph.ILookup*/ serviceProvider) {
         var /*yfiles.graphml.ArrayExtension*/ arrayExtension = new yfiles.graphml.ArrayExtension()
         arrayExtension.type = this.$type
         var /*yfiles.collections.IEnumerator*/ tmpEnumerator
@@ -2099,1281 +2099,1281 @@ yfiles.lang.module('compat.graphml.commonmarkup', function(exports) {
         return arrayExtension.provideValue(serviceProvider)
       },
 
-      $initArrayExtension: function() {
+      $initArrayExtension: function () {
         this.$items = new List()
       }
     }
   })
 })
-yfiles.lang.module('compat.graphml.wpfbridge', function(exports) {
-  exports.PensExtension = new ClassDefinition(function() {
+yfiles.lang.module('compat.graphml.wpfbridge', function (exports) {
+  exports.PensExtension = new ClassDefinition(function () {
     return {
       $static: {
         ALICE_BLUE: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Stroke.$class)]
           },
-          get: function() {
+          get: function () {
             return Stroke.ALICE_BLUE
           }
         },
 
         ANTIQUE_WHITE: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Stroke.$class)]
           },
-          get: function() {
+          get: function () {
             return Stroke.ANTIQUE_WHITE
           }
         },
 
         AQUA: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Stroke.$class)]
           },
-          get: function() {
+          get: function () {
             return Stroke.AQUA
           }
         },
 
         AQUAMARINE: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Stroke.$class)]
           },
-          get: function() {
+          get: function () {
             return Stroke.AQUAMARINE
           }
         },
 
         AZURE: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Stroke.$class)]
           },
-          get: function() {
+          get: function () {
             return Stroke.AZURE
           }
         },
 
         BEIGE: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Stroke.$class)]
           },
-          get: function() {
+          get: function () {
             return Stroke.BEIGE
           }
         },
 
         BISQUE: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Stroke.$class)]
           },
-          get: function() {
+          get: function () {
             return Stroke.BISQUE
           }
         },
 
         BLACK: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Stroke.$class)]
           },
-          get: function() {
+          get: function () {
             return Stroke.BLACK
           }
         },
 
         BLANCHED_ALMOND: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Stroke.$class)]
           },
-          get: function() {
+          get: function () {
             return Stroke.BLANCHED_ALMOND
           }
         },
 
         BLUE: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Stroke.$class)]
           },
-          get: function() {
+          get: function () {
             return Stroke.BLUE
           }
         },
 
         BLUE_VIOLET: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Stroke.$class)]
           },
-          get: function() {
+          get: function () {
             return Stroke.BLUE_VIOLET
           }
         },
 
         BROWN: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Stroke.$class)]
           },
-          get: function() {
+          get: function () {
             return Stroke.BROWN
           }
         },
 
         BURLY_WOOD: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Stroke.$class)]
           },
-          get: function() {
+          get: function () {
             return Stroke.BURLY_WOOD
           }
         },
 
         CADET_BLUE: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Stroke.$class)]
           },
-          get: function() {
+          get: function () {
             return Stroke.CADET_BLUE
           }
         },
 
         CHARTREUSE: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Stroke.$class)]
           },
-          get: function() {
+          get: function () {
             return Stroke.CHARTREUSE
           }
         },
 
         CHOCOLATE: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Stroke.$class)]
           },
-          get: function() {
+          get: function () {
             return Stroke.CHOCOLATE
           }
         },
 
         CORAL: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Stroke.$class)]
           },
-          get: function() {
+          get: function () {
             return Stroke.CORAL
           }
         },
 
         CORNFLOWER_BLUE: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Stroke.$class)]
           },
-          get: function() {
+          get: function () {
             return Stroke.CORNFLOWER_BLUE
           }
         },
 
         CORNSILK: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Stroke.$class)]
           },
-          get: function() {
+          get: function () {
             return Stroke.CORNSILK
           }
         },
 
         CRIMSON: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Stroke.$class)]
           },
-          get: function() {
+          get: function () {
             return Stroke.CRIMSON
           }
         },
 
         CYAN: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Stroke.$class)]
           },
-          get: function() {
+          get: function () {
             return Stroke.CYAN
           }
         },
 
         DARK_BLUE: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Stroke.$class)]
           },
-          get: function() {
+          get: function () {
             return Stroke.DARK_BLUE
           }
         },
 
         DARK_CYAN: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Stroke.$class)]
           },
-          get: function() {
+          get: function () {
             return Stroke.DARK_CYAN
           }
         },
 
         DARK_GOLDENROD: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Stroke.$class)]
           },
-          get: function() {
+          get: function () {
             return Stroke.DARK_GOLDENROD
           }
         },
 
         DARK_GRAY: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Stroke.$class)]
           },
-          get: function() {
+          get: function () {
             return Stroke.DARK_GRAY
           }
         },
 
         DARK_GREEN: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Stroke.$class)]
           },
-          get: function() {
+          get: function () {
             return Stroke.DARK_GREEN
           }
         },
 
         DARK_KHAKI: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Stroke.$class)]
           },
-          get: function() {
+          get: function () {
             return Stroke.DARK_KHAKI
           }
         },
 
         DARK_MAGENTA: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Stroke.$class)]
           },
-          get: function() {
+          get: function () {
             return Stroke.DARK_MAGENTA
           }
         },
 
         DARK_OLIVE_GREEN: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Stroke.$class)]
           },
-          get: function() {
+          get: function () {
             return Stroke.DARK_OLIVE_GREEN
           }
         },
 
         DARK_ORANGE: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Stroke.$class)]
           },
-          get: function() {
+          get: function () {
             return Stroke.DARK_ORANGE
           }
         },
 
         DARK_ORCHID: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Stroke.$class)]
           },
-          get: function() {
+          get: function () {
             return Stroke.DARK_ORCHID
           }
         },
 
         DARK_RED: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Stroke.$class)]
           },
-          get: function() {
+          get: function () {
             return Stroke.DARK_RED
           }
         },
 
         DARK_SALMON: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Stroke.$class)]
           },
-          get: function() {
+          get: function () {
             return Stroke.DARK_SALMON
           }
         },
 
         DARK_SEA_GREEN: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Stroke.$class)]
           },
-          get: function() {
+          get: function () {
             return Stroke.DARK_SEA_GREEN
           }
         },
 
         DARK_SLATE_BLUE: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Stroke.$class)]
           },
-          get: function() {
+          get: function () {
             return Stroke.DARK_SLATE_BLUE
           }
         },
 
         DARK_SLATE_GRAY: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Stroke.$class)]
           },
-          get: function() {
+          get: function () {
             return Stroke.DARK_SLATE_GRAY
           }
         },
 
         DARK_TURQUOISE: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Stroke.$class)]
           },
-          get: function() {
+          get: function () {
             return Stroke.DARK_TURQUOISE
           }
         },
 
         DARK_VIOLET: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Stroke.$class)]
           },
-          get: function() {
+          get: function () {
             return Stroke.DARK_VIOLET
           }
         },
 
         DEEP_PINK: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Stroke.$class)]
           },
-          get: function() {
+          get: function () {
             return Stroke.DEEP_PINK
           }
         },
 
         DEEP_SKY_BLUE: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Stroke.$class)]
           },
-          get: function() {
+          get: function () {
             return Stroke.DEEP_SKY_BLUE
           }
         },
 
         DIM_GRAY: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Stroke.$class)]
           },
-          get: function() {
+          get: function () {
             return Stroke.DIM_GRAY
           }
         },
 
         DODGER_BLUE: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Stroke.$class)]
           },
-          get: function() {
+          get: function () {
             return Stroke.DODGER_BLUE
           }
         },
 
         FIREBRICK: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Stroke.$class)]
           },
-          get: function() {
+          get: function () {
             return Stroke.FIREBRICK
           }
         },
 
         FLORAL_WHITE: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Stroke.$class)]
           },
-          get: function() {
+          get: function () {
             return Stroke.FLORAL_WHITE
           }
         },
 
         FOREST_GREEN: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Stroke.$class)]
           },
-          get: function() {
+          get: function () {
             return Stroke.FOREST_GREEN
           }
         },
 
         FUCHSIA: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Stroke.$class)]
           },
-          get: function() {
+          get: function () {
             return Stroke.FUCHSIA
           }
         },
 
         GAINSBORO: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Stroke.$class)]
           },
-          get: function() {
+          get: function () {
             return Stroke.GAINSBORO
           }
         },
 
         GHOST_WHITE: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Stroke.$class)]
           },
-          get: function() {
+          get: function () {
             return Stroke.GHOST_WHITE
           }
         },
 
         GOLD: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Stroke.$class)]
           },
-          get: function() {
+          get: function () {
             return Stroke.GOLD
           }
         },
 
         GOLDENROD: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Stroke.$class)]
           },
-          get: function() {
+          get: function () {
             return Stroke.GOLDENROD
           }
         },
 
         GRAY: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Stroke.$class)]
           },
-          get: function() {
+          get: function () {
             return Stroke.GRAY
           }
         },
 
         GREEN: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Stroke.$class)]
           },
-          get: function() {
+          get: function () {
             return Stroke.GREEN
           }
         },
 
         GREEN_YELLOW: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Stroke.$class)]
           },
-          get: function() {
+          get: function () {
             return Stroke.GREEN_YELLOW
           }
         },
 
         HONEYDEW: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Stroke.$class)]
           },
-          get: function() {
+          get: function () {
             return Stroke.HONEYDEW
           }
         },
 
         HOT_PINK: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Stroke.$class)]
           },
-          get: function() {
+          get: function () {
             return Stroke.HOT_PINK
           }
         },
 
         INDIAN_RED: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Stroke.$class)]
           },
-          get: function() {
+          get: function () {
             return Stroke.INDIAN_RED
           }
         },
 
         INDIGO: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Stroke.$class)]
           },
-          get: function() {
+          get: function () {
             return Stroke.INDIGO
           }
         },
 
         IVORY: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Stroke.$class)]
           },
-          get: function() {
+          get: function () {
             return Stroke.IVORY
           }
         },
 
         KHAKI: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Stroke.$class)]
           },
-          get: function() {
+          get: function () {
             return Stroke.KHAKI
           }
         },
 
         LAVENDER: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Stroke.$class)]
           },
-          get: function() {
+          get: function () {
             return Stroke.LAVENDER
           }
         },
 
         LAVENDER_BLUSH: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Stroke.$class)]
           },
-          get: function() {
+          get: function () {
             return Stroke.LAVENDER_BLUSH
           }
         },
 
         LAWN_GREEN: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Stroke.$class)]
           },
-          get: function() {
+          get: function () {
             return Stroke.LAWN_GREEN
           }
         },
 
         LEMON_CHIFFON: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Stroke.$class)]
           },
-          get: function() {
+          get: function () {
             return Stroke.LEMON_CHIFFON
           }
         },
 
         LIGHT_BLUE: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Stroke.$class)]
           },
-          get: function() {
+          get: function () {
             return Stroke.LIGHT_BLUE
           }
         },
 
         LIGHT_CORAL: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Stroke.$class)]
           },
-          get: function() {
+          get: function () {
             return Stroke.LIGHT_CORAL
           }
         },
 
         LIGHT_CYAN: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Stroke.$class)]
           },
-          get: function() {
+          get: function () {
             return Stroke.LIGHT_CYAN
           }
         },
 
         LIGHT_GOLDENROD_YELLOW: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Stroke.$class)]
           },
-          get: function() {
+          get: function () {
             return Stroke.LIGHT_GOLDENROD_YELLOW
           }
         },
 
         LIGHT_GRAY: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Stroke.$class)]
           },
-          get: function() {
+          get: function () {
             return Stroke.LIGHT_GRAY
           }
         },
 
         LIGHT_GREEN: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Stroke.$class)]
           },
-          get: function() {
+          get: function () {
             return Stroke.LIGHT_GREEN
           }
         },
 
         LIGHT_PINK: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Stroke.$class)]
           },
-          get: function() {
+          get: function () {
             return Stroke.LIGHT_PINK
           }
         },
 
         LIGHT_SALMON: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Stroke.$class)]
           },
-          get: function() {
+          get: function () {
             return Stroke.LIGHT_SALMON
           }
         },
 
         LIGHT_SEA_GREEN: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Stroke.$class)]
           },
-          get: function() {
+          get: function () {
             return Stroke.LIGHT_SEA_GREEN
           }
         },
 
         LIGHT_SKY_BLUE: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Stroke.$class)]
           },
-          get: function() {
+          get: function () {
             return Stroke.LIGHT_SKY_BLUE
           }
         },
 
         LIGHT_SLATE_GRAY: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Stroke.$class)]
           },
-          get: function() {
+          get: function () {
             return Stroke.LIGHT_SLATE_GRAY
           }
         },
 
         LIGHT_STEEL_BLUE: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Stroke.$class)]
           },
-          get: function() {
+          get: function () {
             return Stroke.LIGHT_STEEL_BLUE
           }
         },
 
         LIGHT_YELLOW: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Stroke.$class)]
           },
-          get: function() {
+          get: function () {
             return Stroke.LIGHT_YELLOW
           }
         },
 
         LIME: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Stroke.$class)]
           },
-          get: function() {
+          get: function () {
             return Stroke.LIME
           }
         },
 
         LIME_GREEN: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Stroke.$class)]
           },
-          get: function() {
+          get: function () {
             return Stroke.LIME_GREEN
           }
         },
 
         LINEN: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Stroke.$class)]
           },
-          get: function() {
+          get: function () {
             return Stroke.LINEN
           }
         },
 
         MAGENTA: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Stroke.$class)]
           },
-          get: function() {
+          get: function () {
             return Stroke.MAGENTA
           }
         },
 
         MAROON: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Stroke.$class)]
           },
-          get: function() {
+          get: function () {
             return Stroke.MAROON
           }
         },
 
         MEDIUM_AQUAMARINE: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Stroke.$class)]
           },
-          get: function() {
+          get: function () {
             return Stroke.MEDIUM_AQUAMARINE
           }
         },
 
         MEDIUM_BLUE: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Stroke.$class)]
           },
-          get: function() {
+          get: function () {
             return Stroke.MEDIUM_BLUE
           }
         },
 
         MEDIUM_ORCHID: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Stroke.$class)]
           },
-          get: function() {
+          get: function () {
             return Stroke.MEDIUM_ORCHID
           }
         },
 
         MEDIUM_PURPLE: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Stroke.$class)]
           },
-          get: function() {
+          get: function () {
             return Stroke.MEDIUM_PURPLE
           }
         },
 
         MEDIUM_SEA_GREEN: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Stroke.$class)]
           },
-          get: function() {
+          get: function () {
             return Stroke.MEDIUM_SEA_GREEN
           }
         },
 
         MEDIUM_SLATE_BLUE: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Stroke.$class)]
           },
-          get: function() {
+          get: function () {
             return Stroke.MEDIUM_SLATE_BLUE
           }
         },
 
         MEDIUM_SPRING_GREEN: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Stroke.$class)]
           },
-          get: function() {
+          get: function () {
             return Stroke.MEDIUM_SPRING_GREEN
           }
         },
 
         MEDIUM_TURQUOISE: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Stroke.$class)]
           },
-          get: function() {
+          get: function () {
             return Stroke.MEDIUM_TURQUOISE
           }
         },
 
         MEDIUM_VIOLET_RED: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Stroke.$class)]
           },
-          get: function() {
+          get: function () {
             return Stroke.MEDIUM_VIOLET_RED
           }
         },
 
         MIDNIGHT_BLUE: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Stroke.$class)]
           },
-          get: function() {
+          get: function () {
             return Stroke.MIDNIGHT_BLUE
           }
         },
 
         MINT_CREAM: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Stroke.$class)]
           },
-          get: function() {
+          get: function () {
             return Stroke.MINT_CREAM
           }
         },
 
         MISTY_ROSE: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Stroke.$class)]
           },
-          get: function() {
+          get: function () {
             return Stroke.MISTY_ROSE
           }
         },
 
         MOCCASIN: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Stroke.$class)]
           },
-          get: function() {
+          get: function () {
             return Stroke.MOCCASIN
           }
         },
 
         NAVAJO_WHITE: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Stroke.$class)]
           },
-          get: function() {
+          get: function () {
             return Stroke.NAVAJO_WHITE
           }
         },
 
         NAVY: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Stroke.$class)]
           },
-          get: function() {
+          get: function () {
             return Stroke.NAVY
           }
         },
 
         OLD_LACE: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Stroke.$class)]
           },
-          get: function() {
+          get: function () {
             return Stroke.OLD_LACE
           }
         },
 
         OLIVE: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Stroke.$class)]
           },
-          get: function() {
+          get: function () {
             return Stroke.OLIVE
           }
         },
 
         OLIVE_DRAB: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Stroke.$class)]
           },
-          get: function() {
+          get: function () {
             return Stroke.OLIVE_DRAB
           }
         },
 
         ORANGE: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Stroke.$class)]
           },
-          get: function() {
+          get: function () {
             return Stroke.ORANGE
           }
         },
 
         ORANGE_RED: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Stroke.$class)]
           },
-          get: function() {
+          get: function () {
             return Stroke.ORANGE_RED
           }
         },
 
         ORCHID: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Stroke.$class)]
           },
-          get: function() {
+          get: function () {
             return Stroke.ORCHID
           }
         },
 
         PALE_GOLDENROD: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Stroke.$class)]
           },
-          get: function() {
+          get: function () {
             return Stroke.PALE_GOLDENROD
           }
         },
 
         PALE_GREEN: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Stroke.$class)]
           },
-          get: function() {
+          get: function () {
             return Stroke.PALE_GREEN
           }
         },
 
         PALE_TURQUOISE: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Stroke.$class)]
           },
-          get: function() {
+          get: function () {
             return Stroke.PALE_TURQUOISE
           }
         },
 
         PALE_VIOLET_RED: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Stroke.$class)]
           },
-          get: function() {
+          get: function () {
             return Stroke.PALE_VIOLET_RED
           }
         },
 
         PAPAYA_WHIP: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Stroke.$class)]
           },
-          get: function() {
+          get: function () {
             return Stroke.PAPAYA_WHIP
           }
         },
 
         PEACH_PUFF: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Stroke.$class)]
           },
-          get: function() {
+          get: function () {
             return Stroke.PEACH_PUFF
           }
         },
 
         PERU: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Stroke.$class)]
           },
-          get: function() {
+          get: function () {
             return Stroke.PERU
           }
         },
 
         PINK: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Stroke.$class)]
           },
-          get: function() {
+          get: function () {
             return Stroke.PINK
           }
         },
 
         PLUM: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Stroke.$class)]
           },
-          get: function() {
+          get: function () {
             return Stroke.PLUM
           }
         },
 
         POWDER_BLUE: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Stroke.$class)]
           },
-          get: function() {
+          get: function () {
             return Stroke.POWDER_BLUE
           }
         },
 
         PURPLE: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Stroke.$class)]
           },
-          get: function() {
+          get: function () {
             return Stroke.PURPLE
           }
         },
 
         RED: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Stroke.$class)]
           },
-          get: function() {
+          get: function () {
             return Stroke.RED
           }
         },
 
         ROSY_BROWN: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Stroke.$class)]
           },
-          get: function() {
+          get: function () {
             return Stroke.ROSY_BROWN
           }
         },
 
         ROYAL_BLUE: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Stroke.$class)]
           },
-          get: function() {
+          get: function () {
             return Stroke.ROYAL_BLUE
           }
         },
 
         SADDLE_BROWN: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Stroke.$class)]
           },
-          get: function() {
+          get: function () {
             return Stroke.SADDLE_BROWN
           }
         },
 
         SALMON: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Stroke.$class)]
           },
-          get: function() {
+          get: function () {
             return Stroke.SALMON
           }
         },
 
         SANDY_BROWN: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Stroke.$class)]
           },
-          get: function() {
+          get: function () {
             return Stroke.SANDY_BROWN
           }
         },
 
         SEA_GREEN: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Stroke.$class)]
           },
-          get: function() {
+          get: function () {
             return Stroke.SEA_GREEN
           }
         },
 
         SEA_SHELL: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Stroke.$class)]
           },
-          get: function() {
+          get: function () {
             return Stroke.SEA_SHELL
           }
         },
 
         SIENNA: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Stroke.$class)]
           },
-          get: function() {
+          get: function () {
             return Stroke.SIENNA
           }
         },
 
         SILVER: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Stroke.$class)]
           },
-          get: function() {
+          get: function () {
             return Stroke.SILVER
           }
         },
 
         SKY_BLUE: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Stroke.$class)]
           },
-          get: function() {
+          get: function () {
             return Stroke.SKY_BLUE
           }
         },
 
         SLATE_BLUE: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Stroke.$class)]
           },
-          get: function() {
+          get: function () {
             return Stroke.SLATE_BLUE
           }
         },
 
         SLATE_GRAY: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Stroke.$class)]
           },
-          get: function() {
+          get: function () {
             return Stroke.SLATE_GRAY
           }
         },
 
         SNOW: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Stroke.$class)]
           },
-          get: function() {
+          get: function () {
             return Stroke.SNOW
           }
         },
 
         SPRING_GREEN: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Stroke.$class)]
           },
-          get: function() {
+          get: function () {
             return Stroke.SPRING_GREEN
           }
         },
 
         STEEL_BLUE: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Stroke.$class)]
           },
-          get: function() {
+          get: function () {
             return Stroke.STEEL_BLUE
           }
         },
 
         TAN: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Stroke.$class)]
           },
-          get: function() {
+          get: function () {
             return Stroke.TAN
           }
         },
 
         TEAL: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Stroke.$class)]
           },
-          get: function() {
+          get: function () {
             return Stroke.TEAL
           }
         },
 
         THISTLE: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Stroke.$class)]
           },
-          get: function() {
+          get: function () {
             return Stroke.THISTLE
           }
         },
 
         TOMATO: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Stroke.$class)]
           },
-          get: function() {
+          get: function () {
             return Stroke.TOMATO
           }
         },
 
         TRANSPARENT: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Stroke.$class)]
           },
-          get: function() {
+          get: function () {
             return Stroke.TRANSPARENT
           }
         },
 
         TURQUOISE: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Stroke.$class)]
           },
-          get: function() {
+          get: function () {
             return Stroke.TURQUOISE
           }
         },
 
         VIOLET: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Stroke.$class)]
           },
-          get: function() {
+          get: function () {
             return Stroke.VIOLET
           }
         },
 
         WHEAT: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Stroke.$class)]
           },
-          get: function() {
+          get: function () {
             return Stroke.WHEAT
           }
         },
 
         WHITE: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Stroke.$class)]
           },
-          get: function() {
+          get: function () {
             return Stroke.WHITE
           }
         },
 
         WHITE_SMOKE: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Stroke.$class)]
           },
-          get: function() {
+          get: function () {
             return Stroke.WHITE_SMOKE
           }
         },
 
         YELLOW: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Stroke.$class)]
           },
-          get: function() {
+          get: function () {
             return Stroke.YELLOW
           }
         },
 
         YELLOW_GREEN: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Stroke.$class)]
           },
-          get: function() {
+          get: function () {
             return Stroke.YELLOW_GREEN
           }
         }
@@ -3381,12 +3381,12 @@ yfiles.lang.module('compat.graphml.wpfbridge', function(exports) {
     }
   })
 })
-yfiles.lang.module('compat.graphml.wpfbridge', function(exports) {
-  exports.PenExtension = new ClassDefinition(function() {
+yfiles.lang.module('compat.graphml.wpfbridge', function (exports) {
+  exports.PenExtension = new ClassDefinition(function () {
     return {
       $extends: MarkupExtension,
 
-      constructor: function() {
+      constructor: function () {
         MarkupExtension.call(this)
         this.$initPenExtension()
         this.$dashCap = compat.graphml.wpfbridge.PenLineCap.FLAT
@@ -3402,13 +3402,13 @@ yfiles.lang.module('compat.graphml.wpfbridge', function(exports) {
       $brush: null,
 
       brush: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(Fill.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$brush
         },
-        set: function(/*yfiles.view.Fill*/ value) {
+        set: function (/*yfiles.view.Fill*/ value) {
           this.$brush = value
         }
       },
@@ -3416,13 +3416,13 @@ yfiles.lang.module('compat.graphml.wpfbridge', function(exports) {
       $dashCap: null,
 
       dashCap: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(compat.graphml.wpfbridge.PenLineCap.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$dashCap
         },
-        set: function(/*compat.graphml.wpfbridge.PenLineCap*/ value) {
+        set: function (/*compat.graphml.wpfbridge.PenLineCap*/ value) {
           this.$dashCap = value
         }
       },
@@ -3430,13 +3430,13 @@ yfiles.lang.module('compat.graphml.wpfbridge', function(exports) {
       $endLineCap: null,
 
       endLineCap: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(compat.graphml.wpfbridge.PenLineCap.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$endLineCap
         },
-        set: function(/*compat.graphml.wpfbridge.PenLineCap*/ value) {
+        set: function (/*compat.graphml.wpfbridge.PenLineCap*/ value) {
           this.$endLineCap = value
         }
       },
@@ -3444,13 +3444,13 @@ yfiles.lang.module('compat.graphml.wpfbridge', function(exports) {
       $lineJoin: null,
 
       lineJoin: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(compat.graphml.wpfbridge.PenLineJoin.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$lineJoin
         },
-        set: function(/*compat.graphml.wpfbridge.PenLineJoin*/ value) {
+        set: function (/*compat.graphml.wpfbridge.PenLineJoin*/ value) {
           this.$lineJoin = value
         }
       },
@@ -3458,13 +3458,13 @@ yfiles.lang.module('compat.graphml.wpfbridge', function(exports) {
       $dashStyle: null,
 
       dashStyle: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(DashStyle.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$dashStyle
         },
-        set: function(/*yfiles.view.DashStyle*/ value) {
+        set: function (/*yfiles.view.DashStyle*/ value) {
           this.$dashStyle = value
         }
       },
@@ -3472,13 +3472,13 @@ yfiles.lang.module('compat.graphml.wpfbridge', function(exports) {
       $miterLimit: 0,
 
       miterLimit: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(YNumber.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$miterLimit
         },
-        set: function(/*number*/ value) {
+        set: function (/*number*/ value) {
           this.$miterLimit = value
         }
       },
@@ -3486,13 +3486,13 @@ yfiles.lang.module('compat.graphml.wpfbridge', function(exports) {
       $startLineCap: null,
 
       startLineCap: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(compat.graphml.wpfbridge.PenLineCap.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$startLineCap
         },
-        set: function(/*compat.graphml.wpfbridge.PenLineCap*/ value) {
+        set: function (/*compat.graphml.wpfbridge.PenLineCap*/ value) {
           this.$startLineCap = value
         }
       },
@@ -3500,18 +3500,18 @@ yfiles.lang.module('compat.graphml.wpfbridge', function(exports) {
       $thickness: 0,
 
       thickness: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(YNumber.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$thickness
         },
-        set: function(/*number*/ value) {
+        set: function (/*number*/ value) {
           this.$thickness = value
         }
       },
 
-      provideValue: function(/*yfiles.graph.ILookup*/ serviceProvider) {
+      provideValue: function (/*yfiles.graph.ILookup*/ serviceProvider) {
         var /*yfiles.view.Stroke*/ newInstance = new Stroke()
         {
           newInstance.fill = this.$brush
@@ -3524,7 +3524,7 @@ yfiles.lang.module('compat.graphml.wpfbridge', function(exports) {
         return newInstance
       },
 
-      $initPenExtension: function() {
+      $initPenExtension: function () {
         this.$dashCap = compat.graphml.wpfbridge.PenLineCap.SQUARE
         this.$endLineCap = compat.graphml.wpfbridge.PenLineCap.SQUARE
         this.$lineJoin = compat.graphml.wpfbridge.PenLineJoin.BEVEL
@@ -3533,8 +3533,8 @@ yfiles.lang.module('compat.graphml.wpfbridge', function(exports) {
     }
   })
 })
-yfiles.lang.module('compat.graphml.wpfbridge', function(exports) {
-  exports.PenLineJoin = new EnumDefinition(function() {
+yfiles.lang.module('compat.graphml.wpfbridge', function (exports) {
+  exports.PenLineJoin = new EnumDefinition(function () {
     return {
       BEVEL: 0,
       ROUND: 1,
@@ -3542,8 +3542,8 @@ yfiles.lang.module('compat.graphml.wpfbridge', function(exports) {
     }
   })
 })
-yfiles.lang.module('compat.graphml.wpfbridge', function(exports) {
-  exports.PenLineCap = new EnumDefinition(function() {
+yfiles.lang.module('compat.graphml.wpfbridge', function (exports) {
+  exports.PenLineCap = new EnumDefinition(function () {
     return {
       SQUARE: 0,
       FLAT: 1,
@@ -3551,12 +3551,12 @@ yfiles.lang.module('compat.graphml.wpfbridge', function(exports) {
     }
   })
 })
-yfiles.lang.module('compat.graphml.wpfbridge', function(exports) {
-  exports.LinearGradientBrushExtension = new ClassDefinition(function() {
+yfiles.lang.module('compat.graphml.wpfbridge', function (exports) {
+  exports.LinearGradientBrushExtension = new ClassDefinition(function () {
     return {
       $extends: compat.graphml.wpfbridge.GradientBrushExtension,
 
-      constructor: function() {
+      constructor: function () {
         compat.graphml.wpfbridge.GradientBrushExtension.call(this)
         this.$initLinearGradientBrushExtension()
         this.$startPoint = Point.ORIGIN
@@ -3566,13 +3566,13 @@ yfiles.lang.module('compat.graphml.wpfbridge', function(exports) {
       $spreadMethod: null,
 
       spreadMethod: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(compat.graphml.wpfbridge.GradientSpreadMethod.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$spreadMethod
         },
-        set: function(/*compat.graphml.wpfbridge.GradientSpreadMethod*/ value) {
+        set: function (/*compat.graphml.wpfbridge.GradientSpreadMethod*/ value) {
           this.$spreadMethod = value
         }
       },
@@ -3580,13 +3580,13 @@ yfiles.lang.module('compat.graphml.wpfbridge', function(exports) {
       $startPoint: null,
 
       startPoint: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(Point.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$startPoint
         },
-        set: function(/*yfiles.geometry.Point*/ value) {
+        set: function (/*yfiles.geometry.Point*/ value) {
           this.$startPoint = value
         }
       },
@@ -3594,18 +3594,18 @@ yfiles.lang.module('compat.graphml.wpfbridge', function(exports) {
       $endPoint: null,
 
       endPoint: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(Point.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$endPoint
         },
-        set: function(/*yfiles.geometry.Point*/ value) {
+        set: function (/*yfiles.geometry.Point*/ value) {
           this.$endPoint = value
         }
       },
 
-      provideValue: function(/*yfiles.graph.ILookup*/ serviceProvider) {
+      provideValue: function (/*yfiles.graph.ILookup*/ serviceProvider) {
         var /*yfiles.view.LinearGradient*/ newInstance = new LinearGradient()
         {
           newInstance.startPoint = this.$startPoint
@@ -3627,7 +3627,7 @@ yfiles.lang.module('compat.graphml.wpfbridge', function(exports) {
         return linearGradient
       },
 
-      $initLinearGradientBrushExtension: function() {
+      $initLinearGradientBrushExtension: function () {
         this.$spreadMethod = compat.graphml.wpfbridge.GradientSpreadMethod.PAD
         this.$startPoint = new Point(0, 0)
         this.$endPoint = new Point(0, 0)
@@ -3635,41 +3635,41 @@ yfiles.lang.module('compat.graphml.wpfbridge', function(exports) {
     }
   })
 })
-yfiles.lang.module('compat.graphml.wpfbridge', function(exports) {
-  exports.SolidColorBrushExtension = new ClassDefinition(function() {
+yfiles.lang.module('compat.graphml.wpfbridge', function (exports) {
+  exports.SolidColorBrushExtension = new ClassDefinition(function () {
     return {
       $extends: MarkupExtension,
 
-      constructor: function() {
+      constructor: function () {
         MarkupExtension.call(this)
       },
 
       $color: null,
 
       color: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(Color.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$color
         },
-        set: function(/*yfiles.view.Color*/ value) {
+        set: function (/*yfiles.view.Color*/ value) {
           this.$color = value
         }
       },
 
-      provideValue: function(/*yfiles.graph.ILookup*/ serviceProvider) {
+      provideValue: function (/*yfiles.graph.ILookup*/ serviceProvider) {
         return new SolidColorFill(this.$color)
       }
     }
   })
 })
-yfiles.lang.module('compat.graphml.wpfbridge', function(exports) {
-  exports.TypefaceExtension = new ClassDefinition(function() {
+yfiles.lang.module('compat.graphml.wpfbridge', function (exports) {
+  exports.TypefaceExtension = new ClassDefinition(function () {
     return {
       $extends: MarkupExtension,
 
-      constructor: function() {
+      constructor: function () {
         MarkupExtension.call(this)
         this.$initTypefaceExtension()
         this.$fontSize = 10
@@ -3683,13 +3683,13 @@ yfiles.lang.module('compat.graphml.wpfbridge', function(exports) {
       $fontSize: 0,
 
       fontSize: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(YNumber.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$fontSize
         },
-        set: function(/*number*/ value) {
+        set: function (/*number*/ value) {
           this.$fontSize = value
         }
       },
@@ -3697,13 +3697,13 @@ yfiles.lang.module('compat.graphml.wpfbridge', function(exports) {
       $fontFamily: null,
 
       fontFamily: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(YString.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$fontFamily
         },
-        set: function(/*string*/ value) {
+        set: function (/*string*/ value) {
           this.$fontFamily = value
         }
       },
@@ -3711,13 +3711,13 @@ yfiles.lang.module('compat.graphml.wpfbridge', function(exports) {
       $fontStyle: null,
 
       fontStyle: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(compat.graphml.wpfbridge.FontStyle.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$fontStyle
         },
-        set: function(/*compat.graphml.wpfbridge.FontStyle*/ value) {
+        set: function (/*compat.graphml.wpfbridge.FontStyle*/ value) {
           this.$fontStyle = value
         }
       },
@@ -3725,13 +3725,13 @@ yfiles.lang.module('compat.graphml.wpfbridge', function(exports) {
       $fontWeight: null,
 
       fontWeight: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(compat.graphml.wpfbridge.FontWeight.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$fontWeight
         },
-        set: function(/*compat.graphml.wpfbridge.FontWeight*/ value) {
+        set: function (/*compat.graphml.wpfbridge.FontWeight*/ value) {
           this.$fontWeight = value
         }
       },
@@ -3739,13 +3739,13 @@ yfiles.lang.module('compat.graphml.wpfbridge', function(exports) {
       $lineSpacing: 0,
 
       lineSpacing: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(YNumber.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$lineSpacing
         },
-        set: function(/*number*/ value) {
+        set: function (/*number*/ value) {
           this.$lineSpacing = value
         }
       },
@@ -3753,18 +3753,18 @@ yfiles.lang.module('compat.graphml.wpfbridge', function(exports) {
       $textDecoration: null,
 
       textDecoration: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(compat.graphml.wpfbridge.TextDecoration.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$textDecoration
         },
-        set: function(/*compat.graphml.wpfbridge.TextDecoration*/ value) {
+        set: function (/*compat.graphml.wpfbridge.TextDecoration*/ value) {
           this.$textDecoration = value
         }
       },
 
-      provideValue: function(/*yfiles.graph.ILookup*/ serviceProvider) {
+      provideValue: function (/*yfiles.graph.ILookup*/ serviceProvider) {
         var /*yfiles.view.FontExtension*/ newInstance = new yfiles.view.FontExtension()
         {
           newInstance.fontFamily = this.$fontFamily
@@ -3777,7 +3777,7 @@ yfiles.lang.module('compat.graphml.wpfbridge', function(exports) {
         return newInstance.provideValue(serviceProvider)
       },
 
-      $initTypefaceExtension: function() {
+      $initTypefaceExtension: function () {
         this.$fontStyle = compat.graphml.wpfbridge.FontStyle.NORMAL
         this.$fontWeight = compat.graphml.wpfbridge.FontWeight.NORMAL
         this.$textDecoration = compat.graphml.wpfbridge.TextDecoration.NONE
@@ -3785,1275 +3785,1275 @@ yfiles.lang.module('compat.graphml.wpfbridge', function(exports) {
     }
   })
 })
-yfiles.lang.module('compat.graphml.wpfbridge', function(exports) {
-  exports.ColorsExtension = new ClassDefinition(function() {
+yfiles.lang.module('compat.graphml.wpfbridge', function (exports) {
+  exports.ColorsExtension = new ClassDefinition(function () {
     return {
       $static: {
         ALICE_BLUE: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Color.$class)]
           },
-          get: function() {
+          get: function () {
             return Color.ALICE_BLUE
           }
         },
 
         ANTIQUE_WHITE: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Color.$class)]
           },
-          get: function() {
+          get: function () {
             return Color.ANTIQUE_WHITE
           }
         },
 
         AQUA: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Color.$class)]
           },
-          get: function() {
+          get: function () {
             return Color.AQUA
           }
         },
 
         AQUAMARINE: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Color.$class)]
           },
-          get: function() {
+          get: function () {
             return Color.AQUAMARINE
           }
         },
 
         AZURE: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Color.$class)]
           },
-          get: function() {
+          get: function () {
             return Color.AZURE
           }
         },
 
         BEIGE: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Color.$class)]
           },
-          get: function() {
+          get: function () {
             return Color.BEIGE
           }
         },
 
         BISQUE: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Color.$class)]
           },
-          get: function() {
+          get: function () {
             return Color.BISQUE
           }
         },
 
         BLACK: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Color.$class)]
           },
-          get: function() {
+          get: function () {
             return Color.BLACK
           }
         },
 
         BLANCHED_ALMOND: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Color.$class)]
           },
-          get: function() {
+          get: function () {
             return Color.BLANCHED_ALMOND
           }
         },
 
         BLUE: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Color.$class)]
           },
-          get: function() {
+          get: function () {
             return Color.BLUE
           }
         },
 
         BLUE_VIOLET: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Color.$class)]
           },
-          get: function() {
+          get: function () {
             return Color.BLUE_VIOLET
           }
         },
 
         BROWN: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Color.$class)]
           },
-          get: function() {
+          get: function () {
             return Color.BROWN
           }
         },
 
         BURLY_WOOD: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Color.$class)]
           },
-          get: function() {
+          get: function () {
             return Color.BURLY_WOOD
           }
         },
 
         CADET_BLUE: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Color.$class)]
           },
-          get: function() {
+          get: function () {
             return Color.CADET_BLUE
           }
         },
 
         CHARTREUSE: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Color.$class)]
           },
-          get: function() {
+          get: function () {
             return Color.CHARTREUSE
           }
         },
 
         CHOCOLATE: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Color.$class)]
           },
-          get: function() {
+          get: function () {
             return Color.CHOCOLATE
           }
         },
 
         CORAL: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Color.$class)]
           },
-          get: function() {
+          get: function () {
             return Color.CORAL
           }
         },
 
         CORNFLOWER_BLUE: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Color.$class)]
           },
-          get: function() {
+          get: function () {
             return Color.CORNFLOWER_BLUE
           }
         },
 
         CORNSILK: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Color.$class)]
           },
-          get: function() {
+          get: function () {
             return Color.CORNSILK
           }
         },
 
         CRIMSON: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Color.$class)]
           },
-          get: function() {
+          get: function () {
             return Color.CRIMSON
           }
         },
 
         CYAN: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Color.$class)]
           },
-          get: function() {
+          get: function () {
             return Color.CYAN
           }
         },
 
         DARK_BLUE: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Color.$class)]
           },
-          get: function() {
+          get: function () {
             return Color.DARK_BLUE
           }
         },
 
         DARK_CYAN: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Color.$class)]
           },
-          get: function() {
+          get: function () {
             return Color.DARK_CYAN
           }
         },
 
         DARK_GOLDENROD: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Color.$class)]
           },
-          get: function() {
+          get: function () {
             return Color.DARK_GOLDENROD
           }
         },
 
         DARK_GRAY: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Color.$class)]
           },
-          get: function() {
+          get: function () {
             return Color.DARK_GRAY
           }
         },
 
         DARK_GREEN: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Color.$class)]
           },
-          get: function() {
+          get: function () {
             return Color.DARK_GREEN
           }
         },
 
         DARK_KHAKI: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Color.$class)]
           },
-          get: function() {
+          get: function () {
             return Color.DARK_KHAKI
           }
         },
 
         DARK_MAGENTA: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Color.$class)]
           },
-          get: function() {
+          get: function () {
             return Color.DARK_MAGENTA
           }
         },
 
         DARK_OLIVE_GREEN: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Color.$class)]
           },
-          get: function() {
+          get: function () {
             return Color.DARK_OLIVE_GREEN
           }
         },
 
         DARK_ORANGE: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Color.$class)]
           },
-          get: function() {
+          get: function () {
             return Color.DARK_ORANGE
           }
         },
 
         DARK_ORCHID: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Color.$class)]
           },
-          get: function() {
+          get: function () {
             return Color.DARK_ORCHID
           }
         },
 
         DARK_RED: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Color.$class)]
           },
-          get: function() {
+          get: function () {
             return Color.DARK_RED
           }
         },
 
         DARK_SALMON: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Color.$class)]
           },
-          get: function() {
+          get: function () {
             return Color.DARK_SALMON
           }
         },
 
         DARK_SEA_GREEN: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Color.$class)]
           },
-          get: function() {
+          get: function () {
             return Color.DARK_SEA_GREEN
           }
         },
 
         DARK_SLATE_BLUE: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Color.$class)]
           },
-          get: function() {
+          get: function () {
             return Color.DARK_SLATE_BLUE
           }
         },
 
         DARK_SLATE_GRAY: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Color.$class)]
           },
-          get: function() {
+          get: function () {
             return Color.DARK_SLATE_GRAY
           }
         },
 
         DARK_TURQUOISE: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Color.$class)]
           },
-          get: function() {
+          get: function () {
             return Color.DARK_TURQUOISE
           }
         },
 
         DARK_VIOLET: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Color.$class)]
           },
-          get: function() {
+          get: function () {
             return Color.DARK_VIOLET
           }
         },
 
         DEEP_PINK: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Color.$class)]
           },
-          get: function() {
+          get: function () {
             return Color.DEEP_PINK
           }
         },
 
         DEEP_SKY_BLUE: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Color.$class)]
           },
-          get: function() {
+          get: function () {
             return Color.DEEP_SKY_BLUE
           }
         },
 
         DIM_GRAY: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Color.$class)]
           },
-          get: function() {
+          get: function () {
             return Color.DIM_GRAY
           }
         },
 
         DODGER_BLUE: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Color.$class)]
           },
-          get: function() {
+          get: function () {
             return Color.DODGER_BLUE
           }
         },
 
         FIREBRICK: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Color.$class)]
           },
-          get: function() {
+          get: function () {
             return Color.FIREBRICK
           }
         },
 
         FLORAL_WHITE: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Color.$class)]
           },
-          get: function() {
+          get: function () {
             return Color.FLORAL_WHITE
           }
         },
 
         FOREST_GREEN: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Color.$class)]
           },
-          get: function() {
+          get: function () {
             return Color.FOREST_GREEN
           }
         },
 
         FUCHSIA: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Color.$class)]
           },
-          get: function() {
+          get: function () {
             return Color.FUCHSIA
           }
         },
 
         GAINSBORO: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Color.$class)]
           },
-          get: function() {
+          get: function () {
             return Color.GAINSBORO
           }
         },
 
         GHOST_WHITE: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Color.$class)]
           },
-          get: function() {
+          get: function () {
             return Color.GHOST_WHITE
           }
         },
 
         GOLD: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Color.$class)]
           },
-          get: function() {
+          get: function () {
             return Color.GOLD
           }
         },
 
         GOLDENROD: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Color.$class)]
           },
-          get: function() {
+          get: function () {
             return Color.GOLDENROD
           }
         },
 
         GRAY: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Color.$class)]
           },
-          get: function() {
+          get: function () {
             return Color.GRAY
           }
         },
 
         GREEN: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Color.$class)]
           },
-          get: function() {
+          get: function () {
             return Color.GREEN
           }
         },
 
         GREEN_YELLOW: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Color.$class)]
           },
-          get: function() {
+          get: function () {
             return Color.GREEN_YELLOW
           }
         },
 
         HONEYDEW: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Color.$class)]
           },
-          get: function() {
+          get: function () {
             return Color.HONEYDEW
           }
         },
 
         HOT_PINK: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Color.$class)]
           },
-          get: function() {
+          get: function () {
             return Color.HOT_PINK
           }
         },
 
         INDIAN_RED: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Color.$class)]
           },
-          get: function() {
+          get: function () {
             return Color.INDIAN_RED
           }
         },
 
         INDIGO: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Color.$class)]
           },
-          get: function() {
+          get: function () {
             return Color.INDIGO
           }
         },
 
         IVORY: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Color.$class)]
           },
-          get: function() {
+          get: function () {
             return Color.IVORY
           }
         },
 
         KHAKI: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Color.$class)]
           },
-          get: function() {
+          get: function () {
             return Color.KHAKI
           }
         },
 
         LAVENDER: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Color.$class)]
           },
-          get: function() {
+          get: function () {
             return Color.LAVENDER
           }
         },
 
         LAVENDER_BLUSH: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Color.$class)]
           },
-          get: function() {
+          get: function () {
             return Color.LAVENDER_BLUSH
           }
         },
 
         LAWN_GREEN: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Color.$class)]
           },
-          get: function() {
+          get: function () {
             return Color.LAWN_GREEN
           }
         },
 
         LEMON_CHIFFON: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Color.$class)]
           },
-          get: function() {
+          get: function () {
             return Color.LEMON_CHIFFON
           }
         },
 
         LIGHT_BLUE: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Color.$class)]
           },
-          get: function() {
+          get: function () {
             return Color.LIGHT_BLUE
           }
         },
 
         LIGHT_CORAL: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Color.$class)]
           },
-          get: function() {
+          get: function () {
             return Color.LIGHT_CORAL
           }
         },
 
         LIGHT_CYAN: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Color.$class)]
           },
-          get: function() {
+          get: function () {
             return Color.LIGHT_CYAN
           }
         },
 
         LIGHT_GOLDENROD_YELLOW: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Color.$class)]
           },
-          get: function() {
+          get: function () {
             return Color.LIGHT_GOLDENROD_YELLOW
           }
         },
 
         LIGHT_GRAY: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Color.$class)]
           },
-          get: function() {
+          get: function () {
             return Color.LIGHT_GRAY
           }
         },
 
         LIGHT_GREEN: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Color.$class)]
           },
-          get: function() {
+          get: function () {
             return Color.LIGHT_GREEN
           }
         },
 
         LIGHT_PINK: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Color.$class)]
           },
-          get: function() {
+          get: function () {
             return Color.LIGHT_PINK
           }
         },
 
         LIGHT_SALMON: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Color.$class)]
           },
-          get: function() {
+          get: function () {
             return Color.LIGHT_SALMON
           }
         },
 
         LIGHT_SEA_GREEN: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Color.$class)]
           },
-          get: function() {
+          get: function () {
             return Color.LIGHT_SEA_GREEN
           }
         },
 
         LIGHT_SKY_BLUE: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Color.$class)]
           },
-          get: function() {
+          get: function () {
             return Color.LIGHT_SKY_BLUE
           }
         },
 
         LIGHT_SLATE_GRAY: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Color.$class)]
           },
-          get: function() {
+          get: function () {
             return Color.LIGHT_SLATE_GRAY
           }
         },
 
         LIGHT_STEEL_BLUE: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Color.$class)]
           },
-          get: function() {
+          get: function () {
             return Color.LIGHT_STEEL_BLUE
           }
         },
 
         LIGHT_YELLOW: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Color.$class)]
           },
-          get: function() {
+          get: function () {
             return Color.LIGHT_YELLOW
           }
         },
 
         LIME: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Color.$class)]
           },
-          get: function() {
+          get: function () {
             return Color.LIME
           }
         },
 
         LIME_GREEN: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Color.$class)]
           },
-          get: function() {
+          get: function () {
             return Color.LIME_GREEN
           }
         },
 
         LINEN: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Color.$class)]
           },
-          get: function() {
+          get: function () {
             return Color.LINEN
           }
         },
 
         MAGENTA: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Color.$class)]
           },
-          get: function() {
+          get: function () {
             return Color.MAGENTA
           }
         },
 
         MAROON: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Color.$class)]
           },
-          get: function() {
+          get: function () {
             return Color.MAROON
           }
         },
 
         MEDIUM_AQUAMARINE: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Color.$class)]
           },
-          get: function() {
+          get: function () {
             return Color.MEDIUM_AQUAMARINE
           }
         },
 
         MEDIUM_BLUE: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Color.$class)]
           },
-          get: function() {
+          get: function () {
             return Color.MEDIUM_BLUE
           }
         },
 
         MEDIUM_ORCHID: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Color.$class)]
           },
-          get: function() {
+          get: function () {
             return Color.MEDIUM_ORCHID
           }
         },
 
         MEDIUM_PURPLE: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Color.$class)]
           },
-          get: function() {
+          get: function () {
             return Color.MEDIUM_PURPLE
           }
         },
 
         MEDIUM_SEA_GREEN: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Color.$class)]
           },
-          get: function() {
+          get: function () {
             return Color.MEDIUM_SEA_GREEN
           }
         },
 
         MEDIUM_SLATE_BLUE: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Color.$class)]
           },
-          get: function() {
+          get: function () {
             return Color.MEDIUM_SLATE_BLUE
           }
         },
 
         MEDIUM_SPRING_GREEN: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Color.$class)]
           },
-          get: function() {
+          get: function () {
             return Color.MEDIUM_SPRING_GREEN
           }
         },
 
         MEDIUM_TURQUOISE: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Color.$class)]
           },
-          get: function() {
+          get: function () {
             return Color.MEDIUM_TURQUOISE
           }
         },
 
         MEDIUM_VIOLET_RED: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Color.$class)]
           },
-          get: function() {
+          get: function () {
             return Color.MEDIUM_VIOLET_RED
           }
         },
 
         MIDNIGHT_BLUE: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Color.$class)]
           },
-          get: function() {
+          get: function () {
             return Color.MIDNIGHT_BLUE
           }
         },
 
         MINT_CREAM: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Color.$class)]
           },
-          get: function() {
+          get: function () {
             return Color.MINT_CREAM
           }
         },
 
         MISTY_ROSE: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Color.$class)]
           },
-          get: function() {
+          get: function () {
             return Color.MISTY_ROSE
           }
         },
 
         MOCCASIN: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Color.$class)]
           },
-          get: function() {
+          get: function () {
             return Color.MOCCASIN
           }
         },
 
         NAVAJO_WHITE: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Color.$class)]
           },
-          get: function() {
+          get: function () {
             return Color.NAVAJO_WHITE
           }
         },
 
         NAVY: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Color.$class)]
           },
-          get: function() {
+          get: function () {
             return Color.NAVY
           }
         },
 
         OLD_LACE: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Color.$class)]
           },
-          get: function() {
+          get: function () {
             return Color.OLD_LACE
           }
         },
 
         OLIVE: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Color.$class)]
           },
-          get: function() {
+          get: function () {
             return Color.OLIVE
           }
         },
 
         OLIVE_DRAB: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Color.$class)]
           },
-          get: function() {
+          get: function () {
             return Color.OLIVE_DRAB
           }
         },
 
         ORANGE: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Color.$class)]
           },
-          get: function() {
+          get: function () {
             return Color.ORANGE
           }
         },
 
         ORANGE_RED: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Color.$class)]
           },
-          get: function() {
+          get: function () {
             return Color.ORANGE_RED
           }
         },
 
         ORCHID: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Color.$class)]
           },
-          get: function() {
+          get: function () {
             return Color.ORCHID
           }
         },
 
         PALE_GOLDENROD: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Color.$class)]
           },
-          get: function() {
+          get: function () {
             return Color.PALE_GOLDENROD
           }
         },
 
         PALE_GREEN: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Color.$class)]
           },
-          get: function() {
+          get: function () {
             return Color.PALE_GREEN
           }
         },
 
         PALE_TURQUOISE: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Color.$class)]
           },
-          get: function() {
+          get: function () {
             return Color.PALE_TURQUOISE
           }
         },
 
         PALE_VIOLET_RED: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Color.$class)]
           },
-          get: function() {
+          get: function () {
             return Color.PALE_VIOLET_RED
           }
         },
 
         PAPAYA_WHIP: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Color.$class)]
           },
-          get: function() {
+          get: function () {
             return Color.PAPAYA_WHIP
           }
         },
 
         PEACH_PUFF: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Color.$class)]
           },
-          get: function() {
+          get: function () {
             return Color.PEACH_PUFF
           }
         },
 
         PERU: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Color.$class)]
           },
-          get: function() {
+          get: function () {
             return Color.PERU
           }
         },
 
         PINK: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Color.$class)]
           },
-          get: function() {
+          get: function () {
             return Color.PINK
           }
         },
 
         PLUM: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Color.$class)]
           },
-          get: function() {
+          get: function () {
             return Color.PLUM
           }
         },
 
         POWDER_BLUE: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Color.$class)]
           },
-          get: function() {
+          get: function () {
             return Color.POWDER_BLUE
           }
         },
 
         PURPLE: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Color.$class)]
           },
-          get: function() {
+          get: function () {
             return Color.PURPLE
           }
         },
 
         RED: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Color.$class)]
           },
-          get: function() {
+          get: function () {
             return Color.RED
           }
         },
 
         ROSY_BROWN: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Color.$class)]
           },
-          get: function() {
+          get: function () {
             return Color.ROSY_BROWN
           }
         },
 
         ROYAL_BLUE: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Color.$class)]
           },
-          get: function() {
+          get: function () {
             return Color.ROYAL_BLUE
           }
         },
 
         SADDLE_BROWN: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Color.$class)]
           },
-          get: function() {
+          get: function () {
             return Color.SADDLE_BROWN
           }
         },
 
         SALMON: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Color.$class)]
           },
-          get: function() {
+          get: function () {
             return Color.SALMON
           }
         },
 
         SANDY_BROWN: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Color.$class)]
           },
-          get: function() {
+          get: function () {
             return Color.SANDY_BROWN
           }
         },
 
         SEA_GREEN: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Color.$class)]
           },
-          get: function() {
+          get: function () {
             return Color.SEA_GREEN
           }
         },
 
         SEA_SHELL: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Color.$class)]
           },
-          get: function() {
+          get: function () {
             return Color.SEA_SHELL
           }
         },
 
         SIENNA: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Color.$class)]
           },
-          get: function() {
+          get: function () {
             return Color.SIENNA
           }
         },
 
         SILVER: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Color.$class)]
           },
-          get: function() {
+          get: function () {
             return Color.SILVER
           }
         },
 
         SKY_BLUE: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Color.$class)]
           },
-          get: function() {
+          get: function () {
             return Color.SKY_BLUE
           }
         },
 
         SLATE_BLUE: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Color.$class)]
           },
-          get: function() {
+          get: function () {
             return Color.SLATE_BLUE
           }
         },
 
         SLATE_GRAY: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Color.$class)]
           },
-          get: function() {
+          get: function () {
             return Color.SLATE_GRAY
           }
         },
 
         SNOW: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Color.$class)]
           },
-          get: function() {
+          get: function () {
             return Color.SNOW
           }
         },
 
         SPRING_GREEN: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Color.$class)]
           },
-          get: function() {
+          get: function () {
             return Color.SPRING_GREEN
           }
         },
 
         STEEL_BLUE: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Color.$class)]
           },
-          get: function() {
+          get: function () {
             return Color.STEEL_BLUE
           }
         },
 
         TAN: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Color.$class)]
           },
-          get: function() {
+          get: function () {
             return Color.TAN
           }
         },
 
         TEAL: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Color.$class)]
           },
-          get: function() {
+          get: function () {
             return Color.TEAL
           }
         },
 
         THISTLE: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Color.$class)]
           },
-          get: function() {
+          get: function () {
             return Color.THISTLE
           }
         },
 
         TOMATO: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Color.$class)]
           },
-          get: function() {
+          get: function () {
             return Color.TOMATO
           }
         },
 
         TRANSPARENT: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Color.$class)]
           },
-          get: function() {
+          get: function () {
             return Color.TRANSPARENT
           }
         },
 
         TURQUOISE: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Color.$class)]
           },
-          get: function() {
+          get: function () {
             return Color.TURQUOISE
           }
         },
 
         VIOLET: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Color.$class)]
           },
-          get: function() {
+          get: function () {
             return Color.VIOLET
           }
         },
 
         WHEAT: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Color.$class)]
           },
-          get: function() {
+          get: function () {
             return Color.WHEAT
           }
         },
 
         WHITE: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Color.$class)]
           },
-          get: function() {
+          get: function () {
             return Color.WHITE
           }
         },
 
         WHITE_SMOKE: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Color.$class)]
           },
-          get: function() {
+          get: function () {
             return Color.WHITE_SMOKE
           }
         },
 
         YELLOW: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Color.$class)]
           },
-          get: function() {
+          get: function () {
             return Color.YELLOW
           }
         },
 
         YELLOW_GREEN: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Color.$class)]
           },
-          get: function() {
+          get: function () {
             return Color.YELLOW_GREEN
           }
         }
@@ -5061,14 +5061,14 @@ yfiles.lang.module('compat.graphml.wpfbridge', function(exports) {
     }
   })
 })
-yfiles.lang.module('compat.graphml.wpfbridge', function(exports) {
-  exports.ColorExtension = new ClassDefinition(function() {
+yfiles.lang.module('compat.graphml.wpfbridge', function (exports) {
+  exports.ColorExtension = new ClassDefinition(function () {
     return {
       $extends: MarkupExtension,
 
       $meta: [GraphMLAttribute().init({ contentProperty: 'value' })],
 
-      constructor: function() {
+      constructor: function () {
         MarkupExtension.call(this)
       },
 
@@ -5079,13 +5079,13 @@ yfiles.lang.module('compat.graphml.wpfbridge', function(exports) {
       $r: 0,
 
       r: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(YNumber.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$r
         },
-        set: function(/*number*/ value) {
+        set: function (/*number*/ value) {
           this.$r = value
         }
       },
@@ -5093,13 +5093,13 @@ yfiles.lang.module('compat.graphml.wpfbridge', function(exports) {
       $g: 0,
 
       g: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(YNumber.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$g
         },
-        set: function(/*number*/ value) {
+        set: function (/*number*/ value) {
           this.$g = value
         }
       },
@@ -5107,13 +5107,13 @@ yfiles.lang.module('compat.graphml.wpfbridge', function(exports) {
       $b: 0,
 
       b: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(YNumber.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$b
         },
-        set: function(/*number*/ value) {
+        set: function (/*number*/ value) {
           this.$b = value
         }
       },
@@ -5121,31 +5121,31 @@ yfiles.lang.module('compat.graphml.wpfbridge', function(exports) {
       $a: 0,
 
       a: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(YNumber.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$a
         },
-        set: function(/*number*/ value) {
+        set: function (/*number*/ value) {
           this.$a = value
         }
       },
 
       value: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(YString.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$value
         },
-        set: function(/*string*/ value) {
+        set: function (/*string*/ value) {
           this.$valueSet = true
           this.$value = value
         }
       },
 
-      provideValue: function(/*yfiles.graph.ILookup*/ serviceProvider) {
+      provideValue: function (/*yfiles.graph.ILookup*/ serviceProvider) {
         if (this.$valueSet) {
           var /*yfiles.view.ColorExtension*/ newInstance = new ColorExtension()
           {
@@ -5158,1275 +5158,1275 @@ yfiles.lang.module('compat.graphml.wpfbridge', function(exports) {
     }
   })
 })
-yfiles.lang.module('compat.graphml.wpfbridge', function(exports) {
-  exports.BrushesExtension = new ClassDefinition(function() {
+yfiles.lang.module('compat.graphml.wpfbridge', function (exports) {
+  exports.BrushesExtension = new ClassDefinition(function () {
     return {
       $static: {
         ALICE_BLUE: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Fill.$class)]
           },
-          get: function() {
+          get: function () {
             return Fill.ALICE_BLUE
           }
         },
 
         ANTIQUE_WHITE: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Fill.$class)]
           },
-          get: function() {
+          get: function () {
             return Fill.ANTIQUE_WHITE
           }
         },
 
         AQUA: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Fill.$class)]
           },
-          get: function() {
+          get: function () {
             return Fill.AQUA
           }
         },
 
         AQUAMARINE: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Fill.$class)]
           },
-          get: function() {
+          get: function () {
             return Fill.AQUAMARINE
           }
         },
 
         AZURE: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Fill.$class)]
           },
-          get: function() {
+          get: function () {
             return Fill.AZURE
           }
         },
 
         BEIGE: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Fill.$class)]
           },
-          get: function() {
+          get: function () {
             return Fill.BEIGE
           }
         },
 
         BISQUE: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Fill.$class)]
           },
-          get: function() {
+          get: function () {
             return Fill.BISQUE
           }
         },
 
         BLACK: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Fill.$class)]
           },
-          get: function() {
+          get: function () {
             return Fill.BLACK
           }
         },
 
         BLANCHED_ALMOND: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Fill.$class)]
           },
-          get: function() {
+          get: function () {
             return Fill.BLANCHED_ALMOND
           }
         },
 
         BLUE: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Fill.$class)]
           },
-          get: function() {
+          get: function () {
             return Fill.BLUE
           }
         },
 
         BLUE_VIOLET: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Fill.$class)]
           },
-          get: function() {
+          get: function () {
             return Fill.BLUE_VIOLET
           }
         },
 
         BROWN: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Fill.$class)]
           },
-          get: function() {
+          get: function () {
             return Fill.BROWN
           }
         },
 
         BURLY_WOOD: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Fill.$class)]
           },
-          get: function() {
+          get: function () {
             return Fill.BURLY_WOOD
           }
         },
 
         CADET_BLUE: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Fill.$class)]
           },
-          get: function() {
+          get: function () {
             return Fill.CADET_BLUE
           }
         },
 
         CHARTREUSE: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Fill.$class)]
           },
-          get: function() {
+          get: function () {
             return Fill.CHARTREUSE
           }
         },
 
         CHOCOLATE: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Fill.$class)]
           },
-          get: function() {
+          get: function () {
             return Fill.CHOCOLATE
           }
         },
 
         CORAL: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Fill.$class)]
           },
-          get: function() {
+          get: function () {
             return Fill.CORAL
           }
         },
 
         CORNFLOWER_BLUE: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Fill.$class)]
           },
-          get: function() {
+          get: function () {
             return Fill.CORNFLOWER_BLUE
           }
         },
 
         CORNSILK: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Fill.$class)]
           },
-          get: function() {
+          get: function () {
             return Fill.CORNSILK
           }
         },
 
         CRIMSON: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Fill.$class)]
           },
-          get: function() {
+          get: function () {
             return Fill.CRIMSON
           }
         },
 
         CYAN: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Fill.$class)]
           },
-          get: function() {
+          get: function () {
             return Fill.CYAN
           }
         },
 
         DARK_BLUE: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Fill.$class)]
           },
-          get: function() {
+          get: function () {
             return Fill.DARK_BLUE
           }
         },
 
         DARK_CYAN: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Fill.$class)]
           },
-          get: function() {
+          get: function () {
             return Fill.DARK_CYAN
           }
         },
 
         DARK_GOLDENROD: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Fill.$class)]
           },
-          get: function() {
+          get: function () {
             return Fill.DARK_GOLDENROD
           }
         },
 
         DARK_GRAY: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Fill.$class)]
           },
-          get: function() {
+          get: function () {
             return Fill.DARK_GRAY
           }
         },
 
         DARK_GREEN: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Fill.$class)]
           },
-          get: function() {
+          get: function () {
             return Fill.DARK_GREEN
           }
         },
 
         DARK_KHAKI: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Fill.$class)]
           },
-          get: function() {
+          get: function () {
             return Fill.DARK_KHAKI
           }
         },
 
         DARK_MAGENTA: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Fill.$class)]
           },
-          get: function() {
+          get: function () {
             return Fill.DARK_MAGENTA
           }
         },
 
         DARK_OLIVE_GREEN: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Fill.$class)]
           },
-          get: function() {
+          get: function () {
             return Fill.DARK_OLIVE_GREEN
           }
         },
 
         DARK_ORANGE: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Fill.$class)]
           },
-          get: function() {
+          get: function () {
             return Fill.DARK_ORANGE
           }
         },
 
         DARK_ORCHID: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Fill.$class)]
           },
-          get: function() {
+          get: function () {
             return Fill.DARK_ORCHID
           }
         },
 
         DARK_RED: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Fill.$class)]
           },
-          get: function() {
+          get: function () {
             return Fill.DARK_RED
           }
         },
 
         DARK_SALMON: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Fill.$class)]
           },
-          get: function() {
+          get: function () {
             return Fill.DARK_SALMON
           }
         },
 
         DARK_SEA_GREEN: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Fill.$class)]
           },
-          get: function() {
+          get: function () {
             return Fill.DARK_SEA_GREEN
           }
         },
 
         DARK_SLATE_BLUE: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Fill.$class)]
           },
-          get: function() {
+          get: function () {
             return Fill.DARK_SLATE_BLUE
           }
         },
 
         DARK_SLATE_GRAY: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Fill.$class)]
           },
-          get: function() {
+          get: function () {
             return Fill.DARK_SLATE_GRAY
           }
         },
 
         DARK_TURQUOISE: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Fill.$class)]
           },
-          get: function() {
+          get: function () {
             return Fill.DARK_TURQUOISE
           }
         },
 
         DARK_VIOLET: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Fill.$class)]
           },
-          get: function() {
+          get: function () {
             return Fill.DARK_VIOLET
           }
         },
 
         DEEP_PINK: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Fill.$class)]
           },
-          get: function() {
+          get: function () {
             return Fill.DEEP_PINK
           }
         },
 
         DEEP_SKY_BLUE: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Fill.$class)]
           },
-          get: function() {
+          get: function () {
             return Fill.DEEP_SKY_BLUE
           }
         },
 
         DIM_GRAY: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Fill.$class)]
           },
-          get: function() {
+          get: function () {
             return Fill.DIM_GRAY
           }
         },
 
         DODGER_BLUE: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Fill.$class)]
           },
-          get: function() {
+          get: function () {
             return Fill.DODGER_BLUE
           }
         },
 
         FIREBRICK: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Fill.$class)]
           },
-          get: function() {
+          get: function () {
             return Fill.FIREBRICK
           }
         },
 
         FLORAL_WHITE: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Fill.$class)]
           },
-          get: function() {
+          get: function () {
             return Fill.FLORAL_WHITE
           }
         },
 
         FOREST_GREEN: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Fill.$class)]
           },
-          get: function() {
+          get: function () {
             return Fill.FOREST_GREEN
           }
         },
 
         FUCHSIA: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Fill.$class)]
           },
-          get: function() {
+          get: function () {
             return Fill.FUCHSIA
           }
         },
 
         GAINSBORO: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Fill.$class)]
           },
-          get: function() {
+          get: function () {
             return Fill.GAINSBORO
           }
         },
 
         GHOST_WHITE: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Fill.$class)]
           },
-          get: function() {
+          get: function () {
             return Fill.GHOST_WHITE
           }
         },
 
         GOLD: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Fill.$class)]
           },
-          get: function() {
+          get: function () {
             return Fill.GOLD
           }
         },
 
         GOLDENROD: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Fill.$class)]
           },
-          get: function() {
+          get: function () {
             return Fill.GOLDENROD
           }
         },
 
         GRAY: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Fill.$class)]
           },
-          get: function() {
+          get: function () {
             return Fill.GRAY
           }
         },
 
         GREEN: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Fill.$class)]
           },
-          get: function() {
+          get: function () {
             return Fill.GREEN
           }
         },
 
         GREEN_YELLOW: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Fill.$class)]
           },
-          get: function() {
+          get: function () {
             return Fill.GREEN_YELLOW
           }
         },
 
         HONEYDEW: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Fill.$class)]
           },
-          get: function() {
+          get: function () {
             return Fill.HONEYDEW
           }
         },
 
         HOT_PINK: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Fill.$class)]
           },
-          get: function() {
+          get: function () {
             return Fill.HOT_PINK
           }
         },
 
         INDIAN_RED: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Fill.$class)]
           },
-          get: function() {
+          get: function () {
             return Fill.INDIAN_RED
           }
         },
 
         INDIGO: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Fill.$class)]
           },
-          get: function() {
+          get: function () {
             return Fill.INDIGO
           }
         },
 
         IVORY: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Fill.$class)]
           },
-          get: function() {
+          get: function () {
             return Fill.IVORY
           }
         },
 
         KHAKI: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Fill.$class)]
           },
-          get: function() {
+          get: function () {
             return Fill.KHAKI
           }
         },
 
         LAVENDER: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Fill.$class)]
           },
-          get: function() {
+          get: function () {
             return Fill.LAVENDER
           }
         },
 
         LAVENDER_BLUSH: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Fill.$class)]
           },
-          get: function() {
+          get: function () {
             return Fill.LAVENDER_BLUSH
           }
         },
 
         LAWN_GREEN: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Fill.$class)]
           },
-          get: function() {
+          get: function () {
             return Fill.LAWN_GREEN
           }
         },
 
         LEMON_CHIFFON: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Fill.$class)]
           },
-          get: function() {
+          get: function () {
             return Fill.LEMON_CHIFFON
           }
         },
 
         LIGHT_BLUE: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Fill.$class)]
           },
-          get: function() {
+          get: function () {
             return Fill.LIGHT_BLUE
           }
         },
 
         LIGHT_CORAL: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Fill.$class)]
           },
-          get: function() {
+          get: function () {
             return Fill.LIGHT_CORAL
           }
         },
 
         LIGHT_CYAN: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Fill.$class)]
           },
-          get: function() {
+          get: function () {
             return Fill.LIGHT_CYAN
           }
         },
 
         LIGHT_GOLDENROD_YELLOW: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Fill.$class)]
           },
-          get: function() {
+          get: function () {
             return Fill.LIGHT_GOLDENROD_YELLOW
           }
         },
 
         LIGHT_GRAY: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Fill.$class)]
           },
-          get: function() {
+          get: function () {
             return Fill.LIGHT_GRAY
           }
         },
 
         LIGHT_GREEN: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Fill.$class)]
           },
-          get: function() {
+          get: function () {
             return Fill.LIGHT_GREEN
           }
         },
 
         LIGHT_PINK: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Fill.$class)]
           },
-          get: function() {
+          get: function () {
             return Fill.LIGHT_PINK
           }
         },
 
         LIGHT_SALMON: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Fill.$class)]
           },
-          get: function() {
+          get: function () {
             return Fill.LIGHT_SALMON
           }
         },
 
         LIGHT_SEA_GREEN: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Fill.$class)]
           },
-          get: function() {
+          get: function () {
             return Fill.LIGHT_SEA_GREEN
           }
         },
 
         LIGHT_SKY_BLUE: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Fill.$class)]
           },
-          get: function() {
+          get: function () {
             return Fill.LIGHT_SKY_BLUE
           }
         },
 
         LIGHT_SLATE_GRAY: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Fill.$class)]
           },
-          get: function() {
+          get: function () {
             return Fill.LIGHT_SLATE_GRAY
           }
         },
 
         LIGHT_STEEL_BLUE: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Fill.$class)]
           },
-          get: function() {
+          get: function () {
             return Fill.LIGHT_STEEL_BLUE
           }
         },
 
         LIGHT_YELLOW: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Fill.$class)]
           },
-          get: function() {
+          get: function () {
             return Fill.LIGHT_YELLOW
           }
         },
 
         LIME: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Fill.$class)]
           },
-          get: function() {
+          get: function () {
             return Fill.LIME
           }
         },
 
         LIME_GREEN: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Fill.$class)]
           },
-          get: function() {
+          get: function () {
             return Fill.LIME_GREEN
           }
         },
 
         LINEN: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Fill.$class)]
           },
-          get: function() {
+          get: function () {
             return Fill.LINEN
           }
         },
 
         MAGENTA: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Fill.$class)]
           },
-          get: function() {
+          get: function () {
             return Fill.MAGENTA
           }
         },
 
         MAROON: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Fill.$class)]
           },
-          get: function() {
+          get: function () {
             return Fill.MAROON
           }
         },
 
         MEDIUM_AQUAMARINE: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Fill.$class)]
           },
-          get: function() {
+          get: function () {
             return Fill.MEDIUM_AQUAMARINE
           }
         },
 
         MEDIUM_BLUE: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Fill.$class)]
           },
-          get: function() {
+          get: function () {
             return Fill.MEDIUM_BLUE
           }
         },
 
         MEDIUM_ORCHID: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Fill.$class)]
           },
-          get: function() {
+          get: function () {
             return Fill.MEDIUM_ORCHID
           }
         },
 
         MEDIUM_PURPLE: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Fill.$class)]
           },
-          get: function() {
+          get: function () {
             return Fill.MEDIUM_PURPLE
           }
         },
 
         MEDIUM_SEA_GREEN: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Fill.$class)]
           },
-          get: function() {
+          get: function () {
             return Fill.MEDIUM_SEA_GREEN
           }
         },
 
         MEDIUM_SLATE_BLUE: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Fill.$class)]
           },
-          get: function() {
+          get: function () {
             return Fill.MEDIUM_SLATE_BLUE
           }
         },
 
         MEDIUM_SPRING_GREEN: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Fill.$class)]
           },
-          get: function() {
+          get: function () {
             return Fill.MEDIUM_SPRING_GREEN
           }
         },
 
         MEDIUM_TURQUOISE: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Fill.$class)]
           },
-          get: function() {
+          get: function () {
             return Fill.MEDIUM_TURQUOISE
           }
         },
 
         MEDIUM_VIOLET_RED: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Fill.$class)]
           },
-          get: function() {
+          get: function () {
             return Fill.MEDIUM_VIOLET_RED
           }
         },
 
         MIDNIGHT_BLUE: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Fill.$class)]
           },
-          get: function() {
+          get: function () {
             return Fill.MIDNIGHT_BLUE
           }
         },
 
         MINT_CREAM: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Fill.$class)]
           },
-          get: function() {
+          get: function () {
             return Fill.MINT_CREAM
           }
         },
 
         MISTY_ROSE: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Fill.$class)]
           },
-          get: function() {
+          get: function () {
             return Fill.MISTY_ROSE
           }
         },
 
         MOCCASIN: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Fill.$class)]
           },
-          get: function() {
+          get: function () {
             return Fill.MOCCASIN
           }
         },
 
         NAVAJO_WHITE: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Fill.$class)]
           },
-          get: function() {
+          get: function () {
             return Fill.NAVAJO_WHITE
           }
         },
 
         NAVY: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Fill.$class)]
           },
-          get: function() {
+          get: function () {
             return Fill.NAVY
           }
         },
 
         OLD_LACE: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Fill.$class)]
           },
-          get: function() {
+          get: function () {
             return Fill.OLD_LACE
           }
         },
 
         OLIVE: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Fill.$class)]
           },
-          get: function() {
+          get: function () {
             return Fill.OLIVE
           }
         },
 
         OLIVE_DRAB: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Fill.$class)]
           },
-          get: function() {
+          get: function () {
             return Fill.OLIVE_DRAB
           }
         },
 
         ORANGE: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Fill.$class)]
           },
-          get: function() {
+          get: function () {
             return Fill.ORANGE
           }
         },
 
         ORANGE_RED: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Fill.$class)]
           },
-          get: function() {
+          get: function () {
             return Fill.ORANGE_RED
           }
         },
 
         ORCHID: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Fill.$class)]
           },
-          get: function() {
+          get: function () {
             return Fill.ORCHID
           }
         },
 
         PALE_GOLDENROD: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Fill.$class)]
           },
-          get: function() {
+          get: function () {
             return Fill.PALE_GOLDENROD
           }
         },
 
         PALE_GREEN: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Fill.$class)]
           },
-          get: function() {
+          get: function () {
             return Fill.PALE_GREEN
           }
         },
 
         PALE_TURQUOISE: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Fill.$class)]
           },
-          get: function() {
+          get: function () {
             return Fill.PALE_TURQUOISE
           }
         },
 
         PALE_VIOLET_RED: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Fill.$class)]
           },
-          get: function() {
+          get: function () {
             return Fill.PALE_VIOLET_RED
           }
         },
 
         PAPAYA_WHIP: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Fill.$class)]
           },
-          get: function() {
+          get: function () {
             return Fill.PAPAYA_WHIP
           }
         },
 
         PEACH_PUFF: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Fill.$class)]
           },
-          get: function() {
+          get: function () {
             return Fill.PEACH_PUFF
           }
         },
 
         PERU: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Fill.$class)]
           },
-          get: function() {
+          get: function () {
             return Fill.PERU
           }
         },
 
         PINK: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Fill.$class)]
           },
-          get: function() {
+          get: function () {
             return Fill.PINK
           }
         },
 
         PLUM: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Fill.$class)]
           },
-          get: function() {
+          get: function () {
             return Fill.PLUM
           }
         },
 
         POWDER_BLUE: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Fill.$class)]
           },
-          get: function() {
+          get: function () {
             return Fill.POWDER_BLUE
           }
         },
 
         PURPLE: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Fill.$class)]
           },
-          get: function() {
+          get: function () {
             return Fill.PURPLE
           }
         },
 
         RED: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Fill.$class)]
           },
-          get: function() {
+          get: function () {
             return Fill.RED
           }
         },
 
         ROSY_BROWN: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Fill.$class)]
           },
-          get: function() {
+          get: function () {
             return Fill.ROSY_BROWN
           }
         },
 
         ROYAL_BLUE: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Fill.$class)]
           },
-          get: function() {
+          get: function () {
             return Fill.ROYAL_BLUE
           }
         },
 
         SADDLE_BROWN: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Fill.$class)]
           },
-          get: function() {
+          get: function () {
             return Fill.SADDLE_BROWN
           }
         },
 
         SALMON: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Fill.$class)]
           },
-          get: function() {
+          get: function () {
             return Fill.SALMON
           }
         },
 
         SANDY_BROWN: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Fill.$class)]
           },
-          get: function() {
+          get: function () {
             return Fill.SANDY_BROWN
           }
         },
 
         SEA_GREEN: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Fill.$class)]
           },
-          get: function() {
+          get: function () {
             return Fill.SEA_GREEN
           }
         },
 
         SEA_SHELL: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Fill.$class)]
           },
-          get: function() {
+          get: function () {
             return Fill.SEA_SHELL
           }
         },
 
         SIENNA: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Fill.$class)]
           },
-          get: function() {
+          get: function () {
             return Fill.SIENNA
           }
         },
 
         SILVER: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Fill.$class)]
           },
-          get: function() {
+          get: function () {
             return Fill.SILVER
           }
         },
 
         SKY_BLUE: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Fill.$class)]
           },
-          get: function() {
+          get: function () {
             return Fill.SKY_BLUE
           }
         },
 
         SLATE_BLUE: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Fill.$class)]
           },
-          get: function() {
+          get: function () {
             return Fill.SLATE_BLUE
           }
         },
 
         SLATE_GRAY: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Fill.$class)]
           },
-          get: function() {
+          get: function () {
             return Fill.SLATE_GRAY
           }
         },
 
         SNOW: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Fill.$class)]
           },
-          get: function() {
+          get: function () {
             return Fill.SNOW
           }
         },
 
         SPRING_GREEN: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Fill.$class)]
           },
-          get: function() {
+          get: function () {
             return Fill.SPRING_GREEN
           }
         },
 
         STEEL_BLUE: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Fill.$class)]
           },
-          get: function() {
+          get: function () {
             return Fill.STEEL_BLUE
           }
         },
 
         TAN: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Fill.$class)]
           },
-          get: function() {
+          get: function () {
             return Fill.TAN
           }
         },
 
         TEAL: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Fill.$class)]
           },
-          get: function() {
+          get: function () {
             return Fill.TEAL
           }
         },
 
         THISTLE: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Fill.$class)]
           },
-          get: function() {
+          get: function () {
             return Fill.THISTLE
           }
         },
 
         TOMATO: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Fill.$class)]
           },
-          get: function() {
+          get: function () {
             return Fill.TOMATO
           }
         },
 
         TRANSPARENT: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Fill.$class)]
           },
-          get: function() {
+          get: function () {
             return Fill.TRANSPARENT
           }
         },
 
         TURQUOISE: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Fill.$class)]
           },
-          get: function() {
+          get: function () {
             return Fill.TURQUOISE
           }
         },
 
         VIOLET: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Fill.$class)]
           },
-          get: function() {
+          get: function () {
             return Fill.VIOLET
           }
         },
 
         WHEAT: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Fill.$class)]
           },
-          get: function() {
+          get: function () {
             return Fill.WHEAT
           }
         },
 
         WHITE: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Fill.$class)]
           },
-          get: function() {
+          get: function () {
             return Fill.WHITE
           }
         },
 
         WHITE_SMOKE: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Fill.$class)]
           },
-          get: function() {
+          get: function () {
             return Fill.WHITE_SMOKE
           }
         },
 
         YELLOW: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Fill.$class)]
           },
-          get: function() {
+          get: function () {
             return Fill.YELLOW
           }
         },
 
         YELLOW_GREEN: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(Fill.$class)]
           },
-          get: function() {
+          get: function () {
             return Fill.YELLOW_GREEN
           }
         }
@@ -6434,12 +6434,12 @@ yfiles.lang.module('compat.graphml.wpfbridge', function(exports) {
     }
   })
 })
-yfiles.lang.module('compat.graphml.wpfbridge', function(exports) {
-  exports.RadialGradientBrushExtension = new ClassDefinition(function() {
+yfiles.lang.module('compat.graphml.wpfbridge', function (exports) {
+  exports.RadialGradientBrushExtension = new ClassDefinition(function () {
     return {
       $extends: compat.graphml.wpfbridge.GradientBrushExtension,
 
-      constructor: function() {
+      constructor: function () {
         compat.graphml.wpfbridge.GradientBrushExtension.call(this)
         this.$initRadialGradientBrushExtension()
       },
@@ -6447,13 +6447,13 @@ yfiles.lang.module('compat.graphml.wpfbridge', function(exports) {
       $center: null,
 
       center: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(Point.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$center
         },
-        set: function(/*yfiles.geometry.Point*/ value) {
+        set: function (/*yfiles.geometry.Point*/ value) {
           this.$center = value
         }
       },
@@ -6461,13 +6461,13 @@ yfiles.lang.module('compat.graphml.wpfbridge', function(exports) {
       $gradientOrigin: null,
 
       gradientOrigin: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(Point.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$gradientOrigin
         },
-        set: function(/*yfiles.geometry.Point*/ value) {
+        set: function (/*yfiles.geometry.Point*/ value) {
           this.$gradientOrigin = value
         }
       },
@@ -6475,13 +6475,13 @@ yfiles.lang.module('compat.graphml.wpfbridge', function(exports) {
       $radiusX: 0,
 
       radiusX: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(YNumber.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$radiusX
         },
-        set: function(/*number*/ value) {
+        set: function (/*number*/ value) {
           this.$radiusX = value
         }
       },
@@ -6489,13 +6489,13 @@ yfiles.lang.module('compat.graphml.wpfbridge', function(exports) {
       $radiusY: 0,
 
       radiusY: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(YNumber.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$radiusY
         },
-        set: function(/*number*/ value) {
+        set: function (/*number*/ value) {
           this.$radiusY = value
         }
       },
@@ -6503,18 +6503,18 @@ yfiles.lang.module('compat.graphml.wpfbridge', function(exports) {
       $spreadMethod: null,
 
       spreadMethod: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(compat.graphml.wpfbridge.GradientSpreadMethod.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$spreadMethod
         },
-        set: function(/*compat.graphml.wpfbridge.GradientSpreadMethod*/ value) {
+        set: function (/*compat.graphml.wpfbridge.GradientSpreadMethod*/ value) {
           this.$spreadMethod = value
         }
       },
 
-      provideValue: function(/*yfiles.graph.ILookup*/ serviceProvider) {
+      provideValue: function (/*yfiles.graph.ILookup*/ serviceProvider) {
         var /*RadialGradient*/ newInstance = new RadialGradient()
         {
           newInstance.spreadMethod = /*(yfiles.view.GradientSpreadMethod)*/ this.$spreadMethod
@@ -6538,7 +6538,7 @@ yfiles.lang.module('compat.graphml.wpfbridge', function(exports) {
         return radialGradient
       },
 
-      $initRadialGradientBrushExtension: function() {
+      $initRadialGradientBrushExtension: function () {
         this.$center = new Point(0, 0)
         this.$gradientOrigin = new Point(0, 0)
         this.$spreadMethod = compat.graphml.wpfbridge.GradientSpreadMethod.PAD
@@ -6546,40 +6546,40 @@ yfiles.lang.module('compat.graphml.wpfbridge', function(exports) {
     }
   })
 })
-yfiles.lang.module('compat.graphml.wpfbridge', function(exports) {
-  exports.GradientStopCollectionExtension = new ClassDefinition(function() {
+yfiles.lang.module('compat.graphml.wpfbridge', function (exports) {
+  exports.GradientStopCollectionExtension = new ClassDefinition(function () {
     return {
       $extends: MarkupExtension,
 
-      constructor: function() {
+      constructor: function () {
         MarkupExtension.call(this)
       },
 
-      provideValue: function(/*yfiles.graph.ILookup*/ serviceProvider) {
+      provideValue: function (/*yfiles.graph.ILookup*/ serviceProvider) {
         return new List()
       }
     }
   })
 })
-yfiles.lang.module('compat.graphml.wpfbridge', function(exports) {
-  exports.GradientStopExtension = new ClassDefinition(function() {
+yfiles.lang.module('compat.graphml.wpfbridge', function (exports) {
+  exports.GradientStopExtension = new ClassDefinition(function () {
     return {
       $extends: MarkupExtension,
 
-      constructor: function() {
+      constructor: function () {
         MarkupExtension.call(this)
       },
 
       $color: null,
 
       color: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(Color.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$color
         },
-        set: function(/*yfiles.view.Color*/ value) {
+        set: function (/*yfiles.view.Color*/ value) {
           this.$color = value
         }
       },
@@ -6587,18 +6587,18 @@ yfiles.lang.module('compat.graphml.wpfbridge', function(exports) {
       $offset: 0,
 
       offset: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(YNumber.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$offset
         },
-        set: function(/*number*/ value) {
+        set: function (/*number*/ value) {
           this.$offset = value
         }
       },
 
-      provideValue: function(/*yfiles.graph.ILookup*/ serviceProvider) {
+      provideValue: function (/*yfiles.graph.ILookup*/ serviceProvider) {
         var /*yfiles.view.GradientStop*/ newInstance = new GradientStop()
         {
           newInstance.color = this.$color
@@ -6609,15 +6609,15 @@ yfiles.lang.module('compat.graphml.wpfbridge', function(exports) {
     }
   })
 })
-yfiles.lang.module('compat.graphml.wpfbridge', function(exports) {
-  exports.GradientBrushExtension = new ClassDefinition(function() {
+yfiles.lang.module('compat.graphml.wpfbridge', function (exports) {
+  exports.GradientBrushExtension = new ClassDefinition(function () {
     return {
       $extends: MarkupExtension,
       $abstract: true,
 
       $meta: [GraphMLAttribute().init({ contentProperty: 'gradientStops' })],
 
-      constructor: function() {
+      constructor: function () {
         MarkupExtension.call(this)
         this.$initGradientBrushExtension()
       },
@@ -6627,33 +6627,33 @@ yfiles.lang.module('compat.graphml.wpfbridge', function(exports) {
       gradientStopsSet: false,
 
       gradientStops: {
-        $meta: function() {
+        $meta: function () {
           return [
             GraphMLAttribute().init({ visibility: GraphMLMemberVisibility.CONTENT }),
             TypeAttribute(List.$class)
           ]
         },
-        get: function() {
+        get: function () {
           return this.$gradientStops
         },
-        set: function(/*yfiles.collections.List<yfiles.view.GradientStop>*/ value) {
+        set: function (/*yfiles.collections.List<yfiles.view.GradientStop>*/ value) {
           this.gradientStopsSet = true
           this.$gradientStops = value
         }
       },
 
-      $initGradientBrushExtension: function() {
+      $initGradientBrushExtension: function () {
         this.$gradientStops = new List()
       }
     }
   })
 })
-yfiles.lang.module('compat.graphml.wpfbridge', function(exports) {
-  exports.DashStyleExtension = new ClassDefinition(function() {
+yfiles.lang.module('compat.graphml.wpfbridge', function (exports) {
+  exports.DashStyleExtension = new ClassDefinition(function () {
     return {
       $extends: MarkupExtension,
 
-      constructor: function() {
+      constructor: function () {
         MarkupExtension.call(this)
         this.$dashes = new List()
       },
@@ -6661,7 +6661,7 @@ yfiles.lang.module('compat.graphml.wpfbridge', function(exports) {
       $dashes: null,
 
       dashes: {
-        $meta: function() {
+        $meta: function () {
           return [
             GraphMLAttribute().init({
               valueSerializer:
@@ -6670,10 +6670,10 @@ yfiles.lang.module('compat.graphml.wpfbridge', function(exports) {
             TypeAttribute(List.$class)
           ]
         },
-        get: function() {
+        get: function () {
           return this.$dashes
         },
-        set: function(/*yfiles.collections.List<number>*/ value) {
+        set: function (/*yfiles.collections.List<number>*/ value) {
           this.$dashes = value
         }
       },
@@ -6681,38 +6681,38 @@ yfiles.lang.module('compat.graphml.wpfbridge', function(exports) {
       $offset: 0,
 
       offset: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(YNumber.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$offset
         },
-        set: function(/*number*/ value) {
+        set: function (/*number*/ value) {
           this.$offset = value
         }
       },
 
-      provideValue: function(/*yfiles.graph.ILookup*/ serviceProvider) {
+      provideValue: function (/*yfiles.graph.ILookup*/ serviceProvider) {
         return new DashStyle(this.$dashes.toArray(), this.$offset)
       },
 
       $static: {
-        NumberCollectionValueSerializer: new ClassDefinition(function() {
+        NumberCollectionValueSerializer: new ClassDefinition(function () {
           return {
             $extends: ValueSerializer,
 
-            constructor: function() {
+            constructor: function () {
               ValueSerializer.call(this)
             },
 
-            canConvertFromString: function(
+            canConvertFromString: function (
               /*string*/ value,
               /*yfiles.graphml.IValueSerializerContext*/ context
             ) {
               return true
             },
 
-            convertFromString: function(
+            convertFromString: function (
               /*string*/ value,
               /*yfiles.graphml.IValueSerializerContext*/ context
             ) {
@@ -6732,51 +6732,51 @@ yfiles.lang.module('compat.graphml.wpfbridge', function(exports) {
     }
   })
 })
-yfiles.lang.module('compat.graphml.wpfbridge', function(exports) {
-  exports.DashStylesExtension = new ClassDefinition(function() {
+yfiles.lang.module('compat.graphml.wpfbridge', function (exports) {
+  exports.DashStylesExtension = new ClassDefinition(function () {
     return {
       $static: {
         DASH: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(DashStyle.$class)]
           },
-          get: function() {
+          get: function () {
             return DashStyle.DASH
           }
         },
 
         DASH_DOT: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(DashStyle.$class)]
           },
-          get: function() {
+          get: function () {
             return DashStyle.DASH_DOT
           }
         },
 
         DASH_DOT_DOT: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(DashStyle.$class)]
           },
-          get: function() {
+          get: function () {
             return DashStyle.DASH_DOT_DOT
           }
         },
 
         DOT: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(DashStyle.$class)]
           },
-          get: function() {
+          get: function () {
             return DashStyle.DOT
           }
         },
 
         SOLID: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(DashStyle.$class)]
           },
-          get: function() {
+          get: function () {
             return DashStyle.SOLID
           }
         }
@@ -6784,8 +6784,8 @@ yfiles.lang.module('compat.graphml.wpfbridge', function(exports) {
     }
   })
 })
-yfiles.lang.module('compat.graphml.wpfbridge', function(exports) {
-  exports.GradientSpreadMethod = new EnumDefinition(function() {
+yfiles.lang.module('compat.graphml.wpfbridge', function (exports) {
+  exports.GradientSpreadMethod = new EnumDefinition(function () {
     return {
       PAD: 0,
       REFLECT: 1,
@@ -6793,8 +6793,8 @@ yfiles.lang.module('compat.graphml.wpfbridge', function(exports) {
     }
   })
 })
-yfiles.lang.module('compat.graphml.wpfbridge', function(exports) {
-  exports.FontStyle = new EnumDefinition(function() {
+yfiles.lang.module('compat.graphml.wpfbridge', function (exports) {
+  exports.FontStyle = new EnumDefinition(function () {
     return {
       NORMAL: 0,
       ITALIC: 1,
@@ -6803,8 +6803,8 @@ yfiles.lang.module('compat.graphml.wpfbridge', function(exports) {
     }
   })
 })
-yfiles.lang.module('compat.graphml.wpfbridge', function(exports) {
-  exports.FontWeight = new EnumDefinition(function() {
+yfiles.lang.module('compat.graphml.wpfbridge', function (exports) {
+  exports.FontWeight = new EnumDefinition(function () {
     return {
       NORMAL: 0,
       BOLD: 1,
@@ -6823,8 +6823,8 @@ yfiles.lang.module('compat.graphml.wpfbridge', function(exports) {
     }
   })
 })
-yfiles.lang.module('compat.graphml.wpfbridge', function(exports) {
-  exports.TextDecoration = new EnumDefinition(function() {
+yfiles.lang.module('compat.graphml.wpfbridge', function (exports) {
+  exports.TextDecoration = new EnumDefinition(function () {
     return {
       $flags: true,
       NONE: 0,
@@ -6835,12 +6835,12 @@ yfiles.lang.module('compat.graphml.wpfbridge', function(exports) {
     }
   })
 })
-yfiles.lang.module('compat.graphml.xaml', function(exports) {
-  exports.SandwichParameterExtension = new ClassDefinition(function() {
+yfiles.lang.module('compat.graphml.xaml', function (exports) {
+  exports.SandwichParameterExtension = new ClassDefinition(function () {
     return {
       $extends: MarkupExtension,
 
-      constructor: function() {
+      constructor: function () {
         MarkupExtension.call(this)
         this.$initSandwichParameterExtension()
         this.$position = ExteriorLabelModelPosition.NORTH
@@ -6849,13 +6849,13 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $position: null,
 
       position: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(ExteriorLabelModelPosition.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$position
         },
-        set: function(/*yfiles.graph.ExteriorLabelModel.ExteriorLabelModelPosition*/ value) {
+        set: function (/*yfiles.graph.ExteriorLabelModel.ExteriorLabelModelPosition*/ value) {
           this.$position = value
         }
       },
@@ -6863,18 +6863,18 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $model: null,
 
       model: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(ILabelModel.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$model
         },
-        set: function(/*yfiles.graph.ILabelModel*/ value) {
+        set: function (/*yfiles.graph.ILabelModel*/ value) {
           this.$model = value
         }
       },
 
-      provideValue: function(/*yfiles.graph.ILookup*/ serviceProvider) {
+      provideValue: function (/*yfiles.graph.ILookup*/ serviceProvider) {
         var /*yfiles.graphml.SandwichParameterExtension*/
           newInstance = new yfiles.graphml.SandwichParameterExtension()
         {
@@ -6885,18 +6885,18 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
         return coreExtension.provideValue(serviceProvider)
       },
 
-      $initSandwichParameterExtension: function() {
+      $initSandwichParameterExtension: function () {
         this.$position = ExteriorLabelModelPosition.NORTH
       }
     }
   })
 })
-yfiles.lang.module('compat.graphml.xaml', function(exports) {
-  exports.SandwichLabelModelExtension = new ClassDefinition(function() {
+yfiles.lang.module('compat.graphml.xaml', function (exports) {
+  exports.SandwichLabelModelExtension = new ClassDefinition(function () {
     return {
       $extends: MarkupExtension,
 
-      constructor: function() {
+      constructor: function () {
         MarkupExtension.call(this)
         this.$yOffset = 0
       },
@@ -6904,18 +6904,18 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $yOffset: 0,
 
       yOffset: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(YNumber.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$yOffset
         },
-        set: function(/*number*/ value) {
+        set: function (/*number*/ value) {
           this.$yOffset = value
         }
       },
 
-      provideValue: function(/*yfiles.graph.ILookup*/ serviceProvider) {
+      provideValue: function (/*yfiles.graph.ILookup*/ serviceProvider) {
         var /*yfiles.graph.SandwichLabelModel*/ newInstance = new SandwichLabelModel()
         {
           newInstance.yOffset = this.$yOffset
@@ -6925,19 +6925,19 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
 
       $static: {
         NORTH: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(ILabelModelParameter.$class)]
           },
-          get: function() {
+          get: function () {
             return SandwichLabelModel.NORTH
           }
         },
 
         SOUTH: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(ILabelModelParameter.$class)]
           },
-          get: function() {
+          get: function () {
             return SandwichLabelModel.SOUTH
           }
         }
@@ -6945,8 +6945,8 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
     }
   })
 })
-yfiles.lang.module('compat.graphml.xaml', function(exports) {
-  exports.StripeLabelModelPosition = new EnumDefinition(function() {
+yfiles.lang.module('compat.graphml.xaml', function (exports) {
+  exports.StripeLabelModelPosition = new EnumDefinition(function () {
     return {
       NORTH: 0,
       EAST: 1,
@@ -6955,25 +6955,25 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
     }
   })
 })
-yfiles.lang.module('compat.graphml.xaml', function(exports) {
-  exports.RotatingEdgeLabelModel = new ClassDefinition(function() {
+yfiles.lang.module('compat.graphml.xaml', function (exports) {
+  exports.RotatingEdgeLabelModel = new ClassDefinition(function () {
     return {
       $with: [ILabelModel, ILabelModelParameterProvider],
 
-      constructor: function() {
+      constructor: function () {
         this.$edgeRelativeDistance = true
       },
 
       $distance: 0,
 
       distance: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(YNumber.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$distance
         },
-        set: function(/*number*/ value) {
+        set: function (/*number*/ value) {
           this.$distance = value
         }
       },
@@ -6981,13 +6981,13 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $edgeRelativeDistance: false,
 
       edgeRelativeDistance: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(YBoolean.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$edgeRelativeDistance
         },
-        set: function(/*boolean*/ value) {
+        set: function (/*boolean*/ value) {
           this.$edgeRelativeDistance = value
         }
       },
@@ -6995,18 +6995,18 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $angle: 0,
 
       angle: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(YNumber.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$angle
         },
-        set: function(/*number*/ value) {
+        set: function (/*number*/ value) {
           this.$angle = value
         }
       },
 
-      lookup: function(/*yfiles.lang.Class*/ type) {
+      lookup: function (/*yfiles.lang.Class*/ type) {
         if (type === ILabelModelParameterProvider.$class) {
           return this
         }
@@ -7016,18 +7016,17 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
         return null
       },
 
-      getContext: function(
+      getContext: function (
         /*yfiles.graph.ILabel*/ label,
         /*yfiles.graph.ILabelModelParameter*/ parameter
       ) {
         return yfiles.graph.Lookups.EMPTY
       },
 
-      getParameters: function(/*yfiles.graph.ILabel*/ label, /*yfiles.graph.ILabelModel*/ model) {
+      getParameters: function (/*yfiles.graph.ILabel*/ label, /*yfiles.graph.ILabelModel*/ model) {
         var /*compat.graphml.xaml.RotatingEdgeLabelModel*/
           rotatingEdgeLabelModel = /*(compat.graphml.xaml.RotatingEdgeLabelModel)*/ model
-        var /*yfiles.collections.List<yfiles.graph.ILabelModelParameter>*/
-          candidates = new List()
+        var /*yfiles.collections.List<yfiles.graph.ILabelModelParameter>*/ candidates = new List()
         for (var /*number*/ i = 0; i <= 10; i++) {
           candidates.add(
             new compat.graphml.xaml.RotatingEdgeLabelModel.RatioParameter(
@@ -7039,7 +7038,7 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
         return candidates
       },
 
-      getGeometry: function(
+      getGeometry: function (
         /*yfiles.graph.ILabel*/ label,
         /*yfiles.graph.ILabelModelParameter*/ parameter
       ) {
@@ -7049,20 +7048,20 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
         return rect
       },
 
-      createDefaultParameter: function() {
+      createDefaultParameter: function () {
         return this.createRatio(0.5)
       },
 
-      createRatio: function(/*number*/ ratio) {
+      createRatio: function (/*number*/ ratio) {
         return new compat.graphml.xaml.RotatingEdgeLabelModel.RatioParameter(this, ratio)
       },
 
       $static: {
-        RatioParameter: new ClassDefinition(function() {
+        RatioParameter: new ClassDefinition(function () {
           return {
             $with: [ILabelModelParameter, IMarkupExtensionConverter],
 
-            constructor: function(
+            constructor: function (
               /*compat.graphml.xaml.RotatingEdgeLabelModel*/ model,
               /*number*/ r
             ) {
@@ -7074,21 +7073,21 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
 
             $model: null,
 
-            supports: function(/*yfiles.graph.ILabel*/ label) {
+            supports: function (/*yfiles.graph.ILabel*/ label) {
               return IEdge.isInstance(label.owner)
             },
 
-            clone: function() {
+            clone: function () {
               return this
             },
 
             model: {
-              get: function() {
+              get: function () {
                 return this.$model
               }
             },
 
-            $setGeometry: function(
+            $setGeometry: function (
               /*compat.graphml.xaml.RotatingEdgeLabelModel*/ model,
               /*yfiles.graph.ILabel*/ label,
               /*yfiles.geometry.IMutableOrientedRectangle*/ rect
@@ -7132,7 +7131,7 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
               }
             },
 
-            $findAnchorTangent: function(
+            $findAnchorTangent: function (
               /*yfiles.graph.IEdge*/ edge,
               /*yfiles.lang.Reference*/ upX,
               /*yfiles.lang.Reference*/ upY,
@@ -7252,11 +7251,11 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
               }
             },
 
-            canConvert: function(/*yfiles.graphml.IWriteContext*/ context, /*Object*/ value) {
+            canConvert: function (/*yfiles.graphml.IWriteContext*/ context, /*Object*/ value) {
               return true
             },
 
-            convert: function(/*yfiles.graphml.IWriteContext*/ context, /*Object*/ value) {
+            convert: function (/*yfiles.graphml.IWriteContext*/ context, /*Object*/ value) {
               var /*compat.graphml.xaml.RotatingEdgeLabelModelParameterExtension*/
                 newInstance = new compat.graphml.xaml.RotatingEdgeLabelModelParameterExtension()
               {
@@ -7271,12 +7270,12 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
     }
   })
 })
-yfiles.lang.module('compat.graphml.xaml', function(exports) {
-  exports.RotatingEdgeLabelModelParameterExtension = new ClassDefinition(function() {
+yfiles.lang.module('compat.graphml.xaml', function (exports) {
+  exports.RotatingEdgeLabelModelParameterExtension = new ClassDefinition(function () {
     return {
       $extends: MarkupExtension,
 
-      constructor: function() {
+      constructor: function () {
         MarkupExtension.call(this)
         this.$ratio = 0.5
       },
@@ -7284,13 +7283,13 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $ratio: 0,
 
       ratio: {
-        $meta: function() {
+        $meta: function () {
           return [GraphMLAttribute().init({ defaultValue: 0.5 }), TypeAttribute(YNumber.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$ratio
         },
-        set: function(/*number*/ value) {
+        set: function (/*number*/ value) {
           this.$ratio = value
         }
       },
@@ -7298,21 +7297,21 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $model: null,
 
       model: {
-        $meta: function() {
+        $meta: function () {
           return [
             GraphMLAttribute().init({ defaultValue: null }),
             TypeAttribute(ILabelModel.$class)
           ]
         },
-        get: function() {
+        get: function () {
           return this.$model
         },
-        set: function(/*yfiles.graph.ILabelModel*/ value) {
+        set: function (/*yfiles.graph.ILabelModel*/ value) {
           this.$model = value
         }
       },
 
-      provideValue: function(/*yfiles.graph.ILookup*/ serviceProvider) {
+      provideValue: function (/*yfiles.graph.ILookup*/ serviceProvider) {
         var /*compat.graphml.xaml.RotatingEdgeLabelModel*/
           exModel = /*(compat.graphml.xaml.RotatingEdgeLabelModel)*/ this.$model
         return exModel.createRatio(this.$ratio)
@@ -7320,13 +7319,13 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
     }
   })
 })
-yfiles.lang.module('compat.graphml.xaml', function(exports) {
-  exports.RotatedSliderEdgeLabelModel = new ClassDefinition(function() {
+yfiles.lang.module('compat.graphml.xaml', function (exports) {
+  exports.RotatedSliderEdgeLabelModel = new ClassDefinition(function () {
     return {
       $with: [ILabelModel, ILabelModelParameterProvider, ILabelModelParameterFinder],
 
       constructor: {
-        RotatedSliderEdgeLabelModel: function() {
+        RotatedSliderEdgeLabelModel: function () {
           compat.graphml.xaml.RotatedSliderEdgeLabelModel.FromDistanceAngleDistanceRelativeToEdgeAndAutoRotationEnabled.call(
             this,
             0,
@@ -7336,7 +7335,7 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
           )
         },
 
-        FromDistanceAngleDistanceRelativeToEdgeAndAutoRotationEnabled: function(
+        FromDistanceAngleDistanceRelativeToEdgeAndAutoRotationEnabled: function (
           /*number*/ distance,
           /*number*/ angle,
           /*boolean*/ distanceRelativeToEdge,
@@ -7359,13 +7358,13 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $distanceRelativeToEdge: false,
 
       distanceRelativeToEdge: {
-        $meta: function() {
+        $meta: function () {
           return [GraphMLAttribute().init({ defaultValue: true }), TypeAttribute(YBoolean.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$distanceRelativeToEdge
         },
-        set: function(/*boolean*/ value) {
+        set: function (/*boolean*/ value) {
           this.$distanceRelativeToEdge = value
         }
       },
@@ -7373,13 +7372,13 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $distance: 0,
 
       distance: {
-        $meta: function() {
+        $meta: function () {
           return [GraphMLAttribute().init({ defaultValue: 0.0 }), TypeAttribute(YNumber.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$distance
         },
-        set: function(/*number*/ value) {
+        set: function (/*number*/ value) {
           this.$distance = value
         }
       },
@@ -7387,13 +7386,13 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $autoRotationEnabled: true,
 
       autoRotationEnabled: {
-        $meta: function() {
+        $meta: function () {
           return [GraphMLAttribute().init({ defaultValue: true }), TypeAttribute(YBoolean.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$autoRotationEnabled
         },
-        set: function(/*boolean*/ value) {
+        set: function (/*boolean*/ value) {
           this.$autoRotationEnabled = value
         }
       },
@@ -7401,18 +7400,18 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $angle: 0,
 
       angle: {
-        $meta: function() {
+        $meta: function () {
           return [GraphMLAttribute().init({ defaultValue: 0.0 }), TypeAttribute(YNumber.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$angle
         },
-        set: function(/*number*/ value) {
+        set: function (/*number*/ value) {
           this.$angle = value
         }
       },
 
-      lookup: function(/*yfiles.lang.Class*/ type) {
+      lookup: function (/*yfiles.lang.Class*/ type) {
         if (type === ILabelModelParameterProvider.$class) {
           return this
         }
@@ -7422,11 +7421,11 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
         return null
       },
 
-      createDefaultParameter: function() {
+      createDefaultParameter: function () {
         return this.$defaultParameter
       },
 
-      getGeometry: function(
+      getGeometry: function (
         /*yfiles.graph.ILabel*/ label,
         /*yfiles.graph.ILabelModelParameter*/ parameter
       ) {
@@ -7595,7 +7594,7 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
         return bounds
       },
 
-      getParameters: function(/*yfiles.graph.ILabel*/ label, /*yfiles.graph.ILabelModel*/ model) {
+      getParameters: function (/*yfiles.graph.ILabel*/ label, /*yfiles.graph.ILabelModel*/ model) {
         var /*yfiles.collections.List<yfiles.graph.ILabelModelParameter>*/ candList = new List()
         var /*yfiles.graph.IEdge*/ edge = /*(yfiles.graph.IEdge)*/ label.owner
         var /*yfiles.geometry.Rect*/
@@ -7702,14 +7701,14 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
         return candList
       },
 
-      getContext: function(
+      getContext: function (
         /*yfiles.graph.ILabel*/ label,
         /*yfiles.graph.ILabelModelParameter*/ parameter
       ) {
         return yfiles.graph.Lookups.EMPTY
       },
 
-      $placeAtPoint: function(
+      $placeAtPoint: function (
         /*yfiles.geometry.OrientedRectangle*/ rect,
         /*compat.graphml.xaml.RotatedSliderEdgeLabelModel.LineSegment*/ segment,
         /*yfiles.geometry.Point*/ p,
@@ -7767,7 +7766,7 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
         }
       },
 
-      $distanceToLine: function(
+      $distanceToLine: function (
         /*yfiles.geometry.Point*/ p,
         /*yfiles.geometry.Point*/ l1,
         /*yfiles.geometry.Point*/ l2
@@ -7785,7 +7784,7 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
         return squaredLength < 0 ? 0 : Math.sqrt(squaredLength)
       },
 
-      $placeAtTarget: function(
+      $placeAtTarget: function (
         /*yfiles.geometry.OrientedRectangle*/ rect,
         /*compat.graphml.xaml.RotatedSliderEdgeLabelModel.LineSegment*/ segment,
         /*yfiles.geometry.IRectangle*/ nodeLayout,
@@ -7801,7 +7800,7 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
         )
       },
 
-      $placeAtSource: function(
+      $placeAtSource: function (
         /*yfiles.geometry.OrientedRectangle*/ rect,
         /*compat.graphml.xaml.RotatedSliderEdgeLabelModel.LineSegment*/ segment,
         /*yfiles.geometry.IRectangle*/ nodeLayout,
@@ -7817,7 +7816,7 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
         )
       },
 
-      $placeAtEndpoint: function(
+      $placeAtEndpoint: function (
         /*yfiles.geometry.OrientedRectangle*/ bounds,
         /*yfiles.geometry.Point*/ p1,
         /*yfiles.geometry.Point*/ p2,
@@ -7920,7 +7919,7 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
         }
       },
 
-      $addIntermediateCandidates: function(
+      $addIntermediateCandidates: function (
         /*yfiles.collections.List<yfiles.graph.ILabelModelParameter>*/ candList,
         /*yfiles.geometry.OrientedRectangle*/ boundsR0,
         /*yfiles.geometry.OrientedRectangle*/ boundsR1,
@@ -8101,7 +8100,7 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
         }
       },
 
-      $placeOnSide: function(
+      $placeOnSide: function (
         /*number*/ side,
         /*compat.graphml.xaml.RotatedSliderEdgeLabelModel.LineSegment*/ lineSegment,
         /*yfiles.geometry.OrientedRectangle*/ rectOrig,
@@ -8366,11 +8365,11 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
         return rectClone.anchor.toPoint()
       },
 
-      $isSideSliderModel: function() {
+      $isSideSliderModel: function () {
         return this.$distance !== 0
       },
 
-      createParameterFromSource: function(/*number*/ segmentIndex, /*number*/ segmentRatio) {
+      createParameterFromSource: function (/*number*/ segmentIndex, /*number*/ segmentRatio) {
         return new compat.graphml.xaml.RotatedSliderEdgeLabelModel.RotatedSliderParameter(
           this,
           segmentIndex,
@@ -8378,7 +8377,7 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
         )
       },
 
-      createParameterFromTarget: function(/*number*/ segmentIndex, /*number*/ segmentRatio) {
+      createParameterFromTarget: function (/*number*/ segmentIndex, /*number*/ segmentRatio) {
         return new compat.graphml.xaml.RotatedSliderEdgeLabelModel.RotatedSliderParameter(
           this,
           -1 - segmentIndex,
@@ -8386,7 +8385,7 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
         )
       },
 
-      findBestParameter: function(
+      findBestParameter: function (
         /*yfiles.graph.ILabel*/ label,
         /*yfiles.graph.ILabelModel*/ model,
         /*yfiles.geometry.IOrientedRectangle*/ labelLayout
@@ -8497,7 +8496,7 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
           : sliderModel.createParameterFromSource(bestIndex, bestRatio)
       },
 
-      calculateRatioAndDistance: function(
+      calculateRatioAndDistance: function (
         /*yfiles.geometry.Point*/ lc,
         /*yfiles.geometry.Point[]*/ path,
         /*number*/ i,
@@ -8572,14 +8571,14 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
         )
       },
 
-      $calculateQuality: function(/*number*/ ratio, /*number*/ distanceToLine) {
+      $calculateQuality: function (/*number*/ ratio, /*number*/ distanceToLine) {
         var /*number*/ rq = ratio < 0 ? -ratio + 1 : ratio
         return rq < 1
           ? distanceToLine + Math.abs(rq - 0.5)
           : Math.sqrt(distanceToLine * distanceToLine + (rq - 1) * (rq - 1))
       },
 
-      setFirstAndLastBoxOnSegment: function(
+      setFirstAndLastBoxOnSegment: function (
         /*yfiles.geometry.Point*/ p1,
         /*yfiles.geometry.Point*/ p2,
         /*boolean*/ isFirst,
@@ -8663,7 +8662,7 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
 
         NODE_SIDE_RIGHT: 3,
 
-        getPathPoints: function(/*yfiles.geometry.GeneralPath*/ path) {
+        getPathPoints: function (/*yfiles.geometry.GeneralPath*/ path) {
           if (path === null) {
             return []
           }
@@ -8707,7 +8706,7 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
           return points.toArray()
         },
 
-        getDistance: function(
+        getDistance: function (
           /*yfiles.geometry.Rect*/ r,
           /*yfiles.geometry.IOrientedRectangle*/ orientedRect
         ) {
@@ -8725,7 +8724,7 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
               )
         },
 
-        isParaxial: function(/*yfiles.geometry.IOrientedRectangle*/ rect) {
+        isParaxial: function (/*yfiles.geometry.IOrientedRectangle*/ rect) {
           // ReSharper disable CompareOfFloatsByEqualityOperator
           return (
             (rect.upX === 0 && (rect.upY === -1 || rect.upY === 1)) ||
@@ -8734,7 +8733,7 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
           // ReSharper restore CompareOfFloatsByEqualityOperator
         },
 
-        distanceToRect: function(/*yfiles.geometry.Rect*/ r1, /*yfiles.geometry.Rect*/ r2) {
+        distanceToRect: function (/*yfiles.geometry.Rect*/ r1, /*yfiles.geometry.Rect*/ r2) {
           if (r1.intersects(r2)) {
             return 0.0
           }
@@ -8751,7 +8750,7 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
           return Math.sqrt(distVertical * distVertical + distHorizontal * distHorizontal)
         },
 
-        orthogonalDistanceTo: function(
+        orthogonalDistanceTo: function (
           /*yfiles.geometry.Rect*/ rect1,
           /*yfiles.geometry.Rect*/ rect2,
           /*boolean*/ horizontal
@@ -8772,7 +8771,7 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
           }
         },
 
-        getBounds: function(/*yfiles.geometry.IOrientedRectangle*/ rect) {
+        getBounds: function (/*yfiles.geometry.IOrientedRectangle*/ rect) {
           if (rect.upX === 0 && rect.upY === -1) {
             return new Rect(rect.anchorX, rect.anchorY - rect.height, rect.width, rect.height)
           } else if (rect.upX === 0 && rect.upY === 1) {
@@ -8791,7 +8790,7 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
           }
         },
 
-        getDistance1: function(/*yfiles.geometry.Rect*/ r, /*yfiles.geometry.Point[]*/ polygon) {
+        getDistance1: function (/*yfiles.geometry.Rect*/ r, /*yfiles.geometry.Point[]*/ polygon) {
           var /*yfiles.geometry.Point*/ upperLeft = r.topLeft
           var /*yfiles.geometry.Point*/ lowerLeft = r.bottomLeft
           var /*yfiles.geometry.Point*/ lowerRight = r.bottomRight
@@ -8822,7 +8821,7 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
           return dist
         },
 
-        findLineIntersection: function(
+        findLineIntersection: function (
           /*compat.graphml.xaml.RotatedSliderEdgeLabelModel.LineSegment*/ segment1,
           /*compat.graphml.xaml.RotatedSliderEdgeLabelModel.LineSegment*/ segment2,
           /*yfiles.lang.Reference<yfiles.geometry.Point>*/ intersectionPoint
@@ -8836,7 +8835,7 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
           )
         },
 
-        findLineIntersection1: function(
+        findLineIntersection1: function (
           /*yfiles.geometry.Point*/ l1,
           /*yfiles.geometry.Point*/ l2,
           /*yfiles.geometry.Point*/ anchor,
@@ -8867,7 +8866,7 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
           return false
         },
 
-        determineAlternativeNodeSide: function(
+        determineAlternativeNodeSide: function (
           /*yfiles.geometry.Point*/ segmentStartPoint,
           /*yfiles.geometry.Point*/ segmentEndPoint
         ) {
@@ -8881,7 +8880,7 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
             : compat.graphml.xaml.RotatedSliderEdgeLabelModel.NODE_SIDE_RIGHT
         },
 
-        calcProjDistance: function(
+        calcProjDistance: function (
           /*compat.graphml.xaml.RotatedSliderEdgeLabelModel.LineSegment*/ edgeSegment,
           /*yfiles.geometry.Point*/ alignSegment,
           /*number*/ dist
@@ -8900,7 +8899,7 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
           return dist / Math.sin(segmentAngle)
         },
 
-        determineNodeSide: function(/*yfiles.geometry.Point*/ p1, /*yfiles.geometry.Point*/ p2) {
+        determineNodeSide: function (/*yfiles.geometry.Point*/ p1, /*yfiles.geometry.Point*/ p2) {
           var /*yfiles.geometry.Point*/ vec = p2.subtract(p1)
           if (Math.abs(vec.x) > Math.abs(vec.y)) {
             return vec.x > 0
@@ -8913,17 +8912,17 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
           }
         },
 
-        rightOf: function(/*yfiles.geometry.Point*/ v1, /*yfiles.geometry.Point*/ v2) {
+        rightOf: function (/*yfiles.geometry.Point*/ v1, /*yfiles.geometry.Point*/ v2) {
           return v1.x * v2.y - v1.y * v2.x > 0
         },
 
         ZERO_VECTOR: {
-          get: function() {
+          get: function () {
             return new Point(1, 0)
           }
         },
 
-        calculateRotationAngle: function(/*yfiles.geometry.Point*/ vector, /*number*/ angle) {
+        calculateRotationAngle: function (/*yfiles.geometry.Point*/ vector, /*number*/ angle) {
           return compat.graphml.xaml.RotatedSliderEdgeLabelModel.normalizeAngle(
             compat.graphml.xaml.RotatedSliderEdgeLabelModel.calculateAngle(
               vector,
@@ -8932,7 +8931,7 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
           )
         },
 
-        calculateAngle: function(/*yfiles.geometry.Point*/ v1, /*yfiles.geometry.Point*/ v2) {
+        calculateAngle: function (/*yfiles.geometry.Point*/ v1, /*yfiles.geometry.Point*/ v2) {
           var /*number*/ cosA = v1.scalarProduct(v2) / (v1.vectorLength * v2.vectorLength)
           // due to rounding errors the above calculated value cosA might be out of
           // the range of theoretically possible (and for Math.acos(double) required)
@@ -8953,12 +8952,12 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
           return a
         },
 
-        orthoNormal: function(/*yfiles.geometry.Point*/ vector) {
+        orthoNormal: function (/*yfiles.geometry.Point*/ vector) {
           var /*number*/ length = vector.vectorLength
           return new Point(-vector.y / length, vector.x / length)
         },
 
-        getCorners: function(/*yfiles.geometry.IOrientedRectangle*/ rect) {
+        getCorners: function (/*yfiles.geometry.IOrientedRectangle*/ rect) {
           var /*number*/ w = rect.width
           var /*number*/ h = rect.height
           var /*number*/ x1 = rect.anchorX
@@ -8974,15 +8973,15 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
           return [new Point(x1, y1), new Point(x2, y2), new Point(x3, y3), new Point(x4, y4)]
         },
 
-        isPositive: function(/*number*/ value) {
+        isPositive: function (/*number*/ value) {
           return value > 0
         },
 
-        isNegative: function(/*number*/ value) {
+        isNegative: function (/*number*/ value) {
           return value < 0
         },
 
-        normalizeAngle: function(/*number*/ angle) {
+        normalizeAngle: function (/*number*/ angle) {
           if (angle < 0) {
             angle += 2 * Math.PI
           }
@@ -8992,7 +8991,7 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
           return angle
         },
 
-        getLineSegment: function(/*yfiles.geometry.Point[]*/ linePoints, /*number*/ index) {
+        getLineSegment: function (/*yfiles.geometry.Point[]*/ linePoints, /*number*/ index) {
           if (index + 1 >= linePoints.length) {
             index = linePoints.length - 2
           } else if (index < 0) {
@@ -9007,9 +9006,9 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
           return null
         },
 
-        LineSegment: new ClassDefinition(function() {
+        LineSegment: new ClassDefinition(function () {
           return {
-            constructor: function(
+            constructor: function (
               /*yfiles.geometry.Point*/ startPoint,
               /*yfiles.geometry.Point*/ endPoint
             ) {
@@ -9021,10 +9020,10 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
             $firstEndPoint: null,
 
             firstEndPoint: {
-              get: function() {
+              get: function () {
                 return this.$firstEndPoint
               },
-              set: function(/*yfiles.geometry.Point*/ value) {
+              set: function (/*yfiles.geometry.Point*/ value) {
                 this.$firstEndPoint = value
               }
             },
@@ -9032,23 +9031,23 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
             $secondEndPoint: null,
 
             secondEndPoint: {
-              get: function() {
+              get: function () {
                 return this.$secondEndPoint
               },
-              set: function(/*yfiles.geometry.Point*/ value) {
+              set: function (/*yfiles.geometry.Point*/ value) {
                 this.$secondEndPoint = value
               }
             },
 
-            $getLength: function() {
+            $getLength: function () {
               return this.$firstEndPoint.distanceTo(this.$secondEndPoint)
             },
 
-            $toVector: function() {
+            $toVector: function () {
               return this.$secondEndPoint.subtract(this.$firstEndPoint)
             },
 
-            $getDistance: function(
+            $getDistance: function (
               /*compat.graphml.xaml.RotatedSliderEdgeLabelModel.LineSegment*/ otherSegment
             ) {
               if (this.$intersects(otherSegment)) {
@@ -9082,7 +9081,7 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
               return distance
             },
 
-            $intersects: function(
+            $intersects: function (
               /*compat.graphml.xaml.RotatedSliderEdgeLabelModel.LineSegment*/ otherSegment
             ) {
               return (
@@ -9100,7 +9099,7 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
               )
             },
 
-            $getClosestPointIndex: function(/*yfiles.geometry.Point[]*/ corners) {
+            $getClosestPointIndex: function (/*yfiles.geometry.Point[]*/ corners) {
               var /*number*/ minDist = Number.MAX_VALUE
               var /*number*/ bestIndex = -1
               for (var /*number*/ i = 0; i < corners.length; i++) {
@@ -9116,17 +9115,17 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
               return bestIndex
             },
 
-            $getClosestPoint: function(/*yfiles.geometry.Point[]*/ corners) {
+            $getClosestPoint: function (/*yfiles.geometry.Point[]*/ corners) {
               return corners[this.$getClosestPointIndex(corners)]
             },
 
-            $initLineSegment: function() {
+            $initLineSegment: function () {
               this.$firstEndPoint = new Point(0, 0)
               this.$secondEndPoint = new Point(0, 0)
             },
 
             $static: {
-              findLineSegmentIntersection: function(
+              findLineSegmentIntersection: function (
                 /*number*/ l1x1,
                 /*number*/ l1y1,
                 /*number*/ l1x2,
@@ -9156,11 +9155,11 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
           }
         }),
 
-        RotatedSliderParameter: new ClassDefinition(function() {
+        RotatedSliderParameter: new ClassDefinition(function () {
           return {
             $with: [ILabelModelParameter, IMarkupExtensionConverter],
 
-            constructor: function(
+            constructor: function (
               /*compat.graphml.xaml.RotatedSliderEdgeLabelModel*/ model,
               /*number*/ segment,
               /*number*/ ratio
@@ -9177,36 +9176,36 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
             $ratio: 0,
 
             segment: {
-              get: function() {
+              get: function () {
                 return this.$segment
               }
             },
 
             ratio: {
-              get: function() {
+              get: function () {
                 return this.$ratio
               }
             },
 
             model: {
-              get: function() {
+              get: function () {
                 return this.$model
               }
             },
 
-            clone: function() {
+            clone: function () {
               return this.memberwiseClone()
             },
 
-            supports: function(/*yfiles.graph.ILabel*/ label) {
+            supports: function (/*yfiles.graph.ILabel*/ label) {
               return IEdge.isInstance(label.owner)
             },
 
-            canConvert: function(/*yfiles.graphml.IWriteContext*/ context, /*Object*/ value) {
+            canConvert: function (/*yfiles.graphml.IWriteContext*/ context, /*Object*/ value) {
               return true
             },
 
-            convert: function(/*yfiles.graphml.IWriteContext*/ context, /*Object*/ value) {
+            convert: function (/*yfiles.graphml.IWriteContext*/ context, /*Object*/ value) {
               if (this.$segment < 0) {
                 var /*compat.graphml.xaml.RotatedSliderLabelModelParameterExtension*/
                   newInstance = new compat.graphml.xaml.RotatedSliderLabelModelParameterExtension()
@@ -9232,7 +9231,7 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
           }
         }),
 
-        getNodeLayout: function(/*yfiles.graph.IPort*/ port) {
+        getNodeLayout: function (/*yfiles.graph.IPort*/ port) {
           var /*yfiles.graph.IPortOwner*/ tmp
           var /*yfiles.graph.INode*/ sourceNode = INode.isInstance((tmp = port.owner))
               ? /*(yfiles.graph.INode)*/ tmp
@@ -9244,7 +9243,7 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
           return new Rect(location.x - 0.5, location.y - 0.5, 1, 1)
         },
 
-        modifyAbsoluteRatios: function(
+        modifyAbsoluteRatios: function (
           /*number*/ lx,
           /*number*/ ly,
           /*yfiles.geometry.Point*/ p1,
@@ -9267,7 +9266,7 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
           return r
         },
 
-        doIntersect: function(
+        doIntersect: function (
           /*yfiles.geometry.Rect*/ nodeLayout,
           /*yfiles.geometry.IOrientedRectangle*/ labelBox
         ) {
@@ -9280,12 +9279,12 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
     }
   })
 })
-yfiles.lang.module('compat.graphml.xaml', function(exports) {
-  exports.RotatedSliderLabelModelParameterExtension = new ClassDefinition(function() {
+yfiles.lang.module('compat.graphml.xaml', function (exports) {
+  exports.RotatedSliderLabelModelParameterExtension = new ClassDefinition(function () {
     return {
       $extends: MarkupExtension,
 
-      constructor: function() {
+      constructor: function () {
         MarkupExtension.call(this)
         this.$segmentRatio = 0.5
         this.$location = compat.graphml.xaml.SliderParameterLocation.FROM_SOURCE
@@ -9294,16 +9293,16 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $model: null,
 
       model: {
-        $meta: function() {
+        $meta: function () {
           return [
             GraphMLAttribute().init({ defaultValue: null }),
             TypeAttribute(ILabelModel.$class)
           ]
         },
-        get: function() {
+        get: function () {
           return this.$model
         },
-        set: function(/*yfiles.graph.ILabelModel*/ value) {
+        set: function (/*yfiles.graph.ILabelModel*/ value) {
           this.$model = value
         }
       },
@@ -9311,7 +9310,7 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $location: 0,
 
       location: {
-        $meta: function() {
+        $meta: function () {
           return [
             GraphMLAttribute().init({
               defaultValue: compat.graphml.xaml.SliderParameterLocation.FROM_SOURCE
@@ -9319,10 +9318,10 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
             TypeAttribute(compat.graphml.xaml.SliderParameterLocation.$class)
           ]
         },
-        get: function() {
+        get: function () {
           return this.$location
         },
-        set: function(/*compat.graphml.xaml.SliderParameterLocation*/ value) {
+        set: function (/*compat.graphml.xaml.SliderParameterLocation*/ value) {
           this.$location = value
         }
       },
@@ -9330,13 +9329,13 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $segmentIndex: 0,
 
       segmentIndex: {
-        $meta: function() {
+        $meta: function () {
           return [GraphMLAttribute().init({ defaultValue: 0 }), TypeAttribute(YNumber.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$segmentIndex
         },
-        set: function(/*number*/ value) {
+        set: function (/*number*/ value) {
           this.$segmentIndex = value
         }
       },
@@ -9344,18 +9343,18 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $segmentRatio: 0,
 
       segmentRatio: {
-        $meta: function() {
+        $meta: function () {
           return [GraphMLAttribute().init({ defaultValue: 0.5 }), TypeAttribute(YNumber.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$segmentRatio
         },
-        set: function(/*number*/ value) {
+        set: function (/*number*/ value) {
           this.$segmentRatio = value
         }
       },
 
-      provideValue: function(/*yfiles.graph.ILookup*/ serviceProvider) {
+      provideValue: function (/*yfiles.graph.ILookup*/ serviceProvider) {
         var /*compat.graphml.xaml.RotatedSliderEdgeLabelModel*/ exModel =
             this.$model instanceof compat.graphml.xaml.RotatedSliderEdgeLabelModel
               ? /*(compat.graphml.xaml.RotatedSliderEdgeLabelModel)*/ this.$model
@@ -9373,12 +9372,12 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
     }
   })
 })
-yfiles.lang.module('compat.graphml.xaml', function(exports) {
-  exports.RotatedSideSliderLabelModelParameterExtension = new ClassDefinition(function() {
+yfiles.lang.module('compat.graphml.xaml', function (exports) {
+  exports.RotatedSideSliderLabelModelParameterExtension = new ClassDefinition(function () {
     return {
       $extends: MarkupExtension,
 
-      constructor: function() {
+      constructor: function () {
         MarkupExtension.call(this)
         this.$segmentRatio = 0.5
         this.$location = compat.graphml.xaml.SliderParameterLocation.FROM_SOURCE
@@ -9387,16 +9386,16 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $model: null,
 
       model: {
-        $meta: function() {
+        $meta: function () {
           return [
             GraphMLAttribute().init({ defaultValue: null }),
             TypeAttribute(ILabelModel.$class)
           ]
         },
-        get: function() {
+        get: function () {
           return this.$model
         },
-        set: function(/*yfiles.graph.ILabelModel*/ value) {
+        set: function (/*yfiles.graph.ILabelModel*/ value) {
           this.$model = value
         }
       },
@@ -9404,7 +9403,7 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $location: 0,
 
       location: {
-        $meta: function() {
+        $meta: function () {
           return [
             GraphMLAttribute().init({
               defaultValue: compat.graphml.xaml.SliderParameterLocation.FROM_SOURCE
@@ -9412,10 +9411,10 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
             TypeAttribute(compat.graphml.xaml.SliderParameterLocation.$class)
           ]
         },
-        get: function() {
+        get: function () {
           return this.$location
         },
-        set: function(/*compat.graphml.xaml.SliderParameterLocation*/ value) {
+        set: function (/*compat.graphml.xaml.SliderParameterLocation*/ value) {
           this.$location = value
         }
       },
@@ -9423,13 +9422,13 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $segmentIndex: 0,
 
       segmentIndex: {
-        $meta: function() {
+        $meta: function () {
           return [GraphMLAttribute().init({ defaultValue: 0 }), TypeAttribute(YNumber.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$segmentIndex
         },
-        set: function(/*number*/ value) {
+        set: function (/*number*/ value) {
           this.$segmentIndex = value
         }
       },
@@ -9437,18 +9436,18 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $segmentRatio: 0,
 
       segmentRatio: {
-        $meta: function() {
+        $meta: function () {
           return [GraphMLAttribute().init({ defaultValue: 0.5 }), TypeAttribute(YNumber.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$segmentRatio
         },
-        set: function(/*number*/ value) {
+        set: function (/*number*/ value) {
           this.$segmentRatio = value
         }
       },
 
-      provideValue: function(/*yfiles.graph.ILookup*/ serviceProvider) {
+      provideValue: function (/*yfiles.graph.ILookup*/ serviceProvider) {
         var /*compat.graphml.xaml.RotatedSideSliderEdgeLabelModel*/ exModel =
             this.$model instanceof compat.graphml.xaml.RotatedSideSliderEdgeLabelModel
               ? /*(compat.graphml.xaml.RotatedSideSliderEdgeLabelModel)*/ this.$model
@@ -9477,12 +9476,12 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
     }
   })
 })
-yfiles.lang.module('compat.graphml.xaml', function(exports) {
-  exports.RotatedSideSliderParameter = new ClassDefinition(function() {
+yfiles.lang.module('compat.graphml.xaml', function (exports) {
+  exports.RotatedSideSliderParameter = new ClassDefinition(function () {
     return {
       $with: [ILabelModelParameter, IMarkupExtensionConverter],
 
-      constructor: function(
+      constructor: function (
         /*yfiles.graph.ILabelModelParameter*/ innerParameter,
         /*compat.graphml.xaml.RotatedSideSliderEdgeLabelModel*/ labelModel
       ) {
@@ -9495,33 +9494,33 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $innerParameter: null,
 
       innerParameter: {
-        get: function() {
+        get: function () {
           return this.$innerParameter
         },
-        set: function(/*yfiles.graph.ILabelModelParameter*/ value) {
+        set: function (/*yfiles.graph.ILabelModelParameter*/ value) {
           this.$innerParameter = value
         }
       },
 
       model: {
-        get: function() {
+        get: function () {
           return this.$labelModel
         }
       },
 
-      supports: function(/*yfiles.graph.ILabel*/ label) {
+      supports: function (/*yfiles.graph.ILabel*/ label) {
         return this.$innerParameter.supports(label)
       },
 
-      clone: function() {
+      clone: function () {
         return this
       },
 
-      canConvert: function(/*yfiles.graphml.IWriteContext*/ context, /*Object*/ value) {
+      canConvert: function (/*yfiles.graphml.IWriteContext*/ context, /*Object*/ value) {
         return true
       },
 
-      convert: function(/*yfiles.graphml.IWriteContext*/ context, /*Object*/ value) {
+      convert: function (/*yfiles.graphml.IWriteContext*/ context, /*Object*/ value) {
         var /*compat.graphml.xaml.RotatedSliderEdgeLabelModel.RotatedSliderParameter*/
           parameter = /*(compat.graphml.xaml.RotatedSliderEdgeLabelModel.RotatedSliderParameter)*/ this
             .$innerParameter
@@ -9555,13 +9554,13 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
     }
   })
 })
-yfiles.lang.module('compat.graphml.xaml', function(exports) {
-  exports.RotatedSideSliderEdgeLabelModel = new ClassDefinition(function() {
+yfiles.lang.module('compat.graphml.xaml', function (exports) {
+  exports.RotatedSideSliderEdgeLabelModel = new ClassDefinition(function () {
     return {
       $with: [ILabelModel, ILabelModelParameterProvider, ILabelModelParameterFinder],
 
       constructor: {
-        default: function() {
+        default: function () {
           compat.graphml.xaml.RotatedSideSliderEdgeLabelModel.RotatedSideSliderEdgeLabelModel.call(
             this,
             0,
@@ -9571,7 +9570,7 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
           )
         },
 
-        RotatedSideSliderEdgeLabelModel: function(
+        RotatedSideSliderEdgeLabelModel: function (
           /*number*/ distance,
           /*number*/ angle,
           /*boolean*/ distanceRelativeToEdge,
@@ -9601,13 +9600,13 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $rightModel: null,
 
       distance: {
-        $meta: function() {
+        $meta: function () {
           return [GraphMLAttribute().init({ defaultValue: 0 }), TypeAttribute(YNumber.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$rightModel.$distance
         },
-        set: function(/*number*/ value) {
+        set: function (/*number*/ value) {
           var /*number*/ distance = value
           if (distance === 0.0) {
             distance += Number.MIN_VALUE
@@ -9618,45 +9617,45 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       },
 
       angle: {
-        $meta: function() {
+        $meta: function () {
           return [GraphMLAttribute().init({ defaultValue: 0.0 }), TypeAttribute(YNumber.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$rightModel.$angle
         },
-        set: function(/*number*/ value) {
+        set: function (/*number*/ value) {
           this.$leftModel.$angle = value
           this.$rightModel.$angle = value
         }
       },
 
       distanceRelativeToEdge: {
-        $meta: function() {
+        $meta: function () {
           return [GraphMLAttribute().init({ defaultValue: true }), TypeAttribute(YBoolean.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$rightModel.$distanceRelativeToEdge
         },
-        set: function(/*boolean*/ value) {
+        set: function (/*boolean*/ value) {
           this.$leftModel.$distanceRelativeToEdge = value
           this.$rightModel.$distanceRelativeToEdge = value
         }
       },
 
       autoRotationEnabled: {
-        $meta: function() {
+        $meta: function () {
           return [GraphMLAttribute().init({ defaultValue: true }), TypeAttribute(YBoolean.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$rightModel.$autoRotationEnabled
         },
-        set: function(/*boolean*/ value) {
+        set: function (/*boolean*/ value) {
           this.$leftModel.$autoRotationEnabled = value
           this.$rightModel.$autoRotationEnabled = value
         }
       },
 
-      lookup: function(/*yfiles.lang.Class*/ type) {
+      lookup: function (/*yfiles.lang.Class*/ type) {
         if (type.isInstance(this)) {
           return this
         } else {
@@ -9664,7 +9663,7 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
         }
       },
 
-      getGeometry: function(
+      getGeometry: function (
         /*yfiles.graph.ILabel*/ label,
         /*yfiles.graph.ILabelModelParameter*/ parameter
       ) {
@@ -9676,23 +9675,22 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
         )
       },
 
-      createDefaultParameter: function() {
+      createDefaultParameter: function () {
         return new compat.graphml.xaml.RotatedSideSliderParameter(
           this.$rightModel.createDefaultParameter(),
           this
         )
       },
 
-      getContext: function(
+      getContext: function (
         /*yfiles.graph.ILabel*/ label,
         /*yfiles.graph.ILabelModelParameter*/ parameter
       ) {
         return yfiles.graph.Lookups.EMPTY
       },
 
-      getParameters: function(/*yfiles.graph.ILabel*/ label, /*yfiles.graph.ILabelModel*/ model) {
-        var /*yfiles.collections.List<yfiles.graph.ILabelModelParameter>*/
-          parameters = new List()
+      getParameters: function (/*yfiles.graph.ILabel*/ label, /*yfiles.graph.ILabelModel*/ model) {
+        var /*yfiles.collections.List<yfiles.graph.ILabelModelParameter>*/ parameters = new List()
         var /*compat.graphml.xaml.RotatedSideSliderEdgeLabelModel*/ rotatedModel
         var /*compat.graphml.xaml.RotatedSideSliderEdgeLabelModel*/ rotatedSideSliderEdgeLabelModel =
             model instanceof compat.graphml.xaml.RotatedSideSliderEdgeLabelModel
@@ -9747,7 +9745,7 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
         return parameters
       },
 
-      createParameterFromSource: function(
+      createParameterFromSource: function (
         /*number*/ segmentIndex,
         /*number*/ segmentRatio,
         /*boolean*/ rightOfEdge
@@ -9761,7 +9759,7 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
         )
       },
 
-      createParameterFromTarget: function(
+      createParameterFromTarget: function (
         /*number*/ segmentIndex,
         /*number*/ segmentRatio,
         /*boolean*/ rightOfEdge
@@ -9775,7 +9773,7 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
         )
       },
 
-      findBestParameter: function(
+      findBestParameter: function (
         /*yfiles.graph.ILabel*/ label,
         /*yfiles.graph.ILabelModel*/ model,
         /*yfiles.geometry.IOrientedRectangle*/ labelLayout
@@ -9800,14 +9798,14 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
     }
   })
 })
-yfiles.lang.module('compat.graphml.xaml', function(exports) {
-  exports.StringTemplatePortStyleExtension = new ClassDefinition(function() {
+yfiles.lang.module('compat.graphml.xaml', function (exports) {
+  exports.StringTemplatePortStyleExtension = new ClassDefinition(function () {
     return {
       $extends: compat.graphml.xaml.ControlStyleBaseExtension,
 
       $meta: [GraphMLAttribute().init({ contentProperty: 'svgContent' })],
 
-      constructor: function() {
+      constructor: function () {
         compat.graphml.xaml.ControlStyleBaseExtension.call(this)
         this.$initStringPortControlPortStyleExtension()
         this.$renderSize = new Size(5, 5)
@@ -9816,13 +9814,13 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $svgContent: null,
 
       svgContent: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(YString.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$svgContent
         },
-        set: function(/*string*/ value) {
+        set: function (/*string*/ value) {
           this.$svgContent = value
         }
       },
@@ -9830,13 +9828,13 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $renderSize: null,
 
       renderSize: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(Size.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$renderSize
         },
-        set: function(/*yfiles.geometry.Size*/ value) {
+        set: function (/*yfiles.geometry.Size*/ value) {
           this.$renderSize = value
         }
       },
@@ -9844,18 +9842,18 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $outlineShape: null,
 
       outlineShape: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(GeneralPath.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$outlineShape
         },
-        set: function(/*yfiles.geometry.GeneralPath*/ value) {
+        set: function (/*yfiles.geometry.GeneralPath*/ value) {
           this.$outlineShape = value
         }
       },
 
-      provideValue: function(/*yfiles.graph.ILookup*/ serviceProvider) {
+      provideValue: function (/*yfiles.graph.ILookup*/ serviceProvider) {
         var /*yfiles.styles.StringTemplatePortStyle*/ newInstance = new StringTemplatePortStyle()
         {
           newInstance.styleTag = this.$styleTag
@@ -9867,18 +9865,18 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
         return newInstance
       },
 
-      $initStringPortControlPortStyleExtension: function() {
+      $initStringPortControlPortStyleExtension: function () {
         this.$renderSize = new Size(0, 0)
       }
     }
   })
 })
-yfiles.lang.module('compat.graphml.xaml', function(exports) {
-  exports.TemplatePortStyleExtension = new ClassDefinition(function() {
+yfiles.lang.module('compat.graphml.xaml', function (exports) {
+  exports.TemplatePortStyleExtension = new ClassDefinition(function () {
     return {
       $extends: compat.graphml.xaml.ControlStyleBaseExtension,
 
-      constructor: function() {
+      constructor: function () {
         compat.graphml.xaml.ControlStyleBaseExtension.call(this)
         this.$initPortControlPortStyleExtension()
         this.$renderSize = new Size(5, 5)
@@ -9887,13 +9885,13 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $styleResourceKey: null,
 
       styleResourceKey: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(YString.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$styleResourceKey
         },
-        set: function(/*string*/ value) {
+        set: function (/*string*/ value) {
           this.$styleResourceKey = value
         }
       },
@@ -9901,13 +9899,13 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $renderSize: null,
 
       renderSize: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(Size.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$renderSize
         },
-        set: function(/*yfiles.geometry.Size*/ value) {
+        set: function (/*yfiles.geometry.Size*/ value) {
           this.$renderSize = value
         }
       },
@@ -9915,18 +9913,18 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $outlineShape: null,
 
       outlineShape: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(GeneralPath.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$outlineShape
         },
-        set: function(/*yfiles.geometry.GeneralPath*/ value) {
+        set: function (/*yfiles.geometry.GeneralPath*/ value) {
           this.$outlineShape = value
         }
       },
 
-      provideValue: function(/*yfiles.graph.ILookup*/ serviceProvider) {
+      provideValue: function (/*yfiles.graph.ILookup*/ serviceProvider) {
         var /*yfiles.styles.TemplatePortStyle*/ newInstance = new TemplatePortStyle()
         {
           newInstance.styleTag = this.$styleTag
@@ -9938,18 +9936,18 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
         return newInstance
       },
 
-      $initPortControlPortStyleExtension: function() {
+      $initPortControlPortStyleExtension: function () {
         this.$renderSize = new Size(0, 0)
       }
     }
   })
 })
-yfiles.lang.module('compat.graphml.xaml', function(exports) {
-  exports.PolylineEdgeStyleExtension = new ClassDefinition(function() {
+yfiles.lang.module('compat.graphml.xaml', function (exports) {
+  exports.PolylineEdgeStyleExtension = new ClassDefinition(function () {
     return {
       $extends: MarkupExtension,
 
-      constructor: function() {
+      constructor: function () {
         MarkupExtension.call(this)
         this.$sourceArrow = IArrow.NONE
         this.$targetArrow = IArrow.NONE
@@ -9959,13 +9957,13 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $pen: null,
 
       pen: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(Stroke.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$pen
         },
-        set: function(/*Stroke*/ value) {
+        set: function (/*Stroke*/ value) {
           this.$pen = value
         }
       },
@@ -9973,13 +9971,13 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $smoothing: 0,
 
       smoothing: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(YNumber.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$smoothing
         },
-        set: function(/*number*/ value) {
+        set: function (/*number*/ value) {
           this.$smoothing = value
         }
       },
@@ -9987,13 +9985,13 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $targetArrow: null,
 
       targetArrow: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(IArrow.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$targetArrow
         },
-        set: function(/*yfiles.styles.IArrow*/ value) {
+        set: function (/*yfiles.styles.IArrow*/ value) {
           this.$targetArrow = value
         }
       },
@@ -10001,18 +9999,18 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $sourceArrow: null,
 
       sourceArrow: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(IArrow.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$sourceArrow
         },
-        set: function(/*yfiles.styles.IArrow*/ value) {
+        set: function (/*yfiles.styles.IArrow*/ value) {
           this.$sourceArrow = value
         }
       },
 
-      provideValue: function(/*yfiles.graph.ILookup*/ serviceProvider) {
+      provideValue: function (/*yfiles.graph.ILookup*/ serviceProvider) {
         var /*yfiles.styles.PolylineEdgeStyle*/ newInstance = new PolylineEdgeStyle()
         {
           newInstance.stroke = this.$pen
@@ -10025,25 +10023,25 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
     }
   })
 })
-yfiles.lang.module('compat.graphml.xaml', function(exports) {
-  exports.SegmentRatioParameterExtension = new ClassDefinition(function() {
+yfiles.lang.module('compat.graphml.xaml', function (exports) {
+  exports.SegmentRatioParameterExtension = new ClassDefinition(function () {
     return {
       $extends: MarkupExtension,
 
-      constructor: function() {
+      constructor: function () {
         MarkupExtension.call(this)
       },
 
       $model: null,
 
       model: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(IPortLocationModel.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$model
         },
-        set: function(/*yfiles.graph.IPortLocationModel*/ value) {
+        set: function (/*yfiles.graph.IPortLocationModel*/ value) {
           this.$model = value
         }
       },
@@ -10051,13 +10049,13 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $index: 0,
 
       index: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(YNumber.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$index
         },
-        set: function(/*number*/ value) {
+        set: function (/*number*/ value) {
           this.$index = value
         }
       },
@@ -10065,18 +10063,18 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $ratio: 0,
 
       ratio: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(YNumber.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$ratio
         },
-        set: function(/*number*/ value) {
+        set: function (/*number*/ value) {
           this.$ratio = value
         }
       },
 
-      provideValue: function(/*yfiles.graph.ILookup*/ serviceProvider) {
+      provideValue: function (/*yfiles.graph.ILookup*/ serviceProvider) {
         var /*yfiles.graphml.SegmentRatioParameterExtension*/
           newInstance = new yfiles.graphml.SegmentRatioParameterExtension()
         {
@@ -10090,25 +10088,25 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
     }
   })
 })
-yfiles.lang.module('compat.graphml.xaml', function(exports) {
-  exports.SegmentRatioPortLocationModelExtension = new ClassDefinition(function() {
+yfiles.lang.module('compat.graphml.xaml', function (exports) {
+  exports.SegmentRatioPortLocationModelExtension = new ClassDefinition(function () {
     return {
       $extends: MarkupExtension,
 
-      constructor: function() {
+      constructor: function () {
         MarkupExtension.call(this)
       },
 
-      provideValue: function(/*yfiles.graph.ILookup*/ serviceProvider) {
+      provideValue: function (/*yfiles.graph.ILookup*/ serviceProvider) {
         return new SegmentRatioPortLocationModel()
       },
 
       $static: {
         INSTANCE: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(SegmentRatioPortLocationModel.$class)]
           },
-          get: function() {
+          get: function () {
             return SegmentRatioPortLocationModel.INSTANCE
           }
         }
@@ -10116,12 +10114,12 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
     }
   })
 })
-yfiles.lang.module('compat.graphml.xaml', function(exports) {
-  exports.ShinyPlateNodeStyleExtension = new ClassDefinition(function() {
+yfiles.lang.module('compat.graphml.xaml', function (exports) {
+  exports.ShinyPlateNodeStyleExtension = new ClassDefinition(function () {
     return {
       $extends: MarkupExtension,
 
-      constructor: function() {
+      constructor: function () {
         MarkupExtension.call(this)
         this.$initShinyPlateNodeStyleExtension()
         this.$radius = 5
@@ -10132,13 +10130,13 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $brush: null,
 
       brush: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(Fill.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$brush
         },
-        set: function(/*Fill*/ value) {
+        set: function (/*Fill*/ value) {
           this.$brush = value
         }
       },
@@ -10146,13 +10144,13 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $pen: null,
 
       pen: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(Stroke.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$pen
         },
-        set: function(/*yfiles.view.Stroke*/ value) {
+        set: function (/*yfiles.view.Stroke*/ value) {
           this.$pen = value
         }
       },
@@ -10160,13 +10158,13 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $radius: 0,
 
       radius: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(YNumber.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$radius
         },
-        set: function(/*number*/ value) {
+        set: function (/*number*/ value) {
           this.$radius = value
         }
       },
@@ -10174,13 +10172,13 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $drawShadow: false,
 
       drawShadow: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(YBoolean.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$drawShadow
         },
-        set: function(/*boolean*/ value) {
+        set: function (/*boolean*/ value) {
           this.$drawShadow = value
         }
       },
@@ -10188,18 +10186,18 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $insets: null,
 
       insets: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(Insets.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$insets
         },
-        set: function(/*yfiles.geometry.Insets*/ value) {
+        set: function (/*yfiles.geometry.Insets*/ value) {
           this.$insets = value
         }
       },
 
-      provideValue: function(/*yfiles.graph.ILookup*/ serviceProvider) {
+      provideValue: function (/*yfiles.graph.ILookup*/ serviceProvider) {
         var /*yfiles.styles.ShinyPlateNodeStyle*/ newInstance = new ShinyPlateNodeStyle()
         {
           newInstance.fill = this.$brush
@@ -10210,14 +10208,14 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
         return newInstance
       },
 
-      $initShinyPlateNodeStyleExtension: function() {
+      $initShinyPlateNodeStyleExtension: function () {
         this.$insets = new Insets(0)
       }
     }
   })
 })
-yfiles.lang.module('compat.graphml.xaml', function(exports) {
-  exports.ShapeNodeShape = new EnumDefinition(function() {
+yfiles.lang.module('compat.graphml.xaml', function (exports) {
+  exports.ShapeNodeShape = new EnumDefinition(function () {
     return {
       RECTANGLE: 0,
       ROUND_RECTANGLE: 1,
@@ -10239,12 +10237,12 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
     }
   })
 })
-yfiles.lang.module('compat.graphml.xaml', function(exports) {
-  exports.StripeLabelModelExtension = new ClassDefinition(function() {
+yfiles.lang.module('compat.graphml.xaml', function (exports) {
+  exports.StripeLabelModelExtension = new ClassDefinition(function () {
     return {
       $extends: MarkupExtension,
 
-      constructor: function() {
+      constructor: function () {
         MarkupExtension.call(this)
         this.$ratio = 0.5
       },
@@ -10252,13 +10250,13 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $useActualInsets: false,
 
       useActualInsets: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(YBoolean.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$useActualInsets
         },
-        set: function(/*boolean*/ value) {
+        set: function (/*boolean*/ value) {
           this.$useActualInsets = value
         }
       },
@@ -10266,18 +10264,18 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $ratio: 0,
 
       ratio: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(YNumber.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$ratio
         },
-        set: function(/*number*/ value) {
+        set: function (/*number*/ value) {
           this.$ratio = value
         }
       },
 
-      provideValue: function(/*yfiles.graph.ILookup*/ serviceProvider) {
+      provideValue: function (/*yfiles.graph.ILookup*/ serviceProvider) {
         var /*yfiles.graph.StripeLabelModel*/ newInstance = new StripeLabelModel()
         {
           newInstance.ratio = this.$ratio
@@ -10288,37 +10286,37 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
 
       $static: {
         NORTH: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(ILabelModelParameter.$class)]
           },
-          get: function() {
+          get: function () {
             return StripeLabelModel.NORTH
           }
         },
 
         SOUTH: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(ILabelModelParameter.$class)]
           },
-          get: function() {
+          get: function () {
             return StripeLabelModel.SOUTH
           }
         },
 
         EAST: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(ILabelModelParameter.$class)]
           },
-          get: function() {
+          get: function () {
             return StripeLabelModel.EAST
           }
         },
 
         WEST: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(ILabelModelParameter.$class)]
           },
-          get: function() {
+          get: function () {
             return StripeLabelModel.WEST
           }
         }
@@ -10326,12 +10324,12 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
     }
   })
 })
-yfiles.lang.module('compat.graphml.xaml', function(exports) {
-  exports.StripeLabelModelParameterExtension = new ClassDefinition(function() {
+yfiles.lang.module('compat.graphml.xaml', function (exports) {
+  exports.StripeLabelModelParameterExtension = new ClassDefinition(function () {
     return {
       $extends: MarkupExtension,
 
-      constructor: function() {
+      constructor: function () {
         MarkupExtension.call(this)
         this.$initStripeLabelModelParameterExtension()
         this.$position = compat.graphml.xaml.StripeLabelModelPosition.NORTH
@@ -10340,13 +10338,13 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $position: null,
 
       position: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(compat.graphml.xaml.StripeLabelModelPosition.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$position
         },
-        set: function(/*compat.graphml.xaml.StripeLabelModelPosition*/ value) {
+        set: function (/*compat.graphml.xaml.StripeLabelModelPosition*/ value) {
           this.$position = value
         }
       },
@@ -10354,18 +10352,18 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $model: null,
 
       model: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(ILabelModel.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$model
         },
-        set: function(/*yfiles.graph.ILabelModel*/ value) {
+        set: function (/*yfiles.graph.ILabelModel*/ value) {
           this.$model = value
         }
       },
 
-      provideValue: function(/*yfiles.graph.ILookup*/ serviceProvider) {
+      provideValue: function (/*yfiles.graph.ILookup*/ serviceProvider) {
         var /*yfiles.graphml.StripeLabelModelParameterExtension*/
           newInstance = new yfiles.graphml.StripeLabelModelParameterExtension()
         {
@@ -10376,14 +10374,14 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
         return coreExtension.provideValue(serviceProvider)
       },
 
-      $initStripeLabelModelParameterExtension: function() {
+      $initStripeLabelModelParameterExtension: function () {
         this.$position = compat.graphml.xaml.StripeLabelModelPosition.NORTH
       }
     }
   })
 })
-yfiles.lang.module('compat.graphml.xaml', function(exports) {
-  exports.StretchStripeLabelModelPosition = new EnumDefinition(function() {
+yfiles.lang.module('compat.graphml.xaml', function (exports) {
+  exports.StretchStripeLabelModelPosition = new EnumDefinition(function () {
     return {
       NORTH: 0,
       EAST: 1,
@@ -10392,12 +10390,12 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
     }
   })
 })
-yfiles.lang.module('compat.graphml.xaml', function(exports) {
-  exports.StretchStripeLabelModelExtension = new ClassDefinition(function() {
+yfiles.lang.module('compat.graphml.xaml', function (exports) {
+  exports.StretchStripeLabelModelExtension = new ClassDefinition(function () {
     return {
       $extends: MarkupExtension,
 
-      constructor: function() {
+      constructor: function () {
         MarkupExtension.call(this)
         this.$initStretchStripeLabelModelExtension()
         this.$insets = new Insets(0)
@@ -10406,13 +10404,13 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $insets: null,
 
       insets: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(Insets.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$insets
         },
-        set: function(/*yfiles.geometry.Insets*/ value) {
+        set: function (/*yfiles.geometry.Insets*/ value) {
           this.$insets = value
         }
       },
@@ -10420,18 +10418,18 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $useActualInsets: false,
 
       useActualInsets: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(YBoolean.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$useActualInsets
         },
-        set: function(/*boolean*/ value) {
+        set: function (/*boolean*/ value) {
           this.$useActualInsets = value
         }
       },
 
-      provideValue: function(/*yfiles.graph.ILookup*/ serviceProvider) {
+      provideValue: function (/*yfiles.graph.ILookup*/ serviceProvider) {
         var /*yfiles.graph.StretchStripeLabelModel*/ newInstance = new StretchStripeLabelModel()
         {
           newInstance.insets = this.$insets
@@ -10440,43 +10438,43 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
         return newInstance
       },
 
-      $initStretchStripeLabelModelExtension: function() {
+      $initStretchStripeLabelModelExtension: function () {
         this.$insets = new Insets(0)
       },
 
       $static: {
         NORTH: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(ILabelModelParameter.$class)]
           },
-          get: function() {
+          get: function () {
             return StretchStripeLabelModel.NORTH
           }
         },
 
         SOUTH: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(ILabelModelParameter.$class)]
           },
-          get: function() {
+          get: function () {
             return StretchStripeLabelModel.SOUTH
           }
         },
 
         EAST: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(ILabelModelParameter.$class)]
           },
-          get: function() {
+          get: function () {
             return StretchStripeLabelModel.EAST
           }
         },
 
         WEST: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(ILabelModelParameter.$class)]
           },
-          get: function() {
+          get: function () {
             return StretchStripeLabelModel.WEST
           }
         }
@@ -10484,12 +10482,12 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
     }
   })
 })
-yfiles.lang.module('compat.graphml.xaml', function(exports) {
-  exports.StretchStripeLabelModelParameterExtension = new ClassDefinition(function() {
+yfiles.lang.module('compat.graphml.xaml', function (exports) {
+  exports.StretchStripeLabelModelParameterExtension = new ClassDefinition(function () {
     return {
       $extends: MarkupExtension,
 
-      constructor: function() {
+      constructor: function () {
         MarkupExtension.call(this)
         this.$initStretchStripeLabelModelParameterExtension()
         this.$position = compat.graphml.xaml.StretchStripeLabelModelPosition.NORTH
@@ -10498,13 +10496,13 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $position: null,
 
       position: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(compat.graphml.xaml.StretchStripeLabelModelPosition.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$position
         },
-        set: function(/*compat.graphml.xaml.StretchStripeLabelModelPosition*/ value) {
+        set: function (/*compat.graphml.xaml.StretchStripeLabelModelPosition*/ value) {
           this.$position = value
         }
       },
@@ -10512,18 +10510,18 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $model: null,
 
       model: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(ILabelModel.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$model
         },
-        set: function(/*yfiles.graph.ILabelModel*/ value) {
+        set: function (/*yfiles.graph.ILabelModel*/ value) {
           this.$model = value
         }
       },
 
-      provideValue: function(/*yfiles.graph.ILookup*/ serviceProvider) {
+      provideValue: function (/*yfiles.graph.ILookup*/ serviceProvider) {
         var /*yfiles.graphml.StretchStripeLabelModelParameterExtension*/
           newInstance = new yfiles.graphml.StretchStripeLabelModelParameterExtension()
         {
@@ -10534,18 +10532,18 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
         return coreExtension.provideValue(serviceProvider)
       },
 
-      $initStretchStripeLabelModelParameterExtension: function() {
+      $initStretchStripeLabelModelParameterExtension: function () {
         this.$position = compat.graphml.xaml.StretchStripeLabelModelPosition.NORTH
       }
     }
   })
 })
-yfiles.lang.module('compat.graphml.xaml', function(exports) {
-  exports.SmartEdgeLabelModelExtension = new ClassDefinition(function() {
+yfiles.lang.module('compat.graphml.xaml', function (exports) {
+  exports.SmartEdgeLabelModelExtension = new ClassDefinition(function () {
     return {
       $extends: MarkupExtension,
 
-      constructor: function() {
+      constructor: function () {
         MarkupExtension.call(this)
         this.$autoRotation = true
       },
@@ -10553,13 +10551,13 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $autoRotation: false,
 
       autoRotation: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(YBoolean.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$autoRotation
         },
-        set: function(/*boolean*/ value) {
+        set: function (/*boolean*/ value) {
           this.$autoRotation = value
         }
       },
@@ -10567,18 +10565,18 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $angle: 0,
 
       angle: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(YNumber.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$angle
         },
-        set: function(/*number*/ value) {
+        set: function (/*number*/ value) {
           this.$angle = value
         }
       },
 
-      provideValue: function(/*yfiles.graph.ILookup*/ serviceProvider) {
+      provideValue: function (/*yfiles.graph.ILookup*/ serviceProvider) {
         var /*yfiles.graph.SmartEdgeLabelModel*/ newInstance = new SmartEdgeLabelModel()
         {
           newInstance.angle = this.$angle
@@ -10589,12 +10587,12 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
     }
   })
 })
-yfiles.lang.module('compat.graphml.xaml', function(exports) {
-  exports.SmartEdgeLabelModelParameterExtension = new ClassDefinition(function() {
+yfiles.lang.module('compat.graphml.xaml', function (exports) {
+  exports.SmartEdgeLabelModelParameterExtension = new ClassDefinition(function () {
     return {
       $extends: MarkupExtension,
 
-      constructor: function() {
+      constructor: function () {
         MarkupExtension.call(this)
         this.$segmentRatio = 0.5
         this.$location = compat.graphml.xaml.SliderParameterLocation.FROM_SOURCE
@@ -10603,13 +10601,13 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $model: null,
 
       model: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(ILabelModel.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$model
         },
-        set: function(/*yfiles.graph.ILabelModel*/ value) {
+        set: function (/*yfiles.graph.ILabelModel*/ value) {
           this.$model = value
         }
       },
@@ -10617,13 +10615,13 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $location: 0,
 
       location: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(compat.graphml.xaml.SliderParameterLocation.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$location
         },
-        set: function(/*compat.graphml.xaml.SliderParameterLocation*/ value) {
+        set: function (/*compat.graphml.xaml.SliderParameterLocation*/ value) {
           this.$location = value
         }
       },
@@ -10631,13 +10629,13 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $segmentIndex: 0,
 
       segmentIndex: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(YNumber.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$segmentIndex
         },
-        set: function(/*number*/ value) {
+        set: function (/*number*/ value) {
           this.$segmentIndex = value
         }
       },
@@ -10645,13 +10643,13 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $segmentRatio: 0,
 
       segmentRatio: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(YNumber.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$segmentRatio
         },
-        set: function(/*number*/ value) {
+        set: function (/*number*/ value) {
           this.$segmentRatio = value
         }
       },
@@ -10659,18 +10657,18 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $distance: 0,
 
       distance: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(YNumber.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$distance
         },
-        set: function(/*number*/ value) {
+        set: function (/*number*/ value) {
           this.$distance = value
         }
       },
 
-      provideValue: function(/*yfiles.graph.ILookup*/ serviceProvider) {
+      provideValue: function (/*yfiles.graph.ILookup*/ serviceProvider) {
         var /*yfiles.graphml.SmartEdgeLabelModelParameterExtension*/
           newInstance = new yfiles.graphml.SmartEdgeLabelModelParameterExtension()
         {
@@ -10686,13 +10684,13 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
     }
   })
 })
-yfiles.lang.module('compat.graphml.xaml', function(exports) {
-  exports.SliderEdgeLabelModel = new ClassDefinition(function() {
+yfiles.lang.module('compat.graphml.xaml', function (exports) {
+  exports.SliderEdgeLabelModel = new ClassDefinition(function () {
     return {
       $with: [ILabelModel, ILabelModelParameterProvider],
 
       constructor: {
-        SliderEdgeLabelModel: function() {
+        SliderEdgeLabelModel: function () {
           compat.graphml.xaml.SliderEdgeLabelModel.FromDistanceAngleAndEdgeRelativeDistance.call(
             this,
             0,
@@ -10701,7 +10699,7 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
           )
         },
 
-        FromDistanceAngleAndEdgeRelativeDistance: function(
+        FromDistanceAngleAndEdgeRelativeDistance: function (
           /*number*/ distance,
           /*number*/ angle,
           /*boolean*/ edgeRelativeDistance
@@ -10717,13 +10715,13 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $upY: 0,
 
       angle: {
-        $meta: function() {
+        $meta: function () {
           return [GraphMLAttribute().init({ defaultValue: 0.0 }), TypeAttribute(YNumber.$class)]
         },
-        get: function() {
+        get: function () {
           return Math.atan2(this.$upX, -this.$upY)
         },
-        set: function(/*number*/ value) {
+        set: function (/*number*/ value) {
           this.$upX = Math.sin(value)
           this.$upY = -Math.cos(value)
         }
@@ -10732,18 +10730,18 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $edgeRelativeDistance: false,
 
       edgeRelativeDistance: {
-        $meta: function() {
+        $meta: function () {
           return [GraphMLAttribute().init({ defaultValue: true }), TypeAttribute(YBoolean.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$edgeRelativeDistance
         },
-        set: function(/*boolean*/ value) {
+        set: function (/*boolean*/ value) {
           this.$edgeRelativeDistance = value
         }
       },
 
-      getGeometry: function(
+      getGeometry: function (
         /*yfiles.graph.ILabel*/ label,
         /*yfiles.graph.ILabelModelParameter*/ parameter
       ) {
@@ -10778,29 +10776,29 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $distance: 0,
 
       distance: {
-        $meta: function() {
+        $meta: function () {
           return [GraphMLAttribute().init({ defaultValue: 0.0 }), TypeAttribute(YNumber.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$distance
         },
-        set: function(/*number*/ value) {
+        set: function (/*number*/ value) {
           this.$distance = value
         }
       },
 
-      createDefaultParameter: function() {
+      createDefaultParameter: function () {
         return new compat.graphml.xaml.SliderEdgeLabelModel.SliderParameter(this, 0, 0.5)
       },
 
-      getContext: function(
+      getContext: function (
         /*yfiles.graph.ILabel*/ label,
         /*yfiles.graph.ILabelModelParameter*/ parameter
       ) {
         return yfiles.graph.Lookups.EMPTY
       },
 
-      createParameterFromSource: function(/*number*/ segmentIndex, /*number*/ segmentRatio) {
+      createParameterFromSource: function (/*number*/ segmentIndex, /*number*/ segmentRatio) {
         return new compat.graphml.xaml.SliderEdgeLabelModel.SliderParameter(
           this,
           segmentIndex,
@@ -10808,7 +10806,7 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
         )
       },
 
-      createParameterFromTarget: function(/*number*/ segmentIndex, /*number*/ segmentRatio) {
+      createParameterFromTarget: function (/*number*/ segmentIndex, /*number*/ segmentRatio) {
         return new compat.graphml.xaml.SliderEdgeLabelModel.SliderParameter(
           this,
           -1 - segmentIndex,
@@ -10816,7 +10814,7 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
         )
       },
 
-      lookup: function(/*yfiles.lang.Class*/ type) {
+      lookup: function (/*yfiles.lang.Class*/ type) {
         if (type === ILabelModelParameterProvider.$class) {
           return this
         }
@@ -10826,7 +10824,7 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
         return null
       },
 
-      getParameters: function(/*yfiles.graph.ILabel*/ label, /*yfiles.graph.ILabelModel*/ model) {
+      getParameters: function (/*yfiles.graph.ILabel*/ label, /*yfiles.graph.ILabelModel*/ model) {
         var /*compat.graphml.xaml.SliderEdgeLabelModel*/
           sliderEdgeLabelModel = /*(compat.graphml.xaml.SliderEdgeLabelModel)*/ model
         var /*yfiles.collections.List<yfiles.graph.ILabelModelParameter>*/ result = new List()
@@ -10846,12 +10844,12 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       },
 
       $static: {
-        getPathGeometry: function(/*yfiles.graph.IEdge*/ edge) {
+        getPathGeometry: function (/*yfiles.graph.IEdge*/ edge) {
           var /*yfiles.styles.IEdgeStyle*/ style = edge.style
           return style.renderer.getPathGeometry(edge, style)
         },
 
-        anchorGeometry: function(
+        anchorGeometry: function (
           /*yfiles.geometry.OrientedRectangle*/ geometry,
           /*boolean*/ edgeRelativeDistance,
           /*number*/ labelModelDistance,
@@ -10961,7 +10959,7 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
           geometry.anchorY = __xReference.value * m12 + __yReference.value * m22
         },
 
-        updatePosition: function(
+        updatePosition: function (
           /*number*/ distance,
           /*number*/ width,
           /*number*/ height,
@@ -11043,11 +11041,11 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
           }
         },
 
-        SliderParameter: new ClassDefinition(function() {
+        SliderParameter: new ClassDefinition(function () {
           return {
             $with: [ILabelModelParameter, IMarkupExtensionConverter],
 
-            constructor: function(
+            constructor: function (
               /*compat.graphml.xaml.SliderEdgeLabelModel*/ model,
               /*number*/ segmentIndex,
               /*number*/ ratio
@@ -11063,7 +11061,7 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
 
             $ratio: 0,
 
-            setAnchor: function(
+            setAnchor: function (
               /*compat.graphml.xaml.SliderEdgeLabelModel*/ labelModel,
               /*yfiles.graph.IEdge*/ edge,
               /*yfiles.geometry.OrientedRectangle*/ geometry
@@ -11112,24 +11110,24 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
             },
 
             model: {
-              get: function() {
+              get: function () {
                 return this.$model
               }
             },
 
-            supports: function(/*yfiles.graph.ILabel*/ label) {
+            supports: function (/*yfiles.graph.ILabel*/ label) {
               return IEdge.isInstance(label.owner)
             },
 
-            clone: function() {
+            clone: function () {
               return this.memberwiseClone()
             },
 
-            canConvert: function(/*yfiles.graphml.IWriteContext*/ context, /*Object*/ value) {
+            canConvert: function (/*yfiles.graphml.IWriteContext*/ context, /*Object*/ value) {
               return true
             },
 
-            convert: function(/*yfiles.graphml.IWriteContext*/ context, /*Object*/ value) {
+            convert: function (/*yfiles.graphml.IWriteContext*/ context, /*Object*/ value) {
               if (this.$segmentIndex < 0) {
                 var /*compat.graphml.xaml.SliderLabelModelParameterExtension*/
                   newInstance = new compat.graphml.xaml.SliderLabelModelParameterExtension()
@@ -11158,12 +11156,12 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
     }
   })
 })
-yfiles.lang.module('compat.graphml.xaml', function(exports) {
-  exports.SliderLabelModelParameterExtension = new ClassDefinition(function() {
+yfiles.lang.module('compat.graphml.xaml', function (exports) {
+  exports.SliderLabelModelParameterExtension = new ClassDefinition(function () {
     return {
       $extends: MarkupExtension,
 
-      constructor: function() {
+      constructor: function () {
         MarkupExtension.call(this)
         this.$segmentRatio = 0.5
         this.$location = compat.graphml.xaml.SliderParameterLocation.FROM_SOURCE
@@ -11172,13 +11170,13 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $model: null,
 
       model: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(ILabelModel.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$model
         },
-        set: function(/*yfiles.graph.ILabelModel*/ value) {
+        set: function (/*yfiles.graph.ILabelModel*/ value) {
           this.$model = value
         }
       },
@@ -11186,7 +11184,7 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $location: 0,
 
       location: {
-        $meta: function() {
+        $meta: function () {
           return [
             GraphMLAttribute().init({
               defaultValue: compat.graphml.xaml.SliderParameterLocation.FROM_SOURCE
@@ -11194,10 +11192,10 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
             TypeAttribute(compat.graphml.xaml.SliderParameterLocation.$class)
           ]
         },
-        get: function() {
+        get: function () {
           return this.$location
         },
-        set: function(/*compat.graphml.xaml.SliderParameterLocation*/ value) {
+        set: function (/*compat.graphml.xaml.SliderParameterLocation*/ value) {
           this.$location = value
         }
       },
@@ -11205,13 +11203,13 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $segmentIndex: 0,
 
       segmentIndex: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(YNumber.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$segmentIndex
         },
-        set: function(/*number*/ value) {
+        set: function (/*number*/ value) {
           this.$segmentIndex = value
         }
       },
@@ -11219,18 +11217,18 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $segmentRatio: 0,
 
       segmentRatio: {
-        $meta: function() {
+        $meta: function () {
           return [GraphMLAttribute().init({ defaultValue: 0.5 }), TypeAttribute(YNumber.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$segmentRatio
         },
-        set: function(/*number*/ value) {
+        set: function (/*number*/ value) {
           this.$segmentRatio = value
         }
       },
 
-      provideValue: function(/*yfiles.graph.ILookup*/ serviceProvider) {
+      provideValue: function (/*yfiles.graph.ILookup*/ serviceProvider) {
         var /*compat.graphml.xaml.SliderEdgeLabelModel*/ exModel =
             this.$model instanceof compat.graphml.xaml.SliderEdgeLabelModel
               ? /*(compat.graphml.xaml.SliderEdgeLabelModel)*/ this.$model
@@ -11251,47 +11249,47 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
     }
   })
 })
-yfiles.lang.module('compat.graphml.xaml', function(exports) {
-  exports.ShadowNodeStyleDecoratorExtension = new ClassDefinition(function() {
+yfiles.lang.module('compat.graphml.xaml', function (exports) {
+  exports.ShadowNodeStyleDecoratorExtension = new ClassDefinition(function () {
     return {
       $extends: MarkupExtension,
 
       $meta: [GraphMLAttribute().init({ contentProperty: 'wrapped' })],
 
-      constructor: function() {
+      constructor: function () {
         MarkupExtension.call(this)
       },
 
       $wrapped: null,
 
       wrapped: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(INodeStyle.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$wrapped
         },
-        set: function(/*yfiles.styles.INodeStyle*/ value) {
+        set: function (/*yfiles.styles.INodeStyle*/ value) {
           this.$wrapped = value
         }
       },
 
-      provideValue: function(/*yfiles.graph.ILookup*/ serviceProvider) {
+      provideValue: function (/*yfiles.graph.ILookup*/ serviceProvider) {
         return new ShadowNodeStyleDecorator(this.$wrapped)
       }
     }
   })
 })
-yfiles.lang.module('compat.graphml.xaml', function(exports) {
-  exports.TableRenderingOrder = new EnumDefinition(function() {
+yfiles.lang.module('compat.graphml.xaml', function (exports) {
+  exports.TableRenderingOrder = new EnumDefinition(function () {
     return {
       COLUMNS_FIRST: 0,
       ROWS_FIRST: 1
     }
   })
 })
-yfiles.lang.module('compat.graphml.xaml', function(exports) {
-  exports.StringTrimming = new EnumDefinition(function() {
+yfiles.lang.module('compat.graphml.xaml', function (exports) {
+  exports.StringTrimming = new EnumDefinition(function () {
     return {
       CHARACTER: 1,
       ELLIPSIS_CHARACTER: 2,
@@ -11301,12 +11299,12 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
     }
   })
 })
-yfiles.lang.module('compat.graphml.xaml', function(exports) {
-  exports.TableNodeStyleExtension = new ClassDefinition(function() {
+yfiles.lang.module('compat.graphml.xaml', function (exports) {
+  exports.TableNodeStyleExtension = new ClassDefinition(function () {
     return {
       $extends: MarkupExtension,
 
-      constructor: function() {
+      constructor: function () {
         MarkupExtension.call(this)
         this.$initTableNodeStyleExtension()
         this.$tableRenderingOrder = compat.graphml.xaml.TableRenderingOrder.COLUMNS_FIRST
@@ -11315,13 +11313,13 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $table: null,
 
       table: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(ITable.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$table
         },
-        set: function(/*yfiles.graph.ITable*/ value) {
+        set: function (/*yfiles.graph.ITable*/ value) {
           this.$table = value
         }
       },
@@ -11333,31 +11331,31 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $tableRenderingOrder: null,
 
       tableRenderingOrder: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(compat.graphml.xaml.TableRenderingOrder.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$tableRenderingOrder
         },
-        set: function(/*compat.graphml.xaml.TableRenderingOrder*/ value) {
+        set: function (/*compat.graphml.xaml.TableRenderingOrder*/ value) {
           this.$tableRenderingOrder = value
         }
       },
 
       backgroundStyle: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(INodeStyle.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$backgroundStyle
         },
-        set: function(/*yfiles.styles.INodeStyle*/ value) {
+        set: function (/*yfiles.styles.INodeStyle*/ value) {
           this.$backgroundStyleSet = true
           this.$backgroundStyle = value
         }
       },
 
-      provideValue: function(/*yfiles.graph.ILookup*/ serviceProvider) {
+      provideValue: function (/*yfiles.graph.ILookup*/ serviceProvider) {
         var /*yfiles.styles.TableNodeStyle*/ newInstance = new TableNodeStyle()
         {
           newInstance.tableRenderingOrder = /*(yfiles.styles.TableRenderingOrder)*/ this.$tableRenderingOrder
@@ -11370,14 +11368,14 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
         return tableNodeStyle
       },
 
-      $initTableNodeStyleExtension: function() {
+      $initTableNodeStyleExtension: function () {
         this.$tableRenderingOrder = compat.graphml.xaml.TableRenderingOrder.COLUMNS_FIRST
       }
     }
   })
 })
-yfiles.lang.module('compat.graphml.xaml', function(exports) {
-  exports.TextAlignment = new EnumDefinition(function() {
+yfiles.lang.module('compat.graphml.xaml', function (exports) {
+  exports.TextAlignment = new EnumDefinition(function () {
     return {
       CENTER: 0,
       LEFT: 1,
@@ -11385,8 +11383,8 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
     }
   })
 })
-yfiles.lang.module('compat.graphml.xaml', function(exports) {
-  exports.VerticalAlignment = new EnumDefinition(function() {
+yfiles.lang.module('compat.graphml.xaml', function (exports) {
+  exports.VerticalAlignment = new EnumDefinition(function () {
     return {
       CENTER: 0,
       TOP: 1,
@@ -11394,12 +11392,12 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
     }
   })
 })
-yfiles.lang.module('compat.graphml.xaml', function(exports) {
-  exports.DynamicTableNodeStyleExtension = new ClassDefinition(function() {
+yfiles.lang.module('compat.graphml.xaml', function (exports) {
+  exports.DynamicTableNodeStyleExtension = new ClassDefinition(function () {
     return {
       $extends: MarkupExtension,
 
-      constructor: function() {
+      constructor: function () {
         MarkupExtension.call(this)
         this.$initDynamicTableNodeStyleExtension()
       },
@@ -11411,31 +11409,31 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $tableRenderingOrder: null,
 
       tableRenderingOrder: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(compat.graphml.xaml.TableRenderingOrder.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$tableRenderingOrder
         },
-        set: function(/*compat.graphml.xaml.TableRenderingOrder*/ value) {
+        set: function (/*compat.graphml.xaml.TableRenderingOrder*/ value) {
           this.$tableRenderingOrder = value
         }
       },
 
       backgroundStyle: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(INodeStyle.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$backgroundStyle
         },
-        set: function(/*yfiles.styles.INodeStyle*/ value) {
+        set: function (/*yfiles.styles.INodeStyle*/ value) {
           this.$backgroundStyleSet = true
           this.$backgroundStyle = value
         }
       },
 
-      provideValue: function(/*yfiles.graph.ILookup*/ serviceProvider) {
+      provideValue: function (/*yfiles.graph.ILookup*/ serviceProvider) {
         var /*yfiles.styles.TableNodeStyle*/ newInstance = new TableNodeStyle(
             null,
             new compat.graphml.xaml.DynamicTableNodeStyleExtension.DynamicTableNodeStyleRenderer()
@@ -11450,20 +11448,20 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
         return tableNodeStyle
       },
 
-      $initDynamicTableNodeStyleExtension: function() {
+      $initDynamicTableNodeStyleExtension: function () {
         this.$tableRenderingOrder = compat.graphml.xaml.TableRenderingOrder.COLUMNS_FIRST
       },
 
       $static: {
-        DynamicTableNodeStyleRenderer: new ClassDefinition(function() {
+        DynamicTableNodeStyleRenderer: new ClassDefinition(function () {
           return {
             $extends: TableNodeStyleRenderer,
 
-            constructor: function() {
+            constructor: function () {
               TableNodeStyleRenderer.call(this)
             },
 
-            getTable: function() {
+            getTable: function () {
               var /*Object*/ tmp
               return ITable.isInstance((tmp = this.$node.tag))
                 ? /*(yfiles.graph.ITable)*/ tmp
@@ -11475,8 +11473,8 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
     }
   })
 })
-yfiles.lang.module('compat.graphml.xaml', function(exports) {
-  exports.SliderParameterLocation = new EnumDefinition(function() {
+yfiles.lang.module('compat.graphml.xaml', function (exports) {
+  exports.SliderParameterLocation = new EnumDefinition(function () {
     return {
       $flags: true,
       LEFT: 1,
@@ -11486,12 +11484,12 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
     }
   })
 })
-yfiles.lang.module('compat.graphml.xaml', function(exports) {
-  exports.SideSliderEdgeLabelModel = new ClassDefinition(function() {
+yfiles.lang.module('compat.graphml.xaml', function (exports) {
+  exports.SideSliderEdgeLabelModel = new ClassDefinition(function () {
     return {
       $with: [ILabelModel, ILabelModelParameterProvider],
 
-      constructor: function() {
+      constructor: function () {
         this.$initSideSliderEdgeLabelModel()
       },
 
@@ -11500,13 +11498,13 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $rightSlider: null,
 
       distance: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(YNumber.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$leftSlider.$distance - 0.01
         },
-        set: function(/*number*/ value) {
+        set: function (/*number*/ value) {
           if (value < 0) {
             throw new Exception('Value must be non-negative!', 'argument')
           }
@@ -11516,32 +11514,32 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       },
 
       edgeRelativePosition: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(YBoolean.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$leftSlider.$edgeRelativeDistance
         },
-        set: function(/*boolean*/ value) {
+        set: function (/*boolean*/ value) {
           this.$leftSlider.$edgeRelativeDistance = value
           this.$rightSlider.$edgeRelativeDistance = value
         }
       },
 
       angle: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(YNumber.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$leftSlider.angle
         },
-        set: function(/*number*/ value) {
+        set: function (/*number*/ value) {
           this.$leftSlider.angle = value
           this.$rightSlider.angle = value
         }
       },
 
-      getGeometry: function(
+      getGeometry: function (
         /*yfiles.graph.ILabel*/ label,
         /*yfiles.graph.ILabelModelParameter*/ parameter
       ) {
@@ -11556,7 +11554,7 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
         }
       },
 
-      createDefaultParameter: function() {
+      createDefaultParameter: function () {
         return new compat.graphml.xaml.SideSliderEdgeLabelModel.SideSliderParameter(
           this,
           compat.graphml.xaml.SliderParameterLocation.FROM_SOURCE |
@@ -11565,14 +11563,14 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
         )
       },
 
-      getContext: function(
+      getContext: function (
         /*yfiles.graph.ILabel*/ label,
         /*yfiles.graph.ILabelModelParameter*/ parameter
       ) {
         return yfiles.graph.Lookups.EMPTY
       },
 
-      createParameterLeftFromSource: function(/*number*/ segmentIndex, /*number*/ segmentRatio) {
+      createParameterLeftFromSource: function (/*number*/ segmentIndex, /*number*/ segmentRatio) {
         return new compat.graphml.xaml.SideSliderEdgeLabelModel.SideSliderParameter(
           this,
           compat.graphml.xaml.SliderParameterLocation.LEFT |
@@ -11581,7 +11579,7 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
         )
       },
 
-      createParameterRightFromSource: function(/*number*/ segmentIndex, /*number*/ segmentRatio) {
+      createParameterRightFromSource: function (/*number*/ segmentIndex, /*number*/ segmentRatio) {
         return new compat.graphml.xaml.SideSliderEdgeLabelModel.SideSliderParameter(
           this,
           compat.graphml.xaml.SliderParameterLocation.FROM_SOURCE |
@@ -11590,7 +11588,7 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
         )
       },
 
-      createParameterLeftFromTarget: function(/*number*/ segmentIndex, /*number*/ segmentRatio) {
+      createParameterLeftFromTarget: function (/*number*/ segmentIndex, /*number*/ segmentRatio) {
         return new compat.graphml.xaml.SideSliderEdgeLabelModel.SideSliderParameter(
           this,
           compat.graphml.xaml.SliderParameterLocation.FROM_TARGET |
@@ -11599,7 +11597,7 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
         )
       },
 
-      createParameterRightFromTarget: function(/*number*/ segmentIndex, /*number*/ segmentRatio) {
+      createParameterRightFromTarget: function (/*number*/ segmentIndex, /*number*/ segmentRatio) {
         return new compat.graphml.xaml.SideSliderEdgeLabelModel.SideSliderParameter(
           this,
           compat.graphml.xaml.SliderParameterLocation.FROM_TARGET |
@@ -11608,7 +11606,7 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
         )
       },
 
-      lookup: function(/*yfiles.lang.Class*/ type) {
+      lookup: function (/*yfiles.lang.Class*/ type) {
         if (type === ILabelModelParameterProvider.$class) {
           return this
         }
@@ -11618,7 +11616,7 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
         return null
       },
 
-      getParameters: function(/*yfiles.graph.ILabel*/ label, /*yfiles.graph.ILabelModel*/ model) {
+      getParameters: function (/*yfiles.graph.ILabel*/ label, /*yfiles.graph.ILabelModel*/ model) {
         var /*compat.graphml.xaml.SideSliderEdgeLabelModel*/
           mmodel = /*(compat.graphml.xaml.SideSliderEdgeLabelModel)*/ model
         var /*yfiles.collections.List<yfiles.graph.ILabelModelParameter>*/ list = new List()
@@ -11671,7 +11669,7 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
         return list
       },
 
-      $initSideSliderEdgeLabelModel: function() {
+      $initSideSliderEdgeLabelModel: function () {
         this.$leftSlider = new compat.graphml.xaml.SliderEdgeLabelModel.FromDistanceAngleAndEdgeRelativeDistance(
           1,
           0,
@@ -11685,11 +11683,11 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       },
 
       $static: {
-        SideSliderParameter: new ClassDefinition(function() {
+        SideSliderParameter: new ClassDefinition(function () {
           return {
             $with: [ILabelModelParameter, IMarkupExtensionConverter],
 
-            constructor: function(
+            constructor: function (
               /*compat.graphml.xaml.SideSliderEdgeLabelModel*/ model,
               /*compat.graphml.xaml.SliderParameterLocation*/ location,
               /*yfiles.graph.ILabelModelParameter*/ parameter
@@ -11706,24 +11704,24 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
             $parameter: null,
 
             model: {
-              get: function() {
+              get: function () {
                 return this.$model
               }
             },
 
-            supports: function(/*yfiles.graph.ILabel*/ label) {
+            supports: function (/*yfiles.graph.ILabel*/ label) {
               return this.$parameter.supports(label)
             },
 
-            clone: function() {
+            clone: function () {
               return this
             },
 
-            canConvert: function(/*yfiles.graphml.IWriteContext*/ context, /*Object*/ value) {
+            canConvert: function (/*yfiles.graphml.IWriteContext*/ context, /*Object*/ value) {
               return true
             },
 
-            convert: function(/*yfiles.graphml.IWriteContext*/ context, /*Object*/ value) {
+            convert: function (/*yfiles.graphml.IWriteContext*/ context, /*Object*/ value) {
               var /*compat.graphml.xaml.SliderEdgeLabelModel.SliderParameter*/
                 parameter = /*(compat.graphml.xaml.SliderEdgeLabelModel.SliderParameter)*/ this
                   .$parameter
@@ -11758,12 +11756,12 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
     }
   })
 })
-yfiles.lang.module('compat.graphml.xaml', function(exports) {
-  exports.SideSliderLabelModelParameterExtension = new ClassDefinition(function() {
+yfiles.lang.module('compat.graphml.xaml', function (exports) {
+  exports.SideSliderLabelModelParameterExtension = new ClassDefinition(function () {
     return {
       $extends: MarkupExtension,
 
-      constructor: function() {
+      constructor: function () {
         MarkupExtension.call(this)
         this.$segmentRatio = 0.5
         this.$location =
@@ -11774,16 +11772,16 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $model: null,
 
       model: {
-        $meta: function() {
+        $meta: function () {
           return [
             GraphMLAttribute().init({ defaultValue: null }),
             TypeAttribute(ILabelModel.$class)
           ]
         },
-        get: function() {
+        get: function () {
           return this.$model
         },
-        set: function(/*yfiles.graph.ILabelModel*/ value) {
+        set: function (/*yfiles.graph.ILabelModel*/ value) {
           this.$model = value
         }
       },
@@ -11791,13 +11789,13 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $location: 0,
 
       location: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(compat.graphml.xaml.SliderParameterLocation.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$location
         },
-        set: function(/*compat.graphml.xaml.SliderParameterLocation*/ value) {
+        set: function (/*compat.graphml.xaml.SliderParameterLocation*/ value) {
           this.$location = value
         }
       },
@@ -11805,13 +11803,13 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $segmentIndex: 0,
 
       segmentIndex: {
-        $meta: function() {
+        $meta: function () {
           return [GraphMLAttribute().init({ defaultValue: 0 }), TypeAttribute(YNumber.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$segmentIndex
         },
-        set: function(/*number*/ value) {
+        set: function (/*number*/ value) {
           this.$segmentIndex = value
         }
       },
@@ -11819,18 +11817,18 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $segmentRatio: 0,
 
       segmentRatio: {
-        $meta: function() {
+        $meta: function () {
           return [GraphMLAttribute().init({ defaultValue: 0.5 }), TypeAttribute(YNumber.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$segmentRatio
         },
-        set: function(/*number*/ value) {
+        set: function (/*number*/ value) {
           this.$segmentRatio = value
         }
       },
 
-      provideValue: function(/*yfiles.graph.ILookup*/ serviceProvider) {
+      provideValue: function (/*yfiles.graph.ILookup*/ serviceProvider) {
         var /*compat.graphml.xaml.SideSliderEdgeLabelModel*/ exModel =
             this.$model instanceof compat.graphml.xaml.SideSliderEdgeLabelModel
               ? /*(compat.graphml.xaml.SideSliderEdgeLabelModel)*/ this.$model
@@ -11862,12 +11860,12 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
     }
   })
 })
-yfiles.lang.module('compat.graphml.xaml', function(exports) {
-  exports.ShapeNodeStyleExtension = new ClassDefinition(function() {
+yfiles.lang.module('compat.graphml.xaml', function (exports) {
+  exports.ShapeNodeStyleExtension = new ClassDefinition(function () {
     return {
       $extends: MarkupExtension,
 
-      constructor: function() {
+      constructor: function () {
         MarkupExtension.call(this)
         this.$initShapeNodeStyleExtension()
         this.$shape = compat.graphml.xaml.ShapeNodeShape.RECTANGLE
@@ -11878,13 +11876,13 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $pen: null,
 
       pen: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(Stroke.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$pen
         },
-        set: function(/*yfiles.view.Stroke*/ value) {
+        set: function (/*yfiles.view.Stroke*/ value) {
           this.$pen = value
         }
       },
@@ -11892,13 +11890,13 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $brush: null,
 
       brush: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(Fill.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$brush
         },
-        set: function(/*yfiles.view.Fill*/ value) {
+        set: function (/*yfiles.view.Fill*/ value) {
           this.$brush = value
         }
       },
@@ -11906,18 +11904,18 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $shape: null,
 
       shape: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(compat.graphml.xaml.ShapeNodeShape.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$shape
         },
-        set: function(/*compat.graphml.xaml.ShapeNodeShape*/ value) {
+        set: function (/*compat.graphml.xaml.ShapeNodeShape*/ value) {
           this.$shape = value
         }
       },
 
-      provideValue: function(/*yfiles.graph.ILookup*/ serviceProvider) {
+      provideValue: function (/*yfiles.graph.ILookup*/ serviceProvider) {
         var /*yfiles.styles.ShapeNodeStyle*/ newInstance = new ShapeNodeStyle()
         {
           newInstance.fill = this.$brush
@@ -11927,18 +11925,18 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
         return newInstance
       },
 
-      $initShapeNodeStyleExtension: function() {
+      $initShapeNodeStyleExtension: function () {
         this.$shape = compat.graphml.xaml.ShapeNodeShape.RECTANGLE
       }
     }
   })
 })
-yfiles.lang.module('compat.graphml.xaml', function(exports) {
-  exports.SimpleLabelStyleExtension = new ClassDefinition(function() {
+yfiles.lang.module('compat.graphml.xaml', function (exports) {
+  exports.SimpleLabelStyleExtension = new ClassDefinition(function () {
     return {
       $extends: MarkupExtension,
 
-      constructor: function() {
+      constructor: function () {
         MarkupExtension.call(this)
         this.$initSimpleLabelStyleExtension()
         this.$textBrush = Fill.BLACK
@@ -11952,13 +11950,13 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $backgroundBrush: null,
 
       backgroundBrush: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(Fill.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$backgroundBrush
         },
-        set: function(/*yfiles.view.Fill*/ value) {
+        set: function (/*yfiles.view.Fill*/ value) {
           this.$backgroundBrush = value
         }
       },
@@ -11966,13 +11964,13 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $verticalTextAlignment: null,
 
       verticalTextAlignment: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(compat.graphml.xaml.VerticalAlignment.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$verticalTextAlignment
         },
-        set: function(/*compat.graphml.xaml.VerticalAlignment*/ value) {
+        set: function (/*compat.graphml.xaml.VerticalAlignment*/ value) {
           this.$verticalTextAlignment = value
         }
       },
@@ -11980,13 +11978,13 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $textAlignment: null,
 
       textAlignment: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(compat.graphml.xaml.TextAlignment.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$textAlignment
         },
-        set: function(/*compat.graphml.xaml.TextAlignment*/ value) {
+        set: function (/*compat.graphml.xaml.TextAlignment*/ value) {
           this.$textAlignment = value
         }
       },
@@ -11994,13 +11992,13 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $clipText: false,
 
       clipText: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(YBoolean.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$clipText
         },
-        set: function(/*boolean*/ value) {
+        set: function (/*boolean*/ value) {
           this.$clipText = value
         }
       },
@@ -12008,13 +12006,13 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $trimming: null,
 
       trimming: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(compat.graphml.xaml.StringTrimming.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$trimming
         },
-        set: function(/*compat.graphml.xaml.StringTrimming*/ value) {
+        set: function (/*compat.graphml.xaml.StringTrimming*/ value) {
           this.$trimming = value
         }
       },
@@ -12022,13 +12020,13 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $backgroundPen: null,
 
       backgroundPen: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(Stroke.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$backgroundPen
         },
-        set: function(/*yfiles.view.Stroke*/ value) {
+        set: function (/*yfiles.view.Stroke*/ value) {
           this.$backgroundPen = value
         }
       },
@@ -12036,13 +12034,13 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $typeface: null,
 
       typeface: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(Font.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$typeface
         },
-        set: function(/*yfiles.view.Font*/ value) {
+        set: function (/*yfiles.view.Font*/ value) {
           this.$typeface = value
         }
       },
@@ -12050,13 +12048,13 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $autoFlip: false,
 
       autoFlip: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(YBoolean.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$autoFlip
         },
-        set: function(/*boolean*/ value) {
+        set: function (/*boolean*/ value) {
           this.$autoFlip = value
         }
       },
@@ -12064,18 +12062,18 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $textBrush: null,
 
       textBrush: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(Fill.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$textBrush
         },
-        set: function(/*yfiles.view.Fill*/ value) {
+        set: function (/*yfiles.view.Fill*/ value) {
           this.$textBrush = value
         }
       },
 
-      provideValue: function(/*yfiles.graph.ILookup*/ serviceProvider) {
+      provideValue: function (/*yfiles.graph.ILookup*/ serviceProvider) {
         var /*yfiles.styles.DefaultLabelStyle*/ newInstance = new DefaultLabelStyle()
         {
           newInstance.autoFlip = this.$autoFlip
@@ -12091,7 +12089,7 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
         return newInstance
       },
 
-      $initSimpleLabelStyleExtension: function() {
+      $initSimpleLabelStyleExtension: function () {
         this.$verticalTextAlignment = compat.graphml.xaml.VerticalAlignment.CENTER
         this.$textAlignment = compat.graphml.xaml.TextAlignment.CENTER
         this.$trimming = compat.graphml.xaml.StringTrimming.CHARACTER
@@ -12099,30 +12097,30 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
     }
   })
 })
-yfiles.lang.module('compat.graphml.xaml', function(exports) {
-  exports.SimplePortStyleExtension = new ClassDefinition(function() {
+yfiles.lang.module('compat.graphml.xaml', function (exports) {
+  exports.SimplePortStyleExtension = new ClassDefinition(function () {
     return {
       $extends: MarkupExtension,
 
-      constructor: function() {
+      constructor: function () {
         MarkupExtension.call(this)
       },
 
       $brush: null,
 
       brush: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(Fill.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$brush
         },
-        set: function(/*yfiles.view.Fill*/ value) {
+        set: function (/*yfiles.view.Fill*/ value) {
           this.$brush = value
         }
       },
 
-      provideValue: function(/*yfiles.graph.ILookup*/ serviceProvider) {
+      provideValue: function (/*yfiles.graph.ILookup*/ serviceProvider) {
         var /*yfiles.styles.NodeStylePortStyleAdapter*/ newInstance = new NodeStylePortStyleAdapter()
         {
           newInstance.renderSize = new Size(4, 4)
@@ -12139,12 +12137,12 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
     }
   })
 })
-yfiles.lang.module('compat.graphml.xaml', function(exports) {
-  exports.LineToExtension = new ClassDefinition(function() {
+yfiles.lang.module('compat.graphml.xaml', function (exports) {
+  exports.LineToExtension = new ClassDefinition(function () {
     return {
       $extends: MarkupExtension,
 
-      constructor: function() {
+      constructor: function () {
         MarkupExtension.call(this)
         this.$initLineToExtension()
       },
@@ -12152,18 +12150,18 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $point: null,
 
       point: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(Point.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$point
         },
-        set: function(/*yfiles.geometry.Point*/ value) {
+        set: function (/*yfiles.geometry.Point*/ value) {
           this.$point = value
         }
       },
 
-      provideValue: function(/*yfiles.graph.ILookup*/ serviceProvider) {
+      provideValue: function (/*yfiles.graph.ILookup*/ serviceProvider) {
         var /*yfiles.graphml.LineTo*/ newInstance = new yfiles.graphml.LineTo()
         {
           newInstance.point = this.$point
@@ -12171,18 +12169,18 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
         return newInstance
       },
 
-      $initLineToExtension: function() {
+      $initLineToExtension: function () {
         this.$point = new Point(0, 0)
       }
     }
   })
 })
-yfiles.lang.module('compat.graphml.xaml', function(exports) {
-  exports.NodeStylePortStyleAdapterExtension = new ClassDefinition(function() {
+yfiles.lang.module('compat.graphml.xaml', function (exports) {
+  exports.NodeStylePortStyleAdapterExtension = new ClassDefinition(function () {
     return {
       $extends: MarkupExtension,
 
-      constructor: function() {
+      constructor: function () {
         MarkupExtension.call(this)
         this.$initNodeStylePortStyleAdapterExtension()
         this.$renderSize = new Size(5, 5)
@@ -12191,13 +12189,13 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $nodeStyle: null,
 
       nodeStyle: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(INodeStyle.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$nodeStyle
         },
-        set: function(/*yfiles.styles.INodeStyle*/ value) {
+        set: function (/*yfiles.styles.INodeStyle*/ value) {
           this.$nodeStyle = value
         }
       },
@@ -12205,18 +12203,18 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $renderSize: null,
 
       renderSize: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(Size.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$renderSize
         },
-        set: function(/*yfiles.geometry.Size*/ value) {
+        set: function (/*yfiles.geometry.Size*/ value) {
           this.$renderSize = value
         }
       },
 
-      provideValue: function(/*yfiles.graph.ILookup*/ serviceProvider) {
+      provideValue: function (/*yfiles.graph.ILookup*/ serviceProvider) {
         var /*yfiles.styles.NodeStylePortStyleAdapter*/ newInstance = new NodeStylePortStyleAdapter()
         {
           newInstance.nodeStyle = this.$nodeStyle
@@ -12225,18 +12223,18 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
         return newInstance
       },
 
-      $initNodeStylePortStyleAdapterExtension: function() {
+      $initNodeStylePortStyleAdapterExtension: function () {
         this.$renderSize = new Size(0, 0)
       }
     }
   })
 })
-yfiles.lang.module('compat.graphml.xaml', function(exports) {
-  exports.GeneralPathNodeStyleExtension = new ClassDefinition(function() {
+yfiles.lang.module('compat.graphml.xaml', function (exports) {
+  exports.GeneralPathNodeStyleExtension = new ClassDefinition(function () {
     return {
       $extends: MarkupExtension,
 
-      constructor: function() {
+      constructor: function () {
         MarkupExtension.call(this)
         this.$pen = Stroke.BLACK
         this.$brush = Fill.WHITE
@@ -12245,13 +12243,13 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $path: null,
 
       path: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(GeneralPath.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$path
         },
-        set: function(/*yfiles.geometry.GeneralPath*/ value) {
+        set: function (/*yfiles.geometry.GeneralPath*/ value) {
           this.$path = value
         }
       },
@@ -12259,13 +12257,13 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $brush: null,
 
       brush: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(Fill.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$brush
         },
-        set: function(/*yfiles.view.Fill*/ value) {
+        set: function (/*yfiles.view.Fill*/ value) {
           this.$brush = value
         }
       },
@@ -12273,18 +12271,18 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $pen: null,
 
       pen: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(Stroke.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$pen
         },
-        set: function(/*yfiles.view.Stroke*/ value) {
+        set: function (/*yfiles.view.Stroke*/ value) {
           this.$pen = value
         }
       },
 
-      provideValue: function(/*yfiles.graph.ILookup*/ serviceProvider) {
+      provideValue: function (/*yfiles.graph.ILookup*/ serviceProvider) {
         var /*yfiles.styles.GeneralPathNodeStyle*/ newInstance = new GeneralPathNodeStyle()
         {
           newInstance.path = this.$path
@@ -12296,25 +12294,25 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
     }
   })
 })
-yfiles.lang.module('compat.graphml.xaml', function(exports) {
-  exports.FreeNodeLabelModelExtension = new ClassDefinition(function() {
+yfiles.lang.module('compat.graphml.xaml', function (exports) {
+  exports.FreeNodeLabelModelExtension = new ClassDefinition(function () {
     return {
       $extends: MarkupExtension,
 
-      constructor: function() {
+      constructor: function () {
         MarkupExtension.call(this)
       },
 
-      provideValue: function(/*yfiles.graph.ILookup*/ serviceProvider) {
+      provideValue: function (/*yfiles.graph.ILookup*/ serviceProvider) {
         return new FreeNodeLabelModel()
       },
 
       $static: {
         INSTANCE: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(FreeNodeLabelModel.$class)]
           },
-          get: function() {
+          get: function () {
             return FreeNodeLabelModel.INSTANCE
           }
         }
@@ -12322,12 +12320,12 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
     }
   })
 })
-yfiles.lang.module('compat.graphml.xaml', function(exports) {
-  exports.RatioAnchoredLabelModelParameterExtension = new ClassDefinition(function() {
+yfiles.lang.module('compat.graphml.xaml', function (exports) {
+  exports.RatioAnchoredLabelModelParameterExtension = new ClassDefinition(function () {
     return {
       $extends: MarkupExtension,
 
-      constructor: function() {
+      constructor: function () {
         MarkupExtension.call(this)
         this.$initRatioAnchoredLabelModelParameterExtension()
         this.$labelOffset = new Point(0, 0)
@@ -12339,13 +12337,13 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $layoutRatio: null,
 
       layoutRatio: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(Point.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$layoutRatio
         },
-        set: function(/*yfiles.geometry.Point*/ value) {
+        set: function (/*yfiles.geometry.Point*/ value) {
           this.$layoutRatio = value
         }
       },
@@ -12353,13 +12351,13 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $layoutOffset: null,
 
       layoutOffset: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(Point.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$layoutOffset
         },
-        set: function(/*yfiles.geometry.Point*/ value) {
+        set: function (/*yfiles.geometry.Point*/ value) {
           this.$layoutOffset = value
         }
       },
@@ -12367,13 +12365,13 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $labelRatio: null,
 
       labelRatio: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(Point.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$labelRatio
         },
-        set: function(/*yfiles.geometry.Point*/ value) {
+        set: function (/*yfiles.geometry.Point*/ value) {
           this.$labelRatio = value
         }
       },
@@ -12381,13 +12379,13 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $labelOffset: null,
 
       labelOffset: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(Point.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$labelOffset
         },
-        set: function(/*yfiles.geometry.Point*/ value) {
+        set: function (/*yfiles.geometry.Point*/ value) {
           this.$labelOffset = value
         }
       },
@@ -12395,13 +12393,13 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $angle: 0,
 
       angle: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(YNumber.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$angle
         },
-        set: function(/*number*/ value) {
+        set: function (/*number*/ value) {
           this.$angle = value
         }
       },
@@ -12409,18 +12407,18 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $model: null,
 
       model: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(ILabelModel.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$model
         },
-        set: function(/*yfiles.graph.ILabelModel*/ value) {
+        set: function (/*yfiles.graph.ILabelModel*/ value) {
           this.$model = value
         }
       },
 
-      provideValue: function(/*yfiles.graph.ILookup*/ serviceProvider) {
+      provideValue: function (/*yfiles.graph.ILookup*/ serviceProvider) {
         var /*yfiles.graphml.RatioAnchoredLabelModelParameterExtension*/
           newInstance = new yfiles.graphml.RatioAnchoredLabelModelParameterExtension()
         {
@@ -12435,7 +12433,7 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
         return coreExtension.provideValue(serviceProvider)
       },
 
-      $initRatioAnchoredLabelModelParameterExtension: function() {
+      $initRatioAnchoredLabelModelParameterExtension: function () {
         this.$layoutRatio = new Point(0, 0)
         this.$layoutOffset = new Point(0, 0)
         this.$labelRatio = new Point(0, 0)
@@ -12444,12 +12442,12 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
     }
   })
 })
-yfiles.lang.module('compat.graphml.xaml', function(exports) {
-  exports.LayoutAnchoredLabelModelParameterExtension = new ClassDefinition(function() {
+yfiles.lang.module('compat.graphml.xaml', function (exports) {
+  exports.LayoutAnchoredLabelModelParameterExtension = new ClassDefinition(function () {
     return {
       $extends: MarkupExtension,
 
-      constructor: function() {
+      constructor: function () {
         MarkupExtension.call(this)
         this.$initLayoutAnchoredLabelModelParameterExtension()
         this.$offset = new Point(0, 0)
@@ -12458,13 +12456,13 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $offset: null,
 
       offset: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(Point.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$offset
         },
-        set: function(/*yfiles.geometry.Point*/ value) {
+        set: function (/*yfiles.geometry.Point*/ value) {
           this.$offset = value
         }
       },
@@ -12472,13 +12470,13 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $angle: 0,
 
       angle: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(YNumber.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$angle
         },
-        set: function(/*number*/ value) {
+        set: function (/*number*/ value) {
           this.$angle = value
         }
       },
@@ -12486,18 +12484,18 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $model: null,
 
       model: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(ILabelModel.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$model
         },
-        set: function(/*yfiles.graph.ILabelModel*/ value) {
+        set: function (/*yfiles.graph.ILabelModel*/ value) {
           this.$model = value
         }
       },
 
-      provideValue: function(/*yfiles.graph.ILookup*/ serviceProvider) {
+      provideValue: function (/*yfiles.graph.ILookup*/ serviceProvider) {
         var /*yfiles.graphml.RatioAnchoredLabelModelParameterExtension*/
           newInstance = new yfiles.graphml.RatioAnchoredLabelModelParameterExtension()
         {
@@ -12512,18 +12510,18 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
         return coreExtension.provideValue(serviceProvider)
       },
 
-      $initLayoutAnchoredLabelModelParameterExtension: function() {
+      $initLayoutAnchoredLabelModelParameterExtension: function () {
         this.$offset = new Point(0, 0)
       }
     }
   })
 })
-yfiles.lang.module('compat.graphml.xaml', function(exports) {
-  exports.CenterAnchoredLabelModelParameterExtension = new ClassDefinition(function() {
+yfiles.lang.module('compat.graphml.xaml', function (exports) {
+  exports.CenterAnchoredLabelModelParameterExtension = new ClassDefinition(function () {
     return {
       $extends: MarkupExtension,
 
-      constructor: function() {
+      constructor: function () {
         MarkupExtension.call(this)
         this.$initCenterAnchoredLabelModelParameterExtension()
         this.$offset = new Point(0, 0)
@@ -12532,13 +12530,13 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $offset: null,
 
       offset: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(Point.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$offset
         },
-        set: function(/*yfiles.geometry.Point*/ value) {
+        set: function (/*yfiles.geometry.Point*/ value) {
           this.$offset = value
         }
       },
@@ -12546,13 +12544,13 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $angle: 0,
 
       angle: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(YNumber.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$angle
         },
-        set: function(/*number*/ value) {
+        set: function (/*number*/ value) {
           this.$angle = value
         }
       },
@@ -12560,18 +12558,18 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $model: null,
 
       model: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(ILabelModel.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$model
         },
-        set: function(/*yfiles.graph.ILabelModel*/ value) {
+        set: function (/*yfiles.graph.ILabelModel*/ value) {
           this.$model = value
         }
       },
 
-      provideValue: function(/*yfiles.graph.ILookup*/ serviceProvider) {
+      provideValue: function (/*yfiles.graph.ILookup*/ serviceProvider) {
         var /*yfiles.graphml.RatioAnchoredLabelModelParameterExtension*/
           newInstance = new yfiles.graphml.RatioAnchoredLabelModelParameterExtension()
         {
@@ -12586,31 +12584,31 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
         return coreExtension.provideValue(serviceProvider)
       },
 
-      $initCenterAnchoredLabelModelParameterExtension: function() {
+      $initCenterAnchoredLabelModelParameterExtension: function () {
         this.$offset = new Point(0, 0)
       }
     }
   })
 })
-yfiles.lang.module('compat.graphml.xaml', function(exports) {
-  exports.FreeLabelModelExtension = new ClassDefinition(function() {
+yfiles.lang.module('compat.graphml.xaml', function (exports) {
+  exports.FreeLabelModelExtension = new ClassDefinition(function () {
     return {
       $extends: MarkupExtension,
 
-      constructor: function() {
+      constructor: function () {
         MarkupExtension.call(this)
       },
 
-      provideValue: function(/*yfiles.graph.ILookup*/ serviceProvider) {
+      provideValue: function (/*yfiles.graph.ILookup*/ serviceProvider) {
         return new FreeLabelModel()
       },
 
       $static: {
         INSTANCE: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(FreeLabelModel.$class)]
           },
-          get: function() {
+          get: function () {
             return FreeLabelModel.INSTANCE
           }
         }
@@ -12618,12 +12616,12 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
     }
   })
 })
-yfiles.lang.module('compat.graphml.xaml', function(exports) {
-  exports.FixedLabelModelParameterExtension = new ClassDefinition(function() {
+yfiles.lang.module('compat.graphml.xaml', function (exports) {
+  exports.FixedLabelModelParameterExtension = new ClassDefinition(function () {
     return {
       $extends: MarkupExtension,
 
-      constructor: function() {
+      constructor: function () {
         MarkupExtension.call(this)
         this.$initFixedLabelModelParameterExtension()
         this.$anchorLocation = new Point(0, 0)
@@ -12632,13 +12630,13 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $anchorLocation: null,
 
       anchorLocation: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(Point.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$anchorLocation
         },
-        set: function(/*yfiles.geometry.Point*/ value) {
+        set: function (/*yfiles.geometry.Point*/ value) {
           this.$anchorLocation = value
         }
       },
@@ -12646,13 +12644,13 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $angle: 0,
 
       angle: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(YNumber.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$angle
         },
-        set: function(/*number*/ value) {
+        set: function (/*number*/ value) {
           this.$angle = value
         }
       },
@@ -12660,18 +12658,18 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $model: null,
 
       model: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(ILabelModel.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$model
         },
-        set: function(/*yfiles.graph.ILabelModel*/ value) {
+        set: function (/*yfiles.graph.ILabelModel*/ value) {
           this.$model = value
         }
       },
 
-      provideValue: function(/*yfiles.graph.ILookup*/ serviceProvider) {
+      provideValue: function (/*yfiles.graph.ILookup*/ serviceProvider) {
         var /*yfiles.graphml.FixedLabelModelParameterExtension*/
           newInstance = new yfiles.graphml.FixedLabelModelParameterExtension()
         {
@@ -12683,31 +12681,31 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
         return coreExtension.provideValue(serviceProvider)
       },
 
-      $initFixedLabelModelParameterExtension: function() {
+      $initFixedLabelModelParameterExtension: function () {
         this.$anchorLocation = new Point(0, 0)
       }
     }
   })
 })
-yfiles.lang.module('compat.graphml.xaml', function(exports) {
-  exports.AnchoredLabelModelParameterExtension = new ClassDefinition(function() {
+yfiles.lang.module('compat.graphml.xaml', function (exports) {
+  exports.AnchoredLabelModelParameterExtension = new ClassDefinition(function () {
     return {
       $extends: MarkupExtension,
 
-      constructor: function() {
+      constructor: function () {
         MarkupExtension.call(this)
       },
 
       $anchorLocation: null,
 
       anchorLocation: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(IPoint.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$anchorLocation
         },
-        set: function(/*yfiles.geometry.IPoint*/ value) {
+        set: function (/*yfiles.geometry.IPoint*/ value) {
           this.$anchorLocation = value
         }
       },
@@ -12715,13 +12713,13 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $angle: 0,
 
       angle: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(YNumber.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$angle
         },
-        set: function(/*number*/ value) {
+        set: function (/*number*/ value) {
           this.$angle = value
         }
       },
@@ -12729,18 +12727,18 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $model: null,
 
       model: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(ILabelModel.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$model
         },
-        set: function(/*yfiles.graph.ILabelModel*/ value) {
+        set: function (/*yfiles.graph.ILabelModel*/ value) {
           this.$model = value
         }
       },
 
-      provideValue: function(/*yfiles.graph.ILookup*/ serviceProvider) {
+      provideValue: function (/*yfiles.graph.ILookup*/ serviceProvider) {
         var /*yfiles.graphml.AnchoredLabelModelParameterExtension*/
           newInstance = new yfiles.graphml.AnchoredLabelModelParameterExtension()
         {
@@ -12754,30 +12752,30 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
     }
   })
 })
-yfiles.lang.module('compat.graphml.xaml', function(exports) {
-  exports.FreeEdgeLabelModelExtension = new ClassDefinition(function() {
+yfiles.lang.module('compat.graphml.xaml', function (exports) {
+  exports.FreeEdgeLabelModelExtension = new ClassDefinition(function () {
     return {
       $extends: MarkupExtension,
 
-      constructor: function() {
+      constructor: function () {
         MarkupExtension.call(this)
       },
 
       $edgeRelativeAngle: false,
 
       edgeRelativeAngle: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(YBoolean.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$edgeRelativeAngle
         },
-        set: function(/*boolean*/ value) {
+        set: function (/*boolean*/ value) {
           this.$edgeRelativeAngle = value
         }
       },
 
-      provideValue: function(/*yfiles.graph.ILookup*/ serviceProvider) {
+      provideValue: function (/*yfiles.graph.ILookup*/ serviceProvider) {
         var /*yfiles.graph.FreeEdgeLabelModel*/ newInstance = new FreeEdgeLabelModel()
         {
           newInstance.edgeRelativeAngle = this.$edgeRelativeAngle
@@ -12787,10 +12785,10 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
 
       $static: {
         INSTANCE: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(FreeEdgeLabelModel.$class)]
           },
-          get: function() {
+          get: function () {
             return FreeEdgeLabelModel.INSTANCE
           }
         }
@@ -12798,12 +12796,12 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
     }
   })
 })
-yfiles.lang.module('compat.graphml.xaml', function(exports) {
-  exports.FreeEdgeLabelModelParameterExtension = new ClassDefinition(function() {
+yfiles.lang.module('compat.graphml.xaml', function (exports) {
+  exports.FreeEdgeLabelModelParameterExtension = new ClassDefinition(function () {
     return {
       $extends: MarkupExtension,
 
-      constructor: function() {
+      constructor: function () {
         MarkupExtension.call(this)
         this.$ratio = 0.5
       },
@@ -12811,13 +12809,13 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $ratio: 0,
 
       ratio: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(YNumber.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$ratio
         },
-        set: function(/*number*/ value) {
+        set: function (/*number*/ value) {
           this.$ratio = value
         }
       },
@@ -12825,13 +12823,13 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $distance: 0,
 
       distance: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(YNumber.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$distance
         },
-        set: function(/*number*/ value) {
+        set: function (/*number*/ value) {
           this.$distance = value
         }
       },
@@ -12839,13 +12837,13 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $angle: 0,
 
       angle: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(YNumber.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$angle
         },
-        set: function(/*number*/ value) {
+        set: function (/*number*/ value) {
           this.$angle = value
         }
       },
@@ -12853,18 +12851,18 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $model: null,
 
       model: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(ILabelModel.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$model
         },
-        set: function(/*yfiles.graph.ILabelModel*/ value) {
+        set: function (/*yfiles.graph.ILabelModel*/ value) {
           this.$model = value
         }
       },
 
-      provideValue: function(/*yfiles.graph.ILookup*/ serviceProvider) {
+      provideValue: function (/*yfiles.graph.ILookup*/ serviceProvider) {
         var /*yfiles.graphml.FreeEdgeLabelModelParameterExtension*/
           newInstance = new yfiles.graphml.FreeEdgeLabelModelParameterExtension()
         {
@@ -12879,8 +12877,8 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
     }
   })
 })
-yfiles.lang.module('compat.graphml.xaml', function(exports) {
-  exports.ExteriorLabelModelPosition = new EnumDefinition(function() {
+yfiles.lang.module('compat.graphml.xaml', function (exports) {
+  exports.ExteriorLabelModelPosition = new EnumDefinition(function () {
     return {
       NORTH: 0,
       EAST: 1,
@@ -12893,12 +12891,12 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
     }
   })
 })
-yfiles.lang.module('compat.graphml.xaml', function(exports) {
-  exports.ExteriorLabelModelExtension = new ClassDefinition(function() {
+yfiles.lang.module('compat.graphml.xaml', function (exports) {
+  exports.ExteriorLabelModelExtension = new ClassDefinition(function () {
     return {
       $extends: MarkupExtension,
 
-      constructor: function() {
+      constructor: function () {
         MarkupExtension.call(this)
         this.$initExteriorLabelModelExtension()
         this.$insets = new Insets(0)
@@ -12907,18 +12905,18 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $insets: null,
 
       insets: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(Insets.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$insets
         },
-        set: function(/*yfiles.geometry.Insets*/ value) {
+        set: function (/*yfiles.geometry.Insets*/ value) {
           this.$insets = value
         }
       },
 
-      provideValue: function(/*yfiles.graph.ILookup*/ serviceProvider) {
+      provideValue: function (/*yfiles.graph.ILookup*/ serviceProvider) {
         var /*yfiles.graph.ExteriorLabelModel*/ newInstance = new ExteriorLabelModel()
         {
           newInstance.insets = this.$insets
@@ -12926,79 +12924,79 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
         return newInstance
       },
 
-      $initExteriorLabelModelExtension: function() {
+      $initExteriorLabelModelExtension: function () {
         this.$insets = new Insets(0)
       },
 
       $static: {
         NORTH: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(ILabelModelParameter.$class)]
           },
-          get: function() {
+          get: function () {
             return ExteriorLabelModel.NORTH
           }
         },
 
         EAST: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(ILabelModelParameter.$class)]
           },
-          get: function() {
+          get: function () {
             return ExteriorLabelModel.EAST
           }
         },
 
         SOUTH: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(ILabelModelParameter.$class)]
           },
-          get: function() {
+          get: function () {
             return ExteriorLabelModel.SOUTH
           }
         },
 
         SOUTH_EAST: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(ILabelModelParameter.$class)]
           },
-          get: function() {
+          get: function () {
             return ExteriorLabelModel.SOUTH_EAST
           }
         },
 
         SOUTH_WEST: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(ILabelModelParameter.$class)]
           },
-          get: function() {
+          get: function () {
             return ExteriorLabelModel.SOUTH_WEST
           }
         },
 
         WEST: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(ILabelModelParameter.$class)]
           },
-          get: function() {
+          get: function () {
             return ExteriorLabelModel.WEST
           }
         },
 
         NORTH_EAST: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(ILabelModelParameter.$class)]
           },
-          get: function() {
+          get: function () {
             return ExteriorLabelModel.NORTH_EAST
           }
         },
 
         NORTH_WEST: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(ILabelModelParameter.$class)]
           },
-          get: function() {
+          get: function () {
             return ExteriorLabelModel.NORTH_WEST
           }
         }
@@ -13006,12 +13004,12 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
     }
   })
 })
-yfiles.lang.module('compat.graphml.xaml', function(exports) {
-  exports.ExteriorLabelModelParameterExtension = new ClassDefinition(function() {
+yfiles.lang.module('compat.graphml.xaml', function (exports) {
+  exports.ExteriorLabelModelParameterExtension = new ClassDefinition(function () {
     return {
       $extends: MarkupExtension,
 
-      constructor: function() {
+      constructor: function () {
         MarkupExtension.call(this)
         this.$initExteriorLabelModelParameterExtension()
         this.$position = compat.graphml.xaml.ExteriorLabelModelPosition.NORTH
@@ -13020,13 +13018,13 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $position: null,
 
       position: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(compat.graphml.xaml.ExteriorLabelModelPosition.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$position
         },
-        set: function(/*compat.graphml.xaml.ExteriorLabelModelPosition*/ value) {
+        set: function (/*compat.graphml.xaml.ExteriorLabelModelPosition*/ value) {
           this.$position = value
         }
       },
@@ -13034,18 +13032,18 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $model: null,
 
       model: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(ILabelModel.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$model
         },
-        set: function(/*yfiles.graph.ILabelModel*/ value) {
+        set: function (/*yfiles.graph.ILabelModel*/ value) {
           this.$model = value
         }
       },
 
-      provideValue: function(/*yfiles.graph.ILookup*/ serviceProvider) {
+      provideValue: function (/*yfiles.graph.ILookup*/ serviceProvider) {
         var /*yfiles.graphml.ExteriorLabelModelParameterExtension*/
           newInstance = new yfiles.graphml.ExteriorLabelModelParameterExtension()
         {
@@ -13056,33 +13054,33 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
         return coreExtension.provideValue(serviceProvider)
       },
 
-      $initExteriorLabelModelParameterExtension: function() {
+      $initExteriorLabelModelParameterExtension: function () {
         this.$position = compat.graphml.xaml.ExteriorLabelModelPosition.NORTH
       }
     }
   })
 })
-yfiles.lang.module('compat.graphml.xaml', function(exports) {
-  exports.DescriptorWrapperLabelModelExtension = new ClassDefinition(function() {
+yfiles.lang.module('compat.graphml.xaml', function (exports) {
+  exports.DescriptorWrapperLabelModelExtension = new ClassDefinition(function () {
     return {
       $extends: MarkupExtension,
 
       $meta: [GraphMLAttribute().init({ contentProperty: 'innerModel' })],
 
-      constructor: function() {
+      constructor: function () {
         MarkupExtension.call(this)
       },
 
       $descriptor: null,
 
       descriptor: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(ILabelCandidateDescriptor.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$descriptor
         },
-        set: function(/*yfiles.graph.ILabelCandidateDescriptor*/ value) {
+        set: function (/*yfiles.graph.ILabelCandidateDescriptor*/ value) {
           this.$descriptor = value
         }
       },
@@ -13090,18 +13088,18 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $innerModel: null,
 
       innerModel: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(ILabelModel.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$innerModel
         },
-        set: function(/*yfiles.graph.ILabelModel*/ value) {
+        set: function (/*yfiles.graph.ILabelModel*/ value) {
           this.$innerModel = value
         }
       },
 
-      provideValue: function(/*yfiles.graph.ILookup*/ serviceProvider) {
+      provideValue: function (/*yfiles.graph.ILookup*/ serviceProvider) {
         var /*yfiles.graph.DescriptorWrapperLabelModel*/
           newInstance = new DescriptorWrapperLabelModel()
         {
@@ -13113,25 +13111,25 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
     }
   })
 })
-yfiles.lang.module('compat.graphml.xaml', function(exports) {
-  exports.DescriptorWrapperLabelModelParameterExtension = new ClassDefinition(function() {
+yfiles.lang.module('compat.graphml.xaml', function (exports) {
+  exports.DescriptorWrapperLabelModelParameterExtension = new ClassDefinition(function () {
     return {
       $extends: MarkupExtension,
 
-      constructor: function() {
+      constructor: function () {
         MarkupExtension.call(this)
       },
 
       $parameter: null,
 
       parameter: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(ILabelModelParameter.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$parameter
         },
-        set: function(/*yfiles.graph.ILabelModelParameter*/ value) {
+        set: function (/*yfiles.graph.ILabelModelParameter*/ value) {
           this.$parameter = value
         }
       },
@@ -13139,18 +13137,18 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $model: null,
 
       model: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(DescriptorWrapperLabelModel.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$model
         },
-        set: function(/*yfiles.graph.DescriptorWrapperLabelModel*/ value) {
+        set: function (/*yfiles.graph.DescriptorWrapperLabelModel*/ value) {
           this.$model = value
         }
       },
 
-      provideValue: function(/*yfiles.graph.ILookup*/ serviceProvider) {
+      provideValue: function (/*yfiles.graph.ILookup*/ serviceProvider) {
         return new yfiles.graphml.DescriptorWrapperLabelModelParameterExtension(
           this.$parameter,
           this.$model
@@ -13159,78 +13157,78 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
     }
   })
 })
-yfiles.lang.module('compat.graphml.xaml', function(exports) {
-  exports.DefaultArrowExtension = new ClassDefinition(function() {
+yfiles.lang.module('compat.graphml.xaml', function (exports) {
+  exports.DefaultArrowExtension = new ClassDefinition(function () {
     return {
       $static: {
         NONE: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(IArrow.$class)]
           },
-          get: function() {
+          get: function () {
             return IArrow.NONE
           }
         },
 
         SIMPLE: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(IArrow.$class)]
           },
-          get: function() {
+          get: function () {
             return IArrow.SIMPLE
           }
         },
 
         DEFAULT: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(IArrow.$class)]
           },
-          get: function() {
+          get: function () {
             return IArrow.DEFAULT
           }
         },
 
         SHORT: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(IArrow.$class)]
           },
-          get: function() {
+          get: function () {
             return IArrow.SHORT
           }
         },
 
         DIAMOND: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(IArrow.$class)]
           },
-          get: function() {
+          get: function () {
             return IArrow.DIAMOND
           }
         },
 
         CROSS: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(IArrow.$class)]
           },
-          get: function() {
+          get: function () {
             return IArrow.CROSS
           }
         },
 
         CIRCLE: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(IArrow.$class)]
           },
-          get: function() {
+          get: function () {
             return IArrow.CIRCLE
           }
         },
 
         TRIANGLE: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(IArrow.$class)]
           },
-          get: function() {
+          get: function () {
             return IArrow.TRIANGLE
           }
         }
@@ -13238,12 +13236,12 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
     }
   })
 })
-yfiles.lang.module('compat.graphml.xaml', function(exports) {
-  exports.ArrowExtension = new ClassDefinition(function() {
+yfiles.lang.module('compat.graphml.xaml', function (exports) {
+  exports.ArrowExtension = new ClassDefinition(function () {
     return {
       $extends: MarkupExtension,
 
-      constructor: function() {
+      constructor: function () {
         MarkupExtension.call(this)
         this.$scale = 1.0
         this.$brush = Fill.BLACK
@@ -13254,13 +13252,13 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $pen: null,
 
       pen: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(Stroke.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$pen
         },
-        set: function(/*yfiles.view.Stroke*/ value) {
+        set: function (/*yfiles.view.Stroke*/ value) {
           this.$pen = value
         }
       },
@@ -13268,13 +13266,13 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $brush: null,
 
       brush: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(Fill.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$brush
         },
-        set: function(/*yfiles.view.Fill*/ value) {
+        set: function (/*yfiles.view.Fill*/ value) {
           this.$brush = value
         }
       },
@@ -13282,13 +13280,13 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $cropLength: 0,
 
       cropLength: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(YNumber.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$cropLength
         },
-        set: function(/*number*/ value) {
+        set: function (/*number*/ value) {
           this.$cropLength = value
         }
       },
@@ -13296,13 +13294,13 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $scale: 0,
 
       scale: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(YNumber.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$scale
         },
-        set: function(/*number*/ value) {
+        set: function (/*number*/ value) {
           this.$scale = value
         }
       },
@@ -13310,18 +13308,18 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $type: 0,
 
       type: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(compat.graphml.xaml.ArrowType.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$type
         },
-        set: function(/*compat.graphml.xaml.ArrowType*/ value) {
+        set: function (/*compat.graphml.xaml.ArrowType*/ value) {
           this.$type = value
         }
       },
 
-      provideValue: function(/*yfiles.graph.ILookup*/ serviceProvider) {
+      provideValue: function (/*yfiles.graph.ILookup*/ serviceProvider) {
         var /*yfiles.styles.Arrow*/ newInstance = new Arrow()
         {
           newInstance.stroke = this.$pen
@@ -13335,13 +13333,13 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
     }
   })
 })
-yfiles.lang.module('compat.graphml.xaml', function(exports) {
-  exports.ControlStyleBaseExtension = new ClassDefinition(function() {
+yfiles.lang.module('compat.graphml.xaml', function (exports) {
+  exports.ControlStyleBaseExtension = new ClassDefinition(function () {
     return {
       $extends: MarkupExtension,
       $abstract: true,
 
-      constructor: function() {
+      constructor: function () {
         MarkupExtension.call(this)
         this.$contextLookup = IContextLookup.EMPTY_CONTEXT_LOOKUP
       },
@@ -13349,13 +13347,13 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $styleTag: null,
 
       styleTag: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(YObject.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$styleTag
         },
-        set: function(/*Object*/ value) {
+        set: function (/*Object*/ value) {
           this.$styleTag = value
         }
       },
@@ -13363,13 +13361,13 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $contextLookup: null,
 
       contextLookup: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(IContextLookup.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$contextLookup
         },
-        set: function(/*yfiles.graph.IContextLookup*/ value) {
+        set: function (/*yfiles.graph.IContextLookup*/ value) {
           this.$contextLookup = value
         }
       },
@@ -13377,7 +13375,7 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $userTagProvider: null,
 
       userTagProvider: {
-        $meta: function() {
+        $meta: function () {
           return [
             GraphMLAttribute().init({
               valueSerializer:
@@ -13386,31 +13384,31 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
             TypeAttribute(YObject.$class)
           ]
         },
-        get: function() {
+        get: function () {
           return this.$userTagProvider
         },
-        set: function(/*Object*/ value) {
+        set: function (/*Object*/ value) {
           this.$userTagProvider = value
         }
       },
 
       $static: {
-        NullValueSerializer: new ClassDefinition(function() {
+        NullValueSerializer: new ClassDefinition(function () {
           return {
             $extends: ValueSerializer,
 
-            constructor: function() {
+            constructor: function () {
               ValueSerializer.call(this)
             },
 
-            convertFromString: function(
+            convertFromString: function (
               /*string*/ value,
               /*yfiles.graphml.IValueSerializerContext*/ context
             ) {
               return value
             },
 
-            canConvertFromString: function(
+            canConvertFromString: function (
               /*string*/ value,
               /*yfiles.graphml.IValueSerializerContext*/ context
             ) {
@@ -13419,18 +13417,18 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
           }
         }),
 
-        EmptyLookup: new ClassDefinition(function() {
+        EmptyLookup: new ClassDefinition(function () {
           return {
             $with: [IContextLookup],
 
-            contextLookup: function(/*Object*/ item, /*yfiles.lang.Class*/ type) {
+            contextLookup: function (/*Object*/ item, /*yfiles.lang.Class*/ type) {
               return null
             },
 
             $static: {
               INSTANCE: null,
 
-              $clinit: function() {
+              $clinit: function () {
                 compat.graphml.xaml.ControlStyleBaseExtension.EmptyLookup.INSTANCE = new compat.graphml.xaml.ControlStyleBaseExtension.EmptyLookup()
               }
             }
@@ -13440,14 +13438,14 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
     }
   })
 })
-yfiles.lang.module('compat.graphml.xaml', function(exports) {
-  exports.CompositeLabelModelExtension = new ClassDefinition(function() {
+yfiles.lang.module('compat.graphml.xaml', function (exports) {
+  exports.CompositeLabelModelExtension = new ClassDefinition(function () {
     return {
       $extends: MarkupExtension,
 
       $meta: [GraphMLAttribute().init({ contentProperty: 'labelModels' })],
 
-      constructor: function() {
+      constructor: function () {
         MarkupExtension.call(this)
         this.$initCompositeLabelModelExtension()
       },
@@ -13455,18 +13453,18 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $labelModels: null,
 
       labelModels: {
-        $meta: function() {
+        $meta: function () {
           return [
             GraphMLAttribute().init({ visibility: GraphMLMemberVisibility.CONTENT }),
             TypeAttribute(IList.$class)
           ]
         },
-        get: function() {
+        get: function () {
           return this.$labelModels
         }
       },
 
-      provideValue: function(/*yfiles.graph.ILookup*/ serviceProvider) {
+      provideValue: function (/*yfiles.graph.ILookup*/ serviceProvider) {
         var /*yfiles.graph.CompositeLabelModel*/ coreModel = new CompositeLabelModel()
         var /*yfiles.collections.IEnumerator*/ tmpEnumerator
         for (tmpEnumerator = this.$labelModels.getEnumerator(); tmpEnumerator.moveNext(); ) {
@@ -13478,31 +13476,31 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
         return coreModel
       },
 
-      $initCompositeLabelModelExtension: function() {
+      $initCompositeLabelModelExtension: function () {
         this.$labelModels = new List()
       }
     }
   })
 })
-yfiles.lang.module('compat.graphml.xaml', function(exports) {
-  exports.CompositeLabelModelParameterExtension = new ClassDefinition(function() {
+yfiles.lang.module('compat.graphml.xaml', function (exports) {
+  exports.CompositeLabelModelParameterExtension = new ClassDefinition(function () {
     return {
       $extends: MarkupExtension,
 
-      constructor: function() {
+      constructor: function () {
         MarkupExtension.call(this)
       },
 
       $parameter: null,
 
       parameter: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(ILabelModelParameter.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$parameter
         },
-        set: function(/*yfiles.graph.ILabelModelParameter*/ value) {
+        set: function (/*yfiles.graph.ILabelModelParameter*/ value) {
           this.$parameter = value
         }
       },
@@ -13510,18 +13508,18 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $model: null,
 
       model: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(ILabelModel.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$model
         },
-        set: function(/*yfiles.graph.ILabelModel*/ value) {
+        set: function (/*yfiles.graph.ILabelModel*/ value) {
           this.$model = value
         }
       },
 
-      provideValue: function(/*yfiles.graph.ILookup*/ serviceProvider) {
+      provideValue: function (/*yfiles.graph.ILookup*/ serviceProvider) {
         var /*yfiles.graphml.CompositeLabelModelParameterExtension*/
           newInstance = new yfiles.graphml.CompositeLabelModelParameterExtension()
         {
@@ -13534,43 +13532,43 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
     }
   })
 })
-yfiles.lang.module('compat.graphml.xaml', function(exports) {
-  exports.BendAnchoredPortLocationModelExtension = new ClassDefinition(function() {
+yfiles.lang.module('compat.graphml.xaml', function (exports) {
+  exports.BendAnchoredPortLocationModelExtension = new ClassDefinition(function () {
     return {
       $extends: MarkupExtension,
 
-      constructor: function() {
+      constructor: function () {
         MarkupExtension.call(this)
       },
 
-      provideValue: function(/*yfiles.graph.ILookup*/ serviceProvider) {
+      provideValue: function (/*yfiles.graph.ILookup*/ serviceProvider) {
         return new BendAnchoredPortLocationModel()
       },
 
       $static: {
         INSTANCE: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(BendAnchoredPortLocationModel.$class)]
           },
-          get: function() {
+          get: function () {
             return BendAnchoredPortLocationModel.INSTANCE
           }
         },
 
         FIRST_BEND: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(IPortLocationModelParameter.$class)]
           },
-          get: function() {
+          get: function () {
             return BendAnchoredPortLocationModel.FIRST_BEND
           }
         },
 
         LAST_BEND: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(IPortLocationModelParameter.$class)]
           },
-          get: function() {
+          get: function () {
             return BendAnchoredPortLocationModel.LAST_BEND
           }
         }
@@ -13578,25 +13576,25 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
     }
   })
 })
-yfiles.lang.module('compat.graphml.xaml', function(exports) {
-  exports.BendAnchoredParameterExtension = new ClassDefinition(function() {
+yfiles.lang.module('compat.graphml.xaml', function (exports) {
+  exports.BendAnchoredParameterExtension = new ClassDefinition(function () {
     return {
       $extends: MarkupExtension,
 
-      constructor: function() {
+      constructor: function () {
         MarkupExtension.call(this)
       },
 
       $index: 0,
 
       index: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(YNumber.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$index
         },
-        set: function(/*number*/ value) {
+        set: function (/*number*/ value) {
           this.$index = value
         }
       },
@@ -13604,18 +13602,18 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $fromSource: false,
 
       fromSource: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(YBoolean.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$fromSource
         },
-        set: function(/*boolean*/ value) {
+        set: function (/*boolean*/ value) {
           this.$fromSource = value
         }
       },
 
-      provideValue: function(/*yfiles.graph.ILookup*/ serviceProvider) {
+      provideValue: function (/*yfiles.graph.ILookup*/ serviceProvider) {
         var /*yfiles.graphml.BendAnchoredParameterExtension*/
           newInstance = new yfiles.graphml.BendAnchoredParameterExtension()
         {
@@ -13628,8 +13626,8 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
     }
   })
 })
-yfiles.lang.module('compat.graphml.xaml', function(exports) {
-  exports.ArrowType = new EnumDefinition(function() {
+yfiles.lang.module('compat.graphml.xaml', function (exports) {
+  exports.ArrowType = new EnumDefinition(function () {
     return {
       DEFAULT: 1,
       SIMPLE: 2,
@@ -13642,12 +13640,12 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
     }
   })
 })
-yfiles.lang.module('compat.graphml.xaml', function(exports) {
-  exports.ArcEdgeStyleExtension = new ClassDefinition(function() {
+yfiles.lang.module('compat.graphml.xaml', function (exports) {
+  exports.ArcEdgeStyleExtension = new ClassDefinition(function () {
     return {
       $extends: MarkupExtension,
 
-      constructor: function() {
+      constructor: function () {
         MarkupExtension.call(this)
         this.$sourceArrow = IArrow.NONE
         this.$targetArrow = IArrow.NONE
@@ -13657,13 +13655,13 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $pen: null,
 
       pen: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(Stroke.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$pen
         },
-        set: function(/*yfiles.view.Stroke*/ value) {
+        set: function (/*yfiles.view.Stroke*/ value) {
           this.$pen = value
         }
       },
@@ -13671,13 +13669,13 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $height: 0,
 
       height: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(YNumber.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$height
         },
-        set: function(/*number*/ value) {
+        set: function (/*number*/ value) {
           this.$height = value
         }
       },
@@ -13685,13 +13683,13 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $ratio: false,
 
       ratio: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(YBoolean.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$ratio
         },
-        set: function(/*boolean*/ value) {
+        set: function (/*boolean*/ value) {
           this.$ratio = value
         }
       },
@@ -13699,13 +13697,13 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $provideHeightHandle: false,
 
       provideHeightHandle: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(YBoolean.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$provideHeightHandle
         },
-        set: function(/*boolean*/ value) {
+        set: function (/*boolean*/ value) {
           this.$provideHeightHandle = value
         }
       },
@@ -13713,13 +13711,13 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $targetArrow: null,
 
       targetArrow: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(IArrow.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$targetArrow
         },
-        set: function(/*yfiles.styles.IArrow*/ value) {
+        set: function (/*yfiles.styles.IArrow*/ value) {
           this.$targetArrow = value
         }
       },
@@ -13727,18 +13725,18 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $sourceArrow: null,
 
       sourceArrow: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(IArrow.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$sourceArrow
         },
-        set: function(/*yfiles.styles.IArrow*/ value) {
+        set: function (/*yfiles.styles.IArrow*/ value) {
           this.$sourceArrow = value
         }
       },
 
-      provideValue: function(/*yfiles.graph.ILookup*/ serviceProvider) {
+      provideValue: function (/*yfiles.graph.ILookup*/ serviceProvider) {
         var /*yfiles.styles.ArcEdgeStyle*/ newInstance = new ArcEdgeStyle()
         {
           newInstance.fixedHeight = !this.$ratio
@@ -13752,12 +13750,12 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
     }
   })
 })
-yfiles.lang.module('compat.graphml.xaml', function(exports) {
-  exports.DynamicAnchoredParameterExtension = new ClassDefinition(function() {
+yfiles.lang.module('compat.graphml.xaml', function (exports) {
+  exports.DynamicAnchoredParameterExtension = new ClassDefinition(function () {
     return {
       $extends: MarkupExtension,
 
-      constructor: function() {
+      constructor: function () {
         MarkupExtension.call(this)
         this.$anchor = new Point(0, 0)
       },
@@ -13765,18 +13763,18 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $anchor: null,
 
       anchor: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(IPoint.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$anchor
         },
-        set: function(/*yfiles.geometry.IPoint*/ value) {
+        set: function (/*yfiles.geometry.IPoint*/ value) {
           this.$anchor = value
         }
       },
 
-      provideValue: function(/*yfiles.graph.ILookup*/ serviceProvider) {
+      provideValue: function (/*yfiles.graph.ILookup*/ serviceProvider) {
         return new yfiles.graphml.DynamicAnchoredParameterExtension(this.$anchor).provideValue(
           serviceProvider
         )
@@ -13784,25 +13782,25 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
     }
   })
 })
-yfiles.lang.module('compat.graphml.xaml', function(exports) {
-  exports.GenericLabelModelParameterExtension = new ClassDefinition(function() {
+yfiles.lang.module('compat.graphml.xaml', function (exports) {
+  exports.GenericLabelModelParameterExtension = new ClassDefinition(function () {
     return {
       $extends: MarkupExtension,
 
-      constructor: function() {
+      constructor: function () {
         MarkupExtension.call(this)
       },
 
       $index: 0,
 
       index: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(YNumber.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$index
         },
-        set: function(/*number*/ value) {
+        set: function (/*number*/ value) {
           this.$index = value
         }
       },
@@ -13810,18 +13808,18 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $model: null,
 
       model: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(GenericLabelModel.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$model
         },
-        set: function(/*yfiles.graph.GenericLabelModel*/ value) {
+        set: function (/*yfiles.graph.GenericLabelModel*/ value) {
           this.$model = value
         }
       },
 
-      provideValue: function(/*yfiles.graph.ILookup*/ serviceProvider) {
+      provideValue: function (/*yfiles.graph.ILookup*/ serviceProvider) {
         var /*yfiles.graphml.GenericLabelModelParameterExtension*/
           newInstance = new yfiles.graphml.GenericLabelModelParameterExtension()
         {
@@ -13834,12 +13832,12 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
     }
   })
 })
-yfiles.lang.module('compat.graphml.xaml', function(exports) {
-  exports.PanelNodeStyleExtension = new ClassDefinition(function() {
+yfiles.lang.module('compat.graphml.xaml', function (exports) {
+  exports.PanelNodeStyleExtension = new ClassDefinition(function () {
     return {
       $extends: MarkupExtension,
 
-      constructor: function() {
+      constructor: function () {
         MarkupExtension.call(this)
         this.$initPanelNodeStyleExtension()
         this.$insets = new Insets(5)
@@ -13850,13 +13848,13 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $color: null,
 
       color: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(Color.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$color
         },
-        set: function(/*yfiles.view.Color*/ value) {
+        set: function (/*yfiles.view.Color*/ value) {
           this.$color = value
         }
       },
@@ -13864,13 +13862,13 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $labelInsetsColor: null,
 
       labelInsetsColor: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(Color.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$labelInsetsColor
         },
-        set: function(/*yfiles.view.Color*/ value) {
+        set: function (/*yfiles.view.Color*/ value) {
           this.$labelInsetsColor = value
         }
       },
@@ -13878,18 +13876,18 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $insets: null,
 
       insets: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(Insets.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$insets
         },
-        set: function(/*yfiles.geometry.Insets*/ value) {
+        set: function (/*yfiles.geometry.Insets*/ value) {
           this.$insets = value
         }
       },
 
-      provideValue: function(/*yfiles.graph.ILookup*/ serviceProvider) {
+      provideValue: function (/*yfiles.graph.ILookup*/ serviceProvider) {
         var /*yfiles.styles.PanelNodeStyle*/ newInstance = new PanelNodeStyle()
         {
           newInstance.color = this.$color
@@ -13899,20 +13897,20 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
         return newInstance
       },
 
-      $initPanelNodeStyleExtension: function() {
+      $initPanelNodeStyleExtension: function () {
         this.$insets = new Insets(0)
       }
     }
   })
 })
-yfiles.lang.module('compat.graphml.xaml', function(exports) {
-  exports.GenericModelExtension = new ClassDefinition(function() {
+yfiles.lang.module('compat.graphml.xaml', function (exports) {
+  exports.GenericModelExtension = new ClassDefinition(function () {
     return {
       $extends: MarkupExtension,
 
       $meta: [GraphMLAttribute().init({ contentProperty: 'parameters' })],
 
-      constructor: function() {
+      constructor: function () {
         MarkupExtension.call(this)
         this.$initGenericModelExtension()
       },
@@ -13920,13 +13918,13 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $parameters: null,
 
       parameters: {
-        $meta: function() {
+        $meta: function () {
           return [
             GraphMLAttribute().init({ visibility: GraphMLMemberVisibility.CONTENT }),
             TypeAttribute(List.$class)
           ]
         },
-        get: function() {
+        get: function () {
           return this.$parameters
         }
       },
@@ -13934,18 +13932,18 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $default: 0,
 
       default: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(YNumber.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$default
         },
-        set: function(/*number*/ value) {
+        set: function (/*number*/ value) {
           this.$default = value
         }
       },
 
-      provideValue: function(/*yfiles.graph.ILookup*/ serviceProvider) {
+      provideValue: function (/*yfiles.graph.ILookup*/ serviceProvider) {
         var /*yfiles.graphml.GenericLabelModelExtension*/
           newInstance = new yfiles.graphml.GenericLabelModelExtension()
         {
@@ -13962,18 +13960,18 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
         return coreExtension.provideValue(serviceProvider)
       },
 
-      $initGenericModelExtension: function() {
+      $initGenericModelExtension: function () {
         this.$parameters = new List()
       }
     }
   })
 })
-yfiles.lang.module('compat.graphml.xaml', function(exports) {
-  exports.BevelNodeStyleExtension = new ClassDefinition(function() {
+yfiles.lang.module('compat.graphml.xaml', function (exports) {
+  exports.BevelNodeStyleExtension = new ClassDefinition(function () {
     return {
       $extends: MarkupExtension,
 
-      constructor: function() {
+      constructor: function () {
         MarkupExtension.call(this)
         this.$color = Color.BLACK
       },
@@ -13981,13 +13979,13 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $inset: 0,
 
       inset: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(YNumber.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$inset
         },
-        set: function(/*number*/ value) {
+        set: function (/*number*/ value) {
           this.$inset = value
         }
       },
@@ -13995,13 +13993,13 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $radius: 0,
 
       radius: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(YNumber.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$radius
         },
-        set: function(/*number*/ value) {
+        set: function (/*number*/ value) {
           this.$radius = value
         }
       },
@@ -14009,13 +14007,13 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $color: null,
 
       color: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(Color.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$color
         },
-        set: function(/*yfiles.view.Color*/ value) {
+        set: function (/*yfiles.view.Color*/ value) {
           this.$color = value
         }
       },
@@ -14023,18 +14021,18 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $drawShadow: false,
 
       drawShadow: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(YBoolean.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$drawShadow
         },
-        set: function(/*boolean*/ value) {
+        set: function (/*boolean*/ value) {
           this.$drawShadow = value
         }
       },
 
-      provideValue: function(/*yfiles.graph.ILookup*/ serviceProvider) {
+      provideValue: function (/*yfiles.graph.ILookup*/ serviceProvider) {
         var /*yfiles.styles.BevelNodeStyle*/ newInstance = new BevelNodeStyle()
         {
           newInstance.inset = this.$inset
@@ -14047,12 +14045,12 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
     }
   })
 })
-yfiles.lang.module('compat.graphml.xaml', function(exports) {
-  exports.NodeStyleLabelStyleAdapterExtension = new ClassDefinition(function() {
+yfiles.lang.module('compat.graphml.xaml', function (exports) {
+  exports.NodeStyleLabelStyleAdapterExtension = new ClassDefinition(function () {
     return {
       $extends: MarkupExtension,
 
-      constructor: function() {
+      constructor: function () {
         MarkupExtension.call(this)
         this.$initNodeStyleLabelStyleAdapterExtension()
         this.$labelStyleInsets = new Insets(0)
@@ -14062,13 +14060,13 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $nodeStyle: null,
 
       nodeStyle: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(INodeStyle.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$nodeStyle
         },
-        set: function(/*yfiles.styles.INodeStyle*/ value) {
+        set: function (/*yfiles.styles.INodeStyle*/ value) {
           this.$nodeStyle = value
         }
       },
@@ -14076,13 +14074,13 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $labelStyle: null,
 
       labelStyle: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(ILabelStyle.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$labelStyle
         },
-        set: function(/*yfiles.styles.ILabelStyle*/ value) {
+        set: function (/*yfiles.styles.ILabelStyle*/ value) {
           this.$labelStyle = value
         }
       },
@@ -14090,13 +14088,13 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $autoFlip: false,
 
       autoFlip: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(YBoolean.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$autoFlip
         },
-        set: function(/*boolean*/ value) {
+        set: function (/*boolean*/ value) {
           this.$autoFlip = value
         }
       },
@@ -14104,18 +14102,18 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $labelStyleInsets: null,
 
       labelStyleInsets: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(Insets.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$labelStyleInsets
         },
-        set: function(/*yfiles.geometry.Insets*/ value) {
+        set: function (/*yfiles.geometry.Insets*/ value) {
           this.$labelStyleInsets = value
         }
       },
 
-      provideValue: function(/*yfiles.graph.ILookup*/ serviceProvider) {
+      provideValue: function (/*yfiles.graph.ILookup*/ serviceProvider) {
         var /*yfiles.styles.NodeStyleLabelStyleAdapter*/
           newInstance = new NodeStyleLabelStyleAdapter()
         {
@@ -14127,112 +14125,112 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
         return newInstance
       },
 
-      $initNodeStyleLabelStyleAdapterExtension: function() {
+      $initNodeStyleLabelStyleAdapterExtension: function () {
         this.$labelStyleInsets = new Insets(0)
       }
     }
   })
 })
-yfiles.lang.module('compat.graphml.xaml', function(exports) {
-  exports.NodeScaledPortLocationModelExtension = new ClassDefinition(function() {
+yfiles.lang.module('compat.graphml.xaml', function (exports) {
+  exports.NodeScaledPortLocationModelExtension = new ClassDefinition(function () {
     return {
       $extends: MarkupExtension,
 
-      constructor: function() {
+      constructor: function () {
         MarkupExtension.call(this)
       },
 
-      provideValue: function(/*yfiles.graph.ILookup*/ serviceProvider) {
+      provideValue: function (/*yfiles.graph.ILookup*/ serviceProvider) {
         return new FreeNodePortLocationModel()
       },
 
       $static: {
         INSTANCE: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(FreeNodePortLocationModel.$class)]
           },
-          get: function() {
+          get: function () {
             return FreeNodePortLocationModel.INSTANCE
           }
         },
 
         NODE_CENTER_ANCHORED: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(IPortLocationModelParameter.$class)]
           },
-          get: function() {
+          get: function () {
             return FreeNodePortLocationModel.NODE_CENTER_ANCHORED
           }
         },
 
         NODE_LEFT_ANCHORED: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(IPortLocationModelParameter.$class)]
           },
-          get: function() {
+          get: function () {
             return FreeNodePortLocationModel.NODE_LEFT_ANCHORED
           }
         },
 
         NODE_RIGHT_ANCHORED: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(IPortLocationModelParameter.$class)]
           },
-          get: function() {
+          get: function () {
             return FreeNodePortLocationModel.NODE_RIGHT_ANCHORED
           }
         },
 
         NODE_TOP_ANCHORED: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(IPortLocationModelParameter.$class)]
           },
-          get: function() {
+          get: function () {
             return FreeNodePortLocationModel.NODE_TOP_ANCHORED
           }
         },
 
         NODE_BOTTOM_ANCHORED: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(IPortLocationModelParameter.$class)]
           },
-          get: function() {
+          get: function () {
             return FreeNodePortLocationModel.NODE_BOTTOM_ANCHORED
           }
         },
 
         NODE_TOP_LEFT_ANCHORED: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(IPortLocationModelParameter.$class)]
           },
-          get: function() {
+          get: function () {
             return FreeNodePortLocationModel.NODE_TOP_LEFT_ANCHORED
           }
         },
 
         NODE_TOP_RIGHT_ANCHORED: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(IPortLocationModelParameter.$class)]
           },
-          get: function() {
+          get: function () {
             return FreeNodePortLocationModel.NODE_TOP_RIGHT_ANCHORED
           }
         },
 
         NODE_BOTTOM_RIGHT_ANCHORED: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(IPortLocationModelParameter.$class)]
           },
-          get: function() {
+          get: function () {
             return FreeNodePortLocationModel.NODE_BOTTOM_RIGHT_ANCHORED
           }
         },
 
         NODE_BOTTOM_LEFT_ANCHORED: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(IPortLocationModelParameter.$class)]
           },
-          get: function() {
+          get: function () {
             return FreeNodePortLocationModel.NODE_BOTTOM_LEFT_ANCHORED
           }
         }
@@ -14240,12 +14238,12 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
     }
   })
 })
-yfiles.lang.module('compat.graphml.xaml', function(exports) {
-  exports.NodeScaledParameterExtension = new ClassDefinition(function() {
+yfiles.lang.module('compat.graphml.xaml', function (exports) {
+  exports.NodeScaledParameterExtension = new ClassDefinition(function () {
     return {
       $extends: MarkupExtension,
 
-      constructor: function() {
+      constructor: function () {
         MarkupExtension.call(this)
         this.$initNodeScaledParameterExtension()
       },
@@ -14253,18 +14251,18 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $offset: null,
 
       offset: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(Point.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$offset
         },
-        set: function(/*yfiles.geometry.Point*/ value) {
+        set: function (/*yfiles.geometry.Point*/ value) {
           this.$offset = value
         }
       },
 
-      provideValue: function(/*yfiles.graph.ILookup*/ serviceProvider) {
+      provideValue: function (/*yfiles.graph.ILookup*/ serviceProvider) {
         var /*yfiles.graphml.FreeNodePortLocationModelParameterExtension*/
           newInstance = new yfiles.graphml.FreeNodePortLocationModelParameterExtension()
         {
@@ -14275,20 +14273,20 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
         return coreExtension.provideValue(serviceProvider)
       },
 
-      $initNodeScaledParameterExtension: function() {
+      $initNodeScaledParameterExtension: function () {
         this.$offset = new Point(0, 0)
       }
     }
   })
 })
-yfiles.lang.module('compat.graphml.xaml', function(exports) {
-  exports.StringTemplateNodeStyleExtension = new ClassDefinition(function() {
+yfiles.lang.module('compat.graphml.xaml', function (exports) {
+  exports.StringTemplateNodeStyleExtension = new ClassDefinition(function () {
     return {
       $extends: compat.graphml.xaml.ControlStyleBaseExtension,
 
       $meta: [GraphMLAttribute().init({ contentProperty: 'svgContent' })],
 
-      constructor: function() {
+      constructor: function () {
         compat.graphml.xaml.ControlStyleBaseExtension.call(this)
         this.$initStringNodeControlNodeStyleExtension()
         this.$minimumSize = Size.EMPTY
@@ -14298,13 +14296,13 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $svgContent: null,
 
       svgContent: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(YString.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$svgContent
         },
-        set: function(/*string*/ value) {
+        set: function (/*string*/ value) {
           this.$svgContent = value
         }
       },
@@ -14312,13 +14310,13 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $insets: null,
 
       insets: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(Insets.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$insets
         },
-        set: function(/*yfiles.geometry.Insets*/ value) {
+        set: function (/*yfiles.geometry.Insets*/ value) {
           this.$insets = value
         }
       },
@@ -14326,13 +14324,13 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $minimumSize: null,
 
       minimumSize: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(Size.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$minimumSize
         },
-        set: function(/*yfiles.geometry.Size*/ value) {
+        set: function (/*yfiles.geometry.Size*/ value) {
           this.$minimumSize = value
         }
       },
@@ -14340,18 +14338,18 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $outlineShape: null,
 
       outlineShape: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(GeneralPath.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$outlineShape
         },
-        set: function(/*yfiles.geometry.GeneralPath*/ value) {
+        set: function (/*yfiles.geometry.GeneralPath*/ value) {
           this.$outlineShape = value
         }
       },
 
-      provideValue: function(/*yfiles.graph.ILookup*/ serviceProvider) {
+      provideValue: function (/*yfiles.graph.ILookup*/ serviceProvider) {
         var /*yfiles.styles.StringTemplateNodeStyle*/ newInstance = new StringTemplateNodeStyle()
         {
           newInstance.insets = this.$insets
@@ -14364,19 +14362,19 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
         return newInstance
       },
 
-      $initStringNodeControlNodeStyleExtension: function() {
+      $initStringNodeControlNodeStyleExtension: function () {
         this.$insets = new Insets(0)
         this.$minimumSize = new Size(0, 0)
       }
     }
   })
 })
-yfiles.lang.module('compat.graphml.xaml', function(exports) {
-  exports.TemplateNodeStyleExtension = new ClassDefinition(function() {
+yfiles.lang.module('compat.graphml.xaml', function (exports) {
+  exports.TemplateNodeStyleExtension = new ClassDefinition(function () {
     return {
       $extends: compat.graphml.xaml.ControlStyleBaseExtension,
 
-      constructor: function() {
+      constructor: function () {
         compat.graphml.xaml.ControlStyleBaseExtension.call(this)
         this.$initNodeControlNodeStyleExtension()
         this.$minimumSize = Size.EMPTY
@@ -14386,13 +14384,13 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $styleResourceKey: null,
 
       styleResourceKey: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(YString.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$styleResourceKey
         },
-        set: function(/*string*/ value) {
+        set: function (/*string*/ value) {
           this.$styleResourceKey = value
         }
       },
@@ -14400,13 +14398,13 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $insets: null,
 
       insets: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(Insets.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$insets
         },
-        set: function(/*yfiles.geometry.Insets*/ value) {
+        set: function (/*yfiles.geometry.Insets*/ value) {
           this.$insets = value
         }
       },
@@ -14414,13 +14412,13 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $minimumSize: null,
 
       minimumSize: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(Size.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$minimumSize
         },
-        set: function(/*yfiles.geometry.Size*/ value) {
+        set: function (/*yfiles.geometry.Size*/ value) {
           this.$minimumSize = value
         }
       },
@@ -14428,18 +14426,18 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $outlineShape: null,
 
       outlineShape: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(GeneralPath.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$outlineShape
         },
-        set: function(/*yfiles.geometry.GeneralPath*/ value) {
+        set: function (/*yfiles.geometry.GeneralPath*/ value) {
           this.$outlineShape = value
         }
       },
 
-      provideValue: function(/*yfiles.graph.ILookup*/ serviceProvider) {
+      provideValue: function (/*yfiles.graph.ILookup*/ serviceProvider) {
         var /*yfiles.styles.TemplateNodeStyle*/ newInstance = new TemplateNodeStyle()
         {
           newInstance.insets = this.$insets
@@ -14452,15 +14450,15 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
         return newInstance
       },
 
-      $initNodeControlNodeStyleExtension: function() {
+      $initNodeControlNodeStyleExtension: function () {
         this.$insets = new Insets(0)
         this.$minimumSize = new Size(0, 0)
       }
     }
   })
 })
-yfiles.lang.module('compat.graphml.xaml', function(exports) {
-  exports.NinePositionsEdgeLabelModelPosition = new EnumDefinition(function() {
+yfiles.lang.module('compat.graphml.xaml', function (exports) {
+  exports.NinePositionsEdgeLabelModelPosition = new EnumDefinition(function () {
     return {
       $flags: true,
       SOURCE_ABOVE: 17,
@@ -14483,12 +14481,12 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
     }
   })
 })
-yfiles.lang.module('compat.graphml.xaml', function(exports) {
-  exports.NinePositionsEdgeLabelModelExtension = new ClassDefinition(function() {
+yfiles.lang.module('compat.graphml.xaml', function (exports) {
+  exports.NinePositionsEdgeLabelModelExtension = new ClassDefinition(function () {
     return {
       $extends: MarkupExtension,
 
-      constructor: function() {
+      constructor: function () {
         MarkupExtension.call(this)
         this.$distance = 10
       },
@@ -14496,13 +14494,13 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $angle: 0,
 
       angle: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(YNumber.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$angle
         },
-        set: function(/*number*/ value) {
+        set: function (/*number*/ value) {
           this.$angle = value
         }
       },
@@ -14510,18 +14508,18 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $distance: 0,
 
       distance: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(YNumber.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$distance
         },
-        set: function(/*number*/ value) {
+        set: function (/*number*/ value) {
           this.$distance = value
         }
       },
 
-      provideValue: function(/*yfiles.graph.ILookup*/ serviceProvider) {
+      provideValue: function (/*yfiles.graph.ILookup*/ serviceProvider) {
         var /*yfiles.graph.NinePositionsEdgeLabelModel*/
           newInstance = new NinePositionsEdgeLabelModel()
         {
@@ -14533,82 +14531,82 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
 
       $static: {
         SOURCE_ABOVE: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(ILabelModelParameter.$class)]
           },
-          get: function() {
+          get: function () {
             return NinePositionsEdgeLabelModel.SOURCE_ABOVE
           }
         },
 
         CENTER_ABOVE: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(ILabelModelParameter.$class)]
           },
-          get: function() {
+          get: function () {
             return NinePositionsEdgeLabelModel.CENTER_ABOVE
           }
         },
 
         TARGET_ABOVE: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(ILabelModelParameter.$class)]
           },
-          get: function() {
+          get: function () {
             return NinePositionsEdgeLabelModel.TARGET_ABOVE
           }
         },
 
         SOURCE_CENTERED: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(ILabelModelParameter.$class)]
           },
-          get: function() {
+          get: function () {
             return NinePositionsEdgeLabelModel.SOURCE_CENTERED
           }
         },
 
         CENTER_CENTERED: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(ILabelModelParameter.$class)]
           },
-          get: function() {
+          get: function () {
             return NinePositionsEdgeLabelModel.CENTER_CENTERED
           }
         },
 
         TARGET_CENTERED: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(ILabelModelParameter.$class)]
           },
-          get: function() {
+          get: function () {
             return NinePositionsEdgeLabelModel.TARGET_CENTERED
           }
         },
 
         SOURCE_BELOW: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(ILabelModelParameter.$class)]
           },
-          get: function() {
+          get: function () {
             return NinePositionsEdgeLabelModel.SOURCE_BELOW
           }
         },
 
         CENTER_BELOW: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(ILabelModelParameter.$class)]
           },
-          get: function() {
+          get: function () {
             return NinePositionsEdgeLabelModel.CENTER_BELOW
           }
         },
 
         TARGET_BELOW: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(ILabelModelParameter.$class)]
           },
-          get: function() {
+          get: function () {
             return NinePositionsEdgeLabelModel.TARGET_BELOW
           }
         }
@@ -14616,12 +14614,12 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
     }
   })
 })
-yfiles.lang.module('compat.graphml.xaml', function(exports) {
-  exports.NinePositionsEdgeLabelParameterExtension = new ClassDefinition(function() {
+yfiles.lang.module('compat.graphml.xaml', function (exports) {
+  exports.NinePositionsEdgeLabelParameterExtension = new ClassDefinition(function () {
     return {
       $extends: MarkupExtension,
 
-      constructor: function() {
+      constructor: function () {
         MarkupExtension.call(this)
         this.$position = compat.graphml.xaml.NinePositionsEdgeLabelModelPosition.CENTER_CENTERED
       },
@@ -14629,13 +14627,13 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $position: 0,
 
       position: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(compat.graphml.xaml.NinePositionsEdgeLabelModelPosition.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$position
         },
-        set: function(/*compat.graphml.xaml.NinePositionsEdgeLabelModelPosition*/ value) {
+        set: function (/*compat.graphml.xaml.NinePositionsEdgeLabelModelPosition*/ value) {
           this.$position = value
         }
       },
@@ -14643,18 +14641,18 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $model: null,
 
       model: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(ILabelModel.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$model
         },
-        set: function(/*yfiles.graph.ILabelModel*/ value) {
+        set: function (/*yfiles.graph.ILabelModel*/ value) {
           this.$model = value
         }
       },
 
-      provideValue: function(/*yfiles.graph.ILookup*/ serviceProvider) {
+      provideValue: function (/*yfiles.graph.ILookup*/ serviceProvider) {
         var /*yfiles.graphml.NinePositionsEdgeLabelModelParameterExtension*/
           newInstance = new yfiles.graphml.NinePositionsEdgeLabelModelParameterExtension()
         {
@@ -14667,27 +14665,27 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
     }
   })
 })
-yfiles.lang.module('compat.graphml.xaml', function(exports) {
-  exports.CloseExtension = new ClassDefinition(function() {
+yfiles.lang.module('compat.graphml.xaml', function (exports) {
+  exports.CloseExtension = new ClassDefinition(function () {
     return {
       $extends: MarkupExtension,
 
-      constructor: function() {
+      constructor: function () {
         MarkupExtension.call(this)
       },
 
-      provideValue: function(/*yfiles.graph.ILookup*/ serviceProvider) {
+      provideValue: function (/*yfiles.graph.ILookup*/ serviceProvider) {
         return new yfiles.graphml.Close()
       }
     }
   })
 })
-yfiles.lang.module('compat.graphml.xaml', function(exports) {
-  exports.QuadToExtension = new ClassDefinition(function() {
+yfiles.lang.module('compat.graphml.xaml', function (exports) {
+  exports.QuadToExtension = new ClassDefinition(function () {
     return {
       $extends: MarkupExtension,
 
-      constructor: function() {
+      constructor: function () {
         MarkupExtension.call(this)
         this.$initQuadToExtension()
       },
@@ -14695,13 +14693,13 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $point: null,
 
       point: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(Point.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$point
         },
-        set: function(/*yfiles.geometry.Point*/ value) {
+        set: function (/*yfiles.geometry.Point*/ value) {
           this.$point = value
         }
       },
@@ -14709,18 +14707,18 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $controlPoint: null,
 
       controlPoint: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(Point.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$controlPoint
         },
-        set: function(/*yfiles.geometry.Point*/ value) {
+        set: function (/*yfiles.geometry.Point*/ value) {
           this.$controlPoint = value
         }
       },
 
-      provideValue: function(/*yfiles.graph.ILookup*/ serviceProvider) {
+      provideValue: function (/*yfiles.graph.ILookup*/ serviceProvider) {
         var /*yfiles.graphml.QuadTo*/ newInstance = new yfiles.graphml.QuadTo()
         {
           newInstance.point = this.$point
@@ -14729,19 +14727,19 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
         return newInstance
       },
 
-      $initQuadToExtension: function() {
+      $initQuadToExtension: function () {
         this.$point = new Point(0, 0)
         this.$controlPoint = new Point(0, 0)
       }
     }
   })
 })
-yfiles.lang.module('compat.graphml.xaml', function(exports) {
-  exports.CubicToExtension = new ClassDefinition(function() {
+yfiles.lang.module('compat.graphml.xaml', function (exports) {
+  exports.CubicToExtension = new ClassDefinition(function () {
     return {
       $extends: MarkupExtension,
 
-      constructor: function() {
+      constructor: function () {
         MarkupExtension.call(this)
         this.$initCubicToExtension()
       },
@@ -14749,13 +14747,13 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $point: null,
 
       point: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(Point.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$point
         },
-        set: function(/*yfiles.geometry.Point*/ value) {
+        set: function (/*yfiles.geometry.Point*/ value) {
           this.$point = value
         }
       },
@@ -14763,13 +14761,13 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $controlPoint2: null,
 
       controlPoint2: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(Point.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$controlPoint2
         },
-        set: function(/*yfiles.geometry.Point*/ value) {
+        set: function (/*yfiles.geometry.Point*/ value) {
           this.$controlPoint2 = value
         }
       },
@@ -14777,18 +14775,18 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $controlPoint1: null,
 
       controlPoint1: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(Point.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$controlPoint1
         },
-        set: function(/*yfiles.geometry.Point*/ value) {
+        set: function (/*yfiles.geometry.Point*/ value) {
           this.$controlPoint1 = value
         }
       },
 
-      provideValue: function(/*yfiles.graph.ILookup*/ serviceProvider) {
+      provideValue: function (/*yfiles.graph.ILookup*/ serviceProvider) {
         var /*yfiles.graphml.CubicTo*/ newInstance = new yfiles.graphml.CubicTo()
         {
           newInstance.point = this.$point
@@ -14798,7 +14796,7 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
         return newInstance
       },
 
-      $initCubicToExtension: function() {
+      $initCubicToExtension: function () {
         this.$point = new Point(0, 0)
         this.$controlPoint2 = new Point(0, 0)
         this.$controlPoint1 = new Point(0, 0)
@@ -14806,12 +14804,12 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
     }
   })
 })
-yfiles.lang.module('compat.graphml.xaml', function(exports) {
-  exports.MoveToExtension = new ClassDefinition(function() {
+yfiles.lang.module('compat.graphml.xaml', function (exports) {
+  exports.MoveToExtension = new ClassDefinition(function () {
     return {
       $extends: MarkupExtension,
 
-      constructor: function() {
+      constructor: function () {
         MarkupExtension.call(this)
         this.$initMoveToExtension()
       },
@@ -14819,18 +14817,18 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $point: null,
 
       point: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(Point.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$point
         },
-        set: function(/*yfiles.geometry.Point*/ value) {
+        set: function (/*yfiles.geometry.Point*/ value) {
           this.$point = value
         }
       },
 
-      provideValue: function(/*yfiles.graph.ILookup*/ serviceProvider) {
+      provideValue: function (/*yfiles.graph.ILookup*/ serviceProvider) {
         var /*yfiles.graphml.MoveTo*/ newInstance = new yfiles.graphml.MoveTo()
         {
           newInstance.point = this.$point
@@ -14838,27 +14836,27 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
         return newInstance
       },
 
-      $initMoveToExtension: function() {
+      $initMoveToExtension: function () {
         this.$point = new Point(0, 0)
       }
     }
   })
 })
-yfiles.lang.module('compat.graphml.xaml', function(exports) {
-  exports.GeneralPathMarkupExtension = new ClassDefinition(function() {
+yfiles.lang.module('compat.graphml.xaml', function (exports) {
+  exports.GeneralPathMarkupExtension = new ClassDefinition(function () {
     return {
       $extends: MarkupExtension,
 
       $meta: [GraphMLAttribute().init({ contentProperty: 'items' })],
 
-      constructor: function() {
+      constructor: function () {
         MarkupExtension.call(this)
         this.$initGeneralPathMarkupExtension()
       },
 
       $items: null,
 
-      provideValue: function(/*yfiles.graph.ILookup*/ serviceProvider) {
+      provideValue: function (/*yfiles.graph.ILookup*/ serviceProvider) {
         var /*yfiles.graphml.GeneralPathExtension*/ generalPathExtension = new yfiles.graphml.GeneralPathExtension()
         var /*yfiles.collections.IEnumerator*/ tmpEnumerator
         for (tmpEnumerator = this.$items.getEnumerator(); tmpEnumerator.moveNext(); ) {
@@ -14871,31 +14869,31 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       },
 
       items: {
-        $meta: function() {
+        $meta: function () {
           return [
             GraphMLAttribute().init({ visibility: GraphMLMemberVisibility.CONTENT }),
             TypeAttribute(IList.$class)
           ]
         },
-        get: function() {
+        get: function () {
           return this.$items
         }
       },
 
-      $initGeneralPathMarkupExtension: function() {
+      $initGeneralPathMarkupExtension: function () {
         this.$items = new List()
       }
     }
   })
 })
-yfiles.lang.module('compat.graphml.xaml', function(exports) {
-  exports.StringTemplateLabelStyleExtension = new ClassDefinition(function() {
+yfiles.lang.module('compat.graphml.xaml', function (exports) {
+  exports.StringTemplateLabelStyleExtension = new ClassDefinition(function () {
     return {
       $extends: compat.graphml.xaml.ControlStyleBaseExtension,
 
       $meta: [GraphMLAttribute().init({ contentProperty: 'svgContent' })],
 
-      constructor: function() {
+      constructor: function () {
         compat.graphml.xaml.ControlStyleBaseExtension.call(this)
         this.$initStringLabelControlLabelStyleExtension()
         this.$preferredSize = new Size(0, 0)
@@ -14905,13 +14903,13 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $svgContent: null,
 
       svgContent: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(YString.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$svgContent
         },
-        set: function(/*string*/ value) {
+        set: function (/*string*/ value) {
           this.$svgContent = value
         }
       },
@@ -14919,13 +14917,13 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $outlineShape: null,
 
       outlineShape: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(GeneralPath.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$outlineShape
         },
-        set: function(/*yfiles.geometry.GeneralPath*/ value) {
+        set: function (/*yfiles.geometry.GeneralPath*/ value) {
           this.$outlineShape = value
         }
       },
@@ -14933,13 +14931,13 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $autoFlip: false,
 
       autoFlip: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(YBoolean.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$autoFlip
         },
-        set: function(/*boolean*/ value) {
+        set: function (/*boolean*/ value) {
           this.$autoFlip = value
         }
       },
@@ -14947,18 +14945,18 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $preferredSize: null,
 
       preferredSize: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(Size.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$preferredSize
         },
-        set: function(/*yfiles.geometry.Size*/ value) {
+        set: function (/*yfiles.geometry.Size*/ value) {
           this.$preferredSize = value
         }
       },
 
-      provideValue: function(/*yfiles.graph.ILookup*/ serviceProvider) {
+      provideValue: function (/*yfiles.graph.ILookup*/ serviceProvider) {
         var /*yfiles.styles.StringTemplateLabelStyle*/ newInstance = new StringTemplateLabelStyle()
         {
           newInstance.autoFlip = this.$autoFlip
@@ -14971,18 +14969,18 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
         return newInstance
       },
 
-      $initStringLabelControlLabelStyleExtension: function() {
+      $initStringLabelControlLabelStyleExtension: function () {
         this.$preferredSize = new Size(0, 0)
       }
     }
   })
 })
-yfiles.lang.module('compat.graphml.xaml', function(exports) {
-  exports.TemplateLabelStyleExtension = new ClassDefinition(function() {
+yfiles.lang.module('compat.graphml.xaml', function (exports) {
+  exports.TemplateLabelStyleExtension = new ClassDefinition(function () {
     return {
       $extends: compat.graphml.xaml.ControlStyleBaseExtension,
 
-      constructor: function() {
+      constructor: function () {
         compat.graphml.xaml.ControlStyleBaseExtension.call(this)
         this.$initLabelControlLabelStyleExtension()
         this.$preferredSize = new Size(0, 0)
@@ -14992,13 +14990,13 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $styleResourceKey: null,
 
       styleResourceKey: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(YString.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$styleResourceKey
         },
-        set: function(/*string*/ value) {
+        set: function (/*string*/ value) {
           this.$styleResourceKey = value
         }
       },
@@ -15006,13 +15004,13 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $outlineShape: null,
 
       outlineShape: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(GeneralPath.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$outlineShape
         },
-        set: function(/*yfiles.geometry.GeneralPath*/ value) {
+        set: function (/*yfiles.geometry.GeneralPath*/ value) {
           this.$outlineShape = value
         }
       },
@@ -15020,13 +15018,13 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $autoFlip: false,
 
       autoFlip: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(YBoolean.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$autoFlip
         },
-        set: function(/*boolean*/ value) {
+        set: function (/*boolean*/ value) {
           this.$autoFlip = value
         }
       },
@@ -15034,18 +15032,18 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $preferredSize: null,
 
       preferredSize: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(Size.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$preferredSize
         },
-        set: function(/*yfiles.geometry.Size*/ value) {
+        set: function (/*yfiles.geometry.Size*/ value) {
           this.$preferredSize = value
         }
       },
 
-      provideValue: function(/*yfiles.graph.ILookup*/ serviceProvider) {
+      provideValue: function (/*yfiles.graph.ILookup*/ serviceProvider) {
         var /*yfiles.styles.TemplateLabelStyle*/ newInstance = new TemplateLabelStyle()
         {
           newInstance.autoFlip = this.$autoFlip
@@ -15058,14 +15056,14 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
         return newInstance
       },
 
-      $initLabelControlLabelStyleExtension: function() {
+      $initLabelControlLabelStyleExtension: function () {
         this.$preferredSize = new Size(0, 0)
       }
     }
   })
 })
-yfiles.lang.module('compat.graphml.xaml', function(exports) {
-  exports.InteriorLabelModelPosition = new EnumDefinition(function() {
+yfiles.lang.module('compat.graphml.xaml', function (exports) {
+  exports.InteriorLabelModelPosition = new EnumDefinition(function () {
     return {
       NORTH: 0,
       EAST: 1,
@@ -15079,12 +15077,12 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
     }
   })
 })
-yfiles.lang.module('compat.graphml.xaml', function(exports) {
-  exports.InteriorLabelModelExtension = new ClassDefinition(function() {
+yfiles.lang.module('compat.graphml.xaml', function (exports) {
+  exports.InteriorLabelModelExtension = new ClassDefinition(function () {
     return {
       $extends: MarkupExtension,
 
-      constructor: function() {
+      constructor: function () {
         MarkupExtension.call(this)
         this.$initInteriorLabelModelExtension()
         this.$insets = new Insets(0)
@@ -15093,18 +15091,18 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $insets: null,
 
       insets: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(Insets.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$insets
         },
-        set: function(/*yfiles.geometry.Insets*/ value) {
+        set: function (/*yfiles.geometry.Insets*/ value) {
           this.$insets = value
         }
       },
 
-      provideValue: function(/*yfiles.graph.ILookup*/ serviceProvider) {
+      provideValue: function (/*yfiles.graph.ILookup*/ serviceProvider) {
         var /*yfiles.graph.InteriorLabelModel*/ newInstance = new InteriorLabelModel()
         {
           newInstance.insets = this.$insets
@@ -15112,88 +15110,88 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
         return newInstance
       },
 
-      $initInteriorLabelModelExtension: function() {
+      $initInteriorLabelModelExtension: function () {
         this.$insets = new Insets(0)
       },
 
       $static: {
         NORTH: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(ILabelModelParameter.$class)]
           },
-          get: function() {
+          get: function () {
             return InteriorLabelModel.NORTH
           }
         },
 
         EAST: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(ILabelModelParameter.$class)]
           },
-          get: function() {
+          get: function () {
             return InteriorLabelModel.EAST
           }
         },
 
         SOUTH: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(ILabelModelParameter.$class)]
           },
-          get: function() {
+          get: function () {
             return InteriorLabelModel.SOUTH
           }
         },
 
         SOUTH_EAST: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(ILabelModelParameter.$class)]
           },
-          get: function() {
+          get: function () {
             return InteriorLabelModel.SOUTH_EAST
           }
         },
 
         SOUTH_WEST: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(ILabelModelParameter.$class)]
           },
-          get: function() {
+          get: function () {
             return InteriorLabelModel.SOUTH_WEST
           }
         },
 
         WEST: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(ILabelModelParameter.$class)]
           },
-          get: function() {
+          get: function () {
             return InteriorLabelModel.WEST
           }
         },
 
         NORTH_EAST: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(ILabelModelParameter.$class)]
           },
-          get: function() {
+          get: function () {
             return InteriorLabelModel.NORTH_EAST
           }
         },
 
         NORTH_WEST: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(ILabelModelParameter.$class)]
           },
-          get: function() {
+          get: function () {
             return InteriorLabelModel.NORTH_WEST
           }
         },
 
         CENTER: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(ILabelModelParameter.$class)]
           },
-          get: function() {
+          get: function () {
             return InteriorLabelModel.CENTER
           }
         }
@@ -15201,12 +15199,12 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
     }
   })
 })
-yfiles.lang.module('compat.graphml.xaml', function(exports) {
-  exports.InteriorLabelModelParameterExtension = new ClassDefinition(function() {
+yfiles.lang.module('compat.graphml.xaml', function (exports) {
+  exports.InteriorLabelModelParameterExtension = new ClassDefinition(function () {
     return {
       $extends: MarkupExtension,
 
-      constructor: function() {
+      constructor: function () {
         MarkupExtension.call(this)
         this.$initInteriorLabelModelParameterExtension()
         this.$position = compat.graphml.xaml.InteriorLabelModelPosition.NORTH
@@ -15215,13 +15213,13 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $position: null,
 
       position: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(compat.graphml.xaml.InteriorLabelModelPosition.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$position
         },
-        set: function(/*compat.graphml.xaml.InteriorLabelModelPosition*/ value) {
+        set: function (/*compat.graphml.xaml.InteriorLabelModelPosition*/ value) {
           this.$position = value
         }
       },
@@ -15229,18 +15227,18 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $model: null,
 
       model: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(ILabelModel.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$model
         },
-        set: function(/*yfiles.graph.ILabelModel*/ value) {
+        set: function (/*yfiles.graph.ILabelModel*/ value) {
           this.$model = value
         }
       },
 
-      provideValue: function(/*yfiles.graph.ILookup*/ serviceProvider) {
+      provideValue: function (/*yfiles.graph.ILookup*/ serviceProvider) {
         var /*yfiles.graphml.InteriorLabelModelParameterExtension*/
           newInstance = new yfiles.graphml.InteriorLabelModelParameterExtension()
         {
@@ -15251,14 +15249,14 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
         return coreExtension.provideValue(serviceProvider)
       },
 
-      $initInteriorLabelModelParameterExtension: function() {
+      $initInteriorLabelModelParameterExtension: function () {
         this.$position = compat.graphml.xaml.InteriorLabelModelPosition.NORTH
       }
     }
   })
 })
-yfiles.lang.module('compat.graphml.xaml', function(exports) {
-  exports.InteriorStretchLabelModelPosition = new EnumDefinition(function() {
+yfiles.lang.module('compat.graphml.xaml', function (exports) {
+  exports.InteriorStretchLabelModelPosition = new EnumDefinition(function () {
     return {
       NORTH: 0,
       EAST: 1,
@@ -15268,12 +15266,12 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
     }
   })
 })
-yfiles.lang.module('compat.graphml.xaml', function(exports) {
-  exports.InteriorStretchLabelModelExtension = new ClassDefinition(function() {
+yfiles.lang.module('compat.graphml.xaml', function (exports) {
+  exports.InteriorStretchLabelModelExtension = new ClassDefinition(function () {
     return {
       $extends: MarkupExtension,
 
-      constructor: function() {
+      constructor: function () {
         MarkupExtension.call(this)
         this.$initInteriorStretchLabelModelExtension()
         this.$insets = new Insets(0)
@@ -15282,18 +15280,18 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $insets: null,
 
       insets: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(Insets.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$insets
         },
-        set: function(/*yfiles.geometry.Insets*/ value) {
+        set: function (/*yfiles.geometry.Insets*/ value) {
           this.$insets = value
         }
       },
 
-      provideValue: function(/*yfiles.graph.ILookup*/ serviceProvider) {
+      provideValue: function (/*yfiles.graph.ILookup*/ serviceProvider) {
         var /*yfiles.graph.InteriorStretchLabelModel*/ newInstance = new InteriorStretchLabelModel()
         {
           newInstance.insets = this.$insets
@@ -15301,52 +15299,52 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
         return newInstance
       },
 
-      $initInteriorStretchLabelModelExtension: function() {
+      $initInteriorStretchLabelModelExtension: function () {
         this.$insets = new Insets(0)
       },
 
       $static: {
         NORTH: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(ILabelModelParameter.$class)]
           },
-          get: function() {
+          get: function () {
             return InteriorStretchLabelModel.NORTH
           }
         },
 
         EAST: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(ILabelModelParameter.$class)]
           },
-          get: function() {
+          get: function () {
             return InteriorStretchLabelModel.EAST
           }
         },
 
         SOUTH: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(ILabelModelParameter.$class)]
           },
-          get: function() {
+          get: function () {
             return InteriorStretchLabelModel.SOUTH
           }
         },
 
         WEST: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(ILabelModelParameter.$class)]
           },
-          get: function() {
+          get: function () {
             return InteriorStretchLabelModel.WEST
           }
         },
 
         CENTER: {
-          $meta: function() {
+          $meta: function () {
             return [TypeAttribute(ILabelModelParameter.$class)]
           },
-          get: function() {
+          get: function () {
             return InteriorStretchLabelModel.CENTER
           }
         }
@@ -15354,12 +15352,12 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
     }
   })
 })
-yfiles.lang.module('compat.graphml.xaml', function(exports) {
-  exports.InteriorStretchLabelModelParameterExtension = new ClassDefinition(function() {
+yfiles.lang.module('compat.graphml.xaml', function (exports) {
+  exports.InteriorStretchLabelModelParameterExtension = new ClassDefinition(function () {
     return {
       $extends: MarkupExtension,
 
-      constructor: function() {
+      constructor: function () {
         MarkupExtension.call(this)
         this.$initInteriorStretchLabelModelParameterExtension()
         this.$position = compat.graphml.xaml.InteriorStretchLabelModelPosition.NORTH
@@ -15368,13 +15366,13 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $position: null,
 
       position: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(compat.graphml.xaml.InteriorStretchLabelModelPosition.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$position
         },
-        set: function(/*compat.graphml.xaml.InteriorStretchLabelModelPosition*/ value) {
+        set: function (/*compat.graphml.xaml.InteriorStretchLabelModelPosition*/ value) {
           this.$position = value
         }
       },
@@ -15382,18 +15380,18 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $model: null,
 
       model: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(ILabelModel.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$model
         },
-        set: function(/*yfiles.graph.ILabelModel*/ value) {
+        set: function (/*yfiles.graph.ILabelModel*/ value) {
           this.$model = value
         }
       },
 
-      provideValue: function(/*yfiles.graph.ILookup*/ serviceProvider) {
+      provideValue: function (/*yfiles.graph.ILookup*/ serviceProvider) {
         var /*yfiles.graphml.InteriorStretchLabelModelParameterExtension*/
           newInstance = new yfiles.graphml.InteriorStretchLabelModelParameterExtension()
         {
@@ -15404,33 +15402,33 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
         return coreExtension.provideValue(serviceProvider)
       },
 
-      $initInteriorStretchLabelModelParameterExtension: function() {
+      $initInteriorStretchLabelModelParameterExtension: function () {
         this.$position = compat.graphml.xaml.InteriorStretchLabelModelPosition.NORTH
       }
     }
   })
 })
-yfiles.lang.module('compat.graphml.xaml', function(exports) {
-  exports.ImageNodeStyleExtension = new ClassDefinition(function() {
+yfiles.lang.module('compat.graphml.xaml', function (exports) {
+  exports.ImageNodeStyleExtension = new ClassDefinition(function () {
     return {
       $extends: MarkupExtension,
 
       $meta: [GraphMLAttribute().init({ contentProperty: 'image' })],
 
-      constructor: function() {
+      constructor: function () {
         MarkupExtension.call(this)
       },
 
       $image: null,
 
       image: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(compat.graphml.xaml.ImageSource.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$image
         },
-        set: function(/*compat.graphml.xaml.ImageSource*/ value) {
+        set: function (/*compat.graphml.xaml.ImageSource*/ value) {
           this.$image = value
         }
       },
@@ -15438,13 +15436,13 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $fallbackImage: null,
 
       fallbackImage: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(compat.graphml.xaml.ImageSource.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$fallbackImage
         },
-        set: function(/*compat.graphml.xaml.ImageSource*/ value) {
+        set: function (/*compat.graphml.xaml.ImageSource*/ value) {
           this.$fallbackImage = value
         }
       },
@@ -15452,18 +15450,18 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $outlineShape: null,
 
       outlineShape: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(GeneralPath.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$outlineShape
         },
-        set: function(/*yfiles.geometry.GeneralPath*/ value) {
+        set: function (/*yfiles.geometry.GeneralPath*/ value) {
           this.$outlineShape = value
         }
       },
 
-      provideValue: function(/*yfiles.graph.ILookup*/ serviceProvider) {
+      provideValue: function (/*yfiles.graph.ILookup*/ serviceProvider) {
         var /*yfiles.styles.ImageNodeStyle*/ newInstance = new ImageNodeStyle()
         {
           newInstance.fallbackImage = this.fallbackImage.$path
@@ -15475,33 +15473,33 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
     }
   })
 })
-yfiles.lang.module('compat.graphml.xaml', function(exports) {
-  exports.ImageSource = new ClassDefinition(function() {
+yfiles.lang.module('compat.graphml.xaml', function (exports) {
+  exports.ImageSource = new ClassDefinition(function () {
     return {
       $path: null,
 
       path: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(YString.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$path
         },
-        set: function(/*string*/ value) {
+        set: function (/*string*/ value) {
           this.$path = value
         }
       }
     }
   })
 })
-yfiles.lang.module('compat.graphml.xaml', function(exports) {
-  exports.IconLabelStyleExtension = new ClassDefinition(function() {
+yfiles.lang.module('compat.graphml.xaml', function (exports) {
+  exports.IconLabelStyleExtension = new ClassDefinition(function () {
     return {
       $extends: MarkupExtension,
 
       $meta: [GraphMLAttribute().init({ contentProperty: 'innerStyle' })],
 
-      constructor: function() {
+      constructor: function () {
         MarkupExtension.call(this)
         this.$initIconLabelStyleExtension()
         this.$autoFlip = true
@@ -15511,13 +15509,13 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $icon: null,
 
       icon: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(compat.graphml.xaml.ImageSource.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$icon
         },
-        set: function(/*compat.graphml.xaml.ImageSource*/ value) {
+        set: function (/*compat.graphml.xaml.ImageSource*/ value) {
           this.$icon = value
         }
       },
@@ -15525,13 +15523,13 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $iconSize: null,
 
       iconSize: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(Size.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$iconSize
         },
-        set: function(/*yfiles.geometry.Size*/ value) {
+        set: function (/*yfiles.geometry.Size*/ value) {
           this.$iconSize = value
         }
       },
@@ -15539,13 +15537,13 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $iconPlacement: null,
 
       iconPlacement: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(ILabelModelParameter.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$iconPlacement
         },
-        set: function(/*yfiles.graph.ILabelModelParameter*/ value) {
+        set: function (/*yfiles.graph.ILabelModelParameter*/ value) {
           this.$iconPlacement = value
         }
       },
@@ -15553,13 +15551,13 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $innerStyle: null,
 
       innerStyle: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(ILabelStyle.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$innerStyle
         },
-        set: function(/*yfiles.styles.ILabelStyle*/ value) {
+        set: function (/*yfiles.styles.ILabelStyle*/ value) {
           this.$innerStyle = value
         }
       },
@@ -15567,13 +15565,13 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $innerStyleInsets: null,
 
       innerStyleInsets: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(Insets.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$innerStyleInsets
         },
-        set: function(/*yfiles.geometry.Insets*/ value) {
+        set: function (/*yfiles.geometry.Insets*/ value) {
           this.$innerStyleInsets = value
         }
       },
@@ -15581,18 +15579,18 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $autoFlip: false,
 
       autoFlip: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(YBoolean.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$autoFlip
         },
-        set: function(/*boolean*/ value) {
+        set: function (/*boolean*/ value) {
           this.$autoFlip = value
         }
       },
 
-      provideValue: function(/*yfiles.graph.ILookup*/ serviceProvider) {
+      provideValue: function (/*yfiles.graph.ILookup*/ serviceProvider) {
         var /*yfiles.styles.IconLabelStyle*/ newInstance = new IconLabelStyle()
         {
           newInstance.autoFlip = this.$autoFlip
@@ -15605,21 +15603,21 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
         return newInstance
       },
 
-      $initIconLabelStyleExtension: function() {
+      $initIconLabelStyleExtension: function () {
         this.$iconSize = new Size(0, 0)
         this.$innerStyleInsets = new Insets(0)
       }
     }
   })
 })
-yfiles.lang.module('compat.graphml.xaml', function(exports) {
-  exports.CollapsibleNodeStyleDecoratorExtension = new ClassDefinition(function() {
+yfiles.lang.module('compat.graphml.xaml', function (exports) {
+  exports.CollapsibleNodeStyleDecoratorExtension = new ClassDefinition(function () {
     return {
       $extends: MarkupExtension,
 
       $meta: [GraphMLAttribute().init({ contentProperty: 'wrapped' })],
 
-      constructor: function() {
+      constructor: function () {
         MarkupExtension.call(this)
         this.$initCollapsibleNodeStyleDecoratorExtension()
         this.$buttonLocationParameter = InteriorLabelModel.NORTH_WEST
@@ -15629,13 +15627,13 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $buttonLocationParameter: null,
 
       buttonLocationParameter: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(ILabelModelParameter.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$buttonLocationParameter
         },
-        set: function(/*yfiles.graph.ILabelModelParameter*/ value) {
+        set: function (/*yfiles.graph.ILabelModelParameter*/ value) {
           this.$buttonLocationParameter = value
         }
       },
@@ -15643,13 +15641,13 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $insets: null,
 
       insets: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(Insets.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$insets
         },
-        set: function(/*yfiles.geometry.Insets*/ value) {
+        set: function (/*yfiles.geometry.Insets*/ value) {
           this.$insets = value
         }
       },
@@ -15657,18 +15655,18 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $wrapped: null,
 
       wrapped: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(INodeStyle.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$wrapped
         },
-        set: function(/*yfiles.styles.INodeStyle*/ value) {
+        set: function (/*yfiles.styles.INodeStyle*/ value) {
           this.$wrapped = value
         }
       },
 
-      provideValue: function(/*yfiles.graph.ILookup*/ serviceProvider) {
+      provideValue: function (/*yfiles.graph.ILookup*/ serviceProvider) {
         var /*yfiles.styles.CollapsibleNodeStyleDecorator*/
           newInstance = new CollapsibleNodeStyleDecorator()
         {
@@ -15679,31 +15677,31 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
         return newInstance
       },
 
-      $initCollapsibleNodeStyleDecoratorExtension: function() {
+      $initCollapsibleNodeStyleDecoratorExtension: function () {
         this.$insets = new Insets(0)
       }
     }
   })
 })
-yfiles.lang.module('compat.graphml.xaml', function(exports) {
-  exports.GenericLabelModelParameterPairExtension = new ClassDefinition(function() {
+yfiles.lang.module('compat.graphml.xaml', function (exports) {
+  exports.GenericLabelModelParameterPairExtension = new ClassDefinition(function () {
     return {
       $extends: MarkupExtension,
 
-      constructor: function() {
+      constructor: function () {
         MarkupExtension.call(this)
       },
 
       $parameter: null,
 
       parameter: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(ILabelModelParameter.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$parameter
         },
-        set: function(/*yfiles.graph.ILabelModelParameter*/ value) {
+        set: function (/*yfiles.graph.ILabelModelParameter*/ value) {
           this.$parameter = value
         }
       },
@@ -15711,18 +15709,18 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $descriptor: null,
 
       descriptor: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(ILabelCandidateDescriptor.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$descriptor
         },
-        set: function(/*yfiles.graph.ILabelCandidateDescriptor*/ value) {
+        set: function (/*yfiles.graph.ILabelCandidateDescriptor*/ value) {
           this.$descriptor = value
         }
       },
 
-      provideValue: function(/*yfiles.graph.ILookup*/ serviceProvider) {
+      provideValue: function (/*yfiles.graph.ILookup*/ serviceProvider) {
         var /*yfiles.graphml.GenericLabelModelParameterPair*/
           newInstance = new yfiles.graphml.GenericLabelModelParameterPair()
         {
@@ -15734,18 +15732,18 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
     }
   })
 })
-yfiles.lang.module('compat.graphml.xaml', function(exports) {
-  exports.AnchoredPortLocationModel = new ClassDefinition(function() {
+yfiles.lang.module('compat.graphml.xaml', function (exports) {
+  exports.AnchoredPortLocationModel = new ClassDefinition(function () {
     return {
       $final: true,
 
       $with: [IPortLocationModel],
 
-      lookup: function(/*yfiles.lang.Class*/ type) {
+      lookup: function (/*yfiles.lang.Class*/ type) {
         return null
       },
 
-      getLocation: function(port, locationParameter) {
+      getLocation: function (port, locationParameter) {
         if (
           locationParameter instanceof compat.graphml.xaml.AnchoredPortLocationModel.AnchorParameter
         ) {
@@ -15760,27 +15758,27 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
         }
       },
 
-      createParameter: function(owner, location) {
+      createParameter: function (owner, location) {
         return new compat.graphml.xaml.AnchoredPortLocationModel.PointAnchorParameter(
           this,
           location
         )
       },
 
-      getContext: function(port, locationParameter) {
+      getContext: function (port, locationParameter) {
         return ILookup.EMPTY
       },
 
       $static: {
         INSTANCE: null,
 
-        AnchorParameter: new ClassDefinition(function() {
+        AnchorParameter: new ClassDefinition(function () {
           return {
             $final: true,
 
             $with: [IPortLocationModelParameter],
 
-            constructor: function(model, anchor) {
+            constructor: function (model, anchor) {
               this.$model = model
               this.$anchor = anchor
             },
@@ -15789,29 +15787,29 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
 
             $anchor: null,
 
-            clone: function() {
+            clone: function () {
               return this
             },
 
             model: {
-              get: function() {
+              get: function () {
                 return this.$model
               }
             },
 
-            supports: function(owner) {
+            supports: function (owner) {
               return true
             }
           }
         }),
 
-        PointAnchorParameter: new ClassDefinition(function() {
+        PointAnchorParameter: new ClassDefinition(function () {
           return {
             $final: true,
 
             $with: [IPortLocationModelParameter, IMarkupExtensionConverter],
 
-            constructor: function(model, anchor) {
+            constructor: function (model, anchor) {
               this.$anchor = Point.ORIGIN
               this.$model = model
               this.$anchor = anchor
@@ -15821,25 +15819,25 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
 
             $anchor: null,
 
-            clone: function() {
+            clone: function () {
               return this
             },
 
             model: {
-              get: function() {
+              get: function () {
                 return this.$model
               }
             },
 
-            supports: function(owner) {
+            supports: function (owner) {
               return true
             },
 
-            canConvert: function(/*yfiles.graphml.IWriteContext*/ context, /*Object*/ value) {
+            canConvert: function (/*yfiles.graphml.IWriteContext*/ context, /*Object*/ value) {
               return true
             },
 
-            convert: function(/*yfiles.graphml.IWriteContext*/ context, /*Object*/ value) {
+            convert: function (/*yfiles.graphml.IWriteContext*/ context, /*Object*/ value) {
               var anchoredParameter = new compat.graphml.xaml.AnchoredParameterExtension()
               anchoredParameter.anchor = this.$anchor
               return anchoredParameter
@@ -15847,18 +15845,18 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
           }
         }),
 
-        $clinit: function() {
+        $clinit: function () {
           compat.graphml.xaml.AnchoredPortLocationModel.INSTANCE = new compat.graphml.xaml.AnchoredPortLocationModel()
         }
       }
     }
   })
 
-  exports.AnchoredParameterExtension = new ClassDefinition(function() {
+  exports.AnchoredParameterExtension = new ClassDefinition(function () {
     return {
       $extends: MarkupExtension,
 
-      constructor: function() {
+      constructor: function () {
         MarkupExtension.call(this)
         this.$initAnchoredParameterExtension()
       },
@@ -15866,25 +15864,25 @@ yfiles.lang.module('compat.graphml.xaml', function(exports) {
       $anchor: null,
 
       anchor: {
-        $meta: function() {
+        $meta: function () {
           return [TypeAttribute(Point.$class)]
         },
-        get: function() {
+        get: function () {
           return this.$anchor
         },
-        set: function(/*yfiles.geometry.Point*/ value) {
+        set: function (/*yfiles.geometry.Point*/ value) {
           this.$anchor = value
         }
       },
 
-      provideValue: function(/*yfiles.graph.ILookup*/ serviceProvider) {
+      provideValue: function (/*yfiles.graph.ILookup*/ serviceProvider) {
         return compat.graphml.xaml.AnchoredPortLocationModel.INSTANCE.createParameter(
           null,
           this.$anchor
         )
       },
 
-      $initAnchoredParameterExtension: function() {
+      $initAnchoredParameterExtension: function () {
         this.$anchor = new Point(0, 0)
       }
     }

@@ -32,10 +32,7 @@ import {
   GraphClipboard,
   GraphComponent,
   GraphEditorInputMode,
-  GraphItemTypes,
   GraphMLIOHandler,
-  GraphMLParser,
-  GraphMLWriter,
   GraphModelManager,
   GroupingNodePositionHandler,
   GroupingSupport,
@@ -69,7 +66,6 @@ import {
   MoveInputMode,
   NodeEventArgs,
   OutputHandlerBase,
-  ParseEventArgs,
   Point,
   QueryInputHandlersEventArgs,
   QueryOutputHandlersEventArgs,
@@ -94,7 +90,6 @@ export class ZOrderSupport extends BaseClass(IComparer) {
    */
   constructor(graphComponent) {
     super()
-    this.$graphComponent = graphComponent
     this.zOrderChangedListeners = []
 
     // initialize maps
@@ -102,6 +97,18 @@ export class ZOrderSupport extends BaseClass(IComparer) {
     this.tempZOrders = new HashMap()
     this.tempParents = new HashMap()
 
+    // A flag indicating if nodes added to the master group should get a z-order assigned.
+    this.addZOrderForNewNodes = true
+
+    this.initializeGraphComponent(graphComponent, true)
+  }
+
+  /**
+   * @param {!GraphComponent} graphComponent
+   * @param {boolean} addInputMode
+   */
+  initializeGraphComponent(graphComponent, addInputMode) {
+    this.$graphComponent = graphComponent
     this.foldingView = graphComponent.graph.foldingView
     this.masterGraph = this.foldingView.manager.masterGraph
     this.masterGroupingSupport = this.masterGraph.groupingSupport
@@ -111,24 +118,69 @@ export class ZOrderSupport extends BaseClass(IComparer) {
     // keep labels at their owners for this demo
     graphComponent.graphModelManager.labelLayerPolicy = LabelLayerPolicy.AT_OWNER
 
-    // use a custom edit mode to keep z-order consistent during grouping/folding/reparenting gestures
-    const zOrderGraphEditorInputMode = new ZOrderGraphEditorInputMode(this)
-    zOrderGraphEditorInputMode.focusableItems = GraphItemTypes.NONE
-    // prevent interactive label changes since they display the z-index in this demo
-    zOrderGraphEditorInputMode.allowEditLabel = false
-    zOrderGraphEditorInputMode.allowAddLabel = false
-    graphComponent.inputMode = zOrderGraphEditorInputMode
     graphComponent.graph.decorator.nodeDecorator.positionHandlerDecorator.setFactory(node => {
       return new ZOrderNodePositionHandler(node, this, null)
     })
+
+    if (addInputMode) {
+      // use a custom edit mode to keep z-order consistent during grouping/folding/reparenting gestures
+      graphComponent.inputMode = this.createZOrderGraphEditorInputMode()
+    }
 
     // use a custom clipboard that transfers the relative z-order of copied/cut nodes
     graphComponent.clipboard = new ZOrderGraphClipboard(this)
 
     // listen for new nodes to assign an initial z-order
     this.masterGraph.addNodeCreatedListener(this.onNodeCreated.bind(this))
-    // A flag indicating if nodes added to the master group should get a z-order assigned.
-    this.addZOrderForNewNodes = true
+  }
+
+  /**
+   * @returns {!ZOrderGraphEditorInputMode}
+   */
+  createZOrderGraphEditorInputMode() {
+    return new ZOrderGraphEditorInputMode(this)
+  }
+
+  /**
+   * @param {!GraphMLIOHandler} ioHandler
+   */
+  configureZOrderGraphMLIOHandler(ioHandler) {
+    let zOrderKeyDefinitionFound = false
+
+    ioHandler.addQueryOutputHandlersListener((o, evt) => {
+      if (evt.scope === KeyScope.NODE) {
+        evt.addOutputHandler(new ZOrderOutputHandler(this))
+      }
+    })
+
+    ioHandler.addQueryInputHandlersListener((o, evt) => {
+      if (
+        !evt.handled &&
+        GraphMLIOHandler.matchesScope(evt.keyDefinition, KeyScope.NODE) &&
+        GraphMLIOHandler.matchesName(evt.keyDefinition, ZOrderOutputHandler.Z_ORDER_KEY_NAME)
+      ) {
+        zOrderKeyDefinitionFound = true
+        evt.addInputHandler(new ZOrderInputHandler(this))
+        evt.handled = true
+      }
+    })
+
+    ioHandler.addParsingListener((sender, evt) => {
+      // clear old z-orders of old graph
+      this.clear()
+      this.addZOrderForNewNodes = false
+      zOrderKeyDefinitionFound = false
+    })
+
+    ioHandler.addParsedListener((sender, evt) => {
+      // enable automatic z-order creation for new nodes again
+      this.addZOrderForNewNodes = true
+      if (!zOrderKeyDefinitionFound) {
+        // no z-orders were stored in the GraphML so initialize the nodes in the view
+        this.setTempNormalizedZOrders(null)
+        this.applyTempZOrders()
+      }
+    })
   }
 
   /**
@@ -175,7 +227,7 @@ export class ZOrderSupport extends BaseClass(IComparer) {
    */
   setZOrder(key, newZOrder) {
     const master = this.getMasterNode(key)
-    const oldZOrder = this.zOrders.get(key)
+    const oldZOrder = this.zOrders.get(master)
     if (oldZOrder !== newZOrder) {
       if (this.masterGraph.undoEngineEnabled) {
         this.masterGraph.addUndoUnit(
@@ -682,103 +734,6 @@ export class ZOrderGraphModelManager extends GraphModelManager {
 }
 
 /**
- * A {@link GraphMLIOHandler} that supports writing and parsing z-orders for nodes.
- */
-export class ZOrderGraphMLIOHandler extends GraphMLIOHandler {
-  /**
-   * @param {!ZOrderSupport} zOrderSupport
-   */
-  constructor(zOrderSupport) {
-    super()
-
-    this.zOrderSupport = zOrderSupport
-    // flag indicating if the z-order key definition was included in a parsed GraphML file
-    this.zOrderKeyDefinitionFound = false
-  }
-
-  /**
-   * @param {!IGraph} graph
-   * @param {!GraphMLWriter} writer
-   */
-  configureOutputHandlers(graph, writer) {
-    super.configureOutputHandlers(graph, writer)
-    writer.addQueryOutputHandlersListener((o, evt) => {
-      this.registerZOrderOutputHandler(o, evt)
-    })
-  }
-
-  /**
-   * Predefined output handler that writes z-orders.
-   * This handler is by default registered for the {@link GraphMLWriter#addQueryOutputHandlersListener QueryOutputHandlers} event
-   * @param {!object} sender
-   * @param {!QueryOutputHandlersEventArgs} evt
-   */
-  registerZOrderOutputHandler(sender, evt) {
-    if (evt.scope === KeyScope.NODE) {
-      evt.addOutputHandler(new ZOrderOutputHandler(this.zOrderSupport))
-    }
-  }
-
-  /**
-   * @param {!GraphMLParser} parser
-   */
-  configureInputHandlers(parser) {
-    super.configureInputHandlers(parser)
-    parser.addQueryInputHandlersListener((o, evt) => {
-      this.registerZOrderInputHandler(o, evt)
-    })
-  }
-
-  /**
-   * Predefined input handler that reads z-orders.
-   * This handler is by default registered for the {@link GraphMLParser#addQueryInputHandlersListener QueryInputHandlers} event
-   * @param {!object} sender
-   * @param {!QueryInputHandlersEventArgs} evt
-   */
-  registerZOrderInputHandler(sender, evt) {
-    if (
-      !evt.handled &&
-      GraphMLIOHandler.matchesScope(evt.keyDefinition, KeyScope.NODE) &&
-      GraphMLIOHandler.matchesName(evt.keyDefinition, ZOrderOutputHandler.Z_ORDER_KEY_NAME)
-    ) {
-      this.zOrderKeyDefinitionFound = true
-      evt.addInputHandler(new ZOrderInputHandler(this.zOrderSupport))
-      evt.handled = true
-    }
-  }
-
-  /**
-   * @param {!ParseEventArgs} evt
-   */
-  onParsing(evt) {
-    super.onParsing(evt)
-    if (this.zOrderSupport) {
-      // clear old z-orders of old graph
-      this.zOrderSupport.clear()
-      // disable automatic z-order creation for new nodes
-      this.zOrderSupport.addZOrderForNewNodes = false
-      this.zOrderKeyDefinitionFound = false
-    }
-  }
-
-  /**
-   * @param {!ParseEventArgs} evt
-   */
-  onParsed(evt) {
-    super.onParsed(evt)
-    if (this.zOrderSupport) {
-      // enable automatic z-order creation for new nodes again
-      this.zOrderSupport.addZOrderForNewNodes = true
-      if (!this.zOrderKeyDefinitionFound) {
-        // no z-orders were stored in the GraphML so initialize the nodes in the view
-        this.zOrderSupport.setTempNormalizedZOrders(null)
-        this.zOrderSupport.applyTempZOrders()
-      }
-    }
-  }
-}
-
-/**
  * An {@link IInputHandler} that reads the z-order of nodes, edges and ports.
  */
 class ZOrderInputHandler extends InputHandlerBase {
@@ -876,6 +831,46 @@ class ZOrderOutputHandler extends OutputHandlerBase {
  * A {@link GraphEditorInputMode} that tries to keep the relative z-order of nodes during grouping related gestures.
  */
 export class ZOrderGraphEditorInputMode extends GraphEditorInputMode {
+  /** @type {ICommand} */
+  static get RAISE() {
+    return ZOrderGraphEditorInputMode.$RAISE
+  }
+
+  /** @type {ICommand} */
+  static set RAISE(RAISE) {
+    ZOrderGraphEditorInputMode.$RAISE = RAISE
+  }
+
+  /** @type {ICommand} */
+  static get LOWER() {
+    return ZOrderGraphEditorInputMode.$LOWER
+  }
+
+  /** @type {ICommand} */
+  static set LOWER(LOWER) {
+    ZOrderGraphEditorInputMode.$LOWER = LOWER
+  }
+
+  /** @type {ICommand} */
+  static get TO_FRONT() {
+    return ZOrderGraphEditorInputMode.$TO_FRONT
+  }
+
+  /** @type {ICommand} */
+  static set TO_FRONT(TO_FRONT) {
+    ZOrderGraphEditorInputMode.$TO_FRONT = TO_FRONT
+  }
+
+  /** @type {ICommand} */
+  static get TO_BACK() {
+    return ZOrderGraphEditorInputMode.$TO_BACK
+  }
+
+  /** @type {ICommand} */
+  static set TO_BACK(TO_BACK) {
+    ZOrderGraphEditorInputMode.$TO_BACK = TO_BACK
+  }
+
   /**
    * @param {!ZOrderSupport} zOrderSupport
    */
@@ -1281,7 +1276,7 @@ export class ZOrderGraphClipboard extends GraphClipboard {
    */
   getZOrder(node) {
     const zOrder = this.zOrders.get(node)
-    return zOrder || this.support.getZOrder(node)
+    return zOrder != null ? zOrder : this.support.getZOrder(node)
   }
 
   /**

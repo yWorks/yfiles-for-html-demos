@@ -17,6 +17,7 @@
     "toolkit/dojo",
     "toolkit/react-typescript",
     "toolkit/typescript",
+    "starter-kits",
     "test/**/*.js"
   ]
 }

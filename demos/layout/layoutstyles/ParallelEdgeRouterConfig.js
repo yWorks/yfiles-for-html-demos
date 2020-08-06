@@ -60,7 +60,7 @@ const ParallelEdgeRouterConfig = Class('ParallelEdgeRouterConfig', {
   /**
    * Setup default values for various configuration parameters.
    */
-  constructor: function() {
+  constructor: function () {
     LayoutConfiguration.call(this)
     const router = new ParallelEdgeRouter()
     this.scopeItem = ParallelEdgeRouterConfig.EnumScope.SCOPE_ALL_EDGES
@@ -78,7 +78,7 @@ const ParallelEdgeRouterConfig = Class('ParallelEdgeRouterConfig', {
    *   configuration on.
    * @return {ILayoutAlgorithm} The configured layout algorithm.
    */
-  createConfiguredLayout: function(graphComponent) {
+  createConfiguredLayout: function (graphComponent) {
     const router = new ParallelEdgeRouter()
     router.adjustLeadingEdge = false
     router.directedMode = this.considerEdgeDirectionItem
@@ -94,7 +94,7 @@ const ParallelEdgeRouterConfig = Class('ParallelEdgeRouterConfig', {
    * Called by {@link LayoutConfiguration#apply} to create the layout data of the configuration. This
    * method is typically overridden to provide mappers for the different layouts.
    */
-  createConfiguredLayoutData: function(graphComponent, layout) {
+  createConfiguredLayoutData: function (graphComponent, layout) {
     const layoutData = new ParallelEdgeRouterData()
     const selection = graphComponent.selection
 
@@ -119,7 +119,7 @@ const ParallelEdgeRouterConfig = Class('ParallelEdgeRouterConfig', {
 
   /** @type {OptionGroup} */
   DescriptionGroup: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute('Description'),
         OptionGroupAttribute('RootGroup', 5),
@@ -131,21 +131,21 @@ const ParallelEdgeRouterConfig = Class('ParallelEdgeRouterConfig', {
 
   /** @type {string} */
   descriptionText: {
-    $meta: function() {
+    $meta: function () {
       return [
         OptionGroupAttribute('DescriptionGroup', 10),
         ComponentAttribute(Components.HTML_BLOCK),
         TypeAttribute(YString.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return "<p style='margin-top:0'>The parallel edge routing algorithm routes parallel edges which connect the same pair of nodes in a graph. It is often used as layout stage for other layout algorithms to handle the parallel edges for those.</p>"
     }
   },
 
   /** @type {OptionGroup} */
   LayoutGroup: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute('General'),
         OptionGroupAttribute('RootGroup', 10),
@@ -163,7 +163,7 @@ const ParallelEdgeRouterConfig = Class('ParallelEdgeRouterConfig', {
 
   /** @type {ParallelEdgeRouterConfig.EnumScope} */
   scopeItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Scope',
@@ -180,10 +180,10 @@ const ParallelEdgeRouterConfig = Class('ParallelEdgeRouterConfig', {
         TypeAttribute(ParallelEdgeRouterConfig.EnumScope.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$scopeItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$scopeItem = value
     }
   },
@@ -196,7 +196,7 @@ const ParallelEdgeRouterConfig = Class('ParallelEdgeRouterConfig', {
 
   /** @type {boolean} */
   useSelectedEdgesAsMasterItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Use Selected Edges As Leading Edges',
@@ -206,10 +206,10 @@ const ParallelEdgeRouterConfig = Class('ParallelEdgeRouterConfig', {
         TypeAttribute(YBoolean.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$useSelectedEdgesAsMasterItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$useSelectedEdgesAsMasterItem = value
     }
   },
@@ -222,7 +222,7 @@ const ParallelEdgeRouterConfig = Class('ParallelEdgeRouterConfig', {
 
   /** @type {boolean} */
   considerEdgeDirectionItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Consider Edge Direction',
@@ -232,10 +232,10 @@ const ParallelEdgeRouterConfig = Class('ParallelEdgeRouterConfig', {
         TypeAttribute(YBoolean.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$considerEdgeDirectionItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$considerEdgeDirectionItem = value
     }
   },
@@ -248,7 +248,7 @@ const ParallelEdgeRouterConfig = Class('ParallelEdgeRouterConfig', {
 
   /** @type {boolean} */
   useAdaptiveLineDistanceItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Use Adaptive Line Distance',
@@ -258,10 +258,10 @@ const ParallelEdgeRouterConfig = Class('ParallelEdgeRouterConfig', {
         TypeAttribute(YBoolean.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$useAdaptiveLineDistanceItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$useAdaptiveLineDistanceItem = value
     }
   },
@@ -274,7 +274,7 @@ const ParallelEdgeRouterConfig = Class('ParallelEdgeRouterConfig', {
 
   /** @type {number} */
   lineDistanceItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Line Distance',
@@ -289,10 +289,10 @@ const ParallelEdgeRouterConfig = Class('ParallelEdgeRouterConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$lineDistanceItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$lineDistanceItem = value
     }
   },
@@ -305,7 +305,7 @@ const ParallelEdgeRouterConfig = Class('ParallelEdgeRouterConfig', {
 
   /** @type {boolean} */
   joinEndsItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Join Ends',
@@ -315,10 +315,10 @@ const ParallelEdgeRouterConfig = Class('ParallelEdgeRouterConfig', {
         TypeAttribute(YBoolean.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$joinEndsItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$joinEndsItem = value
     }
   },
@@ -331,7 +331,7 @@ const ParallelEdgeRouterConfig = Class('ParallelEdgeRouterConfig', {
 
   /** @type {number} */
   joinDistanceItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Join Distance',
@@ -346,20 +346,20 @@ const ParallelEdgeRouterConfig = Class('ParallelEdgeRouterConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$joinDistanceItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$joinDistanceItem = value
     }
   },
 
   /** @type {boolean} */
   shouldDisableJoinDistanceItem: {
-    $meta: function() {
+    $meta: function () {
       return [TypeAttribute(YBoolean.$class)]
     },
-    get: function() {
+    get: function () {
       return !this.joinEndsItem
     }
   },

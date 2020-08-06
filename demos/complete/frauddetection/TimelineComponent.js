@@ -291,7 +291,7 @@ export default class TimelineComponent {
       const graphNodes = this.timelineNodes2graphNodes.get(item)
       if (graphNodes) {
         graphNodes.forEach(node => graphNodesSelected.push(node))
-        this.selectionListener.call(this, graphNodesSelected)
+        this.selectionListener(graphNodesSelected)
       }
     }
   }
@@ -321,7 +321,7 @@ export default class TimelineComponent {
         }
       }
       if (this.highlightListener) {
-        this.highlightListener.call(this, graphNodesSelected)
+        this.highlightListener(graphNodesSelected)
       }
     }
   }
@@ -1150,7 +1150,7 @@ export default class TimelineComponent {
     // if there exists a timeFrame listener, we have to fire the start and the end dates
     if (updateRequired && this.timeFrameListener) {
       if (startDate && endDate) {
-        this.timeFrameListener.call(this, startDate, endDate)
+        this.timeFrameListener(startDate, endDate)
       }
     }
   }
@@ -1226,7 +1226,7 @@ export default class TimelineComponent {
   onCanvasClicked(clickCount) {
     this.timelineComponent.selection.clear()
     if (this.selectionListener) {
-      this.selectionListener.call(this, [])
+      this.selectionListener([])
     }
 
     if (clickCount === 2) {

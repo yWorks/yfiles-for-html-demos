@@ -28,6 +28,6 @@
     "core-js": "^3.6.5",
     "regenerator-runtime": "^0.13.5",
     "unfetch": "^4.1.0",
-    "yfiles": "../../../lib-dev/es-modules/yfiles-23.0.1-dev.tgz"
+    "yfiles": "../../../lib-dev/es-modules/yfiles-23.0.2-dev.tgz"
   }
 }

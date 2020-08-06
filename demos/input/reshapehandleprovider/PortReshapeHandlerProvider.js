@@ -52,6 +52,10 @@ export class PortReshapeHandleProvider extends BaseClass(IReshapeHandleProvider)
    */
   constructor(port, adapter) {
     super()
+
+    // The minimum size the {@link NodeStylePortStyleAdapter.renderSize} may have.
+    this.minimumSize = Size.EMPTY
+
     this.port = port
     this.adapter = adapter
   }

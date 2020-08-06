@@ -65,7 +65,7 @@ const RadialLayoutConfig = Class('RadialLayoutConfig', {
   /**
    * Setup default values for various configuration parameters.
    */
-  constructor: function() {
+  constructor: function () {
     LayoutConfiguration.call(this)
 
     const layout = new RadialLayout()
@@ -101,7 +101,7 @@ const RadialLayoutConfig = Class('RadialLayoutConfig', {
    *   configuration on.
    * @return {ILayoutAlgorithm} The configured layout algorithm.
    */
-  createConfiguredLayout: function(graphComponent) {
+  createConfiguredLayout: function (graphComponent) {
     const layout = new RadialLayout()
     layout.minimumNodeToNodeDistance = this.minimumNodeToNodeDistanceItem
 
@@ -149,7 +149,7 @@ const RadialLayoutConfig = Class('RadialLayoutConfig', {
    * Creates and configures the layout data.
    * @return {LayoutData} The configured layout data.
    */
-  createConfiguredLayoutData: function(graphComponent, layout) {
+  createConfiguredLayoutData: function (graphComponent, layout) {
     const layoutData = new RadialLayoutData()
 
     if (this.centerStrategyItem === CenterNodesPolicy.CUSTOM) {
@@ -162,7 +162,7 @@ const RadialLayoutConfig = Class('RadialLayoutConfig', {
   // ReSharper disable InconsistentNaming
   /** @type {OptionGroup} */
   DescriptionGroup: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute('Description'),
         OptionGroupAttribute('RootGroup', 5),
@@ -174,7 +174,7 @@ const RadialLayoutConfig = Class('RadialLayoutConfig', {
 
   /** @type {OptionGroup} */
   GeneralGroup: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute('General'),
         OptionGroupAttribute('RootGroup', 10),
@@ -186,7 +186,7 @@ const RadialLayoutConfig = Class('RadialLayoutConfig', {
 
   /** @type {OptionGroup} */
   LabelingGroup: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute('Labeling'),
         OptionGroupAttribute('RootGroup', 20),
@@ -198,7 +198,7 @@ const RadialLayoutConfig = Class('RadialLayoutConfig', {
 
   /** @type {OptionGroup} */
   NodePropertiesGroup: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute('Node Settings'),
         OptionGroupAttribute('LabelingGroup', 10),
@@ -210,7 +210,7 @@ const RadialLayoutConfig = Class('RadialLayoutConfig', {
 
   /** @type {OptionGroup} */
   EdgePropertiesGroup: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute('Edge Settings'),
         OptionGroupAttribute('LabelingGroup', 20),
@@ -222,7 +222,7 @@ const RadialLayoutConfig = Class('RadialLayoutConfig', {
 
   /** @type {OptionGroup} */
   PreferredPlacementGroup: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute('Preferred Edge Label Placement'),
         OptionGroupAttribute('LabelingGroup', 30),
@@ -236,17 +236,17 @@ const RadialLayoutConfig = Class('RadialLayoutConfig', {
   // ReSharper restore InconsistentNaming
   /** @type {string} */
   descriptionText: {
-    $meta: function() {
+    $meta: function () {
       return [
         OptionGroupAttribute('DescriptionGroup', 10),
         ComponentAttribute(Components.HTML_BLOCK),
         TypeAttribute(YString.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return (
-        ('<p>The radial layout style arranges the nodes of a graph on concentric circles. Similar to hierarchic layouts, the overall flow of the graph is nicely visualized.</p>' +
-        '<p>This style is well suited for the visualization of directed graphs and tree-like structures.</p>')
+        '<p>The radial layout style arranges the nodes of a graph on concentric circles. Similar to hierarchic layouts, the overall flow of the graph is nicely visualized.</p>' +
+        '<p>This style is well suited for the visualization of directed graphs and tree-like structures.</p>'
       )
     }
   },
@@ -259,7 +259,7 @@ const RadialLayoutConfig = Class('RadialLayoutConfig', {
 
   /** @type {number} */
   minimumLayerDistanceItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Minimum Circle Distance',
@@ -274,10 +274,10 @@ const RadialLayoutConfig = Class('RadialLayoutConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$minimumLayerDistanceItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$minimumLayerDistanceItem = value
     }
   },
@@ -290,7 +290,7 @@ const RadialLayoutConfig = Class('RadialLayoutConfig', {
 
   /** @type {number} */
   minimumNodeToNodeDistanceItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Minimum Node Distance',
@@ -305,10 +305,10 @@ const RadialLayoutConfig = Class('RadialLayoutConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$minimumNodeToNodeDistanceItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$minimumNodeToNodeDistanceItem = value
     }
   },
@@ -321,7 +321,7 @@ const RadialLayoutConfig = Class('RadialLayoutConfig', {
 
   /** @type {number} */
   maximumChildSectorSizeItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Maximum Child Sector Size',
@@ -336,10 +336,10 @@ const RadialLayoutConfig = Class('RadialLayoutConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$maximumChildSectorSizeItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$maximumChildSectorSizeItem = value
     }
   },
@@ -352,7 +352,7 @@ const RadialLayoutConfig = Class('RadialLayoutConfig', {
 
   /** @type {RadialLayoutEdgeRoutingStrategy} */
   edgeRoutingStrategyItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Routing Style',
@@ -369,10 +369,10 @@ const RadialLayoutConfig = Class('RadialLayoutConfig', {
         TypeAttribute(RadialLayoutEdgeRoutingStrategy.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$edgeRoutingStrategyItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$edgeRoutingStrategyItem = value
     }
   },
@@ -385,7 +385,7 @@ const RadialLayoutConfig = Class('RadialLayoutConfig', {
 
   /** @type {number} */
   edgeSmoothnessItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Arc Smoothness',
@@ -400,20 +400,20 @@ const RadialLayoutConfig = Class('RadialLayoutConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$edgeSmoothnessItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$edgeSmoothnessItem = value
     }
   },
 
   /** @type {boolean} */
   shouldDisableEdgeSmoothnessItem: {
-    $meta: function() {
+    $meta: function () {
       return [TypeAttribute(YBoolean.$class)]
     },
-    get: function() {
+    get: function () {
       return this.edgeRoutingStrategyItem !== RadialLayoutEdgeRoutingStrategy.ARC
     }
   },
@@ -426,7 +426,7 @@ const RadialLayoutConfig = Class('RadialLayoutConfig', {
 
   /** @type {number} */
   edgeBundlingStrengthItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Bundling Strength',
@@ -442,20 +442,20 @@ const RadialLayoutConfig = Class('RadialLayoutConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$edgeBundlingStrengthItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$edgeBundlingStrengthItem = value
     }
   },
 
   /** @type {boolean} */
   shouldDisableEdgeBundlingStrengthItem: {
-    $meta: function() {
+    $meta: function () {
       return [TypeAttribute(YBoolean.$class)]
     },
-    get: function() {
+    get: function () {
       return this.edgeRoutingStrategyItem !== RadialLayoutConfig.EnumEdgeRoutingStrategies.BUNDLED
     }
   },
@@ -468,7 +468,7 @@ const RadialLayoutConfig = Class('RadialLayoutConfig', {
 
   /** @type {CenterNodesPolicy} */
   centerStrategyItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Center Allocation Strategy',
@@ -486,10 +486,10 @@ const RadialLayoutConfig = Class('RadialLayoutConfig', {
         TypeAttribute(CenterNodesPolicy.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$centerStrategyItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$centerStrategyItem = value
     }
   },
@@ -502,7 +502,7 @@ const RadialLayoutConfig = Class('RadialLayoutConfig', {
 
   /** @type {RadialLayoutLayeringStrategy} */
   layeringStrategyItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Circle Assignment Strategy',
@@ -518,10 +518,10 @@ const RadialLayoutConfig = Class('RadialLayoutConfig', {
         TypeAttribute(RadialLayoutLayeringStrategy.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$layeringStrategyItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$layeringStrategyItem = value
     }
   },
@@ -534,7 +534,7 @@ const RadialLayoutConfig = Class('RadialLayoutConfig', {
 
   /** @type {boolean} */
   considerNodeLabelsItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Consider Node Labels',
@@ -544,10 +544,10 @@ const RadialLayoutConfig = Class('RadialLayoutConfig', {
         TypeAttribute(YBoolean.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$considerNodeLabelsItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$considerNodeLabelsItem = value
     }
   },
@@ -560,7 +560,7 @@ const RadialLayoutConfig = Class('RadialLayoutConfig', {
 
   /** @type {boolean} */
   edgeLabelingItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Edge Labeling',
@@ -570,10 +570,10 @@ const RadialLayoutConfig = Class('RadialLayoutConfig', {
         TypeAttribute(YBoolean.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$edgeLabelingItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$edgeLabelingItem = value
     }
   },
@@ -586,7 +586,7 @@ const RadialLayoutConfig = Class('RadialLayoutConfig', {
 
   /** @type {boolean} */
   reduceAmbiguityItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Reduce Ambiguity',
@@ -596,20 +596,20 @@ const RadialLayoutConfig = Class('RadialLayoutConfig', {
         TypeAttribute(YBoolean.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$reduceAmbiguityItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$reduceAmbiguityItem = value
     }
   },
 
   /** @type {boolean} */
   shouldDisableReduceAmbiguityItem: {
-    $meta: function() {
+    $meta: function () {
       return [TypeAttribute(YBoolean.$class)]
     },
-    get: function() {
+    get: function () {
       return !this.edgeLabelingItem
     }
   },
@@ -622,7 +622,7 @@ const RadialLayoutConfig = Class('RadialLayoutConfig', {
 
   /** @type {LayoutConfiguration.EnumLabelPlacementOrientation} */
   labelPlacementOrientationItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Orientation',
@@ -640,20 +640,20 @@ const RadialLayoutConfig = Class('RadialLayoutConfig', {
         TypeAttribute(LayoutConfiguration.EnumLabelPlacementOrientation.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$labelPlacementOrientationItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$labelPlacementOrientationItem = value
     }
   },
 
   /** @type {boolean} */
   shouldDisableLabelPlacementOrientationItem: {
-    $meta: function() {
+    $meta: function () {
       return [TypeAttribute(YBoolean.$class)]
     },
-    get: function() {
+    get: function () {
       return !this.edgeLabelingItem
     }
   },
@@ -666,7 +666,7 @@ const RadialLayoutConfig = Class('RadialLayoutConfig', {
 
   /** @type {LayoutConfiguration.EnumLabelPlacementAlongEdge} */
   labelPlacementAlongEdgeItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Along Edge',
@@ -686,20 +686,20 @@ const RadialLayoutConfig = Class('RadialLayoutConfig', {
         TypeAttribute(LayoutConfiguration.EnumLabelPlacementAlongEdge.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$labelPlacementAlongEdgeItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$labelPlacementAlongEdgeItem = value
     }
   },
 
   /** @type {boolean} */
   shouldDisableLabelPlacementAlongEdgeItem: {
-    $meta: function() {
+    $meta: function () {
       return [TypeAttribute(YBoolean.$class)]
     },
-    get: function() {
+    get: function () {
       return !this.edgeLabelingItem
     }
   },
@@ -712,7 +712,7 @@ const RadialLayoutConfig = Class('RadialLayoutConfig', {
 
   /** @type {LayoutConfiguration.EnumLabelPlacementSideOfEdge} */
   labelPlacementSideOfEdgeItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Side of Edge',
@@ -731,20 +731,20 @@ const RadialLayoutConfig = Class('RadialLayoutConfig', {
         TypeAttribute(LayoutConfiguration.EnumLabelPlacementSideOfEdge.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$labelPlacementSideOfEdgeItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$labelPlacementSideOfEdgeItem = value
     }
   },
 
   /** @type {boolean} */
   shouldDisableLabelPlacementSideOfEdgeItem: {
-    $meta: function() {
+    $meta: function () {
       return [TypeAttribute(YBoolean.$class)]
     },
-    get: function() {
+    get: function () {
       return !this.edgeLabelingItem
     }
   },
@@ -757,7 +757,7 @@ const RadialLayoutConfig = Class('RadialLayoutConfig', {
 
   /** @type {number} */
   labelPlacementDistanceItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Distance',
@@ -772,24 +772,24 @@ const RadialLayoutConfig = Class('RadialLayoutConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$labelPlacementDistanceItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$labelPlacementDistanceItem = value
     }
   },
 
   /** @type {boolean} */
   shouldDisableLabelPlacementDistanceItem: {
-    $meta: function() {
+    $meta: function () {
       return [TypeAttribute(YBoolean.$class)]
     },
-    get: function() {
+    get: function () {
       return (
-        (!this.edgeLabelingItem ||
+        !this.edgeLabelingItem ||
         this.labelPlacementSideOfEdgeItem ===
-          LayoutConfiguration.EnumLabelPlacementSideOfEdge.ON_EDGE)
+          LayoutConfiguration.EnumLabelPlacementSideOfEdge.ON_EDGE
       )
     }
   },

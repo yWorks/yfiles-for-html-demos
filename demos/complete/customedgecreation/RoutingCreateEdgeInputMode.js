@@ -137,11 +137,8 @@ export class RoutingCreateEdgeInputMode extends CreateEdgeInputMode {
     this.$layoutEdge = this.$layoutGraph.createEdge(this.$layoutSourceNode, this.$layoutTargetNode)
 
     // set source point of the edge
-    const dummyEdgeSrcPortLocation = this.dummyEdge.sourcePort.location
-    this.$layoutGraph.setSourcePointAbs(
-      this.$layoutEdge,
-      new YPoint(dummyEdgeSrcPortLocation.x, dummyEdgeSrcPortLocation.y)
-    )
+    const dummyEdgeSrcPortLocation = this.dummyEdge.sourcePort.location.toYPoint()
+    this.$layoutGraph.setSourcePointAbs(this.$layoutEdge, dummyEdgeSrcPortLocation)
 
     // the target point of the edge may be relative to the dummy node it is attached
     this.$layoutGraph.setTargetPointRel(this.$layoutEdge, YPoint.ORIGIN)
@@ -164,6 +161,7 @@ export class RoutingCreateEdgeInputMode extends CreateEdgeInputMode {
         true
       )
     )
+    this.$targetPortConstraints = this.$layoutGraph.createEdgeMap()
     this.$layoutGraph.addDataProvider(
       PortConstraintKeys.SOURCE_PORT_CONSTRAINT_DP_KEY,
       sourcePortConstraints
@@ -189,8 +187,7 @@ export class RoutingCreateEdgeInputMode extends CreateEdgeInputMode {
     const targetPortCandidate = this.targetPortCandidate
     if (targetPortCandidate !== null) {
       // use target port location if possible and constraint the target port depending on the ingoing node side
-      const targetPortConstraints = this.$layoutGraph.createEdgeMap()
-      targetPortConstraints.set(
+      this.$targetPortConstraints.set(
         this.$layoutEdge,
         PortConstraint.create(
           this.$getNodeSide(this.dummyEdge.targetNode.layout, this.dummyEdge.targetPort.location),
@@ -199,23 +196,28 @@ export class RoutingCreateEdgeInputMode extends CreateEdgeInputMode {
       )
       this.$layoutGraph.addDataProvider(
         PortConstraintKeys.TARGET_PORT_CONSTRAINT_DP_KEY,
-        targetPortConstraints
+        this.$targetPortConstraints
       )
 
       // adjust location and size of dummy target node to the actual hit target node
       const targetNodeLayout = this.dummyEdge.targetNode.layout
-      this.$layoutGraph.setLocation(this.$layoutTargetNode, targetNodeLayout.x, targetNodeLayout.y)
       this.$layoutGraph.setSize(
         this.$layoutTargetNode,
         targetNodeLayout.width,
         targetNodeLayout.height
       )
+      this.$layoutGraph.setLocation(this.$layoutTargetNode, targetNodeLayout.x, targetNodeLayout.y)
     } else {
       // no node hit, just use drag location
       const dragLocation = this.dragPoint
-      this.$layoutGraph.setLocation(this.$layoutTargetNode, dragLocation.x, dragLocation.y)
       this.$layoutGraph.setSize(this.$layoutTargetNode, 1, 1)
+      this.$layoutGraph.setLocation(this.$layoutTargetNode, dragLocation.x, dragLocation.y)
     }
+
+    this.$layoutGraph.setTargetPointAbs(
+      this.$layoutEdge,
+      this.dummyEdge.targetPort.location.toYPoint()
+    )
 
     // apply the layout
     this.$edgeRouter.applyLayout(this.$layoutGraph)
@@ -238,8 +240,8 @@ export class RoutingCreateEdgeInputMode extends CreateEdgeInputMode {
    * @return {PortSide.WEST|PortSide.EAST|PortSide.ANY|PortSide.NORTH|PortSide.SOUTH}
    */
   $getNodeSide(nodeLayout, point) {
-    const deltaX = Math.abs(nodeLayout.center.x - point.x)
-    const deltaY = Math.abs(nodeLayout.center.y - point.y)
+    const deltaX = Math.abs(nodeLayout.center.x - point.x) / nodeLayout.width
+    const deltaY = Math.abs(nodeLayout.center.y - point.y) / nodeLayout.height
 
     if (deltaX === 0 && deltaY === 0) {
       return PortSide.ANY

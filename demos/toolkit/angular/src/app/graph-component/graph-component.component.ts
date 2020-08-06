@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core'
+import { AfterViewInit, Component, ElementRef, NgZone, ViewChild } from '@angular/core'
 import { GraphComponent, GraphViewerInputMode } from 'yfiles'
 
 @Component({
@@ -38,8 +38,17 @@ export class GraphComponentComponent implements AfterViewInit {
   @ViewChild('graphComponentRef') graphComponentRef!: ElementRef
   graphComponent!: GraphComponent
 
-  ngAfterViewInit() {
-    this.graphComponent = new GraphComponent(this.graphComponentRef.nativeElement)
-    this.graphComponent.inputMode = new GraphViewerInputMode()
+  private zone: NgZone
+
+  constructor(zone: NgZone) {
+    this.zone = zone
+  }
+
+  ngAfterViewInit(): void {
+    // run outside Angular so the change detection won't slow down yFiles
+    this.zone.runOutsideAngular(() => {
+      this.graphComponent = new GraphComponent(this.graphComponentRef.nativeElement)
+      this.graphComponent.inputMode = new GraphViewerInputMode()
+    })
   }
 }

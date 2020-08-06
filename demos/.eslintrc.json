@@ -1,11 +1,16 @@
 {
-  "plugins": ["prettier", "standard", "wdio"],
+  "root": true,
   "parser": "@typescript-eslint/parser",
+  "plugins": ["@typescript-eslint", "react", "standard", "wdio"],
   "extends": [
     "standard",
-    "plugin:prettier/recommended",
-    "prettier/standard",
-    "plugin:wdio/recommended"
+    "plugin:@typescript-eslint/eslint-recommended",
+    "plugin:react/recommended",
+    "plugin:wdio/recommended",
+    "prettier",
+    "prettier/@typescript-eslint",
+    "prettier/react",
+    "prettier/standard"
   ],
   "env": {
     "amd": true,
@@ -14,40 +19,14 @@
     "node": true
   },
   "rules": {
-    "prettier/prettier": "warn",
+    "@typescript-eslint/ban-ts-ignore": "off",
+    "@typescript-eslint/member-delimiter-style": "off",
+    "@typescript-eslint/no-non-null-assertion": "off",
+    "@typescript-eslint/no-unused-vars": "off",
+    "@typescript-eslint/no-use-before-define": "off",
+    "no-multi-str": "off",
+    "no-unused-vars": "off",
     "no-var": "error",
-    "no-unused-vars": [
-      "warn",
-      {
-        "varsIgnorePattern": "[A-Z]\\w+",
-        "argsIgnorePattern": ".*"
-      }
-    ],
     "prefer-const": "error"
-  },
-  "overrides": [
-    {
-      "files": ["*.ts", "*.tsx", ".*.ts", ".*.tsx"],
-      "extends": [
-        "standard",
-        "plugin:prettier/recommended",
-        "prettier/standard",
-        "plugin:@typescript-eslint/recommended",
-        "plugin:wdio/recommended"
-      ],
-      "rules": {
-        "@typescript-eslint/ban-ts-ignore": "off",
-        "@typescript-eslint/no-use-before-define": "off",
-        "@typescript-eslint/no-non-null-assertion": "off",
-        "@typescript-eslint/member-delimiter-style": "off",
-        "@typescript-eslint/no-unused-vars": [
-          "warn",
-          {
-            "varsIgnorePattern": "[A-Z]\\w+",
-            "argsIgnorePattern": ".*"
-          }
-        ]
-      }
-    }
-  ]
+  }
 }

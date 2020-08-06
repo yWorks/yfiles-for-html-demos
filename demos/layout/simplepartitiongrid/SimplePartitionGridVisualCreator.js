@@ -41,6 +41,7 @@ export default class SimplePartitionGridVisualCreator extends BaseClass(IVisualC
     super()
     this.grid = grid
   }
+
   /**
    * Creates the visual for the given partition grid.
    * @param {IRenderContext} context The context that describes where the visual will be used

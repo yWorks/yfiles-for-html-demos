@@ -701,10 +701,7 @@ class CustomGraphSearch extends GraphSearch {
         prop =>
           prop !== 'icon' &&
           node.tag[prop] &&
-          node.tag[prop]
-            .toString()
-            .toLowerCase()
-            .indexOf(lowercaseText) !== -1
+          node.tag[prop].toString().toLowerCase().indexOf(lowercaseText) !== -1
       )
     ) {
       return true

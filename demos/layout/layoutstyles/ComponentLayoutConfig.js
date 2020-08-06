@@ -61,7 +61,7 @@ const ComponentLayoutConfig = Class('ComponentLayoutConfig', {
   /**
    * Setup default values for various configuration parameters.
    */
-  constructor: function() {
+  constructor: function () {
     LayoutConfiguration.call(this)
     const layout = new ComponentLayout()
     this.styleItem = ComponentArrangementStyles.ROWS
@@ -82,7 +82,7 @@ const ComponentLayoutConfig = Class('ComponentLayoutConfig', {
    *   configuration on.
    * @return {ILayoutAlgorithm} The configured layout algorithm.
    */
-  createConfiguredLayout: function(graphComponent) {
+  createConfiguredLayout: function (graphComponent) {
     const layout = new ComponentLayout()
     layout.componentArrangement = true
     let style = this.styleItem
@@ -118,7 +118,7 @@ const ComponentLayoutConfig = Class('ComponentLayoutConfig', {
 
   /** @type {OptionGroup} */
   DescriptionGroup: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute('Description'),
         OptionGroupAttribute('RootGroup', 5),
@@ -130,7 +130,7 @@ const ComponentLayoutConfig = Class('ComponentLayoutConfig', {
 
   /** @type {OptionGroup} */
   LayoutGroup: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute('General'),
         OptionGroupAttribute('RootGroup', 10),
@@ -142,14 +142,14 @@ const ComponentLayoutConfig = Class('ComponentLayoutConfig', {
 
   /** @type {string} */
   descriptionText: {
-    $meta: function() {
+    $meta: function () {
       return [
         OptionGroupAttribute('DescriptionGroup', 10),
         ComponentAttribute(Components.HTML_BLOCK),
         TypeAttribute(YString.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return "<p style='margin-top:0'>The component layout arranges the connected components of a graph. It can use any other layout style to arrange each component separately, and then arranges the components as such.</p><p>In this demo, the arrangement of each component is just kept as it is.</p>"
     }
   },
@@ -162,7 +162,7 @@ const ComponentLayoutConfig = Class('ComponentLayoutConfig', {
 
   /** @type {ComponentArrangementStyles} */
   styleItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute('Layout Style', '#/api/ComponentLayout#ComponentLayout-property-style'),
         OptionGroupAttribute('LayoutGroup', 10),
@@ -199,10 +199,10 @@ const ComponentLayoutConfig = Class('ComponentLayoutConfig', {
         TypeAttribute(ComponentArrangementStyles.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$styleItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$styleItem = value
     }
   },
@@ -215,17 +215,17 @@ const ComponentLayoutConfig = Class('ComponentLayoutConfig', {
 
   /** @type {boolean} */
   noOverlapItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute('Remove Overlaps', '#/api/ComponentLayout#ComponentLayout-property-style'),
         OptionGroupAttribute('LayoutGroup', 20),
         TypeAttribute(YBoolean.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$noOverlapItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$noOverlapItem = value
     }
   },
@@ -238,7 +238,7 @@ const ComponentLayoutConfig = Class('ComponentLayoutConfig', {
 
   /** @type {boolean} */
   fromSketchItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Use Drawing as Sketch',
@@ -248,10 +248,10 @@ const ComponentLayoutConfig = Class('ComponentLayoutConfig', {
         TypeAttribute(YBoolean.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$fromSketchItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$fromSketchItem = value
     }
   },
@@ -264,7 +264,7 @@ const ComponentLayoutConfig = Class('ComponentLayoutConfig', {
 
   /** @type {boolean} */
   useScreenRatioItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Use Screen Aspect Ratio',
@@ -274,10 +274,10 @@ const ComponentLayoutConfig = Class('ComponentLayoutConfig', {
         TypeAttribute(YBoolean.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$useScreenRatioItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$useScreenRatioItem = value
     }
   },
@@ -290,7 +290,7 @@ const ComponentLayoutConfig = Class('ComponentLayoutConfig', {
 
   /** @type {number} */
   aspectRatioItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Aspect Ratio',
@@ -306,20 +306,20 @@ const ComponentLayoutConfig = Class('ComponentLayoutConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$aspectRatioItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$aspectRatioItem = value
     }
   },
 
   /** @type {boolean} */
   shouldDisableAspectRatioItem: {
-    $meta: function() {
+    $meta: function () {
       return [TypeAttribute(YBoolean.$class)]
     },
-    get: function() {
+    get: function () {
       return this.useScreenRatioItem
     }
   },
@@ -332,7 +332,7 @@ const ComponentLayoutConfig = Class('ComponentLayoutConfig', {
 
   /** @type {number} */
   componentSpacingItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Minimum Component Distance',
@@ -347,10 +347,10 @@ const ComponentLayoutConfig = Class('ComponentLayoutConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$componentSpacingItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$componentSpacingItem = value
     }
   },
@@ -363,7 +363,7 @@ const ComponentLayoutConfig = Class('ComponentLayoutConfig', {
 
   /** @type {boolean} */
   gridEnabledItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Route on Grid',
@@ -373,10 +373,10 @@ const ComponentLayoutConfig = Class('ComponentLayoutConfig', {
         TypeAttribute(YBoolean.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$gridEnabledItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$gridEnabledItem = value
     }
   },
@@ -389,7 +389,7 @@ const ComponentLayoutConfig = Class('ComponentLayoutConfig', {
 
   /** @type {number} */
   gridSpacingItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Grid Spacing',
@@ -404,20 +404,20 @@ const ComponentLayoutConfig = Class('ComponentLayoutConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$gridSpacingItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$gridSpacingItem = value
     }
   },
 
   /** @type {boolean} */
   shouldDisableGridSpacingItem: {
-    $meta: function() {
+    $meta: function () {
       return [TypeAttribute(YBoolean.$class)]
     },
-    get: function() {
+    get: function () {
       return !this.gridEnabledItem
     }
   }

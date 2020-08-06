@@ -1,8 +1,8 @@
 # yFiles for HTML Demo Applications
 
-The [yFiles for HTML 2.3](https://www.yworks.com/products/yfiles-for-html) demos and tutorials are extensive sample applications that present the features of the yFiles for HTML diagramming library.
+The [@PRODUCT@ @VERSION@](@PRODUCT_URL@) demos and tutorials are extensive sample applications that present the features of the @PRODUCT@ diagramming library.
 
-The complete source code of all of these samples is part of the yFiles for HTML package and available at [Github](https://github.com/yWorks/yfiles-for-html-demos)
+The complete source code of all of these samples is part of the @PRODUCT@ package and available at [Github](https://github.com/yWorks/yfiles-for-html-demos)
 
 To execute a specific sample, click on its card below. All of these demos are also hosted at the [yFiles for HTML Online Demos page](https://live.yworks.com/demos/).
 
@@ -14,11 +14,12 @@ This folder and its subfolders contain demo applications which make use of the d
 --- | --- | ---
 <img src="resources/image/bpmneditor.png" alt="BPMN Editor screenshot" width="128" height="96" /> | [BPMN Editor](complete/bpmn) | An editor for Business Process diagrams that features interactive editing, BPMN node styles and a specialized BPMN layout algorithm.
 <img src="resources/image/interactiveorgchart.png" alt="Organization Chart screenshot" width="128" height="96" /> | [Organization Chart](complete/interactiveorgchart) | An interactive viewer for organization charts with automatic layout updates.
+<img src="resources/image/processmining.png" alt="Process Mining screenshot" width="128" height="96" /> | [Process Mining](complete/processmining) | Shows how to create an animated visualization of a process flow.
 <img src="resources/image/frauddetection.png" alt="Fraud Detection screenshot" width="128" height="96" /> | [Fraud Detection](complete/frauddetection) | Example of a fraud detection application for time-dependent data.
-<img src="resources/image/isometric.png" alt="Isometric Drawing screenshot" width="128" height="96" /> | [Isometric Drawing](complete/isometric) | Displays graphs in an isometric fashion to create the impression of a 3-dimensional view.
-<img src="resources/image/isometricwebgl.png" alt="Isometric WebGL Drawing screenshot" width="128" height="96" /> | [Isometric WebGL Drawing](complete/isometricwebgl) | Displays graphs in 3D using an arbitrary projection and WebGL rendering.
+<img src="resources/image/isometric-drawing.png" alt="Isometric Drawing screenshot" width="128" height="96" /> | [Isometric Drawing](complete/isometricdrawing) | Displays graphs in 3D using an arbitrary projection and WebGL rendering.
 <img src="resources/image/networkmonitoring.png" alt="Network Monitoring screenshot" width="128" height="96" /> | [Network Monitoring](complete/networkmonitoring) | Example of a monitoring tool for computer networks.
-<img src="resources/image/largegraphaggregation.png" alt="Large Graph Aggregation screenshot" width="128" height="96" /> | [Large Graph Aggregation](complete/largegraphaggregation) | This demo shows how to use the smart node aggregation for drill down exploration of a large graph.
+<img src="resources/image/largegraphaggregation.png" alt="Large Graph Aggregation screenshot" width="128" height="96" /> | [Large Graph Aggregation](complete/largegraphaggregation) | Shows how to use the smart node aggregation for drill-down exploration of a large graph.
+<img src="resources/image/interactiveaggregation.png" alt="Interactive Aggregation screenshot" width="128" height="96" /> | [Interactive Aggregation](complete/interactiveaggregation) | Shows how to analyze a graph by interactively aggregating nodes with common properties.
 <img src="resources/image/metaballgroups.png" alt="Metaball Groups screenshot" width="128" height="96" /> | [Metaball Groups](complete/metaballgroups) | Shows how to render metaball-like background visualizations.
 <img src="resources/image/mapintegration.png" alt="Interactive Map screenshot" width="128" height="96" /> | [Interactive Map](complete/mapintegration) | Draws a graph on top of an interactive map.
 <img src="resources/image/umleditor.png" alt="UML Editor screenshot" width="128" height="96" /> | [UML Editor](complete/uml) | An editor for UML diagrams with a tailored UML node style, automatic layout, and a quick way to create new edges with the mouse or touch.
@@ -49,10 +50,14 @@ This folder and its subfolders contain demo applications which make use of the d
 <img src="resources/image/mazerouting.png" alt="Maze Routing screenshot" width="128" height="96" /> | [Maze Routing](layout/mazerouting) | Shows how the automatic edge routing finds routes through a maze.
 <img src="resources/image/edgelabelplacement.png" alt="Edge Label Placement screenshot" width="128" height="96" /> | [Edge Label Placement](layout/edgelabelplacement) | Shows how to place edge labels at the preferred location with a labeling algorithm.
 <img src="resources/image/nodelabelplacement.png" alt="Node Label Placement screenshot" width="128" height="96" /> | [Node Label Placement](layout/nodelabelplacement) | Shows how to place node labels at the preferred location with a labeling algorithm.
+<img src="resources/image/foldingwithlayout.png" alt="Folding With Layout screenshot" width="128" height="96" /> | [Folding With Layout](layout/foldingwithlayout) | Shows how an automatic layout makes space for opening groups and reclaims the space of closing groups.
 <img src="resources/image/incrementalhierarchic.png" alt="Incremental Hierarchic Layout screenshot" width="128" height="96" /> | [Incremental Hierarchic Layout](layout/incrementalhierarchic) | The incremental mode of the hierarchic layout style can fit new nodes and edges into the existing drawing.
 <img src="resources/image/edgegrouping.png" alt="Edge Grouping screenshot" width="128" height="96" /> | [Edge Grouping](layout/edgegrouping) | The hierarchic layout can group the paths or ports of edges.
 <img src="resources/image/edgeroutergrouping.png" alt="EdgeRouter Grouping screenshot" width="128" height="96" /> | [EdgeRouter Grouping](layout/edgeroutergrouping) | The EdgeRouter can group the paths or ports of edges.
 <img src="resources/image/fillarealayout.png" alt="Fill Area Layout screenshot" width="128" height="96" /> | [Fill Area Layout](layout/fillarealayout) | Shows how to fill free space after deleting nodes.
+<img src="resources/image/clearmarqueearea.png" alt="Clear Marquee Area screenshot" width="128" height="96" /> | [Clear Marquee Area](layout/clearmarqueearea) | Shows how to automatically keep a marquee area clear of graph elements.
+<img src="resources/image/clearrectanglearea.png" alt="Clear Rectangle Area screenshot" width="128" height="96" /> | [Clear Rectangle Area](layout/clearrectanglearea) | Shows how to automatically keep a user-defined rectangular area clear of graph elements.
+<img src="resources/image/nodeoverlapavoiding.png" alt="Node Overlap Avoiding screenshot" width="128" height="96" /> | [Node Overlap Avoiding](layout/nodeoverlapavoiding) | Shows how an automatic layout can remove node overlaps while a user interactively edits a graph.
 <img src="resources/image/busstructures.png" alt="Hierarchic Bus Structures screenshot" width="128" height="96" /> | [Hierarchic Bus Structures](layout/busstructures) | Bus structures in the hierarchic layout result in more compact arrangements.
 <img src="resources/image/subcomponents.png" alt="Hierarchic Subcomponents screenshot" width="128" height="96" /> | [Hierarchic Subcomponents](layout/subcomponents) | The hierarchic layout can arrange subcomponents with different layout styles.
 <img src="resources/image/CriticalPaths.png" alt="Critical Paths screenshot" width="128" height="96" /> | [Critical Paths](layout/criticalpaths) | The hierarchic and tree layout styles can emphasize critical (important) paths by aligning their nodes.
@@ -135,6 +140,7 @@ This folder and its subfolders contain demo applications which make use of the d
 <img src="resources/image/markdownlabel.png" alt="Markdown Label screenshot" width="128" height="96" /> | [Markdown Label](style/markdownlabel) | Use markdown to format the label text.
 <img src="resources/image/richtextlabel.png" alt="Rich Text Label screenshot" width="128" height="96" /> | [Rich Text Label](style/richtextlabel) | Edit markup labels with a WYSIWYG text editor.
 <img src="resources/image/css3_animations_and_transitions.png" alt="CSS3 Animations and Transitions screenshot" width="128" height="96" /> | [CSS3 Animations and Transitions](style/css3animationsandtransitions) | Shows how CSS3 transformations and animations can be applied to graph items.
+<img src="resources/image/editablepath.png" alt="Editable Path Node Style screenshot" width="128" height="96" /> | [Editable Path Node Style](style/editablepathstyle) | Shows a path-based node style whose control points can be moved by users.
 <img src="resources/image/customstyles.png" alt="Custom Styles screenshot" width="128" height="96" /> | [Custom Styles](style/customstyles) | Shows how to create custom styles for nodes, edges, labels, ports, and edge arrows.
 <img src="resources/image/vuejstemplatenodestyle.png" alt="Vue.js Template Node Style screenshot" width="128" height="96" /> | [Vue.js Template Node Style](style/vuejstemplatenodestyle) | Presents a very versatile and easily customizable template node style.
 <img src="resources/image/selectionstyling.png" alt="Selection Styling screenshot" width="128" height="96" /> | [Selection Styling](style/selectionstyling) | Shows customized selection painting of nodes, edges and labels by decorating these items with a corresponding      style.

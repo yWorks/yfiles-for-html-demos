@@ -224,7 +224,7 @@ function initializeInputMode() {
     ICommand.ZOOM_TO_CURRENT_ITEM.execute(null, graphComponent)
   })
 
-  graphViewerInputMode.itemHoverInputMode.addHoveredItemChangedListener(function(sender, args) {
+  graphViewerInputMode.itemHoverInputMode.addHoveredItemChangedListener(function (sender, args) {
     // we use the highlight manager to highlight hovered items
     const manager = graphComponent.highlightIndicatorManager
     if (args.oldItem) {
@@ -384,10 +384,7 @@ class OrgChartGraphSearch extends GraphSearch {
         prop =>
           prop !== 'icon' &&
           node.tag[prop] &&
-          node.tag[prop]
-            .toString()
-            .toLowerCase()
-            .indexOf(lowercaseText) !== -1
+          node.tag[prop].toString().toLowerCase().indexOf(lowercaseText) !== -1
       )
     ) {
       return true

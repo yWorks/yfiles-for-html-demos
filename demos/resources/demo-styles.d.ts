@@ -37,6 +37,12 @@ export class DemoEdgeStyle extends EdgeStyleBase {
   createVisual(context: IRenderContext, edge: IEdge): Visual | null
 }
 
+export class DemoGroupStyle extends NodeStyleBase {
+  createVisual(context: IRenderContext, node: INode): Visual | null
+  cssClass: string
+  solidHitTest: boolean
+}
+
 export function initDemoStyles(graph: IGraph): void
 
 export function DemoSerializationListener(source: object, args: object): void

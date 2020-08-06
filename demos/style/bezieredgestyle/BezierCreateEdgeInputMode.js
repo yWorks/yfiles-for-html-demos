@@ -213,10 +213,7 @@ export class BezierCreateEdgeInputMode extends CreateEdgeInputMode {
             // Insert a middle bend
             const cp0 = this.dummyEdge.bends.get(this.dummyEdge.bends.size - 2).location.toPoint()
             const cp2 = args.item.location.toPoint()
-            const cp1 = cp2
-              .subtract(cp0)
-              .multiply(0.5)
-              .add(cp0)
+            const cp1 = cp2.subtract(cp0).multiply(0.5).add(cp0)
             this.dummyEdgeGraph.addBend(this.dummyEdge, cp1, this.dummyEdge.bends.size - 1)
           }
         } finally {

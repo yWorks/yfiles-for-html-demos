@@ -295,6 +295,7 @@ export class ConstrainedPositionHandler extends BaseClass(IPositionHandler) {
    */
   constructor(handler) {
     super()
+    this.lastLocation = Point.ORIGIN
     this.handler = handler
   }
 

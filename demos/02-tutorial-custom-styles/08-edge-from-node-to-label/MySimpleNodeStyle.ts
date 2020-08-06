@@ -369,8 +369,9 @@ export default class MySimpleNodeStyle extends NodeStyleBase {
     use.href.baseVal = `#${defsId}`
     use.setAttribute(
       'transform',
-      `matrix(${xScaleFactor} ${0} ${0} ${yScaleFactor} ${offsetX -
-        tileSize2 * xScaleFactor} ${offsetY - tileSize2 * yScaleFactor})`
+      `matrix(${xScaleFactor} ${0} ${0} ${yScaleFactor} ${offsetX - tileSize2 * xScaleFactor} ${
+        offsetY - tileSize2 * yScaleFactor
+      })`
     )
     visual.appendChild(use)
   }

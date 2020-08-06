@@ -131,7 +131,7 @@ export default class WebglBlobVisual extends WebGLVisual {
       gl.bindBuffer(gl.ARRAY_BUFFER, this.buffer)
       gl.bufferData(gl.ARRAY_BUFFER, this.vertexBuffer, gl.STATIC_DRAW)
 
-      let positionLocation = gl.getAttribLocation(program, 'position')
+      const positionLocation = gl.getAttribLocation(program, 'position')
       gl.enableVertexAttribArray(positionLocation)
       gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 0, 0)
 

@@ -26,6 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
+/* eslint-disable react/prop-types */
 import React, { Component } from 'react'
 import ReactDOM from 'react-dom'
 import {
@@ -40,7 +41,6 @@ import {
   LayoutExecutor,
   License,
   PolylineEdgeStyle,
-  ShapeNodeStyle,
   Size
 } from 'yfiles'
 import 'yfiles/yfiles.css'
@@ -48,6 +48,8 @@ import './ReactGraphComponent.css'
 import ItemElement from './ItemElement.jsx'
 import DemoToolbar from './DemoToolbar.jsx'
 import yFilesLicense from '../license.json'
+import { ReactComponentNodeStyle } from './ReactComponentNodeStyle'
+import NodeTemplate from './NodeTemplate'
 
 export default class ReactGraphComponent extends Component {
   constructor(props) {
@@ -87,11 +89,7 @@ export default class ReactGraphComponent extends Component {
    */
   initializeDefaultStyles() {
     this.graphComponent.graph.nodeDefaults.size = new Size(60, 40)
-    this.graphComponent.graph.nodeDefaults.style = new ShapeNodeStyle({
-      fill: '#00d7ff',
-      stroke: '#00d7ff',
-      shape: 'round-rectangle'
-    })
+    this.graphComponent.graph.nodeDefaults.style = new ReactComponentNodeStyle(NodeTemplate)
     this.graphComponent.graph.nodeDefaults.labels.style = new DefaultLabelStyle({
       textFill: '#fff',
       font: new Font('Robot, sans-serif', 14)
@@ -147,7 +145,7 @@ export default class ReactGraphComponent extends Component {
       // Identifies the id property of a node object
       id: 'id',
       // Use the 'name' property as node label
-      labels: ['name']
+      tag: item => ({ name: item.name })
     })
     this.edgesSource = graphBuilder.createEdgesSource({
       // Stores the edges of the graph

@@ -81,10 +81,7 @@ describe('Wdio Demo', () => {
       }
 
       // create two nodes
-      await new MouseAction(browser)
-        .clickAt(startLocation)
-        .clickAt(endLocation)
-        .perform()
+      await new MouseAction(browser).clickAt(startLocation).clickAt(endLocation).perform()
 
       // create an edge between them
       await new MouseAction(browser)
@@ -120,10 +117,7 @@ describe('Wdio Demo', () => {
       }
 
       // create two nodes
-      await new MouseAction(browser)
-        .clickAt(startLocation)
-        .clickAt(endLocation)
-        .perform()
+      await new MouseAction(browser).clickAt(startLocation).clickAt(endLocation).perform()
 
       expect(await wdioDemoPage.bendCountAt(bend1Location)).to.equal(0)
       expect(await wdioDemoPage.bendCountAt(bend2Location)).to.equal(0)

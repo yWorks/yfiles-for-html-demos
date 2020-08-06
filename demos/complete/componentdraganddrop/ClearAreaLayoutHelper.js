@@ -67,6 +67,9 @@ export class ClearAreaLayoutHelper {
    * @param {boolean} keepComponents Defines whether or not components should not be separated by the layout algorithm.
    */
   constructor(graphComponent, component, keepComponents) {
+    // The {@link ILayoutAlgorithm} that makes space for the dropped component.
+    this.clearAreaLayout = null
+
     // The control that displays the graph.
     this.graphComponent = graphComponent
     // The location of the last drag. Used to move the outline to the current mouse location.

@@ -121,8 +121,9 @@ export class VoronoiVisual extends BaseClass(IVisualCreator) {
   static drawClusterCenter(point, container) {
     const path = document.createElementNS('http://www.w3.org/2000/svg', 'path')
     const offset = 15
-    const d = `M${point.x - offset},${point.y - offset} L${point.x + offset},${point.y +
-      offset} M${point.x + offset},${point.y - offset} L${point.x - offset},${point.y + offset}`
+    const d = `M${point.x - offset},${point.y - offset} L${point.x + offset},${point.y + offset} M${
+      point.x + offset
+    },${point.y - offset} L${point.x - offset},${point.y + offset}`
     path.setAttribute('d', d)
     path.setAttribute('stroke', '#666666')
     path.setAttribute('stroke-width', '4')

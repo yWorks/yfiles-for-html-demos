@@ -203,7 +203,7 @@ exports.config = {
    * @param {Object} config wdio configuration object
    * @param {Array.<Object>} capabilities list of capabilities details
    */
-  onPrepare: async function(config, capabilities) {
+  onPrepare: async function (config, capabilities) {
     // start an express server that hosts the demo, injects window.INTEGRATION_TEST, and resolves "yfiles" imports
     const app = express()
     const staticRoot = path.join(__dirname, '../../..')
@@ -256,7 +256,7 @@ exports.config = {
    * @param {Array.<Object>} capabilities list of capabilities details
    * @param {Array.<String>} specs List of spec file paths that are to be run
    */
-  before: async function(capabilities, specs) {
+  before: async function (capabilities, specs) {
     await browser.setWindowSize(1920, 1080)
   },
   /**
@@ -337,7 +337,7 @@ exports.config = {
    * @param {Array.<Object>} capabilities list of capabilities details
    * @param {<Object>} results object containing test results
    */
-  onComplete: function(exitCode, config, capabilities, results) {
+  onComplete: function (exitCode, config, capabilities, results) {
     demoServer.close()
   }
   /**

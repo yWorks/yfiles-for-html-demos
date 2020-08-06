@@ -26,6 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
+/* eslint-disable react/prop-types */
 import React, { Component } from 'react'
 import './DemoToolbar.css'
 

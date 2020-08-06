@@ -44,7 +44,7 @@ export default class ItemElement extends Component<ItemElementProps, ItemElement
   }
 
   componentDidMount(): void {
-    this.setState({ backgroundColor: 'transparent' })
+    this.setState(() => ({ backgroundColor: 'transparent' }))
   }
 
   render(): JSX.Element {

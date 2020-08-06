@@ -65,7 +65,7 @@ const LayoutConfiguration = Class('LayoutConfiguration', {
    *   configuration on.
    * @param {function()} doneHandler An optional function that is invoked after the layout finished
    */
-  apply: async function(graphComponent, doneHandler) {
+  apply: async function (graphComponent, doneHandler) {
     if (this.$layoutRunning) {
       setTimeout(doneHandler, 10)
       return
@@ -120,7 +120,7 @@ const LayoutConfiguration = Class('LayoutConfiguration', {
    *   configuration on.
    * @return {ILayoutAlgorithm} The configured layout algorithm.
    */
-  createConfiguredLayout: function(graphComponent) {
+  createConfiguredLayout: function (graphComponent) {
     return null
   },
 
@@ -128,13 +128,13 @@ const LayoutConfiguration = Class('LayoutConfiguration', {
    * Called by {@link LayoutConfiguration#runLayout} after the layout animation is done. This method is
    * typically overridden to remove mappers from the mapper registry of the graph.
    */
-  postProcess: function(graphComponent) {},
+  postProcess: function (graphComponent) {},
 
   /**
    * Called by {@link LayoutConfiguration#apply} to create the layout data of the configuration. This
    * method is typically overridden to provide mappers for the different layouts.
    */
-  createConfiguredLayoutData: function(graphComponent, layout) {
+  createConfiguredLayoutData: function (graphComponent, layout) {
     return null
   },
 
@@ -144,7 +144,7 @@ const LayoutConfiguration = Class('LayoutConfiguration', {
      * to the mapper registry of the given graph. In addition, sets the label model of all edge labels to free
      * since that model can realizes any label placement calculated by a layout algorithm.
      */
-    addPreferredPlacementDescriptor: function(
+    addPreferredPlacementDescriptor: function (
       graph,
       placeAlongEdge,
       sideOfEdge,
@@ -178,7 +178,7 @@ const LayoutConfiguration = Class('LayoutConfiguration', {
      * Creates a new {@link PreferredPlacementDescriptor} that matches the given settings.
      * @return {PreferredPlacementDescriptor}
      */
-    createPreferredPlacementDescriptor: function(
+    createPreferredPlacementDescriptor: function (
       placeAlongEdge,
       sideOfEdge,
       orientation,

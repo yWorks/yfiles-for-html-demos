@@ -299,6 +299,7 @@ class ChangeFilterStateUndoUnit extends UndoUnitBase {
    */
   constructor(filteredGraph, tag) {
     super('ChangeFilterState')
+    this.newState = false
     this.filteredGraph = filteredGraph
     // remember the changed object
     this.tag = tag

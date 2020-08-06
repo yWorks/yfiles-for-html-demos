@@ -447,10 +447,7 @@ async function loadScenario() {
     partialEdgesMapper
   )
 
-  const sample = document
-    .getElementById('select-sample')
-    .value.substring(10)
-    .toLowerCase()
+  const sample = document.getElementById('select-sample').value.substring(10).toLowerCase()
   const path = `resources/${sample}.graphml`
   switch (sample) {
     default:

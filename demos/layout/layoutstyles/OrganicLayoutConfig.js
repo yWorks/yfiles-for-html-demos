@@ -76,7 +76,7 @@ const OrganicLayoutConfig = Class('OrganicLayoutConfig', {
   /**
    * Setup default values for various configuration parameters.
    */
-  constructor: function() {
+  constructor: function () {
     LayoutConfiguration.call(this)
     const layout = new OrganicLayout()
     this.scopeItem = OrganicLayoutScope.ALL
@@ -128,7 +128,7 @@ const OrganicLayoutConfig = Class('OrganicLayoutConfig', {
    *   configuration on.
    * @return {ILayoutAlgorithm} The configured layout algorithm.
    */
-  createConfiguredLayout: function(graphComponent) {
+  createConfiguredLayout: function (graphComponent) {
     const layout = new OrganicLayout()
     layout.preferredEdgeLength = this.preferredEdgeLengthItem
     layout.considerNodeLabels = this.considerNodeLabelsItem
@@ -190,7 +190,7 @@ const OrganicLayoutConfig = Class('OrganicLayoutConfig', {
    * Creates and configures the layout data.
    * @return {LayoutData} The configured layout data.
    */
-  createConfiguredLayoutData: function(graphComponent, layout) {
+  createConfiguredLayoutData: function (graphComponent, layout) {
     const layoutData = new OrganicLayoutData({
       affectedNodes: graphComponent.selection.selectedNodes
     })
@@ -237,7 +237,7 @@ const OrganicLayoutConfig = Class('OrganicLayoutConfig', {
     return layoutData
   },
 
-  $configureOutputRestrictions: function(graphComponent, layout) {
+  $configureOutputRestrictions: function (graphComponent, layout) {
     let viewInfoIsAvailable = false
     const visibleRect = OrganicLayoutConfig.getVisibleRectangle(graphComponent)
     let x = 0
@@ -266,17 +266,13 @@ const OrganicLayoutConfig = Class('OrganicLayoutConfig', {
         layout.outputRestriction = OutputRestriction.createRectangularCageRestriction(x, y, w, h)
         layout.componentLayoutEnabled = false
         break
-      case OrganicLayoutConfig.EnumOutputRestrictions.OUTPUT_AR:
-        let /** number */ ratio
-        if (viewInfoIsAvailable && this.arCageUseViewItem) {
-          ratio = w / h
-        } else {
-          ratio = this.cageRatioItem
-        }
+      case OrganicLayoutConfig.EnumOutputRestrictions.OUTPUT_AR: {
+        const ratio = viewInfoIsAvailable && this.arCageUseViewItem ? w / h : this.cageRatioItem
         layout.outputRestriction = OutputRestriction.createAspectRatioRestriction(ratio)
         layout.componentLayoutEnabled = true
         layout.componentLayout.preferredSize = new YDimension(ratio * 100, 100)
         break
+      }
       case OrganicLayoutConfig.EnumOutputRestrictions.OUTPUT_ELLIPTICAL_CAGE:
         if (!viewInfoIsAvailable || !this.rectCageUseViewItem) {
           x = this.cageXItem
@@ -298,7 +294,7 @@ const OrganicLayoutConfig = Class('OrganicLayoutConfig', {
    * Called when the layout has finished to remove mappers.
    * @param graphComponent the given graphComponent
    */
-  postProcess: function(graphComponent) {
+  postProcess: function (graphComponent) {
     if (this.useEdgeGroupingItem) {
       const mapperRegistry = graphComponent.graph.mapperRegistry
       mapperRegistry.removeMapper(PortConstraintKeys.SOURCE_GROUP_ID_DP_KEY)
@@ -309,7 +305,7 @@ const OrganicLayoutConfig = Class('OrganicLayoutConfig', {
   /**
    * Enables different layout styles for possible detected substructures.
    */
-  enableSubstructures: function() {
+  enableSubstructures: function () {
     this.cycleSubstructureItem = CycleSubstructureStyle.CIRCULAR
     this.chainSubstructureItem = ChainSubstructureStyle.STRAIGHT_LINE
     this.starSubstructureItem = StarSubstructureStyle.RADIAL
@@ -318,7 +314,7 @@ const OrganicLayoutConfig = Class('OrganicLayoutConfig', {
 
   /** @type {OptionGroup} */
   DescriptionGroup: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute('Description'),
         OptionGroupAttribute('RootGroup', 5),
@@ -330,7 +326,7 @@ const OrganicLayoutConfig = Class('OrganicLayoutConfig', {
 
   /** @type {OptionGroup} */
   VisualGroup: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute('General'),
         OptionGroupAttribute('RootGroup', 10),
@@ -342,7 +338,7 @@ const OrganicLayoutConfig = Class('OrganicLayoutConfig', {
 
   /** @type {OptionGroup} */
   RestrictionsGroup: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute('Restrictions'),
         OptionGroupAttribute('RootGroup', 20),
@@ -354,7 +350,7 @@ const OrganicLayoutConfig = Class('OrganicLayoutConfig', {
 
   /** @type {OptionGroup} */
   CageGroup: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute('Bounds'),
         OptionGroupAttribute('RestrictionsGroup', 20),
@@ -366,7 +362,7 @@ const OrganicLayoutConfig = Class('OrganicLayoutConfig', {
 
   /** @type {OptionGroup} */
   ARGroup: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute('Aspect Ratio'),
         OptionGroupAttribute('RestrictionsGroup', 30),
@@ -378,7 +374,7 @@ const OrganicLayoutConfig = Class('OrganicLayoutConfig', {
 
   /** @type {OptionGroup} */
   GroupingGroup: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute('Grouping'),
         OptionGroupAttribute('RootGroup', 30),
@@ -390,7 +386,7 @@ const OrganicLayoutConfig = Class('OrganicLayoutConfig', {
 
   /** @type {OptionGroup} */
   AlgorithmGroup: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute('Algorithm'),
         OptionGroupAttribute('RootGroup', 40),
@@ -402,7 +398,7 @@ const OrganicLayoutConfig = Class('OrganicLayoutConfig', {
 
   /** @type {OptionGroup} */
   SubstructureLayoutGroup: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute('Substructure Layout'),
         OptionGroupAttribute('RootGroup', 50),
@@ -414,7 +410,7 @@ const OrganicLayoutConfig = Class('OrganicLayoutConfig', {
 
   /** @type {OptionGroup} */
   LabelingGroup: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute('Labeling'),
         OptionGroupAttribute('RootGroup', 60),
@@ -426,7 +422,7 @@ const OrganicLayoutConfig = Class('OrganicLayoutConfig', {
 
   /** @type {OptionGroup} */
   NodePropertiesGroup: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute('Node Settings'),
         OptionGroupAttribute('LabelingGroup', 10),
@@ -438,7 +434,7 @@ const OrganicLayoutConfig = Class('OrganicLayoutConfig', {
 
   /** @type {OptionGroup} */
   EdgePropertiesGroup: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute('Edge Settings'),
         OptionGroupAttribute('LabelingGroup', 20),
@@ -450,7 +446,7 @@ const OrganicLayoutConfig = Class('OrganicLayoutConfig', {
 
   /** @type {OptionGroup} */
   PreferredPlacementGroup: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute('Preferred Edge Label Placement'),
         OptionGroupAttribute('LabelingGroup', 30),
@@ -462,14 +458,14 @@ const OrganicLayoutConfig = Class('OrganicLayoutConfig', {
 
   /** @type {string} */
   descriptionText: {
-    $meta: function() {
+    $meta: function () {
       return [
         OptionGroupAttribute('DescriptionGroup', 10),
         ComponentAttribute(Components.HTML_BLOCK),
         TypeAttribute(YString.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return "<p style='margin-top:0'>The organic layout style is based on the force-directed layout paradigm. This algorithm simulates physical forces and rearranges the positions of the nodes in such a way that the sum of the forces emitted by the nodes and the edges reaches a (local) minimum.</p><p>This style is well suited for the visualization of highly connected backbone regions with attached peripheral ring or tree structures. In a diagram arranged by this algorithm, these regions of a network can be easily identified.</p><p>The organic layout style is a multi-purpose layout for undirected graphs. It produces clear representations of complex networks and is especially fitted for application domains such as:</p><ul><li>Bioinformatics</li><li>Enterprise networking</li><li>Knowledge representation</li><li>System management</li><li>WWW visualization</li><li>Mesh visualization</li></ul>"
     }
   },
@@ -482,7 +478,7 @@ const OrganicLayoutConfig = Class('OrganicLayoutConfig', {
 
   /** @type {OrganicLayoutScope} */
   scopeItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute('Scope', '#/api/OrganicLayout#OrganicLayout-property-scope'),
         OptionGroupAttribute('VisualGroup', 10),
@@ -496,10 +492,10 @@ const OrganicLayoutConfig = Class('OrganicLayoutConfig', {
         TypeAttribute(OrganicLayoutScope.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$scopeItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$scopeItem = value
     }
   },
@@ -512,7 +508,7 @@ const OrganicLayoutConfig = Class('OrganicLayoutConfig', {
 
   /** @type {number} */
   preferredEdgeLengthItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Preferred Edge Length',
@@ -527,10 +523,10 @@ const OrganicLayoutConfig = Class('OrganicLayoutConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$preferredEdgeLengthItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$preferredEdgeLengthItem = value
     }
   },
@@ -543,7 +539,7 @@ const OrganicLayoutConfig = Class('OrganicLayoutConfig', {
 
   /** @type {boolean} */
   allowNodeOverlapsItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Allow Overlapping Nodes',
@@ -553,20 +549,20 @@ const OrganicLayoutConfig = Class('OrganicLayoutConfig', {
         TypeAttribute(YBoolean.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$allowNodeOverlapsItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$allowNodeOverlapsItem = value
     }
   },
 
   /** @type {boolean} */
   shouldDisableAllowNodeOverlapsItem: {
-    $meta: function() {
+    $meta: function () {
       return [TypeAttribute(YBoolean.$class)]
     },
-    get: function() {
+    get: function () {
       return this.considerNodeLabelsItem
     }
   },
@@ -579,7 +575,7 @@ const OrganicLayoutConfig = Class('OrganicLayoutConfig', {
 
   /** @type {number} */
   minimumNodeDistanceItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Minimum Node Distance',
@@ -595,20 +591,20 @@ const OrganicLayoutConfig = Class('OrganicLayoutConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$minimumNodeDistanceItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$minimumNodeDistanceItem = value
     }
   },
 
   /** @type {boolean} */
   shouldDisableMinimumNodeDistanceItem: {
-    $meta: function() {
+    $meta: function () {
       return [TypeAttribute(YBoolean.$class)]
     },
-    get: function() {
+    get: function () {
       return this.allowNodeOverlapsItem && !this.considerNodeLabelsItem
     }
   },
@@ -621,7 +617,7 @@ const OrganicLayoutConfig = Class('OrganicLayoutConfig', {
 
   /** @type {boolean} */
   avoidNodeEdgeOverlapsItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Avoid Node/Edge Overlaps',
@@ -631,10 +627,10 @@ const OrganicLayoutConfig = Class('OrganicLayoutConfig', {
         TypeAttribute(YBoolean.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$avoidNodeEdgeOverlapsItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$avoidNodeEdgeOverlapsItem = value
     }
   },
@@ -647,7 +643,7 @@ const OrganicLayoutConfig = Class('OrganicLayoutConfig', {
 
   /** @type {number} */
   compactnessItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Compactness',
@@ -663,10 +659,10 @@ const OrganicLayoutConfig = Class('OrganicLayoutConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$compactnessItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$compactnessItem = value
     }
   },
@@ -679,7 +675,7 @@ const OrganicLayoutConfig = Class('OrganicLayoutConfig', {
 
   /** @type {boolean} */
   useAutoClusteringItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Use Natural Clustering',
@@ -689,10 +685,10 @@ const OrganicLayoutConfig = Class('OrganicLayoutConfig', {
         TypeAttribute(YBoolean.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$useAutoClusteringItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$useAutoClusteringItem = value
     }
   },
@@ -705,7 +701,7 @@ const OrganicLayoutConfig = Class('OrganicLayoutConfig', {
 
   /** @type {number} */
   autoClusteringQualityItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Natural Clustering Quality',
@@ -721,20 +717,20 @@ const OrganicLayoutConfig = Class('OrganicLayoutConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$autoClusteringQualityItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$autoClusteringQualityItem = value
     }
   },
 
   /** @type {boolean} */
   shouldDisableAutoClusteringQualityItem: {
-    $meta: function() {
+    $meta: function () {
       return [TypeAttribute(YBoolean.$class)]
     },
-    get: function() {
+    get: function () {
       return this.useAutoClusteringItem === false
     }
   },
@@ -747,7 +743,7 @@ const OrganicLayoutConfig = Class('OrganicLayoutConfig', {
 
   /** @type {OrganicLayoutConfig.EnumOutputRestrictions} */
   restrictOutputItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Output Area',
@@ -765,24 +761,24 @@ const OrganicLayoutConfig = Class('OrganicLayoutConfig', {
         TypeAttribute(OrganicLayoutConfig.EnumOutputRestrictions.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$restrictOutputItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$restrictOutputItem = value
     }
   },
 
   /** @type {boolean} */
   shouldDisableCageGroup: {
-    $meta: function() {
+    $meta: function () {
       return [TypeAttribute(YBoolean.$class)]
     },
-    get: function() {
+    get: function () {
       return (
-        (this.restrictOutputItem !== OrganicLayoutConfig.EnumOutputRestrictions.OUTPUT_CAGE &&
+        this.restrictOutputItem !== OrganicLayoutConfig.EnumOutputRestrictions.OUTPUT_CAGE &&
         this.restrictOutputItem !==
-          OrganicLayoutConfig.EnumOutputRestrictions.OUTPUT_ELLIPTICAL_CAGE)
+          OrganicLayoutConfig.EnumOutputRestrictions.OUTPUT_ELLIPTICAL_CAGE
       )
     }
   },
@@ -795,7 +791,7 @@ const OrganicLayoutConfig = Class('OrganicLayoutConfig', {
 
   /** @type {boolean} */
   rectCageUseViewItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Use Visible Area',
@@ -805,10 +801,10 @@ const OrganicLayoutConfig = Class('OrganicLayoutConfig', {
         TypeAttribute(YBoolean.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$rectCageUseViewItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$rectCageUseViewItem = value
     }
   },
@@ -821,27 +817,27 @@ const OrganicLayoutConfig = Class('OrganicLayoutConfig', {
 
   /** @type {number} */
   cageXItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute('Top Left X'),
         OptionGroupAttribute('CageGroup', 20),
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$cageXItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$cageXItem = value
     }
   },
 
   /** @type {boolean} */
   shouldDisableCageXItem: {
-    $meta: function() {
+    $meta: function () {
       return [TypeAttribute(YBoolean.$class)]
     },
-    get: function() {
+    get: function () {
       return this.rectCageUseViewItem
     }
   },
@@ -854,27 +850,27 @@ const OrganicLayoutConfig = Class('OrganicLayoutConfig', {
 
   /** @type {number} */
   cageYItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute('Top Left Y'),
         OptionGroupAttribute('CageGroup', 30),
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$cageYItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$cageYItem = value
     }
   },
 
   /** @type {boolean} */
   shouldDisableCageYItem: {
-    $meta: function() {
+    $meta: function () {
       return [TypeAttribute(YBoolean.$class)]
     },
-    get: function() {
+    get: function () {
       return this.rectCageUseViewItem
     }
   },
@@ -887,7 +883,7 @@ const OrganicLayoutConfig = Class('OrganicLayoutConfig', {
 
   /** @type {number} */
   cageWidthItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute('Width'),
         OptionGroupAttribute('CageGroup', 40),
@@ -895,20 +891,20 @@ const OrganicLayoutConfig = Class('OrganicLayoutConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$cageWidthItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$cageWidthItem = value
     }
   },
 
   /** @type {boolean} */
   shouldDisableCageWidthItem: {
-    $meta: function() {
+    $meta: function () {
       return [TypeAttribute(YBoolean.$class)]
     },
-    get: function() {
+    get: function () {
       return this.rectCageUseViewItem
     }
   },
@@ -921,7 +917,7 @@ const OrganicLayoutConfig = Class('OrganicLayoutConfig', {
 
   /** @type {number} */
   cageHeightItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute('Height'),
         OptionGroupAttribute('CageGroup', 50),
@@ -929,20 +925,20 @@ const OrganicLayoutConfig = Class('OrganicLayoutConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$cageHeightItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$cageHeightItem = value
     }
   },
 
   /** @type {boolean} */
   shouldDisableCageHeightItem: {
-    $meta: function() {
+    $meta: function () {
       return [TypeAttribute(YBoolean.$class)]
     },
-    get: function() {
+    get: function () {
       return this.rectCageUseViewItem
     }
   },
@@ -955,17 +951,17 @@ const OrganicLayoutConfig = Class('OrganicLayoutConfig', {
 
   /** @type {boolean} */
   arCageUseViewItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute('Use Ratio of View'),
         OptionGroupAttribute('ARGroup', 10),
         TypeAttribute(YBoolean.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$arCageUseViewItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$arCageUseViewItem = value
     }
   },
@@ -978,7 +974,7 @@ const OrganicLayoutConfig = Class('OrganicLayoutConfig', {
 
   /** @type {number} */
   cageRatioItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute('Aspect Ratio'),
         OptionGroupAttribute('ARGroup', 20),
@@ -991,20 +987,20 @@ const OrganicLayoutConfig = Class('OrganicLayoutConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$cageRatioItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$cageRatioItem = value
     }
   },
 
   /** @type {boolean} */
   shouldDisableCageRatioItem: {
-    $meta: function() {
+    $meta: function () {
       return [TypeAttribute(YBoolean.$class)]
     },
-    get: function() {
+    get: function () {
       return this.arCageUseViewItem
     }
   },
@@ -1017,7 +1013,7 @@ const OrganicLayoutConfig = Class('OrganicLayoutConfig', {
 
   /** @type {OrganicLayoutConfig.EnumGroupLayoutPolicy} */
   groupLayoutPolicyItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Group Layout Policy',
@@ -1038,10 +1034,10 @@ const OrganicLayoutConfig = Class('OrganicLayoutConfig', {
         TypeAttribute(OrganicLayoutConfig.EnumGroupLayoutPolicy.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$groupLayoutPolicyItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$groupLayoutPolicyItem = value
     }
   },
@@ -1054,7 +1050,7 @@ const OrganicLayoutConfig = Class('OrganicLayoutConfig', {
 
   /** @type {number} */
   qualityTimeRatioItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute('Quality', '#/api/OrganicLayout#OrganicLayout-property-qualityTimeRatio'),
         OptionGroupAttribute('AlgorithmGroup', 10),
@@ -1067,10 +1063,10 @@ const OrganicLayoutConfig = Class('OrganicLayoutConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$qualityTimeRatioItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$qualityTimeRatioItem = value
     }
   },
@@ -1083,7 +1079,7 @@ const OrganicLayoutConfig = Class('OrganicLayoutConfig', {
 
   /** @type {number} */
   maximumDurationItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Maximum Duration (sec)',
@@ -1098,10 +1094,10 @@ const OrganicLayoutConfig = Class('OrganicLayoutConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$maximumDurationItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$maximumDurationItem = value
     }
   },
@@ -1114,7 +1110,7 @@ const OrganicLayoutConfig = Class('OrganicLayoutConfig', {
 
   /** @type {boolean} */
   activateDeterministicModeItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Deterministic Mode',
@@ -1124,10 +1120,10 @@ const OrganicLayoutConfig = Class('OrganicLayoutConfig', {
         TypeAttribute(YBoolean.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$activateDeterministicModeItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$activateDeterministicModeItem = value
     }
   },
@@ -1140,7 +1136,7 @@ const OrganicLayoutConfig = Class('OrganicLayoutConfig', {
 
   /** @type {boolean} */
   considerNodeLabelsItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Consider Node Labels',
@@ -1150,10 +1146,10 @@ const OrganicLayoutConfig = Class('OrganicLayoutConfig', {
         TypeAttribute(YBoolean.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$considerNodeLabelsItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$considerNodeLabelsItem = value
     }
   },
@@ -1166,7 +1162,7 @@ const OrganicLayoutConfig = Class('OrganicLayoutConfig', {
 
   /** @type {CycleSubstructureStyle} */
   cycleSubstructureItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Cycles',
@@ -1182,10 +1178,10 @@ const OrganicLayoutConfig = Class('OrganicLayoutConfig', {
         TypeAttribute(CycleSubstructureStyle.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$cycleSubstructureItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$cycleSubstructureItem = value
     }
   },
@@ -1198,7 +1194,7 @@ const OrganicLayoutConfig = Class('OrganicLayoutConfig', {
 
   /** @type {ChainSubstructureStyle} */
   chainSubstructureItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Chains',
@@ -1215,10 +1211,10 @@ const OrganicLayoutConfig = Class('OrganicLayoutConfig', {
         TypeAttribute(ChainSubstructureStyle.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$chainSubstructureItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$chainSubstructureItem = value
     }
   },
@@ -1231,7 +1227,7 @@ const OrganicLayoutConfig = Class('OrganicLayoutConfig', {
 
   /** @type {StarSubstructureStyle} */
   starSubstructureItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute('Star', '#/api/OrganicLayout#OrganicLayout-property-starSubstructureStyle'),
         OptionGroupAttribute('SubstructureLayoutGroup', 30),
@@ -1246,10 +1242,10 @@ const OrganicLayoutConfig = Class('OrganicLayoutConfig', {
         TypeAttribute(StarSubstructureStyle.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$starSubstructureItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$starSubstructureItem = value
     }
   },
@@ -1262,7 +1258,7 @@ const OrganicLayoutConfig = Class('OrganicLayoutConfig', {
 
   /** @type {ParallelSubstructureStyle  } */
   parallelSubstructureItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Parallel',
@@ -1280,10 +1276,10 @@ const OrganicLayoutConfig = Class('OrganicLayoutConfig', {
         TypeAttribute(ParallelSubstructureStyle.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$parallelSubstructureItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$parallelSubstructureItem = value
     }
   },
@@ -1296,7 +1292,7 @@ const OrganicLayoutConfig = Class('OrganicLayoutConfig', {
 
   /** @type {boolean} */
   edgeDirectednessItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Arrows Define Edge Direction',
@@ -1306,10 +1302,10 @@ const OrganicLayoutConfig = Class('OrganicLayoutConfig', {
         TypeAttribute(YBoolean.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$edgeDirectednessItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$edgeDirectednessItem = value
     }
   },
@@ -1322,17 +1318,17 @@ const OrganicLayoutConfig = Class('OrganicLayoutConfig', {
 
   /** @type {boolean} */
   useEdgeGroupingItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute('Use Edge Grouping', '#/api/PortConstraintKeys'),
         OptionGroupAttribute('SubstructureLayoutGroup', 60),
         TypeAttribute(YBoolean.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$useEdgeGroupingItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$useEdgeGroupingItem = value
     }
   },
@@ -1345,7 +1341,7 @@ const OrganicLayoutConfig = Class('OrganicLayoutConfig', {
 
   /** @type {boolean} */
   edgeLabelingItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Edge Labeling',
@@ -1355,10 +1351,10 @@ const OrganicLayoutConfig = Class('OrganicLayoutConfig', {
         TypeAttribute(YBoolean.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$edgeLabelingItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$edgeLabelingItem = value
     }
   },
@@ -1371,7 +1367,7 @@ const OrganicLayoutConfig = Class('OrganicLayoutConfig', {
 
   /** @type {boolean} */
   reduceAmbiguityItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Reduce Ambiguity',
@@ -1381,20 +1377,20 @@ const OrganicLayoutConfig = Class('OrganicLayoutConfig', {
         TypeAttribute(YBoolean.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$reduceAmbiguityItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$reduceAmbiguityItem = value
     }
   },
 
   /** @type {boolean} */
   shouldDisableReduceAmbiguityItem: {
-    $meta: function() {
+    $meta: function () {
       return [TypeAttribute(YBoolean.$class)]
     },
-    get: function() {
+    get: function () {
       return !this.edgeLabelingItem
     }
   },
@@ -1407,7 +1403,7 @@ const OrganicLayoutConfig = Class('OrganicLayoutConfig', {
 
   /** @type {LayoutConfiguration.EnumLabelPlacementOrientation} */
   labelPlacementOrientationItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Orientation',
@@ -1425,20 +1421,20 @@ const OrganicLayoutConfig = Class('OrganicLayoutConfig', {
         TypeAttribute(LayoutConfiguration.EnumLabelPlacementOrientation.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$labelPlacementOrientationItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$labelPlacementOrientationItem = value
     }
   },
 
   /** @type {boolean} */
   shouldDisableLabelPlacementOrientationItem: {
-    $meta: function() {
+    $meta: function () {
       return [TypeAttribute(YBoolean.$class)]
     },
-    get: function() {
+    get: function () {
       return !this.edgeLabelingItem
     }
   },
@@ -1451,7 +1447,7 @@ const OrganicLayoutConfig = Class('OrganicLayoutConfig', {
 
   /** @type {LayoutConfiguration.EnumLabelPlacementAlongEdge} */
   labelPlacementAlongEdgeItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Along Edge',
@@ -1471,20 +1467,20 @@ const OrganicLayoutConfig = Class('OrganicLayoutConfig', {
         TypeAttribute(LayoutConfiguration.EnumLabelPlacementAlongEdge.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$labelPlacementAlongEdgeItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$labelPlacementAlongEdgeItem = value
     }
   },
 
   /** @type {boolean} */
   shouldDisableLabelPlacementAlongEdgeItem: {
-    $meta: function() {
+    $meta: function () {
       return [TypeAttribute(YBoolean.$class)]
     },
-    get: function() {
+    get: function () {
       return !this.edgeLabelingItem
     }
   },
@@ -1497,7 +1493,7 @@ const OrganicLayoutConfig = Class('OrganicLayoutConfig', {
 
   /** @type {LayoutConfiguration.EnumLabelPlacementSideOfEdge} */
   labelPlacementSideOfEdgeItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Side of Edge',
@@ -1516,20 +1512,20 @@ const OrganicLayoutConfig = Class('OrganicLayoutConfig', {
         TypeAttribute(LayoutConfiguration.EnumLabelPlacementSideOfEdge.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$labelPlacementSideOfEdgeItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$labelPlacementSideOfEdgeItem = value
     }
   },
 
   /** @type {boolean} */
   shouldDisableLabelPlacementSideOfEdgeItem: {
-    $meta: function() {
+    $meta: function () {
       return [TypeAttribute(YBoolean.$class)]
     },
-    get: function() {
+    get: function () {
       return !this.edgeLabelingItem
     }
   },
@@ -1542,7 +1538,7 @@ const OrganicLayoutConfig = Class('OrganicLayoutConfig', {
 
   /** @type {number} */
   labelPlacementDistanceItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Distance',
@@ -1557,24 +1553,24 @@ const OrganicLayoutConfig = Class('OrganicLayoutConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$labelPlacementDistanceItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$labelPlacementDistanceItem = value
     }
   },
 
   /** @type {boolean} */
   shouldDisableLabelPlacementDistanceItem: {
-    $meta: function() {
+    $meta: function () {
       return [TypeAttribute(YBoolean.$class)]
     },
-    get: function() {
+    get: function () {
       return (
-        (!this.edgeLabelingItem ||
+        !this.edgeLabelingItem ||
         this.labelPlacementSideOfEdgeItem ===
-          LayoutConfiguration.EnumLabelPlacementSideOfEdge.ON_EDGE)
+          LayoutConfiguration.EnumLabelPlacementSideOfEdge.ON_EDGE
       )
     }
   },
@@ -1583,7 +1579,7 @@ const OrganicLayoutConfig = Class('OrganicLayoutConfig', {
     /**
      * @return {number[]}
      */
-    getVisibleRectangle: function(graphComponent) {
+    getVisibleRectangle: function (graphComponent) {
       const visibleRect = [0, 0, 0, 0]
       if (graphComponent !== null) {
         const viewPort = graphComponent.viewport

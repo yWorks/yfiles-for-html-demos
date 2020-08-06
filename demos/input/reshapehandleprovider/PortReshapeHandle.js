@@ -50,6 +50,13 @@ export class PortReshapeHandle extends BaseClass(IHandle) {
    */
   constructor(context, port, adapter, position) {
     super()
+
+    // The initial RenderSize used to reset the size on Cancel.
+    this.initialRenderSize = Size.EMPTY
+
+    // The minimum size the {@link NodeStylePortStyleAdapter.renderSize} may have.
+    this.minimumSize = Size.EMPTY
+
     this.context = context
     this.position = position
     this.adapter = adapter

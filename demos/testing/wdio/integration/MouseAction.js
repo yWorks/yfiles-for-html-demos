@@ -37,10 +37,7 @@ module.exports.MouseAction = class MouseAction {
   }
 
   clickAt(location) {
-    return this.moveTo(location)
-      .mouseDown()
-      .pause(10)
-      .mouseUp()
+    return this.moveTo(location).mouseDown().pause(10).mouseUp()
   }
 
   moveTo({ x, y }, duration = 0) {

@@ -48,7 +48,7 @@ import {
   ShapeNodeStyle,
   Size
 } from 'yfiles'
-import { AggregationGraphWrapper } from './AggregationGraphWrapper.js'
+import { AggregationGraphWrapper } from '../../utils/AggregationGraphWrapper.js'
 
 /**
  * A helper class that provides methods to aggregate and separate nodes according to a {@link NodeAggregationResult}.

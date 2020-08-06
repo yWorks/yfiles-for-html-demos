@@ -74,10 +74,7 @@ export default class ShortestPathSupport {
           source: start,
           sink: end,
           costs: edge =>
-            edge.style.renderer
-              .getPathGeometry(edge, edge.style)
-              .getPath()
-              .getLength(),
+            edge.style.renderer.getPathGeometry(edge, edge.style).getPath().getLength(),
           directed: false
         })
 

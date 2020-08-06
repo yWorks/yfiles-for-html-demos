@@ -30,7 +30,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin')
 const path = require('path')
 const YWorksOptimizer = require('@yworks/optimizer/webpack-plugin')
 
-module.exports = function(config) {
+module.exports = function (config) {
   const isDevelopment = config.mode === 'development'
   config.plugins.push(
     new HtmlWebpackPlugin({

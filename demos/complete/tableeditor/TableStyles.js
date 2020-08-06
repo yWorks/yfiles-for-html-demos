@@ -55,7 +55,7 @@ export const DemoTableStyle = Class('DemoTableStyle', {
   /**
    * @param {ITable} table
    */
-  constructor: function(table) {
+  constructor: function (table) {
     if (table) {
       TableNodeStyle.call(this, table, new DemoTableStyleRenderer())
       this.tableRenderingOrder = TableRenderingOrder.ROWS_FIRST
@@ -75,7 +75,7 @@ export const DemoTableStyle = Class('DemoTableStyle', {
 const DemoTableStyleRenderer = Class('DemoTableStyleRenderer', {
   $extends: TableNodeStyleRenderer,
 
-  constructor: function() {
+  constructor: function () {
     TableNodeStyleRenderer.call(this)
   },
 
@@ -84,7 +84,7 @@ const DemoTableStyleRenderer = Class('DemoTableStyleRenderer', {
    * @param {Rect} box
    * @return {boolean}
    */
-  isInBox: function(inputModeContext, box) {
+  isInBox: function (inputModeContext, box) {
     return box.contains(this.node.layout.topLeft) && box.contains(this.node.layout.bottomRight)
   },
 
@@ -93,7 +93,7 @@ const DemoTableStyleRenderer = Class('DemoTableStyleRenderer', {
    * @param {Point} p
    * @return {boolean} True if p is inside node.
    */
-  isHit: function(inputModeContext, p) {
+  isHit: function (inputModeContext, p) {
     if (!DemoTableStyleRenderer.$super.isHit.call(this, inputModeContext, p)) {
       return false
     }
@@ -140,7 +140,7 @@ const DemoTableStyleRenderer = Class('DemoTableStyleRenderer', {
 const TableBackgroundStyle = Class('TableBackgroundStyle', {
   $extends: NodeStyleBase,
 
-  constructor: function() {
+  constructor: function () {
     NodeStyleBase.call(this)
   },
 
@@ -149,7 +149,7 @@ const TableBackgroundStyle = Class('TableBackgroundStyle', {
    * @param {INode} node
    * @return {Visual}
    */
-  createVisual: function(renderContext, node) {
+  createVisual: function (renderContext, node) {
     const /** @type {ITable} */ table = node.lookup(ITable.$class)
     if (table != null) {
       const accInsets = table.accumulatedInsets
@@ -229,7 +229,7 @@ const TableBackgroundStyle = Class('TableBackgroundStyle', {
    * @param {number} w
    * @param {number} h
    */
-  createInnerRect: function(g, x, y, w, h) {
+  createInnerRect: function (g, x, y, w, h) {
     const innerRect = document.createElementNS('http://www.w3.org/2000/svg', 'rect')
     innerRect.setAttribute('class', 'stripe-inset')
     g.appendChild(innerRect)
@@ -254,7 +254,7 @@ const TableBackgroundStyle = Class('TableBackgroundStyle', {
    * @param {number} w
    * @param {number} h
    */
-  updateInnerRect: function(g, childIndex, x, y, w, h) {
+  updateInnerRect: function (g, childIndex, x, y, w, h) {
     childIndex++
     if (g.childElementCount <= childIndex) {
       this.createInnerRect(g, x, y, w, h)
@@ -287,7 +287,7 @@ const TableBackgroundStyle = Class('TableBackgroundStyle', {
    * @param {INode} node
    * @return {Visual}
    */
-  updateVisual: function(renderContext, oldVisual, node) {
+  updateVisual: function (renderContext, oldVisual, node) {
     const g = oldVisual.svgElement
     if (g instanceof SVGElement && g.childElementCount > 0) {
       const cache = g.cache
@@ -378,7 +378,7 @@ const TableBackgroundStyle = Class('TableBackgroundStyle', {
    * @param {INode} node
    * @return {boolean} True if p is inside node.
    */
-  isHit: function(inputModeContext, p, node) {
+  isHit: function (inputModeContext, p, node) {
     if (!TableBackgroundStyle.$super.isHit.call(this, inputModeContext, p, node)) {
       return false
     }
@@ -434,7 +434,7 @@ const TableBackgroundStyle = Class('TableBackgroundStyle', {
 export const DemoStripeStyle = Class('DemoStripeStyle', {
   $extends: NodeStyleBase,
 
-  constructor: function() {
+  constructor: function () {
     NodeStyleBase.call(this)
   },
 
@@ -443,7 +443,7 @@ export const DemoStripeStyle = Class('DemoStripeStyle', {
    * @param {INode} node
    * @return {Visual}
    */
-  createVisual: function(renderContext, node) {
+  createVisual: function (renderContext, node) {
     const /** @type {IStripe} */ stripe = node.lookup(IStripe.$class)
     const layout = node.layout
     if (stripe !== null) {
@@ -561,7 +561,7 @@ export const DemoStripeStyle = Class('DemoStripeStyle', {
    * @param {number} h
    * @param {string} cssClass
    */
-  createInnerRect: function(g, x, y, w, h, cssClass) {
+  createInnerRect: function (g, x, y, w, h, cssClass) {
     const rec = document.createElementNS('http://www.w3.org/2000/svg', 'rect')
     rec.setAttribute('class', cssClass)
     g.appendChild(rec)
@@ -587,7 +587,7 @@ export const DemoStripeStyle = Class('DemoStripeStyle', {
    * @param {number} h
    * @param {string} cssClass
    */
-  updateInnerRect: function(g, childIndex, x, y, w, h, cssClass) {
+  updateInnerRect: function (g, childIndex, x, y, w, h, cssClass) {
     childIndex++
     if (g.childElementCount <= childIndex) {
       this.createInnerRect(g, x, y, w, h, cssClass)
@@ -624,7 +624,7 @@ export const DemoStripeStyle = Class('DemoStripeStyle', {
    * @param {INode} node
    * @return {Visual}
    */
-  updateVisual: function(renderContext, oldVisual, node) {
+  updateVisual: function (renderContext, oldVisual, node) {
     const /** @type {IStripe} */ stripe = node.lookup(IStripe.$class)
     const layout = node.layout
     const g = oldVisual.svgElement

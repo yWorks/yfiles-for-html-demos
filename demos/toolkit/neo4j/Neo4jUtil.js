@@ -26,6 +26,8 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
+/* global neo4j */
+
 /**
  * @yjs:keep=types,Node
  */

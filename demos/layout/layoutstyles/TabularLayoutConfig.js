@@ -63,7 +63,7 @@ const TabularLayoutConfig = Class('TabularLayoutConfig', {
   /**
    * Setup default values for various configuration parameters.
    */
-  constructor: function() {
+  constructor: function () {
     LayoutConfiguration.call(this)
 
     const layout = new TabularLayout()
@@ -85,7 +85,7 @@ const TabularLayoutConfig = Class('TabularLayoutConfig', {
    *   configuration on.
    * @return {ILayoutAlgorithm} The configured layout algorithm.
    */
-  createConfiguredLayout: function(graphComponent) {
+  createConfiguredLayout: function (graphComponent) {
     const layout = new TabularLayout()
 
     switch (this.layoutPolicyItem) {
@@ -112,7 +112,7 @@ const TabularLayoutConfig = Class('TabularLayoutConfig', {
    * Creates and configures the layout data.
    * @return {LayoutData} The configured layout data.
    */
-  createConfiguredLayoutData: function(graphComponent, layout) {
+  createConfiguredLayoutData: function (graphComponent, layout) {
     let horizontalAlignment
     switch (this.horizontalAlignmentItem) {
       default:
@@ -147,7 +147,7 @@ const TabularLayoutConfig = Class('TabularLayoutConfig', {
     const nodeCount = graphComponent.graph.nodes.size
     let partitionGrid
     switch (this.layoutPolicyItem) {
-      case TabularLayoutConfig.EnumLayoutPolicies.FIXED_TABLE_SIZE:
+      case TabularLayoutConfig.EnumLayoutPolicies.FIXED_TABLE_SIZE: {
         const rowCount = this.rowCountItem
         const columnCount = this.columnCountItem
         if (rowCount * columnCount >= nodeCount) {
@@ -157,6 +157,7 @@ const TabularLayoutConfig = Class('TabularLayoutConfig', {
           partitionGrid = new PartitionGrid(nodeCount / columnCount, columnCount)
         }
         break
+      }
       case TabularLayoutConfig.EnumLayoutPolicies.SINGLE_ROW:
         partitionGrid = new PartitionGrid(1, nodeCount)
         break
@@ -191,7 +192,7 @@ const TabularLayoutConfig = Class('TabularLayoutConfig', {
   // ReSharper disable UnusedMember.Global
   /** @type {OptionGroup} */
   DescriptionGroup: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute('Description'),
         OptionGroupAttribute('RootGroup', 5),
@@ -203,7 +204,7 @@ const TabularLayoutConfig = Class('TabularLayoutConfig', {
 
   /** @type {OptionGroup} */
   GeneralGroup: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute('General'),
         OptionGroupAttribute('RootGroup', 10),
@@ -217,18 +218,18 @@ const TabularLayoutConfig = Class('TabularLayoutConfig', {
   // ReSharper restore InconsistentNaming
   /** @type {string} */
   descriptionText: {
-    $meta: function() {
+    $meta: function () {
       return [
         OptionGroupAttribute('DescriptionGroup', 10),
         ComponentAttribute(Components.HTML_BLOCK),
         TypeAttribute(YString.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return (
-        ("<p style='margin-top:0'>The tabular layout style arranges the nodes in rows and columns. This is a" +
+        "<p style='margin-top:0'>The tabular layout style arranges the nodes in rows and columns. This is a" +
         ' very simple layout which is useful when nodes should be placed under/next to each other.</p>' +
-        '<p>Edges are ignored in this layout style. Their bends are removed.</p>')
+        '<p>Edges are ignored in this layout style. Their bends are removed.</p>'
       )
     }
   },
@@ -241,7 +242,7 @@ const TabularLayoutConfig = Class('TabularLayoutConfig', {
 
   /** @type {TabularLayoutConfig.EnumLayoutPolicies} */
   layoutPolicyItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute('Layout Mode', '#/api/TabularLayout#TabularLayout-property-layoutPolicy'),
         OptionGroupAttribute('GeneralGroup', 10),
@@ -257,10 +258,10 @@ const TabularLayoutConfig = Class('TabularLayoutConfig', {
         TypeAttribute(TabularLayoutPolicy.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$layoutPolicyItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$layoutPolicyItem = value
     }
   },
@@ -273,7 +274,7 @@ const TabularLayoutConfig = Class('TabularLayoutConfig', {
 
   /** @type {number} */
   rowCountItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Row Count',
@@ -289,20 +290,20 @@ const TabularLayoutConfig = Class('TabularLayoutConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$rowCountItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$rowCountItem = value
     }
   },
 
   /** @type {boolean} */
   shouldDisableRowCountItem: {
-    $meta: function() {
+    $meta: function () {
       return [TypeAttribute(YBoolean.$class)]
     },
-    get: function() {
+    get: function () {
       return this.layoutPolicyItem !== TabularLayoutConfig.EnumLayoutPolicies.FIXED_TABLE_SIZE
     }
   },
@@ -315,7 +316,7 @@ const TabularLayoutConfig = Class('TabularLayoutConfig', {
 
   /** @type {number} */
   columnCountItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Column Count',
@@ -331,20 +332,20 @@ const TabularLayoutConfig = Class('TabularLayoutConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$columnCountItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$columnCountItem = value
     }
   },
 
   /** @type {boolean} */
   shouldDisableColumnCountItem: {
-    $meta: function() {
+    $meta: function () {
       return [TypeAttribute(YBoolean.$class)]
     },
-    get: function() {
+    get: function () {
       return this.layoutPolicyItem !== TabularLayoutConfig.EnumLayoutPolicies.FIXED_TABLE_SIZE
     }
   },
@@ -357,7 +358,7 @@ const TabularLayoutConfig = Class('TabularLayoutConfig', {
 
   /** @type {boolean} */
   considerNodeLabelsItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Consider Node Labels',
@@ -367,10 +368,10 @@ const TabularLayoutConfig = Class('TabularLayoutConfig', {
         TypeAttribute(YBoolean.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$considerNodeLabelsItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$considerNodeLabelsItem = value
     }
   },
@@ -383,7 +384,7 @@ const TabularLayoutConfig = Class('TabularLayoutConfig', {
 
   /** @type {TabularLayoutConfig.EnumHorizontalAlignments} */
   horizontalAlignmentItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         OptionGroupAttribute('GeneralGroup', 50),
         LabelAttribute(
@@ -400,10 +401,10 @@ const TabularLayoutConfig = Class('TabularLayoutConfig', {
         TypeAttribute(TabularLayoutConfig.EnumHorizontalAlignments.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$horizontalAlignmentItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$horizontalAlignmentItem = value
     }
   },
@@ -416,7 +417,7 @@ const TabularLayoutConfig = Class('TabularLayoutConfig', {
 
   /** @type {TabularLayoutConfig.EnumVerticalAlignments} */
   verticalAlignmentItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         OptionGroupAttribute('GeneralGroup', 60),
         LabelAttribute(
@@ -433,10 +434,10 @@ const TabularLayoutConfig = Class('TabularLayoutConfig', {
         TypeAttribute(TabularLayoutConfig.EnumVerticalAlignments.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$verticalAlignmentItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$verticalAlignmentItem = value
     }
   },
@@ -449,7 +450,7 @@ const TabularLayoutConfig = Class('TabularLayoutConfig', {
 
   /** @type {number} */
   cellInsetsItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute('Cell Insets (all sides)', '#/api/RowDescriptor'),
         OptionGroupAttribute('GeneralGroup', 70),
@@ -462,10 +463,10 @@ const TabularLayoutConfig = Class('TabularLayoutConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$cellInsetsItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$cellInsetsItem = value
     }
   },
@@ -478,7 +479,7 @@ const TabularLayoutConfig = Class('TabularLayoutConfig', {
 
   /** @type {number} */
   minimumRowHeightItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Minimum Row Height',
@@ -494,10 +495,10 @@ const TabularLayoutConfig = Class('TabularLayoutConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$minimumRowHeightItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$minimumRowHeightItem = value
     }
   },
@@ -510,7 +511,7 @@ const TabularLayoutConfig = Class('TabularLayoutConfig', {
 
   /** @type {number} */
   minimumColumnWidthItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Minimum Column Width',
@@ -526,10 +527,10 @@ const TabularLayoutConfig = Class('TabularLayoutConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$minimumColumnWidthItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$minimumColumnWidthItem = value
     }
   },

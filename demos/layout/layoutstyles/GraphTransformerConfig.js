@@ -60,7 +60,7 @@ const GraphTransformerConfig = Class('GraphTransformerConfig', {
   /**
    * Setup default values for various configuration parameters.
    */
-  constructor: function() {
+  constructor: function () {
     LayoutConfiguration.call(this)
     const transformer = new GraphTransformer()
     this.operationItem = OperationType.SCALE
@@ -79,7 +79,7 @@ const GraphTransformerConfig = Class('GraphTransformerConfig', {
    *   configuration on.
    * @return {ILayoutAlgorithm} The configured layout  algorithm.
    */
-  createConfiguredLayout: function(graphComponent) {
+  createConfiguredLayout: function (graphComponent) {
     const transformer = new GraphTransformer()
     transformer.operation = this.operationItem
     transformer.subgraphLayoutEnabled = this.actOnSelectionOnlyItem
@@ -109,7 +109,7 @@ const GraphTransformerConfig = Class('GraphTransformerConfig', {
   // ReSharper disable InconsistentNaming
   /** @type {OptionGroup} */
   GeneralGroup: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute('General'),
         OptionGroupAttribute('RootGroup', 10),
@@ -121,7 +121,7 @@ const GraphTransformerConfig = Class('GraphTransformerConfig', {
 
   /** @type {OptionGroup} */
   RotateGroup: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute('Rotate'),
         OptionGroupAttribute('GeneralGroup', 20),
@@ -133,7 +133,7 @@ const GraphTransformerConfig = Class('GraphTransformerConfig', {
 
   /** @type {OptionGroup} */
   ScaleGroup: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute('Scale'),
         OptionGroupAttribute('GeneralGroup', 30),
@@ -145,7 +145,7 @@ const GraphTransformerConfig = Class('GraphTransformerConfig', {
 
   /** @type {OptionGroup} */
   TranslateGroup: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute('Translate'),
         OptionGroupAttribute('GeneralGroup', 40),
@@ -165,7 +165,7 @@ const GraphTransformerConfig = Class('GraphTransformerConfig', {
 
   /** @type {OperationType} */
   operationItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute('Operation', '#/api/GraphTransformer#GraphTransformer-property-operation'),
         OptionGroupAttribute('GeneralGroup', 10),
@@ -181,10 +181,10 @@ const GraphTransformerConfig = Class('GraphTransformerConfig', {
         TypeAttribute(OperationType.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$operationItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$operationItem = value
     }
   },
@@ -197,7 +197,7 @@ const GraphTransformerConfig = Class('GraphTransformerConfig', {
 
   /** @type {boolean} */
   actOnSelectionOnlyItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Act on Selection Only',
@@ -207,10 +207,10 @@ const GraphTransformerConfig = Class('GraphTransformerConfig', {
         TypeAttribute(YBoolean.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$actOnSelectionOnlyItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$actOnSelectionOnlyItem = value
     }
   },
@@ -223,7 +223,7 @@ const GraphTransformerConfig = Class('GraphTransformerConfig', {
 
   /** @type {number} */
   rotationAngleItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Rotation Angle',
@@ -238,20 +238,20 @@ const GraphTransformerConfig = Class('GraphTransformerConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$rotationAngleItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$rotationAngleItem = value
     }
   },
 
   /** @type {boolean} */
   shouldDisableRotationAngleItem: {
-    $meta: function() {
+    $meta: function () {
       return [TypeAttribute(YBoolean.$class)]
     },
-    get: function() {
+    get: function () {
       return this.operationItem !== OperationType.ROTATE || this.applyBestFitRotationItem
     }
   },
@@ -264,7 +264,7 @@ const GraphTransformerConfig = Class('GraphTransformerConfig', {
 
   /** @type {boolean} */
   applyBestFitRotationItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Best Fit Rotation',
@@ -274,20 +274,20 @@ const GraphTransformerConfig = Class('GraphTransformerConfig', {
         TypeAttribute(YBoolean.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$applyBestFitRotationItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$applyBestFitRotationItem = value
     }
   },
 
   /** @type {boolean} */
   shouldDisableApplyBestFitRotationItem: {
-    $meta: function() {
+    $meta: function () {
       return [TypeAttribute(YBoolean.$class)]
     },
-    get: function() {
+    get: function () {
       return this.operationItem !== OperationType.ROTATE
     }
   },
@@ -300,7 +300,7 @@ const GraphTransformerConfig = Class('GraphTransformerConfig', {
 
   /** @type {number} */
   scaleFactorItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Scale Factor',
@@ -316,20 +316,20 @@ const GraphTransformerConfig = Class('GraphTransformerConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$scaleFactorItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$scaleFactorItem = value
     }
   },
 
   /** @type {boolean} */
   shouldDisableScaleFactorItem: {
-    $meta: function() {
+    $meta: function () {
       return [TypeAttribute(YBoolean.$class)]
     },
-    get: function() {
+    get: function () {
       return this.operationItem !== OperationType.SCALE
     }
   },
@@ -342,7 +342,7 @@ const GraphTransformerConfig = Class('GraphTransformerConfig', {
 
   /** @type {boolean} */
   scaleNodeSizeItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Scale Node Size',
@@ -352,20 +352,20 @@ const GraphTransformerConfig = Class('GraphTransformerConfig', {
         TypeAttribute(YBoolean.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$scaleNodeSizeItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$scaleNodeSizeItem = value
     }
   },
 
   /** @type {boolean} */
   shouldDisableScaleNodeSizeItem: {
-    $meta: function() {
+    $meta: function () {
       return [TypeAttribute(YBoolean.$class)]
     },
-    get: function() {
+    get: function () {
       return this.operationItem !== OperationType.SCALE
     }
   },
@@ -378,7 +378,7 @@ const GraphTransformerConfig = Class('GraphTransformerConfig', {
 
   /** @type {number} */
   translateXItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Horizontal Distance',
@@ -388,20 +388,20 @@ const GraphTransformerConfig = Class('GraphTransformerConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$translateXItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$translateXItem = value
     }
   },
 
   /** @type {boolean} */
   shouldDisableTranslateXItem: {
-    $meta: function() {
+    $meta: function () {
       return [TypeAttribute(YBoolean.$class)]
     },
-    get: function() {
+    get: function () {
       return this.operationItem !== OperationType.TRANSLATE
     }
   },
@@ -414,7 +414,7 @@ const GraphTransformerConfig = Class('GraphTransformerConfig', {
 
   /** @type {number} */
   translateYItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Vertical Distance',
@@ -424,20 +424,20 @@ const GraphTransformerConfig = Class('GraphTransformerConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$translateYItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$translateYItem = value
     }
   },
 
   /** @type {boolean} */
   shouldDisableTranslateYItem: {
-    $meta: function() {
+    $meta: function () {
       return [TypeAttribute(YBoolean.$class)]
     },
-    get: function() {
+    get: function () {
       return this.operationItem !== OperationType.TRANSLATE
     }
   }

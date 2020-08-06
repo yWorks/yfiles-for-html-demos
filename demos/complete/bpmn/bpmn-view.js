@@ -164,9 +164,9 @@ export const YFILES_BPMN_NS = 'http://www.yworks.com/xml/yfiles-bpmn/2.0'
  */
 export const YFILES_BPMN_PREFIX = 'bpmn'
 
-///////////////////////////////////////////////////////////////////////
+// /////////////////////////////////////////////////////////////////////
 // BPMN constants which determine the default behavior of this style //
-///////////////////////////////////////////////////////////////////////
+// /////////////////////////////////////////////////////////////////////
 const BPMN_CONSTANTS_DOUBLE_LINE_OFFSET = 2
 const BPMN_CONSTANTS_CHOREOGRAPHY_CORNER_RADIUS = 6
 const BPMN_CONSTANTS_GROUP_NODE_CORNER_RADIUS = 3
@@ -246,7 +246,7 @@ const BPMN_CONSTANTS_SIZES_CONVERSATION = new Size(
 )
 const BPMN_CONSTANTS_SIZES_DATA_OBJECT_TYPE = new Size(10, 8)
 const BPMN_CONSTANTS_SIZES_EVENT_PORT = new Size(20, 20)
-///////////////////////////////////////////////////////////////////////
+// /////////////////////////////////////////////////////////////////////
 
 /**
  * Specifies if an Activity is an expanded or collapsed Sub-Process according to BPMN.
@@ -870,9 +870,9 @@ class AspectRatioHandle extends BaseClass(IHandle) {
   }
 }
 
-/////////////////////////////////////////////////////////////////////////////////
+// ///////////////////////////////////////////////////////////////////////////////
 // BPMN placement constants which determine the default behavior of this style //
-/////////////////////////////////////////////////////////////////////////////////
+// ///////////////////////////////////////////////////////////////////////////////
 const ILM2 = new InteriorLabelModel({ insets: new Insets(2) })
 const ILM6 = new InteriorLabelModel({ insets: new Insets(6) })
 const ISLM_INSIDE_DOUBLE_LINE = new InteriorStretchLabelModel({
@@ -931,7 +931,7 @@ const BPMN_CONSTANTS_PLACEMENTS_INSIDE_DOUBLE_LINE = ISLM_INSIDE_DOUBLE_LINE.cre
 const BPMN_CONSTANTS_PLACEMENTS_POOL_NODE_MARKER = ILM2.createParameter(
   InteriorLabelModelPosition.SOUTH
 )
-/////////////////////////////////////////////////////////////////////////////////
+// ///////////////////////////////////////////////////////////////////////////////
 
 /**
  * Specifies the Loop Characteristic of an Activity or Choreography according to BPMN.
@@ -2015,15 +2015,17 @@ class VariableRectIcon extends Icon {
     const path = document.createElementNS('http://www.w3.org/2000/svg', 'path')
     path.setAttribute(
       'd',
-      `M 0 ${this.topLeftRadius} Q 0 0 ${this.topLeftRadius} ${0} L ${this.bounds.width -
-        this.topRightRadius} ${0} Q ${this.bounds.width} 0 ${this.bounds.width} ${
-        this.topRightRadius
-      } L ${this.bounds.width} ${this.bounds.height - this.bottomRightRadius} Q ${
+      `M 0 ${this.topLeftRadius} Q 0 0 ${this.topLeftRadius} ${0} L ${
+        this.bounds.width - this.topRightRadius
+      } ${0} Q ${this.bounds.width} 0 ${this.bounds.width} ${this.topRightRadius} L ${
         this.bounds.width
-      } ${this.bounds.height} ${this.bounds.width - this.bottomRightRadius} ${
+      } ${this.bounds.height - this.bottomRightRadius} Q ${this.bounds.width} ${
         this.bounds.height
-      } L ${this.bottomLeftRadius} ${this.bounds.height} Q 0 ${this.bounds.height} 0 ${this.bounds
-        .height - this.bottomRightRadius} Z`
+      } ${this.bounds.width - this.bottomRightRadius} ${this.bounds.height} L ${
+        this.bottomLeftRadius
+      } ${this.bounds.height} Q 0 ${this.bounds.height} 0 ${
+        this.bounds.height - this.bottomRightRadius
+      } Z`
     )
     Stroke.setStroke(this.stroke, path, context)
     Fill.setFill(this.fill, path, context)
@@ -2056,15 +2058,17 @@ class VariableRectIcon extends Icon {
     if (!oldCache.equals(newCache)) {
       path.setAttribute(
         'd',
-        `M 0 ${this.topLeftRadius} Q 0 0 ${this.topLeftRadius} ${0} L ${this.bounds.width -
-          this.topRightRadius} ${0} Q ${this.bounds.width} 0 ${this.bounds.width} ${
-          this.topRightRadius
-        } L ${this.bounds.width} ${this.bounds.height - this.bottomRightRadius} Q ${
+        `M 0 ${this.topLeftRadius} Q 0 0 ${this.topLeftRadius} ${0} L ${
+          this.bounds.width - this.topRightRadius
+        } ${0} Q ${this.bounds.width} 0 ${this.bounds.width} ${this.topRightRadius} L ${
           this.bounds.width
-        } ${this.bounds.height} ${this.bounds.width - this.bottomRightRadius} ${
+        } ${this.bounds.height - this.bottomRightRadius} Q ${this.bounds.width} ${
           this.bounds.height
-        } L ${this.bottomLeftRadius} ${this.bounds.height} Q 0 ${this.bounds.height} 0 ${this.bounds
-          .height - this.bottomRightRadius} Z`
+        } ${this.bounds.width - this.bottomRightRadius} ${this.bounds.height} L ${
+          this.bottomLeftRadius
+        } ${this.bounds.height} Q 0 ${this.bounds.height} 0 ${
+          this.bounds.height - this.bottomRightRadius
+        } Z`
       )
       Stroke.setStroke(this.stroke, path, context)
       Fill.setFill(this.fill, path, context)
@@ -3632,12 +3636,13 @@ class IconFactory {
 
     switch (type) {
       case ConversationType.SUB_CONVERSATION:
-      case ConversationType.CALLING_COLLABORATION:
+      case ConversationType.CALLING_COLLABORATION: {
         const icon = IconFactory.createStaticSubState(SubState.COLLAPSED, fill)
         if (hasDefaultColor) {
           IconFactory.$conversationSubState = icon
         }
         return icon
+      }
       default:
         return null
     }
@@ -4602,8 +4607,8 @@ export class ChoreographyNodeStyle extends BpmnNodeStyle {
    */
   get showTopMessage() {
     return (
-      ((this.initiatingMessage && this.initiatingAtTop) ||
-      (this.responseMessage && !this.initiatingAtTop))
+      (this.initiatingMessage && this.initiatingAtTop) ||
+      (this.responseMessage && !this.initiatingAtTop)
     )
   }
 
@@ -4612,8 +4617,8 @@ export class ChoreographyNodeStyle extends BpmnNodeStyle {
    */
   get showBottomMessage() {
     return (
-      ((this.initiatingMessage && !this.initiatingAtTop) ||
-      (this.responseMessage && this.initiatingAtTop))
+      (this.initiatingMessage && !this.initiatingAtTop) ||
+      (this.responseMessage && this.initiatingAtTop)
     )
   }
 
@@ -9964,12 +9969,7 @@ export class GatewayNodeStyle extends BpmnNodeStyle {
    * @return {boolean} whether or not the specified node representation is hit.
    */
   isHit(canvasContext, p, node) {
-    if (
-      !node.layout
-        .toRect()
-        .getEnlarged(canvasContext.hitTestRadius)
-        .contains(p)
-    ) {
+    if (!node.layout.toRect().getEnlarged(canvasContext.hitTestRadius).contains(p)) {
       return false
     }
     const size = Math.min(node.layout.width, node.layout.height)
@@ -10417,8 +10417,9 @@ class DataObjectIcon extends Icon {
       )
       path2.setAttribute(
         'd',
-        `M ${this.bounds.width - cornerSize} 0 L ${this.bounds.width -
-          cornerSize} ${cornerSize} L ${this.bounds.width} ${cornerSize}`
+        `M ${this.bounds.width - cornerSize} 0 L ${
+          this.bounds.width - cornerSize
+        } ${cornerSize} L ${this.bounds.width} ${cornerSize}`
       )
     }
 

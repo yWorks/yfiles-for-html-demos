@@ -52,7 +52,7 @@ export const OptionGroupAttribute = Attribute('OptionGroupAttribute', {
    * @param {string} name Name of OptionGroup the ui component belongs to.
    * @param {number} position The ui component's display position in the OptionGroup.
    */
-  constructor: function(name, position) {
+  constructor: function (name, position) {
     Attribute.call(this)
     this.name = name
     this.position = position
@@ -84,7 +84,7 @@ export const LabelAttribute = Attribute('LabelAttribute', {
    * @param {string} label The text of the generated label.
    * @param {string?} link The api link that is associated with this label.
    */
-  constructor: function(label, link) {
+  constructor: function (label, link) {
     Attribute.call(this)
     this.label = label
     if (typeof link === 'string') {
@@ -114,7 +114,7 @@ export const LinkAttribute = Attribute('LinkAttribute', {
    * Initialize the LinkAttribute.
    * @param {string} link The link of the generated label.
    */
-  constructor: function(link) {
+  constructor: function (link) {
     Attribute.call(this)
     this.link = link
   },
@@ -135,7 +135,7 @@ export const MinMaxAttribute = Attribute('MinMaxAttribute', {
   /**
    * Initialize the MinMaxAttribute.
    */
-  constructor: function() {
+  constructor: function () {
     Attribute.call(this)
     this.min = Number.MIN_VALUE
     this.max = Number.MAX_VALUE
@@ -181,7 +181,7 @@ export const TypeAttribute = Attribute('TypeAttribute', {
    * Initialize the TypeAttribute.
    * @param {Class} type The type of the attribute.
    */
-  constructor: function(type) {
+  constructor: function (type) {
     Attribute.call(this)
     this.type = type
   },
@@ -231,7 +231,7 @@ export const TypeAttribute = Attribute('TypeAttribute', {
  * component created for the corresponding member.
  */
 export const ConfigConverter = Class('ConfigConverter', {
-  constructor: function() {
+  constructor: function () {
     this.$initConfigConverter()
   },
 
@@ -291,7 +291,7 @@ export const ConfigConverter = Class('ConfigConverter', {
    * @param {Object} config The input configuration written by the developer.
    * @return {Object} The output configuration usable by yFilesOptionUI.
    */
-  convert: function(config) {
+  convert: function (config) {
     const type = yfiles.lang.getType(config)
     this.collectMembers(type)
 
@@ -299,7 +299,7 @@ export const ConfigConverter = Class('ConfigConverter', {
     this.writeLabel(type, config1)
 
     this.toplevelItems.sort(new ConfigConverter.MemberComparer())
-    this.groupMapping.forEach(function(entry) {
+    this.groupMapping.forEach(function (entry) {
       entry.value.sort(new ConfigConverter.MemberComparer())
     })
 
@@ -317,26 +317,26 @@ export const ConfigConverter = Class('ConfigConverter', {
    * @param {Object} config The JSObject to contain the configuration.
    * @param {Object} yFilesObj
    */
-  writeMembers: function(config, yFilesObj) {
+  writeMembers: function (config, yFilesObj) {
     const members = new Object()
 
     this.toplevelMembers.forEach(
-      function(member) {
+      function (member) {
         this.visitMember(member, members, yFilesObj)
       }.bind(this)
     )
     this.groupMembers.forEach(
-      function(member) {
+      function (member) {
         this.visitMember(member.key, members, yFilesObj)
       }.bind(this)
     )
     this.groups.forEach(
-      function(group) {
+      function (group) {
         this.visitGroup(group, members, yFilesObj)
       }.bind(this)
     )
     this.methods.forEach(
-      function(method) {
+      function (method) {
         this.visitMember(method, members, yFilesObj)
       }.bind(this)
     )
@@ -348,7 +348,7 @@ export const ConfigConverter = Class('ConfigConverter', {
    * Collect all members of a given type and store them in the respective field.
    * @param {Class} type The type object to collect members for.
    */
-  collectMembers: function(type) {
+  collectMembers: function (type) {
     this.clearMappings()
     let memberInfos = this.getMemberInfos(type, true)
 
@@ -366,14 +366,14 @@ export const ConfigConverter = Class('ConfigConverter', {
     }
   },
 
-  getMemberInfos: function(type, isPublic) {
+  getMemberInfos: function (type, isPublic) {
     const members = []
     const allNames = Object.getOwnPropertyNames(type.Object.prototype)
-    const scopedNames = allNames.filter(function(name) {
+    const scopedNames = allNames.filter(function (name) {
       return isPublic ? name.indexOf('$') < 0 : name.indexOf('$') === 0
     })
 
-    scopedNames.forEach(function(name) {
+    scopedNames.forEach(function (name) {
       if (name === 'constructor') {
         return
       }
@@ -385,7 +385,7 @@ export const ConfigConverter = Class('ConfigConverter', {
       if (typeOf(attributeContainer) === 'function') {
         const attributeGetters = type.$meta[name]()
         if (typeOf(attributeGetters) === 'array') {
-          attributeGetters.forEach(function(attributeGetter) {
+          attributeGetters.forEach(function (attributeGetter) {
             const attr = attributeGetter()
             if (attr instanceof TypeAttribute) {
               typeAttribute = attr.type
@@ -429,14 +429,14 @@ export const ConfigConverter = Class('ConfigConverter', {
     return members
   },
 
-  getCustomAttributesOfType: function(member, type) {
+  getCustomAttributesOfType: function (member, type) {
     if (!member._attributes) {
       return []
     }
 
     const allAttributes = member._attributes
     const typedAttributes = []
-    allAttributes.forEach(function(attr) {
+    allAttributes.forEach(function (attr) {
       if (type.isInstance(attr)) {
         typedAttributes.push(attr)
       }
@@ -447,7 +447,7 @@ export const ConfigConverter = Class('ConfigConverter', {
   /**
    * Clear members from dictionaries and lists.
    */
-  clearMappings: function() {
+  clearMappings: function () {
     this.groupMapping.clear()
     this.groups.clear()
     this.toplevelMembers.clear()
@@ -463,7 +463,7 @@ export const ConfigConverter = Class('ConfigConverter', {
    * The function dispatches between different collect functions based on type of member.
    * @param {MemberInfo} member The member to be processed.
    */
-  collectMember: function(member) {
+  collectMember: function (member) {
     if (this.collectUtilityProperty(member)) {
       return
     }
@@ -476,7 +476,7 @@ export const ConfigConverter = Class('ConfigConverter', {
     }
   },
 
-  collectPrivateMember: function(member) {
+  collectPrivateMember: function (member) {
     this.collectUtilityProperty(member)
   },
 
@@ -485,7 +485,7 @@ export const ConfigConverter = Class('ConfigConverter', {
    * @param {MemberInfo} member The member to be processed.
    * @return {boolean} true if property is an UtilityProperty
    */
-  collectUtilityProperty: function(member) {
+  collectUtilityProperty: function (member) {
     if (startsWith(member.name, 'shouldHide')) {
       this.isHiddenMapping.set(member.name.substr(10).toLowerCase(), member.name)
       return true
@@ -511,7 +511,7 @@ export const ConfigConverter = Class('ConfigConverter', {
    * {@link ConfigConverter#groupMembers}.
    * @param {FieldInfo} field The field to process.
    */
-  collectField: function(field) {
+  collectField: function (field) {
     const group = this.getGroup(field)
     if (group !== null && group !== 'RootGroup') {
       if (!this.groupMapping.has(group)) {
@@ -544,7 +544,7 @@ export const ConfigConverter = Class('ConfigConverter', {
    * {@link ConfigConverter#groupMembers}.
    * @param {PropertyInfo} property The property to process.
    */
-  collectProperty: function(property) {
+  collectProperty: function (property) {
     const group = this.getGroup(property)
     if (group !== null && group !== 'RootGroup') {
       if (!this.groupMapping.has(group)) {
@@ -572,7 +572,7 @@ export const ConfigConverter = Class('ConfigConverter', {
    * Collect a method.
    * @param {MethodInfo} method The method to process.
    */
-  collectMethod: function(method) {
+  collectMethod: function (method) {
     if (method.name !== 'getClass') {
       this.methods.add(method)
     }
@@ -585,7 +585,7 @@ export const ConfigConverter = Class('ConfigConverter', {
    * @param {Object} members The output data object.
    * @param {Object} yFilesObj
    */
-  visitMember: function(member, members, yFilesObj) {
+  visitMember: function (member, members, yFilesObj) {
     if (shouldIgnoreMember(member)) {
       return
     }
@@ -612,7 +612,7 @@ export const ConfigConverter = Class('ConfigConverter', {
    * @param {Object} yFilesObj
    * @return {Object} a new JSObject containing all information collected for the field
    */
-  visitField: function(field, yFilesObj) {
+  visitField: function (field, yFilesObj) {
     const f = new Object()
 
     f['name'] = field.name
@@ -647,7 +647,7 @@ export const ConfigConverter = Class('ConfigConverter', {
    * @param {Object} yFilesObj
    * @return {Object} a new JSObject containing all information collected for the property
    */
-  visitProperty: function(property, yFilesObj) {
+  visitProperty: function (property, yFilesObj) {
     const p = new Object()
 
     p['name'] = property.name
@@ -677,7 +677,7 @@ export const ConfigConverter = Class('ConfigConverter', {
    * @param {Attribute} attribute The attribute to process.
    * @param {Object} obj The object containing the extracted information
    */
-  visitAttribute: function(attribute, obj) {
+  visitAttribute: function (attribute, obj) {
     if (attribute instanceof MinMaxAttribute) {
       const attr = attribute
       obj['min'] = attr.min
@@ -695,7 +695,7 @@ export const ConfigConverter = Class('ConfigConverter', {
    * @param {Object} members The object containing the extracted information
    * @param {Object} yFilesObj
    */
-  visitGroup: function(group, members, yFilesObj) {
+  visitGroup: function (group, members, yFilesObj) {
     const g = new Object()
     g['name'] = group.name
     this.writeLabel(group, g)
@@ -715,12 +715,12 @@ export const ConfigConverter = Class('ConfigConverter', {
    * @param {Object} obj The object containing the extracted information.
    * @param {Object} yFilesObj
    */
-  writeValueProperty: function(member, obj, yFilesObj) {
+  writeValueProperty: function (member, obj, yFilesObj) {
     const descriptor = new Object()
-    descriptor['get'] = function() {
+    descriptor['get'] = function () {
       return yFilesObj[member.name]
     }
-    descriptor['set'] = function(o) {
+    descriptor['set'] = function (o) {
       ;(yFilesObj[member.name] = o), o
     }
     Object.defineProperty(obj, 'value', descriptor)
@@ -735,7 +735,7 @@ export const ConfigConverter = Class('ConfigConverter', {
    * @param {Class} type The type of the member.
    * @param {Object} obj The object containing the extracted information.
    */
-  writeComponent: function(member, type, obj) {
+  writeComponent: function (member, type, obj) {
     let /** string */ component
     if (this.getCustomAttributesOfType(member, ComponentAttribute.$class).length > 0) {
       const attr = this.getCustomAttributesOfType(member, ComponentAttribute.$class)[0]
@@ -756,7 +756,7 @@ export const ConfigConverter = Class('ConfigConverter', {
    * @param {MemberInfo} member The member to process.
    * @param {Object} obj The JSObject containing the extracted information.
    */
-  writeLabel: function(member, obj) {
+  writeLabel: function (member, obj) {
     const attributes = this.getCustomAttributesOfType(member, LabelAttribute.$class)
     let /** string */ label
     let /** string */ link
@@ -782,7 +782,7 @@ export const ConfigConverter = Class('ConfigConverter', {
    * @param {Class} type The type of the member.
    * @param {Object} obj The JSObject containing the extracted information.
    */
-  writeOptions: function(member, type, obj) {
+  writeOptions: function (member, type, obj) {
     const options = new Array()
     const attributes = this.getCustomAttributesOfType(member, EnumValuesAttribute.$class)
     if (attributes.length > 0) {
@@ -805,7 +805,7 @@ export const ConfigConverter = Class('ConfigConverter', {
   /**
    * @return {Object}
    */
-  createOption: function(name, value) {
+  createOption: function (name, value) {
     const option = new Object()
     option['name'] = name
     option['value'] = value
@@ -818,10 +818,10 @@ export const ConfigConverter = Class('ConfigConverter', {
    * @param {Object} obj The JSObject containing the extracted information.
    * @param {Object} yFilesObj
    */
-  writeDefault: function(member, obj, yFilesObj) {
+  writeDefault: function (member, obj, yFilesObj) {
     const a = this.getDefaultCore(member, yFilesObj)
     obj['default'] = a
-    obj['reset'] = function() {
+    obj['reset'] = function () {
       ;(obj['value'] = a), a
     }
   },
@@ -832,22 +832,22 @@ export const ConfigConverter = Class('ConfigConverter', {
    * @param {Object} obj The JSObject containing the extracted information.
    * @param {Object} yFilesObj
    */
-  writeUtilityProperties: function(member, obj, yFilesObj) {
+  writeUtilityProperties: function (member, obj, yFilesObj) {
     const name = member.name.toLowerCase()
     if (this.isDisabledMapping.has(name)) {
-      obj['isDisabled'] = function() {
+      obj['isDisabled'] = function () {
         return yFilesObj[this.isDisabledMapping.get(name)]
       }.bind(this)
     }
     if (this.isHiddenMapping.has(name)) {
-      obj['isHidden'] = function() {
+      obj['isHidden'] = function () {
         return yFilesObj[this.isHiddenMapping.get(name)]
       }.bind(this)
     }
   },
 
-  writeApply: function(config, yFilesObj) {
-    config['apply'] = function() {
+  writeApply: function (config, yFilesObj) {
+    config['apply'] = function () {
       if (yFilesObj['apply']) {
         return yFilesObj['apply'].call(yFilesObj, [])
       }
@@ -858,7 +858,7 @@ export const ConfigConverter = Class('ConfigConverter', {
   /**
    * Writes an array with the options and groups hierarchy.
    */
-  writeMembersArray: function(config) {
+  writeMembersArray: function (config) {
     const membersArray = new Array()
     for (let i = 0; i < this.toplevelItems.size; i++) {
       const member = this.toplevelItems.get(i)
@@ -874,7 +874,7 @@ export const ConfigConverter = Class('ConfigConverter', {
   /**
    * @return {Object}
    */
-  getGroupObject: function(group) {
+  getGroupObject: function (group) {
     const o = new Object()
     const name = group.name
     o['type'] = 'group'
@@ -899,7 +899,7 @@ export const ConfigConverter = Class('ConfigConverter', {
   /**
    * @return {boolean}
    */
-  isOptionGroup: function(groupMember) {
+  isOptionGroup: function (groupMember) {
     if (groupMember.isProperty) {
       return groupMember.propertyType === OptionGroup.$class
     } else if (groupMember.isField) {
@@ -911,7 +911,7 @@ export const ConfigConverter = Class('ConfigConverter', {
   /**
    * @return {string}
    */
-  getTypeString: function(type) {
+  getTypeString: function (type) {
     if (type === YNumber.$class) {
       return 'number'
     } else if (type === YString.$class) {
@@ -925,16 +925,16 @@ export const ConfigConverter = Class('ConfigConverter', {
   /**
    * @return {Object}
    */
-  getDefaultCore: function(member, yFilesObj) {
+  getDefaultCore: function (member, yFilesObj) {
     return yFilesObj[member.name]
   },
 
   /**
    * @return {string}
    */
-  getGroup: function(member) {
+  getGroup: function (member) {
     const attributes = []
-    member._attributes.forEach(function(attr) {
+    member._attributes.forEach(function (attr) {
       if (attr instanceof OptionGroupAttribute) {
         attributes.push(attr)
       }
@@ -948,7 +948,7 @@ export const ConfigConverter = Class('ConfigConverter', {
   /**
    * @return {string}
    */
-  getComponent: function(value) {
+  getComponent: function (value) {
     switch (value) {
       case Components.SLIDER:
         return 'slider'
@@ -970,7 +970,7 @@ export const ConfigConverter = Class('ConfigConverter', {
   /**
    * @return {string}
    */
-  getDefaultComponent: function(type) {
+  getDefaultComponent: function (type) {
     if (type.isEnum) {
       return 'combobox'
     } else if (type === YBoolean.$class) {
@@ -981,7 +981,7 @@ export const ConfigConverter = Class('ConfigConverter', {
     return 'text'
   },
 
-  $initConfigConverter: function() {
+  $initConfigConverter: function () {
     this.toplevelItems = new List()
     this.toplevelMembers = new List()
     this.groups = new List()
@@ -999,14 +999,14 @@ export const ConfigConverter = Class('ConfigConverter', {
     MemberComparer: Class('MemberComparer', {
       $with: [IComparer],
 
-      getCustomAttributesOfType: function(member, type) {
+      getCustomAttributesOfType: function (member, type) {
         if (!member._attributes) {
           return []
         }
 
         const allAttributes = member._attributes
         const typedAttributes = []
-        allAttributes.forEach(function(attr) {
+        allAttributes.forEach(function (attr) {
           if (type.isInstance(attr)) {
             typedAttributes.push(attr)
           }
@@ -1015,7 +1015,7 @@ export const ConfigConverter = Class('ConfigConverter', {
       },
 
       /** @return {number} */
-      compare: function(x, y) {
+      compare: function (x, y) {
         let posX = 0,
           posY = 0
         const attributesX = this.getCustomAttributesOfType(x, OptionGroupAttribute.$class)
@@ -1072,7 +1072,7 @@ export const OptionEditor = Class('OptionEditor', {
    * "OptionConfig" which serves as an interface class to the angular.js application.
    * @param {Element} rootElement The HTML element the yFilesOptionUI is appended to.
    */
-  constructor: function(rootElement) {
+  constructor: function (rootElement) {
     this.converter = new ConfigConverter()
 
     const div = window.document.createElement('div')
@@ -1121,10 +1121,10 @@ export const OptionEditor = Class('OptionEditor', {
    * @type {Object}
    */
   config: {
-    get: function() {
+    get: function () {
       return this.config1
     },
-    set: function(value) {
+    set: function (value) {
       this.config1 = value
       const convertedConfig = this.config1 !== null ? this.converter.convert(this.config1) : null
       if (this.optionConfigService && this.optionConfigService['setConfig']) {
@@ -1139,10 +1139,10 @@ export const OptionEditor = Class('OptionEditor', {
    * @type {function(boolean)}
    */
   validateConfigCallback: {
-    get: function() {
+    get: function () {
       return this.validateCallback
     },
-    set: function(value) {
+    set: function (value) {
       if (this.optionConfigService && this.optionConfigService['setConfig']) {
         this.optionConfigService['setConfigValidCb'].apply(this.optionConfigService, [value])
         this.validateCallback = value
@@ -1162,7 +1162,7 @@ export const ComponentAttribute = Attribute('ComponentAttribute', {
    * Initialize the ComponentAttribute.
    * @param {Components} value The type of ui component to be generated.
    */
-  constructor: function(value) {
+  constructor: function (value) {
     Attribute.call(this)
     this.$initComponentAttribute()
     this.value = value
@@ -1176,15 +1176,15 @@ export const ComponentAttribute = Attribute('ComponentAttribute', {
 
   /** @type {Components} */
   value: {
-    get: function() {
+    get: function () {
       return this.$value
     },
-    set: function(value) {
+    set: function (value) {
       this.$value = value
     }
   },
 
-  $initComponentAttribute: function() {
+  $initComponentAttribute: function () {
     this.$value = Components.SLIDER
   }
 })
@@ -1224,13 +1224,13 @@ function createReferences(config) {
   function addRecursiveDisabledCheck(hierarchy, parentPointer, recursive) {
     function wrapRecFun(member, parentPointer) {
       return parentPointer
-        ? function() {
+        ? function () {
             return (
               (member.isDisabled && member.isDisabled()) ||
               (parentPointer._recIsDisabled && parentPointer._recIsDisabled())
             )
           }
-        : function() {
+        : function () {
             return member.isDisabled
           }
     }
@@ -1256,9 +1256,9 @@ function createReferences(config) {
   return addMemberReferences(hierarchy), addRecursiveDisabledCheck(hierarchy), config
 }
 
-!(function() {
+!(function () {
   const module = angular.module('optionUiTabbar', [])
-  module.directive('optionUiTabbar', function() {
+  module.directive('optionUiTabbar', function () {
     return {
       restrict: 'A',
       templateUrl: relativeTemplatePath + './components/option-ui-tabbar/option-ui-tabbar.html',
@@ -1268,18 +1268,18 @@ function createReferences(config) {
       },
       controller: [
         '$scope',
-        function($scope) {
+        function ($scope) {
           function initialize(newValue) {
             newValue && ($scope.setCurrentTab(0), $scope.moveSlider())
           }
 
-          ;($scope.isCurrentTab = function(index) {
+          ;($scope.isCurrentTab = function (index) {
             return $scope.currentTab === index
           }),
-            ($scope.setCurrentTab = function(index) {
+            ($scope.setCurrentTab = function (index) {
               ;($scope.selected = $scope.tabs[index]), ($scope.currentTab = index)
             }),
-            ($scope.moveSlider = function() {
+            ($scope.moveSlider = function () {
               const length = 100 / $scope.tabs.length
               $scope.slide = {
                 width: length + '%',
@@ -1289,7 +1289,7 @@ function createReferences(config) {
             $scope.$watch('tabs', initialize)
         }
       ],
-      link: function(scope, elem) {
+      link: function (scope, elem) {
         function insertAsNext(newChild, reference) {
           let parent = reference.parentNode,
             next = reference.nextElementSibling
@@ -1302,27 +1302,27 @@ function createReferences(config) {
       }
     }
   }),
-    module.filter('camelcase', function() {
-      return function(items) {
+    module.filter('camelcase', function () {
+      return function (items) {
         return items.replace(/[^A-Z0-9._-]/g, '')
       }
     })
 })(),
-  (function() {
+  (function () {
     const module = angular.module('optionUiCollapse', [])
-    module.directive('optionUiCollapse', function() {
+    module.directive('optionUiCollapse', function () {
       return {
         restrict: 'A',
         templateUrl:
           relativeTemplatePath + './components/option-ui-collapse/option-ui-collapse.html',
         transclude: !0,
         scope: { collapsed: '=' },
-        controller: ['$scope', '$element', function() {}],
-        link: function() {}
+        controller: ['$scope', '$element', function () {}],
+        link: function () {}
       }
     })
   })(),
-  (function() {
+  (function () {
     function createIcon(icon) {
       const graph = icons[icon]
       if (graph) {
@@ -1344,7 +1344,7 @@ function createReferences(config) {
         undo:
           '<g xmlns="http://www.w3.org/2000/svg"><path d="M12,5V1.5l-5,5l5,5V7c3.3,0,6,2.7,6,6s-2.7,6-6,6c-3.3,0-6-2.7-6-6H4c0,4.4,3.6,8,8,8c4.4,0,8-3.6,8-8S16.4,5,12,5z"></path></g>'
       }
-    module.directive('optionUiButton', function() {
+    module.directive('optionUiButton', function () {
       return {
         restrict: 'A',
         templateUrl: relativeTemplatePath + './components/option-ui-button/option-ui-button.html',
@@ -1357,8 +1357,8 @@ function createReferences(config) {
         controller: [
           '$scope',
           '$element',
-          function($scope, $element) {
-            $scope.$watch('icon', function() {
+          function ($scope, $element) {
+            $scope.$watch('icon', function () {
               const old = $element.find('svg')
               old && old.remove()
               const svg = createIcon($scope.icon)
@@ -1373,15 +1373,15 @@ function createReferences(config) {
             })
           }
         ],
-        link: function(scope, elem) {
+        link: function (scope, elem) {
           elem.addClass('option-ui-button')
         }
       }
     })
   })(),
-  (function() {
+  (function () {
     const module = angular.module('optionUiCheckbox', [])
-    module.directive('optionUiCheckbox', function() {
+    module.directive('optionUiCheckbox', function () {
       return {
         restrict: 'A',
         templateUrl:
@@ -1390,14 +1390,14 @@ function createReferences(config) {
           option: '=',
           disabled: '='
         },
-        controller: ['$scope', function() {}],
-        link: function() {}
+        controller: ['$scope', function () {}],
+        link: function () {}
       }
     })
   })(),
-  (function() {
+  (function () {
     const module = angular.module('optionUiCombobox', [])
-    module.directive('optionUiCombobox', function() {
+    module.directive('optionUiCombobox', function () {
       return {
         restrict: 'A',
         templateUrl:
@@ -1407,13 +1407,13 @@ function createReferences(config) {
           options: '=',
           disabled: '='
         },
-        link: function() {}
+        link: function () {}
       }
     })
   })(),
-  (function() {
+  (function () {
     const module = angular.module('optionUiDropdown', [])
-    module.directive('optionUiDropdown', function() {
+    module.directive('optionUiDropdown', function () {
       return {
         restrict: 'A',
         templateUrl:
@@ -1424,19 +1424,19 @@ function createReferences(config) {
         },
         controller: [
           '$scope',
-          function($scope) {
+          function ($scope) {
             function initialize(newValue) {
               newValue && $scope.setCurrentSelected(0)
             }
 
-            ;($scope.setCurrentSelected = function(index) {
+            ;($scope.setCurrentSelected = function (index) {
               ;($scope.selected = $scope.options[index]), ($scope.currentSelected = index)
             }),
               $scope.$watch('options', initialize),
               $scope.$watch('currentSelected', $scope.setCurrentSelected)
           }
         ],
-        link: function(scope, elem) {
+        link: function (scope, elem) {
           function insertAsNext(newChild, reference) {
             let parent = reference.parentNode,
               next = reference.nextElementSibling
@@ -1450,9 +1450,9 @@ function createReferences(config) {
       }
     })
   })(),
-  (function() {
+  (function () {
     const module = angular.module('optionUiSlider', [])
-    module.directive('optionUiSlider', function() {
+    module.directive('optionUiSlider', function () {
       return {
         restrict: 'A',
         templateUrl: relativeTemplatePath + './components/option-ui-slider/option-ui-slider.html',
@@ -1460,22 +1460,22 @@ function createReferences(config) {
           option: '=',
           disabled: '='
         },
-        controller: ['$scope', function() {}],
-        link: function() {}
+        controller: ['$scope', function () {}],
+        link: function () {}
       }
     }),
       module.directive('optionUiNumberParser', [
         '$timeout',
-        function($timeout) {
+        function ($timeout) {
           return {
             restrict: 'A',
             require: '?ngModel',
-            link: function(scope, elem, attrs, ctrl) {
+            link: function (scope, elem, attrs, ctrl) {
               ctrl &&
-                (ctrl.$parsers.push(function(value) {
+                (ctrl.$parsers.push(function (value) {
                   return Number(value)
                 }),
-                $timeout(function() {
+                $timeout(function () {
                   if (scope.option.valid !== !1) {
                     const oldval = scope.option.value
                     ;(scope.option.value = 0),
@@ -1489,11 +1489,11 @@ function createReferences(config) {
         }
       ])
   })(),
-  (function() {
+  (function () {
     const module = angular.module('optionUiSpinner', [])
     module.directive('optionUiSpinner', [
       '$timeout',
-      function() {
+      function () {
         return {
           restrict: 'A',
           templateUrl:
@@ -1502,15 +1502,15 @@ function createReferences(config) {
             option: '=',
             disabled: '='
           },
-          controller: ['$scope', function() {}],
-          link: function() {}
+          controller: ['$scope', function () {}],
+          link: function () {}
         }
       }
     ])
   })(),
-  (function() {
+  (function () {
     const module = angular.module('optionUiText', [])
-    module.directive('optionUiText', function() {
+    module.directive('optionUiText', function () {
       return {
         restrict: 'A',
         templateUrl: relativeTemplatePath + './components/option-ui-text/option-ui-text.html',
@@ -1519,14 +1519,14 @@ function createReferences(config) {
           options: '=',
           disabled: '='
         },
-        controller: ['$scope', function() {}],
-        link: function() {}
+        controller: ['$scope', function () {}],
+        link: function () {}
       }
     })
   })(),
-  (function() {
+  (function () {
     const module = angular.module('optionUiHtmlblock', [])
-    module.directive('optionUiHtmlblock', function() {
+    module.directive('optionUiHtmlblock', function () {
       return {
         restrict: 'A',
         templateUrl:
@@ -1535,15 +1535,15 @@ function createReferences(config) {
           option: '=',
           disabled: '='
         },
-        controller: ['$scope', function() {}],
-        link: function(scope, elem) {
+        controller: ['$scope', function () {}],
+        link: function (scope, elem) {
           angular.element(elem.children()[0]).append(scope.option.value)
         }
       }
     })
   })()
 var relativeTemplatePath = relativeTemplatePath || ''
-!(function() {
+!(function () {
   const module = angular.module('yFilesOptionUI', [
     'ngSanitize',
     'optionUiTabbar',
@@ -1558,7 +1558,7 @@ var relativeTemplatePath = relativeTemplatePath || ''
   ])
   module.directive('optionUi', [
     'OptionConfig',
-    function(OptionConfig) {
+    function (OptionConfig) {
       return {
         restrict: 'A',
         templateUrl: relativeTemplatePath + './templates/option-ui.html',
@@ -1566,7 +1566,7 @@ var relativeTemplatePath = relativeTemplatePath || ''
         controller: [
           '$scope',
           '$element',
-          function($scope, $element) {
+          function ($scope, $element) {
             function updateContentHeight() {
               const oldHeight = contentContainer.style.height
               contentContainer.style.height = 0
@@ -1580,10 +1580,10 @@ var relativeTemplatePath = relativeTemplatePath || ''
 
             ;($scope.config = OptionConfig.getConfig()),
               $scope.$watch(
-                function() {
+                function () {
                   return OptionConfig.getConfig()
                 },
-                function(newVal) {
+                function (newVal) {
                   $scope.config = newVal
                 }
               )
@@ -1601,7 +1601,7 @@ var relativeTemplatePath = relativeTemplatePath || ''
               document.body.addEventListener('resize', updateContentHeight, !1)
           }
         ],
-        link: function(scope, elem) {
+        link: function (scope, elem) {
           elem.addClass('option-ui')
         }
       }
@@ -1611,7 +1611,7 @@ var relativeTemplatePath = relativeTemplatePath || ''
       '$templateCache',
       '$http',
       '$compile',
-      function($templateCache, $http, $compile) {
+      function ($templateCache, $http, $compile) {
         return {
           restrict: 'A',
           scope: {
@@ -1620,22 +1620,22 @@ var relativeTemplatePath = relativeTemplatePath || ''
           },
           controller: [
             '$scope',
-            function($scope) {
-              ;(this.setCollapseFunction = function(fun) {
+            function ($scope) {
+              ;(this.setCollapseFunction = function (fun) {
                 $scope.toggleCollapsed = fun
               }),
-                (this.$watch = function(watchExpression, listener) {
+                (this.$watch = function (watchExpression, listener) {
                   $scope.$watch(watchExpression, listener)
                 }),
-                ($scope.toggleCollapsed = function(member) {
+                ($scope.toggleCollapsed = function (member) {
                   member._isCollapsed = !member._isCollapsed
                 })
             }
           ],
-          link: function(scope, elem) {
+          link: function (scope, elem) {
             function compile(html) {
               const compiledContents = $compile(html)
-              compiledContents(scope, function(clone) {
+              compiledContents(scope, function (clone) {
                 elem.append(clone)
               })
             }
@@ -1643,7 +1643,7 @@ var relativeTemplatePath = relativeTemplatePath || ''
             let templateUrl = relativeTemplatePath + './templates/option-ui-form.html',
               html = $templateCache.get(templateUrl)
             void 0 === html
-              ? $http.get(templateUrl).success(function(data) {
+              ? $http.get(templateUrl).success(function (data) {
                   $templateCache.put(templateUrl, data), compile(data)
                 })
               : compile(html)
@@ -1651,15 +1651,15 @@ var relativeTemplatePath = relativeTemplatePath || ''
         }
       }
     ]),
-    module.directive('accordeon', function() {
+    module.directive('accordeon', function () {
       return {
         restrict: 'A',
         require: '?optionUiForm',
-        link: function(scope, elem, attrs, ctrl) {
+        link: function (scope, elem, attrs, ctrl) {
           ctrl &&
-            ctrl.setCollapseFunction(function(member, members) {
+            ctrl.setCollapseFunction(function (member, members) {
               member._isCollapsed &&
-                angular.forEach(members, function(member) {
+                angular.forEach(members, function (member) {
                   member._isCollapsed = !0
                 }),
                 (member._isCollapsed = !member._isCollapsed)
@@ -1667,7 +1667,7 @@ var relativeTemplatePath = relativeTemplatePath || ''
         }
       }
     }),
-    module.directive('optionUiItem', function() {
+    module.directive('optionUiItem', function () {
       return {
         restrict: 'A',
         scope: {
@@ -1675,8 +1675,8 @@ var relativeTemplatePath = relativeTemplatePath || ''
           disabled: '='
         },
         templateUrl: relativeTemplatePath + './templates/option-ui-item.html',
-        controller: ['$scope', function() {}],
-        link: function(scope, elem) {
+        controller: ['$scope', function () {}],
+        link: function (scope, elem) {
           elem.addClass('option-ui-item')
         }
       }
@@ -1685,14 +1685,14 @@ var relativeTemplatePath = relativeTemplatePath || ''
       '$templateCache',
       '$http',
       '$compile',
-      function($templateCache, $http, $compile) {
+      function ($templateCache, $http, $compile) {
         return {
           restrict: 'A',
           require: '?^^optionUiItem',
-          link: function(scope, elem, attr, ctrl) {
+          link: function (scope, elem, attr, ctrl) {
             function compile(html) {
               const compiledContents = $compile(html)
-              compiledContents(scope, function(clone) {
+              compiledContents(scope, function (clone) {
                 elem.append(clone)
               })
             }
@@ -1701,7 +1701,7 @@ var relativeTemplatePath = relativeTemplatePath || ''
               let templateUrl = relativeTemplatePath + './templates/option-ui-revert.html',
                 html = $templateCache.get(templateUrl)
               void 0 === html
-                ? $http.get(templateUrl).success(function(data) {
+                ? $http.get(templateUrl).success(function (data) {
                     $templateCache.put(templateUrl, data), compile(data)
                   })
                 : compile(html)
@@ -1709,8 +1709,8 @@ var relativeTemplatePath = relativeTemplatePath || ''
           },
           controller: [
             '$scope',
-            function($scope) {
-              $scope.$watch('option', function(newValue) {
+            function ($scope) {
+              $scope.$watch('option', function (newValue) {
                 newValue && newValue.reset && ($scope.clickCallback = newValue.reset)
               })
             }
@@ -1721,12 +1721,12 @@ var relativeTemplatePath = relativeTemplatePath || ''
     module.directive('optionUiValidate', [
       '$compile',
       'OptionConfig',
-      function($compile, OptionConfig) {
+      function ($compile, OptionConfig) {
         return {
           require: 'ngModel',
           restrict: 'A',
-          link: function(scope) {
-            scope.$watch('ctrlForm.input.$valid', function(validity) {
+          link: function (scope) {
+            scope.$watch('ctrlForm.input.$valid', function (validity) {
               ;(scope.option.valid = validity), OptionConfig.updateConfigValidity()
             })
           }
@@ -1734,38 +1734,38 @@ var relativeTemplatePath = relativeTemplatePath || ''
       }
     ])
 })(),
-  (function() {
+  (function () {
     const module = angular.module('yFilesOptionUI')
     module.service('OptionConfig', [
       '$rootScope',
-      function($rootScope) {
+      function ($rootScope) {
         ;(this.config = null),
           (this.configValidCb = null),
-          (this.getConfig = function() {
+          (this.getConfig = function () {
             return this.config
           }),
-          (this.setConfig = function(obj) {
+          (this.setConfig = function (obj) {
             ;(this.config = createReferences(obj)),
               this.config != null &&
-                (angular.forEach(this.config.membersArray, function(member) {
+                (angular.forEach(this.config.membersArray, function (member) {
                   member._isCollapsed = !0
                 }),
                 (this.config.membersArray[0]._isCollapsed = !1)),
               $rootScope.$$phase || $rootScope.$apply()
           }),
-          (this.resetConfig = function() {
+          (this.resetConfig = function () {
             this.config != null &&
-              angular.forEach(this.config.members, function(member) {
+              angular.forEach(this.config.members, function (member) {
                 member.reset()
               })
           }),
-          (this.setConfigValidCb = function(fn) {
+          (this.setConfigValidCb = function (fn) {
             this.configValidCb = fn
           }),
-          (this.updateConfigValidity = function() {
+          (this.updateConfigValidity = function () {
             let self = this,
               valid = !0
-            angular.forEach(this.config.members, function(member) {
+            angular.forEach(this.config.members, function (member) {
               void 0 !== member.valid && member.valid === !1 && (valid = !1)
             }),
               self.configValidCb !== null &&

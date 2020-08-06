@@ -51,6 +51,7 @@ import RedPortCandidateProvider from './RedPortCandidateProvider.js'
 import { showApp } from '../../resources/demo-app.js'
 import { DemoNodeStyle } from '../../resources/demo-styles.js'
 import loadJson from '../../resources/load-json.js'
+
 function run(licenseData) {
   License.value = licenseData
   // initialize the GraphComponent
@@ -70,7 +71,7 @@ function run(licenseData) {
   graph.edgeDefaults.style = new PolylineEdgeStyle({
     stroke: '1px black',
     targetArrow: new Arrow({
-      type: 'DEFAULT',
+      type: 'default',
       stroke: '1px black',
       fill: 'black'
     })
@@ -91,13 +92,12 @@ function run(licenseData) {
   registerPortCandidateProvider(graph)
 
   // crop the edge path at the port and not at the node bounds
-  DefaultEdgePathCropper.isInstance(graph)
-
-  const decorator = graph.decorator
-  const pathCropper = new DefaultEdgePathCropper()
-  pathCropper.cropAtPort = true
-  pathCropper.extraCropLength = 3
-  decorator.portDecorator.edgePathCropperDecorator.setImplementation(pathCropper)
+  graph.decorator.portDecorator.edgePathCropperDecorator.setImplementation(
+    new DefaultEdgePathCropper({
+      cropAtPort: true,
+      extraCropLength: 3
+    })
+  )
 
   // draw edges in front of the nodes
   graphComponent.graphModelManager.edgeGroup.toFront()
@@ -119,8 +119,7 @@ function run(licenseData) {
  * @param {IGraph} graph The given graph
  */
 function registerPortCandidateProvider(graph) {
-  const nodeDecorator = graph.decorator.nodeDecorator
-  nodeDecorator.portCandidateProviderDecorator.setFactory(node => {
+  graph.decorator.nodeDecorator.portCandidateProviderDecorator.setFactory(node => {
     // Obtain the tag from the edge
     const nodeTag = node.tag
 

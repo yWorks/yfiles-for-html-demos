@@ -138,6 +138,7 @@ export function parseData(data) {
     const functionString = /^\sreturn/m.test(nodesSourceValue)
       ? nodesSourceValue
       : `return ${nodesSourceValue}`
+    // eslint-disable-next-line no-new-func
     return new Function(functionString)()
   } catch (e) {
     alert(`Evaluating the nodes source failed: ${e}`)

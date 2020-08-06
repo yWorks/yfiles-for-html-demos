@@ -295,10 +295,12 @@ export default class ContextualToolbar {
     const labelBoundingRect = labelElement.getBoundingClientRect()
     const toolbarClientRect = this.$container.getBoundingClientRect()
     const pickerClientRect = pickerContainer.getBoundingClientRect()
-    pickerContainer.style.left = `${labelBoundingRect.left +
+    pickerContainer.style.left = `${
+      labelBoundingRect.left +
       labelBoundingRect.width / 2 -
       pickerContainer.clientWidth / 2 -
-      toolbarClientRect.left}px`
+      toolbarClientRect.left
+    }px`
     const gcAnchor = this.$graphComponent.toPageFromView(new Point(0, 0))
     if (toolbarClientRect.top - gcAnchor.y < pickerClientRect.height + 20) {
       pickerContainer.style.top = '55px'

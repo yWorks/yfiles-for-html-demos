@@ -164,8 +164,6 @@ function exportSvg(scale, rectangle) {
   // Determine the bounds of the exported area
   const targetRect = rectangle || exportComponent.contentRect
 
-  exportComponent.zoomTo(targetRect)
-
   // Create the exporter class
   const exporter = new SvgExport(targetRect, scale)
   exporter.encodeImagesBase64 = true

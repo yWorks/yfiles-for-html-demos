@@ -118,6 +118,9 @@ import BpmnView, {
 import * as DemoApp from '../../resources/demo-app.js'
 import { DragAndDropPanel } from '../../utils/DndPanel.js'
 import loadJson from '../../resources/load-json.js'
+import { BpmnDiParser } from './bpmn-di'
+
+const numberOfDiSamples = 1
 
 let graphComponent = null
 
@@ -422,25 +425,47 @@ function enableFolding() {
 async function onGraphChooserBoxSelectionChanged() {
   // hide any property popup that might be visible
   popupSupport.hidePropertyPopup()
+  setUIDisabled(true)
 
   // now derive the file name
   const selectedItem = graphChooserBox.options[graphChooserBox.selectedIndex].value
-  const graphName = selectedItem.toLowerCase().replace(new RegExp(' ', 'g'), '_')
-  const fileName = `resources/${graphName}.graphml`
+  const graphName = selectedItem.toLowerCase().replace(/ /g, '_')
+  if (graphChooserBox.selectedIndex >= graphChooserBox.options.length - numberOfDiSamples) {
+    const content = await loadBpmnDiSample(graphName)
+    if (content != null) {
+      const bpmnDiParser = new BpmnDiParser()
+      await bpmnDiParser.load(graphComponent.graph, content)
+    }
+  } else {
+    const fileName = `resources/${graphName}.graphml`
 
-  const graphmlHandler = new GraphMLIOHandler()
-  graphmlHandler.addXamlNamespaceMapping(
-    'http://www.yworks.com/xml/yfiles-for-html/bpmn/2.0',
-    BpmnView
-  )
-  graphmlHandler.addNamespace('http://www.yworks.com/xml/yfiles-for-html/bpmn/2.0', 'bpmn')
+    const graphmlHandler = new GraphMLIOHandler()
+    graphmlHandler.addXamlNamespaceMapping(
+      'http://www.yworks.com/xml/yfiles-for-html/bpmn/2.0',
+      BpmnView
+    )
+    graphmlHandler.addNamespace('http://www.yworks.com/xml/yfiles-for-html/bpmn/2.0', 'bpmn')
 
-  // and then load the graph and when done - fit the bounds
-  setUIDisabled(true)
-  await DemoApp.readGraph(graphmlHandler, graphComponent.graph, fileName)
+    // and then load the graph and when done - fit the bounds
+    await DemoApp.readGraph(graphmlHandler, graphComponent.graph, fileName)
+  }
+
   graphComponent.fitGraphBounds()
   graphComponent.graph.undoEngine.clear()
   setUIDisabled(false)
+}
+
+async function loadBpmnDiSample(graphName) {
+  try {
+    const response = await fetch(`resources/${graphName}.bpmn`)
+    if (response.ok) {
+      return response.text()
+    }
+    console.log('Could not load bpmn file')
+  } catch (e) {
+    console.log('Could not load bpmn file', e)
+  }
+  return null
 }
 
 /**

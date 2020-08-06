@@ -14,15 +14,15 @@ The demo offers different configuration presets alongside an option to customize
 
 Balanced
 
-Each bus is assigned a default [BusDescriptor](https://docs.yworks.com/yfileshtml/#/api/BusDescriptor) with no further configuration.
+Each bus is assigned a default [HierarchicLayoutBusDescriptor](https://docs.yworks.com/yfileshtml/#/api/HierarchicLayoutBusDescriptor) with no further configuration.
 
 Leaves
 
-Each bus uses a [BusDescriptor](https://docs.yworks.com/yfileshtml/#/api/BusDescriptor) where only one node is allowed before and after the bus by setting `maximumNodesAfterBus` and `maximumNodesBeforeBus` to one.
+Each bus uses a [HierarchicLayoutBusDescriptor](https://docs.yworks.com/yfileshtml/#/api/HierarchicLayoutBusDescriptor) where only one node is allowed before and after the bus by setting `maximumNodesAfterBus` and `maximumNodesBeforeBus` to one.
 
 Squares
 
-The [BusDescriptor](https://docs.yworks.com/yfileshtml/#/api/BusDescriptor) for each bus is configured separately such that its elements will be arranged in a square.
+The [HierarchicLayoutBusDescriptor](https://docs.yworks.com/yfileshtml/#/api/HierarchicLayoutBusDescriptor) for each bus is configured separately such that its elements will be arranged in a square.
 
 Left Aligned
 

@@ -5,7 +5,7 @@
   "license": "https://www.yworks.com/products/yfiles-for-html/sla",
   "private": true,
   "dependencies": {
-    "yfiles": "../../../lib-dev/es-modules/yfiles-23.0.1-dev.tgz"
+    "yfiles": "../../../lib-dev/es-modules/yfiles-23.0.2-dev.tgz"
   },
   "devDependencies": {
     "@babel/cli": "^7.10.1",
@@ -26,7 +26,7 @@
     "webpack-cli": "^3.3.11"
   },
   "scripts": {
-    "postinstall": "node -e \"require('fs-extra').copySync('../../utils/Workarounds.js', './utils/Workarounds.js')\"",
+    "postinstall": "node -e \"require('fs-extra').copySync('../../utils/Workarounds.ts', './utils/Workarounds.ts')\"",
     "production": "webpack --mode production",
     "build": "webpack --mode development"
   }

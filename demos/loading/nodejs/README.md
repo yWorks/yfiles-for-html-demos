@@ -1,34 +1,17 @@
 # NodeJS Demo
 
-<img src="../../resources/image/nodejs.png" alt="demo-thumbnail" height="320"/>
-
-[You can also run this demo online](https://live.yworks.com/demos/loading/nodejs/index.html).
-
 This demo shows how to run a yFiles layout algorithm in a _[Node.js®](https://nodejs.org/)_ environment. This makes it possible to run the layout calculation asynchronously, preventing it from blocking the UI.
 
 To transfer the graph structure and layout between the _Node.js_ _[Express](https://expressjs.com/)_ server and the main page, a simple JSON format is used.
 
-Note that GraphML I/O won't work out of the box in a Node.js environment, as GraphML parsing requires the DOM API.
+## Running the demo
 
-## Things to Try
+First, install the required npm modules in the demo's `server` directory:
 
-Modify the graph structure by adding/removing nodes and edges, and re-run the _Node.js_ layout.
+`> npm install`
 
-## Running the Node.js Layout Server
+Then start the _layout_ server with:
 
-1.  Navigate to the `server` subdirectory of this demo's directory
-2.  Install the required node modules:
+`> npm start`
 
-    ```
-    \> npm install
-    ```
-
-3.  Run the layout server:
-
-    ```
-    \> npm start
-    ```
-
-## Note
-
-In Internet Explorer 9, this demo will not work unless client and server are running on the same domain due to cross domain policies and lacking support for cross-origin resource sharing (CORS).
+Afterwards, open the `index.html` file via the standard demo server in a browser to start the demo.

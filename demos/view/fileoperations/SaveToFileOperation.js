@@ -151,7 +151,8 @@ export default class SaveToFileOperation {
 
   /**
    * Returns whether the MS Internet Explorer specific save technique is available.
-   * This works in IE 10+. See https://msdn.microsoft.com/en-us/library/hh779016(v=vs.85).aspx
+   * This works in IE 10+.
+   * See https://docs.microsoft.com/en-us/previous-versions/windows/internet-explorer/ie-developer/samples/hh779016(v=vs.85)
    * for more details.
    * @return {boolean}
    */

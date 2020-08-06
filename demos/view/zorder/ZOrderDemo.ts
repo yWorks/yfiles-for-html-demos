@@ -32,6 +32,7 @@ import {
   GraphComponent,
   GraphEditorInputMode,
   GraphItemTypes,
+  GraphMLIOHandler,
   GraphMLSupport,
   ICommand,
   IGraph,
@@ -45,12 +46,7 @@ import {
 } from 'yfiles'
 import { bindAction, bindCommand, showApp } from '../../resources/demo-app'
 import loadJson from '../../resources/load-json'
-import {
-  ZIndexChangedEventArgs,
-  ZOrderGraphEditorInputMode,
-  ZOrderGraphMLIOHandler,
-  ZOrderSupport
-} from './ZOrderSupport'
+import { ZIndexChangedEventArgs, ZOrderGraphEditorInputMode, ZOrderSupport } from './ZOrderSupport'
 import DemoStyles, { DemoSerializationListener, initDemoStyles } from '../../resources/demo-styles'
 
 // @ts-ignore
@@ -75,12 +71,13 @@ function run(licenseData: object): void {
   enableGroupingOperations()
 
   // use a custom GraphMLIOHandler that supports writing and parsing node z-orders to/from GraphML
-  const ioHandler = new ZOrderGraphMLIOHandler(zOrderSupport)
+  const ioHandler = new GraphMLIOHandler()
   ioHandler.addXamlNamespaceMapping(
     'http://www.yworks.com/yFilesHTML/demos/FlatDemoStyle/1.0',
     DemoStyles
   )
   ioHandler.addHandleSerializationListener(DemoSerializationListener)
+  zOrderSupport.configureZOrderGraphMLIOHandler(ioHandler)
 
   // eslint-disable-next-line no-new
   new GraphMLSupport({
@@ -101,6 +98,13 @@ function run(licenseData: object): void {
     const node = evt.item
     updateLabel(node, zOrderSupport.getZOrder(node))
   })
+
+  // if graph structure is changed, update _all_ labels,
+  // otherwise the copied labels erroneously show the z-order
+  // of the source nodes. (this is for demo purposes only)
+  inputMode.addElementsDuplicatedListener(updateLabels)
+  inputMode.addElementsPastedListener(updateLabels)
+  inputMode.navigationInputMode.addGroupExpandedListener(updateLabels)
 
   zOrderSupport.addZIndexChangedLister((sender: object, evt: ZIndexChangedEventArgs) => {
     if (evt.item instanceof INode) {
@@ -180,14 +184,25 @@ function createGraph(graph: IGraph): void {
 }
 
 /**
+ * Updates the labels of all nodes. Called after duplicate or paste
+ */
+function updateLabels(): void {
+  graphComponent.graph.nodes.forEach(node => {
+    updateLabel(node, zOrderSupport.getZOrder(node))
+  })
+}
+
+/**
  * Updates the label text to show the current z-index of the node.
+ * z-Order labels are for demo purposes only and not necessary for
+ * the z-Order mechanism itself
  */
 function updateLabel(node: INode, zIndex: number): void {
   const graph = graphComponent.graph.contains(node)
     ? graphComponent.graph
     : graphComponent.graph.foldingView!.manager.masterGraph
 
-  if (node.labels.some(label => label.tag.showZIndex)) {
+  if (node.labels.some(label => label.tag && label.tag.showZIndex)) {
     graph.setLabelText(
       node.labels.find(label => label.tag.showZIndex),
       `Level: ${zIndex}`

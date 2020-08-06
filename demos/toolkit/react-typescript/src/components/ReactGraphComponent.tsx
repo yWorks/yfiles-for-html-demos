@@ -46,7 +46,6 @@ import {
   Point,
   PolylineEdgeStyle,
   QueryItemToolTipEventArgs,
-  ShapeNodeStyle,
   Size,
   TimeSpan
 } from 'yfiles'
@@ -56,6 +55,8 @@ import ItemElement from './ItemElement'
 import DemoToolbar from './DemoToolbar'
 import yFilesLicense from '../license.json'
 import { EdgeData, GraphData, NodeData } from '../App'
+import { ReactComponentNodeStyle } from './ReactComponentNodeStyle'
+import NodeTemplate from './NodeTemplate'
 
 interface ReactGraphComponentProps {
   graphData: GraphData
@@ -65,6 +66,7 @@ interface ReactGraphComponentProps {
 export default class ReactGraphComponent extends Component<ReactGraphComponentProps> {
   private readonly div: React.RefObject<HTMLDivElement>
   private updating: boolean
+  private isDirty: boolean
   private scheduledUpdate: null | number
   private readonly graphComponent: GraphComponent
   private graphBuilder?: GraphBuilder
@@ -85,6 +87,7 @@ export default class ReactGraphComponent extends Component<ReactGraphComponentPr
 
     // Newly created elements are animated during which the graph data should not be modified
     this.updating = false
+    this.isDirty = false
     this.scheduledUpdate = null
     this.nodesSource = null
     this.edgesSource = null
@@ -120,11 +123,9 @@ export default class ReactGraphComponent extends Component<ReactGraphComponentPr
    */
   initializeDefaultStyles(): void {
     this.graphComponent.graph.nodeDefaults.size = new Size(60, 40)
-    this.graphComponent.graph.nodeDefaults.style = new ShapeNodeStyle({
-      fill: '#00d7ff',
-      stroke: '#00d7ff',
-      shape: 'round-rectangle'
-    })
+    this.graphComponent.graph.nodeDefaults.style = new ReactComponentNodeStyle<{ name?: string }>(
+      NodeTemplate
+    )
     this.graphComponent.graph.nodeDefaults.labels.style = new DefaultLabelStyle({
       textFill: '#fff',
       font: new Font('Robot, sans-serif', 14)
@@ -182,7 +183,7 @@ export default class ReactGraphComponent extends Component<ReactGraphComponentPr
       // Identifies the id property of a node object
       id: 'id',
       // Use the 'name' property as node label
-      labels: ['name']
+      tag: item => ({ name: item.name })
     })
     this.edgesSource = graphBuilder.createEdgesSource({
       // Stores the edges of the graph
@@ -205,17 +206,7 @@ export default class ReactGraphComponent extends Component<ReactGraphComponentPr
       this.props.graphData.nodesSource.length !== prevProps.graphData.nodesSource.length ||
       this.props.graphData.edgesSource.length !== prevProps.graphData.edgesSource.length
     ) {
-      if (!this.updating) {
-        this.updateGraph()
-      } else {
-        // the graph is currently still updating and running the layout animation, thus schedule an update
-        if (this.scheduledUpdate !== null) {
-          window.clearTimeout(this.scheduledUpdate)
-        }
-        this.scheduledUpdate = window.setTimeout(() => {
-          this.updateGraph()
-        }, 500)
-      }
+      this.updateGraph().catch(e => alert(e))
     }
   }
 
@@ -224,19 +215,26 @@ export default class ReactGraphComponent extends Component<ReactGraphComponentPr
    * @return {Promise}
    */
   async updateGraph(): Promise<void> {
-    this.updating = true
-    // update the graph based on the given graph data
-    this.graphBuilder!.setData(this.nodesSource!, this.props.graphData.nodesSource)
-    this.graphBuilder!.setData(this.edgesSource!, this.props.graphData.edgesSource)
-    this.graphBuilder!.updateGraph()
+    this.isDirty = true
+    if (this.updating) {
+      return
+    }
+    while (this.isDirty) {
+      this.updating = true
+      // update the graph based on the given graph data
+      this.graphBuilder!.setData(this.nodesSource!, this.props.graphData.nodesSource)
+      this.graphBuilder!.setData(this.edgesSource!, this.props.graphData.edgesSource)
+      this.graphBuilder!.updateGraph()
+      this.isDirty = false
 
-    // apply a layout to re-arrange the new elements
-    const layoutExecutor = new LayoutExecutor(this.graphComponent, new HierarchicLayout())
-    layoutExecutor.duration = TimeSpan.fromSeconds(1)
-    layoutExecutor.easedAnimation = true
-    layoutExecutor.animateViewport = true
-    await layoutExecutor.start()
-    this.updating = false
+      // apply a layout to re-arrange the new elements
+      const layoutExecutor = new LayoutExecutor(this.graphComponent, new HierarchicLayout())
+      layoutExecutor.duration = TimeSpan.fromSeconds(1)
+      layoutExecutor.easedAnimation = true
+      layoutExecutor.animateViewport = true
+      await layoutExecutor.start()
+      this.updating = false
+    }
   }
 
   render(): JSX.Element {

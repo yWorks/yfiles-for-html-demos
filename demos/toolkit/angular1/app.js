@@ -27,7 +27,7 @@
  **
  ***************************************************************************/
 /*
- * @yjs:keep=command,commandParameter,commandTarget,controller,directive,link,module,restrict,scope
+ * @yjs:keep=command,parameter,target,controller,directive,link,module,restrict,scope
  */
 import {
   AssistantNodePlacer,

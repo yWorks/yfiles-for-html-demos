@@ -39,7 +39,7 @@ export default class DemoSidebar extends WidgetBase {
         <div class="demo-sidebar-content">
           <p>
             This demo shows how to integrate yFiles in a basic{' '}
-            <a href="https://dojo.io/" target="_blank">
+            <a href="https://dojo.io/" target="_blank" rel="noreferrer">
               Dojo
             </a>{' '}
             application based on the Dojo <code>cli-create-app</code>.
@@ -64,7 +64,7 @@ export default class DemoSidebar extends WidgetBase {
           <h2>Things to Try</h2>
 
           <ul>
-            <li>Toggle editing support using the "Toggle Editing" button.</li>
+            <li>Toggle editing support using the &apos;Toggle Editing&apos; button.</li>
             <li>
               After the graph has been edited, click{' '}
               <img style="vertical-align: middle" src={require('../assets/reload-16.svg')} /> to

@@ -9,7 +9,7 @@
     "test": "wdio wdio.conf.js"
   },
   "dependencies": {
-    "yfiles": "../../../lib-dev/es-modules/yfiles-23.0.1-dev.tgz"
+    "yfiles": "../../../lib-dev/es-modules/yfiles-23.0.2-dev.tgz"
   },
   "devDependencies": {
     "@wdio/cli": "^5.12.5",

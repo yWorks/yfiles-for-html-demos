@@ -146,6 +146,16 @@ export class NodeSelectionResizingInputMode extends BaseClass(IInputMode) {
    */
   constructor(mode, margins) {
     super()
+    this.onHandleDragStartedSnap = null
+    this.onHandleDragStarting = null
+    this.onHandleDragStarted = null
+    this.onHandleDragFinished = null
+    this.onHandleDragCanceled = null
+    this.onZoomChanged = null
+    this.onMultiSelectionStarted = null
+    this.onMultiSelectionFinished = null
+    this.onItemSelectionChanged = null
+    this.onNodeLayoutChanged = null
     this.$margins = margins || Insets.EMPTY
     this.$mode = mode || 'scale'
     this.$inputModeContext = null
@@ -1431,9 +1441,9 @@ class HandleLocation extends BaseClass(IPoint) {
       case HandlePositions.EAST:
       case HandlePositions.SOUTH_EAST:
         return (
-          (bounds.x +
+          bounds.x +
           bounds.width +
-          (this.outerThis.margins.right + this.offset / this.outerThis.context.zoom))
+          (this.outerThis.margins.right + this.offset / this.outerThis.context.zoom)
         )
     }
   }
@@ -1457,9 +1467,9 @@ class HandleLocation extends BaseClass(IPoint) {
       case HandlePositions.SOUTH:
       case HandlePositions.SOUTH_EAST:
         return (
-          (bounds.y +
+          bounds.y +
           bounds.height +
-          (this.outerThis.margins.top + this.offset / this.outerThis.context.zoom))
+          (this.outerThis.margins.top + this.offset / this.outerThis.context.zoom)
         )
     }
   }

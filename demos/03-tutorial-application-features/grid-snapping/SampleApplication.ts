@@ -270,7 +270,7 @@ function createRadioGroup(
     }
     input.addEventListener(
       'change',
-      function(value: any): void {
+      function (value: any): void {
         callback(value)
       }.bind(null, map.get(key))
     )
@@ -310,7 +310,7 @@ function createColorPicker(
 
     rect.addEventListener(
       'click',
-      function(fill: Fill, rect: SVGElement): void {
+      function (fill: Fill, rect: SVGElement): void {
         const selectedColors = Array.from(gridColorPicker!.querySelectorAll('.selectedColor'))
         selectedColors.forEach((rect: Element): Element => removeClass(rect, 'selectedColor'))
         addClass(rect, 'selectedColor')

@@ -68,6 +68,18 @@ export default class RelocateSubtreeLayoutHelper {
    * @param {!Subtree} subtree The subtree to be moved
    */
   constructor(graphComponent, subtree) {
+    // A lock which prevents re-entrant layout execution.
+    this.layoutIsRunning = false
+
+    // Indicates whether a layout run has been requested while a layout calculation is running.
+    this.layoutPending = false
+
+    // The executor has been stopped.
+    // The final layout for the complete tree including the edge to the dragged subtree shall be calculated.
+    this.stopped = false
+
+    this.canceled = false
+    this.initializing = false
     // The component that displays the graph.
     this.graphComponent = graphComponent
     // The subgraph that is dragged.

@@ -48,6 +48,11 @@ export default class LimitingRectangleDescriptor extends BaseClass(
   ICanvasObjectDescriptor,
   IVisualCreator
 ) {
+  constructor() {
+    super()
+    this.rectangle = null
+  }
+
   /**
    * Gets the <code>IVisualCreator</code> for a given <code>ICanvasObject</code>.
    * @param {!object} forUserObject

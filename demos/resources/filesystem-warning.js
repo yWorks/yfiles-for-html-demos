@@ -28,7 +28,7 @@
  ***************************************************************************/
 /* eslint-disable no-eval */
 /* eslint-disable no-var */
-;(function() {
+;(function () {
   var isFileSystem = window.location.protocol.indexOf('file') > -1
 
   var possibleServerUrl = window.location
@@ -107,7 +107,7 @@
     showWarningTemplate(missingEs6Support)
   } else {
     if (!/notimeout/.test(location.search)) {
-      setTimeout(function() {
+      setTimeout(function () {
         if (window.yfiles && !(window.yfiles.collections && window.yfiles.collections.List)) {
           showWarningTemplate(fileSystemWarning)
         }
@@ -129,7 +129,7 @@
 
   function showWarningTemplate(template) {
     var warningDiv = document.createElement('div')
-    var actuallyAppend = function() {
+    var actuallyAppend = function () {
       document.body.appendChild(warningDiv)
       document.body.setAttribute(
         'class',

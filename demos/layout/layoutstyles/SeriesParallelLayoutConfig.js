@@ -65,7 +65,7 @@ const SeriesParallelLayoutConfig = Class('SeriesParallelLayoutConfig', {
 
   $meta: [LabelAttribute('SeriesParallelLayout')],
 
-  constructor: function() {
+  constructor: function () {
     LayoutConfiguration.call(this)
     const layout = new SeriesParallelLayout()
     const edgeLayoutDescriptor = layout.defaultEdgeLayoutDescriptor
@@ -97,7 +97,7 @@ const SeriesParallelLayoutConfig = Class('SeriesParallelLayoutConfig', {
    *   configuration on.
    * @return {ILayoutAlgorithm} The configured layout algorithm.
    */
-  createConfiguredLayout: function(graphComponent) {
+  createConfiguredLayout: function (graphComponent) {
     const layout = new SeriesParallelLayout()
     layout.generalGraphHandling = true
 
@@ -166,17 +166,17 @@ const SeriesParallelLayoutConfig = Class('SeriesParallelLayoutConfig', {
 
   /** @type {OptionGroup} */
   descriptionGroup: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute('Description'),
         OptionGroupAttribute('RootGroup', 5),
         TypeAttribute(OptionGroup.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$descriptionGroup
     },
-    set: function(value) {
+    set: function (value) {
       this.$descriptionGroup = value
     }
   },
@@ -189,17 +189,17 @@ const SeriesParallelLayoutConfig = Class('SeriesParallelLayoutConfig', {
 
   /** @type {OptionGroup} */
   generalGroup: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute('General'),
         OptionGroupAttribute('RootGroup', 10),
         TypeAttribute(OptionGroup.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$generalGroup
     },
-    set: function(value) {
+    set: function (value) {
       this.$generalGroup = value
     }
   },
@@ -212,31 +212,31 @@ const SeriesParallelLayoutConfig = Class('SeriesParallelLayoutConfig', {
 
   /** @type {OptionGroup} */
   edgesGroup: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute('Edges'),
         OptionGroupAttribute('RootGroup', 10),
         TypeAttribute(OptionGroup.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$edgesGroup
     },
-    set: function(value) {
+    set: function (value) {
       this.$edgesGroup = value
     }
   },
 
   /** @type {string} */
   descriptionTextItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         OptionGroupAttribute('descriptionGroup', 10),
         ComponentAttribute(Components.HTML_BLOCK),
         TypeAttribute(YString.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return '<p>The series-parallel layout algorithm highlights the main direction or flow of a graph, similar to the hierarchic style. In comparison, this algorithm is usually faster but can be used only on special graphs, namely series-parallel graphs.</p>'
     }
   },
@@ -249,7 +249,7 @@ const SeriesParallelLayoutConfig = Class('SeriesParallelLayoutConfig', {
 
   /** @type {LayoutOrientation} */
   orientationItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Orientation',
@@ -268,10 +268,10 @@ const SeriesParallelLayoutConfig = Class('SeriesParallelLayoutConfig', {
         TypeAttribute(LayoutOrientation.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$orientationItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$orientationItem = value
     }
   },
@@ -284,7 +284,7 @@ const SeriesParallelLayoutConfig = Class('SeriesParallelLayoutConfig', {
 
   /** @type {number} */
   verticalAlignmentItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Vertical Alignment',
@@ -302,10 +302,10 @@ const SeriesParallelLayoutConfig = Class('SeriesParallelLayoutConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$verticalAlignmentItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$verticalAlignmentItem = value
     }
   },
@@ -318,7 +318,7 @@ const SeriesParallelLayoutConfig = Class('SeriesParallelLayoutConfig', {
 
   /** @type {boolean} */
   useDrawingAsSketchItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Use Drawing as Sketch',
@@ -328,10 +328,10 @@ const SeriesParallelLayoutConfig = Class('SeriesParallelLayoutConfig', {
         TypeAttribute(YBoolean.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$useDrawingAsSketchItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$useDrawingAsSketchItem = value
     }
   },
@@ -344,17 +344,17 @@ const SeriesParallelLayoutConfig = Class('SeriesParallelLayoutConfig', {
 
   /** @type {OptionGroup} */
   distanceGroup: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute('Minimum Distances'),
         OptionGroupAttribute('generalGroup', 30),
         TypeAttribute(OptionGroup.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$distanceGroup
     },
-    set: function(value) {
+    set: function (value) {
       this.$distanceGroup = value
     }
   },
@@ -367,7 +367,7 @@ const SeriesParallelLayoutConfig = Class('SeriesParallelLayoutConfig', {
 
   /** @type {number} */
   minimumNodeToNodeDistanceItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Node to Node Distance',
@@ -382,10 +382,10 @@ const SeriesParallelLayoutConfig = Class('SeriesParallelLayoutConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$minimumNodeToNodeDistanceItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$minimumNodeToNodeDistanceItem = value
     }
   },
@@ -398,7 +398,7 @@ const SeriesParallelLayoutConfig = Class('SeriesParallelLayoutConfig', {
 
   /** @type {number} */
   minimumNodeToEdgeDistanceItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Node to Edge Distance',
@@ -413,10 +413,10 @@ const SeriesParallelLayoutConfig = Class('SeriesParallelLayoutConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$minimumNodeToEdgeDistanceItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$minimumNodeToEdgeDistanceItem = value
     }
   },
@@ -429,7 +429,7 @@ const SeriesParallelLayoutConfig = Class('SeriesParallelLayoutConfig', {
 
   /** @type {number} */
   minimumEdgeToEdgeDistanceItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Edge to Edge Distance',
@@ -444,10 +444,10 @@ const SeriesParallelLayoutConfig = Class('SeriesParallelLayoutConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$minimumEdgeToEdgeDistanceItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$minimumEdgeToEdgeDistanceItem = value
     }
   },
@@ -460,17 +460,17 @@ const SeriesParallelLayoutConfig = Class('SeriesParallelLayoutConfig', {
 
   /** @type {OptionGroup} */
   labelingGroup: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute('Labeling'),
         OptionGroupAttribute('generalGroup', 40),
         TypeAttribute(OptionGroup.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$labelingGroup
     },
-    set: function(value) {
+    set: function (value) {
       this.$labelingGroup = value
     }
   },
@@ -483,7 +483,7 @@ const SeriesParallelLayoutConfig = Class('SeriesParallelLayoutConfig', {
 
   /** @type {boolean} */
   considerNodeLabelsItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Consider Node Labels',
@@ -493,10 +493,10 @@ const SeriesParallelLayoutConfig = Class('SeriesParallelLayoutConfig', {
         TypeAttribute(YBoolean.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$considerNodeLabelsItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$considerNodeLabelsItem = value
     }
   },
@@ -509,7 +509,7 @@ const SeriesParallelLayoutConfig = Class('SeriesParallelLayoutConfig', {
 
   /** @type {boolean} */
   placeEdgeLabelsItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Place Edge Labels',
@@ -519,10 +519,10 @@ const SeriesParallelLayoutConfig = Class('SeriesParallelLayoutConfig', {
         TypeAttribute(YBoolean.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$placeEdgeLabelsItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$placeEdgeLabelsItem = value
     }
   },
@@ -535,7 +535,7 @@ const SeriesParallelLayoutConfig = Class('SeriesParallelLayoutConfig', {
 
   /** @type {SeriesParallelLayoutPortAssignmentMode} */
   portStyleItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Port Style',
@@ -551,10 +551,10 @@ const SeriesParallelLayoutConfig = Class('SeriesParallelLayoutConfig', {
         TypeAttribute(SeriesParallelLayoutPortAssignmentMode.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$portStyleItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$portStyleItem = value
     }
   },
@@ -567,7 +567,7 @@ const SeriesParallelLayoutConfig = Class('SeriesParallelLayoutConfig', {
 
   /** @type {SeriesParallelLayoutRoutingStyle} */
   routingStyleItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Routing Style',
@@ -584,10 +584,10 @@ const SeriesParallelLayoutConfig = Class('SeriesParallelLayoutConfig', {
         TypeAttribute(SeriesParallelLayoutRoutingStyle.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$routingStyleItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$routingStyleItem = value
     }
   },
@@ -600,7 +600,7 @@ const SeriesParallelLayoutConfig = Class('SeriesParallelLayoutConfig', {
 
   /** @type {number} */
   preferredOctilinearSegmentLengthItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Preferred Octilinear Segment Length',
@@ -615,20 +615,20 @@ const SeriesParallelLayoutConfig = Class('SeriesParallelLayoutConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$preferredOctilinearSegmentLengthItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$preferredOctilinearSegmentLengthItem = value
     }
   },
 
   /** @type {boolean} */
   shouldDisablePreferredOctilinearSegmentLengthItem: {
-    $meta: function() {
+    $meta: function () {
       return [TypeAttribute(YBoolean.$class)]
     },
-    get: function() {
+    get: function () {
       return this.routingStyleItem !== SeriesParallelLayoutRoutingStyle.OCTILINEAR
     }
   },
@@ -641,7 +641,7 @@ const SeriesParallelLayoutConfig = Class('SeriesParallelLayoutConfig', {
 
   /** @type {number} */
   minimumPolylineSegmentLengthItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Minimum Polyline Segment Length',
@@ -656,20 +656,20 @@ const SeriesParallelLayoutConfig = Class('SeriesParallelLayoutConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$minimumPolylineSegmentLengthItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$minimumPolylineSegmentLengthItem = value
     }
   },
 
   /** @type {boolean} */
   shouldDisableMinimumPolylineSegmentLengthItem: {
-    $meta: function() {
+    $meta: function () {
       return [TypeAttribute(YBoolean.$class)]
     },
-    get: function() {
+    get: function () {
       return this.routingStyleItem !== SeriesParallelLayoutRoutingStyle.POLYLINE
     }
   },
@@ -682,7 +682,7 @@ const SeriesParallelLayoutConfig = Class('SeriesParallelLayoutConfig', {
 
   /** @type {number} */
   minimumSlopeItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         MinMaxAttribute().init({
           min: 0.0,
@@ -698,20 +698,20 @@ const SeriesParallelLayoutConfig = Class('SeriesParallelLayoutConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$minimumSlopeItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$minimumSlopeItem = value
     }
   },
 
   /** @type {boolean} */
   shouldDisableMinimumSlopeItem: {
-    $meta: function() {
+    $meta: function () {
       return [TypeAttribute(YBoolean.$class)]
     },
-    get: function() {
+    get: function () {
       return this.routingStyleItem !== SeriesParallelLayoutRoutingStyle.POLYLINE
     }
   },
@@ -724,7 +724,7 @@ const SeriesParallelLayoutConfig = Class('SeriesParallelLayoutConfig', {
 
   /** @type {string} */
   routingStyleNonSeriesParallelItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Routing Style (Non-Series-Parallel Edges)',
@@ -741,10 +741,10 @@ const SeriesParallelLayoutConfig = Class('SeriesParallelLayoutConfig', {
         TypeAttribute(YString.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$routingStyleNonSeriesParallelItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$routingStyleNonSeriesParallelItem = value
     }
   },
@@ -757,7 +757,7 @@ const SeriesParallelLayoutConfig = Class('SeriesParallelLayoutConfig', {
 
   /** @type {boolean} */
   routeEdgesInFlowDirectionItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Route Edges in Flow Direction',
@@ -767,10 +767,10 @@ const SeriesParallelLayoutConfig = Class('SeriesParallelLayoutConfig', {
         TypeAttribute(YBoolean.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$routeEdgesInFlowDirectionItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$routeEdgesInFlowDirectionItem = value
     }
   },
@@ -783,7 +783,7 @@ const SeriesParallelLayoutConfig = Class('SeriesParallelLayoutConfig', {
 
   /** @type {number} */
   minimumFirstSegmentLengthItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Minimum First Segment Length',
@@ -798,10 +798,10 @@ const SeriesParallelLayoutConfig = Class('SeriesParallelLayoutConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$minimumFirstSegmentLengthItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$minimumFirstSegmentLengthItem = value
     }
   },
@@ -814,7 +814,7 @@ const SeriesParallelLayoutConfig = Class('SeriesParallelLayoutConfig', {
 
   /** @type {number} */
   minimumLastSegmentLengthItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Minimum Last Segment Length',
@@ -829,10 +829,10 @@ const SeriesParallelLayoutConfig = Class('SeriesParallelLayoutConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$minimumLastSegmentLengthItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$minimumLastSegmentLengthItem = value
     }
   },
@@ -845,7 +845,7 @@ const SeriesParallelLayoutConfig = Class('SeriesParallelLayoutConfig', {
 
   /** @type {number} */
   minimumEdgeLengthItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Minimum Edge Length',
@@ -860,10 +860,10 @@ const SeriesParallelLayoutConfig = Class('SeriesParallelLayoutConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$minimumEdgeLengthItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$minimumEdgeLengthItem = value
     }
   },

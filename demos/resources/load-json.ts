@@ -69,7 +69,7 @@ function tryLocalStorage(): Promise<object | string> {
         console.log('Using license from local storage.')
         resolve(storedLicense)
       } else {
-        window.setTimeout(function() {
+        window.setTimeout(function () {
           const div = document.createElement('div')
           div.setAttribute(
             'style',
@@ -99,7 +99,7 @@ function tryLocalStorage(): Promise<object | string> {
             inputNote.innerHTML = 'Please enter your license information.'
             const confirm = document.createElement('button')
             confirm.innerHTML = 'Save license and continue'
-            confirm.addEventListener('click', function() {
+            confirm.addEventListener('click', function () {
               if (input.value.length > 0) {
                 window.localStorage.setItem('yFiles_for_HTML_license', input.value)
                 resolve(parseLicense(input.value))

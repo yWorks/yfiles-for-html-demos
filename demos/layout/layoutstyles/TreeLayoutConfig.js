@@ -90,7 +90,7 @@ const TreeLayoutConfig = Class('TreeLayoutConfig', {
   /**
    * Setup default values for various configuration parameters.
    */
-  constructor: function() {
+  constructor: function () {
     LayoutConfiguration.call(this)
 
     const layout = new ClassicTreeLayout()
@@ -150,7 +150,7 @@ const TreeLayoutConfig = Class('TreeLayoutConfig', {
    *   configuration on.
    * @return {ILayoutAlgorithm} The configured layout algorithm.
    */
-  createConfiguredLayout: function(graphComponent) {
+  createConfiguredLayout: function (graphComponent) {
     let /** MultiStageLayout */ layout
 
     switch (this.layoutStyleItem) {
@@ -209,7 +209,7 @@ const TreeLayoutConfig = Class('TreeLayoutConfig', {
     return layout
   },
 
-  createConfiguredLayoutData: function(graphComponent, layout) {
+  createConfiguredLayoutData: function (graphComponent, layout) {
     if (this.layoutStyleItem === TreeLayoutConfig.EnumStyle.DEFAULT) {
       const graph = graphComponent.graph
       return new TreeLayoutData({
@@ -258,7 +258,7 @@ const TreeLayoutConfig = Class('TreeLayoutConfig', {
    * Configures the tree reduction stage that will handle edges that do not belong to the tree.
    * @return {TreeReductionStage}
    */
-  $createTreeReductionStage: function() {
+  $createTreeReductionStage: function () {
     // configures tree reduction stage and non-tree edge routing
     const reductionStage = new TreeReductionStage()
     if (this.edgeLabelingItem === TreeLayoutConfig.EnumEdgeLabeling.INTEGRATED) {
@@ -298,7 +298,7 @@ const TreeLayoutConfig = Class('TreeLayoutConfig', {
    * Configures the default tree layout algorithm.
    * @return {MultiStageLayout}
    */
-  $configureDefaultLayout: function() {
+  $configureDefaultLayout: function () {
     const isDefaultNodePlacer = this.nodePlacerItem === TreeLayoutConfig.EnumNodePlacer.DEFAULT
     const isAspectRatioNodePlacer =
       this.nodePlacerItem === TreeLayoutConfig.EnumNodePlacer.ASPECT_RATIO
@@ -418,7 +418,7 @@ const TreeLayoutConfig = Class('TreeLayoutConfig', {
    * Configures the default classic tree layout algorithm.
    * @return {MultiStageLayout}
    */
-  $configureClassicLayout: function() {
+  $configureClassicLayout: function () {
     const layout = new ClassicTreeLayout()
 
     layout.minimumNodeDistance = this.minimumNodeDistanceItem
@@ -447,7 +447,7 @@ const TreeLayoutConfig = Class('TreeLayoutConfig', {
    * Configures the tree layout algorithm with the appropriate node placer to obtain a compact tree layout.
    * @return {MultiStageLayout}
    */
-  $configureCompactLayout: function(graphComponent) {
+  $configureCompactLayout: function (graphComponent) {
     const layout = new TreeLayout()
     const aspectRatioNodePlacer = new AspectRatioNodePlacer()
 
@@ -469,7 +469,7 @@ const TreeLayoutConfig = Class('TreeLayoutConfig', {
   // ReSharper disable InconsistentNaming
   /** @type {OptionGroup} */
   DescriptionGroup: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute('Description'),
         OptionGroupAttribute('RootGroup', 5),
@@ -481,7 +481,7 @@ const TreeLayoutConfig = Class('TreeLayoutConfig', {
 
   /** @type {OptionGroup} */
   GeneralGroup: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute('General'),
         OptionGroupAttribute('RootGroup', 10),
@@ -493,7 +493,7 @@ const TreeLayoutConfig = Class('TreeLayoutConfig', {
 
   /** @type {OptionGroup} */
   DefaultGroup: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute('Default'),
         OptionGroupAttribute('RootGroup', 15),
@@ -505,7 +505,7 @@ const TreeLayoutConfig = Class('TreeLayoutConfig', {
 
   /** @type {OptionGroup} */
   HVGroup: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute('Horizontal-Vertical'),
         OptionGroupAttribute('RootGroup', 20),
@@ -517,7 +517,7 @@ const TreeLayoutConfig = Class('TreeLayoutConfig', {
 
   /** @type {OptionGroup} */
   CompactGroup: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute('Compact'),
         OptionGroupAttribute('RootGroup', 30),
@@ -529,7 +529,7 @@ const TreeLayoutConfig = Class('TreeLayoutConfig', {
 
   /** @type {OptionGroup} */
   ClassicGroup: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute('Classic'),
         OptionGroupAttribute('RootGroup', 40),
@@ -541,7 +541,7 @@ const TreeLayoutConfig = Class('TreeLayoutConfig', {
 
   /** @type {OptionGroup} */
   LabelingGroup: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute('Labeling'),
         OptionGroupAttribute('RootGroup', 50),
@@ -553,7 +553,7 @@ const TreeLayoutConfig = Class('TreeLayoutConfig', {
 
   /** @type {OptionGroup} */
   NodePropertiesGroup: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute('Node Settings'),
         OptionGroupAttribute('LabelingGroup', 10),
@@ -565,7 +565,7 @@ const TreeLayoutConfig = Class('TreeLayoutConfig', {
 
   /** @type {OptionGroup} */
   EdgePropertiesGroup: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute('Edge Settings'),
         OptionGroupAttribute('LabelingGroup', 20),
@@ -577,7 +577,7 @@ const TreeLayoutConfig = Class('TreeLayoutConfig', {
 
   /** @type {OptionGroup} */
   PreferredPlacementGroup: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute('Preferred Edge Label Placement'),
         OptionGroupAttribute('LabelingGroup', 30),
@@ -593,14 +593,14 @@ const TreeLayoutConfig = Class('TreeLayoutConfig', {
    * @type {string}
    */
   descriptionText: {
-    $meta: function() {
+    $meta: function () {
       return [
         OptionGroupAttribute('DescriptionGroup', 10),
         ComponentAttribute(Components.HTML_BLOCK),
         TypeAttribute(YString.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return (
         '<p>The various flavors of the tree layout styles are great for highlighting child-parent relationships in graphs that form one or more trees, ' +
         'or trees with only few additional edges.</p>' +
@@ -623,7 +623,7 @@ const TreeLayoutConfig = Class('TreeLayoutConfig', {
 
   /** @type {TreeLayoutConfig.EnumStyle} */
   layoutStyleItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute('Layout Style', '#/api/TreeLayout#TreeLayout-property-defaultNodePlacer'),
         OptionGroupAttribute('GeneralGroup', 10),
@@ -638,10 +638,10 @@ const TreeLayoutConfig = Class('TreeLayoutConfig', {
         TypeAttribute(TreeLayoutConfig.EnumStyle.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$layoutStyleItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$layoutStyleItem = value
     }
   },
@@ -654,7 +654,7 @@ const TreeLayoutConfig = Class('TreeLayoutConfig', {
 
   /** @type {TreeLayoutConfig.EnumRoute} */
   routingStyleForNonTreeEdgesItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Routing Style for Non-Tree Edges',
@@ -672,10 +672,10 @@ const TreeLayoutConfig = Class('TreeLayoutConfig', {
         TypeAttribute(TreeLayoutConfig.EnumRoute.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$routingStyleForNonTreeEdgesItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$routingStyleForNonTreeEdgesItem = value
     }
   },
@@ -688,7 +688,7 @@ const TreeLayoutConfig = Class('TreeLayoutConfig', {
 
   /** @type {number} */
   edgeBundlingStrengthItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Bundling Strength',
@@ -704,20 +704,20 @@ const TreeLayoutConfig = Class('TreeLayoutConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$edgeBundlingStrengthItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$edgeBundlingStrengthItem = value
     }
   },
 
   /** @type {boolean} */
   shouldDisableEdgeBundlingStrengthItem: {
-    $meta: function() {
+    $meta: function () {
       return [TypeAttribute(YBoolean.$class)]
     },
-    get: function() {
+    get: function () {
       return this.routingStyleForNonTreeEdgesItem !== TreeLayoutConfig.EnumRoute.BUNDLED
     }
   },
@@ -730,7 +730,7 @@ const TreeLayoutConfig = Class('TreeLayoutConfig', {
 
   /** @type {boolean} */
   actOnSelectionOnlyItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Act on Selection Only',
@@ -740,10 +740,10 @@ const TreeLayoutConfig = Class('TreeLayoutConfig', {
         TypeAttribute(YBoolean.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$actOnSelectionOnlyItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$actOnSelectionOnlyItem = value
     }
   },
@@ -756,7 +756,7 @@ const TreeLayoutConfig = Class('TreeLayoutConfig', {
 
   /** @type {boolean} */
   considerNodeLabelsItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Consider Node Labels',
@@ -766,10 +766,10 @@ const TreeLayoutConfig = Class('TreeLayoutConfig', {
         TypeAttribute(YBoolean.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$considerNodeLabelsItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$considerNodeLabelsItem = value
     }
   },
@@ -782,7 +782,7 @@ const TreeLayoutConfig = Class('TreeLayoutConfig', {
 
   /** @type {TreeLayoutConfig.EnumNodePlacer} */
   nodePlacerItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute('Node Placer', '#/api/TreeLayout#TreeLayout-property-defaultNodePlacer'),
         OptionGroupAttribute('DefaultGroup', 10),
@@ -803,10 +803,10 @@ const TreeLayoutConfig = Class('TreeLayoutConfig', {
         TypeAttribute(TreeLayoutConfig.EnumNodePlacer.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$nodePlacerItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$nodePlacerItem = value
     }
   },
@@ -819,7 +819,7 @@ const TreeLayoutConfig = Class('TreeLayoutConfig', {
 
   /** @type {number} */
   spacingItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Spacing',
@@ -834,10 +834,10 @@ const TreeLayoutConfig = Class('TreeLayoutConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$spacingItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$spacingItem = value
     }
   },
@@ -850,7 +850,7 @@ const TreeLayoutConfig = Class('TreeLayoutConfig', {
 
   /** @type {TreeLayoutConfig.EnumRootAlignment} */
   rootAlignmentItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Root Alignment',
@@ -870,25 +870,25 @@ const TreeLayoutConfig = Class('TreeLayoutConfig', {
         TypeAttribute(TreeLayoutConfig.EnumRootAlignment.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$rootAlignmentItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$rootAlignmentItem = value
     }
   },
 
   /** @type {boolean} */
   shouldDisableRootAlignmentItem: {
-    $meta: function() {
+    $meta: function () {
       return [TypeAttribute(YBoolean.$class)]
     },
-    get: function() {
+    get: function () {
       return (
-        (this.nodePlacerItem === TreeLayoutConfig.EnumNodePlacer.ASPECT_RATIO ||
+        this.nodePlacerItem === TreeLayoutConfig.EnumNodePlacer.ASPECT_RATIO ||
         this.nodePlacerItem === TreeLayoutConfig.EnumNodePlacer.BUS ||
         this.nodePlacerItem === TreeLayoutConfig.EnumNodePlacer.DENDROGRAM ||
-        this.nodePlacerItem === TreeLayoutConfig.EnumNodePlacer.COMPACT)
+        this.nodePlacerItem === TreeLayoutConfig.EnumNodePlacer.COMPACT
       )
     }
   },
@@ -901,7 +901,7 @@ const TreeLayoutConfig = Class('TreeLayoutConfig', {
 
   /** @type {LayoutOrientation} */
   defaultLayoutOrientationItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Orientation',
@@ -919,23 +919,23 @@ const TreeLayoutConfig = Class('TreeLayoutConfig', {
         TypeAttribute(LayoutOrientation.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$defaultLayoutOrientationItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$defaultLayoutOrientationItem = value
     }
   },
 
   /** @type {boolean} */
   shouldDisableDefaultLayoutOrientationItem: {
-    $meta: function() {
+    $meta: function () {
       return [TypeAttribute(YBoolean.$class)]
     },
-    get: function() {
+    get: function () {
       return (
-        (this.nodePlacerItem === TreeLayoutConfig.EnumNodePlacer.ASPECT_RATIO ||
-        this.nodePlacerItem === TreeLayoutConfig.EnumNodePlacer.COMPACT)
+        this.nodePlacerItem === TreeLayoutConfig.EnumNodePlacer.ASPECT_RATIO ||
+        this.nodePlacerItem === TreeLayoutConfig.EnumNodePlacer.COMPACT
       )
     }
   },
@@ -948,7 +948,7 @@ const TreeLayoutConfig = Class('TreeLayoutConfig', {
 
   /** @type {number} */
   nodePlacerAspectRatioItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Aspect Ratio',
@@ -964,23 +964,23 @@ const TreeLayoutConfig = Class('TreeLayoutConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$nodePlacerAspectRatioItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$nodePlacerAspectRatioItem = value
     }
   },
 
   /** @type {boolean} */
   shouldDisableNodePlacerAspectRatioItem: {
-    $meta: function() {
+    $meta: function () {
       return [TypeAttribute(YBoolean.$class)]
     },
-    get: function() {
+    get: function () {
       return (
-        (this.nodePlacerItem !== TreeLayoutConfig.EnumNodePlacer.ASPECT_RATIO &&
-        this.nodePlacerItem !== TreeLayoutConfig.EnumNodePlacer.COMPACT)
+        this.nodePlacerItem !== TreeLayoutConfig.EnumNodePlacer.ASPECT_RATIO &&
+        this.nodePlacerItem !== TreeLayoutConfig.EnumNodePlacer.COMPACT
       )
     }
   },
@@ -993,7 +993,7 @@ const TreeLayoutConfig = Class('TreeLayoutConfig', {
 
   /** @type {boolean} */
   allowMultiParentsItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Allow Multi-Parents',
@@ -1003,25 +1003,25 @@ const TreeLayoutConfig = Class('TreeLayoutConfig', {
         TypeAttribute(YBoolean.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$allowMultiParentsItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$allowMultiParentsItem = value
     }
   },
 
   /** @type {boolean} */
   shouldDisableAllowMultiParentsItem: {
-    $meta: function() {
+    $meta: function () {
       return [TypeAttribute(YBoolean.$class)]
     },
-    get: function() {
+    get: function () {
       return (
-        (this.nodePlacerItem !== TreeLayoutConfig.EnumNodePlacer.DEFAULT &&
+        this.nodePlacerItem !== TreeLayoutConfig.EnumNodePlacer.DEFAULT &&
         this.nodePlacerItem !== TreeLayoutConfig.EnumNodePlacer.DENDROGRAM &&
         this.nodePlacerItem !== TreeLayoutConfig.EnumNodePlacer.BUS &&
-        this.nodePlacerItem !== TreeLayoutConfig.EnumNodePlacer.LEFT_RIGHT)
+        this.nodePlacerItem !== TreeLayoutConfig.EnumNodePlacer.LEFT_RIGHT
       )
     }
   },
@@ -1034,7 +1034,7 @@ const TreeLayoutConfig = Class('TreeLayoutConfig', {
 
   /** @type {TreeLayoutPortAssignmentMode} */
   portAssignmentItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Port Assignment',
@@ -1053,10 +1053,10 @@ const TreeLayoutConfig = Class('TreeLayoutConfig', {
         TypeAttribute(TreeLayoutPortAssignmentMode.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$portAssignmentItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$portAssignmentItem = value
     }
   },
@@ -1069,7 +1069,7 @@ const TreeLayoutConfig = Class('TreeLayoutConfig', {
 
   /** @type {number} */
   hvHorizontalSpaceItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Horizontal Spacing',
@@ -1084,10 +1084,10 @@ const TreeLayoutConfig = Class('TreeLayoutConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$hvHorizontalSpaceItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$hvHorizontalSpaceItem = value
     }
   },
@@ -1100,7 +1100,7 @@ const TreeLayoutConfig = Class('TreeLayoutConfig', {
 
   /** @type {number} */
   hvVerticalSpaceItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Vertical Spacing',
@@ -1115,10 +1115,10 @@ const TreeLayoutConfig = Class('TreeLayoutConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$hvVerticalSpaceItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$hvVerticalSpaceItem = value
     }
   },
@@ -1131,7 +1131,7 @@ const TreeLayoutConfig = Class('TreeLayoutConfig', {
 
   /** @type {number} */
   arHorizontalSpaceItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Horizontal Spacing',
@@ -1146,10 +1146,10 @@ const TreeLayoutConfig = Class('TreeLayoutConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$arHorizontalSpaceItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$arHorizontalSpaceItem = value
     }
   },
@@ -1162,7 +1162,7 @@ const TreeLayoutConfig = Class('TreeLayoutConfig', {
 
   /** @type {number} */
   arVerticalSpaceItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Vertical Spacing',
@@ -1177,10 +1177,10 @@ const TreeLayoutConfig = Class('TreeLayoutConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$arVerticalSpaceItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$arVerticalSpaceItem = value
     }
   },
@@ -1193,7 +1193,7 @@ const TreeLayoutConfig = Class('TreeLayoutConfig', {
 
   /** @type {boolean} */
   arUseViewAspectRatioItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Use Aspect Ratio of View',
@@ -1203,10 +1203,10 @@ const TreeLayoutConfig = Class('TreeLayoutConfig', {
         TypeAttribute(YBoolean.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$arUseViewAspectRatioItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$arUseViewAspectRatioItem = value
     }
   },
@@ -1219,7 +1219,7 @@ const TreeLayoutConfig = Class('TreeLayoutConfig', {
 
   /** @type {number} */
   compactPreferredAspectRatioItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Preferred Aspect Ratio',
@@ -1235,20 +1235,20 @@ const TreeLayoutConfig = Class('TreeLayoutConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$compactPreferredAspectRatioItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$compactPreferredAspectRatioItem = value
     }
   },
 
   /** @type {boolean} */
   shouldDisableCompactPreferredAspectRatioItem: {
-    $meta: function() {
+    $meta: function () {
       return [TypeAttribute(YBoolean.$class)]
     },
-    get: function() {
+    get: function () {
       return this.arUseViewCompactPreferredAspectRatioItem
     }
   },
@@ -1261,7 +1261,7 @@ const TreeLayoutConfig = Class('TreeLayoutConfig', {
 
   /** @type {LayoutOrientation} */
   classicLayoutOrientationItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Orientation',
@@ -1279,10 +1279,10 @@ const TreeLayoutConfig = Class('TreeLayoutConfig', {
         TypeAttribute(LayoutOrientation.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$classicLayoutOrientationItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$classicLayoutOrientationItem = value
     }
   },
@@ -1295,7 +1295,7 @@ const TreeLayoutConfig = Class('TreeLayoutConfig', {
 
   /** @type {number} */
   minimumNodeDistanceItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Minimum Node Distance',
@@ -1310,10 +1310,10 @@ const TreeLayoutConfig = Class('TreeLayoutConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$minimumNodeDistanceItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$minimumNodeDistanceItem = value
     }
   },
@@ -1326,7 +1326,7 @@ const TreeLayoutConfig = Class('TreeLayoutConfig', {
 
   /** @type {number} */
   minimumLayerDistanceItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Minimum Layer Distance',
@@ -1341,10 +1341,10 @@ const TreeLayoutConfig = Class('TreeLayoutConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$minimumLayerDistanceItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$minimumLayerDistanceItem = value
     }
   },
@@ -1357,7 +1357,7 @@ const TreeLayoutConfig = Class('TreeLayoutConfig', {
 
   /** @type {PortStyle} */
   portStyleItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Port Style',
@@ -1374,10 +1374,10 @@ const TreeLayoutConfig = Class('TreeLayoutConfig', {
         TypeAttribute(PortStyle.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$portStyleItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$portStyleItem = value
     }
   },
@@ -1390,7 +1390,7 @@ const TreeLayoutConfig = Class('TreeLayoutConfig', {
 
   /** @type {boolean} */
   enforceGlobalLayeringItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Global Layering',
@@ -1400,10 +1400,10 @@ const TreeLayoutConfig = Class('TreeLayoutConfig', {
         TypeAttribute(YBoolean.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$enforceGlobalLayeringItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$enforceGlobalLayeringItem = value
     }
   },
@@ -1416,7 +1416,7 @@ const TreeLayoutConfig = Class('TreeLayoutConfig', {
 
   /** @type {boolean} */
   orthogonalEdgeRoutingItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Orthogonal Edge Routing',
@@ -1426,10 +1426,10 @@ const TreeLayoutConfig = Class('TreeLayoutConfig', {
         TypeAttribute(YBoolean.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$orthogonalEdgeRoutingItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$orthogonalEdgeRoutingItem = value
     }
   },
@@ -1442,7 +1442,7 @@ const TreeLayoutConfig = Class('TreeLayoutConfig', {
 
   /** @type {number} */
   busAlignmentItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Edge Bus Alignment',
@@ -1458,24 +1458,24 @@ const TreeLayoutConfig = Class('TreeLayoutConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$busAlignmentItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$busAlignmentItem = value
     }
   },
 
   /** @type {boolean} */
   shouldDisableBusAlignmentItem: {
-    $meta: function() {
+    $meta: function () {
       return [TypeAttribute(YBoolean.$class)]
     },
-    get: function() {
+    get: function () {
       return (
-        (this.orthogonalEdgeRoutingItem === false ||
+        this.orthogonalEdgeRoutingItem === false ||
         (this.enforceGlobalLayeringItem === false &&
-          this.childPlacementPolicyItem !== LeafPlacement.ALL_LEAVES_ON_SAME_LAYER))
+          this.childPlacementPolicyItem !== LeafPlacement.ALL_LEAVES_ON_SAME_LAYER)
       )
     }
   },
@@ -1488,7 +1488,7 @@ const TreeLayoutConfig = Class('TreeLayoutConfig', {
 
   /** @type {number} */
   verticalAlignmentItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Vertical Child Alignment',
@@ -1504,20 +1504,20 @@ const TreeLayoutConfig = Class('TreeLayoutConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$verticalAlignmentItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$verticalAlignmentItem = value
     }
   },
 
   /** @type {boolean} */
   shouldDisableVerticalAlignmentItem: {
-    $meta: function() {
+    $meta: function () {
       return [TypeAttribute(YBoolean.$class)]
     },
-    get: function() {
+    get: function () {
       return !this.enforceGlobalLayeringItem
     }
   },
@@ -1530,7 +1530,7 @@ const TreeLayoutConfig = Class('TreeLayoutConfig', {
 
   /** @type {ChildPlacement} */
   childPlacementPolicyItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Child Placement Policy',
@@ -1550,10 +1550,10 @@ const TreeLayoutConfig = Class('TreeLayoutConfig', {
         TypeAttribute(LeafPlacement.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$childPlacementPolicyItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$childPlacementPolicyItem = value
     }
   },
@@ -1565,7 +1565,7 @@ const TreeLayoutConfig = Class('TreeLayoutConfig', {
 
   /** @type {TreeLayoutConfig.EnumEdgeLabeling} */
   edgeLabelingItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Edge Labeling',
@@ -1582,10 +1582,10 @@ const TreeLayoutConfig = Class('TreeLayoutConfig', {
         TypeAttribute(TreeLayoutConfig.EnumEdgeLabeling.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$edgeLabelingItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$edgeLabelingItem = value
       if (value === TreeLayoutConfig.EnumEdgeLabeling.INTEGRATED) {
         this.labelPlacementOrientationItem =
@@ -1604,7 +1604,7 @@ const TreeLayoutConfig = Class('TreeLayoutConfig', {
 
   /** @type {boolean} */
   reduceAmbiguityItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Reduce Ambiguity',
@@ -1614,20 +1614,20 @@ const TreeLayoutConfig = Class('TreeLayoutConfig', {
         TypeAttribute(YBoolean.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$reduceAmbiguityItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$reduceAmbiguityItem = value
     }
   },
 
   /** @type {boolean} */
   shouldDisableReduceAmbiguityItem: {
-    $meta: function() {
+    $meta: function () {
       return [TypeAttribute(YBoolean.$class)]
     },
-    get: function() {
+    get: function () {
       return this.edgeLabelingItem !== TreeLayoutConfig.EnumEdgeLabeling.GENERIC
     }
   },
@@ -1640,7 +1640,7 @@ const TreeLayoutConfig = Class('TreeLayoutConfig', {
 
   /** @type {LayoutConfiguration.EnumLabelPlacementOrientation} */
   labelPlacementOrientationItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Orientation',
@@ -1658,20 +1658,20 @@ const TreeLayoutConfig = Class('TreeLayoutConfig', {
         TypeAttribute(LayoutConfiguration.EnumLabelPlacementOrientation.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$labelPlacementOrientationItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$labelPlacementOrientationItem = value
     }
   },
 
   /** @type {boolean} */
   shouldDisableLabelPlacementOrientationItem: {
-    $meta: function() {
+    $meta: function () {
       return [TypeAttribute(YBoolean.$class)]
     },
-    get: function() {
+    get: function () {
       return this.edgeLabelingItem === TreeLayoutConfig.EnumEdgeLabeling.NONE
     }
   },
@@ -1684,7 +1684,7 @@ const TreeLayoutConfig = Class('TreeLayoutConfig', {
 
   /** @type {LayoutConfiguration.EnumLabelPlacementAlongEdge} */
   labelPlacementAlongEdgeItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Along Edge',
@@ -1704,20 +1704,20 @@ const TreeLayoutConfig = Class('TreeLayoutConfig', {
         TypeAttribute(LayoutConfiguration.EnumLabelPlacementAlongEdge.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$labelPlacementAlongEdgeItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$labelPlacementAlongEdgeItem = value
     }
   },
 
   /** @type {boolean} */
   shouldDisableLabelPlacementAlongEdgeItem: {
-    $meta: function() {
+    $meta: function () {
       return [TypeAttribute(YBoolean.$class)]
     },
-    get: function() {
+    get: function () {
       return this.edgeLabelingItem === TreeLayoutConfig.EnumEdgeLabeling.NONE
     }
   },
@@ -1730,7 +1730,7 @@ const TreeLayoutConfig = Class('TreeLayoutConfig', {
 
   /** @type {LayoutConfiguration.EnumLabelPlacementSideOfEdge} */
   labelPlacementSideOfEdgeItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Side of Edge',
@@ -1749,20 +1749,20 @@ const TreeLayoutConfig = Class('TreeLayoutConfig', {
         TypeAttribute(LayoutConfiguration.EnumLabelPlacementSideOfEdge.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$labelPlacementSideOfEdgeItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$labelPlacementSideOfEdgeItem = value
     }
   },
 
   /** @type {boolean} */
   shouldDisableLabelPlacementSideOfEdgeItem: {
-    $meta: function() {
+    $meta: function () {
       return [TypeAttribute(YBoolean.$class)]
     },
-    get: function() {
+    get: function () {
       return this.edgeLabelingItem === TreeLayoutConfig.EnumEdgeLabeling.NONE
     }
   },
@@ -1775,7 +1775,7 @@ const TreeLayoutConfig = Class('TreeLayoutConfig', {
 
   /** @type {number} */
   labelPlacementDistanceItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Distance',
@@ -1790,24 +1790,24 @@ const TreeLayoutConfig = Class('TreeLayoutConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$labelPlacementDistanceItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$labelPlacementDistanceItem = value
     }
   },
 
   /** @type {boolean} */
   shouldDisableLabelPlacementDistanceItem: {
-    $meta: function() {
+    $meta: function () {
       return [TypeAttribute(YBoolean.$class)]
     },
-    get: function() {
+    get: function () {
       return (
-        (this.edgeLabelingItem === TreeLayoutConfig.EnumEdgeLabeling.NONE ||
+        this.edgeLabelingItem === TreeLayoutConfig.EnumEdgeLabeling.NONE ||
         this.labelPlacementSideOfEdgeItem ===
-          LayoutConfiguration.EnumLabelPlacementSideOfEdge.ON_EDGE)
+          LayoutConfiguration.EnumLabelPlacementSideOfEdge.ON_EDGE
       )
     }
   },
@@ -1815,7 +1815,7 @@ const TreeLayoutConfig = Class('TreeLayoutConfig', {
   $static: {
     // ReSharper restore UnusedMember.Global
     // ReSharper restore InconsistentNaming
-    EnumRoute: new EnumDefinition(function() {
+    EnumRoute: new EnumDefinition(function () {
       return {
         ORTHOGONAL: 0,
         ORGANIC: 1,
@@ -1824,7 +1824,7 @@ const TreeLayoutConfig = Class('TreeLayoutConfig', {
       }
     }),
 
-    EnumEdgeLabeling: new EnumDefinition(function() {
+    EnumEdgeLabeling: new EnumDefinition(function () {
       return {
         NONE: 0,
         INTEGRATED: 1,
@@ -1832,7 +1832,7 @@ const TreeLayoutConfig = Class('TreeLayoutConfig', {
       }
     }),
 
-    EnumStyle: new EnumDefinition(function() {
+    EnumStyle: new EnumDefinition(function () {
       return {
         DEFAULT: 0,
         HORIZONTAL_VERTICAL: 1,
@@ -1841,7 +1841,7 @@ const TreeLayoutConfig = Class('TreeLayoutConfig', {
       }
     }),
 
-    EnumNodePlacer: new EnumDefinition(function() {
+    EnumNodePlacer: new EnumDefinition(function () {
       return {
         DEFAULT: 0,
         SIMPLE: 1,
@@ -1856,7 +1856,7 @@ const TreeLayoutConfig = Class('TreeLayoutConfig', {
       }
     }),
 
-    EnumRootAlignment: new EnumDefinition(function() {
+    EnumRootAlignment: new EnumDefinition(function () {
       return {
         CENTER: 0,
         MEDIAN: 1,

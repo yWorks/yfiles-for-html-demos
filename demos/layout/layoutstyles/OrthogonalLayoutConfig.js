@@ -69,7 +69,7 @@ const OrthogonalLayoutConfig = Class('OrthogonalLayoutConfig', {
   /**
    * Setup default values for various configuration parameters.
    */
-  constructor: function() {
+  constructor: function () {
     LayoutConfiguration.call(this)
 
     this.styleItem = OrthogonalLayoutStyle.NORMAL
@@ -112,7 +112,7 @@ const OrthogonalLayoutConfig = Class('OrthogonalLayoutConfig', {
    *   configuration on.
    * @return {ILayoutAlgorithm} The configured layout.
    */
-  createConfiguredLayout: function(graphComponent) {
+  createConfiguredLayout: function (graphComponent) {
     const layout = new OrthogonalLayout()
     if (this.groupLayoutPolicyItem === OrthogonalLayoutConfig.EnumGroupPolicy.FIX_GROUPS) {
       const fgl = new FixGroupLayoutStage()
@@ -179,7 +179,7 @@ const OrthogonalLayoutConfig = Class('OrthogonalLayoutConfig', {
    * @param {ILayoutAlgorithm} layout
    * @return {null}
    */
-  createConfiguredLayoutData: function(graphComponent, layout) {
+  createConfiguredLayoutData: function (graphComponent, layout) {
     const layoutData = new OrthogonalLayoutData()
     if (this.considerEdgeDirectionItem) {
       layoutData.directedEdges = graphComponent.selection.selectedEdges
@@ -191,7 +191,7 @@ const OrthogonalLayoutConfig = Class('OrthogonalLayoutConfig', {
 
   /** @type {OptionGroup} */
   DescriptionGroup: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute('Description'),
         OptionGroupAttribute('RootGroup', 5),
@@ -203,7 +203,7 @@ const OrthogonalLayoutConfig = Class('OrthogonalLayoutConfig', {
 
   /** @type {OptionGroup} */
   LayoutGroup: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute('General'),
         OptionGroupAttribute('RootGroup', 10),
@@ -215,7 +215,7 @@ const OrthogonalLayoutConfig = Class('OrthogonalLayoutConfig', {
 
   /** @type {OptionGroup} */
   LabelingGroup: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute('Labeling'),
         OptionGroupAttribute('RootGroup', 20),
@@ -227,7 +227,7 @@ const OrthogonalLayoutConfig = Class('OrthogonalLayoutConfig', {
 
   /** @type {OptionGroup} */
   NodePropertiesGroup: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute('Node Settings'),
         OptionGroupAttribute('LabelingGroup', 10),
@@ -239,7 +239,7 @@ const OrthogonalLayoutConfig = Class('OrthogonalLayoutConfig', {
 
   /** @type {OptionGroup} */
   EdgePropertiesGroup: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute('Edge Settings'),
         OptionGroupAttribute('LabelingGroup', 20),
@@ -251,7 +251,7 @@ const OrthogonalLayoutConfig = Class('OrthogonalLayoutConfig', {
 
   /** @type {OptionGroup} */
   PreferredPlacementGroup: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute('Preferred Edge Label Placement'),
         OptionGroupAttribute('LabelingGroup', 30),
@@ -263,7 +263,7 @@ const OrthogonalLayoutConfig = Class('OrthogonalLayoutConfig', {
 
   /** @type {OptionGroup} */
   EdgesGroup: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute('Edges'),
         OptionGroupAttribute('RootGroup', 30),
@@ -275,7 +275,7 @@ const OrthogonalLayoutConfig = Class('OrthogonalLayoutConfig', {
 
   /** @type {OptionGroup} */
   GroupingGroup: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute('Grouping'),
         OptionGroupAttribute('RootGroup', 40),
@@ -287,7 +287,7 @@ const OrthogonalLayoutConfig = Class('OrthogonalLayoutConfig', {
 
   /** @type {OptionGroup} */
   SubstructureLayoutGroup: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute('Substructure Layout'),
         OptionGroupAttribute('RootGroup', 50),
@@ -299,14 +299,14 @@ const OrthogonalLayoutConfig = Class('OrthogonalLayoutConfig', {
 
   /** @type {string} */
   descriptionText: {
-    $meta: function() {
+    $meta: function () {
       return [
         OptionGroupAttribute('DescriptionGroup', 10),
         ComponentAttribute(Components.HTML_BLOCK),
         TypeAttribute(YString.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return "<p style='margin-top:0'>The orthogonal layout style is a multi-purpose layout style for undirected graphs. It is well suited for medium-sized sparse graphs, and produces compact drawings with no overlaps, few crossings, and few bends.</p><p>It is especially fitted for application domains such as</p><ul><li>Software engineering</li><li>Database schema</li><li>System management</li><li>Knowledge representation</li></ul>"
     }
   },
@@ -319,7 +319,7 @@ const OrthogonalLayoutConfig = Class('OrthogonalLayoutConfig', {
 
   /** @type {OrthogonalLayoutStyle} */
   styleItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Layout Style',
@@ -339,20 +339,20 @@ const OrthogonalLayoutConfig = Class('OrthogonalLayoutConfig', {
         TypeAttribute(OrthogonalLayoutStyle.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$styleItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$styleItem = value
     }
   },
 
   /** @type {boolean} */
   shouldDisableStyleItem: {
-    $meta: function() {
+    $meta: function () {
       return [TypeAttribute(YBoolean.$class)]
     },
-    get: function() {
+    get: function () {
       return this.useExistingDrawingAsSketchItem === true
     }
   },
@@ -365,7 +365,7 @@ const OrthogonalLayoutConfig = Class('OrthogonalLayoutConfig', {
 
   /** @type {number} */
   gridSpacingItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Grid Spacing',
@@ -380,10 +380,10 @@ const OrthogonalLayoutConfig = Class('OrthogonalLayoutConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$gridSpacingItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$gridSpacingItem = value
     }
   },
@@ -396,7 +396,7 @@ const OrthogonalLayoutConfig = Class('OrthogonalLayoutConfig', {
 
   /** @type {boolean} */
   edgeLengthReductionItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Length Reduction',
@@ -406,10 +406,10 @@ const OrthogonalLayoutConfig = Class('OrthogonalLayoutConfig', {
         TypeAttribute(YBoolean.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$edgeLengthReductionItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$edgeLengthReductionItem = value
     }
   },
@@ -422,7 +422,7 @@ const OrthogonalLayoutConfig = Class('OrthogonalLayoutConfig', {
 
   /** @type {boolean} */
   useExistingDrawingAsSketchItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Use Drawing as Sketch',
@@ -432,10 +432,10 @@ const OrthogonalLayoutConfig = Class('OrthogonalLayoutConfig', {
         TypeAttribute(YBoolean.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$useExistingDrawingAsSketchItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$useExistingDrawingAsSketchItem = value
     }
   },
@@ -448,7 +448,7 @@ const OrthogonalLayoutConfig = Class('OrthogonalLayoutConfig', {
 
   /** @type {boolean} */
   crossingReductionItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Crossing Reduction',
@@ -458,20 +458,20 @@ const OrthogonalLayoutConfig = Class('OrthogonalLayoutConfig', {
         TypeAttribute(YBoolean.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$crossingReductionItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$crossingReductionItem = value
     }
   },
 
   /** @type {boolean} */
   shouldDisableCrossingReductionItem: {
-    $meta: function() {
+    $meta: function () {
       return [TypeAttribute(YBoolean.$class)]
     },
-    get: function() {
+    get: function () {
       return this.useExistingDrawingAsSketchItem === true
     }
   },
@@ -484,7 +484,7 @@ const OrthogonalLayoutConfig = Class('OrthogonalLayoutConfig', {
 
   /** @type {boolean} */
   perceivedBendsPostprocessingItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Minimize Perceived Bends',
@@ -494,20 +494,20 @@ const OrthogonalLayoutConfig = Class('OrthogonalLayoutConfig', {
         TypeAttribute(YBoolean.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$perceivedBendsPostprocessingItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$perceivedBendsPostprocessingItem = value
     }
   },
 
   /** @type {boolean} */
   shouldDisablePerceivedBendsPostprocessingItem: {
-    $meta: function() {
+    $meta: function () {
       return [TypeAttribute(YBoolean.$class)]
     },
-    get: function() {
+    get: function () {
       return this.useExistingDrawingAsSketchItem === true
     }
   },
@@ -520,7 +520,7 @@ const OrthogonalLayoutConfig = Class('OrthogonalLayoutConfig', {
 
   /** @type {boolean} */
   uniformPortAssignmentItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Uniform Port Assignment',
@@ -530,24 +530,24 @@ const OrthogonalLayoutConfig = Class('OrthogonalLayoutConfig', {
         TypeAttribute(YBoolean.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$uniformPortAssignmentItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$uniformPortAssignmentItem = value
     }
   },
 
   /** @type {boolean} */
   shouldDisableUniformPortAssignmentItem: {
-    $meta: function() {
+    $meta: function () {
       return [TypeAttribute(YBoolean.$class)]
     },
-    get: function() {
+    get: function () {
       return (
-        (!this.useExistingDrawingAsSketchItem &&
+        !this.useExistingDrawingAsSketchItem &&
         this.styleItem !== OrthogonalLayoutStyle.NORMAL &&
-        this.styleItem !== OrthogonalLayoutStyle.UNIFORM)
+        this.styleItem !== OrthogonalLayoutStyle.UNIFORM
       )
     }
   },
@@ -560,7 +560,7 @@ const OrthogonalLayoutConfig = Class('OrthogonalLayoutConfig', {
 
   /** @type {boolean} */
   useRandomizationItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Randomization',
@@ -570,20 +570,20 @@ const OrthogonalLayoutConfig = Class('OrthogonalLayoutConfig', {
         TypeAttribute(YBoolean.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$useRandomizationItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$useRandomizationItem = value
     }
   },
 
   /** @type {boolean} */
   shouldDisableUseRandomizationItem: {
-    $meta: function() {
+    $meta: function () {
       return [TypeAttribute(YBoolean.$class)]
     },
-    get: function() {
+    get: function () {
       return this.useExistingDrawingAsSketchItem === true
     }
   },
@@ -596,7 +596,7 @@ const OrthogonalLayoutConfig = Class('OrthogonalLayoutConfig', {
 
   /** @type {boolean} */
   useFaceMaximizationItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Face Maximization',
@@ -606,10 +606,10 @@ const OrthogonalLayoutConfig = Class('OrthogonalLayoutConfig', {
         TypeAttribute(YBoolean.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$useFaceMaximizationItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$useFaceMaximizationItem = value
     }
   },
@@ -622,7 +622,7 @@ const OrthogonalLayoutConfig = Class('OrthogonalLayoutConfig', {
 
   /** @type {boolean} */
   considerNodeLabelsItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Consider Node Labels',
@@ -632,10 +632,10 @@ const OrthogonalLayoutConfig = Class('OrthogonalLayoutConfig', {
         TypeAttribute(YBoolean.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$considerNodeLabelsItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$considerNodeLabelsItem = value
     }
   },
@@ -648,7 +648,7 @@ const OrthogonalLayoutConfig = Class('OrthogonalLayoutConfig', {
 
   /** @type {OrthogonalLayoutConfig.EnumEdgeLabeling} */
   edgeLabelingItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Edge Labeling',
@@ -665,10 +665,10 @@ const OrthogonalLayoutConfig = Class('OrthogonalLayoutConfig', {
         TypeAttribute(OrthogonalLayoutConfig.EnumEdgeLabeling.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$edgeLabelingItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$edgeLabelingItem = value
     }
   },
@@ -681,7 +681,7 @@ const OrthogonalLayoutConfig = Class('OrthogonalLayoutConfig', {
 
   /** @type {boolean} */
   reduceAmbiguityItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Reduce Ambiguity',
@@ -691,20 +691,20 @@ const OrthogonalLayoutConfig = Class('OrthogonalLayoutConfig', {
         TypeAttribute(YBoolean.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$reduceAmbiguityItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$reduceAmbiguityItem = value
     }
   },
 
   /** @type {boolean} */
   shouldDisableReduceAmbiguityItem: {
-    $meta: function() {
+    $meta: function () {
       return [TypeAttribute(YBoolean.$class)]
     },
-    get: function() {
+    get: function () {
       return this.edgeLabelingItem !== OrthogonalLayoutConfig.EnumEdgeLabeling.GENERIC
     }
   },
@@ -717,7 +717,7 @@ const OrthogonalLayoutConfig = Class('OrthogonalLayoutConfig', {
 
   /** @type {LayoutConfiguration.EnumLabelPlacementOrientation} */
   labelPlacementOrientationItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Orientation',
@@ -735,20 +735,20 @@ const OrthogonalLayoutConfig = Class('OrthogonalLayoutConfig', {
         TypeAttribute(LayoutConfiguration.EnumLabelPlacementOrientation.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$labelPlacementOrientationItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$labelPlacementOrientationItem = value
     }
   },
 
   /** @type {boolean} */
   shouldDisableLabelPlacementOrientationItem: {
-    $meta: function() {
+    $meta: function () {
       return [TypeAttribute(YBoolean.$class)]
     },
-    get: function() {
+    get: function () {
       return this.edgeLabelingItem === OrthogonalLayoutConfig.EnumEdgeLabeling.NONE
     }
   },
@@ -761,7 +761,7 @@ const OrthogonalLayoutConfig = Class('OrthogonalLayoutConfig', {
 
   /** @type {LayoutConfiguration.EnumLabelPlacementAlongEdge} */
   labelPlacementAlongEdgeItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Along Edge',
@@ -781,20 +781,20 @@ const OrthogonalLayoutConfig = Class('OrthogonalLayoutConfig', {
         TypeAttribute(LayoutConfiguration.EnumLabelPlacementAlongEdge.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$labelPlacementAlongEdgeItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$labelPlacementAlongEdgeItem = value
     }
   },
 
   /** @type {boolean} */
   shouldDisableLabelPlacementAlongEdgeItem: {
-    $meta: function() {
+    $meta: function () {
       return [TypeAttribute(YBoolean.$class)]
     },
-    get: function() {
+    get: function () {
       return this.edgeLabelingItem === OrthogonalLayoutConfig.EnumEdgeLabeling.NONE
     }
   },
@@ -807,7 +807,7 @@ const OrthogonalLayoutConfig = Class('OrthogonalLayoutConfig', {
 
   /** @type {LayoutConfiguration.EnumLabelPlacementSideOfEdge} */
   labelPlacementSideOfEdgeItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Side of Edge',
@@ -826,20 +826,20 @@ const OrthogonalLayoutConfig = Class('OrthogonalLayoutConfig', {
         TypeAttribute(LayoutConfiguration.EnumLabelPlacementSideOfEdge.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$labelPlacementSideOfEdgeItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$labelPlacementSideOfEdgeItem = value
     }
   },
 
   /** @type {boolean} */
   shouldDisableLabelPlacementSideOfEdgeItem: {
-    $meta: function() {
+    $meta: function () {
       return [TypeAttribute(YBoolean.$class)]
     },
-    get: function() {
+    get: function () {
       return this.edgeLabelingItem === OrthogonalLayoutConfig.EnumEdgeLabeling.NONE
     }
   },
@@ -852,7 +852,7 @@ const OrthogonalLayoutConfig = Class('OrthogonalLayoutConfig', {
 
   /** @type {number} */
   labelPlacementDistanceItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Distance',
@@ -867,24 +867,24 @@ const OrthogonalLayoutConfig = Class('OrthogonalLayoutConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$labelPlacementDistanceItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$labelPlacementDistanceItem = value
     }
   },
 
   /** @type {boolean} */
   shouldDisableLabelPlacementDistanceItem: {
-    $meta: function() {
+    $meta: function () {
       return [TypeAttribute(YBoolean.$class)]
     },
-    get: function() {
+    get: function () {
       return (
-        (this.edgeLabelingItem === OrthogonalLayoutConfig.EnumEdgeLabeling.NONE ||
+        this.edgeLabelingItem === OrthogonalLayoutConfig.EnumEdgeLabeling.NONE ||
         this.labelPlacementSideOfEdgeItem ===
-          LayoutConfiguration.EnumLabelPlacementSideOfEdge.ON_EDGE)
+          LayoutConfiguration.EnumLabelPlacementSideOfEdge.ON_EDGE
       )
     }
   },
@@ -897,7 +897,7 @@ const OrthogonalLayoutConfig = Class('OrthogonalLayoutConfig', {
 
   /** @type {number} */
   minimumFirstSegmentLengthItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Minimum First Segment Length',
@@ -912,10 +912,10 @@ const OrthogonalLayoutConfig = Class('OrthogonalLayoutConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$minimumFirstSegmentLengthItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$minimumFirstSegmentLengthItem = value
     }
   },
@@ -928,7 +928,7 @@ const OrthogonalLayoutConfig = Class('OrthogonalLayoutConfig', {
 
   /** @type {number} */
   minimumSegmentLengthItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Minimum Segment Length',
@@ -943,10 +943,10 @@ const OrthogonalLayoutConfig = Class('OrthogonalLayoutConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$minimumSegmentLengthItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$minimumSegmentLengthItem = value
     }
   },
@@ -959,7 +959,7 @@ const OrthogonalLayoutConfig = Class('OrthogonalLayoutConfig', {
 
   /** @type {number} */
   minimumLastSegmentLengthItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Minimum Last Segment Length',
@@ -974,10 +974,10 @@ const OrthogonalLayoutConfig = Class('OrthogonalLayoutConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$minimumLastSegmentLengthItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$minimumLastSegmentLengthItem = value
     }
   },
@@ -990,7 +990,7 @@ const OrthogonalLayoutConfig = Class('OrthogonalLayoutConfig', {
 
   /** @type {number} */
   considerEdgeDirectionItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Route Selected Edges Downwards',
@@ -1000,10 +1000,10 @@ const OrthogonalLayoutConfig = Class('OrthogonalLayoutConfig', {
         TypeAttribute(YBoolean.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$considerEdgeDirectionItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$considerEdgeDirectionItem = value
     }
   },
@@ -1016,7 +1016,7 @@ const OrthogonalLayoutConfig = Class('OrthogonalLayoutConfig', {
 
   /** @type {OrthogonalLayoutConfig.EnumGroupPolicy} */
   groupLayoutPolicyItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute('Group Layout Policy', '#/api/FixGroupLayoutStage'),
         OptionGroupAttribute('GroupingGroup', 10),
@@ -1030,10 +1030,10 @@ const OrthogonalLayoutConfig = Class('OrthogonalLayoutConfig', {
         TypeAttribute(OrthogonalLayoutConfig.EnumGroupPolicy.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$groupLayoutPolicyItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$groupLayoutPolicyItem = value
     }
   },
@@ -1046,7 +1046,7 @@ const OrthogonalLayoutConfig = Class('OrthogonalLayoutConfig', {
 
   /** @type {CycleLayoutStyle} */
   cycleSubstructureStyleItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute('Cycles', '#/api/OrthogonalLayout#OrthogonalLayout-property-cycleStyle'),
         OptionGroupAttribute('SubstructureLayoutGroup', 10),
@@ -1060,10 +1060,10 @@ const OrthogonalLayoutConfig = Class('OrthogonalLayoutConfig', {
         TypeAttribute(CycleLayoutStyle.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$cycleSubstructureStyleItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$cycleSubstructureStyleItem = value
     }
   },
@@ -1076,7 +1076,7 @@ const OrthogonalLayoutConfig = Class('OrthogonalLayoutConfig', {
 
   /** @type {number} */
   cycleSubstructureSizeItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Minimum Cycle Size',
@@ -1092,20 +1092,20 @@ const OrthogonalLayoutConfig = Class('OrthogonalLayoutConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$cycleSubstructureSizeItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$cycleSubstructureSizeItem = value
     }
   },
 
   /** @type {boolean} */
   shouldDisableCycleSubstructureSizeItem: {
-    $meta: function() {
+    $meta: function () {
       return [TypeAttribute(YBoolean.$class)]
     },
-    get: function() {
+    get: function () {
       return this.cycleSubstructureStyleItem === CycleLayoutStyle.NONE
     }
   },
@@ -1118,7 +1118,7 @@ const OrthogonalLayoutConfig = Class('OrthogonalLayoutConfig', {
 
   /** @type {ChainLayoutStyle} */
   chainSubstructureStyleItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute('Chains', '#/api/OrthogonalLayout#OrthogonalLayout-property-chainStyle'),
         OptionGroupAttribute('SubstructureLayoutGroup', 30),
@@ -1133,10 +1133,10 @@ const OrthogonalLayoutConfig = Class('OrthogonalLayoutConfig', {
         TypeAttribute(CycleLayoutStyle.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$chainSubstructureStyleItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$chainSubstructureStyleItem = value
     }
   },
@@ -1149,7 +1149,7 @@ const OrthogonalLayoutConfig = Class('OrthogonalLayoutConfig', {
 
   /** @type {number} */
   chainSubstructureSizeItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Minimum Chain Length',
@@ -1165,20 +1165,20 @@ const OrthogonalLayoutConfig = Class('OrthogonalLayoutConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$chainSubstructureSizeItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$chainSubstructureSizeItem = value
     }
   },
 
   /** @type {boolean} */
   shouldDisableChainSubstructureSizeItem: {
-    $meta: function() {
+    $meta: function () {
       return [TypeAttribute(YBoolean.$class)]
     },
-    get: function() {
+    get: function () {
       return this.chainSubstructureStyleItem === ChainLayoutStyle.NONE
     }
   },
@@ -1191,7 +1191,7 @@ const OrthogonalLayoutConfig = Class('OrthogonalLayoutConfig', {
 
   /** @type {TreeLayoutStyle} */
   treeSubstructureStyleItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute('Tree Style', '#/api/OrthogonalLayout#OrthogonalLayout-property-treeStyle'),
         OptionGroupAttribute('SubstructureLayoutGroup', 50),
@@ -1207,10 +1207,10 @@ const OrthogonalLayoutConfig = Class('OrthogonalLayoutConfig', {
         TypeAttribute(CycleLayoutStyle.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$treeSubstructureStyleItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$treeSubstructureStyleItem = value
     }
   },
@@ -1223,7 +1223,7 @@ const OrthogonalLayoutConfig = Class('OrthogonalLayoutConfig', {
 
   /** @type {number} */
   treeSubstructureSizeItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Minimum Tree Size',
@@ -1239,20 +1239,20 @@ const OrthogonalLayoutConfig = Class('OrthogonalLayoutConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$treeSubstructureSizeItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$treeSubstructureSizeItem = value
     }
   },
 
   /** @type {boolean} */
   shouldDisableTreeSubstructureSizeItem: {
-    $meta: function() {
+    $meta: function () {
       return [TypeAttribute(YBoolean.$class)]
     },
-    get: function() {
+    get: function () {
       return this.treeSubstructureStyleItem === TreeLayoutStyle.NONE
     }
   },
@@ -1265,7 +1265,7 @@ const OrthogonalLayoutConfig = Class('OrthogonalLayoutConfig', {
 
   /** @type {SubstructureOrientation} */
   treeSubstructureOrientationItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Tree Orientation',
@@ -1284,20 +1284,20 @@ const OrthogonalLayoutConfig = Class('OrthogonalLayoutConfig', {
         TypeAttribute(SubstructureOrientation.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$treeSubstructureOrientationItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$treeSubstructureOrientationItem = value
     }
   },
 
   /** @type {boolean} */
   shouldDisableTreeSubstructureOrientationItem: {
-    $meta: function() {
+    $meta: function () {
       return [TypeAttribute(YBoolean.$class)]
     },
-    get: function() {
+    get: function () {
       return this.treeSubstructureStyleItem === TreeLayoutStyle.NONE
     }
   },
@@ -1305,7 +1305,7 @@ const OrthogonalLayoutConfig = Class('OrthogonalLayoutConfig', {
   /**
    * Enables different layout styles for possible detected substructures.
    */
-  enableSubstructures: function() {
+  enableSubstructures: function () {
     this.chainSubstructureStyleItem = ChainLayoutStyle.WRAPPED_WITH_NODES_AT_TURNS
     this.chainSubstructureSizeItem = 2
     this.cycleSubstructureStyleItem = CycleLayoutStyle.CIRCULAR_WITH_BENDS_AT_CORNERS

@@ -164,7 +164,7 @@ export class MySimpleArrow
 
     const path = this.arrowFigure!.createSvgPath()
 
-      // Remember thickness for update
+    // Remember thickness for update
     ;(<any>path)['data-renderDataCache'] = this.arrowThickness
 
     // rotate the arrow and move it to correct position

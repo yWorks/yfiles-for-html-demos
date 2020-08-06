@@ -91,8 +91,6 @@ export default class ServerSideImageExport {
     // Determine the bounds of the exported area
     const targetRect = exportRect || exportComponent.contentRect
 
-    exportComponent.zoomTo(targetRect)
-
     // Create the exporter class
     const exporter = new SvgExport(targetRect, this.scale)
     exporter.margins = this.margins

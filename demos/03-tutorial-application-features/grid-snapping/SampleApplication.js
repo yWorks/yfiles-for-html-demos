@@ -268,7 +268,7 @@ function createRadioGroup(containerElement, groupName, map, checkedKey, callback
     }
     input.addEventListener(
       'change',
-      function(value) {
+      function (value) {
         callback(value)
       }.bind(null, map.get(key))
     )
@@ -307,7 +307,7 @@ function createColorPicker(sortedGridColors, gridColors) {
 
     rect.addEventListener(
       'click',
-      function(fill, rect) {
+      function (fill, rect) {
         const selectedColors = Array.from(gridColorPicker.querySelectorAll('.selectedColor'))
         selectedColors.forEach(rect => removeClass(rect, 'selectedColor'))
         addClass(rect, 'selectedColor')

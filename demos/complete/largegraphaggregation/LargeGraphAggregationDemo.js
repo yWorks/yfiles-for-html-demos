@@ -88,7 +88,10 @@ import {
 import { bindAction, bindChangeListener, bindCommand, showApp } from '../../resources/demo-app.js'
 import loadJson from '../../resources/load-json.js'
 import { AggregationHelper, AggregationNodeInfo } from './AggregationHelper.js'
-import { AggregationGraphWrapper, EdgeReplacementPolicy } from './AggregationGraphWrapper.js'
+import {
+  AggregationGraphWrapper,
+  EdgeReplacementPolicy
+} from '../../utils/AggregationGraphWrapper.js'
 import SampleGraph from './resources/SampleGraph.js'
 
 /** @type {GraphComponent} */

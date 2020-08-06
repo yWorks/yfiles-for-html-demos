@@ -69,7 +69,7 @@ export default class App extends Component {
   addNode() {
     const newIdx =
       this.state.graphData.nodesSource.reduce((maxId, item) => Math.max(maxId, item.id), 0) + 1
-    const parentNodeIdx = Math.floor(Math.random() * (this.state.graphData.nodesSource.length - 1))
+    const parentNodeIdx = Math.floor(Math.random() * this.state.graphData.nodesSource.length)
     this.setState(state => {
       const nodesSource = state.graphData.nodesSource.concat({
         id: newIdx,
@@ -96,9 +96,7 @@ export default class App extends Component {
 
   removeNode() {
     this.setState(state => {
-      const randomNodeIdx = Math.floor(
-        Math.random() * (this.state.graphData.nodesSource.length - 1)
-      )
+      const randomNodeIdx = Math.floor(Math.random() * this.state.graphData.nodesSource.length)
       const newNodesSource = [...state.graphData.nodesSource]
       newNodesSource.splice(randomNodeIdx, 1)
 

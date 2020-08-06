@@ -44,6 +44,12 @@ import {
   TreeReductionStage
 } from 'yfiles'
 
+enum TierType {
+  COMMON_NODE,
+  LEFT_TREE_GROUP_NODE,
+  RIGHT_TREE_GROUP_NODE
+}
+
 /**
  * Demonstrates how to use the recursive group layout to realize different layouts of elements assigned
  * to different tiers.
@@ -177,10 +183,4 @@ function getTierType(node: INode, graph: IGraph): TierType {
     }
   }
   return TierType.COMMON_NODE
-}
-
-enum TierType {
-  COMMON_NODE,
-  LEFT_TREE_GROUP_NODE,
-  RIGHT_TREE_GROUP_NODE
 }

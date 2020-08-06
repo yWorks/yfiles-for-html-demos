@@ -32,6 +32,7 @@ import {
   Component,
   ComponentFactoryResolver,
   Injector,
+  NgZone,
   ViewChild
 } from '@angular/core'
 import {
@@ -64,46 +65,67 @@ export class AppComponent implements AfterViewInit {
 
   public currentPerson?: Person
 
+  // eslint-disable-next-line no-useless-constructor
   constructor(
     private _injector: Injector,
     private _resolver: ComponentFactoryResolver,
-    private _appRef: ApplicationRef
+    private _appRef: ApplicationRef,
+    private _zone: NgZone
   ) {}
 
   ngAfterViewInit() {
-    const graphComponent = this.gcComponent.graphComponent
-    const graph = graphComponent.graph
+    // run outside Angular so the change detection won't slow down yFiles
+    this._zone.runOutsideAngular(() => {
+      const graphComponent = this.gcComponent.graphComponent
+      const graph = graphComponent.graph
 
-    graph.nodeDefaults.size = new Size(285, 100)
-    graph.nodeDefaults.style = new NodeComponentStyle(this._injector, this._resolver, this._appRef)
+      graph.nodeDefaults.size = new Size(285, 100)
+      graph.nodeDefaults.style = new NodeComponentStyle(
+        this._injector,
+        this._resolver,
+        this._appRef,
+        this._zone
+      )
 
-    graph.edgeDefaults.style = new PolylineEdgeStyle({
-      stroke: '2px rgb(170, 170, 170)',
-      targetArrow: IArrow.NONE
+      graph.edgeDefaults.style = new PolylineEdgeStyle({
+        stroke: '2px rgb(170, 170, 170)',
+        targetArrow: IArrow.NONE
+      })
+
+      graphComponent.addCurrentItemChangedListener(() => {
+        this.currentPerson = graphComponent.currentItem!.tag
+      })
+
+      createSampleGraph(graph)
+
+      runLayout(graph)
+
+      graphComponent.fitGraphBounds()
     })
-
-    graphComponent.addCurrentItemChangedListener(() => {
-      this.currentPerson = graphComponent.currentItem!.tag
-    })
-
-    createSampleGraph(graph)
-
-    runLayout(graph)
-
-    graphComponent.fitGraphBounds()
   }
 
   zoomIn() {
-    ICommand.INCREASE_ZOOM.execute(null, this.gcComponent.graphComponent)
+    this._zone.runOutsideAngular(() => {
+      ICommand.INCREASE_ZOOM.execute(null, this.gcComponent.graphComponent)
+    })
   }
+
   zoomOriginal() {
-    ICommand.ZOOM.execute(1, this.gcComponent.graphComponent)
+    this._zone.runOutsideAngular(() => {
+      ICommand.ZOOM.execute(1, this.gcComponent.graphComponent)
+    })
   }
+
   zoomOut() {
-    ICommand.DECREASE_ZOOM.execute(null, this.gcComponent.graphComponent)
+    this._zone.runOutsideAngular(() => {
+      ICommand.DECREASE_ZOOM.execute(null, this.gcComponent.graphComponent)
+    })
   }
+
   fitContent() {
-    ICommand.FIT_GRAPH_BOUNDS.execute(null, this.gcComponent.graphComponent)
+    this._zone.runOutsideAngular(() => {
+      ICommand.FIT_GRAPH_BOUNDS.execute(null, this.gcComponent.graphComponent)
+    })
   }
 }
 

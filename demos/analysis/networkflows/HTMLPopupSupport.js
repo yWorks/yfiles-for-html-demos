@@ -215,7 +215,6 @@ export default class HTMLPopupSupport {
   setLocation(x, y) {
     // Calculate the view coordinates since we have to place the div in the regular HTML coordinate space
     const viewPoint = this.graphComponent.toViewCoordinates(new Point(x, y))
-    this.div.style.left = `${viewPoint.x}px`
-    this.div.style.top = `${viewPoint.y}px`
+    this.div.style.setProperty('transform', `translate(${viewPoint.x}px, ${viewPoint.y}px)`)
   }
 }

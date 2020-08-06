@@ -69,7 +69,7 @@ const PartialLayoutConfig = Class('PartialLayoutConfig', {
   /**
    * Setup default values for various configuration parameters.
    */
-  constructor: function() {
+  constructor: function () {
     LayoutConfiguration.call(this)
     this.routingToSubgraphItem = PartialLayoutEdgeRoutingStrategy.AUTOMATIC
     this.componentAssignmentStrategyItem = ComponentAssignmentStrategy.CONNECTED
@@ -86,7 +86,7 @@ const PartialLayoutConfig = Class('PartialLayoutConfig', {
    *   configuration on.
    * @return {ILayoutAlgorithm} The configured layout.
    */
-  createConfiguredLayout: function(graphComponent) {
+  createConfiguredLayout: function (graphComponent) {
     const layout = new PartialLayout()
     layout.considerNodeAlignment = this.alignNodesItem
     layout.minimumNodeDistance = this.minNodeDistItem
@@ -123,7 +123,7 @@ const PartialLayoutConfig = Class('PartialLayoutConfig', {
    * Creates and configures the layout data.
    * @return {LayoutData} The configured layout data.
    */
-  createConfiguredLayoutData: function(graphComponent, layout) {
+  createConfiguredLayoutData: function (graphComponent, layout) {
     return new PartialLayoutData({
       affectedNodes: graphComponent.selection.selectedNodes,
       affectedEdges: graphComponent.selection.selectedEdges
@@ -134,7 +134,7 @@ const PartialLayoutConfig = Class('PartialLayoutConfig', {
   // ReSharper disable InconsistentNaming
   /** @type {OptionGroup} */
   DescriptionGroup: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute('Description'),
         OptionGroupAttribute('RootGroup', 5),
@@ -146,7 +146,7 @@ const PartialLayoutConfig = Class('PartialLayoutConfig', {
 
   /** @type {OptionGroup} */
   LayoutGroup: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute('General'),
         OptionGroupAttribute('RootGroup', 10),
@@ -158,14 +158,14 @@ const PartialLayoutConfig = Class('PartialLayoutConfig', {
 
   /** @type {string} */
   descriptionText: {
-    $meta: function() {
+    $meta: function () {
       return [
         OptionGroupAttribute('DescriptionGroup', 10),
         ComponentAttribute(Components.HTML_BLOCK),
         TypeAttribute(YString.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return "<p style='margin-top:0'>Partial layout arranges user-specified parts of a diagram, the so-called partial elements, while keeping the other parts fixed. It is related to incremental graph layout. This concept is a perfect fit for incremental scenarios where subsequently added parts should be arranged so that they fit into a given, unchanged diagram.</p><p>In a first step, partial elements are combined to form subgraph components. Subsequently, these are arranged and afterwards placed so that the remainder of the diagram, which consists of the so-called fixed elements, is not affected.</p><p>Placing a subgraph component predominantly means finding a good position that both meets certain proximity criteria and offers enough space to accommodate the subgraph component.</p>"
     }
   },
@@ -178,7 +178,7 @@ const PartialLayoutConfig = Class('PartialLayoutConfig', {
 
   /** @type {PartialLayoutEdgeRoutingStrategy} */
   routingToSubgraphItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Edge Routing Style',
@@ -197,10 +197,10 @@ const PartialLayoutConfig = Class('PartialLayoutConfig', {
         TypeAttribute(PartialLayoutEdgeRoutingStrategy.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$routingToSubgraphItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$routingToSubgraphItem = value
     }
   },
@@ -213,7 +213,7 @@ const PartialLayoutConfig = Class('PartialLayoutConfig', {
 
   /** @type {ComponentAssignmentStrategy} */
   componentAssignmentStrategyItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Placement Strategy',
@@ -231,10 +231,10 @@ const PartialLayoutConfig = Class('PartialLayoutConfig', {
         TypeAttribute(ComponentAssignmentStrategy.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$componentAssignmentStrategyItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$componentAssignmentStrategyItem = value
     }
   },
@@ -247,7 +247,7 @@ const PartialLayoutConfig = Class('PartialLayoutConfig', {
 
   /** @type {PartialLayoutConfig.EnumSubgraphLayouts} */
   subgraphLayoutItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Subgraph Layouter',
@@ -266,10 +266,10 @@ const PartialLayoutConfig = Class('PartialLayoutConfig', {
         TypeAttribute(PartialLayoutConfig.EnumSubgraphLayouts.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$subgraphLayoutItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$subgraphLayoutItem = value
     }
   },
@@ -282,7 +282,7 @@ const PartialLayoutConfig = Class('PartialLayoutConfig', {
 
   /** @type {SubgraphPlacement} */
   subgraphPlacementItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Preferred Placement',
@@ -298,10 +298,10 @@ const PartialLayoutConfig = Class('PartialLayoutConfig', {
         TypeAttribute(SubgraphPlacement.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$subgraphPlacementItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$subgraphPlacementItem = value
     }
   },
@@ -314,7 +314,7 @@ const PartialLayoutConfig = Class('PartialLayoutConfig', {
 
   /** @type {number} */
   minNodeDistItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Minimum Node Distance',
@@ -329,10 +329,10 @@ const PartialLayoutConfig = Class('PartialLayoutConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$minNodeDistItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$minNodeDistItem = value
     }
   },
@@ -345,7 +345,7 @@ const PartialLayoutConfig = Class('PartialLayoutConfig', {
 
   /** @type {PartialLayoutOrientation} */
   orientationItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Orientation',
@@ -365,10 +365,10 @@ const PartialLayoutConfig = Class('PartialLayoutConfig', {
         TypeAttribute(PartialLayoutOrientation.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$orientationItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$orientationItem = value
     }
   },
@@ -381,7 +381,7 @@ const PartialLayoutConfig = Class('PartialLayoutConfig', {
 
   /** @type {boolean} */
   alignNodesItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Align Nodes',
@@ -391,10 +391,10 @@ const PartialLayoutConfig = Class('PartialLayoutConfig', {
         TypeAttribute(YBoolean.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$alignNodesItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$alignNodesItem = value
     }
   },

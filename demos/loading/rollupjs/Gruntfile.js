@@ -39,14 +39,14 @@ const root = path.join(__dirname, '../../../')
 const build = path.join(__dirname, 'build')
 const dist = path.join(__dirname, 'dist')
 
-module.exports = function(grunt) {
+module.exports = function (grunt) {
   grunt.registerTask('default', ['clean', 'copy', 'rollup'])
   grunt.registerTask('production', ['enable-prod', 'clean', 'optimize', 'rollup'])
-  grunt.registerTask('enable-prod', function() {
+  grunt.registerTask('enable-prod', function () {
     process.env.NODE_ENV = 'production'
   })
 
-  grunt.registerMultiTask('optimize', function() {
+  grunt.registerMultiTask('optimize', function () {
     const files = this.files
 
     for (const file of files) {
@@ -89,7 +89,7 @@ module.exports = function(grunt) {
     })
   })
 
-  grunt.registerTask('rollup', function() {
+  grunt.registerTask('rollup', function () {
     const done = this.async()
 
     rollup

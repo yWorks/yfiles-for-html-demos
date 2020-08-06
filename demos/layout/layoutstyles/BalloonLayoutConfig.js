@@ -70,7 +70,7 @@ const BalloonLayoutConfig = Class('BalloonLayoutConfig', {
   /**
    * Setup default values for various configuration parameters.
    */
-  constructor: function() {
+  constructor: function () {
     LayoutConfiguration.call(this)
     this.$initBalloonLayoutConfig()
     const layout = new BalloonLayout()
@@ -103,7 +103,7 @@ const BalloonLayoutConfig = Class('BalloonLayoutConfig', {
    *   configuration on.
    * @return {ILayoutAlgorithm} The configured layout algorithm.
    */
-  createConfiguredLayout: function(graphComponent) {
+  createConfiguredLayout: function (graphComponent) {
     const layout = new BalloonLayout()
 
     layout.componentLayout.style = ComponentArrangementStyles.MULTI_ROWS
@@ -213,7 +213,7 @@ const BalloonLayoutConfig = Class('BalloonLayoutConfig', {
    * Creates and configures the layout data.
    * @return {LayoutData} The configured layout data.
    */
-  createConfiguredLayoutData: function(graphComponent, layout) {
+  createConfiguredLayoutData: function (graphComponent, layout) {
     const layoutData = new BalloonLayoutData()
 
     if (this.rootNodePolicyItem === RootNodePolicy.SELECTED_ROOT) {
@@ -232,7 +232,7 @@ const BalloonLayoutConfig = Class('BalloonLayoutConfig', {
   // ReSharper disable UnusedMember.Global
   /** @type {OptionGroup} */
   DescriptionGroup: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute('Description'),
         OptionGroupAttribute('RootGroup', 5),
@@ -244,7 +244,7 @@ const BalloonLayoutConfig = Class('BalloonLayoutConfig', {
 
   /** @type {OptionGroup} */
   GeneralGroup: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute('General'),
         OptionGroupAttribute('RootGroup', 10),
@@ -256,7 +256,7 @@ const BalloonLayoutConfig = Class('BalloonLayoutConfig', {
 
   /** @type {OptionGroup} */
   LabelingGroup: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute('Labeling'),
         OptionGroupAttribute('RootGroup', 20),
@@ -268,7 +268,7 @@ const BalloonLayoutConfig = Class('BalloonLayoutConfig', {
 
   /** @type {OptionGroup} */
   NodePropertiesGroup: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute('Node Settings'),
         OptionGroupAttribute('LabelingGroup', 10),
@@ -280,7 +280,7 @@ const BalloonLayoutConfig = Class('BalloonLayoutConfig', {
 
   /** @type {OptionGroup} */
   EdgePropertiesGroup: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute('Edge Settings'),
         OptionGroupAttribute('LabelingGroup', 20),
@@ -292,7 +292,7 @@ const BalloonLayoutConfig = Class('BalloonLayoutConfig', {
 
   /** @type {OptionGroup} */
   PreferredPlacementGroup: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute('Preferred Edge Label Placement'),
         OptionGroupAttribute('LabelingGroup', 30),
@@ -306,18 +306,18 @@ const BalloonLayoutConfig = Class('BalloonLayoutConfig', {
   // ReSharper restore InconsistentNaming
   /** @type {string} */
   descriptionText: {
-    $meta: function() {
+    $meta: function () {
       return [
         OptionGroupAttribute('DescriptionGroup', 10),
         ComponentAttribute(Components.HTML_BLOCK),
         TypeAttribute(YString.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return (
-        ("<p style='margin-top:0'>The balloon layout style is a tree layout style that" +
+        "<p style='margin-top:0'>The balloon layout style is a tree layout style that" +
         ' positions the subtrees in a radial fashion around their root nodes. It is ideally' +
-        ' suited for larger trees.</p>')
+        ' suited for larger trees.</p>'
       )
     }
   },
@@ -330,7 +330,7 @@ const BalloonLayoutConfig = Class('BalloonLayoutConfig', {
 
   /** @type {RootNodePolicy} */
   rootNodePolicyItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Root Node Policy',
@@ -348,10 +348,10 @@ const BalloonLayoutConfig = Class('BalloonLayoutConfig', {
         TypeAttribute(RootNodePolicy.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$rootNodePolicyItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$rootNodePolicyItem = value
     }
   },
@@ -364,7 +364,7 @@ const BalloonLayoutConfig = Class('BalloonLayoutConfig', {
 
   /** @type {BalloonLayoutConfig.EnumRoute} */
   routingStyleForNonTreeEdgesItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Routing Style for Non-Tree Edges',
@@ -382,10 +382,10 @@ const BalloonLayoutConfig = Class('BalloonLayoutConfig', {
         TypeAttribute(BalloonLayoutConfig.EnumRoute.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$routingStyleForNonTreeEdgesItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$routingStyleForNonTreeEdgesItem = value
     }
   },
@@ -398,7 +398,7 @@ const BalloonLayoutConfig = Class('BalloonLayoutConfig', {
 
   /** @type {boolean} */
   actOnSelectionOnlyItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Act on Selection Only',
@@ -408,10 +408,10 @@ const BalloonLayoutConfig = Class('BalloonLayoutConfig', {
         TypeAttribute(YBoolean.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$actOnSelectionOnlyItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$actOnSelectionOnlyItem = value
     }
   },
@@ -424,7 +424,7 @@ const BalloonLayoutConfig = Class('BalloonLayoutConfig', {
 
   /** @type {number} */
   edgeBundlingStrengthItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Bundling Strength',
@@ -440,20 +440,20 @@ const BalloonLayoutConfig = Class('BalloonLayoutConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$edgeBundlingStrengthItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$edgeBundlingStrengthItem = value
     }
   },
 
   /** @type {boolean} */
   shouldDisableEdgeBundlingStrengthItem: {
-    $meta: function() {
+    $meta: function () {
       return [TypeAttribute(YBoolean.$class)]
     },
-    get: function() {
+    get: function () {
       return this.routingStyleForNonTreeEdgesItem !== BalloonLayoutConfig.EnumRoute.BUNDLED
     }
   },
@@ -466,7 +466,7 @@ const BalloonLayoutConfig = Class('BalloonLayoutConfig', {
 
   /** @type {number} */
   preferredChildWedgeItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Preferred Child Wedge',
@@ -481,10 +481,10 @@ const BalloonLayoutConfig = Class('BalloonLayoutConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$preferredChildWedgeItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$preferredChildWedgeItem = value
     }
   },
@@ -497,7 +497,7 @@ const BalloonLayoutConfig = Class('BalloonLayoutConfig', {
 
   /** @type {number} */
   preferredRootWedgeItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Preferred Root Wedge',
@@ -512,10 +512,10 @@ const BalloonLayoutConfig = Class('BalloonLayoutConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$preferredRootWedgeItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$preferredRootWedgeItem = value
     }
   },
@@ -528,7 +528,7 @@ const BalloonLayoutConfig = Class('BalloonLayoutConfig', {
 
   /** @type {number} */
   minimumEdgeLengthItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Minimum Edge Length',
@@ -543,10 +543,10 @@ const BalloonLayoutConfig = Class('BalloonLayoutConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$minimumEdgeLengthItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$minimumEdgeLengthItem = value
     }
   },
@@ -559,7 +559,7 @@ const BalloonLayoutConfig = Class('BalloonLayoutConfig', {
 
   /** @type {number} */
   compactnessFactorItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Compactness Factor',
@@ -575,10 +575,10 @@ const BalloonLayoutConfig = Class('BalloonLayoutConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$compactnessFactorItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$compactnessFactorItem = value
     }
   },
@@ -591,7 +591,7 @@ const BalloonLayoutConfig = Class('BalloonLayoutConfig', {
 
   /** @type {boolean} */
   allowOverlapsItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Allow Overlaps',
@@ -601,10 +601,10 @@ const BalloonLayoutConfig = Class('BalloonLayoutConfig', {
         TypeAttribute(YBoolean.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$allowOverlapsItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$allowOverlapsItem = value
     }
   },
@@ -617,7 +617,7 @@ const BalloonLayoutConfig = Class('BalloonLayoutConfig', {
 
   /** @type {boolean} */
   balloonFromSketchItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Use Drawing as Sketch',
@@ -627,10 +627,10 @@ const BalloonLayoutConfig = Class('BalloonLayoutConfig', {
         TypeAttribute(YBoolean.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$balloonFromSketchItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$balloonFromSketchItem = value
     }
   },
@@ -643,7 +643,7 @@ const BalloonLayoutConfig = Class('BalloonLayoutConfig', {
 
   /** @type {boolean} */
   placeChildrenInterleavedItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Place Children Interleaved',
@@ -653,10 +653,10 @@ const BalloonLayoutConfig = Class('BalloonLayoutConfig', {
         TypeAttribute(YBoolean.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$placeChildrenInterleavedItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$placeChildrenInterleavedItem = value
     }
   },
@@ -669,7 +669,7 @@ const BalloonLayoutConfig = Class('BalloonLayoutConfig', {
 
   /** @type {boolean} */
   straightenChainsItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Straighten Chains',
@@ -679,10 +679,10 @@ const BalloonLayoutConfig = Class('BalloonLayoutConfig', {
         TypeAttribute(YBoolean.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$straightenChainsItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$straightenChainsItem = value
     }
   },
@@ -695,7 +695,7 @@ const BalloonLayoutConfig = Class('BalloonLayoutConfig', {
 
   /** @type {BalloonLayoutConfig.EnumNodeLabelingPolicies} */
   nodeLabelingStyleItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Node Labeling',
@@ -716,10 +716,10 @@ const BalloonLayoutConfig = Class('BalloonLayoutConfig', {
         TypeAttribute(BalloonLayoutConfig.EnumNodeLabelingPolicies.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$nodeLabelingStyleItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$nodeLabelingStyleItem = value
     }
   },
@@ -731,7 +731,7 @@ const BalloonLayoutConfig = Class('BalloonLayoutConfig', {
 
   /** @type {BalloonLayoutConfig.EnumEdgeLabeling} */
   edgeLabelingItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Edge Labeling',
@@ -748,10 +748,10 @@ const BalloonLayoutConfig = Class('BalloonLayoutConfig', {
         TypeAttribute(BalloonLayoutConfig.EnumEdgeLabeling.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$edgeLabelingItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$edgeLabelingItem = value
       if (value === BalloonLayoutConfig.EnumEdgeLabeling.INTEGRATED) {
         this.labelPlacementOrientationItem =
@@ -770,7 +770,7 @@ const BalloonLayoutConfig = Class('BalloonLayoutConfig', {
 
   /** @type {boolean} */
   reduceAmbiguityItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Reduce Ambiguity',
@@ -780,20 +780,20 @@ const BalloonLayoutConfig = Class('BalloonLayoutConfig', {
         TypeAttribute(YBoolean.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$reduceAmbiguityItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$reduceAmbiguityItem = value
     }
   },
 
   /** @type {boolean} */
   shouldDisableReduceAmbiguityItem: {
-    $meta: function() {
+    $meta: function () {
       return [TypeAttribute(YBoolean.$class)]
     },
-    get: function() {
+    get: function () {
       return this.edgeLabelingItem !== BalloonLayoutConfig.EnumEdgeLabeling.GENERIC
     }
   },
@@ -806,7 +806,7 @@ const BalloonLayoutConfig = Class('BalloonLayoutConfig', {
 
   /** @type {LayoutConfiguration.EnumLabelPlacementOrientation} */
   labelPlacementOrientationItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Orientation',
@@ -824,23 +824,23 @@ const BalloonLayoutConfig = Class('BalloonLayoutConfig', {
         TypeAttribute(LayoutConfiguration.EnumLabelPlacementOrientation.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$labelPlacementOrientationItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$labelPlacementOrientationItem = value
     }
   },
 
   /** @type {boolean} */
   shouldDisableLabelPlacementOrientationItem: {
-    $meta: function() {
+    $meta: function () {
       return [TypeAttribute(YBoolean.$class)]
     },
-    get: function() {
+    get: function () {
       return (
-        (this.edgeLabelingItem === BalloonLayoutConfig.EnumEdgeLabeling.NONE ||
-        this.edgeLabelingItem === BalloonLayoutConfig.EnumEdgeLabeling.INTEGRATED)
+        this.edgeLabelingItem === BalloonLayoutConfig.EnumEdgeLabeling.NONE ||
+        this.edgeLabelingItem === BalloonLayoutConfig.EnumEdgeLabeling.INTEGRATED
       )
     }
   },
@@ -853,7 +853,7 @@ const BalloonLayoutConfig = Class('BalloonLayoutConfig', {
 
   /** @type {LayoutConfiguration.EnumLabelPlacementAlongEdge} */
   labelPlacementAlongEdgeItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Along Edge',
@@ -873,23 +873,23 @@ const BalloonLayoutConfig = Class('BalloonLayoutConfig', {
         TypeAttribute(LayoutConfiguration.EnumLabelPlacementAlongEdge.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$labelPlacementAlongEdgeItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$labelPlacementAlongEdgeItem = value
     }
   },
 
   /** @type {boolean} */
   shouldDisableLabelPlacementAlongEdgeItem: {
-    $meta: function() {
+    $meta: function () {
       return [TypeAttribute(YBoolean.$class)]
     },
-    get: function() {
+    get: function () {
       return (
-        (this.edgeLabelingItem === BalloonLayoutConfig.EnumEdgeLabeling.NONE ||
-        this.edgeLabelingItem === BalloonLayoutConfig.EnumEdgeLabeling.INTEGRATED)
+        this.edgeLabelingItem === BalloonLayoutConfig.EnumEdgeLabeling.NONE ||
+        this.edgeLabelingItem === BalloonLayoutConfig.EnumEdgeLabeling.INTEGRATED
       )
     }
   },
@@ -902,7 +902,7 @@ const BalloonLayoutConfig = Class('BalloonLayoutConfig', {
 
   /** @type {LayoutConfiguration.EnumLabelPlacementSideOfEdge} */
   labelPlacementSideOfEdgeItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Side of Edge',
@@ -921,20 +921,20 @@ const BalloonLayoutConfig = Class('BalloonLayoutConfig', {
         TypeAttribute(LayoutConfiguration.EnumLabelPlacementSideOfEdge.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$labelPlacementSideOfEdgeItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$labelPlacementSideOfEdgeItem = value
     }
   },
 
   /** @type {boolean} */
   shouldDisableLabelPlacementSideOfEdgeItem: {
-    $meta: function() {
+    $meta: function () {
       return [TypeAttribute(YBoolean.$class)]
     },
-    get: function() {
+    get: function () {
       return this.edgeLabelingItem === BalloonLayoutConfig.EnumEdgeLabeling.NONE
     }
   },
@@ -947,7 +947,7 @@ const BalloonLayoutConfig = Class('BalloonLayoutConfig', {
 
   /** @type {number} */
   labelPlacementDistanceItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Distance',
@@ -962,30 +962,30 @@ const BalloonLayoutConfig = Class('BalloonLayoutConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$labelPlacementDistanceItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$labelPlacementDistanceItem = value
     }
   },
 
   /** @type {boolean} */
   shouldDisableLabelPlacementDistanceItem: {
-    $meta: function() {
+    $meta: function () {
       return [TypeAttribute(YBoolean.$class)]
     },
-    get: function() {
+    get: function () {
       return (
-        (this.edgeLabelingItem === BalloonLayoutConfig.EnumEdgeLabeling.NONE ||
+        this.edgeLabelingItem === BalloonLayoutConfig.EnumEdgeLabeling.NONE ||
         this.edgeLabelingItem === BalloonLayoutConfig.EnumEdgeLabeling.INTEGRATED ||
         this.labelPlacementSideOfEdgeItem ===
-          LayoutConfiguration.EnumLabelPlacementSideOfEdge.ON_EDGE)
+          LayoutConfiguration.EnumLabelPlacementSideOfEdge.ON_EDGE
       )
     }
   },
 
-  $initBalloonLayoutConfig: function() {
+  $initBalloonLayoutConfig: function () {
     this.$rootNodePolicyItem = RootNodePolicy.DIRECTED_ROOT
     this.$routingStyleForNonTreeEdgesItem = BalloonLayoutConfig.EnumRoute.ORTHOGONAL
     this.$nodeLabelingStyleItem = BalloonLayoutConfig.EnumNodeLabelingPolicies.NONE

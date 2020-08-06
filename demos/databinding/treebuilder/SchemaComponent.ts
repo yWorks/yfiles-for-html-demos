@@ -329,14 +329,14 @@ export class SchemaComponent {
     const schemaGraph = this.schemaGraphComponent.graph
 
     // gather remaining source definitions
-    const treeNodesSourcesDefinitions = Array<TreeNodesSourceDefinition>()
+    const treeNodesSourcesDefinitions: TreeNodesSourceDefinition[] = []
     schemaGraph.nodes.forEach((node: INode) => {
       const sourceConnector = node.tag as TreeNodesSourceDefinitionBuilderConnector
       treeNodesSourcesDefinitions.push(sourceConnector.sourceDefinition)
     })
 
     // gather remaining edge definitions
-    const edgesSourceDefinitions = Array<SchemaEdge>()
+    const edgesSourceDefinitions: SchemaEdge[] = []
     schemaGraph.edges.forEach((edge: IEdge) => {
       const sourceConnector = edge.sourceNode!.tag as TreeNodesSourceDefinitionBuilderConnector
       const targetConnector = edge.targetNode!.tag as TreeNodesSourceDefinitionBuilderConnector

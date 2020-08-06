@@ -194,8 +194,8 @@ function updateEdgePopupContent(edgePopup, edge) {
   }
 }
 
-// We need to load the 'styles-other' module explicitly to prevent tree-shaking
-// tools it from removing this dependency which is needed for loading all library styles.
+// We load the 'styles-other' module explicitly to prevent tree-shaking tools from removing this
+// dependency which is needed for loading all library styles.
 Class.ensure(ImageNodeStyle)
 
 /**

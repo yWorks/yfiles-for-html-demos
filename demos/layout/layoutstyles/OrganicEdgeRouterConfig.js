@@ -62,7 +62,7 @@ const OrganicEdgeRouterConfig = Class('OrganicEdgeRouterConfig', {
   /**
    * Setup default values for various configuration parameters.
    */
-  constructor: function() {
+  constructor: function () {
     LayoutConfiguration.call(this)
     const router = new OrganicEdgeRouter()
     this.selectionOnlyItem = false
@@ -78,7 +78,7 @@ const OrganicEdgeRouterConfig = Class('OrganicEdgeRouterConfig', {
    *   configuration on.
    * @return {ILayoutAlgorithm} The configured layout algorithm.
    */
-  createConfiguredLayout: function(graphComponent) {
+  createConfiguredLayout: function (graphComponent) {
     const router = new OrganicEdgeRouter()
     router.minimumDistance = this.minimumNodeDistanceItem
     router.keepExistingBends = this.keepBendsItem
@@ -111,7 +111,7 @@ const OrganicEdgeRouterConfig = Class('OrganicEdgeRouterConfig', {
    * Creates and configures the layout data.
    * @return {LayoutData} The configured layout data.
    */
-  createConfiguredLayoutData: function(graphComponent, layout) {
+  createConfiguredLayoutData: function (graphComponent, layout) {
     const layoutData = new OrganicEdgeRouterData()
 
     if (this.selectionOnlyItem) {
@@ -123,7 +123,7 @@ const OrganicEdgeRouterConfig = Class('OrganicEdgeRouterConfig', {
 
   /** @type {OptionGroup} */
   DescriptionGroup: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute('Description'),
         OptionGroupAttribute('RootGroup', 5),
@@ -135,7 +135,7 @@ const OrganicEdgeRouterConfig = Class('OrganicEdgeRouterConfig', {
 
   /** @type {OptionGroup} */
   LayoutGroup: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute('General'),
         OptionGroupAttribute('RootGroup', 10),
@@ -147,14 +147,14 @@ const OrganicEdgeRouterConfig = Class('OrganicEdgeRouterConfig', {
 
   /** @type {string} */
   descriptionText: {
-    $meta: function() {
+    $meta: function () {
       return [
         OptionGroupAttribute('DescriptionGroup', 10),
         ComponentAttribute(Components.HTML_BLOCK),
         TypeAttribute(YString.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return "<p style='margin-top:0'>The organic edge routing algorithm routes edges in soft curves to ensure that they do not overlap with nodes. It is especially well suited for non-orthogonal, organic or circular diagrams.</p>"
     }
   },
@@ -167,7 +167,7 @@ const OrganicEdgeRouterConfig = Class('OrganicEdgeRouterConfig', {
 
   /** @type {boolean} */
   selectionOnlyItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Route Selected Edges Only',
@@ -177,10 +177,10 @@ const OrganicEdgeRouterConfig = Class('OrganicEdgeRouterConfig', {
         TypeAttribute(YBoolean.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$selectionOnlyItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$selectionOnlyItem = value
     }
   },
@@ -193,7 +193,7 @@ const OrganicEdgeRouterConfig = Class('OrganicEdgeRouterConfig', {
 
   /** @type {number} */
   minimumNodeDistanceItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Minimum Distance',
@@ -208,10 +208,10 @@ const OrganicEdgeRouterConfig = Class('OrganicEdgeRouterConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$minimumNodeDistanceItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$minimumNodeDistanceItem = value
     }
   },
@@ -224,7 +224,7 @@ const OrganicEdgeRouterConfig = Class('OrganicEdgeRouterConfig', {
 
   /** @type {boolean} */
   keepBendsItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Keep Existing Bends',
@@ -234,10 +234,10 @@ const OrganicEdgeRouterConfig = Class('OrganicEdgeRouterConfig', {
         TypeAttribute(YBoolean.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$keepBendsItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$keepBendsItem = value
     }
   },
@@ -250,7 +250,7 @@ const OrganicEdgeRouterConfig = Class('OrganicEdgeRouterConfig', {
 
   /** @type {boolean} */
   routeOnlyNecessaryItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Route Only Necessary',
@@ -260,10 +260,10 @@ const OrganicEdgeRouterConfig = Class('OrganicEdgeRouterConfig', {
         TypeAttribute(YBoolean.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$routeOnlyNecessaryItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$routeOnlyNecessaryItem = value
     }
   },
@@ -276,17 +276,17 @@ const OrganicEdgeRouterConfig = Class('OrganicEdgeRouterConfig', {
 
   /** @type {boolean} */
   allowMovingNodesItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute('Allow Moving Nodes', '#/api/CompositeLayoutStage'),
         OptionGroupAttribute('LayoutGroup', 50),
         TypeAttribute(YBoolean.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$allowMovingNodesItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$allowMovingNodesItem = value
     }
   }

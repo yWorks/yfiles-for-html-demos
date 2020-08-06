@@ -28,9 +28,9 @@
  ***************************************************************************/
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const { CleanWebpackPlugin } = require('clean-webpack-plugin')
-const yWorksOptimizer = require('@yworks/optimizer/webpack-plugin')
+const YWorksOptimizer = require('@yworks/optimizer/webpack-plugin')
 
-module.exports = function(env, options) {
+module.exports = function (env, options) {
   const config = {
     entry: ['core-js/stable', 'regenerator-runtime/runtime', './TypeScript2Demo.ts'],
 
@@ -74,7 +74,7 @@ module.exports = function(env, options) {
 
   if (options.mode === 'production') {
     // Obfuscate yFiles modules and usages for production build
-    config.plugins.unshift(new yWorksOptimizer())
+    config.plugins.unshift(new YWorksOptimizer())
   }
 
   return config

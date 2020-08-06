@@ -86,7 +86,7 @@ const HierarchicLayoutConfig = Class('HierarchicLayoutConfig', {
   /**
    * Setup default values for various configuration parameters.
    */
-  constructor: function() {
+  constructor: function () {
     LayoutConfiguration.call(this)
     this.groupHorizontalCompactionItem = GroupCompactionPolicy.NONE
     this.groupAlignmentItem = GroupAlignmentPolicy.TOP
@@ -132,7 +132,7 @@ const HierarchicLayoutConfig = Class('HierarchicLayoutConfig', {
    *   configuration on.
    * @return {ILayoutAlgorithm} The configured layout algorithm.
    */
-  createConfiguredLayout: function(graphComponent) {
+  createConfiguredLayout: function (graphComponent) {
     const layout = new HierarchicLayout()
 
     //  mark incremental elements if required
@@ -273,7 +273,7 @@ const HierarchicLayoutConfig = Class('HierarchicLayoutConfig', {
    * Creates and configures the layout data.
    * @return {LayoutData} The configured layout data.
    */
-  createConfiguredLayoutData: function(graphComponent, layout) {
+  createConfiguredLayoutData: function (graphComponent, layout) {
     const graph = graphComponent.graph
     const layoutData = new HierarchicLayoutData()
 
@@ -379,7 +379,7 @@ const HierarchicLayoutConfig = Class('HierarchicLayoutConfig', {
     return layoutData
   },
 
-  getBusEdges: function(graph, node, allBusNodes, edges) {
+  getBusEdges: function (graph, node, allBusNodes, edges) {
     const busNodes = new Set()
     // count the edges that are not bus edges but connect to the bus nodes
     // -> if there are many, then the bus structure may not look that great
@@ -435,20 +435,20 @@ const HierarchicLayoutConfig = Class('HierarchicLayoutConfig', {
   /**
    * Enables different layout styles for possible detected subcomponents.
    */
-  enableSubstructures: function() {
+  enableSubstructures: function () {
     this.subComponentsItem = true
   },
 
   /**
    * Enables automatic bus routing.
    */
-  enableAutomaticBusRouting: function() {
+  enableAutomaticBusRouting: function () {
     this.automaticBusRoutingEnabledItem = true
   },
 
   /** @type {OptionGroup} */
   DescriptionGroup: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute('Description'),
         OptionGroupAttribute('RootGroup', 5),
@@ -460,7 +460,7 @@ const HierarchicLayoutConfig = Class('HierarchicLayoutConfig', {
 
   /** @type {OptionGroup} */
   GeneralGroup: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute('General'),
         OptionGroupAttribute('RootGroup', 10),
@@ -472,7 +472,7 @@ const HierarchicLayoutConfig = Class('HierarchicLayoutConfig', {
 
   /** @type {OptionGroup} */
   InteractionGroup: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute('Interactive Settings'),
         OptionGroupAttribute('GeneralGroup', 10),
@@ -484,7 +484,7 @@ const HierarchicLayoutConfig = Class('HierarchicLayoutConfig', {
 
   /** @type {OptionGroup} */
   DistanceGroup: {
-    $meta: function() {
+    $meta: function () {
       return [
         OptionGroupAttribute('GeneralGroup', 60),
         LabelAttribute('Minimum Distances'),
@@ -496,7 +496,7 @@ const HierarchicLayoutConfig = Class('HierarchicLayoutConfig', {
 
   /** @type {OptionGroup} */
   EdgeSettingsGroup: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute('Edges'),
         OptionGroupAttribute('RootGroup', 20),
@@ -508,7 +508,7 @@ const HierarchicLayoutConfig = Class('HierarchicLayoutConfig', {
 
   /** @type {OptionGroup} */
   RankGroup: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute('Layers'),
         OptionGroupAttribute('RootGroup', 30),
@@ -520,7 +520,7 @@ const HierarchicLayoutConfig = Class('HierarchicLayoutConfig', {
 
   /** @type {OptionGroup} */
   LabelingGroup: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute('Labeling'),
         OptionGroupAttribute('RootGroup', 40),
@@ -532,7 +532,7 @@ const HierarchicLayoutConfig = Class('HierarchicLayoutConfig', {
 
   /** @type {OptionGroup} */
   NodePropertiesGroup: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute('Node Settings'),
         OptionGroupAttribute('LabelingGroup', 10),
@@ -544,7 +544,7 @@ const HierarchicLayoutConfig = Class('HierarchicLayoutConfig', {
 
   /** @type {OptionGroup} */
   EdgePropertiesGroup: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute('Edge Settings'),
         OptionGroupAttribute('LabelingGroup', 20),
@@ -556,7 +556,7 @@ const HierarchicLayoutConfig = Class('HierarchicLayoutConfig', {
 
   /** @type {OptionGroup} */
   PreferredPlacementGroup: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute('Preferred Edge Label Placement'),
         OptionGroupAttribute('LabelingGroup', 30),
@@ -568,7 +568,7 @@ const HierarchicLayoutConfig = Class('HierarchicLayoutConfig', {
 
   /** @type {OptionGroup} */
   GroupingGroup: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute('Grouping'),
         OptionGroupAttribute('RootGroup', 50),
@@ -580,7 +580,7 @@ const HierarchicLayoutConfig = Class('HierarchicLayoutConfig', {
 
   /** @type {OptionGroup} */
   SwimlanesGroup: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute('Swimlanes'),
         OptionGroupAttribute('RootGroup', 60),
@@ -592,7 +592,7 @@ const HierarchicLayoutConfig = Class('HierarchicLayoutConfig', {
 
   /** @type {OptionGroup} */
   GridGroup: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute('Grid'),
         OptionGroupAttribute('RootGroup', 70),
@@ -604,21 +604,21 @@ const HierarchicLayoutConfig = Class('HierarchicLayoutConfig', {
 
   /** @type {string} */
   descriptionText: {
-    $meta: function() {
+    $meta: function () {
       return [
         OptionGroupAttribute('DescriptionGroup', 10),
         ComponentAttribute(Components.HTML_BLOCK),
         TypeAttribute(YString.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return "<p style='margin-top:0'>The hierarchical layout style highlights the main direction or flow of a directed graph. It places the nodes of a graph in hierarchically arranged layers such that the (majority of) its edges follows the overall orientation, for example, top-to-bottom.</p><p>This style is tailored for application domains in which it is crucial to clearly visualize the dependency relations between entities. In particular, if such relations form a chain of dependencies between entities, this layout style nicely exhibits them. Generally, whenever the direction of information flow matters, the hierarchical layout style is an invaluable tool.</p><p>Suitable application domains of this layout style include, for example:</p><ul><li>Workflow visualization</li><li>Software engineering like call graph visualization or activity diagrams</li><li>Process modeling</li><li>Database modeling and Entity-Relationship diagrams</li><li>Bioinformatics, for example biochemical pathways</li><li>Network management</li><li>Decision diagrams</li></ul>"
     }
   },
 
   /** @type {boolean} */
   SelectedElementsIncrementallyItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Selected Elements Incrementally',
@@ -633,7 +633,7 @@ const HierarchicLayoutConfig = Class('HierarchicLayoutConfig', {
 
   /** @type {boolean} */
   UseDrawingAsSketchItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Use Drawing as Sketch',
@@ -648,7 +648,7 @@ const HierarchicLayoutConfig = Class('HierarchicLayoutConfig', {
 
   /** @type {LayoutOrientation} */
   orientationItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Orientation',
@@ -672,7 +672,7 @@ const HierarchicLayoutConfig = Class('HierarchicLayoutConfig', {
 
   /** @type {boolean} */
   LayoutComponentsSeparatelyItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Layout Components Separately',
@@ -687,7 +687,7 @@ const HierarchicLayoutConfig = Class('HierarchicLayoutConfig', {
 
   /** @type {boolean} */
   symmetricPlacementItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Symmetric Placement',
@@ -702,7 +702,7 @@ const HierarchicLayoutConfig = Class('HierarchicLayoutConfig', {
 
   /** @type {boolean} */
   subComponentsItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Layout Sub-components Separately',
@@ -717,7 +717,7 @@ const HierarchicLayoutConfig = Class('HierarchicLayoutConfig', {
 
   /** @type {number} */
   maximumDurationItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Maximum Duration',
@@ -743,7 +743,7 @@ const HierarchicLayoutConfig = Class('HierarchicLayoutConfig', {
 
   /** @type {number} */
   nodeToNodeDistanceItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Node to Node Distance',
@@ -758,10 +758,10 @@ const HierarchicLayoutConfig = Class('HierarchicLayoutConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$nodeToNodeDistanceItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$nodeToNodeDistanceItem = value
     }
   },
@@ -774,7 +774,7 @@ const HierarchicLayoutConfig = Class('HierarchicLayoutConfig', {
 
   /** @type {number} */
   nodeToEdgeDistanceItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Node to Edge Distance',
@@ -789,10 +789,10 @@ const HierarchicLayoutConfig = Class('HierarchicLayoutConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$nodeToEdgeDistanceItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$nodeToEdgeDistanceItem = value
     }
   },
@@ -805,7 +805,7 @@ const HierarchicLayoutConfig = Class('HierarchicLayoutConfig', {
 
   /** @type {number} */
   edgeToEdgeDistanceItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Edge to Edge Distance',
@@ -820,10 +820,10 @@ const HierarchicLayoutConfig = Class('HierarchicLayoutConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$edgeToEdgeDistanceItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$edgeToEdgeDistanceItem = value
     }
   },
@@ -836,7 +836,7 @@ const HierarchicLayoutConfig = Class('HierarchicLayoutConfig', {
 
   /** @type {number} */
   minimumLayerDistanceItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Layer to Layer Distance',
@@ -851,10 +851,10 @@ const HierarchicLayoutConfig = Class('HierarchicLayoutConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$minimumLayerDistanceItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$minimumLayerDistanceItem = value
     }
   },
@@ -867,7 +867,7 @@ const HierarchicLayoutConfig = Class('HierarchicLayoutConfig', {
 
   /** @type {HierarchicLayoutEdgeRoutingStyle} */
   edgeRoutingItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Edge Routing Style',
@@ -885,10 +885,10 @@ const HierarchicLayoutConfig = Class('HierarchicLayoutConfig', {
         TypeAttribute(HierarchicLayoutEdgeRoutingStyle.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$edgeRoutingItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$edgeRoutingItem = value
     }
   },
@@ -901,7 +901,7 @@ const HierarchicLayoutConfig = Class('HierarchicLayoutConfig', {
 
   /** @type {boolean} */
   backloopRoutingItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Backloop Routing',
@@ -911,10 +911,10 @@ const HierarchicLayoutConfig = Class('HierarchicLayoutConfig', {
         TypeAttribute(YBoolean.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$backloopRoutingItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$backloopRoutingItem = value
     }
   },
@@ -927,7 +927,7 @@ const HierarchicLayoutConfig = Class('HierarchicLayoutConfig', {
 
   /** @type {boolean} */
   backloopRoutingForSelfLoopsItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Backloop Routing For Self-loops',
@@ -937,20 +937,20 @@ const HierarchicLayoutConfig = Class('HierarchicLayoutConfig', {
         TypeAttribute(YBoolean.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$backloopRoutingForSelfLoopsItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$backloopRoutingForSelfLoopsItem = value
     }
   },
 
   /** @type {boolean} */
   shouldDisableBackloopRoutingForSelfLoopsItem: {
-    $meta: function() {
+    $meta: function () {
       return [TypeAttribute(YBoolean.$class)]
     },
-    get: function() {
+    get: function () {
       return !this.backloopRoutingItem
     }
   },
@@ -963,7 +963,7 @@ const HierarchicLayoutConfig = Class('HierarchicLayoutConfig', {
 
   /** @type {boolean} */
   automaticEdgeGroupingEnabledItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Automatic Edge Grouping',
@@ -973,10 +973,10 @@ const HierarchicLayoutConfig = Class('HierarchicLayoutConfig', {
         TypeAttribute(YBoolean.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$automaticEdgeGroupingEnabledItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$automaticEdgeGroupingEnabledItem = value
     }
   },
@@ -989,7 +989,7 @@ const HierarchicLayoutConfig = Class('HierarchicLayoutConfig', {
 
   /** @type {boolean} */
   automaticBusRoutingEnabledItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Automatic Bus Routing',
@@ -999,10 +999,10 @@ const HierarchicLayoutConfig = Class('HierarchicLayoutConfig', {
         TypeAttribute(YBoolean.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$automaticBusRoutingEnabledItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$automaticBusRoutingEnabledItem = value
     }
   },
@@ -1015,7 +1015,7 @@ const HierarchicLayoutConfig = Class('HierarchicLayoutConfig', {
 
   /** @type {number} */
   minimumFirstSegmentLengthItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Minimum First Segment Length',
@@ -1030,10 +1030,10 @@ const HierarchicLayoutConfig = Class('HierarchicLayoutConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$minimumFirstSegmentLengthItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$minimumFirstSegmentLengthItem = value
     }
   },
@@ -1046,7 +1046,7 @@ const HierarchicLayoutConfig = Class('HierarchicLayoutConfig', {
 
   /** @type {number} */
   minimumLastSegmentLengthItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Minimum Last Segment Length',
@@ -1061,10 +1061,10 @@ const HierarchicLayoutConfig = Class('HierarchicLayoutConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$minimumLastSegmentLengthItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$minimumLastSegmentLengthItem = value
     }
   },
@@ -1077,7 +1077,7 @@ const HierarchicLayoutConfig = Class('HierarchicLayoutConfig', {
 
   /** @type {number} */
   minimumEdgeLengthItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Minimum Edge Length',
@@ -1092,10 +1092,10 @@ const HierarchicLayoutConfig = Class('HierarchicLayoutConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$minimumEdgeLengthItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$minimumEdgeLengthItem = value
     }
   },
@@ -1108,7 +1108,7 @@ const HierarchicLayoutConfig = Class('HierarchicLayoutConfig', {
 
   /** @type {number} */
   minimumEdgeDistanceItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Minimum Edge Distance',
@@ -1123,10 +1123,10 @@ const HierarchicLayoutConfig = Class('HierarchicLayoutConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$minimumEdgeDistanceItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$minimumEdgeDistanceItem = value
     }
   },
@@ -1139,7 +1139,7 @@ const HierarchicLayoutConfig = Class('HierarchicLayoutConfig', {
 
   /** @type {number} */
   minimumSlopeItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         MinMaxAttribute().init({
           min: 0.0,
@@ -1155,20 +1155,20 @@ const HierarchicLayoutConfig = Class('HierarchicLayoutConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$minimumSlopeItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$minimumSlopeItem = value
     }
   },
 
   /** @type {boolean} */
   shouldDisableMinimumSlopeItem: {
-    $meta: function() {
+    $meta: function () {
       return [TypeAttribute(YBoolean.$class)]
     },
-    get: function() {
+    get: function () {
       return this.edgeRoutingItem !== HierarchicLayoutEdgeRoutingStyle.POLYLINE
     }
   },
@@ -1181,7 +1181,7 @@ const HierarchicLayoutConfig = Class('HierarchicLayoutConfig', {
 
   /** @type {boolean} */
   edgeDirectednessItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         OptionGroupAttribute('EdgeSettingsGroup', 100),
         LabelAttribute(
@@ -1191,10 +1191,10 @@ const HierarchicLayoutConfig = Class('HierarchicLayoutConfig', {
         TypeAttribute(YBoolean.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$edgeDirectednessItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$edgeDirectednessItem = value
     }
   },
@@ -1207,7 +1207,7 @@ const HierarchicLayoutConfig = Class('HierarchicLayoutConfig', {
 
   /** @type {boolean} */
   edgeThicknessItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         OptionGroupAttribute('EdgeSettingsGroup', 110),
         LabelAttribute(
@@ -1217,10 +1217,10 @@ const HierarchicLayoutConfig = Class('HierarchicLayoutConfig', {
         TypeAttribute(YBoolean.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$edgeThicknessItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$edgeThicknessItem = value
     }
   },
@@ -1233,7 +1233,7 @@ const HierarchicLayoutConfig = Class('HierarchicLayoutConfig', {
 
   /** @type {boolean} */
   pcOptimizationEnabledItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Port Constraint Optimization',
@@ -1243,10 +1243,10 @@ const HierarchicLayoutConfig = Class('HierarchicLayoutConfig', {
         TypeAttribute(YBoolean.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$pcOptimizationEnabledItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$pcOptimizationEnabledItem = value
     }
   },
@@ -1259,7 +1259,7 @@ const HierarchicLayoutConfig = Class('HierarchicLayoutConfig', {
 
   /** @type {boolean} */
   straightenEdgesItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Straighten Edges',
@@ -1269,20 +1269,20 @@ const HierarchicLayoutConfig = Class('HierarchicLayoutConfig', {
         TypeAttribute(YBoolean.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$straightenEdgesItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$straightenEdgesItem = value
     }
   },
 
   /** @type {boolean} */
   shouldDisableStraightenEdgesItem: {
-    $meta: function() {
+    $meta: function () {
       return [TypeAttribute(YBoolean.$class)]
     },
-    get: function() {
+    get: function () {
       return this.symmetricPlacementItem
     }
   },
@@ -1295,7 +1295,7 @@ const HierarchicLayoutConfig = Class('HierarchicLayoutConfig', {
 
   /** @type {ComponentArrangementPolicy} */
   recursiveEdgeStyleItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Recursive Edge Routing Style',
@@ -1312,10 +1312,10 @@ const HierarchicLayoutConfig = Class('HierarchicLayoutConfig', {
         TypeAttribute(ComponentArrangementPolicy.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$recursiveEdgeStyleItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$recursiveEdgeStyleItem = value
     }
   },
@@ -1328,7 +1328,7 @@ const HierarchicLayoutConfig = Class('HierarchicLayoutConfig', {
 
   /** @type {HierarchicLayoutLayeringStrategy} */
   rankingPolicyItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Layer Assignment Policy',
@@ -1350,10 +1350,10 @@ const HierarchicLayoutConfig = Class('HierarchicLayoutConfig', {
         TypeAttribute(HierarchicLayoutLayeringStrategy.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$rankingPolicyItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$rankingPolicyItem = value
     }
   },
@@ -1366,7 +1366,7 @@ const HierarchicLayoutConfig = Class('HierarchicLayoutConfig', {
 
   /** @type {number} */
   layerAlignmentItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Alignment within Layer',
@@ -1383,10 +1383,10 @@ const HierarchicLayoutConfig = Class('HierarchicLayoutConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$layerAlignmentItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$layerAlignmentItem = value
     }
   },
@@ -1399,7 +1399,7 @@ const HierarchicLayoutConfig = Class('HierarchicLayoutConfig', {
 
   /** @type {ComponentArrangementPolicy} */
   componentArrangementPolicyItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Component Arrangement',
@@ -1415,10 +1415,10 @@ const HierarchicLayoutConfig = Class('HierarchicLayoutConfig', {
         TypeAttribute(ComponentArrangementPolicy.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$componentArrangementPolicyItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$componentArrangementPolicyItem = value
     }
   },
@@ -1431,7 +1431,7 @@ const HierarchicLayoutConfig = Class('HierarchicLayoutConfig', {
 
   /** @type {boolean} */
   nodeCompactionItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         OptionGroupAttribute('RankGroup', 40),
         LabelAttribute(
@@ -1441,17 +1441,17 @@ const HierarchicLayoutConfig = Class('HierarchicLayoutConfig', {
         TypeAttribute(YBoolean.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$nodeCompactionItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$nodeCompactionItem = value
     }
   },
 
   /** @type {OptionGroup} */
   SketchGroup: {
-    $meta: function() {
+    $meta: function () {
       return [
         OptionGroupAttribute('RankGroup', 50),
         LabelAttribute('From Sketch Layer Assignment'),
@@ -1469,7 +1469,7 @@ const HierarchicLayoutConfig = Class('HierarchicLayoutConfig', {
 
   /** @type {number} */
   scaleItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         OptionGroupAttribute('SketchGroup', 10),
         MinMaxAttribute().init({
@@ -1482,10 +1482,10 @@ const HierarchicLayoutConfig = Class('HierarchicLayoutConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$scaleItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$scaleItem = value
     }
   },
@@ -1494,7 +1494,7 @@ const HierarchicLayoutConfig = Class('HierarchicLayoutConfig', {
    * @type {boolean}
    */
   shouldDisableScaleItem: {
-    get: function() {
+    get: function () {
       return this.rankingPolicyItem !== HierarchicLayoutLayeringStrategy.FROM_SKETCH
     }
   },
@@ -1507,7 +1507,7 @@ const HierarchicLayoutConfig = Class('HierarchicLayoutConfig', {
 
   /** @type {number} */
   haloItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         OptionGroupAttribute('SketchGroup', 20),
         LabelAttribute('Halo', '#/api/AsIsLayerer#AsIsLayerer-property-nodeHalo'),
@@ -1519,10 +1519,10 @@ const HierarchicLayoutConfig = Class('HierarchicLayoutConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$haloItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$haloItem = value
     }
   },
@@ -1531,7 +1531,7 @@ const HierarchicLayoutConfig = Class('HierarchicLayoutConfig', {
    * @type {boolean}
    */
   shouldDisableHaloItem: {
-    get: function() {
+    get: function () {
       return this.rankingPolicyItem !== HierarchicLayoutLayeringStrategy.FROM_SKETCH
     }
   },
@@ -1544,7 +1544,7 @@ const HierarchicLayoutConfig = Class('HierarchicLayoutConfig', {
 
   /** @type {number} */
   minimumSizeItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         OptionGroupAttribute('SketchGroup', 30),
         LabelAttribute('Minimum Size', '#/api/AsIsLayerer#AsIsLayerer-property-minimumNodeSize'),
@@ -1556,10 +1556,10 @@ const HierarchicLayoutConfig = Class('HierarchicLayoutConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$minimumSizeItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$minimumSizeItem = value
     }
   },
@@ -1568,7 +1568,7 @@ const HierarchicLayoutConfig = Class('HierarchicLayoutConfig', {
    * @type {boolean}
    */
   shouldDisableMinimumSizeItem: {
-    get: function() {
+    get: function () {
       return this.rankingPolicyItem !== HierarchicLayoutLayeringStrategy.FROM_SKETCH
     }
   },
@@ -1581,7 +1581,7 @@ const HierarchicLayoutConfig = Class('HierarchicLayoutConfig', {
 
   /** @type {number} */
   maximumSizeItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         OptionGroupAttribute('SketchGroup', 40),
         LabelAttribute('Maximum Size', '#/api/AsIsLayerer#AsIsLayerer-property-maximumNodeSize'),
@@ -1593,10 +1593,10 @@ const HierarchicLayoutConfig = Class('HierarchicLayoutConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$maximumSizeItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$maximumSizeItem = value
     }
   },
@@ -1605,7 +1605,7 @@ const HierarchicLayoutConfig = Class('HierarchicLayoutConfig', {
    * @type {boolean}
    */
   shouldDisableMaximumSizeItem: {
-    get: function() {
+    get: function () {
       return this.rankingPolicyItem !== HierarchicLayoutLayeringStrategy.FROM_SKETCH
     }
   },
@@ -1618,7 +1618,7 @@ const HierarchicLayoutConfig = Class('HierarchicLayoutConfig', {
 
   /** @type {boolean} */
   considerNodeLabelsItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         OptionGroupAttribute('NodePropertiesGroup', 10),
         LabelAttribute(
@@ -1628,10 +1628,10 @@ const HierarchicLayoutConfig = Class('HierarchicLayoutConfig', {
         TypeAttribute(YBoolean.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$considerNodeLabelsItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$considerNodeLabelsItem = value
     }
   },
@@ -1644,7 +1644,7 @@ const HierarchicLayoutConfig = Class('HierarchicLayoutConfig', {
 
   /** @type {HierarchicLayoutConfig.EnumEdgeLabeling} */
   edgeLabelingItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Edge Labeling',
@@ -1661,10 +1661,10 @@ const HierarchicLayoutConfig = Class('HierarchicLayoutConfig', {
         TypeAttribute(HierarchicLayoutConfig.EnumEdgeLabeling.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$edgeLabelingItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$edgeLabelingItem = value
     }
   },
@@ -1677,7 +1677,7 @@ const HierarchicLayoutConfig = Class('HierarchicLayoutConfig', {
 
   /** @type {boolean} */
   compactEdgeLabelPlacementItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Compact Placement',
@@ -1687,20 +1687,20 @@ const HierarchicLayoutConfig = Class('HierarchicLayoutConfig', {
         TypeAttribute(YBoolean.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$compactEdgeLabelPlacementItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$compactEdgeLabelPlacementItem = value
     }
   },
 
   /** @type {boolean} */
   shouldDisableCompactEdgeLabelPlacementItem: {
-    $meta: function() {
+    $meta: function () {
       return [TypeAttribute(YBoolean.$class)]
     },
-    get: function() {
+    get: function () {
       return this.edgeLabelingItem !== HierarchicLayoutConfig.EnumEdgeLabeling.INTEGRATED
     }
   },
@@ -1713,7 +1713,7 @@ const HierarchicLayoutConfig = Class('HierarchicLayoutConfig', {
 
   /** @type {boolean} */
   reduceAmbiguityItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Reduce Ambiguity',
@@ -1723,20 +1723,20 @@ const HierarchicLayoutConfig = Class('HierarchicLayoutConfig', {
         TypeAttribute(YBoolean.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$reduceAmbiguityItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$reduceAmbiguityItem = value
     }
   },
 
   /** @type {boolean} */
   shouldDisableReduceAmbiguityItem: {
-    $meta: function() {
+    $meta: function () {
       return [TypeAttribute(YBoolean.$class)]
     },
-    get: function() {
+    get: function () {
       return this.edgeLabelingItem !== HierarchicLayoutConfig.EnumEdgeLabeling.GENERIC
     }
   },
@@ -1749,7 +1749,7 @@ const HierarchicLayoutConfig = Class('HierarchicLayoutConfig', {
 
   /** @type {LayoutConfiguration.EnumLabelPlacementOrientation} */
   labelPlacementOrientationItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute('Orientation', '#/api/PreferredPlacementDescriptor'),
         OptionGroupAttribute('PreferredPlacementGroup', 10),
@@ -1764,20 +1764,20 @@ const HierarchicLayoutConfig = Class('HierarchicLayoutConfig', {
         TypeAttribute(LayoutConfiguration.EnumLabelPlacementOrientation.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$labelPlacementOrientationItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$labelPlacementOrientationItem = value
     }
   },
 
   /** @type {boolean} */
   shouldDisableLabelPlacementOrientationItem: {
-    $meta: function() {
+    $meta: function () {
       return [TypeAttribute(YBoolean.$class)]
     },
-    get: function() {
+    get: function () {
       return this.edgeLabelingItem === HierarchicLayoutConfig.EnumEdgeLabeling.NONE
     }
   },
@@ -1790,7 +1790,7 @@ const HierarchicLayoutConfig = Class('HierarchicLayoutConfig', {
 
   /** @type {LayoutConfiguration.EnumLabelPlacementAlongEdge} */
   labelPlacementAlongEdgeItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Along Edge',
@@ -1810,20 +1810,20 @@ const HierarchicLayoutConfig = Class('HierarchicLayoutConfig', {
         TypeAttribute(LayoutConfiguration.EnumLabelPlacementAlongEdge.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$labelPlacementAlongEdgeItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$labelPlacementAlongEdgeItem = value
     }
   },
 
   /** @type {boolean} */
   shouldDisableLabelPlacementAlongEdgeItem: {
-    $meta: function() {
+    $meta: function () {
       return [TypeAttribute(YBoolean.$class)]
     },
-    get: function() {
+    get: function () {
       return this.edgeLabelingItem === HierarchicLayoutConfig.EnumEdgeLabeling.NONE
     }
   },
@@ -1836,7 +1836,7 @@ const HierarchicLayoutConfig = Class('HierarchicLayoutConfig', {
 
   /** @type {LayoutConfiguration.EnumLabelPlacementSideOfEdge} */
   labelPlacementSideOfEdgeItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Side of Edge',
@@ -1855,20 +1855,20 @@ const HierarchicLayoutConfig = Class('HierarchicLayoutConfig', {
         TypeAttribute(LayoutConfiguration.EnumLabelPlacementSideOfEdge.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$labelPlacementSideOfEdgeItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$labelPlacementSideOfEdgeItem = value
     }
   },
 
   /** @type {boolean} */
   shouldDisableLabelPlacementSideOfEdgeItem: {
-    $meta: function() {
+    $meta: function () {
       return [TypeAttribute(YBoolean.$class)]
     },
-    get: function() {
+    get: function () {
       return this.edgeLabelingItem === HierarchicLayoutConfig.EnumEdgeLabeling.NONE
     }
   },
@@ -1881,7 +1881,7 @@ const HierarchicLayoutConfig = Class('HierarchicLayoutConfig', {
 
   /** @type {number} */
   labelPlacementDistanceItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Distance',
@@ -1896,24 +1896,24 @@ const HierarchicLayoutConfig = Class('HierarchicLayoutConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$labelPlacementDistanceItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$labelPlacementDistanceItem = value
     }
   },
 
   /** @type {boolean} */
   shouldDisableLabelPlacementDistanceItem: {
-    $meta: function() {
+    $meta: function () {
       return [TypeAttribute(YBoolean.$class)]
     },
-    get: function() {
+    get: function () {
       return (
-        (this.edgeLabelingItem === HierarchicLayoutConfig.EnumEdgeLabeling.NONE ||
+        this.edgeLabelingItem === HierarchicLayoutConfig.EnumEdgeLabeling.NONE ||
         this.labelPlacementSideOfEdgeItem ===
-          LayoutConfiguration.EnumLabelPlacementSideOfEdge.ON_EDGE)
+          LayoutConfiguration.EnumLabelPlacementSideOfEdge.ON_EDGE
       )
     }
   },
@@ -1926,7 +1926,7 @@ const HierarchicLayoutConfig = Class('HierarchicLayoutConfig', {
 
   /** @type {HierarchicLayoutConfig.GroupLayeringStrategyOptions} */
   groupLayeringStrategyItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         OptionGroupAttribute('GroupingGroup', 10),
         LabelAttribute(
@@ -1942,10 +1942,10 @@ const HierarchicLayoutConfig = Class('HierarchicLayoutConfig', {
         TypeAttribute(HierarchicLayoutConfig.GroupLayeringStrategyOptions.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$groupLayeringStrategyItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$groupLayeringStrategyItem = value
     }
   },
@@ -1954,7 +1954,7 @@ const HierarchicLayoutConfig = Class('HierarchicLayoutConfig', {
    * @type {boolean}
    */
   shouldDisableGroupLayeringStrategyItem: {
-    get: function() {
+    get: function () {
       return this.UseDrawingAsSketchItem
     }
   },
@@ -1967,7 +1967,7 @@ const HierarchicLayoutConfig = Class('HierarchicLayoutConfig', {
 
   /** @type {GroupAlignmentPolicy} */
   groupAlignmentItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         OptionGroupAttribute('GroupingGroup', 20),
         LabelAttribute(
@@ -1984,10 +1984,10 @@ const HierarchicLayoutConfig = Class('HierarchicLayoutConfig', {
         TypeAttribute(GroupAlignmentPolicy.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$groupAlignmentItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$groupAlignmentItem = value
     }
   },
@@ -1996,11 +1996,11 @@ const HierarchicLayoutConfig = Class('HierarchicLayoutConfig', {
    * @type {boolean}
    */
   shouldDisableGroupAlignmentItem: {
-    get: function() {
+    get: function () {
       return (
-        (this.groupLayeringStrategyItem !==
+        this.groupLayeringStrategyItem !==
           HierarchicLayoutConfig.GroupLayeringStrategyOptions.LAYOUT_GROUPS ||
-        this.groupEnableCompactionItem)
+        this.groupEnableCompactionItem
       )
     }
   },
@@ -2013,7 +2013,7 @@ const HierarchicLayoutConfig = Class('HierarchicLayoutConfig', {
 
   /** @type {boolean} */
   groupEnableCompactionItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         OptionGroupAttribute('GroupingGroup', 30),
         LabelAttribute(
@@ -2023,10 +2023,10 @@ const HierarchicLayoutConfig = Class('HierarchicLayoutConfig', {
         TypeAttribute(YBoolean.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$groupEnableCompactionItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$groupEnableCompactionItem = value
     }
   },
@@ -2035,11 +2035,11 @@ const HierarchicLayoutConfig = Class('HierarchicLayoutConfig', {
    * @type {boolean}
    */
   shouldDisableGroupEnableCompactionItem: {
-    get: function() {
+    get: function () {
       return (
-        (this.groupLayeringStrategyItem !==
+        this.groupLayeringStrategyItem !==
           HierarchicLayoutConfig.GroupLayeringStrategyOptions.LAYOUT_GROUPS ||
-        this.UseDrawingAsSketchItem)
+        this.UseDrawingAsSketchItem
       )
     }
   },
@@ -2052,7 +2052,7 @@ const HierarchicLayoutConfig = Class('HierarchicLayoutConfig', {
 
   /** @type {GroupCompactionPolicy} */
   groupHorizontalCompactionItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         OptionGroupAttribute('GroupingGroup', 40),
         LabelAttribute(
@@ -2068,10 +2068,10 @@ const HierarchicLayoutConfig = Class('HierarchicLayoutConfig', {
         TypeAttribute(GroupCompactionPolicy.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$groupHorizontalCompactionItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$groupHorizontalCompactionItem = value
     }
   },
@@ -2084,17 +2084,17 @@ const HierarchicLayoutConfig = Class('HierarchicLayoutConfig', {
 
   /** @type {boolean} */
   treatRootGroupAsSwimlanesItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         OptionGroupAttribute('SwimlanesGroup', 10),
         LabelAttribute('Treat Groups as Swimlanes', '#/api/TopLevelGroupToSwimlaneStage'),
         TypeAttribute(YBoolean.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$treatRootGroupAsSwimlanesItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$treatRootGroupAsSwimlanesItem = value
     }
   },
@@ -2107,7 +2107,7 @@ const HierarchicLayoutConfig = Class('HierarchicLayoutConfig', {
 
   /** @type {boolean} */
   useOrderFromSketchItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         OptionGroupAttribute('SwimlanesGroup', 20),
         LabelAttribute(
@@ -2117,10 +2117,10 @@ const HierarchicLayoutConfig = Class('HierarchicLayoutConfig', {
         TypeAttribute(YBoolean.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$useOrderFromSketchItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$useOrderFromSketchItem = value
     }
   },
@@ -2129,7 +2129,7 @@ const HierarchicLayoutConfig = Class('HierarchicLayoutConfig', {
    * @type {boolean}
    */
   shouldDisableUseOrderFromSketchItem: {
-    get: function() {
+    get: function () {
       return !this.treatRootGroupAsSwimlanesItem
     }
   },
@@ -2142,7 +2142,7 @@ const HierarchicLayoutConfig = Class('HierarchicLayoutConfig', {
 
   /** @type {number} */
   swimlineSpacingItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         OptionGroupAttribute('SwimlanesGroup', 30),
         LabelAttribute(
@@ -2157,10 +2157,10 @@ const HierarchicLayoutConfig = Class('HierarchicLayoutConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$swimlineSpacingItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$swimlineSpacingItem = value
     }
   },
@@ -2169,7 +2169,7 @@ const HierarchicLayoutConfig = Class('HierarchicLayoutConfig', {
    * @type {boolean}
    */
   shouldDisableSwimlineSpacingItem: {
-    get: function() {
+    get: function () {
       return !this.treatRootGroupAsSwimlanesItem
     }
   },
@@ -2178,7 +2178,7 @@ const HierarchicLayoutConfig = Class('HierarchicLayoutConfig', {
    * @type {boolean}
    */
   shouldHideSwimlineSpacingItem: {
-    get: function() {
+    get: function () {
       return !this.treatRootGroupAsSwimlanesItem
     }
   },
@@ -2191,17 +2191,17 @@ const HierarchicLayoutConfig = Class('HierarchicLayoutConfig', {
 
   /** @type {boolean} */
   gridEnabledItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         OptionGroupAttribute('GridGroup', 10),
         LabelAttribute('Grid', '#/api/HierarchicLayout#HierarchicLayout-property-gridSpacing'),
         TypeAttribute(YBoolean.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$gridEnabledItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$gridEnabledItem = value
     }
   },
@@ -2214,7 +2214,7 @@ const HierarchicLayoutConfig = Class('HierarchicLayoutConfig', {
 
   /** @type {number} */
   gridSpacingItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         OptionGroupAttribute('GridGroup', 20),
         LabelAttribute(
@@ -2229,10 +2229,10 @@ const HierarchicLayoutConfig = Class('HierarchicLayoutConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$gridSpacingItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$gridSpacingItem = value
     }
   },
@@ -2241,7 +2241,7 @@ const HierarchicLayoutConfig = Class('HierarchicLayoutConfig', {
    * @type {boolean}
    */
   shouldDisableGridSpacingItem: {
-    get: function() {
+    get: function () {
       return !this.$gridEnabledItem
     }
   },
@@ -2254,7 +2254,7 @@ const HierarchicLayoutConfig = Class('HierarchicLayoutConfig', {
 
   /** @type {HierarchicLayoutPortAssignmentMode} */
   gridPortAssignmentItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         OptionGroupAttribute('GridGroup', 30),
         LabelAttribute(
@@ -2271,10 +2271,10 @@ const HierarchicLayoutConfig = Class('HierarchicLayoutConfig', {
         TypeAttribute(HierarchicLayoutPortAssignmentMode.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$gridPortAssignmentItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$gridPortAssignmentItem = value
     }
   },
@@ -2283,7 +2283,7 @@ const HierarchicLayoutConfig = Class('HierarchicLayoutConfig', {
    * @type {boolean}
    */
   shouldDisableGridPortAssignmentItem: {
-    get: function() {
+    get: function () {
       return !this.$gridEnabledItem
     }
   },

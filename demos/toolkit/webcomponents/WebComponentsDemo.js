@@ -41,10 +41,7 @@ import './GraphComponentElement.js'
 
 // wait for the custom graph-component element to be defined
 if (window.customElements) {
-  window.customElements
-    .whenDefined('graph-component')
-    .then(loadJson)
-    .then(run)
+  window.customElements.whenDefined('graph-component').then(loadJson).then(run)
 } else {
   const warningDiv = document.createElement('div')
   document.querySelector('.demo-content').appendChild(warningDiv)

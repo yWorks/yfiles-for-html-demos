@@ -26,6 +26,8 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
+/* global d3 */
+
 import NetworkMonitoringNodeStyle from './NetworkMonitoringNodeStyle.js'
 
 /**
@@ -49,18 +51,11 @@ export default class D3BarChart {
       .attr('width', this.chartWidth + this.chartMargin.left + this.chartMargin.right)
       .attr('height', this.chartHeight + this.chartMargin.top + this.chartMargin.bottom)
 
-    const y = d3
-      .scaleLinear()
-      .domain([0, 1])
-      .range([this.chartHeight, 5])
+    const y = d3.scaleLinear().domain([0, 1]).range([this.chartHeight, 5])
 
     const yAxis = d3.axisLeft(y).ticks(3, '.6')
 
-    this.chart
-      .append('g')
-      .attr('class', 'y axis')
-      .attr('transform', 'translate(25,0)')
-      .call(yAxis)
+    this.chart.append('g').attr('class', 'y axis').attr('transform', 'translate(25,0)').call(yAxis)
 
     // d3.tip positioning doesn't work properly in Firefox (see https://github.com/Caged/d3-tip/issues/56).
     // To compensate for this, we position it in Firefox with an offset.

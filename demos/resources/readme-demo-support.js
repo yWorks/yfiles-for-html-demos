@@ -27,7 +27,7 @@
  **
  ***************************************************************************/
 /* eslint-disable no-var,no-eval */
-;(function() {
+;(function () {
   var enableES6warning =
     window.location.hostname.indexOf('yworks.') < 0 &&
     window.location.pathname.indexOf('es5/demos') < 0 &&
@@ -59,11 +59,11 @@
     for (var i = 0; i < aElementList.length; i++) {
       var link = aElementList[i]
       if (link.getAttribute('href').indexOf('index.html') > 0) {
-        link.addEventListener('click', function(e) {
+        link.addEventListener('click', function (e) {
           window.scrollTo(0, 0)
           var notice = document.getElementById('no-ecmascript6')
           notice.setAttribute('class', notice.getAttribute('class') + ' highlight-important')
-          window.setTimeout(function() {
+          window.setTimeout(function () {
             notice.setAttribute(
               'class',
               notice.getAttribute('class').replace(' highlight-important', '')
@@ -75,7 +75,7 @@
     }
   }
 })()
-;(function() {
+;(function () {
   // Check whether the demo data is available. Otherwise, this is used in a README file of the tutorials
   if (window.getDemoData == null) {
     return
@@ -84,7 +84,7 @@
   var isTsReadme = window.tsReadme
 
   if (isTsReadme) {
-    document.querySelectorAll('.ts-only').forEach(function(element) {
+    document.querySelectorAll('.ts-only').forEach(function (element) {
       element.className = element.className.replace('hidden', '')
     })
   }
@@ -128,7 +128,7 @@
   var demos = window.getDemoData()
 
   if (isTsReadme) {
-    const tsDemosFirst = function(a, b) {
+    var tsDemosFirst = function (a, b) {
       if (a.ts && !b.ts) {
         return -1
       } else if (b.ts && !a.ts) {
@@ -138,9 +138,15 @@
       }
     }
     demos.sort(tsDemosFirst)
+
+    demos.forEach(function (demo) {
+      if (demo.thumbnailPath != null) {
+        demo.thumbnailPath = '../demos-js/' + demo.thumbnailPath
+      }
+    })
   }
 
-  demos.forEach(function(item) {
+  demos.forEach(function (item) {
     item.availableInPackage =
       isCompletePackage ||
       (isViewerPackage &&
@@ -155,7 +161,7 @@
   function createGridItem(demo, index) {
     var gridItem = document.createElement('div')
     gridItem.className = 'grid-item'
-    gridItem.innerHTML = gridItemTemplate.innerHTML.replace(/{{([^}]+)}}/gi, function(
+    gridItem.innerHTML = gridItemTemplate.innerHTML.replace(/{{([^}]+)}}/gi, function (
       match,
       propertyName
     ) {
@@ -173,7 +179,7 @@
     })
     if (demo.tags) {
       var tagContainer = gridItem.querySelector('.tags')
-      demo.tags.forEach(function(tag) {
+      demo.tags.forEach(function (tag) {
         var tagItem = document.createElement('span')
         var anchor = document.createElement('a')
         anchor.setAttribute('href', '#' + tag)
@@ -200,13 +206,14 @@
     }
     if (!demo.availableInPackage) {
       gridItem.className += ' not-available'
-      const notAvailableNotice = document.createElement('div')
+      var notAvailableNotice = document.createElement('div')
       notAvailableNotice.className = 'not-available-notice'
-      notAvailableNotice.innerHTML = `Not available in "${
-        isViewerPackage ? 'Viewer' : 'Layout'
-      }" packages.<br><a href="https://live.yworks.com/demos/${
-        demo.demoPath
-      }">See online version.</a>`
+      notAvailableNotice.innerHTML =
+        'Not available in "' +
+        (isViewerPackage ? 'Viewer' : 'Layout') +
+        '" packages.<br><a href="https://live.yworks.com/demos/' +
+        demo.demoPath +
+        '">See online version.</a>'
       gridItem.appendChild(notAvailableNotice)
     }
     return gridItem
@@ -214,7 +221,7 @@
 
   function createAccordionItem(category) {
     var tmpDiv = document.createElement('div')
-    tmpDiv.innerHTML = accordionItemTemplate.innerHTML.replace(/{{([^}]+)}}/gi, function(
+    tmpDiv.innerHTML = accordionItemTemplate.innerHTML.replace(/{{([^}]+)}}/gi, function (
       match,
       propertyName
     ) {
@@ -226,7 +233,7 @@
       }
     })
     var item = tmpDiv.firstElementChild
-    item.querySelector('.accordion-title').addEventListener('click', function() {
+    item.querySelector('.accordion-title').addEventListener('click', function () {
       if (item.className.indexOf('expanded') >= 0) {
         item.className = item.className.replace(' expanded', '')
         if (searchBox.value.indexOf(category.identifier) === 0) {
@@ -293,10 +300,10 @@
   function matchDemo(demo, needle) {
     var words = needle.split(/[^.\w]/)
     return words
-      .map(function(word) {
+      .map(function (word) {
         return matchWord(demo, word)
       })
-      .reduce(function(prev, curr) {
+      .reduce(function (prev, curr) {
         return prev && curr
       }, true)
   }
@@ -311,7 +318,7 @@
       return true
     }
     if (
-      demo.tags.some(function(tag) {
+      demo.tags.some(function (tag) {
         return regex.test(tag)
       })
     ) {
@@ -319,7 +326,7 @@
     }
     if (
       demo.keywords &&
-      demo.keywords.some(function(tag) {
+      demo.keywords.some(function (tag) {
         return regex.test(tag)
       })
     ) {
@@ -346,7 +353,7 @@
     unAvailableGridHeader.style.display = 'block'
   }
 
-  demos.forEach(function(demo, index) {
+  demos.forEach(function (demo, index) {
     var gridItem = createGridItem(demo, index)
     if (demo.category === 'tutorial-getting-started') {
       tutGettingStartedGrid.appendChild(gridItem)
@@ -378,10 +385,10 @@
 
   searchBox.addEventListener('input', searchBoxChanged)
   searchBox.addEventListener('click', searchBoxClicked)
-  searchBox.addEventListener('blur', function(e) {
+  searchBox.addEventListener('blur', function (e) {
     searchBox.addEventListener('click', searchBoxClicked)
   })
-  resetSearchButton.addEventListener('click', function() {
+  resetSearchButton.addEventListener('click', function () {
     searchBox.value = ''
     searchBoxChanged()
   })
@@ -408,12 +415,12 @@
 
   function searchBoxChanged(evt) {
     var noSearchResults = true
-    tutorialIds.forEach(function(id) {
+    tutorialIds.forEach(function (id) {
       document.getElementById(id).style.display = 'none'
       document.getElementById(id + '-header').style.display = 'block'
     })
     document.getElementById('general-intro').style.display = 'block'
-    demos.forEach(function(demo) {
+    demos.forEach(function (demo) {
       if (matchDemo(demo, searchBox.value)) {
         demo.element.className = demo.element.className.replace(' filtered', '')
         demo.sidebarElement.className = demo.sidebarElement.className.replace(' filtered', '')
@@ -425,7 +432,7 @@
         }
       }
     })
-    tutorialIds.forEach(function(id) {
+    tutorialIds.forEach(function (id) {
       var children = document.getElementById(id + '-grid').childNodes
       var allHidden = true
       for (var i = 0; i < children.length; i++) {
@@ -444,13 +451,13 @@
   }
 
   function changeTextContent(text) {
-    tutorialIds.forEach(function(id) {
+    tutorialIds.forEach(function (id) {
       document.getElementById(id).style.display = 'none'
     })
     if (text.indexOf('tutorial-') === 0) {
       var content = document.getElementById(text)
       if (content != null) {
-        tutorialIds.forEach(function(id) {
+        tutorialIds.forEach(function (id) {
           document.getElementById(id + '-header').style.display = 'none'
         })
         document.getElementById('general-intro').style.display = 'none'

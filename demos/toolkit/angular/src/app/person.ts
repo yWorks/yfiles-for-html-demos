@@ -46,24 +46,31 @@ export class Person {
   get position() {
     return this._position
   }
+
   get name() {
     return this._name
   }
+
   get email() {
     return this._email
   }
+
   get phone() {
     return this._phone
   }
+
   get fax() {
     return this._fax
   }
+
   get businessUnit() {
     return this._businessUnit
   }
+
   get status() {
     return this._status
   }
+
   get icon() {
     return this._icon
   }
@@ -71,18 +78,23 @@ export class Person {
   set name(value) {
     this._name = value
   }
+
   set position(value) {
     this._position = value
   }
+
   set email(value) {
     this._email = value
   }
+
   set phone(value) {
     this._phone = value
   }
+
   set fax(value) {
     this._fax = value
   }
+
   set businessUnit(value) {
     this._businessUnit = value
   }

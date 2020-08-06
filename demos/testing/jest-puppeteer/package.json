@@ -40,7 +40,7 @@
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-scripts": "3.2.0",
-    "yfiles": "../../../lib-dev/es-modules/yfiles-23.0.1-dev.tgz"
+    "yfiles": "../../../lib-dev/es-modules/yfiles-23.0.2-dev.tgz"
   },
   "devDependencies": {
     "cross-env": "^7.0.2",

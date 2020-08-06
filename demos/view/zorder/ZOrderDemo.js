@@ -32,6 +32,7 @@ import {
   GraphComponent,
   GraphEditorInputMode,
   GraphItemTypes,
+  GraphMLIOHandler,
   GraphMLSupport,
   ICommand,
   IGraph,
@@ -48,7 +49,6 @@ import loadJson from '../../resources/load-json.js'
 import {
   ZIndexChangedEventArgs,
   ZOrderGraphEditorInputMode,
-  ZOrderGraphMLIOHandler,
   ZOrderSupport
 } from './ZOrderSupport.js'
 import DemoStyles, {
@@ -79,12 +79,13 @@ function run(licenseData) {
   enableGroupingOperations()
 
   // use a custom GraphMLIOHandler that supports writing and parsing node z-orders to/from GraphML
-  const ioHandler = new ZOrderGraphMLIOHandler(zOrderSupport)
+  const ioHandler = new GraphMLIOHandler()
   ioHandler.addXamlNamespaceMapping(
     'http://www.yworks.com/yFilesHTML/demos/FlatDemoStyle/1.0',
     DemoStyles
   )
   ioHandler.addHandleSerializationListener(DemoSerializationListener)
+  zOrderSupport.configureZOrderGraphMLIOHandler(ioHandler)
 
   // eslint-disable-next-line no-new
   new GraphMLSupport({
@@ -105,6 +106,13 @@ function run(licenseData) {
     const node = evt.item
     updateLabel(node, zOrderSupport.getZOrder(node))
   })
+
+  // if graph structure is changed, update _all_ labels,
+  // otherwise the copied labels erroneously show the z-order
+  // of the source nodes. (this is for demo purposes only)
+  inputMode.addElementsDuplicatedListener(updateLabels)
+  inputMode.addElementsPastedListener(updateLabels)
+  inputMode.navigationInputMode.addGroupExpandedListener(updateLabels)
 
   zOrderSupport.addZIndexChangedLister((sender, evt) => {
     if (evt.item instanceof INode) {
@@ -186,7 +194,18 @@ function createGraph(graph) {
 }
 
 /**
+ * Updates the labels of all nodes. Called after duplicate or paste
+ */
+function updateLabels() {
+  graphComponent.graph.nodes.forEach(node => {
+    updateLabel(node, zOrderSupport.getZOrder(node))
+  })
+}
+
+/**
  * Updates the label text to show the current z-index of the node.
+ * z-Order labels are for demo purposes only and not necessary for
+ * the z-Order mechanism itself
  * @param {!INode} node
  * @param {number} zIndex
  */
@@ -195,7 +214,7 @@ function updateLabel(node, zIndex) {
     ? graphComponent.graph
     : graphComponent.graph.foldingView.manager.masterGraph
 
-  if (node.labels.some(label => label.tag.showZIndex)) {
+  if (node.labels.some(label => label.tag && label.tag.showZIndex)) {
     graph.setLabelText(
       node.labels.find(label => label.tag.showZIndex),
       `Level: ${zIndex}`

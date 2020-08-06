@@ -62,7 +62,7 @@ const ChannelEdgeRouterConfig = Class('ChannelEdgeRouterConfig', {
   /**
    * Setup default values for various configuration parameters.
    */
-  constructor: function() {
+  constructor: function () {
     LayoutConfiguration.call(this)
     this.scopeItem = EdgeRouterScope.ROUTE_ALL_EDGES
     this.minimumDistanceItem = 10
@@ -80,7 +80,7 @@ const ChannelEdgeRouterConfig = Class('ChannelEdgeRouterConfig', {
    *   configuration on.
    * @return {ILayoutAlgorithm} The configured layout.
    */
-  createConfiguredLayout: function(graphComponent) {
+  createConfiguredLayout: function (graphComponent) {
     const router = new ChannelEdgeRouter()
 
     const orthogonalPatternEdgeRouter = new OrthogonalPatternEdgeRouter()
@@ -114,7 +114,7 @@ const ChannelEdgeRouterConfig = Class('ChannelEdgeRouterConfig', {
    * Called by {@link LayoutConfiguration#apply} to create the layout data of the configuration. This
    * method is typically overridden to provide mappers for the different layouts.
    */
-  createConfiguredLayoutData: function(graphComponent, layout) {
+  createConfiguredLayoutData: function (graphComponent, layout) {
     const layoutData = new ChannelEdgeRouterData()
     const selection = graphComponent.selection
     if (this.scopeItem === EdgeRouterScope.ROUTE_EDGES_AT_AFFECTED_NODES) {
@@ -132,11 +132,11 @@ const ChannelEdgeRouterConfig = Class('ChannelEdgeRouterConfig', {
    * Called after the layout animation is done.
    * @see Overrides {@link LayoutConfiguration#postProcess}
    */
-  postProcess: function(graphComponent) {},
+  postProcess: function (graphComponent) {},
 
   /** @type {OptionGroup} */
   DescriptionGroup: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute('Description'),
         OptionGroupAttribute('RootGroup', 5),
@@ -148,7 +148,7 @@ const ChannelEdgeRouterConfig = Class('ChannelEdgeRouterConfig', {
 
   /** @type {OptionGroup} */
   LayoutGroup: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute('General'),
         OptionGroupAttribute('RootGroup', 10),
@@ -160,7 +160,7 @@ const ChannelEdgeRouterConfig = Class('ChannelEdgeRouterConfig', {
 
   /** @type {OptionGroup} */
   CostsGroup: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute('Costs'),
         OptionGroupAttribute('RootGroup', 20),
@@ -172,14 +172,14 @@ const ChannelEdgeRouterConfig = Class('ChannelEdgeRouterConfig', {
 
   /** @type {string} */
   descriptionText: {
-    $meta: function() {
+    $meta: function () {
       return [
         OptionGroupAttribute('DescriptionGroup', 10),
         ComponentAttribute(Components.HTML_BLOCK),
         TypeAttribute(YString.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return "<p style='margin - top:0'>Channel edge router uses a rather fast but simple algorithm for finding orthogonal edge routes. Compared to polyline and orthogonal edge router, edge segments can be very close to each other and edges may also overlap with nodes. However, this algorithm is faster in many situations.</p>"
     }
   },
@@ -192,7 +192,7 @@ const ChannelEdgeRouterConfig = Class('ChannelEdgeRouterConfig', {
 
   /** @type {EdgeRouterScope} */
   scopeItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Scope',
@@ -209,10 +209,10 @@ const ChannelEdgeRouterConfig = Class('ChannelEdgeRouterConfig', {
         TypeAttribute(EdgeRouterScope.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$scopeItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$scopeItem = value
     }
   },
@@ -225,7 +225,7 @@ const ChannelEdgeRouterConfig = Class('ChannelEdgeRouterConfig', {
 
   /** @type {number} */
   minimumDistanceItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Minimum Distance',
@@ -240,10 +240,10 @@ const ChannelEdgeRouterConfig = Class('ChannelEdgeRouterConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$minimumDistanceItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$minimumDistanceItem = value
     }
   },
@@ -256,7 +256,7 @@ const ChannelEdgeRouterConfig = Class('ChannelEdgeRouterConfig', {
 
   /** @type {boolean} */
   activateGridRoutingItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Route on Grid',
@@ -266,10 +266,10 @@ const ChannelEdgeRouterConfig = Class('ChannelEdgeRouterConfig', {
         TypeAttribute(YBoolean.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$activateGridRoutingItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$activateGridRoutingItem = value
     }
   },
@@ -282,7 +282,7 @@ const ChannelEdgeRouterConfig = Class('ChannelEdgeRouterConfig', {
 
   /** @type {number} */
   gridSpacingItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Grid Spacing',
@@ -297,20 +297,20 @@ const ChannelEdgeRouterConfig = Class('ChannelEdgeRouterConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$gridSpacingItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$gridSpacingItem = value
     }
   },
 
   /** @type {boolean} */
   shouldDisableGridSpacingItem: {
-    $meta: function() {
+    $meta: function () {
       return [TypeAttribute(YBoolean.$class)]
     },
-    get: function() {
+    get: function () {
       return !this.activateGridRoutingItem
     }
   },
@@ -323,7 +323,7 @@ const ChannelEdgeRouterConfig = Class('ChannelEdgeRouterConfig', {
 
   /** @type {number} */
   bendCostItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Bend Cost',
@@ -338,10 +338,10 @@ const ChannelEdgeRouterConfig = Class('ChannelEdgeRouterConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$bendCostItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$bendCostItem = value
     }
   },
@@ -354,7 +354,7 @@ const ChannelEdgeRouterConfig = Class('ChannelEdgeRouterConfig', {
 
   /** @type {number} */
   edgeCrossingCostItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Edge Crossing Cost',
@@ -369,10 +369,10 @@ const ChannelEdgeRouterConfig = Class('ChannelEdgeRouterConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$edgeCrossingCostItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$edgeCrossingCostItem = value
     }
   },
@@ -385,7 +385,7 @@ const ChannelEdgeRouterConfig = Class('ChannelEdgeRouterConfig', {
 
   /** @type {number} */
   nodeCrossingCostItem: {
-    $meta: function() {
+    $meta: function () {
       return [
         LabelAttribute(
           'Node Overlap Cost',
@@ -400,14 +400,14 @@ const ChannelEdgeRouterConfig = Class('ChannelEdgeRouterConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function() {
+    get: function () {
       return this.$nodeCrossingCostItem
     },
-    set: function(value) {
+    set: function (value) {
       this.$nodeCrossingCostItem = value
     }
   },
-  $initChannelEdgeRouterConfig: function() {
+  $initChannelEdgeRouterConfig: function () {
     this.$scopeItem = EdgeRouterScope.ROUTE_ALL_EDGES
   }
 })
