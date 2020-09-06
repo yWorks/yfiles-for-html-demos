@@ -31,7 +31,7 @@
      // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
      // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
      // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-     // 
+     //
      ////////////////////////////////////////////////////////////////////////-->
 
   <title>Simple Graph Builder Demo [yFiles for HTML]</title>
@@ -44,16 +44,16 @@
   <script type="text/yfiles-template">
     <defs>
       <clipPath id="myClip">
-        <rect width="260" height="60"></rect>
+        <rect width="260" height="60"/>
       </clipPath>
     </defs>
     <g id="nodeTemplate" clip-path="url(#myClip)">
       <rect fill="#FF8C00" stroke="#FFF" stroke-width="1" rx="2" ry="2"
-          width="{TemplateBinding width}" height="{TemplateBinding height}"></rect>
+          width="{TemplateBinding width}" height="{TemplateBinding height}"/>
       <text transform="translate(10 20)" data-content="{Binding name}"
-          style="font-size:18px; fill:#000; text-anchor: start; dominant-baseline: central;"></text>
+          style="font-size:18px; fill:#000; text-anchor: start; dominant-baseline: central;"/>
       <text transform="translate(10 40)" data-content="{Binding position}"
-          style="font-size:18px; fill:#000; text-anchor: start; dominant-baseline: central;"></text>
+          style="font-size:18px; fill:#000; text-anchor: start; dominant-baseline: central;"/>
     </g>
   </script>
 

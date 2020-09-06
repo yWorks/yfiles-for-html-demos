@@ -32,7 +32,7 @@
      // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
      // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
      // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-     // 
+     //
      ////////////////////////////////////////////////////////////////////////-->
 
   <title>Multi-Page Layout Demo [yFiles for HTML]</title>
@@ -45,40 +45,40 @@
   <script type="text/yfiles-template">
     <g id="NormalNodeTemplate">
       <rect fill="#99CCFF" stroke="#99CCFF" stroke-width="1" rx="2" ry="2" width="{TemplateBinding width}"
-          height="{TemplateBinding height}"></rect>
+          height="{TemplateBinding height}"/>
       <text data-content="{TemplateBinding item, Converter=multipage.labelconverter}"
           transform="{TemplateBinding width, Converter=multipage.transformconverter}"
-          style="font-size:10px; font-family:Arial; fill:#000; text-anchor: middle; dominant-baseline: central;"></text>
+          style="font-size:10px; font-family:Arial; fill:#000; text-anchor: middle; dominant-baseline: central;"/>
     </g>
     <g id="ConnectorNodeTemplate">
       <rect fill="#FF8C00" stroke="#FF8C00" stroke-width="2" rx="2" ry="2" width="{TemplateBinding width}"
-          height="{TemplateBinding height}"></rect>
+          height="{TemplateBinding height}"/>
       <rect fill="white" rx="2" ry="2" class="hoverable" width="{TemplateBinding width}"
-          height="{TemplateBinding height}"></rect>
+          height="{TemplateBinding height}"/>
       <text data-content="{TemplateBinding item, Converter=multipage.labelconverter}"
           transform="{TemplateBinding width, Converter=multipage.transformconverter}"
-          style="font-size:10px; font-family:Arial; fill:#000; text-anchor: middle; dominant-baseline: central;"></text>
-      <rect rx="2" ry="2" style="opacity: 0" width="{TemplateBinding width}" height="{TemplateBinding height}"></rect>
+          style="font-size:10px; font-family:Arial; fill:#000; text-anchor: middle; dominant-baseline: central;"/>
+      <rect rx="2" ry="2" style="opacity: 0" width="{TemplateBinding width}" height="{TemplateBinding height}"/>
     </g>
     <g id="ProxyNodeTemplate">
       <rect fill="#99CC33" stroke="#99CC33" stroke-width="2" rx="2" ry="2" width="{TemplateBinding width}"
-          height="{TemplateBinding height}"></rect>
+          height="{TemplateBinding height}"/>
       <rect fill="white" rx="2" ry="2" class="hoverable" width="{TemplateBinding width}"
-          height="{TemplateBinding height}"></rect>
+          height="{TemplateBinding height}"/>
       <text data-content="{TemplateBinding item, Converter=multipage.labelconverter}"
           transform="{TemplateBinding width, Converter=multipage.transformconverter}"
-          style="font-size:10px; font-family:Arial; fill:#000; text-anchor: middle; dominant-baseline: central;"></text>
-      <rect rx="2" ry="2" style="opacity: 0" width="{TemplateBinding width}" height="{TemplateBinding height}"></rect>
+          style="font-size:10px; font-family:Arial; fill:#000; text-anchor: middle; dominant-baseline: central;"/>
+      <rect rx="2" ry="2" style="opacity: 0" width="{TemplateBinding width}" height="{TemplateBinding height}"/>
     </g>
     <g id="ProxyReferenceNodeTemplate">
       <rect fill="#F23802" stroke="#F23802" stroke-width="2" rx="2" ry="2" width="{TemplateBinding width}"
-          height="{TemplateBinding height}"></rect>
+          height="{TemplateBinding height}"/>
       <rect fill="white" rx="2" ry="2" class="hoverable" width="{TemplateBinding width}"
-          height="{TemplateBinding height}"></rect>
+          height="{TemplateBinding height}"/>
       <text data-content="{TemplateBinding item, Converter=multipage.labelconverter}"
           transform="{TemplateBinding width, Converter=multipage.transformconverter}"
-          style="font-size:10px; font-family:Arial; fill:#000; text-anchor: middle; dominant-baseline: central;"></text>
-      <rect rx="2" ry="2" style="opacity: 0" width="{TemplateBinding width}" height="{TemplateBinding height}"></rect>
+          style="font-size:10px; font-family:Arial; fill:#000; text-anchor: middle; dominant-baseline: central;"/>
+      <rect rx="2" ry="2" style="opacity: 0" width="{TemplateBinding width}" height="{TemplateBinding height}"/>
     </g>
   </script>
   <style type="text/css">

@@ -31,7 +31,7 @@
      // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
      // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
      // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-     // 
+     //
      ////////////////////////////////////////////////////////////////////////-->
 
   <title id="title">Organization Chart Viewer Demo [yFiles for HTML]</title>
@@ -65,18 +65,18 @@
 
 <defs>
 <linearGradient x1="0.5" y1="0" x2="0.5" y2="1" spreadMethod="pad" id="background_gradient">
-  <stop stop-color="#CCFFFF" stop-opacity="1" offset="0"></stop>
-  <stop stop-color="#249AE7" stop-opacity="1" offset="1"></stop>
+  <stop stop-color="#CCFFFF" stop-opacity="1" offset="0"/>
+  <stop stop-color="#249AE7" stop-opacity="1" offset="1"/>
 </linearGradient>
 
 <linearGradient x1="0.5" y1="0" x2="0.5" y2="1" spreadMethod="pad" id="background_gradient_focused">
-  <stop stop-color="#FFFFFF" stop-opacity="1" offset="0"></stop>
-  <stop stop-color="#FFA500" stop-opacity="1" offset="1"></stop>
+  <stop stop-color="#FFFFFF" stop-opacity="1" offset="0"/>
+  <stop stop-color="#FFA500" stop-opacity="1" offset="1"/>
 </linearGradient>
 
 <linearGradient x1="0.5" y1="0" x2="0.5" y2="1" spreadMethod="pad" id="background_gradient_hover">
-  <stop stop-color="#FFFFFF" stop-opacity="0.6" offset="0"></stop>
-  <stop stop-color="#FFFFFF" stop-opacity="0.6" offset="1"></stop>
+  <stop stop-color="#FFFFFF" stop-opacity="0.6" offset="0"/>
+  <stop stop-color="#FFFFFF" stop-opacity="0.6" offset="1"/>
 </linearGradient>
 </defs>
 
@@ -87,18 +87,18 @@
   <use xlink:href="{Binding status, Converter=orgChartConverters.addHashConverter}"/>
   <use xlink:href="{Binding status, Converter=orgChartConverters.addHashConverter, Parameter=_icon}" transform="translate(26 84)"/>
   <g class="hoverable">
-    <rect width="3" height="100"></rect>
-    <rect width="3" height="100" transform="translate(282 0)"></rect>
-    <rect width="285" height="3"></rect>
-    <rect width="285" height="3" transform="translate(0 97)"></rect>
+    <rect width="3" height="100"/>
+    <rect width="3" height="100" transform="translate(282 0)"/>
+    <rect width="285" height="3"/>
+    <rect width="285" height="3" transform="translate(0 97)"/>
   </g>
   <g style="font-size:10px; font-family:Roboto,sans-serif; font-weight: 300; fill: #444">
-    <text transform="translate(100 25)" data-content="{Binding name}" style="font-size:16px; fill:#336699"></text>
-    <text transform="translate(100 45)" data-content="{Binding position, Converter=orgChartConverters.lineBreakConverter, Parameter=true}" style="text-transform: uppercase; font-weight: 400"></text>
-    <text transform="translate(100 57)" data-content="{Binding position, Converter=orgChartConverters.lineBreakConverter, Parameter=false}" style="text-transform: uppercase; font-weight: 400"></text>
-    <text transform="translate(100 72)" data-content="{Binding email}"></text>
-    <text transform="translate(100 88)" data-content="{Binding phone}"></text>
-    <text transform="translate(170 88)" data-content="{Binding fax}"></text>
+    <text transform="translate(100 25)" data-content="{Binding name}" style="font-size:16px; fill:#336699"/>
+    <text transform="translate(100 45)" data-content="{Binding position, Converter=orgChartConverters.lineBreakConverter, Parameter=true}" style="text-transform: uppercase; font-weight: 400"/>
+    <text transform="translate(100 57)" data-content="{Binding position, Converter=orgChartConverters.lineBreakConverter, Parameter=false}" style="text-transform: uppercase; font-weight: 400"/>
+    <text transform="translate(100 72)" data-content="{Binding email}"/>
+    <text transform="translate(100 88)" data-content="{Binding phone}"/>
+    <text transform="translate(170 88)" data-content="{Binding fax}"/>
   </g>
 </g>
 <g id="intermediateNodeStyleTemplate">
@@ -106,28 +106,28 @@
   <rect fill="#FFFFFF" stroke="#C0C0C0" width="285" height="100"/>
   <use xlink:href="{Binding status, Converter=orgChartConverters.addHashConverter}"/>
   <g class="hoverable">
-    <rect width="3" height="100"></rect>
-    <rect width="3" height="100" transform="translate(282 0)"></rect>
-    <rect width="285" height="3"></rect>
-    <rect width="285" height="3" transform="translate(0 97)"></rect>
+    <rect width="3" height="100"/>
+    <rect width="3" height="100" transform="translate(282 0)"/>
+    <rect width="285" height="3"/>
+    <rect width="285" height="3" transform="translate(0 97)"/>
   </g>
   <use xlink:href="{Binding icon, Converter=orgChartConverters.addHashConverter}" transform="scale(0.75) translate(15 30)"/>
-  <text transform="translate(75 40)" data-content="{Binding name, Converter=orgChartConverters.intermediateConverter}" style="font-size:26px; font-family:Roboto,sans-serif; fill:#336699;"></text>
-  <text transform="translate(75 70)" data-content="{Binding position, Converter=orgChartConverters.lineBreakConverter, Parameter=true}" style="font-size:15px; font-family:Roboto,sans-serif; text-transform: uppercase; font-weight: 400"></text>
-  <text transform="translate(75 90)" data-content="{Binding position, Converter=orgChartConverters.lineBreakConverter, Parameter=false}" style="font-size:15px; font-family:Roboto,sans-serif; text-transform: uppercase; font-weight: 400"></text>
+  <text transform="translate(75 40)" data-content="{Binding name, Converter=orgChartConverters.intermediateConverter}" style="font-size:26px; font-family:Roboto,sans-serif; fill:#336699;"/>
+  <text transform="translate(75 70)" data-content="{Binding position, Converter=orgChartConverters.lineBreakConverter, Parameter=true}" style="font-size:15px; font-family:Roboto,sans-serif; text-transform: uppercase; font-weight: 400"/>
+  <text transform="translate(75 90)" data-content="{Binding position, Converter=orgChartConverters.lineBreakConverter, Parameter=false}" style="font-size:15px; font-family:Roboto,sans-serif; text-transform: uppercase; font-weight: 400"/>
 </g>
 <g id="overviewNodeStyleTemplate">
   <rect fill="#AAA" width="288" height="103" transform="translate(-1 -1)"/>
   <rect fill="#FFFFFF" width="285" height="100"/>
   <use xlink:href="{Binding status, Converter=orgChartConverters.addHashConverter}"/>
   <g class="hoverable">
-    <rect width="3" height="100"></rect>
-    <rect width="3" height="100" transform="translate(282 0)"></rect>
-    <rect width="285" height="3"></rect>
-    <rect width="285" height="3" transform="translate(0 97)"></rect>
+    <rect width="3" height="100"/>
+    <rect width="3" height="100" transform="translate(282 0)"/>
+    <rect width="285" height="3"/>
+    <rect width="285" height="3" transform="translate(0 97)"/>
   </g>
   <text transform="translate(30 50)" data-content="{Binding name, Converter=orgChartConverters.overviewConverter}"
-      style="font-size:40px; font-family:Roboto,sans-serif; fill:#336699; dominant-baseline: central;"></text>
+      style="font-size:40px; font-family:Roboto,sans-serif; fill:#336699; dominant-baseline: central;"/>
 </g>
 
 
@@ -136,7 +136,7 @@
 <!-- and can be referenced in the templates. In this case, this happens via converters.           -->
 
   <g id="PortStyleTemplate">
-    <use xlink:href="{TemplateBinding styleTag, Converter=orgChartDemo.iconConverter}" style="pointer-events:none"></use>
+    <use xlink:href="{TemplateBinding styleTag, Converter=orgChartDemo.iconConverter}" style="pointer-events:none"/>
   </g>
 </script>
 
