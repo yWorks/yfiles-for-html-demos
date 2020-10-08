@@ -7,10 +7,14 @@
   "scripts": {
     "preinstall": "cd .. && npm run prepare-package",
     "start": "cd .. && npm start",
-    "tsc": "tsc"
+    "postinstall": "npm run tsc",
+    "tsc": "tsc",
+    "watch": "tsc --watch"
   },
   "dependencies": {
-    "yfiles": "../lib-dev/es-modules/yfiles-23.0.2-dev.tgz",
-    "yfiles-umd": "../lib-dev/umd/yfiles-umd-23.0.2-dev.tgz"
+    "yfiles": "../lib-dev/es-modules/yfiles-23.0.3-dev.tgz"
+  },
+  "devDependencies": {
+    "typescript": ">=2.8 <4"
   }
 }

@@ -31,7 +31,7 @@ import { BaseClass, IArrow, IBoundsProvider, IEdge, IVisualCreator, Point } from
 /**
  * A simple wrapper around an {@link IArrow} that rotates the arrow by 180 degrees.
  */
-export class FlippedArrow extends BaseClass<IArrow>(IArrow) implements IArrow {
+export class FlippedArrow extends BaseClass<IArrow>(IArrow) {
   private readonly wrappedArrow: IArrow
   private readonly offset: number
 

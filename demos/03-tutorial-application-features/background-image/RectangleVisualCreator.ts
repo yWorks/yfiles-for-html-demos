@@ -28,8 +28,7 @@
  ***************************************************************************/
 import { BaseClass, IRenderContext, IVisualCreator, SvgVisual } from 'yfiles'
 
-export default class RectangleVisualCreator extends BaseClass<IVisualCreator>(IVisualCreator)
-  implements IVisualCreator {
+export default class RectangleVisualCreator extends BaseClass<IVisualCreator>(IVisualCreator) {
   /**
    * Creates the visual for the background.
    * @param context The context that describes where the visual will be used

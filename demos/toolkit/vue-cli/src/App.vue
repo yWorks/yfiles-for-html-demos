@@ -7,7 +7,7 @@
     <div class="demo-content">
       <div class="demo-header">
         <a href="https://www.yworks.com" target="_blank">
-          <img src="../../../resources/image/ylogo.svg" class="demo-y-logo" />
+          <img src="../../../resources/icons/ylogo.svg" class="demo-y-logo" />
         </a>
         <a href="../../../README.html" target="_blank">yFiles for HTML</a>
         <span class="demo-title">Vue-CLI Demo [yFiles for HTML]</span>

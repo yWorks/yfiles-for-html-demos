@@ -44,9 +44,9 @@ import { PortReshapeHandle } from './PortReshapeHandle'
  * The provided {@link PortReshapeHandle} modify the {@link NodeStylePortStyleAdapter.renderSize} of the
  * port style.
  */
-export class PortReshapeHandleProvider
-  extends BaseClass<IReshapeHandleProvider>(IReshapeHandleProvider)
-  implements IReshapeHandleProvider {
+export class PortReshapeHandleProvider extends BaseClass<IReshapeHandleProvider>(
+  IReshapeHandleProvider
+) {
   readonly port: IPort
   readonly adapter: NodeStylePortStyleAdapter
 

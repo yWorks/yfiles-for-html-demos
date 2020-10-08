@@ -36,7 +36,7 @@
 
   <title>Script Loading Demo [yFiles for HTML]</title>
 
-  <link rel="stylesheet" href="../../node_modules/yfiles/yfiles.css">
+  <link rel="stylesheet" href="../../../lib-dev/umd/yfiles.css">
   <link rel="stylesheet" href="../../resources/style/demo.css">
 
   <script src="../../resources/filesystem-warning.js"></script>
@@ -47,7 +47,7 @@
   <h1 class="demo-sidebar-header">Description</h1>
   <div class="demo-sidebar-content">
     <p>
-      This demo loads the yFiles modules using <em>&lt;script&gt;</em> tags instead of an AMD loader. </p>
+      This demo loads the yFiles modules using <em>&lt;script&gt;</em> tags. </p>
 
     <p>
       With script-tags, dependencies between the yFiles modules are not resolved automatically. Therefore, all modules
@@ -61,12 +61,16 @@
       yFiles comes with a <a href="https://docs.yworks.com/yfileshtml/#/dguide/deployment_tool" target="_blank">deployment tool</a> that can combine the yFiles modules
       into fewer or optionally even a single file. See the tool's documentation for details.
     </p>
+
+    <p>
+      In order to improve code completion, install the UMD variant of yFiles locally as npm module.
+    </p>
   </div>
 </aside>
 
 <div class="demo-content">
   <div class="demo-header">
-    <a href="https://www.yworks.com" target="_blank"> <img src="../../resources/image/ylogo.svg" class="demo-y-logo"> </a> <a
+    <a href="https://www.yworks.com" target="_blank"> <img src="../../resources/icons/ylogo.svg" class="demo-y-logo"> </a> <a
       href="../../README.html" target="_blank">yFiles for HTML</a> <span class="demo-title">Script Loading Demo [yFiles for HTML]</span>
   </div>
   <div class="demo-toolbar">
@@ -79,40 +83,40 @@
 <!-- Script loading of all modules in correct order -->
 
 <!-- Core Modules-->
-<script src="../../node_modules/yfiles-umd/impl/lang.js"></script>
-<script src="../../node_modules/yfiles-umd/impl/core-lib.js"></script>
+<script src="../../../lib-dev/umd/impl/lang.js"></script>
+<script src="../../../lib-dev/umd/impl/core-lib.js"></script>
 
 <!-- Viewer Modules-->
-<script src="../../node_modules/yfiles-umd/impl/graph-core.js"></script>
-<script src="../../node_modules/yfiles-umd/impl/graph-binding.js"></script>
-<script src="../../node_modules/yfiles-umd/impl/graph-styles-core.js"></script>
-<script src="../../node_modules/yfiles-umd/impl/graph-styles-default.js"></script>
-<script src="../../node_modules/yfiles-umd/impl/graph-styles-other.js"></script>
-<script src="../../node_modules/yfiles-umd/impl/graph-styles-template.js"></script>
-<script src="../../node_modules/yfiles-umd/impl/graph-input.js"></script>
-<script src="../../node_modules/yfiles-umd/impl/graph-folding.js"></script>
-<script src="../../node_modules/yfiles-umd/impl/graph-table.js"></script>
-<script src="../../node_modules/yfiles-umd/impl/graph-styles-table.js"></script>
-<script src="../../node_modules/yfiles-umd/impl/graph-input-table.js"></script>
-<script src="../../node_modules/yfiles-umd/impl/graph-graphml.js"></script>
+<script src="../../../lib-dev/umd/impl/graph-core.js"></script>
+<script src="../../../lib-dev/umd/impl/graph-binding.js"></script>
+<script src="../../../lib-dev/umd/impl/graph-styles-core.js"></script>
+<script src="../../../lib-dev/umd/impl/graph-styles-default.js"></script>
+<script src="../../../lib-dev/umd/impl/graph-styles-other.js"></script>
+<script src="../../../lib-dev/umd/impl/graph-styles-template.js"></script>
+<script src="../../../lib-dev/umd/impl/graph-input.js"></script>
+<script src="../../../lib-dev/umd/impl/graph-folding.js"></script>
+<script src="../../../lib-dev/umd/impl/graph-table.js"></script>
+<script src="../../../lib-dev/umd/impl/graph-styles-table.js"></script>
+<script src="../../../lib-dev/umd/impl/graph-input-table.js"></script>
+<script src="../../../lib-dev/umd/impl/graph-graphml.js"></script>
 
 <!-- Layout Modules-->
-<script src="../../node_modules/yfiles-umd/impl/algorithms.js"></script>
-<script src="../../node_modules/yfiles-umd/impl/layout-core.js"></script>
-<script src="../../node_modules/yfiles-umd/impl/layout-hierarchic.js"></script>
-<script src="../../node_modules/yfiles-umd/impl/layout-organic.js"></script>
-<script src="../../node_modules/yfiles-umd/impl/layout-tree.js"></script>
-<script src="../../node_modules/yfiles-umd/impl/layout-polyline.js"></script>
-<script src="../../node_modules/yfiles-umd/impl/layout-router.js"></script>
-<script src="../../node_modules/yfiles-umd/impl/layout-orthogonal.js"></script>
-<script src="../../node_modules/yfiles-umd/impl/layout-orthogonal-compact.js"></script>
-<script src="../../node_modules/yfiles-umd/impl/layout-seriesparallel.js"></script>
-<script src="../../node_modules/yfiles-umd/impl/layout-radial.js"></script>
-<script src="../../node_modules/yfiles-umd/impl/layout-familytree.js"></script>
-<script src="../../node_modules/yfiles-umd/impl/layout-multipage.js"></script>
+<script src="../../../lib-dev/umd/impl/algorithms.js"></script>
+<script src="../../../lib-dev/umd/impl/layout-core.js"></script>
+<script src="../../../lib-dev/umd/impl/layout-hierarchic.js"></script>
+<script src="../../../lib-dev/umd/impl/layout-organic.js"></script>
+<script src="../../../lib-dev/umd/impl/layout-tree.js"></script>
+<script src="../../../lib-dev/umd/impl/layout-polyline.js"></script>
+<script src="../../../lib-dev/umd/impl/layout-router.js"></script>
+<script src="../../../lib-dev/umd/impl/layout-orthogonal.js"></script>
+<script src="../../../lib-dev/umd/impl/layout-orthogonal-compact.js"></script>
+<script src="../../../lib-dev/umd/impl/layout-seriesparallel.js"></script>
+<script src="../../../lib-dev/umd/impl/layout-radial.js"></script>
+<script src="../../../lib-dev/umd/impl/layout-familytree.js"></script>
+<script src="../../../lib-dev/umd/impl/layout-multipage.js"></script>
 
 <!-- Viewer-Layout-Bridge Module -->
-<script src="../../node_modules/yfiles-umd/impl/graph-layout-bridge.js"></script>
+<script src="../../../lib-dev/umd/impl/graph-layout-bridge.js"></script>
 
 <!-- Load demo-->
 <script src="ScriptLoadingDemo.js"></script>

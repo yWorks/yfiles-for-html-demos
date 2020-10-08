@@ -36,7 +36,6 @@ import {
   GraphOverviewComponent,
   GraphSnapContext,
   GridSnapTypes,
-  HashMap,
   HierarchicLayout,
   IArrow,
   ICommand,
@@ -87,10 +86,7 @@ import DemoStyles, {
 import { bindAction, bindChangeListener, bindCommand, showApp } from '../../resources/demo-app.js'
 import loadJson from '../../resources/load-json.js'
 import { webGlSupported } from '../../utils/Workarounds.js'
-import {
-  FaultTolerantGraphMLIOHandler,
-  ensureDefaultStyles
-} from './FaultTolerantGraphMLIOHandler.js'
+import { FaultTolerantGraphMLIOHandler } from './FaultTolerantGraphMLIOHandler.js'
 
 /**
  * The GraphComponent
@@ -108,7 +104,7 @@ let overviewComponent = null
  * Stores all available layout algorithms and maps each name to the corresponding configuration.
  * @type {Map.<string,LayoutConfiguration>}
  */
-let availableLayouts = null
+const availableLayouts = new Map()
 
 /**
  * The option editor that stores the currently selected layout configuration.
@@ -119,6 +115,8 @@ let optionEditor = null
 let configOptionsValid = false
 let inLayout = false
 let inLoadSample = false
+
+const comboBoxSeparatorItem = '-----------'
 
 // get hold of some UI elements
 
@@ -165,9 +163,44 @@ function run(licenseData) {
     false
   )
 
-  // in order to load the sample graphs we require the styles and graphml
-  // we populate the combo box
-  ;[
+  initializeSamples()
+
+  // initialize the graph and the defaults
+  initializeGraph()
+
+  // configure overview panel
+  overviewComponent.graphVisualCreator = new DemoStyleOverviewPaintable(graphComponent.graph)
+
+  // after the initial graph is loaded, we continue loading with the algorithms
+  initializeLayoutAlgorithms()
+
+  // initialize the demo
+  showApp(graphComponent, overviewComponent)
+
+  loadSampleFromLocationHash(true)
+}
+
+/**
+ * Enables loading and saving the graph to GraphML.
+ */
+function enableGraphML() {
+  const gs = new GraphMLSupport({
+    graphComponent,
+    // configure to load and save to the file system
+    storageLocation: StorageLocation.FILE_SYSTEM,
+    graphMLIOHandler: new FaultTolerantGraphMLIOHandler()
+  })
+
+  // enable serialization of the demo styles - without a namespace mapping, serialization will fail
+  gs.graphMLIOHandler.addXamlNamespaceMapping(
+    'http://www.yworks.com/yFilesHTML/demos/FlatDemoStyle/1.0',
+    DemoStyles
+  )
+  gs.graphMLIOHandler.addHandleSerializationListener(DemoSerializationListener)
+}
+
+function initializeSamples() {
+  initializeComboBox(sampleComboBox, [
     'Hierarchic',
     'Grouping',
     'Organic',
@@ -181,54 +214,16 @@ function run(licenseData) {
     'Bus Router',
     'Components',
     'Tabular',
-    '-----------',
+    comboBoxSeparatorItem,
     'Organic with Substructures',
     'Hierarchic with Subcomponents',
     'Orthogonal with Substructures',
-    '-----------',
+    comboBoxSeparatorItem,
     'Hierarchic with Buses',
-    'Edge Router with Buses'
-  ].forEach(sample => {
-    const option = document.createElement('option')
-    option.text = sample
-    option.value = sample
-    sampleComboBox.add(option)
-    if (sample === '-----------') {
-      option.disabled = true
-    }
-  })
-
-  // initialize the graph and the defaults
-  initializeGraph()
-  // and create the sample graph
-  createSampleGraph(graphComponent.graph)
-  graphComponent.fitGraphBounds()
-
-  // configure overview panel
-  overviewComponent.graphVisualCreator = new DemoStyleOverviewPaintable(graphComponent.graph)
-
-  // after the initial graph is loaded, we continue loading with the algorithms
-  initializeLayoutAlgorithms()
-
-  // initialize the demo
-  showApp(graphComponent, overviewComponent)
-}
-
-/**
- * Enables loading and saving the graph to GraphML.
- */
-function enableGraphML() {
-  const gs = new GraphMLSupport({
-    graphComponent,
-    // configure to load and save to the file system
-    storageLocation: StorageLocation.FILE_SYSTEM,
-    graphMLIOHandler: new FaultTolerantGraphMLIOHandler()
-  })
-  gs.graphMLIOHandler.addXamlNamespaceMapping(
-    'http://www.yworks.com/yFilesHTML/demos/FlatDemoStyle/1.0',
-    DemoStyles
-  )
-  gs.graphMLIOHandler.addHandleSerializationListener(DemoSerializationListener)
+    'Edge Router with Buses',
+    'Hierarchic with Curves',
+    'Edge Router with Curves'
+  ])
 }
 
 /**
@@ -239,9 +234,7 @@ function initializeLayoutAlgorithms() {
     return
   }
 
-  availableLayouts = new HashMap()
-
-  const layoutAlgorithmsNames = [
+  const layoutNames = [
     'Hierarchic',
     'Organic',
     'Orthogonal',
@@ -250,101 +243,76 @@ function initializeLayoutAlgorithms() {
     'Balloon',
     'Radial',
     'Series-Parallel',
-    '-----------',
+    comboBoxSeparatorItem,
     'Edge Router',
     'Channel Router',
     'Bus Router',
     'Organic Router',
     'Parallel Router',
-    '-----------',
+    comboBoxSeparatorItem,
     'Labeling',
     'Components',
     'Tabular',
     'Partial',
     'Graph Transform'
   ]
-  layoutComboBox.items = List.fromArray(layoutAlgorithmsNames)
 
-  layoutAlgorithmsNames.forEach(name => {
-    const option = document.createElement('option')
-    option.text = name
-    layoutComboBox.add(option)
-    if (name === '-----------') {
-      option.disabled = true
+  initializeComboBox(layoutComboBox, layoutNames)
+
+  layoutNames.forEach(name => {
+    if (name === comboBoxSeparatorItem) {
+      return
     }
+    const normalizedName = getNormalizedName(name)
+    availableLayouts.set(normalizedName, createLayoutConfig(normalizedName))
   })
+}
 
-  // load hierarchic layout module
-  availableLayouts.set('Hierarchic', new HierarchicLayoutConfig())
-  maybeLoadAsInitialSample('hierarchic', true)
-  maybeLoadAsInitialSample('grouping')
-  maybeLoadAsInitialSample('hierarchic with subcomponents')
-  maybeLoadAsInitialSample('hierarchic with buses')
-
-  // load organic layout module
-  availableLayouts.set('Organic', new OrganicLayoutConfig())
-  maybeLoadAsInitialSample('organic')
-  maybeLoadAsInitialSample('organic with substructures')
-
-  // load orthogonal layout module
-  availableLayouts.set('Orthogonal', new OrthogonalLayoutConfig())
-  maybeLoadAsInitialSample('orthogonal')
-  maybeLoadAsInitialSample('orthogonal with substructures')
-
-  // load circular layout module
-  availableLayouts.set('Circular', new CircularLayoutConfig())
-  maybeLoadAsInitialSample('circular')
-
-  // load tree layout module
-  availableLayouts.set('Tree', new TreeLayoutConfig())
-  maybeLoadAsInitialSample('tree')
-
-  // load balloon layout module
-  availableLayouts.set('Balloon', new BalloonLayoutConfig())
-  maybeLoadAsInitialSample('balloon')
-
-  // load radial layout module
-  availableLayouts.set('Radial', new RadialLayoutConfig())
-  maybeLoadAsInitialSample('radial')
-
-  // load series-parallel layout module
-  availableLayouts.set('Series-Parallel', new SeriesParallelLayoutConfig())
-  maybeLoadAsInitialSample('series-parallel')
-
-  // load polyline router module
-  availableLayouts.set('Edge Router', new PolylineEdgeRouterConfig())
-  maybeLoadAsInitialSample('edge router')
-  maybeLoadAsInitialSample('edge router with buses')
-
-  // load channel router module
-  availableLayouts.set('Channel Router', new ChannelEdgeRouterConfig())
-
-  // load bus router module
-  availableLayouts.set('Bus Router', new BusEdgeRouterConfig())
-  maybeLoadAsInitialSample('bus router')
-
-  // load organic router module
-  availableLayouts.set('Organic Router', new OrganicEdgeRouterConfig())
-
-  // load parallel edge layout module
-  availableLayouts.set('Parallel Router', new ParallelEdgeRouterConfig())
-
-  // load labeling module
-  availableLayouts.set('Labeling', new LabelingConfig())
-
-  // load component layout module
-  availableLayouts.set('Components', new ComponentLayoutConfig())
-  maybeLoadAsInitialSample('components')
-
-  // load tabular layout module
-  availableLayouts.set('Tabular', new TabularLayoutConfig())
-  maybeLoadAsInitialSample('tabular')
-
-  // load partial layout module
-  availableLayouts.set('Partial', new PartialLayoutConfig())
-
-  // load graph transformer layout module
-  availableLayouts.set('Graph Transform', new GraphTransformerConfig())
+/**
+ * @param normalizedName
+ * @return {*}
+ */
+function createLayoutConfig(normalizedName) {
+  switch (normalizedName) {
+    case 'balloon':
+      return new BalloonLayoutConfig()
+    case 'bus-router':
+      return new BusEdgeRouterConfig()
+    case 'channel-router':
+      return new ChannelEdgeRouterConfig()
+    case 'circular':
+      return new CircularLayoutConfig()
+    case 'components':
+      return new ComponentLayoutConfig()
+    case 'edge-router':
+      return new PolylineEdgeRouterConfig()
+    case 'graph-transform':
+      return new GraphTransformerConfig()
+    case 'hierarchic':
+      return new HierarchicLayoutConfig()
+    case 'labeling':
+      return new LabelingConfig()
+    case 'organic':
+      return new OrganicLayoutConfig()
+    case 'organic-router':
+      return new OrganicEdgeRouterConfig()
+    case 'orthogonal':
+      return new OrthogonalLayoutConfig()
+    case 'series-parallel':
+      return new SeriesParallelLayoutConfig()
+    case 'partial':
+      return new PartialLayoutConfig()
+    case 'radial':
+      return new RadialLayoutConfig()
+    case 'parallel-router':
+      return new ParallelEdgeRouterConfig()
+    case 'tabular':
+      return new TabularLayoutConfig()
+    case 'tree':
+      return new TreeLayoutConfig()
+    default:
+      return new HierarchicLayoutConfig()
+  }
 }
 
 /**
@@ -352,102 +320,49 @@ function initializeLayoutAlgorithms() {
  */
 function resetConfig() {
   const selectedIndex = layoutComboBox.selectedIndex
-  if (selectedIndex >= 0) {
-    const key = layoutComboBox[selectedIndex].value
-    if (key !== null && availableLayouts !== null && availableLayouts.has(key)) {
-      switch (key) {
-        case 'Hierarchic':
-          availableLayouts.set(key, new HierarchicLayoutConfig())
-          break
-        case 'Organic':
-          availableLayouts.set(key, new OrganicLayoutConfig())
-          break
-        case 'Orthogonal':
-          availableLayouts.set(key, new OrthogonalLayoutConfig())
-          break
-        case 'Circular':
-          availableLayouts.set(key, new CircularLayoutConfig())
-          break
-        case 'Tree':
-          availableLayouts.set(key, new TreeLayoutConfig())
-          break
-        case 'Balloon':
-          availableLayouts.set(key, new BalloonLayoutConfig())
-          break
-        case 'Radial':
-          availableLayouts.set(key, new RadialLayoutConfig())
-          break
-        case 'Labeling':
-          availableLayouts.set(key, new LabelingConfig())
-          break
-        case 'Components':
-          availableLayouts.set(key, new ComponentLayoutConfig())
-          break
-        case 'Tabular':
-          availableLayouts.set(key, new TabularLayoutConfig())
-          break
-        case 'Partial':
-          availableLayouts.set(key, new PartialLayoutConfig())
-          break
-        case 'Graph Transform':
-          availableLayouts.set(key, new GraphTransformerConfig())
-          break
-        case 'Edge Router':
-          availableLayouts.set(key, new PolylineEdgeRouterConfig())
-          break
-        case 'Channel Router':
-          availableLayouts.set(key, new ChannelEdgeRouterConfig())
-          break
-        case 'Bus Router':
-          availableLayouts.set(key, new BusEdgeRouterConfig())
-          break
-        case 'Organic Router':
-          availableLayouts.set(key, new OrganicEdgeRouterConfig())
-          break
-        case 'Parallel Router':
-          availableLayouts.set(key, new ParallelEdgeRouterConfig())
-          break
-        default:
-          availableLayouts.set(key, new HierarchicLayoutConfig())
-          break
-      }
-      onLayoutChanged()
-    }
+  if (selectedIndex < 0) {
+    return
+  }
+  const key = layoutComboBox[selectedIndex].value
+  if (key !== null && availableLayouts !== null && availableLayouts.has(key)) {
+    availableLayouts.set(key, createLayoutConfig(key))
+    onLayoutChanged()
   }
 }
 
 /**
  * Applies the layout algorithm of the given key.
- * @param {string} key
+ * @param {string|null} sampleName
  */
-function applyLayoutForKey(key) {
+function applyLayoutForSample(sampleName = null) {
+  if (sampleName == null) {
+    sampleName = getSelectedSample()
+  }
+
   // center the initial position of the animation
   ICommand.FIT_GRAPH_BOUNDS.execute(null, graphComponent)
 
   let forceUpdateConfigPanel = false
-  if (key === 'Organic with Substructures' || key === 'Organic') {
-    key = 'Organic'
+  if (sampleName.indexOf('organic') === 0) {
+    sampleName = 'organic'
     forceUpdateConfigPanel = true
   }
-  if (
-    key === 'Hierarchic with Subcomponents' ||
-    key === 'Hierarchic with Buses' ||
-    key === 'Hierarchic'
-  ) {
-    key = 'Hierarchic'
+  if (sampleName.indexOf('hierarchic') === 0) {
+    sampleName = 'hierarchic'
     forceUpdateConfigPanel = true
   }
-  if (key === 'Orthogonal with Substructures' || key === 'Orthogonal') {
-    key = 'Orthogonal'
+  if (sampleName.indexOf('orthogonal') === 0) {
+    sampleName = 'orthogonal'
     forceUpdateConfigPanel = true
   }
-  if (key === 'Edge Router with Buses') {
-    key = 'Edge Router'
+  if (sampleName.indexOf('edge-router') === 0) {
+    sampleName = 'edge-router'
     forceUpdateConfigPanel = true
   }
   // get the layout and use 'Hierarchic' if the key is unknown (shouldn't happen in this demo)
-  const actualKey = availableLayouts !== null && availableLayouts.has(key) ? key : 'Hierarchic'
-  const actualIndex = getIndexInComboBox(actualKey, layoutComboBox)
+  const layoutName =
+    availableLayouts !== null && availableLayouts.has(sampleName) ? sampleName : 'hierarchic'
+  const actualIndex = getIndexInComboBox(layoutComboBox, layoutName)
   // run the layout if the layout combo box is already correct
   if (layoutComboBox.selectedIndex !== actualIndex || forceUpdateConfigPanel) {
     // otherwise, change the selection and indirectly trigger the layout
@@ -458,21 +373,39 @@ function applyLayoutForKey(key) {
 }
 
 /**
- * Returns the index of the first option with the given text (ignoring case).
- * @param {string} text The text to match.
+ * Returns the index of the first option with the given value.
  * @param {HTMLSelectElement} combobox The combobox to search.
+ * @param {string} value The value to match.
  * @return {number} The index of the first option with the given text (ignoring case), or -1 if no
  *   such option exists.
  */
-function getIndexInComboBox(text, combobox) {
-  const lowerCaseText = text.toLowerCase()
+function getIndexInComboBox(combobox, value) {
+  const normalizedText = getNormalizedName(value)
   const options = combobox.options
   for (let i = 0; i < options.length; i++) {
-    if (options[i].text && options[i].text.toLowerCase() === lowerCaseText) {
+    if (options[i].value === normalizedText) {
       return i
     }
   }
   return -1
+}
+
+/**
+ *
+ * @param {HTMLSelectElement} combobox
+ * @param {string[]} names
+ */
+function initializeComboBox(combobox, names) {
+  names.forEach(name => {
+    const option = document.createElement('option')
+    combobox.add(option)
+    option.label = name
+    if (name === comboBoxSeparatorItem) {
+      option.disabled = true
+    } else {
+      option.value = getNormalizedName(name)
+    }
+  })
 }
 
 /**
@@ -509,14 +442,14 @@ function onLayoutChanged() {
   if (layoutComboBox === null) {
     return
   }
-  const sampleGraphKey = sampleComboBox.options[sampleComboBox.selectedIndex].value
-  const key = layoutComboBox.options[layoutComboBox.selectedIndex]
-    ? layoutComboBox.options[layoutComboBox.selectedIndex].text
+  const sampleName = getSelectedSample()
+  const layoutName = layoutComboBox.options[layoutComboBox.selectedIndex]
+    ? layoutComboBox.options[layoutComboBox.selectedIndex].value
     : null
-  if (key != null && availableLayouts !== null && availableLayouts.has(key)) {
-    graphComponent.graph.edgeDefaults.style.showTargetArrows = isLayoutDirected(key)
-    const config = availableLayouts.get(key)
-    if (key === 'Hierarchic' || key === 'Hierarchic with Subcomponents') {
+  if (layoutName != null && availableLayouts !== null && availableLayouts.has(layoutName)) {
+    graphComponent.graph.edgeDefaults.style.showTargetArrows = isLayoutDirected(layoutName)
+    const config = availableLayouts.get(layoutName)
+    if (layoutName === 'hierarchic' || layoutName === 'hierarchic-with-subcomponents') {
       // enable edge-thickness buttons only for Hierarchic Layout
       generateEdgeThicknessButton.disabled = false
       resetEdgeThicknessButton.disabled = false
@@ -532,19 +465,19 @@ function onLayoutChanged() {
       onResetEdgeDirections(graphComponent.graph)
     }
 
-    if (sampleGraphKey === 'Organic with Substructures' && key === 'Organic') {
+    if (sampleName === 'organic-with-substructures' && layoutName === 'organic') {
       config.enableSubstructures()
     }
-    if (sampleGraphKey === 'Hierarchic with Subcomponents' && key === 'Hierarchic') {
+    if (sampleName === 'hierarchic-with-subcomponents' && layoutName === 'hierarchic') {
       config.enableSubstructures()
     }
-    if (sampleGraphKey === 'Orthogonal with Substructures' && key === 'Orthogonal') {
+    if (sampleName === 'orthogonal-with-substructures' && layoutName === 'orthogonal') {
       config.enableSubstructures()
     }
-    if (sampleGraphKey === 'Hierarchic with Buses' && key === 'Hierarchic') {
+    if (sampleName === 'hierarchic-with-buses' && layoutName === 'hierarchic') {
       config.enableAutomaticBusRouting()
     }
-    if (sampleGraphKey === 'Edge Router with Buses' && key === 'Edge Router') {
+    if (sampleName === 'edge-router-with-buses' && layoutName === 'edge-router') {
       onResetEdgeDirections(graphComponent.graph, false)
       graphComponent.graph.edges.forEach(edge => {
         if (edge.style instanceof PolylineEdgeStyle) {
@@ -553,6 +486,12 @@ function onLayoutChanged() {
         }
       })
       config.enableBusRouting()
+    }
+    if (sampleName === 'hierarchic-with-curves' && layoutName === 'hierarchic') {
+      config.enableCurvedRouting()
+    }
+    if (sampleName === 'edge-router-with-curves' && layoutName === 'edge-router') {
+      config.enableCurvedRouting()
     }
 
     optionEditor.config = config
@@ -564,15 +503,59 @@ function onLayoutChanged() {
 }
 
 /**
+ * Returns the value of the currently selected sample.
+ * @return {string}
+ */
+function getSelectedSample() {
+  return sampleComboBox.options[sampleComboBox.selectedIndex].value
+}
+
+/**
+ * Returns the normalized version of the given name, i.e., in lowercase and '-' instead of space.
+ * @param {string} name
+ * @return {string}
+ */
+function getNormalizedName(name) {
+  return name.toLowerCase().replace(/[\s]/g, '-')
+}
+
+/**
+ * Checks whether the location hash specifies a valid sample, and loads that.
+ * @param {boolean} useFallback
+ */
+function loadSampleFromLocationHash(useFallback = false) {
+  if (!window.location.hash) {
+    if (useFallback) {
+      onSampleChanged()
+    }
+    return
+  }
+
+  const match = window.location.hash.match(/#([\w_-]+)/)
+  const requestedSample = match && match.length > 1 ? match[1].toLowerCase().replace(/_/g, '-') : ''
+  const index = getIndexInComboBox(sampleComboBox, requestedSample)
+  if (index < 0 || sampleComboBox.selectedIndex === index) {
+    if (useFallback) {
+      onSampleChanged()
+    }
+    // do nothing if we don't know the name or if the sample is already selected
+    return
+  }
+
+  sampleComboBox.selectedIndex = index
+  onSampleChanged()
+}
+
+/**
  * Handles a selection change in the sample combo box.
  */
 async function onSampleChanged() {
   if (inLayout || inLoadSample) {
     return
   }
-  const key = sampleComboBox.options[sampleComboBox.selectedIndex].value
+  const key = getSelectedSample()
   const graph = graphComponent.graph
-  if (key === null || key === 'None') {
+  if (key == null || key === 'none') {
     // no specific item - just clear the graph
     graph.clear()
     // and fit the contents
@@ -582,7 +565,7 @@ async function onSampleChanged() {
   inLoadSample = true
   setUIDisabled(true)
   graph.edgeDefaults.style.showTargetArrows = isLayoutDirected(key)
-  if (key === 'Hierarchic') {
+  if (key === 'hierarchic') {
     // enable edge-thickness and edge-direction buttons only for Hierarchic Layout
     generateEdgeThicknessButton.disabled = false
     resetEdgeThicknessButton.disabled = false
@@ -590,9 +573,9 @@ async function onSampleChanged() {
     resetEdgeDirectionButton.disabled = false
     // the hierarchic graph is the sample graph that does not require GraphML I/O
     createSampleGraph(graph)
-    applyLayoutForKey(key)
+    applyLayoutForSample()
   } else {
-    if (key === 'Grouping') {
+    if (key === 'grouping') {
       // enable edge-thickness and edge-direction buttons only for Hierarchic Layout
       generateEdgeThicknessButton.disabled = false
       resetEdgeThicknessButton.disabled = false
@@ -605,19 +588,20 @@ async function onSampleChanged() {
       generateEdgeDirectionButton.disabled = true
       resetEdgeDirectionButton.disabled = true
     }
-    // derive the file name from the key and
-    const fileName = key.toLowerCase().replace(/[-\s]/g, '')
-    const filePath = `resources/${fileName}.graphml`
+
+    const filePath = `resources/${key}.graphml`
     try {
       // load the sample graph and start the layout algorithm in the done handler
       const ioh = new GraphMLIOHandler()
+
+      // enable serialization of the demo styles - without a namespace mapping, serialization will fail
       ioh.addXamlNamespaceMapping(
         'http://www.yworks.com/yFilesHTML/demos/FlatDemoStyle/1.0',
         DemoStyles
       )
       ioh.addHandleSerializationListener(DemoSerializationListener)
       await ioh.readFromURL(graph, filePath)
-      applyLayoutForKey(key)
+      applyLayoutForSample()
     } catch (error) {
       if (graph.nodes.size === 0 && window.location.protocol.toLowerCase().indexOf('file') >= 0) {
         alert(
@@ -629,7 +613,7 @@ async function onSampleChanged() {
         if (sampleComboBox.selectedIndex === 9 || sampleComboBox.selectedIndex === 10) {
           graph.applyLayout(new MinimumNodeSizeStage(new HierarchicLayout()))
         }
-        applyLayoutForKey(key)
+        applyLayoutForSample()
       }
       if (typeof window.reportError === 'function') {
         window.reportError(error)
@@ -1020,21 +1004,19 @@ function registerCommands() {
   bindChangeListener("select[data-command='SampleSelectionChanged']", onSampleChanged)
 
   bindAction("button[data-command='PreviousFile']", () => {
-    // skip the '-------'
-    const sampleGraphKey = sampleComboBox.options[sampleComboBox.selectedIndex - 1].value
-    if (sampleGraphKey.indexOf('---') !== -1) {
+    sampleComboBox.selectedIndex--
+    if (sampleComboBox.options[sampleComboBox.selectedIndex].disabled) {
+      // skip the '-------'
       sampleComboBox.selectedIndex--
     }
-    sampleComboBox.selectedIndex--
     onSampleChanged()
   })
   bindAction("button[data-command='NextFile']", () => {
-    // skip the '-------'
-    const sampleGraphKey = sampleComboBox.options[sampleComboBox.selectedIndex + 1].value
-    if (sampleGraphKey.indexOf('---') !== -1) {
+    sampleComboBox.selectedIndex++
+    if (sampleComboBox.options[sampleComboBox.selectedIndex].disabled) {
+      // skip the '-------'
       sampleComboBox.selectedIndex++
     }
-    sampleComboBox.selectedIndex++
     onSampleChanged()
   })
 
@@ -1059,41 +1041,10 @@ function registerCommands() {
   bindAction("button[data-command='ResetEdgeDirections']", () => {
     onResetEdgeDirections(graphComponent.graph, true)
   })
-}
 
-/**
- * Checks whether the given sample is the one that is requested in the hash part of the URL, and
- * loads it if it is.
- * @param {string} sample The name of the sample to check.
- * @param {boolean} isDefault Whether the given sample is the default one.
- */
-function maybeLoadAsInitialSample(sample, isDefault = false) {
-  // First, get the normalized sample name from the hash part of the URL
-  let requestedSample = ''
-  if (window.location.hash) {
-    const match = window.location.hash.match(/#([\w_-]+)/)
-    if (match && match.length > 1) {
-      requestedSample = match[1].toLowerCase().replace(/_/g, ' ')
-    }
-  }
-
-  // use the default sample if
-  // - no sample was requested explicitly, or
-  // - the requested sample does not match any existing sample, or
-  // - the default sample was explicitly requested
-  const useDefaultSample =
-    getIndexInComboBox(requestedSample, sampleComboBox) === -1 || sample === requestedSample
-
-  if (isDefault && useDefaultSample) {
-    // In contrast to the other branch, this one does not load a GraphML file and works only for the first
-    // ('hierarchic') sample.
-    onLayoutChanged()
-    applyLayout(true)
-  } else if (sample === requestedSample) {
-    // If the given sample is the requested one, load the given sample as initial sample
-    sampleComboBox.selectedIndex = getIndexInComboBox(sample, sampleComboBox)
-    onSampleChanged()
-  }
+  window.addEventListener('hashchange', () => {
+    loadSampleFromLocationHash()
+  })
 }
 
 function releaseLocks() {

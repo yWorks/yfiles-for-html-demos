@@ -74,6 +74,11 @@
     .btn:hover {
       text-decoration: none;
     }
+
+    .js .ts-only, .ts .js-only {
+      display: none;
+    }
+
   </style>
   <script src="../demos-js/resources/filesystem-warning.js"></script>
   <script> window.tsReadme=true</script>
@@ -82,7 +87,7 @@
 <header style="padding-left: 20px;">
   <div class="logo"></div>
   <div class="title">
-    <a href="../README.html">yFiles for HTML</a> <span class="angle-right"></span> Demo Applications 
+    <a href="../README.html">yFiles for HTML</a> <span class="angle-right"></span> Demo Applications &nbsp;(<span class="js-only">JavaScript</span><span class="ts-only">TypeScript</span>)
   </div>
 </header>
 <div class="main">
@@ -99,15 +104,23 @@
   <div class="content">
     <div id="general-intro">
       <p class="first-paragraph">
-        This page lists all <a href="https://www.yworks.com/products/yfiles-for-html">yFiles for HTML 2.3.0.2</a> demo applications.
+        All <a href="https://www.yworks.com/products/yfiles-for-html">yFiles for HTML 2.3.0.3</a> demo applications are available in JavaScript, and
+        demos that are additionally available in TypeScript are labeled with <span class="ts-badge">TS</span>.
       </p>
-      <p>
-        All demos are available as JavaScript. For many of these demos, the TypeScript sources are also available in the
-        <a href="../demos-ts/README.html"><code>demos-ts/</code></a> directory.
-      </p>
-      <p class="ts-only hidden">
-        The demos that are available only as JavaScript are labeled as such. Browse the <a href="../demos-js/README.html">JavaScript demos here</a>.
-      </p>
+      <div class="js-only">
+        <p>
+          This page links the <strong>JavaScript</strong> version of the demos. Browse the TypeScript version on the
+          <a href="../demos-ts/README.html">TypeScript Demos</a> page, and see the
+          <a href="../doc/api/index.html#/dguide/demos">Developer's Guide</a> for more details.
+        </p>
+      </div>
+      <div class="ts-only">
+        <p>
+          This page links the <strong>TypeScript</strong> version of a demo, if available. Browse the JavaScript version
+          on the <a href="../demos-js/README.html">JavaScript Demos</a> page, and see the
+          <a href="../doc/api/index.html#/dguide/demos">Developer's Guide</a> for more details.
+        </p>
+      </div>
     </div>
 
     <div id="tutorial-getting-started" class="hidden">

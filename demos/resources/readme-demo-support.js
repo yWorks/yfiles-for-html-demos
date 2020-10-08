@@ -83,11 +83,7 @@
 
   var isTsReadme = window.tsReadme
 
-  if (isTsReadme) {
-    document.querySelectorAll('.ts-only').forEach(function (element) {
-      element.className = element.className.replace('hidden', '')
-    })
-  }
+  document.body.className += isTsReadme ? ' ts' : ' js'
 
   var categoryNames = {
     'tutorial-getting-started': 'Tutorial: Getting Started',
@@ -202,7 +198,6 @@
       jsBadge.textContent = 'JS Only'
       jsBadge.setAttribute('title', 'Available only as JavaScript')
       gridItem.querySelector('.thumbnail').appendChild(jsBadge)
-      gridItem.className += ' js-only'
     }
     if (!demo.availableInPackage) {
       gridItem.className += ' not-available'
@@ -274,7 +269,6 @@
       jsBadge.textContent = 'JS Only'
       jsBadge.setAttribute('title', 'Available only as JavaScript')
       link.appendChild(jsBadge)
-      link.className += ' js-only'
       link.setAttribute('href', '../demos-js/' + link.getAttribute('href'))
     }
     sidebarItem.appendChild(link)

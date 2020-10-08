@@ -41,8 +41,7 @@ import {
 } from 'yfiles'
 import { LayoutHelper } from './LayoutHelper'
 
-export class NonOverlapReshapeHandler extends BaseClass<IReshapeHandler>(IReshapeHandler)
-  implements IReshapeHandler {
+export class NonOverlapReshapeHandler extends BaseClass<IReshapeHandler>(IReshapeHandler) {
   /**
    * The node we are currently resizing.
    */

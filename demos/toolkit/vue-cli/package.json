@@ -12,7 +12,7 @@
   "dependencies": {
     "core-js": "^2.6.11",
     "vue": "^2.6.11",
-    "yfiles": "../../../lib-dev/es-modules/yfiles-23.0.2-dev.tgz"
+    "yfiles": "../../../lib-dev/es-modules/yfiles-23.0.3-dev.tgz"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^3.12.1",

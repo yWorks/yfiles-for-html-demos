@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-/* global page */
+/* global page, y, beforeEach, describe, it */
 function getZoom() {
   return page.$eval('.yfiles-canvascomponent', e => y.CanvasComponent.getComponent(e).zoom)
 }

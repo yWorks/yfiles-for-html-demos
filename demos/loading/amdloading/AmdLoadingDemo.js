@@ -33,7 +33,7 @@ require.config({
   packages: [
     {
       name: 'yfiles-umd',
-      location: '../../node_modules/yfiles-umd/',
+      location: '../../../lib-dev/umd/',
       main: 'complete'
     }
   ]

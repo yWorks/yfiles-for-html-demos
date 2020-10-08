@@ -72,6 +72,8 @@ function run(licenseData: object): void {
 
   // use a custom GraphMLIOHandler that supports writing and parsing node z-orders to/from GraphML
   const ioHandler = new GraphMLIOHandler()
+
+  // enable serialization of the demo styles - without a namespace mapping, serialization will fail
   ioHandler.addXamlNamespaceMapping(
     'http://www.yworks.com/yFilesHTML/demos/FlatDemoStyle/1.0',
     DemoStyles

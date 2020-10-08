@@ -13,17 +13,6 @@
     "test:integrationWithWatch": "jest -c integration/jest.config.js --watch",
     "eject": "react-scripts eject"
   },
-  "eslintConfig": {
-    "extends": "react-app",
-    "env": {
-      "jest": true
-    },
-    "globals": {
-      "page": true,
-      "browser": true,
-      "context": true
-    }
-  },
   "browserslist": {
     "production": [
       ">0.2%",
@@ -40,7 +29,7 @@
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-scripts": "3.2.0",
-    "yfiles": "../../../lib-dev/es-modules/yfiles-23.0.2-dev.tgz"
+    "yfiles": "../../../lib-dev/es-modules/yfiles-23.0.3-dev.tgz"
   },
   "devDependencies": {
     "cross-env": "^7.0.2",

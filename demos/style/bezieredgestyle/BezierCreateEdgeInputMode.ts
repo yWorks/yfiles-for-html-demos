@@ -103,7 +103,7 @@ export class BezierCreateEdgeInputMode extends CreateEdgeInputMode {
     this.controlPointHighlight = null
 
     this.validBendHitTestable = IHitTestable.create(
-      (context: IInputModeContext | null, location: Point) => {
+      (context: IInputModeContext, location: Point) => {
         if (
           !this.dummyEdge ||
           !(this.dummyEdge.style instanceof BezierEdgeStyle) ||

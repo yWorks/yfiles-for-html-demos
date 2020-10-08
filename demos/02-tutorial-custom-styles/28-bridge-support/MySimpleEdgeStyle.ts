@@ -446,8 +446,7 @@ class RenderDataCache {
 /**
  * A custom IObstacleProvider implementation for this style.
  */
-class BasicEdgeObstacleProvider extends BaseClass<IObstacleProvider>(IObstacleProvider)
-  implements IObstacleProvider {
+class BasicEdgeObstacleProvider extends BaseClass<IObstacleProvider>(IObstacleProvider) {
   edge: IEdge
 
   constructor(edge: IEdge) {

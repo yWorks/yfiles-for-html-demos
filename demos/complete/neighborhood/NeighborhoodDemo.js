@@ -156,6 +156,7 @@ function enableGraphML() {
     storageLocation: StorageLocation.FILE_SYSTEM
   })
 
+  // enable serialization of the demo styles - without a namespace mapping, serialization will fail
   gs.graphMLIOHandler.addXamlNamespaceMapping(
     'http://www.yworks.com/yFilesHTML/demos/FlatDemoStyle/1.0',
     DemoStyles
@@ -337,6 +338,8 @@ async function readSampleGraph() {
   const fileName = `resources/${selectedItem}.graphml`
 
   const ioh = new GraphMLIOHandler()
+
+  // enable deserialization of the demo styles - without a namespace mapping, deserialization will fail
   ioh.addXamlNamespaceMapping(
     'http://www.yworks.com/yFilesHTML/demos/FlatDemoStyle/1.0',
     DemoStyles

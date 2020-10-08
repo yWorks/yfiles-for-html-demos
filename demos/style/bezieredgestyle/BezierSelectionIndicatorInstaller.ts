@@ -71,9 +71,9 @@ class SelectionRenderer extends PolylineEdgeStyleRenderer {
  * Custom decoration decorator that adds a rendering of the curves control point segments
  * This implementation adds as a decorator for an existing decorator and just adds the control point rendering on top.
  */
-export class BezierSelectionIndicatorInstaller
-  extends BaseClass<ISelectionIndicatorInstaller>(ISelectionIndicatorInstaller)
-  implements ISelectionIndicatorInstaller {
+export class BezierSelectionIndicatorInstaller extends BaseClass<ISelectionIndicatorInstaller>(
+  ISelectionIndicatorInstaller
+) {
   /**
    * The style for the control point segments
    * We just use a polyline edge style with a custom renderer so that we can reuse most of the existing rendering implementations.

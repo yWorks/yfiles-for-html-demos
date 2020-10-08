@@ -44,8 +44,7 @@ import {
 } from 'yfiles'
 import { LayoutHelper } from './LayoutHelper'
 
-export class NonOverlapPositionHandler extends BaseClass<IPositionHandler>(IPositionHandler)
-  implements IPositionHandler {
+export class NonOverlapPositionHandler extends BaseClass<IPositionHandler>(IPositionHandler) {
   /**
    * The node we are currently moving.
    */

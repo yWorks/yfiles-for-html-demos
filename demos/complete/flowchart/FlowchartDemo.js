@@ -352,6 +352,8 @@ function registerCommands() {
     graphComponent,
     storageLocation: StorageLocation.FILE_SYSTEM
   })
+
+  // enable serialization of the flowchart styles - without a namespace mapping, serialization will fail
   gs.graphMLIOHandler.addXamlNamespaceMapping(
     'http://www.yworks.com/yFilesHTML/demos/FlatDemoStyle/1.0',
     FlowchartStyle

@@ -36,7 +36,6 @@ import {
   ICommand,
   InteriorLabelModel,
   License,
-  List,
   Size,
   WaitInputMode
 } from 'yfiles'
@@ -44,6 +43,7 @@ import {
 import { initDemoStyles } from './resources/demo-styles.js'
 import WebWorkerLayoutExecutor from './WebWorkerLayoutExecutor.js'
 import { bindAction, bindCommand, showApp } from './resources/demo-app.js'
+import { detectInternetExplorerVersion } from './utils/Workarounds'
 
 import Worker from './WorkerLayoutTask'
 
@@ -52,6 +52,13 @@ License.value = licenseData
 let graphComponent = null
 
 function run() {
+  if (detectInternetExplorerVersion() !== -1) {
+    alert(
+      'This browser does not support modern JavaScript constructs which are required for the webworker demo. Use a more recent browser like Chrome, Edge, Firefox or Safari to run this demo.'
+    )
+    return
+  }
+
   graphComponent = new GraphComponent('graphComponent')
   // initialize styles as well as graph
   graphComponent.inputMode = new GraphEditorInputMode()

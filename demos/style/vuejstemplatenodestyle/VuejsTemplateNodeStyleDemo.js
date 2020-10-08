@@ -185,6 +185,7 @@ function initializeStyles() {
  */
 function initializeIO() {
   graphmlHandler = new GraphMLIOHandler()
+  // enable serialization of the VueJS node style - without a namespace mapping, serialization will fail
   graphmlHandler.addXamlNamespaceMapping(
     'http://www.yworks.com/demos/yfiles-vuejs-node-style/1.0',
     { VuejsNodeStyle: VuejsNodeStyleMarkupExtension }

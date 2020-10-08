@@ -48,7 +48,7 @@ const EPS = 1e-6
  * If the control point triple is currently collinear, this implementation moves the <b>other</b> outer control point
  * of the triple so that this invariant is kept. Otherwise, the other control point is not adjusted.
  */
-export class OuterControlPointHandle extends BaseClass<IHandle>(IHandle) implements IHandle {
+export class OuterControlPointHandle extends BaseClass<IHandle>(IHandle) {
   /**
    * The core bend handle that performs the actual bend movement.
    */
@@ -242,7 +242,7 @@ export class OuterControlPointHandle extends BaseClass<IHandle>(IHandle) impleme
  * If the control point triple is currently collinear, this implementation moves the  outer control points
  * of the triple so that this invariant is kept. Otherwise, the other control points are not adjusted.
  */
-export class InnerControlPointHandle extends BaseClass<IHandle>(IHandle) implements IHandle {
+export class InnerControlPointHandle extends BaseClass<IHandle>(IHandle) {
   /**
    * The core bend handle that performs the actual bend movement.
    */

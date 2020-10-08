@@ -33,7 +33,6 @@ import {
   GeneralPath,
   GraphComponent,
   IInputModeContext,
-  ILayoutGroupBoundsCalculator,
   INode,
   INodeInsetsProvider,
   INodeSizeConstraintProvider,
@@ -62,9 +61,7 @@ const INSET = 2
  * This implementation uses the convenience class
  * {@link NodeStyleBase} as the base class since
  * this makes customizations easy. Additionally, it uses a couple of inner
- * classes to customize certain aspects of the user interaction behavior, for
- * example a {@link ILayoutGroupBoundsCalculator} that takes the node labels
- * into account.
+ * classes to customize certain aspects of the user interaction behavior.
  */
 export default class MyGroupNodeStyle extends NodeStyleBase {
   private $nodeColor: string

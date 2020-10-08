@@ -76,8 +76,7 @@ import {
 /**
  * An utility class to add z-order consistency for nodes to a {@link GraphComponent}.
  */
-export class ZOrderSupport extends BaseClass<IComparer<INode>>(IComparer)
-  implements IComparer<INode> {
+export class ZOrderSupport extends BaseClass<IComparer<INode>>(IComparer) {
   private readonly tempZOrders: IMap<INode, number>
   private readonly zOrderChangedListeners: Array<
     (sender: object, eventArgs: ZIndexChangedEventArgs) => void

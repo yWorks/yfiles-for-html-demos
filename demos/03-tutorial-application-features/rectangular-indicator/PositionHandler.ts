@@ -38,8 +38,7 @@ import {
 /**
  * A position handler that moves a given rectangle.
  */
-export default class PositionHandler extends BaseClass<IPositionHandler>(IPositionHandler)
-  implements IPositionHandler {
+export default class PositionHandler extends BaseClass<IPositionHandler>(IPositionHandler) {
   rectangle: MutableRectangle
   offset: MutablePoint
 

@@ -46,8 +46,7 @@ import {
  * This implementation always creates collinear triples of bends since the bezier edge model expects this.
  * In addition, the new bends and the neighboring bends are positioned so that the curve shape stays constant.
  */
-export class BezierBendCreator extends BaseClass<IBendCreator>(IBendCreator)
-  implements IBendCreator {
+export class BezierBendCreator extends BaseClass<IBendCreator>(IBendCreator) {
   /**
    * Fallback for bend creation if the existing model is not consistent
    */

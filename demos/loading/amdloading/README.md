@@ -17,3 +17,5 @@ Resources that have a _.js_ ending are loaded as JavaScript files. Loading a res
 Please take a look at the HTML sources of this document to see how to load modules using _require_.
 
 Modules can be loaded dynamically at runtime when certain resources are needed. This improves the app's loading speed at startup. In order to observe dynamic loading at runtime, hit the _layout_ button. The modules _layout-hierarchic_ and _graph-layout-bridge_ needed for layout calculation are loaded when the button is hit for the first time. Please take a look at the demo's source code to see how dynamic loading works.
+
+In order to improve code completion, install the UMD variant of yFiles locally as npm module.

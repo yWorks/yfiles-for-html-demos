@@ -33,8 +33,7 @@ import { IHandleProvider, BaseClass, IEdge, IInputModeContext, IEnumerable, IHan
  * This makes it possible to start manipulating the control points immediately without having to
  * select them first (which is nearly impossible for points not lying on the curve)
  */
-export class BezierEdgeHandleProvider extends BaseClass<IHandleProvider>(IHandleProvider)
-  implements IHandleProvider {
+export class BezierEdgeHandleProvider extends BaseClass<IHandleProvider>(IHandleProvider) {
   private readonly edge: IEdge
   private readonly coreImpl: IHandleProvider
 

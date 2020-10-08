@@ -44,12 +44,10 @@ import {
 /**
  * Creates the visualization for the limiting rectangle.
  */
-export default class LimitingRectangleDescriptor
-  extends BaseClass<ICanvasObjectDescriptor, IVisualCreator>(
-    ICanvasObjectDescriptor,
-    IVisualCreator
-  )
-  implements ICanvasObjectDescriptor, IVisualCreator {
+export default class LimitingRectangleDescriptor extends BaseClass<
+  ICanvasObjectDescriptor,
+  IVisualCreator
+>(ICanvasObjectDescriptor, IVisualCreator) {
   rectangle: MutableRectangle | null = null
 
   /**

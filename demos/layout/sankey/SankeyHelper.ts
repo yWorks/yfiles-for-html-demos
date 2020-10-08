@@ -309,8 +309,7 @@ export class TagUndoUnit extends UndoUnitBase {
  * A custom position handler which constrains the movement along the y axis.
  * This implementation wraps the default position handler and delegates most of the work to it.
  */
-export class ConstrainedPositionHandler extends BaseClass<IPositionHandler>(IPositionHandler)
-  implements IPositionHandler {
+export class ConstrainedPositionHandler extends BaseClass<IPositionHandler>(IPositionHandler) {
   handler: IPositionHandler | null
   private lastLocation = Point.ORIGIN
 

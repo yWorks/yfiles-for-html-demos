@@ -38,6 +38,7 @@ import {
   GenericLabeling,
   GraphComponent,
   Grid,
+  HierarchicLayoutEdgeRoutingStyle,
   List,
   MonotonicPathRestriction,
   PenaltySettings,
@@ -287,6 +288,13 @@ const PolylineEdgeRouterConfig = Class('PolylineEdgeRouterConfig', {
    */
   enableBusRouting: function () {
     this.busMembershipItem = PolylineEdgeRouterConfig.EnumBusMembership.TAG
+  },
+
+  /**
+   * Enables automatic bus routing.
+   */
+  enableCurvedRouting: function () {
+    this.routingStyleItem = EdgeRouterEdgeRoutingStyle.CURVED
   },
 
   // ReSharper disable UnusedMember.Global

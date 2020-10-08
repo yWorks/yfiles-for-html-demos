@@ -446,6 +446,13 @@ const HierarchicLayoutConfig = Class('HierarchicLayoutConfig', {
     this.automaticBusRoutingEnabledItem = true
   },
 
+  /**
+   * Enables automatic bus routing.
+   */
+  enableCurvedRouting: function () {
+    this.edgeRoutingItem = HierarchicLayoutEdgeRoutingStyle.CURVED
+  },
+
   /** @type {OptionGroup} */
   DescriptionGroup: {
     $meta: function () {

@@ -118,7 +118,7 @@ import BpmnView, {
 import * as DemoApp from '../../resources/demo-app.js'
 import { DragAndDropPanel } from '../../utils/DndPanel.js'
 import loadJson from '../../resources/load-json.js'
-import { BpmnDiParser } from './bpmn-di'
+import { BpmnDiParser } from './bpmn-di.js'
 
 const numberOfDiSamples = 1
 
@@ -215,6 +215,8 @@ async function run(licenseData) {
     // configure to load and save to the file system
     storageLocation: StorageLocation.FILE_SYSTEM
   })
+
+  // enable serialization of the BPMN types - without namespace mappings, serialization will fail
 
   // support older BPMN style versions (mainly for demo usage)
   graphmlSupport.graphMLIOHandler.addXamlNamespaceMapping(
@@ -440,6 +442,7 @@ async function onGraphChooserBoxSelectionChanged() {
     const fileName = `resources/${graphName}.graphml`
 
     const graphmlHandler = new GraphMLIOHandler()
+    // enable serialization of the bpmn styles - without a namespace mapping, serialization will fail
     graphmlHandler.addXamlNamespaceMapping(
       'http://www.yworks.com/xml/yfiles-for-html/bpmn/2.0',
       BpmnView

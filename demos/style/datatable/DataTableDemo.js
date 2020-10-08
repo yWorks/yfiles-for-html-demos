@@ -130,7 +130,7 @@ function enableGraphML() {
     storageLocation: StorageLocation.FILE_SYSTEM
   })
 
-  // add XamlNamespaceMapping for the custom styles of nodes and labels
+  // enable serialization of the custom styles - without a namespace mapping, serialization will fail
   gs.graphMLIOHandler.addXamlNamespaceMapping(
     'http://www.yworks.com/yFilesHTML/demos/DataTableNodeStyle/1.0',
     'DataTableNodeStyle',

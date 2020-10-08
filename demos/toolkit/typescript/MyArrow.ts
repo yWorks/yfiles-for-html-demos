@@ -39,13 +39,11 @@ import {
   SvgVisual
 } from 'yfiles'
 
-export class MySimpleArrow
-  extends BaseClass<IArrow, IVisualCreator, IBoundsProvider>(
-    IArrow,
-    IVisualCreator,
-    IBoundsProvider
-  )
-  implements IArrow, IVisualCreator, IBoundsProvider {
+export class MySimpleArrow extends BaseClass<IArrow, IVisualCreator, IBoundsProvider>(
+  IArrow,
+  IVisualCreator,
+  IBoundsProvider
+) {
   anchor: Point
   direction: Point
   arrowThickness: number

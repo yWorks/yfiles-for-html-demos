@@ -1626,9 +1626,10 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
  * An ILookupDecorator implementation that contains its own lookup chains.
  * New chain links are added to the chains of this decorator as well as to the decorator of the {@link GraphWrapperBase#wrappedGraph}.
  */
-class AggregationLookupDecorator
-  extends BaseClass<ILookup & ILookupDecorator>(ILookup, ILookupDecorator)
-  implements ILookup, ILookupDecorator {
+class AggregationLookupDecorator extends BaseClass<ILookup & ILookupDecorator>(
+  ILookup,
+  ILookupDecorator
+) {
   private $wrappedDecorator: ILookupDecorator | null
 
   private readonly $graph: AggregationGraphWrapper
@@ -1762,9 +1763,9 @@ class AggregationLookupDecorator
   }
 }
 
-abstract class ContextLookupChainLinkBase
-  extends BaseClass<IContextLookupChainLink>(IContextLookupChainLink)
-  implements IContextLookupChainLink {
+abstract class ContextLookupChainLinkBase extends BaseClass<IContextLookupChainLink>(
+  IContextLookupChainLink
+) {
   private $nextLink: IContextLookup | null = null
 
   public contextLookup(item: object, type: Class): object | null {
@@ -1819,7 +1820,7 @@ class ItemDefaultLookup extends ContextLookupChainLinkBase {
 /**
  * A simple INode implementation for aggregation nodes.
  */
-class AggregationNode extends BaseClass<INode>(INode) implements INode {
+class AggregationNode extends BaseClass<INode>(INode) {
   private readonly $aggregatedNodes: IList<INode>
   private readonly $layout: IMutableRectangle
   private $style: INodeStyle
@@ -1945,7 +1946,7 @@ class AggregationNode extends BaseClass<INode>(INode) implements INode {
 /**
  * A simple IEdge implementation for aggregation edges.
  */
-class AggregationEdge extends BaseClass<IEdge>(IEdge) implements IEdge {
+class AggregationEdge extends BaseClass<IEdge>(IEdge) {
   public readonly $bends: IList<AggregationBend>
   public readonly $ports: IList<AggregationPort>
   public readonly $labels: IList<AggregationLabel>
@@ -1990,6 +1991,7 @@ class AggregationEdge extends BaseClass<IEdge>(IEdge) implements IEdge {
     return this.$portsEnumerable
   }
 
+  // @ts-ignore
   public get graph(): AggregationGraphWrapper | null {
     return this.$graph
   }
@@ -2006,6 +2008,7 @@ class AggregationEdge extends BaseClass<IEdge>(IEdge) implements IEdge {
     this.$sourcePort = value
   }
 
+  // @ts-ignore
   get sourceNode(): INode | null {
     return this.$sourceNode
   }
@@ -2014,6 +2017,7 @@ class AggregationEdge extends BaseClass<IEdge>(IEdge) implements IEdge {
     this.$sourceNode = value
   }
 
+  // @ts-ignore
   get targetNode(): INode | null {
     return this.$targetNode
   }
@@ -2115,7 +2119,7 @@ class AggregationEdge extends BaseClass<IEdge>(IEdge) implements IEdge {
 /**
  * A simple IBend implementation for bends of {@link AggregationEdge}s.
  */
-class AggregationBend extends BaseClass<IBend>(IBend) implements IBend {
+class AggregationBend extends BaseClass<IBend>(IBend) {
   private readonly $owner: AggregationEdge
   private readonly $location: IMutablePoint
   private $graph: AggregationGraphWrapper | null
@@ -2178,7 +2182,7 @@ class AggregationBend extends BaseClass<IBend>(IBend) implements IBend {
 /**
  * A simple IPort implementation for ports of {@link AggregationNode}, {@link AggregationEdge}, or {@link AggregationPort}.
  */
-class AggregationPort extends BaseClass<IPort>(IPort) implements IPort {
+class AggregationPort extends BaseClass<IPort>(IPort) {
   private readonly $owner: AggregationNode | AggregationEdge | AggregationPort
   private $style: IPortStyle
   private $graph: AggregationGraphWrapper | null
@@ -2283,7 +2287,7 @@ class AggregationPort extends BaseClass<IPort>(IPort) implements IPort {
 /**
  * A simple ILabel implementation for labels of {@link AggregationNode}, {@link AggregationEdge}, or {@link AggregationPort}.
  */
-class AggregationLabel extends BaseClass<ILabel>(ILabel) implements ILabel {
+class AggregationLabel extends BaseClass<ILabel>(ILabel) {
   private readonly $owner: AggregationNode | AggregationEdge | AggregationPort
   private $layoutParameter: ILabelModelParameter
   private $preferredSize: Size
@@ -2341,6 +2345,7 @@ class AggregationLabel extends BaseClass<ILabel>(ILabel) implements ILabel {
     }
   }
 
+  // @ts-ignore
   get layout(): IOrientedRectangle {
     return this.$layout
   }

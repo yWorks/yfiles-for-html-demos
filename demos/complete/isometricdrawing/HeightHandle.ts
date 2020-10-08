@@ -31,7 +31,7 @@ import { BaseClass, Cursor, HandleTypes, IHandle, IInputModeContext, INode, Poin
 /**
  * An {@link IHandle} implementation that changes the height in a node's tag.
  */
-export default class HeightHandle extends BaseClass<IHandle>(IHandle) implements IHandle {
+export default class HeightHandle extends BaseClass<IHandle>(IHandle) {
   private dragging: boolean
   private originalHeight = 0
   private node: INode

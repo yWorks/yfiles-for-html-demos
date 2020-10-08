@@ -26,6 +26,8 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
+/* global ActiveXObject */
+
 /**
  * Opens files using the HTML5 FileReader API or a IE-specific workaround.
  * This technique shows the native file open dialog to the user to provide a natural file open experience.

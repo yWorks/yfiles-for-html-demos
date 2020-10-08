@@ -53,6 +53,7 @@ import {
   INode,
   INodeReshapeSnapResultProvider,
   INodeSizeConstraintProvider,
+  InputModeBase,
   InputModeEventArgs,
   Insets,
   IPoint,
@@ -83,12 +84,9 @@ import {
  * selected nodes.
  * Supports two different resize modes: 'resize' and 'scale'.
  */
-export class NodeSelectionResizingInputMode extends BaseClass<IInputMode>(IInputMode)
-  implements IInputMode {
+export class NodeSelectionResizingInputMode extends InputModeBase {
   private $margins: Insets
   private $mode: 'scale' | 'resize'
-  private $inputModeContext: IInputModeContext | null
-  private $priority: number
 
   private handleInputMode: HandleInputMode | null
 
@@ -96,28 +94,6 @@ export class NodeSelectionResizingInputMode extends BaseClass<IInputMode>(IInput
   private rectangle: EncompassingRectangle | null
   private rectCanvasObject: ICanvasObject | null
   private ignoreSingleSelectionEvents: boolean
-
-  private onHandleDragStartedSnap: ((sender: object, evt: InputModeEventArgs) => void) | null = null
-  private onHandleDragStarting: ((sender: object, evt: InputModeEventArgs) => void) | null = null
-  private onHandleDragStarted: ((sender: object, evt: InputModeEventArgs) => void) | null = null
-  private onHandleDragFinished: ((sender: object, evt: InputModeEventArgs) => void) | null = null
-  private onHandleDragCanceled: ((sender: object, evt: InputModeEventArgs) => void) | null = null
-  private onZoomChanged: ((sender: object, evt: EventArgs) => void) | null = null
-  private onMultiSelectionStarted:
-    | ((sender: object, args: SelectionEventArgs<IModelItem>) => void)
-    | null = null
-
-  private onMultiSelectionFinished:
-    | ((sender: object, args: SelectionEventArgs<IModelItem>) => void)
-    | null = null
-
-  private onItemSelectionChanged:
-    | ((sender: object, evt: ItemSelectionChangedEventArgs<IModelItem>) => void)
-    | null = null
-
-  private onNodeLayoutChanged:
-    | ((sender: object, node: INode, oldLayout: Rect) => void)
-    | null = null
 
   /**
    * Gets the margins between the handle rectangle and the bounds of the selected nodes.
@@ -150,24 +126,10 @@ export class NodeSelectionResizingInputMode extends BaseClass<IInputMode>(IInput
     }
   }
 
-  public get inputModeContext(): IInputModeContext | null {
-    return this.$inputModeContext
-  }
-
-  public get priority(): number {
-    return this.$priority
-  }
-
-  public set priority(value: number) {
-    this.$priority = value
-  }
-
   constructor(mode?: 'scale' | 'resize', margins?: Insets) {
     super()
     this.$margins = margins || Insets.EMPTY
     this.$mode = mode || 'scale'
-    this.$inputModeContext = null
-    this.$priority = 0
     this.rectangle = null
     this.rectCanvasObject = null
     this.handleInputMode = null
@@ -176,7 +138,7 @@ export class NodeSelectionResizingInputMode extends BaseClass<IInputMode>(IInput
   }
 
   public install(context: IInputModeContext, controller: ConcurrencyController): void {
-    this.$inputModeContext = context
+    super.install(context, controller)
     const geim = context.parentInputMode as GraphEditorInputMode
     if (!geim) {
       throw new Error(
@@ -188,47 +150,36 @@ export class NodeSelectionResizingInputMode extends BaseClass<IInputMode>(IInput
     this.handleInputMode = new HandleInputMode()
     this.handleInputMode.priority = 1
 
-    // store listeners
-    this.onHandleDragStartedSnap = this.registerReshapedNodes.bind(this)
-    this.onHandleDragStarting = this.moveHandleOrthogonalHelper.starting.bind(
-      this.moveHandleOrthogonalHelper
-    )
-    this.onHandleDragStarted = this.moveHandleOrthogonalHelper.started.bind(
-      this.moveHandleOrthogonalHelper
-    )
-    this.onHandleDragFinished = this.moveHandleOrthogonalHelper.finished.bind(
-      this.moveHandleOrthogonalHelper
-    )
-    this.onHandleDragCanceled = this.moveHandleOrthogonalHelper.canceled.bind(
-      this.moveHandleOrthogonalHelper
-    )
-    this.onMultiSelectionStarted = this.multiSelectionStarted.bind(this)
-    this.onMultiSelectionFinished = this.multiSelectionFinished.bind(this)
-    this.onItemSelectionChanged = this.itemSelectionChanged.bind(this)
-    this.onNodeLayoutChanged = this.nodeLayoutChanged.bind(this)
-
     // notify the GraphSnapContext which nodes are resized and shouldn't provide SnapLines
-    this.handleInputMode.addDragStartedListener(this.onHandleDragStartedSnap)
+    this.handleInputMode.addDragStartedListener(delegate(this.registerReshapedNodes, this))
 
     // forward events to OrthogonalEdgeEditingContext so it can handle keeping edges at reshaped nodes orthogonal
-    this.handleInputMode.addDragStartingListener(this.onHandleDragStarting)
-    this.handleInputMode.addDragStartedListener(this.onHandleDragStarted)
-    this.handleInputMode.addDragFinishedListener(this.onHandleDragFinished)
-    this.handleInputMode.addDragCanceledListener(this.onHandleDragCanceled)
+    this.handleInputMode.addDragStartingListener(
+      delegate(this.moveHandleOrthogonalHelper.starting, this.moveHandleOrthogonalHelper)
+    )
+    this.handleInputMode.addDragStartedListener(
+      delegate(this.moveHandleOrthogonalHelper.started, this.moveHandleOrthogonalHelper)
+    )
+    this.handleInputMode.addDragFinishedListener(
+      delegate(this.moveHandleOrthogonalHelper.finished, this.moveHandleOrthogonalHelper)
+    )
+    this.handleInputMode.addDragCanceledListener(
+      delegate(this.moveHandleOrthogonalHelper.canceled, this.moveHandleOrthogonalHelper)
+    )
 
     this.handleInputMode.install(context, controller)
     this.handleInputMode.enabled = false
 
     // update handles depending on the changed node selection
-    geim.addMultiSelectionStartedListener(this.onMultiSelectionStarted)
-    geim.addMultiSelectionFinishedListener(this.onMultiSelectionFinished)
+    geim.addMultiSelectionStartedListener(delegate(this.multiSelectionStarted, this))
+    geim.addMultiSelectionFinishedListener(delegate(this.multiSelectionFinished, this))
     ;(context.canvasComponent as GraphComponent).selection.addItemSelectionChangedListener(
-      this.onItemSelectionChanged
+      delegate(this.itemSelectionChanged, this)
     )
 
     // add a NodeLayoutChanged listener so the reshape rect is updated when the nodes are moved (e.g. through
     // layout animations or MoveInputMode).
-    context.graph!.addNodeLayoutChangedListener(this.onNodeLayoutChanged)
+    context.graph!.addNodeLayoutChangedListener(delegate(this.nodeLayoutChanged, this))
   }
 
   /**
@@ -265,37 +216,37 @@ export class NodeSelectionResizingInputMode extends BaseClass<IInputMode>(IInput
   }
 
   public uninstall(context: IInputModeContext): void {
-    context.graph!.removeNodeLayoutChangedListener(this.onNodeLayoutChanged!)
+    context.graph!.removeNodeLayoutChangedListener(delegate(this.nodeLayoutChanged, this))
     const geim = context.parentInputMode as GraphEditorInputMode
-    geim.removeMultiSelectionStartedListener(this.onMultiSelectionStarted!)
-    geim.removeMultiSelectionFinishedListener(this.onMultiSelectionFinished!)
+    geim.removeMultiSelectionStartedListener(delegate(this.multiSelectionStarted, this))
+    geim.removeMultiSelectionFinishedListener(delegate(this.multiSelectionFinished, this))
     ;(context.canvasComponent as GraphComponent).selection.removeItemSelectionChangedListener(
-      this.onItemSelectionChanged!
+      delegate(this.itemSelectionChanged, this)
     )
 
-    this.handleInputMode!.removeDragStartedListener(this.onHandleDragStartedSnap!)
-    this.handleInputMode!.removeDragStartingListener(this.onHandleDragStarting!)
-    this.handleInputMode!.removeDragStartedListener(this.onHandleDragStarted!)
-    this.handleInputMode!.removeDragFinishedListener(this.onHandleDragFinished!)
-    this.handleInputMode!.removeDragCanceledListener(this.onHandleDragCanceled!)
+    // notify the GraphSnapContext which nodes are resized and shouldn't provide SnapLines
+    this.handleInputMode!.removeDragStartedListener(delegate(this.registerReshapedNodes, this))
+
+    // forward events to OrthogonalEdgeEditingContext so it can handle keeping edges at reshaped nodes orthogonal
+    this.handleInputMode!.removeDragStartingListener(
+      delegate(this.moveHandleOrthogonalHelper.starting, this.moveHandleOrthogonalHelper)
+    )
+    this.handleInputMode!.removeDragStartedListener(
+      delegate(this.moveHandleOrthogonalHelper.started, this.moveHandleOrthogonalHelper)
+    )
+    this.handleInputMode!.removeDragFinishedListener(
+      delegate(this.moveHandleOrthogonalHelper.finished, this.moveHandleOrthogonalHelper)
+    )
+    this.handleInputMode!.removeDragCanceledListener(
+      delegate(this.moveHandleOrthogonalHelper.canceled, this.moveHandleOrthogonalHelper)
+    )
 
     this.removeRectangleVisualization()
 
-    // reset listeners
-    this.onHandleDragStartedSnap = null
-    this.onHandleDragStarting = null
-    this.onHandleDragStarted = null
-    this.onHandleDragFinished = null
-    this.onHandleDragCanceled = null
-    this.onZoomChanged = null
-    this.onMultiSelectionStarted = null
-    this.onMultiSelectionFinished = null
-    this.onItemSelectionChanged = null
-    this.onNodeLayoutChanged = null
-
     this.handleInputMode!.uninstall(context)
     this.handleInputMode = null
-    this.$inputModeContext = null
+
+    super.uninstall(context)
   }
 
   private multiSelectionStarted(sender: object, args: SelectionEventArgs<IModelItem>): void {
@@ -537,7 +488,7 @@ function isAnyEast(position: HandlePositions): boolean {
  * {@link EncompassingRectangle#invalidate | invalidated} to fit the encompassed nodes or explicitly
  * {@link Reshape">reshaped</see>.
  */
-class EncompassingRectangle extends BaseClass<IRectangle>(IRectangle) implements IRectangle {
+class EncompassingRectangle extends BaseClass<IRectangle>(IRectangle) {
   private readonly $nodes: IEnumerable<INode>
   private readonly $margins: Insets
   private readonly rectangle: MutableRectangle
@@ -625,8 +576,7 @@ class EncompassingRectangle extends BaseClass<IRectangle>(IRectangle) implements
  * This base class implements the interface methods, handles undo/redo support, orthogonal edge editing
  * and snapping, and contains code common to both modes.
  */
-class ReshapeHandlerBase extends BaseClass<IReshapeHandler>(IReshapeHandler)
-  implements IReshapeHandler {
+class ReshapeHandlerBase extends BaseClass<IReshapeHandler>(IReshapeHandler) {
   // dictionaries storing the original layout, reshape handler and snap result provider of the reshape nodes
   protected readonly originalNodeLayouts: Map<INode, Rect>
   private readonly reshapeHandlers: Map<INode, IReshapeHandler>
@@ -693,10 +643,7 @@ class ReshapeHandlerBase extends BaseClass<IReshapeHandler>(IReshapeHandler)
     // register our CollectSnapResults callback
     const snapContext = context.lookup(GraphSnapContext.$class) as GraphSnapContext
     if (snapContext) {
-      snapContext.addCollectSnapResultsListener(
-        // @ts-ignore
-        delegate(this.collectSnapResults, this) as () => void
-      )
+      snapContext.addCollectSnapResultsListener(delegate(this.collectSnapResults, this))
     }
 
     // store original node layouts, reshape handlers and reshape snap result providers
@@ -990,10 +937,7 @@ class ReshapeHandlerBase extends BaseClass<IReshapeHandler>(IReshapeHandler)
   protected clear(context: IInputModeContext): void {
     const snapContext = context.lookup(GraphSnapContext.$class) as GraphSnapContext
     if (snapContext) {
-      snapContext.removeCollectSnapResultsListener(
-        // @ts-ignore
-        delegate(this.collectSnapResults, this) as () => void
-      )
+      snapContext.removeCollectSnapResultsListener(delegate(this.collectSnapResults, this))
     }
     this.reshapeSnapResultProviders.clear()
     this.originalNodeLayouts.clear()
@@ -1185,7 +1129,7 @@ class ResizingReshapeHandler extends ReshapeHandlerBase {
  * A {@link ReshapeHandlerHandle} for an {@link EncompassingRectangle} that considers the
  * {@link EncompassingRectangle.margins} for the calculation of its {@link IDragHandler.location}.
  */
-class NodeSelectionReshapeHandle extends BaseClass<IHandle>(IHandle) implements IHandle {
+class NodeSelectionReshapeHandle extends BaseClass<IHandle>(IHandle) {
   private readonly reshapeHandlerHandle: ReshapeHandlerHandle
   private $location: IPoint | null
 
@@ -1293,7 +1237,7 @@ class NodeSelectionReshapeHandle extends BaseClass<IHandle>(IHandle) implements 
  * reshape handler and the margins of the {@link EncompassingRectangle} as well as an additional
  * zoom-dependent offset.
  */
-class HandleLocation extends BaseClass<IPoint>(IPoint) implements IPoint {
+class HandleLocation extends BaseClass<IPoint>(IPoint) {
   private readonly offset: number
   private readonly outerThis: NodeSelectionReshapeHandle
 

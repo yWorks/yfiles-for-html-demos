@@ -87,6 +87,8 @@ function run(licenseData) {
 
   // create a GraphMLIOHandler and register the demo styles
   ioh = new GraphMLIOHandler()
+
+  // enable serialization of the demo styles - without a namespace mapping, serialization will fail
   ioh.addXamlNamespaceMapping(
     'http://www.yworks.com/yFilesHTML/demos/FlatDemoStyle/1.0',
     DemoStyles

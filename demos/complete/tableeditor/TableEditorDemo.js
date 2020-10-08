@@ -128,6 +128,8 @@ async function createGraph() {
     graphComponent,
     storageLocation: StorageLocation.FILE_SYSTEM
   })
+
+  // enable serialization of the table and demo styles - without a namespace mapping, serialization will fail
   graphMLSupport.graphMLIOHandler.addXamlNamespaceMapping(
     'http://www.yworks.com/yFilesHTML/demos/FlatDemoTableStyle/1.0',
     TableStyles

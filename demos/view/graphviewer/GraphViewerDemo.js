@@ -557,7 +557,7 @@ function getUrlMapper() {
  */
 function createGraphMLIOHandler() {
   const ioHandler = new GraphMLIOHandler()
-  // enable support for demo styles
+  // enable serialization of the demo styles - without a namespace mapping, serialization will fail
   ioHandler.addXamlNamespaceMapping(
     'http://www.yworks.com/yFilesHTML/demos/FlatDemoStyle/1.0',
     DemoStyles

@@ -19,7 +19,7 @@ Most open commands show a file chooser dialog. This is implemented using a hidde
 
 #### File (FileReader)
 
-Open a file using the [HTML5 FileReader API](https://caniuse.com/#search=filereader). This technique provides a natural file open experience on all modern browsers. For IE 9, the [FileSystem Object](https://msdn.microsoft.com/en-us/library/z9ty6h50%28v=vs.85%29.aspx) is a good workaround.
+Open a file using the [HTML5 FileReader API](https://caniuse.com/#search=filereader). This technique provides a natural file open experience on all modern browsers. For IE 9, the [FileSystem Object](<https://docs.microsoft.com/en-us/previous-versions//z9ty6h50(v=vs.85)>) is a good workaround.
 
 #### Server
 

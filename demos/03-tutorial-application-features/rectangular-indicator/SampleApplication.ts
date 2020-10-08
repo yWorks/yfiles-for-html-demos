@@ -146,7 +146,6 @@ function addExportRectInputModes(inputMode: GraphInputMode): void {
   const moveInputMode = new MoveInputMode()
   moveInputMode.positionHandler = new PositionHandler(exportRect)
   moveInputMode.hitTestable = IHitTestable.create(
-    // @ts-ignore
     (context: IInputModeContext, location: Point): boolean => {
       const path = new GeneralPath(5)
       path.appendRectangle(exportRect, false)

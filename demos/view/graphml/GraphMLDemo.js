@@ -302,6 +302,8 @@ function createGraphMLIOHandler() {
   ioHandler.addParsedListener((sender, args) => {
     propertiesPanel.showGraphProperties()
   })
+
+  // enable serialization of the demo styles - without a namespace mapping, serialization will fail
   ioHandler.addXamlNamespaceMapping(
     'http://www.yworks.com/yFilesHTML/demos/FlatDemoStyle/1.0',
     DemoStyles

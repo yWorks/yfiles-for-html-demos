@@ -40,7 +40,7 @@ import {
   Size
 } from 'yfiles'
 
-export class PortReshapeHandle extends BaseClass<IHandle>(IHandle) implements IHandle {
+export class PortReshapeHandle extends BaseClass<IHandle>(IHandle) {
   readonly context: IInputModeContext
   readonly port: IPort
   readonly adapter: NodeStylePortStyleAdapter

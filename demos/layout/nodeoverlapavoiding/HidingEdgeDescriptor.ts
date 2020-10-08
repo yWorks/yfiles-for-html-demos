@@ -41,9 +41,9 @@ import {
   IVisualCreator
 } from 'yfiles'
 
-export class HidingEdgeDescriptor
-  extends BaseClass<ICanvasObjectDescriptor>(ICanvasObjectDescriptor)
-  implements ICanvasObjectDescriptor {
+export class HidingEdgeDescriptor extends BaseClass<ICanvasObjectDescriptor>(
+  ICanvasObjectDescriptor
+) {
   // the original descriptor that is wrapped
   private originalDescriptor: ICanvasObjectDescriptor
 

@@ -28,8 +28,7 @@
  ***************************************************************************/
 import { BaseClass, IRenderContext, IVisualTemplate, Rect, SvgVisual } from 'yfiles'
 
-export class MyMarqueeTemplate extends BaseClass<IVisualTemplate>(IVisualTemplate)
-  implements IVisualTemplate {
+export class MyMarqueeTemplate extends BaseClass<IVisualTemplate>(IVisualTemplate) {
   createVisual(context: IRenderContext, bounds: Rect, dataObject: Object): SvgVisual {
     const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect') as SVGRectElement
     rect.setAttribute('stroke-width', '3')

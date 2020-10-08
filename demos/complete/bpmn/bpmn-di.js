@@ -129,11 +129,9 @@ export class BpmnDiParser {
     return this.$view.manager
   }
 
-  /** 
-   *
-     * Flag that sets the rearrangement of Labels. Does not work properly with custom label bounds
-     
-  * @type {boolean}
+  /**
+   * Flag that sets the rearrangement of Labels. Does not work properly with custom label bounds
+   * @type {boolean}
    */
   static get REARRANGE_LABELS() {
     if (typeof BpmnDiParser.$REARRANGE_LABELS === 'undefined') {
@@ -143,11 +141,9 @@ export class BpmnDiParser {
     return BpmnDiParser.$REARRANGE_LABELS
   }
 
-  /** 
-   *
-     * Flag that decides if Labels should be parsed, if bpmndi:BPMNLabel XML element is missing
-     
-  * @type {boolean}
+  /**
+   * Flag that decides if Labels should be parsed, if bpmndi:BPMNLabel XML element is missing
+   * @type {boolean}
    */
   static get PARSE_ALL_LABELS() {
     if (typeof BpmnDiParser.$PARSE_ALL_LABELS === 'undefined') {
@@ -157,11 +153,9 @@ export class BpmnDiParser {
     return BpmnDiParser.$PARSE_ALL_LABELS
   }
 
-  /** 
-   *
-     * Flag that decides if the folded Diagrams inside a selected diagram should also be parsed
-     
-  * @type {boolean}
+  /**
+   * Flag that decides if the folded Diagrams inside a selected diagram should also be parsed
+   * @type {boolean}
    */
   static get PARSE_FOLDED_DIAGRAMS() {
     if (typeof BpmnDiParser.$PARSE_FOLDED_DIAGRAMS === 'undefined') {
@@ -171,11 +165,9 @@ export class BpmnDiParser {
     return BpmnDiParser.$PARSE_FOLDED_DIAGRAMS
   }
 
-  /** 
-   *
-     * Flag that decides if only top level diagrams can be selected, or all possible Diagrams in the file
-     
-  * @type {boolean}
+  /**
+   * Flag that decides if only top level diagrams can be selected, or all possible Diagrams in the file
+   * @type {boolean}
    */
   static get SHOW_ALL_DIAGRAMS() {
     if (typeof BpmnDiParser.$SHOW_ALL_DIAGRAMS === 'undefined') {
@@ -185,11 +177,9 @@ export class BpmnDiParser {
     return BpmnDiParser.$SHOW_ALL_DIAGRAMS
   }
 
-  /** 
-   *
-     * Flag, if false, no edges are parsed (Debug)
-     
-  * @type {boolean}
+  /**
+   * Flag, if false, no edges are parsed (Debug)
+   * @type {boolean}
    */
   static get PARSE_EDGES() {
     if (typeof BpmnDiParser.$PARSE_EDGES === 'undefined') {
@@ -199,12 +189,10 @@ export class BpmnDiParser {
     return BpmnDiParser.$PARSE_EDGES
   }
 
-  /** 
-   *
-     * Flag to determine, if external node Labels should be single- or multiline Implementation left unfinished, since
-     * the right way to do would be overriding the renderer
-     
-  * @type {boolean}
+  /**
+   * Flag to determine, if external node Labels should be single- or multiline Implementation left unfinished, since
+   * the right way to do would be overriding the renderer
+   * @type {boolean}
    */
   static get MULTI_LINE_EXTERIOR_NODE_LABELS() {
     if (typeof BpmnDiParser.$MULTI_LINE_EXTERIOR_NODE_LABELS === 'undefined') {
@@ -922,7 +910,7 @@ export class BpmnDiParser {
       case 'conversation':
         this.$buildConversationNode(shape, bounds, ConversationType.CONVERSATION, null)
         break
-      case 'callConversation':
+      case 'callConversation': {
         const refElement = { value: null }
         if (this.$tryGetElementForId(shape.getAttribute('calledCollaborationRef'), refElement)) {
           switch (refElement.value.name) {
@@ -954,6 +942,7 @@ export class BpmnDiParser {
           }
         }
         break
+      }
       case 'subConversation':
         this.$buildConversationNode(shape, bounds, ConversationType.SUB_CONVERSATION, null)
         break
@@ -3100,12 +3089,13 @@ export class BpmnElement {
           'categoryValueRef'
         )
         break
-      case 'textAnnotation':
+      case 'textAnnotation': {
         const element = BpmnNamespaceManager.getElement(xNode, BpmnNamespaceManager.BPMN, 'text')
         if (element) {
           this.label = element.textContent
         }
         break
+      }
     }
   }
 
@@ -3281,11 +3271,9 @@ export class BpmnElement {
  * Class for BPMNLabelStyle objects
  */
 export class BpmnLabelStyle {
-  /** 
-   *
-     * Constant that sets the standard Text size of Labels. yFiles Standard is 12 pt, but the Bpmn Demo files look better with 11pt
-     
-  * @type {number}
+  /**
+   * Constant that sets the standard Text size of Labels. yFiles Standard is 12 pt, but the Bpmn Demo files look better with 11pt
+   * @type {number}
    */
   static get LABEL_TEXT_SIZE() {
     if (typeof BpmnLabelStyle.$LABEL_TEXT_SIZE === 'undefined') {

@@ -369,6 +369,8 @@ function registerCommands() {
     graphComponent,
     storageLocation: StorageLocation.FILE_SYSTEM
   })
+
+  // enable serialization of the UML styles - without a namespace mapping, serialization will fail
   gs.graphMLIOHandler.addXamlNamespaceMapping(
     'http://www.yworks.com/yFilesHTML/demos/UMLDemoStyle/1.0',
     UMLStyle

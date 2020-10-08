@@ -678,7 +678,7 @@ function createGraphMLIOHandler() {
   Class.fixType(MindmapNodeStyleRootExtension)
   Class.fixType(MindmapEdgeStyleExtension)
 
-  // we add the XamlNamespaceMapping mappings
+  // enable serialization of the mind map styles - without a namespace mapping, serialization will fail
   ioh.addXamlNamespaceMapping(
     'http://www.yworks.com/yFilesHTML/demos/StateLabelDecorator/1.0',
     'StateLabelDecorator',

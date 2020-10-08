@@ -53,6 +53,7 @@ import {
   INode,
   INodeReshapeSnapResultProvider,
   INodeSizeConstraintProvider,
+  InputModeBase,
   InputModeEventArgs,
   Insets,
   IPoint,
@@ -83,7 +84,7 @@ import {
  * selected nodes.
  * Supports two different resize modes: 'resize' and 'scale'.
  */
-export class NodeSelectionResizingInputMode extends BaseClass(IInputMode) {
+export class NodeSelectionResizingInputMode extends InputModeBase {
   /**
    * Gets the margins between the handle rectangle and the bounds of the selected nodes.
    * @type {!Insets}
@@ -120,46 +121,13 @@ export class NodeSelectionResizingInputMode extends BaseClass(IInputMode) {
   }
 
   /**
-   * @type {?IInputModeContext}
-   */
-  get inputModeContext() {
-    return this.$inputModeContext
-  }
-
-  /**
-   * @type {number}
-   */
-  get priority() {
-    return this.$priority
-  }
-
-  /**
-   * @type {number}
-   */
-  set priority(value) {
-    this.$priority = value
-  }
-
-  /**
    * @param {!('scale'|'resize')} [mode]
    * @param {!Insets} [margins]
    */
   constructor(mode, margins) {
     super()
-    this.onHandleDragStartedSnap = null
-    this.onHandleDragStarting = null
-    this.onHandleDragStarted = null
-    this.onHandleDragFinished = null
-    this.onHandleDragCanceled = null
-    this.onZoomChanged = null
-    this.onMultiSelectionStarted = null
-    this.onMultiSelectionFinished = null
-    this.onItemSelectionChanged = null
-    this.onNodeLayoutChanged = null
     this.$margins = margins || Insets.EMPTY
     this.$mode = mode || 'scale'
-    this.$inputModeContext = null
-    this.$priority = 0
     this.rectangle = null
     this.rectCanvasObject = null
     this.handleInputMode = null
@@ -172,7 +140,7 @@ export class NodeSelectionResizingInputMode extends BaseClass(IInputMode) {
    * @param {!ConcurrencyController} controller
    */
   install(context, controller) {
-    this.$inputModeContext = context
+    super.install(context, controller)
     const geim = context.parentInputMode
     if (!geim) {
       throw new Error(
@@ -184,45 +152,36 @@ export class NodeSelectionResizingInputMode extends BaseClass(IInputMode) {
     this.handleInputMode = new HandleInputMode()
     this.handleInputMode.priority = 1
 
-    // store listeners
-    this.onHandleDragStartedSnap = this.registerReshapedNodes.bind(this)
-    this.onHandleDragStarting = this.moveHandleOrthogonalHelper.starting.bind(
-      this.moveHandleOrthogonalHelper
-    )
-    this.onHandleDragStarted = this.moveHandleOrthogonalHelper.started.bind(
-      this.moveHandleOrthogonalHelper
-    )
-    this.onHandleDragFinished = this.moveHandleOrthogonalHelper.finished.bind(
-      this.moveHandleOrthogonalHelper
-    )
-    this.onHandleDragCanceled = this.moveHandleOrthogonalHelper.canceled.bind(
-      this.moveHandleOrthogonalHelper
-    )
-    this.onMultiSelectionStarted = this.multiSelectionStarted.bind(this)
-    this.onMultiSelectionFinished = this.multiSelectionFinished.bind(this)
-    this.onItemSelectionChanged = this.itemSelectionChanged.bind(this)
-    this.onNodeLayoutChanged = this.nodeLayoutChanged.bind(this)
-
     // notify the GraphSnapContext which nodes are resized and shouldn't provide SnapLines
-    this.handleInputMode.addDragStartedListener(this.onHandleDragStartedSnap)
+    this.handleInputMode.addDragStartedListener(delegate(this.registerReshapedNodes, this))
 
     // forward events to OrthogonalEdgeEditingContext so it can handle keeping edges at reshaped nodes orthogonal
-    this.handleInputMode.addDragStartingListener(this.onHandleDragStarting)
-    this.handleInputMode.addDragStartedListener(this.onHandleDragStarted)
-    this.handleInputMode.addDragFinishedListener(this.onHandleDragFinished)
-    this.handleInputMode.addDragCanceledListener(this.onHandleDragCanceled)
+    this.handleInputMode.addDragStartingListener(
+      delegate(this.moveHandleOrthogonalHelper.starting, this.moveHandleOrthogonalHelper)
+    )
+    this.handleInputMode.addDragStartedListener(
+      delegate(this.moveHandleOrthogonalHelper.started, this.moveHandleOrthogonalHelper)
+    )
+    this.handleInputMode.addDragFinishedListener(
+      delegate(this.moveHandleOrthogonalHelper.finished, this.moveHandleOrthogonalHelper)
+    )
+    this.handleInputMode.addDragCanceledListener(
+      delegate(this.moveHandleOrthogonalHelper.canceled, this.moveHandleOrthogonalHelper)
+    )
 
     this.handleInputMode.install(context, controller)
     this.handleInputMode.enabled = false
 
     // update handles depending on the changed node selection
-    geim.addMultiSelectionStartedListener(this.onMultiSelectionStarted)
-    geim.addMultiSelectionFinishedListener(this.onMultiSelectionFinished)
-    context.canvasComponent.selection.addItemSelectionChangedListener(this.onItemSelectionChanged)
+    geim.addMultiSelectionStartedListener(delegate(this.multiSelectionStarted, this))
+    geim.addMultiSelectionFinishedListener(delegate(this.multiSelectionFinished, this))
+    context.canvasComponent.selection.addItemSelectionChangedListener(
+      delegate(this.itemSelectionChanged, this)
+    )
 
     // add a NodeLayoutChanged listener so the reshape rect is updated when the nodes are moved (e.g. through
     // layout animations or MoveInputMode).
-    context.graph.addNodeLayoutChangedListener(this.onNodeLayoutChanged)
+    context.graph.addNodeLayoutChangedListener(delegate(this.nodeLayoutChanged, this))
   }
 
   /**
@@ -270,37 +229,37 @@ export class NodeSelectionResizingInputMode extends BaseClass(IInputMode) {
    * @param {!IInputModeContext} context
    */
   uninstall(context) {
-    context.graph.removeNodeLayoutChangedListener(this.onNodeLayoutChanged)
+    context.graph.removeNodeLayoutChangedListener(delegate(this.nodeLayoutChanged, this))
     const geim = context.parentInputMode
-    geim.removeMultiSelectionStartedListener(this.onMultiSelectionStarted)
-    geim.removeMultiSelectionFinishedListener(this.onMultiSelectionFinished)
+    geim.removeMultiSelectionStartedListener(delegate(this.multiSelectionStarted, this))
+    geim.removeMultiSelectionFinishedListener(delegate(this.multiSelectionFinished, this))
     context.canvasComponent.selection.removeItemSelectionChangedListener(
-      this.onItemSelectionChanged
+      delegate(this.itemSelectionChanged, this)
     )
 
-    this.handleInputMode.removeDragStartedListener(this.onHandleDragStartedSnap)
-    this.handleInputMode.removeDragStartingListener(this.onHandleDragStarting)
-    this.handleInputMode.removeDragStartedListener(this.onHandleDragStarted)
-    this.handleInputMode.removeDragFinishedListener(this.onHandleDragFinished)
-    this.handleInputMode.removeDragCanceledListener(this.onHandleDragCanceled)
+    // notify the GraphSnapContext which nodes are resized and shouldn't provide SnapLines
+    this.handleInputMode.removeDragStartedListener(delegate(this.registerReshapedNodes, this))
+
+    // forward events to OrthogonalEdgeEditingContext so it can handle keeping edges at reshaped nodes orthogonal
+    this.handleInputMode.removeDragStartingListener(
+      delegate(this.moveHandleOrthogonalHelper.starting, this.moveHandleOrthogonalHelper)
+    )
+    this.handleInputMode.removeDragStartedListener(
+      delegate(this.moveHandleOrthogonalHelper.started, this.moveHandleOrthogonalHelper)
+    )
+    this.handleInputMode.removeDragFinishedListener(
+      delegate(this.moveHandleOrthogonalHelper.finished, this.moveHandleOrthogonalHelper)
+    )
+    this.handleInputMode.removeDragCanceledListener(
+      delegate(this.moveHandleOrthogonalHelper.canceled, this.moveHandleOrthogonalHelper)
+    )
 
     this.removeRectangleVisualization()
 
-    // reset listeners
-    this.onHandleDragStartedSnap = null
-    this.onHandleDragStarting = null
-    this.onHandleDragStarted = null
-    this.onHandleDragFinished = null
-    this.onHandleDragCanceled = null
-    this.onZoomChanged = null
-    this.onMultiSelectionStarted = null
-    this.onMultiSelectionFinished = null
-    this.onItemSelectionChanged = null
-    this.onNodeLayoutChanged = null
-
     this.handleInputMode.uninstall(context)
     this.handleInputMode = null
-    this.$inputModeContext = null
+
+    super.uninstall(context)
   }
 
   /**

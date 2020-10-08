@@ -64,6 +64,7 @@ export class ComponentDropInputMode extends ItemDropInputMode<IGraph> {
   /**
    * Gets the currently dragged component from the drop data.
    */
+  // @ts-ignore
   get draggedItem(): IGraph {
     return this.dropData as IGraph
   }

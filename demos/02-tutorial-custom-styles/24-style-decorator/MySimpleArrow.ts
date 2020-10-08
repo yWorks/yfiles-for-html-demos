@@ -50,13 +50,11 @@ import MySimpleEdgeStyle from './MySimpleEdgeStyle'
 /**
  * A simple IArrow implementation that renders the arrow as a custom filled shape.
  */
-export default class MySimpleArrow
-  extends BaseClass<IArrow, IVisualCreator, IBoundsProvider>(
-    IArrow,
-    IVisualCreator,
-    IBoundsProvider
-  )
-  implements IArrow, IVisualCreator, IBoundsProvider {
+export default class MySimpleArrow extends BaseClass<IArrow, IVisualCreator, IBoundsProvider>(
+  IArrow,
+  IVisualCreator,
+  IBoundsProvider
+) {
   anchor: Point
   direction: Point
   private $thickness: number
@@ -303,8 +301,7 @@ export default class MySimpleArrow
  * the defs elements, those have to implement {@link ISvgDefsCreator} that offers a
  * defined interface to deal with.
  */
-class MyGradientSupport extends BaseClass<ISvgDefsCreator>(ISvgDefsCreator)
-  implements ISvgDefsCreator {
+class MyGradientSupport extends BaseClass<ISvgDefsCreator>(ISvgDefsCreator) {
   gradient: SVGElement
 
   constructor(gradient: SVGElement) {

@@ -13,7 +13,7 @@
     "react-dom": "^16.13.1",
     "react-scripts": "3.4.1",
     "typescript": "3.9.3",
-    "yfiles": "../../../lib-dev/es-modules/yfiles-23.0.2-dev.tgz"
+    "yfiles": "../../../lib-dev/es-modules/yfiles-23.0.3-dev.tgz"
   },
   "scripts": {
     "preinstall": "node -e \"require('fs').copyFileSync('../../../lib/license.json','./src/license.json');\"",

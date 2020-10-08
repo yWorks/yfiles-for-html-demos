@@ -67,7 +67,7 @@ function initializeDemo() {
   logoLink.setAttribute('href', 'https://www.yworks.com/')
 
   const logoImage = document.createElement('img')
-  logoImage.setAttribute('src', '../../resources/image/ylogo.svg')
+  logoImage.setAttribute('src', '../../resources/icons/ylogo.svg')
   logoImage.setAttribute('class', 'demo-y-logo')
 
   logoLink.appendChild(logoImage)

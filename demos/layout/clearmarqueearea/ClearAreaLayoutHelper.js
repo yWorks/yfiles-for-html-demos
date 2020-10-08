@@ -264,7 +264,9 @@ class AffectedEdgesChannelRouter extends LayoutStageBase {
    */
   applyLayout(graph) {
     const routedEdges = graph.getDataProvider(ClearAreaLayout.ROUTE_EDGE_DP_KEY)
-    graph.addDataProvider(ChannelEdgeRouter.AFFECTED_EDGES_DP_KEY, routedEdges)
+    if (routedEdges !== null) {
+      graph.addDataProvider(ChannelEdgeRouter.AFFECTED_EDGES_DP_KEY, routedEdges)
+    }
     this.channelEdgeRouter.applyLayout(graph)
     graph.removeDataProvider(ChannelEdgeRouter.AFFECTED_EDGES_DP_KEY)
   }

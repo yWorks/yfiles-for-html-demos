@@ -57,6 +57,7 @@ export default class ReactGraphComponent extends Component {
     // Newly created elements are animated during which the graph data should not be modified
     this.updating = false
     this.scheduledUpdate = null
+    this.isDirty = false
 
     // include the yFiles License
     License.value = yFilesLicense
@@ -187,19 +188,26 @@ export default class ReactGraphComponent extends Component {
    * @return {Promise}
    */
   async updateGraph() {
-    this.updating = true
-    // update the graph based on the given graph data
-    this.graphBuilder.setData(this.nodesSource, this.props.graphData.nodesSource)
-    this.graphBuilder.setData(this.edgesSource, this.props.graphData.edgesSource)
-    this.graphBuilder.updateGraph()
+    this.isDirty = true
+    if (this.updating) {
+      return
+    }
+    while (this.isDirty) {
+      this.updating = true
+      // update the graph based on the given graph data
+      this.graphBuilder.setData(this.nodesSource, this.props.graphData.nodesSource)
+      this.graphBuilder.setData(this.edgesSource, this.props.graphData.edgesSource)
+      this.graphBuilder.updateGraph()
+      this.isDirty = false
 
-    // apply a layout to re-arrange the new elements
-    const layoutExecutor = new LayoutExecutor(this.graphComponent, new HierarchicLayout())
-    layoutExecutor.duration = '1s'
-    layoutExecutor.easedAnimation = true
-    layoutExecutor.animateViewport = true
-    await layoutExecutor.start()
-    this.updating = false
+      // apply a layout to re-arrange the new elements
+      const layoutExecutor = new LayoutExecutor(this.graphComponent, new HierarchicLayout())
+      layoutExecutor.duration = '1s'
+      layoutExecutor.easedAnimation = true
+      layoutExecutor.animateViewport = true
+      await layoutExecutor.start()
+      this.updating = false
+    }
   }
 
   render() {

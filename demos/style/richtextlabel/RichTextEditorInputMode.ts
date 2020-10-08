@@ -39,6 +39,7 @@ export class RichTextEditorInputMode extends TextEditorInputMode {
    * Wire up Quill with the {@link TextEditorInputMode#editorText}.
    * @yjs:keep=root
    */
+  // @ts-ignore
   get editorText(): string {
     return this.quill.root.innerHTML
   }

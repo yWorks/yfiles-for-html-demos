@@ -5,7 +5,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 
-  <link rel="stylesheet" href="../../node_modules/yfiles-umd/yfiles.css">
+  <link rel="stylesheet" href="../../../lib-dev/umd/yfiles.css">
   <link rel="stylesheet" href="../../resources/style/demo.css">
 
 <!-- ////////////////////////////////////////////////////////////////////////
@@ -71,12 +71,15 @@
       speed at startup. In order to observe dynamic loading at runtime, hit the <em>layout</em> button. The modules <em>layout-hierarchic</em>
       and <em>graph-layout-bridge</em> needed for layout calculation are loaded when the button is hit for the first
       time. Please take a look at the demo's source code to see how dynamic loading works. </p>
+    <p>
+      In order to improve code completion, install the UMD variant of yFiles locally as npm module.
+    </p>
   </div>
 </aside>
 
 <div class="demo-content">
   <div class="demo-header">
-    <a href="https://www.yworks.com" target="_blank"> <img src="../../resources/image/ylogo.svg" class="demo-y-logo"> </a> <a
+    <a href="https://www.yworks.com" target="_blank"> <img src="../../resources/icons/ylogo.svg" class="demo-y-logo"> </a> <a
     href="../../README.html" target="_blank">yFiles for HTML</a> <span class="demo-title">AMD Loading Demo [yFiles for HTML]</span>
   </div>
   <div class="demo-toolbar">
@@ -111,7 +114,7 @@
     data-dojo-config="async:true, parseOnLoad:true,
      baseUrl: location.pathname.replace(/\/[^/]+$/, '/'),
      packages: [
-       { name: 'yfiles', location: './node_modules/yfiles-umd' }
+       { name: 'yfiles-umd', location: '../../../lib-dev/umd' }
      ]"
     src="https://cdnjs.cloudflare.com/ajax/libs/dojo/1.10.4/dojo.js"></script>-->
 

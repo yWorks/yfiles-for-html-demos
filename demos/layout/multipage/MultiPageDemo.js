@@ -536,6 +536,8 @@ async function loadModelGraph(graphId) {
       : 'resources/yfiles-layout-namespaces.graphml'
 
   const graphMLIOHandler = new GraphMLIOHandler()
+
+  // enable serialization of the demo styles - without a namespace mapping, serialization will fail
   graphMLIOHandler.addXamlNamespaceMapping(
     'http://www.yworks.com/yFilesHTML/demos/FlatDemoStyle/1.0',
     DemoStyles

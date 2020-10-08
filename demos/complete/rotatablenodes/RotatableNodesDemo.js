@@ -159,6 +159,8 @@ function initializeGraphML() {
     graphComponent, // configure to load and save to the file system
     storageLocation: StorageLocation.FILE_SYSTEM
   })
+
+  // enable serialization of the required classes - without a namespace mapping, serialization will fail
   const xmlNamespace = 'http://www.yworks.com/yFilesHTML/demos/RotatableNodes/1.0'
   graphmlSupport.graphMLIOHandler.addXamlNamespaceMapping(xmlNamespace, DemoStyles)
   graphmlSupport.graphMLIOHandler.addXamlNamespaceMapping(xmlNamespace, RotatableNodes)

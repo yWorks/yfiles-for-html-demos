@@ -38,8 +38,7 @@ import {
 /**
  * Simple implementation of an {@link IPositionHandler} that moves an {@link IMutablePoint}
  */
-export class RectanglePositionHandler extends BaseClass<IPositionHandler>(IPositionHandler)
-  implements IPositionHandler {
+export class RectanglePositionHandler extends BaseClass<IPositionHandler>(IPositionHandler) {
   private readonly position: IMutablePoint
   private startPosition: Point | null = null
 
