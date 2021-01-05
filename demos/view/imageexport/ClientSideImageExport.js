@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.3.
- ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -28,6 +28,9 @@
  ***************************************************************************/
 import { GraphComponent, IGraph, Insets, Rect, Size, SvgExport } from 'yfiles'
 import { detectFirefoxVersion, detectInternetExplorerVersion } from '../../resources/demo-app.js'
+
+const ieVersion = detectInternetExplorerVersion()
+const ffVersion = detectFirefoxVersion()
 
 /**
  * A class that provides png-image export. The image is exported to svg and converted to png.
@@ -111,9 +114,6 @@ export default class ClientSideImageExport {
   }
 }
 
-const ieVersion = detectInternetExplorerVersion()
-const ffVersion = detectFirefoxVersion()
-
 /**
  * Renders the given SVG element to a PNG image.
  * @param {SVGElement} svgElement
@@ -130,14 +130,8 @@ function renderSvgToPng(svgElement, size, margins) {
 
   if (window.btoa === undefined) {
     targetContext.fillText('This browser does not support SVG previews', 10, 50)
-    // Use the canvg fall-back if the function btoa is not available, e.g. in IE9
-    return exportImageWithCanvg(svgElement, targetCanvas, null)
-  }
-
-  if (detectInternetExplorerVersion() > 11) {
-    // A bug in Microsoft Edge results in black gradients when drawn into a Canvas if the call to drawImage happens
-    // in a timeout, e.g. a button click.
-    return exportImageWithCanvg(svgElement, targetCanvas, null)
+    // Use the canvg fall-back if the function btoa is not available
+    return exportImageWithCanvg(svgElement)
   }
 
   return new Promise(resolve => {
@@ -166,7 +160,7 @@ function renderSvgToPng(svgElement, size, margins) {
             }
           } catch (error) {
             // Use the canvg fall-back when the above solution doesn't work
-            resolve(exportImageWithCanvg(svgElement, targetCanvas, error))
+            resolve(exportImageWithCanvg(svgElement))
           }
         },
         ieVersion > -1 ? 100 : 0
@@ -197,25 +191,22 @@ function renderSvgToPng(svgElement, size, margins) {
 /**
  * Use canvg as fallback if the default solution is not available.
  * @param {SVGElement} svgElement
- * @param {HTMLCanvasElement} targetCanvas
- * @param {Error} error
- * @return {Promise.<{image:Image,targetCanvas:HTMLCanvasElement}>}
+ * @return {Promise.<HTMLImageElement>}
  */
-function exportImageWithCanvg(svgElement, targetCanvas, error) {
-  return new Promise((resolve, reject) => {
-    if (!svgElement.toDataURL) {
-      // The default approach failed, and this callback will not work either.
-      reject(new Error(`This browser doesn't support exporting the raster image: ${error}`))
-    }
+async function exportImageWithCanvg(svgElement) {
+  const canvas = document.createElement('canvas')
+  const ctx = canvas.getContext('2d')
 
-    svgElement.toDataURL('image/png', {
-      callback: dataURL => {
-        const image = new Image()
-        image.src = dataURL
-        image.onload = () => {
-          resolve(image)
-        }
-      }
-    })
+  const serializedSvg = new XMLSerializer().serializeToString(svgElement)
+  // eslint-disable-next-line no-undef
+  const canvgRenderer = await canvg.Canvg.from(ctx, serializedSvg)
+  await canvgRenderer.render()
+
+  return new Promise((resolve, reject) => {
+    const image = new Image()
+    image.src = canvas.toDataURL()
+    image.onload = () => {
+      resolve(image)
+    }
   })
 }

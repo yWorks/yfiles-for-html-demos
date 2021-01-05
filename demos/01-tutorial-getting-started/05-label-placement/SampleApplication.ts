@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.3.
- ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -183,7 +183,7 @@ function populateGraph(): void {
  */
 function setDefaultStyles(): void {
   const graph = graphComponent.graph
-  // Sets the default style for nodes
+
   // Creates a nice ShinyPlateNodeStyle instance, using an orange Fill.
   // Sets this style as the default for all nodes that don't have another
   // style assigned explicitly
@@ -191,19 +191,17 @@ function setDefaultStyles(): void {
     fill: 'darkorange',
     stroke: 'white'
   })
-  // Sets the default size explicitly to 40x40
+
+  // Sets the default size for nodes explicitly to 40x40
   graph.nodeDefaults.size = new Size(40, 40)
-  graph.nodeDefaults.labels.style = new DefaultLabelStyle({
-    verticalTextAlignment: 'center',
-    wrapping: 'word-ellipsis'
-  })
-  // Sets the default style for labels
-  // Creates a label style with the label text color set to dark red
-  // Sets the defined style as the default for both edge and node labels:
+
+  // Creates a label style with the label font set to Tahoma and a black text color
   const defaultLabelStyle = new DefaultLabelStyle({
     font: '12px Tahoma',
     textFill: 'black'
   })
+
+  // Sets the defined style as the default for both edge and node labels
   graph.edgeDefaults.labels.style = defaultLabelStyle
   graph.nodeDefaults.labels.style = defaultLabelStyle
 }

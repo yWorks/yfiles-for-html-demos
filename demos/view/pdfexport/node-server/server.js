@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.3.
- ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -34,12 +34,12 @@ const app = express()
 app.use(bodyParser.urlencoded({ extended: false }))
 
 app.post('/', async (req, res) => {
-  const { svgString, width, height, margin } = req.body
+  const { svgString, width, height, margin, paperSize } = req.body
   if (!svgString) {
     // isAlive check
     res.status(200).send('true')
   } else {
-    const pdfBuffer = await exportPdf(svgString, width, height, margin)
+    const pdfBuffer = await exportPdf(svgString, width, height, margin, paperSize)
 
     res.writeHead(200, {
       'Access-Control-Allow-Origin': '*',

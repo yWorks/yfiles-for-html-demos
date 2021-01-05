@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.3.
- ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -172,7 +172,7 @@ export default class DecisionTree {
    * @param copiedNode The node that has been clicked
    * @param animateScroll Whether to animate scrolling to the new nodes
    */
-  onNodeClicked(copiedNode, animateScroll) {
+  async onNodeClicked(copiedNode, animateScroll) {
     let newNodes
     if (
       this.originalGraph.outDegree(this.nodeMap.get(copiedNode)) === 0 ||
@@ -189,28 +189,29 @@ export default class DecisionTree {
       newNodes = this.onHigherNodeClicked(copiedNode)
     }
     this.updateNodeStyles()
-    this.runLayout(newNodes, animateScroll).then(() => {
-      let nodeArea = null
-      newNodes.forEach(node => {
-        if (nodeArea === null) {
-          nodeArea = node.layout.toRect()
-        } else {
-          nodeArea = Rect.add(nodeArea, node.layout.toRect())
-        }
-        nodeArea = nodeArea.getEnlarged(10)
-      })
-      if (nodeArea) {
-        let zoom = targetZoom
-        if (nodeArea.width * targetZoom > this.$graphComponent.size.width) {
-          zoom = this.$graphComponent.size.width / nodeArea.width
-        }
-        if (animateScroll) {
-          this.$graphComponent.zoomToAnimated(Point.from(nodeArea.center), zoom)
-        } else {
-          this.$graphComponent.zoomTo(nodeArea.center, zoom)
-        }
+    this.onLayout(true)
+    await this.runLayout(newNodes, animateScroll)
+    let nodeArea = null
+    newNodes.forEach(node => {
+      if (nodeArea === null) {
+        nodeArea = node.layout.toRect()
+      } else {
+        nodeArea = Rect.add(nodeArea, node.layout.toRect())
       }
+      nodeArea = nodeArea.getEnlarged(10)
     })
+    if (nodeArea) {
+      let zoom = targetZoom
+      if (nodeArea.width * targetZoom > this.$graphComponent.size.width) {
+        zoom = this.$graphComponent.size.width / nodeArea.width
+      }
+      if (animateScroll) {
+        await this.$graphComponent.zoomToAnimated(Point.from(nodeArea.center), zoom)
+      } else {
+        this.$graphComponent.zoomTo(nodeArea.center, zoom)
+      }
+    }
+    this.onLayout(false)
   }
 
   /**
@@ -482,7 +483,6 @@ export default class DecisionTree {
         this.pathNodes.has(edge.sourceNode) && this.pathNodes.has(edge.targetNode) ? 1 : 0
 
       this.runningLayout = true
-      this.onLayout(true)
       const layoutExecutor = new LayoutExecutor({
         graphComponent: this.$graphComponent,
         layout: new MinimumNodeSizeStage(layout),
@@ -499,7 +499,6 @@ export default class DecisionTree {
         }
       } finally {
         this.runningLayout = false
-        this.onLayout(false)
       }
     }
   }

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.3.
- ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -315,6 +315,9 @@ function showTooltip(id) {
   tooltipDiv.innerHTML = ''
 
   tooltipDiv.setAttribute('class', 'info-visible arrow')
+  if (infoElement == null) {
+    return
+  }
   const tooltipContent = infoElement.cloneNode(true)
   tooltipDiv.appendChild(tooltipContent)
 

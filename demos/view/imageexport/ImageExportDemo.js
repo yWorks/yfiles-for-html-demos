@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.3.
- ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -179,11 +179,18 @@ function registerCommands() {
     if (checkInputValues(scale, margin)) {
       const rectangle = inputUseRect && inputUseRect.checked ? new Rect(exportRect) : null
 
-      // configure export, export the image and show a dialog to save the image
-      clientSideImageExport.scale = scale
-      clientSideImageExport.margins = new Insets(margin)
-      const image = await clientSideImageExport.exportImage(graphComponent.graph, rectangle)
-      showClientExportDialog(image)
+      if (ieVersion === 9) {
+        // IE9 requires an older version of canvg, which is not included in this demo anymore.
+        // See https://github.com/yWorks/yfiles-for-html-demos/tree/v2.3.0.3/demos/view/imageexport
+        // for a compatible version
+        showClientExportDialog(null)
+      } else {
+        // configure export, export the image and show a dialog to save the image
+        clientSideImageExport.scale = scale
+        clientSideImageExport.margins = new Insets(margin)
+        const image = await clientSideImageExport.exportImage(graphComponent.graph, rectangle)
+        showClientExportDialog(image)
+      }
     }
   })
 
@@ -257,25 +264,43 @@ function requestServerExport(svgData, size, url) {
 
 /**
  * Shows the export dialog for the client-side graph exports.
- * @param {HTMLImageElement} pngImage
+ * @param {HTMLImageElement|null} pngImage
  */
 function showClientExportDialog(pngImage) {
   const imageContainerInner = document.getElementById('imageContainerInner')
   imageContainerInner.innerHTML = ''
-  imageContainerInner.appendChild(pngImage)
 
-  const imageButton = cloneAndReplace(document.getElementById('clientPngSaveButton'))
-  imageButton.addEventListener(
-    'click',
-    () => {
-      FileSaveSupport.save(pngImage.src, 'graph.png').catch(() => {
-        alert(
-          'Saving directly to the filesystem is not supported by this browser. Please use the server based export instead.'
-        )
-      })
-    },
-    false
-  )
+  if (pngImage === null) {
+    imageContainerInner.innerHTML = `
+<p>
+  Image export in IE9 is possible in general, but requires an older version of canvg.<br>
+  Please refer to this older Version of the Image Export demo, that used the old version of canvg:
+</p>
+<p>
+  <a href="https://github.com/yWorks/yfiles-for-html-demos/tree/v2.3.0.3/demos/view/imageexport" target="_blank">
+  https://github.com/yWorks/yfiles-for-html-demos/tree/v2.3.0.3/demos/view/imageexport</a>
+</p>
+<p>
+  See the index.html and ClientSideImageExport.js for further details.
+</p>
+`
+    document.getElementById('clientPngSaveButton').disabled = true
+  } else {
+    imageContainerInner.appendChild(pngImage)
+
+    const imageButton = cloneAndReplace(document.getElementById('clientPngSaveButton'))
+    imageButton.addEventListener(
+      'click',
+      () => {
+        FileSaveSupport.save(pngImage.src, 'graph.png').catch(() => {
+          alert(
+            'Saving directly to the filesystem is not supported by this browser. Please use the server based export instead.'
+          )
+        })
+      },
+      false
+    )
+  }
 
   showPopup()
 }

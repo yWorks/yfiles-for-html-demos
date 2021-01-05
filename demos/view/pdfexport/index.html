@@ -8,7 +8,7 @@
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML 2.3.
-     // Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -150,16 +150,16 @@
   <script src="../../resources/filesystem-warning.js"></script>
 
   <!-- the actual pdf export libraries -->
-  <script src="https://www.yworks.com/resources/scripts/jspdf.min.v2.1.0.js"></script>
-  <script src="https://www.yworks.com/resources/scripts/svg2pdf.min.v1.4.0.js"></script>
+  <script src="https://unpkg.com/jspdf@2.2.0/dist/jspdf.umd.min.js"></script>
+  <script src="https://unpkg.com/svg2pdf.js@2.1.0/dist/svg2pdf.umd.min.js"></script>
 
   <!-- Load custom fonts for the custom-fonts sample graph. This is ONLY required if you want to export Cyrillic or Hiragana characters. -->
   <!-- jsPDF supports the most common fonts out of the box, however to register other custom fonts, please see -->
-  <!-- https://github.com/yWorks/jsPDF#custom-fonts and https://github.com/yWorks/svg2pdf.js#concerning-custom-fonts -->
+  <!-- https://github.com/MrRio/jsPDF#use-of-unicode-characters--utf-8 -->
   <link href="https://fonts.googleapis.com/css?family=Prata" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css?family=Kosugi" rel="stylesheet">
-  <script src="https://www.yworks.com/resources/scripts/prata-regular-yjs6962.js"></script>
-  <script src="https://www.yworks.com/resources/scripts/kosugi-yjs6962.js"></script>
+  <script src="https://www.yworks.com/resources/scripts/prata-regular-yjs8146.js"></script>
+  <script src="https://www.yworks.com/resources/scripts/kosugi-yjs8146.js"></script>
 </head>
 
 <body class="demo-has-left demo-has-right">
@@ -182,13 +182,14 @@
           Disable <em>Export Rectangle Contents</em> to export the complete graph instead of the rectangle's region.
         </li>
         <li>
-          Explore the settings for scale and margin.
+          Explore the settings for page size, scale, and margin. Note that the scale option only has an effect
+          if page size is set to <code>Automatic</code>.
         </li>
         <li>
           The client-side PDF export also supports custom fonts which is illustrated by the 'Custom Fonts' sample graph.
           To make use of custom fonts, they need to be preprocessed and registered at the <a
-            href="https://github.com/yWorks/jsPDF" target="_blank">jsPDF</a> instance. Please see the <a
-            href="https://github.com/yWorks/jsPDF" target="_blank">readme</a> for more details.
+            href="https://github.com/MrRio/jsPDF" target="_blank">jsPDF</a> instance. Please see the <a
+            href="https://github.com/MrRio/jsPDF" target="_blank">readme</a> for more details.
         </li>
       </ul>
 
@@ -197,10 +198,10 @@
       <p>
         The demo shows an approach that completely runs in the client's browser, as well as an approach for a
         server-side export. The client-side export uses <a href="https://github.com/yWorks/svg2pdf.js"
-          target="_blank">svg2pdf</a> and a fork of <a href="https://github.com/yWorks/jsPDF" target="_blank">jsPDF</a>
+          target="_blank">svg2pdf</a> and <a href="https://github.com/MrRio/jsPDF" target="_blank">jsPDF</a>
         where we contributed major changes and extensions. Please see its readme on <a
-          href="https://github.com/yWorks/jsPDF">github.com</a>. Although our fork of <a
-          href="https://github.com/yWorks/jsPDF" target="_blank">jsPDF</a> adds many features like gradients and line
+          href="https://github.com/MrRio/jsPDF">github.com</a>. Although our fork of <a
+          href="https://github.com/MrRio/jsPDF" target="_blank">jsPDF</a> adds many features like gradients and line
         style support, the actual export result may differ from the graph in the graph component. </p>
 
       <h3>Server-side export</h3>
@@ -256,11 +257,24 @@
           <div class="demo-form-block"><label for="useRect">Export Rectangle Contents</label> <input id="useRect"
               data-name="inputUseRect" type="checkbox" name="useRect" checked="checked"></div>
           <div class="demo-form-block">
+            <label for="paperSize" class="short">Page Size</label> <select id="paperSize" data-name="inputpaperSize"
+            name="paperSize">
+              <option value="auto">Automatic</option>
+              <option value="A3">A3</option>
+              <option value="A4">A4</option>
+              <option value="A5">A5</option>
+              <option value="A6">A6</option>
+              <option value="Letter">Letter</option>
+            </select>
+          </div>
+          <div class="demo-form-block">
             <label for="scale" class="short">Scale</label> <input id="scale" data-name="inputScale" type="number"
               min="0.1" max="200.0" step="0.1" name="scale" value="1.0">
           </div>
-          <div class="demo-form-block"><label for="margin" class="short">Margin</label> <input id="margin"
-              data-name="inputMargin" name="margin" type="number" min="0" max="100" value="5"></div>
+          <div class="demo-form-block">
+            <label for="margin" class="short">Margin</label> <input id="margin"
+              data-name="inputMargin" name="margin" type="number" min="0" max="100" value="5">
+          </div>
 
         </fieldset>
         <button id="ExportButton" data-name="ExportButton" data-command="Export" value="Export" class="export-button">Client-side Export</button>

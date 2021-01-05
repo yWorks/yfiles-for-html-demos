@@ -1,0 +1,17 @@
+{
+  "name": "jest-demo-for-yfiles-for-html",
+  "version": "1.0.0",
+  "author": "yWorks GmbH <yfileshtml@yworks.com>",
+  "license": "https://www.yworks.com/products/yfiles-for-html/sla",
+  "private": true,
+  "scripts": {
+    "test": "jest"
+  },
+  "dependencies": {
+    "yfiles": "../../../lib-dev/es-modules/yfiles-23.0.4-dev.tgz",
+    "yfiles-umd": "../../../lib-dev/umd/yfiles-umd-23.0.4-dev.tgz"
+  },
+  "devDependencies": {
+    "jest": "^26.6.3"
+  }
+}

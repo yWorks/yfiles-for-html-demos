@@ -23,7 +23,7 @@ After establishing a connection, a small set of data from the database will be d
 
 ## Details
 
-This demo uses the [Neo4j Bolt driver for JavaScript](https://github.com/neo4j/neo4j-javascript-driver) to connect to a Neo4j database and query it for data.
+This demo uses the [Neo4j driver for JavaScript](https://github.com/neo4j/neo4j-javascript-driver) to connect to a Neo4j database and query it for data.
 
 The query results are then used by a [GraphBuilder](https://docs.yworks.com/yfileshtml/#/api/GraphBuilder) with a custom configuration to construct a graph from the data, while assigning different node styles to nodes with different labels.
 

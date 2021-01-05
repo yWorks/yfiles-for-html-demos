@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.3.
- ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -224,12 +224,12 @@ function createInputMode() {
   mode.itemHoverInputMode.addHoveredItemChangedListener((sender, args) => {
     const item = args.item
     const oldItem = args.oldItem
-    if (oldItem && INode.isInstance(oldItem)) {
+    if (oldItem != null && oldItem.tag != null && INode.isInstance(oldItem)) {
       oldItem.tag.sourceHighlight = false
       oldItem.tag.targetHighlight = false
     }
 
-    if (item && INode.isInstance(item)) {
+    if (item != null && item.tag != null && INode.isInstance(item)) {
       item.tag.sourceHighlight = true
       item.tag.targetHighlight = true
     }

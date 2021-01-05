@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.3.
- ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -40,6 +40,7 @@ const {
   ILabelOwner,
   INode,
   Insets,
+  InteriorStretchLabelModel,
   ITable,
   NodeStyleStripeStyleAdapter,
   OrientedRectangle,
@@ -89,6 +90,7 @@ const {
  * @typedef {object} JSONLabel
  * @property {string} text
  * @property {JSONOrientedRectangle|null} layout
+ * @property {'default'|'interior-stretch-north'|'interior-stretch-south'|'interior-stretch-east'|'interior-stretch-west'|'interior-stretch-center'} layoutParameter
  */
 
 /**
@@ -490,7 +492,8 @@ class JSONReader {
    * Creates a label for the given label owner based on the given data to the given graph.
    *
    * The label layout parameter is created from the label geometry with the ILabelModelParameterFinder of the label
-   * model.
+   * model. For interior stretch label models, the layout
+   * parameter is retrieved from the label data to ensure the layout algorithm handles them correctly.
    *
    * @param {IGraph} graph
    * @param {JSONLabel} labelData
@@ -509,15 +512,34 @@ class JSONReader {
       : graph.addLabel(owner, labelData.text)
 
     if (layout) {
-      const model = label.layoutParameter.model
-      const parameterFinder = model.lookup(ILabelModelParameterFinder.$class)
-      if (parameterFinder !== null) {
-        const parameter = parameterFinder.findBestParameter(
-          label,
-          model,
-          new OrientedRectangle(layout)
-        )
-        graph.setLabelLayoutParameter(label, parameter)
+      switch (labelData.layoutParameter) {
+        case 'interior-stretch-center':
+          graph.setLabelLayoutParameter(label, InteriorStretchLabelModel.CENTER)
+          break
+        case 'interior-stretch-north':
+          graph.setLabelLayoutParameter(label, InteriorStretchLabelModel.NORTH)
+          break
+        case 'interior-stretch-south':
+          graph.setLabelLayoutParameter(label, InteriorStretchLabelModel.SOUTH)
+          break
+        case 'interior-stretch-east':
+          graph.setLabelLayoutParameter(label, InteriorStretchLabelModel.EAST)
+          break
+        case 'interior-stretch-west':
+          graph.setLabelLayoutParameter(label, InteriorStretchLabelModel.WEST)
+          break
+        default: {
+          const model = label.layoutParameter.model
+          const parameterFinder = model.lookup(ILabelModelParameterFinder.$class)
+          if (parameterFinder !== null) {
+            const parameter = parameterFinder.findBestParameter(
+              label,
+              model,
+              new OrientedRectangle(layout)
+            )
+            graph.setLabelLayoutParameter(label, parameter)
+          }
+        }
       }
     }
 
@@ -894,9 +916,33 @@ class JSONWriter {
           upY: layout.upY,
           width: layout.width,
           height: layout.height
-        }
+        },
+        layoutParameter: this.createLayoutParameter(label)
       })
     })
+  }
+
+  /**
+   * Returns a string that identifies the label's layout parameter.
+   * @param {ILabel} label
+   * @return {'default'|'interior-stretch-north'|'interior-stretch-south'|'interior-stretch-east'|'interior-stretch-west'|'interior-stretch-center'}
+   */
+  createLayoutParameter(label) {
+    if (label.layoutParameter.model instanceof InteriorStretchLabelModel) {
+      switch (label.layoutParameter) {
+        case InteriorStretchLabelModel.NORTH:
+          return 'interior-stretch-north'
+        case InteriorStretchLabelModel.SOUTH:
+          return 'interior-stretch-south'
+        case InteriorStretchLabelModel.EAST:
+          return 'interior-stretch-east'
+        case InteriorStretchLabelModel.WEST:
+          return 'interior-stretch-west'
+        case InteriorStretchLabelModel.CENTER:
+          return 'interior-stretch-center'
+      }
+    }
+    return 'default'
   }
 
   /**

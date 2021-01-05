@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.3.
- ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -130,9 +130,13 @@ const graphChooserBox = document.querySelector("select[data-command='SelectedFil
 const nextButton = document.querySelector("button[data-command='NextFile']")
 /** @type {HTMLButtonElement} */
 const previousButton = document.querySelector("button[data-command='PreviousFile']")
+/** @type {HTMLButtonElement} */
+const restartButton = document.querySelector("button[data-command='Restart']")
 
 const showDecisionTreeButton = document.getElementById('showDecisionTreeButton')
 const editDecisionTreeButton = document.getElementById('editDecisionTreeButton')
+let showDecisionTreeButtonDisabled = false
+let editDecisionTreeButtonDisabled = false
 
 let decisionTree = null
 
@@ -354,7 +358,7 @@ async function runIncrementalLayout(incrementalNodes) {
  * Displays the decision tree component for the current graph
  */
 function showDecisionTree() {
-  if (showDecisionTreeButton.disabled) {
+  if (showDecisionTreeButtonDisabled) {
     return
   }
 
@@ -388,6 +392,10 @@ function showDecisionTree() {
  * Closes the decision tree component and displays the complete graph
  */
 function editDecisionTree() {
+  if (editDecisionTreeButtonDisabled) {
+    return
+  }
+
   if (decisionTree) {
     // dispose the old decision tree
     decisionTree.dispose()
@@ -515,6 +523,9 @@ function setRunningLayout(running) {
     updatePrevNextButtons()
   }
   graphChooserBox.disabled = running
+  restartButton.disabled = running
+  showDecisionTreeButtonDisabled = running
+  editDecisionTreeButtonDisabled = running
 }
 
 /**

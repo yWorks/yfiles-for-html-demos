@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.3.
- ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -2840,13 +2840,31 @@ function getDemoData() {
     ]
   },
   {
+    "id": "jest",
+    "name": "Jest",
+    "demoPath": "testing/jest/README.html",
+    "summary": "Shows how to test a yFiles for HTML app using Jest.",
+    "category": "testing",
+    "thumbnailPath": "resources/image/jest.png",
+    "sourcePath": "testing/jest/src/ItemFactory.test.js",
+    "tags": [
+      "testing",
+      "jest"
+    ],
+    "keywords": [
+      "v2.3.0.4",
+      "unit",
+      "test"
+    ]
+  },
+  {
     "id": "jest-puppeteer",
     "name": "Jest Puppeteer",
     "demoPath": "testing/jest-puppeteer/README.html",
     "summary": "Shows how to test a yFiles for HTML app using Jest with the Puppeteer environment.",
     "category": "testing",
     "thumbnailPath": "resources/image/jest-puppeteer.png",
-    "sourcePath": "testing/jest/integration/app.test.js",
+    "sourcePath": "testing/jest-puppeteer/integration/app.test.js",
     "tags": [
       "testing",
       "jest",

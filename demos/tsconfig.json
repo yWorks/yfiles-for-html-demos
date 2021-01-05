@@ -5,11 +5,10 @@
     "module": "es6",
     "moduleResolution": "node",
     "removeComments": false,
-    "noImplicitAny": true,
     "resolveJsonModule": true,
     "esModuleInterop": true,
-    "strictNullChecks": true,
-    "lib": ["dom.iterable", "es2017", "dom"]
+    "lib": ["dom.iterable", "es2017", "dom"],
+    "forceConsistentCasingInFileNames": true
   },
   "exclude": [
     "node_modules",

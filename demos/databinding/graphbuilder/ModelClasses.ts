@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.3.
- ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -37,7 +37,10 @@ import {
   NodesSource,
   PolylineEdgeStyle,
   StringTemplateNodeStyle,
-  Stroke
+  Stroke,
+  TemplateNodeStyle,
+  INodeStyle,
+  VoidNodeStyle
 } from 'yfiles'
 
 /**
@@ -145,9 +148,13 @@ export class NodesSourceDefinitionBuilderConnector extends SourceDefinitionBuild
     } else {
       this.nodesSource.idProvider = null
     }
-    this.nodesSource.nodeCreator.defaults.style = new StringTemplateNodeStyle(
-      this.sourceDefinition.template
-    )
+    try {
+      this.nodesSource.nodeCreator.defaults.style = new StringTemplateNodeStyle(
+        this.sourceDefinition.template
+      )
+    } catch (e) {
+      throw new Error(`Evaluating the template failed: ${e}`)
+    }
     this.graphBuilder.setData(this.nodesSource, parseData(this.sourceDefinition.data))
   }
 
@@ -263,8 +270,7 @@ function parseData(data: string): any[] {
     // eslint-disable-next-line no-new-func
     return new Function(functionString)()
   } catch (e) {
-    alert(`Evaluating the nodes source failed: ${e}`)
-    return []
+    throw new Error(`Evaluation of the source data failed: ${e}`)
   }
 }
 

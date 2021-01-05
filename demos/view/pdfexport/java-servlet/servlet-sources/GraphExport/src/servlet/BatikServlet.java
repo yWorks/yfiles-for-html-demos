@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.3.
- ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -76,19 +76,20 @@ public class BatikServlet extends HttpServlet {
 	private static final String PARAMETER_MARGIN = "margin";
 	private static final String PARAMETER_HEIGHT = "height";
 	private static final String PARAMETER_WIDTH = "width";
+	private static final String PARAMETER_PAPER_SIZE = "paperSize";
 
 	private static final Charset CHARSET = StandardCharsets.UTF_8;
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		
+
 		// add x-origin header
 		response.addHeader("Access-Control-Allow-Origin", "*");
 		response.addHeader("Access-Control-Allow-Headers", "X-Requested-With");
-		
+
 		// retrieve parameter map
 		Map<String, String[]> parameters = request.getParameterMap();
-		
+
 	    // read request
 	    StringBuilder buffer = new StringBuilder();
 	    BufferedReader reader = request.getReader();
@@ -97,7 +98,7 @@ public class BatikServlet extends HttpServlet {
 	        buffer.append(line);
 	    }
 	    String body = buffer.toString();
-		
+
 	    // handle isAlive request
 		if (body.equals("isAlive")) {
 			response.getOutputStream().write("true".getBytes());
@@ -109,7 +110,7 @@ public class BatikServlet extends HttpServlet {
 			throw new ServletException("Illegal number of parameters provided, expected: " + NUMBER_PARAMETERS
 					+ ", received: " + parameters.size());
 
-		String svgString = null, format = null;
+		String svgString = null, format = null, paperSize = null;
 		int margin = 0, width = 0, height = 0;
 
 		try {
@@ -118,6 +119,7 @@ public class BatikServlet extends HttpServlet {
 			margin = Integer.parseInt(parameters.get(PARAMETER_MARGIN)[0]);
 			width = Integer.parseInt(parameters.get(PARAMETER_WIDTH)[0]);
 			height = Integer.parseInt(parameters.get(PARAMETER_HEIGHT)[0]);
+			paperSize = parameters.get(PARAMETER_PAPER_SIZE)[0];
 		} catch (NumberFormatException e) {
 			throw new ServletException("Parameter not of type integer", e);
 		} catch (IndexOutOfBoundsException e) {
@@ -138,16 +140,16 @@ public class BatikServlet extends HttpServlet {
 		OutputStream outstream = response.getOutputStream();
 		File targetFile = new File("./graph.pdf");
 		try {
-			OutputStream fileOutStream = new FileOutputStream(targetFile);	
-			convertSvgToPdf(inStream, fileOutStream, margin, width, height);			
+			OutputStream fileOutStream = new FileOutputStream(targetFile);
+			convertSvgToPdf(inStream, fileOutStream, margin, width, height, paperSize);
 		} catch (IOException e) {
 			throw new ServletException("Unable to convert svg string to pdf", e);
 		}
-		
+
 		response.setContentType("application/pdf");
 		response.addHeader("Content-Disposition", "attachment; filename=graph.pdf");
 		response.setContentLength((int) targetFile.length());
-			
+
 		FileInputStream fileInputStream = new FileInputStream(targetFile);
 		int bytes;
 		while ((bytes = fileInputStream.read()) != -1) {
@@ -156,7 +158,7 @@ public class BatikServlet extends HttpServlet {
 	}
 
 	private void convertSvgToPdf(final InputStream inStream, OutputStream outStream, final int margin, final int width,
-			final int height) throws IOException {
+			final int height, final String paperSize) throws IOException {
 		// create and load a SVGDocument
 		UserAgent userAgent = new UserAgentAdapter();
 		SVGDocumentFactory factory = new SAXSVGDocumentFactory(userAgent.getXMLParserClassName());
@@ -172,7 +174,7 @@ public class BatikServlet extends HttpServlet {
 		YPDFGraphics2D graphics = new YPDFGraphics2D(outStream, dimensions);
 
 		// set properties
-		Properties properties = createDefaultProperties(dimensions);
+		Properties properties = createDefaultProperties(dimensions, paperSize);
 		graphics.setProperties(properties);
 		graphics.setMultiPage(false);
 		graphics.setOutlinesEnabled(false);
@@ -184,12 +186,12 @@ public class BatikServlet extends HttpServlet {
 		node.paint(graphics);
 		graphics.endExport();
 	}
-	
-	private Properties createDefaultProperties(final Dimension dimensions) {
+
+	private Properties createDefaultProperties(final Dimension dimensions, final String paperSize) {
 		final Properties defaultProperties = YPDFGraphics2D.getDefaultProperties();
 		final Properties properties = new Properties();
 		properties.putAll(defaultProperties);
-		properties.setProperty(YPDFGraphics2D.PAGE_SIZE, PageConstants.A4);
+		properties.setProperty(YPDFGraphics2D.PAGE_SIZE, paperSize != null && paperSize.length() > 0 ? paperSize : PageConstants.A4);
 		UserProperties.setProperty(properties, YPDFGraphics2D.PREFERRED_PAGE_SIZE, new Dimension(dimensions));
 		properties.setProperty(YPDFGraphics2D.ORIENTATION, PageConstants.PORTRAIT);
 		UserProperties.setProperty(properties, YPDFGraphics2D.PAGE_MARGINS, new Insets(0, 0, 0, 0));

@@ -21,9 +21,7 @@ For more details concerning the shortcomings of the client-side export in this d
 
 ### Fall-back Strategy
 
-Additionally, this demo shows how to use [canvg](https://github.com/canvg/canvg) and the [SVG.toDataURL](https://github.com/sampumon/SVG.toDataURL) project as a fallback strategy on client-side export. canvg provides a viable workaround for Internet Explorer whose security settings do not allow the creation of a data URL of a HTML Canvas.
-
-This fallback is also used for Microsoft Edge because of a bug that does not allow to draw gradients to a Canvas.
+Additionally, this demo shows how to use [canvg](https://github.com/canvg/canvg) as a fallback strategy on client-side export. canvg provides a viable workaround for Internet Explorer whose security settings do not allow the creation of a data URL of a HTML Canvas.
 
 Please note that the canvg result might differ from the original graph visualisation and from the output produced by the primary solution.
 

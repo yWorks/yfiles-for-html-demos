@@ -5,15 +5,15 @@
   "license": "https://www.yworks.com/products/yfiles-for-html/sla",
   "private": true,
   "dependencies": {
-    "react": "16.13.1",
-    "react-dom": "16.13.1",
-    "react-scripts": "3.4.1",
-    "yfiles": "../../../lib-dev/es-modules/yfiles-23.0.3-dev.tgz"
+    "react": "17.0.1",
+    "react-dom": "17.0.1",
+    "react-scripts": "4.0.1",
+    "yfiles": "../../../lib-dev/es-modules/yfiles-23.0.4-dev.tgz"
   },
   "scripts": {
     "preinstall": "node -e \"require('fs').copyFileSync('../../../lib/license.json','./src/license.json');\"",
     "start": "react-scripts --expose-gc --max-old-space-size=8192 start",
-    "build": "react-scripts build",
+    "build": "react-scripts --expose-gc --max-old-space-size=8192 build",
     "eject": "react-scripts eject"
   },
   "browserslist": {

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.3.
- ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -56,25 +56,6 @@ export default class D3BarChart {
     const yAxis = d3.axisLeft(y).ticks(3, '.6')
 
     this.chart.append('g').attr('class', 'y axis').attr('transform', 'translate(25,0)').call(yAxis)
-
-    // d3.tip positioning doesn't work properly in Firefox (see https://github.com/Caged/d3-tip/issues/56).
-    // To compensate for this, we position it in Firefox with an offset.
-    const tipOffset = navigator.userAgent.toLowerCase().indexOf('firefox') > -1 ? 12 : 0
-
-    this.tip = d3
-      .tip()
-      .attr('class', 'd3-tip')
-      .direction('n')
-      .offset([-10, tipOffset])
-      .html(
-        (d, i) =>
-          `<strong>Load:</strong> <span style='color:${NetworkMonitoringNodeStyle.convertLoadToColor(
-            d,
-            1
-          )}'>${(d * 100).toFixed(0)}%</span>`
-      )
-
-    d3.select('.chart').call(this.tip)
   }
 
   /** @type {INode} */
@@ -130,8 +111,6 @@ export default class D3BarChart {
       .attr('y', d => y(d))
       .attr('height', d => this.chartHeight - y(d))
       .attr('width', barWidth - 1)
-      .on('mouseover', this.tip.show)
-      .on('mouseout', this.tip.hide)
 
     // Update the already constructed bars and labels if no new data is added
     groups
@@ -163,8 +142,6 @@ export default class D3BarChart {
       .attr('y', d => y(d))
       .attr('height', d => this.chartHeight - y(d))
       .attr('width', currentBarWidth - 1)
-      .on('mouseover', this.tip.show)
-      .on('mouseout', this.tip.hide)
 
     newCurrentGroup
       .append('text')

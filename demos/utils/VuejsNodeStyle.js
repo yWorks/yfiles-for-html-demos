@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.3.
- ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -58,6 +58,7 @@ class ObservedContext {
     this.node = node
     this.graphComponent = renderContext.canvasComponent
     this.defsSupport = renderContext.svgDefsManager
+    this.contextZoom = renderContext.zoom
     this.reset()
   }
 
@@ -66,6 +67,7 @@ class ObservedContext {
    */
   update(renderContext) {
     this.defsSupport = renderContext.svgDefsManager
+    this.contextZoom = renderContext.zoom
   }
 
   /**
@@ -113,7 +115,7 @@ class ObservedContext {
       }
     }
     if (oldState.hasOwnProperty('zoom')) {
-      const newValue = this.graphComponent.zoom
+      const newValue = this.contextZoom
       if (newValue !== oldState.zoom) {
         delta.zoom = newValue
         change = true
@@ -181,7 +183,7 @@ class ObservedContext {
     if (this.observed.hasOwnProperty('zoom')) {
       return this.observed.zoom
     }
-    return (this.observed.zoom = this.graphComponent.zoom)
+    return (this.observed.zoom = this.contextZoom)
   }
 
   /**

@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.3.
- ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -39,17 +39,13 @@ export const Neo4jEdge = neo4j.types.Relationship
 
 /**
  * Establishes a connection to a Neo4j database.
- * @param {string} url The URL to connect to, usually through the bolt protocol (bolt://)
+ * @param {string} url The URL to connect to (neo4j:// bolt:// neo4j+s://)
  * @param {string} user The username to use.
  * @param {string} pass The password to use.
- * @param {boolean} encrypted Whether to use encryption.
  */
-export async function connectToDB(url, user, pass, encrypted) {
+export async function connectToDB(url, user, pass) {
   // create a new Neo4j driver instance
-  const neo4jDriver = neo4j.driver(url, neo4j.auth.basic(user, pass), {
-    encrypted: encrypted,
-    trust: 'TRUST_CUSTOM_CA_SIGNED_CERTIFICATES'
-  })
+  const neo4jDriver = neo4j.driver(url, neo4j.auth.basic(user, pass))
 
   const runCypherQuery = createCypherQueryRunner(neo4jDriver)
 

@@ -6,19 +6,19 @@
   "private": true,
   "dependencies": {
     "@types/jest": "25.2.3",
-    "@types/node": "14.0.9",
-    "@types/react": "16.9.35",
-    "@types/react-dom": "16.9.8",
-    "react": "^16.13.1",
-    "react-dom": "^16.13.1",
-    "react-scripts": "3.4.1",
-    "typescript": "3.9.3",
-    "yfiles": "../../../lib-dev/es-modules/yfiles-23.0.3-dev.tgz"
+    "@types/node": "14.14.14",
+    "@types/react": "16.9.56",
+    "@types/react-dom": "16.9.9",
+    "react": "16.14.0",
+    "react-dom": "16.14.0",
+    "react-scripts": "3.4.4",
+    "typescript": "~3.9.7",
+    "yfiles": "../../../lib-dev/es-modules/yfiles-23.0.4-dev.tgz"
   },
   "scripts": {
     "preinstall": "node -e \"require('fs').copyFileSync('../../../lib/license.json','./src/license.json');\"",
     "start": "react-scripts --expose-gc --max-old-space-size=8192 start",
-    "build": "react-scripts build",
+    "build": "react-scripts --expose-gc --max-old-space-size=8192 build",
     "eject": "react-scripts eject"
   },
   "browserslist": {

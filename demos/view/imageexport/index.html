@@ -9,7 +9,7 @@
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML 2.3.
-     // Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -148,10 +148,7 @@
   <script src="../../resources/filesystem-warning.js"></script>
 
   <!-- import canvg as fallback -->
-  <script src="https://www.yworks.com/resources/scripts/rgbcolor.a317199.js"></script>
-  <script src="https://www.yworks.com/resources/scripts/canvg.js"></script>
-  <script src="https://www.yworks.com/resources/scripts/base64.js"></script>
-  <script src="https://www.yworks.com/resources/scripts/svg_todataurl.js"></script>
+  <script type="text/javascript" src="https://unpkg.com/canvg@3.0.7/lib/umd.js"></script>
 
 </head>
 <body class="demo-has-left demo-has-right">
@@ -194,12 +191,9 @@
     <h3>Fall-back Strategy</h3>
 
     <p>
-      Additionally, this demo shows how to use <a href="https://github.com/canvg/canvg" target="_blank">canvg</a> and the <a
-      href="https://github.com/sampumon/SVG.toDataURL" target="_blank">SVG.toDataURL</a> project as a fallback strategy on client-side
-      export. canvg provides a viable workaround for Internet Explorer whose security settings do not allow the creation
-      of a data URL of a HTML Canvas.</p>
-    <p>This fallback is also used for Microsoft Edge because of a bug that does not allow
-      to draw gradients to a Canvas.</p>
+      Additionally, this demo shows how to use <a href="https://github.com/canvg/canvg" target="_blank">canvg</a> as a
+      fallback strategy on client-side export. canvg provides a viable workaround for Internet Explorer whose security
+      settings do not allow the creation of a data URL of a HTML Canvas.</p>
     <p>Please note that the canvg result might differ from the original graph visualisation and from the output produced
       by the primary solution. </p>
 

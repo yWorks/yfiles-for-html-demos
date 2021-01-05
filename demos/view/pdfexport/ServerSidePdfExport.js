@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.3.
- ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -29,7 +29,7 @@
 import { GraphComponent, IGraph, Insets, Rect, Size, SvgExport } from 'yfiles'
 
 /**
- * A class that provides png-image export. The image is exported to svg and the PDF can then be requested from the
+ * A class that provides PDF export. The image is exported to svg and the PDF can then be requested from the
  * server.
  */
 export default class ServerSidePdfExport {
@@ -39,6 +39,7 @@ export default class ServerSidePdfExport {
   constructor() {
     this.$scale = 1
     this.$margins = new Insets(5)
+    this.$paperSize = null
     initForm()
   }
 
@@ -75,6 +76,22 @@ export default class ServerSidePdfExport {
   }
 
   /**
+   * Sets the paper size for the exported PDF.
+   * @param {'A3'|'A4'|'A5'|'A6'|'Letter'|null} value A value of <code>null</code> will set
+   * an automatic paper size fitting the diagram.
+   */
+  set paperSize(value) {
+    this.$paperSize = value
+  }
+
+  /**
+   * @return {'A3'|'A4'|'A5'|'A6'|'Letter'|null}
+   */
+  get paperSize() {
+    return this.$paperSize
+  }
+
+  /**
    * Exports the graph to an svg element.
    * This function returns a Promise to allow showing the SVG in a popup with a save button, afterwards.
    * @param {IGraph} graph
@@ -97,7 +114,6 @@ export default class ServerSidePdfExport {
 
     if (window.btoa !== undefined) {
       // Don't use base 64 encoding if btoa is not available and don't inline images as-well.
-      // Otherwise canvg will throw an exception.
       exporter.encodeImagesBase64 = true
       exporter.inlineSvgImages = true
     }
@@ -126,6 +142,8 @@ export default class ServerSidePdfExport {
     height.setAttribute('value', `${size.height}`)
     const margin = document.getElementById('postMargin')
     margin.setAttribute('value', `${this.margins ? this.margins.left : 5}`)
+    const paperSize = document.getElementById('postPaperSize')
+    paperSize.setAttribute('value', this.$paperSize || '')
 
     const form = document.getElementById('postForm')
     form.setAttribute('action', url)
@@ -141,7 +159,7 @@ export default class ServerSidePdfExport {
 }
 
 /**
- * Adds a form to the document body that is used to request the png-image from the server.
+ * Adds a form to the document body that is used to request the PDF from the server.
  */
 function initForm() {
   const form = document.createElement('form')
@@ -173,6 +191,11 @@ function initForm() {
   margin.name = 'margin'
   margin.type = 'hidden'
   form.appendChild(margin)
+  const paperSize = document.createElement('input')
+  paperSize.id = 'postPaperSize'
+  paperSize.name = 'paperSize'
+  paperSize.type = 'hidden'
+  form.appendChild(paperSize)
 
   document.body.appendChild(form)
 }

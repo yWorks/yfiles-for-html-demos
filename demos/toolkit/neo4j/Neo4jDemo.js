@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.3.
- ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -425,31 +425,17 @@ function registerCommands() {
   const userEl = document.querySelector('#userInput')
   const hostEl = document.querySelector('#hostInput')
   const passwordEl = document.querySelector('#passwordInput')
-  const encryptionEl = document.querySelector('#encryptionInput')
-
-  // Encryption not supported for connections to localhost
-  // => uncheck and disable the encryption checkbox for localhost urls.
-  function setEncryptionInput(event) {
-    const url = event.target.value
-    const isLocalhost = /^(bolt:\/\/)?((localhost)|(127\.0\.0\.1($|\D)))/.test(url)
-    encryptionEl.checked = encryptionEl.checked && !isLocalhost
-    encryptionEl.disabled = isLocalhost
-  }
-
-  hostEl.addEventListener('change', setEncryptionInput)
-  hostEl.addEventListener('keyup', setEncryptionInput)
 
   document.getElementById('login-form').addEventListener('submit', async e => {
     e.preventDefault()
     let url = hostEl.value
-    if (url.indexOf('bolt') < 0) {
-      url = `bolt://${url}`
+    if (url.indexOf('://') < 0) {
+      url = `neo4j://${url}`
     }
     const user = userEl.value
     const pass = passwordEl.value
-    const encrypted = encryptionEl.checked
     try {
-      runCypherQuery = await connectToDB(url, user, pass, encrypted)
+      runCypherQuery = await connectToDB(url, user, pass)
 
       // hide the login form and show the graph component
       document.querySelector('#loginPane').setAttribute('style', 'display: none;')

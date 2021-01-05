@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.3.
- ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -160,11 +160,17 @@ function registerCommands() {
   bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent)
   bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
 
+  const inputPaperSize = document.getElementById('paperSize')
   const inputScale = document.getElementById('scale')
   const inputMargin = document.getElementById('margin')
   const inputUseRect = document.getElementById('useRect')
 
+  bindChangeListener('#paperSize', newSize => {
+    inputScale.disabled = newSize !== 'auto'
+  })
+
   bindAction("button[data-command='Export']", async () => {
+    const paperSize = inputPaperSize.value === 'auto' ? null : inputPaperSize.value
     const scale = parseFloat(inputScale.value)
     const margin = parseFloat(inputMargin.value)
     if (checkInputValues(scale, margin)) {
@@ -173,6 +179,7 @@ function registerCommands() {
       // configure export, export the image and show a dialog to save the image
       clientSidePdfExport.scale = scale
       clientSidePdfExport.margins = new Insets(margin)
+      clientSidePdfExport.paperSize = paperSize
       const { raw, uri } = await clientSidePdfExport.exportPdf(graphComponent.graph, rectangle)
       if (ieVersion !== -1) {
         // disable HTML preview in IE
@@ -188,6 +195,7 @@ function registerCommands() {
   })
 
   bindAction("button[data-command='BatikServerExportButton']", async () => {
+    const paperSize = inputPaperSize.value === 'auto' ? null : inputPaperSize.value
     const scale = parseFloat(inputScale.value)
     const margin = parseFloat(inputMargin.value)
     if (checkInputValues(scale, margin)) {
@@ -196,11 +204,13 @@ function registerCommands() {
       // configure export, export the SVG and show a dialog to download the image
       serverSidePdfExport.scale = scale
       serverSidePdfExport.margins = new Insets(margin)
+      serverSidePdfExport.paperSize = paperSize
       const pdf = await serverSidePdfExport.exportSvg(graphComponent.graph, rectangle)
       requestServerExport(pdf.element, pdf.size, JAVA_SERVLET_URL)
     }
   })
   bindAction("button[data-command='NodeServerServerExportButton']", async () => {
+    const paperSize = inputPaperSize.value === 'auto' ? null : inputPaperSize.value
     const scale = parseFloat(inputScale.value)
     const margin = parseFloat(inputMargin.value)
     if (checkInputValues(scale, margin)) {
@@ -209,6 +219,7 @@ function registerCommands() {
       // configure export, export the SVG and show a dialog to download the image
       serverSidePdfExport.scale = scale
       serverSidePdfExport.margins = new Insets(margin)
+      serverSidePdfExport.paperSize = paperSize
       const pdf = await serverSidePdfExport.exportSvg(graphComponent.graph, rectangle)
       requestServerExport(pdf.element, pdf.size, NODE_SERVER_URL)
     }

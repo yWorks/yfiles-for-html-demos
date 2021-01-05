@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.3.
- ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -29,8 +29,8 @@
 const path = require('path')
 const { optimize } = require('@yworks/optimizer')
 const rollup = require('rollup')
-const babel = require('rollup-plugin-babel')
-const resolve = require('@rollup/plugin-node-resolve')
+const { babel } = require('@rollup/plugin-babel')
+const { nodeResolve } = require('@rollup/plugin-node-resolve')
 const replace = require('@rollup/plugin-replace')
 const commonjs = require('@rollup/plugin-commonjs')
 const json = require('@rollup/plugin-json')
@@ -97,10 +97,11 @@ module.exports = function (grunt) {
         input: path.join(build, 'demos-js/loading/rollupjs/src/RollupJsDemo.js'),
         plugins: [
           replace({ 'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV) }),
-          resolve(),
+          nodeResolve(),
           json(),
           babel({
-            exclude: '**/node_modules/**'
+            exclude: '**/node_modules/**',
+            babelHelpers: 'bundled'
           }),
           commonjs()
         ],

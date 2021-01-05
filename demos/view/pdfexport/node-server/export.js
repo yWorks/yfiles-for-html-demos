@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.3.
- ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -29,7 +29,7 @@
 const puppeteer = require('puppeteer')
 const path = require('path')
 
-async function exportPdf(svg, w, h, margin) {
+async function exportPdf(svg, w, h, margin, paperSize) {
   w = parseInt(w)
   h = parseInt(h)
   margin = parseInt(margin)
@@ -55,8 +55,6 @@ async function exportPdf(svg, w, h, margin) {
   }
 
   const pdfConfig = {
-    width: `${w + 2 * margin}px`,
-    height: `${h + 2 * margin}px`,
     margin: {
       top: `${margin}px`,
       bottom: `${margin}px`,
@@ -64,6 +62,14 @@ async function exportPdf(svg, w, h, margin) {
       right: `${margin}px`
     }
   }
+
+  if (paperSize) {
+    pdfConfig.format = paperSize
+  } else {
+    pdfConfig.width = `${w + 2 * margin}px`
+    pdfConfig.height = `${h + 2 * margin}px`
+  }
+
   await page.emulateMedia('screen')
   const pdf = await page.pdf(pdfConfig)
   await browser.close()

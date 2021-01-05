@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.3.
- ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -73,10 +73,12 @@ export default class EdgeDropInputMode extends ItemDropInputMode {
   }
 
   initializePreview() {
-    if (this.showPreview && this.draggedItem) {
-      // there's no dragged item when using the native drag-and-drop approach
-      super.initializePreview()
+    if (this.dropData.style == null) {
+      // when using the native drag-and-drop approach, the data will be a string and not an IModelItem
+      // and we will not populate the preview graph
+      return
     }
+    super.initializePreview()
   }
 
   /**

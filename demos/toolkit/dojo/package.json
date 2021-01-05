@@ -11,16 +11,16 @@
     "postinstall": "node -e \"require('fs').copyFileSync('./node_modules/yfiles/yfiles.css','./src/assets/yfiles.css')\""
   },
   "dependencies": {
-    "@dojo/framework": "^7.0.0",
+    "@dojo/framework": "^7.0.5",
     "@dojo/themes": "^6.0.0",
-    "@dojo/widgets": "^7.0.0",
-    "tslib": "~2.0.0",
-    "yfiles": "../../../lib-dev/es-modules/yfiles-23.0.3-dev.tgz"
+    "@dojo/widgets": "^7.0.5",
+    "tslib": "~2.0.3",
+    "yfiles": "../../../lib-dev/es-modules/yfiles-23.0.4-dev.tgz"
   },
   "devDependencies": {
     "@dojo/cli": "^7.0.0",
-    "@dojo/cli-build-app": "^7.0.0",
-    "@types/node": "~14.0.9",
-    "typescript": "~3.9.3"
+    "@dojo/cli-build-app": "^7.0.4",
+    "@types/node": "~14.14.14",
+    "typescript": "~3.9.7"
   }
 }

@@ -8,7 +8,7 @@
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
      // This demo file is part of yFiles for HTML 2.3.
-     // Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
      // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -41,12 +41,12 @@
 
   <script src="../../resources/filesystem-warning.js"></script>
   <!-- load neo4j driver -->
-  <script src="https://unpkg.com/neo4j-driver@4.0.2/lib/browser/neo4j-web.js"></script>
-  <link rel="stylesheet" href="https://unpkg.com/codemirror@5.54.0/lib/codemirror.css">
+  <script src="https://unpkg.com/neo4j-driver@4.2.1/lib/browser/neo4j-web.js"></script>
+  <link rel="stylesheet" href="https://unpkg.com/codemirror@5.58.3/lib/codemirror.css">
   <link rel="stylesheet" href="https://unpkg.com/cypher-codemirror/dist/cypher-codemirror-syntax.css">
-  <script src="https://unpkg.com/codemirror@5.54.0/lib/codemirror.js"></script>
+  <script src="https://unpkg.com/codemirror@5.58.3/lib/codemirror.js"></script>
   <script>window.codemirror = window.CodeMirror</script>
-  <script src="https://unpkg.com/cypher-codemirror@1.1.6/dist/cypher-codemirror.js"></script>
+  <script src="https://unpkg.com/cypher-codemirror@1.1.7/dist/cypher-codemirror.js"></script>
 
   <style>
     #propertyTable {
@@ -188,7 +188,7 @@
 
     <h2>Details</h2>
     <p>
-      This demo uses the <a href="https://github.com/neo4j/neo4j-javascript-driver" target="_blank">Neo4j Bolt driver for JavaScript</a>
+      This demo uses the <a href="https://github.com/neo4j/neo4j-javascript-driver" target="_blank">Neo4j driver for JavaScript</a>
       to connect to a Neo4j database and query it for data.
     </p>
     <p>
@@ -212,7 +212,10 @@
       <form id="login-form">
         <div class="login-form-row">
           <label for="hostInput">Database URL</label>
-          <input type="text" id="hostInput" value="bolt://localhost">
+          <input type="text" id="hostInput" value="neo4j://localhost">
+        </div>
+        <div class="login-form-row" style="font-size: 0.9em; margin-top: 0">
+          (see &nbsp;<a href="https://neo4j.com/docs/driver-manual/current/client-applications/#driver-configuration-examples" target="_blank">neo4j docs</a>&nbsp; for example URI schemes)
         </div>
         <div class="login-form-row">
           <label for="userInput">Username</label>
@@ -221,10 +224,6 @@
         <div class="login-form-row">
           <label for="passwordInput">Password</label>
           <input type="password" id="passwordInput" autofocus>
-        </div>
-        <div class="login-form-row">
-          <label for="encryptionInput">Use Encryption</label>
-          <input type="checkbox" disabled id="encryptionInput" title="Connects to the database using encryption. The database has to support encrypted connections (not supported for localhost connections).">
         </div>
         <div class="login-form-row">
           <input type="submit" value="Connect">

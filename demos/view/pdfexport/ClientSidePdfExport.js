@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.3.
- ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -27,7 +27,6 @@
  **
  ***************************************************************************/
 import { GraphComponent, IGraph, Insets, Rect, Size, SvgExport } from 'yfiles'
-import { detectSafariVersion } from '../../utils/Workarounds.js'
 
 /**
  * A class that provides PDF-image export. The image is exported to svg and converted to PDF.
@@ -39,6 +38,7 @@ export default class ClientSidePdfExport {
   constructor() {
     this.$scale = 1
     this.$margins = new Insets(5)
+    this.$paperSize = null
   }
 
   /**
@@ -74,6 +74,22 @@ export default class ClientSidePdfExport {
   }
 
   /**
+   * Sets the paper size for the exported PDF.
+   * @param {'A3'|'A4'|'A5'|'A6'|'Letter'|Size|null} value A value of <code>null</code> will set
+   * an automatic paper size fitting the diagram.
+   */
+  set paperSize(value) {
+    this.$paperSize = value
+  }
+
+  /**
+   * @return {Size|null}
+   */
+  get paperSize() {
+    return this.$paperSize
+  }
+
+  /**
    * Exports the graph to a PDF.
    * @param {IGraph} graph
    * @param {Rect} exportRect
@@ -95,7 +111,6 @@ export default class ClientSidePdfExport {
 
     if (window.btoa != null) {
       // Don't use base 64 encoding if btoa is not available and don't inline images as-well.
-      // Otherwise canvg will throw an exception.
       exporter.encodeImagesBase64 = true
       exporter.inlineSvgImages = true
     }
@@ -103,11 +118,8 @@ export default class ClientSidePdfExport {
     // export the component to svg
     const svgElement = await exporter.exportSvgAsync(exportComponent)
 
-    return convertSvgToPdf(
-      svgElement,
-      new Size(exporter.viewWidth, exporter.viewHeight),
-      this.margins
-    )
+    const size = getPaperSize(this.paperSize, exporter)
+    return convertSvgToPdf(svgElement, size)
   }
 }
 
@@ -115,34 +127,55 @@ export default class ClientSidePdfExport {
  * Converts the given SVG element to PDF.
  * @param {SVGElement} svgElement
  * @param {Size} size
- * @param {Insets} margins
  * @return {{raw: string, uri: string}}
  * @yjs:keep=compress,orientation
  */
-function convertSvgToPdf(svgElement, size, margins) {
+function convertSvgToPdf(svgElement, size) {
   svgElement = svgElement.cloneNode(true)
 
-  const margin = margins ? Math.max(margins.left, margins.right, margins.top, margins.bottom) : 5
-  const sizeArray = new Array(2)
-  sizeArray[0] = size.width + 2 * margin
-  sizeArray[1] = size.height + 2 * margin
+  const sizeArray = [size.width, size.height]
   // eslint-disable-next-line no-undef,new-cap
-  const jsPdf = new jsPDF({
+  const jsPdf = new jspdf.jsPDF({
     orientation: sizeArray[0] > sizeArray[1] ? 'l' : 'p',
     unit: 'pt',
     format: sizeArray,
-    // when compressed, the custom font is garbled up in the resulting PDF when viewed in Safari's
-    // PDF viewer
-    compress: detectSafariVersion() === -1,
+    compress: true,
     floatPrecision: 'smart'
   })
 
-  const offsets = {}
-  offsets.xOffset = margin
-  offsets.yOffset = margin
+  const options = {
+    width: sizeArray[0],
+    height: sizeArray[1]
+  }
 
-  // eslint-disable-next-line no-undef
-  svg2pdf(svgElement, jsPdf, offsets)
+  return jsPdf.svg(svgElement, options).then(() => {
+    return { raw: jsPdf.output(), uri: jsPdf.output('datauristring') }
+  })
+}
 
-  return { raw: jsPdf.output(), uri: jsPdf.output('datauristring') }
+function getPaperSize(paperSize, exporter) {
+  if (paperSize === null) {
+    return new Size(exporter.viewWidth, exporter.viewHeight)
+  }
+  if (paperSize instanceof Size) {
+    return paperSize
+  }
+
+  switch (paperSize) {
+    case 'A3': {
+      return new Size(842, 1191)
+    }
+    case 'A4': {
+      return new Size(595, 842)
+    }
+    case 'A5': {
+      return new Size(420, 595)
+    }
+    case 'A6': {
+      return new Size(298, 420)
+    }
+    case 'Letter': {
+      return new Size(612, 792)
+    }
+  }
 }

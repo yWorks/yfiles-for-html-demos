@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.3.
- ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -42,7 +42,7 @@ import {
 
 import loadJson from '../../resources/load-json.js'
 import { bindAction, bindChangeListener, bindCommand, showApp } from '../../resources/demo-app.js'
-import { webGlSupported } from '../../utils/Workarounds.js'
+import { webGlSupported, detectInternetExplorerVersion } from '../../utils/Workarounds.js'
 
 import { AnimationController } from './AnimationController.js'
 import { ProcessingStepNodeStyle } from './ProcessingStepNodeStyle.js'
@@ -68,6 +68,14 @@ async function initialize(license) {
     return
   }
 
+  const internetExplorer = detectInternetExplorerVersion() !== -1
+  if (internetExplorer) {
+    alert(
+      `This browser does not support all modern JavaScript constructs which are required for the process mining visualization demo. Hence, some visual features will be omitted.
+Use a more recent browser like Chrome, Edge, Firefox or Safari to run this demo and explore the complete set of features.`
+    )
+  }
+
   // set the yfiles license
   License.value = license
 
@@ -84,7 +92,9 @@ async function initialize(license) {
     // we define the heat as the ratio of the current heat value to the items capacity, but not more than 1
     return Math.min(1, item.tag.heat.getValue(processItemVisual.time) / item.tag.capacity)
   }
-  addHeatMap(graphComponent, getHeat)
+  if (!internetExplorer) {
+    addHeatMap(graphComponent, getHeat)
+  }
 
   // create and configure a default node and edge styles style
   const graph = graphComponent.graph

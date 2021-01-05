@@ -1,7 +1,7 @@
 /****************************************************************************
  ** @license
  ** This demo file is part of yFiles for HTML 2.3.
- ** Copyright (c) 2000-2020 by yWorks GmbH, Vor dem Kreuzberg 28,
+ ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
  ** yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
@@ -230,9 +230,13 @@ export class NodesSourceDialog extends SourceDialog {
     this.nodesSourceConnector.sourceDefinition.template = this.templateEditor.getValue()
     this.nodesSourceConnector.sourceDefinition.data = this.dataEditor.getValue()
 
-    this.nodesSourceConnector.applyDefinition()
+    try {
+      this.nodesSourceConnector.applyDefinition()
 
-    super.accept()
+      super.accept()
+    } catch (e) {
+      alert(e)
+    }
   }
 }
 
@@ -313,8 +317,12 @@ export class EdgesSourceDialog extends SourceDialog {
     this.edgesSourceConnector.sourceDefinition.labelBinding = this.labelBindingInput!.value
     this.edgesSourceConnector.sourceDefinition.strokeBinding = this.strokeBindingInput!.value
 
-    this.edgesSourceConnector.applyDefinition()
+    try {
+      this.edgesSourceConnector.applyDefinition()
 
-    super.accept()
+      super.accept()
+    } catch (e) {
+      alert(e)
+    }
   }
 }
