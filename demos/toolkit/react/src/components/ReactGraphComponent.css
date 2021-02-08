@@ -41,7 +41,7 @@
   z-index: 10;
 }
 .graph-component-container .yfiles-canvascomponent {
-  position: absolute;
+  position: absolute !important;
   top: 100px;
   left: 0;
   right: 0;
