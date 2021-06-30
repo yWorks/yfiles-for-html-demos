@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -45,10 +45,10 @@ import {
 export default class ShapeBasedGridNodeSnapResultProvider extends NodeSnapResultProvider {
   /**
    * Collects snap results that snap the node to a grid and adds them to the argument.
-   * @param {GraphSnapContext} context The context in which the snapping is performed
-   * @param {CollectSnapResultsEventArgs} args The arguments to add the results to
-   * @param {Rect} suggestedLayout The layout of the node if it would move without snapping
-   * @param {INode} node The node that is currently being processed
+   * @param {!GraphSnapContext} context The context in which the snapping is performed
+   * @param {!CollectSnapResultsEventArgs} args The arguments to add the results to
+   * @param {!Rect} suggestedLayout The layout of the node if it would move without snapping
+   * @param {!INode} node The node that is currently being processed
    */
   collectGridSnapResults(context, args, suggestedLayout, node) {
     // node.Layout isn't updated, yet, so we have to calculate the delta between the the new suggested layout and the
@@ -58,7 +58,7 @@ export default class ShapeBasedGridNodeSnapResultProvider extends NodeSnapResult
       suggestedLayout.topLeft.y - node.layout.topLeft.y
     )
 
-    // get outline of the shape and iterate over it's path point
+    // get outline of the shape and iterate over its path point
     const geometry = node.style.renderer.getShapeGeometry(node, node.style)
     const outline = geometry.getOutline()
     if (outline === null) {

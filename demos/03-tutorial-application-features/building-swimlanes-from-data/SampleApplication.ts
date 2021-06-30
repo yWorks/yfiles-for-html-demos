@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -311,9 +311,9 @@ function writeToJSON(graph: IGraph): any {
 
     // store the lane of the node
     if (table && table instanceof ITable) {
-      const column = table.findColumn(tableNode, node.layout.center)
+      const column = table.findColumn(tableNode!, node.layout.center)
       if (column) {
-        const columnId = `lane${table.findColumn(tableNode, node.layout.center)!.index}`
+        const columnId = `lane${table.findColumn(tableNode!, node.layout.center)!.index}`
         ;(jsonNode as any).lane = columnId
         // store new lanes in the json
         if (!jsonOutput.lanesSource.find((lane: any): boolean => lane.id === columnId)) {

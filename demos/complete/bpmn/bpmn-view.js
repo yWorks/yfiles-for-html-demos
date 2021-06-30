@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -28,9 +28,11 @@
  ***************************************************************************/
 import {
   BaseClass,
+  CanvasComponent,
   Class,
   ConstantLabelCandidateDescriptorProvider,
   CreateEdgeInputMode,
+  Cursor,
   DashStyle,
   DefaultEdgePathCropper,
   DefaultLabelModelParameterFinder,
@@ -47,29 +49,44 @@ import {
   FreeNodePortLocationModel,
   GeneralPath,
   GeomUtilities,
+  GradientStop,
+  GraphComponent,
   GraphMLAttribute,
   GraphMLMemberVisibility,
   HandlePositions,
+  HandleSerializationEventArgs,
+  HandleTypes,
   HashMap,
   HorizontalTextAlignment,
   IArrow,
   IBoundsProvider,
+  ICanvasContext,
+  ICanvasObjectDescriptor,
   ICloneable,
   IColumn,
   ICommand,
+  IDragHandler,
+  IEdge,
   IEdgePathCropper,
+  IEdgeStyle,
   IEditLabelHelper,
-  IGraph,
+  IEnumerable,
+  IEnumerator,
   IHandle,
+  IHitTestable,
+  IInputModeContext,
+  ILabel,
   ILabelCandidateDescriptorProvider,
   ILabelModel,
   ILabelModelParameter,
   ILabelModelParameterFinder,
   ILabelModelParameterProvider,
+  ILabelOwner,
   ILabelStyle,
   ILabelStyleRenderer,
   IList,
   ILookup,
+  IMarqueeTestable,
   INode,
   INodeInsetsProvider,
   INodeSizeConstraintProvider,
@@ -81,15 +98,23 @@ import {
   InteriorStretchLabelModel,
   InteriorStretchLabelModelPosition,
   IOrientedRectangle,
+  IPoint,
+  IPort,
+  IPortCandidate,
+  IPortLocationModelParameter,
   IPortStyle,
   IPortStyleRenderer,
+  IRenderContext,
   IReshapeHandleProvider,
+  IRow,
   IShapeGeometry,
   IStripe,
   ITable,
+  IVisibilityTestable,
   IVisualCreator,
   IVisualTemplate,
   KeyEventRecognizers,
+  LabelEditingEventArgs,
   LabelStyleBase,
   LinearGradient,
   LineCap,
@@ -97,13 +122,13 @@ import {
   List,
   MarkupExtension,
   Matrix,
-  MutableRectangle,
   NodeSizeConstraintProvider,
   NodeStyleBase,
   NodeStyleLabelStyleAdapter,
   NodeStylePortStyleAdapter,
   OrientedRectangle,
   Point,
+  PolylineEdgeStyle,
   PortCandidateProviderBase,
   RadialGradient,
   Rect,
@@ -129,22 +154,33 @@ import {
   VerticalTextAlignment,
   Visual,
   VoidLabelStyle,
+  VoidVisualCreator,
   YBoolean,
   YNumber,
   YObject
 } from 'yfiles'
 
-/** Feature detection whether or not the browser supports active and passive event listeners. */
+/**
+ * Feature detection whether or not the browser supports active and passive event listeners.
+ * @type {boolean}
+ */
 let passiveSupported = false
 try {
   const opts = Object.defineProperty({}, 'passive', {
+    // eslint-disable-next-line getter-return
     get: () => {
       passiveSupported = true
     }
   })
   window.addEventListener('test', null, opts)
-} catch (e) {}
+} catch (ignored) {
+  // ignore
+}
 
+/**
+ * @param {!Fill} fill
+ * @returns {!Fill}
+ */
 function getAsFrozen(fill) {
   fill.freeze()
   return fill
@@ -153,14 +189,12 @@ function getAsFrozen(fill) {
 /**
  * The namespace URI for yFiles BPMN extensions to GraphML.
  * This field has the constant value "http://www.yworks.com/xml/yfiles-bpmn/2.0"
- * @type {string}
  */
 export const YFILES_BPMN_NS = 'http://www.yworks.com/xml/yfiles-bpmn/2.0'
 
 /**
  * The default namespace prefix for {@link YFILES_BPMN_NS}.
  * This field has the constant value "bpmn"
- * @type {string}
  */
 export const YFILES_BPMN_PREFIX = 'bpmn'
 
@@ -246,7 +280,6 @@ const BPMN_CONSTANTS_SIZES_CONVERSATION = new Size(
 )
 const BPMN_CONSTANTS_SIZES_DATA_OBJECT_TYPE = new Size(10, 8)
 const BPMN_CONSTANTS_SIZES_EVENT_PORT = new Size(20, 20)
-// /////////////////////////////////////////////////////////////////////
 
 /**
  * Specifies if an Activity is an expanded or collapsed Sub-Process according to BPMN.
@@ -430,25 +463,28 @@ export const ActivityType = Enum('ActivityType', {
 })
 
 class ScalingLabelModel extends BaseClass(ILabelModel) {
+  /**
+   * @param {!Insets} [insets]
+   */
   constructor(insets) {
     super()
-    this.$insets = insets || Insets.EMPTY
+    this._insets = insets || Insets.EMPTY
   }
 
   /**
    * Gets the insets to use within the node's {@link INode#layout}.
-   * @type {Insets}
+   * @type {!Insets}
    */
   get insets() {
-    return this.$insets
+    return this._insets
   }
 
   /**
    * Sets the insets to use within the node's {@link INode#layout}.
-   * @type {Insets}
+   * @type {!Insets}
    */
   set insets(value) {
-    this.$insets = value
+    this._insets = value
   }
 
   /**
@@ -461,8 +497,8 @@ class ScalingLabelModel extends BaseClass(ILabelModel) {
    * have to return the same instance any time. Also it depends on the
    * type and context whether the instance returned stays up to date or needs to
    * be re-obtained for subsequent use.
-   * @param {Class} type the type for which an instance shall be returned
-   * @return {Object} an instance that is assignable to type or <code>null</code>
+   * @param {!Class} type the type for which an instance shall be returned
+   * @returns {?object} an instance that is assignable to type or <code>null</code>
    * @see Specified by {@link ILookup#lookup}.
    */
   lookup(type) {
@@ -472,9 +508,9 @@ class ScalingLabelModel extends BaseClass(ILabelModel) {
   /**
    * Provides a {@link ILookup lookup context} for the given combination of label
    * and parameter.
-   * @param {ILabel} label The label to use in the context.
-   * @param {ILabelModelParameter} parameter The parameter to use for the label in the context.
-   * @return {ILookup} An implementation of the {@link ILookup} interface that can be used
+   * @param {!ILabel} label The label to use in the context.
+   * @param {!ILabelModelParameter} parameter The parameter to use for the label in the context.
+   * @returns {!ILookup} An implementation of the {@link ILookup} interface that can be used
    *   to query additional aspects of the label/parameter combination.
    * @see {@link ILookup#EMPTY}
    * @see Specified by {@link ILabelModel#getContext}.
@@ -486,62 +522,68 @@ class ScalingLabelModel extends BaseClass(ILabelModel) {
   /**
    * Calculates the geometry in form of an {@link IOrientedRectangle}
    * for a given label using the given model parameter.
-   * @param {ILabelModelParameter} parameter A parameter that has been created by this model.
+   * @param {!ILabelModelParameter} parameter A parameter that has been created by this model.
    * This is typically the parameter that yielded this instance through its
    * {@link ILabelModelParameter#model} property.
-   * @param {ILabel} label the label to calculate the geometry for
-   * @return {IOrientedRectangle} An instance that describes the geometry. This is typically
+   * @param {!ILabel} label the label to calculate the geometry for
+   * @returns {!IOrientedRectangle} An instance that describes the geometry. This is typically
    * an instance designed as a flyweight, so clients should not cache the
    * instance but store the values if they need a snapshot for later use
    * @see Specified by {@link ILabelModel#getGeometry}.
    */
   getGeometry(label, parameter) {
     const scalingParameter = parameter
-    const owner = INode.isInstance(label.owner) ? label.owner : null
-    const availableRect = owner.layout
-    const horizontalInsets = this.insets.left + this.insets.right
-    const verticalInsets = this.insets.top + this.insets.bottom
+    const owner = label.owner instanceof INode ? label.owner : null
 
-    // consider fix insets
-    let x = availableRect.minX + (availableRect.width > horizontalInsets ? this.insets.left : 0)
-    let y = availableRect.minY + (availableRect.height > verticalInsets ? this.insets.top : 0)
-    let width =
-      availableRect.width - (availableRect.width > horizontalInsets ? horizontalInsets : 0)
-    let height = availableRect.height - (availableRect.height > verticalInsets ? verticalInsets : 0)
+    if (owner) {
+      const availableRect = owner.layout
+      const horizontalInsets = this.insets.left + this.insets.right
+      const verticalInsets = this.insets.top + this.insets.bottom
 
-    // consider scaling insets
-    x += scalingParameter.scalingInsets.left * width
-    y += scalingParameter.scalingInsets.top * height
-    width *= 1 - scalingParameter.scalingInsets.left - scalingParameter.scalingInsets.right
-    height *= 1 - scalingParameter.scalingInsets.top - scalingParameter.scalingInsets.bottom
+      // consider fix insets
+      let x = availableRect.minX + (availableRect.width > horizontalInsets ? this.insets.left : 0)
+      let y = availableRect.minY + (availableRect.height > verticalInsets ? this.insets.top : 0)
+      let width =
+        availableRect.width - (availableRect.width > horizontalInsets ? horizontalInsets : 0)
+      let height =
+        availableRect.height - (availableRect.height > verticalInsets ? verticalInsets : 0)
 
-    if (scalingParameter.keepRatio) {
-      const fixRatio = scalingParameter.ratio
-      const availableRatio = height > 0 && width > 0 ? width / height : 1
+      // consider scaling insets
+      const scalingInsets = scalingParameter.scalingInsets
+      x += scalingInsets.left * width
+      y += scalingInsets.top * height
+      width *= 1 - scalingInsets.left - scalingInsets.right
+      height *= 1 - scalingInsets.top - scalingInsets.bottom
 
-      if (fixRatio > availableRatio) {
-        // keep width
-        const cy = y + height * 0.5
-        height *= availableRatio / fixRatio
-        y = cy - height * 0.5
-      } else {
-        const cx = x + width * 0.5
-        width *= fixRatio / availableRatio
-        x = cx - width * 0.5
+      if (scalingParameter.keepRatio) {
+        const fixRatio = scalingParameter.ratio
+        const availableRatio = height > 0 && width > 0 ? width / height : 1
+
+        if (fixRatio > availableRatio) {
+          // keep width
+          const cy = y + height * 0.5
+          height *= availableRatio / fixRatio
+          y = cy - height * 0.5
+        } else {
+          const cx = x + width * 0.5
+          width *= fixRatio / availableRatio
+          x = cx - width * 0.5
+        }
       }
-    }
 
-    ScalingLabelModel.DUMMY_NODE.layout = new Rect(x, y, width, height)
-    ScalingLabelModel.DUMMY_LABEL.preferredSize = label.preferredSize
-    return ScalingLabelModel.STRETCH_MODEL.getGeometry(
-      ScalingLabelModel.DUMMY_LABEL,
-      ScalingLabelModel.STRETCH_PARAMETER
-    )
+      ScalingLabelModel.DUMMY_NODE.layout = new Rect(x, y, width, height)
+      ScalingLabelModel.DUMMY_LABEL.preferredSize = label.preferredSize
+      return ScalingLabelModel.STRETCH_MODEL.getGeometry(
+        ScalingLabelModel.DUMMY_LABEL,
+        ScalingLabelModel.STRETCH_PARAMETER
+      )
+    }
+    return IOrientedRectangle.EMPTY
   }
 
   /**
    * Creates a default parameter that can be used for this model.
-   * @return {ILabelModelParameter} a parameter for this model instance
+   * @returns {!ILabelModelParameter} a parameter for this model instance
    * @see Specified by {@link ILabelModel#createDefaultParameter}.
    */
   createDefaultParameter() {
@@ -551,7 +593,10 @@ class ScalingLabelModel extends BaseClass(ILabelModel) {
     return scalingParameter
   }
 
-  /** @return {ILabelModelParameter} */
+  /**
+   * @param {number} scale
+   * @returns {!ILabelModelParameter}
+   */
   createScaledParameter(scale) {
     if (scale <= 0 || scale > 1) {
       throw new Exception(`Argument '${scale}' not allowed. Valid values are in ]0; 1].`)
@@ -562,7 +607,11 @@ class ScalingLabelModel extends BaseClass(ILabelModel) {
     return scalingParameter
   }
 
-  /** @return {ILabelModelParameter} */
+  /**
+   * @param {number} scale
+   * @param {number} ratio
+   * @returns {!ILabelModelParameter}
+   */
   createScaledParameterWithRatio(scale, ratio) {
     if (scale <= 0 || scale > 1) {
       throw new Exception(`Argument '${scale}' not allowed. Valid values are in ]0; 1].`)
@@ -578,34 +627,42 @@ class ScalingLabelModel extends BaseClass(ILabelModel) {
     return scalingParameter
   }
 
-  /** @return {InteriorStretchLabelModel} */
+  /**
+   * @type {!InteriorStretchLabelModel}
+   */
   static get STRETCH_MODEL() {
     return (
-      ScalingLabelModel.$stretchModel ||
-      (ScalingLabelModel.$stretchModel = new InteriorStretchLabelModel())
+      ScalingLabelModel._stretchModel ||
+      (ScalingLabelModel._stretchModel = new InteriorStretchLabelModel())
     )
   }
 
-  /** @return {ILabelModelParameter} */
+  /**
+   * @type {!ScalingLabelModelParameter}
+   */
   static get STRETCH_PARAMETER() {
     return (
-      ScalingLabelModel.$stretchParameter ||
-      (ScalingLabelModel.$stretchParameter = ScalingLabelModel.STRETCH_MODEL.createParameter(
+      ScalingLabelModel._stretchParameter ||
+      (ScalingLabelModel._stretchParameter = ScalingLabelModel.STRETCH_MODEL.createParameter(
         InteriorStretchLabelModelPosition.CENTER
       ))
     )
   }
 
-  /** @return {SimpleNode} */
+  /**
+   * @type {!SimpleNode}
+   */
   static get DUMMY_NODE() {
-    return ScalingLabelModel.$dummyNode || (ScalingLabelModel.$dummyNode = new SimpleNode())
+    return ScalingLabelModel._dummyNode || (ScalingLabelModel._dummyNode = new SimpleNode())
   }
 
-  /** @return {SimpleLabel} */
+  /**
+   * @type {!SimpleLabel}
+   */
   static get DUMMY_LABEL() {
     return (
-      ScalingLabelModel.$dummyLabel ||
-      (ScalingLabelModel.$dummyLabel = new SimpleLabel(
+      ScalingLabelModel._dummyLabel ||
+      (ScalingLabelModel._dummyLabel = new SimpleLabel(
         ScalingLabelModel.DUMMY_NODE,
         '',
         ScalingLabelModel.STRETCH_PARAMETER
@@ -617,23 +674,29 @@ class ScalingLabelModel extends BaseClass(ILabelModel) {
 class ScalingLabelModelParameter extends BaseClass(ILabelModelParameter) {
   constructor() {
     super()
-    this.$model = null
+    this._model = null
     this.scalingInsets = null
     this.keepRatio = false
     this.ratio = 0
   }
 
-  /** @type {ILabelModel} */
+  /**
+   * @type {!ILabelModel}
+   */
   get model() {
-    return this.$model
+    return this._model
   }
 
-  /** @type {ILabelModel} */
+  /**
+   * @type {!ILabelModel}
+   */
   set model(value) {
-    this.$model = value
+    this._model = value
   }
 
-  /** @return {Object} */
+  /**
+   * @returns {*}
+   */
   clone() {
     const scalingParameter = new ScalingLabelModelParameter()
     scalingParameter.model = this.model
@@ -642,9 +705,12 @@ class ScalingLabelModelParameter extends BaseClass(ILabelModelParameter) {
     return scalingParameter
   }
 
-  /** @return {boolean} */
+  /**
+   * @param {!ILabel} label
+   * @returns {boolean}
+   */
   supports(label) {
-    return INode.isInstance(label.owner)
+    return label.owner instanceof INode
   }
 }
 
@@ -654,12 +720,18 @@ class ScalingLabelModelParameter extends BaseClass(ILabelModelParameter) {
  * {@link EventPortStyle} and have no edges attached.
  */
 export class BpmnPortCandidateProvider extends PortCandidateProviderBase {
+  /**
+   * @param {!INode} owner
+   */
   constructor(owner) {
     super()
     this.owner = owner
   }
 
-  /** @return {IEnumerable.<IPortCandidate>} */
+  /**
+   * @param {!IInputModeContext} context
+   * @returns {!IEnumerable.<IPortCandidate>}
+   */
   getPortCandidates(context) {
     const node = this.owner
     const portCandidates = new List()
@@ -703,6 +775,10 @@ export class BpmnPortCandidateProvider extends PortCandidateProviderBase {
  * their icons.
  */
 export class BpmnReshapeHandleProvider extends BaseClass(IReshapeHandleProvider) {
+  /**
+   * @param {?IReshapeHandleProvider} wrappedHandler
+   * @param {?INode} node
+   */
   constructor(wrappedHandler, node) {
     super()
     this.wrappedHandler = wrappedHandler
@@ -714,7 +790,8 @@ export class BpmnReshapeHandleProvider extends BaseClass(IReshapeHandleProvider)
    * restricted to the ones in the four corners and sides for nodes with {@link GatewayNodeStyle},
    * {@link EventNodeStyle} or {@link ConversationNodeStyle}.
    * @see Specified by {@link IReshapeHandleProvider#getAvailableHandles}.
-   * @return {HandlePositions}
+   * @param {!IInputModeContext} inputModeContext
+   * @returns {!HandlePositions}
    */
   getAvailableHandles(inputModeContext) {
     const style = this.node.style
@@ -740,7 +817,9 @@ export class BpmnReshapeHandleProvider extends BaseClass(IReshapeHandleProvider)
    * {@link GatewayNodeStyle},
    * {@link EventNodeStyle} or {@link ConversationNodeStyle}.
    * @see Specified by {@link IReshapeHandleProvider#getHandle}.
-   * @return {IHandle}
+   * @param {!IInputModeContext} inputModeContext
+   * @param {!HandlePositions} position
+   * @returns {!IHandle}
    */
   getHandle(inputModeContext, position) {
     const style = this.node.style
@@ -752,7 +831,7 @@ export class BpmnReshapeHandleProvider extends BaseClass(IReshapeHandleProvider)
       return new AspectRatioHandle(
         this.wrappedHandler.getHandle(inputModeContext, position),
         position,
-        this.node.layout
+        this.node.layout.toRect()
       )
     }
     return this.wrappedHandler.getHandle(inputModeContext, position)
@@ -763,17 +842,24 @@ export class BpmnReshapeHandleProvider extends BaseClass(IReshapeHandleProvider)
  * An implementation of {@link IHandle} that keeps the aspect ratio of a node intact when resizing.
  */
 class AspectRatioHandle extends BaseClass(IHandle) {
+  /**
+   * @param {!IHandle} handle
+   * @param {!HandlePositions} position
+   * @param {!Rect} layout
+   */
   constructor(handle, position, layout) {
     super()
-    this.handle = handle
-    this.position = position
-    this.layout = layout
     this.lastLocation = new Point(0, 0)
     this.ratio = 0
     this.originalSize = new Size(0, 0)
+    this.handle = handle
+    this.position = position
+    this.layout = layout
   }
 
-  /** @type {IPoint} */
+  /**
+   * @type {!IPoint}
+   */
   get location() {
     return this.handle.location
   }
@@ -781,6 +867,7 @@ class AspectRatioHandle extends BaseClass(IHandle) {
   /**
    * Stores the initial location and aspect ratio for reference, and calls the base method.
    * @see Specified by {@link IDragHandler#initializeDrag}.
+   * @param {!IInputModeContext} inputModeContext
    */
   initializeDrag(inputModeContext) {
     this.handle.initializeDrag(inputModeContext)
@@ -809,6 +896,9 @@ class AspectRatioHandle extends BaseClass(IHandle) {
    * by calculating the constrained location for the given new location,
    * and invoking the original handler with the constrained location.
    * @see Specified by {@link IDragHandler#handleMove}.
+   * @param {!IInputModeContext} inputModeContext
+   * @param {!Point} originalLocation
+   * @param {!Point} newLocation
    */
   handleMove(inputModeContext, originalLocation, newLocation) {
     // For the given new location, the larger node side specifies the actual size change.
@@ -851,20 +941,33 @@ class AspectRatioHandle extends BaseClass(IHandle) {
     this.lastLocation = newLocation
   }
 
+  /**
+   * @param {!IInputModeContext} inputModeContext
+   * @param {!Point} originalLocation
+   */
   cancelDrag(inputModeContext, originalLocation) {
     this.handle.cancelDrag(inputModeContext, originalLocation)
   }
 
+  /**
+   * @param {!IInputModeContext} inputModeContext
+   * @param {!Point} originalLocation
+   * @param {!Point} newLocation
+   */
   dragFinished(inputModeContext, originalLocation, newLocation) {
     this.handle.dragFinished(inputModeContext, originalLocation, this.lastLocation)
   }
 
-  /** @type {HandleTypes} */
+  /**
+   * @type {!HandleTypes}
+   */
   get type() {
     return this.handle.type
   }
 
-  /** @type {Cursor} */
+  /**
+   * @type {!Cursor}
+   */
   get cursor() {
     return this.handle.cursor
   }
@@ -931,7 +1034,6 @@ const BPMN_CONSTANTS_PLACEMENTS_INSIDE_DOUBLE_LINE = ISLM_INSIDE_DOUBLE_LINE.cre
 const BPMN_CONSTANTS_PLACEMENTS_POOL_NODE_MARKER = ILM2.createParameter(
   InteriorLabelModelPosition.SOUTH
 )
-// ///////////////////////////////////////////////////////////////////////////////
 
 /**
  * Specifies the Loop Characteristic of an Activity or Choreography according to BPMN.
@@ -1025,6 +1127,9 @@ export const TaskType = Enum('TaskType', {
  * {@link ChoreographyNodeStyle}.
  */
 class ChoreographyParameter extends BaseClass(ILabelModelParameter) {
+  /**
+   * @type {!object}
+   */
   static get $meta() {
     return {
       $self: [GraphMLAttribute().init({ singletonContainers: [ChoreographyLabelModel.$class] })]
@@ -1032,22 +1137,34 @@ class ChoreographyParameter extends BaseClass(ILabelModelParameter) {
   }
 
   /**
-   * @returns {ILabelModel}
+   * @type {!ILabelModel}
    */
   get model() {
     return ChoreographyLabelModel.INSTANCE
   }
 
+  /**
+   * @returns {*}
+   */
   clone() {
     return this
   }
 
   /**
-   * @param {ILabel} label - The label to test.
+   * @param {!ILabel} label
+   * @param {!ILabelModelParameter} parameter
+   * @returns {!IOrientedRectangle}
+   */
+  getGeometry(label, parameter) {
+    return IOrientedRectangle.EMPTY
+  }
+
+  /**
+   * @param {!ILabel} label - The label to test.
    * @returns {boolean}
    */
   supports(label) {
-    return INode.isInstance(label.owner)
+    return label.owner instanceof INode
   }
 }
 
@@ -1070,10 +1187,12 @@ class ParticipantParameter extends ChoreographyParameter {
 
   /**
    * Creates a positioned rectangle that is placed on the according participant band.
-   * @return {IOrientedRectangle}
+   * @param {!ILabel} label
+   * @param {!ILabelModelParameter} parameter
+   * @returns {!IOrientedRectangle}
    */
   getGeometry(label, parameter) {
-    if (INode.isInstance(label.owner)) {
+    if (label.owner instanceof INode) {
       const owner = label.owner
       if (owner.style instanceof ChoreographyNodeStyle) {
         const style = owner.style
@@ -1092,21 +1211,29 @@ class ParticipantParameter extends ChoreographyParameter {
     return IOrientedRectangle.EMPTY
   }
 
-  /** @return {ParticipantParameter} */
+  /**
+   * @returns {*}
+   */
   clone() {
     return new ParticipantParameter(this.top, this.index)
   }
 
+  /**
+   * @type {!object}
+   */
   static get $meta() {
     return {
       $self: [GraphMLAttribute().init({ singletonContainers: [ChoreographyLabelModel.$class] })]
     }
   }
 
+  /**
+   * @type {!InteriorLabelModel}
+   */
   static get INTERIOR_LABEL_MODEL() {
     return (
-      ParticipantParameter.$interiorLabelModel ||
-      (ParticipantParameter.$interiorLabelModel = new InteriorLabelModel({
+      ParticipantParameter._interiorLabelModel ||
+      (ParticipantParameter._interiorLabelModel = new InteriorLabelModel({
         insets: new Insets(3)
       }))
     )
@@ -1114,8 +1241,8 @@ class ParticipantParameter extends ChoreographyParameter {
 
   static get PLACEMENT() {
     return (
-      ParticipantParameter.$placement ||
-      (ParticipantParameter.$placement = ParticipantParameter.INTERIOR_LABEL_MODEL.createParameter(
+      ParticipantParameter._placement ||
+      (ParticipantParameter._placement = ParticipantParameter.INTERIOR_LABEL_MODEL.createParameter(
         InteriorLabelModelPosition.NORTH
       ))
     )
@@ -1130,23 +1257,23 @@ export class ChoreographyLabelModel extends BaseClass(ILabelModel, ILabelModelPa
   /**
    * Calculates the geometry in form of an {@link IOrientedRectangle}
    * for a given label using the given model parameter.
-   * @param {ILabelModelParameter} parameter A parameter that has been created by this model.
+   * @param {!ILabelModelParameter} parameter A parameter that has been created by this model.
    * This is typically the parameter that yielded this instance through its
    * {@link ILabelModelParameter#model} property.
-   * @param {ILabel} label the label to calculate the geometry for
-   * @return {IOrientedRectangle} An instance that describes the geometry. This is typically
+   * @param {!ILabel} label the label to calculate the geometry for
+   * @returns {!IOrientedRectangle} An instance that describes the geometry. This is typically
    * an instance designed as a flyweight, so clients should not cache the
    * instance but store the values if they need a snapshot for later use
    * @see Specified by {@link ILabelModel#getGeometry}.
    */
   getGeometry(label, parameter) {
     if (
-      INode.isInstance(label.owner) &&
+      label.owner instanceof INode &&
       label.owner.style instanceof ChoreographyNodeStyle &&
       parameter instanceof ChoreographyParameter
     ) {
-      return parameter.getGeometry(label)
-    } else if (INode.isInstance(label.owner)) {
+      return parameter.getGeometry(label, parameter)
+    } else if (label.owner instanceof INode) {
       const layout = label.owner.layout
       return new OrientedRectangle(layout.x, layout.y + layout.height, layout.width, layout.height)
     }
@@ -1155,8 +1282,8 @@ export class ChoreographyLabelModel extends BaseClass(ILabelModel, ILabelModelPa
 
   /**
    * Returns {@link ChoreographyLabelModel#TASK_NAME_BAND} as default parameter.
-   * @return {ILabelModelParameter}
    * @see Specified by {@link ILabelModel#createDefaultParameter}.
+   * @returns {!ILabelModelParameter}
    */
   createDefaultParameter() {
     return ChoreographyLabelModel.TASK_NAME_BAND
@@ -1168,7 +1295,7 @@ export class ChoreographyLabelModel extends BaseClass(ILabelModel, ILabelModelPa
    *   or
    *   {@link ChoreographyNodeStyle#bottomParticipants}.
    * @param {number} index The index of the participant band the label shall be placed in.
-   * @return {ILabelModelParameter}
+   * @returns {!ILabelModelParameter}
    */
   createParticipantParameter(top, index) {
     return new ParticipantParameter(top, index)
@@ -1177,9 +1304,9 @@ export class ChoreographyLabelModel extends BaseClass(ILabelModel, ILabelModelPa
   /**
    * Provides a {@link ILookup lookup context} for the given combination of label
    * and parameter.
-   * @param {ILabel} label The label to use in the context.
-   * @param {ILabelModelParameter} parameter The parameter to use for the label in the context.
-   * @return {ILookup} An implementation of the {@link ILookup} interface that can be used
+   * @param {!ILabel} label The label to use in the context.
+   * @param {!ILabelModelParameter} parameter The parameter to use for the label in the context.
+   * @returns {!ILookup} An implementation of the {@link ILookup} interface that can be used
    *   to query additional aspects of the label/parameter combination.
    * @see {@link ILookup#EMPTY}
    * @see Specified by {@link ILabelModel#getContext}.
@@ -1198,8 +1325,8 @@ export class ChoreographyLabelModel extends BaseClass(ILabelModel, ILabelModelPa
    * have to return the same instance any time. Also it depends on the
    * type and context whether the instance returned stays up to date or needs to
    * be re-obtained for subsequent use.
-   * @param {Class} type the type for which an instance shall be returned
-   * @return {Object} an instance that is assignable to type or <code>null</code>
+   * @param {!Class} type the type for which an instance shall be returned
+   * @returns {?object} an instance that is assignable to type or <code>null</code>
    * @see Specified by {@link ILookup#lookup}.
    */
   lookup(type) {
@@ -1218,15 +1345,15 @@ export class ChoreographyLabelModel extends BaseClass(ILabelModel, ILabelModelPa
   /**
    * Returns an enumerator over a set of possible {@link ILabelModelParameter}
    * instances that can be used for the given label and model.
-   * @param {ILabel} label The label instance to use.
-   * @param {ILabelModel} model The model to provide parameters for.
-   * @return {IEnumerable.<ILabelModelParameter>} A possibly empty enumerator over a
+   * @param {!ILabel} label The label instance to use.
+   * @param {!ILabelModel} model The model to provide parameters for.
+   * @returns {!IEnumerable.<ILabelModelParameter>} A possibly empty enumerator over a
    *   set of label model parameters.
    * @see Specified by {@link ILabelModelParameterProvider#getParameters}.
    */
   getParameters(label, model) {
     const parameters = new List()
-    if (INode.isInstance(label.owner) && label.owner.style instanceof ChoreographyNodeStyle) {
+    if (label.owner instanceof INode && label.owner.style instanceof ChoreographyNodeStyle) {
       const node = label.owner
       const nodeStyle = node.style
       for (let i = 0; i < nodeStyle.topParticipants.size; i++) {
@@ -1253,7 +1380,8 @@ export class ChoreographyLabelModel extends BaseClass(ILabelModel, ILabelModelPa
    *   <li>Top message</li>
    *   <li>Bottom message</li>
    * <ul>
-   * @return {ILabelModelParameter}
+   * @param {!INode} node
+   * @returns {?ILabelModelParameter}
    */
   findNextParameter(node) {
     if (node.style instanceof ChoreographyNodeStyle) {
@@ -1276,7 +1404,7 @@ export class ChoreographyLabelModel extends BaseClass(ILabelModel, ILabelModelPa
             index++
 
             if (parameter instanceof ParticipantParameter) {
-              const pp = parameter instanceof ParticipantParameter ? parameter : null
+              const pp = parameter
               if (!pp.top) {
                 index += topParticipantCount
               }
@@ -1316,30 +1444,42 @@ export class ChoreographyLabelModel extends BaseClass(ILabelModel, ILabelModelPa
     return null
   }
 
+  /**
+   * @type {!ChoreographyLabelModel}
+   */
   static get INSTANCE() {
     return (
-      ChoreographyLabelModel.$instance ||
-      (ChoreographyLabelModel.$instance = new ChoreographyLabelModel())
+      ChoreographyLabelModel._instance ||
+      (ChoreographyLabelModel._instance = new ChoreographyLabelModel())
     )
   }
 
+  /**
+   * @type {!InteriorLabelModel}
+   */
   static get INTERIOR_LABEL_MODEL() {
     return (
-      ChoreographyLabelModel.$interiorLabel ||
-      (ChoreographyLabelModel.$interiorLabel = new InteriorLabelModel())
+      ChoreographyLabelModel._interiorLabel ||
+      (ChoreographyLabelModel._interiorLabel = new InteriorLabelModel())
     )
   }
 
+  /**
+   * @type {!SimpleNode}
+   */
   static get DUMMY_NODE() {
     return (
-      ChoreographyLabelModel.$dummyNode || (ChoreographyLabelModel.$dummyNode = new SimpleNode())
+      ChoreographyLabelModel._dummyNode || (ChoreographyLabelModel._dummyNode = new SimpleNode())
     )
   }
 
+  /**
+   * @type {!SimpleLabel}
+   */
   static get DUMMY_LABEL() {
     return (
-      ChoreographyLabelModel.$dummyLabel ||
-      (ChoreographyLabelModel.$dummyLabel = new SimpleLabel(
+      ChoreographyLabelModel._dummyLabel ||
+      (ChoreographyLabelModel._dummyLabel = new SimpleLabel(
         ChoreographyLabelModel.DUMMY_NODE,
         '',
         InteriorLabelModel.CENTER
@@ -1347,50 +1487,61 @@ export class ChoreographyLabelModel extends BaseClass(ILabelModel, ILabelModelPa
     )
   }
 
+  /**
+   * @type {!TaskNameBandParameter}
+   */
   static get TASK_NAME_BAND() {
     return (
-      ChoreographyLabelModel.$taskNameBand ||
-      (ChoreographyLabelModel.$taskNameBand = new TaskNameBandParameter())
+      ChoreographyLabelModel._taskNameBand ||
+      (ChoreographyLabelModel._taskNameBand = new TaskNameBandParameter())
     )
   }
 
   /**
    * Returns a layout parameter that describes a position north of the node.
-   * @return {MessageParameter}
+   * @type {!MessageParameter}
    */
   static get NORTH_MESSAGE() {
-    if (!ChoreographyLabelModel.$northMessage) {
+    if (!ChoreographyLabelModel._northMessage) {
       const messageParameter = new MessageParameter()
       messageParameter.north = true
-      ChoreographyLabelModel.$northMessage = messageParameter
+      ChoreographyLabelModel._northMessage = messageParameter
     }
-    return ChoreographyLabelModel.$northMessage
+    return ChoreographyLabelModel._northMessage
   }
 
   /**
    * Returns a layout parameter that describes a position south of the node.
-   * @return {MessageParameter}
+   * @type {!MessageParameter}
    */
   static get SOUTH_MESSAGE() {
-    if (!ChoreographyLabelModel.$southMessage) {
+    if (!ChoreographyLabelModel._southMessage) {
       const messageParameter = new MessageParameter()
       messageParameter.north = false
-      ChoreographyLabelModel.$southMessage = messageParameter
+      ChoreographyLabelModel._southMessage = messageParameter
     }
-    return ChoreographyLabelModel.$southMessage
+    return ChoreographyLabelModel._southMessage
   }
 }
+
 /**
  * {@link ILabelModelParameter} that places the label on the task name band in the center of the
  * node.
  */
 class TaskNameBandParameter extends ChoreographyParameter {
+  /**
+   * @type {!object}
+   */
   static get $meta() {
     return {
       $self: [GraphMLAttribute().init({ singletonContainers: [ChoreographyLabelModel.$class] })]
     }
   }
 
+  /**
+   * @param {!ILabel} label
+   * @returns {!IOrientedRectangle}
+   */
   getGeometry(label) {
     const owner = label.owner
     const nodeStyle = owner.style
@@ -1402,6 +1553,9 @@ class TaskNameBandParameter extends ChoreographyParameter {
     )
   }
 
+  /**
+   * @returns {*}
+   */
   clone() {
     return new TaskNameBandParameter()
   }
@@ -1416,7 +1570,10 @@ class MessageParameter extends ChoreographyParameter {
     this.north = false
   }
 
-  /** @return {IOrientedRectangle} */
+  /**
+   * @param {!ILabel} label
+   * @returns {!IOrientedRectangle}
+   */
   getGeometry(label) {
     const parameter = this.north
       ? MessageParameter.NORTH_PARAMETER
@@ -1424,11 +1581,17 @@ class MessageParameter extends ChoreographyParameter {
     return parameter.model.getGeometry(label, parameter)
   }
 
+  /**
+   * @param {!ILabel} label
+   * @returns {boolean}
+   */
   supports(label) {
     return super.supports(label)
   }
 
-  /** @return {Object} */
+  /**
+   * @returns {*}
+   */
   clone() {
     const messageParameter = new MessageParameter()
     messageParameter.north = this.north
@@ -1437,28 +1600,28 @@ class MessageParameter extends ChoreographyParameter {
 
   /**
    * Returns a preconfigured parameter instance that places the label above the node.
-   * @return {ILabelModelParameter}
+   * @type {!ILabelModelParameter}
    */
   static get NORTH_PARAMETER() {
-    if (!MessageParameter.$northParameter) {
+    if (!MessageParameter._northParameter) {
       const model = new SandwichLabelModel()
       model.yOffset = 15
-      MessageParameter.$northParameter = model.createNorthParameter()
+      MessageParameter._northParameter = model.createNorthParameter()
     }
-    return MessageParameter.$northParameter
+    return MessageParameter._northParameter
   }
 
   /**
    * Returns a preconfigured parameter instance that places the label below the node.
-   * @return {ILabelModelParameter}
+   * @type {!ILabelModelParameter}
    */
   static get SOUTH_PARAMETER() {
-    if (!MessageParameter.$southParamter) {
+    if (!MessageParameter._southParameter) {
       const model = new SandwichLabelModel()
       model.yOffset = 15
-      MessageParameter.$southParamter = model.createSouthParameter()
+      MessageParameter._southParameter = model.createSouthParameter()
     }
-    return MessageParameter.$southParamter
+    return MessageParameter._southParameter
   }
 }
 
@@ -1466,40 +1629,39 @@ class MessageParameter extends ChoreographyParameter {
  * An {@link NodeStyleBase} implementation used as base class for nodes styles representing BPMN
  * elements.
  */
-class BpmnNodeStyle extends NodeStyleBase {
+export class BpmnNodeStyle extends NodeStyleBase {
   constructor() {
     super()
-    this.$minimumSize = Size.EMPTY
+    this._minimumSize = Size.EMPTY
 
     // the icon that determines the look and shape of the node.
-    /** @type {Icon} */
     this.icon = null
+
     // the counter of modifications
-    /** @type {number} */
     this.modCount = 0
   }
 
   /**
    * Gets the minimum node size for nodes using this style.
-   * @type {Size}
+   * @type {!Size}
    */
   get minimumSize() {
-    return this.$minimumSize
+    return this._minimumSize
   }
 
   /**
    * Sets the minimum node size for nodes using this style.
-   * @type {Size}
+   * @type {!Size}
    */
   set minimumSize(value) {
-    this.$minimumSize = value
+    this._minimumSize = value
   }
 
   /**
    * Callback that creates the visual.
-   * @param {INode} node The node to which this style instance is assigned.
-   * @param {IRenderContext} renderContext The render context.
-   * @return {Visual} The visual as required by the {@link IVisualCreator#createVisual}
+   * @param {!INode} node The node to which this style instance is assigned.
+   * @param {!IRenderContext} renderContext The render context.
+   * @returns {?SvgVisual} The visual as required by the {@link IVisualCreator#createVisual}
    *   interface.
    * @see {@link NodeStyleBase#updateVisual}
    */
@@ -1530,11 +1692,11 @@ class BpmnNodeStyle extends NodeStyleBase {
 
   /**
    * Callback that updates the visual previously created by {@link NodeStyleBase#createVisual}.
-   * @param {INode} node The node to which this style instance is assigned.
-   * @param {IRenderContext} renderContext The render context.
-   * @param {Visual} oldVisual The visual that has been created in the call to {@link
+   * @param {!INode} node The node to which this style instance is assigned.
+   * @param {!IRenderContext} renderContext The render context.
+   * @param {!SvgVisual} oldVisual The visual that has been created in the call to {@link
    *   NodeStyleBase#createVisual}.
-   * @return {Visual} The visual as required by the {@link IVisualCreator#createVisual}
+   * @returns {?SvgVisual} The visual as required by the {@link IVisualCreator#createVisual}
    *   interface.
    * @see {@link NodeStyleBase#createVisual}
    */
@@ -1543,9 +1705,12 @@ class BpmnNodeStyle extends NodeStyleBase {
       return null
     }
 
-    const container = oldVisual instanceof SvgVisual ? oldVisual : null
-    const cache = container !== null ? container['render-data-cache'] : null
+    const container = oldVisual instanceof SvgVisualGroup ? oldVisual : null
+    if (container === null) {
+      this.createVisual(renderContext, node)
+    }
 
+    const cache = container !== null ? container['render-data-cache'] : null
     if (cache === null || cache.modCount !== this.modCount) {
       return this.createVisual(renderContext, node)
     }
@@ -1561,10 +1726,8 @@ class BpmnNodeStyle extends NodeStyleBase {
       const iconBounds = new Rect(0, 0, newBounds.width, newBounds.height)
       this.icon.setBounds(iconBounds)
 
-      /** @type {Visual} */
       let oldIconVisual = null
-      /** @type {Visual} */
-      let newIconVisual = null
+      let newIconVisual
       if (container.children.size === 0) {
         newIconVisual = this.icon.createVisual(renderContext)
       } else {
@@ -1595,6 +1758,7 @@ class BpmnNodeStyle extends NodeStyleBase {
   /**
    * Updates the {@link BpmnNodeStyle#icon}.
    * This method is called by {@link BpmnNodeStyle#createVisual}.
+   * @param {!INode} node
    */
   updateIcon(node) {}
 
@@ -1602,9 +1766,9 @@ class BpmnNodeStyle extends NodeStyleBase {
    * Performs the {@link ILookup#lookup} operation for the
    * {@link INodeStyleRenderer#getContext} that has been queried from the
    * {@link NodeStyleBase#renderer}.
-   * @param {INode} node The node to use for the context lookup.
-   * @param {Class} type The type to query.
-   * @return {Object} An implementation of the <code>type</code> or <code>null</code>.
+   * @param {!INode} node The node to use for the context lookup.
+   * @param {!Class} type The type to query.
+   * @returns {!object} An implementation of the <code>type</code> or <code>null</code>.
    */
   lookup(node, type) {
     const lookup = super.lookup(node, type)
@@ -1624,15 +1788,15 @@ class BpmnNodeStyle extends NodeStyleBase {
 export class Participant extends BaseClass(ICloneable) {
   constructor() {
     super()
-    this.$modCount = 0
-    this.$multiInstance = false
+    this._modCount = 0
+    this._multiInstance = false
   }
 
   /**
    * @type {number}
    */
   get modCount() {
-    return this.$modCount
+    return this._modCount
   }
 
   /**
@@ -1640,7 +1804,7 @@ export class Participant extends BaseClass(ICloneable) {
    * @type {boolean}
    */
   get multiInstance() {
-    return this.$multiInstance
+    return this._multiInstance
   }
 
   /**
@@ -1648,14 +1812,14 @@ export class Participant extends BaseClass(ICloneable) {
    * @type {boolean}
    */
   set multiInstance(value) {
-    if (this.$multiInstance !== value) {
-      this.$modCount++
-      this.$multiInstance = value
+    if (this._multiInstance !== value) {
+      this._modCount++
+      this._multiInstance = value
     }
   }
 
   /**
-   * @return {number}
+   * @returns {number}
    */
   getSize() {
     return this.multiInstance ? 32 : 20
@@ -1663,7 +1827,7 @@ export class Participant extends BaseClass(ICloneable) {
 
   /**
    * Create a clone of this object.
-   * @return {Object} A clone of this object.
+   * @returns {*} A clone of this object.
    * @see Specified by {@link ICloneable#clone}.
    */
   clone() {
@@ -1681,16 +1845,33 @@ export class Participant extends BaseClass(ICloneable) {
 class Icon extends BaseClass(IVisualCreator) {
   constructor() {
     super()
-    this.bounds = new MutableRectangle(0, 0, 0, 0)
+    this.bounds = new Rect(0, 0, 0, 0)
   }
 
   /**
    * Sets the bounds the visual shall consider.
-   * @param {IRectangle} bounds
    * @see Specified by {@link Icon#setBounds}.
+   * @param {!Rect} bounds
    */
   setBounds(bounds) {
     this.bounds = bounds
+  }
+
+  /**
+   * @param {!IRenderContext} context
+   * @returns {?SvgVisual}
+   */
+  createVisual(context) {
+    return null
+  }
+
+  /**
+   * @param {!IRenderContext} context
+   * @param {?SvgVisual} oldVisual
+   * @returns {?SvgVisual}
+   */
+  updateVisual(context, oldVisual) {
+    return null
   }
 }
 
@@ -1698,6 +1879,11 @@ class Icon extends BaseClass(IVisualCreator) {
  * An {@link Icon} that combines multiple icons in an horizontal line.
  */
 class LineUpIcon extends Icon {
+  /**
+   * @param {!List.<Icon>} icons
+   * @param {!Size} innerIconSize
+   * @param {number} gap
+   */
   constructor(icons, innerIconSize, gap) {
     super()
     this.icons = icons
@@ -1708,7 +1894,10 @@ class LineUpIcon extends Icon {
     this.combinedSize = new Size(combinedWidth, innerIconSize.height)
   }
 
-  /** @return {Visual} */
+  /**
+   * @param {!IRenderContext} context
+   * @returns {?SvgVisual}
+   */
   createVisual(context) {
     if (this.bounds === null) {
       return null
@@ -1719,7 +1908,8 @@ class LineUpIcon extends Icon {
     let offset = 0
     this.icons.forEach(pathIcon => {
       pathIcon.setBounds(new Rect(offset, 0, this.innerIconSize.width, this.innerIconSize.height))
-      container.add(pathIcon.createVisual(context))
+      const pathIconVisual = pathIcon.createVisual(context)
+      container.add(pathIconVisual)
       offset += this.innerIconSize.width + this.gap
     })
     const bound = this.bounds.toRect()
@@ -1727,7 +1917,6 @@ class LineUpIcon extends Icon {
     const transform = new Matrix()
     transform.translate(new Point(bound.centerX - this.combinedSize.width * 0.5, bound.y))
     container.transform = transform
-
     container['render-data-cache'] = {
       location: bound.topLeft,
       size: bound.size
@@ -1736,7 +1925,11 @@ class LineUpIcon extends Icon {
     return container
   }
 
-  /** @return {Visual} */
+  /**
+   * @param {!IRenderContext} context
+   * @param {!SvgVisual} oldVisual
+   * @returns {?SvgVisual}
+   */
   updateVisual(context, oldVisual) {
     const container = oldVisual instanceof SvgVisualGroup ? oldVisual : null
     if (container === null || container.children.size !== this.icons.size) {
@@ -1750,7 +1943,6 @@ class LineUpIcon extends Icon {
       const transform = new Matrix()
       transform.translate(new Point(bound.centerX - this.combinedSize.width * 0.5, bound.y))
       container.transform = transform
-
       container['render-data-cache'] = {
         location: bound.topLeft,
         size: bound.size
@@ -1759,6 +1951,9 @@ class LineUpIcon extends Icon {
     return container
   }
 
+  /**
+   * @param {!Rect} bounds
+   */
   setBounds(bounds) {
     super.setBounds(Rect.fromCenter(bounds.center, this.combinedSize))
   }
@@ -1768,26 +1963,41 @@ class LineUpIcon extends Icon {
  * An {@link Icon} whose position is specified by an {@link ILabelModelParameter}.
  */
 class PlacedIcon extends Icon {
+  /**
+   * @param {!Icon} innerIcon
+   * @param {!ILabelModelParameter} placementParameter
+   * @param {!Size} minimumSize
+   */
   constructor(innerIcon, placementParameter, minimumSize) {
     super()
+    this.dummyNode = new SimpleNode()
     this.innerIcon = innerIcon
     this.placementParameter = placementParameter
-    this.dummyNode = new SimpleNode()
     const dummyLabel = new SimpleLabel(this.dummyNode, '', placementParameter)
     dummyLabel.preferredSize = minimumSize
     this.dummyLabel = dummyLabel
   }
 
-  /** @return {Visual} */
+  /**
+   * @param {!IRenderContext} context
+   * @returns {?SvgVisual}
+   */
   createVisual(context) {
     return this.innerIcon.createVisual(context)
   }
 
-  /** @return {Visual} */
+  /**
+   * @param {!IRenderContext} context
+   * @param {!SvgVisual} oldVisual
+   * @returns {?SvgVisual}
+   */
   updateVisual(context, oldVisual) {
     return this.innerIcon.updateVisual(context, oldVisual)
   }
 
+  /**
+   * @param {!Rect} bounds
+   */
   setBounds(bounds) {
     this.dummyNode.layout = bounds
     this.innerIcon.setBounds(
@@ -1807,18 +2017,20 @@ class RectIcon extends Icon {
     this.stroke = null
   }
 
-  /** @return {Visual} */
+  /**
+   * @param {!IRenderContext} context
+   * @returns {!SvgVisual}
+   */
   createVisual(context) {
     const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect')
-    rect.setAttribute('x', this.bounds.x)
-    rect.setAttribute('y', this.bounds.y)
-    rect.setAttribute('width', this.bounds.width)
-    rect.setAttribute('height', this.bounds.height)
-    rect.setAttribute('rx', this.cornerRadius)
-    rect.setAttribute('ry', this.cornerRadius)
+    rect.setAttribute('x', `${this.bounds.x}`)
+    rect.setAttribute('y', `${this.bounds.y}`)
+    rect.setAttribute('width', `${this.bounds.width}`)
+    rect.setAttribute('height', `${this.bounds.height}`)
+    rect.setAttribute('rx', `${this.cornerRadius}`)
+    rect.setAttribute('ry', `${this.cornerRadius}`)
     Stroke.setStroke(this.stroke, rect, context)
     Fill.setFill(this.fill, rect, context)
-
     rect['render-data-cache'] = new PathIconState(
       this.bounds.width,
       this.bounds.height,
@@ -1828,14 +2040,18 @@ class RectIcon extends Icon {
     return new SvgVisual(rect)
   }
 
-  /** @return {Visual} */
+  /**
+   * @param {!IRenderContext} context
+   * @param {!SvgVisual} oldVisual
+   * @returns {!SvgVisual}
+   */
   updateVisual(context, oldVisual) {
     const rect = oldVisual.svgElement
     const oldCache = rect['render-data-cache']
 
     if (!oldCache.equals(this.bounds.width, this.bounds.height, this.stroke, this.fill)) {
-      rect.setAttribute('width', this.bounds.width)
-      rect.setAttribute('height', this.bounds.height)
+      rect.setAttribute('width', `${this.bounds.width}`)
+      rect.setAttribute('height', `${this.bounds.height}`)
       Stroke.setStroke(this.stroke, rect, context)
       Fill.setFill(this.fill, rect, context)
       rect['render-data-cache'] = new PathIconState(
@@ -1849,6 +2065,9 @@ class RectIcon extends Icon {
     return oldVisual
   }
 
+  /**
+   * @param {!Rect} bounds
+   */
   setBounds(bounds) {
     super.setBounds(bounds)
   }
@@ -1859,12 +2078,18 @@ class RectIcon extends Icon {
  * like a timer.
  */
 class CombinedIcon extends Icon {
+  /**
+   * @param {!List.<Icon>} icons
+   */
   constructor(icons) {
     super()
     this.icons = icons
   }
 
-  /** @return {Visual} */
+  /**
+   * @param {!IRenderContext} context
+   * @returns {?SvgVisual}
+   */
   createVisual(context) {
     if (this.bounds === null) {
       return null
@@ -1874,7 +2099,8 @@ class CombinedIcon extends Icon {
     const iconBounds = new Rect(Point.ORIGIN, this.bounds.toSize())
     this.icons.forEach(icon => {
       icon.setBounds(iconBounds)
-      container.add(icon.createVisual(context))
+      const iconVisual = icon.createVisual(context)
+      container.add(iconVisual)
     })
 
     const bound = this.bounds.toRect()
@@ -1882,7 +2108,6 @@ class CombinedIcon extends Icon {
     const transform = new Matrix()
     transform.translate(bound.topLeft)
     container.transform = transform
-
     container['render-data-cache'] = {
       location: bound.topLeft,
       size: bound.size
@@ -1891,7 +2116,11 @@ class CombinedIcon extends Icon {
     return container
   }
 
-  /** @return {Visual} */
+  /**
+   * @param {!IRenderContext} context
+   * @param {!SvgVisual} oldVisual
+   * @returns {?SvgVisual}
+   */
   updateVisual(context, oldVisual) {
     const container = oldVisual instanceof SvgVisualGroup ? oldVisual : null
     if (container === null || container.children.size !== this.icons.size) {
@@ -1902,7 +2131,7 @@ class CombinedIcon extends Icon {
 
     if (!cache.size.equals(this.bounds.size)) {
       // size changed -> we have to update the icons
-      const iconBounds = new Rect(Point.ORIGIN, this.bounds.size)
+      const iconBounds = new Rect(Point.ORIGIN, this.bounds.size.toSize())
       this.icons.forEach((pathIcon, index) => {
         pathIcon.setBounds(iconBounds)
         const oldPathVisual = container.children.elementAt(index)
@@ -1920,7 +2149,6 @@ class CombinedIcon extends Icon {
     const transform = new Matrix()
     transform.translate(bound.topLeft)
     container.transform = transform
-
     container['render-data-cache'] = {
       location: bound.topLeft,
       size: bound.size
@@ -1936,35 +2164,47 @@ class CombinedIcon extends Icon {
 class PathIcon extends Icon {
   constructor() {
     super()
-
     this.fill = null
     this.stroke = null
     this.path = null
   }
 
-  /** @return {Visual} */
+  /**
+   * @param {!IRenderContext} context
+   * @returns {?SvgVisual}
+   */
   createVisual(context) {
+    if (!this.path) {
+      return null
+    }
     const matrix2D = new Matrix()
     matrix2D.scale(Math.max(0, this.bounds.width), Math.max(0, this.bounds.height))
 
-    const path = this.path.createSvgPath(matrix2D)
-    Stroke.setStroke(this.stroke, path, context)
-    Fill.setFill(this.fill, path, context)
-
-    path['render-data-cache'] = new PathIconState(
+    const svgPath = this.path.createSvgPath(matrix2D)
+    Stroke.setStroke(this.stroke, svgPath, context)
+    Fill.setFill(this.fill, svgPath, context)
+    svgPath['render-data-cache'] = new PathIconState(
       this.bounds.width,
       this.bounds.height,
       this.stroke,
       this.fill
     )
 
-    SvgVisual.setTranslate(path, this.bounds.x, this.bounds.y)
+    SvgVisual.setTranslate(svgPath, this.bounds.x, this.bounds.y)
 
-    return new SvgVisual(path)
+    return new SvgVisual(svgPath)
   }
 
-  /** @return {Visual} */
+  /**
+   * @param {!IRenderContext} context
+   * @param {!SvgVisual} oldVisual
+   * @returns {?SvgVisual}
+   */
   updateVisual(context, oldVisual) {
+    if (!this.path) {
+      return null
+    }
+
     const path = oldVisual.svgElement
     if (path === null) {
       return this.createVisual(context)
@@ -2001,7 +2241,6 @@ class PathIcon extends Icon {
 class VariableRectIcon extends Icon {
   constructor() {
     super()
-
     this.topLeftRadius = 0
     this.topRightRadius = 0
     this.bottomLeftRadius = 0
@@ -2010,7 +2249,10 @@ class VariableRectIcon extends Icon {
     this.stroke = null
   }
 
-  /** @return {Visual} */
+  /**
+   * @param {!IRenderContext} context
+   * @returns {!SvgVisual}
+   */
   createVisual(context) {
     const path = document.createElementNS('http://www.w3.org/2000/svg', 'path')
     path.setAttribute(
@@ -2029,7 +2271,6 @@ class VariableRectIcon extends Icon {
     )
     Stroke.setStroke(this.stroke, path, context)
     Fill.setFill(this.fill, path, context)
-
     path['render-data-cache'] = new PathIconState(
       this.bounds.width,
       this.bounds.height,
@@ -2040,7 +2281,11 @@ class VariableRectIcon extends Icon {
     return new SvgVisual(path)
   }
 
-  /** @return {Visual} */
+  /**
+   * @param {!IRenderContext} context
+   * @param {!SvgVisual} oldVisual
+   * @returns {!SvgVisual}
+   */
   updateVisual(context, oldVisual) {
     const path = oldVisual.svgElement
     if (!path) {
@@ -2074,7 +2319,6 @@ class VariableRectIcon extends Icon {
       Fill.setFill(this.fill, path, context)
 
       SvgVisual.setTranslate(path, this.bounds.x, this.bounds.y)
-
       path['render-data-cache'] = newCache
     }
 
@@ -2087,39 +2331,75 @@ class VariableRectIcon extends Icon {
  */
 class IconBuilder {
   constructor() {
-    this.$path = null
+    this._path = null
     this.stroke = null
     this.fill = null
     this.clear()
   }
 
-  /** @type {GeneralPath} */
+  /**
+   * @type {?GeneralPath}
+   */
   get path() {
-    return this.$path || (this.$path = new GeneralPath())
+    return this._path || (this._path = new GeneralPath())
   }
 
-  /** @type {GeneralPath} */
+  /**
+   * @type {?GeneralPath}
+   */
   set path(value) {
-    this.$path = value
+    this._path = value
   }
 
+  /**
+   * @param {number} x
+   * @param {number} y
+   */
   moveTo(x, y) {
-    this.path.moveTo(x, y)
+    this.path && this.path.moveTo(x, y)
   }
 
+  /**
+   * @param {number} x
+   * @param {number} y
+   */
   lineTo(x, y) {
-    this.path.lineTo(x, y)
+    this.path && this.path.lineTo(x, y)
   }
 
+  /**
+   * @param {number} cx
+   * @param {number} cy
+   * @param {number} x
+   * @param {number} y
+   */
   quadTo(cx, cy, x, y) {
-    this.path.quadTo(cx, cy, x, y)
+    this.path && this.path.quadTo(cx, cy, x, y)
   }
 
+  /**
+   * @param {number} c1x
+   * @param {number} c1y
+   * @param {number} c2x
+   * @param {number} c2y
+   * @param {number} x
+   * @param {number} y
+   */
   cubicTo(c1x, c1y, c2x, c2y, x, y) {
-    this.path.cubicTo(c1x, c1y, c2x, c2y, x, y)
+    this.path && this.path.cubicTo(c1x, c1y, c2x, c2y, x, y)
   }
 
+  /**
+   * @param {number} r
+   * @param {number} cx
+   * @param {number} cy
+   * @param {number} fromAngle
+   * @param {number} toAngle
+   */
   arcTo(r, cx, cy, fromAngle, toAngle) {
+    if (!this.path) {
+      return
+    }
     const a = (toAngle - fromAngle) / 2.0
     const sgn = a < 0 ? -1 : 1
     if (Math.abs(a) > Math.PI / 4) {
@@ -2162,31 +2442,49 @@ class IconBuilder {
     )
   }
 
-  /** @return {Icon} */
+  /**
+   * @returns {?Icon}
+   */
   createEllipseIcon() {
+    if (!this.path) {
+      return null
+    }
     this.path.appendEllipse(new Rect(0, 0, 1, 1), false)
     return this.getPathIcon()
   }
 
   close() {
+    if (!this.path) {
+      return
+    }
     this.path.close()
   }
 
-  /** @return {Icon} */
+  /**
+   * @param {!List.<Icon>} icons
+   * @returns {!Icon}
+   */
   combineIcons(icons) {
     const icon = new CombinedIcon(icons)
     this.clear()
     return icon
   }
 
-  /** @return {Icon} */
+  /**
+   * @param {!List.<Icon>} icons
+   * @param {!Size} innerIconSize
+   * @param {number} gap
+   * @returns {!Icon}
+   */
   createLineUpIcon(icons, innerIconSize, gap) {
     const icon = new LineUpIcon(icons, innerIconSize, gap)
     this.clear()
     return icon
   }
 
-  /** @return {Icon} */
+  /**
+   * @returns {!Icon}
+   */
   getPathIcon() {
     const icon = new PathIcon()
     icon.path = this.path
@@ -2197,7 +2495,10 @@ class IconBuilder {
     return icon
   }
 
-  /** @return {Icon} */
+  /**
+   * @param {number} cornerRadius
+   * @returns {!Icon}
+   */
   createRectIcon(cornerRadius) {
     const rectIcon = new RectIcon()
     rectIcon.stroke = this.stroke
@@ -2208,7 +2509,13 @@ class IconBuilder {
     return rectIcon
   }
 
-  /** @return {Icon} */
+  /**
+   * @param {number} topLeftRadius
+   * @param {number} topRightRadius
+   * @param {number} bottomLeftRadius
+   * @param {number} bottomRightRadius
+   * @returns {!Icon}
+   */
   createVariableRectIcon(topLeftRadius, topRightRadius, bottomLeftRadius, bottomRightRadius) {
     const rectIcon = new VariableRectIcon()
     rectIcon.stroke = this.stroke
@@ -2233,12 +2540,19 @@ class IconBuilder {
  * A class that combines an event type with a fill to be used as a key in a map.
  */
 class EventTypeWithFill {
+  /**
+   * @param {number} type
+   * @param {boolean} filled
+   */
   constructor(type, filled) {
     this.type = type
     this.filled = filled
   }
 
-  /** @return {boolean} */
+  /**
+   * @param {!object} obj
+   * @returns {boolean}
+   */
   equals(obj) {
     if (!(obj instanceof EventTypeWithFill)) {
       return false
@@ -2246,9 +2560,56 @@ class EventTypeWithFill {
     return obj.type === this.type && obj.filled === this.filled
   }
 
-  /** @return {number} */
+  /**
+   * @returns {number}
+   */
   hashCode() {
-    return (this.type * 397) ^ (this.filled ? 1 : 0)
+    let code
+    switch (this.type) {
+      case EventType.PLAIN:
+        code = 0
+        break
+      case EventType.MESSAGE:
+        code = 1
+        break
+      case EventType.TIMER:
+        code = 2
+        break
+      case EventType.ESCALATION:
+        code = 3
+        break
+      case EventType.CONDITIONAL:
+        code = 4
+        break
+      case EventType.LINK:
+        code = 5
+        break
+      case EventType.ERROR:
+        code = 6
+        break
+      case EventType.CANCEL:
+        code = 7
+        break
+      case EventType.COMPENSATION:
+        code = 8
+        break
+      case EventType.SIGNAL:
+        code = 9
+        break
+      case EventType.MULTIPLE:
+        code = 10
+        break
+      case EventType.PARALLEL_MULTIPLE:
+        code = 11
+        break
+      case EventType.TERMINATE:
+        code = 12
+        break
+      default:
+        code = 13
+        break
+    }
+    return (code * 397) ^ (this.filled ? 1 : 0)
   }
 }
 
@@ -2285,15 +2646,23 @@ export const ConversationType = Enum('ConversationType', {
  * A class that stores the important information about a participant to be used as a key in a map.
  */
 class ParticipantBandType {
+  /**
+   * @param {!Fill} fill
+   * @param {number} topRadius
+   * @param {number} bottomRadius
+   */
   constructor(fill, topRadius, bottomRadius) {
     this.fill = fill
     this.topRadius = topRadius
     this.bottomRadius = bottomRadius
   }
 
-  /** @return {boolean} */
+  /**
+   * @param {!object} obj
+   * @returns {boolean}
+   */
   equals(obj) {
-    if (obj instanceof ParticipantBandType) {
+    if (!(obj instanceof ParticipantBandType)) {
       return false
     }
     return (
@@ -2303,7 +2672,9 @@ class ParticipantBandType {
     )
   }
 
-  /** @return {number} */
+  /**
+   * @returns {number}
+   */
   hashCode() {
     return (this.fill.hashCode() * 397) ^ (this.topRadius * 397) ^ this.bottomRadius
   }
@@ -2313,13 +2684,21 @@ class ParticipantBandType {
  * A class that stores all important information for a plus icon to be used as key in a map.
  */
 class PlusData {
+  /**
+   * @param {number} size
+   * @param {!Stroke} stroke
+   * @param {!Fill} fill
+   */
   constructor(size, stroke, fill) {
     this.size = size
     this.stroke = stroke
     this.fill = fill
   }
 
-  /** @return {boolean} */
+  /**
+   * @param {!object} obj
+   * @returns {boolean}
+   */
   equals(obj) {
     if (!(obj instanceof PlusData)) {
       return false
@@ -2327,7 +2706,9 @@ class PlusData {
     return obj.size === this.size && obj.stroke === this.stroke && obj.fill === this.fill
   }
 
-  /** @return {number} */
+  /**
+   * @returns {number}
+   */
   hashCode() {
     const fillHC = this.fill !== null ? this.fill.hashCode() : 1
     return (((this.size * 397) ^ this.stroke.hashCode()) * 397) ^ fillHC
@@ -2338,26 +2719,39 @@ class PlusData {
  * Factory class providing icons according to the BPMN.
  */
 class IconFactory {
-  /** @return {Icon} */
+  /**
+   * @param {!Icon} icon
+   * @param {!ILabelModelParameter} placement
+   * @param {!Size} innerSize
+   * @returns {!Icon}
+   */
   static createPlacedIcon(icon, placement, innerSize) {
     return new PlacedIcon(icon, placement, innerSize)
   }
 
-  /** @return {Icon} */
+  /**
+   * @param {!List.<Icon>} icons
+   * @returns {!Icon}
+   */
   static createCombinedIcon(icons) {
     return IconFactory.BUILDER.combineIcons(icons)
   }
 
-  /** @return {Icon} */
+  /**
+   * @param {!List.<Icon>} icons
+   * @param {!Size} innerIconSize
+   * @param {number} gap
+   * @returns {!Icon}
+   */
   static createLineUpIcon(icons, innerIconSize, gap) {
     return IconFactory.BUILDER.createLineUpIcon(icons, innerIconSize, gap)
   }
 
   /**
-   * @param {ActivityType} type
-   * @param {Fill} background
-   * @param {Fill} outlineFill
-   * @return {Icon}
+   * @param {number} type
+   * @param {!Fill} background
+   * @param {!Fill} outlineFill
+   * @returns {!Icon}
    */
   static createActivity(type, background, outlineFill) {
     const hasDefaultColors =
@@ -2419,10 +2813,10 @@ class IconFactory {
   }
 
   /**
-   * @param {TaskType} type
-   * @param {Fill} iconFill
-   * @param {Fill} background
-   * @return {Icon}
+   * @param {number} type
+   * @param {!Fill} iconFill
+   * @param {!Fill} background
+   * @returns {?Icon}
    */
   static createActivityTaskType(type, iconFill, background) {
     const hasDefaultColor = IconFactory.equalFill(iconFill, BPMN_CONSTANTS_DEFAULT_ICON_COLOR)
@@ -2433,7 +2827,7 @@ class IconFactory {
     }
 
     const BUILDER = IconFactory.BUILDER
-    let /** List.<Icon> */ icons = null
+    let icons
     switch (type) {
       case TaskType.SEND: {
         result = IconFactory.createPlacedIcon(
@@ -2463,12 +2857,8 @@ class IconFactory {
         BUILDER.stroke = stroke
 
         iconFill = iconFill || Fill.BLACK
-        const lightFill = new SolidColorFill(
-          iconFill.color.r,
-          iconFill.color.g,
-          iconFill.color.b,
-          255 * 0.17
-        )
+        const color = iconFill.color
+        const lightFill = new SolidColorFill(color.r, color.g, color.b, 255 * 0.17)
         lightFill.freeze()
         BUILDER.fill = lightFill
 
@@ -2561,17 +2951,19 @@ class IconFactory {
 
         icons = new List()
         iconFill = iconFill || Fill.BLACK
+        const darkColorFill = iconFill.color
         const darkFill = new SolidColorFill(
-          iconFill.color.r,
-          iconFill.color.g,
-          iconFill.color.b,
+          darkColorFill.r,
+          darkColorFill.g,
+          darkColorFill.b,
           255 * 0.5
         )
         darkFill.freeze()
+        const lightColorFill = iconFill.color
         const lightFill = new SolidColorFill(
-          iconFill.color.r,
-          iconFill.color.g,
-          iconFill.color.b,
+          lightColorFill.r,
+          lightColorFill.g,
+          lightColorFill.b,
           255 * 0.17
         )
         lightFill.freeze()
@@ -2615,17 +3007,19 @@ class IconFactory {
         icons = new List()
         const stroke = new Stroke(iconFill, 0.3)
         stroke.freeze()
+        const darkColorFill = iconFill.color
         const darkFill = new SolidColorFill(
-          iconFill.color.r,
-          iconFill.color.g,
-          iconFill.color.b,
+          darkColorFill.r,
+          darkColorFill.g,
+          darkColorFill.b,
           255 * 0.5
         )
         darkFill.freeze()
+        const lightColorFill = iconFill.color
         const lightFill = new SolidColorFill(
-          iconFill.color.r,
-          iconFill.color.g,
-          iconFill.color.b,
+          lightColorFill.r,
+          lightColorFill.g,
+          lightColorFill.b,
           255 * 0.17
         )
         lightFill.freeze()
@@ -2672,7 +3066,7 @@ class IconFactory {
         const stroke = new Stroke({
           fill: iconFill,
           lineCap: LineCap.ROUND,
-          loneJoin: LineJoin.ROUND
+          lineJoin: LineJoin.ROUND
         })
         stroke.freeze()
         BUILDER.stroke = stroke
@@ -2735,9 +3129,9 @@ class IconFactory {
   }
 
   /**
-   * @param {LoopCharacteristic} loopCharacteristic
-   * @param {Fill} iconFill
-   * @return {Icon | null}
+   * @param {number} loopCharacteristic
+   * @param {!Fill} iconFill
+   * @returns {?Icon}
    */
   static createLoopCharacteristic(loopCharacteristic, iconFill) {
     const hasDefaultColor = IconFactory.equalFill(iconFill, BPMN_CONSTANTS_DEFAULT_ICON_COLOR)
@@ -2806,14 +3200,14 @@ class IconFactory {
   }
 
   /**
-   * @param {Fill} iconFill
-   * @return {Icon}
+   * @param {!Fill} iconFill
+   * @returns {!Icon}
    */
   static createAdHoc(iconFill) {
     const hasDefaultColor = IconFactory.equalFill(iconFill, BPMN_CONSTANTS_DEFAULT_ICON_COLOR)
 
-    if (hasDefaultColor && IconFactory.$adHoc) {
-      return IconFactory.$adHoc
+    if (hasDefaultColor && IconFactory._adHoc) {
+      return IconFactory._adHoc
     }
 
     const BUILDER = IconFactory.BUILDER
@@ -2852,25 +3246,25 @@ class IconFactory {
 
     const icon = BUILDER.getPathIcon()
     if (hasDefaultColor) {
-      IconFactory.$adHoc = icon
+      IconFactory._adHoc = icon
     }
     return icon
   }
 
   /**
    * @param {boolean} filled
-   * @param {Fill} iconFill
-   * @return {Icon}
+   * @param {!Fill} iconFill
+   * @returns {!Icon}
    */
   static createCompensation(filled, iconFill) {
     const hasDefaultColor = IconFactory.equalFill(iconFill, BPMN_CONSTANTS_DEFAULT_ICON_COLOR)
 
     if (hasDefaultColor) {
-      if (filled && IconFactory.$filledComparison) {
-        return IconFactory.$filledComparison
+      if (filled && IconFactory._filledComparison) {
+        return IconFactory._filledComparison
       }
-      if (!filled && IconFactory.$comparison) {
-        return IconFactory.$comparison
+      if (!filled && IconFactory._comparison) {
+        return IconFactory._comparison
       }
     }
 
@@ -2895,9 +3289,9 @@ class IconFactory {
     const icon = BUILDER.getPathIcon()
     if (hasDefaultColor) {
       if (filled) {
-        IconFactory.$filledComparison = icon
+        IconFactory._filledComparison = icon
       } else {
-        IconFactory.$comparison = icon
+        IconFactory._comparison = icon
       }
     }
 
@@ -2905,9 +3299,9 @@ class IconFactory {
   }
 
   /**
-   * @param {SubState} subState
-   * @param {Fill} iconFill
-   * @return {Icon}
+   * @param {number} subState
+   * @param {!Fill} iconFill
+   * @returns {?Icon}
    */
   static createStaticSubState(subState, iconFill) {
     const hasDefaultColor = IconFactory.equalFill(iconFill, BPMN_CONSTANTS_DEFAULT_ICON_COLOR)
@@ -2960,26 +3354,26 @@ class IconFactory {
   }
 
   /**
-   * @param {INode} node
-   * @param {Fill} iconFill
-   * @return {CollapseButtonIcon}
+   * @param {!INode} node
+   * @param {!Fill} iconFill
+   * @returns {!CollapseButtonIcon}
    */
   static createDynamicSubState(node, iconFill) {
     return new CollapseButtonIcon(node, iconFill)
   }
 
   /**
-   * @param {Fill} background
-   * @param {Fill} outline
-   * @return {Icon}
+   * @param {!Fill} background
+   * @param {!Fill} outline
+   * @returns {!Icon}
    */
   static createGateway(background, outline) {
     const hasDefaultColors =
       IconFactory.equalFill(background, BPMN_CONSTANTS_GATEWAY_DEFAULT_BACKGROUND) &&
       IconFactory.equalFill(outline, BPMN_CONSTANTS_GATEWAY_DEFAULT_OUTLINE)
 
-    if (hasDefaultColors && IconFactory.$gateway) {
-      return IconFactory.$gateway
+    if (hasDefaultColors && IconFactory._gateway) {
+      return IconFactory._gateway
     }
 
     const BUILDER = IconFactory.BUILDER
@@ -2994,15 +3388,15 @@ class IconFactory {
     BUILDER.close()
     const gatewayIcon = BUILDER.getPathIcon()
     if (hasDefaultColors) {
-      IconFactory.$gateway = gatewayIcon
+      IconFactory._gateway = gatewayIcon
     }
     return gatewayIcon
   }
 
   /**
-   * @param {GatewayType} type
-   * @param {Fill} fill
-   * @return {Icon}
+   * @param {number} type
+   * @param {!Fill} fill
+   * @returns {?Icon}
    */
   static createGatewayType(type, fill) {
     const hasDefaultColor = IconFactory.equalFill(fill, BPMN_CONSTANTS_DEFAULT_ICON_COLOR)
@@ -3139,10 +3533,10 @@ class IconFactory {
   }
 
   /**
-   * @param {EventCharacteristic} characteristic
-   * @param {Fill} background
-   * @param {Fill} outline
-   * @return {Icon}
+   * @param {number} characteristic
+   * @param {!Fill} background
+   * @param {?Fill} outline
+   * @returns {!Icon}
    */
   static createEvent(characteristic, background, outline) {
     const hasDefaultColors =
@@ -3182,6 +3576,7 @@ class IconFactory {
         stroke = new Stroke(outline || Fill.RED, 3)
         break
       default:
+        stroke = new Stroke()
         break
     }
     stroke.freeze()
@@ -3224,11 +3619,11 @@ class IconFactory {
   }
 
   /**
-   * @param {EventType} type
+   * @param {number} type
    * @param {boolean} filled
-   * @param {Fill} fill
-   * @param {Fill} background
-   * @return {Icon}
+   * @param {!Fill} fill
+   * @param {!Fill} background
+   * @returns {?Icon}
    */
   static createEventType(type, filled, fill, background) {
     const hasDefaultColors =
@@ -3402,7 +3797,6 @@ class IconFactory {
         break
       case EventType.PLAIN:
       default:
-        result = null
         break
     }
 
@@ -3414,10 +3808,10 @@ class IconFactory {
   }
 
   /**
-   * @param {Stroke} stroke
-   * @param {Fill} fill
-   * @param {boolean?} inverted
-   * @return {Icon}
+   * @param {?Stroke} stroke
+   * @param {?Fill} fill
+   * @param {boolean} [inverted=false]
+   * @returns {!Icon}
    */
   static createMessage(stroke, fill, inverted = false) {
     const BUILDER = IconFactory.BUILDER
@@ -3461,9 +3855,9 @@ class IconFactory {
   }
 
   /**
-   * @param {ChoreographyType} type
-   * @param {Fill} outline
-   * @return {Icon}
+   * @param {number} type
+   * @param {!Fill} outline
+   * @returns {!Icon}
    */
   static createChoreography(type, outline) {
     const hasDefaultColor = IconFactory.equalFill(
@@ -3472,11 +3866,11 @@ class IconFactory {
     )
 
     if (hasDefaultColor) {
-      if (type === ChoreographyType.TASK && IconFactory.$choreographyTask) {
-        return IconFactory.$choreographyTask
+      if (type === ChoreographyType.TASK && IconFactory._choreographyTask) {
+        return IconFactory._choreographyTask
       }
-      if (type === ChoreographyType.CALL && IconFactory.$choreographyCall) {
-        return IconFactory.$choreographyCall
+      if (type === ChoreographyType.CALL && IconFactory._choreographyCall) {
+        return IconFactory._choreographyCall
       }
     }
 
@@ -3496,21 +3890,21 @@ class IconFactory {
 
     if (hasDefaultColor) {
       if (type === ChoreographyType.TASK) {
-        IconFactory.$choreographyTask = icon
+        IconFactory._choreographyTask = icon
       }
       if (type === ChoreographyType.CALL) {
-        IconFactory.$choreographyCall = icon
+        IconFactory._choreographyCall = icon
       }
     }
     return icon
   }
 
   /**
-   * @param {Fill} outline
-   * @param {Fill} background
+   * @param {!Fill} outline
+   * @param {!Fill} background
    * @param {number} topRadius
    * @param {number} bottomRadius
-   * @return {Icon}
+   * @returns {!Icon}
    */
   static createChoreographyParticipant(outline, background, topRadius, bottomRadius) {
     const hasDefaultColors =
@@ -3539,8 +3933,8 @@ class IconFactory {
   }
 
   /**
-   * @param {Fill} fill
-   * @return {Icon}
+   * @param {!Fill} fill
+   * @returns {!Icon}
    */
   static createChoreographyTaskBand(fill) {
     const hasDefaultColor = IconFactory.equalFill(
@@ -3548,8 +3942,8 @@ class IconFactory {
       BPMN_CONSTANTS_CHOREOGRAPHY_DEFAULT_BACKGROUND
     )
 
-    if (hasDefaultColor && IconFactory.$taskBand) {
-      return IconFactory.$taskBand
+    if (hasDefaultColor && IconFactory._taskBand) {
+      return IconFactory._taskBand
     }
 
     const BUILDER = IconFactory.BUILDER
@@ -3559,17 +3953,17 @@ class IconFactory {
     const icon = BUILDER.createRectIcon(0)
 
     if (hasDefaultColor) {
-      IconFactory.$taskBand = icon
+      IconFactory._taskBand = icon
     }
 
     return icon
   }
 
   /**
-   * @param {ConversationType} type
-   * @param {Fill} background
-   * @param {Fill} outline
-   * @return {Icon}
+   * @param {number} type
+   * @param {!Fill} background
+   * @param {!Fill} outline
+   * @returns {!Icon}
    */
   static createConversation(type, background, outline) {
     const hasDefaultColors =
@@ -3618,20 +4012,20 @@ class IconFactory {
   }
 
   /**
-   * @param {ConversationType} type
-   * @param {Fill} fill
-   * @return {null | Icon}
+   * @param {number} type
+   * @param {!Fill} fill
+   * @returns {?Icon}
    */
   static createConversationMarker(type, fill) {
     const hasDefaultColor = IconFactory.equalFill(fill, BPMN_CONSTANTS_DEFAULT_ICON_COLOR)
 
     if (
       hasDefaultColor &&
-      IconFactory.$conversationSubState &&
+      IconFactory._conversationSubState &&
       (type === ConversationType.SUB_CONVERSATION ||
         type === ConversationType.CALLING_COLLABORATION)
     ) {
-      return IconFactory.$conversationSubState
+      return IconFactory._conversationSubState
     }
 
     switch (type) {
@@ -3639,7 +4033,7 @@ class IconFactory {
       case ConversationType.CALLING_COLLABORATION: {
         const icon = IconFactory.createStaticSubState(SubState.COLLAPSED, fill)
         if (hasDefaultColor) {
-          IconFactory.$conversationSubState = icon
+          IconFactory._conversationSubState = icon
         }
         return icon
       }
@@ -3649,17 +4043,17 @@ class IconFactory {
   }
 
   /**
-   * @param {Fill} background
-   * @param {Fill} outline
-   * @return {DataObjectIcon}
+   * @param {!Fill} background
+   * @param {!Fill} outline
+   * @returns {!DataObjectIcon}
    */
   static createDataObject(background, outline) {
     const hasDefaultColors =
       IconFactory.equalFill(background, BPMN_CONSTANTS_DATA_OBJECT_DEFAULT_BACKGROUND) &&
       IconFactory.equalFill(outline, BPMN_CONSTANTS_DATA_OBJECT_DEFAULT_OUTLINE)
 
-    if (hasDefaultColors && IconFactory.$dataObject) {
-      return IconFactory.$dataObject
+    if (hasDefaultColors && IconFactory._dataObject) {
+      return IconFactory._dataObject
     }
 
     const stroke = new Stroke(outline)
@@ -3669,26 +4063,26 @@ class IconFactory {
     icon.fill = background
 
     if (hasDefaultColors) {
-      IconFactory.$dataObject = icon
+      IconFactory._dataObject = icon
     }
 
     return icon
   }
 
   /**
-   * @param {DataObjectType} type
-   * @param {Fill} fill
-   * @return {null | Icon}
+   * @param {number} type
+   * @param {!Fill} fill
+   * @returns {?Icon}
    */
   static createDataObjectType(type, fill) {
     const hasDefaultColor = IconFactory.equalFill(fill, BPMN_CONSTANTS_DEFAULT_ICON_COLOR)
 
     if (hasDefaultColor) {
-      if (type === DataObjectType.INPUT && IconFactory.$dataObjectInputType) {
-        return IconFactory.$dataObjectInputType
+      if (type === DataObjectType.INPUT && IconFactory._dataObjectInputType) {
+        return IconFactory._dataObjectInputType
       }
-      if (type === DataObjectType.OUTPUT && IconFactory.$dataObjectOutputType) {
-        return IconFactory.$dataObjectOutputType
+      if (type === DataObjectType.OUTPUT && IconFactory._dataObjectOutputType) {
+        return IconFactory._dataObjectOutputType
       }
     }
 
@@ -3697,13 +4091,13 @@ class IconFactory {
       case DataObjectType.INPUT:
         icon = IconFactory.createEventType(EventType.LINK, false, fill, Fill.TRANSPARENT)
         if (hasDefaultColor) {
-          IconFactory.$dataObjectInputType = icon
+          IconFactory._dataObjectInputType = icon
         }
         return icon
       case DataObjectType.OUTPUT:
         icon = IconFactory.createEventType(EventType.LINK, true, fill, fill)
         if (hasDefaultColor) {
-          IconFactory.$dataObjectOutputType = icon
+          IconFactory._dataObjectOutputType = icon
         }
         return icon
       case DataObjectType.NONE:
@@ -3714,20 +4108,20 @@ class IconFactory {
 
   /**
    * @param {boolean} left
-   * @param {Fill} background
-   * @param {Fill} outline
-   * @return {Icon}
+   * @param {!Fill} background
+   * @param {!Fill} outline
+   * @returns {!Icon}
    */
   static createAnnotation(left, background, outline) {
     const hasDefaultColors =
       IconFactory.equalFill(background, BPMN_CONSTANTS_ANNOTATION_DEFAULT_BACKGROUND) &&
       IconFactory.equalFill(outline, BPMN_CONSTANTS_ANNOTATION_DEFAULT_OUTLINE)
 
-    if (hasDefaultColors && left && IconFactory.$leftAnnotation) {
-      return IconFactory.$leftAnnotation
+    if (hasDefaultColors && left && IconFactory._leftAnnotation) {
+      return IconFactory._leftAnnotation
     }
-    if (hasDefaultColors && !left && IconFactory.$rightAnnotation) {
-      return IconFactory.$rightAnnotation
+    if (hasDefaultColors && !left && IconFactory._rightAnnotation) {
+      return IconFactory._rightAnnotation
     }
 
     const stroke = new Stroke(outline)
@@ -3756,26 +4150,26 @@ class IconFactory {
 
     if (hasDefaultColors) {
       if (left) {
-        IconFactory.$leftAnnotation = icon
+        IconFactory._leftAnnotation = icon
       } else {
-        IconFactory.$rightAnnotation = icon
+        IconFactory._rightAnnotation = icon
       }
     }
     return icon
   }
 
   /**
-   * @param {Fill} background
-   * @param {Fill} outline
-   * @return {Icon}
+   * @param {!Fill} background
+   * @param {!Fill} outline
+   * @returns {!Icon}
    */
   static createDataStore(background, outline) {
     const hasDefaultColors =
       IconFactory.equalFill(background, BPMN_CONSTANTS_DATA_STORE_DEFAULT_BACKGROUND) &&
       IconFactory.equalFill(outline, BPMN_CONSTANTS_DATA_STORE_DEFAULT_OUTLINE)
 
-    if (hasDefaultColors && IconFactory.$dataStore) {
-      return IconFactory.$dataStore
+    if (hasDefaultColors && IconFactory._dataStore) {
+      return IconFactory._dataStore
     }
 
     const stroke = new Stroke(outline)
@@ -3816,16 +4210,16 @@ class IconFactory {
     const icon = BUILDER.combineIcons(icons)
 
     if (hasDefaultColors) {
-      IconFactory.$dataStore = icon
+      IconFactory._dataStore = icon
     }
 
     return icon
   }
 
   /**
-   * @param {EdgeType} type
-   * @param {Fill} fill
-   * @return {Icon}
+   * @param {number} type
+   * @param {!Fill} fill
+   * @returns {!Icon}
    */
   static createArrowIcon(type, fill) {
     const hasDefaultColor = IconFactory.equalFill(fill, BPMN_CONSTANTS_DEFAULT_ICON_COLOR)
@@ -3891,7 +4285,14 @@ class IconFactory {
     return result
   }
 
-  /** @return {Icon} */
+  /**
+   * @param {!Stroke} stroke
+   * @param {number} x1
+   * @param {number} y1
+   * @param {number} x2
+   * @param {number} y2
+   * @returns {!Icon}
+   */
   static createLine(stroke, x1, y1, x2, y2) {
     const BUILDER = IconFactory.BUILDER
     BUILDER.stroke = stroke
@@ -3900,7 +4301,12 @@ class IconFactory {
     return BUILDER.getPathIcon()
   }
 
-  /** @return {Point[]} */
+  /**
+   * @param {number} sideCount
+   * @param {number} radius
+   * @param {number} rotation
+   * @returns {!Array.<Point>}
+   */
   static createPolygon(sideCount, radius, rotation) {
     const result = new Array(sideCount)
     const delta = (Math.PI * 2.0) / sideCount
@@ -3912,66 +4318,105 @@ class IconFactory {
     return result
   }
 
+  /**
+   * @type {number}
+   */
   static get RADIUS_TO_CORNER_OFFSET() {
     return (
-      IconFactory.$radiusToCorderOffset ||
-      (IconFactory.$radiusToCorderOffset = Math.sqrt(1.5 - Math.sqrt(2)))
+      IconFactory._radiusToCornerOffset ||
+      (IconFactory._radiusToCornerOffset = Math.sqrt(1.5 - Math.sqrt(2)))
     )
   }
 
+  /**
+   * @type {!HashMap.<number,Icon>}
+   */
   static get TASK_ICONS() {
-    return IconFactory.$taskIcons || (IconFactory.$taskIcons = new HashMap())
+    return IconFactory._taskIcons || (IconFactory._taskIcons = new HashMap())
   }
 
+  /**
+   * @type {!HashMap.<number,Icon>}
+   */
   static get LOOP_TYPES() {
-    return IconFactory.$loopTypes || (IconFactory.$loopTypes = new HashMap())
+    return IconFactory._loopTypes || (IconFactory._loopTypes = new HashMap())
   }
 
+  /**
+   * @type {!HashMap.<number,Icon>}
+   */
   static get SUB_STATES() {
-    return IconFactory.$subStates || (IconFactory.$subStates = new HashMap())
+    return IconFactory._subStates || (IconFactory._subStates = new HashMap())
   }
 
+  /**
+   * @type {!HashMap.<number,Icon>}
+   */
   static get GATEWAY_TYPES() {
-    return IconFactory.$gatewayTypes || (IconFactory.$gatewayTypes = new HashMap())
+    return IconFactory._gatewayTypes || (IconFactory._gatewayTypes = new HashMap())
   }
 
+  /**
+   * @type {!HashMap.<number,Icon>}
+   */
   static get EVENT_CHARACTERISTICS() {
-    return IconFactory.$eventCharacteristics || (IconFactory.$eventCharacteristics = new HashMap())
+    return IconFactory._eventCharacteristics || (IconFactory._eventCharacteristics = new HashMap())
   }
 
+  /**
+   * @type {!HashMap.<EventTypeWithFill,Icon>}
+   */
   static get EVENT_TYPES() {
-    return IconFactory.$eventTypes || (IconFactory.$eventTypes = new HashMap())
+    return IconFactory._eventTypes || (IconFactory._eventTypes = new HashMap())
   }
 
+  /**
+   * @type {!HashMap.<PlusData,Icon>}
+   */
   static get PLUS_ICONS() {
-    return IconFactory.$plusIcons || (IconFactory.$plusIcons = new HashMap())
+    return IconFactory._plusIcons || (IconFactory._plusIcons = new HashMap())
   }
 
+  /**
+   * @type {!HashMap.<ParticipantBandType,Icon>}
+   */
   static get PARTICIPANT_BANDS() {
-    return IconFactory.$participantBands || (IconFactory.$participantBands = new HashMap())
+    return IconFactory._participantBands || (IconFactory._participantBands = new HashMap())
   }
 
+  /**
+   * @type {!HashMap.<number,Icon>}
+   */
   static get CONVERSATIONS() {
-    return IconFactory.$conversations || (IconFactory.$conversations = new HashMap())
+    return IconFactory._conversations || (IconFactory._conversations = new HashMap())
   }
 
+  /**
+   * @type {!HashMap.<number,Icon>}
+   */
   static get ARROWS() {
-    return IconFactory.$arrows || (IconFactory.$arrows = new HashMap())
+    return IconFactory._arrows || (IconFactory._arrows = new HashMap())
   }
 
+  /**
+   * @type {!HashMap.<number,Icon>}
+   */
   static get ACTIVITY_ICONS() {
-    return IconFactory.$activityIcons || (IconFactory.$activityIcons = new HashMap())
+    return IconFactory._activityIcons || (IconFactory._activityIcons = new HashMap())
   }
 
+  /**
+   * @type {!IconBuilder}
+   */
   static get BUILDER() {
-    return IconFactory.$builder || (IconFactory.$builder = new IconBuilder())
+    return IconFactory._builder || (IconFactory._builder = new IconBuilder())
   }
 
   /**
    * Compares two {@link Fill}s for the same color value
-   * @param {Fill} fill1
-   * @param {Fill} fill2
-   * @return {boolean}
+   * @param {?Fill} fill1
+   * @param {?Fill} fill2
+   * @returns {boolean}
    */
   static equalFill(fill1, fill2) {
     if (!fill1 && !fill2) {
@@ -3997,9 +4442,9 @@ class IconFactory {
 
   /**
    * Compares two {@link SolidColorFill}s for the same color value
-   * @param {SolidColorFill} fill1
-   * @param {SolidColorFill} fill2
-   * @return {boolean}
+   * @param {!SolidColorFill} fill1
+   * @param {!SolidColorFill} fill2
+   * @returns {boolean}
    */
   static equalSolidColorFill(fill1, fill2) {
     if (fill1 === fill2) {
@@ -4018,9 +4463,9 @@ class IconFactory {
 
   /**
    * Compares two {@link LinearGradient}s for value equality
-   * @param {LinearGradient} fill1
-   * @param {LinearGradient} fill2
-   * @return {boolean}
+   * @param {!LinearGradient} fill1
+   * @param {!LinearGradient} fill2
+   * @returns {boolean}
    */
   static equalLinearGradient(fill1, fill2) {
     const sameEndPoint = fill1.endPoint.equals(fill2.endPoint)
@@ -4035,9 +4480,9 @@ class IconFactory {
 
   /**
    * Compares two {@link RadialGradient}s for value equality
-   * @param {RadialGradient} fill1
-   * @param {RadialGradient} fill2
-   * @return {boolean}
+   * @param {!RadialGradient} fill1
+   * @param {!RadialGradient} fill2
+   * @returns {boolean}
    */
   static equalRadialGradient(fill1, fill2) {
     const sameCenter = fill1.center.equals(fill2.center)
@@ -4061,9 +4506,9 @@ class IconFactory {
 
   /**
    * Compares whether both {@link GradientStop} lists are the same
-   * @param {List.<GradientStop>} stops1
-   * @param {List.<GradientStop>} stops2
-   * @return {boolean}
+   * @param {!List.<GradientStop>} stops1
+   * @param {!List.<GradientStop>} stops2
+   * @returns {boolean}
    */
   static sameGradientStops(stops1, stops2) {
     if (stops1.size !== stops2.size) {
@@ -4083,11 +4528,14 @@ class IconFactory {
 
   /**
    * Compares two {@link Stroke}s for the same fill value
-   * @param {Stroke} stroke1
-   * @param {Stroke} stroke2
-   * @return {boolean}
+   * @param {?Stroke} stroke1
+   * @param {?Stroke} stroke2
+   * @returns {boolean}
    */
   static equalStroke(stroke1, stroke2) {
+    if (!stroke1 || !stroke2) {
+      return false
+    }
     if (!stroke1.fill && !stroke2.fill) {
       return true
     }
@@ -4098,7 +4546,14 @@ class IconFactory {
   }
 }
 
-/** @return {Icon} */
+/**
+ * @param {number} radius
+ * @param {number} centerX
+ * @param {number} centerY
+ * @param {?Stroke} stroke
+ * @param {?Fill} fill
+ * @returns {!Icon}
+ */
 function createGear(radius, centerX, centerY, stroke, fill) {
   const BUILDER = IconFactory.BUILDER
   BUILDER.stroke = stroke
@@ -4125,7 +4580,12 @@ function createGear(radius, centerX, centerY, stroke, fill) {
   return BUILDER.getPathIcon()
 }
 
-/** @return {Icon} */
+/**
+ * @param {number} size
+ * @param {!Stroke} stroke
+ * @param {!Fill} fill
+ * @returns {!Icon}
+ */
 function createPlusIcon(size, stroke, fill) {
   const BUILDER = IconFactory.BUILDER
   const plusData = new PlusData(size, stroke, fill)
@@ -4162,15 +4622,19 @@ class ParticipantList extends BaseClass(IList) {
   constructor() {
     super()
     this.innerList = new List()
-    this.$modCount = 0
+    this._modCount = 0
   }
 
-  /** @type {number} */
+  /**
+   * @type {number}
+   */
   get modCount() {
-    return this.$modCount + this.getParticipantModCount()
+    return this._modCount + this.getParticipantModCount()
   }
 
-  /** @return {number} */
+  /**
+   * @returns {number}
+   */
   getHeight() {
     let height = 0
     this.innerList.forEach(participant => {
@@ -4180,7 +4644,7 @@ class ParticipantList extends BaseClass(IList) {
   }
 
   /**
-   * @return {number}
+   * @returns {number}
    */
   getParticipantModCount() {
     let participantCount = 0
@@ -4190,66 +4654,102 @@ class ParticipantList extends BaseClass(IList) {
     return participantCount
   }
 
-  /** @return {IEnumerator.<Participant>} */
+  /**
+   * @returns {!IEnumerator.<Participant>}
+   */
   getEnumerator() {
     return this.innerList.getEnumerator()
   }
 
+  /**
+   * @param {!Participant} item
+   */
   add(item) {
-    this.$modCount++
+    this._modCount++
     this.innerList.add(item)
   }
 
   clear() {
-    this.$modCount += this.getParticipantModCount() + 1
+    this._modCount += this.getParticipantModCount() + 1
     this.innerList.clear()
   }
 
-  /** @return {boolean} */
+  /**
+   * @param {!Participant} item
+   * @returns {boolean}
+   */
   includes(item) {
     return this.innerList.includes(item)
   }
 
+  /**
+   * @param {!Array.<Participant>} array
+   * @param {number} arrayIndex
+   */
   copyTo(array, arrayIndex) {
     this.innerList.copyTo(array, arrayIndex)
   }
 
-  /** @return {boolean} */
+  /**
+   * @param {!Participant} item
+   * @returns {boolean}
+   */
   remove(item) {
-    this.$modCount += item.modCount + 1
+    this._modCount += item.modCount + 1
     return this.innerList.remove(item)
   }
 
-  /** @type {number} */
+  /**
+   * @type {number}
+   */
   get size() {
     return this.innerList.size
   }
 
-  /** @type {boolean} */
+  /**
+   * @type {boolean}
+   */
   get isReadOnly() {
     return this.innerList.isReadOnly
   }
 
-  /** @return {number} */
+  /**
+   * @param {!Participant} item
+   * @returns {number}
+   */
   indexOf(item) {
     return this.innerList.indexOf(item)
   }
 
+  /**
+   * @param {number} index
+   * @param {!Participant} item
+   */
   insert(index, item) {
-    this.$modCount++
+    this._modCount++
     this.innerList.insert(index, item)
   }
 
+  /**
+   * @param {number} index
+   */
   removeAt(index) {
-    this.$modCount += this.innerList.getElementAt(index).modCount + 1
+    this._modCount += this.innerList.elementAt(index).modCount + 1
     this.innerList.removeAt(index)
   }
 
-  /** @return {Participant} */
+  /**
+   * @param {number} index
+   * @returns {!Participant}
+   */
   get(index) {
     return this.innerList.get(index)
   }
 
+  /**
+   * @param {number} index
+   * @param {!Participant} value
+   */
   set(index, value) {
     this.innerList.set(index, value)
   }
@@ -4259,104 +4759,97 @@ class ParticipantList extends BaseClass(IList) {
  * An {@link INodeStyle} implementation representing an Choreography according to the BPMN.
  */
 export class ChoreographyNodeStyle extends BpmnNodeStyle {
-  /**
-   * Creates a new instance.
-   */
   constructor() {
     super()
-
-    this.$background = BPMN_CONSTANTS_CHOREOGRAPHY_DEFAULT_BACKGROUND
-    this.$outline = BPMN_CONSTANTS_CHOREOGRAPHY_DEFAULT_OUTLINE
-    this.$iconColor = BPMN_CONSTANTS_CHOREOGRAPHY_DEFAULT_ICON_COLOR
-    this.$initiatingColor = BPMN_CONSTANTS_CHOREOGRAPHY_DEFAULT_INITIATING_COLOR
-    this.$responseColor = BPMN_CONSTANTS_CHOREOGRAPHY_DEFAULT_RESPONSE_COLOR
-
-    this.$messageOutline = null
-    this.$messageStroke = null
-    this.$messageLineStroke = null
-    this.messageOutline = BPMN_CONSTANTS_CHOREOGRAPHY_DEFAULT_MESSAGE_OUTLINE
-
-    this.$loopCharacteristic = LoopCharacteristic.NONE
-    this.$subState = SubState.NONE
-    this.$topParticipants = new ParticipantList()
-    this.$bottomParticipants = new ParticipantList()
-    this.$initiatingMessage = false
-    this.$responseMessage = false
-    this.$initiatingAtTop = true
-    this.$insets = new Insets(5)
-
+    this._background = BPMN_CONSTANTS_CHOREOGRAPHY_DEFAULT_BACKGROUND
+    this._outline = BPMN_CONSTANTS_CHOREOGRAPHY_DEFAULT_OUTLINE
+    this._iconColor = BPMN_CONSTANTS_CHOREOGRAPHY_DEFAULT_ICON_COLOR
+    this._initiatingColor = BPMN_CONSTANTS_CHOREOGRAPHY_DEFAULT_INITIATING_COLOR
+    this._responseColor = BPMN_CONSTANTS_CHOREOGRAPHY_DEFAULT_RESPONSE_COLOR
+    this._messageOutline = null
+    this._messageStroke = null
+    this._messageLineStroke = null
+    this._loopCharacteristic = LoopCharacteristic.NONE
+    this._subState = SubState.NONE
+    this._topParticipants = new ParticipantList()
+    this._bottomParticipants = new ParticipantList()
+    this._initiatingMessage = false
+    this._responseMessage = false
+    this._initiatingAtTop = true
+    this._insets = new Insets(5)
+    this._initiatingMessageIcon = null
+    this._responseMessageIcon = null
+    this._bottomResponseMessageIcon = null
+    this._messageLineIcon = null
+    this._taskBandBackgroundIcon = null
+    this._topInitiatingMessageIcon = null
+    this._bottomInitiatingMessageIcon = null
+    this._multiInstanceIcon = null
+    this._topResponseMessageIcon = null
+    this._type = null
     this.outlineIcon = null
     this.loopIcon = null
-
-    this.$initiatingMessageIcon = null
-    this.$responseMessageIcon = null
-    this.$bottomResponseMessageIcon = null
-    this.$messageLineIcon = null
-    this.$taskBandBackgroundIcon = null
-    this.$topInitiatingMessageIcon = null
-    this.$bottomInitiatingMessageIcon = null
-    this.$multiInstanceIcon = null
-
+    this.messageOutline = BPMN_CONSTANTS_CHOREOGRAPHY_DEFAULT_MESSAGE_OUTLINE
     this.type = ChoreographyType.TASK
     this.minimumSize = new Size(30, 30)
   }
 
   /**
    * Gets the choreography type of this style.
-   * @type {ChoreographyType}
+   * @type {number}
    */
   get type() {
-    return this.$type
+    return this._type
   }
 
   /**
    * Sets the choreography type of this style.
-   * @type {ChoreographyType}
+   * @type {number}
    */
   set type(value) {
-    if (this.$type !== value || this.outlineIcon === null) {
+    if (this._type !== value || this.outlineIcon === null) {
       this.modCount++
-      this.$type = value
+      this._type = value
       this.updateOutlineIcon()
     }
   }
 
   /**
    * Gets the loop characteristic of this style.
-   * @type {LoopCharacteristic}
+   * @type {number}
    */
   get loopCharacteristic() {
-    return this.$loopCharacteristic
+    return this._loopCharacteristic
   }
 
   /**
    * Sets the loop characteristic of this style.
-   * @type {LoopCharacteristic}
+   * @type {number}
    */
   set loopCharacteristic(value) {
-    if (this.$loopCharacteristic !== value) {
+    if (this._loopCharacteristic !== value) {
       this.modCount++
-      this.$loopCharacteristic = value
+      this._loopCharacteristic = value
       this.updateLoopIcon()
     }
   }
 
   /**
    * Gets the sub state of this style.
-   * @type {SubState}
+   * @type {number}
    */
   get subState() {
-    return this.$subState
+    return this._subState
   }
 
   /**
    * Sets the sub state of this style.
-   * @type {SubState}
+   * @type {number}
    */
   set subState(value) {
-    if (this.$subState !== value) {
+    if (this._subState !== value) {
       this.modCount++
-      this.$subState = value
+      this._subState = value
       this.updateTaskBandIcon()
     }
   }
@@ -4366,7 +4859,7 @@ export class ChoreographyNodeStyle extends BpmnNodeStyle {
    * @type {boolean}
    */
   get initiatingMessage() {
-    return this.$initiatingMessage
+    return this._initiatingMessage
   }
 
   /**
@@ -4374,9 +4867,9 @@ export class ChoreographyNodeStyle extends BpmnNodeStyle {
    * @type {boolean}
    */
   set initiatingMessage(value) {
-    if (this.$initiatingMessage !== value) {
+    if (this._initiatingMessage !== value) {
       this.modCount++
-      this.$initiatingMessage = value
+      this._initiatingMessage = value
     }
   }
 
@@ -4385,7 +4878,7 @@ export class ChoreographyNodeStyle extends BpmnNodeStyle {
    * @type {boolean}
    */
   get responseMessage() {
-    return this.$responseMessage
+    return this._responseMessage
   }
 
   /**
@@ -4393,9 +4886,9 @@ export class ChoreographyNodeStyle extends BpmnNodeStyle {
    * @type {boolean}
    */
   set responseMessage(value) {
-    if (this.$responseMessage !== value) {
+    if (this._responseMessage !== value) {
       this.modCount++
-      this.$responseMessage = value
+      this._responseMessage = value
     }
   }
 
@@ -4408,7 +4901,7 @@ export class ChoreographyNodeStyle extends BpmnNodeStyle {
    * @type {boolean}
    */
   get initiatingAtTop() {
-    return this.$initiatingAtTop
+    return this._initiatingAtTop
   }
 
   /**
@@ -4420,8 +4913,8 @@ export class ChoreographyNodeStyle extends BpmnNodeStyle {
    * @type {boolean}
    */
   set initiatingAtTop(value) {
-    if (this.$initiatingAtTop !== value) {
-      this.$initiatingAtTop = value
+    if (this._initiatingAtTop !== value) {
+      this._initiatingAtTop = value
       if (this.initiatingMessage || this.responseMessage) {
         this.modCount++
       }
@@ -4430,76 +4923,76 @@ export class ChoreographyNodeStyle extends BpmnNodeStyle {
 
   /**
    * Gets the list of {@link Participant}s at the top of the node, ordered from top to bottom.
-   * @type {IList.<Participant>}
+   * @type {!ParticipantList}
    */
   get topParticipants() {
-    return this.$topParticipants
+    return this._topParticipants
   }
 
   /**
    * Gets the list of {@link Participant}s at the bottom of the node, ordered from bottom to top.
-   * @type {IList.<Participant>}
+   * @type {!ParticipantList}
    */
   get bottomParticipants() {
-    return this.$bottomParticipants
+    return this._bottomParticipants
   }
 
   /**
    * Gets the background color of the choreography.
-   * @return {Fill}
+   * @type {!Fill}
    */
   get background() {
-    return this.$background
+    return this._background
   }
 
   /**
    * Sets the background color of the choreography.
-   * @param {Fill} value
+   * @type {!Fill}
    */
   set background(value) {
-    if (this.$background !== value) {
+    if (this._background !== value) {
       this.modCount++
-      this.$background = value
+      this._background = value
       this.updateTaskBandIcon()
     }
   }
 
   /**
    * Gets the outline color of the choreography.
-   * @return {Fill}
+   * @type {!Fill}
    */
   get outline() {
-    return this.$outline
+    return this._outline
   }
 
   /**
    * Sets the outline color of the choreography.
-   * @param {Fill} value
+   * @type {!Fill}
    */
   set outline(value) {
-    if (this.$outline !== value) {
+    if (this._outline !== value) {
       this.modCount++
-      this.$outline = value
+      this._outline = value
       this.updateOutlineIcon()
     }
   }
 
   /**
    * Gets the primary color for icons and markers.
-   * @return {Fill}
+   * @type {!Fill}
    */
   get iconColor() {
-    return this.$iconColor
+    return this._iconColor
   }
 
   /**
    * Sets the primary color for icons and markers.
-   * @param {Fill} value
+   * @type {!Fill}
    */
   set iconColor(value) {
-    if (this.$iconColor !== value) {
+    if (this._iconColor !== value) {
       this.modCount++
-      this.$iconColor = value
+      this._iconColor = value
       this.updateMultiInstanceIcon()
       this.updateLoopIcon()
       this.updateTaskBandIcon()
@@ -4508,69 +5001,69 @@ export class ChoreographyNodeStyle extends BpmnNodeStyle {
 
   /**
    * Gets the color for initiating participants and messages.
-   * @return {Fill}
+   * @type {!Fill}
    */
   get initiatingColor() {
-    return this.$initiatingColor
+    return this._initiatingColor
   }
 
   /**
    * Sets the color for initiating participants and messages.
-   * @param {Fill} value
+   * @type {!Fill}
    */
   set initiatingColor(value) {
-    if (this.$initiatingColor !== value) {
+    if (this._initiatingColor !== value) {
       this.modCount++
-      this.$initiatingColor = value
+      this._initiatingColor = value
     }
   }
 
   /**
    * Gets the primary color for responding participants and messages.
-   * @return {Fill}
+   * @type {!Fill}
    */
   get responseColor() {
-    return this.$responseColor
+    return this._responseColor
   }
 
   /**
    * Sets the primary color for responding participants and messages.
-   * @param {Fill} value
+   * @type {!Fill}
    */
   set responseColor(value) {
-    if (this.$responseColor !== value) {
+    if (this._responseColor !== value) {
       this.modCount++
-      this.$responseColor = value
+      this._responseColor = value
     }
   }
 
   /**
    * Gets the outline color for messages.
-   * @return {Fill}
+   * @type {!Fill}
    */
   get messageOutline() {
-    return this.$messageOutline
+    return this._messageOutline
   }
 
   /**
    * Sets the outline color for messages.
    * This also influences the color of the line to the message.
-   * @param {Fill} value
+   * @type {!Fill}
    */
   set messageOutline(value) {
-    if (this.$messageOutline !== value) {
+    if (this._messageOutline !== value) {
       this.modCount++
-      this.$messageOutline = value
-      const messageStroke = new Stroke(this.$messageOutline)
+      this._messageOutline = value
+      const messageStroke = new Stroke(this._messageOutline)
       messageStroke.freeze()
-      this.$messageStroke = messageStroke
+      this._messageStroke = messageStroke
       const messageLineStroke = new Stroke({
-        fill: this.$messageOutline,
+        fill: this._messageOutline,
         dashStyle: DashStyle.DOT,
         lineCap: LineCap.ROUND
       })
       messageLineStroke.freeze()
-      this.$messageLineStroke = messageLineStroke
+      this._messageLineStroke = messageLineStroke
       this.updateMessageLineIcon()
       this.updateInitiatingMessageIcon()
       this.updateResponseMessageIcon()
@@ -4584,10 +5077,10 @@ export class ChoreographyNodeStyle extends BpmnNodeStyle {
    * {@link INodeStyleRenderer#getContext context lookup}.
    * @return An insets object that describes the insets of the task name band.
    * @see {@link INodeInsetsProvider}
-   * @type {Insets}
+   * @type {!Insets}
    */
   get insets() {
-    return this.$insets
+    return this._insets
   }
 
   /**
@@ -4596,10 +5089,10 @@ export class ChoreographyNodeStyle extends BpmnNodeStyle {
    * and returned via an {@link INodeInsetsProvider} if such an instance is queried through the
    * {@link INodeStyleRenderer#getContext context lookup}.
    * @see {@link INodeInsetsProvider}
-   * @type {Insets}
+   * @type {!Insets}
    */
   set insets(value) {
-    this.$insets = value
+    this._insets = value
   }
 
   /**
@@ -4623,15 +5116,15 @@ export class ChoreographyNodeStyle extends BpmnNodeStyle {
   }
 
   /**
-   * @return {Stroke}
+   * @type {!Stroke}
    */
   get messageStroke() {
-    return this.$messageStroke
+    return this._messageStroke
   }
 
   updateOutlineIcon() {
-    this.outlineIcon = IconFactory.createChoreography(this.$type, this.outline)
-    if (this.$type === ChoreographyType.CALL) {
+    this.outlineIcon = IconFactory.createChoreography(this._type, this.outline)
+    if (this._type === ChoreographyType.CALL) {
       this.outlineIcon = new PlacedIcon(
         this.outlineIcon,
         BPMN_CONSTANTS_PLACEMENTS_THICK_LINE,
@@ -4641,16 +5134,16 @@ export class ChoreographyNodeStyle extends BpmnNodeStyle {
   }
 
   updateTaskBandIcon() {
-    this.$taskBandBackgroundIcon = IconFactory.createChoreographyTaskBand(this.background)
+    this._taskBandBackgroundIcon = IconFactory.createChoreographyTaskBand(this.background)
   }
 
   updateMessageLineIcon() {
-    this.$messageLineIcon = IconFactory.createLine(this.$messageLineStroke, 0.5, 0, 0.5, 1)
+    this._messageLineIcon = IconFactory.createLine(this._messageLineStroke, 0.5, 0, 0.5, 1)
   }
 
   updateInitiatingMessageIcon() {
-    this.$initiatingMessageIcon = IconFactory.createMessage(
-      this.$messageStroke,
+    this._initiatingMessageIcon = IconFactory.createMessage(
+      this._messageStroke,
       this.initiatingColor
     )
     this.updateMessageLineIcon()
@@ -4659,16 +5152,16 @@ export class ChoreographyNodeStyle extends BpmnNodeStyle {
   }
 
   updateTopInitiatingMessageIcon() {
-    this.$topInitiatingMessageIcon = IconFactory.createCombinedIcon(
+    this._topInitiatingMessageIcon = IconFactory.createCombinedIcon(
       new List(
         List.fromArray([
           IconFactory.createPlacedIcon(
-            this.$messageLineIcon,
+            this._messageLineIcon,
             ExteriorLabelModel.NORTH,
             new Size(ChoreographyNodeStyle.MESSAGE_DISTANCE, ChoreographyNodeStyle.MESSAGE_DISTANCE)
           ),
           IconFactory.createPlacedIcon(
-            this.$initiatingMessageIcon,
+            this._initiatingMessageIcon,
             BPMN_CONSTANTS_PLACEMENTS_CHOREOGRAPHY_TOP_MESSAGE,
             BPMN_CONSTANTS_SIZES_MESSAGE
           )
@@ -4678,16 +5171,16 @@ export class ChoreographyNodeStyle extends BpmnNodeStyle {
   }
 
   updateBottomInitiatingMessageIcon() {
-    this.$bottomInitiatingMessageIcon = IconFactory.createCombinedIcon(
+    this._bottomInitiatingMessageIcon = IconFactory.createCombinedIcon(
       new List(
         List.fromArray([
           IconFactory.createPlacedIcon(
-            this.$messageLineIcon,
+            this._messageLineIcon,
             ExteriorLabelModel.SOUTH,
             new Size(ChoreographyNodeStyle.MESSAGE_DISTANCE, ChoreographyNodeStyle.MESSAGE_DISTANCE)
           ),
           IconFactory.createPlacedIcon(
-            this.$initiatingMessageIcon,
+            this._initiatingMessageIcon,
             BPMN_CONSTANTS_PLACEMENTS_CHOREOGRAPHY_BOTTOM_MESSAGE,
             BPMN_CONSTANTS_SIZES_MESSAGE
           )
@@ -4697,23 +5190,23 @@ export class ChoreographyNodeStyle extends BpmnNodeStyle {
   }
 
   updateResponseMessageIcon() {
-    this.$responseMessageIcon = IconFactory.createMessage(this.$messageStroke, this.responseColor)
+    this._responseMessageIcon = IconFactory.createMessage(this._messageStroke, this.responseColor)
     this.updateMessageLineIcon()
     this.updateTopResponseMessageIcon()
     this.updateBottomResponseMessageIcon()
   }
 
   updateTopResponseMessageIcon() {
-    this.$topResponseMessageIcon = IconFactory.createCombinedIcon(
+    this._topResponseMessageIcon = IconFactory.createCombinedIcon(
       new List(
         List.fromArray([
           IconFactory.createPlacedIcon(
-            this.$messageLineIcon,
+            this._messageLineIcon,
             ExteriorLabelModel.NORTH,
             new Size(ChoreographyNodeStyle.MESSAGE_DISTANCE, ChoreographyNodeStyle.MESSAGE_DISTANCE)
           ),
           IconFactory.createPlacedIcon(
-            this.$responseMessageIcon,
+            this._responseMessageIcon,
             BPMN_CONSTANTS_PLACEMENTS_CHOREOGRAPHY_TOP_MESSAGE,
             BPMN_CONSTANTS_SIZES_MESSAGE
           )
@@ -4723,16 +5216,16 @@ export class ChoreographyNodeStyle extends BpmnNodeStyle {
   }
 
   updateBottomResponseMessageIcon() {
-    this.$bottomResponseMessageIcon = IconFactory.createCombinedIcon(
+    this._bottomResponseMessageIcon = IconFactory.createCombinedIcon(
       new List(
         List.fromArray([
           IconFactory.createPlacedIcon(
-            this.$messageLineIcon,
+            this._messageLineIcon,
             ExteriorLabelModel.SOUTH,
             new Size(ChoreographyNodeStyle.MESSAGE_DISTANCE, ChoreographyNodeStyle.MESSAGE_DISTANCE)
           ),
           IconFactory.createPlacedIcon(
-            this.$responseMessageIcon,
+            this._responseMessageIcon,
             BPMN_CONSTANTS_PLACEMENTS_CHOREOGRAPHY_BOTTOM_MESSAGE,
             BPMN_CONSTANTS_SIZES_MESSAGE
           )
@@ -4742,7 +5235,7 @@ export class ChoreographyNodeStyle extends BpmnNodeStyle {
   }
 
   updateMultiInstanceIcon() {
-    this.$multiInstanceIcon = IconFactory.createPlacedIcon(
+    this._multiInstanceIcon = IconFactory.createPlacedIcon(
       IconFactory.createLoopCharacteristic(LoopCharacteristic.PARALLEL, this.iconColor),
       BPMN_CONSTANTS_PLACEMENTS_CHOREOGRAPHY_MARKER,
       BPMN_CONSTANTS_SIZES_MARKER
@@ -4755,9 +5248,9 @@ export class ChoreographyNodeStyle extends BpmnNodeStyle {
 
   /**
    * Callback that creates the visual.
-   * @param {IRenderContext} renderContext The render context.
-   * @param {INode} node The node to which this style instance is assigned.
-   * @return {Visual} The visual.
+   * @param {!IRenderContext} renderContext The render context.
+   * @param {!INode} node The node to which this style instance is assigned.
+   * @returns {!SvgVisual} The visual.
    * @see {@link NodeStyleBase#updateVisual}
    */
   createVisual(renderContext, node) {
@@ -4766,13 +5259,15 @@ export class ChoreographyNodeStyle extends BpmnNodeStyle {
 
     // outline
     this.outlineIcon.setBounds(new Rect(Point.ORIGIN, bounds.size))
-    container.add(this.outlineIcon.createVisual(renderContext))
+    const outlineVisual = this.outlineIcon.createVisual(renderContext)
+    container.add(outlineVisual)
 
     // task band
     const taskBandContainer = new SvgVisualGroup()
     const bandIcon = this.createTaskBandIcon(node)
     bandIcon.setBounds(this.getRelativeTaskNameBandBounds(node))
-    taskBandContainer.add(bandIcon.createVisual(renderContext))
+    const bandIconVisual = bandIcon.createVisual(renderContext)
+    taskBandContainer.add(bandIconVisual)
     taskBandContainer['render-data-cache'] = bandIcon
     container.children.add(taskBandContainer)
 
@@ -4780,12 +5275,13 @@ export class ChoreographyNodeStyle extends BpmnNodeStyle {
     // top participants
     let topOffset = 0
     let first = true
-    this.$topParticipants.forEach(participant => {
+    this._topParticipants.forEach(participant => {
       const participantIcon = this.createParticipantIcon(participant, true, first)
       tpi.add(participantIcon)
       const height = participant.getSize()
       participantIcon.setBounds(new Rect(0, topOffset, bounds.width, height))
-      container.add(participantIcon.createVisual(renderContext))
+      const participantIconVisual = participantIcon.createVisual(renderContext)
+      container.add(participantIconVisual)
       topOffset += height
       first = false
     })
@@ -4794,13 +5290,14 @@ export class ChoreographyNodeStyle extends BpmnNodeStyle {
     // bottom participants
     let bottomOffset = bounds.height
     first = true
-    this.$bottomParticipants.forEach(participant => {
+    this._bottomParticipants.forEach(participant => {
       const participantIcon = this.createParticipantIcon(participant, false, first)
       bpi.add(participantIcon)
       const height = participant.getSize()
       bottomOffset -= height
       participantIcon.setBounds(new Rect(0, bottomOffset, bounds.width, height))
-      container.add(participantIcon.createVisual(renderContext))
+      const participantIconVisual = participantIcon.createVisual(renderContext)
+      container.add(participantIconVisual)
       first = false
     })
 
@@ -4808,27 +5305,28 @@ export class ChoreographyNodeStyle extends BpmnNodeStyle {
     if (this.initiatingMessage) {
       this.updateInitiatingMessageIcon()
       const initiatingMessageIcon = this.initiatingAtTop
-        ? this.$topInitiatingMessageIcon
-        : this.$bottomInitiatingMessageIcon
+        ? this._topInitiatingMessageIcon
+        : this._bottomInitiatingMessageIcon
       initiatingMessageIcon.setBounds(new Rect(0, 0, bounds.width, bounds.height))
-      container.add(initiatingMessageIcon.createVisual(renderContext))
+      const initiatingMessageIconVisual = initiatingMessageIcon.createVisual(renderContext)
+      container.add(initiatingMessageIconVisual)
     }
     if (this.responseMessage) {
       this.updateResponseMessageIcon()
       const responseMessageIcon = this.initiatingAtTop
-        ? this.$bottomResponseMessageIcon
-        : this.$topResponseMessageIcon
+        ? this._bottomResponseMessageIcon
+        : this._topResponseMessageIcon
       responseMessageIcon.setBounds(new Rect(0, 0, bounds.width, bounds.height))
-      container.add(responseMessageIcon.createVisual(renderContext))
+      const responseMessageIconVisual = responseMessageIcon.createVisual(renderContext)
+      container.add(responseMessageIconVisual)
     }
 
     const transform = new Matrix()
     transform.translate(node.layout.topLeft)
     container.transform = transform
-
     container['render-data-cache'] = {
       bounds: bounds,
-      modCount: this.modCount + this.$topParticipants.modCount + this.$bottomParticipants.modCount,
+      modCount: this.modCount + this._topParticipants.modCount + this._bottomParticipants.modCount,
       topParticipantIcons: tpi,
       bottomParticipantIcons: bpi
     }
@@ -4837,17 +5335,20 @@ export class ChoreographyNodeStyle extends BpmnNodeStyle {
 
   /**
    * Callback that updates the visual previously created by {@link NodeStyleBase#createVisual}.
-   * @param {IRenderContext} renderContext The render context.
-   * @param {Visual} oldVisual The visual that should be updated.
-   * @param {INode} node The node to which this style instance is assigned.
-   * @return {Visual} The visual.
+   * @param {!IRenderContext} renderContext The render context.
+   * @param {!SvgVisual} oldVisual The visual that should be updated.
+   * @param {!INode} node The node to which this style instance is assigned.
+   * @returns {!SvgVisual} The visual.
    * @see {@link NodeStyleBase#createVisual}
    */
   updateVisual(renderContext, oldVisual, node) {
     const container = oldVisual instanceof SvgVisualGroup ? oldVisual : null
+    if (!container) {
+      this.createVisual(renderContext, node)
+    }
     const cache = container !== null ? container['render-data-cache'] : null
     const currentModCount =
-      this.modCount + this.$topParticipants.modCount + this.$bottomParticipants.modCount
+      this.modCount + this._topParticipants.modCount + this._bottomParticipants.modCount
     if (cache === null || cache.modCount !== currentModCount) {
       return this.createVisual(renderContext, node)
     }
@@ -4875,8 +5376,8 @@ export class ChoreographyNodeStyle extends BpmnNodeStyle {
 
       // top participants
       let topOffset = 0
-      for (let i = 0; i < this.$topParticipants.size; i++) {
-        const participant = this.$topParticipants.elementAt(i)
+      for (let i = 0; i < this._topParticipants.size; i++) {
+        const participant = this._topParticipants.elementAt(i)
         const participantIcon = cache.topParticipantIcons.elementAt(i)
         const height = participant.getSize()
         participantIcon.setBounds(new Rect(0, topOffset, newBounds.width, height))
@@ -4886,8 +5387,8 @@ export class ChoreographyNodeStyle extends BpmnNodeStyle {
 
       // bottom participants
       let bottomOffset = newBounds.height
-      for (let i = 0; i < this.$bottomParticipants.size; i++) {
-        const participant = this.$bottomParticipants.elementAt(i)
+      for (let i = 0; i < this._bottomParticipants.size; i++) {
+        const participant = this._bottomParticipants.elementAt(i)
         const participantIcon = cache.bottomParticipantIcons.elementAt(i)
         const height = participant.getSize()
         bottomOffset -= height
@@ -4898,15 +5399,15 @@ export class ChoreographyNodeStyle extends BpmnNodeStyle {
       // messages
       if (this.initiatingMessage) {
         const initiatingMessageIcon = this.initiatingAtTop
-          ? this.$topInitiatingMessageIcon
-          : this.$bottomInitiatingMessageIcon
+          ? this._topInitiatingMessageIcon
+          : this._bottomInitiatingMessageIcon
         initiatingMessageIcon.setBounds(new Rect(0, 0, newBounds.width, newBounds.height))
         updateChildVisual(container, childIndex++, initiatingMessageIcon, renderContext)
       }
       if (this.responseMessage) {
         const responseMessageIcon = this.initiatingAtTop
-          ? this.$bottomResponseMessageIcon
-          : this.$topResponseMessageIcon
+          ? this._bottomResponseMessageIcon
+          : this._topResponseMessageIcon
         responseMessageIcon.setBounds(new Rect(0, 0, newBounds.width, newBounds.height))
         updateChildVisual(container, childIndex++, responseMessageIcon, renderContext)
       }
@@ -4915,7 +5416,6 @@ export class ChoreographyNodeStyle extends BpmnNodeStyle {
     const transform = new Matrix()
     transform.translate(node.layout.topLeft)
     container.transform = transform
-
     container['render-data-cache'] = {
       bounds: newBounds,
       modCount: currentModCount,
@@ -4928,13 +5428,14 @@ export class ChoreographyNodeStyle extends BpmnNodeStyle {
   /**
    * Creates the {@link Icon} which visualizes the task band at the center of a
    * {@link ChoreographyNodeStyle}
-   * @return {Icon}
+   * @param {!INode} node
+   * @returns {!Icon}
    */
   createTaskBandIcon(node) {
-    if (!this.$taskBandBackgroundIcon) {
+    if (!this._taskBandBackgroundIcon) {
       this.updateTaskBandIcon()
     }
-    let /** Icon */ subStateIcon = null
+    let subStateIcon = null
     if (this.subState !== SubState.NONE) {
       subStateIcon =
         this.subState === SubState.DYNAMIC
@@ -4942,7 +5443,7 @@ export class ChoreographyNodeStyle extends BpmnNodeStyle {
           : IconFactory.createStaticSubState(this.subState, this.iconColor)
     }
 
-    let /** Icon */ markerIcon = null
+    let markerIcon = null
     if (this.loopIcon && subStateIcon) {
       markerIcon = IconFactory.createLineUpIcon(
         List.fromArray([this.loopIcon, subStateIcon]),
@@ -4961,19 +5462,22 @@ export class ChoreographyNodeStyle extends BpmnNodeStyle {
         BPMN_CONSTANTS_SIZES_MARKER
       )
       return IconFactory.createCombinedIcon(
-        new List(List.fromArray([this.$taskBandBackgroundIcon, placedMarkers]))
+        new List(List.fromArray([this._taskBandBackgroundIcon, placedMarkers]))
       )
     }
-    return this.$taskBandBackgroundIcon
+    return this._taskBandBackgroundIcon
   }
 
   /**
    * Creates the {@link Icon} which visualizes a participant band at the top or bottom of a {@link
    * ChoreographyNodeStyle}
-   * @return {Icon}
+   * @param {!Participant} participant
+   * @param {boolean} top
+   * @param {boolean} isFirst
+   * @returns {!Icon}
    */
   createParticipantIcon(participant, top, isFirst) {
-    const isInitializing = isFirst && top ^ !this.initiatingAtTop
+    const isInitializing = isFirst && top !== !this.initiatingAtTop
 
     const radius = BPMN_CONSTANTS_CHOREOGRAPHY_CORNER_RADIUS
     let icon = IconFactory.createChoreographyParticipant(
@@ -4983,19 +5487,19 @@ export class ChoreographyNodeStyle extends BpmnNodeStyle {
       !top && isFirst ? radius : 0
     )
     if (participant.multiInstance) {
-      if (!this.$multiInstanceIcon) {
+      if (!this._multiInstanceIcon) {
         this.updateMultiInstanceIcon()
       }
-      icon = IconFactory.createCombinedIcon(List.fromArray([icon, this.$multiInstanceIcon]))
+      icon = IconFactory.createCombinedIcon(List.fromArray([icon, this._multiInstanceIcon]))
     }
     return icon
   }
 
   /**
    * Returns the participant at the specified location.
-   * @param {INode} node The node whose bounds shall be used.
-   * @param {Point} location The location of the participant.
-   * @return {Participant}
+   * @param {!INode} node The node whose bounds shall be used.
+   * @param {!Point} location The location of the participant.
+   * @returns {?Participant}
    */
   getParticipant(node, location) {
     if (!node.layout.contains(location)) {
@@ -5029,26 +5533,26 @@ export class ChoreographyNodeStyle extends BpmnNodeStyle {
 
   /**
    * Returns the bounds of the specified participant band.
-   * @param {INode} owner The node whose bounds shall be used.
+   * @param {!INode} owner The node whose bounds shall be used.
    * @param {number} index The index of the participant in its list.
    * @param {boolean} top Whether the top of bottom list of participants shall be used.
-   * @return {Rect}
+   * @returns {!Rect}
    */
   getParticipantBandBounds(owner, index, top) {
     const width = owner.layout.width
-    if (top && index <= this.$topParticipants.size) {
+    if (top && index <= this._topParticipants.size) {
       let yOffset = 0
-      for (let i = 0; i < this.$topParticipants.size; i++) {
-        const topParticipant = this.$topParticipants.get(i)
+      for (let i = 0; i < this._topParticipants.size; i++) {
+        const topParticipant = this._topParticipants.get(i)
         if (index === i) {
           return new Rect(owner.layout.x, owner.layout.y + yOffset, width, topParticipant.getSize())
         }
         yOffset += topParticipant.getSize()
       }
-    } else if (!top && index < this.$bottomParticipants.size) {
+    } else if (!top && index < this._bottomParticipants.size) {
       let yOffset = owner.layout.height
-      for (let i = 0; i < this.$bottomParticipants.size; i++) {
-        const bottomParticipant = this.$bottomParticipants.get(i)
+      for (let i = 0; i < this._bottomParticipants.size; i++) {
+        const bottomParticipant = this._bottomParticipants.get(i)
         yOffset -= bottomParticipant.getSize()
         if (index === i) {
           return new Rect(
@@ -5065,8 +5569,8 @@ export class ChoreographyNodeStyle extends BpmnNodeStyle {
 
   /**
    * Returns the bounds of the task name band.
-   * @param {INode} owner The node whose bounds shall be used.
-   * @return {Rect}
+   * @param {!INode} owner The node whose bounds shall be used.
+   * @returns {!Rect}
    */
   getTaskNameBandBounds(owner) {
     return this.getRelativeTaskNameBandBounds(owner).getTranslated(owner.layout.topLeft)
@@ -5074,15 +5578,16 @@ export class ChoreographyNodeStyle extends BpmnNodeStyle {
 
   /**
    * Returns the bounds of the task name band for a node at the origin location (0,0).
-   * @return {Rect}
+   * @param {!INode} owner
+   * @returns {!Rect}
    */
   getRelativeTaskNameBandBounds(owner) {
-    const topHeight = this.$topParticipants.getHeight()
+    const topHeight = this._topParticipants.getHeight()
     return new Rect(
       0,
       topHeight,
       owner.layout.width,
-      Math.max(0, owner.layout.height - topHeight - this.$bottomParticipants.getHeight())
+      Math.max(0, owner.layout.height - topHeight - this._bottomParticipants.getHeight())
     )
   }
 
@@ -5092,8 +5597,8 @@ export class ChoreographyNodeStyle extends BpmnNodeStyle {
    * the {@link INode#layout} depicts the outline.
    * Implementing this method influences the behavior of {@link NodeStyleBase#isInside}
    * and {@link NodeStyleBase#getIntersection} since the default implementations delegate to it.
-   * @param {INode} node The node to which this style instance is assigned.
-   * @return {GeneralPath} The outline of the visual representation or <code>null</code>.
+   * @param {!INode} node The node to which this style instance is assigned.
+   * @returns {!GeneralPath} The outline of the visual representation or <code>null</code>.
    */
   getOutline(node) {
     ChoreographyNodeStyle.SHAPE_NODE_STYLE.renderer.getShapeGeometry(
@@ -5137,10 +5642,10 @@ export class ChoreographyNodeStyle extends BpmnNodeStyle {
    * call to the instance that has been queried from the {@link NodeStyleBase#renderer}.
    * This implementation uses the {@link NodeStyleBase#getOutline outline} to determine
    * whether the node has been hit.
-   * @param {INode} node The node to which this style instance is assigned.
-   * @param {Point} p The point to test.
-   * @param {IInputModeContext} canvasContext The canvas context.
-   * @return {boolean} whether or not the specified node representation is hit.
+   * @param {!INode} node The node to which this style instance is assigned.
+   * @param {!Point} p The point to test.
+   * @param {!IInputModeContext} canvasContext The canvas context.
+   * @returns {boolean} whether or not the specified node representation is hit.
    */
   isHit(canvasContext, p, node) {
     if (
@@ -5203,9 +5708,9 @@ export class ChoreographyNodeStyle extends BpmnNodeStyle {
    * This method is called in response to a {@link IBoundsProvider#getBounds}
    * call to the instance that has been queried from the {@link NodeStyleBase#renderer}.
    * This implementation simply yields the {@link INode#layout}.
-   * @param {INode} node The node to which this style instance is assigned.
-   * @param {ICanvasContext} canvasContext The canvas context.
-   * @return {Rect} The visual bounds of the visual representation.
+   * @param {!INode} node The node to which this style instance is assigned.
+   * @param {!ICanvasContext} canvasContext The canvas context.
+   * @returns {!Rect} The visual bounds of the visual representation.
    */
   getBounds(canvasContext, node) {
     let bounds = node.layout.toRect()
@@ -5237,17 +5742,17 @@ export class ChoreographyNodeStyle extends BpmnNodeStyle {
    * Performs the {@link ILookup#lookup} operation for
    * the {@link INodeStyleRenderer#getContext}
    * that has been queried from the {@link NodeStyleBase#renderer}.
-   * @param {INode} node The node to use for the context lookup.
-   * @param {Class} type The type to query.
-   * @return {Object} An implementation of the <code>type</code> or <code>null</code>.
+   * @param {!INode} node The node to use for the context lookup.
+   * @param {!Class} type The type to query.
+   * @returns {!object} An implementation of the <code>type</code> or <code>null</code>.
    */
   lookup(node, type) {
     if (type === INodeSizeConstraintProvider.$class) {
       const minWidth = Math.max(0, this.minimumSize.width)
       const minHeight =
         Math.max(0, this.minimumSize.height) +
-        this.$topParticipants.getHeight() +
-        this.$bottomParticipants.getHeight()
+        this._topParticipants.getHeight() +
+        this._bottomParticipants.getHeight()
       const maxSize = new Size(Number.MAX_VALUE, Number.MAX_VALUE)
       return new NodeSizeConstraintProvider(new Size(minWidth, minHeight), maxSize)
     } else if (type === INodeInsetsProvider.$class) {
@@ -5260,7 +5765,7 @@ export class ChoreographyNodeStyle extends BpmnNodeStyle {
 
   /**
    * Create a clone of this object.
-   * @return {Object} A clone of this object.
+   * @returns {*} A clone of this object.
    * @see Specified by {@link ICloneable#clone}.
    */
   clone() {
@@ -5289,20 +5794,26 @@ export class ChoreographyNodeStyle extends BpmnNodeStyle {
     return clone
   }
 
+  /**
+   * @type {!ShapeNodeStyle}
+   */
   static get SHAPE_NODE_STYLE() {
-    if (!ChoreographyNodeStyle.$shapeNodeStyle) {
+    if (!ChoreographyNodeStyle._shapeNodeStyle) {
       const shapeNodeStyleRenderer = new ShapeNodeStyleRenderer()
       shapeNodeStyleRenderer.roundRectArcRadius = BPMN_CONSTANTS_CHOREOGRAPHY_CORNER_RADIUS
-      ChoreographyNodeStyle.$shapeNodeStyle = new ShapeNodeStyle({
+      ChoreographyNodeStyle._shapeNodeStyle = new ShapeNodeStyle({
         renderer: shapeNodeStyleRenderer,
         shape: ShapeNodeShape.ROUND_RECTANGLE,
         stroke: Stroke.BLACK,
         fill: null
       })
     }
-    return ChoreographyNodeStyle.$shapeNodeStyle
+    return ChoreographyNodeStyle._shapeNodeStyle
   }
 
+  /**
+   * @type {number}
+   */
   static get MESSAGE_DISTANCE() {
     return 15
   }
@@ -5312,12 +5823,18 @@ export class ChoreographyNodeStyle extends BpmnNodeStyle {
  * Uses the style insets extended by the size of the participant bands.
  */
 class ChoreographyInsetsProvider extends BaseClass(INodeInsetsProvider) {
+  /**
+   * @param {!ChoreographyNodeStyle} style
+   */
   constructor(style) {
     super()
     this.style = style
   }
 
-  /** @return {Insets} */
+  /**
+   * @param {!INode} item
+   * @returns {!Insets}
+   */
   getInsets(item) {
     const topInsets = this.style.topParticipants.getHeight()
     let bottomInsets = this.style.bottomParticipants.getHeight()
@@ -5345,16 +5862,28 @@ class ChoreographyInsetsProvider extends BaseClass(INodeInsetsProvider) {
  * {@link ChoreographyMessageLabelStyle}.
  */
 class ChoreographyEditLabelHelper extends EditLabelHelper {
+  /**
+   * @param {!INode} node
+   */
   constructor(node) {
     super()
     this.node = node
   }
 
+  /**
+   * @param {!IInputModeContext} inputModeContext
+   * @returns {!ILabelModelParameter}
+   */
   getLabelParameter(inputModeContext) {
     const parameter = ChoreographyLabelModel.INSTANCE.findNextParameter(this.node)
     return parameter || ExteriorLabelModel.WEST
   }
 
+  /**
+   * @param {!IInputModeContext} inputModeContext
+   * @param {!ILabelOwner} owner
+   * @returns {!ILabelStyle}
+   */
   getLabelStyle(inputModeContext, owner) {
     const parameter = ChoreographyLabelModel.INSTANCE.findNextParameter(this.node)
     if (
@@ -5366,12 +5895,21 @@ class ChoreographyEditLabelHelper extends EditLabelHelper {
     return inputModeContext.canvasComponent.graph.nodeDefaults.labels.style
   }
 
+  /**
+   * @param {!LabelEditingEventArgs} event
+   */
   onLabelEditing(event) {
     // override default behavior
     // super.onLabelEditing would choose the first label if present but we want to edit the selected label
   }
 }
 
+/**
+ * @param {!SvgVisualGroup} container
+ * @param {number} index
+ * @param {!Icon} icon
+ * @param {!IRenderContext} context
+ */
 function updateChildVisual(container, index, icon, context) {
   const oldPathVisual = container.children.elementAt(index)
   let newPathVisual = icon.updateVisual(context, oldPathVisual)
@@ -5393,26 +5931,24 @@ class ChoreographyMessageLabelStyle extends BaseClass(ILabelStyle) {
    */
   constructor() {
     super()
-
-    this.$messageStyle = new BpmnNodeStyle()
-    this.$messageStyle.minimumSize = BPMN_CONSTANTS_SIZES_MESSAGE
+    this._messageStyle = new BpmnNodeStyle()
+    this._messageStyle.minimumSize = BPMN_CONSTANTS_SIZES_MESSAGE
 
     const connectedIconLabelStyle = new ConnectedIconLabelStyle()
     connectedIconLabelStyle.iconSize = BPMN_CONSTANTS_SIZES_MESSAGE
-    connectedIconLabelStyle.iconStyle = this.$messageStyle
+    connectedIconLabelStyle.iconStyle = this._messageStyle
     connectedIconLabelStyle.textStyle = ChoreographyMessageLabelStyle.TEXT_STYLE
     connectedIconLabelStyle.connectorStyle = ChoreographyMessageLabelStyle.CONNECTOR_STYLE
     connectedIconLabelStyle.labelConnectorLocation = FreeNodePortLocationModel.NODE_BOTTOM_ANCHORED
     connectedIconLabelStyle.nodeConnectorLocation = FreeNodePortLocationModel.NODE_TOP_ANCHORED
-    this.$delegateStyle = connectedIconLabelStyle
-
+    this._delegateStyle = connectedIconLabelStyle
     this.textPlacement = ChoreographyMessageLabelStyle.DEFAULT_TEXT_PLACEMENT
   }
 
   /**
    * Gets where the text is placed relative to the message icon.
    * The label model parameter has to support {@link INode}s.
-   * @type {ILabelModelParameter}
+   * @type {?ILabelModelParameter}
    */
   get textPlacement() {
     return this.delegateStyle !== null ? this.delegateStyle.textPlacement : null
@@ -5421,7 +5957,7 @@ class ChoreographyMessageLabelStyle extends BaseClass(ILabelStyle) {
   /**
    * Sets where the text is placed relative to the message icon.
    * The label model parameter has to support {@link INode}s.
-   * @type {ILabelModelParameter}
+   * @type {?ILabelModelParameter}
    */
   set textPlacement(value) {
     if (this.delegateStyle !== null) {
@@ -5430,22 +5966,22 @@ class ChoreographyMessageLabelStyle extends BaseClass(ILabelStyle) {
   }
 
   /**
-   * @type {ConnectedIconLabelStyle}
+   * @type {!ConnectedIconLabelStyle}
    */
   get delegateStyle() {
-    return this.$delegateStyle
+    return this._delegateStyle
   }
 
   /**
-   * @return {BpmnNodeStyle}
+   * @type {!BpmnNodeStyle}
    */
   get messageStyle() {
-    return this.$messageStyle
+    return this._messageStyle
   }
 
   /**
    * Create a clone of this object.
-   * @return {Object} A clone of this object.
+   * @returns {*} A clone of this object.
    * @see Specified by {@link ICloneable#clone}.
    */
   clone() {
@@ -5463,43 +5999,55 @@ class ChoreographyMessageLabelStyle extends BaseClass(ILabelStyle) {
    * var visual = creator.createVisual(renderContext);
    * </code></pre>
    * @see Specified by {@link ILabelStyle#renderer}.
-   * @type {ILabelStyleRenderer}
+   * @type {!ILabelStyleRenderer}
    */
   get renderer() {
     return ChoreographyMessageLabelStyle.RENDERER
   }
 
+  /**
+   * @type {!ChoreographyMessageLabelStyleRenderer}
+   */
   static get RENDERER() {
     return (
-      ChoreographyMessageLabelStyle.$renderer ||
-      (ChoreographyMessageLabelStyle.$renderer = new ChoreographyMessageLabelStyleRenderer())
+      ChoreographyMessageLabelStyle._renderer ||
+      (ChoreographyMessageLabelStyle._renderer = new ChoreographyMessageLabelStyleRenderer())
     )
   }
 
+  /**
+   * @type {!ILabelModelParameter}
+   */
   static get DEFAULT_TEXT_PLACEMENT() {
-    if (!ChoreographyMessageLabelStyle.$defaultTextPlacement) {
+    if (!ChoreographyMessageLabelStyle._defaultTextPlacement) {
       const model = new ExteriorLabelModel()
       model.insets = new Insets(5)
-      ChoreographyMessageLabelStyle.$defaultTextPlacement = model.createParameter(
+      ChoreographyMessageLabelStyle._defaultTextPlacement = model.createParameter(
         ExteriorLabelModelPosition.WEST
       )
     }
-    return ChoreographyMessageLabelStyle.$defaultTextPlacement
+    return ChoreographyMessageLabelStyle._defaultTextPlacement
   }
 
+  /**
+   * @type {!BpmnEdgeStyle}
+   */
   static get CONNECTOR_STYLE() {
-    if (!ChoreographyMessageLabelStyle.$connectorStyle) {
+    if (!ChoreographyMessageLabelStyle._connectorStyle) {
       const style = new BpmnEdgeStyle()
       style.type = EdgeType.ASSOCIATION
-      ChoreographyMessageLabelStyle.$connectorStyle = style
+      ChoreographyMessageLabelStyle._connectorStyle = style
     }
-    return ChoreographyMessageLabelStyle.$connectorStyle
+    return ChoreographyMessageLabelStyle._connectorStyle
   }
 
+  /**
+   * @type {!DefaultLabelStyle}
+   */
   static get TEXT_STYLE() {
     return (
-      ChoreographyMessageLabelStyle.$textStyle ||
-      (ChoreographyMessageLabelStyle.$textStyle = new DefaultLabelStyle())
+      ChoreographyMessageLabelStyle._textStyle ||
+      (ChoreographyMessageLabelStyle._textStyle = new DefaultLabelStyle())
     )
   }
 }
@@ -5514,12 +6062,14 @@ class ChoreographyMessageLabelStyleRenderer extends BaseClass(ILabelStyleRendere
     this.style = null
     this.north = false
     this.responseMessage = false
-    this.$messageColor = null
-    this.$messageOutline = null
+    this._messageColor = null
+    this._messageOutline = null
   }
 
   /**
-   * @return {ILabelStyle}
+   * @param {!ILabel} item
+   * @param {!ILabelStyle} style
+   * @returns {!ILabelStyle}
    */
   getCurrentStyle(item, style) {
     if (!(style instanceof ChoreographyMessageLabelStyle)) {
@@ -5528,33 +6078,33 @@ class ChoreographyMessageLabelStyleRenderer extends BaseClass(ILabelStyleRendere
     const labelStyle = style
 
     this.north = true
-    this.$messageColor = BPMN_CONSTANTS_DEFAULT_INITIATING_MESSAGE_COLOR
-    this.$messageOutline = null
+    this._messageColor = BPMN_CONSTANTS_DEFAULT_INITIATING_MESSAGE_COLOR
+    this._messageOutline = null
     this.responseMessage = false
-    if (INode.isInstance(item.owner)) {
+    if (item.owner instanceof INode) {
       const node = item.owner
       this.north = item.layout.orientedRectangleCenter.y < node.layout.center.y
 
       if (node.style instanceof ChoreographyNodeStyle) {
-        this.responseMessage = node.style.initiatingAtTop ^ this.north
-        this.$messageColor = this.responseMessage
+        this.responseMessage = node.style.initiatingAtTop !== this.north
+        this._messageColor = this.responseMessage
           ? node.style.responseColor
           : node.style.initiatingColor
-        this.$messageOutline = node.style.messageStroke
+        this._messageOutline = node.style.messageStroke
       }
     }
 
-    if (!this.$messageOutline) {
+    if (!this._messageOutline) {
       const outline = new Stroke(BPMN_CONSTANTS_DEFAULT_MESSAGE_OUTLINE)
       outline.freeze()
-      this.$messageOutline = outline
+      this._messageOutline = outline
     }
 
     const delegateStyle = labelStyle.delegateStyle
     delegateStyle.iconStyle = labelStyle.messageStyle
     labelStyle.messageStyle.icon = IconFactory.createMessage(
-      this.$messageOutline,
-      this.$messageColor
+      this._messageOutline,
+      this._messageColor
     )
     delegateStyle.labelConnectorLocation = this.north
       ? FreeNodePortLocationModel.NODE_BOTTOM_ANCHORED
@@ -5569,9 +6119,9 @@ class ChoreographyMessageLabelStyleRenderer extends BaseClass(ILabelStyleRendere
    * Gets an implementation of the {@link IVisualCreator} interface that can
    * handle the provided item and its associated style.
    * This method may return a flyweight implementation, but never <code>null</code>.
-   * @param {INode} item The item to provide an instance for
-   * @param {INodeStyle} style The style to use for the creation of the visual
-   * @return {IVisualCreator} An implementation that may be used to subsequently create or update
+   * @param {!ILabel} item The item to provide an instance for
+   * @param {!ILabelStyle} style The style to use for the creation of the visual
+   * @returns {!IVisualCreator} An implementation that may be used to subsequently create or update
    *   the visual for the item. Clients should not cache this instance and must always call this
    *   method immediately before using the value returned. This enables the use of the flyweight
    *   design pattern for implementations. This method may not return <code>null</code> but should
@@ -5589,9 +6139,9 @@ class ChoreographyMessageLabelStyleRenderer extends BaseClass(ILabelStyleRendere
    * Gets an implementation of the {@link IBoundsProvider} interface that can
    * handle the provided item and its associated style.
    * This method may return a flyweight implementation.
-   * @param {INode} item The item to provide an instance for
-   * @param {INodeStyle} style The style to use for the calculating the painting bounds
-   * @return {IBoundsProvider} An implementation that may be used to subsequently query
+   * @param {!ILabel} item The item to provide an instance for
+   * @param {!ILabelStyle} style The style to use for the calculating the painting bounds
+   * @returns {!IBoundsProvider} An implementation that may be used to subsequently query
    * the item's painting bounds. Clients should not cache this instance and must always call
    * this method immediately before using the value returned. This enables the
    * use of the flyweight design pattern for implementations
@@ -5606,9 +6156,9 @@ class ChoreographyMessageLabelStyleRenderer extends BaseClass(ILabelStyleRendere
    * Gets an implementation of the {@link IVisibilityTestable} interface that can
    * handle the provided item and its associated style.
    * This method may return a flyweight implementation.
-   * @param {INode} item The item to provide an instance for
-   * @param {INodeStyle} style The style to use for the testing the visibility
-   * @return {IVisibilityTestable} An implementation that may be used to subsequently query
+   * @param {!ILabel} item The item to provide an instance for
+   * @param {!ILabelStyle} style The style to use for the testing the visibility
+   * @returns {!IVisibilityTestable} An implementation that may be used to subsequently query
    * the item's visibility. Clients should not cache this instance and must always call
    * this method immediately before using the value returned. This enables the
    * use of the flyweight design pattern for implementations
@@ -5623,9 +6173,9 @@ class ChoreographyMessageLabelStyleRenderer extends BaseClass(ILabelStyleRendere
    * Gets an implementation of the {@link IHitTestable} interface that can
    * handle the provided item and its associated style.
    * This method may return a flyweight implementation.
-   * @param {INode} item The item to provide an instance for
-   * @param {INodeStyle} style The style to use for the querying hit tests
-   * @return {IHitTestable} An implementation that may be used to subsequently perform
+   * @param {!ILabel} item The item to provide an instance for
+   * @param {!ILabelStyle} style The style to use for the querying hit tests
+   * @returns {!IHitTestable} An implementation that may be used to subsequently perform
    * hit tests. Clients should not cache this instance and must always call
    * this method immediately before using the value returned. This enables the
    * use of the flyweight design pattern for implementations. This method may return
@@ -5641,9 +6191,9 @@ class ChoreographyMessageLabelStyleRenderer extends BaseClass(ILabelStyleRendere
    * Gets an implementation of the {@link IMarqueeTestable} interface that can
    * handle the provided item and its associated style.
    * This method may return a flyweight implementation.
-   * @param {INode} item The item to provide an instance for
-   * @param {INodeStyle} style The style to use for the querying marquee intersection test.
-   * @return {IMarqueeTestable} An implementation that may be used to subsequently query
+   * @param {!ILabel} item The item to provide an instance for
+   * @param {!ILabelStyle} style The style to use for the querying marquee intersection test.
+   * @returns {!IMarqueeTestable} An implementation that may be used to subsequently query
    * the marquee intersections. Clients should not cache this instance and must always call
    * this method immediately before using the value returned. This enables the
    * use of the flyweight design pattern for implementations
@@ -5659,9 +6209,9 @@ class ChoreographyMessageLabelStyleRenderer extends BaseClass(ILabelStyleRendere
    * for the item's style.
    * Implementations may return {@link ILookup#EMPTY} if they don't support this, but may not return
    * <code>null</code>.
-   * @param {INode} item The item to provide a context instance for.
-   * @param {INodeStyle} style The style to use for the context.
-   * @return {ILookup} An non-<code>null</code> lookup implementation.
+   * @param {!ILabel} item The item to provide a context instance for.
+   * @param {!ILabelStyle} style The style to use for the context.
+   * @returns {!ILookup} An non-<code>null</code> lookup implementation.
    * @see {@link ILookup#EMPTY}
    * @see {@link ILookup}
    * @see Specified by {@link INodeStyleRenderer#getContext}.
@@ -5674,10 +6224,10 @@ class ChoreographyMessageLabelStyleRenderer extends BaseClass(ILabelStyleRendere
   /**
    * Calculates the {@link ILabel#preferredSize preferred size}
    * of a given label using the associated style.
-   * @param {ILabel} label The label to determine the preferred size for
-   * @param {ILabelStyle} style The style instance that uses this instance as its
+   * @param {!ILabel} label The label to determine the preferred size for
+   * @param {!ILabelStyle} style The style instance that uses this instance as its
    * {@link ILabelStyle#renderer}
-   * @return {Size} A size that can be used as the {@link ILabel#preferredSize}
+   * @returns {!Size} A size that can be used as the {@link ILabel#preferredSize}
    * if this renderer paints the label using the associated style.
    * @see Specified by {@link ILabelStyleRenderer#getPreferredSize}.
    */
@@ -5691,8 +6241,8 @@ class ChoreographyMessageLabelStyleRenderer extends BaseClass(ILabelStyleRendere
    * that will be included into the {@link IRenderContext}.
    * {@link CanvasComponent} uses this interface through the {@link ICanvasObjectDescriptor}
    * to populate the visual canvas object tree.
-   * @param {IRenderContext} context The context that describes where the visual will be used.
-   * @return {Visual} The visual to include in the canvas object visual tree. This may be
+   * @param {!IRenderContext} context The context that describes where the visual will be used.
+   * @returns {!SvgVisual} The visual to include in the canvas object visual tree. This may be
    *   <code>null</code>.
    * @see {@link IVisualCreator#updateVisual}
    * @see Specified by {@link IVisualCreator#createVisual}.
@@ -5715,10 +6265,10 @@ class ChoreographyMessageLabelStyleRenderer extends BaseClass(ILabelStyleRendere
    * to {@link IVisualCreator#createVisual}. Implementation may update the <code>oldVisual</code>
    * and return that same reference, or create a new visual and return the new instance or
    * <code>null</code>.
-   * @param {IRenderContext} context The context that describes where the visual will be used in.
-   * @param {Visual} oldVisual The visual instance that had been returned the last time the {@link
+   * @param {!IRenderContext} context The context that describes where the visual will be used in.
+   * @param {!SvgVisual} oldVisual The visual instance that had been returned the last time the {@link
    *   IVisualCreator#createVisual} method was called on this instance.
-   * @return {Visual} <code>oldVisual</code>, if this instance modified the visual, or a new visual
+   * @returns {!SvgVisual} <code>oldVisual</code>, if this instance modified the visual, or a new visual
    *   that should replace the existing one in the canvas object visual tree.
    * @see {@link IVisualCreator#createVisual}
    * @see {@link ICanvasObjectDescriptor}
@@ -5727,6 +6277,9 @@ class ChoreographyMessageLabelStyleRenderer extends BaseClass(ILabelStyleRendere
    */
   updateVisual(context, oldVisual) {
     const container = oldVisual instanceof SvgVisualGroup ? oldVisual : null
+    if (!container) {
+      this.createVisual(context)
+    }
     const cache = container !== null ? oldVisual['render-data-cache'] : null
     const newCache = this.createRenderData()
     if (cache === null || !cache.equals(newCache) || container.children.size !== 1) {
@@ -5746,13 +6299,13 @@ class ChoreographyMessageLabelStyleRenderer extends BaseClass(ILabelStyleRendere
   /**
    * Returns an object that contains all information necessary to determine whether a visual needs
    * to be updated.
-   * @return {RenderData}
+   * @returns {!RenderData}
    */
   createRenderData() {
     const renderData = new RenderData()
     renderData.north = this.north
-    renderData.messageColor = this.$messageColor
-    renderData.messageOutline = this.$messageOutline
+    renderData.messageColor = this._messageColor
+    renderData.messageOutline = this._messageOutline
     renderData.textPlacement = this.style.textPlacement
     return renderData
   }
@@ -5767,7 +6320,10 @@ class RenderData {
     this.messageOutline = null
   }
 
-  /** @return {boolean} */
+  /**
+   * @param {!object} obj
+   * @returns {boolean}
+   */
   equals(obj) {
     if (!(obj instanceof RenderData)) {
       return false
@@ -5780,9 +6336,12 @@ class RenderData {
     )
   }
 
-  /** @return {number} */
+  /**
+   * @returns {number}
+   */
   hashCode() {
-    let result = this.textPlacement !== null ? this.textPlacement.hashCode() : 0
+    const placement = this.textPlacement
+    let result = placement ? placement.hashCode() : 0
     result = (result * 397) ^ (this.north ? 1 : 0)
     result = (result * 397) ^ (this.responseMessage ? 1 : 0)
     return result
@@ -5793,53 +6352,50 @@ class RenderData {
  * An {@link PolylineEdgeStyle} implementation representing a connection according to the BPMN.
  */
 export class BpmnEdgeStyle extends EdgeStyleBase {
-  /**
-   * Creates a new instance using {@link EdgeType#SEQUENCE_FLOW}.
-   */
   constructor() {
     super()
-    this.$type = EdgeType.SEQUENCE_FLOW
-    this.$smoothing = 20
-    this.$sourceArrow = null
-    this.$targetArrow = null
-    this.$innerStroke = null
-    this.$stroke = null
+    this._type = EdgeType.SEQUENCE_FLOW
+    this._smoothing = 20
+    this._sourceArrow = null
+    this._targetArrow = null
+    this._innerStroke = null
+    this._stroke = null
     this.color = BPMN_CONSTANTS_EDGE_DEFAULT_COLOR
     this.innerColor = BPMN_CONSTANTS_EDGE_DEFAULT_INNER_COLOR
   }
 
   /**
    * Gets the edge type of this style.
-   * @type {EdgeType}
+   * @type {number}
    */
   get type() {
-    return this.$type
+    return this._type
   }
 
   /**
    * Sets the edge type of this style.
-   * @type {EdgeType}
+   * @type {number}
    */
   set type(value) {
-    this.$type = value
+    this._type = value
     this.updateStroke(this.color)
     this.updateArrow(value)
   }
 
   /**
    * Gets the stroke color of the edge.
-   * @return {Fill}
+   * @type {?Fill}
    */
   get color() {
-    return this.$stroke ? this.$stroke.fill : null
+    return this._stroke ? this._stroke.fill : null
   }
 
   /**
    * Sets the stroke color of the edge.
-   * @param {Fill} value
+   * @type {?Fill}
    */
   set color(value) {
-    if (this.$stroke === null || !IconFactory.equalFill(this.$stroke.fill, value)) {
+    if (this._stroke === null || !IconFactory.equalFill(this._stroke.fill, value)) {
       this.updateStroke(value)
       this.updateArrow(this.type)
     }
@@ -5848,29 +6404,29 @@ export class BpmnEdgeStyle extends EdgeStyleBase {
   /**
    * Gets the inner stroke color of the edge when {@link BpmnEdgeStyle#type} is
    * {@link EdgeType.CONVERSATION}.
-   * @return {Fill}
+   * @type {?Fill}
    */
   get innerColor() {
-    return this.$innerStroke.fill
+    return this._innerStroke ? this._innerStroke.fill : null
   }
 
   /**
    * Sets the inner stroke color of the edge when {@link BpmnEdgeStyle#type} is
    * {@link EdgeType.CONVERSATION}.
-   * @param {Fill} value
+   * @type {?Fill}
    */
   set innerColor(value) {
-    if (this.$innerStroke === null || !IconFactory.equalFill(this.$innerStroke.fill, value)) {
+    if (this._innerStroke === null || !IconFactory.equalFill(this._innerStroke.fill, value)) {
       const stroke = new Stroke(value)
       stroke.lineJoin = LineJoin.ROUND
       stroke.freeze()
-      this.$innerStroke = stroke
+      this._innerStroke = stroke
     }
   }
 
   /**
    * Create a clone of this object.
-   * @return {Object} A clone of this object.
+   * @returns {*} A clone of this object.
    * @see Specified by {@link ICloneable#clone}.
    */
   clone() {
@@ -5885,19 +6441,19 @@ export class BpmnEdgeStyle extends EdgeStyleBase {
   /**
    * Gets the visual arrow at the source end of edges that use this style.
    * Arrow instances may be shared between multiple style instances.
-   * @type {IArrow}
+   * @type {?IArrow}
    */
   get sourceArrow() {
-    return this.$sourceArrow
+    return this._sourceArrow
   }
 
   /**
    * Gets the visual arrow at the target end of edges that use this style.
    * Arrow instances may be shared between multiple style instances.
-   * @type {IArrow}
+   * @type {?IArrow}
    */
   get targetArrow() {
-    return this.$targetArrow
+    return this._targetArrow
   }
 
   /**
@@ -5907,7 +6463,7 @@ export class BpmnEdgeStyle extends EdgeStyleBase {
    * @type {number}
    */
   get smoothing() {
-    return this.$smoothing
+    return this._smoothing
   }
 
   /**
@@ -5917,10 +6473,13 @@ export class BpmnEdgeStyle extends EdgeStyleBase {
    * @type {number}
    */
   set smoothing(value) {
-    this.$smoothing = value
+    this._smoothing = value
   }
 
-  /** @param {Fill} fill */
+  /**
+   * @param {Fill} fill
+   * @param {?Fill} fill
+   */
   updateStroke(fill) {
     let result
     switch (this.type) {
@@ -5954,44 +6513,48 @@ export class BpmnEdgeStyle extends EdgeStyleBase {
         break
     }
     result.freeze()
-    this.$stroke = result
+    this._stroke = result
   }
 
-  /** @param {EdgeType} type */
+  /**
+   * @param {EdgeType} type
+   * @param {number} type
+   */
   updateArrow(type) {
+    const color = this.color
     switch (type) {
       case EdgeType.CONDITIONAL_FLOW:
-        this.$sourceArrow = BpmnEdgeStyle.getConditionalSourceArrow(this.color)
-        this.$targetArrow = BpmnEdgeStyle.getDefaultTargetArrow(this.color)
+        this._sourceArrow = BpmnEdgeStyle.getConditionalSourceArrow(color)
+        this._targetArrow = BpmnEdgeStyle.getDefaultTargetArrow(color)
         break
       case EdgeType.ASSOCIATION:
-        this.$sourceArrow = IArrow.NONE
-        this.$targetArrow = IArrow.NONE
+        this._sourceArrow = IArrow.NONE
+        this._targetArrow = IArrow.NONE
         break
       case EdgeType.DIRECTED_ASSOCIATION:
-        this.$sourceArrow = IArrow.NONE
-        this.$targetArrow = BpmnEdgeStyle.getAssociationArrow(this.color)
+        this._sourceArrow = IArrow.NONE
+        this._targetArrow = BpmnEdgeStyle.getAssociationArrow(color)
         break
       case EdgeType.BIDIRECTED_ASSOCIATION:
-        this.$sourceArrow = BpmnEdgeStyle.getAssociationArrow(this.color)
-        this.$targetArrow = BpmnEdgeStyle.getAssociationArrow(this.color)
+        this._sourceArrow = BpmnEdgeStyle.getAssociationArrow(color)
+        this._targetArrow = BpmnEdgeStyle.getAssociationArrow(color)
         break
       case EdgeType.MESSAGE_FLOW:
-        this.$sourceArrow = BpmnEdgeStyle.getMessageSourceArrow(this.color)
-        this.$targetArrow = BpmnEdgeStyle.getMessageTargetArrow(this.color)
+        this._sourceArrow = BpmnEdgeStyle.getMessageSourceArrow(color)
+        this._targetArrow = BpmnEdgeStyle.getMessageTargetArrow(color)
         break
       case EdgeType.DEFAULT_FLOW:
-        this.$sourceArrow = BpmnEdgeStyle.getDefaultSourceArrow(this.color)
-        this.$targetArrow = BpmnEdgeStyle.getDefaultTargetArrow(this.color)
+        this._sourceArrow = BpmnEdgeStyle.getDefaultSourceArrow(color)
+        this._targetArrow = BpmnEdgeStyle.getDefaultTargetArrow(color)
         break
       case EdgeType.CONVERSATION:
-        this.$sourceArrow = IArrow.NONE
-        this.$targetArrow = IArrow.NONE
+        this._sourceArrow = IArrow.NONE
+        this._targetArrow = IArrow.NONE
         break
       case EdgeType.SEQUENCE_FLOW:
       default:
-        this.$sourceArrow = IArrow.NONE
-        this.$targetArrow = BpmnEdgeStyle.getDefaultTargetArrow(this.color)
+        this._sourceArrow = IArrow.NONE
+        this._targetArrow = BpmnEdgeStyle.getDefaultTargetArrow(color)
         break
     }
   }
@@ -6001,9 +6564,9 @@ export class BpmnEdgeStyle extends EdgeStyleBase {
    * that will be included into the {@link IRenderContext}.
    * {@link CanvasComponent} uses this interface through the {@link ICanvasObjectDescriptor}
    * to populate the visual canvas object tree.
-   * @param {IRenderContext} context The context that describes where the visual will be used.
-   * @param {IEdge} edge The edge for which the visual is created.
-   * @return {Visual} The visual to include in the canvas object visual tree. This may be
+   * @param {!IRenderContext} context The context that describes where the visual will be used.
+   * @param {!IEdge} edge The edge for which the visual is created.
+   * @returns {!SvgVisual} The visual to include in the canvas object visual tree. This may be
    *   <code>null</code>.
    * @see {@link IVisualCreator#updateVisual}
    */
@@ -6012,19 +6575,18 @@ export class BpmnEdgeStyle extends EdgeStyleBase {
 
     const smoothedPath = this.getPath(edge)
     const path = smoothedPath.createSvgPath()
-    Stroke.setStroke(this.$stroke, path, context)
+    Stroke.setStroke(this._stroke, path, context)
     path.setAttribute('fill', 'none')
     container.appendChild(path)
 
     if (this.type === EdgeType.CONVERSATION) {
       const doubleLineCenterPath = smoothedPath.createSvgPath()
-      Stroke.setStroke(this.$innerStroke, doubleLineCenterPath, context)
+      Stroke.setStroke(this._innerStroke, doubleLineCenterPath, context)
       doubleLineCenterPath.setAttribute('fill', 'none')
       container.appendChild(doubleLineCenterPath)
     }
 
     super.addArrows(context, container, edge, smoothedPath, this.sourceArrow, this.targetArrow)
-
     container['render-data-cache'] = {
       type: this.type,
       color: this.color,
@@ -6035,6 +6597,10 @@ export class BpmnEdgeStyle extends EdgeStyleBase {
     return new SvgVisual(container)
   }
 
+  /**
+   * @param {!IEdge} edge
+   * @returns {!GeneralPath}
+   */
   getPath(edge) {
     const path = super.getPath(edge)
     return super
@@ -6050,11 +6616,11 @@ export class BpmnEdgeStyle extends EdgeStyleBase {
    * to {@link IVisualCreator#createVisual}. Implementation may update the <code>oldVisual</code>
    * and return that same reference, or create a new visual and return the new instance or
    * <code>null</code>.
-   * @param {IRenderContext} context The context that describes where the visual will be used in.
-   * @param {Visual} oldVisual The visual instance that had been returned the last time the {@link
+   * @param {!IRenderContext} context The context that describes where the visual will be used in.
+   * @param {!SvgVisual} oldVisual The visual instance that had been returned the last time the {@link
    *   IVisualCreator#createVisual} method was called on this instance.
-   * @param {IEdge} edge The edge for which the visual is updated.
-   * @return {Visual} <code>oldVisual</code>, if this instance modified the visual, or a new visual
+   * @param {!IEdge} edge The edge for which the visual is updated.
+   * @returns {!SvgVisual} <code>oldVisual</code>, if this instance modified the visual, or a new visual
    *   that should replace the existing one in the canvas object visual tree.
    * @see {@link IVisualCreator#createVisual}
    * @see {@link ICanvasObjectDescriptor}
@@ -6082,11 +6648,11 @@ export class BpmnEdgeStyle extends EdgeStyleBase {
       cache.innerColor !== this.innerColor
     ) {
       const path = container.firstElementChild
-      Stroke.setStroke(this.$stroke, path, context)
+      Stroke.setStroke(this._stroke, path, context)
 
       if (this.type === EdgeType.CONVERSATION) {
         const doubleLineCenterPath = newPath.createSvgPath()
-        Stroke.setStroke(this.$innerStroke, doubleLineCenterPath, context)
+        Stroke.setStroke(this._innerStroke, doubleLineCenterPath, context)
         container.appendChild(doubleLineCenterPath)
       } else if (cache.type === EdgeType.CONVERSATION) {
         container.removeChild(container.lastElementChild)
@@ -6108,92 +6674,116 @@ export class BpmnEdgeStyle extends EdgeStyleBase {
     return oldVisual
   }
 
+  /**
+   * @param {!Fill} fill
+   * @returns {!IconArrow}
+   */
   static getDefaultTargetArrow(fill) {
     const hasDefaultColor = IconFactory.equalFill(fill, Fill.BLACK)
-    if (hasDefaultColor && BpmnEdgeStyle.$defaultTargetArrow) {
-      return BpmnEdgeStyle.$defaultTargetArrow
+    if (hasDefaultColor && BpmnEdgeStyle._defaultTargetArrow) {
+      return BpmnEdgeStyle._defaultTargetArrow
     }
     const iconArrow = new IconArrow(IconFactory.createArrowIcon(ArrowType.DEFAULT_TARGET, fill))
     iconArrow.bounds = new Size(8, 6)
     iconArrow.cropLength = 1
     iconArrow.length = 8
     if (hasDefaultColor) {
-      BpmnEdgeStyle.$defaultTargetArrow = iconArrow
+      BpmnEdgeStyle._defaultTargetArrow = iconArrow
     }
     return iconArrow
   }
 
+  /**
+   * @param {!Fill} fill
+   * @returns {!IconArrow}
+   */
   static getDefaultSourceArrow(fill) {
     const hasDefaultColor = IconFactory.equalFill(fill, Fill.BLACK)
-    if (hasDefaultColor && BpmnEdgeStyle.$defaultSourceArrow) {
-      return BpmnEdgeStyle.$defaultSourceArrow
+    if (hasDefaultColor && BpmnEdgeStyle._defaultSourceArrow) {
+      return BpmnEdgeStyle._defaultSourceArrow
     }
     const iconArrow = new IconArrow(IconFactory.createArrowIcon(ArrowType.DEFAULT_SOURCE, fill))
     iconArrow.bounds = new Size(8, 6)
     iconArrow.cropLength = 0
     iconArrow.length = 0
     if (hasDefaultColor) {
-      BpmnEdgeStyle.$defaultSourceArrow = iconArrow
+      BpmnEdgeStyle._defaultSourceArrow = iconArrow
     }
     return iconArrow
   }
 
+  /**
+   * @param {!Fill} fill
+   * @returns {!IconArrow}
+   */
   static getAssociationArrow(fill) {
     const hasDefaultColor = IconFactory.equalFill(fill, Fill.BLACK)
-    if (hasDefaultColor && BpmnEdgeStyle.$associationArrow) {
-      return BpmnEdgeStyle.$associationArrow
+    if (hasDefaultColor && BpmnEdgeStyle._associationArrow) {
+      return BpmnEdgeStyle._associationArrow
     }
     const iconArrow = new IconArrow(IconFactory.createArrowIcon(ArrowType.ASSOCIATION, fill))
     iconArrow.bounds = new Size(8, 6)
     iconArrow.cropLength = 1
     iconArrow.length = 0
     if (hasDefaultColor) {
-      BpmnEdgeStyle.$associationArrow = iconArrow
+      BpmnEdgeStyle._associationArrow = iconArrow
     }
     return iconArrow
   }
 
+  /**
+   * @param {!Fill} fill
+   * @returns {!IconArrow}
+   */
   static getConditionalSourceArrow(fill) {
     const hasDefaultColor = IconFactory.equalFill(fill, Fill.BLACK)
-    if (hasDefaultColor && BpmnEdgeStyle.$conditionalSourceArrow) {
-      return BpmnEdgeStyle.$conditionalSourceArrow
+    if (hasDefaultColor && BpmnEdgeStyle._conditionalSourceArrow) {
+      return BpmnEdgeStyle._conditionalSourceArrow
     }
     const iconArrow = new IconArrow(IconFactory.createArrowIcon(ArrowType.CONDITIONAL_SOURCE, fill))
     iconArrow.bounds = new Size(16, 8)
     iconArrow.cropLength = 1
     iconArrow.length = 16
     if (hasDefaultColor) {
-      BpmnEdgeStyle.$conditionalSourceArrow = iconArrow
+      BpmnEdgeStyle._conditionalSourceArrow = iconArrow
     }
     return iconArrow
   }
 
+  /**
+   * @param {!Fill} fill
+   * @returns {!IconArrow}
+   */
   static getMessageTargetArrow(fill) {
     const hasDefaultColor = IconFactory.equalFill(fill, Fill.BLACK)
-    if (hasDefaultColor && BpmnEdgeStyle.$messageTargetArrow) {
-      return BpmnEdgeStyle.$messageTargetArrow
+    if (hasDefaultColor && BpmnEdgeStyle._messageTargetArrow) {
+      return BpmnEdgeStyle._messageTargetArrow
     }
     const iconArrow = new IconArrow(IconFactory.createArrowIcon(ArrowType.MESSAGE_TARGET, fill))
     iconArrow.bounds = new Size(8, 6)
     iconArrow.cropLength = 1
     iconArrow.length = 8
     if (hasDefaultColor) {
-      BpmnEdgeStyle.$messageTargetArrow = iconArrow
+      BpmnEdgeStyle._messageTargetArrow = iconArrow
     }
     return iconArrow
   }
 
+  /**
+   * @param {!Fill} fill
+   * @returns {!IconArrow}
+   */
   static getMessageSourceArrow(fill) {
     const hasDefaultColor = IconFactory.equalFill(fill, Fill.BLACK)
-    if (hasDefaultColor && BpmnEdgeStyle.$messageSourceArrow) {
-      return BpmnEdgeStyle.$messageSourceArrow
+    if (hasDefaultColor && BpmnEdgeStyle._messageSourceArrow) {
+      return BpmnEdgeStyle._messageSourceArrow
     }
     const iconArrow = new IconArrow(IconFactory.createArrowIcon(ArrowType.MESSAGE_SOURCE, fill))
     iconArrow.bounds = new Size(6, 6)
     iconArrow.cropLength = 1
     iconArrow.length = 6
     if (hasDefaultColor) {
-      BpmnEdgeStyle.$messageSourceArrow = iconArrow
+      BpmnEdgeStyle._messageSourceArrow = iconArrow
     }
     return iconArrow
   }
@@ -6203,12 +6793,18 @@ export class BpmnEdgeStyle extends EdgeStyleBase {
  * Uses the style insets extended by the size of the participant bands.
  */
 class ActivityInsetsProvider extends BaseClass(INodeInsetsProvider) {
+  /**
+   * @param {!ActivityNodeStyle} style
+   */
   constructor(style) {
     super()
     this.style = style
   }
 
-  /** @return {Insets} */
+  /**
+   * @param {!INode} item
+   * @returns {!Insets}
+   */
   getInsets(item) {
     const left =
       this.style.taskType !== TaskType.ABSTRACT
@@ -6236,87 +6832,85 @@ class ActivityInsetsProvider extends BaseClass(INodeInsetsProvider) {
  * An {@link INodeStyle} implementation representing an Activity according to the BPMN.
  */
 export class ActivityNodeStyle extends BpmnNodeStyle {
-  /**
-   * Creates a new instance using the default values.
-   */
   constructor() {
     super()
-    this.$taskType = TaskType.ABSTRACT
-    this.$triggerEventType = EventType.MESSAGE
-    this.$triggerEventCharacteristic = EventCharacteristic.SUB_PROCESS_INTERRUPTING
-    this.$loopCharacteristic = LoopCharacteristic.NONE
-    this.$subState = SubState.NONE
-    this.$insets = new Insets(15)
-    this.$background = BPMN_CONSTANTS_ACTIVITY_DEFAULT_BACKGROUND
-    this.$outline = BPMN_CONSTANTS_ACTIVITY_DEFAULT_OUTLINE
-    this.$eventOutline = BPMN_CONSTANTS_DEFAULT_EVENT_OUTLINE
-    this.$iconColor = BPMN_CONSTANTS_DEFAULT_ICON_COLOR
-    this.minimumSize = new Size(40, 30)
-    this.$activityIcon = null
-    this.$taskIcon = null
-    this.$loopIcon = null
-    this.$adHoc = false
-    this.$adHocIcon = null
-    this.$compensation = false
-    this.$compensationIcon = null
+    this._taskType = TaskType.ABSTRACT
+    this._triggerEventType = EventType.MESSAGE
+    this._triggerEventCharacteristic = EventCharacteristic.SUB_PROCESS_INTERRUPTING
+    this._loopCharacteristic = LoopCharacteristic.NONE
+    this._subState = SubState.NONE
+    this._insets = new Insets(15)
+    this._background = BPMN_CONSTANTS_ACTIVITY_DEFAULT_BACKGROUND
+    this._outline = BPMN_CONSTANTS_ACTIVITY_DEFAULT_OUTLINE
+    this._eventOutline = BPMN_CONSTANTS_DEFAULT_EVENT_OUTLINE
+    this._iconColor = BPMN_CONSTANTS_DEFAULT_ICON_COLOR
+    this._activityIcon = null
+    this._taskIcon = null
+    this._loopIcon = null
+    this._adHoc = false
+    this._adHocIcon = null
+    this._compensation = false
+    this._compensationIcon = null
+    this._activityType = ActivityType.TASK
     this.activityType = ActivityType.TASK
+    this.minimumSize = new Size(40, 30)
   }
 
   /**
    * Gets the activity type for this style.
-   * @type {ActivityType}
+   * @type {number}
    */
   get activityType() {
-    return this.$activityType
+    return this._activityType
   }
 
   /**
    * Sets the activity type for this style.
-   * @type {ActivityType}
+   * @type {number}
    */
   set activityType(value) {
-    if (this.$activityType !== value || this.$activityIcon === null) {
+    if (this._activityType !== value || this._activityIcon === null) {
       this.modCount++
-      this.$activityType = value
+      this._activityType = value
       this.updateActivityIcon()
     }
   }
 
   /**
    * Gets the task type for this style.
-   * @type {TaskType}
+   * @type {number}
    */
   get taskType() {
-    return this.$taskType
+    return this._taskType
   }
 
   /**
    * Sets the task type for this style.
-   * @type {TaskType}
+   * @type {number}
    */
   set taskType(value) {
-    if (this.$taskType !== value) {
+    if (this._taskType !== value) {
       this.modCount++
-      this.$taskType = value
+      this._taskType = value
       this.updateTaskIcon()
     }
   }
 
   /**
    * Gets the event type that is used for the task type {@link TaskType#EVENT_TRIGGERED}.
-   * @type {EventType}
+   * @type {number}
    */
   get triggerEventType() {
-    return this.$triggerEventType
+    return this._triggerEventType
   }
 
   /**
    * Sets the event type that is used for the task type {@link TaskType#EVENT_TRIGGERED}.
-   * @type {EventType}
+   * @type {number}
    */
   set triggerEventType(value) {
-    if (this.$triggerEventType !== value) {
-      this.$triggerEventType = value
+    if (this._triggerEventType !== value) {
+      this._triggerEventType = value
       if (this.taskType === TaskType.EVENT_TRIGGERED) {
         this.modCount++
         this.updateTaskIcon()
@@ -6326,19 +6920,19 @@ export class ActivityNodeStyle extends BpmnNodeStyle {
 
   /**
    * Gets the event characteristic that is used for the task type {@link TaskType#EVENT_TRIGGERED}.
-   * @type {EventCharacteristic}
+   * @type {number}
    */
   get triggerEventCharacteristic() {
-    return this.$triggerEventCharacteristic
+    return this._triggerEventCharacteristic
   }
 
   /**
    * Sets the event characteristic that is used for the task type {@link TaskType#EVENT_TRIGGERED}.
-   * @type {EventCharacteristic}
+   * @type {number}
    */
   set triggerEventCharacteristic(value) {
-    if (this.$triggerEventCharacteristic !== value) {
-      this.$triggerEventCharacteristic = value
+    if (this._triggerEventCharacteristic !== value) {
+      this._triggerEventCharacteristic = value
       if (this.taskType === TaskType.EVENT_TRIGGERED) {
         this.modCount++
         this.updateTaskIcon()
@@ -6348,40 +6942,40 @@ export class ActivityNodeStyle extends BpmnNodeStyle {
 
   /**
    * Gets the loop characteristic of this style.
-   * @type {LoopCharacteristic}
+   * @type {number}
    */
   get loopCharacteristic() {
-    return this.$loopCharacteristic
+    return this._loopCharacteristic
   }
 
   /**
    * Sets the loop characteristic of this style.
-   * @type {LoopCharacteristic}
+   * @type {number}
    */
   set loopCharacteristic(value) {
-    if (this.$loopCharacteristic !== value) {
+    if (this._loopCharacteristic !== value) {
       this.modCount++
-      this.$loopCharacteristic = value
+      this._loopCharacteristic = value
       this.updateLoopIcon()
     }
   }
 
   /**
    * Gets the sub state of this style.
-   * @type {SubState}
+   * @type {number}
    */
   get subState() {
-    return this.$subState
+    return this._subState
   }
 
   /**
    * Sets the sub state of this style.
-   * @type {SubState}
+   * @type {number}
    */
   set subState(value) {
-    if (this.$subState !== value) {
+    if (this._subState !== value) {
       this.modCount++
-      this.$subState = value
+      this._subState = value
     }
   }
 
@@ -6390,7 +6984,7 @@ export class ActivityNodeStyle extends BpmnNodeStyle {
    * @type {boolean}
    */
   get adHoc() {
-    return this.$adHoc
+    return this._adHoc
   }
 
   /**
@@ -6398,9 +6992,9 @@ export class ActivityNodeStyle extends BpmnNodeStyle {
    * @type {boolean}
    */
   set adHoc(value) {
-    if (this.$adHoc !== value) {
+    if (this._adHoc !== value) {
       this.modCount++
-      this.$adHoc = value
+      this._adHoc = value
       this.updateAdHocIcon()
     }
   }
@@ -6410,7 +7004,7 @@ export class ActivityNodeStyle extends BpmnNodeStyle {
    * @type {boolean}
    */
   get compensation() {
-    return this.$compensation
+    return this._compensation
   }
 
   /**
@@ -6418,9 +7012,9 @@ export class ActivityNodeStyle extends BpmnNodeStyle {
    * @type {boolean}
    */
   set compensation(value) {
-    if (this.$compensation !== value) {
+    if (this._compensation !== value) {
       this.modCount++
-      this.$compensation = value
+      this._compensation = value
       this.updateCompensationIcon()
     }
   }
@@ -6431,10 +7025,11 @@ export class ActivityNodeStyle extends BpmnNodeStyle {
    * and returned via an {@link INodeInsetsProvider} if such an instance is queried through the
    * {@link NodeStyleBase#lookup lookup}.
    * @see {@link INodeInsetsProvider}
-   * @return {Insets} An insets object that describes the insets of node.
+   * @return An insets object that describes the insets of node.
+   * @type {!Insets}
    */
   get insets() {
-    return this.$insets
+    return this._insets
   }
 
   /**
@@ -6443,28 +7038,29 @@ export class ActivityNodeStyle extends BpmnNodeStyle {
    * and returned via an {@link INodeInsetsProvider} if such an instance is queried through the
    * {@link NodeStyleBase#lookup lookup}.
    * @see {@link INodeInsetsProvider}
-   * @param {Insets} insets An insets object that describes the insets of node.
+   * @param insets An insets object that describes the insets of node.
+   * @type {!Insets}
    */
   set insets(insets) {
-    this.$insets = insets
+    this._insets = insets
   }
 
   /**
    * Gets the background color of the activity.
-   * @return {Fill}
+   * @type {!Fill}
    */
   get background() {
-    return this.$background
+    return this._background
   }
 
   /**
    * Sets the background color of the activity.
-   * @param {Fill} value
+   * @type {!Fill}
    */
   set background(value) {
-    if (this.$background !== value || this.$activityIcon == null) {
+    if (this._background !== value || this._activityIcon == null) {
       this.modCount++
-      this.$background = value
+      this._background = value
       this.updateActivityIcon()
       this.updateTaskIcon()
     }
@@ -6472,40 +7068,40 @@ export class ActivityNodeStyle extends BpmnNodeStyle {
 
   /**
    * Gets the outline color of the activity.
-   * @return {Fill}
+   * @type {!Fill}
    */
   get outline() {
-    return this.$outline
+    return this._outline
   }
 
   /**
    * Sets the outline color of the activity.
-   * @param {Fill} value
+   * @type {!Fill}
    */
   set outline(value) {
-    if (this.$outline !== value || this.$activityIcon == null) {
+    if (this._outline !== value || this._activityIcon == null) {
       this.modCount++
-      this.$outline = value
+      this._outline = value
       this.updateActivityIcon()
     }
   }
 
   /**
    * Gets the primary color for icons and markers.
-   * @return {Fill}
+   * @type {!Fill}
    */
   get iconColor() {
-    return this.$iconColor
+    return this._iconColor
   }
 
   /**
    * Sets the primary color for icons and markers.
-   * @param {Fill} value
+   * @type {!Fill}
    */
   set iconColor(value) {
-    if (this.$iconColor !== value) {
+    if (this._iconColor !== value) {
       this.modCount++
-      this.$iconColor = value
+      this._iconColor = value
       this.updateTaskIcon()
       this.updateLoopIcon()
       this.updateAdHocIcon()
@@ -6517,27 +7113,27 @@ export class ActivityNodeStyle extends BpmnNodeStyle {
    * Gets the outline color for event icons if {@link ActivityNodeStyle#taskType} is
    * {@link EventType.EVENT_TRIGGERED}. If this is set to null, the outline color is automatic,
    * based on the TriggerEventCharacteristic.
-   * @return {SolidColorFill | null}
+   * @type {?Fill}
    */
   get eventOutline() {
-    return this.$eventOutline
+    return this._eventOutline
   }
 
   /**
    * Sets the outline color for the event icon.
-   * @param {SolidColorFill | null} value
+   * @type {?Fill}
    */
   set eventOutline(value) {
-    if (this.$eventOutline !== value) {
+    if (this._eventOutline !== value) {
       this.modCount++
-      this.$eventOutline = value
+      this._eventOutline = value
       this.updateTaskIcon()
     }
   }
 
   updateActivityIcon() {
-    this.$activityIcon = IconFactory.createActivity(
-      this.$activityType,
+    this._activityIcon = IconFactory.createActivity(
+      this._activityType,
       this.background,
       this.outline
     )
@@ -6553,17 +7149,17 @@ export class ActivityNodeStyle extends BpmnNodeStyle {
       eventNodeStyle.iconColor = this.iconColor
 
       eventNodeStyle.updateIcon()
-      this.$taskIcon = eventNodeStyle.icon
+      this._taskIcon = eventNodeStyle.icon
     } else {
-      this.$taskIcon = IconFactory.createActivityTaskType(
-        this.$taskType,
+      this._taskIcon = IconFactory.createActivityTaskType(
+        this._taskType,
         this.iconColor,
         this.background
       )
     }
-    if (this.$taskIcon !== null) {
-      this.$taskIcon = IconFactory.createPlacedIcon(
-        this.$taskIcon,
+    if (this._taskIcon !== null) {
+      this._taskIcon = IconFactory.createPlacedIcon(
+        this._taskIcon,
         BPMN_CONSTANTS_PLACEMENTS_TASK_TYPE,
         BPMN_CONSTANTS_SIZES_TASK_TYPE
       )
@@ -6571,48 +7167,54 @@ export class ActivityNodeStyle extends BpmnNodeStyle {
   }
 
   updateAdHocIcon() {
-    this.$adHocIcon = this.adHoc ? IconFactory.createAdHoc(this.iconColor) : null
+    this._adHocIcon = this.adHoc ? IconFactory.createAdHoc(this.iconColor) : null
   }
 
   updateCompensationIcon() {
-    this.$compensationIcon = this.compensation
+    this._compensationIcon = this.compensation
       ? IconFactory.createCompensation(false, this.iconColor)
       : null
   }
 
   updateLoopIcon() {
-    this.$loopIcon = IconFactory.createLoopCharacteristic(this.loopCharacteristic, this.iconColor)
+    this._loopIcon = IconFactory.createLoopCharacteristic(this.loopCharacteristic, this.iconColor)
   }
 
-  /** @inheritDoc */
+  /**
+   * @inheritDoc
+   * @param {!INode} node
+   */
   updateIcon(node) {
     this.icon = this.createIcon(node)
   }
 
-  /** @return {Icon} */
+  /**
+   * @param {!INode} node
+   * @returns {?Icon}
+   */
   createIcon(node) {
     let minimumWidth = 10.0
 
     const icons = new List()
-    if (this.$activityIcon) {
-      icons.add(this.$activityIcon)
+    if (this._activityIcon) {
+      icons.add(this._activityIcon)
     }
-    if (this.$taskIcon) {
-      icons.add(this.$taskIcon)
+    if (this._taskIcon) {
+      icons.add(this._taskIcon)
     }
 
     const lineUpIcons = new List()
-    if (this.$loopIcon) {
+    if (this._loopIcon) {
       minimumWidth += BPMN_CONSTANTS_SIZES_MARKER.width + 5
-      lineUpIcons.add(this.$loopIcon)
+      lineUpIcons.add(this._loopIcon)
     }
     if (this.adHoc) {
       minimumWidth += BPMN_CONSTANTS_SIZES_MARKER.width + 5
-      lineUpIcons.add(this.$adHocIcon)
+      lineUpIcons.add(this._adHocIcon)
     }
     if (this.compensation) {
       minimumWidth += BPMN_CONSTANTS_SIZES_MARKER.width + 5
-      lineUpIcons.add(this.$compensationIcon)
+      lineUpIcons.add(this._compensationIcon)
     }
     if (this.subState !== SubState.NONE) {
       minimumWidth += BPMN_CONSTANTS_SIZES_MARKER.width + 5
@@ -6644,8 +7246,8 @@ export class ActivityNodeStyle extends BpmnNodeStyle {
 
   /**
    * Gets the outline of the visual style.
-   * @param {INode} node The node to which this style instance is assigned.
-   * @return {GeneralPath} The outline of the visual representation or <code>null</code>.
+   * @param {!INode} node The node to which this style instance is assigned.
+   * @returns {!GeneralPath} The outline of the visual representation or <code>null</code>.
    */
   getOutline(node) {
     return ActivityNodeStyle.createRoundRectPath(
@@ -6659,10 +7261,10 @@ export class ActivityNodeStyle extends BpmnNodeStyle {
 
   /**
    * Determines whether the visual representation of the node has been hit at the given location.
-   * @param {IInputModeContext} canvasContext The canvas context.
-   * @param {Point} p The point to test.
-   * @param {INode} node The node to which this style instance is assigned.
-   * @return {boolean} <code>true</code> if the specified node representation is hit; otherwise,
+   * @param {!IInputModeContext} canvasContext The canvas context.
+   * @param {!Point} p The point to test.
+   * @param {!INode} node The node to which this style instance is assigned.
+   * @returns {boolean} <code>true</code> if the specified node representation is hit; otherwise,
    *   <code>false</code>.
    */
   isHit(canvasContext, p, node) {
@@ -6673,9 +7275,9 @@ export class ActivityNodeStyle extends BpmnNodeStyle {
 
   /**
    * Performs the {@link ILookup#lookup} operation.
-   * @param {INode} node The node to use for the context lookup.
-   * @param {Class} type The type to query.
-   * @return {Object} An implementation of the <code>type</code> or <code>null</code>.
+   * @param {!INode} node The node to use for the context lookup.
+   * @param {!Class} type The type to query.
+   * @returns {!object} An implementation of the <code>type</code> or <code>null</code>.
    */
   lookup(node, type) {
     if (type === INodeInsetsProvider.$class) {
@@ -6684,7 +7286,14 @@ export class ActivityNodeStyle extends BpmnNodeStyle {
     return super.lookup(node, type)
   }
 
-  /** @return {GeneralPath} */
+  /**
+   * @param {number} x
+   * @param {number} y
+   * @param {number} width
+   * @param {number} height
+   * @param {number} radius
+   * @returns {!GeneralPath}
+   */
   static createRoundRectPath(x, y, width, height, radius) {
     const roundRect = new GeneralPath(10)
     roundRect.clear()
@@ -6702,18 +7311,21 @@ export class ActivityNodeStyle extends BpmnNodeStyle {
     return roundRect
   }
 
+  /**
+   * @type {!ShapeNodeStyle}
+   */
   static get SHAPE_NODE_STYLE() {
-    if (!ActivityNodeStyle.$shapeNodeStyle) {
+    if (!ActivityNodeStyle._shapeNodeStyle) {
       const shapeNodeStyleRenderer = new ShapeNodeStyleRenderer()
       shapeNodeStyleRenderer.roundRectArcRadius = BPMN_CONSTANTS_ACTIVITY_CORNER_RADIUS
-      ActivityNodeStyle.$shapeNodeStyle = new ShapeNodeStyle({
+      ActivityNodeStyle._shapeNodeStyle = new ShapeNodeStyle({
         renderer: shapeNodeStyleRenderer,
         shape: ShapeNodeShape.ROUND_RECTANGLE,
         stroke: Stroke.BLACK,
         fill: null
       })
     }
-    return ActivityNodeStyle.$shapeNodeStyle
+    return ActivityNodeStyle._shapeNodeStyle
   }
 }
 
@@ -6785,65 +7397,64 @@ export const EdgeType = Enum('EdgeType', {
 export class AlternatingLeafStripeStyle extends StripeStyleBase {
   constructor() {
     super()
-
-    this.$evenLeafDescriptor = null
-    this.$parentDescriptor = null
-    this.$oddLeafDescriptor = null
+    this._evenLeafDescriptor = null
+    this._parentDescriptor = null
+    this._oddLeafDescriptor = null
   }
 
   /**
    * Visualization for all leaf stripes that have an even index.
-   * @type {StripeDescriptor}
+   * @type {!StripeDescriptor}
    */
   get evenLeafDescriptor() {
-    return this.$evenLeafDescriptor
+    return this._evenLeafDescriptor
   }
 
   /**
    * Visualization for all leaf stripes that have an even index.
-   * @type {StripeDescriptor}
+   * @type {!StripeDescriptor}
    */
   set evenLeafDescriptor(value) {
-    this.$evenLeafDescriptor = value
+    this._evenLeafDescriptor = value
   }
 
   /**
    * Visualization for all stripes that are not leaves.
-   * @type {StripeDescriptor}
+   * @type {!StripeDescriptor}
    */
   get parentDescriptor() {
-    return this.$parentDescriptor
+    return this._parentDescriptor
   }
 
   /**
    * Visualization for all stripes that are not leaves.
-   * @type {StripeDescriptor}
+   * @type {!StripeDescriptor}
    */
   set parentDescriptor(value) {
-    this.$parentDescriptor = value
+    this._parentDescriptor = value
   }
 
   /**
    * Visualization for all leaf stripes that have an odd index.
-   * @type {StripeDescriptor}
+   * @type {!StripeDescriptor}
    */
   get oddLeafDescriptor() {
-    return this.$oddLeafDescriptor
+    return this._oddLeafDescriptor
   }
 
   /**
    * Visualization for all leaf stripes that have an odd index.
-   * @type {StripeDescriptor}
+   * @type {!StripeDescriptor}
    */
   set oddLeafDescriptor(value) {
-    this.$oddLeafDescriptor = value
+    this._oddLeafDescriptor = value
   }
 
   /**
    * Callback that creates the visual.
-   * @param {IStripe} node The node to which this style instance is assigned.
-   * @param {IRenderContext} renderContext The render context.
-   * @return {Visual} The visual.
+   * @param {!IStripe} node The node to which this style instance is assigned.
+   * @param {!IRenderContext} renderContext The render context.
+   * @returns {?SvgVisual} The visual.
    * @see {@link NodeStyleBase#updateVisual}
    */
   createVisual(renderContext, node) {
@@ -6855,7 +7466,7 @@ export class AlternatingLeafStripeStyle extends StripeStyleBase {
       let descriptor
 
       // Depending on the stripe type, we need to consider horizontal or vertical insets
-      if (IColumn.isInstance(stripe)) {
+      if (stripe instanceof IColumn) {
         const column = stripe
         stripeInsets = new Insets(0, column.actualInsets.top, 0, column.actualInsets.bottom)
       } else {
@@ -6871,7 +7482,7 @@ export class AlternatingLeafStripeStyle extends StripeStyleBase {
         actualBorderThickness = descriptor.borderThickness
       } else {
         let index
-        if (IColumn.isInstance(stripe)) {
+        if (stripe instanceof IColumn) {
           const col = stripe
           // Get all leaf columns
           const leaves = col.table.rootColumn.leaves.toList()
@@ -6901,7 +7512,6 @@ export class AlternatingLeafStripeStyle extends StripeStyleBase {
       const transform = new Matrix()
       transform.translate(node.layout.topLeft)
       container.transform = transform
-
       container['render-data-cache'] = this.createRenderDataCache(descriptor, stripe, stripeInsets)
       return container
     }
@@ -6914,22 +7524,20 @@ export class AlternatingLeafStripeStyle extends StripeStyleBase {
    * call to the instance that has been queried from the {@link NodeStyleBase#renderer}.
    * This implementation simply delegates to {@link NodeStyleBase#createVisual} so subclasses
    * should override to improve rendering performance.
-   * @param {IStripe} node The node to which this style instance is assigned.
-   * @param {IRenderContext} renderContext The render context.
-   * @param {Visual} oldVisual The visual that should be updated.
-   * @return {Visual} The visual.
+   * @param {!IStripe} node The node to which this style instance is assigned.
+   * @param {!IRenderContext} renderContext The render context.
+   * @param {!SvgVisualGroup} oldVisual The visual that should be updated.
+   * @returns {?SvgVisual} The visual.
    * @see {@link NodeStyleBase#createVisual}
    */
   updateVisual(renderContext, oldVisual, node) {
     const stripe = node.lookup(IStripe.$class)
     const layout = node.layout
     if (stripe !== null) {
-      /** @type {Insets} */
       let stripeInsets
       // Check if values have changed - then update everything
-      /** @type {StripeDescriptor} */
       let descriptor
-      if (IColumn.isInstance(stripe)) {
+      if (stripe instanceof IColumn) {
         const col = stripe
         stripeInsets = new Insets(0, col.actualInsets.top, 0, col.actualInsets.bottom)
       } else {
@@ -6937,16 +7545,14 @@ export class AlternatingLeafStripeStyle extends StripeStyleBase {
         stripeInsets = new Insets(row.actualInsets.left, 0, row.actualInsets.right, 0)
       }
 
-      /** @type {Insets} */
       let actualBorderThickness
 
       if (stripe.childStripes.size > 0) {
         descriptor = this.parentDescriptor
         actualBorderThickness = descriptor.borderThickness
       } else {
-        /** @type {number} */
         let index
-        if (IColumn.isInstance(stripe)) {
+        if (stripe instanceof IColumn) {
           const col = stripe
           const leaves = col.table.rootColumn.leaves.toList()
           index = leaves.findIndex(curr => col === curr)
@@ -6961,7 +7567,7 @@ export class AlternatingLeafStripeStyle extends StripeStyleBase {
         }
       }
 
-      // get the data with wich the oldvisual was created
+      // get the data with which the oldvisual was created
       const oldCache = oldVisual['render-data-cache']
       // get the data for the new visual
       const newCache = this.createRenderDataCache(descriptor, stripe, stripeInsets)
@@ -6977,8 +7583,10 @@ export class AlternatingLeafStripeStyle extends StripeStyleBase {
       border.backgroundFill = newCache.descriptor.backgroundFill
       border.insetFill = newCache.descriptor.insetFill
       border.stroke = new Stroke(newCache.descriptor.borderFill, actualBorderThickness.top)
-      const child = oldVisual.children.get(0)
-      oldVisual.children.set(
+
+      const children = oldVisual.children
+      const child = children.get(0)
+      children.set(
         0,
         border.updateVisual(renderContext, child, new Rect(0, 0, layout.width, layout.height), node)
       )
@@ -6992,7 +7600,12 @@ export class AlternatingLeafStripeStyle extends StripeStyleBase {
     return null
   }
 
-  /** @return {Object} */
+  /**
+   * @param {!StripeDescriptor} descriptor
+   * @param {!IStripe} stripe
+   * @param {!Insets} insets
+   * @returns {!StripeRenderDataCache}
+   */
   createRenderDataCache(descriptor, stripe, insets) {
     return {
       descriptor,
@@ -7016,79 +7629,91 @@ export class AlternatingLeafStripeStyle extends StripeStyleBase {
  * and a background rectangle that are grouped inside a g element.
  */
 class BorderVisual extends BaseClass(IVisualTemplate) {
-  constructor(layout) {
+  constructor() {
     super()
-    this.$backgroundFill = null
-    this.$insetFill = null
-    this.$stroke = null
-    this.$insets = Insets.EMPTY
+    this._backgroundFill = null
+    this._insetFill = null
+    this._stroke = null
+    this._insets = Insets.EMPTY
   }
 
+  /**
+   * @param {!IRenderContext} context
+   * @param {!Rect} bounds
+   * @param {!object} data
+   * @returns {!SvgVisual}
+   */
   createVisual(context, bounds, data) {
     const container = document.createElementNS('http://www.w3.org/2000/svg', 'g')
 
     const backgroundRectangle = document.createElementNS('http://www.w3.org/2000/svg', 'rect')
     backgroundRectangle.setAttribute('x', '0')
     backgroundRectangle.setAttribute('y', '0')
-    backgroundRectangle.setAttribute('width', bounds.width)
-    backgroundRectangle.setAttribute('height', bounds.height)
+    backgroundRectangle.setAttribute('width', `${bounds.width}`)
+    backgroundRectangle.setAttribute('height', `${bounds.height}`)
     backgroundRectangle.setAttribute('stroke', 'none')
     Fill.setFill(this.backgroundFill, backgroundRectangle, context)
     container.appendChild(backgroundRectangle)
     const leftInsetRectangle = document.createElementNS('http://www.w3.org/2000/svg', 'rect')
     leftInsetRectangle.setAttribute('x', '0')
     leftInsetRectangle.setAttribute('y', '0')
-    leftInsetRectangle.setAttribute('width', this.insets.left)
-    leftInsetRectangle.setAttribute('height', bounds.height)
+    leftInsetRectangle.setAttribute('width', `${this.insets.left}`)
+    leftInsetRectangle.setAttribute('height', `${bounds.height}`)
     leftInsetRectangle.setAttribute('stroke', 'none')
     Fill.setFill(this.insetFill, leftInsetRectangle, context)
     container.appendChild(leftInsetRectangle)
     const topInsetRectangle = document.createElementNS('http://www.w3.org/2000/svg', 'rect')
     topInsetRectangle.setAttribute('x', '0')
     topInsetRectangle.setAttribute('y', '0')
-    topInsetRectangle.setAttribute('width', bounds.width)
-    topInsetRectangle.setAttribute('height', this.insets.top)
+    topInsetRectangle.setAttribute('width', `${bounds.width}`)
+    topInsetRectangle.setAttribute('height', `${this.insets.top}`)
     topInsetRectangle.setAttribute('stroke', 'none')
     Fill.setFill(this.insetFill, topInsetRectangle, context)
     container.appendChild(topInsetRectangle)
     const rightInsetRectangle = document.createElementNS('http://www.w3.org/2000/svg', 'rect')
-    rightInsetRectangle.setAttribute('x', bounds.width - this.insets.right)
+    rightInsetRectangle.setAttribute('x', `${bounds.width - this.insets.right}`)
     rightInsetRectangle.setAttribute('y', '0')
-    rightInsetRectangle.setAttribute('width', this.insets.right)
-    rightInsetRectangle.setAttribute('height', bounds.height)
+    rightInsetRectangle.setAttribute('width', `${this.insets.right}`)
+    rightInsetRectangle.setAttribute('height', `${bounds.height}`)
     rightInsetRectangle.setAttribute('stroke', 'none')
     Fill.setFill(this.insetFill, rightInsetRectangle, context)
     container.appendChild(rightInsetRectangle)
     const bottomInsetRectangle = document.createElementNS('http://www.w3.org/2000/svg', 'rect')
     bottomInsetRectangle.setAttribute('x', '0')
-    bottomInsetRectangle.setAttribute('y', bounds.height - this.insets.bottom)
-    bottomInsetRectangle.setAttribute('width', bounds.width)
-    bottomInsetRectangle.setAttribute('height', this.insets.bottom)
+    bottomInsetRectangle.setAttribute('y', `${bounds.height - this.insets.bottom}`)
+    bottomInsetRectangle.setAttribute('width', `${bounds.width}`)
+    bottomInsetRectangle.setAttribute('height', `${this.insets.bottom}`)
     bottomInsetRectangle.setAttribute('stroke', 'none')
     Fill.setFill(this.insetFill, bottomInsetRectangle, context)
     container.appendChild(bottomInsetRectangle)
     const borderRectangle = document.createElementNS('http://www.w3.org/2000/svg', 'rect')
     borderRectangle.setAttribute('x', '0')
     borderRectangle.setAttribute('y', '0')
-    borderRectangle.setAttribute('width', bounds.width)
-    borderRectangle.setAttribute('height', bounds.height)
+    borderRectangle.setAttribute('width', `${bounds.width}`)
+    borderRectangle.setAttribute('height', `${bounds.height}`)
     Stroke.setStroke(this.stroke, borderRectangle, context)
     borderRectangle.setAttribute('fill', 'none')
     container.appendChild(borderRectangle)
 
     SvgVisual.setTranslate(container, bounds.x, bounds.y)
-
     container['render-data-cache'] = {
       bounds: bounds.toRect(),
       insets: this.insets,
       stroke: this.stroke,
-      backgroundFill: this.backgroundFill.clone(),
-      insetFill: this.insetFill.clone()
+      backgroundFill: this.backgroundFill ? this.backgroundFill.clone() : null,
+      insetFill: this.insetFill ? this.insetFill.clone() : null
     }
 
     return new SvgVisual(container)
   }
 
+  /**
+   * @param {!IRenderContext} context
+   * @param {!SvgVisual} oldVisual
+   * @param {!Rect} bounds
+   * @param {!object} data
+   * @returns {?SvgVisual}
+   */
   updateVisual(context, oldVisual, bounds, data) {
     const container = oldVisual.svgElement
 
@@ -7118,33 +7743,33 @@ class BorderVisual extends BaseClass(IVisualTemplate) {
       const backgroundRectangle = container.childNodes[0]
       backgroundRectangle.setAttribute('x', '0')
       backgroundRectangle.setAttribute('y', '0')
-      backgroundRectangle.setAttribute('width', bounds.width)
-      backgroundRectangle.setAttribute('height', bounds.height)
+      backgroundRectangle.setAttribute('width', `${bounds.width}`)
+      backgroundRectangle.setAttribute('height', `${bounds.height}`)
       const leftInsetRectangle = container.childNodes[1]
       leftInsetRectangle.setAttribute('x', '0')
       leftInsetRectangle.setAttribute('y', '0')
-      leftInsetRectangle.setAttribute('width', insets.left)
-      leftInsetRectangle.setAttribute('height', bounds.height)
+      leftInsetRectangle.setAttribute('width', `${insets.left}`)
+      leftInsetRectangle.setAttribute('height', `${bounds.height}`)
       const topInsetRectangle = container.childNodes[2]
       topInsetRectangle.setAttribute('x', '0')
       topInsetRectangle.setAttribute('y', '0')
-      topInsetRectangle.setAttribute('width', bounds.width)
-      topInsetRectangle.setAttribute('height', insets.top)
+      topInsetRectangle.setAttribute('width', `${bounds.width}`)
+      topInsetRectangle.setAttribute('height', `${insets.top}`)
       const rightInsetsRectangle = container.childNodes[3]
-      rightInsetsRectangle.setAttribute('x', bounds.width - insets.right)
+      rightInsetsRectangle.setAttribute('x', `${bounds.width - insets.right}`)
       rightInsetsRectangle.setAttribute('y', '0')
-      rightInsetsRectangle.setAttribute('width', insets.right)
-      rightInsetsRectangle.setAttribute('height', bounds.height)
+      rightInsetsRectangle.setAttribute('width', `${insets.right}`)
+      rightInsetsRectangle.setAttribute('height', `${bounds.height}`)
       const bottomInsetRectangle = container.childNodes[4]
       bottomInsetRectangle.setAttribute('x', '0')
-      bottomInsetRectangle.setAttribute('y', bounds.height - insets.bottom)
-      bottomInsetRectangle.setAttribute('width', bounds.width)
-      bottomInsetRectangle.setAttribute('height', insets.bottom)
+      bottomInsetRectangle.setAttribute('y', `${bounds.height - insets.bottom}`)
+      bottomInsetRectangle.setAttribute('width', `${bounds.width}`)
+      bottomInsetRectangle.setAttribute('height', `${insets.bottom}`)
       const borderRectangle = container.childNodes[5]
       borderRectangle.setAttribute('x', '0')
       borderRectangle.setAttribute('y', '0')
-      borderRectangle.setAttribute('width', bounds.width)
-      borderRectangle.setAttribute('height', bounds.height)
+      borderRectangle.setAttribute('width', `${bounds.width}`)
+      borderRectangle.setAttribute('height', `${bounds.height}`)
 
       cache.insets = insets
       cache.bounds = bounds.toRect()
@@ -7157,66 +7782,66 @@ class BorderVisual extends BaseClass(IVisualTemplate) {
 
   /**
    * Returns the fill for inside the rectangle.
-   * @type {Fill}
+   * @type {?Fill}
    */
   get backgroundFill() {
-    return this.$backgroundFill
+    return this._backgroundFill
   }
 
   /**
    * Specifies the fill for inside the rectangle.
-   * @type {Fill}
+   * @type {?Fill}
    */
   set backgroundFill(fill) {
-    this.$backgroundFill = fill
+    this._backgroundFill = fill
   }
 
   /**
    * Returns the stroke for the outline of the rectangle.
-   * @type {Stroke}
+   * @type {?Stroke}
    */
   get stroke() {
-    return this.$stroke
+    return this._stroke
   }
 
   /**
    * Specifies the stroke for the outline of the rectangle.
-   * @type {Stroke}
+   * @type {?Stroke}
    */
   set stroke(stroke) {
-    this.$stroke = stroke
+    this._stroke = stroke
   }
 
   /**
    * Returns the fill for inside the insets.
-   * @type {Fill}
+   * @type {?Fill}
    */
   get insetFill() {
-    return this.$insetFill
+    return this._insetFill
   }
 
   /**
    * Specifies the fill for inside the insets.
-   * @type {Fill}
+   * @type {?Fill}
    */
   set insetFill(fill) {
-    this.$insetFill = fill
+    this._insetFill = fill
   }
 
   /**
    * Returns the border's thickness.
-   * @type {Insets}
+   * @type {!Insets}
    */
   get insets() {
-    return this.$insets
+    return this._insets
   }
 
   /**
    * Sets the border's thickness.
-   * @type {Insets}
+   * @type {!Insets}
    */
   set insets(insets) {
-    this.$insets = insets
+    this._insets = insets
   }
 }
 
@@ -7229,48 +7854,49 @@ export class AnnotationNodeStyle extends BpmnNodeStyle {
    */
   constructor() {
     super()
-    this.$background = BPMN_CONSTANTS_ANNOTATION_DEFAULT_BACKGROUND
-    this.$outline = BPMN_CONSTANTS_ANNOTATION_DEFAULT_OUTLINE
-    this.icon = IconFactory.createAnnotation(true, this.$background, this.$outline)
-    this.minimumSize = new Size(30, 10)
+    this._background = BPMN_CONSTANTS_ANNOTATION_DEFAULT_BACKGROUND
+    this._outline = BPMN_CONSTANTS_ANNOTATION_DEFAULT_OUTLINE
+    this._left = false
+    this.icon = IconFactory.createAnnotation(true, this._background, this._outline)
     this.left = true
+    this.minimumSize = new Size(30, 10)
   }
 
   /**
    * Gets the background color of the annotation.
-   * @return {Fill}
+   * @type {!Fill}
    */
   get background() {
-    return this.$background
+    return this._background
   }
 
   /**
    * Sets the background color of the annotation.
-   * @param {Fill} value
+   * @type {!Fill}
    */
   set background(value) {
-    if (this.$background !== value) {
+    if (this._background !== value) {
       this.modCount++
-      this.$background = value
+      this._background = value
     }
   }
 
   /**
    * Gets the outline color of the annotation.
-   * @return {Fill}
+   * @type {!Fill}
    */
   get outline() {
-    return this.$outline
+    return this._outline
   }
 
   /**
    * Sets the outline color of the annotation.
-   * @param {Fill} value
+   * @type {!Fill}
    */
   set outline(value) {
-    if (this.$outline !== value) {
+    if (this._outline !== value) {
       this.modCount++
-      this.$outline = value
+      this._outline = value
     }
   }
 
@@ -7279,7 +7905,7 @@ export class AnnotationNodeStyle extends BpmnNodeStyle {
    * @type {boolean}
    */
   get left() {
-    return this.$left
+    return this._left
   }
 
   /**
@@ -7287,9 +7913,9 @@ export class AnnotationNodeStyle extends BpmnNodeStyle {
    * @type {boolean}
    */
   set left(value) {
-    if (value !== this.$left) {
+    if (value !== this._left) {
       this.modCount++
-      this.$left = value
+      this._left = value
     }
   }
 
@@ -7306,33 +7932,18 @@ export class AnnotationNodeStyle extends BpmnNodeStyle {
 class ConnectedIconLabelStyle extends LabelStyleBase {
   constructor() {
     super()
-    /** @type {ILabelModelParameter} */
     this.textPlacement = null
-
-    /** @type {IPortLocationModelParameter} */
     this.labelConnectorLocation = null
-
-    /** @type {IPortLocationModelParameter} */
     this.nodeConnectorLocation = null
-
-    /** @type {Size} */
-    this.iconSize = null
-
-    /** @type {INodeStyle} */
+    this.iconSize = Size.ZERO
     this.iconStyle = null
-
-    /** @type {ILabelStyle} */
     this.textStyle = null
-
-    /** @type {IEdgeStyle} */
     this.connectorStyle = null
-
-    this.textBounds = null
   }
 
   /**
    * Create a clone of this object.
-   * @return {Object} A clone of this object.
+   * @returns {*} A clone of this object.
    * @see Specified by {@link ICloneable#clone}.
    */
   clone() {
@@ -7341,19 +7952,18 @@ class ConnectedIconLabelStyle extends LabelStyleBase {
 
   /**
    * Creates a new visual for the label.
-   * @param {IRenderContext} context The context that describes where the visual will be used.
-   * @param {ILabel} label The label for which the visual is created.
-   * @return {Visual} The visual to include in the canvas object visual tree. This may be
+   * @param {!IRenderContext} context The context that describes where the visual will be used.
+   * @param {!ILabel} label The label for which the visual is created.
+   * @returns {!SvgVisual} The visual to include in the canvas object visual tree. This may be
    *   <code>null</code>.
    * @see {@link IVisualCreator#updateVisual}
    * @see Specified by {@link IVisualCreator#createVisual}.
    */
   createVisual(context, label) {
-    this.configure(label)
+    this.configure(context, label)
     const container = new SvgVisualGroup()
 
-    /** @type {Visual} */
-    let iconVisual
+    let iconVisual = null
     if (this.iconStyle) {
       const labelAsNode = ConnectedIconLabelStyle.LABEL_AS_NODE
       iconVisual = this.iconStyle.renderer
@@ -7364,8 +7974,7 @@ class ConnectedIconLabelStyle extends LabelStyleBase {
       iconVisual || new SvgVisual(document.createElementNS('http://www.w3.org/2000/svg', 'g'))
     )
 
-    /** @type {Visual} */
-    let textVisual
+    let textVisual = null
     if (this.textStyle && this.textPlacement) {
       const dummyTextLabel = ConnectedIconLabelStyle.DUMMY_TEXT_LABEL
       textVisual = this.textStyle.renderer
@@ -7376,8 +7985,7 @@ class ConnectedIconLabelStyle extends LabelStyleBase {
       textVisual || new SvgVisual(document.createElementNS('http://www.w3.org/2000/svg', 'g'))
     )
 
-    /** @type {Visual} */
-    let connectorVisual
+    let connectorVisual = null
     if (this.connectorStyle) {
       const dummyEdge = ConnectedIconLabelStyle.DUMMY_EDGE
       connectorVisual = this.connectorStyle.renderer
@@ -7393,13 +8001,14 @@ class ConnectedIconLabelStyle extends LabelStyleBase {
 
   /**
    * Calculates the preferred size given the current state of the renderer.
-   * @return {Size} The size as suggested by this renderer.
+   * @returns {!Size} The size as suggested by this renderer.
+   * @param {!ILabel} label
    */
-  getPreferredSize() {
+  getPreferredSize(label) {
     if (!this.iconSize.equals(Size.ZERO)) {
       return this.iconSize
     }
-    return this.item.preferredSize
+    return label.preferredSize
   }
 
   /**
@@ -7409,22 +8018,21 @@ class ConnectedIconLabelStyle extends LabelStyleBase {
    * to {@link IVisualCreator#createVisual}. Implementation may update the <code>oldVisual</code>
    * and return that same reference, or create a new visual and return the new instance or
    * <code>null</code>.
-   * @param {IRenderContext} context The context that describes where the visual will be used in.
-   * @param {Visual} oldVisual The visual instance that had been returned the last time the {@link
+   * @param {!IRenderContext} context The context that describes where the visual will be used in.
+   * @param {!SvgVisual} oldVisual The visual instance that had been returned the last time the {@link
    *   IVisualCreator#createVisual} method was called on this instance.
-   * @param {ILabel} label The label whose visual is updated.
-   * @return {Visual} <code>oldVisual</code>, if this instance modified the visual, or a new visual
+   * @param {!ILabel} label The label whose visual is updated.
+   * @returns {!SvgVisual} <code>oldVisual</code>, if this instance modified the visual, or a new visual
    *   that should replace the existing one in the canvas object visual tree.
    */
   updateVisual(context, oldVisual, label) {
-    this.configure(label)
+    this.configure(context, label)
     const container = oldVisual instanceof SvgVisualGroup ? oldVisual : null
     if (container === null || container.children.size !== 3) {
-      return this.createVisual(context)
+      return this.createVisual(context, label)
     }
 
     const oldIconVisual = container.children.get(0)
-    /** @type {Visual} */
     let newIconVisual = null
     if (this.iconStyle !== null) {
       const labelAsNode = ConnectedIconLabelStyle.LABEL_AS_NODE
@@ -7437,7 +8045,6 @@ class ConnectedIconLabelStyle extends LabelStyleBase {
     }
 
     const oldTextVisual = container.children.get(1)
-    /** @type {Visual} */
     let newTextVisual = null
     if (this.textStyle !== null && this.textPlacement !== null) {
       const dummyTextLabel = ConnectedIconLabelStyle.DUMMY_TEXT_LABEL
@@ -7450,7 +8057,6 @@ class ConnectedIconLabelStyle extends LabelStyleBase {
     }
 
     const oldConnectorVisual = container.children.get(2)
-    /** @type {Visual} */
     let newConnectorVisual = null
     if (this.connectorStyle !== null) {
       const dummyEdge = ConnectedIconLabelStyle.DUMMY_EDGE
@@ -7467,12 +8073,14 @@ class ConnectedIconLabelStyle extends LabelStyleBase {
 
   /**
    * Prepares this instance for subsequent calls after the style and item have been initialized.
+   * @param {!(IRenderContext|IInputModeContext|ICanvasContext)} context
+   * @param {!ILabel} label
    */
-  configure(label) {
+  configure(context, label) {
     ConnectedIconLabelStyle.LABEL_AS_NODE.style = this.iconStyle
     ConnectedIconLabelStyle.LABEL_AS_NODE.layout = label.layout.bounds
 
-    if (INode.isInstance(label.owner)) {
+    if (label.owner instanceof INode) {
       const nodeOwner = label.owner
       ConnectedIconLabelStyle.DUMMY_FOR_LABEL_OWNER.style = nodeOwner.style
       ConnectedIconLabelStyle.DUMMY_FOR_LABEL_OWNER.layout = nodeOwner.layout
@@ -7481,13 +8089,12 @@ class ConnectedIconLabelStyle extends LabelStyleBase {
     ConnectedIconLabelStyle.DUMMY_TEXT_LABEL.style = this.textStyle
     ConnectedIconLabelStyle.DUMMY_TEXT_LABEL.layoutParameter = this.textPlacement
     ConnectedIconLabelStyle.DUMMY_TEXT_LABEL.text = label.text
-    ConnectedIconLabelStyle.DUMMY_TEXT_LABEL.preferredSize = ConnectedIconLabelStyle.DUMMY_TEXT_LABEL.style.renderer.getPreferredSize(
-      ConnectedIconLabelStyle.DUMMY_TEXT_LABEL,
-      ConnectedIconLabelStyle.DUMMY_TEXT_LABEL.style
-    )
-
-    // Set source port to the port of the node using a dummy node that is located at the origin.
-    ConnectedIconLabelStyle.DUMMY_EDGE.sourcePort.locationParameter = this.labelConnectorLocation
+    ConnectedIconLabelStyle.DUMMY_TEXT_LABEL.preferredSize =
+      ConnectedIconLabelStyle.DUMMY_TEXT_LABEL.style.renderer.getPreferredSize(
+        ConnectedIconLabelStyle.DUMMY_TEXT_LABEL,
+        ConnectedIconLabelStyle.DUMMY_TEXT_LABEL.style
+      )
+    ConnectedIconLabelStyle.DUMMY_EDGE.sourcePort.locationParameter = this.nodeConnectorLocation
     ConnectedIconLabelStyle.DUMMY_EDGE.targetPort.locationParameter = this.nodeConnectorLocation
     ConnectedIconLabelStyle.DUMMY_EDGE.style = this.connectorStyle
   }
@@ -7495,14 +8102,14 @@ class ConnectedIconLabelStyle extends LabelStyleBase {
   /**
    * Determines if something has been hit at the given coordinates
    * in the world coordinate system.
-   * @param {Point} location the coordinates in world coordinate system
-   * @param {ICanvasContext} context the context the hit test is performed in
-   * @param {ILabel} label the label that might be hit.
-   * @return {boolean} whether something has been hit
+   * @param {!Point} location the coordinates in world coordinate system
+   * @param {!IInputModeContext} context the context the hit test is performed in
+   * @param {!ILabel} label the label that might be hit.
+   * @returns {boolean} whether something has been hit
    * @see Specified by {@link IHitTestable#isHit}.
    */
   isHit(context, location, label) {
-    this.configure(label)
+    this.configure(context, label)
     const dummyEdge = ConnectedIconLabelStyle.DUMMY_EDGE
     return (
       label.layout.containsWithEps(location, context.hitTestRadius) ||
@@ -7516,15 +8123,15 @@ class ConnectedIconLabelStyle extends LabelStyleBase {
    * This method may return <code>false</code> if the item cannot be
    * selected using a selection marquee or optionally if the
    * item is only partially contained within the box.
-   * @param {Rect} box the box describing the marquee's bounds
-   * @param {ICanvasContext} context the current canvas context
-   * @param {ILabel} label the label.
-   * @return {boolean} <code>true</code> if the item is considered to be captured by the marquee
+   * @param {!Rect} box the box describing the marquee's bounds
+   * @param {!IInputModeContext} context the current canvas context
+   * @param {!ILabel} label the label.
+   * @returns {boolean} <code>true</code> if the item is considered to be captured by the marquee
    * @see Specified by {@link IMarqueeTestable#isInBox}.
    */
   isInBox(context, box, label) {
-    this.configure(label)
-    return box.intersects(this.boundingBox.getEnlarged(context.hitTestRadius))
+    this.configure(context, label)
+    return box.intersects(this.getBounds(context, label).getEnlarged(context.hitTestRadius))
   }
 
   /**
@@ -7535,13 +8142,13 @@ class ConnectedIconLabelStyle extends LabelStyleBase {
    * If nothing is painted, this method should return an empty rectangle, where
    * either or both the width and height is non-positive or
    * {@link Rect#EMPTY}.
-   * @param {ICanvasContext} context the context to calculate the bounds for
-   * @param {ILabel} label the label.
-   * @return {Rect} the bounds or {@link Rect#EMPTY} to indicate an unbound area
+   * @param {!ICanvasContext} context the context to calculate the bounds for
+   * @param {!ILabel} label the label.
+   * @returns {!Rect} the bounds or {@link Rect#EMPTY} to indicate an unbound area
    * @see Specified by {@link IBoundsProvider#getBounds}.
    */
   getBounds(context, label) {
-    this.configure(label)
+    this.configure(context, label)
     const dummyEdge = ConnectedIconLabelStyle.DUMMY_EDGE
     return Rect.add(
       label.layout.bounds,
@@ -7551,33 +8158,39 @@ class ConnectedIconLabelStyle extends LabelStyleBase {
 
   /**
    * Determines whether an element might intersect the visible region for a given context.
-   * @param {Rect} clip The visible region clip.
-   * @param {ICanvasContext} context The context to determine the visibility for.
-   * @param {ILabel} label the label.
-   * @return {boolean} <code>false</code> if and only if it is safe not to paint the element because
+   * @param {!Rect} clip The visible region clip.
+   * @param {!ICanvasContext} context The context to determine the visibility for.
+   * @param {!ILabel} label the label.
+   * @returns {boolean} <code>false</code> if and only if it is safe not to paint the element because
    * it would not affect the given clipping region.
    * @see Specified by {@link IVisibilityTestable#isVisible}.
    */
   isVisible(context, clip, label) {
-    this.configure(label)
+    this.configure(context, label)
     // We're computing a (very generous) bounding box here because relying on GetBounds does not work.
     // The visibility test does not call Configure, which means we don't have the dummy edge set up yet.
-    if (INode.isInstance(label.owner)) {
+    if (label.owner instanceof INode) {
       const ownerNode = label.owner
       return clip.intersects(Rect.add(label.layout.bounds, ownerNode.layout.toRect()))
     }
     return clip.intersects(label.layout.bounds)
   }
 
+  /**
+   * @type {!SimpleNode}
+   */
   static get LABEL_AS_NODE() {
     return (
-      ConnectedIconLabelStyle.$labelAsNode ||
-      (ConnectedIconLabelStyle.$labelAsNode = new SimpleNode())
+      ConnectedIconLabelStyle._labelAsNode ||
+      (ConnectedIconLabelStyle._labelAsNode = new SimpleNode())
     )
   }
 
+  /**
+   * @type {!SimpleLabel}
+   */
   static get DUMMY_TEXT_LABEL() {
-    if (!ConnectedIconLabelStyle.$dummyTextLabel) {
+    if (!ConnectedIconLabelStyle._dummyTextLabel) {
       const simpleLabel = new SimpleLabel(
         ConnectedIconLabelStyle.LABEL_AS_NODE,
         '',
@@ -7587,20 +8200,26 @@ class ConnectedIconLabelStyle extends LabelStyleBase {
         horizontalTextAlignment: HorizontalTextAlignment.CENTER,
         verticalTextAlignment: VerticalTextAlignment.CENTER
       })
-      ConnectedIconLabelStyle.$dummyTextLabel = simpleLabel
+      ConnectedIconLabelStyle._dummyTextLabel = simpleLabel
     }
-    return ConnectedIconLabelStyle.$dummyTextLabel
+    return ConnectedIconLabelStyle._dummyTextLabel
   }
 
+  /**
+   * @type {!SimpleNode}
+   */
   static get DUMMY_FOR_LABEL_OWNER() {
     return (
-      ConnectedIconLabelStyle.$dummyForLabelOwner ||
-      (ConnectedIconLabelStyle.$dummyForLabelOwner = new SimpleNode())
+      ConnectedIconLabelStyle._dummyForLabelOwner ||
+      (ConnectedIconLabelStyle._dummyForLabelOwner = new SimpleNode())
     )
   }
 
+  /**
+   * @type {!SimpleEdge}
+   */
   static get DUMMY_EDGE() {
-    if (!ConnectedIconLabelStyle.$dummyEdge) {
+    if (!ConnectedIconLabelStyle._dummyEdge) {
       const sourcePort = new SimplePort(
         ConnectedIconLabelStyle.LABEL_AS_NODE,
         FreeNodePortLocationModel.NODE_CENTER_ANCHORED
@@ -7613,9 +8232,9 @@ class ConnectedIconLabelStyle extends LabelStyleBase {
       const bpmnEdgeStyle = new BpmnEdgeStyle()
       bpmnEdgeStyle.type = EdgeType.ASSOCIATION
       simpleEdge.style = bpmnEdgeStyle
-      ConnectedIconLabelStyle.$dummyEdge = simpleEdge
+      ConnectedIconLabelStyle._dummyEdge = simpleEdge
     }
-    return ConnectedIconLabelStyle.$dummyEdge
+    return ConnectedIconLabelStyle._dummyEdge
   }
 }
 
@@ -7625,20 +8244,20 @@ class ConnectedIconLabelStyle extends LabelStyleBase {
 export class AnnotationLabelStyle extends LabelStyleBase {
   constructor() {
     super()
-    this.$leftAnnotationStyle = new AnnotationNodeStyle()
-    this.$rightAnnotationStyle = new AnnotationNodeStyle()
-    this.$rightAnnotationStyle.left = false
-    this.$connectorStyle = new BpmnEdgeStyle()
-    this.$connectorStyle.type = EdgeType.ASSOCIATION
+    this._leftAnnotationStyle = new AnnotationNodeStyle()
+    this._rightAnnotationStyle = new AnnotationNodeStyle()
+    this._connectorStyle = new BpmnEdgeStyle()
+    this._insets = 5.0
+    this._rightAnnotationStyle.left = false
+    this._connectorStyle.type = EdgeType.ASSOCIATION
     const connectedIconLabelStyle = new ConnectedIconLabelStyle()
-    connectedIconLabelStyle.iconStyle = this.$leftAnnotationStyle
+    connectedIconLabelStyle.iconStyle = this._leftAnnotationStyle
     connectedIconLabelStyle.textStyle = AnnotationLabelStyle.TEXT_STYLE
     connectedIconLabelStyle.textPlacement = InteriorLabelModel.CENTER
-    connectedIconLabelStyle.connectorStyle = this.$connectorStyle
+    connectedIconLabelStyle.connectorStyle = this._connectorStyle
     connectedIconLabelStyle.labelConnectorLocation = FreeNodePortLocationModel.NODE_LEFT_ANCHORED
     connectedIconLabelStyle.nodeConnectorLocation = FreeNodePortLocationModel.NODE_CENTER_ANCHORED
-    this.$delegateStyle = connectedIconLabelStyle
-    this.$insets = 5.0
+    this._delegateStyle = connectedIconLabelStyle
   }
 
   /**
@@ -7646,7 +8265,7 @@ export class AnnotationLabelStyle extends LabelStyleBase {
    * @type {number}
    */
   get insets() {
-    return this.$insets
+    return this._insets
   }
 
   /**
@@ -7654,73 +8273,80 @@ export class AnnotationLabelStyle extends LabelStyleBase {
    * @type {number}
    */
   set insets(value) {
-    this.$insets = value
+    this._insets = value
   }
 
   /**
-   * @type {ConnectedIconLabelStyle}
+   * @type {!ConnectedIconLabelStyle}
    */
   get delegateStyle() {
-    return this.$delegateStyle
+    return this._delegateStyle
+  }
+
+  /**
+   * @type {!ConnectedIconLabelStyle}
+   */
+  set delegateStyle(value) {
+    this._delegateStyle = value
   }
 
   /**
    * Gets the background color of the annotation.
-   * @return {Fill}
+   * @type {!Fill}
    */
   get background() {
-    return this.$leftAnnotationStyle.background
+    return this._leftAnnotationStyle.background
   }
 
   /**
    * Sets the background color of the annotation.
-   * @param {Fill} value
+   * @type {!Fill}
    */
   set background(value) {
-    if (this.$leftAnnotationStyle.background !== value) {
-      this.$leftAnnotationStyle.background = value
-      this.$rightAnnotationStyle.background = value
+    if (this._leftAnnotationStyle.background !== value) {
+      this._leftAnnotationStyle.background = value
+      this._rightAnnotationStyle.background = value
     }
   }
 
   /**
    * Gets the outline color of the annotation.
-   * @return {Fill}
+   * @type {!Fill}
    */
   get outline() {
-    return this.$leftAnnotationStyle.outline
+    return this._leftAnnotationStyle.outline
   }
 
   /**
    * Sets the outline color of the annotation.
    * This also influences the color of the line to the annotated element.
-   * @param {Fill} value
+   * @type {!Fill}
    */
   set outline(value) {
-    if (this.$leftAnnotationStyle.outline !== value) {
-      this.$leftAnnotationStyle.outline = value
-      this.$rightAnnotationStyle.outline = value
-      this.$connectorStyle.color = value
+    if (this._leftAnnotationStyle.outline !== value) {
+      this._leftAnnotationStyle.outline = value
+      this._rightAnnotationStyle.outline = value
+      this._connectorStyle.color = value
     }
   }
 
   /**
    * Create a clone of this object.
-   * @return {Object} A clone of this object.
+   * @returns {*} A clone of this object.
    * @see Specified by {@link ICloneable#clone}.
    */
   clone() {
     const style = new AnnotationLabelStyle()
-    style.$connectorStyle = this.$connectorStyle.clone()
+    style._connectorStyle = this._connectorStyle.clone()
 
     const connectedIconLabelStyle = new ConnectedIconLabelStyle()
-    connectedIconLabelStyle.iconStyle = this.$leftAnnotationStyle.clone()
+    connectedIconLabelStyle.iconStyle = this._leftAnnotationStyle.clone()
     connectedIconLabelStyle.textStyle = AnnotationLabelStyle.TEXT_STYLE
     connectedIconLabelStyle.textPlacement = InteriorLabelModel.CENTER
-    connectedIconLabelStyle.connectorStyle = style.$connectorStyle
+    connectedIconLabelStyle.connectorStyle = style._connectorStyle
     connectedIconLabelStyle.labelConnectorLocation = FreeNodePortLocationModel.NODE_LEFT_ANCHORED
     connectedIconLabelStyle.nodeConnectorLocation = FreeNodePortLocationModel.NODE_CENTER_ANCHORED
-    style.$delegateStyle = connectedIconLabelStyle
+    style.delegateStyle = connectedIconLabelStyle
 
     style.insets = this.insets
     style.outline = this.outline
@@ -7728,19 +8354,25 @@ export class AnnotationLabelStyle extends LabelStyleBase {
     return style
   }
 
+  /**
+   * @type {!DefaultLabelStyle}
+   */
   static get TEXT_STYLE() {
     return (
-      AnnotationLabelStyle.$textStyle ||
-      (AnnotationLabelStyle.$textStyle = new DefaultLabelStyle({
+      AnnotationLabelStyle._textStyle ||
+      (AnnotationLabelStyle._textStyle = new DefaultLabelStyle({
         horizontalTextAlignment: HorizontalTextAlignment.CENTER,
         verticalTextAlignment: VerticalTextAlignment.CENTER
       }))
     )
   }
 
-  /** @return {ILabelStyle} */
+  /**
+   * @param {!ILabel} item
+   * @returns {!ILabelStyle}
+   */
   getCurrentStyle(item) {
-    if (!INode.isInstance(item.owner)) {
+    if (!(item.owner instanceof INode)) {
       return VoidLabelStyle.INSTANCE
     }
     const nodeOwner = item.owner
@@ -7748,7 +8380,7 @@ export class AnnotationLabelStyle extends LabelStyleBase {
     this.left = item.layout.orientedRectangleCenter.x > nodeOwner.layout.center.x
 
     const delegateStyle = this.delegateStyle
-    delegateStyle.iconStyle = this.left ? this.$leftAnnotationStyle : this.$rightAnnotationStyle
+    delegateStyle.iconStyle = this.left ? this._leftAnnotationStyle : this._rightAnnotationStyle
     delegateStyle.labelConnectorLocation = this.left
       ? FreeNodePortLocationModel.NODE_LEFT_ANCHORED
       : FreeNodePortLocationModel.NODE_RIGHT_ANCHORED
@@ -7757,9 +8389,9 @@ export class AnnotationLabelStyle extends LabelStyleBase {
 
   /**
    * Returns the bounds of the visual for the label.
-   * @param {ICanvasContext} context The rendering context.
-   * @param {ILabel} label The label to provide the bounds for
-   * @return {Rect} The bounds of the label.
+   * @param {!ICanvasContext} context The rendering context.
+   * @param {!ILabel} label The label to provide the bounds for
+   * @returns {!Rect} The bounds of the label.
    */
   getBounds(context, label) {
     const delegateStyle = this.getCurrentStyle(label)
@@ -7768,10 +8400,10 @@ export class AnnotationLabelStyle extends LabelStyleBase {
 
   /**
    * Returns whether or not the label is currently visible.
-   * @param {ICanvasContext} context The rendering context.
-   * @param {Rect} rectangle The clipping rectangle.
-   * @param {ILabel} label The label.
-   * @return {boolean} Whether or not the label is currently visible.
+   * @param {!ICanvasContext} context The rendering context.
+   * @param {!Rect} rectangle The clipping rectangle.
+   * @param {!ILabel} label The label.
+   * @returns {boolean} Whether or not the label is currently visible.
    */
   isVisible(context, rectangle, label) {
     const delegateStyle = this.getCurrentStyle(label)
@@ -7782,11 +8414,11 @@ export class AnnotationLabelStyle extends LabelStyleBase {
 
   /**
    * Returns whether or not the given location lies inside the label.
-   * @param {IInputModeContext} context The input mode context.
-   * @param {Point} location The location to check.
-   * @param {ILabel} label The label.
-   * @return {boolean}
+   * @param {!IInputModeContext} context The input mode context.
+   * @param {!Point} location The location to check.
+   * @param {!ILabel} label The label.
    * @see {@link ILabelStyleRenderer#getHitTestable}.
+   * @returns {boolean}
    */
   isHit(context, location, label) {
     const delegateStyle = this.getCurrentStyle(label)
@@ -7796,8 +8428,8 @@ export class AnnotationLabelStyle extends LabelStyleBase {
   /**
    * Calculates the {@link ILabel#preferredSize preferred size}
    * of a given label using the associated style.
-   * @param {ILabel} label The label to determine the preferred size for.
-   * @return {Size} A size that can be used as the {@link ILabel#preferredSize}.
+   * @param {!ILabel} label The label to determine the preferred size for.
+   * @returns {!Size} A size that can be used as the {@link ILabel#preferredSize}.
    */
   getPreferredSize(label) {
     const preferredTextSize = AnnotationLabelStyle.TEXT_STYLE.renderer.getPreferredSize(
@@ -7815,9 +8447,9 @@ export class AnnotationLabelStyle extends LabelStyleBase {
    * that will be included into the {@link IRenderContext}.
    * {@link CanvasComponent} uses this interface through the {@link ICanvasObjectDescriptor}
    * to populate the visual canvas object tree.
-   * @param {IRenderContext} context The context that describes where the visual will be used.
-   * @param {ILabel} label The label.
-   * @return {Visual} The visual to include in the canvas object visual tree. This may be
+   * @param {!IRenderContext} context The context that describes where the visual will be used.
+   * @param {!ILabel} label The label.
+   * @returns {!SvgVisual} The visual to include in the canvas object visual tree. This may be
    *   <code>null</code>.
    * @see {@link IVisualCreator#updateVisual}
    * @see Specified by {@link IVisualCreator#createVisual}.
@@ -7841,11 +8473,11 @@ export class AnnotationLabelStyle extends LabelStyleBase {
    * to {@link IVisualCreator#createVisual}. Implementation may update the <code>oldVisual</code>
    * and return that same reference, or create a new visual and return the new instance or
    * <code>null</code>.
-   * @param {IRenderContext} context The context that describes where the visual will be used in.
-   * @param {Visual} oldVisual The visual instance that had been returned the last time the {@link
+   * @param {!IRenderContext} context The context that describes where the visual will be used in.
+   * @param {!SvgVisual} oldVisual The visual instance that had been returned the last time the {@link
    *   IVisualCreator#createVisual} method was called on this instance.
-   * @param {ILabel} label The label.
-   * @return {Visual} <code>oldVisual</code>, if this instance modified the visual, or a new visual
+   * @param {!ILabel} label The label.
+   * @returns {!SvgVisual} <code>oldVisual</code>, if this instance modified the visual, or a new visual
    *   that should replace the existing one in the canvas object visual tree.
    * @see {@link IVisualCreator#createVisual}
    * @see {@link ICanvasObjectDescriptor}
@@ -7854,8 +8486,11 @@ export class AnnotationLabelStyle extends LabelStyleBase {
    */
   updateVisual(context, oldVisual, label) {
     const container = oldVisual instanceof SvgVisualGroup ? oldVisual : null
+    if (!container) {
+      this.createVisual(context, label)
+    }
     const cache = container['render-data-cache']
-    const delegateStyle = this.getCurrentStyle(label, label.Style)
+    const delegateStyle = this.getCurrentStyle(label)
     const newCache = this.createRenderData()
     if (cache === null || !cache.equals(cache, newCache) || container.children.size !== 1) {
       return this.createVisual(context, label)
@@ -7872,7 +8507,7 @@ export class AnnotationLabelStyle extends LabelStyleBase {
   }
 
   /**
-   * @return {Object}
+   * @returns {!object}
    */
   createRenderData() {
     return {
@@ -7888,95 +8523,100 @@ export class AnnotationLabelStyle extends LabelStyleBase {
  */
 export class StripeDescriptor {
   constructor() {
-    this.$backgroundFill = Fill.TRANSPARENT
-    this.$insetFill = Fill.TRANSPARENT
-    this.$borderFill = Fill.BLACK
-    this.$borderThickness = new Insets(1)
+    this._borderThickness = new Insets(1)
+    this._backgroundFill = Fill.TRANSPARENT
+    this._insetFill = Fill.TRANSPARENT
+    this._borderFill = Fill.BLACK
   }
 
   /**
    * The background fill for a stripe.
-   * @type {Fill}
+   * @type {!Fill}
    */
   get backgroundFill() {
-    return this.$backgroundFill
+    return this._backgroundFill
   }
 
   /**
    * The background fill for a stripe.
-   * @type {Fill}
+   * @type {!Fill}
    */
   set backgroundFill(value) {
-    this.$backgroundFill = value
+    this._backgroundFill = value
   }
 
   /**
    * The inset fill for a stripe.
-   * @type {Fill}
+   * @type {!Fill}
    */
   get insetFill() {
-    return this.$insetFill
+    return this._insetFill
   }
 
   /**
    * The inset fill for a stripe.
-   * @type {Fill}
+   * @type {!Fill}
    */
   set insetFill(value) {
-    this.$insetFill = value
+    this._insetFill = value
   }
 
   /**
    * The border fill for a stripe.
-   * @type {Fill}
+   * @type {!Fill}
    */
   get borderFill() {
-    return this.$borderFill
+    return this._borderFill
   }
 
   /**
    * The border fill for a stripe.
-   * @type {Fill}
+   * @type {!Fill}
    */
   set borderFill(value) {
-    this.$borderFill = value
+    this._borderFill = value
   }
 
   /**
    * The border thickness for a stripe.
-   * @type {Insets}
+   * @type {!Insets}
    */
   get borderThickness() {
-    return this.$borderThickness
+    return this._borderThickness
   }
 
   /**
    * The border thickness for a stripe.
-   * @type {Insets}
+   * @type {!Insets}
    */
   set borderThickness(value) {
-    this.$borderThickness = value
+    this._borderThickness = value
   }
 
-  /** @return {boolean} */
+  /**
+   * @param {!object} obj
+   * @returns {boolean}
+   */
   equals(obj) {
     if (!(obj instanceof StripeDescriptor)) {
       return false
     }
     return (
-      obj.$backgroundFill.equals(this.$backgroundFill) &&
-      obj.$insetFill.equals(this.$insetFill) &&
-      obj.$borderFill.equals(this.$borderFill) &&
-      obj.$borderThickness.equals(this.$borderThickness)
+      obj._backgroundFill.equals(this._backgroundFill) &&
+      obj._insetFill.equals(this._insetFill) &&
+      obj._borderFill.equals(this._borderFill) &&
+      obj._borderThickness.equals(this._borderThickness)
     )
   }
 
-  /** @return {number} */
+  /**
+   * @returns {number}
+   */
   hashCode() {
-    let result = this.$backgroundFill !== null ? this.$backgroundFill.hashCode() : 0
-    result = (result * 397) ^ (this.$insetFill !== null ? this.$insetFill.hashCode() : 0)
-    result = (result * 397) ^ (this.$borderFill !== null ? this.$borderFill.hashCode() : 0)
-    result = (result * 397) ^ this.$borderThickness.hashCode()
+    let result = this._backgroundFill !== null ? this._backgroundFill.hashCode() : 0
+    result = (result * 397) ^ (this._insetFill !== null ? this._insetFill.hashCode() : 0)
+    result = (result * 397) ^ (this._borderFill !== null ? this._borderFill.hashCode() : 0)
+    result = (result * 397) ^ this._borderThickness.hashCode()
     return result
   }
 }
@@ -7988,15 +8628,16 @@ export class StripeDescriptor {
 export class PoolNodeStyle extends NodeStyleBase {
   /**
    * Creates a new instance for an oriented pool.
-   * @param {boolean?} vertical Whether or not the style represents a vertical pool.
+   * @param vertical Whether or not the style represents a vertical pool.
+   * @param {boolean} [vertical]
    */
   constructor(vertical) {
     super()
-    this.vertical = typeof vertical !== 'undefined' ? vertical : false
-    this.$multipleInstance = false
-    this.$tableNodeStyle = null
-    this.$iconColor = BPMN_CONSTANTS_DEFAULT_ICON_COLOR
-    this.$multipleInstanceIcon = null
+    this._multipleInstance = false
+    this._tableNodeStyle = null
+    this._iconColor = BPMN_CONSTANTS_DEFAULT_ICON_COLOR
+    this._multipleInstanceIcon = null
+    this.vertical = vertical || false
     this.updateIcon()
   }
 
@@ -8005,7 +8646,7 @@ export class PoolNodeStyle extends NodeStyleBase {
    * @type {boolean}
    */
   get multipleInstance() {
-    return this.$multipleInstance
+    return this._multipleInstance
   }
 
   /**
@@ -8013,45 +8654,45 @@ export class PoolNodeStyle extends NodeStyleBase {
    * @type {boolean}
    */
   set multipleInstance(value) {
-    this.$multipleInstance = value
+    this._multipleInstance = value
   }
 
   /**
    * Gets the color for the icon.
-   * @return {Fill}
+   * @type {!Fill}
    */
   get iconColor() {
-    return this.$iconColor
+    return this._iconColor
   }
 
   /**
    * Sets the color for the icon.
-   * @param {Fill} value
+   * @type {!Fill}
    */
   set iconColor(value) {
-    if (this.$iconColor !== value) {
-      this.$iconColor = value
+    if (this._iconColor !== value) {
+      this._iconColor = value
       this.updateIcon()
     }
   }
 
   /**
    * Gets the {@link TableNodeStyle} the visualization is delegated to.
-   * @type {TableNodeStyle}
+   * @type {!TableNodeStyle}
    */
   get tableNodeStyle() {
-    if (!this.$tableNodeStyle) {
-      this.$tableNodeStyle = createDefaultTableNodeStyle(this.vertical)
+    if (!this._tableNodeStyle) {
+      this._tableNodeStyle = createDefaultTableNodeStyle(this.vertical)
     }
-    return this.$tableNodeStyle
+    return this._tableNodeStyle
   }
 
   /**
    * Sets the {@link TableNodeStyle} the visualization is delegated to.
-   * @type {TableNodeStyle}
+   * @type {!TableNodeStyle}
    */
   set tableNodeStyle(value) {
-    this.$tableNodeStyle = value
+    this._tableNodeStyle = value
   }
 
   updateIcon() {
@@ -8059,7 +8700,7 @@ export class PoolNodeStyle extends NodeStyleBase {
       LoopCharacteristic.PARALLEL,
       this.iconColor
     )
-    this.$multipleInstanceIcon = new PlacedIcon(
+    this._multipleInstanceIcon = new PlacedIcon(
       multipleIcon,
       BPMN_CONSTANTS_PLACEMENTS_POOL_NODE_MARKER,
       BPMN_CONSTANTS_SIZES_MARKER
@@ -8071,9 +8712,9 @@ export class PoolNodeStyle extends NodeStyleBase {
    * that will be included into the {@link IRenderContext}.
    * {@link CanvasComponent} uses this interface through the {@link ICanvasObjectDescriptor}
    * to populate the visual canvas object tree.
-   * @param {IRenderContext} renderContext The context that describes where the visual will be used.
-   * @param {INode} node The node.
-   * @return {Visual} The visual to include in the canvas object visual tree. This may be
+   * @param {!IRenderContext} renderContext The context that describes where the visual will be used.
+   * @param {!INode} node The node.
+   * @returns {!SvgVisual} The visual to include in the canvas object visual tree. This may be
    *   <code>null</code>.
    * @see {@link IVisualCreator#updateVisual}
    * @see Specified by {@link IVisualCreator#createVisual}.
@@ -8086,8 +8727,9 @@ export class PoolNodeStyle extends NodeStyleBase {
         .createVisual(renderContext)
     )
     if (this.multipleInstance) {
-      this.$multipleInstanceIcon.setBounds(node.layout)
-      container.add(this.$multipleInstanceIcon.createVisual(renderContext))
+      this._multipleInstanceIcon.setBounds(node.layout.toRect())
+      const multipleInstanceIconVisual = this._multipleInstanceIcon.createVisual(renderContext)
+      container.add(multipleInstanceIconVisual)
     }
     return container
   }
@@ -8100,12 +8742,12 @@ export class PoolNodeStyle extends NodeStyleBase {
    * to {@link IVisualCreator#createVisual}. Implementation may update the <code>oldVisual</code>
    * and return that same reference, or create a new visual and return the new instance or
    * <code>null</code>.
-   * @param {IRenderContext} renderContext The context that describes where the visual will be used
+   * @param {!IRenderContext} renderContext The context that describes where the visual will be used
    *   in.
-   * @param {Visual} oldVisual The visual instance that had been returned the last time the {@link
+   * @param {!SvgVisual} oldVisual The visual instance that had been returned the last time the {@link
    *   IVisualCreator#createVisual} method was called on this instance.
-   * @param {INode} node The node
-   * @return {Visual} <code>oldVisual</code>, if this instance modified the visual, or a new visual
+   * @param {!INode} node The node
+   * @returns {!SvgVisual} <code>oldVisual</code>, if this instance modified the visual, or a new visual
    *   that should replace the existing one in the canvas object visual tree.
    * @see {@link IVisualCreator#createVisual}
    * @see {@link ICanvasObjectDescriptor}
@@ -8130,11 +8772,12 @@ export class PoolNodeStyle extends NodeStyleBase {
     const oldMultipleVisual = container.children.size > 1 ? container.children.last() : null
     if (this.multipleInstance) {
       if (oldMultipleVisual === null) {
-        this.$multipleInstanceIcon.setBounds(node.layout)
-        container.add(this.$multipleInstanceIcon.createVisual(renderContext))
+        this._multipleInstanceIcon.setBounds(node.layout.toRect())
+        const multipleInstanceIconVisual = this._multipleInstanceIcon.createVisual(renderContext)
+        container.add(multipleInstanceIconVisual)
       } else {
-        this.$multipleInstanceIcon.setBounds(node.layout)
-        const newMultipleVisual = this.$multipleInstanceIcon.updateVisual(
+        this._multipleInstanceIcon.setBounds(node.layout.toRect())
+        const newMultipleVisual = this._multipleInstanceIcon.updateVisual(
           renderContext,
           oldMultipleVisual
         )
@@ -8154,14 +8797,14 @@ export class PoolNodeStyle extends NodeStyleBase {
 
   /**
    * Returns an instance that implements the given type or <code>null</code>.
-   * @param {INode} node the node
-   * @param {Class} type the type for which an instance shall be returned
-   * @return {Object} an instance that is assignable to type or <code>null</code>
+   * @param {!INode} node the node
+   * @param {!Class} type the type for which an instance shall be returned
+   * @returns {!object} an instance that is assignable to type or <code>null</code>
    * @see Specified by {@link ILookup#lookup}.
    */
   lookup(node, type) {
     if (type === IEditLabelHelper.$class) {
-      return new PoolNodeEditLabelHelper(node, this)
+      return new PoolNodeEditLabelHelper(this)
     }
 
     const context = this.tableNodeStyle.renderer.getContext(node, this.tableNodeStyle)
@@ -8177,7 +8820,7 @@ export class PoolNodeStyle extends NodeStyleBase {
 
   /**
    * Create a clone of this object.
-   * @return {Object} A clone of this object.
+   * @returns {*} A clone of this object.
    * @see Specified by {@link ICloneable#clone}.
    */
   clone() {
@@ -8190,12 +8833,18 @@ export class PoolNodeStyle extends NodeStyleBase {
 }
 
 class PoolNodeEditLabelHelper extends EditLabelHelper {
-  constructor(node, style) {
-    super(node)
+  /**
+   * @param {!PoolNodeStyle} style
+   */
+  constructor(style) {
+    super()
     this.style = style
   }
 
-  /** @return {ILabelModelParameter} */
+  /**
+   * @param {!IInputModeContext} inputModeContext
+   * @returns {!ILabelModelParameter}
+   */
   getLabelParameter(inputModeContext) {
     if (this.style.tableNodeStyle.tableRenderingOrder === TableRenderingOrder.COLUMNS_FIRST) {
       return PoolHeaderLabelModel.NORTH
@@ -8206,7 +8855,8 @@ class PoolNodeEditLabelHelper extends EditLabelHelper {
 
 /**
  * Creates a {@link TableNodeStyle} that is used in {@link PoolNodeStyle}.
- * @return {TableNodeStyle}
+ * @param {boolean} vertical
+ * @returns {!TableNodeStyle}
  */
 function createDefaultTableNodeStyle(vertical) {
   // create a new table
@@ -8281,8 +8931,8 @@ export class PoolHeaderLabelModel extends BaseClass(ILabelModel, ILabelModelPara
    * have to return the same instance any time. Also it depends on the
    * type and context whether the instance returned stays up to date or needs to
    * be re-obtained for subsequent use.
-   * @param {Class} type the type for which an instance shall be returned
-   * @return {Object} an instance that is assignable to type or <code>null</code>
+   * @param {!Class} type the type for which an instance shall be returned
+   * @returns {?object} an instance that is assignable to type or <code>null</code>
    * @see Specified by {@link ILookup#lookup}.
    */
   lookup(type) {
@@ -8301,11 +8951,11 @@ export class PoolHeaderLabelModel extends BaseClass(ILabelModel, ILabelModelPara
   /**
    * Calculates the geometry in form of an {@link IOrientedRectangle}
    * for a given label using the given model parameter.
-   * @param {ILabelModelParameter} parameter A parameter that has been created by this model.
+   * @param {!ILabelModelParameter} parameter A parameter that has been created by this model.
    * This is typically the parameter that yielded this instance through its
    * {@link ILabelModelParameter#model} property.
-   * @param {ILabel} label the label to calculate the geometry for
-   * @return {IOrientedRectangle} An instance that describes the geometry. This is typically
+   * @param {!ILabel} label the label to calculate the geometry for
+   * @returns {!IOrientedRectangle} An instance that describes the geometry. This is typically
    * an instance designed as a flyweight, so clients should not cache the
    * instance but store the values if they need a snapshot for later use
    * @see Specified by {@link ILabelModel#getGeometry}.
@@ -8314,7 +8964,7 @@ export class PoolHeaderLabelModel extends BaseClass(ILabelModel, ILabelModelPara
     const php = parameter instanceof PoolHeaderLabelModelParameter ? parameter : null
     const owner = label.owner
     if (php === null || owner === null) {
-      return null
+      return IOrientedRectangle.EMPTY
     }
 
     const table = owner.lookup(ITable.$class)
@@ -8368,7 +9018,7 @@ export class PoolHeaderLabelModel extends BaseClass(ILabelModel, ILabelModelPara
 
   /**
    * Creates a default parameter that can be used for this model.
-   * @return {ILabelModelParameter} a parameter for this model instance
+   * @returns {!ILabelModelParameter} a parameter for this model instance
    * @see Specified by {@link ILabelModel#createDefaultParameter}.
    */
   createDefaultParameter() {
@@ -8378,9 +9028,9 @@ export class PoolHeaderLabelModel extends BaseClass(ILabelModel, ILabelModelPara
   /**
    * Provides a {@link ILookup lookup context} for the given combination of label
    * and parameter.
-   * @param {ILabel} label The label to use in the context.
-   * @param {ILabelModelParameter} parameter The parameter to use for the label in the context.
-   * @return {ILookup} An implementation of the {@link ILookup} interface that can be used
+   * @param {!ILabel} label The label to use in the context.
+   * @param {!ILabelModelParameter} parameter The parameter to use for the label in the context.
+   * @returns {!ILookup} An implementation of the {@link ILookup} interface that can be used
    *   to query additional aspects of the label/parameter combination.
    * @see {@link ILookup#EMPTY}
    * @see Specified by {@link ILabelModel#getContext}.
@@ -8392,9 +9042,9 @@ export class PoolHeaderLabelModel extends BaseClass(ILabelModel, ILabelModelPara
   /**
    * Returns an enumerator over a set of possible {@link ILabelModelParameter}
    * instances that can be used for the given label and model.
-   * @param {ILabel} label The label instance to use.
-   * @param {ILabelModel} model The model to provide parameters for.
-   * @return {IEnumerable.<ILabelModelParameter>} A possibly empty enumerator over a
+   * @param {!ILabel} label The label instance to use.
+   * @param {!ILabelModel} model The model to provide parameters for.
+   * @returns {!IEnumerable.<ILabelModelParameter>} A possibly empty enumerator over a
    *   set of label model parameters.
    * @see Specified by {@link ILabelModelParameterProvider#getParameters}.
    */
@@ -8402,36 +9052,49 @@ export class PoolHeaderLabelModel extends BaseClass(ILabelModel, ILabelModelPara
     return POOL_HEADER_LABEL_MODEL_PARAMETERS
   }
 
-  /** @return {PoolHeaderLabelModelParameter} */
+  /**
+   * @type {!PoolHeaderLabelModelParameter}
+   */
   static get NORTH() {
     return POOL_HEADER_LABEL_MODEL_PARAMETER_NORTH
   }
 
-  /** @return {PoolHeaderLabelModelParameter} */
+  /**
+   * @type {!PoolHeaderLabelModelParameter}
+   */
   static get EAST() {
     return POOL_HEADER_LABEL_MODEL_PARAMETER_EAST
   }
 
-  /** @return {PoolHeaderLabelModelParameter} */
+  /**
+   * @type {!PoolHeaderLabelModelParameter}
+   */
   static get SOUTH() {
     return POOL_HEADER_LABEL_MODEL_PARAMETER_SOUTH
   }
 
-  /** @return {PoolHeaderLabelModelParameter} */
+  /**
+   * @type {!PoolHeaderLabelModelParameter}
+   */
   static get WEST() {
     return POOL_HEADER_LABEL_MODEL_PARAMETER_WEST
   }
 
-  /** @return {PoolHeaderLabelModelParameter} */
+  /**
+   * @type {!PoolHeaderLabelModel}
+   */
   static get INSTANCE() {
     return (
-      PoolHeaderLabelModel.$instance ||
-      (PoolHeaderLabelModel.$instance = new PoolHeaderLabelModel())
+      PoolHeaderLabelModel._instance ||
+      (PoolHeaderLabelModel._instance = new PoolHeaderLabelModel())
     )
   }
 }
 
 class PoolHeaderLabelModelParameter extends BaseClass(ILabelModelParameter) {
+  /**
+   * @type {!object}
+   */
   static get $meta() {
     return {
       $self: [
@@ -8440,29 +9103,37 @@ class PoolHeaderLabelModelParameter extends BaseClass(ILabelModelParameter) {
     }
   }
 
+  /**
+   * @param {number} side
+   */
   constructor(side) {
     super()
-    this.$side = side || 0
-  }
-
-  get side() {
-    return this.$side
+    this._side = side || 0
   }
 
   /**
-   * @returns {ILabelModel}
+   * @type {number}
+   */
+  get side() {
+    return this._side
+  }
+
+  /**
+   * @type {!ILabelModel}
    */
   get model() {
     return PoolHeaderLabelModel.INSTANCE
   }
 
-  /** @return {Object} */
+  /**
+   * @returns {*}
+   */
   clone() {
     return this
   }
 
   /**
-   * @param {ILabel} label - The label to test.
+   * @param {!ILabel} label - The label to test.
    * @returns {boolean}
    */
   supports(label) {
@@ -8485,14 +9156,17 @@ const POOL_HEADER_LABEL_MODEL_PARAMETERS = List.fromArray([
  * An {@link IArrow} implementation using an {@link Icon} for the visualization.
  */
 class IconArrow extends BaseClass(IArrow, IVisualCreator, IBoundsProvider) {
+  /**
+   * @param {!Icon} icon
+   */
   constructor(icon) {
     super()
+    this._length = 0
+    this._cropLength = 0
+    this.bounds = Size.ZERO
     this.anchor = Point.ORIGIN
     this.direction = Point.ORIGIN
     this.icon = icon
-    this.$length = 0
-    this.$cropLength = 0
-    this.bounds = null
   }
 
   /**
@@ -8502,7 +9176,7 @@ class IconArrow extends BaseClass(IArrow, IVisualCreator, IBoundsProvider) {
    * @type {number}
    */
   get length() {
-    return this.$length
+    return this._length
   }
 
   /**
@@ -8512,7 +9186,7 @@ class IconArrow extends BaseClass(IArrow, IVisualCreator, IBoundsProvider) {
    * @type {number}
    */
   set length(value) {
-    this.$length = value
+    this._length = value
   }
 
   /**
@@ -8523,7 +9197,7 @@ class IconArrow extends BaseClass(IArrow, IVisualCreator, IBoundsProvider) {
    * @type {number}
    */
   get cropLength() {
-    return this.$cropLength
+    return this._cropLength
   }
 
   /**
@@ -8534,18 +9208,18 @@ class IconArrow extends BaseClass(IArrow, IVisualCreator, IBoundsProvider) {
    * @type {number}
    */
   set cropLength(value) {
-    this.$cropLength = value
+    this._cropLength = value
   }
 
   /**
    * Gets an {@link IVisualCreator} implementation that will create
    * the  for this arrow
    * at the given location using the given direction for the given edge.
-   * @param {IEdge} edge the edge this arrow belongs to
+   * @param {!IEdge} edge the edge this arrow belongs to
    * @param {boolean} atSource whether this will be the source arrow
-   * @param {Point} anchor the anchor point for the tip of the arrow
-   * @param {Point} direction the direction the arrow is pointing in
-   * @return {IVisualCreator} Itself as a flyweight.
+   * @param {!Point} anchor the anchor point for the tip of the arrow
+   * @param {!Point} direction the direction the arrow is pointing in
+   * @returns {!IVisualCreator} Itself as a flyweight.
    * @see Specified by {@link IArrow#getPaintable}.
    */
   getPaintable(edge, atSource, anchor, direction) {
@@ -8558,11 +9232,11 @@ class IconArrow extends BaseClass(IArrow, IVisualCreator, IBoundsProvider) {
    * Gets an {@link IBoundsProvider} implementation that can yield
    * this arrow's bounds if painted at the given location using the
    * given direction for the given edge.
-   * @param {IEdge} edge the edge this arrow belongs to
+   * @param {!IEdge} edge the edge this arrow belongs to
    * @param {boolean} atSource whether this will be the source arrow
-   * @param {Point} anchor the anchor point for the tip of the arrow
-   * @param {Point} direction the direction the arrow is pointing in
-   * @return {IBoundsProvider} an implementation of the {@link IBoundsProvider} interface
+   * @param {!Point} anchor the anchor point for the tip of the arrow
+   * @param {!Point} direction the direction the arrow is pointing in
+   * @returns {!IBoundsProvider} an implementation of the {@link IBoundsProvider} interface
    *   that can subsequently be used to query the bounds. Clients will always call this method
    *   before using the implementation and may not cache the instance returned. This allows for
    *   applying the flyweight design pattern to implementations.
@@ -8574,6 +9248,13 @@ class IconArrow extends BaseClass(IArrow, IVisualCreator, IBoundsProvider) {
     return this
   }
 
+  /**
+   * @param {!IEdge} edge
+   * @param {boolean} atSource
+   * @param {!Point} anchor
+   * @param {!Point} direction
+   * @returns {*}
+   */
   getVisualCreator(edge, atSource, anchor, direction) {
     this.anchor = anchor
     this.direction = direction
@@ -8583,8 +9264,8 @@ class IconArrow extends BaseClass(IArrow, IVisualCreator, IBoundsProvider) {
   /**
    * This method is called by the framework to create a
    * that will be included into the {@link IRenderContext}.
-   * @param {IRenderContext} context The context that describes where the visual will be used.
-   * @return {Visual} The arrow visual to include in the canvas object visual tree.
+   * @param {!IRenderContext} context The context that describes where the visual will be used.
+   * @returns {!SvgVisual} The arrow visual to include in the canvas object visual tree.
    * @see {@link IconArrow#updateVisual}
    * @see Specified by {@link IVisualCreator#createVisual}.
    */
@@ -8593,7 +9274,8 @@ class IconArrow extends BaseClass(IArrow, IVisualCreator, IBoundsProvider) {
       new Rect(-this.bounds.width, -this.bounds.height / 2, this.bounds.width, this.bounds.height)
     )
     const canvasContainer = new SvgVisualGroup()
-    canvasContainer.add(this.icon.createVisual(context))
+    const iconVisual = this.icon.createVisual(context)
+    canvasContainer.add(iconVisual)
 
     // Rotate arrow and move it to correct position
     canvasContainer.transform = new Matrix(
@@ -8616,10 +9298,10 @@ class IconArrow extends BaseClass(IArrow, IVisualCreator, IBoundsProvider) {
    * to {@link IconArrow#createVisual}. Implementation may update the <code>oldVisual</code>
    * and return that same reference, or create a new visual and return the new instance or
    * <code>null</code>.
-   * @param {IRenderContext} context The context that describes where the visual will be used in.
-   * @param {Visual} oldVisual The visual instance that had been returned the last time the {@link
+   * @param {!IRenderContext} context The context that describes where the visual will be used in.
+   * @param {!SvgVisual} oldVisual The visual instance that had been returned the last time the {@link
    *   IconArrow#createVisual} method was called on this instance.
-   * @return {Visual} the old visual if this instance modified the visual, or a new visual that
+   * @returns {!SvgVisual} the old visual if this instance modified the visual, or a new visual that
    *   should replace the existing one in the canvas object visual tree.
    * @see {@link IconArrow#createVisual}
    * @see {@link ICanvasObjectDescriptor}
@@ -8645,7 +9327,8 @@ class IconArrow extends BaseClass(IArrow, IVisualCreator, IBoundsProvider) {
   /**
    * Returns the bounds of the arrow for the current flyweight configuration.
    * @see Specified by {@link IBoundsProvider#getBounds}.
-   * @return {Rect}
+   * @param {!ICanvasContext} context
+   * @returns {!Rect}
    */
   getBounds(context) {
     return new Rect(
@@ -8663,13 +9346,11 @@ class IconArrow extends BaseClass(IArrow, IVisualCreator, IBoundsProvider) {
 export class MessageLabelStyle extends LabelStyleBase {
   constructor() {
     super()
-    this.$isInitiating = true
-    this.$initiatingColor = BPMN_CONSTANTS_DEFAULT_INITIATING_MESSAGE_COLOR
-    this.$responseColor = BPMN_CONSTANTS_DEFAULT_RECEIVING_MESSAGE_COLOR
-
-    this.$outline = null
-    this.$messagePen = null
-
+    this._isInitiating = true
+    this._initiatingColor = BPMN_CONSTANTS_DEFAULT_INITIATING_MESSAGE_COLOR
+    this._responseColor = BPMN_CONSTANTS_DEFAULT_RECEIVING_MESSAGE_COLOR
+    this._outline = null
+    this._messagePen = null
     const stroke = new Stroke(BPMN_CONSTANTS_DEFAULT_MESSAGE_OUTLINE)
     stroke.freeze()
     const messageIcon = IconFactory.createMessage(
@@ -8680,67 +9361,67 @@ export class MessageLabelStyle extends LabelStyleBase {
     bpmnNodeStyle.icon = messageIcon
     bpmnNodeStyle.minimumSize = BPMN_CONSTANTS_SIZES_MESSAGE
     const labelStyle = new DefaultLabelStyle()
-    this.$adapter = new NodeStyleLabelStyleAdapter(bpmnNodeStyle, labelStyle)
+    this._adapter = new NodeStyleLabelStyleAdapter(bpmnNodeStyle, labelStyle)
     this.outline = BPMN_CONSTANTS_DEFAULT_MESSAGE_OUTLINE
   }
 
   /**
    * Gets whether this message is initiating.
-   * @return {boolean}
+   * @type {boolean}
    */
   get isInitiating() {
-    return this.$isInitiating
+    return this._isInitiating
   }
 
   /**
    * Sets whether this message is initiating.
-   * @param {boolean} value
+   * @type {boolean}
    */
   set isInitiating(value) {
-    if (this.$isInitiating !== value) {
-      this.$isInitiating = value
+    if (this._isInitiating !== value) {
+      this._isInitiating = value
       this.updateIcon()
     }
   }
 
   /**
    * Gets the outline color of the message.
-   * @return {Fill}
+   * @type {?Fill}
    */
   get outline() {
-    return this.$outline
+    return this._outline
   }
 
   /**
    * Sets the outline color of the message.
-   * @param {Fill} value
+   * @type {?Fill}
    */
   set outline(value) {
-    if (this.$outline !== value) {
-      this.$outline = value
+    if (this._outline !== value) {
+      this._outline = value
       const stroke = new Stroke(value)
       stroke.freeze()
-      this.$messagePen = stroke
+      this._messagePen = stroke
       this.updateIcon()
     }
   }
 
   /**
    * Gets the color for an initiating message.
-   * @return {Fill}
+   * @type {!Fill}
    */
   get initiatingColor() {
-    return this.$initiatingColor
+    return this._initiatingColor
   }
 
   /**
    * Sets the color for an initiating message.
-   * @param {Fill} value
+   * @type {!Fill}
    */
   set initiatingColor(value) {
-    if (this.$initiatingColor !== value) {
-      this.$initiatingColor = value
-      if (this.$isInitiating) {
+    if (this._initiatingColor !== value) {
+      this._initiatingColor = value
+      if (this._isInitiating) {
         this.updateIcon()
       }
     }
@@ -8748,69 +9429,106 @@ export class MessageLabelStyle extends LabelStyleBase {
 
   /**
    * Gets the color for a response message.
-   * @return {Fill}
+   * @type {!Fill}
    */
   get responseColor() {
-    return this.$responseColor
+    return this._responseColor
   }
 
   /**
    * Sets the color for a response message.
-   * @param {Fill} value
+   * @type {!Fill}
    */
   set responseColor(value) {
-    if (this.$responseColor !== value) {
-      this.$responseColor = value
-      if (!this.$isInitiating) {
+    if (this._responseColor !== value) {
+      this._responseColor = value
+      if (!this._isInitiating) {
         this.updateIcon()
       }
     }
   }
 
   updateIcon() {
-    const nodeStyle = this.$adapter.nodeStyle
+    const nodeStyle = this._adapter.nodeStyle
     nodeStyle.icon = IconFactory.createMessage(
-      this.$messagePen,
+      this._messagePen,
       this.isInitiating ? this.initiatingColor : this.responseColor
     )
     nodeStyle.modCount++
   }
 
+  /**
+   * @param {!IRenderContext} context
+   * @param {!ILabel} label
+   * @returns {!SvgVisual}
+   */
   createVisual(context, label) {
-    return this.$adapter.renderer.getVisualCreator(label, this.$adapter).createVisual(context)
+    return this._adapter.renderer.getVisualCreator(label, this._adapter).createVisual(context)
   }
 
+  /**
+   * @param {!IRenderContext} context
+   * @param {!SvgVisual} oldVisual
+   * @param {!ILabel} label
+   * @returns {!SvgVisual}
+   */
   updateVisual(context, oldVisual, label) {
-    return this.$adapter.renderer
-      .getVisualCreator(label, this.$adapter)
+    return this._adapter.renderer
+      .getVisualCreator(label, this._adapter)
       .updateVisual(context, oldVisual)
   }
 
+  /**
+   * @param {!ICanvasContext} context
+   * @param {!ILabel} label
+   * @returns {!Rect}
+   */
   getBounds(context, label) {
-    return this.$adapter.renderer.getBoundsProvider(label, this.$adapter).getBounds(context)
+    return this._adapter.renderer.getBoundsProvider(label, this._adapter).getBounds(context)
   }
 
+  /**
+   * @param {!ICanvasContext} context
+   * @param {!Rect} rectangle
+   * @param {!ILabel} label
+   * @returns {boolean}
+   */
   isVisible(context, rectangle, label) {
-    return this.$adapter.renderer
-      .getVisibilityTestable(label, this.$adapter)
+    return this._adapter.renderer
+      .getVisibilityTestable(label, this._adapter)
       .isVisible(context, rectangle)
   }
 
+  /**
+   * @param {!IInputModeContext} context
+   * @param {!Point} location
+   * @param {!ILabel} label
+   * @returns {boolean}
+   */
   isHit(context, location, label) {
-    return this.$adapter.renderer.getHitTestable(label, this.$adapter).isHit(context, location)
+    return this._adapter.renderer.getHitTestable(label, this._adapter).isHit(context, location)
   }
 
+  /**
+   * @param {!ILabel} label
+   * @param {!Class} type
+   * @returns {?object}
+   */
   lookup(label, type) {
-    return this.$adapter.renderer.getContext(label, this.$adapter).lookup(type)
+    return this._adapter.renderer.getContext(label, this._adapter).lookup(type)
   }
 
+  /**
+   * @param {!ILabel} label
+   * @returns {!Size}
+   */
   getPreferredSize(label) {
-    return this.$adapter.renderer.getPreferredSize(label, this.$adapter)
+    return this._adapter.renderer.getPreferredSize(label, this._adapter)
   }
 
   /**
    * Create a clone of this object.
-   * @return {Object} A clone of this object.
+   * @returns {*} A clone of this object.
    * @see Specified by {@link ICloneable#clone}.
    */
   clone() {
@@ -8832,47 +9550,47 @@ export class DataStoreNodeStyle extends BpmnNodeStyle {
    */
   constructor() {
     super()
-    this.$background = BPMN_CONSTANTS_DATA_STORE_DEFAULT_BACKGROUND
-    this.$outline = BPMN_CONSTANTS_DATA_STORE_DEFAULT_OUTLINE
-    this.icon = IconFactory.createDataStore(this.$background, this.$outline)
+    this._background = BPMN_CONSTANTS_DATA_STORE_DEFAULT_BACKGROUND
+    this._outline = BPMN_CONSTANTS_DATA_STORE_DEFAULT_OUTLINE
+    this.icon = IconFactory.createDataStore(this._background, this._outline)
     this.minimumSize = new Size(30, 20)
   }
 
   /**
    * Gets the background color of the data store.
-   * @return {Fill}
+   * @type {!Fill}
    */
   get background() {
-    return this.$background
+    return this._background
   }
 
   /**
    * Sets the background color of the data store.
-   * @param {Fill} value
+   * @type {!Fill}
    */
   set background(value) {
-    if (this.$background !== value) {
+    if (this._background !== value) {
       this.modCount++
-      this.$background = value
+      this._background = value
     }
   }
 
   /**
    * Gets the outline color of the data store.
-   * @return {Fill}
+   * @type {!Fill}
    */
   get outline() {
-    return this.$outline
+    return this._outline
   }
 
   /**
    * Sets the outline color of the data store.
-   * @param {Fill} value
+   * @type {!Fill}
    */
   set outline(value) {
-    if (this.$outline !== value) {
+    if (this._outline !== value) {
       this.modCount++
-      this.$outline = value
+      this._outline = value
     }
   }
 
@@ -8887,8 +9605,8 @@ export class DataStoreNodeStyle extends BpmnNodeStyle {
    * the {@link INode#layout} depicts the outline.
    * Implementing this method influences the behavior of {@link NodeStyleBase#isInside}
    * and {@link NodeStyleBase#getIntersection} since the default implementations delegate to it.
-   * @param {INode} node The node to which this style instance is assigned.
-   * @return {GeneralPath} The outline of the visual representation or <code>null</code>.
+   * @param {!INode} node The node to which this style instance is assigned.
+   * @returns {!GeneralPath} The outline of the visual representation or <code>null</code>.
    */
   getOutline(node) {
     const halfEllipseHeight = 0.125
@@ -8918,13 +9636,16 @@ export class DataObjectNodeStyle extends BpmnNodeStyle {
    */
   constructor() {
     super()
-    this.minimumSize = new Size(25, 30)
-    this.$collection = false
-    this.$background = BPMN_CONSTANTS_DATA_OBJECT_DEFAULT_BACKGROUND
-    this.$outline = BPMN_CONSTANTS_DATA_OBJECT_DEFAULT_OUTLINE
-    this.$iconColor = BPMN_CONSTANTS_DEFAULT_ICON_COLOR
+    this._collection = false
+    this._background = BPMN_CONSTANTS_DATA_OBJECT_DEFAULT_BACKGROUND
+    this._outline = BPMN_CONSTANTS_DATA_OBJECT_DEFAULT_OUTLINE
+    this._iconColor = BPMN_CONSTANTS_DEFAULT_ICON_COLOR
+    this._type = null
+    this.collectionIcon = null
+    this.dataIcon = null
     this.typeIcon = null
     this.type = DataObjectType.NONE
+    this.minimumSize = new Size(25, 30)
   }
 
   /**
@@ -8932,7 +9653,7 @@ export class DataObjectNodeStyle extends BpmnNodeStyle {
    * @type {boolean}
    */
   get collection() {
-    return this.$collection
+    return this._collection
   }
 
   /**
@@ -8940,88 +9661,88 @@ export class DataObjectNodeStyle extends BpmnNodeStyle {
    * @type {boolean}
    */
   set collection(value) {
-    if (this.$collection !== value) {
+    if (this._collection !== value) {
       this.modCount++
-      this.$collection = value
+      this._collection = value
     }
   }
 
   /**
    * Gets the data object type for this style.
-   * @type {DataObjectType}
+   * @type {number}
    */
   get type() {
-    return this.$type
+    return this._type
   }
 
   /**
    * Sets the data object type for this style.
-   * @type {DataObjectType}
+   * @type {number}
    */
   set type(value) {
-    if (this.$type !== value) {
+    if (this._type !== value) {
       this.modCount++
-      this.$type = value
+      this._type = value
       this.updateTypeIcon()
     }
   }
 
   /**
    * Gets the background color of the data object.
-   * @return {Fill}
+   * @type {!Fill}
    */
   get background() {
-    return this.$background
+    return this._background
   }
 
   /**
    * Sets the background color of the data object.
-   * @param {Fill} value
+   * @type {!Fill}
    */
   set background(value) {
-    if (this.$background !== value) {
+    if (this._background !== value) {
       this.modCount++
-      this.$background = value
+      this._background = value
       this.updateDataIcon()
     }
   }
 
   /**
    * Gets the outline color of the data object.
-   * @return {Fill}
+   * @type {!Fill}
    */
   get outline() {
-    return this.$outline
+    return this._outline
   }
 
   /**
    * Sets the outline color of the data object.
-   * @param {Fill} value
+   * @type {!Fill}
    */
   set outline(value) {
-    if (this.$outline !== value) {
+    if (this._outline !== value) {
       this.modCount++
-      this.$outline = value
+      this._outline = value
       this.updateDataIcon()
     }
   }
 
   /**
    * Gets the color for the icon.
-   * @return {Fill}
+   * @type {!Fill}
    */
   get iconColor() {
-    return this.$iconColor
+    return this._iconColor
   }
 
   /**
    * Sets the color for the icon.
-   * @param {Fill} value
+   * @type {!Fill}
    */
   set iconColor(value) {
-    if (this.$iconColor !== value) {
+    if (this._iconColor !== value) {
       this.modCount++
-      this.$iconColor = value
+      this._iconColor = value
       this.updateTypeIcon()
       this.updateCollectionIcon()
     }
@@ -9084,8 +9805,8 @@ export class DataObjectNodeStyle extends BpmnNodeStyle {
    * the {@link INode#layout} depicts the outline.
    * Implementing this method influences the behavior of {@link NodeStyleBase#isInside}
    * and {@link NodeStyleBase#getIntersection} since the default implementations delegate to it.
-   * @param {INode} node The node to which this style instance is assigned.
-   * @return {GeneralPath} The outline of the visual representation or <code>null</code>.
+   * @param {!INode} node The node to which this style instance is assigned.
+   * @returns {!GeneralPath} The outline of the visual representation or <code>null</code>.
    */
   getOutline(node) {
     const cornerSize = Math.min(node.layout.width, node.layout.height) * 0.4
@@ -9114,94 +9835,94 @@ export class ConversationNodeStyle extends BpmnNodeStyle {
    */
   constructor() {
     super()
-    this.$type = -1
-    this.$background = BPMN_CONSTANTS_CONVERSATION_DEFAULT_BACKGROUND
-    this.$outline = BPMN_CONSTANTS_CONVERSATION_DEFAULT_OUTLINE
-    this.$iconColor = BPMN_CONSTANTS_DEFAULT_ICON_COLOR
+    this._type = ConversationType.CONVERSATION
+    this._background = BPMN_CONSTANTS_CONVERSATION_DEFAULT_BACKGROUND
+    this._outline = BPMN_CONSTANTS_CONVERSATION_DEFAULT_OUTLINE
+    this._iconColor = BPMN_CONSTANTS_DEFAULT_ICON_COLOR
     this.type = ConversationType.CONVERSATION
     this.minimumSize = BPMN_CONSTANTS_SIZES_CONVERSATION
   }
 
   /**
    * Gets the conversation type for this style.
-   * @type {ConversationType}
+   * @type {number}
    */
   get type() {
-    return this.$type
+    return this._type
   }
 
   /**
    * Sets the conversation type for this style.
-   * @type {ConversationType}
+   * @type {number}
    */
   set type(value) {
-    if (this.$type !== value || !this.icon) {
+    if (this._type !== value || !this.icon) {
       this.modCount++
-      this.$type = value
+      this._type = value
     }
   }
 
   /**
    * Gets the background color of the conversation.
-   * @return {Fill}
+   * @type {!Fill}
    */
   get background() {
-    return this.$background
+    return this._background
   }
 
   /**
    * Sets the background color of the conversation.
-   * @param {Fill} value
+   * @type {!Fill}
    */
   set background(value) {
-    if (this.$background !== value) {
+    if (this._background !== value) {
       this.modCount++
-      this.$background = value
+      this._background = value
     }
   }
 
   /**
    * Gets the outline color of the conversation.
-   * @return {Fill}
+   * @type {!Fill}
    */
   get outline() {
-    return this.$outline
+    return this._outline
   }
 
   /**
    * Sets the outline color of the conversation.
-   * @param {Fill} value
+   * @type {!Fill}
    */
   set outline(value) {
-    if (this.$outline !== value) {
+    if (this._outline !== value) {
       this.modCount++
-      this.$outline = value
+      this._outline = value
     }
   }
 
   /**
    * Gets the primary color for icons and markers.
-   * @return {Fill}
+   * @type {!Fill}
    */
   get iconColor() {
-    return this.$iconColor
+    return this._iconColor
   }
 
   /**
    * Sets the primary color for icons and markers.
-   * @param {Fill} value
+   * @type {!Fill}
    */
   set iconColor(value) {
-    if (this.$iconColor !== value) {
+    if (this._iconColor !== value) {
       this.modCount++
-      this.$iconColor = value
+      this._iconColor = value
     }
   }
 
   /** @inheritDoc */
   updateIcon() {
-    let typeIcon = IconFactory.createConversation(this.$type, this.background, this.outline)
-    let markerIcon = IconFactory.createConversationMarker(this.$type, this.iconColor)
+    let typeIcon = IconFactory.createConversation(this._type, this.background, this.outline)
+    let markerIcon = IconFactory.createConversationMarker(this._type, this.iconColor)
 
     if (markerIcon) {
       markerIcon = IconFactory.createPlacedIcon(
@@ -9225,8 +9946,8 @@ export class ConversationNodeStyle extends BpmnNodeStyle {
    * the {@link INode#layout} depicts the outline.
    * Implementing this method influences the behavior of {@link NodeStyleBase#isInside}
    * and {@link NodeStyleBase#getIntersection} since the default implementations delegate to it.
-   * @param {INode} node The node to which this style instance is assigned.
-   * @return {GeneralPath} The outline of the visual representation or <code>null</code>.
+   * @param {!INode} node The node to which this style instance is assigned.
+   * @returns {!GeneralPath} The outline of the visual representation or <code>null</code>.
    */
   getOutline(node) {
     const width = Math.min(
@@ -9261,121 +9982,119 @@ export class ConversationNodeStyle extends BpmnNodeStyle {
  * An {@link INodeStyle} implementation representing an Event according to the BPMN.
  */
 export class EventNodeStyle extends BpmnNodeStyle {
-  /**
-   * Creates a new instance.
-   */
   constructor() {
     super()
-    this.$characteristic = EventCharacteristic.START
-    this.$background = BPMN_CONSTANTS_DEFAULT_EVENT_BACKGROUND
-    this.$outline = BPMN_CONSTANTS_DEFAULT_EVENT_OUTLINE
-    this.$iconColor = BPMN_CONSTANTS_DEFAULT_ICON_COLOR
-    this.minimumSize = new Size(20, 20)
+    this._characteristic = EventCharacteristic.START
+    this._background = BPMN_CONSTANTS_DEFAULT_EVENT_BACKGROUND
+    this._outline = BPMN_CONSTANTS_DEFAULT_EVENT_OUTLINE
+    this._iconColor = BPMN_CONSTANTS_DEFAULT_ICON_COLOR
     this.eventIcon = null
     this.typeIcon = null
     this.fillTypeIcon = false
+    this._type = null
     this.type = EventType.PLAIN
     this.characteristic = EventCharacteristic.START
+    this.minimumSize = new Size(20, 20)
   }
 
   /**
    * Gets the event type for this style.
-   * @type {EventType}
+   * @type {number}
    */
   get type() {
-    return this.$type
+    return this._type
   }
 
   /**
    * Sets the event type for this style.
-   * @type {EventType}
+   * @type {number}
    */
   set type(value) {
-    if (this.$type !== value) {
+    if (this._type !== value) {
       this.modCount++
-      this.$type = value
+      this._type = value
       this.createTypeIcon()
     }
   }
 
   /**
    * Gets the event characteristic for this style.
-   * @type {EventCharacteristic}
+   * @type {number}
    */
   get characteristic() {
-    return this.$characteristic
+    return this._characteristic
   }
 
   /**
    * Sets the event characteristic for this style.
-   * @type {EventCharacteristic}
+   * @type {number}
    */
   set characteristic(value) {
-    if (this.$characteristic !== value || this.eventIcon === null) {
+    if (this._characteristic !== value || this.eventIcon === null) {
       this.modCount++
-      this.$characteristic = value
+      this._characteristic = value
       this.createEventIcon()
     }
   }
 
   /**
    * Gets the background color of the event.
-   * @return {Fill}
+   * @type {!Fill}
    */
   get background() {
-    return this.$background
+    return this._background
   }
 
   /**
    * Sets the background color of the event.
-   * @param {Fill} value
+   * @type {!Fill}
    */
   set background(value) {
-    if (this.$background !== value) {
+    if (this._background !== value) {
       this.modCount++
-      this.$background = value
+      this._background = value
       this.createEventIcon()
     }
   }
 
   /**
    * Gets the outline color of the event icon.
-   * @return {Fill}
+   * @type {?Fill}
    */
   get outline() {
-    return this.$outline
+    return this._outline
   }
 
   /**
    * Sets the outline color of the event icon.
    * If this is set to null, the outline color is automatic, based on the
    * {@link EventNodeStyle#characteristic}.
-   * @param {Fill} value
+   * @type {?Fill}
    */
   set outline(value) {
-    if (this.$outline !== value) {
+    if (this._outline !== value) {
       this.modCount++
-      this.$outline = value
+      this._outline = value
       this.createEventIcon()
     }
   }
 
   /**
    * Gets the primary color for icons and markers.
-   * @return {Fill}
+   * @type {!Fill}
    */
   get iconColor() {
-    return this.$iconColor
+    return this._iconColor
   }
 
   /**
    * Sets the primary color for icons and markers.
-   * @param {Fill} value
+   * @type {!Fill}
    */
   set iconColor(value) {
-    if (this.$iconColor !== value) {
+    if (this._iconColor !== value) {
       this.modCount++
-      this.$iconColor = value
+      this._iconColor = value
       this.createTypeIcon()
     }
   }
@@ -9429,10 +10148,21 @@ export class EventNodeStyle extends BpmnNodeStyle {
     }
   }
 
+  /**
+   * @param {!IRenderContext} context
+   * @param {!INode} node
+   * @returns {?SvgVisual}
+   */
   createVisual(context, node) {
     return super.createVisual(context, node)
   }
 
+  /**
+   * @param {!IRenderContext} context
+   * @param {!SvgVisual} oldVisual
+   * @param {!INode} node
+   * @returns {?SvgVisual}
+   */
   updateVisual(context, oldVisual, node) {
     return super.updateVisual(context, oldVisual, node)
   }
@@ -9443,8 +10173,8 @@ export class EventNodeStyle extends BpmnNodeStyle {
    * the {@link INode#layout} depicts the outline.
    * Implementing this method influences the behavior of {@link NodeStyleBase#isInside}
    * and {@link NodeStyleBase#getIntersection} since the default implementations delegate to it.
-   * @param {INode} node The node to which this style instance is assigned.
-   * @return {GeneralPath} The outline of the visual representation or <code>null</code>.
+   * @param {!INode} node The node to which this style instance is assigned.
+   * @returns {!GeneralPath} The outline of the visual representation or <code>null</code>.
    */
   getOutline(node) {
     const size = Math.min(node.layout.width, node.layout.height)
@@ -9466,10 +10196,10 @@ export class EventNodeStyle extends BpmnNodeStyle {
    * call to the instance that has been queried from the {@link NodeStyleBase#renderer}.
    * This implementation uses the {@link NodeStyleBase#getOutline outline} to determine
    * whether the node has been hit.
-   * @param {INode} node The node to which this style instance is assigned.
-   * @param {Point} p The point to test.
-   * @param {ICanvasContext} canvasContext The canvas context.
-   * @return {boolean} whether or not the specified node representation is hit.
+   * @param {!INode} node The node to which this style instance is assigned.
+   * @param {!Point} p The point to test.
+   * @param {!ICanvasContext} canvasContext The canvas context.
+   * @returns {boolean} whether or not the specified node representation is hit.
    */
   isHit(canvasContext, p, node) {
     const size = Math.min(node.layout.width, node.layout.height)
@@ -9489,8 +10219,8 @@ export class EventNodeStyle extends BpmnNodeStyle {
 export class GroupNodeStyle extends BaseClass(INodeStyle) {
   constructor() {
     super()
-    this.$insets = new Insets(15)
-    this.$renderer = new GroupNodeStyleRenderer()
+    this._insets = new Insets(15)
+    this._renderer = new GroupNodeStyleRenderer()
   }
 
   /**
@@ -9499,10 +10229,11 @@ export class GroupNodeStyle extends BaseClass(INodeStyle) {
    * through the
    * {@link INodeStyleRenderer#getContext context lookup}.
    * @see {@link INodeInsetsProvider}
-   * @return {Insets} An insets object that describes the insets of node.
+   * @return An insets object that describes the insets of node.
+   * @type {!Insets}
    */
   get insets() {
-    return this.$insets
+    return this._insets
   }
 
   /**
@@ -9510,51 +10241,52 @@ export class GroupNodeStyle extends BaseClass(INodeStyle) {
    * These insets are returned via an {@link INodeInsetsProvider} if such an instance is queried
    * through the
    * @see {@link INodeInsetsProvider}
-   * @param {Insets} insets An insets object that describes the insets of node.
+   * @param insets An insets object that describes the insets of node.
+   * @type {!Insets}
    */
   set insets(insets) {
-    this.$insets = insets
+    this._insets = insets
   }
 
   /**
    * Gets the background color of the group.
-   * @return {Fill}
+   * @type {?Fill}
    */
   get background() {
-    return this.$renderer.shapeNodeStyle.fill
+    return this._renderer.shapeNodeStyle.fill
   }
 
   /**
    * Sets the background color of the group.
-   * @param {Fill} value
+   * @type {?Fill}
    */
   set background(value) {
-    if (this.$renderer.shapeNodeStyle.fill !== value) {
-      this.$renderer.shapeNodeStyle.fill = value
+    if (this._renderer.shapeNodeStyle.fill !== value) {
+      this._renderer.shapeNodeStyle.fill = value
     }
   }
 
   /**
    * Gets the outline color of the group.
-   * @return {Fill}
+   * @type {?Fill}
    */
   get outline() {
-    return this.$renderer.shapeNodeStyle.stroke.fill
+    return this._renderer.shapeNodeStyle.stroke.fill
   }
 
   /**
    * Sets the outline color of the group.
-   * @param {Fill} value
+   * @type {?Fill}
    */
   set outline(value) {
-    if (this.$renderer.shapeNodeStyle.stroke.fill !== value) {
-      this.$renderer.shapeNodeStyle.stroke = this.getPen(value)
+    if (this._renderer.shapeNodeStyle.stroke.fill !== value) {
+      this._renderer.shapeNodeStyle.stroke = this.getPen(value)
     }
   }
 
   /**
-   * @param {Fill} outline
-   * @return {Stroke}
+   * @param {?Fill} outline
+   * @returns {!Stroke}
    */
   getPen(outline) {
     const stroke = new Stroke({
@@ -9568,7 +10300,7 @@ export class GroupNodeStyle extends BaseClass(INodeStyle) {
 
   /**
    * Create a clone of this object.
-   * @return {Object} A clone of this object.
+   * @returns {*} A clone of this object.
    * @see Specified by {@link ICloneable#clone}.
    */
   clone() {
@@ -9590,10 +10322,10 @@ export class GroupNodeStyle extends BaseClass(INodeStyle) {
    * var visual = creator.createVisual(renderContext);
    * </code></pre>
    * @see Specified by {@link INodeStyle#renderer}.
-   * @type {INodeStyleRenderer}
+   * @type {!INodeStyleRenderer}
    */
   get renderer() {
-    return this.$renderer
+    return this._renderer
   }
 }
 
@@ -9611,29 +10343,29 @@ class GroupNodeStyleRenderer extends BaseClass(INodeStyleRenderer, ILookup) {
       lineCap: LineCap.ROUND
     })
     groupOutline.freeze()
-    this.$shapeNodeStyle = new ShapeNodeStyle({
+    this._shapeNodeStyle = new ShapeNodeStyle({
       shape: ShapeNodeShape.ROUND_RECTANGLE,
       stroke: groupOutline,
       fill: BPMN_CONSTANTS_GROUP_DEFAULT_BACKGROUND
     })
-    this.$shapeNodeStyle.renderer.roundRectArcRadius = BPMN_CONSTANTS_GROUP_NODE_CORNER_RADIUS
+    this._shapeNodeStyle.renderer.roundRectArcRadius = BPMN_CONSTANTS_GROUP_NODE_CORNER_RADIUS
   }
 
   /**
    * The ShapeNodeStyle that is used internally to render this group style.
-   * @return {ShapeNodeStyle}
+   * @type {!ShapeNodeStyle}
    */
   get shapeNodeStyle() {
-    return this.$shapeNodeStyle
+    return this._shapeNodeStyle
   }
 
   /**
    * Gets an implementation of the {@link IVisualCreator} interface that can
    * handle the provided item and its associated style.
    * This method may return a flyweight implementation, but never <code>null</code>.
-   * @param {INode} node The node to provide an instance for
-   * @param {INodeStyle} style The style to use for the creation of the visual
-   * @return {IVisualCreator} An implementation that may be used to subsequently create or update
+   * @param {!INode} node The node to provide an instance for
+   * @param {!INodeStyle} style The style to use for the creation of the visual
+   * @returns {!IVisualCreator} An implementation that may be used to subsequently create or update
    *   the visual for the item. Clients should not cache this instance and must always call this
    *   method immediately before using the value returned. This enables the use of the flyweight
    *   design pattern for implementations. This method may not return <code>null</code> but should
@@ -9642,48 +10374,48 @@ class GroupNodeStyleRenderer extends BaseClass(INodeStyleRenderer, ILookup) {
    * @see Specified by {@link INodeStyleRenderer#getVisualCreator}.
    */
   getVisualCreator(node, style) {
-    return this.$shapeNodeStyle.renderer.getVisualCreator(node, this.$shapeNodeStyle)
+    return this._shapeNodeStyle.renderer.getVisualCreator(node, this._shapeNodeStyle)
   }
 
   /**
    * Gets an implementation of the {@link IBoundsProvider} interface that can
    * handle the provided item and its associated style.
    * This method may return a flyweight implementation.
-   * @param {INode} node The node to provide an instance for
-   * @param {INodeStyle} style The style to use for the calculating the painting bounds
-   * @return {IBoundsProvider} An implementation that may be used to subsequently query
+   * @param {!INode} node The node to provide an instance for
+   * @param {!INodeStyle} style The style to use for the calculating the painting bounds
+   * @returns {!IBoundsProvider} An implementation that may be used to subsequently query
    * the item's painting bounds. Clients should not cache this instance and must always call
    * this method immediately before using the value returned. This enables the
    * use of the flyweight design pattern for implementations
    * @see Specified by {@link INodeStyleRenderer#getBoundsProvider}.
    */
   getBoundsProvider(node, style) {
-    return this.$shapeNodeStyle.renderer.getBoundsProvider(node, this.$shapeNodeStyle)
+    return this._shapeNodeStyle.renderer.getBoundsProvider(node, this._shapeNodeStyle)
   }
 
   /**
    * Gets an implementation of the {@link IVisibilityTestable} interface that can
    * handle the provided item and its associated style.
    * This method may return a flyweight implementation.
-   * @param {INode} node The node to provide an instance for
-   * @param {INodeStyle} style The style to use for the testing the visibility
-   * @return {IVisibilityTestable} An implementation that may be used to subsequently query
+   * @param {!INode} node The node to provide an instance for
+   * @param {!INodeStyle} style The style to use for the testing the visibility
+   * @returns {!IVisibilityTestable} An implementation that may be used to subsequently query
    * the item's visibility. Clients should not cache this instance and must always call
    * this method immediately before using the value returned. This enables the
    * use of the flyweight design pattern for implementations
    * @see Specified by {@link INodeStyleRenderer#getVisibilityTestable}.
    */
   getVisibilityTestable(node, style) {
-    return this.$shapeNodeStyle.renderer.getVisibilityTestable(node, this.$shapeNodeStyle)
+    return this._shapeNodeStyle.renderer.getVisibilityTestable(node, this._shapeNodeStyle)
   }
 
   /**
    * Gets an implementation of the {@link IHitTestable} interface that can
    * handle the provided item and its associated style.
    * This method may return a flyweight implementation.
-   * @param {INode} node The node to provide an instance for
-   * @param {INodeStyle} style The style to use for the querying hit tests
-   * @return {IHitTestable} An implementation that may be used to subsequently perform
+   * @param {!INode} node The node to provide an instance for
+   * @param {!INodeStyle} style The style to use for the querying hit tests
+   * @returns {!IHitTestable} An implementation that may be used to subsequently perform
    * hit tests. Clients should not cache this instance and must always call
    * this method immediately before using the value returned. This enables the
    * use of the flyweight design pattern for implementations. This method may return
@@ -9691,23 +10423,23 @@ class GroupNodeStyleRenderer extends BaseClass(INodeStyleRenderer, ILookup) {
    * @see Specified by {@link INodeStyleRenderer#getHitTestable}.
    */
   getHitTestable(node, style) {
-    return this.$shapeNodeStyle.renderer.getHitTestable(node, this.$shapeNodeStyle)
+    return this._shapeNodeStyle.renderer.getHitTestable(node, this._shapeNodeStyle)
   }
 
   /**
    * Gets an implementation of the {@link IMarqueeTestable} interface that can
    * handle the provided item and its associated style.
    * This method may return a flyweight implementation.
-   * @param {INode} node The node to provide an instance for
-   * @param {INodeStyle} style The style to use for the querying marquee intersection test.
-   * @return {IMarqueeTestable} An implementation that may be used to subsequently query
+   * @param {!INode} node The node to provide an instance for
+   * @param {!INodeStyle} style The style to use for the querying marquee intersection test.
+   * @returns {!IMarqueeTestable} An implementation that may be used to subsequently query
    * the marquee intersections. Clients should not cache this instance and must always call
    * this method immediately before using the value returned. This enables the
    * use of the flyweight design pattern for implementations
    * @see Specified by {@link INodeStyleRenderer#getMarqueeTestable}.
    */
   getMarqueeTestable(node, style) {
-    return this.$shapeNodeStyle.renderer.getMarqueeTestable(node, this.$shapeNodeStyle)
+    return this._shapeNodeStyle.renderer.getMarqueeTestable(node, this._shapeNodeStyle)
   }
 
   /**
@@ -9715,9 +10447,9 @@ class GroupNodeStyleRenderer extends BaseClass(INodeStyleRenderer, ILookup) {
    * for the item's style.
    * Implementations may return {@link ILookup#EMPTY} if they don't support this, but may not return
    * <code>null</code>.
-   * @param {IModelItem} item The item to provide a context instance for.
-   * @param {INodeStyle} style The style to use for the context.
-   * @return {ILookup} An non-<code>null</code> lookup implementation.
+   * @param {!INode} item The item to provide a context instance for.
+   * @param {!INodeStyle} style The style to use for the context.
+   * @returns {!ILookup} An non-<code>null</code> lookup implementation.
    * @see {@link ILookup#EMPTY}
    * @see {@link ILookup}
    * @see Specified by {@link INodeStyleRenderer#getContext}.
@@ -9732,16 +10464,16 @@ class GroupNodeStyleRenderer extends BaseClass(INodeStyleRenderer, ILookup) {
    * Gets an implementation of the {@link IShapeGeometry} interface that can
    * handle the provided node and its associated style.
    * This method may return a flyweight implementation.
-   * @param {INode} node The node to provide an instance for
-   * @param {INodeStyle} style The style to use for the painting
-   * @return {IShapeGeometry} An implementation that may be used to subsequently query geometry
+   * @param {!INode} node The node to provide an instance for
+   * @param {!INodeStyle} style The style to use for the painting
+   * @returns {!IShapeGeometry} An implementation that may be used to subsequently query geometry
    *   information from. Clients should not cache this instance and must always call this method
    *   immediately before using the value returned. This enables the use of the flyweight design
    *   pattern for implementations
    * @see Specified by {@link INodeStyleRenderer#getShapeGeometry}.
    */
   getShapeGeometry(node, style) {
-    return this.$shapeNodeStyle.renderer.getShapeGeometry(node, this.$shapeNodeStyle)
+    return this._shapeNodeStyle.renderer.getShapeGeometry(node, this._shapeNodeStyle)
   }
 
   /**
@@ -9754,15 +10486,15 @@ class GroupNodeStyleRenderer extends BaseClass(INodeStyleRenderer, ILookup) {
    * have to return the same instance any time. Also it depends on the
    * type and context whether the instance returned stays up to date or needs to
    * be reobtained for subsequent use.
-   * @param {Class} type the type for which an instance shall be returned
-   * @return {Object} an instance that is assignable to type or <code>null</code>
+   * @param {!Class} type the type for which an instance shall be returned
+   * @returns {?object} an instance that is assignable to type or <code>null</code>
    * @see Specified by {@link ILookup#lookup}.
    */
   lookup(type) {
     if (type === INodeInsetsProvider.$class && this.lastStyle !== null) {
       return new GroupInsetsProvider(this.lastStyle)
     }
-    const lookup = this.$shapeNodeStyle.renderer.getContext(this.lastNode, this.$shapeNodeStyle)
+    const lookup = this._shapeNodeStyle.renderer.getContext(this.lastNode, this._shapeNodeStyle)
     return lookup !== null ? lookup.lookup(type) : null
   }
 }
@@ -9771,6 +10503,9 @@ class GroupNodeStyleRenderer extends BaseClass(INodeStyleRenderer, ILookup) {
  * Uses the style insets extended by the size of the participant bands.
  */
 class GroupInsetsProvider extends BaseClass(INodeInsetsProvider) {
+  /**
+   * @param {!GroupNodeStyle} style
+   */
   constructor(style) {
     super()
     this.style = style
@@ -9779,8 +10514,8 @@ class GroupInsetsProvider extends BaseClass(INodeInsetsProvider) {
   /**
    * Returns the insets from {@link GroupNodeStyle} for the given node to include the size of the
    * participant bands.
-   * @param {INode} node The node for which the insets are provided
-   * @return {Insets}
+   * @param {!INode} node The node for which the insets are provided
+   * @returns {!Insets}
    */
   getInsets(node) {
     return this.style.insets
@@ -9791,96 +10526,94 @@ class GroupInsetsProvider extends BaseClass(INodeInsetsProvider) {
  * An {@link INodeStyle} implementation representing a Gateway according to the BPMN.
  */
 export class GatewayNodeStyle extends BpmnNodeStyle {
-  /**
-   * Creates a new instance.
-   */
   constructor() {
     super()
-    this.$type = null
-    this.$outline = BPMN_CONSTANTS_GATEWAY_DEFAULT_OUTLINE
-    this.$iconColor = BPMN_CONSTANTS_DEFAULT_ICON_COLOR
-    this.$background = BPMN_CONSTANTS_GATEWAY_DEFAULT_BACKGROUND
+    this._type = null
+    this._outline = BPMN_CONSTANTS_GATEWAY_DEFAULT_OUTLINE
+    this._iconColor = BPMN_CONSTANTS_DEFAULT_ICON_COLOR
+    this._background = BPMN_CONSTANTS_GATEWAY_DEFAULT_BACKGROUND
+    this.gatewayIcon = null
+    this.typeIcon = null
     this.type = GatewayType.EXCLUSIVE_WITHOUT_MARKER
     this.minimumSize = new Size(20, 20)
-    this.typeIcon = null
   }
 
   /**
    * Gets the gateway type for this style.
-   * @type {GatewayType}
+   * @type {number}
    */
   get type() {
-    return this.$type
+    return this._type
   }
 
   /**
    * Sets the gateway type for this style.
-   * @type {GatewayType}
+   * @type {number}
    */
   set type(value) {
-    if (this.$type !== value) {
+    if (this._type !== value) {
       this.modCount++
-      this.$type = value
+      this._type = value
       this.updateTypeIcon()
     }
   }
 
   /**
    * Gets the background color of the gateway.
-   * @return {Fill}
+   * @type {!Fill}
    */
   get background() {
-    return this.$background
+    return this._background
   }
 
   /**
    * Sets the background color of the gateway.
-   * @param {Fill} value
+   * @type {!Fill}
    */
   set background(value) {
-    if (this.$background !== value) {
+    if (this._background !== value) {
       this.modCount++
-      this.$background = value
+      this._background = value
       this.updateGatewayIcon()
     }
   }
 
   /**
    * Gets the outline color of the gateway.
-   * @return {Fill}
+   * @type {!Fill}
    */
   get outline() {
-    return this.$outline
+    return this._outline
   }
 
   /**
    * Sets the outline color of the gateway.
-   * @param {Fill} value
+   * @type {!Fill}
    */
   set outline(value) {
-    if (this.$outline !== value) {
+    if (this._outline !== value) {
       this.modCount++
-      this.$outline = value
+      this._outline = value
       this.updateGatewayIcon()
     }
   }
 
   /**
    * Gets the color for the icon.
-   * @return {Fill}
+   * @type {!Fill}
    */
   get iconColor() {
-    return this.$iconColor
+    return this._iconColor
   }
 
   /**
    * Sets the color for the icon.
-   * @param {Fill} value
+   * @type {!Fill}
    */
   set iconColor(value) {
-    if (this.$iconColor !== value) {
+    if (this._iconColor !== value) {
       this.modCount++
-      this.$iconColor = value
+      this._iconColor = value
       this.updateTypeIcon()
     }
   }
@@ -9924,8 +10657,8 @@ export class GatewayNodeStyle extends BpmnNodeStyle {
    * the {@link INode#layout} depicts the outline.
    * Implementing this method influences the behavior of {@link NodeStyleBase#isInside}
    * and {@link NodeStyleBase#getIntersection} since the default implementations delegate to it.
-   * @param {INode} node The node to which this style instance is assigned.
-   * @return {GeneralPath} The outline of the visual representation or <code>null</code>.
+   * @param {!INode} node The node to which this style instance is assigned.
+   * @returns {!GeneralPath} The outline of the visual representation or <code>null</code>.
    */
   getOutline(node) {
     const size = Math.min(node.layout.width, node.layout.height)
@@ -9949,10 +10682,21 @@ export class GatewayNodeStyle extends BpmnNodeStyle {
     return path
   }
 
+  /**
+   * @param {!IRenderContext} context
+   * @param {!INode} node
+   * @returns {?SvgVisual}
+   */
   createVisual(context, node) {
     return super.createVisual(context, node)
   }
 
+  /**
+   * @param {!IRenderContext} context
+   * @param {!SvgVisual} oldVisual
+   * @param {!INode} node
+   * @returns {?SvgVisual}
+   */
   updateVisual(context, oldVisual, node) {
     return super.updateVisual(context, oldVisual, node)
   }
@@ -9963,10 +10707,10 @@ export class GatewayNodeStyle extends BpmnNodeStyle {
    * call to the instance that has been queried from the {@link NodeStyleBase#renderer}.
    * This implementation uses the {@link NodeStyleBase#getOutline outline} to determine
    * whether the node has been hit.
-   * @param {INode} node The node to which this style instance is assigned.
-   * @param {Point} p The point to test.
-   * @param {ICanvasContext} canvasContext The canvas context.
-   * @return {boolean} whether or not the specified node representation is hit.
+   * @param {!INode} node The node to which this style instance is assigned.
+   * @param {!Point} p The point to test.
+   * @param {!ICanvasContext} canvasContext The canvas context.
+   * @returns {boolean} whether or not the specified node representation is hit.
    */
   isHit(canvasContext, p, node) {
     if (!node.layout.toRect().getEnlarged(canvasContext.hitTestRadius).contains(p)) {
@@ -9990,17 +10734,17 @@ export class EventPortStyle extends BaseClass(IPortStyle) {
    */
   constructor() {
     super()
-    this.$nodeStyle = new EventNodeStyle()
-    this.$nodeStyle.characteristic = EventCharacteristic.BOUNDARY_INTERRUPTING
-    this.$nodeStyle.type = EventType.COMPENSATION
-    const nodeStylePortStyleAdapter = new NodeStylePortStyleAdapter(this.$nodeStyle)
+    this._nodeStyle = new EventNodeStyle()
+    this._nodeStyle.characteristic = EventCharacteristic.BOUNDARY_INTERRUPTING
+    this._nodeStyle.type = EventType.COMPENSATION
+    const nodeStylePortStyleAdapter = new NodeStylePortStyleAdapter(this._nodeStyle)
     nodeStylePortStyleAdapter.renderSize = BPMN_CONSTANTS_SIZES_EVENT_PORT
-    this.$adapter = nodeStylePortStyleAdapter
+    this._adapter = nodeStylePortStyleAdapter
   }
 
   /**
    * Gets the event type for this style.
-   * @type {EventType}
+   * @type {number}
    */
   get type() {
     return this.eventNodeStyle.type
@@ -10008,7 +10752,7 @@ export class EventPortStyle extends BaseClass(IPortStyle) {
 
   /**
    * Sets the event type for this style.
-   * @type {EventType}
+   * @type {number}
    */
   set type(value) {
     this.eventNodeStyle.type = value
@@ -10016,7 +10760,7 @@ export class EventPortStyle extends BaseClass(IPortStyle) {
 
   /**
    * Gets the event characteristic for this style.
-   * @type {EventCharacteristic}
+   * @type {number}
    */
   get characteristic() {
     return this.eventNodeStyle.characteristic
@@ -10024,7 +10768,7 @@ export class EventPortStyle extends BaseClass(IPortStyle) {
 
   /**
    * Sets the event characteristic for this style.
-   * @type {EventCharacteristic}
+   * @type {number}
    */
   set characteristic(value) {
     this.eventNodeStyle.characteristic = value
@@ -10032,94 +10776,93 @@ export class EventPortStyle extends BaseClass(IPortStyle) {
 
   /**
    * Gets the size the port style is rendered with.
-   * @type {Size}
+   * @type {!Size}
    */
   get renderSize() {
-    return this.$adapter.renderSize
+    return this._adapter.renderSize
   }
 
   /**
    * Sets the size the port style is rendered with.
-   * @type {Size}
+   * @type {!Size}
    */
   set renderSize(value) {
-    this.$adapter.renderSize = value
+    this._adapter.renderSize = value
   }
 
   /**
    * Gets the background color of the event.
-   * @return {Fill}
+   * @type {!Fill}
    */
   get background() {
-    return this.$nodeStyle.background
+    return this._nodeStyle.background
   }
 
   /**
    * Sets the background color of the event.
-   * @param {Fill} value
+   * @type {!Fill}
    */
   set background(value) {
-    if (this.$nodeStyle.background !== value) {
-      this.$nodeStyle.background = value
+    if (this._nodeStyle.background !== value) {
+      this._nodeStyle.background = value
     }
   }
 
   /**
    * Gets the outline color of the event.
-   * @return {Fill}
+   * @type {?Fill}
    */
   get outline() {
-    return this.$nodeStyle.outline
+    return this._nodeStyle.outline
   }
 
   /**
    * Sets the outline color of the event.
    * If this is set to null, the outline color is automatic, based on the
    * {@link EventPortStyle#characteristic}.
-   * @param {Fill} value
+   * @type {?Fill}
    */
   set outline(value) {
-    if (this.$nodeStyle.outline !== value) {
-      this.$nodeStyle.outline = value
+    if (this._nodeStyle.outline !== value) {
+      this._nodeStyle.outline = value
     }
   }
 
   /**
    * Gets the primary color for icons and markers.
-   * @return {Fill}
+   * @type {!Fill}
    */
   get iconColor() {
-    return this.$nodeStyle.iconColor
+    return this._nodeStyle.iconColor
   }
 
   /**
    * Sets the primary color for icons and markers.
-   * @param {Fill} value
+   * @type {!Fill}
    */
   set iconColor(value) {
-    if (this.$nodeStyle.iconColor !== value) {
-      this.$nodeStyle.iconColor = value
+    if (this._nodeStyle.iconColor !== value) {
+      this._nodeStyle.iconColor = value
     }
   }
 
   /**
-   * @type {EventNodeStyle}
+   * @type {!EventNodeStyle}
    */
   get eventNodeStyle() {
-    const nodeStyle = this.$adapter.nodeStyle
-    return nodeStyle instanceof EventNodeStyle ? nodeStyle : null
+    return this._adapter.nodeStyle
   }
 
   /**
-   * @return {NodeStylePortStyleAdapter}
+   * @type {!NodeStylePortStyleAdapter}
    */
   get adapter() {
-    return this.$adapter
+    return this._adapter
   }
 
   /**
    * Create a clone of this object.
-   * @return {Object} A clone of this object.
+   * @returns {*} A clone of this object.
    * @see Specified by {@link ICloneable#clone}.
    */
   clone() {
@@ -10131,7 +10874,7 @@ export class EventPortStyle extends BaseClass(IPortStyle) {
    * that provide details about the visual appearance and visual behavior
    * for a given port and this style instance.
    * @see Specified by {@link IPortStyle#renderer}.
-   * @type {IPortStyleRenderer}
+   * @type {!IPortStyleRenderer}
    */
   get renderer() {
     return EventPortStyleRenderer.INSTANCE
@@ -10150,9 +10893,9 @@ class EventPortStyleRenderer extends BaseClass(IPortStyleRenderer, ILookup) {
   /**
    * Gets an implementation of the {@link IVisualCreator} interface that can
    * handle the provided item and its associated style.
-   * @param {IPort} port The port to provide an instance for
-   * @param {IPortStyle} style The style to use for the creation of the visual
-   * @return {IVisualCreator} An implementation that may be used to subsequently create or update
+   * @param {!IPort} port The port to provide an instance for
+   * @param {!IPortStyle} style The style to use for the creation of the visual
+   * @returns {!IVisualCreator} An implementation that may be used to subsequently create or update
    *   the visual for the item. Clients should not cache this instance and must always call this
    *   method immediately before using the value returned. This enables the use of the flyweight
    *   design pattern for implementations. This method may not return <code>null</code> but should
@@ -10168,9 +10911,9 @@ class EventPortStyleRenderer extends BaseClass(IPortStyleRenderer, ILookup) {
   /**
    * Gets an implementation of the {@link IBoundsProvider} interface that can
    * handle the provided item and its associated style.
-   * @param {IPort} port The port to provide an instance for
-   * @param {IPortStyle} style The style to use for the calculating the painting bounds
-   * @return {IBoundsProvider} An implementation that may be used to subsequently query
+   * @param {!IPort} port The port to provide an instance for
+   * @param {!IPortStyle} style The style to use for the calculating the painting bounds
+   * @returns {!IBoundsProvider} An implementation that may be used to subsequently query
    * the item's painting bounds. Clients should not cache this instance and must always call
    * this method immediately before using the value returned. This enables the
    * use of the flyweight design pattern for implementations
@@ -10184,9 +10927,9 @@ class EventPortStyleRenderer extends BaseClass(IPortStyleRenderer, ILookup) {
   /**
    * Gets an implementation of the {@link IVisibilityTestable} interface that can
    * handle the provided item and its associated style.
-   * @param {IPort} port The port to provide an instance for
-   * @param {IPortStyle} style The style to use for the testing the visibility
-   * @return {IVisibilityTestable} An implementation that may be used to subsequently query
+   * @param {!IPort} port The port to provide an instance for
+   * @param {!IPortStyle} style The style to use for the testing the visibility
+   * @returns {!IVisibilityTestable} An implementation that may be used to subsequently query
    * the item's visibility. Clients should not cache this instance and must always call
    * this method immediately before using the value returned. This enables the
    * use of the flyweight design pattern for implementations
@@ -10200,9 +10943,9 @@ class EventPortStyleRenderer extends BaseClass(IPortStyleRenderer, ILookup) {
   /**
    * Gets an implementation of the {@link IHitTestable} interface that can
    * handle the provided item and its associated style.
-   * @param {IPort} port The port to provide an instance for
-   * @param {IPortStyle} style The style to use for the querying hit tests
-   * @return {IHitTestable} An implementation that may be used to subsequently perform
+   * @param {!IPort} port The port to provide an instance for
+   * @param {!IPortStyle} style The style to use for the querying hit tests
+   * @returns {!IHitTestable} An implementation that may be used to subsequently perform
    * hit tests. Clients should not cache this instance and must always call
    * this method immediately before using the value returned. This enables the
    * use of the flyweight design pattern for implementations. This method may return
@@ -10217,9 +10960,9 @@ class EventPortStyleRenderer extends BaseClass(IPortStyleRenderer, ILookup) {
   /**
    * Gets an implementation of the {@link IMarqueeTestable} interface that can
    * handle the provided item and its associated style.
-   * @param {IPort} port The port to provide an instance for
-   * @param {IPortStyle} style The style to use for the querying marquee intersection test.
-   * @return {IMarqueeTestable} An implementation that may be used to subsequently query
+   * @param {!IPort} port The port to provide an instance for
+   * @param {!IPortStyle} style The style to use for the querying marquee intersection test.
+   * @returns {!IMarqueeTestable} An implementation that may be used to subsequently query
    * the marquee intersections. Clients should not cache this instance and must always call
    * this method immediately before using the value returned. This enables the
    * use of the flyweight design pattern for implementations
@@ -10233,9 +10976,9 @@ class EventPortStyleRenderer extends BaseClass(IPortStyleRenderer, ILookup) {
   /**
    * Gets a temporary context instance that can be used to query additional information
    * for the item's style.
-   * @param {IPort} port The item to provide a context instance for.
-   * @param {IPortStyle} style The style to use for the context.
-   * @return {ILookup} An non-<code>null</code> lookup implementation.
+   * @param {!IPort} port The item to provide a context instance for.
+   * @param {!IPortStyle} style The style to use for the context.
+   * @returns {!ILookup} An non-<code>null</code> lookup implementation.
    * @see {@link ILookup#EMPTY}
    * @see {@link ILookup}
    * @see Specified by {@link IPortStyleRenderer#getContext}.
@@ -10256,21 +10999,24 @@ class EventPortStyleRenderer extends BaseClass(IPortStyleRenderer, ILookup) {
    * have to return the same instance any time. Also it depends on the
    * type and context whether the instance returned stays up to date or needs to
    * be re-obtained for subsequent use.
-   * @param {Class} type the type for which an instance shall be returned
-   * @return {Object} an instance that is assignable to type or <code>null</code>
+   * @param {!Class} type the type for which an instance shall be returned
+   * @returns {?object} an instance that is assignable to type or <code>null</code>
    * @see Specified by {@link ILookup#lookup}.
    */
   lookup(type) {
     if (type === IEdgePathCropper.$class) {
       return EventPortEdgeIntersectionCalculator.CalculatorInstance
     }
-    return this.fallbackLookup.lookup(type)
+    return this.fallbackLookup ? this.fallbackLookup.lookup(type) : null
   }
 
+  /**
+   * @type {!EventPortStyleRenderer}
+   */
   static get INSTANCE() {
     return (
-      EventPortStyleRenderer.$instance ||
-      (EventPortStyleRenderer.$instance = new EventPortStyleRenderer())
+      EventPortStyleRenderer._instance ||
+      (EventPortStyleRenderer._instance = new EventPortStyleRenderer())
     )
   }
 }
@@ -10286,8 +11032,8 @@ class EventPortEdgeIntersectionCalculator extends DefaultEdgePathCropper {
 
   /**
    * Returns the geometry of the port retrieved from {@link EventPortStyle}.
-   * @param {IPort} port The port at which the edge should be cropped.
-   * @return {IShapeGeometry}
+   * @param {!IPort} port The port at which the edge should be cropped.
+   * @returns {?IShapeGeometry}
    */
   getPortGeometry(port) {
     if (port.style instanceof EventPortStyle) {
@@ -10297,10 +11043,14 @@ class EventPortEdgeIntersectionCalculator extends DefaultEdgePathCropper {
     return null
   }
 
+  /**
+   * @type {!EventPortEdgeIntersectionCalculator}
+   */
   static get CalculatorInstance() {
     return (
-      EventPortEdgeIntersectionCalculator.$calculatorInstance ||
-      (EventPortEdgeIntersectionCalculator.$calculatorInstance = new EventPortEdgeIntersectionCalculator())
+      EventPortEdgeIntersectionCalculator._calculatorInstance ||
+      (EventPortEdgeIntersectionCalculator._calculatorInstance =
+        new EventPortEdgeIntersectionCalculator())
     )
   }
 }
@@ -10308,41 +11058,46 @@ class EventPortEdgeIntersectionCalculator extends DefaultEdgePathCropper {
 /**
  * A toggle button that uses different {@link Visual}s for the two toggle states.
  */
-class VisualToggleButton extends Visual {
+class VisualToggleButton extends SvgVisual {
   constructor() {
-    super()
-    this.g = window.document.createElementNS('http://www.w3.org/2000/svg', 'g')
+    super(window.document.createElementNS('http://www.w3.org/2000/svg', 'g'))
+
     // The visual used if the button is checked.
     this.checkedVisual = null
+
     // The visual used if the button is not checked.
     this.uncheckedVisual = null
 
-    this.$checked = false
+    this._checked = false
   }
 
-  /** @type {boolean} */
+  /**
+   * @type {boolean}
+   */
   get checked() {
-    return this.$checked
+    return this._checked
   }
 
-  /** @type {boolean} */
+  /**
+   * @type {boolean}
+   */
   set checked(value) {
-    const noChildren = this.g.childElementCount < 1
-    if (value && (noChildren || !this.checked)) {
-      this.g.setAttribute('class', 'visualToggleButton visualToggleButtonChecked')
-      this.setChild(this.checkedVisual)
-    } else if (!value && (noChildren || this.checked)) {
-      this.g.setAttribute('class', 'visualToggleButton visualToggleButtonUnchecked')
-      this.setChild(this.uncheckedVisual)
+    if (this.checkedVisual && this.uncheckedVisual) {
+      const noChildren = this.svgElement.childElementCount < 1
+      if (value && (noChildren || !this.checked)) {
+        this.svgElement.setAttribute('class', 'visualToggleButton visualToggleButtonChecked')
+        this.setChild(this.checkedVisual)
+      } else if (!value && (noChildren || this.checked)) {
+        this.svgElement.setAttribute('class', 'visualToggleButton visualToggleButtonUnchecked')
+        this.setChild(this.uncheckedVisual)
+      }
+      this._checked = value
     }
-    this.$checked = value
   }
 
-  /** @type {Element} */
-  get svgElement() {
-    return this.g
-  }
-
+  /**
+   * @param {!SvgVisual} newChild
+   */
   setChild(newChild) {
     if (this.svgElement.childElementCount >= 1) {
       this.svgElement.removeChild(this.svgElement.firstElementChild)
@@ -10360,17 +11115,22 @@ class DataObjectIcon extends Icon {
     this.stroke = null
   }
 
-  /** @return {Visual} */
+  /**
+   * @param {!IRenderContext} context
+   * @returns {!SvgVisual}
+   */
   createVisual(context) {
     const container = document.createElementNS('http://www.w3.org/2000/svg', 'g')
 
-    const cornerSize = Math.min(this.bounds.width, this.bounds.height) * 0.4
+    const boundsWidth = this.bounds.width
+    const boundsHeight = this.bounds.height
+    const cornerSize = Math.min(boundsWidth, boundsHeight) * 0.4
     const path1 = document.createElementNS('http://www.w3.org/2000/svg', 'path')
     path1.setAttribute(
       'd',
-      `M 0 0 L ${this.bounds.width - cornerSize} 0 L ${this.bounds.width} ${cornerSize} L ${
-        this.bounds.width
-      } ${this.bounds.height} L 0 ${this.bounds.height} Z`
+      `M 0 0 L ${
+        boundsWidth - cornerSize
+      } 0 L ${boundsWidth} ${cornerSize} L ${boundsWidth} ${boundsHeight} L 0 ${boundsHeight} Z`
     )
     Stroke.setStroke(this.stroke, path1, context)
     Fill.setFill(this.fill, path1, context)
@@ -10379,17 +11139,16 @@ class DataObjectIcon extends Icon {
     const path2 = document.createElementNS('http://www.w3.org/2000/svg', 'path')
     path2.setAttribute(
       'd',
-      `M ${this.bounds.width - cornerSize} 0 L ${this.bounds.width - cornerSize} ${cornerSize} L ${
-        this.bounds.width
-      } ${cornerSize}`
+      `M ${boundsWidth - cornerSize} 0 L ${
+        boundsWidth - cornerSize
+      } ${cornerSize} L ${boundsWidth} ${cornerSize}`
     )
     Stroke.setStroke(this.stroke, path2, context)
     Fill.setFill(this.fill, path2, context)
     container.appendChild(path2)
-
     container['render-data-cache'] = new PathIconState(
-      this.bounds.width,
-      this.bounds.height,
+      boundsWidth,
+      boundsHeight,
       this.stroke,
       this.fill
     )
@@ -10399,7 +11158,11 @@ class DataObjectIcon extends Icon {
     return new SvgVisual(container)
   }
 
-  /** @return {Visual} */
+  /**
+   * @param {!IRenderContext} context
+   * @param {!SvgVisual} oldVisual
+   * @returns {!SvgVisual}
+   */
   updateVisual(context, oldVisual) {
     const container = oldVisual.svgElement
     const cache = container['render-data-cache']
@@ -10447,17 +11210,24 @@ class DataObjectIcon extends Icon {
 }
 
 class CollapseButtonIcon extends Icon {
+  /**
+   * @param {!INode} node
+   * @param {!Fill} iconFill
+   */
   constructor(node, iconFill) {
     super()
+    this.touchEndRegistered = false
+    this.onTouchEndDelegate = null
     this.node = node
     this.iconFill = iconFill
     this.collapsedIcon = IconFactory.createStaticSubState(SubState.COLLAPSED, iconFill)
     this.expandedIcon = IconFactory.createStaticSubState(SubState.EXPANDED, iconFill)
-    this.touchEndRegistered = false
-    this.onTouchEndDelegate = null
   }
 
-  /** @return {Visual} */
+  /**
+   * @param {!IRenderContext} context
+   * @returns {!SvgVisual}
+   */
   createVisual(context) {
     this.collapsedIcon.setBounds(new Rect(Point.ORIGIN, this.bounds.size))
     this.expandedIcon.setBounds(new Rect(Point.ORIGIN, this.bounds.size))
@@ -10477,13 +11247,16 @@ class CollapseButtonIcon extends Icon {
     return container
   }
 
-  /** @return {Visual} */
+  /**
+   * @param {!IRenderContext} context
+   * @param {!SvgVisual} oldVisual
+   * @returns {!SvgVisual}
+   */
   updateVisual(context, oldVisual) {
     const container = oldVisual instanceof SvgVisualGroup ? oldVisual : null
     if (
-      container !== null &&
-      container.children.size === 1 &&
-      container.children.get(0) instanceof VisualToggleButton
+      !container ||
+      (container.children.size === 1 && container.children.get(0) instanceof VisualToggleButton)
     ) {
       return this.createVisual(context)
     }
@@ -10503,7 +11276,13 @@ class CollapseButtonIcon extends Icon {
     return container
   }
 
-  /** @return {VisualToggleButton} */
+  /**
+   * @param {!IRenderContext} context
+   * @param {!INode} item
+   * @param {!SvgVisual} collapsedVisual
+   * @param {!SvgVisual} expandedVisual
+   * @returns {!VisualToggleButton}
+   */
   createButton(context, item, collapsedVisual, expandedVisual) {
     const button = new VisualToggleButton()
     button.checkedVisual = collapsedVisual
@@ -10520,14 +11299,14 @@ class CollapseButtonIcon extends Icon {
    * This method adds event listeners for click and tap events to
    * the given button visual that call {@link CollapseButtonIcon#toggleExpansionState}.
    * It is called by {@link CollapseButtonIcon#createButton}.
-   * @param {Visual} button The button visual to add the event listeners to.
-   * @param {IRenderContext} context The context.
+   * @param {!VisualToggleButton} button The button visual to add the event listeners to.
+   * @param {!IRenderContext} context The context.
    */
   addToggleGroupStateCommand(button, context) {
     const currentItem = this.node
     button.svgElement.addEventListener(
       'click',
-      event => {
+      () => {
         toggleExpansionState(currentItem, context)
         button.checked = !isExpanded(context, this.node)
       },
@@ -10541,7 +11320,7 @@ class CollapseButtonIcon extends Icon {
     }
     button.svgElement.addEventListener(
       'touchstart',
-      evt => {
+      () => {
         if (!this.touchEndRegistered) {
           this.touchEndRegistered = true
           button.svgElement.addEventListener(
@@ -10555,6 +11334,11 @@ class CollapseButtonIcon extends Icon {
     )
   }
 
+  /**
+   * @param {!VisualToggleButton} button
+   * @param {!INode} currentItem
+   * @param {!IRenderContext} context
+   */
   onTouchEnd(button, currentItem, context) {
     button.svgElement.removeEventListener(
       'touchend',
@@ -10566,18 +11350,20 @@ class CollapseButtonIcon extends Icon {
   }
 }
 
-/** @return {boolean} */
+/**
+ * @param {!IRenderContext} context
+ * @param {!INode} item
+ * @returns {boolean}
+ */
 function isExpanded(context, item) {
   let expanded = true
   const canvas = context !== null ? context.canvasComponent : null
 
   if (canvas !== null) {
-    if (IGraph.isInstance(canvas.graph)) {
-      const graph = canvas.graph
-      const foldedGraph = graph.foldingView
-      if (foldedGraph !== null && foldedGraph.graph.contains(item)) {
-        expanded = foldedGraph.isExpanded(item)
-      }
+    const graph = canvas.graph
+    const foldedGraph = graph.foldingView
+    if (foldedGraph !== null && foldedGraph.graph.contains(item)) {
+      expanded = foldedGraph.isExpanded(item)
     }
   }
   return expanded
@@ -10585,8 +11371,8 @@ function isExpanded(context, item) {
 
 /**
  * Executes the {@link ICommand#TOGGLE_EXPANSION_STATE}, if it can be executed.
- * @param {INode} currentNode The group whose state should be toggled.
- * @param {IRenderContext} context The context.
+ * @param {!INode} currentNode The group whose state should be toggled.
+ * @param {!IRenderContext} context The context.
  */
 function toggleExpansionState(currentNode, context) {
   const canvas = context.canvasComponent
@@ -10600,6 +11386,12 @@ function toggleExpansionState(currentNode, context) {
  * updated.
  */
 class PathIconState {
+  /**
+   * @param {number} width
+   * @param {number} height
+   * @param {?Stroke} stroke
+   * @param {?Fill} fill
+   */
   constructor(width, height, stroke, fill) {
     this.width = width
     this.height = height
@@ -10607,7 +11399,13 @@ class PathIconState {
     this.fill = fill
   }
 
-  /** @return {boolean} */
+  /**
+   * @param {number} width
+   * @param {number} height
+   * @param {?Stroke} stroke
+   * @param {?Fill} fill
+   * @returns {boolean}
+   */
   equals(width, height, stroke, fill) {
     return (
       this.width === width && this.height === height && this.stroke === stroke && this.fill === fill
@@ -10710,44 +11508,71 @@ export const DataObjectType = Enum('DataObjectType', {
 export class PoolNodeStyleExtension extends MarkupExtension {
   constructor() {
     super()
-    this.$vertical = false
-    this.$multipleInstance = false
-    this.$tableNodeStyle = null
-    this.$iconColor = BPMN_CONSTANTS_DEFAULT_ICON_COLOR
+    this._vertical = false
+    this._multipleInstance = false
+    this._tableNodeStyle = null
+    this._iconColor = BPMN_CONSTANTS_DEFAULT_ICON_COLOR
   }
 
+  /**
+   * @type {boolean}
+   */
   get vertical() {
-    return this.$vertical
+    return this._vertical
   }
 
+  /**
+   * @type {boolean}
+   */
   set vertical(value) {
-    this.$vertical = value
+    this._vertical = value
   }
 
+  /**
+   * @type {boolean}
+   */
   get multipleInstance() {
-    return this.$multipleInstance
+    return this._multipleInstance
   }
 
+  /**
+   * @type {boolean}
+   */
   set multipleInstance(value) {
-    this.$multipleInstance = value
+    this._multipleInstance = value
   }
 
+  /**
+   * @type {?TableNodeStyle}
+   */
   get tableNodeStyle() {
-    return this.$tableNodeStyle
+    return this._tableNodeStyle
   }
 
+  /**
+   * @type {?TableNodeStyle}
+   */
   set tableNodeStyle(value) {
-    this.$tableNodeStyle = value
+    this._tableNodeStyle = value
   }
 
+  /**
+   * @type {!Fill}
+   */
   get iconColor() {
-    return this.$iconColor
+    return this._iconColor
   }
 
+  /**
+   * @type {!Fill}
+   */
   set iconColor(value) {
-    this.$iconColor = value
+    this._iconColor = value
   }
 
+  /**
+   * @type {!object}
+   */
   static get $meta() {
     return {
       $self: [GraphMLAttribute().init({ contentProperty: 'tableNodeStyle' })],
@@ -10764,6 +11589,10 @@ export class PoolNodeStyleExtension extends MarkupExtension {
     }
   }
 
+  /**
+   * @param {!ILookup} serviceProvider
+   * @returns {!PoolNodeStyle}
+   */
   provideValue(serviceProvider) {
     const style = new PoolNodeStyle(this.vertical)
     style.multipleInstance = this.multipleInstance
@@ -10774,30 +11603,58 @@ export class PoolNodeStyleExtension extends MarkupExtension {
 }
 
 export class AlternatingLeafStripeStyleExtension extends MarkupExtension {
+  constructor() {
+    super()
+    this._evenLeafDescriptor = null
+    this._parentDescriptor = null
+    this._oddLeafDescriptor = null
+  }
+
+  /**
+   * @type {!StripeDescriptor}
+   */
   get evenLeafDescriptor() {
-    return this.$evenLeafDescriptor
+    return this._evenLeafDescriptor
   }
 
+  /**
+   * @type {!StripeDescriptor}
+   */
   set evenLeafDescriptor(value) {
-    this.$evenLeafDescriptor = value
+    this._evenLeafDescriptor = value
   }
 
+  /**
+   * @type {!StripeDescriptor}
+   */
   get parentDescriptor() {
-    return this.$parentDescriptor
+    return this._parentDescriptor
   }
 
+  /**
+   * @type {!StripeDescriptor}
+   */
   set parentDescriptor(value) {
-    this.$parentDescriptor = value
+    this._parentDescriptor = value
   }
 
+  /**
+   * @type {!StripeDescriptor}
+   */
   get oddLeafDescriptor() {
-    return this.$oddLeafDescriptor
+    return this._oddLeafDescriptor
   }
 
+  /**
+   * @type {!StripeDescriptor}
+   */
   set oddLeafDescriptor(value) {
-    this.$oddLeafDescriptor = value
+    this._oddLeafDescriptor = value
   }
 
+  /**
+   * @type {!object}
+   */
   static get $meta() {
     return {
       evenLeafDescriptor: TypeAttribute(YObject.$class),
@@ -10806,8 +11663,12 @@ export class AlternatingLeafStripeStyleExtension extends MarkupExtension {
     }
   }
 
+  /**
+   * @param {!ILookup} serviceProvider
+   * @returns {!AlternatingLeafStripeStyle}
+   */
   provideValue(serviceProvider) {
-    const style = new AlternatingLeafStripeStyle(this.vertical)
+    const style = new AlternatingLeafStripeStyle()
     style.evenLeafDescriptor = this.evenLeafDescriptor
     style.parentDescriptor = this.parentDescriptor
     style.oddLeafDescriptor = this.oddLeafDescriptor
@@ -10818,44 +11679,71 @@ export class AlternatingLeafStripeStyleExtension extends MarkupExtension {
 export class StripeDescriptorExtension extends MarkupExtension {
   constructor() {
     super()
-    this.$backgroundFill = Fill.TRANSPARENT
-    this.$insetFill = Fill.TRANSPARENT
-    this.$borderFill = Fill.BLACK
-    this.$borderThickness = new Insets(1)
+    this._backgroundFill = Fill.TRANSPARENT
+    this._insetFill = Fill.TRANSPARENT
+    this._borderFill = Fill.BLACK
+    this._borderThickness = new Insets(1)
   }
 
+  /**
+   * @type {!Fill}
+   */
   get backgroundFill() {
-    return this.$backgroundFill
+    return this._backgroundFill
   }
 
+  /**
+   * @type {!Fill}
+   */
   set backgroundFill(value) {
-    this.$backgroundFill = value
+    this._backgroundFill = value
   }
 
+  /**
+   * @type {!Fill}
+   */
   get insetFill() {
-    return this.$insetFill
+    return this._insetFill
   }
 
+  /**
+   * @type {!Fill}
+   */
   set insetFill(value) {
-    this.$insetFill = value
+    this._insetFill = value
   }
 
+  /**
+   * @type {!Fill}
+   */
   get borderFill() {
-    return this.$borderFill
+    return this._borderFill
   }
 
+  /**
+   * @type {!Fill}
+   */
   set borderFill(value) {
-    this.$borderFill = value
+    this._borderFill = value
   }
 
+  /**
+   * @type {!Insets}
+   */
   get borderThickness() {
-    return this.$borderThickness
+    return this._borderThickness
   }
 
+  /**
+   * @type {!Insets}
+   */
   set borderThickness(value) {
-    this.$borderThickness = value
+    this._borderThickness = value
   }
 
+  /**
+   * @type {!object}
+   */
   static get $meta() {
     return {
       backgroundFill: [
@@ -10877,6 +11765,10 @@ export class StripeDescriptorExtension extends MarkupExtension {
     }
   }
 
+  /**
+   * @param {!ILookup} serviceProvider
+   * @returns {!StripeDescriptor}
+   */
   provideValue(serviceProvider) {
     const descriptor = new StripeDescriptor()
     descriptor.backgroundFill = this.backgroundFill
@@ -10890,134 +11782,221 @@ export class StripeDescriptorExtension extends MarkupExtension {
 export class ActivityNodeStyleExtension extends MarkupExtension {
   constructor() {
     super()
-    this.$activityType = ActivityType.TASK
-    this.$taskType = TaskType.ABSTRACT
-    this.$triggerEventType = EventType.MESSAGE
-    this.$triggerEventCharacteristic = EventCharacteristic.SUB_PROCESS_INTERRUPTING
-    this.$loopCharacteristic = LoopCharacteristic.NONE
-    this.$subState = SubState.NONE
-    this.$insets = new Insets(15)
-    this.$adHoc = false
-    this.$compensation = false
-    this.$minimumSize = Size.EMPTY
-    this.$background = BPMN_CONSTANTS_ACTIVITY_DEFAULT_BACKGROUND
-    this.$outline = BPMN_CONSTANTS_ACTIVITY_DEFAULT_OUTLINE
-    this.$iconColor = BPMN_CONSTANTS_DEFAULT_ICON_COLOR
-    this.$eventOutline = BPMN_CONSTANTS_DEFAULT_EVENT_OUTLINE
+    this._activityType = ActivityType.TASK
+    this._taskType = TaskType.ABSTRACT
+    this._triggerEventType = EventType.MESSAGE
+    this._triggerEventCharacteristic = EventCharacteristic.SUB_PROCESS_INTERRUPTING
+    this._loopCharacteristic = LoopCharacteristic.NONE
+    this._subState = SubState.NONE
+    this._insets = new Insets(15)
+    this._adHoc = false
+    this._compensation = false
+    this._minimumSize = Size.EMPTY
+    this._background = BPMN_CONSTANTS_ACTIVITY_DEFAULT_BACKGROUND
+    this._outline = BPMN_CONSTANTS_ACTIVITY_DEFAULT_OUTLINE
+    this._iconColor = BPMN_CONSTANTS_DEFAULT_ICON_COLOR
+    this._eventOutline = BPMN_CONSTANTS_DEFAULT_EVENT_OUTLINE
   }
 
+  /**
+   * @type {number}
+   */
   get activityType() {
-    return this.$activityType
+    return this._activityType
   }
 
+  /**
+   * @type {number}
+   */
   set activityType(value) {
-    this.$activityType = value
+    this._activityType = value
   }
 
+  /**
+   * @type {number}
+   */
   get taskType() {
-    return this.$taskType
+    return this._taskType
   }
 
+  /**
+   * @type {number}
+   */
   set taskType(value) {
-    this.$taskType = value
+    this._taskType = value
   }
 
+  /**
+   * @type {number}
+   */
   get triggerEventType() {
-    return this.$triggerEventType
+    return this._triggerEventType
   }
 
+  /**
+   * @type {number}
+   */
   set triggerEventType(value) {
-    this.$triggerEventType = value
+    this._triggerEventType = value
   }
 
+  /**
+   * @type {number}
+   */
   get triggerEventCharacteristic() {
-    return this.$triggerEventCharacteristic
+    return this._triggerEventCharacteristic
   }
 
+  /**
+   * @type {number}
+   */
   set triggerEventCharacteristic(value) {
-    this.$triggerEventCharacteristic = value
+    this._triggerEventCharacteristic = value
   }
 
+  /**
+   * @type {number}
+   */
   get loopCharacteristic() {
-    return this.$loopCharacteristic
+    return this._loopCharacteristic
   }
 
+  /**
+   * @type {number}
+   */
   set loopCharacteristic(value) {
-    this.$loopCharacteristic = value
+    this._loopCharacteristic = value
   }
 
+  /**
+   * @type {number}
+   */
   get subState() {
-    return this.$subState
+    return this._subState
   }
 
+  /**
+   * @type {number}
+   */
   set subState(value) {
-    this.$subState = value
+    this._subState = value
   }
 
+  /**
+   * @type {!Insets}
+   */
   get insets() {
-    return this.$insets
+    return this._insets
   }
 
+  /**
+   * @type {!Insets}
+   */
   set insets(value) {
-    this.$insets = value
+    this._insets = value
   }
 
+  /**
+   * @type {boolean}
+   */
   get adHoc() {
-    return this.$adHoc
+    return this._adHoc
   }
 
+  /**
+   * @type {boolean}
+   */
   set adHoc(value) {
-    this.$adHoc = value
+    this._adHoc = value
   }
 
+  /**
+   * @type {boolean}
+   */
   get compensation() {
-    return this.$compensation
+    return this._compensation
   }
 
+  /**
+   * @type {boolean}
+   */
   set compensation(value) {
-    this.$compensation = value
+    this._compensation = value
   }
 
+  /**
+   * @type {!Size}
+   */
   get minimumSize() {
-    return this.$minimumSize
+    return this._minimumSize
   }
 
+  /**
+   * @type {!Size}
+   */
   set minimumSize(value) {
-    this.$minimumSize = value
+    this._minimumSize = value
   }
 
+  /**
+   * @type {!Fill}
+   */
   get background() {
-    return this.$background
+    return this._background
   }
 
+  /**
+   * @type {!Fill}
+   */
   set background(value) {
-    this.$background = value
+    this._background = value
   }
 
+  /**
+   * @type {!Fill}
+   */
   get outline() {
-    return this.$outline
+    return this._outline
   }
 
+  /**
+   * @type {!Fill}
+   */
   set outline(value) {
-    this.$outline = value
+    this._outline = value
   }
 
+  /**
+   * @type {!Fill}
+   */
   get iconColor() {
-    return this.$iconColor
+    return this._iconColor
   }
 
+  /**
+   * @type {!Fill}
+   */
   set iconColor(value) {
-    this.$iconColor = value
+    this._iconColor = value
   }
 
+  /**
+   * @type {?Fill}
+   */
   get eventOutline() {
-    return this.$eventOutline
+    return this._eventOutline
   }
 
+  /**
+   * @type {?Fill}
+   */
   set eventOutline(value) {
-    this.$eventOutline = value
+    this._eventOutline = value
   }
 
+  /**
+   * @type {!object}
+   */
   static get $meta() {
     return {
       activityType: [
@@ -11078,6 +12057,10 @@ export class ActivityNodeStyleExtension extends MarkupExtension {
     }
   }
 
+  /**
+   * @param {!ILookup} serviceProvider
+   * @returns {!ActivityNodeStyle}
+   */
   provideValue(serviceProvider) {
     const style = new ActivityNodeStyle()
     style.activityType = this.activityType
@@ -11101,35 +12084,56 @@ export class ActivityNodeStyleExtension extends MarkupExtension {
 export class AnnotationNodeStyleExtension extends MarkupExtension {
   constructor() {
     super()
-    this.$left = true
-    this.$background = BPMN_CONSTANTS_ANNOTATION_DEFAULT_BACKGROUND
-    this.$outline = BPMN_CONSTANTS_ANNOTATION_DEFAULT_OUTLINE
+    this._left = true
+    this._background = BPMN_CONSTANTS_ANNOTATION_DEFAULT_BACKGROUND
+    this._outline = BPMN_CONSTANTS_ANNOTATION_DEFAULT_OUTLINE
   }
 
+  /**
+   * @type {boolean}
+   */
   get left() {
-    return this.$left
+    return this._left
   }
 
+  /**
+   * @type {boolean}
+   */
   set left(value) {
-    this.$left = value
+    this._left = value
   }
 
+  /**
+   * @type {!Fill}
+   */
   get background() {
-    return this.$background
+    return this._background
   }
 
+  /**
+   * @type {!Fill}
+   */
   set background(value) {
-    this.$background = value
+    this._background = value
   }
 
+  /**
+   * @type {!Fill}
+   */
   get outline() {
-    return this.$outline
+    return this._outline
   }
 
+  /**
+   * @type {!Fill}
+   */
   set outline(value) {
-    this.$outline = value
+    this._outline = value
   }
 
+  /**
+   * @type {!object}
+   */
   static get $meta() {
     return {
       left: [GraphMLAttribute().init({ defaultValue: true }), TypeAttribute(YBoolean.$class)],
@@ -11144,6 +12148,10 @@ export class AnnotationNodeStyleExtension extends MarkupExtension {
     }
   }
 
+  /**
+   * @param {!ILookup} serviceProvider
+   * @returns {!AnnotationNodeStyle}
+   */
   provideValue(serviceProvider) {
     const style = new AnnotationNodeStyle()
     style.left = this.left
@@ -11156,44 +12164,71 @@ export class AnnotationNodeStyleExtension extends MarkupExtension {
 export class ConversationNodeStyleExtension extends MarkupExtension {
   constructor() {
     super()
-    this.$type = ConversationType.CONVERSATION
-    this.$background = BPMN_CONSTANTS_CONVERSATION_DEFAULT_BACKGROUND
-    this.$outline = BPMN_CONSTANTS_CONVERSATION_DEFAULT_OUTLINE
-    this.$iconColor = BPMN_CONSTANTS_DEFAULT_ICON_COLOR
+    this._type = ConversationType.CONVERSATION
+    this._background = BPMN_CONSTANTS_CONVERSATION_DEFAULT_BACKGROUND
+    this._outline = BPMN_CONSTANTS_CONVERSATION_DEFAULT_OUTLINE
+    this._iconColor = BPMN_CONSTANTS_DEFAULT_ICON_COLOR
   }
 
+  /**
+   * @type {number}
+   */
   get type() {
-    return this.$type
+    return this._type
   }
 
+  /**
+   * @type {number}
+   */
   set type(value) {
-    this.$type = value
+    this._type = value
   }
 
+  /**
+   * @type {!Fill}
+   */
   get background() {
-    return this.$background
+    return this._background
   }
 
+  /**
+   * @type {!Fill}
+   */
   set background(value) {
-    this.$background = value
+    this._background = value
   }
 
+  /**
+   * @type {!Fill}
+   */
   get outline() {
-    return this.$outline
+    return this._outline
   }
 
+  /**
+   * @type {!Fill}
+   */
   set outline(value) {
-    this.$outline = value
+    this._outline = value
   }
 
+  /**
+   * @type {!Fill}
+   */
   get iconColor() {
-    return this.$iconColor
+    return this._iconColor
   }
 
+  /**
+   * @type {!Fill}
+   */
   set iconColor(value) {
-    this.$iconColor = value
+    this._iconColor = value
   }
 
+  /**
+   * @type {!object}
+   */
   static get $meta() {
     return {
       type: [
@@ -11215,6 +12250,10 @@ export class ConversationNodeStyleExtension extends MarkupExtension {
     }
   }
 
+  /**
+   * @param {!ILookup} serviceProvider
+   * @returns {!ConversationNodeStyle}
+   */
   provideValue(serviceProvider) {
     const style = new ConversationNodeStyle()
     style.type = this.type
@@ -11228,152 +12267,251 @@ export class ConversationNodeStyleExtension extends MarkupExtension {
 export class ChoreographyNodeStyleExtension extends MarkupExtension {
   constructor() {
     super()
-    this.$topParticipants = new List()
-    this.$bottomParticipants = new List()
-    this.$loopCharacteristic = LoopCharacteristic.NONE
-    this.$subState = SubState.NONE
-    this.$initiatingMessage = false
-    this.$responseMessage = false
-    this.$initiatingAtTop = true
-    this.$insets = new Insets(5)
-    this.$type = ChoreographyType.TASK
-    this.$minimumSize = Size.EMPTY
-    this.$background = BPMN_CONSTANTS_CHOREOGRAPHY_DEFAULT_BACKGROUND
-    this.$outline = BPMN_CONSTANTS_CHOREOGRAPHY_DEFAULT_OUTLINE
-    this.$iconColor = BPMN_CONSTANTS_CHOREOGRAPHY_DEFAULT_ICON_COLOR
-    this.$initiatingColor = BPMN_CONSTANTS_CHOREOGRAPHY_DEFAULT_INITIATING_COLOR
-    this.$responseColor = BPMN_CONSTANTS_CHOREOGRAPHY_DEFAULT_RESPONSE_COLOR
-    this.$messageOutline = BPMN_CONSTANTS_CHOREOGRAPHY_DEFAULT_MESSAGE_OUTLINE
+    this._topParticipants = new List()
+    this._bottomParticipants = new List()
+    this._loopCharacteristic = LoopCharacteristic.NONE
+    this._subState = SubState.NONE
+    this._initiatingMessage = false
+    this._responseMessage = false
+    this._initiatingAtTop = true
+    this._insets = new Insets(5)
+    this._type = ChoreographyType.TASK
+    this._minimumSize = Size.EMPTY
+    this._background = BPMN_CONSTANTS_CHOREOGRAPHY_DEFAULT_BACKGROUND
+    this._outline = BPMN_CONSTANTS_CHOREOGRAPHY_DEFAULT_OUTLINE
+    this._iconColor = BPMN_CONSTANTS_CHOREOGRAPHY_DEFAULT_ICON_COLOR
+    this._initiatingColor = BPMN_CONSTANTS_CHOREOGRAPHY_DEFAULT_INITIATING_COLOR
+    this._responseColor = BPMN_CONSTANTS_CHOREOGRAPHY_DEFAULT_RESPONSE_COLOR
+    this._messageOutline = BPMN_CONSTANTS_CHOREOGRAPHY_DEFAULT_MESSAGE_OUTLINE
   }
 
+  /**
+   * @type {number}
+   */
   get loopCharacteristic() {
-    return this.$loopCharacteristic
+    return this._loopCharacteristic
   }
 
+  /**
+   * @type {number}
+   */
   set loopCharacteristic(value) {
-    this.$loopCharacteristic = value
+    this._loopCharacteristic = value
   }
 
+  /**
+   * @type {number}
+   */
   get subState() {
-    return this.$subState
+    return this._subState
   }
 
+  /**
+   * @type {number}
+   */
   set subState(value) {
-    this.$subState = value
+    this._subState = value
   }
 
+  /**
+   * @type {!List.<Participant>}
+   */
   get topParticipants() {
-    return this.$topParticipants
+    return this._topParticipants
   }
 
+  /**
+   * @type {!List.<Participant>}
+   */
   set topParticipants(value) {
-    this.$topParticipants = value
+    this._topParticipants = value
   }
 
+  /**
+   * @type {!List.<Participant>}
+   */
   get bottomParticipants() {
-    return this.$bottomParticipants
+    return this._bottomParticipants
   }
 
+  /**
+   * @type {!List.<Participant>}
+   */
   set bottomParticipants(value) {
-    this.$bottomParticipants = value
+    this._bottomParticipants = value
   }
 
+  /**
+   * @type {boolean}
+   */
   get initiatingMessage() {
-    return this.$initiatingMessage
+    return this._initiatingMessage
   }
 
+  /**
+   * @type {boolean}
+   */
   set initiatingMessage(value) {
-    this.$initiatingMessage = value
+    this._initiatingMessage = value
   }
 
+  /**
+   * @type {boolean}
+   */
   get responseMessage() {
-    return this.$responseMessage
+    return this._responseMessage
   }
 
+  /**
+   * @type {boolean}
+   */
   set responseMessage(value) {
-    this.$responseMessage = value
+    this._responseMessage = value
   }
 
+  /**
+   * @type {boolean}
+   */
   get initiatingAtTop() {
-    return this.$initiatingAtTop
+    return this._initiatingAtTop
   }
 
+  /**
+   * @type {boolean}
+   */
   set initiatingAtTop(value) {
-    this.$initiatingAtTop = value
+    this._initiatingAtTop = value
   }
 
+  /**
+   * @type {!Insets}
+   */
   get insets() {
-    return this.$insets
+    return this._insets
   }
 
+  /**
+   * @type {!Insets}
+   */
   set insets(value) {
-    this.$insets = value
+    this._insets = value
   }
 
+  /**
+   * @type {number}
+   */
   get type() {
-    return this.$type
+    return this._type
   }
 
+  /**
+   * @type {number}
+   */
   set type(value) {
-    this.$type = value
+    this._type = value
   }
 
+  /**
+   * @type {!Size}
+   */
   get minimumSize() {
-    return this.$minimumSize
+    return this._minimumSize
   }
 
+  /**
+   * @type {!Size}
+   */
   set minimumSize(value) {
-    this.$minimumSize = value
+    this._minimumSize = value
   }
 
+  /**
+   * @type {!Fill}
+   */
   get background() {
-    return this.$background
+    return this._background
   }
 
+  /**
+   * @type {!Fill}
+   */
   set background(value) {
-    this.$background = value
+    this._background = value
   }
 
+  /**
+   * @type {!Fill}
+   */
   get outline() {
-    return this.$outline
+    return this._outline
   }
 
+  /**
+   * @type {!Fill}
+   */
   set outline(value) {
-    this.$outline = value
+    this._outline = value
   }
 
+  /**
+   * @type {!Fill}
+   */
   get iconColor() {
-    return this.$iconColor
+    return this._iconColor
   }
 
+  /**
+   * @type {!Fill}
+   */
   set iconColor(value) {
-    this.$iconColor = value
+    this._iconColor = value
   }
 
+  /**
+   * @type {!Fill}
+   */
   get initiatingColor() {
-    return this.$initiatingColor
+    return this._initiatingColor
   }
 
+  /**
+   * @type {!Fill}
+   */
   set initiatingColor(value) {
-    this.$initiatingColor = value
+    this._initiatingColor = value
   }
 
+  /**
+   * @type {!Fill}
+   */
   get responseColor() {
-    return this.$responseColor
+    return this._responseColor
   }
 
+  /**
+   * @type {!Fill}
+   */
   set responseColor(value) {
-    this.$responseColor = value
+    this._responseColor = value
   }
 
+  /**
+   * @type {!Fill}
+   */
   get messageOutline() {
-    return this.$messageOutline
+    return this._messageOutline
   }
 
+  /**
+   * @type {!Fill}
+   */
   set messageOutline(value) {
-    this.$messageOutline = value
+    this._messageOutline = value
   }
 
+  /**
+   * @type {!object}
+   */
   static get $meta() {
     return {
       loopCharacteristic: [
@@ -11449,6 +12587,10 @@ export class ChoreographyNodeStyleExtension extends MarkupExtension {
     }
   }
 
+  /**
+   * @param {!ILookup} serviceProvider
+   * @returns {!ChoreographyNodeStyle}
+   */
   provideValue(serviceProvider) {
     const style = new ChoreographyNodeStyle()
     style.loopCharacteristic = this.loopCharacteristic
@@ -11478,154 +12620,251 @@ export class ChoreographyNodeStyleExtension extends MarkupExtension {
 export class LegacyChoreographyNodeStyleExtension extends MarkupExtension {
   constructor() {
     super()
-    this.$topParticipants = new List()
-    this.$bottomParticipants = new List()
-    this.$loopCharacteristic = LoopCharacteristic.NONE
-    this.$subState = SubState.NONE
-    this.$topParticipants = null
-    this.$bottomParticipants = null
-    this.$initiatingMessage = false
-    this.$responseMessage = false
-    this.$initiatingAtTop = true
-    this.$insets = new Insets(5)
-    this.$type = ChoreographyType.TASK
-    this.$minimumSize = Size.EMPTY
-    this.$background = BPMN_CONSTANTS_CHOREOGRAPHY_DEFAULT_BACKGROUND
-    this.$outline = BPMN_CONSTANTS_CHOREOGRAPHY_DEFAULT_OUTLINE
-    this.$iconColor = BPMN_CONSTANTS_CHOREOGRAPHY_DEFAULT_ICON_COLOR
-    this.$initiatingColor = Fill.LIGHT_GRAY
-    this.$responseColor = BPMN_CONSTANTS_CHOREOGRAPHY_DEFAULT_RESPONSE_COLOR
-    this.$messageOutline = BPMN_CONSTANTS_CHOREOGRAPHY_DEFAULT_MESSAGE_OUTLINE
+    this._topParticipants = new List()
+    this._bottomParticipants = new List()
+    this._loopCharacteristic = LoopCharacteristic.NONE
+    this._subState = SubState.NONE
+    this._initiatingMessage = false
+    this._responseMessage = false
+    this._initiatingAtTop = true
+    this._insets = new Insets(5)
+    this._type = ChoreographyType.TASK
+    this._minimumSize = Size.EMPTY
+    this._background = BPMN_CONSTANTS_CHOREOGRAPHY_DEFAULT_BACKGROUND
+    this._outline = BPMN_CONSTANTS_CHOREOGRAPHY_DEFAULT_OUTLINE
+    this._iconColor = BPMN_CONSTANTS_CHOREOGRAPHY_DEFAULT_ICON_COLOR
+    this._initiatingColor = Fill.LIGHT_GRAY
+    this._responseColor = BPMN_CONSTANTS_CHOREOGRAPHY_DEFAULT_RESPONSE_COLOR
+    this._messageOutline = BPMN_CONSTANTS_CHOREOGRAPHY_DEFAULT_MESSAGE_OUTLINE
   }
 
+  /**
+   * @type {number}
+   */
   get loopCharacteristic() {
-    return this.$loopCharacteristic
+    return this._loopCharacteristic
   }
 
+  /**
+   * @type {number}
+   */
   set loopCharacteristic(value) {
-    this.$loopCharacteristic = value
+    this._loopCharacteristic = value
   }
 
+  /**
+   * @type {number}
+   */
   get subState() {
-    return this.$subState
+    return this._subState
   }
 
+  /**
+   * @type {number}
+   */
   set subState(value) {
-    this.$subState = value
+    this._subState = value
   }
 
+  /**
+   * @type {!List.<Participant>}
+   */
   get topParticipants() {
-    return this.$topParticipants
+    return this._topParticipants
   }
 
+  /**
+   * @type {!List.<Participant>}
+   */
   set topParticipants(value) {
-    this.$topParticipants = value
+    this._topParticipants = value
   }
 
+  /**
+   * @type {!List.<Participant>}
+   */
   get bottomParticipants() {
-    return this.$bottomParticipants
+    return this._bottomParticipants
   }
 
+  /**
+   * @type {!List.<Participant>}
+   */
   set bottomParticipants(value) {
-    this.$bottomParticipants = value
+    this._bottomParticipants = value
   }
 
+  /**
+   * @type {boolean}
+   */
   get initiatingMessage() {
-    return this.$initiatingMessage
+    return this._initiatingMessage
   }
 
+  /**
+   * @type {boolean}
+   */
   set initiatingMessage(value) {
-    this.$initiatingMessage = value
+    this._initiatingMessage = value
   }
 
+  /**
+   * @type {boolean}
+   */
   get responseMessage() {
-    return this.$responseMessage
+    return this._responseMessage
   }
 
+  /**
+   * @type {boolean}
+   */
   set responseMessage(value) {
-    this.$responseMessage = value
+    this._responseMessage = value
   }
 
+  /**
+   * @type {boolean}
+   */
   get initiatingAtTop() {
-    return this.$initiatingAtTop
+    return this._initiatingAtTop
   }
 
+  /**
+   * @type {boolean}
+   */
   set initiatingAtTop(value) {
-    this.$initiatingAtTop = value
+    this._initiatingAtTop = value
   }
 
+  /**
+   * @type {!Insets}
+   */
   get insets() {
-    return this.$insets
+    return this._insets
   }
 
+  /**
+   * @type {!Insets}
+   */
   set insets(value) {
-    this.$insets = value
+    this._insets = value
   }
 
+  /**
+   * @type {number}
+   */
   get type() {
-    return this.$type
+    return this._type
   }
 
+  /**
+   * @type {number}
+   */
   set type(value) {
-    this.$type = value
+    this._type = value
   }
 
+  /**
+   * @type {!Size}
+   */
   get minimumSize() {
-    return this.$minimumSize
+    return this._minimumSize
   }
 
+  /**
+   * @type {!Size}
+   */
   set minimumSize(value) {
-    this.$minimumSize = value
+    this._minimumSize = value
   }
 
+  /**
+   * @type {!Fill}
+   */
   get background() {
-    return this.$background
+    return this._background
   }
 
+  /**
+   * @type {!Fill}
+   */
   set background(value) {
-    this.$background = value
+    this._background = value
   }
 
+  /**
+   * @type {!Fill}
+   */
   get outline() {
-    return this.$outline
+    return this._outline
   }
 
+  /**
+   * @type {!Fill}
+   */
   set outline(value) {
-    this.$outline = value
+    this._outline = value
   }
 
+  /**
+   * @type {!Fill}
+   */
   get iconColor() {
-    return this.$iconColor
+    return this._iconColor
   }
 
+  /**
+   * @type {!Fill}
+   */
   set iconColor(value) {
-    this.$iconColor = value
+    this._iconColor = value
   }
 
+  /**
+   * @type {!Fill}
+   */
   get initiatingColor() {
-    return this.$initiatingColor
+    return this._initiatingColor
   }
 
+  /**
+   * @type {!Fill}
+   */
   set initiatingColor(value) {
-    this.$initiatingColor = value
+    this._initiatingColor = value
   }
 
+  /**
+   * @type {!Fill}
+   */
   get responseColor() {
-    return this.$responseColor
+    return this._responseColor
   }
 
+  /**
+   * @type {!Fill}
+   */
   set responseColor(value) {
-    this.$responseColor = value
+    this._responseColor = value
   }
 
+  /**
+   * @type {!Fill}
+   */
   get messageOutline() {
-    return this.$messageOutline
+    return this._messageOutline
   }
 
+  /**
+   * @type {!Fill}
+   */
   set messageOutline(value) {
-    this.$messageOutline = value
+    this._messageOutline = value
   }
 
+  /**
+   * @type {!object}
+   */
   static get $meta() {
     return {
       loopCharacteristic: [
@@ -11701,6 +12940,10 @@ export class LegacyChoreographyNodeStyleExtension extends MarkupExtension {
     }
   }
 
+  /**
+   * @param {!ILookup} serviceProvider
+   * @returns {!ChoreographyNodeStyle}
+   */
   provideValue(serviceProvider) {
     const style = new ChoreographyNodeStyle()
     style.loopCharacteristic = this.loopCharacteristic
@@ -11730,17 +12973,26 @@ export class LegacyChoreographyNodeStyleExtension extends MarkupExtension {
 export class ParticipantExtension extends MarkupExtension {
   constructor() {
     super()
-    this.$multiInstance = false
+    this._multiInstance = false
   }
 
+  /**
+   * @type {boolean}
+   */
   get multiInstance() {
-    return this.$multiInstance
+    return this._multiInstance
   }
 
+  /**
+   * @type {boolean}
+   */
   set multiInstance(value) {
-    this.$multiInstance = value
+    this._multiInstance = value
   }
 
+  /**
+   * @type {!object}
+   */
   static get $meta() {
     return {
       multiInstance: [
@@ -11750,6 +13002,10 @@ export class ParticipantExtension extends MarkupExtension {
     }
   }
 
+  /**
+   * @param {!ILookup} serviceProvider
+   * @returns {!Participant}
+   */
   provideValue(serviceProvider) {
     const participant = new Participant()
     participant.multiInstance = this.multiInstance
@@ -11760,62 +13016,101 @@ export class ParticipantExtension extends MarkupExtension {
 export class DataObjectNodeStyleExtension extends MarkupExtension {
   constructor() {
     super()
-    this.$minimumSize = Size.EMPTY
-    this.$collection = false
-    this.$type = DataObjectType.NONE
-    this.$background = BPMN_CONSTANTS_DATA_OBJECT_DEFAULT_BACKGROUND
-    this.$outline = BPMN_CONSTANTS_DATA_OBJECT_DEFAULT_OUTLINE
-    this.$iconColor = BPMN_CONSTANTS_DEFAULT_ICON_COLOR
+    this._minimumSize = Size.EMPTY
+    this._collection = false
+    this._type = DataObjectType.NONE
+    this._background = BPMN_CONSTANTS_DATA_OBJECT_DEFAULT_BACKGROUND
+    this._outline = BPMN_CONSTANTS_DATA_OBJECT_DEFAULT_OUTLINE
+    this._iconColor = BPMN_CONSTANTS_DEFAULT_ICON_COLOR
   }
 
+  /**
+   * @type {!Size}
+   */
   get minimumSize() {
-    return this.$minimumSize
+    return this._minimumSize
   }
 
+  /**
+   * @type {!Size}
+   */
   set minimumSize(value) {
-    this.$minimumSize = value
+    this._minimumSize = value
   }
 
+  /**
+   * @type {boolean}
+   */
   get collection() {
-    return this.$collection
+    return this._collection
   }
 
+  /**
+   * @type {boolean}
+   */
   set collection(value) {
-    this.$collection = value
+    this._collection = value
   }
 
+  /**
+   * @type {number}
+   */
   get type() {
-    return this.$type
+    return this._type
   }
 
+  /**
+   * @type {number}
+   */
   set type(value) {
-    this.$type = value
+    this._type = value
   }
 
+  /**
+   * @type {!Fill}
+   */
   get background() {
-    return this.$background
+    return this._background
   }
 
+  /**
+   * @type {!Fill}
+   */
   set background(value) {
-    this.$background = value
+    this._background = value
   }
 
+  /**
+   * @type {!Fill}
+   */
   get outline() {
-    return this.$outline
+    return this._outline
   }
 
+  /**
+   * @type {!Fill}
+   */
   set outline(value) {
-    this.$outline = value
+    this._outline = value
   }
 
+  /**
+   * @type {!Fill}
+   */
   get iconColor() {
-    return this.$iconColor
+    return this._iconColor
   }
 
+  /**
+   * @type {!Fill}
+   */
   set iconColor(value) {
-    this.$iconColor = value
+    this._iconColor = value
   }
 
+  /**
+   * @type {!object}
+   */
   static get $meta() {
     return {
       minimumSize: [
@@ -11834,7 +13129,6 @@ export class DataObjectNodeStyleExtension extends MarkupExtension {
         GraphMLAttribute().init({ defaultValue: BPMN_CONSTANTS_DATA_OBJECT_DEFAULT_BACKGROUND }),
         TypeAttribute(Fill.$class)
       ],
-
       outline: [
         GraphMLAttribute().init({ defaultValue: BPMN_CONSTANTS_DATA_OBJECT_DEFAULT_OUTLINE }),
         TypeAttribute(Fill.$class)
@@ -11846,6 +13140,10 @@ export class DataObjectNodeStyleExtension extends MarkupExtension {
     }
   }
 
+  /**
+   * @param {!ILookup} serviceProvider
+   * @returns {!DataObjectNodeStyle}
+   */
   provideValue(serviceProvider) {
     const style = new DataObjectNodeStyle()
     style.minimumSize = this.minimumSize
@@ -11861,35 +13159,56 @@ export class DataObjectNodeStyleExtension extends MarkupExtension {
 export class DataStoreNodeStyleExtension extends MarkupExtension {
   constructor() {
     super()
-    this.$minimumSize = Size.EMPTY
-    this.$background = BPMN_CONSTANTS_DATA_STORE_DEFAULT_BACKGROUND
-    this.$outline = BPMN_CONSTANTS_DATA_STORE_DEFAULT_OUTLINE
+    this._minimumSize = Size.EMPTY
+    this._background = BPMN_CONSTANTS_DATA_STORE_DEFAULT_BACKGROUND
+    this._outline = BPMN_CONSTANTS_DATA_STORE_DEFAULT_OUTLINE
   }
 
+  /**
+   * @type {!Size}
+   */
   get minimumSize() {
-    return this.$minimumSize
+    return this._minimumSize
   }
 
+  /**
+   * @type {!Size}
+   */
   set minimumSize(value) {
-    this.$minimumSize = value
+    this._minimumSize = value
   }
 
+  /**
+   * @type {!Fill}
+   */
   get background() {
-    return this.$background
+    return this._background
   }
 
+  /**
+   * @type {!Fill}
+   */
   set background(value) {
-    this.$background = value
+    this._background = value
   }
 
+  /**
+   * @type {!Fill}
+   */
   get outline() {
-    return this.$outline
+    return this._outline
   }
 
+  /**
+   * @type {!Fill}
+   */
   set outline(value) {
-    this.$outline = value
+    this._outline = value
   }
 
+  /**
+   * @type {!object}
+   */
   static get $meta() {
     return {
       minimumSize: [
@@ -11907,6 +13226,10 @@ export class DataStoreNodeStyleExtension extends MarkupExtension {
     }
   }
 
+  /**
+   * @param {!ILookup} serviceProvider
+   * @returns {!DataStoreNodeStyle}
+   */
   provideValue(serviceProvider) {
     const style = new DataStoreNodeStyle()
     style.minimumSize = this.minimumSize
@@ -11919,62 +13242,101 @@ export class DataStoreNodeStyleExtension extends MarkupExtension {
 export class EventNodeStyleExtension extends MarkupExtension {
   constructor() {
     super()
-    this.$type = EventType.PLAIN
-    this.$characteristic = EventCharacteristic.START
-    this.$minimumSize = Size.EMPTY
-    this.$background = BPMN_CONSTANTS_DEFAULT_EVENT_BACKGROUND
-    this.$outline = BPMN_CONSTANTS_DEFAULT_EVENT_OUTLINE
-    this.$iconColor = BPMN_CONSTANTS_DEFAULT_ICON_COLOR
+    this._type = EventType.PLAIN
+    this._characteristic = EventCharacteristic.START
+    this._minimumSize = Size.EMPTY
+    this._background = BPMN_CONSTANTS_DEFAULT_EVENT_BACKGROUND
+    this._outline = BPMN_CONSTANTS_DEFAULT_EVENT_OUTLINE
+    this._iconColor = BPMN_CONSTANTS_DEFAULT_ICON_COLOR
   }
 
+  /**
+   * @type {number}
+   */
   get type() {
-    return this.$type
+    return this._type
   }
 
+  /**
+   * @type {number}
+   */
   set type(value) {
-    this.$type = value
+    this._type = value
   }
 
+  /**
+   * @type {number}
+   */
   get characteristic() {
-    return this.$characteristic
+    return this._characteristic
   }
 
+  /**
+   * @type {number}
+   */
   set characteristic(value) {
-    this.$characteristic = value
+    this._characteristic = value
   }
 
+  /**
+   * @type {!Size}
+   */
   get minimumSize() {
-    return this.$minimumSize
+    return this._minimumSize
   }
 
+  /**
+   * @type {!Size}
+   */
   set minimumSize(value) {
-    this.$minimumSize = value
+    this._minimumSize = value
   }
 
+  /**
+   * @type {!Fill}
+   */
   get background() {
-    return this.$background
+    return this._background
   }
 
+  /**
+   * @type {!Fill}
+   */
   set background(value) {
-    this.$background = value
+    this._background = value
   }
 
+  /**
+   * @type {?Fill}
+   */
   get outline() {
-    return this.$outline
+    return this._outline
   }
 
+  /**
+   * @type {?Fill}
+   */
   set outline(value) {
-    this.$outline = value
+    this._outline = value
   }
 
+  /**
+   * @type {!Fill}
+   */
   get iconColor() {
-    return this.$iconColor
+    return this._iconColor
   }
 
+  /**
+   * @type {!Fill}
+   */
   set iconColor(value) {
-    this.$iconColor = value
+    this._iconColor = value
   }
 
+  /**
+   * @type {!object}
+   */
   static get $meta() {
     return {
       type: [
@@ -12004,6 +13366,10 @@ export class EventNodeStyleExtension extends MarkupExtension {
     }
   }
 
+  /**
+   * @param {!ILookup} serviceProvider
+   * @returns {!EventNodeStyle}
+   */
   provideValue(serviceProvider) {
     const style = new EventNodeStyle()
     style.type = this.type
@@ -12019,53 +13385,86 @@ export class EventNodeStyleExtension extends MarkupExtension {
 export class GatewayNodeStyleExtension extends MarkupExtension {
   constructor() {
     super()
-    this.$type = GatewayType.EXCLUSIVE_WITHOUT_MARKER
-    this.$minimumSize = Size.EMPTY
-    this.$background = BPMN_CONSTANTS_GATEWAY_DEFAULT_BACKGROUND
-    this.$outline = BPMN_CONSTANTS_GATEWAY_DEFAULT_OUTLINE
-    this.$iconColor = BPMN_CONSTANTS_DEFAULT_ICON_COLOR
+    this._type = GatewayType.EXCLUSIVE_WITHOUT_MARKER
+    this._minimumSize = Size.EMPTY
+    this._background = BPMN_CONSTANTS_GATEWAY_DEFAULT_BACKGROUND
+    this._outline = BPMN_CONSTANTS_GATEWAY_DEFAULT_OUTLINE
+    this._iconColor = BPMN_CONSTANTS_DEFAULT_ICON_COLOR
   }
 
+  /**
+   * @type {number}
+   */
   get type() {
-    return this.$type
+    return this._type
   }
 
+  /**
+   * @type {number}
+   */
   set type(value) {
-    this.$type = value
+    this._type = value
   }
 
+  /**
+   * @type {!Size}
+   */
   get minimumSize() {
-    return this.$minimumSize
+    return this._minimumSize
   }
 
+  /**
+   * @type {!Size}
+   */
   set minimumSize(value) {
-    this.$minimumSize = value
+    this._minimumSize = value
   }
 
+  /**
+   * @type {!Fill}
+   */
   get background() {
-    return this.$background
+    return this._background
   }
 
+  /**
+   * @type {!Fill}
+   */
   set background(value) {
-    this.$background = value
+    this._background = value
   }
 
+  /**
+   * @type {!Fill}
+   */
   get outline() {
-    return this.$outline
+    return this._outline
   }
 
+  /**
+   * @type {!Fill}
+   */
   set outline(value) {
-    this.$outline = value
+    this._outline = value
   }
 
+  /**
+   * @type {!Fill}
+   */
   get iconColor() {
-    return this.$iconColor
+    return this._iconColor
   }
 
+  /**
+   * @type {!Fill}
+   */
   set iconColor(value) {
-    this.$iconColor = value
+    this._iconColor = value
   }
 
+  /**
+   * @type {!object}
+   */
   static get $meta() {
     return {
       type: [
@@ -12091,6 +13490,10 @@ export class GatewayNodeStyleExtension extends MarkupExtension {
     }
   }
 
+  /**
+   * @param {!ILookup} serviceProvider
+   * @returns {!GatewayNodeStyle}
+   */
   provideValue(serviceProvider) {
     const style = new GatewayNodeStyle()
     style.type = this.type
@@ -12105,35 +13508,56 @@ export class GatewayNodeStyleExtension extends MarkupExtension {
 export class GroupNodeStyleExtension extends MarkupExtension {
   constructor() {
     super()
-    this.$insets = new Insets(15)
-    this.$background = BPMN_CONSTANTS_GROUP_DEFAULT_BACKGROUND
-    this.$outline = BPMN_CONSTANTS_GROUP_DEFAULT_OUTLINE
+    this._insets = new Insets(15)
+    this._background = BPMN_CONSTANTS_GROUP_DEFAULT_BACKGROUND
+    this._outline = BPMN_CONSTANTS_GROUP_DEFAULT_OUTLINE
   }
 
+  /**
+   * @type {!Insets}
+   */
   get insets() {
-    return this.$insets
+    return this._insets
   }
 
+  /**
+   * @type {!Insets}
+   */
   set insets(value) {
-    this.$insets = value
+    this._insets = value
   }
 
+  /**
+   * @type {!Fill}
+   */
   get background() {
-    return this.$background
+    return this._background
   }
 
+  /**
+   * @type {!Fill}
+   */
   set background(value) {
-    this.$background = value
+    this._background = value
   }
 
+  /**
+   * @type {!Fill}
+   */
   get outline() {
-    return this.$outline
+    return this._outline
   }
 
+  /**
+   * @type {!Fill}
+   */
   set outline(value) {
-    this.$outline = value
+    this._outline = value
   }
 
+  /**
+   * @type {!object}
+   */
   static get $meta() {
     return {
       insets: [
@@ -12151,6 +13575,10 @@ export class GroupNodeStyleExtension extends MarkupExtension {
     }
   }
 
+  /**
+   * @param {!ILookup} serviceProvider
+   * @returns {!GroupNodeStyle}
+   */
   provideValue(serviceProvider) {
     const style = new GroupNodeStyle()
     style.insets = this.insets
@@ -12163,44 +13591,71 @@ export class GroupNodeStyleExtension extends MarkupExtension {
 export class BpmnEdgeStyleExtension extends MarkupExtension {
   constructor() {
     super()
-    this.$type = EdgeType.SEQUENCE_FLOW
-    this.$smoothing = 20
-    this.$color = BPMN_CONSTANTS_EDGE_DEFAULT_COLOR
-    this.$innerColor = BPMN_CONSTANTS_EDGE_DEFAULT_INNER_COLOR
+    this._type = EdgeType.SEQUENCE_FLOW
+    this._smoothing = 20
+    this._color = BPMN_CONSTANTS_EDGE_DEFAULT_COLOR
+    this._innerColor = BPMN_CONSTANTS_EDGE_DEFAULT_INNER_COLOR
   }
 
+  /**
+   * @type {number}
+   */
   get type() {
-    return this.$type
+    return this._type
   }
 
+  /**
+   * @type {number}
+   */
   set type(value) {
-    this.$type = value
+    this._type = value
   }
 
+  /**
+   * @type {number}
+   */
   get smoothing() {
-    return this.$smoothing
+    return this._smoothing
   }
 
+  /**
+   * @type {number}
+   */
   set smoothing(value) {
-    this.$smoothing = value
+    this._smoothing = value
   }
 
+  /**
+   * @type {!Fill}
+   */
   get color() {
-    return this.$color
+    return this._color
   }
 
+  /**
+   * @type {!Fill}
+   */
   set color(value) {
-    this.$color = value
+    this._color = value
   }
 
+  /**
+   * @type {!Fill}
+   */
   get innerColor() {
-    return this.$innerColor
+    return this._innerColor
   }
 
+  /**
+   * @type {!Fill}
+   */
   set innerColor(value) {
-    this.$innerColor = value
+    this._innerColor = value
   }
 
+  /**
+   * @type {!object}
+   */
   static get $meta() {
     return {
       type: [
@@ -12219,6 +13674,10 @@ export class BpmnEdgeStyleExtension extends MarkupExtension {
     }
   }
 
+  /**
+   * @param {!ILookup} serviceProvider
+   * @returns {!BpmnEdgeStyle}
+   */
   provideValue(serviceProvider) {
     const style = new BpmnEdgeStyle()
     style.type = this.type
@@ -12232,62 +13691,101 @@ export class BpmnEdgeStyleExtension extends MarkupExtension {
 export class EventPortStyleExtension extends MarkupExtension {
   constructor() {
     super()
-    this.$type = EventType.COMPENSATION
-    this.$characteristic = EventCharacteristic.BOUNDARY_INTERRUPTING
-    this.$renderSize = new Size(20, 20)
-    this.$background = BPMN_CONSTANTS_DEFAULT_EVENT_BACKGROUND
-    this.$outline = BPMN_CONSTANTS_DEFAULT_EVENT_OUTLINE
-    this.$iconColor = BPMN_CONSTANTS_DEFAULT_ICON_COLOR
+    this._type = EventType.COMPENSATION
+    this._characteristic = EventCharacteristic.BOUNDARY_INTERRUPTING
+    this._renderSize = new Size(20, 20)
+    this._background = BPMN_CONSTANTS_DEFAULT_EVENT_BACKGROUND
+    this._outline = BPMN_CONSTANTS_DEFAULT_EVENT_OUTLINE
+    this._iconColor = BPMN_CONSTANTS_DEFAULT_ICON_COLOR
   }
 
+  /**
+   * @type {number}
+   */
   get type() {
-    return this.$type
+    return this._type
   }
 
+  /**
+   * @type {number}
+   */
   set type(value) {
-    this.$type = value
+    this._type = value
   }
 
+  /**
+   * @type {number}
+   */
   get characteristic() {
-    return this.$characteristic
+    return this._characteristic
   }
 
+  /**
+   * @type {number}
+   */
   set characteristic(value) {
-    this.$characteristic = value
+    this._characteristic = value
   }
 
+  /**
+   * @type {!Size}
+   */
   get renderSize() {
-    return this.$renderSize
+    return this._renderSize
   }
 
+  /**
+   * @type {!Size}
+   */
   set renderSize(value) {
-    this.$renderSize = value
+    this._renderSize = value
   }
 
+  /**
+   * @type {!Fill}
+   */
   get background() {
-    return this.$background
+    return this._background
   }
 
+  /**
+   * @type {!Fill}
+   */
   set background(value) {
-    this.$background = value
+    this._background = value
   }
 
+  /**
+   * @type {?Fill}
+   */
   get outline() {
-    return this.$outline
+    return this._outline
   }
 
+  /**
+   * @type {?Fill}
+   */
   set outline(value) {
-    this.$outline = value
+    this._outline = value
   }
 
+  /**
+   * @type {!Fill}
+   */
   get iconColor() {
-    return this.$iconColor
+    return this._iconColor
   }
 
+  /**
+   * @type {!Fill}
+   */
   set iconColor(value) {
-    this.$iconColor = value
+    this._iconColor = value
   }
 
+  /**
+   * @type {!object}
+   */
   static get $meta() {
     return {
       type: [
@@ -12317,6 +13815,10 @@ export class EventPortStyleExtension extends MarkupExtension {
     }
   }
 
+  /**
+   * @param {!ILookup} serviceProvider
+   * @returns {!EventPortStyle}
+   */
   provideValue(serviceProvider) {
     const style = new EventPortStyle()
     style.characteristic = this.characteristic
@@ -12332,35 +13834,56 @@ export class EventPortStyleExtension extends MarkupExtension {
 export class AnnotationLabelStyleExtension extends MarkupExtension {
   constructor() {
     super()
-    this.$insets = 5
-    this.$background = BPMN_CONSTANTS_ANNOTATION_DEFAULT_BACKGROUND
-    this.$outline = BPMN_CONSTANTS_ANNOTATION_DEFAULT_OUTLINE
+    this._insets = 5
+    this._background = BPMN_CONSTANTS_ANNOTATION_DEFAULT_BACKGROUND
+    this._outline = BPMN_CONSTANTS_ANNOTATION_DEFAULT_OUTLINE
   }
 
+  /**
+   * @type {number}
+   */
   get insets() {
-    return this.$insets
+    return this._insets
   }
 
+  /**
+   * @type {number}
+   */
   set insets(value) {
-    this.$insets = value
+    this._insets = value
   }
 
+  /**
+   * @type {!Fill}
+   */
   get background() {
-    return this.$background
+    return this._background
   }
 
+  /**
+   * @type {!Fill}
+   */
   set background(value) {
-    this.$background = value
+    this._background = value
   }
 
+  /**
+   * @type {!Fill}
+   */
   get outline() {
-    return this.$outline
+    return this._outline
   }
 
+  /**
+   * @type {!Fill}
+   */
   set outline(value) {
-    this.$outline = value
+    this._outline = value
   }
 
+  /**
+   * @type {!object}
+   */
   static get $meta() {
     return {
       insets: [GraphMLAttribute().init({ defaultValue: 5 }), TypeAttribute(YNumber.$class)],
@@ -12375,6 +13898,10 @@ export class AnnotationLabelStyleExtension extends MarkupExtension {
     }
   }
 
+  /**
+   * @param {!ILookup} serviceProvider
+   * @returns {!AnnotationLabelStyle}
+   */
   provideValue(serviceProvider) {
     const style = new AnnotationLabelStyle()
     style.insets = this.insets
@@ -12387,44 +13914,71 @@ export class AnnotationLabelStyleExtension extends MarkupExtension {
 export class MessageLabelStyleExtension extends MarkupExtension {
   constructor() {
     super()
-    this.$isInitiating = true
-    this.$outline = BPMN_CONSTANTS_DEFAULT_MESSAGE_OUTLINE
-    this.$initiatingColor = BPMN_CONSTANTS_DEFAULT_INITIATING_MESSAGE_COLOR
-    this.$responseColor = BPMN_CONSTANTS_DEFAULT_RECEIVING_MESSAGE_COLOR
+    this._isInitiating = true
+    this._outline = BPMN_CONSTANTS_DEFAULT_MESSAGE_OUTLINE
+    this._initiatingColor = BPMN_CONSTANTS_DEFAULT_INITIATING_MESSAGE_COLOR
+    this._responseColor = BPMN_CONSTANTS_DEFAULT_RECEIVING_MESSAGE_COLOR
   }
 
+  /**
+   * @type {boolean}
+   */
   get isInitiating() {
-    return this.$isInitiating
+    return this._isInitiating
   }
 
+  /**
+   * @type {boolean}
+   */
   set isInitiating(value) {
-    this.$isInitiating = value
+    this._isInitiating = value
   }
 
+  /**
+   * @type {!Fill}
+   */
   get outline() {
-    return this.$outline
+    return this._outline
   }
 
+  /**
+   * @type {!Fill}
+   */
   set outline(value) {
-    this.$outline = value
+    this._outline = value
   }
 
+  /**
+   * @type {!Fill}
+   */
   get initiatingColor() {
-    return this.$initiatingColor
+    return this._initiatingColor
   }
 
+  /**
+   * @type {!Fill}
+   */
   set initiatingColor(value) {
-    this.$initiatingColor = value
+    this._initiatingColor = value
   }
 
+  /**
+   * @type {!Fill}
+   */
   get responseColor() {
-    return this.$responseColor
+    return this._responseColor
   }
 
+  /**
+   * @type {!Fill}
+   */
   set responseColor(value) {
-    this.$responseColor = value
+    this._responseColor = value
   }
 
+  /**
+   * @type {!object}
+   */
   static get $meta() {
     return {
       isInitiating: [
@@ -12446,6 +14000,10 @@ export class MessageLabelStyleExtension extends MarkupExtension {
     }
   }
 
+  /**
+   * @param {!ILookup} serviceProvider
+   * @returns {!MessageLabelStyle}
+   */
   provideValue(serviceProvider) {
     const style = new MessageLabelStyle()
     style.isInitiating = this.isInitiating
@@ -12457,6 +14015,9 @@ export class MessageLabelStyleExtension extends MarkupExtension {
 }
 
 export class PoolHeaderLabelModelExtension extends MarkupExtension {
+  /**
+   * @type {!PoolHeaderLabelModel}
+   */
   static get INSTANCE() {
     return new PoolHeaderLabelModel()
   }
@@ -12477,6 +14038,9 @@ export class PoolHeaderLabelModelExtension extends MarkupExtension {
     return PoolHeaderLabelModel.WEST
   }
 
+  /**
+   * @type {!object}
+   */
   static get $meta() {
     return {
       INSTANCE: TypeAttribute(PoolHeaderLabelModel.$class),
@@ -12487,6 +14051,10 @@ export class PoolHeaderLabelModelExtension extends MarkupExtension {
     }
   }
 
+  /**
+   * @param {!ILookup} serviceProvider
+   * @returns {!PoolHeaderLabelModel}
+   */
   provideValue(serviceProvider) {
     return new PoolHeaderLabelModel()
   }
@@ -12498,6 +14066,9 @@ Class.fixType(MessageParameter)
 Class.fixType(TaskNameBandParameter)
 
 export class ChoreographyLabelModelExtension extends MarkupExtension {
+  /**
+   * @type {!ChoreographyLabelModel}
+   */
   static get INSTANCE() {
     return new ChoreographyLabelModel()
   }
@@ -12514,6 +14085,9 @@ export class ChoreographyLabelModelExtension extends MarkupExtension {
     return ChoreographyLabelModel.SOUTH_MESSAGE
   }
 
+  /**
+   * @type {!object}
+   */
   static get $meta() {
     return {
       INSTANCE: TypeAttribute(ChoreographyLabelModel.$class),
@@ -12523,6 +14097,10 @@ export class ChoreographyLabelModelExtension extends MarkupExtension {
     }
   }
 
+  /**
+   * @param {!ILookup} serviceProvider
+   * @returns {!ChoreographyLabelModel}
+   */
   provideValue(serviceProvider) {
     return new ChoreographyLabelModel()
   }
@@ -12531,26 +14109,41 @@ export class ChoreographyLabelModelExtension extends MarkupExtension {
 export class ParticipantParameterExtension extends MarkupExtension {
   constructor() {
     super()
-    this.$top = false
-    this.$index = false
+    this._top = false
+    this._index = 0
   }
 
+  /**
+   * @type {boolean}
+   */
   get top() {
-    return this.$top
+    return this._top
   }
 
+  /**
+   * @type {boolean}
+   */
   set top(value) {
-    this.$top = value
+    this._top = value
   }
 
+  /**
+   * @type {number}
+   */
   get index() {
-    return this.$index
+    return this._index
   }
 
+  /**
+   * @type {number}
+   */
   set index(value) {
-    this.$index = value
+    this._index = value
   }
 
+  /**
+   * @type {!object}
+   */
   static get $meta() {
     return {
       top: TypeAttribute(YBoolean.$class),
@@ -12558,12 +14151,20 @@ export class ParticipantParameterExtension extends MarkupExtension {
     }
   }
 
+  /**
+   * @param {!ILookup} serviceProvider
+   * @returns {!ParticipantParameter}
+   */
   provideValue(serviceProvider) {
     return new ParticipantParameter(this.top, this.index)
   }
 }
 
 export class TaskNameBandParameterExtension extends MarkupExtension {
+  /**
+   * @param {!ILookup} serviceProvider
+   * @returns {!TaskNameBandParameter}
+   */
   provideValue(serviceProvider) {
     return new TaskNameBandParameter()
   }
@@ -12572,17 +14173,27 @@ export class TaskNameBandParameterExtension extends MarkupExtension {
 export class MessageParameterExtension extends MarkupExtension {
   constructor() {
     super()
-    this.$north = false
+    this._north = false
   }
 
+  /**
+   * @type {boolean}
+   */
   get north() {
-    return this.$north
+    return this._north
   }
 
+  /**
+   * @type {boolean}
+   */
   set north(value) {
-    this.$north = value
+    this._north = value
   }
 
+  /**
+   * @param {!ILookup} serviceProvider
+   * @returns {!MessageParameter}
+   */
   provideValue(serviceProvider) {
     const parameter = new MessageParameter()
     parameter.north = this.north
@@ -12591,14 +14202,29 @@ export class MessageParameterExtension extends MarkupExtension {
 }
 
 export class ChoreographyMessageLabelStyleExtension extends MarkupExtension {
+  constructor() {
+    super()
+    this._textPlacement = null
+  }
+
+  /**
+   * @type {?ILabelModelParameter}
+   */
   get textPlacement() {
-    return this.$textPlacement
+    return this._textPlacement
   }
 
+  /**
+   * @type {?ILabelModelParameter}
+   */
   set textPlacement(value) {
-    this.$textPlacement = value
+    this._textPlacement = value
   }
 
+  /**
+   * @param {!ILookup} serviceProvider
+   * @returns {!ChoreographyMessageLabelStyle}
+   */
   provideValue(serviceProvider) {
     const style = new ChoreographyMessageLabelStyle()
     style.textPlacement = this.textPlacement
@@ -12612,8 +14238,8 @@ export class ChoreographyMessageLabelStyleExtension extends MarkupExtension {
 export const BpmnHandleSerializationListener = (source, args) => {
   const item = args.item
 
-  let markupExtension
-  let markupExtensionClass
+  let markupExtension = null
+  let markupExtensionClass = null
   if (item instanceof PoolNodeStyle) {
     markupExtension = new PoolNodeStyleExtension()
     markupExtension.vertical = item.vertical
@@ -12853,12 +14479,20 @@ const IO_SUPPORT = {
  * The only difference is that the new BPMN styles deserialize the
  * {@link ChoreographyNodeStyle#initiatingColor} as white (which better fits the BPMN specification)
  * instead of Light.GRAY as it used to be.
- * @type {object}
  */
 export const LegacyBpmnExtensions = Object.assign({}, IO_SUPPORT)
 LegacyBpmnExtensions.ChoreographyNodeStyleExtension = LegacyChoreographyNodeStyleExtension
 
 /**
+ /**
  * The markup extensions for this BPMN style implementation.
  */
 export default IO_SUPPORT
+
+/**
+ * @typedef {Object} StripeRenderDataCache
+ * @property {StripeDescriptor} descriptor
+ * @property {IStripe} stripe
+ * @property {Insets} insets
+ * @property {function} equals
+ */

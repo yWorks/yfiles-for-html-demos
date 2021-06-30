@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -33,6 +33,7 @@ import {
   GraphEditorInputMode,
   GraphMLSupport,
   ICommand,
+  IGraph,
   INode,
   License,
   List,
@@ -47,44 +48,43 @@ import DataTableNodeStyle from './DataTableNodeStyle.js'
 import { bindAction, bindCommand, showApp } from '../../resources/demo-app.js'
 import loadJson from '../../resources/load-json.js'
 
-/** @type GraphComponent */
-let graphComponent = null
-
-/** @type GraphMLSupport */
-let gs = null
-
+/**
+ * @param {!object} licenseData
+ */
 function run(licenseData) {
   License.value = licenseData
+
   // initialize the GraphComponent
-  graphComponent = new GraphComponent('graphComponent')
+  const graphComponent = new GraphComponent('graphComponent')
+
+  // initialize default demo styles
+  initializeStyles(graphComponent.graph)
+
+  // initialize the input mode
+  initializeInputMode(graphComponent)
+
+  // enable the graphml support for loading and saving
+  enableGraphML(graphComponent)
+
+  // create a sample graph
+  createSampleGraph(graphComponent.graph, 4)
+
+  graphComponent.fitGraphBounds()
 
   // enable the undo engine
   graphComponent.graph.undoEngineEnabled = true
 
-  // initialize default demo styles
-  initializeStyles()
-
-  // initialize the input mode
-  initializeInputMode()
-
-  // enable the graphml support for loading and saving
-  enableGraphML()
-
-  // create a sample graph
-  createSampleGraph(4)
-
   // wire up the UI
-  registerCommands()
+  registerCommands(graphComponent)
 
   showApp(graphComponent)
 }
 
 /**
  * Initializes the default styles for nodes and labels.
+ * @param {!IGraph} graph
  */
-function initializeStyles() {
-  const graph = graphComponent.graph
-
+function initializeStyles(graph) {
   // initialize node style
   graph.nodeDefaults.style = new DataTableNodeStyle()
   graph.nodeDefaults.size = new Size(170, 120)
@@ -101,8 +101,9 @@ function initializeStyles() {
 
 /**
  * Initializes the input mode.
+ * @param {!GraphComponent} graphComponent
  */
-function initializeInputMode() {
+function initializeInputMode(graphComponent) {
   const mode = new GraphEditorInputMode({
     // labels are added with the toolbar button and are not editable
     allowEditLabel: false,
@@ -113,18 +114,19 @@ function initializeInputMode() {
     e.item.tag = createNewRandomUserData()
     // check if the label should be displayed
     const exteriorLabelModel = new ExteriorLabelModel({ insets: 15 })
-    onToggleNodeLabel(e.item, exteriorLabelModel)
+    onToggleNodeLabel(graphComponent.graph, e.item, exteriorLabelModel)
     graphComponent.updateContentRect()
   })
   graphComponent.inputMode = mode
 }
 
 /**
- * Enables loading and saving the graph to GraphML.
+ * Enables loading and saving the graph from/to GraphML.
+ * @param {!GraphComponent} graphComponent
  */
-function enableGraphML() {
+function enableGraphML(graphComponent) {
   // create a new GraphMLSupport instance that handles save and load operations
-  gs = new GraphMLSupport({
+  const gs = new GraphMLSupport({
     graphComponent,
     // configure to load and save to the file system
     storageLocation: StorageLocation.FILE_SYSTEM
@@ -141,17 +143,80 @@ function enableGraphML() {
     'DataTableLabelStyle',
     DataTableLabelStyle.$class
   )
+
+  gs.graphMLIOHandler.addParsedListener((sender, args) => {
+    onToggleLabels(args.context.graph)
+  })
 }
 
 /**
- * Wires up the UI.
+ * Executed when Toggle Labels button is pressed.
+ * @param {!IGraph} graph
  */
-function registerCommands() {
+function onToggleLabels(graph) {
+  const exteriorLabelModel = new ExteriorLabelModel({ insets: 15 })
+  for (const node of graph.nodes) {
+    onToggleNodeLabel(graph, node, exteriorLabelModel)
+  }
+}
+
+/**
+ * Executed for each node when Toggle Labels button is pressed.
+ * @param {!IGraph} graph
+ * @param {!INode} node
+ * @param {!ExteriorLabelModel} exteriorLabelModel
+ */
+function onToggleNodeLabel(graph, node, exteriorLabelModel) {
+  if (document.getElementById('ToggleLabels').checked) {
+    const parameter =
+      node.layout.x < 100
+        ? exteriorLabelModel.createParameter(ExteriorLabelModelPosition.EAST)
+        : exteriorLabelModel.createParameter(ExteriorLabelModelPosition.WEST)
+    graph.addLabel(node, '', parameter)
+  } else {
+    // if there exist labels, remove them
+    for (const label of new List(node.labels)) {
+      graph.remove(label)
+    }
+  }
+}
+
+/**
+ * Creates an initial graph.
+ * @param {!IGraph} graph
+ * @param {number} nodeCount
+ */
+function createSampleGraph(graph, nodeCount) {
+  // Create nodes with random user data
+  const nodes = []
+  for (let i = 0; i < nodeCount; i++) {
+    const x = i % 2 === 0 ? 0 : 350
+    nodes[i] = graph.createNodeAt({
+      location: new Point(x, i * 150),
+      tag: createNewRandomUserData()
+    })
+  }
+
+  // Create some edges
+  if (nodes.length > 1) {
+    graph.createEdge(nodes[0], nodes[1])
+  }
+  for (let i = 2; i < nodes.length; i++) {
+    graph.createEdge(nodes[i - 1], nodes[i])
+    graph.createEdge(nodes[i - 2], nodes[i])
+  }
+}
+
+/**
+ * Binds actions to the demo's UI controls.
+ * @param {!GraphComponent} graphComponent
+ */
+function registerCommands(graphComponent) {
   bindAction("button[data-command='New']", () => {
     graphComponent.graph.clear()
     graphComponent.fitGraphBounds()
   })
-  bindAction("button[data-command='Open']", openFile)
+  bindCommand("button[data-command='Open']", ICommand.OPEN, graphComponent)
   bindCommand("button[data-command='Save']", ICommand.SAVE, graphComponent)
 
   bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent)
@@ -167,81 +232,10 @@ function registerCommands() {
   bindCommand("button[data-command='Paste']", ICommand.PASTE, graphComponent)
   bindCommand("button[data-command='Delete']", ICommand.DELETE, graphComponent)
 
-  bindAction("input[data-command='ToggleLabels']", onToggleLabels)
-}
-
-/**
- * Opens a new graphml file and checks whether the labels should be visible or not.
- */
-async function openFile() {
-  try {
-    await gs.openFile(graphComponent)
-    onToggleLabels()
-    graphComponent.fitGraphBounds()
-  } catch (error) {
-    alert(`Error occurred during loading file: ${error}`)
-  }
-}
-
-/**
- * Executed when Toggle Labels button is pressed.
- */
-function onToggleLabels() {
-  const exteriorLabelModel = new ExteriorLabelModel({ insets: 15 })
-
-  const graph = graphComponent.graph
-  graph.nodes.forEach(node => onToggleNodeLabel(node, exteriorLabelModel))
-  graphComponent.updateContentRect()
-}
-
-/**
- * Executed for each node when Toggle Labels button is pressed.
- * @param {INode} node
- * @param {ExteriorLabelModel} exteriorLabelModel
- */
-function onToggleNodeLabel(node, exteriorLabelModel) {
-  if (document.getElementById('ToggleLabels').checked) {
-    const parameter =
-      node.layout.x < 100
-        ? exteriorLabelModel.createParameter(ExteriorLabelModelPosition.EAST)
-        : exteriorLabelModel.createParameter(ExteriorLabelModelPosition.WEST)
-    graphComponent.graph.addLabel(node, '', parameter)
-  } else {
-    // if there exist labels, remove them
-    const labels = new List(node.labels)
-    labels.forEach(label => graphComponent.graph.remove(label))
-  }
-}
-
-/**
- * Creates an initial graph.
- * @param {number} nodeCount
- */
-function createSampleGraph(nodeCount) {
-  const graph = graphComponent.graph
-
-  // Create nodes with random user data
-  const nodes = []
-  for (let i = 0; i < nodeCount; i++) {
-    const x = i % 2 === 0 ? 0 : 350
-    const node = graph.createNodeAt({
-      location: new Point(x, i * 150),
-      tag: createNewRandomUserData()
-    })
-    nodes[i] = node
-  }
-
-  // Create some edges
-  if (nodes.length > 1) {
-    graph.createEdge(nodes[0], nodes[1])
-  }
-  for (let i = 2; i < nodes.length; i++) {
-    graph.createEdge(nodes[i - 1], nodes[i])
-    graph.createEdge(nodes[i - 2], nodes[i])
-  }
-
-  graphComponent.fitGraphBounds()
-  graph.undoEngine.clear()
+  bindAction("input[data-command='ToggleLabels']", () => {
+    onToggleLabels(graphComponent.graph)
+    graphComponent.updateContentRect()
+  })
 }
 
 // Runs the demo

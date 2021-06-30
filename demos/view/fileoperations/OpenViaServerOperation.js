@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -26,60 +26,57 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
+const TARGET_NAME = 'demo-open-iframe'
+const INPUT_FIELD_ID = 'demo-open-input'
+const UPLOAD_FORM_ID = 'demo-upload-form'
+
+const ERROR_ON_SETUP =
+  'Unable to setup Open Via Server Operation.\n' +
+  'Perhaps your browser does not allow handling cross domain HTTP requests. ' +
+  'Please see the demo readme for details.'
+
+const ERROR_ON_EXECUTE =
+  'Unable to execute Open Via Server Operation.\n' +
+  'Perhaps your browser does not allow handling cross domain HTTP requests. ' +
+  'Please see the demo readme for details.'
+
 /**
  * Opens a file by submitting a file input element to a dedicated server which returns the
  * content of the respective file.
  * In all browsers, submitting a form loads the server responses as new document. To prevent
  * loosing the application page, the target of the form is set to an invisible iframe. After
  * loading, this iframe sends the file content to the application by posting a message.
- * @deprecated Please note that using a dedicated server is not the recommended way to open a file in modern
- *   browsers.
- * If you only want to open a file from the local filesystem, use the approach shown in 'OpenFromFileOperation.js'
- *   instead.
+ * @deprecated Please note that using a dedicated server is not the recommended way to open a
+ * file in modern browsers.
+ * If you only want to open a file from the local filesystem, use the approach shown in
+ * 'OpenFromFileOperation' instead.
  */
 export default class OpenViaServerOperation {
   /**
-   * @param {string|null} [fileServerUrl] The URL the file server runs on.
-   * @param {string|null} [responseOrigin] The URL that's sent as origin of the server responses.
-   * @param {Boolean} [clearInputElementValueAfterOpen] Specifies whether or not to reset the input element at the
-   *   end of opening. Enable this as a workaround for an unexpected behavior of Google Chrome: the change event is
-   *   not triggered if the previous file is selected again. Since the file chooser dialog remembers the last
-   *   directory in any case, enabling this is no inconvenience for the users.
+   * @param {!string} fileServerUrl The URL the file server runs on.
+   * @param {!string} responseOrigin The URL that is sent as origin of the server responses.
+   * @param clearInputElementValueAfterOpen Specifies whether or not to reset the input element at
+   * the end of opening. Enable this as a workaround for an unexpected behavior of Google Chrome:
+   * The change event is not triggered if the previous file is selected again. Since the file
+   * chooser dialog remembers the last directory in any case, enabling this is no inconvenience
+   * for the users.
+   * @param {boolean} [clearInputElementValueAfterOpen=false]
    */
-  constructor(fileServerUrl, responseOrigin, clearInputElementValueAfterOpen) {
-    this.targetName = 'demo-open-iframe'
-    this.uploadFormId = 'demo-upload-form'
-    this.$fileServerUrl = fileServerUrl || 'http://localhost:4242/file/'
-    this.$responseOrigin = responseOrigin || 'http://localhost:4242'
-    this.$executable = false
-    this.$inputElement = null
-
-    this.$clearInputElementValueAfterOpen = !!clearInputElementValueAfterOpen
-
+  constructor(fileServerUrl, responseOrigin, clearInputElementValueAfterOpen = false) {
+    this.clearInputElementValueAfterOpen = clearInputElementValueAfterOpen
+    this.responseOrigin = responseOrigin
+    this.fileServerUrl = fileServerUrl
+    this.executable = false
+    this.inputElement = null
+    this.messageListener = null
+    this.targetElement = createTargetIFrame()
+    this.formElement = createFormIFrame()
     this.initialize()
   }
 
   /**
-   * Gets whether the operation can be executed.
-   * @type {boolean}
-   */
-  get executable() {
-    return this.$executable
-  }
-
-  /**
-   * Sets whether the operation can be executed.
-   * @type {boolean}
-   */
-  set executable(value) {
-    if (this.$executable !== value) {
-      this.$executable = value
-    }
-  }
-
-  /**
    * Checks if the operation can be executed.
-   * @return {boolean}
+   * @returns {boolean}
    */
   isAvailable() {
     return this.executable
@@ -88,23 +85,28 @@ export default class OpenViaServerOperation {
   /**
    * Opens the file selected by the inputElement by calling the
    * element's click function.
-   * @return {Promise} A Promise that resolves with the file content.
+   * @returns {!Promise.<string>} A Promise that resolves with the file content.
    */
   open() {
     return new Promise((resolve, reject) => {
-      const element = this.$inputElement
-      const listener = e => {
-        this.fileInputChanged(e, resolve, reject)
-        this.$inputElement.removeEventListener('change', listener, false)
-        if (this.$clearInputElementValueAfterOpen) {
-          // Setting null to the element's value shoudn't trigger the onchange event but it does in IE 11.
-          // In any case, this is no problem since we remove the change listener.
-          // This has no effect in IE 9 and IE 10.
-          this.$inputElement.value = null
+      const element = this.inputElement
+      if (element) {
+        const listener = () => {
+          this.fileInputChanged(resolve, reject)
+          element.removeEventListener('change', listener, false)
+          if (this.clearInputElementValueAfterOpen) {
+            // Clearing the element's value should not trigger the onchange event,
+            // but it does in IE 11.
+            // In any case, this is no problem since we remove the change listener.
+            // This has no effect in IE 9 and IE 10.
+            element.value = ''
+          }
         }
+        element.addEventListener('change', listener, false)
+        element.click()
+      } else {
+        reject(new Error('Input element not available.'))
       }
-      element.addEventListener('change', listener, false)
-      element.click()
     })
   }
 
@@ -112,60 +114,51 @@ export default class OpenViaServerOperation {
    * Initializes the html elements of the class.
    */
   initialize() {
-    this.targetIframeElement = document.createElement('iframe')
-    this.targetIframeElement.name = this.targetName
-    // use attribute 'name' not 'id'!
-    this.targetIframeElement.style.display = 'none'
-
-    this.formIframeElement = document.createElement('iframe')
-    this.formIframeElement.addEventListener(
+    this.formElement.addEventListener(
       'load',
       () => {
         try {
-          this.$inputElement = this.formIframeElement.contentDocument.getElementById(
-            'demo-open-input'
-          )
+          this.inputElement = getElementById(this.formElement, INPUT_FIELD_ID)
         } catch (e) {
-          const error = e
-          const msg =
-            'Unable to setup Open Via Server Operation.\nPerhaps your browser does not allow handling cross domain HTTP requests. Please see the demo readme for details.'
-          if (error.message) {
-            alert(`${msg}\n${error.message}\n`)
+          const err = e
+          if (err.message) {
+            alert(`${ERROR_ON_SETUP}\n${err.message}\n`)
           } else {
-            alert(msg)
+            alert(ERROR_ON_SETUP)
           }
         }
       },
       false
     )
-    this.formIframeElement.src = 'uploadForm.html'
-    this.formIframeElement.styledisplay = 'none'
 
     const body = document.getElementsByTagName('body')[0]
-    body.appendChild(this.targetIframeElement)
-    body.appendChild(this.formIframeElement)
+    body.appendChild(this.targetElement)
+    body.appendChild(this.formElement)
   }
 
   /**
    * Called by the change event listener after the user selected a file.
    * Submits the file input element to the server and calls the superclass's method.
-   * @param {Event} ev
+   * @param {!function} resolve
+   * @param {!function} reject
    */
-  fileInputChanged(ev, resolve, reject) {
+  fileInputChanged(resolve, reject) {
     this.submitForm(resolve, reject)
   }
 
   /**
    * Submits the file input element to the server.
+   * @param {!function} resolve
+   * @param {!function} reject
    */
   submitForm(resolve, reject) {
-    if (this.messageListener !== null) {
+    if (this.messageListener) {
       window.removeEventListener('message', this.messageListener, false)
     }
 
     // register listener for server result
     this.messageListener = e => {
-      if (e.origin === this.$responseOrigin) {
+      if (e.origin === this.responseOrigin) {
         this.onMessageReceived(e, resolve, reject)
       }
     }
@@ -173,23 +166,24 @@ export default class OpenViaServerOperation {
 
     // upload to server
     try {
-      const form = this.formIframeElement.contentDocument.getElementById(this.uploadFormId)
-      form.action = `${this.$fileServerUrl}load?${OpenViaServerOperation.createRequestId()}`
+      const form = getElementById(this.formElement, UPLOAD_FORM_ID)
+      form.action = `${this.fileServerUrl}load?${OpenViaServerOperation.createRequestId()}`
       form.submit()
     } catch (e) {
-      const error = e
-      const msg =
-        'Unable to execute Open Via Server Operation.\nPerhaps your browser does not allow handling cross domain HTTP requests. Please see the demo readme for details.'
-      if (error.message) {
-        alert(`${msg}\n${error.message}\n`)
+      const err = e
+      if (err.message) {
+        alert(`${ERROR_ON_EXECUTE}\n${err.message}\n`)
       } else {
-        alert(msg)
+        alert(ERROR_ON_EXECUTE)
       }
     }
   }
 
   /**
    * Invoked when the input file has been received.
+   * @param {!MessageEvent} e
+   * @param {!function} resolve
+   * @param {!function} reject
    */
   onMessageReceived(e, resolve, reject) {
     window.removeEventListener('message', this.messageListener, false)
@@ -202,15 +196,48 @@ export default class OpenViaServerOperation {
     }
   }
 
+  /**
+   * @returns {!Promise.<(boolean|Response)>}
+   */
   checkServer() {
-    return fetch(`${this.$fileServerUrl}isAlive`).catch(() => Promise.resolve(false))
+    return fetch(`${this.fileServerUrl}isAlive`).catch(() => Promise.resolve(false))
   }
 
   /**
    * Creates a unique request ID to prevent caching.
-   * @return {string}
+   * @returns {!string}
    */
   static createRequestId() {
     return `${new Date().getTime()}-${Math.floor(Math.random() * 100000)}`
   }
+}
+
+/**
+ * @returns {!HTMLIFrameElement}
+ */
+function createTargetIFrame() {
+  const iframe = document.createElement('iframe')
+  iframe.name = TARGET_NAME // use attribute 'name' not 'id'!
+  iframe.style.display = 'none'
+  return iframe
+}
+
+/**
+ * @returns {!HTMLIFrameElement}
+ */
+function createFormIFrame() {
+  const iframe = document.createElement('iframe')
+  iframe.src = 'uploadForm.html'
+  iframe.style.display = 'none'
+  return iframe
+}
+
+/**
+ * @template {HTMLElement} T
+ * @param {!HTMLIFrameElement} iframe
+ * @param {!string} id
+ * @returns {!T}
+ */
+function getElementById(iframe, id) {
+  return iframe.contentDocument.getElementById(id)
 }

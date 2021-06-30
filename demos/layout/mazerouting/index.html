@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -7,7 +7,7 @@
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.3.
+     // This demo file is part of yFiles for HTML 2.4.
      // Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
@@ -36,7 +36,6 @@
 
   <title>Maze Routing Demo [yFiles for HTML]</title>
 
-  <link rel="stylesheet" href="../../node_modules/yfiles/yfiles.css">
   <link rel="stylesheet" href="../../resources/style/demo.css">
   <link rel="stylesheet" href="../../resources/style/demo-option-editor.css">
 
@@ -45,66 +44,69 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.7.9/angular.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-sanitize/1.7.9/angular-sanitize.min.js"></script>
   <style type="text/css">
-
-    #data-editor-header select:not(.demo-disabled),
-    #data-editor-header select:not(.demo-disabled):hover {
-      border: 1px #888;
+    .data-editor-header select:not(.demo-disabled),
+    .data-editor-header select:not(.demo-disabled):hover{
+      border-color: #888;
+      border-width: 1px;
       padding-left: 1px;
     }
 
     .option-ui-content-container {
-      overflow-y: visible;
+      overflow-y:visible;
     }
 
     #data-editor {
-      position: absolute;
-      right: 25px;
-      left: 25px;
-      bottom: 45px;
-      top: 60px;
-      overflow: auto;
       -webkit-overflow-scrolling: touch;
     }
 
     #data-editor-button-container {
-      position: absolute;
-      bottom: 0;
-      width: 100%;
-      background-color: #f7f7f7;
+      position:absolute;
+      bottom:0;
+      width:100%;
+      background-color:#f7f7f7;
       min-width: 235px;
+      display: flex;
+      align-items: center;
+      justify-content: space-evenly;
+      height: 65px;
     }
 
     .flat-button {
       width: 7.5em;
-      height: inherit;
-      margin: 11px 0 11px 11px;
       padding: 14px 9px 14px 9px;
-      background-color: #A0A0A0;
-      color: #f7f7f7;
+      color: #232265;
+      background-color: #f7f7f7;
       border: none;
+      cursor: pointer;
+      border-radius: 4px;
+      font-family: Tahoma, Verdana, sans-serif;
+      font-size: 14px;
+      letter-spacing: 1px;
+      transition: background-color 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
-    #route-edges-button {
-      background-color: #1871BD;
-      color: #f7f7f7;
+    .secondary {
+      border: thin solid #232265;
+    }
+
+    .primary {
+      background-color: #4caf50;
+      color:#f7f7f7;
     }
 
     #route-edges-button:hover:not(.demo-disabled) {
-      background-color: #328AD5;
+      box-shadow: inset 0 0 100px 100px rgba(255, 255, 255, 0.15);
     }
 
     #reset-button:hover {
-      background-color: #B0B0B0;
+      box-shadow: inset 0 0 100px 100px rgba(0, 0, 0, 0.10);
     }
 
-    @media screen and (max-width: 1024px) {
-      .demo-splitter {
-        width: 10px;
-        -webkit-user-select: none;
-      }
+    .demo-sidebar.demo-right .demo-sidebar-content {
+      height: calc(100% - 125px);
+      padding: 0;
     }
-
-  </style>
+   </style>
 </head>
 <body class="demo-has-left demo-has-right">
 <!--
@@ -122,10 +124,9 @@
       maze nodes and is displayed inside the graph component. </p>
 
     <h2>Things to try</h2>
-    <p>
     <ul>
-    <li>Change the settings of the <code>EdgeRouter</code> from the configuration panel on the right to see how the routing of the
-        edges changes.
+      <li>Change the settings of the <code>EdgeRouter</code> from the configuration panel on the right to see how the
+        routing of the edges changes.
       </li>
       <li>
         Modify the graph with one of the following operations to see how the affected edges are rerouted:
@@ -136,7 +137,6 @@
         </ul>
       </li>
     </ul>
-    </p>
   </div>
 </aside>
 
@@ -362,10 +362,10 @@ The sidebar for the properties and settings
       <!-- End Templates -->
     </div>
     <div id="data-editor-button-container" class="demo-form-block">
-      <button id="route-edges-button" class="flat-button" data-command="RouteEdgesCommand" title="Route the Edges">
+      <button id="route-edges-button" class="flat-button primary" data-command="RouteEdgesCommand" title="Route the Edges">
         <span>Apply</span>
       </button>
-      <button id="reset-button" class="flat-button" data-command="ResetConfigCommand" title="Reset Configuration">
+      <button id="reset-button" class="flat-button secondary" data-command="ResetConfigCommand" title="Reset Configuration">
         <span>Reset</span>
       </button>
     </div>

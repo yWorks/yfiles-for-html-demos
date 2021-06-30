@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -28,7 +28,7 @@
  ***************************************************************************/
 /* eslint-disable no-undef */
 
-import { NodeStyleBase, SvgVisual } from 'yfiles'
+import { INode, IRenderContext, NodeStyleBase, SvgVisual } from 'yfiles'
 
 const margin = {
   top: 3,
@@ -51,7 +51,9 @@ export default class D3ChartNodeStyle extends NodeStyleBase {
   /**
    * Creates the visual for a node.
    * @see Overrides {@link NodeStyleBase#createVisual}
-   * @return {SvgVisual}
+   * @param {!IRenderContext} renderContext
+   * @param {!INode} node
+   * @returns {!SvgVisual}
    */
   createVisual(renderContext, node) {
     // create a g element and use it as a container for the sparkline visualization
@@ -83,27 +85,27 @@ export default class D3ChartNodeStyle extends NodeStyleBase {
       .data(data)
       .enter()
       .append('rect')
-      .attr('x', (_, i) => xHelper(i))
+      .attr('x', (d, i) => xHelper(`${i}`))
       .attr('y', d => yHelper(d))
       .attr('height', d => yHelper(0) - yHelper(d))
       .attr('width', xHelper.bandwidth())
       .attr('data-value', d => d)
       .attr('fill', d => color(d))
       .attr('stroke', 'none')
-    const svgVisual = new SvgVisual(g)
 
-    Object.assign(svgVisual, {
-      width,
-      height,
-      data
-    })
+    const svgVisual = new SvgVisual(g)
+    svgVisual['render-data-cache'] = new RenderDataCache(width, height, data)
+
     return svgVisual
   }
 
   /**
    * Re-renders the node using the old visual for performance reasons.
    * @see Overrides {@link NodeStyleBase#updateVisual}
-   * @return {SvgVisual}
+   * @param {!IRenderContext} renderContext
+   * @param {!SvgVisual} oldVisual
+   * @param {!INode} node
+   * @returns {!SvgVisual}
    */
   updateVisual(renderContext, oldVisual, node) {
     const g = oldVisual.svgElement
@@ -124,18 +126,18 @@ export default class D3ChartNodeStyle extends NodeStyleBase {
       .attr('width', width)
       .attr('height', height)
 
-    if (data !== oldVisual.data || oldVisual.width !== width || oldVisual.height !== height) {
-      Object.assign(oldVisual, {
-        width,
-        height,
-        data
-      })
+    const oldCache = oldVisual['render-data-cache']
+    const newCache = new RenderDataCache(width, height, data)
+
+    if (!newCache.equals(oldCache)) {
+      oldVisual['render-data-cache'] = newCache
+
       const dataSelection = group.select('g').selectAll('rect').data(data)
 
       dataSelection
         .enter()
         .append('rect')
-        .attr('x', (_, i) => xHelper(i))
+        .attr('x', (d, i) => xHelper(`${i}`))
         .attr('y', d => yHelper(d))
         .attr('height', d => yHelper(0) - yHelper(d))
         .attr('width', xHelper.bandwidth())
@@ -147,12 +149,36 @@ export default class D3ChartNodeStyle extends NodeStyleBase {
 
       dataSelection
         .transition()
-        .attr('x', (_, i) => xHelper(i))
+        .attr('x', (d, i) => xHelper(`${i}`))
         .attr('width', xHelper.bandwidth())
         .attr('y', d => yHelper(d))
         .attr('fill', d => color(d))
         .attr('height', d => yHelper(0) - yHelper(d))
     }
     return oldVisual
+  }
+}
+
+class RenderDataCache {
+  /**
+   * @param {number} width
+   * @param {number} height
+   * @param {!Array.<number>} data
+   */
+  constructor(width, height, data) {
+    this.data = data
+    this.height = height
+    this.width = width
+  }
+  /**
+   * @param {!RenderDataCache} other
+   */
+  equals(other) {
+    return (
+      other &&
+      this.width === other.width &&
+      this.height === other.height &&
+      this.data === other.data
+    )
   }
 }

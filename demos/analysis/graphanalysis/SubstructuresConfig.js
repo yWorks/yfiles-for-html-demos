@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -31,12 +31,14 @@ import {
   CliqueSubstructures,
   CycleSubstructures,
   IGraph,
+  IModelItem,
+  ResultItemCollection,
   StarSubstructures,
-  Substructure,
+  SubstructureItems,
   TreeSubstructures
 } from 'yfiles'
 import AlgorithmConfiguration from './AlgorithmConfiguration.js'
-import { MultiColorNodeStyle } from './DemoStyles'
+import { MultiColorNodeStyle } from './DemoStyles.js'
 
 /**
  * Configuration options for the substructures algorithms.
@@ -48,12 +50,12 @@ export default class SubstructuresConfig extends AlgorithmConfiguration {
    */
   constructor(algorithmType) {
     super()
-    this.$algorithmType = algorithmType
+    this.algorithmType = algorithmType
   }
 
   /**
-   * Runs the chosen substructure algorithm
-   * @param {IGraph} graph The graph on which a path algorithm is executed.
+   * Runs the chosen substructure algorithm.
+   * @param {!IGraph} graph The graph on which a path algorithm is executed.
    */
   runAlgorithm(graph) {
     // reset the graph to remove all previous markings
@@ -61,7 +63,7 @@ export default class SubstructuresConfig extends AlgorithmConfiguration {
 
     if (graph.nodes.size > 0) {
       // apply one of the path algorithms
-      switch (this.$algorithmType) {
+      switch (this.algorithmType) {
         case SubstructuresConfig.CHAINS_SUBSTRUCTURES:
           this.findChains(graph)
           break
@@ -84,7 +86,7 @@ export default class SubstructuresConfig extends AlgorithmConfiguration {
 
   /**
    * Finds chain sub structures and marks the resulting substructures
-   * @param {IGraph} graph the graph to run the algorithm on
+   * @param {!IGraph} graph the graph to run the algorithm on
    */
   findChains(graph) {
     const chainSubstructures = new ChainSubstructures({
@@ -97,7 +99,7 @@ export default class SubstructuresConfig extends AlgorithmConfiguration {
 
   /**
    * Finds clique sub structures and marks the resulting substructures
-   * @param {IGraph} graph the graph to run the algorithm on
+   * @param {!IGraph} graph the graph to run the algorithm on
    */
   findCliques(graph) {
     const cliqueSubstructures = new CliqueSubstructures({
@@ -109,7 +111,7 @@ export default class SubstructuresConfig extends AlgorithmConfiguration {
 
   /**
    * Finds cycle sub structures and marks the resulting substructures
-   * @param {IGraph} graph the graph to run the algorithm on
+   * @param {!IGraph} graph the graph to run the algorithm on
    */
   findCycles(graph) {
     const cycleSubstructures = new CycleSubstructures({
@@ -122,7 +124,7 @@ export default class SubstructuresConfig extends AlgorithmConfiguration {
 
   /**
    * Finds star sub structures and marks the resulting substructures
-   * @param {IGraph} graph the graph to run the algorithm on
+   * @param {!IGraph} graph the graph to run the algorithm on
    */
   findStars(graph) {
     const starSubstructures = new StarSubstructures({
@@ -135,7 +137,7 @@ export default class SubstructuresConfig extends AlgorithmConfiguration {
 
   /**
    * Finds tree sub structures and marks the resulting substructures
-   * @param {IGraph} graph the graph to run the algorithm on
+   * @param {!IGraph} graph the graph to run the algorithm on
    */
   findTrees(graph) {
     const treeSubstructures = new TreeSubstructures({
@@ -148,8 +150,8 @@ export default class SubstructuresConfig extends AlgorithmConfiguration {
 
   /**
    * Colorizes substructures found in graph
-   * @param {IGraph} graph the graph to run the algorithm on
-   * @param {ResultItemCollection<Substructure>} substructures found in graph
+   * @param {!IGraph} graph the graph to run the algorithm on
+   * @param {!ResultItemCollection.<SubstructureItems>} substructures found in graph
    */
   markSubstructures(graph, substructures) {
     this.resetGraphStyles(graph)
@@ -200,7 +202,7 @@ export default class SubstructuresConfig extends AlgorithmConfiguration {
 
   /**
    * Resets the edge and node styles
-   * @param {IGraph} graph the graph to reset the styles in
+   * @param {!IGraph} graph the graph to reset the styles in
    */
   resetGraphStyles(graph) {
     graph.edges.forEach((edge, index) => {
@@ -221,10 +223,11 @@ export default class SubstructuresConfig extends AlgorithmConfiguration {
 
   /**
    * Returns the description text that explains the currently used substructure algorithm.
-   * @return {string} The description text.
+   * @return The description text.
+   * @type {!string}
    */
   get descriptionText() {
-    switch (this.$algorithmType) {
+    switch (this.algorithmType) {
       case SubstructuresConfig.CHAINS_SUBSTRUCTURES:
         return (
           '<p>This part of the demo shows <em>chain</em> substructures in the graph.</p>' +

@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -122,9 +122,8 @@ function run(licenseData: object): void {
     'change',
     () => {
       neighborhoodView.maxDistance = parseInt(neighborhoodMaxDistanceSlider.value)
-      ;(document.getElementById(
-        'neighborhoodMaxDistanceLabel'
-      ) as HTMLLabelElement).textContent = neighborhoodMaxDistanceSlider.value.toString()
+      ;(document.getElementById('neighborhoodMaxDistanceLabel') as HTMLLabelElement).textContent =
+        neighborhoodMaxDistanceSlider.value.toString()
     },
     true
   )
@@ -226,7 +225,7 @@ function highlightNodes(nodes: IEnumerable<INode>): void {
  */
 function initializeHighlighting(): void {
   // we use the same highlight style as the Neighborhood View default highlight style
-  const highlightShape = neighborhoodView.highlightStyle!
+  const highlightShape = neighborhoodView.highlightStyle
 
   const nodeStyleHighlight = new NodeStyleDecorationInstaller({
     // that should be slightly larger than the real node

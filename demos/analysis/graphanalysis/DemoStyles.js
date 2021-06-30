@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -33,6 +33,7 @@ import {
   GeomUtilities,
   IArrow,
   IEdge,
+  IInputModeContext,
   IModelItem,
   INode,
   IRectangle,
@@ -40,6 +41,7 @@ import {
   Matrix,
   NodeStyleBase,
   Point,
+  Size,
   SvgVisual,
   Visual,
   YObject
@@ -78,7 +80,7 @@ const gradientColors = [
  * Colors are represented like this: "rbg(r,g,b)".
  * @param {number} componentId The id of the component.
  * @param {boolean} useGradient Whether to use gradient colors
- * @return {string}   The color for the component.
+ * @returns {!string} The color for the component.
  */
 export function getColorForComponent(componentId, useGradient) {
   if (useGradient) {
@@ -90,9 +92,8 @@ export function getColorForComponent(componentId, useGradient) {
 
 /**
  * Checks whether or not the given item has a valid color in its tag.
- * @param {IModelItem} item The item to be checked.
- * @return {boolean} <code>true</code> if the node's tag contains a valid color, <code>false</code>
- *   otherwise.
+ * @param {!IModelItem} item The item to be checked.
+ * @returns {boolean} <code>true</code> if the node's tag contains a valid color, <code>false</code> otherwise.
  */
 function hasValidColorTag(item) {
   return item.tag !== null && item.tag.color !== null && item.tag.color !== undefined
@@ -100,9 +101,9 @@ function hasValidColorTag(item) {
 
 /**
  * Returns whether or not the given two arrays are equals.
- * @param {Array} array1
- * @param {Array} array2
- * @return {boolean} <code>true</code> if arrays are the same, <code>false</code> otherwise.
+ * @returns {boolean} <code>true</code> if arrays are the same, <code>false</code> otherwise.
+ * @param {!Array.<*>} array1
+ * @param {!Array.<*>} array2
  */
 function arraysAreEqual(array1, array2) {
   if (!array1 || !array2 || array1.length !== array2.length) {
@@ -121,68 +122,70 @@ function arraysAreEqual(array1, array2) {
 }
 
 /**
+ * @typedef {Object} NodeTag
+ * @property {number} id
+ * @property {string} color
+ * @property {Array.<Array.<IModelItem>>} components
+ * @property {Array.<number>} nodeComponents
+ */
+
+class MultiColorNodeStyleRenderCache {
+  /**
+   * @param {?string} currentColor
+   * @param {!Point} location
+   * @param {!Size} size
+   * @param {!NodeTag} tag
+   */
+  constructor(currentColor, location, size, tag) {
+    this.tag = tag
+    this.size = size
+    this.location = location
+    this.currentColor = currentColor
+  }
+
+  /**
+   * @param {*} other
+   * @returns {boolean}
+   */
+  equals(other) {
+    return (
+      other !== null &&
+      other !== undefined &&
+      this.currentColor === other.currentColor &&
+      this.size.equals(other.size) &&
+      arraysAreEqual(this.tag.components, other.tag.components) &&
+      arraysAreEqual(this.tag.nodeComponents, other.tag.nodeComponents)
+    )
+  }
+}
+
+/**
  * This style supports nodes to change colors and to react interactively.
  */
 export class MultiColorNodeStyle extends NodeStyleBase {
   constructor() {
     super()
-    this.$currentColor = null
-    this.$oldColor = null
-    this.$hovered = false
-    this.$useGradient = false
-  }
-
-  /** @type {string} */
-  set currentColor(color) {
-    this.$currentColor = color
-  }
-
-  /** @type {string} */
-  get currentColor() {
-    return this.$currentColor
-  }
-
-  /** @type {string} */
-  set oldColor(color) {
-    this.$oldColor = color
-  }
-
-  /** @type {string} */
-  get oldColor() {
-    return this.$oldColor
-  }
-
-  /** @type {boolean} */
-  set useGradient(useGradient) {
-    this.$useGradient = useGradient
-  }
-
-  /** @type {boolean} */
-  get useGradient() {
-    return this.$useGradient
-  }
-
-  /** @type {boolean} */
-  set hovered(hovered) {
-    this.$hovered = hovered
-  }
-
-  /** @type {boolean} */
-  get hovered() {
-    return this.$hovered
+    this.currentColor = null
+    this.oldColor = null
+    this.hovered = false
+    this.useGradient = false
   }
 
   /**
    * Creates the visual for a node.
-   * @param {IRenderContext} renderContext
-   * @param {INode} node
-   * @return {Visual}
+   * @param {!IRenderContext} renderContext
+   * @param {!INode} node
+   * @returns {!Visual}
    */
   createVisual(renderContext, node) {
     // This implementation creates a 'g' element and uses it as a container for the rendering of the node.
     const g = window.document.createElementNS('http://www.w3.org/2000/svg', 'g')
     // Render the node
-    const cache = this.createRenderDataCache(this.$currentColor, node.layout, node.tag)
+    const cache = MultiColorNodeStyle.createRenderDataCache(
+      this.currentColor,
+      node.layout,
+      node.tag
+    )
     this.render(renderContext, node, g, cache)
     // set the location
     g.setAttribute('transform', `translate(${node.layout.x} ${node.layout.y})`)
@@ -191,19 +194,23 @@ export class MultiColorNodeStyle extends NodeStyleBase {
 
   /**
    * Re-renders the node using the old visual for performance reasons.
-   * @param {IRenderContext} renderContext
-   * @param {Visual} oldVisual
-   * @param {INode} node
-   * @return {Visual}
+   * @param {!IRenderContext} renderContext
+   * @param {!SvgVisual} oldVisual
+   * @param {!INode} node
+   * @returns {!Visual}
    */
   updateVisual(renderContext, oldVisual, node) {
     const container = oldVisual.svgElement
     const oldCache = container['data-renderDataCache']
-    const newCache = this.createRenderDataCache(this.currentColor, node.layout, node.tag)
+    const newCache = MultiColorNodeStyle.createRenderDataCache(
+      this.currentColor,
+      node.layout,
+      node.tag
+    )
 
     if (!newCache.equals(oldCache)) {
       // something changed - re-render the visual
-      while (container.hasChildNodes()) {
+      while (container.firstChild) {
         container.removeChild(container.firstChild)
       }
       this.render(renderContext, node, container, newCache)
@@ -211,6 +218,7 @@ export class MultiColorNodeStyle extends NodeStyleBase {
 
     // make sure that the location is up to date
     if (
+      !oldCache ||
       oldCache.location.x !== newCache.location.x ||
       oldCache.location.y !== newCache.location.y
     ) {
@@ -229,10 +237,10 @@ export class MultiColorNodeStyle extends NodeStyleBase {
    * (0,0). {@link MultiColorNodeStyle#createVisual} and
    * <code>UpdateVisual</code> finally arrange the container so that the drawing is translated into
    * the final position.
-   * @param {IRenderContext} renderContext
-   * @param {INode} node
-   * @param {Element} visual
-   * @param {object} cache
+   * @param {!IRenderContext} renderContext
+   * @param {!INode} node
+   * @param {!SVGGElement} visual
+   * @param {!MultiColorNodeStyleRenderCache} cache
    */
   render(renderContext, node, visual, cache) {
     visual['data-renderDataCache'] = cache
@@ -268,12 +276,12 @@ export class MultiColorNodeStyle extends NodeStyleBase {
 
       const shape = window.document.createElementNS('http://www.w3.org/2000/svg', 'ellipse')
       shape.setAttribute('id', `node${node.tag.id}circle`)
-      shape.setAttribute('cx', radius)
-      shape.setAttribute('cy', radius)
-      shape.setAttribute('rx', radius)
-      shape.setAttribute('ry', radius)
+      shape.setAttribute('cx', String(radius))
+      shape.setAttribute('cy', String(radius))
+      shape.setAttribute('rx', String(radius))
+      shape.setAttribute('ry', String(radius))
       shape.setAttribute('fill', this.currentColor)
-      shape.setAttribute('component', components.length === 1 ? components[0] : -1)
+      shape.setAttribute('component', String(components.length === 1 ? components[0] : -1))
 
       shape.addEventListener('mouseenter', event => this.onMouseOver(node, event.target))
       shape.addEventListener('mouseleave', event => this.onMouseOut(node, event.target))
@@ -295,7 +303,7 @@ export class MultiColorNodeStyle extends NodeStyleBase {
 
       for (let i = 0; i < components.length; i++) {
         const slice = window.document.createElementNS('http://www.w3.org/2000/svg', 'path')
-        slice.setAttribute('component', components[i])
+        slice.setAttribute('component', String(components[i]))
         slice.setAttribute(
           'd',
           `M${radius},${radius} L${radius},${0} A${radius},${radius} 0 0,1 ${radius + y * radius},${
@@ -351,14 +359,13 @@ export class MultiColorNodeStyle extends NodeStyleBase {
             ? component[0].tag.color
             : getColorForComponent(components[components.length - 1], this.useGradient)
       }
-      const color = this.currentColor
       const circle = window.document.createElementNS('http://www.w3.org/2000/svg', 'ellipse')
       circle.setAttribute('id', `node${node.tag.id}circle`)
-      circle.setAttribute('cx', radius)
-      circle.setAttribute('cy', radius)
-      circle.setAttribute('rx', radius - 5)
-      circle.setAttribute('ry', radius - 5)
-      circle.setAttribute('fill', color)
+      circle.setAttribute('cx', String(radius))
+      circle.setAttribute('cy', String(radius))
+      circle.setAttribute('rx', String(radius - 5))
+      circle.setAttribute('ry', String(radius - 5))
+      circle.setAttribute('fill', this.currentColor)
       circle.setAttribute('stroke', 'white')
       circle.setAttribute('stroke-width', '2')
       circle.setAttribute('style', 'pointer-events:none')
@@ -369,32 +376,18 @@ export class MultiColorNodeStyle extends NodeStyleBase {
 
   /**
    * Creates a cache object which stores relevant information to update the style.
-   * @param {string} color
-   * @param {IRectangle} layout
-   * @param {object} tag
-   * @return {object}
+   * @param {?string} color
+   * @param {!IRectangle} layout
+   * @param {!NodeTag} tag
+   * @returns {!MultiColorNodeStyleRenderCache}
    */
-  createRenderDataCache(color, layout, tag) {
-    return {
-      currentColor: color,
-      location: layout.toPoint(),
-      size: layout.toSize(),
-      tag,
-      equals(other) {
-        return (
-          other !== null &&
-          this.currentColor === other.currentColor &&
-          this.size.equals(other.size) &&
-          arraysAreEqual(this.tag.components, other.tag.components) &&
-          arraysAreEqual(this.tag.nodeComponents, other.tag.nodeComponents)
-        )
-      }
-    }
+  static createRenderDataCache(color, layout, tag) {
+    return new MultiColorNodeStyleRenderCache(color, layout.toPoint(), layout.toSize(), tag)
   }
 
   /**
-   * @param {INode} node
-   * @param {SVGElement} svgElement
+   * @param {!INode} node
+   * @param {!SVGElement} svgElement
    */
   onMouseOver(node, svgElement) {
     const componentId = svgElement.getAttribute('component')
@@ -403,7 +396,7 @@ export class MultiColorNodeStyle extends NodeStyleBase {
     if (component) {
       component.forEach(object => {
         if (
-          INode.isInstance(object) &&
+          object instanceof INode &&
           (object.style instanceof MultiColorNodeStyle ||
             object.style instanceof SourceTargetNodeStyle)
         ) {
@@ -421,7 +414,7 @@ export class MultiColorNodeStyle extends NodeStyleBase {
               if (object.style instanceof MultiColorNodeStyle) {
                 const color = hasValidColorTag(component[0])
                   ? component[0].tag.color
-                  : getColorForComponent(componentId, this.useGradient)
+                  : getColorForComponent(Number(componentId), this.useGradient)
                 circle.setAttribute('fill', color)
               }
             }
@@ -429,13 +422,13 @@ export class MultiColorNodeStyle extends NodeStyleBase {
             componentElement.setAttribute('class', 'path-highlight-hovered')
             object.style.hovered = true
           }
-        } else if (IEdge.isInstance(object) && object.style instanceof MultiColorEdgeStyle) {
+        } else if (object instanceof IEdge && object.style instanceof MultiColorEdgeStyle) {
           const path = window.document.getElementById(`edge${object.tag.id}path`)
           if (path !== null) {
             object.style.oldColor = object.style.currentColor
             const color = hasValidColorTag(component[0])
               ? component[0].tag.color
-              : getColorForComponent(componentId, this.useGradient)
+              : getColorForComponent(Number(componentId), this.useGradient)
             path.setAttribute('stroke', color)
             path.setAttribute('stroke-width', '7')
           }
@@ -445,8 +438,8 @@ export class MultiColorNodeStyle extends NodeStyleBase {
   }
 
   /**
-   * @param {INode} node
-   * @param {SVGElement} svgElement
+   * @param {!INode} node
+   * @param {!SVGElement} svgElement
    */
   onMouseOut(node, svgElement) {
     const componentId = svgElement.getAttribute('component')
@@ -455,7 +448,7 @@ export class MultiColorNodeStyle extends NodeStyleBase {
     if (component) {
       component.forEach(object => {
         if (
-          INode.isInstance(object) &&
+          object instanceof INode &&
           (object.style instanceof MultiColorNodeStyle ||
             object.style instanceof SourceTargetNodeStyle)
         ) {
@@ -475,11 +468,11 @@ export class MultiColorNodeStyle extends NodeStyleBase {
               object.style.hovered = false
             }
           }
-        } else if (IEdge.isInstance(object) && object.style instanceof MultiColorEdgeStyle) {
+        } else if (object instanceof IEdge && object.style instanceof MultiColorEdgeStyle) {
           const path = window.document.getElementById(`edge${object.tag.id}path`)
           if (path !== null) {
             path.setAttribute('stroke', object.style.oldColor)
-            path.setAttribute('stroke-width', object.style.thickness)
+            path.setAttribute('stroke-width', String(object.style.thickness))
           }
         }
       })
@@ -487,9 +480,9 @@ export class MultiColorNodeStyle extends NodeStyleBase {
   }
 
   /**
-   * @param {Point} clickPoint
-   * @param {INode} node
-   * @param {SVGElement} svgElement
+   * @param {!Point} clickPoint
+   * @param {!INode} node
+   * @param {!SVGElement} svgElement
    */
   onMouseClicked(clickPoint, node, svgElement) {
     const nodeCenterX = node.layout.x + node.layout.width * 0.5
@@ -502,25 +495,26 @@ export class MultiColorNodeStyle extends NodeStyleBase {
     if (!isInCircle || (node.tag.nodeComponents && node.tag.nodeComponents.length === 1)) {
       const componentId = svgElement.getAttribute('component')
       const currentComponent = node.tag.components[componentId]
-      this.currentColor =
+      const color =
         currentComponent[0].tag.color !== null
           ? currentComponent[0].tag.color
-          : getColorForComponent(componentId, this.useGradient)
+          : getColorForComponent(Number(componentId), this.useGradient)
+      this.currentColor = color
 
       currentComponent.forEach(object => {
-        if (INode.isInstance(object) && object.style instanceof MultiColorNodeStyle) {
-          object.style.currentColor = this.currentColor
-          object.style.oldColor = object.style.currentColor
+        if (object instanceof INode && object.style instanceof MultiColorNodeStyle) {
+          object.style.currentColor = color
+          object.style.oldColor = color
           const circle = window.document.getElementById(`node${object.tag.id}circle`)
           if (circle !== null) {
-            circle.setAttribute('fill', object.style.currentColor)
+            circle.setAttribute('fill', color)
           }
-        } else if (IEdge.isInstance(object) && object.style instanceof MultiColorEdgeStyle) {
+        } else if (object instanceof IEdge && object.style instanceof MultiColorEdgeStyle) {
           const path = window.document.getElementById(`edge${object.tag.id}path`)
           if (path !== null) {
             object.tag.edgeComponent = componentId
-            object.style.currentColor = this.currentColor
-            object.style.oldColor = this.currentColor
+            object.style.currentColor = color
+            object.style.oldColor = color
             path.setAttribute('stroke', object.style.currentColor)
           }
         }
@@ -531,9 +525,9 @@ export class MultiColorNodeStyle extends NodeStyleBase {
   /**
    * Exact geometric check whether a point p lies inside the node.
    * This is important for intersection calculation, among others.
-   * @param {INode} node
-   * @param {Point} point
-   * @return {boolean}
+   * @param {!INode} node
+   * @param {!Point} point
+   * @returns {boolean}
    */
   isInside(node, point) {
     return GeomUtilities.ellipseContains(node.layout.toRect(), point, 0)
@@ -542,8 +536,8 @@ export class MultiColorNodeStyle extends NodeStyleBase {
   /**
    * Gets the outline of the node, an ellipse in this case.
    * This allows for correct edge path intersection calculation, among others.
-   * @param {INode} node
-   * @return {GeneralPath}
+   * @param {!INode} node
+   * @returns {!GeneralPath}
    */
   getOutline(node) {
     const rect = node.layout.toRect()
@@ -553,78 +547,90 @@ export class MultiColorNodeStyle extends NodeStyleBase {
   }
 }
 
+class MultiColorEdgeStyleRenderCache {
+  /**
+   * @param {number} thickness
+   * @param {!GeneralPath} path
+   * @param {?string} currentColor
+   * @param {!IArrow} targetArrow
+   */
+  constructor(thickness, path, currentColor, targetArrow) {
+    this.targetArrow = targetArrow
+    this.currentColor = currentColor
+    this.path = path
+    this.thickness = thickness
+  }
+
+  /**
+   * Check if this cache is equal to another object. Returns <code>true</code> if the other
+   * object is an instance of this class too, the path is equal and state is equal.
+   * @param {*} other
+   * @returns {boolean}
+   */
+  equals(other) {
+    return (
+      other !== null &&
+      other instanceof MultiColorEdgeStyleRenderCache &&
+      this.pathEquals(other) &&
+      this.stateEquals(other)
+    )
+  }
+
+  /**
+   * Check if the path thickness, current colors and the arrows of this instance
+   * are equals to another {@link MultiColorEdgeStyleRenderCache}'s properties.
+   * @param {!MultiColorEdgeStyleRenderCache} other
+   * @returns {boolean}
+   */
+  stateEquals(other) {
+    return (
+      other.thickness === this.thickness &&
+      this.currentColor === other.currentColor &&
+      YObject.equals(other.targetArrow, this.targetArrow)
+    )
+  }
+
+  /**
+   * Check if the path of this instance is equals to another
+   * {@link MultiColorEdgeStyleRenderCache}'s path.
+   * @param {!MultiColorEdgeStyleRenderCache} other
+   * @returns {boolean}
+   */
+  pathEquals(other) {
+    if (other.path === null && this.path === null) {
+      return true
+    } else if (other.path === null) {
+      return false
+    }
+    return other.path.hasSameValue(this.path)
+  }
+}
+
 /**
  * This style supports edges to change colors and to react interactively.
  */
 export class MultiColorEdgeStyle extends EdgeStyleBase {
   /**
    * Creates a new instance of the {@link MultiColorEdgeStyle}
-   * @param {string} color
+   * @param {!string} currentColor
+   * @param {!IArrow} targetArrow
+   * @param {number} [thickness=1]
+   * @param {boolean} [useGradient=false]
    */
-  constructor(color) {
+  constructor(currentColor, targetArrow, thickness = 1, useGradient = false) {
     super()
-    this.$currentColor = color
-    this.$oldColor = null
-    this.$thickness = 1
-    this.$useGradient = false
-    this.$targetArrow = null
-  }
-
-  /** @type {number} */
-  set thickness(value) {
-    this.$thickness = value
-  }
-
-  /** @type {number} */
-  get thickness() {
-    return this.$thickness
-  }
-
-  /** @type {string} */
-  set currentColor(color) {
-    this.$currentColor = color
-  }
-
-  /** @type {string} */
-  get currentColor() {
-    return this.$currentColor
-  }
-
-  /** @type {string} */
-  set oldColor(color) {
-    this.$oldColor = color
-  }
-
-  /** @type {string} */
-  get oldColor() {
-    return this.$oldColor
-  }
-
-  /** @type {boolean} */
-  set useGradient(useGradient) {
-    this.$useGradient = useGradient
-  }
-
-  /** @type {boolean} */
-  get useGradient() {
-    return this.$useGradient
-  }
-
-  /** @type {IArrow} */
-  get targetArrow() {
-    return this.$targetArrow
-  }
-
-  /** @type {IArrow} */
-  set targetArrow(value) {
-    this.$targetArrow = value
+    this.useGradient = useGradient
+    this.thickness = thickness
+    this.targetArrow = targetArrow
+    this.currentColor = currentColor
+    this.oldColor = null
   }
 
   /**
    * Creates the visual for an edge.
-   * @param {IRenderContext} renderContext
-   * @param {IEdge} edge
-   * @return {Visual}
+   * @param {!IRenderContext} renderContext
+   * @param {!IEdge} edge
+   * @returns {!Visual}
    */
   createVisual(renderContext, edge) {
     // This implementation creates a CanvasContainer and uses it for the rendering of the edge.
@@ -644,10 +650,10 @@ export class MultiColorEdgeStyle extends EdgeStyleBase {
 
   /**
    * Re-renders the edge using the old visual for performance reasons.
-   * @param {IRenderContext} renderContext
-   * @param {Visual} oldVisual
-   * @param {IEdge} edge
-   * @return {Visual}
+   * @param {!IRenderContext} renderContext
+   * @param {!SvgVisual} oldVisual
+   * @param {!IEdge} edge
+   * @returns {!Visual}
    */
   updateVisual(renderContext, oldVisual, edge) {
     const g = oldVisual.svgElement
@@ -664,7 +670,9 @@ export class MultiColorEdgeStyle extends EdgeStyleBase {
     // check if something changed
     if (!newCache.stateEquals(oldCache)) {
       // more than only the path changed - re-render the visual
-      g.removeChild(g.lastChild)
+      if (g.lastChild) {
+        g.removeChild(g.lastChild)
+      }
       this.render(renderContext, edge, oldVisual, newCache)
       return oldVisual
     }
@@ -679,14 +687,13 @@ export class MultiColorEdgeStyle extends EdgeStyleBase {
 
   /**
    * Creates the visual appearance of an edge.
-   * @param {IRenderContext} context
-   * @param {IEdge} edge
-   * @param {Visual} visual
-   * @param {Object} cache
+   * @param {!IRenderContext} context
+   * @param {!IEdge} edge
+   * @param {!Visual} visual
+   * @param {!MultiColorEdgeStyleRenderCache} cache
    */
   render(context, edge, visual, cache) {
     const g = visual.svgElement
-
     if (hasValidColorTag(edge)) {
       this.currentColor = edge.tag.color
     }
@@ -716,55 +723,20 @@ export class MultiColorEdgeStyle extends EdgeStyleBase {
 
   /**
    * Creates an object containing all necessary data to create an edge visual.
-   * @param {IEdge} edge
+   * @param {!IEdge} edge
    * @param {number} thickness
-   * @param {IArrow} targetArrow
-   * @param {string} color
-   * @return {MultiColorEdgeStyle.RenderDataCache}
+   * @param {!IArrow} targetArrow
+   * @param {!string} color
+   * @returns {!MultiColorEdgeStyleRenderCache}
    */
   createRenderDataCache(edge, thickness, targetArrow, color) {
-    return {
-      thickness,
-      path: this.getPath(edge),
-      targetArrow,
-      currentColor: color,
-      equals(obj) {
-        return (
-          obj !== null &&
-          obj instanceof MultiColorEdgeStyle.RenderDataCache &&
-          this.pathEquals(obj) &&
-          this.stateEquals(obj)
-        )
-      },
-
-      /**
-       * Check if the path thickness, current colors and the arrows of this instance
-       * are equals to another {@link MultiColorEdgeStyle.RenderDataCache}'s properties.
-       * @return {boolean}
-       */
-      stateEquals(other) {
-        return (
-          other.thickness === this.thickness &&
-          this.currentColor === other.currentColor &&
-          YObject.equals(other.targetArrow, this.targetArrow)
-        )
-      },
-
-      /**
-       * Check if the path of this instance is equals to another
-       * {@link MultiColorEdgeStyle.RenderDataCache}'s path.
-       * @return {boolean}
-       */
-      pathEquals(other) {
-        return other.path.hasSameValue(this.path)
-      }
-    }
+    return new MultiColorEdgeStyleRenderCache(thickness, this.getPath(edge), color, targetArrow)
   }
 
   /**
    * Creates a {@link GeneralPath} from the edge's bends.
-   * @param {IEdge} edge The edge to create the path for.
-   * @return {GeneralPath} A {@link GeneralPath} following the edge
+   * @param {!IEdge} edge The edge to create the path for.
+   * @returns {!GeneralPath} A {@link GeneralPath} following the edge
    */
   getPath(edge) {
     // Create a general path from the locations of the ports and the bends of the edge.
@@ -780,26 +752,25 @@ export class MultiColorEdgeStyle extends EdgeStyleBase {
   /**
    * Updates the edge path data as well as the arrow positions of the visuals stored in <param
    * name="container" />.
-   * @param {IRenderContext} context
-   * @param {IEdge} edge
-   * @param {Visual} visual
-   * @param {Object} cache
+   * @param {!IRenderContext} context
+   * @param {!IEdge} edge
+   * @param {!Visual} visual
+   * @param {!MultiColorEdgeStyleRenderCache} cache
    */
   updatePath(context, edge, visual, cache) {
     // The first child must be a path - else re-create the container from scratch
-    if (visual.svgElement.childElementCount === 0) {
+    const g = visual.svgElement
+    if (g.childElementCount === 0) {
       this.render(context, edge, visual, cache)
       return
     }
-
-    const g = visual.svgElement
 
     // store information with the visual on how we created it
     g['data-renderDataCache'] = cache
 
     // update the path
     const gp = cache.path.clone()
-    const path = visual.svgElement.childNodes.item(0)
+    const path = g.childNodes.item(0)
     path.setAttribute('d', gp.createSvgPathData(new Matrix()))
 
     // update the arrows
@@ -807,15 +778,15 @@ export class MultiColorEdgeStyle extends EdgeStyleBase {
   }
 
   /**
-   * @param {IEdge} edge
-   * @param {SVGElement} svgElement
+   * @param {!IEdge} edge
+   * @param {!SVGElement} svgElement
    */
   onMouseOver(edge, svgElement) {
     const componentId = svgElement.getAttribute('component')
     const component = componentId !== '-1' ? edge.tag.components[componentId] : [edge]
     component.forEach(object => {
       if (
-        INode.isInstance(object) &&
+        object instanceof INode &&
         (object.style instanceof MultiColorNodeStyle ||
           object.style instanceof SourceTargetNodeStyle)
       ) {
@@ -830,17 +801,17 @@ export class MultiColorEdgeStyle extends EdgeStyleBase {
           if (object.style instanceof MultiColorNodeStyle) {
             const color = hasValidColorTag(component[0])
               ? component[0].tag.color
-              : getColorForComponent(componentId, this.useGradient)
+              : getColorForComponent(Number(componentId), this.useGradient)
             circle.setAttribute('fill', color)
           }
         }
-      } else if (IEdge.isInstance(object) && object.style instanceof MultiColorEdgeStyle) {
+      } else if (object instanceof IEdge && object.style instanceof MultiColorEdgeStyle) {
         const path = window.document.getElementById(`edge${object.tag.id}path`)
         if (path !== null) {
           object.style.oldColor = object.style.currentColor
           const color = hasValidColorTag(object)
             ? object.tag.color
-            : getColorForComponent(componentId, this.useGradient)
+            : getColorForComponent(Number(componentId), this.useGradient)
           path.setAttribute('stroke', color)
           path.setAttribute('stroke-width', '7')
         }
@@ -849,15 +820,15 @@ export class MultiColorEdgeStyle extends EdgeStyleBase {
   }
 
   /**
-   * @param {IEdge} edge
-   * @param {SVGElement} svgElement
+   * @param {!IEdge} edge
+   * @param {!SVGElement} svgElement
    */
   onMouseOut(edge, svgElement) {
     const componentId = svgElement.getAttribute('component')
     const component = componentId !== '-1' ? edge.tag.components[componentId] : [edge]
     component.forEach(object => {
       if (
-        INode.isInstance(object) &&
+        object instanceof INode &&
         (object.style instanceof MultiColorNodeStyle ||
           object.style instanceof SourceTargetNodeStyle)
       ) {
@@ -870,35 +841,35 @@ export class MultiColorEdgeStyle extends EdgeStyleBase {
             circle.setAttribute('fill', object.style.oldColor)
           }
         }
-      } else if (IEdge.isInstance(object) && object.style instanceof MultiColorEdgeStyle) {
+      } else if (object instanceof IEdge && object.style instanceof MultiColorEdgeStyle) {
         const path = window.document.getElementById(`edge${object.tag.id}path`)
         if (path !== null) {
           path.setAttribute('stroke', object.style.oldColor)
-          path.setAttribute('stroke-width', object.style.thickness)
+          path.setAttribute('stroke-width', String(object.style.thickness))
         }
       }
     })
   }
 
   /**
-   * @param {IEdge} edge
-   * @param {SVGElement} svgElement
+   * @param {!IEdge} edge
+   * @param {!SVGElement} svgElement
    */
   onMouseClicked(edge, svgElement) {
     const componentId = svgElement.getAttribute('component')
     this.currentColor = hasValidColorTag(edge)
       ? edge.tag.color
-      : getColorForComponent(componentId, this.useGradient)
+      : getColorForComponent(Number(componentId), this.useGradient)
     const currentComponent = edge.tag.components[componentId]
     currentComponent.forEach(object => {
-      if (INode.isInstance(object) && object.style instanceof MultiColorNodeStyle) {
+      if (object instanceof INode && object.style instanceof MultiColorNodeStyle) {
         object.style.currentColor = this.currentColor
         object.style.oldColor = object.style.currentColor
         const circle = window.document.getElementById(`node${object.tag.id}circle`)
         if (circle !== null) {
           circle.setAttribute('fill', object.style.currentColor)
         }
-      } else if (IEdge.isInstance(object) && object.style instanceof MultiColorEdgeStyle) {
+      } else if (object instanceof IEdge && object.style instanceof MultiColorEdgeStyle) {
         const path = window.document.getElementById(`edge${object.tag.id}path`)
         if (path !== null) {
           object.style.currentColor = this.currentColor
@@ -913,14 +884,35 @@ export class MultiColorEdgeStyle extends EdgeStyleBase {
    * Determines whether the visual representation of the edge has been hit at the given location.
    * Overridden method to include the {@link MultiColorEdgeStyle#thickness} and the HitTestRadius
    * specified in the context in the calculation.
-   * @param {IRenderContext} context
-   * @param {Point} point
-   * @param {IEdge} edge
-   * @return {boolean}
+   * @param {!IInputModeContext} context
+   * @param {!Point} point
+   * @param {!IEdge} edge
+   * @returns {boolean}
    */
   isHit(context, point, edge) {
     // Use the convenience method in GeneralPath
     return this.getPath(edge).pathContains(point, context.hitTestRadius + this.thickness * 0.5)
+  }
+}
+
+export class SingleColorNodeStyleRenderCache {
+  /**
+   * @param {!string} color
+   * @param {!Point} location
+   * @param {!Size} size
+   */
+  constructor(color, location, size) {
+    this.size = size
+    this.location = location
+    this.color = color
+  }
+
+  /**
+   * @param {!SingleColorNodeStyleRenderCache} other
+   * @returns {boolean}
+   */
+  equals(other) {
+    return other !== null && this.color === other.color && this.size.equals(other.size)
   }
 }
 
@@ -930,32 +922,22 @@ export class MultiColorEdgeStyle extends EdgeStyleBase {
 export class SingleColorNodeStyle extends NodeStyleBase {
   /**
    * Creates a new instance of SingleColorNodeStyle
-   * @param {string} color
+   * @param {!string} color
    */
   constructor(color) {
     super()
-    this.$color = color
-  }
-
-  /** @type {string} */
-  set color(color) {
-    this.$color = color
-  }
-
-  /** @type {string} */
-  get color() {
-    return this.$color
+    this.color = color
   }
 
   /**
    * Creates the visual for a node.
-   * @param {IRenderContext} renderContext
-   * @param {INode} node
-   * @return {SvgVisual}
+   * @param {!IRenderContext} renderContext
+   * @param {!INode} node
+   * @returns {!SvgVisual}
    */
   createVisual(renderContext, node) {
     const g = window.document.createElementNS('http://www.w3.org/2000/svg', 'g')
-    const cache = this.createRenderDataCache(this.$color, node.layout, node.tag)
+    const cache = SingleColorNodeStyle.createRenderDataCache(this.color, node.layout)
     this.render(node, g, cache)
     g.setAttribute('transform', `translate(${node.layout.x} ${node.layout.y})`)
     return new SvgVisual(g)
@@ -963,15 +945,15 @@ export class SingleColorNodeStyle extends NodeStyleBase {
 
   /**
    * Re-renders the node using the old visual for performance reasons.
-   * @param {IRenderContext} renderContext
-   * @param {Visual} oldVisual
-   * @param {INode} node
-   * @return {Visual}
+   * @param {!IRenderContext} renderContext
+   * @param {!SvgVisual} oldVisual
+   * @param {!INode} node
+   * @returns {!Visual}
    */
   updateVisual(renderContext, oldVisual, node) {
     const container = oldVisual.svgElement
     const oldCache = container['data-renderDataCache']
-    const newCache = this.createRenderDataCache(this.$color, node.layout)
+    const newCache = SingleColorNodeStyle.createRenderDataCache(this.color, node.layout)
 
     if (!newCache.equals(oldCache)) {
       this.render(node, container, newCache)
@@ -991,12 +973,12 @@ export class SingleColorNodeStyle extends NodeStyleBase {
 
   /**
    * Creates the visual appearance of a node.
-   * @param {INode} node
-   * @param {Visual} visual
-   * @param {Object} cache
+   * @param {!INode} node
+   * @param {!SVGGElement} element
+   * @param {!SingleColorNodeStyleRenderCache} cache
    */
-  render(node, visual, cache) {
-    visual['data-renderDataCache'] = cache
+  render(node, element, cache) {
+    element['data-renderDataCache'] = cache
 
     const tag = node.tag
 
@@ -1004,10 +986,10 @@ export class SingleColorNodeStyle extends NodeStyleBase {
     const nodeSize = cache.size
     const radius = nodeSize.width * 0.5
 
-    let group = visual.firstElementChild
+    let group = element.firstElementChild
     if (group === null) {
       group = window.document.createElementNS('http://www.w3.org/2000/svg', 'g')
-      visual.appendChild(group)
+      element.appendChild(group)
     }
 
     group.setAttribute('id', `node${tag.id}`)
@@ -1021,34 +1003,27 @@ export class SingleColorNodeStyle extends NodeStyleBase {
 
     shape.setAttribute('id', `node${node.tag.id}circle`)
     shape.setAttribute('class', 'color-transition')
-    shape.setAttribute('cx', radius)
-    shape.setAttribute('cy', radius)
-    shape.setAttribute('rx', radius)
-    shape.setAttribute('ry', radius)
+    shape.setAttribute('cx', String(radius))
+    shape.setAttribute('cy', String(radius))
+    shape.setAttribute('rx', String(radius))
+    shape.setAttribute('ry', String(radius))
     shape.setAttribute('fill', this.color)
   }
 
   /**
-   * @param {string} color
-   * @param {IRectangle} layout
-   * @return {*}
+   * @param {!string} color
+   * @param {!IRectangle} layout
+   * @returns {!SingleColorNodeStyleRenderCache}
    */
-  createRenderDataCache(color, layout) {
-    return {
-      color,
-      location: layout.toPoint(),
-      size: layout.toSize(),
-      equals(other) {
-        return other !== null && this.color === other.color && this.size.equals(other.size)
-      }
-    }
+  static createRenderDataCache(color, layout) {
+    return new SingleColorNodeStyleRenderCache(color, layout.toPoint(), layout.toSize())
   }
 
   /**
    * Returns whether or not a point lies inside the node.
-   * @param {INode} node
-   * @param {Point} point
-   * @return {boolean}
+   * @param {!INode} node
+   * @param {!Point} point
+   * @returns {boolean}
    */
   isInside(node, point) {
     return GeomUtilities.ellipseContains(node.layout.toRect(), point, 0)
@@ -1056,8 +1031,8 @@ export class SingleColorNodeStyle extends NodeStyleBase {
 
   /**
    * Gets the outline of the node, an ellipse in this case.
-   * @param {INode} node
-   * @return {GeneralPath}
+   * @param {!INode} node
+   * @returns {!GeneralPath}
    */
   getOutline(node) {
     const rect = node.layout.toRect()
@@ -1067,68 +1042,105 @@ export class SingleColorNodeStyle extends NodeStyleBase {
   }
 }
 
+export class SingleColorEdgeStyleRenderCache {
+  /**
+   * @param {!string} color
+   * @param {!GeneralPath} path
+   * @param {!IArrow} targetArrow
+   */
+  constructor(color, path, targetArrow) {
+    this.targetArrow = targetArrow
+    this.path = path
+    this.color = color
+  }
+
+  /**
+   * @param {*} other
+   * @returns {boolean}
+   */
+  equals(other) {
+    return (
+      other !== null &&
+      other instanceof SingleColorEdgeStyleRenderCache &&
+      this.pathEquals(other) &&
+      this.stateEquals(other)
+    )
+  }
+
+  /**
+   * Check if the current color and the arrows of this instance
+   * are equals to another {@link SingleColorEdgeStyleRenderCache}'s properties.
+   * @param {!SingleColorEdgeStyleRenderCache} other
+   * @returns {boolean}
+   */
+  stateEquals(other) {
+    return this.color === other.color && YObject.equals(other.targetArrow, this.targetArrow)
+  }
+
+  /**
+   * Check if the path of this instance is equals to another
+   * {@link SingleColorEdgeStyleRenderCache}'s path.
+   * @param {!SingleColorEdgeStyleRenderCache} other
+   * @returns {boolean}
+   */
+  pathEquals(other) {
+    return other.path.hasSameValue(this.path)
+  }
+}
+
 /**
  * Edge style that can be highlighted when hovered (or when hovering the according component/path).
  */
 export class SingleColorEdgeStyle extends EdgeStyleBase {
   /**
    * Creates a new instance of SingleColorEdgeStyle
-   * @param {string} color
+   * @param {!string} color
+   * @param {!IArrow} targetArrow
    */
-  constructor(color) {
+  constructor(color, targetArrow) {
     super()
-    this.$color = color
-    this.$targetArrow = null
-  }
-
-  /** @type {string} */
-  set color(color) {
-    this.$color = color
-  }
-
-  /** @type {string} */
-  get color() {
-    return this.$color
-  }
-
-  /** @type {IArrow} */
-  set targetArrow(value) {
-    this.$targetArrow = value
-  }
-
-  /** @type {IArrow} */
-  get targetArrow() {
-    return this.$targetArrow
+    this.targetArrow = targetArrow
+    this.color = color
   }
 
   /**
    * Creates the visual for an edge.
-   * @param {IRenderContext} renderContext
-   * @param {IEdge} edge
-   * @return {SvgVisual}
+   * @param {!IRenderContext} renderContext
+   * @param {!IEdge} edge
+   * @returns {!SvgVisual}
    */
   createVisual(renderContext, edge) {
     const visual = new SvgVisual(document.createElementNS('http://www.w3.org/2000/svg', 'g'))
-    const cache = this.createRenderDataCache(this.color, this.getPath(edge), this.targetArrow)
+    const cache = SingleColorEdgeStyle.createRenderDataCache(
+      this.color,
+      this.getPath(edge),
+      this.targetArrow
+    )
     this.render(renderContext, edge, visual, cache)
     return visual
   }
 
   /**
    * Re-renders the edge using the old visual for performance reasons.
-   * @param {IRenderContext} renderContext
-   * @param {Visual} oldVisual
-   * @param {IEdge} edge
-   * @return {Visual}
+   * @param {!IRenderContext} renderContext
+   * @param {!SvgVisual} oldVisual
+   * @param {!IEdge} edge
+   * @returns {!Visual}
    */
   updateVisual(renderContext, oldVisual, edge) {
     const g = oldVisual.svgElement
     const oldCache = g['data-renderDataCache']
-    const newCache = this.createRenderDataCache(this.color, this.getPath(edge), this.targetArrow)
+    const newCache = SingleColorEdgeStyle.createRenderDataCache(
+      this.color,
+      this.getPath(edge),
+      this.targetArrow
+    )
 
     if (!newCache.stateEquals(oldCache)) {
       // more than only the path changed - re-render the visual
-      g.removeChild(g.lastChild)
+      if (g.lastChild) {
+        g.removeChild(g.lastChild)
+      }
       this.render(renderContext, edge, oldVisual, newCache)
     } else if (!newCache.pathEquals(oldCache)) {
       // only the path changed - update the old visual
@@ -1140,10 +1152,10 @@ export class SingleColorEdgeStyle extends EdgeStyleBase {
 
   /**
    * Creates the visual appearance of an edge.
-   * @param {IRenderContext} context
-   * @param {IEdge} edge
-   * @param {Visual} visual
-   * @param {Object} cache
+   * @param {!IRenderContext} context
+   * @param {!IEdge} edge
+   * @param {!SvgVisual} visual
+   * @param {!SingleColorEdgeStyleRenderCache} cache
    */
   render(context, edge, visual, cache) {
     const g = visual.svgElement
@@ -1159,55 +1171,24 @@ export class SingleColorEdgeStyle extends EdgeStyleBase {
 
     g.appendChild(path)
 
-    const noneArrow = IArrow.NONE
-    super.addArrows(context, g, edge, gp, noneArrow, cache.targetArrow)
+    super.addArrows(context, g, edge, gp, IArrow.NONE, cache.targetArrow)
   }
 
   /**
    * Creates an object containing all necessary data to create an edge visual.
-   * @param {string} color
-   * @param {GeneralPath} path
-   * @param {IArrow} targetArrow
-   * @return {object}
+   * @param {!string} color
+   * @param {!GeneralPath} path
+   * @param {!IArrow} targetArrow
+   * @returns {!SingleColorEdgeStyleRenderCache}
    */
-  createRenderDataCache(color, path, targetArrow) {
-    return {
-      color,
-      path,
-      targetArrow,
-      equals(other) {
-        return (
-          other !== null &&
-          other instanceof SingleColorNodeStyle.RenderDataCache &&
-          this.pathEquals(other) &&
-          this.stateEquals(other)
-        )
-      },
-
-      /**
-       * Check if the current color and the arrows of this instance
-       * are equals to another {@link SingleColorNodeStyle.RenderDataCache}'s properties.
-       * @return {boolean}
-       */
-      stateEquals(other) {
-        return this.color === other.color && YObject.equals(other.targetArrow, this.targetArrow)
-      },
-
-      /**
-       * Check if the path of this instance is equals to another
-       * {@link SingleColorNodeStyle.RenderDataCache}'s path.
-       * @return {boolean}
-       */
-      pathEquals(other) {
-        return other.path.hasSameValue(this.path)
-      }
-    }
+  static createRenderDataCache(color, path, targetArrow) {
+    return new SingleColorEdgeStyleRenderCache(color, path, targetArrow)
   }
 
   /**
    * Creates a {@link GeneralPath} from the edge's bends.
-   * @param {IEdge} edge The edge for which to create the path.
-   * @return {GeneralPath} A {@link GeneralPath} following the edge.
+   * @param {!IEdge} edge The edge for which to create the path.
+   * @returns {!GeneralPath} A {@link GeneralPath} following the edge.
    */
   getPath(edge) {
     const path = new GeneralPath()
@@ -1221,10 +1202,10 @@ export class SingleColorEdgeStyle extends EdgeStyleBase {
   /**
    * Updates the edge path data as well as the arrow positions of the visuals stored in <param
    * name="visual"/>.
-   * @param {IRenderContext} context
-   * @param {IEdge} edge
-   * @param {Visual} visual
-   * @param {object} cache
+   * @param {!IRenderContext} context
+   * @param {!IEdge} edge
+   * @param {!SvgVisual} visual
+   * @param {!SingleColorEdgeStyleRenderCache} cache
    */
   updatePath(context, edge, visual, cache) {
     // The first child must be a path - else re-create the container from scratch
@@ -1242,18 +1223,45 @@ export class SingleColorEdgeStyle extends EdgeStyleBase {
     path.setAttribute('d', gp.createSvgPathData(new Matrix()))
 
     // update the arrows
-    const noneArrow = IArrow.NONE
-    super.updateArrows(context, g, edge, gp, noneArrow, cache.targetArrow)
+    super.updateArrows(context, g, edge, gp, IArrow.NONE, cache.targetArrow)
   }
 
   /**
-   * @param {IRenderContext} context
-   * @param {Point} point
-   * @param {IEdge} edge
-   * @return {boolean}
+   * @param {!IInputModeContext} context
+   * @param {!Point} point
+   * @param {!IEdge} edge
+   * @returns {boolean}
    */
   isHit(context, point, edge) {
     return this.getPath(edge).pathContains(point, context.hitTestRadius)
+  }
+}
+
+export class SourceTargetNodeStyleRenderCache {
+  /**
+   * @param {!string} currentColor
+   * @param {!Point} location
+   * @param {!Size} size
+   * @param {!NodeTag} tag
+   */
+  constructor(currentColor, location, size, tag) {
+    this.tag = tag
+    this.size = size
+    this.location = location
+    this.currentColor = currentColor
+  }
+  /**
+   * @param {!SourceTargetNodeStyleRenderCache} other
+   * @returns {boolean}
+   */
+  equals(other) {
+    return (
+      other !== null &&
+      this.currentColor === other.currentColor &&
+      this.size.equals(other.size) &&
+      arraysAreEqual(this.tag.components, other.tag.components) &&
+      arraysAreEqual(this.tag.nodeComponents, other.tag.nodeComponents)
+    )
   }
 }
 
@@ -1262,66 +1270,26 @@ export class SingleColorEdgeStyle extends EdgeStyleBase {
  */
 export class SourceTargetNodeStyle extends NodeStyleBase {
   /**
-   * Creats a new instance of SourceTargetNodeStyle.
+   * Creates a new instance of SourceTargetNodeStyle.
    * @param {number} type
    */
   constructor(type) {
     super()
-    this.$currentColor = 'rgba(255,255,255,1)'
-    this.$oldColor = null
-    this.$type = type
-    this.$hovered = false
-  }
-
-  /** @type {string} */
-  set currentColor(color) {
-    this.$currentColor = color
-  }
-
-  /** @type {string} */
-  get currentColor() {
-    return this.$currentColor
-  }
-
-  /** @type {string} */
-  set oldColor(color) {
-    this.$oldColor = color
-  }
-
-  /** @type {string} */
-  get oldColor() {
-    return this.$oldColor
-  }
-
-  /** @type {boolean} */
-  set hovered(hovered) {
-    this.$hovered = hovered
-  }
-
-  /** @type {boolean} */
-  get hovered() {
-    return this.$hovered
-  }
-
-  /** @type {number} */
-  set type(type) {
-    this.$type = type
-  }
-
-  /** @type {number} */
-  get type() {
-    return this.$type
+    this.currentColor = 'rgba(255,255,255,1)'
+    this.oldColor = null
+    this.hovered = false
+    this.type = type
   }
 
   /**
    * Creates the visual for a node.
-   * @param {IRenderContext} renderContext
-   * @param {INode} node
-   * @return {SvgVisual}
+   * @param {!IRenderContext} renderContext
+   * @param {!INode} node
+   * @returns {!SvgVisual}
    */
   createVisual(renderContext, node) {
     const g = window.document.createElementNS('http://www.w3.org/2000/svg', 'g')
-    const cache = this.createRenderDataCache(this.$currentColor, node.layout, node.tag)
+    const cache = this.createRenderDataCache(this.currentColor, node.layout, node.tag)
     this.render(renderContext, node, g, cache)
     // set the location
     g.setAttribute('transform', `translate(${node.layout.x} ${node.layout.y})`)
@@ -1330,19 +1298,19 @@ export class SourceTargetNodeStyle extends NodeStyleBase {
 
   /**
    * Re-renders the node using the old visual for performance reasons.
-   * @param {IRenderContext} renderContext
-   * @param {Visual} oldVisual
-   * @param {INode} node
-   * @return {Visual}
+   * @param {!IRenderContext} renderContext
+   * @param {!SvgVisual} oldVisual
+   * @param {!INode} node
+   * @returns {!Visual}
    */
   updateVisual(renderContext, oldVisual, node) {
     const container = oldVisual.svgElement
     const oldCache = container['data-renderDataCache']
-    const newCache = this.createRenderDataCache(this.$currentColor, node.layout, node.tag)
+    const newCache = this.createRenderDataCache(this.currentColor, node.layout, node.tag)
 
     if (!newCache.equals(oldCache)) {
       // something changed - re-render the visual
-      while (container.hasChildNodes()) {
+      while (container.firstChild) {
         container.removeChild(container.firstChild)
       }
       this.render(renderContext, node, container, newCache)
@@ -1368,10 +1336,10 @@ export class SourceTargetNodeStyle extends NodeStyleBase {
    * (0,0). {@link SourceTargetNodeStyle#createVisual} and
    * <code>UpdateVisual</code> finally arrange the container so that the drawing is translated into
    * the final position.
-   * @param {IRenderContext} renderContext
-   * @param {INode} node
-   * @param {Element} visual
-   * @param {Object} cache
+   * @param {!IRenderContext} renderContext
+   * @param {!INode} node
+   * @param {!SVGGElement} visual
+   * @param {!SourceTargetNodeStyleRenderCache} cache
    */
   render(renderContext, node, visual, cache) {
     visual['data-renderDataCache'] = cache
@@ -1405,14 +1373,14 @@ export class SourceTargetNodeStyle extends NodeStyleBase {
       const y = Math.sin(angle)
       for (let i = 0; i < components.length; i++) {
         const slice = window.document.createElementNS('http://www.w3.org/2000/svg', 'path')
-        slice.setAttribute('component', components[i])
+        slice.setAttribute('component', String(components[i]))
         slice.setAttribute(
           'd',
           `M${radius},${radius} L${radius},${0} A${radius},${radius} 0 0,1 ${radius + y * radius},${
             radius - x * radius
           } z`
         )
-        slice.setAttribute('fill', getColorForComponent(components[i]), this.useGradient)
+        slice.setAttribute('fill', getColorForComponent(components[i], false))
         slice.setAttribute(
           'transform',
           `rotate(${(i * angle * 180) / Math.PI} ${radius} ${radius})`
@@ -1451,10 +1419,10 @@ export class SourceTargetNodeStyle extends NodeStyleBase {
 
     const circle = window.document.createElementNS('http://www.w3.org/2000/svg', 'ellipse')
     circle.setAttribute('id', `node${node.tag.id}circle`)
-    circle.setAttribute('cx', radius)
-    circle.setAttribute('cy', radius)
-    circle.setAttribute('rx', radius)
-    circle.setAttribute('ry', radius)
+    circle.setAttribute('cx', String(radius))
+    circle.setAttribute('cy', String(radius))
+    circle.setAttribute('rx', String(radius))
+    circle.setAttribute('ry', String(radius))
     circle.setAttribute('fill', 'white')
     circle.setAttribute('stroke', strokeColor)
     circle.setAttribute('stroke-width', '5')
@@ -1464,10 +1432,10 @@ export class SourceTargetNodeStyle extends NodeStyleBase {
 
     if (this.type === SourceTargetNodeStyle.TYPE_SOURCE_AND_TARGET) {
       const dashedCircle = window.document.createElementNS('http://www.w3.org/2000/svg', 'ellipse')
-      dashedCircle.setAttribute('cx', radius)
-      dashedCircle.setAttribute('cy', radius)
-      dashedCircle.setAttribute('rx', radius)
-      dashedCircle.setAttribute('ry', radius)
+      dashedCircle.setAttribute('cx', String(radius))
+      dashedCircle.setAttribute('cy', String(radius))
+      dashedCircle.setAttribute('rx', String(radius))
+      dashedCircle.setAttribute('ry', String(radius))
       dashedCircle.setAttribute('stroke', 'yellowgreen')
       dashedCircle.setAttribute('stroke-width', '5')
       dashedCircle.setAttribute('stroke-dasharray', (Math.PI * radius * 0.5).toString())
@@ -1479,32 +1447,18 @@ export class SourceTargetNodeStyle extends NodeStyleBase {
 
   /**
    * Creates an object which contains all relevant data to update the style.
-   * @param {string} color
-   * @param {IRectangle} layout
-   * @param {Object} tag
-   * @return {Object}
+   * @param {!string} color
+   * @param {!IRectangle} layout
+   * @param {!NodeTag} tag
+   * @returns {!SourceTargetNodeStyleRenderCache}
    */
   createRenderDataCache(color, layout, tag) {
-    return {
-      currentColor: color,
-      location: layout.toPoint(),
-      size: layout.toSize(),
-      tag,
-      equals(other) {
-        return (
-          other !== null &&
-          this.currentColor === other.currentColor &&
-          this.size.equals(other.size) &&
-          arraysAreEqual(this.tag.components, other.tag.components) &&
-          arraysAreEqual(this.tag.nodeComponents, other.tag.nodeComponents)
-        )
-      }
-    }
+    return new SourceTargetNodeStyleRenderCache(color, layout.toPoint(), layout.toSize(), tag)
   }
 
   /**
-   * @param {INode} node
-   * @param {SVGElement} svgElement
+   * @param {!INode} node
+   * @param {!SVGElement} svgElement
    */
   onMouseOver(node, svgElement) {
     const componentId = svgElement.getAttribute('component')
@@ -1512,7 +1466,7 @@ export class SourceTargetNodeStyle extends NodeStyleBase {
 
     component.forEach(object => {
       if (
-        INode.isInstance(object) &&
+        object instanceof INode &&
         (object.style instanceof SourceTargetNodeStyle ||
           object.style instanceof MultiColorNodeStyle)
       ) {
@@ -1531,18 +1485,18 @@ export class SourceTargetNodeStyle extends NodeStyleBase {
               object.style instanceof MultiColorNodeStyle ||
               SourceTargetNodeStyle.notSourceOrTarget(object, component)
             ) {
-              circle.setAttribute('fill', getColorForComponent(componentId), this.useGradient)
+              circle.setAttribute('fill', getColorForComponent(Number(componentId), false))
             }
           }
         } else if (componentElement !== null) {
           componentElement.setAttribute('class', 'path-highlight-hovered')
           object.style.hovered = true
         }
-      } else if (IEdge.isInstance(object) && object.style instanceof MultiColorEdgeStyle) {
+      } else if (object instanceof IEdge && object.style instanceof MultiColorEdgeStyle) {
         const path = window.document.getElementById(`edge${object.tag.id}path`)
         if (path !== null) {
           object.style.oldColor = object.style.currentColor
-          path.setAttribute('stroke', getColorForComponent(componentId), this.useGradient)
+          path.setAttribute('stroke', getColorForComponent(Number(componentId), false))
           path.setAttribute('stroke-width', '7')
         }
       }
@@ -1550,15 +1504,15 @@ export class SourceTargetNodeStyle extends NodeStyleBase {
   }
 
   /**
-   * @param {INode} node
-   * @param {SVGElement} svgElement
+   * @param {!INode} node
+   * @param {!SVGElement} svgElement
    */
   onMouseOut(node, svgElement) {
     const componentId = svgElement.getAttribute('component')
     const component = node.tag.components[componentId]
     component.forEach(object => {
       if (
-        INode.isInstance(object) &&
+        object instanceof INode &&
         (object.style instanceof SourceTargetNodeStyle ||
           object.style instanceof MultiColorNodeStyle)
       ) {
@@ -1578,20 +1532,20 @@ export class SourceTargetNodeStyle extends NodeStyleBase {
             object.style.hovered = false
           }
         }
-      } else if (IEdge.isInstance(object) && object.style instanceof MultiColorEdgeStyle) {
+      } else if (object instanceof IEdge && object.style instanceof MultiColorEdgeStyle) {
         const path = window.document.getElementById(`edge${object.tag.id}path`)
         if (path !== null) {
           path.setAttribute('stroke', object.style.oldColor)
-          path.setAttribute('stroke-width', object.style.thickness)
+          path.setAttribute('stroke-width', String(object.style.thickness))
         }
       }
     })
   }
 
   /**
-   * @param {Point} clickPoint
-   * @param {INode} node
-   * @param {SVGElement} svgElement
+   * @param {!Point} clickPoint
+   * @param {!INode} node
+   * @param {!SVGElement} svgElement
    */
   onMouseClicked(clickPoint, node, svgElement) {
     const nodeCenterX = node.layout.x + node.layout.width * 0.5
@@ -1603,17 +1557,17 @@ export class SourceTargetNodeStyle extends NodeStyleBase {
       Math.pow(radius, 2)
     if (!isInCircle || node.tag.nodeComponents.length === 1) {
       const component = svgElement.getAttribute('component')
-      const color = getColorForComponent(component, this.useGradient)
+      const color = getColorForComponent(Number(component), false)
       const currentComponent = node.tag.components[component]
       currentComponent.forEach(object => {
-        if (INode.isInstance(object) && object.style instanceof MultiColorNodeStyle) {
+        if (object instanceof INode && object.style instanceof MultiColorNodeStyle) {
           object.style.currentColor = color
           object.style.oldColor = object.style.currentColor
           const circle = window.document.getElementById(`node${object.tag.id}circle`)
           if (circle !== null) {
             circle.setAttribute('fill', object.style.currentColor)
           }
-        } else if (IEdge.isInstance(object) && object.style instanceof MultiColorEdgeStyle) {
+        } else if (object instanceof IEdge && object.style instanceof MultiColorEdgeStyle) {
           const path = window.document.getElementById(`edge${object.tag.id}path`)
           if (path !== null) {
             object.tag.edgeComponent = component
@@ -1628,9 +1582,9 @@ export class SourceTargetNodeStyle extends NodeStyleBase {
 
   /**
    * Determines if the given node is not a source or target node of a path.
-   * @param {INode} node
-   * @param {Array} component
-   * @return {boolean}
+   * @param {!INode} node
+   * @param {!Array.<IModelItem>} component
+   * @returns {boolean}
    */
   static notSourceOrTarget(node, component) {
     return component[0] !== node && component[component.length - 1] !== node
@@ -1639,9 +1593,9 @@ export class SourceTargetNodeStyle extends NodeStyleBase {
   /**
    * Exact geometric check whether a point p lies inside the node. This is important for
    * intersection calculation, among others.
-   * @param {INode} node
-   * @param {Point} point
-   * @return {boolean}
+   * @param {!INode} node
+   * @param {!Point} point
+   * @returns {boolean}
    */
   isInside(node, point) {
     return GeomUtilities.ellipseContains(node.layout.toRect(), point, 0)
@@ -1650,8 +1604,8 @@ export class SourceTargetNodeStyle extends NodeStyleBase {
   /**
    * Gets the outline of the node, an ellipse in this case.
    * This allows for correct edge path intersection calculation, among others.
-   * @param {INode} node
-   * @return {GeneralPath}
+   * @param {!INode} node
+   * @returns {!GeneralPath}
    */
   getOutline(node) {
     const rect = node.layout.toRect()
@@ -1660,17 +1614,23 @@ export class SourceTargetNodeStyle extends NodeStyleBase {
     return outline
   }
 
-  /** @type {number} */
+  /**
+   * @type {number}
+   */
   static get TYPE_SOURCE() {
     return 0
   }
 
-  /** @type {number} */
+  /**
+   * @type {number}
+   */
   static get TYPE_TARGET() {
     return 1
   }
 
-  /** @type {number} */
+  /**
+   * @type {number}
+   */
   static get TYPE_SOURCE_AND_TARGET() {
     return 2
   }

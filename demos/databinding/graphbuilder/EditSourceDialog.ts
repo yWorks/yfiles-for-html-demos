@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -30,8 +30,10 @@ import {
   EdgesSourceDefinitionBuilderConnector,
   NodesSourceDefinitionBuilderConnector
 } from './ModelClasses'
+// import CodeMirror typings
+import CodeMirror, { EditorFromTextArea } from 'codemirror'
 
-import { addClass } from '../../resources/demo-app.js'
+import { addClass } from '../../resources/demo-app'
 
 /**
  * Abstract base class for a node-/edge- source editing dialog
@@ -131,17 +133,18 @@ export abstract class SourceDialog {
    * @param doc the documentation text. Can be longer as it is rendered as a HTML paragraph
    * @param mode the language syntax configuration object for CodeMirror
    */
-  // @ts-ignore
-  protected createEditorField(labelText: string, doc: string, mode: string | object): CodeMirror {
+  protected createEditorField(
+    labelText: string,
+    doc: string,
+    mode: string | object
+  ): EditorFromTextArea {
     const container = this.createDescription(labelText, doc)
     const textArea = document.createElement('textarea')
     container.appendChild(textArea)
-    // @ts-ignore
-    // eslint-disable-next-line no-undef
     return CodeMirror.fromTextArea(textArea, {
       lineNumbers: true,
       mode: mode
-    })
+    } as any)
   }
 
   /**

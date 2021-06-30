@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -26,26 +26,24 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { MarkupExtension, TypeAttribute, YBoolean, YObject, YString } from 'yfiles'
+import {
+  HandleSerializationEventArgs,
+  ILookup,
+  MarkupExtension,
+  TypeAttribute,
+  YBoolean,
+  YObject,
+  YString
+} from 'yfiles'
 
 /**
  * The data model of the UML node style.
  * A modification counter tracks if there have been modifications since the last drawing of this model.
  */
 export class UMLClassModel {
-  get modCount() {
-    return this.$modCount
-  }
-
-  get selectedIndex() {
-    return this.$selectedIndex
-  }
-
-  set selectedIndex(v) {
-    this.$selectedIndex = v
-    this.modify()
-  }
-
+  /**
+   * @param {!object} [data]
+   */
   constructor(data) {
     this.stereotype = (data && data.stereotype) || ''
     this.constraint = (data && data.constraint) || ''
@@ -54,15 +52,40 @@ export class UMLClassModel {
     this.operations = (data && data.operations) || []
     this.attributesOpen = this.attributes.length > 0
     this.operationsOpen = this.operations.length > 0
-    this.$selectedIndex = -1
     this.selectedCategory = 1
+    this.$selectedIndex = -1
     this.$modCount = 0
+  }
+
+  /**
+   * @type {number}
+   */
+  get modCount() {
+    return this.$modCount
+  }
+
+  /**
+   * @type {number}
+   */
+  get selectedIndex() {
+    return this.$selectedIndex
+  }
+
+  /**
+   * @type {number}
+   */
+  set selectedIndex(value) {
+    this.$selectedIndex = value
+    this.modify()
   }
 
   modify() {
     this.$modCount++
   }
 
+  /**
+   * @returns {!UMLClassModel}
+   */
   clone() {
     const clone = new UMLClassModel()
     clone.stereotype = this.stereotype
@@ -81,62 +104,118 @@ export class UMLClassModel {
  * Markup extension needed to (de-)serialize the UML model.
  */
 export class UMLClassModelExtension extends MarkupExtension {
+  constructor() {
+    super()
+    this.$stereotype = ''
+    this.$constraint = ''
+    this.$className = ''
+    this.$attributes = []
+    this.$operations = []
+    this.$attributesOpen = false
+    this.$operationsOpen = false
+  }
+
+  /**
+   * @type {!string}
+   */
   get stereotype() {
     return this.$stereotype
   }
 
+  /**
+   * @type {!string}
+   */
   set stereotype(value) {
     this.$stereotype = value
   }
 
+  /**
+   * @type {!string}
+   */
   get constraint() {
     return this.$constraint
   }
 
+  /**
+   * @type {!string}
+   */
   set constraint(value) {
     this.$constraint = value
   }
 
+  /**
+   * @type {!string}
+   */
   get className() {
     return this.$className
   }
 
+  /**
+   * @type {!string}
+   */
   set className(value) {
     this.$className = value
   }
 
+  /**
+   * @type {!Array.<string>}
+   */
   get attributes() {
     return this.$attributes
   }
 
+  /**
+   * @type {!Array.<string>}
+   */
   set attributes(value) {
     this.$attributes = value
   }
 
+  /**
+   * @type {!Array.<string>}
+   */
   get operations() {
     return this.$operations
   }
 
+  /**
+   * @type {!Array.<string>}
+   */
   set operations(value) {
     this.$operations = value
   }
 
+  /**
+   * @type {boolean}
+   */
   get attributesOpen() {
     return this.$attributesOpen
   }
 
+  /**
+   * @type {boolean}
+   */
   set attributesOpen(value) {
     this.$attributesOpen = value
   }
 
+  /**
+   * @type {boolean}
+   */
   get operationsOpen() {
     return this.$operationsOpen
   }
 
+  /**
+   * @type {boolean}
+   */
   set operationsOpen(value) {
     this.$operationsOpen = value
   }
 
+  /**
+   * @type {!object}
+   */
   static get $meta() {
     return {
       stereotype: TypeAttribute(YString.$class),
@@ -149,6 +228,10 @@ export class UMLClassModelExtension extends MarkupExtension {
     }
   }
 
+  /**
+   * @param {!ILookup} serviceProvider
+   * @returns {!UMLClassModel}
+   */
   provideValue(serviceProvider) {
     const umlClassModel = new UMLClassModel()
     umlClassModel.stereotype = this.stereotype

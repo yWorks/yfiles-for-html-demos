@@ -4,7 +4,7 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/databinding/adjacencygraphbuilder/index.html).
 
-This demo uses the class [AdjacencyGraphBuilder](https://docs.yworks.com/yfileshtml/#/api/AdjacencyGraphBuilder) to interactively build and modify a graph from business data.
+This demo interactively builds and modifies a graph from **JSON** business data using class [AdjacencyGraphBuilder](https://docs.yworks.com/yfileshtml/#/api/AdjacencyGraphBuilder).
 
 See the the Developer's Guide section on the [AdjacencyGraphBuilder](https://docs.yworks.com/yfileshtml/#/dguide/graph_builder-AdjacencyGraphBuilder) for an in-depth explanation of the relevant concepts.
 

@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -67,7 +67,10 @@ import {
   StorageLocation,
   TreeLayout,
   TreeReductionStage,
-  YObject
+  YObject,
+  ILayoutAlgorithm,
+  INodeStyle,
+  IOrientedRectangle
 } from 'yfiles'
 
 import RotatedNodeLayoutStage from './RotatedNodeLayoutStage.js'
@@ -83,16 +86,22 @@ import DemoStyles, {
   DemoSerializationListener
 } from '../../resources/demo-styles.js'
 import * as RotatableNodes from './RotatableNodes.js'
-import { RotatableNodesSerializationListener } from './RotatableNodes.js'
+import {
+  RotatableNodesSerializationListener,
+  RotatableNodeStyleDecorator
+} from './RotatableNodes.js'
 import { bindAction, bindChangeListener, bindCommand, showApp } from '../../resources/demo-app.js'
 import loadJson from '../../resources/load-json.js'
 
 /** @type {GraphComponent} */
-let graphComponent = null
+let graphComponent
 
 /** @type {GraphMLSupport} */
-let graphmlSupport = null
+let graphmlSupport
 
+/**
+ * @param {!object} licenseData
+ */
 function run(licenseData) {
   License.value = licenseData
   graphComponent = new GraphComponent('graphComponent')
@@ -134,7 +143,7 @@ function initializeInputMode() {
   const handleInputMode = graphComponent.inputMode.handleInputMode
   handleInputMode.addDraggedListener((src, args) => {
     if (src.currentHandle instanceof RotatableNodes.NodeRotateHandle) {
-      const rotatedNode = src.affectedItems.find(item => INode.isInstance(item))
+      const rotatedNode = src.affectedItems.find(item => item instanceof INode)
       if (
         rotatedNode &&
         rotatedNode.style instanceof RotatableNodes.RotatableNodeStyleDecorator &&
@@ -156,7 +165,7 @@ function initializeInputMode() {
 function initializeGraphML() {
   // initialize (de-)serialization for load/save commands
   graphmlSupport = new GraphMLSupport({
-    graphComponent, // configure to load and save to the file system
+    graphComponent,
     storageLocation: StorageLocation.FILE_SYSTEM
   })
 
@@ -200,9 +209,10 @@ function initializeGraph() {
   graph.nodeDefaults.size = new Size(100, 50)
 
   const coreLabelModel = new InteriorLabelModel()
-  graph.nodeDefaults.labels.layoutParameter = new RotatableNodeLabels.RotatableNodeLabelModelDecorator(
-    coreLabelModel
-  ).createWrappingParameter(InteriorLabelModel.CENTER)
+  graph.nodeDefaults.labels.layoutParameter =
+    new RotatableNodeLabels.RotatableNodeLabelModelDecorator(
+      coreLabelModel
+    ).createWrappingParameter(InteriorLabelModel.CENTER)
 
   // Make ports visible
   graph.nodeDefaults.ports.style = new NodeStylePortStyleAdapter(
@@ -213,9 +223,10 @@ function initializeGraph() {
     })
   )
   // Use a rotatable port model as default
-  graph.nodeDefaults.ports.locationParameter = new RotatablePorts.RotatablePortLocationModelDecorator().createWrappingParameter(
-    FreeNodePortLocationModel.NODE_TOP_ANCHORED
-  )
+  graph.nodeDefaults.ports.locationParameter =
+    new RotatablePorts.RotatablePortLocationModelDecorator().createWrappingParameter(
+      FreeNodePortLocationModel.NODE_TOP_ANCHORED
+    )
 
   const groupStyle = new DemoGroupStyle()
   groupStyle.isCollapsible = true
@@ -233,7 +244,7 @@ function initializeGraph() {
 
 /**
  * Creates a {@link IPortCandidateProvider} that considers the node's shape and rotation.
- * @param {INode} node
+ * @param {!INode} node
  */
 function createPortCandidateProvider(node) {
   const rotatedPortModel = RotatablePorts.RotatablePortLocationModelDecorator.INSTANCE
@@ -243,9 +254,9 @@ function createPortCandidateProvider(node) {
   const wrapped = rnsd.wrapped
 
   if (
-    ShinyPlateNodeStyle.isInstance(wrapped) ||
-    BevelNodeStyle.isInstance(wrapped) ||
-    (ShapeNodeStyle.isInstance(wrapped) && wrapped.shape === ShapeNodeShape.ROUND_RECTANGLE)
+    wrapped instanceof ShinyPlateNodeStyle ||
+    wrapped instanceof BevelNodeStyle ||
+    (wrapped instanceof ShapeNodeStyle && wrapped.shape === ShapeNodeShape.ROUND_RECTANGLE)
   ) {
     return IPortCandidateProvider.combine(
       // Take all existing ports - these are assumed to have the correct port location model
@@ -303,7 +314,7 @@ function createPortCandidateProvider(node) {
   }
   if (
     wrapped instanceof DemoNodeStyle ||
-    (ShapeNodeStyle.isInstance(wrapped) && wrapped.shape === ShapeNodeShape.RECTANGLE)
+    (wrapped instanceof ShapeNodeStyle && wrapped.shape === ShapeNodeShape.RECTANGLE)
   ) {
     return IPortCandidateProvider.combine(
       IPortCandidateProvider.fromUnoccupiedPorts(node),
@@ -355,7 +366,7 @@ function createPortCandidateProvider(node) {
       )
     )
   }
-  if (ShapeNodeStyle.isInstance(wrapped)) {
+  if (wrapped instanceof ShapeNodeStyle) {
     // Can be an arbitrary shape. First create a dummy node that is not rotated
     const dummyNode = new SimpleNode()
     dummyNode.style = wrapped
@@ -383,7 +394,7 @@ Class.ensure(LayoutExecutor)
 
 /**
  * Loads the graph from json-data.
- * @param {'sine'|'circle'} sample
+ * @param {!('sine'|'circle')} sample
  */
 function loadGraph(sample) {
   const graph = graphComponent.graph
@@ -428,6 +439,11 @@ function loadGraph(sample) {
   graphComponent.graph.undoEngine.clear()
 }
 
+/**
+ * @param {!INodeStyle} style
+ * @param {!INode} node
+ * @returns {!GeneralPath}
+ */
 function getOutline(style, node) {
   let outline = style.renderer.getShapeGeometry(node, style).getOutline()
   if (!outline) {
@@ -439,6 +455,11 @@ function getOutline(style, node) {
   return outline
 }
 
+/**
+ * @param {!INodeStyle} style
+ * @param {!INode} node
+ * @returns {!IOrientedRectangle}
+ */
 function getOrientedLayout(style, node) {
   return style instanceof RotatableNodes.RotatableNodeStyleDecorator
     ? style.getRotatedLayout(node)
@@ -466,14 +487,14 @@ async function applyLayout() {
   )
 
   // get the selected layout algorithm
-  let layout = getLayoutAlgorithm()
+  const layout = getLayoutAlgorithm()
 
   // wrap the algorithm in RotatedNodeLayoutStage to make it aware of the node rotations
-  layout = new RotatedNodeLayoutStage(layout)
-  layout.edgeRoutingMode = getRoutingMode()
+  const rotatedNodeLayout = new RotatedNodeLayoutStage(layout)
+  rotatedNodeLayout.edgeRoutingMode = getRoutingMode()
   try {
     // apply the layout
-    await graphComponent.morphLayout(layout, '700ms')
+    await graphComponent.morphLayout(rotatedNodeLayout, '700ms')
 
     // clean up mapper registry
     graph.mapperRegistry.removeMapper(RotatedNodeLayoutStage.ROTATED_NODE_LAYOUT_DP_KEY)
@@ -488,54 +509,47 @@ async function applyLayout() {
 
 /**
  * Gets the layout algorithm selected by the user.
- * @return {ILayoutAlgorithm}
+ * @returns {!ILayoutAlgorithm}
  */
 function getLayoutAlgorithm() {
   const graph = graphComponent.graph
   const selectLayout = document.querySelector("select[data-command='SelectLayout']")
-  let layout
   switch (selectLayout.value) {
     default:
     case 'hierarchic':
-      layout = new HierarchicLayout()
-      break
+      return new HierarchicLayout()
     case 'organic':
-      layout = new OrganicLayout()
-      layout.preferredEdgeLength =
-        1.5 * Math.max(graph.nodeDefaults.size.width, graph.nodeDefaults.size.height)
-      break
+      return new OrganicLayout({
+        preferredEdgeLength:
+          1.5 * Math.max(graph.nodeDefaults.size.width, graph.nodeDefaults.size.height)
+      })
     case 'orthogonal':
-      layout = new OrthogonalLayout()
-      break
+      return new OrthogonalLayout()
     case 'circular':
-      layout = new CircularLayout()
-      break
+      return new CircularLayout()
     case 'tree':
-      layout = new TreeReductionStage(new TreeLayout())
-      layout.nonTreeEdgeRouter = new OrganicEdgeRouter()
-      break
+      return new TreeReductionStage({
+        coreLayout: new TreeLayout(),
+        nonTreeEdgeRouter: new OrganicEdgeRouter()
+      })
     case 'balloon':
-      layout = new TreeReductionStage(new BalloonLayout())
-      layout.nonTreeEdgeRouter = new OrganicEdgeRouter()
-      break
+      return new TreeReductionStage({
+        coreLayout: new BalloonLayout(),
+        nonTreeEdgeRouter: new OrganicEdgeRouter()
+      })
     case 'radial':
-      layout = new RadialLayout()
-      break
+      return new RadialLayout()
     case 'router-polyline':
-      layout = new EdgeRouter()
-      break
+      return new EdgeRouter()
     case 'router-organic':
-      layout = new OrganicEdgeRouter()
-      layout.edgeNodeOverlapAllowed = false
-      break
+      return new OrganicEdgeRouter({ edgeNodeOverlapAllowed: false })
   }
-  return layout
 }
 
 /**
  * Get the routing mode that suits the selected layout algorithm. Layout algorithm that place edge
  * ports in the center of the node don't need to add a routing step.
- * @return {string}
+ * @returns {!('no-routing'|'shortest-straight-path-to-border'|'fixed-port')}
  */
 function getRoutingMode() {
   const selectLayout = document.querySelector("select[data-command='SelectLayout']")
@@ -579,15 +593,13 @@ function registerCommands() {
   bindCommand("button[data-command='ExitGroup']", ICommand.EXIT_GROUP, graphComponent)
 
   bindAction('#demo-snapping-button', () => {
-    graphComponent.inputMode.snapContext.enabled = document.querySelector(
-      '#demo-snapping-button'
-    ).checked
-    graphComponent.inputMode.labelSnapContext.enabled = document.querySelector(
-      '#demo-snapping-button'
-    ).checked
+    const inputMode = graphComponent.inputMode
+    inputMode.snapContext.enabled = document.getElementById('demo-snapping-button').checked
+    inputMode.labelSnapContext.enabled = document.getElementById('demo-snapping-button').checked
   })
   bindAction('#demo-orthogonal-editing-button', () => {
-    graphComponent.inputMode.orthogonalEdgeEditingContext.enabled = document.querySelector(
+    const inputMode = graphComponent.inputMode
+    inputMode.orthogonalEdgeEditingContext.enabled = document.querySelector(
       '#demo-orthogonal-editing-button'
     ).checked
   })

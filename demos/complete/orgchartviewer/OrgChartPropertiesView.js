@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -27,116 +27,121 @@
  **
  ***************************************************************************/
 import { addClass } from '../../resources/demo-app.js'
+import { IModelItem, INode } from 'yfiles'
 
 export default class OrgChartPropertiesView {
   /**
    * Creates a new OrgChartPropertiesView
-   * @param {Element} element The DOM element that will be filled with the properties.
-   * @param {function(INode)} selectAndZoomToNodeWithEmail - the function will be called when clicking
+   * @param {!Element} element The DOM element that will be filled with the properties.
+   * @param {!function} selectAndZoomToNodeWithEmail - the function will be called when clicking
    *   on email links in the View
    */
   constructor(element, selectAndZoomToNodeWithEmail) {
-    this.element = element
     this.selectAndZoomToNodeWithEmail = selectAndZoomToNodeWithEmail
+    this.element = element
   }
 
-  showProperties(node) {
+  /**
+   * @param {?IModelItem} item
+   */
+  showProperties(item) {
     this.clear()
 
-    if (node == null || node.tag == null) {
-      return
-    }
+    if (item instanceof INode && item.tag) {
+      // When the graph is created from the source data by class TreeSource,
+      // The source data for each node is attached to the node as it's tag.
+      const employee = item.tag
+      const heading = document.createElement('div')
+      addClass(heading, 'user-detail')
+      this.element.appendChild(heading)
+      // The employee name
+      heading.appendChild(createElement('h2', employee.name))
+      heading.appendChild(createElement('div', employee.position))
 
-    // When the graph is created from the source data by class TreeSource,
-    // The source data for each node is attached to the node as it's tag.
-    const employee = node.tag
-    const heading = document.createElement('div')
-    addClass(heading, 'user-detail')
-    this.element.appendChild(heading)
-    // The employee name
-    heading.appendChild(createElement('h2', employee.name))
-    heading.appendChild(createElement('div', employee.position))
-
-    const svgIcon = this.createSVGIcon(employee.icon, 50, 50, '0 0 75 75')
-    if (svgIcon !== null) {
-      heading.appendChild(svgIcon)
-    }
-
-    // Display the individual properties
-    const table = document.createElement('table')
-    this.element.appendChild(table)
-    // The employee business unit
-    let tr = document.createElement('tr')
-    table.appendChild(tr)
-    tr.appendChild(createElement('td', 'Dept.'))
-    tr.appendChild(createElement('td', employee.businessUnit))
-    // The employee email
-    tr = document.createElement('tr')
-    table.appendChild(tr)
-    tr.appendChild(createElement('td', 'Email'))
-    tr.appendChild(createElement('td', employee.email))
-    // The employee phone
-    tr = document.createElement('tr')
-    table.appendChild(tr)
-    tr.appendChild(createElement('td', 'Phone'))
-    tr.appendChild(createElement('td', employee.phone))
-    // The employee fax
-    tr = document.createElement('tr')
-    table.appendChild(tr)
-    tr.appendChild(createElement('td', 'Fax'))
-    tr.appendChild(createElement('td', employee.fax))
-    // The employee status
-    tr = document.createElement('tr')
-    table.appendChild(tr)
-    tr.appendChild(createElement('td', 'Status'))
-    const statusTd = document.createElement('td')
-    tr.appendChild(statusTd)
-    statusTd.appendChild(this.createSVGIcon(`${employee.status}_icon`, 100, 15, '-5 -2.5 70 5'))
-
-    // Create links to the parent and colleague nodes.
-    // (Note that the parent references are added to the
-    // source data in method demo.OrgChartDemo#addParentReferences()).
-    const parent = employee.parent
-    if (typeof parent !== 'undefined') {
-      const parentTr = document.createElement('tr')
-      parentTr.appendChild(createElement('td', 'Superior'))
-      const parentTd = document.createElement('td')
-      parentTd.appendChild(this.createLinkEntry(parent))
-      parentTr.appendChild(parentTd)
-      table.appendChild(parentTr)
-
-      const colleagues = parent.subordinates
-      if (typeof colleagues !== 'undefined' && colleagues.length > 1) {
-        const colleagueTr = document.createElement('tr')
-        colleagueTr.appendChild(createElement('td', 'Colleagues'))
-        const colleagueTd = document.createElement('td')
-        colleagues.forEach(colleague => {
-          if (colleague !== employee) {
-            if (colleagueTd.childElementCount > 0) {
-              colleagueTd.appendChild(document.createTextNode(', '))
-            }
-            colleagueTd.appendChild(this.createLinkEntry(colleague))
-          }
-        }, this)
-        colleagueTr.appendChild(colleagueTd)
-        table.appendChild(colleagueTr)
+      const svgIcon = this.createSVGIcon(employee.icon, 50, 50, '0 0 75 75')
+      if (svgIcon) {
+        heading.appendChild(svgIcon)
       }
-    }
 
-    // Create links to subordinate nodes
-    const subs = employee.subordinates
-    if (typeof subs !== 'undefined') {
-      const subTr = document.createElement('tr')
-      subTr.appendChild(createElement('td', 'Subordinates'))
-      const subTd = document.createElement('td')
-      subs.forEach(sub => {
-        if (subTd.childElementCount > 0) {
-          subTd.appendChild(document.createTextNode(', '))
+      // Display the individual properties
+      const table = document.createElement('table')
+      this.element.appendChild(table)
+      // The employee business unit
+      let tr = document.createElement('tr')
+      table.appendChild(tr)
+      tr.appendChild(createElement('td', 'Dept.'))
+      tr.appendChild(createElement('td', employee.businessUnit))
+      // The employee email
+      tr = document.createElement('tr')
+      table.appendChild(tr)
+      tr.appendChild(createElement('td', 'Email'))
+      tr.appendChild(createElement('td', employee.email))
+      // The employee phone
+      tr = document.createElement('tr')
+      table.appendChild(tr)
+      tr.appendChild(createElement('td', 'Phone'))
+      tr.appendChild(createElement('td', employee.phone))
+      // The employee fax
+      tr = document.createElement('tr')
+      table.appendChild(tr)
+      tr.appendChild(createElement('td', 'Fax'))
+      tr.appendChild(createElement('td', employee.fax))
+      // The employee status
+      tr = document.createElement('tr')
+      table.appendChild(tr)
+      tr.appendChild(createElement('td', 'Status'))
+      const statusTd = document.createElement('td')
+      tr.appendChild(statusTd)
+      const statusIcon = this.createSVGIcon(`${employee.status}_icon`, 100, 15, '-5 -2.5 70 5')
+      if (statusIcon) {
+        statusTd.appendChild(statusIcon)
+      }
+
+      // Create links to the parent and colleague nodes.
+      // (Note that the parent references are added to the
+      // source data in {@link OrgChartViewerDemo#addParentReferences()}.
+      const parent = employee.parent
+      if (parent) {
+        const parentTr = document.createElement('tr')
+        parentTr.appendChild(createElement('td', 'Superior'))
+        const parentTd = document.createElement('td')
+        parentTd.appendChild(this.createLinkEntry(parent))
+        parentTr.appendChild(parentTd)
+        table.appendChild(parentTr)
+
+        const colleagues = parent.subordinates
+        if (colleagues && colleagues.length > 1) {
+          const colleagueTr = document.createElement('tr')
+          colleagueTr.appendChild(createElement('td', 'Colleagues'))
+          const colleagueTd = document.createElement('td')
+          for (const colleague of colleagues) {
+            if (colleague !== employee) {
+              if (colleagueTd.childElementCount > 0) {
+                colleagueTd.appendChild(document.createTextNode(', '))
+              }
+              colleagueTd.appendChild(this.createLinkEntry(colleague))
+            }
+          }
+          colleagueTr.appendChild(colleagueTd)
+          table.appendChild(colleagueTr)
         }
-        subTd.appendChild(this.createLinkEntry(sub))
-      }, this)
-      subTr.appendChild(subTd)
-      table.appendChild(subTr)
+      }
+
+      // Create links to subordinate nodes
+      const subs = employee.subordinates
+      if (subs) {
+        const subTr = document.createElement('tr')
+        subTr.appendChild(createElement('td', 'Subordinates'))
+        const subTd = document.createElement('td')
+        for (const sub of subs) {
+          if (subTd.childElementCount > 0) {
+            subTd.appendChild(document.createTextNode(', '))
+          }
+          subTd.appendChild(this.createLinkEntry(sub))
+        }
+        subTr.appendChild(subTd)
+        table.appendChild(subTr)
+      }
     }
   }
 
@@ -145,11 +150,11 @@ export default class OrgChartPropertiesView {
   /**
    * Creates an SVG element that references the provided SVG icon, e.g.:
    * <svg width="50" height="50"><use xlink:href="#usericon_male1"></use></svg>
-   * @param {object} iconRef
+   * @param {!string} iconRef
    * @param {number} width
    * @param {number} height
-   * @param {string} viewBox
-   * @return {*}
+   * @param {!string} viewBox
+   * @returns {?SVGElement}
    */
   createSVGIcon(iconRef, width, height, viewBox) {
     const icon = document.getElementById(iconRef)
@@ -159,8 +164,8 @@ export default class OrgChartPropertiesView {
       const svgElement = document.createElementNS(svgNS, 'svg')
       const useElement = document.createElementNS(svgNS, 'use')
       useElement.setAttributeNS(xlinkNS, 'xlink:href', `#${iconRef}`)
-      svgElement.setAttribute('width', width)
-      svgElement.setAttribute('height', height)
+      svgElement.setAttribute('width', `${width}`)
+      svgElement.setAttribute('height', `${height}`)
       svgElement.setAttribute('viewBox', viewBox)
       svgElement.appendChild(useElement)
       return svgElement
@@ -172,7 +177,8 @@ export default class OrgChartPropertiesView {
    * clicking a link to another employee in the properties view will select
    * and zoom to the corresponding node in the organization chart.
    * We use the E-Mail address to identify individual employees.
-   * @param {object} employee
+   * @param {!Employee} employee
+   * @returns {!HTMLElement}
    */
   createLinkEntry(employee) {
     const element = createElement('a', employee.name)
@@ -191,7 +197,9 @@ export default class OrgChartPropertiesView {
 
 /**
  * Creates a DOM element with the specified text content
- * @returns {HTMLElement}
+ * @param {!string} tagName
+ * @param {!string} textContent
+ * @returns {!HTMLElement}
  */
 function createElement(tagName, textContent) {
   const element = document.createElement(tagName)

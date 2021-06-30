@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.3.
+     // This demo file is part of yFiles for HTML 2.4.
      // Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
@@ -12580,11 +12580,10 @@
     <node id="n445">
       <data key="d0">
         <x:List>
-          <y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 1}"
-                   PreferredSize="131.4587021962976,14">
-            <y:Label.Text>PolylineEdgeRouterData</y:Label.Text>
+          <y:Label LayoutParameter="{x:Static y:InteriorLabelModel.Center}" Style="{y:GraphMLReference 1}">
+            <y:Label.Text>EdgeRouterData</y:Label.Text>
             <y:Label.Tag>
-              <sys:String>PolylineEdgeRouterData</sys:String>
+              <sys:String>EdgeRouterData</sys:String>
             </y:Label.Tag>
           </y:Label>
         </x:List>

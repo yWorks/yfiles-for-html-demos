@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -121,7 +121,9 @@
     'view'
   ]
 
-  var demos = window.getDemoData()
+  var demos = window.getDemoData().filter(function (demo) {
+    return !demo.hidden
+  })
 
   if (isTsReadme) {
     var tsDemosFirst = function (a, b) {
@@ -157,28 +159,28 @@
   function createGridItem(demo, index) {
     var gridItem = document.createElement('div')
     gridItem.className = 'grid-item'
-    gridItem.innerHTML = gridItemTemplate.innerHTML.replace(/{{([^}]+)}}/gi, function (
-      match,
-      propertyName
-    ) {
-      if (propertyName === 'demoPath' && isTsReadme && !demo.ts) {
-        return '../demos-js/' + demo.demoPath
-      } else if (propertyName === 'index') {
-        return index + 2
-      } else if (propertyName === 'video' && demo.thumbnailPath.indexOf('.mp4') > -1) {
-        return '<video src="' + demo.thumbnailPath + '" loop="true" autoplay="true">'
-      } else if (Object.prototype.hasOwnProperty.call(demo, propertyName)) {
-        return demo[propertyName]
-      } else {
-        return ''
+    gridItem.innerHTML = gridItemTemplate.innerHTML.replace(
+      /{{([^}]+)}}/gi,
+      function (match, propertyName) {
+        if (propertyName === 'demoPath' && isTsReadme && !demo.ts) {
+          return '../demos-js/' + demo.demoPath
+        } else if (propertyName === 'index') {
+          return index + 2
+        } else if (propertyName === 'video' && demo.thumbnailPath.indexOf('.mp4') > -1) {
+          return '<video src="' + demo.thumbnailPath + '" loop="true" autoplay="true">'
+        } else if (Object.prototype.hasOwnProperty.call(demo, propertyName)) {
+          return demo[propertyName]
+        } else {
+          return ''
+        }
       }
-    })
+    )
     if (demo.tags) {
       var tagContainer = gridItem.querySelector('.tags')
       demo.tags.forEach(function (tag) {
         var tagItem = document.createElement('span')
         var anchor = document.createElement('a')
-        anchor.setAttribute('href', '#' + tag)
+        anchor.setAttribute('href', '#' + encodeURIComponent(tag))
         tagItem.className += ' tag'
         anchor.textContent = tag
         tagItem.appendChild(anchor)
@@ -216,17 +218,17 @@
 
   function createAccordionItem(category) {
     var tmpDiv = document.createElement('div')
-    tmpDiv.innerHTML = accordionItemTemplate.innerHTML.replace(/{{([^}]+)}}/gi, function (
-      match,
-      propertyName
-    ) {
-      if (Object.prototype.hasOwnProperty.call(category, propertyName)) {
-        return category[propertyName]
-      } else {
-        // console.warn("Property '" + propertyName + "' not found in demo: " + demo.name);
-        return ''
+    tmpDiv.innerHTML = accordionItemTemplate.innerHTML.replace(
+      /{{([^}]+)}}/gi,
+      function (match, propertyName) {
+        if (Object.prototype.hasOwnProperty.call(category, propertyName)) {
+          return category[propertyName]
+        } else {
+          // console.warn("Property '" + propertyName + "' not found in demo: " + demo.name);
+          return ''
+        }
       }
-    })
+    )
     var item = tmpDiv.firstElementChild
     item.querySelector('.accordion-title').addEventListener('click', function () {
       if (item.className.indexOf('expanded') >= 0) {
@@ -239,7 +241,7 @@
         item.className += ' expanded'
         if (/tutorial/i.test(category.title)) {
           searchBox.value = category.identifier
-          searchBoxChanged()
+          searchBoxChanged(undefined, category.identifier)
         }
       }
     })
@@ -290,33 +292,48 @@
   /**
    * @param {object} demo The JSON data of a demo
    * @param {string} needle A whitespace-separated list of search terms
+   * @param {string} categoryFilter An optional filter to restrict matches to a certain category
+   * @return {number} The quality of the match in the range [0-100]. Higher quality is better and
+   *   the value is 0 if the demo doesn't match at all.
    */
-  function matchDemo(demo, needle) {
-    var words = needle.split(/[^.\w]/)
+  function matchDemo(demo, needle, categoryFilter) {
+    if (categoryFilter && demo.category !== categoryFilter) {
+      return 0
+    }
+    var words = needle.split(/[^.\w/]/)
     return words
       .map(function (word) {
         return matchWord(demo, word)
       })
       .reduce(function (prev, curr) {
-        return prev && curr
-      }, true)
+        if (categoryFilter) {
+          // when filtering a specific demo category avoid any priorities, but show demos in the given order
+          return prev > 0 || curr > 0 ? 1 : 0
+        } else {
+          // require that all the words match by multiplying the priority number computed by
+          // the function matchWord - if one is zero, the whole demo does not match
+          return prev === -1 ? curr : prev * curr
+        }
+      }, -1)
   }
 
   /**
    * @param {object} demo The JSON data of a demo
    * @param {string} word A single search term
+   * @return {number} The quality of the match in the range [0-100]. Higher quality is better and
+   *   the value is 0 if the demo doesn't match at all.
    */
   function matchWord(demo, word) {
     var regex = new RegExp(word, 'gi')
     if (regex.test(demo.name)) {
-      return true
+      return 100
     }
     if (
       demo.tags.some(function (tag) {
         return regex.test(tag)
       })
     ) {
-      return true
+      return 50
     }
     if (
       demo.keywords &&
@@ -324,12 +341,12 @@
         return regex.test(tag)
       })
     ) {
-      return true
+      return 20
     }
     if (regex.test(demo.category)) {
-      return true
+      return 10
     }
-    return regex.test(demo.summary)
+    return regex.test(demo.summary) ? 25 : 0
   }
 
   var demoGrid = document.getElementById('non-tutorial-grid')
@@ -365,7 +382,7 @@
     var element = document.querySelector('.demo-items-' + demo.category)
     if (!element) {
       var categoryName = categoryNames[demo.category] || demo.category
-      document.querySelector('.sidebar').appendChild(
+      document.querySelector('.demo-browser-sidebar').appendChild(
         createAccordionItem({
           title: categoryName,
           identifier: demo.category
@@ -377,7 +394,7 @@
     demo.sidebarElement = sidebarItem
   })
 
-  searchBox.addEventListener('input', searchBoxChanged)
+  searchBox.addEventListener('input', debounce(searchBoxChanged, 300, false))
   searchBox.addEventListener('click', searchBoxClicked)
   searchBox.addEventListener('blur', function (e) {
     searchBox.addEventListener('click', searchBoxClicked)
@@ -404,28 +421,69 @@
   function searchBoxClicked(evt) {
     searchBox.select()
     searchBox.removeEventListener('click', searchBoxClicked)
-    location.hash = searchBox.textContent
   }
 
-  function searchBoxChanged(evt) {
+  function searchBoxChanged(evt, categoryFilter) {
     var noSearchResults = true
     tutorialIds.forEach(function (id) {
       document.getElementById(id).style.display = 'none'
       document.getElementById(id + '-header').style.display = 'block'
     })
     document.getElementById('general-intro').style.display = 'block'
-    demos.forEach(function (demo) {
-      if (matchDemo(demo, searchBox.value)) {
+
+    var searchBoxEmpty = searchBox.value.trim() === ''
+    var sortedDemos = demos.map(function (demo) {
+      return {
+        demo: demo,
+        prio: matchDemo(demo, searchBox.value, categoryFilter)
+      }
+    })
+
+    if (!searchBoxEmpty) {
+      sortedDemos.sort(function (i1, i2) {
+        if (i1.prio === i2.prio) {
+          return 0
+        }
+        if (i1.prio === 0) {
+          return 1
+        }
+        if (i2.prio === 0) {
+          return -1
+        }
+        return i1.prio > i2.prio ? -1 : 1
+      })
+    }
+
+    sortedDemos.forEach(function (item) {
+      var demo = item.demo
+      // Reorder the nodes in each grid section
+      demo.element.parentElement.appendChild(demo.element)
+
+      if (searchBoxEmpty && demo.hiddenInGrid) {
+        // search box is empty ...
+        // and this is a demo that should be hidden in overview and only be visible when searching
+        if (demo.element.className.indexOf('filtered') === -1) {
+          //hide the demo in any case
+          demo.element.className += ' filtered'
+        }
+        //however, for the empty search box we show the sidebar element
+        demo.sidebarElement.className = demo.sidebarElement.className.replace(' filtered', '')
+        return
+      }
+      if (item.prio > 0) {
         demo.element.className = demo.element.className.replace(' filtered', '')
         demo.sidebarElement.className = demo.sidebarElement.className.replace(' filtered', '')
         noSearchResults = false
       } else {
         if (demo.element.className.indexOf('filtered') === -1) {
           demo.element.className += ' filtered'
+        }
+        if (demo.sidebarElement.className.indexOf('filtered') === -1) {
           demo.sidebarElement.className += ' filtered'
         }
       }
     })
+
     tutorialIds.forEach(function (id) {
       var children = document.getElementById(id + '-grid').childNodes
       var allHidden = true
@@ -461,5 +519,32 @@
       }
     }
     document.getElementById('general-intro').style.display = 'block'
+  }
+
+  /**
+   * Returns a function, that, as long as it continues to be invoked, will not be triggered.
+   * @param {function} func
+   * @param {number} delay
+   * @param {boolean} immediate
+   * @return {(function(): void)|*}
+   */
+  function debounce(func, delay, immediate) {
+    var timeout
+    return function () {
+      var context = this,
+        args = arguments
+      var later = function () {
+        timeout = null
+        if (!immediate) {
+          func.apply(context, args)
+        }
+      }
+      var callNow = immediate && !timeout
+      clearTimeout(timeout)
+      timeout = setTimeout(later, delay)
+      if (callNow) {
+        func.apply(context, args)
+      }
+    }
   }
 })()

@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -39,8 +39,7 @@ import {
   FillStyle,
   GraphComponent,
   GridNodePlacer,
-  HashMap,
-  IEnumerable,
+  IGraph,
   INode,
   ITreeLayoutNodePlacer,
   LeafNodePlacer,
@@ -51,7 +50,6 @@ import {
   RootNodeAlignment,
   RotatableNodePlacerBase,
   RotatableNodePlacerMatrix,
-  ShapeNodeShape,
   ShapeNodeStyle,
   SimpleNodePlacer,
   TreeLayout,
@@ -60,11 +58,9 @@ import {
 } from 'yfiles'
 
 import { setComboboxValue } from '../../resources/demo-app.js'
-// a map which stores the specified node placer for each node
-const nodePlacers = new Mapper()
 
 // a list of fill colors that are assigned to the layers
-const layerFills = [
+export const LayerFills = [
   Fill.CRIMSON,
   Fill.DARK_TURQUOISE,
   Fill.CORNFLOWER_BLUE,
@@ -88,25 +84,31 @@ const layerFills = [
 export default class NodePlacerPanel {
   /**
    * Creates a new instance of NodePlacerPanel.
-   * @param {GraphComponent} graphComponent
+   * @param {!GraphComponent} graphComponent
    */
   constructor(graphComponent) {
     this.graphComponent = graphComponent
-    this.graph = graphComponent.graph
 
     // initialize the preview component where the node placer settings are demonstrated on a small graph
     this.previewComponent = new GraphComponent('previewComponent')
-    createPreviewGraph(this.previewComponent)
-    runPreviewLayout(null, this.previewComponent)
-
-    // connect the UI elements of this panel that are not specific for one node placer
-    bindActions(this)
 
     // initializes change listener handling
     this.changeListeners = []
 
     // create node placer configurations
-    this.nodePlacerConfigurations = new HashMap()
+    this.nodePlacerConfigurations = new Map()
+
+    this.currentNodePlacerConfiguration = null
+
+    // a map which stores the specified node placer for each node
+    this.nodePlacers = new Mapper()
+
+    this.graph = graphComponent.graph
+    createPreviewGraph(this.previewComponent)
+    runPreviewLayout(null, this.previewComponent)
+
+    // connect the UI elements of this panel that are not specific for one node placer
+    bindActions(this)
     this.nodePlacerConfigurations.set('DefaultNodePlacer', new DefaultNodePlacerConfiguration(this))
     this.nodePlacerConfigurations.set('SimpleNodePlacer', new SimpleNodePlacerConfiguration(this))
     this.nodePlacerConfigurations.set('BusNodePlacer', new BusNodePlacerConfiguration(this))
@@ -132,38 +134,24 @@ export default class NodePlacerPanel {
   }
 
   /**
-   * Returns a map which provides a {@link ITreeLayoutNodePlacer} for each node
-   * @return {Mapper.<INode, ITreeLayoutNodePlacer>}
-   */
-  get nodePlacers() {
-    return nodePlacers
-  }
-
-  /**
-   * Returns a list of fill colors that can be used to color the nodes in the color of their layer.
-   * @return {Array.<Fill>}
-   */
-  static get layerFills() {
-    return layerFills
-  }
-
-  /**
    * Updates the node placer map and preview graph.
    * This method is called when there are changes in the panel and notifies all registered change listeners.
    */
   panelChanged() {
-    this.currentNodePlacerConfiguration.updateNodePlacers(
-      this.graphComponent.selection.selectedNodes,
-      this.nodePlacers
-    )
-    const nodePlacer = this.currentNodePlacerConfiguration.createNodePlacer()
-    runPreviewLayout(nodePlacer, this.previewComponent)
-    this.updateChangeListeners()
+    if (this.currentNodePlacerConfiguration) {
+      this.currentNodePlacerConfiguration.updateNodePlacers(
+        this.graphComponent.selection.selectedNodes,
+        this.nodePlacers
+      )
+      const nodePlacer = this.currentNodePlacerConfiguration.createNodePlacer()
+      runPreviewLayout(nodePlacer, this.previewComponent)
+      this.updateChangeListeners()
+    }
   }
 
   /**
    * Updates which node placer configuration is used in this panel and the layout of the preview graph.
-   * @param {IEnumerable} selectedNodes
+   * @param {!Array.<INode>} selectedNodes
    */
   onNodeSelectionChanged(selectedNodes) {
     const noNodePlacerElement = document.getElementById('no-node-placer-settings')
@@ -177,7 +165,7 @@ export default class NodePlacerPanel {
       this.currentNodePlacerConfiguration.visible = false
     }
 
-    if (selectedNodes.size === 0) {
+    if (selectedNodes.length === 0) {
       noNodePlacerElement.style.display = 'block'
       nodePlacerElement.style.display = 'none'
       nodePlacerLabelElement.style.display = 'none'
@@ -192,21 +180,27 @@ export default class NodePlacerPanel {
     }
 
     const nodePlacers = selectedNodes.map(node => {
-      if (!this.nodePlacers.get(node)) {
-        // make sure every node as an associated node placer in the nodePlacers-map
-        this.nodePlacers.set(node, new DefaultNodePlacer())
+      const placer = this.nodePlacers.get(node)
+      if (placer === null) {
+        // make sure every node has an associated node placer in the nodePlacers-map
+        const defaultNodePlacer = new DefaultNodePlacer()
+        this.nodePlacers.set(node, defaultNodePlacer)
+        return defaultNodePlacer
       }
-      return this.nodePlacers.get(node)
+      return placer
     })
-    const nodePlacer = nodePlacers.reduce((acc, np) => {
-      return acc && acc.getClass().isInstance(np) ? acc : null
-    }, nodePlacers.firstOrDefault())
 
-    const configurationName = getConfigurationName(nodePlacer)
+    let referencePlacer = nodePlacers[0]
+    const referenceConfig = getConfigurationName(referencePlacer)
+    //check that all node placers are of same instance - otherwise the MultipleNodePlacerConfiguration is used
+    if (!nodePlacers.every(placer => getConfigurationName(placer) === referenceConfig)) {
+      referencePlacer = null
+    }
+    const configurationName = getConfigurationName(referencePlacer)
     setComboboxValue('select-node-placer', configurationName)
 
     const configuration = this.nodePlacerConfigurations.get(configurationName)
-    configuration.adoptSettings(nodePlacers.toArray())
+    configuration.adoptSettings(nodePlacers)
 
     if (this.currentNodePlacerConfiguration) {
       this.currentNodePlacerConfiguration.visible = false
@@ -226,12 +220,12 @@ export default class NodePlacerPanel {
 
     this.currentNodePlacerConfiguration.updatePanel()
 
-    runPreviewLayout(nodePlacer, this.previewComponent)
+    runPreviewLayout(referencePlacer, this.previewComponent)
   }
 
   /**
    * Adds the given listener to the list of listeners that are notified when the node placer settings change.
-   * @param {function} listener
+   * @param {!function} listener
    */
   addChangeListener(listener) {
     this.changeListeners.push(listener)
@@ -239,7 +233,7 @@ export default class NodePlacerPanel {
 
   /**
    * Removes the given listener to the list of listeners that are notified when the node placer settings change.
-   * @param {function} listener
+   * @param {!function} listener
    */
   removeChangeListener(listener) {
     const index = this.changeListeners.indexOf(listener)
@@ -258,12 +252,14 @@ export default class NodePlacerPanel {
   }
 }
 
+/** @type {boolean} */
 let layoutRunning = false
 
 /**
  * Calculates a preview layout. This method is called when node placer settings are changed.
- * @param {ITreeLayoutNodePlacer} nodePlacer
- * @param {GraphComponent} graphComponent
+ * @param {?ITreeLayoutNodePlacer} nodePlacer
+ * @param {!GraphComponent} graphComponent
+ * @returns {!Promise}
  */
 async function runPreviewLayout(nodePlacer, graphComponent) {
   if (layoutRunning) {
@@ -274,10 +270,7 @@ async function runPreviewLayout(nodePlacer, graphComponent) {
   const leafNodePlacer = new LeafNodePlacer()
   const treeLayoutData = new TreeLayoutData({
     nodePlacers: node => {
-      if (graphComponent.graph.inDegree(node) === 0) {
-        return nodePlacer
-      }
-      return leafNodePlacer
+      return graphComponent.graph.inDegree(node) ? leafNodePlacer : nodePlacer
     },
     assistantNodes: node => node.tag && node.tag.assistant
   })
@@ -288,7 +281,7 @@ async function runPreviewLayout(nodePlacer, graphComponent) {
 
 /**
  * Wires up the UI elements that are not node placer specific.
- * @param {NodePlacerPanel} panel
+ * @param {!NodePlacerPanel} panel
  */
 function bindActions(panel) {
   const selectNodePlacer = document.getElementById('select-node-placer')
@@ -300,9 +293,10 @@ function bindActions(panel) {
       selectNodePlacer.value
     )
     panel.currentNodePlacerConfiguration.visible = true
-    panel.currentNodePlacerConfiguration.adoptSettings([
-      panel.currentNodePlacerConfiguration.getDefaultNodePlacer()
-    ])
+    const defaultPlacer = panel.currentNodePlacerConfiguration.getDefaultNodePlacer()
+    if (defaultPlacer) {
+      panel.currentNodePlacerConfiguration.adoptSettings([defaultPlacer])
+    }
 
     const rotationElement = document.getElementById('rotation')
     const spacingElement = document.getElementById('rotatable-spacing')
@@ -353,38 +347,38 @@ function bindActions(panel) {
  * Updates the rotation matrix for RotatableNodePlacers.
  * It is necessary to create a new instance of the node placer because modificationMatrix is a
  * readonly property.
- * @param {INode} node
- * @param {RotatableNodePlacerMatrix} matrix
- * @param {NodePlacerPanel} panel
+ * @param {!INode} node
+ * @param {!RotatableNodePlacerMatrix} matrix
+ * @param {!NodePlacerPanel} panel
  */
 function updateModificationMatrix(node, matrix, panel) {
   const nodePlacer = panel.nodePlacers.get(node)
   let rotatedNodePlacer = nodePlacer
-  if (AssistantNodePlacer.isInstance(nodePlacer)) {
+  if (nodePlacer instanceof AssistantNodePlacer) {
     rotatedNodePlacer = new AssistantNodePlacer({
       spacing: nodePlacer.spacing,
       modificationMatrix: nodePlacer.modificationMatrix.multiply(matrix),
       childNodePlacer: nodePlacer.childNodePlacer
     })
-  } else if (BusNodePlacer.isInstance(nodePlacer)) {
+  } else if (nodePlacer instanceof BusNodePlacer) {
     rotatedNodePlacer = new BusNodePlacer({
       spacing: nodePlacer.spacing,
       modificationMatrix: nodePlacer.modificationMatrix.multiply(matrix)
     })
-  } else if (DoubleLineNodePlacer.isInstance(nodePlacer)) {
+  } else if (nodePlacer instanceof DoubleLineNodePlacer) {
     rotatedNodePlacer = new DoubleLineNodePlacer({
       spacing: nodePlacer.spacing,
       modificationMatrix: nodePlacer.modificationMatrix.multiply(matrix),
       rootAlignment: nodePlacer.rootAlignment,
       doubleLineSpacingRatio: nodePlacer.doubleLineSpacingRatio
     })
-  } else if (GridNodePlacer.isInstance(nodePlacer)) {
-    rotatedNodePlacer = new GridNodePlacer(
-      nodePlacer.modificationMatrix.multiply(matrix),
-      nodePlacer.rootAlignment
-    )
-    rotatedNodePlacer.spacing = nodePlacer.spacing
-  } else if (LeftRightNodePlacer.isInstance(nodePlacer)) {
+  } else if (nodePlacer instanceof GridNodePlacer) {
+    rotatedNodePlacer = new GridNodePlacer({
+      modificationMatrix: nodePlacer.modificationMatrix.multiply(matrix),
+      rootAlignment: nodePlacer.rootAlignment,
+      spacing: nodePlacer.spacing
+    })
+  } else if (nodePlacer instanceof LeftRightNodePlacer) {
     rotatedNodePlacer = new LeftRightNodePlacer({
       spacing: nodePlacer.spacing,
       modificationMatrix: nodePlacer.modificationMatrix.multiply(matrix),
@@ -393,7 +387,7 @@ function updateModificationMatrix(node, matrix, panel) {
       branchCount: nodePlacer.branchCount,
       placeLastOnBottom: nodePlacer.placeLastOnBottom
     })
-  } else if (SimpleNodePlacer.isInstance(nodePlacer)) {
+  } else if (nodePlacer instanceof SimpleNodePlacer) {
     rotatedNodePlacer = new SimpleNodePlacer({
       spacing: nodePlacer.spacing,
       modificationMatrix: nodePlacer.modificationMatrix.multiply(matrix),
@@ -408,27 +402,27 @@ function updateModificationMatrix(node, matrix, panel) {
 
 /**
  * Returns the configuration name to retrieve the correct configuration for the given node placer.
- * @param {ITreeLayoutNodePlacer} nodePlacer
- * @return {string|null}
+ * @param {?ITreeLayoutNodePlacer} nodePlacer
+ * @returns {!string}
  */
 function getConfigurationName(nodePlacer) {
-  if (DefaultNodePlacer.isInstance(nodePlacer)) {
+  if (nodePlacer instanceof DefaultNodePlacer) {
     return 'DefaultNodePlacer'
-  } else if (SimpleNodePlacer.isInstance(nodePlacer)) {
+  } else if (nodePlacer instanceof SimpleNodePlacer) {
     return 'SimpleNodePlacer'
-  } else if (BusNodePlacer.isInstance(nodePlacer)) {
+  } else if (nodePlacer instanceof BusNodePlacer) {
     return 'BusNodePlacer'
-  } else if (DoubleLineNodePlacer.isInstance(nodePlacer)) {
+  } else if (nodePlacer instanceof DoubleLineNodePlacer) {
     return 'DoubleLineNodePlacer'
-  } else if (GridNodePlacer.isInstance(nodePlacer)) {
+  } else if (nodePlacer instanceof GridNodePlacer) {
     return 'GridNodePlacer'
-  } else if (LeftRightNodePlacer.isInstance(nodePlacer)) {
+  } else if (nodePlacer instanceof LeftRightNodePlacer) {
     return 'LeftRightNodePlacer'
-  } else if (AspectRatioNodePlacer.isInstance(nodePlacer)) {
+  } else if (nodePlacer instanceof AspectRatioNodePlacer) {
     return 'AspectRatioNodePlacer'
-  } else if (AssistantNodePlacer.isInstance(nodePlacer)) {
+  } else if (nodePlacer instanceof AssistantNodePlacer) {
     return 'AssistantNodePlacer'
-  } else if (CompactNodePlacer.isInstance(nodePlacer)) {
+  } else if (nodePlacer instanceof CompactNodePlacer) {
     return 'CompactNodePlacer'
   }
   return 'Multiple Values'
@@ -436,14 +430,14 @@ function getConfigurationName(nodePlacer) {
 
 /**
  * Creates a small preview graph that demonstrates the node placer settings on a small sample.
- * @param {GraphComponent} graphComponent
+ * @param {!GraphComponent} graphComponent
  */
 function createPreviewGraph(graphComponent) {
   const graph = graphComponent.graph
   const root = graph.createNode({
     layout: new Rect(0, 0, 60, 30),
     style: new ShapeNodeStyle({
-      shape: ShapeNodeShape.ROUND_RECTANGLE,
+      shape: 'round-rectangle',
       fill: 'crimson',
       stroke: 'white'
     })
@@ -456,7 +450,7 @@ function createPreviewGraph(graphComponent) {
         graph.createNode({
           layout: new Rect(0, 0, i < 4 ? 60 : 80, 30),
           style: new ShapeNodeStyle({
-            shape: ShapeNodeShape.ROUND_RECTANGLE,
+            shape: 'round-rectangle',
             fill: 'gray',
             stroke: 'white'
           })
@@ -468,7 +462,7 @@ function createPreviewGraph(graphComponent) {
         graph.createNode({
           layout: new Rect(0, 0, 60, 30),
           style: new ShapeNodeStyle({
-            shape: ShapeNodeShape.ROUND_RECTANGLE,
+            shape: 'round-rectangle',
             fill: 'gray',
             stroke: '2px dashed black'
           }),
@@ -486,14 +480,16 @@ function createPreviewGraph(graphComponent) {
 class NodePlacerConfiguration {
   /**
    * Creates a new instance of NodePlacerConfiguration.
-   * @param {HTMLElement} div
-   * @param {ITreeLayoutNodePlacer} nodePlacer
-   * @param {Element} panel
+   * @param {!HTMLDivElement} div
+   * @param {?ITreeLayoutNodePlacer} nodePlacer
+   * @param {!NodePlacerPanel} panel
    */
   constructor(div, nodePlacer, panel) {
-    this.$div = div
-    this.$visible = false
-    this.adoptSettings([nodePlacer])
+    this.div = div
+    this._visible = false
+    if (nodePlacer !== null) {
+      this.adoptSettings([nodePlacer])
+    }
     this.bindActions(panel)
     this.updatePanel()
   }
@@ -501,7 +497,7 @@ class NodePlacerConfiguration {
   /**
    * Returns whether or not the represented node placer is rotatable. This is used to determine if the
    * rotation/mirroring-buttons should be visible.
-   * @return {boolean}
+   * @type {boolean}
    */
   get rotatable() {
     return false
@@ -510,7 +506,7 @@ class NodePlacerConfiguration {
   /**
    * Returns whether or not there is a preview for the layout with the represented node placer. This
    * is used to determine if the preview element should be visible.
-   * @returns {boolean}
+   * @type {boolean}
    */
   get hasPreview() {
     return true
@@ -518,26 +514,26 @@ class NodePlacerConfiguration {
 
   /**
    * Returns whether or not these node placer settings are currently active/visible.
-   * @return {boolean}
+   * @type {boolean}
    */
   get visible() {
-    return this.$visible
+    return this._visible
   }
 
   /**
    * Sets whether or not these node placer settings should be active/visible.
    * It also updates the description text.
-   * @param {boolean} visible
+   * @type {boolean}
    */
   set visible(visible) {
-    this.$visible = visible
+    this._visible = visible
 
     const description = document.getElementById('node-placer-description')
     if (visible) {
-      this.$div.style.display = 'block'
+      this.div.style.display = 'block'
       description.innerHTML = this.getDescriptionText()
     } else {
-      this.$div.style.display = 'none'
+      this.div.style.display = 'none'
       description.innerHTML = ''
     }
   }
@@ -545,24 +541,25 @@ class NodePlacerConfiguration {
   /**
    * Creates a configured {@link ITreeLayoutNodePlacer} according to the current settings.
    * This method is called when the map of node placers is updated.
+   * @returns {?ITreeLayoutNodePlacer}
    */
-  createNodePlacer() {}
+  createNodePlacer() {
+    return null
+  }
 
   /**
    * Updates the node placers of the selected nodes with the values in the panel.
    * Note that indeterminate properties in the panel should not be applied to the individual placer.
-   * @param {IEnumerable} selectedNodes
-   * @param {Mapper.<ITreeLayoutNodePlacer>} nodePlacers
+   * @param {!Iterable.<INode>} selectedNodes
+   * @param {!Mapper.<INode,ITreeLayoutNodePlacer>} nodePlacers
    */
-  // eslint-disable-next-line no-unused-vars
   updateNodePlacers(selectedNodes, nodePlacers) {}
 
   /**
    * Updates the configuration settings according to the given {@link ITreeLayoutNodePlacer}.
-   * This method is call when the configuration is changed or reset.
-   * @param {Array.<ITreeLayoutNodePlacer>} nodePlacers
+   * This method is called when the configuration is changed or reset.
+   * @param {!Array.<ITreeLayoutNodePlacer>} nodePlacers
    */
-  // eslint-disable-next-line no-unused-vars
   adoptSettings(nodePlacers) {}
 
   /**
@@ -573,22 +570,25 @@ class NodePlacerConfiguration {
 
   /**
    * Wires up the UI for this configuration.
-   * @param {NodePlacerPanel} panel
+   * @param {!NodePlacerPanel} panel
    */
-  // eslint-disable-next-line no-unused-vars
   bindActions(panel) {}
 
   /**
    * Returns the description text for this configuration.
-   * @return {string}
+   * @returns {!string}
    */
-  getDescriptionText() {}
+  getDescriptionText() {
+    return ''
+  }
 
   /**
    * Returns the node placer for this configuration with initial settings.
-   * @return {ITreeLayoutNodePlacer}
+   * @returns {?ITreeLayoutNodePlacer}
    */
-  getDefaultNodePlacer() {}
+  getDefaultNodePlacer() {
+    return null
+  }
 }
 
 /**
@@ -597,6 +597,11 @@ class NodePlacerConfiguration {
  * It will handle the rotation and spacing properties by default.
  */
 class RotatableNodePlacerConfiguration extends NodePlacerConfiguration {
+  /**
+   * @param {!HTMLDivElement} div
+   * @param {!ITreeLayoutNodePlacer} nodePlacer
+   * @param {!NodePlacerPanel} panel
+   */
   constructor(div, nodePlacer, panel) {
     super(div, nodePlacer, panel)
     this.spacing = 20
@@ -606,52 +611,49 @@ class RotatableNodePlacerConfiguration extends NodePlacerConfiguration {
 
   /**
    * Returns true for all configurations based on this class.
-   * @return {boolean}
+   * @type {boolean}
    */
   get rotatable() {
     return true
   }
 
+  /**
+   * @param {!Array.<RotatableNodePlacerBase>} nodePlacers
+   */
   adoptSettings(nodePlacers) {
-    const nodePlacer = nodePlacers[0]
-    let settings = {
-      spacing: nodePlacer.spacing,
-      indeterminateSpacing: false,
-      modificationMatrix: nodePlacer.modificationMatrix
+    this.spacing = nodePlacers[0].spacing
+    this.indeterminateSpacing = false
+    this.modificationMatrix = nodePlacers[0].modificationMatrix
+
+    for (const nodePlacer of nodePlacers) {
+      if (this.spacing !== nodePlacer.spacing) {
+        this.indeterminateSpacing = true
+      }
     }
-    if (nodePlacers.length > 1) {
-      settings = nodePlacers.reduce((acc, nodePlacer) => {
-        if (!acc.indeterminateSpacing && acc.spacing !== nodePlacer.spacing) {
-          acc.indeterminateSpacing = true
-        }
-        return acc
-      }, settings)
-    }
-    this.spacing = settings.spacing
-    this.indeterminateSpacing = settings.indeterminateSpacing
-    this.modificationMatrix = settings.modificationMatrix
+
+    this.updatePanel()
   }
 
   updatePanel() {
-    const spacing = document.getElementById('spacing')
-    spacing.value = this.spacing
-    const spacingLabel = document.getElementById('spacing-label')
-    spacingLabel.innerHTML = this.indeterminateSpacing ? '???' : this.spacing
+    updateInput('spacing', this.spacing, this.indeterminateSpacing)
   }
 
+  /**
+   * @param {!NodePlacerPanel} panel
+   */
   bindActions(panel) {
-    const spacing = document.getElementById('spacing')
-    spacing.addEventListener('change', () => {
+    const spacingElement = document.getElementById('spacing')
+    spacingElement.addEventListener('change', () => {
       if (this.visible) {
-        this.spacing = Number.parseInt(spacing.value)
+        this.spacing = Number.parseInt(spacingElement.value)
         this.indeterminateSpacing = false
         panel.panelChanged()
       }
     })
     const spacingLabel = document.getElementById('spacing-label')
-    spacing.addEventListener('input', () => {
+    spacingElement.addEventListener('input', () => {
       if (this.visible) {
-        spacingLabel.innerHTML = spacing.value
+        spacingLabel.innerHTML = spacingElement.value
       }
     })
   }
@@ -660,24 +662,27 @@ class RotatableNodePlacerConfiguration extends NodePlacerConfiguration {
 class DefaultNodePlacerConfiguration extends NodePlacerConfiguration {
   /**
    * Creates a new instance of DefaultNodePlacerConfiguration.
-   * @param {Element} panel
+   * @param {!NodePlacerPanel} panel
    */
   constructor(panel) {
     super(document.getElementById('default-node-placer-settings'), new DefaultNodePlacer(), panel)
-    this.childPlacement = ChildPlacement.HORIZONTAL_DOWNWARD
     this.indeterminateChildPlacement = false
-    this.routingStyle = TreeLayoutEdgeRoutingStyle.FORK
     this.indeterminateRoutingStyle = false
     this.horizontalDistance = 40
     this.indeterminateHorizontalDistance = false
     this.verticalDistance = 40
     this.indeterminateVerticalDistance = false
-    this.rootAlignment = RootAlignment.CENTER
     this.indeterminateRootAlignment = false
     this.minimumChannelSegmentDistance = 0
     this.indeterminateMinimumChannelSegmentDistance = false
+    this.childPlacement = ChildPlacement.HORIZONTAL_DOWNWARD
+    this.routingStyle = TreeLayoutEdgeRoutingStyle.FORK
+    this.rootAlignment = RootAlignment.CENTER
   }
 
+  /**
+   * @returns {!DefaultNodePlacer}
+   */
   createNodePlacer() {
     return new DefaultNodePlacer({
       childPlacement: this.childPlacement,
@@ -689,10 +694,14 @@ class DefaultNodePlacerConfiguration extends NodePlacerConfiguration {
     })
   }
 
+  /**
+   * @param {!Iterable.<INode>} selectedNodes
+   * @param {!Mapper.<INode,ITreeLayoutNodePlacer>} nodePlacers
+   */
   updateNodePlacers(selectedNodes, nodePlacers) {
-    selectedNodes.forEach(selectedNode => {
+    for (const selectedNode of selectedNodes) {
       const nodePlacer = nodePlacers.get(selectedNode)
-      if (DefaultNodePlacer.isInstance(nodePlacer)) {
+      if (nodePlacer instanceof DefaultNodePlacer) {
         if (!this.indeterminateChildPlacement) {
           nodePlacer.childPlacement = this.childPlacement
         }
@@ -714,69 +723,49 @@ class DefaultNodePlacerConfiguration extends NodePlacerConfiguration {
       } else {
         nodePlacers.set(selectedNode, this.createNodePlacer())
       }
-    })
+    }
   }
 
+  /**
+   * @param {!Array.<DefaultNodePlacer>} nodePlacers
+   */
   adoptSettings(nodePlacers) {
-    let settings = {
-      childPlacement: nodePlacers[0].childPlacement,
-      indeterminateChildPlacement: false,
-      routingStyle: nodePlacers[0].routingStyle,
-      indeterminateRoutingStyle: false,
-      horizontalDistance: nodePlacers[0].horizontalDistance,
-      indeterminateHorizontalDistance: false,
-      verticalDistance: nodePlacers[0].verticalDistance,
-      indeterminateVerticalDistance: false,
-      minimumChannelSegmentDistance: nodePlacers[0].minimumChannelSegmentDistance,
-      indeterminateMinimumChannelSegmentDistance: false,
-      rootAlignment: nodePlacers[0].rootAlignment,
-      indeterminateRootAlignment: false
-    }
+    this.childPlacement = nodePlacers[0].childPlacement
+    this.indeterminateChildPlacement = false
+    this.routingStyle = nodePlacers[0].routingStyle
+    this.indeterminateRoutingStyle = false
+    this.horizontalDistance = nodePlacers[0].horizontalDistance
+    this.indeterminateHorizontalDistance = false
+    this.verticalDistance = nodePlacers[0].verticalDistance
+    this.indeterminateVerticalDistance = false
+    this.minimumChannelSegmentDistance = nodePlacers[0].minimumChannelSegmentDistance
+    this.indeterminateMinimumChannelSegmentDistance = false
+    this.rootAlignment = nodePlacers[0].rootAlignment
+    this.indeterminateRootAlignment = false
+
     if (nodePlacers.length > 1) {
-      settings = nodePlacers.reduce((acc, nodePlacer) => {
-        if (acc.indeterminateChildPlacement || acc.childPlacement !== nodePlacer.childPlacement) {
-          acc.indeterminateChildPlacement = true
+      for (const nodePlacer of nodePlacers) {
+        if (this.childPlacement !== nodePlacer.childPlacement) {
+          this.indeterminateChildPlacement = true
         }
-        if (acc.indeterminateRoutingStyle || acc.routingStyle !== nodePlacer.routingStyle) {
-          acc.indeterminateRoutingStyle = true
+        if (this.routingStyle !== nodePlacer.routingStyle) {
+          this.indeterminateRoutingStyle = true
         }
-        if (
-          acc.indeterminateHorizontalDistance ||
-          acc.horizontalDistance !== nodePlacer.horizontalDistance
-        ) {
-          acc.indeterminateHorizontalDistance = true
+        if (this.horizontalDistance !== nodePlacer.horizontalDistance) {
+          this.indeterminateHorizontalDistance = true
         }
-        if (
-          acc.indeterminateVerticalDistance ||
-          acc.verticalDistance !== nodePlacer.verticalDistance
-        ) {
-          acc.indeterminateVerticalDistance = true
+        if (this.verticalDistance !== nodePlacer.verticalDistance) {
+          this.indeterminateVerticalDistance = true
         }
-        if (
-          acc.indeterminateMinimumChannelSegmentDistance ||
-          acc.minimumChannelSegmentDistance !== nodePlacer.minimumChannelSegmentDistance
-        ) {
-          acc.indeterminateMinimumChannelSegmentDistance = true
+        if (this.minimumChannelSegmentDistance !== nodePlacer.minimumChannelSegmentDistance) {
+          this.indeterminateMinimumChannelSegmentDistance = true
         }
-        if (acc.indeterminateRootAlignment || acc.rootAlignment !== nodePlacer.rootAlignment) {
-          acc.indeterminateRootAlignment = true
+        if (this.rootAlignment !== nodePlacer.rootAlignment) {
+          this.indeterminateRootAlignment = true
         }
-        return acc
-      }, settings)
+      }
     }
-    this.childPlacement = settings.childPlacement
-    this.indeterminateChildPlacement = settings.indeterminateChildPlacement
-    this.routingStyle = settings.routingStyle
-    this.indeterminateRoutingStyle = settings.indeterminateRoutingStyle
-    this.horizontalDistance = settings.horizontalDistance
-    this.indeterminateHorizontalDistance = settings.indeterminateHorizontalDistance
-    this.verticalDistance = settings.verticalDistance
-    this.indeterminateVerticalDistance = settings.indeterminateVerticalDistance
-    this.minimumChannelSegmentDistance = settings.minimumChannelSegmentDistance
-    this.indeterminateMinimumChannelSegmentDistance =
-      settings.indeterminateMinimumChannelSegmentDistance
-    this.rootAlignment = settings.rootAlignment
-    this.indeterminateRootAlignment = settings.indeterminateRootAlignment
+
     this.updatePanel()
   }
 
@@ -823,30 +812,17 @@ class DefaultNodePlacerConfiguration extends NodePlacerConfiguration {
       }
     }
 
-    const horizontalDistance = document.getElementById('horizontal-distance')
-    horizontalDistance.value = this.horizontalDistance
-    const horizontalDistanceLabel = document.getElementById('horizontal-distance-label')
-    horizontalDistanceLabel.innerHTML = this.indeterminateHorizontalDistance
-      ? '???'
-      : this.horizontalDistance
-
-    const verticalDistance = document.getElementById('vertical-distance')
-    verticalDistance.value = this.verticalDistance
-    const verticalDistanceLabel = document.getElementById('vertical-distance-label')
-    verticalDistanceLabel.innerHTML = this.indeterminateVerticalDistance
-      ? '???'
-      : this.verticalDistance
-
-    const minimumChannelSegmentDistance = document.getElementById(
-      'minimum-channel-segment-distance'
+    updateInput(
+      'horizontal-distance',
+      this.horizontalDistance,
+      this.indeterminateHorizontalDistance
     )
-    minimumChannelSegmentDistance.value = this.minimumChannelSegmentDistance
-    const minimumChannelSegmentDistanceLabel = document.getElementById(
-      'minimum-channel-segment-distance-label'
+    updateInput('vertical-distance', this.verticalDistance, this.indeterminateVerticalDistance)
+    updateInput(
+      'minimum-channel-segment-distance',
+      this.minimumChannelSegmentDistance,
+      this.indeterminateMinimumChannelSegmentDistance
     )
-    minimumChannelSegmentDistanceLabel.innerHTML = this.indeterminateMinimumChannelSegmentDistance
-      ? '???'
-      : this.minimumChannelSegmentDistance
 
     const rootAlignment = document.getElementById('root-alignment')
     if (this.indeterminateRootAlignment) {
@@ -882,6 +858,9 @@ class DefaultNodePlacerConfiguration extends NodePlacerConfiguration {
     }
   }
 
+  /**
+   * @returns {!string}
+   */
   getDescriptionText() {
     return (
       '<h2>DefaultNodePlacer</h2>' +
@@ -890,6 +869,9 @@ class DefaultNodePlacerConfiguration extends NodePlacerConfiguration {
     )
   }
 
+  /**
+   * @param {!NodePlacerPanel} panel
+   */
   bindActions(panel) {
     const childPlacement = document.getElementById('select-child-placement')
     childPlacement.addEventListener('change', () => {
@@ -1004,6 +986,9 @@ class DefaultNodePlacerConfiguration extends NodePlacerConfiguration {
     })
   }
 
+  /**
+   * @returns {!DefaultNodePlacer}
+   */
   getDefaultNodePlacer() {
     return new DefaultNodePlacer()
   }
@@ -1012,7 +997,7 @@ class DefaultNodePlacerConfiguration extends NodePlacerConfiguration {
 class SimpleNodePlacerConfiguration extends RotatableNodePlacerConfiguration {
   /**
    * Creates a new instance of SimpleNodePlacerConfiguration.
-   * @param {Element} panel
+   * @param {!NodePlacerPanel} panel
    */
   constructor(panel) {
     super(document.getElementById('simple-node-placer-settings'), new SimpleNodePlacer(), panel)
@@ -1033,10 +1018,14 @@ class SimpleNodePlacerConfiguration extends RotatableNodePlacerConfiguration {
     })
   }
 
+  /**
+   * @param {!Iterable.<INode>} selectedNodes
+   * @param {!Mapper.<INode,ITreeLayoutNodePlacer>} nodePlacers
+   */
   updateNodePlacers(selectedNodes, nodePlacers) {
-    selectedNodes.forEach(selectedNode => {
+    for (const selectedNode of selectedNodes) {
       const nodePlacer = nodePlacers.get(selectedNode)
-      if (SimpleNodePlacer.isInstance(nodePlacer)) {
+      if (nodePlacer instanceof SimpleNodePlacer) {
         if (!this.indeterminateSpacing) {
           nodePlacer.spacing = this.spacing
         }
@@ -1052,45 +1041,33 @@ class SimpleNodePlacerConfiguration extends RotatableNodePlacerConfiguration {
       } else {
         nodePlacers.set(selectedNode, this.createNodePlacer())
       }
-    })
+    }
   }
 
+  /**
+   * @param {!Array.<SimpleNodePlacer>} nodePlacers
+   */
   adoptSettings(nodePlacers) {
     super.adoptSettings(nodePlacers)
 
-    const nodePlacer = nodePlacers[0]
-    let settings = {
-      createBus: nodePlacer.createBus,
-      indeterminateCreateBus: false,
-      rootAlignment: nodePlacer.rootAlignment,
-      indeterminateRootAlignment: false,
-      minimumChannelSegmentDistance: nodePlacer.minimumChannelSegmentDistance,
-      indeterminateMinimumChannelSegmentDistance: false
+    this.createBus = nodePlacers[0].createBus
+    this.indeterminateCreateBus = false
+    this.rootAlignment = nodePlacers[0].rootAlignment
+    this.indeterminateRootAlignment = false
+    this.minimumChannelSegmentDistance = nodePlacers[0].minimumChannelSegmentDistance
+    this.indeterminateMinimumChannelSegmentDistance = false
+
+    for (const nodePlacer of nodePlacers) {
+      if (this.createBus !== nodePlacer.createBus) {
+        this.indeterminateCreateBus = true
+      }
+      if (this.rootAlignment !== nodePlacer.rootAlignment) {
+        this.indeterminateRootAlignment = true
+      }
+      if (this.minimumChannelSegmentDistance !== nodePlacer.minimumChannelSegmentDistance) {
+        this.indeterminateMinimumChannelSegmentDistance = true
+      }
     }
-    if (nodePlacers.length > 1) {
-      settings = nodePlacers.reduce((acc, nodePlacer) => {
-        if (!acc.indeterminateCreateBus && acc.createBus !== nodePlacer.createBus) {
-          acc.indeterminateCreateBus = true
-        }
-        if (!acc.indeterminateRootAlignment && acc.rootAlignment !== nodePlacer.rootAlignment) {
-          acc.indeterminateRootAlignment = true
-        }
-        if (
-          !acc.indeterminateMinimumChannelSegmentDistance &&
-          acc.minimumChannelSegmentDistance !== nodePlacer.minimumChannelSegmentDistance
-        ) {
-          acc.indeterminateMinimumChannelSegmentDistance = true
-        }
-        return acc
-      }, settings)
-    }
-    this.createBus = settings.createBus
-    this.indeterminateCreateBus = settings.indeterminateCreateBus
-    this.rootAlignment = settings.rootAlignment
-    this.indeterminateRootAlignment = settings.indeterminateRootAlignment
-    this.minimumChannelSegmentDistance = settings.minimumChannelSegmentDistance
-    this.indeterminateMinimumChannelSegmentDistance =
-      settings.indeterminateMinimumChannelSegmentDistance
 
     this.updatePanel()
   }
@@ -1131,16 +1108,16 @@ class SimpleNodePlacerConfiguration extends RotatableNodePlacerConfiguration {
       }
     }
 
-    const minimumChannelSegmentDistance = document.getElementById('min-channel-segment-distance')
-    minimumChannelSegmentDistance.value = this.minimumChannelSegmentDistance
-    const minimumChannelSegmentDistanceLabel = document.getElementById(
-      'min-channel-segment-distance-label'
+    updateInput(
+      'min-channel-segment-distance',
+      this.minimumChannelSegmentDistance,
+      this.indeterminateMinimumChannelSegmentDistance
     )
-    minimumChannelSegmentDistanceLabel.innerHTML = this.indeterminateMinimumChannelSegmentDistance
-      ? '???'
-      : this.minimumChannelSegmentDistance
   }
 
+  /**
+   * @returns {!string}
+   */
   getDescriptionText() {
     return (
       '<h2>SimpleNodePlacer</h2>' +
@@ -1149,6 +1126,9 @@ class SimpleNodePlacerConfiguration extends RotatableNodePlacerConfiguration {
     )
   }
 
+  /**
+   * @param {!NodePlacerPanel} panel
+   */
   bindActions(panel) {
     super.bindActions(panel)
 
@@ -1203,6 +1183,9 @@ class SimpleNodePlacerConfiguration extends RotatableNodePlacerConfiguration {
     })
   }
 
+  /**
+   * @returns {!SimpleNodePlacer}
+   */
   getDefaultNodePlacer() {
     return new SimpleNodePlacer()
   }
@@ -1211,34 +1194,47 @@ class SimpleNodePlacerConfiguration extends RotatableNodePlacerConfiguration {
 class BusNodePlacerConfiguration extends RotatableNodePlacerConfiguration {
   /**
    * Creates a new instance of BusNodePlacerConfiguration.
-   * @param {Element} panel
+   * @param {!NodePlacerPanel} panel
    */
   constructor(panel) {
     super(document.getElementById('bus-node-placer-settings'), new BusNodePlacer(), panel)
   }
 
+  /**
+   * @returns {!BusNodePlacer}
+   */
   createNodePlacer() {
     return new BusNodePlacer({ spacing: this.spacing })
   }
 
+  /**
+   * @param {!Iterable.<INode>} selectedNodes
+   * @param {!Mapper.<INode,ITreeLayoutNodePlacer>} nodePlacers
+   */
   updateNodePlacers(selectedNodes, nodePlacers) {
-    selectedNodes.forEach(selectedNode => {
+    for (const selectedNode of selectedNodes) {
       const nodePlacer = nodePlacers.get(selectedNode)
-      if (BusNodePlacer.isInstance(nodePlacer)) {
+      if (nodePlacer instanceof BusNodePlacer) {
         if (!this.indeterminateSpacing) {
           nodePlacer.spacing = this.spacing
         }
       } else {
         nodePlacers.set(selectedNode, this.createNodePlacer())
       }
-    })
+    }
   }
 
+  /**
+   * @param {!Array.<RotatableNodePlacerBase>} nodePlacer
+   */
   adoptSettings(nodePlacer) {
     super.adoptSettings(nodePlacer)
     this.updatePanel()
   }
 
+  /**
+   * @returns {!string}
+   */
   getDescriptionText() {
     return (
       '<h2>BusNodePlacer</h2>' +
@@ -1246,6 +1242,9 @@ class BusNodePlacerConfiguration extends RotatableNodePlacerConfiguration {
     )
   }
 
+  /**
+   * @returns {!BusNodePlacer}
+   */
   getDefaultNodePlacer() {
     return new BusNodePlacer()
   }
@@ -1254,16 +1253,19 @@ class BusNodePlacerConfiguration extends RotatableNodePlacerConfiguration {
 class GridNodePlacerConfiguration extends RotatableNodePlacerConfiguration {
   /**
    * Creates a new instance of GridNodePlacerConfiguration.
-   * @param {Element} panel
+   * @param {!NodePlacerPanel} panel
    */
   constructor(panel) {
     super(document.getElementById('grid-node-placer-settings'), new GridNodePlacer(), panel)
     this.rootAlignment = GridNodePlacer.BUS_ALIGNED
-    this.indeterminateRootAlignment = GridNodePlacer.BUS_ALIGNED
+    this.indeterminateRootAlignment = false
     this.busPlacement = BusPlacement.LEADING
-    this.indeterminateBusPlacement = BusPlacement.LEADING
+    this.indeterminateBusPlacement = false
   }
 
+  /**
+   * @returns {!GridNodePlacer}
+   */
   createNodePlacer() {
     return new GridNodePlacer({
       spacing: this.spacing,
@@ -1273,10 +1275,14 @@ class GridNodePlacerConfiguration extends RotatableNodePlacerConfiguration {
     })
   }
 
+  /**
+   * @param {!Iterable.<INode>} selectedNodes
+   * @param {!Mapper.<INode,ITreeLayoutNodePlacer>} nodePlacers
+   */
   updateNodePlacers(selectedNodes, nodePlacers) {
-    selectedNodes.forEach(selectedNode => {
+    for (const selectedNode of selectedNodes) {
       const nodePlacer = nodePlacers.get(selectedNode)
-      if (GridNodePlacer.isInstance(nodePlacer)) {
+      if (nodePlacer instanceof GridNodePlacer) {
         if (!this.indeterminateSpacing) {
           nodePlacer.spacing = this.spacing
         }
@@ -1289,44 +1295,35 @@ class GridNodePlacerConfiguration extends RotatableNodePlacerConfiguration {
       } else {
         nodePlacers.set(selectedNode, this.createNodePlacer())
       }
-    })
+    }
   }
 
+  /**
+   * @param {!Array.<GridNodePlacer>} nodePlacers
+   */
   adoptSettings(nodePlacers) {
     super.adoptSettings(nodePlacers)
 
-    const nodePlacer = nodePlacers[0]
-    let settings = {
-      rootAlignment: nodePlacer.rootAlignment,
-      indeterminateRootAlignment: false,
-      busPlacement: nodePlacer.busPlacement,
-      indeterminateBusPlacement: false
+    this.rootAlignment = nodePlacers[0].rootAlignment
+    this.indeterminateRootAlignment = false
+    this.busPlacement = nodePlacers[0].busPlacement
+    this.indeterminateBusPlacement = false
+
+    for (const nodePlacer of nodePlacers) {
+      if (!this.rootAlignment.equals(nodePlacer.rootAlignment)) {
+        this.indeterminateRootAlignment = true
+      }
+      if (this.busPlacement !== nodePlacer.busPlacement) {
+        this.indeterminateBusPlacement = true
+      }
     }
-    if (nodePlacers.length > 1) {
-      settings = nodePlacers.reduce((acc, nodePlacer) => {
-        if (!acc.indeterminateSpacing && acc.spacing !== nodePlacer.spacing) {
-          acc.indeterminateSpacing = true
-        }
-        if (
-          !acc.indeterminateRootAlignment &&
-          !acc.rootAlignment.equals(nodePlacer.rootAlignment)
-        ) {
-          acc.indeterminateRootAlignment = true
-        }
-        if (!acc.indeterminateBusPlacement && acc.busPlacement !== nodePlacer.busPlacement) {
-          acc.indeterminateBusPlacement = true
-        }
-        return acc
-      }, settings)
-    }
-    this.rootAlignment = settings.rootAlignment
-    this.indeterminateRootAlignment = settings.indeterminateRootAlignment
-    this.busPlacement = settings.busPlacement
-    this.indeterminateBusPlacement = settings.indeterminateBusPlacement
 
     this.updatePanel()
   }
 
+  /**
+   * @returns {!string}
+   */
   getDescriptionText() {
     return (
       '<h2>GridNodePlacer</h2>' +
@@ -1387,6 +1384,9 @@ class GridNodePlacerConfiguration extends RotatableNodePlacerConfiguration {
     }
   }
 
+  /**
+   * @param {!NodePlacerPanel} panel
+   */
   bindActions(panel) {
     super.bindActions(panel)
     const rootAlignment = document.getElementById('grid-node-placer-alignment')
@@ -1438,6 +1438,9 @@ class GridNodePlacerConfiguration extends RotatableNodePlacerConfiguration {
     })
   }
 
+  /**
+   * @returns {!GridNodePlacer}
+   */
   getDefaultNodePlacer() {
     return new GridNodePlacer()
   }
@@ -1446,7 +1449,7 @@ class GridNodePlacerConfiguration extends RotatableNodePlacerConfiguration {
 class DoubleLineNodePlacerConfiguration extends RotatableNodePlacerConfiguration {
   /**
    * Creates a new instance of DoubleLineNodePlacerConfiguration.
-   * @param {Element} panel
+   * @param {!NodePlacerPanel} panel
    */
   constructor(panel) {
     super(
@@ -1458,6 +1461,9 @@ class DoubleLineNodePlacerConfiguration extends RotatableNodePlacerConfiguration
     this.indeterminateRootAlignment = false
   }
 
+  /**
+   * @returns {!DoubleLineNodePlacer}
+   */
   createNodePlacer() {
     return new DoubleLineNodePlacer({
       spacing: this.spacing,
@@ -1465,10 +1471,14 @@ class DoubleLineNodePlacerConfiguration extends RotatableNodePlacerConfiguration
     })
   }
 
+  /**
+   * @param {!Iterable.<INode>} selectedNodes
+   * @param {!Mapper.<INode,ITreeLayoutNodePlacer>} nodePlacers
+   */
   updateNodePlacers(selectedNodes, nodePlacers) {
-    selectedNodes.forEach(selectedNode => {
+    for (const selectedNode of selectedNodes) {
       const nodePlacer = nodePlacers.get(selectedNode)
-      if (DoubleLineNodePlacer.isInstance(nodePlacer)) {
+      if (nodePlacer instanceof DoubleLineNodePlacer) {
         if (!this.indeterminateSpacing) {
           nodePlacer.spacing = this.spacing
         }
@@ -1478,33 +1488,32 @@ class DoubleLineNodePlacerConfiguration extends RotatableNodePlacerConfiguration
       } else {
         nodePlacers.set(selectedNode, this.createNodePlacer())
       }
-    })
+    }
   }
 
+  /**
+   * @param {!Array.<DoubleLineNodePlacer>} nodePlacers
+   */
   adoptSettings(nodePlacers) {
     super.adoptSettings(nodePlacers)
 
-    const nodePlacer = nodePlacers[0]
-    let settings = {
-      rootAlignment: nodePlacer.rootAlignment,
-      indeterminateRootAlignment: false
-    }
+    this.rootAlignment = nodePlacers[0].rootAlignment
+    this.indeterminateRootAlignment = false
+
     if (nodePlacers.length > 1) {
-      settings = nodePlacers.reduce((acc, nodePlacer) => {
-        if (
-          !acc.indeterminateRootAlignment &&
-          !acc.rootAlignment.equals(nodePlacer.rootAlignment)
-        ) {
-          acc.indeterminateRootAlignment = true
+      nodePlacers.forEach(nodePlacer => {
+        if (!this.rootAlignment.equals(nodePlacer.rootAlignment)) {
+          this.indeterminateRootAlignment = true
         }
-        return acc
-      }, settings)
+      })
     }
-    this.rootAlignment = settings.rootAlignment
-    this.indeterminateRootAlignment = settings.indeterminateRootAlignment
+
     this.updatePanel()
   }
 
+  /**
+   * @returns {!string}
+   */
   getDescriptionText() {
     return (
       '<h2>DoubleLineNodePlacer</h2>' +
@@ -1547,6 +1556,9 @@ class DoubleLineNodePlacerConfiguration extends RotatableNodePlacerConfiguration
     }
   }
 
+  /**
+   * @param {!NodePlacerPanel} panel
+   */
   bindActions(panel) {
     super.bindActions(panel)
     const rootAlignment = document.getElementById('double-line-root-node-alignment')
@@ -1580,6 +1592,9 @@ class DoubleLineNodePlacerConfiguration extends RotatableNodePlacerConfiguration
     })
   }
 
+  /**
+   * @returns {!DoubleLineNodePlacer}
+   */
   getDefaultNodePlacer() {
     return new DoubleLineNodePlacer()
   }
@@ -1588,7 +1603,7 @@ class DoubleLineNodePlacerConfiguration extends RotatableNodePlacerConfiguration
 class LeftRightNodePlacerConfiguration extends RotatableNodePlacerConfiguration {
   /**
    * Creates a new instance of LeftRightNodePlacerConfiguration.
-   * @param {Element} panel
+   * @param {!NodePlacerPanel} panel
    */
   constructor(panel) {
     super(
@@ -1596,24 +1611,31 @@ class LeftRightNodePlacerConfiguration extends RotatableNodePlacerConfiguration 
       new LeftRightNodePlacer(),
       panel
     )
-    this.lastOnBottom = true
-    this.indeterminateLastOnBottom = false
     this.branchCount = 1
     this.indeterminateBranchCount = false
+    this.placeLastOnBottom = true
+    this.indeterminatePlaceLastOnBottom = false
   }
 
+  /**
+   * @returns {!LeftRightNodePlacer}
+   */
   createNodePlacer() {
     return new LeftRightNodePlacer({
       spacing: this.spacing,
-      placeLastOnBottom: this.lastOnBottom,
+      placeLastOnBottom: this.placeLastOnBottom,
       branchCount: this.branchCount
     })
   }
 
+  /**
+   * @param {!Iterable.<INode>} selectedNodes
+   * @param {!Mapper.<INode,ITreeLayoutNodePlacer>} nodePlacers
+   */
   updateNodePlacers(selectedNodes, nodePlacers) {
-    selectedNodes.forEach(selectedNode => {
+    for (const selectedNode of selectedNodes) {
       const nodePlacer = nodePlacers.get(selectedNode)
-      if (AssistantNodePlacer.isInstance(nodePlacer)) {
+      if (nodePlacer instanceof LeftRightNodePlacer) {
         if (!this.indeterminateSpacing) {
           nodePlacer.spacing = this.spacing
         }
@@ -1626,41 +1648,35 @@ class LeftRightNodePlacerConfiguration extends RotatableNodePlacerConfiguration 
       } else {
         nodePlacers.set(selectedNode, this.createNodePlacer())
       }
-    })
+    }
   }
 
+  /**
+   * @param {!Array.<LeftRightNodePlacer>} nodePlacers
+   */
   adoptSettings(nodePlacers) {
     super.adoptSettings(nodePlacers)
 
-    const nodePlacer = nodePlacers[0]
-    let settings = {
-      placeLastOnBottom: nodePlacer.placeLastOnBottom,
-      indeterminatePlaceLastOnBottom: false,
-      branchCount: nodePlacer.branchCount,
-      indeterminateBranchCount: false
+    this.placeLastOnBottom = nodePlacers[0].placeLastOnBottom
+    this.indeterminatePlaceLastOnBottom = false
+    this.branchCount = nodePlacers[0].branchCount
+    this.indeterminateBranchCount = false
+
+    for (const nodePlacer of nodePlacers) {
+      if (this.placeLastOnBottom !== nodePlacer.placeLastOnBottom) {
+        this.indeterminatePlaceLastOnBottom = true
+      }
+      if (this.branchCount !== nodePlacer.branchCount) {
+        this.indeterminateBranchCount = true
+      }
     }
-    if (nodePlacers.length > 1) {
-      settings = nodePlacers.reduce((acc, nodePlacer) => {
-        if (
-          !acc.indeterminatePlaceLastOnBottom &&
-          acc.placeLastOnBottom !== nodePlacer.placeLastOnBottom
-        ) {
-          acc.indeterminatePlaceLastOnBottom = true
-        }
-        if (!acc.indeterminateBranchCount && acc.branchCount !== nodePlacer.branchCount) {
-          acc.indeterminateBranchCount = true
-        }
-        return acc
-      }, settings)
-    }
-    this.placeLastOnBottom = settings.placeLastOnBottom
-    this.indeterminatePlaceLastOnBottom = settings.indeterminatePlaceLastOnBottom
-    this.branchCount = settings.branchCount
-    this.indeterminateBranchCount = settings.indeterminateBranchCount
 
     this.updatePanel()
   }
 
+  /**
+   * @returns {!string}
+   */
   getDescriptionText() {
     return (
       '<h2>LeftRightNodePlacer</h2>' +
@@ -1672,20 +1688,20 @@ class LeftRightNodePlacerConfiguration extends RotatableNodePlacerConfiguration 
     super.updatePanel()
 
     const lastOnBottom = document.getElementById('last-on-bottom')
-    lastOnBottom.checked = this.lastOnBottom
+    lastOnBottom.checked = this.placeLastOnBottom
     lastOnBottom.indeterminate = this.indeterminatePlaceLastOnBottom
-    const branchCount = document.getElementById('branch-count')
-    branchCount.value = this.branchCount
-    const branchCountLabel = document.getElementById('branch-count-label')
-    branchCountLabel.innerHTML = this.indeterminateBranchCount ? '???' : this.branchCount.toString()
+    updateInput('branchCount', this.branchCount, this.indeterminateBranchCount)
   }
 
+  /**
+   * @param {!NodePlacerPanel} panel
+   */
   bindActions(panel) {
     super.bindActions(panel)
     const lastOnBottom = document.getElementById('last-on-bottom')
     lastOnBottom.addEventListener('change', () => {
-      this.lastOnBottom = lastOnBottom.checked
-      this.indeterminateLastOnBottom = false
+      this.placeLastOnBottom = lastOnBottom.checked
+      this.indeterminatePlaceLastOnBottom = false
       panel.panelChanged()
     })
 
@@ -1702,6 +1718,9 @@ class LeftRightNodePlacerConfiguration extends RotatableNodePlacerConfiguration 
     })
   }
 
+  /**
+   * @returns {!LeftRightNodePlacer}
+   */
   getDefaultNodePlacer() {
     return new LeftRightNodePlacer()
   }
@@ -1710,7 +1729,7 @@ class LeftRightNodePlacerConfiguration extends RotatableNodePlacerConfiguration 
 class AspectRatioNodePlacerConfiguration extends NodePlacerConfiguration {
   /**
    * Creates a new instance of AspectRatioNodePlacerConfiguration.
-   * @param {Element} panel
+   * @param {!NodePlacerPanel} panel
    */
   constructor(panel) {
     super(
@@ -1730,6 +1749,9 @@ class AspectRatioNodePlacerConfiguration extends NodePlacerConfiguration {
     this.indeterminateVerticalDistance = false
   }
 
+  /**
+   * @returns {!AspectRatioNodePlacer}
+   */
   createNodePlacer() {
     return new AspectRatioNodePlacer({
       aspectRatio: this.aspectRatio,
@@ -1740,10 +1762,14 @@ class AspectRatioNodePlacerConfiguration extends NodePlacerConfiguration {
     })
   }
 
+  /**
+   * @param {!Iterable.<INode>} selectedNodes
+   * @param {!Mapper.<INode,ITreeLayoutNodePlacer>} nodePlacers
+   */
   updateNodePlacers(selectedNodes, nodePlacers) {
-    selectedNodes.forEach(selectedNode => {
+    for (const selectedNode of selectedNodes) {
       const nodePlacer = nodePlacers.get(selectedNode)
-      if (AspectRatioNodePlacer.isInstance(nodePlacer)) {
+      if (nodePlacer instanceof AspectRatioNodePlacer) {
         if (!this.indeterminateAspectRatio) {
           nodePlacer.aspectRatio = this.aspectRatio
         }
@@ -1762,62 +1788,48 @@ class AspectRatioNodePlacerConfiguration extends NodePlacerConfiguration {
       } else {
         nodePlacers.set(selectedNode, this.createNodePlacer())
       }
-    })
+    }
   }
 
+  /**
+   * @param {!Array.<AspectRatioNodePlacer>} nodePlacers
+   */
   adoptSettings(nodePlacers) {
-    const nodePlacer = nodePlacers[0]
-    let settings = {
-      aspectRatio: nodePlacer.aspectRatio,
-      indeterminateAspectRatio: false,
-      fillStyle: nodePlacer.fillStyle,
-      indeterminateFillStyle: false,
-      horizontalDistance: nodePlacer.horizontalDistance,
-      indeterminateHorizontalDistance: false,
-      verticalDistance: nodePlacer.verticalDistance,
-      indeterminateVerticalDistance: false,
-      horizontal: nodePlacer.horizontal,
-      indeterminateHorizontal: false
+    this.aspectRatio = nodePlacers[0].aspectRatio
+    this.indeterminateAspectRatio = false
+    this.fillStyle = nodePlacers[0].fillStyle
+    this.indeterminateFillStyle = false
+    this.horizontalDistance = nodePlacers[0].horizontalDistance
+    this.indeterminateHorizontalDistance = false
+    this.verticalDistance = nodePlacers[0].verticalDistance
+    this.indeterminateVerticalDistance = false
+    this.horizontal = nodePlacers[0].horizontal
+    this.indeterminateHorizontal = false
+
+    for (const nodePlacer of nodePlacers) {
+      if (this.aspectRatio !== nodePlacer.aspectRatio) {
+        this.indeterminateAspectRatio = true
+      }
+      if (this.fillStyle !== nodePlacer.fillStyle) {
+        this.indeterminateFillStyle = true
+      }
+      if (this.horizontalDistance !== nodePlacer.horizontalDistance) {
+        this.indeterminateHorizontalDistance = true
+      }
+      if (this.verticalDistance !== nodePlacer.verticalDistance) {
+        this.indeterminateVerticalDistance = true
+      }
+      if (this.horizontal !== nodePlacer.horizontal) {
+        this.indeterminateHorizontal = true
+      }
     }
-    if (nodePlacers.length > 1) {
-      settings = nodePlacers.reduce((acc, nodePlacer) => {
-        if (!acc.indeterminateAspectRatio && acc.aspectRatio !== nodePlacer.aspectRatio) {
-          acc.indeterminateAspectRatio = true
-        }
-        if (!acc.indeterminateFillStyle && acc.fillStyle !== nodePlacer.fillStyle) {
-          acc.indeterminateFillStyle = true
-        }
-        if (
-          !acc.indeterminateHorizontalDistance &&
-          acc.horizontalDistance !== nodePlacer.horizontalDistance
-        ) {
-          acc.indeterminateHorizontalDistance = true
-        }
-        if (
-          !acc.indeterminateVerticalDistance &&
-          acc.verticalDistance !== nodePlacer.verticalDistance
-        ) {
-          acc.indeterminateVerticalDistance = true
-        }
-        if (!acc.indeterminateHorizontal && acc.horizontal !== nodePlacer.horizontal) {
-          acc.indeterminateHorizontal = true
-        }
-        return acc
-      }, settings)
-    }
-    this.aspectRatio = settings.aspectRatio
-    this.indeterminateAspectRatio = settings.indeterminateAspectRatio
-    this.fillStyle = settings.fillStyle
-    this.indeterminateFillStyle = settings.indeterminateFillStyle
-    this.horizontalDistance = settings.horizontalDistance
-    this.indeterminateHorizontalDistance = settings.indeterminateHorizontalDistance
-    this.verticalDistance = settings.verticalDistance
-    this.indeterminateVerticalDistance = settings.indeterminateVerticalDistance
-    this.horizontal = settings.horizontal
-    this.indeterminateHorizontal = settings.indeterminateHorizontal
+
     this.updatePanel()
   }
 
+  /**
+   * @returns {!string}
+   */
   getDescriptionText() {
     return (
       '<h2>AspectRatioNodePlacer</h2>' +
@@ -1826,10 +1838,7 @@ class AspectRatioNodePlacerConfiguration extends NodePlacerConfiguration {
   }
 
   updatePanel() {
-    const aspectRatio = document.getElementById('aspect-ratio')
-    aspectRatio.value = this.aspectRatio
-    const aspectRatioLabel = document.getElementById('aspect-ratio-label')
-    aspectRatioLabel.innerHTML = this.indeterminateAspectRatio ? '???' : this.aspectRatio
+    updateInput('aspect-ratio', this.aspectRatio, this.indeterminateAspectRatio)
 
     const fillStyle = document.getElementById('fill-style')
     if (this.indeterminateFillStyle) {
@@ -1852,27 +1861,25 @@ class AspectRatioNodePlacerConfiguration extends NodePlacerConfiguration {
       }
     }
 
-    const horizontalDistance = document.getElementById('aspect-ratio-horizontal-distance')
-    horizontalDistance.value = this.horizontalDistance
-    const horizontalDistanceLabel = document.getElementById(
-      'aspect-ratio-horizontal-distance-label'
+    updateInput(
+      'aspect-ratio-horizontal-distance',
+      this.horizontalDistance,
+      this.indeterminateHorizontalDistance
     )
-    horizontalDistanceLabel.innerHTML = this.indeterminateVerticalDistance
-      ? '???'
-      : this.horizontalDistance
-
-    const verticalDistance = document.getElementById('aspect-ratio-vertical-distance')
-    verticalDistance.value = this.verticalDistance
-    const verticalDistanceLabel = document.getElementById('aspect-ratio-vertical-distance-label')
-    verticalDistanceLabel.innerHTML = this.indeterminateVerticalDistance
-      ? '???'
-      : this.verticalDistance
+    updateInput(
+      'aspect-ratio-vertical-distance',
+      this.verticalDistance,
+      this.indeterminateVerticalDistance
+    )
 
     const horizontal = document.getElementById('horizontal')
     horizontal.checked = this.horizontal
     horizontal.indeterminate = this.indeterminateHorizontal
   }
 
+  /**
+   * @param {!NodePlacerPanel} panel
+   */
   bindActions(panel) {
     const aspectRatio = document.getElementById('aspect-ratio')
     aspectRatio.addEventListener('change', () => {
@@ -1938,6 +1945,9 @@ class AspectRatioNodePlacerConfiguration extends NodePlacerConfiguration {
     })
   }
 
+  /**
+   * @returns {!AspectRatioNodePlacer}
+   */
   getDefaultNodePlacer() {
     return new AspectRatioNodePlacer()
   }
@@ -1946,7 +1956,7 @@ class AspectRatioNodePlacerConfiguration extends NodePlacerConfiguration {
 class AssistantNodePlacerConfiguration extends RotatableNodePlacerConfiguration {
   /**
    * Creates a new instance of AssistantNodePlacerConfiguration.
-   * @param {Element} panel
+   * @param {!NodePlacerPanel} panel
    */
   constructor(panel) {
     super(
@@ -1958,6 +1968,9 @@ class AssistantNodePlacerConfiguration extends RotatableNodePlacerConfiguration 
     this.indeterminateChildNodePlacer = false
   }
 
+  /**
+   * @returns {!AssistantNodePlacer}
+   */
   createNodePlacer() {
     return new AssistantNodePlacer({
       spacing: this.spacing,
@@ -1965,8 +1978,12 @@ class AssistantNodePlacerConfiguration extends RotatableNodePlacerConfiguration 
     })
   }
 
+  /**
+   * @param {!Iterable.<INode>} selectedNodes
+   * @param {!Mapper.<INode,ITreeLayoutNodePlacer>} nodePlacers
+   */
   updateNodePlacers(selectedNodes, nodePlacers) {
-    selectedNodes.forEach(selectedNode => {
+    for (const selectedNode of selectedNodes) {
       const nodePlacer = nodePlacers.get(selectedNode)
       if (AssistantNodePlacer.isInstance(nodePlacer)) {
         if (!this.indeterminateSpacing) {
@@ -1978,32 +1995,31 @@ class AssistantNodePlacerConfiguration extends RotatableNodePlacerConfiguration 
       } else {
         nodePlacers.set(selectedNode, this.createNodePlacer())
       }
-    })
+    }
   }
 
+  /**
+   * @param {!Array.<AssistantNodePlacer>} nodePlacers
+   */
   adoptSettings(nodePlacers) {
     super.adoptSettings(nodePlacers)
 
-    let settings = {
-      childNodePlacer: nodePlacers[0].childNodePlacer,
-      indeterminateChildNodePlacer: false
-    }
-    if (nodePlacers.length > 1) {
-      settings = nodePlacers.reduce((acc, nodePlacer) => {
-        if (
-          acc.indeterminateChildNodePlacer ||
-          acc.childNodePlacer !== nodePlacer.childNodePlacer
-        ) {
-          acc.indeterminateChildNodePlacer = true
-        }
-        return acc
-      }, settings)
-    }
-    this.childNodePlacer = settings.childNodePlacer
-    this.indeterminateChildNodePlacer = settings.indeterminateChildNodePlacer
+    this.childNodePlacer = nodePlacers[0].childNodePlacer
+    this.indeterminateChildNodePlacer = false
+    nodePlacers.forEach(nodePlacer => {
+      if (
+        this.indeterminateChildNodePlacer ||
+        this.childNodePlacer !== nodePlacer.childNodePlacer
+      ) {
+        this.indeterminateChildNodePlacer = true
+      }
+    })
     this.updatePanel()
   }
 
+  /**
+   * @returns {!string}
+   */
   getDescriptionText() {
     return (
       '<h2>AssistantNodePlacer</h2>' +
@@ -2019,21 +2035,24 @@ class AssistantNodePlacerConfiguration extends RotatableNodePlacerConfiguration 
     const childNodePlacer = document.getElementById('child-node-placer')
     if (this.indeterminateChildNodePlacer) {
       childNodePlacer.selectedIndex = 0
-    } else if (DefaultNodePlacer.isInstance(this.childNodePlacer)) {
+    } else if (this.childNodePlacer instanceof DefaultNodePlacer) {
       childNodePlacer.selectedIndex = 1
-    } else if (SimpleNodePlacer.isInstance(this.childNodePlacer)) {
+    } else if (this.childNodePlacer instanceof SimpleNodePlacer) {
       childNodePlacer.selectedIndex = 2
-    } else if (BusNodePlacer.isInstance(this.childNodePlacer)) {
+    } else if (this.childNodePlacer instanceof BusNodePlacer) {
       childNodePlacer.selectedIndex = 3
-    } else if (DoubleLineNodePlacer.isInstance(this.childNodePlacer)) {
+    } else if (this.childNodePlacer instanceof DoubleLineNodePlacer) {
       childNodePlacer.selectedIndex = 4
-    } else if (LeftRightNodePlacer.isInstance(this.childNodePlacer)) {
+    } else if (this.childNodePlacer instanceof LeftRightNodePlacer) {
       childNodePlacer.selectedIndex = 5
-    } else if (AspectRatioNodePlacer.isInstance(this.childNodePlacer)) {
+    } else if (this.childNodePlacer instanceof AspectRatioNodePlacer) {
       childNodePlacer.selectedIndex = 6
     }
   }
 
+  /**
+   * @param {!NodePlacerPanel} panel
+   */
   bindActions(panel) {
     super.bindActions(panel)
     const childNodePlacer = document.getElementById('child-node-placer')
@@ -2064,6 +2083,9 @@ class AssistantNodePlacerConfiguration extends RotatableNodePlacerConfiguration 
     })
   }
 
+  /**
+   * @returns {!AssistantNodePlacer}
+   */
   getDefaultNodePlacer() {
     return new AssistantNodePlacer()
   }
@@ -2072,12 +2094,12 @@ class AssistantNodePlacerConfiguration extends RotatableNodePlacerConfiguration 
 class CompactNodePlacerConfiguration extends NodePlacerConfiguration {
   /**
    * Creates a new instance of AspectRatioNodePlacerConfiguration.
-   * @param {Element} panel
+   * @param {!NodePlacerPanel} panel
    */
   constructor(panel) {
     super(document.getElementById('compact-node-placer-settings'), new CompactNodePlacer(), panel)
     this.preferredAspectRatio = 1
-    this.indeterminatePreferredAspectRatio = 1
+    this.indeterminatePreferredAspectRatio = false
     this.verticalDistance = 40
     this.indeterminateVerticalDistance = false
     this.horizontalDistance = 40
@@ -2088,6 +2110,9 @@ class CompactNodePlacerConfiguration extends NodePlacerConfiguration {
     this.indeterminateMinimumLastSegmentLength = false
   }
 
+  /**
+   * @returns {!CompactNodePlacer}
+   */
   createNodePlacer() {
     return new CompactNodePlacer({
       preferredAspectRatio: this.preferredAspectRatio,
@@ -2098,8 +2123,12 @@ class CompactNodePlacerConfiguration extends NodePlacerConfiguration {
     })
   }
 
+  /**
+   * @param {!Iterable.<INode>} selectedNodes
+   * @param {!Mapper.<INode,ITreeLayoutNodePlacer>} nodePlacers
+   */
   updateNodePlacers(selectedNodes, nodePlacers) {
-    selectedNodes.forEach(selectedNode => {
+    for (const selectedNode of selectedNodes) {
       const nodePlacer = nodePlacers.get(selectedNode)
       if (CompactNodePlacer.isInstance(nodePlacer)) {
         if (!this.indeterminatePreferredAspectRatio) {
@@ -2120,70 +2149,48 @@ class CompactNodePlacerConfiguration extends NodePlacerConfiguration {
       } else {
         nodePlacers.set(selectedNode, this.createNodePlacer())
       }
-    })
+    }
   }
 
+  /**
+   * @param {!Array.<CompactNodePlacer>} nodePlacers
+   */
   adoptSettings(nodePlacers) {
-    let settings = {
-      preferredAspectRatio: nodePlacers[0].preferredAspectRatio,
-      indeterminatePreferredAspectRatio: false,
-      verticalDistance: nodePlacers[0].verticalDistance,
-      indeterminateVerticalDistance: false,
-      horizontalDistance: nodePlacers[0].horizontalDistance,
-      indeterminateHorizontalDistance: false,
-      minimumFirstSegmentLength: nodePlacers[0].minimumFirstSegmentLength,
-      indeterminateMinimumFirstSegmentLength: false,
-      minimumLastSegmentLength: nodePlacers[0].minimumLastSegmentLength,
-      indeterminateMinimumLastSegmentLength: false
+    this.preferredAspectRatio = nodePlacers[0].preferredAspectRatio
+    this.indeterminatePreferredAspectRatio = false
+    this.verticalDistance = nodePlacers[0].verticalDistance
+    this.indeterminateVerticalDistance = false
+    this.horizontalDistance = nodePlacers[0].horizontalDistance
+    this.indeterminateHorizontalDistance = false
+    this.minimumFirstSegmentLength = nodePlacers[0].minimumFirstSegmentLength
+    this.indeterminateMinimumFirstSegmentLength = false
+    this.minimumLastSegmentLength = nodePlacers[0].minimumLastSegmentLength
+    this.indeterminateMinimumLastSegmentLength = false
+
+    for (const nodePlacer of nodePlacers) {
+      if (this.preferredAspectRatio !== nodePlacer.preferredAspectRatio) {
+        this.indeterminatePreferredAspectRatio = true
+      }
+      if (this.verticalDistance !== nodePlacer.verticalDistance) {
+        this.indeterminateVerticalDistance = true
+      }
+      if (this.horizontalDistance !== nodePlacer.horizontalDistance) {
+        this.indeterminateHorizontalDistance = true
+      }
+      if (this.minimumFirstSegmentLength !== nodePlacer.minimumFirstSegmentLength) {
+        this.indeterminateMinimumFirstSegmentLength = true
+      }
+      if (this.minimumLastSegmentLength !== nodePlacer.minimumLastSegmentLength) {
+        this.indeterminateMinimumLastSegmentLength = true
+      }
     }
-    if (nodePlacers.length > 1) {
-      settings = nodePlacers.reduce((acc, nodePlacer) => {
-        if (
-          acc.indeterminatePreferredAspectRatio ||
-          acc.preferredAspectRatio !== nodePlacer.preferredAspectRatio
-        ) {
-          acc.indeterminatePreferredAspectRatio = true
-        }
-        if (
-          acc.indeterminateVerticalDistance ||
-          acc.verticalDistance !== nodePlacer.verticalDistance
-        ) {
-          acc.indeterminateVerticalDistance = true
-        }
-        if (
-          acc.indeterminateHorizontalDistance ||
-          acc.horizontalDistance !== nodePlacer.horizontalDistance
-        ) {
-          acc.indeterminateHorizontalDistance = true
-        }
-        if (
-          acc.indeterminateMinimumFirstSegmentLength ||
-          acc.minimumFirstSegmentLength !== nodePlacer.minimumFirstSegmentLength
-        ) {
-          acc.indeterminateMinimumFirstSegmentLength = true
-        }
-        if (
-          acc.indeterminateMinimumLastSegmentLength ||
-          acc.minimumLastSegmentLength !== nodePlacer.minimumLastSegmentLength
-        ) {
-          acc.indeterminateMinimumLastSegmentLength = true
-        }
-        return acc
-      }, settings)
-    }
-    this.preferredAspectRatio = settings.preferredAspectRatio
-    this.indeterminatePreferredAspectRatio = settings.indeterminatePreferredAspectRatio
-    this.verticalDistance = settings.verticalDistance
-    this.indeterminateVerticalDistance = settings.indeterminateVerticalDistance
-    this.horizontalDistance = settings.horizontalDistance
-    this.indeterminateHorizontalDistance = settings.indeterminateHorizontalDistance
-    this.minimumFirstSegmentLength = settings.minimumFirstSegmentLength
-    this.indeterminateMinimumFirstSegmentLength = settings.indeterminateMinimumFirstSegmentLength
-    this.minimumLastSegmentLength = settings.minimumLastSegmentLength
-    this.indeterminateMinimumLastSegmentLength = settings.indeterminateMinimumLastSegmentLength
+
     this.updatePanel()
   }
 
+  /**
+   * @returns {!string}
+   */
   getDescriptionText() {
     return (
       '<h2>CompactNodePlacer</h2>' +
@@ -2193,50 +2200,36 @@ class CompactNodePlacerConfiguration extends NodePlacerConfiguration {
   }
 
   updatePanel() {
-    const preferredAspectRatio = document.getElementById('compact-preferred-aspect-ratio')
-    preferredAspectRatio.value = this.preferredAspectRatio
-    const preferredAspectRatioLabel = document.getElementById(
-      'compact-preferred-aspect-ratio-label'
+    updateInput(
+      'compact-preferred-aspect-ratio',
+      this.preferredAspectRatio,
+      this.indeterminatePreferredAspectRatio
     )
-    preferredAspectRatioLabel.innerHTML = this.indeterminatePreferredAspectRatio
-      ? '???'
-      : this.preferredAspectRatio
-
-    const verticalDistance = document.getElementById('compact-vertical-distance')
-    verticalDistance.value = this.verticalDistance
-    const verticalDistanceLabel = document.getElementById('compact-vertical-distance-label')
-    verticalDistanceLabel.innerHTML = this.indeterminateVerticalDistance
-      ? '???'
-      : this.verticalDistance
-
-    const horizontalDistance = document.getElementById('compact-horizontal-distance')
-    horizontalDistance.value = this.horizontalDistance
-    const horizontalDistanceLabel = document.getElementById('compact-horizontal-distance-label')
-    horizontalDistanceLabel.innerHTML = this.indeterminateHorizontalDistance
-      ? '???'
-      : this.horizontalDistance
-
-    const minimumFirstSegmentLength = document.getElementById(
-      'compact-minimum-first-segment-length'
+    updateInput(
+      'compact-vertical-distance',
+      this.verticalDistance,
+      this.indeterminateVerticalDistance
     )
-    minimumFirstSegmentLength.value = this.minimumFirstSegmentLength
-    const minimumFirstSegmentLengthLabel = document.getElementById(
-      'compact-minimum-first-segment-length-label'
+    updateInput(
+      'compact-horizontal-distance',
+      this.horizontalDistance,
+      this.indeterminateHorizontalDistance
     )
-    minimumFirstSegmentLengthLabel.innerHTML = this.indeterminateMinimumFirstSegmentLength
-      ? '???'
-      : this.minimumFirstSegmentLength
-
-    const minimumLastSegmentLength = document.getElementById('compact-minimum-last-segment-length')
-    minimumLastSegmentLength.value = this.minimumLastSegmentLength
-    const minimumLastSegmentLengthLabel = document.getElementById(
-      'compact-minimum-last-segment-length-label'
+    updateInput(
+      'compact-minimum-first-segment-length',
+      this.minimumFirstSegmentLength,
+      this.indeterminateMinimumFirstSegmentLength
     )
-    minimumLastSegmentLengthLabel.innerHTML = this.indeterminateMinimumLastSegmentLength
-      ? '???'
-      : this.minimumLastSegmentLength
+    updateInput(
+      'compact-minimum-last-segment-length',
+      this.minimumLastSegmentLength,
+      this.indeterminateMinimumLastSegmentLength
+    )
   }
 
+  /**
+   * @param {!NodePlacerPanel} panel
+   */
   bindActions(panel) {
     const preferredAspectRatio = document.getElementById('compact-preferred-aspect-ratio')
     preferredAspectRatio.addEventListener('change', () => {
@@ -2302,6 +2295,9 @@ class CompactNodePlacerConfiguration extends NodePlacerConfiguration {
     })
   }
 
+  /**
+   * @returns {!CompactNodePlacer}
+   */
   getDefaultNodePlacer() {
     return new CompactNodePlacer()
   }
@@ -2310,25 +2306,77 @@ class CompactNodePlacerConfiguration extends NodePlacerConfiguration {
 class MultipleNodePlacerConfiguration extends NodePlacerConfiguration {
   /**
    * Creates a new instance of MultipleNodePlacerConfiguration.
-   * @param {Element} panel
+   * @param {!NodePlacerPanel} panel
    */
   constructor(panel) {
     super(document.getElementById('multiple-node-placer-settings'), null, panel)
   }
 
+  /**
+   * @type {boolean}
+   */
   get hasPreview() {
     return false
   }
 
+  /**
+   * @returns {?ITreeLayoutNodePlacer}
+   */
   createNodePlacer() {
     return null
   }
 
+  /**
+   * @returns {!string}
+   */
   getDescriptionText() {
     return (
       '<h2>Multiple Values</h2>' +
       'You have selected nodes with different <code>NodePlacer</code>s. To assign the same ' +
       '<code>NodePlacer</code> to all of these nodes, choose one form the selection box.'
     )
+  }
+
+  /**
+   * @param {!Array.<ITreeLayoutNodePlacer>} nodePlacers
+   */
+  adoptSettings(nodePlacers) {}
+
+  /**
+   * @param {!NodePlacerPanel} panel
+   */
+  bindActions(panel) {}
+
+  /**
+   * @returns {?ITreeLayoutNodePlacer}
+   */
+  getDefaultNodePlacer() {
+    return null
+  }
+
+  /**
+   * @param {!Iterable.<INode>} selectedNodes
+   * @param {!Mapper.<INode,ITreeLayoutNodePlacer>} nodePlacers
+   */
+  updateNodePlacers(selectedNodes, nodePlacers) {}
+
+  updatePanel() {}
+}
+
+/**
+ * Convenience function changing the value of the {HTMLInputElement} found with the given id.
+ * @param {!string} elemId the element id
+ * @param {number} value the new value
+ * @param indeterminate whether the value is indeterminate
+ * @param {boolean} [indeterminate]
+ */
+function updateInput(elemId, value, indeterminate) {
+  const elem = document.getElementById(elemId)
+  if (elem instanceof HTMLInputElement) {
+    elem.value = String(value)
+  }
+  const labelElm = document.getElementById(elemId + '-label')
+  if (labelElm !== null) {
+    labelElm.innerHTML = indeterminate ? '???' : String(value)
   }
 }

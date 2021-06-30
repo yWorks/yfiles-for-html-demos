@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -28,20 +28,30 @@
  ***************************************************************************/
 import { BaseClass, delegate, IPropertyObservable, PropertyChangedEventArgs } from 'yfiles'
 
+/** @type {number} */
 let counter = 0
 
 /**
- * A data object with a name and a numeric value.
+ * Creates an instance of ClipboardBusinessObject with a new name.
+ * @returns {!ClipboardBusinessObject}
  */
-export default class ClipboardBusinessObject extends BaseClass(IPropertyObservable) {
+export function createClipboardBusinessObject() {
+  return new ClipboardBusinessObject(`Name ${++counter}`)
+}
+
+/**
+ * A data object with a name and a numeric value.
+ * It implements {@link IPropertyObservable} so the node style will be notified
+ * about changes of the {@link #name} property and update its visualization immediately.
+ */
+export class ClipboardBusinessObject extends BaseClass(IPropertyObservable) {
   /**
    * Creates a new instance of <code>ClipboardBusinessObject</code>
+   * @param {!string} name
    */
-  constructor() {
+  constructor(name) {
     super()
-    this.$name = null
-    this.$value = 0.5
-    this.$propertyChangedEvent = null
+    this.$name = name
   }
 
   /**
@@ -55,6 +65,7 @@ export default class ClipboardBusinessObject extends BaseClass(IPropertyObservab
   /**
    * Sets the name of this object.
    * @param {string} value
+   * @type {*}
    */
   set name(value) {
     if (this.$name !== value) {
@@ -66,66 +77,20 @@ export default class ClipboardBusinessObject extends BaseClass(IPropertyObservab
   }
 
   /**
-   * Gets the numeric value of this object.
-   * @return {number}
+   * The event that is raised when the {@link ClipboardBusinessObject#name} of this object changes.
+   * @param {function(Object, PropertyChangedEventArgs)} listener
+   * @param {!function} listener
    */
-  get value() {
-    return this.$value
-  }
-
-  /**
-   * Sets the numeric value of this object.
-   * @param {number} v
-   */
-  set value(v) {
-    if (v < 0) {
-      this.$value = 0
-    } else if (v > 1) {
-      this.$value = 1
-    } else {
-      this.$value = v
-    }
-  }
-
-  /**
-   * Gets the event fired when the {@link ClipboardBusinessObject#name} of this object changes.
-   * @return {function(Object, PropertyChangedEventArgs)}
-   */
-  get propertyChangedEvent() {
-    return this.$propertyChangedEvent
-  }
-
-  /**
-   * Sets the event fired when the {@link ClipboardBusinessObject#name} of this object changes.
-   * @param {function(Object, PropertyChangedEventArgs)} value
-   */
-  set propertyChangedEvent(value) {
-    this.$propertyChangedEvent = value
+  addPropertyChangedListener(listener) {
+    this.$propertyChangedEvent = delegate.combine(this.$propertyChangedEvent, listener)
   }
 
   /**
    * The event that is fired when the {@link ClipboardBusinessObject#name} of this object changes.
-   * @param {function(Object, PropertyChangedEventArgs)} value
+   * @param {function(Object, PropertyChangedEventArgs)} listener
+   * @param {!function} listener
    */
-  addPropertyChangedListener(value) {
-    this.$propertyChangedEvent = delegate.combine(this.$propertyChangedEvent, value)
-  }
-
-  /**
-   * The event that is fired when the {@link ClipboardBusinessObject#name} of this object changes.
-   * @param {function(Object, PropertyChangedEventArgs)} value
-   */
-  removePropertyChangedListener(value) {
-    this.$propertyChangedEvent = delegate.remove(this.$propertyChangedEvent, value)
-  }
-
-  /**
-   * Creates an instance of ClipboardBusinessObject.
-   * @return {ClipboardBusinessObject}
-   */
-  static create() {
-    const newClipboardBusinessObject = new ClipboardBusinessObject()
-    newClipboardBusinessObject.name = `Name ${++counter}`
-    return newClipboardBusinessObject
+  removePropertyChangedListener(listener) {
+    this.$propertyChangedEvent = delegate.remove(this.$propertyChangedEvent, listener)
   }
 }

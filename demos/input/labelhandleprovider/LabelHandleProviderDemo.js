@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -50,11 +50,15 @@ import {
 
 import LabelHandleProvider from './LabelHandleProvider.js'
 import { initDemoStyles } from '../../resources/demo-styles.js'
-import { showApp, bindCommand } from '../../resources/demo-app.js'
+import { bindCommand, showApp } from '../../resources/demo-app.js'
 import loadJson from '../../resources/load-json.js'
-/** @type {GraphComponent} */
-let graphComponent = null
 
+/** @type {GraphComponent} */
+let graphComponent
+
+/**
+ * @param {!object} licenseData
+ */
 function run(licenseData) {
   License.value = licenseData
   graphComponent = new GraphComponent('graphComponent')
@@ -84,12 +88,12 @@ function initializeGraph() {
            <circle r="4" stroke="black" stroke-width="1" fill="none" cx="{TemplateBinding width, Converter=demoBindings.halfConverter}" cy="{TemplateBinding height, Converter=demoBindings.halfConverter}"></circle>
          </g>`
 
-  const demoBindings = {}
-  TemplateLabelStyle.CONVERTERS.demoBindings = demoBindings
-  demoBindings.halfConverter = value => value * 0.5
-  demoBindings.flippedHandlePosition = height => height + 15
-  demoBindings.showUpsideHandle = isUpsideDown => (isUpsideDown ? '0' : '3')
-  demoBindings.showFlippedHandle = isUpsideDown => (isUpsideDown ? '3' : '0')
+  TemplateLabelStyle.CONVERTERS.demoBindings = {
+    halfConverter: value => value * 0.5,
+    flippedHandlePosition: height => height + 15,
+    showUpsideHandle: isUpsideDown => (isUpsideDown ? '0' : '3'),
+    showFlippedHandle: isUpsideDown => (isUpsideDown ? '3' : '0')
+  }
   const templateLabelStyle = new StringTemplateLabelStyle(templateString)
 
   const labelDecorationInstaller = new LabelStyleDecorationInstaller({
@@ -112,7 +116,7 @@ function initializeGraph() {
     backgroundFill: 'rgb(119, 204, 255)',
     backgroundStroke: 'lightgray',
     horizontalTextAlignment: 'center',
-    insets: [3, 5, 3, 5]
+    insets: [3, 5]
   })
   graph.nodeDefaults.labels.style = labelStyle
   // Our resize logic does not work together with all label models resp. label model parameters
@@ -127,7 +131,7 @@ function initializeGraph() {
   graph.edgeDefaults.labels.layoutParameter = labelModel.createParameterFromSource(
     0,
     0.5,
-    EdgeSides.RIGHT_OF_EDGE
+    'right-of-edge'
   )
 
   // create sample graph
@@ -140,19 +144,13 @@ function initializeGraph() {
     labels: [
       {
         text: 'Free Node Label.\nSupports rotation and asymmetric resizing',
-        layoutParameter: new FreeNodeLabelModel().createParameter(
-          [0.5, 0.5],
-          [0, 0],
-          [0.5, 0.5],
-          [0, 0],
-          0
-        ),
+        layoutParameter: new FreeNodeLabelModel().createParameter([0.5, 0.5], [0, 0], [0.5, 0.5]),
         style: new DefaultLabelStyle({
           backgroundFill: 'rgb(119, 204, 255)',
           backgroundStroke: 'lightgray',
           horizontalTextAlignment: 'center',
           autoFlip: false,
-          insets: [3, 5, 3, 5]
+          insets: [3, 5]
         })
       }
     ]
@@ -168,8 +166,7 @@ function initializeGraph() {
 
 /**
  * Returns the LabelHandleProvider for the given label.
- * @param {ILabel} label The given label
- * @return {LabelHandleProvider}
+ * @param {!ILabel} label The given label
  */
 function getLabelHandleProvider(label) {
   return new LabelHandleProvider(label)
@@ -194,7 +191,7 @@ function initializeInputMode() {
 
   // add a label to each created node
   mode.addNodeCreatedListener((sender, args) => {
-    const graph = mode.graphComponent.graph
+    const graph = graphComponent.graph
     graph.addLabel(args.item, `Node ${graph.nodes.size}`)
   })
 

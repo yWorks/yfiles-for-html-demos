@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.3.
+     // This demo file is part of yFiles for HTML 2.4.
      // Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
@@ -207,7 +207,7 @@
 			<data key="d2"/>
 			<data key="d3">
 				<x:List>
-					<y:Label PreferredSize="80.94480643681503,17">
+					<y:Label>
 						<y:Label.Text><![CDATA[Table Node]]></y:Label.Text>
 						<y:Label.LayoutParameter>
 							<y:InteriorLabelModelParameter Position="North">
@@ -249,7 +249,7 @@
 										<yjs:NodeStyleStripeStyleAdapter nodeStyle="{y:GraphMLReference 1}"/>
 									</y:Column.Style>
 									<y:Column.Labels>
-										<y:Label LayoutParameter="{x:Static y:StretchStripeLabelModel.North}" Style="{y:GraphMLReference 2}" PreferredSize="49.9995806741083,14">
+										<y:Label LayoutParameter="{x:Static y:StretchStripeLabelModel.North}" Style="{y:GraphMLReference 2}">
 											<y:Label.Text>Column1</y:Label.Text>
 										</y:Label>
 									</y:Column.Labels>
@@ -259,7 +259,7 @@
 										<yjs:NodeStyleStripeStyleAdapter nodeStyle="{y:GraphMLReference 1}"/>
 									</y:Column.Style>
 									<y:Column.Labels>
-										<y:Label LayoutParameter="{x:Static y:StretchStripeLabelModel.North}" Style="{y:GraphMLReference 2}" PreferredSize="49.9995806741083,14">
+										<y:Label LayoutParameter="{x:Static y:StretchStripeLabelModel.North}" Style="{y:GraphMLReference 2}">
 											<y:Label.Text>Column2</y:Label.Text>
 										</y:Label>
 									</y:Column.Labels>
@@ -303,7 +303,7 @@
 					<data key="d2"/>
 					<data key="d3">
 						<x:List>
-							<y:Label LayoutParameter="{x:Static y:InteriorStretchLabelModel.Center}" PreferredSize="39.99966453928664,14">
+							<y:Label LayoutParameter="{x:Static y:InteriorStretchLabelModel.Center}">
 								<y:Label.Text><![CDATA[Node 1]]></y:Label.Text>
 								<y:Label.Style>
 									<yjs:DefaultLabelStyle verticalTextAlignment="{y:GraphMLReference 3}" horizontalTextAlignment="{y:GraphMLReference 4}" wrapping="{y:GraphMLReference 6}" font="{y:GraphMLReference 8}" textFill="{y:GraphMLReference 7}"/>
@@ -325,7 +325,7 @@
 					<data key="d2"/>
 					<data key="d3">
 						<x:List>
-							<y:Label LayoutParameter="{x:Static y:InteriorStretchLabelModel.Center}" PreferredSize="140.9988175009854,14">
+							<y:Label LayoutParameter="{x:Static y:InteriorStretchLabelModel.Center}">
 								<y:Label.Text>InteriorStretchLabelModel</y:Label.Text>
 								<y:Label.Style>
 									<yjs:DefaultLabelStyle verticalTextAlignment="{y:GraphMLReference 3}" horizontalTextAlignment="{y:GraphMLReference 4}" wrapping="{y:GraphMLReference 6}" font="{y:GraphMLReference 8}" textFill="{y:GraphMLReference 7}"/>
@@ -350,7 +350,7 @@
 				<edge id="n0::e1" source="n0::n0" target="n0::n1" sourceport="p1" targetport="p1">
 					<data key="d8">
 						<x:List>
-							<y:Label LayoutParameter="{x:Static y:NinePositionsEdgeLabelModel.CenterCentered}" PreferredSize="169.99857429196823,14">
+							<y:Label LayoutParameter="{x:Static y:NinePositionsEdgeLabelModel.CenterCentered}">
 								<y:Label.Text>NinePositionsEdgeLabelModel</y:Label.Text>
 								<y:Label.Style>
 									<yjs:DefaultLabelStyle backgroundFill="WHITE" backgroundStroke="#FFFFFFFF" textFill="#FF336699">
@@ -402,7 +402,7 @@
 			<data key="d2"/>
 			<data key="d3">
 				<x:List>
-					<y:Label PreferredSize="106.99910264259177,14">
+					<y:Label>
 						<y:Label.Text>ExteriorLabelModel</y:Label.Text>
 						<y:Label.LayoutParameter>
 							<y:ExteriorLabelModelParameter Position="{y:GraphMLReference 12}">
@@ -503,7 +503,7 @@
       <data key="d2"><![CDATA[A Wonderful, suspenseful, sensual escape from reality]]></data>
 			<data key="d3">
 				<x:List>
-					<y:Label PreferredSize="62.9996818969043,11">
+					<y:Label>
 						<y:Label.Text><![CDATA[The Illusionist]]></y:Label.Text>
 						<y:Label.LayoutParameter>
 							<y:SandwichParameter Position="{y:GraphMLReference 12}">
@@ -530,7 +530,7 @@
       <data key="d2"><![CDATA[The crew of the Serenity is getting desperate. They have lain lower and lower to protect their doctor.]]></data>
 			<data key="d3">
 				<x:List>
-					<y:Label PreferredSize="37.999808128291484,11">
+					<y:Label>
 						<y:Label.Text>Serenity</y:Label.Text>
 						<y:Label.LayoutParameter>
 							<y:SandwichParameter Position="{y:GraphMLReference 12}">
@@ -584,7 +584,7 @@
 		<edge id="e2" source="n1" target="n2" sourceport="p1" targetport="p0">
 			<data key="d8">
 				<x:List>
-					<y:Label PreferredSize="125.99894329875292,14">
+					<y:Label>
 						<y:Label.Text>SmartEdgeLabelModel</y:Label.Text>
 						<y:Label.LayoutParameter>
 							<y:SmartEdgeLabelModelParameter Location="{y:GraphMLReference 14}" SegmentRatio="0.17018835920603426" Distance="7.684259949463261">

@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -72,7 +72,7 @@ class IsometricWebGLNodeStyleVisual extends WebGLVisual {
             varying vec4 v_color;
 
             void main() {
-              gl_Position = viewTransform_3d * a_position;
+              gl_Position = u_yf_worldToWebGL_3d * a_position;
               v_color = a_color;
             }`,
       `precision mediump float;

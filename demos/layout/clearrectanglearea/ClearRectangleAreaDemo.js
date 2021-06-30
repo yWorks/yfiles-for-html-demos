@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -259,8 +259,9 @@ function addClearRectInputModes(inputMode) {
   rectangleHandles.minimumSize = new Size(10, 10)
 
   // create a mode that deals with the handles
-  const handleInputMode = new HandleInputMode()
-  handleInputMode.priority = 1
+  const handleInputMode = new HandleInputMode({
+    priority: 1
+  })
 
   // add it to the graph editor mode
   inputMode.add(handleInputMode)
@@ -277,12 +278,11 @@ function addClearRectInputModes(inputMode) {
   handleInputMode.handles = handleCollection
 
   // create a mode that allows for dragging the rectangle at the sides
-  const moveInputMode = new MoveInputMode()
-  moveInputMode.positionHandler = new RectanglePositionHandler(clearRect)
-  moveInputMode.hitTestable = IHitTestable.create((context, location) =>
-    clearRect.contains(location)
-  )
-  moveInputMode.priority = 41
+  const moveInputMode = new MoveInputMode({
+    positionHandler: new RectanglePositionHandler(clearRect),
+    hitTestable: IHitTestable.create((context, location) => clearRect.contains(location)),
+    priority: 41
+  })
 
   // handle dragging the rectangle
   moveInputMode.addDragStartingListener((sender, evt) => onDragStarting(sender, evt))

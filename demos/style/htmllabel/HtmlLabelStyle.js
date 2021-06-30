@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -26,26 +26,47 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { Font, ILabel, IRenderContext, LabelStyleBase, Size, SvgVisual } from 'yfiles'
+import {
+  Font,
+  ILabel,
+  IOrientedRectangle,
+  IRenderContext,
+  LabelStyleBase,
+  Size,
+  SvgVisual,
+  YObject
+} from 'yfiles'
+
+/**
+ * @typedef {Object} Cache
+ * @property {IOrientedRectangle} layout
+ * @property {string} text
+ * @property {Font} font
+ */
 
 /**
  * A label style which displays HTML markup as label text.
  */
 export default class HtmlLabelStyle extends LabelStyleBase {
+  /*
+   * Creates a new instance of the HTMLLabelStyle class.
+   *
+   * @param font The font used for rendering the label text.
+   */
   /**
-   * @param {Font} font
+   * @param {!Font} font
    */
   constructor(font) {
     super()
-    this.fontField = font
+    this.font = font
   }
 
   /**
    * Creates a visual that uses a foreignObject-element to display a HTML formatted text.
    * @see Overrides {@link LabelStyleBase#createVisual}
-   * @param {IRenderContext} context
-   * @param {ILabel} label
-   * @return {SvgVisual}
+   * @param {!IRenderContext} context
+   * @param {!ILabel} label
+   * @returns {!SvgVisual}
    */
   createVisual(context, label) {
     const labelLayout = label.layout
@@ -55,15 +76,15 @@ export default class HtmlLabelStyle extends LabelStyleBase {
     foreignObject.setAttribute('y', '0')
 
     const div = document.createElement('div')
-    div.style.setProperty('overflow', 'hidden', '')
+    div.style.setProperty('overflow', 'hidden')
     foreignObject.setAttribute('width', `${labelLayout.width}`)
     foreignObject.setAttribute('height', `${labelLayout.height}`)
-    div.style.setProperty('width', `${labelLayout.width}px`, '')
-    div.style.setProperty('height', `${labelLayout.height}px`, '')
-    div.style.setProperty('font-family', this.font.fontFamily, '')
-    div.style.setProperty('font-size', `${this.font.fontSize}px`, '')
-    div.style.setProperty('font-weight', `${this.font.fontWeight}`, '')
-    div.style.setProperty('font-style', `${this.font.fontStyle}`, '')
+    div.style.setProperty('width', `${labelLayout.width}px`)
+    div.style.setProperty('height', `${labelLayout.height}px`)
+    div.style.setProperty('font-family', this.font.fontFamily)
+    div.style.setProperty('font-size', `${this.font.fontSize}px`)
+    div.style.setProperty('font-weight', `${this.font.fontWeight}`)
+    div.style.setProperty('font-style', `${this.font.fontStyle}`)
     div.innerHTML = label.text
     foreignObject.appendChild(div)
 
@@ -72,7 +93,7 @@ export default class HtmlLabelStyle extends LabelStyleBase {
     transform.applyTo(foreignObject)
 
     // Get the necessary data for rendering of the label and store information with the visual
-    foreignObject['data-cache'] = HtmlLabelStyle.createRenderDataCache(label, this.font)
+    foreignObject['data-cache'] = createRenderDataCache(label, this.font)
 
     return new SvgVisual(foreignObject)
   }
@@ -80,10 +101,10 @@ export default class HtmlLabelStyle extends LabelStyleBase {
   /**
    * Updates the visual that uses a foreignObject-element to display a HTML formatted text.
    * @see Overrides {@link LabelStyleBase#updateVisual}
-   * @param {IRenderContext} context
-   * @param {SvgVisual} oldVisual
-   * @param {ILabel} label
-   * @return {SvgVisual}
+   * @param {!IRenderContext} context
+   * @param {!SvgVisual} oldVisual
+   * @param {!ILabel} label
+   * @returns {!SvgVisual}
    */
   updateVisual(context, oldVisual, label) {
     const element = oldVisual.svgElement
@@ -96,27 +117,27 @@ export default class HtmlLabelStyle extends LabelStyleBase {
     const oldCache = element['data-cache']
 
     // get the data for the new visual
-    const newCache = HtmlLabelStyle.createRenderDataCache(label, this.font)
+    const newCache = createRenderDataCache(label, this.font)
 
     // update elements if they have changed
     const foreignObject = element
     const div = foreignObject.firstElementChild
-    if (!oldCache.layout.equals(newCache.layout)) {
+    if (!YObject.equals(oldCache.layout, newCache.layout)) {
       const labelLayout = label.layout
       foreignObject.setAttribute('width', `${labelLayout.width}`)
       foreignObject.setAttribute('height', `${labelLayout.height}`)
 
-      div.style.setProperty('width', `${labelLayout.width}px`, '')
-      div.style.setProperty('height', `${labelLayout.height}px`, '')
+      div.style.setProperty('width', `${labelLayout.width}px`)
+      div.style.setProperty('height', `${labelLayout.height}px`)
     }
     if (!oldCache.font.equals(newCache.font)) {
-      div.style.setProperty('font-family', this.font.fontFamily, '')
-      div.style.setProperty('font-size', `${this.font.fontSize}px`, '')
-      div.style.setProperty('font-weight', `${this.font.fontWeight}`, '')
-      div.style.setProperty('font-style', `${this.font.fontStyle}`, '')
+      div.style.setProperty('font-family', this.font.fontFamily)
+      div.style.setProperty('font-size', `${this.font.fontSize}px`)
+      div.style.setProperty('font-weight', `${this.font.fontWeight}`)
+      div.style.setProperty('font-style', `${this.font.fontStyle}`)
     }
 
-    if (oldCache.labelText !== newCache.labelText) {
+    if (oldCache.text !== newCache.text) {
       div.innerHTML = label.text
     }
 
@@ -133,46 +154,30 @@ export default class HtmlLabelStyle extends LabelStyleBase {
   /**
    * Returns the preferred size of the label.
    * @see Overrides {@link LabelStyleBase#getPreferredSize}
-   * @param {ILabel} label The label to which this style instance is assigned.
-   * @return {Size} The preferred size.
+   * @param {!ILabel} label The label to which this style instance is assigned.
+   * @returns {!Size} The preferred size.
    */
   getPreferredSize(label) {
     const div = document.createElement('div')
-    div.style.setProperty('display', 'inline-block', '')
+    div.style.setProperty('display', 'inline-block')
     div.innerHTML = label.text
     document.body.appendChild(div)
     const clientRect = div.getBoundingClientRect()
     document.body.removeChild(div)
     return new Size(clientRect.width, clientRect.height)
   }
+}
 
-  /**
-   * Creates an object containing all necessary data to create a label visual.
-   * @param {ILabel} label The current label.
-   * @param {Font} font The font of the label text.
-   * @return {Object}
-   */
-  static createRenderDataCache(label, font) {
-    return {
-      text: label.text,
-      font,
-      layout: label.layout
-    }
-  }
-
-  /**
-   * Returns the font used for rendering the label text.
-   * @type {Font}
-   */
-  get font() {
-    return this.fontField
-  }
-
-  /**
-   * Specifies the font used for rendering the label text.
-   * @type {Font}
-   */
-  set font(value) {
-    this.fontField = value
+/**
+ * Creates an object containing all necessary data to create a label visual.
+ * @param {!ILabel} label The current label.
+ * @param {!Font} font The font of the label text.
+ * @returns {!Cache}
+ */
+function createRenderDataCache(label, font) {
+  return {
+    text: label.text,
+    font,
+    layout: label.layout
   }
 }

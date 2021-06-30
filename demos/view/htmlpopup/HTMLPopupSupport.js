@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -31,6 +31,7 @@ import {
   IEdge,
   ILabelModelParameter,
   IModelItem,
+  INode,
   Point,
   SimpleLabel,
   Size
@@ -38,28 +39,27 @@ import {
 
 /**
  * This class adds an HTML panel on top of the contents of the GraphComponent that can
- * display arbitrary information about a {@link IModelItem graph item}.
- * In order to not interfere with the positioning of the pop-up, HTML content
- * should be added as ancestor of the {@link HTMLPopupSupport#div div element}, and
- * use relative positioning. This implementation uses a
- * {@link ILabelModelParameter label model parameter} to determine
- * the position of the pop-up.
+ * display arbitrary information about a {@link INode node} or an {@link IEdge edge}.
+ * In order to not interfere with the positioning of the pop-up, HTML content should be added as
+ * ancestor of the {@link HTMLPopupSupport#div div element}, and use relative positioning.
+ * This implementation uses a {@link ILabelModelParameter label model parameter} to determine the
+ * position of the pop-up.
  */
 export default class HTMLPopupSupport {
   /**
-   * Constructor that takes the graphComponent, the container div element and an ILabelModelParameter
-   * to determine the relative position of the popup.
-   * @param {GraphComponent} graphComponent
-   * @param {HTMLElement} div
-   * @param {ILabelModelParameter} labelModelParameter
+   * Initializes a new HTMLPopupSupport instance for the given graph component, pop-up container
+   * div, and pop-up placement parameter.
+   * @param {!GraphComponent} graphComponent The GraphComponent that displays the nodes and edges for which pop-ups
+   * will be shown.
+   * @param {!HTMLElement} div The HTMLDivElement that is used as parent element for the pop-up element.
+   * @param {!ILabelModelParameter} labelModelParameter The placement parameter that determines the pop-up location.
    */
   constructor(graphComponent, div, labelModelParameter) {
-    this.graphComponent = graphComponent
     this.labelModelParameter = labelModelParameter
-    this.$div = div
-    this.$currentItem = null
-    this.$dirty = false
-
+    this.div = div
+    this.graphComponent = graphComponent
+    this._currentItem = null
+    this.dirty = false
     // make the popup invisible
     div.style.opacity = '0'
     div.style.display = 'none'
@@ -68,33 +68,25 @@ export default class HTMLPopupSupport {
   }
 
   /**
-   * Sets the container {@link HTMLPopupSupport#div div element}.
-   * @type {HTMLElement}
+   * Gets the node or edge to display information for.
+   * @type {?(IEdge|INode)}
    */
-  set div(value) {
-    this.$div = value
+  get currentItem() {
+    return this._currentItem
   }
 
   /**
-   * Gets the container {@link HTMLPopupSupport#div div element}.
-   * @type {HTMLElement}
-   */
-  get div() {
-    return this.$div
-  }
-
-  /**
-   * Sets the {@link IModelItem item} to display information for.
+   * Sets the node or edge to display information for.
    * Setting this property to a value other than null shows the pop-up.
    * Setting the property to null hides the pop-up.
-   * @type {IModelItem}
+   * @type {?(IEdge|INode)}
    */
   set currentItem(value) {
-    if (value === this.$currentItem) {
+    if (value === this._currentItem) {
       return
     }
-    this.$currentItem = value
-    if (value !== null) {
+    this._currentItem = value
+    if (value) {
       this.show()
     } else {
       this.hide()
@@ -102,36 +94,12 @@ export default class HTMLPopupSupport {
   }
 
   /**
-   * Gets the {@link IModelItem item} to display information for.
-   * @type {IModelItem}
-   */
-  get currentItem() {
-    return this.$currentItem
-  }
-
-  /**
-   * Sets the flag for the current position is no longer valid.
-   * @param value true if the current position is no longer valid, false otherwise
-   * @type {boolean}
-   */
-  set dirty(value) {
-    this.$dirty = value
-  }
-
-  /**
-   * Gets the flag for the current position is no longer valid.
-   * @type {boolean}
-   */
-  get dirty() {
-    return this.$dirty
-  }
-
-  /**
-   * Registers viewport, node bounds changes and visual tree listeners to the given graphComponent.
+   * Registers viewport, node bounds changes, and visual tree listeners to the support's associated
+   * graph component.
    */
   registerListeners() {
     // Adds listener for viewport changes
-    this.graphComponent.addViewportChangedListener((sender, propertyChangedEventArgs) => {
+    this.graphComponent.addViewportChangedListener((sender, args) => {
       if (this.currentItem) {
         this.dirty = true
       }
@@ -139,16 +107,14 @@ export default class HTMLPopupSupport {
 
     // Adds listeners for node bounds changes
     this.graphComponent.graph.addNodeLayoutChangedListener((node, oldLayout) => {
-      if (
-        ((this.currentItem && this.currentItem === node) || IEdge.isInstance(this.currentItem)) &&
-        (node === this.currentItem.sourcePort.owner || node === this.currentItem.targetPort.owner)
-      ) {
+      const item = this.currentItem
+      if (item && (item === node || HTMLPopupSupport.isEdgeConnectedTo(item, node))) {
         this.dirty = true
       }
     })
 
     // Adds listener for updates of the visual tree
-    this.graphComponent.addUpdatedVisualListener((sender, eventArgs) => {
+    this.graphComponent.addUpdatedVisualListener((sender, args) => {
       if (this.currentItem && this.dirty) {
         this.dirty = false
         this.updateLocation()
@@ -218,5 +184,17 @@ export default class HTMLPopupSupport {
     // Calculate the view coordinates since we have to place the div in the regular HTML coordinate space
     const viewPoint = this.graphComponent.toViewCoordinates(new Point(x, y))
     this.div.style.setProperty('transform', `translate(${viewPoint.x}px, ${viewPoint.y}px)`)
+  }
+
+  /**
+   * Determines if the given item is an IEdge connected to the given node.
+   * @param {!IModelItem} item
+   * @param {!INode} node
+   * @returns {boolean}
+   */
+  static isEdgeConnectedTo(item, node) {
+    return (
+      item instanceof IEdge && (item.sourcePort.owner === node || item.targetPort.owner === node)
+    )
   }
 }

@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -126,9 +126,9 @@ function performanceButtonClick(): void {
     // this code is only included in this tutorial step. It is necessary to
     // make the toggle button work that can be used to switch between high-
     // and low-performance mode.
-    style.highPerformanceRendering = (window.document.getElementById(
-      'togglePerformance'
-    ) as HTMLInputElement).checked
+    style.highPerformanceRendering = (
+      window.document.getElementById('togglePerformance') as HTMLInputElement
+    ).checked
     graph.invalidateDisplays()
   }
 }

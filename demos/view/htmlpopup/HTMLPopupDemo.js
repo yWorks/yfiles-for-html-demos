@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -41,6 +41,7 @@ import {
   INode,
   Key,
   License,
+  ModifierKeys,
   Point,
   StorageLocation
 } from 'yfiles'
@@ -50,29 +51,23 @@ import HTMLPopupSupport from './HTMLPopupSupport.js'
 import { bindCommand, readGraph, showApp } from '../../resources/demo-app.js'
 import loadJson from '../../resources/load-json.js'
 
-// This demo presents how to add a zoom-invariant HTML pop-up component on top of the graph component to display
-// additional information for graph items.
-
-/**
- * The demo's graphComponent.
- * @type {GraphComponent}
- */
-let graphComponent = null
-
 /**
  * Runs the demo.
+ * @param {!object} licenseData
  */
 function run(licenseData) {
   License.value = licenseData
-  graphComponent = new GraphComponent('graphComponent')
-  initializeInputMode()
 
-  initializePopups()
+  const graphComponent = new GraphComponent('graphComponent')
 
-  readSampleGraph()
-  registerCommands()
+  initializeInputMode(graphComponent)
 
-  // Initializes the demo
+  initializePopups(graphComponent)
+
+  readSampleGraph(graphComponent)
+
+  registerCommands(graphComponent)
+
   showApp(graphComponent)
 }
 
@@ -80,15 +75,16 @@ function run(licenseData) {
  * Creates the pop-ups for nodes and edges and adds the event listeners that show and hide these pop-ups.
  *
  * Since we want to show only one pop-up at any time, we bind it to the current item of the graph component.
+ * @param {!GraphComponent} graphComponent
  */
-function initializePopups() {
+function initializePopups(graphComponent) {
   // Creates a label model parameter that is used to position the node pop-up
   const nodeLabelModel = new ExteriorLabelModel({ insets: 10 })
 
   // Creates the pop-up for the node pop-up template
   const nodePopup = new HTMLPopupSupport(
     graphComponent,
-    window.document.getElementById('nodePopupContent'),
+    getDiv('nodePopupContent'),
     nodeLabelModel.createParameter(ExteriorLabelModelPosition.NORTH)
   )
 
@@ -99,7 +95,7 @@ function initializePopups() {
   // Creates the pop-up for the edge pop-up template
   const edgePopup = new HTMLPopupSupport(
     graphComponent,
-    window.document.getElementById('edgePopupContent'),
+    getDiv('edgePopupContent'),
     edgeLabelModel.createDefaultParameter()
   )
 
@@ -112,13 +108,13 @@ function initializePopups() {
   // Register a listener that shows the pop-up for the currentItem
   graphComponent.addCurrentItemChangedListener((sender, args) => {
     const item = graphComponent.currentItem
-    if (INode.isInstance(item)) {
+    if (item instanceof INode) {
       // update data in node pop-up
       updateNodePopupContent(nodePopup, item)
       // open node pop-up and hide edge pop-up
       nodePopup.currentItem = item
       edgePopup.currentItem = null
-    } else if (IEdge.isInstance(item)) {
+    } else if (item instanceof IEdge) {
       // update data in edge pop-up
       updateEdgePopupContent(edgePopup, item)
       // open edge pop-up and node edge pop-up
@@ -136,18 +132,29 @@ function initializePopups() {
   })
 
   // On press of the ESCAPE key, set currentItem to <code>null</code> to hide the pop-ups
-  inputMode.keyboardInputMode.addKeyBinding({
-    key: Key.ESCAPE,
-    execute: (command, parameter, source) => {
+  inputMode.keyboardInputMode.addKeyBinding(
+    Key.ESCAPE,
+    ModifierKeys.NONE,
+    (command, parameter, source) => {
       source.currentItem = null
+      return true
     }
-  })
+  )
+}
+
+/**
+ * Returns the HTMLDivElement with the given ID.
+ * @param {!string} id
+ * @returns {!HTMLDivElement}
+ */
+function getDiv(id) {
+  return document.getElementById(id)
 }
 
 /**
  * Updates the node pop-up content with the elements from the node's tag.
- * @param {HTMLPopupSupport} nodePopup
- * @param {INode} node
+ * @param {!HTMLPopupSupport} nodePopup
+ * @param {!INode} node
  */
 function updateNodePopupContent(nodePopup, node) {
   // get business data from node tag
@@ -159,7 +166,7 @@ function updateNodePopupContent(nodePopup, node) {
     const div = divs.item(i)
     if (div.hasAttribute('data-id')) {
       // if div has a 'data-id' attribute, get content from the business data
-      const id = div.getAttribute('data-id')
+      const id = div.getAttribute('data-id') || ''
       div.textContent = data[id]
     }
   }
@@ -170,8 +177,8 @@ function updateNodePopupContent(nodePopup, node) {
 
 /**
  * Updates the edge pop-up content with the elements from the edge's tag.
- * @param {HTMLPopupSupport} edgePopup
- * @param {IEdge} edge
+ * @param {!HTMLPopupSupport} edgePopup
+ * @param {!IEdge} edge
  */
 function updateEdgePopupContent(edgePopup, edge) {
   // get business data from node tags
@@ -200,8 +207,10 @@ Class.ensure(ImageNodeStyle)
 
 /**
  * Reads the source graph from a graphml file.
+ * @param {!GraphComponent} graphComponent
+ * @returns {!Promise}
  */
-async function readSampleGraph() {
+async function readSampleGraph(graphComponent) {
   // Enables the graphml support
   const gs = new GraphMLSupport({
     graphComponent,
@@ -221,8 +230,9 @@ async function readSampleGraph() {
 
 /**
  * Creates a viewer input mode for the graphComponent of this demo.
+ * @param {!GraphComponent} graphComponent
  */
-function initializeInputMode() {
+function initializeInputMode(graphComponent) {
   const mode = new GraphViewerInputMode({
     toolTipItems: GraphItemTypes.NODE,
     selectableItems: GraphItemTypes.NONE,
@@ -231,9 +241,9 @@ function initializeInputMode() {
 
   mode.mouseHoverInputMode.toolTipLocationOffset = new Point(10, 10)
   mode.addQueryItemToolTipListener((sender, args) => {
-    if (INode.isInstance(args.item) && !args.handled) {
+    if (args.item instanceof INode && !args.handled) {
       const nodeName = args.item.tag.name
-      if (nodeName != null) {
+      if (nodeName) {
         args.toolTip = nodeName
         args.handled = true
       }
@@ -244,9 +254,10 @@ function initializeInputMode() {
 }
 
 /**
- * Wires-up the UI.
+ * Binds commands to the demo's UI controls.
+ * @param {!GraphComponent} graphComponent
  */
-function registerCommands() {
+function registerCommands(graphComponent) {
   bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent)
   bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent)
   bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent)

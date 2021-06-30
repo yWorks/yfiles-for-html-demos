@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -26,7 +26,15 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { GraphComponent, GraphEditorInputMode, ICommand, License, Point, Size } from 'yfiles'
+import {
+  GraphComponent,
+  GraphEditorInputMode,
+  ICommand,
+  IInputMode,
+  License,
+  Point,
+  Size
+} from 'yfiles'
 
 import CSS3NodeStyle from './CSS3NodeStyle.js'
 import { initDemoStyles } from '../../resources/demo-styles.js'
@@ -34,8 +42,11 @@ import { bindCommand, showApp } from '../../resources/demo-app.js'
 import loadJson from '../../resources/load-json.js'
 
 /** @type {GraphComponent} */
-let graphComponent = null
+let graphComponent
 
+/**
+ * @param {!object} licenseData
+ */
 function run(licenseData) {
   License.value = licenseData
   graphComponent = new GraphComponent('graphComponent')
@@ -74,7 +85,7 @@ function initializeGraph() {
 
 /**
  * Creates the default input mode for the graphComponent, a {@link GraphEditorInputMode}.
- * @return {IInputMode} a new GraphEditorInputMode instance
+ * @returns {!IInputMode} a new GraphEditorInputMode instance
  */
 function createEditorMode() {
   const mode = new GraphEditorInputMode({
@@ -85,8 +96,7 @@ function createEditorMode() {
   // by the custom node style to set the appropriate CSS classes
   mode.addNodeCreatedListener((sender, args) => {
     const node = args.item
-    node.tag = {}
-    node.tag.created = true
+    node.tag = { created: true }
   })
 
   return mode

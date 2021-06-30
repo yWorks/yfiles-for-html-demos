@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -26,30 +26,34 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-/* global ActiveXObject */
+const ERROR_ON_LOCAL_ACCESS =
+  'Unable to access local files due to Internet Explorer security settings.\n' +
+  'Local file access for ActiveX controls can be configured in Tools->Internet Options->Security->Custom Level.\n' +
+  'To allow local file access, the setting for "Initialize and script ActiveX controls not ' +
+  'marked as safe" can be changed to "Enable" or "Prompt".'
 
 /**
  * Opens files using the HTML5 FileReader API or a IE-specific workaround.
  * This technique shows the native file open dialog to the user to provide a natural file open experience.
  *
  * Most browsers prevent the usage of the HTML5 FileReader APIs for scripts that run locally (via file: URLs).
- *
  */
 export default class OpenFromFileOperation {
   /**
-   * @param {Boolean} clearInputElementValueAfterOpen Specifies whether or not to reset the input element at the end
+   * @param clearInputElementValueAfterOpen Specifies whether or not to reset the input element at the end
    *   of opening. Enable this as a workaround for an unexpected behavior of Google Chrome: the change event is not
    *   triggered if the previous file is selected again. Since the file chooser dialog remembers the last directory
    *   in any case, enabling this is no inconvenience for the users.
+   * @param {boolean} [clearInputElementValueAfterOpen=false]
    */
-  constructor(clearInputElementValueAfterOpen) {
-    this.$inputElement = OpenFromFileOperation.createInputElement()
-    this.$clearInputElementValueAfterOpen = clearInputElementValueAfterOpen
+  constructor(clearInputElementValueAfterOpen = false) {
+    this.clearInputElementValueAfterOpen = clearInputElementValueAfterOpen
+    this.inputElement = OpenFromFileOperation.createInputElement()
   }
 
   /**
    * Checks if the operation can be executed.
-   * @return {boolean}
+   * @returns {boolean}
    */
   isAvailable() {
     return (
@@ -61,20 +65,21 @@ export default class OpenFromFileOperation {
   /**
    * Opens the file selected by the inputElement by calling the
    * element's click function.
-   * @return {Promise} A Promise that resolves with the file content.
+   * @returns {!Promise.<string>} A Promise that resolves with the file content.
    */
   open() {
     return new Promise((resolve, reject) => {
-      const element = this.$inputElement
-      const listener = e => {
+      const element = this.inputElement
+      const listener = () => {
         this.fileInputChanged(resolve, reject)
         // cleanup the input element
-        this.$inputElement.removeEventListener('change', listener, false)
-        if (this.$clearInputElementValueAfterOpen) {
-          // Setting null to the element's value shouldn't trigger the onchange event but it does in IE 11.
+        element.removeEventListener('change', listener, false)
+        if (this.clearInputElementValueAfterOpen) {
+          // Clearing the element's value should not trigger the onchange event,
+          // but it does in IE 11.
           // In any case, this is no problem since we remove the change listener.
           // This has no effect in IE 9 and IE 10.
-          this.$inputElement.value = null
+          element.value = ''
         }
       }
       element.addEventListener('change', listener, false)
@@ -86,8 +91,8 @@ export default class OpenFromFileOperation {
    * Called by the change event listener after the user selected a file.
    * Removes the change event listener and, optionally, resets the input
    * element's value.
-   * @param {function} resolve The Promise resolve function
-   * @param {function} reject The Promise reject function
+   * @param {!function} resolve The Promise resolve function
+   * @param {!function} reject The Promise reject function
    */
   fileInputChanged(resolve, reject) {
     if (OpenFromFileOperation.fileReaderIsAvailable()) {
@@ -99,11 +104,11 @@ export default class OpenFromFileOperation {
 
   /**
    * Opens files using the HTML5 FileReader API.
-   * @param {function} resolve The Promise resolve function
-   * @param {function} reject The Promise reject function
+   * @param {!function} resolve The Promise resolve function
+   * @param {!function} reject The Promise reject function
    */
   openWithFileReader(resolve, reject) {
-    const fileInputElement = this.$inputElement
+    const fileInputElement = this.inputElement
     if (!fileInputElement.files || fileInputElement.files.length <= 0) {
       reject(new Error('There is no file to open'))
       return
@@ -125,36 +130,30 @@ export default class OpenFromFileOperation {
    * Opens files using the FileSystemObject API of Internet Explorer.
    * Due to limitations of the FileSystemObject, this works only for ASCII encoded files.
    * Especially, files with byte order mark are not handled correctly.
-   * @param {function} resolve The Promise resolve function
-   * @param {function} reject The Promise reject function
+   * @param {!function} resolve The Promise resolve function
+   * @param {!function} reject The Promise reject function
    */
   openWithMsFileSystemObject(resolve, reject) {
-    const fileInputElement = this.$inputElement
+    const fileInputElement = this.inputElement
     if (!fileInputElement.value) {
       reject(new Error('There is no file to open'))
       return
     }
     let textStream = null
     try {
-      // noinspection Eslint
       const fso = new ActiveXObject('Scripting.FileSystemObject')
       textStream = fso.openTextFile(fileInputElement.value, 1)
       const content = textStream.readAll()
       resolve(content)
     } catch (e) {
-      if (e.number === -2146827859) {
-        reject(
-          new Error(
-            'Unable to access local files due to Internet Explorer security settings.\n' +
-              'Local file access for ActiveX controls can be configured in Tools->Internet Options->Security->Custom Level.\n' +
-              'To allow local file access, the setting for "Initialize and script ActiveX controls not marked as safe" can be changed to "Enable" or "Prompt".'
-          )
-        )
+      const err = e
+      if (err.number === -2146827859) {
+        reject(new Error(ERROR_ON_LOCAL_ACCESS))
       } else {
-        reject(new Error(e.message))
+        reject(new Error(err.message))
       }
     } finally {
-      if (textStream !== null) {
+      if (textStream) {
         textStream.close()
       }
     }
@@ -162,7 +161,7 @@ export default class OpenFromFileOperation {
 
   /**
    * Creates a new file input element, hides it, and adds it to the body.
-   * @return {HTMLInputElement}
+   * @returns {!HTMLInputElement}
    */
   static createInputElement() {
     const inputElement = document.createElement('input')
@@ -175,17 +174,25 @@ export default class OpenFromFileOperation {
 
   /**
    * Checks if the FileSystem Object are available.
-   * @return {boolean}
+   * @returns {boolean}
    */
   static fileReaderIsAvailable() {
-    return window.Blob !== undefined && window.File !== undefined && window.FileReader !== undefined
+    return !isUndefined(window.Blob) && !isUndefined(window.File) && !isUndefined(window.FileReader)
   }
 
   /**
    * Checks if the file reader is available.
-   * @return {boolean}
+   * @returns {boolean}
    */
   static msFileSystemObjectIsAvailable() {
-    return window.ActiveXObject !== undefined
+    return !isUndefined(window.ActiveXObject)
   }
+}
+
+/**
+ * @param {*} value
+ * @returns {boolean}
+ */
+function isUndefined(value) {
+  return typeof value === 'undefined'
 }

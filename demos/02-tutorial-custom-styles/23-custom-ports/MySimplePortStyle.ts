@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -56,7 +56,7 @@ export default class MySimplePortStyle extends PortStyleBase {
   }
 
   updateVisual(context: IRenderContext, oldVisual: SvgVisual, port: IPort): SvgVisual {
-    const ellipse = oldVisual.svgElement as SVGElement
+    const ellipse = oldVisual.svgElement
     const portLocation = port.locationParameter.model.getLocation(port, port.locationParameter)
     // arrange the old ellipse
     const locationX = portLocation.x - WIDTH * 0.5

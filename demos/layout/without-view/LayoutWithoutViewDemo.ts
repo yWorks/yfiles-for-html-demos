@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -38,6 +38,7 @@ import {
   IEdgeLabelLayout,
   INodeLabelLayout,
   LayoutGraph,
+  LayoutGraphUtilities,
   LayoutOrientation,
   License,
   SwimlaneDescriptor,
@@ -54,7 +55,7 @@ function run(licenseData: object): void {
 
   // create the graph in memory
   const layoutGraph = new DefaultLayoutGraph()
-  const labelFactory = layoutGraph.createLabelFactory()
+  const labelFactory = LayoutGraphUtilities.getLabelFactory(layoutGraph)!
 
   // define some convenience methods to create elements
   function createNode(x: number, y: number, width: number, height: number): YNode {
@@ -117,7 +118,7 @@ function runAlgorithm(graph: Graph): YNode {
   const edgeCosts = graph.createEdgeMap()
 
   // assign some arbitrary costs
-  graph.edges!.forEach((edge, i) => {
+  graph.edges.forEach((edge, i) => {
     edgeCosts.setNumber(edge, i / graph.edgeCount)
   })
 
@@ -125,13 +126,13 @@ function runAlgorithm(graph: Graph): YNode {
   CentralityAlgorithm.closenessCentrality(graph, closenessResult, true, edgeCosts)
 
   log('Centrality values')
-  for (const node of graph.nodes!) {
+  for (const node of graph.nodes) {
     log(` node ${node.index} : ${closenessResult.getNumber(node)}`)
   }
 
   // find the most central node
-  const centralNode = graph
-    .nodes!.map(node => ({ node, centrality: closenessResult.getNumber(node) }))
+  const centralNode = graph.nodes
+    .map(node => ({ node, centrality: closenessResult.getNumber(node) }))
     .reduce((a, b) => (a.centrality > b.centrality ? a : b)).node
 
   // release resources
@@ -159,7 +160,7 @@ function runLayout(layoutGraph: DefaultLayoutGraph, centralNode: YNode): void {
   otherLane.indexFixed = true
   otherLane.minimumLaneWidth = 30
 
-  layoutGraph.nodes!.forEach(node => {
+  layoutGraph.nodes.forEach(node => {
     if (node === centralNode) {
       swimlaneMap.set(node, centerLane)
     } else {
@@ -174,7 +175,7 @@ function runLayout(layoutGraph: DefaultLayoutGraph, centralNode: YNode): void {
   layout.backLoopRouting = true
   layout.integratedEdgeLabeling = true
   layout.considerNodeLabels = true
-  layout.edgeLayoutDescriptor!.routingStyle = new HierarchicLayoutRoutingStyle(
+  layout.edgeLayoutDescriptor.routingStyle = new HierarchicLayoutRoutingStyle(
     HierarchicLayoutEdgeRoutingStyle.ORTHOGONAL
   )
 
@@ -208,7 +209,7 @@ function logGraph(layoutGraph: LayoutGraph): void {
     )
   }
 
-  for (const node of layoutGraph.nodes!) {
+  for (const node of layoutGraph.nodes) {
     log(`node ${node.index}`)
     const nodeLayout = layoutGraph.getLayout(node)
     log(` layout ${nodeLayout.x}, ${nodeLayout.y}, ${nodeLayout.width}, ${nodeLayout.height}`)
@@ -216,12 +217,12 @@ function logGraph(layoutGraph: LayoutGraph): void {
     if (nodeLabelLayouts && nodeLabelLayouts.length > 0) {
       log(' labels')
       for (const label of nodeLabelLayouts) {
-        logOrientedBox(label.orientedBox!)
+        logOrientedBox(label.orientedBox)
       }
     }
   }
 
-  for (const edge of layoutGraph.edges!) {
+  for (const edge of layoutGraph.edges) {
     log(`edge ${edge.index}  (${edge.source.index} -> ${edge.target.index})`)
     const edgeLayout = layoutGraph.getLayout(edge)
     const sourcePortLocation = layoutGraph.getSourcePointRel(edge)
@@ -236,7 +237,7 @@ function logGraph(layoutGraph: LayoutGraph): void {
     if (edgeLabelLayouts && edgeLabelLayouts.length > 0) {
       log(' labels')
       for (const label of edgeLabelLayouts) {
-        logOrientedBox(label.orientedBox!)
+        logOrientedBox(label.orientedBox)
       }
     }
   }
@@ -250,12 +251,12 @@ function log(value?: string | object | undefined): void {
   if (arguments.length === 0) {
     value = ''
   }
-  logElement!.textContent += value + `\n`
+  logElement.textContent += `${value}\n`
 }
 
 /* launch the demo */
 loadJson()
   .then(run)
   .catch(e => {
-    log('Error' + e)
+    log(`Error ${e}`)
   })

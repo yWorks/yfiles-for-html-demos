@@ -5,13 +5,14 @@
   "license": "https://www.yworks.com/products/yfiles-for-html/sla",
   "private": true,
   "dependencies": {
-    "react": "17.0.1",
-    "react-dom": "17.0.1",
-    "react-scripts": "4.0.1",
-    "yfiles": "../../../lib-dev/es-modules/yfiles-23.0.4-dev.tgz"
+    "prop-types": "15.7.2",
+    "react": "17.0.2",
+    "react-dom": "17.0.2",
+    "react-scripts": "4.0.3",
+    "yfiles": "../../../lib-dev/es-modules/yfiles-24.0.0-dev.tgz"
   },
   "scripts": {
-    "preinstall": "node -e \"require('fs').copyFileSync('../../../lib/license.json','./src/license.json');\"",
+    "preinstall": "node -e \"require('fs').copyFileSync('../../../lib/license.json','./src/license.json'); require('fs-extra').copySync('../../utils/Workarounds.js', './src/utils/Workarounds.js'); require('fs-extra').copySync('../../utils/GraphSearch.js', './src/utils/GraphSearch.js');\"",
     "start": "react-scripts --expose-gc --max-old-space-size=8192 start",
     "build": "react-scripts --expose-gc --max-old-space-size=8192 build",
     "eject": "react-scripts eject"
@@ -27,5 +28,11 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "worker-loader": "^3.0.8"
+  },
+  "resolutions": {
+    "react-scripts/eslint-webpack-plugin": "2.4.1"
   }
 }

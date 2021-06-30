@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -26,14 +26,14 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { INode, INodeStyle, IRenderContext, NodeStyleBase, Visual } from 'yfiles'
+import { INode, INodeStyle, IRenderContext, NodeStyleBase, SvgVisual, Visual } from 'yfiles'
 
 export default class LevelOfDetailNodeStyle extends NodeStyleBase {
   /**
    * Creates a new instance of LevelOfDetailNodeStyle which combines three styles for different zoom level.
-   * @param {INodeStyle} detailNodeStyle
-   * @param {INodeStyle} intermediateNodeStyle
-   * @param {INodeStyle} overviewNodeStyle
+   * @param {!INodeStyle} detailNodeStyle
+   * @param {!INodeStyle} intermediateNodeStyle
+   * @param {!INodeStyle} overviewNodeStyle
    */
   constructor(detailNodeStyle, intermediateNodeStyle, overviewNodeStyle) {
     super()
@@ -45,13 +45,13 @@ export default class LevelOfDetailNodeStyle extends NodeStyleBase {
   }
 
   /**
-   * @param {IRenderContext} renderContext
-   * @param {INode} node
-   * @return {Visual}
+   * @param {!IRenderContext} renderContext
+   * @param {!INode} node
+   * @returns {!Visual}
    */
   createVisual(renderContext, node) {
     const zoom = renderContext.zoom
-    let visual = null
+    let visual
 
     if (zoom >= this.detailThreshold) {
       visual = this.detailNodeStyle.renderer
@@ -74,14 +74,14 @@ export default class LevelOfDetailNodeStyle extends NodeStyleBase {
   }
 
   /**
-   * @param {IRenderContext} renderContext
-   * @param {Visual} oldVisual
-   * @param {INode} node
-   * @return {Visual}
+   * @param {!IRenderContext} renderContext
+   * @param {!Visual} oldVisual
+   * @param {!INode} node
+   * @returns {!Visual}
    */
   updateVisual(renderContext, oldVisual, node) {
     const zoom = renderContext.zoom
-    let newVisual = null
+    let newVisual
 
     if (oldVisual === null) {
       return this.createVisual(renderContext, node)

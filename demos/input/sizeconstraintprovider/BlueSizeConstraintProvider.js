@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -36,31 +36,31 @@ import { BaseClass, INode, INodeSizeConstraintProvider, Rect, Size } from 'yfile
 export default class BlueSizeConstraintProvider extends BaseClass(INodeSizeConstraintProvider) {
   /**
    * Returns the current node size to prevent the shrinking of nodes.
-   * @param {INode} item
    * @see Specified by {@link INodeSizeConstraintProvider#getMinimumSize}.
-   * @return {Size}
+   * @param {!INode} node
+   * @returns {!Size}
    */
-  getMinimumSize(item) {
-    return item.layout.toSize()
+  getMinimumSize(node) {
+    return node.layout.toSize()
   }
 
   /**
    * Returns three times the current node size.
-   * @param {INode} item
    * @see Specified by {@link INodeSizeConstraintProvider#getMaximumSize}.
-   * @return {Size}
+   * @param {!INode} node
+   * @returns {!Size}
    */
-  getMaximumSize(item) {
-    return new Size(item.layout.width * 3, item.layout.height * 3)
+  getMaximumSize(node) {
+    return new Size(node.layout.width * 3, node.layout.height * 3)
   }
 
   /**
    * Returns an empty rectangle since this area is not constraint.
-   * @param {INode} item
    * @see Specified by {@link INodeSizeConstraintProvider#getMinimumEnclosedArea}.
-   * @return {Rect}
+   * @param {!INode} node
+   * @returns {!Rect}
    */
-  getMinimumEnclosedArea(item) {
+  getMinimumEnclosedArea(node) {
     return Rect.EMPTY
   }
 }

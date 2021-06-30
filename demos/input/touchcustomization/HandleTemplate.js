@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -29,6 +29,7 @@
 import {
   BaseClass,
   IRenderContext,
+  IVisualCreator,
   IVisualTemplate,
   Rect,
   SimpleNode,
@@ -43,51 +44,62 @@ import {
 export default class HandleTemplate extends BaseClass(IVisualTemplate) {
   /**
    * Creates a new instance of <code>HandleTemplate</code>
-   * @param {string} template - The template svg string used to render the handle.
-   * @param {Size|null} [size] - The handle size.
+   * @param {!string} template - The template svg string used to render the handle.
+   * @param {?Size} size - The handle size.
    */
   constructor(template, size) {
     super()
-    this.templateStyle = new StringTemplateNodeStyle(template)
-    this.size = size || new Size(6, 6)
+    this.dummyNode = newDummyNode(template, size || new Size(6, 6))
   }
 
   /**
-   * @param {IRenderContext} context - The context that describes where the visual will be used.
-   * @param {Rect} bounds - The initial bounds to use for the visual.
-   * @param {Object} dataObject - The data object to visualize.
-   * @returns {SvgVisual}
+   * @param {!IRenderContext} context The context that describes where the visual will be used.
+   * @param {!Rect} bounds The initial bounds to use for the visual.
+   * @param {!object} dataObject The data object to visualize.
+   * @returns {!SvgVisual}
    */
   createVisual(context, bounds, dataObject) {
-    const handleElement = this.createHandleElement(context)
+    const handleElement = this.createHandleVisual(context).svgElement
     return new SvgVisual(handleElement)
   }
 
   /**
-   * @param {IRenderContext} context - The context that describes where the visual will be used in.
-   * @param {SvgVisual} oldVisual - The visual instance that had been returned the last time the
-   *   {@link IVisualTemplate#createVisual} method was called on this instance.
-   * @param {Rect} bounds - The initial bounds to use for the visual.
-   * @param {Object} dataObject - The data object to visualize.
-   * @returns {SvgVisual}
+   * @param {!IRenderContext} context The context that describes where the visual will be used in.
+   * @param {!SvgVisual} oldVisual The visual instance that had been returned the last time the
+   * {@link IVisualTemplate#createVisual} method was called on this instance.
+   * @param {!Rect} bounds The initial bounds to use for the visual.
+   * @param {!object} dataObject The data object to visualize.
+   * @returns {!SvgVisual}
    */
   updateVisual(context, oldVisual, bounds, dataObject) {
     return oldVisual
   }
 
   /**
-   * @private
-   * @param context
-   * @returns {SVGElement}
+   * @param {!IRenderContext} context
+   * @returns {!SvgVisual}
    */
-  createHandleElement(context) {
-    const size = this.size
-    const dummyNode = new SimpleNode()
-    dummyNode.layout = new Rect(-size.width * 0.5, -size.height * 0.5, size.width, size.height)
-    dummyNode.style = this.templateStyle
-
-    return dummyNode.style.renderer
-      .getVisualCreator(dummyNode, dummyNode.style)
-      .createVisual(context.canvasComponent.createRenderContext()).svgElement
+  createHandleVisual(context) {
+    return this.getVisualCreator().createVisual(context)
   }
+
+  /**
+   * @returns {!IVisualCreator}
+   */
+  getVisualCreator() {
+    const style = this.dummyNode.style
+    return style.renderer.getVisualCreator(this.dummyNode, style)
+  }
+}
+
+/**
+ * @param {!string} template
+ * @param {!Size} size
+ * @returns {!SimpleNode}
+ */
+function newDummyNode(template, size) {
+  const node = new SimpleNode()
+  node.layout = new Rect(-size.width * 0.5, -size.height * 0.5, size.width, size.height)
+  node.style = new StringTemplateNodeStyle(template)
+  return node
 }

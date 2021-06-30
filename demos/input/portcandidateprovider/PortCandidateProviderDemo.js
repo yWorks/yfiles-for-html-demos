@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -41,7 +41,7 @@ import {
   PortCandidateValidity,
   Rect,
   ShapeNodeStyle,
-  YString
+  INode
 } from 'yfiles'
 
 import OrangePortCandidateProvider from './OrangePortCandidateProvider.js'
@@ -52,6 +52,9 @@ import { showApp } from '../../resources/demo-app.js'
 import { DemoNodeStyle } from '../../resources/demo-styles.js'
 import loadJson from '../../resources/load-json.js'
 
+/**
+ * @param {!object} licenseData
+ */
 function run(licenseData) {
   License.value = licenseData
   // initialize the GraphComponent
@@ -84,6 +87,7 @@ function run(licenseData) {
     allowClipboardOperations: false
   })
   graphEditorInputMode.createEdgeInputMode.useHitItemsCandidatesOnly = true
+
   // and enable the undo feature.
   graph.undoEngineEnabled = true
 
@@ -116,7 +120,7 @@ function run(licenseData) {
  * This callback function is called whenever a node in the graph is queried
  * for its <code>IPortCandidateProvider</code>. In this case, the 'node'
  * parameter will be assigned that node.
- * @param {IGraph} graph The given graph
+ * @param {!IGraph} graph The given graph
  */
 function registerPortCandidateProvider(graph) {
   graph.decorator.nodeDecorator.portCandidateProviderDecorator.setFactory(node => {
@@ -124,7 +128,7 @@ function registerPortCandidateProvider(graph) {
     const nodeTag = node.tag
 
     // Check if it is a known tag and choose the respective implementation
-    if (!YString.isInstance(nodeTag)) {
+    if (typeof nodeTag !== 'string') {
       return null
     } else if (nodeTag === 'firebrick') {
       return new RedPortCandidateProvider(node)
@@ -142,7 +146,7 @@ function registerPortCandidateProvider(graph) {
 
 /**
  * Creates the sample graph for this demo.
- * @param {GraphComponent} graphComponent The given graphComponent
+ * @param {!GraphComponent} graphComponent The given graphComponent
  */
 function createSampleGraph(graphComponent) {
   const graph = graphComponent.graph
@@ -160,16 +164,13 @@ function createSampleGraph(graphComponent) {
   const candidates = portCandidateProvider.getAllSourcePortCandidates(
     graphComponent.inputModeContext
   )
-  candidates.forEach(portCandidate => {
-    if (portCandidate.validity !== PortCandidateValidity.DYNAMIC) {
-      portCandidate.createPort(graphComponent.inputModeContext)
-    }
-  })
+  candidates
+    .filter(portCandidate => portCandidate.validity !== PortCandidateValidity.DYNAMIC)
+    .forEach(portCandidate => portCandidate.createPort(graphComponent.inputModeContext))
 
   // The orange node
   const nodeStyle = new DemoNodeStyle()
   nodeStyle.cssClass = 'orange'
-
   const orange = graph.createNode(new Rect(100, 400, 100, 100), nodeStyle, 'orange')
   graph.addLabel(orange, 'Dynamic Ports')
 
@@ -179,14 +180,14 @@ function createSampleGraph(graphComponent) {
 
 /**
  * Creates a sample node for this demo.
- * @param {IGraph} graph The given graph
+ * @param {!IGraph} graph The given graph
  * @param {number} x The node's x-coordinate
  * @param {number} y The node's y-coordinate
  * @param {number} w The node's width
  * @param {number} h The node's height
- * @param {string} cssClass The given css class
- * @param {string} labelText The nodes label's text
- * @return {INode}
+ * @param {!string} cssClass The given css class
+ * @param {!string} labelText The nodes label's text
+ * @returns {!INode}
  */
 function createNode(graph, x, y, w, h, cssClass, labelText) {
   const whiteTextLabelStyle = new DefaultLabelStyle({

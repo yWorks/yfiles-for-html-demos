@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -114,7 +114,7 @@ class ProcessItemProgramInfo extends WebGLProgramInfo {
 
   /**
    * @param {!WebGLRenderingContext} gl
-   * @returns {!WebGLTexture}
+   * @returns {?WebGLTexture}
    */
   initRainbowTexture(gl) {
     // noinspection AssignmentResultUsedJS
@@ -259,7 +259,7 @@ void main() {
       pos.y += h;
       v_coord.y = 1.;
     }
-    gl_Position = vec4((viewTransform * vec3(pos, 1)).xy, 0., 1.);
+    gl_Position = vec4((u_yf_worldToWebGL * vec3(pos, 1)).xy, 0., 1.);
   } else {
     gl_Position = vec4(-10.,-10.,-10.,1);
   }

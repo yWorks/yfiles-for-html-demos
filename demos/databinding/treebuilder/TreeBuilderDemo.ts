@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -83,7 +83,7 @@ function run(licenseData: any): void {
   const graph = graphComponent.graph
 
   // configure the input mode
-  graphComponent!.inputMode = new GraphViewerInputMode()
+  graphComponent.inputMode = new GraphViewerInputMode()
 
   // configure label placement
   const preferredPlacementDescriptor = new PreferredPlacementDescriptor({
@@ -158,15 +158,15 @@ async function buildGraphFromData(update: boolean): Promise<void> {
     existingNodes = graphComponent!.graph.nodes.toList()
     try {
       schemaComponent!.treeBuilder.updateGraph()
-    } catch (e) {
-      alert(`${e.message}`)
+    } catch (err) {
+      alert(`${(err as Error).message}`)
     }
   } else {
     graphComponent!.graph.clear()
     try {
       schemaComponent!.treeBuilder.buildGraph()
-    } catch (e) {
-      alert(`${e.message}`)
+    } catch (err) {
+      alert(`${(err as Error).message}`)
     }
     graphComponent!.fitGraphBounds()
   }
@@ -239,7 +239,7 @@ function initializeSamplesComboBox(): void {
     option.textContent = samples[i].name
     // @ts-ignore
     option.value = samples[i]
-    samplesComboBox!.appendChild(option)
+    samplesComboBox.appendChild(option)
   }
 }
 

@@ -5,7 +5,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.3.
+     // This demo file is part of yFiles for HTML 2.4.
      // Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
@@ -33,126 +33,104 @@
      ////////////////////////////////////////////////////////////////////////-->
 
   <title>Webpack ES Modules Demo [yFiles for HTML]</title>
-  <link rel="stylesheet" type="text/css" href="../../../doc/documentation-style.css">
+  <link rel="stylesheet" type="text/css" href="../../../doc/readme-style.css">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 </head>
 <body>
-<header>
+<!-- populated by readme-style.js -->
+<div id="header" class="simple-header">
+  Webpack ES Modules Demo
+</div>
+<main>
   <div class="content-centered">
-    <div class="logo"></div>
-    <div class="title">
-      <a href="../../README.html">yFiles for HTML</a> <span class="angle-right"></span> Webpack ES Modules Demo
-    </div>
-  </div>
-</header>
-<div class="content">
-  <div class="content-centered">
-    <h1>Webpack ES Modules Demo</h1>
+    <div class="content">
+      <div class="breadcrumbs">
+        <a href="../../README.html">yFiles for HTML</a> <span class="angle-right"></span> Webpack ES Modules Demo
+      </div>
 
-    <p>
-      This demo shows how to integrate the yFiles library in a <a href="https://webpack.js.org/">webpack</a> project.
-    </p>
-  </div>
-  <div class="content-centered" style="padding-bottom: 20px">
-    <p>
-      Two fundamental concepts for webpack projects are demonstrated:
-    </p>
-    <ul>
-      <li><a href="https://webpack.js.org/guides/code-splitting/">Code Splitting</a></li>
-      <li>Separate webpack configurations for development and <a href="https://webpack.js.org/guides/production-build/">production</a></li>
-    </ul>
-  </div>
+      <div>
+        <h1>Webpack ES Modules Demo</h1>
+
+        <p>
+          This demo shows how to integrate the yFiles library in a <a href="https://webpack.js.org/">webpack</a>
+          project.
+        </p>
+      </div>
+      <div style="padding-bottom: 20px">
+        <p>
+          Two fundamental concepts for webpack projects are demonstrated:
+        </p>
+        <ul>
+          <li><a href="https://webpack.js.org/guides/code-splitting/">Code Splitting</a></li>
+          <li>Separate webpack configurations for development and <a
+            href="https://webpack.js.org/guides/production-build/">production</a></li>
+        </ul>
+      </div>
 
 
-  <div class="block-space" style="padding: 40px 0 20px 0">
-    <div class="content-centered">
-      <h2>Running the demo</h2>
+      <div style="padding: 20px 0 20px 0">
+        <div>
+          <h2>Running the demo</h2>
 
-      <p>First, install the required npm modules in the demo directory:</p>
+          <p>First, install the required npm modules in the demo directory:</p>
 
-      <code>
+          <code>
         > npm install
       </code>
 
-      <h3>Development</h3>
+          <h3>Development</h3>
 
-      <p>
-        For development, the <a href="https://github.com/webpack/docs/wiki/webpack-dev-server">webpack dev server</a>
-        offers convenient live reloading support to minimize turnaround times.
-      </p><p>
-        The dev server will serve the webpack bundles from memory (no bundles will be created on disc),
-        update the app bundle and refresh the page when changes are made to the source files.
-      </p>
-      <p>To run the dev server:</p>
+          <p>
+            For development, the <a href="https://github.com/webpack/docs/wiki/webpack-dev-server">webpack dev
+            server</a> offers convenient live reloading support to minimize turnaround times.
+          </p>
+          <p>
+            The dev server will serve the webpack bundles from memory (no bundles will be created on disc), update the
+            app bundle and refresh the page when changes are made to the source files.
+          </p>
+          <p>To run the dev server:</p>
 
-      <code>
+          <code>
         > npm start
       </code>
 
-      <p>The wepback dev server will create the bundles in memory and launch the <a href="http://localhost:9003/">generated index file</a> in a browser.</p>
-      <p>Note that the npm start script will run webpack once before starting the webpack dev server, so the generated index.html file
-      already exists when the browser first tries to access it.</p>
+          <p>The webpack dev server will create the bundles in memory and launch the <a href="http://localhost:9003/">generated
+            index file</a> in a browser.</p>
+          <p>Note that the npm start script will run webpack once before starting the webpack dev server, so the
+            generated index.html file already exists when the browser first tries to access it.</p>
 
-      <p>When the server runs, try making changes to <code>src/webpack-demo.js</code> and see how the app will be updated
-      in the browser immediately.</p>
+          <p>When the server runs, try making changes to <code>src/webpack-demo.js</code> and see how the app will be
+            updated in the browser immediately.</p>
 
-      <p>Debugging of application files in the browser's developer tools should work fine, as source maps are enabled using
-        webpack's "<a href="https://webpack.js.org/plugins/source-map-dev-tool-plugin/">SourceMapDevToolPlugin</a>".</p>
+          <p>Debugging of application files in the browser's developer tools should work fine, as source maps are
+            enabled using webpack's "<a
+              href="https://webpack.js.org/plugins/source-map-dev-tool-plugin/">SourceMapDevToolPlugin</a>".</p>
 
-      <h3>Production</h3>
+          <h3>Production</h3>
 
-      <p>The following build steps are specific to the production configuration:</p>
-      <ul>
-        <li>Append a content-based hash to the bundle filename to enable long-term caching.</li>
-        <li><a href="https://webpack.js.org/guides/production-build/#minification">Minify</a> the bundles using webpack's minification plugin.</li>
-      </ul>
+          <p>The following build steps are specific to the production configuration:</p>
+          <ul>
+            <li>Append a content-based hash to the bundle filename to enable long-term caching.</li>
+            <li><a href="https://webpack.js.org/guides/production-build/#minification">Minify</a> the bundles using
+              webpack's minification plugin.
+            </li>
+          </ul>
 
-      <p>To run the production build:</p>
+          <p>To run the production build:</p>
 
-      <code>
+          <code>
         > npm run production
       </code>
 
-      <p>Note that the final minification step of the production build may take some time (the first "done" message is misleading).</p>
+          <p>Note that the final minification step of the production build may take some time (the first "done" message
+            is misleading).</p>
+        </div>
+      </div>
     </div>
+    <!-- populated by readme-style.js -->
+    <div id="footer-detailed"></div>
   </div>
-</div>
-<footer class="default-footer">
-  <div class="footer-block">
-    <h4>Contents</h4>
-    <a href="../../../README.html">Welcome Page</a><br>
-    <a href="../../../doc/api/index.html">API Documentation</a><br>
-    <a href="../../../doc/api/index.html#/dguide/getting_started">Getting Started</a><br>
-    <a href="../../../doc/readme/legal/SOFTWARE_LICENSE_AGREEMENT.html">License Agreement</a><br>
-    <a href="../../../doc/readme/support.html">Help and Support</a>
-  </div>
-  <div class="footer-block">
-    <h4>Contact</h4>
-    yWorks GmbH<br>
-    Vor dem Kreuzberg 28<br>
-    72070 T&uuml;bingen<br>
-    Germany<br>
-    Phone: <a href="tel:+497071979050">+49 7071 979050</a><br>
-    Email: <a href="https://www.yworks.com/contact">contact(at)yworks.com</a>
-  </div>
-  <div class="footer-block">
-    <h4>Follow Us</h4>
-    <div class="social">
-      <a href="https://www.yworks.com/products/yfiles-for-html" target="_blank" class="web">Homepage</a>
-      <a href="https://www.yworks.com/newsfeed" target="_blank" class="rss">RSS Feed</a>
-    </div>
-    <div>
-      <a href="https://github.com/yWorks" target="_blank" class="gh">GitHub</a>
-      <a href="https://twitter.com/yworks" target="_blank" class="tw">Twitter</a>
-      <a href="https://www.youtube.com/user/yWorksTube" target="_blank" class="yt">YouTube</a>
-    </div>
-    <br><br>
-    <span class="copyright">COPYRIGHT &#x00A9; 2021 yWorks</span><br>
-    <a href="https://www.yworks.com/company/legal/imprint">Legal Disclosure</a> |
-    <a href="https://www.yworks.com/company/legal/terms-of-use">Terms of Use</a> |
-    <a href="https://www.yworks.com/company/legal/privacy">Privacy Policy</a>
-  </div>
-  <div class="footer-block logo"></div>
-</footer>
+</main>
+<script src="../../../doc/readme-style.js"></script>
 </body>
 </html>

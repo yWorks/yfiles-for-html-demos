@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -32,7 +32,8 @@ import {
   CanvasComponent,
   HtmlCanvasVisual,
   IRenderContext,
-  IVisualCreator
+  IVisualCreator,
+  Visual
 } from 'yfiles'
 import GanttMapper from './GanttMapper.js'
 
@@ -42,19 +43,19 @@ import GanttMapper from './GanttMapper.js'
 export default class GridVisual extends BaseClass(HtmlCanvasVisual, IVisualCreator) {
   /**
    * Creates a new instance.
-   * @param {GanttMapper} mapper The mapper.
-   * @param dataModel
+   * @param {!GanttMapper} mapper The mapper.
+   * @param {*} dataModel The model data to create the grid for.
    */
   constructor(mapper, dataModel) {
     super()
-    /** @type {GanttMapper} */
-    this.mapper = mapper
     this.dataModel = dataModel
+    this.mapper = mapper
   }
 
   /**
-   * @param {IRenderContext} renderContext - The render context of the {@link CanvasComponent}
-   * @param {CanvasRenderingContext2D} canvasContext - The HTML5 Canvas context to use for rendering.
+   * Paints the grid visualization.
+   * @param {!IRenderContext} renderContext The render context of the {@link CanvasComponent}
+   * @param {!CanvasRenderingContext2D} canvasContext The HTML5 Canvas context to use for rendering.
    */
   paint(renderContext, canvasContext) {
     const mapper = this.mapper
@@ -69,22 +70,27 @@ export default class GridVisual extends BaseClass(HtmlCanvasVisual, IVisualCreat
     const endDate = mapper.getDate(x + width + 100).endOf('month')
     const endX = mapper.getX(endDate)
 
-    this.drawDays(renderContext, canvasContext, beginX, endX, beginDate)
-    this.drawMonths(renderContext, canvasContext, beginX, endX, beginDate)
-    this.drawTaskSeparators(renderContext, canvasContext, beginX, endX)
+    this.drawDays(component, canvasContext, beginX, endX, beginDate)
+    this.drawMonths(component, canvasContext, beginX, endX, beginDate)
+    this.drawTaskSeparators(component, canvasContext, beginX, endX)
   }
 
   /**
    * Draws the day separators.
+   * @param {!CanvasComponent} canvasComponent
+   * @param {!CanvasRenderingContext2D} canvasContext
+   * @param {number} beginX
+   * @param {number} endX
+   * @param {!MomentInput} beginDate
    */
-  drawDays(renderContext, canvasContext, beginX, endX, beginDate) {
+  drawDays(canvasComponent, canvasContext, beginX, endX, beginDate) {
     const date = moment(beginDate)
 
     let x = beginX
     canvasContext.strokeStyle = '#ccc'
     canvasContext.lineWidth = 1
-    const y1 = renderContext.canvasComponent.viewport.y
-    const y2 = renderContext.canvasComponent.viewport.bottomLeft.y
+    const y1 = canvasComponent.viewport.y
+    const y2 = canvasComponent.viewport.bottomLeft.y
     canvasContext.beginPath()
     while (x < endX) {
       canvasContext.moveTo(x, y1)
@@ -97,15 +103,20 @@ export default class GridVisual extends BaseClass(HtmlCanvasVisual, IVisualCreat
 
   /**
    * Draws the day separators.
+   * @param {!CanvasComponent} canvasComponent
+   * @param {!CanvasRenderingContext2D} canvasContext
+   * @param {number} beginX
+   * @param {number} endX
+   * @param {!MomentInput} beginDate
    */
-  drawMonths(renderContext, canvasContext, beginX, endX, beginDate) {
+  drawMonths(canvasComponent, canvasContext, beginX, endX, beginDate) {
     const date = moment(beginDate)
 
     let x = beginX
     canvasContext.strokeStyle = '#ccc'
     canvasContext.lineWidth = 3
-    const y1 = renderContext.canvasComponent.viewport.y
-    const y2 = renderContext.canvasComponent.viewport.bottomLeft.y
+    const y1 = canvasComponent.viewport.y
+    const y2 = canvasComponent.viewport.bottomLeft.y
     canvasContext.beginPath()
     while (x < endX) {
       canvasContext.moveTo(x, y1)
@@ -119,8 +130,12 @@ export default class GridVisual extends BaseClass(HtmlCanvasVisual, IVisualCreat
 
   /**
    * Draws the horizontal task lane separators.
+   * @param {!CanvasComponent} canvasComponent
+   * @param {!CanvasRenderingContext2D} canvasContext
+   * @param {number} beginX
+   * @param {number} endX
    */
-  drawTaskSeparators(renderContext, canvasContext, beginX, endX) {
+  drawTaskSeparators(canvasComponent, canvasContext, beginX, endX) {
     const x1 = beginX
     const x2 = endX
 
@@ -148,7 +163,8 @@ export default class GridVisual extends BaseClass(HtmlCanvasVisual, IVisualCreat
 
   /**
    * Returns this instance.
-   * @returns {GridVisual}
+   * @param {!IRenderContext} context
+   * @returns {!Visual}
    */
   createVisual(context) {
     return this
@@ -156,7 +172,9 @@ export default class GridVisual extends BaseClass(HtmlCanvasVisual, IVisualCreat
 
   /**
    * Returns this instance.
-   * @returns {GridVisual}
+   * @param {!IRenderContext} context
+   * @param {!Visual} oldVisual
+   * @returns {!Visual}
    */
   updateVisual(context, oldVisual) {
     return oldVisual

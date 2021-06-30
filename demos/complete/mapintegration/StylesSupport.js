@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -34,16 +34,21 @@ import {
   FreeNodePortLocationModel,
   GeneralPath,
   IEdge,
+  IGraph,
   ImageNodeStyle,
   NodeStyleLabelStyleAdapter,
   Rect,
   ShapeNodeShape,
-  ShapeNodeStyle
+  ShapeNodeStyle,
+  Size
 } from 'yfiles'
 
+/**
+ * @param {!IGraph} graph
+ */
 export function initializeDefaultMapStyles(graph) {
   graph.nodeDefaults.style = createMapNodeStyle()
-  graph.nodeDefaults.size = [40, 40]
+  graph.nodeDefaults.size = Size.from([40, 40])
   graph.nodeDefaults.shareStyleInstance = false
   graph.nodeDefaults.labels.style = createLabelStyle()
   graph.nodeDefaults.labels.layoutParameter = ExteriorLabelModel.SOUTH
@@ -53,6 +58,9 @@ export function initializeDefaultMapStyles(graph) {
   graph.edgeDefaults.shareStyleInstance = false
 }
 
+/**
+ * @param {!IGraph} graph
+ */
 export function applyMapStyles(graph) {
   graph.edges.forEach(edge => {
     graph.setStyle(edge, createMapEdgeStyle(getArcHeight(edge)))
@@ -65,15 +73,21 @@ export function applyMapStyles(graph) {
   })
 }
 
+/**
+ * @param {!IGraph} graph
+ */
 export function applyLayoutStyles(graph) {
   graph.edges.forEach(edge => {
-    graph.setStyle(edge, createLayoutEdgeStyle(edge))
+    graph.setStyle(edge, createLayoutEdgeStyle())
   })
   graph.nodes.forEach(node => {
     graph.setStyle(node, createLayoutNodeStyle())
   })
 }
 
+/**
+ * @returns {!ImageNodeStyle}
+ */
 function createMapNodeStyle() {
   const outline = new GeneralPath()
   outline.moveTo(0.5, 0)
@@ -92,6 +106,10 @@ function createMapNodeStyle() {
   })
 }
 
+/**
+ * @param {number} [height]
+ * @returns {!ArcEdgeStyle}
+ */
 function createMapEdgeStyle(height) {
   return new ArcEdgeStyle({
     stroke: '5px dashed royalblue',
@@ -99,12 +117,18 @@ function createMapEdgeStyle(height) {
   })
 }
 
+/**
+ * @returns {!BezierEdgeStyle}
+ */
 function createLayoutEdgeStyle() {
   return new BezierEdgeStyle({
     stroke: '5px dashed royalblue'
   })
 }
 
+/**
+ * @returns {!ImageNodeStyle}
+ */
 function createLayoutNodeStyle() {
   const outline = new GeneralPath()
   outline.appendEllipse(new Rect(0.125, 0, 0.75, 0.75), false)
@@ -114,6 +138,9 @@ function createLayoutNodeStyle() {
   })
 }
 
+/**
+ * @returns {!NodeStyleLabelStyleAdapter}
+ */
 function createLabelStyle() {
   return new NodeStyleLabelStyleAdapter({
     nodeStyle: new ShapeNodeStyle({
@@ -128,6 +155,9 @@ function createLabelStyle() {
   })
 }
 
+/**
+ * @param {!IGraph} graph
+ */
 export function updateEdgeArcs(graph) {
   graph.edges.forEach(edge => {
     edge.style.height = getArcHeight(edge)
@@ -136,8 +166,8 @@ export function updateEdgeArcs(graph) {
 
 /**
  * Returns the height of the edge arc considering the length of the edge.
- * @param {IEdge} edge
- * @return {number}
+ * @param {!IEdge} edge
+ * @returns {number}
  */
 export function getArcHeight(edge) {
   const sourceCenter = edge.sourceNode.layout.center

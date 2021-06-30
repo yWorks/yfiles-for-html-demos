@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -27,9 +27,9 @@
  **
  ***************************************************************************/
 import {
+  GraphComponent,
   HoveredItemChangedEventArgs,
   IEdge,
-  IModelItem,
   INode,
   ItemHoverInputMode,
   ShortestPath
@@ -42,16 +42,20 @@ import { SingleColorEdgeStyle, SingleColorNodeStyle } from './DemoStyles.js'
 export default class HighlightHoverInputMode extends ItemHoverInputMode {
   /**
    * Changes the node/edge styles when the hovered item changes.
-   * @param {HoveredItemChangedEventArgs} hoveredItemChangedEventArgs The current event.
+   * @param {!HoveredItemChangedEventArgs} hoveredItemChangedEventArgs The current event.
    */
   onHoveredItemChanged(hoveredItemChangedEventArgs) {
+    if (!this.inputModeContext) {
+      return
+    }
+
     const item = hoveredItemChangedEventArgs.item
     const oldItem = hoveredItemChangedEventArgs.oldItem
     const graph = this.inputModeContext.canvasComponent.graph
 
     // reset the changes on the style of the previously hovered item
     if (
-      INode.isInstance(oldItem) &&
+      oldItem instanceof INode &&
       graph.contains(oldItem) &&
       oldItem.style instanceof SingleColorNodeStyle
     ) {
@@ -59,7 +63,7 @@ export default class HighlightHoverInputMode extends ItemHoverInputMode {
         this.changeStyles(oldItem, false)
       }
     } else if (
-      IEdge.isInstance(oldItem) &&
+      oldItem instanceof IEdge &&
       graph.contains(oldItem) &&
       oldItem.style instanceof SingleColorEdgeStyle
     ) {
@@ -80,7 +84,7 @@ export default class HighlightHoverInputMode extends ItemHoverInputMode {
 
     // change the style of the currently hovered item
     if (
-      INode.isInstance(item) &&
+      item instanceof INode &&
       graph.contains(item) &&
       item.style instanceof SingleColorNodeStyle
     ) {
@@ -88,7 +92,7 @@ export default class HighlightHoverInputMode extends ItemHoverInputMode {
         this.changeStyles(item, true)
       }
     } else if (
-      IEdge.isInstance(item) &&
+      item instanceof IEdge &&
       graph.contains(item) &&
       item.style instanceof SingleColorEdgeStyle
     ) {
@@ -110,10 +114,13 @@ export default class HighlightHoverInputMode extends ItemHoverInputMode {
 
   /**
    * Changes the css-style class for the hovered/non-hovered item.
-   * @param {IModelItem} item The changed item.
+   * @param {!INode} item The changed item.
    * @param {boolean} hovered The hovered state of the item.
    */
   changeStyles(item, hovered) {
+    if (!this.inputModeContext) {
+      return
+    }
     const graph = this.inputModeContext.canvasComponent.graph
 
     // calculate the shortest path between the item and the single source

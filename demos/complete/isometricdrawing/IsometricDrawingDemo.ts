@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -73,9 +73,9 @@ import {
   Stroke,
   WebGLPolylineEdgeStyle
 } from 'yfiles'
-import IsometricData from './resources/IsometricData.js'
-import { bindAction, bindInputListener, showApp } from '../../resources/demo-app.js'
-import loadJson from '../../resources/load-json.js'
+import IsometricData from './resources/IsometricData'
+import { bindAction, bindInputListener, showApp } from '../../resources/demo-app'
+import loadJson from '../../resources/load-json'
 import IsometricWebGLNodeStyle from './IsometricWebGLNodeStyle'
 import HeightHandleProvider from './HeightHandleProvider'
 import { webGlSupported } from '../../utils/Workarounds'

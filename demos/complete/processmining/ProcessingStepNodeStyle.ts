@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -104,9 +104,11 @@ export class ProcessingStepNodeStyle extends NodeStyleBase {
     dummyLabel.text = this.textGetter(node)
 
     g.appendChild(
-      (dummyLabel.style.renderer
-        .getVisualCreator(dummyLabel, dummyLabel.style)
-        .createVisual(renderContext) as SvgVisual).svgElement
+      (
+        dummyLabel.style.renderer
+          .getVisualCreator(dummyLabel, dummyLabel.style)
+          .createVisual(renderContext) as SvgVisual
+      ).svgElement
     )
 
     const circleBackground = window.document.createElementNS('http://www.w3.org/2000/svg', 'circle')

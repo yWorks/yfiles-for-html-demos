@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -34,6 +34,12 @@ import {
   detectInternetExplorerVersion
 } from '../utils/Workarounds.js'
 import { GraphMLIOHandler } from 'yfiles'
+
+/**
+ * @typedef {Object} OptionData
+ * @property {string} value
+ * @property {string} text
+ */
 
 // match CSS media query
 const SIDEBAR_WIDTH = 320
@@ -551,6 +557,88 @@ export function setComboboxValue(comboBoxId, value) {
 }
 
 /**
+ * Adds options to an HTMLSelectElement
+ * @param {!HTMLSelectElement} selectElement the HTMLSelectElement
+ * @param values the option values
+ * @param {!Array.<(string|OptionData)>} undefined
+ */
+export function addOptions(selectElement, ...values) {
+  for (const value of values) {
+    const option = document.createElement('option')
+    if (typeof value === 'string') {
+      option.value = value
+      option.text = value
+    } else {
+      option.value = value.value
+      option.text = value.text
+    }
+    selectElement.add(option)
+  }
+  selectElement.dispatchEvent(new Event('change'))
+}
+/**
+ * Adds navigation buttons to an HTMLSelectElement
+ * @param {!HTMLSelectElement} selectElement the HTMLSelectElement
+ * @param wrapAround whether to wrap around when navigating beyond the end or beginning of the select
+ * @param {boolean} [wrapAround=true]
+ */
+export function addNavigationButtons(selectElement, wrapAround = true) {
+  if (selectElement.parentElement == null) {
+    throw new Error('The element must have a parent')
+  }
+
+  const prevButton = document.createElement('button')
+  prevButton.setAttribute('title', 'Previous')
+  prevButton.setAttribute('class', 'demo-icon-yIconPrevious')
+  prevButton.addEventListener('click', e => {
+    const newIndex = selectElement.selectedIndex - 1
+    selectElement.selectedIndex =
+      newIndex >= 0 ? newIndex : wrapAround ? selectElement.options.length - 1 : 0
+    selectElement.dispatchEvent(new Event('change'))
+  })
+
+  const nextButton = document.createElement('button')
+  nextButton.setAttribute('title', 'Next')
+  nextButton.setAttribute('class', 'demo-icon-yIconNext')
+  nextButton.addEventListener('click', e => {
+    const newIndex = selectElement.selectedIndex + 1
+    const lastIndex = selectElement.options.length - 1
+    selectElement.selectedIndex = newIndex <= lastIndex ? newIndex : wrapAround ? 0 : lastIndex
+    selectElement.dispatchEvent(new Event('change'))
+  })
+
+  selectElement.parentElement.insertBefore(prevButton, selectElement)
+  if (selectElement.nextElementSibling != null) {
+    selectElement.parentElement.insertBefore(nextButton, selectElement.nextElementSibling)
+  } else {
+    selectElement.parentElement.appendChild(nextButton)
+  }
+
+  const updateDisabled = () => {
+    const lastIndex = selectElement.options.length - 1
+    prevButton.disabled =
+      selectElement.disabled || (!wrapAround && selectElement.selectedIndex === 0)
+    nextButton.disabled =
+      selectElement.disabled || (!wrapAround && selectElement.selectedIndex === lastIndex)
+  }
+
+  selectElement.addEventListener('change', _ => {
+    updateDisabled()
+  })
+
+  const disabledObserver = new MutationObserver(mutations => {
+    for (const mutation of mutations) {
+      if (mutation.attributeName === 'disabled') {
+        updateDisabled()
+        return
+      }
+    }
+  })
+  disabledObserver.observe(selectElement, { attributes: true })
+  return selectElement
+}
+
+/**
  * Reads a graph from the given filename.
  * @param {!GraphMLIOHandler} graphMLIOHandler The GraphMLIOHandler that is used to read the graph
  * @param {*} graph The graph.
@@ -578,12 +666,3 @@ export function readGraph(graphMLIOHandler, graph, filename) {
 
 // initialize the application
 initializeDemo()
-
-export {
-  detectFirefoxVersion,
-  detectInternetExplorerVersion,
-  detectiOSVersion,
-  passiveSupported,
-  nativeDragAndDropSupported,
-  pointerEventsSupported
-} from '../utils/Workarounds.js'

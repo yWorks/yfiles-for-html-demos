@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -7,7 +7,7 @@
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.3.
+     // This demo file is part of yFiles for HTML 2.4.
      // Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
@@ -36,7 +36,6 @@
 
   <title>PDF Export Demo [yFiles for HTML]</title>
 
-  <link rel="stylesheet" href="../../node_modules/yfiles/yfiles.css">
   <link rel="stylesheet" href="../../resources/style/demo.css">
 
   <style>
@@ -150,7 +149,7 @@
   <script src="../../resources/filesystem-warning.js"></script>
 
   <!-- the actual pdf export libraries -->
-  <script src="https://unpkg.com/jspdf@2.2.0/dist/jspdf.umd.min.js"></script>
+  <script src="https://unpkg.com/jspdf@2.3.1/dist/jspdf.umd.min.js"></script>
   <script src="https://unpkg.com/svg2pdf.js@2.1.0/dist/svg2pdf.umd.min.js"></script>
 
   <!-- Load custom fonts for the custom-fonts sample graph. This is ONLY required if you want to export Cyrillic or Hiragana characters. -->
@@ -259,12 +258,12 @@
           <div class="demo-form-block">
             <label for="paperSize" class="short">Page Size</label> <select id="paperSize" data-name="inputpaperSize"
             name="paperSize">
-              <option value="auto">Automatic</option>
+              <option value="AUTO">Automatic</option>
               <option value="A3">A3</option>
               <option value="A4">A4</option>
               <option value="A5">A5</option>
               <option value="A6">A6</option>
-              <option value="Letter">Letter</option>
+              <option value="LETTER">Letter</option>
             </select>
           </div>
           <div class="demo-form-block">

@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -27,6 +27,8 @@
  **
  ***************************************************************************/
 import { AdjacencyNodesSourceDefinitionBuilderConnector } from './ModelClasses'
+// import CodeMirror typings
+import CodeMirror, { EditorFromTextArea } from 'codemirror'
 
 /**
  * Editing dialog for schema graph nodes business data ({@link AdjacencyNodesSourceDefinition}
@@ -190,17 +192,18 @@ export class EditAdjacencyNodesSourceDialog {
    * @param doc the documentation text. Can be longer as it is rendered as a HTML paragraph
    * @param mode the language syntax configuration object for CodeMirror
    */
-  // @ts-ignore
-  private createEditorField(labelText: string, doc: string, mode: string | object): CodeMirror {
+  private createEditorField(
+    labelText: string,
+    doc: string,
+    mode: string | object
+  ): EditorFromTextArea {
     const container = this.createDescription(labelText, doc)
     const textArea = document.createElement('textarea')
     container.appendChild(textArea)
-    // @ts-ignore
-    // eslint-disable-next-line no-undef
     return CodeMirror.fromTextArea(textArea, {
       lineNumbers: true,
       mode: mode
-    })
+    } as any)
   }
 
   /**

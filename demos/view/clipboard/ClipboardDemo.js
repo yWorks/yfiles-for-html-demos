@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -40,22 +40,30 @@ import {
   Point,
   Size,
   TemplateNodeStyle,
-  YObject
+  YObject,
+  IInputMode,
+  IModelItem
 } from 'yfiles'
 
-import ClipboardBusinessObject from './ClipboardBusinessObject.js'
-import { TagCopyItem, TaggedNodeClipboardHelper } from './ClipboardHelper.js'
+import {
+  ClipboardBusinessObject,
+  createClipboardBusinessObject
+} from './ClipboardBusinessObject.js'
 import { bindAction, bindCommand, showApp } from '../../resources/demo-app.js'
 import loadJson from '../../resources/load-json.js'
+import { TagCopyItem, TaggedNodeClipboardHelper } from './ClipboardHelper.js'
 
 // This demo shows different ways of using the class GraphClipboard for Copy and Paste operations.
 
 /** @type {GraphComponent} */
-let graphComponent = null
+let graphComponent
 
 /** @type {GraphComponent} */
-let graphComponent2 = null
+let graphComponent2
 
+/**
+ * @param {!object} licenseData
+ */
 function run(licenseData) {
   License.value = licenseData
   // initialize converters for the node style
@@ -106,7 +114,6 @@ function initializeGraph() {
     new TaggedNodeClipboardHelper()
   )
   graph.decorator.nodeDecorator.focusIndicatorDecorator.hideImplementation()
-  graphComponent.enabled = true
 
   // Register specialized copiers that can deal with our business objects
   graphComponent.clipboard.fromClipboardCopier.addNodeCopiedListener((sender, evt) => {
@@ -136,8 +143,8 @@ function initializeGraph() {
  * Called when a node is pasted.
  * Either yields a previously cached copy for the given original or uses the copyDelegate to create
  * the copy of the original.
- * @param {Object} original The original item
- * @return {Object} A copy of the original, either cached, or newly created and then cached
+ * @param {!INode} original The original item
+ * @returns {!TagCopyItem} A copy of the original, either cached, or newly created and then cached
  */
 function nodeCopiedOnPaste(original) {
   return graphComponent.clipboard.fromClipboardCopier.getOrCreateCopy(
@@ -151,8 +158,8 @@ function nodeCopiedOnPaste(original) {
  * Called when a node is copied.
  * Either yields a previously cached copy for the given original or uses the copyDelegate to create
  * the copy of the original.
- * @param {Object} original The original item
- * @return {Object} A copy of the original, either cached, or newly created and then cached
+ * @param {!INode} original The original item
+ * @returns {!TagCopyItem} A copy of the original, either cached, or newly created and then cached
  */
 function nodeCopiedOnCopy(original) {
   return graphComponent.clipboard.toClipboardCopier.getOrCreateCopy(
@@ -164,8 +171,8 @@ function nodeCopiedOnCopy(original) {
 
 /**
  * Creates a business object from the given tag.
- * @param {Object} tag
- * @return {Object}
+ * @param {!TagCopyItem} tag
+ * @returns {!ClipboardBusinessObject}
  */
 function createBusinessObjectFromTagCopyItem(tag) {
   const copyItem = tag
@@ -176,15 +183,14 @@ function createBusinessObjectFromTagCopyItem(tag) {
       ? `Copy of ${origObject.name}`
       : `Copy (${copyItem.pasteCount}) of ${origObject.name}`
 
-  const newClipboardBusinessObject = new ClipboardBusinessObject()
+  const newClipboardBusinessObject = new ClipboardBusinessObject(name)
   newClipboardBusinessObject.name = name
-  newClipboardBusinessObject.value = origObject.value
   return newClipboardBusinessObject
 }
 
 /**
  * Creates the GraphEditorInputMode for this demo.
- * @return {IInputMode}
+ * @returns {!IInputMode}
  */
 function createEditorMode() {
   const inputMode = new GraphEditorInputMode({
@@ -192,7 +198,7 @@ function createEditorMode() {
     // For each new node, create a node label and a business object automatically
     nodeCreator: (context, graph, location) => {
       const node = graph.createNodeAt(location)
-      node.tag = ClipboardBusinessObject.create()
+      node.tag = createClipboardBusinessObject()
       graph.addLabel(node, `Label ${graph.nodes.size.toString()}`)
       return node
     },
@@ -221,7 +227,7 @@ function registerCommands() {
       button.disabled = evt.selection.size === 0
     })
 
-    inputMode.addDeletedSelectionListener((sender, evt) => {
+    inputMode.addDeletedSelectionListener(() => {
       const button = document.querySelector(`button[data-command='${buttonCommand}']`)
       button.disabled = true
     })
@@ -272,17 +278,17 @@ function registerCommands() {
 
 /**
  * Executes paste special command.
- * @param {GraphComponent} component The graphComponent to apply the command to.
+ * @param {!GraphComponent} component The graphComponent to apply the command to.
  */
 function onPasteSpecialCommand(component) {
   const clipboard = component.clipboard
   component.selection.clear()
 
   // This is the filter for the Paste call.
-  const filter = item => INode.isInstance(item) || ILabel.isInstance(item)
+  const filter = item => item instanceof INode || item instanceof ILabel
   // This callback is executed for every pasted element. We use it to select the pasted nodes.
   const pasted = (originalItem, pastedItem) => {
-    if (INode.isInstance(pastedItem)) {
+    if (pastedItem instanceof INode) {
       component.selection.setSelected(pastedItem, true)
     }
   }
@@ -294,15 +300,15 @@ function onPasteSpecialCommand(component) {
 
 /**
  * Shows a dialog for editing the node name.
- * @param {GraphComponent} component The graphComponent to apply the command to.
- * @param {string} elementID The id of the element that shows the dialog.
+ * @param {!GraphComponent} component The graphComponent to apply the command to.
+ * @param {!string} elementID The id of the element that shows the dialog.
  */
 function onEditNameCommand(component, elementID) {
   const nameDialog = window.document.getElementById('nameDialog')
   const nodeNameInput = nameDialog.querySelector('#nodeNameInput')
   nodeNameInput.value = getCommonName(component.selection.selectedNodes)
 
-  nameDialog.querySelector('#applyButton').onclick = evt => {
+  bindAction('#applyButton', evt => {
     evt.preventDefault()
     nameDialog.style.display = 'none'
     const name = nodeNameInput.value
@@ -310,22 +316,23 @@ function onEditNameCommand(component, elementID) {
       node.tag.name = name
     })
     component.focus()
-  }
+  })
 
-  nameDialog.querySelector('#cancelButton').onclick = evt => {
+  bindAction('#cancelButton', () => {
     nameDialog.style.display = 'none'
-  }
+  })
 
   nameDialog.style.display = 'block'
-  document.getElementById(elementID).appendChild(nameDialog)
+  const element = document.getElementById(elementID)
+  element?.appendChild(nameDialog)
   nodeNameInput.focus()
 }
 
 /**
  * Returns the common name of the selected nodes if such a common name
  * exists, or the empty string otherwise.
- * @param {ISelectionModel<INode>} selectedNodes
- * @return {string}
+ * @param {!ISelectionModel.<INode>} selectedNodes
+ * @returns {!string}
  */
 function getCommonName(selectedNodes) {
   if (selectedNodes.size === 0) {
@@ -337,24 +344,24 @@ function getCommonName(selectedNodes) {
 
 /**
  * Creates the sample graph.
- * @param {IGraph} graph
+ * @param {!IGraph} graph
  */
 function createSampleGraph(graph) {
-  const sharedBusinessObject = ClipboardBusinessObject.create()
+  const sharedBusinessObject = createClipboardBusinessObject()
 
   const node1 = graph.createNodeAt({
     location: new Point(100, 100),
     tag: sharedBusinessObject,
-    labels: 'Label 1'
+    labels: ['Label 1']
   })
   const node2 = graph.createNodeAt({
     location: new Point(350, 100),
     tag: sharedBusinessObject,
-    labels: 'Label 2'
+    labels: ['Label 2']
   })
   graph.createNodeAt({
     location: new Point(100, 200),
-    tag: ClipboardBusinessObject.create()
+    tag: createClipboardBusinessObject()
   })
   graph.addLabel(graph.createEdge(node1, node2), 'Shared Object')
 

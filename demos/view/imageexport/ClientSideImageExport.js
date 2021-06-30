@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -27,60 +27,36 @@
  **
  ***************************************************************************/
 import { GraphComponent, IGraph, Insets, Rect, Size, SvgExport } from 'yfiles'
-import { detectFirefoxVersion, detectInternetExplorerVersion } from '../../resources/demo-app.js'
+import { detectFirefoxVersion, detectInternetExplorerVersion } from '../../utils/Workarounds.js'
 
+/**
+ * The detected IE version for x-browser compatibility.
+ */
 const ieVersion = detectInternetExplorerVersion()
+
+/**
+ * The detected Firefox version for x-browser compatibility.
+ */
 const ffVersion = detectFirefoxVersion()
 
 /**
- * A class that provides png-image export. The image is exported to svg and converted to png.
+ * A class that provides PNG image export in the client's browser. The {@link SvgExport} exports an
+ * SVG element of a {@link GraphComponent} which is subsequently converted to PNG.
  */
 export default class ClientSideImageExport {
-  /**
-   * Creates a new instance.
-   */
   constructor() {
-    this.$scale = 1
-    this.$margins = new Insets(5)
+    // The scaling of the exported image.
+    this.scale = 1
+
+    // The margins for the exported image.
+    this.margins = new Insets(5)
   }
 
   /**
-   * Returns the scaling of the exported image.
-   * @return {number}
-   */
-  get scale() {
-    return this.$scale
-  }
-
-  /**
-   * Specifies the scaling of the exported image.
-   * @param {number} value
-   */
-  set scale(value) {
-    this.$scale = value
-  }
-
-  /**
-   * Returns the margins for the exported image.
-   * @return {Insets}
-   */
-  get margins() {
-    return this.$margins
-  }
-
-  /**
-   * Specifies the margins for the exported image.
-   * @param {Insets} value
-   */
-  set margins(value) {
-    this.$margins = value
-  }
-
-  /**
-   * Exports the graph to a PNG image.
-   * @param {IGraph} graph
-   * @param {Rect} exportRect
-   * @return {Promise.<HTMLImageElement>}
+   * Exports the {@link IGraph} to a PNG image with the help of {@link SvgExport}.
+   * @param {!IGraph} graph
+   * @param {?Rect} exportRect
+   * @returns {!Promise.<HTMLImageElement>}
    */
   async exportImage(graph, exportRect) {
     // Create a new graph component for exporting the original SVG content
@@ -93,17 +69,20 @@ export default class ClientSideImageExport {
     const targetRect = exportRect || exportComponent.contentRect
 
     // Create the exporter class
-    const exporter = new SvgExport(targetRect, this.scale)
-    exporter.margins = this.margins
+    const exporter = new SvgExport({
+      worldBounds: targetRect,
+      scale: this.scale,
+      margins: this.margins
+    })
 
     if (window.btoa != null) {
-      // Don't use base 64 encoding if btoa is not available and don't inline images as-well.
+      // Do not use base 64 encoding if btoa is not available and do not inline images either.
       // Otherwise canvg will throw an exception.
       exporter.encodeImagesBase64 = true
       exporter.inlineSvgImages = true
     }
 
-    // export the component to svg
+    // Export the component to svg
     const svgElement = await exporter.exportSvgAsync(exportComponent)
 
     return renderSvgToPng(
@@ -115,11 +94,11 @@ export default class ClientSideImageExport {
 }
 
 /**
- * Renders the given SVG element to a PNG image.
- * @param {SVGElement} svgElement
- * @param {Size} size
- * @param {Insets} margins
- * @return {Promise.<HTMLImageElement>}
+ * Converts the given SVG element to a PNG image.
+ * @param {!SVGElement} svgElement
+ * @param {!Size} size
+ * @param {!Insets} margins
+ * @returns {!Promise.<HTMLImageElement>}
  */
 function renderSvgToPng(svgElement, size, margins) {
   const targetCanvas = document.createElement('canvas')
@@ -155,9 +134,7 @@ function renderSvgToPng(svgElement, size, margins) {
             const pngImage = new Image()
             // The following 'toDataURL' function throws a security error in IE
             pngImage.src = targetCanvas.toDataURL('image/png')
-            pngImage.onload = () => {
-              resolve(pngImage)
-            }
+            pngImage.onload = () => resolve(pngImage)
           } catch (error) {
             // Use the canvg fall-back when the above solution doesn't work
             resolve(exportImageWithCanvg(svgElement))
@@ -167,17 +144,18 @@ function renderSvgToPng(svgElement, size, margins) {
       )
     }
 
-    // workaround for the following Firefox bug: https://bugzilla.mozilla.org/show_bug.cgi?id=1365622
+    // Workaround for the following Firefox bug: https://bugzilla.mozilla.org/show_bug.cgi?id=1365622
     if (ffVersion > 52 && ffVersion < 55) {
       svgImage.onload = () => {
-        // draw the image to the Canvas immediately to preload it
+        // Draw the image to the canvas immediately to preload it
         targetContext.drawImage(svgImage, 0, 0)
         const waitMessage = document.createElement('p')
         waitMessage.textContent = 'Please wait...'
-        document.getElementById('formContainer').appendChild(waitMessage)
-        // wait 2 seconds to actually render the image
+        const formContainer = document.getElementById('formContainer')
+        formContainer.appendChild(waitMessage)
+        // Wait 2 seconds to actually render the image
         setTimeout(() => {
-          document.getElementById('formContainer').removeChild(waitMessage)
+          formContainer.removeChild(waitMessage)
           onSvgImageLoad()
         }, 2000)
       }
@@ -189,24 +167,21 @@ function renderSvgToPng(svgElement, size, margins) {
 }
 
 /**
- * Use canvg as fallback if the default solution is not available.
- * @param {SVGElement} svgElement
- * @return {Promise.<HTMLImageElement>}
+ * Use canvg as fallback if the default approach is not available.
+ * @param {!SVGElement} svgElement
+ * @returns {!Promise.<HTMLImageElement>}
  */
 async function exportImageWithCanvg(svgElement) {
   const canvas = document.createElement('canvas')
   const ctx = canvas.getContext('2d')
 
   const serializedSvg = new XMLSerializer().serializeToString(svgElement)
-  // eslint-disable-next-line no-undef
   const canvgRenderer = await canvg.Canvg.from(ctx, serializedSvg)
   await canvgRenderer.render()
 
-  return new Promise((resolve, reject) => {
+  return new Promise(resolve => {
     const image = new Image()
     image.src = canvas.toDataURL()
-    image.onload = () => {
-      resolve(image)
-    }
+    image.onload = () => resolve(image)
   })
 }

@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -28,11 +28,13 @@
  ***************************************************************************/
 import {
   BaseClass,
+  GraphComponent,
   IGraph,
   IRenderContext,
   IVisualCreator,
   Point,
   RadialLayout,
+  RadialLayoutNodeInfo,
   SvgVisual,
   Visual
 } from 'yfiles'
@@ -41,29 +43,20 @@ import {
  * A visualization for the circles in the radial layout to emphasize the hops between airports.
  */
 export default class CircleVisual extends BaseClass(IVisualCreator) {
+  /**
+   * @param {boolean} graphMode
+   */
   constructor(graphMode) {
     super()
-    this.$graphMode = graphMode
+    this.center = null
+    this.radii = []
+    // Whether or not the demo is in the graph mode.
+    this.graphMode = graphMode
   }
 
   /**
-   * Returns whether or not the demo is in the graph mode.
-   * @return {boolean}
-   */
-  get graphMode() {
-    return this.$graphMode
-  }
-
-  /**
-   * Sets whether or not the demo is in the graph mode.
-   * @param {boolean} value
-   */
-  set graphMode(value) {
-    this.$graphMode = value
-  }
-
-  /**
-   * @param {IRenderContext} context
+   * @param {!IRenderContext} context
+   * @returns {!SvgVisual}
    */
   createVisual(context) {
     const graph = context.canvasComponent.graph
@@ -73,9 +66,9 @@ export default class CircleVisual extends BaseClass(IVisualCreator) {
 
     this.radii.forEach(radius => {
       const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle')
-      circle.setAttribute('cx', this.center.x)
-      circle.setAttribute('cy', this.center.y)
-      circle.setAttribute('r', radius)
+      circle.setAttribute('cx', `${this.center.x}`)
+      circle.setAttribute('cy', `${this.center.y}`)
+      circle.setAttribute('r', `${radius}`)
       circle.setAttribute('class', 'circle')
       container.appendChild(circle)
     })
@@ -91,8 +84,9 @@ export default class CircleVisual extends BaseClass(IVisualCreator) {
   }
 
   /**
-   * @param {IRenderContext} context
-   * @param {Visual} oldVisual
+   * @param {!IRenderContext} context
+   * @param {!Visual} oldVisual
+   * @returns {!Visual}
    */
   updateVisual(context, oldVisual) {
     const renderDataCache = oldVisual['render-data-cache']
@@ -111,9 +105,9 @@ export default class CircleVisual extends BaseClass(IVisualCreator) {
 
   /**
    * Checks if the two arrays are equal.
-   * @param {Array} array1
-   * @param {Array} array2
-   * @return {boolean}
+   * @param {!Array.<number>} array1
+   * @param {!Array.<number>} array2
+   * @returns {boolean}
    */
   equalsArray(array1, array2) {
     if (array1 === array2) {
@@ -137,7 +131,7 @@ export default class CircleVisual extends BaseClass(IVisualCreator) {
 
   /**
    * Updates the center and radii of the circles.
-   * @param {IGraph} graph
+   * @param {!IGraph} graph
    */
   updateCircleInformation(graph) {
     const circleInfo = graph.mapperRegistry.getMapper(RadialLayout.NODE_INFO_DP_KEY)

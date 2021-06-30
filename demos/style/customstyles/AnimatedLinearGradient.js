@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -26,35 +26,44 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { ISvgDefsCreator, Matrix } from 'yfiles'
+import { ICanvasContext, ISvgDefsCreator, Matrix } from 'yfiles'
+import { SVGNS } from './Namespaces.js'
+
+/**
+ * @returns {!SVGLinearGradientElement}
+ */
+function createGradient() {
+  const gradient = document.createElementNS(SVGNS, 'linearGradient')
+  gradient.setAttribute('x1', '0')
+  gradient.setAttribute('y1', '0')
+  gradient.setAttribute('x2', '30')
+  gradient.setAttribute('y2', '30')
+  gradient.setAttribute('spreadMethod', 'repeat')
+  const stop1 = document.createElementNS(SVGNS, 'stop')
+  stop1.setAttribute('stop-color', 'rgb(255, 215, 0)')
+  stop1.setAttribute('offset', '0')
+  const stop2 = document.createElementNS(SVGNS, 'stop')
+  stop2.setAttribute('stop-color', 'rgb(255, 245, 30)')
+  stop2.setAttribute('offset', '0.5')
+  const stop3 = document.createElementNS(SVGNS, 'stop')
+  stop3.setAttribute('stop-color', 'rgb(255, 215, 0)')
+  stop3.setAttribute('offset', '1')
+  gradient.appendChild(stop1)
+  gradient.appendChild(stop2)
+  gradient.appendChild(stop3)
+
+  // set gradient units to userSpaceOnUse in order to be interpreted globally
+  gradient.setAttribute('gradientUnits', 'userSpaceOnUse')
+
+  return gradient
+}
+
 // create the gradient element
-const gradient = window.document.createElementNS('http://www.w3.org/2000/svg', 'linearGradient')
-gradient.setAttribute('x1', 0)
-gradient.setAttribute('y1', 0)
-gradient.setAttribute('x2', 30)
-gradient.setAttribute('y2', 30)
-gradient.setAttribute('spreadMethod', 'repeat')
-const stop1 = window.document.createElementNS('http://www.w3.org/2000/svg', 'stop')
-stop1.setAttribute('stop-color', 'rgb(255, 215, 0)')
-stop1.setAttribute('offset', '0')
-const stop2 = window.document.createElementNS('http://www.w3.org/2000/svg', 'stop')
-stop2.setAttribute('stop-color', 'rgb(255, 245, 30)')
-stop2.setAttribute('offset', '0.5')
-const stop3 = window.document.createElementNS('http://www.w3.org/2000/svg', 'stop')
-stop3.setAttribute('stop-color', 'rgb(255, 215, 0)')
-stop3.setAttribute('offset', '1')
-gradient.appendChild(stop1)
-gradient.appendChild(stop2)
-gradient.appendChild(stop3)
+const gradient = createGradient()
 
-// set gradient units to userSpaceOnUse in order to be interpreted globally
-gradient.setAttribute('gradientUnits', 'userSpaceOnUse')
-
-const defsCreator = new ISvgDefsCreator({
-  /** @return {Element} */
+const defsCreator = ISvgDefsCreator.create({
   createDefsElement: context => gradient,
 
-  /** @return {boolean} */
   accept: (context, node, id) =>
     node instanceof Element &&
     node.localName === 'path' &&
@@ -64,7 +73,9 @@ const defsCreator = new ISvgDefsCreator({
   updateDefsElement: (context, oldElement) => {}
 })
 
+/** @type {number} */
 let animationFrameId = -1
+
 const startGradientAnimation = () => {
   let offset = 0
   const ANIMATION_SPEED = 0.05
@@ -94,7 +105,7 @@ const startGradientAnimation = () => {
     }
   }
   // start the animation
-  animationFrameId = requestAnimationFrame(frameRequestCallback)
+  animationFrameId = window.requestAnimationFrame(frameRequestCallback)
 }
 
 export default {

@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -29,16 +29,20 @@
 import {
   BaseClass,
   ConstrainedPositionHandler,
+  ICanvasObject,
   ICanvasObjectDescriptor,
   IInputModeContext,
   INode,
   IPositionHandler,
   IRenderContext,
   IVisualCreator,
+  Mapper,
   Point,
+  Rect,
   SvgVisual,
   Visual
 } from 'yfiles'
+import LayerVisual from './LayerVisual.js'
 
 /**
  * Helper class that moves a node and uses the location of the mouse
@@ -47,16 +51,16 @@ import {
 export default class LayerPositionHandler extends ConstrainedPositionHandler {
   /**
    * Creates a new instance that wraps the base handler
-   * @param {IPositionHandler} baseHandler
-   * @param {LayerVisual} layerVisual
-   * @param {INode} node
-   * @param {IMapper.<INode,number>} layerMapper
+   * @param {!IPositionHandler} baseHandler
+   * @param {!LayerVisual} layerVisual
+   * @param {!INode} node
+   * @param {!Mapper.<INode,number>} newLayerMapper
    */
-  constructor(baseHandler, layerVisual, node, layerMapper) {
+  constructor(baseHandler, layerVisual, node, newLayerMapper) {
     super(baseHandler)
-    this.layerVisual = layerVisual
+    this.newLayerMapper = newLayerMapper
     this.node = node
-    this.newLayerMapper = layerMapper
+    this.layerVisual = layerVisual
     this.canvasObject = null
   }
 
@@ -64,8 +68,8 @@ export default class LayerPositionHandler extends ConstrainedPositionHandler {
    * Called when a node drag started.
    * This add a rectangle which highlights the layer into which the node would be currently dropped.
    * @see overrides {@link ConstrainedPositionHandler#onInitialized}
-   * @param {IInputModeContext} inputModeContext
-   * @param {Point} originalLocation
+   * @param {!IInputModeContext} inputModeContext
+   * @param {!Point} originalLocation
    */
   onInitialized(inputModeContext, originalLocation) {
     super.onInitialized(inputModeContext, originalLocation)
@@ -84,23 +88,22 @@ export default class LayerPositionHandler extends ConstrainedPositionHandler {
    * Called when a node drag was canceled.
    * The highlighting rectangle is removed.
    * @see overrides {@link ConstrainedPositionHandler#onCanceled}
-   * @param {IInputModeContext} context
-   * @param {Point} originalLocation
+   * @param {!IInputModeContext} context
+   * @param {!Point} originalLocation
    */
   onCanceled(context, originalLocation) {
     super.onCanceled(context, originalLocation)
     // clean up
     this.canvasObject.remove()
-    this.canvasObject = null
   }
 
   /**
    * Called when a node drag was finished.
    * The layer is updated for the moved node and the highlighting rectangle is removed.
    * @see overrides {@link ConstrainedPositionHandler#onFinished}
-   * @param {IInputModeContext} inputModeContext
-   * @param {Point} originalLocation
-   * @param {Point} newLocation
+   * @param {!IInputModeContext} inputModeContext
+   * @param {!Point} originalLocation
+   * @param {!Point} newLocation
    */
   onFinished(inputModeContext, originalLocation, newLocation) {
     super.onFinished(inputModeContext, originalLocation, newLocation)
@@ -108,16 +111,15 @@ export default class LayerPositionHandler extends ConstrainedPositionHandler {
     const newLayer = this.updateTargetBounds(inputModeContext.canvasComponent.lastEventLocation)
     // clean up
     this.canvasObject.remove()
-    this.canvasObject = null
     this.newLayerMapper.set(this.node, newLayer)
   }
 
   /**
    * Updates the highlighting rectangle while the node is moved.
    * @see overrides {@link ConstrainedPositionHandler#onMoved}
-   * @param {IInputModeContext} inputModeContext
-   * @param {Point} originalLocation
-   * @param {Point} newLocation
+   * @param {!IInputModeContext} inputModeContext
+   * @param {!Point} originalLocation
+   * @param {!Point} newLocation
    */
   onMoved(inputModeContext, originalLocation, newLocation) {
     super.onMoved(inputModeContext, originalLocation, newLocation)
@@ -128,9 +130,10 @@ export default class LayerPositionHandler extends ConstrainedPositionHandler {
   /**
    * Does nothing because the location should not be constrained.
    * @see overrides {@link ConstrainedPositionHandler#constrainNewLocation}
-   * @param {IInputModeContext} inputModeContext
-   * @param {Point} originalLocation
-   * @param {Point} newLocation
+   * @param {!IInputModeContext} context
+   * @param {!Point} originalLocation
+   * @param {!Point} newLocation
+   * @returns {!Point}
    */
   constrainNewLocation(context, originalLocation, newLocation) {
     // do not constrain...
@@ -139,12 +142,15 @@ export default class LayerPositionHandler extends ConstrainedPositionHandler {
 
   /**
    * Updates the target bounds of the currently hit layer.
-   * @param {Point} location
-   * @return {number}
+   * @param {!Point} location
+   * @returns {number}
    */
   updateTargetBounds(location) {
     const lastLayer = this.layerVisual.getLayer(location)
-    if (this.canvasObject !== null) {
+    if (
+      this.canvasObject !== null &&
+      this.canvasObject.userObject instanceof LayerIndicatorVisual
+    ) {
       this.canvasObject.userObject.bounds = this.layerVisual.getLayerBounds(lastLayer)
     }
     return lastLayer
@@ -155,9 +161,14 @@ export default class LayerPositionHandler extends ConstrainedPositionHandler {
  * Visual that presents a rectangle which marks the current layer to drop a node.
  */
 class LayerIndicatorVisual extends BaseClass(IVisualCreator) {
+  constructor() {
+    super()
+    this.bounds = null
+  }
+
   /**
-   * @param {IRenderContext} context
-   * @return {SvgVisual}
+   * @param {!IRenderContext} context
+   * @returns {!SvgVisual}
    */
   createVisual(context) {
     const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect')
@@ -171,11 +182,14 @@ class LayerIndicatorVisual extends BaseClass(IVisualCreator) {
   }
 
   /**
-   * @param {IRenderContext} context
-   * @param {Visual} oldVisual
-   * @return {Visual}
+   * @param {!IRenderContext} context
+   * @param {!Visual} oldVisual
+   * @returns {!Visual}
    */
   updateVisual(context, oldVisual) {
+    if (!(oldVisual instanceof SvgVisual)) {
+      return this.createVisual(context)
+    }
     const rect = oldVisual.svgElement
     rect.x.baseVal.value = this.bounds ? this.bounds.x : 0
     rect.y.baseVal.value = this.bounds ? this.bounds.y : 0

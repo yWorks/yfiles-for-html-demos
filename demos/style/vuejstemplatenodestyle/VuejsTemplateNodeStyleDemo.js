@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -34,6 +34,7 @@ import {
   GraphViewerInputMode,
   IArrow,
   ICommand,
+  IPoint,
   License,
   PolylineEdgeStyle,
   Rect,
@@ -54,20 +55,21 @@ import {
 import loadJson from '../../resources/load-json.js'
 
 /** @type {GraphComponent} */
-let graphComponent = null
+let graphComponent
 
-/** @type {GraphMLIOHandler} */
-let graphmlHandler = null
+/** @type {EditorFromTextArea} */
+let templateTextArea
 
-/** @type {HTMLElement} */
-let templateTextArea = null
-
-/** @type {HTMLElement} */
-let tagTextArea = null
+/** @type {EditorFromTextArea} */
+let tagTextArea
 
 /** @type {GraphMLSupport} */
-let gs = null
+let graphMLSupport
 
+/**
+ * Runs the demo.
+ * @param {!object} licenseData
+ */
 function run(licenseData) {
   License.value = licenseData
   graphComponent = new GraphComponent('graphComponent')
@@ -88,17 +90,13 @@ function run(licenseData) {
  * changed.
  */
 function initializeTextAreas() {
-  templateTextArea = document.getElementById('template-text-area')
-  // eslint-disable-next-line no-undef
-  templateTextArea = CodeMirror.fromTextArea(templateTextArea, {
+  templateTextArea = CodeMirror.fromTextArea(document.getElementById('template-text-area'), {
     lineNumbers: true,
     mode: 'application/xml',
     gutters: ['CodeMirror-lint-markers'],
     lint: true
   })
-  tagTextArea = document.getElementById('tag-text-area')
-  // eslint-disable-next-line no-undef
-  tagTextArea = CodeMirror.fromTextArea(tagTextArea, {
+  tagTextArea = CodeMirror.fromTextArea(document.getElementById('tag-text-area'), {
     lineNumbers: true,
     mode: 'application/json',
     gutters: ['CodeMirror-lint-markers'],
@@ -141,7 +139,7 @@ function initializeStyles() {
 <rect v-else-if="tag.status === 'busy'" :width="layout.width" height="2" fill="#E7527C"></rect>
 <rect v-else-if="tag.status === 'travel'" :width="layout.width" height="2" fill="#9945E9"></rect>
 <rect v-else-if="tag.status === 'unavailable'" :width="layout.width" height="2" fill="#8D8F91"></rect>
-<rect fill='transparent' :stroke="selected ? '#FFBB33' : 'transparent'" stroke-width="3" :width="layout.width-3" :height="layout.height-3" x="1.5" y="1.5"></rect>
+<rect fill="transparent" :stroke="selected ? '#FFBB33' : 'transparent'" stroke-width="3" :width="layout.width-3" :height="layout.height-3" x="1.5" y="1.5"></rect>
 <template v-if="zoom >= 0.7">
   <image :xlink:href="'./resources/' + tag.icon + '.svg'" x="15" y="10" width="63.75" height="63.75"></image>
   <image :xlink:href="'./resources/' + tag.status + '_icon.svg'" x="25" y="80" height="15" width="60"></image>
@@ -157,7 +155,7 @@ function initializeStyles() {
   <image :xlink:href="'./resources/' + tag.icon + '.svg'" x="15" y="20" width="56.25" height="56.25"></image>
   <g style="font-size: 15px; font-family: Roboto,sans-serif; fill: #444" width="185">
     <text transform="translate(85 40)" style="font-size: 26px; fill: #336699">{{tag.name}}</text>
-    <svg-text :content="tag.position.toUpperCase()" x="85" y="50" :width="layout.width - 100" :height="50" :wrapping="4" font-family="sans-serif" :font-size="14" :font-style="0" :font-weight="0" :text-decoration="0" fill="black" :opacity="1" visible="true" :clipped="true" align="start" transform=""></svg-text>
+    <svg-text :content="tag.position.toUpperCase()" x="85" y="50" :width="layout.width - 100" :height="50" :wrapping="4" font-family="sans-serif" :font-size="14" :font-style="0" :font-weight="0" :text-decoration="0" fill="black" :opacity="1" :visible="true" :clipped="true" align="start" transform=""></svg-text>
   </g>
 </template>
 <defs>
@@ -169,6 +167,7 @@ function initializeStyles() {
     <stop offset="5%" style="stop-color:white;stop-opacity:1" />
   </linearGradient>
 </defs>
+
 
 </g>`)
   graph.nodeDefaults.size = new Size(290, 100)
@@ -184,7 +183,7 @@ function initializeStyles() {
  * Initializes GraphML writing and reading for files containing VuejsNodeStyle.
  */
 function initializeIO() {
-  graphmlHandler = new GraphMLIOHandler()
+  const graphmlHandler = new GraphMLIOHandler()
   // enable serialization of the VueJS node style - without a namespace mapping, serialization will fail
   graphmlHandler.addXamlNamespaceMapping(
     'http://www.yworks.com/demos/yfiles-vuejs-node-style/1.0',
@@ -208,7 +207,7 @@ function initializeIO() {
       args.handled = true
     }
   })
-  gs = new GraphMLSupport({
+  graphMLSupport = new GraphMLSupport({
     graphComponent,
     graphMLIOHandler: graphmlHandler,
     storageLocation: StorageLocation.FILE_SYSTEM
@@ -254,7 +253,7 @@ function loadSampleGraph() {
 function registerCommands() {
   bindAction("button[data-command='Open']", async () => {
     try {
-      await gs.openFile(graphComponent.graph)
+      await graphMLSupport.openFile(graphComponent.graph)
       graphComponent.fitGraphBounds()
     } catch (ignored) {
       alert(
@@ -286,29 +285,29 @@ function registerCommands() {
       })
 
       removeClass(document.getElementById('template-text-area-error'), 'open-error')
-    } catch (error) {
-      const errorarea = document.getElementById('template-text-area-error')
-      const errorString = error.toString().replace(templateText, '...template...')
-      errorarea.setAttribute('title', errorString)
-      addClass(errorarea, 'open-error')
+    } catch (err) {
+      const errorArea = document.getElementById('template-text-area-error')
+      const errorString = err.toString().replace(templateText, '...template...')
+      errorArea.setAttribute('title', errorString)
+      addClass(errorArea, 'open-error')
     }
   })
   bindAction("button[data-command='ApplyTag']", () => {
-    const errorarea = document.getElementById('tag-text-area-error')
+    const errorArea = document.getElementById('tag-text-area-error')
     graphComponent.selection.selectedNodes.forEach(node => {
       try {
         node.tag = JSON.parse(tagTextArea.getValue())
-        removeClass(errorarea, 'open-error')
-      } catch (error) {
-        addClass(errorarea, 'open-error')
-        errorarea.setAttribute('title', error.toString())
+        removeClass(errorArea, 'open-error')
+      } catch (err) {
+        addClass(errorArea, 'open-error')
+        errorArea.setAttribute('title', err.toString())
       }
     })
     graphComponent.invalidate()
   })
 
   bindAction("button[data-command='Reload']", () => {
-    loadSampleGraph(graphComponent.graph)
+    loadSampleGraph()
   })
 }
 

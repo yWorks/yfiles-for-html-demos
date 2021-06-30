@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -41,7 +41,7 @@ import {
 } from 'yfiles'
 import { LayoutHelper } from './LayoutHelper'
 
-export class NonOverlapReshapeHandler extends BaseClass<IReshapeHandler>(IReshapeHandler) {
+export class NonOverlapReshapeHandler extends BaseClass(IReshapeHandler) {
   /**
    * The node we are currently resizing.
    */
@@ -68,7 +68,7 @@ export class NonOverlapReshapeHandler extends BaseClass<IReshapeHandler>(IReshap
   }
 
   public get bounds(): IRectangle {
-    return this.handler!.bounds
+    return this.handler.bounds
   }
 
   /**
@@ -86,7 +86,9 @@ export class NonOverlapReshapeHandler extends BaseClass<IReshapeHandler>(IReshap
   public handleReshape(context: IInputModeContext, originalBounds: Rect, newBounds: Rect): void {
     this.clearTimeout()
     this.handler.handleReshape(context, originalBounds, newBounds)
-    this.timeoutHandle = setTimeout(() => this.layoutHelper!.runLayout(), 50)
+    this.timeoutHandle = setTimeout(() => {
+      this.layoutHelper!.runLayout()
+    }, 50)
   }
 
   /**

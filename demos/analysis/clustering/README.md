@@ -12,6 +12,8 @@ This demo showcases a selection of clustering algorithms. The algorithms present
 - k-Means Clustering
 - Hierarchical Clustering
 - Biconnected Components Clustering
+- Louvain Modularity Clustering
+- Label Propagation Clustering
 
 ### Things to Try
 

@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -32,9 +32,11 @@ import {
   GraphEditorInputMode,
   GraphItemTypes,
   GraphSnapContext,
+  IEdge,
   IEdgeReconnectionPortCandidateProvider,
   IGraph,
   INode,
+  IPort,
   License,
   OrthogonalEdgeEditingContext,
   OrthogonalEdgeHelper,
@@ -54,7 +56,7 @@ import loadJson from '../../resources/load-json.js'
 
 /**
  * Registers different IOrthogonalEdgeHelpers to demonstrate various custom behaviour.
- * @param {IGraph} graph The given graph
+ * @param {!IGraph} graph The given graph
  */
 function registerOrthogonalEdgeHelperDecorators(graph) {
   const edgeDecorator = graph.decorator.edgeDecorator
@@ -64,20 +66,24 @@ function registerOrthogonalEdgeHelperDecorators(graph) {
     edge => edge.tag === 'firebrick',
     new RedOrthogonalEdgeHelper()
   )
+
   // Green edges have the regular orthogonal editing behavior and therefore,
   // don't need a custom implementation
   edgeDecorator.orthogonalEdgeHelperDecorator.setImplementation(
     edge => edge.tag === 'green',
     new OrthogonalEdgeHelper()
   )
+
   edgeDecorator.orthogonalEdgeHelperDecorator.setImplementation(
     edge => edge.tag === 'purple',
     new PurpleOrthogonalEdgeHelper()
   )
+
   edgeDecorator.orthogonalEdgeHelperDecorator.setImplementation(
     edge => edge.tag === 'orange',
     new OrangeOrthogonalEdgeHelper()
   )
+
   edgeDecorator.orthogonalEdgeHelperDecorator.setImplementation(
     edge => edge.tag === 'royalblue',
     new BlueOrthogonalEdgeHelper()
@@ -99,7 +105,7 @@ function registerOrthogonalEdgeHelperDecorators(graph) {
   // orange edge move within the bounds of the node
   edgeDecorator.edgePortHandleProviderDecorator.setImplementationWrapper(
     edge => edge.tag === 'orange',
-    (edge, provider) => new PortLookupEdgePortHandleProvider()
+    () => new PortLookupEdgePortHandleProvider()
   )
 
   // Allow the relocating of an edge to another node
@@ -108,22 +114,14 @@ function registerOrthogonalEdgeHelperDecorators(graph) {
   )
 }
 
+/**
+ * @param {!object} licenseData
+ */
 function run(licenseData) {
   License.value = licenseData
   // initialize the GraphComponent
   const graphComponent = new GraphComponent('graphComponent')
   const graph = graphComponent.graph
-
-  // enable snapping for edges only,
-  const newGraphSnapContext = new GraphSnapContext({
-    collectNodeSnapLines: false,
-    collectNodePairCenterSnapLines: false,
-    collectNodePairSnapLines: false,
-    collectNodePairSegmentSnapLines: false,
-    collectNodeSizes: false,
-    snapNodesToSnapLines: false,
-    snapOrthogonalMovement: false
-  })
 
   // Create a default editor input mode
   const graphEditorInputMode = new GraphEditorInputMode({
@@ -135,7 +133,16 @@ function run(licenseData) {
     allowClipboardOperations: false,
     // disable deleting items
     deletableItems: GraphItemTypes.NONE,
-    snapContext: newGraphSnapContext
+    // enable snapping for edges only
+    snapContext: new GraphSnapContext({
+      collectNodeSnapLines: false,
+      collectNodePairCenterSnapLines: false,
+      collectNodePairSnapLines: false,
+      collectNodePairSegmentSnapLines: false,
+      collectNodeSizes: false,
+      snapNodesToSnapLines: false,
+      snapOrthogonalMovement: false
+    })
   })
 
   // and enable the undo feature.
@@ -157,16 +164,16 @@ function run(licenseData) {
 
 /**
  * Creates the sample graph of this demo.
- * @param {IGraph} graph The input graph
+ * @param {!IGraph} graph The input graph
  */
 function createSampleGraph(graph) {
-  createSubgraph(graph, 'firebrick', 0, false)
-  createSubgraph(graph, 'green', 110, false)
+  createSubgraph(graph, 'firebrick', 0)
+  createSubgraph(graph, 'green', 110)
   createSubgraph(graph, 'purple', 220, true)
-  createSubgraph(graph, 'orange', 330, false)
+  createSubgraph(graph, 'orange', 330)
 
   // The blue edge has more bends than the other edges
-  const blueEdge = createSubgraph(graph, 'royalblue', 440, false)
+  const blueEdge = createSubgraph(graph, 'royalblue', 440)
   const blueBends = blueEdge.bends.toArray()
   graph.remove(blueBends[1])
   graph.remove(blueBends[0])
@@ -181,13 +188,13 @@ function createSampleGraph(graph) {
 
 /**
  * Creates the sample graph of the given color with two nodes and a single edge.
- * @param {IGraph} graph
- * @param {string} cssClass
+ * @param {!IGraph} graph
+ * @param {!string} cssClass
  * @param {number} yOffset
- * @param {boolean} createPorts
- * @return {IEdge}
+ * @param {boolean} [createPorts=false]
+ * @returns {!IEdge}
  */
-function createSubgraph(graph, cssClass, yOffset, createPorts) {
+function createSubgraph(graph, cssClass, yOffset, createPorts = false) {
   // Create two nodes
   const nodeStyle = new DemoNodeStyle()
   nodeStyle.cssClass = cssClass
@@ -195,7 +202,7 @@ function createSubgraph(graph, cssClass, yOffset, createPorts) {
   const n1 = graph.createNode(new Rect(110, 100 + yOffset, 40, 40), nodeStyle, cssClass)
   const n2 = graph.createNode(new Rect(450, 130 + yOffset, 40, 40), nodeStyle, cssClass)
 
-  // Create an edge, either between the two nodes or between the nodes's ports
+  // Create an edge, either between the two nodes or between the their ports
   let edge
   const edgeStyle = new DemoEdgeStyle()
   edgeStyle.cssClass = cssClass
@@ -210,19 +217,21 @@ function createSubgraph(graph, cssClass, yOffset, createPorts) {
   }
 
   // Add bends that create a vertical segment in the middle of the edge
-  const x = (edge.sourcePort.location.x + edge.targetPort.location.x) / 2
-  graph.addBend(edge, new Point(x, edge.sourcePort.location.y))
-  graph.addBend(edge, new Point(x, edge.targetPort.location.y))
+  const sourcePortLocation = edge.sourcePort.location
+  const targetPortLocation = edge.targetPort.location
+  const x = (sourcePortLocation.x + targetPortLocation.x) / 2
+  graph.addBend(edge, new Point(x, sourcePortLocation.y))
+  graph.addBend(edge, new Point(x, targetPortLocation.y))
 
   return edge
 }
 
 /**
  * Adds some ports to the given node.
- * @param {IGraph} graph
- * @param {INode} node
+ * @param {!IGraph} graph
+ * @param {!INode} node
  * @param {boolean} toEastSide
- * @return {IPort[]}
+ * @returns {!Array.<IPort>}
  */
 function createSamplePorts(graph, node, toEastSide) {
   const nodeScaledPortLocationModel = FreeNodePortLocationModel.INSTANCE

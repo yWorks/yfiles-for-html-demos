@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -34,9 +34,9 @@ import { GraphOverviewCanvasVisualCreator, IEdge, INode, IRenderContext } from '
 export default class OrgchartOverviewCanvasVisualCreator extends GraphOverviewCanvasVisualCreator {
   /**
    * Paints the given node.
-   * @param {IRenderContext} renderContext The render context.
-   * @param {CanvasRenderingContext2D} ctx The HTML canvas rendering context.
-   * @param {INode} node The node to paint.
+   * @param {!IRenderContext} renderContext The render context.
+   * @param {!CanvasRenderingContext2D} ctx The HTML canvas rendering context.
+   * @param {!INode} node The node to paint.
    */
   paintNode(renderContext, ctx, node) {
     switch (node.tag.status) {
@@ -58,14 +58,11 @@ export default class OrgchartOverviewCanvasVisualCreator extends GraphOverviewCa
     const layout = node.layout
 
     ctx.fillRect(layout.x, layout.y, layout.width, layout.height)
-    const fullName = node.tag.name.split(' ')
-    const shortName =
-      fullName[0].replace(/^(.)(\S*)(.*)/, '$1$3') +
-      ' ' +
-      fullName[1].replace(/^(.)(\S*)(.*)/, '$1$3')
-    ctx.strokeStyle = '#ffffff'
+    const fullName = node.tag.name
+    const shortName = fullName.replace(/^(.).*\s(.)\S*$/, '$1 $2')
+    ctx.fillStyle = '#ffffff'
     ctx.font = '50px Verdana'
-    ctx.strokeText(
+    ctx.fillText(
       shortName,
       node.layout.center.x - node.layout.width / 6,
       node.layout.center.y + node.layout.height / 6
@@ -74,9 +71,9 @@ export default class OrgchartOverviewCanvasVisualCreator extends GraphOverviewCa
 
   /**
    * Paints the given edge.
-   * @param {IRenderContext} renderContext The render context.
-   * @param {CanvasRenderingContext2D} ctx The HTML canvas rendering context.
-   * @param {IEdge} edge The edge to paint.
+   * @param {!IRenderContext} renderContext The render context.
+   * @param {!CanvasRenderingContext2D} ctx The HTML canvas rendering context.
+   * @param {!IEdge} edge The edge to paint.
    */
   paintEdge(renderContext, ctx, edge) {
     ctx.beginPath()

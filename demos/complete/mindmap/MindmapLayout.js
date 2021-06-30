@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -27,72 +27,81 @@
  **
  ***************************************************************************/
 import {
-  BaseClass,
-  CompositeLayoutData,
   DefaultTreeLayoutPortAssignment,
   DelegatingNodePlacer,
   FixNodeLayoutData,
   FixNodeLayoutStage,
   GraphComponent,
-  IComparer,
-  IEnumerable,
+  IEdge,
   IGraph,
   INode,
   LayeredNodePlacer,
-  LayeredRoutingStyle,
+  LayoutData,
   LayoutExecutor,
-  LayoutKeys,
-  List,
   PlaceNodesAtBarycenterStage,
   PlaceNodesAtBarycenterStageData,
   Point,
   PortConstraint,
-  PortConstraintKeys,
   PortSide,
   RotatableNodePlacerMatrix,
   SubgraphLayout,
+  SubgraphLayoutData,
   TreeLayout,
+  TreeLayoutData,
   TreeLayoutPortAssignmentMode,
-  TreeReductionStage
+  TreeReductionStage,
+  TreeReductionStageData
 } from 'yfiles'
-
-import { Structure } from './MindmapUtil.js'
+import { getSubtree, isCrossReference, isLeft, isRoot } from './MindmapUtil.js'
 
 /**
  * This class contains methods that deal with the mindmap graph layout.
  */
 export default class MindmapLayout {
+  /** @type {MindmapLayout} */
+  static get instance() {
+    if (typeof MindmapLayout.$instance === 'undefined') {
+      MindmapLayout.$instance = new MindmapLayout()
+    }
+
+    return MindmapLayout.$instance
+  }
+
+  /** @type {MindmapLayout} */
+  static set instance(instance) {
+    MindmapLayout.$instance = instance
+  }
+
   /**
    * Constructs the MindmapLayout.
    */
   constructor() {
     // initialize the layout
-    this.gtl = new TreeLayout({
+    this.treeLayout = new TreeLayout({
       // use port constraints
       defaultPortAssignment: new DefaultTreeLayoutPortAssignment(
         TreeLayoutPortAssignmentMode.PORT_CONSTRAINT
       )
     })
-    this.gtl.prependStage(new PlaceNodesAtBarycenterStage())
 
     // create the node placers
-    this.placerLeft = new LayeredNodePlacer(
-      RotatableNodePlacerMatrix.ROT270,
-      RotatableNodePlacerMatrix.ROT270
-    )
-    this.placerLeft.routingStyle = LayeredRoutingStyle.ORTHOGONAL
-    this.placerLeft.verticalAlignment = 0
-    this.placerLeft.spacing = 10
-    this.placerLeft.layerSpacing = 45
+    this.placerLeft = new LayeredNodePlacer({
+      modificationMatrix: RotatableNodePlacerMatrix.ROT270,
+      id: RotatableNodePlacerMatrix.ROT270,
+      routingStyle: 'orthogonal',
+      verticalAlignment: 0,
+      spacing: 10,
+      layerSpacing: 45
+    })
 
-    this.placerRight = new LayeredNodePlacer(
-      RotatableNodePlacerMatrix.ROT90,
-      RotatableNodePlacerMatrix.ROT90
-    )
-    this.placerRight.routingStyle = LayeredRoutingStyle.ORTHOGONAL
-    this.placerRight.verticalAlignment = 0
-    this.placerRight.spacing = 10
-    this.placerRight.layerSpacing = 45
+    this.placerRight = new LayeredNodePlacer({
+      modificationMatrix: RotatableNodePlacerMatrix.ROT90,
+      id: RotatableNodePlacerMatrix.ROT90,
+      routingStyle: 'orthogonal',
+      verticalAlignment: 0,
+      spacing: 10,
+      layerSpacing: 45
+    })
 
     this.placerRoot = new DelegatingNodePlacer(
       RotatableNodePlacerMatrix.DEFAULT,
@@ -100,163 +109,139 @@ export default class MindmapLayout {
       this.placerRight
     )
 
-    this.$inLayout = false
-  }
+    // A flag indicating whether a layout animation is currently in progress.
+    this.inLayout = false
 
-  /**
-   * Gets a flag that tells whether a layout animation is currently in progress.
-   * @return {boolean}
-   */
-  get inLayout() {
-    return this.$inLayout
-  }
-
-  /**
-   * Sets a flag that tells whether a layout animation is currently in progress.
-   * @param {boolean} value The flag to be set.
-   */
-  set inLayout(value) {
-    this.$inLayout = value
+    this.treeLayout.prependStage(new PlaceNodesAtBarycenterStage())
+    // a layout stage that keeps a certain node in place during layout
+    this.treeLayout.prependStage(new FixNodeLayoutStage())
+    this.treeLayout.prependStage(new TreeReductionStage())
   }
 
   /**
    * Adds the mappers to the graph that are needed for the layout.
    * The mappers provide the layout algorithm with additional information that is needed
    * to achieve the desired layout.
-   * @param {IGraph} graph The input graph.
+   * @returns {!LayoutData}
    */
-  addMappers(graph) {
-    // tells the DelegatingNodePlacer which side a node is on
-    graph.mapperRegistry.createDelegateMapper(
-      DelegatingNodePlacer.PRIMARY_NODES_DP_KEY,
-      Structure.isLeft
-    )
-    // tells the layout which node placer to use for a node
-    graph.mapperRegistry.createDelegateMapper(TreeLayout.NODE_PLACER_DP_KEY, node => {
-      if (Structure.isRoot(node)) {
-        return this.placerRoot
-      }
-      if (Structure.isLeft(node)) {
-        return this.placerLeft
-      }
-      return this.placerRight
-    })
-    // tells the layout which comparer to use for a node to sort the children
-    graph.mapperRegistry.createDelegateMapper(TreeLayout.OUT_EDGE_COMPARER_DP_KEY, node => {
-      if (Structure.isRoot(node)) {
-        return new YCoordComparator()
-      }
-      if (Structure.isLeft(node)) {
-        return this.placerLeft.createComparer()
-      }
-      return this.placerRight.createComparer()
-    })
+  createLayoutData() {
+    return new TreeLayoutData({
+      // tells the DelegatingNodePlacer which side a node is on
+      delegatingNodePlacerPrimaryNodes: isLeft,
+      // tells the layout which node placer to use for a node
+      nodePlacers: node => {
+        if (isRoot(node)) {
+          return this.placerRoot
+        }
+        if (isLeft(node)) {
+          return this.placerLeft
+        }
+        return this.placerRight
+      },
+      // tells the layout how to sort the children of specific nodes
+      outEdgeComparers: node => {
+        return (edge1, edge2) => {
+          if (edge1 === edge2) {
+            return 0
+          }
+          const y1 = edge1.targetNode.layout.y
+          const y2 = edge2.targetNode.layout.y
 
-    // tells the layout which side to place a source port on
-    graph.mapperRegistry.createDelegateMapper(
-      PortConstraintKeys.SOURCE_PORT_CONSTRAINT_DP_KEY,
-      edge =>
-        PortConstraint.create(
-          Structure.isLeft(edge.targetNode) ? PortSide.WEST : PortSide.EAST,
-          true
-        )
+          if (isLeft(edge1.targetNode)) {
+            return y1 - y2
+          }
+          return y2 - y1
+        }
+      },
+      // tells the layout which side to place a source port on
+      sourcePortConstraints: edge =>
+        PortConstraint.create(isLeft(edge.targetNode) ? PortSide.WEST : PortSide.EAST, true),
+      // tells the layout which side to place a target port on
+      targetPortConstraints: edge =>
+        PortConstraint.create(isLeft(edge.targetNode) ? PortSide.EAST : PortSide.WEST, true)
+      // a layout stage that hides cross-reference edges from the layout
+    }).combineWith(
+      new TreeReductionStageData({
+        nonTreeEdges: isCrossReference
+      })
     )
-    // tells the layout which side to place a target port on
-    graph.mapperRegistry.createDelegateMapper(
-      PortConstraintKeys.TARGET_PORT_CONSTRAINT_DP_KEY,
-      edge =>
-        PortConstraint.create(
-          Structure.isLeft(edge.targetNode) ? PortSide.EAST : PortSide.WEST,
-          true
-        )
-    )
-
-    // a layout stage that keeps a certain node in place during layout
-    const fixNodeStage = new FixNodeLayoutStage()
-    this.gtl.prependStage(fixNodeStage)
-
-    // a layout stage that hides cross-reference edges from the layout
-    graph.mapperRegistry.createDelegateMapper(
-      TreeReductionStage.NON_TREE_EDGES_DP_KEY,
-      Structure.isCrossReference
-    )
-    this.gtl.prependStage(new TreeReductionStage())
   }
 
   /**
    * Moves the source and target ports of the given edges to the bottom-left or
    * bottom-right corner of the node.
-   * @param {IGraph} graph The input graph.
-   * @param {IEnumerable} edges The list of edges for which the ports should be adjusted.
+   * @param {!IGraph} graph The input graph.
+   * @param {!Iterable.<IEdge>} edges The list of edges for which the ports should be adjusted.
    */
   adjustPortLocations(graph, edges) {
-    edges.forEach(edge => {
-      if (!Structure.isCrossReference(edge)) {
-        const s = edge.sourceNode
-        const t = edge.targetNode
-        const sbl = new Point(-s.layout.width * 0.5, s.layout.height * 0.5)
-        const sbr = new Point(+s.layout.width * 0.5, s.layout.height * 0.5)
-        const tbl = new Point(-t.layout.width * 0.5, t.layout.height * 0.5)
-        const tbr = new Point(+t.layout.width * 0.5, t.layout.height * 0.5)
+    for (const edge of edges) {
+      if (!isCrossReference(edge)) {
+        const sourceNode = edge.sourceNode
+        const targetNode = edge.targetNode
 
-        if (!Structure.isRoot(s)) {
-          graph.setRelativePortLocation(edge.sourcePort, Structure.isLeft(s) ? sbl : sbr)
+        if (!isRoot(sourceNode)) {
+          const sourceLayout = sourceNode.layout
+          const sourceBottomLeft = new Point(-sourceLayout.width * 0.5, sourceLayout.height * 0.5)
+          const sourceBottomRight = new Point(+sourceLayout.width * 0.5, sourceLayout.height * 0.5)
+          graph.setRelativePortLocation(
+            edge.sourcePort,
+            isLeft(sourceNode) ? sourceBottomLeft : sourceBottomRight
+          )
         } else {
           // source is root node - set port to center
           graph.setRelativePortLocation(edge.sourcePort, Point.ORIGIN)
         }
 
-        if (!Structure.isRoot(t)) {
-          graph.setRelativePortLocation(edge.targetPort, Structure.isLeft(t) ? tbr : tbl)
+        if (!isRoot(targetNode)) {
+          const targetLayout = targetNode.layout
+          const targetBottomLeft = new Point(-targetLayout.width * 0.5, targetLayout.height * 0.5)
+          const targetBottomRight = new Point(+targetLayout.width * 0.5, targetLayout.height * 0.5)
+          graph.setRelativePortLocation(
+            edge.targetPort,
+            isLeft(targetNode) ? targetBottomRight : targetBottomLeft
+          )
         }
       }
-    })
+    }
   }
 
   /**
    * Calculates a layout on a subtree that is specified by a given
    * root node.
-   * @param {IGraph} graph The input graph.
-   * @param {INode} subtreeRoot The root node of the subtree.
+   * @param {!IGraph} graph The input graph.
+   * @param {!INode} subtreeRoot The root node of the subtree.
    */
   layoutSubtree(graph, subtreeRoot) {
-    const nodes = new List()
-    const edges = new List()
-    Structure.getSubtree(graph, subtreeRoot, nodes, edges)
-
-    // a mapper that determines the nodes to layout
-    const subtreeSelectionMapper = graph.mapperRegistry.createMapper(
-      LayoutKeys.AFFECTED_NODES_DP_KEY
-    )
-
-    // choose subtree nodes
-    graph.nodes.forEach(n => {
-      subtreeSelectionMapper.set(n, false)
-    })
-    nodes.forEach(node => {
-      subtreeSelectionMapper.set(node, true)
-    })
+    const nodes = []
+    const edges = []
+    getSubtree(graph, subtreeRoot, nodes, edges)
 
     // fix node layout stage - mark subtree root node as fixed
-    const layoutData = new FixNodeLayoutData({
-      fixedNodes: subtreeRoot
-    })
+    const layoutData = this.createLayoutData()
+      .combineWith(
+        new FixNodeLayoutData({
+          fixedNodes: subtreeRoot
+        })
+      )
+      .combineWith(
+        new SubgraphLayoutData({
+          subgraphNodes: nodes
+        })
+      )
 
     this.adjustPortLocations(graph, edges)
-    graph.applyLayout(new SubgraphLayout(this.gtl), layoutData)
-
-    // remove the mapper
-    graph.mapperRegistry.removeMapper(LayoutKeys.AFFECTED_NODES_DP_KEY)
+    graph.applyLayout(new SubgraphLayout(this.treeLayout), layoutData)
   }
 
   /**
    * Calculates an animated layout on the graph.
-   * @param {GraphComponent} graphComponent The given graphComponent.
-   * @param {List?} incrementalNodes
-   * @param {boolean?} collapse
-   * @return {Promise}
+   * @param {!GraphComponent} graphComponent The given graphComponent.
+   * @param {!Array.<INode>} incrementalNodes Nodes to add incrementally or null if the layout should be calculated from scratch
+   * @param collapse Whether nodes are hidden (true) or added
+   * @param {boolean} [collapse=false]
+   * @returns {!Promise}
    */
-  async layout(graphComponent, incrementalNodes, collapse) {
+  async layout(graphComponent, incrementalNodes = [], collapse = false) {
     // check a layout is currently in progress
     if (this.inLayout) {
       return Promise.resolve()
@@ -264,14 +249,11 @@ export default class MindmapLayout {
     const graph = graphComponent.graph
     this.adjustPortLocations(graph, graph.edges)
     this.inLayout = true
-    // disable the input mode so that no user interactions are allowed during layout
-    const inputMode = graphComponent.inputMode
-    inputMode.enabled = false
 
-    const layoutData = new CompositeLayoutData(
-      new FixNodeLayoutData({ fixedNodes: Structure.isRoot })
+    let layoutData = this.createLayoutData().combineWith(
+      new FixNodeLayoutData({ fixedNodes: isRoot })
     )
-    if (incrementalNodes && incrementalNodes.size > 0) {
+    if (incrementalNodes.length > 0) {
       if (!collapse) {
         // move the incremental nodes to the barycenter of their neighbors before layout to get a
         // smooth layout animation
@@ -279,86 +261,48 @@ export default class MindmapLayout {
       } else {
         // mark the incremental nodes so they end up in the barycenter of their neighbors after
         // layout for a smooth layout animation
-        layoutData.items.add(
+        layoutData = layoutData.combineWith(
           new PlaceNodesAtBarycenterStageData({
-            affectedNodes: node => incrementalNodes.includes(node)
+            affectedNodes: incrementalNodes
           })
         )
       }
     }
 
     // execute an animated layout
-    const newLayoutExecutor = new LayoutExecutor({
+    const layoutExecutor = new LayoutExecutor({
       graphComponent,
-      layout: this.gtl,
+      layout: this.treeLayout,
       layoutData,
-      duration: '0.2s'
+      duration: '0.2s',
+      allowUserInteraction: false
     })
     try {
-      await newLayoutExecutor.start()
-    } catch (error) {
-      if (error.name === 'AlgorithmAbortedError') {
+      await layoutExecutor.start()
+    } catch (err) {
+      if (err instanceof Error && err.name === 'AlgorithmAbortedError') {
         alert(
           'The layout computation was canceled because the maximum configured runtime was exceeded.'
         )
       } else if (typeof window.reportError === 'function') {
-        window.reportError(error)
+        window.reportError(err)
       }
     } finally {
       this.inLayout = false
-      inputMode.enabled = true
     }
   }
 
   /**
    * Moves incremental nodes between their neighbors before expanding for a smooth animation.
+   * @param {!IGraph} graph
+   * @param {!Array.<INode>} incrementalNodes
    */
   prepareSmoothExpandLayoutAnimation(graph, incrementalNodes) {
     // mark the new nodes and place them between their neighbors
     const layoutData = new PlaceNodesAtBarycenterStageData({
-      affectedNodes: node => incrementalNodes.includes(node)
+      affectedNodes: incrementalNodes
     })
     const layout = new PlaceNodesAtBarycenterStage()
     graph.applyLayout(layout, layoutData)
-  }
-
-  static get instance() {
-    // eslint-disable-next-line no-return-assign
-    return MindmapLayout.$instance || (MindmapLayout.$instance = new MindmapLayout())
-  }
-}
-
-/**
- * Sorts edges depending on the y-coordinates of their target nodes.
- * By default, edges are sorted from top to bottom. However, in case sides are taken into consideration, edges with
- * target nodes to the right are sorted bottom up and edges with target nodes to the left are sorted top down.
- * This is important when this comparator is used to determine the order of children for layout.
- */
-class YCoordComparator extends BaseClass(IComparer) {
-  /** @return {number} */
-  compare(x, y) {
-    const edge1 = x
-    const edge2 = y
-    const y1 = YCoordComparator.getY(edge1)
-    const y2 = YCoordComparator.getY(edge2)
-
-    if (YCoordComparator.isLeft(edge1.target)) {
-      return y1 - y2
-    }
-    return y2 - y1
-  }
-
-  /**
-   * @return {boolean}
-   */
-  static isLeft(n) {
-    return n.graph.getDataProvider(DelegatingNodePlacer.PRIMARY_NODES_DP_KEY).getBoolean(n)
-  }
-
-  /**
-   * @return {number}
-   */
-  static getY(e) {
-    return e.graph.getY(e.target)
   }
 }

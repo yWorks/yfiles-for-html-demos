@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -1296,8 +1296,10 @@ export class SimpleTreeBuilder {
   private $createAdjacentNodesGraphBuilderWrapper(
     graph: IGraph
   ): AdjacentNodesGraphBuilderBaseCalls & SimpleAdjacentNodesGraphBuilder {
-    class AdjacentNodesGraphBuilderWrapper extends SimpleAdjacentNodesGraphBuilder
-      implements AdjacentNodesGraphBuilderBaseCalls {
+    class AdjacentNodesGraphBuilderWrapper
+      extends SimpleAdjacentNodesGraphBuilder
+      implements AdjacentNodesGraphBuilderBaseCalls
+    {
       private $treeBuilder: SimpleTreeBuilder
 
       constructor(
@@ -2289,9 +2291,10 @@ export class SimpleAdjacentNodesGraphBuilder {
     thisNode = this.$nodeToMirrorNodeMap.get(thisNode)!
     neighborNode = this.$nodeToMirrorNodeMap.get(neighborNode)!
 
-    return (neighborIsSuccessor
-      ? this.$mirrorGraph.successors(thisNode)
-      : this.$mirrorGraph.predecessors(thisNode)
+    return (
+      neighborIsSuccessor
+        ? this.$mirrorGraph.successors(thisNode)
+        : this.$mirrorGraph.predecessors(thisNode)
     ).includes(neighborNode)
   }
 
@@ -3205,14 +3208,14 @@ class GraphBuilderHelper {
       }
 
       return this.$onNodeCreated(node, nodeObject)
-    } catch (e) {
-      if (e.message === 'No node created!') {
+    } catch (err) {
+      if (err instanceof Error && err.message === 'No node created!') {
         // This usually only happens when the GraphBuilder is used on a foldingView
         throw new Error(
           'Could not create node. When folding is used, make sure to use the master graph in the GraphBuilder.'
         )
       }
-      throw e
+      throw err
     }
   }
 

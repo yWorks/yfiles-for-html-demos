@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -33,9 +33,11 @@ import {
   GraphComponent,
   GraphEditorInputMode,
   ICommand,
+  IGraph,
   IHitTestable,
   IHitTester,
   IInputModeContext,
+  IModelItem,
   INode,
   INodeInsetsProvider,
   InteriorLabelModel,
@@ -45,6 +47,7 @@ import {
   PanelNodeStyle,
   Point,
   Rect,
+  ShowPortCandidates,
   Size
 } from 'yfiles'
 
@@ -52,11 +55,14 @@ import { bindAction, bindChangeListener, bindCommand, showApp } from '../../reso
 import loadJson from '../../resources/load-json.js'
 
 /** @type {GraphComponent} */
-let graphComponent = null
+let graphComponent
 
 /** @type {MoveInputMode} */
-let moveUnselectedInputMode = null
+let moveUnselectedInputMode
 
+/**
+ * @param {!object} licenseData
+ */
 function run(licenseData) {
   License.value = licenseData
   // initialize the GraphComponent
@@ -67,7 +73,8 @@ function run(licenseData) {
   registerCommands()
 
   // pre-select the 'Drag at Top' mode
-  document.querySelector("select[data-command='moveModeChanged']").value = 'Drag at Top'
+  const moveModeSelect = document.querySelector("select[data-command='moveModeChanged']")
+  moveModeSelect.value = 'Drag at Top'
   onMoveModeChanged()
 
   showApp(graphComponent)
@@ -103,7 +110,7 @@ function initializeInputModes() {
   const graphEditorInputMode = new GraphEditorInputMode()
 
   // Always add a label to the newly created nodes
-  graphEditorInputMode.nodeCreator = (context, graph, location, parent) => {
+  graphEditorInputMode.nodeCreator = (context, graph, location) => {
     const node = graph.createNodeAt(location)
     graph.addLabel(node, 'Node')
     return node
@@ -130,7 +137,8 @@ function initializeInputModes() {
  * if necessary it changes the hit testable for the move input mode
  */
 function onMoveModeChanged() {
-  const selectedIndex = document.getElementById('moveModeComboBox').selectedIndex
+  const moveModeSelect = document.getElementById('moveModeComboBox')
+  const selectedIndex = moveModeSelect.selectedIndex
   if (selectedIndex === 2) {
     // mode 2 (only top region): set a custom hit testable which detects hits only at the top of
     // the nodes
@@ -155,18 +163,19 @@ function onMoveModeChanged() {
  * Adjusts the edge creation behavior.
  */
 function onEdgeCreationModeChanged() {
-  const selectedIndex = document.getElementById('edgeCreationModeComboBox').selectedIndex
-  const /** @type GraphEditorInputMode */ geim = graphComponent.inputMode
+  const edgeCreationModeSelect = document.getElementById('edgeCreationModeComboBox')
+  const selectedIndex = edgeCreationModeSelect.selectedIndex
+  const geim = graphComponent.inputMode
   if (selectedIndex === 0) {
     geim.moveUnselectedInputMode.priority = 41
     geim.moveInputMode.priority = 40
     geim.createEdgeInputMode.startOverCandidateOnly = false
-    geim.createEdgeInputMode.showPortCandidates = 'TARGET'
+    geim.createEdgeInputMode.showPortCandidates = ShowPortCandidates.TARGET
   } else if (selectedIndex === 1) {
     geim.moveUnselectedInputMode.priority = 47
     geim.moveInputMode.priority = 46
     geim.createEdgeInputMode.startOverCandidateOnly = true
-    geim.createEdgeInputMode.showPortCandidates = 'ALL'
+    geim.createEdgeInputMode.showPortCandidates = ShowPortCandidates.ALL
   }
 }
 
@@ -174,13 +183,14 @@ function onEdgeCreationModeChanged() {
  * A custom EventRecognizer to be used as modifier recognizer.
  *
  * Has to return true if the move input mode is allowed to move a node.
- * @param {object} source
- * @param {EventArgs} args
- * @return {boolean}
+ * @param {*} source
+ * @param {!EventArgs} args
+ * @returns {boolean}
  */
 function isRecognized(source, args) {
   // return the value according to the Mode combo box
-  switch (document.getElementById('moveModeComboBox').selectedIndex) {
+  const moveModeSelect = document.getElementById('moveModeComboBox')
+  switch (moveModeSelect.selectedIndex) {
     case 0: // always
     case 2: // on top (this is handled by custom IHitTestable)
       // the same as only enabling the MoveUnselectedInputMode without changing the recognizers
@@ -206,7 +216,8 @@ function registerCommands() {
   bindChangeListener("select[data-command='edgeCreationModeChanged']", onEdgeCreationModeChanged)
 
   bindAction("input[data-command='ToggleClassicMode']", () => {
-    graphComponent.inputMode.moveInputMode.enabled = !graphComponent.inputMode.moveInputMode.enabled
+    const mode = graphComponent.inputMode.moveInputMode
+    mode.enabled = !mode.enabled
   })
 }
 
@@ -219,54 +230,42 @@ function registerCommands() {
 class TopInsetsHitTestable extends BaseClass(IHitTestable) {
   /**
    * Creates a new instance of <code>TopInsetsHitTestable</code>.
-   * @param {IHitTestable} original
-   * @param {GraphEditorInputMode} inputMode
+   * @param {!IHitTestable} original
+   * @param {!GraphEditorInputMode} inputMode
    */
   constructor(original, inputMode) {
     super()
-    this.$original = original
-    this.$inputMode = inputMode
-  }
-
-  /**
-   * Gets the original hit testable.
-   * @return {IHitTestable|*}
-   */
-  get original() {
-    return this.$original
+    this.inputMode = inputMode
+    // Gets the original hit testable.
+    this.original = original
   }
 
   /**
    * Test whether the given location is a valid hit.
    *
    * The hit is considered as valid if the location lies inside a node's top insets.
-   * @param {IInputModeContext} context - The current input mode context.
-   * @param {Point} location - The location to test.
-   * @return {boolean}
+   * @param {!IInputModeContext} context - The current input mode context.
+   * @param {!Point} location - The location to test.
+   * @returns {boolean}
    */
   isHit(context, location) {
-    /*
-      Get the current hit tester from the input mode context
-      @type {IHitTester}
-     */
-    const hitTester = this.$inputMode.inputModeContext.lookup(IHitTester.$class)
-    if (hitTester !== null) {
+    // get the current hit tester from the input mode context
+    const inputModeContext = this.inputMode.inputModeContext
+    const hitTester = inputModeContext.lookup(IHitTester.$class)
+    if (hitTester) {
       // get an enumerator over all elements at the given location
-      const hits = hitTester.enumerateHits(this.$inputMode.inputModeContext, location)
+      const hits = hitTester.enumerateHits(inputModeContext, location)
       const enumerator = hits.getEnumerator()
       while (enumerator.moveNext()) {
         const item = enumerator.current
         // if the element is a node and its lookup returns an INodeInsetsProvider
-        if (INode.isInstance(item)) {
+        if (item instanceof INode) {
           const insetsProvider = item.lookup(INodeInsetsProvider.$class)
-          if (insetsProvider !== null) {
+          if (insetsProvider) {
             // determine whether the given location lies inside the top insets
             const insets = insetsProvider.getInsets(item)
-            if (
-              new Rect(item.layout.x, item.layout.y, item.layout.width, insets.top).contains(
-                location
-              )
-            ) {
+            const topInset = new Rect(item.layout.x, item.layout.y, item.layout.width, insets.top)
+            if (topInset.contains(location)) {
               // if so: return true
               return true
             }

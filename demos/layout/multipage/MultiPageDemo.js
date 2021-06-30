@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -38,10 +38,15 @@ import {
   HoveredItemChangedEventArgs,
   ICanvasObjectDescriptor,
   ICommand,
+  IEdge,
+  IGraph,
+  ILabel,
+  ILayoutCallback,
   INode,
   LayoutGraphAdapter,
   License,
   MultiPageLayout,
+  MultiPageLayoutData,
   MultiPageLayoutResult,
   OrganicLayout,
   OrthogonalLayout,
@@ -50,31 +55,31 @@ import {
   TreeLayout,
   TreeReductionStage,
   VoidLabelStyle,
-  YDimension,
-  YObject
+  YDimension
 } from 'yfiles'
 
 import DemoStyles, {
   DemoEdgeStyle,
   DemoSerializationListener
 } from '../../resources/demo-styles.js'
-import MultiPageIGraphBuilder from './MultiPageIGraphBuilder.js'
 import {
   bindAction,
   bindChangeListener,
   bindCommand,
-  passiveSupported,
   readGraph,
   showApp
 } from '../../resources/demo-app.js'
-import PageBoundsVisualCreator from './PageBoundsVisualCreator.js'
+import { passiveSupported } from '../../utils/Workarounds.js'
 import loadJson from '../../resources/load-json.js'
+import MultiPageIGraphBuilder from './MultiPageIGraphBuilder.js'
+import PageBoundsVisualCreator from './PageBoundsVisualCreator.js'
 
 /**
  * This demo demonstrates how the result of a multi-page layout calculation
  * can be displayed in a graph component.
  * A multi-page layout splits a large graph into multiple pages with a fixed maximum width and height.
  * Each of these pages is displayed by a different graph.
+ * @param {*} licenseData
  */
 function run(licenseData) {
   License.value = licenseData
@@ -95,19 +100,19 @@ function run(licenseData) {
  * Shows the current page of the multi-page layout.
  * @type {GraphComponent}
  */
-let graphComponent = null
+let graphComponent
 
 /**
  * Shows the complete model graph.
  * @type {GraphComponent}
  */
-let modelGraphComponent = null
+let modelGraphComponent
 
 /**
  * The calculated page graphs.
- * @type {IGraph[]}
+ * @type {Array.<IGraph>}
  */
-let viewGraphs = null
+let viewGraphs
 
 /**
  * The currently selected page.
@@ -119,7 +124,7 @@ let pageNumber = 0
  * The visual creator for rendering the page bounds.
  * @type {PageBoundsVisualCreator}
  */
-let pageBoundsVisualCreator = null
+let pageBoundsVisualCreator
 
 /**
  * A flag that prevents re-entrant layout calls.
@@ -152,10 +157,7 @@ function runMultiPageLayout() {
   // get the core layout
   const coreLayoutComboBox = document.getElementById('coreLayoutComboBox')
   const layoutIndex = coreLayoutComboBox.selectedIndex
-  const coreLayout =
-    layoutIndex > -1
-      ? coreLayoutComboBox.options[layoutIndex].myValue
-      : coreLayoutComboBox.options[0].myValue
+  const coreLayout = coreLayoutComboBox.options[layoutIndex > -1 ? layoutIndex : 0].myValue
   if (coreLayoutComboBox.value === 'Tree') {
     // configure CompactNodePlacer to respect the aspect ratio of the page
     coreLayout.defaultNodePlacer.aspectRatio = pageWidth / pageHeight
@@ -173,50 +175,31 @@ function runMultiPageLayout() {
     maximumPageSize: new YDimension(pageWidth, pageHeight),
     createProxyReferenceNodes: createProxyNodes,
     multipleComponentsOnSinglePage: placeComponentsOnSinglePage,
-    additionalParentCount: Number.parseInt(document.getElementById('additionalParentCount').value)
+    additionalParentCount: Number.parseInt(document.getElementById('additionalParentCount').value),
+    layoutCallback: ILayoutCallback.create(result => {
+      applyLayoutResult(result, pageWidth, pageHeight)
+    })
   })
 
-  // a data provider for the node, edge, and label IDs:
-  // this data provider returns the node/edge/label instances themselves
-  const registry = modelGraphComponent.graph.mapperRegistry
-  // assign the data providers for the element IDs
-  registry.createDelegateMapper(
-    YObject.$class,
-    YObject.$class,
-    MultiPageLayout.NODE_ID_DP_KEY,
-    key => key
-  )
-  registry.createDelegateMapper(
-    YObject.$class,
-    YObject.$class,
-    MultiPageLayout.EDGE_ID_DP_KEY,
-    key => key
-  )
-  registry.createDelegateMapper(
-    YObject.$class,
-    YObject.$class,
-    MultiPageLayout.NODE_LABEL_ID_DP_KEY,
-    key => key
-  )
-  registry.createDelegateMapper(
-    YObject.$class,
-    YObject.$class,
-    MultiPageLayout.EDGE_LABEL_ID_DP_KEY,
-    key => key
-  )
+  const multiPageLayoutData = new MultiPageLayoutData({
+    nodeIds: key => key,
+    edgeIds: key => key,
+    nodeLabelIds: key => key,
+    edgeLabelIds: key => key
+  })
 
   setTimeout(() => {
     const adapter = new LayoutGraphAdapter(modelGraphComponent.graph)
-    // multiPageLayout gets a list with the single page graphs
-    const layout = multiPageLayout.calculateLayout(adapter.createCopiedLayoutGraph())
-    applyLayoutResult(layout, pageWidth, pageHeight)
+    // Note that unlike other layouts, MultiPageLayout does not alter the input graph.
+    // Instead, the result is available via the function set to the 'layoutCallback' property.
+    adapter.applyLayout(multiPageLayout, multiPageLayoutData)
     layouting = false
-  }, 50)
+  }, 0)
 }
 
 /**
  * Applies the result of the multi-page layout using a {@link MultiPageIGraphBuilder}.
- * @param {MultiPageLayoutResult} multiPageLayoutResult
+ * @param {!MultiPageLayoutResult} multiPageLayoutResult
  * @param {number} pageWidth
  * @param {number} pageHeight
  */
@@ -242,13 +225,6 @@ function applyLayoutResult(multiPageLayoutResult, pageWidth, pageHeight) {
   builder.proxyEdgeDefaults.style = proxyEdgeStyle
   builder.proxyReferenceEdgeDefaults.style = new DemoEdgeStyle()
 
-  // remove all data providers used for the layout
-  const registry = modelGraphComponent.graph.mapperRegistry
-  registry.removeMapper(MultiPageLayout.NODE_ID_DP_KEY)
-  registry.removeMapper(MultiPageLayout.EDGE_ID_DP_KEY)
-  registry.removeMapper(MultiPageLayout.NODE_LABEL_ID_DP_KEY)
-  registry.removeMapper(MultiPageLayout.EDGE_LABEL_ID_DP_KEY)
-
   // create the graphs
   viewGraphs = builder.createViewGraphs()
   setPageNumber(0)
@@ -266,7 +242,7 @@ function applyLayoutResult(multiPageLayoutResult, pageWidth, pageHeight) {
 
 /**
  * @param {number} newPageNumber
- * @param {INode} targetNode
+ * @param {?INode} [targetNode=null]
  */
 function setPageNumber(newPageNumber, targetNode = null) {
   graphComponent.highlightIndicatorManager.clearHighlights()
@@ -324,7 +300,7 @@ function setPageNumber(newPageNumber, targetNode = null) {
 
 /**
  * "Jump" to a referencing node of a clicked auxiliary multi-page node.
- * @param {INode} viewNode The multi page node that has been clicked
+ * @param {!INode} viewNode The multi page node that has been clicked
  */
 function goToReferencingNode(viewNode) {
   // get the ID of the referencing node
@@ -343,7 +319,8 @@ function goToReferencingNode(viewNode) {
 /**
  * Checks if the given page number is valid.
  * A valid page number lies between 0 and the number of pages.
- * @return {boolean}
+ * @param {*} pageNo
+ * @returns {boolean}
  */
 function checkPageNumber(pageNo) {
   return !isNaN(pageNo) && viewGraphs && pageNo >= 0 && pageNo < viewGraphs.length
@@ -355,7 +332,7 @@ function checkPageNumber(pageNo) {
  */
 function showLoadingIndicator(visible) {
   const loadingIndicator = document.getElementById('loadingIndicator')
-  loadingIndicator.style.setProperty('display', visible ? 'block' : 'none', null)
+  loadingIndicator.style.setProperty('display', visible ? 'block' : 'none', undefined)
 }
 
 /**
@@ -438,9 +415,9 @@ function initializeCoreLayouts() {
 
 /**
  * Adds a new option to the given combo-box
- * @param {HTMLElement} comboBox The combo-box to extend.
- * @param {String} text The text that describes the option.
- * @param {Object} value The value object for this option.
+ * @param {!HTMLSelectElement} comboBox The combo-box to extend.
+ * @param {!string} text The text that describes the option.
+ * @param {*} value The value object for this option.
  */
 function addOption(comboBox, text, value) {
   const option = document.createElement('option')
@@ -485,8 +462,8 @@ function initializeInputModes() {
 
 /**
  * Add/Remove the hovered item to the highlight manager.
- * @param {object} sender
- * @param {HoveredItemChangedEventArgs} args
+ * @param {!object} sender
+ * @param {!HoveredItemChangedEventArgs} args
  */
 function onHoveredItemChanged(sender, args) {
   // we use the highlight manager to highlight hovered items
@@ -510,8 +487,8 @@ function initConverters() {
   /**
    * Converts a node into the text of the first node label.
    */
-  store.labelconverter = (value, parameter) => {
-    const node = INode.isInstance(value) ? value : null
+  store.labelConverter = (value, parameter) => {
+    const node = value instanceof INode ? value : null
     return node && node.labels.size > 0 ? node.labels.first().text : ''
   }
 
@@ -519,12 +496,13 @@ function initConverters() {
    * Converts a width value into a 'translate' transformation to the node center.
    */
   // eslint-disable-next-line no-confusing-arrow
-  store.transformconverter = (value, parameter) =>
+  store.transformConverter = (value, parameter) =>
     !isNaN(value) ? `translate(${(value * 0.5) | 0} 15)` : ''
 }
 
 /**
  * Loads the model graph and applies an initial multi-page layout.
+ * @param {*} graphId
  */
 async function loadModelGraph(graphId) {
   // show a notification because the multi-page layout takes some time

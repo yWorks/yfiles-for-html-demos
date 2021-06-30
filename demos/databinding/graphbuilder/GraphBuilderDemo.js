@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -309,14 +309,18 @@ function createSourcesLists(sourcesFactory) {
     sourceName => sourcesFactory.createNodesSourceConnector(sourceName),
     NodesSourceDialog,
     nodeSourcesListRootElement,
-    () => buildGraphFromData(true)
+    () => {
+      buildGraphFromData(true)
+    }
   )
 
   const edgesSourcesListBox = new SourcesListBox(
     sourceName => sourcesFactory.createEdgesSourceConnector(sourceName),
     EdgesSourceDialog,
     edgesSourcesListRootElement,
-    () => buildGraphFromData(true)
+    () => {
+      buildGraphFromData(true)
+    }
   )
 
   return { nodesSourcesListBox, edgesSourcesListBox }

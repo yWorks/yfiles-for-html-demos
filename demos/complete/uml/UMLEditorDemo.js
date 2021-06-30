@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -29,7 +29,6 @@
 import {
   DefaultPortCandidate,
   EdgeRouter,
-  EdgeRouterScope,
   Fill,
   FreeNodePortLocationModel,
   GraphComponent,
@@ -39,14 +38,18 @@ import {
   HierarchicLayoutData,
   ICommand,
   IEdge,
+  IGraph,
   IHitTestable,
+  IInputModeContext,
   INode,
+  IPortCandidate,
   LayoutExecutor,
   License,
   OrthogonalEdgeEditingContext,
-  PolylineEdgeRouterData,
+  Point,
   PolylineEdgeStyle,
   Rect,
+  RoutingPolicy,
   Size,
   StorageLocation,
   VoidNodeStyle
@@ -65,12 +68,14 @@ import UMLStyle, { UMLNodeStyle, UMLNodeStyleSerializationListener } from './UML
 import loadJson from '../../resources/load-json.js'
 
 /** @type {GraphComponent} */
-let graphComponent = null
+let graphComponent
 
+/**
+ * @param {!object} licenseData
+ */
 async function run(licenseData) {
   License.value = licenseData
   graphComponent = new GraphComponent('#graphComponent')
-  graphComponent.graph.undoEngineEnabled = true
 
   // configure the input mode
   graphComponent.inputMode = createInputMode()
@@ -83,8 +88,10 @@ async function run(licenseData) {
   // bootstrap the sample graph
   generateSampleGraph()
   await executeLayout()
-  // the sample graph bootstrapping should not be undoable
-  graphComponent.graph.undoEngine.clear()
+
+  graphComponent.graph.undoEngineEnabled = true
+
+  enableGraphML()
 
   // bind the demo buttons to their commands
   registerCommands()
@@ -119,20 +126,26 @@ function executeLayout() {
 
 /**
  * Returns an edge group id according to the edge style.
- * @param {IEdge} edge
- * @param {string} marker
- * @return {object|null}
+ * @param {!IEdge} edge
+ * @param {!string} marker
+ * @returns {?string}
  */
 function getGroupId(edge, marker) {
   if (edge.style instanceof PolylineEdgeStyle) {
     const edgeStyle = edge.style
-    return isInheritance(edgeStyle) ? edgeStyle.stroke.dashStyle + marker : null
+    if (isInheritance(edgeStyle)) {
+      const stroke = edgeStyle.stroke
+      if (stroke) {
+        return `${stroke.dashStyle}${marker}`
+      }
+    }
   }
   return null
 }
 
 /**
  * Configure interaction.
+ * @returns {!GraphEditorInputMode}
  */
 function createInputMode() {
   const mode = new GraphEditorInputMode({
@@ -201,9 +214,9 @@ function createInputMode() {
   mode.add(umlContextButtonsInputMode)
 
   // execute a layout after certain gestures
-  mode.moveInputMode.addDragFinishedListener((src, args) => routeEdgesAtSelectedNodes())
-  mode.handleInputMode.addDragFinishedListener((src, args) => routeEdgesAtSelectedNodes())
-  createEdgeInputMode.addEdgeCreatedListener((src, args) => routeEdge(args.item))
+  mode.moveInputMode.addDragFinishedListener((src, args) => routeEdges())
+  mode.handleInputMode.addDragFinishedListener((src, args) => routeEdges())
+  createEdgeInputMode.addEdgeCreatedListener((src, args) => routeEdges())
 
   // hide the edge creation buttons when the empty canvas was clicked
   mode.addCanvasClickedListener((src, args) => {
@@ -221,39 +234,16 @@ function createInputMode() {
 }
 
 /**
- * Routes all edges that connect to selected nodes. This is used when a selection of nodes is moved or resized.
+ * Routes edges which need to be re-routed. This is called after an input gesture.
  */
-function routeEdgesAtSelectedNodes() {
+function routeEdges() {
   const edgeRouter = new EdgeRouter()
-  edgeRouter.scope = EdgeRouterScope.ROUTE_EDGES_AT_AFFECTED_NODES
+  // route all edge segments which need to be re-routed.
+  edgeRouter.defaultEdgeLayoutDescriptor.routingPolicy = RoutingPolicy.SEGMENTS_AS_NEEDED
 
   const layoutExecutor = new LayoutExecutor({
     graphComponent,
     layout: edgeRouter,
-    layoutData: new PolylineEdgeRouterData({
-      affectedNodes: node => graphComponent.selection.selectedNodes.isSelected(node)
-    }),
-    duration: '0.5s',
-    updateContentRect: false
-  })
-  layoutExecutor.start()
-}
-
-/**
- * Routes just the given edge without adjusting the view port. This is used for applying an initial layout to newly
- * created edges.
- * @param affectedEdge
- */
-function routeEdge(affectedEdge) {
-  const edgeRouter = new EdgeRouter()
-  edgeRouter.scope = EdgeRouterScope.ROUTE_AFFECTED_EDGES
-
-  const layoutExecutor = new LayoutExecutor({
-    graphComponent,
-    layout: edgeRouter,
-    layoutData: new PolylineEdgeRouterData({
-      affectedEdges: edge => edge === affectedEdge
-    }),
     duration: '0.5s',
     animateViewport: false,
     updateContentRect: false
@@ -364,28 +354,29 @@ function generateSampleGraph() {
   })
 }
 
-function registerCommands() {
+/**
+ * Enables loading and saving the demo's model graph from and to GraphML.
+ */
+function enableGraphML() {
   const gs = new GraphMLSupport({
     graphComponent,
     storageLocation: StorageLocation.FILE_SYSTEM
   })
 
+  const namespaceUri = 'http://www.yworks.com/yFilesHTML/demos/UMLDemoStyle/1.0'
+
   // enable serialization of the UML styles - without a namespace mapping, serialization will fail
-  gs.graphMLIOHandler.addXamlNamespaceMapping(
-    'http://www.yworks.com/yFilesHTML/demos/UMLDemoStyle/1.0',
-    UMLStyle
-  )
-  gs.graphMLIOHandler.addXamlNamespaceMapping(
-    'http://www.yworks.com/yFilesHTML/demos/UMLDemoStyle/1.0',
-    umlModel
-  )
-  gs.graphMLIOHandler.addNamespace('http://www.yworks.com/yFilesHTML/demos/UMLDemoStyle/1.0', 'uml')
+  gs.graphMLIOHandler.addXamlNamespaceMapping(namespaceUri, UMLStyle)
+  gs.graphMLIOHandler.addXamlNamespaceMapping(namespaceUri, umlModel)
+  gs.graphMLIOHandler.addNamespace(namespaceUri, 'uml')
   gs.graphMLIOHandler.addHandleSerializationListener(UMLNodeStyleSerializationListener)
   gs.graphMLIOHandler.addHandleSerializationListener(umlModel.UMLClassModelSerializationListener)
+}
 
+function registerCommands() {
   bindAction("button[data-command='New']", () => {
     graphComponent.graph.clear()
-    ICommand.FIT_GRAPH_BOUNDS.execute(null, graphComponent)
+    graphComponent.fitGraphBounds()
   })
   bindCommand("button[data-command='Open']", ICommand.OPEN, graphComponent)
   bindCommand("button[data-command='Save']", ICommand.SAVE, graphComponent)

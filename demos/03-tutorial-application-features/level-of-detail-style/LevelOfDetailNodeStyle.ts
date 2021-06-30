@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -64,9 +64,8 @@ export default class LevelOfDetailNodeStyle extends NodeStyleBase {
       visual = this.intermediateNodeStyle.renderer
         .getVisualCreator(node, this.intermediateNodeStyle)
         .createVisual(renderContext) as SvgVisual
-      ;(visual.svgElement as any)[
-        'data-levelsRenderDataCache'
-      ] = this.intermediateNodeStyle.renderer
+      ;(visual.svgElement as any)['data-levelsRenderDataCache'] =
+        this.intermediateNodeStyle.renderer
     } else {
       visual = this.overviewNodeStyle.renderer
         .getVisualCreator(node, this.overviewNodeStyle)
@@ -100,9 +99,8 @@ export default class LevelOfDetailNodeStyle extends NodeStyleBase {
       newVisual = this.intermediateNodeStyle.renderer
         .getVisualCreator(node, this.intermediateNodeStyle)
         .updateVisual(renderContext, oldVisual) as SvgVisual
-      ;(newVisual.svgElement as any)[
-        'data-levelsRenderDataCache'
-      ] = this.intermediateNodeStyle.renderer
+      ;(newVisual.svgElement as any)['data-levelsRenderDataCache'] =
+        this.intermediateNodeStyle.renderer
       return newVisual
     } else if (zoom <= this.intermediateThreshold && cache === this.overviewNodeStyle.renderer) {
       newVisual = this.overviewNodeStyle.renderer

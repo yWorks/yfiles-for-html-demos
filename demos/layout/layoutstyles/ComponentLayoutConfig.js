@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -31,6 +31,7 @@ import {
   ComponentArrangementStyles,
   ComponentLayout,
   GraphComponent,
+  ILayoutAlgorithm,
   YBoolean,
   YDimension,
   YNumber,
@@ -51,7 +52,6 @@ import {
 
 /**
  * Configuration options for the layout algorithm of the same name.
- * @yjs:keep=DescriptionGroup,LayoutGroup,descriptionText,aspectRatioItem,componentSpacingItem,fromSketchItem,gridEnabledItem,gridSpacingItem,noOverlapItem,shouldDisableAspectRatioItem,shouldDisableGridSpacingItem,styleItem,useScreenRatioItem
  */
 const ComponentLayoutConfig = Class('ComponentLayoutConfig', {
   $extends: LayoutConfiguration,
@@ -74,13 +74,14 @@ const ComponentLayoutConfig = Class('ComponentLayoutConfig', {
     this.componentSpacingItem = layout.componentSpacing
     this.gridEnabledItem = layout.gridSpacing > 0
     this.gridSpacingItem = layout.gridSpacing > 0 ? layout.gridSpacing : 20.0
+    this.title = 'Component Layout'
   },
 
   /**
    * Creates and configures a layout and the graph's {@link IGraph#mapperRegistry} if necessary.
-   * @param {GraphComponent} graphComponent The <code>GraphComponent</code> to apply the
+   * @param graphComponent The <code>GraphComponent</code> to apply the
    *   configuration on.
-   * @return {ILayoutAlgorithm} The configured layout algorithm.
+   * @return The configured layout algorithm.
    */
   createConfiguredLayout: function (graphComponent) {
     const layout = new ComponentLayout()
@@ -117,18 +118,6 @@ const ComponentLayoutConfig = Class('ComponentLayoutConfig', {
   },
 
   /** @type {OptionGroup} */
-  DescriptionGroup: {
-    $meta: function () {
-      return [
-        LabelAttribute('Description'),
-        OptionGroupAttribute('RootGroup', 5),
-        TypeAttribute(OptionGroup.$class)
-      ]
-    },
-    value: null
-  },
-
-  /** @type {OptionGroup} */
   LayoutGroup: {
     $meta: function () {
       return [
@@ -153,12 +142,6 @@ const ComponentLayoutConfig = Class('ComponentLayoutConfig', {
       return "<p style='margin-top:0'>The component layout arranges the connected components of a graph. It can use any other layout style to arrange each component separately, and then arranges the components as such.</p><p>In this demo, the arrangement of each component is just kept as it is.</p>"
     }
   },
-
-  /**
-   * Backing field for below property
-   * @type {ComponentArrangementStyles}
-   */
-  $styleItem: null,
 
   /** @type {ComponentArrangementStyles} */
   styleItem: {
@@ -199,19 +182,8 @@ const ComponentLayoutConfig = Class('ComponentLayoutConfig', {
         TypeAttribute(ComponentArrangementStyles.$class)
       ]
     },
-    get: function () {
-      return this.$styleItem
-    },
-    set: function (value) {
-      this.$styleItem = value
-    }
+    value: null
   },
-
-  /**
-   * Backing field for below property
-   * @type {boolean}
-   */
-  $noOverlapItem: false,
 
   /** @type {boolean} */
   noOverlapItem: {
@@ -222,19 +194,8 @@ const ComponentLayoutConfig = Class('ComponentLayoutConfig', {
         TypeAttribute(YBoolean.$class)
       ]
     },
-    get: function () {
-      return this.$noOverlapItem
-    },
-    set: function (value) {
-      this.$noOverlapItem = value
-    }
+    value: false
   },
-
-  /**
-   * Backing field for below property
-   * @type {boolean}
-   */
-  $fromSketchItem: false,
 
   /** @type {boolean} */
   fromSketchItem: {
@@ -248,19 +209,8 @@ const ComponentLayoutConfig = Class('ComponentLayoutConfig', {
         TypeAttribute(YBoolean.$class)
       ]
     },
-    get: function () {
-      return this.$fromSketchItem
-    },
-    set: function (value) {
-      this.$fromSketchItem = value
-    }
+    value: false
   },
-
-  /**
-   * Backing field for below property
-   * @type {boolean}
-   */
-  $useScreenRatioItem: false,
 
   /** @type {boolean} */
   useScreenRatioItem: {
@@ -274,19 +224,8 @@ const ComponentLayoutConfig = Class('ComponentLayoutConfig', {
         TypeAttribute(YBoolean.$class)
       ]
     },
-    get: function () {
-      return this.$useScreenRatioItem
-    },
-    set: function (value) {
-      this.$useScreenRatioItem = value
-    }
+    value: false
   },
-
-  /**
-   * Backing field for below property
-   * @type {number}
-   */
-  $aspectRatioItem: 0,
 
   /** @type {number} */
   aspectRatioItem: {
@@ -306,12 +245,7 @@ const ComponentLayoutConfig = Class('ComponentLayoutConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function () {
-      return this.$aspectRatioItem
-    },
-    set: function (value) {
-      this.$aspectRatioItem = value
-    }
+    value: 0.2
   },
 
   /** @type {boolean} */
@@ -325,11 +259,6 @@ const ComponentLayoutConfig = Class('ComponentLayoutConfig', {
   },
 
   /**
-   * Backing field for below property
-   * @type {number}
-   */
-  $componentSpacingItem: 0,
-
   /** @type {number} */
   componentSpacingItem: {
     $meta: function () {
@@ -347,45 +276,23 @@ const ComponentLayoutConfig = Class('ComponentLayoutConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function () {
-      return this.$componentSpacingItem
-    },
-    set: function (value) {
-      this.$componentSpacingItem = value
-    }
+    value: 0
   },
-
-  /**
-   * Backing field for below property
-   * @type {boolean}
-   */
-  $gridEnabledItem: false,
 
   /** @type {boolean} */
   gridEnabledItem: {
     $meta: function () {
       return [
         LabelAttribute(
-          'Route on Grid',
+          'Place on Grid',
           '#/api/ComponentLayout#ComponentLayout-property-gridSpacing'
         ),
         OptionGroupAttribute('LayoutGroup', 70),
         TypeAttribute(YBoolean.$class)
       ]
     },
-    get: function () {
-      return this.$gridEnabledItem
-    },
-    set: function (value) {
-      this.$gridEnabledItem = value
-    }
+    value: false
   },
-
-  /**
-   * Backing field for below property
-   * @type {number}
-   */
-  $gridSpacingItem: 0,
 
   /** @type {number} */
   gridSpacingItem: {
@@ -404,12 +311,7 @@ const ComponentLayoutConfig = Class('ComponentLayoutConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function () {
-      return this.$gridSpacingItem
-    },
-    set: function (value) {
-      this.$gridSpacingItem = value
-    }
+    value: 2
   },
 
   /** @type {boolean} */

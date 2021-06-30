@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -34,10 +34,21 @@ import { AppComponent } from './app.component'
 import { GraphComponentComponent } from './graph-component/graph-component.component'
 import { PropertiesViewComponent } from './properties-view/properties-view.component'
 import { NodeComponent } from './node.component'
+import { ContextMenuComponent } from './context-menu/context-menu.component'
+import { GraphOverviewComponentComponent } from './graph-overview-component/graph-overview-component.component'
+import { TooltipComponent } from './tooltip/tooltip.component'
 
 @NgModule({
   entryComponents: [NodeComponent],
-  declarations: [AppComponent, GraphComponentComponent, PropertiesViewComponent, NodeComponent],
+  declarations: [
+    AppComponent,
+    GraphComponentComponent,
+    PropertiesViewComponent,
+    NodeComponent,
+    ContextMenuComponent,
+    GraphOverviewComponentComponent,
+    TooltipComponent
+  ],
   imports: [BrowserModule, FormsModule],
   providers: [],
   bootstrap: [AppComponent]

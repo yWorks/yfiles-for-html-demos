@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -26,6 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
+/* eslint-disable no-dupe-else-if */
 import {
   BaseClass,
   Cursor,
@@ -74,7 +75,7 @@ function createDefaultPath(): GeneralPath {
   return generalPath
 }
 
-class EditablePathNodeStyleMementoSupport extends BaseClass<IMementoSupport>(IMementoSupport) {
+class EditablePathNodeStyleMementoSupport extends BaseClass(IMementoSupport) {
   applyState(subject: any, state: any): void {
     const style = subject as EditablePathNodeStyle
     style.path.clear()
@@ -97,7 +98,8 @@ class EditablePathNodeStyleMementoSupport extends BaseClass<IMementoSupport>(IMe
   }
 }
 
-export const EDITABLE_PATH_MEMENTO_SUPPORT: IMementoSupport = new EditablePathNodeStyleMementoSupport()
+export const EDITABLE_PATH_MEMENTO_SUPPORT: IMementoSupport =
+  new EditablePathNodeStyleMementoSupport()
 
 /**
  * A custom implementation of an {@link INodeStyle} that wraps a {@link GeneralPathNodeStyle} and
@@ -117,8 +119,8 @@ export default class EditablePathNodeStyle extends NodeStyleBase {
       this.$path = options.path || createDefaultPath()
       this.$pathStyle = new GeneralPathNodeStyle({
         path: this.$path,
-        fill: options.fill,
-        stroke: options.stroke
+        fill: options.fill ?? null,
+        stroke: options.stroke ?? null
       })
     } else {
       this.$path = createDefaultPath()
@@ -387,7 +389,7 @@ export default class EditablePathNodeStyle extends NodeStyleBase {
 /**
  * A {@link IHandle} that allows for changing the path of a {@link EditablePathNodeStyle}.
  */
-export class PathHandle extends BaseClass<IHandle, IPoint>(IHandle, IPoint) {
+export class PathHandle extends BaseClass(IHandle, IPoint) {
   private readonly $type: HandleTypes
   private readonly $node: INode
   private readonly $index: number

@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -39,18 +39,23 @@ import {
   GraphItemTypes,
   HierarchicLayout,
   ICommand,
+  IEnumerable,
   IGraph,
   ILabel,
+  ILayoutAlgorithm,
   LabelAngleOnRightSideOffsets,
   LabelAngleOnRightSideRotations,
   LabelAngleReferences,
+  LabelLayoutTranslator,
   LabelPlacements,
   LabelSideReferences,
   LayoutExecutor,
   LayoutGraphAdapter,
   LayoutOrientation,
   License,
+  Mapper,
   MinimumNodeSizeStage,
+  MultiStageLayout,
   OrthogonalLayout,
   PreferredPlacementDescriptor,
   Size,
@@ -63,21 +68,25 @@ import { bindAction, bindChangeListener, bindCommand, showApp } from '../../reso
 import loadJson from '../../resources/load-json.js'
 
 /**
+ * @typedef {*} EdgeLabelPlacementOption
+ */
+
+/**
  * The graph component.
  * @type {GraphComponent}
  */
-let graphComponent = null
+let graphComponent
 
 /**
  * The graph that contains the labels.
  * @type {IGraph}
  */
-let graph = null
+let graph
 
 /**
  * The mapper which provides a PreferredPlacementDescriptor for each edge label.
  * This mapper is used by the layout algorithms to consider the preferred placement for the edge labels.
- * @type {IMapper.<ILabel,PreferredPlacementDescriptor>}
+ * @type {Mapper.<ILabel,PreferredPlacementDescriptor>}
  */
 let descriptorMapper = null
 
@@ -87,9 +96,23 @@ let descriptorMapper = null
  */
 let layouting = false
 
+// init UI elements
+const layoutComboBox = document.getElementById('layoutComboBox')
+const layoutButton = document.getElementById('layoutButton')
+const labelTextArea = document.getElementById('labelTextArea')
+const distanceToEdgeNumberField = document.getElementById('distanceToEdgeNumberField')
+const angleNumberField = document.getElementById('angleNumberField')
+const placementAlongEdgeComboBox = document.getElementById('placementAlongEdgeComboBox')
+const placementSideOfEdgeComboBox = document.getElementById('placementSideOfEdgeComboBox')
+const sideReferenceComboBox = document.getElementById('sideReferenceComboBox')
+const angleReferenceComboBox = document.getElementById('angleReferenceComboBox')
+const angleRotationComboBox = document.getElementById('angleRotationComboBox')
+const add180CheckBox = document.getElementById('add180CheckBox')
+
 /**
  * This demo shows how to influence the placement of edge labels by a generic labeling algorithm as well as by a
  * layout algorithm with integrated edge labeling using a PreferredPlacementDescriptor.
+ * @param {!object} licenseData
  */
 function run(licenseData) {
   License.value = licenseData
@@ -122,7 +145,6 @@ async function doLayout(fitViewToContent) {
     setUIDisabled(true)
 
     // retrieve current labeling/layout algorithm from the combo-box
-    const layoutComboBox = document.getElementById('layoutComboBox')
     const layoutAlgorithm = layoutComboBox.options[layoutComboBox.selectedIndex].myValue
 
     // initialize layout executor
@@ -153,16 +175,16 @@ async function doLayout(fitViewToContent) {
 /**
  * Disables the HTML elements of the UI and the input mode.
  *
- * @param disabled true if the elements should be disabled, false otherwise
+ * @param {boolean} disabled true if the elements should be disabled, false otherwise
  */
 function setUIDisabled(disabled) {
-  document.getElementById('layoutButton').disabled = disabled
-  document.getElementById('layoutComboBox').disabled = disabled
+  layoutButton.disabled = disabled
+  layoutComboBox.disabled = disabled
 }
 
 /**
  * Called whenever a property of the option handler has changed.
- * @param source The HTMLElement that reported a change.
+ * @param {!HTMLElement} source The HTMLElement that reported a change.
  */
 function onLabelPropertyChanged(source) {
   updateLabelValues(getAffectedLabels(), source)
@@ -172,27 +194,19 @@ function onLabelPropertyChanged(source) {
 /**
  * Updates the PreferredPlacementDescriptors for all affected labels.
  * Affected labels are part of the selection or all labels if no label is selected.
- * @param {IEnumerable.<ILabel>} labels The affected labels.
- * @param source The HTMLElement that reported a change.
+ * @param {!IEnumerable.<ILabel>} labels The affected labels.
+ * @param {!HTMLElement} source The HTMLElement that reported a change.
  */
 function updateLabelValues(labels, source) {
   if (descriptorMapper === null) {
     return
   }
 
-  const labelTextArea = document.getElementById('labelTextArea')
-  const distanceToEdgeNumberField = document.getElementById('distanceToEdgeNumberField')
-  const angleNumberField = document.getElementById('angleNumberField')
-  const placementAlongEdgeComboBox = document.getElementById('placementAlongEdgeComboBox')
-  const placementSideOfEdgeComboBox = document.getElementById('placementSideOfEdgeComboBox')
-  const sideReferenceComboBox = document.getElementById('sideReferenceComboBox')
-  const angleReferenceComboBox = document.getElementById('angleReferenceComboBox')
-  const angleRotationComboBox = document.getElementById('angleRotationComboBox')
-  const add180CheckBox = document.getElementById('add180CheckBox')
-
   labels.forEach(edgeLabel => {
     const oldDescriptor = descriptorMapper.get(edgeLabel)
-    const descriptor = new PreferredPlacementDescriptor(oldDescriptor)
+    const descriptor = oldDescriptor
+      ? new PreferredPlacementDescriptor(oldDescriptor)
+      : new PreferredPlacementDescriptor()
 
     if (source === labelTextArea) {
       graph.setLabelText(edgeLabel, labelTextArea.value)
@@ -248,7 +262,7 @@ function updateLabelValues(labels, source) {
 /**
  * Updates the properties in the option handler when the selection has changed.
  * The options show the descriptor values for all selected labels or nothing if the values do not match.
- * @param {IEnumerable.<ILabel>} labels The affected labels.
+ * @param {!IEnumerable.<ILabel>} labels The affected labels.
  */
 function updateLabelProperties(labels) {
   if (descriptorMapper === null) {
@@ -257,18 +271,16 @@ function updateLabelProperties(labels) {
 
   let valuesUndefined = true
   let text = null
-  let /** @type {LabelPlacements} */ placement = null
-  let /** @type {LabelPlacements} */ side = null
-  let /** @type {LabelSideReferences} */ sideReference = null
+  let placement = null
+  let side = null
+  let sideReference = null
   let angle = null
-  let /** @type {LabelAngleReferences} */ angleReference = null
-  let /** @type {LabelAngleOnRightSideRotations} */ angleRotation = null
+  let angleReference = null
+  let angleRotation = null
   let hasAngleOffset = null
   let distance = null
 
-  const labelsArray = labels.toArray()
-  for (let i = 0; i < labelsArray.length; i++) {
-    const label = labelsArray[i]
+  for (const label of labels) {
     const descriptor = descriptorMapper.get(label)
     if (valuesUndefined) {
       text = label.text
@@ -327,44 +339,35 @@ function updateLabelProperties(labels) {
 
   // If, for a single property, there are multiple values present in the set of selected edge labels, the
   // respective option item is set to indicate an "undefined value" state.
-  const labelTextArea = document.getElementById('labelTextArea')
   labelTextArea.value = text !== null ? text : ''
 
-  const distanceToEdgeNumberField = document.getElementById('distanceToEdgeNumberField')
   distanceToEdgeNumberField.value = distance !== null ? distance.toString() : ''
 
-  const angleNumberField = document.getElementById('angleNumberField')
   angleNumberField.value = angle !== null ? Geom.toDegrees(angle).toString() : ''
 
-  const add180CheckBox = document.getElementById('add180CheckBox')
   add180CheckBox.checked = hasAngleOffset === null ? false : hasAngleOffset
 
-  const placementAlongEdgeComboBox = document.getElementById('placementAlongEdgeComboBox')
   placementAlongEdgeComboBox.selectedIndex =
     placement !== null ? getIndex(placementAlongEdgeComboBox, placement) : -1
 
-  const placementSideOfEdgeComboBox = document.getElementById('placementSideOfEdgeComboBox')
   placementSideOfEdgeComboBox.selectedIndex =
     side !== null ? getIndex(placementSideOfEdgeComboBox, side) : -1
 
-  const sideReferenceComboBox = document.getElementById('sideReferenceComboBox')
   sideReferenceComboBox.selectedIndex =
     sideReference !== null ? getIndex(sideReferenceComboBox, sideReference) : -1
 
-  const angleReferenceComboBox = document.getElementById('angleReferenceComboBox')
   angleReferenceComboBox.selectedIndex =
     angleReference !== null ? getIndex(angleReferenceComboBox, angleReference) : -1
 
-  const angleRotationComboBox = document.getElementById('angleRotationComboBox')
   angleRotationComboBox.selectedIndex =
     angleRotation !== null ? getIndex(angleRotationComboBox, angleRotation) : -1
 }
 
 /**
  * Retrieves the index for the given option in the combo-box.
- * @param comboBox The combo-box that contains the given option.
- * @param value The value of the option for which the index is needed.
- * @return {number}
+ * @param {!HTMLSelectElement} comboBox The combo-box that contains the given option.
+ * @param {!(ILayoutAlgorithm|LabelPlacements|LabelSideReferences|LabelAngleReferences|LabelAngleOnRightSideRotations)} value The value of the option for which the index is needed.
+ * @returns {number}
  */
 function getIndex(comboBox, value) {
   const options = comboBox.options
@@ -386,41 +389,41 @@ function registerCommands() {
   bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent)
   bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent)
   bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
+  bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1)
 
   bindAction("button[data-command='Layout']", () => doLayout(true))
   bindChangeListener("select[data-command='SelectLayout']", () => doLayout(true))
   bindAction("button[data-command='PlacementAlongEdgeChanged']", () =>
-    onLabelPropertyChanged(document.getElementById('placementAlongEdgeChanged'))
+    onLabelPropertyChanged(placementAlongEdgeComboBox)
   )
   bindAction("button[data-command='PlacementSideOfEdgeChanged']", () =>
-    onLabelPropertyChanged(document.getElementById('placementSideOfEdgeComboBox'))
+    onLabelPropertyChanged(placementSideOfEdgeComboBox)
   )
   bindAction("button[data-command='SideReferenceChanged']", () =>
-    onLabelPropertyChanged(document.getElementById('sideReferenceComboBox'))
+    onLabelPropertyChanged(sideReferenceComboBox)
   )
   bindAction("button[data-command='AngleReferenceChanged']", () =>
-    onLabelPropertyChanged(document.getElementById('angleReferenceComboBox'))
+    onLabelPropertyChanged(angleReferenceComboBox)
   )
   bindAction("button[data-command='AngleRotationChanged']", () =>
-    onLabelPropertyChanged(document.getElementById('angleRotationComboBox'))
+    onLabelPropertyChanged(angleRotationComboBox)
   )
-  document.getElementById('distanceToEdgeNumberField').addEventListener(
+  distanceToEdgeNumberField.addEventListener(
     'change',
     input => {
-      if (input.target.value > 200) {
+      if (parseFloat(input.target.value) > 200) {
         alert('Distance cannot be larger than 200.')
-        input.target.value = -1
+        input.target.value = '-1'
       }
     },
     false
   )
-  document.getElementById('angleNumberField').addEventListener(
+  angleNumberField.addEventListener(
     'change',
     input => {
-      const angle = input.target.value
+      const angle = parseFloat(input.target.value)
       if (angle <= -360 || angle >= 360) {
-        input.target.value = angle % 360
+        input.target.value = `${angle % 360}`
       }
     },
     false
@@ -496,29 +499,26 @@ function initializeInputMode() {
  * Initializes the properties in the option handler with options and default values.
  */
 function initializeOptions() {
-  const placementAlongEdgeComboBox = document.getElementById('placementAlongEdgeComboBox')
   addOption(placementAlongEdgeComboBox, 'AtCenter', LabelPlacements.AT_CENTER)
   addOption(placementAlongEdgeComboBox, 'AtSource', LabelPlacements.AT_SOURCE)
   addOption(placementAlongEdgeComboBox, 'AtTarget', LabelPlacements.AT_TARGET)
   addOption(placementAlongEdgeComboBox, 'Anywhere', LabelPlacements.ANYWHERE)
   addOption(placementAlongEdgeComboBox, 'AtSourcePort', LabelPlacements.AT_SOURCE_PORT)
   addOption(placementAlongEdgeComboBox, 'AtTargetPort', LabelPlacements.AT_TARGET_PORT)
-  placementAlongEdgeComboBox.addEventListener('change', event =>
+  placementAlongEdgeComboBox.addEventListener('change', () =>
     onLabelPropertyChanged(placementAlongEdgeComboBox)
   )
   placementAlongEdgeComboBox.selectedIndex = 0
 
-  const placementSideOfEdgeComboBox = document.getElementById('placementSideOfEdgeComboBox')
   addOption(placementSideOfEdgeComboBox, 'RightOfEdge', LabelPlacements.RIGHT_OF_EDGE)
   addOption(placementSideOfEdgeComboBox, 'OnEdge', LabelPlacements.ON_EDGE)
   addOption(placementSideOfEdgeComboBox, 'LeftOfEdge', LabelPlacements.LEFT_OF_EDGE)
   addOption(placementSideOfEdgeComboBox, 'Anywhere', LabelPlacements.ANYWHERE)
-  placementSideOfEdgeComboBox.addEventListener('change', event =>
+  placementSideOfEdgeComboBox.addEventListener('change', () =>
     onLabelPropertyChanged(placementSideOfEdgeComboBox)
   )
   placementSideOfEdgeComboBox.selectedIndex = 1
 
-  const sideReferenceComboBox = document.getElementById('sideReferenceComboBox')
   addOption(sideReferenceComboBox, 'RelativeToEdgeFlow', LabelSideReferences.RELATIVE_TO_EDGE_FLOW)
   addOption(
     sideReferenceComboBox,
@@ -530,51 +530,45 @@ function initializeOptions() {
     'AbsoluteWithRightInNorth',
     LabelSideReferences.ABSOLUTE_WITH_RIGHT_IN_NORTH
   )
-  sideReferenceComboBox.addEventListener('change', event =>
+  sideReferenceComboBox.addEventListener('change', () =>
     onLabelPropertyChanged(sideReferenceComboBox)
   )
   sideReferenceComboBox.selectedIndex = 0
 
-  const angleReferenceComboBox = document.getElementById('angleReferenceComboBox')
   addOption(
     angleReferenceComboBox,
     'RelativeToEdgeFlow',
     LabelAngleReferences.RELATIVE_TO_EDGE_FLOW
   )
   addOption(angleReferenceComboBox, 'Absolute', LabelAngleReferences.ABSOLUTE)
-  angleReferenceComboBox.addEventListener('change', event =>
+  angleReferenceComboBox.addEventListener('change', () =>
     onLabelPropertyChanged(angleReferenceComboBox)
   )
   angleReferenceComboBox.selectedIndex = 1
 
-  const angleRotationComboBox = document.getElementById('angleRotationComboBox')
   addOption(angleRotationComboBox, 'Clockwise', LabelAngleOnRightSideRotations.CLOCKWISE)
   addOption(
     angleRotationComboBox,
     'CounterClockwise',
     LabelAngleOnRightSideRotations.COUNTER_CLOCKWISE
   )
-  angleRotationComboBox.addEventListener('change', event =>
+  angleRotationComboBox.addEventListener('change', () =>
     onLabelPropertyChanged(angleRotationComboBox)
   )
   angleRotationComboBox.selectedIndex = 0
 
-  const labelTextArea = document.getElementById('labelTextArea')
-  labelTextArea.addEventListener('change', event => onLabelPropertyChanged(labelTextArea))
+  labelTextArea.addEventListener('change', () => onLabelPropertyChanged(labelTextArea))
   labelTextArea.value = 'Label'
 
-  const distanceToEdgeNumberField = document.getElementById('distanceToEdgeNumberField')
-  distanceToEdgeNumberField.addEventListener('change', event =>
+  distanceToEdgeNumberField.addEventListener('change', () =>
     onLabelPropertyChanged(distanceToEdgeNumberField)
   )
   distanceToEdgeNumberField.value = '5.00'
 
-  const angleNumberField = document.getElementById('angleNumberField')
-  angleNumberField.addEventListener('change', event => onLabelPropertyChanged(angleNumberField))
+  angleNumberField.addEventListener('change', () => onLabelPropertyChanged(angleNumberField))
   angleNumberField.value = '0.00'
 
-  const add180CheckBox = document.getElementById('add180CheckBox')
-  add180CheckBox.addEventListener('change', event => onLabelPropertyChanged(add180CheckBox))
+  add180CheckBox.addEventListener('change', () => onLabelPropertyChanged(add180CheckBox))
   add180CheckBox.checked = false
 }
 
@@ -582,7 +576,6 @@ function initializeOptions() {
  * Initializes the layout combo-box with a selection of layout algorithms.
  */
 function initializeLayoutComboBox() {
-  const layoutComboBox = document.getElementById('layoutComboBox')
   addOption(layoutComboBox, 'Generic Edge Labeling', new GenericLabeling())
   addOption(
     layoutComboBox,
@@ -602,8 +595,8 @@ function initializeLayoutComboBox() {
 
 /**
  * Creates a configured HierarchicLayout.
- * @param {LayoutOrientation} layoutOrientation
- * @return {HierarchicLayout}
+ * @param {!LayoutOrientation} layoutOrientation
+ * @returns {!HierarchicLayout}
  */
 function createHierarchicLayout(layoutOrientation) {
   const layout = new HierarchicLayout()
@@ -614,7 +607,9 @@ function createHierarchicLayout(layoutOrientation) {
   return layout
 }
 
-/** @return {ILayoutAlgorithm} */
+/**
+ * @returns {!ILayoutAlgorithm}
+ */
 function createGenericTreeLayout() {
   const reductionStage = new TreeReductionStage()
   const labelingAlgorithm = new GenericLabeling()
@@ -634,7 +629,9 @@ function createGenericTreeLayout() {
   return layout
 }
 
-/** @return {ILayoutAlgorithm} */
+/**
+ * @returns {!ILayoutAlgorithm}
+ */
 function createOrthogonalLayout() {
   const layout = new OrthogonalLayout()
   layout.integratedEdgeLabeling = true
@@ -646,7 +643,7 @@ function createOrthogonalLayout() {
 /**
  * Disables auto-flipping for labels on the layout algorithm since the result could differ from the values in the
  * PreferredPlacementDescriptor.
- * @param multiStageLayout The current layout algorithm.
+ * @param {!MultiStageLayout} multiStageLayout The current layout algorithm.
  */
 function disableAutoFlipping(multiStageLayout) {
   const labelLayoutTranslator = multiStageLayout.labeling
@@ -654,9 +651,9 @@ function disableAutoFlipping(multiStageLayout) {
 }
 
 /**
- * @param {HTMLElement} comboBox
- * @param {string} text
- * @param {object} value
+ * @param {!HTMLSelectElement} comboBox
+ * @param {!string} text
+ * @param {!(ILayoutAlgorithm|LabelPlacements|LabelSideReferences|LabelAngleReferences|LabelAngleOnRightSideRotations)} value
  */
 function addOption(comboBox, text, value) {
   const option = document.createElement('option')
@@ -735,7 +732,7 @@ function createSampleGraph() {
 /**
  * Returns a collection of labels that are currently affected by option changes.
  * Affected labels are all selected labels or all labels in case no label is selected.
- * @return {IEnumerable.<ILabel>}
+ * @returns {!IEnumerable.<ILabel>}
  */
 function getAffectedLabels() {
   const selectedLabels = graphComponent.selection.selectedLabels

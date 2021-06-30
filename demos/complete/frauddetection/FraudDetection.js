@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -26,7 +26,15 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { ConnectedComponents, CycleEdges, GraphComponent, IGraph, Mapper } from 'yfiles'
+import {
+  ConnectedComponents,
+  CycleEdges,
+  GraphComponent,
+  IEdge,
+  IGraph,
+  INode,
+  Mapper
+} from 'yfiles'
 
 /**
  * A simple fraud detection that scans for cycles where persons share phone numbers and addresses.
@@ -34,23 +42,17 @@ import { ConnectedComponents, CycleEdges, GraphComponent, IGraph, Mapper } from 
 export default class FraudDetection {
   /**
    * Creates a new FraudDetection.
-   * @param {GraphComponent} graphComponent The graph component which contains the graph which is checked
+   * @param {!GraphComponent} graphComponent The graph component which contains the graph which is checked
    *   for fraud.
    */
   constructor(graphComponent) {
     this.graphComponent = graphComponent
+    this.bankFraud = false
   }
 
-  /** @type {boolean} */
-  set bankFraud(value) {
-    this.bankFraudField = value
-  }
-
-  /** @type {boolean} */
-  get bankFraud() {
-    return this.bankFraudField
-  }
-
+  /**
+   * @returns {!Array.<INode>}
+   */
   detectFraud() {
     if (this.bankFraud) {
       return this.detectBankFraud()
@@ -60,6 +62,7 @@ export default class FraudDetection {
 
   /**
    * Scans the graph for cycles that only contain persons, phone numbers and addresses.
+   * @returns {!Array.<INode>}
    */
   detectBankFraud() {
     const graph = this.graphComponent.graph
@@ -78,7 +81,7 @@ export default class FraudDetection {
       subgraphNodes: node => node.tag.type !== 'Bank Branch'
     }).run(graph)
 
-    result.edges.forEach(edge => {
+    for (const edge of result.edges) {
       const source = edge.sourceNode
       const target = edge.targetNode
       const sourceType = source.tag.type
@@ -100,7 +103,7 @@ export default class FraudDetection {
           edge.tag.fraud = true
         }
       }
-    })
+    }
 
     return fraudsterNodes
   }
@@ -108,6 +111,7 @@ export default class FraudDetection {
   /**
    * Checks in each connected component if the same persons are involved in more than one accidents
    * and then checks if some of these persons have the same lawyer or doctor.
+   * @returns {!Array.<INode>}
    */
   detectInsuranceFraud() {
     const graph = this.graphComponent.graph
@@ -133,12 +137,12 @@ export default class FraudDetection {
         const lawyerSet = new Set()
         const doctorSet = new Set()
 
-        component.nodes.forEach(node => {
+        for (const node of component.nodes) {
           if (node.tag.type === 'Participant') {
             const accidents = []
 
             // determine if the person is involved in more than one accidents
-            graph.outEdgesAt(node).forEach(edge => {
+            for (const edge of graph.outEdgesAt(node)) {
               const targetNode = edge.targetNode
 
               if (targetNode.tag.type === 'Car') {
@@ -149,14 +153,14 @@ export default class FraudDetection {
               } else if (targetNode.tag.type === 'Accident') {
                 accidents.push(targetNode)
               }
-            })
+            }
 
             // if the person is involved in all accidents of the component => fraud
             if (accidents.length === involvedAccidents) {
               node2Accidents.set(node, accidents)
               suspiciousPersons.push(node)
 
-              graph.inEdgesAt(node).forEach(edge => {
+              for (const edge of graph.inEdgesAt(node)) {
                 const oppositeNode = edge.sourceNode
 
                 if (oppositeNode.tag.type === 'Lawyer') {
@@ -168,18 +172,17 @@ export default class FraudDetection {
                     doctors.push(oppositeNode)
                   }
                 }
-              })
+              }
             }
           }
-        })
+        }
 
         // if the suspicious persons share lawyers or doctors => fraud
         if (
           suspiciousPersons.length > lawyers.length ||
           suspiciousPersons.length > doctors.length
         ) {
-          for (let j = 0; j < suspiciousPersons.length; j++) {
-            const person = suspiciousPersons[j]
+          for (const person of suspiciousPersons) {
             person.tag.fraud = true
             fraudsterNodes.push(person)
 
@@ -188,16 +191,14 @@ export default class FraudDetection {
             })
           }
 
-          for (let j = 0; j < doctors.length; j++) {
-            const doctor = doctors[j]
+          for (const doctor of doctors) {
             if (graph.edgesAt(doctor).size > 1) {
               doctor.tag.fraud = true
               fraudsterNodes.push(doctor)
             }
           }
 
-          for (let j = 0; j < lawyers.length; j++) {
-            const lawyer = lawyers[j]
+          for (const lawyer of lawyers) {
             if (graph.edgesAt(lawyer).size > 1) {
               lawyer.tag.fraud = true
               fraudsterNodes.push(lawyer)
@@ -212,7 +213,7 @@ export default class FraudDetection {
 
 /**
  * Resets the tags of nodes and edges to no fraud.
- * @param {IGraph} graph
+ * @param {!IGraph} graph
  */
 function resetTags(graph) {
   const nodes = graph.nodes

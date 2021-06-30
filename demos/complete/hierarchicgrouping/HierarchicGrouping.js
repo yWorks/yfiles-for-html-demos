@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -26,7 +26,6 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-/* eslint-disable no-unused-vars */
 import {
   CompositeLayoutData,
   FixNodeLayoutData,
@@ -35,18 +34,21 @@ import {
   GivenCoordinatesStage,
   GivenCoordinatesStageData,
   GraphComponent,
-  GraphEditorInputMode,
+  GraphInputMode,
   GroupingSupport,
   HierarchicLayout,
   HierarchicLayoutData,
   HierarchicLayoutEdgeRoutingStyle,
   HierarchicLayoutRoutingStyle,
+  IBend,
   IEdge,
+  IEnumerable,
   IGraph,
   IMapper,
   INode,
   IPoint,
   IRectangle,
+  ISize,
   LayoutExecutor,
   LayoutMode,
   List,
@@ -59,49 +61,20 @@ import {
 } from 'yfiles'
 
 export default class HierarchicGrouping {
-  constructor() {
-    /**
-     * The graph component associated with this instance.
-     *
-     * @type {GraphComponent}
-     */
-    this.graphComponent = null
-
-    /**
-     * The last group node that was collapsed/expanded.
-     *
-     * @type {INode}
-     */
+  /**
+   * @param {!GraphComponent} graphComponent
+   */
+  constructor(graphComponent) {
+    // The last group node that was collapsed/expanded.
     this.changedGroupNode = null
 
-    /**
-     * A mapper containing alternative bounds for the collapsed/expanded group node.
-     *
-     * @type {Mapper.<INode, IRectangle>}
-     */
-    this.alternativeGroupBounds = null
-
-    /**
-     * A mapper containing alternative bounds for the collapsed/expanded group node.
-     *
-     * @type {Mapper.<IEdge, IEnumerable.<IPoint>>}
-     */
-    this.alternativeEdgePaths = null
-  }
-
-  /**
-   * The public setup method.
-   *
-   * @param {GraphComponent} graphComponent
-   */
-  setUp(graphComponent) {
-    if (this.graphComponent != null) {
-      // graph component is already set
-      return
-    }
+    // The graph component associated with this instance.
     this.graphComponent = graphComponent
 
+    // A mapper containing alternative bounds for the collapsed/expanded group node.
     this.alternativeGroupBounds = new Mapper()
+    // A mapper containing alternative path for the edges connecting to groups,
+    // group content or folder nodes.
     this.alternativeEdgePaths = new Mapper()
 
     this.configureInputMode(graphComponent.inputMode)
@@ -111,8 +84,7 @@ export default class HierarchicGrouping {
    * Enables the folding commands on the <code>navigationInputMode</code> of the provided <code>inputMode</code> and
    * registers event listeners for the expand and collapse commands that trigger the automatic layout.
    *
-   * @param {GraphEditorInputMode} inputMode
-   *
+   * @param {!GraphInputMode} inputMode The input mode to be configured.
    * @private
    */
   configureInputMode(inputMode) {
@@ -120,39 +92,40 @@ export default class HierarchicGrouping {
     // expand/collapse button of the current group node keeps its location.
     // Note that the corresponding 'fix point policy' is used for the FixNodeLayoutStage in
     // the incremental layout calculation.
-
-    inputMode.navigationInputMode.autoGroupNodeAlignmentPolicy = NodeAlignmentPolicy.TOP_RIGHT
+    const navigationInputMode = inputMode.navigationInputMode
+    navigationInputMode.autoGroupNodeAlignmentPolicy = NodeAlignmentPolicy.TOP_RIGHT
 
     // Allow folding commands
-    inputMode.navigationInputMode.allowCollapseGroup = true
-    inputMode.navigationInputMode.allowExpandGroup = true
+    navigationInputMode.allowCollapseGroup = true
+    navigationInputMode.allowExpandGroup = true
 
     // FitContent interferes with our view port animation setup
-    inputMode.navigationInputMode.fitContentAfterGroupActions = false
+    navigationInputMode.fitContentAfterGroupActions = false
 
-    inputMode.navigationInputMode.addGroupExpandingListener((sender, evt) => {
+    navigationInputMode.addGroupExpandingListener((sender, evt) =>
       this.beforeExpandingGroup(evt.item)
-    })
-    inputMode.navigationInputMode.addGroupCollapsingListener((sender, evt) => {
+    )
+    navigationInputMode.addGroupCollapsingListener((sender, evt) =>
       this.beforeCollapsingGroup(evt.item)
-    })
+    )
 
-    inputMode.navigationInputMode.addGroupExpandedListener((sender, evt) => {
+    navigationInputMode.addGroupExpandedListener((sender, evt) =>
       this.afterGroupStateChanged(evt.item)
-    })
-    inputMode.navigationInputMode.addGroupCollapsedListener((sender, evt) => {
+    )
+    navigationInputMode.addGroupCollapsedListener((sender, evt) =>
       this.afterGroupStateChanged(evt.item)
-    })
+    )
   }
 
   /**
    * Stores information about the current layout before expanding a group.
    *
-   * @param {INode} group The group that will be expanded.
+   * @param {!INode} group The group that will be expanded.
    * @private
    */
   beforeExpandingGroup(group) {
     const graph = this.graphComponent.graph
+    const foldingView = graph.foldingView
     const layout = group.layout
 
     // store the expanded group node
@@ -160,7 +133,7 @@ export default class HierarchicGrouping {
 
     // store the group bounds of the expanded group node before layout
     this.alternativeGroupBounds.clear()
-    this.alternativeGroupBounds.set(graph.foldingView.getMasterItem(group), layout.toRect())
+    this.alternativeGroupBounds.set(foldingView.getMasterItem(group), layout.toRect())
 
     // store all edge paths that connect to the expanded group before layout
     this.alternativeEdgePaths.clear()
@@ -169,18 +142,19 @@ export default class HierarchicGrouping {
       points.add(edge.sourcePort.location)
       edge.bends.forEach(bend => points.add(bend.location))
       points.add(edge.targetPort.location)
-      this.alternativeEdgePaths.set(graph.foldingView.getMasterItem(edge), points)
+      this.alternativeEdgePaths.set(foldingView.getMasterItem(edge), points)
     })
   }
 
   /**
    * Stores the layout of the group node and its descendants before collapsing it.
    *
-   * @param {INode} group The group that will be collapsed.
+   * @param {!INode} group The group that will be collapsed.
    * @private
    */
   beforeCollapsingGroup(group) {
     const graph = this.graphComponent.graph
+    const foldingView = graph.foldingView
     const layout = group.layout
 
     // store the collapsed group node
@@ -188,7 +162,7 @@ export default class HierarchicGrouping {
 
     // store the group bounds of the collapsed group node before layout
     this.alternativeGroupBounds.clear()
-    this.alternativeGroupBounds.set(graph.foldingView.getMasterItem(group), layout.toRect())
+    this.alternativeGroupBounds.set(foldingView.getMasterItem(group), layout.toRect())
 
     // store all edge paths that connect to/into the collapsed group before layout
     this.alternativeEdgePaths.clear()
@@ -197,14 +171,14 @@ export default class HierarchicGrouping {
       points.add(edge.sourcePort.location)
       edge.bends.forEach(bend => points.add(bend.location))
       points.add(edge.targetPort.location)
-      this.alternativeEdgePaths.set(graph.foldingView.getMasterItem(edge), points)
+      this.alternativeEdgePaths.set(foldingView.getMasterItem(edge), points)
     })
   }
 
   /**
    * Performs an incremental layout on the graph after a group was closed/expanded interactively.
    *
-   * @param {INode} group The group that was expanded or collapsed.
+   * @param {!INode} group The group that was expanded or collapsed.
    * @private
    */
   afterGroupStateChanged(group) {
@@ -256,11 +230,12 @@ export default class HierarchicGrouping {
 
   /**
    * Applies the incremental layout after each expanding and collapsing.
-   * @param {IMapper} nodesCoordinates the coordinates of the nodes before the layout
-   * @param {IMapper} nodeSizes the sizes of the nodes before the layout
-   * @param {IMapper} edgesCoordinates the coordinates of the edges before the layout
+   * @param {!IMapper.<INode,IPoint>} nodesCoordinates the coordinates of the nodes before the layout
+   * @param {!IMapper.<INode,ISize>} nodeSizes the sizes of the nodes before the layout
+   * @param {!IMapper.<IEdge,IEnumerable.<IPoint>>} edgesCoordinates the coordinates of the edges before the layout
+   * @returns {!Promise}
    */
-  applyIncrementalLayout(nodesCoordinates, nodeSizes, edgesCoordinates) {
+  async applyIncrementalLayout(nodesCoordinates, nodeSizes, edgesCoordinates) {
     // Configure hierarchic layout for a most stable outcome
     const layout = new HierarchicLayout()
     layout.recursiveGroupLayering = true
@@ -278,18 +253,19 @@ export default class HierarchicGrouping {
 
     // Prepare graph so the layout will consider which node is fixed and what bounds to use for from-sketch placement
     const graph = this.graphComponent.graph
+    const foldingView = graph.foldingView
     const layoutData = new CompositeLayoutData(
       new HierarchicLayoutData({
         alternativeGroupBounds: node => {
-          const masterNode = graph.foldingView.getMasterItem(node)
+          const masterNode = foldingView.getMasterItem(node)
           return this.alternativeGroupBounds.get(masterNode)
         },
         alternativeEdgePaths: edge => {
-          const masterEdge = graph.foldingView.getMasterItem(edge)
+          const masterEdge = foldingView.getMasterItem(edge)
           return this.alternativeEdgePaths.get(masterEdge)
         },
         // Mark folder nodes to treat them differently than normal nodes during layout
-        folderNodes: node => !graph.foldingView.isExpanded(node)
+        folderNodes: node => !foldingView.isExpanded(node)
       }),
       new FixNodeLayoutData({
         fixedNodes: this.changedGroupNode
@@ -310,30 +286,29 @@ export default class HierarchicGrouping {
       easedAnimation: true,
       duration: '0.5s'
     })
-    layoutExecutor.start().catch(error => {
+    await layoutExecutor.start().catch(error => {
       if (typeof window.reportError === 'function') {
         window.reportError(error)
       } else {
         throw error
       }
     })
+    this.graphComponent.updateContentRect()
   }
 
   /**
    * Retrieves the affected edges when a group node is collapsed.
    * Edges are affected when they connect to the group node directly or to a descendant of the group node.
    *
-   * @param {INode} group The group node which is collapsed.
-   * @param {IGraph} graph The graph to which the group node belongs.
+   * @param {!INode} group The group node which is collapsed.
+   * @param {!IGraph} graph The graph to which the group node belongs.
    *
-   * @return {Array} An array of all affected edges.
+   * @returns {!Array.<IEdge>} An array of all affected edges.
    * @private
    */
   getAffectedEdges(group, graph) {
-    const crossingEdges = []
-
     // Collect all edges that connect to the group node.
-    graph.edgesAt(group).forEach(edge => crossingEdges.push(edge))
+    const crossingEdges = graph.edgesAt(group).toArray()
 
     // Collect all edges that cross the group node's border.
     let groupingSupport = graph.groupingSupport

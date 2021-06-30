@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -36,7 +36,7 @@ import {
   StorageLocation
 } from 'yfiles'
 
-import CustomNodeLabelModel from './CustomNodeLabelModel.js'
+import CustomNodeLabelModel, { CustomNodeLabelModelParameter } from './CustomNodeLabelModel.js'
 import DemoStyles, {
   DemoSerializationListener,
   initDemoStyles
@@ -49,6 +49,7 @@ let graphComponent = null
 
 /**
  * This demo shows how to create and use a custom label model.
+ * @param {!object} licenseData
  */
 function run(licenseData) {
   License.value = licenseData
@@ -84,10 +85,10 @@ function enableGraphML() {
   )
   gs.graphMLIOHandler.addHandleSerializationListener(DemoSerializationListener)
   gs.graphMLIOHandler.addHandleSerializationListener(
-    CustomNodeLabelModel.CustomNodeLabelModelParameter.serializationHandler
+    CustomNodeLabelModelParameter.serializationHandler
   )
   gs.graphMLIOHandler.addHandleDeserializationListener(
-    CustomNodeLabelModel.CustomNodeLabelModelParameter.deserializationHandler
+    CustomNodeLabelModelParameter.deserializationHandler
   )
 }
 
@@ -107,7 +108,7 @@ function initializeGraph() {
   const node1 = graph.createNode(new Rect(90, 90, 100, 100))
   const node2 = graph.createNode(new Rect(250, 90, 100, 100))
 
-  const /** @type {CustomNodeLabelModel} */ customNodeLabelModel = new CustomNodeLabelModel()
+  const customNodeLabelModel = new CustomNodeLabelModel()
   customNodeLabelModel.candidateCount = 0
   customNodeLabelModel.offset = 20
   graph.addLabel(node1, 'Click and Drag', customNodeLabelModel.createDefaultParameter())

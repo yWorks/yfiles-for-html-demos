@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -27,6 +27,7 @@
  **
  ***************************************************************************/
 import {
+  BaseClass,
   DefaultLabelStyle,
   ExteriorLabelModel,
   Font,
@@ -38,6 +39,7 @@ import {
   ICommand,
   InteriorLabelModel,
   InteriorStretchLabelModel,
+  IRenderContext,
   IVisualCreator,
   LabelLayerPolicy,
   License,
@@ -49,20 +51,25 @@ import {
   ShapeNodeStyle,
   Size,
   SmartEdgeLabelModel,
-  SvgVisual
+  SvgVisual,
+  TextWrapping,
+  VerticalTextAlignment,
+  Visual
 } from 'yfiles'
 
 import { bindAction, bindChangeListener, bindCommand, showApp } from '../../resources/demo-app.js'
 import loadJson from '../../resources/load-json.js'
 
 /** @type {GraphComponent} */
-let graphComponent = null
+let graphComponent
 
 /**
  * Bootstraps the demo.
+ * @param {!object} licenseData
  */
 function run(licenseData) {
   License.value = licenseData
+
   // initialize graph component
   graphComponent = new GraphComponent('#graphComponent')
   graphComponent.inputMode = new GraphEditorInputMode({
@@ -86,28 +93,34 @@ function run(licenseData) {
 /**
  * Switches between pre-defined rendering order settings for common use cases.
  * Note: The settings may also be combined in different ways, too.
+ * @param {!string} order
  */
 function selectRenderingOrder(order) {
   const graphModelManager = graphComponent.graphModelManager
 
   // set to default first
-  graphComponent.graphModelManager.labelLayerPolicy = LabelLayerPolicy.SEPARATE_LAYER
-  graphComponent.graphModelManager.portLayerPolicy = PortLayerPolicy.SEPARATE_LAYER
-  graphComponent.graphModelManager.hierarchicNestingPolicy = HierarchicNestingPolicy.NODES_AND_EDGES
+  graphModelManager.labelLayerPolicy = LabelLayerPolicy.SEPARATE_LAYER
+  graphModelManager.portLayerPolicy = PortLayerPolicy.SEPARATE_LAYER
+  graphModelManager.hierarchicNestingPolicy = HierarchicNestingPolicy.NODES_AND_EDGES
   graphModelManager.edgeGroup.below(graphModelManager.nodeGroup)
 
-  if (order === 'at-owner') {
-    graphComponent.graphModelManager.labelLayerPolicy = LabelLayerPolicy.AT_OWNER
-    graphComponent.graphModelManager.portLayerPolicy = PortLayerPolicy.AT_OWNER
-  } else if (order === 'edges-on-top') {
-    graphComponent.graphModelManager.labelLayerPolicy = LabelLayerPolicy.AT_OWNER
-    graphComponent.graphModelManager.portLayerPolicy = PortLayerPolicy.AT_OWNER
-    graphComponent.graphModelManager.hierarchicNestingPolicy = HierarchicNestingPolicy.NODES
-    graphModelManager.edgeGroup.above(graphModelManager.nodeGroup)
-  } else if (order === 'group-nodes') {
-    graphComponent.graphModelManager.hierarchicNestingPolicy = HierarchicNestingPolicy.GROUP_NODES
-  } else if (order === 'none') {
-    graphComponent.graphModelManager.hierarchicNestingPolicy = HierarchicNestingPolicy.NONE
+  switch (order) {
+    case 'at-owner':
+      graphModelManager.labelLayerPolicy = LabelLayerPolicy.AT_OWNER
+      graphModelManager.portLayerPolicy = PortLayerPolicy.AT_OWNER
+      break
+    case 'edges-on-top':
+      graphModelManager.labelLayerPolicy = LabelLayerPolicy.AT_OWNER
+      graphModelManager.portLayerPolicy = PortLayerPolicy.AT_OWNER
+      graphModelManager.hierarchicNestingPolicy = HierarchicNestingPolicy.NODES
+      graphModelManager.edgeGroup.above(graphModelManager.nodeGroup)
+      break
+    case 'group-nodes':
+      graphModelManager.hierarchicNestingPolicy = HierarchicNestingPolicy.GROUP_NODES
+      break
+    case 'none':
+      graphModelManager.hierarchicNestingPolicy = HierarchicNestingPolicy.NONE
+      break
   }
 }
 
@@ -122,8 +135,8 @@ function initDemoDefaults() {
   })
   graph.nodeDefaults.size = new Size(40, 40)
   graph.nodeDefaults.labels.style = new DefaultLabelStyle({
-    verticalTextAlignment: 'center',
-    wrapping: 'word_ellipsis'
+    verticalTextAlignment: VerticalTextAlignment.CENTER,
+    wrapping: TextWrapping.WORD_ELLIPSIS
   })
   graph.nodeDefaults.labels.layoutParameter = InteriorLabelModel.CENTER
   graph.nodeDefaults.ports.style = new NodeStylePortStyleAdapter(
@@ -168,7 +181,8 @@ function createGraph() {
 }
 
 /**
- * Creates a sample graph with overlaping exterior node labels.
+ * Creates a sample graph with overlapping exterior node labels.
+ * @param {!Point} origin
  */
 function createOverlappingLabelSample(origin) {
   const graph = graphComponent.graph
@@ -182,43 +196,19 @@ function createOverlappingLabelSample(origin) {
   })
 
   graphComponent.backgroundGroup.addChild(
-    new IVisualCreator({
-      createVisual(ctx) {
-        const g = document.createElementNS('http://www.w3.org/2000/svg', 'g')
-        const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect')
-        rect.x.baseVal.value = origin.x - 50
-        rect.y.baseVal.value = origin.y - 20
-        rect.width.baseVal.value = 210
-        rect.height.baseVal.value = 250
-        rect.setAttribute('fill', 'none')
-        rect.setAttribute('stroke', 'gray')
-        rect.setAttribute('stroke-width', '4px')
-        rect.setAttribute('stroke-dasharray', '5,5')
-        const text = document.createElementNS('http://www.w3.org/2000/svg', 'text')
-        text.textContent = "Try 'Default'"
-        text.setAttribute('fill', 'gray')
-        text.setAttribute('x', `${origin.x + 5}`)
-        text.setAttribute('y', `${origin.y - 30}`)
-        new Font({
-          fontSize: 18,
-          fontWeight: 'bold'
-        }).applyTo(text)
-        g.appendChild(rect)
-        g.appendChild(text)
-        return new SvgVisual(g)
-      },
-      updateVisual(ctx, oldVisual) {
-        return oldVisual
-      }
-    }),
+    new RectangleBorder(
+      new Point(origin.x - 50, origin.y - 20),
+      new Size(210, 250),
+      new Point(origin.x + 5, origin.y - 30),
+      "Try 'Default'"
+    ),
     ICanvasObjectDescriptor.ALWAYS_DIRTY_INSTANCE
   )
 }
 
 /**
  * Creates a sample graph with overlapping nodes that have interior node labels.
- * @param origin
- * @returns {Visual}
+ * @param {!Point} origin
  */
 function createOverlappingNodeSample(origin) {
   const graph = graphComponent.graph
@@ -226,15 +216,15 @@ function createOverlappingNodeSample(origin) {
   // overlapping nodes
   const back1 = graph.createNode({
     layout: [origin.x, origin.y + 20, 50, 50],
-    labels: 'Back'
+    labels: ['Back']
   })
   graph.createNode({
     layout: [origin.x + 20, origin.y + 35, 50, 50],
-    labels: 'Middle'
+    labels: ['Middle']
   })
   const front1 = graph.createNode({
     layout: [origin.x + 40, origin.y + 50, 50, 50],
-    labels: 'Front'
+    labels: ['Front']
   })
 
   // overlapping nodes with ports
@@ -274,41 +264,19 @@ function createOverlappingNodeSample(origin) {
   graph.setRelativePortLocation(edge2.sourcePort, new Point(0, 25))
 
   graphComponent.backgroundGroup.addChild(
-    new IVisualCreator({
-      createVisual(ctx) {
-        const g = document.createElementNS('http://www.w3.org/2000/svg', 'g')
-        const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect')
-        rect.x.baseVal.value = origin.x - 50
-        rect.y.baseVal.value = origin.y - 20
-        rect.width.baseVal.value = 310
-        rect.height.baseVal.value = 250
-        rect.setAttribute('fill', 'none')
-        rect.setAttribute('stroke', 'gray')
-        rect.setAttribute('stroke-width', '4px')
-        rect.setAttribute('stroke-dasharray', '5,5')
-        const text = document.createElementNS('http://www.w3.org/2000/svg', 'text')
-        text.textContent = "Try 'Labels/Ports At Owner'"
-        text.setAttribute('fill', 'gray')
-        text.setAttribute('x', `${origin.x - 15}`)
-        text.setAttribute('y', `${origin.y - 30}`)
-        new Font({
-          fontSize: 18,
-          fontWeight: 'bold'
-        }).applyTo(text)
-        g.appendChild(rect)
-        g.appendChild(text)
-        return new SvgVisual(g)
-      },
-      updateVisual(ctx, oldVisual) {
-        return oldVisual
-      }
-    }),
+    new RectangleBorder(
+      new Point(origin.x - 50, origin.y - 20),
+      new Size(310, 250),
+      new Point(origin.x - 15, origin.y - 30),
+      "Try 'Labels/Ports At Owner'"
+    ),
     ICanvasObjectDescriptor.ALWAYS_DIRTY_INSTANCE
   )
 }
 
 /**
  * Creates a sample graph with an edge that crosses a group node.
+ * @param {!Point} origin
  */
 function createOverlappingEdgeSample(origin) {
   const graph = graphComponent.graph
@@ -343,59 +311,37 @@ function createOverlappingEdgeSample(origin) {
   })
 
   graphComponent.backgroundGroup.addChild(
-    new IVisualCreator({
-      createVisual(ctx) {
-        const g = document.createElementNS('http://www.w3.org/2000/svg', 'g')
-        const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect')
-        rect.x.baseVal.value = origin.x - 20
-        rect.y.baseVal.value = origin.y - 20
-        rect.width.baseVal.value = 340
-        rect.height.baseVal.value = 250
-        rect.setAttribute('fill', 'none')
-        rect.setAttribute('stroke', 'gray')
-        rect.setAttribute('stroke-width', '4px')
-        rect.setAttribute('stroke-dasharray', '5,5')
-        const text = document.createElementNS('http://www.w3.org/2000/svg', 'text')
-        text.textContent = "Try 'Edges on top' or 'Group Nodes'"
-        text.setAttribute('fill', 'gray')
-        text.setAttribute('x', `${origin.x - 5}`)
-        text.setAttribute('y', `${origin.y - 30}`)
-        new Font({
-          fontSize: 18,
-          fontWeight: 'bold'
-        }).applyTo(text)
-        g.appendChild(rect)
-        g.appendChild(text)
-        return new SvgVisual(g)
-      },
-      updateVisual(ctx, oldVisual) {
-        return oldVisual
-      }
-    }),
+    new RectangleBorder(
+      new Point(origin.x - 20, origin.y - 20),
+      new Size(340, 250),
+      new Point(origin.x - 5, origin.y - 30),
+      "Edges on top' or 'Group Nodes"
+    ),
     ICanvasObjectDescriptor.ALWAYS_DIRTY_INSTANCE
   )
 }
 
 /**
  * Creates a sample graph with nested group nodes and edges.
+ * @param {!Point} origin
  */
 function createNestedGroupSample(origin) {
   const graph = graphComponent.graph
 
   const root = graph.createGroupNode({
     layout: [origin.x, origin.y, 230, 220],
-    labels: 'Outer Group Node'
+    labels: ['Outer Group Node']
   })
 
   const outerChild1 = graph.createNode({
     parent: root,
     layout: [origin.x + 145, origin.y + 30, 50, 50],
-    labels: 'Outer\nChild'
+    labels: ['Outer\nChild']
   })
   const outerChild2 = graph.createNode({
     parent: root,
     layout: [origin.x + 40, origin.y + 140, 50, 50],
-    labels: 'Outer\nChild'
+    labels: ['Outer\nChild']
   })
   graph.createEdge({
     source: outerChild1,
@@ -406,17 +352,17 @@ function createNestedGroupSample(origin) {
   const childGroup = graph.createGroupNode({
     parent: root,
     layout: [origin.x + 20, origin.y + 50, 150, 150],
-    labels: 'Inner Group Node'
+    labels: ['Inner Group Node']
   })
   const innerNode1 = graph.createNode({
     parent: childGroup,
     layout: [origin.x + 40, origin.y + 80, 50, 50],
-    labels: 'Inner\nChild'
+    labels: ['Inner\nChild']
   })
   const innerNode2 = graph.createNode({
     parent: childGroup,
     layout: [origin.x + 100, origin.y + 140, 50, 50],
-    labels: 'Inner\nChild'
+    labels: ['Inner\nChild']
   })
   graph.createEdge({
     source: innerNode1,
@@ -425,35 +371,12 @@ function createNestedGroupSample(origin) {
   })
 
   graphComponent.backgroundGroup.addChild(
-    new IVisualCreator({
-      createVisual(ctx) {
-        const g = document.createElementNS('http://www.w3.org/2000/svg', 'g')
-        const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect')
-        rect.x.baseVal.value = origin.x - 20
-        rect.y.baseVal.value = origin.y - 20
-        rect.width.baseVal.value = 280
-        rect.height.baseVal.value = 250
-        rect.setAttribute('fill', 'none')
-        rect.setAttribute('stroke', 'gray')
-        rect.setAttribute('stroke-width', '4px')
-        rect.setAttribute('stroke-dasharray', '5,5')
-        const text = document.createElementNS('http://www.w3.org/2000/svg', 'text')
-        text.textContent = 'Try different settings'
-        text.setAttribute('fill', 'gray')
-        text.setAttribute('x', `${origin.x + 20}`)
-        text.setAttribute('y', `${origin.y - 30}`)
-        new Font({
-          fontSize: 18,
-          fontWeight: 'bold'
-        }).applyTo(text)
-        g.appendChild(rect)
-        g.appendChild(text)
-        return new SvgVisual(g)
-      },
-      updateVisual(ctx, oldVisual) {
-        return oldVisual
-      }
-    }),
+    new RectangleBorder(
+      new Point(origin.x - 20, origin.y - 20),
+      new Size(280, 250),
+      new Point(origin.x + 20, origin.y - 30),
+      'Try different settings'
+    ),
     ICanvasObjectDescriptor.ALWAYS_DIRTY_INSTANCE
   )
 }
@@ -483,6 +406,63 @@ class GroupPanelNodeStyleRenderer extends PanelNodeStyleRenderer {
    */
   drawShadow() {
     return false
+  }
+}
+
+/**
+ * Creates a boundary rectangle with a title for a sample graph.
+ */
+class RectangleBorder extends BaseClass(IVisualCreator) {
+  /**
+   * @param {!Point} rectOrigin the position where to draw the rectangle
+   * @param {!Size} size   the size of the rectangle
+   * @param {!Point} titleOrigin the position where to draw the title
+   * @param {!string} title  the content of the label above the rectangle
+   */
+  constructor(rectOrigin, size, titleOrigin, title) {
+    super()
+    this.title = title
+    this.titleOrigin = titleOrigin
+    this.size = size
+    this.rectOrigin = rectOrigin
+  }
+
+  /**
+   * @param {!IRenderContext} ctx
+   * @returns {!SvgVisual}
+   */
+  createVisual(ctx) {
+    const container = document.createElementNS('http://www.w3.org/2000/svg', 'g')
+
+    const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect')
+    rect.x.baseVal.value = this.rectOrigin.x
+    rect.y.baseVal.value = this.rectOrigin.y
+    rect.width.baseVal.value = this.size.width
+    rect.height.baseVal.value = this.size.height
+    rect.setAttribute('fill', 'none')
+    rect.setAttribute('stroke', 'gray')
+    rect.setAttribute('stroke-width', '4px')
+    rect.setAttribute('stroke-dasharray', '5,5')
+    container.appendChild(rect)
+
+    const text = document.createElementNS('http://www.w3.org/2000/svg', 'text')
+    text.textContent = this.title
+    text.setAttribute('fill', 'gray')
+    text.setAttribute('x', `${this.titleOrigin.x}`)
+    text.setAttribute('y', `${this.titleOrigin.y}`)
+    new Font({ fontSize: 18, fontWeight: 'bold' }).applyTo(text)
+    container.appendChild(text)
+
+    return new SvgVisual(container)
+  }
+
+  /**
+   * @param {!IRenderContext} ctx
+   * @param {!Visual} oldVisual
+   * @returns {!Visual}
+   */
+  updateVisual(ctx, oldVisual) {
+    return oldVisual
   }
 }
 

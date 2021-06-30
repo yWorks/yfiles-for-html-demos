@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -30,6 +30,7 @@ import {
   GraphComponent,
   IEdge,
   ILabelModelParameter,
+  ILabelOwner,
   IModelItem,
   Point,
   SimpleLabel,
@@ -48,16 +49,16 @@ export default class HTMLPopupSupport {
   /**
    * Constructor that takes the graphComponent, the container div element and an ILabelModelParameter
    * to determine the relative position of the popup.
-   * @param {GraphComponent} graphComponent
-   * @param {HTMLElement} div
-   * @param {ILabelModelParameter} labelModelParameter
+   * @param {!GraphComponent} graphComponent
+   * @param {!HTMLElement} div
+   * @param {!ILabelModelParameter} labelModelParameter
    */
   constructor(graphComponent, div, labelModelParameter) {
-    this.graphComponent = graphComponent
     this.labelModelParameter = labelModelParameter
-    this.$div = div
-    this.$currentItem = null
-    this.$dirty = false
+    this.div = div
+    this.graphComponent = graphComponent
+    this._currentItem = null
+    this.dirty = false
 
     // make the popup invisible
     div.style.opacity = '0'
@@ -67,32 +68,17 @@ export default class HTMLPopupSupport {
   }
 
   /**
-   * Sets the container {@link HTMLPopupSupport#div div element}.
-   * @param {HTMLElement} value The div to be set
-   */
-  set div(value) {
-    this.$div = value
-  }
-
-  /**
-   * Gets the container {@link HTMLPopupSupport#div div element}.
-   * @return {HTMLElement} The container div
-   */
-  get div() {
-    return this.$div
-  }
-
-  /**
    * Sets the {@link IModelItem item} to display information for.
    * Setting this property to a value other than null shows the pop-up.
    * Setting the property to null hides the pop-up.
-   * @param {IModelItem} value The current graph item
+   * @param value The current graph item
+   * @type {?IModelItem}
    */
   set currentItem(value) {
-    if (value === this.$currentItem) {
+    if (value === this._currentItem) {
       return
     }
-    this.$currentItem = value
+    this._currentItem = value
     if (value !== null) {
       this.show()
     } else {
@@ -102,26 +88,11 @@ export default class HTMLPopupSupport {
 
   /**
    * Gets the {@link IModelItem item} to display information for.
-   * @return {IModelItem} The current graph item
+   * @return The current graph item
+   * @type {?IModelItem}
    */
   get currentItem() {
-    return this.$currentItem
-  }
-
-  /**
-   * Sets the flag for the current position is no longer valid.
-   * @param {boolean} value True if the current position is no longer valid, false otherwise
-   */
-  set dirty(value) {
-    this.$dirty = value
-  }
-
-  /**
-   * Gets the flag for the current position is no longer valid.
-   * @return {boolean} True if the current position is no longer valid, false otherwise
-   */
-  get dirty() {
-    return this.$dirty
+    return this._currentItem
   }
 
   /**
@@ -138,7 +109,7 @@ export default class HTMLPopupSupport {
     // Adds listeners for node bounds changes
     this.graphComponent.graph.addNodeLayoutChangedListener((sender, node, oldLayout) => {
       if (
-        ((this.currentItem && this.currentItem === node) || IEdge.isInstance(this.currentItem)) &&
+        ((this.currentItem && this.currentItem === node) || this.currentItem instanceof IEdge) &&
         (node === this.currentItem.sourcePort.owner || node === this.currentItem.targetPort.owner)
       ) {
         this.dirty = true
@@ -159,9 +130,7 @@ export default class HTMLPopupSupport {
    */
   show() {
     this.div.style.display = 'block'
-    setTimeout(() => {
-      this.div.style.opacity = '1'
-    }, 0)
+    setTimeout(() => (this.div.style.opacity = '1'), 0)
     this.updateLocation()
   }
 
@@ -176,9 +145,7 @@ export default class HTMLPopupSupport {
     // fade the clone out, then remove it from the DOM. Both actions need to be timed.
     setTimeout(() => {
       popupClone.setAttribute('style', `${popupClone.getAttribute('style')} opacity: 0;`)
-      setTimeout(() => {
-        parent.removeChild(popupClone)
-      }, 300)
+      setTimeout(() => parent.removeChild(popupClone), 300)
     }, 0)
     this.div.style.opacity = '0'
     this.div.style.display = 'none'

@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -86,7 +86,7 @@ export class AdjacencyNodesSourceDefinitionBuilderConnector {
         this.sourceDefinition.template
       )
     } catch (e) {
-      throw new Error(`Evaluating the template failed: ${e}`)
+      throw new Error(`Evaluating the template failed: ${e as Error}`)
     }
     this.graphBuilder.setData(this.nodesSource, parseData(this.sourceDefinition.data))
   }
@@ -113,7 +113,7 @@ export function createBinding(bindingString: string): (dataItem: any) => any {
   if (bindingString.indexOf('function') >= 0 || bindingString.indexOf('=>') >= 0) {
     try {
       // eval the string to get the function object
-      // eslint-disable-next-line no-new-func
+      // eslint-disable-next-line no-new-func,@typescript-eslint/no-implied-eval
       const func = new Function(`return (${bindingString})`)()
       // wrap the binding function with a function that catches and reports errors
       // that occur in the binding functions
@@ -125,7 +125,7 @@ export function createBinding(bindingString: string): (dataItem: any) => any {
           return result === null ? undefined : result
         } catch (e) {
           if (!bindingErrorCaught) {
-            alert(`Evaluating the binding function ${bindingString} failed: ${e}`)
+            alert(`Evaluating the binding function ${bindingString} failed: ${e as Error}`)
             bindingErrorCaught = true
           }
           return undefined
@@ -156,9 +156,9 @@ export function parseData(data?: string): any[] {
     const functionString = /^\sreturn/m.test(nodesSourceValue)
       ? nodesSourceValue
       : `return ${nodesSourceValue}`
-    // eslint-disable-next-line no-new-func
+    // eslint-disable-next-line no-new-func,@typescript-eslint/no-implied-eval
     return new Function(functionString)()
   } catch (e) {
-    throw new Error(`Evaluation of the source data failed: ${e}`)
+    throw new Error(`Evaluation of the source data failed: ${e as Error}`)
   }
 }

@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -27,6 +27,8 @@
  **
  ***************************************************************************/
 import {
+  Cursor,
+  DefaultFolderNodeConverter,
   DefaultGraph,
   DefaultLabelStyle,
   FoldingManager,
@@ -40,7 +42,9 @@ import {
   HierarchicNestingPolicy,
   ICommand,
   IGraph,
+  ILabel,
   INode,
+  IRenderContext,
   InteriorStretchLabelModel,
   License,
   NodeStyleBase,
@@ -58,7 +62,8 @@ import {
   VoidLabelStyle,
   YDimension,
   YInsets,
-  YString
+  YString,
+  YNode
 } from 'yfiles'
 
 import TreeMapData from './resources/TreeMapData.js'
@@ -66,23 +71,34 @@ import { bindAction, bindCommand, showApp } from '../../resources/demo-app.js'
 import loadJson from '../../resources/load-json.js'
 
 /**
+ * Mapper registry key for node names.
+ */
+const NAME_KEY = 'NODE_TO_NAME'
+/**
+ * Mapper registry key for preferred sizes.
+ */
+const PREFERRED_SIZE_KEY = 'ROOT_TO_PREFERRED_SIZE'
+
+/**
  * The graph component containing the current graph.
  * @type {GraphComponent}
  */
-let graphComponent = null
+let graphComponent
 
 /**
  * The complete graph containing all nodes and the general hierarchy information.
  * This graph is used as a template for the visible sub-graphs.
  * @type {IGraph}
  */
-let masterGraph = null
+let masterGraph
 
 /**
  * Starts and sets up the demo.
+ * @param {!object} licenseData
  */
 function run(licenseData) {
   License.value = licenseData
+
   graphComponent = new GraphComponent('graphComponent')
   initializeGraph()
   initializeInputModes()
@@ -142,20 +158,20 @@ function initializeGraph() {
 
   graphBuilder.buildGraph()
 
-  graph.nodes.forEach(node => {
+  for (const node of graph.nodes) {
     if (graph.isGroupNode(node)) {
       graph.addLabel(node, node.tag.label)
     }
-  })
+  }
 
   // store the master graph as a template
   masterGraph = graph
-  masterGraph.mapperRegistry.createMapper(INode.$class, YDimension.$class, 'ROOT_TO_PREFERRED_SIZE')
+  masterGraph.mapperRegistry.createMapper(INode.$class, YDimension.$class, PREFERRED_SIZE_KEY)
 
   graphComponent.viewportLimiter.honorBothDimensions = false
 
   // create a sub-graph that only shows the root and its children and grandchildren
-  updateGraph(null)
+  updateGraph()
 }
 
 /**
@@ -169,46 +185,19 @@ function initializeInputModes() {
   inputMode.focusableItems = GraphItemTypes.NONE
   inputMode.addItemClickedListener((sender, event) => {
     const item = event.item
-    const itemGraph = graphComponent.graph
-
-    // remember if the click will be going downwards or upwards
-    let isDrillDown = true
-
-    // get the node from the master graph to be able to check the hierarchy information
-    let root = masterGraph.nodes.find(
-      node => item.tag.id === node.tag.id && item.tag.groupTag === node.tag.groupTag
-    )
-    // group nodes can be entered or they lead to a higher hierarchy level
-    if (masterGraph.isGroupNode(root)) {
-      if (!itemGraph.getParent(item)) {
-        // up to a higher hierarchy level, take the parent of the root node as new root
-        root = masterGraph.getParent(root)
-        isDrillDown = false
-      } else {
-        const preferredSizes = masterGraph.mapperRegistry.getMapper('ROOT_TO_PREFERRED_SIZE')
-        const preferredSize = preferredSizes.get(root)
-        if (!preferredSize) {
-          preferredSizes.set(root, new YDimension(item.layout.width, item.layout.height))
-        }
-      }
-      if (root) {
-        masterGraph.setNodeLayout(root, item.layout.toRect())
-
-        // update the graph to only contain the new root and its children and grandchildren
-        updateGraph(root, item, isDrillDown)
-      }
+    if (item instanceof INode && onNodeClicked(item)) {
       event.handled = true
     }
   })
   // add tooltips that show the label text
   inputMode.toolTipItems = GraphItemTypes.NODE
-  inputMode.mouseHoverInputMode.toolTipLocationOffset = [10, 10]
+  inputMode.mouseHoverInputMode.toolTipLocationOffset = new Point(10, 10)
   inputMode.addQueryItemToolTipListener((sender, event) => {
     if (event.handled) {
       return
     }
     const hitNode = event.item
-    if (hitNode.labels.size > 0) {
+    if (hitNode instanceof INode && hitNode.labels.size > 0) {
       event.toolTip = hitNode.labels.get(0).text
       event.handled = true
     }
@@ -218,32 +207,33 @@ function initializeInputModes() {
   inputMode.itemHoverInputMode.discardInvalidItems = false
   inputMode.itemHoverInputMode.addHoveredItemChangedListener((sender, event) => {
     const manager = graphComponent.highlightIndicatorManager
-    inputMode.defaultCursor = 'DEFAULT'
     manager.clearHighlights()
+
     const item = event.item
 
-    if (item) {
+    inputMode.defaultCursor = Cursor.DEFAULT
+    if (item instanceof INode) {
       // get the node from the master graph to be able to check the hierarchy information
-      let root = masterGraph.nodes.find(
-        node => item.tag.id === node.tag.id && item.tag.groupTag === node.tag.groupTag
-      )
+      let root = masterGraph.nodes.find(node => equalTags(item, node))
 
       const itemGraph = graphComponent.graph
       if (masterGraph.isGroupNode(root)) {
-        let cursor = 'ZOOM_IN'
+        let cursor = Cursor.ZOOM_IN
         if (!itemGraph.getParent(item)) {
-          root = masterGraph.getParent(root)
-          cursor = 'ZOOM_OUT'
+          root = root ? masterGraph.getParent(root) : null
+          cursor = Cursor.ZOOM_OUT
         }
         if (root) {
           inputMode.defaultCursor = cursor
           manager.addHighlight(item)
         }
       } else {
-        const parent = masterGraph.getParent(root)
+        const parent = root ? masterGraph.getParent(root) : null
         if (parent && parent.tag.parentGroupRef !== '') {
           const itemParent = graphComponent.graph.getParent(item)
-          inputMode.defaultCursor = !itemGraph.getParent(itemParent) ? 'ZOOM_OUT' : 'ZOOM_IN'
+          inputMode.defaultCursor = itemGraph.getParent(itemParent)
+            ? Cursor.ZOOM_IN
+            : Cursor.ZOOM_OUT
           manager.addHighlight(itemParent)
         }
       }
@@ -253,73 +243,109 @@ function initializeInputModes() {
 }
 
 /**
- * Updates the current graph when the root node changes.
- * @param {INode} root
- * @param {INode} clickedNode
- * @param {boolean} isDrillDown
+ * Handles node clicked events.
+ * @param {!INode} clickedNode the node that was clicked.
+ * @returns {boolean} true if the visible graph is changed due to the click and false otherwise.
  */
-function updateGraph(root, clickedNode, isDrillDown) {
+function onNodeClicked(clickedNode) {
+  // remember if the click will be going downwards or upwards
+  let isDrillDown = true
+
+  // get the node from the master graph to be able to check the hierarchy information
+  let root = masterGraph.nodes.find(node => equalTags(clickedNode, node))
+
+  // group nodes can be entered or they lead to a higher hierarchy level
+  if (root && masterGraph.isGroupNode(root)) {
+    const visibleGraph = graphComponent.graph
+    const clickedNodeLayout = clickedNode.layout
+    if (!visibleGraph.getParent(clickedNode)) {
+      // up to a higher hierarchy level, take the parent of the root node as new root
+      root = masterGraph.getParent(root)
+      isDrillDown = false
+    } else {
+      const preferredSizes = masterGraph.mapperRegistry.getMapper(PREFERRED_SIZE_KEY)
+      const preferredSize = preferredSizes.get(root)
+      if (!preferredSize) {
+        preferredSizes.set(root, new YDimension(clickedNodeLayout.width, clickedNodeLayout.height))
+      }
+    }
+    if (root) {
+      masterGraph.setNodeLayout(root, clickedNodeLayout.toRect())
+
+      // update the graph to only contain the new root and its children and grandchildren
+      updateGraph(root, clickedNode, isDrillDown)
+    }
+    return true
+  }
+  return false
+}
+
+/**
+ * Updates the current graph when the root node changes.
+ * @param {!INode} [root]
+ * @param {!INode} [clickedNode]
+ * @param {boolean} [isDrillDown=false]
+ */
+function updateGraph(root, clickedNode, isDrillDown = false) {
   let graph = new DefaultGraph({
     nodeDefaults: masterGraph.nodeDefaults,
     groupNodeDefaults: masterGraph.groupNodeDefaults
   })
   const copier = new GraphCopier()
 
-  let clickedNodeCopy
+  let clickedNodeCopy = null
   if (root) {
     // collect the descendants of the root nodes that should be visible
     const visibleNodes = []
-    masterGraph.getChildren(root).forEach(child => {
+    for (const child of masterGraph.getChildren(root)) {
       visibleNodes.push(child)
-      masterGraph.getChildren(child).forEach(grandChild => visibleNodes.push(grandChild))
-    })
+      for (const grandChild of masterGraph.getChildren(child)) {
+        visibleNodes.push(grandChild)
+      }
+    }
     visibleNodes.push(root)
     // create a copy of the graph containing only the visible nodes
     copier.copy(
       masterGraph,
-      item => visibleNodes.includes(item) || visibleNodes.includes(item.owner),
+      // there are only nodes and labels in this demo
+      item => visibleNodes.includes(item instanceof ILabel ? item.owner : item),
       graph,
       Point.ORIGIN,
       () => {}
     )
 
     // center nodes inside the route to get a smooth animation
-    graph.nodes.forEach(node => {
+    for (const node of graph.nodes) {
       graph.setNodeCenter(node, root.layout.center)
 
       // Animate the upwards direction by 'fitting' the clicked node into the layout. This is achieved by keeping
       // the original layout for the clicked nodes and children.
-      if (!isDrillDown) {
-        const isClickedNode =
-          (node.tag.id && clickedNode.tag.id && node.tag.id === clickedNode.tag.id) ||
-          (node.tag.groupTag &&
-            clickedNode.tag.groupTag &&
-            node.tag.groupTag === clickedNode.tag.groupTag)
-
-        if (isClickedNode) {
+      if (clickedNode && !isDrillDown) {
+        if (equalTags(node, clickedNode)) {
           graph.setNodeLayout(node, clickedNode.layout.toRect())
           clickedNodeCopy = node
-          if (graphComponent.graph.isGroupNode(clickedNode)) {
+          const visibleGraph = graphComponent.graph
+          if (visibleGraph.isGroupNode(clickedNode)) {
             // also transfer the layout of the children
-            graphComponent.graph.getChildren(clickedNode).forEach(child => {
-              const copiedChild = graph.nodes.find(n =>
-                n.tag.id ? n.tag.id === child.tag.id : n.tag.groupTag === child.tag.groupTag
-              )
-              graph.setNodeLayout(copiedChild, child.layout.toRect())
-            })
+            for (const child of visibleGraph.getChildren(clickedNode)) {
+              const copiedChild = graph.nodes.find(n => equalTags(child, n))
+              if (copiedChild) {
+                graph.setNodeLayout(copiedChild, child.layout.toRect())
+              }
+            }
           }
         }
       }
-    })
+    }
   } else {
     // use the master graph since the global root was selected
     copier.copy(masterGraph, graph)
     graphComponent.graph = graph
 
     // center nodes inside the viewport to get a smooth animation
-    graph.nodes.forEach(node => {
+    for (const node of graph.nodes) {
       graph.setNodeCenter(node, graphComponent.viewport.center)
-    })
+    }
   }
 
   // clear highlights to avoid artifact highlights of the previews sub-graph
@@ -327,12 +353,13 @@ function updateGraph(root, clickedNode, isDrillDown) {
 
   // create a folding view that collapses the grandchildren of the current root
   const foldingManager = new FoldingManager(graph)
-  const folderNodeConverter = foldingManager.folderNodeConverter
-  folderNodeConverter.copyFirstLabel = true
-  folderNodeConverter.folderNodeStyle = new ColorNodeStyle()
-  folderNodeConverter.cloneNodeStyle = false
-  folderNodeConverter.labelStyle = masterGraph.nodeDefaults.labels.style
-  folderNodeConverter.labelLayoutParameter = InteriorStretchLabelModel.CENTER
+  foldingManager.folderNodeConverter = new DefaultFolderNodeConverter({
+    copyFirstLabel: true,
+    folderNodeStyle: new ColorNodeStyle(),
+    cloneNodeStyle: false,
+    labelStyle: masterGraph.nodeDefaults.labels.style,
+    labelLayoutParameter: InteriorStretchLabelModel.CENTER
+  })
   graph = foldingManager.createFoldingView({
     isExpanded: node => {
       const parent = graph.getParent(node)
@@ -341,25 +368,27 @@ function updateGraph(root, clickedNode, isDrillDown) {
   }).graph
 
   // update the label text, folders should show their sizes like files
-  graph.nodes.forEach(node => {
+  for (const node of graph.nodes) {
     if (!graph.foldingView.isExpanded(node)) {
       const text = node.labels.first().text
       graph.setLabelText(node.labels.first(), `${text}\n(${getSizeString(node.tag.size)})`)
     }
-  })
+  }
 
   // update the label in the tool bar
-  let pathString = null
-  masterGraph.groupingSupport.getPathToRoot(root).forEach(node => {
-    if (node) {
-      if (pathString) {
-        pathString = `${node.tag.label} > ${pathString}`
-      } else {
-        pathString = node.tag.label
+  let pathString = ''
+  if (root) {
+    for (const node of masterGraph.groupingSupport.getPathToRoot(root)) {
+      if (node) {
+        if (pathString) {
+          pathString = `${node.tag.label} > ${pathString}`
+        } else {
+          pathString = node.tag.label
+        }
       }
     }
-  })
-  const path = document.getElementById('path')
+  }
+  const path = getElementById('path')
   path.innerHTML = pathString || 'yFiles-for-HTML-Complete'
 
   // register a highlight
@@ -382,12 +411,17 @@ function updateGraph(root, clickedNode, isDrillDown) {
     const clickedItem = graphComponent.graph.nodes
       .filter(n => n.tag.groupTag === clickedNodeCopy.tag.groupTag)
       .first()
-    graphComponent.graphModelManager.getCanvasObject(clickedItem).toFront()
+    const itemCo = graphComponent.graphModelManager.getCanvasObject(clickedItem)
+    if (itemCo) {
+      itemCo.toFront()
+    }
     if (graph.isGroupNode(clickedItem)) {
-      const childs = graph.getChildren(clickedItem)
-      childs.forEach(child => {
-        graphComponent.graphModelManager.getCanvasObject(child).toFront()
-      })
+      for (const child of graph.getChildren(clickedItem)) {
+        const childCo = graphComponent.graphModelManager.getCanvasObject(child)
+        if (childCo) {
+          childCo.toFront()
+        }
+      }
     }
   }
 
@@ -396,9 +430,21 @@ function updateGraph(root, clickedNode, isDrillDown) {
 }
 
 /**
+ * Checks if the id and the groupTag properties of the tags of the given nodes are equal.
+ * @param {!INode} n1
+ * @param {!INode} n2
+ * @returns {boolean}
+ */
+function equalTags(n1, n2) {
+  const t1 = n1.tag
+  const t2 = n2.tag
+  return t1 && t2 && ((t1.id && t1.id === t2.id) || (t1.groupTag && t1.groupTag === t2.groupTag))
+}
+
+/**
  * Transforms the given size to a string showing the largest unit and the smallest number.
  * @param {number} size
- * @return {string}
+ * @returns {!string}
  */
 function getSizeString(size) {
   if (size >= 1000000) {
@@ -412,6 +458,7 @@ function getSizeString(size) {
 /**
  * Applies a TreeMapLayout to the current graph. The configuration is derived from the information
  * in the module.
+ * @returns {!Promise}
  */
 async function applyLayout() {
   const graph = graphComponent.graph
@@ -423,15 +470,15 @@ async function applyLayout() {
   )
 
   // configure layout algorithm using the settings from the module
-  const minimumWidth = Number.parseInt(document.getElementById('minimum-node-width').value)
-  const minimumHeight = Number.parseInt(document.getElementById('minimum-node-height').value)
+  const minimumWidth = Number.parseInt(getElementById('minimum-node-width').value)
+  const minimumHeight = Number.parseInt(getElementById('minimum-node-height').value)
   const layout = new TreeMapLayout({
     preferredSize: getPreferredSize(graph),
-    aspectRatio: Number.parseFloat(document.getElementById('aspect-ratio').value),
+    aspectRatio: Number.parseFloat(getElementById('aspect-ratio').value),
     tilingPolicy: getTilingAlgorithm(),
     minimumNodeSize: new YDimension(minimumWidth, minimumHeight),
-    spacing: Number.parseInt(document.getElementById('spacing').value),
-    nodeComparer: getNodeComparer(graph)
+    spacing: Number.parseInt(getElementById('spacing').value),
+    nodeComparer: createNodeComparer(graph)
   })
 
   // determine the current weight range
@@ -439,13 +486,13 @@ async function applyLayout() {
   const minimumWeight = 10
   let minWeight = Number.MAX_VALUE
   let maxWeight = 0
-  graph.nodes.forEach(node => {
+  for (const node of graph.nodes) {
     if (!graph.isGroupNode(node)) {
       const weight = node.tag.size
       minWeight = Math.min(minWeight, weight)
       maxWeight = Math.max(maxWeight, weight)
     }
-  })
+  }
   const weightRange = maxWeight - minWeight
   const goalWeightRange = maximumWeight - minimumWeight
 
@@ -470,7 +517,7 @@ async function applyLayout() {
   await graphComponent.morphLayout(layout, '0.7s', layoutData)
   // clean up previously added mappers
   graph.mapperRegistry.removeMapper(GroupingKeys.GROUP_NODE_INSETS_DP_KEY)
-  graph.mapperRegistry.removeMapper('NODE_TO_NAME')
+  graph.mapperRegistry.removeMapper(NAME_KEY)
 
   // update text sizes and show labels again
   updateLabelTextSizes(graph)
@@ -485,16 +532,17 @@ async function applyLayout() {
 
 /**
  * Determines the preferred layout size for the current graph.
- * @param {IGraph} graph
- * @return {YDimension}
+ * @param {!IGraph} graph
+ * @returns {!YDimension}
  */
 function getPreferredSize(graph) {
-  const zoomingMode = document.getElementById('select-zooming-mode').value
+  const zoomingMode = getElementById('select-zooming-mode').value
   const defaultMapSize = 1000
-  const preferredSizes = masterGraph.mapperRegistry.getMapper('ROOT_TO_PREFERRED_SIZE')
+  const preferredSizes = masterGraph.mapperRegistry.getMapper(PREFERRED_SIZE_KEY)
   const root = graph.nodes.filter(node => !graph.getParent(node)).firstOrDefault()
+  const groupTag = root && root.tag ? root.tag.groupTag : null
   const preferredSize = preferredSizes.get(
-    masterGraph.nodes.filter(node => node.tag.groupTag === root.tag.groupTag).firstOrDefault()
+    masterGraph.nodes.filter(node => node.tag && node.tag.groupTag === groupTag).firstOrDefault()
   )
   if (zoomingMode === 'Aspect Ratio of Root' && preferredSize) {
     // if we have a preferred size specified, then the according property on the layout algorithm is configured
@@ -511,24 +559,21 @@ function getPreferredSize(graph) {
 
 /**
  * Determines the tiling algorithm.
- * @return {TilingPolicy.SQUARIFIED | TilingPolicy.SLICE_AND_DICE}
+ * @returns {!TilingPolicy}
  */
 function getTilingAlgorithm() {
-  const tilingAlgorithm = document.getElementById('select-tiling-algorithm').value
-  if (tilingAlgorithm === 'Squarified') {
-    return TilingPolicy.SQUARIFIED
-  }
-  return TilingPolicy.SLICE_AND_DICE
+  const tilingAlgorithm = getElementById('select-tiling-algorithm').value
+  return tilingAlgorithm === 'Squarified' ? TilingPolicy.SQUARIFIED : TilingPolicy.SLICE_AND_DICE
 }
 
 /**
  * Creates a node comparer according to the sorting settings.
- * @param {IGraph} graph
- * @return {TreeMapNodeComparator}
+ * @param {!IGraph} graph
+ * @returns {!TreeMapNodeComparer}
  */
-function getNodeComparer(graph) {
-  const sortingCriterion = document.getElementById('select-sorting-criterion').value
-  const fileDirectoryOrder = document.getElementById('select-file-directory-order').value
+function createNodeComparer(graph) {
+  const sortingCriterion = getElementById('select-sorting-criterion').value
+  const fileDirectoryOrder = getElementById('select-file-directory-order').value
   const ascending = sortingCriterion.indexOf('ascending') !== -1
   const useNameAsCriterion = sortingCriterion.startsWith('Name')
   const considerLeafState = fileDirectoryOrder.startsWith('Files')
@@ -537,24 +582,24 @@ function getNodeComparer(graph) {
     graph.mapperRegistry.createDelegateMapper(
       INode.$class,
       YString.$class,
-      'NODE_TO_NAME',
+      NAME_KEY,
       node => node.labels.first().text
     )
   }
-  return new TreeMapNodeComparator(ascending, useNameAsCriterion, considerLeafState, leavesTrailing)
+  return new TreeMapNodeComparer(ascending, useNameAsCriterion, considerLeafState, leavesTrailing)
 }
 
 /**
  * Updates the sizes of the label texts according to the sizes of their owner nodes.
- * @param {IGraph} graph
+ * @param {!IGraph} graph
  */
 function updateLabelTextSizes(graph) {
   // we'll use a hidden div to measure the text sizes
-  const textMeasureDiv = document.getElementById('text-measure-container')
-  graph.nodes.forEach(node => {
+  const textMeasureDiv = getElementById('text-measure-container')
+  for (const node of graph.nodes) {
     // only adjust text sizes for normal nodes and folders
     if (graph.isGroupNode(node)) {
-      return
+      continue
     }
 
     const label = node.labels.first()
@@ -582,15 +627,16 @@ function updateLabelTextSizes(graph) {
           highSize = midSize
         }
       }
+      const style = label.style
       if (lowSize > 8) {
         // update label style with re-sized font
-        label.style.font = new Font({ fontSize: lowSize })
+        style.font = new Font({ fontSize: lowSize })
       } else {
         // wrap the text if the font size would be too small to read
-        label.style.wrapping = TextWrapping.WORD
+        style.wrapping = TextWrapping.WORD
       }
     }
-  })
+  }
 }
 
 /**
@@ -603,43 +649,52 @@ function registerCommands() {
   bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
 
   // update the labels of the sliders that show the current value
-  const aspectRatio = document.getElementById('aspect-ratio')
-  const aspectRatioLabel = document.getElementById('aspect-ratio-label')
-  aspectRatio.addEventListener('input', () => {
-    aspectRatioLabel.innerHTML = aspectRatio.value
-  })
-  const spacing = document.getElementById('spacing')
-  const spacingLabel = document.getElementById('spacing-label')
-  spacing.addEventListener('input', () => {
-    spacingLabel.innerHTML = spacing.value
-  })
-  const minimumNodeWidth = document.getElementById('minimum-node-width')
-  const minimumNodeWidthLabel = document.getElementById('minimum-node-width-label')
-  minimumNodeWidth.addEventListener('input', () => {
-    minimumNodeWidthLabel.innerHTML = minimumNodeWidth.value
-  })
-  const minimumNodeHeight = document.getElementById('minimum-node-height')
-  const minimumNodeHeightLabel = document.getElementById('minimum-node-height-label')
-  minimumNodeHeight.addEventListener('input', () => {
-    minimumNodeHeightLabel.innerHTML = minimumNodeHeight.value
-  })
+  bindLabelToInput('aspect-ratio', 'aspect-ratio-label')
+  bindLabelToInput('spacing', 'spacing-label')
+  bindLabelToInput('minimum-node-width', 'minimum-node-width-label')
+  bindLabelToInput('minimum-node-height', 'minimum-node-height-label')
 
   // apply a layout with the current settings
   bindAction("button[data-command='ApplyLayout']", applyLayout)
 }
 
 /**
+ * Registers a listener that updates the innerHTML property of the HTMLLabelElement with the given
+ * labelId with the value property of the HTMLInputElement with the given inputId.
+ * @param {!string} inputId
+ * @param {!string} labelId
+ */
+function bindLabelToInput(inputId, labelId) {
+  const input = getElementById(inputId)
+  const label = getElementById(labelId)
+  input.addEventListener('input', () => {
+    label.innerHTML = input.value
+  })
+}
+
+/**
  * A flexible comparer which can be used for sorting groups and leaf nodes using different criteria.
  */
-class TreeMapNodeComparator extends NodeWeightComparer {
+class TreeMapNodeComparer extends NodeWeightComparer {
+  /**
+   * @param {boolean} ascending
+   * @param {boolean} useNameAsCriterion
+   * @param {boolean} considerLeafState
+   * @param {boolean} leavesTrailing
+   */
   constructor(ascending, useNameAsCriterion, considerLeafState, leavesTrailing) {
     super()
-    this.ascending = ascending
-    this.useNameAsCriterion = useNameAsCriterion
-    this.considerLeafState = considerLeafState
     this.leavesTrailing = leavesTrailing
+    this.considerLeafState = considerLeafState
+    this.useNameAsCriterion = useNameAsCriterion
+    this.ascending = ascending
   }
 
+  /**
+   * @param {!YNode} node1
+   * @param {!YNode} node2
+   * @returns {number}
+   */
   compare(node1, node2) {
     if (this.considerLeafState) {
       // leaves should either come last (trailing) or first (leading)
@@ -658,26 +713,41 @@ class TreeMapNodeComparator extends NodeWeightComparer {
     // both are non-leaves or leaves, or leaf state is ignored
     // a) compare by name
     if (this.useNameAsCriterion) {
-      const names = node1.graph.getDataProvider('NODE_TO_NAME')
+      const names = node1.graph.getDataProvider(NAME_KEY)
       const name1 = names.get(node1)
       const name2 = names.get(node2)
       const result = name1.localeCompare(name2)
       return this.ascending ? result : -result
     }
     // b) compare by weight
-    return this.ascending ? -super.compare(node1, node2) : super.compare(node1, node2)
+    const result = super.compare(node1, node2)
+    return this.ascending ? -result : result
   }
 }
+
+/**
+ * @typedef {Object} RenderDataCache
+ * @property {number} x
+ * @property {number} y
+ * @property {number} width
+ * @property {number} height
+ * @property {string} fill
+ */
 
 /**
  * A simple node style which draws a rectangle. The color for the rectangle is provided in the tag.
  */
 class ColorNodeStyle extends NodeStyleBase {
+  /**
+   * @param {!IRenderContext} context
+   * @param {!INode} node
+   * @returns {!SvgVisual}
+   */
   createVisual(context, node) {
     const { x, y, width, height } = node.layout
     const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect')
-    rect.setAttribute('width', width)
-    rect.setAttribute('height', height)
+    rect.setAttribute('width', width.toString())
+    rect.setAttribute('height', height.toString())
     rect.setAttribute('fill', node.tag.color)
     rect.setAttribute('stroke', 'none')
     rect['render-cache'] = {
@@ -691,6 +761,12 @@ class ColorNodeStyle extends NodeStyleBase {
     return new SvgVisual(rect)
   }
 
+  /**
+   * @param {!IRenderContext} context
+   * @param {!SvgVisual} oldVisual
+   * @param {!INode} node
+   * @returns {!SvgVisual}
+   */
   updateVisual(context, oldVisual, node) {
     const rect = oldVisual.svgElement
     if (!rect) {
@@ -703,8 +779,8 @@ class ColorNodeStyle extends NodeStyleBase {
       rect.setAttribute('fill', node.tag.color)
     }
     if (renderCache.width !== width || renderCache.height !== height) {
-      rect.setAttribute('width', width)
-      rect.setAttribute('height', height)
+      rect.setAttribute('width', width.toString())
+      rect.setAttribute('height', height.toString())
     }
     if (renderCache.x !== x || renderCache.y !== y) {
       SvgVisual.setTranslate(rect, x, y)
@@ -718,6 +794,16 @@ class ColorNodeStyle extends NodeStyleBase {
     }
     return oldVisual
   }
+}
+
+/**
+ * Returns a reference to the first element with the specified ID in the current document.
+ * @returns {!T} A reference to the first element with the specified ID in the current document.
+ * @template {HTMLElement} T
+ * @param {!string} id
+ */
+function getElementById(id) {
+  return document.getElementById(id)
 }
 
 loadJson().then(run)

@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -36,85 +36,95 @@ import {
   INode,
   IPoint,
   List,
-  Point
+  Point,
+  IEnumerable
 } from 'yfiles'
 
 /**
  * A handle implementation that modifies the lead or followUp time of an activity.
  */
 export class TimeHandle extends BaseClass(IHandle, IPoint) {
-  /***
+  /**
    * Creates a new instance fo the given node.
-   * @param {INode} node The node.
+   * @param {!INode} node The node whose lead or followUp time is changed through this handle.
    * @param {boolean} isFollowUpTime Whether this handle should change the lead or followUp time.
    */
   constructor(node, isFollowUpTime) {
     super()
-    this.$node = node
-    this.followUpTime = isFollowUpTime
+    this.node = node
+
+    // Stores the time when at which the drag operation was started.
+    this._originalTime = 0
+
+    this._isFollowUpTime = isFollowUpTime
   }
 
   /**
-   * @returns {Cursor}
+   * @type {!Cursor}
    */
   get cursor() {
     return Cursor.EW_RESIZE
   }
 
   /**
-   * @returns {IPoint}
+   * @type {!IPoint}
    */
   get location() {
     return this
   }
 
   /**
-   * @returns {HandleTypes}
+   * @type {!HandleTypes}
    */
   get type() {
     return HandleTypes.MOVE
   }
 
   /**
-   * @returns {number}
+   * @type {number}
    */
   get x() {
     // return the right side of the node plus the followUp time, or the left minus the lead time
-    return this.followUpTime
-      ? this.$node.layout.x + this.$node.layout.width + this.getTime()
-      : this.$node.layout.x - this.getTime()
+    return this.isFollowUpTime
+      ? this.node.layout.x + this.node.layout.width + this.getTime()
+      : this.node.layout.x - this.getTime()
   }
 
   /**
-   * @returns {number}
+   * @type {number}
    */
   get y() {
     // return the vertical center of the layout
-    return this.$node.layout.y + this.$node.layout.height * 0.5
+    return this.node.layout.y + this.node.layout.height * 0.5
   }
 
   /**
-   * @returns {IModelItem}
+   * @type {!INode}
    */
   get item() {
-    return this.$node
+    return this.node
   }
 
   /**
-   * @param {IInputModeContext} context - The context to retrieve information about the drag from.
+   * Determines the original lead or follow-up time for the associated activity node when a resize
+   * gesture starts.
+   * @param {!IInputModeContext} context The context to retrieve information about the drag from.
    */
   initializeDrag(context) {
     // remember the time at the drag start
-    this.$originalTime = this.getTime()
+    this._originalTime = this.getTime()
   }
 
   /**
-   * @param {IInputModeContext} context - The context to retrieve information about the drag from.
-   * @param {Point} originalLocation - The value of the {@link IDragHandler#location}
-   *   property at the time of {@link IDragHandler#initializeDrag}.
-   * @param {Point} newLocation - The coordinates in the world coordinate system that the client
-   *   wants the handle to be at. Depending on the implementation the {@link IDragHandler#location} may
-   *   or may not be modified to reflect the new value.
+   * Adjusts the lead or follow-up time for the associated activity node during node resize
+   * operations.
+   * @param {!IInputModeContext} context The context to retrieve information about the drag from.
+   * @param {!Point} originalLocation The value of the {@link IDragHandler#location} property at the time of
+   * {@link IDragHandler#initializeDrag}.
+   * @param {!Point} newLocation The coordinates in the world coordinate system that the client wants the
+   * handle to be at. Depending on the implementation the {@link IDragHandler#location} may or may
+   * not be modified to reflect the new value.
+   * @returns {boolean}
    */
   handleMove(context, originalLocation, newLocation) {
     // get current value
@@ -130,57 +140,70 @@ export class TimeHandle extends BaseClass(IHandle, IPoint) {
   }
 
   /**
-   * @param {IInputModeContext} context - The context to retrieve information about the drag from.
-   * @param {Point} originalLocation - The value of the {@link IDragHandler#location}
-   *   property at the time of {@link IDragHandler#initializeDrag}.
-   * @param {Point} newLocation - The coordinates in the world coordinate system that the client
-   *   wants the handle to be at. Depending on the implementation the {@link IDragHandler#location} may
-   *   or may not be modified to reflect the new value. This is the same value as delivered in the last invocation of
-   *   {@link IDragHandler#handleMove}
+   * Adjusts the lead or follow-up time for the associated activity node when a node resize is
+   * finished.
+   * @param {!IInputModeContext} context The context to retrieve information about the drag from.
+   * @param {!Point} originalLocation The value of the {@link IDragHandler#location} property at the time of
+   * {@link IDragHandler#initializeDrag}.
+   * @param {!Point} newLocation The coordinates in the world coordinate system that the client wants the
+   * handle to be at. Depending on the implementation the {@link IDragHandler#location} may or may
+   * not be modified to reflect the new value. This is the same value as delivered in the last
+   * invocation of {@link IDragHandler#handleMove}
    */
   dragFinished(context, originalLocation, newLocation) {
     this.setTime(this.calculateTime(newLocation))
   }
 
   /**
-   * @param {IInputModeContext} context - The context to retrieve information about the drag from.
-   * @param {Point} originalLocation - The value of the coordinate of the
-   *   {@link IDragHandler#location} property at the time of
-   *   {@link IDragHandler#initializeDrag}.
+   * Resets the lead of follow-up time for the associated activity node when a resize gesture is
+   * cancelled.
+   * @param {!IInputModeContext} context The context to retrieve information about the drag from.
+   * @param {!Point} originalLocation The value of the coordinate of the {@link IDragHandler#location}
+   * property at the time of {@link IDragHandler#initializeDrag}.
    */
   cancelDrag(context, originalLocation) {
     // assign original value
-    this.setTime(this.$originalTime)
+    this.setTime(this._originalTime)
   }
 
+  /**
+   * @param {!Point} newLocation
+   * @returns {number}
+   */
   calculateTime(newLocation) {
-    return this.followUpTime
-      ? Math.max(0, newLocation.x - (this.$node.layout.x + this.$node.layout.width))
-      : Math.max(0, this.$node.layout.x - newLocation.x)
+    return this.isFollowUpTime
+      ? Math.max(0, newLocation.x - (this.node.layout.x + this.node.layout.width))
+      : Math.max(0, this.node.layout.x - newLocation.x)
   }
 
   /**
    * Gets the new value from the node tag.
+   * @returns {number}
    */
   getTime() {
     // read the value from the tag
-    const time = this.followUpTime ? this.$node.tag.followUpTimeWidth : this.$node.tag.leadTimeWidth
+    const time = this.isFollowUpTime ? this.node.tag.followUpTimeWidth : this.node.tag.leadTimeWidth
     return time || 0
   }
 
   /**
    * Stores the new value in the node tag.
+   * @param {number} val
    */
   setTime(val) {
-    if (this.followUpTime) {
-      this.$node.tag.followUpTimeWidth = val
+    if (this.isFollowUpTime) {
+      this.node.tag.followUpTimeWidth = val
     } else {
-      this.$node.tag.leadTimeWidth = val
+      this.node.tag.leadTimeWidth = val
     }
   }
 
-  isFollowUpTime() {
-    return this.followUpTime
+  /**
+   * Returns true if this handle changes its node's followUp time and false otherwise.
+   * @type {boolean}
+   */
+  get isFollowUpTime() {
+    return this._isFollowUpTime
   }
 }
 
@@ -190,7 +213,7 @@ export class TimeHandle extends BaseClass(IHandle, IPoint) {
 export class TimeHandleProvider extends BaseClass(IHandleProvider) {
   /**
    * Creates a new instance for the given node.
-   * @param {INode} node
+   * @param {!INode} node
    */
   constructor(node) {
     super()
@@ -198,8 +221,9 @@ export class TimeHandleProvider extends BaseClass(IHandleProvider) {
   }
 
   /**
-   * @param {IInputModeContext} context -
-   * @returns {IEnumerable.<IHandle>}
+   * Returns handles for changing the lead and followUp times of the provider's node.
+   * @param {!IInputModeContext} context
+   * @returns {!IEnumerable.<IHandle>}
    */
   getHandles(context) {
     const leadTimeHandle = new TimeHandle(this.node, false)

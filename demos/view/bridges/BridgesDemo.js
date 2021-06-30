@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -51,23 +51,24 @@ import loadJson from '../../resources/load-json.js'
  * Holds the graphComponent.
  * @type {GraphComponent}
  */
-let graphComponent = null
+let graphComponent
 
 /**
  * Holds the bridgeManager.
  * @type {BridgeManager}
  */
-let bridgeManager = null
+let bridgeManager
 
 /**
  * Runs the demo.
+ * @param {!object} licenseData
  */
 function run(licenseData) {
   License.value = licenseData
   graphComponent = new GraphComponent('graphComponent')
   const graph = graphComponent.graph
 
-  // draw edges in front, so that group nodes don't hide the bridges..
+  // draw edges in front, so that group nodes don't hide the bridges
   graphComponent.graphModelManager.edgeGroup.toFront()
   graphComponent.graphModelManager.hierarchicNestingPolicy = HierarchicNestingPolicy.NODES
 
@@ -78,6 +79,8 @@ function run(licenseData) {
   })
 
   configureBridges()
+
+  initializeToolBarElements()
 
   createSampleGraph()
 
@@ -114,8 +117,6 @@ function configureBridges() {
     node => graphComponent.graph.isGroupNode(node),
     node => new GroupNodeObstacleProvider(node)
   )
-
-  initializeToolBarElements()
 }
 
 /**
@@ -220,14 +221,17 @@ function initializeToolBarElements() {
 
 /**
  * Fills the given combo box with the given values.
- * @param {HTMLElement} comboBox The combo box to be filled
- * @param {Array} content The values to be used
+ * @param {?HTMLElement} comboBox The combo box to be filled
+ * @param {!Array.<object>} content The values to be used
  */
 function fillComboBox(comboBox, content) {
+  if (!comboBox) {
+    return
+  }
   for (let i = 0; i < content.length; i++) {
     const el = document.createElement('option')
     el.textContent = content[i].text
-    el.value = content[i].value
+    el.value = content[i].value.toString()
     comboBox.appendChild(el)
   }
 }
@@ -239,51 +243,41 @@ function registerCommands() {
   bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent)
   bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent)
   bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent)
-  bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
+  bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1)
 
   bindChangeListener("select[data-command='CrossingStyleChanged']", () => {
-    const crossingStyleComboBox = document.getElementById('crossingStyleComboBox')
-    bridgeManager.defaultBridgeCrossingStyle = parseInt(
-      crossingStyleComboBox[crossingStyleComboBox.selectedIndex].value
-    )
+    bridgeManager.defaultBridgeCrossingStyle = getValueFromComboBox('crossingStyleComboBox')
     graphComponent.invalidate()
   })
   bindChangeListener("select[data-command='CrossingPolicyChanged']", () => {
-    const crossingPolicyComboBox = document.getElementById('crossingPolicyComboBox')
-    bridgeManager.bridgeCrossingPolicy = parseInt(
-      crossingPolicyComboBox[crossingPolicyComboBox.selectedIndex].value
-    )
+    bridgeManager.bridgeCrossingPolicy = getValueFromComboBox('crossingPolicyComboBox')
     graphComponent.invalidate()
   })
   bindChangeListener("select[data-command='BridgeOrientationChanged']", () => {
-    const bridgeOrientationComboBox = document.getElementById('bridgeOrientationComboBox')
-    bridgeManager.defaultBridgeOrientationStyle = parseInt(
-      bridgeOrientationComboBox[bridgeOrientationComboBox.selectedIndex].value
-    )
+    bridgeManager.defaultBridgeOrientationStyle = getValueFromComboBox('bridgeOrientationComboBox')
     graphComponent.invalidate()
   })
+  bindChangeListener('#bridgeWidthSlider', value => {
+    bridgeManager.defaultBridgeWidth = parseInt(value)
+    graphComponent.invalidate()
+    document.getElementById('bridgeWidthLabel').textContent = value
+  })
+  bindChangeListener('#bridgeHeightSlider', value => {
+    bridgeManager.defaultBridgeHeight = parseInt(value)
+    graphComponent.invalidate()
+    document.getElementById('bridgeHeightLabel').textContent = value
+  })
+}
 
-  const bridgeWidthSlider = document.getElementById('bridgeWidthSlider')
-  bridgeWidthSlider.addEventListener(
-    'change',
-    evt => {
-      bridgeManager.defaultBridgeWidth = parseInt(bridgeWidthSlider.value)
-      graphComponent.invalidate()
-      document.getElementById('bridgeWidthLabel').textContent = bridgeWidthSlider.value.toString()
-    },
-    true
-  )
-
-  const bridgeHeightSlider = document.getElementById('bridgeHeightSlider')
-  bridgeHeightSlider.addEventListener(
-    'change',
-    evt => {
-      bridgeManager.defaultBridgeHeight = parseInt(bridgeHeightSlider.value)
-      graphComponent.invalidate()
-      document.getElementById('bridgeHeightLabel').textContent = bridgeHeightSlider.value.toString()
-    },
-    true
-  )
+/**
+ * Returns the integer value of the currently-selected element in the combo box
+ * with the given ID.
+ * @param {!string} id The ID of the combo box.
+ * @returns {number}
+ */
+function getValueFromComboBox(id) {
+  const comboBox = document.getElementById(id)
+  return parseInt(comboBox[comboBox.selectedIndex].value)
 }
 
 /**

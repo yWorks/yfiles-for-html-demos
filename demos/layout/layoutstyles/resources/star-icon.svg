@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="30px" height="30px" version="1.1" viewBox="0 0 30 30" xmlns="http://www.w3.org/2000/svg">
+  <g transform="translate(-66,-117)">
+    <circle cx="81" cy="132" r="15" fill="#f7f7f7"/>
+    <circle cx="81" cy="132" r="12" fill="#4caf50"/>
+    <g transform="matrix(1.1667 0 0 1.1667 71.083 103.42)" stroke="#f7f7f7" stroke-miterlimit="10" stroke-width="1.5" stroke-linecap="round">
+      <line x1="2.5" x2="14.5" y1="24.5" y2="24.5"/>
+      <line x1="8.5" x2="8.5" y1="18.5" y2="30.5"/>
+      <line x1="4.257" x2="12.742" y1="20.258" y2="28.742"/>
+      <line x1="12.742" x2="4.257" y1="20.258" y2="28.742"/>
+    </g>
+  </g>
+</svg>

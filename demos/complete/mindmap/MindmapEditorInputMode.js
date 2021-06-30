@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -27,7 +27,7 @@
  **
  ***************************************************************************/
 import { GraphEditorInputMode, IEdge, IModelItem, INode } from 'yfiles'
-import { Structure } from './MindmapUtil.js'
+import { isCrossReference, isRoot } from './MindmapUtil.js'
 
 /**
  * This class disables interactions on certain items.
@@ -35,26 +35,26 @@ import { Structure } from './MindmapUtil.js'
 export default class MindmapEditorInputMode extends GraphEditorInputMode {
   /**
    * Enables selection only for cross reference edges.
-   * @param {IModelItem} item The item to check.
+   * @param {!IModelItem} item The item to check.
    * @see Overrides {@link GraphEditorInputMode#shouldClickSelect}
-   * @return {boolean}
+   * @returns {boolean}
    */
   shouldClickSelect(item) {
     if (IEdge.isInstance(item)) {
-      return Structure.isCrossReference(item)
+      return isCrossReference(item)
     }
     return super.shouldClickSelect(item)
   }
 
   /**
    * Disables moving root node.
-   * @param {IModelItem} item The item to check.
+   * @param {!IModelItem} item The item to check.
    * @see Overrides {@link GraphEditorInputMode#shouldMove}
-   * @return {boolean}
+   * @returns {boolean}
    */
   shouldMove(item) {
     if (INode.isInstance(item)) {
-      return !Structure.isRoot(item)
+      return !isRoot(item)
     }
     return super.shouldMove(item)
   }

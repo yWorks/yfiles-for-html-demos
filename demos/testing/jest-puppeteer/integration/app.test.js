@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -87,11 +87,18 @@ describe('app', () => {
     expect(hasYFiles).toBe(true)
   })
 
-  it('should zoom', async () => {
+  it('should zoom', async function () {
     let zoom = await getZoom()
     expect(zoom).toBe(1.0)
     await expect(page).toClick('.demo-icon-yIconZoomIn')
-    zoom = await getZoom()
+
+    // zooming is animated, thus wait a before checking the value
+    const checkZoomPromise = new Promise(resolve => {
+      setTimeout(() => {
+        resolve(getZoom())
+      }, 1000)
+    })
+    zoom = await checkZoomPromise
     expect(zoom).toBe(1.2)
   })
 

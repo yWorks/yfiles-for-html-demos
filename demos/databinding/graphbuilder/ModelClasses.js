@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -80,10 +80,17 @@ export class EdgesSourceDefinition extends SourceDefinition {
  * Abstract base class for a SourceDefinition <-> GraphBuilder connector
  */
 export class SourceDefinitionBuilderConnector {
+  /**
+   * Updates/sets the sources' bindings and new data content
+   */
   applyDefinition() {
     throw new Error('abstract function call')
   }
 
+  /**
+   * Sets the source data to the empty string. This is a workaround for the {@link GraphBuilder}
+   * not having a "remove" method for sources.
+   */
   reset() {
     throw new Error('abstract function call')
   }
@@ -181,7 +188,7 @@ function createBinding(bindingString) {
   if (bindingString.indexOf('function') >= 0 || bindingString.indexOf('=>') >= 0) {
     try {
       // eval the string to get the function object
-      // eslint-disable-next-line no-new-func
+      // eslint-disable-next-line no-new-func,@typescript-eslint/no-implied-eval
       const func = new Function(`return (${bindingString})`)()
 
       // wrap the binding function with a function that catches and reports errors
@@ -221,7 +228,7 @@ function parseData(data) {
     const functionString = /^\sreturn/m.test(nodesSourceValue)
       ? nodesSourceValue
       : `return ${nodesSourceValue}`
-    // eslint-disable-next-line no-new-func
+    // eslint-disable-next-line no-new-func,@typescript-eslint/no-implied-eval
     return new Function(functionString)()
   } catch (e) {
     throw new Error(`Evaluation of the source data failed: ${e}`)

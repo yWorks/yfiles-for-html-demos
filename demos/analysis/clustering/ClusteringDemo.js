@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -28,33 +28,43 @@
  ***************************************************************************/
 import {
   BiconnectedComponentClustering,
+  BiconnectedComponentClusteringResult,
   DefaultLabelStyle,
+  DistanceMetric,
   EdgeBetweennessClustering,
+  EdgeBetweennessClusteringResult,
   EdgePathLabelModel,
   EdgeSides,
-  Enum,
+  GraphBuilder,
   GraphComponent,
   GraphEditorInputMode,
   GraphItemTypes,
   HierarchicalClustering,
+  HierarchicalClusteringResult,
   IArrow,
   ICanvasObject,
   ICanvasObjectDescriptor,
   ICommand,
   IEdge,
+  IEnumerable,
   IGraph,
+  INode,
+  IRectangle,
   Insets,
   KMeansClustering,
-  DistanceMetric,
+  KMeansClusteringResult,
   LabelPropagationClustering,
+  LabelPropagationClusteringResult,
   License,
   LinkageMethod,
   LouvainModularityClustering,
+  LouvainModularityClusteringResult,
   NodeStyleDecorationInstaller,
+  Point,
   PolylineEdgeStyle,
+  Rect,
   ShapeNodeStyle,
-  GraphBuilder,
-  Rect
+  IVisualCreator
 } from 'yfiles'
 
 import * as ClusteringData from './resources/ClusteringData.js'
@@ -68,37 +78,37 @@ import loadJson from '../../resources/load-json.js'
  * The {@link GraphComponent} which contains the {@link IGraph}.
  * @type {GraphComponent}
  */
-let graphComponent = null
+let graphComponent
 
 /**
  * The {@link GraphComponent} for the visualization of the dendrogram in the hierarchical clustering.
  * @type {DendrogramComponent}
  */
-let dendrogramComponent = null
+let dendrogramComponent
 
 /**
  * The canvas object for the cluster visual
  * @type {ICanvasObject}
  */
-let clusterVisualObject = null
+let clusterVisualObject
 
 /**
  * The canvas object for the k-means centroids visual
  * @type {ICanvasObject}
  */
-let kMeansCentroidObject = null
+let kMeansCentroidObject
 
 /**
  * The style for the directed edges
  * @type {PolylineEdgeStyle}
  */
-let directedEdgeStyle = null
+let directedEdgeStyle
 
 /**
  * The result of the clustering algorithm
- * @type {Object}
+ * @type {(BiconnectedComponentClusteringResult|EdgeBetweennessClusteringResult|HierarchicalClusteringResult|KMeansClusteringResult|LouvainModularityClusteringResult|LabelPropagationClusteringResult)}
  */
-let result = null
+let result
 
 /**
  * Holds whether a clustering algorithm is running
@@ -108,21 +118,38 @@ let busy = false
 
 /**
  * The algorithm selected by the user
+ * @type {ClusteringAlgorithm}
  */
 let selectedAlgorithm
 
+/**
+ * Returns a reference to the first element with the specified ID in the current document.
+ * @returns {!T} A reference to the first element with the specified ID in the current document.
+ * @template {HTMLElement} T
+ * @param {!string} id
+ */
+function getElementById(id) {
+  return document.getElementById(id)
+}
+
+/**
+ * @param {!object} licenseData
+ */
 function run(licenseData) {
   License.value = licenseData
+
   graphComponent = new GraphComponent('graphComponent')
 
   // initialize the default styles
-  initializeGraph()
+  configureGraph(graphComponent.graph)
 
   // create the input mode
-  createInputMode()
+  configureUserInteraction(graphComponent)
+
+  dendrogramComponent = new DendrogramComponent(graphComponent)
 
   // initialize the dendrogram component
-  initializeDendrogramComponent()
+  configureDendrogramComponent(dendrogramComponent)
 
   // load the graph and run the algorithm
   onAlgorithmChanged()
@@ -136,9 +163,9 @@ function run(licenseData) {
 
 /**
  * Initializes the default styles and the highlight style.
+ * @param {!IGraph} graph
  */
-function initializeGraph() {
-  const graph = graphComponent.graph
+function configureGraph(graph) {
   graph.nodeDefaults.style = new ShapeNodeStyle({
     shape: 'ellipse',
     fill: 'orange',
@@ -189,29 +216,28 @@ function initializeGraph() {
 }
 
 /**
- * Creates the input mode.
+ * Configures user interaction for the given graph component.
+ * @param {!GraphComponent} graphComponent
  */
-function createInputMode() {
+function configureUserInteraction(graphComponent) {
   const mode = new GraphEditorInputMode({
     allowEditLabel: false,
     showHandleItems: GraphItemTypes.NONE
   })
 
-  // when an edge is created, run the algorithm if this is EDGE_BETWEENNESS or BICONNECTED_COMPONENTS, since the
-  // other are independent of the edges of the graph
-  mode.createEdgeInputMode.addEdgeCreatedListener((source, edgeEventArgs) => {
+  // when an edge is created, run the algorithm again except for the k-means and hierarchical
+  // because these two are independent of the edges of the graph
+  mode.createEdgeInputMode.addEdgeCreatedListener((source, args) => {
     if (
-      selectedAlgorithm === ClusteringAlgorithm.EDGE_BETWEENNESS ||
-      selectedAlgorithm === ClusteringAlgorithm.BICONNECTED_COMPONENTS ||
-      selectedAlgorithm === ClusteringAlgorithm.LOUVAIN_MODULARITY ||
-      selectedAlgorithm === ClusteringAlgorithm.LABEL_PROPAGATION
+      selectedAlgorithm === ClusteringAlgorithm.EDGE_BETWEENNESS &&
+      getElementById('directed').checked
     ) {
-      if (
-        selectedAlgorithm === ClusteringAlgorithm.EDGE_BETWEENNESS &&
-        document.getElementById('directed').checked
-      ) {
-        graphComponent.graph.setStyle(edgeEventArgs.item, directedEdgeStyle)
-      }
+      graphComponent.graph.setStyle(args.item, directedEdgeStyle)
+    }
+    if (
+      selectedAlgorithm != ClusteringAlgorithm.kMEANS &&
+      selectedAlgorithm != ClusteringAlgorithm.HIERARCHICAL
+    ) {
       runAlgorithm()
     }
   })
@@ -262,24 +288,13 @@ function createInputMode() {
 
 /**
  * Initializes the dendrogram component.
+ * @param {!DendrogramComponent} dendrogramComponent
  */
-function initializeDendrogramComponent() {
-  dendrogramComponent = new DendrogramComponent(graphComponent)
+function configureDendrogramComponent(dendrogramComponent) {
   // add a dragging listener to run the hierarchical algorithm's when the dragging of the cutoff line has finished
   dendrogramComponent.addDragFinishedListener(cutOffValue => {
     removeClusterVisuals()
     runHierarchicalClustering(cutOffValue)
-  })
-
-  // add a highlight listener
-  dendrogramComponent.addHighlightChangedListener(nodesToHighlight => {
-    const highlightManager = graphComponent.highlightIndicatorManager
-    highlightManager.clearHighlights()
-    if (nodesToHighlight) {
-      nodesToHighlight.forEach(node => {
-        highlightManager.addHighlight(node)
-      })
-    }
   })
 }
 
@@ -332,26 +347,26 @@ function runEdgeBetweennessClustering() {
   const graph = graphComponent.graph
 
   // get the algorithm preferences from the right panel
-  let minClusterCount = parseFloat(document.getElementById('ebMinClusterNumber').value)
-  const maxClusterCount = parseFloat(document.getElementById('ebMaxClusterNumber').value)
+  let minClusterCount = parseFloat(getElementById('ebMinClusterNumber').value)
+  const maxClusterCount = parseFloat(getElementById('ebMaxClusterNumber').value)
 
   if (minClusterCount > maxClusterCount) {
     alert(
       'Desired minimum number of clusters cannot be larger than the desired maximum number of clusters.'
     )
-    document.getElementById('ebMinClusterNumber').value = maxClusterCount
+    getElementById('ebMinClusterNumber').value = maxClusterCount.toString()
     minClusterCount = maxClusterCount
   } else if (minClusterCount > graph.nodes.size) {
     alert(
       'Desired minimum number of clusters cannot be larger than the number of nodes in the graph.'
     )
-    document.getElementById('ebMinClusterNumber').value = graph.nodes.size
+    getElementById('ebMinClusterNumber').value = graph.nodes.size.toString()
     minClusterCount = graph.nodes.size
   }
 
   // run the algorithm
   result = new EdgeBetweennessClustering({
-    directed: document.getElementById('directed').checked,
+    directed: getElementById('directed').checked,
     minimumClusterCount: minClusterCount,
     maximumClusterCount: maxClusterCount,
     weights: getEdgeWeight
@@ -369,7 +384,7 @@ function runKMeansClustering() {
 
   // get the algorithm preferences from the right panel
   let distanceMetric
-  switch (document.getElementById('distanceMetricComboBox').selectedIndex) {
+  switch (getElementById('distanceMetricComboBox').selectedIndex) {
     default:
     case 0:
       distanceMetric = DistanceMetric.EUCLIDEAN
@@ -385,8 +400,8 @@ function runKMeansClustering() {
   // run the clustering algorithm
   result = new KMeansClustering({
     metric: distanceMetric,
-    maximumIterations: parseFloat(document.getElementById('iterations').value),
-    k: parseFloat(document.getElementById('kMeansMaxClusterNumber').value)
+    maximumIterations: parseFloat(getElementById('iterations').value),
+    k: parseFloat(getElementById('kMeansMaxClusterNumber').value)
   }).run(graphComponent.graph)
 
   // visualize the result
@@ -395,7 +410,8 @@ function runKMeansClustering() {
 
 /**
  * Run the hierarchical clustering algorithm.
- * @param {number?} cutoff The given cut-off value to run the algorithm
+ * @param cutoff The given cut-off value to run the algorithm
+ * @param {number} [cutoff]
  */
 function runHierarchicalClustering(cutoff) {
   updateInformationPanel('hierarchical')
@@ -403,7 +419,7 @@ function runHierarchicalClustering(cutoff) {
   const graph = graphComponent.graph
   // get the algorithm preferences from the right panel
   let linkage
-  switch (document.getElementById('linkageComboBox').selectedIndex) {
+  switch (getElementById('linkageComboBox').selectedIndex) {
     default:
     case 0:
       linkage = LinkageMethod.SINGLE
@@ -420,7 +436,10 @@ function runHierarchicalClustering(cutoff) {
   result = new HierarchicalClustering({
     metric: HierarchicalClustering.EUCLIDEAN,
     linkage,
-    cutoff
+    // if no cutoff is specified when runHierarchicalClustering is called, the clustering algorithm
+    // should produce a single cluster with all nodes (i.e. not cut-off any nodes)
+    // setting the algorithm's cutoff property to a negative value ensures a single cluster result
+    cutoff: typeof cutoff === 'undefined' ? -1 : cutoff
   }).run(graph)
 
   // visualize the result
@@ -495,18 +514,33 @@ function visualizeClusteringResult() {
       case ClusteringAlgorithm.EDGE_BETWEENNESS:
       case ClusteringAlgorithm.BICONNECTED_COMPONENTS: {
         // create a polygonal visual that encloses the nodes that belong to the same cluster
-        clusterVisual = new PolygonVisual()
+        const clusters = {
+          number: clustering.size,
+          clustering,
+          centroids: IEnumerable.from([])
+        }
+        clusterVisual = new PolygonVisual(false, clusters)
         break
       }
       case ClusteringAlgorithm.kMEANS: {
+        const centroids = result.centroids
         if (clustering.size >= 3 && graphComponent.contentRect) {
           // create a voronoi diagram
+          const clusters = {
+            centroids: centroids
+          }
           clusterVisual = new VoronoiVisual(
-            new VoronoiDiagram(result.centroids, graphComponent.contentRect)
+            new VoronoiDiagram(centroids, graphComponent.contentRect),
+            clusters
           )
         } else {
           // if there exist only two clusters, create a polygonal visual with center marking
-          clusterVisual = new PolygonVisual(true)
+          const clusters = {
+            number: clustering.size,
+            clustering,
+            centroids: centroids
+          }
+          clusterVisual = new PolygonVisual(true, clusters)
         }
         break
       }
@@ -518,14 +552,6 @@ function visualizeClusteringResult() {
       ICanvasObjectDescriptor.ALWAYS_DIRTY_INSTANCE
     )
     clusterVisualObject.toBack()
-
-    // update the information for the visual object
-    clusterVisualObject.userObject.clusters = {
-      number: clustering.size,
-      clustering,
-      centroids: result.centroids,
-      drawCenters: selectedAlgorithm === ClusteringAlgorithm.kMEANS
-    }
   }
 
   // invalidate the graphComponent
@@ -536,7 +562,7 @@ function visualizeClusteringResult() {
  * Called when the clustering algorithm changes
  */
 function onAlgorithmChanged() {
-  const algorithmsComboBox = document.getElementById('algorithmsComboBox')
+  const algorithmsComboBox = getElementById('algorithmsComboBox')
   selectedAlgorithm = algorithmsComboBox.selectedIndex
 
   // determine the file name that will be used for loading the graph
@@ -557,13 +583,25 @@ function onAlgorithmChanged() {
 
 /**
  * Loads the sample graphs from a JSON file.
- * @param {Object} sampleData The data samples
+ * @param {*} sampleData The data samples
  */
 function loadGraph(sampleData) {
-  const graph = graphComponent.graph
-  graph.clear()
   // remove all previous visuals
   removeClusterVisuals()
+
+  const graph = graphComponent.graph
+  graph.clear()
+
+  const isEdgeBetweenness = selectedAlgorithm === ClusteringAlgorithm.EDGE_BETWEENNESS
+  const styleFactory =
+    isEdgeBetweenness && getElementById('directed').checked
+      ? () => directedEdgeStyle
+      : () => undefined // tell GraphBuilder to use default styles
+
+  const labelsFactory =
+    isEdgeBetweenness && getElementById('edgeCosts').checked
+      ? () => Math.floor(Math.random() * 200 + 1).toString()
+      : () => undefined // tell GraphBuilder not to create any labels
 
   // initialize a graph builder to parse the graph from the JSON file
   const builder = new GraphBuilder({
@@ -581,22 +619,8 @@ function loadGraph(sampleData) {
         data: sampleData.edges,
         sourceId: 'source',
         targetId: 'target',
-        style: () => {
-          if (
-            selectedAlgorithm === ClusteringAlgorithm.EDGE_BETWEENNESS &&
-            document.getElementById('directed').checked
-          ) {
-            return directedEdgeStyle
-          }
-        },
-        labels: () => {
-          if (
-            selectedAlgorithm === ClusteringAlgorithm.EDGE_BETWEENNESS &&
-            document.getElementById('edgeCosts').checked
-          ) {
-            return Math.floor(Math.random() * 200 + 1)
-          }
-        }
+        style: styleFactory,
+        labels: [labelsFactory]
       }
     ]
   })
@@ -616,7 +640,7 @@ function registerCommands() {
   bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent)
   bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent)
 
-  const samplesComboBox = document.getElementById('algorithmsComboBox')
+  const samplesComboBox = getElementById('algorithmsComboBox')
   bindAction("button[data-command='PreviousFile']", () => {
     samplesComboBox.selectedIndex = Math.max(0, samplesComboBox.selectedIndex - 1)
     onAlgorithmChanged()
@@ -633,45 +657,49 @@ function registerCommands() {
   bindAction("button[data-command='RunAlgorithm']", runAlgorithm)
 
   // edge-betweenness menu
-  document.getElementById('ebMinClusterNumber').addEventListener('change', input => {
-    const value = parseFloat(input.target.value)
-    const maximumClusterNumber = parseFloat(document.getElementById('ebMaxClusterNumber').value)
+  const minInput = getElementById('ebMinClusterNumber')
+  minInput.addEventListener('change', input => {
+    const target = input.target
+    const value = parseFloat(target.value)
+    const maximumClusterNumber = parseFloat(getElementById('ebMaxClusterNumber').value)
     if (isNaN(value) || value < 1) {
       alert('Number of clusters should be non-negative.')
-      input.target.value = 1
+      target.value = '1'
       return
     } else if (value > maximumClusterNumber) {
       alert(
         'Desired minimum number of clusters cannot be larger than the desired maximum number of clusters.'
       )
-      input.target.value = maximumClusterNumber
+      target.value = maximumClusterNumber.toString()
       return
     } else if (value > graph.nodes.size) {
       alert(
         'Desired minimum number of clusters cannot be larger than the number of nodes in the graph.'
       )
-      input.target.value = graph.nodes.size
+      target.value = graph.nodes.size.toString()
       return
     }
     runAlgorithm()
   })
 
-  document.getElementById('ebMaxClusterNumber').addEventListener('change', input => {
-    const value = parseFloat(input.target.value)
-    const minimumClusterNumber = parseFloat(document.getElementById('ebMinClusterNumber').value)
+  const maxInput = getElementById('ebMaxClusterNumber')
+  maxInput.addEventListener('change', input => {
+    const target = input.target
+    const value = parseFloat(target.value)
+    const minimumClusterNumber = parseFloat(getElementById('ebMinClusterNumber').value)
     if (isNaN(value) || value < minimumClusterNumber || minimumClusterNumber < 1) {
       const message =
         value < minimumClusterNumber
           ? 'Desired maximum number of clusters cannot be smaller than the desired minimum number of clusters.'
           : 'Number of clusters should be non-negative.'
       alert(message)
-      input.target.value = minimumClusterNumber
+      target.value = minimumClusterNumber.toString()
       return
     }
     runAlgorithm()
   })
 
-  const considerEdgeDirection = document.getElementById('directed')
+  const considerEdgeDirection = getElementById('directed')
   considerEdgeDirection.addEventListener('click', () => {
     const isChecked = considerEdgeDirection.checked
     graph.edges.forEach(edge => {
@@ -681,7 +709,7 @@ function registerCommands() {
     runAlgorithm()
   })
 
-  const considerEdgeCosts = document.getElementById('edgeCosts')
+  const considerEdgeCosts = getElementById('edgeCosts')
   considerEdgeCosts.addEventListener('click', () => {
     graph.edges.forEach(edge => {
       if (considerEdgeCosts.checked) {
@@ -702,20 +730,24 @@ function registerCommands() {
 
   // k-Means
   bindChangeListener("select[data-command='distanceMetricComboBox']", runAlgorithm)
-  document.getElementById('kMeansMaxClusterNumber').addEventListener('change', input => {
-    const value = parseFloat(input.target.value)
+  const kmeansInput = getElementById('kMeansMaxClusterNumber')
+  kmeansInput.addEventListener('change', input => {
+    const target = input.target
+    const value = parseFloat(target.value)
     if (isNaN(value) || value < 1) {
       alert('Desired maximum number of clusters should be greater than zero.')
-      input.target.value = 1
+      target.value = '1'
       return
     }
     runAlgorithm()
   })
-  document.getElementById('iterations').addEventListener('change', input => {
-    const value = parseFloat(input.target.value)
+  const iterationsInput = getElementById('iterations')
+  iterationsInput.addEventListener('change', input => {
+    const target = input.target
+    const value = parseFloat(target.value)
     if (isNaN(value) || value < 0) {
       alert('Desired maximum number of iterations should be non-negative.')
-      input.target.value = 0
+      target.value = '0'
       return
     }
     runAlgorithm()
@@ -742,11 +774,11 @@ function removeClusterVisuals() {
 
 /**
  * Returns the edge weight for the given edge.
- * @param {IEdge} edge The given edge
- * @return {number} The edge weight
+ * @param {!IEdge} edge The given edge
+ * @returns {number} The edge weight
  */
 function getEdgeWeight(edge) {
-  if (!document.getElementById('edgeCosts').checked) {
+  if (!getElementById('edgeCosts').checked) {
     return 1
   }
 
@@ -755,10 +787,10 @@ function getEdgeWeight(edge) {
     // ..try to return it's value
     const edgeWeight = parseFloat(edge.labels.elementAt(0).text)
     if (!isNaN(edgeWeight)) {
-      return edgeWeight > 0 ? edgeWeight : 0
+      return edgeWeight > 0 ? edgeWeight : 1
     }
   }
-  return 0
+  return 1
 }
 
 /**
@@ -766,11 +798,10 @@ function getEdgeWeight(edge) {
  * @param {boolean} disabled
  */
 function setUIDisabled(disabled) {
-  const samplesComboBox = document.getElementById('algorithmsComboBox')
+  const samplesComboBox = getElementById('algorithmsComboBox')
   samplesComboBox.disabled = disabled
-  document.getElementById('previousButton').disabled =
-    disabled || samplesComboBox.selectedIndex === 0
-  document.getElementById('nextButton').disabled =
+  getElementById('previousButton').disabled = disabled || samplesComboBox.selectedIndex === 0
+  getElementById('nextButton').disabled =
     disabled || samplesComboBox.selectedIndex === samplesComboBox.childElementCount - 1
   graphComponent.inputMode.waiting = disabled
   busy = disabled
@@ -778,27 +809,31 @@ function setUIDisabled(disabled) {
 
 /**
  * Updates the description and the settings panel.
- * @param {string} panelId The id of the panel to be updated
+ * @param {!string} panelId The id of the panel to be updated
  */
 function updateInformationPanel(panelId) {
   // set display none to all and then change only the desired one
-  document.getElementById('edge-betweenness').style.display = 'none'
-  document.getElementById('k-means').style.display = 'none'
-  document.getElementById('hierarchical').style.display = 'none'
-  document.getElementById('biconnected-components').style.display = 'none'
-  document.getElementById('louvain-modularity').style.display = 'none'
-  document.getElementById('label-propagation').style.display = 'none'
-  document.getElementById(panelId).style.display = 'inline-block'
+  getElementById('edge-betweenness').style.display = 'none'
+  getElementById('k-means').style.display = 'none'
+  getElementById('hierarchical').style.display = 'none'
+  getElementById('biconnected-components').style.display = 'none'
+  getElementById('louvain-modularity').style.display = 'none'
+  getElementById('label-propagation').style.display = 'none'
+  getElementById(panelId).style.display = 'inline-block'
 }
 
-const ClusteringAlgorithm = Enum('ClusteringAlgorithm', {
+/**
+ * @readonly
+ * @enum {number}
+ */
+const ClusteringAlgorithm = {
   EDGE_BETWEENNESS: 0,
   kMEANS: 1,
   HIERARCHICAL: 2,
   BICONNECTED_COMPONENTS: 3,
   LOUVAIN_MODULARITY: 4,
   LABEL_PROPAGATION: 5
-})
+}
 
 // Run the demo
 loadJson().then(run)

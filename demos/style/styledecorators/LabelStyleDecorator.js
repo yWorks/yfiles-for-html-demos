@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -28,7 +28,7 @@
  ***************************************************************************/
 import {
   Class,
-  DefaultLabelStyle,
+  EdgeStyleBase,
   ICanvasContext,
   IInputModeContext,
   ILabel,
@@ -40,8 +40,11 @@ import {
   Rect,
   Size,
   SvgVisual,
-  SvgVisualGroup
+  SvgVisualGroup,
+  Visual
 } from 'yfiles'
+
+const SVG_NS = 'http://www.w3.org/2000/svg'
 
 /**
  * This label style decorator shows how to decorate another label style.
@@ -49,18 +52,18 @@ import {
 export default class LabelStyleDecorator extends LabelStyleBase {
   /**
    * Initializes a new instance of this class.
-   * @param {ILabelStyle} baseStyle The optional base style.
+   * @param {!ILabelStyle} baseStyle The base style.
    */
   constructor(baseStyle) {
     super()
-    this.baseStyle = baseStyle || new DefaultLabelStyle()
+    this.baseStyle = baseStyle
   }
 
   /**
    * Creates a new visual as combination of the base label visualization and the decoration.
-   * @param {IRenderContext} context The render context.
-   * @param {ILabel} label The label to which this style instance is assigned.
-   * @returns {Visual} The created visual.
+   * @param {!IRenderContext} context The render context.
+   * @param {!ILabel} label The label to which this style instance is assigned.
+   * @returns {!Visual} The created visual.
    * @see LabelStyleBase#createVisual
    */
   createVisual(context, label) {
@@ -80,16 +83,16 @@ export default class LabelStyleDecorator extends LabelStyleBase {
 
   /**
    * Updates the provided visual.
-   * @param {IRenderContext} context The render context.
-   * @param {Visual|SvgVisualGroup} oldVisual The visual that has been created in the call to
+   * @param {!IRenderContext} context The render context.
+   * @param {!Visual} oldVisual The visual that has been created in the call to
    *        {@link LabelStyleBase#createVisual}.
-   * @param {ILabel} label The label to which this style instance is assigned.
-   * @returns {Visual} The updated visual.
+   * @param {!ILabel} label The label to which this style instance is assigned.
+   * @returns {!Visual} The updated visual.
    * @see LabelStyleBase#updateVisual
    */
   updateVisual(context, oldVisual, label) {
     // check whether the elements are as expected
-    if (oldVisual.children.size !== 2) {
+    if (!(oldVisual instanceof SvgVisualGroup) || oldVisual.children.size !== 2) {
       return this.createVisual(context, label)
     }
 
@@ -110,13 +113,13 @@ export default class LabelStyleDecorator extends LabelStyleBase {
 
   /**
    * Creates the visualization of the decoration.
-   * @param {IRenderContext} context The render context.
-   * @param {IOrientedRectangle} layout The label layout.
-   * @return {SvgVisual} The visual that provides the decoration.
+   * @param {!IRenderContext} context The render context.
+   * @param {!IOrientedRectangle} layout The label layout.
+   * @returns {!SvgVisual} The visual that provides the decoration.
    */
   static createDecoration(context, layout) {
     const padding = 3
-    const line1 = window.document.createElementNS('http://www.w3.org/2000/svg', 'line')
+    const line1 = document.createElementNS(SVG_NS, 'line')
     line1.x1.baseVal.value = -padding
     line1.x2.baseVal.value = layout.width + padding
     line1.y1.baseVal.value = -padding + 2
@@ -124,7 +127,7 @@ export default class LabelStyleDecorator extends LabelStyleBase {
     line1.setAttribute('stroke', '#336699')
     line1.setAttribute('stroke-width', '2')
 
-    const line2 = window.document.createElementNS('http://www.w3.org/2000/svg', 'line')
+    const line2 = document.createElementNS(SVG_NS, 'line')
     line2.x1.baseVal.value = -padding
     line2.x2.baseVal.value = layout.width + padding
     line2.y1.baseVal.value = layout.height + padding
@@ -132,7 +135,7 @@ export default class LabelStyleDecorator extends LabelStyleBase {
     line2.setAttribute('stroke', '#336699')
     line2.setAttribute('stroke-width', '2')
 
-    const group = window.document.createElementNS('http://www.w3.org/2000/svg', 'g')
+    const group = document.createElementNS(SVG_NS, 'g')
     group.appendChild(line1)
     group.appendChild(line2)
 
@@ -145,9 +148,9 @@ export default class LabelStyleDecorator extends LabelStyleBase {
 
   /**
    * Updates the visualization of the decoration.
-   * @param {IRenderContext} context The render context.
-   * @param {IOrientedRectangle} layout The label layout.
-   * @param {SvgVisualGroup} visualGroup The visual that that provides the decoration.
+   * @param {!IRenderContext} context The render context.
+   * @param {!IOrientedRectangle} layout The label layout.
+   * @param {!SvgVisualGroup} visualGroup The visual that that provides the decoration.
    */
   static updateDecoration(context, layout, visualGroup) {
     const group = visualGroup.svgElement
@@ -167,8 +170,8 @@ export default class LabelStyleDecorator extends LabelStyleBase {
 
   /**
    * Returns the preferred {@link Size size} of the base style for the provided label.
-   * @param {ILabel} label The label to which this style instance is assigned.
-   * @returns {Size} The preferred size.
+   * @param {!ILabel} label The label to which this style instance is assigned.
+   * @returns {!Size} The preferred size.
    * @see LabelStyleBase#getPreferredSize
    */
   getPreferredSize(label) {
@@ -178,9 +181,9 @@ export default class LabelStyleDecorator extends LabelStyleBase {
   /**
    * Returns the bounds provided by the base style for the label.
    *
-   * @param {ICanvasContext} context The canvas context.
-   * @param {ILabel} label The label to which this style instance is assigned.
-   * @returns {Rect} The visual bounds.
+   * @param {!ICanvasContext} context The canvas context.
+   * @param {!ILabel} label The label to which this style instance is assigned.
+   * @returns {!Rect} The visual bounds.
    * @override
    * @see LabelStyleBase#getBounds
    */
@@ -190,10 +193,10 @@ export default class LabelStyleDecorator extends LabelStyleBase {
 
   /**
    * Returns whether the base visualization is visible.
-   * @param {ICanvasContext} context The canvas context.
-   * @param {Rect} rectangle The clipping rectangle.
-   * @param {ILabel} label The label to which this style instance is assigned.
-   * @return {boolean} <code>true</code> if either the base visualization or the decoration is
+   * @param {!ICanvasContext} context The canvas context.
+   * @param {!Rect} rectangle The clipping rectangle.
+   * @param {!ILabel} label The label to which this style instance is assigned.
+   * @returns {boolean} <code>true</code> if either the base visualization or the decoration is
    *   visible.
    * @see LabelStyleBase#isVisible
    */
@@ -206,10 +209,10 @@ export default class LabelStyleDecorator extends LabelStyleBase {
   /**
    * Returns whether the base visualization is hit, we don't want the decoration to be hit testable.
    *
-   * @param {IInputModeContext} context The context.
-   * @param {Point} location The point to test.
-   * @param {ILabel} label The label to which this style instance is assigned.
-   * @return {boolean} <code>true</code> if the base visualization is hit.
+   * @param {!IInputModeContext} context The context.
+   * @param {!Point} location The point to test.
+   * @param {!ILabel} label The label to which this style instance is assigned.
+   * @returns {boolean} <code>true</code> if the base visualization is hit.
    * @override
    * @see LabelStyleBase#isHit
    */
@@ -220,10 +223,10 @@ export default class LabelStyleDecorator extends LabelStyleBase {
   /**
    * Returns whether the base visualization is in the box, we don't want the decoration to be
    * marquee selectable.
-   * @param {IInputModeContext} context The input mode context.
-   * @param {Rect} rectangle The marquee selection box.
-   * @param {ILabel} label The label to which this style instance is assigned.
-   * @return {boolean} <code>true</code> if the base visualization is hit.
+   * @param {!IInputModeContext} context The input mode context.
+   * @param {!Rect} rectangle The marquee selection box.
+   * @param {!ILabel} label The label to which this style instance is assigned.
+   * @returns {boolean} <code>true</code> if the base visualization is hit.
    * @override
    * @see LabelStyleBase#isInBox
    */
@@ -237,9 +240,9 @@ export default class LabelStyleDecorator extends LabelStyleBase {
   /**
    * Delegates the lookup to the base style.
    *
-   * @param {ILabel} label The label to use for the context lookup.
-   * @param {Class} type The type to query.
-   * @returns {Object} An implementation of the <code>type</code> or <code>null</code>.
+   * @param {!ILabel} label The label to use for the context lookup.
+   * @param {!Class} type The type to query.
+   * @returns {?object} An implementation of the <code>type</code> or <code>null</code>.
    * @see EdgeStyleBase#lookup
    */
   lookup(label, type) {

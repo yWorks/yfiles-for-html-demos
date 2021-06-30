@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -102,7 +102,7 @@ export class HeatMapBackground extends HtmlCanvasVisual {
       }
     }
     let lastStrokeStyleHeat = -1
-    for (const edge of (renderContext!.canvasComponent as GraphComponent).graph.edges) {
+    for (const edge of (renderContext.canvasComponent as GraphComponent).graph.edges) {
       const heat = this.getHeat(edge)
       if (heat > 0) {
         if (heat !== lastStrokeStyleHeat) {

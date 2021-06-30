@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.3.
+     // This demo file is part of yFiles for HTML 2.4.
      // Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
@@ -28,1443 +28,1572 @@
      // 
      ////////////////////////////////////////////////////////////////////////-->
 
-<graphml xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://www.yworks.com/xml/schema/graphml.html/2.0/ygraphml.xsd " xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:y="http://www.yworks.com/xml/yfiles-common/3.0" xmlns:x="http://www.yworks.com/xml/yfiles-common/markup/3.0" xmlns:yjs="http://www.yworks.com/xml/yfiles-for-html/2.0/xaml" xmlns:x0="http://www.yworks.com/yFilesHTML/demos/FlatDemoStyle/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-	<key id="d0" for="node" attr.name="NodeLabels" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/NodeLabels"/>
-	<key id="d1" for="node" attr.name="NodeGeometry" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/NodeGeometry"/>
-	<key id="d2" for="all" attr.name="UserTags" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/UserTags"/>
-	<key id="d3" for="node" attr.name="NodeStyle" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/NodeStyle"/>
-	<key id="d4" for="edge" attr.name="EdgeLabels" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/EdgeLabels"/>
-	<key id="d5" for="edge" attr.name="EdgeGeometry" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/EdgeGeometry"/>
-	<key id="d6" for="edge" attr.name="EdgeStyle" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/EdgeStyle"/>
-	<key id="d7" for="port" attr.name="PortLabels" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/PortLabels"/>
-	<key id="d8" for="port" attr.name="PortLocationParameter" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/PortLocationParameter">
+<!--Created by yFiles for HTML 2.4-layout1-->
+<graphml xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://www.yworks.com/xml/schema/graphml.html/2.0/ygraphml.xsd " xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:demostyle="http://www.yworks.com/yFilesHTML/demos/FlatDemoStyle/1.0" xmlns:icon-style="http://www.yworks.com/yed-live/icon-style/1.0" xmlns:bpmn="http://www.yworks.com/xml/yfiles-bpmn/2.0" xmlns:demotablestyle="http://www.yworks.com/yFilesHTML/demos/FlatDemoTableStyle/1.0" xmlns:uml="http://www.yworks.com/yFilesHTML/demos/UMLDemoStyle/1.0" xmlns:GraphvizNodeStyle="http://www.yworks.com/yFilesHTML/graphviz-node-style/1.0" xmlns:VuejsNodeStyle="http://www.yworks.com/demos/yfiles-vuejs-node-style/1.0" xmlns:explorer-style="http://www.yworks.com/data-explorer/1.0" xmlns:y="http://www.yworks.com/xml/yfiles-common/3.0" xmlns:x="http://www.yworks.com/xml/yfiles-common/markup/3.0" xmlns:yjs="http://www.yworks.com/xml/yfiles-for-html/2.0/xaml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<key id="d0" for="node" attr.type="int" attr.name="zOrder" y:attr.uri="http://www.yworks.com/xml/yfiles-z-order/1.0/zOrder"/>
+	<key id="d1" for="node" attr.type="boolean" attr.name="Expanded" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/folding/Expanded">
+		<default>true</default>
+	</key>
+	<key id="d2" for="node" attr.type="string" attr.name="url"/>
+	<key id="d3" for="node" attr.type="string" attr.name="description"/>
+	<key id="d4" for="node" attr.name="NodeLabels" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/NodeLabels"/>
+	<key id="d5" for="node" attr.name="NodeGeometry" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/NodeGeometry"/>
+	<key id="d6" for="all" attr.name="UserTags" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/UserTags"/>
+	<key id="d7" for="node" attr.name="NodeStyle" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/NodeStyle"/>
+	<key id="d8" for="node" attr.name="NodeViewState" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/folding/1.1/NodeViewState"/>
+	<key id="d9" for="edge" attr.type="string" attr.name="url"/>
+	<key id="d10" for="edge" attr.type="string" attr.name="description"/>
+	<key id="d11" for="edge" attr.name="EdgeLabels" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/EdgeLabels"/>
+	<key id="d12" for="edge" attr.name="EdgeGeometry" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/EdgeGeometry"/>
+	<key id="d13" for="edge" attr.name="EdgeStyle" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/EdgeStyle"/>
+	<key id="d14" for="edge" attr.name="EdgeViewState" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/folding/1.1/EdgeViewState"/>
+	<key id="d15" for="port" attr.name="PortLabels" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/PortLabels"/>
+	<key id="d16" for="port" attr.name="PortLocationParameter" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/PortLocationParameter">
 		<default>
 			<x:Static Member="y:FreeNodePortLocationModel.NodeCenterAnchored"/>
 		</default>
 	</key>
-	<key id="d9" for="port" attr.name="PortStyle" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/PortStyle">
+	<key id="d17" for="port" attr.name="PortStyle" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/PortStyle">
 		<default>
 			<x:Static Member="y:VoidPortStyle.Instance"/>
 		</default>
 	</key>
-	<key id="d10" attr.name="SharedData" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/SharedData"/>
-	<data key="d10">
-		<y:SharedData>
-			<y:RatioAnchoredLabelModelParameter x:Key="1" LayoutRatio="0.5,0.5" LabelRatio="0.5,0.5"/>
-		</y:SharedData>
+	<key id="d18" for="port" attr.name="PortViewState" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/folding/1.1/PortViewState"/>
+	<key id="d19" attr.name="SharedData" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/SharedData"/>
+	<data key="d19">
+		<y:SharedData/>
 	</data>
 	<graph id="G" edgedefault="directed">
+		<data key="d6">
+			<y:Json>{"version":"2.0.0","theme":{"name":"light","version":"1.0.0"}}</y:Json>
+		</data>
 		<node id="n0">
-			<data key="d1">
-				<y:RectD X="415" Y="250" Width="40" Height="40"/>
+			<data key="d0">0</data>
+			<data key="d5">
+				<y:RectD X="0" Y="0" Width="40" Height="40"/>
 			</data>
-			<data key="d3">
+			<data key="d7">
 				<yjs:ShapeNodeStyle fill="#FFFF8C00">
 					<yjs:ShapeNodeStyle.stroke>
-						<yjs:Stroke fill="#FFFFFFFF" miterLimit="1.45"/>
+						<yjs:Stroke fill="#FFA75D04" thickness="1.5"/>
 					</yjs:ShapeNodeStyle.stroke>
 				</yjs:ShapeNodeStyle>
 			</data>
 			<port name="p0">
-				<data key="d8">
-					<y:FreeNodePortLocationModelParameter Ratio="0.875,0"/>
+				<data key="d16">
+					<y:FreeNodePortLocationModelParameter Ratio="1,0.5"/>
 				</data>
 			</port>
 			<port name="p1">
-				<data key="d8">
+				<data key="d16">
 					<y:FreeNodePortLocationModelParameter Ratio="0,0.5"/>
 				</data>
 			</port>
 			<port name="p2">
-				<data key="d8">
-					<y:FreeNodePortLocationModelParameter Ratio="0.5,1"/>
+				<data key="d16">
+					<y:FreeNodePortLocationModelParameter Ratio="0.16666666666666713,1"/>
 				</data>
 			</port>
 			<port name="p3">
-				<data key="d8">
+				<data key="d16">
 					<y:FreeNodePortLocationModelParameter Ratio="0.5,0"/>
 				</data>
 			</port>
 			<port name="p4">
-				<data key="d8">
-					<y:FreeNodePortLocationModelParameter Ratio="0.125,0"/>
+				<data key="d16">
+					<y:FreeNodePortLocationModelParameter Ratio="0.5,1"/>
 				</data>
 			</port>
 			<port name="p5">
-				<data key="d8">
-					<y:FreeNodePortLocationModelParameter Ratio="1,0.5"/>
+				<data key="d16">
+					<y:FreeNodePortLocationModelParameter Ratio="0.8333333333333328,1"/>
 				</data>
 			</port>
 		</node>
 		<node id="n1">
-			<data key="d1">
-				<y:RectD X="415" Y="250" Width="40" Height="40"/>
+			<data key="d0">1</data>
+			<data key="d5">
+				<y:RectD X="0" Y="0" Width="40" Height="40"/>
 			</data>
-			<data key="d3">
+			<data key="d7">
 				<yjs:ShapeNodeStyle fill="#FFFF8C00">
 					<yjs:ShapeNodeStyle.stroke>
-						<yjs:Stroke fill="#FFFFFFFF" miterLimit="1.45"/>
+						<yjs:Stroke fill="#FFA75D04" thickness="1.5"/>
 					</yjs:ShapeNodeStyle.stroke>
 				</yjs:ShapeNodeStyle>
 			</data>
 			<port name="p0">
-				<data key="d8">
-					<y:FreeNodePortLocationModelParameter Ratio="1,0.5"/>
+				<data key="d16">
+					<y:FreeNodePortLocationModelParameter Ratio="0.5,0"/>
 				</data>
 			</port>
 			<port name="p1">
-				<data key="d8">
-					<y:FreeNodePortLocationModelParameter Ratio="0.125,0"/>
+				<data key="d16">
+					<y:FreeNodePortLocationModelParameter Ratio="0.5,0"/>
 				</data>
 			</port>
 			<port name="p2">
-				<data key="d8">
-					<y:FreeNodePortLocationModelParameter Ratio="1,0.5"/>
+				<data key="d16">
+					<y:FreeNodePortLocationModelParameter Ratio="0.5,1"/>
 				</data>
 			</port>
 			<port name="p3">
-				<data key="d8">
+				<data key="d16">
 					<y:FreeNodePortLocationModelParameter Ratio="0.5,0"/>
 				</data>
 			</port>
 			<port name="p4">
-				<data key="d8">
-					<y:FreeNodePortLocationModelParameter Ratio="0.5,1"/>
+				<data key="d16">
+					<y:FreeNodePortLocationModelParameter Ratio="0.5,0"/>
 				</data>
 			</port>
 			<port name="p5">
-				<data key="d8">
-					<y:FreeNodePortLocationModelParameter Ratio="0,0.5"/>
+				<data key="d16">
+					<y:FreeNodePortLocationModelParameter Ratio="0.5,0"/>
 				</data>
 			</port>
 		</node>
 		<node id="n2">
-			<data key="d0">
+			<data key="d0">2</data>
+			<data key="d4">
 				<x:List>
-					<y:Label LayoutParameter="{y:GraphMLReference 1}" PreferredSize="7.332568059905846,14">
+					<y:Label>
 						<y:Label.Text>T</y:Label.Text>
+						<y:Label.LayoutParameter>
+							<y:RatioAnchoredLabelModelParameter LayoutOffset="16.333715970047024,13"/>
+						</y:Label.LayoutParameter>
 						<y:Label.Style>
 							<yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000">
 								<yjs:DefaultLabelStyle.font>
-									<yjs:Font fontSize="12"/>
+									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
 								</yjs:DefaultLabelStyle.font>
 							</yjs:DefaultLabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
 			</data>
-			<data key="d1">
-				<y:RectD X="415" Y="250" Width="40" Height="40"/>
+			<data key="d5">
+				<y:RectD X="0" Y="0" Width="40" Height="40"/>
 			</data>
-			<data key="d3">
-				<yjs:ShapeNodeStyle fill="#FF32CD32">
+			<data key="d7">
+				<yjs:ShapeNodeStyle fill="#FFF1D302">
 					<yjs:ShapeNodeStyle.stroke>
-						<yjs:Stroke fill="#FFFFFFFF" miterLimit="1.45"/>
+						<yjs:Stroke fill="#FFA79200" thickness="1.5"/>
 					</yjs:ShapeNodeStyle.stroke>
 				</yjs:ShapeNodeStyle>
 			</data>
 			<port name="p0">
-				<data key="d8">
+				<data key="d16">
 					<y:FreeNodePortLocationModelParameter Ratio="0,0.5"/>
 				</data>
 			</port>
 			<port name="p1">
-				<data key="d8">
+				<data key="d16">
 					<y:FreeNodePortLocationModelParameter Ratio="1,0.5"/>
 				</data>
 			</port>
 			<port name="p2">
-				<data key="d8">
-					<y:FreeNodePortLocationModelParameter Ratio="1,0.5"/>
+				<data key="d16">
+					<y:FreeNodePortLocationModelParameter Ratio="0.5,1"/>
 				</data>
 			</port>
 			<port name="p3">
-				<data key="d8">
-					<y:FreeNodePortLocationModelParameter Ratio="1,0.5"/>
+				<data key="d16">
+					<y:FreeNodePortLocationModelParameter Ratio="0.1666666666666657,1"/>
 				</data>
 			</port>
 		</node>
 		<node id="n3">
-			<data key="d1">
-				<y:RectD X="395" Y="230" Width="80" Height="80"/>
+			<data key="d0">3</data>
+			<data key="d5">
+				<y:RectD X="0" Y="0" Width="80" Height="80"/>
 			</data>
-			<data key="d3">
+			<data key="d7">
 				<yjs:ShapeNodeStyle fill="#FFFF8C00">
 					<yjs:ShapeNodeStyle.stroke>
-						<yjs:Stroke fill="#FFFFFFFF" miterLimit="1.45"/>
+						<yjs:Stroke fill="#FFA75D04" thickness="1.5"/>
 					</yjs:ShapeNodeStyle.stroke>
 				</yjs:ShapeNodeStyle>
 			</data>
 			<port name="p0">
-				<data key="d8">
-					<y:FreeNodePortLocationModelParameter Ratio="1,0.5"/>
+				<data key="d16">
+					<y:FreeNodePortLocationModelParameter Ratio="0.5,1"/>
 				</data>
 			</port>
 			<port name="p1">
-				<data key="d8">
+				<data key="d16">
 					<y:FreeNodePortLocationModelParameter Ratio="0,0.5"/>
 				</data>
 			</port>
 			<port name="p2">
-				<data key="d8">
+				<data key="d16">
 					<y:FreeNodePortLocationModelParameter Ratio="0.5,0"/>
 				</data>
 			</port>
 		</node>
 		<node id="n4">
-			<data key="d0">
+			<data key="d0">4</data>
+			<data key="d4">
 				<x:List>
-					<y:Label LayoutParameter="{y:GraphMLReference 1}" PreferredSize="7.332568059905846,14">
+					<y:Label>
 						<y:Label.Text>T</y:Label.Text>
+						<y:Label.LayoutParameter>
+							<y:RatioAnchoredLabelModelParameter LayoutOffset="16.333715970047024,13"/>
+						</y:Label.LayoutParameter>
 						<y:Label.Style>
 							<yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000">
 								<yjs:DefaultLabelStyle.font>
-									<yjs:Font fontSize="12"/>
+									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
 								</yjs:DefaultLabelStyle.font>
 							</yjs:DefaultLabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
 			</data>
-			<data key="d1">
-				<y:RectD X="415" Y="250" Width="40" Height="40"/>
+			<data key="d5">
+				<y:RectD X="0" Y="0" Width="40" Height="40"/>
 			</data>
-			<data key="d3">
-				<yjs:ShapeNodeStyle fill="#FF32CD32">
+			<data key="d7">
+				<yjs:ShapeNodeStyle fill="#FFF1D302">
 					<yjs:ShapeNodeStyle.stroke>
-						<yjs:Stroke fill="#FFFFFFFF" miterLimit="1.45"/>
+						<yjs:Stroke fill="#FFA79200" thickness="1.5"/>
 					</yjs:ShapeNodeStyle.stroke>
 				</yjs:ShapeNodeStyle>
 			</data>
 			<port name="p0">
-				<data key="d8">
-					<y:FreeNodePortLocationModelParameter Ratio="0,0.5"/>
+				<data key="d16">
+					<y:FreeNodePortLocationModelParameter Ratio="0.5,0"/>
 				</data>
 			</port>
 		</node>
 		<node id="n5">
-			<data key="d0">
+			<data key="d0">5</data>
+			<data key="d4">
 				<x:List>
-					<y:Label LayoutParameter="{y:GraphMLReference 1}" PreferredSize="7.332568059905846,14">
+					<y:Label>
 						<y:Label.Text>T</y:Label.Text>
+						<y:Label.LayoutParameter>
+							<y:RatioAnchoredLabelModelParameter LayoutOffset="16.33371597004708,13"/>
+						</y:Label.LayoutParameter>
 						<y:Label.Style>
 							<yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000">
 								<yjs:DefaultLabelStyle.font>
-									<yjs:Font fontSize="12"/>
+									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
 								</yjs:DefaultLabelStyle.font>
 							</yjs:DefaultLabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
 			</data>
-			<data key="d1">
-				<y:RectD X="415" Y="250" Width="40" Height="40"/>
+			<data key="d5">
+				<y:RectD X="0" Y="0" Width="40" Height="40"/>
 			</data>
-			<data key="d3">
-				<yjs:ShapeNodeStyle fill="#FF32CD32">
+			<data key="d7">
+				<yjs:ShapeNodeStyle fill="#FFF1D302">
 					<yjs:ShapeNodeStyle.stroke>
-						<yjs:Stroke fill="#FFFFFFFF" miterLimit="1.45"/>
+						<yjs:Stroke fill="#FFA79200" thickness="1.5"/>
 					</yjs:ShapeNodeStyle.stroke>
 				</yjs:ShapeNodeStyle>
 			</data>
 			<port name="p0">
-				<data key="d8">
-					<y:FreeNodePortLocationModelParameter Ratio="0,0.5"/>
+				<data key="d16">
+					<y:FreeNodePortLocationModelParameter Ratio="0.5,0"/>
 				</data>
 			</port>
 			<port name="p1">
-				<data key="d8">
-					<y:FreeNodePortLocationModelParameter Ratio="1,0.5"/>
+				<data key="d16">
+					<y:FreeNodePortLocationModelParameter Ratio="0.3,1"/>
 				</data>
 			</port>
 			<port name="p2">
-				<data key="d8">
-					<y:FreeNodePortLocationModelParameter Ratio="1,0.5"/>
+				<data key="d16">
+					<y:FreeNodePortLocationModelParameter Ratio="0.5,1"/>
 				</data>
 			</port>
 			<port name="p3">
-				<data key="d8">
-					<y:FreeNodePortLocationModelParameter Ratio="1,0.5"/>
+				<data key="d16">
+					<y:FreeNodePortLocationModelParameter Ratio="0.1,1"/>
 				</data>
 			</port>
 			<port name="p4">
-				<data key="d8">
+				<data key="d16">
 					<y:FreeNodePortLocationModelParameter Ratio="1,0.5"/>
 				</data>
 			</port>
 			<port name="p5">
-				<data key="d8">
-					<y:FreeNodePortLocationModelParameter Ratio="1,0.5"/>
+				<data key="d16">
+					<y:FreeNodePortLocationModelParameter Ratio="0,0.5"/>
 				</data>
 			</port>
 		</node>
 		<node id="n6">
-			<data key="d0">
+			<data key="d0">6</data>
+			<data key="d4">
 				<x:List>
-					<y:Label LayoutParameter="{y:GraphMLReference 1}" PreferredSize="7.332568059905846,14">
+					<y:Label>
 						<y:Label.Text>T</y:Label.Text>
+						<y:Label.LayoutParameter>
+							<y:RatioAnchoredLabelModelParameter LayoutOffset="16.333715970047024,13"/>
+						</y:Label.LayoutParameter>
 						<y:Label.Style>
 							<yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000">
 								<yjs:DefaultLabelStyle.font>
-									<yjs:Font fontSize="12"/>
+									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
 								</yjs:DefaultLabelStyle.font>
 							</yjs:DefaultLabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
 			</data>
-			<data key="d1">
-				<y:RectD X="415" Y="250" Width="40" Height="40"/>
+			<data key="d5">
+				<y:RectD X="0" Y="0" Width="40" Height="40"/>
 			</data>
-			<data key="d3">
-				<yjs:ShapeNodeStyle fill="#FF32CD32">
+			<data key="d7">
+				<yjs:ShapeNodeStyle fill="#FFF1D302">
 					<yjs:ShapeNodeStyle.stroke>
-						<yjs:Stroke fill="#FFFFFFFF" miterLimit="1.45"/>
+						<yjs:Stroke fill="#FFA79200" thickness="1.5"/>
 					</yjs:ShapeNodeStyle.stroke>
 				</yjs:ShapeNodeStyle>
 			</data>
 			<port name="p0">
-				<data key="d8">
-					<y:FreeNodePortLocationModelParameter Ratio="0,0.5"/>
+				<data key="d16">
+					<y:FreeNodePortLocationModelParameter Ratio="0.5,0"/>
 				</data>
 			</port>
 		</node>
 		<node id="n7">
-			<data key="d0">
+			<data key="d0">7</data>
+			<data key="d4">
 				<x:List>
-					<y:Label LayoutParameter="{y:GraphMLReference 1}" PreferredSize="7.332568059905846,14">
+					<y:Label>
 						<y:Label.Text>T</y:Label.Text>
+						<y:Label.LayoutParameter>
+							<y:RatioAnchoredLabelModelParameter LayoutOffset="16.333715970047024,13"/>
+						</y:Label.LayoutParameter>
 						<y:Label.Style>
 							<yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000">
 								<yjs:DefaultLabelStyle.font>
-									<yjs:Font fontSize="12"/>
+									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
 								</yjs:DefaultLabelStyle.font>
 							</yjs:DefaultLabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
 			</data>
-			<data key="d1">
-				<y:RectD X="415" Y="250" Width="40" Height="40"/>
+			<data key="d5">
+				<y:RectD X="0" Y="0" Width="40" Height="40"/>
 			</data>
-			<data key="d3">
-				<yjs:ShapeNodeStyle fill="#FF32CD32">
+			<data key="d7">
+				<yjs:ShapeNodeStyle fill="#FFF1D302">
 					<yjs:ShapeNodeStyle.stroke>
-						<yjs:Stroke fill="#FFFFFFFF" miterLimit="1.45"/>
+						<yjs:Stroke fill="#FFA79200" thickness="1.5"/>
 					</yjs:ShapeNodeStyle.stroke>
 				</yjs:ShapeNodeStyle>
 			</data>
 			<port name="p0">
-				<data key="d8">
-					<y:FreeNodePortLocationModelParameter Ratio="0,0.5"/>
+				<data key="d16">
+					<y:FreeNodePortLocationModelParameter Ratio="0.5,0"/>
 				</data>
 			</port>
 		</node>
 		<node id="n8">
-			<data key="d0">
+			<data key="d0">8</data>
+			<data key="d4">
 				<x:List>
-					<y:Label LayoutParameter="{y:GraphMLReference 1}" PreferredSize="7.332568059905846,14">
+					<y:Label>
 						<y:Label.Text>T</y:Label.Text>
+						<y:Label.LayoutParameter>
+							<y:RatioAnchoredLabelModelParameter LayoutOffset="16.33371597004708,13"/>
+						</y:Label.LayoutParameter>
 						<y:Label.Style>
 							<yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000">
 								<yjs:DefaultLabelStyle.font>
-									<yjs:Font fontSize="12"/>
+									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
 								</yjs:DefaultLabelStyle.font>
 							</yjs:DefaultLabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
 			</data>
-			<data key="d1">
-				<y:RectD X="415" Y="250" Width="40" Height="40"/>
+			<data key="d5">
+				<y:RectD X="0" Y="0" Width="40" Height="40"/>
 			</data>
-			<data key="d3">
-				<yjs:ShapeNodeStyle fill="#FF32CD32">
+			<data key="d7">
+				<yjs:ShapeNodeStyle fill="#FFF1D302">
 					<yjs:ShapeNodeStyle.stroke>
-						<yjs:Stroke fill="#FFFFFFFF" miterLimit="1.45"/>
+						<yjs:Stroke fill="#FFA79200" thickness="1.5"/>
 					</yjs:ShapeNodeStyle.stroke>
 				</yjs:ShapeNodeStyle>
 			</data>
 			<port name="p0">
-				<data key="d8">
-					<y:FreeNodePortLocationModelParameter Ratio="0,0.5"/>
+				<data key="d16">
+					<y:FreeNodePortLocationModelParameter Ratio="0.5,0"/>
 				</data>
 			</port>
 		</node>
 		<node id="n9">
-			<data key="d0">
+			<data key="d0">9</data>
+			<data key="d4">
 				<x:List>
-					<y:Label LayoutParameter="{y:GraphMLReference 1}" PreferredSize="7.332568059905846,14">
+					<y:Label>
 						<y:Label.Text>T</y:Label.Text>
+						<y:Label.LayoutParameter>
+							<y:RatioAnchoredLabelModelParameter LayoutOffset="16.33371597004708,13"/>
+						</y:Label.LayoutParameter>
 						<y:Label.Style>
 							<yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000">
 								<yjs:DefaultLabelStyle.font>
-									<yjs:Font fontSize="12"/>
+									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
 								</yjs:DefaultLabelStyle.font>
 							</yjs:DefaultLabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
 			</data>
-			<data key="d1">
-				<y:RectD X="415" Y="250" Width="40" Height="40"/>
+			<data key="d5">
+				<y:RectD X="0" Y="0" Width="40" Height="40"/>
 			</data>
-			<data key="d3">
-				<yjs:ShapeNodeStyle fill="#FF32CD32">
+			<data key="d7">
+				<yjs:ShapeNodeStyle fill="#FFF1D302">
 					<yjs:ShapeNodeStyle.stroke>
-						<yjs:Stroke fill="#FFFFFFFF" miterLimit="1.45"/>
+						<yjs:Stroke fill="#FFA79200" thickness="1.5"/>
 					</yjs:ShapeNodeStyle.stroke>
 				</yjs:ShapeNodeStyle>
 			</data>
 			<port name="p0">
-				<data key="d8">
-					<y:FreeNodePortLocationModelParameter Ratio="0,0.5"/>
+				<data key="d16">
+					<y:FreeNodePortLocationModelParameter Ratio="0.5,0"/>
 				</data>
 			</port>
 		</node>
 		<node id="n10">
-			<data key="d1">
-				<y:RectD X="415" Y="250" Width="40" Height="40"/>
+			<data key="d0">10</data>
+			<data key="d5">
+				<y:RectD X="0" Y="0" Width="40" Height="40"/>
 			</data>
-			<data key="d3">
+			<data key="d7">
 				<yjs:ShapeNodeStyle fill="#FFFF8C00">
 					<yjs:ShapeNodeStyle.stroke>
-						<yjs:Stroke fill="#FFFFFFFF" miterLimit="1.45"/>
+						<yjs:Stroke fill="#FFA75D04" thickness="1.5"/>
 					</yjs:ShapeNodeStyle.stroke>
 				</yjs:ShapeNodeStyle>
 			</data>
 			<port name="p0">
-				<data key="d8">
+				<data key="d16">
 					<y:FreeNodePortLocationModelParameter Ratio="1,0.5"/>
 				</data>
 			</port>
 			<port name="p1">
-				<data key="d8">
+				<data key="d16">
 					<y:FreeNodePortLocationModelParameter Ratio="0.5,1"/>
 				</data>
 			</port>
 		</node>
 		<node id="n11">
-			<data key="d1">
-				<y:RectD X="395" Y="230" Width="80" Height="80"/>
+			<data key="d0">11</data>
+			<data key="d5">
+				<y:RectD X="0" Y="0" Width="80" Height="80"/>
 			</data>
-			<data key="d3">
+			<data key="d7">
 				<yjs:ShapeNodeStyle fill="#FFFF8C00">
 					<yjs:ShapeNodeStyle.stroke>
-						<yjs:Stroke fill="#FFFFFFFF" miterLimit="1.45"/>
+						<yjs:Stroke fill="#FFA75D04" thickness="1.5"/>
 					</yjs:ShapeNodeStyle.stroke>
 				</yjs:ShapeNodeStyle>
 			</data>
 			<port name="p0">
-				<data key="d8">
-					<y:FreeNodePortLocationModelParameter Ratio="0,0.5"/>
+				<data key="d16">
+					<y:FreeNodePortLocationModelParameter Ratio="0.5,0"/>
 				</data>
 			</port>
 			<port name="p1">
-				<data key="d8">
+				<data key="d16">
 					<y:FreeNodePortLocationModelParameter Ratio="1,0.5"/>
 				</data>
 			</port>
 			<port name="p2">
-				<data key="d8">
+				<data key="d16">
 					<y:FreeNodePortLocationModelParameter Ratio="0.5,1"/>
 				</data>
 			</port>
 		</node>
 		<node id="n12">
-			<data key="d0">
+			<data key="d0">12</data>
+			<data key="d4">
 				<x:List>
-					<y:Label LayoutParameter="{y:GraphMLReference 1}" PreferredSize="7.332568059905846,14">
+					<y:Label>
 						<y:Label.Text>T</y:Label.Text>
+						<y:Label.LayoutParameter>
+							<y:RatioAnchoredLabelModelParameter LayoutOffset="16.33371597004708,13"/>
+						</y:Label.LayoutParameter>
 						<y:Label.Style>
 							<yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000">
 								<yjs:DefaultLabelStyle.font>
-									<yjs:Font fontSize="12"/>
+									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
 								</yjs:DefaultLabelStyle.font>
 							</yjs:DefaultLabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
 			</data>
-			<data key="d1">
-				<y:RectD X="415" Y="250" Width="40" Height="40"/>
+			<data key="d5">
+				<y:RectD X="0" Y="0" Width="40" Height="40"/>
 			</data>
-			<data key="d3">
-				<yjs:ShapeNodeStyle fill="#FF32CD32">
+			<data key="d7">
+				<yjs:ShapeNodeStyle fill="#FFF1D302">
 					<yjs:ShapeNodeStyle.stroke>
-						<yjs:Stroke fill="#FFFFFFFF" miterLimit="1.45"/>
+						<yjs:Stroke fill="#FFA79200" thickness="1.5"/>
 					</yjs:ShapeNodeStyle.stroke>
 				</yjs:ShapeNodeStyle>
 			</data>
 			<port name="p0">
-				<data key="d8">
-					<y:FreeNodePortLocationModelParameter Ratio="0,0.5"/>
+				<data key="d16">
+					<y:FreeNodePortLocationModelParameter Ratio="0.5,0"/>
 				</data>
 			</port>
 		</node>
 		<node id="n13">
-			<data key="d0">
+			<data key="d0">13</data>
+			<data key="d4">
 				<x:List>
-					<y:Label LayoutParameter="{y:GraphMLReference 1}" PreferredSize="7.332568059905846,14">
+					<y:Label>
 						<y:Label.Text>T</y:Label.Text>
+						<y:Label.LayoutParameter>
+							<y:RatioAnchoredLabelModelParameter LayoutOffset="16.333715970047024,13"/>
+						</y:Label.LayoutParameter>
 						<y:Label.Style>
 							<yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000">
 								<yjs:DefaultLabelStyle.font>
-									<yjs:Font fontSize="12"/>
+									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
 								</yjs:DefaultLabelStyle.font>
 							</yjs:DefaultLabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
 			</data>
-			<data key="d1">
-				<y:RectD X="415" Y="250" Width="40" Height="40"/>
+			<data key="d5">
+				<y:RectD X="0" Y="0" Width="40" Height="40"/>
 			</data>
-			<data key="d3">
-				<yjs:ShapeNodeStyle fill="#FF32CD32">
+			<data key="d7">
+				<yjs:ShapeNodeStyle fill="#FFF1D302">
 					<yjs:ShapeNodeStyle.stroke>
-						<yjs:Stroke fill="#FFFFFFFF" miterLimit="1.45"/>
+						<yjs:Stroke fill="#FFA79200" thickness="1.5"/>
 					</yjs:ShapeNodeStyle.stroke>
 				</yjs:ShapeNodeStyle>
 			</data>
 			<port name="p0">
-				<data key="d8">
-					<y:FreeNodePortLocationModelParameter Ratio="0,0.5"/>
+				<data key="d16">
+					<y:FreeNodePortLocationModelParameter Ratio="0.5,0"/>
 				</data>
 			</port>
 		</node>
 		<node id="n14">
-			<data key="d0">
+			<data key="d0">14</data>
+			<data key="d4">
 				<x:List>
-					<y:Label LayoutParameter="{y:GraphMLReference 1}" PreferredSize="7.332568059905846,14">
+					<y:Label>
 						<y:Label.Text>T</y:Label.Text>
+						<y:Label.LayoutParameter>
+							<y:RatioAnchoredLabelModelParameter LayoutOffset="16.33371597004708,13"/>
+						</y:Label.LayoutParameter>
 						<y:Label.Style>
 							<yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000">
 								<yjs:DefaultLabelStyle.font>
-									<yjs:Font fontSize="12"/>
+									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
 								</yjs:DefaultLabelStyle.font>
 							</yjs:DefaultLabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
 			</data>
-			<data key="d1">
-				<y:RectD X="415" Y="250" Width="40" Height="40"/>
+			<data key="d5">
+				<y:RectD X="0" Y="0" Width="40" Height="40"/>
 			</data>
-			<data key="d3">
-				<yjs:ShapeNodeStyle fill="#FF32CD32">
+			<data key="d7">
+				<yjs:ShapeNodeStyle fill="#FFF1D302">
 					<yjs:ShapeNodeStyle.stroke>
-						<yjs:Stroke fill="#FFFFFFFF" miterLimit="1.45"/>
+						<yjs:Stroke fill="#FFA79200" thickness="1.5"/>
 					</yjs:ShapeNodeStyle.stroke>
 				</yjs:ShapeNodeStyle>
 			</data>
 			<port name="p0">
-				<data key="d8">
-					<y:FreeNodePortLocationModelParameter Ratio="0,0.5"/>
+				<data key="d16">
+					<y:FreeNodePortLocationModelParameter Ratio="0.5,0"/>
 				</data>
 			</port>
 		</node>
 		<node id="n15">
-			<data key="d0">
+			<data key="d0">15</data>
+			<data key="d4">
 				<x:List>
-					<y:Label LayoutParameter="{y:GraphMLReference 1}" PreferredSize="14.670997485167332,14">
+					<y:Label>
 						<y:Label.Text>Cy</y:Label.Text>
+						<y:Label.LayoutParameter>
+							<y:RatioAnchoredLabelModelParameter LayoutOffset="12.664501257416333,13"/>
+						</y:Label.LayoutParameter>
 						<y:Label.Style>
 							<yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000">
 								<yjs:DefaultLabelStyle.font>
-									<yjs:Font fontSize="12"/>
+									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
 								</yjs:DefaultLabelStyle.font>
 							</yjs:DefaultLabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
 			</data>
-			<data key="d1">
-				<y:RectD X="415" Y="250" Width="40" Height="40"/>
+			<data key="d5">
+				<y:RectD X="0" Y="0" Width="40" Height="40"/>
 			</data>
-			<data key="d3">
-				<yjs:ShapeNodeStyle fill="#FFBA55D3">
+			<data key="d7">
+				<yjs:ShapeNodeStyle fill="#FFAB2346">
 					<yjs:ShapeNodeStyle.stroke>
-						<yjs:Stroke fill="#FFFFFFFF" miterLimit="1.45"/>
+						<yjs:Stroke fill="#FF480B1B" thickness="1.5"/>
 					</yjs:ShapeNodeStyle.stroke>
 				</yjs:ShapeNodeStyle>
 			</data>
 			<port name="p0">
-				<data key="d8">
-					<y:FreeNodePortLocationModelParameter Ratio="1,0.5"/>
-				</data>
-			</port>
-			<port name="p1">
-				<data key="d8">
+				<data key="d16">
 					<y:FreeNodePortLocationModelParameter Ratio="0.5,0"/>
 				</data>
 			</port>
-			<port name="p2">
-				<data key="d8">
+			<port name="p1">
+				<data key="d16">
 					<y:FreeNodePortLocationModelParameter Ratio="0.5,1"/>
+				</data>
+			</port>
+			<port name="p2">
+				<data key="d16">
+					<y:FreeNodePortLocationModelParameter Ratio="1,0.5"/>
 				</data>
 			</port>
 		</node>
 		<node id="n16">
-			<data key="d0">
+			<data key="d0">16</data>
+			<data key="d4">
 				<x:List>
-					<y:Label LayoutParameter="{y:GraphMLReference 1}" PreferredSize="14.670997485167332,14">
+					<y:Label>
 						<y:Label.Text>Cy</y:Label.Text>
+						<y:Label.LayoutParameter>
+							<y:RatioAnchoredLabelModelParameter LayoutOffset="12.664501257416333,13"/>
+						</y:Label.LayoutParameter>
 						<y:Label.Style>
 							<yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000">
 								<yjs:DefaultLabelStyle.font>
-									<yjs:Font fontSize="12"/>
+									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
 								</yjs:DefaultLabelStyle.font>
 							</yjs:DefaultLabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
 			</data>
-			<data key="d1">
-				<y:RectD X="415" Y="250" Width="40" Height="40"/>
+			<data key="d5">
+				<y:RectD X="0" Y="0" Width="40" Height="40"/>
 			</data>
-			<data key="d3">
-				<yjs:ShapeNodeStyle fill="#FFBA55D3">
+			<data key="d7">
+				<yjs:ShapeNodeStyle fill="#FFAB2346">
 					<yjs:ShapeNodeStyle.stroke>
-						<yjs:Stroke fill="#FFFFFFFF" miterLimit="1.45"/>
+						<yjs:Stroke fill="#FF480B1B" thickness="1.5"/>
 					</yjs:ShapeNodeStyle.stroke>
 				</yjs:ShapeNodeStyle>
 			</data>
 			<port name="p0">
-				<data key="d8">
-					<y:FreeNodePortLocationModelParameter Ratio="0.5,1"/>
+				<data key="d16">
+					<y:FreeNodePortLocationModelParameter Ratio="0.5,0"/>
 				</data>
 			</port>
 			<port name="p1">
-				<data key="d8">
-					<y:FreeNodePortLocationModelParameter Ratio="0.5,0"/>
+				<data key="d16">
+					<y:FreeNodePortLocationModelParameter Ratio="0.5,1"/>
 				</data>
 			</port>
 		</node>
 		<node id="n17">
-			<data key="d0">
+			<data key="d0">17</data>
+			<data key="d4">
 				<x:List>
-					<y:Label LayoutParameter="{y:GraphMLReference 1}" PreferredSize="14.670997485167332,14">
+					<y:Label>
 						<y:Label.Text>Cy</y:Label.Text>
+						<y:Label.LayoutParameter>
+							<y:RatioAnchoredLabelModelParameter LayoutOffset="12.664501257416333,13"/>
+						</y:Label.LayoutParameter>
 						<y:Label.Style>
 							<yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000">
 								<yjs:DefaultLabelStyle.font>
-									<yjs:Font fontSize="12"/>
+									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
 								</yjs:DefaultLabelStyle.font>
 							</yjs:DefaultLabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
 			</data>
-			<data key="d1">
-				<y:RectD X="415" Y="250" Width="40" Height="40"/>
+			<data key="d5">
+				<y:RectD X="0" Y="0" Width="40" Height="40"/>
 			</data>
-			<data key="d3">
-				<yjs:ShapeNodeStyle fill="#FFBA55D3">
+			<data key="d7">
+				<yjs:ShapeNodeStyle fill="#FFAB2346">
 					<yjs:ShapeNodeStyle.stroke>
-						<yjs:Stroke fill="#FFFFFFFF" miterLimit="1.45"/>
+						<yjs:Stroke fill="#FF480B1B" thickness="1.5"/>
 					</yjs:ShapeNodeStyle.stroke>
 				</yjs:ShapeNodeStyle>
 			</data>
 			<port name="p0">
-				<data key="d8">
-					<y:FreeNodePortLocationModelParameter Ratio="1,0.5"/>
-				</data>
-			</port>
-			<port name="p1">
-				<data key="d8">
-					<y:FreeNodePortLocationModelParameter Ratio="0,0.5"/>
-				</data>
-			</port>
-		</node>
-		<node id="n18">
-			<data key="d0">
-				<x:List>
-					<y:Label LayoutParameter="{y:GraphMLReference 1}" PreferredSize="14.670997485167332,14">
-						<y:Label.Text>Cy</y:Label.Text>
-						<y:Label.Style>
-							<yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000">
-								<yjs:DefaultLabelStyle.font>
-									<yjs:Font fontSize="12"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
-						</y:Label.Style>
-					</y:Label>
-				</x:List>
-			</data>
-			<data key="d1">
-				<y:RectD X="415" Y="250" Width="40" Height="40"/>
-			</data>
-			<data key="d3">
-				<yjs:ShapeNodeStyle fill="#FFBA55D3">
-					<yjs:ShapeNodeStyle.stroke>
-						<yjs:Stroke fill="#FFFFFFFF" miterLimit="1.45"/>
-					</yjs:ShapeNodeStyle.stroke>
-				</yjs:ShapeNodeStyle>
-			</data>
-			<port name="p0">
-				<data key="d8">
-					<y:FreeNodePortLocationModelParameter Ratio="1,0.5"/>
-				</data>
-			</port>
-			<port name="p1">
-				<data key="d8">
-					<y:FreeNodePortLocationModelParameter Ratio="0,0.5"/>
-				</data>
-			</port>
-		</node>
-		<node id="n19">
-			<data key="d0">
-				<x:List>
-					<y:Label LayoutParameter="{y:GraphMLReference 1}" PreferredSize="14.670997485167332,14">
-						<y:Label.Text>Cy</y:Label.Text>
-						<y:Label.Style>
-							<yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000">
-								<yjs:DefaultLabelStyle.font>
-									<yjs:Font fontSize="12"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
-						</y:Label.Style>
-					</y:Label>
-				</x:List>
-			</data>
-			<data key="d1">
-				<y:RectD X="415" Y="250" Width="40" Height="40"/>
-			</data>
-			<data key="d3">
-				<yjs:ShapeNodeStyle fill="#FFBA55D3">
-					<yjs:ShapeNodeStyle.stroke>
-						<yjs:Stroke fill="#FFFFFFFF" miterLimit="1.45"/>
-					</yjs:ShapeNodeStyle.stroke>
-				</yjs:ShapeNodeStyle>
-			</data>
-			<port name="p0">
-				<data key="d8">
+				<data key="d16">
 					<y:FreeNodePortLocationModelParameter Ratio="0.5,0"/>
 				</data>
 			</port>
 			<port name="p1">
-				<data key="d8">
+				<data key="d16">
+					<y:FreeNodePortLocationModelParameter Ratio="0.5,1"/>
+				</data>
+			</port>
+		</node>
+		<node id="n18">
+			<data key="d0">18</data>
+			<data key="d4">
+				<x:List>
+					<y:Label>
+						<y:Label.Text>Cy</y:Label.Text>
+						<y:Label.LayoutParameter>
+							<y:RatioAnchoredLabelModelParameter LayoutOffset="12.664501257416333,13"/>
+						</y:Label.LayoutParameter>
+						<y:Label.Style>
+							<yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000">
+								<yjs:DefaultLabelStyle.font>
+									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
+								</yjs:DefaultLabelStyle.font>
+							</yjs:DefaultLabelStyle>
+						</y:Label.Style>
+					</y:Label>
+				</x:List>
+			</data>
+			<data key="d5">
+				<y:RectD X="0" Y="0" Width="40" Height="40"/>
+			</data>
+			<data key="d7">
+				<yjs:ShapeNodeStyle fill="#FFAB2346">
+					<yjs:ShapeNodeStyle.stroke>
+						<yjs:Stroke fill="#FF480B1B" thickness="1.5"/>
+					</yjs:ShapeNodeStyle.stroke>
+				</yjs:ShapeNodeStyle>
+			</data>
+			<port name="p0">
+				<data key="d16">
+					<y:FreeNodePortLocationModelParameter Ratio="0.5,0"/>
+				</data>
+			</port>
+			<port name="p1">
+				<data key="d16">
+					<y:FreeNodePortLocationModelParameter Ratio="0.5,1"/>
+				</data>
+			</port>
+		</node>
+		<node id="n19">
+			<data key="d0">19</data>
+			<data key="d4">
+				<x:List>
+					<y:Label>
+						<y:Label.Text>Cy</y:Label.Text>
+						<y:Label.LayoutParameter>
+							<y:RatioAnchoredLabelModelParameter LayoutOffset="12.664501257416333,13"/>
+						</y:Label.LayoutParameter>
+						<y:Label.Style>
+							<yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000">
+								<yjs:DefaultLabelStyle.font>
+									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
+								</yjs:DefaultLabelStyle.font>
+							</yjs:DefaultLabelStyle>
+						</y:Label.Style>
+					</y:Label>
+				</x:List>
+			</data>
+			<data key="d5">
+				<y:RectD X="0" Y="0" Width="40" Height="40"/>
+			</data>
+			<data key="d7">
+				<yjs:ShapeNodeStyle fill="#FFAB2346">
+					<yjs:ShapeNodeStyle.stroke>
+						<yjs:Stroke fill="#FF480B1B" thickness="1.5"/>
+					</yjs:ShapeNodeStyle.stroke>
+				</yjs:ShapeNodeStyle>
+			</data>
+			<port name="p0">
+				<data key="d16">
+					<y:FreeNodePortLocationModelParameter Ratio="0.5,0"/>
+				</data>
+			</port>
+			<port name="p1">
+				<data key="d16">
 					<y:FreeNodePortLocationModelParameter Ratio="0.5,1"/>
 				</data>
 			</port>
 		</node>
 		<node id="n20">
-			<data key="d0">
+			<data key="d0">20</data>
+			<data key="d4">
 				<x:List>
-					<y:Label LayoutParameter="{y:GraphMLReference 1}" PreferredSize="14.670997485167332,14">
+					<y:Label>
 						<y:Label.Text>Cy</y:Label.Text>
+						<y:Label.LayoutParameter>
+							<y:RatioAnchoredLabelModelParameter LayoutOffset="12.664501257416333,13"/>
+						</y:Label.LayoutParameter>
 						<y:Label.Style>
 							<yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000">
 								<yjs:DefaultLabelStyle.font>
-									<yjs:Font fontSize="12"/>
+									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
 								</yjs:DefaultLabelStyle.font>
 							</yjs:DefaultLabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
 			</data>
-			<data key="d1">
-				<y:RectD X="415" Y="250" Width="40" Height="40"/>
+			<data key="d5">
+				<y:RectD X="0" Y="0" Width="40" Height="40"/>
 			</data>
-			<data key="d3">
-				<yjs:ShapeNodeStyle fill="#FFBA55D3">
+			<data key="d7">
+				<yjs:ShapeNodeStyle fill="#FFAB2346">
 					<yjs:ShapeNodeStyle.stroke>
-						<yjs:Stroke fill="#FFFFFFFF" miterLimit="1.45"/>
+						<yjs:Stroke fill="#FF480B1B" thickness="1.5"/>
 					</yjs:ShapeNodeStyle.stroke>
 				</yjs:ShapeNodeStyle>
 			</data>
 			<port name="p0">
-				<data key="d8">
+				<data key="d16">
 					<y:FreeNodePortLocationModelParameter Ratio="0.5,0"/>
 				</data>
 			</port>
 			<port name="p1">
-				<data key="d8">
+				<data key="d16">
 					<y:FreeNodePortLocationModelParameter Ratio="0.5,1"/>
 				</data>
 			</port>
 		</node>
 		<node id="n21">
-			<data key="d0">
+			<data key="d0">21</data>
+			<data key="d4">
 				<x:List>
-					<y:Label LayoutParameter="{y:GraphMLReference 1}" PreferredSize="14.670997485167332,14">
+					<y:Label>
 						<y:Label.Text>Cy</y:Label.Text>
+						<y:Label.LayoutParameter>
+							<y:RatioAnchoredLabelModelParameter LayoutOffset="12.664501257416333,13"/>
+						</y:Label.LayoutParameter>
 						<y:Label.Style>
 							<yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000">
 								<yjs:DefaultLabelStyle.font>
-									<yjs:Font fontSize="12"/>
+									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
 								</yjs:DefaultLabelStyle.font>
 							</yjs:DefaultLabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
 			</data>
-			<data key="d1">
-				<y:RectD X="415" Y="250" Width="40" Height="40"/>
+			<data key="d5">
+				<y:RectD X="0" Y="0" Width="40" Height="40"/>
 			</data>
-			<data key="d3">
-				<yjs:ShapeNodeStyle fill="#FFBA55D3">
+			<data key="d7">
+				<yjs:ShapeNodeStyle fill="#FFAB2346">
 					<yjs:ShapeNodeStyle.stroke>
-						<yjs:Stroke fill="#FFFFFFFF" miterLimit="1.45"/>
+						<yjs:Stroke fill="#FF480B1B" thickness="1.5"/>
 					</yjs:ShapeNodeStyle.stroke>
 				</yjs:ShapeNodeStyle>
 			</data>
 			<port name="p0">
-				<data key="d8">
-					<y:FreeNodePortLocationModelParameter Ratio="0,0.5"/>
-				</data>
-			</port>
-			<port name="p1">
-				<data key="d8">
-					<y:FreeNodePortLocationModelParameter Ratio="1,0.5"/>
-				</data>
-			</port>
-		</node>
-		<node id="n22">
-			<data key="d0">
-				<x:List>
-					<y:Label LayoutParameter="{y:GraphMLReference 1}" PreferredSize="15.34505450106595,14">
-						<y:Label.Text>Ch</y:Label.Text>
-						<y:Label.Style>
-							<yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000">
-								<yjs:DefaultLabelStyle.font>
-									<yjs:Font fontSize="12"/>
-								</yjs:DefaultLabelStyle.font>
-							</yjs:DefaultLabelStyle>
-						</y:Label.Style>
-					</y:Label>
-				</x:List>
-			</data>
-			<data key="d1">
-				<y:RectD X="401" Y="251.5" Width="68" Height="37"/>
-			</data>
-			<data key="d3">
-				<yjs:ShapeNodeStyle fill="#FF00BFFF">
-					<yjs:ShapeNodeStyle.stroke>
-						<yjs:Stroke fill="#FFFFFFFF" miterLimit="1.45"/>
-					</yjs:ShapeNodeStyle.stroke>
-				</yjs:ShapeNodeStyle>
-			</data>
-			<port name="p0">
-				<data key="d8">
+				<data key="d16">
 					<y:FreeNodePortLocationModelParameter Ratio="0.5,0"/>
 				</data>
 			</port>
 			<port name="p1">
-				<data key="d8">
+				<data key="d16">
+					<y:FreeNodePortLocationModelParameter Ratio="0.5,1"/>
+				</data>
+			</port>
+		</node>
+		<node id="n22">
+			<data key="d0">22</data>
+			<data key="d4">
+				<x:List>
+					<y:Label>
+						<y:Label.Text>Ch</y:Label.Text>
+						<y:Label.LayoutParameter>
+							<y:RatioAnchoredLabelModelParameter LayoutOffset="26.327472749467034,11.5"/>
+						</y:Label.LayoutParameter>
+						<y:Label.Style>
+							<yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000">
+								<yjs:DefaultLabelStyle.font>
+									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
+								</yjs:DefaultLabelStyle.font>
+							</yjs:DefaultLabelStyle>
+						</y:Label.Style>
+					</y:Label>
+				</x:List>
+			</data>
+			<data key="d5">
+				<y:RectD X="0" Y="0" Width="68" Height="37"/>
+			</data>
+			<data key="d7">
+				<yjs:ShapeNodeStyle fill="#FF00BFFF">
+					<yjs:ShapeNodeStyle.stroke>
+						<yjs:Stroke fill="#FF01749A" thickness="1.5"/>
+					</yjs:ShapeNodeStyle.stroke>
+				</yjs:ShapeNodeStyle>
+			</data>
+			<port name="p0">
+				<data key="d16">
+					<y:FreeNodePortLocationModelParameter Ratio="0.5,0"/>
+				</data>
+			</port>
+			<port name="p1">
+				<data key="d16">
 					<y:FreeNodePortLocationModelParameter Ratio="0.5,1"/>
 				</data>
 			</port>
 		</node>
 		<node id="n23">
-			<data key="d0">
+			<data key="d0">23</data>
+			<data key="d4">
 				<x:List>
-					<y:Label LayoutParameter="{y:GraphMLReference 1}" PreferredSize="15.34505450106595,14">
+					<y:Label>
 						<y:Label.Text>Ch</y:Label.Text>
+						<y:Label.LayoutParameter>
+							<y:RatioAnchoredLabelModelParameter LayoutOffset="26.327472749467034,11.5"/>
+						</y:Label.LayoutParameter>
 						<y:Label.Style>
 							<yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000">
 								<yjs:DefaultLabelStyle.font>
-									<yjs:Font fontSize="12"/>
+									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
 								</yjs:DefaultLabelStyle.font>
 							</yjs:DefaultLabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
 			</data>
-			<data key="d1">
-				<y:RectD X="401" Y="251.5" Width="68" Height="37"/>
+			<data key="d5">
+				<y:RectD X="0" Y="0" Width="68" Height="37"/>
 			</data>
-			<data key="d3">
+			<data key="d7">
 				<yjs:ShapeNodeStyle fill="#FF00BFFF">
 					<yjs:ShapeNodeStyle.stroke>
-						<yjs:Stroke fill="#FFFFFFFF" miterLimit="1.45"/>
+						<yjs:Stroke fill="#FF01749A" thickness="1.5"/>
 					</yjs:ShapeNodeStyle.stroke>
 				</yjs:ShapeNodeStyle>
 			</data>
 			<port name="p0">
-				<data key="d8">
+				<data key="d16">
 					<y:FreeNodePortLocationModelParameter Ratio="0.5,0"/>
 				</data>
 			</port>
 			<port name="p1">
-				<data key="d8">
+				<data key="d16">
 					<y:FreeNodePortLocationModelParameter Ratio="0.5,1"/>
 				</data>
 			</port>
 		</node>
 		<node id="n24">
-			<data key="d0">
+			<data key="d0">24</data>
+			<data key="d4">
 				<x:List>
-					<y:Label LayoutParameter="{y:GraphMLReference 1}" PreferredSize="15.34505450106595,14">
+					<y:Label>
 						<y:Label.Text>Ch</y:Label.Text>
+						<y:Label.LayoutParameter>
+							<y:RatioAnchoredLabelModelParameter LayoutOffset="26.327472749467034,11.5"/>
+						</y:Label.LayoutParameter>
 						<y:Label.Style>
 							<yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000">
 								<yjs:DefaultLabelStyle.font>
-									<yjs:Font fontSize="12"/>
+									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
 								</yjs:DefaultLabelStyle.font>
 							</yjs:DefaultLabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
 			</data>
-			<data key="d1">
-				<y:RectD X="401" Y="251.5" Width="68" Height="37"/>
+			<data key="d5">
+				<y:RectD X="0" Y="0" Width="68" Height="37"/>
 			</data>
-			<data key="d3">
+			<data key="d7">
 				<yjs:ShapeNodeStyle fill="#FF00BFFF">
 					<yjs:ShapeNodeStyle.stroke>
-						<yjs:Stroke fill="#FFFFFFFF" miterLimit="1.45"/>
+						<yjs:Stroke fill="#FF01749A" thickness="1.5"/>
 					</yjs:ShapeNodeStyle.stroke>
 				</yjs:ShapeNodeStyle>
 			</data>
 			<port name="p0">
-				<data key="d8">
+				<data key="d16">
 					<y:FreeNodePortLocationModelParameter Ratio="0.5,0"/>
 				</data>
 			</port>
 			<port name="p1">
-				<data key="d8">
-					<y:FreeNodePortLocationModelParameter Ratio="0,0.5"/>
+				<data key="d16">
+					<y:FreeNodePortLocationModelParameter Ratio="0.5,1"/>
 				</data>
 			</port>
 		</node>
 		<node id="n25">
-			<data key="d0">
+			<data key="d0">25</data>
+			<data key="d4">
 				<x:List>
-					<y:Label LayoutParameter="{y:GraphMLReference 1}" PreferredSize="15.34505450106595,14">
+					<y:Label>
 						<y:Label.Text>Ch</y:Label.Text>
+						<y:Label.LayoutParameter>
+							<y:RatioAnchoredLabelModelParameter LayoutOffset="26.327472749467034,11.5"/>
+						</y:Label.LayoutParameter>
 						<y:Label.Style>
 							<yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000">
 								<yjs:DefaultLabelStyle.font>
-									<yjs:Font fontSize="12"/>
+									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
 								</yjs:DefaultLabelStyle.font>
 							</yjs:DefaultLabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
 			</data>
-			<data key="d1">
-				<y:RectD X="401" Y="250" Width="68" Height="37"/>
+			<data key="d5">
+				<y:RectD X="0" Y="0" Width="68" Height="37"/>
 			</data>
-			<data key="d3">
+			<data key="d7">
 				<yjs:ShapeNodeStyle fill="#FF00BFFF">
 					<yjs:ShapeNodeStyle.stroke>
-						<yjs:Stroke fill="#FFFFFFFF" miterLimit="1.45"/>
+						<yjs:Stroke fill="#FF01749A" thickness="1.5"/>
 					</yjs:ShapeNodeStyle.stroke>
 				</yjs:ShapeNodeStyle>
 			</data>
 			<port name="p0">
-				<data key="d8">
-					<y:FreeNodePortLocationModelParameter Ratio="1,0.5"/>
+				<data key="d16">
+					<y:FreeNodePortLocationModelParameter Ratio="0.5,0"/>
 				</data>
 			</port>
 			<port name="p1">
-				<data key="d8">
-					<y:FreeNodePortLocationModelParameter Ratio="0.5,0"/>
+				<data key="d16">
+					<y:FreeNodePortLocationModelParameter Ratio="0.5,1"/>
 				</data>
 			</port>
 		</node>
 		<node id="n26">
-			<data key="d0">
+			<data key="d0">26</data>
+			<data key="d4">
 				<x:List>
-					<y:Label LayoutParameter="{y:GraphMLReference 1}" PreferredSize="15.34505450106595,14">
+					<y:Label>
 						<y:Label.Text>Ch</y:Label.Text>
+						<y:Label.LayoutParameter>
+							<y:RatioAnchoredLabelModelParameter LayoutOffset="26.327472749467034,11.5"/>
+						</y:Label.LayoutParameter>
 						<y:Label.Style>
 							<yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000">
 								<yjs:DefaultLabelStyle.font>
-									<yjs:Font fontSize="12"/>
+									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
 								</yjs:DefaultLabelStyle.font>
 							</yjs:DefaultLabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
 			</data>
-			<data key="d1">
-				<y:RectD X="401" Y="251.5" Width="68" Height="37"/>
+			<data key="d5">
+				<y:RectD X="0" Y="0" Width="68" Height="37"/>
 			</data>
-			<data key="d3">
+			<data key="d7">
 				<yjs:ShapeNodeStyle fill="#FF00BFFF">
 					<yjs:ShapeNodeStyle.stroke>
-						<yjs:Stroke fill="#FFFFFFFF" miterLimit="1.45"/>
+						<yjs:Stroke fill="#FF01749A" thickness="1.5"/>
 					</yjs:ShapeNodeStyle.stroke>
 				</yjs:ShapeNodeStyle>
 			</data>
 			<port name="p0">
-				<data key="d8">
-					<y:FreeNodePortLocationModelParameter Ratio="0.5,1"/>
+				<data key="d16">
+					<y:FreeNodePortLocationModelParameter Ratio="0.5,0"/>
 				</data>
 			</port>
 			<port name="p1">
-				<data key="d8">
-					<y:FreeNodePortLocationModelParameter Ratio="0.5,0"/>
+				<data key="d16">
+					<y:FreeNodePortLocationModelParameter Ratio="0.5,1"/>
 				</data>
 			</port>
 		</node>
 		<node id="n27">
-			<data key="d0">
+			<data key="d0">27</data>
+			<data key="d4">
 				<x:List>
-					<y:Label LayoutParameter="{y:GraphMLReference 1}" PreferredSize="15.34505450106595,14">
+					<y:Label>
 						<y:Label.Text>Ch</y:Label.Text>
+						<y:Label.LayoutParameter>
+							<y:RatioAnchoredLabelModelParameter LayoutOffset="26.327472749467034,11.5"/>
+						</y:Label.LayoutParameter>
 						<y:Label.Style>
 							<yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000">
 								<yjs:DefaultLabelStyle.font>
-									<yjs:Font fontSize="12"/>
+									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
 								</yjs:DefaultLabelStyle.font>
 							</yjs:DefaultLabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
 			</data>
-			<data key="d1">
-				<y:RectD X="401" Y="251.5" Width="68" Height="37"/>
+			<data key="d5">
+				<y:RectD X="0" Y="0" Width="68" Height="37"/>
 			</data>
-			<data key="d3">
+			<data key="d7">
 				<yjs:ShapeNodeStyle fill="#FF00BFFF">
 					<yjs:ShapeNodeStyle.stroke>
-						<yjs:Stroke fill="#FFFFFFFF" miterLimit="1.45"/>
+						<yjs:Stroke fill="#FF01749A" thickness="1.5"/>
 					</yjs:ShapeNodeStyle.stroke>
 				</yjs:ShapeNodeStyle>
 			</data>
 			<port name="p0">
-				<data key="d8">
-					<y:FreeNodePortLocationModelParameter Ratio="0.5,1"/>
+				<data key="d16">
+					<y:FreeNodePortLocationModelParameter Ratio="0.5,0"/>
 				</data>
 			</port>
 			<port name="p1">
-				<data key="d8">
-					<y:FreeNodePortLocationModelParameter Ratio="0,0.5"/>
+				<data key="d16">
+					<y:FreeNodePortLocationModelParameter Ratio="0.5,1"/>
 				</data>
 			</port>
 		</node>
 		<node id="n28">
-			<data key="d0">
+			<data key="d0">28</data>
+			<data key="d4">
 				<x:List>
-					<y:Label LayoutParameter="{y:GraphMLReference 1}" PreferredSize="15.34505450106595,14">
+					<y:Label>
 						<y:Label.Text>Ch</y:Label.Text>
+						<y:Label.LayoutParameter>
+							<y:RatioAnchoredLabelModelParameter LayoutOffset="26.327472749467034,11.5"/>
+						</y:Label.LayoutParameter>
 						<y:Label.Style>
 							<yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000">
 								<yjs:DefaultLabelStyle.font>
-									<yjs:Font fontSize="12"/>
+									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
 								</yjs:DefaultLabelStyle.font>
 							</yjs:DefaultLabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
 			</data>
-			<data key="d1">
-				<y:RectD X="401" Y="251.5" Width="68" Height="37"/>
+			<data key="d5">
+				<y:RectD X="0" Y="0" Width="68" Height="37"/>
 			</data>
-			<data key="d3">
+			<data key="d7">
 				<yjs:ShapeNodeStyle fill="#FF00BFFF">
 					<yjs:ShapeNodeStyle.stroke>
-						<yjs:Stroke fill="#FFFFFFFF" miterLimit="1.45"/>
+						<yjs:Stroke fill="#FF01749A" thickness="1.5"/>
 					</yjs:ShapeNodeStyle.stroke>
 				</yjs:ShapeNodeStyle>
 			</data>
 			<port name="p0">
-				<data key="d8">
-					<y:FreeNodePortLocationModelParameter Ratio="1,0.5"/>
+				<data key="d16">
+					<y:FreeNodePortLocationModelParameter Ratio="0.5,0"/>
 				</data>
 			</port>
 			<port name="p1">
-				<data key="d8">
+				<data key="d16">
 					<y:FreeNodePortLocationModelParameter Ratio="0.5,1"/>
 				</data>
 			</port>
 		</node>
 		<node id="n29">
-			<data key="d0">
+			<data key="d0">29</data>
+			<data key="d4">
 				<x:List>
-					<y:Label LayoutParameter="{y:GraphMLReference 1}" PreferredSize="15.34505450106595,14">
+					<y:Label>
 						<y:Label.Text>Ch</y:Label.Text>
+						<y:Label.LayoutParameter>
+							<y:RatioAnchoredLabelModelParameter LayoutOffset="26.327472749467034,11.5"/>
+						</y:Label.LayoutParameter>
 						<y:Label.Style>
 							<yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000">
 								<yjs:DefaultLabelStyle.font>
-									<yjs:Font fontSize="12"/>
+									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
 								</yjs:DefaultLabelStyle.font>
 							</yjs:DefaultLabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
 			</data>
-			<data key="d1">
-				<y:RectD X="401" Y="251.5" Width="68" Height="37"/>
+			<data key="d5">
+				<y:RectD X="0" Y="0" Width="68" Height="37"/>
 			</data>
-			<data key="d3">
+			<data key="d7">
 				<yjs:ShapeNodeStyle fill="#FF00BFFF">
 					<yjs:ShapeNodeStyle.stroke>
-						<yjs:Stroke fill="#FFFFFFFF" miterLimit="1.45"/>
+						<yjs:Stroke fill="#FF01749A" thickness="1.5"/>
 					</yjs:ShapeNodeStyle.stroke>
 				</yjs:ShapeNodeStyle>
 			</data>
 			<port name="p0">
-				<data key="d8">
+				<data key="d16">
 					<y:FreeNodePortLocationModelParameter Ratio="0.5,0"/>
 				</data>
 			</port>
 			<port name="p1">
-				<data key="d8">
+				<data key="d16">
 					<y:FreeNodePortLocationModelParameter Ratio="0.5,1"/>
 				</data>
 			</port>
 		</node>
 		<node id="n30">
-			<data key="d0">
+			<data key="d0">30</data>
+			<data key="d4">
 				<x:List>
-					<y:Label LayoutParameter="{y:GraphMLReference 1}" PreferredSize="15.34505450106595,14">
+					<y:Label>
 						<y:Label.Text>Ch</y:Label.Text>
+						<y:Label.LayoutParameter>
+							<y:RatioAnchoredLabelModelParameter LayoutOffset="26.327472749467034,11.5"/>
+						</y:Label.LayoutParameter>
 						<y:Label.Style>
 							<yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000">
 								<yjs:DefaultLabelStyle.font>
-									<yjs:Font fontSize="12"/>
+									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
 								</yjs:DefaultLabelStyle.font>
 							</yjs:DefaultLabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
 			</data>
-			<data key="d1">
-				<y:RectD X="401" Y="251.5" Width="68" Height="37"/>
+			<data key="d5">
+				<y:RectD X="0" Y="0" Width="68" Height="37"/>
 			</data>
-			<data key="d3">
+			<data key="d7">
 				<yjs:ShapeNodeStyle fill="#FF00BFFF">
 					<yjs:ShapeNodeStyle.stroke>
-						<yjs:Stroke fill="#FFFFFFFF" miterLimit="1.45"/>
+						<yjs:Stroke fill="#FF01749A" thickness="1.5"/>
 					</yjs:ShapeNodeStyle.stroke>
 				</yjs:ShapeNodeStyle>
 			</data>
 			<port name="p0">
-				<data key="d8">
+				<data key="d16">
 					<y:FreeNodePortLocationModelParameter Ratio="0.5,0"/>
 				</data>
 			</port>
 		</node>
 		<node id="n31">
-			<data key="d0">
+			<data key="d0">31</data>
+			<data key="d4">
 				<x:List>
-					<y:Label LayoutParameter="{y:GraphMLReference 1}" PreferredSize="14.670997485167332,14">
+					<y:Label>
 						<y:Label.Text>Cy</y:Label.Text>
+						<y:Label.LayoutParameter>
+							<y:RatioAnchoredLabelModelParameter LayoutOffset="12.664501257416333,13"/>
+						</y:Label.LayoutParameter>
 						<y:Label.Style>
 							<yjs:DefaultLabelStyle horizontalTextAlignment="CENTER" autoFlip="false" textFill="#FF000000">
 								<yjs:DefaultLabelStyle.font>
-									<yjs:Font fontSize="12"/>
+									<yjs:Font fontSize="12" fontFamily="'Arial'"/>
 								</yjs:DefaultLabelStyle.font>
 							</yjs:DefaultLabelStyle>
 						</y:Label.Style>
 					</y:Label>
 				</x:List>
 			</data>
-			<data key="d1">
-				<y:RectD X="415" Y="250" Width="40" Height="40"/>
+			<data key="d5">
+				<y:RectD X="0" Y="0" Width="40" Height="40"/>
 			</data>
-			<data key="d3">
-				<yjs:ShapeNodeStyle fill="#FFBA55D3">
+			<data key="d7">
+				<yjs:ShapeNodeStyle fill="#FFAB2346">
 					<yjs:ShapeNodeStyle.stroke>
-						<yjs:Stroke fill="#FFFFFFFF" miterLimit="1.45"/>
+						<yjs:Stroke fill="#FF480B1B" thickness="1.5"/>
 					</yjs:ShapeNodeStyle.stroke>
 				</yjs:ShapeNodeStyle>
 			</data>
 			<port name="p0">
-				<data key="d8">
-					<y:FreeNodePortLocationModelParameter Ratio="0,0.5"/>
+				<data key="d16">
+					<y:FreeNodePortLocationModelParameter Ratio="0.5,0"/>
 				</data>
 			</port>
 			<port name="p1">
-				<data key="d8">
+				<data key="d16">
 					<y:FreeNodePortLocationModelParameter Ratio="1,0.5"/>
 				</data>
 			</port>
 		</node>
 		<node id="n32">
-			<data key="d1">
-				<y:RectD X="395" Y="230" Width="80" Height="80"/>
+			<data key="d0">32</data>
+			<data key="d5">
+				<y:RectD X="0" Y="0" Width="80" Height="80"/>
 			</data>
-			<data key="d3">
+			<data key="d7">
 				<yjs:ShapeNodeStyle fill="#FFFF8C00">
 					<yjs:ShapeNodeStyle.stroke>
-						<yjs:Stroke fill="#FFFFFFFF" miterLimit="1.45"/>
+						<yjs:Stroke fill="#FFA75D04" thickness="1.5"/>
 					</yjs:ShapeNodeStyle.stroke>
 				</yjs:ShapeNodeStyle>
 			</data>
 			<port name="p0">
-				<data key="d8">
-					<y:FreeNodePortLocationModelParameter Ratio="0.5,1"/>
-				</data>
-			</port>
-			<port name="p1">
-				<data key="d8">
+				<data key="d16">
 					<y:FreeNodePortLocationModelParameter Ratio="0,0.5"/>
 				</data>
 			</port>
+			<port name="p1">
+				<data key="d16">
+					<y:FreeNodePortLocationModelParameter Ratio="0.5,0"/>
+				</data>
+			</port>
 			<port name="p2">
-				<data key="d8">
-					<y:FreeNodePortLocationModelParameter Ratio="1,0.5"/>
+				<data key="d16">
+					<y:FreeNodePortLocationModelParameter Ratio="0.5,1"/>
 				</data>
 			</port>
 		</node>
 		<node id="n33">
-			<data key="d1">
-				<y:RectD X="415" Y="250" Width="40" Height="40"/>
+			<data key="d0">33</data>
+			<data key="d5">
+				<y:RectD X="0" Y="0" Width="40" Height="40"/>
 			</data>
-			<data key="d3">
+			<data key="d7">
 				<yjs:ShapeNodeStyle fill="#FFFF8C00">
 					<yjs:ShapeNodeStyle.stroke>
-						<yjs:Stroke fill="#FFFFFFFF" miterLimit="1.45"/>
+						<yjs:Stroke fill="#FFA75D04" thickness="1.5"/>
 					</yjs:ShapeNodeStyle.stroke>
 				</yjs:ShapeNodeStyle>
 			</data>
 			<port name="p0">
-				<data key="d8">
-					<y:FreeNodePortLocationModelParameter Ratio="0,0.5"/>
-				</data>
-			</port>
-			<port name="p1">
-				<data key="d8">
+				<data key="d16">
 					<y:FreeNodePortLocationModelParameter Ratio="1,0.5"/>
 				</data>
 			</port>
-			<port name="p2">
-				<data key="d8">
+			<port name="p1">
+				<data key="d16">
 					<y:FreeNodePortLocationModelParameter Ratio="0.5,1"/>
 				</data>
 			</port>
-		</node>
-		<node id="n34">
-			<data key="d1">
-				<y:RectD X="395" Y="230" Width="80" Height="80"/>
-			</data>
-			<data key="d3">
-				<yjs:ShapeNodeStyle fill="#FFFF8C00">
-					<yjs:ShapeNodeStyle.stroke>
-						<yjs:Stroke fill="#FFFFFFFF" miterLimit="1.45"/>
-					</yjs:ShapeNodeStyle.stroke>
-				</yjs:ShapeNodeStyle>
-			</data>
-			<port name="p0">
-				<data key="d8">
-					<y:FreeNodePortLocationModelParameter Ratio="0,0.5"/>
-				</data>
-			</port>
-			<port name="p1">
-				<data key="d8">
-					<y:FreeNodePortLocationModelParameter Ratio="1,0.5"/>
-				</data>
-			</port>
 			<port name="p2">
-				<data key="d8">
-					<y:FreeNodePortLocationModelParameter Ratio="0,0.3125"/>
-				</data>
-			</port>
-			<port name="p3">
-				<data key="d8">
+				<data key="d16">
 					<y:FreeNodePortLocationModelParameter Ratio="0.5,0"/>
 				</data>
 			</port>
 		</node>
+		<node id="n34">
+			<data key="d0">34</data>
+			<data key="d5">
+				<y:RectD X="0" Y="0" Width="80" Height="80"/>
+			</data>
+			<data key="d7">
+				<yjs:ShapeNodeStyle fill="#FFFF8C00">
+					<yjs:ShapeNodeStyle.stroke>
+						<yjs:Stroke fill="#FFA75D04" thickness="1.5"/>
+					</yjs:ShapeNodeStyle.stroke>
+				</yjs:ShapeNodeStyle>
+			</data>
+			<port name="p0">
+				<data key="d16">
+					<y:FreeNodePortLocationModelParameter Ratio="0.5,0"/>
+				</data>
+			</port>
+			<port name="p1">
+				<data key="d16">
+					<y:FreeNodePortLocationModelParameter Ratio="0,0.5"/>
+				</data>
+			</port>
+			<port name="p2">
+				<data key="d16">
+					<y:FreeNodePortLocationModelParameter Ratio="1,0.5"/>
+				</data>
+			</port>
+			<port name="p3">
+				<data key="d16">
+					<y:FreeNodePortLocationModelParameter Ratio="0.5,1"/>
+				</data>
+			</port>
+		</node>
 		<edge id="e0" source="n2" target="n1" sourceport="p0" targetport="p0">
-			<data key="d6">
-				<x0:DemoEdgeStyle showTargetArrows="false"/>
+			<data key="d13">
+				<demostyle:DemoEdgeStyle showTargetArrows="false"/>
 			</data>
 		</edge>
 		<edge id="e1" source="n3" target="n1" sourceport="p0" targetport="p1">
-			<data key="d6">
-				<x0:DemoEdgeStyle showTargetArrows="false"/>
+			<data key="d13">
+				<demostyle:DemoEdgeStyle showTargetArrows="false"/>
 			</data>
 		</edge>
 		<edge id="e2" source="n2" target="n4" sourceport="p1" targetport="p0">
-			<data key="d6">
-				<x0:DemoEdgeStyle showTargetArrows="false"/>
+			<data key="d13">
+				<demostyle:DemoEdgeStyle showTargetArrows="false"/>
 			</data>
 		</edge>
 		<edge id="e3" source="n2" target="n7" sourceport="p2" targetport="p0">
-			<data key="d6">
-				<x0:DemoEdgeStyle showTargetArrows="false"/>
+			<data key="d13">
+				<demostyle:DemoEdgeStyle showTargetArrows="false"/>
 			</data>
 		</edge>
 		<edge id="e4" source="n2" target="n6" sourceport="p3" targetport="p0">
-			<data key="d6">
-				<x0:DemoEdgeStyle showTargetArrows="false"/>
+			<data key="d13">
+				<demostyle:DemoEdgeStyle showTargetArrows="false"/>
 			</data>
 		</edge>
 		<edge id="e5" source="n1" target="n5" sourceport="p2" targetport="p0">
-			<data key="d6">
-				<x0:DemoEdgeStyle showTargetArrows="false"/>
+			<data key="d13">
+				<demostyle:DemoEdgeStyle showTargetArrows="false"/>
 			</data>
 		</edge>
 		<edge id="e6" source="n5" target="n8" sourceport="p1" targetport="p0">
-			<data key="d6">
-				<x0:DemoEdgeStyle showTargetArrows="false"/>
+			<data key="d13">
+				<demostyle:DemoEdgeStyle showTargetArrows="false"/>
 			</data>
 		</edge>
 		<edge id="e7" source="n5" target="n9" sourceport="p2" targetport="p0">
-			<data key="d6">
-				<x0:DemoEdgeStyle showTargetArrows="false"/>
+			<data key="d13">
+				<demostyle:DemoEdgeStyle showTargetArrows="false"/>
 			</data>
 		</edge>
 		<edge id="e8" source="n0" target="n3" sourceport="p0" targetport="p1">
-			<data key="d6">
-				<x0:DemoEdgeStyle showTargetArrows="false"/>
+			<data key="d13">
+				<demostyle:DemoEdgeStyle showTargetArrows="false"/>
 			</data>
 		</edge>
 		<edge id="e9" source="n10" target="n11" sourceport="p0" targetport="p0">
-			<data key="d6">
-				<x0:DemoEdgeStyle showTargetArrows="false"/>
+			<data key="d13">
+				<demostyle:DemoEdgeStyle showTargetArrows="false"/>
 			</data>
 		</edge>
 		<edge id="e10" source="n11" target="n1" sourceport="p1" targetport="p3">
-			<data key="d6">
-				<x0:DemoEdgeStyle showTargetArrows="false"/>
+			<data key="d13">
+				<demostyle:DemoEdgeStyle showTargetArrows="false"/>
 			</data>
 		</edge>
 		<edge id="e11" source="n11" target="n3" sourceport="p2" targetport="p2">
-			<data key="d6">
-				<x0:DemoEdgeStyle showTargetArrows="false"/>
+			<data key="d13">
+				<demostyle:DemoEdgeStyle showTargetArrows="false"/>
 			</data>
 		</edge>
 		<edge id="e12" source="n5" target="n12" sourceport="p3" targetport="p0">
-			<data key="d6">
-				<x0:DemoEdgeStyle showTargetArrows="false"/>
+			<data key="d13">
+				<demostyle:DemoEdgeStyle showTargetArrows="false"/>
 			</data>
 		</edge>
 		<edge id="e13" source="n5" target="n13" sourceport="p4" targetport="p0">
-			<data key="d6">
-				<x0:DemoEdgeStyle showTargetArrows="false"/>
+			<data key="d13">
+				<demostyle:DemoEdgeStyle showTargetArrows="false"/>
 			</data>
 		</edge>
 		<edge id="e14" source="n5" target="n14" sourceport="p5" targetport="p0">
-			<data key="d6">
-				<x0:DemoEdgeStyle showTargetArrows="false"/>
+			<data key="d13">
+				<demostyle:DemoEdgeStyle showTargetArrows="false"/>
 			</data>
 		</edge>
 		<edge id="e15" source="n0" target="n15" sourceport="p1" targetport="p0">
-			<data key="d6">
-				<x0:DemoEdgeStyle showTargetArrows="false"/>
+			<data key="d13">
+				<demostyle:DemoEdgeStyle showTargetArrows="false"/>
 			</data>
 		</edge>
 		<edge id="e16" source="n15" target="n16" sourceport="p1" targetport="p0">
-			<data key="d6">
-				<x0:DemoEdgeStyle showTargetArrows="false"/>
+			<data key="d13">
+				<demostyle:DemoEdgeStyle showTargetArrows="false"/>
 			</data>
 		</edge>
 		<edge id="e17" source="n16" target="n17" sourceport="p1" targetport="p0">
-			<data key="d6">
-				<x0:DemoEdgeStyle showTargetArrows="false"/>
+			<data key="d13">
+				<demostyle:DemoEdgeStyle showTargetArrows="false"/>
 			</data>
 		</edge>
 		<edge id="e18" source="n17" target="n18" sourceport="p1" targetport="p0">
-			<data key="d6">
-				<x0:DemoEdgeStyle showTargetArrows="false"/>
+			<data key="d13">
+				<demostyle:DemoEdgeStyle showTargetArrows="false"/>
 			</data>
 		</edge>
 		<edge id="e19" source="n18" target="n19" sourceport="p1" targetport="p0">
-			<data key="d6">
-				<x0:DemoEdgeStyle showTargetArrows="false"/>
+			<data key="d13">
+				<demostyle:DemoEdgeStyle showTargetArrows="false"/>
 			</data>
 		</edge>
 		<edge id="e20" source="n19" target="n20" sourceport="p1" targetport="p0">
-			<data key="d6">
-				<x0:DemoEdgeStyle showTargetArrows="false"/>
+			<data key="d13">
+				<demostyle:DemoEdgeStyle showTargetArrows="false"/>
 			</data>
 		</edge>
 		<edge id="e21" source="n20" target="n21" sourceport="p1" targetport="p0">
-			<data key="d6">
-				<x0:DemoEdgeStyle showTargetArrows="false"/>
+			<data key="d13">
+				<demostyle:DemoEdgeStyle showTargetArrows="false"/>
 			</data>
 		</edge>
 		<edge id="e22" source="n0" target="n22" sourceport="p2" targetport="p0">
-			<data key="d6">
-				<x0:DemoEdgeStyle showTargetArrows="false"/>
+			<data key="d13">
+				<demostyle:DemoEdgeStyle showTargetArrows="false"/>
 			</data>
 		</edge>
 		<edge id="e23" source="n22" target="n23" sourceport="p1" targetport="p0">
-			<data key="d6">
-				<x0:DemoEdgeStyle showTargetArrows="false"/>
+			<data key="d13">
+				<demostyle:DemoEdgeStyle showTargetArrows="false"/>
 			</data>
 		</edge>
 		<edge id="e24" source="n23" target="n24" sourceport="p1" targetport="p0">
-			<data key="d6">
-				<x0:DemoEdgeStyle showTargetArrows="false"/>
+			<data key="d13">
+				<demostyle:DemoEdgeStyle showTargetArrows="false"/>
 			</data>
 		</edge>
 		<edge id="e25" source="n24" target="n25" sourceport="p1" targetport="p0">
-			<data key="d6">
-				<x0:DemoEdgeStyle showTargetArrows="false"/>
+			<data key="d13">
+				<demostyle:DemoEdgeStyle showTargetArrows="false"/>
 			</data>
 		</edge>
 		<edge id="e26" source="n25" target="n26" sourceport="p1" targetport="p0">
-			<data key="d6">
-				<x0:DemoEdgeStyle showTargetArrows="false"/>
+			<data key="d13">
+				<demostyle:DemoEdgeStyle showTargetArrows="false"/>
 			</data>
 		</edge>
 		<edge id="e27" source="n26" target="n27" sourceport="p1" targetport="p0">
-			<data key="d6">
-				<x0:DemoEdgeStyle showTargetArrows="false"/>
+			<data key="d13">
+				<demostyle:DemoEdgeStyle showTargetArrows="false"/>
 			</data>
 		</edge>
 		<edge id="e28" source="n27" target="n28" sourceport="p1" targetport="p0">
-			<data key="d6">
-				<x0:DemoEdgeStyle showTargetArrows="false"/>
+			<data key="d13">
+				<demostyle:DemoEdgeStyle showTargetArrows="false"/>
 			</data>
 		</edge>
 		<edge id="e29" source="n28" target="n29" sourceport="p1" targetport="p0">
-			<data key="d6">
-				<x0:DemoEdgeStyle showTargetArrows="false"/>
+			<data key="d13">
+				<demostyle:DemoEdgeStyle showTargetArrows="false"/>
 			</data>
 		</edge>
 		<edge id="e30" source="n29" target="n30" sourceport="p1" targetport="p0">
-			<data key="d6">
-				<x0:DemoEdgeStyle showTargetArrows="false"/>
+			<data key="d13">
+				<demostyle:DemoEdgeStyle showTargetArrows="false"/>
 			</data>
 		</edge>
 		<edge id="e31" source="n21" target="n31" sourceport="p1" targetport="p0">
-			<data key="d6">
-				<x0:DemoEdgeStyle showTargetArrows="false"/>
+			<data key="d13">
+				<demostyle:DemoEdgeStyle showTargetArrows="false"/>
 			</data>
 		</edge>
 		<edge id="e32" source="n31" target="n15" sourceport="p1" targetport="p2">
-			<data key="d6">
-				<x0:DemoEdgeStyle showTargetArrows="false"/>
+			<data key="d13">
+				<demostyle:DemoEdgeStyle showTargetArrows="false"/>
 			</data>
 		</edge>
 		<edge id="e33" source="n10" target="n0" sourceport="p1" targetport="p3">
-			<data key="d6">
-				<x0:DemoEdgeStyle showTargetArrows="false"/>
+			<data key="d13">
+				<demostyle:DemoEdgeStyle showTargetArrows="false"/>
 			</data>
 		</edge>
 		<edge id="e34" source="n0" target="n34" sourceport="p4" targetport="p0">
-			<data key="d6">
-				<x0:DemoEdgeStyle showTargetArrows="false"/>
+			<data key="d13">
+				<demostyle:DemoEdgeStyle showTargetArrows="false"/>
 			</data>
 		</edge>
 		<edge id="e35" source="n34" target="n1" sourceport="p1" targetport="p4">
-			<data key="d6">
-				<x0:DemoEdgeStyle showTargetArrows="false"/>
+			<data key="d13">
+				<demostyle:DemoEdgeStyle showTargetArrows="false"/>
 			</data>
 		</edge>
 		<edge id="e36" source="n34" target="n32" sourceport="p2" targetport="p0">
-			<data key="d6">
-				<x0:DemoEdgeStyle showTargetArrows="false"/>
+			<data key="d13">
+				<demostyle:DemoEdgeStyle showTargetArrows="false"/>
 			</data>
 		</edge>
 		<edge id="e37" source="n32" target="n0" sourceport="p1" targetport="p5">
-			<data key="d6">
-				<x0:DemoEdgeStyle showTargetArrows="false"/>
+			<data key="d13">
+				<demostyle:DemoEdgeStyle showTargetArrows="false"/>
 			</data>
 		</edge>
 		<edge id="e38" source="n32" target="n33" sourceport="p2" targetport="p0">
-			<data key="d6">
-				<x0:DemoEdgeStyle showTargetArrows="false"/>
+			<data key="d13">
+				<demostyle:DemoEdgeStyle showTargetArrows="false"/>
 			</data>
 		</edge>
 		<edge id="e39" source="n33" target="n1" sourceport="p1" targetport="p5">
-			<data key="d6">
-				<x0:DemoEdgeStyle showTargetArrows="false"/>
+			<data key="d13">
+				<demostyle:DemoEdgeStyle showTargetArrows="false"/>
 			</data>
 		</edge>
 		<edge id="e40" source="n33" target="n34" sourceport="p2" targetport="p3">
-			<data key="d6">
-				<x0:DemoEdgeStyle showTargetArrows="false"/>
+			<data key="d13">
+				<demostyle:DemoEdgeStyle showTargetArrows="false"/>
 			</data>
 		</edge>
 	</graph>

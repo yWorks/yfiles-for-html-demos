@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -50,15 +50,18 @@ import {
   IEdgeReconnectionPortCandidateProvider,
   IEditLabelHelper,
   IInputModeContext,
+  ILabelModelParameter,
   ILabelOwner,
+  IModelItem,
   INode,
+  Insets,
+  InteriorLabelModel,
   IPort,
   IPortCandidateProvider,
+  IPortStyle,
   IRow,
   IStripe,
   ITable,
-  Insets,
-  InteriorLabelModel,
   LayoutExecutor,
   License,
   MinimumNodeSizeStage,
@@ -81,7 +84,7 @@ import {
   Table,
   TableEditorInputMode,
   VoidStripeStyle,
-  IEdgePathCropper
+  YObject
 } from 'yfiles'
 
 import ContextMenu from '../../utils/ContextMenu.js'
@@ -94,6 +97,7 @@ import BpmnView, {
   AnnotationNodeStyle,
   BpmnEdgeStyle,
   BpmnHandleSerializationListener,
+  BpmnNodeStyle,
   BpmnPortCandidateProvider,
   BpmnReshapeHandleProvider,
   ChoreographyLabelModel,
@@ -107,11 +111,11 @@ import BpmnView, {
   EventPortStyle,
   GatewayNodeStyle,
   GroupNodeStyle as BpmnGroupNodeStyle,
+  LegacyBpmnExtensions,
   MessageLabelStyle,
   Participant,
   PoolHeaderLabelModel,
   PoolNodeStyle,
-  LegacyBpmnExtensions,
   YFILES_BPMN_NS,
   YFILES_BPMN_PREFIX
 } from './bpmn-view.js'
@@ -119,25 +123,22 @@ import * as DemoApp from '../../resources/demo-app.js'
 import { DragAndDropPanel } from '../../utils/DndPanel.js'
 import loadJson from '../../resources/load-json.js'
 import { BpmnDiParser } from './bpmn-di.js'
+import { pointerEventsSupported } from '../../utils/Workarounds.js'
 
 const numberOfDiSamples = 1
 
-let graphComponent = null
-
-/**
- * The combo box to choose the sample graphs from.
- * @type {HTMLElement}
- */
-let graphChooserBox = null
+/** @type {GraphComponent} */
+let graphComponent
 
 /**
  * The input mode that handles interactive table editing like adding rows and columns.
  * @type {TableEditorInputMode}
  */
-let tableEditorInputMode = null
+let tableEditorInputMode
 
 /**
- * A flag that indicates whether or not a layout is currently running to prevent re-entrant layout calculations.
+ * A flag that indicates whether or not a layout is currently running to prevent re-entrant layout
+ * calculations.
  * @type {boolean}
  */
 let layoutIsRunning = false
@@ -146,23 +147,29 @@ let layoutIsRunning = false
  * The context menu that provides all options for the different BPMN styles.
  * @type {ContextMenu}
  */
-let contextMenu = null
+let contextMenu
 
 /**
  * A helper class that facilitates using popups that show the properties of the BPMN nodes.
- * @type {BpmnPopupSupport}
+ * @type {PopupSupport}
  */
-let popupSupport = null
+let popupSupport
+
+/**
+ * The combo box to choose the sample graphs from.
+ */
+const graphChooserBox = document.getElementById('SampleComboBox')
 
 /**
  * Starts the BPMN editor.
+ * @param {!object} licenseData
+ * @returns {!Promise}
  */
 async function run(licenseData) {
   License.value = licenseData
   // initialize UI elements
   graphComponent = new GraphComponent('graphComponent')
   const overviewComponent = new GraphOverviewComponent('overviewComponent', graphComponent)
-  graphChooserBox = document.getElementById('SampleComboBox')
 
   // load the folding and style modules and initialize the GraphComponent
   initializeGraphComponent()
@@ -171,23 +178,20 @@ async function run(licenseData) {
 
   // load the graphml module with folding support and initialize
   // the graph chooser box and the style property popups
-  const stylePanel = new DragAndDropPanel(
-    document.getElementById('stylePanel'),
-    DemoApp.passiveSupported
-  )
+  const stylePanel = new DragAndDropPanel(document.getElementById('stylePanel'))
   stylePanel.copyNodeLabels = false
   // Set the callback that starts the actual drag and drop operation
   stylePanel.beginDragCallback = (element, data) => {
     const dragPreview = element.cloneNode(true)
     dragPreview.style.margin = '0'
-    let dragSource = null
-    if (IStripe.isInstance(data)) {
+    let dragSource
+    if (data instanceof IStripe) {
       dragSource = StripeDropInputMode.startDrag(
         element,
         data,
         DragDropEffects.ALL,
         true,
-        DemoApp.pointerEventsSupported ? dragPreview : null
+        pointerEventsSupported ? dragPreview : null
       )
     } else {
       dragSource = NodeDropInputMode.startDrag(
@@ -195,7 +199,7 @@ async function run(licenseData) {
         data,
         DragDropEffects.ALL,
         true,
-        DemoApp.pointerEventsSupported ? dragPreview : null
+        pointerEventsSupported ? dragPreview : null
       )
     }
     dragSource.addQueryContinueDragListener((src, args) => {
@@ -261,11 +265,13 @@ function initializeGraphComponent() {
   graphComponent.clipboard = graphClipboard
 
   const decorator = graphComponent.graph.decorator
-  decorator.nodeDecorator.editLabelHelperDecorator.setFactory(
-    owner =>
-      (owner.style.lookup && owner.style.lookup(owner, IEditLabelHelper.$class)) ||
-      new AdditionalEditLabelHelper()
-  )
+  decorator.nodeDecorator.editLabelHelperDecorator.setFactory(node => {
+    const style = node.style
+    if (style.lookup && style.lookup(node, IEditLabelHelper.$class)) {
+      return style.lookup(node, IEditLabelHelper.$class)
+    }
+    return new AdditionalEditLabelHelper()
+  })
 }
 
 function initializeInputMode() {
@@ -386,7 +392,8 @@ function enableFolding() {
   const compositeLabelModel = new CompositeLabelModel()
   compositeLabelModel.labelModels.add(new InteriorLabelModel())
   compositeLabelModel.labelModels.add(new ExteriorLabelModel({ insets: 10 }))
-  graphComponent.graph.nodeDefaults.labels.layoutParameter = compositeLabelModel.createDefaultParameter()
+  graphComponent.graph.nodeDefaults.labels.layoutParameter =
+    compositeLabelModel.createDefaultParameter()
 
   manager.masterGraph.decorator.nodeDecorator.portCandidateProviderDecorator.setFactory(node => {
     if (node.lookup(ITable.$class)) {
@@ -423,6 +430,7 @@ function enableFolding() {
 
 /**
  * Helper method that reads the currently selected GraphML from the combo box.
+ * @returns {!Promise}
  */
 async function onGraphChooserBoxSelectionChanged() {
   // hide any property popup that might be visible
@@ -434,7 +442,7 @@ async function onGraphChooserBoxSelectionChanged() {
   const graphName = selectedItem.toLowerCase().replace(/ /g, '_')
   if (graphChooserBox.selectedIndex >= graphChooserBox.options.length - numberOfDiSamples) {
     const content = await loadBpmnDiSample(graphName)
-    if (content != null) {
+    if (content !== null) {
       const bpmnDiParser = new BpmnDiParser()
       await bpmnDiParser.load(graphComponent.graph, content)
     }
@@ -458,6 +466,10 @@ async function onGraphChooserBoxSelectionChanged() {
   setUIDisabled(false)
 }
 
+/**
+ * @param {!string} graphName
+ * @returns {!Promise.<string>}
+ */
 async function loadBpmnDiSample(graphName) {
   try {
     const response = await fetch(`resources/${graphName}.bpmn`)
@@ -468,11 +480,12 @@ async function loadBpmnDiSample(graphName) {
   } catch (e) {
     console.log('Could not load bpmn file', e)
   }
-  return null
+  return Promise.resolve(null)
 }
 
 /**
  * Helper method that tries to layout the current graph using the BpmnLayout.
+ * @returns {!Promise}
  */
 async function onLayoutButtonClicked() {
   if (layoutIsRunning) {
@@ -493,7 +506,11 @@ async function onLayoutButtonClicked() {
   const layoutExecutor = new LayoutExecutor({
     graphComponent,
     layout: new MinimumNodeSizeStage(bpmnLayout),
-    layoutData: bpmnLayoutData,
+    layoutData: bpmnLayoutData.create(
+      graphComponent.graph,
+      graphComponent.selection,
+      bpmnLayout.scope
+    ),
     duration: '0.5s',
     animateViewport: true
   })
@@ -539,15 +556,14 @@ function registerCommands() {
   DemoApp.bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent)
   DemoApp.bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
 
-  const samplesComboBox = document.getElementById('SampleComboBox')
   DemoApp.bindAction("button[data-command='PreviousSample']", () => {
-    samplesComboBox.selectedIndex = Math.max(0, samplesComboBox.selectedIndex - 1)
+    graphChooserBox.selectedIndex = Math.max(0, graphChooserBox.selectedIndex - 1)
     onGraphChooserBoxSelectionChanged()
   })
   DemoApp.bindAction("button[data-command='NextSample']", () => {
-    samplesComboBox.selectedIndex = Math.min(
-      samplesComboBox.selectedIndex + 1,
-      samplesComboBox.options.length - 1
+    graphChooserBox.selectedIndex = Math.min(
+      graphChooserBox.selectedIndex + 1,
+      graphChooserBox.options.length - 1
     )
     onGraphChooserBoxSelectionChanged()
   })
@@ -583,7 +599,7 @@ function initializeContextMenu() {
     }
   })
 
-  // Add and event listener that populates the context menu according to the hit elements, or cancels showing a menu.
+  // Add an event listener that populates the context menu according to the hit elements, or cancels showing a menu.
   // This PopulateItemContextMenu is fired when calling the ContextMenuInputMode.shouldOpenMenu method above.
   inputMode.addPopulateItemContextMenuListener((sender, args) => {
     onPopulateItemContextMenu(contextMenu, args)
@@ -601,17 +617,16 @@ function initializeContextMenu() {
 }
 
 /**
- * Updates the elements of the UI's state and the input mode and checks whether the buttons should be enabled or
- * not.
+ * Updates the elements of the UI's state and the input mode and checks whether the buttons should
+ * be enabled or not.
  * @param {boolean} disabled
  */
 function setUIDisabled(disabled) {
-  const samplesComboBox = document.getElementById('SampleComboBox')
-  samplesComboBox.disabled = disabled
+  graphChooserBox.disabled = disabled
   document.getElementById('previousButton').disabled =
-    disabled || samplesComboBox.selectedIndex === 0
+    disabled || graphChooserBox.selectedIndex === 0
   document.getElementById('nextButton').disabled =
-    disabled || samplesComboBox.selectedIndex === samplesComboBox.childElementCount - 1
+    disabled || graphChooserBox.selectedIndex === graphChooserBox.childElementCount - 1
   document.getElementById('layoutButton').disabled = disabled
   document.getElementById('newButton').disabled = disabled
   graphComponent.inputMode.waitInputMode.waiting = disabled
@@ -620,14 +635,14 @@ function setUIDisabled(disabled) {
 /**
  * Adds options to the context menu according to the item for which it is displayed.
  * This is called when the context menu is about to show.
- * @param {ContextMenu} itemContextMenu the context menu to which the options are added.
- * @param {PopulateItemContextMenuEventArgs} event The event data.
+ * @param {!ContextMenu} itemContextMenu the context menu to which the options are added.
+ * @param {!PopulateItemContextMenuEventArgs.<IModelItem>} event The event data.
  */
 function onPopulateItemContextMenu(itemContextMenu, event) {
   // clear items from a previous context menu appearance
   itemContextMenu.clearItems()
 
-  if (INode.isInstance(event.item)) {
+  if (event.item instanceof INode) {
     const node = event.item
     // Add an annotation label to the node and start editing its text
     itemContextMenu.addMenuItem('Add Annotation Label', () => {
@@ -704,21 +719,22 @@ function onPopulateItemContextMenu(itemContextMenu, event) {
       StripeTypes.ALL,
       StripeSubregionTypes.HEADER
     )
-    if (stripeDescriptor && IRow.isInstance(stripeDescriptor.stripe)) {
+    if (stripeDescriptor && stripeDescriptor.stripe instanceof IRow) {
       // ... allow to increase or decrease the row header size
       const stripe = stripeDescriptor.stripe
+      const table = stripe.table
       const insets = stripe.insets
-      const defaultInsets = stripe.table.rowDefaults.insets
+      const defaultInsets = table.rowDefaults.insets
 
       if (insets.left > defaultInsets.left) {
         itemContextMenu.addMenuItem('Reduce header size', () => {
           // by reducing the header size of one of the rows, the size of the table insets might change
-          const insetsBefore = stripe.table.accumulatedInsets
-          stripe.table.setStripeInsets(
+          const insetsBefore = table.accumulatedInsets
+          table.setStripeInsets(
             stripe,
             new Insets(insets.left - defaultInsets.left, insets.top, insets.right, insets.bottom)
           )
-          const insetsAfter = stripe.table.accumulatedInsets
+          const insetsAfter = table.accumulatedInsets
           // if the table insets have changed, the bounds of the pool node have to be adjusted as well
           const diff = insetsBefore.left - insetsAfter.left
           graphComponent.graph.setNodeLayout(
@@ -733,12 +749,12 @@ function onPopulateItemContextMenu(itemContextMenu, event) {
         })
       }
       itemContextMenu.addMenuItem('Increase header size', () => {
-        const insetsBefore = stripe.table.accumulatedInsets
-        stripe.table.setStripeInsets(
+        const insetsBefore = table.accumulatedInsets
+        table.setStripeInsets(
           stripe,
           new Insets(insets.left + defaultInsets.left, insets.top, insets.right, insets.bottom)
         )
-        const insetsAfter = stripe.table.accumulatedInsets
+        const insetsAfter = table.accumulatedInsets
         const diff = insetsBefore.left - insetsAfter.left
         graphComponent.graph.setNodeLayout(
           node,
@@ -760,11 +776,11 @@ function onPopulateItemContextMenu(itemContextMenu, event) {
 
     // we don't want to be queried again if there are more items at this location
     event.showMenu = true
-  } else if (IEdge.isInstance(event.item)) {
+  } else if (event.item instanceof IEdge) {
     // For edges a label with a Message Icon may be added
     const modelParameter = new SmartEdgeLabelModel().createDefaultParameter()
     itemContextMenu.addMenuItem('Add Message Icon Label', () => {
-      if (IEdge.isInstance(event.item)) {
+      if (event.item instanceof IEdge) {
         graphComponent.graph.addLabel(
           event.item,
           '',
@@ -784,7 +800,7 @@ function onPopulateItemContextMenu(itemContextMenu, event) {
 
     // we don't want to be queried again if there are more items at this location
     event.showMenu = true
-  } else if (IPort.isInstance(event.item)) {
+  } else if (event.item instanceof IPort) {
     const port = event.item
     if (popupSupport.hasPropertyPopup(port.style.getClass())) {
       itemContextMenu.addMenuItem('Edit Port Style Properties', () => {
@@ -801,8 +817,8 @@ function onPopulateItemContextMenu(itemContextMenu, event) {
  */
 class NoNestedTablesDropInputMode extends NodeDropInputMode {
   /**
-   * @param {Point} dragLocation
-   * @return {IModelItem}
+   * @param {!Point} dragLocation
+   * @returns {?IModelItem}
    */
   getDropTarget(dragLocation) {
     // Ok, this node has a table associated -> disallow dragging it into a group node.
@@ -818,10 +834,10 @@ class NoNestedTablesDropInputMode extends NodeDropInputMode {
  */
 class NoTableReparentNodeHandler extends ReparentNodeHandler {
   /**
-   * @param {IInputModeContext} context
-   * @param {INode} node
-   * @param {INode} newParent
-   * @return {boolean}
+   * @param {!IInputModeContext} context
+   * @param {!INode} node
+   * @param {!INode} newParent
+   * @returns {boolean}
    */
   isValidParent(context, node, newParent) {
     // table nodes shall not become child nodes
@@ -830,8 +846,9 @@ class NoTableReparentNodeHandler extends ReparentNodeHandler {
 }
 
 /**
- * Creates and configures nodes that will be displayed in the style panel to be dragged to the graph component.
- * @return {INode[]}
+ * Creates and configures nodes that will be displayed in the style panel to be dragged to the
+ * graph component.
+ * @returns {!Array.<INode>}
  */
 function createStylePanelNodes() {
   // Create a new Graph in which the palette nodes live
@@ -924,29 +941,27 @@ const parameters = [
 ]
 
 /**
- * This class customizes the label editing for nodes that consist of more than one labels. The first label is
- * placed in the center of the node, while the others according to the parameters defined by the
- * ExteriorLabelModel.
+ * This class customizes the label editing for nodes that consist of more than one labels. The
+ * first label is placed in the center of the node, while the others according to the parameters
+ * defined by the ExteriorLabelModel.
  */
 class AdditionalEditLabelHelper extends EditLabelHelper {
   /**
-   * @param {IInputModeContext} context
-   * @param {ILabelOwner} owner
-   * @return {*|ILabelModelParameter}
+   * @param {!IInputModeContext} context
+   * @param {!ILabelOwner} owner
+   * @returns {!ILabelModelParameter}
    */
   getLabelParameter(context, owner) {
     if (owner.style instanceof BpmnGroupNodeStyle) {
       return InteriorLabelModel.NORTH
     }
     // eslint-disable-next-line arrow-body-style
-    const validParameters = parameters.filter(parameter => {
-      // find the valid parameter by checking for each label, if its bounds intersect with the bounds of the label
-      // model parameter
-      return owner.labels.every(label => {
+    const validParameters = parameters.filter(parameter =>
+      owner.labels.every(label => {
         const bounds = label.layoutParameter.model.getGeometry(label, label.layoutParameter)
         return !parameter.model.getGeometry(label, parameter).bounds.intersects(bounds)
       })
-    })
+    )
     return validParameters[0] || InteriorLabelModel.CENTER
   }
 }

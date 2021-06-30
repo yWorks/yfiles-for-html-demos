@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -208,9 +208,8 @@ function registerCommands(): void {
     // display Image in the background
     displayImage()
     // enable the rectangle button
-    ;(document.querySelector(
-      "button[data-command='Rectangle']"
-    )! as HTMLButtonElement).disabled = false
+    ;(document.querySelector("button[data-command='Rectangle']")! as HTMLButtonElement).disabled =
+      false
     // disabled the image button
     ;(document.querySelector("button[data-command='Image']")! as HTMLButtonElement).disabled = true
   })
@@ -219,9 +218,8 @@ function registerCommands(): void {
     // display colored rectangle in the background
     displayRectangle()
     // disable the rectangle button
-    ;(document.querySelector(
-      "button[data-command='Rectangle']"
-    )! as HTMLButtonElement).disabled = true
+    ;(document.querySelector("button[data-command='Rectangle']")! as HTMLButtonElement).disabled =
+      true
     // enable the image button
     ;(document.querySelector("button[data-command='Image']")! as HTMLButtonElement).disabled = false
   })

@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -46,6 +46,7 @@ import loadJson from '../../resources/load-json.js'
  * Simple demo that shows how to create a custom style that uses HTML for rendering the labels.
  * This is done using the foreignObject SVG element. Note that Internet Explorer does not currently (as of version
  * 11) support this feature.
+ * @param {*} licenseData
  */
 function run(licenseData) {
   License.value = licenseData
@@ -203,7 +204,7 @@ function run(licenseData) {
 }
 
 /** @type {GraphComponent} */
-let graphComponent = null
+let graphComponent
 
 function registerCommands() {
   bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent)

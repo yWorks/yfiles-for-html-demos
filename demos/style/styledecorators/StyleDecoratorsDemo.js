@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -32,12 +32,15 @@ import {
   GraphEditorInputMode,
   ICommand,
   IGraph,
+  IInputMode,
+  INode,
   INodeStyle,
   InteriorLabelModel,
   License,
   NodeStylePortStyleAdapter,
   Point,
   ShapeNodeStyle,
+  Size,
   SmartEdgeLabelModel
 } from 'yfiles'
 
@@ -47,50 +50,68 @@ import EdgeStyleDecorator from './EdgeStyleDecorator.js'
 import NodeStyleDecorator from './NodeStyleDecorator.js'
 import { initDemoStyles } from '../../resources/demo-styles.js'
 import loadJson from '../../resources/load-json.js'
-/** @type {GraphComponent} */
-let graphComponent = null
 
-/** @type {INodeStyle} */
-let baseStyle = null
-
+/**
+ * @param {!object} licenseData
+ */
 function run(licenseData) {
   License.value = licenseData
-  graphComponent = new GraphComponent('graphComponent')
 
-  const graphEditorInputMode = new GraphEditorInputMode({
+  const graphComponent = new GraphComponent('graphComponent')
+
+  graphComponent.inputMode = createInputMode()
+
+  configureGraph(graphComponent.graph)
+
+  createSampleGraph(graphComponent.graph)
+  graphComponent.fitGraphBounds()
+
+  registerCommands(graphComponent)
+
+  showApp(graphComponent)
+}
+
+/**
+ * Creates an input mode that supports interactive editing like e.g. creating new nodes and edges or
+ * editing labels.
+ * @returns {!IInputMode}
+ */
+function createInputMode() {
+  const geim = new GraphEditorInputMode({
     allowEditLabel: true
   })
 
   // set a random traffic value to edges created interactively
-  graphEditorInputMode.createEdgeInputMode.addEdgeCreatedListener((source, eventArgs) => {
+  geim.createEdgeInputMode.addEdgeCreatedListener((source, args) => {
     switch (Math.floor(Math.random() * 4)) {
       case 0:
-        eventArgs.item.tag = 'TRAFFIC_VERY_HIGH'
+        args.item.tag = 'TRAFFIC_VERY_HIGH'
         break
       case 1:
-        eventArgs.item.tag = 'TRAFFIC_HIGH'
+        args.item.tag = 'TRAFFIC_HIGH'
         break
       case 2:
-        eventArgs.item.tag = 'TRAFFIC_NORMAL'
+        args.item.tag = 'TRAFFIC_NORMAL'
         break
       case 3:
       default:
-        eventArgs.item.tag = 'TRAFFIC_LOW'
+        args.item.tag = 'TRAFFIC_LOW'
         break
     }
   })
-  graphComponent.inputMode = graphEditorInputMode
 
-  const graph = graphComponent.graph
+  return geim
+}
+
+/**
+ * Configures default styles for nodes and edges.
+ * @param {!IGraph} graph
+ */
+function configureGraph(graph) {
   initDemoStyles(graph)
 
-  baseStyle = new ShapeNodeStyle({
-    fill: 'rgb(102, 153, 204)',
-    stroke: null,
-    shape: 'rectangle'
-  })
-  graph.nodeDefaults.style = new NodeStyleDecorator(baseStyle, 'resources/workstation.svg')
-  graph.nodeDefaults.size = [80, 40]
+  graph.nodeDefaults.style = new NodeStyleDecorator(newBaseStyle(), 'resources/workstation.svg')
+  graph.nodeDefaults.size = new Size(80, 40)
 
   graph.edgeDefaults.style = new EdgeStyleDecorator(
     new NodeStylePortStyleAdapter({
@@ -110,16 +131,103 @@ function run(licenseData) {
 
   graph.edgeDefaults.labels.style = new LabelStyleDecorator(new DefaultLabelStyle())
   graph.edgeDefaults.labels.layoutParameter = new SmartEdgeLabelModel().createDefaultParameter()
-
-  createSampleGraph(graph)
-  graphComponent.fitGraphBounds()
-
-  registerCommands()
-
-  showApp(graphComponent)
 }
 
-function registerCommands() {
+/**
+ * Creates the sample graph of this demo.
+ * @param {!IGraph} graph The graph to which nodes and edges are added
+ */
+function createSampleGraph(graph) {
+  graph.clear()
+
+  const baseStyle = newBaseStyle()
+
+  graph.createNodeAt({
+    location: new Point(0, 0),
+    style: new NodeStyleDecorator(baseStyle, 'resources/switch.svg'),
+    tag: 'Root',
+    labels: ['Root']
+  })
+  addNode(graph, 120, -50, baseStyle, 'Switch')
+  addNode(graph, -130, 60, baseStyle, 'Switch')
+  addNode(graph, 95, -180, baseStyle, 'Scanner')
+  addNode(graph, 240, -110, baseStyle, 'Printer')
+  addNode(graph, 200, 50, baseStyle, 'Workstation')
+  addNode(graph, -160, -60, baseStyle, 'Printer')
+  addNode(graph, -260, 40, baseStyle, 'Scanner')
+  addNode(graph, -200, 170, baseStyle, 'Workstation')
+  addNode(graph, -50, 160, baseStyle, 'Workstation')
+
+  const nodes = graph.nodes.toArray()
+
+  addEdge(graph, nodes[0], nodes[1], 'TRAFFIC_VERY_HIGH')
+  addEdge(graph, nodes[0], nodes[2], 'TRAFFIC_HIGH')
+  addEdge(graph, nodes[1], nodes[3], 'TRAFFIC_HIGH')
+  addEdge(graph, nodes[1], nodes[4], 'TRAFFIC_NORMAL')
+  addEdge(graph, nodes[1], nodes[5], 'TRAFFIC_HIGH')
+  addEdge(graph, nodes[2], nodes[6], 'TRAFFIC_LOW')
+  addEdge(graph, nodes[2], nodes[7], 'TRAFFIC_LOW')
+  addEdge(graph, nodes[2], nodes[8], 'TRAFFIC_NORMAL')
+  addEdge(graph, nodes[2], nodes[9], 'TRAFFIC_LOW')
+
+  // add some bends
+  for (const edge of graph.edges) {
+    const sp = edge.sourcePort
+    const tp = edge.targetPort
+    graph.addBend(edge, sp.location.add(tp.location).multiply(0.5))
+  }
+}
+
+/**
+ * Creates a new node style instance that is used as the base style or decorated style for
+ * the NodeStyleDecorator instances created in this demo.
+ * @returns {!INodeStyle}
+ */
+function newBaseStyle() {
+  return new ShapeNodeStyle({
+    fill: 'rgb(102, 153, 204)',
+    stroke: null,
+    shape: 'rectangle'
+  })
+}
+
+/**
+ * Creates a new node in the given graph at the given location.
+ * @param {!IGraph} graph
+ * @param {number} x
+ * @param {number} y
+ * @param {!INodeStyle} baseStyle
+ * @param {!string} type
+ */
+function addNode(graph, x, y, baseStyle, type) {
+  graph.createNodeAt({
+    location: new Point(x, y),
+    style: new NodeStyleDecorator(baseStyle, `resources/${type.toLowerCase()}.svg`),
+    tag: type,
+    labels: [type]
+  })
+}
+
+/**
+ * Creates a new edge in the given graph between the two given nodes.
+ * @param {!IGraph} graph
+ * @param {!INode} source
+ * @param {!INode} target
+ * @param {!string} type
+ */
+function addEdge(graph, source, target, type) {
+  graph.createEdge({
+    source: source,
+    target: target,
+    tag: type
+  })
+}
+
+/**
+ * Binds actions and commands to the demo's UI controls.
+ * @param {!GraphComponent} graphComponent
+ */
+function registerCommands(graphComponent) {
   bindAction("button[data-command='Reload']", () => {
     graphComponent.graph.clear()
     createSampleGraph(graphComponent.graph)
@@ -129,134 +237,6 @@ function registerCommands() {
   bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent)
   bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent)
   bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
-}
-
-/**
- * Creates the sample graph of this demo.
- * @param {IGraph} graph The graph to which nodes and edges are added
- */
-function createSampleGraph(graph) {
-  graph.clear()
-
-  graph.createNodeAt({
-    location: new Point(0, 0),
-    style: new NodeStyleDecorator(baseStyle, 'resources/switch.svg'),
-    tag: 'Root',
-    labels: ['Root']
-  })
-  graph.createNodeAt({
-    location: new Point(120, -50),
-    style: new NodeStyleDecorator(baseStyle, 'resources/switch.svg'),
-    tag: 'Switch',
-    labels: ['Switch']
-  })
-  graph.createNodeAt({
-    location: new Point(-130, 60),
-    style: new NodeStyleDecorator(baseStyle, 'resources/switch.svg'),
-    tag: 'Switch',
-    labels: ['Switch']
-  })
-  graph.createNodeAt({
-    location: new Point(95, -180),
-    style: new NodeStyleDecorator(baseStyle, 'resources/scanner.svg'),
-    tag: 'Scanner',
-    labels: ['Scanner']
-  })
-  graph.createNodeAt({
-    location: new Point(240, -110),
-    style: new NodeStyleDecorator(baseStyle, 'resources/printer.svg'),
-    tag: 'Printer',
-    labels: ['Printer']
-  })
-  graph.createNodeAt({
-    location: new Point(200, 50),
-    style: new NodeStyleDecorator(baseStyle, 'resources/workstation.svg'),
-    tag: 'Workstation',
-    labels: ['Workstation']
-  })
-  graph.createNodeAt({
-    location: new Point(-160, -60),
-    style: new NodeStyleDecorator(baseStyle, 'resources/printer.svg'),
-    tag: 'Printer',
-    labels: ['Printer']
-  })
-  graph.createNodeAt({
-    location: new Point(-260, 40),
-    style: new NodeStyleDecorator(baseStyle, 'resources/scanner.svg'),
-    tag: 'Scanner',
-    labels: ['Scanner']
-  })
-  graph.createNodeAt({
-    location: new Point(-200, 170),
-    style: new NodeStyleDecorator(baseStyle, 'resources/workstation.svg'),
-    tag: 'Workstation',
-    labels: ['Workstation']
-  })
-  graph.createNodeAt({
-    location: new Point(-50, 160),
-    style: new NodeStyleDecorator(baseStyle, 'resources/workstation.svg'),
-    tag: 'Workstation',
-    labels: ['Workstation']
-  })
-
-  const nodes = graph.nodes.toArray()
-
-  graph.createEdge({
-    source: nodes[0],
-    target: nodes[1],
-    tag: 'TRAFFIC_VERY_HIGH'
-  })
-  graph.createEdge({
-    source: nodes[0],
-    target: nodes[2],
-    tag: 'TRAFFIC_HIGH'
-  })
-  graph.createEdge({
-    source: nodes[1],
-    target: nodes[3],
-    tag: 'TRAFFIC_HIGH'
-  })
-  graph.createEdge({
-    source: nodes[1],
-    target: nodes[4],
-    tag: 'TRAFFIC_NORMAL'
-  })
-  graph.createEdge({
-    source: nodes[1],
-    target: nodes[5],
-    tag: 'TRAFFIC_HIGH'
-  })
-  graph.createEdge({
-    source: nodes[2],
-    target: nodes[6],
-    tag: 'TRAFFIC_LOW'
-  })
-  graph.createEdge({
-    source: nodes[2],
-    target: nodes[7],
-    tag: 'TRAFFIC_LOW'
-  })
-  graph.createEdge({
-    source: nodes[2],
-    target: nodes[8],
-    tag: 'TRAFFIC_NORMAL'
-  })
-  graph.createEdge({
-    source: nodes[2],
-    target: nodes[9],
-    tag: 'TRAFFIC_LOW'
-  })
-
-  // add some bends
-  const edges = graph.edges.toArray()
-  edges.forEach(edge => {
-    graph.addBend(
-      edge,
-      edge.sourcePort.location.add(
-        edge.targetPort.location.subtract(edge.sourcePort.location).multiply(0.5)
-      )
-    )
-  })
 }
 
 // start demo

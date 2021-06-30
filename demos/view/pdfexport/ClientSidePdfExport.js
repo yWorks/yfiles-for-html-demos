@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -26,74 +26,33 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
+/* eslint-disable no-undef */
 import { GraphComponent, IGraph, Insets, Rect, Size, SvgExport } from 'yfiles'
+/* eslint-disable no-undef */
+import { PaperSize } from './PdfExportDemo.js'
 
 /**
- * A class that provides PDF-image export. The image is exported to svg and converted to PDF.
+ * A class that provides PDF export in the client's browser.
+ * yFiles' {@link SvgExport} is used to export the contents of a {@link GraphComponent} into an
+ * SVG document which is subsequently converted into a PDF document by jsPDF.
  */
 export default class ClientSidePdfExport {
-  /**
-   * Creates a new instance.
-   */
   constructor() {
-    this.$scale = 1
-    this.$margins = new Insets(5)
-    this.$paperSize = null
+    // The scaling of the exported image.
+    this.scale = 1
+
+    // The margins for the exported image.
+    this.margins = new Insets(5)
+
+    // The size of the exported PDF.
+    this.paperSize = PaperSize.AUTO
   }
 
   /**
-   * Returns the scaling of the exported image.
-   * @return {number}
-   */
-  get scale() {
-    return this.$scale
-  }
-
-  /**
-   * Specifies the scaling of the exported image.
-   * @param {number} value
-   */
-  set scale(value) {
-    this.$scale = value
-  }
-
-  /**
-   * Returns the margins for the exported image.
-   * @return {Insets}
-   */
-  get margins() {
-    return this.$margins
-  }
-
-  /**
-   * Specifies the margins for the exported image.
-   * @param {Insets} value
-   */
-  set margins(value) {
-    this.$margins = value
-  }
-
-  /**
-   * Sets the paper size for the exported PDF.
-   * @param {'A3'|'A4'|'A5'|'A6'|'Letter'|Size|null} value A value of <code>null</code> will set
-   * an automatic paper size fitting the diagram.
-   */
-  set paperSize(value) {
-    this.$paperSize = value
-  }
-
-  /**
-   * @return {Size|null}
-   */
-  get paperSize() {
-    return this.$paperSize
-  }
-
-  /**
-   * Exports the graph to a PDF.
-   * @param {IGraph} graph
-   * @param {Rect} exportRect
-   * @return {Promise.<{raw: string, uri: string}>}
+   * Exports the {@link IGraph} to PDF with the help of {@link SvgExport} and jsPDF.
+   * @param {!IGraph} graph
+   * @param {?Rect} exportRect
+   * @returns {!Promise.<object>}
    */
   async exportPdf(graph, exportRect) {
     // Create a new graph component for exporting the original SVG content
@@ -106,8 +65,11 @@ export default class ClientSidePdfExport {
     const targetRect = exportRect || exportComponent.contentRect
 
     // Create the exporter class
-    const exporter = new SvgExport(targetRect, this.scale)
-    exporter.margins = this.margins
+    const exporter = new SvgExport({
+      worldBounds: targetRect,
+      scale: this.scale,
+      margins: this.margins
+    })
 
     if (window.btoa != null) {
       // Don't use base 64 encoding if btoa is not available and don't inline images as-well.
@@ -118,17 +80,17 @@ export default class ClientSidePdfExport {
     // export the component to svg
     const svgElement = await exporter.exportSvgAsync(exportComponent)
 
-    const size = getPaperSize(this.paperSize, exporter)
+    const size = getExportSize(this.paperSize, exporter)
     return convertSvgToPdf(svgElement, size)
   }
 }
 
 /**
  * Converts the given SVG element to PDF.
- * @param {SVGElement} svgElement
- * @param {Size} size
- * @return {{raw: string, uri: string}}
  * @yjs:keep=compress,orientation
+ * @param {!SVGElement} svgElement
+ * @param {!Size} size
+ * @returns {!Promise.<object>}
  */
 function convertSvgToPdf(svgElement, size) {
   svgElement = svgElement.cloneNode(true)
@@ -148,34 +110,30 @@ function convertSvgToPdf(svgElement, size) {
     height: sizeArray[1]
   }
 
-  return jsPdf.svg(svgElement, options).then(() => {
-    return { raw: jsPdf.output(), uri: jsPdf.output('datauristring') }
-  })
+  return jsPdf
+    .svg(svgElement, options)
+    .then(() => ({ raw: jsPdf.output(), uri: jsPdf.output('datauristring') }))
 }
 
-function getPaperSize(paperSize, exporter) {
-  if (paperSize === null) {
-    return new Size(exporter.viewWidth, exporter.viewHeight)
-  }
-  if (paperSize instanceof Size) {
-    return paperSize
-  }
-
+/**
+ * Returns the size of the exported PDF. Paper sizes are converted to pixel sizes based on 72 PPI.
+ * @param {!PaperSize} paperSize
+ * @param {!SvgExport} exporter
+ * @returns {!Size}
+ */
+function getExportSize(paperSize, exporter) {
   switch (paperSize) {
-    case 'A3': {
+    case PaperSize.A3:
       return new Size(842, 1191)
-    }
-    case 'A4': {
+    case PaperSize.A4:
       return new Size(595, 842)
-    }
-    case 'A5': {
+    case PaperSize.A5:
       return new Size(420, 595)
-    }
-    case 'A6': {
+    case PaperSize.A6:
       return new Size(298, 420)
-    }
-    case 'Letter': {
+    case PaperSize.LETTER:
       return new Size(612, 792)
-    }
+    case PaperSize.AUTO:
+      return new Size(exporter.viewWidth, exporter.viewHeight)
   }
 }

@@ -4,11 +4,13 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/layout/multipage/index.html).
 
-This demo shows how to divide a large model graph into several smaller page graphs.
+This demo shows the multi-page layout that divides a large graph into several smaller page graphs.
 
-## About Multi-Page Layout
+## About Multi-page Layout
 
-MultiPageLayout subdivides a large graph (called model graph) into a set of smaller graphs (called page graphs) such that the layout of each page graph fits a specified maximum page size. To guarantee that no information is lost when distributing the elements of the model over several pages, the algorithm introduces the following three kinds of auxiliary nodes.
+[MultiPageLayout](https://docs.yworks.com/yfileshtml/#/api/MultiPageLayout) subdivides a large graph (called model graph) into a set of smaller graphs (called page graphs) such that the layout of each page graph fits a specified maximum page size. To guarantee that no information is lost when distributing the elements of the model over several pages, the algorithm introduces the following three kinds of auxiliary nodes.
+
+## Auxiliary Nodes
 
 Connector The layout algorithm replaces edges between nodes on different pages by so-called connector nodes. More precisely, for each edge between two nodes v and w that belong to different page graphs, there is a connector node attached to v that has the same label as node w. Similarly, there is a connector node attached to w that has the same label as node v. Click on a connector node to switch to the page graph that holds the related element.
 

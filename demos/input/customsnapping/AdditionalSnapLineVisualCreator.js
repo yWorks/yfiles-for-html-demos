@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -28,6 +28,7 @@
  ***************************************************************************/
 import {
   BaseClass,
+  IEnumerable,
   IRenderContext,
   IVisualCreator,
   List,
@@ -46,20 +47,20 @@ import {
 export default class AdditionalSnapLineVisualCreator extends BaseClass(IVisualCreator) {
   /**
    * Creates a new instance of <code>AdditionalSnapLineVisualCreator</code>.
-   * @param {Point} from The start point
-   * @param {Point} to The end point
+   * @param {!Point} from The start point
+   * @param {!Point} to The end point
    */
   constructor(from, to) {
     super()
-    this.from = from
     this.to = to
+    this.from = from
   }
 
   /**
    * Creates the {@link OrthogonalSnapLine}s that are displayed by this visual creator.
    * Since items should be able to snap from both sides to this line, two snap lines with the same location and
    * different {@link SnapLineSnapTypes}s are created.
-   * @return {IEnumerable.<OrthogonalSnapLine>}
+   * @returns {!IEnumerable.<OrthogonalSnapLine>}
    */
   createSnapLines() {
     const lines = new List()
@@ -121,25 +122,25 @@ export default class AdditionalSnapLineVisualCreator extends BaseClass(IVisualCr
 
   /**
    * Creates the visual for the orthogonal snap lines.
-   * @param {IRenderContext} ctx
-   * @return {Visual}
+   * @param {!IRenderContext} ctx
+   * @returns {!Visual}
    */
   createVisual(ctx) {
     const line = window.document.createElementNS('http://www.w3.org/2000/svg', 'line')
-    line.setAttribute('x1', this.from.x)
-    line.setAttribute('y1', this.from.y)
-    line.setAttribute('x2', this.to.x)
-    line.setAttribute('y2', this.to.y)
-    line.setAttribute('stroke-width', 2)
+    line.setAttribute('x1', this.from.x.toString())
+    line.setAttribute('y1', this.from.y.toString())
+    line.setAttribute('x2', this.to.x.toString())
+    line.setAttribute('y2', this.to.y.toString())
+    line.setAttribute('stroke-width', '2')
     line.setAttribute('stroke', 'firebrick')
     return new SvgVisual(line)
   }
 
   /**
    * Updates a previously created visual.
-   * @param {IRenderContext} ctx
-   * @param {Visual} oldVisual
-   * @return {Visual}
+   * @param {!IRenderContext} ctx
+   * @param {!Visual} oldVisual
+   * @returns {!Visual}
    */
   updateVisual(ctx, oldVisual) {
     const visual = oldVisual instanceof SvgVisual ? oldVisual : null
@@ -147,10 +148,10 @@ export default class AdditionalSnapLineVisualCreator extends BaseClass(IVisualCr
       return this.createVisual(ctx)
     }
     const line = visual.svgElement
-    line.setAttribute('x1', this.from.x)
-    line.setAttribute('y1', this.from.y)
-    line.setAttribute('x2', this.to.x)
-    line.setAttribute('y2', this.to.y)
+    line.setAttribute('x1', this.from.x.toString())
+    line.setAttribute('y1', this.from.y.toString())
+    line.setAttribute('x2', this.to.x.toString())
+    line.setAttribute('y2', this.to.y.toString())
     return oldVisual
   }
 }

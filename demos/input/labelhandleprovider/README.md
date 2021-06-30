@@ -4,7 +4,7 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/input/labelhandleprovider/index.html).
 
-This demo shows how to implement custom [IHandles](https://docs.yworks.com/yfileshtml/#/api/IHandles) that allow interactive resizing and rotation of labels.
+This demo shows how to implement custom [IHandle](https://docs.yworks.com/yfileshtml/#/api/IHandle)s that allow interactive resizing and rotation of labels.
 
 ## Things to Try
 

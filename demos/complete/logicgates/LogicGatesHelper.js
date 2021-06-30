@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -29,19 +29,21 @@
 import {
   BaseClass,
   DefaultPortCandidate,
-  Enum,
   IInputModeContext,
   INode,
   IPortCandidate,
   IPortCandidateProvider,
   List,
-  PortCandidateValidity
+  PortCandidateValidity,
+  IEnumerable
 } from 'yfiles'
+import { GateNodeStyle } from './DemoStyles.js'
 
-/**
- * Defines the types of logic gates.
+export /**
+ * @readonly
+ * @enum {number}
  */
-export const LogicGateType = Enum('LogicGateType', {
+const LogicGateType = {
   AND: 0,
   NAND: 1,
   NOT: 2,
@@ -49,15 +51,15 @@ export const LogicGateType = Enum('LogicGateType', {
   NOR: 4,
   XOR: 5,
   XNOR: 6
-})
-
-/**
- * Defines the edge direction.
+}
+export /**
+ * @readonly
+ * @enum {number}
  */
-export const EdgeDirection = Enum('EdgeDirection', {
+const EdgeDirection = {
   IN: 0,
   OUT: 1
-})
+}
 
 /**
  * Provides all available ports of the given graph with the specified edge direction.
@@ -65,7 +67,7 @@ export const EdgeDirection = Enum('EdgeDirection', {
 export class DescriptorDependentPortCandidateProvider extends BaseClass(IPortCandidateProvider) {
   /**
    * Creates a new instance of DescriptorDependentPortCandidateProvider.
-   * @param {INode} node
+   * @param {!INode} node
    */
   constructor(node) {
     super()
@@ -74,9 +76,9 @@ export class DescriptorDependentPortCandidateProvider extends BaseClass(IPortCan
 
   /**
    * Returns all port candidates that apply for the provided opposite port candidate.
-   * @param {IInputModeContext} context The context for which the candidates should be provided
-   * @param {IPortCandidate} target The opposite port candidate
-   * @return {IListEnumerable}
+   * @param {!IInputModeContext} context The context for which the candidates should be provided
+   * @param {!IPortCandidate} target The opposite port candidate
+   * @returns {!IEnumerable.<IPortCandidate>}
    */
   getSourcePortCandidates(context, target) {
     return this.getPortCandidatesForDirection(EdgeDirection.OUT)
@@ -84,9 +86,9 @@ export class DescriptorDependentPortCandidateProvider extends BaseClass(IPortCan
 
   /**
    * Returns all port candidates that apply for the provided opposite port candidate.
-   * @param {IInputModeContext} context The context for which the candidates should be provided
-   * @param {IPortCandidate} source The opposite port candidate
-   * @return {IListEnumerable}
+   * @param {!IInputModeContext} context The context for which the candidates should be provided
+   * @param {!IPortCandidate} source The opposite port candidate
+   * @returns {!IEnumerable.<IPortCandidate>}
    */
   getTargetPortCandidates(context, source) {
     return this.getPortCandidatesForDirection(EdgeDirection.IN)
@@ -94,8 +96,8 @@ export class DescriptorDependentPortCandidateProvider extends BaseClass(IPortCan
 
   /**
    * Returns all source port candidates that belong to the context of this provider.
-   * @param {IInputModeContext} context The context for which the candidates should be provided
-   * @return {IListEnumerable}
+   * @param {!IInputModeContext} context The context for which the candidates should be provided
+   * @returns {!IEnumerable.<IPortCandidate>}
    */
   getAllSourcePortCandidates(context) {
     return this.getPortCandidatesForDirection(EdgeDirection.OUT)
@@ -103,8 +105,8 @@ export class DescriptorDependentPortCandidateProvider extends BaseClass(IPortCan
 
   /**
    * Returns all target port candidates that belong to the context of this provider.
-   * @param {IInputModeContext} context The context for which the candidates should be provided
-   * @return {IListEnumerable}
+   * @param {!IInputModeContext} context The context for which the candidates should be provided
+   * @returns {!IEnumerable.<IPortCandidate>}
    */
   getAllTargetPortCandidates(context) {
     return this.getPortCandidatesForDirection(EdgeDirection.IN)
@@ -113,7 +115,7 @@ export class DescriptorDependentPortCandidateProvider extends BaseClass(IPortCan
   /**
    * Returns the suitable candidates based on the specified edge direction.
    * @param {number} direction The direction of the edge
-   * @return {List}
+   * @returns {!List.<IPortCandidate>}
    */
   getPortCandidatesForDirection(direction) {
     const candidates = new List()
@@ -126,7 +128,7 @@ export class DescriptorDependentPortCandidateProvider extends BaseClass(IPortCan
       // get the port descriptor
       const portDescriptor = port.tag
       // make the candidate valid if the direction is the same as the one supplied
-      if (portDescriptor !== null && portDescriptor.direction === direction) {
+      if (portDescriptor && portDescriptor.direction === direction) {
         candidate.validity = PortCandidateValidity.VALID
       }
       // add the candidate to the list
@@ -155,15 +157,16 @@ export class PortDescriptor {
 
   /**
    * Creates a list of all edges belonging to the type of the node as specified by its logic gate type.
-   * @param {INode} node The given node
-   * @return {List}
+   * @param {!INode} node The given node
+   * @returns {!List.<PortDescriptor>}
    */
   static createPortDescriptors(node) {
     const layout = node.layout
     const width = layout.width
     const height = layout.height
     const ports = new List()
-    switch (node.style.gateType) {
+    const style = node.style
+    switch (style.gateType) {
       default:
       case LogicGateType.AND:
       case LogicGateType.NAND: {

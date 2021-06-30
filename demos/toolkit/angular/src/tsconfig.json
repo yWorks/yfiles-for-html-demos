@@ -11,11 +11,12 @@
     "experimentalDecorators": true,
     "resolveJsonModule": true,
     "esModuleInterop": true,
+    "skipLibCheck": true,
     "target": "es6",
     "module": "esnext",
     "types": [],
     "lib": ["es2018", "dom"]
   },
   "include": ["**/*.ts"],
-  "exclude": ["**/environments/**"]
+  "exclude": ["**/environments/**", "src/**/*.worker.ts"]
 }

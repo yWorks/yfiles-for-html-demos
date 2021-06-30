@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -28,18 +28,37 @@
  ***************************************************************************/
 import {
   Class,
-  Enum,
   FreeEdgeLabelModel,
   GraphComponent,
-  IEdgeLabelLayout,
+  IGraph,
   ILabel,
+  ILayoutAlgorithm,
   LabelAngleReferences,
   LabelPlacements,
+  LayoutData,
   LayoutExecutor,
   LayoutGraphAdapter,
   MinimumNodeSizeStage,
-  PreferredPlacementDescriptor
+  PreferredPlacementDescriptor,
+  TimeSpan
 } from 'yfiles'
+
+/**
+ * @typedef {Object} LayoutConfigurationType
+ * @property {boolean} collapsedInitialization
+ * @property {string} [descriptionText]
+ * @property {string} title
+ * @property {function} apply
+ * @property {function} createConfiguredLayout
+ * @property {function} createConfiguredLayoutData
+ * @property {function} postProcess
+ */
+
+/**
+ * @typedef {Object} LayoutConfigurationImpl
+ * @property {boolean} $layoutRunning
+ * @property {function} createPreferredPlacementDescriptor
+ */
 
 /**
  * Abstract base class for configurations that can be displayed in an {@link OptionEditor}.
@@ -82,15 +101,13 @@ const LayoutConfiguration = Class('LayoutConfiguration', {
     const layoutExecutor = new LayoutExecutor({
       graphComponent,
       layout: new MinimumNodeSizeStage(layout),
-      duration: '1s',
-      animateViewport: true
+      duration: '0.75s',
+      animateViewport: true,
+      easedAnimation: true,
+      portAdjustmentPolicy: 'lengthen'
     })
     // set the cancel duration for the layout computation to 20s
-    if (layoutData && layoutData.abortHandler) {
-      layoutData.abortHandler.cancelDuration = '20s'
-    } else {
-      layoutExecutor.abortHandler.cancelDuration = '20s'
-    }
+    layoutExecutor.abortHandler.cancelDuration = TimeSpan.from('20s')
 
     // set the layout data to the LayoutExecutor
     if (layoutData) {
@@ -99,17 +116,24 @@ const LayoutConfiguration = Class('LayoutConfiguration', {
     // start the LayoutExecutor with finish and error handling code
     try {
       await layoutExecutor.start()
-    } catch (error) {
-      if (error.name === 'AlgorithmAbortedError') {
+    } catch (err) {
+      if (err instanceof Error && err.name === 'AlgorithmAbortedError') {
         alert(
           'The layout computation was canceled because the maximum configured runtime of 20 seconds was exceeded.'
         )
-      } else if (typeof window.reportError === 'function') {
-        window.reportError(error)
+      } else {
+        const reporter = window.reportError
+        if (typeof reporter === 'function') {
+          reporter(err)
+        }
       }
     } finally {
       this.$layoutRunning = false
       this.postProcess(graphComponent)
+      // clean up mapperRegistry
+      graphComponent.graph.mapperRegistry.removeMapper(
+        LayoutGraphAdapter.EDGE_LABEL_LAYOUT_PREFERRED_PLACEMENT_DESCRIPTOR_DP_KEY
+      )
     }
     doneHandler()
   },
@@ -138,158 +162,185 @@ const LayoutConfiguration = Class('LayoutConfiguration', {
     return null
   },
 
-  $static: {
-    /**
-     * Adds a mapper with a {@link PreferredPlacementDescriptor} that matches the given settings
-     * to the mapper registry of the given graph. In addition, sets the label model of all edge labels to free
-     * since that model can realizes any label placement calculated by a layout algorithm.
-     */
-    addPreferredPlacementDescriptor: function (
-      graph,
+  /**
+   * The title of the layout algorithm that is managed by this configuration.
+   */
+  title: 'Layout Algorithm',
+
+  collapsedInitialization: false,
+
+  // $static: {
+  /**
+   * Adds a mapper with a {@link PreferredPlacementDescriptor} that matches the given settings
+   * to the mapper registry of the given graph. In addition, sets the label model of all edge labels to free
+   * since that model can realizes any label placement calculated by a layout algorithm.
+   */
+  addPreferredPlacementDescriptor: function (
+    graph,
+    placeAlongEdge,
+    sideOfEdge,
+    orientation,
+    distanceToEdge
+  ) {
+    const descriptor = this.createPreferredPlacementDescriptor(
       placeAlongEdge,
       sideOfEdge,
       orientation,
       distanceToEdge
-    ) {
-      const descriptor = LayoutConfiguration.createPreferredPlacementDescriptor(
-        placeAlongEdge,
-        sideOfEdge,
-        orientation,
-        distanceToEdge
-      )
+    )
 
-      graph.mapperRegistry.createConstantMapper(
-        ILabel.$class,
-        IEdgeLabelLayout.$class,
-        LayoutGraphAdapter.EDGE_LABEL_LAYOUT_PREFERRED_PLACEMENT_DESCRIPTOR_DP_KEY,
-        descriptor
-      )
+    graph.mapperRegistry.createConstantMapper(
+      ILabel.$class,
+      PreferredPlacementDescriptor.$class,
+      LayoutGraphAdapter.EDGE_LABEL_LAYOUT_PREFERRED_PLACEMENT_DESCRIPTOR_DP_KEY,
+      descriptor
+    )
 
-      // change to a free edge label model to support integrated edge labeling
-      const model = new FreeEdgeLabelModel()
-      graph.edgeLabels.forEach(label => {
-        if (!(label.layoutParameter.model instanceof FreeEdgeLabelModel)) {
-          graph.setLabelLayoutParameter(label, model.findBestParameter(label, model, label.layout))
-        }
-      })
-    },
-
-    /**
-     * Creates a new {@link PreferredPlacementDescriptor} that matches the given settings.
-     * @return {PreferredPlacementDescriptor}
-     */
-    createPreferredPlacementDescriptor: function (
-      placeAlongEdge,
-      sideOfEdge,
-      orientation,
-      distanceToEdge
-    ) {
-      const descriptor = new PreferredPlacementDescriptor()
-
-      switch (sideOfEdge) {
-        case LayoutConfiguration.EnumLabelPlacementSideOfEdge.ANYWHERE:
-          descriptor.sideOfEdge = LabelPlacements.ANYWHERE
-          break
-        case LayoutConfiguration.EnumLabelPlacementSideOfEdge.ON_EDGE:
-          descriptor.sideOfEdge = LabelPlacements.ON_EDGE
-          break
-        case LayoutConfiguration.EnumLabelPlacementSideOfEdge.LEFT:
-          descriptor.sideOfEdge = LabelPlacements.LEFT_OF_EDGE
-          break
-        case LayoutConfiguration.EnumLabelPlacementSideOfEdge.RIGHT:
-          descriptor.sideOfEdge = LabelPlacements.RIGHT_OF_EDGE
-          break
-        case LayoutConfiguration.EnumLabelPlacementSideOfEdge.LEFT_OR_RIGHT:
-          descriptor.sideOfEdge = LabelPlacements.LEFT_OF_EDGE | LabelPlacements.RIGHT_OF_EDGE
-          break
-        default:
-          descriptor.sideOfEdge = LabelPlacements.ANYWHERE
-          break
+    // change to a free edge label model to support integrated edge labeling
+    const model = new FreeEdgeLabelModel()
+    graph.edgeLabels.forEach(label => {
+      if (!(label.layoutParameter.model instanceof FreeEdgeLabelModel)) {
+        graph.setLabelLayoutParameter(label, model.findBestParameter(label, model, label.layout))
       }
-
-      switch (placeAlongEdge) {
-        case LayoutConfiguration.EnumLabelPlacementAlongEdge.ANYWHERE:
-          descriptor.placeAlongEdge = LabelPlacements.ANYWHERE
-          break
-        case LayoutConfiguration.EnumLabelPlacementAlongEdge.AT_SOURCE:
-          descriptor.placeAlongEdge = LabelPlacements.AT_SOURCE
-          break
-        case LayoutConfiguration.EnumLabelPlacementAlongEdge.AT_SOURCE_PORT:
-          descriptor.placeAlongEdge = LabelPlacements.AT_SOURCE_PORT
-          break
-        case LayoutConfiguration.EnumLabelPlacementAlongEdge.AT_TARGET:
-          descriptor.placeAlongEdge = LabelPlacements.AT_TARGET
-          break
-        case LayoutConfiguration.EnumLabelPlacementAlongEdge.AT_TARGET_PORT:
-          descriptor.placeAlongEdge = LabelPlacements.AT_TARGET_PORT
-          break
-        case LayoutConfiguration.EnumLabelPlacementAlongEdge.CENTERED:
-          descriptor.placeAlongEdge = LabelPlacements.AT_CENTER
-          break
-        default:
-          descriptor.placeAlongEdge = LabelPlacements.ANYWHERE
-          break
-      }
-
-      switch (orientation) {
-        case LayoutConfiguration.EnumLabelPlacementOrientation.PARALLEL:
-          descriptor.angle = 0.0
-          descriptor.angleReference = LabelAngleReferences.RELATIVE_TO_EDGE_FLOW
-          break
-        case LayoutConfiguration.EnumLabelPlacementOrientation.ORTHOGONAL:
-          descriptor.angle = Math.PI / 2
-          descriptor.angleReference = LabelAngleReferences.RELATIVE_TO_EDGE_FLOW
-          break
-        case LayoutConfiguration.EnumLabelPlacementOrientation.HORIZONTAL:
-          descriptor.angle = 0.0
-          descriptor.angleReference = LabelAngleReferences.ABSOLUTE
-          break
-        case LayoutConfiguration.EnumLabelPlacementOrientation.VERTICAL:
-          descriptor.angle = Math.PI / 2
-          descriptor.angleReference = LabelAngleReferences.ABSOLUTE
-          break
-        default:
-          descriptor.angle = 0.0
-          descriptor.angleReference = LabelAngleReferences.RELATIVE_TO_EDGE_FLOW
-          break
-      }
-
-      descriptor.distanceToEdge = distanceToEdge
-      return descriptor
-    },
-
-    /**
-     * Specifies constants for the preferred placement along an edge used by layout configurations.
-     */
-    EnumLabelPlacementAlongEdge: Enum('EnumLabelPlacementAlongEdge', {
-      ANYWHERE: 0,
-      AT_SOURCE: 1,
-      AT_TARGET: 2,
-      CENTERED: 3,
-      AT_SOURCE_PORT: 4,
-      AT_TARGET_PORT: 5
-    }),
-
-    /**
-     * Specifies constants for the preferred placement at a side of an edge used by layout configurations.
-     */
-    EnumLabelPlacementSideOfEdge: Enum('EnumLabelPlacementSideOfEdge', {
-      ANYWHERE: 0,
-      ON_EDGE: 1,
-      LEFT: 2,
-      RIGHT: 3,
-      LEFT_OR_RIGHT: 4
-    }),
-
-    /**
-     * Specifies constants for the orientation of an edge label used by layout configurations.
-     */
-    EnumLabelPlacementOrientation: Enum('EnumLabelPlacementOrientation', {
-      PARALLEL: 0,
-      ORTHOGONAL: 1,
-      HORIZONTAL: 2,
-      VERTICAL: 3
     })
+  },
+
+  /**
+   * Creates a new {@link PreferredPlacementDescriptor} that matches the given settings.
+   */
+  createPreferredPlacementDescriptor: function (
+    placeAlongEdge,
+    sideOfEdge,
+    orientation,
+    distanceToEdge
+  ) {
+    const descriptor = new PreferredPlacementDescriptor()
+
+    switch (sideOfEdge) {
+      case LabelPlacementSideOfEdge.ANYWHERE:
+        descriptor.sideOfEdge = LabelPlacements.ANYWHERE
+        break
+      case LabelPlacementSideOfEdge.ON_EDGE:
+        descriptor.sideOfEdge = LabelPlacements.ON_EDGE
+        break
+      case LabelPlacementSideOfEdge.LEFT:
+        descriptor.sideOfEdge = LabelPlacements.LEFT_OF_EDGE
+        break
+      case LabelPlacementSideOfEdge.RIGHT:
+        descriptor.sideOfEdge = LabelPlacements.RIGHT_OF_EDGE
+        break
+      case LabelPlacementSideOfEdge.LEFT_OR_RIGHT:
+        descriptor.sideOfEdge = LabelPlacements.LEFT_OF_EDGE | LabelPlacements.RIGHT_OF_EDGE
+        break
+      default:
+        descriptor.sideOfEdge = LabelPlacements.ANYWHERE
+        break
+    }
+
+    switch (placeAlongEdge) {
+      case LabelPlacementAlongEdge.ANYWHERE:
+        descriptor.placeAlongEdge = LabelPlacements.ANYWHERE
+        break
+      case LabelPlacementAlongEdge.AT_SOURCE:
+        descriptor.placeAlongEdge = LabelPlacements.AT_SOURCE
+        break
+      case LabelPlacementAlongEdge.AT_SOURCE_PORT:
+        descriptor.placeAlongEdge = LabelPlacements.AT_SOURCE_PORT
+        break
+      case LabelPlacementAlongEdge.AT_TARGET:
+        descriptor.placeAlongEdge = LabelPlacements.AT_TARGET
+        break
+      case LabelPlacementAlongEdge.AT_TARGET_PORT:
+        descriptor.placeAlongEdge = LabelPlacements.AT_TARGET_PORT
+        break
+      case LabelPlacementAlongEdge.CENTERED:
+        descriptor.placeAlongEdge = LabelPlacements.AT_CENTER
+        break
+      default:
+        descriptor.placeAlongEdge = LabelPlacements.ANYWHERE
+        break
+    }
+
+    switch (orientation) {
+      case LabelPlacementOrientation.PARALLEL:
+        descriptor.angle = 0.0
+        descriptor.angleReference = LabelAngleReferences.RELATIVE_TO_EDGE_FLOW
+        break
+      case LabelPlacementOrientation.ORTHOGONAL:
+        descriptor.angle = Math.PI / 2
+        descriptor.angleReference = LabelAngleReferences.RELATIVE_TO_EDGE_FLOW
+        break
+      case LabelPlacementOrientation.HORIZONTAL:
+        descriptor.angle = 0.0
+        descriptor.angleReference = LabelAngleReferences.ABSOLUTE
+        break
+      case LabelPlacementOrientation.VERTICAL:
+        descriptor.angle = Math.PI / 2
+        descriptor.angleReference = LabelAngleReferences.ABSOLUTE
+        break
+      default:
+        descriptor.angle = 0.0
+        descriptor.angleReference = LabelAngleReferences.RELATIVE_TO_EDGE_FLOW
+        break
+    }
+
+    descriptor.distanceToEdge = distanceToEdge
+    return descriptor
   }
 })
 export default LayoutConfiguration
+
+export /**
+ * @readonly
+ * @enum {number}
+ */
+const EdgeLabeling = {
+  NONE: 0,
+  INTEGRATED: 1,
+  GENERIC: 2
+}
+
+/**
+ * Specifies constants for the preferred placement along an edge used by layout configurations.
+ */
+export /**
+ * @readonly
+ * @enum {number}
+ */
+const LabelPlacementAlongEdge = {
+  ANYWHERE: 0,
+  AT_SOURCE: 1,
+  AT_TARGET: 2,
+  CENTERED: 3,
+  AT_SOURCE_PORT: 4,
+  AT_TARGET_PORT: 5
+}
+
+/**
+ * Specifies constants for the preferred placement at a side of an edge used by layout configurations.
+ */
+export /**
+ * @readonly
+ * @enum {number}
+ */
+const LabelPlacementSideOfEdge = {
+  ANYWHERE: 0,
+  ON_EDGE: 1,
+  LEFT: 2,
+  RIGHT: 3,
+  LEFT_OR_RIGHT: 4
+}
+
+/**
+ * Specifies constants for the orientation of an edge label used by layout configurations.
+ */
+export /**
+ * @readonly
+ * @enum {number}
+ */
+const LabelPlacementOrientation = {
+  PARALLEL: 0,
+  ORTHOGONAL: 1,
+  HORIZONTAL: 2,
+  VERTICAL: 3
+}

@@ -16,4 +16,4 @@ In general, a pop-up can contain arbitrary HTML content, it can be created throu
 
 - Click a node to show information about the person.
 - Click an edge to display information about the connection.
-- Take a look at the code, especially `HTMLPopupSupport.js`.
+- Take a look at the code, especially `HTMLPopupSupport`.

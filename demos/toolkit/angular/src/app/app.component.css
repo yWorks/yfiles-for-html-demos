@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -26,3 +26,52 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
+:host {
+  position: absolute;
+  top: 60px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+.demo-toolbar {
+  top: 0;
+  right: 320px;
+  display: flex;
+  align-items: center;
+}
+
+.demo-separator {
+  height: 20px;
+  width: 1px;
+  background: #999;
+  display: inline-block;
+  vertical-align: middle;
+  margin: 0 10px;
+}
+
+.graph-container {
+  position: absolute;
+  top: 40px;
+  bottom: 0;
+  left: 0;
+  right: 320px;
+}
+
+.graph-overview-component {
+  position: absolute;
+  left: 20px;
+  top: 20px;
+}
+
+.search {
+  line-height: 20px;
+  padding: 4px 8px;
+  font-size: 16px;
+  letter-spacing: normal;
+  width: 300px;
+}
+
+.search:focus {
+  outline: none;
+}

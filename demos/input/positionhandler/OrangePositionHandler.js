@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -27,6 +27,7 @@
  **
  ***************************************************************************/
 import {
+  ConstrainedDragHandler,
   ConstrainedPositionHandler,
   IInputModeContext,
   INode,
@@ -44,24 +45,24 @@ import {
 export default class OrangePositionHandler extends ConstrainedPositionHandler {
   /**
    * Creates a new instance of <code>OrangePositionHandler</code>
-   * @param {MutableRectangle} boundaryRectangle The boundary rectangle
-   * @param {INode} node The given node
-   * @param {IPositionHandler} delegateHandler The default handler
+   * @param {!MutableRectangle} boundaryRectangle The boundary rectangle
+   * @param {!INode} node The given node
+   * @param {!IPositionHandler} delegateHandler The default handler
    */
   constructor(boundaryRectangle, node, delegateHandler) {
     super(delegateHandler)
-    this.boundaryPositionRectangle = null
-    this.boundaryRectangle = boundaryRectangle
     this.node = node
+    this.boundaryRectangle = boundaryRectangle
+    this.boundaryPositionRectangle = null
   }
 
   /**
    * Prepares the rectangle that is actually used to limit the node
-   * position, besides the base functionality. Since a position handler
+   * position (and calls the base implementation). Since a position handler
    * works on points, the actual rectangle must be a limit for the upper
    * left corner of the node and not for the node's bounding box.
-   * @param {IInputModeContext} inputModeContext The input mode context
-   * @param {Point} originalLocation The original location
+   * @param {!IInputModeContext} inputModeContext The input mode context
+   * @param {!Point} originalLocation The original location
    * @see Overrides {@link ConstrainedDragHandler#onInitialized}
    */
   onInitialized(inputModeContext, originalLocation) {
@@ -77,11 +78,11 @@ export default class OrangePositionHandler extends ConstrainedPositionHandler {
 
   /**
    * Returns the position that is constrained by the rectangle.
-   * @param {IInputModeContext} context The context in which the drag will be performed
-   * @param {Point} originalLocation The value of the location property at the time of initializeDrag
-   * @param {Point} newLocation The new location of the handler
+   * @param {!IInputModeContext} context The context in which the drag will be performed
+   * @param {!Point} originalLocation The value of the location property at the time of initializeDrag
+   * @param {!Point} newLocation The new location of the handler
    * @see Overrides {@link ConstrainedDragHandler#constrainNewLocation}
-   * @return {Point}
+   * @returns {!Point}
    */
   constrainNewLocation(context, originalLocation, newLocation) {
     return newLocation.getConstrained(this.boundaryPositionRectangle)

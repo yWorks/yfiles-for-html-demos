@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -30,6 +30,7 @@ import {
   AdjustContentRectPolicy,
   Animator,
   Color,
+  CreateEdgeInputMode,
   DefaultLabelStyle,
   EdgeStyleDecorationInstaller,
   EventRecognizers,
@@ -43,13 +44,16 @@ import {
   GridSnapTypes,
   HandlePositions,
   HorizontalTextAlignment,
+  HoveredItemChangedEventArgs,
   IAnimation,
   ICanvasObjectDescriptor,
   IEdge,
+  IHandle,
   INode,
   Insets,
   InteriorStretchLabelModel,
   InteriorStretchLabelModelPosition,
+  ItemHoverInputMode,
   KeyEventRecognizers,
   License,
   List,
@@ -85,20 +89,22 @@ import GanttMapper from './GanttMapper.js'
 import loadJson from '../../resources/load-json.js'
 
 /** @type {GraphComponent} */
-let mainComponent = null
+let mainComponent
 
 /** @type {GraphComponent} */
-let taskComponent = null
+let taskComponent
 
 /** @type {GraphComponent} */
-let timelineComponent = null
+let timelineComponent
 
 /**
  * A helper class that handles the data model and maps graph coordinates to the corresponding dates.
- * @type {GanttMapper}
  */
 const mapper = new GanttMapper(dataModel)
 
+/**
+ * @param {*} licenseData
+ */
 function run(licenseData) {
   License.value = licenseData
   // create the three components
@@ -109,7 +115,7 @@ function run(licenseData) {
   // show the activity info box for the current item
   mainComponent.addCurrentItemChangedListener(() => {
     const item = mainComponent.currentItem
-    if (INode.isInstance(item)) {
+    if (item instanceof INode) {
       showActivityInfo(item.tag.activity, item.layout.center)
     } else {
       hideActivityInfo()
@@ -135,8 +141,7 @@ function run(licenseData) {
 
   showApp(mainComponent)
 
-  mainComponent.updateContentRect()
-  taskComponent.updateContentRect()
+  updateContentRects()
 }
 
 /**
@@ -145,8 +150,8 @@ function run(licenseData) {
 function populateGraph() {
   // now create the nodes and edges
   createGraph()
-  // put overlapping nodes in subrows
-  updateSubrows(false)
+  // put overlapping nodes in sub rows
+  updateSubRows(false)
 }
 
 /**
@@ -229,21 +234,21 @@ function updateTasks() {
 
 /**
  * Calculates the new height for each task row, spreading overlapping activity nodes
- * on multiple subrows. The calculated data is stored
+ * on multiple sub rows. The calculated data is stored
  * in the mapper.
  */
-function updateSubrowMappings() {
+function updateSubRowMappings() {
   // maps the task id to the task's activities
   const taskId2Activities = new Map()
-  // maps each task to its subrow index
-  const subrowMap = mapper.subrowMap
-  // maps each task row to the number of subrows
-  const subrowCountMap = mapper.subrowCountMap
+  // maps each task to its sub row index
+  const subRowMap = mapper.subRowMap
+  // maps each task row to the number of sub rows
+  const subRowCountMap = mapper.subRowCountMap
 
-  subrowMap.clear()
-  subrowCountMap.clear()
+  subRowMap.clear()
+  subRowCountMap.clear()
 
-  // create the task mapping for each activity and initialize the subrow mapping with 0
+  // create the task mapping for each activity and initialize the sub row mapping with 0
   mainComponent.graph.nodes.forEach(node => {
     const activity = node.tag.activity
     const taskId = activity.taskId
@@ -251,34 +256,35 @@ function updateSubrowMappings() {
       taskId2Activities.set(taskId, [])
     }
     taskId2Activities.get(taskId).push(node)
-    subrowMap.set(activity, 0)
+    subRowMap.set(activity, 0)
   })
 
-  // calculate the subrow mapping for each task
+  // calculate the sub row mapping for each task
   dataModel.tasks.forEach(task => {
-    const maxRowIndex = calculateMappingForTask(task, taskId2Activities, subrowMap)
-    subrowCountMap.set(task.id, maxRowIndex + 1)
+    const maxRowIndex = calculateMappingForTask(task, taskId2Activities, subRowMap)
+    subRowCountMap.set(task.id, maxRowIndex + 1)
   })
 }
 
 /**
  * Analyzes node overlaps within the same task lane
- * and splits up those nodes in subrows.
- * @param animate Whether to animate the resulting node layout change
+ * and splits up those nodes in sub rows.
+ * @param {boolean} animate Whether to animate the resulting node layout change
+ * @returns {!Promise}
  */
-async function updateSubrows(animate) {
-  // update the information mapping the tasks to subrows and rows to the number of subrows
-  updateSubrowMappings()
+async function updateSubRows(animate) {
+  // update the information mapping the tasks to sub rows and rows to the number of sub rows
+  updateSubRowMappings()
   // a list of node animations used to collect and execute them all at the same time
   const animations = new List()
   mainComponent.graph.nodes.forEach(node => {
     const activity = node.tag.activity
-    // get the subrow calculated earlier
-    const subrowIndex = mapper.getSubrowIndex(activity)
-    if (typeof subrowIndex !== 'undefined') {
+    // get the sub row calculated earlier
+    const subRowIndex = mapper.getSubRowIndex(activity)
+    if (typeof subRowIndex !== 'undefined') {
       const layout = node.layout
 
-      const yTop = mapper.getActivityY(activity, subrowIndex)
+      const yTop = mapper.getActivityY(activity)
       // calculate the new node layout
       const newLayout = new Rect(layout.x, yTop, layout.width, layout.height)
       // check if need to update the current layout
@@ -306,22 +312,26 @@ async function updateSubrows(animate) {
   if (animate && animations.size > 0) {
     // create a composite animation that executes all node transitions at the same time
     const compositeAnimation = IAnimation.createParallelAnimation(animations)
-    mainComponent.inputMode.waiting = true
+    const geim = mainComponent.inputMode
+    geim.waiting = true
     // start the animation
     await new Animator(mainComponent).animate(compositeAnimation)
-    mainComponent.inputMode.waiting = false
+    geim.waiting = false
   }
 }
 
-/***
- * Calculates the subrow mapping for a given task.
+/**
+ * Calculates the sub row mapping for a given task.
  * In order to do that, a sweep line, or scan line algorithm is used:
  * The tasks are sorted by their x-coordinate. The algorithm runs over
- * the activities from left to right and chooses the first available subrow
- * for each task until all activities have been assigned to a subrow.
- * @returns {number} The number of subrows needed for this task row.
+ * the activities from left to right and chooses the first available sub row
+ * for each task until all activities have been assigned to a sub row.
+ * @returns {number} The number of sub rows needed for this task row.
+ * @param {!Task} task
+ * @param {!Map.<number,Array.<INode>>} taskId2Activities
+ * @param {!Map.<Activity,number>} subRowMap
  */
-function calculateMappingForTask(task, taskId2Activities, subrowMap) {
+function calculateMappingForTask(task, taskId2Activities, subRowMap) {
   let maxRowIndex = 0
   // get the array of activities for this task
   const activityNodes = taskId2Activities.get(task.id)
@@ -352,26 +362,26 @@ function calculateMappingForTask(task, taskId2Activities, subrowMap) {
 
     // sort by x coordinates
     sweeplineData.sort((t1, t2) => t1.x - t2.x)
-    const subRows = {} // holds information about available and unavailable subrows
+    const subRows = [] // holds information about available and unavailable sub rows
     // sweep (scan) the data
     sweeplineData.forEach(d => {
       // a new task begins
       if (d.open) {
-        // search for the first available subrow
+        // search for the first available sub row
         let i = 0
         while (subRows[i]) {
           i++
         }
-        // put the activity in the subrow
+        // put the activity in the sub row
         subRows[i] = d.activity
         // possibly increment the max row information
         maxRowIndex = Math.max(maxRowIndex, i)
-        // save the 'activity to subrow' information in the mapping
-        subrowMap.set(d.activity, i)
+        // save the 'activity to sub row' information in the mapping
+        subRowMap.set(d.activity, i)
       } else {
         // a task ends
-        const i = subrowMap.get(d.activity)
-        // delete it from the subrows storage
+        const i = subRowMap.get(d.activity)
+        // delete it from the sub rows storage
         delete subRows[i]
       }
     })
@@ -379,6 +389,13 @@ function calculateMappingForTask(task, taskId2Activities, subrowMap) {
   // return the number of rows needed
   return maxRowIndex
 }
+
+/**
+ * @typedef {Object} SweeplineData
+ * @property {number} x
+ * @property {Activity} activity
+ * @property {boolean} open
+ */
 
 /**
  *  Creates and assigns the default styles for graph items
@@ -421,7 +438,7 @@ function initializeHighlightStyles() {
   decorator.edgeDecorator.highlightDecorator.setImplementation(edgeStyleHighlight)
 }
 
-/***
+/**
  * This method uses the graph decorator to customize various things about the
  * interaction.
  */
@@ -443,7 +460,7 @@ function configureGraphDecorations() {
 }
 
 /**
- *  Initializes interaction.
+ * Initializes interaction.
  */
 function configureInteraction() {
   const graphComponent = mainComponent
@@ -511,6 +528,7 @@ function configureInteraction() {
 
 /**
  * Initializes the node snapping feature
+ * @param {!GraphEditorInputMode} graphEditorInputMode
  */
 function initializeSnapping(graphEditorInputMode) {
   const snapContext = new GraphSnapContext({
@@ -535,6 +553,7 @@ function initializeSnapping(graphEditorInputMode) {
 
 /**
  * Configures CreateEdgeInputMode
+ * @param {!CreateEdgeInputMode} createEdgeInputMode
  */
 function configureCreateEdgeInputMode(createEdgeInputMode) {
   // start edge creation on shift + left mouse button
@@ -551,12 +570,13 @@ function configureCreateEdgeInputMode(createEdgeInputMode) {
   // node
   createEdgeInputMode.useHitItemsCandidatesOnly = true
 
-  createEdgeInputMode.enforceBendCreationRecognizer(EventRecognizers.NEVER)
-  createEdgeInputMode.portCandidateResolutionRecognizer(EventRecognizers.NEVER)
+  createEdgeInputMode.enforceBendCreationRecognizer = EventRecognizers.NEVER
+  createEdgeInputMode.portCandidateResolutionRecognizer = EventRecognizers.NEVER
 }
 
 /**
  * Creates a custom HandleInputMode that provides the node resize handles
+ * @returns {!NodeResizeHandleInputMode}
  */
 function createHandleInputMode() {
   // create the customized input mode
@@ -564,35 +584,11 @@ function createHandleInputMode() {
 
   handleInputMode.addDragStartedListener(() => {
     hideActivityInfo()
-    // show info box
-    const handle = handleInputMode.currentHandle
-    const location = handle.location.toPoint()
-    let text
-    if (handle instanceof TimeHandle) {
-      const duration = mapper.worldLengthToHours(handle.getTime())
-      const label = handle.isFollowUpTime() ? 'Follow-up Time' : 'Lead Time'
-      text = `${label}: ${duration} h`
-    } else {
-      text = mapper.getDate(location.x).format('Do MMM HH:mm')
-    }
-
-    showInfo(text, location)
+    showInfoBox(handleInputMode.currentHandle)
   })
 
   handleInputMode.addDraggedListener(() => {
-    // show info box
-    const handle = handleInputMode.currentHandle
-    const location = handle.location.toPoint()
-    let text
-    if (handle instanceof TimeHandle) {
-      const duration = mapper.worldLengthToHours(handle.getTime())
-      const label = handle.isFollowUpTime() ? 'Follow-up Time' : 'Lead Time'
-      text = `${label}: ${duration} h`
-    } else {
-      text = mapper.getDate(location.x).format('Do MMM HH:mm')
-    }
-
-    showInfo(text, location)
+    showInfoBox(handleInputMode.currentHandle)
   })
 
   // apply the graph modifications when a handle has been dragged
@@ -611,15 +607,32 @@ function createHandleInputMode() {
     }
   })
 
-  handleInputMode.addDragCanceledListener(() => {
-    hideInfo()
-  })
+  handleInputMode.addDragCanceledListener(() => hideInfo())
 
   return handleInputMode
 }
 
 /**
- *  Creates an input mode that creates new activity nodes
+ * Shows an info box at the position of the given handle
+ * @param {!IHandle} handle The handle to show the info box for.
+ */
+function showInfoBox(handle) {
+  const location = handle.location.toPoint()
+  let text
+  if (handle instanceof TimeHandle) {
+    const duration = mapper.worldLengthToHours(handle.getTime())
+    const label = handle.isFollowUpTime ? 'Follow-up Time' : 'Lead Time'
+    text = `${label}: ${duration} h`
+  } else {
+    text = mapper.getDate(location.x).format('Do MMM HH:mm')
+  }
+
+  showInfo(text, location)
+}
+
+/**
+ * Creates an input mode that creates new activity nodes
+ * @returns {!CreateActivityInputMode}
  */
 function createCreateActivityInputMode() {
   // create the customized input mode
@@ -643,7 +656,10 @@ function createCreateActivityInputMode() {
 }
 
 /**
- * Called when the mouse hovers over a different item.
+ * Updates the highlighted nodes and edges when the mouse is moved over a
+ * node or an edge.
+ * @param {!ItemHoverInputMode} sender
+ * @param {!HoveredItemChangedEventArgs} hoveredItemChangedEventArgs
  */
 function onHoveredItemChanged(sender, hoveredItemChangedEventArgs) {
   const manager = mainComponent.highlightIndicatorManager
@@ -654,13 +670,13 @@ function onHoveredItemChanged(sender, hoveredItemChangedEventArgs) {
   if (item !== null) {
     // highlight the node or edge
     manager.addHighlight(item)
-    if (INode.isInstance(item)) {
+    if (item instanceof INode) {
       // also highlight dependencies and their activities
       mainComponent.graph.inEdgesAt(item).forEach(edge => {
         manager.addHighlight(edge)
         manager.addHighlight(edge.sourceNode)
       })
-    } else if (IEdge.isInstance(item)) {
+    } else if (item instanceof IEdge) {
       // highlight the source and target activity
       manager.addHighlight(item.sourceNode)
       manager.addHighlight(item.targetNode)
@@ -668,6 +684,10 @@ function onHoveredItemChanged(sender, hoveredItemChangedEventArgs) {
   }
 }
 
+/**
+ * @param {!string} text
+ * @param {!Point} location
+ */
 function showInfo(text, location) {
   const info = document.getElementById('info')
   const pageLocation = mainComponent.toPageFromView(mainComponent.toViewCoordinates(location))
@@ -679,6 +699,11 @@ function showInfo(text, location) {
   info.style.top = `${pageLocation.y - height - 10}px`
 }
 
+/**
+ * Shows information about the given activity.
+ * @param {!Activity} activity
+ * @param {!Point} location
+ */
 function showActivityInfo(activity, location) {
   const viewLocation = mainComponent.toViewCoordinates(location)
   const pageLocation = mainComponent.toPageFromView(viewLocation)
@@ -717,6 +742,9 @@ function hideInfo() {
   document.getElementById('info').style.display = 'none'
 }
 
+/**
+ * Hides the tool tip that displays detailed information for selected nodes.
+ */
 function hideActivityInfo() {
   document.getElementById('nodeInfo').style.display = 'none'
   // set the current item to null so the node info can be opened on the same node again
@@ -725,6 +753,7 @@ function hideActivityInfo() {
 
 /**
  * Creates an input mode that moves unselected nodes when shift is not pressed..
+ * @param {!GraphEditorInputMode} graphEditorInputMode
  */
 function configureMoveInputMode(graphEditorInputMode) {
   // configure an input mode that moves unselected nodes
@@ -760,7 +789,7 @@ function configureMoveInputMode(graphEditorInputMode) {
   moveUnselectedInputMode.addDragFinishedListener(() => {
     hideInfo()
     if (moveUnselectedInputMode.affectedItems.size > 0) {
-      onNodeMoved(moveUnselectedInputMode.affectedItems.first(), true)
+      onNodeMoved(moveUnselectedInputMode.affectedItems.first())
     }
   })
 
@@ -782,7 +811,7 @@ function synchronizeComponents() {
 
 /**
  * Called when the start date of a node has been changed. Updates the start date in the model.
- * @param node The node whose start date has been changed.
+ * @param {!INode} node The node whose start date has been changed.
  */
 function onStartDateChanged(node) {
   // synchronize start time
@@ -794,7 +823,7 @@ function onStartDateChanged(node) {
 
 /**
  * Called when the end date of a node has been changed. Updates the end date in the model.
- * @param node The node whose end date has been changed.
+ * @param {!INode} node The node whose end date has been changed.
  */
 function onEndDateChanged(node) {
   // synchronize end time
@@ -806,7 +835,7 @@ function onEndDateChanged(node) {
 
 /**
  * Called when the lead time or follow up time of an activity has changed
- * @param node The node whose time has been changed.
+ * @param {!INode} node The node whose time has been changed.
  */
 function onTimeDecorationChanged(node) {
   const activity = node.tag.activity
@@ -825,7 +854,7 @@ function onTimeDecorationChanged(node) {
 
 /**
  * Called when a node has been moved. Updates the start and end position and task in the model.
- * @param node the node that has been moved.
+ * @param {!INode} node the node that has been moved.
  */
 function onNodeMoved(node) {
   updateModel(node)
@@ -834,7 +863,7 @@ function onNodeMoved(node) {
 
 /**
  * Called when a node has been created. Updates the list of tasks in the data model as well as the task mapping.
- * @param node the node that has been created.
+ * @param {!INode} node the node that has been created.
  */
 function onNodeCreated(node) {
   updateModel(node)
@@ -842,8 +871,8 @@ function onNodeCreated(node) {
 }
 
 /**
- * Writes the start and end dates of the given node
- * back to the data model.
+ * Writes the start and end dates of the given node back to the data model.
+ * @param {!INode} node
  */
 function updateModel(node) {
   // synchronize start and end time
@@ -860,31 +889,34 @@ function updateModel(node) {
 
 /**
  * Does the necessary updates after all structural graph changes,
- * i.e. updating the subrow information and refreshing the background
+ * i.e. updating the sub row information and refreshing the background
  */
 function onGraphModified() {
   // updates the multi-line placement
-  updateSubrows(true)
+  updateSubRows(true)
   // updates the lane height of each task
   updateTasks()
 
   // update the scrollable area of each component
-  mainComponent.updateContentRect()
-  taskComponent.updateContentRect()
+  updateContentRects()
 
   // trigger a background refresh
   mainComponent.backgroundGroup.dirty = true
   mainComponent.invalidate()
 }
 
+/**
+ * Creates the main graph component displaying activities and their dependencies.
+ * @returns {!GraphComponent}
+ */
 function createMainGraphComponent() {
   const graphComponent = new GraphComponent('mainComponent')
 
-  // switch of the horizontal scrollbar
+  // switch on the horizontal scrollbar
   graphComponent.horizontalScrollBarPolicy = ScrollBarVisibility.ALWAYS
-
   // switch off mouse wheel zoom
   graphComponent.mouseWheelBehavior = MouseWheelBehaviors.SCROLL
+
   // disable animated scroll
   graphComponent.animateScrollCommands = false
 
@@ -901,6 +933,10 @@ function createMainGraphComponent() {
   return graphComponent
 }
 
+/**
+ * Creates the task component showing all available tasks.
+ * @returns {!GraphComponent}
+ */
 function createTaskComponent() {
   const graphComponent = new GraphComponent('taskComponent')
   // hide scrollbars
@@ -927,6 +963,10 @@ function createTaskComponent() {
   return graphComponent
 }
 
+/**
+ * Creates the timeline component showing days and months.
+ * @returns {!GraphComponent}
+ */
 function createTimelineGraphComponent() {
   const graphComponent = new GraphComponent('timelineComponent')
   // hide scrollbars
@@ -940,6 +980,28 @@ function createTimelineGraphComponent() {
   const timelineVisual = new TimelineVisual(mapper)
   graphComponent.backgroundGroup.addChild(timelineVisual, ICanvasObjectDescriptor.VISUAL)
   return graphComponent
+}
+
+/**
+ * Updates the content rectangles of the demo's main component and task component.
+ */
+function updateContentRects() {
+  taskComponent.updateContentRect()
+  const taskCr = taskComponent.contentRect
+  mainComponent.updateContentRect()
+  const mainCr = mainComponent.contentRect
+
+  // updateContentRect for the mainComponent will calculate the y-coordinate and the height
+  // of the content rectangle from the bounds of the main component's activity nodes
+  // updateContentRect for the taskComponent will do the same for the task component's task nodes
+  // however, the bounds of those task nodes are calculated from the bounds of the activity nodes
+  // associated to each task plus some vertical margins
+  // thus the content rect of the task component will be higher than the content rect of
+  // the main component
+  // as a result, the y-coordinate and the height of the main component's content rectangle has to
+  // be adopted from the task component's content rect to ensure the proper scroll range for the
+  // main component's vertical scroll bar
+  mainComponent.contentRect = new Rect(mainCr.x, taskCr.y, mainCr.width, taskCr.height)
 }
 
 // Start the demo

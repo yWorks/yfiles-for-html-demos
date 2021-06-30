@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -44,16 +44,23 @@ import {
   IRenderContext,
   LabelSnapContext,
   License,
+  Point,
+  TimeSpan,
   Visualization
 } from 'yfiles'
 import { DemoEdgeStyle, DemoNodeStyle } from '../../resources/demo-styles.js'
 import { bindCommand, showApp } from '../../resources/demo-app.js'
 import loadJson from '../../resources/load-json.js'
 
-let graphComponent = null
+/** @type {GraphComponent} */
+let graphComponent
 
+/**
+ * @param {!object} licenseData
+ */
 function run(licenseData) {
   License.value = licenseData
+
   graphComponent = new GraphComponent('graphComponent')
   const overviewComponent = new GraphOverviewComponent('overviewComponent', graphComponent)
 
@@ -72,21 +79,7 @@ function run(licenseData) {
  * Configures an input mode to allow the operations which use the templates that were styled with CSS.
  */
 function configureInputMode() {
-  graphComponent.inputMode = new GraphEditorInputMode({
-    // allow hovering of all graph elements
-    itemHoverInputMode: {
-      hoverItems: GraphItemTypes.ALL
-    },
-    // enable tooltips
-    mouseHoverInputMode: {
-      toolTipLocationOffset: [15, 15],
-      delay: '500ms',
-      duration: '5s'
-    },
-    // show an indicator for the current label position
-    moveLabelInputMode: {
-      visualization: Visualization.GHOST
-    },
+  const graphEditorInputMode = new GraphEditorInputMode({
     // enable snapping
     snapContext: new GraphSnapContext({
       enabled: true,
@@ -98,8 +91,20 @@ function configureInputMode() {
     focusableItems: GraphItemTypes.ALL
   })
 
+  // allow hovering of all graph elements
+  graphEditorInputMode.itemHoverInputMode.hoverItems = GraphItemTypes.ALL
+
+  // enable tooltips
+  const mouseHoverInputMode = graphEditorInputMode.mouseHoverInputMode
+  mouseHoverInputMode.toolTipLocationOffset = Point.from([15, 15])
+  mouseHoverInputMode.delay = TimeSpan.from('500ms')
+  mouseHoverInputMode.duration = TimeSpan.from('5s')
+
+  // show an indicator for the current label position
+  graphEditorInputMode.moveLabelInputMode.visualization = Visualization.GHOST
+
   // add a tooltip for hovered items
-  graphComponent.inputMode.addQueryItemToolTipListener((src, event) => {
+  graphEditorInputMode.addQueryItemToolTipListener((src, event) => {
     if (event.handled) {
       return
     }
@@ -108,7 +113,7 @@ function configureInputMode() {
   })
 
   // add a highlight for hovered items
-  graphComponent.inputMode.itemHoverInputMode.addHoveredItemChangedListener((sender, event) => {
+  graphEditorInputMode.itemHoverInputMode.addHoveredItemChangedListener((sender, event) => {
     if (event.oldItem) {
       graphComponent.highlightIndicatorManager.removeHighlight(event.oldItem)
     }
@@ -116,21 +121,23 @@ function configureInputMode() {
       graphComponent.highlightIndicatorManager.addHighlight(event.item)
     }
   })
+
+  graphComponent.inputMode = graphEditorInputMode
 }
 
 /**
  * Creates a tooltip text depending on the class of the item.
- * @param {IModelItem} item
+ * @param {!IModelItem} item
  * @returns {?string}
  */
 function createTooltipContent(item) {
-  if (INode.isInstance(item)) {
+  if (item instanceof INode) {
     return 'Node Tooltip'
-  } else if (IEdge.isInstance(item)) {
+  } else if (item instanceof IEdge) {
     return 'Edge Tooltip'
-  } else if (IPort.isInstance(item)) {
+  } else if (item instanceof IPort) {
     return 'Port Tooltip'
-  } else if (ILabel.isInstance(item)) {
+  } else if (item instanceof ILabel) {
     return 'Label Tooltip'
   }
   return null
@@ -143,9 +150,11 @@ function createTooltipContent(item) {
 function createSampleGraph() {
   const demoNodeStyle = new DemoNodeStyle()
   demoNodeStyle.cssClass = 'demo-node-style'
+
   const demoEdgeStyle = new DemoEdgeStyle()
   demoEdgeStyle.showTargetArrows = false
   demoEdgeStyle.cssClass = 'demo-edge-style'
+
   const demoLabelStyle = new DefaultLabelStyle({
     textFill: 'white',
     insets: [3, 5, 3, 5],
@@ -204,26 +213,24 @@ function registerCommands() {
 class GraphOverviewVisualCreator extends GraphOverviewCanvasVisualCreator {
   /**
    * Paints the path of the edge in a very light gray.
-   * @param {IRenderContext} renderContext
-   * @param {CanvasRenderingContext2D} ctx
-   * @param {IEdge} edge
+   * @param {!IRenderContext} renderContext
+   * @param {!CanvasRenderingContext2D} ctx
+   * @param {!IEdge} edge
    */
   paintEdge(renderContext, ctx, edge) {
     ctx.strokeStyle = '#f7f7f7'
     ctx.beginPath()
     ctx.moveTo(edge.sourcePort.location.x, edge.sourcePort.location.y)
-    edge.bends.forEach(bend => {
-      ctx.lineTo(bend.location.x, bend.location.y)
-    })
+    edge.bends.forEach(bend => ctx.lineTo(bend.location.x, bend.location.y))
     ctx.lineTo(edge.targetPort.location.x, edge.targetPort.location.y)
     ctx.stroke()
   }
 
   /**
    * Paints the outline of the group node in a very light gray.
-   * @param {IRenderContext} renderContext
-   * @param {CanvasRenderingContext2D} ctx
-   * @param {INode} node
+   * @param {!IRenderContext} renderContext
+   * @param {!CanvasRenderingContext2D} ctx
+   * @param {!INode} node
    */
   paintGroupNode(renderContext, ctx, node) {
     ctx.strokeStyle = '#f7f7f7'
@@ -232,9 +239,9 @@ class GraphOverviewVisualCreator extends GraphOverviewCanvasVisualCreator {
 
   /**
    * Paints the rectangle of the node in a very light gray
-   * @param {IRenderContext} renderContext
-   * @param {CanvasRenderingContext2D} ctx
-   * @param {INode} node
+   * @param {!IRenderContext} renderContext
+   * @param {!CanvasRenderingContext2D} ctx
+   * @param {!INode} node
    */
   paintNode(renderContext, ctx, node) {
     ctx.fillStyle = '#f7f7f7'

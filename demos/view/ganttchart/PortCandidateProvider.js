@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -29,7 +29,9 @@
 import {
   BaseClass,
   DefaultPortCandidate,
+  IEnumerable,
   IInputModeContext,
+  INode,
   IPortCandidate,
   IPortCandidateProvider,
   List
@@ -40,6 +42,9 @@ import ActivityNodePortLocationModel from './ActivityNodePortLocationModel.js'
  * A port candidate provider for the port on the left and right side of activity nodes.
  */
 export default class PortCandidateProvider extends BaseClass(IPortCandidateProvider) {
+  /**
+   * @param {!INode} node
+   */
   constructor(node) {
     super()
     this.node = node
@@ -47,8 +52,8 @@ export default class PortCandidateProvider extends BaseClass(IPortCandidateProvi
 
   /**
    * Returns a port candidate on the right side of the node where an edge can start.
-   * @param {IInputModeContext} context - The context for which the candidates should be provided.
-   * @returns {IEnumerable.<IPortCandidate>}
+   * @param {!IInputModeContext} context The context for which the candidates should be provided.
+   * @returns {!IEnumerable.<IPortCandidate>}
    */
   getAllSourcePortCandidates(context) {
     // create a port candidate at the right side of the node
@@ -63,8 +68,8 @@ export default class PortCandidateProvider extends BaseClass(IPortCandidateProvi
 
   /**
    * Returns a port candidate on the left side of the node where an edge can end.
-   * @param {IInputModeContext} context - The context for which the candidates should be provided.
-   * @returns {IEnumerable.<IPortCandidate>}
+   * @param {!IInputModeContext} context The context for which the candidates should be provided.
+   * @returns {!IEnumerable.<IPortCandidate>}
    */
   getAllTargetPortCandidates(context) {
     // create a port candidate at the left side of the node
@@ -78,18 +83,20 @@ export default class PortCandidateProvider extends BaseClass(IPortCandidateProvi
   }
 
   /**
-   * @param {IInputModeContext} context - The context for which the candidates should be provided.
-   * @param {IPortCandidate} target - The opposite port candidate.
-   * @returns {IEnumerable.<IPortCandidate>}
+   * Returns all port candidates that apply for the provided opposite target port candidate.
+   * @param {!IInputModeContext} context The context for which the candidates should be provided.
+   * @param {!IPortCandidate} target The opposite port candidate.
+   * @returns {!IEnumerable.<IPortCandidate>}
    */
   getSourcePortCandidates(context, target) {
     return this.getAllSourcePortCandidates(context)
   }
 
   /**
-   * @param {IInputModeContext} context - The context for which the candidates should be provided.
-   * @param {IPortCandidate} source - The opposite port candidate.
-   * @returns {IEnumerable.<IPortCandidate>}
+   * Returns all port candidates that apply for the provided opposite source port candidate.
+   * @param {!IInputModeContext} context The context for which the candidates should be provided.
+   * @param {!IPortCandidate} source The opposite port candidate.
+   * @returns {!IEnumerable.<IPortCandidate>}
    */
   getTargetPortCandidates(context, source) {
     return this.getAllTargetPortCandidates(context)

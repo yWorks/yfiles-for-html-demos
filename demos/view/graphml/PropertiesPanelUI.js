@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -26,53 +26,49 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
+import GraphMLProperty from './GraphMLProperty.js'
+
 /**
  * Properties Panel.
  */
 export default class PropertiesPanelUI {
   /**
-   * @param {HTMLElement} div
+   * @param {!HTMLElement} div
    */
   constructor(div) {
     this.div = div
-    this.graphMapping = {}
-    this.itemMapping = {}
-    this.graphPropertiesDiv = div.querySelector('#graphPropertiesDiv')
-    this.itemPropertiesDiv = div.querySelector('#itemPropertiesDiv')
-    this.itemPropertiesPanel = div.querySelector('.custom-data-panel.item-data')
-    this.itemPropertiesPanel.style.display = 'none'
-    this.initializeNewPropertyListeners()
-
     this.reentrantFlag = false
 
     // prepare callback hooks, they will be assigned in PropertiesPanel
-    this.itemPropertyAddedCallback = null
-    this.graphPropertyAddedCallback = null
-    this.itemValueChangedCallback = null
-    this.graphValueChangedCallback = null
+    this.itemPropertyAddedCallback = () => {}
+
+    this.graphPropertyAddedCallback = () => {}
+    this.itemValueChangedCallback = () => {}
+    this.graphValueChangedCallback = () => {}
+    this.graphPropertiesDiv = getDiv(div, '#graphPropertiesDiv')
+    this.itemPropertiesDiv = getDiv(div, '#itemPropertiesDiv')
+    this.itemPropertiesPanel = getDiv(div, '.custom-data-panel.item-data')
+    this.itemPropertiesPanel.style.display = 'none'
+    this.initializeNewPropertyListeners()
   }
 
   /**
    * Adds a graph property to the panel.
-   * @param {GraphMLProperty} property
-   * @param {string} value
+   * @param {!GraphMLProperty} property
+   * @param {!string} value
    */
   addGraphProperty(property, value) {
     const container = this.createChildElement(property, value, this.graphValueChangedCallback)
-    this.graphMapping[property] = container
-
     this.graphPropertiesDiv.appendChild(container)
   }
 
   /**
    * Adds an item property to the panel.
-   * @param {GraphMLProperty} property
-   * @param {string} value
+   * @param {!GraphMLProperty} property
+   * @param {!string} value
    */
   addItemProperty(property, value) {
     const container = this.createChildElement(property, value, this.itemValueChangedCallback)
-    this.itemMapping[property] = container
-
     this.itemPropertiesDiv.appendChild(container)
   }
 
@@ -80,20 +76,18 @@ export default class PropertiesPanelUI {
    * Clears all item properties from the panel.
    */
   clearItemProperties() {
-    while (this.itemPropertiesDiv.firstChild) {
-      this.itemPropertiesDiv.removeChild(this.itemPropertiesDiv.firstChild)
+    while (this.itemPropertiesDiv.lastChild) {
+      this.itemPropertiesDiv.removeChild(this.itemPropertiesDiv.lastChild)
     }
-    this.itemMapping = {}
   }
 
   /**
    * Clears all properties from the panel.
    */
   clearAllProperties() {
-    while (this.graphPropertiesDiv.firstChild) {
-      this.graphPropertiesDiv.removeChild(this.graphPropertiesDiv.firstChild)
+    while (this.graphPropertiesDiv.lastChild) {
+      this.graphPropertiesDiv.removeChild(this.graphPropertiesDiv.lastChild)
     }
-    this.graphMapping = {}
 
     this.clearItemProperties()
   }
@@ -108,10 +102,10 @@ export default class PropertiesPanelUI {
 
   /**
    * Creates a child element that represents an item/graph property.
-   * @param {GraphMLProperty} property
-   * @param {string} value
-   * @param {function} callback
-   * @return {Element} the UI element
+   * @returns {!Element} the UI element
+   * @param {!GraphMLProperty} property
+   * @param {!string} value
+   * @param {!function} callback
    */
   createChildElement(property, value, callback) {
     const container = document.createElement('div')
@@ -150,14 +144,13 @@ export default class PropertiesPanelUI {
    * Initialize listeners that are called when new properties are entered in the panel.
    */
   initializeNewPropertyListeners() {
-    const elGraph = this.div.querySelector('.new-property-div.graph-data')
+    const elGraph = getDiv(this.div, '.new-property-div.graph-data')
     const inputsGraph = elGraph.querySelectorAll('input')
     const nameInputGraph = inputsGraph[0]
     const valueInputGraph = inputsGraph[1]
 
     const graphDataListener = event => {
-      const key = event.which || event.keyCode
-      if (key === 13) {
+      if (event.key === 'Enter') {
         if (this.graphPropertyAddedCallback && nameInputGraph.value) {
           this.graphPropertyAddedCallback(nameInputGraph.value, valueInputGraph.value)
           nameInputGraph.value = ''
@@ -169,15 +162,14 @@ export default class PropertiesPanelUI {
     nameInputGraph.addEventListener('keypress', graphDataListener)
     valueInputGraph.addEventListener('keypress', graphDataListener)
 
-    const elItem = this.div.querySelector('.new-property-div.item-data')
+    const elItem = getDiv(this.div, '.new-property-div.item-data')
 
     const inputsItem = elItem.querySelectorAll('input')
     const nameInputItem = inputsItem[0]
     const valueInputItem = inputsItem[1]
 
     const itemDataListener = event => {
-      const key = event.which || event.keyCode
-      if (key === 13) {
+      if (event.key === 'Enter') {
         if (this.itemPropertyAddedCallback) {
           this.itemPropertyAddedCallback(nameInputItem.value, valueInputItem.value)
           nameInputItem.value = ''
@@ -189,4 +181,13 @@ export default class PropertiesPanelUI {
     nameInputItem.addEventListener('keypress', itemDataListener)
     valueInputItem.addEventListener('keypress', itemDataListener)
   }
+}
+
+/**
+ * @param {!HTMLElement} parent
+ * @param {!string} selector
+ * @returns {!HTMLDivElement}
+ */
+function getDiv(parent, selector) {
+  return parent.querySelector(selector)
 }

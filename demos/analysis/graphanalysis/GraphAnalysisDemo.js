@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -30,7 +30,7 @@ import {
   AdjacencyTypes,
   Arrow,
   ComponentArrangementStyles,
-  CycleSubstructureStyle,
+  ComponentLayout,
   DefaultLabelStyle,
   FreeEdgeLabelModel,
   GenericLabeling,
@@ -39,12 +39,13 @@ import {
   GraphItemTypes,
   GraphMLIOHandler,
   GraphStructureAnalyzer,
-  HashMap,
   IArrow,
   ICommand,
   IEdge,
   IGraph,
   ILabel,
+  ILayoutAlgorithm,
+  IModelItem,
   INode,
   LabelPlacements,
   LayoutGraphAdapter,
@@ -55,6 +56,8 @@ import {
   OrganicLayoutData,
   OrganicLayoutScope,
   OrganicRemoveOverlapsStage,
+  PolylineEdgeStyle,
+  PopulateItemContextMenuEventArgs,
   PreferredPlacementDescriptor,
   Rect,
   ShapeNodeStyle,
@@ -71,56 +74,65 @@ import MinimumSpanningTreeConfig from './MinimumSpanningTreeConfig.js'
 import SubstructuresConfig from './SubstructuresConfig.js'
 import { bindAction, bindChangeListener, bindCommand, showApp } from '../../resources/demo-app.js'
 import loadJson from '../../resources/load-json.js'
+import AlgorithmConfiguration from './AlgorithmConfiguration.js'
 
 // This demo showcases a selection of algorithms to analyse the structure of a graph.
 
 /**
  * Stores all available graph algorithms and maps each name to the corresponding configuration.
  */
-let availableAlgorithms = null
+const availableAlgorithms = new Map()
 
 /**
  * Stores all available samples graphs and maps each name to the corresponding file name.
  */
-let availableSamples = null
+const availableSamples = new Map()
 
-/**
- * @type {AlgorithmConfiguration}
- */
-let currentConfig = null
+/** @type {AlgorithmConfiguration} */
+let currentConfig
 
 /**
  * Specifies whether or not the current selected configuration is valid.
+ * @type {boolean}
  */
 let configOptionsValid = false
 
 /**
  * Specifies whether or not a layout is running.
+ * @type {boolean}
  */
 let inLayout = false
 
 /**
  * Specifies whether or not a sample is being loaded.
+ * @type {boolean}
  */
 let inLoadSample = false
 
 /**
  * Specifies whether or not the edges should be considered as directed.
+ * @type {boolean}
  */
 let directed = false
 
 /**
  * Specifies whether or not the edges have uniform weights.
+ * @type {boolean}
  */
 let useUniformWeights = true
 
 /**
  * Marks the elements that are changed from user actions... like add/remove node, add/remove edge.
+ * @type {Mapper.<INode,boolean>}
  */
-let incrementalNodesMapper = null
+let incrementalNodesMapper
+
+/** @type {Mapper.<INode,boolean>} */
+let incrementalElements
 
 /**
  * Specifies whether or not a new layout should be prevented.
+ * @type {boolean}
  */
 let preventLayout = false
 
@@ -128,31 +140,34 @@ let preventLayout = false
  * The graph component
  * @type {GraphComponent}
  */
-let graphComponent = null
+let graphComponent
 
-let algorithmComboBox = null
+/** @type {HTMLSelectElement} */
+let algorithmComboBox
 
-let nextButton = null
+/** @type {HTMLSelectElement} */
+let sampleComboBox
 
-let previousButton = null
+/** @type {HTMLButtonElement} */
+let nextButton
 
-let sampleComboBox = null
+/** @type {HTMLButtonElement} */
+let previousButton
 
-let directionComboBox = null
+/** @type {HTMLSelectElement} */
+let directionComboBox
 
-let uniformEdgeWeightsComboBox = null
-
-/** @type {Mapper.<INode, boolean>} */
-let incrementalElements = null
+/** @type {HTMLSelectElement} */
+let uniformEdgeWeightsComboBox
 
 /**
  * Precompiled Regex matcher used to allow only weight labels with positive numbers as text.
- * @type {RegExp}
  */
 const validationPattern = new RegExp('^(0*[1-9][0-9]*(\\.[0-9]+)?|0+\\.[0-9]*[1-9][0-9]*)$')
 
 /**
  * Main function for running the Graph Analysis demo.
+ * @param {*} licenseData
  */
 async function run(licenseData) {
   License.value = licenseData
@@ -165,8 +180,6 @@ async function run(licenseData) {
 
   incrementalNodesMapper = new Mapper()
   incrementalNodesMapper.defaultValue = false
-
-  availableSamples = new HashMap()
 
   // in order to load the sample graphs we require the styles and graphml
   // we populate the combo box
@@ -320,8 +333,6 @@ function initializeAlgorithms() {
     return Promise.resolve()
   }
 
-  availableAlgorithms = new HashMap()
-
   const algorithmNames = [
     'Algorithm: Minimum Spanning Tree',
     'Algorithm: Connected Components',
@@ -446,10 +457,8 @@ function initializeAlgorithms() {
 }
 
 /**
- * Creates the default input mode for the graph component,
- * a {@link GraphEditorInputMode}.
- * @return {GraphEditorInputMode} a new <code>GraphEditorInputMode</code> instance and configures
- *   snapping and orthogonal edge editing
+ * Creates the default input mode for the graph component, a {@link GraphEditorInputMode}.
+ * @returns {!GraphEditorInputMode} a new <code>GraphEditorInputMode</code> instance and configures snapping and orthogonal edge editing
  */
 function createEditorMode() {
   incrementalElements = new Mapper()
@@ -464,31 +473,32 @@ function createEditorMode() {
 
   // deletion
   inputMode.addDeletingSelectionListener((sender, eventArgs) => {
-    /** @type {IGraphSelection} */
-    const selection = eventArgs.selection
     currentConfig.edgeRemoved = true
-    selection.selectedNodes.forEach(node => {
-      graphComponent.graph.edgesAt(node, AdjacencyTypes.ALL).forEach(edge => {
-        if (!selection.isSelected(edge.opposite(node))) {
-          incrementalNodesMapper.set(edge.opposite(node), true)
+    const selection = eventArgs.selection
+    selection.forEach(item => {
+      if (item instanceof INode) {
+        graphComponent.graph.edgesAt(item, AdjacencyTypes.ALL).forEach(edge => {
+          const oppositeNode = edge.opposite(item)
+          if (!selection.isSelected(oppositeNode)) {
+            incrementalNodesMapper.set(oppositeNode, true)
+          }
+        })
+      } else if (item instanceof IEdge) {
+        if (!selection.isSelected(item.sourceNode)) {
+          incrementalNodesMapper.set(item.sourceNode, true)
+          incrementalElements.set(item.sourceNode, true)
         }
-      })
-    })
-    selection.selectedEdges.forEach(edge => {
-      if (!selection.isSelected(edge.sourceNode)) {
-        incrementalNodesMapper.set(edge.sourceNode, true)
-        incrementalElements.set(edge.sourceNode, true)
-      }
-      if (!selection.isSelected(edge.targetNode)) {
-        incrementalNodesMapper.set(edge.targetNode, true)
-        incrementalElements.set(edge.targetNode, true)
+        if (!selection.isSelected(item.targetNode)) {
+          incrementalNodesMapper.set(item.targetNode, true)
+          incrementalElements.set(item.targetNode, true)
+        }
       }
     })
 
     currentConfig.incrementalElements = incrementalElements
   })
 
-  inputMode.addDeletedSelectionListener((sender, eventArgs) => {
+  inputMode.addDeletedSelectionListener(() => {
     updateGraphInformation()
     runLayout(true, false, true).catch(handleError)
   })
@@ -518,16 +528,14 @@ function createEditorMode() {
     applyAlgorithm()
   })
 
-  inputMode.moveInputMode.addDragFinishedListener((sender, eventArgs) => {
-    const affectedNodes = sender.affectedItems.filter(item => INode.isInstance(item))
+  inputMode.moveInputMode.addDragFinishedListener((sender, _) => {
+    const affectedNodes = sender.affectedItems.filter(item => item instanceof INode)
     if (affectedNodes.size < graphComponent.graph.nodes.size) {
       runLayout(true, false, true).catch(handleError)
     }
   })
 
-  inputMode.addLabelTextChangedListener((sender, eventArgs) => {
-    applyAlgorithm()
-  })
+  inputMode.addLabelTextChangedListener(() => applyAlgorithm())
 
   inputMode.addValidateLabelTextListener((sender, args) => {
     // labels must contain only positive numbers
@@ -542,7 +550,7 @@ function createEditorMode() {
 /**
  * Initializes the context menu.
  *
- * @param {GraphEditorInputMode} inputMode The input mode.
+ * @param {!GraphEditorInputMode} inputMode The input mode.
  */
 function initializeContextMenu(inputMode) {
   // Create a context menu. In this demo, we use our sample context menu implementation but you can use any other
@@ -558,7 +566,7 @@ function initializeContextMenu(inputMode) {
     }
   })
 
-  // Add and event listener that populates the context menu according to the hit elements, or cancels showing a menu.
+  // Add an event listener that populates the context menu according to the hit elements, or cancels showing a menu.
   // This PopulateItemContextMenu is fired when calling the ContextMenuInputMode.shouldOpenMenu method above.
   inputMode.addPopulateItemContextMenuListener((sender, args) =>
     populateContextMenu(contextMenu, args)
@@ -578,22 +586,15 @@ function initializeContextMenu(inputMode) {
 /**
  * Populates the context menu based on the item the mouse hovers over.
  *
- * @param contextMenu the context menu object
- * @param args the mouse hovered item
+ * @param {!ContextMenu} contextMenu the context menu object
+ * @param {!PopulateItemContextMenuEventArgs.<IModelItem>} args the mouse hovered item
  */
 function populateContextMenu(contextMenu, args) {
   // get the item which is located at the mouse position
   const hits = graphComponent.graphModelManager.hitElementsAt(args.queryLocation).toArray()
-  let item = null
 
-  for (let i = 0; i < hits.length; i++) {
-    const hit = hits[i]
-    if (INode.isInstance(hit)) {
-      item = hit
-      // use the first hit node
-      break
-    }
-  }
+  // use the first hit node
+  const item = hits.find(hit => hit instanceof INode)
 
   contextMenu.clearItems()
 
@@ -602,7 +603,9 @@ function populateContextMenu(contextMenu, args) {
     return
   }
 
-  config.populateContextMenu(contextMenu, item, graphComponent)
+  if (item) {
+    config.populateContextMenu(contextMenu, item, graphComponent)
+  }
 
   // finally, if the context menu has at least one entry, set the showMenu flag
   if (contextMenu.element.childElementCount > 0) {
@@ -691,15 +694,17 @@ function applyAlgorithm() {
  * @param {boolean} incremental true if the layout should run in incremental mode, false otherwise
  * @param {boolean} clearUndo true if the undo engine should be cleared, false otherwise
  * @param {boolean} runAlgorithm true if the algorithm should be applied, false otherwise
+ * @returns {!Promise}
  */
 async function runLayout(incremental, clearUndo, runAlgorithm) {
-  let layoutAlgorithm = new OrganicLayout()
-  layoutAlgorithm.deterministic = true
-  layoutAlgorithm.considerNodeSizes = true
-  layoutAlgorithm.componentLayout.style =
+  const organicLayout = new OrganicLayout()
+  organicLayout.deterministic = true
+  organicLayout.considerNodeSizes = true
+  organicLayout.componentLayout.style =
     ComponentArrangementStyles.NONE | ComponentArrangementStyles.MODIFIER_NO_OVERLAP
-  layoutAlgorithm.scope = incremental ? OrganicLayoutScope.MAINLY_SUBSET : OrganicLayoutScope.ALL
-  layoutAlgorithm.labelingEnabled = false
+  organicLayout.scope = incremental ? OrganicLayoutScope.MAINLY_SUBSET : OrganicLayoutScope.ALL
+  organicLayout.labelingEnabled = false
+  let layout = organicLayout
 
   const organicLayoutData = new OrganicLayoutData({
     preferredEdgeLengths: 100,
@@ -712,9 +717,9 @@ async function runLayout(incremental, clearUndo, runAlgorithm) {
     algorithmComboBox[algorithmComboBox.selectedIndex].value.endsWith('Centrality')
   ) {
     // since centrality changes the node sizes, node overlaps need to be removed
-    layoutAlgorithm = currentConfig.getCentralityStage(layoutAlgorithm, directed)
+    layout = currentConfig.getCentralityStage(organicLayout, directed)
     // changes the node sizes before resolving node overlaps
-    layoutAlgorithm = new OrganicRemoveOverlapsStage(layoutAlgorithm)
+    layout = new OrganicRemoveOverlapsStage(layout)
   }
   const graph = graphComponent.graph
   graph.mapperRegistry.createDelegateMapper(
@@ -727,7 +732,7 @@ async function runLayout(incremental, clearUndo, runAlgorithm) {
   inLayout = true
   setUIDisabled(true)
   try {
-    await graphComponent.morphLayout(layoutAlgorithm, '0.5s', organicLayoutData)
+    await graphComponent.morphLayout(layout, '0.5s', organicLayoutData)
     // apply graph algorithms after layout
     if (runAlgorithm) {
       applyAlgorithm()
@@ -736,12 +741,12 @@ async function runLayout(incremental, clearUndo, runAlgorithm) {
     const genericLabeling = new GenericLabeling()
     genericLabeling.placeEdgeLabels = true
     genericLabeling.placeNodeLabels = false
-    genericLabeling.deterministicMode = true
+    genericLabeling.deterministic = true
 
     const mapper = new Mapper()
     graph.labels.forEach(label => {
       const preferredPlacementDescriptor = new PreferredPlacementDescriptor()
-      if (IEdge.isInstance(label.owner)) {
+      if (label.owner instanceof IEdge) {
         if (label.tag === 'centrality') {
           preferredPlacementDescriptor.sideOfEdge = LabelPlacements.ON_EDGE
         } else {
@@ -760,7 +765,7 @@ async function runLayout(incremental, clearUndo, runAlgorithm) {
       mapper
     )
     await graphComponent.morphLayout(genericLabeling, '0.2s')
-    if (clearUndo) {
+    if (clearUndo && graph.undoEngine) {
       graph.undoEngine.clear()
     }
     // clean up data provider
@@ -780,6 +785,7 @@ async function runLayout(incremental, clearUndo, runAlgorithm) {
 
 /**
  * Handles a selection change in the sample combo box.
+ * @returns {!Promise}
  */
 async function onSampleChanged() {
   if (inLayout || inLoadSample) {
@@ -841,6 +847,8 @@ async function onSampleChanged() {
 
 /**
  * Applies the algorithm to the selected file and runs the layout.
+ * @param {number} sampleSelectedIndex
+ * @returns {!Promise}
  */
 async function applyAlgorithmForKey(sampleSelectedIndex) {
   resetStyles()
@@ -872,6 +880,7 @@ async function applyAlgorithmForKey(sampleSelectedIndex) {
 
 /**
  * Handles a selection change in the algorithm combo box.
+ * @returns {!Promise}
  */
 async function onAlgorithmChanged() {
   if (algorithmComboBox === null) {
@@ -880,7 +889,7 @@ async function onAlgorithmChanged() {
   const selectedIndex = algorithmComboBox.selectedIndex
   if (selectedIndex >= 0 && selectedIndex < algorithmComboBox.options.length) {
     const key = algorithmComboBox.options[selectedIndex].value
-    if (key !== null && availableAlgorithms !== null && availableAlgorithms.keys.includes(key)) {
+    if (key !== null && availableAlgorithms.has(key)) {
       currentConfig = availableAlgorithms.get(key)
     }
   }
@@ -986,7 +995,9 @@ function updateGraphInformation() {
       image.setAttribute('style', 'width:10px; height:10px; border:0; text-decoration:none')
       a.appendChild(document.createTextNode(`${caption}\t`))
       a.appendChild(image)
-      a.href = graphInformation.url
+      if (graphInformation.url) {
+        a.href = graphInformation.url
+      }
       a.target = '_blank'
       const sup = document.createElement('sup')
       sup.appendChild(a)
@@ -1027,10 +1038,10 @@ function updateDescriptionText() {
 /**
  * Returns the graph information according to the given type.
  *
- * @param {IGraph} graph the given graph
- * @param {string} type the algorithm type
+ * @param {!IGraph} graph the given graph
+ * @param {!string} type the algorithm type
  *
- * @returns {boolean, Object, string}
+ * @returns {!object}
  */
 function getGraphInformation(graph, type) {
   const graphAnalyzer = new GraphStructureAnalyzer(graph)
@@ -1111,8 +1122,8 @@ function getGraphInformation(graph, type) {
  * Callback that returns the edge weight for a given edge.
  * This implementation retrieves the weights from the labels or alternatively from the edge length.
  *
- * @param {IEdge} edge the edge.
- * @return {number|null} the weight of the edge
+ * @param {!IEdge} edge the edge.
+ * @returns {?number} the weight of the edge
  */
 function getEdgeWeight(edge) {
   if (useUniformWeights) {
@@ -1239,8 +1250,8 @@ function onGenerateEdgeLabels() {
 /**
  * Fills in a combo box with the values of the given array.
  *
- * @param {HTMLSelectElement} combobox
- * @param {string[]} content
+ * @param {!HTMLSelectElement} combobox
+ * @param {!Array.<string>} content
  */
 function fillComboBox(combobox, content) {
   for (let i = 0; i < content.length; i++) {
@@ -1254,7 +1265,7 @@ function fillComboBox(combobox, content) {
 
 /**
  * Returns true if the algorithm can take the edge direction into consideration, false otherwise.
- * @return {boolean} true if the algorithm can take the edge direction into consideration, false
+ * @returns {boolean} true if the algorithm can take the edge direction into consideration, false
  *   otherwise
  */
 function algorithmSupportsDirectedEdges() {
@@ -1271,7 +1282,7 @@ function algorithmSupportsDirectedEdges() {
 
 /**
  * Returns true if the algorithm needs directed edges to work
- * @return {boolean} true if the algorithm needs directed edges
+ * @returns {boolean} true if the algorithm needs directed edges
  */
 function algorithmNeedsDirectedEdges() {
   const selectedIndex = algorithmComboBox.selectedIndex
@@ -1280,7 +1291,7 @@ function algorithmNeedsDirectedEdges() {
 
 /**
  * Returns true if the algorithm can take the edge weights into consideration, false otherwise.
- * @return {boolean} true if the algorithm can take the edge weights into consideration, false
+ * @returns {boolean} true if the algorithm can take the edge weights into consideration, false
  *   otherwise
  */
 function algorithmSupportsWeights() {
@@ -1311,7 +1322,7 @@ function releaseLocks() {
 /**
  * Disables the HTML elements of the UI.
  *
- * @param disabled true if the element should be disabled, false otherwise
+ * @param {boolean} disabled true if the element should be disabled, false otherwise
  */
 function setUIDisabled(disabled) {
   sampleComboBox.disabled = disabled
@@ -1350,7 +1361,6 @@ function updateUIState() {
 
   uniformEdgeWeightsComboBox.disabled =
     !configOptionsValid || inLayout || !algorithmSupportsWeights()
-
   document.getElementById('new').disabled = false
   document.getElementById('generateEdgeLabels').disabled =
     !configOptionsValid || inLayout || uniformEdgeWeightsComboBox.disabled
@@ -1361,6 +1371,7 @@ function updateUIState() {
 
 /**
  * Programmatically creates a sample graph so that we do not require GraphML I/O for this demo.
+ * @param {!IGraph} graph
  */
 function createSampleGraph(graph) {
   graph.clear()
@@ -1407,9 +1418,13 @@ function createSampleGraph(graph) {
   graph.createEdge(nodes[23], nodes[0])
 }
 
+/**
+ * @param {*} error
+ */
 function handleError(error) {
-  if (typeof window.reportError === 'function') {
-    window.reportError(error)
+  const reportError = window.reportError
+  if (typeof reportError === 'function') {
+    reportError()
   } else {
     throw error
   }

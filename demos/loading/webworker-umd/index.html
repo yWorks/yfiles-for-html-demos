@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -7,7 +7,7 @@
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.3.
+     // This demo file is part of yFiles for HTML 2.4.
      // Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
@@ -36,7 +36,6 @@
 
   <title>Web Worker UMD Demo [yFiles for HTML]</title>
 
-  <link rel="stylesheet" href="./node_modules/yfiles-umd/yfiles.css">
   <link rel="stylesheet" href="../../resources/style/demo.css">
 
   <script src="../../resources/filesystem-warning.js"></script>
@@ -69,11 +68,12 @@
       <a href="https://html.spec.whatwg.org/multipage/workers.html" target="_blank">Web Worker</a> task
       in order to prevent the layout calculation from blocking the UI.
     </p>
-    <p> In order to run this demo, please run <code>npm install</code> in the demo folder.</p>
-    <p>Because web workers cannot load ES modules (yet), this demo loads yFiles using the AMD loader require.js</p>
+    <p>In order to run this demo, please run <code>npm install</code> in the demo folder.</p>
+    <p>This demo loads yFiles using the AMD loader require.js</p>
     <p>
-      To transfer the graph structure and layout between the worker and the main page, a simple JSON format is used.
-      As the web worker environment does not support any DOM-related functionality, the GraphML format can't be used for this purpose.
+      The graph, layout, and layout data are configured in the main thread and transferred to the web worker using
+      class <a href="https://docs.yworks.com/yfileshtml/#/api/LayoutExecutorAsync" target="_blank">LayoutExecutorAsync</a>. The actual layout calculation is performed in <em>WorkerLayout.js</em>
+      with class <a href="https://docs.yworks.com/yfileshtml/#/api/LayoutExecutorAsyncWorker" target="_blank">LayoutExecutorAsyncWorker</a> on the web worker thread.
     </p>
 
     <h2>Things to Try</h2>
@@ -87,7 +87,7 @@
 <div class="demo-content">
   <div class="demo-header">
     <a href="https://www.yworks.com" target="_blank"> <img src="../../resources/icons/ylogo.svg" class="demo-y-logo"> </a> <a
-    href="../../README.html" target="_blank">yFiles for HTML</a> <span class="demo-title">Web Worker UMD Demo [yFiles for HTML]</span>
+    href="../../README.html" target="_blank">yFiles for HTML</a> <span class="demo-title">Web Worker Demo (UMD) [yFiles for HTML]</span>
   </div>
   <div class="demo-toolbar">
     <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
@@ -102,7 +102,7 @@
 
     <span class="demo-separator"></span>
 
-    <button data-command="WebWorkerLayout" title="Run the web worker layout" class="demo-icon-yIconLayout labeled">Layout</button>
+    <button id="layoutBtn" data-command="WebWorkerLayout" title="Run the web worker layout" class="demo-icon-yIconLayout labeled" disabled>Layout</button>
   </div>
 
   <div id="graphComponent"></div>

@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -38,12 +38,10 @@ export default class DemoReparentNodeHandler extends ReparentNodeHandler {
    * can be determined through the context is a reparent gesture. In this
    * case, it returns true, if the base implementation returns true or if the
    * current node is green.
-   * @param {IInputModeContext} context The context that provides information about the
+   * @param {!IInputModeContext} context The context that provides information about the
    * user input.
-   * @param {INode} node The node that will possibly be reparented.
-   * @return {boolean} Whether this is a reparenting gesture.
-   * @see Overrides {@link ReparentNodeHandler#isReparentGesture}
-   * @see Specified by {@link IReparentNodeHandler#isReparentGesture}.
+   * @param {!INode} node The node that will possibly be reparented.
+   * @returns {boolean} Whether this is a reparenting gesture.
    */
   isReparentGesture(context, node) {
     return super.isReparentGesture(context, node) || node.tag === 'green'
@@ -53,35 +51,31 @@ export default class DemoReparentNodeHandler extends ReparentNodeHandler {
    * In general, this method determines whether the user may detach the
    * given node from its current parent in order to reparent it. In this case,
    * it returns false for red nodes.
-   * @param {IInputModeContext} context The context that provides information about the
+   * @param {!IInputModeContext} context The context that provides information about the
    * user input.
-   * @param {INode} node The node that is about to be detached from its
+   * @param {!INode} node The node that is about to be detached from its
    * current parent.
-   * @return {boolean} Whether the node may be detached and reparented.
-   * @see Overrides {@link ReparentNodeHandler#shouldReparent}
-   * @see Specified by {@link IReparentNodeHandler#shouldReparent}.
+   * @returns {boolean} Whether the node may be detached and reparented.
    */
   shouldReparent(context, node) {
-    return !(node.tag === 'firebrick')
+    return node.tag !== 'firebrick'
   }
 
   /**
    * In general, this method determines whether the provided node
    * may be reparented to the given <code>newParent</code>.
-   * @param {IInputModeContext} context The context that provides information about the
+   * @param {!IInputModeContext} context The context that provides information about the
    * user input.
-   * @param {INode} node The node that will be reparented.
-   * @param {INode} newParent The potential new parent.
-   * @return {boolean} Whether <code>newParent</code> is a valid new parent
+   * @param {!INode} node The node that will be reparented.
+   * @param {!INode} newParent The potential new parent.
+   * @returns {boolean} Whether <code>newParent</code> is a valid new parent
    * for <code>node</code>.
-   * @see Overrides {@link ReparentNodeHandler#isValidParent}
-   * @see Specified by {@link IReparentNodeHandler#isValidParent}.
    */
   isValidParent(context, node, newParent) {
     // Obtain the tag from the designated child
     const nodeTag = node.tag
     // and from the designated parent.
-    const parentTag = newParent === null ? null : newParent.tag
+    const parentTag = newParent ? newParent.tag : null
     if (nodeTag === null) {
       // Newly created nodes or nodes without a tag in general can be reparented freely
       return true

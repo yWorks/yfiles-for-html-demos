@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -33,6 +33,8 @@ import {
   GraphEditorInputMode,
   ICanvasObjectDescriptor,
   ICommand,
+  INode,
+  IRenderContext,
   IVisualCreator,
   LayoutExecutor,
   License,
@@ -40,16 +42,26 @@ import {
   OrganicLayoutData,
   OrganicLayoutScope,
   ShapeNodeStyle,
-  Size
+  Size,
+  SolidColorFill
 } from 'yfiles'
 import WebglBlobVisual from './WebglBlobVisual.js'
 import { bindAction, bindCommand, showApp } from '../../resources/demo-app.js'
 import loadJson from '../../resources/load-json.js'
+import { webGlSupported } from '../../utils/Workarounds.js'
 
 /** @type {GraphComponent} */
-let graphComponent = null
+let graphComponent
 
+/**
+ * @param {!object} licenseData
+ */
 function run(licenseData) {
+  if (!webGlSupported) {
+    document.getElementById('no-webgl-support').removeAttribute('style')
+    showApp(null)
+    return
+  }
   License.value = licenseData
   graphComponent = new GraphComponent('graphComponent')
 
@@ -65,8 +77,10 @@ function run(licenseData) {
   // add a blob visualization for the red group
   graphComponent.backgroundGroup.addChild(
     new BlobBackground(
-      n =>
-        n.style.fill.color.g < n.style.fill.color.r && n.style.fill.color.r >= n.style.fill.color.b,
+      n => {
+        const color = n.style.fill.color
+        return color.g < color.r && color.r >= color.b
+      },
       new Color(255, 128, 128, 196),
       120
     ),
@@ -76,8 +90,10 @@ function run(licenseData) {
   // add a blob visualization for the blue group
   graphComponent.backgroundGroup.addChild(
     new BlobBackground(
-      n =>
-        n.style.fill.color.g < n.style.fill.color.b && n.style.fill.color.b >= n.style.fill.color.r,
+      n => {
+        const color = n.style.fill.color
+        return color.g < color.b && color.b >= color.r
+      },
       new Color(128, 128, 255, 196),
       150
     ),
@@ -166,6 +182,11 @@ function registerCommands() {
  * A background visual creator that produces the metaball groups.
  */
 class BlobBackground extends BaseClass(IVisualCreator) {
+  /**
+   * @param {!function} selector
+   * @param {!Color} color
+   * @param {number} size
+   */
   constructor(selector, color, size) {
     super()
     this.selector = selector
@@ -173,6 +194,10 @@ class BlobBackground extends BaseClass(IVisualCreator) {
     this.color = color
   }
 
+  /**
+   * @param {!IRenderContext} renderContext
+   * @returns {!WebglBlobVisual}
+   */
   createVisual(renderContext) {
     return new WebglBlobVisual(
       renderContext.canvasComponent.graph.nodes
@@ -183,30 +208,14 @@ class BlobBackground extends BaseClass(IVisualCreator) {
     )
   }
 
+  /**
+   * @param {!IRenderContext} renderContext
+   * @param {!WebglBlobVisual} oldVisual
+   * @returns {!WebglBlobVisual}
+   */
   updateVisual(renderContext, oldVisual) {
     return oldVisual
   }
 }
 
-/**
- * Whether the current browser supports WebGL rendering.
- * @returns {boolean}
- */
-function hasWebGLSupport() {
-  const canvas = document.createElement('canvas')
-  return !!canvas.getContext('webgl') || !!canvas.getContext('experimental-webgl')
-}
-
-// start demo if the browser supports WebGL
-if (hasWebGLSupport()) {
-  loadJson().then(run)
-} else {
-  document.querySelector('#graphComponent').innerHTML = `
-    <div style="padding: 50px">
-      <p style="font-size: 2rem;">Your browser doesn't support WebGL.</p>
-      <p> See <a href="https://www.khronos.org/webgl/" target="_blank">https://www.khronos.org/webgl/</a> and 
-        <a href="https://caniuse.com/#search=webgl" target="_blank">caniuse.com</a> for details on browser support for WebGL.
-      </p>
-    </div>`
-  showApp(graphComponent)
-}
+loadJson().then(run)

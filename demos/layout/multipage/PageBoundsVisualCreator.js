@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -29,18 +29,17 @@
 import { BaseClass, IRenderContext, IVisualCreator, Point, SvgVisual, Visual } from 'yfiles'
 
 /**
+ * A constant margin for the page so the graph does not touch the frame.
+ */
+const MARGIN = 15
+
+/**
  * This class renders a rectangle that represents the page.
  */
 export default class PageBoundsVisualCreator extends BaseClass(IVisualCreator) {
   constructor() {
     super()
-    /**
-     * Specifies the width of the page.
-     */
     this.pageWidth = 0
-    /**
-     * Specifies the height of the page.
-     */
     this.pageHeight = 0
     /**
      * Specifies the center of the page.
@@ -50,9 +49,9 @@ export default class PageBoundsVisualCreator extends BaseClass(IVisualCreator) {
 
   /**
    * Creates a visual for a rectangular page.
-   * @param {IRenderContext} context
-   * @return {Visual}
    * @see Overrides {@link IVisualCreator#createVisual}.
+   * @param {!IRenderContext} context
+   * @returns {?Visual}
    */
   createVisual(context) {
     const rectangle = document.createElementNS('http://www.w3.org/2000/svg', 'rect')
@@ -67,10 +66,10 @@ export default class PageBoundsVisualCreator extends BaseClass(IVisualCreator) {
 
   /**
    * Updates the size of the visual for a rectangular page.
-   * @param {IRenderContext} context
-   * @param {Visual} oldVisual
-   * @return {Visual}
    * @see Overrides {@link IVisualCreator#updateVisual}.
+   * @param {!IRenderContext} context
+   * @param {!Visual} oldVisual
+   * @returns {?Visual}
    */
   updateVisual(context, oldVisual) {
     if (this.pageWidth === 0 || this.pageHeight === 0) {
@@ -84,8 +83,8 @@ export default class PageBoundsVisualCreator extends BaseClass(IVisualCreator) {
 
     rectangle.setAttribute('x', '0')
     rectangle.setAttribute('y', '0')
-    rectangle.setAttribute('width', width)
-    rectangle.setAttribute('height', height)
+    rectangle.setAttribute('width', width.toString())
+    rectangle.setAttribute('height', height.toString())
 
     // update the position of the page
     rectangle.setAttribute(
@@ -96,9 +95,3 @@ export default class PageBoundsVisualCreator extends BaseClass(IVisualCreator) {
     return oldVisual
   }
 }
-
-/**
- * A constant margin for the page so the graph does not touch the frame.
- * @type {number}
- */
-const MARGIN = 15

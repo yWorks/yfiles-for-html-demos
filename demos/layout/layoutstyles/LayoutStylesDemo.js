@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -27,34 +27,46 @@
  **
  ***************************************************************************/
 import {
+  Class,
   Color,
+  DefaultGraph,
   GraphComponent,
+  GraphCopier,
   GraphEditorInputMode,
   GraphInputMode,
-  GraphMLIOHandler,
   GraphMLSupport,
   GraphOverviewComponent,
   GraphSnapContext,
   GridSnapTypes,
-  HierarchicLayout,
   IArrow,
   ICommand,
   IEdge,
+  IEnumerable,
   IGraph,
+  IInputMode,
+  ILabelOwner,
+  ILabel,
+  ImageNodeStyle,
   IModelItem,
   INode,
   LabelSnapContext,
   License,
   List,
-  MinimumNodeSizeStage,
   OrthogonalEdgeEditingContext,
+  Point,
   PolylineEdgeStyle,
   PopulateItemContextMenuEventArgs,
+  Rect,
   RenderModes,
   SmartEdgeLabelModel,
   StorageLocation,
-  Stroke
+  Stroke,
+  TableNodeStyle
 } from 'yfiles'
+
+// We need to load the 'styles-other' module explicitly to prevent tree-shaking
+// tools it from removing this dependency which is needed for loading all library styles.
+Class.ensure(ImageNodeStyle)
 
 import { OptionEditor } from '../../resources/demo-option-editor.js'
 import HierarchicLayoutConfig from './HierarchicLayoutConfig.js'
@@ -62,6 +74,7 @@ import OrganicLayoutConfig from './OrganicLayoutConfig.js'
 import OrthogonalLayoutConfig from './OrthogonalLayoutConfig.js'
 import CircularLayoutConfig from './CircularLayoutConfig.js'
 import TreeLayoutConfig from './TreeLayoutConfig.js'
+import ClassicTreeLayoutConfig from './ClassicTreeLayoutConfig.js'
 import BalloonLayoutConfig from './BalloonLayoutConfig.js'
 import RadialLayoutConfig from './RadialLayoutConfig.js'
 import SeriesParallelLayoutConfig from './SeriesParallelLayoutConfig.js'
@@ -75,63 +88,76 @@ import ComponentLayoutConfig from './ComponentLayoutConfig.js'
 import TabularLayoutConfig from './TabularLayoutConfig.js'
 import PartialLayoutConfig from './PartialLayoutConfig.js'
 import GraphTransformerConfig from './GraphTransformerConfig.js'
+import { PresetsUiBuilder } from './PresetsUiBuilder.js'
 import ContextMenu from '../../utils/ContextMenu.js'
-import DemoStyles, {
+import {
   DemoArrow,
   DemoEdgeStyle,
-  DemoSerializationListener,
+  DemoGroupStyle,
+  DemoNodeStyle,
   DemoStyleOverviewPaintable,
   initDemoStyles
 } from '../../resources/demo-styles.js'
-import { bindAction, bindChangeListener, bindCommand, showApp } from '../../resources/demo-app.js'
+import {
+  addClass,
+  bindAction,
+  bindChangeListener,
+  bindCommand,
+  removeClass,
+  showApp
+} from '../../resources/demo-app.js'
 import loadJson from '../../resources/load-json.js'
 import { webGlSupported } from '../../utils/Workarounds.js'
-import { FaultTolerantGraphMLIOHandler } from './FaultTolerantGraphMLIOHandler.js'
+import { createConfiguredGraphMLIOHandler } from './FaultTolerantGraphMLIOHandler.js'
+import { isSeparator, LayoutStyles, Presets } from './resources/LayoutSamples.js'
+import { LoremIpsum } from './resources/LoremIpsum.js'
 
 /**
  * The GraphComponent
  * @type {GraphComponent}
  */
-let graphComponent = null
+let graphComponent
 
 /**
  * The overview component
  * @type {GraphOverviewComponent}
  */
-let overviewComponent = null
-
-/**
- * Stores all available layout algorithms and maps each name to the corresponding configuration.
- * @type {Map.<string,LayoutConfiguration>}
- */
-const availableLayouts = new Map()
+let overviewComponent
 
 /**
  * The option editor that stores the currently selected layout configuration.
  * @type {OptionEditor}
  */
-let optionEditor = null
+let optionEditor
+/** @type {PresetsUiBuilder} */
+let presetsUiBuilder
 
+/** @type {boolean} */
 let configOptionsValid = false
+/** @type {boolean} */
 let inLayout = false
+/** @type {boolean} */
 let inLoadSample = false
 
 const comboBoxSeparatorItem = '-----------'
 
 // get hold of some UI elements
+const layoutComboBox = getElementById('layout-select-box')
+const sampleComboBox = getElementById('sample-select-box')
+const nextButton = getElementById('next-sample-button')
+const previousButton = getElementById('previous-sample-button')
+const layoutButton = getElementById('apply-layout-button')
 
-const layoutComboBox = /** @type {HTMLSelectElement} */ document.getElementById('layout-select-box')
-const sampleComboBox = /** @type {HTMLSelectElement} */ document.getElementById('sample-combo-box')
-const nextButton = document.getElementById('next-sample-button')
-const previousButton = document.getElementById('previous-sample-button')
-const layoutButton = document.getElementById('apply-layout-button')
-const resetButton = document.getElementById('reset-layout-button')
-const generateEdgeThicknessButton = document.getElementById('generate-edge-thickness-button')
-const resetEdgeThicknessButton = document.getElementById('reset-edge-thickness-button')
-const generateEdgeDirectionButton = document.getElementById('generate-edge-direction-button')
-const resetEdgeDirectionButton = document.getElementById('reset-edge-direction-button')
+// keep track of user interactions with the graph
+/** @type {boolean} */
+let customGraphSelected = false
+/** @type {IGraph} */
+let customGraph = null
 
-function run(licenseData) {
+/**
+ * @param {!object} licenseData
+ */
+async function run(licenseData) {
   License.value = licenseData
   // initialize the GraphComponent
   graphComponent = new GraphComponent('graphComponent')
@@ -147,23 +173,22 @@ function run(licenseData) {
   // we start loading the input mode
   graphComponent.inputMode = createEditorMode()
 
-  setUIDisabled(true)
   // use the file system for built-in I/O
   enableGraphML()
   // initialize the property editor
-  const editorElement = window.document.getElementById('data-editor')
+  const editorElement = getElementById('data-editor')
   optionEditor = new OptionEditor(editorElement)
-  editorElement.addEventListener(
-    'keypress',
-    evt => {
-      if (evt.key === 13) {
-        applyLayout(false)
-      }
-    },
-    false
-  )
 
-  initializeSamples()
+  // initialize the presets UI builder
+  presetsUiBuilder = new PresetsUiBuilder({
+    rootElement: getElementById('data-presets'),
+    optionEditor: optionEditor,
+    presetDefs: Presets,
+    onPresetApplied: () => applyLayout(false)
+  })
+
+  // disable UI during initialization
+  setUIDisabled(true)
 
   // initialize the graph and the defaults
   initializeGraph()
@@ -177,100 +202,61 @@ function run(licenseData) {
   // initialize the demo
   showApp(graphComponent, overviewComponent)
 
-  loadSampleFromLocationHash(true)
+  await initializeApplicationFromUrl()
+
+  updateStyleDefaults()
 }
 
 /**
  * Enables loading and saving the graph to GraphML.
  */
 function enableGraphML() {
-  const gs = new GraphMLSupport({
+  const graphMLIOHandler = createConfiguredGraphMLIOHandler()
+  graphMLIOHandler.addParsedListener((sender, args) => {
+    updateModifiedGraphSample()
+  })
+  new GraphMLSupport({
     graphComponent,
     // configure to load and save to the file system
     storageLocation: StorageLocation.FILE_SYSTEM,
-    graphMLIOHandler: new FaultTolerantGraphMLIOHandler()
+    graphMLIOHandler: graphMLIOHandler
   })
-
-  // enable serialization of the demo styles - without a namespace mapping, serialization will fail
-  gs.graphMLIOHandler.addXamlNamespaceMapping(
-    'http://www.yworks.com/yFilesHTML/demos/FlatDemoStyle/1.0',
-    DemoStyles
-  )
-  gs.graphMLIOHandler.addHandleSerializationListener(DemoSerializationListener)
 }
 
-function initializeSamples() {
-  initializeComboBox(sampleComboBox, [
-    'Hierarchic',
-    'Grouping',
-    'Organic',
-    'Orthogonal',
-    'Circular',
-    'Tree',
-    'Balloon',
-    'Radial',
-    'Series-Parallel',
-    'Edge Router',
-    'Bus Router',
-    'Components',
-    'Tabular',
-    comboBoxSeparatorItem,
-    'Organic with Substructures',
-    'Hierarchic with Subcomponents',
-    'Orthogonal with Substructures',
-    comboBoxSeparatorItem,
-    'Hierarchic with Buses',
-    'Edge Router with Buses',
-    'Hierarchic with Curves',
-    'Edge Router with Curves'
-  ])
+/**
+ * Populates the sample combobox depending on the chosen layout algorithm.
+ * @param {!string} layoutName
+ */
+function initializeSamples(layoutName) {
+  const selectedLayout = LayoutStyles.find(
+    entry => !isSeparator(entry) && getNormalizedName(entry.layout) === layoutName
+  )
+  if (selectedLayout) {
+    const files = [...selectedLayout.samples]
+    if (customGraph !== null) {
+      files.push({ label: 'Modified Graph', sample: 'modified-graph' })
+    }
+    initializeComboBox(sampleComboBox, files)
+    if (customGraphSelected) {
+      sampleComboBox.selectedIndex = sampleComboBox.options.length - 1
+    }
+  }
 }
 
 /**
  * Loads all layout modules and populates the layout combo box.
  */
 function initializeLayoutAlgorithms() {
-  if (layoutComboBox === null) {
-    return
-  }
-
-  const layoutNames = [
-    'Hierarchic',
-    'Organic',
-    'Orthogonal',
-    'Circular',
-    'Tree',
-    'Balloon',
-    'Radial',
-    'Series-Parallel',
-    comboBoxSeparatorItem,
-    'Edge Router',
-    'Channel Router',
-    'Bus Router',
-    'Organic Router',
-    'Parallel Router',
-    comboBoxSeparatorItem,
-    'Labeling',
-    'Components',
-    'Tabular',
-    'Partial',
-    'Graph Transform'
-  ]
-
+  const layoutNames = LayoutStyles.map(entry =>
+    isSeparator(entry) ? comboBoxSeparatorItem : entry.layout
+  )
   initializeComboBox(layoutComboBox, layoutNames)
-
-  layoutNames.forEach(name => {
-    if (name === comboBoxSeparatorItem) {
-      return
-    }
-    const normalizedName = getNormalizedName(name)
-    availableLayouts.set(normalizedName, createLayoutConfig(normalizedName))
-  })
 }
 
 /**
- * @param normalizedName
- * @return {*}
+ * Creates a new instance of the configuration for the layout algorithm with the given name.
+ * @param {!string} normalizedName The name of the layout algorithm for which a configuration is created.
+ * @returns {!LayoutConfigurationType}
  */
 function createLayoutConfig(normalizedName) {
   switch (normalizedName) {
@@ -310,73 +296,18 @@ function createLayoutConfig(normalizedName) {
       return new TabularLayoutConfig()
     case 'tree':
       return new TreeLayoutConfig()
+    case 'classic-tree':
+      return new ClassicTreeLayoutConfig()
     default:
       return new HierarchicLayoutConfig()
   }
 }
 
 /**
- * Reset the configuration.
- */
-function resetConfig() {
-  const selectedIndex = layoutComboBox.selectedIndex
-  if (selectedIndex < 0) {
-    return
-  }
-  const key = layoutComboBox[selectedIndex].value
-  if (key !== null && availableLayouts !== null && availableLayouts.has(key)) {
-    availableLayouts.set(key, createLayoutConfig(key))
-    onLayoutChanged()
-  }
-}
-
-/**
- * Applies the layout algorithm of the given key.
- * @param {string|null} sampleName
- */
-function applyLayoutForSample(sampleName = null) {
-  if (sampleName == null) {
-    sampleName = getSelectedSample()
-  }
-
-  // center the initial position of the animation
-  ICommand.FIT_GRAPH_BOUNDS.execute(null, graphComponent)
-
-  let forceUpdateConfigPanel = false
-  if (sampleName.indexOf('organic') === 0) {
-    sampleName = 'organic'
-    forceUpdateConfigPanel = true
-  }
-  if (sampleName.indexOf('hierarchic') === 0) {
-    sampleName = 'hierarchic'
-    forceUpdateConfigPanel = true
-  }
-  if (sampleName.indexOf('orthogonal') === 0) {
-    sampleName = 'orthogonal'
-    forceUpdateConfigPanel = true
-  }
-  if (sampleName.indexOf('edge-router') === 0) {
-    sampleName = 'edge-router'
-    forceUpdateConfigPanel = true
-  }
-  // get the layout and use 'Hierarchic' if the key is unknown (shouldn't happen in this demo)
-  const layoutName =
-    availableLayouts !== null && availableLayouts.has(sampleName) ? sampleName : 'hierarchic'
-  const actualIndex = getIndexInComboBox(layoutComboBox, layoutName)
-  // run the layout if the layout combo box is already correct
-  if (layoutComboBox.selectedIndex !== actualIndex || forceUpdateConfigPanel) {
-    // otherwise, change the selection and indirectly trigger the layout
-    layoutComboBox.selectedIndex = actualIndex
-    onLayoutChanged()
-  }
-  applyLayout(true)
-}
-
-/**
  * Returns the index of the first option with the given value.
- * @param {HTMLSelectElement} combobox The combobox to search.
- * @param {string} value The value to match.
- * @return {number} The index of the first option with the given text (ignoring case), or -1 if no
+ * @param {!HTMLSelectElement} combobox The combobox to search.
+ * @param {!string} value The value to match.
+ * @returns {number} The index of the first option with the given text (ignoring case), or -1 if no
  *   such option exists.
  */
 function getIndexInComboBox(combobox, value) {
@@ -391,21 +322,34 @@ function getIndexInComboBox(combobox, value) {
 }
 
 /**
- *
- * @param {HTMLSelectElement} combobox
- * @param {string[]} names
+ * Populates the given HTMLSelectElement with the items in the given string array.
+ * @param {!HTMLSelectElement} combobox
+ * @param {!(Array.<string>|Array.<object>)} names
  */
 function initializeComboBox(combobox, names) {
-  names.forEach(name => {
+  while (combobox.firstChild) {
+    combobox.removeChild(combobox.lastChild)
+  }
+
+  for (const entry of names) {
+    let label = ''
+    let value = ''
+    if (typeof entry === 'string') {
+      label = entry
+      value = getNormalizedName(entry)
+    } else {
+      label = entry.label
+      value = entry.sample
+    }
     const option = document.createElement('option')
     combobox.add(option)
-    option.label = name
-    if (name === comboBoxSeparatorItem) {
+    option.label = label
+    if (entry === comboBoxSeparatorItem) {
       option.disabled = true
     } else {
-      option.value = getNormalizedName(name)
+      option.value = value
     }
-  })
+  }
 }
 
 /**
@@ -436,75 +380,165 @@ function applyLayout(clearUndo) {
 }
 
 /**
- * Handles a selection change in the layout combo box.
+ * @returns {!string}
  */
-function onLayoutChanged() {
-  if (layoutComboBox === null) {
-    return
-  }
-  const sampleName = getSelectedSample()
-  const layoutName = layoutComboBox.options[layoutComboBox.selectedIndex]
-    ? layoutComboBox.options[layoutComboBox.selectedIndex].value
-    : null
-  if (layoutName != null && availableLayouts !== null && availableLayouts.has(layoutName)) {
-    graphComponent.graph.edgeDefaults.style.showTargetArrows = isLayoutDirected(layoutName)
-    const config = availableLayouts.get(layoutName)
-    if (layoutName === 'hierarchic' || layoutName === 'hierarchic-with-subcomponents') {
-      // enable edge-thickness buttons only for Hierarchic Layout
-      generateEdgeThicknessButton.disabled = false
-      resetEdgeThicknessButton.disabled = false
-      generateEdgeDirectionButton.disabled = false
-      resetEdgeDirectionButton.disabled = false
-    } else {
-      // disable edge-thickness buttons only for all other layouts
-      generateEdgeThicknessButton.disabled = true
-      resetEdgeThicknessButton.disabled = true
-      generateEdgeDirectionButton.disabled = true
-      resetEdgeDirectionButton.disabled = true
+function getSelectedAlgorithm() {
+  return layoutComboBox.options[layoutComboBox.selectedIndex].value
+}
+
+/**
+ * @param {!string} layoutName
+ */
+function updateThicknessButtonsState(layoutName) {
+  const generateEdgeThicknessButton = getElementById('generate-edge-thickness-button')
+  const resetEdgeThicknessButton = getElementById('reset-edge-thickness-button')
+  const generateEdgeDirectionButton = getElementById('generate-edge-direction-button')
+  const resetEdgeDirectionButton = getElementById('reset-edge-direction-button')
+  if (layoutName === 'hierarchic') {
+    // enable edge-thickness buttons only for Hierarchic Layout
+    generateEdgeThicknessButton.disabled = false
+    resetEdgeThicknessButton.disabled = false
+    generateEdgeDirectionButton.disabled = false
+    resetEdgeDirectionButton.disabled = false
+  } else {
+    // disable edge-thickness buttons for all other layouts
+    generateEdgeThicknessButton.disabled = true
+    resetEdgeThicknessButton.disabled = true
+    generateEdgeDirectionButton.disabled = true
+    resetEdgeDirectionButton.disabled = true
+    if (!customGraphSelected) {
       onResetEdgeThicknesses(graphComponent.graph)
       onResetEdgeDirections(graphComponent.graph)
     }
+  }
+}
 
-    if (sampleName === 'organic-with-substructures' && layoutName === 'organic') {
-      config.enableSubstructures()
+/**
+ * Handles a selection change in the layout combo box.
+ * @param {boolean} [initSamples=true]
+ * @param {!''} appliedPresetId
+ * @returns {!Promise}
+ */
+async function onLayoutChanged(initSamples = true, appliedPresetId = '') {
+  const layoutName = getSelectedAlgorithm()
+  if (layoutName != null) {
+    if (initSamples) {
+      initializeSamples(layoutName)
     }
-    if (sampleName === 'hierarchic-with-subcomponents' && layoutName === 'hierarchic') {
-      config.enableSubstructures()
-    }
-    if (sampleName === 'orthogonal-with-substructures' && layoutName === 'orthogonal') {
-      config.enableSubstructures()
-    }
-    if (sampleName === 'hierarchic-with-buses' && layoutName === 'hierarchic') {
-      config.enableAutomaticBusRouting()
-    }
-    if (sampleName === 'edge-router-with-buses' && layoutName === 'edge-router') {
-      onResetEdgeDirections(graphComponent.graph, false)
-      graphComponent.graph.edges.forEach(edge => {
-        if (edge.style instanceof PolylineEdgeStyle) {
-          const color = edge.style.stroke.fill.color
-          edge.tag = `rgb(${color.r},${color.g},${color.b})`
-        }
-      })
-      config.enableBusRouting()
-    }
-    if (sampleName === 'hierarchic-with-curves' && layoutName === 'hierarchic') {
-      config.enableCurvedRouting()
-    }
-    if (sampleName === 'edge-router-with-curves' && layoutName === 'edge-router') {
-      config.enableCurvedRouting()
-    }
+
+    setDefaultArrows(graphComponent.graph, isLayoutDirected(layoutName))
+
+    // maybe enable thickness buttons
+    updateThicknessButtonsState(layoutName)
+
+    // use a new instance to re-initialize the default values
+    const config = createLayoutConfig(layoutName)
+
+    // place description in left sidebar
+    updateDescriptionText(config)
+
+    // this demo starts with collapsed option settings by default
+    config.collapsedInitialization = true
 
     optionEditor.config = config
     optionEditor.validateConfigCallback = b => {
       configOptionsValid = b
       layoutButton.disabled = !(configOptionsValid && !inLayout)
     }
+
+    let presetsStruct
+    if (customGraphSelected) {
+      presetsStruct = findPresets(layoutName)
+      presetsStruct.defaultPreset = presetsStruct.presets[0]
+    } else {
+      const key = getSelectedSample()
+      await onSampleChangedCore(key)
+      presetsStruct = findPresets(layoutName, key)
+    }
+
+    presetsUiBuilder.buildUi(
+      presetsStruct,
+      appliedPresetId ? appliedPresetId : presetsStruct.defaultPreset
+    )
+
+    applyLayout(!customGraphSelected)
   }
 }
 
 /**
+ * @param {!LayoutConfigurationType} config
+ */
+function updateDescriptionText(config) {
+  const layoutDescriptionContainer = getElementById('layout-description-container')
+  const layoutDescription = getElementById('layout-description')
+  const layoutTitle = getElementById('layout-title')
+
+  removeClass(layoutDescriptionContainer, 'highlight-description')
+  while (layoutDescription.firstChild) {
+    layoutDescription.removeChild(layoutDescription.lastChild)
+  }
+  layoutTitle.innerHTML = ''
+
+  if (config.descriptionText) {
+    layoutDescription.innerHTML = config.descriptionText
+    layoutTitle.innerHTML = config.title
+
+    // highlight the description once
+    setTimeout(() => {
+      addClass(layoutDescriptionContainer, 'highlight-description')
+    }, 0)
+  }
+}
+
+/**
+ * @param {!string} algorithmName
+ * @param {!''} sampleKey
+ * @returns {!object}
+ */
+function findPresets(algorithmName, sampleKey = '') {
+  const algorithm = findAlgorithmImpl(algorithmName)
+  if (algorithm && algorithm.samples) {
+    const presets = algorithm.presets ? algorithm.presets : []
+    const invalidPresets = []
+    const presetStruct = { presets, defaultPreset: '', invalidPresets }
+    if (sampleKey !== '') {
+      if (sampleKey !== 'modified-graph') {
+        for (const entry of algorithm.samples) {
+          if (entry.sample && getNormalizedName(entry.sample) === sampleKey) {
+            if (entry.defaultPreset) {
+              presetStruct.defaultPreset = entry.defaultPreset
+            }
+            if (entry.invalidPresets) {
+              presetStruct.invalidPresets = [...entry.invalidPresets]
+            }
+          }
+        }
+      } else {
+        //always select default preset for modified graph sample
+        presetStruct.defaultPreset = presets[0]
+      }
+    }
+    return presetStruct
+  }
+  return { presets: [], defaultPreset: '', invalidPresets: [] }
+}
+
+/**
+ * @param {!string} algorithmName
+ * @returns {?LayoutSample}
+ */
+function findAlgorithmImpl(algorithmName) {
+  for (const entry of LayoutStyles) {
+    if (!isSeparator(entry) && getNormalizedName(entry.layout) === algorithmName) {
+      return entry
+    }
+  }
+  return null
+}
+
+/**
  * Returns the value of the currently selected sample.
- * @return {string}
+ * @returns {!string}
  */
 function getSelectedSample() {
   return sampleComboBox.options[sampleComboBox.selectedIndex].value
@@ -512,122 +546,262 @@ function getSelectedSample() {
 
 /**
  * Returns the normalized version of the given name, i.e., in lowercase and '-' instead of space.
- * @param {string} name
- * @return {string}
+ * @param {!string} name
+ * @returns {!string}
  */
 function getNormalizedName(name) {
   return name.toLowerCase().replace(/[\s]/g, '-')
 }
 
 /**
- * Checks whether the location hash specifies a valid sample, and loads that.
- * @param {boolean} useFallback
+ * Initializes the application configuration from the URL.
+ * @returns {!Promise}
  */
-function loadSampleFromLocationHash(useFallback = false) {
-  if (!window.location.hash) {
-    if (useFallback) {
-      onSampleChanged()
-    }
-    return
+async function initializeApplicationFromUrl() {
+  const hash = window.location.hash
+  if (hash) {
+    await loadConfigurationFromLocationHash(hash)
+  } else {
+    await loadConfigurationFromUrl()
+  }
+}
+
+/**
+ * Updates current layout algorithm and current sample graph when the window location hash changes.
+ * @returns {!Promise}
+ */
+async function onHashChanged() {
+  const hash = window.location.hash
+  if (hash) {
+    await loadConfigurationFromLocationHash(hash)
+  } else {
+    await onLayoutChanged()
+  }
+}
+
+/**
+ * Checks whether the location hash specifies a valid sample, and loads that.
+ * @param {!string} windowLocationHash
+ * @returns {!Promise}
+ */
+async function loadConfigurationFromLocationHash(windowLocationHash) {
+  const match = windowLocationHash.match(/#([\w_-]+)/)
+  const hash = match && match.length > 1 ? match[1].toLowerCase().replace(/_/g, '-') : ''
+
+  let layout = hash
+  let sample = null
+  let preset = null
+
+  // support some specific hashed URLs by parsing specific sample configurations
+  if (hash === 'hierarchic-with-subcomponents') {
+    layout = 'hierarchic'
+    sample = 'hierarchic-with-subcomponents'
+    preset = 'hierarchic-with-subcomponents'
+  } else if (hash === 'hierarchic-with-buses') {
+    layout = 'hierarchic'
+    sample = 'hierarchic-with-buses'
+    preset = 'hierarchic-with-buses'
+  } else if (hash === 'hierarchic-with-curves') {
+    layout = 'hierarchic'
+    sample = 'hierarchic'
+    preset = 'hierarchic-with-curves'
+  } else if (hash === 'organic-with-substructures') {
+    layout = 'organic'
+    sample = 'organic-with-substructures'
+    preset = 'organic-with-substructures'
+  } else if (hash === 'orthogonal-with-substructures') {
+    layout = 'orthogonal'
+    sample = 'orthogonal-with-substructures'
+    preset = 'orthogonal-with-substructures'
+  } else if (hash === 'edge-router-with-buses') {
+    layout = 'edge-router'
+    sample = 'edge-router-with-buses'
+    preset = 'edge-router-with-buses'
+  } else if (hash === 'edge-router-with-curves') {
+    layout = 'edge-router'
+    sample = 'edge-router'
+    preset = 'edge-router-with-curves'
+  } else if (hash === 'grouping') {
+    layout = 'hierarchic'
+    sample = 'grouping'
   }
 
-  const match = window.location.hash.match(/#([\w_-]+)/)
-  const requestedSample = match && match.length > 1 ? match[1].toLowerCase().replace(/_/g, '-') : ''
-  const index = getIndexInComboBox(sampleComboBox, requestedSample)
-  if (index < 0 || sampleComboBox.selectedIndex === index) {
-    if (useFallback) {
-      onSampleChanged()
+  await loadConfiguration(layout, sample, preset)
+}
+
+/**
+ * Parses the URL parameters and loads the requested configuration.
+ * @returns {!Promise}
+ */
+async function loadConfigurationFromUrl() {
+  try {
+    const urlParams = new URLSearchParams(window.location.search)
+    const requestedLayout = urlParams.get('layout')
+    const requestedSample = urlParams.get('sample')
+    const requestedPreset = urlParams.get('preset')
+    await loadConfiguration(requestedLayout, requestedSample, requestedPreset)
+  } catch (e) {
+    /* URLSearchParams is not supported in IE, fallback to default algoritm and sample */
+    onLayoutChanged()
+  }
+}
+
+/**
+ * Loads the requested layout, sample, and preset.
+ * @param {?string} [layout=null]
+ * @param {?string} [sample=null]
+ * @param {?string} [preset=null]
+ * @returns {!Promise}
+ */
+async function loadConfiguration(layout = null, sample = null, preset = null) {
+  if (layout !== null) {
+    // load the requested layout algorithm
+    const layoutIndex = getIndexInComboBox(layoutComboBox, layout)
+    if (layoutIndex === -1) {
+      // maybe typo in hash which where it should just fail silently
+      await onLayoutChanged()
+      return
     }
-    // do nothing if we don't know the name or if the sample is already selected
-    return
+
+    if (layoutIndex !== -1 && layoutComboBox.selectedIndex !== layoutIndex) {
+      layoutComboBox.selectedIndex = layoutIndex
+    }
+
+    // always initialize the samples if the layout is given
+    const layoutName = layoutComboBox.options[layoutIndex].value
+    initializeSamples(layoutName)
+
+    // load the requested sample
+    if (sample !== null) {
+      const sampleIndex = getIndexInComboBox(sampleComboBox, sample)
+      if (sampleIndex !== -1 && sampleComboBox.selectedIndex !== sampleIndex) {
+        sampleComboBox.selectedIndex = sampleIndex
+      }
+    }
   }
 
-  sampleComboBox.selectedIndex = index
-  onSampleChanged()
+  // loads the requested layout alongside the selected sample
+  await onLayoutChanged(layout === null, preset === null ? '' : preset)
+}
+
+/**
+ * Copies the current graph into a temporary {@link IGraph} instance for later use.
+ */
+function storeModifiedGraph() {
+  customGraph = new DefaultGraph()
+  const copier = new GraphCopier()
+  copier.copy(graphComponent.graph, customGraph)
+}
+
+/**
+ * Loads the temporary stored modified graph into the the main {@link GraphComponent}.
+ */
+function loadModifiedGraph() {
+  if (customGraph !== null) {
+    graphComponent.graph.clear()
+    const copier = new GraphCopier()
+    copier.copy(customGraph, graphComponent.graph)
+  }
+}
+
+/**
+ * Stores the current state as modified graph and adds a sample graph item for it.
+ */
+function updateModifiedGraphSample() {
+  addCustomGraphEntry()
+  storeModifiedGraph()
+}
+
+/**
+ * Adjusts the style defaults to match the overall graph theme.
+ */
+function updateStyleDefaults() {
+  const graph = graphComponent.graph
+  const firstNode = graph.nodes.firstOrDefault(n => !graph.isGroupNode(n))
+  const firstGroupNode = graph.nodes.firstOrDefault(
+    n => graph.isGroupNode(n) && !(n.style instanceof TableNodeStyle)
+  )
+  const firstEdge = graph.edges.firstOrDefault()
+  if (firstNode) {
+    graph.nodeDefaults.style = firstNode.style.clone()
+  } else {
+    graph.nodeDefaults.style = new DemoNodeStyle()
+  }
+  if (firstGroupNode) {
+    graph.groupNodeDefaults.style = firstGroupNode.style.clone()
+  } else {
+    const groupStyle = new DemoGroupStyle()
+    groupStyle.isCollapsible = graph.foldingView !== null
+    graph.groupNodeDefaults.style = groupStyle
+  }
+  if (firstEdge) {
+    graph.edgeDefaults.style = firstEdge.style.clone()
+  } else {
+    graph.edgeDefaults.style = new DemoEdgeStyle()
+  }
 }
 
 /**
  * Handles a selection change in the sample combo box.
+ * @returns {!Promise}
  */
 async function onSampleChanged() {
   if (inLayout || inLoadSample) {
     return
   }
+
   const key = getSelectedSample()
+  await onSampleChangedCore(key)
+
+  updateStyleDefaults()
+
+  const presetsStruct = findPresets(getSelectedAlgorithm(), key)
+  presetsUiBuilder.buildUi(presetsStruct, presetsStruct.defaultPreset)
+
+  applyLayout(true)
+}
+
+/**
+ * @param {?string} key
+ * @returns {!Promise}
+ */
+async function onSampleChangedCore(key) {
   const graph = graphComponent.graph
   if (key == null || key === 'none') {
     // no specific item - just clear the graph
     graph.clear()
     // and fit the contents
-    ICommand.FIT_GRAPH_BOUNDS.execute(null, graphComponent)
+    graphComponent.fitGraphBounds()
     return
   }
   inLoadSample = true
   setUIDisabled(true)
-  graph.edgeDefaults.style.showTargetArrows = isLayoutDirected(key)
-  if (key === 'hierarchic') {
-    // enable edge-thickness and edge-direction buttons only for Hierarchic Layout
-    generateEdgeThicknessButton.disabled = false
-    resetEdgeThicknessButton.disabled = false
-    generateEdgeDirectionButton.disabled = false
-    resetEdgeDirectionButton.disabled = false
-    // the hierarchic graph is the sample graph that does not require GraphML I/O
-    createSampleGraph(graph)
-    applyLayoutForSample()
-  } else {
-    if (key === 'grouping') {
-      // enable edge-thickness and edge-direction buttons only for Hierarchic Layout
-      generateEdgeThicknessButton.disabled = false
-      resetEdgeThicknessButton.disabled = false
-      generateEdgeDirectionButton.disabled = false
-      resetEdgeDirectionButton.disabled = false
-    } else {
-      // disable edge-thickness and edge-direction buttons for all other layouts
-      generateEdgeThicknessButton.disabled = true
-      resetEdgeThicknessButton.disabled = true
-      generateEdgeDirectionButton.disabled = true
-      resetEdgeDirectionButton.disabled = true
-    }
 
-    const filePath = `resources/${key}.graphml`
-    try {
-      // load the sample graph and start the layout algorithm in the done handler
-      const ioh = new GraphMLIOHandler()
-
-      // enable serialization of the demo styles - without a namespace mapping, serialization will fail
-      ioh.addXamlNamespaceMapping(
-        'http://www.yworks.com/yFilesHTML/demos/FlatDemoStyle/1.0',
-        DemoStyles
-      )
-      ioh.addHandleSerializationListener(DemoSerializationListener)
-      await ioh.readFromURL(graph, filePath)
-      applyLayoutForSample()
-    } catch (error) {
-      if (graph.nodes.size === 0 && window.location.protocol.toLowerCase().indexOf('file') >= 0) {
-        alert(
-          'Unable to open the sample graph. A default graph will be loaded instead. Perhaps your browser does not ' +
-            'allow handling cross domain HTTP requests. Please see the demo readme for details.'
-        )
-        // the sample graph cannot be loaded, so we run the default graph
-        createSampleGraph(graph)
-        if (sampleComboBox.selectedIndex === 9 || sampleComboBox.selectedIndex === 10) {
-          graph.applyLayout(new MinimumNodeSizeStage(new HierarchicLayout()))
-        }
-        applyLayoutForSample()
-      }
-      if (typeof window.reportError === 'function') {
-        window.reportError(error)
-      } else {
-        throw error
-      }
-    }
+  if (customGraphSelected) {
+    storeModifiedGraph()
+  } else if (key === 'modified-graph') {
+    loadModifiedGraph()
+    applyLayout(true)
+    customGraphSelected = true
+    return
   }
+
+  customGraphSelected = false
+  setDefaultArrows(graph, isLayoutDirected(key))
+
+  const filePath = `resources/${key}.graphml`
+
+  // load the sample graph and start the layout algorithm in the done handler
+  const ioh = createConfiguredGraphMLIOHandler(graphComponent)
+  await ioh.readFromURL(graph, filePath)
+
+  graphComponent.zoomTo(getCenter(graph), graphComponent.zoom)
 }
 
 /**
  * Generate and add random labels for a collection of ModelItems.
  * Existing items will be deleted before adding the new items.
- * @param {IEnumerable.<IModelItem>} items the collection of items the labels are
+ * @param {!IEnumerable.<ILabelOwner>} items the collection of items the labels are
  *   generated for
  */
 function onGenerateItemLabels(items) {
@@ -638,23 +812,17 @@ function onGenerateItemLabels(items) {
   const labelCount = Math.floor(
     items.size * (Math.random() * (labelPercMax - labelPercMin) + labelPercMin)
   )
+
+  const graph = graphComponent.graph
+
   const itemList = new List()
-  items.forEach(item => {
+  for (const item of items) {
     itemList.add(item)
-  })
-  // remove all existing item labels
-  items.forEach(item => {
-    const labels = new List()
-    item.labels.forEach(label => {
-      labels.add(label)
-    })
-    labels.forEach(label => {
-      graphComponent.graph.remove(label)
-    })
-  })
+    removeLabels(graph, item)
+  }
 
   // add random item labels
-  const loremList = getLoremIpsum()
+  const loremList = LoremIpsum
   for (let i = 0; i < labelCount; i++) {
     let label = ''
     const wordCount = Math.floor(Math.random() * (wordCountMax + 1 - wordCountMin)) + wordCountMin
@@ -666,22 +834,24 @@ function onGenerateItemLabels(items) {
     const itemIdx = Math.floor(Math.random() * itemList.size)
     const item = itemList.get(itemIdx)
     itemList.removeAt(itemIdx)
-    graphComponent.graph.addLabel(item, label)
+    graph.addLabel(item, label)
   }
 }
 
 /**
- * @param {IGraph} graph
+ * @param {!IGraph} graph
  */
 function onRemoveItemLabels(graph) {
-  const labels = new List()
-  graph.edges.forEach(edge => edge.labels.forEach(label => labels.add(label)))
-  graph.nodes.forEach(node => node.labels.forEach(label => labels.add(label)))
-  labels.forEach(label => graph.remove(label))
+  for (const edge of graph.edges) {
+    removeLabels(graph, edge)
+  }
+  for (const node of graph.nodes) {
+    removeLabels(graph, node)
+  }
 }
 
 /**
- * @param {IGraph} graph
+ * @param {!IGraph} graph
  */
 function onGenerateEdgeThicknesses(graph) {
   graph.edges.forEach(edge => {
@@ -695,7 +865,7 @@ function onGenerateEdgeThicknesses(graph) {
     })
     if (oldStyle instanceof PolylineEdgeStyle) {
       style.targetArrow = oldStyle.targetArrow
-    } else {
+    } else if (oldStyle instanceof DemoEdgeStyle) {
       style.targetArrow = oldStyle.showTargetArrows ? new DemoArrow() : IArrow.NONE
     }
     graph.setStyle(edge, style)
@@ -703,7 +873,7 @@ function onGenerateEdgeThicknesses(graph) {
 }
 
 /**
- * @param {IGraph} graph
+ * @param {!IGraph} graph
  */
 function onResetEdgeThicknesses(graph) {
   graph.edges.forEach(edge => {
@@ -716,10 +886,7 @@ function onResetEdgeThicknesses(graph) {
     } else if (oldStyle instanceof DemoEdgeStyle) {
       showTargetArrow = oldStyle.showTargetArrows
     }
-    if (
-      oldStyle instanceof PolylineEdgeStyle &&
-      oldStyle.stroke.fill.color !== Color.fromRGBA(51, 102, 153)
-    ) {
+    if (oldStyle instanceof PolylineEdgeStyle && acceptFill(oldStyle)) {
       graph.setStyle(
         edge,
         new PolylineEdgeStyle({
@@ -737,7 +904,7 @@ function onResetEdgeThicknesses(graph) {
 }
 
 /**
- * @param {IGraph} graph
+ * @param {!IGraph} graph
  */
 function onGenerateEdgeDirections(graph) {
   graph.edges.forEach(edge => {
@@ -746,18 +913,19 @@ function onGenerateEdgeDirections(graph) {
     if (style instanceof PolylineEdgeStyle) {
       style.targetArrow = directed ? new DemoArrow() : IArrow.NONE
     } else {
-      graph.setStyle(edge, new DemoEdgeStyle())
-      edge.style.showTargetArrows = directed
+      const newStyle = new DemoEdgeStyle()
+      newStyle.showTargetArrows = directed
+      graph.setStyle(edge, newStyle)
     }
   })
   graph.invalidateDisplays()
 }
 
 /**
- * @param {IGraph} graph
- * @param {boolean} [directed]
+ * @param {!IGraph} graph
+ * @param {boolean} [directed=false]
  */
-function onResetEdgeDirections(graph, directed) {
+function onResetEdgeDirections(graph, directed = false) {
   graph.edges.forEach(edge => {
     const style = edge.style
     if (style instanceof PolylineEdgeStyle) {
@@ -766,9 +934,10 @@ function onResetEdgeDirections(graph, directed) {
           ? IArrow.NONE
           : new DemoArrow()
     } else {
-      graph.setStyle(edge, new DemoEdgeStyle())
-      edge.style.showTargetArrows =
-        typeof directed !== 'undefined' ? directed : style.showTargetArrows
+      const fallback = style instanceof DemoEdgeStyle ? style.showTargetArrows : false
+      const newStyle = new DemoEdgeStyle()
+      newStyle.showTargetArrows = typeof directed !== 'undefined' ? directed : fallback
+      graph.setStyle(edge, newStyle)
     }
   })
   graph.invalidateDisplays()
@@ -780,7 +949,7 @@ function onResetEdgeDirections(graph, directed) {
 function initializeGraph() {
   const graph = graphComponent.graph
 
-  // Enable grouping and undo support.
+  // enable grouping and undo support
   graph.undoEngineEnabled = true
 
   // set some nice defaults
@@ -789,12 +958,55 @@ function initializeGraph() {
   // use a smart label model to support integrated labeling
   const model = new SmartEdgeLabelModel({ autoRotation: false })
   graph.edgeDefaults.labels.layoutParameter = model.createDefaultParameter()
+
+  registerGraphEditListeners()
+}
+
+/**
+ * Store a custom graph entry in the samples, if users modify the graph interactively.
+ * The demo only tracks structural changes to the graph.
+ */
+function registerGraphEditListeners() {
+  const geim = graphComponent.inputMode
+  geim.addNodeCreatedListener(onGraphEdited)
+  geim.addNodeReparentedListener(onGraphEdited)
+  geim.addDeletedItemListener(onGraphEdited)
+  geim.addLabelAddedListener(onGraphEdited)
+  geim.addLabelTextChangedListener(onGraphEdited)
+  geim.createEdgeInputMode.addEdgeCreatedListener(onGraphEdited)
+}
+
+/**
+ * Listener called when graph is edited.
+ */
+function onGraphEdited() {
+  addCustomGraphEntry()
+  presetsUiBuilder.resetInvalidState()
+}
+
+/**
+ * Adds a custom sample graph entry for a modified graph by the user.
+ */
+function addCustomGraphEntry() {
+  customGraphSelected = true
+  customGraph = customGraph || new DefaultGraph()
+  let customGraphIdx = [...sampleComboBox.options].findIndex(
+    entry => entry.value === 'modified-graph'
+  )
+  if (customGraphIdx === -1) {
+    const option = document.createElement('option')
+    sampleComboBox.add(option)
+    option.label = 'Modified Graph'
+    option.value = getNormalizedName(option.label)
+    customGraphIdx = sampleComboBox.options.length - 1
+  }
+  sampleComboBox.selectedIndex = customGraphIdx
 }
 
 /**
  * Creates the default input mode for the <code>GraphComponent</code>,
  * a {@link GraphEditorInputMode}.
- * @return {IInputMode} a new <code>GraphEditorInputMode</code> instance configured for snapping and
+ * @returns {!IInputMode} A new <code>GraphEditorInputMode</code> instance configured for snapping and
  *   orthogonal edge editing
  */
 function createEditorMode() {
@@ -817,8 +1029,8 @@ function createEditorMode() {
       enabled: false
     })
   })
-  mode.navigationInputMode.collapsingGroupsAllowed = false
-  mode.navigationInputMode.expandingGroupsAllowed = false
+  mode.navigationInputMode.allowCollapseGroup = false
+  mode.navigationInputMode.allowExpandGroup = false
 
   // make bend creation more important than moving of selected edges
   // this has the effect that dragging a selected edge (not its bends)
@@ -840,7 +1052,7 @@ function createEditorMode() {
 }
 
 /**
- * @param {GraphInputMode} inputMode
+ * @param {!GraphInputMode} inputMode
  */
 function initializeContextMenu(inputMode) {
   // Create a context menu. In this demo, we use our sample context menu implementation but you can use any other
@@ -856,7 +1068,7 @@ function initializeContextMenu(inputMode) {
     }
   })
 
-  // Add and event listener that populates the context menu according to the hit elements, or cancels showing a menu.
+  // Add an event listener that populates the context menu according to the hit elements, or cancels showing a menu.
   // This PopulateItemContextMenu is fired when calling the ContextMenuInputMode.shouldOpenMenu method above.
   inputMode.addPopulateItemContextMenuListener((sender, args) =>
     populateContextMenu(contextMenu, args)
@@ -875,8 +1087,8 @@ function initializeContextMenu(inputMode) {
 
 /**
  * Populates the context menu based on the item the mouse hovers over
- * @param {ContextMenu} contextMenu
- * @param {PopulateItemContextMenuEventArgs<IModelItem>} args
+ * @param {!ContextMenu} contextMenu
+ * @param {!PopulateItemContextMenuEventArgs.<IModelItem>} args
  */
 function populateContextMenu(contextMenu, args) {
   contextMenu.clearItems()
@@ -956,6 +1168,7 @@ function registerCommands() {
     graphComponent.graph.undoEngine.clear()
   })
   bindCommand("button[data-command='Open']", ICommand.OPEN, graphComponent, null)
+  bindCommand("button[data-command='OpenInSidebar']", ICommand.OPEN, graphComponent, null)
   bindCommand("button[data-command='Save']", ICommand.SAVE, graphComponent, null)
 
   bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent, null)
@@ -985,49 +1198,51 @@ function registerCommands() {
   )
 
   bindAction('#snapping-button', () => {
-    const snappingEnabled = document.querySelector('#snapping-button').checked
-    graphComponent.inputMode.snapContext.enabled = snappingEnabled
-    graphComponent.inputMode.labelSnapContext.enabled = snappingEnabled
+    const snappingEnabled = querySelector('#snapping-button').checked
+    const geim = graphComponent.inputMode
+    geim.snapContext.enabled = snappingEnabled
+    geim.labelSnapContext.enabled = snappingEnabled
   })
 
   bindAction('#orthogonal-editing-button', () => {
-    graphComponent.inputMode.orthogonalEdgeEditingContext.enabled = document.querySelector(
-      '#orthogonal-editing-button'
-    ).checked
+    const geim = graphComponent.inputMode
+    geim.orthogonalEdgeEditingContext.enabled = querySelector('#orthogonal-editing-button').checked
   })
 
   bindAction("button[data-command='LayoutCommand']", () => {
     applyLayout(false)
   })
-  bindAction("button[data-command='ResetConfigCommand']", resetConfig)
   bindChangeListener("select[data-command='LayoutSelectionChanged']", onLayoutChanged)
   bindChangeListener("select[data-command='SampleSelectionChanged']", onSampleChanged)
 
-  bindAction("button[data-command='PreviousFile']", () => {
-    sampleComboBox.selectedIndex--
-    if (sampleComboBox.options[sampleComboBox.selectedIndex].disabled) {
+  bindAction("button[data-command='PreviousStyle']", () => {
+    layoutComboBox.selectedIndex--
+    if (layoutComboBox.options[layoutComboBox.selectedIndex].disabled) {
       // skip the '-------'
-      sampleComboBox.selectedIndex--
+      layoutComboBox.selectedIndex--
     }
-    onSampleChanged()
+    onLayoutChanged()
   })
-  bindAction("button[data-command='NextFile']", () => {
-    sampleComboBox.selectedIndex++
-    if (sampleComboBox.options[sampleComboBox.selectedIndex].disabled) {
+  bindAction("button[data-command='NextStyle']", () => {
+    layoutComboBox.selectedIndex++
+    if (layoutComboBox.options[layoutComboBox.selectedIndex].disabled) {
       // skip the '-------'
-      sampleComboBox.selectedIndex++
+      layoutComboBox.selectedIndex++
     }
-    onSampleChanged()
+    onLayoutChanged()
   })
 
   bindAction("button[data-command='GenerateNodeLabels']", () => {
     onGenerateItemLabels(graphComponent.graph.nodes)
+    updateModifiedGraphSample()
   })
   bindAction("button[data-command='GenerateEdgeLabels']", () => {
     onGenerateItemLabels(graphComponent.graph.edges)
+    updateModifiedGraphSample()
   })
   bindAction("button[data-command='RemoveLabels']", () => {
     onRemoveItemLabels(graphComponent.graph)
+    updateModifiedGraphSample()
   })
   bindAction("button[data-command='GenerateEdgeThicknesses']", () => {
     onGenerateEdgeThicknesses(graphComponent.graph)
@@ -1043,7 +1258,23 @@ function registerCommands() {
   })
 
   window.addEventListener('hashchange', () => {
-    loadSampleFromLocationHash()
+    onHashChanged()
+  })
+
+  // apply layout shortcut with CTRL+Enter
+  window.addEventListener('keydown', e => {
+    const geim = graphComponent.inputMode
+    if (!geim.textEditorInputMode.editing && e.which === 13 && (e.ctrlKey || e.metaKey)) {
+      applyLayout(false)
+      e.preventDefault()
+    }
+  })
+  // also allow 'enter' within the option-editor
+  getElementById('data-editor').addEventListener('keydown', e => {
+    if (e.which === 13) {
+      applyLayout(false)
+      e.preventDefault()
+    }
   })
 }
 
@@ -1057,28 +1288,31 @@ function releaseLocks() {
  * @param {boolean} disabled true if the elements should be disabled, false otherwise
  */
 function setUIDisabled(disabled) {
-  document.querySelector("button[data-command='New']").disabled = disabled
-  document.querySelector("button[data-command='Open']").disabled = disabled
-  document.querySelector("button[data-command='Save']").disabled = disabled
+  querySelector("button[data-command='New']").disabled = disabled
+  querySelector("button[data-command='Open']").disabled = disabled
+  querySelector("button[data-command='Save']").disabled = disabled
   sampleComboBox.disabled = disabled
+  layoutComboBox.disabled = disabled
   nextButton.disabled = disabled
   previousButton.disabled = disabled
   layoutButton.disabled = disabled
-  resetButton.disabled = disabled
   graphComponent.inputMode.waiting = disabled
+  presetsUiBuilder.setPresetButtonDisabled(disabled)
 }
 
 function updateUIState() {
   sampleComboBox.disabled = false
-  nextButton.disabled = sampleComboBox.selectedIndex >= sampleComboBox.length - 1
-  previousButton.disabled = sampleComboBox.selectedIndex <= 0
+  layoutComboBox.disabled = false
+  nextButton.disabled = layoutComboBox.selectedIndex >= layoutComboBox.length - 1
+  previousButton.disabled = layoutComboBox.selectedIndex <= 0
   layoutButton.disabled = !(configOptionsValid && !inLayout)
+  presetsUiBuilder.setPresetButtonDisabled(false)
 }
 
 /**
  * Returns whether or not the current layout algorithm considers edge directions.
- * @param {string} key The descriptor of the current layout.
- * @return {boolean}
+ * @param {!string} key The descriptor of the current layout.
+ * @returns {boolean}
  */
 function isLayoutDirected(key) {
   return (
@@ -1090,555 +1324,73 @@ function isLayoutDirected(key) {
 }
 
 /**
- * Programmatically creates a sample graph so that we do not require GraphML I/O for this demo.
+ * @param {!IGraph} graph
+ * @param {!ILabelOwner} item
  */
-function createSampleGraph(graph) {
-  graph.clear()
-  const nodes = []
-  for (let i = 0; i < 27; i++) {
-    nodes[i] = graph.createNode()
+function removeLabels(graph, item) {
+  const labels = new List()
+  for (const label of item.labels) {
+    labels.add(label)
   }
-
-  graph.createEdge(nodes[3], nodes[7])
-  graph.createEdge(nodes[0], nodes[1])
-  graph.createEdge(nodes[0], nodes[4])
-  graph.createEdge(nodes[1], nodes[2])
-  graph.createEdge(nodes[0], nodes[9])
-  graph.createEdge(nodes[6], nodes[10])
-  graph.createEdge(nodes[11], nodes[12])
-  graph.createEdge(nodes[11], nodes[13])
-  graph.createEdge(nodes[8], nodes[11])
-  graph.createEdge(nodes[15], nodes[16])
-  graph.createEdge(nodes[16], nodes[17])
-  graph.createEdge(nodes[18], nodes[19])
-  graph.createEdge(nodes[20], nodes[21])
-  graph.createEdge(nodes[7], nodes[17])
-  graph.createEdge(nodes[9], nodes[22])
-  graph.createEdge(nodes[22], nodes[3])
-  graph.createEdge(nodes[19], nodes[0])
-  graph.createEdge(nodes[8], nodes[4])
-  graph.createEdge(nodes[18], nodes[25])
-  graph.createEdge(nodes[24], nodes[8])
-  graph.createEdge(nodes[26], nodes[25])
-  graph.createEdge(nodes[10], nodes[20])
-  graph.createEdge(nodes[5], nodes[23])
-  graph.createEdge(nodes[25], nodes[15])
-  graph.createEdge(nodes[10], nodes[15])
-  graph.createEdge(nodes[21], nodes[17])
-  graph.createEdge(nodes[26], nodes[6])
-  graph.createEdge(nodes[13], nodes[12])
-  graph.createEdge(nodes[12], nodes[14])
-  graph.createEdge(nodes[14], nodes[11])
-  graph.createEdge(nodes[21], nodes[5])
-  graph.createEdge(nodes[5], nodes[6])
-  graph.createEdge(nodes[9], nodes[7])
-  graph.createEdge(nodes[19], nodes[24])
+  for (const label of labels) {
+    graph.remove(label)
+  }
 }
 
-/** @return {string[]} */
-function getLoremIpsum() {
-  return [
-    'lorem',
-    'ipsum',
-    'dolor',
-    'sit',
-    'amet',
-    'consectetur',
-    'adipiscing',
-    'elit',
-    'donec',
-    'felis',
-    'erat',
-    'malesuada',
-    'quis',
-    'ipsum',
-    'et',
-    'condimentum',
-    'ultrices',
-    'orci',
-    'nullam',
-    'interdum',
-    'vestibulum',
-    'eros',
-    'sed',
-    'porta',
-    'donec',
-    'ac',
-    'eleifend',
-    'dolor',
-    'at',
-    'dictum',
-    'ipsum',
-    'pellentesque',
-    'vel',
-    'suscipit',
-    'mi',
-    'nullam',
-    'aliquam',
-    'turpis',
-    'et',
-    'dolor',
-    'porttitor',
-    'varius',
-    'nullam',
-    'vel',
-    'arcu',
-    'rutrum',
-    'iaculis',
-    'est',
-    'sit',
-    'amet',
-    'rhoncus',
-    'turpis',
-    'vestibulum',
-    'lacinia',
-    'sollicitudin',
-    'urna',
-    'nec',
-    'vestibulum',
-    'nulla',
-    'id',
-    'lacinia',
-    'metus',
-    'etiam',
-    'ac',
-    'felis',
-    'rutrum',
-    'sollicitudin',
-    'erat',
-    'vitae',
-    'egestas',
-    'tortor',
-    'curabitur',
-    'quis',
-    'libero',
-    'aliquet',
-    'mattis',
-    'mauris',
-    'nec',
-    'tempus',
-    'nibh',
-    'in',
-    'at',
-    'lectus',
-    'luctus',
-    'mattis',
-    'urna',
-    'pretium',
-    'eleifend',
-    'lacus',
-    'sed',
-    'interdum',
-    'sapien',
-    'nec',
-    'justo',
-    'vestibulum',
-    'non',
-    'scelerisque',
-    'nibh',
-    'sollicitudin',
-    'interdum',
-    'et',
-    'malesuada',
-    'fames',
-    'ac',
-    'ante',
-    'ipsum',
-    'primis',
-    'in',
-    'faucibus',
-    'vivamus',
-    'congue',
-    'tristique',
-    'magna',
-    'quis',
-    'elementum',
-    'phasellus',
-    'sit',
-    'amet',
-    'tristique',
-    'massa',
-    'vestibulum',
-    'eu',
-    'leo',
-    'vitae',
-    'quam',
-    'dictum',
-    'venenatis',
-    'eu',
-    'id',
-    'nibh',
-    'donec',
-    'eget',
-    'eleifend',
-    'felis',
-    'nulla',
-    'ac',
-    'suscipit',
-    'ante',
-    'et',
-    'sollicitudin',
-    'dui',
-    'mauris',
-    'in',
-    'pulvinar',
-    'tortor',
-    'vestibulum',
-    'pulvinar',
-    'arcu',
-    'vel',
-    'tellus',
-    'maximus',
-    'blandit',
-    'morbi',
-    'sed',
-    'sem',
-    'vehicula',
-    'fermentum',
-    'nisi',
-    'eu',
-    'fringilla',
-    'metus',
-    'duis',
-    'ut',
-    'quam',
-    'eget',
-    'odio',
-    'hendrerit',
-    'finibus',
-    'ut',
-    'a',
-    'lectus',
-    'cras',
-    'ullamcorper',
-    'turpis',
-    'in',
-    'purus',
-    'facilisis',
-    'vestibulum',
-    'donec',
-    'maximus',
-    'ac',
-    'tortor',
-    'tempus',
-    'egestas',
-    'aenean',
-    'est',
-    'diam',
-    'dictum',
-    'et',
-    'sodales',
-    'vel',
-    'efficitur',
-    'ac',
-    'libero',
-    'vivamus',
-    'vehicula',
-    'ligula',
-    'eu',
-    'diam',
-    'auctor',
-    'at',
-    'dapibus',
-    'nulla',
-    'pellentesque',
-    'morbi',
-    'et',
-    'dapibus',
-    'dolor',
-    'quis',
-    'auctor',
-    'turpis',
-    'nunc',
-    'sed',
-    'pretium',
-    'diam',
-    'quisque',
-    'non',
-    'massa',
-    'consectetur',
-    'tempor',
-    'augue',
-    'vel',
-    'volutpat',
-    'ex',
-    'vivamus',
-    'vestibulum',
-    'dolor',
-    'risus',
-    'quis',
-    'mollis',
-    'urna',
-    'fermentum',
-    'sed',
-    'sed',
-    'porttitor',
-    'venenatis',
-    'volutpat',
-    'nulla',
-    'facilisi',
-    'donec',
-    'aliquam',
-    'mi',
-    'vitae',
-    'ligula',
-    'dictum',
-    'ornare',
-    'suspendisse',
-    'finibus',
-    'ligula',
-    'vitae',
-    'congue',
-    'iaculis',
-    'donec',
-    'vestibulum',
-    'erat',
-    'vel',
-    'tortor',
-    'iaculis',
-    'tempor',
-    'vivamus',
-    'et',
-    'purus',
-    'eu',
-    'ipsum',
-    'rhoncus',
-    'pretium',
-    'sit',
-    'amet',
-    'nec',
-    'nisl',
-    'nunc',
-    'molestie',
-    'consectetur',
-    'rhoncus',
-    'duis',
-    'ex',
-    'nunc',
-    'interdum',
-    'at',
-    'molestie',
-    'quis',
-    'blandit',
-    'quis',
-    'diam',
-    'nunc',
-    'imperdiet',
-    'lorem',
-    'vel',
-    'scelerisque',
-    'facilisis',
-    'eros',
-    'massa',
-    'auctor',
-    'nisl',
-    'vitae',
-    'efficitur',
-    'leo',
-    'diam',
-    'vel',
-    'felis',
-    'aliquam',
-    'tincidunt',
-    'dapibus',
-    'arcu',
-    'in',
-    'pulvinar',
-    'metus',
-    'tincidunt',
-    'et',
-    'etiam',
-    'turpis',
-    'ligula',
-    'sodales',
-    'a',
-    'eros',
-    'vel',
-    'fermentum',
-    'imperdiet',
-    'purus',
-    'fusce',
-    'mollis',
-    'enim',
-    'sed',
-    'volutpat',
-    'blandit',
-    'arcu',
-    'orci',
-    'iaculis',
-    'est',
-    'non',
-    'iaculis',
-    'lorem',
-    'sapien',
-    'sit',
-    'amet',
-    'est',
-    'morbi',
-    'ut',
-    'porttitor',
-    'elit',
-    'aenean',
-    'ac',
-    'sodales',
-    'lectus',
-    'morbi',
-    'ut',
-    'bibendum',
-    'arcu',
-    'maecenas',
-    'tincidunt',
-    'erat',
-    'vel',
-    'maximus',
-    'pellentesque',
-    'ut',
-    'placerat',
-    'quam',
-    'sem',
-    'a',
-    'auctor',
-    'ligula',
-    'imperdiet',
-    'quis',
-    'pellentesque',
-    'gravida',
-    'consectetur',
-    'urna',
-    'suspendisse',
-    'vitae',
-    'nisl',
-    'et',
-    'ante',
-    'ornare',
-    'vulputate',
-    'sed',
-    'a',
-    'est',
-    'lorem',
-    'ipsum',
-    'dolor',
-    'sit',
-    'amet',
-    'consectetur',
-    'adipiscing',
-    'elit',
-    'sed',
-    'eu',
-    'facilisis',
-    'lectus',
-    'nullam',
-    'iaculis',
-    'dignissim',
-    'eros',
-    'eget',
-    'tincidunt',
-    'metus',
-    'viverra',
-    'at',
-    'donec',
-    'nec',
-    'justo',
-    'vitae',
-    'risus',
-    'eleifend',
-    'imperdiet',
-    'eget',
-    'ut',
-    'ante',
-    'ut',
-    'arcu',
-    'ex',
-    'convallis',
-    'in',
-    'lobortis',
-    'at',
-    'mattis',
-    'sed',
-    'velit',
-    'ut',
-    'viverra',
-    'ultricies',
-    'lacus',
-    'suscipit',
-    'feugiat',
-    'eros',
-    'luctus',
-    'et',
-    'vestibulum',
-    'et',
-    'aliquet',
-    'mauris',
-    'quisque',
-    'convallis',
-    'purus',
-    'posuere',
-    'aliquam',
-    'nulla',
-    'sit',
-    'amet',
-    'posuere',
-    'orci',
-    'nullam',
-    'sed',
-    'iaculis',
-    'mauris',
-    'ut',
-    'volutpat',
-    'est',
-    'suspendisse',
-    'in',
-    'vestibulum',
-    'felis',
-    'nullam',
-    'gravida',
-    'nulla',
-    'at',
-    'varius',
-    'fringilla',
-    'ipsum',
-    'ipsum',
-    'finibus',
-    'lectus',
-    'nec',
-    'vestibulum',
-    'lorem',
-    'arcu',
-    'ut',
-    'magna',
-    'aliquam',
-    'aliquam',
-    'erat',
-    'erat',
-    'ac',
-    'euismod',
-    'orci',
-    'iaculis',
-    'blandit',
-    'morbi',
-    'tincidunt',
-    'posuere',
-    'mi',
-    'non',
-    'eleifend',
-    'vivamus',
-    'accumsan',
-    'dolor',
-    'magna',
-    'in',
-    'cursus',
-    'eros',
-    'malesuada',
-    'eu',
-    'sed',
-    'auctor',
-    'consectetur',
-    'tempus',
-    'maecenas',
-    'luctus',
-    'turpis',
-    'a'
-  ]
+/**
+ * @param {!PolylineEdgeStyle} style
+ * @returns {boolean}
+ */
+function acceptFill(style) {
+  if (style.stroke && style.stroke.fill) {
+    const color = style.stroke.fill.color
+    return color !== Color.fromRGBA(51, 102, 153)
+  }
+  return false
+}
+
+/**
+ * @param {!IGraph} graph
+ * @param {boolean} directed
+ */
+function setDefaultArrows(graph, directed) {
+  graph.edgeDefaults.style.showTargetArrows = directed
+}
+
+/**
+ * Calculates the center of the accumulated bounds of the given graph's nodes.
+ * @param {!IGraph} graph
+ * @returns {!Point}
+ */
+function getCenter(graph) {
+  if (graph.nodes.size > 0) {
+    let bounds = graph.nodes.first().layout.toRect()
+    for (const node of graph.nodes) {
+      bounds = Rect.add(bounds, node.layout.toRect())
+    }
+    return bounds.center
+  } else {
+    return Point.ORIGIN
+  }
+}
+
+/**
+ * Returns a reference to the first element with the specified ID in the current document.
+ * @returns {!T} A reference to the first element with the specified ID in the current document.
+ * @template {HTMLElement} T
+ * @param {!string} id
+ */
+function getElementById(id) {
+  return document.getElementById(id)
+}
+
+/**
+ * @template {HTMLElement} T
+ * @param {!string} selector
+ * @returns {!T}
+ */
+function querySelector(selector) {
+  return document.querySelector(selector)
 }
 
 // start demo

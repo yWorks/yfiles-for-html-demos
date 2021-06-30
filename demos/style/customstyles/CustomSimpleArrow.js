@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -32,7 +32,7 @@ import {
   GeneralPath,
   IArrow,
   IBoundsProvider,
-  ICanvasObjectDescriptor,
+  ICanvasContext,
   IEdge,
   IEdgeStyle,
   IRenderContext,
@@ -44,6 +44,7 @@ import {
   SvgVisual,
   Visual
 } from 'yfiles'
+import { SVGNS } from './Namespaces.js'
 
 /**
  * A demo IArrow implementation that renders the arrow as a custom filled shape.
@@ -56,17 +57,9 @@ export default class CustomSimpleArrow extends BaseClass(IArrow, IVisualCreator,
     super()
     this.anchor = Point.ORIGIN
     this.direction = Point.ORIGIN
-    this.$thickness = 2.0
+    this.thickness = 2.0
     this.arrowThickness = 0
-    this.$arrowFigure = null
-  }
-
-  get arrowFigure() {
-    return this.$arrowFigure
-  }
-
-  set arrowFigure(value) {
-    this.$arrowFigure = value
+    this.arrowFigure = null
   }
 
   /**
@@ -93,32 +86,16 @@ export default class CustomSimpleArrow extends BaseClass(IArrow, IVisualCreator,
   }
 
   /**
-   * Gets or sets the thickness of the arrow.
-   * @type {number}
-   */
-  get thickness() {
-    return this.$thickness
-  }
-
-  /**
-   * Gets or sets the thickness of the arrow.
-   * @param {number} value
-   */
-  set thickness(value) {
-    this.$thickness = value
-  }
-
-  /**
    * Gets an {@link IVisualCreator} implementation that will create
    * the {@link IVisualCreator} for this arrow
    * at the given location using the given direction for the given edge.
-   * @param {IEdge} edge the edge this arrow belongs to
+   * @param {!IEdge} edge the edge this arrow belongs to
    * @param {boolean} atSource whether this will be the source arrow
-   * @param {Point} anchor the anchor point for the tip of the arrow
-   * @param {Point} direction the direction the arrow is pointing in
-   * @return {IVisualCreator}
+   * @param {!Point} anchor the anchor point for the tip of the arrow
+   * @param {!Point} direction the direction the arrow is pointing in
    * Itself as a flyweight.
    * @see Specified by {@link IArrow#getVisualCreator}.
+   * @returns {!IVisualCreator}
    */
   getVisualCreator(edge, atSource, anchor, direction) {
     this.configureThickness(edge)
@@ -131,26 +108,19 @@ export default class CustomSimpleArrow extends BaseClass(IArrow, IVisualCreator,
    * Gets an {@link IBoundsProvider} implementation that can yield
    * this arrow's bounds if painted at the given location using the
    * given direction for the given edge.
-   * @param {IEdge} edge the edge this arrow belongs to
+   * @param {!IEdge} edge the edge this arrow belongs to
    * @param {boolean} atSource whether this will be the source arrow
-   * @param {Point} anchor the anchor point for the tip of the arrow
-   * @param {Point} direction the direction the arrow is pointing in
-   * @return {IBoundsProvider}
+   * @param {!Point} anchor the anchor point for the tip of the arrow
+   * @param {!Point} direction the direction the arrow is pointing in
    * an implementation of the {@link IBoundsProvider} interface that can
    * subsequently be used to query the bounds. Clients will always call
    * this method before using the implementation and may not cache the instance returned.
    * This allows for applying the flyweight design pattern to implementations.
    * @see Specified by {@link IArrow#getBoundsProvider}.
+   * @returns {!IBoundsProvider}
    */
   getBoundsProvider(edge, atSource, anchor, direction) {
-    // Get the edge's thickness
-    const style = edge.style
-    if (typeof style.pathThickness !== 'undefined') {
-      this.arrowThickness = style.pathThickness
-    } else {
-      this.arrowThickness = this.thickness
-    }
-
+    this.arrowThickness = this.getThickness(edge.style)
     this.anchor = anchor
     this.direction = direction
     return this
@@ -158,33 +128,15 @@ export default class CustomSimpleArrow extends BaseClass(IArrow, IVisualCreator,
 
   /**
    * Creates the visual for the arrow.
-   * @param {IRenderContext} ctx The context that contains the information needed to create the visual.
-   * @return {Visual}
+   * @param {!IRenderContext} ctx The context that contains the information needed to create the visual.
    * The arrow visual.
    * @see Specified by {@link IVisualCreator#createVisual}.
+   * @returns {!SvgVisual}
    */
   createVisual(ctx) {
     // create a new path to draw the arrow
     if (this.arrowFigure === null) {
-      this.arrowFigure = new GeneralPath()
-      this.arrowFigure.moveTo(new Point(7, -this.arrowThickness / 2))
-      this.arrowFigure.lineTo(new Point(7, this.arrowThickness / 2))
-      this.arrowFigure.cubicTo(
-        new Point(5, this.arrowThickness / 2),
-        new Point(1.5, this.arrowThickness / 2),
-        new Point(-1, this.arrowThickness * 1.666)
-      )
-      this.arrowFigure.cubicTo(
-        new Point(0, this.arrowThickness * 0.833),
-        new Point(0, -this.arrowThickness * 0.833),
-        new Point(-1, -this.arrowThickness * 1.666)
-      )
-      this.arrowFigure.cubicTo(
-        new Point(1.5, -this.arrowThickness / 2),
-        new Point(5, -this.arrowThickness / 2),
-        new Point(7, -this.arrowThickness / 2)
-      )
-      this.arrowFigure.close()
+      this.arrowFigure = CustomSimpleArrow.newArrowPath(this.arrowThickness)
     }
 
     const path = this.arrowFigure.createSvgPath()
@@ -213,15 +165,15 @@ export default class CustomSimpleArrow extends BaseClass(IArrow, IVisualCreator,
    * update an existing Visual that has previously been created by the same instance during a call
    * to {@link CustomSimpleArrow#createVisual}. Implementations may update the <code>oldVisual</code>
    * and return that same reference, or create a new visual and return the new instance or <code>null</code>.
-   * @param {IRenderContext} ctx The context that contains the information needed to create the visual.
-   * @param {Visual} oldVisual The visual instance that had been returned the last time the
+   * @param {!IRenderContext} ctx The context that contains the information needed to create the visual.
+   * @param {!SvgVisual} oldVisual The visual instance that had been returned the last time the
    *   {@link CustomSimpleArrow#createVisual} method was called.
-   * @return {Visual}
    * The updated visual.
    * @see {@link CustomSimpleArrow#createVisual}
    * @see {@link ICanvasObjectDescriptor}
    * @see {@link CanvasComponent}
    * @see Specified by {@link IVisualCreator#updateVisual}.
+   * @returns {!SvgVisual}
    */
   updateVisual(ctx, oldVisual) {
     const path = oldVisual.svgElement
@@ -245,7 +197,8 @@ export default class CustomSimpleArrow extends BaseClass(IArrow, IVisualCreator,
   /**
    * Returns the bounds of the arrow for the current flyweight configuration.
    * @see Specified by {@link IBoundsProvider#getBounds}.
-   * @return {Rect}
+   * @param {!ICanvasContext} context
+   * @returns {!Rect}
    */
   getBounds(context) {
     return new Rect(
@@ -258,21 +211,56 @@ export default class CustomSimpleArrow extends BaseClass(IArrow, IVisualCreator,
 
   /**
    * Configures the thickness to use for the next visual creation.
-   * @param {IEdge} edge The edge to read the thickness from.
+   * @param {!IEdge} edge The edge to read the thickness from.
    */
   configureThickness(edge) {
-    // Get the edge's thickness
+    // determine the edge's thickness
     const oldThickness = this.arrowThickness
-    const style = edge.style
-    if (typeof style.pathThickness !== 'undefined') {
-      this.arrowThickness = style.pathThickness
-    } else {
-      this.arrowThickness = this.thickness
-    }
+    this.arrowThickness = this.getThickness(edge.style)
+
     // see if the old arrow figure needs to be invalidated...
     if (this.arrowThickness !== oldThickness) {
       this.arrowFigure = null
     }
+  }
+
+  /**
+   * @param {*} style
+   * @returns {number}
+   */
+  getThickness(style) {
+    if (typeof style.pathThickness !== 'undefined') {
+      return style.pathThickness
+    } else {
+      return this.thickness
+    }
+  }
+
+  /**
+   * @param {number} thickness
+   * @returns {!GeneralPath}
+   */
+  static newArrowPath(thickness) {
+    const path = new GeneralPath()
+    path.moveTo(new Point(7, -thickness * 0.5))
+    path.lineTo(new Point(7, thickness * 0.5))
+    path.cubicTo(
+      new Point(5, thickness * 0.5),
+      new Point(1.5, thickness * 0.5),
+      new Point(-1, thickness * 1.666)
+    )
+    path.cubicTo(
+      new Point(0, thickness * 0.833),
+      new Point(0, -thickness * 0.833),
+      new Point(-1, -thickness * 1.666)
+    )
+    path.cubicTo(
+      new Point(1.5, -thickness * 0.5),
+      new Point(5, -thickness * 0.5),
+      new Point(7, -thickness * 0.5)
+    )
+    path.close()
+    return path
   }
 }
 
@@ -287,56 +275,63 @@ export default class CustomSimpleArrow extends BaseClass(IArrow, IVisualCreator,
  * defined interface to deal with.
  */
 class CustomGradientSupport extends BaseClass(ISvgDefsCreator) {
+  /**
+   * @param {!SVGLinearGradientElement} gradient
+   */
   constructor(gradient) {
     super()
     this.gradient = gradient
   }
 
-  /** @return {SVGElement} */
+  /**
+   * @param {!ICanvasContext} context
+   * @returns {!SVGElement}
+   */
   createDefsElement(context) {
     return this.gradient
   }
 
-  /** @return {boolean} */
+  /**
+   * @param {!ICanvasContext} context
+   * @param {!Node} node
+   * @param {!string} id
+   * @returns {boolean}
+   */
   accept(context, node, id) {
-    const element = node instanceof Element ? node : null
-    if (element !== null) {
-      const attributeValue = element.getAttribute('fill')
-      return attributeValue !== null && attributeValue === `url(#${id})`
-    }
-    return false
+    return node instanceof Element && node.getAttribute('fill') === `url(#${id})`
   }
 
+  /**
+   * @param {!ICanvasContext} context
+   * @param {!SVGElement} oldElement
+   */
   updateDefsElement(context, oldElement) {}
 }
 
 const GRADIENT = createGradient()
 
 /**
- * @return {MyGradientSupport}
+ * @returns {!CustomGradientSupport}
  */
 function createGradient() {
   // initialize gradient
-  const linearGradient = window.document.createElementNS(
-    'http://www.w3.org/2000/svg',
-    'linearGradient'
-  )
-  linearGradient.setAttribute('x1', 0)
-  linearGradient.setAttribute('y1', 0)
-  linearGradient.setAttribute('x2', 0)
-  linearGradient.setAttribute('y2', 1)
+  const linearGradient = document.createElementNS(SVGNS, 'linearGradient')
+  linearGradient.setAttribute('x1', '0')
+  linearGradient.setAttribute('y1', '0')
+  linearGradient.setAttribute('x2', '0')
+  linearGradient.setAttribute('y2', '1')
   linearGradient.setAttribute('spreadMethod', 'repeat')
-  const stop1 = window.document.createElementNS('http://www.w3.org/2000/svg', 'stop')
+  const stop1 = document.createElementNS(SVGNS, 'stop')
   stop1.setAttribute('stop-color', 'rgb(180,180,180)')
   stop1.setAttribute('stop-opacity', '1')
   stop1.setAttribute('offset', '0')
   linearGradient.appendChild(stop1)
-  const stop2 = window.document.createElementNS('http://www.w3.org/2000/svg', 'stop')
+  const stop2 = document.createElementNS(SVGNS, 'stop')
   stop2.setAttribute('stop-color', 'rgb(50,50,50)')
   stop2.setAttribute('stop-opacity', '1')
   stop2.setAttribute('offset', '0.5')
   linearGradient.appendChild(stop2)
-  const stop3 = window.document.createElementNS('http://www.w3.org/2000/svg', 'stop')
+  const stop3 = document.createElementNS(SVGNS, 'stop')
   stop3.setAttribute('stop-color', 'rgb(150,150,150)')
   stop3.setAttribute('stop-opacity', '1')
   stop3.setAttribute('offset', '1')

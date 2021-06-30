@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -26,7 +26,8 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { BaseClass, IClipboardHelper, IGraphClipboardContext, IModelItem } from 'yfiles'
+import { BaseClass, IClipboardHelper, IGraphClipboardContext, IModelItem, INode } from 'yfiles'
+import { ClipboardBusinessObject } from './ClipboardBusinessObject.js'
 
 /**
  * Holds the tag of the item that has been copied.
@@ -34,43 +35,13 @@ import { BaseClass, IClipboardHelper, IGraphClipboardContext, IModelItem } from 
 export class TagCopyItem {
   /**
    * Creates a new instance of <code>TagCopyItem</code>.
-   * @param {object} tag
+   * @param {!ClipboardBusinessObject} tag The tag of the copied item
    */
   constructor(tag) {
-    this.$tag = tag
-    this.$pasteCount = 0
-  }
+    this.tag = tag
 
-  /**
-   * Gets the number of item that have been pasted.
-   * @return {number}
-   */
-  get pasteCount() {
-    return this.$pasteCount
-  }
-
-  /**
-   * Sets the number of item that have been pasted.
-   * @param {number} value
-   */
-  set pasteCount(value) {
-    this.$pasteCount = value
-  }
-
-  /**
-   * Gets the tag of the copied item.
-   * @return {Object}
-   */
-  get tag() {
-    return this.$tag
-  }
-
-  /**
-   * Sets the tag of the copied item.
-   * @param {Object} value
-   */
-  set tag(value) {
-    this.$tag = value
+    // The number of items that have been pasted.
+    this.pasteCount = 0
   }
 
   /**
@@ -92,10 +63,10 @@ export class TagCopyItem {
 export class TaggedNodeClipboardHelper extends BaseClass(IClipboardHelper) {
   /**
    * Nodes can be copied unconditionally.
-   * @param {IGraphClipboardContext} context The context in which this interface is used, can be null
-   * @param {IModelItem} item The item to be copied
+   * @param {?IGraphClipboardContext} context The context in which this interface is used, can be null
+   * @param {!IModelItem} item The item to be copied
    * @see Specified by {@link IClipboardHelper#shouldCopy}.
-   * @return {boolean}
+   * @returns {boolean}
    */
   shouldCopy(context, item) {
     return true
@@ -103,10 +74,10 @@ export class TaggedNodeClipboardHelper extends BaseClass(IClipboardHelper) {
 
   /**
    * Nodes can be cut unconditionally.
-   * @param {IGraphClipboardContext} context The context in which this interface is used, can be null
-   * @param {IModelItem} item The item to be cut
+   * @param {?IGraphClipboardContext} context The context in which this interface is used, can be null
+   * @param {!IModelItem} item The item to be cut
    * @see Specified by {@link IClipboardHelper#shouldCut}.
-   * @return {boolean}
+   * @returns {boolean}
    */
   shouldCut(context, item) {
     return true
@@ -114,11 +85,11 @@ export class TaggedNodeClipboardHelper extends BaseClass(IClipboardHelper) {
 
   /**
    * Nodes can be pasted unconditionally.
-   * @param {IGraphClipboardContext} context The context in which this interface is used, can be null
-   * @param {IModelItem} item The item to be pasted
-   * @param {object} userData The state memento that had been created during cut or copy
+   * @param {?IGraphClipboardContext} context The context in which this interface is used, can be null
+   * @param {!IModelItem} item The item to be pasted
+   * @param {*} userData The state memento that had been created during cut or copy
    * @see Specified by {@link IClipboardHelper#shouldPaste}.
-   * @return {boolean}
+   * @returns {boolean}
    */
   shouldPaste(context, item, userData) {
     return true
@@ -127,41 +98,42 @@ export class TaggedNodeClipboardHelper extends BaseClass(IClipboardHelper) {
   /**
    * If the copied node has at least one label, we store a variant of the label text
    * (see {@link CopyItem} implementation).
-   * @param {IGraphClipboardContext} context The context in which this interface is used, can be null
-   * @param {IModelItem} item The item to be copied
+   * @param {?IGraphClipboardContext} context The context in which this interface is used, can be null
+   * @param {!IModelItem} item The item to be copied
    * @see Specified by {@link IClipboardHelper#copy}.
-   * @return {Object}
+   * @returns {*}
    */
   copy(context, item) {
-    const node = item
-    return node.labels.size > 0 ? new CopyItem(node.labels.get(0).text) : null
+    return item instanceof INode && item.labels.size > 0
+      ? new CopyItem(item.labels.get(0).text)
+      : null
   }
 
   /**
    * If the cut node has at least one label, we store a variant of the label text
    * (see {@link CopyItem} implementation).
-   * @param {IGraphClipboardContext} context The context in which this interface is used, can be null
-   * @param {IModelItem} item The item to be cut
+   * @param {?IGraphClipboardContext} context The context in which this interface is used, can be null
+   * @param {!IModelItem} item The item to be cut
    * @see Specified by {@link IClipboardHelper#cut}.
-   * @return {Object}
+   * @returns {*}
    */
   cut(context, item) {
-    const node = item
-    return node.labels.size > 0 ? new CopyItem(node.labels.get(0).text) : null
+    return item instanceof INode && item.labels.size > 0
+      ? new CopyItem(item.labels.get(0).text)
+      : null
   }
 
   /**
    * If the pasted node has at least one label, we change the text using the one that is provided
    * by <code>userData</code>.
-   * @param {IGraphClipboardContext} context The context in which this interface is used, can be null
-   * @param {Object} item The copied item The item to be pasted
-   * @param {object} userData The state memento that had been created during cut or copy
+   * @param {?IGraphClipboardContext} context The context in which this interface is used, can be null
+   * @param {!IModelItem} item The copied item The item to be pasted
+   * @param {*} userData The state memento that had been created during cut or copy
    * @see Specified by {@link IClipboardHelper#paste}.
    */
   paste(context, item, userData) {
-    const node = item
-    if (node.labels.size > 0 && userData instanceof CopyItem && context !== null) {
-      context.targetGraph.setLabelText(node.labels.get(0), userData.toString())
+    if (item instanceof INode && item.labels.size > 0 && userData instanceof CopyItem) {
+      context?.targetGraph.setLabelText(item.labels.get(0), userData.toString())
     }
   }
 }
@@ -173,48 +145,16 @@ export class TaggedNodeClipboardHelper extends BaseClass(IClipboardHelper) {
 class CopyItem {
   /**
    * Creates a new instance of <code>CopyItem</code>.
-   * @param {string} text
+   * @param {!string} text
    */
   constructor(text) {
-    this.$text = text
-    this.$pasteCount = 0
-  }
-
-  /**
-   * Gets the number of pasted elements.
-   * @return {number}
-   */
-  get pasteCount() {
-    return this.$pasteCount
-  }
-
-  /**
-   * Sets the number of pasted elements.
-   * @param {number} value
-   */
-  set pasteCount(value) {
-    this.$pasteCount = value
-  }
-
-  /**
-   * Gets the text of the copied elements.
-   * @return {string}
-   */
-  get text() {
-    return this.$text
-  }
-
-  /**
-   * Sets the text of the copied elements.
-   * @param {string} value
-   */
-  set text(value) {
-    this.$text = value
+    this.text = text
+    this.pasteCount = 0
   }
 
   /**
    * Returns the label text of the copied item and the number of pasted elements as string.
-   * @return {string}
+   * @returns {!string}
    */
   toString() {
     // We count how often we have been pasted and change the string

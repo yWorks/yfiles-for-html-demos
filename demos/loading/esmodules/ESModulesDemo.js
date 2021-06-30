@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -31,13 +31,11 @@ import {
   GraphComponent,
   GraphEditorInputMode,
   HierarchicLayout,
-  ICommand,
   LayoutExecutor,
   License,
   MinimumNodeSizeStage,
   Rect
 } from '../../node_modules/yfiles/yfiles.js'
-import { showApp, bindCommand, bindAction } from '../../resources/demo-app.js'
 import NodeStyle from './ESModuleNodeStyle.js'
 import loadJson from '../../resources/load-json.js'
 
@@ -59,10 +57,9 @@ function run(licenseData) {
   graph.undoEngineEnabled = true
   graphComponent.fitGraphBounds()
 
-  // Wire up the UI
-  registerCommands(graphComponent)
-
-  showApp(graphComponent)
+  // initialize layout button
+  const element = document.querySelector("button[data-command='Layout']")
+  element.addEventListener('click', () => applyLayout(graphComponent))
 }
 
 function initializeGraph(graph) {
@@ -88,23 +85,6 @@ function applyLayout(graphComponent) {
         throw error
       }
     })
-}
-
-function registerCommands(graphComponent) {
-  bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent)
-  bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
-
-  bindCommand("button[data-command='Cut']", ICommand.CUT, graphComponent)
-  bindCommand("button[data-command='Copy']", ICommand.COPY, graphComponent)
-  bindCommand("button[data-command='Paste']", ICommand.PASTE, graphComponent)
-  bindCommand("button[data-command='Delete']", ICommand.DELETE, graphComponent)
-
-  bindCommand("button[data-command='Undo']", ICommand.UNDO, graphComponent)
-  bindCommand("button[data-command='Redo']", ICommand.REDO, graphComponent)
-
-  bindAction("button[data-command='Layout']", () => applyLayout(graphComponent))
 }
 
 loadJson().then(run)

@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -36,8 +36,10 @@ import {
   FilteredGraphWrapper,
   GraphCentrality,
   GraphStructureAnalyzer,
+  IEdge,
   IGraph,
   ILayoutAlgorithm,
+  INode,
   PageRank,
   Rect,
   ResultItemMapping,
@@ -50,22 +52,24 @@ import CentralityStage from './CentralityStage.js'
  * Configuration options for the Centrality Algorithms.
  */
 export default class CentralityConfig extends AlgorithmConfiguration {
+  /**
+   * @param {number} algorithmType
+   */
   constructor(algorithmType) {
     super()
-    this.$algorithmType = algorithmType
+    this.algorithmType = algorithmType
   }
 
   /**
    * Runs the selected centrality algorithm.
-   * @param {IGraph} graph the graph on which a centrality algorithm is executed.
+   * @param {!IGraph} graph the graph on which a centrality algorithm is executed.
    */
   runAlgorithm(graph) {
     this.resetGraph(graph)
 
-    let result
-    switch (this.$algorithmType) {
+    switch (this.algorithmType) {
       case CentralityConfig.WEIGHT_CENTRALITY: {
-        result = new WeightCentrality({
+        const result = new WeightCentrality({
           weights: edge => this.getEdgeWeight(edge),
           considerOutgoingEdges: true,
           considerIncomingEdges: true
@@ -74,7 +78,7 @@ export default class CentralityConfig extends AlgorithmConfiguration {
         break
       }
       case CentralityConfig.GRAPH_CENTRALITY: {
-        result = new GraphCentrality({
+        const result = new GraphCentrality({
           weights: edge => this.getEdgeWeight(edge),
           directed: this.directed
         }).run(graph)
@@ -82,7 +86,7 @@ export default class CentralityConfig extends AlgorithmConfiguration {
         break
       }
       case CentralityConfig.NODE_EDGE_BETWEENESS_CENTRALITY: {
-        result = new BetweennessCentrality({
+        const result = new BetweennessCentrality({
           weights: edge => this.getEdgeWeight(edge),
           directed: this.directed
         }).run(graph)
@@ -93,7 +97,7 @@ export default class CentralityConfig extends AlgorithmConfiguration {
       case CentralityConfig.CLOSENESS_CENTRALITY: {
         const analyzer = new GraphStructureAnalyzer(graph)
         if (analyzer.isConnected()) {
-          result = new ClosenessCentrality({
+          const result = new ClosenessCentrality({
             weights: edge => this.getEdgeWeight(edge),
             directed: this.directed
           }).run(graph)
@@ -104,7 +108,7 @@ export default class CentralityConfig extends AlgorithmConfiguration {
           const connectedComponentsResult = new ConnectedComponents().run(graph)
 
           connectedComponentsResult.components.forEach(component => {
-            result = new ClosenessCentrality({
+            const result = new ClosenessCentrality({
               weights: edge => this.getEdgeWeight(edge),
               directed: this.directed,
               subgraphNodes: component.nodes
@@ -122,7 +126,7 @@ export default class CentralityConfig extends AlgorithmConfiguration {
         break
       }
       case CentralityConfig.DEGREE_CENTRALITY: {
-        result = new DegreeCentrality({
+        const result = new DegreeCentrality({
           considerOutgoingEdges: true,
           considerIncomingEdges: true
         }).run(graph)
@@ -130,13 +134,13 @@ export default class CentralityConfig extends AlgorithmConfiguration {
         break
       }
       case CentralityConfig.EIGENVECTOR_CENTRALITY: {
-        result = new EigenvectorCentrality().run(graph)
+        const result = new EigenvectorCentrality().run(graph)
         this.applyNodeCentralityColor(graph, result.nodeCentrality)
         break
       }
       case CentralityConfig.PAGERANK_CENTRALITY:
       default: {
-        result = new PageRank({
+        const result = new PageRank({
           edgeWeights: edge => this.getEdgeWeight(edge)
         }).run(graph)
         this.applyNodeCentralityColor(graph, result.pageRank)
@@ -147,8 +151,8 @@ export default class CentralityConfig extends AlgorithmConfiguration {
 
   /**
    * Applies a color to the nodes according to the centrality value of the node.
-   * @param {IGraph} graph the given graph
-   * @param {ResultItemMapping} centrality the node-map containing the centrality results
+   * @param {!IGraph} graph the given graph
+   * @param {!ResultItemMapping.<INode,number>} centrality the node-map containing the centrality results
    */
   applyNodeCentralityColor(graph, centrality) {
     const extrema = this.getCentralityValues(graph, centrality)
@@ -178,7 +182,7 @@ export default class CentralityConfig extends AlgorithmConfiguration {
         tag: 'centrality'
       })
 
-      if (diff === 0 || !Number.isFinite(diff)) {
+      if (diff === 0 || centralityValue === 'Inf') {
         graph.setStyle(
           node,
           this.getMarkedNodeStyle(0, {
@@ -193,7 +197,7 @@ export default class CentralityConfig extends AlgorithmConfiguration {
       } else {
         // adjust gradient color
         const colorScale = (colorNumber - 1) / diff
-        const index = parseInt((centralityId - extrema.min) * colorScale)
+        const index = Math.floor((centralityId - extrema.min) * colorScale)
         graph.setStyle(
           node,
           this.getMarkedNodeStyle(index, {
@@ -204,7 +208,7 @@ export default class CentralityConfig extends AlgorithmConfiguration {
 
         // adjust size
         const sizeScale = (mostCentralValue - leastCentralValue) / diff
-        const size = parseInt(leastCentralValue + (centralityId - extrema.min) * sizeScale)
+        const size = Math.floor(leastCentralValue + (centralityId - extrema.min) * sizeScale)
         graph.setNodeLayout(node, new Rect(node.layout.x, node.layout.y, size, size))
       }
     })
@@ -212,8 +216,8 @@ export default class CentralityConfig extends AlgorithmConfiguration {
 
   /**
    * Applies a color to the edges according to the centrality value of the edge.
-   * @param {IGraph} graph the given graph
-   * @param {ResultItemMapping} centrality the node-map containing the centrality results
+   * @param {!IGraph} graph the given graph
+   * @param {!ResultItemMapping.<IEdge,number>} centrality the node-map containing the centrality results
    */
   applyEdgeCentralityColor(graph, centrality) {
     graph.edges.forEach(edge => {
@@ -236,22 +240,22 @@ export default class CentralityConfig extends AlgorithmConfiguration {
   /**
    * Returns a LayoutStage that sets the node sizes according to their centrality value.
    * This LayoutStage can be used to adjust the layout algorithm and to be able to use just one layout run.
-   * @param {ILayoutAlgorithm} coreLayout the core layout algorithm
+   * @param {!ILayoutAlgorithm} coreLayout the core layout algorithm
    * @param {boolean} directed true if the edges should be considered directed, false otherwise
-   * @return {CentralityStage} a layoutStage that sets the node sizes according to their centrality value
+   * @returns {!CentralityStage} a layoutStage that sets the node sizes according to their centrality value
    */
   getCentralityStage(coreLayout, directed) {
     const centralityStage = new CentralityStage(coreLayout)
-    centralityStage.centrality = this.$algorithmType
+    centralityStage.centrality = this.algorithmType
     centralityStage.directed = directed
     return centralityStage
   }
 
   /**
    * Determines the minimum and the maximum centrality value of the graph.
-   * @param {IGraph} graph the given graph
-   * @param {ResultItemMapping} centrality the node map containing the centrality values
-   * @return {{min: Number, max: number, difference: number}}
+   * @param {!IGraph} graph the given graph
+   * @param {!ResultItemMapping.<INode,number>} centrality the node map containing the centrality values
+   * @returns {!object}
    */
   getCentralityValues(graph, centrality) {
     let min = Number.MAX_VALUE
@@ -272,10 +276,11 @@ export default class CentralityConfig extends AlgorithmConfiguration {
 
   /**
    * Returns the description text for the centrality algorithms.
-   * @returns {string} the description text for the centrality algorithms
+   * @return the description text for the centrality algorithms
+   * @type {!string}
    */
   get descriptionText() {
-    switch (this.$algorithmType) {
+    switch (this.algorithmType) {
       case CentralityConfig.WEIGHT_CENTRALITY:
         return (
           '<p>This part of the demo shows the <em>weight centrality</em> for the nodes of the given graph.</p>' +
@@ -342,7 +347,7 @@ export default class CentralityConfig extends AlgorithmConfiguration {
 
   /**
    * Static field for degree centrality.
-   * @return {number}
+   * @type {number}
    */
   static get DEGREE_CENTRALITY() {
     return 0
@@ -350,7 +355,7 @@ export default class CentralityConfig extends AlgorithmConfiguration {
 
   /**
    * Static field for weight centrality.
-   * @return {number}
+   * @type {number}
    */
   static get WEIGHT_CENTRALITY() {
     return 1
@@ -358,7 +363,7 @@ export default class CentralityConfig extends AlgorithmConfiguration {
 
   /**
    * Static field for graph centrality.
-   * @return {number}
+   * @type {number}
    */
   static get GRAPH_CENTRALITY() {
     return 2
@@ -366,7 +371,7 @@ export default class CentralityConfig extends AlgorithmConfiguration {
 
   /**
    * Static field for node-edge-betweeness centrality.
-   * @return {number}
+   * @type {number}
    */
   static get NODE_EDGE_BETWEENESS_CENTRALITY() {
     return 3
@@ -374,7 +379,7 @@ export default class CentralityConfig extends AlgorithmConfiguration {
 
   /**
    * Static field for closeness centrality.
-   * @return {number}
+   * @type {number}
    */
   static get CLOSENESS_CENTRALITY() {
     return 4
@@ -382,7 +387,7 @@ export default class CentralityConfig extends AlgorithmConfiguration {
 
   /**
    * Static field for eigenvector centrality.
-   * @return {number}
+   * @type {number}
    */
   static get EIGENVECTOR_CENTRALITY() {
     return 5
@@ -390,7 +395,7 @@ export default class CentralityConfig extends AlgorithmConfiguration {
 
   /**
    * Static field for PageRank centrality.
-   * @return {number}
+   * @type {number}
    */
   static get PAGERANK_CENTRALITY() {
     return 6

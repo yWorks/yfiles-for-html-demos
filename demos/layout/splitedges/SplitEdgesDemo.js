@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -29,9 +29,7 @@
 import {
   Arrow,
   ArrowType,
-  CompositeLayoutData,
   EdgeRouter,
-  EdgeRouterScope,
   EdgeStyleBase,
   EdgeStyleDecorationInstaller,
   GraphComponent,
@@ -44,16 +42,21 @@ import {
   ICommand,
   IEdge,
   IRenderContext,
-  Insets,
   LayoutOrientation,
   License,
   PolylineEdgeStyle,
   RecursiveGroupLayout,
   RecursiveGroupLayoutData,
+  SimplexNodePlacer,
+  Size,
   SmoothingPolicy,
+  SolidColorFill,
+  Stroke,
   StyleDecorationZoomPolicy,
   SvgVisual,
-  SvgVisualGroup
+  SvgVisualGroup,
+  Visual,
+  YInsets
 } from 'yfiles'
 
 import ContextMenuSupport from './ContextMenuSupport.js'
@@ -62,14 +65,18 @@ import { bindAction, bindCommand, showApp } from '../../resources/demo-app.js'
 import loadJson from '../../resources/load-json.js'
 
 /** @type {GraphComponent} */
-let graphComponent = null
+let graphComponent
 
-function run(licenseData) {
+/**
+ * @param {!object} licenseData
+ * @returns {!Promise}
+ */
+async function run(licenseData) {
   License.value = licenseData
   graphComponent = new GraphComponent('graphComponent')
 
   configureInteraction()
-  createSampleGraph()
+  await createSampleGraph()
   registerCommands()
   showApp(graphComponent)
 }
@@ -86,7 +93,7 @@ async function runLayout() {
   hierarchicLayout.nodePlacer.barycenterMode = true
 
   const edgeRouter = new EdgeRouter({
-    scope: EdgeRouterScope.ROUTE_AFFECTED_EDGES
+    scope: 'route-affected-edges'
   })
   edgeRouter.defaultEdgeLayoutDescriptor.directGroupContentEdgeRouting = true
 
@@ -97,11 +104,10 @@ async function runLayout() {
   })
 
   // use the split ids from the edge tags
-  const layoutData = new CompositeLayoutData(
-    new RecursiveGroupLayoutData({
-      sourceSplitIds: edge => (edge.tag && edge.tag.sourceSplitId ? edge.tag.sourceSplitId : null),
-      targetSplitIds: edge => (edge.tag && edge.tag.targetSplitId ? edge.tag.targetSplitId : null)
-    }),
+  const layoutData = new RecursiveGroupLayoutData({
+    sourceSplitIds: edge => (edge.tag && edge.tag.sourceSplitId ? edge.tag.sourceSplitId : null),
+    targetSplitIds: edge => (edge.tag && edge.tag.targetSplitId ? edge.tag.targetSplitId : null)
+  }).combineWith(
     new HierarchicLayoutData({
       edgeThickness: 3
     })
@@ -109,7 +115,7 @@ async function runLayout() {
 
   graphComponent.graph.mapperRegistry.createConstantMapper(
     GroupingKeys.GROUP_NODE_INSETS_DP_KEY,
-    new Insets(20, 35, 20, 20)
+    new YInsets(35, 20, 20, 20)
   )
 
   setUIDisabled(true)
@@ -119,8 +125,9 @@ async function runLayout() {
 
 /**
  * Creates a simple sample graph.
+ * @returns {!Promise}
  */
-function createSampleGraph() {
+async function createSampleGraph() {
   const graph = graphComponent.graph
   graph.clear()
   initializeDefaults()
@@ -199,18 +206,19 @@ function createSampleGraph() {
     target: nodes[4]
   })
 
-  graph.edges.forEach(edge => {
-    if (edge.tag && (edge.tag.sourceSplitId || edge.tag.targetSplitId)) {
-      edge.style.stroke = `3px ${edge.tag.color}`
-      edge.style.targetArrow = new Arrow({
+  graph.edges
+    .filter(edge => edge.tag && (edge.tag.sourceSplitId || edge.tag.targetSplitId))
+    .forEach(edge => {
+      const edgeStyle = edge.style
+      edgeStyle.stroke = Stroke.from(`3px ${edge.tag.color}`)
+      edgeStyle.targetArrow = new Arrow({
         fill: edge.tag.color,
-        type: ArrowType.TRIANGLE,
+        type: 'triangle',
         scale: 1.5
       })
-    }
-  })
+    })
 
-  runLayout()
+  await runLayout()
 }
 
 /**
@@ -218,18 +226,21 @@ function createSampleGraph() {
  */
 function initializeDefaults() {
   const graph = graphComponent.graph
-  graph.nodeDefaults.style = new DemoNodeStyle()
-  graph.nodeDefaults.style.cssClass = 'node-color'
-  graph.nodeDefaults.size = [50, 30]
+  const nodeStyle = new DemoNodeStyle()
+  graph.nodeDefaults.style = nodeStyle
+  nodeStyle.cssClass = 'node-color'
+  graph.nodeDefaults.style = nodeStyle
+  graph.nodeDefaults.size = new Size(50, 30)
 
-  graph.groupNodeDefaults.style = new DemoGroupStyle()
-  graph.groupNodeDefaults.style.cssClass = 'group-border'
+  const groupNodeStyle = new DemoGroupStyle()
+  groupNodeStyle.cssClass = 'group-border'
+  graph.groupNodeDefaults.style = groupNodeStyle
 
   graph.edgeDefaults.style = new PolylineEdgeStyle({
     stroke: '3px #BBBBBB',
     targetArrow: new Arrow({
       fill: '#BBBBBB',
-      type: ArrowType.TRIANGLE,
+      type: 'triangle',
       scale: 1.5
     }),
     smoothingLength: 15
@@ -273,7 +284,7 @@ function registerCommands() {
 
 /**
  * Disables the HTML elements of the UI.
- * @param disabled true if the element should be disabled, false otherwise
+ * @param {boolean} disabled true if the element should be disabled, false otherwise
  */
 function setUIDisabled(disabled) {
   document.querySelector("button[data-command='Layout']").disabled = disabled
@@ -286,20 +297,21 @@ function setUIDisabled(disabled) {
  */
 class HighlightEdgeStyle extends EdgeStyleBase {
   /**
-   * @param {IRenderContext} context
-   * @param {IEdge} edge
-   * @returns {Visual}
+   * @param {!IRenderContext} context
+   * @param {!IEdge} edge
+   * @returns {!Visual}
    */
   createVisual(context, edge) {
-    const strokeColor = edge.style.stroke.fill.color
-    const highlightColor = `rgba(${strokeColor.r}, ${strokeColor.g}, ${strokeColor.b})`
+    const edgeStyle = edge.style
+    const strokeColor = edgeStyle.stroke.fill?.color
+    const highlightColor = `rgb(${strokeColor.r}, ${strokeColor.g}, ${strokeColor.b})`
     const visualGroup = new SvgVisualGroup()
     const highlight = document.createElementNS('http://www.w3.org/2000/svg', 'g')
     const highlightPath = document.createElementNS('http://www.w3.org/2000/svg', 'path')
     const path = this.cropPath(
       edge,
-      edge.style.sourceArrow,
-      edge.style.targetArrow,
+      edgeStyle.sourceArrow,
+      edgeStyle.targetArrow,
       this.getPath(edge)
     ).createSmoothedPath(15, SmoothingPolicy.ASYMMETRIC, true)
     highlightPath.setAttribute('d', path.createSvgPathData())

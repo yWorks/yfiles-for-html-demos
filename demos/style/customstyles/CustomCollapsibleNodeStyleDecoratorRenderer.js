@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -27,9 +27,12 @@
  **
  ***************************************************************************/
 import {
+  Class,
   CollapsibleNodeStyleDecoratorRenderer,
+  ILookup,
   ImageNodeStyle,
   INodeInsetsProvider,
+  IRenderContext,
   Rect,
   SimpleNode,
   Size,
@@ -42,44 +45,59 @@ import {
  * state to a node style.
  */
 export default class CustomCollapsibleNodeStyleDecoratorRenderer extends CollapsibleNodeStyleDecoratorRenderer {
+  /**
+   * @param {!Size} size
+   */
   constructor(size) {
     super()
-
-    // The size of the button.
     this.size = size
+
     // The node style used for the rendering of the expanded state.
     this.expandedButtonStyle = new ImageNodeStyle('resources/collapse.svg')
+
     // The node style used for the rendering of the collapsed state.
     this.collapsedButtonStyle = new ImageNodeStyle('resources/expand.svg')
-    // A dumCustom node that is used internally for the rendering of the button. This is a class field
+
+    // A dummy node that is used internally for the rendering of the button. This is a class field
     // since we want to reuse the same instance for each call to
     // {@link CustomCollapsibleNodeStyleDecoratorRenderer#createButton} and
     // {@link CustomCollapsibleNodeStyleDecoratorRenderer#updateButton} (for performance reasons).
-    this.dumCustomNode = new SimpleNode()
+    this.dummyNode = new SimpleNode()
   }
 
-  /** @return {SvgVisual} */
+  /**
+   * @param {!IRenderContext} context
+   * @param {boolean} expanded
+   * @param {!Size} size
+   * @returns {!SvgVisual}
+   */
   createButton(context, expanded, size) {
-    // Set the dumCustom node to the desired size
-    this.dumCustomNode.layout = new Rect(0, 0, size.width, size.height)
+    // Set the dummy node to the desired size
+    this.dummyNode.layout = new Rect(0, 0, size.width, size.height)
     // Delegate the creation of the button visualization to the node styles
     const nodeStyle = expanded ? this.expandedButtonStyle : this.collapsedButtonStyle
     const visual = nodeStyle.renderer
-      .getVisualCreator(this.dumCustomNode, nodeStyle)
+      .getVisualCreator(this.dummyNode, nodeStyle)
       .createVisual(context)
     // Add the commands for user interaction
     CollapsibleNodeStyleDecoratorRenderer.addToggleExpansionStateCommand(visual, this.node, context)
     return visual
   }
 
-  /** @return {SvgVisual} */
+  /**
+   * @param {!IRenderContext} context
+   * @param {boolean} expanded
+   * @param {!Size} size
+   * @param {!SvgVisual} oldVisual
+   * @returns {!SvgVisual}
+   */
   updateButton(context, expanded, size, oldVisual) {
-    // Set the dumCustom node to the desired size
-    this.dumCustomNode.layout = new Rect(0, 0, size.width, size.height)
+    // Set the dummy node to the desired size
+    this.dummyNode.layout = new Rect(0, 0, size.width, size.height)
     // Delegate the updating of the button visualization to the node styles
     const nodeStyle = expanded ? this.expandedButtonStyle : this.collapsedButtonStyle
     const visual = nodeStyle.renderer
-      .getVisualCreator(this.dumCustomNode, nodeStyle)
+      .getVisualCreator(this.dummyNode, nodeStyle)
       .updateVisual(context, oldVisual)
     if (visual !== oldVisual) {
       // Add the commands for user interaction is a new visual was created
@@ -92,7 +110,9 @@ export default class CustomCollapsibleNodeStyleDecoratorRenderer extends Collaps
     return visual
   }
 
-  /** @return {Size} */
+  /**
+   * @returns {!Size}
+   */
   getButtonSize() {
     return this.size
   }
@@ -101,7 +121,8 @@ export default class CustomCollapsibleNodeStyleDecoratorRenderer extends Collaps
    * This is implemented to override the base insets provider, which would add insets for the label.
    * @see Overrides {@link CollapsibleNodeStyleDecoratorRenderer#lookup}
    * @see Specified by {@link ILookup#lookup}.
-   * @return {Object}
+   * @param {!Class} type
+   * @returns {?object}
    */
   lookup(type) {
     if (type === INodeInsetsProvider.$class) {

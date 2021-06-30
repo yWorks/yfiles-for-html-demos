@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -27,21 +27,26 @@
  **
  ***************************************************************************/
 import {
+  Class,
   Color,
   GeneralPath,
   GraphComponent,
   IGroupBoundsCalculator,
-  ILayoutGroupBoundsCalculator,
+  IInputModeContext,
   INode,
   INodeInsetsProvider,
   INodeSizeConstraintProvider,
   Insets,
+  IRenderContext,
+  ITagOwner,
   Matrix,
   NodeStyleBase,
+  Point,
   Rect,
   Size,
   SvgVisual
 } from 'yfiles'
+import { SVGNS } from './Namespaces.js'
 
 /** bounds of the "tab" */
 const TAB_H = 16
@@ -61,39 +66,48 @@ const BUTTON_SIZE = 14
  * {@link NodeStyleBase} as the base class since
  * this makes customizations easy. Additionally, it uses a couple of inner
  * classes to customize certain aspects of the user interaction behavior, for
- * example a {@link ILayoutGroupBoundsCalculator}that takes the node labels
+ * example a {@link IGroupBoundsCalculator} that takes the node labels
  * into account.
  */
 export default class CustomGroupNodeStyle extends NodeStyleBase {
   constructor() {
     super()
-    this.$nodeColor = 'rgba(0, 130, 180, 1)'
+    this.nodeColor = 'rgba(0, 130, 180, 1)'
   }
 
-  /** @return {SvgVisual} */
+  /**
+   * @param {!IRenderContext} renderContext
+   * @param {!INode} node
+   * @returns {!SvgVisual}
+   */
   createVisual(renderContext, node) {
-    const g = window.document.createElementNS('http://www.w3.org/2000/svg', 'g')
-    this.render(g, this.createRenderDataCache(node, renderContext))
+    const g = document.createElementNS(SVGNS, 'g')
+    CustomGroupNodeStyle.render(g, this.createRenderDataCache(renderContext, node))
     SvgVisual.setTranslate(g, node.layout.x, node.layout.y)
     return new SvgVisual(g)
   }
 
-  /** @return {SvgVisual} */
+  /**
+   * @param {!IRenderContext} renderContext
+   * @param {!SvgVisual} oldVisual
+   * @param {!INode} node
+   * @returns {!SvgVisual}
+   */
   updateVisual(renderContext, oldVisual, node) {
     const container = oldVisual.svgElement
     // get the data with which the oldvisual was created
     const oldCache = container['data-renderDataCache']
     // get the data for the new visual
-    const newCache = this.createRenderDataCache(node, renderContext)
+    const newCache = this.createRenderDataCache(renderContext, node)
 
     // check if something changed except for the location of the node
-    if (!newCache.equals(newCache, oldCache)) {
+    if (!newCache.equals(oldCache)) {
       // something changed - re-render the visual
-      while (container.hasChildNodes()) {
+      while (container.lastChild) {
         // remove all children
-        container.removeChild(container.firstChild)
+        container.removeChild(container.lastChild)
       }
-      this.render(container, newCache)
+      CustomGroupNodeStyle.render(container, newCache)
     }
     // make sure that the location is up to date
     SvgVisual.setTranslate(container, node.layout.x, node.layout.y)
@@ -102,8 +116,10 @@ export default class CustomGroupNodeStyle extends NodeStyleBase {
 
   /**
    * Creates the actual visualization of this style and adds it to the given container.
+   * @param {*} container
+   * @param {!NodeRenderDataCache} cache
    */
-  render(container, cache) {
+  static render(container, cache) {
     container['data-renderDataCache'] = cache
 
     const width = cache.width
@@ -136,7 +152,7 @@ export default class CustomGroupNodeStyle extends NodeStyleBase {
       return
     }
     // optionally create text element for the tab
-    const text = window.document.createElementNS('http://www.w3.org/2000/svg', 'text')
+    const text = document.createElementNS(SVGNS, 'text')
     text.textContent = cache.isCollapsed ? 'Folder' : 'Group'
     text.setAttribute('transform', 'translate(4 14)')
     text.setAttribute('font-size', '14px')
@@ -147,33 +163,32 @@ export default class CustomGroupNodeStyle extends NodeStyleBase {
 
   /**
    * Creates an object containing all necessary data to create a visual for the node.
-   * @return {object}
+   * @param {!IRenderContext} context
+   * @param {!INode} node
+   * @returns {!NodeRenderDataCache}
    */
-  createRenderDataCache(node, context) {
-    return {
-      color: this.getNodeColor(node),
-      width: node.layout.width,
-      height: node.layout.height,
-      isCollapsed: isCollapsed(node, context),
-      equals: (self, other) =>
-        self.color === other.color &&
-        self.width === other.width &&
-        self.height === other.height &&
-        self.isCollapsed === other.isCollapsed
-    }
+  createRenderDataCache(context, node) {
+    return new NodeRenderDataCache(
+      this.getNodeColor(node),
+      node.layout.width,
+      node.layout.height,
+      isCollapsed(context, node)
+    )
   }
 
   /**
    * Overridden to customize the behavior of this style with respect to certain user interaction.
    * @see Overrides {@link NodeStyleBase#lookup}
-   * @return {Object}
+   * @param {!INode} node
+   * @param {!Class} type
+   * @returns {!object}
    */
   lookup(node, type) {
     // A group bounds calculator that calculates bounds that encompass the
     // children of a group and all the children's labels.
     if (type === IGroupBoundsCalculator.$class) {
       // use a custom group bounds calculator that takes labels into account
-      return new IGroupBoundsCalculator((graph, groupNode) => {
+      return IGroupBoundsCalculator.create((graph, groupNode) => {
         let bounds = Rect.EMPTY
         const children = graph.getChildren(groupNode)
         children.forEach(child => {
@@ -193,8 +208,8 @@ export default class CustomGroupNodeStyle extends NodeStyleBase {
     // Determines the insets used for the group contents.
     if (type === INodeInsetsProvider.$class) {
       // use a custom insets provider that reserves space for the tab and the toggle button
-      return new INodeInsetsProvider(
-        group => new Insets(6, TAB_H + 6, CORNER_SIZE - 1, CORNER_SIZE - 1)
+      return INodeInsetsProvider.create(
+        () => new Insets(6, TAB_H + 6, CORNER_SIZE - 1, CORNER_SIZE - 1)
       )
     }
 
@@ -202,17 +217,17 @@ export default class CustomGroupNodeStyle extends NodeStyleBase {
     if (type === INodeSizeConstraintProvider.$class) {
       // use a custom size constraint provider to make sure that the tab
       // and the toggle button are always visible
-      return new INodeSizeConstraintProvider({
+      return INodeSizeConstraintProvider.create({
         // Returns a reasonable minimum size to show the tab and the toggle button.
-        getMinimumSize: item =>
+        getMinimumSize: () =>
           new Size(
             Math.max(SMALL_TAB_W + OUTER_RADIUS + OUTER_RADIUS, CORNER_SIZE + OUTER_RADIUS),
             TAB_H + OUTER_RADIUS + CORNER_SIZE
           ),
         // Returns infinity to don't limit the maximum size.
-        getMaximumSize: item => Size.INFINITE,
+        getMaximumSize: () => Size.INFINITE,
         // Returns the empty rectangle to don't constrain the area.
-        getMinimumEnclosedArea: item => Rect.EMPTY
+        getMinimumEnclosedArea: () => Rect.EMPTY
       })
     }
     return super.lookup(node, type)
@@ -224,9 +239,12 @@ export default class CustomGroupNodeStyle extends NodeStyleBase {
    * <code>true</code> for the main rectangle and the tab area, but not
    * for the empty space to the left of the tab.
    * @see Overrides {@link NodeStyleBase#isHit}
-   * @return {boolean}
+   * @param {!IInputModeContext} context
+   * @param {!Point} location
+   * @param {!INode} node
+   * @returns {boolean}
    */
-  isHit(canvasContext, p, node) {
+  isHit(context, location, node) {
     const rect = new Rect(
       node.layout.x,
       node.layout.y + TAB_H,
@@ -234,14 +252,14 @@ export default class CustomGroupNodeStyle extends NodeStyleBase {
       node.layout.height - TAB_H
     )
     // check main node rect
-    if (rect.containsWithEps(p, canvasContext.hitTestRadius)) {
+    if (rect.containsWithEps(location, context.hitTestRadius)) {
       return true
     }
     // check tab
     const width = displayTextInTab(node.layout.width) ? TAB_W : SMALL_TAB_W
     return new Rect(node.layout.x, node.layout.y, width, TAB_H).containsWithEps(
-      p,
-      canvasContext.hitTestRadius
+      location,
+      context.hitTestRadius
     )
   }
 
@@ -249,7 +267,8 @@ export default class CustomGroupNodeStyle extends NodeStyleBase {
    * Returns the exact outline for the given node. This information is used
    * to clip the node's edges correctly.
    * @see Overrides {@link NodeStyleBase#getOutline}
-   * @return {GeneralPath}
+   * @param {!INode} node
+   * @returns {!GeneralPath}
    */
   getOutline(node) {
     const path = createOuterPath(node.layout.width, node.layout.height)
@@ -258,65 +277,82 @@ export default class CustomGroupNodeStyle extends NodeStyleBase {
   }
 
   /**
-   * Gets the fill color of the node.
-   * @type {Color}
-   */
-  get nodeColor() {
-    return this.$nodeColor
-  }
-
-  /**
-   * Sets the fill color of the node.
-   * @type {Color}
-   */
-  set nodeColor(value) {
-    this.$nodeColor = value
-  }
-
-  /**
    * Determines the color to use for filling the node.
    * This implementation uses the {@link CustomGroupNodeStyle#nodeColor} property unless
    * the {@link ITagOwner#tag} of the {@link INode} is of type {@link Color},
    * in which case that color overrides this style's setting.
-   * @param {INode} node The node to determine the color for.
-   * @return {Color} The color for filling the node.
+   * @param {!INode} node The node to determine the color for.
+   * @returns {!string} The color for filling the node.
    */
   getNodeColor(node) {
     return typeof node.tag === 'string' ? node.tag : this.nodeColor
   }
 }
 
+class NodeRenderDataCache {
+  /**
+   * @param {!string} color
+   * @param {number} width
+   * @param {number} height
+   * @param {boolean} isCollapsed
+   */
+  constructor(color, width, height, isCollapsed) {
+    this.isCollapsed = isCollapsed
+    this.height = height
+    this.width = width
+    this.color = color
+  }
+
+  /**
+   * @param {!NodeRenderDataCache} [other]
+   * @returns {boolean}
+   */
+  equals(other) {
+    return (
+      !!other &&
+      this.color === other.color &&
+      this.width === other.width &&
+      this.height === other.height &&
+      this.isCollapsed === other.isCollapsed
+    )
+  }
+}
+
 /**
  * Returns whether or not the given group node is collapsed.
- * @return {boolean}
+ * @param {!IRenderContext} context
+ * @param {!INode} node
+ * @returns {boolean}
  */
-function isCollapsed(node, context) {
-  if (!(context.canvasComponent instanceof GraphComponent)) {
-    return false
-  }
+function isCollapsed(context, node) {
   const graphComponent = context.canvasComponent
-  const foldedGraph = graphComponent.graph.foldingView
-  if (foldedGraph === null) {
-    return false
+  if (graphComponent instanceof GraphComponent) {
+    const foldedGraph = graphComponent.graph.foldingView
+    if (foldedGraph) {
+      // check if the node is collapsed in the view graph
+      return !foldedGraph.isExpanded(node)
+    }
   }
-  // check if the node is collapsed in the view graph
-  return !foldedGraph.isExpanded(node)
+  return false
 }
 
 /**
  * Creates the inner group path
+ * @param {number} width
+ * @param {number} height
+ * @returns {!GeneralPath}
  */
-function createInnerPath(w, h) {
+function createInnerPath(width, height) {
   const i = INSET
   const r = INNER_RADIUS
 
   // helper variables for curve coordinates
   const c = 0.551915024494
-  const sx = w - i - r
-  const sy = h - i - CORNER_SIZE
+  const sx = width - i - r
+  const sy = height - i - CORNER_SIZE
   const b = (BUTTON_SIZE / 2) | 0
-  const ex = w - i - CORNER_SIZE
-  const ey = h - i - b
+  const ex = width - i - CORNER_SIZE
+  const ey = height - i - b
   const dc = c * (CORNER_SIZE - r)
   const c1x = sx - dc
   const c1y = sy
@@ -326,15 +362,15 @@ function createInnerPath(w, h) {
   const path = new GeneralPath()
   path.moveTo(i + r, i + TAB_H)
   path.lineTo(sx, i + TAB_H)
-  path.quadTo(w - i, i + TAB_H, w - i, i + TAB_H + r)
-  path.lineTo(w - i, sy - r)
-  path.quadTo(w - i, sy, sx, sy)
-  path.lineTo(w - i - b, h - i - CORNER_SIZE)
+  path.quadTo(width - i, i + TAB_H, width - i, i + TAB_H + r)
+  path.lineTo(width - i, sy - r)
+  path.quadTo(width - i, sy, sx, sy)
+  path.lineTo(width - i - b, height - i - CORNER_SIZE)
   path.cubicTo(c1x, c1y, c2x, c2y, ex, ey)
-  path.lineTo(w - i - CORNER_SIZE, h - i - r)
-  path.quadTo(ex, h - i, ex - r, h - i)
-  path.lineTo(i + r, h - i)
-  path.quadTo(i, h - i, i, ey)
+  path.lineTo(width - i - CORNER_SIZE, height - i - r)
+  path.quadTo(ex, height - i, ex - r, height - i)
+  path.lineTo(i + r, height - i)
+  path.quadTo(i, height - i, i, ey)
   path.lineTo(i, i + TAB_H + r)
   path.quadTo(i, i + TAB_H, i + r, i + TAB_H)
   path.close()
@@ -343,18 +379,21 @@ function createInnerPath(w, h) {
 
 /**
  * Creates the outer group path
+ * @param {number} width
+ * @param {number} height
+ * @returns {!GeneralPath}
  */
-function createOuterPath(w, h) {
+function createOuterPath(width, height) {
   const r = OUTER_RADIUS
-  const tabWidth = displayTextInTab(w) ? TAB_W : SMALL_TAB_W
+  const tabWidth = displayTextInTab(width) ? TAB_W : SMALL_TAB_W
   const path = new GeneralPath()
   path.moveTo(tabWidth + r, TAB_H)
-  path.lineTo(w - r, TAB_H)
-  path.quadTo(w, TAB_H, w, TAB_H + r)
-  path.lineTo(w, h - r)
-  path.quadTo(w, h, w - r, h)
-  path.lineTo(r, h)
-  path.quadTo(0, h, 0, h - r)
+  path.lineTo(width - r, TAB_H)
+  path.quadTo(width, TAB_H, width, TAB_H + r)
+  path.lineTo(width, height - r)
+  path.quadTo(width, height, width - r, height)
+  path.lineTo(r, height)
+  path.quadTo(0, height, 0, height - r)
   path.lineTo(0, r)
   path.quadTo(0, 0, r, 0)
   path.lineTo(-r + tabWidth, 0)
@@ -369,7 +408,7 @@ function createOuterPath(w, h) {
 /**
  * Checks whether the node is wide enough to display the large tab.
  * @param {number} w The node width.
- * @return {boolean}
+ * @returns {boolean}
  */
 function displayTextInTab(w) {
   return w >= TAB_W + OUTER_RADIUS + OUTER_RADIUS

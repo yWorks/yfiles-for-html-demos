@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -36,15 +36,13 @@ import {
   HierarchicLayout,
   HierarchicLayoutData,
   IEdge,
+  IGraph,
   ILayoutAlgorithm,
-  IMapper,
   IModelItem,
   INode,
+  ItemCollection,
   LayoutGraph,
-  LayoutMode,
-  LayoutOrientation,
   LayoutStageBase,
-  List,
   Mapper,
   NodeStyleDecorationInstaller,
   OrganicLayout,
@@ -55,40 +53,46 @@ import {
   Rect,
   ShapeNodeStyle,
   StyleDecorationZoomPolicy,
-  YBoolean
+  YBoolean,
+  YPoint
 } from 'yfiles'
 
 import NodePopup from './NodePopup.js'
 import TimelineComponent from './TimelineComponent.js'
 
 /**
+ * @typedef {Object} NodeTag
+ * @property {number} id
+ * @property {string} type
+ * @property {Array.<Date>} enter
+ * @property {Array.<Date>} exit
+ * @property {(string|object)} info
+ * @property {number} x
+ * @property {number} y
+ */
+
+/**
  * This class provides a detailed view a fraud component.
  */
 export default class FraudDetectionView {
-  constructor(inputGraph, componentNodes, componentIndex, layoutAlgorithm, onCloseListener) {
-    this.inputGraph = inputGraph
-    this.componentNodes = new Set(componentNodes)
-    this.$componentIndex = componentIndex
-    this.layoutAlgorithm = layoutAlgorithm
+  /**
+   * @param {!IGraph} inputGraph
+   * @param {!Array.<INode>} componentNodes
+   * @param {number} componentIndex
+   * @param {!('organic'|'hierarchic')} layoutStyle
+   * @param {!function} [onCloseListener]
+   */
+  constructor(inputGraph, componentNodes, componentIndex, layoutStyle, onCloseListener) {
     this.onCloseListener = onCloseListener
-    this.filteredGraph = null
+    this.layoutStyle = layoutStyle
+    this.componentIndex = componentIndex
+    this.inputGraph = inputGraph
+    this.nodesAdded = null
+    this.graphChanged = false
+    this.incrementalNodes = []
+    this.layoutFromScratch = true
+    this.componentNodes = new Set(componentNodes)
     this.initializeFraudDetectionView()
-  }
-
-  /**
-   * Gets the fraud component index.
-   * @return {number} The fraud component index
-   */
-  get componentIndex() {
-    return this.$componentIndex
-  }
-
-  /**
-   * Sets the fraud component index.
-   * @param {number} value The fraud component index to set
-   */
-  set componentIndex(value) {
-    this.$componentIndex = value
   }
 
   /**
@@ -98,16 +102,16 @@ export default class FraudDetectionView {
     // create the fraud detection component div
     this.fraudDetectionComponent = new GraphComponent()
     const fraudDetectionViewDiv = document.getElementById('fraudDetectionView')
+    const fraudDetectionToolbar = document.getElementById('fraudDetectionToolbar')
+    const fraudDetectionTitle = document.getElementById('fraudDetectionTitle')
     const fraudDetectionTimeline = document.getElementById('fraudDetectionTimeline')
     fraudDetectionViewDiv.insertBefore(this.fraudDetectionComponent.div, fraudDetectionTimeline)
     this.fraudDetectionComponent.div.id = 'fraudDetectionComponent'
 
     // display the component
-    document.getElementById('fraudDetectionView').style.display = 'block'
-    document.getElementById('fraudDetectionToolbar').style.display = 'inline'
-    document.getElementById('fraudDetectionTitle').innerHTML = `Fraud Ring ${this.componentIndex}`
-
-    this.visibleNodesSet = null
+    fraudDetectionViewDiv.style.display = 'block'
+    fraudDetectionToolbar.style.display = 'inline'
+    fraudDetectionTitle.innerHTML = `Fraud Ring ${this.componentIndex}`
 
     this.initializeHighlightStyle()
     this.initializeInputMode()
@@ -149,7 +153,7 @@ export default class FraudDetectionView {
 
     this.filteredGraph.addNodeCreatedListener((sender, args) => {
       const node = args.item
-      this.incrementalNodes.add(node)
+      this.incrementalNodes.push(node)
       if (!this.nodesAdded) {
         this.nodesAdded = new Mapper()
       }
@@ -157,20 +161,24 @@ export default class FraudDetectionView {
     })
 
     this.filteredGraph.addEdgeCreatedListener((sender, args) => {
-      if (!this.incrementalNodes.includes(args.item.sourceNode)) {
-        this.incrementalNodes.add(args.item.sourceNode)
+      const sourceNode = args.item.sourceNode
+      const targetNode = args.item.targetNode
+      if (!this.incrementalNodes.includes(sourceNode)) {
+        this.incrementalNodes.push(sourceNode)
       }
-      if (!this.incrementalNodes.includes(args.item.targetNode)) {
-        this.incrementalNodes.add(args.item.targetNode)
+      if (!this.incrementalNodes.includes(targetNode)) {
+        this.incrementalNodes.push(targetNode)
       }
     })
 
     this.filteredGraph.addEdgeRemovedListener((sender, args) => {
-      if (!this.incrementalNodes.includes(args.item.sourceNode)) {
-        this.incrementalNodes.add(args.item.sourceNode)
+      const sourceNode = args.item.sourceNode
+      const targetNode = args.item.targetNode
+      if (!this.incrementalNodes.includes(sourceNode)) {
+        this.incrementalNodes.push(sourceNode)
       }
-      if (!this.incrementalNodes.includes(args.item.targetNode)) {
-        this.incrementalNodes.add(args.item.targetNode)
+      if (!this.incrementalNodes.includes(targetNode)) {
+        this.incrementalNodes.push(targetNode)
       }
     })
 
@@ -178,7 +186,7 @@ export default class FraudDetectionView {
       this.graphChanged = true
     })
 
-    this.incrementalNodes = new List()
+    this.incrementalNodes = []
     this.graphChanged = false
     this.layoutFromScratch = true
 
@@ -215,16 +223,16 @@ export default class FraudDetectionView {
         let maxX = Number.NEGATIVE_INFINITY
         let minY = Number.POSITIVE_INFINITY
         let maxY = Number.NEGATIVE_INFINITY
-        nodes.forEach(node => {
-          if (this.filteredGraph.contains(node)) {
+        nodes
+          .filter(node => this.filteredGraph.contains(node))
+          .forEach(node => {
             this.fraudDetectionComponent.selection.setSelected(node, true)
             const nodeLayout = node.layout
             minX = Math.min(minX, nodeLayout.x)
             maxX = Math.max(maxX, nodeLayout.x + nodeLayout.width)
             minY = Math.min(minY, nodeLayout.y)
             maxY = Math.max(maxY, nodeLayout.y + nodeLayout.height)
-          }
-        })
+          })
         if (
           minX !== Number.POSITIVE_INFINITY &&
           maxX !== Number.NEGATIVE_INFINITY &&
@@ -240,8 +248,8 @@ export default class FraudDetectionView {
 
   /**
    * Determines whether or not a node of the filtered graph should be visible.
-   * @param {INode} node
-   * @return {boolean} true if the node should be visible, false otherwise
+   * @returns {boolean} true if the node should be visible, false otherwise
+   * @param {!INode} node
    */
   nodePredicate(node) {
     return this.visibleNodesSet === null || this.visibleNodesSet.has(node)
@@ -249,8 +257,8 @@ export default class FraudDetectionView {
 
   /**
    * Invoked when the timeline frame changes.
-   * @param {number} minTime
-   * @param {number} maxTime
+   * @param {!Array.<string>} minTime
+   * @param {!Array.<string>} maxTime
    */
   onTimeFrameChanged(minTime, maxTime) {
     if (!minTime || !maxTime || minTime.length === 0 || maxTime.length < 1) {
@@ -261,10 +269,14 @@ export default class FraudDetectionView {
     this.visibleNodesSet.clear()
 
     this.filteredGraph.wrappedGraph.nodes.forEach(node => {
-      node.tag.enter.forEach((sDate, index) => {
-        const tDate = node.tag.exit[index]
+      const tag = node.tag
+      tag.enter.forEach((sDate, index) => {
+        const tDate = new Date(tag.exit[index])
         if (
-          !(tDate.getTime() < new Date(startDate).getTime() || sDate > new Date(endDate).getTime())
+          !(
+            tDate.getTime() < new Date(startDate).getTime() ||
+            new Date(sDate).getTime() > new Date(endDate).getTime()
+          )
         ) {
           this.visibleNodesSet.add(node)
         }
@@ -276,7 +288,7 @@ export default class FraudDetectionView {
     // In bank fraud detection, there exist bank branch nodes that are connected to many nodes, and thus the enter
     // and exit dates may cover a really wide time range. To avoid, having isolated bank nodes, we remove them
     // after  filtering if they have no connections to the current graph nodes.
-    if (this.layoutAlgorithm === FraudDetectionView.ORGANIC) {
+    if (this.layoutStyle === 'organic') {
       this.filteredGraph.nodes.forEach(node => {
         if (node.tag.type === 'Bank Branch' && this.filteredGraph.degree(node) === 0) {
           this.visibleNodesSet.delete(node)
@@ -286,7 +298,7 @@ export default class FraudDetectionView {
       this.filteredGraph.nodePredicateChanged()
     }
 
-    if (this.incrementalNodes.size > 0 || this.graphChanged) {
+    if (this.incrementalNodes.length > 0 || this.graphChanged) {
       this.runLayout(this.layoutFromScratch)
     }
   }
@@ -296,7 +308,7 @@ export default class FraudDetectionView {
    * @param {boolean} fromScratch
    */
   runLayout(fromScratch) {
-    if (this.layoutAlgorithm === FraudDetectionView.ORGANIC) {
+    if (this.layoutStyle === 'organic') {
       const layout = new OrganicLayout()
       layout.deterministic = true
       layout.scope = fromScratch ? OrganicLayoutScope.ALL : OrganicLayoutScope.MAINLY_SUBSET
@@ -304,7 +316,7 @@ export default class FraudDetectionView {
       layout.nodeEdgeOverlapAvoided = true
 
       if (!fromScratch) {
-        layout.appendStage(new InitialPositionsStage(layout, this.nodesAdded))
+        layout.appendStage(new InitialPositionsStage(layout))
       }
 
       const organicLayoutData = new OrganicLayoutData({
@@ -322,14 +334,16 @@ export default class FraudDetectionView {
       this.fraudDetectionComponent.graph.mapperRegistry.removeMapper('NODES_ADDED')
     } else {
       const layout = new HierarchicLayout({
-        layoutOrientation: LayoutOrientation.BOTTOM_TO_TOP,
+        layoutOrientation: 'bottom-to-top',
         orthogonalRouting: false,
-        layoutMode: fromScratch ? LayoutMode.FROM_SCRATCH : LayoutMode.INCREMENTAL
+        layoutMode: fromScratch ? 'from-scratch' : 'incremental'
       })
 
       const hierarchicLayoutData = new HierarchicLayoutData()
       if (!fromScratch) {
-        hierarchicLayoutData.incrementalHints.incrementalLayeringNodes = this.incrementalNodes
+        hierarchicLayoutData.incrementalHints.incrementalLayeringNodes = ItemCollection.from(
+          this.incrementalNodes
+        )
       }
 
       layout.prependStage(new PortCalculator())
@@ -340,7 +354,7 @@ export default class FraudDetectionView {
 
     this.fraudDetectionComponent.fitGraphBounds()
     this.layoutFromScratch = false
-    this.incrementalNodes.clear()
+    this.incrementalNodes.length = 0
     this.graphChanged = false
     this.nodesAdded.clear()
   }
@@ -358,31 +372,32 @@ export default class FraudDetectionView {
       allowClipboardOperations: false,
       allowUndoOperations: false,
       allowEditLabelOnDoubleClick: false,
-      clickableItems: GraphItemTypes.NODE,
-      selectableItems: GraphItemTypes.NODE,
-      focusableItems: GraphItemTypes.NONE,
-      showHandleItems: GraphItemTypes.NONE,
-      deletableItems: GraphItemTypes.NONE
+      clickableItems: 'node',
+      selectableItems: 'node',
+      focusableItems: 'none',
+      showHandleItems: 'none',
+      deletableItems: 'none'
     })
     inputMode.marqueeSelectionInputMode.enabled = false
 
     inputMode.addDeletingSelectionListener((sender, args) => {
       const selection = args.selection
-      selection.selectedNodes.forEach(node => {
-        this.filteredGraph.edgesAt(node, AdjacencyTypes.ALL).forEach(edge => {
-          if (!selection.isSelected(edge.opposite(node))) {
-            this.incrementalNodes.add(edge.opposite(node))
+      for (const item of selection) {
+        if (item instanceof INode) {
+          this.filteredGraph.edgesAt(item, AdjacencyTypes.ALL).forEach(edge => {
+            if (!selection.isSelected(edge.opposite(item))) {
+              this.incrementalNodes.push(edge.opposite(item))
+            }
+          })
+        } else if (item instanceof IEdge) {
+          if (!selection.isSelected(item.sourceNode)) {
+            this.incrementalNodes.push(item.sourceNode)
           }
-        })
-      })
-      selection.selectedEdges.forEach(edge => {
-        if (!selection.isSelected(edge.sourceNode)) {
-          this.incrementalNodes.add(edge.sourceNode)
+          if (!selection.isSelected(item.targetNode)) {
+            this.incrementalNodes.push(item.targetNode)
+          }
         }
-        if (!selection.isSelected(edge.targetNode)) {
-          this.incrementalNodes.add(edge.targetNode)
-        }
-      })
+      }
     })
 
     // create the node popup
@@ -406,7 +421,7 @@ export default class FraudDetectionView {
         return
       }
       const item = eventArgs.item
-      if (IEdge.isInstance(item) && this.layoutAlgorithm === FraudDetectionView.HIERARCHIC) {
+      if (IEdge.isInstance(item) && this.layoutStyle === 'hierarchic') {
         eventArgs.toolTip = item.tag.type
 
         // Indicate that the tooltip content has been set.
@@ -446,8 +461,8 @@ export default class FraudDetectionView {
 
   /**
    * Updates the highlights of the hovered node.
-   * @param {IModelItem} oldItem The item that was previously hovered, possibly null
-   * @param {IModelItem} currentItem The currently hovered item
+   * @param {?IModelItem} oldItem The item that was previously hovered, possibly null
+   * @param {!IModelItem} currentItem The currently hovered item
    */
   updateHighlights(oldItem, currentItem) {
     const highlightManager = this.fraudDetectionComponent.highlightIndicatorManager
@@ -537,14 +552,6 @@ export default class FraudDetectionView {
       this.onCloseListener()
     }
   }
-
-  static get ORGANIC() {
-    return 0
-  }
-
-  static get HIERARCHIC() {
-    return 1
-  }
 }
 
 /**
@@ -554,17 +561,15 @@ export default class FraudDetectionView {
 class InitialPositionsStage extends LayoutStageBase {
   /**
    * Creates a new instance of InitialPositionsStage.
-   * @param {ILayoutAlgorithm} layout
-   * @param {IMapper} incrementalNodes
+   * @param {!ILayoutAlgorithm} layout
    */
-  constructor(layout, incrementalNodes) {
+  constructor(layout) {
     super(layout)
-    this.incrementalNodes = incrementalNodes
   }
 
   /**
    * Applies the layout
-   * @param {LayoutGraph} graph The graph to be laid out.
+   * @param {!LayoutGraph} graph The graph to be laid out.
    */
   applyLayout(graph) {
     const nodesAdded = graph.getDataProvider('NODES_ADDED')

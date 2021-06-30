@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -29,8 +29,11 @@
 import {
   DefaultPortCandidate,
   FreeNodePortLocationModel,
+  IEnumerable,
   IInputModeContext,
   INode,
+  IPortCandidate,
+  IPortLocationModelParameter,
   List,
   PortCandidateProviderBase
 } from 'yfiles'
@@ -41,7 +44,7 @@ import {
 export default class NodePortCandidateProvider extends PortCandidateProviderBase {
   /**
    * Creates a new instance of <code>NodePortCandidateProvider</code>.
-   * @param {INode} node The given node.
+   * @param {!INode} node The given node.
    */
   constructor(node) {
     super()
@@ -50,26 +53,25 @@ export default class NodePortCandidateProvider extends PortCandidateProviderBase
 
   /**
    * Returns a list that contains the port candidates.
-   * @param {IInputModeContext} context The context for which the candidates should be provided
+   * @param {!IInputModeContext} context The context for which the candidates should be provided
    * @see Overrides {@link PortCandidateProviderBase#getPortCandidates}
-   * @return {IEnumerable.<IPortCandidate>}
+   * @returns {!IEnumerable.<IPortCandidate>}
    */
   getPortCandidates(context) {
     const candidates = new List()
-    candidates.add(
-      new DefaultPortCandidate(this.node, FreeNodePortLocationModel.NODE_CENTER_ANCHORED)
-    )
-    candidates.add(
-      new DefaultPortCandidate(this.node, FreeNodePortLocationModel.NODE_LEFT_ANCHORED)
-    )
-    candidates.add(new DefaultPortCandidate(this.node, FreeNodePortLocationModel.NODE_TOP_ANCHORED))
-    candidates.add(
-      new DefaultPortCandidate(this.node, FreeNodePortLocationModel.NODE_RIGHT_ANCHORED)
-    )
-    candidates.add(
-      new DefaultPortCandidate(this.node, FreeNodePortLocationModel.NODE_BOTTOM_ANCHORED)
-    )
-
+    candidates.add(this.newCandidate(FreeNodePortLocationModel.NODE_CENTER_ANCHORED))
+    candidates.add(this.newCandidate(FreeNodePortLocationModel.NODE_LEFT_ANCHORED))
+    candidates.add(this.newCandidate(FreeNodePortLocationModel.NODE_TOP_ANCHORED))
+    candidates.add(this.newCandidate(FreeNodePortLocationModel.NODE_RIGHT_ANCHORED))
+    candidates.add(this.newCandidate(FreeNodePortLocationModel.NODE_BOTTOM_ANCHORED))
     return candidates
+  }
+
+  /**
+   * @param {!IPortLocationModelParameter} parameter
+   * @returns {!IPortCandidate}
+   */
+  newCandidate(parameter) {
+    return new DefaultPortCandidate(this.node, parameter)
   }
 }

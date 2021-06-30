@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -30,20 +30,29 @@ import {
   BaseClass,
   Color,
   IAnimation,
+  IMutableRectangle,
+  IRectangle,
   IRenderContext,
   IVisualCreator,
   MutableRectangle,
   PartitionGrid,
+  Rect,
   SvgVisual,
   TimeSpan,
   Visual
 } from 'yfiles'
 
 /**
+ * @typedef {Object} CellId
+ * @property {number} rowIndex
+ * @property {number} columnIndex
+ */
+
+/**
  * Visualizes the partition grid that has been used in the last layout.
- * Each grid cell is visualized as an svg rectangle.
- * This class implements {@link IAnimation} and allows to animate the partition grid changes between two
- * layout calculations.
+ * Each grid cell is visualized as an SVG rectangle.
+ * This class implements {@link IAnimation} and supports animating partition grid changes between
+ * two layout calculations.
  */
 export default class PartitionGridVisualCreator extends BaseClass(IVisualCreator, IAnimation) {
   /**
@@ -53,62 +62,41 @@ export default class PartitionGridVisualCreator extends BaseClass(IVisualCreator
    */
   constructor(rowCount, columnCount) {
     super()
+    this.columnCount = columnCount
+    this.rowCount = rowCount
+    this.rows = []
+    this.rowStarts = []
+    this.rowEnds = []
+    this.columns = []
+    this.columnColors = []
+    this.columnStarts = []
+    this.columnEnds = []
+
+    // The partition grid to be visualized.
+    this.grid = null
+
+    // The selected cell indices.
+    this.selectedCellId = null
+
     this.rowCount = rowCount
     this.columnCount = columnCount
-    this.rows = []
     for (let i = 0; i < rowCount; i++) {
       this.rows.push(new MutableRectangle(0, 0, 10, 10))
     }
-    this.columns = []
     for (let i = 0; i < columnCount; i++) {
       this.columns.push(new MutableRectangle(0, 0, 10, 10))
     }
-    this.$grid = null
-    this.$selectedCellId = null
-    this.duration = TimeSpan.fromMilliseconds(400)
-  }
-
-  /**
-   * Gets the selected cell indices.
-   * @return {Object} An object containing the selected cell's indices
-   */
-  get selectedCellId() {
-    return this.$selectedCellId
-  }
-
-  /**
-   * Sets the selected cell indices.
-   * @param {Object} selectedCellId An object containing the selected cell's indices
-   */
-  set selectedCellId(selectedCellId) {
-    this.$selectedCellId = selectedCellId
-  }
-
-  /**
-   * Sets the partition grid to be visualized.
-   * @param {PartitionGrid} grid The given partition grid
-   */
-  set grid(grid) {
-    this.$grid = grid
-  }
-
-  /**
-   * Returns the partition grid to be visualized.
-   * @return {PartitionGrid} The given partition grid
-   */
-  get grid() {
-    return this.$grid
   }
 
   /**
    * Creates the visual for the given partition grid.
-   * @param {IRenderContext} context The context that describes where the visual will be used
-   * @return {SvgVisual} The visual for the given partition grid
+   * @param {!IRenderContext} context The context that describes where the visual will be used
+   * @returns {!SvgVisual} The visual for the given partition grid
    */
   createVisual(context) {
     const container = document.createElementNS('http://www.w3.org/2000/svg', 'g')
 
-    this.columnColors = generateGradientColor(
+    this.columnColors = generateGradientColors(
       Color.LIGHT_SKY_BLUE,
       Color.ROYAL_BLUE,
       this.columnCount
@@ -122,10 +110,10 @@ export default class PartitionGridVisualCreator extends BaseClass(IVisualCreator
         const cellY2 = this.rows[rowIndex].y + this.rows[rowIndex].height
 
         const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect')
-        rect.setAttribute('x', cellX1)
-        rect.setAttribute('y', cellY1)
-        rect.setAttribute('width', cellX2 - cellX1)
-        rect.setAttribute('height', cellY2 - cellY1)
+        rect.setAttribute('x', cellX1.toString())
+        rect.setAttribute('y', cellY1.toString())
+        rect.setAttribute('width', (cellX2 - cellX1).toString())
+        rect.setAttribute('height', (cellY2 - cellY1).toString())
         rect.setAttribute('stroke', 'white')
         if (
           !this.selectedCellId ||
@@ -137,7 +125,7 @@ export default class PartitionGridVisualCreator extends BaseClass(IVisualCreator
             'fill',
             `rgba(${columnColor.r},${columnColor.g},${columnColor.b},${columnColor.a})`
           )
-          rect.setAttribute('opacity', rowIndex % 2 === 0 ? 0.7 : 0.4)
+          rect.setAttribute('opacity', (rowIndex % 2 === 0 ? 0.7 : 0.4).toString())
         } else {
           rect.setAttribute('fill', 'lightsteelblue')
         }
@@ -149,10 +137,10 @@ export default class PartitionGridVisualCreator extends BaseClass(IVisualCreator
 
   /**
    * Updates the visual for the given partition grid. In particular, method {@link createVisual} is called.
-   * @param {IRenderContext} context The context that describes where the visual will be used
-   * @param {Visual} oldVisual The visual instance that had been returned the last time the createVisual
+   * @param {!IRenderContext} context The context that describes where the visual will be used
+   * @param {!Visual} oldVisual The visual instance that had been returned the last time the createVisual
    *   method was called on this instance
-   * @return {SvgVisual} The visual for the given partition grid
+   * @returns {!SvgVisual} The visual for the given partition grid
    */
   updateVisual(context, oldVisual) {
     return this.createVisual(context)
@@ -161,10 +149,10 @@ export default class PartitionGridVisualCreator extends BaseClass(IVisualCreator
   /**
    * Gets the preferred duration of the animation.
    * @see Specified by {@link IAnimation#preferredDuration}.
-   * @type {TimeSpan}
+   * @type {!TimeSpan}
    */
   get preferredDuration() {
-    return new TimeSpan(this.duration.totalMilliseconds)
+    return TimeSpan.fromMilliseconds(400)
   }
 
   /**
@@ -181,51 +169,53 @@ export default class PartitionGridVisualCreator extends BaseClass(IVisualCreator
     let minEndY = Number.POSITIVE_INFINITY
     let maxEndY = Number.NEGATIVE_INFINITY
 
+    const grid = this.grid
+
     // looking at the y-coordinate and height of each row before and after the layout we can define the
     // minimum/maximum start/end y values for each row
     this.rowStarts = []
     this.rowEnds = []
-    this.grid.rows.forEach((rowDescriptor, index) => {
-      const rowRect = this.rows[index]
-      const startY = rowRect.y
-      const startHeight = rowRect.height
-      minStartY = Math.min(minStartY, rowRect.y)
-      maxStartY = Math.max(maxStartY, rowRect.maxY)
+    if (grid) {
+      grid.rows.forEach((rowDescriptor, index) => {
+        const rowRect = this.rows[index]
+        const startY = rowRect.y
+        const startHeight = rowRect.height
+        minStartY = Math.min(minStartY, rowRect.y)
+        maxStartY = Math.max(maxStartY, rowRect.maxY)
 
-      const endY = rowDescriptor.computedPosition
-      const endHeight = rowDescriptor.computedHeight
-      minEndY = Math.min(minEndY, rowDescriptor.computedPosition)
-      maxEndY = Math.max(maxEndY, rowDescriptor.computedPosition + rowDescriptor.computedHeight)
+        const endY = rowDescriptor.computedPosition
+        const endHeight = rowDescriptor.computedHeight
+        minEndY = Math.min(minEndY, rowDescriptor.computedPosition)
+        maxEndY = Math.max(maxEndY, rowDescriptor.computedPosition + rowDescriptor.computedHeight)
 
-      // for each row we store its layout before and after the layout
-      this.rowStarts.push(
-        new MutableRectangle(minStartX, startY, maxStartX - minStartX, startHeight)
-      )
-      this.rowEnds.push(new MutableRectangle(minEndX, endY, maxEndX - minEndX, endHeight))
-    })
+        // for each row we store its layout before and after the layout
+        this.rowStarts.push(new Rect(minStartX, startY, maxStartX - minStartX, startHeight))
+        this.rowEnds.push(new Rect(minEndX, endY, maxEndX - minEndX, endHeight))
+      })
+    }
 
     // looking at the x-coordinate and width of each column before and after the layout we can define the
     // minimum/maximum start/end x values for each column
     this.columnStarts = []
     this.columnEnds = []
-    this.grid.columns.forEach((columnDescriptor, index) => {
-      const columnRect = this.columns[index]
-      const startX = columnRect.x
-      const startWidth = columnRect.width
-      minStartX = Math.min(minStartX, startX)
-      maxStartX = Math.max(maxStartX, startX + startWidth)
+    if (grid) {
+      grid.columns.forEach((columnDescriptor, index) => {
+        const columnRect = this.columns[index]
+        const startX = columnRect.x
+        const startWidth = columnRect.width
+        minStartX = Math.min(minStartX, startX)
+        maxStartX = Math.max(maxStartX, startX + startWidth)
 
-      const endX = columnDescriptor.computedPosition
-      const endWidth = columnDescriptor.computedWidth
-      minEndX = Math.min(minEndX, endX)
-      maxEndX = Math.max(maxEndX, endX + endWidth)
+        const endX = columnDescriptor.computedPosition
+        const endWidth = columnDescriptor.computedWidth
+        minEndX = Math.min(minEndX, endX)
+        maxEndX = Math.max(maxEndX, endX + endWidth)
 
-      // for each column we store its layout before and after the layout
-      this.columnStarts.push(
-        new MutableRectangle(startX, minStartY, startWidth, maxStartY - minStartY)
-      )
-      this.columnEnds.push(new MutableRectangle(endX, minEndY, endWidth, maxEndY - minEndY))
-    })
+        // for each column we store its layout before and after the layout
+        this.columnStarts.push(new Rect(startX, minStartY, startWidth, maxStartY - minStartY))
+        this.columnEnds.push(new Rect(endX, minEndY, endWidth, maxEndY - minEndY))
+      })
+    }
   }
 
   /**
@@ -262,23 +252,22 @@ export default class PartitionGridVisualCreator extends BaseClass(IVisualCreator
    */
   cleanUp() {
     this.grid = null
-    this.rowStarts = null
-    this.rowEnds = null
-    this.columnStarts = null
-    this.columnEnds = null
+    this.rowStarts = []
+    this.rowEnds = []
+    this.columnStarts = []
+    this.columnEnds = []
   }
 }
 
 /**
- * Generate an array of gradient colors between the start color and the end color.
- * @param {Color} startColor The start color
- * @param {Color} endColor The end color
+ * Generates an array of gradient colors between the start color and the end color.
+ * @param {!Color} startColor The start color
+ * @param {!Color} endColor The end color
  * @param {number} count The number of gradient colors to be generated
- * @return {Array} An array of gradient colors between the start color and the end color
+ * @returns {!Array.<Color>} An array of gradient colors between the start color and the end color
  */
-function generateGradientColor(startColor, endColor, count) {
+export function generateGradientColors(startColor, endColor, count) {
   const colors = []
-
   for (let i = 0; i < count; i++) {
     const r = (startColor.r * (count - i) + endColor.r * i) / count
     const g = (startColor.g * (count - i) + endColor.g * i) / count

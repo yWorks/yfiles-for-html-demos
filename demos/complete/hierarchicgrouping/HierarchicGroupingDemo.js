@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -38,6 +38,7 @@ import {
   HierarchicLayoutRoutingStyle,
   ICommand,
   IGraph,
+  IPoint,
   LayoutMode,
   License,
   Point,
@@ -53,10 +54,12 @@ import loadJson from '../../resources/load-json.js'
 import GraphData from './sample-graph.js'
 import HierarchicGrouping from './HierarchicGrouping.js'
 
+/** @type {GraphComponent} */
 let graphComponent = null
 
 /**
  * This demo shows how to nicely expand and collapse sub-graphs organized in groups.
+ * @param {!object} licenseData
  */
 function run(licenseData) {
   License.value = licenseData
@@ -70,8 +73,7 @@ function run(licenseData) {
   graphComponent.inputMode = new GraphViewerInputMode()
 
   // set up the HierarchicGrouping
-  const hierarchicGrouping = new HierarchicGrouping()
-  hierarchicGrouping.setUp(graphComponent)
+  new HierarchicGrouping(graphComponent)
 
   // enable folding
   const foldingManager = new FoldingManager()
@@ -104,11 +106,12 @@ function run(licenseData) {
 /**
  * Builds the graph using the JSON Data
  * After building the graph, a hierarchic layout is applied.
- * @param {IGraph} graph The folding view
+ * @param {!IGraph} graph The folding view
  */
 function buildGraph(graph) {
   // Create the builder on the master graph
-  const builder = createGraphBuilder(graph.foldingView.manager.masterGraph)
+  const foldingView = graph.foldingView
+  const builder = createGraphBuilder(foldingView.manager.masterGraph)
 
   // Build the master graph from the data
   builder.buildGraph()
@@ -134,7 +137,7 @@ function buildGraph(graph) {
   // collapsing the groups whose tags are collapsed
   graph.nodes.toArray().forEach(node => {
     if (node.tag.collapsed) {
-      graph.foldingView.collapse(node)
+      foldingView.collapse(node)
     }
   })
 
@@ -154,8 +157,8 @@ function buildGraph(graph) {
 
 /**
  * Creates and configures the {@link GraphBuilder}.
- * @param {IGraph} masterGraph The master graph of the {@link GraphComponent}
- * @return {GraphBuilder}
+ * @param {!IGraph} masterGraph The master graph of the {@link GraphComponent}
+ * @returns {!GraphBuilder}
  */
 function createGraphBuilder(masterGraph) {
   const graphBuilder = new GraphBuilder(masterGraph)

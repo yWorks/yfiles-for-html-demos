@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -38,6 +38,7 @@ import {
   IEdgeLabelLayout,
   INodeLabelLayout,
   LayoutGraph,
+  LayoutGraphUtilities,
   LayoutOrientation,
   License,
   SwimlaneDescriptor,
@@ -57,7 +58,7 @@ function run(licenseData) {
 
   // create the graph in memory
   const layoutGraph = new DefaultLayoutGraph()
-  const labelFactory = layoutGraph.createLabelFactory()
+  const labelFactory = LayoutGraphUtilities.getLabelFactory(layoutGraph)
 
   // define some convenience methods to create elements
   function createNode(x, y, width, height) {
@@ -263,12 +264,12 @@ function log(value) {
   if (arguments.length === 0) {
     value = ''
   }
-  logElement.textContent += value + `\n`
+  logElement.textContent += `${value}\n`
 }
 
 /* launch the demo */
 loadJson()
   .then(run)
   .catch(e => {
-    log('Error' + e)
+    log(`Error ${e}`)
   })

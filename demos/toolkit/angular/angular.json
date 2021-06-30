@@ -4,9 +4,15 @@
   "newProjectRoot": "projects",
   "projects": {
     "angular-cli": {
+      "projectType": "application",
+      "schematics": {
+        "@schematics/angular:application": {
+          "strict": true
+        }
+      },
       "root": "",
       "sourceRoot": "src",
-      "projectType": "application",
+      "prefix": "app",
       "architect": {
         "build": {
           "builder": "@angular-builders/custom-webpack:browser",
@@ -17,66 +23,53 @@
             "outputPath": "dist",
             "index": "src/index.html",
             "main": "src/main.ts",
-            "tsConfig": "src/tsconfig.json",
             "polyfills": "src/polyfills.ts",
+            "tsConfig": "src/tsconfig.json",
             "assets": ["src/assets"],
-            "styles": ["../../resources/style/demo.css", "../../../lib-dev/es-modules/yfiles.css"]
+            "styles": ["../../resources/style/demo.css"],
+            "webWorkerTsConfig": "tsconfig.worker.json"
           },
           "configurations": {
             "production": {
-              "optimization": true,
-              "outputHashing": "all",
-              "sourceMap": false,
-              "extractCss": true,
-              "namedChunks": false,
-              "aot": true,
-              "extractLicenses": true,
-              "vendorChunk": false,
-              "buildOptimizer": true,
               "fileReplacements": [
                 {
                   "replace": "src/environments/environment.ts",
                   "with": "src/environments/environment.prod.ts"
                 }
-              ]
+              ],
+              "outputHashing": "all"
+            },
+            "development": {
+              "buildOptimizer": false,
+              "optimization": false,
+              "vendorChunk": true,
+              "extractLicenses": false,
+              "sourceMap": true,
+              "namedChunks": true
             }
-          }
+          },
+          "defaultConfiguration": "production"
         },
         "serve": {
           "builder": "@angular-builders/custom-webpack:dev-server",
-          "options": {
-            "browserTarget": "angular-cli:build"
-          },
           "configurations": {
             "production": {
               "browserTarget": "angular-cli:build:production"
+            },
+            "development": {
+              "browserTarget": "angular-cli:build:development"
             }
-          }
+          },
+          "defaultConfiguration": "development"
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
             "browserTarget": "angular-cli:build"
           }
-        },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": [],
-            "exclude": []
-          }
         }
       }
     }
   },
-  "defaultProject": "angular-cli",
-  "schematics": {
-    "@schematics/angular:component": {
-      "prefix": "app",
-      "style": "css"
-    },
-    "@schematics/angular:directive": {
-      "prefix": "app"
-    }
-  }
+  "defaultProject": "angular-cli"
 }

@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -29,7 +29,6 @@
 import {
   BaseClass,
   Class,
-  Enum,
   ILookup,
   INode,
   IPort,
@@ -40,25 +39,26 @@ import {
 } from 'yfiles'
 
 /**
- * An enumeration for right or left port position.
+ * @readonly
+ * @enum {number}
  */
-const PortPosition = Enum('PortPosition', {
+const PortPosition = {
   LEFT: 1,
   RIGHT: 2
-})
+}
 
 /**
  * A simple PortLocationModel that allows ports to be placed in the center left or center right
- * location of the node. This implementation also considers the lead and followUp time.
+ * location of the node. This implementation also considers lead and followUp time.
  */
 export default class ActivityNodePortLocationModel extends BaseClass(IPortLocationModel) {
   /**
    * Calculates the port location for a parameter. Places the port at the right or left side of a node.
-   * @param {IPort} port - The port to determine the location for.
-   * @param {IPortLocationModelParameter} locationParameter - The parameter to use. The parameter can be
-   *   expected to be created by this instance having the {@link IPortLocationModelParameter#model}
-   *   property set to this instance..
-   * @returns {Point}
+   * @param {!IPort} port The port to determine the location for.
+   * @param {!IPortLocationModelParameter} locationParameter The parameter to use. The parameter can be expected to be created by
+   * this instance having the {@link IPortLocationModelParameter#model} property set to this
+   * instance.
+   * @returns {!Point}
    */
   getLocation(port, locationParameter) {
     const node = port.owner
@@ -83,26 +83,27 @@ export default class ActivityNodePortLocationModel extends BaseClass(IPortLocati
     return layout.center // use the node center as fallback.
   }
 
-  /** Creates a suitable parameter for a location.
-   * @param {IPortOwner} owner - The port owner that will own the port for which the parameter shall be
-   *   created.
-   * @param {Point} location - The location in the world coordinate system that should be matched as
-   *   best as possible.
-   * @returns {IPortLocationModelParameter}
+  /**
+   * Creates a suitable parameter for a location.
+   * @param {!IPortOwner} owner The port owner that will own the port for which the parameter shall be created.
+   * @param {!Point} location The location in the world coordinate system that should be matched as best as
+   * possible.
+   * @returns {!IPortLocationModelParameter}
    */
   createParameter(owner, location) {
+    const node = owner
     // see if we are in the right or the left half of the node
-    if (owner.layout && location.x > owner.layout.center.x) {
+    if (node.layout && location.x > node.layout.center.x) {
       return ActivityNodePortLocationModel.RIGHT
     }
     return ActivityNodePortLocationModel.LEFT
   }
 
   /**
-   * @param {IPort} port - The port to use in the context.
-   * @param {IPortLocationModelParameter} locationParameter - The parameter to use for the port in the
-   *   context.
-   * @returns {ILookup}
+   * Returns the empty lookup.
+   * @param {!IPort} port The port to use in the context.
+   * @param {!IPortLocationModelParameter} locationParameter  The parameter to use for the port in the context.
+   * @returns {!ILookup}
    */
   getContext(port, locationParameter) {
     // no special types to lookup
@@ -110,21 +111,31 @@ export default class ActivityNodePortLocationModel extends BaseClass(IPortLocati
   }
 
   /**
-   * @param {Class} type - the type for which an instance shall be returned
+   * Returns always null.
+   * @param {!Class} type the type for which an instance shall be returned
    * @returns {*}
    */
   lookup(type) {
     return null
   }
 
+  /**
+   * @type {!ActivityNodePortLocationModel}
+   */
   static get INSTANCE() {
     return instance
   }
 
+  /**
+   * @type {!ActivityNodePortLocationModelParameter}
+   */
   static get LEFT() {
     return left
   }
 
+  /**
+   * @type {!ActivityNodePortLocationModelParameter}
+   */
   static get RIGHT() {
     return right
   }
@@ -135,43 +146,36 @@ export default class ActivityNodePortLocationModel extends BaseClass(IPortLocati
  */
 class ActivityNodePortLocationModelParameter extends BaseClass(IPortLocationModelParameter) {
   /**
-   * @param {PortPosition} position
-   * @param {ActivityNodePortLocationModel} model
+   * @param {!PortPosition} position
+   * @param {!ActivityNodePortLocationModel} model
    */
   constructor(position, model) {
     super()
-    this.$position = position
-    this.$model = model
+    this.position = position
+    this._model = model
   }
 
   /**
-   * @returns {PortPosition}
-   */
-  get position() {
-    return this.$position
-  }
-
-  /**
-   * @returns {IPortLocationModel}
+   * @type {!ActivityNodePortLocationModel}
    */
   get model() {
-    return this.$model
+    return this._model
   }
 
   /**
-   * @param {IPortOwner} owner - The port owner to test.
+   * Returns true if the given owner is a node.
+   * @param {!IPortOwner} owner The port owner to test.
    * @returns {boolean}
    */
   supports(owner) {
-    // this implementation supports only nodes
-    return INode.isInstance(owner)
+    return owner instanceof INode
   }
 
   /**
-   * @returns {ActivityNodePortLocationModelParameter}
+   * @returns {*}
    */
   clone() {
-    return new ActivityNodePortLocationModelParameter(this.$position, this.$model)
+    return new ActivityNodePortLocationModelParameter(this.position, this.model)
   }
 }
 

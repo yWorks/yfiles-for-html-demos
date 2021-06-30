@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -172,13 +172,13 @@ function createGraphMLIOHandler(): GraphMLIOHandler {
     graphMLIOHandler.addInputMapper(
       INode.$class,
       YObject.$class,
-      (element: Element): boolean => GraphMLIOHandler.matchesName(element!, DATE_TIME_MAPPER_KEY),
+      (element: Element): boolean => GraphMLIOHandler.matchesName(element, DATE_TIME_MAPPER_KEY),
       dateMapper,
       (sender: object, e: any): void => {
         // The actual value is a text node that can be retrieved from the event
         try {
           const stringValue = e.xmlNode.textContent
-          e.result = JSON.parse(stringValue!, (key: string, val: any): any => new Date(val))
+          e.result = JSON.parse(stringValue, (key: string, val: any): any => new Date(val))
         } catch (exception) {
           if (typeof window.console !== 'undefined') {
             window.console.log(exception)

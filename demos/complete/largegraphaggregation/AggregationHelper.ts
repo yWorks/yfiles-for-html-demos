@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -264,6 +264,7 @@ export class AggregationHelper {
    * Gets the descendant {@link NodeAggregate} with the highest {@link NodeAggregate#descendantWeightSum}.
    */
   private static getMostImportantDescendant(aggregate: NodeAggregate): NodeAggregate {
+    // eslint-disable-next-line no-constant-condition
     while (true) {
       const maxChild = aggregate.children.reduce((max, child) =>
         child.descendantWeightSum > max.descendantWeightSum ? child : max
@@ -367,15 +368,8 @@ export class AggregationHelper {
    * Replaces original edges adjacent to a placeholder node with aggregation edges when source and target are currently visible.
    */
   private $replaceEdges(node: INode): void {
-    let originalNode: INode | null
-    let tmp
-    const aggregationInfo =
-      (tmp = node.tag) instanceof AggregationNodeInfo ? (tmp as AggregationNodeInfo) : null
-    if (aggregationInfo) {
-      originalNode = aggregationInfo.aggregate.node
-    } else {
-      originalNode = node
-    }
+    const aggregationInfo = node.tag instanceof AggregationNodeInfo ? node.tag : null
+    const originalNode = aggregationInfo ? aggregationInfo.aggregate.node : node
 
     if (!originalNode) {
       return

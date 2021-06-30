@@ -1,0 +1,1016 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- ////////////////////////////////////////////////////////////////////////
+     // @license
+     // This demo file is part of yFiles for HTML 2.4.
+     // Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // 72070 Tuebingen, Germany. All rights reserved.
+     //
+     // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+     // of demo files in source code or binary form, with or without
+     // modification, is not permitted.
+     //
+     // Owners of a valid software license for a yFiles for HTML version that this
+     // demo is shipped with are allowed to use the demo source code as basis
+     // for their own yFiles for HTML powered applications. Use of such programs is
+     // governed by the rights and conditions as set out in the yFiles for HTML
+     // license agreement.
+     //
+     // THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+     // WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+     // MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+     // NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+     // SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+     // TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+     // PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+     // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+     // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+     // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+     // 
+     ////////////////////////////////////////////////////////////////////////-->
+
+<!--Created by yFiles for HTML 2.4-layout1-->
+<graphml xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://www.yworks.com/xml/schema/graphml.html/2.0/ygraphml.xsd " xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:demostyle="http://www.yworks.com/yFilesHTML/demos/FlatDemoStyle/1.0" xmlns:icon-style="http://www.yworks.com/yed-live/icon-style/1.0" xmlns:bpmn="http://www.yworks.com/xml/yfiles-bpmn/2.0" xmlns:demotablestyle="http://www.yworks.com/yFilesHTML/demos/FlatDemoTableStyle/1.0" xmlns:uml="http://www.yworks.com/yFilesHTML/demos/UMLDemoStyle/1.0" xmlns:GraphvizNodeStyle="http://www.yworks.com/yFilesHTML/graphviz-node-style/1.0" xmlns:VuejsNodeStyle="http://www.yworks.com/demos/yfiles-vuejs-node-style/1.0" xmlns:explorer-style="http://www.yworks.com/data-explorer/1.0" xmlns:y="http://www.yworks.com/xml/yfiles-common/3.0" xmlns:x="http://www.yworks.com/xml/yfiles-common/markup/3.0" xmlns:yjs="http://www.yworks.com/xml/yfiles-for-html/2.0/xaml" xmlns:sys="http://www.yworks.com/xml/yfiles-common/markup/primitives/2.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<key id="d0" for="node" attr.type="int" attr.name="zOrder" y:attr.uri="http://www.yworks.com/xml/yfiles-z-order/1.0/zOrder"/>
+	<key id="d1" for="node" attr.type="boolean" attr.name="Expanded" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/folding/Expanded">
+		<default>true</default>
+	</key>
+	<key id="d2" for="node" attr.type="string" attr.name="url"/>
+	<key id="d3" for="node" attr.type="string" attr.name="description"/>
+	<key id="d4" for="node" attr.name="NodeLabels" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/NodeLabels"/>
+	<key id="d5" for="node" attr.name="NodeGeometry" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/NodeGeometry"/>
+	<key id="d6" for="all" attr.name="UserTags" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/UserTags"/>
+	<key id="d7" for="node" attr.name="NodeStyle" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/NodeStyle"/>
+	<key id="d8" for="node" attr.name="NodeViewState" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/folding/1.1/NodeViewState"/>
+	<key id="d9" for="edge" attr.type="string" attr.name="url"/>
+	<key id="d10" for="edge" attr.type="string" attr.name="description"/>
+	<key id="d11" for="edge" attr.name="EdgeLabels" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/EdgeLabels"/>
+	<key id="d12" for="edge" attr.name="EdgeGeometry" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/EdgeGeometry"/>
+	<key id="d13" for="edge" attr.name="EdgeStyle" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/EdgeStyle"/>
+	<key id="d14" for="edge" attr.name="EdgeViewState" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/folding/1.1/EdgeViewState"/>
+	<key id="d15" for="port" attr.name="PortLabels" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/PortLabels"/>
+	<key id="d16" for="port" attr.name="PortLocationParameter" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/PortLocationParameter">
+		<default>
+			<x:Static Member="y:FreeNodePortLocationModel.NodeCenterAnchored"/>
+		</default>
+	</key>
+	<key id="d17" for="port" attr.name="PortStyle" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/PortStyle">
+		<default>
+			<x:Static Member="y:VoidPortStyle.Instance"/>
+		</default>
+	</key>
+	<key id="d18" for="port" attr.name="PortViewState" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/folding/1.1/PortViewState"/>
+	<key id="d19" attr.name="SharedData" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/SharedData"/>
+	<data key="d19">
+		<y:SharedData>
+			<sys:String x:Key="1">data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI3MCIgaGVpZ2h0PSI3MCIgdmlld0JveD0iMCAwIDcwIDcwIj4NCiAgPHBhdGggZmlsbD0iIzlDRDdGRiIgZD0iTTkuNTggNDUuODVhMjcuNTQgMjcuNTQgMCAxIDEgNTAuMjkgMGw0LjQxIDIuMDNhMzIuNCAzMi40IDAgMSAwLTU5LjEyIDBsNC40Mi0yLjAzeiIvPg0KICA8cGF0aCBmaWxsPSIjOWNkN2ZmIiBkPSJNMTguNDIgNDEuOGExNy44MiAxNy44MiAwIDEgMSAzMi42IDBsNC40MiAyLjAyYTIyLjY4IDIyLjY4IDAgMSAwLTQxLjQzIDBsNC40LTIuMDN6Ii8+DQogIDxwYXRoIGZpbGw9IiM5Y2Q3ZmYiIGQ9Ik0yNy4yNSAzNy43NGE4LjEgOC4xIDAgMSAxIDE0Ljk1IDBsNC40MSAyLjAzYTEyLjk2IDEyLjk2IDAgMSAwLTIzLjc4IDBsNC40Mi0yLjAzeiIvPg0KICA8cGF0aCBmaWxsPSIjYWZhZmFmIiBkPSJNMjEuNDggNTIuMjJjMCAuNjUtLjUzIDEuMTgtMS4xOCAxLjE4aC0uMTRjLS42NSAwLTEuMTgtLjUzLTEuMTgtMS4xOHYtMjkuOGMwLS42NC41My0xLjE3IDEuMTgtMS4xN2guMTRjLjY1IDAgMS4xOC41MyAxLjE4IDEuMTh2MjkuOHptMjkuNCAwYzAgLjY1LS41MyAxLjE4LTEuMTggMS4xOGgtLjE0Yy0uNjUgMC0xLjE4LS41My0xLjE4LTEuMTh2LTI5LjhjMC0uNjQuNTMtMS4xNyAxLjE4LTEuMTdoLjE0Yy42NSAwIDEuMTguNTMgMS4xOCAxLjE4djI5Ljh6Ii8+DQogIDxwYXRoIGZpbGw9IiNhZmFmYWYiIGQ9Ik02Ni4xOCA1Ni41NWguMDJsLS4wNi0uMDItLjA4LS4wNC0xMC40My01LjE3YTE0LjIgMTQuMiAwIDAgMC00LjQ1LTEuMjNzLTQuNzgtLjM2LTE1LjktLjM2Yy05LjEgMC0xNi4zNi40LTE2LjM2LjQtMS4zLjA4LTMuMy42LTQuNDYgMS4xOEw0LjMzIDU2LjM1YTIuNiAyLjYgMCAwIDAtMS44NyAyLjQ0djUuODhhMi42IDIuNiAwIDAgMCAyLjM1IDIuNTRzMTEuOTYuOTggMzAuMi45OWMxOC44IDAgMzAuMTktLjk4IDMwLjE5LS45OGEyLjYyIDIuNjIgMCAwIDAgMi4zNC0yLjU1di01Ljg4YzAtLjk0LS41Ni0xLjgtMS4zNi0yLjI0em0tMzAuNzMtMS4yOWgtLjI2LjI2em0tMS41NiAwaC0uMTMuMTN6Ii8+DQogIDxwYXRoIGZpbGw9IiM1ZGFjZTIiIGQ9Ik01MS42MiA1Ni41NWguMDFsLS4wMy0uMDItLjA0LS4wNC01LjU4LTUuNjZhNS4yMiA1LjIyIDAgMCAwLTIuMzgtMS4yM3MtMi41NS0uMzctOC40Ny0uMzdjLTQuODUgMC04LjczLjQxLTguNzMuNDEtLjY4LjA3LTEuNzUuNi0yLjM3IDEuMThsLTUuMzggNS41M2MtLjU3LjMtMSAxLjMxLTEgMi40NHY2LjY4YzAgMS4zLjU3IDIuNDQgMS4yNiAyLjU1IDAgMCA2LjM3Ljk4IDE2LjEuOTggMTAuMDIgMCAxNi4wOS0uOTcgMTYuMDktLjk3LjY5LS4xMSAxLjI1LTEuMjcgMS4yNS0yLjU2di02LjY4YzAtLjk0LS4zLTEuOC0uNzMtMi4yNHptLTE2LjM4LTEuMjloLS4xNC4xNHptLS44MyAwaC0uMDcuMDd6Ii8+DQogIDxwYXRoIGQ9Ik02NS4wNCA1OS45MWgyLjY1djEuMDhoLTIuNjV6bS0yNS44OCAyLjU3aDQuMDJsLjA2IDIuMzFoLTQuMDJ6bS02LjIzLjIyaDQuMDJMMzcgNjVoLTQuMDJ6bS02LjIzLS4yMmg0LjAybC4wNiAyLjMxaC00LjAyem0xOC42OS0uMjloNC4wMmwuMDYgMi4zaC00LjAyem0tMjQuOTIgMGg0LjAybC4wNiAyLjNoLTQuMDJ6IiBmaWxsPSIjQzhGRjAwIiBzdHJva2U9IiM3MTcxNzEiIHN0cm9rZS13aWR0aD0iLjA2IiBzdHJva2UtbWl0ZXJsaW1pdD0iMTAiLz4NCjwvc3ZnPg==</sys:String>
+			<sys:String x:Key="2">data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI3MCIgaGVpZ2h0PSI3MCIgdmlld0JveD0iMCAwIDcwIDcwIj4NCiAgPHBhdGggZmlsbD0iI2FmYWZhZiIgZD0iTTU0LjY1IDU5LjQ4Yy4xOS40Ni0uMDYuODQtLjU2Ljg0SDMuOWMtLjUgMC0uNi0uMjgtLjIzLS42bDguMDItNy4yYy4zNy0uMzMgMS4wOS0uNiAxLjU5LS42aDM3LjI1Yy41IDAgMS4wNy4zNyAxLjI3LjgzbDIuODYgNi43M3oiLz4NCiAgPHBhdGggZmlsbD0ibm9uZSIgc3Ryb2tlPSIjOEQ4RDhEIiBzdHJva2Utd2lkdGg9Ii4yNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBzdHJva2UtbWl0ZXJsaW1pdD0iMTAiIGQ9Ik01NC42NSA1OS40OGMuMTkuNDYtLjA2Ljg0LS41Ni44NEgzLjljLS41IDAtLjYtLjI4LS4yMy0uNmw4LjAyLTcuMmMuMzctLjMzIDEuMDktLjYgMS41OS0uNmgzNy4yNWMuNSAwIDEuMDcuMzcgMS4yNy44M2wyLjg2IDYuNzN6Ii8+DQogIDxwYXRoIGZpbGw9IiM3MTcxNzEiIGQ9Ik0zNS40MyA1OC4xM2MwIC4yNS0uMi40Ni0uNDYuNDZINy4zNGMtLjI1IDAtLjMtLjE0LS4xMi0uM2w1LjYzLTUuMTZjLjE5LS4xNy41NC0uMzEuOC0uMzFoMjEuMzNjLjI1IDAgLjQ1LjIuNDUuNDV2NC44NnptOC42Mi4wM2EuNy43IDAgMCAwIC42LjQzaDcuNDdjLjI1IDAgLjM4LS4xOS4yOC0uNDJsLTIuMDUtNC45M2EuNzUuNzUgMCAwIDAtLjYzLS40MmgtNy4xN2MtLjI1IDAtLjM4LjE5LS4zLjQzbDEuOCA0Ljkxem0tNy44NS0uMDNjMCAuMjUuMi40Ni40Ni40Nmg2LjEzYy4yNSAwIC4zOC0uMi4zLS40M2wtLjE2LS40YS43LjcgMCAwIDAtLjYyLS40MmwtMS4wNC4wMmEuNjIuNjIgMCAwIDEtLjU4LS40M2wtLjAyLS4wOWEuNjIuNjIgMCAwIDAtLjU3LS40NGgtMS4zYS40NC40NCAwIDAgMC0uNDQuNDZ2LjA2YS40My40MyAwIDAgMS0uNDMuNDZsLTEuMjYuMDJhLjQ2LjQ2IDAgMCAwLS40Ni40NnYuMjd6bTAtMy41NmMwIC4yNS4yLjQ1LjQ2LjQ1aDQuODRjLjI1IDAgLjQtLjIuMzItLjQ0bC0uNC0xLjMzYS42NS42NSAwIDAgMC0uNTgtLjQ0aC00LjE4Yy0uMjUgMC0uNDYuMi0uNDYuNDZ2MS4zeiIvPg0KICA8cGF0aCBmaWxsPSIjNmU2ZTZlIiBkPSJNNTAuMzYgNDguMDhjMCAuOTYtNi43NiAxLjQtMTIuMzcgMS40LTMuOSAwLTEwLjkyLS4zNS0xMS4zNy0xLjI3djEuNjZjMCAuNzMgNC44IDEuMjQgMTEuMzYgMS4yNCA2LjU1IDAgMTIuMzgtLjY0IDEyLjM4LTEuMzZ2LTEuNjd6Ii8+DQogIDxwYXRoIGZpbGw9ImdyYXkiIGQ9Ik0zOC40OSA0Ni44N2M2LjU2IDAgMTEuODcuNTggMTEuODcgMS4zIDAgLjczLTUuMzEgMS40My0xMS44NyAxLjQzLTYuNyAwLTExLjg3LS43LTExLjg3LTEuNDJzNS4zMi0xLjMxIDExLjg3LTEuMzF6Ii8+DQogIDxwYXRoIGZpbGw9IiM2ZTZlNmUiIGQ9Ik00MS4wNSA0OC40NnMtMS40OC4xLTIuNS4xLTIuNS0uMS0yLjUtLjF2LTkuNzdoNXY5Ljc3eiIvPg0KICA8cGF0aCBmaWxsPSIjNmU2ZTZlIiBkPSJNMTIuNzYgOS42OGMwLTEuMS45LTIgMi0yaDQ4LjI1YTIgMiAwIDAgMSAyIDJ2MzAuMDhhMiAyIDAgMCAxLTIgMkgxNC43NmEyIDIgMCAwIDEtMi0yVjkuNjh6Ii8+DQogIDxwYXRoIGZpbGw9IiNhZmFmYWYiIGQ9Ik0xMy43OSAxMC43YzAtMS4xLjktMiAyLTJoNDYuNDNhMiAyIDAgMCAxIDIgMnYyNy44MWEyIDIgMCAwIDEtMiAySDE1Ljc5YTIgMiAwIDAgMS0yLTJ2LTI3Ljh6Ii8+DQogIDxwYXRoIGZpbGw9IiM2MWFjZTAiIGQ9Ik0xNC4zNSAxMS4xNmMwLTEuMS45LTIgMi0yaDQ1LjNhMiAyIDAgMCAxIDIgMnYyNi45YTIgMiAwIDAgMS0yIDJoLTQ1LjNhMiAyIDAgMCAxLTItMnYtMjYuOXoiLz4NCiAgPHBhdGggZmlsbD0iI0M5QzlDOSIgZD0iTTYyLjA5IDU0LjE2YTIuNjYgMi42NiAwIDAgMS0uNzEtLjQ4Yy4yNy4xNS41LjMyLjcuNDh6Ii8+DQogIDxwYXRoIGZpbGw9IiNhZmFmYWYiIGQ9Ik02Mi4wOCA1NC4xNmguMDFjLjA5LjAzLjE2LjAzLjIyLS4wMi4wMiAwIC4wMy0uMDIuMDQtLjA0LjYtLjEyIDEuMzMtLjE1IDIuMi0uMDggMi4wMyAxLjU0IDMuNzYgNC42MiAxLjE3IDUuOC0yLjA0LjkzLTMuNTQuNzgtNC43Mi0uNDlhMTUuMTMgMTUuMTMgMCAwIDEtMS43My0yLjI2Yy4yNy0xLjE0LjktMi40NSAyLjgxLTIuOTF6Ii8+DQogIDxwYXRoIGZpbGw9IiNhZmFmYWYiIGQ9Ik01OS4yNyA1Ny4wN2MtLjktMS40NC0xLjM1LTIuODctLjY2LTMuNTQuMjQtLjIzLjU0LS40Mi44Ni0uNTYuNi4wNiAxLjMuMzUgMS45LjcuMjguMjMuNTMuNDMuNy40OC0xLjkuNDctMi41MyAxLjc4LTIuOCAyLjkyeiIvPg0KICA8cGF0aCBmaWxsPSIjYWZhZmFmIiBkPSJNNTkuNDcgNTIuOThjMS4zNS0uNTcgMy4yOS0uMjcgNC45Ni45NWwuMTEuMDlhMTAgMTAgMCAwIDAtMi40Mi4wOGMtLjExLS4xLS43Ny0uNDUtLjc1LS40M2E0LjkgNC45IDAgMCAwLTEuOS0uN3oiLz4NCiAgPHBhdGggZmlsbD0ibm9uZSIgc3Ryb2tlPSIjNzE3MTcxIiBzdHJva2Utd2lkdGg9Ii4xMSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbWl0ZXJsaW1pdD0iMTAiIGQ9Ik01OS40NyA1Mi45OGMxLjM1LS41NyAzLjI5LS4yNyA0Ljk2Ljk1bC4xMS4wOWMyLjAzIDEuNTQgMy43NyA0LjYyIDEuMTggNS44LTIuMDQuOTMtMy41NC43OC00LjcyLS40OWExNS4yNyAxNS4yNyAwIDAgMS0xLjczLTIuMjZjLS44OS0xLjQ0LTEuMzUtMi44Ny0uNjYtMy41My4yNC0uMjQuNTQtLjQzLjg2LS41NnoiLz4NCiAgPHBhdGggZmlsbD0ibm9uZSIgc3Ryb2tlPSIjNzE3MTcxIiBzdHJva2Utd2lkdGg9Ii4xMSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbWl0ZXJsaW1pdD0iMTAiIGQ9Ik02Mi4wOSA1NC4xNmwuMjYtLjA2Yy42LS4xMiAxLjMzLS4xNSAyLjItLjA5bS01LjI4IDMuMDd2LS4wMWMuMjctMS4xNC45LTIuNDQgMi44Mi0yLjkxbS0uNzItLjQ5YTQuOSA0LjkgMCAwIDAtMS45LS43bTIuNjIgMS4xOWE1LjYgNS42IDAgMCAwLS43MS0uNDgiLz4NCiAgPHBhdGggZmlsbD0iIzRENEQ0RCIgZD0iTTYxLjU3IDUzLjVjLjM1LjI2LjQ0LjQ4LjU1LjZsLS4yNi4wNmMtLjM2LS40LTEtLjY3LS45Ni0uNzMuMS0uMTQuNDctLjA4LjY3LjA3eiIvPg0KPC9zdmc+</sys:String>
+			<y:ExteriorLabelModelParameter x:Key="3" Position="North" Model="{y:GraphMLReference 5}"/>
+			<yjs:Font x:Key="4" fontSize="12" fontFamily="'Arial'"/>
+			<y:ExteriorLabelModel x:Key="5" Insets="5"/>
+			<sys:String x:Key="6">data:image/svg+xml;base64,PHN2ZyBpZD0ibGFwdG9wIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI3MHB4IiBoZWlnaHQ9IjcwcHgiIHZpZXdCb3g9IjAgMCA3MCA3MCI+DQogIDxwYXRoIGQ9Ik0xMS44IDkuNWMwLTEgLjgtMS44IDEuOC0xLjhoNDMuM2MxIDAgMS44LjggMS44IDEuOHYyN2MwIDEtLjggMS44LTEuOCAxLjhIMTMuNmMtMSAwLTEuOC0uOC0xLjgtMS44di0yN3oiIGZpbGw9IiNhZmFmYWYiLz4NCiAgPHBhdGggZmlsbD0iIzZlNmU2ZSIgZD0iTTEyLjcgMTAuNGMwLTEgLjgtMS44IDEuOC0xLjhoNDEuNmMxIDAgMS44LjggMS44IDEuOHYyNC45YzAgMS0uOCAxLjgtMS44IDEuOEgxNC41Yy0xIDAtMS44LS44LTEuOC0xLjhWMTAuNHoiLz4NCiAgPHBhdGggZD0iTTEzLjMgMTAuOGMwLTEgLjgtMS44IDEuOC0xLjhoNDAuNmMxIDAgMS44LjggMS44IDEuOHYyNC4xYzAgMS0uOCAxLjgtMS44IDEuOEgxNWMtMSAwLTEuOC0uOC0xLjgtMS44VjEwLjh6IiBmaWxsPSIjNWRhY2UyIi8+DQogIDxwYXRoIGQ9Ik01OS45IDM5LjhjLS43LS45LTIuMi0xLjYtMy4zLTEuNmgtNDNjLTEuMSAwLTIuNi43LTMuMiAxLjZsLTcuNSA5LjdjLTEuMiAxLjYtMS4yIDEuOC0xLjIgMi42di4xYy4xLjQuMyAxIDEuMiAxaDY0LjhjLjggMCAxLjUtLjMgMS41LTF2LS4xYzAtLjggMC0uOC0xLjMtMi42bC04LTkuN3oiIGZpbGw9IiNjNmM2YzYiLz4NCiAgPHBhdGggZmlsbD0iIzZlNmU2ZSIgZD0iTTYxLjMgNDQuOGMuMy40LjIuOC0uNC44SDkuOGMtLjYgMC0uNy0uNC0uNC0uOGwyLjgtNGMuMy0uNSAxLS44IDEuNi0uOGg0Mi43Yy42IDAgMS4zLjQgMS42LjhsMy4yIDR6TTQyIDQ5LjVjLjEuMi0uMS40LS4zLjRIMjguM2MtLjIgMC0uNC0uMi0uMy0uNGwuOC0yLjhjLjEtLjIuMy0uNC41LS40aDExLjJjLjIgMCAuNS4yLjUuNGwxIDIuOHoiLz4NCjwvc3ZnPg==</sys:String>
+			<sys:String x:Key="7">data:image/svg+xml;base64,PHN2ZyBpZD0ic2VydmVyIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI3MCIgaGVpZ2h0PSI3MCIgdmlld0JveD0iMCAwIDcwIDcwIj4NCiAgPHBhdGggZD0iTTE3LjQ1IDE1LjE5aDM1djUzLjdoLTM1eiIgZmlsbD0iIzUxNTE1MSIvPg0KICA8cGF0aCBkPSJNMjIuOTUgMTUuMTljNy45LTEuMyAxNi0xLjMgMjQgMHY1My43Yy03LjkgMS4zLTE2IDEuMy0yNCAwdi01My43eiIgZmlsbD0iI2M2YzZjNiIvPg0KICA8cGF0aCBkPSJNMjIuOTUgMjguOWgyNHY0MGMtNy45IDEuMy0xNiAxLjMtMjQgMHYtNDB6IiBmaWxsPSIjNTE1MTUxIi8+DQogIDxwYXRoIGQ9Ik0yMi45NSAxOWM4LS42IDE2LS42IDI0IDB2OC4xaC0yNFYxOXoiIG9wYWNpdHk9Ii40MyIgZmlsbD0iI2FmYWZhZiIvPg0KICA8cGF0aCBkPSJNMjIuOTUgMTljOC0uNiAxNi0uNiAyNCAwdjguMWgtMjRWMTl6IiBvcGFjaXR5PSIuNDMiIGZpbGw9IiM0ZDRkNGQiLz4NCiAgPHBhdGggc3Ryb2tlLW1pdGVybGltaXQ9IjEwIiBkPSJNMjMuOTUgMjBsMy40LS4ydjEuMWwtMy40LjF6IiBvcGFjaXR5PSIuNDMiIGZpbGw9IiM1NjU2NTYiIHN0cm9rZT0iIzRkNGQ0ZCIgc3Ryb2tlLXdpZHRoPSIuMDEiLz4NCiAgPHBhdGggZD0iTTQ4Ljc1IDE2LjhoMy43djEuNWgtMy43em0wIDMuMmgzLjd2MS41aC0zLjd6IiBzdHJva2UtbWl0ZXJsaW1pdD0iMTAiIGZpbGw9IiNjOGZmMDAiIHN0cm9rZT0iIzcxNzE3MSIgc3Ryb2tlLXdpZHRoPSIuMTkiLz4NCiAgPHBhdGggZD0iTTIyLjk1IDI5LjF2MzkuN2M3LjkgMS4zIDE2IDEuMyAyMy45IDBWMjkuMWgtMjMuOXptMjIuOSAzLjhoLTIuMlYzMGgyLjJ2Mi45em0tMTIgMjMuOHYtMi45aDIuMnYyLjloLTIuMnptMi4yIDEuMXYyLjloLTIuMnYtMi45aDIuMnptMC0xNS44djIuOWgtMi4yVjQyaDIuMnptLTIuMi0xLjFWMzhoMi4ydjIuOWgtMi4yem0wIDcuOXYtMi45aDIuMnYyLjloLTIuMnptMi4yIDEuMXYyLjloLTIuMnYtMi45aDIuMnptLTMuMy01aC0yLjJWNDJoMi4ydjIuOXptMCAxdjIuOWgtMi4ydi0yLjloMi4yem0wIDR2Mi45Yy0uNyAwLTEuNSAwLTIuMi0uMXYtMi45Yy43LjEgMS41LjEgMi4yLjF6bTAgMy45djIuOWMtLjcgMC0xLjUgMC0yLjItLjF2LTIuOWMuNy4xIDEuNS4xIDIuMi4xem00LjMgMGMuNyAwIDEuNSAwIDIuMi0uMXYyLjljLS43IDAtMS41LjEtMi4yLjF2LTIuOXptMC0xdi0yLjloMi4ydjIuOWMtLjctLjEtMS40IDAtMi4yIDB6bTAtNHYtMi45aDIuMnYyLjloLTIuMnptMC0zLjlWNDJoMi4ydjIuOWMtLjctLjEtMS40LS4xLTIuMiAwem0wLTRWMzhoMi4ydjIuOWgtMi4yem0wLTMuOXYtMi45aDIuMlYzN2gtMi4yem0tMSAwaC0yLjJ2LTIuOWgyLjJWMzd6bS0zLjMgMGgtMi4ydi0yLjloMi4yVjM3em0wIDF2Mi45aC0yLjJWMzhoMi4yem0tMy4zIDIuOWMtLjcgMC0xLjUgMC0yLjItLjFWMzhoMi4ydjIuOXptMCAxdjIuOWMtLjcgMC0xLjUgMC0yLjItLjF2LTIuOWMuOC4xIDEuNS4xIDIuMi4xem0wIDR2Mi45Yy0uNyAwLTEuNS0uMS0yLjItLjF2LTIuOWMuOCAwIDEuNSAwIDIuMi4xem0wIDMuOXYyLjljLS43IDAtMS41LS4xLTIuMi0uMXYtMi45Yy43IDAgMS41LjEgMi4yLjF6bTAgMy45djIuOWMtLjcgMC0xLjUtLjEtMi4yLS4xdi0yLjljLjcuMSAxLjUuMSAyLjIuMXptMCA0djIuOWMtLjcgMC0xLjUtLjEtMi4yLS4xdi0yLjhjLjctLjEgMS41LS4xIDIuMiAwem0xLjEgMGMuNyAwIDEuNS4xIDIuMi4xdjIuOWMtLjcgMC0xLjUgMC0yLjItLjF2LTIuOXptMi4yIDR2Mi45Yy0uNyAwLTEuNSAwLTIuMi0uMXYtMi45Yy43LjEgMS41LjEgMi4yLjF6bTEuMSAwaDIuMnYyLjloLTIuMnYtMi45em0zLjIgMGMuNyAwIDEuNSAwIDIuMi0uMXYyLjljLS43IDAtMS41LjEtMi4yLjF2LTIuOXptMC0xdi0yLjljLjcgMCAxLjUgMCAyLjItLjF2Mi45Yy0uNyAwLTEuNCAwLTIuMi4xem0zLjMtM2MuNyAwIDEuNS0uMSAyLjItLjF2Mi44Yy0uNy4xLTEuNS4xLTIuMi4ydi0yLjl6bTAtMS4xdi0yLjljLjcgMCAxLjUtLjEgMi4yLS4xdjIuOWMtLjcgMC0xLjQuMS0yLjIuMXptMC0zLjl2LTIuOWMuNyAwIDEuNS0uMSAyLjItLjF2Mi45Yy0uNyAwLTEuNCAwLTIuMi4xem0wLTR2LTIuOWMuNyAwIDEuNS0uMSAyLjItLjF2Mi45Yy0uNy4xLTEuNS4xLTIuMi4xem0wLTMuOXYtMi45Yy43IDAgMS41IDAgMi4yLS4xdjIuOWMtLjcuMS0xLjUuMS0yLjIuMXptMC0zLjlWMzhoMi4ydjIuOGMtLjcgMC0xLjUgMC0yLjIuMXptMC00VjM0aDIuMnYyLjloLTIuMnptMC0zLjl2LTIuOWgyLjJWMzNoLTIuMnptLTEgMGgtMi4ydi0yLjloMi4yVjMzem0tMy4zIDBoLTIuMnYtMi45aDIuMlYzM3ptLTMuMyAwaC0yLjJ2LTIuOWgyLjJWMzN6bS0zLjMgMGgtMi4ydi0yLjloMi4yVjMzem0wIDEuMVYzN2gtMi4ydi0yLjloMi4yem0tMy4yIDIuOGMtLjcgMC0xLjUgMC0yLjItLjFWMzRoMi4ydjIuOXptMCAxdjIuOGMtLjcgMC0xLjUtLjEtMi4yLS4xdi0yLjhjLjcuMSAxLjQuMSAyLjIuMXptMCAzLjl2Mi44Yy0uNyAwLTEuNS0uMS0yLjItLjF2LTIuOGMuNy4xIDEuNC4xIDIuMi4xem0wIDMuOXYyLjljLS43IDAtMS41LS4xLTIuMi0uMXYtMi44aDIuMnptMCAzLjl2Mi45Yy0uNy0uMS0xLjUtLjEtMi4yLS4ydi0yLjhjLjcuMSAxLjQuMSAyLjIuMXptMCA0djIuOWMtLjctLjEtMS41LS4xLTIuMi0uMnYtMi44Yy43LS4xIDEuNCAwIDIuMi4xem0wIDMuOXYyLjhjLS43LS4xLTEuNS0uMS0yLjItLjJ2LTIuOGMuNyAwIDEuNC4xIDIuMi4yem0wIDMuOHYyLjlsLTIuMi0uM3YtMi44Yy43LjEgMS40LjIgMi4yLjJ6bTEgLjFjLjcuMSAxLjUuMSAyLjIuMnYyLjljLS43IDAtMS41LS4xLTIuMi0uMnYtMi45em0yLjIgNC4xdjIuOWMtLjctLjEtMS41LS4xLTIuMi0uMnYtMi45Yy43LjEgMS41LjIgMi4yLjJ6bTEuMS4xYy43IDAgMS41LjEgMi4yLjF2Mi45Yy0uNyAwLTEuNS0uMS0yLjItLjF2LTIuOXptMy4zLjFoMi4ydjIuOWgtMi4ydi0yLjl6bTMuMiAwYy43IDAgMS41IDAgMi4yLS4xdjIuOWMtLjcgMC0xLjUuMS0yLjIuMXYtMi45em0zLjMtLjJjLjcgMCAxLjUtLjEgMi4yLS4ydjIuOWMtLjcuMS0xLjUuMS0yLjIuMnYtMi45em0wLTF2LTIuOWMuNyAwIDEuNS0uMSAyLjItLjJ2Mi45Yy0uNy4xLTEuNC4xLTIuMi4yem0zLjMtMy4yYy43LS4xIDEuNS0uMSAyLjItLjJ2Mi44bC0yLjIuM3YtMi45em0wLTF2LTIuOGMuNy0uMSAxLjUtLjEgMi4yLS4ydjIuOGMtLjcuMS0xLjUuMS0yLjIuMnptMC0zLjl2LTIuOGMuNy0uMSAxLjUtLjEgMi4yLS4ydjIuOGMtLjcuMS0xLjUuMS0yLjIuMnptMC0zLjl2LTIuOWMuNyAwIDEuNS0uMSAyLjItLjF2Mi44Yy0uNy4xLTEuNS4xLTIuMi4yem0wLTMuOXYtMi45Yy43IDAgMS41LS4xIDIuMi0uMXYyLjhjLS43LjEtMS41LjEtMi4yLjJ6bTAtMy45di0yLjhjLjcgMCAxLjUtLjEgMi4yLS4xdjIuOGMtLjcgMC0xLjUgMC0yLjIuMXptMC0zLjlWMzhjLjcgMCAxLjUgMCAyLjItLjF2Mi44Yy0uNyAwLTEuNSAwLTIuMi4xem0wLTMuOVYzNGgyLjJ2Mi44Yy0uNyAwLTEuNS4xLTIuMi4xem0tMTcuNC02LjhWMzNoLTIuMnYtMi44Yy43LS4xIDEuNC0uMSAyLjItLjF6TTIzLjk1IDY1bDIuMi4zdjIuOWwtMi4yLS4zVjY1em0xOS43IDMuMXYtMi45bDIuMi0uM3YyLjhjLS43LjItMS41LjMtMi4yLjR6IiBmaWxsPSIjYzZjNmM2Ii8+DQo8L3N2Zz4=</sys:String>
+			<sys:String x:Key="8">data:image/svg+xml;base64,PHN2ZyBpZD0iZGF0YWJhc2UiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjcwcHgiIGhlaWdodD0iNzBweCIgdmlld0JveD0iMCAwIDcwIDcwIj4NCiAgPGcgaWQ9ImRpc2tfMyI+DQogICAgPHBhdGggZmlsbD0iIzYxYWNlMCIgZD0iTTM1IDQ2LjJjLTEwLjggMC0xOS42LTEuOS0xOS42LTQuMnYxMGMwIDIuMyA4LjggNC4yIDE5LjYgNC4yczE5LjYtMS45IDE5LjYtNC4yVjQyYzAgMi4zLTguOCA0LjItMTkuNiA0LjJ6Ii8+DQogICAgPHBhdGggZmlsbD0iIzk2Y2RlYSIgZD0iTTM1IDQ2LjJjMTAuOCAwIDE5LjYtMS45IDE5LjYtNC4ybC0xLjItMmMwIDIuMi04LjIgMy45LTE4LjQgMy45LTkuNSAwLTE3LjQtMi0xOC40LTMuOWwtMS4yIDJjMCAyLjMgOC44IDQuMiAxOS42IDQuMnoiLz4NCiAgICA8cGF0aCBmaWxsPSIjM2M4OWM5IiBkPSJNMzUgMzUuOWMxMC4yIDAgMTkuNiAyLjggMTkuNiAyLjgtLjQgMi43LTUuNCA1LjQtMTkuNiA1LjQtMTIuMSAwLTE4LjUtMi41LTE5LjUtNC45LS4zLS43IDkuMy0zLjMgMTkuNS0zLjN6Ii8+DQogIDwvZz4NCiAgPGcgaWQ9ImRpc2tfMiI+DQogICAgPHBhdGggZmlsbD0iIzYxYWNlMCIgZD0iTTM1IDMyLjdjLTEwLjggMC0xOS42LTEuOS0xOS42LTQuMnYxMGMwIDIuMyA4LjggNC4yIDE5LjYgNC4yczE5LjYtMS45IDE5LjYtNC4ydi0xMGMwIDIuMy04LjggNC4yLTE5LjYgNC4yeiIvPg0KICAgIDxwYXRoIGZpbGw9IiM5NmNkZWEiIGQ9Ik0zNSAzMi43YzEwLjggMCAxOS42LTEuOSAxOS42LTQuMmwtMS4yLTJjMCAyLjItOC4yIDMuOS0xOC40IDMuOS05LjUgMC0xNy40LTItMTguNC0zLjlsLTEuMiAyYzAgMi4zIDguOCA0LjIgMTkuNiA0LjJ6Ii8+DQogICAgPHBhdGggZmlsbD0iIzNjODljOSIgZD0iTTM0LjkgMjIuNGMxMC4yIDAgMTkuNiAyLjggMTkuNiAyLjgtLjQgMi43LTUuNCA1LjQtMTkuNiA1LjQtMTIuMSAwLTE4LjUtMi41LTE5LjUtNC45LS4zLS42IDkuMy0zLjMgMTkuNS0zLjN6Ii8+DQogIDwvZz4NCiAgPGcgaWQ9ImRpc2tfMSI+DQogICAgPHBhdGggZmlsbD0iIzYxYWNlMCIgZD0iTTM1IDE5LjVjLTEwLjggMC0xOS42LTEuOS0xOS42LTQuMnYxMGMwIDIuMyA4LjggNC4yIDE5LjYgNC4yczE5LjYtMS45IDE5LjYtNC4ydi0xMGMwIDIuMy04LjggNC4yLTE5LjYgNC4yeiIvPg0KICAgIDxwYXRoIGZpbGw9IiM5NmNkZWEiIGQ9Ik0zNSAxOS41YzEwLjggMCAxOS42LTEuOSAxOS42LTQuMmwtMS4yLTJjMCAyLjItOC4yIDMuOS0xOC40IDMuOS05LjUgMC0xNy40LTItMTguNC0zLjlsLTEuMiAyYzAgMi4zIDguOCA0LjIgMTkuNiA0LjJ6Ii8+DQogICAgPGVsbGlwc2UgZmlsbD0iIzYxYWNlMCIgY3g9IjM1IiBjeT0iMTMuMyIgcng9IjE4LjQiIHJ5PSIzLjkiLz4NCiAgPC9nPg0KPC9zdmc+</sys:String>
+			<sys:String x:Key="9">data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGhlaWdodD0iNzAiIHdpZHRoPSI3MCIgdmlld0JveD0iMCAwIDcwIDcwIj4NCiAgPHBhdGggZD0iTTY4LjA2IDMxLjMzbC0uMS0uMS0xMS4xLTcuOWMtMS4yLS45LTMuMy0xLjctNC43LTEuOSAwIDAtNS4xLS41LTE2LjktLjUtOS42IDAtMTcuMy42LTE3LjMuNi0xLjQuMS0zLjUuOS00LjcgMS44bC0xMC44IDcuN2MtMS4xLjUtMiAyLTIgMy43djljMCAyIDEuMSAzLjcgMi41IDMuOSAwIDAgMTIuNyAxLjUgMzIgMS41IDE5LjkgMCAzMi0xLjUgMzItMS41IDEuNC0uMiAyLjUtMS45IDIuNS0zLjl2LTljMC0xLjQtLjYtMi43LTEuNC0zLjR6bS0zMi42LTEuOWgtLjMuM3ptLTEuNyAwaC0uMS4xeiIgZmlsbD0iIzZlNmU2ZSIvPg0KICA8cGF0aCBzdHJva2UtbWl0ZXJsaW1pdD0iMTAiIGQ9Ik02My4yNiAzNC40M2MtLjYtLjMtMTguMi0uMy0yOC4zLS4zLTguMiAwLTI3LjguMS0yNy44LjEtMSAuNC0xLjcgMS43LTEuNyAzLjJ2NS42YzAgMS43IDEgMy4yIDIuMSAzLjMgMCAwIDEwLjguNyAyNy40LjcgMTcgMCAyNy40LS43IDI3LjQtLjcgMS4yLS4xIDIuMS0xLjYgMi4xLTMuM3YtNS42YzAtMS4zLS42LTIuNy0xLjItM3oiIGZpbGw9IiM1ZGFjZTIiIHN0cm9rZT0iI2FmYWZhZiIgc3Ryb2tlLXdpZHRoPSIuNSIvPg0KICA8ZyBzdHJva2UtbWl0ZXJsaW1pdD0iMTAiPg0KICAgIDxwYXRoIGQ9Ik02Ni44NiAzNi41M2gyLjh2MS42aC0yLjh6IiBmaWxsPSIjYzhmZjAwIiBzdHJva2U9IiM3MTcxNzEiIHN0cm9rZS13aWR0aD0iLjA2Ii8+DQogICAgPHBhdGggZD0iTTQ5Ljc2IDM2LjQzaC02Ljh2Ny4xaDJ2MWgyLjhsLS4xLTFoMi4xem0tMTEuNSAwaC02Ljh2Ny4xaDJ2MWgyLjhsLS4xLTFoMi4xem0tMTEuNSAwaC02Ljh2Ny4xaDJ2MWgyLjd2LTFoMi4xem0tMTEuNSAwaC02Ljh2Ny4xaDJ2MWgyLjd2LTFoMi4xem00NiAwaC02Ljh2Ny4xaDJ2MWgyLjhsLS4xLTFoMi4xeiIgZmlsbD0iIzRkNGQ0ZCIgc3Ryb2tlPSIjZDlmMWZmIiBzdHJva2Utd2lkdGg9Ii4zNyIvPg0KICA8L2c+DQo8L3N2Zz4=</sys:String>
+			<y:EdgePathLabelModelParameter x:Key="10" SegmentRatio="1">
+				<y:EdgePathLabelModelParameter.Model>
+					<y:EdgePathLabelModel Distance="2" AutoRotationEnabled="false"/>
+				</y:EdgePathLabelModelParameter.Model>
+			</y:EdgePathLabelModelParameter>
+		</y:SharedData>
+	</data>
+	<graph id="G" edgedefault="directed">
+		<data key="d6">
+			<y:Json>{"version":"2.0.0","theme":{"name":"light","version":"1.0.0"}}</y:Json>
+		</data>
+		<node id="n0">
+			<data key="d0">0</data>
+			<data key="d5">
+				<y:RectD X="485" Y="485" Width="30" Height="30"/>
+			</data>
+			<data key="d7">
+				<yjs:ImageNodeStyle image="{y:GraphMLReference 1}"/>
+			</data>
+			<port name="p0"/>
+			<port name="p1"/>
+			<port name="p2"/>
+			<port name="p3"/>
+			<port name="p4"/>
+			<port name="p5"/>
+			<port name="p6"/>
+			<port name="p7"/>
+			<port name="p8"/>
+			<port name="p9"/>
+			<port name="p10"/>
+			<port name="p11"/>
+			<port name="p12"/>
+			<port name="p13"/>
+			<port name="p14"/>
+			<port name="p15"/>
+			<port name="p16"/>
+			<port name="p17"/>
+			<port name="p18"/>
+			<port name="p19"/>
+			<port name="p20"/>
+			<port name="p21"/>
+		</node>
+		<node id="n1">
+			<data key="d0">1</data>
+			<data key="d4">
+				<x:List>
+					<y:Label LayoutParameter="{y:GraphMLReference 3}">
+						<y:Label.Text><![CDATA[Workstation 0]]></y:Label.Text>
+						<y:Label.Style>
+							<yjs:DefaultLabelStyle backgroundFill="#FFE5D9DF" verticalTextAlignment="BOTTOM" horizontalTextAlignment="CENTER" backgroundStroke="#FFE5D9DF" font="{y:GraphMLReference 4}" textFill="BLACK"/>
+						</y:Label.Style>
+					</y:Label>
+				</x:List>
+			</data>
+			<data key="d5">
+				<y:RectD X="517.863436123348" Y="164.5859030837005" Width="30" Height="30"/>
+			</data>
+			<data key="d7">
+				<yjs:ImageNodeStyle image="{y:GraphMLReference 2}"/>
+			</data>
+			<port name="p0"/>
+		</node>
+		<node id="n2">
+			<data key="d0">2</data>
+			<data key="d4">
+				<x:List>
+					<y:Label LayoutParameter="{y:GraphMLReference 3}">
+						<y:Label.Text><![CDATA[Workstation 1]]></y:Label.Text>
+						<y:Label.Style>
+							<yjs:DefaultLabelStyle backgroundFill="#FFE5D9DF" verticalTextAlignment="BOTTOM" horizontalTextAlignment="CENTER" backgroundStroke="#FFE5D9DF" font="{y:GraphMLReference 4}" textFill="BLACK"/>
+						</y:Label.Style>
+					</y:Label>
+				</x:List>
+			</data>
+			<data key="d5">
+				<y:RectD X="681.363436123348" Y="164.5859030837005" Width="30" Height="30"/>
+			</data>
+			<data key="d7">
+				<yjs:ImageNodeStyle image="{y:GraphMLReference 2}"/>
+			</data>
+			<port name="p0"/>
+		</node>
+		<node id="n3">
+			<data key="d0">3</data>
+			<data key="d4">
+				<x:List>
+					<y:Label LayoutParameter="{y:GraphMLReference 3}">
+						<y:Label.Text><![CDATA[Workstation 2]]></y:Label.Text>
+						<y:Label.Style>
+							<yjs:DefaultLabelStyle backgroundFill="#FFE5D9DF" verticalTextAlignment="BOTTOM" horizontalTextAlignment="CENTER" backgroundStroke="#FFE5D9DF" font="{y:GraphMLReference 4}" textFill="BLACK"/>
+						</y:Label.Style>
+					</y:Label>
+				</x:List>
+			</data>
+			<data key="d5">
+				<y:RectD X="844.863436123348" Y="164.5859030837005" Width="30" Height="30"/>
+			</data>
+			<data key="d7">
+				<yjs:ImageNodeStyle image="{y:GraphMLReference 2}"/>
+			</data>
+			<port name="p0"/>
+		</node>
+		<node id="n4">
+			<data key="d0">4</data>
+			<data key="d4">
+				<x:List>
+					<y:Label>
+						<y:Label.Text>Notebook</y:Label.Text>
+						<y:Label.LayoutParameter>
+							<y:ExteriorLabelModelParameter Position="South" Model="{y:GraphMLReference 5}"/>
+						</y:Label.LayoutParameter>
+						<y:Label.Style>
+							<yjs:DefaultLabelStyle backgroundFill="#FFE5D9DF" verticalTextAlignment="BOTTOM" horizontalTextAlignment="CENTER" backgroundStroke="#FFE5D9DF" font="{y:GraphMLReference 4}" textFill="BLACK"/>
+						</y:Label.Style>
+					</y:Label>
+				</x:List>
+			</data>
+			<data key="d5">
+				<y:RectD X="548.863436123348" Y="274.5859030837005" Width="30" Height="30"/>
+			</data>
+			<data key="d7">
+				<yjs:ImageNodeStyle image="{y:GraphMLReference 6}"/>
+			</data>
+			<port name="p0"/>
+		</node>
+		<node id="n5">
+			<data key="d0">5</data>
+			<data key="d4">
+				<x:List>
+					<y:Label>
+						<y:Label.Text><![CDATA[Server 0]]></y:Label.Text>
+						<y:Label.LayoutParameter>
+							<y:ExteriorLabelModelParameter Position="South" Model="{y:GraphMLReference 5}"/>
+						</y:Label.LayoutParameter>
+						<y:Label.Style>
+							<yjs:DefaultLabelStyle backgroundFill="#FFE5D9DF" verticalTextAlignment="BOTTOM" horizontalTextAlignment="CENTER" backgroundStroke="#FFE5D9DF" font="{y:GraphMLReference 4}" textFill="BLACK"/>
+						</y:Label.Style>
+					</y:Label>
+				</x:List>
+			</data>
+			<data key="d5">
+				<y:RectD X="648.863436123348" Y="274.5859030837005" Width="30" Height="30"/>
+			</data>
+			<data key="d7">
+				<yjs:ImageNodeStyle image="{y:GraphMLReference 7}"/>
+			</data>
+			<port name="p0"/>
+		</node>
+		<node id="n6">
+			<data key="d0">6</data>
+			<data key="d4">
+				<x:List>
+					<y:Label>
+						<y:Label.Text><![CDATA[Server 1]]></y:Label.Text>
+						<y:Label.LayoutParameter>
+							<y:ExteriorLabelModelParameter Position="South" Model="{y:GraphMLReference 5}"/>
+						</y:Label.LayoutParameter>
+						<y:Label.Style>
+							<yjs:DefaultLabelStyle backgroundFill="#FFE5D9DF" verticalTextAlignment="BOTTOM" horizontalTextAlignment="CENTER" backgroundStroke="#FFE5D9DF" font="{y:GraphMLReference 4}" textFill="BLACK"/>
+						</y:Label.Style>
+					</y:Label>
+				</x:List>
+			</data>
+			<data key="d5">
+				<y:RectD X="748.863436123348" Y="274.5859030837005" Width="30" Height="30"/>
+			</data>
+			<data key="d7">
+				<yjs:ImageNodeStyle image="{y:GraphMLReference 7}"/>
+			</data>
+			<port name="p0"/>
+		</node>
+		<node id="n7">
+			<data key="d0">7</data>
+			<data key="d4">
+				<x:List>
+					<y:Label LayoutParameter="{y:GraphMLReference 3}">
+						<y:Label.Text><![CDATA[Workstation 0]]></y:Label.Text>
+						<y:Label.Style>
+							<yjs:DefaultLabelStyle backgroundFill="#FFEBEBDF" verticalTextAlignment="BOTTOM" horizontalTextAlignment="CENTER" backgroundStroke="#FFEBEBDF" font="{y:GraphMLReference 4}" textFill="BLACK"/>
+						</y:Label.Style>
+					</y:Label>
+				</x:List>
+			</data>
+			<data key="d5">
+				<y:RectD X="-0.14278017241372254" Y="287.9118942731277" Width="30" Height="30"/>
+			</data>
+			<data key="d7">
+				<yjs:ImageNodeStyle image="{y:GraphMLReference 6}"/>
+			</data>
+			<port name="p0"/>
+		</node>
+		<node id="n8">
+			<data key="d0">8</data>
+			<data key="d4">
+				<x:List>
+					<y:Label LayoutParameter="{y:GraphMLReference 3}">
+						<y:Label.Text><![CDATA[Workstation 1]]></y:Label.Text>
+						<y:Label.Style>
+							<yjs:DefaultLabelStyle backgroundFill="#FFEBEBDF" verticalTextAlignment="BOTTOM" horizontalTextAlignment="CENTER" backgroundStroke="#FFEBEBDF" font="{y:GraphMLReference 4}" textFill="BLACK"/>
+						</y:Label.Style>
+					</y:Label>
+				</x:List>
+			</data>
+			<data key="d5">
+				<y:RectD X="99.85721982758628" Y="287.9118942731277" Width="30" Height="30"/>
+			</data>
+			<data key="d7">
+				<yjs:ImageNodeStyle image="{y:GraphMLReference 6}"/>
+			</data>
+			<port name="p0"/>
+		</node>
+		<node id="n9">
+			<data key="d0">9</data>
+			<data key="d4">
+				<x:List>
+					<y:Label LayoutParameter="{y:GraphMLReference 3}">
+						<y:Label.Text><![CDATA[Workstation 2]]></y:Label.Text>
+						<y:Label.Style>
+							<yjs:DefaultLabelStyle backgroundFill="#FFEBEBDF" verticalTextAlignment="BOTTOM" horizontalTextAlignment="CENTER" backgroundStroke="#FFEBEBDF" font="{y:GraphMLReference 4}" textFill="BLACK"/>
+						</y:Label.Style>
+					</y:Label>
+				</x:List>
+			</data>
+			<data key="d5">
+				<y:RectD X="199.85721982758628" Y="255.48876770763832" Width="30" Height="30"/>
+			</data>
+			<data key="d7">
+				<yjs:ImageNodeStyle image="{y:GraphMLReference 6}"/>
+			</data>
+			<port name="p0"/>
+		</node>
+		<node id="n10">
+			<data key="d0">10</data>
+			<data key="d4">
+				<x:List>
+					<y:Label LayoutParameter="{y:GraphMLReference 3}">
+						<y:Label.Text><![CDATA[Workstation 3]]></y:Label.Text>
+						<y:Label.Style>
+							<yjs:DefaultLabelStyle backgroundFill="#FFEBEBDF" verticalTextAlignment="BOTTOM" horizontalTextAlignment="CENTER" backgroundStroke="#FFEBEBDF" font="{y:GraphMLReference 4}" textFill="BLACK"/>
+						</y:Label.Style>
+					</y:Label>
+				</x:List>
+			</data>
+			<data key="d5">
+				<y:RectD X="299.8572198275863" Y="287.9118942731277" Width="30" Height="30"/>
+			</data>
+			<data key="d7">
+				<yjs:ImageNodeStyle image="{y:GraphMLReference 6}"/>
+			</data>
+			<port name="p0"/>
+		</node>
+		<node id="n11">
+			<data key="d0">11</data>
+			<data key="d4">
+				<x:List>
+					<y:Label>
+						<y:Label.Text><![CDATA[Workstation 4]]></y:Label.Text>
+						<y:Label.LayoutParameter>
+							<y:ExteriorLabelModelParameter Position="South" Model="{y:GraphMLReference 5}"/>
+						</y:Label.LayoutParameter>
+						<y:Label.Style>
+							<yjs:DefaultLabelStyle backgroundFill="#FFEBEBDF" verticalTextAlignment="BOTTOM" horizontalTextAlignment="CENTER" backgroundStroke="#FFEBEBDF" font="{y:GraphMLReference 4}" textFill="BLACK"/>
+						</y:Label.Style>
+					</y:Label>
+				</x:List>
+			</data>
+			<data key="d5">
+				<y:RectD X="-0.14278017241372254" Y="378" Width="30" Height="30"/>
+			</data>
+			<data key="d7">
+				<yjs:ImageNodeStyle image="{y:GraphMLReference 6}"/>
+			</data>
+			<port name="p0"/>
+		</node>
+		<node id="n12">
+			<data key="d0">12</data>
+			<data key="d4">
+				<x:List>
+					<y:Label>
+						<y:Label.Text><![CDATA[Workstation 5]]></y:Label.Text>
+						<y:Label.LayoutParameter>
+							<y:ExteriorLabelModelParameter Position="South" Model="{y:GraphMLReference 5}"/>
+						</y:Label.LayoutParameter>
+						<y:Label.Style>
+							<yjs:DefaultLabelStyle backgroundFill="#FFEBEBDF" verticalTextAlignment="BOTTOM" horizontalTextAlignment="CENTER" backgroundStroke="#FFEBEBDF" font="{y:GraphMLReference 4}" textFill="BLACK"/>
+						</y:Label.Style>
+					</y:Label>
+				</x:List>
+			</data>
+			<data key="d5">
+				<y:RectD X="99.85721982758628" Y="439.881043576441" Width="30" Height="30"/>
+			</data>
+			<data key="d7">
+				<yjs:ImageNodeStyle image="{y:GraphMLReference 6}"/>
+			</data>
+			<port name="p0"/>
+		</node>
+		<node id="n13">
+			<data key="d0">13</data>
+			<data key="d4">
+				<x:List>
+					<y:Label>
+						<y:Label.Text><![CDATA[Workstation 6]]></y:Label.Text>
+						<y:Label.LayoutParameter>
+							<y:ExteriorLabelModelParameter Position="South" Model="{y:GraphMLReference 5}"/>
+						</y:Label.LayoutParameter>
+						<y:Label.Style>
+							<yjs:DefaultLabelStyle backgroundFill="#FFEBEBDF" verticalTextAlignment="BOTTOM" horizontalTextAlignment="CENTER" backgroundStroke="#FFEBEBDF" font="{y:GraphMLReference 4}" textFill="BLACK"/>
+						</y:Label.Style>
+					</y:Label>
+				</x:List>
+			</data>
+			<data key="d5">
+				<y:RectD X="199.85721982758628" Y="378" Width="30" Height="30"/>
+			</data>
+			<data key="d7">
+				<yjs:ImageNodeStyle image="{y:GraphMLReference 6}"/>
+			</data>
+			<port name="p0"/>
+		</node>
+		<node id="n14">
+			<data key="d0">14</data>
+			<data key="d4">
+				<x:List>
+					<y:Label>
+						<y:Label.Text><![CDATA[Workstation 7]]></y:Label.Text>
+						<y:Label.LayoutParameter>
+							<y:ExteriorLabelModelParameter Position="South" Model="{y:GraphMLReference 5}"/>
+						</y:Label.LayoutParameter>
+						<y:Label.Style>
+							<yjs:DefaultLabelStyle backgroundFill="#FFEBEBDF" verticalTextAlignment="BOTTOM" horizontalTextAlignment="CENTER" backgroundStroke="#FFEBEBDF" font="{y:GraphMLReference 4}" textFill="BLACK"/>
+						</y:Label.Style>
+					</y:Label>
+				</x:List>
+			</data>
+			<data key="d5">
+				<y:RectD X="299.8572198275863" Y="378" Width="30" Height="30"/>
+			</data>
+			<data key="d7">
+				<yjs:ImageNodeStyle image="{y:GraphMLReference 6}"/>
+			</data>
+			<port name="p0"/>
+		</node>
+		<node id="n15">
+			<data key="d0">15</data>
+			<data key="d4">
+				<x:List>
+					<y:Label>
+						<y:Label.Text><![CDATA[Workstation 0]]></y:Label.Text>
+						<y:Label.LayoutParameter>
+							<y:ExteriorLabelModelParameter Position="South" Model="{y:GraphMLReference 5}"/>
+						</y:Label.LayoutParameter>
+						<y:Label.Style>
+							<yjs:DefaultLabelStyle backgroundFill="#FFBDD9DC" verticalTextAlignment="BOTTOM" horizontalTextAlignment="CENTER" backgroundStroke="#FFBDD9DC" font="{y:GraphMLReference 4}" textFill="BLACK"/>
+						</y:Label.Style>
+					</y:Label>
+				</x:List>
+			</data>
+			<data key="d5">
+				<y:RectD X="179.99999999999994" Y="708" Width="30" Height="30"/>
+			</data>
+			<data key="d7">
+				<yjs:ImageNodeStyle image="{y:GraphMLReference 2}"/>
+			</data>
+			<port name="p0"/>
+		</node>
+		<node id="n16">
+			<data key="d0">16</data>
+			<data key="d4">
+				<x:List>
+					<y:Label>
+						<y:Label.Text><![CDATA[Workstation 1]]></y:Label.Text>
+						<y:Label.LayoutParameter>
+							<y:ExteriorLabelModelParameter Position="South" Model="{y:GraphMLReference 5}"/>
+						</y:Label.LayoutParameter>
+						<y:Label.Style>
+							<yjs:DefaultLabelStyle backgroundFill="#FFBDD9DC" verticalTextAlignment="BOTTOM" horizontalTextAlignment="CENTER" backgroundStroke="#FFBDD9DC" font="{y:GraphMLReference 4}" textFill="BLACK"/>
+						</y:Label.Style>
+					</y:Label>
+				</x:List>
+			</data>
+			<data key="d5">
+				<y:RectD X="299.8572198275863" Y="708" Width="30" Height="30"/>
+			</data>
+			<data key="d7">
+				<yjs:ImageNodeStyle image="{y:GraphMLReference 2}"/>
+			</data>
+			<port name="p0"/>
+		</node>
+		<node id="n17">
+			<data key="d0">17</data>
+			<data key="d4">
+				<x:List>
+					<y:Label>
+						<y:Label.Text><![CDATA[Workstation 2]]></y:Label.Text>
+						<y:Label.LayoutParameter>
+							<y:ExteriorLabelModelParameter Position="South" Model="{y:GraphMLReference 5}"/>
+						</y:Label.LayoutParameter>
+						<y:Label.Style>
+							<yjs:DefaultLabelStyle backgroundFill="#FFBDD9DC" verticalTextAlignment="BOTTOM" horizontalTextAlignment="CENTER" backgroundStroke="#FFBDD9DC" font="{y:GraphMLReference 4}" textFill="BLACK"/>
+						</y:Label.Style>
+					</y:Label>
+				</x:List>
+			</data>
+			<data key="d5">
+				<y:RectD X="419.7144396551724" Y="708" Width="30" Height="30"/>
+			</data>
+			<data key="d7">
+				<yjs:ImageNodeStyle image="{y:GraphMLReference 2}"/>
+			</data>
+			<port name="p0"/>
+		</node>
+		<node id="n18">
+			<data key="d0">18</data>
+			<data key="d4">
+				<x:List>
+					<y:Label>
+						<y:Label.Text>Database</y:Label.Text>
+						<y:Label.LayoutParameter>
+							<y:ExteriorLabelModelParameter Position="South" Model="{y:GraphMLReference 5}"/>
+						</y:Label.LayoutParameter>
+						<y:Label.Style>
+							<yjs:DefaultLabelStyle backgroundFill="#FFBDD9DC" verticalTextAlignment="BOTTOM" horizontalTextAlignment="CENTER" backgroundStroke="#FFBDD9DC" font="{y:GraphMLReference 4}" textFill="BLACK"/>
+						</y:Label.Style>
+					</y:Label>
+				</x:List>
+			</data>
+			<data key="d5">
+				<y:RectD X="539.5716594827586" Y="708" Width="30" Height="30"/>
+			</data>
+			<data key="d7">
+				<yjs:ImageNodeStyle image="{y:GraphMLReference 8}"/>
+			</data>
+			<port name="p0"/>
+		</node>
+		<node id="n19">
+			<data key="d0">19</data>
+			<data key="d4">
+				<x:List>
+					<y:Label LayoutParameter="{y:GraphMLReference 3}">
+						<y:Label.Text><![CDATA[Workstation 3]]></y:Label.Text>
+						<y:Label.Style>
+							<yjs:DefaultLabelStyle backgroundFill="#FFBDD9DC" verticalTextAlignment="BOTTOM" horizontalTextAlignment="CENTER" backgroundStroke="#FFBDD9DC" font="{y:GraphMLReference 4}" textFill="BLACK"/>
+						</y:Label.Style>
+					</y:Label>
+				</x:List>
+			</data>
+			<data key="d5">
+				<y:RectD X="179.99999999999994" Y="603" Width="30" Height="30"/>
+			</data>
+			<data key="d7">
+				<yjs:ImageNodeStyle image="{y:GraphMLReference 2}"/>
+			</data>
+			<port name="p0"/>
+		</node>
+		<node id="n20">
+			<data key="d0">20</data>
+			<data key="d4">
+				<x:List>
+					<y:Label LayoutParameter="{y:GraphMLReference 3}">
+						<y:Label.Text><![CDATA[Workstation 4]]></y:Label.Text>
+						<y:Label.Style>
+							<yjs:DefaultLabelStyle backgroundFill="#FFBDD9DC" verticalTextAlignment="BOTTOM" horizontalTextAlignment="CENTER" backgroundStroke="#FFBDD9DC" font="{y:GraphMLReference 4}" textFill="BLACK"/>
+						</y:Label.Style>
+					</y:Label>
+				</x:List>
+			</data>
+			<data key="d5">
+				<y:RectD X="299.8572198275863" Y="603" Width="30" Height="30"/>
+			</data>
+			<data key="d7">
+				<yjs:ImageNodeStyle image="{y:GraphMLReference 2}"/>
+			</data>
+			<port name="p0"/>
+		</node>
+		<node id="n21">
+			<data key="d0">21</data>
+			<data key="d4">
+				<x:List>
+					<y:Label LayoutParameter="{y:GraphMLReference 3}">
+						<y:Label.Text><![CDATA[Switch 0]]></y:Label.Text>
+						<y:Label.Style>
+							<yjs:DefaultLabelStyle backgroundFill="#FFBDD9DC" verticalTextAlignment="BOTTOM" horizontalTextAlignment="CENTER" backgroundStroke="#FFBDD9DC" font="{y:GraphMLReference 4}" textFill="BLACK"/>
+						</y:Label.Style>
+					</y:Label>
+				</x:List>
+			</data>
+			<data key="d5">
+				<y:RectD X="419.71443965517244" Y="603" Width="30" Height="30"/>
+			</data>
+			<data key="d7">
+				<yjs:ImageNodeStyle image="{y:GraphMLReference 9}"/>
+			</data>
+			<port name="p0"/>
+		</node>
+		<node id="n22">
+			<data key="d0">22</data>
+			<data key="d4">
+				<x:List>
+					<y:Label LayoutParameter="{y:GraphMLReference 3}">
+						<y:Label.Text><![CDATA[Switch 1]]></y:Label.Text>
+						<y:Label.Style>
+							<yjs:DefaultLabelStyle backgroundFill="#FFBDD9DC" verticalTextAlignment="BOTTOM" horizontalTextAlignment="CENTER" backgroundStroke="#FFBDD9DC" font="{y:GraphMLReference 4}" textFill="BLACK"/>
+						</y:Label.Style>
+					</y:Label>
+				</x:List>
+			</data>
+			<data key="d5">
+				<y:RectD X="539.5716594827586" Y="603" Width="30" Height="30"/>
+			</data>
+			<data key="d7">
+				<yjs:ImageNodeStyle image="{y:GraphMLReference 9}"/>
+			</data>
+			<port name="p0"/>
+		</node>
+		<edge id="e0" source="n0" target="n1" sourceport="p0" targetport="p0">
+			<data key="d11">
+				<x:List>
+					<y:Label LayoutParameter="{y:GraphMLReference 10}">
+						<y:Label.Text><![CDATA[Net 0]]></y:Label.Text>
+						<y:Label.Style>
+							<yjs:DefaultLabelStyle backgroundFill="#FFE5D9DF" verticalTextAlignment="BOTTOM" horizontalTextAlignment="CENTER" backgroundStroke="#FFE5D9DF" font="{y:GraphMLReference 4}" textFill="BLACK"/>
+						</y:Label.Style>
+					</y:Label>
+				</x:List>
+			</data>
+			<data key="d13">
+				<yjs:PolylineEdgeStyle>
+					<yjs:PolylineEdgeStyle.stroke>
+						<yjs:Stroke fill="#FF363020" thickness="1.5"/>
+					</yjs:PolylineEdgeStyle.stroke>
+					<yjs:PolylineEdgeStyle.targetArrow>
+						<yjs:Arrow type="TRIANGLE" scale="0.75" stroke="#FF363020" fill="#FF363020" cropLength="1"/>
+					</yjs:PolylineEdgeStyle.targetArrow>
+					<yjs:PolylineEdgeStyle.sourceArrow>
+						<yjs:Arrow type="NONE" stroke="#FF363020" fill="#FF363020"/>
+					</yjs:PolylineEdgeStyle.sourceArrow>
+				</yjs:PolylineEdgeStyle>
+			</data>
+			<data key="d6">
+				<sys:String><![CDATA[Net 0]]></sys:String>
+			</data>
+		</edge>
+		<edge id="e1" source="n0" target="n2" sourceport="p1" targetport="p0">
+			<data key="d13">
+				<yjs:PolylineEdgeStyle>
+					<yjs:PolylineEdgeStyle.stroke>
+						<yjs:Stroke fill="#FF363020" thickness="1.5"/>
+					</yjs:PolylineEdgeStyle.stroke>
+					<yjs:PolylineEdgeStyle.targetArrow>
+						<yjs:Arrow type="TRIANGLE" scale="0.75" stroke="#FF363020" fill="#FF363020" cropLength="1"/>
+					</yjs:PolylineEdgeStyle.targetArrow>
+					<yjs:PolylineEdgeStyle.sourceArrow>
+						<yjs:Arrow type="NONE" stroke="#FF363020" fill="#FF363020"/>
+					</yjs:PolylineEdgeStyle.sourceArrow>
+				</yjs:PolylineEdgeStyle>
+			</data>
+			<data key="d6">
+				<sys:String><![CDATA[Net 0]]></sys:String>
+			</data>
+		</edge>
+		<edge id="e2" source="n0" target="n3" sourceport="p2" targetport="p0">
+			<data key="d13">
+				<yjs:PolylineEdgeStyle>
+					<yjs:PolylineEdgeStyle.stroke>
+						<yjs:Stroke fill="#FF363020" thickness="1.5"/>
+					</yjs:PolylineEdgeStyle.stroke>
+					<yjs:PolylineEdgeStyle.targetArrow>
+						<yjs:Arrow type="TRIANGLE" scale="0.75" stroke="#FF363020" fill="#FF363020" cropLength="1"/>
+					</yjs:PolylineEdgeStyle.targetArrow>
+					<yjs:PolylineEdgeStyle.sourceArrow>
+						<yjs:Arrow type="NONE" stroke="#FF363020" fill="#FF363020"/>
+					</yjs:PolylineEdgeStyle.sourceArrow>
+				</yjs:PolylineEdgeStyle>
+			</data>
+			<data key="d6">
+				<sys:String><![CDATA[Net 0]]></sys:String>
+			</data>
+		</edge>
+		<edge id="e3" source="n0" target="n4" sourceport="p3" targetport="p0">
+			<data key="d13">
+				<yjs:PolylineEdgeStyle>
+					<yjs:PolylineEdgeStyle.stroke>
+						<yjs:Stroke fill="#FF363020" thickness="1.5"/>
+					</yjs:PolylineEdgeStyle.stroke>
+					<yjs:PolylineEdgeStyle.targetArrow>
+						<yjs:Arrow type="TRIANGLE" scale="0.75" stroke="#FF363020" fill="#FF363020" cropLength="1"/>
+					</yjs:PolylineEdgeStyle.targetArrow>
+					<yjs:PolylineEdgeStyle.sourceArrow>
+						<yjs:Arrow type="NONE" stroke="#FF363020" fill="#FF363020"/>
+					</yjs:PolylineEdgeStyle.sourceArrow>
+				</yjs:PolylineEdgeStyle>
+			</data>
+			<data key="d6">
+				<sys:String><![CDATA[Net 0]]></sys:String>
+			</data>
+		</edge>
+		<edge id="e4" source="n0" target="n5" sourceport="p4" targetport="p0">
+			<data key="d13">
+				<yjs:PolylineEdgeStyle>
+					<yjs:PolylineEdgeStyle.stroke>
+						<yjs:Stroke fill="#FF363020" thickness="1.5"/>
+					</yjs:PolylineEdgeStyle.stroke>
+					<yjs:PolylineEdgeStyle.targetArrow>
+						<yjs:Arrow type="TRIANGLE" scale="0.75" stroke="#FF363020" fill="#FF363020" cropLength="1"/>
+					</yjs:PolylineEdgeStyle.targetArrow>
+					<yjs:PolylineEdgeStyle.sourceArrow>
+						<yjs:Arrow type="NONE" stroke="#FF363020" fill="#FF363020"/>
+					</yjs:PolylineEdgeStyle.sourceArrow>
+				</yjs:PolylineEdgeStyle>
+			</data>
+			<data key="d6">
+				<sys:String><![CDATA[Net 0]]></sys:String>
+			</data>
+		</edge>
+		<edge id="e5" source="n0" target="n6" sourceport="p5" targetport="p0">
+			<data key="d13">
+				<yjs:PolylineEdgeStyle>
+					<yjs:PolylineEdgeStyle.stroke>
+						<yjs:Stroke fill="#FF363020" thickness="1.5"/>
+					</yjs:PolylineEdgeStyle.stroke>
+					<yjs:PolylineEdgeStyle.targetArrow>
+						<yjs:Arrow type="TRIANGLE" scale="0.75" stroke="#FF363020" fill="#FF363020" cropLength="1"/>
+					</yjs:PolylineEdgeStyle.targetArrow>
+					<yjs:PolylineEdgeStyle.sourceArrow>
+						<yjs:Arrow type="NONE" stroke="#FF363020" fill="#FF363020"/>
+					</yjs:PolylineEdgeStyle.sourceArrow>
+				</yjs:PolylineEdgeStyle>
+			</data>
+			<data key="d6">
+				<sys:String><![CDATA[Net 0]]></sys:String>
+			</data>
+		</edge>
+		<edge id="e6" source="n0" target="n7" sourceport="p6" targetport="p0">
+			<data key="d11">
+				<x:List>
+					<y:Label LayoutParameter="{y:GraphMLReference 10}">
+						<y:Label.Text><![CDATA[Net 1]]></y:Label.Text>
+						<y:Label.Style>
+							<yjs:DefaultLabelStyle backgroundFill="#FFEBEBDF" verticalTextAlignment="BOTTOM" horizontalTextAlignment="CENTER" backgroundStroke="#FFEBEBDF" font="{y:GraphMLReference 4}" textFill="BLACK"/>
+						</y:Label.Style>
+					</y:Label>
+				</x:List>
+			</data>
+			<data key="d13">
+				<yjs:PolylineEdgeStyle>
+					<yjs:PolylineEdgeStyle.stroke>
+						<yjs:Stroke fill="#FF363020" thickness="1.5"/>
+					</yjs:PolylineEdgeStyle.stroke>
+					<yjs:PolylineEdgeStyle.targetArrow>
+						<yjs:Arrow type="TRIANGLE" scale="0.75" stroke="#FF363020" fill="#FF363020" cropLength="1"/>
+					</yjs:PolylineEdgeStyle.targetArrow>
+					<yjs:PolylineEdgeStyle.sourceArrow>
+						<yjs:Arrow type="NONE" stroke="#FF363020" fill="#FF363020"/>
+					</yjs:PolylineEdgeStyle.sourceArrow>
+				</yjs:PolylineEdgeStyle>
+			</data>
+			<data key="d6">
+				<sys:String><![CDATA[Net 1]]></sys:String>
+			</data>
+		</edge>
+		<edge id="e7" source="n0" target="n8" sourceport="p7" targetport="p0">
+			<data key="d13">
+				<yjs:PolylineEdgeStyle>
+					<yjs:PolylineEdgeStyle.stroke>
+						<yjs:Stroke fill="#FF363020" thickness="1.5"/>
+					</yjs:PolylineEdgeStyle.stroke>
+					<yjs:PolylineEdgeStyle.targetArrow>
+						<yjs:Arrow type="TRIANGLE" scale="0.75" stroke="#FF363020" fill="#FF363020" cropLength="1"/>
+					</yjs:PolylineEdgeStyle.targetArrow>
+					<yjs:PolylineEdgeStyle.sourceArrow>
+						<yjs:Arrow type="NONE" stroke="#FF363020" fill="#FF363020"/>
+					</yjs:PolylineEdgeStyle.sourceArrow>
+				</yjs:PolylineEdgeStyle>
+			</data>
+			<data key="d6">
+				<sys:String><![CDATA[Net 1]]></sys:String>
+			</data>
+		</edge>
+		<edge id="e8" source="n0" target="n9" sourceport="p8" targetport="p0">
+			<data key="d13">
+				<yjs:PolylineEdgeStyle>
+					<yjs:PolylineEdgeStyle.stroke>
+						<yjs:Stroke fill="#FF363020" thickness="1.5"/>
+					</yjs:PolylineEdgeStyle.stroke>
+					<yjs:PolylineEdgeStyle.targetArrow>
+						<yjs:Arrow type="TRIANGLE" scale="0.75" stroke="#FF363020" fill="#FF363020" cropLength="1"/>
+					</yjs:PolylineEdgeStyle.targetArrow>
+					<yjs:PolylineEdgeStyle.sourceArrow>
+						<yjs:Arrow type="NONE" stroke="#FF363020" fill="#FF363020"/>
+					</yjs:PolylineEdgeStyle.sourceArrow>
+				</yjs:PolylineEdgeStyle>
+			</data>
+			<data key="d6">
+				<sys:String><![CDATA[Net 1]]></sys:String>
+			</data>
+		</edge>
+		<edge id="e9" source="n0" target="n10" sourceport="p9" targetport="p0">
+			<data key="d13">
+				<yjs:PolylineEdgeStyle>
+					<yjs:PolylineEdgeStyle.stroke>
+						<yjs:Stroke fill="#FF363020" thickness="1.5"/>
+					</yjs:PolylineEdgeStyle.stroke>
+					<yjs:PolylineEdgeStyle.targetArrow>
+						<yjs:Arrow type="TRIANGLE" scale="0.75" stroke="#FF363020" fill="#FF363020" cropLength="1"/>
+					</yjs:PolylineEdgeStyle.targetArrow>
+					<yjs:PolylineEdgeStyle.sourceArrow>
+						<yjs:Arrow type="NONE" stroke="#FF363020" fill="#FF363020"/>
+					</yjs:PolylineEdgeStyle.sourceArrow>
+				</yjs:PolylineEdgeStyle>
+			</data>
+			<data key="d6">
+				<sys:String><![CDATA[Net 1]]></sys:String>
+			</data>
+		</edge>
+		<edge id="e10" source="n0" target="n11" sourceport="p10" targetport="p0">
+			<data key="d13">
+				<yjs:PolylineEdgeStyle>
+					<yjs:PolylineEdgeStyle.stroke>
+						<yjs:Stroke fill="#FF363020" thickness="1.5"/>
+					</yjs:PolylineEdgeStyle.stroke>
+					<yjs:PolylineEdgeStyle.targetArrow>
+						<yjs:Arrow type="TRIANGLE" scale="0.75" stroke="#FF363020" fill="#FF363020" cropLength="1"/>
+					</yjs:PolylineEdgeStyle.targetArrow>
+					<yjs:PolylineEdgeStyle.sourceArrow>
+						<yjs:Arrow type="NONE" stroke="#FF363020" fill="#FF363020"/>
+					</yjs:PolylineEdgeStyle.sourceArrow>
+				</yjs:PolylineEdgeStyle>
+			</data>
+			<data key="d6">
+				<sys:String><![CDATA[Net 1]]></sys:String>
+			</data>
+		</edge>
+		<edge id="e11" source="n0" target="n12" sourceport="p11" targetport="p0">
+			<data key="d13">
+				<yjs:PolylineEdgeStyle>
+					<yjs:PolylineEdgeStyle.stroke>
+						<yjs:Stroke fill="#FF363020" thickness="1.5"/>
+					</yjs:PolylineEdgeStyle.stroke>
+					<yjs:PolylineEdgeStyle.targetArrow>
+						<yjs:Arrow type="TRIANGLE" scale="0.75" stroke="#FF363020" fill="#FF363020" cropLength="1"/>
+					</yjs:PolylineEdgeStyle.targetArrow>
+					<yjs:PolylineEdgeStyle.sourceArrow>
+						<yjs:Arrow type="NONE" stroke="#FF363020" fill="#FF363020"/>
+					</yjs:PolylineEdgeStyle.sourceArrow>
+				</yjs:PolylineEdgeStyle>
+			</data>
+			<data key="d6">
+				<sys:String><![CDATA[Net 1]]></sys:String>
+			</data>
+		</edge>
+		<edge id="e12" source="n0" target="n13" sourceport="p12" targetport="p0">
+			<data key="d13">
+				<yjs:PolylineEdgeStyle>
+					<yjs:PolylineEdgeStyle.stroke>
+						<yjs:Stroke fill="#FF363020" thickness="1.5"/>
+					</yjs:PolylineEdgeStyle.stroke>
+					<yjs:PolylineEdgeStyle.targetArrow>
+						<yjs:Arrow type="TRIANGLE" scale="0.75" stroke="#FF363020" fill="#FF363020" cropLength="1"/>
+					</yjs:PolylineEdgeStyle.targetArrow>
+					<yjs:PolylineEdgeStyle.sourceArrow>
+						<yjs:Arrow type="NONE" stroke="#FF363020" fill="#FF363020"/>
+					</yjs:PolylineEdgeStyle.sourceArrow>
+				</yjs:PolylineEdgeStyle>
+			</data>
+			<data key="d6">
+				<sys:String><![CDATA[Net 1]]></sys:String>
+			</data>
+		</edge>
+		<edge id="e13" source="n0" target="n14" sourceport="p13" targetport="p0">
+			<data key="d13">
+				<yjs:PolylineEdgeStyle>
+					<yjs:PolylineEdgeStyle.stroke>
+						<yjs:Stroke fill="#FF363020" thickness="1.5"/>
+					</yjs:PolylineEdgeStyle.stroke>
+					<yjs:PolylineEdgeStyle.targetArrow>
+						<yjs:Arrow type="TRIANGLE" scale="0.75" stroke="#FF363020" fill="#FF363020" cropLength="1"/>
+					</yjs:PolylineEdgeStyle.targetArrow>
+					<yjs:PolylineEdgeStyle.sourceArrow>
+						<yjs:Arrow type="NONE" stroke="#FF363020" fill="#FF363020"/>
+					</yjs:PolylineEdgeStyle.sourceArrow>
+				</yjs:PolylineEdgeStyle>
+			</data>
+			<data key="d6">
+				<sys:String><![CDATA[Net 1]]></sys:String>
+			</data>
+		</edge>
+		<edge id="e14" source="n0" target="n15" sourceport="p14" targetport="p0">
+			<data key="d11">
+				<x:List>
+					<y:Label LayoutParameter="{y:GraphMLReference 10}">
+						<y:Label.Text><![CDATA[Net 2]]></y:Label.Text>
+						<y:Label.Style>
+							<yjs:DefaultLabelStyle backgroundFill="#FFBDD9DC" verticalTextAlignment="BOTTOM" horizontalTextAlignment="CENTER" backgroundStroke="#FFBDD9DC" font="{y:GraphMLReference 4}" textFill="BLACK"/>
+						</y:Label.Style>
+					</y:Label>
+				</x:List>
+			</data>
+			<data key="d13">
+				<yjs:PolylineEdgeStyle>
+					<yjs:PolylineEdgeStyle.stroke>
+						<yjs:Stroke fill="#FF363020" thickness="1.5"/>
+					</yjs:PolylineEdgeStyle.stroke>
+					<yjs:PolylineEdgeStyle.targetArrow>
+						<yjs:Arrow type="TRIANGLE" scale="0.75" stroke="#FF363020" fill="#FF363020" cropLength="1"/>
+					</yjs:PolylineEdgeStyle.targetArrow>
+					<yjs:PolylineEdgeStyle.sourceArrow>
+						<yjs:Arrow type="NONE" stroke="#FF363020" fill="#FF363020"/>
+					</yjs:PolylineEdgeStyle.sourceArrow>
+				</yjs:PolylineEdgeStyle>
+			</data>
+			<data key="d6">
+				<sys:String><![CDATA[Net 2]]></sys:String>
+			</data>
+		</edge>
+		<edge id="e15" source="n0" target="n16" sourceport="p15" targetport="p0">
+			<data key="d13">
+				<yjs:PolylineEdgeStyle>
+					<yjs:PolylineEdgeStyle.stroke>
+						<yjs:Stroke fill="#FF363020" thickness="1.5"/>
+					</yjs:PolylineEdgeStyle.stroke>
+					<yjs:PolylineEdgeStyle.targetArrow>
+						<yjs:Arrow type="TRIANGLE" scale="0.75" stroke="#FF363020" fill="#FF363020" cropLength="1"/>
+					</yjs:PolylineEdgeStyle.targetArrow>
+					<yjs:PolylineEdgeStyle.sourceArrow>
+						<yjs:Arrow type="NONE" stroke="#FF363020" fill="#FF363020"/>
+					</yjs:PolylineEdgeStyle.sourceArrow>
+				</yjs:PolylineEdgeStyle>
+			</data>
+			<data key="d6">
+				<sys:String><![CDATA[Net 2]]></sys:String>
+			</data>
+		</edge>
+		<edge id="e16" source="n0" target="n17" sourceport="p16" targetport="p0">
+			<data key="d13">
+				<yjs:PolylineEdgeStyle>
+					<yjs:PolylineEdgeStyle.stroke>
+						<yjs:Stroke fill="#FF363020" thickness="1.5"/>
+					</yjs:PolylineEdgeStyle.stroke>
+					<yjs:PolylineEdgeStyle.targetArrow>
+						<yjs:Arrow type="TRIANGLE" scale="0.75" stroke="#FF363020" fill="#FF363020" cropLength="1"/>
+					</yjs:PolylineEdgeStyle.targetArrow>
+					<yjs:PolylineEdgeStyle.sourceArrow>
+						<yjs:Arrow type="NONE" stroke="#FF363020" fill="#FF363020"/>
+					</yjs:PolylineEdgeStyle.sourceArrow>
+				</yjs:PolylineEdgeStyle>
+			</data>
+			<data key="d6">
+				<sys:String><![CDATA[Net 2]]></sys:String>
+			</data>
+		</edge>
+		<edge id="e17" source="n0" target="n18" sourceport="p17" targetport="p0">
+			<data key="d13">
+				<yjs:PolylineEdgeStyle>
+					<yjs:PolylineEdgeStyle.stroke>
+						<yjs:Stroke fill="#FF363020" thickness="1.5"/>
+					</yjs:PolylineEdgeStyle.stroke>
+					<yjs:PolylineEdgeStyle.targetArrow>
+						<yjs:Arrow type="TRIANGLE" scale="0.75" stroke="#FF363020" fill="#FF363020" cropLength="1"/>
+					</yjs:PolylineEdgeStyle.targetArrow>
+					<yjs:PolylineEdgeStyle.sourceArrow>
+						<yjs:Arrow type="NONE" stroke="#FF363020" fill="#FF363020"/>
+					</yjs:PolylineEdgeStyle.sourceArrow>
+				</yjs:PolylineEdgeStyle>
+			</data>
+			<data key="d6">
+				<sys:String><![CDATA[Net 2]]></sys:String>
+			</data>
+		</edge>
+		<edge id="e18" source="n0" target="n19" sourceport="p18" targetport="p0">
+			<data key="d13">
+				<yjs:PolylineEdgeStyle>
+					<yjs:PolylineEdgeStyle.stroke>
+						<yjs:Stroke fill="#FF363020" thickness="1.5"/>
+					</yjs:PolylineEdgeStyle.stroke>
+					<yjs:PolylineEdgeStyle.targetArrow>
+						<yjs:Arrow type="TRIANGLE" scale="0.75" stroke="#FF363020" fill="#FF363020" cropLength="1"/>
+					</yjs:PolylineEdgeStyle.targetArrow>
+					<yjs:PolylineEdgeStyle.sourceArrow>
+						<yjs:Arrow type="NONE" stroke="#FF363020" fill="#FF363020"/>
+					</yjs:PolylineEdgeStyle.sourceArrow>
+				</yjs:PolylineEdgeStyle>
+			</data>
+			<data key="d6">
+				<sys:String><![CDATA[Net 2]]></sys:String>
+			</data>
+		</edge>
+		<edge id="e19" source="n0" target="n20" sourceport="p19" targetport="p0">
+			<data key="d13">
+				<yjs:PolylineEdgeStyle>
+					<yjs:PolylineEdgeStyle.stroke>
+						<yjs:Stroke fill="#FF363020" thickness="1.5"/>
+					</yjs:PolylineEdgeStyle.stroke>
+					<yjs:PolylineEdgeStyle.targetArrow>
+						<yjs:Arrow type="TRIANGLE" scale="0.75" stroke="#FF363020" fill="#FF363020" cropLength="1"/>
+					</yjs:PolylineEdgeStyle.targetArrow>
+					<yjs:PolylineEdgeStyle.sourceArrow>
+						<yjs:Arrow type="NONE" stroke="#FF363020" fill="#FF363020"/>
+					</yjs:PolylineEdgeStyle.sourceArrow>
+				</yjs:PolylineEdgeStyle>
+			</data>
+			<data key="d6">
+				<sys:String><![CDATA[Net 2]]></sys:String>
+			</data>
+		</edge>
+		<edge id="e20" source="n0" target="n21" sourceport="p20" targetport="p0">
+			<data key="d13">
+				<yjs:PolylineEdgeStyle>
+					<yjs:PolylineEdgeStyle.stroke>
+						<yjs:Stroke fill="#FF363020" thickness="1.5"/>
+					</yjs:PolylineEdgeStyle.stroke>
+					<yjs:PolylineEdgeStyle.targetArrow>
+						<yjs:Arrow type="TRIANGLE" scale="0.75" stroke="#FF363020" fill="#FF363020" cropLength="1"/>
+					</yjs:PolylineEdgeStyle.targetArrow>
+					<yjs:PolylineEdgeStyle.sourceArrow>
+						<yjs:Arrow type="NONE" stroke="#FF363020" fill="#FF363020"/>
+					</yjs:PolylineEdgeStyle.sourceArrow>
+				</yjs:PolylineEdgeStyle>
+			</data>
+			<data key="d6">
+				<sys:String><![CDATA[Net 2]]></sys:String>
+			</data>
+		</edge>
+		<edge id="e21" source="n0" target="n22" sourceport="p21" targetport="p0">
+			<data key="d13">
+				<yjs:PolylineEdgeStyle>
+					<yjs:PolylineEdgeStyle.stroke>
+						<yjs:Stroke fill="#FF363020" thickness="1.5"/>
+					</yjs:PolylineEdgeStyle.stroke>
+					<yjs:PolylineEdgeStyle.targetArrow>
+						<yjs:Arrow type="TRIANGLE" scale="0.75" stroke="#FF363020" fill="#FF363020" cropLength="1"/>
+					</yjs:PolylineEdgeStyle.targetArrow>
+					<yjs:PolylineEdgeStyle.sourceArrow>
+						<yjs:Arrow type="NONE" stroke="#FF363020" fill="#FF363020"/>
+					</yjs:PolylineEdgeStyle.sourceArrow>
+				</yjs:PolylineEdgeStyle>
+			</data>
+			<data key="d6">
+				<sys:String><![CDATA[Net 2]]></sys:String>
+			</data>
+		</edge>
+	</graph>
+</graphml>

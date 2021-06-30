@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -33,7 +33,7 @@ import { IHandleProvider, BaseClass, IEdge, IInputModeContext, IEnumerable, IHan
  * This makes it possible to start manipulating the control points immediately without having to
  * select them first (which is nearly impossible for points not lying on the curve)
  */
-export class BezierEdgeHandleProvider extends BaseClass<IHandleProvider>(IHandleProvider) {
+export class BezierEdgeHandleProvider extends BaseClass(IHandleProvider) {
   private readonly edge: IEdge
   private readonly coreImpl: IHandleProvider
 

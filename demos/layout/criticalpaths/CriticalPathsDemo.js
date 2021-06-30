@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -39,8 +39,10 @@ import {
   LayeredNodePlacer,
   License,
   PolylineEdgeStyle,
+  SimplexNodePlacer,
   Stroke,
-  TreeLayout
+  TreeLayout,
+  TreeLayoutData
 } from 'yfiles'
 
 import PriorityPanel from './PriorityPanel.js'
@@ -53,13 +55,13 @@ import loadJson from '../../resources/load-json.js'
  * The graph component in which the graph is displayed.
  * @type {GraphComponent}
  */
-let graphComponent = null
+let graphComponent
 
 /**
  * A popup panel to change the priority of edges.
  * @type {PriorityPanel}
  */
-let priorityPanel = null
+let priorityPanel
 
 /**
  * Flag that prevents re-entrant layout runs.
@@ -69,10 +71,13 @@ let layoutRunning = false
 
 /**
  * The current layout algorithm.
- * @type {'hierarchic'|'tree'}
+ * @type {'hierarchic'}
  */
 let layoutStyle = 'hierarchic'
 
+/**
+ * @param {*} licenseData
+ */
 function run(licenseData) {
   License.value = licenseData
   graphComponent = new GraphComponent('graphComponent')
@@ -87,7 +92,7 @@ function run(licenseData) {
 
 /**
  * Loads the sample graph which initially provides some priorities.
- * @param {'hierarchic'|'tree'} sample
+ * @param {!('hierarchic'|'tree')} sample
  */
 function loadGraph(sample) {
   const graph = graphComponent.graph
@@ -113,7 +118,7 @@ function loadGraph(sample) {
 
 /**
  * Specifies the priority of the given edge.
- * @param {IEdge} edge
+ * @param {!IEdge} edge
  * @param {number} priority
  */
 function setPriority(edge, priority) {
@@ -128,7 +133,7 @@ function setPriority(edge, priority) {
 /**
  * Updates the stroke color and thickness according to the given priority.
  * @param {number} priority
- * @return {Stroke}
+ * @returns {!Stroke}
  */
 function getStroke(priority) {
   switch (priority) {
@@ -149,6 +154,7 @@ function getStroke(priority) {
 
 /**
  * Applies a hierarchic layout considering the edge priorities.
+ * @returns {!Promise}
  */
 async function runLayout() {
   if (layoutRunning) {
@@ -160,14 +166,12 @@ async function runLayout() {
     layoutStyle === 'hierarchic' ? configureHierarchicLayout() : configureTreeLayout()
 
   await graphComponent.morphLayout(layout, '700ms', layoutData)
-  if (layoutStyle === 'tree') {
-    graphComponent.graph.mapperRegistry.removeMapper(TreeLayout.CRITICAL_EDGE_DP_KEY)
-  }
   layoutRunning = false
 }
 
 /**
  * Returns a configured hierarchic layout considering the edge priorities.
+ * @returns {!object}
  */
 function configureHierarchicLayout() {
   const layout = new HierarchicLayout()
@@ -177,19 +181,12 @@ function configureHierarchicLayout() {
   layout.nodePlacer.barycenterMode = true
 
   const layoutData = new HierarchicLayoutData({
-    criticalEdgePriorities: edge => {
-      if (edge.tag) {
-        return edge.tag.priority || 0
-      }
-      return 0
-    },
-    // Use the edge crossing costs to avoid crossings of different critical paths, when the priority of the edge is high then the probability of crossing is low.
-    edgeCrossingCosts: edge => {
-      if (edge.tag) {
-        return edge.tag.priority + 1 || 1
-      }
-      return 1
-    }
+    // Define priorities for edges on critical paths
+    criticalEdgePriorities: edge => (edge.tag ? edge.tag.priority || 0 : 0),
+
+    // Use the edge crossing costs to avoid crossings of different critical paths,
+    // when the priority of the edge is high then the probability of crossing is low.
+    edgeCrossingCosts: edge => (edge.tag ? edge.tag.priority + 1 || 1 : 1)
   })
 
   return {
@@ -200,27 +197,23 @@ function configureHierarchicLayout() {
 
 /**
  * Returns a configured tree layout considering the edge priorities.
+ * @returns {!object}
  */
 function configureTreeLayout() {
   const layout = new TreeLayout()
-  const layeredNodePlacer = new LayeredNodePlacer()
-  layeredNodePlacer.layerSpacing = 60
-  layeredNodePlacer.spacing = 30
-  layout.defaultNodePlacer = layeredNodePlacer
+  layout.defaultNodePlacer = new LayeredNodePlacer({
+    layerSpacing: 60,
+    spacing: 30
+  })
 
-  graphComponent.graph.mapperRegistry.createDelegateMapper(
-    TreeLayout.CRITICAL_EDGE_DP_KEY,
-    edge => {
-      if (edge.tag) {
-        return edge.tag.priority || 0
-      }
-      return 0
-    }
-  )
+  const layoutData = new TreeLayoutData({
+    // Define priorities for edges on critical paths
+    criticalEdgePriorities: edge => (edge.tag ? edge.tag.priority || 0 : 0)
+  })
 
   return {
     layout,
-    layoutData: null
+    layoutData
   }
 }
 
@@ -232,9 +225,9 @@ function markRandomPredecessorsPaths() {
     return
   }
 
-  const leaves = graphComponent.graph.nodes.filter(node => {
-    return graphComponent.graph.outEdgesAt(node).size === 0
-  })
+  const leaves = graphComponent.graph.nodes.filter(
+    node => graphComponent.graph.outEdgesAt(node).size === 0
+  )
 
   // clear priorities
   graphComponent.graph.edges.forEach(edge => {
@@ -255,7 +248,7 @@ function markRandomPredecessorsPaths() {
 
 /**
  * Marks the upstream path from a given node.
- * @param {INode} node
+ * @param {!INode} node
  * @param {number} priority
  */
 function markPredecessorsPath(node, priority) {
@@ -282,35 +275,44 @@ function clearPriorities() {
   runLayout()
 }
 
+/**
+ * Initializes a {@link GraphViewerInputMode} that enables element selection and tool tips.
+ */
 function initializeInputMode() {
-  graphComponent.inputMode = new GraphViewerInputMode({
+  const gvim = new GraphViewerInputMode({
     selectableItems: GraphItemTypes.EDGE | GraphItemTypes.NODE,
     toolTipItems: GraphItemTypes.EDGE
   })
-  graphComponent.inputMode.addQueryItemToolTipListener((sender, event) => {
+  gvim.addQueryItemToolTipListener((sender, event) => {
     if (!event.handled) {
       const node = event.item
-      event.toolTip = `Priority: ${node.tag.priority || 0}`
-      event.handled = true
+      if (node) {
+        event.toolTip = `Priority: ${node.tag.priority || 0}`
+        event.handled = true
+      }
     }
   })
+  graphComponent.inputMode = gvim
 }
 
+/**
+ * Initializes the {@link PriorityPanel}.
+ */
 function initializePriorityPanel() {
   priorityPanel = new PriorityPanel(graphComponent)
   priorityPanel.itemPriorityChanged = (item, newPriority) => {
-    if (IEdge.isInstance(item)) {
+    if (item instanceof IEdge) {
       setPriority(item, newPriority)
-    } else if (INode.isInstance(item)) {
+    } else if (item instanceof INode) {
       markPredecessorsPath(item, newPriority)
     }
     graphComponent.selection.clear()
   }
-  priorityPanel.priorityChanged = () => {
-    runLayout()
-  }
+
+  priorityPanel.priorityChanged = () => runLayout()
+
   graphComponent.selection.addItemSelectionChangedListener((src, args) => {
-    if (INode.isInstance(args.item)) {
+    if (args.item instanceof INode) {
       priorityPanel.currentItems = graphComponent.selection.selectedNodes.toArray()
     } else {
       priorityPanel.currentItems = graphComponent.selection.selectedEdges.toArray()

@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -34,8 +34,7 @@ const { nodeResolve } = require('@rollup/plugin-node-resolve')
 const replace = require('@rollup/plugin-replace')
 const commonjs = require('@rollup/plugin-commonjs')
 const json = require('@rollup/plugin-json')
-
-const root = path.join(__dirname, '../../../')
+const webWorkerLoader = require('rollup-plugin-web-worker-loader')
 const build = path.join(__dirname, 'build')
 const dist = path.join(__dirname, 'dist')
 
@@ -65,7 +64,7 @@ module.exports = function (grunt) {
 
     for (const file of yfilesPackageFiles) {
       const source = grunt.file.read(file)
-      const destPath = path.join(build, path.relative(root, file))
+      const destPath = path.join(build, path.relative(__dirname, file))
       if (file.endsWith('.js')) {
         libFiles.push({
           source: source,
@@ -94,8 +93,9 @@ module.exports = function (grunt) {
 
     rollup
       .rollup({
-        input: path.join(build, 'demos-js/loading/rollupjs/src/RollupJsDemo.js'),
+        input: path.join(build, 'src/RollupJsDemo.js'),
         plugins: [
+          webWorkerLoader({ inline: false, pattern: /.*LayoutWorker\.js$/, loadPath: 'dist' }),
           replace({ 'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV) }),
           nodeResolve(),
           json(),
@@ -123,9 +123,8 @@ module.exports = function (grunt) {
   const gruntDemoFiles = [
     {
       expand: true,
-      cwd: root,
-      src: [`demos-js/loading/rollupjs/**/*.js`, `demos-js/loading/rollupjs/**/*.json`],
-      ignore: ['**/node_modules/**', 'demos-js/loading/rollupjs/Gruntfile.js'],
+      cwd: __dirname,
+      src: [`./src/**/*.{js,json}`],
       dest: build
     }
   ]
@@ -144,6 +143,11 @@ module.exports = function (grunt) {
     copy: {
       all: {
         files: gruntDemoFiles
+      },
+      license: {
+        files: {
+          './src/license.json': path.join(path.join(__dirname, '../../../'), 'lib/license.json')
+        }
       }
     }
   })

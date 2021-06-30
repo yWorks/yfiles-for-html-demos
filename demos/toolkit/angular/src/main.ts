@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -31,14 +31,10 @@ import { platformBrowserDynamic } from '@angular/platform-browser-dynamic'
 
 import { AppModule } from './app/app.module'
 import { environment } from './environments/environment'
-import { Class, LayoutExecutor, License } from 'yfiles'
+import { License } from 'yfiles'
 import licenseData from '../../../../lib/license.json'
 // @ts-ignore
 import { enableWorkarounds } from './utils/Workarounds'
-
-// We need to load the yfiles/view-layout-bridge module explicitly to prevent the webpack
-// tree shaker from removing this dependency which is needed for the layout functionality in this demo.
-Class.ensure(LayoutExecutor)
 
 License.value = licenseData
 

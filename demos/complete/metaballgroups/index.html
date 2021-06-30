@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -7,7 +7,7 @@
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.3.
+     // This demo file is part of yFiles for HTML 2.4.
      // Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
@@ -36,10 +36,22 @@
 
   <title>Metaball Groups Rendering Demo [yFiles for HTML]</title>
 
-  <link rel="stylesheet" href="../../node_modules/yfiles/yfiles.css">
   <link rel="stylesheet" href="../../resources/style/demo.css">
 
   <script src="../../resources/filesystem-warning.js"></script>
+
+  <style>
+    #no-webgl-support {
+      text-align: center;
+      font-size: 24px;
+      position: absolute;
+      top: 100px;
+      padding: 2em;
+      left: 0;
+      right: 0;
+      line-height: 2;
+    }
+  </style>
 
 </head>
 <body class="demo-has-left">
@@ -88,6 +100,11 @@
   </div>
 
   <div id="graphComponent"></div>
+
+  <div id="no-webgl-support" style="display:none;">
+    Your browser or device does not support WebGL.<br>
+    This demo only works if WebGL is available.
+  </div>
 </div>
 
 <script type="module" crossorigin="anonymous" src="MetaballGroupsDemo.js"></script>

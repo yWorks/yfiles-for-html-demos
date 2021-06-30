@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -31,6 +31,9 @@ import {
   DefaultNodePlacer,
   IEdge,
   IGraph,
+  ILayoutAlgorithm,
+  INode,
+  LayoutData,
   LeafNodePlacer,
   LeftRightNodePlacer,
   Mapper,
@@ -40,22 +43,31 @@ import {
   TreeLayoutData,
   TreeReductionStage
 } from 'yfiles'
+import NodePlacerPanel from './NodePlacerPanel.js'
+
+/**
+ * @typedef {Object} Configuration
+ * @property {ILayoutAlgorithm} layout
+ * @property {LayoutData} [layoutData]
+ */
 
 /**
  * Creates a layout configuration that uses the node placers from the panel.
  * This configuration considers assistant nodes as well as an out-edge comparer.
- * @param {IGraph} graph The graph
- * @param {NodePlacerPanel} nodePlacerPanel The panel
- * @returns {{layout: MinimumNodeSizeStage, layoutData: TreeLayoutData}}
+ * @param {!IGraph} graph The graph
+ * @param {!NodePlacerPanel} nodePlacerPanel The panel
+ * @returns {!Configuration}
  */
 export function createGenericConfiguration(graph, nodePlacerPanel) {
   // create layout algorithm
   const treeLayout = new TreeLayout()
-  if (document.getElementById('select-sample').value === 'General Graph') {
-    // add the tree reduction stage for the case where the graph is not a tree
-    const treeReductionStage = new TreeReductionStage()
-    treeReductionStage.nonTreeEdgeRouter = new OrganicEdgeRouter()
-    treeReductionStage.nonTreeEdgeSelectionKey = OrganicEdgeRouter.AFFECTED_EDGES_DP_KEY
+  const sample = document.getElementById('select-sample').value
+  if (sample === 'General Graph') {
+    // add the tree reduction stage for the case where the graph is not a tree but a general graph
+    const treeReductionStage = new TreeReductionStage({
+      nonTreeEdgeRouter: new OrganicEdgeRouter(),
+      nonTreeEdgeSelectionKey: OrganicEdgeRouter.AFFECTED_EDGES_DP_KEY
+    })
     treeLayout.prependStage(treeReductionStage)
   }
   const layout = new MinimumNodeSizeStage(treeLayout)
@@ -84,23 +96,16 @@ export function createGenericConfiguration(graph, nodePlacerPanel) {
     compactNodePlacerStrategyMementos: new Mapper()
   })
 
-  return {
-    layout,
-    layoutData
-  }
+  return { layout, layoutData }
 }
 
 /**
  * Returns the ordinal which describes where this edge fits in the edge order.
  * This implementation uses the label text if it is a number or 0.
- * @param {IEdge} edge
- * @return {number}
+ * @param {!IEdge} edge
+ * @returns {number}
  */
 function getOrdinal(edge) {
-  if (!edge) {
-    return 0
-  }
-
   const targetLabels = edge.targetNode.labels
   if (targetLabels.size > 0) {
     const number = Number.parseFloat(targetLabels.first().text)
@@ -114,150 +119,125 @@ function getOrdinal(edge) {
 /**
  * Creates a layout configuration that uses a combination of LeftRightNodePlacer and
  * DefaultNodePlacer.
- * @param {IGraph} graph The graph
- * @param {NodePlacerPanel} nodePlacerPanel The panel
- * @returns {{layout: MinimumNodeSizeStage, layoutData: TreeLayoutData}}
+ * @param {!IGraph} graph The graph
+ * @param {!NodePlacerPanel} nodePlacerPanel The panel
+ * @returns {!Configuration}
  */
 export function createDefaultTreeConfiguration(graph, nodePlacerPanel) {
   // create layout algorithm
   const layout = new MinimumNodeSizeStage(new TreeLayout())
 
   // create layout data
-  const layoutData = new TreeLayoutData({
-    nodePlacers: node =>
-      node.tag.layer === 3 ? new LeftRightNodePlacer() : new DefaultNodePlacer()
-  })
+  const layoutData = new TreeLayoutData()
 
-  // update node placers with the same values to keep the panel intact
-  graph.nodes.forEach(node => {
-    nodePlacerPanel.nodePlacers.set(
-      node,
-      node.tag.layer === 3 ? new LeftRightNodePlacer() : new DefaultNodePlacer()
-    )
-  })
+  for (const node of graph.nodes) {
+    //specify placer in layout data, depending on the layer value stored in the node's tag
+    const placer = node.tag.layer === 3 ? new LeftRightNodePlacer() : new DefaultNodePlacer()
+    layoutData.nodePlacers.mapper.set(node, placer)
 
-  return {
-    layout,
-    layoutData
+    // update node placers with the same values to keep the panel intact
+    nodePlacerPanel.nodePlacers.set(node, placer)
   }
+
+  return { layout, layoutData }
 }
 
 /**
  * Creates a layout configuration that places the first two levels horizontally and stacks the
  * remaining layers left-right.
- * @param {IGraph} graph The graph
- * @param {NodePlacerPanel} nodePlacerPanel The panel
- * @returns {{layout: MinimumNodeSizeStage, layoutData: TreeLayoutData}}
+ * @param {!IGraph} graph The graph
+ * @param {!NodePlacerPanel} nodePlacerPanel The panel
+ * @returns {!Configuration}
  */
 export function createCategoryTreeConfiguration(graph, nodePlacerPanel) {
   // create layout algorithm
   const layout = new MinimumNodeSizeStage(new TreeLayout())
 
   // create layout data
-  const layoutData = new TreeLayoutData({
-    nodePlacers: node => {
-      if (node.tag.layer === 0) {
-        return new DefaultNodePlacer()
-      }
-      return new LeftRightNodePlacer({
-        placeLastOnBottom: false
-      })
-    }
-  })
+  const layoutData = new TreeLayoutData()
 
-  // update node placers with the same values to keep the panel intact
-  graph.nodes.forEach(node => {
-    if (node.tag.layer === 0) {
-      nodePlacerPanel.nodePlacers.set(node, new DefaultNodePlacer())
-    } else {
-      const leftRightNodePlacer = new LeftRightNodePlacer({
-        placeLastOnBottom: false
-      })
-      nodePlacerPanel.nodePlacers.set(node, leftRightNodePlacer)
-    }
-  })
+  for (const node of graph.nodes) {
+    //specify placer in layout data, depending on the layer value stored in the node's tag
+    const placer =
+      node.tag.layer === 0
+        ? new DefaultNodePlacer()
+        : new LeftRightNodePlacer({
+            placeLastOnBottom: false
+          })
+    layoutData.nodePlacers.mapper.set(node, placer)
 
-  return {
-    layout,
-    layoutData
+    // update node placers with the same values to keep the panel intact
+    nodePlacerPanel.nodePlacers.set(node, placer)
   }
+
+  return { layout, layoutData }
 }
 
 /**
  * Creates a layout configuration that can handle general graphs.
  * Non-tree edges are routed with organic style.
- * @param {IGraph} graph The graph
- * @param {NodePlacerPanel} nodePlacerPanel The panel
- * @returns {{layout: MinimumNodeSizeStage, layoutData: TreeLayoutData}}
+ * @param {!IGraph} graph The graph
+ * @param {!NodePlacerPanel} nodePlacerPanel The panel
+ * @returns {!Configuration}
  */
 export function createGeneralGraphConfiguration(graph, nodePlacerPanel) {
   // create layout algorithm
-  const treeLayout = new TreeReductionStage(new TreeLayout())
-  treeLayout.nonTreeEdgeRouter = new OrganicEdgeRouter()
-  treeLayout.nonTreeEdgeSelectionKey = OrganicEdgeRouter.AFFECTED_EDGES_DP_KEY
+  const treeLayout = new TreeReductionStage({
+    coreLayout: new TreeLayout(),
+    nonTreeEdgeRouter: new OrganicEdgeRouter(),
+    nonTreeEdgeSelectionKey: OrganicEdgeRouter.AFFECTED_EDGES_DP_KEY
+  })
   const layout = new MinimumNodeSizeStage(treeLayout)
 
   // update node placers with the same values to keep the panel intact
-  graph.nodes.forEach(node => {
+  for (const node of graph.nodes) {
     nodePlacerPanel.nodePlacers.set(node, new DefaultNodePlacer())
-  })
-
-  return {
-    layout,
-    layoutData: null
   }
+
+  return { layout }
 }
 
 /**
  * Creates a layout configuration that uses CompactNodePlacer for nodes with more than 5 children.
- * @param {IGraph} graph The graph
- * @param {NodePlacerPanel} nodePlacerPanel The panel
- * @returns {{layout: MinimumNodeSizeStage, layoutData: TreeLayoutData}}
+ * @param {!IGraph} graph The graph
+ * @param {!NodePlacerPanel} nodePlacerPanel The panel
+ * @returns {!Configuration}
  */
 export function createLargeTreeConfiguration(graph, nodePlacerPanel) {
   // create layout algorithm
   const layout = new MinimumNodeSizeStage(new TreeLayout())
 
   const layoutData = new TreeLayoutData({
-    nodePlacers: node => {
-      if (graph.outDegree(node) > 5) {
-        return new CompactNodePlacer()
-      }
-      return new DefaultNodePlacer()
-    },
     compactNodePlacerStrategyMementos: new Mapper()
   })
 
-  // update node placers with the same values to keep the panel intact
-  graph.nodes.forEach(node => {
-    if (graph.outDegree(node) > 5) {
-      nodePlacerPanel.nodePlacers.set(node, new CompactNodePlacer())
-    } else {
-      nodePlacerPanel.nodePlacers.set(node, new DefaultNodePlacer())
-    }
-  })
+  // select placer depending on out-degree and specify it in the layout data
+  for (const node of graph.nodes) {
+    const placer = graph.outDegree(node) > 5 ? new CompactNodePlacer() : new DefaultNodePlacer()
+    layoutData.nodePlacers.mapper.set(node, placer)
 
-  return {
-    layout,
-    layoutData
+    // update node placers with the same values to keep the panel intact
+    nodePlacerPanel.nodePlacers.set(node, placer)
   }
+
+  return { layout, layoutData }
 }
 
 /**
  * Creates a layout configuration that uses DefaultNodePlacer for all nodes in the graph.
- * @param {IGraph} graph The graph
- * @param {NodePlacerPanel} nodePlacerPanel The panel
- * @returns {{layout: MinimumNodeSizeStage, layoutData: TreeLayoutData}}
+ * @param {!IGraph} graph The graph
+ * @param {!NodePlacerPanel} nodePlacerPanel The panel
+ * @returns {!Configuration}
  */
 export function createWideTreeConfiguration(graph, nodePlacerPanel) {
+  const defaultNodePlacer = new DefaultNodePlacer()
   const layout = new TreeLayout({
-    defaultNodePlacer: new DefaultNodePlacer()
+    defaultNodePlacer: defaultNodePlacer
   })
   // update node placers with the same values to keep the panel intact
-  graph.nodes.forEach(node => nodePlacerPanel.nodePlacers.set(node, new DefaultNodePlacer()))
-
-  return {
-    layout: new MinimumNodeSizeStage(layout),
-    layoutData: null
+  for (const node of graph.nodes) {
+    nodePlacerPanel.nodePlacers.set(node, defaultNodePlacer)
   }
+
+  return { layout: new MinimumNodeSizeStage(layout) }
 }

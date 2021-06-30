@@ -9,22 +9,47 @@
       @change="$emit('toggle-editable', $event.target.checked)"
     />
     <label for="toggleEditable">Toggle Editing</label>
+    <span class="demo-separator"></span>
+    <button class="demo-icon-yIconLayout labeled" @click="$emit('layout')">Layout</button>
+    <span class="demo-separator"></span>
+    <input
+      v-model.trim="searchString"
+      class="search"
+      placeholder="Search Nodes"
+      @input="$emit('search-query-change', $event.target.value)"
+    />
   </div>
 </template>
 
 <script>
 export default {
-  name: 'DemoToolbar'
+  name: 'DemoToolbar',
+  data() {
+    return {
+      searchString: ''
+    }
+  }
 }
 </script>
 
 <style scoped>
-.demo-toolbar > * {
-  vertical-align: middle;
+.demo-toolbar {
+  display: flex;
+  align-items: center;
+  height: 100%;
 }
 .demo-toolbar button {
   line-height: normal;
   height: 24px;
+}
+.demo-toolbar button.labeled {
+  background-position-x: left;
+  width: inherit;
+  padding: 0 2px;
+}
+.demo-toolbar button.labeled[class*='demo-icon'] {
+  padding-left: 24px;
+  background-position-x: 2px;
 }
 .demo-toolbar button,
 .demo-toolbar > label {
@@ -82,9 +107,22 @@ export default {
   background: #999;
   display: inline-block;
   vertical-align: middle;
-  margin: 0 2px;
+  margin: 0 10px;
 }
 .demo-icon-yIconReload {
   background-image: url('../assets/reload-16.svg');
+}
+.demo-icon-yIconLayout {
+  background-image: url('../assets/play2-16.svg');
+}
+.search {
+  line-height: 20px;
+  padding: 4px 8px;
+  font-size: 16px;
+  letter-spacing: normal;
+  width: 300px;
+}
+.search:focus {
+  outline: none;
 }
 </style>

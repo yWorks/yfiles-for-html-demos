@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -35,47 +35,48 @@ import { BaseClass, IRenderContext, IVisualCreator, PartitionGrid, SvgVisual, Vi
 export default class SimplePartitionGridVisualCreator extends BaseClass(IVisualCreator) {
   /**
    * Creates a new instance of PartitionGridVisualCreator.
-   * @param {PartitionGrid} grid The partition grid to be visualized
+   * @param {!PartitionGrid} grid The partition grid to be visualized
    */
   constructor(grid) {
     super()
+    // The partition grid to be visualized
     this.grid = grid
   }
 
   /**
    * Creates the visual for the given partition grid.
-   * @param {IRenderContext} context The context that describes where the visual will be used
-   * @return {SvgVisual} The visual for the given partition grid
+   * @param {!IRenderContext} context The context that describes where the visual will be used
+   * @returns {!SvgVisual} The visual for the given partition grid
    */
   createVisual(context) {
     const container = document.createElementNS('http://www.w3.org/2000/svg', 'g')
-    for (let rowIndex = 0; rowIndex < this.grid.rows.size; rowIndex++) {
-      for (let columnIndex = 0; columnIndex < this.grid.columns.size; columnIndex++) {
-        const row = this.grid.rows.get(rowIndex)
-        const column = this.grid.columns.get(columnIndex)
+
+    for (const row of this.grid.rows) {
+      for (const column of this.grid.columns) {
         const x = column.computedPosition
         const y = row.computedPosition
         const h = row.computedHeight
         const w = column.computedWidth
         const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect')
-        rect.setAttribute('x', x)
-        rect.setAttribute('y', y)
-        rect.setAttribute('width', w)
-        rect.setAttribute('height', h)
+        rect.setAttribute('x', `${x}`)
+        rect.setAttribute('y', `${y}`)
+        rect.setAttribute('width', `${w}`)
+        rect.setAttribute('height', `${h}`)
         rect.setAttribute('stroke', 'white')
         rect.setAttribute('fill', 'lightsteelblue')
         container.appendChild(rect)
       }
     }
+
     return new SvgVisual(container)
   }
 
   /**
    * Updates the visual for the given partition grid. In particular, method {@link createVisual} is called.
-   * @param {IRenderContext} context The context that describes where the visual will be used
-   * @param {Visual} oldVisual The visual instance that had been returned the last time the createVisual
+   * @param {!IRenderContext} context The context that describes where the visual will be used
+   * @param {!Visual} oldVisual The visual instance that had been returned the last time the createVisual
    *   method was called on this instance
-   * @return {SvgVisual} The visual for the given partition grid
+   * @returns {!SvgVisual} The visual for the given partition grid
    */
   updateVisual(context, oldVisual) {
     return this.createVisual(context)

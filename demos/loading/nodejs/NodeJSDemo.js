@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -27,39 +27,20 @@
  **
  ***************************************************************************/
 import {
-  Animator,
-  DefaultFolderNodeConverter,
-  FoldingManager,
   FreeEdgeLabelModel,
   GraphComponent,
   GraphEditorInputMode,
-  IAnimation,
   ICommand,
   IGraph,
-  ILabel,
-  ILabelModelParameterFinder,
-  IMapper,
   IModelItem,
-  INodeInsetsProvider,
-  Insets,
   InteriorLabelModel,
+  LayoutExecutorAsync,
   License,
   List,
-  Mapper,
-  OrientedRectangle,
-  Point,
-  Rect,
-  SimpleEdge,
-  SimpleLabel,
-  SimpleNode,
-  SimplePort,
-  Size,
-  ViewportAnimation,
   WaitInputMode
 } from 'yfiles'
 
 import { initDemoStyles } from '../../resources/demo-styles.js'
-import { JSONWriter } from '../../utils/JsonIO.js'
 import { bindAction, bindCommand, showApp } from '../../resources/demo-app.js'
 import loadJson from '../../resources/load-json.js'
 
@@ -90,34 +71,32 @@ function run(licenseData) {
 async function runNodeJSLayout(clearUndo) {
   showLoading()
 
-  // transfer the graph structure and layout in JSON format
-  const jsonWriter = new JSONWriter()
-  jsonWriter.nodeIdProvider = n => n.tag.id
+  // handles the connection between the NodeJS server and the client application
+  async function nodeJsMessageHandler(data) {
+    // send the data blob to the NodeJS server
+    const request = await fetch('http://localhost:3001/layout', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'text/plain;charset=UTF-8'
+      },
+      body: JSON.stringify(data)
+    })
+    // resolve with the layouted graph returned from the server
+    return await request.json()
+  }
 
-  // In addition to the default data, we need the insets for the layout calculation
-  jsonWriter.nodeDataCreated = (data, node, graph) => {
-    const insetsProvider = node.lookup(INodeInsetsProvider.$class)
-    if (insetsProvider !== null) {
-      const insets = insetsProvider.getInsets(node)
-      data.insets = {
-        top: insets.top,
-        right: insets.right,
-        bottom: insets.bottom,
-        left: insets.left
-      }
-    }
-  }
-  const initObject = {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'text/plain;charset=UTF-8'
-    },
-    body: JSON.stringify(jsonWriter.write(graphComponent.graph))
-  }
+  // The LayoutExecutorAsync allows to hook up with a LayoutExecutorAsyncWorker on a different
+  // server and applies the response to the current diagram.
+  const remoteExecutor = new LayoutExecutorAsync({
+    messageHandler: nodeJsMessageHandler,
+    graphComponent,
+    duration: '1s',
+    animateViewport: true,
+    easedAnimation: true
+  })
+
   try {
-    const response = await fetch('http://localhost:3001/layout', initObject)
-    const data = await response.json()
-    applyCalculatedLayout(data, clearUndo)
+    await remoteExecutor.start()
   } catch (e) {
     alert(
       'Layout request failed. Is the layout server running? \n\nPlease start the layout server and reload the demo.\n'
@@ -127,135 +106,6 @@ async function runNodeJSLayout(clearUndo) {
       graphComponent.graph.undoEngine.clear()
     }
     hideLoading()
-  }
-}
-
-/**
- * Applies the graph layout that was calculated by the NodeJS server to the graph.
- * @yjs:keep=nodeList,edgeList,graphBounds,id,layout
- * @param {Object} response The JSON object from the NodeJS server that specifies the new graph layout.
- * @param {boolean} clearUndo Specifies whether the undo queue should be cleared after the layout
- * calculation. This is set to <code>true</code> if this method is called directly after
- * loading a new sample graph.
- */
-async function applyCalculatedLayout(response, clearUndo) {
-  const nodes = response.nodeList
-  const edges = response.edgeList
-
-  // collect the resulting node, bend, port and label positions, so we
-  // can animate to the new layout using IAnimation.createGraphAnimation
-  const node2Layout = new Mapper()
-  const edge2Bends = new Mapper()
-  const port2Location = new Mapper()
-  const label2Parameter = new Mapper()
-
-  // make sure that the layout calculation is a single undo step
-  const graph = graphComponent.graph
-  const compoundEdit = graph.beginEdit('Layout', 'Layout')
-
-  // collect the new node layouts
-  for (let i1 = 0; i1 < nodes.length; i1++) {
-    const nodeObj = nodes[i1]
-    storeNodeLayout(node2Layout, label2Parameter, nodeObj)
-  }
-
-  // collect the new bend and port locations
-  edges.forEach(edgeObj =>
-    storeEdgeLayout(edge2Bends, node2Layout, port2Location, label2Parameter, edgeObj)
-  )
-
-  // the target port location parameters have to be created for node instances that
-  // are already located at the final locations.
-  const portMapper = IMapper.fromDelegate(port => {
-    const location = port2Location.get(port)
-    const ownerLayout = node2Layout.get(port.owner)
-    if (location !== null && ownerLayout !== null) {
-      const dummyNode = new SimpleNode()
-      dummyNode.layout = ownerLayout
-      return port.locationParameter.model.createParameter(dummyNode, location)
-    }
-    return port.locationParameter
-  })
-
-  // we also animate the viewport, so the full graph is visible after the layout animation
-  const bounds = response.graphBounds
-  const targetBounds = new Rect(
-    parseFloat(bounds.x),
-    parseFloat(bounds.y),
-    parseFloat(bounds.width),
-    parseFloat(bounds.height)
-  )
-  // we ignore label locations here.
-  const graphAnimation = IAnimation.createGraphAnimation(
-    graph,
-    node2Layout,
-    edge2Bends,
-    portMapper,
-    null,
-    '1s'
-  )
-  const viewportAnimation = new ViewportAnimation(graphComponent, targetBounds, '1s')
-  viewportAnimation.targetViewMargins = new Insets(10)
-  const parallelAnimation = IAnimation.createParallelAnimation([graphAnimation, viewportAnimation])
-  const animator = new Animator(graphComponent)
-
-  await animator.animate(parallelAnimation)
-  compoundEdit.commit()
-  if (clearUndo) {
-    compoundEdit.cancel()
-    graphComponent.graph.undoEngine.clear()
-  }
-  graphComponent.contentRect = targetBounds
-}
-
-/**
- * Gets the label model parameter which describes the given label with findBestParameter.
- * @param {Object} labelObj The JSON label object from the NodeJS server that specifies the new label layout
- * @param {ILabel} dummyLabel A dummy label that is used to calculate the layout parameter.
- * @return {ILabelModelParameter} The parameter that best matches the new layout.
- */
-function getLabelParameter(labelObj, dummyLabel) {
-  const model = dummyLabel.layoutParameter.model
-  const parameterFinder = model.lookup(ILabelModelParameterFinder.$class)
-  const layout = new OrientedRectangle(
-    labelObj.anchorX,
-    labelObj.anchorY,
-    labelObj.width,
-    labelObj.height,
-    labelObj.upX,
-    labelObj.upY
-  )
-  return parameterFinder.findBestParameter(dummyLabel, model, layout)
-}
-
-/**
- * Stores the node layout copied from the NodeJS object to the map that holds the layout of the nodes of the graph.
- * @param {Mapper} node2Layout The map that stores the node layouts
- * @param {Mapper} label2Parameter The map that stores the label parameters.
- * @param {Object} nodeObj The JSON node object from the NodeJS server that specifies the new node layout
- */
-function storeNodeLayout(node2Layout, label2Parameter, nodeObj) {
-  const node = graphComponent.graph.nodes.find(n => n.tag.id === nodeObj.tag.id)
-  if (node !== null) {
-    const objLayout = nodeObj.layout
-    const x = parseFloat(objLayout.x)
-    const y = parseFloat(objLayout.y)
-    const w = parseFloat(objLayout.width)
-    const h = parseFloat(objLayout.height)
-    const newLayout = new Rect(x, y, w, h)
-    node2Layout.set(node, newLayout)
-
-    // We need a dummy label with the new owner layout, so the ILabelModelParameterFinder can
-    // calculate the parameter correctly.
-    const dummyNode = new SimpleNode()
-    dummyNode.layout = newLayout
-    nodeObj.labels &&
-      nodeObj.labels.forEach((labelObj, index) => {
-        const label = node.labels.get(index)
-        const dummyLabel = new SimpleLabel(dummyNode, label.text, label.layoutParameter)
-        dummyLabel.preferredSize = label.preferredSize
-        label2Parameter.set(label, getLabelParameter(labelObj.layout, dummyLabel))
-      })
   }
 }
 
@@ -270,52 +120,6 @@ function showLoading() {
     if (waitMode.controller !== null && waitMode.controller.canRequestMutex()) {
       waitMode.waiting = true
     }
-  }
-}
-
-/**
- * Stores the edge layout alongside the port locations from the nodejs server's edge object to the respective maps
- * that hold the information for the graph.
- * @param {Mapper} edge2Bends The map that stores the edge bends.
- * @param {Mapper} node2Layout The map that stores the node layouts.
- * @param {Mapper} port2Location The map that stores the port locations.
- * @param {Mapper} label2Parameter The map that stores the label parameters.
- * @param {Object} edgeObj The JSON edge object from the nodejs server that specifies the new layout.
- */
-function storeEdgeLayout(edge2Bends, node2Layout, port2Location, label2Parameter, edgeObj) {
-  const edge = graphComponent.graph.edges.find(e => e.tag.id === edgeObj.tag.id)
-  if (edge !== null) {
-    // We need a dummy label with the new source/target port layout, so the ILabelModelParameterFinder can
-    // calculate the parameter correctly
-    const dummySource = new SimpleNode()
-    const dummyTarget = new SimpleNode()
-    dummySource.layout = node2Layout.get(edge.sourcePort.owner)
-    dummyTarget.layout = node2Layout.get(edge.targetPort.owner)
-    const sourcePort = new SimplePort(dummySource, edge.sourcePort.locationParameter)
-    const targetPort = new SimplePort(dummyTarget, edge.targetPort.locationParameter)
-
-    const dummyEdge = new SimpleEdge(sourcePort, targetPort)
-
-    if (Array.isArray(edgeObj.bends)) {
-      const bends = []
-      for (let i = 0; i < edgeObj.bends.length; i++) {
-        bends.push(getLocationFromObj(edgeObj.bends[i]))
-      }
-      edge2Bends.set(edge, bends)
-    } else {
-      edge2Bends.set(edge, [])
-    }
-
-    port2Location.set(edge.sourcePort, getLocationFromObj(edgeObj.sourcePort))
-    port2Location.set(edge.targetPort, getLocationFromObj(edgeObj.targetPort))
-
-    edgeObj.labels &&
-      edgeObj.labels.forEach((labelObj, index) => {
-        const label = edge.labels.get(index)
-        const dummyLabel = new SimpleLabel(dummyEdge, label.text, label.layoutParameter)
-        dummyLabel.preferredSize = label.preferredSize
-        label2Parameter.set(label, getLabelParameter(labelObj.layout, dummyLabel))
-      })
   }
 }
 
@@ -350,8 +154,8 @@ function registerCommands() {
 }
 
 /**
- * Initializes the graph defaults and adds item created listeners that set a unique ID to each new node and edge.
- * The IDs are used in the exported JSON files to identify items in the graph model.
+ * Initializes the graph defaults and adds item created listeners that set a unique ID to each new
+ * node and edge. The IDs are used in the exported JSON files to identify items in the graph model.
  */
 function initializeGraph() {
   // enable undo/redo support
@@ -362,7 +166,8 @@ function initializeGraph() {
 
   // set default label styles
   graphComponent.graph.nodeDefaults.labels.layoutParameter = InteriorLabelModel.CENTER
-  graphComponent.graph.edgeDefaults.labels.layoutParameter = FreeEdgeLabelModel.INSTANCE.createDefaultParameter()
+  graphComponent.graph.edgeDefaults.labels.layoutParameter =
+    FreeEdgeLabelModel.INSTANCE.createDefaultParameter()
 
   // Add listeners for item created events to add a tag to each new item
   graphComponent.graph.addNodeCreatedListener((source, evt) => {
@@ -374,17 +179,6 @@ function initializeGraph() {
   graphComponent.graph.addEdgeCreatedListener((source, evt) => {
     evt.item.tag = { id: `E-${graphComponent.graph.edges.size}` }
   })
-}
-
-/**
- * Returns the location stored in the given JSON object.
- * @param {Object} obj The JSON object that contains the location.
- * @return {Point} The location stored in the given JSON object.
- */
-function getLocationFromObj(obj) {
-  const x = parseFloat(obj.x)
-  const y = parseFloat(obj.y)
-  return new Point(x, y)
 }
 
 /**

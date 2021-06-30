@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -28,10 +28,7 @@
  ***************************************************************************/
 import {
   Animator,
-  ClickEventArgs,
-  DefaultGraph,
   DefaultLabelStyle,
-  EventArgs,
   ExteriorLabelModel,
   ExteriorLabelModelPosition,
   Font,
@@ -45,43 +42,44 @@ import {
   IModelItem,
   INode,
   Insets,
+  ItemClickedEventArgs,
   License,
-  Mapper,
   Point,
+  QueryItemToolTipEventArgs,
   Rect,
-  ToolTipQueryEventArgs,
   ViewportAnimation
 } from 'yfiles'
 
-import NetworkSimulator from './NetworkSimulator.js'
-import NetworkModel from './NetworkModel.js'
-import ModelEdge from './ModelEdge.js'
-import ModelNode from './ModelNode.js'
-import Network from './resources/network.js'
-import NetworkMonitoringEdgeStyle from './NetworkMonitoringEdgeStyle.js'
-import NetworkMonitoringNodeStyle from './NetworkMonitoringNodeStyle.js'
-import { bindAction, bindCommand, passiveSupported, showApp } from '../../resources/demo-app.js'
+import Simulator from './Simulator.js'
+import Connection from './Connection.js'
+import Device from './Device.js'
+import ConnectionStyle from './ConnectionStyle.js'
+import DeviceStyle from './DeviceStyle.js'
+import { bindAction, bindCommand, showApp } from '../../resources/demo-app.js'
 import D3BarChart from './D3BarChart.js'
 import HTMLPopupSupport from './HTMLPopupSupport.js'
 import loadJson from '../../resources/load-json.js'
+import { passiveSupported } from '../../utils/Workarounds.js'
+import Network from './Network.js'
+import SampleData from './resources/sample.js'
 
 // This demo creates a network monitoring tool for dynamic data.
-// The mock-up model is created and updated by class NetworkSimulator.
+// The mock-up model is created and updated by class Simulator.
 
 /** @type {GraphComponent} */
-let graphComponent = null
+let graphComponent
 
 /**
  * The network model of the graph. It models traffic and load of the graph.
- * @type {NetworkModel}
+ * @type {Network}
  */
-let model = null
+let network
 
 /**
  * The actual simulator of the network.
- * @type {NetworkSimulator}
+ * @type {Simulator}
  */
-let simulator = null
+let simulator
 
 /**
  * Whether the simulator is paused.
@@ -90,26 +88,26 @@ let simulator = null
 let simulatorPaused = false
 
 /**
- * Maps the network model edges to the graph control edges.
- * @type {Mapper.<ModelEdge,IEdge>}
+ * Maps the network model nodes to the graph control nodes.
+ * @type {Map.<Device,INode>}
  */
-let modelEdgeToIEdge = null
+let deviceToNode
 
 /**
- * Maps the network model nodes to the graph control nodes.
- * @type {Mapper.<ModelNode,INode>}
+ * Maps the network model edges to the graph control edges.
+ * @type {Map.<Connection,IEdge>}
  */
-let modelNodeToINode = null
+let connectionToEdge
 
 /**
  * The node popup which contains additional information of the node.
  * @type {HTMLPopupSupport}
  */
-let nodePopup = null
+let nodePopup
 
 /**
  * The bar chart which is displayed in the node popup.
- * @type {D3BarChart}
+ * @type {*}
  */
 let barChart = null
 
@@ -123,43 +121,36 @@ let d3Loaded = false
  * Manages the animation of packets that travel along the edges.
  * @type {Animator}
  */
-let edgeAnimator = null
+let edgeAnimator
 
-function run(licenseData) {
+/**
+ * @param {!object} licenseData
+ * @returns {!Promise}
+ */
+async function run(licenseData) {
   License.value = licenseData
+
   graphComponent = new GraphComponent('graphComponent')
 
   initializeInputMode()
 
-  initGraphAndModel(() => {
-    setupSimulator()
-    graphComponent.fitGraphBounds(new Insets(50))
-    // limit scrolling to the area containing the graph
-    graphComponent.viewportLimiter.honorBothDimensions = false
-    graphComponent.viewportLimiter.bounds = graphComponent.contentRect
-    graphComponent.maximumZoom = 3
-    startSimulator()
-  })
+  setDefaultStyles()
 
-  // create a label model parameter that is used to position the node pop-up
-  const nodeLabelModel = new ExteriorLabelModel({ insets: 10 })
-  const nodeLabelModelParameter = nodeLabelModel.createParameter(ExteriorLabelModelPosition.NORTH)
+  initializePopupSupport()
 
-  // create the pop-up content div for the node pop-up div
-  const nodePopupContent = window.document.getElementById('nodePopupContent')
-  nodePopup = new HTMLPopupSupport(graphComponent, nodePopupContent, nodeLabelModelParameter)
-
-  // initialize the d3.js bar chart
-  try {
-    barChart = new D3BarChart()
-    d3Loaded = true
-  } catch (ignored) {
-    d3Loaded = false
-    const chart = document.getElementsByClassName('chart')[0]
-    chart.setAttribute('class', 'no-chart')
-  }
+  initializeBarCharts()
 
   registerCommands()
+
+  await loadNetwork()
+
+  setupSimulator()
+  graphComponent.fitGraphBounds(new Insets(50))
+  // limit scrolling to the area containing the graph
+  graphComponent.viewportLimiter.honorBothDimensions = false
+  graphComponent.viewportLimiter.bounds = graphComponent.contentRect
+  graphComponent.maximumZoom = 3
+  startSimulator()
 
   showApp(graphComponent)
 }
@@ -185,21 +176,13 @@ function initializeInputMode() {
 }
 
 /**
- * Initializes the graph from the supplied GraphML file and creates the model from it.
- * While this reads the graph from a GraphML file and constructs the model from an already-finished
- * graph, a real-world application would likely create the model from whichever data source is
- * available and then create the graph from it.
- * @param {function} loadedCallback
+ * Configures default styles for newly created graph elements.
  */
-function initGraphAndModel(loadedCallback) {
-  // create an animator instance that can be used by the edge style
-  edgeAnimator = new Animator(graphComponent)
-  edgeAnimator.allowUserInteraction = true
-  edgeAnimator.autoInvalidation = false
+function setDefaultStyles() {
+  const graph = graphComponent.graph
 
-  // set the default node and edge styles
-  const graph = new DefaultGraph()
-  graph.nodeDefaults.style = new NetworkMonitoringNodeStyle(passiveSupported)
+  // set the default node style
+  graph.nodeDefaults.style = new DeviceStyle(passiveSupported)
   graph.nodeDefaults.labels.layoutParameter = FreeNodeLabelModel.INSTANCE.createParameter(
     [0.5, 1],
     [0, -15],
@@ -209,48 +192,88 @@ function initGraphAndModel(loadedCallback) {
     backgroundFill: 'rgba(255, 255, 255, 0.8)',
     horizontalTextAlignment: 'center',
     insets: [3, 5, 3, 5],
-    font: new Font({
-      lineSpacing: 0.2
-    })
+    font: new Font({ lineSpacing: 0.2 })
   })
-  graph.edgeDefaults.style = new NetworkMonitoringEdgeStyle(edgeAnimator, passiveSupported)
-  graphComponent.graph = graph
 
-  if (Network && Network[0]) {
-    loadGraph(Network[0], loadedCallback)
+  // set the default edge style
+  // create an animator instance that can be used by the edge style
+  edgeAnimator = new Animator(graphComponent)
+  edgeAnimator.allowUserInteraction = true
+  edgeAnimator.autoInvalidation = false
+
+  graph.edgeDefaults.style = new ConnectionStyle(edgeAnimator, passiveSupported)
+  graphComponent.graph = graph
+}
+
+function initializePopupSupport() {
+  // create a label model parameter that is used to position the node pop-up
+  const nodeLabelModel = new ExteriorLabelModel({ insets: 10 })
+  const nodeLabelModelParameter = nodeLabelModel.createParameter(ExteriorLabelModelPosition.NORTH)
+
+  // create the pop-up content div for the node pop-up div
+  const nodePopupContent = window.document.getElementById('nodePopupContent')
+  nodePopup = new HTMLPopupSupport(graphComponent, nodePopupContent, nodeLabelModelParameter)
+}
+
+function initializeBarCharts() {
+  try {
+    barChart = new D3BarChart()
+    d3Loaded = true
+  } catch (ignored) {
+    d3Loaded = false
+    const chart = document.getElementsByClassName('chart')[0]
+    chart.setAttribute('class', 'no-chart')
   }
 }
 
 /**
  * Shows/hides node labels.
+ * @param {!Event} event
  */
-function toggleLabels(e) {
+function toggleLabels(event) {
   const graph = graphComponent.graph
-  if (!e.target.checked) {
-    graph.labels.toArray().forEach(label => {
-      graphComponent.graph.remove(label)
-    })
+
+  if (!event.target.checked) {
+    graph.labels.toArray().forEach(label => graphComponent.graph.remove(label))
   } else {
     graph.nodes.forEach(node => {
-      const tag = node.tag
-      graph.addLabel(node, `${tag.name}\n${tag.ip}`)
+      const deviceName = node.tag.name
+      const deviceIp = node.tag.ip
+      return graph.addLabel(node, `${deviceName}\n${deviceIp}`)
     })
   }
 }
 
 /**
- * @param {object} data
+ * Initializes the graph from the supplied JSON file and creates the model from it.
+ * While this reads the graph asynchronously from a JSON file and constructs the model from an
+ * already-finished graph, a real-world application would likely create the model from whichever
+ * data source is available and then create the graph from it.
+ * @returns {!Promise}
  */
-function loadGraphCore(data) {
+function loadNetwork() {
+  return new Promise(resolve =>
+    setTimeout(() => {
+      loadGraph(SampleData)
+      populateModel(graphComponent.graph)
+      resolve()
+    }, 0)
+  )
+}
+
+/**
+ * Loads the graph from the given JSON data.
+ * @param {!NetworkSample} data
+ */
+function loadGraph(data) {
   const graph = graphComponent.graph
   graph.clear()
 
-  // get the list of nodes and edges
-  const nodes = data.nodeList
-  const edges = data.edgeList
   // create a map to store the nodes for edge creation
-  const nodeMap = new Mapper()
+  const nodeMap = new Map()
+
   // create the nodes
+  const nodes = data.nodeList
   for (let i = 0; i < nodes.length; i++) {
     const n = nodes[i]
     const l = n.layout
@@ -261,6 +284,7 @@ function loadGraphCore(data) {
     nodeMap.set(n.tag.id, node)
   }
 
+  const edges = data.edgeList
   for (let i = 0; i < edges.length; i++) {
     const e = edges[i]
     // get the source and target node from the mapping
@@ -272,71 +296,53 @@ function loadGraphCore(data) {
     const sourcePort = graph.addPortAt(sourceNode, Point.from(sp))
     const targetPort = graph.addPortAt(targetNode, Point.from(tp))
     // create the edge
-    const edge = graph.createEdge(sourcePort, targetPort)
-    // add the bends
-    const bends = e.bends
-    bends.forEach(bend => graph.addBend(edge, Point.from(bend)))
+    graph.createEdge(sourcePort, targetPort)
   }
 }
 
 /**
- * @param {object} sampleData
- * @param {function} loadedCallBack
- */
-function loadGraph(sampleData, loadedCallBack) {
-  loadGraphCore(sampleData)
-  populateModel(graphComponent.graph)
-  loadedCallBack()
-}
-
-/**
- * Populates the model and initializes the mapping based on the nodes and edges of the original
- * IGraph.
- * @param {IGraph} graph
+ * Populates the model and initializes the mapping based on the nodes and edges of the original graph.
+ * @param {!IGraph} graph
  */
 function populateModel(graph) {
+  // Create and attach for each graph node a device.
+  deviceToNode = new Map()
   graph.nodes.forEach(node => {
-    // Create and attach the model node to the graph node.
-    const modelNode = new ModelNode()
+    const device = new Device()
     const tag = node.tag
-    modelNode.name = tag.name
-    modelNode.ip = tag.ip
-    modelNode.enabled = true
-    modelNode.type = tag.type
-    modelNode.load = tag.load
+    device.name = tag.name
+    device.ip = tag.ip
+    device.enabled = true
+    device.kind = tag.type
+    device.load = tag.load
 
-    node.tag = modelNode
+    // Mapping between edge and device
+    node.tag = device
+    deviceToNode.set(device, node)
   })
 
+  // Create and attach for each graph edge a connection.
+  connectionToEdge = new Map()
   graph.edges.forEach(edge => {
-    // Create and attach the model edge to the graph edge
-    const modelEdge = new ModelEdge()
-    modelEdge.source = edge.sourceNode.tag
-    modelEdge.target = edge.targetNode.tag
+    const connection = new Connection()
+    connection.sender = edge.sourceNode.tag
+    connection.receiver = edge.targetNode.tag
 
-    edge.tag = modelEdge
-  })
-
-  // Create the mappings from model items to graph elements.
-  modelNodeToINode = new Mapper()
-  graph.nodes.forEach(node => {
-    modelNodeToINode.set(node.tag, node)
-  })
-  modelEdgeToIEdge = new Mapper()
-  graph.edges.forEach(edge => {
-    modelEdgeToIEdge.set(edge.tag, edge)
+    // Mapping between node and connection
+    edge.tag = connection
+    connectionToEdge.set(connection, edge)
   })
 
   // Create the network model.
-  model = new NetworkModel(modelNodeToINode.entries.keys, modelEdgeToIEdge.entries.keys)
+  network = new Network([...deviceToNode.keys()], [...connectionToEdge.keys()])
 }
 
 /**
  * Prepares the simulator that moves packets through the network.
  */
 function setupSimulator() {
-  simulator = new NetworkSimulator(model)
-  simulator.addSomethingFailedListener(onNetworkFailure)
+  simulator = new Simulator(network)
+  simulator.addFailedListener(onNetworkFailure)
   // initialize simulator state
   for (let i = 0; i < 30; i++) {
     simulator.tick()
@@ -345,20 +351,24 @@ function setupSimulator() {
 
 /**
  * Starts the simulator.
+ * @param {number} [timeout]
  */
 function startSimulator(timeout) {
   if (simulatorPaused) {
     return
   }
-  const simulatorTimeout = typeof timeout !== 'undefined' ? timeout : 1500
+  const simulatorTimeout = timeout ? timeout : 1500
   window.setTimeout(() => {
-    !simulatorPaused && simulator.tick()
+    simulator.tick()
+
     // update the bar chart
     if (d3Loaded) {
       barChart.updateCurrentChart()
     }
+
     // redraw the graph
     graphComponent.invalidate()
+
     // continuously run the simulation
     startSimulator()
   }, simulatorTimeout)
@@ -368,33 +378,24 @@ function startSimulator(timeout) {
  * Event handler for clicks on the "Enable failures" button.
  */
 function onToggleFailuresClicked() {
-  if (simulator !== null) {
-    simulator.failuresEnabled = document.querySelector(
-      "input[data-command='ToggleFailures']"
-    ).checked
+  if (simulator) {
+    const toggleFailureButton = document.querySelector("input[data-command='ToggleFailures']")
+    simulator.failuresEnabled = toggleFailureButton.checked
   }
 }
 
 /**
  * Event handler for clicks on edges or nodes.
- * @param {object} sender
- * @param {ItemClickedEventArgs.<IModelItem>} args
+ * @param {!GraphViewerInputMode} sender
+ * @param {!ItemClickedEventArgs.<IModelItem>} args
  */
 function onItemClicked(sender, args) {
-  if (IEdge.isInstance(args.item)) {
-    const modelEdge = args.item.tag
-    if (modelEdge.failed) {
-      // repair edge
-      modelEdge.failed = false
-      graphComponent.invalidate()
-    }
-  }
-  if (INode.isInstance(args.item)) {
-    const modelNode = args.item.tag
-    if (modelNode.failed) {
+  if (args.item instanceof INode) {
+    const device = args.item.tag
+    if (device.failed) {
       // repair node
-      modelNode.failed = false
-      modelNode.enabled = true
+      device.failed = false
+      device.enabled = true
       graphComponent.invalidate()
     } else {
       // update data displayed in pop-up
@@ -403,11 +404,20 @@ function onItemClicked(sender, args) {
       nodePopup.currentItem = args.item
     }
   }
+
+  if (args.item instanceof IEdge) {
+    const connection = args.item.tag
+    if (connection.failed) {
+      // repair edge
+      connection.failed = false
+      graphComponent.invalidate()
+    }
+  }
 }
 
 /**
  * Populate the node popup with the clicked node's information.
- * @param {INode} node
+ * @param {!INode} node
  */
 function updateNodePopupContent(node) {
   // get data from tag
@@ -415,8 +425,7 @@ function updateNodePopupContent(node) {
 
   // get all divs in the pop-up
   const divs = nodePopup.div.getElementsByTagName('div')
-  for (let i = 0; i < divs.length; i++) {
-    const div = divs.item(i)
+  for (const div of divs) {
     if (div.hasAttribute('data-id')) {
       // if div has a 'data-id' attribute, get content from the business data
       const id = div.getAttribute('data-id')
@@ -424,7 +433,7 @@ function updateNodePopupContent(node) {
     }
   }
 
-  // set the correct powerbutton state
+  // set the correct power button state
   const powerButtonPath = document.getElementById('powerButton-path')
   powerButtonPath.setAttribute('class', node.tag.enabled ? '' : 'powerButton-off')
 
@@ -438,19 +447,21 @@ function updateNodePopupContent(node) {
  * Event handler for failures in the network during the simulation.
  * The effect is a viewport animation to bring the failed object into view, if it is not visible
  * already.
- * @param {Object} sender The object that raised the event.
- * @param {EventArgs} args Event arguments.
+ * @param {!Simulator} sender The object that raised the event.
+ * @param {!(Device|Connection)} item The item the fails.
+ * @returns {!Promise}
  */
-function onNetworkFailure(sender, args) {
-  let /** @type {Rect} */ rect = null
+async function onNetworkFailure(sender, item) {
+  let rect = null
 
-  if (sender instanceof ModelNode) {
+  if (item instanceof Device) {
     // For nodes just include the node itself in the viewport
-    const graphNode = modelNodeToINode.get(sender instanceof ModelNode ? sender : null)
+    const graphNode = deviceToNode.get(item)
     rect = graphNode.layout.toRect()
-  } else if (sender instanceof ModelEdge) {
-    const modelEdge = sender instanceof ModelEdge ? sender : null
-    const graphEdge = modelEdgeToIEdge.get(modelEdge)
+  }
+
+  if (item instanceof Connection) {
+    const graphEdge = connectionToEdge.get(item)
     // For edges we need to get the bounding box of the end points
     // We don't need to consider bends in this demo as there are none.
     rect = new Rect(
@@ -460,7 +471,7 @@ function onNetworkFailure(sender, args) {
   }
 
   // Don't do anything if the failing element is visible already
-  if (graphComponent.viewport.contains(rect) && graphComponent.zoom > 0.8) {
+  if (!rect || (graphComponent.viewport.contains(rect) && graphComponent.zoom > 0.8)) {
     return
   }
 
@@ -471,41 +482,44 @@ function onNetworkFailure(sender, args) {
   const animator = new Animator(graphComponent)
   animator.allowUserInteraction = true
   const viewportAnimation = new ViewportAnimation(graphComponent, rect, '1s')
-  animator.animate(viewportAnimation.createEasedAnimation(0, 1))
+  await animator.animate(viewportAnimation.createEasedAnimation(0, 1))
 }
 
 /**
  * Assigns the tooltip content for the queried graph item.
- * @param {object} sender
- * @param {ToolTipQueryEventArgs} args
+ * @param {!GraphViewerInputMode} sender
+ * @param {!QueryItemToolTipEventArgs.<IModelItem>} args
  */
 function onQueryItemToolTip(sender, args) {
-  const tag = args.item.tag
-  // display the load for nodes and edges
-  if (tag instanceof ModelNode) {
-    const modelNode = tag
-    if (modelNode.failed) {
-      args.toolTip = `Repair ${modelNode.name}`
+  const item = args.item
+
+  // Display the load for nodes
+  if (item instanceof INode) {
+    const device = item.tag
+    if (device.failed) {
+      args.toolTip = `Repair ${device.name}`
     } else {
-      args.toolTip = `Load: ${(modelNode.load * 100).toFixed(1)}%`
-    }
-  } else if (tag instanceof ModelEdge) {
-    const modelEdge = tag
-    if (modelEdge.failed) {
-      args.toolTip = 'Repair connection.'
-    } else {
-      args.toolTip = `Load: ${(modelEdge.load * 100).toFixed(1)}%`
+      args.toolTip = `Load: ${(device.load * 100).toFixed(1)}%`
     }
   }
+
+  // Display the load for edges
+  if (item instanceof IEdge) {
+    const connection = item.tag
+    if (connection.failed) {
+      args.toolTip = 'Repair connection.'
+    } else {
+      args.toolTip = `Load: ${(connection.load * 100).toFixed(1)}%`
+    }
+  }
+
   args.handled = true
 }
 
 /**
  * Event handler that hides the pop-up on click on the background.
- * @param {object} sender
- * @param {ClickEventArgs} args
  */
-function onClick(sender, args) {
+function onClick() {
   nodePopup.currentItem = null
 }
 
@@ -516,7 +530,8 @@ function registerCommands() {
   bindAction("input[data-command='ToggleFailures']", onToggleFailuresClicked)
   bindAction("input[data-command='ToggleLabels']", toggleLabels)
   bindAction("input[data-command='PauseSimulation']", e => {
-    const paused = e.target.checked
+    const pauseButton = e.target
+    const paused = pauseButton.checked
     simulatorPaused = paused
     edgeAnimator.paused = paused
     if (!paused) {
@@ -525,5 +540,4 @@ function registerCommands() {
   })
 }
 
-// 'export' just the run function
 loadJson().then(run)

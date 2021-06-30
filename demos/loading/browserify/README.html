@@ -5,7 +5,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.3.
+     // This demo file is part of yFiles for HTML 2.4.
      // Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
@@ -33,84 +33,52 @@
      ////////////////////////////////////////////////////////////////////////-->
 
   <title>Browserify Demo [yFiles for HTML]</title>
-  <link rel="stylesheet" type="text/css" href="../../../doc/documentation-style.css">
+  <link rel="stylesheet" type="text/css" href="../../../doc/readme-style.css">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 </head>
 <body>
-<header>
+<!-- populated by readme-style.js -->
+<div id="header" class="simple-header">
+  Browserify Demo
+</div>
+<main>
   <div class="content-centered">
-    <div class="logo"></div>
-    <div class="title">
-      <a href="../../README.html">yFiles for HTML</a> <span class="angle-right"></span> Browserify Demo
-    </div>
-  </div>
-</header>
-<div class="content">
-  <div class="content-centered">
-    <h1>Browserify Demo</h1>
+    <div class="content">
+      <div class="breadcrumbs">
+        <a href="../../README.html">yFiles for HTML</a> <span class="angle-right"></span> Browserify Demo
+      </div>
+      <h1>Browserify Demo</h1>
 
-    <p>
-      This demo shows how to bundle the yFiles library in a <a href="http://browserify.org/">browserify</a> project.</p>
+      <p>
+        This demo shows how to bundle the yFiles library in a <a href="http://browserify.org/">browserify</a> project.
+      </p>
 
-    <p>
-      The yFiles modules are <code>require</code>d in the demo sources in addition to an <code>npm</code> library (<a
+      <p>
+        The yFiles modules are <code>require</code>d in the demo sources in addition to an <code>npm</code> library (<a
         href="https://www.npmjs.com/package/color">color</a>), so browserify will add the yfiles modules and the npm
-      library to the generated <code>bundle.js</code>. </p>
+        library to the generated <code>bundle.js</code>. </p>
 
-    <p>
-      The HTML file just references the single <code>bundle.js</code> file containing the demo code as well as all
-      library code.</p>
+      <p>
+        The HTML file just references the single <code>bundle.js</code> file containing the demo code as well as all
+        library code.</p>
 
-    <h2>Build</h2>
+      <h2>Build</h2>
 
-    <p>Install the required npm packages and run the build script</p>
-<pre>
+      <p>Install the required npm packages and run the build script</p>
+      <pre>
 > npm install
 > npm run build
 </pre>
-    <h2>Run</h2>
+      <h2>Run</h2>
 
-    <p>
-      Browserify will place the output files in the <code>dist/</code> directory inside this demo's directory. To run
-      the demo, open <code>./index.html</code> in a browser.</p>
-  </div>
-</div>
-<footer class="default-footer">
-  <div class="footer-block">
-    <h4>Contents</h4>
-    <a href="../../../README.html">Welcome Page</a><br>
-    <a href="../../../doc/api/index.html">API Documentation</a><br>
-    <a href="../../../doc/api/index.html#/dguide/getting_started">Getting Started</a><br>
-    <a href="../../../doc/readme/legal/SOFTWARE_LICENSE_AGREEMENT.html">License Agreement</a><br>
-    <a href="../../../doc/readme/support.html">Help and Support</a>
-  </div>
-  <div class="footer-block">
-    <h4>Contact</h4>
-    yWorks GmbH<br>
-    Vor dem Kreuzberg 28<br>
-    72070 T&uuml;bingen<br>
-    Germany<br>
-    Phone: <a href="tel:+497071979050">+49 7071 979050</a><br>
-    Email: <a href="https://www.yworks.com/contact">contact(at)yworks.com</a>
-  </div>
-  <div class="footer-block">
-    <h4>Follow Us</h4>
-    <div class="social">
-      <a href="https://www.yworks.com/products/yfiles-for-html" target="_blank" class="web">Homepage</a>
-      <a href="https://www.yworks.com/newsfeed" target="_blank" class="rss">RSS Feed</a>
+      <p>
+        Browserify will place the output files in the <code>dist/</code> directory inside this demo's directory. To run
+        the demo, open <code>./index.html</code> in a browser.</p>
     </div>
-    <div>
-      <a href="https://github.com/yWorks" target="_blank" class="gh">GitHub</a>
-      <a href="https://twitter.com/yworks" target="_blank" class="tw">Twitter</a>
-      <a href="https://www.youtube.com/user/yWorksTube" target="_blank" class="yt">YouTube</a>
-    </div>
-    <br><br>
-    <span class="copyright">COPYRIGHT &#x00A9; 2021 yWorks</span><br>
-    <a href="https://www.yworks.com/company/legal/imprint">Legal Disclosure</a> |
-    <a href="https://www.yworks.com/company/legal/terms-of-use">Terms of Use</a> |
-    <a href="https://www.yworks.com/company/legal/privacy">Privacy Policy</a>
+    <!-- populated by readme-style.js -->
+    <div id="footer-detailed"></div>
   </div>
-  <div class="footer-block logo"></div>
-</footer>
+</main>
+<script src="../../../doc/readme-style.js"></script>
 </body>
 </html>

@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -35,6 +35,7 @@ import {
   GraphViewerInputMode,
   HierarchicLayout,
   ICommand,
+  IGraph,
   LayoutExecutor,
   LayoutOrientation,
   License,
@@ -50,109 +51,118 @@ import GraphBuilderData from './graph-builder-data.js'
 import { bindChangeListener, bindCommand, showApp } from '../../resources/demo-app.js'
 import { initDemoStyles } from '../../resources/demo-styles.js'
 import loadJson from '../../resources/load-json.js'
+import { initDataView, updateDataView } from './data-view.js'
 
-/**
- * This demo shows how to automatically build a graph from business data.
- */
-function run(licenseData) {
-  License.value = licenseData
-  // Initialize graph component
-  graphComponent = new GraphComponent('graphComponent')
-
-  // Use the viewer input mode since this demo should not allow interactive graph editing
-  graphComponent.inputMode = new GraphViewerInputMode()
-
-  // Assign the default demo styles for groups and edges
-  initDemoStyles(graphComponent.graph)
-  // But use a different style for normal nodes
-  graphComponent.graph.nodeDefaults.style = new TemplateNodeStyle('nodeTemplate')
-  graphComponent.graph.nodeDefaults.size = new Size(260, 60)
-
-  // Build the graph from data
-  builderType = TYPE_GRAPH_BUILDER
-  buildGraph()
-
-  // register toolbar commands
-  registerCommands()
-
-  showApp(graphComponent)
-}
-
-/**
- * The current graph component.
- * @type {GraphComponent}
- */
-let graphComponent = null
-
-/**
- * The current builder type.
- * @type {string}
- */
-let builderType = null
-
-/**
- * @type {HTMLSelectElement}
- */
-const selectBox = document.querySelector("select[data-command='SelectBuilder']")
+// We need to load the 'view-layout-bridge' module explicitly to prevent tree-shaking
+// tools from removing this dependency which is needed for 'morphLayout'.
+Class.ensure(LayoutExecutor)
 
 /**
  * Specifier that indicates using a {@link GraphBuilder}.
- * @type {string}
  */
 const TYPE_GRAPH_BUILDER = 'Graph Builder'
 
 /**
  * Specifier that indicates using a {@link TreeBuilder} with an array input.
- * @type {string}
  */
 const TYPE_TREE_BUILDER_ARRAY = 'Tree Builder (Array)'
 
 /**
  * Specifier that indicates using a {@link TreeBuilder} with a JSON input.
- * @type {string}
  */
 const TYPE_TREE_BUILDER_JSON = 'Tree Builder (JSON)'
 
 /**
  * Specifier that indicates using a {@link AdjacencyGraphBuilder} with a JSON input.
- * @type {string}
  */
 const TYPE_ADJACENT_NODES_BUILDER = 'Adjacent Nodes Graph Builder'
 
 /**
  * Specifier that indicates using a {@link TreeBuilder} with an array input and node IDs.
- * @type {string}
  */
 const TYPE_ADJACENT_NODES_BUILDER_ID_ARRAY = 'Adjacent Nodes Graph Builder (with IDs)'
 
+const selectBox = document.querySelector("select[data-command='SelectBuilder']")
+
+/**
+ * This demo shows how to automatically build a graph from business data.
+ * @param {!object} licenseData
+ */
+function run(licenseData) {
+  License.value = licenseData
+
+  // initialize graph component
+  const graphComponent = new GraphComponent('graphComponent')
+
+  // use the viewer input mode since this demo should not allow interactive graph editing
+  graphComponent.inputMode = new GraphViewerInputMode()
+
+  // assign the default demo styles for groups and edges
+  configureGraph(graphComponent.graph)
+
+  // initialize the source data view
+  initDataView('#data-view')
+
+  // build the graph from data
+  buildGraph(graphComponent.graph, TYPE_GRAPH_BUILDER)
+
+  arrangeGraph(graphComponent)
+
+  // register toolbar commands
+  registerCommands(graphComponent)
+
+  showApp(graphComponent)
+}
+
+/**
+ * Configures default styles for the given graph's elements.
+ * @param {!IGraph} graph
+ */
+function configureGraph(graph) {
+  // use simple and efficient styles for all graph elements
+  initDemoStyles(graph)
+
+  // ... but use a style that supports data binding for normal nodes
+  graph.nodeDefaults.style = new TemplateNodeStyle('nodeTemplate')
+  graph.nodeDefaults.size = new Size(260, 60)
+}
+
 /**
  * Creates and configures the {@link GraphBuilder}.
- * @return {GraphBuilder}
+ * @param {!IGraph} graph
+ * @returns {!GraphBuilder}
  */
-function createGraphBuilder() {
-  const graphBuilder = new GraphBuilder(graphComponent.graph)
+function createGraphBuilder(graph) {
+  // update the data view with the current data
+  updateDataView(
+    GraphBuilderData.nodesSource,
+    GraphBuilderData.groupsSource,
+    GraphBuilderData.edgesSource
+  )
+
+  const graphBuilder = new GraphBuilder(graph)
   graphBuilder.createNodesSource({
-    // Stores the nodes of the graph
+    // stores the nodes of the graph
     data: GraphBuilderData.nodesSource,
-    // Identifies the id property of a node object
+    // identifies the id property of a node object
     id: 'id',
-    // Identifies the property of a node object that contains its group's id
+    // identifies the property of a node object that contains its group's id
     parentId: 'group'
   })
   graphBuilder.createGroupNodesSource({
-    // Stores the group nodes of the graph
+    // stores the group nodes of the graph
     data: GraphBuilderData.groupsSource,
-    // Identifies the id property of a group node object
+    // identifies the id property of a group node object
     id: 'id',
-    // Identifies the property of a group node object that contains its parent group id
+    // identifies the property of a group node object that contains its parent group id
     parentId: 'parentGroup'
   })
   graphBuilder.createEdgesSource({
-    // Stores the edges of the graph
+    // stores the edges of the graph
     data: GraphBuilderData.edgesSource,
-    // Identifies the property of an edge object that contains the source node's id
+    // identifies the property of an edge object that contains the source node's id
     sourceId: 'fromNode',
-    // Identifies the property of an edge object that contains the target node's id
+    // identifies the property of an edge object that contains the target node's id
     targetId: 'toNode'
   })
 
@@ -161,22 +171,24 @@ function createGraphBuilder() {
 
 /**
  * Creates and configures the {@link TreeBuilder}.
- * @return {TreeBuilder}
+ * @param {!IGraph} graph
+ * @param {!string} builderType
+ * @returns {!TreeBuilder}
  */
-function createTreeBuilder() {
-  const treeBuilder = new TreeBuilder(graphComponent.graph)
+function createTreeBuilder(graph, builderType) {
+  const treeBuilder = new TreeBuilder(graph)
 
-  let nodesSource
-  // Set the properties of TreeSource that specify your custom data
-  if (builderType === TYPE_TREE_BUILDER_ARRAY) {
-    nodesSource = TreeBuilderDataArray.nodesSource
-  } else if (builderType === TYPE_TREE_BUILDER_JSON) {
-    nodesSource = TreeBuilderDataJson.nodesSource
-  }
+  const nodesSource =
+    builderType === TYPE_TREE_BUILDER_ARRAY
+      ? TreeBuilderDataArray.nodesSource
+      : TreeBuilderDataJson.nodesSource
 
-  // Identifies the property of a node object that contains its child nodes
+  // update the data view with the current data
+  updateDataView(nodesSource)
+
+  // identifies the property of a node object that contains its child nodes
   const rootNodesSource = treeBuilder.createRootNodesSource(nodesSource)
-  // Configure the recursive tree structure
+  // configure the recursive tree structure
   rootNodesSource.addChildNodesSource(data => data.children, rootNodesSource)
 
   return treeBuilder
@@ -184,24 +196,33 @@ function createTreeBuilder() {
 
 /**
  * Creates and configures the {@link AdjacencyGraphBuilder}.
- * @return {AdjacencyGraphBuilder}
+ * @param {!IGraph} graph
+ * @param {!string} builderType
+ * @returns {!AdjacencyGraphBuilder}
  */
-function createAdjacencyGraphBuilder() {
-  const adjacencyGraphBuilder = new AdjacencyGraphBuilder(graphComponent.graph)
+function createAdjacencyGraphBuilder(graph, builderType) {
+  const adjacencyGraphBuilder = new AdjacencyGraphBuilder(graph)
 
   if (builderType === TYPE_ADJACENT_NODES_BUILDER) {
-    // Stores the nodes of the graph
+    // update the data view with the current data
+    updateDataView(TreeBuilderDataArray.nodesSource)
+
+    // stores the nodes of the graph
     const adjacencyNodesSource = adjacencyGraphBuilder.createNodesSource(
       TreeBuilderDataArray.nodesSource
     )
-    // Configure the successor nodes
+
+    // configure the successor nodes
     adjacencyNodesSource.addSuccessorsSource(
       data => data.children,
       adjacencyNodesSource,
       new EdgeCreator()
     )
   } else if (builderType === TYPE_ADJACENT_NODES_BUILDER_ID_ARRAY) {
-    // Stores the nodes of the graph
+    // update the data view with the current data
+    updateDataView(AdjacentBuilderIdDataArray.nodesSource)
+
+    // stores the nodes of the graph
     const adjacencyNodesSource = adjacencyGraphBuilder.createNodesSource(
       AdjacentBuilderIdDataArray.nodesSource,
       'id'
@@ -213,57 +234,65 @@ function createAdjacencyGraphBuilder() {
   return adjacencyGraphBuilder
 }
 
-// We need to load the 'view-layout-bridge' module explicitly to prevent tree-shaking
-// tools it from removing this dependency which is needed for 'morphLayout'.
-Class.ensure(LayoutExecutor)
-
 /**
  * Builds the graph using the selected builder type.
- * After building the graph, a hierarchic layout is applied.
+ * @param {!IGraph} graph
+ * @param {!string} builderType
  */
-async function buildGraph() {
+function buildGraph(graph, builderType) {
   // Clear the current graph
-  graphComponent.graph.clear()
+  graph.clear()
 
   // Create the builder
   let builder
   if (builderType === TYPE_GRAPH_BUILDER) {
-    builder = createGraphBuilder()
+    builder = createGraphBuilder(graph)
   } else if (
     builderType === TYPE_ADJACENT_NODES_BUILDER ||
     builderType === TYPE_ADJACENT_NODES_BUILDER_ID_ARRAY
   ) {
-    builder = createAdjacencyGraphBuilder()
+    builder = createAdjacencyGraphBuilder(graph, builderType)
   } else {
-    builder = createTreeBuilder()
+    builder = createTreeBuilder(graph, builderType)
   }
 
   // Build the graph from the data...
-  graphComponent.graph = builder.buildGraph()
-  // ... and make sure it is centered in the view (this is the initial state of the layout animation)
+  builder.buildGraph()
+}
+
+/**
+ * Arranges the graph of the given graph component and applies the new layout in an animated
+ * fashion.
+ * @param {!GraphComponent} graphComponent
+ * @returns {!Promise}
+ */
+async function arrangeGraph(graphComponent) {
+  // make sure the graph is centered in the view before arranging it
+  // (this is the initial state of the layout animation)
   graphComponent.fitGraphBounds()
 
-  // Layout the graph with the hierarchic layout style
-  const hl = new HierarchicLayout()
-  hl.layoutOrientation = LayoutOrientation.LEFT_TO_RIGHT
+  const algorithm = new HierarchicLayout()
+  algorithm.layoutOrientation = LayoutOrientation.LEFT_TO_RIGHT
 
   selectBox.disabled = true
-  await graphComponent.morphLayout(hl, '1s')
+  // arrange the graph with the chosen layout algorithm
+  await graphComponent.morphLayout(algorithm, '1s')
   selectBox.disabled = false
 }
 
 /**
  * Registers the commands for the tool bar buttons during the creation of this application.
+ * @param {!GraphComponent} graphComponent
  */
-function registerCommands() {
+function registerCommands(graphComponent) {
   bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent, null)
   bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent, null)
   bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
   bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent, null)
   bindChangeListener("select[data-command='SelectBuilder']", selectedValue => {
-    builderType = selectedValue
-    // Build graph from new data
-    buildGraph()
+    // build graph from new data
+    buildGraph(graphComponent.graph, selectedValue)
+    arrangeGraph(graphComponent)
   })
 }
 

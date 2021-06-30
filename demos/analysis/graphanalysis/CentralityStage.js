@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -42,49 +42,21 @@ import {
 export default class CentralityStage extends LayoutStageBase {
   /**
    * Creates a new instance of CentralityStage
-   * @param {ILayoutAlgorithm} layout
+   * @param {!ILayoutAlgorithm} layout
    */
   constructor(layout) {
     super(layout)
-    this.$centrality = 0
-    this.$directed = false
-  }
 
-  /**
-   * Specifies the centrality algorithm that will be applied.
-   * @param {number} centrality the centrality algorithm
-   */
-  set centrality(centrality) {
-    this.$centrality = centrality
-  }
+    // Specifies the centrality algorithm that will be applied.
+    this.centrality = 0
 
-  /**
-   * Returns the centrality algorithm that will be applied.
-   * @return {number} centrality the centrality algorithm
-   */
-  get centrality() {
-    return this.$centrality
-  }
-
-  /**
-   * Specifies whether the edges should be considered directed or undirected.
-   * @param {boolean} directed true if the edges should be considered directed, false otherwise
-   */
-  set directed(directed) {
-    this.$directed = directed
-  }
-
-  /**
-   * Returns whether the edges should be considered directed or undirected.
-   * @return {boolean} directed true if the edges should be considered directed, false otherwise
-   */
-  get directed() {
-    return this.$directed
+    // Whether the edges should be considered directed or undirected.
+    this.directed = false
   }
 
   /**
    * Applies the layout to the given graph.
-   * @param {LayoutGraph} graph the given graph
+   * @param {!LayoutGraph} graph the given graph
    */
   applyLayout(graph) {
     // run the core layout
@@ -97,7 +69,7 @@ export default class CentralityStage extends LayoutStageBase {
     const weights = Maps.createHashedEdgeMap()
 
     graph.edges.forEach(edge => {
-      if (weightProvider.get(edge) !== null) {
+      if (weightProvider !== null && weightProvider.get(edge) !== null) {
         weights.setNumber(edge, weightProvider.get(edge))
       } else {
         // calculate geometric edge length
@@ -110,7 +82,7 @@ export default class CentralityStage extends LayoutStageBase {
       }
     })
 
-    switch (this.$centrality) {
+    switch (this.centrality) {
       case 0: {
         // DEGREE_CENTRALITY
         CentralityAlgorithm.degreeCentrality(graph, centrality, true, true)
@@ -123,7 +95,7 @@ export default class CentralityStage extends LayoutStageBase {
       }
       case 2: {
         // GRAPH_CENTRALITY
-        CentralityAlgorithm.graphCentrality(graph, centrality, this.$directed, weights)
+        CentralityAlgorithm.graphCentrality(graph, centrality, this.directed, weights)
         break
       }
       case 3: {
@@ -133,14 +105,14 @@ export default class CentralityStage extends LayoutStageBase {
           graph,
           centrality,
           edgeCentrality,
-          this.$directed,
+          this.directed,
           weightProvider
         )
         break
       }
       case 4: {
         // CLOSENESS_CENTRALITY
-        CentralityAlgorithm.closenessCentrality(graph, centrality, this.$directed, weights)
+        CentralityAlgorithm.closenessCentrality(graph, centrality, this.directed, weights)
         break
       }
       default: {
@@ -160,7 +132,9 @@ export default class CentralityStage extends LayoutStageBase {
       const nodeLayout = graph.getLayout(node)
       if (centralityValues.difference > 0) {
         const sizeScale = (mostCentralSize - leastCentralSize) / centralityValues.difference
-        const size = parseInt(leastCentralSize + (centralityId - centralityValues.min) * sizeScale)
+        const size = Math.floor(
+          leastCentralSize + (centralityId - centralityValues.min) * sizeScale
+        )
         nodeLayout.setSize(size, size)
         nodeLayout.setLocation(
           nodeLayout.x + (nodeLayout.width * 0.5 - size * 0.5),
@@ -178,9 +152,9 @@ export default class CentralityStage extends LayoutStageBase {
 
   /**
    * Returns the range of centrality values of the nodes.
-   * @param {Graph} graph
-   * @param {INodeMap} centrality
-   * @return {{min: Number, max: number, difference: number}}
+   * @param {!Graph} graph
+   * @param {!INodeMap} centrality
+   * @returns {!object}
    */
   getCentralityValues(graph, centrality) {
     let min = Number.MAX_VALUE

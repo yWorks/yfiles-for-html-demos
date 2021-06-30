@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -34,6 +34,7 @@ import {
   ComponentAssignmentStrategy,
   CompositeLayoutData,
   EdgeRouter,
+  EdgeRouterData,
   EdgeRouterScope,
   FillAreaLayout,
   FillAreaLayoutData,
@@ -51,7 +52,6 @@ import {
   LayoutGraph,
   LayoutStageBase,
   List,
-  PolylineEdgeRouterData,
   SequentialLayout,
   Size,
   TimeSpan
@@ -243,7 +243,7 @@ export class LayoutHelper implements PendingLayout {
       fillAreaLayoutData.fixedNodes.items = List.from(this.nodes)
       layoutData.items.add(fillAreaLayoutData)
       if (this.state === 'FINISHING') {
-        const polylineEdgeRouterData = new PolylineEdgeRouterData()
+        const polylineEdgeRouterData = new EdgeRouterData()
         polylineEdgeRouterData.affectedNodes.items = List.from(this.nodes)
         // only route edges for the final layout
         layoutData.items.add(polylineEdgeRouterData)

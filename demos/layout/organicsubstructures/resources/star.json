@@ -1,0 +1,13 @@
+{
+  "settings": {
+    "cycleSubstructureStyle": "CIRCULAR",
+    "chainSubstructureStyle": "NONE",
+    "starSubstructureStyle": "SEPARATED_RADIAL",
+    "parallelSubstructureStyle": "NONE",
+    "useEdgeGrouping": true,
+    "considerNodeTypes": true,
+    "parallelSubstructureTypeSeparation": false,
+    "starSubstructureTypeSeparation": true,
+    "alterTypesAndStructure": true
+  }
+}

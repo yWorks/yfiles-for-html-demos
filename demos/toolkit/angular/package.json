@@ -5,35 +5,35 @@
   "license": "https://www.yworks.com/products/yfiles-for-html/sla",
   "private": true,
   "scripts": {
-    "postinstall": "node -e \"require('fs-extra').copySync('../../utils/Workarounds.ts', './src/utils/Workarounds.ts')\"",
+    "postinstall": "node -e \"require('fs-extra').copySync('../../utils/Workarounds.ts', './src/utils/Workarounds.ts'); require('fs-extra').copySync('../../utils/GraphSearch.ts', './src/utils/GraphSearch.ts');\"",
     "ng": "ng",
-    "start": "ng serve --open",
+    "start": "node --max_old_space_size=6144 node_modules/@angular/cli/bin/ng serve --open",
     "build-dev": "node --max_old_space_size=6144 node_modules/@angular/cli/bin/ng build",
-    "build": "ng build --prod"
+    "build": "node --max_old_space_size=6144 node_modules/@angular/cli/bin/ng build --configuration production"
   },
   "dependencies": {
-    "@angular/common": "~10.2.4",
-    "@angular/compiler": "~10.2.4",
-    "@angular/core": "~10.2.4",
-    "@angular/forms": "~10.2.4",
-    "@angular/platform-browser": "~10.2.4",
-    "@angular/platform-browser-dynamic": "~10.2.4",
-    "rxjs": "~6.6.3",
-    "tslib": "^2.0.3",
-    "yfiles": "../../../lib-dev/es-modules/yfiles-23.0.4-dev.tgz",
-    "zone.js": "~0.11.3"
+    "@angular/common": "~12.0.5",
+    "@angular/compiler": "~12.0.5",
+    "@angular/core": "~12.0.5",
+    "@angular/forms": "~12.0.5",
+    "@angular/platform-browser": "~12.0.5",
+    "@angular/platform-browser-dynamic": "~12.0.5",
+    "rxjs": "~7.1.0",
+    "tslib": "^2.3.0",
+    "yfiles": "../../../lib-dev/es-modules/yfiles-24.0.0-dev.tgz",
+    "zone.js": "~0.11.4"
   },
   "devDependencies": {
-    "@angular-builders/custom-webpack": "^10.0.1",
-    "@angular-devkit/build-angular": "~0.1002.1",
-    "@angular/cli": "~10.2.1",
-    "@angular/compiler-cli": "~10.2.4",
-    "@angular/language-service": "~10.2.4",
-    "@babel/core": "^7.12.10",
-    "@babel/preset-env": "^7.12.11",
-    "@babel/preset-typescript": "^7.12.7",
-    "@yworks/optimizer": "^1.4.3",
-    "fs-extra": "^9.0.1",
-    "typescript": "~3.9.7"
+    "@angular-builders/custom-webpack": "^12.1.0",
+    "@angular-devkit/build-angular": "~12.0.5",
+    "@angular/cli": "~12.0.5",
+    "@angular/compiler-cli": "~12.0.5",
+    "@angular/language-service": "~12.0.5",
+    "@babel/core": "^7.14.6",
+    "@babel/preset-env": "^7.14.7",
+    "@babel/preset-typescript": "^7.14.5",
+    "@yworks/optimizer": "^1.5.0",
+    "fs-extra": "^10.0.0",
+    "typescript": "~4.2.4"
   }
 }

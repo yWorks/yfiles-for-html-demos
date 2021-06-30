@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -26,6 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
+/* eslint-disable @typescript-eslint/unbound-method */
 import {
   BaseClass,
   CollectSnapResultsEventArgs,
@@ -147,8 +148,10 @@ export class NodeSelectionResizingInputMode extends InputModeBase {
     }
 
     // create own HandleInputMode for the handles
-    this.handleInputMode = new HandleInputMode()
-    this.handleInputMode.priority = 1
+    this.handleInputMode = new HandleInputMode({
+      priority: 1,
+      enabled: false
+    })
 
     // notify the GraphSnapContext which nodes are resized and shouldn't provide SnapLines
     this.handleInputMode.addDragStartedListener(delegate(this.registerReshapedNodes, this))
@@ -168,7 +171,6 @@ export class NodeSelectionResizingInputMode extends InputModeBase {
     )
 
     this.handleInputMode.install(context, controller)
-    this.handleInputMode.enabled = false
 
     // update handles depending on the changed node selection
     geim.addMultiSelectionStartedListener(delegate(this.multiSelectionStarted, this))
@@ -316,8 +318,8 @@ export class NodeSelectionResizingInputMode extends InputModeBase {
       graphComponent.canvasContext,
       graphComponent.inputModeGroup,
       this.rectangle
-    )!
-    this.rectCanvasObject.toBack()
+    )
+    this.rectCanvasObject!.toBack()
 
     // Create a reshape handler factory depending on the current mode
     const reshapeHandlerFactory =
@@ -488,7 +490,7 @@ function isAnyEast(position: HandlePositions): boolean {
  * {@link EncompassingRectangle#invalidate | invalidated} to fit the encompassed nodes or explicitly
  * {@link Reshape">reshaped</see>.
  */
-class EncompassingRectangle extends BaseClass<IRectangle>(IRectangle) {
+class EncompassingRectangle extends BaseClass(IRectangle) {
   private readonly $nodes: IEnumerable<INode>
   private readonly $margins: Insets
   private readonly rectangle: MutableRectangle
@@ -576,7 +578,7 @@ class EncompassingRectangle extends BaseClass<IRectangle>(IRectangle) {
  * This base class implements the interface methods, handles undo/redo support, orthogonal edge editing
  * and snapping, and contains code common to both modes.
  */
-class ReshapeHandlerBase extends BaseClass<IReshapeHandler>(IReshapeHandler) {
+class ReshapeHandlerBase extends BaseClass(IReshapeHandler) {
   // dictionaries storing the original layout, reshape handler and snap result provider of the reshape nodes
   protected readonly originalNodeLayouts: Map<INode, Rect>
   private readonly reshapeHandlers: Map<INode, IReshapeHandler>
@@ -664,11 +666,8 @@ class ReshapeHandlerBase extends BaseClass<IReshapeHandler>(IReshapeHandler) {
         this.reshapeSnapResultProviders.set(node, snapResultProvider)
       }
       // store orthogonal edge drag handler that keeps edges at node orthogonal
-      const orthogonalEdgeDragHandler = OrthogonalEdgeEditingContext.createOrthogonalEdgeDragHandler(
-        context,
-        node,
-        false
-      )
+      const orthogonalEdgeDragHandler =
+        OrthogonalEdgeEditingContext.createOrthogonalEdgeDragHandler(context, node, false)
       if (orthogonalEdgeDragHandler) {
         this.orthogonalEdgeDragHandlers.set(node, orthogonalEdgeDragHandler)
       }
@@ -1027,9 +1026,9 @@ class ScalingReshapeHandler extends ReshapeHandlerBase {
     if (graph == null) {
       return
     }
-    const groupingSupport = graph!.groupingSupport
+    const groupingSupport = graph.groupingSupport
     for (const node of this.reshapeNodes) {
-      if (graph!.isGroupNode(node)) {
+      if (graph.isGroupNode(node)) {
         groupingSupport.enlargeGroupNode(context, node, true)
       }
     }
@@ -1129,7 +1128,7 @@ class ResizingReshapeHandler extends ReshapeHandlerBase {
  * A {@link ReshapeHandlerHandle} for an {@link EncompassingRectangle} that considers the
  * {@link EncompassingRectangle.margins} for the calculation of its {@link IDragHandler.location}.
  */
-class NodeSelectionReshapeHandle extends BaseClass<IHandle>(IHandle) {
+class NodeSelectionReshapeHandle extends BaseClass(IHandle) {
   private readonly reshapeHandlerHandle: ReshapeHandlerHandle
   private $location: IPoint | null
 
@@ -1197,12 +1196,12 @@ class NodeSelectionReshapeHandle extends BaseClass<IHandle>(IHandle) {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  centerReshapeRecognizer(eventSource: any, evt: EventArgs | null): boolean {
+  centerReshapeRecognizer(eventSource: any, evt: EventArgs): boolean {
     return this.reshapeHandlerHandle.centerReshapeRecognizer(eventSource, evt)
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  ratioReshapeRecognizer(eventSource: any, evt: EventArgs | null): boolean {
+  ratioReshapeRecognizer(eventSource: any, evt: EventArgs): boolean {
     return this.reshapeHandlerHandle.ratioReshapeRecognizer(eventSource, evt)
   }
 
@@ -1237,7 +1236,7 @@ class NodeSelectionReshapeHandle extends BaseClass<IHandle>(IHandle) {
  * reshape handler and the margins of the {@link EncompassingRectangle} as well as an additional
  * zoom-dependent offset.
  */
-class HandleLocation extends BaseClass<IPoint>(IPoint) {
+class HandleLocation extends BaseClass(IPoint) {
   private readonly offset: number
   private readonly outerThis: NodeSelectionReshapeHandle
 

@@ -4,8 +4,9 @@
 
 [You can also run this demo online](https://live.yworks.com/demos/databinding/simplegraphbuilder/index.html).
 
-This demo uses [GraphBuilder](https://docs.yworks.com/yfileshtml/#/api/GraphBuilder), [TreeBuilder](https://docs.yworks.com/yfileshtml/#/api/TreeBuilder) or [AdjacencyGraphBuilder](https://docs.yworks.com/yfileshtml/#/api/AdjacencyGraphBuilder) to automatically build a graph from business data.  
-The business data can be stored in _arrays_ or in _JSON_ format.  
+This demo automatically builds a graph from business data using [GraphBuilder](https://docs.yworks.com/yfileshtml/#/api/GraphBuilder), [TreeBuilder](https://docs.yworks.com/yfileshtml/#/api/TreeBuilder) or [AdjacencyGraphBuilder](https://docs.yworks.com/yfileshtml/#/api/AdjacencyGraphBuilder).  
+The business data is stored in arrays or in **JSON** format.
+
 The nodes are visualized by a [TemplateNodeStyle](https://docs.yworks.com/yfileshtml/#/api/TemplateNodeStyle) instance that binds to the business data objects which [GraphBuilder](https://docs.yworks.com/yfileshtml/#/api/GraphBuilder), [TreeBuilder](https://docs.yworks.com/yfileshtml/#/api/TreeBuilder) and [AdjacencyGraphBuilder](https://docs.yworks.com/yfileshtml/#/api/AdjacencyGraphBuilder) store in the graph item's [ITagOwner#tag](https://docs.yworks.com/yfileshtml/#/api/ITagOwner#tag).
 
 See the the Developer's Guide section on [creating a Graph from Business Data](https://docs.yworks.com/yfileshtml/#/dguide/graph_builder) for an in-depth explanation of the relevant concepts.
@@ -52,11 +53,11 @@ Registers a data source that represents the group nodes.
 
 `AdjacencyNodesSource.addPredecessorIds`
 
-Registers a provider for source node ids to which edges are created.
+Registers a provider for source node IDs to which edges are created.
 
 `AdjacencyNodesSource.addSuccessorIds`
 
-Registers a provider for target node ids to which edges are created.
+Registers a provider for target node IDs to which edges are created.
 
 ### Input Data
 

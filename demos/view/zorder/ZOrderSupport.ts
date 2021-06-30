@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -54,6 +54,7 @@ import {
   IOutputHandler,
   IParseContext,
   IPositionHandler,
+  IReparentNodeHandler,
   ItemCopiedEventArgs,
   ItemEventArgs,
   ItemModelManager,
@@ -478,7 +479,7 @@ export class ZOrderSupport extends BaseClass<IComparer<INode>>(IComparer) {
   /**
    * Returns the master item of <code>node</code> if folding is enabled and <code>node</code> itself otherwise.
    */
-  private getMasterNode(node: INode): INode {
+  public getMasterNode(node: INode): INode {
     const foldingView = this.graphComponent.graph.foldingView
     if (foldingView) {
       if (foldingView.manager.masterGraph.contains(node)) {
@@ -602,20 +603,18 @@ export class ZOrderNodePositionHandler extends GroupingNodePositionHandler {
    */
   public setCurrentParent(context: IInputModeContext, node: INode, parent: INode): void {
     if (parent !== this.$initialParent) {
-      let tmp
       // node is temporarily at a new parent
-      const moveInputMode =
-        (tmp = context.parentInputMode) instanceof ZOrderMoveInputMode ? tmp : null
-      if (moveInputMode) {
+      if (context.parentInputMode instanceof ZOrderMoveInputMode) {
+        const moveInputMode = context.parentInputMode
         // the ZOrderMoveInputMode knows all moved nodes and therefore can provide the new z-order for this node
         const tempZOrder = moveInputMode.getZOrderForNewParent(node, parent)
         // 'parent' is only a temporary new parent so the old z-order should be kept but a new temporary one is set
-        this.$ZOrderSupport!.setTempZOrder(node, parent, tempZOrder)
+        this.$ZOrderSupport.setTempZOrder(node, parent, tempZOrder)
       }
       super.setCurrentParent(context, node, parent)
     } else if (parent !== this.$currentParent) {
       // node is reset to its initial parent: reset its temporary z-order so the original one is used again
-      this.$ZOrderSupport!.removeTempZOrder(node)
+      this.$ZOrderSupport.removeTempZOrder(node)
 
       super.setCurrentParent(context, node, parent)
     }
@@ -765,6 +764,13 @@ export class ZOrderGraphEditorInputMode extends GraphEditorInputMode {
       ZOrderGraphEditorInputMode.TO_BACK,
       zOrderSupport.toBack.bind(zOrderSupport)
     )
+
+    // delegate reparenting of nodes to a custom implementation that adjusts the reparented
+    // node's z-order accordingly
+    this.reparentNodeHandler = new ZOrderReparentHandler(
+      this.reparentNodeHandler,
+      this.zOrderSupport
+    )
   }
 
   private addCommandBinding(newCommand: ICommand, method: (obj: List<INode>) => void): void {
@@ -895,17 +901,70 @@ export class ZOrderGraphEditorInputMode extends GraphEditorInputMode {
     const newParent = this.graph!.getParent(evt.item)
     this.newParents!.add(newParent)
   }
+}
 
-  onNodeReparented(evt: NodeEventArgs): void {
-    super.onNodeReparented(evt)
-    const node = evt.item
-    const zIndex = this.calculateNewZIndex(node, this.graph!.getParent(node))
-    this.zOrderSupport.setZOrder(node, zIndex)
-    this.graphComponent!.graphModelManager.update(node)
+/**
+ * Delegates reparenting to an external callback function. The callback function is intended to
+ * provide pre- and post-processing only. The actual reparenting operation should be performed by
+ * the reparent handler that is passed to the callback function.
+ */
+class ZOrderReparentHandler extends BaseClass<IReparentNodeHandler>(IReparentNodeHandler) {
+  constructor(
+    private readonly handler: IReparentNodeHandler,
+    private readonly zOrderSupport: ZOrderSupport
+  ) {
+    super()
   }
 
-  private calculateNewZIndex(node: INode, parent: INode | null): number {
-    const children = this.graph!.getChildren(parent)
+  isReparentGesture(context: IInputModeContext, node: INode): boolean {
+    return this.handler.isReparentGesture(context, node)
+  }
+
+  isValidParent(context: IInputModeContext, node: INode, newParent: INode | null): boolean {
+    return this.handler.isValidParent(context, node, newParent)
+  }
+
+  reparent(context: IInputModeContext, node: INode, newParent: INode | null): void {
+    // Determine the node's and the parent's representatives in the master graph.
+    // This has to be done prior to the reparenting operation, because if the new parent is a
+    // folder node (i.e. a closed group node), the given node will be removed from the current
+    // view graph as part of the reparenting operation. In this case, the corresponding master nodes
+    // cannot be determined anymore after reparenting is done.
+    // Being able to determine the master nodes right before reparenting is the whole reason
+    // for decorating the default reparent handler here.
+    const support = this.zOrderSupport
+    const masterNode = support.getMasterNode(node)
+    const masterParent = newParent ? support.getMasterNode(newParent) : null
+
+    // reparent the node
+    this.handler.reparent(context, node, newParent)
+
+    // update the node's z-order index
+    const graphComponent = context.canvasComponent as GraphComponent
+    const viewGraph = graphComponent.graph
+    const masterGraph = ZOrderReparentHandler.getMasterGraph(viewGraph)
+    const zIndex = this.calculateNewZIndex(masterGraph, masterNode, masterParent)
+    support.setZOrder(masterNode, zIndex)
+
+    const viewNode = ZOrderReparentHandler.getViewNode(viewGraph, masterNode)
+    if (viewNode) {
+      graphComponent.graphModelManager.update(viewNode)
+    }
+  }
+
+  shouldReparent(context: IInputModeContext, node: INode): boolean {
+    return this.handler.shouldReparent(context, node)
+  }
+
+  /**
+   * Calculates an appropriate z-order index for the given node in the given graph.
+   */
+  private calculateNewZIndex(
+    masterGraph: IGraph,
+    masterNode: INode,
+    masterParent: INode | null
+  ): number {
+    const children = masterGraph.getChildren(masterParent)
     if (children.size === 1) {
       // node is the only child
       return 0
@@ -914,10 +973,28 @@ export class ZOrderGraphEditorInputMode extends GraphEditorInputMode {
     return (
       children.reduce(
         (acc: number, current: INode): number =>
-          current !== node ? Math.max(acc, this.zOrderSupport.getZOrder(current)) : acc,
+          current !== masterNode ? Math.max(acc, this.zOrderSupport.getZOrder(current)) : acc,
         Number.MIN_VALUE
       ) + 1
     )
+  }
+
+  /**
+   * Returns the master graph associated to the given view graph if folding is enabled for said
+   * view graph.
+   */
+  private static getMasterGraph(viewGraph: IGraph): IGraph {
+    const foldingView = viewGraph.foldingView
+    return foldingView ? foldingView.manager.masterGraph : viewGraph
+  }
+
+  /**
+   * Returns the view node for the given master node or null if the given master node has no
+   * representative in the given view graph.
+   */
+  private static getViewNode(viewGraph: IGraph, masterNode: INode): INode | null {
+    const foldingView = viewGraph.foldingView
+    return foldingView ? foldingView.getViewItem(masterNode) : masterNode
   }
 }
 
@@ -1012,7 +1089,7 @@ export class ZOrderMoveInputMode extends MoveInputMode {
           : 0
       this.maxOldZOrder.set(parent, maxZOrder)
     }
-    return maxZOrder!
+    return maxZOrder
   }
 
   /**
@@ -1088,14 +1165,14 @@ export class ZOrderGraphClipboard extends GraphClipboard {
 
   private onCopiedToClipboard(sender: object, evt: ItemCopiedEventArgs<INode>): void {
     // transfer relative z-order from original node to the copy in the clipboard graph
-    this.zOrders.set(evt.copy, this.getZOrder(evt.original!))
+    this.zOrders.set(evt.copy, this.getZOrder(evt.original))
   }
 
   private onCopiedFromClipboard(sender: object, evt: ItemCopiedEventArgs<INode>): void {
     // store new node to use in ArrangeItems
-    this.newItems.add(evt.copy!)
+    this.newItems.add(evt.copy)
     // transfer relative z-order from node in the clipboard graph to the new node
-    this.zOrders.set(evt.copy, this.getZOrder(evt.original!))
+    this.zOrders.set(evt.copy, this.getZOrder(evt.original))
   }
 
   /**

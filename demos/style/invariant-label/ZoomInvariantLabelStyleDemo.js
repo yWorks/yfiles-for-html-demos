@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -33,6 +33,7 @@ import {
   GraphItemTypes,
   GraphViewerInputMode,
   ICommand,
+  ILabelStyle,
   INode,
   IRectangle,
   License,
@@ -43,14 +44,15 @@ import {
   FitOwnerLabelStyle,
   ZoomInvariantBelowThresholdLabelStyle,
   ZoomInvariantAboveThresholdLabelStyle,
-  ZoomInvariantOutsideRangeLabelStyle
+  ZoomInvariantOutsideRangeLabelStyle,
+  ZoomInvariantLabelStyleBase
 } from './ZoomInvariantLabelStyle.js'
 import { bindChangeListener, bindCommand, showApp } from '../../resources/demo-app.js'
 import loadJson from '../../resources/load-json.js'
 import { initDemoStyles } from '../../resources/demo-styles.js'
 
 /** @type {GraphComponent} */
-let graphComponent = null
+let graphComponent
 
 const ModeDescriptions = {
   DEFAULT: 'Default Label Style',
@@ -67,6 +69,9 @@ const maxScaleLabel = document.getElementById('maxScaleLabel')
 const maxScaleInput = document.getElementById('maxScale')
 const zoomLevelDisplay = document.getElementById('zoomLevel')
 
+/**
+ * @param {!object} licenseData
+ */
 function run(licenseData) {
   License.value = licenseData
   graphComponent = new GraphComponent('graphComponent')
@@ -115,34 +120,38 @@ function run(licenseData) {
 
 /**
  * Helper method to create node with the given layout and label
- * @param {IRectangle} layout
- * @param {string} label
- * @return {INode}
+ * @param {!IRectangle} layout
+ * @param {!string} label
+ * @returns {!INode}
  */
 function createNode(layout, label) {
   return graphComponent.graph.createNode({
     layout: layout,
-    labels: {
-      text: label,
-      style: new ZoomInvariantBelowThresholdLabelStyle(new DefaultLabelStyle(), 1)
-    }
+    labels: [
+      {
+        text: label,
+        style: new ZoomInvariantBelowThresholdLabelStyle(new DefaultLabelStyle(), 1)
+      }
+    ]
   })
 }
 
 /**
  * Helper method to create an edge with the given label between the given source and target.
- * @param {INode} source
- * @param {INode} target
- * @param {string} label
+ * @param {!INode} source
+ * @param {!INode} target
+ * @param {!string} label
  */
 function createEdge(source, target, label) {
   return graphComponent.graph.createEdge({
     source: source,
     target: target,
-    labels: {
-      text: label,
-      style: new ZoomInvariantBelowThresholdLabelStyle(new DefaultLabelStyle(), 1)
-    }
+    labels: [
+      {
+        text: label,
+        style: new ZoomInvariantBelowThresholdLabelStyle(new DefaultLabelStyle(), 1)
+      }
+    ]
   })
 }
 

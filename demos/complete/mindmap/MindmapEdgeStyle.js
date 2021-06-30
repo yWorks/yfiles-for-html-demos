@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -32,7 +32,6 @@ import {
   HtmlCanvasVisual,
   IEdge,
   IInputModeContext,
-  INode,
   IRenderContext,
   Point,
   Visual
@@ -49,48 +48,16 @@ export default class MindmapEdgeStyle extends EdgeStyleBase {
    */
   constructor(thicknessStart, thicknessEnd) {
     super()
-    this.$thicknessStart = thicknessStart
-    this.$thicknessEnd = thicknessEnd
-  }
-
-  /**
-   * Gets the thickness of the edge at its start.
-   * @return {number}
-   */
-  get thicknessStart() {
-    return this.$thicknessStart
-  }
-
-  /**
-   * Sets the thickness of the edge at its start.
-   * @param {number} value The thickness to be set.
-   */
-  set thicknessStart(value) {
-    this.$thicknessStart = value
-  }
-
-  /**
-   * Gets the thickness of the edge at its end.
-   * @return {number}
-   */
-  get thicknessEnd() {
-    return this.$thicknessEnd
-  }
-
-  /**
-   * Sets the thickness of the edge at its end.
-   * @param {number} value The thickness to be set.
-   */
-  set thicknessEnd(value) {
-    this.$thicknessEnd = value
+    this.thicknessEnd = thicknessEnd
+    this.thicknessStart = thicknessStart
   }
 
   /**
    * Creates the visual.
-   * @param {IRenderContext} context The render context.
-   * @param {IEdge} edge The edge to which this style instance is assigned.
+   * @param {!IRenderContext} context The render context.
+   * @param {!IEdge} edge The edge to which this style instance is assigned.
    * @see Overrides {@link EdgeStyleBase#createVisual}
-   * @return {Visual}
+   * @returns {!Visual}
    */
   createVisual(context, edge) {
     return new MindmapCanvasVisual(edge, this.thicknessStart, this.thicknessEnd)
@@ -98,17 +65,16 @@ export default class MindmapEdgeStyle extends EdgeStyleBase {
 
   /**
    * Updates the visual.
-   * @param {IRenderContext} context The render context.
-   * @param {Visual} oldVisual The old visual.
-   * @param {IEdge} edge The edge to which this style instance is assigned.
+   * @param {!IRenderContext} context The render context.
+   * @param {!Visual} oldVisual The old visual.
+   * @param {!IEdge} edge The edge to which this style instance is assigned.
    * @see Overrides {@link EdgeStyleBase#updateVisual}
-   * @return {Visual}
+   * @returns {!Visual}
    */
   updateVisual(context, oldVisual, edge) {
     // old state of edge
-    const thicknessStart = oldVisual['data-thicknessStart']
-    const thicknessEnd = oldVisual['data-thicknessEnd']
-
+    const thicknessStart = oldVisual.cachedThicknessStart
+    const thicknessEnd = oldVisual.cachedThicknessEnd
     if (thicknessStart !== this.thicknessStart || thicknessEnd !== this.thicknessEnd) {
       // if something changed, re-create the visual from scratch
       oldVisual = this.createVisual(context, edge)
@@ -119,11 +85,11 @@ export default class MindmapEdgeStyle extends EdgeStyleBase {
   /**
    * Hit-test of the edge style.
    * Mindmap edges should not be clicked, selected or hovered. Thus, the hit-test returns false.
-   * @param {IInputModeContext} canvasContext The canvas context.
-   * @param {Point} p The point to test.
-   * @param {INode} edge The given edge.
+   * @param {!IInputModeContext} canvasContext The canvas context.
+   * @param {!Point} p The point to test.
+   * @param {!IEdge} edge The given edge.
    * @see Overrides {@link EdgeStyleBase#isHit}
-   * @return {boolean}
+   * @returns {boolean}
    */
   isHit(canvasContext, p, edge) {
     return false
@@ -137,41 +103,31 @@ export default class MindmapEdgeStyle extends EdgeStyleBase {
 class MindmapCanvasVisual extends HtmlCanvasVisual {
   /**
    * Creates the canvas visual.
-   * @param {IEdge} edge The given edge.
+   * @param {!IEdge} edge The given edge.
    * @param {number} thicknessStart The thickness of the edge at its start.
    * @param {number} thicknessEnd The thickness of the edge at its end.
    */
   constructor(edge, thicknessStart, thicknessEnd) {
     super()
+    this.cachedThicknessStart = 0
+    this.cachedThicknessEnd = 0
+
+    // Gets or sets the array of points after flattening the path.
+    // @return The edge path.
+    this.points = null
+
     this.edge = edge
     this.thicknessStart = thicknessStart
     this.thicknessEnd = thicknessEnd
-    this.$points = null
 
     // initialize the path data to null
-    this['data-path'] = null
-  }
-
-  /**
-   * Gets the array of points after flattening the path.
-   * @return {Point[]} The edge path.
-   */
-  get points() {
-    return this.$points
-  }
-
-  /**
-   * Sets the array of points after flattening the path.
-   * @param {Point[]} value The path to be set.
-   */
-  set points(value) {
-    this.$points = value
+    this.cachedPath = null
   }
 
   /**
    * Renders the edge.
-   * @param {IRenderContext} renderContext The render context.
-   * @param {CanvasRenderingContext2D} ctx The HTML5 Canvas context.
+   * @param {!IRenderContext} renderContext The render context.
+   * @param {!CanvasRenderingContext2D} ctx The HTML5 Canvas context.
    * @see Overrides {@link HtmlCanvasVisual#paint}
    */
   paint(renderContext, ctx) {
@@ -179,7 +135,7 @@ class MindmapCanvasVisual extends HtmlCanvasVisual {
     ctx.beginPath()
     const p = MindmapCanvasVisual.createCurvedPath(this.edge)
     // if path segments have not changed, the old points along the path can be reused
-    const oldPath = this['data-path']
+    const oldPath = this.cachedPath
     if (!p.hasSameValue(oldPath)) {
       // if path segments have changed, compute new points along path
       const flattenedPath = p.flatten(0.01)
@@ -201,15 +157,16 @@ class MindmapCanvasVisual extends HtmlCanvasVisual {
     ctx.restore()
 
     // save the data used to create the visualization
-    this['data-path'] = p
-    this['data-thicknessStart'] = this.thicknessStart
-    this['data-thicknessEnd'] = this.thicknessEnd
+    this.cachedPath = p
+    this.cachedThicknessStart = this.thicknessStart
+    this.cachedThicknessEnd = this.thicknessEnd
   }
 
   /**
    * Return equidistant points on path.
    * Quality of curve rendering may be adjusted by setting MAX_SEGMENTS.
-   * @return {Point[]}
+   * @param {!GeneralPath} path
+   * @returns {!Array.<Point>}
    */
   static getPoints(path) {
     const MAX_SEGMENTS = 50
@@ -227,14 +184,14 @@ class MindmapCanvasVisual extends HtmlCanvasVisual {
    * Intermediate values of color components (r,g,b) and thickness (w) are computed using linear interpolation.
    * @param {number} startThickness The thickness start.
    * @param {number} endThickness The thickness end.
-   * @param {object} startColor The color of the edge at its start.
-   * @param {object} endColor The color of the edge at its end.
-   * @param {Point[]} points The thickness start
-   * @param {CanvasRenderingContext2D} ctx The HTML5 Canvas context.
+   * @param {!RGB} startColor The color of the edge at its start.
+   * @param {!RGB} endColor The color of the edge at its end.
+   * @param {!Array.<Point>} points The thickness start
+   * @param {!CanvasRenderingContext2D} ctx The HTML5 Canvas context.
    */
   static drawEdgePath(startThickness, endThickness, startColor, endColor, points, ctx) {
-    let /** @type {Point} */ x0
-    let /** @type {Point} */ x1
+    let x0
+    let x1
 
     const rS = startColor.r
     const rE = endColor.r
@@ -281,8 +238,8 @@ class MindmapCanvasVisual extends HtmlCanvasVisual {
   /**
    * Creates curved path segment using edge bends as control points.
    * If no bends are available, create a straight line.
-   * @param {IEdge} edge The given edge.
-   * @return {GeneralPath}
+   * @param {!IEdge} edge The given edge.
+   * @returns {!GeneralPath}
    */
   static createCurvedPath(edge) {
     const p = new GeneralPath()
@@ -302,8 +259,8 @@ class MindmapCanvasVisual extends HtmlCanvasVisual {
 
   /**
    * Converts a hex to rgb color.
-   * @param {string} hex The hex to be converted.
-   * @return {Object} The color in rgb format.
+   * @param {!string} hex The hex to be converted.
+   * @returns {!RGB} The color in rgb format.
    */
   static hexToRgb(hex) {
     const rgb = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex)
@@ -313,6 +270,13 @@ class MindmapCanvasVisual extends HtmlCanvasVisual {
           g: parseInt(rgb[2], 16),
           b: parseInt(rgb[3], 16)
         }
-      : null
+      : { r: 0, g: 0, b: 0 }
   }
 }
+
+/**
+ * @typedef {Object} RGB
+ * @property {number} r
+ * @property {number} g
+ * @property {number} b
+ */

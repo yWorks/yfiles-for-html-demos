@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -28,12 +28,17 @@
  ***************************************************************************/
 import {
   Animator,
+  CopiedLayoutGraph,
   GraphComponent,
   GraphConnectivity,
-  ICollection,
   IEdge,
+  IEnumerable,
+  IGraph,
+  IModelItem,
   INode,
+  INodeMap,
   InteractiveOrganicLayout,
+  InteractiveOrganicLayoutExecutionContext,
   LayoutGraphAdapter,
   Maps,
   Point
@@ -43,25 +48,28 @@ import {
  * This class manages the interactive layout of this demo.
  */
 export default class InteractiveLayout {
-  /**
-   * Initializes the layout algorithm.
-   * @param {GraphComponent} graphComponent The given graph component
-   * @param {function} callback Called if layout has been initialized.
-   */
-  initLayout(graphComponent, callback) {
-    this.graphComponent = graphComponent
-    this.graph = graphComponent.graph
+  constructor() {
     this.copiedLayoutGraph = null
     this.layoutContext = null
-
-    this.animator = new Animator(graphComponent)
-    this.animator.autoInvalidation = false
-    this.animator.allowUserInteraction = true
-
     this.nodesAdded = []
     this.edgesAdded = []
     this.edgesRemoved = []
     this.nodesRemoved = []
+    this.movedNode = null
+  }
+
+  /**
+   * Initializes the layout algorithm.
+   * @param {!GraphComponent} graphComponent The given graph component
+   * @param {!Function} callback Called if layout has been initialized.
+   */
+  initLayout(graphComponent, callback) {
+    this.graphComponent = graphComponent
+    this.graph = graphComponent.graph
+
+    this.animator = new Animator(graphComponent)
+    this.animator.autoInvalidation = false
+    this.animator.allowUserInteraction = true
 
     if (callback) {
       callback()
@@ -112,7 +120,7 @@ export default class InteractiveLayout {
           const copiedTarget = this.copiedLayoutGraph.getCopiedNode(edge.targetNode)
 
           if (copiedSource) {
-            if (this.nodesAdded.indexOf(edge.sourceNode) >= 0) {
+            if (this.nodesAdded.includes(edge.sourceNode)) {
               this.layout.setInertia(copiedSource, 0)
               this.layout.setStress(copiedSource, 1)
             } else {
@@ -122,7 +130,7 @@ export default class InteractiveLayout {
           }
 
           if (copiedTarget) {
-            if (this.nodesAdded.indexOf(edge.targetNode) >= 0) {
+            if (this.nodesAdded.includes(edge.targetNode)) {
               this.layout.setInertia(copiedTarget, 0)
               this.layout.setStress(copiedTarget, 1)
             } else {
@@ -137,7 +145,7 @@ export default class InteractiveLayout {
 
       if (this.nodesAdded.length > 0) {
         this.graph.nodes.forEach(node => {
-          if (this.nodesAdded.indexOf(node) >= 0) {
+          if (this.nodesAdded.includes(node)) {
             const copiedNode = this.copiedLayoutGraph.getCopiedNode(node)
             if (copiedNode) {
               this.layout.setInertia(copiedNode, 0.8)
@@ -199,7 +207,7 @@ export default class InteractiveLayout {
 
   /**
    * Invoked when a node is created.
-   * @param {INode} node
+   * @param {!INode} node
    */
   onNodeCreated(node) {
     this.nodesAdded.push(node)
@@ -208,7 +216,7 @@ export default class InteractiveLayout {
 
   /**
    * Invoked when a node is removed.
-   * @param {INode} node
+   * @param {!INode} node
    */
   onNodeRemoved(node) {
     this.nodesRemoved.push(node)
@@ -217,7 +225,7 @@ export default class InteractiveLayout {
 
   /**
    * Invoked when an edge is created.
-   * @param {IEdge} edge
+   * @param {!IEdge} edge
    */
   onEdgeCreated(edge) {
     this.edgesAdded.push(edge)
@@ -226,7 +234,7 @@ export default class InteractiveLayout {
 
   /**
    * Invoked when an edge is removed.
-   * @param {IEdge} edge
+   * @param {!IEdge} edge
    */
   onEdgeRemoved(edge) {
     this.edgesRemoved.push(edge)
@@ -235,11 +243,12 @@ export default class InteractiveLayout {
 
   /**
    * Invoked when dragging has started.
-   * @param {ICollection} affectedItems
+   * @param {!IEnumerable.<IModelItem>} affectedItems
    */
   onDragStarted(affectedItems) {
-    this.movedNode = affectedItems.size > 0 ? affectedItems.first() : null
-    if (INode.isInstance(this.movedNode) && this.graph.contains(this.movedNode)) {
+    const item = affectedItems.size > 0 ? affectedItems.first() : null
+    if (item instanceof INode && this.graph.contains(item)) {
+      this.movedNode = item
       this.copiedLayoutGraph.syncStructure()
 
       this.components = Maps.createHashedNodeMap()

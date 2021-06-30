@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -29,104 +29,98 @@
 import {
   Fill,
   GeneralPath,
+  GraphComponent,
   GraphMLAttribute,
+  GraphMLIOHandler,
+  HandleSerializationEventArgs,
+  IBend,
+  ICanvasContext,
   IEdge,
+  IEnumerable,
+  IInputModeContext,
+  ILookup,
   INode,
   INodeStyle,
+  IPort,
   IRenderContext,
   MarkupExtension,
   NodeStyleBase,
+  Point,
   Rect,
   SolidColorFill,
   Stroke,
   SvgVisual,
   TypeAttribute,
+  Visual,
   YString
 } from 'yfiles'
+
+export /**
+ * @readonly
+ * @enum {number}
+ */
+const FlowchartNodeType = {
+  Process: 'process',
+  Decision: 'decision',
+  Start1: 'start1',
+  Start2: 'start2',
+  Terminator: 'terminator',
+  Cloud: 'cloud',
+  Data: 'data',
+  DirectData: 'directData',
+  Database: 'database',
+  Document: 'document',
+  PredefinedProcess: 'predefinedProcess',
+  StoredData: 'storedData',
+  InternalStorage: 'internalStorage',
+  SequentialData: 'sequentialData',
+  ManualInput: 'manualInput',
+  Card: 'card',
+  PaperType: 'paperType',
+  Delay: 'delay',
+  Display: 'display',
+  ManualOperation: 'manualOperation',
+  Preparation: 'preparation',
+  LoopLimit: 'loopLimit',
+  LoopLimitEnd: 'loopLimitEnd',
+  OnPageReference: 'onPageReference',
+  OffPageReference: 'offPageReference',
+  Annotation: 'annotation',
+  UserMessage: 'userMessage',
+  NetworkMessage: 'networkMessage'
+}
 
 /**
  * {@link INodeStyle} which draws a flowchart shape according to its type.
  * This style can be customized by changing the properties 'fill' and 'stroke' as well as with a css-stylesheet.
  */
 export class FlowchartNodeStyle extends NodeStyleBase {
-  constructor(type, cssClass) {
+  /**
+   * Creates a new instance with the given type.
+   * @param {!FlowchartNodeType} type The element type
+   * @param {!Fill} fill The background fill for this still.
+   * @param {!Stroke} stroke The border stroke for this style.
+   * @param cssClass The CSS class name for this style.
+   * @param {?string} [cssClass=null]
+   */
+  constructor(
+    type,
+    fill = new SolidColorFill(183, 201, 227),
+    stroke = Stroke.BLACK,
+    cssClass = null
+  ) {
     super()
-    this.$type = type
-    this.$fill = new SolidColorFill(183, 201, 227)
-    this.$stroke = Stroke.BLACK
-    this.$cssClass = cssClass || null
+    this.cssClass = cssClass
+    this.stroke = stroke
+    this.fill = fill
+    this.type = type
   }
 
   /**
-   * Returns the type of the node which determines the shape that is drawn.
-   * @return {'process'|'decision'|'start1'|'start2'|'terminator'|'cloud'|'data'|'directData'|'dataBase'|'document'|
-   * 'predefinedProcess'|'storedData'|'internalStorage'|'sequentialData'|'manualInput'|'card'|'paperType'|'delay'|
-   * 'display'|'manualOperation'|'preparation'|'loopLimit'|'loopLimitEnd'|'onPageReference'|'offPageReference'|
-   * 'annotation'|'userMessage'|'networkMessage'}
+   * @param {!IRenderContext} context
+   * @param {!INode} node
+   * @returns {!SvgVisual}
    */
-  get type() {
-    return this.$type
-  }
-
-  /**
-   * Sets the type of the node which determines the shape that is drawn.
-   * @param {'process'|'decision'|'start1'|'start2'|'terminator'|'cloud'|'data'|'directData'|'dataBase'|'document'|
-   * 'predefinedProcess'|'storedData'|'internalStorage'|'sequentialData'|'manualInput'|'card'|'paperType'|'delay'|
-   * 'display'|'manualOperation'|'preparation'|'loopLimit'|'loopLimitEnd'|'onPageReference'|'offPageReference'|
-   * 'annotation'|'userMessage'|'networkMessage'} value
-   */
-  set type(value) {
-    this.$type = value
-  }
-
-  /**
-   * Returns the fill for the background of the shape.
-   * @return {Fill}
-   */
-  get fill() {
-    return this.$fill
-  }
-
-  /**
-   * Sets the fill for the background of the shape.
-   * @param {Fill} value
-   */
-  set fill(value) {
-    this.$fill = value
-  }
-
-  /**
-   * Returns the stroke for the lines around and inside the shape.
-   * @return {Stroke}
-   */
-  get stroke() {
-    return this.$stroke
-  }
-
-  /**
-   * Sets the stroke for the lines around and inside the shape.
-   * @param {Stroke} value
-   */
-  set stroke(value) {
-    this.$stroke = value
-  }
-
-  /**
-   * Returns the name of the css-class that specifies fill and stroke of the shape.
-   * @return {string}
-   */
-  get cssClass() {
-    return this.$cssClass
-  }
-
-  /**
-   * Sets the name of the css-class that specifies fill and stroke of the shape.
-   * @param {string} cssClass
-   */
-  set cssClass(cssClass) {
-    this.$cssClass = cssClass
-  }
-
   createVisual(context, node) {
     const container = document.createElementNS('http://www.w3.org/2000/svg', 'g')
 
@@ -144,7 +138,7 @@ export class FlowchartNodeStyle extends NodeStyleBase {
 
     // add the decoration if there is any for this type
     const decoration = getDecoration(this.type, node, context)
-    let decorationPath
+    let decorationPath = null
     if (decoration) {
       decorationPath = decoration.createSvgPath()
       if (!this.cssClass) {
@@ -185,6 +179,12 @@ export class FlowchartNodeStyle extends NodeStyleBase {
     return new SvgVisual(container)
   }
 
+  /**
+   * @param {!IRenderContext} context
+   * @param {!Visual} oldVisual
+   * @param {!INode} node
+   * @returns {!Visual}
+   */
   updateVisual(context, oldVisual, node) {
     const container = oldVisual.svgElement
     const cache = container['render-data-cache']
@@ -203,8 +203,9 @@ export class FlowchartNodeStyle extends NodeStyleBase {
       this.type === 'annotation'
     ) {
       path.setAttribute('d', getPath(this.type, node).createSvgPathData())
-      if (decoration) {
-        decoration.setAttribute('d', getDecoration(this.type, node, context).createSvgPathData())
+      let decorationPath
+      if (decoration && (decorationPath = getDecoration(this.type, node, context))) {
+        decoration.setAttribute('d', decorationPath.createSvgPathData())
       }
       cache.location = node.layout.topLeft
       cache.size = node.layout.toSize()
@@ -215,7 +216,7 @@ export class FlowchartNodeStyle extends NodeStyleBase {
       if (!this.cssClass) {
         if (this.type !== 'annotation') {
           Stroke.setStroke(this.stroke, path, context)
-        } else {
+        } else if (decoration) {
           Stroke.setStroke(this.stroke, decoration, context)
         }
       }
@@ -266,6 +267,9 @@ export class FlowchartNodeStyle extends NodeStyleBase {
 
   /**
    * Returns the bounds of the outline of the shape according to the type.
+   * @param {!ICanvasContext} context
+   * @param {!INode} node
+   * @returns {!Rect}
    */
   getBounds(context, node) {
     return getPath(this.type, node).getBounds()
@@ -273,6 +277,8 @@ export class FlowchartNodeStyle extends NodeStyleBase {
 
   /**
    * Returns the outline of the shape according to the type.
+   * @param {!INode} node
+   * @returns {!GeneralPath}
    */
   getOutline(node) {
     return getPath(this.type, node)
@@ -280,6 +286,9 @@ export class FlowchartNodeStyle extends NodeStyleBase {
 
   /**
    * Returns whether or not the given location lies within the shape according to the type.
+   * @param {!INode} node
+   * @param {!Point} location
+   * @returns {boolean}
    */
   isInside(node, location) {
     if (!node.layout.contains(location)) {
@@ -290,109 +299,117 @@ export class FlowchartNodeStyle extends NodeStyleBase {
 
   /**
    * Returns whether or not the given location hits the shape according to the type.
+   * @param {!IInputModeContext} context
+   * @param {!Point} location
+   * @param {!INode} node
+   * @returns {boolean}
    */
   isHit(context, location, node) {
-    if (!node.layout.toRect().containsWithEps(location, context.hitTestRadius)) {
-      return false
-    }
-    return getPath(this.type, node).areaContains(location)
+    return (
+      node.layout.toRect().containsWithEps(location, context.hitTestRadius) &&
+      getPath(this.type, node).areaContains(location)
+    )
   }
 }
 
 /**
  * Returns the outline of the shape according to the type
- * @param {string} type
- * @param {INode} node
- * @return {GeneralPath}
+ * @param {!FlowchartNodeType} type
+ * @param {!INode} node
+ * @returns {!GeneralPath}
  */
 function getPath(type, node) {
   switch (type) {
     default:
-    case 'annotation':
+    case FlowchartNodeType.Annotation:
       return renderAnnotationPath(node)
-    case 'card':
+    case FlowchartNodeType.Card:
       return renderCardPath(node)
-    case 'cloud':
+    case FlowchartNodeType.Cloud:
       return renderCloudPath(node)
-    case 'data':
+    case FlowchartNodeType.Data:
       return renderDataPath(node)
-    case 'dataBase':
+    case FlowchartNodeType.Database:
       return renderDatabasePath(node)
-    case 'decision':
+    case FlowchartNodeType.Decision:
       return renderDecisionPath(node)
-    case 'delay':
+    case FlowchartNodeType.Delay:
       return renderDelayPath(node)
-    case 'directData':
+    case FlowchartNodeType.DirectData:
       return renderDirectDataPath(node)
-    case 'display':
+    case FlowchartNodeType.Display:
       return renderDisplayPath(node)
-    case 'document':
+    case FlowchartNodeType.Document:
       return renderDocumentPath(node)
-    case 'internalStorage':
+    case FlowchartNodeType.InternalStorage:
       return renderInternalStoragePath(node)
-    case 'loopLimit':
+    case FlowchartNodeType.LoopLimit:
       return renderLoopLimitPath(node)
-    case 'loopLimitEnd':
+    case FlowchartNodeType.LoopLimitEnd:
       return renderLoopLimitEndPath(node)
-    case 'manualInput':
+    case FlowchartNodeType.ManualInput:
       return renderManualInputPath(node)
-    case 'manualOperation':
+    case FlowchartNodeType.ManualOperation:
       return renderManualOperationPath(node)
-    case 'networkMessage':
+    case FlowchartNodeType.NetworkMessage:
       return renderNetworkMessagePath(node)
-    case 'offPageReference':
+    case FlowchartNodeType.OffPageReference:
       return renderOffPageReferencePath(node)
-    case 'onPageReference':
+    case FlowchartNodeType.OnPageReference:
       return renderOnPageReferencePath(node)
-    case 'paperType':
+    case FlowchartNodeType.PaperType:
       return renderPaperTapePath(node)
-    case 'predefinedProcess':
+    case FlowchartNodeType.PredefinedProcess:
       return renderPredefinedProcessPath(node)
-    case 'preparation':
+    case FlowchartNodeType.Preparation:
       return renderPreparationPath(node)
-    case 'process':
+    case FlowchartNodeType.Process:
       return renderProcessPath(node)
-    case 'sequentialData':
+    case FlowchartNodeType.SequentialData:
       return renderSequentialDataPath(node)
-    case 'start1':
+    case FlowchartNodeType.Start1:
       return renderStart1Path(node)
-    case 'start2':
+    case FlowchartNodeType.Start2:
       return renderStart2Path(node)
-    case 'storedData':
+    case FlowchartNodeType.StoredData:
       return renderStoredDataPath(node)
-    case 'terminator':
+    case FlowchartNodeType.Terminator:
       return renderTerminatorPath(node)
-    case 'userMessage':
+    case FlowchartNodeType.UserMessage:
       return renderUserMessagePath(node)
   }
 }
 
 /**
  * Returns the decorations according to the type
- * @param {string} type
- * @param {INode} node
- * @param {IRenderContext} context
- * @return {GeneralPath}
+ * @param {!FlowchartNodeType} type
+ * @param {!INode} node
+ * @param {!IRenderContext} context
+ * @returns {?GeneralPath}
  */
 function getDecoration(type, node, context) {
   switch (type) {
     default:
       return null
-    case 'annotation':
+    case FlowchartNodeType.Annotation:
       return renderAnnotationDecoration(node, context)
-    case 'dataBase':
+    case FlowchartNodeType.Database:
       return renderDatabaseDecoration(node)
-    case 'directData':
+    case FlowchartNodeType.DirectData:
       return renderDirectDataDecoration(node)
-    case 'internalStorage':
+    case FlowchartNodeType.InternalStorage:
       return renderInternalStorageDecoration(node)
-    case 'predefinedProcess':
+    case FlowchartNodeType.PredefinedProcess:
       return renderPredefinedProcessDecoration(node)
-    case 'sequentialData':
+    case FlowchartNodeType.SequentialData:
       return renderSequentialDataDecoration(node)
   }
 }
 
+/**
+ * @param {!INode} node
+ * @returns {!GeneralPath}
+ */
 function renderCardPath(node) {
   const x = node.layout.x
   const y = node.layout.y
@@ -411,6 +428,10 @@ function renderCardPath(node) {
   return path
 }
 
+/**
+ * @param {!INode} node
+ * @returns {!GeneralPath}
+ */
 function renderDataPath(node) {
   const x = node.layout.x
   const y = node.layout.y
@@ -429,6 +450,10 @@ function renderDataPath(node) {
   return path
 }
 
+/**
+ * @param {!INode} node
+ * @returns {!GeneralPath}
+ */
 function renderDatabasePath(node) {
   const x = node.layout.x
   const y = node.layout.y
@@ -460,6 +485,10 @@ function renderDatabasePath(node) {
   return path
 }
 
+/**
+ * @param {!INode} node
+ * @returns {!GeneralPath}
+ */
 function renderDatabaseDecoration(node) {
   const x = node.layout.x
   const y = node.layout.y
@@ -481,6 +510,10 @@ function renderDatabaseDecoration(node) {
   return path
 }
 
+/**
+ * @param {!INode} node
+ * @returns {!GeneralPath}
+ */
 function renderDirectDataPath(node) {
   const x = node.layout.x
   const y = node.layout.y
@@ -505,6 +538,10 @@ function renderDirectDataPath(node) {
   return path
 }
 
+/**
+ * @param {!INode} node
+ * @returns {!GeneralPath}
+ */
 function renderDirectDataDecoration(node) {
   const x = node.layout.x
   const y = node.layout.y
@@ -525,6 +562,10 @@ function renderDirectDataDecoration(node) {
   return path
 }
 
+/**
+ * @param {!INode} node
+ * @returns {!GeneralPath}
+ */
 function renderCloudPath(node) {
   const x = node.layout.x
   const y = node.layout.y
@@ -590,6 +631,10 @@ function renderCloudPath(node) {
   return path
 }
 
+/**
+ * @param {!INode} node
+ * @returns {!GeneralPath}
+ */
 function renderDecisionPath(node) {
   const x = node.layout.x
   const y = node.layout.y
@@ -604,18 +649,30 @@ function renderDecisionPath(node) {
   return path
 }
 
+/**
+ * @param {!INode} node
+ * @returns {!GeneralPath}
+ */
 function renderProcessPath(node) {
   const path = new GeneralPath()
   path.appendRectangle(node.layout, true)
   return path
 }
 
+/**
+ * @param {!INode} node
+ * @returns {!GeneralPath}
+ */
 function renderStart1Path(node) {
   const path = new GeneralPath()
   path.appendEllipse(node.layout, true)
   return path
 }
 
+/**
+ * @param {!INode} node
+ * @returns {!GeneralPath}
+ */
 function renderStart2Path(node) {
   const x = node.layout.x
   const y = node.layout.y
@@ -630,6 +687,10 @@ function renderStart2Path(node) {
   return path
 }
 
+/**
+ * @param {!INode} node
+ * @returns {!GeneralPath}
+ */
 function renderTerminatorPath(node) {
   const x = node.layout.x
   const y = node.layout.y
@@ -652,6 +713,10 @@ function renderTerminatorPath(node) {
   return path
 }
 
+/**
+ * @param {!INode} node
+ * @returns {!GeneralPath}
+ */
 function renderDocumentPath(node) {
   const x = node.layout.x
   const y = node.layout.y
@@ -676,12 +741,20 @@ function renderDocumentPath(node) {
   return path
 }
 
+/**
+ * @param {!INode} node
+ * @returns {!GeneralPath}
+ */
 function renderPredefinedProcessPath(node) {
   const path = new GeneralPath()
   path.appendRectangle(node.layout, true)
   return path
 }
 
+/**
+ * @param {!INode} node
+ * @returns {!GeneralPath}
+ */
 function renderPredefinedProcessDecoration(node) {
   const x = node.layout.x
   const y = node.layout.y
@@ -700,6 +773,10 @@ function renderPredefinedProcessDecoration(node) {
   return path
 }
 
+/**
+ * @param {!INode} node
+ * @returns {!GeneralPath}
+ */
 function renderStoredDataPath(node) {
   const x = node.layout.x
   const y = node.layout.y
@@ -719,12 +796,20 @@ function renderStoredDataPath(node) {
   return path
 }
 
+/**
+ * @param {!INode} node
+ * @returns {!GeneralPath}
+ */
 function renderInternalStoragePath(node) {
   const path = new GeneralPath()
   path.appendRectangle(node.layout, true)
   return path
 }
 
+/**
+ * @param {!INode} node
+ * @returns {!GeneralPath}
+ */
 function renderInternalStorageDecoration(node) {
   const x = node.layout.x
   const y = node.layout.y
@@ -743,6 +828,10 @@ function renderInternalStorageDecoration(node) {
   return path
 }
 
+/**
+ * @param {!INode} node
+ * @returns {!GeneralPath}
+ */
 function renderSequentialDataPath(node) {
   const x = node.layout.x
   const y = node.layout.y
@@ -757,6 +846,10 @@ function renderSequentialDataPath(node) {
   return path
 }
 
+/**
+ * @param {!INode} node
+ * @returns {!GeneralPath}
+ */
 function renderSequentialDataDecoration(node) {
   const x = node.layout.x
   const y = node.layout.y
@@ -773,6 +866,10 @@ function renderSequentialDataDecoration(node) {
   return path
 }
 
+/**
+ * @param {!INode} node
+ * @returns {!GeneralPath}
+ */
 function renderManualInputPath(node) {
   const x = node.layout.x
   const y = node.layout.y
@@ -790,6 +887,10 @@ function renderManualInputPath(node) {
   return path
 }
 
+/**
+ * @param {!INode} node
+ * @returns {!GeneralPath}
+ */
 function renderPaperTapePath(node) {
   const x = node.layout.x
   const y = node.layout.y
@@ -815,6 +916,10 @@ function renderPaperTapePath(node) {
   return path
 }
 
+/**
+ * @param {!INode} node
+ * @returns {!GeneralPath}
+ */
 function renderDelayPath(node) {
   const x = node.layout.x
   const y = node.layout.y
@@ -838,6 +943,10 @@ function renderDelayPath(node) {
   return path
 }
 
+/**
+ * @param {!INode} node
+ * @returns {!GeneralPath}
+ */
 function renderDisplayPath(node) {
   const x = node.layout.x
   const y = node.layout.y
@@ -863,6 +972,10 @@ function renderDisplayPath(node) {
   return path
 }
 
+/**
+ * @param {!INode} node
+ * @returns {!GeneralPath}
+ */
 function renderManualOperationPath(node) {
   const x = node.layout.x
   const y = node.layout.y
@@ -880,6 +993,10 @@ function renderManualOperationPath(node) {
   return path
 }
 
+/**
+ * @param {!INode} node
+ * @returns {!GeneralPath}
+ */
 function renderPreparationPath(node) {
   const x = node.layout.x
   const y = node.layout.y
@@ -900,6 +1017,10 @@ function renderPreparationPath(node) {
   return path
 }
 
+/**
+ * @param {!INode} node
+ * @returns {!GeneralPath}
+ */
 function renderLoopLimitPath(node) {
   const x = node.layout.x
   const y = node.layout.y
@@ -919,6 +1040,10 @@ function renderLoopLimitPath(node) {
   return path
 }
 
+/**
+ * @param {!INode} node
+ * @returns {!GeneralPath}
+ */
 function renderLoopLimitEndPath(node) {
   const x = node.layout.x
   const y = node.layout.y
@@ -938,6 +1063,10 @@ function renderLoopLimitEndPath(node) {
   return path
 }
 
+/**
+ * @param {!INode} node
+ * @returns {!GeneralPath}
+ */
 function renderOnPageReferencePath(node) {
   const x = node.layout.x
   const y = node.layout.y
@@ -952,6 +1081,10 @@ function renderOnPageReferencePath(node) {
   return path
 }
 
+/**
+ * @param {!INode} node
+ * @returns {!GeneralPath}
+ */
 function renderOffPageReferencePath(node) {
   const x = node.layout.x
   const y = node.layout.y
@@ -971,12 +1104,21 @@ function renderOffPageReferencePath(node) {
   return path
 }
 
+/**
+ * @param {!INode} node
+ * @returns {!GeneralPath}
+ */
 function renderAnnotationPath(node) {
   const path = new GeneralPath()
   path.appendRectangle(node.layout, true)
   return path
 }
 
+/**
+ * @param {!INode} node
+ * @param {!IRenderContext} context
+ * @returns {!GeneralPath}
+ */
 function renderAnnotationDecoration(node, context) {
   const orientation = determineBracketOrientation(node, context)
 
@@ -997,6 +1139,13 @@ function renderAnnotationDecoration(node, context) {
   }
 }
 
+/**
+ * @param {number} x
+ * @param {number} y
+ * @param {number} width
+ * @param {number} height
+ * @returns {!GeneralPath}
+ */
 function createLeftBracket(x, y, width, height) {
   const path = new GeneralPath()
   path.moveTo(x + 0.125 * width, y)
@@ -1006,6 +1155,13 @@ function createLeftBracket(x, y, width, height) {
   return path
 }
 
+/**
+ * @param {number} x
+ * @param {number} y
+ * @param {number} width
+ * @param {number} height
+ * @returns {!GeneralPath}
+ */
 function createRightBracket(x, y, width, height) {
   const path = new GeneralPath()
   path.moveTo(x + 0.875 * width, y)
@@ -1015,6 +1171,13 @@ function createRightBracket(x, y, width, height) {
   return path
 }
 
+/**
+ * @param {number} x
+ * @param {number} y
+ * @param {number} width
+ * @param {number} height
+ * @returns {!GeneralPath}
+ */
 function createTopBracket(x, y, width, height) {
   const path = new GeneralPath()
   path.moveTo(x, y + 0.125 * height)
@@ -1024,6 +1187,13 @@ function createTopBracket(x, y, width, height) {
   return path
 }
 
+/**
+ * @param {number} x
+ * @param {number} y
+ * @param {number} width
+ * @param {number} height
+ * @returns {!GeneralPath}
+ */
 function createDownBracket(x, y, width, height) {
   const path = new GeneralPath()
   path.moveTo(x, y + 0.875 * height)
@@ -1042,9 +1212,9 @@ function createDownBracket(x, y, width, height) {
  *   <li>top</li>
  *   <li>left</li>
  * </ul>
- * @param {INode} node the node
- * @param {IRenderContext} context the render context
- * @return {'left'|'right'|'top'|'down'}
+ * @param {!INode} node the node
+ * @param {!IRenderContext} context the render context
+ * @returns {!('left'|'right'|'top'|'down')}
  */
 function determineBracketOrientation(node, context) {
   const graph = context.canvasComponent.graph
@@ -1086,8 +1256,9 @@ function determineBracketOrientation(node, context) {
 /**
  * Returns the point where the edge intersects with the node.
  *
- * @param {IEdge} edge
- * @param {INode} node
+ * @param {!IEdge} edge
+ * @param {!INode} node
+ * @returns {?Point}
  */
 function getIntersection(edge, node) {
   let bends
@@ -1103,24 +1274,25 @@ function getIntersection(edge, node) {
     bends = edge.bends.toReversed()
   }
 
-  let lastBend = firstPort
-  let bend
-  for (let enumerator = bends.getEnumerator(); enumerator.moveNext(); ) {
-    bend = enumerator.current
+  let lastBend = firstPort.location
+  let bend = null
+  for (const enumerator = bends.getEnumerator(); enumerator.moveNext(); ) {
+    bend = enumerator.current.location.toPoint()
 
-    if (!node.layout.contains(bend.location)) {
+    if (!node.layout.contains(bend)) {
       break
     }
 
     lastBend = bend
   }
 
-  if (bend) {
-    return node.layout.toRect().findLineIntersection(lastBend.location, bend.location)
-  }
-  return node.layout.toRect().findLineIntersection(lastBend.location, secondPort.location)
+  return node.layout.toRect().findLineIntersection(lastBend, bend ? bend : secondPort.location)
 }
 
+/**
+ * @param {!INode} node
+ * @returns {!GeneralPath}
+ */
 function renderUserMessagePath(node) {
   const x = node.layout.x
   const y = node.layout.y
@@ -1139,6 +1311,10 @@ function renderUserMessagePath(node) {
   return path
 }
 
+/**
+ * @param {!INode} node
+ * @returns {!GeneralPath}
+ */
 function renderNetworkMessagePath(node) {
   const x = node.layout.x
   const y = node.layout.y
@@ -1165,40 +1341,69 @@ export class FlowchartNodeStyleExtension extends MarkupExtension {
     super()
     this.$stroke = Stroke.BLACK
     this.$fill = new SolidColorFill(183, 201, 227)
+    this.$type = FlowchartNodeType.Data
+    this.$cssClass = null
   }
 
+  /**
+   * @type {!FlowchartNodeType}
+   */
   get type() {
     return this.$type
   }
 
+  /**
+   * @type {!FlowchartNodeType}
+   */
   set type(type) {
     this.$type = type
   }
 
+  /**
+   * @type {!Stroke}
+   */
   get stroke() {
     return this.$stroke
   }
 
+  /**
+   * @type {!Stroke}
+   */
   set stroke(stroke) {
     this.$stroke = stroke
   }
 
+  /**
+   * @type {!Fill}
+   */
   get fill() {
     return this.$fill
   }
 
+  /**
+   * @type {!Fill}
+   */
   set fill(fill) {
     this.$fill = fill
   }
 
+  /**
+   * @type {?string}
+   */
   get cssClass() {
     return this.$cssClass
   }
 
+  /**
+   * @type {?string}
+   */
   set cssClass(value) {
     this.$cssClass = value
   }
 
+  /**
+   * @type {!object}
+   */
   static get $meta() {
     return {
       type: [TypeAttribute(YString.$class)],
@@ -1214,6 +1419,10 @@ export class FlowchartNodeStyleExtension extends MarkupExtension {
     }
   }
 
+  /**
+   * @param {?ILookup} serviceProvider
+   * @returns {*}
+   */
   provideValue(serviceProvider) {
     const style = new FlowchartNodeStyle(this.type)
     style.type = this.type

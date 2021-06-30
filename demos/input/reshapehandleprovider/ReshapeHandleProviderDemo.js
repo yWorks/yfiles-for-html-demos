@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -31,7 +31,7 @@ import {
   GraphEditorInputMode,
   GraphItemTypes,
   GraphMLIOHandler,
-  IPort,
+  IGraph,
   IReshapeHandleProvider,
   Key,
   KeyEventArgs,
@@ -52,8 +52,10 @@ let graphComponent
 /** @type {GraphEditorInputMode} */
 let graphEditorInputMode
 
-// a flag that indicates whether the CTRL key is currently pressed
-/** @type {boolean} */
+/**
+ * Indicates whether or not the Ctrl modifier key is pressed.
+ * @type {boolean}
+ */
 let ctrlPressed = false
 
 /**
@@ -62,30 +64,58 @@ let ctrlPressed = false
  * This callback function is called whenever a node in the graph is queried
  * for its <code>IReshapeHandleProvider</code>. In this case, the 'port'
  * parameter will be set to that port.
+ * @param {!IGraph} graph
  */
-function registerReshapeHandleProvider() {
-  const portDecorator = graphComponent.graph.decorator.portDecorator
+function registerReshapeHandleProvider(graph) {
+  const portDecorator = graph.decorator.portDecorator
   portDecorator.getDecoratorFor(IReshapeHandleProvider.$class).setFactory(
     port => port.style instanceof NodeStylePortStyleAdapter,
     port => {
-      const portReshapeHandleProvider = new PortReshapeHandleProvider(port, port.style)
-      portReshapeHandleProvider.minimumSize = new Size(5, 5)
-      return portReshapeHandleProvider
+      return new PortReshapeHandleProvider(port, port.style, new Size(5, 5))
     }
   )
 }
 
 /**
- * @param {!object} licenseData
+ * @param {*} licenseData
  * @returns {!Promise}
  */
 async function run(licenseData) {
   License.value = licenseData
+
   // initialize the GraphComponent
   graphComponent = new GraphComponent('graphComponent')
-  const graph = graphComponent.graph
 
   // initialize graph defaults
+  initializeGraphDefaults(graphComponent.graph)
+
+  // create a default editor input mode
+  graphEditorInputMode = newEditorInputMode()
+  // set the input mode to the graph control.
+  graphComponent.inputMode = graphEditorInputMode
+
+  // PortReshapeHandlerProvider considers pressed Ctrl keys.
+  // Whenever Ctrl is pressed or released, we force GraphEditorInputMode to requery the handles
+  // of selected items
+  graphComponent.addKeyDownListener(onKeyDown)
+  graphComponent.addKeyUpListener(onKeyUp)
+  graphComponent.div.addEventListener('blur', onBlur)
+
+  // register the reshape handle provider for ports
+  registerReshapeHandleProvider(graphComponent.graph)
+
+  // create initial graph
+  await readGraph(new GraphMLIOHandler(), graphComponent.graph, 'resources/sample.graphml')
+  graphComponent.fitGraphBounds()
+
+  showApp(graphComponent)
+}
+
+/**
+ * Configures default behavior and visualizations for the elements of the given graph.
+ * @param {!IGraph} graph The graph to be configured.
+ */
+function initializeGraphDefaults(graph) {
   const adaptedStyle = new ShapeNodeStyle({
     fill: 'green',
     stroke: 'transparent'
@@ -102,12 +132,17 @@ async function run(licenseData) {
   graph.edgeDefaults.style = new PolylineEdgeStyle({
     stroke: '3px solid black'
   })
+}
 
+/**
+ * Creates a new editor input mode to handle user interaction in this demo.
+ * @returns {!GraphEditorInputMode}
+ */
+function newEditorInputMode() {
   // create a default editor input mode
-  graphEditorInputMode = new GraphEditorInputMode()
-
+  const mode = new GraphEditorInputMode()
   // ports are preferred for clicks
-  graphEditorInputMode.clickHitTestOrder = [
+  mode.clickHitTestOrder = [
     GraphItemTypes.PORT,
     GraphItemTypes.PORT_LABEL,
     GraphItemTypes.BEND,
@@ -117,29 +152,14 @@ async function run(licenseData) {
     GraphItemTypes.NODE_LABEL
   ]
   // enable orthogonal edge editing
-  graphEditorInputMode.orthogonalEdgeEditingContext = new OrthogonalEdgeEditingContext()
+  mode.orthogonalEdgeEditingContext = new OrthogonalEdgeEditingContext()
 
-  // PortReshapeHandlerProvider considers pressed Ctrl keys. Whenever Ctrl is pressed or released,
-  // we force GraphEditorInputMode to requery the handles of selected items
-  graphComponent.addKeyDownListener(onKeyDown)
-  graphComponent.addKeyUpListener(onKeyUp)
-  graphComponent.div.addEventListener('blur', onBlur)
-
-  // finally, set the input mode to the graph control.
-  graphComponent.inputMode = graphEditorInputMode
-
-  // register the reshape handle provider for ports
-  registerReshapeHandleProvider()
-
-  // create initial graph
-  await readGraph(new GraphMLIOHandler(), graphComponent.graph, 'resources/sample.graphml')
-  graphComponent.fitGraphBounds()
-
-  showApp(graphComponent)
+  return mode
 }
 
 /**
- * @param {!object} sender
+ * Triggers {@link GraphEditorInputMode.requeryHandles} when the Ctrl modifier key is pressed.
+ * @param {*} sender
  * @param {!KeyEventArgs} e
  */
 function onKeyDown(sender, e) {
@@ -151,7 +171,8 @@ function onKeyDown(sender, e) {
 }
 
 /**
- * @param {!object} sender
+ * Triggers {@link GraphEditorInputMode.requeryHandles} when the Ctrl modifier key is released.
+ * @param {*} sender
  * @param {!KeyEventArgs} e
  */
 function onKeyUp(sender, e) {
@@ -162,6 +183,9 @@ function onKeyUp(sender, e) {
   }
 }
 
+/**
+ * Triggers {@link GraphEditorInputMode.requeryHandles} when the demo's graph component looses focus.
+ */
 function onBlur() {
   ctrlPressed = false
   // update handles

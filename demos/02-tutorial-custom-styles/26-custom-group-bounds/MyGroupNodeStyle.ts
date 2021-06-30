@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -179,23 +179,21 @@ export default class MyGroupNodeStyle extends NodeStyleBase {
     // children of a group and all the children's labels.
     if (type === IGroupBoundsCalculator.$class) {
       // use a custom group bounds calculator that takes labels into account
-      return IGroupBoundsCalculator.create(
-        (graph: IGraph, groupNode: INode): Rect => {
-          let bounds: Rect = Rect.EMPTY
-          const children = graph.getChildren(groupNode)
-          children.forEach((child: INode): void => {
-            bounds = Rect.add(bounds, child.layout.toRect())
-            child.labels.forEach((label: ILabel): void => {
-              bounds = Rect.add(bounds, label.layout.bounds)
-            })
+      return IGroupBoundsCalculator.create((graph: IGraph, groupNode: INode): Rect => {
+        let bounds: Rect = Rect.EMPTY
+        const children = graph.getChildren(groupNode)
+        children.forEach((child: INode): void => {
+          bounds = Rect.add(bounds, child.layout.toRect())
+          child.labels.forEach((label: ILabel): void => {
+            bounds = Rect.add(bounds, label.layout.bounds)
           })
+        })
 
-          const insetsProvider = groupNode.lookup(INodeInsetsProvider.$class)
-          return insetsProvider === null
-            ? bounds
-            : bounds.getEnlarged((insetsProvider as INodeInsetsProvider).getInsets(groupNode))
-        }
-      )
+        const insetsProvider = groupNode.lookup(INodeInsetsProvider.$class)
+        return insetsProvider === null
+          ? bounds
+          : bounds.getEnlarged((insetsProvider as INodeInsetsProvider).getInsets(groupNode))
+      })
     }
 
     // //////////////////////////////////////////////////

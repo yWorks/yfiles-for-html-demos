@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -165,7 +165,7 @@ function initializeGraph(): void {
       const item = args.item
       if (item.tag && args.oldValue && item.tag.colorId !== args.oldValue.colorId) {
         if (item.style instanceof ShapeNodeStyle) {
-          const style = item.style as ShapeNodeStyle
+          const style = item.style
           style.fill = new SolidColorFill(getNodeColor(item))
           graphComponent.invalidate()
         }
@@ -206,7 +206,9 @@ function createInputMode(): void {
 
   mode.moveUnselectedInputMode.enabled = true
   mode.moveInputMode.enabled = false
-  mode.moveUnselectedInputMode.addDragFinishedListener((): Promise<void> => runLayout())
+  mode.moveUnselectedInputMode.addDragFinishedListener(() => {
+    runLayout()
+  })
 
   mode.marqueeSelectionInputMode.enabled = false
   mode.moveViewportInputMode.pressedRecognizer = MouseEventRecognizers.LEFT_DOWN
@@ -246,7 +248,7 @@ function createInputMode(): void {
             highlightManager.addHighlight(label)
           })
         } else if (ILabel.isInstance(item)) {
-          const label = item as ILabel
+          const label = item
           if (label.owner) {
             highlightManager.addHighlight(label.owner)
           }
@@ -268,7 +270,7 @@ function createInputMode(): void {
     }
   })
 
-  // Add and event listener that populates the context menu according to the hit elements, or cancels showing a menu.
+  // Add an event listener that populates the context menu according to the hit elements, or cancels showing a menu.
   // This PopulateItemContextMenu is fired when calling the ContextMenuInputMode.shouldOpenMenu method above.
   mode.addPopulateItemContextMenuListener(
     (sender: object, evt: PopulateItemContextMenuEventArgs<IModelItem>): void =>
@@ -370,7 +372,7 @@ function registerCommands(): void {
   bindCommand("button[data-command='Undo']", ICommand.UNDO, graphComponent)
   bindCommand("button[data-command='Redo']", ICommand.REDO, graphComponent)
 
-  colorDirectionBox!.addEventListener('change', (): void => {
+  colorDirectionBox.addEventListener('change', (): void => {
     assignEdgeColors()
   })
 }
@@ -654,7 +656,7 @@ function assignEdgeColors(): void {
 }
 
 function assignEdgeColorsAtNode(node: INode): void {
-  const outgoing = colorDirectionBox!.value === 'outgoing'
+  const outgoing = colorDirectionBox.value === 'outgoing'
   const graph = graphComponent.graph
   const edges = outgoing ? graph.outEdgesAt(node) : graph.inEdgesAt(node)
   for (const edge of edges) {

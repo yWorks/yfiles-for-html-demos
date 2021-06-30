@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -29,15 +29,19 @@
 import {
   Chains,
   GraphComponent,
+  IEdge,
   IGraph,
   IModelItem,
   INode,
+  Path,
   Paths,
+  ResultItemMapping,
   ShortestPath,
   SingleSourceShortestPaths
 } from 'yfiles'
 import AlgorithmConfiguration from './AlgorithmConfiguration.js'
 import { MultiColorNodeStyle } from './DemoStyles.js'
+import ContextMenu from '../../utils/ContextMenu.js'
 
 /**
  * Configuration options for the path algorithms.
@@ -49,42 +53,42 @@ export default class PathsConfig extends AlgorithmConfiguration {
    */
   constructor(algorithmType) {
     super()
-    this.$algorithmType = algorithmType
-    this.$paths = []
-    this.$dist = null
-    this.$pred = null
-    this.$markedSources = null
-    this.$markedTargets = null
+    this.algorithmType = algorithmType
+    this.paths = []
+    this.dist = null
+    this.pred = null
+    this.markedSources = null
+    this.markedTargets = null
   }
 
   /**
    * Finds edges that belong to a path/chain in the graph.
-   * @param {IGraph} graph The graph on which a path algorithm is executed.
+   * @param {!IGraph} graph The graph on which a path algorithm is executed.
    */
   runAlgorithm(graph) {
     // reset the graph to remove all previous markings
     this.resetGraph(graph)
-    this.$paths = []
-    this.$dist = null
-    this.$pred = null
+    this.paths = []
+    this.dist = null
+    this.pred = null
 
     if (graph.nodes.size > 0) {
-      if (this.$markedSources === null || !this.nodesInGraph(this.$markedSources, graph)) {
+      if (this.markedSources === null || !this.nodesInGraph(this.markedSources, graph)) {
         // choose a source for the path if there isn't one already
-        this.$markedSources = [graph.nodes.first()]
+        this.markedSources = [graph.nodes.first()]
       }
-      if (this.$markedTargets === null || !this.nodesInGraph(this.$markedTargets, graph)) {
+      if (this.markedTargets === null || !this.nodesInGraph(this.markedTargets, graph)) {
         // choose a target for the path if there isn't one already
-        this.$markedTargets = [graph.nodes.last()]
+        this.markedTargets = [graph.nodes.last()]
       }
 
       // apply one of the path algorithms
-      switch (this.$algorithmType) {
+      switch (this.algorithmType) {
         case PathsConfig.ALGORITHM_TYPE_SHORTEST_PATHS:
-          this.calculateShortestPath(this.$markedSources, this.$markedTargets, graph)
+          this.calculateShortestPath(this.markedSources, this.markedTargets, graph)
           break
         case PathsConfig.ALGORITHM_TYPE_ALL_PATHS:
-          this.calculateAllPaths(this.$markedSources[0], this.$markedTargets[0], graph)
+          this.calculateAllPaths(this.markedSources[0], this.markedTargets[0], graph)
           break
         case PathsConfig.ALGORITHM_TYPE_ALL_CHAINS:
           this.calculateAllChains(graph)
@@ -93,7 +97,7 @@ export default class PathsConfig extends AlgorithmConfiguration {
           this.calculateSingleSource(graph)
           break
         default:
-          this.calculateShortestPath(this.$markedSources, this.$markedTargets, graph)
+          this.calculateShortestPath(this.markedSources, this.markedTargets, graph)
           break
       }
 
@@ -104,9 +108,9 @@ export default class PathsConfig extends AlgorithmConfiguration {
 
   /**
    * Calculates the shortest paths from each source to each target.
-   * @param {Array} sources An array of source nodes.
-   * @param {Array} targets An array of target nodes.
-   * @param {IGraph} graph   The graph on which the shortest path algorithm is executed.
+   * @param {!Array.<INode>} sources An array of source nodes.
+   * @param {!Array.<INode>} targets An array of target nodes.
+   * @param {!IGraph} graph The graph on which the shortest path algorithm is executed.
    */
   calculateShortestPath(sources, targets, graph) {
     if (sources !== null && targets !== null) {
@@ -118,19 +122,19 @@ export default class PathsConfig extends AlgorithmConfiguration {
           sink: targets[0]
         }).run(graph)
         if (result.path) {
-          this.$paths = [result.path]
+          this.paths = [result.path]
         }
       })
     } else {
-      this.$paths.length = 0
+      this.paths.length = 0
     }
   }
 
   /**
    * Calculates all paths between the source and target.
-   * @param {INode} source The source for the paths.
-   * @param {INode} target The target for the paths.
-   * @param {IGraph} graph  The graph on which the all paths algorithm is executed.
+   * @param {!INode} source The source for the paths.
+   * @param {!INode} target The target for the paths.
+   * @param {!IGraph} graph The graph on which the all paths algorithm is executed.
    */
   calculateAllPaths(source, target, graph) {
     // Check if graph contains source and target nodes
@@ -141,53 +145,49 @@ export default class PathsConfig extends AlgorithmConfiguration {
         endNodes: target
       }).run(graph)
       // add resulting edges to set
-      result.paths.forEach(path => this.$paths.push(path))
+      result.paths.forEach(path => this.paths.push(path))
     } else {
-      this.$paths.length = 0
+      this.paths.length = 0
     }
   }
 
   /**
    * Calculates all chains in the graph.
-   * @param {IGraph} graph The graph on which the all chains algorithm is executed.
+   * @param {!IGraph} graph The graph on which the all chains algorithm is executed.
    */
   calculateAllChains(graph) {
     // run algorithm
     const result = new Chains({ directed: this.directed }).run(graph)
-    result.chains.forEach(chain => this.$paths.push(chain))
+    result.chains.forEach(chain => this.paths.push(chain))
   }
 
   /**
    * Calculates the paths from the source to all reachable nodes in the graph.
-   * @param {IGraph} graph The graph on which the single source algorithm is executed.
+   * @param {!IGraph} graph The graph on which the single source algorithm is executed.
    */
   calculateSingleSource(graph) {
     // run algorithm
     const result = new SingleSourceShortestPaths({
-      source: this.$markedSources[0],
+      source: this.markedSources[0],
       sinks: graph.nodes,
       directed: this.directed,
       costs: edge => this.getEdgeWeight(edge)
     }).run(graph)
 
-    this.$dist = result.distances
-    this.$pred = result.predecessors
+    this.dist = result.distances
+    this.pred = result.predecessors
   }
 
   /**
    * Adds different colors to independent paths.
    * If some nodes or edges are selected only paths that depend on them are marked.
-   * @param {IGraph} graph The graph in which the paths are marked.
+   * @param {!IGraph} graph The graph in which the paths are marked.
    */
   markPaths(graph) {
-    const paths = this.$paths
-
-    if (this.$algorithmType !== PathsConfig.ALGORITHM_TYPE_SINGLE_SOURCE) {
-      const allPaths = []
-      for (let pathCount = 0; pathCount < paths.length; pathCount++) {
-        allPaths[pathCount] = []
-      }
-      if (paths !== null && paths.length > 0) {
+    const paths = this.paths
+    if (this.algorithmType !== PathsConfig.ALGORITHM_TYPE_SINGLE_SOURCE) {
+      const allPaths = Array.from({ length: paths.length }).map(_ => [])
+      if (paths.length > 0) {
         // change the styles for the nodes and edges that belong to a path
         for (let i = 0; i < paths.length; i++) {
           const path = paths[i].edges
@@ -257,25 +257,26 @@ export default class PathsConfig extends AlgorithmConfiguration {
       }
     } else {
       // add a gradient to indicate the distance of the nodes to the source
-      this.$markedTargets.length = 0
-      if (this.$dist !== null && this.$pred !== null) {
+      this.markedTargets.length = 0
+      if (this.dist !== null && this.pred !== null) {
         let maxDistance = 0
+        const distances = this.dist
+        const predecessors = this.pred
         graph.nodes.forEach(node => {
-          const dist = this.$dist.get(node)
-          if (dist < Number.POSITIVE_INFINITY) {
+          const dist = distances.get(node)
+          if (dist !== null && dist < Number.POSITIVE_INFINITY) {
             maxDistance = Math.max(maxDistance, dist)
           }
         })
         graph.nodes.forEach((node, index) => {
-          const distToSource = this.$dist.get(node)
-          const predEdge = this.$pred.get(node)
+          const distToSource = distances.get(node)
+          const predEdge = predecessors.get(node)
 
           node.tag = {
-            singleSource: this.$markedSources[0],
+            singleSource: this.markedSources[0],
             id: index
           }
-          let markedNodeStyle
-          if (node === this.$markedSources[0]) {
+          if (node === this.markedSources[0]) {
             graph.setStyle(
               node,
               this.getMarkedNodeStyle(0, {
@@ -283,8 +284,12 @@ export default class PathsConfig extends AlgorithmConfiguration {
                 size: maxDistance + 1
               })
             )
-          } else if (distToSource < Number.POSITIVE_INFINITY) {
-            markedNodeStyle = this.getMarkedNodeStyle(Math.round(distToSource), {
+          } else if (
+            distToSource !== null &&
+            distToSource < Number.POSITIVE_INFINITY &&
+            predEdge !== null
+          ) {
+            const markedNodeStyle = this.getMarkedNodeStyle(Math.round(distToSource), {
               lightToDark: false,
               size: maxDistance + 1
             })
@@ -297,7 +302,7 @@ export default class PathsConfig extends AlgorithmConfiguration {
               })
             )
             predEdge.tag = {
-              singleSource: this.$markedSources[0],
+              singleSource: this.markedSources[0],
               id: index
             }
           }
@@ -305,40 +310,36 @@ export default class PathsConfig extends AlgorithmConfiguration {
       }
     }
 
-    if (this.$algorithmType !== PathsConfig.ALGORITHM_TYPE_ALL_CHAINS) {
-      if (this.$algorithmType === PathsConfig.ALGORITHM_TYPE_SHORTEST_PATHS) {
+    if (this.algorithmType !== PathsConfig.ALGORITHM_TYPE_ALL_CHAINS) {
+      if (this.algorithmType === PathsConfig.ALGORITHM_TYPE_SHORTEST_PATHS) {
         // mark source and target of the paths
-        if (this.$markedSources) {
-          this.$markedSources.forEach(source =>
-            graph.setStyle(
-              source,
-              this.getSourceTargetNodeStyle(true, this.$markedTargets.indexOf(source) >= 0)
-            )
+        this.markedSources.forEach(source =>
+          graph.setStyle(
+            source,
+            this.getSourceTargetNodeStyle(true, this.markedTargets.indexOf(source) >= 0)
           )
-        }
-        if (this.$markedTargets) {
-          this.$markedTargets.forEach(target =>
-            graph.setStyle(
-              target,
-              this.getSourceTargetNodeStyle(this.$markedSources.indexOf(target) >= 0, true)
-            )
+        )
+        this.markedTargets.forEach(target =>
+          graph.setStyle(
+            target,
+            this.getSourceTargetNodeStyle(this.markedSources.indexOf(target) >= 0, true)
           )
-        }
+        )
       } else {
         // mark the source
-        if (this.$markedSources[0] !== null) {
+        if (this.markedSources[0] !== null) {
           graph.setStyle(
-            this.$markedSources[0],
-            this.getSourceTargetNodeStyle(true, this.$markedSources[0] === this.$markedTargets[0])
+            this.markedSources[0],
+            this.getSourceTargetNodeStyle(true, this.markedSources[0] === this.markedTargets[0])
           )
         }
         if (
-          this.$markedTargets[0] !== null &&
-          this.$algorithmType === PathsConfig.ALGORITHM_TYPE_ALL_PATHS
+          this.markedTargets[0] !== null &&
+          this.algorithmType === PathsConfig.ALGORITHM_TYPE_ALL_PATHS
         ) {
           graph.setStyle(
-            this.$markedTargets[0],
-            this.getSourceTargetNodeStyle(this.$markedSources[0] === this.$markedTargets[0], true)
+            this.markedTargets[0],
+            this.getSourceTargetNodeStyle(this.markedSources[0] === this.markedTargets[0], true)
           )
         }
       }
@@ -347,36 +348,36 @@ export default class PathsConfig extends AlgorithmConfiguration {
 
   /**
    * Adds entries to the context menu to mark source and target nodes.
-   * @param {object} contextMenu The context menu to extend
-   * @param {IModelItem} item The item which is affected by the context menu
-   * @param {GraphComponent} graphComponent The current graph component.
+   * @param {!ContextMenu} contextMenu The context menu to extend
+   * @param {!IModelItem} item The item which is affected by the context menu
+   * @param {!GraphComponent} graphComponent The current graph component.
    */
   populateContextMenu(contextMenu, item, graphComponent) {
     const graph = graphComponent.graph
-    if (this.$algorithmType === PathsConfig.ALGORITHM_TYPE_SHORTEST_PATHS) {
+    if (this.algorithmType === PathsConfig.ALGORITHM_TYPE_SHORTEST_PATHS) {
       if (INode.isInstance(item)) {
         this.updateSelection(item, graphComponent)
       }
       const selectedNodes = graphComponent.selection.selectedNodes
       if (selectedNodes.size > 0) {
         contextMenu.addMenuItem('Mark as Source', () => {
-          this.$markedSources = selectedNodes.toArray()
+          this.markedSources = selectedNodes.toArray()
           this.runAlgorithm(graph)
         })
         contextMenu.addMenuItem('Mark as Target', () => {
-          this.$markedTargets = selectedNodes.toArray()
+          this.markedTargets = selectedNodes.toArray()
           this.runAlgorithm(graph)
         })
       }
-    } else if (this.$algorithmType !== PathsConfig.ALGORITHM_TYPE_ALL_CHAINS) {
+    } else if (this.algorithmType !== PathsConfig.ALGORITHM_TYPE_ALL_CHAINS) {
       if (INode.isInstance(item)) {
         contextMenu.addMenuItem('Mark As Source', () => {
-          this.$markedSources = [item]
+          this.markedSources = [item]
           this.runAlgorithm(graph)
         })
-        if (this.$algorithmType !== PathsConfig.ALGORITHM_TYPE_SINGLE_SOURCE) {
+        if (this.algorithmType !== PathsConfig.ALGORITHM_TYPE_SINGLE_SOURCE) {
           contextMenu.addMenuItem('Mark As Target', () => {
-            this.$markedTargets = [item]
+            this.markedTargets = [item]
             this.runAlgorithm(graph)
           })
         }
@@ -386,8 +387,8 @@ export default class PathsConfig extends AlgorithmConfiguration {
 
   /**
    * Updates the selection of the graph so the given node is the only selected node.
-   * @param {INode} node The only node that should be selected.
-   * @param {GraphComponent} graphComponent The graph component that contains the graph to which the node
+   * @param {!INode} node The only node that should be selected.
+   * @param {!GraphComponent} graphComponent The graph component that contains the graph to which the node
    *   belongs.
    */
   updateSelection(node, graphComponent) {
@@ -402,10 +403,11 @@ export default class PathsConfig extends AlgorithmConfiguration {
 
   /**
    * Returns the description text that explains the currently used path algorithm.
-   * @return {string} The description text.
+   * @return The description text.
+   * @type {!string}
    */
   get descriptionText() {
-    switch (this.$algorithmType) {
+    switch (this.algorithmType) {
       case PathsConfig.ALGORITHM_TYPE_ALL_PATHS:
         return (
           '<p>This part of the demo highlights <em>all paths</em> between two nodes that can be marked using the <em>Context Menu</em>.</p><p>The paths may share some parts and therefore can overlap. Which path is in focus can be specified at the nodes which belong to several path.</p>' +
@@ -437,18 +439,12 @@ export default class PathsConfig extends AlgorithmConfiguration {
 
   /**
    * Returns whether or not all the given nodes belong to the graph.
-   * @param {Array} nodes The nodes.
-   * @param {IGraph} graph The graph.
-   * @return {boolean} <code>true</code> if all nodes belong to the graph, <code>false</code> otherwise.
+   * @param {!Array.<INode>} nodes The nodes.
+   * @param {!IGraph} graph The graph.
+   * @returns {boolean} <code>true</code> if all nodes belong to the graph, <code>false</code> otherwise.
    */
   nodesInGraph(nodes, graph) {
-    let nodesInGraph = true
-    nodes.forEach(node => {
-      if (!graph.contains(node)) {
-        nodesInGraph = false
-      }
-    })
-    return nodesInGraph
+    return nodes.every(node => graph.contains(node))
   }
 
   /**

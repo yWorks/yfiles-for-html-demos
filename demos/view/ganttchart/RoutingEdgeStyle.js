@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -37,11 +37,16 @@ import {
   PathBasedEdgeStyleRenderer,
   Point,
   SolidColorFill,
-  Stroke
+  Stroke,
+  IEdge,
+  Class,
+  Fill,
+  IEdgeStyleRenderer,
+  Tangent
 } from 'yfiles'
 
 /**
- * An edge style that draws a bendless edge in an orthogonal fashion.
+ * An edge style that draws an edge in an orthogonal fashion.
  * All existing bends of the edge are ignored.
  */
 export default class RoutingEdgeStyle extends BaseClass(IEdgeStyle) {
@@ -49,19 +54,21 @@ export default class RoutingEdgeStyle extends BaseClass(IEdgeStyle) {
    * Creates a new instance of RoutingEdgeStyle.
    * @param {number} outSegmentLength The length of the horizontal segment that connects to the source node.
    * @param {number} inSegmentLength The length of the horizontal segment that connects to the target node.
-   * @param {Fill?} fill
-   * @param {number?} thickness
+   * @param fill The edge color.
+   * @param thickness The line thickness.
+   * @param {?Fill} [fill=null]
+   * @param {number} [thickness=1]
    */
-  constructor(outSegmentLength, inSegmentLength, fill, thickness) {
+  constructor(outSegmentLength, inSegmentLength, fill = null, thickness = 1) {
     super()
-    this.inSegmentLengthField = inSegmentLength
-    this.outSegmentLengthField = outSegmentLength
-    this.middleSegmentOffsetField = 32
-    this.smoothingField = 10
+    this._middleSegmentOffset = 32
+    this._smoothing = 10
+    this._inSegmentLength = inSegmentLength
+    this._outSegmentLength = outSegmentLength
     const f = fill || new SolidColorFill(100, 100, 100)
-    this.strokeField = new Stroke(f, thickness || 2)
-    this.sourceArrowField = IArrow.NONE
-    this.targetArrowField = new Arrow({
+    this._stroke = new Stroke(f, thickness || 2)
+    this._sourceArrow = IArrow.NONE
+    this._targetArrow = new Arrow({
       fill: f,
       type: ArrowType.TRIANGLE
     })
@@ -72,7 +79,7 @@ export default class RoutingEdgeStyle extends BaseClass(IEdgeStyle) {
    * @type {number}
    */
   get outSegmentLength() {
-    return this.outSegmentLengthField
+    return this._outSegmentLength
   }
 
   /**
@@ -80,7 +87,7 @@ export default class RoutingEdgeStyle extends BaseClass(IEdgeStyle) {
    * @type {number}
    */
   set outSegmentLength(value) {
-    this.outSegmentLengthField = value
+    this._outSegmentLength = value
   }
 
   /**
@@ -88,7 +95,7 @@ export default class RoutingEdgeStyle extends BaseClass(IEdgeStyle) {
    * @type {number}
    */
   get inSegmentLength() {
-    return this.inSegmentLengthField
+    return this._inSegmentLength
   }
 
   /**
@@ -96,7 +103,7 @@ export default class RoutingEdgeStyle extends BaseClass(IEdgeStyle) {
    * @type {number}
    */
   set inSegmentLength(value) {
-    this.inSegmentLengthField = value
+    this._inSegmentLength = value
   }
 
   /**
@@ -105,7 +112,7 @@ export default class RoutingEdgeStyle extends BaseClass(IEdgeStyle) {
    * @type {number}
    */
   get middleSegmentOffset() {
-    return this.middleSegmentOffsetField
+    return this._middleSegmentOffset
   }
 
   /**
@@ -114,7 +121,7 @@ export default class RoutingEdgeStyle extends BaseClass(IEdgeStyle) {
    * @type {number}
    */
   set middleSegmentOffset(value) {
-    this.middleSegmentOffsetField = value
+    this._middleSegmentOffset = value
   }
 
   /**
@@ -122,7 +129,7 @@ export default class RoutingEdgeStyle extends BaseClass(IEdgeStyle) {
    * @type {number}
    */
   get smoothing() {
-    return this.smoothingField
+    return this._smoothing
   }
 
   /**
@@ -130,66 +137,74 @@ export default class RoutingEdgeStyle extends BaseClass(IEdgeStyle) {
    * @type {number}
    */
   set smoothing(value) {
-    this.smoothingField = value
+    this._smoothing = value
   }
 
   /**
    * Gets the source arrow.
-   * @type {IArrow}
+   * @type {!IArrow}
    */
   get sourceArrow() {
-    return this.sourceArrowField
+    return this._sourceArrow
   }
 
   /**
    * Sets the source arrow.
-   * @type {IArrow}
+   * @type {!IArrow}
    */
   set sourceArrow(value) {
-    this.sourceArrowField = value
+    this._sourceArrow = value
   }
 
   /**
    * Gets the target arrow.
-   * @type {IArrow}
+   * @type {!IArrow}
    */
   get targetArrow() {
-    return this.targetArrowField
+    return this._targetArrow
   }
 
   /**
    * Sets the target arrow.
-   * @type {IArrow}
+   * @type {!IArrow}
    */
   set targetArrow(value) {
-    this.targetArrowField = value
+    this._targetArrow = value
   }
 
   /**
    * Gets the stroke used to draw the edge.
-   * @type {Stroke}
+   * @type {!Stroke}
    */
   get stroke() {
-    return this.strokeField
+    return this._stroke
   }
 
   /**
    * Sets the stroke used to draw the edge.
-   * @type {Stroke}
+   * @type {!Stroke}
    */
   set stroke(value) {
-    this.strokeField = value
+    this._stroke = value
   }
 
+  /**
+   * @type {!IEdgeStyleRenderer}
+   */
   get renderer() {
     return new RoutingEdgeStyleRenderer()
   }
 
   /**
-   * @returns {Object}
+   * @returns {*}
    */
   clone() {
-    return new RoutingEdgeStyle(this.outSegmentLength, this.inSegmentLength)
+    return new RoutingEdgeStyle(
+      this.outSegmentLength,
+      this.inSegmentLength,
+      this.stroke.fill,
+      this.stroke.thickness
+    )
   }
 }
 
@@ -204,7 +219,7 @@ class RoutingEdgeStyleRenderer extends PathBasedEdgeStyleRenderer {
   /**
    * Constructs the orthogonal edge path.
    * @see Overrides {@link PathBasedEdgeStyleRenderer#createPath}
-   * @returns {GeneralPath}
+   * @returns {!GeneralPath}
    */
   createPath() {
     // create a new GeneralPath with the edge points
@@ -219,8 +234,8 @@ class RoutingEdgeStyleRenderer extends PathBasedEdgeStyleRenderer {
 
   /**
    * Calculates the points that define the edge path.
-   * @returns {List.<Point>} A list of points that define the edge path.
-   * @private
+   * @returns {!List.<Point>} A list of points that define the edge path.
+   * @param {!IEdge} edge
    */
   getEdgePoints(edge) {
     const sourcePoint = edge.sourcePort.location
@@ -257,32 +272,72 @@ class RoutingEdgeStyleRenderer extends PathBasedEdgeStyleRenderer {
     return points
   }
 
+  /**
+   * Gets the tangent on this path at the given ratio.
+   * @param {number} ratio
+   * @returns {?Tangent}
+   */
+  getTangent(ratio) {
+    return this.getPath().getTangent(ratio)
+  }
+
+  /**
+   * Gets the tangent on this path instance at the segment and segment ratio.
+   * @param {number} segmentIndex
+   * @param {number} ratio
+   * @returns {?Tangent}
+   */
   getTangentForSegment(segmentIndex, ratio) {
     return this.getPath().getTangentForSegment(segmentIndex, ratio)
   }
 
+  /**
+   * Gets the segment count which is the number of edge points -1.
+   * @returns {number}
+   */
   getSegmentCount() {
     // the segment count is the number of edge points - 1
-    const p = this.getEdgePoints(this.item)
+    const p = this.getEdgePoints(this.edge)
     return p.size - 1
   }
 
+  /**
+   * Gets the target arrow.
+   * @returns {!IArrow}
+   */
   getTargetArrow() {
     return this.style.targetArrow
   }
 
+  /**
+   * Gets the source arrow.
+   * @returns {!IArrow}
+   */
   getSourceArrow() {
     return this.style.sourceArrow
   }
 
+  /**
+   * Gets the pen used by style.
+   * @returns {!Stroke}
+   */
   getStroke() {
     return this.style.stroke
   }
 
+  /**
+   * Gets the smoothing length used by style.
+   * @returns {number}
+   */
   getSmoothingLength() {
     return this.style.smoothing
   }
 
+  /**
+   * Returns an instance that implements the given type or null if no such instance is available.
+   * @param {!Class} type
+   * @returns {?object}
+   */
   lookup(type) {
     return super.lookup.call(this, type)
   }

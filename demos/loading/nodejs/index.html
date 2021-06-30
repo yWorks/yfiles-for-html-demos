@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -7,7 +7,7 @@
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.3.
+     // This demo file is part of yFiles for HTML 2.4.
      // Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
@@ -36,7 +36,6 @@
 
   <title>NodeJS Demo [yFiles for HTML]</title>
 
-  <link rel="stylesheet" href="../../node_modules/yfiles/yfiles.css">
   <link rel="stylesheet" href="../../resources/style/demo.css">
 
   <script src="../../resources/filesystem-warning.js"></script>
@@ -70,12 +69,19 @@
       This makes it possible to run the layout calculation asynchronously, preventing it from blocking the UI.
     </p>
     <p>
-      To transfer the graph structure and layout between the <em>Node.js</em>
-      <em><a target="_blank" href="https://expressjs.com/">Express</a></em> server and the main page, a simple JSON
-      format is used.
+      To transfer the graph structure and layout between the <em>Node.js</em> <em><a target="_blank"
+      href="https://expressjs.com/">Express</a></em> server and the main page, the <a href="https://docs.yworks.com/yfileshtml/#/api/LayoutExecutorAsync" target="_blank">LayoutExecutorAsync</a>
+      creates a serializable data object on the client-side and sends it to the <em>Node.js</em> server.
     </p>
-    <p>Note that GraphML I/O won't work out of the box in a Node.js environment, as GraphML parsing
-      requires the DOM API.</p>
+    <p>
+      On the server-side, the <a href="https://docs.yworks.com/yfileshtml/#/api/LayoutExecutorAsyncWorker" target="_blank">LayoutExecutorAsyncWorker</a> parses this data object and provides a callback which
+      allows to apply a layout on the parsed graph. This callback is executed by calling <code>process(data)</code> on
+      the worker which resolves with a serializable result data object that is supposed to be sent back to the <a href="https://docs.yworks.com/yfileshtml/#/api/LayoutExecutorAsync" target="_blank">LayoutExecutorAsync</a>.
+    </p>
+    <p>
+      On the client-side, the <a href="https://docs.yworks.com/yfileshtml/#/api/LayoutExecutorAsync" target="_blank">LayoutExecutorAsync</a> waits for the response of the <a href="https://docs.yworks.com/yfileshtml/#/api/LayoutExecutorAsyncWorker" target="_blank">LayoutExecutorAsyncWorker</a>
+      and eventually applies the result to the graph.
+    </p>
 
     <h2>Things to Try</h2>
 

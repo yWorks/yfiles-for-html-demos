@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -33,12 +33,13 @@ import {
   IEdge,
   IInputModeContext,
   INode,
-  IPoint,
   IRectangle,
   IRenderContext,
   NodeStyleBase,
   Point,
-  Visual
+  Visual,
+  IListEnumerable,
+  IPoint
 } from 'yfiles'
 
 /**
@@ -46,19 +47,19 @@ import {
  */
 export class InteractiveOrganicFastNodeStyle extends NodeStyleBase {
   /**
-   * @param {IRenderContext} renderContext
-   * @param {INode} node
-   * @return {NodeRenderVisual}
+   * @param {!IRenderContext} renderContext
+   * @param {!INode} node
+   * @returns {!NodeRenderVisual}
    */
   createVisual(renderContext, node) {
     return new NodeRenderVisual(node.layout)
   }
 
   /**
-   * @param {IRenderContext} renderContext
-   * @param {Visual} oldVisual
-   * @param {INode} node
-   * @return {Visual}
+   * @param {!IRenderContext} renderContext
+   * @param {!Visual} oldVisual
+   * @param {!INode} node
+   * @returns {!Visual}
    */
   updateVisual(renderContext, oldVisual, node) {
     return oldVisual
@@ -71,34 +72,18 @@ export class InteractiveOrganicFastNodeStyle extends NodeStyleBase {
 class NodeRenderVisual extends HtmlCanvasVisual {
   /**
    * Creates a new instance of NodeRenderVisual.
-   * @param {IRectangle} layout A live view of the layout of a node.
+   * @param {!IRectangle} layout A live view of the layout of a node.
    */
   constructor(layout) {
     super()
-    this.$layout = layout
-  }
-
-  /**
-   * Gets the current node layout.
-   * @type {IRectangle}
-   */
-  get layout() {
-    return this.$layout
-  }
-
-  /**
-   * Sets the current node layout.
-   * @type {IRectangle}
-   */
-  set layout(value) {
-    this.$layout = value
+    this.layout = layout
   }
 
   /**
    * Draw a rectangle with a solid orange fill.
    * @see Overrides {@link HtmlCanvasVisual#paint}
-   * @param {IRenderContext} renderContext
-   * @param {CanvasRenderingContext2D} ctx
+   * @param {!IRenderContext} renderContext
+   * @param {!CanvasRenderingContext2D} ctx
    */
   paint(renderContext, ctx) {
     ctx.fillStyle = 'rgba(255,140,0,1)'
@@ -113,9 +98,9 @@ class NodeRenderVisual extends HtmlCanvasVisual {
  */
 export class InteractiveOrganicFastEdgeStyle extends EdgeStyleBase {
   /**
-   * @param {IRenderContext} renderContext
-   * @param {IEdge} edge
-   * @return {EdgeRenderVisual}
+   * @param {!IRenderContext} renderContext
+   * @param {!IEdge} edge
+   * @returns {!EdgeRenderVisual}
    */
   createVisual(renderContext, edge) {
     return new EdgeRenderVisual(
@@ -126,10 +111,10 @@ export class InteractiveOrganicFastEdgeStyle extends EdgeStyleBase {
   }
 
   /**
-   * @param {IInputModeContext} context
-   * @param {Point} location
-   * @param {IEdge} edge
-   * @return {boolean}
+   * @param {!IInputModeContext} context
+   * @param {!Point} location
+   * @param {!IEdge} edge
+   * @returns {boolean}
    */
   isHit(context, location, edge) {
     // we use a very simple hit logic here (the base implementation)
@@ -147,10 +132,10 @@ export class InteractiveOrganicFastEdgeStyle extends EdgeStyleBase {
   }
 
   /**
-   * @param {IRenderContext} renderContext
-   * @param {Visual} oldVisual
-   * @param {IEdge} edge
-   * @return {Visual}
+   * @param {!IRenderContext} renderContext
+   * @param {!Visual} oldVisual
+   * @param {!IEdge} edge
+   * @returns {!Visual}
    */
   updateVisual(renderContext, oldVisual, edge) {
     return oldVisual
@@ -162,79 +147,31 @@ export class InteractiveOrganicFastEdgeStyle extends EdgeStyleBase {
  */
 class EdgeRenderVisual extends HtmlCanvasVisual {
   /**
-   * @param {IListEnumerable.<IBend>} bends
-   * @param {IPoint} sourcePortLocation
-   * @param {IPoint} targetPortLocation
+   * @param {!IListEnumerable.<IBend>} bends
+   * @param {!IPoint} sourcePortLocation
+   * @param {!IPoint} targetPortLocation
    */
   constructor(bends, sourcePortLocation, targetPortLocation) {
     super()
-    this.$bends = bends
-    this.$sourcePortLocation = sourcePortLocation
-    this.$targetPortLocation = targetPortLocation
+    this.targetPortLocation = targetPortLocation
+    this.sourcePortLocation = sourcePortLocation
+    this.bends = bends
   }
 
   /**
-   * Gets the edge bends.
-   * @type {IListEnumerable.<IBend>}
-   */
-  get bends() {
-    return this.$bends
-  }
-
-  /**
-   * Sets the edge bends.
-   * @type {IListEnumerable.<IBend>}
-   */
-  set bends(value) {
-    this.$bends = value
-  }
-
-  /**
-   * Gets the source port location.
-   * @type {IPoint}
-   */
-  get sourcePortLocation() {
-    return this.$sourcePortLocation
-  }
-
-  /**
-   * Gets the source port location.
-   * @type {IPoint}
-   */
-  set sourcePortLocation(value) {
-    this.$sourcePortLocation = value
-  }
-
-  /**
-   * Gets the target port location.
-   * @type {IPoint}
-   */
-  get targetPortLocation() {
-    return this.$targetPortLocation
-  }
-
-  /**
-   * Sets the target port location.
-   * @type {IPoint}
-   */
-  set targetPortLocation(value) {
-    this.$targetPortLocation = value
-  }
-
-  /**
-   * @param {IRenderContext} renderContext
-   * @param {CanvasRenderingContext2D} ctx
+   * @param {!IRenderContext} renderContext
+   * @param {!CanvasRenderingContext2D} ctx
    */
   paint(renderContext, ctx) {
     // simply draw a blue line from the source port location via all bends to the target port location
-    ctx.fill = 'rgb(51,102,153)'
+    ctx.strokeStyle = 'rgb(51,102,153)'
 
     ctx.beginPath()
     let location = this.sourcePortLocation
     ctx.moveTo(location.x, location.y)
     if (this.bends.size > 0) {
       this.bends.forEach(bend => {
-        location = bend.location
+        location = bend.location.toPoint()
         ctx.lineTo(location.x, location.y)
       })
     }

@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -46,7 +46,7 @@ import {
  * This implementation always creates collinear triples of bends since the bezier edge model expects this.
  * In addition, the new bends and the neighboring bends are positioned so that the curve shape stays constant.
  */
-export class BezierBendCreator extends BaseClass<IBendCreator>(IBendCreator) {
+export class BezierBendCreator extends BaseClass(IBendCreator) {
   /**
    * Fallback for bend creation if the existing model is not consistent
    */

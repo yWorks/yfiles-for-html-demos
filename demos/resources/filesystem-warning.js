@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -29,11 +29,12 @@
 /* eslint-disable no-eval */
 /* eslint-disable no-var */
 ;(function () {
-  var isFileSystem = window.location.protocol.indexOf('file') > -1
+  var demoRoot = window.location.toString().indexOf('/demos-ts/') > -1 ? 'demos-ts' : 'demos-js'
 
+  var serverUrl = 'http://localhost:4242/'
   var possibleServerUrl = window.location
     .toString()
-    .replace(/.*?\/demos-js\/(.*)/, 'http://localhost:4242/demos-js/$1')
+    .replace(new RegExp('.*?/' + demoRoot + '/(.*)'), serverUrl + demoRoot + '/$1')
 
   var showES6warning =
     window.location.hostname.indexOf('yworks.') < 0 &&
@@ -43,58 +44,65 @@
 
   var fileSystemWarning =
     '<div id="fs-warning" style="z-index: 99; visibility: visible; position: fixed; top: 0;left: 0;right: 0;padding: 0 24px 24px; background-color: #336699; color: white; border-bottom: 4px solid rgba(26, 52, 78, 0.65); font-size: 18px; text-align: center; max-height: 100%; overflow: auto; box-sizing: border-box;">' +
-    '  <div style="max-width: 800px; display: inline-block; text-align: left;text-align: initial;">' +
+    '  <div style="max-width: 800px; display: inline-block; text-align: initial;">' +
     '    <p>' +
-    '      Most demos in this package use yFiles as a local NPM dependency with ES Module imports.' +
+    (!window.isReadme
+      ? '  This demo uses yFiles as a local NPM dependency with ES Module imports.'
+      : '  Most demos in this package use yFiles as a local NPM dependency with ES Module imports.') +
     '      Hence, a preprocessing is necessary to resolve the ES Module imports. Usually, this is done by' +
     '      bundling the application e.g. with webpack. Alternatively, the imports can be resolved with ' +
-    '      a preconfigured server. A <a href="../../demo-server/README.html" style="color: #ffaf00; text-decoration: underline;">local Node.js Express server</a>' +
+    '      a preconfigured server. A <a href="../demos-js/demo-server/README.html" style="color: #ffaf00; text-decoration: underline;">local Node.js Express server</a>' +
     '      is included in the yFiles for HTML package and can be run with: ' +
     '    </p>' +
     '    <pre style="color: #333;background-color: #f7f7f7;">\n' +
-    '   > cd %YFILES_HTML_DISTRIBUTION_DIR%/demos-js/\n' +
+    '   > cd %YFILES_HTML_DISTRIBUTION_DIR%/' +
+    demoRoot +
+    '/\n' +
     '   > npm install\n' +
     '   > npm start</pre>' +
-    '    <p>Once the server is running, you can click <a style="color: #ffaf00; text-decoration: underline;" href="' +
-    possibleServerUrl +
-    '">Here</a> to visit this page on the server.' +
-    (isFileSystem
-      ? '<br>Click <a href="../../README.html#nonsymbolic" style="color: #ffaf00; text-decoration: underline;">here</a> for a list of demos that work when served from a regular web server.'
+    (!window.isReadme
+      ? '    <div style="padding: 10px; border: 3px solid #f7f7f7;">' +
+        '      <svg version="1.1" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="64px" height="64px" viewBox="0 0 24 24" xml:space="preserve" style="float: left;margin-right: 1em;padding-left: 10px;">' +
+        '        <path stroke="white" fill="#336699" d="M3 22.5c-0.708 0-1.27-0.276-1.55-0.759-0.278-0.481-0.235-1.11 0.119-1.72l9-15.6c0.354-0.613 0.876-0.965 1.43-0.965s1.08 0.352 1.43 0.965l9 15.6c0.354 0.613 0.397 1.24 0.119 1.72-0.279 0.482-0.844 0.759-1.55 0.759h-18"/>' +
+        '        <ellipse fill="white" rx="1.25" ry="1.25" cx="12.00" cy="18.40"/>' +
+        '        <path fill="white" d="M12 8.69c-0.6 0-1 0.45-1 1v5.01c0 0.5 0.4 1 1 1s1-0.5 1-1v-5.01c0-0.55-0.4-1-1-1z"/>' +
+        '      </svg>' +
+        '      <div style="overflow: auto">' +
+        '       <p style="margin-top: 0;">' +
+        '         yFiles supports different loading mechanisms and can also be included as UMD modules (e.g. with ' +
+        '         <a href="https://requirejs.org/" style="color: #ffaf00; text-decoration: underline;">require.js</a>)' +
+        "         or globally with script tags, which both don't require any preprocessing or bundling at all." +
+        '        </p>' +
+        '        <p style="margin-bottom: 0">For example, browsers that support ES Module imports can import modules directly from a relative path. Thus replacing</p>' +
+        '        <pre style="color: #333;background-color: #f7f7f7;margin: 5px 0;">\n' +
+        "  import { ... } from 'yfiles' </pre>" +
+        '        <p style="margin: 0">with</p>' +
+        '        <pre style="color: #333;background-color: #f7f7f7;margin: 5px 0;">\n' +
+        "  import { ... } from '../../../lib/es-modules/yfiles.js' </pre>" +
+        '        <p style="margin-top: 0;">removes the need of resolving symbolic module names.</p>' +
+        '        <p style="margin-bottom: 0;">' +
+        '         For more information see the <a href="../../../doc/api/index.html#/dguide/getting_started-application#getting_started-module_loading" style="color: #ffaf00; text-decoration: underline;">Module Loading</a> ' +
+        "         chapter in the Developer's Guide." +
+        '       </p>' +
+        '      </div>' +
+        '    </div>'
       : '') +
-    '</p>' +
-    '    <div style="padding: 10px; border: 3px solid #f7f7f7;">' +
-    '      <svg version="1.1" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="64px" height="64px" viewBox="0 0 24 24" xml:space="preserve" style="float: left;margin-right: 1em;padding-left: 10px;">' +
-    '        <path stroke="white" fill="#336699" d="M3 22.5c-0.708 0-1.27-0.276-1.55-0.759-0.278-0.481-0.235-1.11 0.119-1.72l9-15.6c0.354-0.613 0.876-0.965 1.43-0.965s1.08 0.352 1.43 0.965l9 15.6c0.354 0.613 0.397 1.24 0.119 1.72-0.279 0.482-0.844 0.759-1.55 0.759h-18"/>' +
-    '        <ellipse fill="white" rx="1.25" ry="1.25" cx="12.00" cy="18.40"/>' +
-    '        <path fill="white" d="M12 8.69c-0.6 0-1 0.45-1 1v5.01c0 0.5 0.4 1 1 1s1-0.5 1-1v-5.01c0-0.55-0.4-1-1-1z"/>' +
-    '      </svg>' +
-    '      <div style="overflow: auto">' +
-    '       <p style="margin-top: 0;">' +
-    '         yFiles supports different loading mechanisms and can also be included as UMD modules (e.g. with ' +
-    '         <a href="https://requirejs.org/" style="color: #ffaf00; text-decoration: underline;">require.js</a>)' +
-    "         or globally with script tags, which both don't require any preprocessing or bundling at all." +
-    '        </p>' +
-    '        <p style="margin-bottom: 0">For example, browsers that support ES Module imports can import modules directly from a relative path. Thus replacing</p>' +
-    '        <pre style="color: #333;background-color: #f7f7f7;margin: 5px 0;">\n' +
-    "  import { ... } from 'yfiles' </pre>" +
-    '        <p style="margin: 0">with</p>' +
-    '        <pre style="color: #333;background-color: #f7f7f7;margin: 5px 0;">\n' +
-    "  import { ... } from '../../../lib/es-modules/yfiles.js' </pre>" +
-    '        <p style="margin-top: 0;">removes the need of resolving symbolic module names.</p>' +
-    '        <p style="margin-bottom: 0;">' +
-    '         For more information see the <a href="../../../doc/api/index.html#/dguide/getting_started-application#getting_started-module_loading" style="color: #ffaf00; text-decoration: underline;">Module Loading</a> ' +
-    "         chapter in the Developer's Guide." +
-    '       </p>' +
-    '      </div>' +
-    '    </div>' +
-    '  <div style="display: inline-block; text-align: left; padding: 6px; cursor: pointer; margin-top: 16px; background-color: #e48208;" onclick="document.getElementById(\'fs-warning\').style.display = \'none\'">Got it!</div>' +
+    '    <div style="margin-top: 30px">' +
+    '      <div style="margin-top: 10px"><a href="' +
+    possibleServerUrl +
+    '">' +
+    '<button id="demo-server-running-btn" style="background-color: #e48208; height: 35px; cursor: pointer; border: none; width: 130px; color:white; font-size: 18px; font-family:Tahoma,Verdana,sans-serif;" disabled >Reload Page</button>' +
+    '</a> <span>once the server is running.</span> ' +
+    (window.isReadme
+      ? '<button style="background-color: #e48208; height: 35px; cursor: pointer; border: none; width: 100px; color:white; font-size: 18px; font-family:Tahoma,Verdana,sans-serif; float: right" onclick="document.getElementById(\'fs-warning\').style.display=\'none\'">Close</button>'
+      : '') +
     '  </div>' +
     '</div>'
 
   var missingEs6Support =
     '<div style="visibility: visible; position: fixed; top: 0;left: 0;right: 0;padding: 24px;background-color: #336699; color: white; border-bottom: 4px solid rgba(26, 52, 78, 0.65); font-size: 18px; text-align: center; max-height: 100%; overflow: auto; box-sizing: border-box;">' +
-    '  <div style="max-width: 800px; display: inline-block; text-align: left;text-align: initial;">' +
-    '    <h2>Starting the demo failed</h2>' +
+    '  <div style="max-width: 800px; display: inline-block; text-align: initial;">' +
+    '    <h2 style="color: #FFFFFF">Starting the demo failed</h2>' +
     '    <p>The demos in this package require at least ECMAScript 6 support that your browser does not support.</p>' +
     '    <p>Please switch to a browser with support for ECMAScript 6 (Chrome, Firefox, Edge, Safari 10) or use the included ' +
     '     <a style="color: #ffaf00; text-decoration: underline;" href="../../../deployment/demos-es5/README.html">deployment tool</a> to convert the demos to ECMAScript 5. The converted ' +
@@ -105,14 +113,54 @@
 
   if (showES6warning) {
     showWarningTemplate(missingEs6Support)
-  } else {
-    if (!/notimeout/.test(location.search)) {
-      setTimeout(function () {
-        if (window.yfiles && !(window.yfiles.collections && window.yfiles.collections.List)) {
-          showWarningTemplate(fileSystemWarning)
-        }
-      }, 10000)
+  }
+
+  var demoServerIsRunning = false
+  checkFileSystem()
+
+  function checkDemoServerStatus(response) {
+    // check if the demo server is running through the headers
+    var demoServerHeader = response.headers.get('x-yfiles-for-html-demo-server')
+    if (demoServerHeader) {
+      demoServerIsRunning = true
+      var demoServerRunningBtn = document.getElementById('demo-server-running-btn')
+      if (demoServerRunningBtn) {
+        demoServerRunningBtn.disabled = false
+        updateDemoServerBtnStyle(false)
+      }
+    } else {
+      showWarningTemplate(fileSystemWarning)
+      setTimeout(checkDemoServerUrl, 1000)
     }
+  }
+
+  function checkFileSystem() {
+    if (typeof window.fetch !== 'function') {
+      // IE probably
+      return
+    }
+    // check the current location of the demo
+    fetch(window.location.origin)
+      .then(checkDemoServerStatus)
+      .catch(function () {
+        // if an exception is thrown the demo has been accessed from the filesystem
+        showWarningTemplate(fileSystemWarning)
+
+        /** check in this case, if the demo server runs at {@link serverUrl} */
+        checkDemoServerUrl()
+      })
+  }
+
+  function checkDemoServerUrl() {
+    if (typeof window.fetch !== 'function') {
+      // IE probably
+      return
+    }
+    fetch(serverUrl)
+      .then(checkDemoServerStatus)
+      .catch(function () {
+        setTimeout(checkDemoServerUrl, 1000)
+      })
   }
 
   function hasEs6Support() {
@@ -127,7 +175,26 @@
     return true
   }
 
+  function updateDemoServerBtnStyle(disabled) {
+    var demoServerRunningBtn = document.getElementById('demo-server-running-btn')
+    if (demoServerRunningBtn) {
+      if (disabled) {
+        demoServerRunningBtn.style.opacity = '0.6'
+        demoServerRunningBtn.style.cursor = 'not-allowed'
+      } else {
+        demoServerRunningBtn.style.opacity = '1'
+        demoServerRunningBtn.style.cursor = 'pointer'
+      }
+    }
+  }
+
   function showWarningTemplate(template) {
+    if (
+      document.getElementById('demo-server-not-running-warning') ||
+      document.getElementById('fs-warning')
+    ) {
+      return
+    }
     var warningDiv = document.createElement('div')
     var actuallyAppend = function () {
       document.body.appendChild(warningDiv)
@@ -136,6 +203,11 @@
         document.body.getAttribute('class') + ' file-system-warning'
       )
       warningDiv.outerHTML = template
+      var demoServerRunningBtn = document.getElementById('demo-server-running-btn')
+      if (demoServerRunningBtn && !demoServerIsRunning) {
+        demoServerRunningBtn.disabled = true
+        updateDemoServerBtnStyle(true)
+      }
     }
     if (document.readyState === 'loading') {
       // Loading hasn't finished yet

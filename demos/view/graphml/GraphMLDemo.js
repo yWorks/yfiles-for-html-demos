@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -39,8 +39,9 @@ import {
   ICommand,
   IFoldingView,
   IGraph,
-  IModelItem,
+  IInputMode,
   ImageNodeStyle,
+  IModelItem,
   KeyScope,
   KeyType,
   License,
@@ -61,9 +62,49 @@ import DemoStyles, {
 } from '../../resources/demo-styles.js'
 import EditorSync from './EditorSync.js'
 import loadJson from '../../resources/load-json.js'
+import GraphMLProperty from './GraphMLProperty.js'
 
-function run(licenseData) {
+/** @type {GraphComponent} */
+let graphComponent
+
+/**
+ * The properties panel shows the custom data properties of the currently selected graph item.
+ * Custom data properties can be added and modified.
+ * @type {PropertiesPanel}
+ */
+let propertiesPanel
+
+/**
+ * The folding view that manages the folding of the graph.
+ * @type {IFoldingView}
+ */
+let foldingView
+
+/**
+ * The EditorSync synchronizes the graph with the GraphML editor.
+ * @type {EditorSync}
+ */
+let editorSync
+
+/**
+ * The GraphMLSupport instance that takes care of saving/loading the graph and keeping the editor in sync.
+ * @type {GraphMLSupport}
+ */
+let graphmlSupport
+
+/**
+ * The listener function that is called when the graph is modified.
+ * @type {function}
+ */
+let graphModifiedListener
+
+/**
+ * @param {!object} licenseData
+ * @returns {!Promise}
+ */
+async function run(licenseData) {
   License.value = licenseData
+
   graphComponent = new GraphComponent('graphComponent')
   editorSync = new EditorSync()
 
@@ -73,7 +114,7 @@ function run(licenseData) {
 
   // Initialize IO
   graphmlSupport = new GraphMLSupport({
-    graphComponent, // configure to load and save to the file system
+    graphComponent,
     storageLocation: StorageLocation.FILE_SYSTEM
   })
 
@@ -83,9 +124,6 @@ function run(licenseData) {
   const graph = view.graph
   graphComponent.graph = graph
   foldingView = view
-
-  // Get graph instance and enable undoability support
-  manager.masterGraph.undoEngineEnabled = true
 
   // Assign the default demo styles
   initDemoStyles(graph)
@@ -108,84 +146,28 @@ function run(licenseData) {
   )
 
   propertiesPanel = new PropertiesPanel(document.getElementById('propertiesContent'))
-  propertiesPanel.addSomethingChangedListener(onGraphModified.bind(this))
+  propertiesPanel.addSomethingChangedListener(onGraphModified)
 
   graphComponent.fitGraphBounds()
-  graphComponent.addCurrentItemChangedListener((sender, args) =>
-    propertiesPanel.setCurrentItem(getMasterItem(graphComponent.currentItem))
+  graphComponent.addCurrentItemChangedListener(
+    (sender, args) => (propertiesPanel.currentItem = getMasterItem(graphComponent.currentItem))
   )
 
   createGraphMLIOHandler()
   initializeEditorSynchronization()
   graphModifiedListener = editorSync.onGraphModified.bind(editorSync)
   initGraphModificationEvents()
-  loadSampleGraph(graphComponent.graph)
+  await loadSampleGraph(graphComponent.graph)
+
+  // enable undo/redo support
+  manager.masterGraph.undoEngineEnabled = true
 
   showApp(graphComponent)
 }
 
-/** @type {GraphComponent} */
-let graphComponent = null
-
-/**
- * The properties panel shows the custom data properties of the currently selected graph item.
- * Custom data properties can be added and modified.
- * @type {PropertiesPanel}
- */
-let propertiesPanel = null
-
-/**
- * The folding view that manages the folding of the graph.
- * @type {IFoldingView}
- */
-let foldingView = null
-
-/**
- * The EditorSync synchronizes the graph with the GraphML editor.
- * @type {EditorSync}
- */
-let editorSync = null
-
-/**
- * The GraphMLSupport instance that takes care of saving/loading the graph and keeping the editor in sync.
- * @type {GraphMLSupport}
- */
-let graphmlSupport = null
-
-/**
- * The listener function that is called when the graph is modified.
- * @type {function({graphml: string, selectedItem: IModelItem})}
- */
-let graphModifiedListener = null
-
-/**
- * Registers commands for the toolbar buttons.
- */
-function registerCommands() {
-  bindAction("button[data-command='New']", clearGraph)
-  bindAction("button[data-command='Open']", onOpenCommandExecuted)
-  bindCommand("button[data-command='Save']", ICommand.SAVE, graphComponent)
-
-  bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent)
-  bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
-
-  bindCommand("button[data-command='Undo']", ICommand.UNDO, graphComponent)
-  bindCommand("button[data-command='Redo']", ICommand.REDO, graphComponent)
-
-  bindCommand("button[data-command='Cut']", ICommand.CUT, graphComponent)
-  bindCommand("button[data-command='Copy']", ICommand.COPY, graphComponent)
-  bindCommand("button[data-command='Paste']", ICommand.PASTE, graphComponent)
-  bindCommand("button[data-command='Delete']", ICommand.DELETE, graphComponent)
-
-  bindCommand("button[data-command='GroupSelection']", ICommand.GROUP_SELECTION, graphComponent)
-  bindCommand("button[data-command='UngroupSelection']", ICommand.UNGROUP_SELECTION, graphComponent)
-}
-
 /**
  * Creates the editor input mode for the graph component with support for table nodes.
- * @return {IInputMode} A new <code>GraphEditorInputMode</code> instance
+ * @returns {!IInputMode} A new <code>GraphEditorInputMode</code> instance
  */
 function createEditorMode() {
   const inputMode = new GraphEditorInputMode({
@@ -214,51 +196,58 @@ function createEditorMode() {
   inputMode.keyboardInputMode.addCommandBinding(
     ICommand.UNDO,
     () => {
-      graphComponent.inputMode.undo()
+      inputMode.undo()
       onGraphModified()
+      return true
     },
-    () => graphComponent.graph.undoEngine !== null && graphComponent.graph.undoEngine.canUndo()
+    (command, parameter, source) => {
+      const undoEngine = source.graph.undoEngine
+      return undoEngine !== null && undoEngine.canUndo()
+    }
   )
 
   inputMode.keyboardInputMode.addCommandBinding(
     ICommand.REDO,
     () => {
-      graphComponent.inputMode.redo()
+      inputMode.redo()
       onGraphModified()
+      return true
     },
-    () => graphComponent.graph.undoEngine !== null && graphComponent.graph.undoEngine.canUndo()
+    (command, parameter, source) => {
+      const undoEngine = source.graph.undoEngine
+      return undoEngine !== null && undoEngine.canRedo()
+    }
   )
 
   inputMode.keyboardInputMode.addCommandBinding(
     ICommand.CUT,
     () => {
-      graphComponent.inputMode.cut()
+      inputMode.cut()
       onGraphModified()
+      return true
     },
-    () => {
-      const clipboard = graphComponent.clipboard
+    (command, parameter, source) => {
+      const component = source
+      const clipboard = component.clipboard
       return (
         clipboard !== null &&
         clipboard.copyItems !== GraphItemTypes.NONE &&
-        graphComponent.inputMode.allowClipboardOperations &&
-        graphComponent.selection.size > 0 &&
-        (GraphItemTypes.getItemTypes(graphComponent.selection) &
-          graphComponent.inputMode.deletableItems) !==
-          0
+        inputMode.allowClipboardOperations &&
+        component.selection.size > 0 &&
+        (GraphItemTypes.getItemTypes(component.selection) & inputMode.deletableItems) !== 0
       )
     }
   )
   inputMode.keyboardInputMode.addCommandBinding(
     ICommand.PASTE,
     () => {
-      graphComponent.inputMode.paste()
+      inputMode.paste()
       onGraphModified()
+      return true
     },
-    () => {
-      const clipboard = graphComponent.clipboard
-      return (
-        clipboard !== null && graphComponent.inputMode.allowClipboardOperations && !clipboard.empty
-      )
+    (command, parameter, source) => {
+      const clipboard = source.clipboard
+      return clipboard !== null && inputMode.allowClipboardOperations && !clipboard.empty
     }
   )
 
@@ -272,7 +261,7 @@ Class.ensure(ImageNodeStyle)
 /**
  * Creates a GraphMLIOHandler with event handlers for dynamic parsing of custom data, and for connecting the GraphML
  * editor to write and parse events.
- * @return {GraphMLIOHandler}
+ * @returns {!GraphMLIOHandler}
  */
 function createGraphMLIOHandler() {
   const ioHandler = new GraphMLIOHandler()
@@ -331,10 +320,13 @@ function initializeEditorSynchronization() {
   // update the editor selection when the view's selection state changes
   const selection = graphComponent.selection
   selection.addItemSelectionChangedListener((sender, args) => {
-    if (args.itemSelected) {
-      editorSync.onItemSelected(getMasterItem(args.item))
-    } else {
-      editorSync.onItemDeselected(getMasterItem(args.item))
+    const masterItem = getMasterItem(args.item)
+    if (masterItem) {
+      if (args.itemSelected) {
+        editorSync.onItemSelected(masterItem)
+      } else {
+        editorSync.onItemDeselected(masterItem)
+      }
     }
   })
 }
@@ -342,21 +334,21 @@ function initializeEditorSynchronization() {
 /**
  * The GraphML editor's content has been modified: try to parse the new GraphML data, and update the view if
  * successful.
- * @param {string} value The new editor content.
+ * @param {!string} value The new editor content.
  */
 async function onEditorContentChanged(value) {
   graphComponent.selection.clear()
   try {
     await graphmlSupport.graphMLIOHandler.readFromGraphMLText(graphComponent.graph, value)
     editorSync.onGraphMLParsed()
-  } catch (error) {
-    editorSync.onGraphMLError(error)
+  } catch (err) {
+    editorSync.onGraphMLError(err)
   }
 }
 
 /**
  * An item's GraphML representation has been selected in the GraphML editor: select the corresponding view item.
- * @param {IModelItem} masterItem The item that has changed.
+ * @param {!IModelItem} masterItem The item that has changed.
  */
 function onEditorItemSelected(masterItem) {
   const selection = graphComponent.selection
@@ -430,7 +422,7 @@ function onGraphModified() {
       if (graphComponent.selection.size > 0) {
         selectedMasterItem = getMasterItem(graphComponent.selection.first())
       }
-      if (graphModifiedListener !== null) {
+      if (graphModifiedListener) {
         graphModifiedListener({
           graphml: str,
           selectedItem: selectedMasterItem
@@ -444,7 +436,7 @@ function onGraphModified() {
  * Called for each key definition in the loaded GraphML file.
  * This method is called if the GraphML parse code reaches a key element. If the key has not been handled yet,
  * a new input handler is added that handles value definitions for this key in the GraphML file.
- * @param {QueryInputHandlersEventArgs} args
+ * @param {!QueryInputHandlersEventArgs} args
  */
 function queryInputHandlers(args) {
   const keyDefinition = args.keyDefinition
@@ -461,12 +453,10 @@ function queryInputHandlers(args) {
     }
 
     // parse the key scope attribute
-    const keyScope = Enum.parse(KeyScope.$class, keyScopeString, true)
+    const keyScope = parse(KeyScope.$class, keyScopeString)
     // parse the type attribute
-    const type =
-      typeString !== null ? Enum.parse(KeyType.$class, typeString, true) : KeyType.COMPLEX
+    const type = typeString !== null ? parse(KeyType.$class, typeString) : KeyType.COMPLEX
 
-    /** @type {GraphMLProperty} */
     let property
     // check if the key describes an item or a graph property
     if (keyScope === KeyScope.EDGE || keyScope === KeyScope.NODE || keyScope === KeyScope.PORT) {
@@ -492,10 +482,20 @@ function queryInputHandlers(args) {
 }
 
 /**
+ * @template T
+ * @param {!Class.<T>} type
+ * @param {!string} value
+ * @returns {!T}
+ */
+function parse(type, value) {
+  return Enum.parse(type, value, true)
+}
+
+/**
  * Called before serializing the graph.
  * This method takes care that the item and graph properties in the properties panel are
  * written back to GraphML. For this purpose, it adds an output handler for each property.
- * @param {QueryOutputHandlersEventArgs} args
+ * @param {!QueryOutputHandlersEventArgs} args
  */
 function queryOutputHandlers(args) {
   propertiesPanel.properties.forEach(property => {
@@ -516,46 +516,73 @@ function clearGraph() {
 
 /**
  * Reads the default sample graph.
- * @param {IGraph} graph The graph instance that will be populated with the parsed graph.
+ * @param {!IGraph} graph The graph instance that will be populated with the parsed graph.
+ * @returns {!Promise}
  */
 async function loadSampleGraph(graph) {
   // Temporarily disconnect editor synchronization, so the graph isn't
   // serialized repeatedly while loading.
-  graphModifiedListener = null
+  graphModifiedListener = () => {}
 
   await readGraph(graphmlSupport.graphMLIOHandler, graph, 'resources/sample-graph.graphml')
   // when done - fit the bounds
   graphComponent.fitGraphBounds()
-  graphComponent.graph.undoEngine.clear()
   // Trigger synchronization of the GraphML editor
   onGraphModified()
   // reconnect editor synchronization
   graphModifiedListener = editorSync.onGraphModified.bind(editorSync)
-  graphComponent.graph.undoEngine.clear()
 }
 
 /**
  * Called when the open command executed is executed and applies a layout after loading the graph.
+ * @returns {!Promise}
  */
 async function onOpenCommandExecuted() {
   // Temporarily disconnect editor synchronization, so the graph isn't
   // serialized repeatedly while loading.
-  graphModifiedListener = null
+  graphModifiedListener = () => {}
   await graphmlSupport.openFile(graphComponent.graph)
   onGraphModified()
   graphModifiedListener = editorSync.onGraphModified.bind(editorSync)
+  graphComponent.graph.undoEngine?.clear()
 }
 
 /**
  * Returns the corresponding master graph item for a provided view graph item.
- * @param {IModelItem} item A view item
- * @return {IModelItem} A master graph item
+ * @param {?IModelItem} item A view item
+ * @returns {?IModelItem} A master graph item
  */
 function getMasterItem(item) {
-  if (foldingView.manager.masterGraph.contains(item)) {
+  if (!item || foldingView.manager.masterGraph.contains(item)) {
     return item
+  } else {
+    return graphComponent.graph.contains(item) ? foldingView.getMasterItem(item) : null
   }
-  return graphComponent.graph.contains(item) ? foldingView.getMasterItem(item) : null
+}
+
+/**
+ * Registers commands for the toolbar buttons.
+ */
+function registerCommands() {
+  bindAction("button[data-command='New']", clearGraph)
+  bindAction("button[data-command='Open']", onOpenCommandExecuted)
+  bindCommand("button[data-command='Save']", ICommand.SAVE, graphComponent)
+
+  bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent)
+  bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent)
+  bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent)
+  bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
+
+  bindCommand("button[data-command='Undo']", ICommand.UNDO, graphComponent)
+  bindCommand("button[data-command='Redo']", ICommand.REDO, graphComponent)
+
+  bindCommand("button[data-command='Cut']", ICommand.CUT, graphComponent)
+  bindCommand("button[data-command='Copy']", ICommand.COPY, graphComponent)
+  bindCommand("button[data-command='Paste']", ICommand.PASTE, graphComponent)
+  bindCommand("button[data-command='Delete']", ICommand.DELETE, graphComponent)
+
+  bindCommand("button[data-command='GroupSelection']", ICommand.GROUP_SELECTION, graphComponent)
+  bindCommand("button[data-command='UngroupSelection']", ICommand.UNGROUP_SELECTION, graphComponent)
 }
 
 loadJson().then(run)

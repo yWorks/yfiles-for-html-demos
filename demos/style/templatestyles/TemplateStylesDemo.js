@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -40,9 +40,14 @@ import {
   GraphViewerInputMode,
   IArrow,
   ICommand,
+  IEnumerable,
+  IGraph,
+  INode,
   Insets,
+  IPort,
   LayoutGraphAdapter,
   License,
+  LineCap,
   Point,
   PolylineEdgeStyle,
   Rect,
@@ -59,36 +64,48 @@ import OrgChartData from './resources/OrgChartData.js'
 import { bindCommand, showApp } from '../../resources/demo-app.js'
 import loadJson from '../../resources/load-json.js'
 
-/** @type {GraphComponent} */
-let graphComponent = null
+/**
+ * Specifies the properties of an employee, i.e. the business data associated to each node
+ * in the demo's graph.
+ * @typedef {Object} Employee
+ * @property {string} position
+ * @property {string} name
+ * @property {string} email
+ * @property {string} phone
+ * @property {string} fax
+ * @property {string} businessUnit
+ * @property {string} status
+ * @property {string} icon
+ * @property {IEnumerable.<Employee>} subordinates
+ * @property {Employee} [parent]
+ */
 
 /**
- * The properties view displayed in the side-bar.
- * @type {PropertiesView}
+ * @param {!object} licenseData
  */
-let propertiesView = null
-
 function run(licenseData) {
   License.value = licenseData
-  graphComponent = new GraphComponent('graphComponent')
 
-  // setup the binding converters
+  // setup the binding converters for the TemplateNodeStyle used to visualize the demo's nodes
   initConverters()
 
-  // initialize the graph item styles
-  configureStyles()
+  const graphComponent = new GraphComponent('graphComponent')
 
-  initialize()
+  // initialize the default styles for nodes, edges, labels, and ports
+  configureStyles(graphComponent.graph)
+
+  initialize(graphComponent)
 
   showApp(graphComponent)
 }
 
 /**
- * Configures the default style for group nodes.
+ * Configures default styles for nodes, edges, labels, and ports.
+ * Even though it is not possible to create new items in this demo, the default styles are
+ * nevertheless used for the graph items created in method {@link #createGraph} below.
+ * @param {!IGraph} graph
  */
-function configureStyles() {
-  const graph = graphComponent.graph
-
+function configureStyles(graph) {
   // use an elliptical shape for the node outline to match the template shape
   const outlinePath = new GeneralPath()
   // the path is interpreted as normalized - spanning from 0/0 to 1/1
@@ -115,12 +132,12 @@ function configureStyles() {
     normalizedOutline: outlinePath
   })
 
-  // use a PolylineEdgeStyle instance with a dotted stroke for the edge
+  // use a PolylineEdgeStyle instance with a dotted stroke for edges
   graph.edgeDefaults.style = new PolylineEdgeStyle({
     stroke: new Stroke({
       fill: 'rgb(229,233,240)',
       dashStyle: new DashStyle([0.125, 2], 10),
-      lineCap: 'ROUND',
+      lineCap: LineCap.ROUND,
       thickness: 8
     }),
     sourceArrow: IArrow.NONE,
@@ -194,30 +211,33 @@ function initConverters() {
   }
 }
 
-function initialize() {
+/**
+ * @param {!GraphComponent} graphComponent
+ */
+function initialize(graphComponent) {
   // initialize the graph
-  initializeGraph()
+  initializeGraph(graphComponent.graph)
 
   // create the graph items
-  createSampleGraph()
+  createGraph(graphComponent.graph)
 
-  // initialize the input mode
+  // support interactive panning and zooming, but no structural modifications like
+  // adding or deleting items
   graphComponent.inputMode = new GraphViewerInputMode()
 
-  createPropertiesPanel()
+  createPropertiesPanel(graphComponent)
 
-  registerCommands()
+  registerCommands(graphComponent)
 
-  runLayout()
+  runLayout(graphComponent)
 }
 
 /**
  * Customizes the graph - in this case, the default node size is set and the default decoration for
  * selection and focus is removed.
+ * @param {!IGraph} graph
  */
-function initializeGraph() {
-  const graph = graphComponent.graph
-
+function initializeGraph(graph) {
   graph.nodeDefaults.size = new Size(100, 100)
 
   // remove the default selection and focus decoration
@@ -227,10 +247,9 @@ function initializeGraph() {
 
 /**
  * Creates the initial sample graph.
+ * @param {!IGraph} graph
  */
-function createSampleGraph() {
-  const graph = graphComponent.graph
-
+function createGraph(graph) {
   // make each data item observable to be able to update the template style bindings
   const dataSource = OrgChartData.map(data => TemplateNodeStyle.makeObservable(data))
 
@@ -241,9 +260,10 @@ function createSampleGraph() {
   const adjacencyNodesSource = adjacencyGraphBuilder.createNodesSource(dataSource, 'email')
 
   // configure the successor nodes
-  const edgeCreator = new EdgeCreator()
-  // use the same edge defaults as in the graph
-  edgeCreator.defaults = graph.edgeDefaults
+  const edgeCreator = new EdgeCreator({
+    // use the same edge defaults as in the graph
+    defaults: graph.edgeDefaults
+  })
   // label edges that point to assistants
   edgeCreator.addEdgeCreatedListener((sender, args) => {
     const edge = args.item
@@ -264,7 +284,7 @@ function createSampleGraph() {
 /**
  * Calculates the tree level of each node. Nodes higher up in the hierarchy are enlarged
  * accordingly.
- * @param graph The graph
+ * @param {!IGraph} graph
  */
 function adjustNodeSizes(graph) {
   // calculate the tree hierarchy levels using a BFS algorithm
@@ -292,26 +312,28 @@ function adjustNodeSizes(graph) {
   })
 }
 
-function createPropertiesPanel() {
+/**
+ * Creates a panel that displays detailed information for the employee that is represented
+ * by the given graph component's current item.
+ * @param {!GraphComponent} graphComponent
+ */
+function createPropertiesPanel(graphComponent) {
   // Create the properties view that populates the "propertiesView" element with
   // the properties of the selected employee.
   const propertiesViewElement = document.getElementById('propertiesView')
-  propertiesView = new PropertiesView(propertiesViewElement)
+  const propertiesView = new PropertiesView(propertiesViewElement)
 
   // add a listener for the properties view
-  graphComponent.addCurrentItemChangedListener((sender, args) => {
+  graphComponent.addCurrentItemChangedListener(() => {
     propertiesView.showProperties(graphComponent.currentItem)
   })
 }
 
-function registerCommands() {
-  bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent, null)
-  bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent, null)
-  bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent, null)
-  bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
-}
-
-function runLayout() {
+/**
+ * Arranges the graph of the given graph component.
+ * @param {!GraphComponent} graphComponent
+ */
+function runLayout(graphComponent) {
   const layout = new BalloonLayout()
   layout.minimumNodeDistance = 10
   layout.minimumEdgeLength = 100
@@ -322,12 +344,13 @@ function runLayout() {
   // move the ports from the node center to outside the node
   adjustPorts(graphComponent.graph)
   graphComponent.currentItem = graphComponent.graph.nodes.first()
-  limitViewport()
+  limitViewport(graphComponent)
   graphComponent.fitGraphBounds()
 }
 
 /**
  * Moves the ports from the node center to outside the node.
+ * @param {!IGraph} graph
  */
 function adjustPorts(graph) {
   graph.edges.forEach(edge => {
@@ -344,18 +367,18 @@ function adjustPorts(graph) {
 
     const v = targetPortLocation.subtract(sourcePortLocation).normalized
     const v2 = new Point(-v.x, -v.y)
-    adjustPort(sourcePort, v, graph)
-    adjustPort(targetPort, v2, graph)
+    adjustPort(graph, sourcePort, v)
+    adjustPort(graph, targetPort, v2)
   })
 }
 
 /**
  * Moves a port on the given vector outside of its owner node.
- * @param port The port to adjust.
- * @param vector The vector on which the port should be moved.
- * @param graph The graph.
+ * @param {!IGraph} graph The graph displayed in this demo.
+ * @param {!IPort} port The port to adjust.
+ * @param {!Point} vector The vector on which the port should be moved.
  */
-function adjustPort(port, vector, graph) {
+function adjustPort(graph, port, vector) {
   const node = port.owner
   const r = node.layout.width * 0.5
   const offset = 20
@@ -370,14 +393,25 @@ function adjustPort(port, vector, graph) {
 }
 
 /**
- * Setup a ViewportLimiter that makes sure that the explorable region
- * doesn't exceed the graph size.
+ * Configures a ViewportLimiter that ensures the explorable region does not exceed the graph size.
+ * @param {!GraphComponent} graphComponent
  */
-function limitViewport() {
+function limitViewport(graphComponent) {
   graphComponent.updateContentRect(new Insets(100))
   const limiter = graphComponent.viewportLimiter
   limiter.honorBothDimensions = false
   limiter.bounds = graphComponent.contentRect
+}
+
+/**
+ * Binds actions to the demo's UI controls.
+ * @param {!GraphComponent} graphComponent
+ */
+function registerCommands(graphComponent) {
+  bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent, null)
+  bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent, null)
+  bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent, null)
+  bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
 }
 
 // start demo

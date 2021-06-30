@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -27,43 +27,41 @@
  **
  ***************************************************************************/
 import {
-  BendAnchoredPortLocationModel,
-  DefaultPortCandidate,
+  CreateEdgeInputMode,
+  EdgePathPortLocationModel,
   EventRecognizers,
   GraphComponent,
   GraphEditorInputMode,
   GraphSnapContext,
   GridConstraintProvider,
   GridInfo,
-  GridSnapTypes,
   ICommand,
   IEdge,
   IEdgePortHandleProvider,
   IEdgeReconnectionPortCandidateProvider,
   IHitTestable,
-  IInputModeContext,
   IPortCandidateProvider,
   IPortLocationModel,
   KeyEventRecognizers,
   License,
-  List,
   MouseEventRecognizers,
   NodeStylePortStyleAdapter,
   OrthogonalEdgeEditingContext,
   Point,
   PolylineEdgeStyle,
-  PortCandidateProviderBase,
-  SegmentRatioPortLocationModel,
+  PortRelocationHandleProvider,
   ShapeNodeStyle,
-  Stroke
+  Stroke,
+  Visualization
 } from 'yfiles'
 
 import { initDemoStyles } from '../../resources/demo-styles.js'
 import { bindAction, bindCommand, showApp } from '../../resources/demo-app.js'
 import loadJson from '../../resources/load-json.js'
+import { EdgePathPortCandidateProvider } from './EdgePathPortCandidateProvider.js'
 
 /** @type {GraphComponent} */
-let graphComponent = null
+let graphComponent
 
 /**
  * This application demonstrates the use of edge-to-edge connections. Edges can be created interactively
@@ -79,9 +77,11 @@ let graphComponent = null
  * {@link IEdgePortHandleProvider} and {@link IPortLocationModel}
  * to enable custom behavior like reconnecting an existing edge to another edge, starting edge creation from an edge
  * etc.
+ * @param {!object} licenseData
  */
 function run(licenseData) {
   License.value = licenseData
+
   graphComponent = new GraphComponent('graphComponent')
 
   initializeInputMode()
@@ -100,6 +100,7 @@ function run(licenseData) {
  */
 function initializeGraph() {
   const graph = graphComponent.graph
+
   graph.undoEngineEnabled = true
 
   initDemoStyles(graph)
@@ -107,34 +108,40 @@ function initializeGraph() {
   graph.edgeDefaults.shareStyleInstance = false
 
   // assign a port style for the ports at the edges
-  const shapeNodeStyle = new ShapeNodeStyle({
-    shape: 'ellipse',
-    fill: 'black',
-    stroke: null
-  })
   graph.edgeDefaults.ports.style = new NodeStylePortStyleAdapter({
-    nodeStyle: shapeNodeStyle,
+    nodeStyle: new ShapeNodeStyle({
+      shape: 'ellipse',
+      fill: 'black',
+      stroke: null
+    }),
     renderSize: [3, 3]
   })
 
   // enable edge port candidates
   graph.decorator.edgeDecorator.portCandidateProviderDecorator.setFactory(
-    edge => new EdgeSegmentPortCandidateProvider(edge)
+    edge => new EdgePathPortCandidateProvider(edge)
   )
+
   // set IEdgeReconnectionPortCandidateProvider to allow re-connecting edges to other edges
   graph.decorator.edgeDecorator.edgeReconnectionPortCandidateProviderDecorator.setImplementation(
     IEdgeReconnectionPortCandidateProvider.ALL_NODE_AND_EDGE_CANDIDATES
   )
+  graph.decorator.edgeDecorator.handleProviderDecorator.setFactory(edge => {
+    let portRelocationHandleProvider = new PortRelocationHandleProvider(null, edge)
+    portRelocationHandleProvider.visualization = Visualization.LIVE
+    return portRelocationHandleProvider
+  })
 }
 
 /**
  * Creates the {@link GraphSnapContext}.
+ * @returns {!GraphSnapContext}
  */
 function createSnapContext() {
   const snapContext = new GraphSnapContext({
     enabled: false,
     // disable grid snapping
-    gridSnapType: GridSnapTypes.NONE
+    gridSnapType: 'none'
   })
   // add constraint provider for nodes, bends, and ports
   const gridInfo = new GridInfo(50)
@@ -166,6 +173,7 @@ function initializeInputMode() {
   mode.createEdgeInputMode.addEdgeCreationStartedListener((sender, args) =>
     setRandomEdgeColor(args.item)
   )
+
   graphComponent.inputMode = mode
 }
 
@@ -186,17 +194,18 @@ function createSampleGraph() {
 
   graph.addBends(e3, [
     new Point(100, 300),
-    new Point(100, 400),
-    new Point(400, 400),
+    new Point(100, 450),
+    new Point(400, 450),
     new Point(400, 300)
   ])
 
-  const p1 = graph.addPortAt(e1, new Point(0, 150))
-  const p2 = graph.addPortAt(e2, new Point(500, 150))
+  const p1 = graph.addPort(e1, EdgePathPortLocationModel.INSTANCE.createRatioParameter(0.4))
+  const p2 = graph.addPort(e2, EdgePathPortLocationModel.INSTANCE.createRatioParameter(0.4))
   const e4 = graph.createEdge(p1, p2)
-  const p3 = graph.addPortAt(e4, new Point(250, 150))
-  const p4 = graph.addPortAt(e3, new Point(400, 350))
-  graph.createEdge(p3, p4)
+  const p3 = graph.addPort(e4, EdgePathPortLocationModel.INSTANCE.createRatioParameter(0.5))
+  const p4 = graph.addPort(e3, EdgePathPortLocationModel.INSTANCE.createRatioParameter(0.8))
+  const e5 = graph.createEdge(p3, p4)
+  graph.addBend(e5, new Point(250, 360))
 
   graphComponent.fitGraphBounds()
 
@@ -215,7 +224,7 @@ function registerCommands() {
   bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent)
   bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent)
   bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent)
-  bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
+  bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1)
 
   bindCommand("button[data-command='Undo']", ICommand.UNDO, graphComponent)
   bindCommand("button[data-command='Redo']", ICommand.REDO, graphComponent)
@@ -226,20 +235,21 @@ function registerCommands() {
   bindCommand("button[data-command='Delete']", ICommand.DELETE, graphComponent)
 
   bindAction('#demo-snapping-button', () => {
-    graphComponent.inputMode.snapContext.enabled = document.querySelector(
-      '#demo-snapping-button'
-    ).checked
+    const snappingButton = document.querySelector('#demo-snapping-button')
+    const inputMode = graphComponent.inputMode
+    inputMode.snapContext.enabled = snappingButton.checked
   })
+
   bindAction('#demo-orthogonal-editing-button', () => {
-    graphComponent.inputMode.orthogonalEdgeEditingContext.enabled = document.querySelector(
-      '#demo-orthogonal-editing-button'
-    ).checked
+    const orthogonalEditingButton = document.querySelector('#demo-orthogonal-editing-button')
+    const inputMode = graphComponent.inputMode
+    inputMode.orthogonalEdgeEditingContext.enabled = orthogonalEditingButton.checked
   })
 }
 
 /**
  * Creates a random colored pen and uses that one for the style.
- * @param {IEdge} edge
+ * @param {!IEdge} edge
  */
 function setRandomEdgeColor(edge) {
   if (edge.style instanceof PolylineEdgeStyle) {
@@ -254,58 +264,3 @@ function setRandomEdgeColor(edge) {
 }
 
 loadJson().then(run)
-
-/**
- * A port candidate provider that aggregates different {@link IPortLocationModel PortLocationModels}
- * to provide a number of port candidates along each segment of the edge.
- */
-class EdgeSegmentPortCandidateProvider extends PortCandidateProviderBase {
-  /**
-   * Create a new instance of this type.
-   * @param {IEdge} edge
-   */
-  constructor(edge) {
-    super()
-    this.edge = edge
-  }
-
-  /**
-   * Creates an enumeration of possible port candidates.
-   * @param {IInputModeContext} context
-   * @return {IEnumerable<IPortCandidate>}
-   */
-  getPortCandidates(context) {
-    const candidates = new List()
-    const edge = this.edge
-    // add a port candidate at each bend
-    for (let i = edge.bends.size - 1; i >= 0; i--) {
-      candidates.add(
-        new DefaultPortCandidate(edge, BendAnchoredPortLocationModel.INSTANCE.createFromSource(i))
-      )
-    }
-    // add port candidates along the path of each segment
-    for (let i = edge.bends.size; i >= 0; i--) {
-      candidates.add(
-        new DefaultPortCandidate(
-          edge,
-          SegmentRatioPortLocationModel.INSTANCE.createFromSource(0.25, i)
-        )
-      )
-      candidates.add(
-        new DefaultPortCandidate(
-          edge,
-          SegmentRatioPortLocationModel.INSTANCE.createFromSource(0.5, i)
-        )
-      )
-      candidates.add(
-        new DefaultPortCandidate(
-          edge,
-          SegmentRatioPortLocationModel.INSTANCE.createFromSource(0.75, i)
-        )
-      )
-      // add a dynamic candidate that can be used if shift is pressed to assign the exact location.
-      candidates.add(new DefaultPortCandidate(edge, SegmentRatioPortLocationModel.INSTANCE))
-    }
-    return candidates
-  }
-}

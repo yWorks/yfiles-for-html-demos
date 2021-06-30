@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -7,7 +7,7 @@
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.3.
+     // This demo file is part of yFiles for HTML 2.4.
      // Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
@@ -36,7 +36,6 @@
 
   <title>Selection Styling Demo [yFiles for HTML]</title>
 
-  <link rel="stylesheet" href="../../node_modules/yfiles/yfiles.css">
   <link rel="stylesheet" href="../../resources/style/demo.css">
 
   <script src="../../resources/filesystem-warning.js"></script>
@@ -58,28 +57,28 @@
 
     <ul>
       <li>
-        Switch between the default visualization and the <em>Custom Styling</em> of nodes, edges and labels with the
+        Switch between the default visualization and the <em>Custom Selection Decoration</em> of nodes, edges and labels with the
         toolbar buttons.
       </li>
       <li>
-        Test the different <em>Zoom Modes</em> for the custom selection painting.
+        Test the different <em>Zoom Modes</em> for the custom selection rendering.
       </li>
     </ul>
 
-    <h2>Zoom Mode Property</h2>
+    <h2>Zoom Mode</h2>
 
     <p>Specifies how the zoom level affects the custom selecting painting.</p>
     <dl>
-      <dt>WorldCoordinates</dt>
+      <dt>Zoom with graph</dt>
       <dd>The visual is rendered in the world coordinate space and scales with the zoom level like a regular graph
         item visualization, for example a node style.
       </dd>
-      <dt>ViewCoordinates</dt>
+      <dt>Always the same size</dt>
       <dd>The visual is rendered in the view coordinate space and doesn't scale with the zoom level, similar to the
         default node resize handles, for example.
       </dd>
       <dt>Mixed</dt>
-      <dd>Uses WorldCoordinates rendering for zoom level &#8805; 1 and ViewCoordinates rendering for zoom level &lt;
+      <dd>Uses world coordinates for zoom level &#8805; 1 and view coordinates for zoom level &lt;
         1.
       </dd>
     </dl>
@@ -97,7 +96,7 @@
 
     <span class="demo-separator"></span>
 
-    <span>Custom Styling:</span>
+    <span>Custom Selection Decoration:</span>
     <input type="checkbox" id="nodeButton" class="demo-toggle-button labeled" title="Nodes" data-command="UpdateNodeDecorationCommand" checked/><label for="nodeButton">Nodes</label>
     <input type="checkbox" id="edgeButton" class="demo-toggle-button labeled" title="Edges" data-command="UpdateEdgeDecorationCommand" checked/><label for="edgeButton">Edges</label>
     <input type="checkbox" id="labelButton" class="demo-toggle-button labeled" title="Labels" data-command="UpdateLabelDecorationCommand" checked/><label for="labelButton">Labels</label>

@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -36,25 +36,31 @@ import {
 } from 'yfiles'
 
 /**
- * A position handler that moves a given rectangle.
+ * An {@link IPositionHandler} that manages the position of a given {@link MutableRectangle}.
  */
 export default class PositionHandler extends BaseClass(IPositionHandler) {
   /**
-   * @param {MutableRectangle} rectangle
+   * @param {!MutableRectangle} rectangle
    */
   constructor(rectangle) {
     super()
     this.rectangle = rectangle
+
+    // Stores the offset from the mouse event location to the handled rectangle's upper left corner.
     this.offset = new MutablePoint()
   }
 
-  /** @type {Point} */
+  /**
+   * The rectangle's top-left coordinate.
+   * @type {!Point}
+   */
   get location() {
     return this.rectangle.topLeft
   }
 
   /**
-   * @param {IInputModeContext} context
+   * Initializes the mouse event offset before the actual move gesture starts.
+   * @param {!IInputModeContext} context
    */
   initializeDrag(context) {
     const x = this.rectangle.x - context.canvasComponent.lastEventLocation.x
@@ -63,9 +69,10 @@ export default class PositionHandler extends BaseClass(IPositionHandler) {
   }
 
   /**
-   * @param {IInputModeContext} context
-   * @param {Point} originalLocation
-   * @param {Point} newLocation
+   * Updates the rectangle's position during each drag.
+   * @param {!IInputModeContext} context
+   * @param {!Point} originalLocation
+   * @param {!Point} newLocation
    */
   handleMove(context, originalLocation, newLocation) {
     const newX = newLocation.x + this.offset.x
@@ -74,17 +81,19 @@ export default class PositionHandler extends BaseClass(IPositionHandler) {
   }
 
   /**
-   * @param {IInputModeContext} context
-   * @param {Point} originalLocation
+   * Resets the rectangle's position when the move gesture was cancelled.
+   * @param {!IInputModeContext} context
+   * @param {!Point} originalLocation
    */
   cancelDrag(context, originalLocation) {
     this.rectangle.relocate(originalLocation)
   }
 
   /**
-   * @param {IInputModeContext} context
-   * @param {Point} originalLocation
-   * @param {Point} newLocation
+   * Finalizes the rectangle's position when the move gesture ends.
+   * @param {!IInputModeContext} context
+   * @param {!Point} originalLocation
+   * @param {!Point} newLocation
    */
   dragFinished(context, originalLocation, newLocation) {
     const newX = newLocation.x + this.offset.x

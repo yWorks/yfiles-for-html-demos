@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -30,63 +30,34 @@ import { BaseClass, CanvasComponent, IAnimation, Point, TimeSpan } from 'yfiles'
 
 export default class ZoomAnimation extends BaseClass(IAnimation) {
   /**
-   * @param {CanvasComponent} canvas
+   * @param {!CanvasComponent} canvas
    * @param {number} targetZoom
-   * @param {Point} zoomPoint
+   * @param {!Point} zoomPoint
    * @param {number} duration
    */
   constructor(canvas, targetZoom, zoomPoint, duration) {
     super()
+    this.zoomPoint = zoomPoint
+    this.canvas = canvas
+
+    // The zoom level difference between the initial and the target zoom level.
+    this.delta = 0
+
+    // Binary logarithm of the initial zoom level.
+    this.initialZoomLog = 0
+
     this.canvas = canvas
     this.targetZoomLog = Math.log(targetZoom) / Math.log(2)
-    this.$preferredDuration = new TimeSpan(duration)
-    this.$delta = 0
-    this.$initialZoomLog = 0
-    this.zoomPoint = zoomPoint
+    this._preferredDuration = new TimeSpan(duration)
   }
 
   /**
-   * Gets the preferred duration of the animation.
+   * The preferred duration of the animation.
    * @see Specified by {@link IAnimation#preferredDuration}.
-   * @type {TimeSpan}
+   * @type {!TimeSpan}
    */
   get preferredDuration() {
-    return this.$preferredDuration
-  }
-
-  /**
-   * Sets the preferred duration of the animation.
-   * @see Specified by {@link IAnimation#preferredDuration}.
-   * @type {TimeSpan}
-   */
-  set preferredDuration(value) {
-    this.$preferredDuration = value
-  }
-
-  /**
-   * The zoom level difference between the initial and the target zoom level.
-   * @type {number}
-   */
-  get delta() {
-    return this.$delta
-  }
-
-  /** @type {number} */
-  set delta(value) {
-    this.$delta = value
-  }
-
-  /**
-   * Binary logarithm of the initial zoom level.
-   * @type {number}
-   */
-  get initialZoomLog() {
-    return this.$initialZoomLog
-  }
-
-  /** @type {number} */
-  set initialZoomLog(value) {
-    this.$initialZoomLog = value
+    return this._preferredDuration
   }
 
   /**

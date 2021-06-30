@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -42,10 +42,10 @@ require.config({
 
 require([
   'yfiles-umd/view-editor',
-  'WebWorkerLayoutExecutor.js',
   'yfiles-umd/view-folding',
-  'yfiles-umd/view-layout-bridge'
-], (/** @param {yfiles} yfiles */ yfiles, WebWorkerLayoutExecutor) => {
+  'yfiles-umd/view-layout-bridge',
+  'yfiles-umd/layout-hierarchic'
+], (/** @param {yfiles} yfiles */ yfiles) => {
   const {
     License,
     GraphComponent,
@@ -58,10 +58,21 @@ require([
     PolylineEdgeStyle,
     IArrow,
     FreeEdgeLabelModel,
-    List,
-    InteriorLabelModel
+    InteriorLabelModel,
+    LayoutExecutorAsync,
+    HierarchicLayoutData,
+    NodeHalo
   } = yfiles
   let graphComponent = null
+
+  const layoutButton = document.getElementById('layoutBtn')
+
+  const worker = new Worker('./WorkerLayout.js')
+  worker.onmessage = e => {
+    if (e.data === 'ready') {
+      runWebWorkerLayout(true)
+    }
+  }
 
   function run(licenseData) {
     License.value = licenseData
@@ -73,8 +84,6 @@ require([
     graphComponent.fitGraphBounds()
 
     registerCommands()
-
-    runWebWorkerLayout(true)
   }
 
   /**
@@ -84,64 +93,75 @@ require([
    * loading a new sample graph.
    */
   async function runWebWorkerLayout(clearUndo) {
-    // create a new web worker
-    const worker = tryCreateWorker()
-    if (worker === null) {
-      return
-    }
+    const layoutData = createLayoutData()
+    const layoutDescriptor = createLayoutDescriptor()
 
     showLoading()
 
-    // execute layout calculation of the worker
-    const layoutExecutor = new WebWorkerLayoutExecutor(graphComponent, worker)
-    try {
-      await layoutExecutor.start()
-    } catch (error) {
-      if (typeof window.reportError === 'function') {
-        window.reportError(error)
-      } else {
-        throw error
+    // helper function that performs the actual message passing to the web worker
+    function webWorkerMessageHandler(data) {
+      return new Promise(resolve => {
+        worker.onmessage = e => resolve(e.data)
+        worker.postMessage(data)
+      })
+    }
+
+    // create an asynchronous layout executor that calculates a layout on the worker
+    const executor = new LayoutExecutorAsync({
+      messageHandler: webWorkerMessageHandler,
+      graphComponent,
+      layoutDescriptor,
+      layoutData,
+      duration: '1s',
+      animateViewport: true,
+      easedAnimation: true
+    })
+
+    // run the Web Worker layout
+    await executor.start()
+
+    if (clearUndo) {
+      graphComponent.graph.undoEngine.clear()
+    }
+
+    hideLoading()
+  }
+
+  /**
+   * Creates the object that describes the layout to the Web Worker layout executor.
+   * @returns {LayoutDescriptor} The LayoutDescriptor for this layout
+   */
+  function createLayoutDescriptor() {
+    return {
+      name: 'HierarchicLayout',
+      properties: {
+        nodeToNodeDistance: 50,
+        considerNodeLabels: true,
+        integratedEdgeLabeling: true
       }
-    } finally {
-      if (clearUndo) {
-        graphComponent.graph.undoEngine.clear()
-      }
-      hideLoading()
     }
   }
 
   /**
-   * Initializes the web worker.
-   * @return {Worker} The newly created web worker or null if the web worker cannot be initialized
+   * Creates the layout data that is used to execute the layout.
+   * @returns The LayoutDescriptor for this layout
    */
-  function tryCreateWorker() {
-    if (typeof window.Worker === 'undefined') {
-      alert('This browser does not support web workers (Worker is not defined).')
-      return null
-    }
-
-    let worker = null
-    try {
-      worker = new Worker('WorkerLayoutTask.js')
-    } catch (e) {
-      const error = e
-      let message =
-        'Unable to run the web worker. Perhaps your browser does not allow to run web workers from the' +
-        ' local filesystem. Please see the demo readme for details.'
-      if (error.message) {
-        message += `\n\n${error.message}\n`
-      }
-      alert(message)
-    }
-    return worker
+  function createLayoutData() {
+    return new HierarchicLayoutData({
+      nodeHalos: node => NodeHalo.create(10),
+      targetGroupIds: edge => edge.targetNode
+    })
   }
 
   /**
    * Shows the wait cursor and disables editing during the layout calculation.
    */
   function showLoading() {
+    layoutButton.disabled = true
     const statusElement = document.getElementById('graphComponentStatus')
-    statusElement.style.setProperty('visibility', 'visible', '')
+    if (statusElement) {
+      statusElement.style.setProperty('visibility', 'visible', '')
+    }
     const waitMode = graphComponent.lookup(WaitInputMode.$class)
     if (waitMode !== null && !waitMode.waiting) {
       if (waitMode.controller !== null && waitMode.controller.canRequestMutex()) {
@@ -154,6 +174,7 @@ require([
    * Removes the wait cursor and restores editing after the layout calculation.
    */
   function hideLoading() {
+    layoutButton.disabled = false
     const statusElement = document.getElementById('graphComponentStatus')
     if (statusElement !== null) {
       statusElement.style.setProperty('visibility', 'hidden', '')
@@ -199,8 +220,9 @@ require([
   }
 
   /**
-   * Initializes the graph defaults and adds item created listeners that set a unique ID to each new node and edge.
-   * The IDs are used in the exported JSON files to identify items in the graph model.
+   * Initializes the graph defaults and adds item created listeners that set a unique ID to each
+   * new node and edge. The IDs are used in the exported JSON files to identify items in the graph
+   * model.
    */
   function initializeGraph() {
     // Configure folding
@@ -228,7 +250,8 @@ require([
 
     // set default label styles
     graphComponent.graph.nodeDefaults.labels.layoutParameter = InteriorLabelModel.CENTER
-    graphComponent.graph.edgeDefaults.labels.layoutParameter = FreeEdgeLabelModel.INSTANCE.createDefaultParameter()
+    graphComponent.graph.edgeDefaults.labels.layoutParameter =
+      FreeEdgeLabelModel.INSTANCE.createDefaultParameter()
 
     // Add listeners for item created events to add a tag to each new item
     const masterGraph = manager.masterGraph

@@ -7,16 +7,19 @@
     "removeComments": false,
     "resolveJsonModule": true,
     "esModuleInterop": true,
-    "lib": ["dom.iterable", "es2017", "dom"],
+    "lib": [
+      "dom.iterable",
+      "es2017",
+      "dom"
+    ],
     "forceConsistentCasingInFileNames": true
   },
   "exclude": [
+    "loading/webworker-umd",
+    "loading/webworker-webpack",
     "node_modules",
     "toolkit/angular",
     "toolkit/dojo",
-    "toolkit/react-typescript",
-    "toolkit/typescript",
-    "starter-kits",
-    "test/**/*.js"
+    "toolkit/react-typescript"
   ]
 }

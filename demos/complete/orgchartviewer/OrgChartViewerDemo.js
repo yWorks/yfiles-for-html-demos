@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -27,6 +27,7 @@
  **
  ***************************************************************************/
 import {
+  BaseClass,
   CompactNodePlacer,
   EdgeRouterScope,
   GraphComponent,
@@ -62,19 +63,37 @@ import { bindAction, bindCommand, showApp } from '../../resources/demo-app.js'
 import OrgChartData from './resources/OrgChartData.js'
 import loadJson from '../../resources/load-json.js'
 
-let graphComponent = null
+/**
+ * @typedef {Object} Employee
+ * @property {string} position
+ * @property {string} name
+ * @property {string} email
+ * @property {string} phone
+ * @property {string} fax
+ * @property {string} businessUnit
+ * @property {string} status
+ * @property {string} icon
+ * @property {Array.<Employee>} [subordinates]
+ * @property {Employee} [parent]
+ */
+
+/** @type {GraphComponent} */
+let graphComponent
 
 /**
  * The overview graph shown alongside the GraphComponent.
  * @type {GraphOverviewComponent}
- **/
-let overviewComponent = null
-
+ */
+let overviewComponent
 /**
+ * The component for the search in the graph
  * @type {OrgChartGraphSearch}
  */
-let graphSearch = null
+let graphSearch
 
+/**
+ * @param {!object} licenseData
+ */
 function run(licenseData) {
   License.value = licenseData
   graphComponent = new GraphComponent('graphComponent')
@@ -111,30 +130,29 @@ function run(licenseData) {
 function createPropertiesView() {
   const propertiesViewElement = document.getElementById('propertiesView')
   const propertiesView = new OrgChartPropertiesView(propertiesViewElement, email => {
-    const nodeForEMail =
-      email != null &&
-      graphComponent.graph.nodes.find(node => node.tag != null && email === node.tag.email)
-    if (nodeForEMail != null) {
+    const nodeForEMail = graphComponent.graph.nodes.find(
+      node => node.tag != null && email === node.tag.email
+    )
+    if (nodeForEMail !== null) {
       zoomToItem(nodeForEMail)
       graphComponent.focus()
     }
   })
 
-  graphComponent.addCurrentItemChangedListener((sender, args) => {
+  graphComponent.addCurrentItemChangedListener(() => {
     propertiesView.showProperties(graphComponent.currentItem)
   })
 }
 
 /**
  * Focuses the given item.
- * @param {IModelItem} item
+ * @param {!IModelItem} item
  */
 function zoomToItem(item) {
-  if (!INode.isInstance(item)) {
-    return
+  if (item instanceof INode) {
+    graphComponent.currentItem = item
+    ICommand.ZOOM_TO_CURRENT_ITEM.execute(null, graphComponent)
   }
-  graphComponent.currentItem = item
-  ICommand.ZOOM_TO_CURRENT_ITEM.execute(null, graphComponent)
 }
 
 /**
@@ -146,7 +164,7 @@ function registerCommands() {
   bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent, null)
   bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent, null)
   bindAction("button[data-command='ZoomOriginal']", () => {
-    ICommand.ZOOM.execute(1.0, graphComponent)
+    ICommand.ZOOM.execute(1, graphComponent)
   })
 }
 
@@ -218,7 +236,7 @@ function initializeInputMode() {
   graphViewerInputMode.itemHoverInputMode.hoverItems = GraphItemTypes.NODE
 
   graphViewerInputMode.addItemDoubleClickedListener(() => {
-    if (!INode.isInstance(graphComponent.currentItem)) {
+    if (!(graphComponent.currentItem instanceof INode)) {
       return
     }
     ICommand.ZOOM_TO_CURRENT_ITEM.execute(null, graphComponent)
@@ -241,7 +259,7 @@ function initializeInputMode() {
 
 /**
  * Sets style defaults for nodes and edges.
- * @param {IGraph} graph
+ * @param {!IGraph} graph
  */
 function registerElementDefaults(graph) {
   graph.nodeDefaults.style = new LevelOfDetailNodeStyle(
@@ -273,27 +291,28 @@ function runLayout() {
 
 /**
  * Creates a tree layout data for the tree layout
- * @param {IGraph} graph
- * @return {TreeLayoutData} A configured TreeLayoutData.
+ * @returns {!TreeLayoutData} A configured TreeLayoutData.
  * @private
+ * @param {!IGraph} graph
  */
 function createConfiguredLayoutData(graph) {
   return new TreeLayoutData({
-    assistantNodes: node => node.tag && node.tag.assistant && graph.inDegree(node) > 0
+    assistantNodes: node => node.tag && node.tag.assistant && graph.inDegree(node) > 0,
+    nodeTypes: node => (node.tag && node.tag.status ? node.tag.status : null)
   })
 }
 
 /**
  * Creates a tree layout that handles assistant nodes and stack leaf nodes.
- * @return {TreeLayout} A configured TreeLayout.
+ * @returns {!TreeLayout} A configured TreeLayout.
  * @private
  */
 function createConfiguredLayout() {
   const treeLayout = new TreeLayout()
-  treeLayout.defaultPortAssignment = new ITreeLayoutPortAssignment({
+  treeLayout.defaultPortAssignment = new (class extends BaseClass(ITreeLayoutPortAssignment) {
     /**
-     * @param {LayoutGraph} graph - the graph
-     * @param {YNode} node - the node whose adjacent edges' ports should be set
+     * @param {!LayoutGraph} graph
+     * @param {!YNode} node
      */
     assignPorts(graph, node) {
       const inEdge = node.firstInEdge
@@ -305,7 +324,7 @@ function createConfiguredLayout() {
         graph.setSourcePointRel(outEdge, new YPoint(0, halfHeight))
       })
     }
-  })
+  })()
   // we let the CompactNodePlacer arrange the nodes
   treeLayout.defaultNodePlacer = new CompactNodePlacer()
 
@@ -332,7 +351,7 @@ function limitViewport() {
  * Adds a "parent" reference to all subordinates contained in the source data.
  * The parent reference is needed to create the colleague and parent links
  * in the properties view.
- * @param {Object} nodesSourceItem The source data in JSON format
+ * @param {!Employee} nodesSourceItem The source data in JSON format
  */
 function addParentReferences(nodesSourceItem) {
   const subs = nodesSourceItem.subordinates
@@ -346,8 +365,8 @@ function addParentReferences(nodesSourceItem) {
 }
 /**
  * Creates the sample graph of this demo.
- * @param {Object} nodesSource The source data in JSON format.
- * @return {IGraph} The complete sample graph of this demo.
+ * @param {!Array.<Employee>} nodesSource The source data in JSON format.
+ * @returns {!IGraph} The complete sample graph of this demo.
  */
 function createGraph(nodesSource) {
   addParentReferences(nodesSource[0])
@@ -356,7 +375,7 @@ function createGraph(nodesSource) {
   registerElementDefaults(treeBuilder.graph)
   // configure the root nodes
   const rootSource = treeBuilder.createRootNodesSource(nodesSource)
-  // configure the recursive structure of the childs
+  // configure the recursive structure of the children
   rootSource.addChildNodesSource(data => data.subordinates, rootSource)
   treeBuilder.buildGraph()
 
@@ -371,9 +390,9 @@ class OrgChartGraphSearch extends GraphSearch {
   /**
    * Returns whether the given node is a match when searching for the given text.
    * This method searches the matching string to the labels and the tags of the nodes.
-   * @param {INode} node The node to be examined
-   * @param {string} text The text to be queried
-   * @return {boolean} True if the node matches the text, false otherwise
+   * @param {!INode} node The node to be examined
+   * @param {!string} text The text to be queried
+   * @returns {boolean} True if the node matches the text, false otherwise
    */
   matches(node, text) {
     const lowercaseText = text.toLowerCase()

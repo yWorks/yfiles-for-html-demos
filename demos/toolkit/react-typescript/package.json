@@ -5,21 +5,26 @@
   "license": "https://www.yworks.com/products/yfiles-for-html/sla",
   "private": true,
   "dependencies": {
-    "@types/jest": "25.2.3",
-    "@types/node": "14.14.14",
-    "@types/react": "16.9.56",
-    "@types/react-dom": "16.9.9",
-    "react": "16.14.0",
-    "react-dom": "16.14.0",
-    "react-scripts": "3.4.4",
-    "typescript": "~3.9.7",
-    "yfiles": "../../../lib-dev/es-modules/yfiles-23.0.4-dev.tgz"
+    "@types/jest": "26.0.23",
+    "@types/node": "15.12.4",
+    "@types/react": "17.0.11",
+    "@types/react-dom": "17.0.8",
+    "react": "17.0.2",
+    "react-dom": "17.0.2",
+    "react-scripts": "4.0.3",
+    "typescript": "~4.3.4",
+    "yfiles": "../../../lib-dev/es-modules/yfiles-24.0.0-dev.tgz"
   },
   "scripts": {
-    "preinstall": "node -e \"require('fs').copyFileSync('../../../lib/license.json','./src/license.json');\"",
+    "preinstall": "node -e \"require('fs').copyFileSync('../../../lib/license.json','./src/license.json'); require('fs-extra').copySync('../../utils/Workarounds.ts', './src/utils/Workarounds.ts'); require('fs-extra').copySync('../../utils/GraphSearch.ts', './src/utils/GraphSearch.ts');\"",
     "start": "react-scripts --expose-gc --max-old-space-size=8192 start",
     "build": "react-scripts --expose-gc --max-old-space-size=8192 build",
     "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app"
+    ]
   },
   "browserslist": {
     "production": [
@@ -32,5 +37,11 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "worker-loader": "^3.0.8"
+  },
+  "resolutions": {
+    "react-scripts/eslint-webpack-plugin": "2.4.1"
   }
 }

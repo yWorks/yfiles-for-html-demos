@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -31,6 +31,8 @@ import {
   Font,
   GraphEditorInputMode,
   ILabel,
+  IOrientedRectangle,
+  IRenderContext,
   LabelStyleBase,
   Matrix,
   Size,
@@ -38,6 +40,7 @@ import {
   TextRenderSupport,
   TextWrapping
 } from 'yfiles'
+import { SVGNS, XLINKNS } from './Namespaces.js'
 
 const HORIZONTAL_INSET = 2
 const VERTICAL_INSET = 2
@@ -45,10 +48,10 @@ const BUTTON_SIZE = 16
 
 /**
  * This class is an example for a custom style based on the {@link LabelStyleBase}.
- * The font for the label text can be set. The label text is drawn with black letters inside a blue rounded
- * rectangle.
- * Also there is a customized button displayed in the label at certain zoom levels that enables editing of the label
- * text.
+ * The font for the label text can be set. The label text is drawn with black letters inside a blue
+ * rounded rectangle.
+ * Also there is a customized button displayed in the label at certain zoom levels that enables
+ * editing of the label text.
  */
 export default class CustomSimpleLabelStyle extends LabelStyleBase {
   /**
@@ -56,85 +59,68 @@ export default class CustomSimpleLabelStyle extends LabelStyleBase {
    */
   constructor() {
     super()
-    this.$font = new Font({
+
+    this.font = new Font({
       fontFamily: 'Arial',
       fontSize: 12
     })
   }
 
-  get font() {
-    return this.$font
-  }
-
-  set font(value) {
-    this.$font = value
-  }
-
   /**
    * Creates the visual for a label to be drawn.
    * @see Overrides {@link LabelStyleBase#createVisual}
-   * @return {SvgVisual}
+   * @param {!IRenderContext} context
+   * @param {!ILabel} label
+   * @returns {!SvgVisual}
    */
-  createVisual(renderContext, label) {
+  createVisual(context, label) {
     // This implementation creates a 'g' element and uses it for the rendering of the label.
-    const g = window.document.createElementNS('http://www.w3.org/2000/svg', 'g')
+    const container = document.createElementNS(SVGNS, 'g')
     // Get the necessary data for rendering of the label
-    const cache = this.createRenderDataCache(renderContext, label, this.font)
+    const cache = CustomSimpleLabelStyle.createRenderDataCache(context, label, this.font)
     // Render the label
-    this.render(g, label.layout, cache)
+    this.render(container, label.layout, cache)
     // move container to correct location
-    const transform = LabelStyleBase.createLayoutTransform(renderContext, label.layout, true)
-    transform.applyTo(g)
+    const transform = LabelStyleBase.createLayoutTransform(context, label.layout, true)
+    transform.applyTo(container)
 
     // set data item
-    g.setAttribute('data-internalId', 'CustomSimpleLabel')
-    g['data-item'] = label
+    container.setAttribute('data-internalId', 'CustomSimpleLabel')
+    container['data-item'] = label
 
-    return new SvgVisual(g)
+    return new SvgVisual(container)
   }
 
   /**
    * Re-renders the label using the old visual for performance reasons.
    * @see Overrides {@link LabelStyleBase#updateVisual}
-   * @return {SvgVisual}
+   * @param {!IRenderContext} context
+   * @param {!SvgVisual} oldVisual
+   * @param {!ILabel} label
+   * @returns {!SvgVisual}
    */
-  updateVisual(renderContext, oldVisual, label) {
+  updateVisual(context, oldVisual, label) {
     const container = oldVisual.svgElement
     // get the data with which the oldvisual was created
     const oldCache = container['data-renderDataCache']
     // get the data for the new visual
-    const newCache = this.createRenderDataCache(renderContext, label, this.font)
-    if (!oldCache.equals(oldCache, newCache)) {
+    const newCache = CustomSimpleLabelStyle.createRenderDataCache(context, label, this.font)
+    if (!newCache.equals(oldCache)) {
       // something changed - re-render the visual
       this.render(container, label.layout, newCache)
     }
     // nothing changed, return the old visual
     // arrange because the layout might have changed
-    const transform = LabelStyleBase.createLayoutTransform(renderContext, label.layout, true)
+    const transform = LabelStyleBase.createLayoutTransform(context, label.layout, true)
     transform.applyTo(container)
     return oldVisual
   }
 
   /**
-   * Creates an object containing all necessary data to create a label visual.
-   * @return {object}
-   */
-  createRenderDataCache(context, label, font) {
-    // Visibility of button changes dependent on the zoom level
-    const buttonVisibility = context.zoom > 1
-    return {
-      text: label.text,
-      buttonVisibility,
-      font,
-      equals: (self, other) =>
-        self.text === other.text &&
-        self.buttonVisibility === other.buttonVisibility &&
-        self.font.equals(other.font)
-    }
-  }
-
-  /**
    * Creates the visual appearance of a label.
+   * @param {*} container
+   * @param {!IOrientedRectangle} labelLayout
+   * @param {!LabelRenderDataCache} cache
    */
   render(container, labelLayout, cache) {
     // store information with the visual on how we created it
@@ -143,9 +129,9 @@ export default class CustomSimpleLabelStyle extends LabelStyleBase {
     // background rectangle
     let rect
     if (container.childElementCount > 0) {
-      rect = container.childNodes.item(0)
+      rect = container.childNodes[0]
     } else {
-      rect = window.document.createElementNS('http://www.w3.org/2000/svg', 'rect')
+      rect = document.createElementNS(SVGNS, 'rect')
       rect.rx.baseVal.value = 5
       rect.ry.baseVal.value = 5
       container.appendChild(rect)
@@ -153,14 +139,14 @@ export default class CustomSimpleLabelStyle extends LabelStyleBase {
     rect.width.baseVal.value = labelLayout.width
     rect.height.baseVal.value = labelLayout.height
     rect.setAttribute('stroke', 'skyblue')
-    rect.setAttribute('stroke-width', 1)
+    rect.setAttribute('stroke-width', '1')
     rect.setAttribute('fill', 'rgb(155,226,255)')
 
     let text
     if (container.childElementCount > 1) {
-      text = container.childNodes.item(1)
+      text = container.childNodes[1]
     } else {
-      text = window.document.createElementNS('http://www.w3.org/2000/svg', 'text')
+      text = document.createElementNS(SVGNS, 'text')
       text.setAttribute('fill', '#000')
       container.appendChild(text)
     }
@@ -190,7 +176,7 @@ export default class CustomSimpleLabelStyle extends LabelStyleBase {
 
     text.setAttribute('transform', `translate(${translateX} ${translateY})`)
     while (container.childElementCount > 2) {
-      container.removeChild(container.childNodes.item(2))
+      container.removeChild(container.lastChild)
     }
     if (cache.buttonVisibility) {
       const button = createButton()
@@ -209,10 +195,23 @@ export default class CustomSimpleLabelStyle extends LabelStyleBase {
   }
 
   /**
+   * Creates an object containing all necessary data to create a label visual.
+   * @param {!IRenderContext} context
+   * @param {!ILabel} label
+   * @param {!Font} font
+   * @returns {!LabelRenderDataCache}
+   */
+  static createRenderDataCache(context, label, font) {
+    // Visibility of button changes dependent on the zoom level
+    return new LabelRenderDataCache(label.text, context.zoom > 1, font)
+  }
+
+  /**
    * Calculates the preferred size for the given label if this style is used for the rendering.
    * The size is calculated from the label's text.
    * @see Overrides {@link LabelStyleBase#getPreferredSize}
-   * @return {Size}
+   * @param {!ILabel} label
+   * @returns {!Size}
    */
   getPreferredSize(label) {
     // first measure
@@ -225,24 +224,52 @@ export default class CustomSimpleLabelStyle extends LabelStyleBase {
   }
 }
 
-/** @return {SVGGElement} */
+class LabelRenderDataCache {
+  /**
+   * @param {!string} text
+   * @param {boolean} buttonVisibility
+   * @param {!Font} font
+   */
+  constructor(text, buttonVisibility, font) {
+    this.font = font
+    this.buttonVisibility = buttonVisibility
+    this.text = text
+  }
+
+  /**
+   * @param {!LabelRenderDataCache} [other]
+   * @returns {boolean}
+   */
+  equals(other) {
+    return (
+      !!other &&
+      this.text === other.text &&
+      this.buttonVisibility === other.buttonVisibility &&
+      this.font.equals(other.font)
+    )
+  }
+}
+
+/**
+ * @returns {!SVGGElement}
+ */
 function createButton() {
-  const image = window.document.createElementNS('http://www.w3.org/2000/svg', 'image')
-  image.setAttributeNS('http://www.w3.org/1999/xlink', 'href', 'resources/edit_label.png')
+  const image = document.createElementNS(SVGNS, 'image')
+  image.setAttributeNS(XLINKNS, 'href', 'resources/edit_label.png')
   image.x.baseVal.value = 1
   image.y.baseVal.value = 1
   image.width.baseVal.value = BUTTON_SIZE - 2
   image.height.baseVal.value = BUTTON_SIZE - 2
-  const button = window.document.createElementNS('http://www.w3.org/2000/svg', 'rect')
+  const button = document.createElementNS(SVGNS, 'rect')
   button.width.baseVal.value = BUTTON_SIZE
   button.height.baseVal.value = BUTTON_SIZE
   button.rx.baseVal.value = 3
   button.ry.baseVal.value = 3
   button.setAttribute('fill', '#000')
-  button.setAttribute('fill-opacity', 0.07)
+  button.setAttribute('fill-opacity', '0.07')
   button.setAttribute('stroke', '#000')
-  button.setAttribute('stroke-width', 1)
-  const g = window.document.createElementNS('http://www.w3.org/2000/svg', 'g')
+  button.setAttribute('stroke-width', '1')
+  const g = document.createElementNS(SVGNS, 'g')
   g.appendChild(button)
   g.appendChild(image)
   return g
@@ -250,41 +277,51 @@ function createButton() {
 
 /**
  * Called when the edit label button inside a label has been clicked.
+ * @param {!Event} evt
  */
 function onMouseDown(evt) {
   const graphComponentElement = getAncestorElementByAttribute(evt.target, 'id', 'graphComponent')
   if (!graphComponentElement) {
     return
   }
-  const graphComponent = CanvasComponent.getComponent(graphComponentElement)
+
   const svgElement = getAncestorElementByAttribute(
     evt.target,
     'data-internalId',
     'CustomSimpleLabel'
   )
-  const label =
-    svgElement !== null && ILabel.isInstance(svgElement['data-item'])
-      ? svgElement['data-item']
-      : null
-  if (
-    graphComponent !== null &&
-    label !== null &&
-    graphComponent.inputMode instanceof GraphEditorInputMode
-  ) {
+  const label = getLabel(svgElement)
+  if (!label) {
+    return
+  }
+
+  const graphComponent = CanvasComponent.getComponent(graphComponentElement)
+  if (graphComponent && graphComponent.inputMode instanceof GraphEditorInputMode) {
     graphComponent.inputMode.editLabel(label)
   }
 }
 
 /**
- * @param {Element} descendant
- * @param {string} attributeName
- * @param {string} attributeValue
- * @return {Element}
+ * @param {!EventTarget} descendant
+ * @param {!string} attributeName
+ * @param {!string} attributeValue
+ * @returns {?Element}
  */
 function getAncestorElementByAttribute(descendant, attributeName, attributeValue) {
-  let walker = descendant
-  while (walker !== null && walker.getAttribute(attributeName) !== attributeValue) {
-    walker = walker.parentNode instanceof Element ? walker.parentNode : null
+  if (descendant instanceof Element) {
+    let walker = descendant
+    while (walker && walker.getAttribute(attributeName) !== attributeValue) {
+      walker = walker.parentNode instanceof Element ? walker.parentNode : null
+    }
+    return walker
   }
-  return walker
+  return null
+}
+
+/**
+ * @param {?*} element
+ * @returns {?ILabel}
+ */
+function getLabel(element) {
+  return element && typeof element['data-item'] !== 'undefined' ? element['data-item'] : null
 }

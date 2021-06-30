@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -30,10 +30,12 @@ import {
   Class,
   GraphComponent,
   GraphTransformer,
+  ILayoutAlgorithm,
   LayoutGraphAdapter,
   OperationType,
   YBoolean,
-  YNumber
+  YNumber,
+  YString
 } from 'yfiles'
 
 import LayoutConfiguration from './LayoutConfiguration.js'
@@ -50,7 +52,6 @@ import {
 
 /**
  * Configuration options for the layout algorithm of the same name.
- * @yjs:keep=GeneralGroup,RotateGroup,ScaleGroup,TranslateGroup,actOnSelectionOnlyItem,applyBestFitRotationItem,operationItem,rotationAngleItem,scaleFactorItem,scaleNodeSizeItem,shouldDisableApplyBestFitRotationItem,shouldDisableRotationAngleItem,shouldDisableScaleFactorItem,shouldDisableScaleNodeSizeItem,shouldDisableTranslateXItem,shouldDisableTranslateYItem,translateXItem,translateYItem
  */
 const GraphTransformerConfig = Class('GraphTransformerConfig', {
   $extends: LayoutConfiguration,
@@ -71,13 +72,14 @@ const GraphTransformerConfig = Class('GraphTransformerConfig', {
     this.scaleNodeSizeItem = transformer.scaleNodeSize
     this.translateXItem = transformer.translateX
     this.translateYItem = transformer.translateY
+    this.title = 'Graph Transformer'
   },
 
   /**
    * Creates and configures a layout and the graph's {@link IGraph#mapperRegistry} if necessary.
-   * @param {GraphComponent} graphComponent The <code>GraphComponent</code> to apply the
+   * @param graphComponent The <code>GraphComponent</code> to apply the
    *   configuration on.
-   * @return {ILayoutAlgorithm} The configured layout  algorithm.
+   * @return The configured layout  algorithm.
    */
   createConfiguredLayout: function (graphComponent) {
     const transformer = new GraphTransformer()
@@ -105,8 +107,6 @@ const GraphTransformerConfig = Class('GraphTransformerConfig', {
     return transformer
   },
 
-  // ReSharper disable UnusedMember.Global
-  // ReSharper disable InconsistentNaming
   /** @type {OptionGroup} */
   GeneralGroup: {
     $meta: function () {
@@ -155,13 +155,19 @@ const GraphTransformerConfig = Class('GraphTransformerConfig', {
     value: null
   },
 
-  // ReSharper restore UnusedMember.Global
-  // ReSharper restore InconsistentNaming
-  /**
-   * Backing field for below property
-   * @type {OperationType}
-   */
-  $operationItem: null,
+  /** @type {string} */
+  descriptionText: {
+    $meta: function () {
+      return [
+        OptionGroupAttribute('DescriptionGroup', 10),
+        ComponentAttribute(Components.HTML_BLOCK),
+        TypeAttribute(YString.$class)
+      ]
+    },
+    get: function () {
+      return '<p>This layout algorithm applies geometric transformations to (sub-)graphs.</p><p>There are several ways to transform the graph that include mirroring, rotating, scaling and translating.</p>'
+    }
+  },
 
   /** @type {OperationType} */
   operationItem: {
@@ -181,19 +187,8 @@ const GraphTransformerConfig = Class('GraphTransformerConfig', {
         TypeAttribute(OperationType.$class)
       ]
     },
-    get: function () {
-      return this.$operationItem
-    },
-    set: function (value) {
-      this.$operationItem = value
-    }
+    value: null
   },
-
-  /**
-   * Backing field for below property
-   * @type {boolean}
-   */
-  $actOnSelectionOnlyItem: false,
 
   /** @type {boolean} */
   actOnSelectionOnlyItem: {
@@ -207,19 +202,8 @@ const GraphTransformerConfig = Class('GraphTransformerConfig', {
         TypeAttribute(YBoolean.$class)
       ]
     },
-    get: function () {
-      return this.$actOnSelectionOnlyItem
-    },
-    set: function (value) {
-      this.$actOnSelectionOnlyItem = value
-    }
+    value: false
   },
-
-  /**
-   * Backing field for below property
-   * @type {number}
-   */
-  $rotationAngleItem: 0,
 
   /** @type {number} */
   rotationAngleItem: {
@@ -238,12 +222,7 @@ const GraphTransformerConfig = Class('GraphTransformerConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function () {
-      return this.$rotationAngleItem
-    },
-    set: function (value) {
-      this.$rotationAngleItem = value
-    }
+    value: 0
   },
 
   /** @type {boolean} */
@@ -255,12 +234,6 @@ const GraphTransformerConfig = Class('GraphTransformerConfig', {
       return this.operationItem !== OperationType.ROTATE || this.applyBestFitRotationItem
     }
   },
-
-  /**
-   * Backing field for below property
-   * @type {boolean}
-   */
-  $applyBestFitRotationItem: false,
 
   /** @type {boolean} */
   applyBestFitRotationItem: {
@@ -274,12 +247,7 @@ const GraphTransformerConfig = Class('GraphTransformerConfig', {
         TypeAttribute(YBoolean.$class)
       ]
     },
-    get: function () {
-      return this.$applyBestFitRotationItem
-    },
-    set: function (value) {
-      this.$applyBestFitRotationItem = value
-    }
+    value: false
   },
 
   /** @type {boolean} */
@@ -291,12 +259,6 @@ const GraphTransformerConfig = Class('GraphTransformerConfig', {
       return this.operationItem !== OperationType.ROTATE
     }
   },
-
-  /**
-   * Backing field for below property
-   * @type {number}
-   */
-  $scaleFactorItem: 0,
 
   /** @type {number} */
   scaleFactorItem: {
@@ -316,12 +278,7 @@ const GraphTransformerConfig = Class('GraphTransformerConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function () {
-      return this.$scaleFactorItem
-    },
-    set: function (value) {
-      this.$scaleFactorItem = value
-    }
+    value: 0.1
   },
 
   /** @type {boolean} */
@@ -333,12 +290,6 @@ const GraphTransformerConfig = Class('GraphTransformerConfig', {
       return this.operationItem !== OperationType.SCALE
     }
   },
-
-  /**
-   * Backing field for below property
-   * @type {boolean}
-   */
-  $scaleNodeSizeItem: false,
 
   /** @type {boolean} */
   scaleNodeSizeItem: {
@@ -352,12 +303,7 @@ const GraphTransformerConfig = Class('GraphTransformerConfig', {
         TypeAttribute(YBoolean.$class)
       ]
     },
-    get: function () {
-      return this.$scaleNodeSizeItem
-    },
-    set: function (value) {
-      this.$scaleNodeSizeItem = value
-    }
+    value: false
   },
 
   /** @type {boolean} */
@@ -369,12 +315,6 @@ const GraphTransformerConfig = Class('GraphTransformerConfig', {
       return this.operationItem !== OperationType.SCALE
     }
   },
-
-  /**
-   * Backing field for below property
-   * @type {number}
-   */
-  $translateXItem: 0,
 
   /** @type {number} */
   translateXItem: {
@@ -388,12 +328,7 @@ const GraphTransformerConfig = Class('GraphTransformerConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function () {
-      return this.$translateXItem
-    },
-    set: function (value) {
-      this.$translateXItem = value
-    }
+    value: 0
   },
 
   /** @type {boolean} */
@@ -405,12 +340,6 @@ const GraphTransformerConfig = Class('GraphTransformerConfig', {
       return this.operationItem !== OperationType.TRANSLATE
     }
   },
-
-  /**
-   * Backing field for below property
-   * @type {number}
-   */
-  $translateYItem: 0,
 
   /** @type {number} */
   translateYItem: {
@@ -424,12 +353,7 @@ const GraphTransformerConfig = Class('GraphTransformerConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function () {
-      return this.$translateYItem
-    },
-    set: function (value) {
-      this.$translateYItem = value
-    }
+    value: 0
   },
 
   /** @type {boolean} */

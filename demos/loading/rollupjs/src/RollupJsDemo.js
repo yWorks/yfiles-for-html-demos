@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -26,9 +26,19 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { GraphComponent, GraphEditorInputMode, License, Rect, ShapeNodeStyle } from 'yfiles'
+import {
+  GraphComponent,
+  GraphEditorInputMode,
+  LayoutExecutorAsync,
+  License,
+  Rect,
+  ShapeNodeStyle
+} from 'yfiles'
 import license from './license.json'
 import { enableWorkarounds } from './utils/Workarounds'
+import LayoutWorker from './LayoutWorker.js'
+
+const layoutWorker = new LayoutWorker()
 
 License.value = license
 
@@ -48,6 +58,7 @@ graph.nodeDefaults.style = new ShapeNodeStyle({
 
 // Create small sample graph
 initializeGraph(graph)
+registerCommands()
 
 // Enable undo and center the graph in the view
 graph.undoEngineEnabled = true
@@ -59,4 +70,32 @@ function initializeGraph(graph) {
   const node3 = graph.createNode(new Rect(100, 150, 30, 30))
   graph.createEdge(node1, node2)
   graph.createEdge(node1, node3)
+}
+
+function registerCommands() {
+  document.querySelector("button[data-command='Layout']").addEventListener('click', runLayout)
+}
+
+/**
+ * Runs a layout in a web worker
+ */
+function runLayout() {
+  // helper function that performs the actual message passing to the web worker
+  function webWorkerMessageHandler(data) {
+    return new Promise(resolve => {
+      layoutWorker.onmessage = e => resolve(e.data)
+      layoutWorker.postMessage(data)
+    })
+  }
+
+  // create an asynchronous layout executor that calculates a layout on the worker
+  const executor = new LayoutExecutorAsync({
+    messageHandler: webWorkerMessageHandler,
+    graphComponent,
+    duration: '1s',
+    easedAnimation: true,
+    animateViewport: true
+  })
+
+  return executor.start()
 }

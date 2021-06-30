@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -41,7 +41,7 @@ import {
 export default class MyReparentHandler extends BaseClass(IReparentNodeHandler) {
   /**
    * Creates a new instance of MyReparentHandler.
-   * @param {IReparentNodeHandler} coreHandler
+   * @param {!IReparentNodeHandler} coreHandler
    */
   constructor(coreHandler) {
     super()
@@ -49,18 +49,18 @@ export default class MyReparentHandler extends BaseClass(IReparentNodeHandler) {
   }
 
   /**
-   * @param {IInputModeContext} context
-   * @param {INode} node
-   * @return {boolean}
+   * @param {!IInputModeContext} context
+   * @param {!INode} node
+   * @returns {boolean}
    */
   isReparentGesture(context, node) {
     return this.coreHandler.isReparentGesture(context, node)
   }
 
   /**
-   * @param {IInputModeContext} context
-   * @param {INode} node
-   * @return {boolean}
+   * @param {!IInputModeContext} context
+   * @param {!INode} node
+   * @returns {boolean}
    */
   shouldReparent(context, node) {
     // Ok, this node has a table associated - disallow dragging into a group node.
@@ -71,19 +71,19 @@ export default class MyReparentHandler extends BaseClass(IReparentNodeHandler) {
   }
 
   /**
-   * @param {IInputModeContext} context
-   * @param {INode} node
-   * @param {INode} newParent
-   * @return {boolean}
+   * @param {!IInputModeContext} context
+   * @param {!INode} node
+   * @param {!INode} newParent
+   * @returns {boolean}
    */
   isValidParent(context, node, newParent) {
     return this.coreHandler.isValidParent(context, node, newParent)
   }
 
   /**
-   * @param {IInputModeContext} context
-   * @param {INode} node
-   * @param {INode} newParent
+   * @param {!IInputModeContext} context
+   * @param {!INode} node
+   * @param {!INode} newParent
    */
   reparent(context, node, newParent) {
     this.coreHandler.reparent(context, node, newParent)

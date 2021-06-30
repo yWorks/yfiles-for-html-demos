@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -34,7 +34,6 @@ import {
   Cursor,
   Cycle,
   DefaultLabelStyle,
-  Enum,
   FilteredGraphWrapper,
   GraphBuilder,
   GraphComponent,
@@ -53,7 +52,9 @@ import {
   IGraph,
   ILabelModelParameter,
   ILabelStyle,
+  IMap,
   IMementoSupport,
+  IModelItem,
   INode,
   INodeStyle,
   Insets,
@@ -63,6 +64,7 @@ import {
   LayoutMode,
   LayoutOrientation,
   License,
+  List,
   Matrix,
   PlaceNodesAtBarycenterStage,
   PlaceNodesAtBarycenterStageData,
@@ -71,9 +73,11 @@ import {
   PortAdjustmentPolicy,
   Rect,
   ShapeNodeStyle,
+  SimplexNodePlacer,
   Size,
   TransitiveClosure,
   TransitiveReduction,
+  UndoEngine,
   UndoUnitBase,
   ViewportAnimation
 } from 'yfiles'
@@ -93,19 +97,17 @@ import loadJson from '../../resources/load-json.js'
 
 /**
  * @typedef {Object} NpmPackageInfo
- * @property {String} name
- * @property {String} version
+ * @property {string} name
+ * @property {string} version
  */
 
 /**
  * The port of the proxy server for the npm package API.
- * @type {string}
  */
-const proxyPort = location.protocol !== 'file:' && location.port !== 80 ? location.port : '4242'
+const proxyPort = location.protocol !== 'file:' && location.port !== '80' ? location.port : '4242'
 
 /**
  * Maximum number of npm modules to add before resorting to expand-functionality
- * @type {number}
  */
 const maxNpmModules = 50
 
@@ -113,81 +115,81 @@ const maxNpmModules = 50
  * The {@link GraphComponent} which contains the {@link IGraph}.
  * @type {GraphComponent}
  */
-let graphComponent = null
+let graphComponent
 
 /**
  * The node style that is applied to all nodes.
  * It provides an icon and buttons to reveal additional dependents/dependencies.
  * @type {INodeStyle}
  */
-let defaultNodeStyle = null
+let defaultNodeStyle
 
 /**
  * The node label style that is applied to all labels.
  * It provides a label without background and white text.
  * @type {ILabelStyle}
  */
-let nodeLabelStyle = null
+let nodeLabelStyle
 
 /**
  * The parameter for all node labels.
  * It keeps the labels on the right side of the node.
  * @type {ILabelModelParameter}
  */
-let nodeLabelParameter = null
+let nodeLabelParameter
 
 /**
  * The edge style that is applied to all original, non-transitive edges in the graph.
  * Normal edges are visualized with a solid black line and arrow.
  * @type {IEdgeStyle}
  */
-let normalEdgeStyle = null
+let normalEdgeStyle
 
 /**
  * The edge style that is applied to all edges that were added when calculating the transitive
  * closure. Those edges are visualized with a solid blue line and arrow.
  * @type {IEdgeStyle}
  */
-let addedEdgeStyle = null
+let addedEdgeStyle
 
 /**
  * The edge style that is applied to all edges that were removed when calculating the transitive
  * reduction. Those edges are visualized with a dashed grey line and an arrow.
  * @type {IEdgeStyle}
  */
-let removedEdgeStyle = null
+let removedEdgeStyle
 
 /**
  * The layout algorithm that is used for every layout calculation in this demo.
  * It is configured in {@link initializeLayout()}.
  * @type {HierarchicLayout}
  */
-let layout = null
+let layout
 
 /**
- * Marks whether or not the demo is currently layouting the graph.
+ * Marks whether or not the demo is currently applying a layout to the graph.
  * During layout, the toolbar is disabled.
- * @type boolean
+ * @type {boolean}
  */
-let layouting = false
+let layoutInProgress = false
 
 /**
  * Changes the toolbar state according to if a layout is running or not.
- * @param {boolean} isLayouting
+ * @param {boolean} inProgress
  */
-function setLayouting(isLayouting) {
+function setLayoutInProgress(inProgress) {
   if (!busy) {
     // only change toolbar-state when not busy loading npm-packages
     // since there are layout calculations during loading
-    setUIDisabled(isLayouting)
+    setUIDisabled(inProgress)
   }
-  layouting = isLayouting
+  layoutInProgress = inProgress
 }
 
 /**
  * Marks whether or not the demo is currently loading npm-packages.
  * When busy, the mouse cursor is changed and the toolbar as well as the input modes are disabled.
- * @type boolean
+ * @type {boolean}
  */
 let busy = false
 
@@ -205,29 +207,29 @@ function setBusy(isBusy) {
  * Combo box to select one of the different algorithms.
  * It provides access to transitive reduction, transitive closure and returning to the original
  * graph.
- * @type {HTMLElement}
+ * @type {HTMLSelectElement}
  */
-let algorithmComboBox = null
+let algorithmComboBox
 
 /**
  * Text box to request the dependency graph for a certain npm-package.
  * It is only available if npm-packages are browsed.
- * @type {HTMLElement}
+ * @type {HTMLInputElement}
  */
-let packageTextBox = null
+let packageTextBox
 
 /**
  * Combo box to select one of the two samples.
  * There is an dependency graph of the <em>yFiles for HTML</em> modules as well as the possibility
  * to browse npm-packages with their dependencies.
- * @type {HTMLElement}
+ * @type {HTMLSelectElement}
  */
-let samplesComboBox = null
+let samplesComboBox
 
 /**
  * Holds all edges that are added when calculating the transitive closure.
  * These edges are removed when the original graph is restored.
- * @type {Array.<IEdge>}
+ * @type {Array}
  */
 let addedEdges = []
 
@@ -235,7 +237,7 @@ let addedEdges = []
  * Holds all nodes that are added when loading npm-packages and are not part of the layout, yet.
  * If the number of these nodes reaches a certain limit, they are inserted in the layout
  * incrementally.
- * @type {Array.<INode>}
+ * @type {Array}
  */
 let addedNodes = []
 
@@ -265,17 +267,17 @@ let filteredEdges = null
  * {@link edgePredicate(INode)}.
  * @type {FilteredGraphWrapper}
  */
-let filteredGraph = null
+let filteredGraph
 
 /**
  * Holds all nodes that should be inserted into the layout incrementally at then next layout run.
- * @type {Array.<INode>}
+ * @type {Array}
  */
 let incrementalNodes = []
 
 /**
  * Holds all edges that should be inserted into the layout incrementally at then next layout run.
- * @type {Array.<INode>}
+ * @type {Array}
  */
 let incrementalEdges = []
 
@@ -289,9 +291,9 @@ let showTransitiveEdges = true
  * Stores all npm-packages that have been visited to be able to reuse those nodes instead of
  * reloading them. This mapper will be cleared when switching samples or loading a new npm-package
  * graph.
- * @type {Map.<string, INode>}
+ * @type {IMap.<string,INode>}
  */
-let visitedPackages = null
+let visitedPackages
 
 /**
  * The node whose dependencies are currently shown.
@@ -314,6 +316,7 @@ let dependenciesNo = 0
 
 /**
  * Starts a demo that shows how to use the yFiles transitivity algorithms.
+ * @param {*} licenseData
  */
 function run(licenseData) {
   License.value = licenseData
@@ -323,11 +326,7 @@ function run(licenseData) {
   algorithmComboBox = document.getElementById('algorithmComboBox')
 
   // use a filtered graph to have control over which nodes and edges are visible at any time
-  filteredGraph = new FilteredGraphWrapper(
-    graphComponent.graph,
-    nodePredicate.bind(this),
-    edgePredicate.bind(this)
-  )
+  filteredGraph = new FilteredGraphWrapper(graphComponent.graph, nodePredicate, edgePredicate)
   graphComponent.graph = filteredGraph
 
   // load input module and initialize input
@@ -346,6 +345,15 @@ function run(licenseData) {
 }
 
 /**
+ * Gets the undo engine from the graph associated to the given graph component.
+ * @param {!GraphComponent} graphComponent the demo's graph component
+ * @returns {!UndoEngine} the undo engine that is associated to graph of the given graph component.
+ */
+function getUndoEngine(graphComponent) {
+  return graphComponent.graph.undoEngine
+}
+
+/**
  * Registers the JavaScript commands for the GUI elements, typically the
  * tool bar buttons, during the creation of this application.
  */
@@ -356,15 +364,9 @@ function registerCommands() {
   bindCommand("button[data-command='Undo']", ICommand.UNDO, graphComponent)
   bindCommand("button[data-command='Redo']", ICommand.REDO, graphComponent)
 
-  bindChangeListener(
-    "select[data-command='SampleSelectionChanged']",
-    onSampleGraphChanged.bind(this)
-  )
-  bindChangeListener(
-    "select[data-command='AlgorithmSelectionChanged']",
-    onAlgorithmChanged.bind(this)
-  )
-  bindAction("button[data-command='LoadDependencies']", loadGraph.bind(this))
+  bindChangeListener("select[data-command='SampleSelectionChanged']", onSampleGraphChanged)
+  bindChangeListener("select[data-command='AlgorithmSelectionChanged']", onAlgorithmChanged)
+  bindAction("button[data-command='LoadDependencies']", loadGraph)
 
   bindAction("button[data-command='RunLayout']", () => {
     applyLayout(false)
@@ -372,7 +374,7 @@ function registerCommands() {
 
   bindAction("input[data-command='ShowTransitiveEdges']", async () => {
     const button = document.getElementById('showTransitiveEdgesButton')
-    showTransitiveEdges = button.checked
+    showTransitiveEdges = !!button && button.checked
     if (algorithmComboBox.selectedIndex === 2) {
       const undoEdit = beginUndoEdit('undoShowTransitiveEdges', 'redoShowTransitiveEdges')
       resetGraph()
@@ -381,21 +383,23 @@ function registerCommands() {
       commitUndoEdit(undoEdit)
     }
   })
-
-  graphComponent.inputMode.keyboardInputMode.addCommandBinding(
+  const gvim = graphComponent.inputMode
+  gvim.keyboardInputMode.addCommandBinding(
     ICommand.UNDO,
-    () => {
-      graphComponent.graph.undoEngine.undo()
+    (command, parameter, source) => {
+      getUndoEngine(graphComponent).undo()
+      return true
     },
-    () => graphComponent.graph.undoEngine.canUndo()
+    () => getUndoEngine(graphComponent).canUndo()
   )
 
-  graphComponent.inputMode.keyboardInputMode.addCommandBinding(
+  gvim.keyboardInputMode.addCommandBinding(
     ICommand.REDO,
-    () => {
-      graphComponent.graph.undoEngine.redo()
+    (command, parameter, source) => {
+      getUndoEngine(graphComponent).redo()
+      return true
     },
-    () => graphComponent.graph.undoEngine.canRedo()
+    () => getUndoEngine(graphComponent).canRedo()
   )
 
   packageTextBox = document.getElementById('packageTextBox')
@@ -414,8 +418,8 @@ function registerCommands() {
 
 /**
  * Returns enlarged bounds for the given item that correspond to the highlight bounds.
- * @param {INode} item The item whose bounds are enlarged.
- * @return {Rect} The new bounds.
+ * @param {!INode} item The item whose bounds are enlarged.
+ * @returns {!Rect} The new bounds.
  */
 function getEnlargedNodeBounds(item) {
   const nodeBounds = item.layout.toRect()
@@ -443,9 +447,9 @@ function initializeInputModes() {
   })
 
   // show enlarged nodes on hover
-  mode.itemHoverInputMode.addHoveredItemChangedListener((sender, eventArgs) => {
-    const item = eventArgs.item
-    const oldItem = eventArgs.oldItem
+  mode.itemHoverInputMode.addHoveredItemChangedListener((sender, args) => {
+    const item = args.item
+    const oldItem = args.oldItem
 
     const highlightManager = graphComponent.highlightIndicatorManager
     if (item) {
@@ -468,14 +472,15 @@ function initializeInputModes() {
     new MagnifyNodeHighlightInstaller()
   )
 
-  mode.addItemClickedListener(async (sender, e) => {
+  mode.addItemClickedListener(async (sender, args) => {
     // check if the clicked item is a node or if the loaded graph is yfiles/modules, since this graph has
     // no pending dependencies... in this case, we have to execute the code in addItemSelectedListener.
-    if (INode.isInstance(e.item)) {
-      e.handled = true
+    if (args.item instanceof INode) {
+      args.handled = true
 
-      const item = e.item
-      const clickPoint = graphComponent.inputMode.clickInputMode.clickLocation
+      const item = args.item
+      const gvim = graphComponent.inputMode
+      const clickPoint = gvim.clickInputMode.clickLocation
 
       // if the node is hovered, we have to use the enlarged bounds of the highlight
       const nodeBounds = getEnlargedNodeBounds(item)
@@ -490,7 +495,7 @@ function initializeInputModes() {
         handlePendingDependencies(item, existingPackages)
       } else if (item !== startNode) {
         const undoEdit = beginUndoEdit('undoChangeStartNode', 'redoChangeStartNode')
-        graphComponent.graph.undoEngine.addUnit(new ChangedSetUndoUnit())
+        getUndoEngine(graphComponent).addUnit(new ChangedSetUndoUnit())
         graphComponent.currentItem = item
         filteredGraph.nodes.forEach(node => {
           node.tag.pendingDependencies = false
@@ -507,12 +512,13 @@ function initializeInputModes() {
 /**
  * Loads pending dependencies for the given node in case the click-point is located in the
  * according circle.
- * @param {INode} item the node whose dependencies are completed.
- * @param {Map} existingPackages A mapping of existing packages.
+ * @param {!INode} item the node whose dependencies are completed.
+ * @param {!IMap.<string,INode>} existingPackages A mapping of existing packages.
+ * @returns {!Promise}
  */
 async function handlePendingDependencies(item, existingPackages) {
   const undoEdit = beginUndoEdit('undoLoadPendingDependencies', 'redoLoadPendingDependencies')
-  graphComponent.graph.undoEngine.addUnit(new ChangedSetUndoUnit())
+  getUndoEngine(graphComponent).addUnit(new ChangedSetUndoUnit())
 
   filteredGraph.nodes.forEach(node => {
     existingPackages.set(node.labels.get(0).text, node)
@@ -541,7 +547,7 @@ async function handlePendingDependencies(item, existingPackages) {
 
 /**
  * Animates the view port based on the newly inserted nodes.
- * @param {INode} hoveredItem The item that has been currently hovered
+ * @param {!INode} hoveredItem The item that has been currently hovered
  */
 function animateViewPort(hoveredItem) {
   let minX = Number.POSITIVE_INFINITY
@@ -576,7 +582,7 @@ function animateViewPort(hoveredItem) {
  */
 function initializeStyles() {
   const shapeNodeStyle = new ShapeNodeStyle({
-    shape: 'round_rectangle',
+    shape: 'round-rectangle',
     stroke: 'rgb(102, 153, 204)',
     fill: 'rgb(102, 153, 204)'
   })
@@ -650,6 +656,7 @@ function initializeLayout() {
 /**
  * Loads a new dependency graph according to which sample is selected.
  * This function is also called if a new start package is chosen.
+ * @returns {!Promise}
  */
 async function loadGraph() {
   filteredGraph.wrappedGraph.clear()
@@ -708,7 +715,7 @@ async function loadGraph() {
       filteredEdges = new Set()
       visitedPackages = new HashMap()
       await updateGraph({ name: packageText, version: 'latest' }, false)
-      graphComponent.graph.undoEngine.clear()
+      getUndoEngine(graphComponent).clear()
     }
   }
 }
@@ -716,8 +723,9 @@ async function loadGraph() {
 /**
  * Updates the graph by filling it with nodes that represent npm-packages.
  * The packages are loaded asynchronously from the internet.
- * @param {NpmPackageInfo} pckg - the start package info
+ * @param {!NpmPackageInfo} pckg - the start package info
  * @param {boolean} incremental <code>true</code> if the layouts should be incremental
+ * @returns {!Promise}
  */
 async function updateGraph(pckg, incremental) {
   setBusy(true)
@@ -754,7 +762,8 @@ async function updateGraph(pckg, incremental) {
 
 /**
  * Retrieves the node from where the dependencies unfold, asynchronously.
- * @param {NpmPackageInfo} pckg the package info represented by the start node
+ * @param {!NpmPackageInfo} pckg the package info represented by the start node
+ * @returns {!INode}
  */
 function createModuleNode(pckg) {
   let node = visitedPackages.get(pckg.name)
@@ -782,8 +791,8 @@ function createModuleNode(pckg) {
 
 /**
  * Returns the node that represents the given package.
- * @param {string} packageName the name of the package and the label of the node
- * @return {INode}
+ * @param {!string} packageName the name of the package and the label of the node
+ * @returns {?INode}
  */
 function getInitialPackage(packageName) {
   let initialPackageNode = null
@@ -797,10 +806,10 @@ function getInitialPackage(packageName) {
 
 /**
  * Adds nodes for all dependencies asynchronously.
- * @param {INode} pred the predecessor node
- * @param {Array.<NpmPackageInfo>} predDependencies all dependencies of pred
+ * @param {!INode} pred the predecessor node
+ * @param {!Array.<NpmPackageInfo>} predDependencies all dependencies of pred
  * @param {boolean} incremental whether or not the layout is applied incrementally
- * @return {Promise}
+ * @returns {!Promise}
  */
 async function addDependencies(pred, predDependencies, incremental) {
   const next = []
@@ -815,7 +824,7 @@ async function addDependencies(pred, predDependencies, incremental) {
         node = createModuleNode(dependency)
         const dependencies = await fetchDependencies(dependency)
         if (dependencies.length > 0) {
-          next.push([node, dependencies])
+          next.push({ node, dependencies })
           pendingDeps += dependencies.length
         }
       } else {
@@ -843,21 +852,21 @@ async function addDependencies(pred, predDependencies, incremental) {
     }
   }
   for (const info of next) {
-    await addDependencies(info[0], info[1], incremental)
+    await addDependencies(info.node, info.dependencies, incremental)
   }
 }
 
 /**
  * Returns the edge between the two given nodes in the graph or <code>null</code> if there is none.
- * @param {IGraph} graph the graph to which the edge belongs
- * @param {INode} node1 one incident node to the edge
- * @param {INode} node2 another incident node to the edge
- * @return {IEdge}
+ * @param {!IGraph} graph the graph to which the edge belongs
+ * @param {!INode} node1 one incident node to the edge
+ * @param {!INode} node2 another incident node to the edge
+ * @returns {?IEdge}
  */
 function getEdge(graph, node1, node2) {
   const outEdges = graph.outEdgesAt(node1)
   for (const outEdge of outEdges) {
-    if (outEdge.targetNode.equals(node2)) {
+    if (outEdge.targetNode == node2) {
       return outEdge
     }
   }
@@ -867,9 +876,9 @@ function getEdge(graph, node1, node2) {
 /**
  * Unfolds dependencies in the npm-graph that were not loaded because the graph was already large,
  * asynchronously. This function is called when the plus-sign on the right of the node is clicked.
- * @param {INode} pred the node that represents the predecessor
+ * @param {!INode} pred the node that represents the predecessor
  * @param {boolean} incremental whether or not the layout should be incremental
- * @return {Promise}
+ * @returns {!Promise.<Array.<void>>}
  */
 async function onAddDependencies(pred, incremental) {
   const promises = filteredGraph.wrappedGraph
@@ -917,8 +926,7 @@ async function onAddDependencies(pred, incremental) {
       await tryLayout(incremental)
 
       const dependencies = await fetchDependencies(dependency)
-      node.tag.pendingDependencies =
-        dependencies.length > filteredGraph.wrappedGraph.outDegree(node)
+      node.tag.pendingDependencies = dependencies.length > wrappedGraph.outDegree(node)
     })
   )
   return Promise.all(promises)
@@ -927,18 +935,17 @@ async function onAddDependencies(pred, incremental) {
 /**
  * Invokes a layout if there are enough new nodes in the graph and no previous layout is running.
  * @param {boolean} incremental whether or not the layout is calculated incrementally
+ * @returns {!Promise}
  */
 async function tryLayout(incremental) {
   // this method should return a promise so that resolve in method addDependencies is called
   // only if layout is done
-  if (!layouting && addedNodes.length > 5) {
-    let i = 5
-    while (i > 0) {
+  if (!layoutInProgress && addedNodes.length > 5) {
+    for (let i = 5; i > 0; --i) {
       const node = addedNodes.shift()
       filteredNodes.add(node)
       incrementalNodes.push(node)
       filteredGraph.nodePredicateChanged(node)
-      i--
     }
     await applyLayout(incremental)
   }
@@ -946,8 +953,8 @@ async function tryLayout(incremental) {
 
 /**
  * Send a query for the given url that requests data about npm-packages.
- * @param {string} url The url that is used to request data about npm-packages.
- * @return {Promise}
+ * @param {!string} url The url that is used to request data about npm-packages.
+ * @returns {!Promise}
  */
 async function requestData(url) {
   const response = await fetch(url)
@@ -964,8 +971,8 @@ async function requestData(url) {
 }
 
 /**
- * @param {object} pckg
- * @return {Promise<object[]>}
+ * @param {!NpmPackageInfo} pckg
+ * @returns {!Promise.<Array.<NpmPackageInfo>>}
  */
 async function fetchDependencies(pckg) {
   const url = `http://localhost:${proxyPort}/npm-request?type=dependencies&package=${pckg.name}&version=${pckg.version}`
@@ -989,6 +996,7 @@ async function fetchDependencies(pckg) {
 
 /**
  * Invokes the selected algorithms when another algorithm is chosen in the combo box.
+ * @returns {!Promise}
  */
 async function onAlgorithmChanged() {
   if (!algorithmComboBox) {
@@ -1007,7 +1015,7 @@ async function onAlgorithmChanged() {
   resetGraph()
   applyAlgorithm()
   await applyLayout(true)
-  graphComponent.graph.undoEngine.clear()
+  getUndoEngine(graphComponent).clear()
 }
 
 /**
@@ -1087,7 +1095,8 @@ function applyAlgorithm() {
  * Returns whether or not the given edge should be visible.
  * An edge is visible if it is not removed during transitive reduction and is contained in
  * {@link filteredEdges}.
- * @return {boolean}
+ * @param {!IEdge} edge
+ * @returns {boolean}
  */
 function edgePredicate(edge) {
   return (
@@ -1098,7 +1107,8 @@ function edgePredicate(edge) {
 /**
  * Returns whether or not the given node should be visible.
  * A node is visible if it is contains in {@link filteredNodes}.
- * @return {boolean}
+ * @param {!INode} node
+ * @returns {boolean}
  */
 function nodePredicate(node) {
   return !filteredNodes || filteredNodes.has(node)
@@ -1106,7 +1116,8 @@ function nodePredicate(node) {
 
 /**
  * Filters the graph after selecting a different start node interactively.
- * @param {INode} clickedNode The new start node.
+ * @param {!INode} clickedNode The new start node.
+ * @returns {!Promise}
  */
 async function filterGraph(clickedNode) {
   resetGraph()
@@ -1142,12 +1153,12 @@ async function filterGraph(clickedNode) {
       const oppositeNode = edge.opposite(clickedNode)
       // we have to check if the node is already taken into consideration in the calculation of dependents
       if (!filteredNodes.has(oppositeNode)) {
-        filteredNodes.add(oppositeNode)
+        !filteredNodes.add(oppositeNode)
         dependentsNo++
       }
     })
 
-    filteredNodes.add(clickedNode)
+    !filteredNodes.add(clickedNode)
     collectConnectedNodes(clickedNode, fullGraph, true)
     collectConnectedNodes(clickedNode, fullGraph, false)
 
@@ -1169,54 +1180,58 @@ async function filterGraph(clickedNode) {
     return applyLayout(true)
   } else {
     const packageNode = graphComponent.currentItem
-    filteredNodes.add(packageNode)
+    if (packageNode && packageNode instanceof INode) {
+      filteredNodes.add(packageNode)
 
-    filteredGraph.inEdgesAt(packageNode).forEach(edge => {
-      filteredEdges.add(edge)
+      filteredGraph.inEdgesAt(packageNode).forEach(edge => {
+        filteredEdges.add(edge)
 
-      const source = edge.sourceNode
-      filteredNodes.add(source)
-    })
+        const source = edge.sourceNode
+        filteredNodes.add(source)
+      })
 
-    const visited = []
-    const edgeStack = filteredGraph.outEdgesAt(packageNode).toArray()
-    while (edgeStack.length > 0) {
-      const edge = edgeStack.pop()
-      filteredEdges.add(edge)
+      const visited = []
+      const edgeStack = filteredGraph.outEdgesAt(packageNode).toArray()
+      while (edgeStack.length > 0) {
+        const edge = edgeStack.pop()
+        filteredEdges.add(edge)
 
-      const target = edge.targetNode
-      filteredNodes.add(target)
-      if (visited.indexOf(target) < 0) {
-        dependenciesNo++
-        visited.push(target)
+        const target = edge.targetNode
+        filteredNodes.add(target)
+        if (visited.indexOf(target) < 0) {
+          dependenciesNo++
+          visited.push(target)
+        }
+
+        filteredGraph.outEdgesAt(target).forEach(outEdge => {
+          if (!visited.includes(outEdge.targetNode)) {
+            edgeStack.push(outEdge)
+          }
+        })
       }
 
-      filteredGraph.outEdgesAt(target).forEach(outEdge => {
-        if (!visited.includes(outEdge.targetNode)) {
-          edgeStack.push(outEdge)
-        }
-      })
+      filteredGraph.nodePredicateChanged()
+      filteredGraph.edgePredicateChanged()
+
+      return updateGraph(packageNode.tag.pkg, true)
+    } else {
+      return new Promise(() => {})
     }
-
-    filteredGraph.nodePredicateChanged()
-    filteredGraph.edgePredicateChanged()
-
-    return updateGraph(packageNode.tag.pkg, true)
   }
 }
 
 /**
  * Collects and changes the visible state of the nodes/edges connected to the given node,
  * recursively. Depending on the out-parameter dependents or dependencies are collected.
- * @param {INode} initialNode The node to start collecting of nodes.
- * @param {IGraph} graph The graph.
+ * @param {!INode} initialNode The node to start collecting of nodes.
+ * @param {!IGraph} graph The graph.
  * @param {boolean} out whether or not to collect dependents or dependencies.
  */
 function collectConnectedNodes(initialNode, graph, out) {
   // recursively collect all children of the successors of the clicked node
   const stack = []
   stack.push(initialNode)
-  while (stack.length !== 0) {
+  while (stack.length > 0) {
     const node = stack.pop()
     const edges = out ? graph.outEdgesAt(node) : graph.inEdgesAt(node)
     edges.forEach(edge => {
@@ -1241,10 +1256,8 @@ function collectConnectedNodes(initialNode, graph, out) {
  * Previously added edges are deleted and removed edges are reinserted.
  */
 function resetGraph() {
-  if (addedEdges !== null && addedEdges.length !== 0) {
-    addedEdges.forEach(edge => {
-      filteredGraph.remove(edge)
-    })
+  if (addedEdges.length !== 0) {
+    addedEdges.forEach(edge => filteredGraph.remove(edge))
 
     addedEdges = []
   }
@@ -1252,28 +1265,25 @@ function resetGraph() {
   removedEdgesSet = null
   filteredGraph.edgePredicateChanged()
 
-  filteredGraph.edges.forEach(edge => {
-    filteredGraph.setStyle(edge, normalEdgeStyle)
-  })
+  filteredGraph.edges.forEach(edge => filteredGraph.setStyle(edge, normalEdgeStyle))
 
-  filteredGraph.nodes.forEach(node => {
-    node.tag.highlight = false
-  })
+  filteredGraph.nodes.forEach(node => (node.tag.highlight = false))
 }
 
 /**
  * Applies the layout to the current graph.
  * @param {boolean} incremental <code>true</code> if an incremental layout is desired,
  *   <code>false</code> otherwise
+ * @returns {!Promise}
  */
 async function applyLayout(incremental) {
   // if is in layout or the graph has no nodes then return.
   // it is important to check if nodes === 0, since else Exceptions can occur due to asynchronous
   // calls of this function
-  if (filteredGraph.nodes.size === 0 || layouting) {
+  if (filteredGraph.nodes.size === 0 || layoutInProgress) {
     return
   }
-  setLayouting(true)
+  setLayoutInProgress(true)
 
   // sort nodes by label text
   const nodes = filteredGraph.nodes.toList()
@@ -1293,11 +1303,11 @@ async function applyLayout(incremental) {
 
   if (incremental) {
     layout.layoutMode = LayoutMode.INCREMENTAL
-    layoutData.incrementalHints.incrementalLayeringNodes = incrementalNodes.filter(node =>
-      filteredGraph.contains(node)
+    layoutData.incrementalHints.incrementalLayeringNodes.items = List.from(
+      incrementalNodes.filter(node => filteredGraph.contains(node))
     )
-    layoutData.incrementalHints.incrementalSequencingItems = incrementalEdges.filter(node =>
-      filteredGraph.contains(node)
+    layoutData.incrementalHints.incrementalSequencingItems.items = List.from(
+      incrementalEdges.filter(node => filteredGraph.contains(node))
     )
 
     prepareSmoothLayoutAnimation()
@@ -1334,13 +1344,14 @@ async function applyLayout(incremental) {
     // check where the mouse is located after layout and adjust highlight
     graphComponent.inputMode.itemHoverInputMode.updateHover()
   } catch (error) {
-    if (typeof window.reportError === 'function') {
-      window.reportError(error)
+    const reporter = window.reportError
+    if (typeof reporter === 'function') {
+      reporter(error)
     } else {
       throw error
     }
   } finally {
-    setLayouting(false)
+    setLayoutInProgress(false)
   }
 }
 
@@ -1364,6 +1375,7 @@ function prepareSmoothLayoutAnimation() {
 
 /**
  * Changes the disabled-state of all UI elements in the toolbar.
+ * @param {boolean} disabled
  */
 function setUIDisabled(disabled) {
   graphComponent.inputMode.waitInputMode.waiting = disabled
@@ -1378,8 +1390,8 @@ function setUIDisabled(disabled) {
 /**
  * Checks if the given click-point belongs to one of the circles representing the dependencies of
  * the node.
- * @param {Rect} nodeBounds the enlarged node bounds
- * @param {Point} clickPoint the clicked point
+ * @param {!Rect} nodeBounds the enlarged node bounds
+ * @param {!Point} clickPoint the clicked point
  * @param {number} x the starting x-coordinate for defining the circle
  * @returns {boolean}
  */
@@ -1399,7 +1411,7 @@ function clickIsInCircle(nodeBounds, clickPoint, x) {
 
 /**
  * Checks if the nodes of the given list have pending dependencies.
- * @param {INode} packageNode the first node to check
+ * @param {!INode} packageNode the first node to check
  * @returns {boolean}
  */
 function existPendingRelations(packageNode) {
@@ -1410,16 +1422,16 @@ function existPendingRelations(packageNode) {
     return true
   }
 
-  filteredGraph.nodes.forEach(node => {
-    pendingRelations |= node.tag && node.tag.pendingDependencies
-  })
+  filteredGraph.nodes.forEach(
+    node => (pendingRelations |= node.tag && node.tag.pendingDependencies)
+  )
 
   return pendingRelations
 }
 
 /**
  * Updates the table when dependencies are loaded.
- * @param {INode} packageNode the start node
+ * @param {!INode} packageNode the start node
  */
 function updateGraphInformation(packageNode) {
   const table = document.getElementById('graph-information')
@@ -1428,7 +1440,7 @@ function updateGraphInformation(packageNode) {
   // remove the dependents row if the graph is not module
   if (samplesComboBox.selectedIndex === SampleName.YFILES_MODULES_SAMPLE) {
     removeClass(table.rows[1], 'row-invisible')
-    table.rows[1].cells[1].innerHTML = dependentsNo
+    table.rows[1].cells[1].innerHTML = dependentsNo.toString()
   } else {
     addClass(table.rows[1], 'row-invisible')
   }
@@ -1440,16 +1452,18 @@ function updateGraphInformation(packageNode) {
     samplesComboBox.selectedIndex === SampleName.NPM_PACKAGES_SAMPLE
       ? existPendingRelations(packageNode)
       : false
-  table.rows[2].cells[1].innerHTML = dependencies + (existPendingDependencies ? '<sup>+</sup>' : '')
+  table.rows[2].cells[1].innerHTML = `${dependencies}${
+    existPendingDependencies ? '<sup>+</sup>' : ''
+  }`
 
   // update number of graph nodes and edges
-  table.rows[3].cells[1].innerHTML = filteredGraph.nodes.size
-  table.rows[4].cells[1].innerHTML = filteredGraph.edges.size
+  table.rows[3].cells[1].innerHTML = filteredGraph.nodes.size.toString()
+  table.rows[4].cells[1].innerHTML = filteredGraph.edges.size.toString()
 }
 
 /**
  * Resets the table when the sample graph changes.
- * @param {string} packageName the name of the start package
+ * @param {!string} packageName the name of the start package
  */
 function resetTable(packageName) {
   const table = document.getElementById('graph-information')
@@ -1462,6 +1476,7 @@ function resetTable(packageName) {
 
 /**
  * Displays or hides the loading indicator.
+ * @param {boolean} visible
  */
 function setLoadingIndicatorVisibility(visible) {
   const loadingIndicator = document.getElementById('loadingIndicator')
@@ -1470,28 +1485,32 @@ function setLoadingIndicatorVisibility(visible) {
 
 /**
  * Enum definition for accessing different transitivity algorithms.
+ * @readonly
+ * @enum {number}
  */
-const AlgorithmName = Enum({
+const AlgorithmName = {
   ORIGINAL_GRAPH: 0,
   TRANSITIVITY_CLOSURE: 1,
   TRANSITIVITY_REDUCTION: 2
-})
+}
 
 /**
  * Enum definition for accessing different samples.
+ * @readonly
+ * @enum {number}
  */
-const SampleName = Enum({
+const SampleName = {
   YFILES_MODULES_SAMPLE: 0,
   NPM_PACKAGES_SAMPLE: 1
-})
+}
 
 /**
  * Begins an undo edit to encapsulate several changes in one undo/redo steps.
- * @param {string} undoName The undo name.
- * @param {string} redoName The redo name.
- * @return {{compoundEdit: ICompoundEdit, tagEdit: ICompoundEdit}}
+ * @param {!string} undoName The undo name.
+ * @param {!string} redoName The redo name.
  * @see {@link commitUndoEdit}
  * @see {@link cancelUndoEdit}
+ * @returns {!object}
  */
 function beginUndoEdit(undoName, redoName) {
   const compoundEdit = graphComponent.graph.beginEdit(undoName, redoName)
@@ -1510,7 +1529,7 @@ function beginUndoEdit(undoName, redoName) {
 
 /**
  * Commits all undo edits contained in the given edit.
- * @param {{compoundEdit: ICompoundEdit, tagEdit: ICompoundEdit}} edit The edit to commit.
+ * @param {!object} edit The edit to commit.
  */
 function commitUndoEdit(edit) {
   edit.tagEdit.commit()
@@ -1519,7 +1538,7 @@ function commitUndoEdit(edit) {
 
 /**
  * Cancels all undo edits contained in the given edit.
- * @param {{compoundEdit: ICompoundEdit, tagEdit: ICompoundEdit}} edit The edit to cancel.
+ * @param {!object} edit The edit to cancel.
  */
 function cancelUndoEdit(edit) {
   edit.tagEdit.cancel()
@@ -1537,6 +1556,10 @@ class ChangedSetUndoUnit extends UndoUnitBase {
     this.oldFilteredEdges = filteredEdges ? new Set(filteredEdges) : null
     this.oldRemovedEdges = removedEdgesSet ? new Set(removedEdgesSet) : null
     this.oldCurrentItem = graphComponent.currentItem
+    this.newFilteredNodes = new Set()
+    this.newFilteredEdges = new Set()
+    this.newRemovedEdges = new Set()
+    this.newCurrentItem = null
   }
 
   undo() {
@@ -1560,13 +1583,6 @@ class ChangedSetUndoUnit extends UndoUnitBase {
     filteredGraph.nodePredicateChanged()
     filteredGraph.edgePredicateChanged()
   }
-
-  static update(currentSet, array) {
-    currentSet.clear()
-    array.forEach(item => {
-      currentSet.add(item)
-    })
-  }
 }
 
 /**
@@ -1574,23 +1590,37 @@ class ChangedSetUndoUnit extends UndoUnitBase {
  * during undo/redo.
  */
 class TagMementoSupport extends BaseClass(IMementoSupport) {
+  /**
+   * @param {*} item
+   * @returns {*}
+   */
   getState(item) {
-    if (INode.isInstance(item)) {
+    if (item instanceof INode) {
       const tag = item.tag
       return {
         highlight: tag.highlight,
         pendingDependencies: tag.pendingDependencies
       }
+    } else {
+      return {}
     }
-    return null
   }
 
+  /**
+   * @param {*} item
+   * @param {*} state
+   */
   applyState(item, state) {
-    if (INode.isInstance(item)) {
+    if (item instanceof INode) {
       item.tag = state
     }
   }
 
+  /**
+   * @param {*} state1
+   * @param {*} state2
+   * @returns {boolean}
+   */
   stateEquals(state1, state2) {
     return (
       state1.highlight === state2.highlight &&

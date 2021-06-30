@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -164,15 +164,15 @@ async function buildGraphFromData(update) {
     existingNodes = graphComponent.graph.nodes.toList()
     try {
       schemaComponent.treeBuilder.updateGraph()
-    } catch (e) {
-      alert(`${e.message}`)
+    } catch (err) {
+      alert(`${err.message}`)
     }
   } else {
     graphComponent.graph.clear()
     try {
       schemaComponent.treeBuilder.buildGraph()
-    } catch (e) {
-      alert(`${e.message}`)
+    } catch (err) {
+      alert(`${err.message}`)
     }
     graphComponent.fitGraphBounds()
   }

@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -29,8 +29,10 @@
 import {
   Color,
   GeneralPath,
+  GraphComponent,
   ICanvasContext,
   IInputModeContext,
+  IModelItem,
   INode,
   INodeStyle,
   IRenderContext,
@@ -42,7 +44,8 @@ import {
   SolidColorFill,
   Stroke,
   SvgVisual,
-  SvgVisualGroup
+  SvgVisualGroup,
+  Visual
 } from 'yfiles'
 
 /**
@@ -52,7 +55,7 @@ import {
 export default class PackageNodeStyleDecorator extends NodeStyleBase {
   /**
    * Initializes a new instance of this class.
-   * @param {INodeStyle} wrapped The optional wrapped style
+   * @param {!INodeStyle} wrapped The optional wrapped style
    */
   constructor(wrapped) {
     super()
@@ -68,9 +71,9 @@ export default class PackageNodeStyleDecorator extends NodeStyleBase {
 
   /**
    * Creates a visual that contains the visual of the wrapped style as well as the icon.
-   * @param {IRenderContext} context The render context
-   * @param {INode} node The node to which this style instance is assigned
-   * @returns {SvgVisual} The newly created visual
+   * @param {!IRenderContext} context The render context
+   * @param {!INode} node The node to which this style instance is assigned
+   * @returns {!SvgVisual} The newly created visual
    */
   createVisual(context, node) {
     const svgNS = 'http://www.w3.org/2000/svg'
@@ -78,7 +81,7 @@ export default class PackageNodeStyleDecorator extends NodeStyleBase {
     // add both to a group
     const group = new SvgVisualGroup()
 
-    const selected = context.canvasComponent.currentItem === node
+    const selected = getCurrentItem(context) === node
 
     // add the wrapped visual first
     let wrappedVisual
@@ -118,9 +121,9 @@ export default class PackageNodeStyleDecorator extends NodeStyleBase {
     }
 
     const pendingDependencies = node.tag && node.tag.pendingDependencies
-    group['data-renderDataCache'] = PackageNodeStyleDecorator.createRenderDataCache(
-      selected,
-      pendingDependencies
+    setRenderDataCache(
+      group,
+      PackageNodeStyleDecorator.createRenderDataCache(selected, pendingDependencies)
     )
 
     return group
@@ -128,18 +131,18 @@ export default class PackageNodeStyleDecorator extends NodeStyleBase {
 
   /**
    * Updates the given visual.
-   * @param {INode} node The node to which this style instance is assigned
-   * @param {IRenderContext} context The render context
-   * @param {SvgVisualGroup} oldVisual The existing visual
-   * @return {SvgVisual} The updated visual
+   * @param {!INode} node The node to which this style instance is assigned
+   * @param {!IRenderContext} context The render context
+   * @param {!SvgVisualGroup} oldVisual The existing visual
+   * @returns {!SvgVisual} The updated visual
    */
   updateVisual(context, oldVisual, node) {
-    const selected = context.canvasComponent.currentItem === node
+    const selected = getCurrentItem(context) === node
     const pendingDependencies = node.tag && node.tag.pendingDependencies
 
     const newCache = PackageNodeStyleDecorator.createRenderDataCache(selected, pendingDependencies)
-    const oldCache = oldVisual['data-renderDataCache']
-    if (!newCache.equals(newCache, oldCache)) {
+    const oldCache = getRenderDataCache(oldVisual)
+    if (!newCache.equals(oldCache)) {
       return this.createVisual(context, node)
     }
 
@@ -169,10 +172,10 @@ export default class PackageNodeStyleDecorator extends NodeStyleBase {
     if (oldVisual.children.size > 1) {
       const g = oldVisual.children.get(1).svgElement
       // move the image to the correct location
-      g.childNodes[0].setAttribute('transform', `translate(${x + 10} ${y + 3})`)
+      g.firstElementChild.setAttribute('transform', `translate(${x + 10} ${y + 3})`)
     }
 
-    const hasDependencies = oldCache.pendingDependencies
+    const hasDependencies = oldCache && oldCache.pendingDependencies
     if (oldVisual.children.size > 2) {
       // add a circle with a plus symbol the node has more dependencies
       const g1 = oldVisual.children.get(2).svgElement
@@ -187,18 +190,18 @@ export default class PackageNodeStyleDecorator extends NodeStyleBase {
         // in this container the plus symbol refers to dependencies
         const g = oldVisual.children.get(2).svgElement
         const xCoord = hasDependencies ? plusX + width : plusX
-        g.childNodes[0].setAttribute('transform', `translate(${xCoord} ${plusY})`)
+        g.firstElementChild.setAttribute('transform', `translate(${xCoord} ${plusY})`)
       }
     }
 
-    oldVisual['data-renderDataCache'] = newCache
+    setRenderDataCache(oldVisual, newCache)
     return oldVisual
   }
 
   /**
    * Returns the enlarged area of the node if the node has the circles for more dependencies.
-   * @param {INode} node The given node
-   * @returns {GeneralPath} The enlarged area
+   * @param {!INode} node The given node
+   * @returns {!GeneralPath} The enlarged area
    */
   static getEnlargedOutline(node) {
     const enlargedOutline = new GeneralPath()
@@ -230,10 +233,10 @@ export default class PackageNodeStyleDecorator extends NodeStyleBase {
 
   /**
    * Determines whether the visual representation of the node has been hit at the given location.
-   * @param {IInputModeContext} canvasContext The canvas context
-   * @param {Point} p The point to test
-   * @param {INode} node The node to which this style instance is assigned
-   * @return {boolean} True if the node has been hit, false otherwise
+   * @param {!IInputModeContext} canvasContext The canvas context
+   * @param {!Point} p The point to test
+   * @param {!INode} node The node to which this style instance is assigned
+   * @returns {boolean} True if the node has been hit, false otherwise
    */
   isHit(canvasContext, p, node) {
     if (node.tag && node.tag.pendingDependencies) {
@@ -261,10 +264,10 @@ export default class PackageNodeStyleDecorator extends NodeStyleBase {
 
   /**
    * Gets the intersection of a line with the visual representation of the node.
-   * @param {INode} node The node to which this style instance is assigned
-   * @param {Point} inner The coordinates of a point lying inside the shape
-   * @param {Point} outer The coordinates of a point lying outside the shape
-   * @return {Point} The intersection point
+   * @param {!INode} node The node to which this style instance is assigned
+   * @param {!Point} inner The coordinates of a point lying inside the shape
+   * @param {!Point} outer The coordinates of a point lying outside the shape
+   * @returns {?Point} The intersection point
    */
   getIntersection(node, inner, outer) {
     // delegate this to the wrapped style
@@ -273,9 +276,9 @@ export default class PackageNodeStyleDecorator extends NodeStyleBase {
 
   /**
    * Determines whether the provided point is geometrically inside the visual bounds of the node.
-   * @param {INode} node The node to which this style instance is assigned
-   * @param {Point} point The point to test
-   * @return {boolean} True if the provided point is geometrically inside the visual bounds of the
+   * @param {!INode} node The node to which this style instance is assigned
+   * @param {!Point} point The point to test
+   * @returns {boolean} True if the provided point is geometrically inside the visual bounds of the
    *   node, false otherwise
    */
   isInside(node, point) {
@@ -285,8 +288,8 @@ export default class PackageNodeStyleDecorator extends NodeStyleBase {
 
   /**
    * Gets the outline of the visual style.
-   * @param {INode} node The node to which this style instance is assigned
-   * @return {GeneralPath} The outline of the visual style
+   * @param {!INode} node The node to which this style instance is assigned
+   * @returns {?GeneralPath} The outline of the visual style
    */
   getOutline(node) {
     // delegate this to the wrapped style
@@ -295,9 +298,9 @@ export default class PackageNodeStyleDecorator extends NodeStyleBase {
 
   /**
    * Gets the bounds of the visual for the node in the given context.
-   * @param {ICanvasContext} canvasContext The canvas context
-   * @param {INode} node The node to which this style instance is assigned
-   * @return {Rect} The bounds of the visual
+   * @param {!ICanvasContext} canvasContext The canvas context
+   * @param {!INode} node The node to which this style instance is assigned
+   * @returns {!Rect} The bounds of the visual
    */
   getBounds(canvasContext, node) {
     // delegate this to the wrapped style
@@ -306,10 +309,10 @@ export default class PackageNodeStyleDecorator extends NodeStyleBase {
 
   /**
    * Determines whether the visualization for the specified node is visible in the context.
-   * @param {ICanvasContext} canvasContext The canvas context
-   * @param {Rect} clip The clipping rectangle
-   * @param {INode} node The node to which this style instance is assigned
-   * @return {boolean} True if the visualization for this node is visible, false otherwise
+   * @param {!ICanvasContext} canvasContext The canvas context
+   * @param {!Rect} clip The clipping rectangle
+   * @param {!INode} node The node to which this style instance is assigned
+   * @returns {boolean} True if the visualization for this node is visible, false otherwise
    */
   isVisible(canvasContext, clip, node) {
     // first check if the wrapped style is visible
@@ -332,30 +335,48 @@ export default class PackageNodeStyleDecorator extends NodeStyleBase {
   /**
    * Determines whether the visualization for the specified node is included in the marquee
    * selection.
-   * @param {IInputModeContext,} canvasContext The canvas context
-   * @param {Rect} box The marquee selection box
-   * @param {INode} node The node to which this style instance is assigned
-   * @return {boolean} if True the visualization is included in the marquee selection, false
+   * @param {!IInputModeContext} context The input mode context
+   * @param {!Rect} box The marquee selection box
+   * @param {!INode} node The node to which this style instance is assigned
+   * @returns {boolean} if True the visualization is included in the marquee selection, false
    *   otherwise
    */
-  isInBox(canvasContext, box, node) {
+  isInBox(context, box, node) {
     // delegate this to the wrapped style
-    return this.wrapped.renderer.getMarqueeTestable(node, this.wrapped).isInBox(canvasContext, box)
+    return this.wrapped.renderer.getMarqueeTestable(node, this.wrapped).isInBox(context, box)
   }
 
   /**
    * Creates the render data cache object.
    * @param {boolean} selected True if the given node is selected, false otherwise
-   * @param {Object} pendingDependencies The pending pendingDependencies of the given node
-   * @return {Object} The render data cache object
+   * @param {boolean} pendingDependencies The pending pendingDependencies of the given node
+   * @returns {!NodeRenderDataCache} The render data cache object
    */
   static createRenderDataCache(selected, pendingDependencies) {
-    return {
-      selected,
-      pendingDependencies,
-      equals: (self, other) =>
-        self.selected === other.selected && self.pendingDependencies === other.pendingDependencies
-    }
+    return new NodeRenderDataCache(selected, pendingDependencies)
+  }
+}
+
+class NodeRenderDataCache {
+  /**
+   * @param {boolean} selected
+   * @param {boolean} pendingDependencies
+   */
+  constructor(selected, pendingDependencies) {
+    this.pendingDependencies = pendingDependencies
+    this.selected = selected
+  }
+
+  /**
+   * @param {!NodeRenderDataCache} [other]
+   * @returns {boolean}
+   */
+  equals(other) {
+    return (
+      !!other &&
+      this.selected === other.selected &&
+      this.pendingDependencies === other.pendingDependencies
+    )
   }
 }
 
@@ -363,7 +384,7 @@ export default class PackageNodeStyleDecorator extends NodeStyleBase {
  * Creates the circle for describing that there exist more dependencies.
  * @param {number} x The start x-coordinate for the circle
  * @param {number} y The start y-coordinate for the circle
- * @param {SVGElement} container The svg container
+ * @param {!SVGElement} container The svg container
  */
 function createPlusImage(x, y, container) {
   const plusImage = window.document.createElementNS('http://www.w3.org/2000/svg', 'image')
@@ -372,4 +393,28 @@ function createPlusImage(x, y, container) {
   plusImage.setAttribute('height', '18')
   plusImage.setAttribute('transform', `translate(${x} ${y})`)
   container.appendChild(plusImage)
+}
+
+/**
+ * @param {!IRenderContext} context
+ * @returns {?IModelItem}
+ */
+function getCurrentItem(context) {
+  return context.canvasComponent.currentItem
+}
+
+/**
+ * @param {*} cacheOwner
+ * @returns {!NodeRenderDataCache}
+ */
+function getRenderDataCache(cacheOwner) {
+  return cacheOwner['data-renderDataCache']
+}
+
+/**
+ * @param {*} cacheOwner
+ * @param {!NodeRenderDataCache} cache
+ */
+function setRenderDataCache(cacheOwner, cache) {
+  cacheOwner['data-renderDataCache'] = cache
 }

@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -71,7 +71,7 @@ export default class ContextMenu {
       false
     )
 
-    // Add and event listener that populates the context menu according to the hit elements, or cancels showing a menu.
+    // Add an event listener that populates the context menu according to the hit elements, or cancels showing a menu.
     // This PopulateItemContextMenu is fired when calling the ContextMenuInputMode.shouldOpenMenu method above.
     inputMode.addPopulateItemContextMenuListener((sender, args) => this.populateContextMenu(args))
 

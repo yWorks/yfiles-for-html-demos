@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -39,55 +39,64 @@ import {
   PortConstraint,
   PortConstraintKeys,
   PortSide,
-  YPoint
+  YPoint,
+  CopiedLayoutGraph,
+  YNode,
+  Edge,
+  IEdgeMap
 } from 'yfiles'
 
 /**
- * The different edge routing strategies that the custom {@ling RoutingCreateEdgeInputMode}
+ * The different edge routing strategies that the custom {@link RoutingCreateEdgeInputMode}
  * supports.
  */
-export const RoutingStrategy = Object.freeze({
-  NONE: Symbol('none'),
-  EDGE_ROUTER: Symbol('edge-router'),
-  PERFORMANCE_EDGE_ROUTER: Symbol('performance-edge-router'),
-  CHANNEL_EDGE_ROUTER: Symbol('channel-edge-router')
-})
+export /**
+ * @readonly
+ * @enum {number}
+ */
+const RoutingStrategy = {
+  NONE: 0,
+  EDGE_ROUTER: 1,
+  PERFORMANCE_EDGE_ROUTER: 2,
+  CHANNEL_EDGE_ROUTER: 3
+}
 
 /**
- * Uses a different edge routing algorithm during the edge creation gesture, depending on the
- * {@link RoutingCreateEdgeInputMode.routingStrategy} property.
+ * A custom {@link CreateEdgeInputMode} that uses a
+ * {@link RoutingCreateEdgeInputMode.routingStrategy} to determine how edges are routed during
+ * edge creation gestures.
  */
 export class RoutingCreateEdgeInputMode extends CreateEdgeInputMode {
   /**
    * Gets the edge routing algorithm that is used during the edge creation gesture.
-   * @return {RoutingStrategy}
+   * @type {!RoutingStrategy}
    */
   get routingStrategy() {
-    return this.$routingStrategy
+    return this._routingStrategy
   }
 
   /**
    * Sets the edge routing algorithm that is used during the edge creation gesture.
    * @yjs:keep=AUTO
-   * @param {RoutingStrategy} value
+   * @type {!RoutingStrategy}
    */
-  set routingStrategy(value) {
-    this.$routingStrategy = value
-    switch (this.$routingStrategy) {
+  set routingStrategy(strategy) {
+    this._routingStrategy = strategy
+    switch (strategy) {
       case RoutingStrategy.NONE:
-        this.$edgeRouter = null
+        this.edgeRouter = null
         // use orthogonal edge editing base on the parent mode's setting
         this.orthogonalEdgeCreation = OrthogonalEdgeEditingPolicy.AUTO
         break
       case RoutingStrategy.EDGE_ROUTER:
-        this.$edgeRouter = new EdgeRouter({
+        this.edgeRouter = new EdgeRouter({
           scope: EdgeRouterScope.ROUTE_AFFECTED_EDGES
         })
         // disable orthogonal edge creation, since the edge will be routed by the layout algorithm
         this.orthogonalEdgeCreation = OrthogonalEdgeEditingPolicy.NEVER
         break
       case RoutingStrategy.PERFORMANCE_EDGE_ROUTER:
-        this.$edgeRouter = new EdgeRouter({
+        this.edgeRouter = new EdgeRouter({
           scope: EdgeRouterScope.ROUTE_AFFECTED_EDGES,
           maximumDuration: 0 // maximize performance over quality
         })
@@ -95,7 +104,7 @@ export class RoutingCreateEdgeInputMode extends CreateEdgeInputMode {
         this.orthogonalEdgeCreation = OrthogonalEdgeEditingPolicy.NEVER
         break
       case RoutingStrategy.CHANNEL_EDGE_ROUTER:
-        this.$edgeRouter = new ChannelEdgeRouter()
+        this.edgeRouter = new ChannelEdgeRouter()
         // disable orthogonal edge creation, since the edge will be routed by the layout algorithm
         this.orthogonalEdgeCreation = OrthogonalEdgeEditingPolicy.NEVER
         break
@@ -108,12 +117,14 @@ export class RoutingCreateEdgeInputMode extends CreateEdgeInputMode {
    */
   constructor() {
     super()
-    this.routingStrategy = RoutingStrategy.NONE
+    this.edgeRouter = null
+    this._routingStrategy = RoutingStrategy.NONE
   }
 
   /**
-   * Called when the edge creation gesture has started.
-   * @param {InputModeEventArgs} evt - The event argument that contains context information.
+   * Called when the edge creation gesture has started. Initializes the state, depending on the
+   * specified {@link RoutingStrategy}.
+   * @param {!InputModeEventArgs} evt
    */
   onGestureStarted(evt) {
     if (this.routingStrategy === RoutingStrategy.NONE) {
@@ -122,47 +133,51 @@ export class RoutingCreateEdgeInputMode extends CreateEdgeInputMode {
       return
     }
 
-    // init the graph that is considered during the layout
+    // initialize the graph that is considered during the layout
     const layoutGraphAdapter = new LayoutGraphAdapter(this.graph)
-    this.$layoutGraph = layoutGraphAdapter.createCopiedLayoutGraph()
+    this.layoutGraph = layoutGraphAdapter.createCopiedLayoutGraph()
 
     // find the source node of the gesture in the layout graph
-    this.$layoutSourceNode = this.$layoutGraph.getCopiedNode(this.dummyEdge.sourceNode)
+    this.layoutSourceNode = this.layoutGraph.getCopiedNode(this.dummyEdge.sourceNode)
 
     // use a dummy target node during the gesture for the edge that is currently created
-    this.$layoutTargetNode = this.$layoutGraph.createNode()
-    this.$layoutGraph.setSize(this.$layoutTargetNode, 1, 1)
+    this.layoutTargetNode = this.layoutGraph.createNode()
+    this.layoutGraph.setSize(this.layoutTargetNode, 1, 1)
 
-    // create the edge we want to layout
-    this.$layoutEdge = this.$layoutGraph.createEdge(this.$layoutSourceNode, this.$layoutTargetNode)
+    // create the edge that should be routed
+    this.layoutEdge = this.layoutGraph.createEdge(this.layoutSourceNode, this.layoutTargetNode)
 
-    // set source point of the edge
+    // set source point of the edge to the start point of the edge creation gesture's edge
     const dummyEdgeSrcPortLocation = this.dummyEdge.sourcePort.location.toYPoint()
-    this.$layoutGraph.setSourcePointAbs(this.$layoutEdge, dummyEdgeSrcPortLocation)
+    this.layoutGraph.setSourcePointAbs(this.layoutEdge, dummyEdgeSrcPortLocation)
 
     // the target point of the edge may be relative to the dummy node it is attached
-    this.$layoutGraph.setTargetPointRel(this.$layoutEdge, YPoint.ORIGIN)
+    this.layoutGraph.setTargetPointRel(this.layoutEdge, YPoint.ORIGIN)
 
     // mark the dummy edge as affected
-    const affectedEdges = this.$layoutGraph.createEdgeMap()
-    affectedEdges.setBoolean(this.$layoutEdge, true)
-    if (this.$edgeRouter instanceof EdgeRouter) {
-      this.$layoutGraph.addDataProvider(this.$edgeRouter.affectedEdgesDpKey, affectedEdges)
-    } else if (this.$edgeRouter instanceof ChannelEdgeRouter) {
-      this.$layoutGraph.addDataProvider(ChannelEdgeRouter.AFFECTED_EDGES_DP_KEY, affectedEdges)
-    }
+    const affectedEdges = this.layoutGraph.createEdgeMap()
+    affectedEdges.setBoolean(this.layoutEdge, true)
+    this.layoutGraph.addDataProvider(
+      this.edgeRouter instanceof EdgeRouter
+        ? this.edgeRouter.affectedEdgesDpKey
+        : ChannelEdgeRouter.AFFECTED_EDGES_DP_KEY,
+      affectedEdges
+    )
 
     // the source port should not be adjusted by the layout
-    const sourcePortConstraints = this.$layoutGraph.createEdgeMap()
+    const sourcePortConstraints = this.layoutGraph.createEdgeMap()
     sourcePortConstraints.set(
-      this.$layoutEdge,
+      this.layoutEdge,
       PortConstraint.create(
-        this.$getNodeSide(this.dummyEdge.sourceNode.layout, this.dummyEdge.sourcePort.location),
+        RoutingCreateEdgeInputMode.getNodeSide(
+          this.dummyEdge.sourceNode.layout,
+          this.dummyEdge.sourcePort.location
+        ),
         true
       )
     )
-    this.$targetPortConstraints = this.$layoutGraph.createEdgeMap()
-    this.$layoutGraph.addDataProvider(
+    this.targetPortConstraints = this.layoutGraph.createEdgeMap()
+    this.layoutGraph.addDataProvider(
       PortConstraintKeys.SOURCE_PORT_CONSTRAINT_DP_KEY,
       sourcePortConstraints
     )
@@ -171,8 +186,9 @@ export class RoutingCreateEdgeInputMode extends CreateEdgeInputMode {
   }
 
   /**
-   * Called after each move during the edge creation gesture.
-   * @param {InputModeEventArgs} evt - The event argument that contains context information.
+   * Called after each move during the edge creation gesture. If a {@link RoutingStrategy} is
+   * specified, a new edge routing is calculated for the edge of this gesture.
+   * @param {!InputModeEventArgs} evt
    */
   onMoved(evt) {
     if (this.routingStrategy === RoutingStrategy.NONE) {
@@ -182,48 +198,48 @@ export class RoutingCreateEdgeInputMode extends CreateEdgeInputMode {
     }
 
     // clear any target port constraint
-    this.$layoutGraph.removeDataProvider(PortConstraintKeys.TARGET_PORT_CONSTRAINT_DP_KEY)
+    this.layoutGraph.removeDataProvider(PortConstraintKeys.TARGET_PORT_CONSTRAINT_DP_KEY)
 
     const targetPortCandidate = this.targetPortCandidate
+    const targetNode = this.dummyEdge.targetNode
+    const targetPort = this.dummyEdge.targetPort
+
     if (targetPortCandidate !== null) {
       // use target port location if possible and constraint the target port depending on the ingoing node side
-      this.$targetPortConstraints.set(
-        this.$layoutEdge,
+      this.targetPortConstraints.set(
+        this.layoutEdge,
         PortConstraint.create(
-          this.$getNodeSide(this.dummyEdge.targetNode.layout, this.dummyEdge.targetPort.location),
+          RoutingCreateEdgeInputMode.getNodeSide(targetNode.layout, targetPort.location),
           true
         )
       )
-      this.$layoutGraph.addDataProvider(
+      this.layoutGraph.addDataProvider(
         PortConstraintKeys.TARGET_PORT_CONSTRAINT_DP_KEY,
-        this.$targetPortConstraints
+        this.targetPortConstraints
       )
 
       // adjust location and size of dummy target node to the actual hit target node
-      const targetNodeLayout = this.dummyEdge.targetNode.layout
-      this.$layoutGraph.setSize(
-        this.$layoutTargetNode,
+      const targetNodeLayout = targetNode.layout
+      this.layoutGraph.setSize(
+        this.layoutTargetNode,
         targetNodeLayout.width,
         targetNodeLayout.height
       )
-      this.$layoutGraph.setLocation(this.$layoutTargetNode, targetNodeLayout.x, targetNodeLayout.y)
+      this.layoutGraph.setLocation(this.layoutTargetNode, targetNodeLayout.x, targetNodeLayout.y)
     } else {
       // no node hit, just use drag location
       const dragLocation = this.dragPoint
-      this.$layoutGraph.setSize(this.$layoutTargetNode, 1, 1)
-      this.$layoutGraph.setLocation(this.$layoutTargetNode, dragLocation.x, dragLocation.y)
+      this.layoutGraph.setSize(this.layoutTargetNode, 1, 1)
+      this.layoutGraph.setLocation(this.layoutTargetNode, dragLocation.x, dragLocation.y)
     }
 
-    this.$layoutGraph.setTargetPointAbs(
-      this.$layoutEdge,
-      this.dummyEdge.targetPort.location.toYPoint()
-    )
+    this.layoutGraph.setTargetPointAbs(this.layoutEdge, targetPort.location.toYPoint())
 
     // apply the layout
-    this.$edgeRouter.applyLayout(this.$layoutGraph)
+    this.edgeRouter.applyLayout(this.layoutGraph)
 
-    // transfer the layouted edge to the dummy edge
-    const edgeLayout = this.$layoutGraph.getLayout(this.$layoutEdge)
+    // transfer the edge layout to the visible dummy edge of the gesture
+    const edgeLayout = this.layoutGraph.getLayout(this.layoutEdge)
     this.dummyEdgeGraph.clearBends(this.dummyEdge)
     for (let i = 0; i < edgeLayout.pointCount(); i++) {
       const bendPoint = edgeLayout.getPoint(i)
@@ -235,11 +251,12 @@ export class RoutingCreateEdgeInputMode extends CreateEdgeInputMode {
 
   /**
    * A helper function that determines the {@link PortSide} from the given point on the node.
-   * @param {IRectangle} nodeLayout - The node layout
-   * @param {Point} point - The point for which the {@link PortSide} should be calculated
-   * @return {PortSide.WEST|PortSide.EAST|PortSide.ANY|PortSide.NORTH|PortSide.SOUTH}
+   *
+   * @param {!IRectangle} nodeLayout The node layout.
+   * @param {!Point} point The point for which the {@link PortSide} should be calculated.
+   * @returns {!PortSide}
    */
-  $getNodeSide(nodeLayout, point) {
+  static getNodeSide(nodeLayout, point) {
     const deltaX = Math.abs(nodeLayout.center.x - point.x) / nodeLayout.width
     const deltaY = Math.abs(nodeLayout.center.y - point.y) / nodeLayout.height
 

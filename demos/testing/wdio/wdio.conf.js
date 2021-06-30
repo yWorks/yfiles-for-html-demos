@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -29,7 +29,7 @@
 const path = require('path')
 const fs = require('fs')
 const express = require('express')
-const resolveYfiles = require('../../demo-server/resolve-yfiles')
+const { resolve: resolveYfiles } = require('../../demo-server/resolve-yfiles')
 
 const demoServerPort = 4253
 let demoServer = null
@@ -335,7 +335,7 @@ exports.config = {
    * @param {Object} exitCode 0 - success, 1 - fail
    * @param {Object} config wdio configuration object
    * @param {Array.<Object>} capabilities list of capabilities details
-   * @param {<Object>} results object containing test results
+   * @param {Object} results object containing test results
    */
   onComplete: function (exitCode, config, capabilities, results) {
     demoServer.close()

@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -40,21 +40,22 @@ import {
   HandleInputMode,
   HandlePositions,
   HighlightIndicatorManager,
+  ICanvasObject,
   ICanvasObjectDescriptor,
-  ICollection,
-  IComparer,
+  IEnumerable,
   IGraph,
+  IHandle,
   IHitTestable,
   IInputModeContext,
   IModelItem,
   IMutableRectangle,
   INode,
-  IPositionHandler,
-  IRenderContext,
-  IVisualCreator,
   Insets,
-  List,
-  Mapper,
+  IPositionHandler,
+  IRectangle,
+  IRenderContext,
+  ISelectionModel,
+  IVisualCreator,
   MouseWheelBehaviors,
   MoveInputMode,
   MutablePoint,
@@ -69,11 +70,28 @@ import {
   Size,
   StyleDecorationZoomPolicy,
   SvgVisual,
-  TextRenderSupport,
-  Visual
+  TextRenderSupport
 } from 'yfiles'
 
 import { addClass, toggleClass } from '../../resources/demo-app.js'
+
+/**
+ * @typedef {Object} TimelineNodeTag
+ * @property {string} type
+ * @property {Array.<string>} date
+ * @property {number} isInTimeFrame
+ */
+
+/**
+ * @typedef {Object} NodeTag
+ * @property {number} id
+ * @property {string} type
+ * @property {Array.<Date>} enter
+ * @property {Array.<Date>} exit
+ * @property {(string|object)} info
+ * @property {number} x
+ * @property {number} y
+ */
 
 /**
  * This class creates a timeline component to visualize time-dependent data. The component consists of a time axis
@@ -90,43 +108,73 @@ import { addClass, toggleClass } from '../../resources/demo-app.js'
  * Also, the timeline component has already registered listeners for reacting on hovering and selection of the nodes
  * of the source graph.
  *
- * Finally, method {@link TimelineComponent#createTimeline} has to be called in order to display the
+ * Finally, the {@link TimelineComponent#createTimeline} method has to be called in order to display the
  * timeline component. The method has to be set after all necessary listeners have been registered.
  */
 export default class TimelineComponent {
   /**
    * Creates a new timeline component.
-   * @param {string} selector The components' HTML element
-   * @param {GraphComponent} graphComponent The source GraphComponent
+   * @param {!string} selector The components' HTML element
+   * @param {!GraphComponent} graphComponent The source GraphComponent
    */
   constructor(selector, graphComponent) {
+    this.filteringEnabled = true
+    this._zoomLevelEnabled = false
+    this.hitPoint = null
     this.selector = selector
     this.createComponentDiv()
     this.initializeInputMode()
     this.initializeNodeStyle()
-    this.init()
+    this._zoomFactor = 1
+    this._videoEnabled = true
+    this._busy = false
+    this.zoomLevel = ZoomLevel.ZOOM_MONTHS
+    this.zoomLevelEnabled = true
+
+    this.dates = []
+    this.timelineNodes = []
+
+    this.date2interval = new Map()
+    this.interval2date = new Map()
+    this.interval2timelineNodes = new Map()
+    this.timelineNodes2graphNodes = new Map()
+    this.graphNodes2timelineNodes = new Map()
+
+    this.timeFrameWidth = 0
+    this.timeFrameAnimation = null
+    this.timeFrameVisual = null
+    this.timeAxisVisual = null
+    this.hitNode = null
+    this.positionHandler = null
+
+    this.highlightedNodes = []
+
+    // initialize timeline listeners
+    this.selectionListener = null
+    this.highlightListener = null
+    this.timeFrameListener = null
+    this.timeAxisCanvasObject = null
+    this.timeFrameCanvasObject = null
     this.graphComponent = graphComponent
   }
 
   /**
    * Gets the source GraphComponent
-   * @type {GraphComponent}
+   * @type {!GraphComponent}
    */
   get graphComponent() {
-    return this.$graphComponent
+    return this._graphComponent
   }
 
   /**
    * Sets the source GraphComponent
-   * @param {GraphComponent} graphComponent
+   * @type {!GraphComponent}
    */
   set graphComponent(graphComponent) {
-    this.$graphComponent = graphComponent
-    if (this.$graphComponent) {
-      const filteredGraph = new FilteredGraphWrapper(
-        this.graphComponent.graph,
-        node => this.nodePredicateChanged(node),
-        edge => true
+    this._graphComponent = graphComponent
+    if (this._graphComponent) {
+      const filteredGraph = new FilteredGraphWrapper(this.graphComponent.graph, node =>
+        this.nodePredicate(node)
       )
       this.graphComponent.graph = filteredGraph
       this.filteredGraph = filteredGraph
@@ -146,54 +194,22 @@ export default class TimelineComponent {
   }
 
   /**
-   * Gets whether the timeline component should filter the nodes of the source graph.
+   * Gets whether or not different zoom levels can be applied.
    * @type {boolean}
    */
-  get filteringEnabled() {
-    return this.$filteringEnabled
-  }
-
-  /**
-   * Sets whether the timeline component should filter the nodes of the source graph.
-   * @param {boolean} filteringEnabled
-   */
-  set filteringEnabled(filteringEnabled) {
-    this.$filteringEnabled = filteringEnabled
-  }
-
-  /**
-   * Gets the filtered graph.
-   * @type {FilteredGraphWrapper}
-   */
-  get filteredGraph() {
-    return this.$filteredGraph
-  }
-
-  /**
-   * Sets the filtered graph.
-   * @param {FilteredGraphWrapper} filteredGraph
-   */
-  set filteredGraph(filteredGraph) {
-    this.$filteredGraph = filteredGraph
-  }
-
-  /**
-   * Gets whether or not different zoom levels can be applied.
-   * @return {boolean}
-   */
   get zoomLevelEnabled() {
-    return this.$zoomLevelEnabled
+    return this._zoomLevelEnabled
   }
 
   /**
    * Sets whether or not different zoom levels can be applied. If enabled, the zoom level will change based on
    * mouse wheel gestures on the timeline component between months, years, and days. If not enabled, zoom level will
    * be set to months.
-   * @param {boolean} zoomLevelEnabled
+   * @type {boolean}
    */
   set zoomLevelEnabled(zoomLevelEnabled) {
-    this.$zoomLevelEnabled = zoomLevelEnabled
-    if (!this.$zoomLevelEnabled) {
+    this._zoomLevelEnabled = zoomLevelEnabled
+    if (!this._zoomLevelEnabled) {
       this.zoomLevel = ZoomLevel.ZOOM_MONTHS
       this.timelineComponent.removeMouseWheelListener((sender, evt) =>
         this.onMouseWheel(evt.wheelDelta, evt.location)
@@ -207,18 +223,18 @@ export default class TimelineComponent {
 
   /**
    * Gets whether another operation that blocks the timeline is running.
-   * @return {boolean}
+   * @type {boolean}
    */
   get busy() {
-    return this.$busy
+    return this._busy
   }
 
   /**
    * Sets whether another operation that blocks the timeline is running.
-   * @param {boolean} busy
+   * @type {boolean}
    */
   set busy(busy) {
-    this.$busy = busy
+    this._busy = busy
     if (this.positionHandler) {
       this.positionHandler.enabled = !busy
     }
@@ -226,7 +242,7 @@ export default class TimelineComponent {
 
   /**
    * Adds the listener invoked when the selected nodes of the timeline graph change.
-   * @param {function(Array)} listener
+   * @param {!function} listener
    */
   addSelectionChangedListener(listener) {
     this.selectionListener = listener
@@ -234,7 +250,7 @@ export default class TimelineComponent {
 
   /**
    * Removes the listener invoked when the selected nodes of the timeline graph change.
-   * @param {function(Array)} listener
+   * @param {!function} listener
    */
   removeSelectionChangedListener(listener) {
     if (this.selectionListener === listener) {
@@ -244,7 +260,7 @@ export default class TimelineComponent {
 
   /**
    * Adds the listener invoked when the hovered nodes of the timeline graph change.
-   * @param {function(Array)} listener
+   * @param {!function} listener
    */
   addHighlightChangedListener(listener) {
     this.highlightListener = listener
@@ -252,7 +268,7 @@ export default class TimelineComponent {
 
   /**
    * Removes the listener invoked when the hovered nodes of the timeline graph change.
-   * @param {function(Array)} listener
+   * @param {!function} listener
    */
   removeHighlightChangedListener(listener) {
     if (this.highlightListener === listener) {
@@ -262,7 +278,7 @@ export default class TimelineComponent {
 
   /**
    * Adds the listener invoked when the time frame changes.
-   * @param {function} listener
+   * @param {!function} listener
    */
   addTimeFrameChangedListener(listener) {
     this.timeFrameListener = listener
@@ -270,7 +286,7 @@ export default class TimelineComponent {
 
   /**
    * Removes the listener invoked when the time frame changes.
-   * @param {function} listener
+   * @param {!function} listener
    */
   removeTimeFrameEventListener(listener) {
     if (this.timeFrameListener === listener) {
@@ -280,7 +296,7 @@ export default class TimelineComponent {
 
   /**
    * Fired when the selected nodes of the timeline graph change.
-   * @param {IModelItem} item
+   * @param {!IModelItem} item
    */
   onItemSelectionChanged(item) {
     if (!this.selectionListener) {
@@ -298,7 +314,7 @@ export default class TimelineComponent {
 
   /**
    * Fired when the hovered nodes of the timeline graph change.
-   * @param {IModelItem} item
+   * @param {!IModelItem} item
    */
   onHoveredItemChanged(item) {
     if (!this.busy) {
@@ -307,7 +323,7 @@ export default class TimelineComponent {
       highlightIndicatorManager.clearHighlights()
       if (item && INode.isInstance(item)) {
         highlightIndicatorManager.addHighlight(item)
-        this.highlightedNodes.add(item)
+        this.highlightedNodes.push(item)
         if (!this.highlightListener) {
           return
         }
@@ -328,20 +344,22 @@ export default class TimelineComponent {
 
   /**
    * Highlights the node of the timeline based on the highlighted nodes of the source graph.
-   * @param {IModelItem} item
+   * @param {?IModelItem} item
    */
   updateHighlight(item) {
     const highlightIndicatorManager = this.timelineComponent.highlightIndicatorManager
     highlightIndicatorManager.clearHighlights()
-    if (INode.isInstance(item)) {
+    if (item instanceof INode) {
       const timelineNodes = this.graphNodes2timelineNodes.get(item)
-      timelineNodes.forEach(timelineNode => highlightIndicatorManager.addHighlight(timelineNode))
+      for (const timelineNode of timelineNodes) {
+        highlightIndicatorManager.addHighlight(timelineNode)
+      }
     }
   }
 
   /**
    * Selects the nodes of the timeline based on the selected nodes of the source graph.
-   * @param {ICollection} nodes
+   * @param {!ISelectionModel.<INode>} nodes
    */
   updateSelection(nodes) {
     this.timelineComponent.selection.clear()
@@ -366,57 +384,19 @@ export default class TimelineComponent {
   }
 
   /**
-   * Initializes the component's variables.
-   */
-  init() {
-    this.$filteringEnabled = true
-    this.$filteredGraph = null
-    this.$zoomfactor = 1
-    this.$videoEnabled = true
-    this.$busy = false
-    this.zoomLevel = ZoomLevel.ZOOM_MONTHS
-    this.zoomLevelEnabled = true
-
-    this.dates = new List()
-    this.timelineNodes = new List()
-
-    this.date2interval = new Mapper()
-    this.interval2date = new Mapper()
-    this.interval2timelineNodes = new Mapper()
-    this.timelineNodes2graphNodes = new Mapper()
-    this.graphNodes2timelineNodes = new Mapper()
-
-    this.timeFrameWidth = 0
-    this.timeFrameAnimation = null
-    this.timeFrameVisual = null
-    this.timeAxisVisual = null
-    this.hitNode = null
-    this.positionHandler = null
-
-    this.highlightedNodes = new List()
-
-    // initialize timeline listeners
-    this.selectionListener = null
-    this.highlightListener = null
-    this.timeFrameListener = null
-    this.timeAxisCanvasObject = null
-    this.timeFrameCanvasObject = null
-  }
-
-  /**
    * Gets the zoom factor.
    * @type {number}
    */
   get zoomFactor() {
-    return this.$zoomfactor
+    return this._zoomFactor
   }
 
   /**
    * Sets the zoom factor and adjusts appropriately the zoom level.
-   * @param {number} value
+   * @type {number}
    */
   set zoomFactor(value) {
-    this.$zoomfactor = value
+    this._zoomFactor = value
     // based on the value, initialize the zoom level
     if (value <= 0.8) {
       this.zoomLevel = ZoomLevel.ZOOM_YEARS
@@ -511,10 +491,10 @@ export default class TimelineComponent {
   /**
    * Checks whether or not a node of the source graph should be displayed. If filtering is not enabled, it returns
    * always true.
-   * @param {INode} node the node to check
-   * @return {boolean} true if a node should be displayed, false otherwise
+   * @param {!INode} node the node to check
+   * @returns {boolean} true if a node should be displayed, false otherwise
    */
-  nodePredicateChanged(node) {
+  nodePredicate(node) {
     if (this.filteringEnabled || !this.timeFrameVisual) {
       const timelineNodes = this.graphNodes2timelineNodes.get(node)
 
@@ -551,8 +531,8 @@ export default class TimelineComponent {
 
     // generates the full calendar between the first and the last day of the data-set
     const fullCalendar = TimelineComponent.generateFullCalendar(
-      this.dates.get(0),
-      this.dates.get(this.dates.size - 1)
+      this.dates[0],
+      this.dates[this.dates.length - 1]
     )
 
     const maxInterval = this.getMaxInterval(this.zoomLevel, fullCalendar)
@@ -571,7 +551,8 @@ export default class TimelineComponent {
 
     // associates the node with the enter/exit intervals to which they belong
     graph.nodes.forEach(node => {
-      const enterDates = node.tag.enter
+      const tag = node.tag
+      const enterDates = tag.enter
       enterDates.forEach(date => {
         const enterInterval = this.date2interval.get(TimelineComponent.getDateFormat(date))
         // associates the node with its enter/exit interval
@@ -582,7 +563,7 @@ export default class TimelineComponent {
         }
       })
 
-      const exitDates = node.tag.exit
+      const exitDates = tag.exit
       exitDates.forEach(date => {
         const exitInterval = this.date2interval.get(TimelineComponent.getDateFormat(date))
         // associates the node with its enter/exit interval
@@ -608,7 +589,7 @@ export default class TimelineComponent {
           new Rect(x, -currentNodesCount * unitHeight, xOffset - 5, currentNodesCount * unitHeight)
         )
 
-        mainGraphNodes.forEach(node => {
+        for (const node of mainGraphNodes) {
           if (this.graphNodes2timelineNodes.get(node)) {
             this.graphNodes2timelineNodes.get(node).push(timelineNode)
           } else {
@@ -620,10 +601,10 @@ export default class TimelineComponent {
           } else {
             this.timelineNodes2graphNodes.set(timelineNode, [node])
           }
-        })
+        }
 
         // sorts the nodes of the source graph based on their dates
-        mainGraphNodes.forEach(node => {
+        for (const node of mainGraphNodes) {
           if (this.graphNodes2timelineNodes.get(node)) {
             const list = this.graphNodes2timelineNodes.get(node)
             list.sort((node1, node2) => {
@@ -635,7 +616,7 @@ export default class TimelineComponent {
               return 0
             })
           }
-        })
+        }
       } else {
         // if no node is associated with a time interval we create only a node of unit height
         timelineNode = timelineGraph.createNode(new Rect(x, -1, xOffset - 5, 1))
@@ -646,48 +627,34 @@ export default class TimelineComponent {
         date: this.interval2date.get(i)
       }
 
-      this.timelineNodes.add(timelineNode)
+      this.timelineNodes.push(timelineNode)
       x += xOffset
     }
   }
 
   /**
    * Finds and sorts the dates associated with each node of the source graph.
-   * @param {IGraph} graph
+   * @param {!IGraph} graph
    */
   initializeCalendar(graph) {
-    graph.nodes.forEach(node => {
-      const enterDates = node.tag.enter
-      const convertedEnterDates = []
-      const convertedExitDates = []
+    for (const node of graph.nodes) {
+      const tag = node.tag
+      const enterDates = tag.enter.map(s => new Date(s))
+      const exitDates = tag.exit.map(s => new Date(s))
+      tag.enter = enterDates
+      tag.exit = exitDates
+      this.dates.push(...enterDates, ...exitDates)
+    }
 
-      enterDates.forEach(date => {
-        const convertedDate = new Date(date)
-        this.dates.add(convertedDate)
-        convertedEnterDates.push(convertedDate)
-      })
-      node.tag.enter = convertedEnterDates
-
-      const exitDates = node.tag.exit
-      exitDates.forEach(date => {
-        const convertedDate = new Date(date)
-        this.dates.add(convertedDate)
-        convertedExitDates.push(convertedDate)
-      })
-      node.tag.exit = convertedExitDates
+    this.dates.sort((a, b) => {
+      // Shorthand interface implementation, sorts the dates in ascending order.
+      if (a.getTime() < b.getTime()) {
+        return -1
+      } else if (a.getTime() > b.getTime()) {
+        return 1
+      }
+      return 0
     })
-
-    this.dates.sort(
-      new IComparer((entry1, entry2) => {
-        // Shorthand interface implementation, sorts the dates in ascending order.
-        if (entry1.getTime() < entry2.getTime()) {
-          return -1
-        } else if (entry1.getTime() > entry2.getTime()) {
-          return 1
-        }
-        return 0
-      })
-    )
   }
 
   /**
@@ -698,7 +665,7 @@ export default class TimelineComponent {
     if (this.filteredGraph.wrappedGraph.nodes.size === 0) {
       return
     }
-    let updatedContentRectX
+    let updatedContentRectX = 0
     const updateRequired = this.hitNode !== null
 
     if (!moveOnlyRectangle) {
@@ -722,12 +689,11 @@ export default class TimelineComponent {
       // if a date was hit, we have to find the interval to which it belongs in the updated timeline bar, since we
       // want after the zooming to be at the same time interval that we were before zooming
       // updatedRectangleStartNode, updatedRectangleEndNode holds the new timeline node after zooming
-      let updatedRectangleStartNode
-      let updatedRectangleEndNode
+      let updatedRectangleStartNode = null
+      let updatedRectangleEndNode = null
       let includedNodes = 0
       if (updateRequired) {
-        for (let i = 0; i < this.timelineNodes.size; i++) {
-          const node = this.timelineNodes.get(i)
+        for (const node of this.timelineNodes) {
           const dates = node.tag.date
           if (dates.includes(this.hitNode.tag.date[0])) {
             this.hitNode = node
@@ -849,7 +815,7 @@ export default class TimelineComponent {
 
   /**
    * Returns the nodes of the timeline that lie on the left and right boundary of the visual rectangle.
-   * @return {{visualRectangleStartNode: INode, visualRectangleEndNode: INode}}
+   * @returns {!object}
    */
   getBoundaryNodes() {
     let visualRectangleStartNode
@@ -858,8 +824,7 @@ export default class TimelineComponent {
     let minXFromEnd = Number.MAX_VALUE
     const visualRect = this.timeFrameVisual.rectangle
 
-    for (let i = 0; i < this.timelineNodes.size; i++) {
-      const node = this.timelineNodes.get(i)
+    for (const node of this.timelineNodes) {
       const distFromStart = Math.abs(node.layout.x - visualRect.x)
       const distFromEnd = Math.abs(
         node.layout.x + node.layout.width - (visualRect.x + visualRect.width)
@@ -894,7 +859,7 @@ export default class TimelineComponent {
    * Updates the new content rectangle of the timeline component so that the labels showing years, months, days of
    * the timeline are being included in the content rectangle. At the end, returns the rectangle position which
    * has to be calculated based on the old rectangle.
-   * @return {number}
+   * @returns {number}
    */
   getUpdatedRectanglePosition() {
     this.timelineComponent.updateContentRect(new Insets(10))
@@ -942,7 +907,7 @@ export default class TimelineComponent {
    * Updates the frame window when the zoom level changes. If a user has zoomed to a specific date, we have
    * to scroll the timeline bar at this specific date. For this, we need to find the last mouse location and
    * calculate the new moveOnlyRectangle by changing the viewpoint of the graphComponent.
-   * @param {Rect} contentRect
+   * @param {!Rect} contentRect
    * @param {number} hitNodeX
    * @param {number} includedNodes
    */
@@ -968,8 +933,8 @@ export default class TimelineComponent {
 
   /**
    * Finds the minimum and the maximum coordinates if the nodes of the timeline graph.
-   * @param {ICollection} nodes
-   * @returns {{maxY: number, minY: Number}}
+   * @param {!IEnumerable.<INode>} nodes
+   * @returns {!object}
    */
   calculateBoundaryCoordinates(nodes) {
     let minX = Number.MAX_VALUE
@@ -979,11 +944,11 @@ export default class TimelineComponent {
 
     // finds the minimum and maximum y-coordinate of the timeline nodes
     nodes.forEach(node => {
-      const layout = node.layout
-      minX = Math.min(minX, layout.x)
-      minY = Math.min(minY, layout.y)
-      maxX = Math.max(maxX, layout.x + layout.width)
-      maxY = Math.max(maxY, layout.y + layout.height)
+      const { x, y, height, width } = node.layout
+      minX = Math.min(minX, x)
+      minY = Math.min(minY, y)
+      maxX = Math.max(maxX, x + width)
+      maxY = Math.max(maxY, y + height)
     })
     return {
       minX,
@@ -995,7 +960,7 @@ export default class TimelineComponent {
 
   /**
    * Creates the rectangle of the timeline view that will determine which nodes will be included in the graph.
-   * @param {Rect} rectangle The given rectangle based on which the visual will be created.
+   * @param {!MutableRectangle} rectangle The given rectangle based on which the visual will be created.
    */
   createTimeFrameVisual(rectangle) {
     this.timeFrameVisual = new TimeFrameVisual(rectangle)
@@ -1005,8 +970,9 @@ export default class TimelineComponent {
     )
 
     // creates the handle input mode that manages the handles of the rectangle
-    this.handleInputMode = new HandleInputMode()
-    this.handleInputMode.priority = 0
+    this.handleInputMode = new HandleInputMode({
+      priority: 0
+    })
 
     this.handles = new ObservableCollection()
     this.handles.add(new RectangleHandle(HandlePositions.EAST, rectangle))
@@ -1018,19 +984,20 @@ export default class TimelineComponent {
     this.timelineComponent.inputMode.add(this.handleInputMode)
 
     // creates the move input mode that manages the movement of the rectangle
-    this.moveInputMode = new MoveInputMode()
-    this.moveInputMode.hitTestable = IHitTestable.create((context, location) =>
-      rectangle.containsWithEps(location, context.hitTestRadius + 3 / context.zoom)
-    )
     this.positionHandler = new TimeFramePositionHandler(
       rectangle,
       this.timelineComponent.contentRect,
       !this.busy
     )
-    this.moveInputMode.positionHandler = this.positionHandler
+    this.moveInputMode = new MoveInputMode({
+      hitTestable: IHitTestable.create((context, location) =>
+        rectangle.containsWithEps(location, context.hitTestRadius + 3 / context.zoom)
+      ),
+      positionHandler: this.positionHandler,
+      priority: 1
+    })
     this.moveInputMode.addDraggingListener(this.onManuallyTimeFrameChanged.bind(this))
     this.moveInputMode.addDragFinishedListener(this.onManuallyTimeFrameChanged.bind(this))
-    this.moveInputMode.priority = 1
     this.timelineComponent.inputMode.add(this.moveInputMode)
   }
 
@@ -1039,15 +1006,13 @@ export default class TimelineComponent {
    */
   onManuallyTimeFrameChanged() {
     this.getTimeFrameAnimation().startLocation = null
-    this.onTimeFrameChanged(
-      this.timeFrameVisual.rectangle.x,
-      this.timeFrameVisual.rectangle.x + this.timeFrameVisual.rectangle.width
-    )
+    const rectangle = this.timeFrameVisual.rectangle
+    this.onTimeFrameChanged(rectangle.x, rectangle.x + rectangle.width)
   }
 
   /**
    * Creates and returns the time frame animation for the video.
-   * @returns {TimeFrameAnimation} The time frame animation
+   * @returns {!TimeFrameAnimation} The time frame animation
    */
   getTimeFrameAnimation() {
     if (
@@ -1080,7 +1045,7 @@ export default class TimelineComponent {
       this.timelineComponent.selection.clear()
     }
 
-    if (this.highlightedNodes.size === 0) {
+    if (this.highlightedNodes.length === 0) {
       this.timelineComponent.highlightIndicatorManager.clearHighlights()
     }
 
@@ -1090,46 +1055,48 @@ export default class TimelineComponent {
     const visibleGraphNodes = []
     let minX = Number.MAX_VALUE
     let maxX = -Number.MIN_VALUE
-    let startDate
-    let endDate
+    let startDate = []
+    let endDate = []
     let updateRequired = false
     const nodesToUpdate = []
-    timelineGraph.nodes.forEach(node => {
-      if (node.tag.type === 'bar') {
-        const oldState = node.tag.isInTimeFrame
+    for (const node of timelineGraph.nodes) {
+      const tag = node.tag
+      if (tag.type === 'bar') {
+        const oldState = tag.isInTimeFrame
         const layout = node.layout
+        const style = node.style
         if (minTime <= layout.center.x && maxTime >= layout.center.x) {
-          node.style.fill = Fill.GRAY
-          node.tag.isInTimeFrame = 0
+          style.fill = Fill.GRAY
+          tag.isInTimeFrame = 0
           const graphNodes = this.timelineNodes2graphNodes.get(node)
           if (graphNodes) {
             graphNodes.forEach(n => visibleGraphNodes.push(n))
           }
           if (minX >= layout.center.x) {
             minX = layout.center.x
-            startDate = node.tag.date
+            startDate = tag.date
           }
           if (maxX <= layout.center.x) {
             maxX = layout.center.x
-            endDate = node.tag.date
+            endDate = tag.date
           }
         } else if (minTime > layout.center.x) {
-          node.style.fill = Fill.LIGHT_GRAY
-          node.tag.isInTimeFrame = 1
+          style.fill = Fill.LIGHT_GRAY
+          tag.isInTimeFrame = 1
         } else if (maxTime < layout.center.x) {
-          node.style.fill = Fill.LIGHT_GRAY
-          node.tag.isInTimeFrame = -1
+          style.fill = Fill.LIGHT_GRAY
+          tag.isInTimeFrame = -1
         }
-        if (node.tag.isInTimeFrame !== oldState) {
+        if (tag.isInTimeFrame !== oldState) {
           nodesToUpdate.push(node)
         }
 
         // only if at least one needs update, update the frame
-        if (!updateRequired && node.tag.isInTimeFrame !== oldState) {
+        if (!updateRequired && tag.isInTimeFrame !== oldState) {
           updateRequired = true
         }
       }
-    })
+    }
 
     // if the timeline component has to filter the graph, just call method nodePredicateChanged of the filtered
     // graph, otherwise fire the event
@@ -1171,7 +1138,7 @@ export default class TimelineComponent {
    * Changes the zoom level of the timeline view so that more information about time intervals is displayed. The
    * order is years (zoom level 0.8) -> months (zoom level 1) -> days (zoom level 1.2). By default zoom === 1.
    * @param {number} wheelDelta The signed number of mouse wheel turn units
-   * @param {Point} location The coordinates in the world coordinate space associated with the event
+   * @param {!Point} location The coordinates in the world coordinate space associated with the event
    */
   onMouseWheel(wheelDelta, location) {
     if (!this.busy) {
@@ -1256,14 +1223,14 @@ export default class TimelineComponent {
       }
     }
     this.timelineComponent.graph.clear()
-    this.timelineNodes.clear()
+    this.timelineNodes.length = 0
     this.interval2timelineNodes.clear()
     this.date2interval.clear()
     this.graphNodes2timelineNodes.clear()
     this.timelineNodes2graphNodes.clear()
     this.interval2date.clear()
-    this.dates.clear()
-    this.highlightedNodes.clear()
+    this.dates.length = 0
+    this.highlightedNodes.length = 0
     this.updateVideoButtonVisibleState(true)
   }
 
@@ -1320,17 +1287,16 @@ export default class TimelineComponent {
 
   /**
    * Generates the full calendar between two given days.
-   * @param {string} startDate
-   * @param {string} endDate
-   * @return {Array}
+   * @param {!Date} startDate
+   * @param {!Date} endDate
+   * @returns {!Array.<Date>}
    */
   static generateFullCalendar(startDate, endDate) {
     const start = new Date(startDate)
     const end = new Date(endDate)
 
-    const months = getMonths()
     // to correct the end date, we have to know exactly how many days each month has
-    const days = calculateDaysOfMonth(months[end.getMonth()], end.getFullYear())
+    const days = calculateDaysOfMonth(MONTHS[end.getMonth()], end.getFullYear())
 
     // use the first day of the start month and the last day of the end month
     const correctedStartDate = new Date(start.getFullYear(), start.getMonth(), 1)
@@ -1353,8 +1319,8 @@ export default class TimelineComponent {
   /**
    * Splits the calendar based on the current zoom level and returns the resulting number of divided periods.
    * @param {number} zoomLevel
-   * @param {Array} fullCalendar
-   * @return {number}
+   * @param {!Array.<Date>} fullCalendar
+   * @returns {number}
    */
   getMaxInterval(zoomLevel, fullCalendar) {
     switch (zoomLevel) {
@@ -1373,7 +1339,8 @@ export default class TimelineComponent {
 
   /**
    * Associates the nodes with the interval to which they belong based on their dates (in days).
-   * @param {Array} fullCalendar
+   * @param {!Array.<Date>} fullCalendar
+   * @returns {number}
    */
   splitInDays(fullCalendar) {
     for (let i = 0; i < fullCalendar.length; i++) {
@@ -1393,7 +1360,8 @@ export default class TimelineComponent {
 
   /**
    * Associates the nodes with the interval to which they belong based on their dates (in months).
-   * @param {Array} fullCalendar
+   * @param {!Array.<Date>} fullCalendar
+   * @returns {number}
    */
   splitInMonths(fullCalendar) {
     const startMonth = fullCalendar[0].getMonth() + 1
@@ -1422,7 +1390,8 @@ export default class TimelineComponent {
 
   /**
    * Associates the nodes with the interval to which they belong based on their dates (in weeks).
-   * @param {Array} fullCalendar
+   * @param {!Array.<Date>} fullCalendar
+   * @returns {number}
    */
   splitInWeeks(fullCalendar) {
     const startMonth = fullCalendar[0].getMonth() + 1
@@ -1464,7 +1433,8 @@ export default class TimelineComponent {
 
   /**
    * Returns the given date in "yyyy-mm-dd" format.
-   * @param {Date} date
+   * @param {!Date} date
+   * @returns {!string}
    */
   static getDateFormat(date) {
     return `${date.getFullYear()}/${date.getMonth() + 1}/${date.getDate()}`
@@ -1485,7 +1455,7 @@ export default class TimelineComponent {
 
   /**
    * Creates the html div for the video buttons.
-   * @return {Element}
+   * @returns {!Element}
    */
   createVideoButton() {
     const button = document.createElement('button')
@@ -1555,7 +1525,7 @@ export default class TimelineComponent {
 class TimeAxisVisual extends BaseClass(IVisualCreator) {
   /**
    * Creates a new instance of TimeAxisVisual.
-   * @param {Array} fullCalendar
+   * @param {!Array} fullCalendar
    * @param {number} zoomLevel
    */
   constructor(fullCalendar, zoomLevel) {
@@ -1566,8 +1536,8 @@ class TimeAxisVisual extends BaseClass(IVisualCreator) {
 
   /**
    * Creates the axis visual.
-   * @param {IRenderContext} context
-   * @returns {SvgVisual}
+   * @param {!IRenderContext} context
+   * @returns {!SvgVisual}
    */
   createVisual(context) {
     const container = window.document.createElementNS('http://www.w3.org/2000/svg', 'g')
@@ -1581,9 +1551,9 @@ class TimeAxisVisual extends BaseClass(IVisualCreator) {
 
   /**
    * Updates the axis visual to improve performance.
-   * @param {IRenderContext} context
-   * @param {Visual} oldVisual
-   * @returns {SvgVisual}
+   * @param {!IRenderContext} context
+   * @param {!SvgVisual} oldVisual
+   * @returns {!SvgVisual}
    */
   updateVisual(context, oldVisual) {
     const container = oldVisual.svgElement
@@ -1601,8 +1571,8 @@ class TimeAxisVisual extends BaseClass(IVisualCreator) {
 
   /**
    * Renders the axis visual.
-   * @param {SVGElement} container
-   * @param {object} cache
+   * @param {!SVGElement} container
+   * @param {*} cache
    */
   render(container, cache) {
     container['data-renderDataCache'] = cache
@@ -1696,7 +1666,7 @@ class TimeAxisVisual extends BaseClass(IVisualCreator) {
             monthY = y + 5
             break
         }
-        const monthsArray = getMonths()
+        const monthsArray = MONTHS
         months.forEach(month => {
           const days = calculateDaysOfMonth(month, year)
 
@@ -1769,7 +1739,7 @@ class TimeAxisVisual extends BaseClass(IVisualCreator) {
               labelText.setAttribute('font-weight', 'bold')
               labelText.setAttribute('font-size', '9')
               labelText.setAttribute('text-anchor', 'middle')
-              labelText.textContent = day
+              labelText.textContent = day.toString()
               container.appendChild(labelText)
               daysX += daysWidth + 5
             }
@@ -1783,9 +1753,9 @@ class TimeAxisVisual extends BaseClass(IVisualCreator) {
 
   /**
    * Generates the intermediate years between two dates.
-   * @param {string} startDate
-   * @param {string} endDate
-   * @return {Array}
+   * @param {!Date} startDate
+   * @param {!Date} endDate
+   * @returns {!Array.<number>}
    */
   static findIntermediateYears(startDate, endDate) {
     const years = []
@@ -1793,28 +1763,29 @@ class TimeAxisVisual extends BaseClass(IVisualCreator) {
     const endYear = endDate.getFullYear()
 
     for (let i = startYear; i <= endYear; i++) {
-      years.push(i.toString())
+      years.push(i)
     }
     return years
   }
 
   /**
    * Generates the intermediate months between two dates.
-   * @param {Array} fullCalendar
+   * @param {!Array.<Date>} fullCalendar
+   * @returns {!Map.<number,Array.<string>>}
    */
   static findIntermediateMonths(fullCalendar) {
-    const /** @type {Date} */ startDate = fullCalendar[0]
-    const /** @type {Date} */ endDate = fullCalendar[fullCalendar.length - 1]
+    const startDate = fullCalendar[0]
+    const endDate = fullCalendar[fullCalendar.length - 1]
 
-    const months = getMonths()
+    const months = MONTHS
     const startYear = startDate.getFullYear()
     const endYear = endDate.getFullYear()
 
-    const year2Months = new Mapper()
+    const year2Months = new Map()
     const diffYear = 12 * (endYear - startYear) + endDate.getMonth()
 
     for (let i = startDate.getMonth(); i <= diffYear; i++) {
-      const year = `${Math.floor(startYear + i / 12)}`
+      const year = Math.floor(Number(startYear) + i / 12)
 
       if (!year2Months.get(year)) {
         year2Months.set(year, [])
@@ -1832,33 +1803,18 @@ class TimeAxisVisual extends BaseClass(IVisualCreator) {
 class TimeFrameVisual extends BaseClass(IVisualCreator) {
   /**
    * Creates a new instance of TimeFrameVisual.
-   * @param {Rect} rectangle
+   *
+   * @param {!MutableRectangle} rectangle The rectangle that determines the bounds of this visual object.
    */
   constructor(rectangle) {
     super()
-    this.$rectangle = rectangle
-  }
-
-  /**
-   * Gets the rectangle that determines the bounds of this visual object.
-   * @return {MutableRectangle}
-   */
-  get rectangle() {
-    return this.$rectangle
-  }
-
-  /**
-   * Sets the rectangle that determines the bounds of this visual object.
-   * @param {MutableRectangle} rectangle
-   */
-  set rectangle(rectangle) {
-    this.$rectangle = rectangle
+    this.rectangle = rectangle
   }
 
   /**
    * Creates the time frame rectangle.
-   * @param {IRenderContext} context
-   * @return {SvgVisual}
+   * @param {!IRenderContext} context
+   * @returns {!SvgVisual}
    */
   createVisual(context) {
     const svgNamespace = 'http://www.w3.org/2000/svg'
@@ -1872,28 +1828,27 @@ class TimeFrameVisual extends BaseClass(IVisualCreator) {
     container.appendChild(timeFrameRect)
 
     container.setAttribute('transform', `translate(${this.rectangle.x} ${this.rectangle.y})`)
-
     container['render-data-cache'] = this.createRenderDataCache(this.rectangle)
     return new SvgVisual(container)
   }
 
   /**
    * Updates the time frame rectangle to improve performance.
-   * @param {IRenderContext} context
-   * @param {Visual} oldVisual
-   * @returns {SvgVisual}
+   * @param {!IRenderContext} context
+   * @param {!SvgVisual} oldVisual
+   * @returns {!SvgVisual}
    */
   updateVisual(context, oldVisual) {
     const container = oldVisual.svgElement
     const oldDataCache = container['render-data-cache']
     const newDataCache = this.createRenderDataCache(this.rectangle)
 
-    if (!newDataCache.equalsSize(newDataCache, oldDataCache)) {
+    if (!newDataCache.size.equals(oldDataCache.size)) {
       container.firstElementChild.setAttribute('width', this.rectangle.width.toString())
       container.firstElementChild.setAttribute('height', this.rectangle.height.toString())
     }
 
-    if (!newDataCache.equalsLocation(newDataCache, oldDataCache)) {
+    if (!newDataCache.location.equals(oldDataCache.location)) {
       container.setAttribute('transform', `translate(${this.rectangle.x} ${this.rectangle.y})`)
     }
 
@@ -1904,15 +1859,13 @@ class TimeFrameVisual extends BaseClass(IVisualCreator) {
 
   /**
    * Creates an object containing all necessary data to create a visual for the timeline frame.
-   * @param {Rectangle} rectangle
-   * @return {object}
+   * @param {!IRectangle} rectangle
+   * @returns {!object}
    */
   createRenderDataCache(rectangle) {
     return {
       location: new Point(rectangle.x, rectangle.y),
-      size: rectangle.toSize(),
-      equalsLocation: (self, other) => self.location.equals(other.location),
-      equalsSize: (self, other) => self.size.equals(other.size)
+      size: rectangle.toSize()
     }
   }
 }
@@ -1923,19 +1876,19 @@ class TimeFrameVisual extends BaseClass(IVisualCreator) {
 class TimeFrameAnimation {
   /**
    * Creates a new TimeFrameAnimation
-   * @param timeFrame The rectangle used in the {@link TimeFrameVisual}
-   * @param timelineComponent The graph component presenting the timeline
-   * @param graphComponent The graph component presenting the main graph
+   * @param {!MutableRectangle} timeFrame The rectangle used in the {@link TimeFrameVisual}
+   * @param {!GraphComponent} timelineComponent The graph component presenting the timeline
+   * @param {!GraphComponent} graphComponent The graph component presenting the main graph
    */
   constructor(timeFrame, timelineComponent, graphComponent) {
-    this.timeFrame = timeFrame
-    this.timelineComponent = timelineComponent
-    this.graphComponent = graphComponent
     this.animator = null
     this.startLocation = null
     this.timeFrameListeners = []
     this.animationEndedListeners = []
     this.animating = false
+    this.timeFrame = timeFrame
+    this.timelineComponent = timelineComponent
+    this.graphComponent = graphComponent
   }
 
   /**
@@ -1943,10 +1896,7 @@ class TimeFrameAnimation {
    */
   playAnimation() {
     if (!this.animating) {
-      const animator = new Animator(this.timelineComponent)
-      animator.autoInvalidation = true
-      animator.allowUserInteraction = true
-      this.animator = animator
+      this.animator = new Animator({ canvas: this.timelineComponent, allowUserInteraction: true })
 
       // set animating flag
       this.animating = true
@@ -1955,7 +1905,7 @@ class TimeFrameAnimation {
       this.startLocation = this.timeFrame.topLeft
 
       // start animation
-      animator.animate(() => {
+      this.animator.animate(() => {
         const timeFrame = this.timeFrame
         const viewport = this.timelineComponent.viewport
         const maxX = this.timelineComponent.contentRect.x + this.timelineComponent.contentRect.width
@@ -1991,6 +1941,7 @@ class TimeFrameAnimation {
 
   /**
    * Adds the listener invoked when the time frame changes.
+   * @param {!function} listener
    */
   addTimeFrameListener(listener) {
     this.timeFrameListeners.push(listener)
@@ -1998,7 +1949,7 @@ class TimeFrameAnimation {
 
   /**
    * Removes the listener invoked when the time frame changes.
-   * @param {function} listener
+   * @param {!function} listener
    */
   removeTimeFrameListener(listener) {
     const index = this.timeFrameListeners.indexOf(listener)
@@ -2020,7 +1971,7 @@ class TimeFrameAnimation {
 
   /**
    * Adds the listener invoked when the animation stops due to reaching the right end of the timeline.
-   * @param {function} listener
+   * @param {!Function} listener
    */
   addAnimationEndedListener(listener) {
     this.animationEndedListeners.push(listener)
@@ -2028,7 +1979,7 @@ class TimeFrameAnimation {
 
   /**
    * Removes the listener invoked when the animation stops due to reaching the right end of the timeline.
-   * @param {function} listener
+   * @param {!Function} listener
    */
   removeAnimationEndedListener(listener) {
     const index = this.animationEndedListeners.indexOf(listener)
@@ -2054,14 +2005,14 @@ class TimeFrameAnimation {
 class TimeFramePositionHandler extends BaseClass(IPositionHandler) {
   /**
    * Creates a position handler for the timeline.
-   * @param {IMutableRectangle} rectangle The rectangle to read and write its location to.
-   * @param {Rect} boundaryRectangle The content rectangle of the timeline component.
+   * @param {!IMutableRectangle} rectangle The rectangle to read and write its location to.
+   * @param {!Rect} boundaryRectangle The content rectangle of the timeline component.
    * @param {boolean} enabled Whether the handler should be enabled or not is enabled or not.
    */
   constructor(rectangle, boundaryRectangle, enabled) {
     super()
-    this.rectangle = rectangle
     this.$offset = new MutablePoint()
+    this.rectangle = rectangle
     this.$enabled = enabled
     this.$boundaryRectangle = boundaryRectangle
   }
@@ -2069,7 +2020,7 @@ class TimeFramePositionHandler extends BaseClass(IPositionHandler) {
   /**
    * The last "drag-location" during dragging.
    * It helps calculating the current position of the rectangle and finding out if there was any movement.
-   * @type {Point}
+   * @type {!Point}
    */
   get location() {
     return this.rectangle.topLeft
@@ -2078,7 +2029,7 @@ class TimeFramePositionHandler extends BaseClass(IPositionHandler) {
   /**
    * Gets the offset between the "drag-point" and the rectangle's location.
    * This offset helps keeping the relative position of the rectangle and the mouse cursor while dragging.
-   * @type {MutablePoint}
+   * @type {!MutablePoint}
    */
   get offset() {
     return this.$offset
@@ -2086,7 +2037,7 @@ class TimeFramePositionHandler extends BaseClass(IPositionHandler) {
 
   /**
    * Sets the offset between the "drag-point" and the rectangle's location.
-   * @param {MutablePoint} offset
+   * @type {!MutablePoint}
    */
   set offset(offset) {
     this.$offset = offset
@@ -2094,7 +2045,7 @@ class TimeFramePositionHandler extends BaseClass(IPositionHandler) {
 
   /**
    * Gets the content rectangle of the timeline component.
-   * @type {Rect}
+   * @type {!Rect}
    */
   get boundaryRectangle() {
     return this.$boundaryRectangle
@@ -2102,7 +2053,7 @@ class TimeFramePositionHandler extends BaseClass(IPositionHandler) {
 
   /**
    * Sets the content rectangle of the timeline component.
-   * @param {Rect} boundaryRectangle
+   * @type {!Rect}
    */
   set boundaryRectangle(boundaryRectangle) {
     this.$boundaryRectangle = boundaryRectangle
@@ -2110,7 +2061,7 @@ class TimeFramePositionHandler extends BaseClass(IPositionHandler) {
 
   /**
    * Checks whether the frame is busy so that the handler remains disabled.
-   * @type boolean
+   * @type {boolean}
    */
   get enabled() {
     return this.$enabled
@@ -2118,7 +2069,7 @@ class TimeFramePositionHandler extends BaseClass(IPositionHandler) {
 
   /**
    * Enable/disable this position handler.
-   * @param {boolean} enabled
+   * @type {boolean}
    */
   set enabled(enabled) {
     this.$enabled = enabled
@@ -2127,6 +2078,7 @@ class TimeFramePositionHandler extends BaseClass(IPositionHandler) {
   /**
    * Stores the initial location of the movement for reference, and calls the base method.
    * @see Specified by {@link IDragHandler#initializeDrag}.
+   * @param {*} context
    */
   initializeDrag(context) {
     this.offset.x = this.location.x - context.canvasComponent.lastMouseEvent.location.x
@@ -2134,9 +2086,9 @@ class TimeFramePositionHandler extends BaseClass(IPositionHandler) {
 
   /**
    * Constrains the movement to the horizontal axis.
-   * @param {IInputModeContext} inputModeContext
-   * @param {Point} originalLocation
-   * @param {Point} newLocation
+   * @param {!IInputModeContext} inputModeContext
+   * @param {!Point} originalLocation
+   * @param {!Point} newLocation
    */
   handleMove(inputModeContext, originalLocation, newLocation) {
     if (this.enabled) {
@@ -2151,9 +2103,9 @@ class TimeFramePositionHandler extends BaseClass(IPositionHandler) {
 
   /**
    * Invoked when dragging has finished.
-   * @param {IInputModeContext} inputModeContext
-   * @param {Point} originalLocation
-   * @param {Point} newLocation
+   * @param {!IInputModeContext} inputModeContext
+   * @param {!Point} originalLocation
+   * @param {!Point} newLocation
    */
   dragFinished(inputModeContext, originalLocation, newLocation) {
     const newX = this.getX(
@@ -2166,8 +2118,8 @@ class TimeFramePositionHandler extends BaseClass(IPositionHandler) {
 
   /**
    * Invoked when dragging was cancelled.
-   * @param {IInputModeContext} inputModeContext
-   * @param {Point} originalLocation
+   * @param {*} context
+   * @param {!Point} originalLocation
    */
   cancelDrag(context, originalLocation) {
     this.rectangle.relocate(originalLocation)
@@ -2176,10 +2128,10 @@ class TimeFramePositionHandler extends BaseClass(IPositionHandler) {
   /**
    * Returns the next x position. If the rectangle reaches the borders of the boundary rectangle, the position
    * changes accordingly such that the rectangle fits in the timeline.
+   * @returns {number} The next x coordinate of the rectangle.
    * @param {number} nextPositionX
    * @param {number} x1
    * @param {number} x2
-   * @return {number} The next x coordinate of the rectangle.
    */
   getX(nextPositionX, x1, x2) {
     // check if the next position is within the boundary rectangle borders
@@ -2195,38 +2147,20 @@ class TimeFramePositionHandler extends BaseClass(IPositionHandler) {
 
 /**
  * Represents the current zoom-level that will determine if years, months or days will be displayed.
+ * @readonly
+ * @enum {number}
  */
-class ZoomLevel {
-  /**
-   * Zoom to years.
-   * @return {number}
-   */
-  static get ZOOM_YEARS() {
-    return 0
-  }
-
-  /**
-   * Zoom to months.
-   * @return {number}
-   */
-  static get ZOOM_MONTHS() {
-    return 1
-  }
-
-  /**
-   * Zoom to days.
-   * @return {number}
-   */
-  static get ZOOM_DAYS() {
-    return 2
-  }
+const ZoomLevel = {
+  ZOOM_YEARS: 0,
+  ZOOM_MONTHS: 1,
+  ZOOM_DAYS: 2
 }
 
 /**
  * Calculates the days of each month.
- * @param {string} month
- * @param {string} year
- * @return {number}
+ * @param {!string} month
+ * @param {number} year
+ * @returns {number}
  */
 function calculateDaysOfMonth(month, year) {
   switch (month) {
@@ -2252,29 +2186,27 @@ function calculateDaysOfMonth(month, year) {
 }
 
 /**
- * Returns an array with the months of a year.
+ * An array with the months of a year.
  */
-function getMonths() {
-  return [
-    'January',
-    'February',
-    'March',
-    'April',
-    'May',
-    'June',
-    'July',
-    'August',
-    'September',
-    'October',
-    'November',
-    'December'
-  ]
-}
+const MONTHS = [
+  'January',
+  'February',
+  'March',
+  'April',
+  'May',
+  'June',
+  'July',
+  'August',
+  'September',
+  'October',
+  'November',
+  'December'
+]
 
 /**
  * Returns the size of the timeline nodes based on the zoom factor.
- * @param zoomLevel The current zoom level
- * @return {number} The width of the timeline nodes
+ * @param {!ZoomLevel} zoomLevel The current zoom level
+ * @returns {number} The width of the timeline nodes
  */
 function getXOffset(zoomLevel) {
   switch (zoomLevel) {
@@ -2289,8 +2221,8 @@ function getXOffset(zoomLevel) {
 
 /**
  * Returns the offset between two timeline nodes.
- * @param zoomLevel The current zoom level
- * @return {number} The split offset
+ * @param {!ZoomLevel} zoomLevel The current zoom level
+ * @returns {number} The split offset
  */
 function getSplitOffset(zoomLevel) {
   switch (zoomLevel) {

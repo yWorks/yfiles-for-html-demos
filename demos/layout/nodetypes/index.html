@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+
+<!-- ////////////////////////////////////////////////////////////////////////
+     // @license
+     // This demo file is part of yFiles for HTML 2.4.
+     // Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // 72070 Tuebingen, Germany. All rights reserved.
+     //
+     // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+     // of demo files in source code or binary form, with or without
+     // modification, is not permitted.
+     //
+     // Owners of a valid software license for a yFiles for HTML version that this
+     // demo is shipped with are allowed to use the demo source code as basis
+     // for their own yFiles for HTML powered applications. Use of such programs is
+     // governed by the rights and conditions as set out in the yFiles for HTML
+     // license agreement.
+     //
+     // THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+     // WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+     // MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+     // NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+     // SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+     // TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+     // PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+     // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+     // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+     // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+     // 
+     ////////////////////////////////////////////////////////////////////////-->
+
+  <title>Node Types Demo [yFiles for HTML]</title>
+
+  <link rel="stylesheet" href="../../resources/style/demo.css">
+
+  <script src="../../resources/filesystem-warning.js"></script>
+
+  <style>
+    #node-type-panel {
+      border: solid lightgray;
+      background-color: rgba(255, 255, 255, 0.9);
+      padding: 6px;
+      position: relative;
+      display: inline-block;
+      user-select: none;
+      cursor: default;
+    }
+
+    #node-type-panel .type-0, #node-type-panel .type-1, #node-type-panel .type-2 {
+      cursor: pointer;
+    }
+
+    #heading {
+      font-size: 28px;
+      margin-bottom: 1ex;
+    }
+
+    .node-type-button {
+      width: 30px;
+      height: 30px;
+      text-align: center;
+      vertical-align: middle;
+      font-size: 24px;
+      display: inline-block;
+    }
+
+    .current-type {
+      border: thick solid darkseagreen;
+    }
+
+    .type-0 {
+      fill: firebrick;
+      background-color: firebrick;
+    }
+
+    .type-1 {
+      fill: cornflowerblue;
+      background-color: cornflowerblue;
+    }
+
+    .type-2 {
+      fill: green;
+      background-color: green;
+    }
+  </style>
+</head>
+<body class="demo-has-left">
+<aside class="demo-sidebar demo-left">
+  <h1 class="demo-sidebar-header">Description</h1>
+  <div class="demo-sidebar-content">
+    <p>
+      This demo shows how different layout algorithms handle nodes that are associated with some specific types, see
+      the Developer's Guide section on <a href="https://docs.yworks.com/yfileshtml/#/dguide/node_types" target="_blank">Layout with Custom Node Types</a>.
+      In this example application, nodes with same color are considered to be of the same type.
+    </p>
+    <p>
+      The type is generally treated as a secondary, subordinate optimization criterion. Thus, nodes of the same type
+      are usually not simply clustered together. The type is only considered when some free choice is available after
+      considering other constraints relevant to the specific layout algorithm (like minimizing the number of crossings or
+      considering the hierarchical grouping structure).
+    </p>
+
+    <h2>Things to Try</h2>
+    <ul>
+      <li>
+        Use the combo box to choose a specific layout algorithm. This automatically loads a suitable example graph.
+      </li>
+      <li>
+        Compare the results with and without considering node types. Use the 'Consider Types' checkbox
+        to change the setting.
+      </li>
+      <li>
+        Modify the graph by adding new elements or changing the type of existing nodes via the context menu and
+        observe the effect on the layout. The context menu can be accessed by clicking on a node.
+      </li>
+    </ul>
+
+  </div>
+</aside>
+
+<div class="demo-content">
+  <div class="demo-toolbar">
+    <button data-command="Reset" title="Reset Graph" class="demo-icon-yIconNew"></button>
+    <span class="demo-separator"></span>
+    <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
+    <button data-command="ZoomOriginal" title="Zoom to original size" class="demo-icon-yIconZoomOriginal"></button>
+    <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
+    <button data-command="FitContent" title="Fit Content" class="demo-icon-yIconZoomFit"></button>
+    <span class="demo-separator"></span>
+    <button data-command="Undo" title="Undo" class="demo-icon-yIconUndo"></button>
+    <button data-command="Redo" title="Redo" class="demo-icon-yIconRedo"></button>
+    <span class="demo-separator"></span>
+    <span>Sample</span>
+    <button data-command="PreviousSample" title="Open previous graph" class="demo-icon-yIconPrevious" id="previous-sample-button"></button>
+    <select data-command="SampleSelectionChanged" title="Select a sample graph" id="sample-combo-box"></select>
+    <button data-command="NextSample" title="Open next graph" class="demo-icon-yIconNext" id="next-sample-button"></button>
+    <span class="demo-separator"></span>
+    <button data-command="Layout" title="Run Layout" class="demo-icon-yIconLayout labeled">Layout</button>
+    <span class="demo-separator"></span>
+    <input type="checkbox" id="consider-types" checked class="demo-toggle-button labeled">
+    <label for="consider-types">Consider Types</label>
+  </div>
+  <div id="graphComponent">
+    <div id="node-type-panel" class="popupContent" tabindex="0">
+      <div id="heading">Type</div>
+      <div class="node-type-button type-0"></div>
+      <div class="node-type-button type-1"></div>
+      <div class="node-type-button type-2"></div>
+    </div>
+  </div>
+</div>
+
+<script type="module" crossorigin="anonymous" src="NodeTypesDemo.js"></script>
+</body>
+</html>

@@ -10,5 +10,5 @@ Available styles are tree, organic, or orthogonal style, or a hierarchic style w
 
 ## Things to Try
 
-- Add nodes to a new subcomponent that gets an individual layout. Select some nodes, chose a layout algorithm and style, and hit ![](../../resources/icons/plus2-16.svg). Then the new subcomponent is marked with a color and the layout is updated.
+- Add nodes to a new subcomponent that gets an individual layout. Select some nodes, choose a layout algorithm and style, and hit ![](../../resources/icons/plus2-16.svg). Then the new subcomponent is marked with a color and the layout is updated.
 - Remove nodes from subcomponents. Select some nodes and press ![](../../resources/icons/minus2-16.svg). Those nodes are removed from their subcomponents.

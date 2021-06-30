@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -174,7 +174,7 @@ function configureContextMenu(graphComponent) {
     }
   })
 
-  // Add and event listener that populates the context menu according to the hit elements, or cancels showing a menu.
+  // Add an event listener that populates the context menu according to the hit elements, or cancels showing a menu.
   // This PopulateItemContextMenu is fired when calling the ContextMenuInputMode.shouldOpenMenu method above.
   inputMode.addPopulateItemContextMenuListener((sender, evt) =>
     populateContextMenu(contextMenu, graphComponent, evt)
@@ -335,6 +335,7 @@ async function loadGraph() {
  * @param {!IList.<INode>} nodes The nodes to aggregate by
  * @param {!function} selector The selector function to use for aggregation
  * @param {!function} styleFactory The style factory to use for the aggregation node
+ * @template TKey
  */
 function aggregateSame(nodes, selector, styleFactory) {
   // get one representative of each kind of node (determined by the selector) ignoring aggregation nodes
@@ -360,6 +361,7 @@ function aggregateSame(nodes, selector, styleFactory) {
  * Collects all un-aggregated nodes that match the kind of node by the selector.
  * @param {!INode} node The node to match
  * @param {!function} selector The selector function to use for the node matching
+ * @template TKey
  * @returns {!IList.<INode>}
  */
 function collectNodesOfSameKind(node, selector) {
@@ -374,6 +376,7 @@ function collectNodesOfSameKind(node, selector) {
  * Aggregates all nodes of the original graph by the selector and runs the layout.
  * Before aggregating the nodes, all existing aggregations are separated.
  * See {@link AggregationGraphWrapper.separateAll}.
+ * @template TKey
  * @param {!function} selector
  * @param {!function} styleFactory
  */
@@ -401,6 +404,7 @@ function aggregateAll(selector, styleFactory) {
  * @param {!IList.<INode>} nodes The nodes to aggregate
  * @param {!TKey} key The key to use for the aggregation
  * @param {!function} styleFactory The style factory to use for the aggregation node
+ * @template TKey
  */
 function aggregate(nodes, key, styleFactory) {
   const size = graphComponent.graph.nodeDefaults.size.multiply(1 + nodes.size * 0.2)

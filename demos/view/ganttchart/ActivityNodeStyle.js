@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -27,9 +27,12 @@
  **
  ***************************************************************************/
 import {
-  Color,
+  Class,
+  ICanvasContext,
   IFocusIndicatorInstaller,
+  IInputModeContext,
   INode,
+  IRectangle,
   IRenderContext,
   ISelectionIndicatorInstaller,
   NodeStyleBase,
@@ -47,20 +50,20 @@ import {
  */
 export default class ActivityNodeStyle extends NodeStyleBase {
   /**
-   * @param {Color} color
+   * @param {!object} color
    */
   constructor(color) {
     super()
     this.color = `rgb(${color.r},${color.g},${color.b})`
     this.fillColor = `rgba(${color.r},${color.g},${color.b},0.8)`
-    this.patternFill = this.$createPatternFill(this.color)
+    this.patternFill = this.createPatternFill(this.color)
   }
 
   /**
-   * Creates the visual element for the node.
-   * @param {IRenderContext} context - The render context.
-   * @param {INode} node - The node to which this style instance is assigned.
-   * @returns {SvgVisual}
+   * Creates the visualization for the given node.
+   * @param {!IRenderContext} context The render context.
+   * @param {!INode} node The node to which this style instance is assigned.
+   * @returns {!SvgVisual}
    */
   createVisual(context, node) {
     // get the activity data
@@ -68,7 +71,7 @@ export default class ActivityNodeStyle extends NodeStyleBase {
     const layout = node.layout
 
     // create the container element
-    const container = window.document.createElementNS('http://www.w3.org/2000/svg', 'g')
+    const container = document.createElementNS('http://www.w3.org/2000/svg', 'g')
 
     // get the width of the lead an followUp decorations
     const leadWidth =
@@ -84,7 +87,7 @@ export default class ActivityNodeStyle extends NodeStyleBase {
     const halfHeight = layout.height * 0.5
 
     // create the background rectangle
-    const backgroundRect = window.document.createElementNS('http://www.w3.org/2000/svg', 'rect')
+    const backgroundRect = document.createElementNS('http://www.w3.org/2000/svg', 'rect')
     backgroundRect.width.baseVal.value = rectWidth
     backgroundRect.height.baseVal.value = layout.height
     backgroundRect.rx.baseVal.value = halfHeight
@@ -94,7 +97,7 @@ export default class ActivityNodeStyle extends NodeStyleBase {
     container.appendChild(backgroundRect)
 
     // create the main rectangle
-    const mainRect = window.document.createElementNS('http://www.w3.org/2000/svg', 'rect')
+    const mainRect = document.createElementNS('http://www.w3.org/2000/svg', 'rect')
     mainRect.width.baseVal.value = rectWidth
     mainRect.height.baseVal.value = layout.height
     mainRect.rx.baseVal.value = halfHeight
@@ -107,7 +110,7 @@ export default class ActivityNodeStyle extends NodeStyleBase {
     // render the lead and followUp time
     if (leadWidth > 0 || followUpWidth > 0) {
       // create a g element which contains the lead and followUp rectangles
-      const decoratorContainer = window.document.createElementNS('http://www.w3.org/2000/svg', 'g')
+      const decoratorContainer = document.createElementNS('http://www.w3.org/2000/svg', 'g')
 
       if (leadWidth > 0) {
         this.renderTimeDecoration(context, decoratorContainer, leadWidth, layout, false)
@@ -131,17 +134,17 @@ export default class ActivityNodeStyle extends NodeStyleBase {
 
   /**
    * Updates the visual element for the node with the current data.
-   * @param {IRenderContext} context - The render context.
-   * @param {Visual} oldVisual - The visual that has been created in the call to
+   * @param {!IRenderContext} context - The render context.
+   * @param {!Visual} oldVisual - The visual that has been created in the call to
    *   {@link NodeStyleBase#createVisual}.
-   * @param {INode} node - The node to which this style instance is assigned.
-   * @returns {SvgVisual}
+   * @param {!INode} node - The node to which this style instance is assigned.
+   * @returns {!SvgVisual}
    */
   updateVisual(context, oldVisual, node) {
     const tag = node.tag
     const layout = node.layout
 
-    if (oldVisual === null) {
+    if (!(oldVisual instanceof SvgVisual)) {
       // there's no old visual to update
       return this.createVisual(context, node)
     }
@@ -197,7 +200,7 @@ export default class ActivityNodeStyle extends NodeStyleBase {
         // update the lead and followUp decorations
         if (container.childElementCount < 3) {
           // there is no container - create it
-          const el = window.document.createElementNS('http://www.w3.org/2000/svg', 'g')
+          const el = document.createElementNS('http://www.w3.org/2000/svg', 'g')
           container.appendChild(el)
         }
 
@@ -223,10 +226,15 @@ export default class ActivityNodeStyle extends NodeStyleBase {
   }
 
   /**
-   * Creates the visual element representing the lead or followUp time and adds it to the container.
+   * Creates the visualization for lead or followUp time and adds it to the container.
+   * @param {!IRenderContext} renderContext
+   * @param {!SVGElement} decoratorContainer
+   * @param {number} duration
+   * @param {!IRectangle} nodeLayout
+   * @param {boolean} isFollowUpTime
    */
   renderTimeDecoration(renderContext, decoratorContainer, duration, nodeLayout, isFollowUpTime) {
-    const pathElement = window.document.createElementNS('http://www.w3.org/2000/svg', 'path')
+    const pathElement = document.createElementNS('http://www.w3.org/2000/svg', 'path')
 
     pathElement.setAttribute(
       'd',
@@ -236,11 +244,8 @@ export default class ActivityNodeStyle extends NodeStyleBase {
     this.patternFill.applyTo(pathElement, renderContext)
     pathElement.setAttribute('stroke', this.color)
 
-    const clipPathElement = window.document.createElementNS(
-      'http://www.w3.org/2000/svg',
-      'clipPath'
-    )
-    const rectElement = window.document.createElementNS('http://www.w3.org/2000/svg', 'rect')
+    const clipPathElement = document.createElementNS('http://www.w3.org/2000/svg', 'clipPath')
+    const rectElement = document.createElementNS('http://www.w3.org/2000/svg', 'rect')
     rectElement.x.baseVal.value = isFollowUpTime ? nodeLayout.width : -duration
     rectElement.y.baseVal.value = 0
     rectElement.width.baseVal.value = duration
@@ -251,7 +256,7 @@ export default class ActivityNodeStyle extends NodeStyleBase {
 
     pathElement.setAttribute('clip-path', `url(#${clipId})`)
 
-    const innerContainer = window.document.createElementNS('http://www.w3.org/2000/svg', 'g')
+    const innerContainer = document.createElementNS('http://www.w3.org/2000/svg', 'g')
     innerContainer['data-is-followup-time'] = isFollowUpTime
 
     innerContainer.appendChild(pathElement)
@@ -266,6 +271,11 @@ export default class ActivityNodeStyle extends NodeStyleBase {
 
   /**
    * Updates the visual element representing the lead or followUp time and adds it to the container.
+   * @param {!IRenderContext} renderContext
+   * @param {!SVGElement} decoratorContainer
+   * @param {number} duration
+   * @param {!IRectangle} nodeLayout
+   * @param {boolean} isFollowUpTime
    */
   updateTimeDecoration(renderContext, decoratorContainer, duration, nodeLayout, isFollowUpTime) {
     const innerContainer = isFollowUpTime
@@ -306,7 +316,10 @@ export default class ActivityNodeStyle extends NodeStyleBase {
 
   /**
    * Create the SVG path data.
-   * @returns {string}
+   * @param {number} duration
+   * @param {!IRectangle} nodeLayout
+   * @param {boolean} isFollowUpTime
+   * @returns {!string}
    */
   createTimeDecorationPathData(duration, nodeLayout, isFollowUpTime) {
     const y = 0
@@ -320,18 +333,19 @@ export default class ActivityNodeStyle extends NodeStyleBase {
 
   /**
    * Creates a hatch fill for the lead/followUp time using the given color.
-   * @returns {PatternFill}
+   * @param {!string} color
+   * @returns {!PatternFill}
    */
-  $createPatternFill(color) {
-    const content = window.document.createElementNS('http://www.w3.org/2000/svg', 'g')
-    const line = window.document.createElementNS('http://www.w3.org/2000/svg', 'line')
+  createPatternFill(color) {
+    const content = document.createElementNS('http://www.w3.org/2000/svg', 'g')
+    const line = document.createElementNS('http://www.w3.org/2000/svg', 'line')
     const patternSize = 6
-    line.setAttribute('x1', 0)
-    line.setAttribute('y1', patternSize)
-    line.setAttribute('x2', patternSize)
-    line.setAttribute('y2', 0)
+    line.setAttribute('x1', '0')
+    line.setAttribute('y1', `${patternSize}`)
+    line.setAttribute('x2', `${patternSize}`)
+    line.setAttribute('y2', '0')
     line.setAttribute('stroke', color)
-    const rect = window.document.createElementNS('http://www.w3.org/2000/svg', 'rect')
+    const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect')
     rect.setAttribute('width', patternSize.toString())
     rect.setAttribute('height', patternSize.toString())
     rect.setAttribute('fill', '#fff')
@@ -348,7 +362,9 @@ export default class ActivityNodeStyle extends NodeStyleBase {
   /**
    * Get the bounding box of the node
    * This is used for bounding box calculations.
-   * @returns {Rect}
+   * @param {!ICanvasContext} canvasContext
+   * @param {!INode} node
+   * @returns {!Rect}
    */
   getBounds(canvasContext, node) {
     const layout = node.layout
@@ -368,6 +384,9 @@ export default class ActivityNodeStyle extends NodeStyleBase {
   /**
    * Checks if the node is visible.
    * This method is overridden to include the lead and followUp time.
+   * @param {!ICanvasContext} canvasContext
+   * @param {!Rect} clip
+   * @param {!INode} node
    * @returns {boolean}
    */
   isVisible(canvasContext, clip, node) {
@@ -380,6 +399,9 @@ export default class ActivityNodeStyle extends NodeStyleBase {
 
   /**
    * Checks if the node is hit. Always returns false if the node has no height.
+   * @param {!IInputModeContext} context
+   * @param {!Point} p
+   * @param {!INode} node
    * @returns {boolean}
    */
   isHit(context, p, node) {
@@ -389,6 +411,9 @@ export default class ActivityNodeStyle extends NodeStyleBase {
 
   /**
    * Overridden to switch off the default selection decoration.
+   * @param {!INode} node
+   * @param {!Class} type
+   * @returns {*}
    */
   lookup(node, type) {
     if (type === ISelectionIndicatorInstaller.$class || type === IFocusIndicatorInstaller.$class) {

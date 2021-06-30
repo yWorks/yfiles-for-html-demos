@@ -1,11 +1,11 @@
 <!DOCTYPE HTML>
-<html>
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.3.
+     // This demo file is part of yFiles for HTML 2.4.
      // Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
@@ -33,85 +33,59 @@
      ////////////////////////////////////////////////////////////////////////-->
 
   <title>yFiles for HTML File Operations Demo Java Server README</title>
-  <link rel="stylesheet" type="text/css" href="../../../../../doc/documentation-style.css">
+  <link rel="stylesheet" type="text/css" href="../../../../../doc/readme-style.css">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 </head>
 <body>
-<header>
-  <div class="logo"></div>
-  <div class="title">
-    <a href="../../../../README.html">yFiles for HTML</a>
-    <span class="angle-right"></span>
-    yFiles for HTML File Operations Demo Java Server README
-  </div>
-</header>
-
-<div class="content">
-  <div class="content-centered">
-    <p>Note that the server load/save operations are also supported by the <a href="../../../../demo-server/README.html" target="_blank">Node.js Demo Server</a>.</p>
-
-    <h2>Deployment</h2>
-
-    <p>Create a web application that contains the compiled <code>com.yworks.demo.SimpleLoadSaveServlet</code> in the
-    <code>WEB-INF/classes</code> directory, and that uses the <code>web/WEB-INF/web.xml</code> file as deployment descriptor.</p>
-
-    <div class="note">
-    <p>The deployment descriptor (web.xml) maps the <code>com.yworks.demo.SimpleLoadSaveServlet</code> to the
-      <code>/isAlive, /load,</code> and <code>/save</code> url patterns.
-      Therefore, to properly handle the demo requests (e.g. <code>http://localhost:4242/file/isAlive</code>), the web application should be deployed with <b><code>/file</code>
-      as the application context</b>, and the servlet container should <b>listen on <code>localhost:4242</code></b>.</p>
-    </div>
-
-    <h2>Demo Requests</h2>
-    <p>
-      The File Operations Demo uses the following requests:
-    </p>
-    <dl>
-     <dt><code>http://localhost:4242/file/isAlive</code></dt><dd><code>GET</code> request to check whether a file load/save server is running
-     (used to enable the corresponding actions if an "OK" (200) response code is received).</dd>
-     <dt><code>http://localhost:4242/file/load</code></dt><dd><code>POST</code> request to upload a file from
-     the filesystem and send the file contents to the client.</dd>
-     <dt><code>http://localhost:4242/file/save</code></dt><dd><code>POST</code> request to send the current graph
-     to the server and download it as a GraphML file.</dd>
-    </dl>
-  </div>
+<div id="header" class="simple-header">
+  yFiles for HTML File Operations Demo Java Server
 </div>
-<footer class="default-footer">
-  <div class="footer-block">
-    <h4>Contents</h4>
-    <a href="../../../../../README.html">Welcome Page</a><br>
-    <a href="../../../../../doc/api/index.html">API Documentation</a><br>
-    <a href="../../../../../doc/api/index.html#/dguide/getting_started">Getting Started</a><br>
-    <a href="../../../../../doc/readme/legal/SOFTWARE_LICENSE_AGREEMENT.html">License Agreement</a><br>
-    <a href="../../../../../doc/readme/support.html">Help and Support</a>
-  </div>
-  <div class="footer-block">
-    <h4>Contact</h4>
-    yWorks GmbH<br>
-    Vor dem Kreuzberg 28<br>
-    72070 T&uuml;bingen<br>
-    Germany<br>
-    Phone: <a href="tel:+497071979050">+49 7071 979050</a><br>
-    Email: <a href="https://www.yworks.com/contact">contact(at)yworks.com</a>
-  </div>
-  <div class="footer-block">
-    <h4>Follow Us</h4>
-    <div class="social">
-      <a href="https://www.yworks.com/products/yfiles-for-html" target="_blank" class="web">Homepage</a>
-      <a href="https://www.yworks.com/newsfeed" target="_blank" class="rss">RSS Feed</a>
+
+<main>
+  <div class="content-centered">
+    <div class="content">
+      <div class="breadcrumbs">
+        <a href="../../../../README.html">yFiles for HTML</a>
+        <span class="angle-right"></span>
+        yFiles for HTML File Operations Demo Java Server
+      </div>
+
+      <p>Note that the server load/save operations are also supported by the <a
+        href="../../../../demo-server/README.html" target="_blank">Node.js Demo Server</a>.</p>
+
+      <h2>Deployment</h2>
+
+      <p>Create a web application that contains the compiled <code>com.yworks.demo.SimpleLoadSaveServlet</code> in the
+        <code>WEB-INF/classes</code> directory, and that uses the <code>web/WEB-INF/web.xml</code> file as deployment
+        descriptor.</p>
+
+      <div class="info">
+        <p>The deployment descriptor (web.xml) maps the <code>com.yworks.demo.SimpleLoadSaveServlet</code> to the <code>/isAlive, /load,</code>
+          and <code>/save</code> url patterns. Therefore, to properly handle the demo requests (e.g. <code>http://localhost:4242/file/isAlive</code>),
+          the web application should be deployed with <b><code>/file</code> as the application context</b>, and the
+          servlet container should <b>listen on <code>localhost:4242</code></b>.</p>
+      </div>
+
+      <h2>Demo Requests</h2>
+      <p>
+        The File Operations Demo uses the following requests:
+      </p>
+      <dl>
+        <dt><code>http://localhost:4242/file/isAlive</code></dt>
+        <dd><code>GET</code> request to check whether a file load/save server is running (used to enable the
+          corresponding actions if an "OK" (200) response code is received).
+        </dd>
+        <dt><code>http://localhost:4242/file/load</code></dt>
+        <dd><code>POST</code> request to upload a file from the filesystem and send the file contents to the client.
+        </dd>
+        <dt><code>http://localhost:4242/file/save</code></dt>
+        <dd><code>POST</code> request to send the current graph to the server and download it as a GraphML file.</dd>
+      </dl>
     </div>
-    <div>
-      <a href="https://github.com/yWorks" target="_blank" class="gh">GitHub</a>
-      <a href="https://twitter.com/yworks" target="_blank" class="tw">Twitter</a>
-      <a href="https://www.youtube.com/user/yWorksTube" target="_blank" class="yt">YouTube</a>
-    </div>
-    <br><br>
-    <span class="copyright">COPYRIGHT &#x00A9; 2021 yWorks</span><br>
-    <a href="https://www.yworks.com/company/legal/imprint">Legal Disclosure</a> |
-    <a href="https://www.yworks.com/company/legal/terms-of-use">Terms of Use</a> |
-    <a href="https://www.yworks.com/company/legal/privacy">Privacy Policy</a>
+    <!-- populated by readme-style.js -->
+    <div id="footer-detailed"></div>
   </div>
-  <div class="footer-block logo"></div>
-</footer>
+</main>
+<script src="../../../../../doc/readme-style.js"></script>
 </body>
 </html>

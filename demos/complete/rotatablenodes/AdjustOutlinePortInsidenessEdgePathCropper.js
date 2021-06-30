@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -42,11 +42,11 @@ import {
 export default class AdjustOutlinePortInsidenessEdgePathCropper extends DefaultEdgePathCropper {
   /**
    * Checks whether or not the given location is inside the nodes rotated shape.
-   * @param {Point} location
-   * @param {INode} node
-   * @param {IShapeGeometry} nodeShapeGeometry
-   * @param {IEdge} edge
-   * @return {boolean}
+   * @param {!Point} location
+   * @param {!INode} node
+   * @param {!IShapeGeometry} nodeShapeGeometry
+   * @param {!IEdge} edge
+   * @returns {boolean}
    */
   isInside(location, node, nodeShapeGeometry, edge) {
     if (nodeShapeGeometry) {
@@ -58,12 +58,12 @@ export default class AdjustOutlinePortInsidenessEdgePathCropper extends DefaultE
   /**
    * Returns the intersection point of the segment between the outer and inner point and the node's rotated shape.
    * If there is no intersection point, the result is null.
-   * @param {INode} node
-   * @param {IShapeGeometry} nodeShapeGeometry
-   * @param {IEdge} edge
-   * @param {Point} inner
-   * @param {Point} outer
-   * @return {Point|null}
+   * @param {!INode} node
+   * @param {!IShapeGeometry} nodeShapeGeometry
+   * @param {!IEdge} edge
+   * @param {!Point} inner
+   * @param {!Point} outer
+   * @returns {?Point}
    */
   getIntersection(node, nodeShapeGeometry, edge, inner, outer) {
     if (nodeShapeGeometry) {
@@ -80,9 +80,9 @@ export default class AdjustOutlinePortInsidenessEdgePathCropper extends DefaultE
 /**
  * Returns a slightly enlarged outline of the shape to ensure that ports ports that lie exactly on the shape's outline
  * are always considered inside.
- * @param {INode} node
- * @param {IShapeGeometry} nodeShapeGeometry
- * @return {GeneralPath}
+ * @param {!INode} node
+ * @param {!IShapeGeometry} nodeShapeGeometry
+ * @returns {!GeneralPath}
  */
 function getScaledOutline(node, nodeShapeGeometry) {
   let outline = nodeShapeGeometry.getOutline()

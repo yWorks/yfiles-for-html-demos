@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -50,25 +50,26 @@ import {
 
 import AdditionalSnapLineVisualCreator from './AdditionalSnapLineVisualCreator.js'
 import { initDemoStyles } from '../../resources/demo-styles.js'
-import ShapeBasedGridNodeSnapResultProvider from './ShapeBasedGridNodeSnapResultProvider.js'
 import OrthogonalLabelSnapLineProviderWrapper from './OrthogonalLabelSnapLineProviderWrapper.js'
+import ShapeBasedGridNodeSnapResultProvider from './ShapeBasedGridNodeSnapResultProvider.js'
 import { showApp } from '../../resources/demo-app.js'
 import AdditionalSnapLineMoveInputMode from './AdditionalSnapLineMoveInputMode.js'
 import loadJson from '../../resources/load-json.js'
 
-/**
- * @type {GridVisualCreator}
- */
+/** @type {GridVisualCreator} */
 let grid = null
 
 /**
- * Returns a list of the free {@link AdditionalSnapLineVisualCreator}s used in this
- * This property is used by the {@link AdditionalSnapLineMoveInputMode} to access the
- * {@link AdditionalSnapLineVisualCreator}s used in this
+ * Returns a list of the free {@link AdditionalSnapLineVisualCreator}s used in this demo.
+ * This property is used by {@link AdditionalSnapLineMoveInputMode} to access the
+ * {@link AdditionalSnapLineVisualCreator}s used in this demo.
  * @type {List.<AdditionalSnapLineVisualCreator>}
  */
 let additionalSnapLineVisualCreators = null
 
+/**
+ * @param {*} licenseData
+ */
 function run(licenseData) {
   License.value = licenseData
   // initialize the GraphComponent
@@ -82,21 +83,22 @@ function run(licenseData) {
 
   initializeGrid(graphComponent, graphSnapContext)
 
-  // Initialize two free snap lines that are also visualized in the GraphCanvasComponent
+  // initialize two free snap lines that are also visualized in the demo's GraphComponent
   additionalSnapLineVisualCreators = new List()
   addAdditionalSnapLineVisualCreator(graphComponent, new Point(0, -70), new Point(500, -70))
   addAdditionalSnapLineVisualCreator(graphComponent, new Point(-230, -50), new Point(-230, 400))
 
-  // Initialize the input mode for this demo
+  // initialize the input mode for this demo
   const graphEditorInputMode = new GraphEditorInputMode({
     snapContext: graphSnapContext,
     labelSnapContext
   })
 
-  // add an input mode that allows to move the custom AdditionalSnapLines
+  // add an input mode that allows to move the additional snap lines
   const additionalSnapLineMoveInputMode = new AdditionalSnapLineMoveInputMode(
     additionalSnapLineVisualCreators
   )
+  // ensure the new mode is the first to process mouse events
   additionalSnapLineMoveInputMode.priority = -50
   graphEditorInputMode.add(additionalSnapLineMoveInputMode)
 
@@ -106,8 +108,9 @@ function run(licenseData) {
 
   initializeGraphDefaults(graph)
 
-  // Initialize the graph by reading it from a file.
+  // create a sample graph for the demo
   createSampleGraph(graph)
+  // center the sample graph in the demo's GraphComponent
   graphComponent.fitGraphBounds()
 
   showApp(graphComponent)
@@ -115,7 +118,7 @@ function run(licenseData) {
 
 /**
  * Creates a pre-configured {@link GraphSnapContext}.
- * @return {GraphSnapContext}
+ * @returns {!GraphSnapContext}
  */
 function createGraphSnapContext() {
   const context = new GraphSnapContext({
@@ -126,22 +129,19 @@ function createGraphSnapContext() {
   })
   // use the free additional snap lines
   context.addCollectSnapLinesListener((sender, evt) => {
-    // Creates and adds Snaplines for the free AdditionalSnapLineVisualCreator to a GraphSnapContext.
-    // While the AdditionalSnapLineVisualCreators are used to visualize and represent free snap lines,
-    // according OrthogonalSnapLines have to be added to the snapping mechanism to describe their
-    // snapping behavior.
-    additionalSnapLineVisualCreators.forEach(creator => {
-      creator.createSnapLines().forEach(snapLine => {
-        evt.addAdditionalSnapLine(snapLine)
-      })
-    })
+    // Creates and adds snap lines for the free AdditionalSnapLineVisualCreator to a GraphSnapContext.
+    // While the AdditionalSnapLineVisualCreators are used to visualize free snap lines, corresponding
+    // OrthogonalSnapLines have to be added to the snapping mechanism to provide the snapping behavior.
+    additionalSnapLineVisualCreators.forEach(creator =>
+      creator.createSnapLines().forEach(snapLine => evt.addAdditionalSnapLine(snapLine))
+    )
   })
   return context
 }
 
 /**
  * Creates a pre-configured {@link LabelSnapContext}.
- * @return {LabelSnapContext}
+ * @returns {!LabelSnapContext}
  */
 function createLabelSnapContext() {
   const snapContext = new LabelSnapContext({
@@ -150,23 +150,20 @@ function createLabelSnapContext() {
   })
 
   snapContext.addCollectSnapLinesListener((sender, evt) => {
-    // Creates and adds SnapLines for the free AdditionalSnapLineVisualCreator to a LabelSnapContext.
-    // While the AdditionalSnapLineVisualCreators are used to visualize and represent free snap lines,
-    // according OrthogonalSnapLines have to be added to the snapping mechanism to describe their
-    // snapping behavior.
-    additionalSnapLineVisualCreators.forEach(creator => {
-      creator.createSnapLines().forEach(snapLine => {
-        evt.addSnapLine(snapLine)
-      })
-    })
+    // Creates and adds snap lines for the free AdditionalSnapLineVisualCreator to a LabelSnapContext.
+    // While the AdditionalSnapLineVisualCreators are used to visualize free snap lines, corresponding
+    // OrthogonalSnapLines have to be added to the snapping mechanism to provide the snapping behavior.
+    additionalSnapLineVisualCreators.forEach(creator =>
+      creator.createSnapLines().forEach(snapLine => evt.addSnapLine(snapLine))
+    )
   })
 
   return snapContext
 }
 
 /**
- * Sets to the node/edge decorator the desired snapping implementation.
- * @param {IGraph} graph The given graph
+ * Registers the demo's custom snap line providers for nodes and edges.
+ * @param {!IGraph} graph The demo's graph
  */
 function decorateModelItemLookupForCustomSnappingBehaviour(graph) {
   // add additional snap lines for orthogonal labels of nodes
@@ -180,16 +177,16 @@ function decorateModelItemLookupForCustomSnappingBehaviour(graph) {
     (edge, wrappedProvider) => new OrthogonalLabelSnapLineProviderWrapper(wrappedProvider)
   )
 
-  // for nodes using IShapeNodeStyle use a customized grid snapping behaviour based on their shape
+  // for nodes using ShapeNodeStyle use a customized grid snapping behavior based on their shape
   decorator.nodeDecorator.nodeSnapResultProviderDecorator.setImplementation(
     new ShapeBasedGridNodeSnapResultProvider()
   )
 }
 
 /**
- * Adds the grid to the graphComponent and a grid constraint provider to the snap context.
- * @param {GraphComponent} graphComponent The given graphComponent
- * @param {GraphSnapContext} graphSnapContext The configured snap context
+ * Configures grid visualization and grid snapping for the given graph component.
+ * @param {!GraphComponent} graphComponent The graph component to set up for grid visualization and grid snapping
+ * @param {!GraphSnapContext} graphSnapContext The snap context to set up for grid snapping
  */
 function initializeGrid(graphComponent, graphSnapContext) {
   const gridInfo = new GridInfo()
@@ -210,8 +207,8 @@ function initializeGrid(graphComponent, graphSnapContext) {
 }
 
 /**
- * Initializes the default styles for the given graphComponent.
- * @param {IGraph} graph The given graph
+ * Configures default styles for the given graph.
+ * @param {!IGraph} graph The graph for which default styles are configured
  */
 function initializeGraphDefaults(graph) {
   const labelStyle = new DefaultLabelStyle()
@@ -236,11 +233,11 @@ function initializeGraphDefaults(graph) {
 }
 
 /**
- * Adds a new {@link AdditionalSnapLineVisualCreator} to the graphComponent that spans between
+ * Adds a new {@link AdditionalSnapLineVisualCreator} to the given graph component that spans between
  * <code>from</code> and <code>to</code>.
- * @param {GraphComponent} graphComponent The given graphComponent
- * @param {Point} from The start location of the snap line.
- * @param {Point} to The end location of the snap line.
+ * @param {!GraphComponent} graphComponent The graph component for which to add snap line visualizations
+ * @param {!Point} from The start location of the snap line.
+ * @param {!Point} to The end location of the snap line.
  */
 function addAdditionalSnapLineVisualCreator(graphComponent, from, to) {
   const lineVisualCreator = new AdditionalSnapLineVisualCreator(from, to)
@@ -253,8 +250,8 @@ function addAdditionalSnapLineVisualCreator(graphComponent, from, to) {
 }
 
 /**
- * Creates the sample graph.
- * @param {IGraph} graph
+ * Creates the demo's sample graph.
+ * @param {!IGraph} graph The graph to populate
  */
 function createSampleGraph(graph) {
   graph.clear()

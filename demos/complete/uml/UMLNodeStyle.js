@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -36,9 +36,13 @@ import {
   HorizontalTextAlignment,
   IClipboardHelper,
   IEditLabelHelper,
+  ILabel,
+  ILabelStyle,
   INode,
   INodeSizeConstraintProvider,
+  INodeStyle,
   IRenderContext,
+  IVisualCreator,
   Insets,
   InteriorStretchLabelModel,
   InteriorStretchLabelModelPosition,
@@ -60,7 +64,14 @@ import {
   TypeAttribute,
   VerticalTextAlignment,
   Visual,
-  YObject
+  YObject,
+  GraphComponent,
+  IGraphClipboardContext,
+  IModelItem,
+  IRectangle,
+  ILookup,
+  HandleSerializationEventArgs,
+  GraphMLIOHandler
 } from 'yfiles'
 
 import { UMLClassModel } from './UMLClassModel.js'
@@ -75,61 +86,24 @@ const LEFT_SPACING = 25
  */
 export class UMLNodeStyle extends NodeStyleBase {
   /**
-   * Returns the background fill.
-   * @return {Fill}
-   */
-  get fill() {
-    return this.$fill
-  }
-
-  /**
-   * Sets the fill for the background.
-   * @param {Fill} value
-   */
-  set fill(value) {
-    this.$fill = value
-  }
-
-  /**
-   * Returns the highlight background fill.
-   * @return {Fill}
-   */
-  get highlightFill() {
-    return this.$highlightFill
-  }
-
-  /**
-   * Sets the fill for the highlight background.
-   * @param {Fill} value
-   */
-  set highlightFill(value) {
-    this.$highlightFill = value
-  }
-
-  /**
-   * Gets the UML data of this style.
-   * @returns {UMLClassModel}
-   */
-  get model() {
-    return this.$model
-  }
-
-  /**
-   * Sets the UML data for this style.
-   * @param {UMLClassModel} model
-   */
-  set model(model) {
-    this.$model = model
-  }
-
-  /**
    * Creates a new instance of the UML node style.
-   * @param {UMLClassModel?} model The UML data that should be visualization by this style
-   * @param {Fill?} fill The background fill of the header sections.
-   * @param {Fill?} highlightFill The background fill of the selected entry.
+   * @param model The UML data that should be visualization by this style
+   * @param fill The background fill of the header sections.
+   * @param highlightFill The background fill of the selected entry.
+   * @param {!UMLClassModel} [model]
+   * @param {!Fill} [fill]
+   * @param {!Fill} [highlightFill]
    */
   constructor(model, fill, highlightFill) {
     super()
+    this.dummyNode = null
+    this.backgroundStyle = null
+    this.stretchLabelModel = null
+    this.categoryLabel = null
+    this.elementLabel = null
+    this.classLabel = null
+    this.stereotypeLabel = null
+    this.constraintLabel = null
     this.$model = model || new UMLClassModel()
     this.$fill = fill || new SolidColorFill(0x60, 0x7d, 0x8b)
     this.$highlightFill = highlightFill || new SolidColorFill(0xa3, 0xf1, 0xbb)
@@ -137,10 +111,58 @@ export class UMLNodeStyle extends NodeStyleBase {
   }
 
   /**
+   * Returns the background fill.
+   * @type {!Fill}
+   */
+  get fill() {
+    return this.$fill
+  }
+
+  /**
+   * Sets the fill for the background.
+   * @type {!Fill}
+   */
+  set fill(value) {
+    this.$fill = value
+  }
+
+  /**
+   * Returns the highlight background fill.
+   * @type {!Fill}
+   */
+  get highlightFill() {
+    return this.$highlightFill
+  }
+
+  /**
+   * Sets the fill for the highlight background.
+   * @type {!Fill}
+   */
+  set highlightFill(value) {
+    this.$highlightFill = value
+  }
+
+  /**
+   * Gets the UML data of this style.
+   * @type {!UMLClassModel}
+   */
+  get model() {
+    return this.$model
+  }
+
+  /**
+   * Sets the UML data for this style.
+   * @type {!UMLClassModel}
+   */
+  set model(model) {
+    this.$model = model
+  }
+
+  /**
    * Creates the UML node style visual based on the UMLClassModel.
-   * @param {IRenderContext} ctx The render context.
-   * @param {INode} node The node to which this style instance is assigned.
-   * @returns {Visual}
+   * @param {!IRenderContext} ctx The render context.
+   * @param {!INode} node The node to which this style instance is assigned.
+   * @returns {!Visual}
    */
   createVisual(ctx, node) {
     this.initializeStyles() // fill color might have changed
@@ -149,53 +171,50 @@ export class UMLNodeStyle extends NodeStyleBase {
     const g = document.createElementNS('http://www.w3.org/2000/svg', 'g')
     g.setAttribute('class', 'uml-node')
     this.dummyNode.layout = new Rect(0, 0, layout.width, layout.height)
-    g.appendChild(UMLNodeStyle.getCreator(this.dummyNode).createVisual(ctx).svgElement)
+    g.appendChild(newSvgElement(getCreator(this.dummyNode), ctx))
 
     let yOffset = 0
 
     // add the class label
     this.stretchLabelModel.insets = new Insets(0, yOffset, 0, 0)
     this.classLabel.text = ''
-    g.appendChild(
-      UMLNodeStyle.getCreator(this.classLabel, this.backgroundStyle).createVisual(ctx).svgElement
-    )
+    g.appendChild(newSvgElement(getCreator(this.classLabel, this.backgroundStyle), ctx))
     this.classLabel.text = data.className
-    g.appendChild(UMLNodeStyle.getCreator(this.classLabel).createVisual(ctx).svgElement)
+    g.appendChild(newSvgElement(getCreator(this.classLabel), ctx))
 
     // add stereotype
     if (data.stereotype) {
       this.stretchLabelModel.insets = new Insets(0, 5, 0, 0)
       this.stereotypeLabel.text = `<<${data.stereotype}>>`
-      g.appendChild(UMLNodeStyle.getCreator(this.stereotypeLabel).createVisual(ctx).svgElement)
+      g.appendChild(newSvgElement(getCreator(this.stereotypeLabel), ctx))
     }
 
     // add constraint
     if (data.constraint) {
       this.stretchLabelModel.insets = new Insets(0, 5, 0, 0)
       this.constraintLabel.text = `{${data.constraint}}`
-      g.appendChild(UMLNodeStyle.getCreator(this.constraintLabel).createVisual(ctx).svgElement)
+      g.appendChild(newSvgElement(getCreator(this.constraintLabel), ctx))
     }
 
     yOffset += this.classLabel.preferredSize.height
 
     let selectedIndex = -1
-    if (ctx.canvasComponent.currentItem === node && data.selectedIndex >= 0) {
+    if (ctx.canvasComponent.currentItem === node && data.selectedIndex > -1) {
       selectedIndex = data.selectedIndex
     }
 
     yOffset += VERTICAL_SPACING
     this.stretchLabelModel.insets = new Insets(0, yOffset, 0, 0)
     this.categoryLabel.text = ''
-    const attributesHeaderBackground = UMLNodeStyle.getCreator(
-      this.categoryLabel,
-      this.backgroundStyle
-    ).createVisual(ctx).svgElement
+    const attributesHeaderBackground = newSvgElement(
+      getCreator(this.categoryLabel, this.backgroundStyle),
+      ctx
+    )
     attributesHeaderBackground.setAttribute('cursor', 'pointer')
     g.appendChild(attributesHeaderBackground)
     this.categoryLabel.text = 'Attributes'
     this.stretchLabelModel.insets = new Insets(LEFT_SPACING, yOffset, 0, 0)
-    const attributesTextElement = UMLNodeStyle.getCreator(this.categoryLabel).createVisual(ctx)
-      .svgElement
+    const attributesTextElement = newSvgElement(getCreator(this.categoryLabel), ctx)
     attributesTextElement.setAttribute('cursor', 'pointer')
     g.appendChild(attributesTextElement)
 
@@ -211,15 +230,15 @@ export class UMLNodeStyle extends NodeStyleBase {
           hasGlobalSelection = true
           hasLocalSelection = true
           this.elementLabel.text = ''
-          this.elementLabel.style.backgroundFill = this.$highlightFill
+          setBackgroundFill(this.elementLabel, this.$highlightFill)
           this.stretchLabelModel.insets = new Insets(1, yOffset, 1, 0)
-          g.appendChild(UMLNodeStyle.getCreator(this.elementLabel).createVisual(ctx).svgElement)
+          g.appendChild(newSvgElement(getCreator(this.elementLabel), ctx))
         }
         if (data.attributes[i] !== null && typeof data.attributes[i] !== 'undefined') {
           this.elementLabel.text = data.attributes[i]
-          this.elementLabel.style.backgroundFill = null
+          setBackgroundFill(this.elementLabel, null)
           this.stretchLabelModel.insets = new Insets(LEFT_SPACING, yOffset, 5, 0)
-          g.appendChild(UMLNodeStyle.getCreator(this.elementLabel).createVisual(ctx).svgElement)
+          g.appendChild(newSvgElement(getCreator(this.elementLabel), ctx))
           yOffset += this.elementLabel.preferredSize.height
         }
       }
@@ -238,16 +257,15 @@ export class UMLNodeStyle extends NodeStyleBase {
 
     this.stretchLabelModel.insets = new Insets(0, yOffset, 0, 0)
     this.categoryLabel.text = ''
-    const operationsHeaderBackground = UMLNodeStyle.getCreator(
-      this.categoryLabel,
-      this.backgroundStyle
-    ).createVisual(ctx).svgElement
+    const operationsHeaderBackground = newSvgElement(
+      getCreator(this.categoryLabel, this.backgroundStyle),
+      ctx
+    )
     operationsHeaderBackground.setAttribute('cursor', 'pointer')
     g.appendChild(operationsHeaderBackground)
     this.categoryLabel.text = 'Operations'
     this.stretchLabelModel.insets = new Insets(LEFT_SPACING, yOffset, 0, 0)
-    const operationsTextElement = UMLNodeStyle.getCreator(this.categoryLabel).createVisual(ctx)
-      .svgElement
+    const operationsTextElement = newSvgElement(getCreator(this.categoryLabel), ctx)
     operationsTextElement.setAttribute('cursor', 'pointer')
     g.appendChild(operationsTextElement)
     yOffset += this.categoryLabel.preferredSize.height
@@ -260,15 +278,15 @@ export class UMLNodeStyle extends NodeStyleBase {
           hasGlobalSelection = true
           hasLocalSelection = true
           this.elementLabel.text = ''
-          this.elementLabel.style.backgroundFill = this.$highlightFill
+          setBackgroundFill(this.elementLabel, this.$highlightFill)
           this.stretchLabelModel.insets = new Insets(1, yOffset, 1, 0)
-          g.appendChild(UMLNodeStyle.getCreator(this.elementLabel).createVisual(ctx).svgElement)
+          g.appendChild(newSvgElement(getCreator(this.elementLabel), ctx))
         }
         if (data.operations[i] !== null && typeof data.operations[i] !== 'undefined') {
           this.elementLabel.text = data.operations[i]
-          this.elementLabel.style.backgroundFill = null
+          setBackgroundFill(this.elementLabel, null)
           this.stretchLabelModel.insets = new Insets(LEFT_SPACING, yOffset, 5, 0)
-          g.appendChild(UMLNodeStyle.getCreator(this.elementLabel).createVisual(ctx).svgElement)
+          g.appendChild(newSvgElement(getCreator(this.elementLabel), ctx))
           yOffset += this.elementLabel.preferredSize.height
         }
       }
@@ -284,9 +302,7 @@ export class UMLNodeStyle extends NodeStyleBase {
     }
 
     SvgVisual.setTranslate(g, layout.x, layout.y)
-
-    const svgVisual = new SvgVisual(g)
-    svgVisual.data = {
+    g['data-renderDataCache'] = {
       x: layout.x,
       y: layout.y,
       width: layout.width,
@@ -296,30 +312,31 @@ export class UMLNodeStyle extends NodeStyleBase {
       fill: this.$fill,
       highlightFill: this.$highlightFill
     }
-    return svgVisual
+    return new SvgVisual(g)
   }
 
   /**
    * Updates the location of the UML node style. If anything other changed, a new visual is created.
-   * @param {IRenderContext} ctx The render context.
-   * @param {Visual} oldVisual The visual that has been created in the call to
+   * @param {!IRenderContext} ctx The render context.
+   * @param {!SvgVisual} oldVisual The visual that has been created in the call to
    *   {@link NodeStyleBase#createVisual}.
-   * @param {INode} node The node to which this style instance is assigned.
-   * @returns {Visual}
+   * @param {!INode} node The node to which this style instance is assigned.
+   * @returns {!Visual}
    */
   updateVisual(ctx, oldVisual, node) {
     const layout = node.layout
 
-    const data = oldVisual.data
+    const data = oldVisual.svgElement['data-renderDataCache']
     const model = this.$model
+    const style = node.style
     if (
       !data ||
       data.dataModCount !== model.modCount ||
       data.width !== layout.width ||
       data.height !== layout.height ||
       (data.hasSelection && ctx.canvasComponent.currentItem !== node) ||
-      data.fill !== node.style.fill ||
-      data.highlightFill !== node.style.highlightFill
+      data.fill !== style.fill ||
+      data.highlightFill !== style.highlightFill
     ) {
       return this.createVisual(ctx, node)
     }
@@ -334,8 +351,8 @@ export class UMLNodeStyle extends NodeStyleBase {
 
   /**
    * Return the size of this node considering the associated UML data.
-   * @param {INode} node The node of which the size should be determined.
-   * @returns {Size} The preferred size of this node.
+   * @param {!INode} node The node of which the size should be determined.
+   * @returns {!Size} The preferred size of this node.
    */
   getPreferredSize(node) {
     const data = this.$model
@@ -351,22 +368,22 @@ export class UMLNodeStyle extends NodeStyleBase {
 
     // determine width
     let width = 125
-    const elementFont = this.elementLabel.style.font
+    const elementFont = getFont(this.elementLabel)
     const elements = data.attributes.concat(data.operations)
     elements.forEach(element => {
       const size = TextRenderSupport.measureText(element, elementFont)
       width = Math.max(width, size.width + LEFT_SPACING + 5)
     })
-    const classNameSize = TextRenderSupport.measureText(data.className, this.classLabel.style.font)
+    const classNameSize = TextRenderSupport.measureText(data.className, getFont(this.classLabel))
     width = Math.max(width, classNameSize.width)
     const stereotypeSize = TextRenderSupport.measureText(
       data.stereotype,
-      this.stereotypeLabel.style.font
+      getFont(this.stereotypeLabel)
     )
     width = Math.max(width, stereotypeSize.width)
     const constraintSize = TextRenderSupport.measureText(
       data.className,
-      this.constraintLabel.style.font
+      getFont(this.constraintLabel)
     )
     width = Math.max(width, constraintSize.width)
 
@@ -376,8 +393,8 @@ export class UMLNodeStyle extends NodeStyleBase {
   /**
    * Adjusts the size of the given node considering UML data of the node. If the current node layout is bigger than
    * the minimal needed size for the UML data then the current node layout will be used instead.
-   * @param {INode} node The node whose size should be adjusted.
-   * @param {GraphEditorInputMode} geim The responsible input mode.
+   * @param {!INode} node The node whose size should be adjusted.
+   * @param {!GraphEditorInputMode} geim The responsible input mode.
    */
   adjustSize(node, geim) {
     const layout = node.layout
@@ -391,8 +408,8 @@ export class UMLNodeStyle extends NodeStyleBase {
 
   /**
    * Adjusts the height of the given node to fit the UML data.
-   * @param {INode} node The node whose size should be adjusted.
-   * @param {GraphEditorInputMode} geim The responsible input mode.
+   * @param {!INode} node The node whose size should be adjusted.
+   * @param {!GraphEditorInputMode} geim The responsible input mode.
    * @private
    */
   fitHeight(node, geim) {
@@ -407,15 +424,15 @@ export class UMLNodeStyle extends NodeStyleBase {
    * Upon label edit, we check which UML entry was hit and adjust the label edit accordingly. Additionally, we provide
    * an {@link INodeSizeConstraintProvider} to limit the interactive node resizing to the node's size
    * considering the attached UML data.
-   * @param {INode} node The node to use for the context lookup.
-   * @param {Class} type The type to query.
-   * @returns {Object}
+   * @param {!INode} node The node to use for the context lookup.
+   * @param {!Class} type The type to query.
+   * @returns {*}
    */
   lookup(node, type) {
     const outerThis = this
     if (type === IEditLabelHelper.$class) {
       const oldData = this.$model.clone()
-      return new IEditLabelHelper({
+      return IEditLabelHelper.create({
         async onLabelAdding(evt) {
           const newData = await outerThis.editLabel(evt, node, true)
           outerThis.handleUndo(evt.context.canvasComponent.inputMode, node, newData, oldData)
@@ -426,25 +443,27 @@ export class UMLNodeStyle extends NodeStyleBase {
         }
       })
     } else if (type === INodeSizeConstraintProvider.$class) {
-      return new INodeSizeConstraintProvider({
+      return INodeSizeConstraintProvider.create({
         getMinimumSize: item => this.getPreferredSize(item),
-        getMaximumSize: item => Size.INFINITE,
-        getMinimumEnclosedArea: item => Rect.EMPTY
+        getMaximumSize: _item => Size.INFINITE,
+        getMinimumEnclosedArea: _item => Rect.EMPTY
       })
     } else if (type === IClipboardHelper.$class) {
-      return new IClipboardHelper({
-        shouldCopy: (context, item) => true,
-        shouldCut: (context, item) => true,
-        shouldPaste: (context, item, userData) => true,
-        copy: (context, item) => null,
-        cut: (context, item) => null,
-        paste: (context, item, userData) => {
-          const style = item.style
-          if (style instanceof UMLNodeStyle) {
-            if (context.targetGraph.foldingView) {
-              context.targetGraph.foldingView.manager.masterGraph.setStyle(item, style.clone())
-            } else {
-              context.targetGraph.setStyle(item, style.clone())
+      return IClipboardHelper.create({
+        shouldCopy: (_context, _item) => true,
+        shouldCut: (_context, _item) => true,
+        shouldPaste: (_context, _item, _userData) => true,
+        copy: (_context, _item) => null,
+        cut: (_context, _item) => null,
+        paste: (context, item, _userData) => {
+          if (item instanceof INode) {
+            const style = item.style
+            if (style instanceof UMLNodeStyle) {
+              if (context.targetGraph.foldingView) {
+                context.targetGraph.foldingView.manager.masterGraph.setStyle(item, style.clone())
+              } else {
+                context.targetGraph.setStyle(item, style.clone())
+              }
             }
           }
         }
@@ -457,11 +476,11 @@ export class UMLNodeStyle extends NodeStyleBase {
    * Manages text edits on the {@link UMLNodeStyle} by preconfiguring the {@link TextEditorInputMode}
    * with the text that should be edited and its position such that the label edit text box is opened on top of the
    * clicked text.
-   * @param {LabelEditingEventArgs} evt The event args with which the edit label was triggered.
-   * @param {INode} node The node whose label should be edited.
+   * @param {!LabelEditingEventArgs} evt The event args with which the edit label was triggered.
+   * @param {!INode} node The node whose label should be edited.
    * @param {boolean} adding Whether a new label is added or an existing one should be edited.
-   * @return {Promise}
    * @private
+   * @returns {!Promise.<UMLClassModel>}
    */
   async editLabel(evt, node, adding) {
     const data = this.$model
@@ -537,13 +556,13 @@ export class UMLNodeStyle extends NodeStyleBase {
       }
     }
     data.modify()
-    evt.context.canvasComponent.invalidate()
+    graphComponent.invalidate()
     return data
   }
 
   /**
    * Clones this style and the associated UML model.
-   * @returns {UMLNodeStyle}
+   * @returns {*}
    */
   clone() {
     const clone = super.clone()
@@ -553,8 +572,8 @@ export class UMLNodeStyle extends NodeStyleBase {
 
   /**
    * Handles clicks on this style.
-   * @param {GraphEditorInputMode} geim
-   * @param {ItemClickedEventArgs} args
+   * @param {!GraphEditorInputMode} geim
+   * @param {!ItemClickedEventArgs.<IModelItem>} args
    */
   nodeClicked(geim, args) {
     const node = args.item
@@ -636,17 +655,18 @@ export class UMLNodeStyle extends NodeStyleBase {
       return
     }
 
-    geim.inputModeContext.canvasComponent.currentItem = node
-    geim.inputModeContext.canvasComponent.invalidate()
+    const graphComponent = geim.inputModeContext.canvasComponent
+    graphComponent.currentItem = node
+    graphComponent.invalidate()
     args.handled = true
   }
 
   /**
    * Triggers interactive label adding.
    * @param {number} category 1 represents the attributes section, 2 represents the operations section
-   * @param {GraphEditorInputMode} geim
-   * @param {INode} node
    * @private
+   * @param {!GraphEditorInputMode} geim
+   * @param {!INode} node
    */
   addLabel(category, geim, node) {
     const data = this.$model
@@ -668,9 +688,9 @@ export class UMLNodeStyle extends NodeStyleBase {
   /**
    * Removes the selected label from the node.
    * @param {number} category 1 represents the attributes section, 2 represents the operations section
-   * @param {GraphEditorInputMode} geim
-   * @param {INode} node
    * @private
+   * @param {!GraphEditorInputMode} geim
+   * @param {!INode} node
    */
   removeLabel(category, geim, node) {
     const data = this.$model
@@ -694,9 +714,9 @@ export class UMLNodeStyle extends NodeStyleBase {
   /**
    * Toggles the open/closed state of the attributes or operations section.
    * @param {number} category 1 represents the attributes section, 2 represents the operations section
-   * @param {GraphEditorInputMode} geim
-   * @param {INode} node
    * @private
+   * @param {!GraphEditorInputMode} geim
+   * @param {!INode} node
    */
   toggleOpenState(category, geim, node) {
     const data = this.$model
@@ -712,10 +732,10 @@ export class UMLNodeStyle extends NodeStyleBase {
 
   /**
    * Adds an undo unit to the graphs undo engine which may undo/redo the UML data change.
-   * @param {GraphEditorInputMode} geim The responsible input mode.
-   * @param {INode} node The node whose data is changed.
-   * @param {UMLClassModel} newData The new data.
-   * @param {UMLClassModel} oldData The previous data.
+   * @param {!GraphEditorInputMode} geim The responsible input mode.
+   * @param {!INode} node The node whose data is changed.
+   * @param {!UMLClassModel} newData The new data.
+   * @param {!UMLClassModel} oldData The previous data.
    * @private
    */
   handleUndo(geim, node, newData, oldData) {
@@ -739,18 +759,19 @@ export class UMLNodeStyle extends NodeStyleBase {
   /**
    * Helper function to return the relative layout of a given slot index. A negative index indicates the class header
    * area.
-   * @returns {Rect}
    * @private
+   * @param {number} slot
+   * @param {!INode} node
+   * @param {boolean} isAdding
+   * @param {number} category
+   * @returns {!Rect}
    */
   getRelativeSlotLayout(slot, node, isAdding, category) {
     const data = this.$model
     const layout = node.layout
 
     if (slot < 0) {
-      const classNameSize = TextRenderSupport.measureText(
-        data.className,
-        this.classLabel.style.font
-      )
+      const classNameSize = TextRenderSupport.measureText(data.className, getFont(this.classLabel))
       return new Rect(
         layout.width / 2 - classNameSize.width / 2,
         0,
@@ -776,6 +797,11 @@ export class UMLNodeStyle extends NodeStyleBase {
   /**
    * Helper function to add the control buttons.
    * @private
+   * @param {!IRenderContext} ctx
+   * @param {!Element} container
+   * @param {!IRectangle} nodeLayout
+   * @param {boolean} opened
+   * @param {boolean} enableRemoveButton
    */
   addControls(ctx, container, nodeLayout, opened, enableRemoveButton) {
     const openMarker = document.createElementNS('http://www.w3.org/2000/svg', 'polygon')
@@ -911,47 +937,106 @@ export class UMLNodeStyle extends NodeStyleBase {
       })
     })
   }
+}
 
-  /**
-   * Helper function to obtain the visual creator of the item.
-   * @param {INode|ILabel} item
-   * @param {INodeStyle|ILabelStyle?} itemStyle
-   * @private
-   */
-  static getCreator(item, itemStyle) {
-    itemStyle = itemStyle || item.style
-    return itemStyle.renderer.getVisualCreator(item, itemStyle)
+/**
+ * Helper function to obtain the visual creator of the item.
+ * @private
+ * @param {!(INode|ILabel)} item
+ * @param {!(INodeStyle|ILabelStyle)} [itemStyle]
+ * @returns {!IVisualCreator}
+ */
+function getCreator(item, itemStyle) {
+  if (item instanceof INode) {
+    const style = itemStyle || item.style
+    return style.renderer.getVisualCreator(item, style)
+  } else {
+    const style = itemStyle || item.style
+    return style.renderer.getVisualCreator(item, style)
   }
+}
+
+/**
+ * @param {!IVisualCreator} creator
+ * @param {!IRenderContext} ctx
+ * @returns {!SVGElement}
+ */
+function newSvgElement(creator, ctx) {
+  return creator.createVisual(ctx).svgElement
+}
+
+/**
+ * @param {!SimpleLabel} label
+ * @returns {!Font}
+ */
+function getFont(label) {
+  return label.style.font
+}
+
+/**
+ * @param {!SimpleLabel} label
+ * @param {?Fill} fill
+ */
+function setBackgroundFill(label, fill) {
+  label.style.backgroundFill = fill
 }
 
 /**
  * Markup extension needed to (de-)serialize the UML style.
  */
 export class UMLNodeStyleExtension extends MarkupExtension {
+  constructor() {
+    super()
+    this._fill = null
+    this._highlightFill = null
+    this._model = null
+  }
+
+  /**
+   * @type {!Fill}
+   */
   get fill() {
-    return this.$fill
+    return this._fill
   }
 
+  /**
+   * @type {!Fill}
+   */
   set fill(value) {
-    this.$fill = value
+    this._fill = value
   }
 
+  /**
+   * @type {!Fill}
+   */
   get highlightFill() {
-    return this.$highlightFill
+    return this._highlightFill
   }
 
+  /**
+   * @type {!Fill}
+   */
   set highlightFill(value) {
-    this.$highlightFill = value
+    this._highlightFill = value
   }
 
+  /**
+   * @type {!UMLClassModel}
+   */
   get model() {
-    return this.$model
+    return this._model
   }
 
+  /**
+   * @type {!UMLClassModel}
+   */
   set model(value) {
-    this.$model = value
+    this._model = value
   }
 
+  /**
+   * @type {!object}
+   */
   static get $meta() {
     return {
       fill: TypeAttribute(Fill.$class),
@@ -960,7 +1045,10 @@ export class UMLNodeStyleExtension extends MarkupExtension {
     }
   }
 
-  provideValue(serviceProvider) {
+  /**
+   * @param {?ILookup} _serviceProvider
+   */
+  provideValue(_serviceProvider) {
     return new UMLNodeStyle(this.model, this.fill, this.highlightFill)
   }
 }

@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -29,12 +29,15 @@
 import {
   Animator,
   BaseClass,
+  CanvasComponent,
   Font,
   GraphComponent,
   HierarchicNestingPolicy,
   IAnimation,
+  IEdgeStyle,
   INode,
   IPoint,
+  IRenderContext,
   IVisualCreator,
   Point,
   Rect,
@@ -44,6 +47,7 @@ import {
   SvgVisual,
   TextRenderSupport,
   TimeSpan,
+  Visual,
   VoidNodeStyle
 } from 'yfiles'
 
@@ -55,14 +59,25 @@ import {
   createGeneralizationStyle,
   createRealizationStyle
 } from './UMLEdgeStyleFactory.js'
+import { UMLNodeStyle } from './UMLNodeStyle.js'
 
 /**
  * Provides the visuals of the edge creation buttons.
  */
 export default class ButtonVisualCreator extends BaseClass(IVisualCreator) {
+  /** @type {Array.<SVGElement>} */
+  static get buttons() {
+    return ButtonVisualCreator.$buttons
+  }
+
+  /** @type {Array.<SVGElement>} */
+  static set buttons(buttons) {
+    ButtonVisualCreator.$buttons = buttons
+  }
+
   /**
    * The provided edge creation buttons.
-   * @returns {IEdgeStyle[]}
+   * @type {!Array.<IEdgeStyle>}
    */
   static get edgeCreationButtons() {
     return [
@@ -77,13 +92,13 @@ export default class ButtonVisualCreator extends BaseClass(IVisualCreator) {
 
   /**
    * Creates the visual creator for the edge creation buttons.
-   * @param {INode} node The node for which the buttons should be created.
-   * @param {GraphComponent} graphComponent The graph component in which the node resides.
+   * @param {!INode} node The node for which the buttons should be created.
+   * @param {!GraphComponent} graphComponent The graph component in which the node resides.
    */
   constructor(node, graphComponent) {
     super()
-    this.renderer = new ButtonIconRenderer()
     this.node = node
+    this.renderer = new ButtonIconRenderer()
     this.animator = new Animator(graphComponent)
     this.animator.autoInvalidation = false
     this.animator.allowUserInteraction = true
@@ -91,8 +106,8 @@ export default class ButtonVisualCreator extends BaseClass(IVisualCreator) {
   }
 
   /**
-   * @param {IRenderContext} ctx The context that describes where the visual will be used.
-   * @returns {Visual}
+   * @param {!IRenderContext} ctx The context that describes where the visual will be used.
+   * @returns {!Visual}
    */
   createVisual(ctx) {
     // save the button elements to conveniently use them for hit testing
@@ -135,10 +150,11 @@ export default class ButtonVisualCreator extends BaseClass(IVisualCreator) {
     container.appendChild(abstractButton)
 
     // visualize the button state
-    if (this.node.style.model.stereotype === 'interface') {
+    const model = this.node.style.model
+    if (model.stereotype === 'interface') {
       interfaceButton.setAttribute('class', 'interface-toggle toggled')
     }
-    if (this.node.style.model.constraint === 'abstract') {
+    if (model.constraint === 'abstract') {
       abstractButton.setAttribute('class', 'abstract-toggle toggled')
     }
 
@@ -157,18 +173,18 @@ export default class ButtonVisualCreator extends BaseClass(IVisualCreator) {
     container['data-renderDataCache'] = {
       width: layout.width,
       height: layout.height,
-      interfaceToggle: this.node.style.model.stereotype,
-      constraintToggle: this.node.style.model.constraint
+      interfaceToggle: model.stereotype,
+      constraintToggle: model.constraint
     }
 
     return new SvgVisual(container)
   }
 
   /**
-   * @param {IRenderContext} ctx The context that describes where the visual will be used in.
-   * @param {Visual} oldVisual The visual instance that had been returned the last time the
+   * @param {!IRenderContext} ctx The context that describes where the visual will be used in.
+   * @param {!SvgVisual} oldVisual The visual instance that had been returned the last time the
    *   {@link IVisualCreator#createVisual} method was called on this instance.
-   * @returns {Visual}
+   * @returns {!Visual}
    */
   updateVisual(ctx, oldVisual) {
     const layout = this.node.layout
@@ -194,21 +210,20 @@ export default class ButtonVisualCreator extends BaseClass(IVisualCreator) {
     }
 
     // update the button state if they have changed
-    if (cache.interfaceToggle !== this.node.style.model.stereotype) {
+    const model = this.node.style.model
+    if (cache.interfaceToggle !== model.stereotype) {
       interfaceButton.setAttribute(
         'class',
-        this.node.style.model.stereotype.length > 0
-          ? 'interface-toggle toggled'
-          : 'interface-toggle'
+        model.stereotype.length > 0 ? 'interface-toggle toggled' : 'interface-toggle'
       )
-      cache.interfaceToggle = this.node.style.model.stereotype
+      cache.interfaceToggle = model.stereotype
     }
-    if (cache.constraintToggle !== this.node.style.model.constraint) {
+    if (cache.constraintToggle !== model.constraint) {
       abstractButton.setAttribute(
         'class',
-        this.node.style.model.constraint.length > 0 ? 'abstract-toggle toggled' : 'abstract-toggle'
+        model.constraint.length > 0 ? 'abstract-toggle toggled' : 'abstract-toggle'
       )
-      cache.constraintToggle = this.node.style.model.constraint
+      cache.constraintToggle = model.constraint
     }
 
     return oldVisual
@@ -216,10 +231,10 @@ export default class ButtonVisualCreator extends BaseClass(IVisualCreator) {
 
   /**
    * Helper method to get the edge style of the edge creation button if there is a button at the given location.
-   * @param {CanvasComponent} canvasComponent The canvas component in which the node resides.
-   * @param {INode} node The node who should be checked for a button.
-   * @param {IPoint} location The world location to check for a button.
-   * @returns {IEdgeStyle} The edge style if there is a button at the given location, otherwise null.
+   * @param {!CanvasComponent} canvasComponent The canvas component in which the node resides.
+   * @param {!INode} node The node who should be checked for a button.
+   * @param {!IPoint} location The world location to check for a button.
+   * @returns {?IEdgeStyle} The edge style if there is a button at the given location, otherwise null.
    */
   static getStyleButtonAt(canvasComponent, node, location) {
     for (let i = 0; i < ButtonVisualCreator.buttons.length; i++) {
@@ -241,9 +256,9 @@ export default class ButtonVisualCreator extends BaseClass(IVisualCreator) {
 
   /**
    * Helper method to get the context button at the given location.
-   * @param {INode} node The node who should be checked for a button.
-   * @param {IPoint} location The world location to check for a button.
-   * @returns {string|object} The context button at the given or null.
+   * @param {!INode} node The node who should be checked for a button.
+   * @param {!IPoint} location The world location to check for a button.
+   * @returns {?string} The context button at the given or null.
    */
   static getContextButtonAt(node, location) {
     const layout = node.layout
@@ -271,13 +286,21 @@ export default class ButtonVisualCreator extends BaseClass(IVisualCreator) {
  * Executes the button fan out animation.
  */
 class ButtonAnimation extends BaseClass(IAnimation) {
+  /**
+   * @param {!SVGElement} rotationElement
+   * @param {number} finishAngle
+   * @param {!SVGElement} translationElement
+   */
   constructor(rotationElement, finishAngle, translationElement) {
     super()
-    this.rotationElement = rotationElement
     this.translationElement = translationElement
     this.finishAngle = finishAngle
+    this.rotationElement = rotationElement
   }
 
+  /**
+   * @type {!TimeSpan}
+   */
   get preferredDuration() {
     return TimeSpan.fromMilliseconds(200)
   }
@@ -308,6 +331,10 @@ class ButtonIconRenderer {
     this.gc.graphModelManager.edgeGroup.above(this.gc.graphModelManager.nodeGroup)
   }
 
+  /**
+   * @param {!IEdgeStyle} edgeStyle
+   * @returns {!Element}
+   */
   renderButton(edgeStyle) {
     const graph = this.gc.graph
     graph.clear()
@@ -324,6 +351,10 @@ class ButtonIconRenderer {
     return svgExport.exportSvg(this.gc)
   }
 
+  /**
+   * @param {!string} text
+   * @returns {!SVGGElement}
+   */
   renderTextButton(text) {
     const textSize = TextRenderSupport.measureText(
       text,

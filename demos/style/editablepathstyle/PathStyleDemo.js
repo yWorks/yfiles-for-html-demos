@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -129,9 +129,10 @@ function createEditorMode() {
   })
 
   // add handle input to handle change shape handles
-  const changeShapeHandleInputMode = new HandleInputMode()
-  changeShapeHandleInputMode.priority = graphEditorInputMode.handleInputMode.priority - 1
-  changeShapeHandleInputMode.exclusive = true
+  const changeShapeHandleInputMode = new HandleInputMode({
+    priority: graphEditorInputMode.handleInputMode.priority - 1,
+    exclusive: true
+  })
   graphEditorInputMode.add(changeShapeHandleInputMode)
 
   const locations = new List()

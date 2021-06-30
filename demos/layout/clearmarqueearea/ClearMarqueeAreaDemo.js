@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -71,14 +71,13 @@ let clearAreaStrategy = ClearAreaStrategy.PRESERVE_SHAPES
 
 /**
  * @param {!object} licenseData
- * @returns {!Promise}
  */
-async function run(licenseData) {
+function run(licenseData) {
   License.value = licenseData
   graphComponent = new GraphComponent('#graphComponent')
 
   initializeInputModes()
-  await initializeGraph()
+  initializeGraph()
 
   // bind the buttons to their commands
   registerCommands()
@@ -100,15 +99,16 @@ function initializeInputModes() {
 
   // create an input mode to clear the area of a marquee rectangle
   // using the right mouse button
-  const marqueeClearInputMode = new MarqueeSelectionInputMode()
-  marqueeClearInputMode.pressedRecognizer = MouseEventRecognizers.RIGHT_DOWN
-  marqueeClearInputMode.draggedRecognizer = MouseEventRecognizers.RIGHT_DRAG
-  marqueeClearInputMode.releasedRecognizer = MouseEventRecognizers.RIGHT_UP
-  marqueeClearInputMode.cancelRecognizer = EventRecognizers.createOrRecognizer(
-    KeyEventRecognizers.ESCAPE_DOWN,
-    MouseEventRecognizers.LOST_CAPTURE_DURING_DRAG
-  )
-  marqueeClearInputMode.template = new ClearRectTemplate()
+  const marqueeClearInputMode = new MarqueeSelectionInputMode({
+    template: new ClearRectTemplate(),
+    pressedRecognizer: MouseEventRecognizers.RIGHT_DOWN,
+    draggedRecognizer: MouseEventRecognizers.RIGHT_DRAG,
+    releasedRecognizer: MouseEventRecognizers.RIGHT_UP,
+    cancelRecognizer: EventRecognizers.createOrRecognizer(
+      KeyEventRecognizers.ESCAPE_DOWN,
+      MouseEventRecognizers.LOST_CAPTURE_DURING_DRAG
+    )
+  })
 
   // handle dragging the marquee
   marqueeClearInputMode.addDragStartingListener(onDragStarting)
@@ -217,7 +217,7 @@ function onDragFinished(sender, e) {
  * Returns the group node at the given location. If there is no group node, <code>null</code> is returned.
  * @param {!IInputModeContext} context
  * @param {!Point} location
- * @returns {!INode}
+ * @returns {?INode}
  */
 function getHitGroupNode(context, location) {
   return context

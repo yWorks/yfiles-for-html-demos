@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -36,7 +36,8 @@ import {
   ICommand,
   License,
   PolylineEdgeStyle,
-  Rect
+  Rect,
+  Size
 } from 'yfiles'
 import SampleData from './D3ChartNodesData.js'
 import D3ChartNodeStyle from './D3ChartNodeStyle.js'
@@ -44,8 +45,11 @@ import { bindCommand, showApp } from '../../resources/demo-app.js'
 import loadJson from '../../resources/load-json.js'
 
 /** @type {GraphComponent} */
-let graphComponent = null
+let graphComponent
 
+/**
+ * @param {!object} licenseData
+ */
 function run(licenseData) {
   License.value = licenseData
 
@@ -56,14 +60,15 @@ function run(licenseData) {
   loadSampleGraph()
 
   // initialize the input mode
-  graphComponent.inputMode = new GraphEditorInputMode()
-  graphComponent.inputMode.addNodeCreatedListener((sender, args) => {
+  const graphEditorInputMode = new GraphEditorInputMode()
+  graphEditorInputMode.addNodeCreatedListener((sender, args) => {
     // put random data in tag of created node
     args.item.tag = createRandomSparklineData()
   })
+  graphComponent.inputMode = graphEditorInputMode
 
   // set an interval to randomly change the sparkline data of some nodes
-  setInterval(modifyData.bind(this), 500)
+  setInterval(modifyData, 500)
 
   // set up the UI
   registerCommands()
@@ -76,25 +81,21 @@ function run(licenseData) {
  * sparkline visualization to simulate updating data from a server.
  */
 function modifyData() {
-  graphComponent.graph.nodes.forEach(node => {
-    if (Math.random() < 0.1) {
+  graphComponent.graph.nodes
+    .filter(() => Math.random() < 0.1)
+    .forEach(node => {
       node.tag = createRandomSparklineData()
-    }
-  })
+    })
   // make the graphComponent repaint it's content
   graphComponent.invalidate()
 }
 
 /**
  * Creates an array with random data.
- * @return {Object}
+ * @returns {!Array.<number>}
  */
 function createRandomSparklineData() {
-  const data = new Array(10 + Math.floor(Math.random() * 5))
-  for (let i = 0; i < data.length; i++) {
-    data[i] = Math.random() * 10 + 1
-  }
-  return data
+  return Array.from({ length: 10 + Math.floor(Math.random() * 5) }, () => Math.random() * 10 + 1)
 }
 
 /**
@@ -104,7 +105,7 @@ function loadSampleGraph() {
   // initialize the graph defaults
   const graph = graphComponent.graph
   graph.nodeDefaults.style = new D3ChartNodeStyle()
-  graph.nodeDefaults.size = [100, 50]
+  graph.nodeDefaults.size = Size.from([100, 50])
   graph.nodeDefaults.labels.layoutParameter = new ExteriorLabelModel({
     insets: 3
   }).createParameter(ExteriorLabelModelPosition.NORTH)
@@ -112,6 +113,7 @@ function loadSampleGraph() {
     backgroundFill: 'rgba(255, 255, 255, 0.6)',
     insets: [2, 3, 2, 3]
   })
+
   graph.edgeDefaults.style = new PolylineEdgeStyle()
 
   const defaultNodeSize = graphComponent.graph.nodeDefaults.size

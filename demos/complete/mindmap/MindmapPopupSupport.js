@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -30,13 +30,14 @@ import {
   GraphComponent,
   IEdge,
   ILabelModelParameter,
+  ILabelOwner,
   IModelItem,
   INode,
   Point,
   SimpleLabel,
   Size
 } from 'yfiles'
-import { Structure } from './MindmapUtil.js'
+import { isRoot } from './MindmapUtil.js'
 
 /**
  * This class adds an HTML panel on top of the contents of the graphComponent that can
@@ -51,17 +52,19 @@ export default class MindmapPopupSupport {
   /**
    * Constructor that takes the graphComponent, the container div element and an ILabelModelParameter
    * to determine the relative position of the popup.
-   * @param {GraphComponent} graphComponent The given graphComponent.
-   * @param {Element} div The div element.
-   * @param {ILabelModelParameter} labelModelParameter The label model parameter that determines
+   * @param {!GraphComponent} graphComponent The given graphComponent.
+   * @param {!HTMLElement} div The container {@link MindmapPopupSupport#div div element}.
+   * @param {!ILabelModelParameter} labelModelParameter The label model parameter that determines
    * the position of the pop-up.
    */
   constructor(graphComponent, div, labelModelParameter) {
-    this.graphComponent = graphComponent
     this.labelModelParameter = labelModelParameter
-    this.$div = div
-    this.$currentItem = null
-    this.$dirty = false
+    this.div = div
+    this.graphComponent = graphComponent
+    this._currentItem = null
+
+    // A flag indicating whether the current position is no longer valid.
+    this.dirty = false
 
     // make the popup invisible
     div.style.opacity = '0'
@@ -71,33 +74,18 @@ export default class MindmapPopupSupport {
   }
 
   /**
-   * Sets the container {@link MindmapPopupSupport#div div element}.
-   * @param {HTMLElement} value The div element to be set.
-   */
-  set div(value) {
-    this.$div = value
-  }
-
-  /**
-   * Gets the container {@link MindmapPopupSupport#div div element}.
-   * @return {HTMLElement}
-   */
-  get div() {
-    return this.$div
-  }
-
-  /**
    * Sets the {@link IModelItem item} to display information for.
    * Setting this property to a value other than null shows the pop-up.
    * Setting the property to null hides the pop-up.
-   * @param {IModelItem} value The current item.
+   * @param value The current item.
+   * @type {?IModelItem}
    */
   set currentItem(value) {
-    if (value === this.$currentItem) {
+    if (value === this._currentItem) {
       return
     }
-    this.$currentItem = value
-    if (value !== null) {
+    this._currentItem = value
+    if (value) {
       this.show()
     } else {
       this.hide()
@@ -106,27 +94,10 @@ export default class MindmapPopupSupport {
 
   /**
    * Gets the {@link IModelItem item} to display information for.
-   * @return {IModelItem}
+   * @type {?IModelItem}
    */
   get currentItem() {
-    return this.$currentItem
-  }
-
-  /**
-   * Sets the flag for the current position is no longer valid.
-   * @param value true if the current position is no longer valid, false otherwise
-   * @param {boolean} value True if the current position is no longer valid, false otherwise.
-   */
-  set dirty(value) {
-    this.$dirty = value
-  }
-
-  /**
-   * Gets the flag for the current position is no longer valid.
-   * @return {boolean}
-   */
-  get dirty() {
-    return this.$dirty
+    return this._currentItem
   }
 
   /**
@@ -165,7 +136,7 @@ export default class MindmapPopupSupport {
   show() {
     const colorChooserNodeButton = document.getElementById('btnSetColor')
     const deleteNodeButton = document.getElementById('btnDeleteNode')
-    if (INode.isInstance(this.currentItem) && Structure.isRoot(this.currentItem)) {
+    if (INode.isInstance(this.currentItem) && isRoot(this.currentItem)) {
       // don't show the delete button on the root element
       colorChooserNodeButton.className = 'popupIcon iconColorChooser disabled'
       deleteNodeButton.className = 'popupIcon iconMinus disabled'

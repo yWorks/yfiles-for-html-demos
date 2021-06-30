@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -54,8 +54,8 @@ import {
 } from 'yfiles'
 
 import EditablePathNodeStyle, { PathHandle, updateHandles } from './EditablePathNodeStyle'
-import { bindCommand, showApp } from '../../resources/demo-app.js'
-import loadJson from '../../resources/load-json.js'
+import { bindCommand, showApp } from '../../resources/demo-app'
+import loadJson from '../../resources/load-json'
 
 // @ts-ignore
 let graphComponent: GraphComponent = null
@@ -82,7 +82,7 @@ function run(licenseData: object): void {
  * nodes in the graph.
  */
 function initializeGraph(): void {
-  const graph = graphComponent!.graph
+  const graph = graphComponent.graph
 
   graph.undoEngineEnabled = true
 
@@ -125,9 +125,10 @@ function createEditorMode(): GraphEditorInputMode {
   })
 
   // add handle input to handle change shape handles
-  const changeShapeHandleInputMode = new HandleInputMode()
-  changeShapeHandleInputMode.priority = graphEditorInputMode.handleInputMode.priority - 1
-  changeShapeHandleInputMode.exclusive = true
+  const changeShapeHandleInputMode = new HandleInputMode({
+    priority: graphEditorInputMode.handleInputMode.priority - 1,
+    exclusive: true
+  })
   graphEditorInputMode.add(changeShapeHandleInputMode)
 
   const locations: List<Point> = new List<Point>()
@@ -210,7 +211,7 @@ function createEditorMode(): GraphEditorInputMode {
   let currentNode: INode | null = null
 
   // hide handles when a node is removed
-  graphComponent!.graph.addNodeRemovedListener((sender, evt) => {
+  graphComponent.graph.addNodeRemovedListener((sender, evt) => {
     if (evt.item === currentNode) {
       changeShapeHandleInputMode.cancel()
       changeShapeHandleInputMode.handles.clear()
@@ -277,8 +278,8 @@ function createEditorMode(): GraphEditorInputMode {
       )
       if (handle) {
         ;(handle as PathHandle).removeSegment()
-        ;(currentNode!.style as EditablePathNodeStyle).normalizePath(
-          currentNode!,
+        ;(currentNode.style as EditablePathNodeStyle).normalizePath(
+          currentNode,
           graphEditorInputMode.graph!
         )
 
@@ -306,7 +307,7 @@ function createEditorMode(): GraphEditorInputMode {
  * Creates the initial sample graph.
  */
 function createSampleGraph(): void {
-  const graph = graphComponent!.graph
+  const graph = graphComponent.graph
   graph.nodeDefaults.shareStyleInstance = false
 
   const n1 = graph.createNode()

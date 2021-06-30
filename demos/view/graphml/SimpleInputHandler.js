@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -27,6 +27,8 @@
  **
  ***************************************************************************/
 import { IGraph, IModelItem, IParseContext, InputHandlerBase, KeyType, YObject } from 'yfiles'
+import GraphMLProperty from './GraphMLProperty.js'
+import { PropertiesPanel } from './PropertiesPanel.js'
 
 /**
  * An input handler that reads arbitrary data.
@@ -34,8 +36,8 @@ import { IGraph, IModelItem, IParseContext, InputHandlerBase, KeyType, YObject }
  */
 export default class SimpleInputHandler extends InputHandlerBase {
   /**
-   * @param {GraphMLProperty} property
-   * @param {PropertiesPanel} panel
+   * @param {!GraphMLProperty} property
+   * @param {!PropertiesPanel} panel
    */
   constructor(property, panel) {
     super(YObject.$class, YObject.$class)
@@ -50,14 +52,14 @@ export default class SimpleInputHandler extends InputHandlerBase {
    * Simple data types are parsed as such, for complex data types, the
    * plain string representation of the xml data is returned.
    *
-   * @param {IParseContext} context
-   * @param {Node} xmlNode
-   * @return {Object}
    * @see Overrides {@link InputHandlerBase#parseDataCore}
+   * @param {!IParseContext} context
+   * @param {!Node} xmlNode
+   * @returns {*}
    */
   parseDataCore(context, xmlNode) {
     const node = xmlNode
-    const textValue = node.textContent !== null ? node.textContent : ''
+    const textValue = node.textContent ? node.textContent : ''
     switch (this.property.type) {
       case KeyType.INT:
         return parseInt(textValue, 10)
@@ -70,7 +72,7 @@ export default class SimpleInputHandler extends InputHandlerBase {
       case KeyType.BOOLEAN:
         return !!textValue
       case KeyType.COMPLEX:
-        return node.innerHTML !== null ? node.innerHTML : ''
+        return node.innerHTML ? node.innerHTML : ''
       case KeyType.STRING:
       default:
         return textValue
@@ -79,10 +81,10 @@ export default class SimpleInputHandler extends InputHandlerBase {
 
   /**
    * Sets the parsed value.
-   * @param {IParseContext} context
-   * @param key
-   * @param data
    * @see Overrides {@link InputHandlerBase#setValue}
+   * @param {!IParseContext} context
+   * @param {*} key
+   * @param {*} data
    */
   setValue(context, key, data) {
     if (context.getCurrent(IModelItem.$class)) {
@@ -96,9 +98,9 @@ export default class SimpleInputHandler extends InputHandlerBase {
 
   /**
    * Initializes this instance from the GraphML key definition.
-   * @param {IParseContext} context
-   * @param {Element} definition
    * @see overrides {@link InputHandlerBase#initializeFromKeyDefinition}
+   * @param {!IParseContext} context
+   * @param {!Element} definition
    */
   initializeFromKeyDefinition(context, definition) {
     super.initializeFromKeyDefinition(context, definition)

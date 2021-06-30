@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -33,15 +33,19 @@ import {
   DefaultLabelStyle,
   GraphComponent,
   IArrow,
+  IEdge,
   IGraph,
   IModelItem,
   INode,
   KCoreComponents,
+  Mapper,
   Reachability,
+  ResultItemMapping,
   StronglyConnectedComponents
 } from 'yfiles'
 import AlgorithmConfiguration from './AlgorithmConfiguration.js'
 import { getColorForComponent, MultiColorEdgeStyle, MultiColorNodeStyle } from './DemoStyles.js'
+import ContextMenu from '../../utils/ContextMenu.js'
 
 /**
  * Configuration options for the Connectivity Algorithms.
@@ -53,38 +57,19 @@ export default class ConnectivityConfig extends AlgorithmConfiguration {
    */
   constructor(algorithmType) {
     super()
-    this.$algorithmType = algorithmType
-    this.$markedSource = null
-  }
 
-  /**
-   * Specifies the marked node.
-   * @param {INode} markedSource the marked node
-   */
-  set markedSource(markedSource) {
-    this.$markedSource = markedSource
-  }
+    // Specifies the marked node.
+    this.markedSource = null
 
-  /**
-   * Returns the marked node.
-   * @return {INode} the marked node
-   */
-  get markedSource() {
-    return this.$markedSource
-  }
-
-  /**
-   * Returns which connectivity algorithm is used.
-   * @return {number}
-   */
-  get algorithmType() {
-    return this.$algorithmType
+    this.incrementalElements = null
+    this.edgeRemoved = false
+    // Specifies which connectivity algorithm is used.
+    this.algorithmType = algorithmType
   }
 
   /**
    * Runs the selected connectivity algorithm.
-   * @param {IGraph} graph the graph on which the algorithm is executed
-   *   executed
+   * @param {!IGraph} graph the graph on which the algorithm is executed
    */
   runAlgorithm(graph) {
     switch (this.algorithmType) {
@@ -107,20 +92,23 @@ export default class ConnectivityConfig extends AlgorithmConfiguration {
 
   /**
    * Calculates the connected components of the given graph.
-   * @param {IGraph} graph The graph whose components are determined.
+   * @param {!IGraph} graph The graph whose components are determined
    */
   calculateConnectedComponents(graph) {
-    let result
     const stronglyConnectedComponents =
       this.algorithmType === ConnectivityConfig.STRONGLY_CONNECTED_COMPONENTS
+    let compNum
+    let components
     if (stronglyConnectedComponents) {
-      result = new StronglyConnectedComponents().run(graph)
+      const stronglyConnectedComponentsResult = new StronglyConnectedComponents().run(graph)
+      components = stronglyConnectedComponentsResult.nodeComponentIds
+      compNum = stronglyConnectedComponentsResult.components.size
     } else {
-      result = new ConnectedComponents().run(graph)
+      const connectedComponentsResult = new ConnectedComponents().run(graph)
+      components = connectedComponentsResult.nodeComponentIds
+      compNum = connectedComponentsResult.components.size
     }
 
-    const compNum = result.components.size
-    const components = result.nodeComponentIds
     if (compNum > 0) {
       // find the components that are affected by the use move, if any
       const affectedComponents = this.getAffectedNodeComponents(components, graph)
@@ -148,7 +136,7 @@ export default class ConnectivityConfig extends AlgorithmConfiguration {
       // this is the component with the larger number of elements
       const largestComponentIdx = this.getLargestComponentIndex(affectedComponents, allComponents)
       // holds the color of the affected components
-      const color2AffectedComponent = new Map()
+      const affectedComponent2Color = new Map()
       // generate a color array
       const colors = this.generateColors(null)
 
@@ -160,7 +148,7 @@ export default class ConnectivityConfig extends AlgorithmConfiguration {
           colors,
           componentIdx,
           affectedComponents,
-          color2AffectedComponent,
+          affectedComponent2Color,
           largestComponentIdx,
           allComponents,
           graph,
@@ -208,7 +196,7 @@ export default class ConnectivityConfig extends AlgorithmConfiguration {
 
   /**
    * Calculates the biconnected components of the given graph.
-   * @param {IGraph} graph The graph whose biconnected components are determined.
+   * @param {!IGraph} graph The graph whose biconnected components are determined.
    */
   calculateBiconnectedComponents(graph) {
     const result = new BiconnectedComponents().run(graph)
@@ -236,7 +224,7 @@ export default class ConnectivityConfig extends AlgorithmConfiguration {
       // this is the component with the larger number of elements
       const largestComponentIdx = this.getLargestComponentIndex(affectedComponents, allComponents)
       // holds the color of the affected components
-      const color2AffectedComponent = new Map()
+      const affectedComponent2Color = new Map()
       // generate a color array
       const colors = this.generateColors(null)
 
@@ -253,7 +241,7 @@ export default class ConnectivityConfig extends AlgorithmConfiguration {
             colors,
             componentIdx,
             affectedComponents,
-            color2AffectedComponent,
+            affectedComponent2Color,
             largestComponentIdx,
             allComponents,
             graph,
@@ -293,15 +281,15 @@ export default class ConnectivityConfig extends AlgorithmConfiguration {
 
       // reset the style/tag for the articulation points
       articulationNodes.forEach(node => {
-        const visitedComponents = {}
+        const visitedComponents = new Set()
         graph.setStyle(node, new MultiColorNodeStyle())
         const components = []
         let color
 
         graph.edgesAt(node, AdjacencyTypes.ALL).forEach(edge => {
           const componentIdx = biconnectedComponents.get(edge)
-          if (!visitedComponents[componentIdx]) {
-            visitedComponents[componentIdx] = componentIdx
+          if (!visitedComponents.has(componentIdx)) {
+            visitedComponents.add(componentIdx)
             components.push(componentIdx)
             color = edge.tag.color
           }
@@ -325,7 +313,7 @@ export default class ConnectivityConfig extends AlgorithmConfiguration {
 
   /**
    * Calculates the nodes reachable from the marked node.
-   * @param {IGraph} graph The graph in which all reachable nodes are determined.
+   * @param {!IGraph} graph The graph in which all reachable nodes are determined.
    */
   calculateReachableNodes(graph) {
     this.resetGraph(graph)
@@ -369,7 +357,7 @@ export default class ConnectivityConfig extends AlgorithmConfiguration {
 
   /**
    * Calculates the k-cores and visualizes them
-   * @param {IGraph} graph The graph in which the k-cores are visualized
+   * @param {!IGraph} graph The graph in which the k-cores are visualized
    */
   calculateKCoreNodes(graph) {
     this.resetGraph(graph)
@@ -411,11 +399,10 @@ export default class ConnectivityConfig extends AlgorithmConfiguration {
             targetStyle.useGradient = true
             graph.setStyle(target, targetStyle)
 
-            const edgeStyle = new MultiColorEdgeStyle(getColorForComponent(k, true))
-            edgeStyle.thickness = 5
-            edgeStyle.targetArrow = IArrow.NONE
-            edgeStyle.useGradient = true
-            graph.setStyle(edge, edgeStyle)
+            graph.setStyle(
+              edge,
+              new MultiColorEdgeStyle(getColorForComponent(k, true), IArrow.NONE, 5, true)
+            )
 
             if (
               edges.length === 1 ||
@@ -488,31 +475,31 @@ export default class ConnectivityConfig extends AlgorithmConfiguration {
 
   /**
    * Returns the first edge with non-negative component index of the given node.
-   * @param {IGraph} graph the given graph
-   * @param {INode} node the given node
-   * @param {ResultItemMapping<IEdge,number>} biconnectedComponents the edge-map that holds the
-   *   result of the biconnected components algorithm
+   * @param {!IGraph} graph the given graph
+   * @param {!INode} node the given node
+   * @param {!ResultItemMapping.<IEdge,number>} biconnectedComponents the mapping that holds the result of the biconnected components algorithm
+   * @returns {?IEdge}
    */
   findEdgeInBiconnectedComponent(graph, node, biconnectedComponents) {
-    let edge = null
-    graph.edgesAt(node, AdjacencyTypes.ALL).forEach(incidentEdge => {
-      if (biconnectedComponents.get(incidentEdge) >= 0) {
-        edge = incidentEdge
-      }
-    })
-    return edge
+    return graph
+      .edgesAt(node, AdjacencyTypes.ALL)
+      .find(
+        incidentEdge =>
+          biconnectedComponents.get(incidentEdge) !== null &&
+          biconnectedComponents.get(incidentEdge) >= 0
+      )
   }
 
   /**
    * Adds a context menu to mark the source node for the reachability algorithm.
-   * @param {object} contextMenu the context menu to which the entries are added
-   * @param {IModelItem} item the item that is affected by this context menu
-   * @param {GraphComponent} graphComponent the given graph component
+   * @param {!ContextMenu} contextMenu the context menu to which the entries are added
+   * @param {!IModelItem} item the item that is affected by this context menu
+   * @param {!GraphComponent} graphComponent the given graph component
    */
   populateContextMenu(contextMenu, item, graphComponent) {
     if (this.algorithmType === ConnectivityConfig.REACHABILITY) {
       const graph = graphComponent.graph
-      if (INode.isInstance(item)) {
+      if (item instanceof INode) {
         contextMenu.addMenuItem('Mark As Source', () => {
           this.markedSource = item
           this.resetGraph(graph)
@@ -524,7 +511,8 @@ export default class ConnectivityConfig extends AlgorithmConfiguration {
 
   /**
    * Returns the description text for the connectivity algorithms.
-   * @returns {string} the description text for the connectivity algorithms
+   * @return the description text for the connectivity algorithms
+   * @type {!string}
    */
   get descriptionText() {
     switch (this.algorithmType) {
@@ -556,7 +544,7 @@ export default class ConnectivityConfig extends AlgorithmConfiguration {
 
   /**
    * Static field for CONNECTED_COMPONENTS
-   * @return {number}
+   * @type {number}
    */
   static get CONNECTED_COMPONENTS() {
     return 0
@@ -564,7 +552,7 @@ export default class ConnectivityConfig extends AlgorithmConfiguration {
 
   /**
    * Static field for BICONNECTED_COMPONENTS
-   * @return {number}
+   * @type {number}
    */
   static get BICONNECTED_COMPONENTS() {
     return 1
@@ -572,7 +560,7 @@ export default class ConnectivityConfig extends AlgorithmConfiguration {
 
   /**
    * Static field for STRONGLY_CONNECTED_COMPONENTS
-   * @return {number}
+   * @type {number}
    */
   static get STRONGLY_CONNECTED_COMPONENTS() {
     return 2
@@ -580,7 +568,7 @@ export default class ConnectivityConfig extends AlgorithmConfiguration {
 
   /**
    * Static field for REACHABILITY
-   * @return {number}
+   * @type {number}
    */
   static get REACHABILITY() {
     return 3
@@ -588,7 +576,7 @@ export default class ConnectivityConfig extends AlgorithmConfiguration {
 
   /**
    * Static field for K_CORE_COMPONENTS
-   * @return {number}
+   * @type {number}
    */
   static get K_CORE_COMPONENTS() {
     return 4

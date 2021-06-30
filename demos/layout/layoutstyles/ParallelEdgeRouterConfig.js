@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -28,8 +28,10 @@
  ***************************************************************************/
 import {
   Class,
-  EnumDefinition,
+  Enum,
   GraphComponent,
+  ILayoutAlgorithm,
+  LayoutData,
   ParallelEdgeRouter,
   ParallelEdgeRouterData,
   YBoolean,
@@ -63,20 +65,21 @@ const ParallelEdgeRouterConfig = Class('ParallelEdgeRouterConfig', {
   constructor: function () {
     LayoutConfiguration.call(this)
     const router = new ParallelEdgeRouter()
-    this.scopeItem = ParallelEdgeRouterConfig.EnumScope.SCOPE_ALL_EDGES
+    this.scopeItem = Scope.SCOPE_ALL_EDGES
     this.useSelectedEdgesAsMasterItem = false
     this.considerEdgeDirectionItem = router.directedMode
     this.useAdaptiveLineDistanceItem = router.adaptiveLineDistances
     this.lineDistanceItem = router.lineDistance | 0
     this.joinEndsItem = router.joinEnds
     this.joinDistanceItem = router.absJoinEndDistance
+    this.title = 'Parallel Edge Router'
   },
 
   /**
    * Creates and configures a layout and the graph's {@link IGraph#mapperRegistry} if necessary.
-   * @param {GraphComponent} graphComponent The <code>GraphComponent</code> to apply the
+   * @param graphComponent The <code>GraphComponent</code> to apply the
    *   configuration on.
-   * @return {ILayoutAlgorithm} The configured layout algorithm.
+   * @return The configured layout algorithm.
    */
   createConfiguredLayout: function (graphComponent) {
     const router = new ParallelEdgeRouter()
@@ -98,35 +101,20 @@ const ParallelEdgeRouterConfig = Class('ParallelEdgeRouterConfig', {
     const layoutData = new ParallelEdgeRouterData()
     const selection = graphComponent.selection
 
-    if (this.scopeItem === ParallelEdgeRouterConfig.EnumScope.SCOPE_AT_SELECTED_NODES) {
-      layoutData.affectedEdges = edge =>
+    if (this.scopeItem === Scope.SCOPE_AT_SELECTED_NODES) {
+      layoutData.affectedEdges.delegate = edge =>
         selection.isSelected(edge.sourceNode) || selection.isSelected(edge.targetNode)
-    } else if (this.scopeItem === ParallelEdgeRouterConfig.EnumScope.SCOPE_SELECTED_EDGES) {
-      layoutData.affectedEdges = selection.selectedEdges
+    } else if (this.scopeItem === Scope.SCOPE_SELECTED_EDGES) {
+      layoutData.affectedEdges.items = selection.selectedEdges.toList()
     } else {
-      layoutData.affectedEdges = edge => true
+      layoutData.affectedEdges.delegate = edge => true
     }
 
     if (this.useSelectedEdgesAsMasterItem) {
-      layoutData.leadingEdges = selection.selectedEdges
+      layoutData.leadingEdges.items = selection.selectedEdges.toList()
     }
 
     return layoutData
-  },
-
-  // ReSharper disable UnusedMember.Global
-  // ReSharper disable InconsistentNaming
-
-  /** @type {OptionGroup} */
-  DescriptionGroup: {
-    $meta: function () {
-      return [
-        LabelAttribute('Description'),
-        OptionGroupAttribute('RootGroup', 5),
-        TypeAttribute(OptionGroup.$class)
-      ]
-    },
-    value: null
   },
 
   /** @type {string} */
@@ -155,13 +143,7 @@ const ParallelEdgeRouterConfig = Class('ParallelEdgeRouterConfig', {
     value: null
   },
 
-  /**
-   * Backing field for below property
-   * @type {ParallelEdgeRouterConfig.EnumScope}
-   */
-  $scopeItem: null,
-
-  /** @type {ParallelEdgeRouterConfig.EnumScope} */
+  /** @type {Scope} */
   scopeItem: {
     $meta: function () {
       return [
@@ -172,27 +154,16 @@ const ParallelEdgeRouterConfig = Class('ParallelEdgeRouterConfig', {
         OptionGroupAttribute('LayoutGroup', 10),
         EnumValuesAttribute().init({
           values: [
-            ['All Edges', ParallelEdgeRouterConfig.EnumScope.SCOPE_ALL_EDGES],
-            ['Selected Edges', ParallelEdgeRouterConfig.EnumScope.SCOPE_SELECTED_EDGES],
-            ['Edges at Selected Nodes', ParallelEdgeRouterConfig.EnumScope.SCOPE_AT_SELECTED_NODES]
+            ['All Edges', Scope.SCOPE_ALL_EDGES],
+            ['Selected Edges', Scope.SCOPE_SELECTED_EDGES],
+            ['Edges at Selected Nodes', Scope.SCOPE_AT_SELECTED_NODES]
           ]
         }),
-        TypeAttribute(ParallelEdgeRouterConfig.EnumScope.$class)
+        TypeAttribute(Enum.$class)
       ]
     },
-    get: function () {
-      return this.$scopeItem
-    },
-    set: function (value) {
-      this.$scopeItem = value
-    }
+    value: null
   },
-
-  /**
-   * Backing field for below property
-   * @type {boolean}
-   */
-  $useSelectedEdgesAsMasterItem: false,
 
   /** @type {boolean} */
   useSelectedEdgesAsMasterItem: {
@@ -206,19 +177,8 @@ const ParallelEdgeRouterConfig = Class('ParallelEdgeRouterConfig', {
         TypeAttribute(YBoolean.$class)
       ]
     },
-    get: function () {
-      return this.$useSelectedEdgesAsMasterItem
-    },
-    set: function (value) {
-      this.$useSelectedEdgesAsMasterItem = value
-    }
+    value: false
   },
-
-  /**
-   * Backing field for below property
-   * @type {boolean}
-   */
-  $considerEdgeDirectionItem: false,
 
   /** @type {boolean} */
   considerEdgeDirectionItem: {
@@ -232,19 +192,8 @@ const ParallelEdgeRouterConfig = Class('ParallelEdgeRouterConfig', {
         TypeAttribute(YBoolean.$class)
       ]
     },
-    get: function () {
-      return this.$considerEdgeDirectionItem
-    },
-    set: function (value) {
-      this.$considerEdgeDirectionItem = value
-    }
+    value: false
   },
-
-  /**
-   * Backing field for below property
-   * @type {boolean}
-   */
-  $useAdaptiveLineDistanceItem: false,
 
   /** @type {boolean} */
   useAdaptiveLineDistanceItem: {
@@ -258,19 +207,8 @@ const ParallelEdgeRouterConfig = Class('ParallelEdgeRouterConfig', {
         TypeAttribute(YBoolean.$class)
       ]
     },
-    get: function () {
-      return this.$useAdaptiveLineDistanceItem
-    },
-    set: function (value) {
-      this.$useAdaptiveLineDistanceItem = value
-    }
+    value: false
   },
-
-  /**
-   * Backing field for below property
-   * @type {number}
-   */
-  $lineDistanceItem: 0,
 
   /** @type {number} */
   lineDistanceItem: {
@@ -289,19 +227,8 @@ const ParallelEdgeRouterConfig = Class('ParallelEdgeRouterConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function () {
-      return this.$lineDistanceItem
-    },
-    set: function (value) {
-      this.$lineDistanceItem = value
-    }
+    value: 0
   },
-
-  /**
-   * Backing field for below property
-   * @type {boolean}
-   */
-  $joinEndsItem: false,
 
   /** @type {boolean} */
   joinEndsItem: {
@@ -315,19 +242,8 @@ const ParallelEdgeRouterConfig = Class('ParallelEdgeRouterConfig', {
         TypeAttribute(YBoolean.$class)
       ]
     },
-    get: function () {
-      return this.$joinEndsItem
-    },
-    set: function (value) {
-      this.$joinEndsItem = value
-    }
+    value: false
   },
-
-  /**
-   * Backing field for below property
-   * @type {number}
-   */
-  $joinDistanceItem: 0,
 
   /** @type {number} */
   joinDistanceItem: {
@@ -346,12 +262,7 @@ const ParallelEdgeRouterConfig = Class('ParallelEdgeRouterConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function () {
-      return this.$joinDistanceItem
-    },
-    set: function (value) {
-      this.$joinDistanceItem = value
-    }
+    value: 0
   },
 
   /** @type {boolean} */
@@ -362,18 +273,16 @@ const ParallelEdgeRouterConfig = Class('ParallelEdgeRouterConfig', {
     get: function () {
       return !this.joinEndsItem
     }
-  },
-
-  $static: {
-    // ReSharper restore UnusedMember.Global
-    // ReSharper restore InconsistentNaming
-    EnumScope: new EnumDefinition(() => {
-      return {
-        SCOPE_ALL_EDGES: 0,
-        SCOPE_SELECTED_EDGES: 1,
-        SCOPE_AT_SELECTED_NODES: 2
-      }
-    })
   }
 })
 export default ParallelEdgeRouterConfig
+
+/**
+ * @readonly
+ * @enum {number}
+ */
+const Scope = {
+  SCOPE_ALL_EDGES: 0,
+  SCOPE_SELECTED_EDGES: 1,
+  SCOPE_AT_SELECTED_NODES: 2
+}

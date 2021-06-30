@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -39,30 +39,30 @@ import {
   IListEnumerable,
   INode,
   IOrientedRectangle,
+  IPoint,
   IRectangle,
   IRenderContext,
   LabelStyleBase,
   NodeStyleBase,
   Point,
-  Size,
-  Visual
+  Size
 } from 'yfiles'
 
 export class FastNodeStyle extends NodeStyleBase {
   /**
-   * @param {IRenderContext} renderContext
-   * @param {INode} node
-   * @return {NodeCanvasVisual}
+   * @param {!IRenderContext} renderContext
+   * @param {!INode} node
+   * @returns {!NodeCanvasVisual}
    */
   createVisual(renderContext, node) {
     return new NodeCanvasVisual(node.layout)
   }
 
   /**
-   * @param {IRenderContext} renderContext
-   * @param {Visual} oldVisual
-   * @param {INode} node
-   * @return {Visual}
+   * @param {!IRenderContext} renderContext
+   * @param {!NodeCanvasVisual} oldVisual
+   * @param {!INode} node
+   * @returns {!NodeCanvasVisual}
    */
   updateVisual(renderContext, oldVisual, node) {
     oldVisual.layout = node.layout
@@ -75,30 +75,23 @@ export class FastNodeStyle extends NodeStyleBase {
  */
 class NodeCanvasVisual extends HtmlCanvasVisual {
   /**
-   * @param {IRectangle} layout A live view of the layout of a node.
+   * Initializes a new NodeCanvasVisual instance with the given property value.
+   * @param {!IRectangle} layout A live view of the layout of a node.
    */
   constructor(layout) {
     super()
-    this.$layout = layout
-  }
-
-  set layout(value) {
-    this.$layout = value
-  }
-
-  get layout() {
-    return this.$layout
+    this.layout = layout
   }
 
   /**
    * Draw a rectangle with a solid orange fill.
    * @see Overrides {@link HtmlCanvasVisual#paint}
-   * @param {IRenderContext} renderContext
-   * @param {CanvasRenderingContext2D} ctx
+   * @param {!IRenderContext} renderContext
+   * @param {!CanvasRenderingContext2D} ctx
    */
   paint(renderContext, ctx) {
     ctx.fillStyle = 'rgba(255,140,0,1)'
-    const l = this.$layout
+    const l = this.layout
     ctx.fillRect(l.x, l.y, l.width, l.height)
   }
 }
@@ -109,19 +102,19 @@ class NodeCanvasVisual extends HtmlCanvasVisual {
  */
 export class FastEdgeStyle extends EdgeStyleBase {
   /**
-   * @param {IRenderContext} renderContext
-   * @param {IEdge} edge
-   * @return {EdgeCanvasVisual}
+   * @param {!IRenderContext} renderContext
+   * @param {!IEdge} edge
+   * @returns {!EdgeCanvasVisual}
    */
   createVisual(renderContext, edge) {
     return new EdgeCanvasVisual(edge.bends, edge.sourcePort.location, edge.targetPort.location)
   }
 
   /**
-   * @param {IInputModeContext} inputContext
-   * @param {Point} location
-   * @param {IEdge} edge
-   * @return {boolean}
+   * @param {!IInputModeContext} inputContext
+   * @param {!Point} location
+   * @param {!IEdge} edge
+   * @returns {boolean}
    */
   isHit(inputContext, location, edge) {
     // we use a very simple hit logic here (the base implementation)
@@ -138,10 +131,10 @@ export class FastEdgeStyle extends EdgeStyleBase {
   }
 
   /**
-   * @param {IRenderContext} renderContext
-   * @param {Visual} oldVisual
-   * @param {IEdge} edge
-   * @return {Visual}
+   * @param {!IRenderContext} renderContext
+   * @param {!EdgeCanvasVisual} oldVisual
+   * @param {!IEdge} edge
+   * @returns {!EdgeCanvasVisual}
    */
   updateVisual(renderContext, oldVisual, edge) {
     oldVisual.bends = edge.bends
@@ -156,59 +149,36 @@ export class FastEdgeStyle extends EdgeStyleBase {
  */
 class EdgeCanvasVisual extends HtmlCanvasVisual {
   /**
-   * @param {IListEnumerable.<IBend>} bends
-   * @param {Point} sourcePortLocation
-   * @param {Point} targetPortLocation
+   * Initializes a new EdgeCanvasVisual instance with the given property values.
+   * @param {!IListEnumerable.<IBend>} bends The bends in the edge's path.
+   * @param {!Point} sourcePortLocation The start point of the edge's path.
+   * @param {!Point} targetPortLocation The end point of the edge's path.
    */
   constructor(bends, sourcePortLocation, targetPortLocation) {
     super()
-    this.$bends = bends
-    this.$sourcePortLocation = sourcePortLocation
-    this.$targetPortLocation = targetPortLocation
-  }
-
-  get bends() {
-    return this.$bends
-  }
-
-  set bends(value) {
-    this.$bends = value
-  }
-
-  get sourcePortLocation() {
-    return this.$sourcePortLocation
-  }
-
-  set sourcePortLocation(value) {
-    this.$sourcePortLocation = value
-  }
-
-  get targetPortLocation() {
-    return this.$targetPortLocation
-  }
-
-  set targetPortLocation(value) {
-    this.$targetPortLocation = value
+    this.targetPortLocation = targetPortLocation
+    this.sourcePortLocation = sourcePortLocation
+    this.bends = bends
   }
 
   /**
-   * @param {IRenderContext} renderContext
-   * @param {CanvasRenderingContext2D} ctx
+   * @param {!IRenderContext} renderContext
+   * @param {!CanvasRenderingContext2D} ctx
    */
   paint(renderContext, ctx) {
     // simply draw a black line from the source port location via all bends to the target port location
     ctx.strokeStyle = 'rgb(51,102,153)'
 
     ctx.beginPath()
-    let location = this.$sourcePortLocation
+    let location = this.sourcePortLocation
     ctx.moveTo(location.x, location.y)
-    if (this.$bends.size > 0) {
-      this.$bends.forEach(bend => {
+    if (this.bends.size > 0) {
+      this.bends.forEach(bend => {
         location = bend.location
         ctx.lineTo(location.x, location.y)
       })
     }
-    location = this.$targetPortLocation
+    location = this.targetPortLocation
     ctx.lineTo(location.x, location.y)
     ctx.stroke()
   }
@@ -221,44 +191,52 @@ class EdgeCanvasVisual extends HtmlCanvasVisual {
 export class FastLabelStyle extends LabelStyleBase {
   constructor() {
     super()
-    this.$zoomThreshold = 0.7
-    this.$font = new Font()
-  }
-
-  /** @type {number} */
-  get zoomThreshold() {
-    return this.$zoomThreshold
-  }
-
-  /** @type {number} */
-  set zoomThreshold(value) {
-    this.$zoomThreshold = value
-  }
-
-  /** @type {Font} */
-  get font() {
-    return this.$font
-  }
-
-  /** @type {Font} */
-  set font(value) {
-    this.$font = value
+    this._zoomThreshold = 0.7
+    this._font = new Font()
   }
 
   /**
-   * @param {IRenderContext} renderContext
-   * @param {ILabel} label
-   * @return {LabelCanvasVisual}
+   * @type {number}
+   */
+  get zoomThreshold() {
+    return this._zoomThreshold
+  }
+
+  /**
+   * @type {number}
+   */
+  set zoomThreshold(value) {
+    this._zoomThreshold = value
+  }
+
+  /**
+   * @type {!Font}
+   */
+  get font() {
+    return this._font
+  }
+
+  /**
+   * @type {!Font}
+   */
+  set font(value) {
+    this._font = value
+  }
+
+  /**
+   * @param {!IRenderContext} renderContext
+   * @param {!ILabel} label
+   * @returns {!LabelCanvasVisual}
    */
   createVisual(renderContext, label) {
     return new LabelCanvasVisual(label.text, label.layout, this.font, this.zoomThreshold)
   }
 
   /**
-   * @param {IRenderContext} renderContext
-   * @param {Visual} oldVisual
-   * @param {ILabel} label
-   * @return {Visual}
+   * @param {!IRenderContext} renderContext
+   * @param {!LabelCanvasVisual} oldVisual
+   * @param {!ILabel} label
+   * @returns {!LabelCanvasVisual}
    */
   updateVisual(renderContext, oldVisual, label) {
     oldVisual.text = label.text
@@ -269,8 +247,8 @@ export class FastLabelStyle extends LabelStyleBase {
   }
 
   /**
-   * @param {ILabel} label
-   * @return {Size}
+   * @param {!ILabel} label
+   * @returns {!Size}
    */
   getPreferredSize(label) {
     const canvas = document.createElement('canvas')
@@ -282,8 +260,8 @@ export class FastLabelStyle extends LabelStyleBase {
 
   /**
    * Helper method to set a Font on the given context;
-   * @param {CanvasRenderingContext2D} ctx
-   * @param {Font} font
+   * @param {!CanvasRenderingContext2D} ctx
+   * @param {!Font} font
    */
   static setFont(ctx, font) {
     ctx.font = `${FastLabelStyle.fontStyleToString(
@@ -292,8 +270,8 @@ export class FastLabelStyle extends LabelStyleBase {
   }
 
   /**
-   * @param {FontStyle} fontStyle
-   * @return {string}
+   * @param {!FontStyle} fontStyle
+   * @returns {!string}
    */
   static fontStyleToString(fontStyle) {
     switch (fontStyle) {
@@ -310,8 +288,8 @@ export class FastLabelStyle extends LabelStyleBase {
   }
 
   /**
-   * @param {FontWeight} fontWeight
-   * @return {string}
+   * @param {!FontWeight} fontWeight
+   * @returns {!string}
    */
   static fontWeightToString(fontWeight) {
     switch (fontWeight) {
@@ -353,69 +331,39 @@ export class FastLabelStyle extends LabelStyleBase {
  */
 class LabelCanvasVisual extends HtmlCanvasVisual {
   /**
-   * @param {string} text
-   * @param {IOrientedRectangle} layout A live view of the layout of a label.
-   * @param {Font} font
-   * @param {number} zoomThreshold
+   * Initializes a new LabelCanvasVisual with the given property values.
+   * @param {!string} text The text to be rendered.
+   * @param {!IOrientedRectangle} layout A live view of the layout of a label.
+   * @param {!Font} font The Font to render the label text with.
+   * @param {number} zoomThreshold Text is rendered only if the zoom property of the component in which
+   * this visual is displayed is greater than the given value.
    */
   constructor(text, layout, font, zoomThreshold) {
     super()
-    this.$text = text
-    this.$layout = layout
-    this.$font = font
-    this.$zoomThreshold = zoomThreshold
-  }
-
-  get text() {
-    return this.$text
-  }
-
-  set text(value) {
-    this.$text = value
-  }
-
-  get layout() {
-    return this.$layout
-  }
-
-  set layout(value) {
-    this.$layout = value
-  }
-
-  get font() {
-    return this.$font
-  }
-
-  set font(value) {
-    this.$font = value
-  }
-
-  get zoomThreshold() {
-    return this.$zoomThreshold
-  }
-
-  set zoomThreshold(value) {
-    this.$zoomThreshold = value
+    this.zoomThreshold = zoomThreshold
+    this.font = font
+    this.layout = layout
+    this.text = text
   }
 
   /**
-   * @param {IRenderContext} renderContext
-   * @param {CanvasRenderingContext2D} ctx
+   * @param {!IRenderContext} renderContext
+   * @param {!CanvasRenderingContext2D} ctx
    */
   paint(renderContext, ctx) {
-    if (renderContext.zoom > this.$zoomThreshold) {
-      FastLabelStyle.setFont(ctx, this.$font)
-      const dx = this.$layout.anchorX
-      const dy = this.$layout.anchorY
+    if (renderContext.zoom > this.zoomThreshold) {
+      FastLabelStyle.setFont(ctx, this.font)
+      const dx = this.layout.anchorX
+      const dy = this.layout.anchorY
       ctx.save()
       ctx.fillStyle = 'rgba(50,50,50,1)'
       ctx.textBaseline = 'bottom'
-      if (this.$layout.upY !== -1) {
-        const elements = this.$layout.getTransform().elements
+      if (this.layout.upY !== -1) {
+        const elements = this.layout.createTransform().elements
         ctx.transform(elements[0], elements[1], elements[2], elements[3], elements[4], elements[5])
-        ctx.fillText(this.$text, 0, this.$layout.height)
+        ctx.fillText(this.text, 0, this.layout.height)
       } else {
-        ctx.fillText(this.$text, dx, dy)
+        ctx.fillText(this.text, dx, dy)
       }
       ctx.restore()
     }

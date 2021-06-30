@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -30,6 +30,8 @@ import {
   EventRecognizers,
   GraphComponent,
   GraphEditorInputMode,
+  IContextLookupChainLink,
+  IGraph,
   ILassoTestable,
   LassoTestables,
   License,
@@ -42,13 +44,28 @@ import { bindChangeListener, showApp } from '../../resources/demo-app.js'
 import loadJson from '../../resources/load-json.js'
 
 /** @type {GraphComponent} */
-let graphComponent = null
+let graphComponent
+/** @type {GraphEditorInputMode} */
+let inputMode
+/** @type {IContextLookupChainLink} */
+let decoration
 
+/**
+ * @param {!object} licenseData
+ */
 function run(licenseData) {
   License.value = licenseData
   graphComponent = new GraphComponent('graphComponent')
 
-  prepareSampleGraph()
+  initDemoStyles(graphComponent.graph)
+
+  // create a sample graph for the demo
+  createSampleGraph(graphComponent.graph)
+  // center the sample graph in the demo's GraphComponent
+  graphComponent.fitGraphBounds()
+
+  // enable undo and redo for the demo
+  graphComponent.graph.undoEngineEnabled = true
 
   configureLassoSelection()
 
@@ -61,7 +78,7 @@ function run(licenseData) {
  * Initialize lasso selection.
  */
 function configureLassoSelection() {
-  const inputMode = new GraphEditorInputMode()
+  inputMode = new GraphEditorInputMode()
   const lassoSelectionInputMode = inputMode.lassoSelectionInputMode
   lassoSelectionInputMode.finishRadius = 10
   lassoSelectionInputMode.enabled = true
@@ -69,12 +86,13 @@ function configureLassoSelection() {
 }
 
 /**
- * Sets the selection style. This can either be free-hand or polyline lasso selection or marquee selection as a
- * reference.
- * @param {'free-hand-selection'|'polyline-selection'|'marquee-selection'} style
+ * Sets the selection style.
+ * Supports free-hand or polyline lasso selection. Additionally, classic marquee selection
+ * is supported for easy comparison of all selection styles.
+ * @param {!('free-hand-selection'|'polyline-selection'|'marquee-selection')} style
  */
 function setSelectionStyle(style) {
-  const lassoSelectionInputMode = graphComponent.inputMode.lassoSelectionInputMode
+  const lassoSelectionInputMode = inputMode.lassoSelectionInputMode
 
   switch (style) {
     default:
@@ -97,7 +115,7 @@ function setSelectionStyle(style) {
       break
     case 'polyline-selection':
       lassoSelectionInputMode.dragFreeRecognizer = MouseEventRecognizers.LEFT_DRAG
-      // always start a segment in free-hand lasso selection
+      // always start a segment for polyline lasso selection
       lassoSelectionInputMode.startSegmentRecognizer = EventRecognizers.ALWAYS
       // end a segment with click
       lassoSelectionInputMode.endSegmentRecognizer = EventRecognizers.createOrRecognizer(
@@ -108,7 +126,7 @@ function setSelectionStyle(style) {
       lassoSelectionInputMode.finishRecognizer = MouseEventRecognizers.LEFT_DOUBLE_CLICK
 
       lassoSelectionInputMode.dragFreeRecognizerTouch = TouchEventRecognizers.TOUCH_MOVE_PRIMARY
-      // always start a segment in free-hand lasso selection
+      // always start a segment for polyline lasso selection
       lassoSelectionInputMode.startSegmentRecognizerTouch = EventRecognizers.ALWAYS
       // end a segment with tap
       lassoSelectionInputMode.endSegmentRecognizerTouch = EventRecognizers.createOrRecognizer(
@@ -121,54 +139,61 @@ function setSelectionStyle(style) {
       lassoSelectionInputMode.enabled = true
       break
     case 'marquee-selection':
-      // disable lasso selection
+      // disable lasso selection to let marquee selection activate on left drag gestures
+      // (while lasso selection is enabled, it is prioritized over marquee selection because
+      // lassoSelectionInputMode.priority < marqueeSelectionInputMode.priority)
       lassoSelectionInputMode.enabled = false
       break
   }
 }
 
 /**
- * Specifies the radius around the start point in which the lasso can be closed. When the lasso is dragged near this
- * point, this circle is highlighted.
+ * Specifies the radius around the lasso selection starting point in which the lasso can be closed.
+ * When the lasso is dragged near its starting point, a circle with corresponding radius is
+ * highlighted.
  * @param {number} radius
  */
 function setFinishRadius(radius) {
-  graphComponent.inputMode.lassoSelectionInputMode.finishRadius = radius
+  inputMode.lassoSelectionInputMode.finishRadius = radius
 }
 
 /**
  * Decorates the lasso testable lookup to provide different modes of when a node is selected.
- * @param {'nodes-complete'|'nodes-intersected'|'nodes-center'} mode
+ * @param {!('nodes-complete'|'nodes-intersected'|'nodes-center')} mode
  */
 function setLassoTestables(mode) {
-  const lassoTestableDecorator = graphComponent.graph.decorator.nodeDecorator.lassoTestableDecorator
+  const nodeDecorator = graphComponent.graph.decorator.nodeDecorator
+  const lassoTestableDecorator = nodeDecorator.lassoTestableDecorator
+  if (decoration) {
+    nodeDecorator.remove(decoration)
+  }
   if (mode === 'nodes-complete') {
     // the nodes must be completely contained in the lasso to end up in the selection
-    lassoTestableDecorator.setFactory(
-      node =>
-        new ILassoTestable(
-          (context, lassoPath) =>
-            !lassoPath.intersects(node.layout.toRect(), 0) &&
-            lassoPath.areaContains(node.layout.center)
-        )
+    decoration = lassoTestableDecorator.setFactory(node =>
+      ILassoTestable.create(
+        (context, lassoPath) =>
+          !lassoPath.intersects(node.layout.toRect(), 0) &&
+          lassoPath.areaContains(node.layout.center)
+      )
     )
   } else if (mode === 'nodes-intersected') {
-    // the nodes must be intersected by the lasso to end up in the selection
-    lassoTestableDecorator.setFactory(node => LassoTestables.fromRectangle(node.layout))
+    // the nodes must be intersected by or completely contained in the lasso to end up in the selection
+    decoration = lassoTestableDecorator.setFactory(node =>
+      LassoTestables.fromRectangle(node.layout)
+    )
   } else if (mode === 'nodes-center') {
     // the nodes' center must be contained in the lasso to end up in the selection
-    lassoTestableDecorator.setFactory(node => LassoTestables.fromPoint(node.layout.center))
+    decoration = lassoTestableDecorator.setFactory(node =>
+      LassoTestables.fromPoint(node.layout.center)
+    )
   }
 }
 
 /**
- * Creates the sample graph and initializes undo-redo-functionality.
+ * Creates the demo's sample graph.
+ * @param {!IGraph} graph The graph to populate
  */
-function prepareSampleGraph() {
-  const graph = graphComponent.graph
-  graph.undoEngineEnabled = true
-  initDemoStyles(graph)
-
+function createSampleGraph(graph) {
   const locations = [
     [317, 87],
     [291, 2],
@@ -182,10 +207,7 @@ function prepareSampleGraph() {
     [71, 285],
     [0, 320]
   ]
-  const nodes = []
-  locations.forEach(location => {
-    nodes.push(graph.createNodeAt(location))
-  })
+  const nodes = locations.map(location => graph.createNodeAt(location))
 
   graph.createEdge(nodes[2], nodes[1])
   graph.createEdge(nodes[1], nodes[0])
@@ -200,9 +222,6 @@ function prepareSampleGraph() {
   graph.createEdge(nodes[6], nodes[5])
   graph.createEdge(nodes[6], nodes[9])
   graph.createEdge(nodes[9], nodes[10])
-
-  graphComponent.fitGraphBounds()
-  graph.undoEngine.clear()
 }
 
 /**

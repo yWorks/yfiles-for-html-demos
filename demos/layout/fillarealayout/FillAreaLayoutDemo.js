@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -70,14 +70,13 @@ let componentAssignmentStrategy = ComponentAssignmentStrategy.SINGLE
 
 /**
  * @param {!object} licenseData
- * @returns {!Promise}
  */
-async function run(licenseData) {
+function run(licenseData) {
   License.value = licenseData
   graphComponent = new GraphComponent('#graphComponent')
 
   initializeInputModes()
-  await initializeGraph()
+  initializeGraph()
 
   // bind the buttons to their commands
   registerCommands()

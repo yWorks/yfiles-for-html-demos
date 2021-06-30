@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -31,6 +31,7 @@ import {
   ICanvasContext,
   ILabel,
   ILabelStyle,
+  INode,
   IRenderContext,
   LabelStyleBase,
   PolylineEdgeStyle,
@@ -39,6 +40,8 @@ import {
   SimpleEdge,
   SimpleNode,
   SimplePort,
+  Size,
+  SvgVisual,
   SvgVisualGroup
 } from 'yfiles'
 
@@ -49,21 +52,22 @@ import {
 export default class CityLabelStyle extends LabelStyleBase {
   /**
    * Initializes a new instance of CityLabelStyle.
-   * @param {ILabelStyle} innerLabelStyle
+   * @param {!ILabelStyle} innerLabelStyle
    */
   constructor(innerLabelStyle) {
     super()
-    this.innerLabelStyle = innerLabelStyle
     this.connectorEdgeStyle = new PolylineEdgeStyle()
     this.ownerPortLocation = FreeNodePortLocationModel.NODE_CENTER_ANCHORED
     this.labelPortLocation = FreeNodePortLocationModel.NODE_CENTER_ANCHORED
+    // The style that will be use for the label rendering
+    this.innerLabelStyle = innerLabelStyle
   }
 
   /**
    * Creates the visual for a label to be drawn.
-   * @param {IRenderContext} context The render context
-   * @param {ILabel} label The label to be rendered
-   * @return {SvgVisualGroup} The visual for a label to be drawn.
+   * @param {!IRenderContext} context The render context
+   * @param {!ILabel} label The label to be rendered
+   * @returns {!SvgVisualGroup} The visual for a label to be drawn.
    */
   createVisual(context, label) {
     // create a visual group
@@ -73,40 +77,54 @@ export default class CityLabelStyle extends LabelStyleBase {
     const connectorVisual = this.connectorEdgeStyle.renderer
       .getVisualCreator(connectorEdge, this.connectorEdgeStyle)
       .createVisual(context)
-    group.add(connectorVisual)
+    if (connectorVisual) {
+      group.add(connectorVisual)
+    }
 
     const labelVisual = this.innerLabelStyle.renderer
       .getVisualCreator(label, this.innerLabelStyle)
       .createVisual(context)
-    group.add(labelVisual)
+    if (labelVisual) {
+      group.add(labelVisual)
+    }
+
     return group
   }
 
   /**
    * Re-renders the label using the old visual for performance reasons.
-   * @param {IRenderContext} context The render context
-   * @param {SvgVisualGroup} oldVisual The old visual
-   * @param {ILabel} label The label to be rendered
-   * @return {SvgVisualGroup}
+   * @param {!IRenderContext} context The render context
+   * @param {!SvgVisualGroup} oldVisual The old visual
+   * @param {!ILabel} label The label to be rendered
+   * @returns {!SvgVisualGroup}
    */
   updateVisual(context, oldVisual, label) {
+    // check whether the elements are as expected
+    if (oldVisual.children.size !== 2) {
+      return this.createVisual(context, label)
+    }
     const connectorEdge = this.createConnectorEdge(label)
     const connectorVisual = this.connectorEdgeStyle.renderer
       .getVisualCreator(connectorEdge, this.connectorEdgeStyle)
       .updateVisual(context, oldVisual.children.get(0))
-    oldVisual.children.set(0, connectorVisual)
+    if (connectorVisual) {
+      oldVisual.children.set(0, connectorVisual)
+    }
 
     const labelVisual = this.innerLabelStyle.renderer
       .getVisualCreator(label, this.innerLabelStyle)
       .updateVisual(context, oldVisual.children.get(1))
-    oldVisual.children.set(1, labelVisual)
+    if (labelVisual) {
+      oldVisual.children.set(1, labelVisual)
+    }
+
     return oldVisual
   }
 
   /**
    * Creates the edge that connects the label with its owner node.
-   * @param {ILabel} label The given label
-   * @return {SimpleEdge} The edge that connects the label with its owner node
+   * @param {!ILabel} label The given label
+   * @returns {!SimpleEdge} The edge that connects the label with its owner node
    */
   createConnectorEdge(label) {
     // create a dummy node at the location of the label
@@ -114,7 +132,7 @@ export default class CityLabelStyle extends LabelStyleBase {
     labelNodeDummy.layout = label.layout.bounds
     labelNodeDummy.style = new ShapeNodeStyle()
 
-    const simpleEdge = new SimpleEdge(null, null)
+    const simpleEdge = new SimpleEdge()
     simpleEdge.style = this.connectorEdgeStyle
     simpleEdge.sourcePort = new SimplePort(labelNodeDummy, this.labelPortLocation)
     simpleEdge.targetPort = new SimplePort(label.owner, this.ownerPortLocation)
@@ -123,8 +141,8 @@ export default class CityLabelStyle extends LabelStyleBase {
 
   /**
    * Returns the preferred size of the given label.
-   * @param {ILabel} label The given label
-   * @return {Size} The preferred size of the given label
+   * @param {!ILabel} label The given label
+   * @returns {!Size} The preferred size of the given label
    */
   getPreferredSize(label) {
     return this.innerLabelStyle.renderer.getPreferredSize(label, this.innerLabelStyle)
@@ -132,23 +150,23 @@ export default class CityLabelStyle extends LabelStyleBase {
 
   /**
    * Determines whether the visualization for the specified label is visible in the context.
-   * @param {ICanvasContext} context The canvas context
-   * @param {Rect} rectangle The clipping rectangle
-   * @param {ILabel} label The given label
-   * @return {boolean} True if the visualization is visible, false otherwise
+   * @param {!ICanvasContext} context The canvas context
+   * @param {!Rect} rectangle The clipping rectangle
+   * @param {!ILabel} label The given label
+   * @returns {boolean} True if the visualization is visible, false otherwise
    */
   isVisible(context, rectangle, label) {
-    if (
-      this.innerLabelStyle.renderer
-        .getVisibilityTestable(label, this.innerLabelStyle)
-        .isVisible(context, rectangle)
-    ) {
+    const isInnerLabelVisible = this.innerLabelStyle.renderer
+      .getVisibilityTestable(label, this.innerLabelStyle)
+      .isVisible(context, rectangle)
+    if (isInnerLabelVisible) {
       return true
     }
+
     const connectorEdge = this.createConnectorEdge(label)
-    // check the connecting edge visual
-    return this.connectorEdgeStyle.renderer
+    const isConnectorEdgeVisible = this.connectorEdgeStyle.renderer
       .getVisibilityTestable(connectorEdge, this.connectorEdgeStyle)
       .isVisible(context, rectangle)
+    return isConnectorEdgeVisible
   }
 }

@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -118,7 +118,7 @@
   top: 60px;
   bottom: 0;
   width: 150px;
-  border-right: 5px solid #eee;
+  border-right: 5px solid #ebeef0;
   overflow: auto;
   box-sizing: border-box;
   z-index: 12;

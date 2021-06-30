@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -31,6 +31,7 @@ import {
   ClearAreaLayoutData,
   CompositeLayoutData,
   EdgeRouter,
+  EdgeRouterData,
   EdgeRouterScope,
   FillAreaLayout,
   FillAreaLayoutData,
@@ -52,7 +53,6 @@ import {
   NodeAlignmentPolicy,
   PartialLayoutEdgeRoutingStrategy,
   Point,
-  PolylineEdgeRouterData,
   Rect,
   SequentialLayout,
   YRectangle
@@ -424,7 +424,7 @@ export class ExpandCollapseNavigationHelper {
   static createFillAreaLayoutData(groupNode, foldingView) {
     return new CompositeLayoutData(
       new FillAreaLayoutData({ fixedNodes: groupNode }),
-      new PolylineEdgeRouterData({ affectedEdges: foldingView.graph.edgesAt(groupNode) })
+      new EdgeRouterData({ affectedEdges: foldingView.graph.edgesAt(groupNode) })
     )
   }
 

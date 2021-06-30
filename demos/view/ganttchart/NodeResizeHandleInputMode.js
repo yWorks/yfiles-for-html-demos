@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -31,7 +31,8 @@ import {
   HandlePositions,
   INodeHitTester,
   IReshapeHandleProvider,
-  Point
+  Point,
+  IHandle
 } from 'yfiles'
 import { TimeHandle } from './TimeHandle.js'
 
@@ -43,8 +44,9 @@ const fuzzyness = 3
  */
 export default class NodeResizeHandleInputMode extends HandleInputMode {
   /**
-   * @param {Point} location - The coordinates in the world coordinate system.
-   * @returns {IHandle}
+   * Finds the closest handle for the given world coordinate.
+   * @param {!Point} location The coordinates in the world coordinate system.
+   * @returns {?IHandle}
    */
   getClosestHitHandle(location) {
     const handle = super.getClosestHitHandle(location)
@@ -53,9 +55,10 @@ export default class NodeResizeHandleInputMode extends HandleInputMode {
       return handle
     }
     // get the node in the location
-    const hitTestEnumerator = this.inputModeContext.lookup(INodeHitTester.$class)
+    const context = this.inputModeContext
+    const hitTestEnumerator = context.lookup(INodeHitTester.$class)
     if (hitTestEnumerator !== null) {
-      const hits = hitTestEnumerator.enumerateHits(this.inputModeContext, location).getEnumerator()
+      const hits = hitTestEnumerator.enumerateHits(context, location).getEnumerator()
       if (hits.moveNext()) {
         // there is a node in the location
         const node = hits.current
@@ -64,11 +67,11 @@ export default class NodeResizeHandleInputMode extends HandleInputMode {
         const { x, width } = node.layout
         if (Math.abs(x - location.x) < fuzzyness) {
           // mouse is over left border - get west handle
-          return handleProvider.getHandle(this.inputModeContext, HandlePositions.WEST)
+          return handleProvider.getHandle(context, HandlePositions.WEST)
         }
         if (Math.abs(x + (width - location.x)) < fuzzyness) {
           // mouse is over right border - get east handle
-          return handleProvider.getHandle(this.inputModeContext, HandlePositions.EAST)
+          return handleProvider.getHandle(context, HandlePositions.EAST)
         }
       }
     }

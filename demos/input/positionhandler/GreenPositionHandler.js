@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -29,9 +29,11 @@
 import {
   BaseClass,
   ConstrainedPositionHandler,
+  IDragHandler,
   IInputModeContext,
   IPositionHandler,
-  Point
+  Point,
+  IPoint
 } from 'yfiles'
 
 /**
@@ -40,30 +42,30 @@ import {
  * original) handler.
  * Note that the simpler solution for this use case is subclassing
  * {@link ConstrainedPositionHandler}, however the interface is
- * completely implemented for illustration, here.
+ * completely implemented for illustration purposes, here.
  */
 export default class GreenPositionHandler extends BaseClass(IPositionHandler) {
   /**
    * Creates a new instance of <code>GreenPositionHandler</code>
-   * @param {IPositionHandler} handler The default handler
+   * @param {!IPositionHandler} handler The default handler
    */
   constructor(handler) {
     super()
-    this.handler = handler
     this.lastLocation = null
+    this.handler = handler
   }
 
   /**
    * Returns the location of the item.
-   * @return {IPoint}
+   * @type {!IPoint}
    */
   get location() {
     return this.handler.location
   }
 
   /**
-   * Stores the initial location of the movement for reference, and calls the base method.
-   * @param {IInputModeContext} inputModeContext The context to retrieve information about the drag from
+   * Stores the initial location of the movement for reference and calls the base method.
+   * @param {!IInputModeContext} inputModeContext The context to retrieve information about the drag from
    * @see Specified by {@link IDragHandler#initializeDrag}.
    */
   initializeDrag(inputModeContext) {
@@ -75,28 +77,29 @@ export default class GreenPositionHandler extends BaseClass(IPositionHandler) {
    * Constrains the movement to one axis. This is done by calculating the
    * constrained location for the given new location, and invoking the
    * original handler with the constrained location.
-   * @param {IInputModeContext} inputModeContext The context to retrieve information about the drag from
-   * @param {Point} originalLocation The value of the {@link IDragHandler#location}
+   * @param {!IInputModeContext} inputModeContext The context to retrieve information about the drag from
+   * @param {!Point} originalLocation The value of the {@link IDragHandler#location}
    * property at the time of {@link IDragHandler#initializeDrag}
-   * @param {Point} newLocation The coordinates in the world coordinate system that the client wants
+   * @param {!Point} newLocation The coordinates in the world coordinate system that the client wants
    * the handle to be at. Depending on the implementation the {@link IDragHandler#location} may or may
    * not be modified to reflect the new value.
    * @see Specified by {@link IDragHandler#handleMove}.
-   * @return {boolean}
+   * @returns {boolean}
    */
   handleMove(inputModeContext, originalLocation, newLocation) {
-    let updatedNewLocation
     // The larger difference in coordinates specifies whether this is
     // a horizontal or vertical movement.
-    const delta = new Point(newLocation.x - originalLocation.x, newLocation.y - originalLocation.y)
-    if (Math.abs(delta.x) > Math.abs(delta.y)) {
-      updatedNewLocation = new Point(newLocation.x, originalLocation.y)
-    } else {
-      updatedNewLocation = new Point(originalLocation.x, newLocation.y)
-    }
+    const delta = newLocation.subtract(originalLocation)
+    const isHorizontalMovement = Math.abs(delta.x) > Math.abs(delta.y)
+
+    const updatedNewLocation = isHorizontalMovement
+      ? new Point(newLocation.x, originalLocation.y)
+      : new Point(originalLocation.x, newLocation.y)
+
     if (updatedNewLocation.equals(this.lastLocation)) {
       return false
     }
+
     this.handler.handleMove(inputModeContext, originalLocation, updatedNewLocation)
     this.lastLocation = updatedNewLocation
     return true
@@ -104,8 +107,8 @@ export default class GreenPositionHandler extends BaseClass(IPositionHandler) {
 
   /**
    * Called when dragging has been canceled by the user.
-   * @param {IInputModeContext} inputModeContext The context to retrieve information about the drag from
-   * @param {Point} originalLocation The value of the coordinate of the
+   * @param {!IInputModeContext} inputModeContext The context to retrieve information about the drag from
+   * @param {!Point} originalLocation The value of the coordinate of the
    * {@link IDragHandler#location} property at the time of
    *   {@link IDragHandler#initializeDrag}.
    */
@@ -115,10 +118,10 @@ export default class GreenPositionHandler extends BaseClass(IPositionHandler) {
 
   /**
    * Called when dragging has finished.
-   * @param {IInputModeContext} inputModeContext The context to retrieve information about the drag from
-   * @param {Point} originalLocation The value of the {@link IDragHandler#location}
+   * @param {!IInputModeContext} inputModeContext The context to retrieve information about the drag from
+   * @param {!Point} originalLocation The value of the {@link IDragHandler#location}
    * property at the time of {@link IDragHandler#initializeDrag}
-   * @param {Point} newLocation The coordinates in the world coordinate system that the client wants
+   * @param {!Point} newLocation The coordinates in the world coordinate system that the client wants
    * the handle to be at. Depending on the implementation the {@link IDragHandler#location} may or may
    * not be modified to reflect the new value. This is the same value as delivered in the last invocation of
    * {@link IDragHandler#handleMove}

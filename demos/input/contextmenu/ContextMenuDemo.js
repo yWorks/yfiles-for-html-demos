@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -31,6 +31,7 @@ import {
   GraphEditorInputMode,
   ICommand,
   IGraph,
+  IModelItem,
   INode,
   License,
   Point,
@@ -41,6 +42,9 @@ import { showApp } from '../../resources/demo-app.js'
 import { initDemoStyles } from '../../resources/demo-styles.js'
 import loadJson from '../../resources/load-json.js'
 
+/**
+ * @param {!object} licenseData
+ */
 function run(licenseData) {
   License.value = licenseData
   // initialize the GraphComponent
@@ -65,7 +69,7 @@ function run(licenseData) {
 
 /**
  * Initializes the context menu.
- * @param {GraphComponent} graphComponent The graph component to which the context menu belongs
+ * @param {!GraphComponent} graphComponent The graph component to which the context menu belongs
  */
 function configureContextMenu(graphComponent) {
   const inputMode = graphComponent.inputMode
@@ -83,7 +87,7 @@ function configureContextMenu(graphComponent) {
     }
   })
 
-  // Add and event listener that populates the context menu according to the hit elements, or cancels showing a menu.
+  // Add an event listener that populates the context menu according to the hit elements, or cancels showing a menu.
   // This PopulateItemContextMenu is fired when calling the ContextMenuInputMode.shouldOpenMenu method above.
   inputMode.addPopulateItemContextMenuListener((sender, args) =>
     populateContextMenu(contextMenu, graphComponent, args)
@@ -103,9 +107,9 @@ function configureContextMenu(graphComponent) {
 /**
  * Populates the context menu based on the item the mouse hovers over.
  *
- * @param {GraphComponent} graphComponent The given graphComponent
- * @param {ContextMenu} contextMenu The context menu.
- * @param {PopulateItemContextMenuEventArgs} args The event args.
+ * @param {!GraphComponent} graphComponent The given graphComponent
+ * @param {!ContextMenu} contextMenu The context menu.
+ * @param {!PopulateItemContextMenuEventArgs.<IModelItem>} args The event args.
  */
 function populateContextMenu(contextMenu, graphComponent, args) {
   // The 'showMenu' property is set to true to inform the input mode that we actually want to show a context menu
@@ -115,7 +119,7 @@ function populateContextMenu(contextMenu, graphComponent, args) {
 
   contextMenu.clearItems()
 
-  const node = INode.isInstance(args.item) ? args.item : null
+  const node = args.item instanceof INode ? args.item : null
   // If the cursor is over a node select it
   updateSelection(graphComponent, node)
 
@@ -135,8 +139,8 @@ function populateContextMenu(contextMenu, graphComponent, args) {
 
 /**
  * Helper function that updates the node selection state when the context menu is opened on a node.
- * @param {GraphComponent} graphComponent The given graphComponent
- * @param {INode} node The node or <code>null</code>.
+ * @param {!GraphComponent} graphComponent The given graphComponent
+ * @param {?INode} node The node or <code>null</code>.
  */
 function updateSelection(graphComponent, node) {
   if (node === null) {
@@ -154,7 +158,7 @@ function updateSelection(graphComponent, node) {
 
 /**
  * Creates a sample graph.
- * @param {IGraph} graph The input graph
+ * @param {!IGraph} graph The input graph
  */
 function createSampleGraph(graph) {
   graph.addLabel(graph.createNodeAt(new Point(80, 100)), '1')

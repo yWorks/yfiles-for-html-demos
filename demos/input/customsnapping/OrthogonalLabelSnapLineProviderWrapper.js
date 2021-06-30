@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -43,12 +43,12 @@ import {
 /**
  * Wraps a given {@link ISnapLineProvider} and adds additional {@link OrthogonalSnapLine}s
  * for orthogonal labels of an {@link IModelItem}. For each orthogonal label there are
- * {@link OrthogonalSnapLine}s added for it's top, bottom, left and right side.
+ * {@link OrthogonalSnapLine}s added for its top, bottom, left, and right side.
  */
 export default class OrthogonalLabelSnapLineProviderWrapper extends BaseClass(ISnapLineProvider) {
   /**
-   * Creates a new instance that wraps the given <code>wrapped</code>.
-   * @param {ISnapLineProvider} wrapped The snap line provider that shall be wrapped.
+   * Creates a new instance that wraps the given snap line provider.
+   * @param {!ISnapLineProvider} wrapped The snap line provider that will be wrapped.
    */
   constructor(wrapped) {
     super()
@@ -57,20 +57,26 @@ export default class OrthogonalLabelSnapLineProviderWrapper extends BaseClass(IS
 
   /**
    * Calls {@link ISnapLineProvider#addSnapLines} of the wrapped provider and adds custom
-   * {@link OrthogonalSnapLine}s for the <code>item</code>.
-   * @param {GraphSnapContext} context The context which holds the settings for the snap lines.
-   * @param {CollectGraphSnapLinesEventArgs} args The argument to use for adding snap lines.
-   * @param {IModelItem} item The item to add snaplines for.
+   * {@link OrthogonalSnapLine}s for the given <code>item</code>.
+   * @param {!GraphSnapContext} context The context which holds the settings for the snap lines.
+   * @param {!CollectGraphSnapLinesEventArgs} args The argument to use for adding snap lines.
+   * @param {!IModelItem} item The item to add snap lines for.
    * @see Specified by {@link ISnapLineProvider#addSnapLines}.
    */
   addSnapLines(context, args, item) {
     this.wrapped.addSnapLines(context, args, item)
 
-    // add snaplines for orthogonal labels
-    const labeledItem = ILabelOwner.isInstance(item) ? item : null
-    if (labeledItem === null) {
-      return
+    if (item instanceof ILabelOwner) {
+      this.addCustomSnapLines(args, item)
     }
+  }
+
+  /**
+   * Adds custom snap lines for orthogonal labels
+   * @param {!CollectGraphSnapLinesEventArgs} args The argument to use for adding snap lines.
+   * @param {!ILabelOwner} labeledItem The item to add snap lines for.
+   */
+  addCustomSnapLines(args, labeledItem) {
     labeledItem.labels.forEach(label => {
       // round UpX to its first 6 digits
       const upX = Math.round(label.layout.upX * Math.pow(10, 6)) / Math.pow(10, 6)
@@ -79,7 +85,9 @@ export default class OrthogonalLabelSnapLineProviderWrapper extends BaseClass(IS
         // label is orthogonal
         const bounds = label.layout.bounds
 
-        // add snaplines to the top, bottom, left and right border of the label
+        // add snap lines to the top, bottom, left and right border of the label
+        //
+        // snap line for the label's top border
         const topCenter = bounds.topLeft.add(new Point(label.layout.width / 2, 0))
         let snapLine = new OrthogonalSnapLine(
           SnapLineOrientation.HORIZONTAL,
@@ -93,6 +101,7 @@ export default class OrthogonalLabelSnapLineProviderWrapper extends BaseClass(IS
         )
         args.addAdditionalSnapLine(snapLine)
 
+        // snap line for the label's bottom border
         const bottomCenter = bounds.bottomLeft.add(new Point(label.layout.width / 2, 0))
         snapLine = new OrthogonalSnapLine(
           SnapLineOrientation.HORIZONTAL,
@@ -106,6 +115,7 @@ export default class OrthogonalLabelSnapLineProviderWrapper extends BaseClass(IS
         )
         args.addAdditionalSnapLine(snapLine)
 
+        // snap line for the label's left border
         const leftCenter = bounds.topLeft.add(new Point(0, label.layout.height / 2))
         snapLine = new OrthogonalSnapLine(
           SnapLineOrientation.VERTICAL,
@@ -119,6 +129,7 @@ export default class OrthogonalLabelSnapLineProviderWrapper extends BaseClass(IS
         )
         args.addAdditionalSnapLine(snapLine)
 
+        // snap line for the label's right border
         const rightCenter = bounds.topRight.add(new Point(0, label.layout.height / 2))
         snapLine = new OrthogonalSnapLine(
           SnapLineOrientation.VERTICAL,

@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { IGraph, SpanningTree } from 'yfiles'
+import { IGraph, IModelItem, SpanningTree } from 'yfiles'
 import AlgorithmConfiguration from './AlgorithmConfiguration.js'
 import { MultiColorNodeStyle } from './DemoStyles.js'
 
@@ -36,7 +36,7 @@ import { MultiColorNodeStyle } from './DemoStyles.js'
 export default class MinimumSpanningTreeConfig extends AlgorithmConfiguration {
   /**
    * Creates and configures a layout and the graph's {@link IGraph#mapperRegistry} if necessary.
-   * @param {IGraph} graph The graph on which the minimum spanning tree algorithm is executed.
+   * @param {!IGraph} graph The graph on which the minimum spanning tree algorithm is executed.
    */
   runAlgorithm(graph) {
     this.calculateSpanningTree(graph)
@@ -44,7 +44,7 @@ export default class MinimumSpanningTreeConfig extends AlgorithmConfiguration {
 
   /**
    * Calculates the minimum spanning tree of the given graph.
-   * @param {IGraph} graph The graph on which the minimum spanning tree algorithm is executed.
+   * @param {!IGraph} graph The graph on which the minimum spanning tree algorithm is executed.
    */
   calculateSpanningTree(graph) {
     if (graph.nodes.size === 0 || graph.edges.size === 0) {
@@ -107,7 +107,8 @@ export default class MinimumSpanningTreeConfig extends AlgorithmConfiguration {
 
   /**
    * Returns the description text for the minimum spanning tree algorithm.
-   * @returns {string} the description text for the minimum spanning tree algorithm
+   * @return the description text for the minimum spanning tree algorithm
+   * @type {!string}
    */
   get descriptionText() {
     return (

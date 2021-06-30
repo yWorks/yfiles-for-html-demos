@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { GeneralPath, INode, IRenderContext, NodeStyleBase, SvgVisual, Visual } from 'yfiles'
+import { GeneralPath, INode, IRenderContext, NodeStyleBase, SvgVisual } from 'yfiles'
 
 /**
  * The node style used for the root node of the mindmap.
@@ -34,35 +34,36 @@ import { GeneralPath, INode, IRenderContext, NodeStyleBase, SvgVisual, Visual } 
 export default class MindmapNodeStyleRoot extends NodeStyleBase {
   /**
    * Creates a new instance of this style using the given class name.
-   * @param {string} className The css class attributed to the node.
+   * @param {!string} className The css class attributed to the node.
    */
   constructor(className) {
     super()
-    this.$className = className
+    this._className = className
   }
 
   /**
    * Gets the class name associated with this node style.
-   * @return {string}
+   * @type {!string}
    */
   get className() {
-    return this.$className
+    return this._className
   }
 
   /**
    * Sets the class name to this node style.
-   * @param {string} value The value to be set.
+   * @param value The value to be set.
+   * @type {!string}
    */
   set className(value) {
-    this.$className = value
+    this._className = value
   }
 
   /**
    * Creates the visual for this node style.
-   * @param {IRenderContext} renderContext The render context.
-   * @param {INode} node The node to which this style instance is assigned.
+   * @param {!IRenderContext} renderContext The render context.
+   * @param {!INode} node The node to which this style instance is assigned.
    * @see Overrides {@link NodeStyleBase#createVisual}
-   * @return {SvgVisual}
+   * @returns {!SvgVisual}
    */
   createVisual(renderContext, node) {
     // create a container element
@@ -75,11 +76,11 @@ export default class MindmapNodeStyleRoot extends NodeStyleBase {
 
   /**
    * Updates the visual.
-   * @param {IRenderContext} renderContext The render context.
-   * @param {SvgVisual} oldVisual The old visual.
-   * @param {INode} node The node to which this style instance is assigned.
+   * @param {!IRenderContext} renderContext The render context.
+   * @param {!SvgVisual} oldVisual The old visual.
+   * @param {!INode} node The node to which this style instance is assigned.
    * @see Overrides {@link NodeStyleBase#updateVisual}
-   * @return {SvgVisual}
+   * @returns {!SvgVisual}
    */
   updateVisual(renderContext, oldVisual, node) {
     const nodeSize = node.layout.toSize()
@@ -101,8 +102,8 @@ export default class MindmapNodeStyleRoot extends NodeStyleBase {
 
   /**
    * Creates the Svg elements and adds them to the container.
-   * @param {INode} node The node to which this style instance is assigned.
-   * @param {Element} container The svg element.
+   * @param {!INode} node The node to which this style instance is assigned.
+   * @param {!Element} container The svg element.
    */
   render(node, container) {
     const layout = node.layout
@@ -129,9 +130,9 @@ export default class MindmapNodeStyleRoot extends NodeStyleBase {
   /**
    * Returns a {@link GeneralPath path} defining the
    * outline of the node.
-   * @param {INode} node The given node.
+   * @param {!INode} node The given node.
    * @see Overrides {@link NodeStyleBase#getOutline}
-   * @return {GeneralPath}
+   * @returns {!GeneralPath}
    */
   getOutline(node) {
     const rect = node.layout

@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -29,57 +29,29 @@
 import { GraphComponent, IGraph, Insets, Rect, Size, SvgExport } from 'yfiles'
 
 /**
- * A class that provides png-image export. The image is exported to svg and the png-image can then be requested from
- * the server.
+ * A class that provides PNG image export on the server-side. The {@link SvgExport} exports an
+ * SVG element of a {@link GraphComponent} which is sent to the server that converts it to a PNG
+ * image.
  */
 export default class ServerSideImageExport {
   /**
-   * Creates a new instance.
+   * Creates a new instance of the {@link ServerSideImageExport}.
    */
   constructor() {
-    this.$scale = 1
-    this.$margins = new Insets(5)
-    initForm()
+    // The scaling of the exported image.
+    this.scale = 1
+
+    // The margins for the exported image.
+    this.margins = new Insets(5)
+
+    ServerSideImageExport.initializeForm()
   }
 
   /**
-   * Returns the scaling of the exported image.
-   * @return {number}
-   */
-  get scale() {
-    return this.$scale
-  }
-
-  /**
-   * Specifies the scaling of the exported image.
-   * @param {number} value
-   */
-  set scale(value) {
-    this.$scale = value
-  }
-
-  /**
-   * Returns the margins for the exported image.
-   * @return {Insets}
-   */
-  get margins() {
-    return this.$margins
-  }
-
-  /**
-   * Specifies the margins for the exported image.
-   * @param {Insets} value
-   */
-  set margins(value) {
-    this.$margins = value
-  }
-
-  /**
-   * Exports the graph to an svg element.
-   * This function returns a Promise to allow showing the SVG in a popup with a save button, afterwards.
-   * @param {IGraph} graph
-   * @param {Rect} exportRect
-   * @return {Promise.<{element:SVGElement,size:Size}|Error>}
+   * Exports an SVG element of the passed {@link IGraph}.
+   * @param {!IGraph} graph
+   * @param {?Rect} exportRect
+   * @returns {!Promise.<object>}
    */
   async exportSvg(graph, exportRect) {
     // Create a new graph component for exporting the original SVG content
@@ -92,10 +64,13 @@ export default class ServerSideImageExport {
     const targetRect = exportRect || exportComponent.contentRect
 
     // Create the exporter class
-    const exporter = new SvgExport(targetRect, this.scale)
-    exporter.margins = this.margins
-    exporter.encodeImagesBase64 = true
-    exporter.inlineSvgImages = true
+    const exporter = new SvgExport({
+      worldBounds: targetRect,
+      scale: this.scale,
+      margins: this.margins,
+      encodeImagesBase64: true,
+      inlineSvgImages: true
+    })
     const svgElement = await exporter.exportSvgAsync(exportComponent)
     return {
       element: svgElement,
@@ -104,11 +79,11 @@ export default class ServerSideImageExport {
   }
 
   /**
-   * Send the request to the server which initiates a file download.
-   * @param {string} url
-   * @param {string} format
-   * @param {string} svgString
-   * @param {Size} size
+   * Sends a request to the server which initiates a file download.
+   * @param {!string} url
+   * @param {!string} format
+   * @param {!string} svgString
+   * @param {!Size} size
    */
   requestFile(url, format, svgString, size) {
     const svgStringInput = document.getElementById('postSvgString')
@@ -128,54 +103,39 @@ export default class ServerSideImageExport {
   }
 
   /**
-   * Disposes this image export.
+   * Adds a form to the document body that is used to request the PNG image from the server.
    */
-  dispose() {
-    disposeForm()
+  static initializeForm() {
+    const form = document.createElement('form')
+    form.style.display = 'none'
+    form.id = 'postForm'
+    form.method = 'post'
+    const svgString = document.createElement('input')
+    svgString.id = 'postSvgString'
+    svgString.name = 'svgString'
+    svgString.type = 'hidden'
+    form.appendChild(svgString)
+    const format = document.createElement('input')
+    format.id = 'postFormat'
+    format.name = 'format'
+    format.type = 'hidden'
+    form.appendChild(format)
+    const width = document.createElement('input')
+    width.id = 'postWidth'
+    width.name = 'width'
+    width.type = 'hidden'
+    form.appendChild(width)
+    const height = document.createElement('input')
+    height.id = 'postHeight'
+    height.name = 'height'
+    height.type = 'hidden'
+    form.appendChild(height)
+    const margin = document.createElement('input')
+    margin.id = 'postMargin'
+    margin.name = 'margin'
+    margin.type = 'hidden'
+    form.appendChild(margin)
+
+    document.body.appendChild(form)
   }
-}
-
-/**
- * Adds a form to the document body that is used to request the png-image from the server.
- */
-function initForm() {
-  const form = document.createElement('form')
-  form.style.display = 'none'
-  form.id = 'postForm'
-  form.method = 'post'
-  const svgString = document.createElement('input')
-  svgString.id = 'postSvgString'
-  svgString.name = 'svgString'
-  svgString.type = 'hidden'
-  form.appendChild(svgString)
-  const format = document.createElement('input')
-  format.id = 'postFormat'
-  format.name = 'format'
-  format.type = 'hidden'
-  form.appendChild(format)
-  const width = document.createElement('input')
-  width.id = 'postWidth'
-  width.name = 'width'
-  width.type = 'hidden'
-  form.appendChild(width)
-  const height = document.createElement('input')
-  height.id = 'postHeight'
-  height.name = 'height'
-  height.type = 'hidden'
-  form.appendChild(height)
-  const margin = document.createElement('input')
-  margin.id = 'postMargin'
-  margin.name = 'margin'
-  margin.type = 'hidden'
-  form.appendChild(margin)
-
-  document.body.appendChild(form)
-}
-
-/**
- * Removes the form to keep the dom clean.
- */
-function disposeForm() {
-  const form = document.getElementById('postForm')
-  document.body.removeChild(form)
 }

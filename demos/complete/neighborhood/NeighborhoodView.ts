@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -482,7 +482,7 @@ export default class NeighborhoodView {
     })
 
     // configure the highlight decoration installer
-    this.installHighlightStyle(this.highlightStyle as INodeStyle)
+    this.installHighlightStyle(this.highlightStyle)
   }
 
   /**
@@ -676,7 +676,7 @@ export default class NeighborhoodView {
           foldingView.manager.masterGraph,
           (item: IModelItem) => {
             if (IEdge.isInstance(item)) {
-              const edge = item!
+              const edge = item
               let intraComponentEdge = false
               this.selectedNodes!.forEach((node: INode) => {
                 if (

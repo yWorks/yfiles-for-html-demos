@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -30,7 +30,6 @@ import {
   ArcEdgeStyle,
   Arrow,
   ArrowType,
-  Class,
   DefaultLabelStyle,
   DefaultPortCandidate,
   EdgeStyleDecorationInstaller,
@@ -47,14 +46,16 @@ import {
   GraphOverviewComponent,
   ICommand,
   IEdge,
+  IEdgeStyle,
   ILabel,
+  ILabelStyle,
   IModelItem,
   INode,
+  INodeStyle,
   Insets,
   InteriorLabelModel,
   Key,
   License,
-  List,
   MouseEventRecognizers,
   NinePositionsEdgeLabelModel,
   Rect,
@@ -62,11 +63,6 @@ import {
   StyleDecorationZoomPolicy
 } from 'yfiles'
 
-import MindmapEdgeStyleExtension from './MindmapEdgeStyleExtension.js'
-import MindmapNodeStyleExtension from './MindmapNodeStyleExtension.js'
-import MindmapNodeStyleRootExtension from './MindmapNodeStyleRootExtension.js'
-import StateLabelDecoratorExtension from './StateLabelDecoratorExtension.js'
-import CollapseDecoratorExtension from './CollapseDecoratorExtension.js'
 import MindmapPopupSupport from './MindmapPopupSupport.js'
 import MindmapGraphModelManager from './MindmapGraphModelManager.js'
 import StateLabelDecorator from './StateLabelDecorator.js'
@@ -77,16 +73,27 @@ import CollapseDecorator from './CollapseDecorator.js'
 import { ArcEdgeHandleProvider, SubtreePositionHandler } from './MindmapPositionHandlers.js'
 import {
   CenterPortCandidateProvider,
+  createChild,
+  createCrossReferenceEdge,
+  getDepth,
+  getInEdge,
+  getRoot,
+  getSubtree,
+  isCollapsed,
+  isCrossReference,
+  isRoot,
   MyArcEdgeStyleRenderer,
-  Structure,
+  removeSubtree,
+  setSubtreeDepths,
   TagChangeUndoUnit
 } from './MindmapUtil.js'
 import MindmapEditorInputMode from './MindmapEditorInputMode.js'
-import { bindAction, bindCommand, passiveSupported, showApp } from '../../resources/demo-app.js'
+import { bindAction, bindCommand, showApp } from '../../resources/demo-app.js'
 import MindmapOverviewGraphVisualCreator from './MindmapOverviewGraphVisualCreator.js'
 import MindmapLayout from './MindmapLayout.js'
 import DemoCommands from './DemoCommands.js'
 import loadJson from '../../resources/load-json.js'
+import createGraphMLIOHandler from './GraphMLUtils.js'
 
 // This demo shows how to implement a Mindmap viewer and editor.
 //
@@ -101,7 +108,7 @@ import loadJson from '../../resources/load-json.js'
 
 /**
  * The GraphComponent
- * @type GraphComponent
+ * @type {GraphComponent}
  */
 let graphComponent = null
 
@@ -138,21 +145,21 @@ let nodePopupIcon = null
 /**
  * The array of node styles used for nodes at different depths.
  * The style at position i in array is used for nodes at depth i of tree.
- * @type {INodeStyle[]}
+ * @type {Array.<INodeStyle>}
  */
 let nodeStyles = null
 
 /**
  * The array of edge styles used for edges at different depths.
  * The style at position i in array is used for edges from depth i to depth i+1 of tree.
- * @type {IEdgeStyle[]}
+ * @type {Array.<IEdgeStyle>}
  */
 let edgeStyles = null
 
 /**
  * The array of label styles used for node labels at different depths.
  * The style at position i in array is used for labels at depth i of tree.
- * @type {ILabelStyle[]}
+ * @type {Array.<ILabelStyle>}
  */
 let labelStyles = null
 
@@ -164,7 +171,7 @@ let movedNode = null
 
 /**
  * Holds the old tag data of a node.
- * @type {object}
+ * @type {NodeData}
  */
 let oldTagData = null
 
@@ -186,7 +193,10 @@ let gs = null
  */
 let ioh = null
 
-function run(licenseData) {
+/**
+ * @param {*} licenseData
+ */
+async function run(licenseData) {
   License.value = licenseData
   // initialize the GraphComponent and GraphOverviewComponent
   graphComponent = new GraphComponent('graphComponent')
@@ -211,17 +221,14 @@ function run(licenseData) {
   // Set maximum zoom factor of viewport to 2.0
   graphComponent.maximumZoom = 2.0
 
-  // Initialize the layout
-  MindmapLayout.instance.addMappers(graph)
-
   // Create the IO Handler
-  createGraphMLIOHandler()
+  ioh = createGraphMLIOHandler()
 
   // Enable GraphML support
   enableGraphML()
 
   // Read the graph
-  readGraph('resources/hobbies.graphml')
+  await readGraph('resources/hobbies.graphml')
 
   // configure overview panel
   overviewComponent.graphVisualCreator = new MindmapOverviewGraphVisualCreator(graph)
@@ -275,14 +282,10 @@ function initializeInputModes() {
   createEdgeInputMode.enabled = false
   createEdgeInputMode.allowCreateBend = false
   // disable CreateEdgeInputMode after cross reference edge has been created
-  createEdgeInputMode.addEdgeCreatedListener(() => {
-    createEdgeInputMode.enabled = false
-  })
-  createEdgeInputMode.addGestureCanceledListener(() => {
-    createEdgeInputMode.enabled = false
-  })
+  createEdgeInputMode.addEdgeCreatedListener(() => (createEdgeInputMode.enabled = false))
+  createEdgeInputMode.addGestureCanceledListener(() => (createEdgeInputMode.enabled = false))
   // customize edge creation
-  createEdgeInputMode.edgeCreator = Structure.createCrossReferenceEdge
+  createEdgeInputMode.edgeCreator = createCrossReferenceEdge
 
   disableMultiSelection(graphEditorInputMode)
 
@@ -292,7 +295,7 @@ function initializeInputModes() {
 /**
  * Disables the selection of multiple graph items using mouse/keyboard gestures.
  * Only one item may be selected at a time.
- * @param {GraphEditorInputMode} mode The input mode.
+ * @param {!GraphEditorInputMode} mode The input mode.
  */
 function disableMultiSelection(mode) {
   // disable marquee selection
@@ -318,7 +321,7 @@ function initializeGraph() {
   const nodeDecorator = graphComponent.graph.decorator.nodeDecorator
   // customize the position handler
   nodeDecorator.positionHandlerDecorator.setImplementationWrapper((item, implementation) => {
-    if (Structure.getRoot(filteredGraph.wrappedGraph) !== item) {
+    if (getRoot(filteredGraph.wrappedGraph) !== item) {
       return new SubtreePositionHandler(implementation)
     }
     return null
@@ -334,9 +337,9 @@ function initializeGraph() {
  */
 function initializeNodeStyle() {
   nodeStyles = [
-    new CollapseDecorator(new MindmapNodeStyleRoot('level0'), passiveSupported),
-    new CollapseDecorator(new MindmapNodeStyle('level1'), passiveSupported),
-    new CollapseDecorator(new MindmapNodeStyle('level2'), passiveSupported)
+    new CollapseDecorator(new MindmapNodeStyleRoot('level0')),
+    new CollapseDecorator(new MindmapNodeStyle('level1')),
+    new CollapseDecorator(new MindmapNodeStyle('level2'))
   ]
   edgeStyles = [new MindmapEdgeStyle(25, 8), new MindmapEdgeStyle(8, 3), new MindmapEdgeStyle(3, 3)]
   labelStyles = [
@@ -412,15 +415,15 @@ function initializeGraphFiltering() {
 /**
  * Predicate for the filtered graph wrapper that
  * indicates whether a node should be visible.
- * @param {INode} node The node to be tested.
- * @return {boolean} True if the node should be visible, false otherwise.
+ * @param {!INode} node The node to be tested.
+ * @returns {boolean} True if the node should be visible, false otherwise.
  */
 function nodePredicate(node) {
   // return true if none of the parent nodes is collapsed
-  const edge = Structure.getInEdge(node, filteredGraph.wrappedGraph)
+  const edge = getInEdge(node, filteredGraph.wrappedGraph)
   if (edge !== null) {
     const parent = edge.sourcePort.owner
-    return (node === movedNode || !Structure.isCollapsed(parent)) && nodePredicate(parent)
+    return (node === movedNode || !isCollapsed(parent)) && nodePredicate(parent)
   }
   return true
 }
@@ -457,13 +460,7 @@ function initializeNodePopups() {
   const nodePopupContent = window.document.getElementById('nodePopupContent')
   nodePopupMain = new MindmapPopupSupport(graphComponent, nodePopupContent, nodeLabelModelParameter)
 
-  nodePopupMain.div.addEventListener(
-    'click',
-    () => {
-      nodePopupMain.currentItem = null
-    },
-    false
-  )
+  nodePopupMain.div.addEventListener('click', () => (nodePopupMain.currentItem = null), false)
   window.document.getElementById('btnSetState').addEventListener(
     'click',
     () => {
@@ -493,22 +490,18 @@ function initializeNodePopups() {
   window.document.getElementById('btnCreateNode').addEventListener(
     'click',
     () => {
-      const tag = graphComponent.currentItem.tag
+      const depth = graphComponent.currentItem.tag.depth
       demoCommands.executeCreateChildren(
-        getNodeStyle(tag.depth + 1),
-        getEdgeStyle(tag.depth),
-        getLabelStyle(tag.depth + 1)
+        getNodeStyle(depth + 1),
+        getEdgeStyle(depth),
+        getLabelStyle(depth + 1)
       )
     },
     false
   )
-  window.document.getElementById('btnDeleteNode').addEventListener(
-    'click',
-    () => {
-      demoCommands.executeDeleteItem()
-    },
-    false
-  )
+  window.document
+    .getElementById('btnDeleteNode')
+    .addEventListener('click', () => demoCommands.executeDeleteItem(), false)
   const nodeLabelModelColor = new ExteriorLabelModel({ insets: 10 })
   const nodeLabelModelColorParameter = nodeLabelModelColor.createParameter(
     ExteriorLabelModelPosition.NORTH
@@ -522,13 +515,7 @@ function initializeNodePopups() {
   )
 
   const colorContainer = nodePopupColor.div
-  colorContainer.addEventListener(
-    'click',
-    () => {
-      nodePopupColor.currentItem = null
-    },
-    false
-  )
+  colorContainer.addEventListener('click', () => (nodePopupColor.currentItem = null), false)
   // create color popup menu
   const colors = [
     '#FF6502',
@@ -572,26 +559,14 @@ function initializeNodePopups() {
   )
 
   const iconContainer = nodePopupIcon.div
-  iconContainer.addEventListener(
-    'click',
-    () => {
-      nodePopupIcon.currentItem = null
-    },
-    false
-  )
+  iconContainer.addEventListener('click', () => (nodePopupIcon.currentItem = null), false)
 
   StateLabelDecorator.STATE_ICONS.forEach((stateIcon, i) => {
     const div = window.document.createElement('div')
     div.setAttribute('style', `background:url(./resources/${stateIcon}-16.svg)`)
     div.setAttribute('class', 'iconButton')
     iconContainer.appendChild(div)
-    div.addEventListener(
-      'click',
-      () => {
-        demoCommands.onStateLabelClicked(i)
-      },
-      false
-    )
+    div.addEventListener('click', () => demoCommands.onStateLabelClicked(i), false)
   })
 }
 
@@ -601,109 +576,6 @@ function initializeNodePopups() {
 function enableUndo() {
   // Enables undo
   graphComponent.graph.undoEngineEnabled = true
-}
-
-/**
- * Initializes the GraphMLIOHandler.
- * @return {GraphMLIOHandler}
- */
-function createGraphMLIOHandler() {
-  ioh = new GraphMLIOHandler()
-  // We have to implement a special serialization handle listener in order to be able to serialize
-  // the custom style classes that have inner properties and are written in ECMAScript 6.
-  ioh.addHandleSerializationListener((sender, args) => {
-    const item = args.item
-    if (item instanceof CollapseDecorator) {
-      const collapseDecoratorExtension = new CollapseDecoratorExtension(passiveSupported)
-      collapseDecoratorExtension.wrappedStyle = item.wrappedStyle
-      const context = args.context
-      context.serializeReplacement(
-        CollapseDecoratorExtension.$class,
-        item,
-        collapseDecoratorExtension
-      )
-      args.handled = true
-    } else if (item instanceof StateLabelDecorator) {
-      const stateLabelDecoratorExtension = new StateLabelDecoratorExtension()
-      stateLabelDecoratorExtension.wrappedStyle = item.wrappedStyle.wrapped
-      stateLabelDecoratorExtension.labelModelParameterLeft = item.labelModelParameterLeft
-      stateLabelDecoratorExtension.labelModelParameterRight = item.labelModelParameterRight
-      stateLabelDecoratorExtension.insetsLeft = item.insetsLeft
-      stateLabelDecoratorExtension.insetsRight = item.insetsRight
-      const context = args.context
-      context.serializeReplacement(
-        StateLabelDecoratorExtension.$class,
-        item,
-        stateLabelDecoratorExtension
-      )
-      args.handled = true
-    } else if (item instanceof MindmapNodeStyleRoot) {
-      const mindmapNodeStyleRootExtension = new MindmapNodeStyleRootExtension()
-      mindmapNodeStyleRootExtension.className = item.className
-      const context = args.context
-      context.serializeReplacement(
-        MindmapNodeStyleRootExtension.$class,
-        item,
-        mindmapNodeStyleRootExtension
-      )
-      args.handled = true
-    } else if (item instanceof MindmapNodeStyle) {
-      const mindmapNodeStyleExtension = new MindmapNodeStyleExtension()
-      mindmapNodeStyleExtension.className = item.className
-      const context = args.context
-      context.serializeReplacement(
-        MindmapNodeStyleExtension.$class,
-        item,
-        mindmapNodeStyleExtension
-      )
-      args.handled = true
-    } else if (item instanceof MindmapEdgeStyle) {
-      const mindmapEdgeStyleExtension = new MindmapEdgeStyleExtension()
-      mindmapEdgeStyleExtension.thicknessStart = item.thicknessStart
-      mindmapEdgeStyleExtension.thicknessEnd = item.thicknessEnd
-      const context = args.context
-      context.serializeReplacement(
-        MindmapEdgeStyleExtension.$class,
-        item,
-        mindmapEdgeStyleExtension
-      )
-      args.handled = true
-    }
-  })
-
-  // initialize $class on the markup extensions
-  Class.fixType(StateLabelDecoratorExtension)
-  Class.fixType(CollapseDecoratorExtension)
-  Class.fixType(MindmapNodeStyleExtension)
-  Class.fixType(MindmapNodeStyleRootExtension)
-  Class.fixType(MindmapEdgeStyleExtension)
-
-  // enable serialization of the mind map styles - without a namespace mapping, serialization will fail
-  ioh.addXamlNamespaceMapping(
-    'http://www.yworks.com/yFilesHTML/demos/StateLabelDecorator/1.0',
-    'StateLabelDecorator',
-    StateLabelDecoratorExtension.$class
-  )
-  ioh.addXamlNamespaceMapping(
-    'http://www.yworks.com/yFilesHTML/demos/CollapseDecorator/1.0',
-    'CollapseDecorator',
-    CollapseDecoratorExtension.$class
-  )
-  ioh.addXamlNamespaceMapping(
-    'http://www.yworks.com/yFilesHTML/demos/MindmapNodeStyle/1.0',
-    'MindmapNodeStyle',
-    MindmapNodeStyleExtension.$class
-  )
-  ioh.addXamlNamespaceMapping(
-    'http://www.yworks.com/yFilesHTML/demos/MindmapNodeStyleRoot/1.0',
-    'MindmapNodeStyleRoot',
-    MindmapNodeStyleRootExtension.$class
-  )
-  ioh.addXamlNamespaceMapping(
-    'http://www.yworks.com/yFilesHTML/demos/MindmapEdgeStyle/1.0',
-    'MindmapEdgeStyle',
-    MindmapEdgeStyleExtension.$class
-  )
 }
 
 /**
@@ -720,8 +592,8 @@ function enableGraphML() {
 }
 
 /**
- * Reads the given graphml file. If the loading fails, a default graph will be loading.
- * @param {string} fileName The file url.
+ * Reads the given GraphML file. If the loading fails, a default graph will be loaded.
+ * @param {!string} fileName The file url.
  */
 async function readGraph(fileName) {
   const graph = graphComponent.graph
@@ -730,16 +602,10 @@ async function readGraph(fileName) {
     await ioh.readFromURL(graph, fileName)
     graphComponent.graph.nodes.forEach(node => {
       const nodeData = node.tag
-      node.tag = {
-        depth: nodeData.depth,
-        isLeft: nodeData.isLeft,
-        color: nodeData.color,
-        isCollapsed: nodeData.isCollapsed,
-        stateIcon: nodeData.stateIcon
-      }
+      node.tag = { ...nodeData }
     })
     // when done - fit the bounds and clear the undo engine
-    onGraphChanged()
+    await onGraphChanged()
   } catch (error) {
     alert(`Unable to open the graph. Perhaps your browser does not allow handling cross domain HTTP requests.
       Please see the demo readme for details: ${error}`)
@@ -752,7 +618,7 @@ async function readGraph(fileName) {
  */
 function loadFallbackGraph() {
   graphComponent.graph.clear()
-  createSampleGraph(graphComponent)
+  createSampleGraph()
   onGraphChanged()
 }
 
@@ -761,12 +627,12 @@ function loadFallbackGraph() {
  */
 async function onGraphChanged() {
   graphComponent.updateContentRect()
-  graphComponent.fitContent()
+  await graphComponent.fitContent()
   filteredGraph.nodePredicateChanged()
   adjustNodeBounds()
   await MindmapLayout.instance.layout(graphComponent)
   limitViewport()
-  graphComponent.fitContent()
+  await graphComponent.fitContent()
   graphComponent.graph.undoEngine.clear()
 }
 
@@ -780,7 +646,7 @@ function adjustNodeBounds() {
       const label = node.labels.get(0)
       const preferredSize = label.style.renderer.getPreferredSize(label, label.style)
       fullGraph.setLabelPreferredSize(label, preferredSize)
-      if (!Structure.isRoot(node)) {
+      if (!isRoot(node)) {
         // enlarge bounds
         fullGraph.setNodeLayout(
           node,
@@ -812,7 +678,7 @@ function registerCommands() {
   bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent)
   bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent)
   bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent)
-  bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
+  bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1)
 
   bindCommand("button[data-command='Undo']", ICommand.UNDO, graphComponent)
   bindCommand("button[data-command='Redo']", ICommand.REDO, graphComponent)
@@ -828,26 +694,29 @@ function registerCommands() {
         getEdgeStyle(tag.depth),
         getLabelStyle(tag.depth + 1)
       )
+      return true
     },
-    canExecute: () => demoCommands.canExecuteCreateChildren()
+    canExecute: _ => demoCommands.canExecuteCreateChildren()
   })
+
   kim.addKeyBinding({
     key: Key.DELETE,
-    execute: () => {
+    execute: _ => {
       hidePopups()
       demoCommands.executeDeleteItem()
+      return true
     },
-    canExecute: () => demoCommands.canExecuteDeleteItem()
+    canExecute: _ => demoCommands.canExecuteDeleteItem()
   })
   kim.addKeyBinding({
     key: Key.ADD,
-    execute: () => demoCommands.executeExpandNode(),
-    canExecute: () => demoCommands.canExecuteExpandNode()
+    execute: _ => demoCommands.executeExpandNode(),
+    canExecute: _ => demoCommands.canExecuteExpandNode()
   })
   kim.addKeyBinding({
     key: Key.SUBTRACT,
-    execute: () => demoCommands.executeCollapseNode(),
-    canExecute: () => demoCommands.canExecuteCollapseNode()
+    execute: _ => demoCommands.executeCollapseNode(),
+    canExecute: _ => demoCommands.canExecuteCollapseNode()
   })
   kim.addKeyBinding({
     key: Key.ENTER,
@@ -858,8 +727,9 @@ function registerCommands() {
         getEdgeStyle(tag.depth - 1),
         getLabelStyle(tag.depth)
       )
+      return true
     },
-    canExecute: () => demoCommands.canExecuteCreateSibling()
+    canExecute: _ => demoCommands.canExecuteCreateSibling()
   })
 }
 
@@ -872,13 +742,7 @@ async function openFile() {
 
     graphComponent.graph.nodes.forEach(node => {
       const nodeData = node.tag
-      node.tag = {
-        depth: nodeData.depth,
-        isLeft: nodeData.isLeft,
-        color: nodeData.color,
-        isCollapsed: nodeData.isCollapsed,
-        stateIcon: nodeData.stateIcon
-      }
+      node.tag = { ...nodeData }
     })
     onGraphChanged()
   } catch (error) {
@@ -894,26 +758,19 @@ async function openFile() {
  * included in the graphml file.
  */
 function saveFile() {
-  gs.saveFile(filteredGraph.wrappedGraph).catch(error => {
+  gs.saveFile(filteredGraph.wrappedGraph).catch(error =>
     alert(`Error occurred during saving: ${error}`)
-  })
+  )
 }
 
 /**
  * Sets the color for a node.
- * @param {INode} node The node to set the color for.
- * @param {string} color The color to set.
+ * @param {!INode} node The node to set the color for.
+ * @param {!string} color The color to set.
  */
 function setNodeColor(node, color) {
   const oldData = node.tag
-  const newData = {
-    depth: oldData.depth,
-    isLeft: oldData.isLeft,
-    color: oldData.color,
-    isCollapsed: oldData.isCollapsed,
-    stateIcon: oldData.stateIcon
-  }
-  newData.color = color
+  const newData = { ...oldData, color }
   node.tag = newData
 
   // create a custom undo unit
@@ -925,26 +782,19 @@ function setNodeColor(node, color) {
 
 /**
  * Sets the collapsed state of a node.
- * @param {INode} node The node to set the collapsed state for.
+ * @param {!INode} node The node to set the collapsed state for.
  * @param {boolean} collapsed The state to set.
  */
 function setCollapsedState(node, collapsed) {
   const oldData = node.tag
-  const newData = {
-    depth: oldData.depth,
-    isLeft: oldData.isLeft,
-    color: oldData.color,
-    isCollapsed: oldData.isCollapsed,
-    stateIcon: oldData.stateIcon
-  }
-  newData.isCollapsed = collapsed
+  const newData = { ...oldData, isCollapsed: collapsed }
   node.tag = newData
 
   // create a custom undo unit
   graphComponent.graph.undoEngine.addUnit(
-    new TagChangeUndoUnit('Collapse/Expand', 'Collapse/Expand', oldData, newData, node, () => {
+    new TagChangeUndoUnit('Collapse/Expand', 'Collapse/Expand', oldData, newData, node, () =>
       filteredGraph.nodePredicateChanged()
-    })
+    )
   )
   // tell the filtered graph to update the graph structure
   filteredGraph.nodePredicateChanged()
@@ -961,7 +811,7 @@ function hidePopups() {
 
 /**
  * Shows the popup menu when an item is selected.
- * @param {IModelItem} item The clicked item
+ * @param {!IModelItem} item The clicked item
  */
 function onItemClicked(item) {
   hidePopups()
@@ -973,14 +823,14 @@ function onItemClicked(item) {
 
 /**
  * Edits node- or cross reference edge-labels when double-clicking node/edge.
- * @param {IModelItem} item The clicked item
+ * @param {!IModelItem} item The clicked item
  */
 function onItemDoubleClicked(item) {
   if (ILabel.isInstance(item)) {
     item = item.owner
   }
 
-  if ((INode.isInstance(item) || IEdge.isInstance(item)) && Structure.isCrossReference(item)) {
+  if ((INode.isInstance(item) || IEdge.isInstance(item)) && isCrossReference(item)) {
     const inputMode = graphComponent.inputMode
     if (item.labels.size > 0) {
       inputMode.editLabel(item.labels.get(0))
@@ -998,13 +848,7 @@ function onDragStarted() {
   hidePopups()
   movedNode = graphComponent.selection.selectedNodes.first()
   const oldData = movedNode.tag
-  oldTagData = {
-    depth: oldData.depth,
-    isLeft: oldData.isLeft,
-    color: oldData.color,
-    isCollapsed: oldData.isCollapsed,
-    stateIcon: oldData.stateIcon
-  }
+  oldTagData = { ...oldData }
 }
 
 /**
@@ -1013,10 +857,10 @@ function onDragStarted() {
  */
 function onDragged() {
   const fullGraph = filteredGraph.wrappedGraph
-  const subtreeEdge = Structure.getInEdge(movedNode, fullGraph)
+  const subtreeEdge = getInEdge(movedNode, fullGraph)
   if (subtreeEdge !== null) {
-    const depth = Structure.getDepth(subtreeEdge.sourceNode)
-    Structure.setSubtreeDepths(fullGraph, movedNode, depth + 1)
+    const depth = getDepth(subtreeEdge.sourceNode)
+    setSubtreeDepths(fullGraph, movedNode, depth + 1)
     updateStyles(movedNode)
     fullGraph.setStyle(subtreeEdge, getEdgeStyle(depth))
   }
@@ -1033,9 +877,9 @@ async function onDragFinished() {
   const compoundEdit = graphComponent.graph.beginEdit('Set State Label', 'Set State Label')
   const fullGraph = filteredGraph.wrappedGraph
   // update styles
-  const subtreeEdge = Structure.getInEdge(movedNode, fullGraph)
+  const subtreeEdge = getInEdge(movedNode, fullGraph)
   if (subtreeEdge !== null) {
-    Structure.setSubtreeDepths(fullGraph, movedNode, Structure.getDepth(subtreeEdge.sourceNode) + 1)
+    setSubtreeDepths(fullGraph, movedNode, getDepth(subtreeEdge.sourceNode) + 1)
     updateStyles(movedNode)
     adjustNodeBounds()
     setCollapsedState(subtreeEdge.sourceNode, false)
@@ -1048,12 +892,10 @@ async function onDragFinished() {
         newTagData,
         movedNode,
         node => {
-          const subtreeNodes = new List()
-          const subtreeEdges = new List()
-          Structure.getSubtree(fullGraph, node, subtreeNodes, subtreeEdges)
-          subtreeNodes.forEach(n => {
-            n.tag.isLeft = node.tag.isLeft
-          })
+          const subtreeNodes = []
+          const subtreeEdges = []
+          getSubtree(fullGraph, node, subtreeNodes, subtreeEdges)
+          subtreeNodes.forEach(n => (n.tag.isLeft = node.tag.isLeft))
         }
       )
     )
@@ -1071,7 +913,7 @@ async function onDragFinished() {
         node => filteredGraph.nodePredicateChanged(node)
       )
     )
-    Structure.removeSubtree(fullGraph, movedNode)
+    removeSubtree(fullGraph, movedNode)
   }
   await MindmapLayout.instance.layout(graphComponent)
   compoundEdit.commit()
@@ -1087,9 +929,9 @@ function onDragCanceled() {
   graphComponent.selection.clear()
   hidePopups()
   const fullGraph = filteredGraph.wrappedGraph
-  const subtreeEdge = Structure.getInEdge(movedNode, fullGraph)
+  const subtreeEdge = getInEdge(movedNode, fullGraph)
   if (subtreeEdge !== null) {
-    Structure.setSubtreeDepths(fullGraph, movedNode, Structure.getDepth(subtreeEdge.sourceNode) + 1)
+    setSubtreeDepths(fullGraph, movedNode, getDepth(subtreeEdge.sourceNode) + 1)
     updateStyles(movedNode)
     adjustNodeBounds()
     setCollapsedState(subtreeEdge.sourceNode, false)
@@ -1099,7 +941,7 @@ function onDragCanceled() {
 
 /**
  * Starts interactive creation of a new cross reference edge.
- * @param {INode} node The source node of the new cross reference edge.
+ * @param {!INode} node The source node of the new cross reference edge.
  */
 function startCrossReferenceEdgeCreation(node) {
   const inputMode = graphComponent.inputMode
@@ -1116,39 +958,35 @@ function startCrossReferenceEdgeCreation(node) {
 /**
  * Updates the styles of a subtree based on the depth information
  * in the nodes' tags.
- * @param {INode} subtreeRoot The root node of the subtree.
+ * @param {!INode} subtreeRoot The root node of the subtree.
  */
 function updateStyles(subtreeRoot) {
-  const subtreeNodes = new List()
-  const subtreeEdges = new List()
+  const subtreeNodes = []
+  const subtreeEdges = []
   const fullGraph = filteredGraph.wrappedGraph
-  Structure.getSubtree(fullGraph, subtreeRoot, subtreeNodes, subtreeEdges)
+  getSubtree(fullGraph, subtreeRoot, subtreeNodes, subtreeEdges)
 
-  subtreeNodes.forEach(
-    /** INode */ node => {
-      const depth = Structure.getDepth(node)
-      const label = node.labels.first()
-      const nodeStyle = getNodeStyle(depth)
-      const labelStyle = getLabelStyle(depth)
-      fullGraph.setStyle(node, nodeStyle)
-      fullGraph.setStyle(label, labelStyle)
-    }
-  )
+  subtreeNodes.forEach(node => {
+    const depth = getDepth(node)
+    const label = node.labels.first()
+    const nodeStyle = getNodeStyle(depth)
+    const labelStyle = getLabelStyle(depth)
+    fullGraph.setStyle(node, nodeStyle)
+    fullGraph.setStyle(label, labelStyle)
+  })
 
-  subtreeEdges.forEach(
-    /** IEdge */ edge => {
-      const depth = Structure.getDepth(edge.sourceNode)
-      const edgeStyle = getEdgeStyle(depth)
-      fullGraph.setStyle(edge, edgeStyle)
-    }
-  )
+  subtreeEdges.forEach(edge => {
+    const depth = getDepth(edge.sourceNode)
+    const edgeStyle = getEdgeStyle(depth)
+    fullGraph.setStyle(edge, edgeStyle)
+  })
 }
 
 /**
  * Gets the label style based on the depth information
  * in the nodes' tags.
  * @param {number} depth The nodes' depth.
- * @return {ILabelStyle} The label's style.
+ * @returns {!ILabelStyle} The label's style.
  */
 function getLabelStyle(depth) {
   const maxStyle = labelStyles.length - 1
@@ -1159,7 +997,7 @@ function getLabelStyle(depth) {
  * Gets the node style based on the depth information
  * in the nodes' tags.
  * @param {number} depth The nodes' depth.
- * @return {INodeStyle} The node's style.
+ * @returns {!INodeStyle} The node's style.
  */
 function getNodeStyle(depth) {
   const maxStyle = nodeStyles.length - 1
@@ -1169,7 +1007,7 @@ function getNodeStyle(depth) {
 /**
  * Gets the edge style based on the depth information.
  * @param {number} depth The nodes' depth.
- * @return {IEdgeStyle} The edge's style.
+ * @returns {!IEdgeStyle} The edge's style.
  */
 function getEdgeStyle(depth) {
   const maxStyle = edgeStyles.length - 1
@@ -1190,53 +1028,17 @@ function createSampleGraph() {
   const fullGraph = filteredGraph.wrappedGraph
   const n0 = fullGraph.createNode(new Rect(85, 80, 200, 100), getNodeStyle(0), nodeData)
   graphComponent.graph.addLabel(n0, 'Topic', InteriorLabelModel.CENTER, getLabelStyle(0))
-  const n1 = Structure.createChild(
-    fullGraph,
-    n0,
-    getNodeStyle(1),
-    getEdgeStyle(0),
-    getLabelStyle(1)
-  )
+  const n1 = createChild(fullGraph, n0, getNodeStyle(1), getEdgeStyle(0), getLabelStyle(1))
   fullGraph.setLabelText(n1.labels.get(0), 'Topic 1')
-  const n2 = Structure.createChild(
-    fullGraph,
-    n0,
-    getNodeStyle(1),
-    getEdgeStyle(0),
-    getLabelStyle(1)
-  )
+  const n2 = createChild(fullGraph, n0, getNodeStyle(1), getEdgeStyle(0), getLabelStyle(1))
   fullGraph.setLabelText(n2.labels.get(0), 'Topic 2')
-  const n3 = Structure.createChild(
-    fullGraph,
-    n0,
-    getNodeStyle(1),
-    getEdgeStyle(0),
-    getLabelStyle(1)
-  )
+  const n3 = createChild(fullGraph, n0, getNodeStyle(1), getEdgeStyle(0), getLabelStyle(1))
   fullGraph.setLabelText(n3.labels.get(0), 'Topic 3')
-  const n11 = Structure.createChild(
-    fullGraph,
-    n1,
-    getNodeStyle(2),
-    getEdgeStyle(1),
-    getLabelStyle(2)
-  )
+  const n11 = createChild(fullGraph, n1, getNodeStyle(2), getEdgeStyle(1), getLabelStyle(2))
   fullGraph.setLabelText(n11.labels.get(0), 'Topic 1.1')
-  const n12 = Structure.createChild(
-    fullGraph,
-    n1,
-    getNodeStyle(2),
-    getEdgeStyle(1),
-    getLabelStyle(2)
-  )
+  const n12 = createChild(fullGraph, n1, getNodeStyle(2), getEdgeStyle(1), getLabelStyle(2))
   fullGraph.setLabelText(n12.labels.get(0), 'Topic 1.2')
-  const n13 = Structure.createChild(
-    fullGraph,
-    n1,
-    getNodeStyle(2),
-    getEdgeStyle(1),
-    getLabelStyle(2)
-  )
+  const n13 = createChild(fullGraph, n1, getNodeStyle(2), getEdgeStyle(1), getLabelStyle(2))
   fullGraph.setLabelText(n13.labels.get(0), 'Topic 1.3')
 }
 

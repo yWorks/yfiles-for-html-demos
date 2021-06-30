@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -7,7 +7,7 @@
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.3.
+     // This demo file is part of yFiles for HTML 2.4.
      // Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
@@ -36,7 +36,6 @@
 
   <title>Template Styles Demo [yFiles for HTML]</title>
 
-  <link rel="stylesheet" href="../../node_modules/yfiles/yfiles.css">
   <link rel="stylesheet" href="../../resources/style/demo.css">
   <link rel="stylesheet" href="./resources/styles.css">
 
@@ -120,11 +119,6 @@
       Template bindings are written like this: <br/>
       <code>width="{TemplateBinding width}"</code><br/>
     </p>
-
-    <h3>Automatic Property Changes</h3>
-    <p>The interface <code>IPropertyObservable</code> gives you the ability to update bindings automatically when the item's business data changes.
-      For this reason, the business data in this demo is wrapped by class <code>Employee</code>.
-    </p>
   </div>
 </aside>
 
@@ -163,13 +157,10 @@
         Take a look at the templates for nodes, labels and ports in <code>index.html</code>.
       </li>
       <li>
-        Take a look at <code>Employee.js</code> to see how the <code>IPropertyObservable</code> interface is implemented.
+        Take a look at method <code>initConverters()</code> in <code>TemplateStylesDemo</code> to see how the data binding converters are initialized.
       </li>
       <li>
-        Take a look at method <code>initConverters()</code> in <code>TemplateStylesDemo.js</code> to see how the data binding converters are initialized.
-      </li>
-      <li>
-        Take a look at method <code>configureStyles()</code> in <code>TemplateStylesDemo.js</code> to see how the template styles are initialized.
+        Take a look at method <code>configureStyles()</code> in <code>TemplateStylesDemo</code> to see how the template styles are initialized.
       </li>
     </ul>
   </div>

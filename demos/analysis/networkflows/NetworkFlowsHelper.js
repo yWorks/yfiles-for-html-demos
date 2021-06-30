@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -30,6 +30,7 @@ import {
   BaseClass,
   ConcurrencyController,
   Cursor,
+  GraphComponent,
   HandlePositions,
   IEdge,
   IHandle,
@@ -38,12 +39,13 @@ import {
   INode,
   InputModeBase,
   IReshapeHandleProvider,
-  IVisualCreator,
   MouseButtons,
+  MouseEventArgs,
   Point,
   Rect,
   UndoUnitBase
 } from 'yfiles'
+import { MinCutLine } from './DemoStyles.js'
 
 /**
  * This class provides undo/redo for an operation changing tag data.
@@ -51,17 +53,17 @@ import {
 export class TagUndoUnit extends UndoUnitBase {
   /**
    * The constructor.
-   * @param {string} undoName Name of the undo operation.
-   * @param {string} redoName Name of the redo operation
-   * @param {Object} oldTag The data to restore the previous state
-   * @param {Object} newTag The data to restore the next state
-   * @param {IModelItem} item The owner of the tag
+   * @param {!string} undoName Name of the undo operation.
+   * @param {!string} redoName Name of the redo operation
+   * @param {*} oldTag The data to restore the previous state
+   * @param {*} newTag The data to restore the next state
+   * @param {!IModelItem} item The owner of the tag
    */
   constructor(undoName, redoName, oldTag, newTag, item) {
     super(undoName, redoName)
-    this.oldTag = oldTag
-    this.newTag = newTag
     this.item = item
+    this.newTag = newTag
+    this.oldTag = oldTag
   }
 
   /**
@@ -85,17 +87,17 @@ export class TagUndoUnit extends UndoUnitBase {
 export class MinCutUndoUnit extends UndoUnitBase {
   /**
    * The constructor.
-   * @param {string} undoName Name of the undo operation.
-   * @param {string} redoName Name of the redo operation
-   * @param {Rect} oldBounds The old min-cut line bounds
-   * @param {Rect} newBounds The new min-cut line bounds
-   * @param {IVisualCreator} minCutLine The given min-cut line
+   * @param {!string} undoName Name of the undo operation.
+   * @param {!string} redoName Name of the redo operation
+   * @param {!Rect} oldBounds The old min-cut line bounds
+   * @param {!Rect} newBounds The new min-cut line bounds
+   * @param {!MinCutLine} minCutLine The given min-cut line
    */
   constructor(undoName, redoName, oldBounds, newBounds, minCutLine) {
     super(undoName, redoName)
-    this.oldBounds = oldBounds
-    this.newBounds = newBounds
     this.minCutLine = minCutLine
+    this.newBounds = newBounds
+    this.oldBounds = oldBounds
   }
 
   /**
@@ -119,9 +121,9 @@ export class MinCutUndoUnit extends UndoUnitBase {
 export class EmptyReshapeHandleProvider extends BaseClass(IReshapeHandleProvider) {
   /**
    * Returns the indicator for no valid position.
-   * @param {IInputModeContext} inputModeContext The context for which the handles are queried
+   * @param {!IInputModeContext} inputModeContext The context for which the handles are queried
    * @see Specified by {@link IReshapeHandleProvider#getAvailableHandles}.
-   * @return {HandlePositions} The indicator for no valid position
+   * @returns {!HandlePositions} The indicator for no valid position
    */
   getAvailableHandles(inputModeContext) {
     return HandlePositions.NONE
@@ -129,10 +131,10 @@ export class EmptyReshapeHandleProvider extends BaseClass(IReshapeHandleProvider
 
   /**
    * This method is never called since getAvailableHandles returns no valid position.
-   * @param {IInputModeContext} inputModeContext The context for which the handles are queried
-   * @param {HandlePositions} position The single position a handle implementation should be
+   * @param {!IInputModeContext} inputModeContext The context for which the handles are queried
+   * @param {!HandlePositions} position The single position a handle implementation should be
    *   returned for
-   * @return {IHandle} Null since getAvailableHandles returns no valid position.
+   * @returns {!IHandle} Null since getAvailableHandles returns no valid position.
    */
   getHandle(inputModeContext, position) {
     // Never called since getAvailableHandles returns no valid position.
@@ -149,13 +151,14 @@ export class NetworkFlowInputMode extends InputModeBase {
   constructor() {
     super()
     this.graphComponent = null
-    this.state = null
+    this.state = ''
     this.hitItem = null
-    this.initialLocation = null
+    this.initialLocation = Point.ORIGIN
     this.initialCapacity = 0
     this.initialSupply = 0
     this.dragFinishedListener = null
-    this.oldtag = null
+    this.dragStartedListener = null
+    this.oldTag = null
 
     // initializes listener functions in order to install/uninstall them
     this.onMouseMoveListener = (sender, evt) => this.onMouseMove(evt.location)
@@ -166,8 +169,8 @@ export class NetworkFlowInputMode extends InputModeBase {
 
   /**
    * Installs this input mode into a CanvasComponent using the provided IInputModeContext.
-   * @param {IInputModeContext} context The context to install this mode into
-   * @param {ConcurrencyController} controller The controller for this mode
+   * @param {!IInputModeContext} context The context to install this mode into
+   * @param {!ConcurrencyController} controller The controller for this mode
    */
   install(context, controller) {
     super.install(context, controller)
@@ -181,7 +184,7 @@ export class NetworkFlowInputMode extends InputModeBase {
 
   /**
    * Occurs when the mouse has been moved in world coordinates.
-   * @param {Point} location The event location in world coordinates
+   * @param {!Point} location The event location in world coordinates
    */
   onMouseMove(location) {
     if (this.controller.active && this.isValidHover(location)) {
@@ -197,8 +200,8 @@ export class NetworkFlowInputMode extends InputModeBase {
    * Checks whether the mouse hover occurred on a valid position. Valid positions are the edges and
    * the area of a node that represents the flow supply/demand (if the flow can be adjusted like in
    * Minimum Cost flow algorithm).
-   * @param {Point} location The event location in world coordinates
-   * @return {boolean} True if the mouse hover occurred on a valid position, false otherwise
+   * @param {!Point} location The event location in world coordinates
+   * @returns {boolean} True if the mouse hover occurred on a valid position, false otherwise
    */
   isValidHover(location) {
     const hits = this.graphComponent.graphModelManager.hitTester.enumerateHits(
@@ -208,7 +211,7 @@ export class NetworkFlowInputMode extends InputModeBase {
 
     this.hitItem = hits.firstOrDefault()
 
-    if (INode.isInstance(this.hitItem)) {
+    if (this.hitItem instanceof INode) {
       if (this.hitItem.tag.adjustable) {
         const layout = this.hitItem.layout
         const draggableArea = new Rect(layout.x + 15, layout.y, layout.width - 30, layout.height)
@@ -216,7 +219,7 @@ export class NetworkFlowInputMode extends InputModeBase {
           return true
         }
       }
-    } else if (IEdge.isInstance(this.hitItem)) {
+    } else if (this.hitItem instanceof IEdge) {
       return true
     }
     // reset the hitItem if the position is not valid
@@ -226,8 +229,8 @@ export class NetworkFlowInputMode extends InputModeBase {
 
   /**
    * Occurs when a mouse button has been pressed.
-   * @param {MouseButtons} buttons The state of the mouse buttons at the time of the event creation
-   * @param {Point} location The event location in world coordinates
+   * @param {!MouseButtons} buttons The state of the mouse buttons at the time of the event creation
+   * @param {!Point} location The event location in world coordinates
    */
   onMouseDown(location, buttons) {
     if (this.controller.active && this.hitItem && buttons === MouseButtons.LEFT) {
@@ -238,7 +241,7 @@ export class NetworkFlowInputMode extends InputModeBase {
 
   /**
    * Occurs when the mouse is being moved while at least one of the mouse buttons is pressed.
-   * @param {Point} location The event location in world coordinates
+   * @param {!Point} location The event location in world coordinates
    */
   onMouseDrag(location) {
     if (this.controller.active && this.hitItem && this.state === 'down') {
@@ -247,27 +250,27 @@ export class NetworkFlowInputMode extends InputModeBase {
       this.initialLocation = location
       // drag has started, fire the event
       if (this.dragStartedListener) {
-        this.dragStartedListener()
+        this.dragStartedListener(this.hitItem)
       }
 
-      if (INode.isInstance(this.hitItem)) {
+      if (this.hitItem instanceof INode) {
         this.initialSupply = this.hitItem.tag.supply
-      } else if (IEdge.isInstance(this.hitItem)) {
+      } else if (this.hitItem instanceof IEdge) {
         this.initialCapacity = this.hitItem.tag.capacity
       }
 
       this.oldTag = Object.assign({}, this.hitItem.tag)
     }
-    if (this.state === 'drag') {
+    if (this.state === 'drag' && this.hitItem) {
       const delta = this.initialLocation.y - location.y
 
-      if (INode.isInstance(this.hitItem)) {
+      if (this.hitItem instanceof INode) {
         const flow = this.hitItem.tag.flow / this.hitItem.layout.height
         this.hitItem.tag.supply = Math.min(
           1 - flow,
           Math.max(-1, this.initialSupply + delta / this.hitItem.layout.height)
         )
-      } else {
+      } else if (this.hitItem instanceof IEdge) {
         const tag = this.hitItem.tag
         tag.capacity = Math.round(Math.max(0, this.initialCapacity + delta))
 
@@ -282,7 +285,7 @@ export class NetworkFlowInputMode extends InputModeBase {
 
   /**
    * Occurs when the mouse button has been released.
-   * @param {Point} location The event location in world coordinates
+   * @param {!Point} location The event location in world coordinates
    */
   onMouseUp(location) {
     if (this.controller.active && this.state === 'drag') {
@@ -300,7 +303,7 @@ export class NetworkFlowInputMode extends InputModeBase {
       } else {
         this.state = 'start'
         this.controller.preferredCursor = null
-        this.initialLocation = null
+        this.initialLocation = Point.ORIGIN
         this.initialSupply = 0
         this.initialCapacity = 0
         this.hitItem = null
@@ -310,7 +313,7 @@ export class NetworkFlowInputMode extends InputModeBase {
 
   /**
    * Adds a listener that fires an event whenever the dragging of a node/edge has finished.
-   * @param {function(item: IModelItem)} listener The given listener
+   * @param {!function} listener The given listener
    */
   addDragFinished(listener) {
     this.dragFinishedListener = listener
@@ -318,7 +321,7 @@ export class NetworkFlowInputMode extends InputModeBase {
 
   /**
    * Removes the listener that fires an event whenever the dragging of a node/edge has finished.
-   * @param {function(item: IModelItem)} listener The given listener
+   * @param {!function} listener The given listener
    */
   removeDragFinishedListener(listener) {
     if (this.dragFinishedListener === listener) {
@@ -328,7 +331,7 @@ export class NetworkFlowInputMode extends InputModeBase {
 
   /**
    * Adds a listener that fires an event whenever the dragging of a node/edge has started.
-   * @param {function(item: IModelItem)} listener The given listener
+   * @param {!function} listener The given listener
    */
   addDragStartedListener(listener) {
     this.dragStartedListener = listener
@@ -336,7 +339,7 @@ export class NetworkFlowInputMode extends InputModeBase {
 
   /**
    * Removes the listener that fires an event whenever the dragging of a node/edge has started.
-   * @param {function(item: IModelItem)} listener The given listener
+   * @param {!function} listener The given listener
    */
   removeDragStartedListener(listener) {
     if (this.dragStartedListener === listener) {
@@ -346,7 +349,7 @@ export class NetworkFlowInputMode extends InputModeBase {
 
   /**
    * Uninstalls this mode from the canvas.
-   * @param {IInputModeContext} context The context to remove this mode from.
+   * @param {!IInputModeContext} context The context to remove this mode from.
    */
   uninstall(context) {
     super.uninstall(context)

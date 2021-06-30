@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -26,66 +26,75 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { GraphBuilder } from 'yfiles'
+import { EdgesSource, GraphBuilder, IGraph, INode, NodesSource } from 'yfiles'
+
+/**
+ * @typedef {Object} Friendship
+ * @property {number} from
+ * @property {number} to
+ */
 
 /**
  * A {@link GraphBuilder} that is tailored towards the social network use case in this demo.
  */
 export class SocialNetworkGraphBuilder {
+  /**
+   * @param {!IGraph} graph
+   */
   constructor(graph) {
-    this.$persons = []
-    this.$seen = new Set()
-    this.$graphBuilder = new GraphBuilder(graph)
+    this._persons = []
+    this._seen = new Set()
+    this._graphBuilder = new GraphBuilder(graph)
     // create empty NodesSources whose data will be set on updateGraph
-    this.$nodesSource = this.$graphBuilder.createNodesSource({
+    this._nodesSource = this._graphBuilder.createNodesSource({
       data: [],
       id: 'id',
       labels: ['name']
     })
-    this.$edgesSource = this.$graphBuilder.createEdgesSource([], 'from', 'to')
+    this._edgesSource = this._graphBuilder.createEdgesSource([], 'from', 'to')
   }
 
   /**
    * Clears the graph.
    */
   clear() {
-    this.$persons = []
+    this._persons = []
     this.updateGraph()
   }
 
   /**
    * Adds the given persons to the graph.
-   * @param {Array} persons The persons that should be added
-   * @return {IEnumerable<INode>} The newly created nodes
+   * @param {!Array.<Person>} persons The persons that should be added
+   * @returns {!Iterable.<INode>} The newly created nodes
    */
   addPersons(persons) {
     for (const person of persons) {
-      this.$addPerson(person)
+      this.addPerson(person)
     }
-    this.$seen.clear()
+    this._seen.clear()
 
-    const existingNodes = this.$graphBuilder.graph.nodes.toList()
+    const existingNodes = this._graphBuilder.graph.nodes.toList()
     this.updateGraph()
-    return this.$graphBuilder.graph.nodes.filter(node => !existingNodes.includes(node))
+    return this._graphBuilder.graph.nodes.filter(node => !existingNodes.includes(node))
   }
 
   /**
    * Helper method to add a person to the graph in which we make sure to not add the same person
    * multiple times.
-   * @param {object} newPerson The person that should be added
-   * @return {object} The newly added or existing person
+   * @param {!Person} newPerson The person that should be added
+   * @returns {!Person} The newly added or existing person
    */
-  $addPerson(newPerson) {
-    const existingPerson = this.$persons.find(p => p.id === newPerson.id)
+  addPerson(newPerson) {
+    const existingPerson = this._persons.find(person => person.id === newPerson.id)
 
-    if (this.$seen.has(newPerson)) {
+    if (this._seen.has(newPerson)) {
       return existingPerson
     }
 
-    this.$seen.add(newPerson)
+    this._seen.add(newPerson)
 
     if (newPerson.friends) {
-      newPerson.friends = newPerson.friends.map(friend => this.$addPerson(friend))
+      newPerson.friends = newPerson.friends.map(friend => this.addPerson(friend))
     } else {
       newPerson.friends = []
     }
@@ -97,7 +106,7 @@ export class SocialNetworkGraphBuilder {
       existingPerson.friendsCount = existingPerson.friendsCount || newPerson.friendsCount
       return existingPerson
     } else {
-      this.$persons.push(newPerson)
+      this._persons.push(newPerson)
       return newPerson
     }
   }
@@ -106,28 +115,28 @@ export class SocialNetworkGraphBuilder {
    * Updates the diagram with the help of the {@link GraphBuilder}.
    */
   updateGraph() {
-    this.$graphBuilder.setData(this.$nodesSource, this.$persons)
-    this.$graphBuilder.setData(this.$edgesSource, this.createEdgesSource())
-    this.$graphBuilder.updateGraph()
+    this._graphBuilder.setData(this._nodesSource, this._persons)
+    this._graphBuilder.setData(this._edgesSource, this.createEdgesSource())
+    this._graphBuilder.updateGraph()
   }
 
   /**
    * Creates the edges for the persons that are currently in the graph.
-   * @return {[]} A list of connections
+   * @returns {!Array.<Friendship>} A list of connections
    */
   createEdgesSource() {
     const edges = []
 
-    this.$persons.forEach(person => {
-      person.friends.forEach(friend => {
+    for (const person of this._persons) {
+      for (const friend of person.friends) {
         const from = Math.min(person.id, friend.id)
         const to = Math.max(person.id, friend.id)
 
-        if (!edges.some(e => e.from === from && e.to === to)) {
+        if (!edges.some(edge => edge.from === from && edge.to === to)) {
           edges.push({ from, to })
         }
-      })
-    })
+      }
+    }
 
     return edges
   }

@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -134,7 +134,7 @@ public class SimpleLoadSaveServlet extends HttpServlet {
     try {
       out = resp.getWriter();
       String encoded = encodeMessage(message);
-      out.println("<html><head><script type='text/javascript'>"
+      out.println("<html lang="en"><head><script type='text/javascript'>"
               + "function onLoad() {\n"
               + "window.parent.postMessage(\"" + encoded + "\",\"*\") ;\n"
               + "}</script></head>"

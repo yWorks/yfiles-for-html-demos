@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -31,17 +31,19 @@ import {
   GraphComponent,
   GraphEditorInputMode,
   GraphMLIOHandler,
+  IGraph,
   License,
-  Point
+  Point,
+  StorageLocation
 } from 'yfiles'
 
-import SaveViaServerOperation from './SaveViaServerOperation.js'
+import OpenFromFileOperation from './OpenFromFileOperation.js'
+import OpenFromWebStorageOperation from './OpenFromWebStorageOperation.js'
 import OpenViaServerOperation from './OpenViaServerOperation.js'
 import SaveToFileOperation from './SaveToFileOperation.js'
-import SaveToWebStorageOperation from './SaveToWebStorageOperation.js'
 import SaveToNewWindowOperation from './SaveToNewWindowOperation.js'
-import OpenFromWebStorageOperation from './OpenFromWebStorageOperation.js'
-import OpenFromFileOperation from './OpenFromFileOperation.js'
+import SaveToWebStorageOperation from './SaveToWebStorageOperation.js'
+import SaveViaServerOperation from './SaveViaServerOperation.js'
 import { bindAction, showApp } from '../../resources/demo-app.js'
 import DemoStyles, {
   DemoSerializationListener,
@@ -49,102 +51,136 @@ import DemoStyles, {
 } from '../../resources/demo-styles.js'
 import loadJson from '../../resources/load-json.js'
 
-/** @type GraphComponent */
-let graphComponent = null
+const STORAGE_LOCATION = StorageLocation.LOCAL_STORAGE
+const STORAGE_URI = 'www.yworks.com/yFilesHTML/GraphML/'
 
-let openFileReaderOperation = null
-let openFromStorageOperation = null
-let openViaServerOperation = null
+const DEMO_IO_ORIGIN = 'http://localhost:4242'
+const DEMO_IO_ENDPOINT = DEMO_IO_ORIGIN + '/file/'
 
-let saveToFileOperation = null
-let saveToWindowOperation = null
-let saveToStorageOperation = null
-let saveViaServerOperation = null
+/** @type {OpenFromFileOperation} */
+let openFileReaderOperation
+/** @type {OpenFromWebStorageOperation} */
+let openFromStorageOperation
+/** @type {OpenViaServerOperation} */
+let openViaServerOperation
 
-/** @type GraphMLIOHandler */
-let ioh = null
+/** @type {SaveToFileOperation} */
+let saveToFileOperation
+/** @type {SaveToNewWindowOperation} */
+let saveToWindowOperation
+/** @type {SaveToWebStorageOperation} */
+let saveToStorageOperation
+/** @type {SaveViaServerOperation} */
+let saveViaServerOperation
 
+/** @type {GraphMLIOHandler} */
+let ioh
+
+/**
+ * @param {!object} licenseData
+ */
 function run(licenseData) {
   License.value = licenseData
-  graphComponent = new GraphComponent('graphComponent')
 
-  // enable folding
-  const foldingManager = new FoldingManager()
-  foldingManager.masterGraph.undoEngineEnabled = true
+  const graphComponent = new GraphComponent('graphComponent')
+  graphComponent.graph = createConfiguredGraph()
 
-  const foldingView = foldingManager.createFoldingView()
-  foldingView.enqueueNavigationalUndoUnits = true
-  graphComponent.graph = foldingView.graph
-
-  // initialize the default style of the nodes and edges
-  initDemoStyles(foldingView.graph)
-
-  // initialize the input mode
-  const inputMode = new GraphEditorInputMode({
+  // configure user interaction
+  graphComponent.inputMode = new GraphEditorInputMode({
     allowGroupingOperations: true
   })
-  graphComponent.inputMode = inputMode
 
-  // create a GraphMLIOHandler and register the demo styles
-  ioh = new GraphMLIOHandler()
+  ioh = createIoHandler()
 
-  // enable serialization of the demo styles - without a namespace mapping, serialization will fail
-  ioh.addXamlNamespaceMapping(
-    'http://www.yworks.com/yFilesHTML/demos/FlatDemoStyle/1.0',
-    DemoStyles
-  )
-  ioh.addHandleSerializationListener(DemoSerializationListener)
-
-  // initialize the open and save operations
+  // initialize open and save operations
   initializeOperations()
 
-  // create the sample graph
-  createSampleGraph()
+  // create a sample graph
+  createSampleGraph(graphComponent.graph)
+
+  // center the graph in the visible area
+  graphComponent.fitGraphBounds()
+
+  // enable undo and redo
+  graphComponent.graph.foldingView.manager.masterGraph.undoEngineEnabled = true
 
   // wire up the UI
-  registerCommands()
+  registerCommands(graphComponent)
 
   showApp(graphComponent)
 }
 
 /**
+ * Initializes the graph instance and set default styles.
+ * @returns {!IGraph}
+ */
+function createConfiguredGraph() {
+  // enable folding
+  const foldingManager = new FoldingManager()
+  const foldingView = foldingManager.createFoldingView()
+  const graph = foldingView.graph
+
+  // initialize default style for nodes and edges
+  initDemoStyles(graph)
+
+  return graph
+}
+
+/**
+ * Creates a new GraphMLIOHandler instance that supports readng and writing demo styles.
+ * @returns {!GraphMLIOHandler}
+ */
+function createIoHandler() {
+  const handler = new GraphMLIOHandler()
+
+  // enable serialization of the demo styles - without a namespace mapping, serialization will fail
+  handler.addXamlNamespaceMapping(
+    'http://www.yworks.com/yFilesHTML/demos/FlatDemoStyle/1.0',
+    DemoStyles
+  )
+  handler.addHandleSerializationListener(DemoSerializationListener)
+  return handler
+}
+
+/**
  * Initializes the open and save operations.
+ * @returns {!Promise}
  */
 async function initializeOperations() {
   // Initialize OpenFromFileOperation
   openFileReaderOperation = new OpenFromFileOperation()
   if (!openFileReaderOperation.isAvailable()) {
-    document.querySelector('#openFromFileButton').disabled = false
+    querySelector('#openFromFileButton').disabled = false
   }
 
   // Initialize OpenFromWebStorageOperation
-  openFromStorageOperation = new OpenFromWebStorageOperation()
+  openFromStorageOperation = new OpenFromWebStorageOperation(STORAGE_LOCATION, STORAGE_URI)
 
   // Initialize SaveToNewWindowOperation
   saveToWindowOperation = new SaveToNewWindowOperation()
 
   // Initialize SaveToWebStorageOperation
-  saveToStorageOperation = new SaveToWebStorageOperation()
+  saveToStorageOperation = new SaveToWebStorageOperation(STORAGE_LOCATION, STORAGE_URI)
   updateLocalStorageButtons()
 
   // Initialize SaveToFileOperation
   saveToFileOperation = new SaveToFileOperation()
   if (!saveToFileOperation.isAvailable()) {
-    document.querySelector('#saveToFileButton').disabled = true
+    querySelector('#saveToFileButton').disabled = true
   }
 
   // Initialize OpenViaServerOperation
-  openViaServerOperation = new OpenViaServerOperation()
+  openViaServerOperation = new OpenViaServerOperation(DEMO_IO_ENDPOINT, DEMO_IO_ORIGIN)
 
   // Initialize SaveViaServerOperation
-  saveViaServerOperation = new SaveViaServerOperation()
+  saveViaServerOperation = new SaveViaServerOperation(DEMO_IO_ENDPOINT)
   try {
     // check server availability (default: disabled)
     const executable = await openViaServerOperation.checkServer()
-    document.querySelector('#openViaServerButton').disabled = !executable
-    document.querySelector('#saveViaServerButton').disabled = !executable
-  } catch (e) {
-    alert(e)
+    querySelector('#openViaServerButton').disabled = !executable
+    querySelector('#saveViaServerButton').disabled = !executable
+  } catch (err) {
+    alert(err)
   }
 }
 
@@ -152,19 +188,19 @@ async function initializeOperations() {
  * Updates the Local storage buttons.
  */
 function updateLocalStorageButtons() {
-  document.querySelector('#saveToStorageButton').disabled = !saveToStorageOperation.isAvailable()
-  document.querySelector(
-    '#openFromStorageButton'
-  ).disabled = !openFromStorageOperation.isAvailable()
+  querySelector('#saveToStorageButton').disabled = !saveToStorageOperation.isAvailable()
+  querySelector('#openFromStorageButton').disabled = !openFromStorageOperation.isAvailable()
 }
 
 /**
  * Parses the graphml file.
- * @param {string} text
+ * @param {!GraphComponent} graphComponent
+ * @param {!string} text
+ * @returns {!Promise}
  */
-async function parseGraphMLText(text) {
+async function parseGraphMLText(graphComponent, text) {
   const doc = new DOMParser().parseFromString(text, 'text/xml')
-  if (doc.documentElement === null || doc.documentElement.nodeName === 'parsererror') {
+  if (!doc.documentElement || doc.documentElement.nodeName === 'parsererror') {
     alert('Error parsing XML.')
     return
   }
@@ -172,80 +208,16 @@ async function parseGraphMLText(text) {
     // read the graph
     await ioh.readFromDocument(graphComponent.graph, doc)
     graphComponent.fitGraphBounds()
-  } catch (e) {
-    alert(`Error parsing GraphML: ${e.message}`)
+  } catch (err) {
+    alert(`Error parsing GraphML: ${err.message}`)
   }
 }
 
 /**
- * Sets the commands to the toolbar buttons.
- */
-function registerCommands() {
-  bindAction("button[data-command='New']", () => {
-    graphComponent.graph.clear()
-    graphComponent.fitGraphBounds()
-  })
-  bindAction("button[data-command='OpenFromFile']", async () => {
-    try {
-      const graphMLText = await openFileReaderOperation.open()
-      parseGraphMLText(graphMLText)
-    } catch (msg) {
-      alert(msg)
-    }
-  })
-  bindAction("button[data-command='OpenViaServer']", async () => {
-    try {
-      const graphMLText = await openViaServerOperation.open()
-      parseGraphMLText(graphMLText)
-    } catch (msg) {
-      alert(msg)
-    }
-  })
-  bindAction("button[data-command='OpenFromStorage']", async () => {
-    try {
-      const graphMLText = await openFromStorageOperation.open()
-      parseGraphMLText(graphMLText)
-    } catch (msg) {
-      alert(msg)
-    }
-  })
-  bindAction("button[data-command='SaveToFile']", async () => {
-    try {
-      const result = await ioh.write(graphComponent.graph)
-      saveToFileOperation.save(result, 'unnamed.graphml')
-    } catch (msg) {
-      alert(msg)
-    }
-  })
-  bindAction("button[data-command='SaveToWindow']", async () => {
-    const result = await ioh.write(graphComponent.graph)
-    saveToWindowOperation.save(result)
-  })
-
-  bindAction("button[data-command='SaveViaServer']", async () => {
-    try {
-      const result = await ioh.write(graphComponent.graph)
-      saveViaServerOperation.save(result)
-    } catch (msg) {
-      alert(msg)
-    }
-  })
-  bindAction("button[data-command='SaveToStorage']", async () => {
-    try {
-      const result = await ioh.write(graphComponent.graph)
-      await saveToStorageOperation.save(result)
-    } catch (msg) {
-      alert(msg)
-    }
-    updateLocalStorageButtons()
-  })
-}
-
-/**
  * Creates the sample graph.
+ * @param {!IGraph} graph
  */
-function createSampleGraph() {
-  const graph = graphComponent.graph
+function createSampleGraph(graph) {
   const node1 = graph.createNodeAt(new Point(0, 100))
   const node2 = graph.createNodeAt(new Point(100, 40))
   const node3 = graph.createNodeAt(new Point(100, 100))
@@ -254,12 +226,80 @@ function createSampleGraph() {
   graph.createEdge(node1, graph.createNodeAt(new Point(100, 160)))
   graph.createEdge(node2, graph.createNodeAt(new Point(200, 40)))
   graph.createEdge(node3, graph.createNodeAt(new Point(200, 100)))
+}
 
-  // fit the graph in the view
-  graphComponent.fitGraphBounds()
+/**
+ * Binds actions to the demo's UI controls.
+ * @param {!GraphComponent} graphComponent
+ */
+function registerCommands(graphComponent) {
+  bindAction("button[data-command='New']", () => {
+    graphComponent.graph.clear()
+    graphComponent.fitGraphBounds()
+  })
+  bindAction("button[data-command='OpenFromFile']", async () => {
+    try {
+      const graphMLText = await openFileReaderOperation.open()
+      await parseGraphMLText(graphComponent, graphMLText)
+    } catch (err) {
+      alert(err)
+    }
+  })
+  bindAction("button[data-command='OpenViaServer']", async () => {
+    try {
+      const graphMLText = await openViaServerOperation.open()
+      await parseGraphMLText(graphComponent, graphMLText)
+    } catch (err) {
+      alert(err)
+    }
+  })
+  bindAction("button[data-command='OpenFromStorage']", async () => {
+    try {
+      const graphMLText = await openFromStorageOperation.open()
+      await parseGraphMLText(graphComponent, graphMLText)
+    } catch (err) {
+      alert(err)
+    }
+  })
+  bindAction("button[data-command='SaveToFile']", async () => {
+    try {
+      const result = await ioh.write(graphComponent.graph)
+      await saveToFileOperation.save(result, 'unnamed.graphml')
+    } catch (err) {
+      alert(err)
+    }
+  })
+  bindAction("button[data-command='SaveToWindow']", async () => {
+    const result = await ioh.write(graphComponent.graph)
+    await saveToWindowOperation.save(result)
+  })
 
-  // clear the undo queue
-  graph.foldingView.manager.masterGraph.undoEngine.clear()
+  bindAction("button[data-command='SaveViaServer']", async () => {
+    try {
+      const result = await ioh.write(graphComponent.graph)
+      await saveViaServerOperation.save(result)
+    } catch (err) {
+      alert(err)
+    }
+  })
+  bindAction("button[data-command='SaveToStorage']", async () => {
+    try {
+      const result = await ioh.write(graphComponent.graph)
+      await saveToStorageOperation.save(result)
+    } catch (err) {
+      alert(err)
+    }
+    updateLocalStorageButtons()
+  })
+}
+
+/**
+ * @template {HTMLElement} T
+ * @param {!string} selector
+ * @returns {!T}
+ */
+function querySelector(selector) {
+  return document.querySelector(selector)
 }
 
 // Runs the demo.

@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -31,8 +31,10 @@ import {
   DefaultPortCandidate,
   FreeNodePortLocationModel,
   IEdgeReconnectionPortCandidateProvider,
+  IEnumerable,
   IInputModeContext,
   IListEnumerable,
+  IPortCandidate,
   List
 } from 'yfiles'
 
@@ -46,9 +48,9 @@ export default class GreenEdgePortCandidateProvider extends BaseClass(
 ) {
   /**
    * Returns all source port candidates that may be used for all nodes.
-   * @param {IInputModeContext} context The context for which the candidates should be provided
+   * @param {!IInputModeContext} context The context for which the candidates should be provided
    * @see Specified by {@link IEdgeReconnectionPortCandidateProvider#getTargetPortCandidates}.
-   * @return {IEnumerable.<IPortCandidate>}
+   * @returns {!IEnumerable.<IPortCandidate>}
    */
   getSourcePortCandidates(context) {
     const graph = context.graph
@@ -66,9 +68,9 @@ export default class GreenEdgePortCandidateProvider extends BaseClass(
 
   /**
    * Returns all target port candidates that may be used for all nodes.
-   * @param {IInputModeContext} context The context for which the candidates should be provided
+   * @param {!IInputModeContext} context The context for which the candidates should be provided
    * @see Specified by {@link IEdgeReconnectionPortCandidateProvider#getTargetPortCandidates}.
-   * @return {IEnumerable.<IPortCandidate>}
+   * @returns {!IEnumerable.<IPortCandidate>}
    */
   getTargetPortCandidates(context) {
     return this.getSourcePortCandidates(context)

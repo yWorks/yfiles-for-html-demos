@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -30,11 +30,15 @@ import { Arrow, ArrowType, DashStyle, Fill, PolylineEdgeStyle, Stroke } from 'yf
 
 /**
  * Static helpers class to create UML styles and provide methods to check for certain styles.
+ * @returns {!PolylineEdgeStyle}
  */
 export function createAssociationStyle() {
   return new PolylineEdgeStyle()
 }
 
+/**
+ * @returns {!PolylineEdgeStyle}
+ */
 export function createDirectedAssociationStyle() {
   return new PolylineEdgeStyle({
     targetArrow: new Arrow({
@@ -45,6 +49,9 @@ export function createDirectedAssociationStyle() {
   })
 }
 
+/**
+ * @returns {!PolylineEdgeStyle}
+ */
 export function createRealizationStyle() {
   return new PolylineEdgeStyle({
     stroke: new Stroke({
@@ -58,6 +65,9 @@ export function createRealizationStyle() {
   })
 }
 
+/**
+ * @returns {!PolylineEdgeStyle}
+ */
 export function createGeneralizationStyle() {
   return new PolylineEdgeStyle({
     sourceArrow: new Arrow({
@@ -68,6 +78,9 @@ export function createGeneralizationStyle() {
   })
 }
 
+/**
+ * @returns {!PolylineEdgeStyle}
+ */
 export function createAggregationStyle() {
   return new PolylineEdgeStyle({
     sourceArrow: new Arrow({
@@ -78,6 +91,9 @@ export function createAggregationStyle() {
   })
 }
 
+/**
+ * @returns {!PolylineEdgeStyle}
+ */
 export function createDependencyStyle() {
   return new PolylineEdgeStyle({
     stroke: new Stroke({
@@ -93,7 +109,7 @@ export function createDependencyStyle() {
 
 /**
  * Inheritance styles, i.e. generalization or realization
- * @param style
+ * @param {!PolylineEdgeStyle} style
  * @returns {boolean}
  */
 export function isInheritance(style) {
@@ -102,24 +118,38 @@ export function isInheritance(style) {
 
 /**
  * If the style symbolizes a generalization.
- * @param style
+ * @param {!PolylineEdgeStyle} style
  * @returns {boolean}
  */
 export function isGeneralization(style) {
-  if (!style.stroke || !style.sourceArrow) {
-    return false
-  }
-  return style.stroke.dashStyle === DashStyle.SOLID && style.sourceArrow.type === ArrowType.TRIANGLE
+  return hasStroke(style, DashStyle.SOLID) && hasArrow(style, ArrowType.TRIANGLE)
 }
 
 /**
  * If the style symbolizes a realization.
- * @param style
+ * @param {!PolylineEdgeStyle} style
  * @returns {boolean}
  */
 export function isRealization(style) {
-  if (!style.stroke || !style.sourceArrow) {
-    return false
-  }
-  return style.stroke.dashStyle === DashStyle.DASH && style.sourceArrow.type === ArrowType.TRIANGLE
+  return hasStroke(style, DashStyle.DASH) && hasArrow(style, ArrowType.TRIANGLE)
+}
+
+/**
+ * @param {!PolylineEdgeStyle} edgeStyle
+ * @param {!DashStyle} dashStyle
+ * @returns {boolean}
+ */
+function hasStroke(edgeStyle, dashStyle) {
+  const stroke = edgeStyle.stroke
+  return !!stroke && stroke.dashStyle === dashStyle
+}
+
+/**
+ * @param {!PolylineEdgeStyle} style
+ * @param {!ArrowType} arrowType
+ * @returns {boolean}
+ */
+function hasArrow(style, arrowType) {
+  const arrow = style.sourceArrow
+  return !!arrow && arrow instanceof Arrow && arrow.type === arrowType
 }

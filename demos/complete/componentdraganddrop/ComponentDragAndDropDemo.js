@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -58,11 +58,10 @@ import {
   addClass,
   bindAction,
   bindCommand,
-  passiveSupported,
-  pointerEventsSupported,
   removeClass,
   showApp
 } from '../../resources/demo-app.js'
+import { passiveSupported, pointerEventsSupported } from '../../utils/Workarounds.js'
 import loadJson from '../../resources/load-json.js'
 
 /** @type {GraphComponent} */
@@ -386,7 +385,8 @@ function onDragged(sender) {
     layoutHelper.location = graphDropInputMode.mousePosition.toPoint()
   } else if (sender instanceof MoveInputMode) {
     const moveInputMode = sender
-    layoutHelper.location = moveInputMode.inputModeContext.canvasComponent.lastEventLocation.toPoint()
+    layoutHelper.location =
+      moveInputMode.inputModeContext.canvasComponent.lastEventLocation.toPoint()
   }
   layoutHelper.runLayout()
 }
@@ -419,7 +419,8 @@ function onDragFinished(sender, itemEventArgs) {
     layoutHelper.finishLayout()
   } else if (sender instanceof MoveInputMode) {
     const moveInputMode = sender
-    layoutHelper.location = moveInputMode.inputModeContext.canvasComponent.lastEventLocation.toPoint()
+    layoutHelper.location =
+      moveInputMode.inputModeContext.canvasComponent.lastEventLocation.toPoint()
     layoutHelper.component = moveInputMode.affectedItems.filter(item => item instanceof INode)
   }
 }

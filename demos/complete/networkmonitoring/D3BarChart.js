@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -26,16 +26,15 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-/* global d3 */
-
-import NetworkMonitoringNodeStyle from './NetworkMonitoringNodeStyle.js'
+import DeviceStyle from './DeviceStyle.js'
+import { INode } from 'yfiles'
 
 /**
  * A class for creating a bar chart.
  */
 export default class D3BarChart {
   constructor() {
-    this.$currentNode = null
+    this.currentNode = null
 
     this.chartMargin = {
       top: 0,
@@ -43,6 +42,7 @@ export default class D3BarChart {
       bottom: 10,
       left: 30
     }
+
     this.chartWidth = 250 - this.chartMargin.left - this.chartMargin.right
     this.chartHeight = 75 - this.chartMargin.top - this.chartMargin.bottom
 
@@ -58,19 +58,9 @@ export default class D3BarChart {
     this.chart.append('g').attr('class', 'y axis').attr('transform', 'translate(25,0)').call(yAxis)
   }
 
-  /** @type {INode} */
-  set currentNode(value) {
-    this.$currentNode = value
-  }
-
-  /** @type {INode} */
-  get currentNode() {
-    return this.$currentNode
-  }
-
   /**
-   * Show the data of the given node as a bar chart.
-   * @param {INode} node
+   * Shows the data of the given node as a bar chart.
+   * @param {!INode} node
    */
   barChart(node) {
     if (!node) {
@@ -81,8 +71,9 @@ export default class D3BarChart {
     this.currentNode = node
 
     // Extract the last load, since it is the current value
-    const currentBarLoad = [node.tag.loadHistory[node.tag.loadHistory.length - 1]]
-    const remainingLoads = node.tag.loadHistory.slice(0, node.tag.loadHistory.length - 1)
+    const loadHistory = node.tag.loadHistory
+    const currentBarLoad = loadHistory.slice(-1)
+    const remainingLoads = loadHistory.slice(0, loadHistory.length - 1)
 
     // Width of each bar
     const currentBarWidth = (this.chartWidth / remainingLoads.length) * 2
@@ -107,7 +98,7 @@ export default class D3BarChart {
     // ... the actual bar element
     newGroups
       .append('rect')
-      .style('fill', d => NetworkMonitoringNodeStyle.convertLoadToColor(d, 0.75))
+      .style('fill', d => DeviceStyle.convertLoadToColor(d, 0.75))
       .attr('y', d => y(d))
       .attr('height', d => this.chartHeight - y(d))
       .attr('width', barWidth - 1)
@@ -115,7 +106,7 @@ export default class D3BarChart {
     // Update the already constructed bars and labels if no new data is added
     groups
       .select('rect')
-      .style('fill', d => NetworkMonitoringNodeStyle.convertLoadToColor(d, 0.75))
+      .style('fill', d => DeviceStyle.convertLoadToColor(d, 0.75))
       .attr('y', d => y(d))
       .attr('height', d => this.chartHeight - y(d))
 
@@ -133,12 +124,12 @@ export default class D3BarChart {
       .attr('class', 'current-load')
       .attr(
         'transform',
-        (d, i) => `translate(${this.chartMargin.left + remainingLoads.length * barWidth},0)`
+        () => `translate(${this.chartMargin.left + remainingLoads.length * barWidth},0)`
       )
 
     newCurrentGroup
       .append('rect')
-      .style('fill', d => NetworkMonitoringNodeStyle.convertLoadToColor(d, 1))
+      .style('fill', d => DeviceStyle.convertLoadToColor(d, 1))
       .attr('y', d => y(d))
       .attr('height', d => this.chartHeight - y(d))
       .attr('width', currentBarWidth - 1)
@@ -154,7 +145,7 @@ export default class D3BarChart {
     // Update data
     currentGroup
       .select('rect')
-      .style('fill', d => NetworkMonitoringNodeStyle.convertLoadToColor(d, 1))
+      .style('fill', d => DeviceStyle.convertLoadToColor(d, 1))
       .attr('y', d => y(d))
       .attr('height', d => this.chartHeight - y(d))
 

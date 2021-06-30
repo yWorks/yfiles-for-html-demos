@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -126,6 +126,8 @@ Class.ensure(LayoutExecutor)
  * @returns {!Promise}
  */
 async function runLayout() {
+  const layoutButton = document.getElementById('layout-btn')
+  layoutButton.disabled = true
   // Uses the morphLayout method to perform the layout, animate it, manage undo and adjust the content rectangle in
   // one call. Here, the actual layout is wrapped into a MinimumNodeSizeStage to avoid errors with nodes of size '0'.
   // morphLayout runs asynchronously and returns immediately yielding a Promise that we can await or use to catch
@@ -144,6 +146,8 @@ async function runLayout() {
     } else {
       throw error
     }
+  } finally {
+    layoutButton.disabled = false
   }
   /*
   // Alternatively we can do this directly on the graph, without animation

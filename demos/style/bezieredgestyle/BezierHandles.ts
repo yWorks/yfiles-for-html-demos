@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -48,7 +48,7 @@ const EPS = 1e-6
  * If the control point triple is currently collinear, this implementation moves the <b>other</b> outer control point
  * of the triple so that this invariant is kept. Otherwise, the other control point is not adjusted.
  */
-export class OuterControlPointHandle extends BaseClass<IHandle>(IHandle) {
+export class OuterControlPointHandle extends BaseClass(IHandle) {
   /**
    * The core bend handle that performs the actual bend movement.
    */
@@ -242,7 +242,7 @@ export class OuterControlPointHandle extends BaseClass<IHandle>(IHandle) {
  * If the control point triple is currently collinear, this implementation moves the  outer control points
  * of the triple so that this invariant is kept. Otherwise, the other control points are not adjusted.
  */
-export class InnerControlPointHandle extends BaseClass<IHandle>(IHandle) {
+export class InnerControlPointHandle extends BaseClass(IHandle) {
   /**
    * The core bend handle that performs the actual bend movement.
    */

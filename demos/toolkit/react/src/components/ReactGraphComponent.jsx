@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -26,34 +26,54 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-/* eslint-disable react/prop-types */
 import React, { Component } from 'react'
 import ReactDOM from 'react-dom'
+import PropTypes from 'prop-types'
 import {
   Arrow,
   DefaultLabelStyle,
   Font,
   GraphBuilder,
   GraphComponent,
+  GraphItemTypes,
   GraphViewerInputMode,
   HierarchicLayout,
   ICommand,
-  LayoutExecutor,
+  IEdge,
+  INode,
+  LayoutExecutorAsync,
   License,
+  Point,
   PolylineEdgeStyle,
-  Size
+  Rect,
+  Size,
+  TimeSpan
 } from 'yfiles'
-import 'yfiles/yfiles.css'
 import './ReactGraphComponent.css'
-import ItemElement from './ItemElement.jsx'
 import DemoToolbar from './DemoToolbar.jsx'
 import yFilesLicense from '../license.json'
 import { ReactComponentNodeStyle } from './ReactComponentNodeStyle'
 import NodeTemplate from './NodeTemplate'
+import LayoutWorker from 'worker-loader!./LayoutWorker.js'
+import { ContextMenu } from './ContextMenu'
+import ReactGraphOverviewComponent from './GraphOverviewComponent'
+import Tooltip from './Tooltip'
+import GraphSearch from '../utils/GraphSearch'
+
+const layoutWorker = new LayoutWorker()
 
 export default class ReactGraphComponent extends Component {
   constructor(props) {
     super(props)
+    this.state = {
+      contextMenu: {
+        show: false,
+        x: 0,
+        y: 0,
+        items: []
+      }
+    }
+
     // Newly created elements are animated during which the graph data should not be modified
     this.updating = false
     this.scheduledUpdate = null
@@ -62,10 +82,15 @@ export default class ReactGraphComponent extends Component {
     // include the yFiles License
     License.value = yFilesLicense
 
-    // Initialize the GraphComponent
+    // initialize the GraphComponent
     this.graphComponent = new GraphComponent()
+    // register interaction
     this.graphComponent.inputMode = new GraphViewerInputMode()
-    this.initializeTooltips(this.graphComponent.inputMode)
+    // register context menu on nodes and edges
+    this.initializeContextMenu()
+    // register tooltips
+    this.initializeTooltips()
+    // specify default styles for newly created nodes and edges
     this.initializeDefaultStyles()
   }
 
@@ -83,6 +108,35 @@ export default class ReactGraphComponent extends Component {
     // Layout the graph with the hierarchic layout style
     await this.graphComponent.morphLayout(new HierarchicLayout(), '1s')
     this.updating = false
+
+    this.initializeGraphSearch()
+  }
+
+  /**
+   * Initializes the node search input.
+   */
+  initializeGraphSearch() {
+    this.graphSearch = new NodeTagSearch(this.graphComponent)
+    this.graphComponent.graph.addNodeCreatedListener(this.updateSearch.bind(this))
+    this.graphComponent.graph.addNodeRemovedListener(this.updateSearch.bind(this))
+    this.graphComponent.graph.addLabelAddedListener(this.updateSearch.bind(this))
+    this.graphComponent.graph.addLabelRemovedListener(this.updateSearch.bind(this))
+    this.graphComponent.graph.addLabelTextChangedListener(this.updateSearch.bind(this))
+  }
+
+  /**
+   * Updates the search highlights.
+   */
+  updateSearch() {
+    this.graphSearch.updateSearch(this.$query)
+  }
+
+  /**
+   * Called when the search query has changed.
+   */
+  onSearchQueryChanged(query) {
+    this.$query = query
+    this.updateSearch()
   }
 
   /**
@@ -107,31 +161,141 @@ export default class ReactGraphComponent extends Component {
   }
 
   /**
-   * Set ups the tooltips for nodes and edges.
-   * @param {GraphViewerInputMode} inputMode
+   * Helper function to update the context menu state.
    */
-  initializeTooltips(inputMode) {
+  updateContextMenuState(key, value) {
+    const contextMenuState = { ...this.state.contextMenu }
+    contextMenuState[key] = value
+    this.setState({ contextMenu: contextMenuState })
+  }
+
+  /**
+   * Registers a context menu for nodes and edges on the input mode.
+   */
+  initializeContextMenu() {
+    const inputMode = this.graphComponent.inputMode
+    ContextMenu.addOpeningEventListeners(this.graphComponent, location => {
+      const worldLocation = this.graphComponent.toWorldFromPage(location)
+      const showMenu = inputMode.contextMenuInputMode.shouldOpenMenu(worldLocation)
+      if (showMenu) {
+        this.openMenu(location)
+      }
+    })
+
+    inputMode.addPopulateItemContextMenuListener((sender, args) => {
+      // select the item
+      this.graphComponent.selection.clear()
+      this.graphComponent.selection.setSelected(args.item, true)
+      // populate the menu
+      this.populateContextMenu(args)
+    })
+    inputMode.contextMenuInputMode.addCloseMenuListener(this.hideMenu.bind(this))
+  }
+
+  /**
+   * Hides the context menu.
+   */
+  hideMenu() {
+    this.updateContextMenuState('show', false)
+  }
+
+  /**
+   * Shows the context menu at the given location
+   * @param {Point} location
+   */
+  openMenu(location) {
+    this.updateContextMenuState('x', location.x)
+    this.updateContextMenuState('y', location.y)
+    this.updateContextMenuState('show', true)
+  }
+
+  /**
+   * Populates the context menu depending on the given context.
+   * @param {PopulateItemContextMenuEventArgs} args
+   */
+  populateContextMenu(args) {
+    const contextMenuItems = []
+    const item = args.item
+    if (item instanceof INode || item instanceof IEdge) {
+      contextMenuItems.push({
+        title: 'Zoom to item',
+        action: () => {
+          // center the item in the viewport
+          const targetBounds =
+            item instanceof INode
+              ? item.layout.toRect()
+              : Rect.add(item.sourceNode.layout.toRect(), item.targetNode.layout.toRect())
+          ICommand.ZOOM.execute(
+            targetBounds.getEnlarged(50 / this.graphComponent.zoom),
+            this.graphComponent
+          )
+        }
+      })
+    }
+
+    this.updateContextMenuState('items', contextMenuItems)
+    if (contextMenuItems.length > 0) {
+      args.showMenu = true
+    }
+  }
+
+  /**
+   * Dynamic tooltips are implemented by adding a tooltip provider as an event handler for
+   * the {@link MouseHoverInputMode#addQueryToolTipListener QueryToolTip} event of the
+   * GraphEditorInputMode using the
+   * {@link ToolTipQueryEventArgs} parameter.
+   * The {@link ToolTipQueryEventArgs} parameter provides three relevant properties:
+   * Handled, QueryLocation, and ToolTip. The Handled property is a flag which indicates
+   * whether the tooltip was already set by one of possibly several tooltip providers. The
+   * QueryLocation property contains the mouse position for the query in world coordinates.
+   * The tooltip is set by setting the ToolTip property.
+   */
+  initializeTooltips() {
+    const inputMode = this.graphComponent.inputMode
+
+    // show tooltips only for nodes and edges
+    inputMode.toolTipItems = GraphItemTypes.NODE | GraphItemTypes.EDGE
+
     // Customize the tooltip's behavior to our liking.
     const mouseHoverInputMode = inputMode.mouseHoverInputMode
-    mouseHoverInputMode.toolTipLocationOffset = [15, 15]
-    mouseHoverInputMode.delay = '500ms'
-    mouseHoverInputMode.duration = '5s'
+    mouseHoverInputMode.toolTipLocationOffset = new Point(15, 15)
+    mouseHoverInputMode.delay = TimeSpan.fromMilliseconds(500)
+    mouseHoverInputMode.duration = TimeSpan.fromSeconds(5)
 
     // Register a listener for when a tooltip should be shown.
-    inputMode.addQueryItemToolTipListener((src, args) => {
-      if (args.handled) {
-        // Tooltip content has already been assigned => nothing to do.
+    inputMode.addQueryItemToolTipListener((src, eventArgs) => {
+      if (eventArgs.handled) {
+        // Tooltip content has already been assigned -> nothing to do.
         return
       }
 
-      // Re-use the React-Component to render the tooltip content
-      const container = document.createElement('div')
-      ReactDOM.render(<ItemElement item={args.item.tag} />, container)
-      args.toolTip = container
+      // Use a rich HTML element as tooltip content. Alternatively, a plain string would do as well.
+      eventArgs.toolTip = this.createTooltipContent(eventArgs.item)
 
       // Indicate that the tooltip content has been set.
-      args.handled = true
+      eventArgs.handled = true
     })
+  }
+
+  /**
+   * The tooltip may either be a plain string or it can also be a rich HTML element. In this case, we
+   * show the latter by using a dynamically compiled Vue component.
+   * @param {IModelItem} item
+   * @returns {HTMLElement}
+   */
+  createTooltipContent(item) {
+    const title = item instanceof INode ? 'Node Data' : 'Edge Data'
+    const content = JSON.stringify(item.tag)
+
+    const props = {
+      title,
+      content
+    }
+    const tooltipContainer = document.createElement('div')
+    const element = React.createElement(Tooltip, props)
+    ReactDOM.render(element, tooltipContainer)
+
+    return tooltipContainer
   }
 
   /**
@@ -201,12 +365,26 @@ export default class ReactGraphComponent extends Component {
       this.isDirty = false
 
       // apply a layout to re-arrange the new elements
-      const layoutExecutor = new LayoutExecutor(this.graphComponent, new HierarchicLayout())
-      layoutExecutor.duration = '1s'
-      layoutExecutor.easedAnimation = true
-      layoutExecutor.animateViewport = true
-      await layoutExecutor.start()
+
+      // create an asynchronous layout executor that calculates a layout on the worker
+      const executor = new LayoutExecutorAsync({
+        messageHandler: webWorkerMessageHandler,
+        graphComponent: this.graphComponent,
+        duration: '1s',
+        animateViewport: true,
+        easedAnimation: true
+      })
+
+      await executor.start()
       this.updating = false
+    }
+
+    // helper function that performs the actual message passing to the web worker
+    function webWorkerMessageHandler(data) {
+      return new Promise(resolve => {
+        layoutWorker.onmessage = e => resolve(e.data)
+        layoutWorker.postMessage(data)
+      })
     }
   }
 
@@ -220,6 +398,7 @@ export default class ReactGraphComponent extends Component {
             zoomOut={() => ICommand.DECREASE_ZOOM.execute(null, this.graphComponent)}
             resetZoom={() => ICommand.ZOOM.execute(1.0, this.graphComponent)}
             fitContent={() => ICommand.FIT_GRAPH_BOUNDS.execute(null, this.graphComponent)}
+            searchChange={evt => this.onSearchQueryChanged(evt.target.value)}
           />
         </div>
         <div
@@ -228,6 +407,16 @@ export default class ReactGraphComponent extends Component {
             this.div = node
           }}
         />
+        <ContextMenu
+          x={this.state.contextMenu.x}
+          y={this.state.contextMenu.y}
+          show={this.state.contextMenu.show}
+          items={this.state.contextMenu.items}
+          hideMenu={() => this.hideMenu()}
+        />
+        <div style={{ position: 'absolute', left: '20px', top: '120px' }}>
+          <ReactGraphOverviewComponent graphComponent={this.graphComponent} />
+        </div>
       </div>
     )
   }
@@ -237,5 +426,20 @@ ReactGraphComponent.defaultProps = {
   graphData: {
     nodesSource: [],
     edgesSource: []
+  }
+}
+
+ReactGraphComponent.propTypes = {
+  graphData: PropTypes.object,
+  onResetData: PropTypes.func
+}
+
+class NodeTagSearch extends GraphSearch {
+  matches(node, text) {
+    if (node.tag) {
+      const data = node.tag
+      return data.name.toLowerCase().indexOf(text.toLowerCase()) !== -1
+    }
+    return false
   }
 }

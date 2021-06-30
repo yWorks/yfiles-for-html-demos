@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-explicit-any,@typescript-eslint/restrict-template-expressions */
 import {
   AdjacencyTypes,
   BaseClass,
@@ -283,8 +283,7 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
    * For nodes, their labels, ports and adjacent edges are hidden. For edges, their labels, ports and bends are hidden.
    */
   private $hide(portOwner: IPortOwner): void {
-    const aggregationNode =
-      portOwner instanceof AggregationNode ? (portOwner as AggregationNode) : null
+    const aggregationNode = portOwner instanceof AggregationNode ? portOwner : null
     if (aggregationNode) {
       const oldIsGroupNode = this.isGroupNode(aggregationNode)
       const oldParent = this.getParent(aggregationNode)
@@ -296,8 +295,7 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
       return
     }
 
-    const aggregationEdge =
-      portOwner instanceof AggregationEdge ? (portOwner as AggregationEdge) : null
+    const aggregationEdge = portOwner instanceof AggregationEdge ? portOwner : null
     if (aggregationEdge) {
       this.$hideAdjacentEdges(aggregationEdge)
       this.$filteredAggregationItems.add(aggregationEdge)
@@ -326,7 +324,7 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
    */
   private $show(item: IPortOwner): void {
     if (item instanceof AggregationNode) {
-      const aggregationNode = item as AggregationNode
+      const aggregationNode = item
       this.$filteredAggregationItems.delete(aggregationNode)
       this.onNodeCreated(
         new NodeEventArgs(
@@ -427,7 +425,7 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
     tag?: any
   ): INode {
     const badNode = nodes.firstOrDefault(node => !this.contains(node))
-    if (badNode) {
+    if (badNode != null) {
       throw new Error(
         `ArgumentError: Affected parameter nodes: Cannot aggregate node ${badNode} that is not in this graph.`
       )
@@ -443,8 +441,7 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
     const parent = this.groupingSupport.getNearestCommonAncestor(nodes)
     if (parent) {
       aggregationNode.parent = parent
-      const aggregationNodeParent =
-        parent instanceof AggregationNode ? (parent as AggregationNode) : null
+      const aggregationNodeParent = parent instanceof AggregationNode ? parent : null
       if (aggregationNodeParent) {
         aggregationNodeParent.children!.add(aggregationNode)
       }
@@ -581,7 +578,7 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
       )
     }
 
-    const aggregationNode = node as AggregationNode
+    const aggregationNode = node
 
     const adjacentEdges = this.edgesAt(aggregationNode, AdjacencyTypes.ALL).toList()
     for (const edge of adjacentEdges) {
@@ -605,9 +602,9 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
   private $showOrRemoveAggregatedEdges(aggregationEdge: AggregationEdge): void {
     for (const aggregatedEdge of aggregationEdge.aggregatedEdges) {
       if (aggregatedEdge instanceof AggregationEdge) {
-        const replacedEdge = aggregationEdge as AggregationEdge
+        const replacedEdge = aggregationEdge
         // manually show aggregated AggregationEdges, other edges are handled by filtered graph
-        if (this.contains(replacedEdge.sourcePort!) && this.contains(replacedEdge.targetPort!)) {
+        if (this.contains(replacedEdge.sourcePort) && this.contains(replacedEdge.targetPort)) {
           this.$show(aggregatedEdge)
         } else {
           this.$removeAggregationEdge(replacedEdge)
@@ -651,7 +648,7 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
     const isIncoming = adjacencyType === AdjacencyTypes.INCOMING
 
     let edgesAt: IEnumerable<IEdge> = this.$aggregationEdges.filter(edge =>
-      node.ports.includes(isIncoming ? edge.targetPort! : edge.sourcePort!)
+      node.ports.includes(isIncoming ? edge.targetPort : edge.sourcePort)
     )
 
     if (!this.isAggregationItem(node)) {
@@ -687,7 +684,7 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
     }
   }
 
-  private $findAggregationNode(node: INode): AggregationNode {
+  private $findAggregationNode(node: INode): AggregationNode | null {
     return this.aggregationNodes.firstOrDefault(n => n.aggregatedNodes.includes(node))
   }
 
@@ -738,11 +735,11 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
    */
   public getAggregatedItems<T extends IModelItem>(item: T): IListEnumerable<T> {
     if (item instanceof AggregationNode) {
-      return new ListEnumerable<T>((item.aggregatedNodes as unknown) as IList<T>)
+      return new ListEnumerable<T>(item.aggregatedNodes as unknown as IList<T>)
     }
 
     if (item instanceof AggregationEdge) {
-      return new ListEnumerable<T>((item.aggregatedEdges as unknown) as IList<T>)
+      return new ListEnumerable<T>(item.aggregatedEdges as unknown as IList<T>)
     }
 
     return IListEnumerable.EMPTY
@@ -783,7 +780,7 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
   }
 
   private $removeCore(item: IModelItem): void {
-    const aggregationNode = item instanceof AggregationNode ? (item as AggregationNode) : null
+    const aggregationNode = item instanceof AggregationNode ? item : null
     if (aggregationNode) {
       if (aggregationNode.graph !== this) {
         return
@@ -796,7 +793,7 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
       return
     }
 
-    const aggregationEdge = item instanceof AggregationEdge ? (item as AggregationEdge) : null
+    const aggregationEdge = item instanceof AggregationEdge ? item : null
     if (aggregationEdge) {
       if (aggregationEdge.graph !== this) {
         return
@@ -807,17 +804,17 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
         this.$removeCore(aggregatedEdge)
       }
 
-      this.$cleanupPort(aggregationEdge.sourcePort!)
-      this.$cleanupPort(aggregationEdge.targetPort!)
+      this.$cleanupPort(aggregationEdge.sourcePort)
+      this.$cleanupPort(aggregationEdge.targetPort)
       return
     }
 
     if (item instanceof AggregationBend) {
-      this.$removeAggregationBend(item as AggregationBend)
+      this.$removeAggregationBend(item)
     } else if (item instanceof AggregationPort) {
-      this.$removeAggregationPort(item as AggregationPort)
+      this.$removeAggregationPort(item)
     } else if (item instanceof AggregationLabel) {
-      this.$removeAggregationLabel(item as AggregationLabel)
+      this.$removeAggregationLabel(item)
     } else {
       super.remove(item)
     }
@@ -827,11 +824,12 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
     const isAggregationItem = this.isAggregationItem(port)
     let tmp
     // check the auto-cleanup policy to apply
-    const autoCleanUp = (isAggregationItem
-      ? this.aggregationNodeDefaults
-      : this.isGroupNode((tmp = port.owner) instanceof INode ? (tmp as INode) : null)
-      ? this.wrappedGraph!.groupNodeDefaults
-      : this.wrappedGraph!.nodeDefaults
+    const autoCleanUp = (
+      isAggregationItem
+        ? this.aggregationNodeDefaults
+        : this.isGroupNode((tmp = port.owner) instanceof INode ? tmp : null)
+        ? this.wrappedGraph!.groupNodeDefaults
+        : this.wrappedGraph!.nodeDefaults
     ).ports.autoCleanUp
     if (!autoCleanUp) {
       return
@@ -894,7 +892,7 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
     }
     ;(aggregationPort.owner as AggregationNode | AggregationEdge)!.$ports.remove(aggregationPort)
     aggregationPort.graph = null
-    this.onPortRemoved(new PortEventArgs(aggregationPort, aggregationPort.owner!))
+    this.onPortRemoved(new PortEventArgs(aggregationPort, aggregationPort.owner))
   }
 
   private $removeAggregationLabel(aggregationLabel: AggregationLabel): void {
@@ -976,23 +974,23 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
   }
 
   public contains(item: IModelItem | null): boolean {
-    const node = item instanceof AggregationNode ? (item as AggregationNode) : null
+    const node = item instanceof AggregationNode ? item : null
     if (node) {
       return node.graph === this && this.$aggregationItemPredicate(node)
     }
-    const edge = item instanceof AggregationEdge ? (item as AggregationEdge) : null
+    const edge = item instanceof AggregationEdge ? item : null
     if (edge) {
       return edge.graph === this && this.$aggregationItemPredicate(edge)
     }
-    const port = item instanceof AggregationPort ? (item as AggregationPort) : null
+    const port = item instanceof AggregationPort ? item : null
     if (port) {
-      return port.graph === this && this.contains(port.owner!)
+      return port.graph === this && this.contains(port.owner)
     }
-    const label = item instanceof AggregationLabel ? (item as AggregationLabel) : null
+    const label = item instanceof AggregationLabel ? item : null
     if (label) {
       return label.graph === this && this.contains(label.owner)
     }
-    const bend = item instanceof AggregationBend ? (item as AggregationBend) : null
+    const bend = item instanceof AggregationBend ? item : null
     if (bend) {
       return bend.graph === this && this.contains(bend.owner)
     }
@@ -1009,7 +1007,7 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
       )
     }
 
-    const aggregationNode = node instanceof AggregationNode ? (node as AggregationNode) : null
+    const aggregationNode = node instanceof AggregationNode ? node : null
     if (aggregationNode) {
       const oldLayout = aggregationNode.layout.toRect()
       aggregationNode.layout.reshape(layout)
@@ -1035,7 +1033,7 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
     if (!(owner instanceof IPortOwner)) {
       const options = owner
       owner = options.owner
-      locationParameter = options.locationParameter!
+      locationParameter = options.locationParameter
       style = options.style
       tag = options.tag
     }
@@ -1051,7 +1049,7 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
       )
     }
 
-    const aggregationNode = owner instanceof AggregationNode ? (owner as AggregationNode) : null
+    const aggregationNode = owner instanceof AggregationNode ? owner : null
     if (aggregationNode) {
       const portLocationParameter =
         locationParameter || this.aggregationNodeDefaults.ports.getLocationParameterInstance(owner)
@@ -1094,7 +1092,7 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
       )
     }
 
-    const aggregationPort = port instanceof AggregationPort ? (port as AggregationPort) : null
+    const aggregationPort = port instanceof AggregationPort ? port : null
     if (aggregationPort) {
       const oldParameter = port.locationParameter
       aggregationPort.locationParameter = locationParameter
@@ -1116,7 +1114,7 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
       )
     }
 
-    const aggregationEdge = edge instanceof AggregationEdge ? (edge as AggregationEdge) : null
+    const aggregationEdge = edge instanceof AggregationEdge ? edge : null
     if (aggregationEdge) {
       const aggregationBend = new AggregationBend(this, aggregationEdge, new MutablePoint(location))
       const bendList = aggregationEdge.$bends
@@ -1144,7 +1142,7 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
       )
     }
 
-    const aggregationBend = bend instanceof AggregationBend ? (bend as AggregationBend) : null
+    const aggregationBend = bend instanceof AggregationBend ? bend : null
     if (aggregationBend) {
       const oldLocation = aggregationBend.location.toPoint()
       aggregationBend.location.relocate(location)
@@ -1193,7 +1191,7 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
       owner instanceof AggregationNode ||
       owner instanceof AggregationEdge ||
       owner instanceof AggregationPort
-        ? (owner as AggregationNode | AggregationEdge | AggregationPort)
+        ? owner
         : null
     if (labelOwner) {
       if (!this.contains(owner)) {
@@ -1236,7 +1234,7 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
     } else if (owner instanceof AggregationEdge) {
       return this.aggregationEdgeDefaults.labels.getLayoutParameterInstance(owner)
     } else {
-      const aggregationPort = owner as AggregationPort
+      const aggregationPort = owner
       if (aggregationPort.owner instanceof INode) {
         return this.aggregationNodeDefaults.ports.labels.getLayoutParameterInstance(owner)
       } else {
@@ -1251,7 +1249,7 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
     } else if (owner instanceof AggregationEdge) {
       return this.aggregationEdgeDefaults.labels.getStyleInstance(owner)
     } else {
-      const aggregationPort = owner as AggregationPort
+      const aggregationPort = owner
       if (aggregationPort.owner instanceof INode) {
         return this.aggregationNodeDefaults.ports.labels.getStyleInstance(owner)
       } else {
@@ -1268,7 +1266,7 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
       throw new Error('ArgumentError: Affected parameter label: Label is not in this graph.')
     }
 
-    const aggregationLabel = label instanceof AggregationLabel ? (label as AggregationLabel) : null
+    const aggregationLabel = label instanceof AggregationLabel ? label : null
     if (aggregationLabel) {
       const oldText = label.text
       aggregationLabel.text = text
@@ -1291,7 +1289,7 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
       )
     }
 
-    const aggregationLabel = label instanceof AggregationLabel ? (label as AggregationLabel) : null
+    const aggregationLabel = label instanceof AggregationLabel ? label : null
     if (aggregationLabel) {
       const oldPreferredSize = label.preferredSize
       aggregationLabel.preferredSize = preferredSize
@@ -1321,7 +1319,7 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
       )
     }
 
-    const aggregationLabel = label instanceof AggregationLabel ? (label as AggregationLabel) : null
+    const aggregationLabel = label instanceof AggregationLabel ? label : null
     if (aggregationLabel) {
       const oldParameter = label.layoutParameter
       aggregationLabel.layoutParameter = layoutParameter
@@ -1342,7 +1340,7 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
     }
 
     if (item instanceof INode) {
-      const aggregationNode = item instanceof AggregationNode ? (item as AggregationNode) : null
+      const aggregationNode = item instanceof AggregationNode ? item : null
       if (aggregationNode) {
         if (aggregationNode.style !== style) {
           const oldStyle = aggregationNode.style
@@ -1353,7 +1351,7 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
         super.setStyle(item, style as INodeStyle)
       }
     } else if (item instanceof IEdge) {
-      const aggregationEdge = item instanceof AggregationEdge ? (item as AggregationEdge) : null
+      const aggregationEdge = item instanceof AggregationEdge ? item : null
       if (aggregationEdge) {
         if (aggregationEdge.style !== style) {
           const oldStyle = aggregationEdge.style
@@ -1364,7 +1362,7 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
         super.setStyle(item, style as IEdgeStyle)
       }
     } else if (item instanceof ILabel) {
-      const aggregationLabel = item instanceof AggregationLabel ? (item as AggregationLabel) : null
+      const aggregationLabel = item instanceof AggregationLabel ? item : null
       if (aggregationLabel) {
         if (aggregationLabel.style !== style) {
           const oldStyle = aggregationLabel.style
@@ -1375,7 +1373,7 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
         super.setStyle(item, style as ILabelStyle)
       }
     } else {
-      const aggregationPort = item instanceof AggregationPort ? (item as AggregationPort) : null
+      const aggregationPort = item instanceof AggregationPort ? item : null
       if (aggregationPort) {
         if (aggregationPort.style !== style) {
           const oldStyle = aggregationPort.style
@@ -1398,7 +1396,7 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
       throw new Error('ArgumentError: Affected parameter node: Node is not in this graph.')
     }
 
-    const aggregationNode = node instanceof AggregationNode ? (node as AggregationNode) : null
+    const aggregationNode = node instanceof AggregationNode ? node : null
     if (aggregationNode) {
       return new ListEnumerable<INode>(aggregationNode.children || IListEnumerable.EMPTY)
     }
@@ -1413,7 +1411,7 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
       throw new Error('ArgumentError: Affected parameter node: Node is not in this graph.')
     }
 
-    const aggregationNode = node instanceof AggregationNode ? (node as AggregationNode) : null
+    const aggregationNode = node instanceof AggregationNode ? node : null
     if (aggregationNode) {
       return aggregationNode.parent
     }
@@ -1437,8 +1435,7 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
     }
 
     const oldParent = this.getParent(node)
-    const oldAggregationParent =
-      oldParent instanceof AggregationNode ? (oldParent as AggregationNode) : null
+    const oldAggregationParent = oldParent instanceof AggregationNode ? oldParent : null
     if (oldAggregationParent && oldAggregationParent.children) {
       oldAggregationParent.children.remove(node)
     }
@@ -1453,12 +1450,11 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
         this.setIsGroupNode(parent, true)
       }
 
-      const aggregationNode = node instanceof AggregationNode ? (node as AggregationNode) : null
+      const aggregationNode = node instanceof AggregationNode ? node : null
       if (aggregationNode) {
         aggregationNode.parent = node
       }
-      const aggregationParent =
-        parent instanceof AggregationNode ? (parent as AggregationNode) : null
+      const aggregationParent = parent instanceof AggregationNode ? parent : null
       if (aggregationParent) {
         aggregationParent.children!.add(node)
       }
@@ -1481,7 +1477,7 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
       throw new Error('ArgumentError: Affected parameter node: Node is not in this graph.')
     }
 
-    const aggregationNode = node instanceof AggregationNode ? (node as AggregationNode) : null
+    const aggregationNode = node instanceof AggregationNode ? node : null
     if (aggregationNode) {
       if (isGroupNode && !aggregationNode.children) {
         aggregationNode.children = new List<INode>()
@@ -1510,7 +1506,7 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
       throw new Error('ArgumentError: Affected parameter node: Node is not in this graph')
     }
 
-    const aggregationNode = node instanceof AggregationNode ? (node as AggregationNode) : null
+    const aggregationNode = node instanceof AggregationNode ? node : null
     if (aggregationNode) {
       return aggregationNode.children === null
     }
@@ -1609,15 +1605,15 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
 
   onTagChanged(item: IModelItem, oldTag: object): void {
     if (item instanceof INode) {
-      this.onNodeTagChanged(new ItemChangedEventArgs<INode, object>(item as INode, oldTag))
+      this.onNodeTagChanged(new ItemChangedEventArgs<INode, object>(item, oldTag))
     } else if (item instanceof IEdge) {
-      this.onEdgeTagChanged(new ItemChangedEventArgs<IEdge, object>(item as IEdge, oldTag))
+      this.onEdgeTagChanged(new ItemChangedEventArgs<IEdge, object>(item, oldTag))
     } else if (item instanceof ILabel) {
-      this.onLabelTagChanged(new ItemChangedEventArgs<ILabel, object>(item as ILabel, oldTag))
+      this.onLabelTagChanged(new ItemChangedEventArgs<ILabel, object>(item, oldTag))
     } else if (item instanceof IPort) {
-      this.onPortTagChanged(new ItemChangedEventArgs<IPort, object>(item as IPort, oldTag))
+      this.onPortTagChanged(new ItemChangedEventArgs<IPort, object>(item, oldTag))
     } else if (item instanceof IBend) {
-      this.onBendTagChanged(new ItemChangedEventArgs<IBend, object>(item as IBend, oldTag))
+      this.onBendTagChanged(new ItemChangedEventArgs<IBend, object>(item, oldTag))
     }
   }
 }
@@ -1626,10 +1622,7 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
  * An ILookupDecorator implementation that contains its own lookup chains.
  * New chain links are added to the chains of this decorator as well as to the decorator of the {@link GraphWrapperBase#wrappedGraph}.
  */
-class AggregationLookupDecorator extends BaseClass<ILookup & ILookupDecorator>(
-  ILookup,
-  ILookupDecorator
-) {
+class AggregationLookupDecorator extends BaseClass(ILookup, ILookupDecorator) {
   private $wrappedDecorator: ILookupDecorator | null
 
   private readonly $graph: AggregationGraphWrapper
@@ -1763,9 +1756,7 @@ class AggregationLookupDecorator extends BaseClass<ILookup & ILookupDecorator>(
   }
 }
 
-abstract class ContextLookupChainLinkBase extends BaseClass<IContextLookupChainLink>(
-  IContextLookupChainLink
-) {
+abstract class ContextLookupChainLinkBase extends BaseClass(IContextLookupChainLink) {
   private $nextLink: IContextLookup | null = null
 
   public contextLookup(item: object, type: Class): object | null {
@@ -1820,7 +1811,7 @@ class ItemDefaultLookup extends ContextLookupChainLinkBase {
 /**
  * A simple INode implementation for aggregation nodes.
  */
-class AggregationNode extends BaseClass<INode>(INode) {
+class AggregationNode extends BaseClass(INode) {
   private readonly $aggregatedNodes: IList<INode>
   private readonly $layout: IMutableRectangle
   private $style: INodeStyle
@@ -1946,7 +1937,7 @@ class AggregationNode extends BaseClass<INode>(INode) {
 /**
  * A simple IEdge implementation for aggregation edges.
  */
-class AggregationEdge extends BaseClass<IEdge>(IEdge) {
+class AggregationEdge extends BaseClass(IEdge) {
   public readonly $bends: IList<AggregationBend>
   public readonly $ports: IList<AggregationPort>
   public readonly $labels: IList<AggregationLabel>
@@ -2077,9 +2068,9 @@ class AggregationEdge extends BaseClass<IEdge>(IEdge) {
     if (port instanceof IPort) {
       return (port === this.sourcePort ? this.targetPort : this.sourcePort) as T
     } else {
-      return (((port as IPortOwner) === this.sourceNode
+      return ((port as IPortOwner) === this.sourceNode
         ? this.targetNode!
-        : this.sourceNode!) as unknown) as T
+        : this.sourceNode!) as unknown as T
     }
   }
 
@@ -2119,7 +2110,7 @@ class AggregationEdge extends BaseClass<IEdge>(IEdge) {
 /**
  * A simple IBend implementation for bends of {@link AggregationEdge}s.
  */
-class AggregationBend extends BaseClass<IBend>(IBend) {
+class AggregationBend extends BaseClass(IBend) {
   private readonly $owner: AggregationEdge
   private readonly $location: IMutablePoint
   private $graph: AggregationGraphWrapper | null
@@ -2182,7 +2173,7 @@ class AggregationBend extends BaseClass<IBend>(IBend) {
 /**
  * A simple IPort implementation for ports of {@link AggregationNode}, {@link AggregationEdge}, or {@link AggregationPort}.
  */
-class AggregationPort extends BaseClass<IPort>(IPort) {
+class AggregationPort extends BaseClass(IPort) {
   private readonly $owner: AggregationNode | AggregationEdge | AggregationPort
   private $style: IPortStyle
   private $graph: AggregationGraphWrapper | null
@@ -2287,7 +2278,7 @@ class AggregationPort extends BaseClass<IPort>(IPort) {
 /**
  * A simple ILabel implementation for labels of {@link AggregationNode}, {@link AggregationEdge}, or {@link AggregationPort}.
  */
-class AggregationLabel extends BaseClass<ILabel>(ILabel) {
+class AggregationLabel extends BaseClass(ILabel) {
   private readonly $owner: AggregationNode | AggregationEdge | AggregationPort
   private $layoutParameter: ILabelModelParameter
   private $preferredSize: Size

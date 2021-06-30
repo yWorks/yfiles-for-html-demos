@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -50,12 +50,12 @@ export default class BlueBendCreator extends BaseClass(IBendCreator) {
    * Creates a new bend at the given location. If this bend is on the first or last segment,
    * a second bend is created and placed at a location that ensures that the newly create
    * inner segment is orthogonal.
-   * @param {IInputModeContext} context The context for which the bend should be created
-   * @param {IGraph} graph The graph, the edge belongs to
-   * @param {IEdge} edge The edge
-   * @param {Point} location The preferred coordinates of the bend
+   * @param {!IInputModeContext} context The context for which the bend should be created
+   * @param {!IGraph} graph The graph, the edge belongs to
+   * @param {!IEdge} edge The edge
+   * @param {!Point} location The preferred coordinates of the bend
    * @see Specified by {@link IBendCreator#createBend}.
-   * @return {number}
+   * @returns {number}
    */
   createBend(context, graph, edge, location) {
     const edgePoints = getEdgePoints(edge)
@@ -65,22 +65,25 @@ export default class BlueBendCreator extends BaseClass(IBendCreator) {
     const lastSegment = edge.bends.size
 
     // if bend wasn't created in first or last segment, call default action
-    if (closestSegment !== firstSegment && closestSegment !== lastSegment) {
-      return new DefaultBendCreator(edge).createBend(context, graph, edge, location)
+    const isFirstOrLastSegment = closestSegment === firstSegment || closestSegment === lastSegment
+    if (!isFirstOrLastSegment) {
+      return new DefaultBendCreator().createBend(context, graph, edge, location)
     }
 
     // add created bend and another one to make the edge stay orthogonal
     if (
       closestSegment === -1 ||
-      context === null ||
+      !context ||
       !(context.parentInputMode instanceof CreateBendInputMode)
     ) {
       return -1
     }
+
     const editingContext = context.lookup(OrthogonalEdgeEditingContext.$class)
-    if (editingContext === null) {
+    if (!editingContext) {
       return -1
     }
+
     if (closestSegment === firstSegment) {
       const nextPoint = edgePoints.get(1)
       // get orientation of next edge segment to determine second bend location
@@ -93,6 +96,7 @@ export default class BlueBendCreator extends BaseClass(IBendCreator) {
       }
       return 0
     }
+
     if (closestSegment === lastSegment) {
       const prevPoint = edgePoints.get(edge.bends.size)
       // get orientation of next edge segment to determine second bend location
@@ -111,9 +115,9 @@ export default class BlueBendCreator extends BaseClass(IBendCreator) {
 
 /**
  * Determines the index of the segment in which the bend was created.
- * @param {List} points The points of an edge
- * @param {Point} location The given location
- * @return {number}
+ * @param {!List.<Point>} points The points of an edge
+ * @param {!Point} location The given location
+ * @returns {number}
  */
 function determineBendSegmentIndex(points, location) {
   let closestIndex = -1
@@ -131,8 +135,8 @@ function determineBendSegmentIndex(points, location) {
 /**
  * Returns a list containing the source port location, the bend locations,
  * and the target port location of the given edge.
- * @param {IEdge} edge The given edge
- * @return {List.<Point>}
+ * @param {!IEdge} edge The given edge
+ * @returns {!List.<Point>}
  */
 function getEdgePoints(edge) {
   const points = new List()

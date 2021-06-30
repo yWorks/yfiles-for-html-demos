@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -82,9 +82,9 @@ function run(licenseData: object): void {
 async function runLayout(): Promise<void> {
   setUIDisabled(true)
 
-  const selectedLayout = (document.getElementById(
-    'select-sample'
-  ) as HTMLSelectElement).value.substring(8)
+  const selectedLayout = (
+    document.getElementById('select-sample') as HTMLSelectElement
+  ).value.substring(8)
   const fromSketch = (document.getElementById('from-sketch') as HTMLInputElement).checked
 
   let layout: ILayoutAlgorithm

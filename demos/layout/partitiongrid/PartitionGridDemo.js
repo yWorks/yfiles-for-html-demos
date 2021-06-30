@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -40,6 +40,7 @@ import {
   ICanvasObject,
   ICanvasObjectDescriptor,
   ICommand,
+  IGraph,
   ILayoutAlgorithm,
   INode,
   Insets,
@@ -50,6 +51,7 @@ import {
   MouseButtons,
   OrganicLayout,
   PanelNodeStyle,
+  PartitionCellId,
   PartitionGrid,
   PartitionGridData,
   Point,
@@ -57,10 +59,10 @@ import {
   ShapeNodeStyle,
   Size,
   SolidColorFill,
-  YList
+  TimeSpan
 } from 'yfiles'
 
-import PartitionGridVisualCreator from './PartitionGridVisualCreator.js'
+import PartitionGridVisualCreator, { generateGradientColors } from './PartitionGridVisualCreator.js'
 import GraphData from './resources/GraphData.js'
 import { bindAction, bindCommand, showApp } from '../../resources/demo-app.js'
 import loadJson from '../../resources/load-json.js'
@@ -69,31 +71,31 @@ import loadJson from '../../resources/load-json.js'
  * Holds the GraphComponent.
  * @type {GraphComponent}
  */
-let graphComponent = null
+let graphComponent
 
 /**
  * Holds the colors for the nodes based on the column to which they belong.
- * @type {Array}
+ * @type {Array.<Color>}
  */
-let nodeFills = null
+let nodeFills
 
 /**
  * The visual creator for the partition grid.
  * @type {PartitionGridVisualCreator}
  */
-let partitionGridVisualCreator = null
+let partitionGridVisualCreator
 
 /**
  * The visual object for the partition grid that will be added to the graphComponent.
  * @type {ICanvasObject}
  */
-let partitionGridVisualObject = null
+let partitionGridVisualObject
 
 /**
  * The Partition Grid
  * @type {PartitionGrid}
  */
-let partitionGrid = null
+let partitionGrid
 
 /**
  * Holds the number of columns.
@@ -109,19 +111,17 @@ let rowCount
 
 /**
  * Holds the last applied layout algorithm.
- * @type {ILayoutAlgorithm}
+ * @type {HierarchicLayout}
  */
 let lastAppliedLayoutAlgorithm = new HierarchicLayout()
 
 /**
  * Maps each row index with the number of nodes that belong to the particular row.
- * @type {Map}
  */
 const rows2nodes = new HashMap()
 
 /**
  * Maps each column index with the number of nodes that belong to the particular column.
- * @type {Map}
  */
 const columns2nodes = new HashMap()
 
@@ -133,24 +133,31 @@ let layoutRunning = false
 
 /**
  * Holds the selected cell id.
- * @type {Object}
+ * @type {CellId}
  */
-let selectedCellId = null
+let selectedCellId
 
 /**
  * Runs the demo.
+ * @param {*} licenseData
  */
 function run(licenseData) {
   License.value = licenseData
   graphComponent = new GraphComponent('graphComponent')
 
-  initializeGraph()
+  initializeGraph(graphComponent.graph)
 
-  loadSampleGraph()
+  createSampleGraph(graphComponent.graph)
+
+  initializeColumnAndRowCount(graphComponent.graph)
+
+  nodeFills = generateNodeColors()
+
+  initializeStyleAndTag(graphComponent.graph)
 
   initializePartitionGridVisual()
 
-  createInputMode()
+  configureUserInteraction()
 
   registerCommands()
 
@@ -161,9 +168,9 @@ function run(licenseData) {
 
 /**
  * Initializes some default styles to the graph elements and adds the necessary event listeners.
+ * @param {!IGraph} graph
  */
-function initializeGraph() {
-  const graph = graphComponent.graph
+function initializeGraph(graph) {
   // set the default style for nodes, this style refers to the nodes without grid restrictions
   graph.nodeDefaults.size = new Size(30, 30)
   graph.nodeDefaults.style = new ShapeNodeStyle({
@@ -196,22 +203,14 @@ function initializeGraph() {
     updateNodeFill(node)
     updateMapping(node, args.oldValue)
   })
-
-  // run the layout whenever a cut or paste action is performed, so that the layout is updated if new nodes are
-  // added to the graph
-  graphComponent.clipboard.addElementsPastedListener(() => {
-    runLayout()
-  })
-  graphComponent.clipboard.addElementsCutListener(() => {
-    runLayout()
-  })
 }
 
 /**
- * Loads the sample graph.
+ * Creates a sample graph from structured data.
+ * @param {!IGraph} graph
  */
-function loadSampleGraph() {
-  const graphBuilder = new GraphBuilder(graphComponent.graph)
+function createSampleGraph(graph) {
+  const graphBuilder = new GraphBuilder(graph)
   graphBuilder.createNodesSource({
     data: GraphData.nodes,
     id: 'id',
@@ -222,39 +221,49 @@ function loadSampleGraph() {
   groupNodeCreator.createLabelBinding(() => 'Group')
   graphBuilder.createEdgesSource(GraphData.edges, 'source', 'target')
 
-  const graph = graphBuilder.buildGraph()
+  graphBuilder.buildGraph()
+}
 
+/**
+ * Determines the number of columns and rows needed for the given graph.
+ * @param {!IGraph} graph
+ */
+function initializeColumnAndRowCount(graph) {
   // find the desired number of rows/columns
-  columnCount = Number.NEGATIVE_INFINITY
-  rowCount = Number.NEGATIVE_INFINITY
-  graph.nodes.forEach(node => {
+  let maxColumnId = 0
+  let maxRowId = 0
+  for (const node of graph.nodes) {
     if (!graph.isGroupNode(node)) {
-      const columnIndex = node.tag.column
-      const rowIndex = node.tag.row
-      // the column/row indices are stored to each node's tag
-      // if no information is available then, the indices are -1
-      node.tag = {
-        rowIndex,
-        columnIndex
-      }
-
-      if (columnIndex !== -1 && rowIndex !== -1) {
-        columnCount = Math.max(columnIndex, columnCount)
-        rowCount = Math.max(rowIndex, rowCount)
-      }
+      maxColumnId = Math.max(node.tag.column, maxColumnId)
+      maxRowId = Math.max(node.tag.row, maxRowId)
     }
-  })
-  columnCount++
-  rowCount++
+  }
+  columnCount = maxColumnId + 1
+  rowCount = maxRowId + 1
+}
 
-  // update the node fill colors based on the column/row to which they belong
-  nodeFills = generateGradientColor(Color.ORANGE, Color.RED)
-  graph.nodes.forEach(node => {
-    // update the partition grid colors
-    if (!graph.isGroupNode(node) && hasActiveRestrictions(node)) {
+/**
+ * Updates node colors based on the column/row to which the nodes belong and
+ * replaces node tags with appropriate CellId instances.
+ * @param {!IGraph} graph
+ */
+function initializeStyleAndTag(graph) {
+  for (const node of graph.nodes) {
+    if (graph.isGroupNode(node)) {
+      continue
+    }
+
+    node.tag = {
+      columnIndex: node.tag.column,
+      rowIndex: node.tag.row
+    }
+
+    // check if the given node is assigned to a partition grid cell ...
+    if (hasActiveRestrictions(node)) {
+      // ... and update the node color appropriately
       updateNodeFill(node)
     }
-  })
+  }
 }
 
 /**
@@ -283,9 +292,9 @@ function removePartitionGridVisual() {
 }
 
 /**
- * Creates the input mode.
+ * Configures user interaction for this demo.
  */
-function createInputMode() {
+function configureUserInteraction() {
   const inputMode = new GraphEditorInputMode({
     allowGroupingOperations: true
   })
@@ -293,8 +302,8 @@ function createInputMode() {
   const graph = graphComponent.graph
   // add a drag listener that will determine the column/row indices of the dragged elements based on their last
   // positions
-  inputMode.moveInputMode.addDragFinishedListener(() => {
-    graphComponent.selection.selectedNodes.forEach(node => {
+  inputMode.moveInputMode.addDragFinishedListener((sender, args) => {
+    for (const node of graphComponent.selection.selectedNodes) {
       if (!graph.isGroupNode(node)) {
         updateNodeRestrictions(node)
       } else {
@@ -302,13 +311,13 @@ function createInputMode() {
         const stack = [node]
         while (stack.length > 0) {
           const startNode = stack.pop()
-          graph.getChildren(startNode).forEach(child => {
+          for (const child of graph.getChildren(startNode)) {
             updateNodeRestrictions(child)
             stack.push(child)
-          })
+          }
         }
       }
-    })
+    }
     runLayout()
   })
 
@@ -331,31 +340,31 @@ function createInputMode() {
   })
 
   // whenever an edge is created, run a layout using the last applied layout algorithm
-  inputMode.createEdgeInputMode.addEdgeCreatedListener(() => {
+  inputMode.createEdgeInputMode.addEdgeCreatedListener((sender, args) => {
     runLayout()
   })
 
   // whenever a graph element is deleted, run a layout using the last applied layout algorithm
-  inputMode.addDeletedSelectionListener(() => {
+  inputMode.addDeletedSelectionListener((sender, args) => {
     runLayout()
   })
 
   // before a node is removed, remove its tag so that the row2nodes and column2nodes maps are updated
   inputMode.addDeletingSelectionListener((sender, args) => {
     const selection = args.selection
-    selection.forEach(item => {
-      if (INode.isInstance(item)) {
+    for (const item of selection) {
+      if (item instanceof INode) {
         item.tag = {
           rowIndex: -1,
           columnIndex: -1
         }
       }
-    })
+    }
   })
 
   // whenever a right-click on a cell occurs (on canvas), determine the row/column that is selected and highlight it
   inputMode.addCanvasClickedListener((sender, args) => {
-    toggleDeleteButtonsVisibility(true)
+    toggleDeleteButtonsVisibility(true, Point.ORIGIN)
     if (args.mouseButtons === MouseButtons.RIGHT) {
       if (partitionGridVisualCreator) {
         toggleDeleteButtonsVisibility(false, args.location)
@@ -364,17 +373,26 @@ function createInputMode() {
   })
 
   // disable visibility buttons if are already enabled
-  inputMode.addItemClickedListener(() => {
-    if (!document.getElementById('DeleteRow').disabled) {
-      toggleDeleteButtonsVisibility(true)
+  inputMode.addItemClickedListener((sender, args) => {
+    if (!getElementById('DeleteRow').disabled) {
+      toggleDeleteButtonsVisibility(true, Point.ORIGIN)
     }
   })
   graphComponent.inputMode = inputMode
+
+  // run the layout whenever a cut or paste action is performed, so that the layout is updated if new nodes are
+  // added to the graph
+  graphComponent.clipboard.addElementsPastedListener(() => {
+    runLayout()
+  })
+  graphComponent.clipboard.addElementsCutListener(() => {
+    runLayout()
+  })
 }
 
 /**
  * Updates the partition cell indices for the given node only if it has active restrictions.
- * @param {INode} node The node to be examined
+ * @param {!INode} node The node to be examined
  */
 function updateNodeRestrictions(node) {
   if (!hasActiveRestrictions(node)) {
@@ -391,30 +409,35 @@ function updateNodeRestrictions(node) {
 
 /**
  * Updates the style of the given node.
- * @param {INode} node The given node
+ * @param {!INode} node The given node
  */
 function updateNodeFill(node) {
-  let fill = Fill.LIGHT_SLATE_GRAY
-  if (hasActiveRestrictions(node) && nodeFills) {
-    // determine the node's fill based on the column and change the opacity depending on the row to which the node
-    // belongs
-    const nodeFill = nodeFills[node.tag.columnIndex]
-    if (nodeFill) {
-      fill = new SolidColorFill(
-        nodeFill.r,
-        nodeFill.g,
-        nodeFill.b,
-        node.tag.rowIndex % 2 === 0 ? 255 : 0.65 * 255
-      )
+  const style = node.style
+  if (style instanceof ShapeNodeStyle) {
+    let fill = Fill.LIGHT_SLATE_GRAY
+    if (hasActiveRestrictions(node) && nodeFills) {
+      // determine the node's fill based on the column and change the opacity depending on the row to which the node
+      // belongs
+      const nodeFill = nodeFills[node.tag.columnIndex]
+      if (nodeFill) {
+        fill = new SolidColorFill(
+          nodeFill.r,
+          nodeFill.g,
+          nodeFill.b,
+          node.tag.rowIndex % 2 === 0 ? 255 : 0.65 * 255
+        )
+      }
     }
+    style.fill = fill
   }
-  node.style.fill = fill
 }
 
 /**
  * Arranges the graph with the given layout algorithm. If no argument is given, the last applied
  * layout algorithm will be used.
- * @param {ILayoutAlgorithm} algorithm The given layout algorithm
+ * @param algorithm The given layout algorithm
+ * @param {!ILayoutAlgorithm} [algorithm]
+ * @returns {!Promise}
  */
 async function runLayout(algorithm) {
   const layoutAlgorithm = algorithm || lastAppliedLayoutAlgorithm
@@ -445,13 +468,14 @@ async function runLayout(algorithm) {
   try {
     // configure the layout executor and start the layout
     const executor = new CustomLayoutExecutor(graphComponent, layoutAlgorithm)
-    executor.duration = '1s'
+    executor.duration = TimeSpan.from('1s')
     executor.layoutData = partitionGridData
     executor.animateViewport = true
     await executor.start()
   } catch (error) {
-    if (typeof window.reportError === 'function') {
-      window.reportError(error)
+    const reporter = window.reportError
+    if (typeof reporter === 'function') {
+      reporter(error)
     } else {
       throw error
     }
@@ -466,7 +490,7 @@ async function runLayout(algorithm) {
 
 /**
  * Configures the given layout algorithm.
- * @param {ILayoutAlgorithm} layoutAlgorithm The given layout algorithm
+ * @param {!ILayoutAlgorithm} layoutAlgorithm The given layout algorithm
  */
 function configureAlgorithm(layoutAlgorithm) {
   if (layoutAlgorithm instanceof HierarchicLayout) {
@@ -488,38 +512,44 @@ function configureAlgorithm(layoutAlgorithm) {
 /**
  * Updates the mapping between the columns/rows and the number of nodes the each column/row
  * contains. It has to be called whenever a node changes a column/row.
- * @param {INode} node The given node
- * @param {Object} oldTag The given node's old tag
+ * @param {!INode} node The given node
+ * @param {!CellId} oldTag The given node's old tag
  */
 function updateMapping(node, oldTag) {
   // remove from old row if there was in one
-  if (oldTag && typeof oldTag.rowIndex !== 'undefined' && oldTag.rowIndex !== -1) {
+  if (oldTag && oldTag.rowIndex && oldTag.rowIndex !== -1) {
     const oldRowNodes = rows2nodes.get(oldTag.rowIndex)
-    oldRowNodes.splice(oldRowNodes.indexOf(node), 1)
+    if (oldRowNodes) {
+      oldRowNodes.splice(oldRowNodes.indexOf(node), 1)
+    }
   }
   // add to the new row
   const rowIndex = node.tag.rowIndex
   if (rowIndex !== -1) {
-    if (!rows2nodes.get(rowIndex)) {
-      rows2nodes.set(rowIndex, [])
+    let rowNodes = rows2nodes.get(rowIndex)
+    if (!rowNodes) {
+      rowNodes = []
+      rows2nodes.set(rowIndex, rowNodes)
     }
-    const rowNodes = rows2nodes.get(rowIndex)
     if (rowNodes.indexOf(node) < 0) {
       rowNodes.push(node)
     }
   }
 
-  if (oldTag && typeof oldTag.columnIndex !== 'undefined' && oldTag.columnIndex !== -1) {
+  if (oldTag && oldTag.columnIndex && oldTag.columnIndex !== -1) {
     const oldColumnNodes = columns2nodes.get(oldTag.columnIndex)
-    oldColumnNodes.splice(oldColumnNodes.indexOf(node), 1)
+    if (oldColumnNodes) {
+      oldColumnNodes.splice(oldColumnNodes.indexOf(node), 1)
+    }
   }
   // add to the new row
   const columnIndex = node.tag.columnIndex
   if (columnIndex !== -1) {
-    if (!columns2nodes.get(columnIndex)) {
-      columns2nodes.set(columnIndex, [])
+    let columnNodes = columns2nodes.get(columnIndex)
+    if (!columnNodes) {
+      columnNodes = []
+      columns2nodes.set(columnIndex, columnNodes)
     }
-    const columnNodes = columns2nodes.get(columnIndex)
     if (columnNodes.indexOf(node) < 0) {
       columnNodes.push(node)
     }
@@ -528,15 +558,16 @@ function updateMapping(node, oldTag) {
 
 /**
  * Returns an array containing the indices of the rows/columns that contain nodes (non-empty).
- * @param {YList} list The given list of rows/columns
+ * @param {number} stripeCount the number of rows/columns in the current partition grid
  * @param {boolean} isRow <code>True</code> if we examine the rows, <code>false</code> otherwise
- * @return {Array} An array containing the indices of the non-empty rows/columns
+ * @returns {!Array.<number>} An array containing the indices of the non-empty rows/columns
  */
-function getNonEmptyIndices(list, isRow) {
+function getNonEmptyIndices(stripeCount, isRow) {
   const nonEmptyIndices = []
   const map = isRow ? rows2nodes : columns2nodes
-  for (let i = 0; i < list.size; i++) {
-    if (map.get(i) && map.get(i).length > 0) {
+  for (let i = 0; i < stripeCount; i++) {
+    const nodes = map.get(i)
+    if (nodes && nodes.length > 0) {
       nonEmptyIndices.push(i)
     }
   }
@@ -545,22 +576,21 @@ function getNonEmptyIndices(list, isRow) {
 
 /**
  * Determines the cell indices to which the given point belongs.
- * @param {Point} point The given point
- * @return {{rowIndex: number, columnIndex: number}} The row/column indices
+ * @param {!Point} point The given point
+ * @returns {!CellId} The row/column indices
  */
 function determineCellIndex(point) {
   let rowIndex = -1
   let columnIndex = -1
 
   if (existsPartitionGrid()) {
-    const firstRow = partitionGrid.rows.get(0)
-    const lastRow = partitionGrid.rows.get(partitionGrid.rows.size - 1)
-    const firstColumn = partitionGrid.columns.get(0)
-    const lastColumn = partitionGrid.columns.get(partitionGrid.columns.size - 1)
+    const firstRow = partitionGrid.rows.first()
+    const lastRow = partitionGrid.rows.last()
+    const firstColumn = partitionGrid.columns.first()
+    const lastColumn = partitionGrid.columns.last()
 
     // find the row to which the rect belongs
-    for (let i = 0; i < partitionGrid.rows.size; i++) {
-      const rowDescriptor = partitionGrid.rows.get(i)
+    partitionGrid.rows.forEach((rowDescriptor, i) => {
       const minRowY = rowDescriptor.computedPosition
       const maxRowY = minRowY + rowDescriptor.computedHeight
       const minColumnX = firstColumn.computedPosition
@@ -572,13 +602,12 @@ function determineCellIndex(point) {
         point.x < maxColumnX
       ) {
         rowIndex = i
-        break
+        return
       }
-    }
+    })
 
     // find the column to which the rect belongs
-    for (let i = 0; i < partitionGrid.columns.size; i++) {
-      const columnDescriptor = partitionGrid.columns.get(i)
+    partitionGrid.columns.forEach((columnDescriptor, i) => {
       const minColumnX = columnDescriptor.computedPosition
       const maxColumnX = minColumnX + columnDescriptor.computedWidth
       const minRowY = firstRow.computedPosition
@@ -590,9 +619,9 @@ function determineCellIndex(point) {
         point.y < maxRowY
       ) {
         columnIndex = i
-        break
+        return
       }
-    }
+    })
   } else {
     rowIndex = getRandomInt(3)
     columnIndex = getRandomInt(5)
@@ -614,21 +643,21 @@ function determineCellIndex(point) {
  */
 function adjustGraphComponentBounds() {
   if (existsPartitionGrid()) {
-    const nonEmptyRows = getNonEmptyIndices(partitionGrid.rows, true)
+    const nonEmptyRows = getNonEmptyIndices(partitionGrid.rows.size, true)
     // empty rows on the top
     const emptyTop = nonEmptyRows[0]
     // empty rows on the bottom
     const emptyBottom = partitionGrid.rows.size - nonEmptyRows[nonEmptyRows.length - 1] - 1
-    const nonEmptyColumns = getNonEmptyIndices(partitionGrid.columns, false)
+    const nonEmptyColumns = getNonEmptyIndices(partitionGrid.columns.size, false)
     // empty columns on the left
     const emptyLeft = nonEmptyColumns[0]
     // empty columns on the right
     const emptyRight = partitionGrid.columns.size - nonEmptyColumns[nonEmptyColumns.length - 1] - 1
 
-    const firstRow = partitionGrid.rows.get(0)
-    const lastRow = partitionGrid.rows.get(partitionGrid.rows.size - 1)
-    const firstColumn = partitionGrid.columns.get(0)
-    const lastColumn = partitionGrid.columns.get(partitionGrid.columns.size - 1)
+    const firstRow = partitionGrid.rows.first()
+    const lastRow = partitionGrid.rows.last()
+    const firstColumn = partitionGrid.columns.first()
+    const lastColumn = partitionGrid.columns.last()
 
     if (emptyLeft && emptyTop && emptyRight && emptyBottom) {
       const insets = new Insets(
@@ -645,8 +674,8 @@ function adjustGraphComponentBounds() {
 /**
  * Returns a partition cell for the given node if it has valid row/column indices or
  * <code>null</code> otherwise.
- * @param {INode} node The given node to create the cell id for
- * @return {PartitionCellId} A partition cell for the given node if it has valid row/column indices
+ * @param {!INode} node The given node to create the cell id for
+ * @returns {?PartitionCellId} A partition cell for the given node if it has valid row/column indices
  * or <code>null</code> otherwise
  */
 function createNodeCellId(node) {
@@ -660,8 +689,8 @@ function createNodeCellId(node) {
  * Returns a partition cell for the given group node if any of its descendants has a valid
  * partition cell id or
  * <code>null</code> otherwise.
- * @param {INode} node The group node to create the cell id for
- * @return {PartitionCellId} A partition cell id for the given group node if any of its descendants
+ * @param {!INode} node The group node to create the cell id for
+ * @returns {?PartitionCellId} A partition cell id for the given group node if any of its descendants
  * has a valid partition cell id or <code>null</code> otherwise
  */
 function getGroupNodeCellId(node) {
@@ -671,19 +700,19 @@ function getGroupNodeCellId(node) {
   const rowSet = new List()
   const columnSet = new List()
 
-  graph.getChildren(node).forEach(child => {
+  for (const child of graph.getChildren(node)) {
     // get the cell id of the child
     const childCellId = !graph.isGroupNode(child)
       ? createNodeCellId(child)
       : getGroupNodeCellId(child)
     // if there is a cell id, add all row and column descriptors to our row/columnSets
     if (childCellId) {
-      childCellId.cells.forEach(cellEntry => {
+      for (const cellEntry of childCellId.cells) {
         rowSet.add(cellEntry.row)
         columnSet.add(cellEntry.column)
-      })
+      }
     }
-  })
+  }
 
   if (rowSet.size !== 0 && columnSet.size !== 0) {
     // at least one row and one column is specified by the children and should be spanned by this group node
@@ -695,8 +724,8 @@ function getGroupNodeCellId(node) {
 
 /**
  * Returns whether or not a given node has valid row/column indices.
- * @param {INode} node The given node
- * @return {boolean} <code>True</code> if the given node has valid row/column indices,
+ * @param {!INode} node The given node
+ * @returns {boolean} <code>True</code> if the given node has valid row/column indices,
  *   <code>false</code> otherwise
  */
 function hasActiveRestrictions(node) {
@@ -705,7 +734,7 @@ function hasActiveRestrictions(node) {
 
 /**
  * Returns whether or not a partition grid currently exists.
- * @return {PartitionGrid|boolean}
+ * @returns {!(boolean|PartitionGrid)}
  */
 function existsPartitionGrid() {
   return partitionGrid && partitionGrid.rows.size > 0 && partitionGrid.columns.size > 0
@@ -713,45 +742,51 @@ function existsPartitionGrid() {
 
 /**
  * Returns the partition grid for each layout run.
- * @return {PartitionGrid} The newly created partition grid
+ * @returns {!PartitionGrid} The newly created partition grid
  */
 function createPartitionGrid() {
-  if (rowCount > 0 && columnCount > 0) {
-    partitionGrid = new PartitionGrid(rowCount, columnCount)
+  const grid = new PartitionGrid(rowCount, columnCount)
 
-    const minimumColumnWidth = parseFloat(document.getElementById('columnWidth').value)
-    const leftInset = parseFloat(document.getElementById('leftInset').value)
-    const rightInset = parseFloat(document.getElementById('rightInset').value)
-    const fixedColumnOrder = document.getElementById('fixColumnOrder').checked
+  const minimumColumnWidth = getFloatValue('columnWidth')
+  const leftInset = getFloatValue('leftInset')
+  const rightInset = getFloatValue('rightInset')
+  const fixedColumnOrder = getElementById('fixColumnOrder').checked
 
-    partitionGrid.columns.forEach(columnDescriptor => {
-      columnDescriptor.minimumWidth = minimumColumnWidth || 0
-      columnDescriptor.leftInset = leftInset || 0
-      columnDescriptor.rightInset = rightInset || 0
-      columnDescriptor.indexFixed = fixedColumnOrder
-    })
-
-    const minimumRowHeight = parseFloat(document.getElementById('rowHeight').value)
-    const topInset = parseFloat(document.getElementById('topInset').value)
-    const bottomInset = parseFloat(document.getElementById('bottomInset').value)
-
-    partitionGrid.rows.forEach(rowDescriptor => {
-      rowDescriptor.minimumHeight = minimumRowHeight || 0
-      rowDescriptor.topInset = topInset || 0
-      rowDescriptor.bottomInset = bottomInset || 0
-    })
-    return partitionGrid
+  for (const columnDescriptor of grid.columns) {
+    columnDescriptor.minimumWidth = minimumColumnWidth || 0
+    columnDescriptor.leftInset = leftInset || 0
+    columnDescriptor.rightInset = rightInset || 0
+    columnDescriptor.indexFixed = fixedColumnOrder
   }
-  return null
+
+  const minimumRowHeight = getFloatValue('rowHeight')
+  const topInset = getFloatValue('topInset')
+  const bottomInset = getFloatValue('bottomInset')
+
+  for (const rowDescriptor of grid.rows) {
+    rowDescriptor.minimumHeight = minimumRowHeight || 0
+    rowDescriptor.topInset = topInset || 0
+    rowDescriptor.bottomInset = bottomInset || 0
+  }
+  return grid
+}
+
+/**
+ * Returns the numeric value of the HTMLInputElement with the specified ID.
+ * @param {!string} id
+ * @returns {number}
+ */
+function getFloatValue(id) {
+  return parseFloat(getElementById(id).value)
 }
 
 /**
  * Returns the partition grid data for each layout run or null if no partition grid exists
- * @return {PartitionGridData} The newly created partition grid data
+ * @returns {?PartitionGridData} The newly created partition grid data
  */
 function createPartitionGridData() {
-  const graph = graphComponent.graph
   if (rowCount > 0 && columnCount > 0) {
+    const graph = graphComponent.graph
     return new PartitionGridData({
       grid: partitionGrid,
       cellIds: node => {
@@ -759,7 +794,7 @@ function createPartitionGridData() {
           return createNodeCellId(node)
         }
         // we have a group node
-        const stretchGroups = document.getElementById('stretchGroupNodes').checked
+        const stretchGroups = getElementById('stretchGroupNodes').checked
         if (!stretchGroups || graph.getChildren(node).size === 0) {
           // the group nodes shall not be stretched or the group node has no children so we return null
           // this means the group node will be adjusted to contain its children but has no specific assignment to cells
@@ -792,7 +827,10 @@ function registerCommands() {
   const runHierarchicLayout = ICommand.createCommand()
   kim.addCommandBinding(
     runHierarchicLayout,
-    (command, parameter, sender) => runLayout(parameter),
+    (command, parameter, sender) => {
+      runLayout(parameter)
+      return true
+    },
     canExecuteAnyLayout
   )
   bindCommand(
@@ -805,7 +843,10 @@ function registerCommands() {
   const runOrganicLayout = ICommand.createCommand()
   kim.addCommandBinding(
     runOrganicLayout,
-    (command, parameter, sender) => runLayout(parameter),
+    (command, parameter, sender) => {
+      runLayout(parameter)
+      return true
+    },
     canExecuteOrganicLayout
   )
   bindCommand(
@@ -816,11 +857,25 @@ function registerCommands() {
   )
 
   const addRestrictions = ICommand.createCommand()
-  kim.addCommandBinding(addRestrictions, executeAddRestrictions, canExecuteAddRestrictions)
+  kim.addCommandBinding(
+    addRestrictions,
+    () => {
+      executeAddRestrictions()
+      return true
+    },
+    canExecuteAddRestrictions
+  )
   bindCommand("button[data-command='GenerateGridRestrictions']", addRestrictions, graphComponent)
 
   const removeRestrictions = ICommand.createCommand()
-  kim.addCommandBinding(removeRestrictions, executeRemoveRestrictions, canExecuteRemoveRestrictions)
+  kim.addCommandBinding(
+    removeRestrictions,
+    () => {
+      executeRemoveRestrictions()
+      return true
+    },
+    canExecuteRemoveRestrictions
+  )
   bindCommand("button[data-command='RemoveRestrictions']", removeRestrictions, graphComponent)
 
   bindAction("button[data-command='AddRow']", () => {
@@ -829,7 +884,7 @@ function registerCommands() {
     if (columnCount === 0) {
       columnCount = 1
     }
-    nodeFills = generateGradientColor(Color.ORANGE, Color.RED)
+    nodeFills = generateNodeColors()
     updateGrid()
     // run the last applied layout algorithm
     runLayout()
@@ -840,20 +895,20 @@ function registerCommands() {
     if (rowCount === 0) {
       rowCount = 1
     }
-    nodeFills = generateGradientColor(Color.ORANGE, Color.RED)
+    nodeFills = generateNodeColors()
     updateGrid()
     // run the last applied layout algorithm
     runLayout()
   })
   bindAction("button[data-command='DeleteRow']", () => {
-    if (selectedCellId.rowIndex !== -1) {
+    if (selectedCellId && selectedCellId.rowIndex !== -1) {
       removeRow(selectedCellId.rowIndex)
       updateGridAfterRemove()
     }
   })
 
   bindAction("button[data-command='DeleteColumn']", () => {
-    if (selectedCellId.columnIndex !== -1) {
+    if (selectedCellId && selectedCellId.columnIndex !== -1) {
       removeColumn(selectedCellId.columnIndex)
       updateGridAfterRemove()
     }
@@ -862,13 +917,15 @@ function registerCommands() {
   bindAction("button[data-command='DeleteEmptyRowsColumns']", () => {
     if (existsPartitionGrid()) {
       for (let i = 0; i < rowCount; i++) {
-        if (!rows2nodes.get(i) || rows2nodes.get(i).length === 0) {
+        const nodes = rows2nodes.get(i)
+        if (!nodes || nodes.length === 0) {
           removeRow(i)
           i = 0
         }
       }
       for (let i = 0; i < columnCount; i++) {
-        if (!columns2nodes.get(i) || columns2nodes.get(i).length === 0) {
+        const nodes = columns2nodes.get(i)
+        if (!nodes || nodes.length === 0) {
           removeColumn(i)
           i = 0
         }
@@ -879,14 +936,8 @@ function registerCommands() {
 
   // for each input, add a change listener to validate that the input is within the desired limits [0, 200]
   const inputFields = document.getElementsByClassName('option-input')
-  for (let i = 0; i < inputFields.length; i++) {
-    inputFields[i].addEventListener(
-      'change',
-      value => {
-        isValidInput(value, 200)
-      },
-      false
-    )
+  for (const inputField of inputFields) {
+    inputField.addEventListener('change', event => isValidInput(event, 200), false)
   }
 }
 
@@ -896,18 +947,16 @@ function registerCommands() {
  */
 function removeRow(selectedIndex) {
   for (let i = selectedIndex; i < partitionGrid.rows.size; i++) {
-    if (rows2nodes.get(i) && rows2nodes.get(i).length > 0) {
-      rows2nodes
-        .get(i)
-        .slice(0)
-        .forEach(node => {
-          const rowIndex = i === selectedIndex ? -1 : node.tag.rowIndex - 1
-          const columnIndex = i === selectedIndex ? -1 : node.tag.columnIndex
-          node.tag = {
-            columnIndex,
-            rowIndex
-          }
-        })
+    const nodes = rows2nodes.get(i)
+    if (nodes && nodes.length > 0) {
+      for (const node of nodes.slice(0)) {
+        const columnIndex = i === selectedIndex ? -1 : node.tag.columnIndex
+        const rowIndex = i === selectedIndex ? -1 : node.tag.rowIndex - 1
+        node.tag = {
+          columnIndex,
+          rowIndex
+        }
+      }
     }
   }
   rowCount--
@@ -923,18 +972,16 @@ function removeRow(selectedIndex) {
  */
 function removeColumn(selectedIndex) {
   for (let i = selectedIndex; i < partitionGrid.columns.size; i++) {
-    if (columns2nodes.get(i) && columns2nodes.get(i).length > 0) {
-      columns2nodes
-        .get(i)
-        .slice(0)
-        .forEach(node => {
-          const columnIndex = i === selectedIndex ? -1 : node.tag.columnIndex - 1
-          const rowIndex = i === selectedIndex ? -1 : node.tag.rowIndex
-          node.tag = {
-            columnIndex,
-            rowIndex
-          }
-        })
+    const nodes = columns2nodes.get(i)
+    if (nodes && nodes.length > 0) {
+      for (const node of nodes.slice(0)) {
+        const columnIndex = i === selectedIndex ? -1 : node.tag.columnIndex - 1
+        const rowIndex = i === selectedIndex ? -1 : node.tag.rowIndex
+        node.tag = {
+          columnIndex,
+          rowIndex
+        }
+      }
     }
   }
   columnCount--
@@ -950,7 +997,7 @@ function removeColumn(selectedIndex) {
 function updateGridAfterRemove() {
   updateGrid()
   runLayout()
-  toggleDeleteButtonsVisibility(true)
+  toggleDeleteButtonsVisibility(true, Point.ORIGIN)
 }
 
 /**
@@ -973,20 +1020,22 @@ function updateGrid() {
 
 /**
  * Checks whether the input provided by the user is valid, i.e., not larger than the desired value.
- * @param {number} input The user's input
+ * @param {!Event} input The user's input
  * @param {number} maxValue The maximum expected value
- * @return {boolean} <code>True</code> if the input provided by the user is valid, i.e., not larger
- *   than the desired value, <code>false</code> otherwise
+ * @returns {boolean} <code>True</code> if the input provided by the user is valid, i.e., not larger
+ * than the desired value, <code>false</code> otherwise
  */
 function isValidInput(input, maxValue) {
-  if (input.target.value > maxValue) {
+  const target = input.target
+  const value = parseInt(target.value)
+  if (value > maxValue) {
     alert(`Values cannot be larger than ${maxValue}`)
-    input.target.value = 10
+    target.value = maxValue.toString()
     return false
   }
-  if (input.target.value < 0) {
+  if (value < 0) {
     alert('Values must be non-negative')
-    input.target.value = 10
+    target.value = '0'
     return false
   }
   return true
@@ -995,6 +1044,7 @@ function isValidInput(input, maxValue) {
 /**
  * Checks whether or not a layout algorithm can be executed. A layout algorithm cannot be executed
  * when the graph is empty or a layout algorithm is already running.
+ * @returns {boolean}
  */
 function canExecuteAnyLayout() {
   // don't allow layouts for empty graphs
@@ -1004,6 +1054,7 @@ function canExecuteAnyLayout() {
 
 /**
  * Determines whether the organic layout command can be executed.
+ * @returns {boolean}
  */
 function canExecuteOrganicLayout() {
   if (!canExecuteAnyLayout()) {
@@ -1042,8 +1093,8 @@ function canExecuteOrganicLayout() {
 
 /**
  * Returns the cell id of the first child node that is not a group node.
- * @param {INode} groupNode The group node
- * @return {Object} The cell id indices
+ * @param {!INode} groupNode The group node
+ * @returns {!CellId} The cell id indices
  */
 function getFirstChildActiveRestriction(groupNode) {
   const graph = graphComponent.graph
@@ -1071,13 +1122,14 @@ function getFirstChildActiveRestriction(groupNode) {
 /**
  * Determines whether the remove restrictions command can be executed. This can occur only if there
  * exists at least one selected node (that is not a group node) with active grid restrictions.
+ * @returns {boolean}
  */
 function canExecuteRemoveRestrictions() {
   const selection = graphComponent.selection.selectedNodes
+  const graph = graphComponent.graph
   return (
     selection.size > 0 &&
-    selection.filter(node => !graphComponent.graph.isGroupNode(node) && hasActiveRestrictions(node))
-      .size > 0
+    selection.filter(node => !graph.isGroupNode(node) && hasActiveRestrictions(node)).size > 0
   )
 }
 
@@ -1085,14 +1137,15 @@ function canExecuteRemoveRestrictions() {
  * Executes the remove restrictions command.
  */
 function executeRemoveRestrictions() {
-  graphComponent.selection.selectedNodes.forEach(node => {
-    if (!graphComponent.graph.isGroupNode(node)) {
+  const graph = graphComponent.graph
+  for (const node of graphComponent.selection.selectedNodes) {
+    if (!graph.isGroupNode(node)) {
       node.tag = {
         columnIndex: -1,
         rowIndex: -1
       }
     }
-  })
+  }
   // run the last applied layout algorithm
   runLayout()
 }
@@ -1101,14 +1154,14 @@ function executeRemoveRestrictions() {
  * Determines whether the add restrictions command can be executed. This can occur only if there
  * exists at least one selected node (that is not a group node) and has no active grid
  * restrictions.
+ * @returns {boolean}
  */
 function canExecuteAddRestrictions() {
   const selection = graphComponent.selection.selectedNodes
+  const graph = graphComponent.graph
   return (
     selection.size > 0 &&
-    selection.filter(
-      node => !graphComponent.graph.isGroupNode(node) && !hasActiveRestrictions(node)
-    ).size > 0
+    selection.filter(node => !graph.isGroupNode(node) && !hasActiveRestrictions(node)).size > 0
   )
 }
 
@@ -1125,8 +1178,9 @@ function executeAddRestrictions() {
   }
 
   // add the restrictions for the selected nodes
-  graphComponent.selection.selectedNodes.forEach(node => {
-    if (!graphComponent.graph.isGroupNode(node)) {
+  const graph = graphComponent.graph
+  for (const node of graphComponent.selection.selectedNodes) {
+    if (!graph.isGroupNode(node)) {
       // if the node has no restrictions, find the cell to which it belongs.
       const cellId = determineCellIndex(node.layout.center)
       const columnIndex = cellId.columnIndex
@@ -1136,51 +1190,37 @@ function executeAddRestrictions() {
         rowIndex
       }
     }
-  })
+  }
   // run the last applied layout algorithm
   runLayout()
 }
 
 /**
- * Generate an array of gradient colors between the start color and the end color.
- * @param {Color} startColor The start color
- * @param {Color} endColor The end color
- * @return {Array} An array of gradient colors between the start color and the end color
+ * Generates an array of gradient colors between from orange to red.
+ * @returns {!Array.<Color>}
  */
-function generateGradientColor(startColor, endColor) {
-  const stepCount = columnCount
-  const colors = []
-
-  for (let i = 0; i < columnCount; i++) {
-    const r = (startColor.r * (stepCount - i) + endColor.r * i) / stepCount
-    const g = (startColor.g * (stepCount - i) + endColor.g * i) / stepCount
-    const b = (startColor.b * (stepCount - i) + endColor.b * i) / stepCount
-    const a = (startColor.a * (stepCount - i) + endColor.a * i) / stepCount
-    colors.push(new Color(r | 0, g | 0, b | 0, a | 0))
-  }
-  return colors
+function generateNodeColors() {
+  return generateGradientColors(Color.ORANGE, Color.RED, columnCount)
 }
 
 /**
  * Enables/Disables some toolbar elements and the input mode of the graph component.
- * @param {boolean} disabled <code>True</code> if the UI should be disabled, <code>false</code>
- *   otherwise.
+ * @param {boolean} disabled <code>True</code> if the UI should be disabled, <code>false</code> otherwise.
  */
 function setUIDisabled(disabled) {
-  document.getElementById('AddRow').disabled = disabled
-  document.getElementById('AddColumn').disabled = disabled
-  document.getElementById('DeleteEmptyRowsColumns').disabled = disabled
+  getElementById('AddRow').disabled = disabled
+  getElementById('AddColumn').disabled = disabled
+  getElementById('DeleteEmptyRowsColumns').disabled = disabled
 }
 
 /**
  * Enables/disables the delete column/row buttons and updates the partition grid visual
- * @param {boolean} disabled <code>True</code> if the buttons should be disabled,
- *   <code>false</code> otherwise.
- * @param {Point} location The location of the last mouse event
+ * @param {boolean} disabled <code>True</code> if the buttons should be disabled, <code>false</code> otherwise.
+ * @param {!Point} location The location of the last mouse event
  */
 function toggleDeleteButtonsVisibility(disabled, location) {
-  document.getElementById('DeleteRow').disabled = disabled
-  document.getElementById('DeleteColumn').disabled = disabled
+  getElementById('DeleteRow').disabled = disabled
+  getElementById('DeleteColumn').disabled = disabled
 
   if (partitionGridVisualCreator) {
     const cellId = disabled ? null : determineCellIndex(location)
@@ -1193,7 +1233,7 @@ function toggleDeleteButtonsVisibility(disabled, location) {
 /**
  * Generates a random integer with the given bound.
  * @param {number} upper The given upper bound
- * @return {number}
+ * @returns {number}
  */
 function getRandomInt(upper) {
   return Math.floor(Math.random() * upper)
@@ -1204,6 +1244,9 @@ function getRandomInt(upper) {
  * graph itself as well as the partition grid visualization.
  */
 class CustomLayoutExecutor extends LayoutExecutor {
+  /**
+   * @returns {*}
+   */
   createMorphAnimation() {
     const graphMorphAnimation = super.createMorphAnimation()
     if (partitionGridVisualCreator) {
@@ -1213,6 +1256,16 @@ class CustomLayoutExecutor extends LayoutExecutor {
     }
     return graphMorphAnimation
   }
+}
+
+/**
+ * Returns a reference to the first element with the specified ID in the current document.
+ * @returns {!T} A reference to the first element with the specified ID in the current document.
+ * @template {HTMLElement} T
+ * @param {!string} id
+ */
+function getElementById(id) {
+  return document.getElementById(id)
 }
 
 // run the demo

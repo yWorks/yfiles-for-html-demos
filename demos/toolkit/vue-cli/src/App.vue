@@ -14,6 +14,7 @@
       </div>
 
       <diagram-component ref="GraphComponent"></diagram-component>
+      <graph-overview-component class="graph-overview-component"></graph-overview-component>
     </div>
   </div>
 </template>
@@ -21,12 +22,22 @@
 <script>
 import DiagramComponent from './components/DiagramComponent'
 import DemoSidebar from './components/DemoSidebar'
+import GraphOverviewComponent from './components/GraphOverviewComponent'
 
 export default {
   name: 'app',
   components: {
     DemoSidebar,
-    DiagramComponent
+    DiagramComponent,
+    GraphOverviewComponent
+  },
+
+  provide() {
+    return {
+      yFilesAPI: {
+        getGC: () => this.$refs.GraphComponent.graphComponent
+      }
+    }
   }
 }
 </script>
@@ -130,5 +141,11 @@ body {
     height: 30px;
     line-height: 30px;
   }
+}
+
+.graph-overview-component {
+  position: absolute;
+  left: 20px;
+  top: 120px;
 }
 </style>

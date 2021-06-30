@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -32,12 +32,19 @@ import {
   BusRouterBusDescriptor,
   BusRouterData,
   Class,
+  Edge,
   EdgeRouterScope,
-  EnumDefinition,
+  Enum,
+  GenericLayoutData,
   GraphComponent,
   IEdge,
+  ILayoutAlgorithm,
+  LayoutData,
+  LayoutGraph,
   LayoutGraphHider,
   LayoutStageBase,
+  Mapper,
+  RoutingPolicy,
   YBoolean,
   YNumber,
   YString
@@ -69,8 +76,8 @@ const BusEdgeRouterConfig = Class('BusEdgeRouterConfig', {
   constructor: function () {
     LayoutConfiguration.call(this)
     const router = new BusRouter()
-    this.scopeItem = BusEdgeRouterConfig.EnumScope.ALL
-    this.busesItem = BusEdgeRouterConfig.EnumBuses.LABEL
+    this.scopeItem = BusRouterScope.ALL
+    this.busesItem = BusType.TAG
     this.gridEnabledItem = router.gridRouting
     this.gridSpacingItem = router.gridSpacing
     this.minDistanceToNodesItem = router.minimumDistanceToNode
@@ -82,23 +89,23 @@ const BusEdgeRouterConfig = Class('BusEdgeRouterConfig', {
     this.crossingCostItem = router.crossingCost
     this.crossingReroutingItem = router.rerouting
     this.minimumConnectionsCountItem = 6
+    this.title = 'Bus Router'
   },
 
   /**
-   * Creates and configures a layout and the graph's {@link IGraph#mapperRegistry} if necessary.
-   * @param {GraphComponent} graphComponent The <code>GraphComponent</code> to apply the
-   *   configuration on.
-   * @return {ILayoutAlgorithm} The configured layout algorithm.
+   * Creates and configures a layout.
+   * @param graphComponent The <code>GraphComponent</code> to apply the configuration on.
+   * @return The configured layout algorithm.
    */
   createConfiguredLayout: function (graphComponent) {
     const router = new BusRouter()
     switch (this.scopeItem) {
-      case BusEdgeRouterConfig.EnumScope.ALL:
+      case BusRouterScope.ALL:
         router.scope = EdgeRouterScope.ROUTE_ALL_EDGES
         break
-      case BusEdgeRouterConfig.EnumScope.PARTIAL:
-      case BusEdgeRouterConfig.EnumScope.SUBSET:
-      case BusEdgeRouterConfig.EnumScope.SUBSET_BUS:
+      case BusRouterScope.PARTIAL:
+      case BusRouterScope.SUBSET:
+      case BusRouterScope.SUBSET_BUS:
         router.scope = EdgeRouterScope.ROUTE_AFFECTED_EDGES
         break
       default:
@@ -115,7 +122,7 @@ const BusEdgeRouterConfig = Class('BusEdgeRouterConfig', {
     router.crossingCost = this.crossingCostItem
     router.rerouting = this.crossingReroutingItem
 
-    if (this.scopeItem === BusEdgeRouterConfig.EnumScope.PARTIAL) {
+    if (this.scopeItem === BusRouterScope.PARTIAL) {
       return new HideNonOrthogonalEdgesStage(router)
     }
 
@@ -124,45 +131,46 @@ const BusEdgeRouterConfig = Class('BusEdgeRouterConfig', {
 
   /**
    * Creates and configures the layout data.
-   * @return {LayoutData} The configured layout data.
+   * @return The configured layout data.
    */
   createConfiguredLayoutData: function (graphComponent, layout) {
     const graph = graphComponent.graph
     const graphSelection = graphComponent.selection
-    const scopePartial = this.scopeItem === BusEdgeRouterConfig.EnumScope.PARTIAL
-
-    const busIds = graph.mapperRegistry.createMapper(BusRouter.EDGE_DESCRIPTOR_DP_KEY)
+    const scopePartial = this.scopeItem === BusRouterScope.PARTIAL
+    const busIds = new Mapper()
+    const layoutData = new BusRouterData({
+      edgeDescriptors: busIds
+    })
 
     graph.edges.forEach(edge => {
       const isFixed =
         scopePartial &&
         !graphSelection.isSelected(edge.sourceNode) &&
         !graphSelection.isSelected(edge.targetNode)
-      const id = BusEdgeRouterConfig.getBusId(edge, this.busesItem)
-      busIds.set(edge, new BusRouterBusDescriptor(id, isFixed))
+      const id = this.getBusId(edge, this.busesItem)
+      const descriptor = new BusRouterBusDescriptor(id, isFixed)
+      descriptor.routingPolicy = this.routingPolicyItem
+      busIds.set(edge, descriptor)
     })
 
     const selectedIds = new Set()
-
-    const layoutData = new BusRouterData()
     switch (this.scopeItem) {
-      case BusEdgeRouterConfig.EnumScope.SUBSET:
-        layoutData.affectedEdges = edge => graphSelection.isSelected(edge)
+      case BusRouterScope.SUBSET:
+        layoutData.affectedEdges.delegate = edge => graphSelection.isSelected(edge)
         break
-      case BusEdgeRouterConfig.EnumScope.SUBSET_BUS:
+      case BusRouterScope.SUBSET_BUS:
         graph.edges
           .filter(item => graphSelection.isSelected(item))
           .forEach(edge => {
             const busId = busIds.get(edge).busId
-
             if (!selectedIds.has(busId)) {
               selectedIds.add(busId)
             }
           })
 
-        layoutData.affectedEdges = edge => selectedIds.has(busIds.get(edge).busId)
+        layoutData.affectedEdges.delegate = edge => selectedIds.has(busIds.get(edge).busId)
         break
-      case BusEdgeRouterConfig.EnumScope.PARTIAL:
+      case BusRouterScope.PARTIAL: {
         graph.nodes
           .filter(item => graphSelection.isSelected(item))
           .flatMap(node => graph.edgesAt(node, AdjacencyTypes.ALL))
@@ -173,43 +181,18 @@ const BusEdgeRouterConfig = Class('BusEdgeRouterConfig', {
             }
           })
 
-        graph.mapperRegistry.createDelegateMapper(
-          IEdge.$class,
-          YBoolean.$class,
+        const hideNonOrthogonalEdgesLayoutData = new GenericLayoutData()
+        hideNonOrthogonalEdgesLayoutData.addNodeItemCollection(
           HideNonOrthogonalEdgesStage.SELECTED_NODES_DP_KEY,
-          node => graphSelection.isSelected(node)
+          graphSelection.selectedNodes
         )
+        layoutData.affectedEdges.delegate = edge => selectedIds.has(busIds.get(edge).busId)
 
-        layoutData.affectedEdges = edge => {
-          return selectedIds.has(busIds.get(edge).busId)
-        }
-        break
+        return layoutData.combineWith(hideNonOrthogonalEdgesLayoutData)
+      }
     }
 
     return layoutData
-  },
-
-  /**
-   * Called after the layout animation is done.
-   * @see Overrides {@link LayoutConfiguration#postProcess}
-   */
-  postProcess: function (graphComponent) {
-    graphComponent.graph.mapperRegistry.removeMapper(BusRouter.EDGE_DESCRIPTOR_DP_KEY)
-    graphComponent.graph.mapperRegistry.removeMapper(BusRouter.DEFAULT_AFFECTED_EDGES_DP_KEY)
-  },
-
-  // ReSharper disable UnusedMember.Global
-  // ReSharper disable InconsistentNaming
-  /** @type {OptionGroup} */
-  DescriptionGroup: {
-    $meta: function () {
-      return [
-        LabelAttribute('Description'),
-        OptionGroupAttribute('RootGroup', 5),
-        TypeAttribute(OptionGroup.$class)
-      ]
-    },
-    value: null
   },
 
   /** @type {OptionGroup} */
@@ -262,13 +245,7 @@ const BusEdgeRouterConfig = Class('BusEdgeRouterConfig', {
     }
   },
 
-  /**
-   * Backing field for below property
-   * @type {BusEdgeRouterConfig.EnumScope}
-   */
-  $scopeItem: null,
-
-  /** @type {BusEdgeRouterConfig.EnumScope} */
+  /** @type {BusRouterScope} */
   scopeItem: {
     $meta: function () {
       return [
@@ -276,58 +253,39 @@ const BusEdgeRouterConfig = Class('BusEdgeRouterConfig', {
         OptionGroupAttribute('LayoutGroup', 10),
         EnumValuesAttribute().init({
           values: [
-            ['All Edges', BusEdgeRouterConfig.EnumScope.ALL],
-            ['Selected Edges', BusEdgeRouterConfig.EnumScope.SUBSET],
-            ['Buses of Selected Edges', BusEdgeRouterConfig.EnumScope.SUBSET_BUS],
-            ['Reroute to Selected Nodes', BusEdgeRouterConfig.EnumScope.PARTIAL]
+            ['All Edges', BusRouterScope.ALL],
+            ['Selected Edges', BusRouterScope.SUBSET],
+            ['Buses of Selected Edges', BusRouterScope.SUBSET_BUS],
+            ['Reroute to Selected Nodes', BusRouterScope.PARTIAL]
           ]
         }),
-        TypeAttribute(BusEdgeRouterConfig.EnumScope.$class)
+        TypeAttribute(Enum.$class)
       ]
     },
-    get: function () {
-      return this.$scopeItem
-    },
-    set: function (value) {
-      this.$scopeItem = value
-    }
+    value: null
   },
 
-  /**
-   * Backing field for below property
-   * @type {BusEdgeRouterConfig.EnumBuses}
-   */
-  $busesItem: null,
-
-  /** @type {BusEdgeRouterConfig.EnumBuses} */
+  /** @type {BusType} */
   busesItem: {
     $meta: function () {
       return [
-        LabelAttribute('Bus Membership', '#/api/BusRouter#BusRouter-field-EDGE_DESCRIPTOR_DP_KEY'),
+        LabelAttribute(
+          'Bus Membership',
+          '#/api/BusRouterData#BusRouterData-property-edgeDescriptors'
+        ),
         OptionGroupAttribute('LayoutGroup', 20),
         EnumValuesAttribute().init({
           values: [
-            ['Single Bus', BusEdgeRouterConfig.EnumBuses.SINGLE],
-            ['Defined by First Label', BusEdgeRouterConfig.EnumBuses.LABEL],
-            ['Defined by User Tag', BusEdgeRouterConfig.EnumBuses.TAG]
+            ['Single Bus', BusType.SINGLE],
+            ['Defined by First Label', BusType.LABEL],
+            ['Defined by User Tag', BusType.TAG]
           ]
         }),
-        TypeAttribute(BusEdgeRouterConfig.EnumBuses.$class)
+        TypeAttribute(Enum.$class)
       ]
     },
-    get: function () {
-      return this.$busesItem
-    },
-    set: function (value) {
-      this.$busesItem = value
-    }
+    value: null
   },
-
-  /**
-   * Backing field for below property
-   * @type {boolean}
-   */
-  $gridEnabledItem: false,
 
   /** @type {boolean} */
   gridEnabledItem: {
@@ -338,19 +296,8 @@ const BusEdgeRouterConfig = Class('BusEdgeRouterConfig', {
         TypeAttribute(YBoolean.$class)
       ]
     },
-    get: function () {
-      return this.$gridEnabledItem
-    },
-    set: function (value) {
-      this.$gridEnabledItem = value
-    }
+    value: false
   },
-
-  /**
-   * Backing field for below property
-   * @type {number}
-   */
-  $gridSpacingItem: 0,
 
   /** @type {number} */
   gridSpacingItem: {
@@ -366,12 +313,7 @@ const BusEdgeRouterConfig = Class('BusEdgeRouterConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function () {
-      return this.$gridSpacingItem
-    },
-    set: function (value) {
-      this.$gridSpacingItem = value
-    }
+    value: 2
   },
 
   /** @type {boolean} */
@@ -383,12 +325,6 @@ const BusEdgeRouterConfig = Class('BusEdgeRouterConfig', {
       return !this.gridEnabledItem
     }
   },
-
-  /**
-   * Backing field for below property
-   * @type {number}
-   */
-  $minDistanceToNodesItem: 0,
 
   /** @type {number} */
   minDistanceToNodesItem: {
@@ -407,19 +343,8 @@ const BusEdgeRouterConfig = Class('BusEdgeRouterConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function () {
-      return this.$minDistanceToNodesItem
-    },
-    set: function (value) {
-      this.$minDistanceToNodesItem = value
-    }
+    value: 0
   },
-
-  /**
-   * Backing field for below property
-   * @type {number}
-   */
-  $minDistanceToEdgesItem: 0,
 
   /** @type {number} */
   minDistanceToEdgesItem: {
@@ -438,19 +363,8 @@ const BusEdgeRouterConfig = Class('BusEdgeRouterConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function () {
-      return this.$minDistanceToEdgesItem
-    },
-    set: function (value) {
-      this.$minDistanceToEdgesItem = value
-    }
+    value: 0
   },
-
-  /**
-   * Backing field for below property
-   * @type {number}
-   */
-  $preferredBackboneCountItem: 0,
 
   /** @type {number} */
   preferredBackboneCountItem: {
@@ -469,19 +383,8 @@ const BusEdgeRouterConfig = Class('BusEdgeRouterConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function () {
-      return this.$preferredBackboneCountItem
-    },
-    set: function (value) {
-      this.$preferredBackboneCountItem = value
-    }
+    value: 1
   },
-
-  /**
-   * Backing field for below property
-   * @type {number}
-   */
-  $minimumBackboneLengthItem: 0,
 
   /** @type {number} */
   minimumBackboneLengthItem: {
@@ -500,19 +403,29 @@ const BusEdgeRouterConfig = Class('BusEdgeRouterConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function () {
-      return this.$minimumBackboneLengthItem
-    },
-    set: function (value) {
-      this.$minimumBackboneLengthItem = value
-    }
+    value: 1
   },
 
-  /**
-   * Backing field for below property
-   * @type {number}
-   */
-  $crossingCostItem: 0,
+  /** @type {number} */
+  routingPolicyItem: {
+    $meta: function () {
+      return [
+        LabelAttribute(
+          'Routing Policy',
+          '#/api/BusRouterBusDescriptor#BusRouterBusDescriptor-property-routingPolicy'
+        ),
+        OptionGroupAttribute('RoutingGroup', 5),
+        EnumValuesAttribute().init({
+          values: [
+            ['Always', RoutingPolicy.ALWAYS],
+            ['Path As Needed', RoutingPolicy.PATH_AS_NEEDED]
+          ]
+        }),
+        TypeAttribute(RoutingPolicy.$class)
+      ]
+    },
+    value: RoutingPolicy.ALWAYS
+  },
 
   /** @type {number} */
   crossingCostItem: {
@@ -528,19 +441,8 @@ const BusEdgeRouterConfig = Class('BusEdgeRouterConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function () {
-      return this.$crossingCostItem
-    },
-    set: function (value) {
-      this.$crossingCostItem = value
-    }
+    value: 0
   },
-
-  /**
-   * Backing field for below property
-   * @type {boolean}
-   */
-  $crossingReroutingItem: false,
 
   /** @type {boolean} */
   crossingReroutingItem: {
@@ -551,19 +453,8 @@ const BusEdgeRouterConfig = Class('BusEdgeRouterConfig', {
         TypeAttribute(YBoolean.$class)
       ]
     },
-    get: function () {
-      return this.$crossingReroutingItem
-    },
-    set: function (value) {
-      this.$crossingReroutingItem = value
-    }
+    value: false
   },
-
-  /**
-   * Backing field for below property
-   * @type {number}
-   */
-  $minimumConnectionsCountItem: 0,
 
   /** @type {number} */
   minimumConnectionsCountItem: {
@@ -582,65 +473,56 @@ const BusEdgeRouterConfig = Class('BusEdgeRouterConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function () {
-      return this.$minimumConnectionsCountItem
-    },
-    set: function (value) {
-      this.$minimumConnectionsCountItem = value
-    }
+    value: 0
   },
 
-  $static: {
-    /**
-     * @return {Object}
-     */
-    getBusId: function (e, busDetermination) {
-      switch (busDetermination) {
-        case BusEdgeRouterConfig.EnumBuses.LABEL:
-          return e.labels.size > 0 ? e.labels.elementAt(0).text : ''
-        case BusEdgeRouterConfig.EnumBuses.TAG:
-          return e.tag
-        default:
-          return BusEdgeRouterConfig.SINGLE_BUS_ID
-      }
-    },
-
-    /**
-     * @type {Object}
-     */
-    SINGLE_BUS_ID: null,
-
-    // ReSharper restore UnusedMember.Global
-    // ReSharper restore InconsistentNaming
-    EnumScope: new EnumDefinition(() => {
-      return {
-        ALL: 0,
-        SUBSET: 1,
-        SUBSET_BUS: 2,
-        PARTIAL: 3
-      }
-    }),
-
-    EnumBuses: new EnumDefinition(() => {
-      return {
-        SINGLE: 0,
-        LABEL: 1,
-        TAG: 2
-      }
-    }),
-
-    $clinit: function () {
-      BusEdgeRouterConfig.SINGLE_BUS_ID = {}
+  /**
+   * @return the bus id of the given edge considering the given bus determination type
+   */
+  getBusId: function (edge, busType) {
+    switch (busType) {
+      case BusType.LABEL:
+        return edge.labels.size > 0 ? edge.labels.elementAt(0).text : ''
+      case BusType.TAG:
+        return edge.tag
+      default:
+        return SINGLE_BUS_ID
     }
   }
 })
+
+const SINGLE_BUS_ID = {}
+
+export /**
+ * @readonly
+ * @enum {number}
+ */
+const BusType = {
+  SINGLE: 0,
+  LABEL: 1,
+  TAG: 2
+}
+
+export /**
+ * @readonly
+ * @enum {number}
+ */
+const BusRouterScope = {
+  ALL: 0,
+  SUBSET: 1,
+  SUBSET_BUS: 2,
+  PARTIAL: 3
+}
 
 class HideNonOrthogonalEdgesStage extends LayoutStageBase {
   static get SELECTED_NODES_DP_KEY() {
     return 'BusEdgeRouterConfig.SELECTED_NODES_DP_KEY'
   }
 
-  applyLayout(/** LayoutGraph */ graph) {
+  /**
+   * @param {!LayoutGraph} graph
+   */
+  applyLayout(graph) {
     const affectedEdges = graph.getDataProvider(BusRouter.DEFAULT_AFFECTED_EDGES_DP_KEY)
     const selectedNodes = graph.getDataProvider(HideNonOrthogonalEdgesStage.SELECTED_NODES_DP_KEY)
     const hider = new LayoutGraphHider(graph)

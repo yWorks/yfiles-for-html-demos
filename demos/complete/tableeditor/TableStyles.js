@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -27,7 +27,6 @@
  **
  ***************************************************************************/
 import {
-  Class,
   ClickInputMode,
   CreateEdgeInputMode,
   IColumn,
@@ -46,59 +45,53 @@ import {
   TableNodeStyle,
   TableNodeStyleRenderer,
   TableRenderingOrder,
-  Visual
+  Visual,
+  IRow
 } from 'yfiles'
 
-export const DemoTableStyle = Class('DemoTableStyle', {
-  $extends: TableNodeStyle,
+/**
+ * @typedef {Object} Cache
+ * @property {number} x
+ * @property {number} y
+ * @property {number} w
+ * @property {number} h
+ */
 
+export class DemoTableStyle extends TableNodeStyle {
   /**
-   * @param {ITable} table
+   * @param {!ITable} [table]
    */
-  constructor: function (table) {
-    if (table) {
-      TableNodeStyle.call(this, table, new DemoTableStyleRenderer())
-      this.tableRenderingOrder = TableRenderingOrder.ROWS_FIRST
-      this.backgroundStyle = new TableBackgroundStyle()
-    } else {
-      // we need a no-arg constructor for GraphML de-/serialization
-      TableNodeStyle.call(this, new Table(), new DemoTableStyleRenderer())
-      this.tableRenderingOrder = TableRenderingOrder.ROWS_FIRST
-      this.backgroundStyle = new TableBackgroundStyle()
-    }
+  constructor(table) {
+    super(table ? table : new Table(), new DemoTableStyleRenderer())
+    this.tableRenderingOrder = TableRenderingOrder.ROWS_FIRST
+    this.backgroundStyle = new TableBackgroundStyle()
   }
-})
+}
 
 /**
  * Custom TableNodeStyleRenderer which defines a clickable area on the table's headers.
  */
-const DemoTableStyleRenderer = Class('DemoTableStyleRenderer', {
-  $extends: TableNodeStyleRenderer,
-
-  constructor: function () {
-    TableNodeStyleRenderer.call(this)
-  },
-
+class DemoTableStyleRenderer extends TableNodeStyleRenderer {
   /**
-   * @param {IInputModeContext} inputModeContext
-   * @param {Rect} box
-   * @return {boolean}
+   * @param {!IInputModeContext} inputModeContext
+   * @param {!Rect} box
+   * @returns {boolean}
    */
-  isInBox: function (inputModeContext, box) {
+  isInBox(inputModeContext, box) {
     return box.contains(this.node.layout.topLeft) && box.contains(this.node.layout.bottomRight)
-  },
+  }
 
   /**
-   * @param {IInputModeContext} inputModeContext
-   * @param {Point} p
-   * @return {boolean} True if p is inside node.
+   * @returns {boolean} True if p is inside node.
+   * @param {!IInputModeContext} inputModeContext
+   * @param {!Point} p
    */
-  isHit: function (inputModeContext, p) {
-    if (!DemoTableStyleRenderer.$super.isHit.call(this, inputModeContext, p)) {
+  isHit(inputModeContext, p) {
+    if (!super.isHit.call(this, inputModeContext, p)) {
       return false
     }
 
-    const /** @type {ITable} */ table = this.node.lookup(ITable.$class)
+    const table = this.node.lookup(ITable.$class)
     if (table == null) {
       return true
     }
@@ -132,25 +125,19 @@ const DemoTableStyleRenderer = Class('DemoTableStyleRenderer', {
     }
     return true
   }
-})
+}
 
 /**
  * Custom table background style that uses a flat style.
  */
-const TableBackgroundStyle = Class('TableBackgroundStyle', {
-  $extends: NodeStyleBase,
-
-  constructor: function () {
-    NodeStyleBase.call(this)
-  },
-
+class TableBackgroundStyle extends NodeStyleBase {
   /**
-   * @param {IRenderContext} renderContext
-   * @param {INode} node
-   * @return {Visual}
+   * @param {!IRenderContext} renderContext
+   * @param {!INode} node
+   * @returns {?Visual}
    */
-  createVisual: function (renderContext, node) {
-    const /** @type {ITable} */ table = node.lookup(ITable.$class)
+  createVisual(renderContext, node) {
+    const table = node.lookup(ITable.$class)
     if (table != null) {
       const accInsets = table.accumulatedInsets
 
@@ -162,12 +149,11 @@ const TableBackgroundStyle = Class('TableBackgroundStyle', {
         h: layout.height
       }
 
-      const namespaceURI = renderContext.defsElement.namespaceURI
-      const g = document.createElementNS(namespaceURI, 'g')
+      const g = document.createElementNS('http://www.w3.org/2000/svg', 'g')
 
       const result = new SvgVisual(g)
 
-      const rec = document.createElementNS(namespaceURI, 'rect')
+      const rec = document.createElementNS('http://www.w3.org/2000/svg', 'rect')
       rec.x.baseVal.value = 0
       rec.y.baseVal.value = 0
       rec.width.baseVal.value = cache.w
@@ -219,17 +205,17 @@ const TableBackgroundStyle = Class('TableBackgroundStyle', {
       return result
     }
     return null
-  },
+  }
 
   /**
    * Helper function to create the inner rectangles for the headings.
-   * @param {SVGElement} g
+   * @param {!SVGElement} g
    * @param {number} x
    * @param {number} y
    * @param {number} w
    * @param {number} h
    */
-  createInnerRect: function (g, x, y, w, h) {
+  createInnerRect(g, x, y, w, h) {
     const innerRect = document.createElementNS('http://www.w3.org/2000/svg', 'rect')
     innerRect.setAttribute('class', 'stripe-inset')
     g.appendChild(innerRect)
@@ -243,18 +229,19 @@ const TableBackgroundStyle = Class('TableBackgroundStyle', {
       w,
       h
     }
-  },
+  }
 
   /**
    * Helper function to update the inner rectangles.
-   * @param {SVGElement} g
+   * @param {!SVGElement} g
    * @param {number} childIndex
    * @param {number} x
    * @param {number} y
    * @param {number} w
    * @param {number} h
+   * @returns {number}
    */
-  updateInnerRect: function (g, childIndex, x, y, w, h) {
+  updateInnerRect(g, childIndex, x, y, w, h) {
     childIndex++
     if (g.childElementCount <= childIndex) {
       this.createInnerRect(g, x, y, w, h)
@@ -263,35 +250,35 @@ const TableBackgroundStyle = Class('TableBackgroundStyle', {
       const rectangleCache = rec.cache
       if (
         !rectangleCache ||
-        rec.cache.x !== x ||
-        rec.cache.y !== y ||
-        rec.cache.w !== w ||
-        rec.cache.h !== h
+        rectangleCache.x !== x ||
+        rectangleCache.y !== y ||
+        rectangleCache.w !== w ||
+        rectangleCache.h !== h
       ) {
         rec.x.baseVal.value = x
         rec.y.baseVal.value = y
         rec.width.baseVal.value = w
         rec.height.baseVal.value = h
-        rec.cache.x = x
-        rec.cache.y = y
-        rec.cache.w = w
-        rec.cache.h = h
+        rectangleCache.x = x
+        rectangleCache.y = y
+        rectangleCache.w = w
+        rectangleCache.h = h
       }
     }
     return childIndex
-  },
+  }
 
   /**
-   * @param {IRenderContext} renderContext
-   * @param {Visual} oldVisual
-   * @param {INode} node
-   * @return {Visual}
+   * @param {!IRenderContext} renderContext
+   * @param {!SvgVisual} oldVisual
+   * @param {!INode} node
+   * @returns {?Visual}
    */
-  updateVisual: function (renderContext, oldVisual, node) {
+  updateVisual(renderContext, oldVisual, node) {
     const g = oldVisual.svgElement
     if (g instanceof SVGElement && g.childElementCount > 0) {
       const cache = g.cache
-      const /** @type {ITable} */ table = node.lookup(ITable.$class)
+      const table = node.lookup(ITable.$class)
       if (table != null && cache) {
         const accInsets = table.accumulatedInsets
 
@@ -369,20 +356,20 @@ const TableBackgroundStyle = Class('TableBackgroundStyle', {
       }
     }
     return this.createVisual(renderContext, node)
-  },
+  }
 
   /**
    * Hit test which considers HitTestRadius specified in CanvasContext.
-   * @param {IInputModeContext} inputModeContext
-   * @param {Point} p
-   * @param {INode} node
-   * @return {boolean} True if p is inside node.
+   * @returns {boolean} True if p is inside node.
+   * @param {!IInputModeContext} inputModeContext
+   * @param {!Point} p
+   * @param {!INode} node
    */
-  isHit: function (inputModeContext, p, node) {
-    if (!TableBackgroundStyle.$super.isHit.call(this, inputModeContext, p, node)) {
+  isHit(inputModeContext, p, node) {
+    if (!super.isHit.call(this, inputModeContext, p, node)) {
       return false
     }
-    const /** @type {ITable} */ table = node.lookup(ITable.$class)
+    const table = node.lookup(ITable.$class)
     if (table == null) {
       return true
     }
@@ -426,34 +413,23 @@ const TableBackgroundStyle = Class('TableBackgroundStyle', {
 
     return true
   }
-})
+}
 
 /**
  * Custom style for the Stripes in a table.
  */
-export const DemoStripeStyle = Class('DemoStripeStyle', {
-  $extends: NodeStyleBase,
-
-  constructor: function () {
-    NodeStyleBase.call(this)
-  },
-
+export class DemoStripeStyle extends NodeStyleBase {
   /**
-   * @param {IRenderContext} renderContext
-   * @param {INode} node
-   * @return {Visual}
+   * @param {!IRenderContext} renderContext
+   * @param {!INode} node
+   * @returns {?Visual}
    */
-  createVisual: function (renderContext, node) {
-    const /** @type {IStripe} */ stripe = node.lookup(IStripe.$class)
+  createVisual(renderContext, node) {
+    const stripe = node.lookup(IStripe.$class)
     const layout = node.layout
     if (stripe !== null) {
-      const isColumn = IColumn.isInstance(stripe)
-      let hasNoChildren
-      if (isColumn) {
-        hasNoChildren = !stripe.childColumns.getEnumerator().moveNext()
-      } else {
-        hasNoChildren = !stripe.childRows.getEnumerator().moveNext()
-      }
+      const isColumn = stripe instanceof IColumn
+      const hasNoChildren = !stripe.childStripes.getEnumerator().moveNext()
 
       let stripeInsets
       let isFirst
@@ -461,7 +437,7 @@ export const DemoStripeStyle = Class('DemoStripeStyle', {
         const actualInsets = stripe.actualInsets
         if (isColumn) {
           stripeInsets = new Insets(0, actualInsets.top, 0, actualInsets.bottom)
-          let walker = stripe.table.rootColumn
+          let walker = stripe.table && stripe.table.rootColumn
           while (walker !== null && walker !== stripe) {
             const enumerator = walker.childColumns.getEnumerator()
             walker = enumerator.moveNext() ? enumerator.current : null
@@ -469,7 +445,7 @@ export const DemoStripeStyle = Class('DemoStripeStyle', {
           isFirst = walker === stripe
         } else {
           stripeInsets = new Insets(actualInsets.left, 0, actualInsets.right, 0)
-          let walker = stripe.table.rootRow
+          let walker = stripe.table && stripe.table.rootRow
           while (walker !== null && walker !== stripe) {
             const enumerator = walker.childRows.getEnumerator()
             walker = enumerator.moveNext() ? enumerator.current : null
@@ -481,13 +457,12 @@ export const DemoStripeStyle = Class('DemoStripeStyle', {
         isFirst = false
       }
 
-      const namespaceURI = renderContext.defsElement.namespaceURI
-      const g = document.createElementNS(namespaceURI, 'g')
+      const g = document.createElementNS('http://www.w3.org/2000/svg', 'g')
 
       const result = new SvgVisual(g)
 
-      let x = 1.0
-      let y = 1.0
+      let x = 1
+      let y = 1
       let w = layout.width - 2
       let h = layout.height - 2
 
@@ -535,7 +510,6 @@ export const DemoStripeStyle = Class('DemoStripeStyle', {
       }
 
       g.setAttribute('transform', `translate(${layout.x} ${layout.y})`)
-
       result.cache = {
         x: layout.x,
         y: layout.y,
@@ -550,18 +524,18 @@ export const DemoStripeStyle = Class('DemoStripeStyle', {
       return result
     }
     return null
-  },
+  }
 
   /**
    * Helper function to create the inner rectangles for the headings.
-   * @param {Element} g
+   * @param {!Element} g
    * @param {number} x
    * @param {number} y
    * @param {number} w
    * @param {number} h
-   * @param {string} cssClass
+   * @param {!string} cssClass
    */
-  createInnerRect: function (g, x, y, w, h, cssClass) {
+  createInnerRect(g, x, y, w, h, cssClass) {
     const rec = document.createElementNS('http://www.w3.org/2000/svg', 'rect')
     rec.setAttribute('class', cssClass)
     g.appendChild(rec)
@@ -576,18 +550,20 @@ export const DemoStripeStyle = Class('DemoStripeStyle', {
       h,
       cl: cssClass
     }
-  },
+  }
 
   /**
    * Helper function to update the inner rectangles.
-   * @param {Element} g
+   * @param {!Element} g
+   * @param {number} childIndex
    * @param {number} x
    * @param {number} y
    * @param {number} w
    * @param {number} h
-   * @param {string} cssClass
+   * @param {!string} cssClass
+   * @returns {number}
    */
-  updateInnerRect: function (g, childIndex, x, y, w, h, cssClass) {
+  updateInnerRect(g, childIndex, x, y, w, h, cssClass) {
     childIndex++
     if (g.childElementCount <= childIndex) {
       this.createInnerRect(g, x, y, w, h, cssClass)
@@ -600,44 +576,39 @@ export const DemoStripeStyle = Class('DemoStripeStyle', {
       }
       if (
         !rectangleCache ||
-        rec.cache.x !== x ||
-        rec.cache.y !== y ||
-        rec.cache.w !== w ||
-        rec.cache.h !== h
+        rectangleCache.x !== x ||
+        rectangleCache.y !== y ||
+        rectangleCache.w !== w ||
+        rectangleCache.h !== h
       ) {
         rec.x.baseVal.value = x
         rec.y.baseVal.value = y
         rec.width.baseVal.value = w
         rec.height.baseVal.value = h
-        rec.cache.x = x
-        rec.cache.y = y
-        rec.cache.w = w
-        rec.cache.h = h
+        rectangleCache.x = x
+        rectangleCache.y = y
+        rectangleCache.w = w
+        rectangleCache.h = h
       }
     }
     return childIndex
-  },
+  }
 
   /**
-   * @param {IRenderContext} renderContext
-   * @param {Visual} oldVisual
-   * @param {INode} node
-   * @return {Visual}
+   * @param {!IRenderContext} renderContext
+   * @param {!SvgVisual} oldVisual
+   * @param {!INode} node
+   * @returns {?Visual}
    */
-  updateVisual: function (renderContext, oldVisual, node) {
-    const /** @type {IStripe} */ stripe = node.lookup(IStripe.$class)
+  updateVisual(renderContext, oldVisual, node) {
+    const stripe = node.lookup(IStripe.$class)
     const layout = node.layout
     const g = oldVisual.svgElement
     const cache = oldVisual.cache
     if (stripe !== null && g instanceof SVGGElement && cache) {
-      const isColumn = IColumn.isInstance(stripe)
+      const isColumn = stripe instanceof IColumn
 
-      let hasNoChildren
-      if (isColumn) {
-        hasNoChildren = !stripe.childColumns.getEnumerator().moveNext()
-      } else {
-        hasNoChildren = !stripe.childRows.getEnumerator().moveNext()
-      }
+      const hasNoChildren = !stripe.childStripes.getEnumerator().moveNext()
 
       let stripeInsets
       let isFirst
@@ -645,7 +616,7 @@ export const DemoStripeStyle = Class('DemoStripeStyle', {
         const actualInsets = stripe.actualInsets
         if (isColumn) {
           stripeInsets = new Insets(0, actualInsets.top, 0, actualInsets.bottom)
-          let walker = stripe.table.rootColumn
+          let walker = stripe.table && stripe.table.rootColumn
           while (walker !== null && walker !== stripe) {
             const enumerator = walker.childColumns.getEnumerator()
             walker = enumerator.moveNext() ? enumerator.current : null
@@ -653,7 +624,7 @@ export const DemoStripeStyle = Class('DemoStripeStyle', {
           isFirst = walker === stripe
         } else {
           stripeInsets = new Insets(actualInsets.left, 0, actualInsets.right, 0)
-          let walker = stripe.table.rootRow
+          let walker = stripe.table && stripe.table.rootRow
           while (walker !== null && walker !== stripe) {
             const enumerator = walker.childRows.getEnumerator()
             walker = enumerator.moveNext() ? enumerator.current : null
@@ -665,8 +636,8 @@ export const DemoStripeStyle = Class('DemoStripeStyle', {
         isFirst = false
       }
 
-      let x = 1.0
-      let y = 1.0
+      let x = 1
+      let y = 1
       let w = layout.width - 2
       let h = layout.height - 2
 
@@ -744,9 +715,9 @@ export const DemoStripeStyle = Class('DemoStripeStyle', {
       }
       return oldVisual
     }
-    return this.createVisual(node, renderContext)
+    return this.createVisual(renderContext, node)
   }
-})
+}
 
 // export a default object to be able to map a namespace to this module for serialization
 export default { DemoTableStyle, TableBackgroundStyle, DemoStripeStyle }

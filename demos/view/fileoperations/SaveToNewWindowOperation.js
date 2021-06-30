@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -26,45 +26,44 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-/**
- */
 export default class SaveToNewWindowOperation {
   /**
    * Checks if the operation can be executed.
-   * @return {boolean}
+   * @returns {boolean}
    */
   isAvailable() {
     return true
   }
 
   /**
-   * @param {string} fileContent
-   * @return {Promise} A Promise that resolves when the save operation is complete.
+   * @returns {!Promise} A Promise that resolves when the save operation is complete.
+   * @param {!string} fileContent
    */
   save(fileContent) {
     return new Promise((resolve, reject) => {
       const newWindow = window.open()
-      if (typeof newWindow === 'undefined') {
+      if (!newWindow) {
         reject(new Error('Could not open a new window. Maybe it was blocked by the browser.'))
         return
       }
-      newWindow.document.open()
-      if (newWindow.document.documentElement === null) {
-        newWindow.document.write('<html></html>')
+      const newDocument = newWindow.document
+      newDocument.open()
+      if (!newDocument.documentElement) {
+        newDocument.write('<html lang="en"></html>')
       }
-      const elementsByTagName = newWindow.document.documentElement.getElementsByTagName('body')
+      const elementsByTagName = newDocument.documentElement.getElementsByTagName('body')
       let body
       if (elementsByTagName.length === 0) {
-        body = newWindow.document.createElement('body')
-        newWindow.document.documentElement.appendChild(body)
+        body = newDocument.createElement('body')
+        newDocument.documentElement.appendChild(body)
       } else {
         body = elementsByTagName.item(0)
       }
-      newWindow.document.title = 'GraphML Export'
-      const pre = newWindow.document.createElement('pre')
+      newDocument.title = 'GraphML Export'
+      const pre = newDocument.createElement('pre')
       body.appendChild(pre)
       pre.textContent = fileContent
-      newWindow.document.close()
+      newDocument.close()
 
       resolve()
     })

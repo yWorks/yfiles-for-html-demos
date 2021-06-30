@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -39,8 +39,11 @@ import {
   HierarchicLayout,
   ICommand,
   IEdge,
+  IEdgeStyle,
+  ILayoutAlgorithm,
   IModelItem,
   INode,
+  INodeStyle,
   InteriorStretchLabelModel,
   InteriorStretchLabelModelPosition,
   License,
@@ -68,18 +71,34 @@ import {
 } from '../../resources/demo-app.js'
 import loadJson from '../../resources/load-json.js'
 
-let graphComponent = null
+// We need to load the modules 'router-polyline' and 'router-other' explicitly to prevent
+// tree-shaking tools from removing this dependency which is needed for 'PartialLayout'.
+Class.ensure(EdgeRouter, OrganicEdgeRouter)
 
-let partialNodesMapper = null
-let partialEdgesMapper = null
+/** @type {GraphComponent} */
+let graphComponent
 
-let partialNodeStyle = null
-let partialGroupStyle = null
-let partialEdgeStyle = null
-let fixedNodeStyle = null
-let fixedGroupNodeStyle = null
-let fixedEdgeStyle = null
+/** @type {Mapper.<INode,boolean>} */
+let partialNodesMapper
+/** @type {Mapper.<IEdge,boolean>} */
+let partialEdgesMapper
 
+/** @type {INodeStyle} */
+let partialNodeStyle
+/** @type {INodeStyle} */
+let partialGroupStyle
+/** @type {IEdgeStyle} */
+let partialEdgeStyle
+/** @type {INodeStyle} */
+let fixedNodeStyle
+/** @type {INodeStyle} */
+let fixedGroupNodeStyle
+/** @type {IEdgeStyle} */
+let fixedEdgeStyle
+
+/**
+ * @param {*} licenseData
+ */
 function run(licenseData) {
   License.value = licenseData
   // initialize the GraphComponent
@@ -100,10 +119,6 @@ function run(licenseData) {
   showApp(graphComponent)
 }
 
-// We need to load the modules 'router-polyline' and 'router-other' explicitly to prevent
-// tree-shaking tools it from removing this dependency which is needed for 'PartialLayout'.
-Class.ensure(EdgeRouter, OrganicEdgeRouter)
-
 /**
  * Runs a partial layout considering all selected options and partial/fixed nodes.
  */
@@ -111,7 +126,7 @@ async function runLayout() {
   setUIDisabled(true)
 
   // configure layout
-  const distance = Number.parseFloat(document.getElementById('node-distance').value)
+  const distance = Number.parseFloat(getElementById('node-distance').value)
   const partialLayout = new PartialLayout({
     coreLayout: getSubgraphLayout(),
     componentAssignmentStrategy: getComponentAssignmentStrategy(),
@@ -119,8 +134,8 @@ async function runLayout() {
     edgeRoutingStrategy: getEdgeRoutingStrategy(),
     layoutOrientation: getLayoutOrientation(),
     minimumNodeDistance: Number.isNaN(distance) ? 0 : distance,
-    allowMirroring: document.getElementById('mirroring').checked,
-    considerNodeAlignment: document.getElementById('snapping').checked
+    allowMirroring: getElementById('mirroring').checked,
+    considerNodeAlignment: getElementById('snapping').checked
   })
 
   // mark partial elements for the layout algorithm
@@ -131,7 +146,6 @@ async function runLayout() {
   // run layout algorithm
   try {
     await graphComponent.morphLayout(partialLayout, '0.5s', partialLayoutData)
-  } catch (e) {
   } finally {
     setUIDisabled(false)
   }
@@ -139,19 +153,18 @@ async function runLayout() {
 
 /**
  * Retrieves the selected layout for partial components.
- * @return {ILayoutAlgorithm}
+ * @returns {!ILayoutAlgorithm}
  */
 function getSubgraphLayout() {
-  const distance = Number.parseFloat(document.getElementById('node-distance').value)
-  const layout = document.getElementById('subgraph-layout').value
+  const distance = Number.parseFloat(getElementById('node-distance').value)
+  const layout = getElementById('subgraph-layout').value
   switch (layout) {
     default:
     case 'Hierarchic': {
-      const hierarchicLayout = new HierarchicLayout({
+      return new HierarchicLayout({
         minimumLayerDistance: distance,
         nodeToNodeDistance: distance
       })
-      return hierarchicLayout
     }
     case 'Orthogonal': {
       return new OrthogonalLayout({
@@ -174,10 +187,10 @@ function getSubgraphLayout() {
 
 /**
  * Retrieves the assignment strategy, either single nodes or components.
- * @return {ComponentAssignmentStrategy}
+ * @returns {!ComponentAssignmentStrategy}
  */
 function getComponentAssignmentStrategy() {
-  const componentAssignment = document.getElementById('component-assignment').value
+  const componentAssignment = getElementById('component-assignment').value
   switch (componentAssignment) {
     default:
     case 'Single':
@@ -190,10 +203,10 @@ function getComponentAssignmentStrategy() {
 /**
  * Retrieves the positioning strategy, either nodes are place close to the barycenter of their neighbors or their
  * initial location.
- * @return {SubgraphPlacement}
+ * @returns {!SubgraphPlacement}
  */
 function getSubgraphPlacement() {
-  const placement = document.getElementById('subgraph-positioning').value
+  const placement = getElementById('subgraph-positioning').value
   switch (placement) {
     default:
     case 'Barycenter':
@@ -205,10 +218,10 @@ function getSubgraphPlacement() {
 
 /**
  * Retrieves the edge routing strategy for partial edges and edges connected to partial nodes.
- * @return {PartialLayoutEdgeRoutingStrategy}
+ * @returns {!PartialLayoutEdgeRoutingStrategy}
  */
 function getEdgeRoutingStrategy() {
-  const edgeRouting = document.getElementById('edge-routing-style').value
+  const edgeRouting = getElementById('edge-routing-style').value
   switch (edgeRouting) {
     default:
     case 'Automatic':
@@ -226,10 +239,10 @@ function getEdgeRoutingStrategy() {
 
 /**
  * Retrieves the layout orientation for partial components.
- * @return {PartialLayoutOrientation}
+ * @returns {!PartialLayoutOrientation}
  */
 function getLayoutOrientation() {
-  const orientation = document.getElementById('layout-orientation').value
+  const orientation = getElementById('layout-orientation').value
   switch (orientation) {
     default:
     case 'None':
@@ -255,18 +268,12 @@ function initializeGraph() {
   graphComponent.graph = foldingManager.createFoldingView().graph
 
   // initialize styles
-  partialNodeStyle = new DemoNodeStyle()
-  partialGroupStyle = new DemoGroupStyle()
-  partialGroupStyle.isCollapsible = true
-  partialEdgeStyle = new DemoEdgeStyle()
-  partialEdgeStyle.cssClass = 'partial-edge'
-  fixedNodeStyle = new DemoNodeStyle()
-  fixedNodeStyle.cssClass = 'fixed-node'
-  fixedGroupNodeStyle = new DemoGroupStyle()
-  fixedGroupNodeStyle.cssClass = 'fixed-group-node'
-  fixedGroupNodeStyle.isCollapsible = true
-  fixedEdgeStyle = new DemoEdgeStyle()
-  fixedEdgeStyle.cssClass = 'fixed-edge'
+  partialNodeStyle = newDemoNodeStyle('', false)
+  partialGroupStyle = newDemoNodeStyle('', true)
+  partialEdgeStyle = newDemoEdgeStyle('partial-edge')
+  fixedNodeStyle = newDemoNodeStyle('fixed-node', false)
+  fixedGroupNodeStyle = newDemoNodeStyle('fixed-group-node', true)
+  fixedEdgeStyle = newDemoEdgeStyle('fixed-edge')
 
   const graph = graphComponent.graph
   graphComponent.navigationCommandsEnabled = true
@@ -288,6 +295,37 @@ function initializeGraph() {
   // Create and register mappers that specify partial graph elements
   partialNodesMapper = new Mapper({ defaultValue: true })
   partialEdgesMapper = new Mapper({ defaultValue: true })
+}
+
+/**
+ * Creates a new style instance for nodes in this demo.
+ * @param {!string} cssClassName The name of the CSS class to use for the new style instance.
+ * @param {boolean} group If true, a DemoGroupStyle instance is created;
+ * otherwise a DemoNodeStyle instance  is created.
+ * @returns {!INodeStyle}
+ */
+function newDemoNodeStyle(cssClassName, group) {
+  if (group) {
+    const style = new DemoGroupStyle()
+    style.isCollapsible = true
+    style.cssClass = cssClassName
+    return style
+  } else {
+    const style = new DemoNodeStyle()
+    style.cssClass = cssClassName
+    return style
+  }
+}
+
+/**
+ * Creates a new style instance for edges in this demo.
+ * @param {!string} cssClassName The name of the CSS class to use for the new style instance.
+ * @returns {!IEdgeStyle}
+ */
+function newDemoEdgeStyle(cssClassName) {
+  const style = new DemoEdgeStyle()
+  style.cssClass = cssClassName
+  return style
 }
 
 /**
@@ -329,13 +367,15 @@ function initializeInputModes() {
 
 /**
  * Sets the given item as fixed or movable and changes its color to indicate its new state.
+ * @param {!IModelItem} item
+ * @param {boolean} fixed
  */
 function setFixed(item, fixed) {
   const masterItem = getMasterItem(item)
-  if (INode.isInstance(item)) {
+  if (masterItem instanceof INode) {
     partialNodesMapper.set(masterItem, !fixed)
     updateStyle(item, fixed)
-  } else if (IEdge.isInstance(item)) {
+  } else if (masterItem instanceof IEdge) {
     partialEdgesMapper.set(masterItem, !fixed)
     updateStyle(item, fixed)
   }
@@ -344,12 +384,14 @@ function setFixed(item, fixed) {
 /**
  * Returns if a given item is considered fixed or shall be rearranged by the layout algorithm.
  * Note that an edge always gets rerouted if any of its end nodes may be moved.
+ * @param {!IModelItem} item
+ * @returns {boolean}
  */
 function isFixed(item) {
   const masterItem = getMasterItem(item)
-  if (INode.isInstance(item)) {
+  if (masterItem instanceof INode) {
     return !partialNodesMapper.get(masterItem)
-  } else if (IEdge.isInstance(item)) {
+  } else if (masterItem instanceof IEdge) {
     return !partialEdgesMapper.get(masterItem)
   }
   return false
@@ -359,35 +401,37 @@ function isFixed(item) {
  * Returns the master item for the given item.
  * Since folding is supported in this demo, partial/fixed states are stored for the master items to stay consistent
  * when expanding/collapsing group nodes.
- * @param {IModelItem} item
- * @return {IModelItem}
+ * @param {!IModelItem} item
+ * @returns {?IModelItem}
  */
 function getMasterItem(item) {
   const graph = graphComponent.graph
-  if (graph.foldingView.manager.masterGraph.contains(item)) {
+  const foldingView = graph.foldingView
+  if (foldingView.manager.masterGraph.contains(item)) {
     return item
   }
   if (graph.contains(item)) {
-    return graph.foldingView.getMasterItem(item)
+    return foldingView.getMasterItem(item)
   }
   return null
 }
 
 /**
  * Updates the style of the given item when the partial/fixed state has changed.
- * @param {IModelItem} item
+ * @param {!IModelItem} item
  * @param {boolean} fixed
  */
 function updateStyle(item, fixed) {
   const graph = graphComponent.graph
-  if (INode.isInstance(item)) {
-    const masterGraph = graph.foldingView.manager.masterGraph
-    if (masterGraph.isGroupNode(graph.foldingView.getMasterItem(item))) {
+  if (item instanceof INode) {
+    const foldingView = graph.foldingView
+    const masterGraph = foldingView.manager.masterGraph
+    if (masterGraph.isGroupNode(foldingView.getMasterItem(item))) {
       graph.setStyle(item, fixed ? fixedGroupNodeStyle : partialGroupStyle)
     } else {
       graph.setStyle(item, fixed ? fixedNodeStyle : partialNodeStyle)
     }
-  } else if (IEdge.isInstance(item)) {
+  } else if (item instanceof IEdge) {
     graph.setStyle(item, fixed ? fixedEdgeStyle : partialEdgeStyle)
   }
 }
@@ -428,6 +472,7 @@ function registerCommands() {
 
 /**
  * Loads one of four scenarios that come with a sample graph and a layout configuration.
+ * @returns {!Promise}
  */
 async function loadScenario() {
   partialNodesMapper.clear()
@@ -447,7 +492,7 @@ async function loadScenario() {
     partialEdgesMapper
   )
 
-  const sample = document.getElementById('select-sample').value.substring(10).toLowerCase()
+  const sample = getElementById('select-sample').value.substring(10).toLowerCase()
   const path = `resources/${sample}.graphml`
   switch (sample) {
     default:
@@ -488,12 +533,12 @@ async function loadScenario() {
 
 /**
  * Update the options according to the current scenario.
- * @param {string} subgraphLayout
- * @param {string} componentAssignmentStrategy
- * @param {string} subgraphPlacement
- * @param {string} edgeRoutingStrategy
- * @param {string} layoutOrientation
- * @param {number} minimunNodeDistance
+ * @param {!string} subgraphLayout
+ * @param {!string} componentAssignmentStrategy
+ * @param {!string} subgraphPlacement
+ * @param {!string} edgeRoutingStrategy
+ * @param {!string} layoutOrientation
+ * @param {number} minimumNodeDistance
  * @param {boolean} allowMirroring
  * @param {boolean} nodeSnapping
  */
@@ -503,7 +548,7 @@ function setOptions(
   subgraphPlacement,
   edgeRoutingStrategy,
   layoutOrientation,
-  minimunNodeDistance,
+  minimumNodeDistance,
   allowMirroring,
   nodeSnapping
 ) {
@@ -512,9 +557,9 @@ function setOptions(
   setComboboxValue('subgraph-positioning', subgraphPlacement)
   setComboboxValue('edge-routing-style', edgeRoutingStrategy)
   setComboboxValue('layout-orientation', layoutOrientation)
-  document.getElementById('node-distance').value = minimunNodeDistance
-  document.getElementById('mirroring').value = allowMirroring
-  document.getElementById('snapping').value = nodeSnapping
+  getElementById('node-distance').value = minimumNodeDistance.toString()
+  getElementById('mirroring').value = allowMirroring.toString()
+  getElementById('snapping').value = nodeSnapping.toString()
 }
 
 /**
@@ -523,11 +568,21 @@ function setOptions(
  * @param {boolean} disabled
  */
 function setUIDisabled(disabled) {
-  document.getElementById('lock-selection').disabled = disabled
-  document.getElementById('unlock-selection').disabled = disabled
-  document.getElementById('select-sample').disabled = disabled
-  document.getElementById('refresh').disabled = disabled
-  document.getElementById('layout').disabled = disabled
+  getElementById('lock-selection').disabled = disabled
+  getElementById('unlock-selection').disabled = disabled
+  getElementById('select-sample').disabled = disabled
+  getElementById('refresh').disabled = disabled
+  getElementById('layout').disabled = disabled
+}
+
+/**
+ * Returns a reference to the first element with the specified ID in the current document.
+ * @returns {!T} A reference to the first element with the specified ID in the current document.
+ * @template {HTMLElement} T
+ * @param {!string} id
+ */
+function getElementById(id) {
+  return document.getElementById(id)
 }
 
 // run the demo

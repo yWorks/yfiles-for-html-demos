@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -26,35 +26,45 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { GraphComponent, GraphEditorInputMode, IGraph, License, Rect } from 'yfiles'
+import { GraphComponent, GraphEditorInputMode, IGraph, License, Rect, INode } from 'yfiles'
 import { showApp } from '../../resources/demo-app.js'
 import { initDemoStyles, DemoNodeStyle, DemoGroupStyle } from '../../resources/demo-styles.js'
 import DemoReparentNodeHandler from './DemoReparentNodeHandler.js'
 import loadJson from '../../resources/load-json.js'
+
+/**
+ * Runs the demo.
+ * @param {!object} licenseData The yFiles license information.
+ */
 function run(licenseData) {
   License.value = licenseData
+
   // initialize the GraphComponent
   const graphComponent = new GraphComponent('graphComponent')
   const graph = graphComponent.graph
 
-  // Create a default editor input mode and configure it
+  // create a default editor input mode and configure it
   const graphEditorInputMode = new GraphEditorInputMode({
-    // Assign the custom reparent handler of this demo
+    // assign the custom reparent handler of this demo
     reparentNodeHandler: new DemoReparentNodeHandler(),
     allowGroupingOperations: true,
-    // Just for user convenience: disable node, group node, edge creation and clipboard operations
+    // Just for user convenience: disable edge creation, ...
     allowCreateEdge: false,
+    // ... node creation, and ...
     allowCreateNode: false,
+    // ... group node creation as well as ...
     allowGroupSelection: false,
+    // ... clipboard operations
     allowClipboardOperations: false
   })
-  // and enable the undo feature.
+
+  // enable the undo feature.
   graph.undoEngineEnabled = true
 
-  // Initialize the default style of the nodes and edges
+  // initialize the default style of the nodes and edges
   initDemoStyles(graph)
 
-  // Finally, set the input mode to the graph component.
+  // Finally, assign the configured input mode to the graph component.
   graphComponent.inputMode = graphEditorInputMode
 
   createSampleGraph(graph)
@@ -63,17 +73,17 @@ function run(licenseData) {
 }
 
 /**
- * Creates the sample graph of this DemoStyles.
- * @param {IGraph} graph
+ * Creates the demo's sample graph.
+ * @param {!IGraph} graph The graph to populate
  */
 function createSampleGraph(graph) {
-  // Create some group nodes
+  // create some group nodes ...
   const group1 = createGroupNode(graph, 100, 100, 'royalblue', 'Only Blue Children')
   const group2 = createGroupNode(graph, 160, 130, 'royalblue', 'Only Blue Children')
   const greenGroup = createGroupNode(graph, 100, 350, 'green', 'Only Green Children')
   createGroupNode(graph, 400, 350, 'green', 'Only Green Children')
 
-  // And some regular nodes
+  // ... and some regular nodes
   const blueNodeStyle = new DemoNodeStyle()
   blueNodeStyle.cssClass = 'royalblue'
 
@@ -93,23 +103,23 @@ function createSampleGraph(graph) {
   graph.groupNodes(group1, [blueNode, group2])
   graph.groupNodes(greenGroup, [greenNode])
 
-  // Ensure that the outer blue group completely contains its inner group
+  // ensure that the outer blue group completely contains its inner group
   graph.setNodeLayout(group1, new Rect(100, 100, 200, 150))
-  // Uncomment the following line to adjust the bounds of the outer blue group automatically
+  // uncomment the following line to adjust the bounds of the outer blue group automatically
   // graph.adjustGroupNodeLayout(group1);
 
-  // clear undo after initial graph loading
+  // clear undo after initial graph creation
   graph.undoEngine.clear()
 }
 
 /**
  * Creates a group node for the sample graph with a specific styling.
- * @param {IGraph} graph The given graph
+ * @param {!IGraph} graph The given graph
  * @param {number} x The node's x-coordinate
  * @param {number} y The node's y-coordinate
- * @param {string} cssClass The given css class
- * @param {string} labelText The nodes label's text
- * @return {INode}
+ * @param {!string} cssClass The CSS class that determines the node's styling
+ * @param {!string} labelText The node's label text
+ * @returns {!INode}
  */
 function createGroupNode(graph, x, y, cssClass, labelText) {
   const groupNode = graph.createGroupNode()

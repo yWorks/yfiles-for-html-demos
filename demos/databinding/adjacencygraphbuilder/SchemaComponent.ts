@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -328,7 +328,7 @@ export class SchemaComponent {
         if (IEdge.isInstance(args.item)) {
           args.showMenu = true
 
-          const edge = args.item!
+          const edge = args.item
           contextMenu.addMenuItem('Invert neighbor type (successor/predecessor)', (): void => {
             edge.tag.neighborType =
               edge.tag.neighborType === 'predecessor' ? 'successor' : 'predecessor'
@@ -525,9 +525,8 @@ export class SchemaComponent {
     sourceDefinition: AdjacencyNodesSourceDefinition
   ): AdjacencyNodesSourceDefinitionBuilderConnector {
     const data = SchemaComponent.hasData(sourceDefinition) ? parseData(sourceDefinition.data) : []
-    const nodesSource: AdjacencyNodesSource<DataItemType> = this.adjacencyGraphBuilder.createNodesSource(
-      data
-    )
+    const nodesSource: AdjacencyNodesSource<DataItemType> =
+      this.adjacencyGraphBuilder.createNodesSource(data)
 
     const nodeCreator = nodesSource.nodeCreator
     nodeCreator.defaults.style = new StringTemplateNodeStyle(sourceDefinition.template)
@@ -562,7 +561,8 @@ export class SchemaComponent {
    * @param schemaNode the schema node to edit
    */
   private openEditNodeSourceDialog(schemaNode: INode): void {
-    const sourceDefinitionConnector = schemaNode.tag as AdjacencyNodesSourceDefinitionBuilderConnector
+    const sourceDefinitionConnector =
+      schemaNode.tag as AdjacencyNodesSourceDefinitionBuilderConnector
     // noinspection JSIgnoredPromiseFromCall
     new EditAdjacencyNodesSourceDialog(sourceDefinitionConnector, () => {
       this.schemaGraphComponent.graph.setLabelText(
@@ -588,7 +588,8 @@ export class SchemaComponent {
    * @param {CreateEdgeInputMode} createEdgeInputMode
    */
   private enableTargetNodeCreation(createEdgeInputMode: CreateEdgeInputMode): void {
-    createEdgeInputMode.dummyEdgeGraph.nodeDefaults.size = this.schemaGraphComponent.graph.nodeDefaults.size
+    createEdgeInputMode.dummyEdgeGraph.nodeDefaults.size =
+      this.schemaGraphComponent.graph.nodeDefaults.size
 
     // each edge creation should use another random target node color
     createEdgeInputMode.addGestureStartingListener(src => {

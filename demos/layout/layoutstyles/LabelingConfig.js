@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -28,17 +28,19 @@
  ***************************************************************************/
 import {
   Class,
+  Enum,
   FreeEdgeLabelModel,
   GenericLabeling,
   GraphComponent,
+  ILabelLayoutDpKey,
   ILabelModelParameterFinder,
-  ILabelOwner,
+  ILayoutAlgorithm,
   LabelingData,
+  LayoutData,
   OptimizationStrategy,
   SimpleProfitModel,
   YBoolean,
   YNumber,
-  YObject,
   YString
 } from 'yfiles'
 
@@ -52,8 +54,13 @@ import {
   OptionGroupAttribute,
   TypeAttribute
 } from '../../resources/demo-option-editor.js'
-import LayoutConfiguration from './LayoutConfiguration.js'
-import SelectedLabelsStage from './SelectedLabelsStage.js'
+import LayoutConfiguration, {
+  LabelPlacementAlongEdge,
+  LabelPlacementSideOfEdge,
+  LabelPlacementOrientation
+} from './LayoutConfiguration.js'
+
+const SELECTED_LABELS_KEY = new ILabelLayoutDpKey(YBoolean.$class, null, 'SelectedLabels')
 
 /**
  * Configuration options for the layout algorithm of the same name.
@@ -78,21 +85,21 @@ const LabelingConfig = Class('LabelingConfig', {
     this.allowEdgeOverlapsItem = true
     this.reduceAmbiguityItem = true
 
-    this.labelPlacementAlongEdgeItem = LayoutConfiguration.EnumLabelPlacementAlongEdge.CENTERED
-    this.labelPlacementSideOfEdgeItem = LayoutConfiguration.EnumLabelPlacementSideOfEdge.ON_EDGE
-    this.labelPlacementOrientationItem =
-      LayoutConfiguration.EnumLabelPlacementOrientation.HORIZONTAL
+    this.labelPlacementAlongEdgeItem = LabelPlacementAlongEdge.CENTERED
+    this.labelPlacementSideOfEdgeItem = LabelPlacementSideOfEdge.ON_EDGE
+    this.labelPlacementOrientationItem = LabelPlacementOrientation.HORIZONTAL
     this.labelPlacementDistanceItem = 10.0
+    this.title = 'Generic Labeling'
   },
 
   /**
    * Creates and configures a layout and the graph's {@link IGraph#mapperRegistry} if necessary.
-   * @param {GraphComponent} graphComponent The <code>GraphComponent</code> to apply the
+   * @param graphComponent The <code>GraphComponent</code> to apply the
    *   configuration on.
-   * @return {ILayoutAlgorithm} The configured layout.
+   * @return The configured layout.
    */
   createConfiguredLayout: function (graphComponent) {
-    let labeling = new GenericLabeling()
+    const labeling = new GenericLabeling()
     labeling.autoFlipping = true
     labeling.optimizationStrategy = this.optimizationStrategyItem
     if (labeling.optimizationStrategy === OptimizationStrategy.NONE) {
@@ -109,61 +116,41 @@ const LabelingConfig = Class('LabelingConfig', {
     labeling.affectedLabelsDpKey = null
 
     if (graphComponent.selection !== null && selectionOnly) {
-      labeling.affectedLabelsDpKey = SelectedLabelsStage.PROVIDER_KEY
-      labeling = new SelectedLabelsStage(labeling)
+      labeling.affectedLabelsDpKey = SELECTED_LABELS_KEY
     }
 
-    LayoutConfiguration.addPreferredPlacementDescriptor(
-      graphComponent.graph,
-      this.labelPlacementAlongEdgeItem,
-      this.labelPlacementSideOfEdgeItem,
-      this.labelPlacementOrientationItem,
-      this.labelPlacementDistanceItem
-    )
-    this.$setupEdgeLabelModels(graphComponent)
+    if (this.placeEdgeLabelsItem) {
+      this.addPreferredPlacementDescriptor(
+        graphComponent.graph,
+        this.labelPlacementAlongEdgeItem,
+        this.labelPlacementSideOfEdgeItem,
+        this.labelPlacementOrientationItem,
+        this.labelPlacementDistanceItem
+      )
+      this.setupEdgeLabelModels(graphComponent)
+    }
 
     return labeling
   },
 
   /**
    * Creates and configures the layout data.
-   * @return {LayoutData} The configured layout data.
+   * @return The configured layout data.
    */
   createConfiguredLayoutData: function (graphComponent, layout) {
     const layoutData = new LabelingData()
 
     const selection = graphComponent.selection
     if (selection !== null) {
-      layoutData.affectedLabels = selection.selectedLabels
-
-      graphComponent.graph.mapperRegistry.createDelegateMapper(
-        ILabelOwner.$class,
-        YObject.$class,
-        SelectedLabelsStage.SELECTED_LABELS_AT_ITEM_KEY,
-        function (item) {
-          const bools = []
-          for (let i = 0; i < item.labels.size; i++) {
-            bools.push(selection.isSelected(item.labels.get(i)) || selection.isSelected(item))
-          }
-          return bools
-        }
-      )
+      layoutData.affectedLabels.dpKey = SELECTED_LABELS_KEY
+      layoutData.affectedLabels.delegate = label =>
+        selection.isSelected(label) || selection.isSelected(label.owner)
     }
 
     return layoutData
   },
 
-  /**
-   * Called after the layout animation is done.
-   * @see Overrides {@link LayoutConfiguration#postProcess}
-   */
-  postProcess: function (graphComponent) {
-    graphComponent.graph.mapperRegistry.removeMapper(
-      SelectedLabelsStage.SELECTED_LABELS_AT_ITEM_KEY
-    )
-  },
-
-  $setupEdgeLabelModels: function (graphComponent) {
+  setupEdgeLabelModels: function (graphComponent) {
     const model = new FreeEdgeLabelModel()
 
     const selectionOnly = this.considerSelectedFeaturesOnlyItem
@@ -174,7 +161,7 @@ const LabelingConfig = Class('LabelingConfig', {
 
     const parameterFinder = model.lookup(ILabelModelParameterFinder.$class)
     const graph = graphComponent.graph
-    graph.edgeLabels.forEach(label => {
+    for (const label of graph.edgeLabels) {
       if (selectionOnly) {
         if (graphComponent.selection.isSelected(label)) {
           graph.setLabelLayoutParameter(
@@ -188,19 +175,7 @@ const LabelingConfig = Class('LabelingConfig', {
           parameterFinder.findBestParameter(label, model, label.layout)
         )
       }
-    })
-  },
-
-  /** @type {OptionGroup} */
-  DescriptionGroup: {
-    $meta: function () {
-      return [
-        LabelAttribute('Description'),
-        OptionGroupAttribute('RootGroup', 5),
-        TypeAttribute(OptionGroup.$class)
-      ]
-    },
-    value: null
+    }
   },
 
   /** @type {OptionGroup} */
@@ -253,12 +228,6 @@ const LabelingConfig = Class('LabelingConfig', {
     }
   },
 
-  /**
-   * Backing field for below property
-   * @type {boolean}
-   */
-  $placeNodeLabelsItem: false,
-
   /** @type {boolean} */
   placeNodeLabelsItem: {
     $meta: function () {
@@ -271,19 +240,8 @@ const LabelingConfig = Class('LabelingConfig', {
         TypeAttribute(YBoolean.$class)
       ]
     },
-    get: function () {
-      return this.$placeNodeLabelsItem
-    },
-    set: function (value) {
-      this.$placeNodeLabelsItem = value
-    }
+    value: false
   },
-
-  /**
-   * Backing field for below property
-   * @type {boolean}
-   */
-  $placeEdgeLabelsItem: false,
 
   /** @type {boolean} */
   placeEdgeLabelsItem: {
@@ -297,19 +255,8 @@ const LabelingConfig = Class('LabelingConfig', {
         TypeAttribute(YBoolean.$class)
       ]
     },
-    get: function () {
-      return this.$placeEdgeLabelsItem
-    },
-    set: function (value) {
-      this.$placeEdgeLabelsItem = value
-    }
+    value: false
   },
-
-  /**
-   * Backing field for below property
-   * @type {boolean}
-   */
-  $considerSelectedFeaturesOnlyItem: false,
 
   /** @type {boolean} */
   considerSelectedFeaturesOnlyItem: {
@@ -323,19 +270,8 @@ const LabelingConfig = Class('LabelingConfig', {
         TypeAttribute(YBoolean.$class)
       ]
     },
-    get: function () {
-      return this.$considerSelectedFeaturesOnlyItem
-    },
-    set: function (value) {
-      this.$considerSelectedFeaturesOnlyItem = value
-    }
+    value: false
   },
-
-  /**
-   * Backing field for below property
-   * @type {boolean}
-   */
-  $allowNodeOverlapsItem: false,
 
   /** @type {boolean} */
   allowNodeOverlapsItem: {
@@ -349,19 +285,8 @@ const LabelingConfig = Class('LabelingConfig', {
         TypeAttribute(YBoolean.$class)
       ]
     },
-    get: function () {
-      return this.$allowNodeOverlapsItem
-    },
-    set: function (value) {
-      this.$allowNodeOverlapsItem = value
-    }
+    value: false
   },
-
-  /**
-   * Backing field for below property
-   * @type {boolean}
-   */
-  $allowEdgeOverlapsItem: false,
 
   /** @type {boolean} */
   allowEdgeOverlapsItem: {
@@ -375,19 +300,8 @@ const LabelingConfig = Class('LabelingConfig', {
         TypeAttribute(YBoolean.$class)
       ]
     },
-    get: function () {
-      return this.$allowEdgeOverlapsItem
-    },
-    set: function (value) {
-      this.$allowEdgeOverlapsItem = value
-    }
+    value: false
   },
-
-  /**
-   * Backing field for below property
-   * @type {OptimizationStrategy}
-   */
-  $optimizationStrategyItem: null,
 
   /** @type {OptimizationStrategy} */
   optimizationStrategyItem: {
@@ -410,19 +324,8 @@ const LabelingConfig = Class('LabelingConfig', {
         TypeAttribute(OptimizationStrategy.$class)
       ]
     },
-    get: function () {
-      return this.$optimizationStrategyItem
-    },
-    set: function (value) {
-      this.$optimizationStrategyItem = value
-    }
+    value: null
   },
-
-  /**
-   * Backing field for below property
-   * @type {boolean}
-   */
-  $reduceAmbiguityItem: false,
 
   /** @type {boolean} */
   reduceAmbiguityItem: {
@@ -436,21 +339,10 @@ const LabelingConfig = Class('LabelingConfig', {
         TypeAttribute(YBoolean.$class)
       ]
     },
-    get: function () {
-      return this.$reduceAmbiguityItem
-    },
-    set: function (value) {
-      this.$reduceAmbiguityItem = value
-    }
+    value: false
   },
 
-  /**
-   * Backing field for below property
-   * @type {LayoutConfiguration.EnumLabelPlacementOrientation}
-   */
-  $labelPlacementOrientationItem: null,
-
-  /** @type {LayoutConfiguration.EnumLabelPlacementOrientation} */
+  /** @type {LabelPlacementOrientation} */
   labelPlacementOrientationItem: {
     $meta: function () {
       return [
@@ -461,30 +353,19 @@ const LabelingConfig = Class('LabelingConfig', {
         OptionGroupAttribute('PreferredPlacementGroup', 10),
         EnumValuesAttribute().init({
           values: [
-            ['Parallel', LayoutConfiguration.EnumLabelPlacementOrientation.PARALLEL],
-            ['Orthogonal', LayoutConfiguration.EnumLabelPlacementOrientation.ORTHOGONAL],
-            ['Horizontal', LayoutConfiguration.EnumLabelPlacementOrientation.HORIZONTAL],
-            ['Vertical', LayoutConfiguration.EnumLabelPlacementOrientation.VERTICAL]
+            ['Parallel', LabelPlacementOrientation.PARALLEL],
+            ['Orthogonal', LabelPlacementOrientation.ORTHOGONAL],
+            ['Horizontal', LabelPlacementOrientation.HORIZONTAL],
+            ['Vertical', LabelPlacementOrientation.VERTICAL]
           ]
         }),
-        TypeAttribute(LayoutConfiguration.EnumLabelPlacementOrientation.$class)
+        TypeAttribute(Enum.$class)
       ]
     },
-    get: function () {
-      return this.$labelPlacementOrientationItem
-    },
-    set: function (value) {
-      this.$labelPlacementOrientationItem = value
-    }
+    value: null
   },
 
-  /**
-   * Backing field for below property
-   * @type {LayoutConfiguration.EnumLabelPlacementAlongEdge}
-   */
-  $labelPlacementAlongEdgeItem: null,
-
-  /** @type {LayoutConfiguration.EnumLabelPlacementAlongEdge} */
+  /** @type {LabelPlacementAlongEdge} */
   labelPlacementAlongEdgeItem: {
     $meta: function () {
       return [
@@ -495,32 +376,21 @@ const LabelingConfig = Class('LabelingConfig', {
         OptionGroupAttribute('PreferredPlacementGroup', 20),
         EnumValuesAttribute().init({
           values: [
-            ['Anywhere', LayoutConfiguration.EnumLabelPlacementAlongEdge.ANYWHERE],
-            ['At Source', LayoutConfiguration.EnumLabelPlacementAlongEdge.AT_SOURCE],
-            ['At Source Port', LayoutConfiguration.EnumLabelPlacementAlongEdge.AT_SOURCE_PORT],
-            ['At Target', LayoutConfiguration.EnumLabelPlacementAlongEdge.AT_TARGET],
-            ['At Target Port', LayoutConfiguration.EnumLabelPlacementAlongEdge.AT_TARGET_PORT],
-            ['Centered', LayoutConfiguration.EnumLabelPlacementAlongEdge.CENTERED]
+            ['Anywhere', LabelPlacementAlongEdge.ANYWHERE],
+            ['At Source', LabelPlacementAlongEdge.AT_SOURCE],
+            ['At Source Port', LabelPlacementAlongEdge.AT_SOURCE_PORT],
+            ['At Target', LabelPlacementAlongEdge.AT_TARGET],
+            ['At Target Port', LabelPlacementAlongEdge.AT_TARGET_PORT],
+            ['Centered', LabelPlacementAlongEdge.CENTERED]
           ]
         }),
-        TypeAttribute(LayoutConfiguration.EnumLabelPlacementAlongEdge.$class)
+        TypeAttribute(Enum.$class)
       ]
     },
-    get: function () {
-      return this.$labelPlacementAlongEdgeItem
-    },
-    set: function (value) {
-      this.$labelPlacementAlongEdgeItem = value
-    }
+    value: null
   },
 
-  /**
-   * Backing field for below property
-   * @type {LayoutConfiguration.EnumLabelPlacementSideOfEdge}
-   */
-  $labelPlacementSideOfEdgeItem: null,
-
-  /** @type {LayoutConfiguration.EnumLabelPlacementSideOfEdge} */
+  /** @type {LabelPlacementSideOfEdge} */
   labelPlacementSideOfEdgeItem: {
     $meta: function () {
       return [
@@ -531,29 +401,18 @@ const LabelingConfig = Class('LabelingConfig', {
         OptionGroupAttribute('PreferredPlacementGroup', 30),
         EnumValuesAttribute().init({
           values: [
-            ['Anywhere', LayoutConfiguration.EnumLabelPlacementSideOfEdge.ANYWHERE],
-            ['On Edge', LayoutConfiguration.EnumLabelPlacementSideOfEdge.ON_EDGE],
-            ['Left', LayoutConfiguration.EnumLabelPlacementSideOfEdge.LEFT],
-            ['Right', LayoutConfiguration.EnumLabelPlacementSideOfEdge.RIGHT],
-            ['Left or Right', LayoutConfiguration.EnumLabelPlacementSideOfEdge.LEFT_OR_RIGHT]
+            ['Anywhere', LabelPlacementSideOfEdge.ANYWHERE],
+            ['On Edge', LabelPlacementSideOfEdge.ON_EDGE],
+            ['Left', LabelPlacementSideOfEdge.LEFT],
+            ['Right', LabelPlacementSideOfEdge.RIGHT],
+            ['Left or Right', LabelPlacementSideOfEdge.LEFT_OR_RIGHT]
           ]
         }),
-        TypeAttribute(LayoutConfiguration.EnumLabelPlacementSideOfEdge.$class)
+        TypeAttribute(Enum.$class)
       ]
     },
-    get: function () {
-      return this.$labelPlacementSideOfEdgeItem
-    },
-    set: function (value) {
-      this.$labelPlacementSideOfEdgeItem = value
-    }
+    value: null
   },
-
-  /**
-   * Backing field for below property
-   * @type {number}
-   */
-  $labelPlacementDistanceItem: 0,
 
   /** @type {number} */
   labelPlacementDistanceItem: {
@@ -572,12 +431,7 @@ const LabelingConfig = Class('LabelingConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function () {
-      return this.$labelPlacementDistanceItem
-    },
-    set: function (value) {
-      this.$labelPlacementDistanceItem = value
-    }
+    value: 0
   },
 
   /** @type {boolean} */
@@ -586,10 +440,7 @@ const LabelingConfig = Class('LabelingConfig', {
       return [TypeAttribute(YBoolean.$class)]
     },
     get: function () {
-      return (
-        this.labelPlacementSideOfEdgeItem ===
-        LayoutConfiguration.EnumLabelPlacementSideOfEdge.ON_EDGE
-      )
+      return this.labelPlacementSideOfEdgeItem === LabelPlacementSideOfEdge.ON_EDGE
     }
   }
 })

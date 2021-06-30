@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -28,22 +28,48 @@
  ***************************************************************************/
 /* eslint-disable no-prototype-builtins */
 /* global Vue */
+/* eslint-disable no-undef */
 import {
   Font,
+  FontStyle,
+  FontWeight,
+  GraphComponent,
   INode,
   IRenderContext,
+  LabelStyleBase,
   NodeStyleBase,
   Size,
+  SvgDefsManager,
   SvgVisual,
+  TextDecoration,
   TextRenderSupport,
   TextWrapping
 } from 'yfiles'
 
 /**
  * Initializes custom components that can be used in the template. Those components can either be used directly or
- * come from a style created by 'Node Template Designer' (https://www.yworks.com/node-template-designer/).
+ * originate from a style created by 'Node Template Designer', currently used in the data explorer for neo4j
+ * (https://www.yworks.com/neo4j-explorer/).
  */
 initializeDesignerVueComponents()
+
+/**
+ * @typedef {Object} State
+ * @property {NodeLayout} [layout]
+ * @property {number} [zoom]
+ * @property {object} [tag]
+ * @property {boolean} [selected]
+ * @property {boolean} [highlighted]
+ * @property {boolean} [focused]
+ */
+
+/**
+ * @typedef {Object} NodeLayout
+ * @property {number} x
+ * @property {number} y
+ * @property {number} width
+ * @property {number} height
+ */
 
 /**
  * A context object that helps to enhance performance. There are some properties that are provided for binding
@@ -51,10 +77,11 @@ initializeDesignerVueComponents()
  */
 class ObservedContext {
   /**
-   * @param {INode} node
-   * @param {IRenderContext} renderContext
+   * @param {!INode} node
+   * @param {!IRenderContext} renderContext
    */
   constructor(node, renderContext) {
+    this.observed = {}
     this.node = node
     this.graphComponent = renderContext.canvasComponent
     this.defsSupport = renderContext.svgDefsManager
@@ -63,7 +90,7 @@ class ObservedContext {
   }
 
   /**
-   * @param {IRenderContext} renderContext
+   * @param {!IRenderContext} renderContext
    */
   update(renderContext) {
     this.defsSupport = renderContext.svgDefsManager
@@ -72,7 +99,7 @@ class ObservedContext {
 
   /**
    * Resets the context object to an empty object if none of the properties is used.
-   * @return {Object|null}
+   * @returns {?Object}
    */
   reset() {
     const oldState = this.observed
@@ -90,8 +117,8 @@ class ObservedContext {
 
   /**
    * Checks the current state for changes and returns the differences to the old state.
-   * @param {Object} oldState
-   * @return {{change: boolean, delta: {}}}
+   * @param {!State} oldState
+   * @returns {!object}
    */
   checkModification(oldState) {
     const delta = {}
@@ -104,11 +131,12 @@ class ObservedContext {
         width: layout.width,
         height: layout.height
       }
+      const oldLayout = oldState.layout
       if (
-        newValue.x !== oldState.layout.x ||
-        newValue.y !== oldState.layout.y ||
-        newValue.width !== oldState.layout.width ||
-        newValue.height !== oldState.layout.height
+        newValue.x !== oldLayout.x ||
+        newValue.y !== oldLayout.y ||
+        newValue.width !== oldLayout.width ||
+        newValue.height !== oldLayout.height
       ) {
         delta.layout = newValue
         change = true
@@ -159,7 +187,7 @@ class ObservedContext {
 
   /**
    * Returns the layout.
-   * @return {{x, y, height, width:}}
+   * @type {!NodeLayout}
    */
   get layout() {
     if (this.observed.hasOwnProperty('layout')) {
@@ -177,7 +205,7 @@ class ObservedContext {
 
   /**
    * Returns the zoom level.
-   * @return {number}
+   * @type {number}
    */
   get zoom() {
     if (this.observed.hasOwnProperty('zoom')) {
@@ -188,7 +216,7 @@ class ObservedContext {
 
   /**
    * Returns the tag.
-   * @return {Object}
+   * @type {!object}
    */
   get tag() {
     if (this.observed.hasOwnProperty('tag')) {
@@ -199,7 +227,7 @@ class ObservedContext {
 
   /**
    * Returns the selected state.
-   * @return {boolean}
+   * @type {boolean}
    */
   get selected() {
     if (this.observed.hasOwnProperty('selected')) {
@@ -212,20 +240,19 @@ class ObservedContext {
 
   /**
    * Returns the highlighted state.
-   * @return {boolean}
+   * @type {boolean}
    */
   get highlighted() {
     if (this.observed.hasOwnProperty('highlighted')) {
       return this.observed.highlighted
     }
-    return (this.observed.highlighted = this.graphComponent.highlightIndicatorManager.selectionModel.isSelected(
-      this.node
-    ))
+    return (this.observed.highlighted =
+      this.graphComponent.highlightIndicatorManager.selectionModel.isSelected(this.node))
   }
 
   /**
    * Returns the focused state.
-   * @return {boolean}
+   * @type {boolean}
    */
   get focused() {
     if (this.observed.hasOwnProperty('focused')) {
@@ -237,6 +264,7 @@ class ObservedContext {
 
   /**
    * Generates an id for use in SVG defs elements that is unique for the current rendering context.
+   * @returns {!string}
    */
   generateDefsId() {
     return this.defsSupport.generateUniqueDefsId()
@@ -244,32 +272,46 @@ class ObservedContext {
 }
 
 /**
+ * @typedef {Object} DataType
+ * @property {*} yFilesContext
+ * @property {DataMap} idMap
+ * @property {DataMap} urlMap
+ * @property {function} localId
+ * @property {object} tag
+ */
+
+/**
+ * @typedef {Object} DataMap
+ */
+
+/**
  * A node style which uses a Vuejs component to display a node.
  */
 export default class VuejsNodeStyle extends NodeStyleBase {
   /**
-   * @param {string} template
+   * @param {!string} template
    */
   constructor(template) {
     super()
+    this._template = ''
     this.template = template
   }
 
   /**
    * Returns the Vuejs template.
-   * @return {string}
+   * @type {!string}
    */
   get template() {
-    return this.$template
+    return this._template
   }
 
   /**
    * Sets the Vuejs template.
-   * @param {string} value
+   * @type {!string}
    */
   set template(value) {
-    if (value !== this.$template) {
-      this.$template = value
+    if (value !== this._template) {
+      this._template = value
       this.constructorFunction = Vue.extend({
         template: value,
         data() {
@@ -329,7 +371,7 @@ export default class VuejsNodeStyle extends NodeStyleBase {
           zoom() {
             const yFilesContext = this.yFilesContext
             if (yFilesContext.hasOwnProperty('zoom')) {
-              return yFilesContext.selected
+              return yFilesContext.zoom
             }
             return yFilesContext.observedContext.zoom
           },
@@ -360,10 +402,10 @@ export default class VuejsNodeStyle extends NodeStyleBase {
 
   /**
    * Creates a visual that uses a Vuejs component to display a node.
-   * @param {IRenderContext} context
-   * @param {INode} node
-   * @return {SvgVisual}
    * @see Overrides {@link LabelStyleBase#createVisual}
+   * @param {!IRenderContext} context
+   * @param {!INode} node
+   * @returns {!SvgVisual}
    */
   createVisual(context, node) {
     // eslint-disable-next-line new-cap
@@ -399,21 +441,23 @@ export default class VuejsNodeStyle extends NodeStyleBase {
     const svgVisual = new SvgVisual(svgElement)
     context.setDisposeCallback(svgVisual, (context, visual) => {
       // clean up vue component instance after the visual is disposed
-      visual.svgElement['data-vueComponent'].$destroy()
+      const svgElement = visual.svgElement
+      svgElement['data-vueComponent'].$destroy()
+      return null
     })
     return svgVisual
   }
 
   /**
    * Updates the visual by returning the old visual, as Vuejs handles updating the component.
-   * @param {IRenderContext} context
-   * @param {SvgVisual} oldVisual
-   * @param {INode} node
-   * @return {SvgVisual}
    * @see Overrides {@link LabelStyleBase#updateVisual}
+   * @param {!IRenderContext} context
+   * @param {!SvgVisual} oldVisual
+   * @param {!INode} node
+   * @returns {!SvgVisual}
    */
   updateVisual(context, oldVisual, node) {
-    if (oldVisual instanceof SvgVisual && oldVisual.svgElement) {
+    if (oldVisual.svgElement) {
       const component = oldVisual.svgElement['data-vueComponent']
       if (component) {
         const yfilesContext = component.yFilesContext
@@ -446,15 +490,16 @@ export default class VuejsNodeStyle extends NodeStyleBase {
 
   /**
    * Prepares the Vuejs component for rendering.
-   * @param {Object} component
-   * @param {IRenderContext} context
-   * @param {INode} node
+   * @param {*} component
+   * @param {!IRenderContext} context
+   * @param {!INode} node
    */
   prepareVueComponent(component, context, node) {
     const yFilesContext = {}
 
     const ctx = new ObservedContext(node, context)
 
+    // Values added using Object.defineProperty() are immutable and not enumerable and thus are not observed by Vuejs.
     Object.defineProperty(yFilesContext, 'observedContext', {
       configurable: false,
       enumerable: false,
@@ -466,15 +511,16 @@ export default class VuejsNodeStyle extends NodeStyleBase {
 
   /**
    * Updates the Vuejs component for rendering.
-   * @param {Object} component
-   * @param {IRenderContext} context
-   * @param {INode} node
+   * @param {*} component
+   * @param {!IRenderContext} context
+   * @param {!INode} node
    */
   updateVueComponent(component, context, node) {
     const yFilesContext = {}
 
     const ctx = component.yFilesContext.observedContext
 
+    // Values added using Object.defineProperty() are immutable and not enumerable and thus are not observed by Vuejs.
     Object.defineProperty(yFilesContext, 'observedContext', {
       configurable: false,
       enumerable: false,
@@ -487,8 +533,8 @@ export default class VuejsNodeStyle extends NodeStyleBase {
 
   /**
    * Updates the location of the given visual.
-   * @param {INode} node
-   * @param {SVGElement} svgElement
+   * @param {!INode} node
+   * @param {!SVGElement} svgElement
    */
   updateLocation(node, svgElement) {
     if (svgElement.transform) {
@@ -530,31 +576,31 @@ function initializeDesignerVueComponents() {
       fontSettings.fontFamily = fontFamily
     }
     if (typeof fontSize !== 'undefined') {
-      fontSettings.fontSize = parseFloat(fontSize)
+      fontSettings.fontSize = Number(fontSize)
     }
     if (typeof fontStyle !== 'undefined') {
-      fontSettings.fontStyle = fontStyle
+      fontSettings.fontStyle = Number(fontStyle)
     }
     if (typeof fontWeight !== 'undefined') {
-      fontSettings.fontWeight = fontWeight
+      fontSettings.fontWeight = Number(fontWeight)
     }
     if (typeof textDecoration !== 'undefined') {
-      fontSettings.textDecoration = textDecoration
+      fontSettings.textDecoration = Number(textDecoration)
     }
     if (typeof lineSpacing !== 'undefined') {
-      fontSettings.lineSpacing = parseFloat(lineSpacing)
+      fontSettings.lineSpacing = Number(lineSpacing)
     }
     const font = new Font(fontSettings)
     let textWrapping = TextWrapping.CHARACTER_ELLIPSIS
 
     if (typeof wrapping !== 'undefined' && wrapping !== null) {
-      switch (wrapping) {
+      switch (Number(wrapping)) {
         case TextWrapping.CHARACTER_ELLIPSIS:
         case TextWrapping.CHARACTER:
         case TextWrapping.NONE:
         case TextWrapping.WORD:
         case TextWrapping.WORD_ELLIPSIS:
-          textWrapping = wrapping
+          textWrapping = Number(wrapping)
           break
         default:
           // in case of faulty input
@@ -571,7 +617,7 @@ function initializeDesignerVueComponents() {
 
     // do the text wrapping
     // This sample uses the strategy CHARACTER_ELLIPSIS. You can use any other setting.
-    TextRenderSupport.addText(textElement, text, font, new Size(w, h), textWrapping)
+    TextRenderSupport.addText(textElement, text, font, new Size(Number(w), Number(h)), textWrapping)
 
     return textElement
   }
@@ -609,19 +655,60 @@ function initializeDesignerVueComponents() {
 
   let clipId = 0
 
+  /**
+   * @typedef {Object} TextDataType
+   * @property {string} content
+   * @property {(string|number)} width
+   * @property {(string|number)} height
+   * @property {string} fontFamily
+   * @property {(string|number)} fontSize
+   * @property {(string|number)} fontWeight
+   * @property {(string|number)} fontStyle
+   * @property {(string|number)} textDecoration
+   * @property {(string|number)} lineSpacing
+   * @property {(string|number)} wrapping
+   * @property {SVGElement} $el
+   */
+
+  /**
+   * @typedef {Object} TextPropsType
+   * @property {(string|number)} x
+   * @property {(string|number)} y
+   * @property {(string|number)} width
+   * @property {(string|number)} height
+   * @property {boolean} clipped
+   * @property {string} align
+   * @property {string} fill
+   * @property {string} content
+   * @property {(string|number)} opacity
+   * @property {(string|boolean)} visible
+   * @property {(string|number)} wrapping
+   * @property {string} transform
+   * @property {string} fontFamily
+   * @property {(string|number)} fontSize
+   * @property {(string|number)} fontWeight
+   * @property {(string|number)} fontStyle
+   * @property {(string|number)} textDecoration
+   * @property {(string|number)} lineSpacing
+   */
+
   Vue.component('svg-text', {
     template: `
-<g v-if="visible" :transform="$transform">
-<g v-if="clipped" :transform="'translate('+x+' '+y+')'">
-  <text dy="1em" :transform="'translate('+$dx+' 0)'" :text-anchor="$textAnchor" :clip-path="'url(#'+refId+')'" :fill="fill" :opacity="opacity">{{content}}</text>
-  <clipPath :id="refId">
-    <rect :width="width" :height="height" :x="-$dx"></rect>
-  </clipPath>
-</g>
-<g v-else :transform="'translate('+x+' '+y+')'">
-  <text dy="1em" :transform="'translate('+$dx+' 0)'" :text-anchor="$textAnchor" :fill="fill" :opacity="opacity">{{content}}</text>
-</g>
-</g>`,
+      <g v-if="visible" :transform="$transform">
+      <g v-if="clipped" :transform="'translate('+x+' '+y+')'">
+        <text dy="1em" :transform="'translate('+$dx+' 0)'" :text-anchor="$textAnchor"
+          :clip-path="'url(#'+refId+')'" :fill="fill" :opacity="opacity">{{ content }}
+        </text>
+        <clipPath :id="refId">
+          <rect :width="width" :height="height" :x="-$dx"></rect>
+        </clipPath>
+      </g>
+      <g v-else :transform="'translate('+x+' '+y+')'">
+        <text dy="1em" :transform="'translate('+$dx+' 0)'" :text-anchor="$textAnchor" :fill="fill"
+          :opacity="opacity">{{ content }}
+        </text>
+      </g>
+      </g>`,
     data() {
       return { refId: `svg-text-${clipId++}` }
     },
@@ -690,117 +777,155 @@ function initializeDesignerVueComponents() {
 
     props: {
       x: {
+        type: [String, Number],
         required: false,
         default: undefined
       },
       y: {
+        type: [String, Number],
         required: false,
         default: undefined
       },
       width: {
+        type: [String, Number],
         required: false,
         default: undefined
       },
       height: {
+        type: [String, Number],
         required: false,
         default: undefined
       },
       clipped: {
+        type: Boolean,
         required: false,
         default: false
       },
       align: {
+        type: String,
         required: false,
-        default: false
+        default: 'start'
       },
       fill: {
+        type: String,
         required: false,
         default: undefined
       },
       content: {
+        type: String,
         required: false,
         default: undefined
       },
       opacity: {
+        type: [String, Number],
         default: undefined,
         required: false
       },
       visible: {
+        type: [String, Boolean],
         default: true,
         required: false
       },
       wrapping: {
+        type: [String, Number],
         default: TextWrapping.CHARACTER_ELLIPSIS,
         required: false
       },
       transform: {
+        type: String,
         default: '',
         required: false
       },
       fontFamily: {
+        type: String,
         default: undefined,
         required: false
       },
       fontSize: {
+        type: [String, Number],
         default: undefined,
         required: false
       },
       fontWeight: {
+        type: [String, Number],
         default: undefined,
         required: false
       },
       fontStyle: {
+        type: [String, Number],
         default: undefined,
         required: false
       },
       textDecoration: {
+        type: [String, Number],
         default: undefined,
         required: false
       },
       lineSpacing: {
+        type: [String, Number],
         default: 0.5,
         required: false
       }
     },
     computed: {
       $dx() {
-        return this.align === 'end' ? this.width : this.align === 'middle' ? this.width * 0.5 : 0
+        return this.align === 'end'
+          ? Number(this.width)
+          : this.align === 'middle'
+          ? Number(this.width) * 0.5
+          : 0
       },
       $textAnchor() {
         return this.align === 'end' || this.align === 'middle' ? this.align : false
       },
       $transform() {
-        return !this.transform ? false : this.transform
+        return this.transform || ''
       }
     }
   })
+
+  /**
+   * @typedef {Object} ShapePropsType
+   * @property {(string|number)} x
+   * @property {(string|number)} y
+   * @property {(string|number)} width
+   * @property {(string|number)} height
+   * @property {(string|number)} cornerRadius
+   * @property {string} fill
+   * @property {string} stroke
+   * @property {(string|number)} strokewidth
+   * @property {string} strokeDasharray
+   * @property {(string|number)} opacity
+   * @property {(string|boolean)} visible
+   * @property {(string|boolean)} transform
+   */
 
   Vue.component('svg-rect', {
     template:
       '<rect :transform="$transform" :x="x" :y="y" :width="width" :height="height" :rx="cornerRadius" :fill="fill" :stroke="stroke" :stroke-width="strokeWidth" :stroke-dasharray="strokeDasharray" :opacity="opacity" v-if="visible"></rect>',
     props: {
       x: {
-        type: Number,
+        type: [String, Number],
         default: 0,
         required: false
       },
       y: {
-        type: Number,
+        type: [String, Number],
         default: 0,
         required: false
       },
       width: {
-        type: Number,
+        type: [String, Number],
         default: 50,
         required: false
       },
       height: {
-        type: Number,
+        type: [String, Number],
         default: 50,
         required: false
       },
       cornerRadius: {
-        type: Number,
+        type: [String, Number],
         default: 0,
         required: false
       },
@@ -815,7 +940,7 @@ function initializeDesignerVueComponents() {
         default: 'orange'
       },
       strokeWidth: {
-        type: Number,
+        type: [String, Number],
         default: 1,
         required: false
       },
@@ -825,47 +950,49 @@ function initializeDesignerVueComponents() {
         required: false
       },
       opacity: {
-        type: Number,
+        type: [String, Number],
         default: 1,
         required: false
       },
       visible: {
-        type: Boolean,
+        type: [String, Boolean],
         default: true,
         required: false
       },
       transform: {
+        type: String,
         default: '',
         required: false
       }
     },
     computed: {
       $transform() {
-        return !this.transform ? false : this.transform
+        return this.transform || false
       }
     }
   })
+
   Vue.component('svg-ellipse', {
     template:
       '<ellipse :transform="$transform" :cx="$cx" :cy="$cy" :rx="$rx" :ry="$ry" :fill="fill" :stroke="stroke" :stroke-width="strokeWidth" :stroke-dasharray="strokeDasharray" :opacity="opacity" v-if="visible"></ellipse>',
     props: {
       x: {
-        type: Number,
+        type: [String, Number],
         default: 0,
         required: false
       },
       y: {
-        type: Number,
+        type: [String, Number],
         default: 0,
         required: false
       },
       width: {
-        type: Number,
+        type: [String, Number],
         default: 50,
         required: false
       },
       height: {
-        type: Number,
+        type: [String, Number],
         default: 50,
         required: false
       },
@@ -880,7 +1007,7 @@ function initializeDesignerVueComponents() {
         default: 'orange'
       },
       strokeWidth: {
-        type: Number,
+        type: [String, Number],
         default: 1,
         required: false
       },
@@ -890,78 +1017,88 @@ function initializeDesignerVueComponents() {
         required: false
       },
       opacity: {
-        type: Number,
+        type: [String, Number],
         default: 1,
         required: false
       },
       visible: {
-        type: Boolean,
+        type: [String, Boolean],
         default: true,
         required: false
       },
       transform: {
+        type: String,
         default: '',
         required: false
       }
     },
     computed: {
       $cx() {
-        return this.x + this.width * 0.5
+        return Number(this.x) + Number(this.width) * 0.5
       },
       $cy() {
-        return this.y + this.height * 0.5
+        return Number(this.y) + Number(this.height) * 0.5
       },
       $rx() {
-        return this.width * 0.5
+        return Number(this.width) * 0.5
       },
       $ry() {
-        return this.height * 0.5
+        return Number(this.height) * 0.5
       },
       $transform() {
-        return !this.transform ? false : this.transform
+        return this.transform || false
       }
     }
   })
+
   Vue.component('svg-image', {
     template:
       '<image :transform="$transform" :x="x" :y="y" :width="width" :height="height" v-bind="{\'xlink:href\':src}" :opacity="opacity" v-if="visible"></image>',
     props: {
       x: {
+        type: [String, Number],
         default: undefined,
         required: false
       },
       y: {
+        type: [String, Number],
         default: undefined,
         required: false
       },
       width: {
+        type: [String, Number],
         default: undefined,
         required: false
       },
       height: {
+        type: [String, Number],
         default: undefined,
         required: false
       },
       src: {
+        type: String,
         default: undefined,
         required: false
       },
       opacity: {
+        type: [String, Number],
         default: undefined,
         required: false
       },
       visible: {
+        type: [String, Boolean],
         default: true,
         required: false
       },
       transform: {
+        type: String,
         default: '',
         required: false
       }
     },
     computed: {
       $transform() {
-        return !this.transform ? false : this.transform
+        return this.transform || false
       }
     }
   })

@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -26,9 +26,13 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { GraphBuilder, ShapeNodeStyle } from 'yfiles'
+import { GraphBuilder, GraphComponent, INodeStyle, ShapeNodeStyle } from 'yfiles'
 
-// helper method to convert the Neo4j "long" ids, to a simple string
+/**
+ * Helper method to convert the Neo4j "long" ids, to a simple string
+ * @param {!Integer} identity
+ * @returns {!string}
+ */
 function getId(identity) {
   return `${identity.low.toString()}:${identity.high.toString()}`
 }
@@ -65,11 +69,11 @@ const predefinedNodesStyles = [
 
 /**
  * Returns a GraphBuilder that is configured to work well with Neo4J query results.
- * @param graphComponent
- * @param {Neo4jNode[]} nodes
- * @param {Neo4jEdge[]} edges
- * @return {GraphBuilder}
  * @yjs:keep=end
+ * @param {!GraphComponent} graphComponent
+ * @param {!Array.<Node>} nodes
+ * @param {!Array.<Relationship>} edges
+ * @returns {!GraphBuilder}
  */
 export function createGraphBuilder(graphComponent, nodes, edges) {
   // mapping from labels to node styles

@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { DefaultGraph, HashMap, IGraph, Point } from 'yfiles'
+import { HashMap, IGraph, INode } from 'yfiles'
 
 /**
  * A class that creates random graphs. The size of the graph and other options  may be specified.
@@ -35,151 +35,51 @@ import { DefaultGraph, HashMap, IGraph, Point } from 'yfiles'
 export default class RandomGraphGenerator {
   /**
    * Creates a new instance of RandomGraphGenerator.
-   * @param {object} config
+   * @param {!object} config
    */
   constructor(config) {
-    this.$nodeCreator = config.nodeCreator ? config.nodeCreator : graph => graph.createNode()
-    this.$nodeCount = config.$nodeCount || 30
-    this.$edgeCount = config.$edgeCount || 40
-    this.$allowSelfLoops = config.$allowSelfLoops
-    this.$allowCycles = config.$allowCycles
-    this.$allowMultipleEdges = config.$allowMultipleEdges
-  }
-
-  /**
-   * Gets or sets the callback that is responsible for creating a new node.
-   * @return {function(IInputModeContext, IGraph, Point, INode)}
-   */
-  get nodeCreator() {
-    return this.$nodeCreator
-  }
-
-  /**
-   * Gets or sets the callback that is responsible for creating a new node.
-   * @param {function(IInputModeContext, IGraph, Point, INode)} value
-   */
-  set nodeCreator(value) {
-    this.$nodeCreator = value
-  }
-
-  /**
-   * Gets or sets the node count of the graph to be generated. The default value is 30.
-   * @return {number}
-   */
-  get nodeCount() {
-    return this.$nodeCount
-  }
-
-  /**
-   * Gets or sets the node count of the graph to be generated. The default value is 30.
-   * @param {number} value
-   */
-  set nodeCount(value) {
-    this.$nodeCount = value
-  }
-
-  /**
-   * Gets or sets the edge count of the graph to be generated. The default value is 40.
-   * If the edge count is higher than it is theoretically possible by the generator options set, then the highest
-   * possible edge count is applied instead.
-   * @return {number}
-   */
-  get edgeCount() {
-    return this.$edgeCount
-  }
-
-  /**
-   * Gets or sets the edge count of the graph to be generated. The default value is 40.
-   * If the edge count is higher than it is theoretically possible by the generator options set, then the highest
-   * possible edge count is applied instead.
-   * @param {number} value
-   */
-  set edgeCount(value) {
-    this.$edgeCount = value
-  }
-
-  /**
-   * Whether or not to allow the generation of self-loops, i.e. edges with same source and target nodes.
-   * If allowed it still could happen by chance that the generated graph contains no self-loops.
-   * By default disallowed.
-   * @return {boolean}
-   */
-  get allowSelfLoops() {
-    return this.$allowSelfLoops
-  }
-
-  /**
-   * Whether or not to allow the generation of self-loops, i.e. edges with same source and target nodes.
-   * If allowed it still could happen by chance that the generated graph contains no self-loops.
-   * By default disallowed.
-   * @param {boolean} value
-   */
-  set allowSelfLoops(value) {
-    this.$allowSelfLoops = value
-  }
-
-  /**
-   * Whether or not to allow the generation of cyclic graphs, i.e. graphs that contain directed cyclic paths.
-   * If allowed it still could happen by chance that the generated graph is acyclic. By default allowed.
-   * @return {boolean}
-   */
-  get allowCycles() {
-    return this.$allowCycles
-  }
-
-  /**
-   * Whether or not to allow the generation of cyclic graphs, i.e. graphs that contain directed cyclic paths.
-   * If allowed it still could happen by chance that the generated graph is acyclic. By default allowed.
-   * @param {boolean} value
-   */
-  set allowCycles(value) {
-    this.$allowCycles = value
-  }
-
-  /**
-   * Whether or not to allow the generation of graphs that contain multiple edges, i.e. graphs that has more than one
-   * edge that connect the same pair of nodes. If allowed it still could happen by chance that the generated graph
-   * does not contain multiple edges. By default disallowed.
-   * @return {boolean}
-   */
-  get allowMultipleEdges() {
-    return this.$allowMultipleEdges
-  }
-
-  /**
-   * Whether or not to allow the generation of graphs that contain multiple edges, i.e. graphs that has more than one
-   * edge that connect the same pair of nodes. If allowed it still could happen by chance that the generated graph
-   * does not contain multiple edges. By default disallowed.
-   * @param {boolean} value
-   */
-  set allowMultipleEdges(value) {
-    this.$allowMultipleEdges = value
+    // The callback that is responsible for creating a new node.
+    this.nodeCreator = config.nodeCreator || (graph => graph.createNode())
+    // The node count of the graph to be generated. The default value is 30.
+    this.nodeCount = config.$nodeCount || 30
+    // The edge count of the graph to be generated. The default value is 40.
+    // If the edge count is higher than it is theoretically possible by the generator options set, then the highest
+    // possible edge count is applied instead.
+    this.edgeCount = config.$edgeCount || 40
+    // Whether or not to allow the generation of self-loops, i.e. edges with same source and target nodes.
+    // If allowed it still could happen by chance that the generated graph contains no self-loops.
+    // By default disallowed.
+    this.allowSelfLoops = config.$allowSelfLoops || false
+    // Whether or not to allow the generation of cyclic graphs, i.e. graphs that contain directed cyclic paths.
+    // If allowed it still could happen by chance that the generated graph is acyclic. By default allowed.
+    this.allowCycles = config.$allowCycles || false
+    // Whether or not to allow the generation of graphs that contain multiple edges, i.e. graphs that has more than one
+    // edge that connect the same pair of nodes. If allowed it still could happen by chance that the generated graph
+    // does not contain multiple edges. By default disallowed.
+    this.allowMultipleEdges = config.$allowMultipleEdges || false
   }
 
   /**
    * Generates a new random graph that obeys the specified settings.
-   * In case an existing graph is passed, it clears this graph and generates new nodes and edges for it, so that the
-   * specified settings are obeyed, otherwise a new graph is created.
-   * @param {IGraph} graph
+   * @param {!IGraph} graph
    */
   generate(graph) {
-    const newGraph = graph || new DefaultGraph()
     if (this.allowMultipleEdges) {
-      this.generateMultipleGraph(newGraph)
+      this.generateMultipleGraph(graph)
     } else if (
       this.nodeCount > 1 &&
       this.edgeCount > 10 &&
       Math.log(this.nodeCount) * this.nodeCount < this.edgeCount
     ) {
-      this.generateDenseGraph(newGraph)
+      this.generateDenseGraph(graph)
     } else {
-      this.generateSparseGraph(newGraph)
+      this.generateSparseGraph(graph)
     }
   }
 
   /**
    * Random graph generator in case multiple edges are allowed.
-   * @param {IGraph} graph
+   * @param {!IGraph} graph
    */
   generateMultipleGraph(graph) {
     const n = this.nodeCount
@@ -190,7 +90,7 @@ export default class RandomGraphGenerator {
     const nodes = new Array(n)
     for (let i = 0; i < n; i++) {
       nodes[i] = this.createNode(graph)
-      index[nodes[i]] = i
+      index.set(nodes[i], i)
     }
 
     for (let i = 0; i < m; i++) {
@@ -214,8 +114,8 @@ export default class RandomGraphGenerator {
       graph.edges.forEach(edge => {
         const sourcePort = edge.sourcePort
         const targetPort = edge.targetPort
-        if (index[sourcePort.owner] > index[targetPort.owner]) {
-          graph.setEdgePorts(edge, targetPort, sourcePort)
+        if (index.get(sourcePort.owner) > index.get(targetPort.owner)) {
+          graph.reverse(edge)
         }
       })
     }
@@ -223,7 +123,7 @@ export default class RandomGraphGenerator {
 
   /**
    * Random graph generator for dense graphs.
-   * @param {IGraph} graph
+   * @param {!IGraph} graph
    */
   generateDenseGraph(graph) {
     graph.clear()
@@ -233,14 +133,14 @@ export default class RandomGraphGenerator {
       nodes[i] = this.createNode(graph)
     }
 
-    RandomSupport.permutate(nodes)
+    permutate(nodes)
 
     const m = Math.min(this.getMaxEdges(), this.edgeCount)
     const n = this.nodeCount
 
     const adder = this.allowSelfLoops && this.allowCycles ? 0 : 1
 
-    const edgeWanted = RandomSupport.getBoolArray(this.getMaxEdges(), m)
+    const edgeWanted = getBoolArray(this.getMaxEdges(), m)
     for (let i = 0, k = 0; i < n; i++) {
       for (let j = i + adder; j < n; j++, k++) {
         if (edgeWanted[k]) {
@@ -256,7 +156,7 @@ export default class RandomGraphGenerator {
 
   /**
    * Random graph generator for sparse graphs.
-   * @param {IGraph} graph
+   * @param {!IGraph} graph
    */
   generateSparseGraph(graph) {
     graph.clear()
@@ -270,10 +170,10 @@ export default class RandomGraphGenerator {
 
     for (let i = 0; i < n; i++) {
       nodes[i] = this.createNode(graph)
-      index[nodes[i]] = i
+      index.set(nodes[i], i)
     }
 
-    RandomSupport.permutate(nodes)
+    permutate(nodes)
 
     let count = m
     while (count > 0) {
@@ -292,8 +192,8 @@ export default class RandomGraphGenerator {
       graph.edges.forEach(edge => {
         const sourcePort = edge.sourcePort
         const targetPort = edge.targetPort
-        if (index[sourcePort.owner] > index[targetPort.owner]) {
-          graph.setEdgePorts(edge, targetPort, sourcePort)
+        if (index.get(sourcePort.owner) > index.get(targetPort.owner)) {
+          graph.reverse(edge)
         }
       })
     }
@@ -301,8 +201,8 @@ export default class RandomGraphGenerator {
 
   /**
    * Creates a node
-   * @param {IGraph} graph
-   * @return {INode}
+   * @param {!IGraph} graph
+   * @returns {!INode}
    */
   createNode(graph) {
     return this.nodeCreator(graph)
@@ -311,6 +211,7 @@ export default class RandomGraphGenerator {
   /**
    * Helper method that returns the maximum number of edges of a graph that still obeys the set structural
    * constraints.
+   * @returns {number}
    */
   getMaxEdges() {
     if (this.allowMultipleEdges) {
@@ -324,78 +225,76 @@ export default class RandomGraphGenerator {
   }
 }
 
-class RandomSupport {
-  /**
-   * Permutates the positions of the elements within the given array.
-   * @param {Array} a
-   */
-  static permutate(a) {
-    // forth...
+/**
+ * Permutates the positions of the elements within the given array.
+ * @param {!Array} a
+ */
+function permutate(a) {
+  // forth...
+  for (let i = 0; i < a.length; i++) {
+    const j = Math.floor(Math.random() * a.length)
+    const tmp = a[i]
+    a[i] = a[j]
+    a[j] = tmp
+  }
+  // back...
+  for (let i = a.length - 1; i >= 0; i--) {
+    const j = Math.floor(Math.random() * a.length)
+    const tmp = a[i]
+    a[i] = a[j]
+    a[j] = tmp
+  }
+}
+
+/**
+ * Returns an array of n unique random integers that lie within the range min (inclusive) and max (exclusive).
+ * If max - min &lt; n then null is returned.
+ * @param {number} n
+ * @param {number} min
+ * @param {number} max
+ * @returns {?Array.<number>}
+ */
+function getUniqueArray(n, min, max) {
+  max--
+
+  let ret = null
+  const l = max - min + 1
+  if (l >= n && n > 0) {
+    const accu = new Array(l)
+    ret = new Array(n)
+    for (let i = 0, j = min; i < l; i++, j++) {
+      accu[i] = j
+    }
+    for (let j = 0, m = l - 1; j < n; j++, m--) {
+      const r = Math.floor(Math.random() * (m + 1))
+      ret[j] = accu[r]
+      if (r < m) {
+        accu[r] = accu[m]
+      }
+    }
+  }
+  return ret
+}
+
+/**
+ * Returns an array of n randomly chosen boolean values of which trueCount of them are true.
+ * If the requested numbers of true values is bigger than the number
+ * of requested boolean values, an Exception is raised.
+ * @param {number} n
+ * @param {number} trueCount
+ * @returns {!Array.<boolean>}
+ */
+function getBoolArray(n, trueCount) {
+  if (trueCount > n) {
+    throw new Error(`RandomSupport.GetBoolArray( ${n}, ${trueCount} )`)
+  }
+
+  const a = getUniqueArray(trueCount, 0, n)
+  const b = []
+  if (a) {
     for (let i = 0; i < a.length; i++) {
-      const j = Math.floor(Math.random() * a.length)
-      const tmp = a[i]
-      a[i] = a[j]
-      a[j] = tmp
-    }
-    // back...
-    for (let i = a.length - 1; i >= 0; i--) {
-      const j = Math.floor(Math.random() * a.length)
-      const tmp = a[i]
-      a[i] = a[j]
-      a[j] = tmp
+      b[a[i]] = true
     }
   }
-
-  /**
-   * Returns an array of n unique random integers that lie within the range min (inclusive) and max (exclusive).
-   * If max - min &lt; n then null is returned.
-   * @param {number} n
-   * @param {number} min
-   * @param {number} max
-   * @return {Array.<number>}
-   */
-  static getUniqueArray(n, min, max) {
-    max--
-
-    let ret = null
-    const l = max - min + 1
-    if (l >= n && n > 0) {
-      const accu = new Array(l)
-      ret = new Array(n)
-      for (let i = 0, j = min; i < l; i++, j++) {
-        accu[i] = j
-      }
-      for (let j = 0, m = l - 1; j < n; j++, m--) {
-        const r = Math.floor(Math.random() * (m + 1))
-        ret[j] = accu[r]
-        if (r < m) {
-          accu[r] = accu[m]
-        }
-      }
-    }
-    return ret
-  }
-
-  /**
-   * Returns an array of n randomly chosen boolean values of which trueCount of them are true.
-   * If the requested numbers of true values is bigger than the number
-   * of requested boolean values, an Exception is raised.
-   * @param {number} n
-   * @param {number} trueCount
-   * @return {Array.<boolean>}
-   */
-  static getBoolArray(n, trueCount) {
-    if (trueCount > n) {
-      throw new Error(`RandomSupport.GetBoolArray( ${n}, ${trueCount} )`)
-    }
-
-    const a = RandomSupport.getUniqueArray(trueCount, 0, n)
-    const b = [[]]
-    if (a) {
-      for (let i = 0; i < a.length; i++) {
-        b[a[i]] = true
-      }
-    }
-    return b
-  }
+  return b
 }

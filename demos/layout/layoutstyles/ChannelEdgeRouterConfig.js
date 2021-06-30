@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -32,8 +32,11 @@ import {
   Class,
   EdgeRouterScope,
   GraphComponent,
+  ILayoutAlgorithm,
+  LayoutData,
   OrthogonalPatternEdgeRouter,
   OrthogonalSegmentDistributionStage,
+  RoutingPolicy,
   YBoolean,
   YNumber,
   YString
@@ -68,17 +71,18 @@ const ChannelEdgeRouterConfig = Class('ChannelEdgeRouterConfig', {
     this.minimumDistanceItem = 10
     this.activateGridRoutingItem = true
     this.gridSpacingItem = 20
+    this.routingPolicyItem = RoutingPolicy.ALWAYS
 
     this.bendCostItem = 1.0
     this.edgeCrossingCostItem = 5.0
     this.nodeCrossingCostItem = 50.0
+    this.title = 'Channel Edge Router'
   },
 
   /**
-   * Creates and configures a layout and the graph's {@link IGraph#mapperRegistry} if necessary.
-   * @param {GraphComponent} graphComponent The <code>GraphComponent</code> to apply the
-   *   configuration on.
-   * @return {ILayoutAlgorithm} The configured layout.
+   * Creates and configures a layout.
+   * @param graphComponent The <code>GraphComponent</code> to apply the configuration on.
+   * @return The configured layout.
    */
   createConfiguredLayout: function (graphComponent) {
     const router = new ChannelEdgeRouter()
@@ -106,44 +110,27 @@ const ChannelEdgeRouterConfig = Class('ChannelEdgeRouterConfig', {
     segmentDistributionStage.gridSpacing = this.gridSpacingItem
 
     router.edgeDistributionStrategy = segmentDistributionStage
+    router.routingPolicy = this.routingPolicyItem
 
     return router
   },
 
   /**
    * Called by {@link LayoutConfiguration#apply} to create the layout data of the configuration. This
-   * method is typically overridden to provide mappers for the different layouts.
+   * method is typically overridden to provide data for the different layouts.
    */
   createConfiguredLayoutData: function (graphComponent, layout) {
     const layoutData = new ChannelEdgeRouterData()
     const selection = graphComponent.selection
     if (this.scopeItem === EdgeRouterScope.ROUTE_EDGES_AT_AFFECTED_NODES) {
-      layoutData.affectedEdges = edge =>
+      layoutData.affectedEdges.delegate = edge =>
         selection.isSelected(edge.sourceNode) || selection.isSelected(edge.targetNode)
     } else if (this.scopeItem === EdgeRouterScope.ROUTE_AFFECTED_EDGES) {
-      layoutData.affectedEdges = edge => selection.isSelected(edge)
+      layoutData.affectedEdges.delegate = edge => selection.isSelected(edge)
     } else {
-      layoutData.affectedEdges = edge => true
+      layoutData.affectedEdges.delegate = _ => true
     }
     return layoutData
-  },
-
-  /**
-   * Called after the layout animation is done.
-   * @see Overrides {@link LayoutConfiguration#postProcess}
-   */
-  postProcess: function (graphComponent) {},
-
-  /** @type {OptionGroup} */
-  DescriptionGroup: {
-    $meta: function () {
-      return [
-        LabelAttribute('Description'),
-        OptionGroupAttribute('RootGroup', 5),
-        TypeAttribute(OptionGroup.$class)
-      ]
-    },
-    value: null
   },
 
   /** @type {OptionGroup} */
@@ -184,12 +171,6 @@ const ChannelEdgeRouterConfig = Class('ChannelEdgeRouterConfig', {
     }
   },
 
-  /**
-   * Backing field for below property
-   * @type {EdgeRouterScope}
-   */
-  $scopeItem: null,
-
   /** @type {EdgeRouterScope} */
   scopeItem: {
     $meta: function () {
@@ -209,19 +190,8 @@ const ChannelEdgeRouterConfig = Class('ChannelEdgeRouterConfig', {
         TypeAttribute(EdgeRouterScope.$class)
       ]
     },
-    get: function () {
-      return this.$scopeItem
-    },
-    set: function (value) {
-      this.$scopeItem = value
-    }
+    value: null
   },
-
-  /**
-   * Backing field for below property
-   * @type {number}
-   */
-  $minimumDistanceItem: 0,
 
   /** @type {number} */
   minimumDistanceItem: {
@@ -240,19 +210,8 @@ const ChannelEdgeRouterConfig = Class('ChannelEdgeRouterConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function () {
-      return this.$minimumDistanceItem
-    },
-    set: function (value) {
-      this.$minimumDistanceItem = value
-    }
+    value: 0
   },
-
-  /**
-   * Backing field for below property
-   * @type {boolean}
-   */
-  $activateGridRoutingItem: false,
 
   /** @type {boolean} */
   activateGridRoutingItem: {
@@ -266,19 +225,8 @@ const ChannelEdgeRouterConfig = Class('ChannelEdgeRouterConfig', {
         TypeAttribute(YBoolean.$class)
       ]
     },
-    get: function () {
-      return this.$activateGridRoutingItem
-    },
-    set: function (value) {
-      this.$activateGridRoutingItem = value
-    }
+    value: false
   },
-
-  /**
-   * Backing field for below property
-   * @type {number}
-   */
-  $gridSpacingItem: 0,
 
   /** @type {number} */
   gridSpacingItem: {
@@ -297,12 +245,7 @@ const ChannelEdgeRouterConfig = Class('ChannelEdgeRouterConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function () {
-      return this.$gridSpacingItem
-    },
-    set: function (value) {
-      this.$gridSpacingItem = value
-    }
+    value: 2
   },
 
   /** @type {boolean} */
@@ -315,11 +258,26 @@ const ChannelEdgeRouterConfig = Class('ChannelEdgeRouterConfig', {
     }
   },
 
-  /**
-   * Backing field for below property
-   * @type {number}
-   */
-  $bendCostItem: 0,
+  /** @type {number} */
+  routingPolicyItem: {
+    $meta: function () {
+      return [
+        LabelAttribute(
+          'Routing Policy',
+          '#/api/EdgeRouterEdgeLayoutDescriptor#EdgeLayoutDescriptor-property-routingPolicy'
+        ),
+        OptionGroupAttribute('LayoutGroup', 60),
+        EnumValuesAttribute().init({
+          values: [
+            ['Always', RoutingPolicy.ALWAYS],
+            ['Path As Needed', RoutingPolicy.PATH_AS_NEEDED]
+          ]
+        }),
+        TypeAttribute(RoutingPolicy.$class)
+      ]
+    },
+    value: RoutingPolicy.ALWAYS
+  },
 
   /** @type {number} */
   bendCostItem: {
@@ -338,19 +296,8 @@ const ChannelEdgeRouterConfig = Class('ChannelEdgeRouterConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function () {
-      return this.$bendCostItem
-    },
-    set: function (value) {
-      this.$bendCostItem = value
-    }
+    value: 0
   },
-
-  /**
-   * Backing field for below property
-   * @type {number}
-   */
-  $edgeCrossingCostItem: 0,
 
   /** @type {number} */
   edgeCrossingCostItem: {
@@ -369,19 +316,8 @@ const ChannelEdgeRouterConfig = Class('ChannelEdgeRouterConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function () {
-      return this.$edgeCrossingCostItem
-    },
-    set: function (value) {
-      this.$edgeCrossingCostItem = value
-    }
+    value: 0
   },
-
-  /**
-   * Backing field for below property
-   * @type {number}
-   */
-  $nodeCrossingCostItem: 0,
 
   /** @type {number} */
   nodeCrossingCostItem: {
@@ -400,15 +336,7 @@ const ChannelEdgeRouterConfig = Class('ChannelEdgeRouterConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function () {
-      return this.$nodeCrossingCostItem
-    },
-    set: function (value) {
-      this.$nodeCrossingCostItem = value
-    }
-  },
-  $initChannelEdgeRouterConfig: function () {
-    this.$scopeItem = EdgeRouterScope.ROUTE_ALL_EDGES
+    value: 0
   }
 })
 export default ChannelEdgeRouterConfig

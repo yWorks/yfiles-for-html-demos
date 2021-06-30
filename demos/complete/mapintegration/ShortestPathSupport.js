@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -26,15 +26,27 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { INode, ShortestPath } from 'yfiles'
+import {
+  GraphComponent,
+  GraphViewerInputMode,
+  IEdge,
+  IModelItem,
+  INode,
+  ItemClickedEventArgs,
+  ShortestPath
+} from 'yfiles'
 
+/** @type {INode} */
 let lastClickedNode = null
 
 export default class ShortestPathSupport {
+  /**
+   * @param {!GraphComponent} graphComponent
+   * @param {boolean} graphMode
+   */
   constructor(graphComponent, graphMode) {
+    this.graphMode = graphMode
     this.graphComponent = graphComponent
-    this.$graphMode = graphMode
-
     this.graphComponent.inputMode.addItemClickedListener((sender, args) => {
       this.updateShortestPathHighlight(args.item, this.graphMode)
     })
@@ -47,17 +59,9 @@ export default class ShortestPathSupport {
     })
   }
 
-  get graphMode() {
-    return this.$graphMode
-  }
-
-  set graphMode(value) {
-    this.$graphMode = value
-  }
-
   /**
    * Highlights the shortest path between the current clickNode and the last clicked node.
-   * @param {INode} clickedNode
+   * @param {!INode} clickedNode
    * @param {boolean} graphMode
    */
   updateShortestPathHighlight(clickedNode, graphMode) {
@@ -67,12 +71,10 @@ export default class ShortestPathSupport {
     if (graphMode) {
       if (lastClickedNode && graph.contains(lastClickedNode)) {
         const start = lastClickedNode
-        const end = clickedNode
-
         // determine the shortest path using the Euclidean distances in the graph to weigh the edges
         const algorithm = new ShortestPath({
           source: start,
-          sink: end,
+          sink: clickedNode,
           costs: edge =>
             edge.style.renderer.getPathGeometry(edge, edge.style).getPath().getLength(),
           directed: false
@@ -84,10 +86,12 @@ export default class ShortestPathSupport {
         const result = algorithm.run(graph)
         result.edges.forEach(edge => {
           highlightManager.addHighlight(edge)
-          highlightManager.addHighlight(edge.sourceNode)
-          highlightManager.addHighlight(edge.targetNode)
-          highlightManager.addHighlight(edge.sourceNode.labels.first())
-          highlightManager.addHighlight(edge.targetNode.labels.first())
+          const sourceNode = edge.sourceNode
+          const targetNode = edge.targetNode
+          highlightManager.addHighlight(sourceNode)
+          highlightManager.addHighlight(targetNode)
+          highlightManager.addHighlight(sourceNode.labels.first())
+          highlightManager.addHighlight(targetNode.labels.first())
         })
         lastClickedNode = null
       } else {

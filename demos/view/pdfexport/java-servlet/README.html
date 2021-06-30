@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.3.
+     // This demo file is part of yFiles for HTML 2.4.
      // Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
@@ -33,26 +33,29 @@
      ////////////////////////////////////////////////////////////////////////-->
 
   <title>Java Servlet</title>
-  <link rel="stylesheet" type="text/css" href="../../../../doc/documentation-style.css">
+  <link rel="stylesheet" type="text/css" href="../../../../doc/readme-style.css">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 </head>
 <body>
-  <header>
-    <div class="logo"></div>
-    <div class="title">
-      <a href="../../../README.html">yFiles for HTML</a>
-      <span class="angle-right"></span>
-      Java Servlet
-    </div>
-  </header>
-  <div class="content">
-    <div class="content-centered">
+<div id="header" class="simple-header">
+  Java Servlet
+</div>
+<main>
+  <div class="content-centered">
+    <div class="content">
+      <div class="breadcrumbs">
+        <a href="../../../README.html">yFiles for HTML</a>
+        <span class="angle-right"></span>
+        Java Servlet
+      </div>
+
       <h2>Prerequisites</h2>
       <p>
-        To start the server, first download <a href="https://tomcat.apache.org/download-80.cgi">Apache Tomcat 8.0</a> and
-        follow the install instructions.</p>
+        To start the server, first download <a href="https://tomcat.apache.org/download-80.cgi">Apache Tomcat 8.0</a>
+        and follow the install instructions.</p>
 
-      <p>To test a successful installation, open the command prompt, change directory to <code>TOMCAT-DIR/bin/</code> and run</p>
+      <p>To test a successful installation, open the command prompt, change directory to <code>TOMCAT-DIR/bin/</code>
+        and run</p>
       <pre>
 > catalina</pre>
       <p>If the installation was successful, the command should list several options.</p>
@@ -60,14 +63,18 @@
       <h2>Compiling the Servlet</h2>
 
       <p>
-        A <a href="https://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html">Java Development Kit</a> as well as the following dependencies are needed to compile the servlet:</p>
+        A <a href="https://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html">Java
+        Development Kit</a> as well as the following dependencies are needed to compile the servlet:</p>
       <ul>
-        <li>Vectorgraphics.jar - <a href="https://www.yworks.com/resources/libs/vectorgraphics.jar">vectorgraphics.jar</a></li>
+        <li>Vectorgraphics.jar - <a
+          href="https://www.yworks.com/resources/libs/vectorgraphics.jar">vectorgraphics.jar</a></li>
         <li>Batik.jar - <a href="https://www.yworks.com/resources/libs/batik.jar">batik.jar</a></li>
       </ul>
-      <p>Please download the above libraries and copy them to <code>./servlet-sources/GraphExport/web/WEB-INF/lib/</code> directory.</p>
+      <p>Please download the above libraries and copy them to
+        <code>./servlet-sources/GraphExport/web/WEB-INF/lib/</code> directory.</p>
 
-      <p>To actually compile the servlet, open a command prompt and change directory to <code>./servlet-sources/GraphExport/src/servlet</code>.</p>
+      <p>To actually compile the servlet, open a command prompt and change directory to <code>./servlet-sources/GraphExport/src/servlet</code>.
+      </p>
 
       <p>Compile the Java servlet with its dependencies, i.e. Batik, Vectorgraphics and Apache Tomcat's Servlet-API:</p>
       <pre>
@@ -80,48 +87,17 @@
       <h2>Running the Servlet</h2>
 
       <p>
-        To run the a Tomcat server with this web application, copy <code>BatikServlet.war</code> to <code>TOMCAT-DIR/webapps/</code>. Then start the server from <code>TOMCAT-DIR/bin/</code> with</p>
+        To run the a Tomcat server with this web application, copy <code>BatikServlet.war</code> to <code>TOMCAT-DIR/webapps/</code>.
+        Then start the server from <code>TOMCAT-DIR/bin/</code> with</p>
       <pre>
 > catalina run</pre>
-      <p>This will deploy all web applications in <code>TOMCAT-DIR/webapps/</code>. The servlet is now listening on <code>http://localhost:8080/BatikServlet/BatikServlet</code>.</p>
+      <p>This will deploy all web applications in <code>TOMCAT-DIR/webapps/</code>. The servlet is now listening on
+        <code>http://localhost:8080/BatikServlet/BatikServlet</code>.</p>
     </div>
+    <!-- populated by readme-style.js -->
+    <div id="footer-detailed"></div>
   </div>
-<footer class="default-footer">
-  <div class="footer-block">
-    <h4>Contents</h4>
-    <a href="../../../../README.html">Welcome Page</a><br>
-    <a href="../../../../doc/api/index.html">API Documentation</a><br>
-    <a href="../../../../doc/api/index.html#/dguide/getting_started">Getting Started</a><br>
-    <a href="../../../../doc/readme/legal/SOFTWARE_LICENSE_AGREEMENT.html">License Agreement</a><br>
-    <a href="../../../../doc/readme/support.html">Help and Support</a>
-  </div>
-  <div class="footer-block">
-    <h4>Contact</h4>
-    yWorks GmbH<br>
-    Vor dem Kreuzberg 28<br>
-    72070 T&uuml;bingen<br>
-    Germany<br>
-    Phone: <a href="tel:+497071979050">+49 7071 979050</a><br>
-    Email: <a href="https://www.yworks.com/contact">contact(at)yworks.com</a>
-  </div>
-  <div class="footer-block">
-    <h4>Follow Us</h4>
-    <div class="social">
-      <a href="https://www.yworks.com/products/yfiles-for-html" target="_blank" class="web">Homepage</a>
-      <a href="https://www.yworks.com/newsfeed" target="_blank" class="rss">RSS Feed</a>
-    </div>
-    <div>
-      <a href="https://github.com/yWorks" target="_blank" class="gh">GitHub</a>
-      <a href="https://twitter.com/yworks" target="_blank" class="tw">Twitter</a>
-      <a href="https://www.youtube.com/user/yWorksTube" target="_blank" class="yt">YouTube</a>
-    </div>
-    <br><br>
-    <span class="copyright">COPYRIGHT &#x00A9; 2021 yWorks</span><br>
-    <a href="https://www.yworks.com/company/legal/imprint">Legal Disclosure</a> |
-    <a href="https://www.yworks.com/company/legal/terms-of-use">Terms of Use</a> |
-    <a href="https://www.yworks.com/company/legal/privacy">Privacy Policy</a>
-  </div>
-  <div class="footer-block logo"></div>
-</footer>
+</main>
+<script src="../../../../doc/readme-style.js"></script>
 </body>
 </html>

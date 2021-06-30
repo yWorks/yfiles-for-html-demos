@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -56,23 +56,24 @@ import { webGlSupported } from '../../utils/Workarounds.js'
  * The GraphComponent
  * @type {GraphComponent}
  */
-let graphComponent = null
+let graphComponent
 
 /**
  * The overview graph component that use the Canvas and Svg visual creator.
- * @type {GraphOverviewComponent}
- **/
-let overviewComponent = null
+ ** @type {GraphOverviewComponent}
+ */
+let overviewComponent
 
 /**
  * The graph component that use the overview inputMode to let the overview graph use the same
  * styles as the graphComponent.
- * @type {GraphComponent}
- **/
-let overviewGraphComponent = null
+ ** @type {GraphComponent}
+ */
+let overviewGraphComponent
 
 /**
  * Runs the demo.
+ * @param {!object} licenseData
  */
 function run(licenseData) {
   License.value = licenseData
@@ -92,9 +93,9 @@ function run(licenseData) {
   // initialize the overview graph that use the same GraphComponent styles.
   // If you want the overview to use the same styles as the GraphComponent, you can use a GraphComponent to display the overview.
   overviewGraphComponent = new GraphComponent('overviewGraphComponent')
-  const overviewInputMode = new OverviewInputMode()
-  overviewInputMode.canvasComponent = graphComponent
-  overviewGraphComponent.inputMode = overviewInputMode
+  overviewGraphComponent.inputMode = new OverviewInputMode({
+    canvasComponent: graphComponent
+  })
 
   initializeConverters()
 
@@ -124,7 +125,7 @@ function run(licenseData) {
 
 /**
  * Styles the overview graph.
- * @param {string} styleType The type of the styling selected with the combobox.
+ * @param {!string} styleType The type of the styling selected with the combobox.
  */
 function overviewStyling(styleType) {
   switch (styleType) {
@@ -136,8 +137,8 @@ function overviewStyling(styleType) {
       // updates the overview component then show the overview graph
       overviewComponent.updateVisualAsync().then(() => {
         // hide the overview graph that use the GraphComponent styles and show the overview graph that use the canvas, SVG or WebGL creator
-        document.getElementById('overviewGraphComponent').style.display = 'none'
-        document.getElementById('overviewComponent').style.display = 'block'
+        overviewGraphComponent.div.style.display = 'none'
+        overviewComponent.div.style.display = 'block'
       })
       break
     case 'GraphOverviewCanvasVisualCreator':
@@ -148,8 +149,8 @@ function overviewStyling(styleType) {
       // updates the overview component then show the overview graph
       overviewComponent.updateVisualAsync().then(() => {
         // hides the overview graph that use the GraphComponent styles and show the overview graph that use the canvas, SVG or WebGL creator
-        document.getElementById('overviewGraphComponent').style.display = 'none'
-        document.getElementById('overviewComponent').style.display = 'block'
+        overviewGraphComponent.div.style.display = 'none'
+        overviewComponent.div.style.display = 'block'
       })
       break
     case 'OverviewInputMode':
@@ -159,8 +160,8 @@ function overviewStyling(styleType) {
       // updates the overview component then show the overview graph
       overviewGraphComponent.updateVisualAsync().then(() => {
         // hides the overview graph that use the canvas or Svg visual creator and show the overview graph that use the GraphComponent styles
-        document.getElementById('overviewGraphComponent').style.display = 'block'
-        document.getElementById('overviewComponent').style.display = 'none'
+        overviewGraphComponent.div.style.display = 'block'
+        overviewComponent.div.style.display = 'none'
         overviewGraphComponent.fitGraphBounds()
       })
       break
@@ -172,8 +173,8 @@ function overviewStyling(styleType) {
       // updates the overview component then show the overview graph
       overviewComponent.updateVisualAsync().then(() => {
         // hide the overview graph that use the GraphComponent styles and show the overview graph that use the canvas, SVG or WebGL visual creator
-        document.getElementById('overviewGraphComponent').style.display = 'none'
-        document.getElementById('overviewComponent').style.display = 'block'
+        overviewGraphComponent.div.style.display = 'none'
+        overviewComponent.div.style.display = 'block'
       })
       break
   }
@@ -181,7 +182,7 @@ function overviewStyling(styleType) {
 
 /**
  * Creates the visual creator that uses SVG rendering.
- * @return {GraphOverviewSvgVisualCreator} The visual creator that uses SVG rendering.
+ * @returns {!GraphOverviewSvgVisualCreator} The visual creator that uses SVG rendering.
  */
 function getOverviewSvgVisualCreator() {
   const overviewSvgVisualCreator = new GraphOverviewSvgVisualCreator(graphComponent.graph)
@@ -191,7 +192,7 @@ function getOverviewSvgVisualCreator() {
 }
 /**
  * Creates the visual creator that uses WebGL rendering.
- * @return {GraphOverviewWebGLVisualCreator} The visual creator that uses SVG rendering.
+ * @returns {!GraphOverviewWebGLVisualCreator} The visual creator that uses SVG rendering.
  */
 function getOverviewWebGLVisualCreator() {
   return new GraphOverviewWebGLVisualCreator(graphComponent.graph)
@@ -201,11 +202,11 @@ function getOverviewWebGLVisualCreator() {
  * tool bar buttons, during the creation of this application.
  */
 function registerCommands() {
-  bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent, null)
-  bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent, null)
-  bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent, null)
+  bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent)
+  bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent)
+  bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent)
   bindAction("button[data-command='ZoomOriginal']", () => {
-    ICommand.ZOOM.execute(1.0, graphComponent)
+    ICommand.ZOOM.execute(1, graphComponent)
   })
 
   bindChangeListener("select[data-command='SelectedStyle']", selectedValue => {
@@ -249,20 +250,13 @@ function initializeConverters() {
       return value
     },
     // converter function that return a color according to the employee's status
-    colorConverter: value => {
-      switch (value) {
-        case 'busy':
-          return '#E7527C'
-        case 'present':
-          return '#55B757'
-        case 'travel':
-          return '#9945E9'
-        case 'unavailable':
-          return '#8D8F91'
-        default:
-          return '#8D8F91'
-      }
-    }
+    colorConverter: value =>
+      ({
+        busy: '#E7527C',
+        present: '#55B757',
+        travel: '#9945E9',
+        unavailable: '#8D8F91'
+      }[value] || '#8D8F91')
   }
 }
 

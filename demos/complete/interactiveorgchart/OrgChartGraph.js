@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -27,24 +27,28 @@
  **
  ***************************************************************************/
 import {
+  BaseClass,
   CompactNodePlacer,
   CompositeLayoutData,
+  Edge,
   FilteredGraphWrapper,
   FixNodeLayoutData,
   FixNodeLayoutStage,
   GraphComponent,
   ICommand,
   IComparer,
+  IEdge,
   IGraph,
+  ILayoutAlgorithm,
   IModelItem,
   INode,
-  IPort,
-  ITreeLayoutPortAssignment,
   Insets,
+  ITreeLayoutPortAssignment,
   LayoutExecutor,
   LayoutGraph,
   PlaceNodesAtBarycenterStage,
   PlaceNodesAtBarycenterStageData,
+  StringTemplatePortStyle,
   TreeLayout,
   TreeLayoutData,
   TreeReductionStage,
@@ -55,46 +59,35 @@ import {
 export default class OrgChartGraph {
   /**
    * Creates a new instance of this class.
-   * @param {GraphComponent} graphComponent
-   * @param {IGraph} completeGraph
+   * @param {!GraphComponent} graphComponent
+   * @param {!IGraph} completeGraph
    */
   constructor(graphComponent, completeGraph) {
-    /**
-     * Used by the predicate function to determine which nodes should not be shown.
-     * @type {Set}
-     */
     this.hiddenNodesSet = new Set()
-
+    this.doingLayout = false
     this.graphComponent = graphComponent
     this.completeGraph = completeGraph
     this.filteredGraph = new FilteredGraphWrapper(
       completeGraph,
-      node => !this.hiddenNodesSet.has(node),
-      e => true
+      node => !this.hiddenNodesSet.has(node)
     )
-    /**
-     * Set to true when a layout is in progress.
-     * @type {boolean}
-     */
-    this.doingLayout = false
   }
 
   /**
    * Hides the children of the given node or port.
-   * @param {INode|IPort} item
+   * @param {!INode} item
+   * @returns {!Promise}
    */
   async executeHideChildren(item) {
     if (!this.canExecuteHideChildren(item)) {
       return Promise.resolve()
     }
 
-    const incrementalNodes = OrgChartGraph.collectSubtreeNodes(
-      this.filteredGraph.wrappedGraph,
-      item
-    )
+    const wrappedGraph = this.filteredGraph.wrappedGraph
+    const incrementalNodes = OrgChartGraph.collectSubtreeNodes(wrappedGraph, item)
     // change the tag of the node to collapsed is true to change the style of the port
     incrementalNodes.concat([item]).forEach(node => {
-      this.filteredGraph.wrappedGraph.outEdgesAt(node).forEach(childEdge => {
+      wrappedGraph.outEdgesAt(node).forEach(childEdge => {
         childEdge.sourcePort.style.styleTag = { collapsed: true }
       })
     })
@@ -113,35 +106,29 @@ export default class OrgChartGraph {
 
   /**
    * Determines whether the children of the given node or port can be hidden.
-   * @param {INode|IPort} item
    * @returns {boolean} Whether the children of the given node or port can be hidden.
+   * @param {!INode} item
    */
   canExecuteHideChildren(item) {
-    return (
-      (INode.isInstance(item) || IPort.isInstance(item)) &&
-      !this.doingLayout &&
-      this.filteredGraph.outDegree(item) > 0
-    )
+    return !this.doingLayout && this.filteredGraph.outDegree(item) > 0
   }
 
   /**
    * Shows the children of the given node or port.
-   * @param {INode|IPort} item
+   * @param {!INode} item
+   * @returns {!Promise}
    */
   executeShowChildren(item) {
     if (!this.canExecuteShowChildren(item)) {
       return Promise.resolve()
     }
 
-    const incrementalNodes = OrgChartGraph.collectSubtreeNodes(
-      this.filteredGraph.wrappedGraph,
-      item
-    )
-    this.filteredGraph.wrappedGraph.outEdgesAt(item).forEach(childEdge => {
+    const wrappedGraph = this.filteredGraph.wrappedGraph
+    const incrementalNodes = OrgChartGraph.collectSubtreeNodes(wrappedGraph, item)
+    wrappedGraph.outEdgesAt(item).forEach(childEdge => {
       const child = childEdge.targetNode
       this.hiddenNodesSet.delete(child)
       OrgChartGraph.restoreGroup(this.completeGraph, this.hiddenNodesSet, child)
-
       // change the tag of the node to collapsed is false to change the style of the port
       childEdge.sourcePort.style.styleTag = { collapsed: false }
     })
@@ -153,12 +140,11 @@ export default class OrgChartGraph {
 
   /**
    * Determines whether the children of the given node or port can be shown.
-   * @param {INode|IPort} item
    * @returns {boolean} Whether the children of the given node or port can be shown.
+   * @param {!INode} item
    */
   canExecuteShowChildren(item) {
     return (
-      (INode.isInstance(item) || IPort.isInstance(item)) &&
       !this.doingLayout &&
       this.filteredGraph.outDegree(item) !== this.filteredGraph.wrappedGraph.outDegree(item)
     )
@@ -166,10 +152,11 @@ export default class OrgChartGraph {
 
   /**
    * Shows the parent of the given node.
-   * @param {INode} node
+   * @param {!INode} node
+   * @returns {!Promise}
    */
   executeShowParent(node) {
-    if (!INode.isInstance(node) || this.doingLayout) {
+    if (this.doingLayout) {
       return Promise.resolve()
     }
     const incrementalNodes = []
@@ -187,12 +174,11 @@ export default class OrgChartGraph {
 
   /**
    * Determines whether the parent of the given node can be shown.
-   * @param {INode} node
    * @returns {boolean} Whether the parent of the given node can be shown.
+   * @param {!INode} node
    */
   canExecuteShowParent(node) {
     return (
-      INode.isInstance(node) &&
       !this.doingLayout &&
       this.filteredGraph.inDegree(node) === 0 &&
       this.filteredGraph.wrappedGraph.inDegree(node) > 0
@@ -201,10 +187,11 @@ export default class OrgChartGraph {
 
   /**
    * Hides the parent of the given node.
-   * @param {INode} node
+   * @param {!INode} node
+   * @returns {!Promise}
    */
   async executeHideParent(node) {
-    if (!INode.isInstance(node) || this.doingLayout) {
+    if (this.doingLayout) {
       return Promise.resolve()
     }
     const nodes = OrgChartGraph.collectAllNodesExceptSubtree(this.filteredGraph.wrappedGraph, node)
@@ -224,15 +211,16 @@ export default class OrgChartGraph {
 
   /**
    * Determines whether the parent of the given node can be hidden.
-   * @param {INode} node
    * @returns {boolean} Whether the parent of the given node can be hidden.
+   * @param {!INode} node
    */
   canExecuteHideParent(node) {
-    return INode.isInstance(node) && !this.doingLayout && this.filteredGraph.inDegree(node) > 0
+    return !this.doingLayout && this.filteredGraph.inDegree(node) > 0
   }
 
   /**
    * Shows all nodes.
+   * @returns {!Promise}
    */
   executeShowAll() {
     if (this.doingLayout) {
@@ -288,16 +276,16 @@ export default class OrgChartGraph {
 
   /**
    * Focuses the given item.
-   * @param {IModelItem} item
+   * @param {!IModelItem} item
    */
   zoomToItem(item) {
-    if (!INode.isInstance(item)) {
+    if (!(item instanceof INode)) {
       return
     }
     if (!this.filteredGraph.nodes.includes(item)) {
       // the given node is hidden, make it visible
 
-      // unhide all nodes ...
+      // un-hide all nodes ...
       this.hiddenNodesSet.clear()
       // ... except the node to be displayed and all its descendants
       OrgChartGraph.collectAllNodesExceptSubtree(this.filteredGraph.wrappedGraph, item).forEach(
@@ -321,11 +309,10 @@ export default class OrgChartGraph {
 
   /**
    * Refreshes the node after modifications on the tree.
-   * @param {INode|null} centerNode
-   * @param {INode[]} incrementalNodes
+   * @returns {!Promise} a promise which is resolved when the layout has been executed.
+   * @param {?INode} centerNode
+   * @param {!Array.<INode>} incrementalNodes
    * @param {boolean} collapse
-   * @param {INode} centerNode
-   * @return {Promise} a promise which is resolved when the layout has been executed.
    */
   async refreshLayout(centerNode, incrementalNodes, collapse) {
     if (this.doingLayout) {
@@ -345,7 +332,7 @@ export default class OrgChartGraph {
     }
 
     // configure the tree layout
-    const treeLayout = OrgChartGraph.createConfiguredLayout(true, collapse ? incrementalNodes : [])
+    const treeLayout = OrgChartGraph.createConfiguredLayout(true)
 
     // create the layout (with a stage that fixes the center node in the coordinate system)
     const layout = new FixNodeLayoutStage(new TreeReductionStage(treeLayout))
@@ -396,8 +383,8 @@ export default class OrgChartGraph {
 
   /**
    * Moves incremental nodes to a location between their neighbors before expanding for a smooth animation.
-   * @param {INode[]} incrementalNodes
    * @private
+   * @param {!Array.<INode>} incrementalNodes
    */
   prepareSmoothExpandLayoutAnimation(incrementalNodes) {
     const graph = this.graphComponent.graph
@@ -413,10 +400,10 @@ export default class OrgChartGraph {
 
   /**
    * Creates a tree layout data for the tree layout
-   * @param {IGraph} graph
-   * @param {INode[]} incrementalNodes
-   * @return {TreeLayoutData} A configured TreeLayoutData.
+   * @returns {!TreeLayoutData} A configured TreeLayoutData.
    * @private
+   * @param {!IGraph} graph
+   * @param {!Array.<INode>} incrementalNodes
    */
   static createConfiguredLayoutData(graph = null, incrementalNodes = []) {
     const hasIncrementalParent = node =>
@@ -451,23 +438,23 @@ export default class OrgChartGraph {
           return firstLevelOutEdgeComparer
         }
         return () => 0
-      }
+      },
+      nodeTypes: node => (node.tag && node.tag.status ? node.tag.status : null)
     })
   }
 
   /**
    * Creates a tree layout that handles assistant nodes and stack leaf nodes.
-   * @param {boolean} incremental
-   * @param {INode[]} incrementalNodes
-   * @return {TreeLayout} A configured TreeLayout.
+   * @returns {!ILayoutAlgorithm} A configured TreeLayout.
    * @private
+   * @param {boolean} incremental
    */
-  static createConfiguredLayout(incremental, incrementalNodes = []) {
+  static createConfiguredLayout(incremental) {
     const treeLayout = new TreeLayout()
-    treeLayout.defaultPortAssignment = new ITreeLayoutPortAssignment({
+    treeLayout.defaultPortAssignment = new (class extends BaseClass(ITreeLayoutPortAssignment) {
       /**
-       * @param {LayoutGraph} graph - the graph
-       * @param {YNode} node - the node whose adjacent edges' ports should be set
+       * @param {!LayoutGraph} graph
+       * @param {!YNode} node
        */
       assignPorts(graph, node) {
         const inEdge = node.firstInEdge
@@ -479,22 +466,20 @@ export default class OrgChartGraph {
           graph.setSourcePointRel(outEdge, new YPoint(0, halfHeight))
         })
       }
-    })
+    })()
     if (incremental) {
-      treeLayout.defaultOutEdgeComparer = new IComparer({
-        compare(edge1, edge2) {
-          const y1 = edge1.graph.getCenterY(edge1.target)
-          const y2 = edge2.graph.getCenterY(edge2.target)
-          if (y1 === y2) {
-            const x1 = edge1.graph.getCenterX(edge1.target)
-            const x2 = edge2.graph.getCenterX(edge2.target)
-            if (x1 === x2) {
-              return 0
-            }
-            return x1 < x2 ? -1 : 1
+      treeLayout.defaultOutEdgeComparer = IComparer.create((edge1, edge2) => {
+        const y1 = edge1.graph.getCenterY(edge1.target)
+        const y2 = edge2.graph.getCenterY(edge2.target)
+        if (y1 === y2) {
+          const x1 = edge1.graph.getCenterX(edge1.target)
+          const x2 = edge2.graph.getCenterX(edge2.target)
+          if (x1 === x2) {
+            return 0
           }
-          return y1 < y2 ? -1 : 1
+          return x1 < x2 ? -1 : 1
         }
+        return y1 < y2 ? -1 : 1
       })
     }
 
@@ -519,9 +504,9 @@ export default class OrgChartGraph {
 
   /**
    * Restores the group of the given node if needed.
-   * @param {IGraph} graph
-   * @param {Set} hiddenNodesSet
-   * @param {INode} node
+   * @param {!IGraph} graph
+   * @param {!Set.<INode>} hiddenNodesSet
+   * @param {!INode} node
    */
   static restoreGroup(graph, hiddenNodesSet, node) {
     const parent = graph.getParent(node)
@@ -532,9 +517,9 @@ export default class OrgChartGraph {
 
   /**
    * Returns all groups in the given graph that will be empty after removing the given nodes.
-   * @param {IGraph} graph
-   * @param {INode[]} nodesToHide
-   * @return {INode[]}
+   * @param {!IGraph} graph
+   * @param {!Array.<INode>} nodesToHide
+   * @returns {!Array.<INode>}
    */
   static findEmptyGroups(graph, nodesToHide) {
     return graph.nodes
@@ -549,9 +534,9 @@ export default class OrgChartGraph {
 
   /**
    * Creates an array containing all nodes of the subtree rooted by the given node.
-   * @param {IGraph} graph
-   * @param {INode|IPort} root
-   * @return {INode[]}
+   * @param {!IGraph} graph
+   * @param {!INode} root
+   * @returns {!Array.<INode>}
    */
   static collectSubtreeNodes(graph, root) {
     const nodes = []
@@ -568,10 +553,10 @@ export default class OrgChartGraph {
 
   /**
    * Creates an array of all nodes except of the nodes in the subtree rooted in the excluded sub-root.
-   * @param {IGraph} graph
-   * @param {INode} excludedRoot
-   * @return {INode[]}
    * @private
+   * @param {!IGraph} graph
+   * @param {!INode} excludedRoot
+   * @returns {!Array.<INode>}
    */
   static collectAllNodesExceptSubtree(graph, excludedRoot) {
     const nodes = []

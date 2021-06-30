@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -66,11 +66,17 @@ import DemoStyles, {
 import { bindAction, bindCommand, readGraph, showApp } from '../../resources/demo-app.js'
 import loadJson from '../../resources/load-json.js'
 
-/** @type {GraphComponent} */
-let graphComponent = null
+/**
+ * The component displaying the demo's graph.
+ * @type {GraphComponent}
+ */
+let graphComponent
 
-/** @type {IGraph} */
-let graph = null
+/**
+ * This demo's graph instance.
+ * @type {IGraph}
+ */
+let graph
 
 /**
  * The layout call is asynchronous. However, we only want one layout at a time.
@@ -78,6 +84,10 @@ let graph = null
  */
 let isLayoutRunning = false
 
+/**
+ * Bootstraps this demo.
+ * @param {!object} licenseData
+ */
 function run(licenseData) {
   License.value = licenseData
 
@@ -145,9 +155,8 @@ async function createGraph() {
 
 /**
  * Configures table editing specific parts.
- * @return {TableEditorInputMode} The table editor input mode
+ * @returns {!TableEditorInputMode} The table editor input mode
  */
-
 function configureTableEditing() {
   const graphInputMode = graphComponent.inputMode
 
@@ -167,16 +176,9 @@ function configureTableEditing() {
     // the marquee testable for pool nodes. The pool node should only be selected by marquee, if the entire bounds are
     // within the marquee.
     node =>
-      new IMarqueeTestable({
-        /**
-         * @param {IInputModeContext} context
-         * @param {Rect} box
-         * @return {boolean}
-         */
-        isInBox(context, box) {
-          const rectangle = node.layout
-          return box.contains(rectangle.topLeft) && box.contains(rectangle.bottomRight)
-        }
+      IMarqueeTestable.create((context, box) => {
+        const rectangle = node.layout
+        return box.contains(rectangle.topLeft) && box.contains(rectangle.bottomRight)
       })
   )
 
@@ -223,8 +225,7 @@ function configureTableEditing() {
 
 /**
  * Initializes the context menu.
- * @param {TableEditorInputMode} tableEditorInputMode The table editor input mode that used to populates the context
- *   menu
+ * @param {!TableEditorInputMode} tableEditorInputMode The table editor input mode that is used to populate the context menu
  */
 function configureContextMenu(tableEditorInputMode) {
   const graphInputMode = graphComponent.inputMode
@@ -262,9 +263,10 @@ function configureContextMenu(tableEditorInputMode) {
 
 /**
  * Event handler for the context menu.
- * @param {Object} contextMenu
- * @param {PopulateItemContextMenuEventArgs<IModelItem>} args
- * @param {TableEditorInputMode} tableEditorInputMode The table editor input mode which is necessary to add new stripe
+ *
+ * @param {!ContextMenu} contextMenu The {@link ContextMenu} instance
+ * @param {!PopulateItemContextMenuEventArgs.<IModelItem>} args The event arguments
+ * @param {!TableEditorInputMode} tableEditorInputMode The table editor input mode which is necessary to add new stripes
  */
 function populateContextMenu(contextMenu, args, tableEditorInputMode) {
   const graphInputMode = graphComponent.inputMode
@@ -279,16 +281,16 @@ function populateContextMenu(contextMenu, args, tableEditorInputMode) {
   )
 
   if (stripe !== null) {
-    contextMenu.addMenuItem(`Delete ${stripe.stripe}`, evt => {
+    contextMenu.addMenuItem(`Delete ${stripe.stripe}`, () => {
       ICommand.DELETE.execute(stripe.stripe, graphComponent)
     })
 
-    contextMenu.addMenuItem(`Insert new stripe before ${stripe.stripe}`, evt => {
+    contextMenu.addMenuItem(`Insert new stripe before ${stripe.stripe}`, () => {
       const parent = stripe.stripe.parentStripe
       const index = stripe.stripe.index
       tableEditorInputMode.insertChild(parent, index)
     })
-    contextMenu.addMenuItem(`Insert new stripe after ${stripe.stripe}`, evt => {
+    contextMenu.addMenuItem(`Insert new stripe after ${stripe.stripe}`, () => {
       const parent = stripe.stripe.parentStripe
       const index = stripe.stripe.index
       tableEditorInputMode.insertChild(parent, index + 1)
@@ -324,7 +326,6 @@ async function applyLayout() {
     orthogonalRouting: true,
     recursiveGroupLayering: false
   })
-  layout.nodePlacer.barycenterMode = true
 
   // we use Layout executor convenience method that already sets up the whole layout pipeline correctly
   const layoutExecutor = new LayoutExecutor({
@@ -359,7 +360,7 @@ async function applyLayout() {
 
 /**
  * Disables the HTML elements of the UI and the input mode.
- * @param disabled true if the elements should be disabled, false otherwise
+ * @param {boolean} disabled true if the elements should be disabled, false otherwise
  */
 function setUIDisabled(disabled) {
   document.getElementById('newButton').disabled = disabled

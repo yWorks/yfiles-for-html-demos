@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -68,12 +68,12 @@ let componentAssignmentStrategy: ComponentAssignmentStrategy = ComponentAssignme
 
 let clearAreaStrategy: ClearAreaStrategy = ClearAreaStrategy.PRESERVE_SHAPES
 
-async function run(licenseData: object): Promise<void> {
+function run(licenseData: object) {
   License.value = licenseData
   graphComponent = new GraphComponent('#graphComponent')
 
   initializeInputModes()
-  await initializeGraph()
+  initializeGraph()
 
   // bind the buttons to their commands
   registerCommands()
@@ -95,15 +95,16 @@ function initializeInputModes(): void {
 
   // create an input mode to clear the area of a marquee rectangle
   // using the right mouse button
-  const marqueeClearInputMode = new MarqueeSelectionInputMode()
-  marqueeClearInputMode.pressedRecognizer = MouseEventRecognizers.RIGHT_DOWN
-  marqueeClearInputMode.draggedRecognizer = MouseEventRecognizers.RIGHT_DRAG
-  marqueeClearInputMode.releasedRecognizer = MouseEventRecognizers.RIGHT_UP
-  marqueeClearInputMode.cancelRecognizer = EventRecognizers.createOrRecognizer(
-    KeyEventRecognizers.ESCAPE_DOWN,
-    MouseEventRecognizers.LOST_CAPTURE_DURING_DRAG
-  )
-  marqueeClearInputMode.template = new ClearRectTemplate()
+  const marqueeClearInputMode = new MarqueeSelectionInputMode({
+    template: new ClearRectTemplate(),
+    pressedRecognizer: MouseEventRecognizers.RIGHT_DOWN,
+    draggedRecognizer: MouseEventRecognizers.RIGHT_DRAG,
+    releasedRecognizer: MouseEventRecognizers.RIGHT_UP,
+    cancelRecognizer: EventRecognizers.createOrRecognizer(
+      KeyEventRecognizers.ESCAPE_DOWN,
+      MouseEventRecognizers.LOST_CAPTURE_DURING_DRAG
+    )
+  })
 
   // handle dragging the marquee
   marqueeClearInputMode.addDragStartingListener(onDragStarting)
@@ -120,7 +121,7 @@ function initializeInputModes(): void {
 /**
  * A template for the red marquee rectangle.
  */
-class ClearRectTemplate extends BaseClass<IVisualTemplate>(IVisualTemplate) {
+class ClearRectTemplate extends BaseClass(IVisualTemplate) {
   createVisual(context: IRenderContext, bounds: Rect, dataObject: any): SvgVisual | null {
     const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect')
     rect.setAttribute('fill', 'rgba(255,0,0,0.67)')
@@ -191,7 +192,7 @@ function onDragFinished(sender: any, e: MarqueeSelectionEventArgs): void {
 /**
  * Returns the group node at the given location. If there is no group node, <code>null</code> is returned.
  */
-function getHitGroupNode(context: IInputModeContext, location: Point): INode {
+function getHitGroupNode(context: IInputModeContext, location: Point): INode | null {
   return (context.lookup(INodeHitTester.$class) as INodeHitTester)
     .enumerateHits(context, location)
     .firstOrDefault(n => graphComponent.graph.isGroupNode(n))

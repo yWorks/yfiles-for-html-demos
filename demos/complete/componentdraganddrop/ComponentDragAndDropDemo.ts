@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -55,15 +55,8 @@ import {
 } from 'yfiles'
 import { ComponentDropInputMode } from './ComponentDropInputMode'
 import { ClearAreaLayoutHelper } from './ClearAreaLayoutHelper'
-import {
-  addClass,
-  bindAction,
-  bindCommand,
-  passiveSupported,
-  pointerEventsSupported,
-  removeClass,
-  showApp
-} from '../../resources/demo-app'
+import { addClass, bindAction, bindCommand, removeClass, showApp } from '../../resources/demo-app'
+import { passiveSupported, pointerEventsSupported } from '../../utils/Workarounds'
 import loadJson from '../../resources/load-json'
 
 // @ts-ignore
@@ -351,11 +344,11 @@ function createComponentVisual(componentGraph: IGraph): string {
 function onDragStarted(sender: object): void {
   let component
   if (sender instanceof ComponentDropInputMode) {
-    const graphDropInputMode = sender as ComponentDropInputMode
+    const graphDropInputMode = sender
     const graph = graphDropInputMode.dropData as IGraph
     component = graph.nodes
   } else if (sender instanceof MoveInputMode) {
-    const moveInputMode = sender as MoveInputMode
+    const moveInputMode = sender
     component = moveInputMode.affectedItems.filter(item => item instanceof INode)
   }
   layoutHelper = new ClearAreaLayoutHelper(
@@ -372,11 +365,12 @@ function onDragStarted(sender: object): void {
  */
 function onDragged(sender: object): void {
   if (sender instanceof ComponentDropInputMode) {
-    const graphDropInputMode = sender as ComponentDropInputMode
+    const graphDropInputMode = sender
     layoutHelper.location = graphDropInputMode.mousePosition.toPoint()
   } else if (sender instanceof MoveInputMode) {
-    const moveInputMode = sender as MoveInputMode
-    layoutHelper.location = moveInputMode.inputModeContext!.canvasComponent!.lastEventLocation!.toPoint()
+    const moveInputMode = sender
+    layoutHelper.location =
+      moveInputMode.inputModeContext!.canvasComponent!.lastEventLocation.toPoint()
   }
   layoutHelper.runLayout()
 }
@@ -398,7 +392,7 @@ function onDragFinished(
   itemEventArgs: ItemEventArgs<IGraph> | InputModeEventArgs
 ): void {
   if (sender instanceof ComponentDropInputMode) {
-    const graphDropInputMode = sender as ComponentDropInputMode
+    const graphDropInputMode = sender
     const eventArgs = itemEventArgs as ItemEventArgs<IGraph>
     layoutHelper.location = graphDropInputMode.dropLocation
     layoutHelper.component = eventArgs.item.nodes
@@ -409,8 +403,9 @@ function onDragFinished(
     componentCount++
     layoutHelper.finishLayout()
   } else if (sender instanceof MoveInputMode) {
-    const moveInputMode = sender as MoveInputMode
-    layoutHelper.location = moveInputMode.inputModeContext!.canvasComponent!.lastEventLocation!.toPoint()
+    const moveInputMode = sender
+    layoutHelper.location =
+      moveInputMode.inputModeContext!.canvasComponent!.lastEventLocation.toPoint()
     layoutHelper.component = moveInputMode.affectedItems.filter(
       (item: IModelItem) => item instanceof INode
     ) as IEnumerable<INode>

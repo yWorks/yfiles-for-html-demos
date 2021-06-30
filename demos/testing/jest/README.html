@@ -5,7 +5,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.3.
+     // This demo file is part of yFiles for HTML 2.4.
      // Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
@@ -33,94 +33,62 @@
      ////////////////////////////////////////////////////////////////////////-->
 
   <title>Jest Demo [yFiles for HTML]</title>
-  <link rel="stylesheet" type="text/css" href="../../../doc/documentation-style.css">
+  <link rel="stylesheet" type="text/css" href="../../../doc/readme-style.css">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 </head>
 <body>
-<header>
-  <div class="content-centered">
-    <div class="logo"></div>
-    <div class="title">
-      <a href="../../README.html">yFiles for HTML</a> <span class="angle-right"></span> Jest Demo
-    </div>
-  </div>
-</header>
-<div class="content">
-  <div class="content-centered">
-    <h1>Jest Demo</h1>
-
-    <p>
-      The Jest demo shows how to use <a target="_blank" href="https://jestjs.io/">Jest</a> for unit
-      testing a yFiles for HTML application.
-    </p>
-
-    <p>
-      To run the unit tests:
-    </p>
-    <ol>
-      <li>
-        Go to the demo's directory <code>demos-js/testing/jest</code>.
-      </li>
-      <li>
-        Run <code>npm install</code>.
-      </li>
-      <li>
-        Run the unit tests with <code>npm run test</code>.
-      </li>
-    </ol>
-
-    <h2>yFiles and Jest</h2>
-    <p>
-      While modern JavaScript (or TypeScript) applications usually use es-modules,
-      Jest's support for native es-modules is still experimental. For this reason,
-      es-modules code is transpiled. Due to its size, transpiling the yFiles
-      es-modules library is rather slow. As workaround, it is possible
-      to map the es-modules variant of yFiles to its UMD variant, which does
-      not need to be transpiled. This can be achieved with Jest's
-      <code>moduleNameMapper</code> configuration option.
-    </p>
-
-    <p>
-      Some parts of yFiles require a complete DOM implementation, which Jest's
-      JSDOM environment does not provide. To still be able to test code that
-      uses yFiles API that require a DOM, it is necessary to mock yFiles.
-      See the <code>src/ItemFactoryWithMock.test.js</code> file for details.
-    </p>
-
-    <p>&nbsp;</p>
-
-  </div>
+<div id="header" class="simple-header">
+  Jest Demo
 </div>
-<footer class="default-footer">
-  <div class="footer-block">
-    <h4>Contents</h4>
-    <a href="../../../README.html">Welcome Page</a><br> <a href="../../../doc/api/index.html">API Documentation</a><br>
-    <a href="../../../doc/api/index.html#/dguide/getting_started">Getting Started</a><br> <a
-    href="../../../doc/readme/legal/SOFTWARE_LICENSE_AGREEMENT.html">License Agreement</a><br> <a
-    href="../../../doc/readme/support.html">Help and Support</a>
-  </div>
-  <div class="footer-block">
-    <h4>Contact</h4>
-    yWorks GmbH<br> Vor dem Kreuzberg 28<br> 72070 T&uuml;bingen<br> Germany<br> Phone: <a href="tel:+497071979050">+49
-    7071 979050</a><br> Email: <a href="https://www.yworks.com/contact">contact(at)yworks.com</a>
-  </div>
-  <div class="footer-block">
-    <h4>Follow Us</h4>
-    <div class="social">
-      <a href="https://www.yworks.com/products/yfiles-for-html" target="_blank" class="web">Homepage</a> <a href="https://www.yworks.com/newsfeed"
-      target="_blank" class="rss">RSS Feed</a>
+<main>
+  <div class="content-centered">
+    <div class="content">
+      <div class="breadcrumbs">
+        <a href="../../README.html">yFiles for HTML</a> <span class="angle-right"></span> Jest Demo
+      </div>
+
+      <h1>Jest Demo</h1>
+
+      <p>
+        The Jest demo shows how to use <a target="_blank" href="https://jestjs.io/">Jest</a> for unit testing a yFiles
+        for HTML application.
+      </p>
+
+      <p>
+        To run the unit tests:
+      </p>
+      <ol>
+        <li>
+          Go to the demo's directory <code>demos-js/testing/jest</code>.
+        </li>
+        <li>
+          Run <code>npm install</code>.
+        </li>
+        <li>
+          Run the unit tests with <code>npm run test</code>.
+        </li>
+      </ol>
+
+      <h2>yFiles and Jest</h2>
+      <p>
+        While modern JavaScript (or TypeScript) applications usually use es-modules, Jest's support for native
+        es-modules is still experimental. For this reason, es-modules code is transpiled. Due to its size, transpiling
+        the yFiles es-modules library is rather slow. As workaround, it is possible to map the es-modules variant of
+        yFiles to its UMD variant, which does not need to be transpiled. This can be achieved with Jest's <code>moduleNameMapper</code>
+        configuration option.
+      </p>
+
+      <p>
+        Some parts of yFiles require a complete DOM implementation, which Jest's JSDOM environment does not provide. To
+        still be able to test code that uses yFiles API that require a DOM, it is necessary to mock yFiles. See the
+        <code>src/ItemFactoryWithMock.test.js</code> file for details.
+      </p>
+
     </div>
-    <div>
-      <a href="https://github.com/yWorks" target="_blank" class="gh">GitHub</a> <a href="https://twitter.com/yworks"
-      target="_blank" class="tw">Twitter</a> <a href="https://www.youtube.com/user/yWorksTube" target="_blank"
-      class="yt">YouTube</a>
-    </div>
-    <br><br> <span class="copyright">COPYRIGHT &#x00A9; 2021 yWorks</span><br> <a
-    href="https://www.yworks.com/company/legal/imprint">Legal Disclosure</a> | <a
-    href="https://www.yworks.com/company/legal/terms-of-use">Terms of Use</a> | <a
-    href="https://www.yworks.com/company/legal/privacy">Privacy Policy</a>
+    <!-- populated by readme-style.js -->
+    <div id="footer-detailed"></div>
   </div>
-  <div class="footer-block logo"></div>
-</footer>
+</main>
+<script src="../../../doc/readme-style.js"></script>
 </body>
 </html>

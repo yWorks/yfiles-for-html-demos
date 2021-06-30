@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -28,8 +28,10 @@
  ***************************************************************************/
 import {
   BaseClass,
+  IEnumerable,
   IGraph,
   IMapper,
+  INode,
   IRenderContext,
   IVisualCreator,
   List,
@@ -45,18 +47,21 @@ import {
 export default class LayerVisual extends BaseClass(IVisualCreator) {
   constructor() {
     super()
+
     // the bounds of the complete drawing
     this.bounds = Rect.EMPTY
+
     // the list of the dividers (one less than the number of layers)
     this.dividers = new List()
+
     // the opacity of the drawing
     this.opacity = '0.5'
   }
 
   /**
    * updates the layer drawing from the information passed in
-   * @param {IGraph} graph
-   * @param {IMapper} layerMapper
+   * @param {!IGraph} graph
+   * @param {!IMapper.<INode,number>} layerMapper
    */
   updateLayers(graph, layerMapper) {
     // count the layers
@@ -70,9 +75,7 @@ export default class LayerVisual extends BaseClass(IVisualCreator) {
     }
 
     let layerCount = 0
-    nodes.forEach(node => {
-      layerCount = Math.max(layerCount, layerMapper.get(node))
-    })
+    nodes.forEach(node => (layerCount = Math.max(layerCount, layerMapper.get(node))))
     layerCount++
 
     // calculate min and max values
@@ -97,7 +100,6 @@ export default class LayerVisual extends BaseClass(IVisualCreator) {
 
     // now determine divider locations
     this.dividers.clear()
-    this.dividers.capacity = Math.max(mins.length, this.dividers.capacity)
     for (let i = 0; i < maxs.length - 1; i++) {
       this.dividers.add((maxs[i] + mins[i + 1]) * 0.5)
     }
@@ -121,8 +123,8 @@ export default class LayerVisual extends BaseClass(IVisualCreator) {
 
   /**
    * Gets the layer at the given location.
-   * @param {Point} location The location.
-   * @return {number} A positive value if a specific layer is hit, a negative one to indicate that a new layer should
+   * @param {!Point} location The location.
+   * @returns {number} A positive value if a specific layer is hit, a negative one to indicate that a new layer should
    * be inserted before layer -(value + 1) - int.MaxValue if no layer has been hit.
    */
   getLayer(location) {
@@ -175,7 +177,7 @@ export default class LayerVisual extends BaseClass(IVisualCreator) {
   /**
    * Gets the bounds of a layer by index as specified by {@link LayerVisual#getLayer}.
    * @param {number} layerIndex Index of the layer.
-   * @return {Rect} The bounds of the layer
+   * @returns {!Rect} The bounds of the layer
    */
   getLayerBounds(layerIndex) {
     if (layerIndex === Number.MAX_SAFE_INTEGER) {
@@ -214,8 +216,8 @@ export default class LayerVisual extends BaseClass(IVisualCreator) {
   /**
    * Creates a new visual that emphasizes the hierarchic layers in the graph layout.
    * @see overrides {@link IVisualCreator#createVisual}
-   * @param {IRenderContext} context
-   * @return {Visual}
+   * @param {!IRenderContext} context
+   * @returns {!Visual}
    */
   createVisual(context) {
     return this.updateVisual(
@@ -227,11 +229,14 @@ export default class LayerVisual extends BaseClass(IVisualCreator) {
   /**
    * Updates the visual that emphasizes the hierarchic layers in the graph layout.
    * @see overrides {@link IVisualCreator#updateVisual}
-   * @param {IRenderContext} context
-   * @param {Visual} oldVisual
-   * @return {Visual}
+   * @param {!IRenderContext} context
+   * @param {!Visual} oldVisual
+   * @returns {!Visual}
    */
   updateVisual(context, oldVisual) {
+    if (!(oldVisual instanceof SvgVisual)) {
+      return this.createVisual(context)
+    }
     const g = oldVisual.svgElement
 
     let y = this.bounds.y
@@ -247,8 +252,8 @@ export default class LayerVisual extends BaseClass(IVisualCreator) {
         rectangle = g.childNodes.item(count)
       }
       const bottom = divider
-      rectangle.setAttribute('x', this.bounds.x)
-      rectangle.setAttribute('y', y)
+      rectangle.setAttribute('x', this.bounds.x.toString())
+      rectangle.setAttribute('y', y.toString())
       rectangle.setAttribute('width', this.bounds.width.toString())
       rectangle.setAttribute('height', (bottom - y).toString())
       rectangle.setAttribute('fill', count % 2 === 1 ? LIGHT_FILL : DARK_FILL)
@@ -265,8 +270,8 @@ export default class LayerVisual extends BaseClass(IVisualCreator) {
     } else {
       rectangle = g.childNodes.item(count)
     }
-    rectangle.setAttribute('x', this.bounds.x)
-    rectangle.setAttribute('y', y)
+    rectangle.setAttribute('x', this.bounds.x.toString())
+    rectangle.setAttribute('y', y.toString())
     rectangle.setAttribute('width', this.bounds.width.toString())
     rectangle.setAttribute('height', (this.bounds.y + this.bounds.height - y).toString())
     rectangle.setAttribute('fill', count % 2 === 1 ? LIGHT_FILL : DARK_FILL)
@@ -282,10 +287,10 @@ export default class LayerVisual extends BaseClass(IVisualCreator) {
 
 /**
  * checks a layer and determines if the layer has been clicked near the border
- * @param {Point} location
- * @param {Rect} layerBounds
+ * @param {!Point} location
+ * @param {!Rect} layerBounds
  * @param {number} layerIndex
- * @return {number}
+ * @returns {number}
  */
 function getLayerIndex(location, layerBounds, layerIndex) {
   // check if close to top or bottom
@@ -303,18 +308,15 @@ function getLayerIndex(location, layerBounds, layerIndex) {
 
 /**
  * the dark fill used for drawing the layers
- * @type {string}
  */
 const DARK_FILL = 'rgb(150,200,255)'
 
 /**
  * the light fill used for drawing the layers
- * @type {string}
  */
 const LIGHT_FILL = 'rgb(220,240,240)'
 
 /**
  * the insets for each layer
- * @type {number}
  */
 const LAYER_INSETS = 10

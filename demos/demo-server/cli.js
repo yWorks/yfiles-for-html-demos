@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -45,16 +45,16 @@ const app = require('./server')
 
 app.use('/', (req, res) => {
   res.send(
-    `<html>
+    `<html lang="en">
       <body>
         <p>
           The yFiles for HTML demo server is up and running.
         </p>
         <p>
           Serving static content from: <b><code>${path.resolve(staticRoot)}</code></b>
-        </p> 
+        </p>
         <p>
-                  
+
         </p>
       </body>
     </html>`

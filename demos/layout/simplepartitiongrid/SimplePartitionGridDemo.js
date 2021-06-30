@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -33,6 +33,7 @@ import {
   HierarchicLayout,
   ICanvasObjectDescriptor,
   ICommand,
+  INode,
   License,
   PartitionGrid,
   PartitionGridData
@@ -44,19 +45,20 @@ import SimplePartitionGridVisualCreator from './SimplePartitionGridVisualCreator
 import { initDemoStyles } from '../../resources/demo-styles.js'
 
 /**
- * Holds the GraphComponent.
+ * Holds the GraphComponent
  * @type {GraphComponent}
  */
-let graphComponent = null
+let graphComponent
 
 /**
  * The Partition Grid
  * @type {PartitionGrid}
  */
-let partitionGrid = null
+let partitionGrid
 
 /**
  * Runs the demo.
+ * @param {!object} licenseData
  */
 function run(licenseData) {
   License.value = licenseData
@@ -89,7 +91,7 @@ function run(licenseData) {
 
 /**
  * Creates the partition grid.
- * @return {PartitionGrid} The created partition grid
+ * @returns {?PartitionGrid} The created partition grid
  */
 function createPartitionGrid() {
   const graph = graphComponent.graph

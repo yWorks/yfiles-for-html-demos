@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -31,31 +31,31 @@ import {
   BusNodePlacer,
   ChildPlacement,
   Class,
-  ClassicTreeLayout,
-  ClassicTreeLayoutEdgeRoutingStyle,
   CompactNodePlacer,
   ComponentArrangementStyles,
   DefaultNodePlacer,
   DefaultTreeLayoutPortAssignment,
+  DelegatingNodePlacer,
   DendrogramNodePlacer,
   DoubleLineNodePlacer,
+  Enum,
   EdgeBundleDescriptor,
   EdgeRouter,
   EdgeRouterScope,
-  EnumDefinition,
   GenericLabeling,
   GraphComponent,
   GridNodePlacer,
-  ITreeLayoutNodePlacer,
+  ILayoutAlgorithm,
   LayeredNodePlacer,
+  LayoutData,
   LayoutOrientation,
-  LeafPlacement,
   LeftRightNodePlacer,
   Mapper,
   OrganicEdgeRouter,
   PortStyle,
   RootAlignment,
   RootNodeAlignment,
+  RotatableNodePlacerMatrix,
   SimpleNodePlacer,
   TreeLayout,
   TreeLayoutData,
@@ -76,7 +76,12 @@ import {
   OptionGroupAttribute,
   TypeAttribute
 } from '../../resources/demo-option-editor.js'
-import LayoutConfiguration from './LayoutConfiguration.js'
+import LayoutConfiguration, {
+  EdgeLabeling,
+  LabelPlacementAlongEdge,
+  LabelPlacementSideOfEdge,
+  LabelPlacementOrientation
+} from './LayoutConfiguration.js'
 import HandleEdgesBetweenGroupsStage from './HandleEdgesBetweenGroupsStage.js'
 
 /**
@@ -93,91 +98,60 @@ const TreeLayoutConfig = Class('TreeLayoutConfig', {
   constructor: function () {
     LayoutConfiguration.call(this)
 
-    const layout = new ClassicTreeLayout()
     const aspectRatioNodePlacer = new AspectRatioNodePlacer()
-    const defaultNodePlacer = new DefaultNodePlacer()
 
-    this.layoutStyleItem = TreeLayoutConfig.EnumStyle.DEFAULT
-    this.routingStyleForNonTreeEdgesItem = TreeLayoutConfig.EnumRoute.ORTHOGONAL
+    this.routingStyleForNonTreeEdgesItem = RoutingStyle.ORTHOGONAL
     this.edgeBundlingStrengthItem = 0.95
     this.actOnSelectionOnlyItem = false
 
     this.defaultLayoutOrientationItem = LayoutOrientation.TOP_TO_BOTTOM
-    this.classicLayoutOrientationItem = LayoutOrientation.TOP_TO_BOTTOM
 
-    this.minimumNodeDistanceItem = layout.minimumNodeDistance | 0
-    this.minimumLayerDistanceItem = layout.minimumLayerDistance | 0
     this.portStyleItem = PortStyle.NODE_CENTER
 
     this.considerNodeLabelsItem = false
 
-    this.orthogonalEdgeRoutingItem = false
-
-    this.verticalAlignmentItem = 0.5
-    this.childPlacementPolicyItem = LeafPlacement.SIBLINGS_ON_SAME_LAYER
-    this.enforceGlobalLayeringItem = false
-
-    this.nodePlacerItem = TreeLayoutConfig.EnumNodePlacer.DEFAULT
+    this.nodePlacerItem = TreeNodePlacer.DEFAULT
 
     this.spacingItem = 20
-    this.rootAlignmentItem = TreeLayoutConfig.EnumRootAlignment.CENTER
+    this.rootAlignmentItem = TreeRootAlignment.CENTER
     this.allowMultiParentsItem = false
     this.portAssignmentItem = TreeLayoutPortAssignmentMode.NONE
 
-    this.hvHorizontalSpaceItem = defaultNodePlacer.horizontalDistance | 0
-    this.hvVerticalSpaceItem = defaultNodePlacer.verticalDistance | 0
-
-    this.busAlignmentItem = 0.5
-
-    this.arHorizontalSpaceItem = aspectRatioNodePlacer.horizontalDistance | 0
-    this.arVerticalSpaceItem = aspectRatioNodePlacer.verticalDistance | 0
     this.nodePlacerAspectRatioItem = aspectRatioNodePlacer.aspectRatio
 
-    this.arUseViewAspectRatioItem = true
-    this.compactPreferredAspectRatioItem = 1
-
-    this.edgeLabelingItem = TreeLayoutConfig.EnumEdgeLabeling.NONE
-    this.labelPlacementAlongEdgeItem = LayoutConfiguration.EnumLabelPlacementAlongEdge.CENTERED
-    this.labelPlacementSideOfEdgeItem = LayoutConfiguration.EnumLabelPlacementSideOfEdge.ON_EDGE
-    this.labelPlacementOrientationItem =
-      LayoutConfiguration.EnumLabelPlacementOrientation.HORIZONTAL
+    this.edgeLabelingItem = EdgeLabeling.NONE
+    this.labelPlacementAlongEdgeItem = LabelPlacementAlongEdge.CENTERED
+    this.labelPlacementSideOfEdgeItem = LabelPlacementSideOfEdge.ON_EDGE
+    this.labelPlacementOrientationItem = LabelPlacementOrientation.HORIZONTAL
     this.labelPlacementDistanceItem = 10
+    this.title = 'Tree Layout'
   },
 
   /**
    * Creates and configures a layout and the graph's {@link IGraph#mapperRegistry} if necessary.
-   * @param {GraphComponent} graphComponent The <code>GraphComponent</code> to apply the
+   * @param graphComponent The <code>GraphComponent</code> to apply the
    *   configuration on.
-   * @return {ILayoutAlgorithm} The configured layout algorithm.
+   * @return The configured layout algorithm.
    */
   createConfiguredLayout: function (graphComponent) {
-    let /** MultiStageLayout */ layout
+    let layout
 
-    switch (this.layoutStyleItem) {
-      default:
-      case TreeLayoutConfig.EnumStyle.DEFAULT:
-        layout = this.$configureDefaultLayout()
-        break
-      case TreeLayoutConfig.EnumStyle.CLASSIC:
-        layout = this.$configureClassicLayout()
-        break
-      case TreeLayoutConfig.EnumStyle.HORIZONTAL_VERTICAL:
-        layout = new TreeLayout()
-        break
-      case TreeLayoutConfig.EnumStyle.COMPACT:
-        layout = this.$configureCompactLayout(graphComponent)
-        break
+    if (this.nodePlacerItem !== TreeNodePlacer.HV) {
+      layout = this.configureDefaultLayout()
+    } else {
+      // use a default TreeLayout to show the 'Horizontal-Vertical' style
+      layout = new TreeLayout()
     }
 
     layout.parallelEdgeRouterEnabled = false
     layout.componentLayout.style = ComponentArrangementStyles.MULTI_ROWS
     layout.subgraphLayoutEnabled = this.actOnSelectionOnlyItem
 
-    layout.prependStage(this.$createTreeReductionStage())
+    layout.prependStage(this.createTreeReductionStage())
 
     const placeLabels =
-      this.edgeLabelingItem === TreeLayoutConfig.EnumEdgeLabeling.INTEGRATED ||
-      this.edgeLabelingItem === TreeLayoutConfig.EnumEdgeLabeling.GENERIC
+      this.edgeLabelingItem === EdgeLabeling.INTEGRATED ||
+      this.edgeLabelingItem === EdgeLabeling.GENERIC
 
     // required to prevent WrongGraphStructure exception which may be thrown by TreeLayout if there are edges
     // between group nodes
@@ -185,7 +159,7 @@ const TreeLayoutConfig = Class('TreeLayoutConfig', {
 
     layout.considerNodeLabels = this.considerNodeLabelsItem
 
-    if (this.edgeLabelingItem === TreeLayoutConfig.EnumEdgeLabeling.GENERIC) {
+    if (this.edgeLabelingItem === EdgeLabeling.GENERIC) {
       layout.integratedEdgeLabeling = false
 
       const labeling = new GenericLabeling()
@@ -194,11 +168,11 @@ const TreeLayoutConfig = Class('TreeLayoutConfig', {
       labeling.reduceAmbiguity = this.reduceAmbiguityItem
       layout.labelingEnabled = true
       layout.labeling = labeling
-    } else if (this.edgeLabelingItem === TreeLayoutConfig.EnumEdgeLabeling.INTEGRATED) {
+    } else if (this.edgeLabelingItem === EdgeLabeling.INTEGRATED) {
       layout.integratedEdgeLabeling = true
     }
 
-    LayoutConfiguration.addPreferredPlacementDescriptor(
+    this.addPreferredPlacementDescriptor(
       graphComponent.graph,
       this.labelPlacementAlongEdgeItem,
       this.labelPlacementSideOfEdgeItem,
@@ -210,83 +184,122 @@ const TreeLayoutConfig = Class('TreeLayoutConfig', {
   },
 
   createConfiguredLayoutData: function (graphComponent, layout) {
-    if (this.layoutStyleItem === TreeLayoutConfig.EnumStyle.DEFAULT) {
-      const graph = graphComponent.graph
-      return new TreeLayoutData({
-        gridNodePlacerRowIndices: node => {
-          const predecessors = graph.predecessors(node)
-          const parent = predecessors.firstOrDefault()
-          if (parent) {
-            const siblings = graph.successors(parent).toArray()
-            return siblings.indexOf(node) % Math.round(Math.sqrt(siblings.length))
-          }
-          return 0
-        },
-        leftRightNodePlacerLeftNodes: node => {
-          const predecessors = graph.predecessors(node)
-          const parent = predecessors.firstOrDefault()
-          if (parent) {
-            const siblings = graph.successors(parent).toArray()
-            return siblings.indexOf(node) % 2 !== 0
-          }
-          return false
-        },
-        compactNodePlacerStrategyMementos: new Mapper()
-      })
-    } else if (this.layoutStyleItem === TreeLayoutConfig.EnumStyle.HORIZONTAL_VERTICAL) {
-      return new TreeLayoutData({
-        nodePlacers: node => {
-          // children of selected nodes should be placed vertical and to the right of their child nodes, while
-          // the children of non-selected horizontal downwards
-          const childPlacement = graphComponent.selection.isSelected(node)
-            ? ChildPlacement.VERTICAL_TO_RIGHT
-            : ChildPlacement.HORIZONTAL_DOWNWARD
-
-          return new DefaultNodePlacer(
-            childPlacement,
-            RootAlignment.LEADING_ON_BUS,
-            this.hvVerticalSpaceItem,
-            this.hvHorizontalSpaceItem
-          )
-        }
-      })
+    if (this.nodePlacerItem === TreeNodePlacer.HV) {
+      return this.createLayoutDataHorizontalVertical(graphComponent)
     }
-    return null
+    if (this.nodePlacerItem === TreeNodePlacer.DELEGATING_LAYERED) {
+      return this.createLayoutDataDelegatingPlacer(graphComponent)
+    }
+
+    const graph = graphComponent.graph
+    return new TreeLayoutData({
+      gridNodePlacerRowIndices: node => {
+        const predecessors = graph.predecessors(node)
+        const parent = predecessors.firstOrDefault()
+        if (parent) {
+          const siblings = graph.successors(parent).toArray()
+          return siblings.indexOf(node) % Math.round(Math.sqrt(siblings.length))
+        }
+        return 0
+      },
+      leftRightNodePlacerLeftNodes: node => {
+        const predecessors = graph.predecessors(node)
+        const parent = predecessors.firstOrDefault()
+        if (parent) {
+          const siblings = graph.successors(parent).toArray()
+          return siblings.indexOf(node) % 2 !== 0
+        }
+        return false
+      },
+      compactNodePlacerStrategyMementos: new Mapper(),
+      assistantNodes: node => {
+        return node.tag ? node.tag.assistant : null
+      }
+    })
+  },
+
+  createLayoutDataHorizontalVertical: function (graphComponent) {
+    return new TreeLayoutData({
+      nodePlacers: node => {
+        // children of selected nodes should be placed vertical and to the right of their child nodes, while
+        // the children of non-selected horizontal downwards
+        const childPlacement = graphComponent.selection.isSelected(node)
+          ? ChildPlacement.VERTICAL_TO_RIGHT
+          : ChildPlacement.HORIZONTAL_DOWNWARD
+
+        return new DefaultNodePlacer(
+          childPlacement,
+          RootAlignment.LEADING_ON_BUS,
+          this.spacingItem,
+          this.spacingItem
+        )
+      }
+    })
+  },
+
+  createLayoutDataDelegatingPlacer: function (graphComponent) {
+    const graph = graphComponent.graph
+    //half the subtrees are delegated to the left placer and half to the right placer
+    const leftNodes = new Set()
+    const root = graph.nodes.first(node => graph.inDegree(node) === 0)
+    let left = true
+    for (const successor of graph.successors(root)) {
+      const stack = [successor]
+      while (stack.length > 0) {
+        const child = stack.pop()
+        if (left) {
+          leftNodes.add(child)
+        } // else: right node
+        //push successors on stack -> whole subtree is either left or right
+        stack.push(...graph.successors(child).toArray())
+      }
+      left = !left
+    }
+    const layoutData = new TreeLayoutData({
+      delegatingNodePlacerPrimaryNodes: node => leftNodes.has(node),
+      // tells the layout which node placer to use for a node
+      nodePlacers: node => {
+        if (node === root) {
+          return this.delegatingRootPlacer
+        }
+        if (leftNodes.has(node)) {
+          return this.delegatingLeftPlacer
+        }
+        return this.delegatingRightPlacer
+      }
+    })
+    layoutData.treeRoot.item = root
+    return layoutData
   },
 
   /**
    * Configures the tree reduction stage that will handle edges that do not belong to the tree.
-   * @return {TreeReductionStage}
    */
-  $createTreeReductionStage: function () {
+  createTreeReductionStage: function () {
     // configures tree reduction stage and non-tree edge routing
     const reductionStage = new TreeReductionStage()
-    if (this.edgeLabelingItem === TreeLayoutConfig.EnumEdgeLabeling.INTEGRATED) {
+    if (this.edgeLabelingItem === EdgeLabeling.INTEGRATED) {
       reductionStage.nonTreeEdgeLabelingAlgorithm = new GenericLabeling()
     }
     reductionStage.multiParentAllowed =
-      (this.layoutStyleItem === TreeLayoutConfig.EnumStyle.CLASSIC &&
-        !this.enforceGlobalLayeringItem &&
-        this.childPlacementPolicyItem !== LeafPlacement.ALL_LEAVES_ON_SAME_LAYER) ||
-      (this.layoutStyleItem === TreeLayoutConfig.EnumStyle.DEFAULT &&
-        (this.nodePlacerItem === TreeLayoutConfig.EnumNodePlacer.DEFAULT ||
-          this.nodePlacerItem === TreeLayoutConfig.EnumNodePlacer.BUS ||
-          this.nodePlacerItem === TreeLayoutConfig.EnumNodePlacer.LEFT_RIGHT ||
-          this.nodePlacerItem === TreeLayoutConfig.EnumNodePlacer.DENDROGRAM) &&
-        this.allowMultiParentsItem)
+      (this.nodePlacerItem === TreeNodePlacer.DEFAULT ||
+        this.nodePlacerItem === TreeNodePlacer.BUS ||
+        this.nodePlacerItem === TreeNodePlacer.LEFT_RIGHT ||
+        this.nodePlacerItem === TreeNodePlacer.DENDROGRAM) &&
+      this.allowMultiParentsItem
 
-    if (this.routingStyleForNonTreeEdgesItem === TreeLayoutConfig.EnumRoute.ORGANIC) {
+    if (this.routingStyleForNonTreeEdgesItem === RoutingStyle.ORGANIC) {
       reductionStage.nonTreeEdgeRouter = new OrganicEdgeRouter()
       reductionStage.nonTreeEdgeSelectionKey = OrganicEdgeRouter.AFFECTED_EDGES_DP_KEY
-    } else if (this.routingStyleForNonTreeEdgesItem === TreeLayoutConfig.EnumRoute.ORTHOGONAL) {
+    } else if (this.routingStyleForNonTreeEdgesItem === RoutingStyle.ORTHOGONAL) {
       const edgeRouter = new EdgeRouter()
       edgeRouter.rerouting = true
       edgeRouter.scope = EdgeRouterScope.ROUTE_AFFECTED_EDGES
       reductionStage.nonTreeEdgeRouter = edgeRouter
       reductionStage.nonTreeEdgeSelectionKey = edgeRouter.affectedEdgesDpKey
-    } else if (this.routingStyleForNonTreeEdgesItem === TreeLayoutConfig.EnumRoute.STRAIGHTLINE) {
+    } else if (this.routingStyleForNonTreeEdgesItem === RoutingStyle.STRAIGHTLINE) {
       reductionStage.nonTreeEdgeRouter = reductionStage.createStraightLineRouter()
-    } else if (this.routingStyleForNonTreeEdgesItem === TreeLayoutConfig.EnumRoute.BUNDLED) {
+    } else if (this.routingStyleForNonTreeEdgesItem === RoutingStyle.BUNDLED) {
       const ebc = reductionStage.edgeBundling
       ebc.bundlingStrength = this.edgeBundlingStrengthItem
       ebc.defaultBundleDescriptor = new EdgeBundleDescriptor({ bundled: true })
@@ -296,12 +309,10 @@ const TreeLayoutConfig = Class('TreeLayoutConfig', {
 
   /**
    * Configures the default tree layout algorithm.
-   * @return {MultiStageLayout}
    */
-  $configureDefaultLayout: function () {
-    const isDefaultNodePlacer = this.nodePlacerItem === TreeLayoutConfig.EnumNodePlacer.DEFAULT
-    const isAspectRatioNodePlacer =
-      this.nodePlacerItem === TreeLayoutConfig.EnumNodePlacer.ASPECT_RATIO
+  configureDefaultLayout: function () {
+    const isDefaultNodePlacer = this.nodePlacerItem === TreeNodePlacer.DEFAULT
+    const isAspectRatioNodePlacer = this.nodePlacerItem === TreeNodePlacer.ASPECT_RATIO
 
     const layout = new TreeLayout()
     layout.layoutOrientation = isAspectRatioNodePlacer
@@ -313,24 +324,24 @@ const TreeLayoutConfig = Class('TreeLayoutConfig', {
     let rootAlignment
     switch (this.rootAlignmentItem) {
       default:
-      case TreeLayoutConfig.EnumRootAlignment.CENTER:
+      case TreeRootAlignment.CENTER:
         rootAlignment = isDefaultNodePlacer ? RootAlignment.CENTER : RootNodeAlignment.CENTER
         break
-      case TreeLayoutConfig.EnumRootAlignment.MEDIAN:
+      case TreeRootAlignment.MEDIAN:
         rootAlignment = isDefaultNodePlacer ? RootAlignment.MEDIAN : RootNodeAlignment.MEDIAN
         break
-      case TreeLayoutConfig.EnumRootAlignment.LEFT:
+      case TreeRootAlignment.LEFT:
         rootAlignment = isDefaultNodePlacer ? RootAlignment.LEADING : RootNodeAlignment.LEFT
         break
-      case TreeLayoutConfig.EnumRootAlignment.LEADING:
+      case TreeRootAlignment.LEADING:
         rootAlignment = isDefaultNodePlacer
           ? RootAlignment.LEADING_OFFSET
           : RootNodeAlignment.LEADING
         break
-      case TreeLayoutConfig.EnumRootAlignment.RIGHT:
+      case TreeRootAlignment.RIGHT:
         rootAlignment = isDefaultNodePlacer ? RootAlignment.TRAILING : RootNodeAlignment.RIGHT
         break
-      case TreeLayoutConfig.EnumRootAlignment.TRAILING:
+      case TreeRootAlignment.TRAILING:
         rootAlignment = isDefaultNodePlacer
           ? RootAlignment.TRAILING_OFFSET
           : RootNodeAlignment.TRAILING
@@ -342,69 +353,95 @@ const TreeLayoutConfig = Class('TreeLayoutConfig', {
 
     switch (this.nodePlacerItem) {
       default:
-      case TreeLayoutConfig.EnumNodePlacer.DEFAULT:
+      case TreeNodePlacer.DEFAULT:
         layout.defaultNodePlacer = new DefaultNodePlacer({
           horizontalDistance: spacing,
           verticalDistance: spacing,
-          rootAlignment
+          rootAlignment: rootAlignment
         })
         layout.multiParentAllowed = allowMultiParents
         break
-      case TreeLayoutConfig.EnumNodePlacer.SIMPLE:
+      case TreeNodePlacer.SIMPLE:
         layout.defaultNodePlacer = new SimpleNodePlacer({
           spacing,
-          rootAlignment
+          rootAlignment: rootAlignment
         })
         break
-      case TreeLayoutConfig.EnumNodePlacer.BUS:
+      case TreeNodePlacer.BUS:
         layout.defaultNodePlacer = new BusNodePlacer({
           spacing
         })
         layout.multiParentAllowed = allowMultiParents
         break
-      case TreeLayoutConfig.EnumNodePlacer.DOUBLE_LINE:
+      case TreeNodePlacer.DOUBLE_LINE:
         layout.defaultNodePlacer = new DoubleLineNodePlacer({
           spacing,
-          rootAlignment
+          rootAlignment: rootAlignment
         })
         break
-      case TreeLayoutConfig.EnumNodePlacer.LEFT_RIGHT:
+      case TreeNodePlacer.LEFT_RIGHT:
         layout.defaultNodePlacer = new LeftRightNodePlacer({ spacing })
         layout.multiParentAllowed = allowMultiParents
         break
-      case TreeLayoutConfig.EnumNodePlacer.LAYERED:
+      case TreeNodePlacer.LAYERED:
         layout.defaultNodePlacer = new LayeredNodePlacer({
           spacing,
           layerSpacing: spacing,
-          rootAlignment
+          rootAlignment: rootAlignment
         })
         break
-      case TreeLayoutConfig.EnumNodePlacer.ASPECT_RATIO:
+      case TreeNodePlacer.ASPECT_RATIO:
         layout.defaultNodePlacer = new AspectRatioNodePlacer({
           horizontalDistance: spacing,
           verticalDistance: spacing,
           aspectRatio
         })
         break
-      case TreeLayoutConfig.EnumNodePlacer.DENDROGRAM:
+      case TreeNodePlacer.DENDROGRAM:
         layout.defaultNodePlacer = new DendrogramNodePlacer({
           minimumRootDistance: spacing,
           minimumSubtreeDistance: spacing
         })
         layout.multiParentAllowed = allowMultiParents
         break
-      case TreeLayoutConfig.EnumNodePlacer.GRID:
+      case TreeNodePlacer.GRID:
         layout.defaultNodePlacer = new GridNodePlacer({
           spacing,
-          rootAlignment
+          rootAlignment: rootAlignment
         })
         break
-      case TreeLayoutConfig.EnumNodePlacer.COMPACT:
+      case TreeNodePlacer.COMPACT:
         layout.defaultNodePlacer = new CompactNodePlacer({
           horizontalDistance: spacing,
           verticalDistance: spacing,
           preferredAspectRatio: aspectRatio
         })
+        break
+      case TreeNodePlacer.DELEGATING_LAYERED:
+        this.delegatingLeftPlacer = new LayeredNodePlacer({
+          modificationMatrix: RotatableNodePlacerMatrix.ROT270,
+          id: RotatableNodePlacerMatrix.ROT270,
+          verticalAlignment: 0,
+          routingStyle: 'orthogonal',
+          spacing,
+          layerSpacing: spacing,
+          rootAlignment: rootAlignment
+        })
+
+        this.delegatingRightPlacer = new LayeredNodePlacer({
+          modificationMatrix: RotatableNodePlacerMatrix.ROT90,
+          id: RotatableNodePlacerMatrix.ROT90,
+          verticalAlignment: 0,
+          routingStyle: 'orthogonal',
+          layerSpacing: spacing,
+          rootAlignment: rootAlignment
+        })
+
+        this.delegatingRootPlacer = new DelegatingNodePlacer(
+          RotatableNodePlacerMatrix.DEFAULT,
+          this.delegatingLeftPlacer,
+          this.delegatingRightPlacer
+        )
         break
     }
 
@@ -412,71 +449,6 @@ const TreeLayoutConfig = Class('TreeLayoutConfig', {
     layout.groupingSupported = true
 
     return layout
-  },
-
-  /**
-   * Configures the default classic tree layout algorithm.
-   * @return {MultiStageLayout}
-   */
-  $configureClassicLayout: function () {
-    const layout = new ClassicTreeLayout()
-
-    layout.minimumNodeDistance = this.minimumNodeDistanceItem
-    layout.minimumLayerDistance = this.minimumLayerDistanceItem
-
-    const ol = layout.orientationLayout
-    ol.orientation = this.classicLayoutOrientationItem
-
-    if (this.orthogonalEdgeRoutingItem) {
-      layout.edgeRoutingStyle = ClassicTreeLayoutEdgeRoutingStyle.ORTHOGONAL
-    } else {
-      layout.edgeRoutingStyle = ClassicTreeLayoutEdgeRoutingStyle.PLAIN
-    }
-
-    layout.leafPlacement = this.childPlacementPolicyItem
-    layout.enforceGlobalLayering = this.enforceGlobalLayeringItem
-    layout.portStyle = this.portStyleItem
-
-    layout.verticalAlignment = this.verticalAlignmentItem
-    layout.busAlignment = this.busAlignmentItem
-
-    return layout
-  },
-
-  /**
-   * Configures the tree layout algorithm with the appropriate node placer to obtain a compact tree layout.
-   * @return {MultiStageLayout}
-   */
-  $configureCompactLayout: function (graphComponent) {
-    const layout = new TreeLayout()
-    const aspectRatioNodePlacer = new AspectRatioNodePlacer()
-
-    if (graphComponent && this.arUseViewAspectRatioItem) {
-      const size = graphComponent.innerSize
-      aspectRatioNodePlacer.aspectRatio = size.width / size.height
-    } else {
-      aspectRatioNodePlacer.aspectRatio = this.compactPreferredAspectRatioItem
-    }
-
-    aspectRatioNodePlacer.horizontalDistance = this.arHorizontalSpaceItem
-    aspectRatioNodePlacer.verticalDistance = this.arVerticalSpaceItem
-
-    layout.defaultNodePlacer = aspectRatioNodePlacer
-    return layout
-  },
-
-  // ReSharper disable UnusedMember.Global
-  // ReSharper disable InconsistentNaming
-  /** @type {OptionGroup} */
-  DescriptionGroup: {
-    $meta: function () {
-      return [
-        LabelAttribute('Description'),
-        OptionGroupAttribute('RootGroup', 5),
-        TypeAttribute(OptionGroup.$class)
-      ]
-    },
-    value: null
   },
 
   /** @type {OptionGroup} */
@@ -492,22 +464,10 @@ const TreeLayoutConfig = Class('TreeLayoutConfig', {
   },
 
   /** @type {OptionGroup} */
-  DefaultGroup: {
+  NodePlacerGroup: {
     $meta: function () {
       return [
-        LabelAttribute('Default'),
-        OptionGroupAttribute('RootGroup', 15),
-        TypeAttribute(OptionGroup.$class)
-      ]
-    },
-    value: null
-  },
-
-  /** @type {OptionGroup} */
-  HVGroup: {
-    $meta: function () {
-      return [
-        LabelAttribute('Horizontal-Vertical'),
+        LabelAttribute('Node Placer'),
         OptionGroupAttribute('RootGroup', 20),
         TypeAttribute(OptionGroup.$class)
       ]
@@ -516,10 +476,10 @@ const TreeLayoutConfig = Class('TreeLayoutConfig', {
   },
 
   /** @type {OptionGroup} */
-  CompactGroup: {
+  EdgesGroup: {
     $meta: function () {
       return [
-        LabelAttribute('Compact'),
+        LabelAttribute('Edges'),
         OptionGroupAttribute('RootGroup', 30),
         TypeAttribute(OptionGroup.$class)
       ]
@@ -528,11 +488,11 @@ const TreeLayoutConfig = Class('TreeLayoutConfig', {
   },
 
   /** @type {OptionGroup} */
-  ClassicGroup: {
+  NonTreeEdgesGroup: {
     $meta: function () {
       return [
-        LabelAttribute('Classic'),
-        OptionGroupAttribute('RootGroup', 40),
+        LabelAttribute('Non-Tree Edges'),
+        OptionGroupAttribute('EdgesGroup', 20),
         TypeAttribute(OptionGroup.$class)
       ]
     },
@@ -544,7 +504,7 @@ const TreeLayoutConfig = Class('TreeLayoutConfig', {
     $meta: function () {
       return [
         LabelAttribute('Labeling'),
-        OptionGroupAttribute('RootGroup', 50),
+        OptionGroupAttribute('RootGroup', 40),
         TypeAttribute(OptionGroup.$class)
       ]
     },
@@ -615,290 +575,6 @@ const TreeLayoutConfig = Class('TreeLayoutConfig', {
     }
   },
 
-  /**
-   * Backing field for below property
-   * @type {TreeLayoutConfig.EnumStyle}
-   */
-  $layoutStyleItem: null,
-
-  /** @type {TreeLayoutConfig.EnumStyle} */
-  layoutStyleItem: {
-    $meta: function () {
-      return [
-        LabelAttribute('Layout Style', '#/api/TreeLayout#TreeLayout-property-defaultNodePlacer'),
-        OptionGroupAttribute('GeneralGroup', 10),
-        EnumValuesAttribute().init({
-          values: [
-            ['Default', TreeLayoutConfig.EnumStyle.DEFAULT],
-            ['Horizontal-Vertical', TreeLayoutConfig.EnumStyle.HORIZONTAL_VERTICAL],
-            ['Compact', TreeLayoutConfig.EnumStyle.COMPACT],
-            ['Classic', TreeLayoutConfig.EnumStyle.CLASSIC]
-          ]
-        }),
-        TypeAttribute(TreeLayoutConfig.EnumStyle.$class)
-      ]
-    },
-    get: function () {
-      return this.$layoutStyleItem
-    },
-    set: function (value) {
-      this.$layoutStyleItem = value
-    }
-  },
-
-  /**
-   * Backing field for below property
-   * @type {TreeLayoutConfig.EnumRoute}
-   */
-  $routingStyleForNonTreeEdgesItem: null,
-
-  /** @type {TreeLayoutConfig.EnumRoute} */
-  routingStyleForNonTreeEdgesItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Routing Style for Non-Tree Edges',
-          '#/api/TreeReductionStage#TreeReductionStage-property-nonTreeEdgeRouter'
-        ),
-        OptionGroupAttribute('GeneralGroup', 20),
-        EnumValuesAttribute().init({
-          values: [
-            ['Orthogonal', TreeLayoutConfig.EnumRoute.ORTHOGONAL],
-            ['Organic', TreeLayoutConfig.EnumRoute.ORGANIC],
-            ['Straight-Line', TreeLayoutConfig.EnumRoute.STRAIGHTLINE],
-            ['Bundled', TreeLayoutConfig.EnumRoute.BUNDLED]
-          ]
-        }),
-        TypeAttribute(TreeLayoutConfig.EnumRoute.$class)
-      ]
-    },
-    get: function () {
-      return this.$routingStyleForNonTreeEdgesItem
-    },
-    set: function (value) {
-      this.$routingStyleForNonTreeEdgesItem = value
-    }
-  },
-
-  /**
-   * Backing field for below property
-   * @type {number}
-   */
-  $edgeBundlingStrengthItem: 1.0,
-
-  /** @type {number} */
-  edgeBundlingStrengthItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Bundling Strength',
-          '#/api/EdgeBundling#EdgeBundling-property-bundlingStrength'
-        ),
-        OptionGroupAttribute('GeneralGroup', 30),
-        MinMaxAttribute().init({
-          min: 0,
-          max: 1.0,
-          step: 0.01
-        }),
-        ComponentAttribute(Components.SLIDER),
-        TypeAttribute(YNumber.$class)
-      ]
-    },
-    get: function () {
-      return this.$edgeBundlingStrengthItem
-    },
-    set: function (value) {
-      this.$edgeBundlingStrengthItem = value
-    }
-  },
-
-  /** @type {boolean} */
-  shouldDisableEdgeBundlingStrengthItem: {
-    $meta: function () {
-      return [TypeAttribute(YBoolean.$class)]
-    },
-    get: function () {
-      return this.routingStyleForNonTreeEdgesItem !== TreeLayoutConfig.EnumRoute.BUNDLED
-    }
-  },
-
-  /**
-   * Backing field for below property
-   * @type {boolean}
-   */
-  $actOnSelectionOnlyItem: false,
-
-  /** @type {boolean} */
-  actOnSelectionOnlyItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Act on Selection Only',
-          '#/api/TreeLayout#MultiStageLayout-property-subgraphLayoutEnabled'
-        ),
-        OptionGroupAttribute('GeneralGroup', 40),
-        TypeAttribute(YBoolean.$class)
-      ]
-    },
-    get: function () {
-      return this.$actOnSelectionOnlyItem
-    },
-    set: function (value) {
-      this.$actOnSelectionOnlyItem = value
-    }
-  },
-
-  /**
-   * Backing field for below property
-   * @type {boolean}
-   */
-  $considerNodeLabelsItem: false,
-
-  /** @type {boolean} */
-  considerNodeLabelsItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Consider Node Labels',
-          '#/api/TreeLayout#TreeLayout-property-considerNodeLabels'
-        ),
-        OptionGroupAttribute('GeneralGroup', 50),
-        TypeAttribute(YBoolean.$class)
-      ]
-    },
-    get: function () {
-      return this.$considerNodeLabelsItem
-    },
-    set: function (value) {
-      this.$considerNodeLabelsItem = value
-    }
-  },
-
-  /**
-   * Backing field for below property
-   * @type {ITreeLayoutNodePlacer}
-   */
-  $nodePlacerItem: null,
-
-  /** @type {TreeLayoutConfig.EnumNodePlacer} */
-  nodePlacerItem: {
-    $meta: function () {
-      return [
-        LabelAttribute('Node Placer', '#/api/TreeLayout#TreeLayout-property-defaultNodePlacer'),
-        OptionGroupAttribute('DefaultGroup', 10),
-        EnumValuesAttribute().init({
-          values: [
-            ['Default', TreeLayoutConfig.EnumNodePlacer.DEFAULT],
-            ['Simple', TreeLayoutConfig.EnumNodePlacer.SIMPLE],
-            ['Bus', TreeLayoutConfig.EnumNodePlacer.BUS],
-            ['Double-Line', TreeLayoutConfig.EnumNodePlacer.DOUBLE_LINE],
-            ['Left-Right', TreeLayoutConfig.EnumNodePlacer.LEFT_RIGHT],
-            ['Layered', TreeLayoutConfig.EnumNodePlacer.LAYERED],
-            ['Aspect Ratio', TreeLayoutConfig.EnumNodePlacer.ASPECT_RATIO],
-            ['Dendrogram', TreeLayoutConfig.EnumNodePlacer.DENDROGRAM],
-            ['Grid', TreeLayoutConfig.EnumNodePlacer.GRID],
-            ['Compact', TreeLayoutConfig.EnumNodePlacer.COMPACT]
-          ]
-        }),
-        TypeAttribute(TreeLayoutConfig.EnumNodePlacer.$class)
-      ]
-    },
-    get: function () {
-      return this.$nodePlacerItem
-    },
-    set: function (value) {
-      this.$nodePlacerItem = value
-    }
-  },
-
-  /**
-   * Backing field for below property
-   * @type {number}
-   */
-  $spacingItem: 0,
-
-  /** @type {number} */
-  spacingItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Spacing',
-          '#/api/DefaultNodePlacer#DefaultNodePlacer-property-horizontalDistance'
-        ),
-        OptionGroupAttribute('DefaultGroup', 20),
-        MinMaxAttribute().init({
-          min: 0,
-          max: 500
-        }),
-        ComponentAttribute(Components.SLIDER),
-        TypeAttribute(YNumber.$class)
-      ]
-    },
-    get: function () {
-      return this.$spacingItem
-    },
-    set: function (value) {
-      this.$spacingItem = value
-    }
-  },
-
-  /**
-   * Backing field for below property
-   * @type {TreeLayoutConfig.EnumRootAlignment}
-   */
-  $rootAlignmentItem: null,
-
-  /** @type {TreeLayoutConfig.EnumRootAlignment} */
-  rootAlignmentItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Root Alignment',
-          '#/api/DefaultNodePlacer#DefaultNodePlacer-property-rootAlignment'
-        ),
-        OptionGroupAttribute('DefaultGroup', 30),
-        EnumValuesAttribute().init({
-          values: [
-            ['Center', TreeLayoutConfig.EnumRootAlignment.CENTER],
-            ['Median', TreeLayoutConfig.EnumRootAlignment.MEDIAN],
-            ['Left', TreeLayoutConfig.EnumRootAlignment.LEFT],
-            ['Leading', TreeLayoutConfig.EnumRootAlignment.LEADING],
-            ['Right', TreeLayoutConfig.EnumRootAlignment.RIGHT],
-            ['Trailing', TreeLayoutConfig.EnumRootAlignment.TRAILING]
-          ]
-        }),
-        TypeAttribute(TreeLayoutConfig.EnumRootAlignment.$class)
-      ]
-    },
-    get: function () {
-      return this.$rootAlignmentItem
-    },
-    set: function (value) {
-      this.$rootAlignmentItem = value
-    }
-  },
-
-  /** @type {boolean} */
-  shouldDisableRootAlignmentItem: {
-    $meta: function () {
-      return [TypeAttribute(YBoolean.$class)]
-    },
-    get: function () {
-      return (
-        this.nodePlacerItem === TreeLayoutConfig.EnumNodePlacer.ASPECT_RATIO ||
-        this.nodePlacerItem === TreeLayoutConfig.EnumNodePlacer.BUS ||
-        this.nodePlacerItem === TreeLayoutConfig.EnumNodePlacer.DENDROGRAM ||
-        this.nodePlacerItem === TreeLayoutConfig.EnumNodePlacer.COMPACT
-      )
-    }
-  },
-
-  /**
-   * Backing field for below property
-   * @type {LayoutOrientation}
-   */
-  $defaultLayoutOrientationItem: null,
-
   /** @type {LayoutOrientation} */
   defaultLayoutOrientationItem: {
     $meta: function () {
@@ -907,7 +583,7 @@ const TreeLayoutConfig = Class('TreeLayoutConfig', {
           'Orientation',
           '#/api/TreeLayout#MultiStageLayout-property-layoutOrientation'
         ),
-        OptionGroupAttribute('DefaultGroup', 40),
+        OptionGroupAttribute('GeneralGroup', 5),
         EnumValuesAttribute().init({
           values: [
             ['Top to Bottom', LayoutOrientation.TOP_TO_BOTTOM],
@@ -919,12 +595,7 @@ const TreeLayoutConfig = Class('TreeLayoutConfig', {
         TypeAttribute(LayoutOrientation.$class)
       ]
     },
-    get: function () {
-      return this.$defaultLayoutOrientationItem
-    },
-    set: function (value) {
-      this.$defaultLayoutOrientationItem = value
-    }
+    value: null
   },
 
   /** @type {boolean} */
@@ -934,17 +605,129 @@ const TreeLayoutConfig = Class('TreeLayoutConfig', {
     },
     get: function () {
       return (
-        this.nodePlacerItem === TreeLayoutConfig.EnumNodePlacer.ASPECT_RATIO ||
-        this.nodePlacerItem === TreeLayoutConfig.EnumNodePlacer.COMPACT
+        this.nodePlacerItem === TreeNodePlacer.ASPECT_RATIO ||
+        this.nodePlacerItem === TreeNodePlacer.COMPACT
       )
     }
   },
 
-  /**
-   * Backing field for below property
-   * @type {number}
-   */
-  $nodePlacerAspectRatioItem: 0,
+  /** @type {boolean} */
+  actOnSelectionOnlyItem: {
+    $meta: function () {
+      return [
+        LabelAttribute(
+          'Act on Selection Only',
+          '#/api/TreeLayout#MultiStageLayout-property-subgraphLayoutEnabled'
+        ),
+        OptionGroupAttribute('GeneralGroup', 10),
+        TypeAttribute(YBoolean.$class)
+      ]
+    },
+    value: false
+  },
+
+  /** @type {boolean} */
+  considerNodeLabelsItem: {
+    $meta: function () {
+      return [
+        LabelAttribute(
+          'Consider Node Labels',
+          '#/api/TreeLayout#TreeLayout-property-considerNodeLabels'
+        ),
+        OptionGroupAttribute('NodePropertiesGroup', 10),
+        TypeAttribute(YBoolean.$class)
+      ]
+    },
+    value: false
+  },
+
+  /** @type {TreeNodePlacer} */
+  nodePlacerItem: {
+    $meta: function () {
+      return [
+        LabelAttribute('Node Placer', '#/api/TreeLayout#TreeLayout-property-defaultNodePlacer'),
+        OptionGroupAttribute('NodePlacerGroup', 10),
+        EnumValuesAttribute().init({
+          values: [
+            ['Default', TreeNodePlacer.DEFAULT],
+            ['Simple', TreeNodePlacer.SIMPLE],
+            ['Compact', TreeNodePlacer.COMPACT],
+            ['Bus', TreeNodePlacer.BUS],
+            ['Double-Line', TreeNodePlacer.DOUBLE_LINE],
+            ['Left-Right', TreeNodePlacer.LEFT_RIGHT],
+            ['Layered', TreeNodePlacer.LAYERED],
+            ['Aspect Ratio', TreeNodePlacer.ASPECT_RATIO],
+            ['Dendrogram', TreeNodePlacer.DENDROGRAM],
+            ['Grid', TreeNodePlacer.GRID],
+            ['Horizontal-Vertical', TreeNodePlacer.HV],
+            ['Delegating & Layered', TreeNodePlacer.DELEGATING_LAYERED]
+          ]
+        }),
+        TypeAttribute(Enum.$class)
+      ]
+    },
+    value: null
+  },
+
+  /** @type {number} */
+  spacingItem: {
+    $meta: function () {
+      return [
+        LabelAttribute(
+          'Spacing',
+          '#/api/DefaultNodePlacer#DefaultNodePlacer-property-horizontalDistance'
+        ),
+        OptionGroupAttribute('NodePlacerGroup', 20),
+        MinMaxAttribute().init({
+          min: 0,
+          max: 500
+        }),
+        ComponentAttribute(Components.SLIDER),
+        TypeAttribute(YNumber.$class)
+      ]
+    },
+    value: 0
+  },
+
+  /** @type {TreeRootAlignment} */
+  rootAlignmentItem: {
+    $meta: function () {
+      return [
+        LabelAttribute(
+          'Root Alignment',
+          '#/api/DefaultNodePlacer#DefaultNodePlacer-property-rootAlignment'
+        ),
+        OptionGroupAttribute('NodePlacerGroup', 30),
+        EnumValuesAttribute().init({
+          values: [
+            ['Center', TreeRootAlignment.CENTER],
+            ['Median', TreeRootAlignment.MEDIAN],
+            ['Left', TreeRootAlignment.LEFT],
+            ['Leading', TreeRootAlignment.LEADING],
+            ['Right', TreeRootAlignment.RIGHT],
+            ['Trailing', TreeRootAlignment.TRAILING]
+          ]
+        }),
+        TypeAttribute(Enum.$class)
+      ]
+    },
+    value: null
+  },
+
+  /** @type {boolean} */
+  shouldDisableRootAlignmentItem: {
+    $meta: function () {
+      return [TypeAttribute(YBoolean.$class)]
+    },
+    get: function () {
+      return (
+        this.nodePlacerItem === TreeNodePlacer.ASPECT_RATIO ||
+        this.nodePlacerItem === TreeNodePlacer.BUS ||
+        this.nodePlacerItem === TreeNodePlacer.DENDROGRAM ||
+        this.nodePlacerItem === TreeNodePlacer.COMPACT
+      )
+    }
+  },
 
   /** @type {number} */
   nodePlacerAspectRatioItem: {
@@ -954,7 +737,7 @@ const TreeLayoutConfig = Class('TreeLayoutConfig', {
           'Aspect Ratio',
           '#/api/AspectRatioNodePlacer#AspectRatioNodePlacer-property-aspectRatio'
         ),
-        OptionGroupAttribute('DefaultGroup', 50),
+        OptionGroupAttribute('NodePlacerGroup', 50),
         MinMaxAttribute().init({
           min: 0.1,
           max: 4,
@@ -964,12 +747,7 @@ const TreeLayoutConfig = Class('TreeLayoutConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function () {
-      return this.$nodePlacerAspectRatioItem
-    },
-    set: function (value) {
-      this.$nodePlacerAspectRatioItem = value
-    }
+    value: 0.1
   },
 
   /** @type {boolean} */
@@ -979,17 +757,11 @@ const TreeLayoutConfig = Class('TreeLayoutConfig', {
     },
     get: function () {
       return (
-        this.nodePlacerItem !== TreeLayoutConfig.EnumNodePlacer.ASPECT_RATIO &&
-        this.nodePlacerItem !== TreeLayoutConfig.EnumNodePlacer.COMPACT
+        this.nodePlacerItem !== TreeNodePlacer.ASPECT_RATIO &&
+        this.nodePlacerItem !== TreeNodePlacer.COMPACT
       )
     }
   },
-
-  /**
-   * Backing field for below property
-   * @type {boolean}
-   */
-  $allowMultiParentsItem: false,
 
   /** @type {boolean} */
   allowMultiParentsItem: {
@@ -999,16 +771,11 @@ const TreeLayoutConfig = Class('TreeLayoutConfig', {
           'Allow Multi-Parents',
           '#/api/TreeLayout#TreeLayout-property-multiParentAllowed'
         ),
-        OptionGroupAttribute('DefaultGroup', 60),
+        OptionGroupAttribute('NodePlacerGroup', 60),
         TypeAttribute(YBoolean.$class)
       ]
     },
-    get: function () {
-      return this.$allowMultiParentsItem
-    },
-    set: function (value) {
-      this.$allowMultiParentsItem = value
-    }
+    value: false
   },
 
   /** @type {boolean} */
@@ -1018,19 +785,67 @@ const TreeLayoutConfig = Class('TreeLayoutConfig', {
     },
     get: function () {
       return (
-        this.nodePlacerItem !== TreeLayoutConfig.EnumNodePlacer.DEFAULT &&
-        this.nodePlacerItem !== TreeLayoutConfig.EnumNodePlacer.DENDROGRAM &&
-        this.nodePlacerItem !== TreeLayoutConfig.EnumNodePlacer.BUS &&
-        this.nodePlacerItem !== TreeLayoutConfig.EnumNodePlacer.LEFT_RIGHT
+        this.nodePlacerItem !== TreeNodePlacer.DEFAULT &&
+        this.nodePlacerItem !== TreeNodePlacer.DENDROGRAM &&
+        this.nodePlacerItem !== TreeNodePlacer.BUS &&
+        this.nodePlacerItem !== TreeNodePlacer.LEFT_RIGHT
       )
     }
   },
 
-  /**
-   * Backing field for below property
-   * @type {TreeLayoutPortAssignmentMode}
-   */
-  $portAssignmentItem: null,
+  /** @type {RoutingStyle} */
+  routingStyleForNonTreeEdgesItem: {
+    $meta: function () {
+      return [
+        LabelAttribute(
+          'Routing Style for Non-Tree Edges',
+          '#/api/TreeReductionStage#TreeReductionStage-property-nonTreeEdgeRouter'
+        ),
+        OptionGroupAttribute('NonTreeEdgesGroup', 10),
+        EnumValuesAttribute().init({
+          values: [
+            ['Orthogonal', RoutingStyle.ORTHOGONAL],
+            ['Organic', RoutingStyle.ORGANIC],
+            ['Straight-Line', RoutingStyle.STRAIGHTLINE],
+            ['Bundled', RoutingStyle.BUNDLED]
+          ]
+        }),
+        TypeAttribute(Enum.$class)
+      ]
+    },
+    value: null
+  },
+
+  /** @type {number} */
+  edgeBundlingStrengthItem: {
+    $meta: function () {
+      return [
+        LabelAttribute(
+          'Bundling Strength',
+          '#/api/EdgeBundling#EdgeBundling-property-bundlingStrength'
+        ),
+        OptionGroupAttribute('NonTreeEdgesGroup', 20),
+        MinMaxAttribute().init({
+          min: 0,
+          max: 1.0,
+          step: 0.01
+        }),
+        ComponentAttribute(Components.SLIDER),
+        TypeAttribute(YNumber.$class)
+      ]
+    },
+    value: 1.0
+  },
+
+  /** @type {boolean} */
+  shouldDisableEdgeBundlingStrengthItem: {
+    $meta: function () {
+      return [TypeAttribute(YBoolean.$class)]
+    },
+    get: function () {
+      return this.routingStyleForNonTreeEdgesItem !== RoutingStyle.BUNDLED
+    }
+  },
 
   /** @type {TreeLayoutPortAssignmentMode} */
   portAssignmentItem: {
@@ -1040,7 +855,7 @@ const TreeLayoutConfig = Class('TreeLayoutConfig', {
           'Port Assignment',
           '#/api/TreeLayout#TreeLayout-property-defaultPortAssignment'
         ),
-        OptionGroupAttribute('DefaultGroup', 70),
+        OptionGroupAttribute('EdgesGroup', 10),
         EnumValuesAttribute().init({
           values: [
             ['None', TreeLayoutPortAssignmentMode.NONE],
@@ -1053,517 +868,15 @@ const TreeLayoutConfig = Class('TreeLayoutConfig', {
         TypeAttribute(TreeLayoutPortAssignmentMode.$class)
       ]
     },
-    get: function () {
-      return this.$portAssignmentItem
-    },
-    set: function (value) {
-      this.$portAssignmentItem = value
-    }
+    value: null
   },
 
   /**
-   * Backing field for below property
-   * @type {number}
-   */
-  $hvHorizontalSpaceItem: 0,
-
-  /** @type {number} */
-  hvHorizontalSpaceItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Horizontal Spacing',
-          '#/api/DefaultNodePlacer#DefaultNodePlacer-property-horizontalDistance'
-        ),
-        OptionGroupAttribute('HVGroup', 10),
-        MinMaxAttribute().init({
-          min: 0,
-          max: 100
-        }),
-        ComponentAttribute(Components.SLIDER),
-        TypeAttribute(YNumber.$class)
-      ]
-    },
-    get: function () {
-      return this.$hvHorizontalSpaceItem
-    },
-    set: function (value) {
-      this.$hvHorizontalSpaceItem = value
-    }
-  },
-
-  /**
-   * Backing field for below property
-   * @type {number}
-   */
-  $hvVerticalSpaceItem: 0,
-
-  /** @type {number} */
-  hvVerticalSpaceItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Vertical Spacing',
-          '#/api/DefaultNodePlacer#DefaultNodePlacer-property-verticalDistance'
-        ),
-        OptionGroupAttribute('HVGroup', 20),
-        MinMaxAttribute().init({
-          min: 0,
-          max: 100
-        }),
-        ComponentAttribute(Components.SLIDER),
-        TypeAttribute(YNumber.$class)
-      ]
-    },
-    get: function () {
-      return this.$hvVerticalSpaceItem
-    },
-    set: function (value) {
-      this.$hvVerticalSpaceItem = value
-    }
-  },
-
-  /**
-   * Backing field for below property
-   * @type {number}
-   */
-  $arHorizontalSpaceItem: 0,
-
-  /** @type {number} */
-  arHorizontalSpaceItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Horizontal Spacing',
-          '#/api/AspectRatioNodePlacer#AspectRatioNodePlacer-property-horizontalDistance'
-        ),
-        OptionGroupAttribute('CompactGroup', 10),
-        MinMaxAttribute().init({
-          min: 0,
-          max: 100
-        }),
-        ComponentAttribute(Components.SLIDER),
-        TypeAttribute(YNumber.$class)
-      ]
-    },
-    get: function () {
-      return this.$arHorizontalSpaceItem
-    },
-    set: function (value) {
-      this.$arHorizontalSpaceItem = value
-    }
-  },
-
-  /**
-   * Backing field for below property
-   * @type {number}
-   */
-  $arVerticalSpaceItem: 0,
-
-  /** @type {number} */
-  arVerticalSpaceItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Vertical Spacing',
-          '#/api/AspectRatioNodePlacer#AspectRatioNodePlacer-property-verticalDistance'
-        ),
-        OptionGroupAttribute('CompactGroup', 20),
-        MinMaxAttribute().init({
-          min: 0,
-          max: 100
-        }),
-        ComponentAttribute(Components.SLIDER),
-        TypeAttribute(YNumber.$class)
-      ]
-    },
-    get: function () {
-      return this.$arVerticalSpaceItem
-    },
-    set: function (value) {
-      this.$arVerticalSpaceItem = value
-    }
-  },
-
-  /**
-   * Backing field for below property
-   * @type {boolean}
-   */
-  $arUseViewAspectRatioItem: false,
-
-  /** @type {boolean} */
-  arUseViewAspectRatioItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Use Aspect Ratio of View',
-          '#/api/AspectRatioNodePlacer#AspectRatioNodePlacer-property-aspectRatio'
-        ),
-        OptionGroupAttribute('CompactGroup', 40),
-        TypeAttribute(YBoolean.$class)
-      ]
-    },
-    get: function () {
-      return this.$arUseViewAspectRatioItem
-    },
-    set: function (value) {
-      this.$arUseViewAspectRatioItem = value
-    }
-  },
-
-  /**
-   * Backing field for below property
-   * @type {number}
-   */
-  $compactPreferredAspectRatioItem: 0,
-
-  /** @type {number} */
-  compactPreferredAspectRatioItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Preferred Aspect Ratio',
-          '#/api/AspectRatioNodePlacer#AspectRatioNodePlacer-property-aspectRatio'
-        ),
-        OptionGroupAttribute('CompactGroup', 50),
-        MinMaxAttribute().init({
-          min: 0.2,
-          max: 5.0,
-          step: 0.01
-        }),
-        ComponentAttribute(Components.SLIDER),
-        TypeAttribute(YNumber.$class)
-      ]
-    },
-    get: function () {
-      return this.$compactPreferredAspectRatioItem
-    },
-    set: function (value) {
-      this.$compactPreferredAspectRatioItem = value
-    }
-  },
-
-  /** @type {boolean} */
-  shouldDisableCompactPreferredAspectRatioItem: {
-    $meta: function () {
-      return [TypeAttribute(YBoolean.$class)]
-    },
-    get: function () {
-      return this.arUseViewCompactPreferredAspectRatioItem
-    }
-  },
-
-  /**
-   * Backing field for below property
-   * @type {LayoutOrientation}
-   */
-  $classicLayoutOrientationItem: null,
-
-  /** @type {LayoutOrientation} */
-  classicLayoutOrientationItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Orientation',
-          '#/api/OrientationLayout#OrientationLayout-property-orientation'
-        ),
-        OptionGroupAttribute('ClassicGroup', 10),
-        EnumValuesAttribute().init({
-          values: [
-            ['Top to Bottom', LayoutOrientation.TOP_TO_BOTTOM],
-            ['Left to Right', LayoutOrientation.LEFT_TO_RIGHT],
-            ['Bottom to Top', LayoutOrientation.BOTTOM_TO_TOP],
-            ['Right to Left', LayoutOrientation.RIGHT_TO_LEFT]
-          ]
-        }),
-        TypeAttribute(LayoutOrientation.$class)
-      ]
-    },
-    get: function () {
-      return this.$classicLayoutOrientationItem
-    },
-    set: function (value) {
-      this.$classicLayoutOrientationItem = value
-    }
-  },
-
-  /**
-   * Backing field for below property
-   * @type {number}
-   */
-  $minimumNodeDistanceItem: 0,
-
-  /** @type {number} */
-  minimumNodeDistanceItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Minimum Node Distance',
-          '#/api/ClassicTreeLayout#ClassicTreeLayout-property-minimumNodeDistance'
-        ),
-        MinMaxAttribute().init({
-          min: 1,
-          max: 100
-        }),
-        OptionGroupAttribute('ClassicGroup', 20),
-        ComponentAttribute(Components.SLIDER),
-        TypeAttribute(YNumber.$class)
-      ]
-    },
-    get: function () {
-      return this.$minimumNodeDistanceItem
-    },
-    set: function (value) {
-      this.$minimumNodeDistanceItem = value
-    }
-  },
-
-  /**
-   * Backing field for below property
-   * @type {number}
-   */
-  $minimumLayerDistanceItem: 0,
-
-  /** @type {number} */
-  minimumLayerDistanceItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Minimum Layer Distance',
-          '#/api/ClassicTreeLayout#ClassicTreeLayout-property-minimumLayerDistance'
-        ),
-        MinMaxAttribute().init({
-          min: 10,
-          max: 300
-        }),
-        OptionGroupAttribute('ClassicGroup', 30),
-        ComponentAttribute(Components.SLIDER),
-        TypeAttribute(YNumber.$class)
-      ]
-    },
-    get: function () {
-      return this.$minimumLayerDistanceItem
-    },
-    set: function (value) {
-      this.$minimumLayerDistanceItem = value
-    }
-  },
-
-  /**
-   * Backing field for below property
-   * @type {PortStyle}
-   */
-  $portStyleItem: null,
-
-  /** @type {PortStyle} */
-  portStyleItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Port Style',
-          '#/api/ClassicTreeLayout#ClassicTreeLayout-property-portStyle'
-        ),
-        OptionGroupAttribute('ClassicGroup', 40),
-        EnumValuesAttribute().init({
-          values: [
-            ['Node Centered', PortStyle.NODE_CENTER],
-            ['Border Centered', PortStyle.BORDER_CENTER],
-            ['Border Distributed', PortStyle.BORDER_DISTRIBUTED]
-          ]
-        }),
-        TypeAttribute(PortStyle.$class)
-      ]
-    },
-    get: function () {
-      return this.$portStyleItem
-    },
-    set: function (value) {
-      this.$portStyleItem = value
-    }
-  },
-
-  /**
-   * Backing field for below property
-   * @type {boolean}
-   */
-  $enforceGlobalLayeringItem: false,
-
-  /** @type {boolean} */
-  enforceGlobalLayeringItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Global Layering',
-          '#/api/ClassicTreeLayout#ClassicTreeLayout-property-enforceGlobalLayering'
-        ),
-        OptionGroupAttribute('ClassicGroup', 50),
-        TypeAttribute(YBoolean.$class)
-      ]
-    },
-    get: function () {
-      return this.$enforceGlobalLayeringItem
-    },
-    set: function (value) {
-      this.$enforceGlobalLayeringItem = value
-    }
-  },
-
-  /**
-   * Backing field for below property
-   * @type {boolean}
-   */
-  $orthogonalEdgeRoutingItem: false,
-
-  /** @type {boolean} */
-  orthogonalEdgeRoutingItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Orthogonal Edge Routing',
-          '#/api/ClassicTreeLayout#ClassicTreeLayout-property-edgeRoutingStyle'
-        ),
-        OptionGroupAttribute('ClassicGroup', 60),
-        TypeAttribute(YBoolean.$class)
-      ]
-    },
-    get: function () {
-      return this.$orthogonalEdgeRoutingItem
-    },
-    set: function (value) {
-      this.$orthogonalEdgeRoutingItem = value
-    }
-  },
-
-  /**
-   * Backing field for below property
-   * @type {number}
-   */
-  $busAlignmentItem: 0,
-
-  /** @type {number} */
-  busAlignmentItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Edge Bus Alignment',
-          '#/api/ClassicTreeLayout#ClassicTreeLayout-property-busAlignment'
-        ),
-        OptionGroupAttribute('ClassicGroup', 70),
-        MinMaxAttribute().init({
-          min: 0.0,
-          max: 1.0,
-          step: 0.01
-        }),
-        ComponentAttribute(Components.SLIDER),
-        TypeAttribute(YNumber.$class)
-      ]
-    },
-    get: function () {
-      return this.$busAlignmentItem
-    },
-    set: function (value) {
-      this.$busAlignmentItem = value
-    }
-  },
-
-  /** @type {boolean} */
-  shouldDisableBusAlignmentItem: {
-    $meta: function () {
-      return [TypeAttribute(YBoolean.$class)]
-    },
-    get: function () {
-      return (
-        this.orthogonalEdgeRoutingItem === false ||
-        (this.enforceGlobalLayeringItem === false &&
-          this.childPlacementPolicyItem !== LeafPlacement.ALL_LEAVES_ON_SAME_LAYER)
-      )
-    }
-  },
-
-  /**
-   * Backing field for below property
-   * @type {number}
-   */
-  $verticalAlignmentItem: 0,
-
-  /** @type {number} */
-  verticalAlignmentItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Vertical Child Alignment',
-          '#/api/ClassicTreeLayout#ClassicTreeLayout-property-verticalAlignment'
-        ),
-        OptionGroupAttribute('ClassicGroup', 80),
-        MinMaxAttribute().init({
-          min: 0.0,
-          max: 1.0,
-          step: 0.01
-        }),
-        ComponentAttribute(Components.SLIDER),
-        TypeAttribute(YNumber.$class)
-      ]
-    },
-    get: function () {
-      return this.$verticalAlignmentItem
-    },
-    set: function (value) {
-      this.$verticalAlignmentItem = value
-    }
-  },
-
-  /** @type {boolean} */
-  shouldDisableVerticalAlignmentItem: {
-    $meta: function () {
-      return [TypeAttribute(YBoolean.$class)]
-    },
-    get: function () {
-      return !this.enforceGlobalLayeringItem
-    }
-  },
-
-  /**
-   * Backing field for below property
-   * @type {ChildPlacement}
-   */
-  $childPlacementPolicyItem: null,
-
-  /** @type {ChildPlacement} */
-  childPlacementPolicyItem: {
-    $meta: function () {
-      return [
-        LabelAttribute(
-          'Child Placement Policy',
-          '#/api/ClassicTreeLayout#ClassicTreeLayout-property-leafPlacement'
-        ),
-        OptionGroupAttribute('ClassicGroup', 90),
-        EnumValuesAttribute().init({
-          values: [
-            ['Siblings in same Layer', LeafPlacement.SIBLINGS_ON_SAME_LAYER],
-            ['All Leaves in same Layer', LeafPlacement.ALL_LEAVES_ON_SAME_LAYER],
-            ['Leaves stacked', LeafPlacement.LEAVES_STACKED],
-            ['Leaves stacked left', LeafPlacement.LEAVES_STACKED_LEFT],
-            ['Leaves stacked right', LeafPlacement.LEAVES_STACKED_RIGHT],
-            ['Leaves stacked left and right', LeafPlacement.LEAVES_STACKED_LEFT_AND_RIGHT]
-          ]
-        }),
-        TypeAttribute(LeafPlacement.$class)
-      ]
-    },
-    get: function () {
-      return this.$childPlacementPolicyItem
-    },
-    set: function (value) {
-      this.$childPlacementPolicyItem = value
-    }
-  },
-
-  /**
-   * @type {TreeLayoutConfig.EnumEdgeLabeling}
+   * @type {EdgeLabeling}
    */
   $edgeLabelingItem: null,
 
-  /** @type {TreeLayoutConfig.EnumEdgeLabeling} */
+  /** @type {EdgeLabeling} */
   edgeLabelingItem: {
     $meta: function () {
       return [
@@ -1574,12 +887,12 @@ const TreeLayoutConfig = Class('TreeLayoutConfig', {
         OptionGroupAttribute('EdgePropertiesGroup', 10),
         EnumValuesAttribute().init({
           values: [
-            ['None', TreeLayoutConfig.EnumEdgeLabeling.NONE],
-            ['Integrated', TreeLayoutConfig.EnumEdgeLabeling.INTEGRATED],
-            ['Generic', TreeLayoutConfig.EnumEdgeLabeling.GENERIC]
+            ['None', EdgeLabeling.NONE],
+            ['Integrated', EdgeLabeling.INTEGRATED],
+            ['Generic', EdgeLabeling.GENERIC]
           ]
         }),
-        TypeAttribute(TreeLayoutConfig.EnumEdgeLabeling.$class)
+        TypeAttribute(Enum.$class)
       ]
     },
     get: function () {
@@ -1587,20 +900,13 @@ const TreeLayoutConfig = Class('TreeLayoutConfig', {
     },
     set: function (value) {
       this.$edgeLabelingItem = value
-      if (value === TreeLayoutConfig.EnumEdgeLabeling.INTEGRATED) {
-        this.labelPlacementOrientationItem =
-          LayoutConfiguration.EnumLabelPlacementOrientation.PARALLEL
-        this.labelPlacementAlongEdgeItem = LayoutConfiguration.EnumLabelPlacementAlongEdge.AT_TARGET
+      if (value === EdgeLabeling.INTEGRATED) {
+        this.labelPlacementOrientationItem = LabelPlacementOrientation.PARALLEL
+        this.labelPlacementAlongEdgeItem = LabelPlacementAlongEdge.AT_TARGET
         this.labelPlacementDistanceItem = 0
       }
     }
   },
-
-  /**
-   * Backing field for below property
-   * @type {boolean}
-   */
-  $reduceAmbiguityItem: false,
 
   /** @type {boolean} */
   reduceAmbiguityItem: {
@@ -1614,12 +920,7 @@ const TreeLayoutConfig = Class('TreeLayoutConfig', {
         TypeAttribute(YBoolean.$class)
       ]
     },
-    get: function () {
-      return this.$reduceAmbiguityItem
-    },
-    set: function (value) {
-      this.$reduceAmbiguityItem = value
-    }
+    value: false
   },
 
   /** @type {boolean} */
@@ -1628,17 +929,11 @@ const TreeLayoutConfig = Class('TreeLayoutConfig', {
       return [TypeAttribute(YBoolean.$class)]
     },
     get: function () {
-      return this.edgeLabelingItem !== TreeLayoutConfig.EnumEdgeLabeling.GENERIC
+      return this.edgeLabelingItem !== EdgeLabeling.GENERIC
     }
   },
 
-  /**
-   * Backing field for below property
-   * @type {LayoutConfiguration.EnumLabelPlacementOrientation}
-   */
-  $labelPlacementOrientationItem: null,
-
-  /** @type {LayoutConfiguration.EnumLabelPlacementOrientation} */
+  /** @type {LabelPlacementOrientation} */
   labelPlacementOrientationItem: {
     $meta: function () {
       return [
@@ -1649,21 +944,16 @@ const TreeLayoutConfig = Class('TreeLayoutConfig', {
         OptionGroupAttribute('PreferredPlacementGroup', 10),
         EnumValuesAttribute().init({
           values: [
-            ['Parallel', LayoutConfiguration.EnumLabelPlacementOrientation.PARALLEL],
-            ['Orthogonal', LayoutConfiguration.EnumLabelPlacementOrientation.ORTHOGONAL],
-            ['Horizontal', LayoutConfiguration.EnumLabelPlacementOrientation.HORIZONTAL],
-            ['Vertical', LayoutConfiguration.EnumLabelPlacementOrientation.VERTICAL]
+            ['Parallel', LabelPlacementOrientation.PARALLEL],
+            ['Orthogonal', LabelPlacementOrientation.ORTHOGONAL],
+            ['Horizontal', LabelPlacementOrientation.HORIZONTAL],
+            ['Vertical', LabelPlacementOrientation.VERTICAL]
           ]
         }),
-        TypeAttribute(LayoutConfiguration.EnumLabelPlacementOrientation.$class)
+        TypeAttribute(Enum.$class)
       ]
     },
-    get: function () {
-      return this.$labelPlacementOrientationItem
-    },
-    set: function (value) {
-      this.$labelPlacementOrientationItem = value
-    }
+    value: null
   },
 
   /** @type {boolean} */
@@ -1672,17 +962,11 @@ const TreeLayoutConfig = Class('TreeLayoutConfig', {
       return [TypeAttribute(YBoolean.$class)]
     },
     get: function () {
-      return this.edgeLabelingItem === TreeLayoutConfig.EnumEdgeLabeling.NONE
+      return this.edgeLabelingItem === EdgeLabeling.NONE
     }
   },
 
-  /**
-   * Backing field for below property
-   * @type {LayoutConfiguration.EnumLabelPlacementAlongEdge}
-   */
-  $labelPlacementAlongEdgeItem: null,
-
-  /** @type {LayoutConfiguration.EnumLabelPlacementAlongEdge} */
+  /** @type {LabelPlacementAlongEdge} */
   labelPlacementAlongEdgeItem: {
     $meta: function () {
       return [
@@ -1693,23 +977,18 @@ const TreeLayoutConfig = Class('TreeLayoutConfig', {
         OptionGroupAttribute('PreferredPlacementGroup', 20),
         EnumValuesAttribute().init({
           values: [
-            ['Anywhere', LayoutConfiguration.EnumLabelPlacementAlongEdge.ANYWHERE],
-            ['At Source', LayoutConfiguration.EnumLabelPlacementAlongEdge.AT_SOURCE],
-            ['At Source Port', LayoutConfiguration.EnumLabelPlacementAlongEdge.AT_SOURCE_PORT],
-            ['At Target', LayoutConfiguration.EnumLabelPlacementAlongEdge.AT_TARGET],
-            ['At Target Port', LayoutConfiguration.EnumLabelPlacementAlongEdge.AT_TARGET_PORT],
-            ['Centered', LayoutConfiguration.EnumLabelPlacementAlongEdge.CENTERED]
+            ['Anywhere', LabelPlacementAlongEdge.ANYWHERE],
+            ['At Source', LabelPlacementAlongEdge.AT_SOURCE],
+            ['At Source Port', LabelPlacementAlongEdge.AT_SOURCE_PORT],
+            ['At Target', LabelPlacementAlongEdge.AT_TARGET],
+            ['At Target Port', LabelPlacementAlongEdge.AT_TARGET_PORT],
+            ['Centered', LabelPlacementAlongEdge.CENTERED]
           ]
         }),
-        TypeAttribute(LayoutConfiguration.EnumLabelPlacementAlongEdge.$class)
+        TypeAttribute(Enum.$class)
       ]
     },
-    get: function () {
-      return this.$labelPlacementAlongEdgeItem
-    },
-    set: function (value) {
-      this.$labelPlacementAlongEdgeItem = value
-    }
+    value: null
   },
 
   /** @type {boolean} */
@@ -1718,17 +997,11 @@ const TreeLayoutConfig = Class('TreeLayoutConfig', {
       return [TypeAttribute(YBoolean.$class)]
     },
     get: function () {
-      return this.edgeLabelingItem === TreeLayoutConfig.EnumEdgeLabeling.NONE
+      return this.edgeLabelingItem === EdgeLabeling.NONE
     }
   },
 
-  /**
-   * Backing field for below property
-   * @type {LayoutConfiguration.EnumLabelPlacementSideOfEdge}
-   */
-  $labelPlacementSideOfEdgeItem: null,
-
-  /** @type {LayoutConfiguration.EnumLabelPlacementSideOfEdge} */
+  /** @type {LabelPlacementSideOfEdge} */
   labelPlacementSideOfEdgeItem: {
     $meta: function () {
       return [
@@ -1739,22 +1012,17 @@ const TreeLayoutConfig = Class('TreeLayoutConfig', {
         OptionGroupAttribute('PreferredPlacementGroup', 30),
         EnumValuesAttribute().init({
           values: [
-            ['Anywhere', LayoutConfiguration.EnumLabelPlacementSideOfEdge.ANYWHERE],
-            ['On Edge', LayoutConfiguration.EnumLabelPlacementSideOfEdge.ON_EDGE],
-            ['Left', LayoutConfiguration.EnumLabelPlacementSideOfEdge.LEFT],
-            ['Right', LayoutConfiguration.EnumLabelPlacementSideOfEdge.RIGHT],
-            ['Left or Right', LayoutConfiguration.EnumLabelPlacementSideOfEdge.LEFT_OR_RIGHT]
+            ['Anywhere', LabelPlacementSideOfEdge.ANYWHERE],
+            ['On Edge', LabelPlacementSideOfEdge.ON_EDGE],
+            ['Left', LabelPlacementSideOfEdge.LEFT],
+            ['Right', LabelPlacementSideOfEdge.RIGHT],
+            ['Left or Right', LabelPlacementSideOfEdge.LEFT_OR_RIGHT]
           ]
         }),
-        TypeAttribute(LayoutConfiguration.EnumLabelPlacementSideOfEdge.$class)
+        TypeAttribute(Enum.$class)
       ]
     },
-    get: function () {
-      return this.$labelPlacementSideOfEdgeItem
-    },
-    set: function (value) {
-      this.$labelPlacementSideOfEdgeItem = value
-    }
+    value: null
   },
 
   /** @type {boolean} */
@@ -1763,15 +1031,9 @@ const TreeLayoutConfig = Class('TreeLayoutConfig', {
       return [TypeAttribute(YBoolean.$class)]
     },
     get: function () {
-      return this.edgeLabelingItem === TreeLayoutConfig.EnumEdgeLabeling.NONE
+      return this.edgeLabelingItem === EdgeLabeling.NONE
     }
   },
-
-  /**
-   * Backing field for below property
-   * @type {number}
-   */
-  $labelPlacementDistanceItem: 0,
 
   /** @type {number} */
   labelPlacementDistanceItem: {
@@ -1790,12 +1052,7 @@ const TreeLayoutConfig = Class('TreeLayoutConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function () {
-      return this.$labelPlacementDistanceItem
-    },
-    set: function (value) {
-      this.$labelPlacementDistanceItem = value
-    }
+    value: 0
   },
 
   /** @type {boolean} */
@@ -1805,67 +1062,53 @@ const TreeLayoutConfig = Class('TreeLayoutConfig', {
     },
     get: function () {
       return (
-        this.edgeLabelingItem === TreeLayoutConfig.EnumEdgeLabeling.NONE ||
-        this.labelPlacementSideOfEdgeItem ===
-          LayoutConfiguration.EnumLabelPlacementSideOfEdge.ON_EDGE
+        this.edgeLabelingItem === EdgeLabeling.NONE ||
+        this.labelPlacementSideOfEdgeItem === LabelPlacementSideOfEdge.ON_EDGE
       )
     }
-  },
-
-  $static: {
-    // ReSharper restore UnusedMember.Global
-    // ReSharper restore InconsistentNaming
-    EnumRoute: new EnumDefinition(function () {
-      return {
-        ORTHOGONAL: 0,
-        ORGANIC: 1,
-        STRAIGHTLINE: 2,
-        BUNDLED: 3
-      }
-    }),
-
-    EnumEdgeLabeling: new EnumDefinition(function () {
-      return {
-        NONE: 0,
-        INTEGRATED: 1,
-        GENERIC: 2
-      }
-    }),
-
-    EnumStyle: new EnumDefinition(function () {
-      return {
-        DEFAULT: 0,
-        HORIZONTAL_VERTICAL: 1,
-        COMPACT: 2,
-        CLASSIC: 3
-      }
-    }),
-
-    EnumNodePlacer: new EnumDefinition(function () {
-      return {
-        DEFAULT: 0,
-        SIMPLE: 1,
-        BUS: 2,
-        DOUBLE_LINE: 3,
-        LEFT_RIGHT: 4,
-        LAYERED: 5,
-        ASPECT_RATIO: 6,
-        DENDROGRAM: 7,
-        GRID: 8,
-        COMPACT: 9
-      }
-    }),
-
-    EnumRootAlignment: new EnumDefinition(function () {
-      return {
-        CENTER: 0,
-        MEDIAN: 1,
-        LEFT: 2,
-        LEADING: 3,
-        RIGHT: 4,
-        TRAILING: 5
-      }
-    })
   }
 })
 export default TreeLayoutConfig
+
+/**
+ * @readonly
+ * @enum {number}
+ */
+const RoutingStyle = {
+  ORTHOGONAL: 0,
+  ORGANIC: 1,
+  STRAIGHTLINE: 2,
+  BUNDLED: 3
+}
+
+export /**
+ * @readonly
+ * @enum {number}
+ */
+const TreeNodePlacer = {
+  DEFAULT: 0,
+  SIMPLE: 1,
+  BUS: 2,
+  DOUBLE_LINE: 3,
+  LEFT_RIGHT: 4,
+  LAYERED: 5,
+  ASPECT_RATIO: 6,
+  DENDROGRAM: 7,
+  GRID: 8,
+  COMPACT: 9,
+  HV: 10,
+  DELEGATING_LAYERED: 11
+}
+
+/**
+ * @readonly
+ * @enum {number}
+ */
+const TreeRootAlignment = {
+  CENTER: 0,
+  MEDIAN: 1,
+  LEFT: 2,
+  LEADING: 3,
+  RIGHT: 4,
+  TRAILING: 5
+}

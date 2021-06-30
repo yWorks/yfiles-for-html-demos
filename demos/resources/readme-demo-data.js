@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -42,6 +42,7 @@ function getDemoData() {
       "algorithms"
     ],
     "keywords": [
+      "layout-styles-samples",
       "layoutstyles",
       "options",
       "overview",
@@ -64,8 +65,427 @@ function getDemoData() {
       "tabular",
       "partial",
       "graph-transform",
-      "label placement"
-    ]
+      "label placement",
+      "v2.4.0.0"
+    ],
+    "ts": true
+  },
+  {
+    "id": "layout-styles-hierarchic",
+    "name": "Layout Styles: Hierarchic",
+    "hiddenInGrid": true,
+    "demoPath": "layout/layoutstyles/index.html?layout=hierarchic&sample=hierarchic",
+    "summary": "Suitable for any kind of directed diagram, like flow charts, BPMN diagrams and more",
+    "category": "layout",
+    "thumbnailPath": "resources/image/layoutstyles-hierarchic.png",
+    "sourcePath": "layout/layoutstyles/LayoutStylesDemo.js",
+    "tags": [
+      "hierarchic",
+      "layout"
+    ],
+    "keywords": [
+      "layout-styles-samples",
+      "layoutstyles",
+      "layout-algorithm",
+      "HierarchicLayout",
+      "hierarchy",
+      "hierarchical",
+      "sugiyama",
+      "layered",
+      "flow",
+      "direction",
+      "bus structures",
+      "directed",
+      "layers",
+      "curves",
+      "curved",
+      "splines",
+      "polyline",
+      "octilinear",
+      "orthogonal",
+      "bpmn",
+      "uml",
+      "flowchart",
+      "sankey",
+      "decision tree",
+      "incremental",
+      "grouping",
+      "partition grid",
+      "swimlane",
+      "call graph",
+      "pathways",
+      "entity-relationship",
+      "workflow"
+    ],
+    "ts": true
+  },
+  {
+    "id": "layout-styles-organic",
+    "name": "Layout Styles: Organic",
+    "hiddenInGrid": true,
+    "demoPath": "layout/layoutstyles/index.html?layout=organic&sample=organic",
+    "summary": "Suitable for many types of undirected graphs and complex networks, like social networks, WWW visualizations or knowledge representation.",
+    "category": "layout",
+    "thumbnailPath": "resources/image/layoutstyles-organic.png",
+    "sourcePath": "layout/layoutstyles/LayoutStylesDemo.js",
+    "tags": [
+      "organic",
+      "layout"
+    ],
+    "keywords": [
+      "layout-styles-samples",
+      "layoutstyles",
+      "layout-algorithm",
+      "OrganicLayout",
+      "force-directed",
+      "spring-embedder",
+      "energy-based",
+      "Kamada–Kawai",
+      "Fruchterman–Reingold",
+      "physical",
+      "social",
+      "network",
+      "networking",
+      "straight-line",
+      "substructures",
+      "stars",
+      "chains",
+      "cliques",
+      "mesh",
+      "undirected",
+      "straight-line",
+      "large-graphs"
+    ],
+    "ts": true
+  },
+  {
+    "id": "layout-styles-edgerouter",
+    "name": "Layout Styles: Edge Router",
+    "hiddenInGrid": true,
+    "demoPath": "layout/layoutstyles/index.html?layout=edge-router&sample=edge-router",
+    "summary": "For routing edges in an orthogonal, octilinear or curved style.",
+    "category": "layout",
+    "thumbnailPath": "resources/image/layoutstyles-edgerouter.png",
+    "sourcePath": "layout/layoutstyles/LayoutStylesDemo.js",
+    "tags": [
+      "edge",
+      "router"
+    ],
+    "keywords": [
+      "layout-styles-samples",
+      "layoutstyles",
+      "routing-algorithm",
+      "EdgeRouter",
+      "layout",
+      "routing",
+      "route",
+      "re-routing",
+      "curved",
+      "curves",
+      "splines",
+      "path",
+      "orthogonal",
+      "octilinear",
+      "polyline",
+      "bus",
+      "backbone"
+    ],
+    "ts": true
+  },
+  {
+    "id": "layout-styles-tree",
+    "name": "Layout Styles: Tree",
+    "hiddenInGrid": true,
+    "demoPath": "layout/layoutstyles/index.html?layout=tree&sample=tree",
+    "summary": "Suitable to visualize tree structures like organization charts or for dataflow analysis.",
+    "category": "layout",
+    "thumbnailPath": "resources/image/layoutstyles-tree.png",
+    "sourcePath": "layout/layoutstyles/LayoutStylesDemo.js",
+    "tags": [
+      "tree",
+      "layout"
+    ],
+    "keywords": [
+      "layout-styles-samples",
+      "layoutstyles",
+      "layout-algorithm",
+      "TreeLayout",
+      "tree",
+      "nodeplacer",
+      "org chart",
+      "root",
+      "directed",
+      "dendrogram",
+      "hierarchic",
+      "hierarchy"
+    ],
+    "ts": true
+  },
+  {
+    "id": "layout-styles-balloon",
+    "name": "Layout Styles: Balloon",
+    "hiddenInGrid": true,
+    "demoPath": "layout/layoutstyles/index.html?layout=balloon&sample=balloon",
+    "summary": "Suitable to visualize tree-like structures in a radial fashion.",
+    "category": "layout",
+    "thumbnailPath": "resources/image/layoutstyles-balloon.png",
+    "sourcePath": "layout/layoutstyles/LayoutStylesDemo.js",
+    "tags": [
+      "balloon",
+      "layout"
+    ],
+    "keywords": [
+      "layout-styles-samples",
+      "layoutstyles",
+      "BalloonLayout",
+      "tree",
+      "radial",
+      "balloons",
+      "stars",
+      "star-like",
+      "social-networks",
+      "organic"
+    ],
+    "ts": true
+  },
+  {
+    "id": "layout-styles-orthogonal",
+    "name": "Layout Styles: Orthogonal",
+    "hiddenInGrid": true,
+    "demoPath": "layout/layoutstyles/index.html?layout=orthogonal&sample=orthogonal",
+    "summary": "Suitable for diagrams with orthogonal edges such as UML, database schemas, system management and more.",
+    "category": "layout",
+    "thumbnailPath": "resources/image/layoutstyles-orthogonal.png",
+    "sourcePath": "layout/layoutstyles/LayoutStylesDemo.js",
+    "tags": [
+      "orthogonal",
+      "layout"
+    ],
+    "keywords": [
+      "layout-styles-samples",
+      "layoutstyles",
+      "layout-algorithm",
+      "OrthogonalLayout",
+      "tsm",
+      "topology-shape-metrics",
+      "planar",
+      "substructures",
+      "perpendicular",
+      "system-management",
+      "uml"
+    ],
+    "ts": true
+  },
+  {
+    "id": "layout-styles-circular",
+    "name": "Layout Styles: Circular",
+    "hiddenInGrid": true,
+    "demoPath": "layout/layoutstyles/index.html?layout=circular&sample=circular",
+    "summary": "Suitable for applications in social networking, for WWW visualization and network management",
+    "category": "layout",
+    "thumbnailPath": "resources/image/layoutstyles-circular.png",
+    "sourcePath": "layout/layoutstyles/LayoutStylesDemo.js",
+    "tags": [
+      "circular",
+      "layout"
+    ],
+    "keywords": [
+      "layout-styles-samples",
+      "layoutstyles",
+      "layout-algorithm",
+      "CircularLayout",
+      "cycle",
+      "circles",
+      "elliptical",
+      "bundling",
+      "radial",
+      "straight-line",
+      "arcs",
+      "ring",
+      "chord"
+    ],
+    "ts": true
+  },
+  {
+    "id": "layout-styles-radial",
+    "name": "Layout Styles: Radial",
+    "hiddenInGrid": true,
+    "demoPath": "layout/layoutstyles/index.html?layout=radial&sample=radial",
+    "summary": "Suitable to visualize directed diagrams with a certain flow.",
+    "category": "layout",
+    "thumbnailPath": "resources/image/layoutstyles-radial.png",
+    "sourcePath": "layout/layoutstyles/LayoutStylesDemo.js",
+    "tags": [
+      "radial",
+      "layout"
+    ],
+    "keywords": [
+      "layout-styles-samples",
+      "layoutstyles",
+      "RadialLayout",
+      "circles",
+      "circular",
+      "concentric",
+      "hierarchical",
+      "hierarchy",
+      "layered",
+      "arcs",
+      "tree",
+      "directed",
+      "bundling"
+    ],
+    "ts": true
+  },
+  {
+    "id": "layout-styles-seriesparallel",
+    "name": "Layout Styles: Series-Parallel",
+    "hiddenInGrid": true,
+    "demoPath": "layout/layoutstyles/index.html?layout=series-parallel&sample=series-parallel",
+    "summary": "Suitable for diagrams with a main direction, like flow charts.",
+    "category": "layout",
+    "thumbnailPath": "resources/image/layoutstyles-seriesparallel.png",
+    "sourcePath": "layout/layoutstyles/LayoutStylesDemo.js",
+    "tags": [
+      "seriesparallel",
+      "layout"
+    ],
+    "keywords": [
+      "layout-styles-samples",
+      "layoutstyles",
+      "layout-algorithm",
+      "SeriesParallelLayout",
+      "series",
+      "parallel",
+      "hierarchical",
+      "orthogonal",
+      "octilinear",
+      "directed",
+      "sp-graph"
+    ],
+    "ts": true
+  },
+  {
+    "id": "layout-styles-busrouter",
+    "name": "Layout Styles: Bus Router",
+    "hiddenInGrid": true,
+    "demoPath": "layout/layoutstyles/index.html?layout=bus-router",
+    "summary": "For routing edges in an orthogonal bus-style.",
+    "category": "layout",
+    "thumbnailPath": "resources/image/layoutstyles-busrouter.png",
+    "sourcePath": "layout/layoutstyles/LayoutStylesDemo.js",
+    "tags": [
+      "bus",
+      "router"
+    ],
+    "keywords": [
+      "layout-styles-samples",
+      "layoutstyles",
+      "routing-algorithm",
+      "BusRouter",
+      "layout",
+      "routing",
+      "orthogonal",
+      "bus",
+      "backbone"
+    ],
+    "ts": true
+  },
+  {
+    "id": "layout-styles-components",
+    "name": "Layout Styles: Components",
+    "hiddenInGrid": true,
+    "demoPath": "layout/layoutstyles/index.html?layout=components&sample=components",
+    "summary": "For arranging any kind of disconnected diagram components.",
+    "category": "layout",
+    "thumbnailPath": "resources/image/layoutstyles-components.png",
+    "sourcePath": "layout/layoutstyles/LayoutStylesDemo.js",
+    "tags": [
+      "component",
+      "layout"
+    ],
+    "keywords": [
+      "layout-styles-samples",
+      "layoutstyles",
+      "layout-algorithm",
+      "ComponentLayout"
+    ],
+    "ts": true
+  },
+  {
+    "id": "layout-styles-tabular",
+    "name": "Layout Styles: Tabular",
+    "hiddenInGrid": true,
+    "demoPath": "layout/layoutstyles/index.html?layout=tabular&sample=tabular",
+    "summary": "Suitable to arrange elements in rows and columns.",
+    "category": "layout",
+    "thumbnailPath": "resources/image/layoutstyles-tabular.png",
+    "sourcePath": "layout/layoutstyles/LayoutStylesDemo.js",
+    "tags": [
+      "tabular",
+      "layout"
+    ],
+    "keywords": [
+      "layout-styles-samples",
+      "layoutstyles",
+      "layout-algorithm",
+      "TabularLayout",
+      "rows",
+      "row-like",
+      "columns",
+      "column-like",
+      "grid",
+      "components",
+      "disconnected",
+      "table"
+    ],
+    "ts": true
+  },
+  {
+    "id": "layout-styles-labeling",
+    "name": "Layout Styles: Labeling",
+    "hiddenInGrid": true,
+    "demoPath": "layout/layoutstyles/index.html?layout=labeling",
+    "summary": "Places node and edge labels.",
+    "category": "layout",
+    "thumbnailPath": "resources/image/layoutstyles-labeling.png",
+    "sourcePath": "layout/layoutstyles/LayoutStylesDemo.js",
+    "tags": [
+      "generic",
+      "label",
+      "placement"
+    ],
+    "keywords": [
+      "layout-styles-samples",
+      "layoutstyles",
+      "GenericLabeling",
+      "preferred-placement"
+    ],
+    "ts": true
+  },
+  {
+    "id": "layout-styles-partial",
+    "name": "Layout Styles: Partial",
+    "hiddenInGrid": true,
+    "demoPath": "layout/layoutstyles/index.html?layout=partial",
+    "summary": "Suitable for incremental scenarios where new elements should be added to an existing diagram layout.",
+    "category": "layout",
+    "thumbnailPath": "resources/image/layoutstyles-partial.png",
+    "sourcePath": "layout/layoutstyles/LayoutStylesDemo.js",
+    "tags": [
+      "partial",
+      "incremental",
+      "layout"
+    ],
+    "keywords": [
+      "layout-styles-samples",
+      "layoutstyles",
+      "layout-algorithm",
+      "PartialLayout",
+      "mental map",
+      "subgraph",
+      "fixed"
+    ],
+    "ts": true
   },
   {
     "id": "bpmn-editor",
@@ -74,7 +494,7 @@ function getDemoData() {
     "summary": "An editor for Business Process diagrams that features interactive editing, BPMN node styles and a specialized BPMN layout algorithm.",
     "category": "complete",
     "thumbnailPath": "resources/image/bpmneditor.png",
-    "sourcePath": "complete/bpmn/BpmnDemo.js",
+    "sourcePath": "complete/bpmn/BpmnEditorDemo.js",
     "tags": [
       "styles",
       "layout"
@@ -85,7 +505,8 @@ function getDemoData() {
       "palette",
       "ports",
       "overview"
-    ]
+    ],
+    "ts": true
   },
   {
     "id": "organization-chart",
@@ -112,7 +533,8 @@ function getDemoData() {
       "structure",
       "hide",
       "detail"
-    ]
+    ],
+    "ts": true
   },
   {
     "id": "process-mining",
@@ -152,7 +574,8 @@ function getDemoData() {
       "date",
       "time",
       "schedule"
-    ]
+    ],
+    "ts": true
   },
   {
     "id": "fraud-detection",
@@ -172,7 +595,8 @@ function getDemoData() {
       "animation",
       "structure",
       "detail"
-    ]
+    ],
+    "ts": true
   },
   {
     "id": "isometric-drawing",
@@ -219,7 +643,8 @@ function getDemoData() {
       "chart",
       "structure",
       "d3js"
-    ]
+    ],
+    "ts": true
   },
   {
     "id": "graph-analysis",
@@ -242,7 +667,8 @@ function getDemoData() {
       "cycles",
       "spanningtree",
       "shortestpaths"
-    ]
+    ],
+    "ts": true
   },
   {
     "id": "edge-bundling",
@@ -251,7 +677,7 @@ function getDemoData() {
     "summary": "Shows how edge bundling can be applied for reducing visual cluttering in dense graphs.",
     "category": "layout",
     "thumbnailPath": "resources/image/edgebundling.png",
-    "sourcePath": "layout/edgebundling/EdgeBundling.js",
+    "sourcePath": "layout/edgebundling/EdgeBundlingDemo.js",
     "tags": [
       "styles",
       "curves",
@@ -265,7 +691,30 @@ function getDemoData() {
       "balloon",
       "bundle",
       "bezier"
-    ]
+    ],
+    "ts": true
+  },
+  {
+    "id": "large-graphs",
+    "name": "Large Graphs",
+    "demoPath": "view/large-graphs/index.html",
+    "summary": "Shows how to display large graphs with both good performance in WebGL2 and high quality in SVG.",
+    "category": "view",
+    "thumbnailPath": "resources/image/large-graphs.png",
+    "sourcePath": "view/large-graphs/LargeGraphsDemo.js",
+    "tags": [
+      "performance",
+      "WebGL"
+    ],
+    "keywords": [
+      "v2.4.0.0",
+      "rendering",
+      "large",
+      "huge",
+      "WebGL2",
+      "SVG"
+    ],
+    "ts": true
   },
   {
     "id": "large-graph-aggregation",
@@ -276,16 +725,16 @@ function getDemoData() {
     "thumbnailPath": "resources/image/largegraphaggregation.png",
     "sourcePath": "complete/largegraphaggregation/LargeGraphAggregationDemo.js",
     "tags": [
-      "large graphs",
-      "exploration",
-      "layout"
+      "large graph",
+      "exploration"
     ],
     "keywords": [
       "v2.3.0.0",
       "balloon",
       "AggregationGraphWrapper",
       "curve",
-      "bezier"
+      "bezier",
+      "cluster"
     ],
     "ts": true
   },
@@ -298,13 +747,14 @@ function getDemoData() {
     "thumbnailPath": "resources/image/interactiveaggregation.png",
     "sourcePath": "complete/interactiveaggregation/InteractiveAggregationDemo.js",
     "tags": [
-      "exploration",
-      "layout"
+      "large graph",
+      "exploration"
     ],
     "keywords": [
       "v2.3.0.2",
       "AggregationGraphWrapper",
-      "contextmenu"
+      "contextmenu",
+      "cluster"
     ],
     "ts": true
   },
@@ -336,7 +786,7 @@ function getDemoData() {
     "summary": "Shows disk usage of a directory tree with the Tree Map layout.",
     "category": "layout",
     "thumbnailPath": "resources/image/treemap.png",
-    "sourcePath": "layout/tree/TreeMapDemo.js",
+    "sourcePath": "layout/treemap/TreeMapDemo.js",
     "tags": [
       "layout"
     ],
@@ -345,7 +795,8 @@ function getDemoData() {
       "v2.1.0.0",
       "animation",
       "tooltip"
-    ]
+    ],
+    "ts": true
   },
   {
     "id": "family-tree",
@@ -367,7 +818,8 @@ function getDemoData() {
       "v2.2.0.0",
       "structure",
       "labels"
-    ]
+    ],
+    "ts": true
   },
   {
     "id": "template-styles",
@@ -387,7 +839,25 @@ function getDemoData() {
       "SVG",
       "datapanel",
       "template"
-    ]
+    ],
+    "ts": true
+  },
+  {
+    "id": "webgl-styles",
+    "name": "WebGL2 Styles",
+    "demoPath": "style/webgl-styles/index.html",
+    "summary": "Shows the various graph element styles available in WebGL2 rendering.",
+    "category": "style",
+    "thumbnailPath": "resources/image/webgl-styles.png",
+    "sourcePath": "style/webgl-styles/WebGLStylesDemo.js",
+    "tags": [
+      "styles",
+      "WebGL2"
+    ],
+    "keywords": [
+      "v2.4.0.0"
+    ],
+    "ts": true
   },
   {
     "id": "css-styling",
@@ -406,7 +876,8 @@ function getDemoData() {
       "stylesheet",
       "v2.2.0.0",
       "labels"
-    ]
+    ],
+    "ts": true
   },
   {
     "id": "bezier-edge-style",
@@ -450,7 +921,8 @@ function getDemoData() {
       "overviewinputmode",
       "svg",
       "labels"
-    ]
+    ],
+    "ts": true
   },
   {
     "id": "metaball-groups",
@@ -468,7 +940,8 @@ function getDemoData() {
       "v2.2.0.0",
       "overlapping",
       "heatmap"
-    ]
+    ],
+    "ts": true
   },
   {
     "id": "maze-routing",
@@ -486,7 +959,8 @@ function getDemoData() {
       "edgerouter",
       "polylinerouter",
       "background"
-    ]
+    ],
+    "ts": true
   },
   {
     "id": "interactive-map",
@@ -513,7 +987,8 @@ function getDemoData() {
       "background",
       "curve",
       "bezier"
-    ]
+    ],
+    "ts": true
   },
   {
     "id": "uml-editor",
@@ -535,7 +1010,8 @@ function getDemoData() {
       "edgerouter",
       "hierarchic",
       "structure"
-    ]
+    ],
+    "ts": true
   },
   {
     "id": "flowchart-editor",
@@ -554,7 +1030,8 @@ function getDemoData() {
       "palette",
       "draganddrop",
       "palette"
-    ]
+    ],
+    "ts": true
   },
   {
     "id": "decision-tree",
@@ -571,7 +1048,8 @@ function getDemoData() {
     "keywords": [
       "hierarchic",
       "contextmenu"
-    ]
+    ],
+    "ts": true
   },
   {
     "id": "mindmap-editor",
@@ -590,7 +1068,8 @@ function getDemoData() {
       "tree",
       "structure",
       "labels"
-    ]
+    ],
+    "ts": true
   },
   {
     "id": "d3-chart-nodes",
@@ -608,7 +1087,8 @@ function getDemoData() {
     ],
     "keywords": [
       "v2.2.0.0"
-    ]
+    ],
+    "ts": true
   },
   {
     "id": "logic-gates",
@@ -635,7 +1115,8 @@ function getDemoData() {
       "draganddrop",
       "palette",
       "reversed edge creation"
-    ]
+    ],
+    "ts": true
   },
   {
     "id": "component-drag-and-drop",
@@ -669,26 +1150,27 @@ function getDemoData() {
     "ts": true
   },
   {
-    "id": "organization-chart-viewer",
-    "name": "Organization Chart Viewer",
-    "demoPath": "complete/orgchartviewer/index.html",
-    "summary": "A viewer for organization charts.",
+    "id": "large-tree",
+    "name": "Large Collapsible Tree",
+    "demoPath": "complete/large-tree/index.html",
+    "summary": "Shows a tree graph, where a large number of nodes can be added interactively.",
     "category": "complete",
-    "thumbnailPath": "resources/image/orgchart.png",
-    "sourcePath": "complete/orgchartviewer/OrgChartViewerDemo.js",
+    "thumbnailPath": "resources/image/large-tree.png",
+    "sourcePath": "complete/large-tree/LargeTreeDemo.js",
     "tags": [
-      "styles",
-      "layout"
+      "performance",
+      "WebGL",
+      "interaction"
     ],
     "keywords": [
-      "orgchart",
-      "search",
-      "template",
-      "datapanel",
-      "v2.2.0.0",
-      "structure",
-      "highlight"
-    ]
+      "v2.4.0.0",
+      "rendering",
+      "large",
+      "huge",
+      "WebGL2",
+      "SVG"
+    ],
+    "ts": true
   },
   {
     "id": "collapsible-trees",
@@ -710,7 +1192,8 @@ function getDemoData() {
       "balloon",
       "filtering",
       "hide"
-    ]
+    ],
+    "ts": true
   },
   {
     "id": "rotatable-nodes",
@@ -743,7 +1226,8 @@ function getDemoData() {
       "polyline-router",
       "organic-router",
       "curves"
-    ]
+    ],
+    "ts": true
   },
   {
     "id": "contextual-toolbar",
@@ -752,7 +1236,7 @@ function getDemoData() {
     "summary": "Shows a contextual toolbar for the current selection that enables fast and easy style changes.",
     "category": "view",
     "thumbnailPath": "resources/image/contextualtoolbar.png",
-    "sourcePath": "view/grapheditor/ContextualToolbarDemo.js",
+    "sourcePath": "view/contextualtoolbar/ContextualToolbarDemo.js",
     "tags": [
       "interaction",
       "overlay"
@@ -762,7 +1246,8 @@ function getDemoData() {
       "html",
       "popup",
       "contextmenu"
-    ]
+    ],
+    "ts": true
   },
   {
     "id": "graph-editor",
@@ -781,7 +1266,8 @@ function getDemoData() {
       "folding",
       "overview",
       "Labels"
-    ]
+    ],
+    "ts": true
   },
   {
     "id": "table-editor",
@@ -805,7 +1291,8 @@ function getDemoData() {
       "contextmenu",
       "move",
       "labels"
-    ]
+    ],
+    "ts": true
   },
   {
     "id": "graph-viewer",
@@ -827,25 +1314,54 @@ function getDemoData() {
       "highlight",
       "curve",
       "bezier"
-    ]
+    ],
+    "ts": true
   },
   {
-    "id": "large-graphs",
-    "name": "Large Graphs",
-    "demoPath": "view/largegraphs/index.html",
-    "summary": "Illustrates improvements in rendering performance for large graphs.",
+    "id": "organization-chart-viewer",
+    "name": "Organization Chart Viewer",
+    "demoPath": "complete/orgchartviewer/index.html",
+    "summary": "A viewer for organization charts.",
+    "category": "complete",
+    "thumbnailPath": "resources/image/orgchart.png",
+    "sourcePath": "complete/orgchartviewer/OrgChartViewerDemo.js",
+    "tags": [
+      "styles",
+      "layout"
+    ],
+    "keywords": [
+      "orgchart",
+      "search",
+      "template",
+      "datapanel",
+      "v2.2.0.0",
+      "structure",
+      "highlight"
+    ],
+    "ts": true
+  },
+  {
+    "id": "rendering-optimizations",
+    "name": "Rendering Optimizations",
+    "demoPath": "view/rendering-optimizations/index.html",
+    "summary": "Illustrates optimizations of the rendering performance for large graphs.",
     "category": "view",
-    "thumbnailPath": "resources/image/largegraphs.png",
-    "sourcePath": "view/largegraphs/LargeGraphsDemo.js",
+    "thumbnailPath": "resources/image/rendering-optimizations.png",
+    "sourcePath": "view/rendering-optimizations/RenderingOptimizationsDemo.js",
     "tags": [
       "performance",
       "Canvas",
       "WebGL"
     ],
     "keywords": [
+      "v2.4.0.0",
       "FPS",
-      "rendering"
-    ]
+      "rendering",
+      "large",
+      "huge",
+      "WebGL2"
+    ],
+    "ts": true
   },
   {
     "id": "events-viewer",
@@ -861,7 +1377,8 @@ function getDemoData() {
     "keywords": [
       "palette",
       "draganddrop"
-    ]
+    ],
+    "ts": true
   },
   {
     "id": "z-order",
@@ -895,7 +1412,7 @@ function getDemoData() {
     "summary": "Shows how to provide directional ports and demonstrates interactive routing during edge creation.",
     "category": "complete",
     "thumbnailPath": "resources/image/customedgecreation.png",
-    "sourcePath": "complete/customedgecreation/CustonEdgeCreationDemo.js",
+    "sourcePath": "complete/customedgecreation/CustomEdgeCreationDemo.js",
     "tags": [
       "layout",
       "interaction",
@@ -908,7 +1425,8 @@ function getDemoData() {
       "channel-edge-router",
       "orthogonal",
       "portcandidateprovider"
-    ]
+    ],
+    "ts": true
   },
   {
     "id": "touch-interaction",
@@ -917,7 +1435,7 @@ function getDemoData() {
     "summary": "Shows how a graph editor application can be optimized for touch devices.",
     "category": "input",
     "thumbnailPath": "resources/image/custom_touch_interaction.png",
-    "sourcePath": "input/touchcustomization/TouchEditorDemoDemo.js",
+    "sourcePath": "input/touchcustomization/TouchEditorDemo.js",
     "tags": [
       "interaction",
       "mobile"
@@ -928,7 +1446,8 @@ function getDemoData() {
       "draganddrop",
       "contextmenu",
       "move"
-    ]
+    ],
+    "ts": true
   },
   {
     "id": "neighborhood-view",
@@ -966,7 +1485,8 @@ function getDemoData() {
       "voronoi",
       "dendrogram",
       "background"
-    ]
+    ],
+    "ts": true
   },
   {
     "id": "network-flows",
@@ -986,7 +1506,8 @@ function getDemoData() {
       "minimum",
       "cut",
       "labels"
-    ]
+    ],
+    "ts": true
   },
   {
     "id": "transitivity",
@@ -1007,7 +1528,8 @@ function getDemoData() {
       "filtering",
       "structure",
       "highlight"
-    ]
+    ],
+    "ts": true
   },
   {
     "id": "edge-label-placement",
@@ -1031,7 +1553,8 @@ function getDemoData() {
       "orthogonal",
       "edgerouter",
       "move"
-    ]
+    ],
+    "ts": true
   },
   {
     "id": "node-label-placement",
@@ -1050,7 +1573,31 @@ function getDemoData() {
       "genericlabeling",
       "text",
       "background"
-    ]
+    ],
+    "ts": true
+  },
+  {
+    "id": "node-types",
+    "name": "Node Types",
+    "demoPath": "layout/nodetypes/index.html",
+    "summary": "Shows how different layout algorithms handle nodes with types.",
+    "category": "layout",
+    "thumbnailPath": "resources/image/nodetypes.png",
+    "sourcePath": "layout/nodetypes/NodeTypesDemo.js",
+    "tags": [
+      "types",
+      "node types"
+    ],
+    "keywords": [
+      "v2.4.0.0",
+      "type",
+      "tree",
+      "hierarchic",
+      "organic",
+      "component",
+      "circular"
+    ],
+    "ts": true
   },
   {
     "id": "markdown-label",
@@ -1119,7 +1666,8 @@ function getDemoData() {
       "overview",
       "folding",
       "hide"
-    ]
+    ],
+    "ts": true
   },
   {
     "id": "folding-with-layout",
@@ -1163,7 +1711,26 @@ function getDemoData() {
     "keywords": [
       "ports",
       "background"
-    ]
+    ],
+    "ts": true
+  },
+  {
+    "id": "interactive-edge-routing",
+    "name": "Interactive Edge Routing",
+    "demoPath": "layout/interactiveedgerouting/index.html",
+    "summary": "After each edit the edge paths are re-routed if necessary.",
+    "category": "layout",
+    "thumbnailPath": "resources/image/interactiveedgerouting.png",
+    "sourcePath": "layout/interactiveedgerouting/InteractiveEdgeRoutingDemo.js",
+    "tags": [
+      "layout",
+      "edgerouter"
+    ],
+    "keywords": [
+      "v2.4.0.0",
+      "interaction"
+    ],
+    "ts": true
   },
   {
     "id": "edge-grouping",
@@ -1186,7 +1753,8 @@ function getDemoData() {
       "contextmenu",
       "groups",
       "bridges"
-    ]
+    ],
+    "ts": true
   },
   {
     "id": "edge-router-grouping",
@@ -1195,7 +1763,7 @@ function getDemoData() {
     "summary": "The EdgeRouter can group the paths or ports of edges.",
     "category": "layout",
     "thumbnailPath": "resources/image/edgeroutergrouping.png",
-    "sourcePath": "layout/edgeroutergrouping/EdgeRouterGroupingDemo.js.js",
+    "sourcePath": "layout/edgeroutergrouping/EdgeRouterGroupingDemo.js",
     "tags": [
       "layout",
       "edgerouter"
@@ -1209,7 +1777,50 @@ function getDemoData() {
       "ports",
       "contextmenu",
       "bridges"
-    ]
+    ],
+    "ts": true
+  },
+  {
+    "id": "organic-substructures",
+    "name": "Organic Substructures",
+    "demoPath": "layout/organicsubstructures/index.html",
+    "summary": "Shows organic layout, and its substructures and node types features.",
+    "category": "layout",
+    "thumbnailPath": "resources/image/organicsubstructures.png",
+    "sourcePath": "layout/organicsubstructures/OrganicSubstructuresDemo.js",
+    "tags": [
+      "layout",
+      "organic",
+      "substructures",
+      "node types"
+    ],
+    "keywords": [
+      "v2.4.0.0",
+      "clustering",
+      "grouping",
+      "similar"
+    ],
+    "ts": true
+  },
+  {
+    "id": "busrouting",
+    "name": "Bus Routing",
+    "demoPath": "layout/busrouting/index.html",
+    "summary": "Shows how to group edges in bus structures.",
+    "category": "layout",
+    "thumbnailPath": "resources/image/busrouting.png",
+    "sourcePath": "layout/busrouting/BusRoutingDemo.js",
+    "tags": [
+      "layout",
+      "edgerouter"
+    ],
+    "keywords": [
+      "v2.4.0.0",
+      "edgegroups",
+      "bus",
+      "bus structures"
+    ],
+    "ts": true
   },
   {
     "id": "fill-area-layout",
@@ -1318,7 +1929,7 @@ function getDemoData() {
     "summary": "Bus structures in the hierarchic layout result in more compact arrangements.",
     "category": "layout",
     "thumbnailPath": "resources/image/busstructures.png",
-    "sourcePath": "layout/subcomponents/BusStructuresDemo.js",
+    "sourcePath": "layout/busstructures/BusStructuresDemo.js",
     "tags": [
       "layout",
       "hierarchic",
@@ -1329,7 +1940,8 @@ function getDemoData() {
       "bus structures",
       "orthogonal",
       "compact"
-    ]
+    ],
+    "ts": true
   },
   {
     "id": "hierarchic-subcomponents",
@@ -1348,7 +1960,8 @@ function getDemoData() {
       "tree",
       "organic",
       "orthogonal"
-    ]
+    ],
+    "ts": true
   },
   {
     "id": "critical-paths",
@@ -1365,7 +1978,39 @@ function getDemoData() {
     ],
     "keywords": [
       "contextmenu"
-    ]
+    ],
+    "ts": true
+  },
+  {
+    "id": "custom-layout-stage",
+    "name": "Custom Layout Stage",
+    "sourcePath": "layout/custom-layout-stage/CustomLayoutStageDemo.js",
+    "summary": "Custom layout stages can be used to solve unique layout problems that are not adequately covered by existing layout algorithms.",
+    "demoPath": "layout/custom-layout-stage/index.html",
+    "thumbnailPath": "resources/image/CustomLayoutStage.png",
+    "category": "layout",
+    "tags": [
+      "layout stage",
+      "layout"
+    ],
+    "keywords": [
+      "v2.4.0.0",
+      "ILayoutStage",
+      "LayoutStageBase",
+      "CoreLayout",
+      "IDataProvider",
+      "data provider",
+      "LayoutGraph",
+      "LayoutGraphHider",
+      "dummy edges",
+      "temporary elements",
+      "temporary edges",
+      "layout post-processing",
+      "DataProviderBase",
+      "GenericLayoutData",
+      "LayoutData"
+    ],
+    "ts": true
   },
   {
     "id": "split-edges",
@@ -1384,7 +2029,8 @@ function getDemoData() {
       "v2.1.0.3",
       "contextmenu",
       "recursive"
-    ]
+    ],
+    "ts": true
   },
   {
     "id": "partition-grid",
@@ -1399,7 +2045,8 @@ function getDemoData() {
       "partition grid",
       "hierarchic",
       "organic"
-    ]
+    ],
+    "ts": true
   },
   {
     "id": "simple-partition-grid",
@@ -1416,7 +2063,8 @@ function getDemoData() {
     ],
     "keywords": [
       "v2.2.0.0"
-    ]
+    ],
+    "ts": true
   },
   {
     "id": "interactive-graph-restructuring",
@@ -1453,7 +2101,8 @@ function getDemoData() {
     "tags": [
       "layout",
       "hierarchic"
-    ]
+    ],
+    "ts": true
   },
   {
     "id": "sequence-constraints",
@@ -1466,7 +2115,8 @@ function getDemoData() {
     "tags": [
       "layout",
       "hierarchic"
-    ]
+    ],
+    "ts": true
   },
   {
     "id": "interactive-organic-layout",
@@ -1484,7 +2134,8 @@ function getDemoData() {
     "keywords": [
       "organic",
       "move"
-    ]
+    ],
+    "ts": true
   },
   {
     "id": "recursive-group-layout",
@@ -1525,7 +2176,8 @@ function getDemoData() {
       "large",
       "split",
       "print"
-    ]
+    ],
+    "ts": true
   },
   {
     "id": "tree-layout",
@@ -1542,7 +2194,8 @@ function getDemoData() {
     "keywords": [
       "nodeplacer",
       "v2.2.0.2"
-    ]
+    ],
+    "ts": true
   },
   {
     "id": "partial-layout",
@@ -1562,7 +2215,8 @@ function getDemoData() {
       "organic",
       "circular",
       "curves"
-    ]
+    ],
+    "ts": true
   },
   {
     "id": "image-export",
@@ -1582,7 +2236,8 @@ function getDemoData() {
       "bitmap",
       "save",
       "handles"
-    ]
+    ],
+    "ts": true
   },
   {
     "id": "svg-export",
@@ -1603,7 +2258,8 @@ function getDemoData() {
       "handles",
       "curve",
       "bezier"
-    ]
+    ],
+    "ts": true
   },
   {
     "id": "pdf-export",
@@ -1620,7 +2276,8 @@ function getDemoData() {
     "keywords": [
       "vector graphics",
       "handles"
-    ]
+    ],
+    "ts": true
   },
   {
     "id": "printing",
@@ -1637,7 +2294,8 @@ function getDemoData() {
       "poster",
       "vector graphics",
       "handles"
-    ]
+    ],
+    "ts": true
   },
   {
     "id": "structure-view",
@@ -1657,13 +2315,14 @@ function getDemoData() {
       "structure",
       "v2.1.0.3",
       "labels"
-    ]
+    ],
+    "ts": true
   },
   {
     "id": "graph-builder",
     "name": "Graph Builder",
     "demoPath": "databinding/graphbuilder/index.html",
-    "summary": "Uses class <code>GraphBuilder</code> to interactively build and modify a graph from business data.",
+    "summary": "Interactively builds and modifies a graph from JSON business data using class <code>GraphBuilder</code>.",
     "category": "databinding",
     "thumbnailPath": "resources/image/graphbuilder.png",
     "sourcePath": "databinding/graphbuilder/GraphBuilderDemo.js",
@@ -1684,7 +2343,7 @@ function getDemoData() {
     "id": "tree-graph-builder",
     "name": "Tree Builder",
     "demoPath": "databinding/treebuilder/index.html",
-    "summary": "Uses class <code>TreeBuilder</code> to interactively build and modify a graph from business data.",
+    "summary": "Interactively builds and modifies a graph from JSON business data using class <code>TreeBuilder</code>.",
     "category": "databinding",
     "thumbnailPath": "resources/image/treebuilder.png",
     "sourcePath": "databinding/treebuilder/TreeBuilderDemo.js",
@@ -1705,7 +2364,7 @@ function getDemoData() {
     "id": "adjacency-graph-builder",
     "name": "Adjacency Graph Builder",
     "demoPath": "databinding/adjacencygraphbuilder/index.html",
-    "summary": "Uses class <code>AdjacencyGraphBuilder</code> to interactively build and modify a graph from business data.",
+    "summary": "Interactively builds and modifies a graph from JSON business data using class <code>AdjacencyGraphBuilder</code>.",
     "category": "databinding",
     "thumbnailPath": "resources/image/adjacencygraphbuilder.png",
     "sourcePath": "databinding/adjacencygraphbuilder/AdjacencyGraphBuilderDemo.js",
@@ -1726,7 +2385,7 @@ function getDemoData() {
     "id": "simple-graph-builder",
     "name": "Simple Graph Builder",
     "demoPath": "databinding/simplegraphbuilder/index.html",
-    "summary": "Uses <code>GraphBuilder</code>, <code>AdjacencyGraphBuilder</code> or <code>TreeBuilder</code> to automatically build a graph from business data.",
+    "summary": "Automatically builds a graph from JSON business data using <code>GraphBuilder</code>, <code>AdjacencyGraphBuilder</code> or <code>TreeBuilder</code>.",
     "category": "databinding",
     "thumbnailPath": "resources/image/simplegraphbuilder.png",
     "sourcePath": "databinding/simplegraphbuilder/SimpleGraphBuilderDemo.js",
@@ -1739,7 +2398,8 @@ function getDemoData() {
       "hierarchic",
       "labels",
       "v2.3.0.0"
-    ]
+    ],
+    "ts": true
   },
   {
     "id": "angular-cli",
@@ -1759,7 +2419,8 @@ function getDemoData() {
       "v2.1.0.0",
       "tools",
       "tree",
-      "datapanel"
+      "datapanel",
+      "integration"
     ],
     "ts": true
   },
@@ -1779,7 +2440,8 @@ function getDemoData() {
     "keywords": [
       "styles",
       "tree",
-      "datapanel"
+      "datapanel",
+      "integration"
     ]
   },
   {
@@ -1799,8 +2461,10 @@ function getDemoData() {
       "v2.2.0.2",
       "remote",
       "organic",
-      "layout"
-    ]
+      "layout",
+      "integration"
+    ],
+    "ts": true
   },
   {
     "id": "neo4j",
@@ -1810,7 +2474,7 @@ function getDemoData() {
     "category": "integration",
     "packageType": "no-viewer",
     "thumbnailPath": "resources/image/neo4j.png",
-    "sourcePath": "integration/neo4j/Neo4jDemo.js",
+    "sourcePath": "toolkit/neo4j/Neo4jDemo.js",
     "tags": [
       "neo4j",
       "database"
@@ -1818,12 +2482,14 @@ function getDemoData() {
     "keywords": [
       "remote",
       "organic",
-      "layout"
-    ]
+      "layout",
+      "integration"
+    ],
+    "ts": true
   },
   {
     "id": "nodejs",
-    "name": "NodeJS",
+    "name": "Node.js",
     "demoPath": "loading/nodejs/index.html",
     "summary": "Shows how to run a yFiles layout algorithm in a <a href='https://nodejs.org/' target='_blank'>Node.js&reg;</a> environment.",
     "category": "loading",
@@ -1836,7 +2502,8 @@ function getDemoData() {
     "keywords": [
       "folding",
       "hierarchic",
-      "json"
+      "json",
+      "webworker"
     ]
   },
   {
@@ -1852,7 +2519,9 @@ function getDemoData() {
       "react",
       "json",
       "data",
-      "webpack"
+      "webpack",
+      "integration",
+      "webworker"
     ],
     "keywords": [
       "v2.2.0.2"
@@ -1871,28 +2540,11 @@ function getDemoData() {
       "react",
       "json",
       "data",
-      "typescript"
+      "typescript",
+      "integration"
     ],
     "keywords": [
       "v2.2.0.2"
-    ],
-    "ts": true
-  },
-  {
-    "id": "typescript",
-    "name": "TypeScript",
-    "demoPath": "toolkit/typescript/README.html",
-    "summary": "Shows the integration of yFiles for HTML with TypeScript (using the ES module version of yFiles).",
-    "category": "integration",
-    "thumbnailPath": "resources/image/typescript.png",
-    "sourcePath": "",
-    "tags": [
-      "typescript",
-      "styles"
-    ],
-    "keywords": [
-      "overview",
-      "esmodules"
     ],
     "ts": true
   },
@@ -1911,7 +2563,8 @@ function getDemoData() {
     ],
     "keywords": [
       "v2.2.0.2",
-      "esmodules"
+      "esmodules",
+      "integration"
     ]
   },
   {
@@ -1929,7 +2582,8 @@ function getDemoData() {
     "keywords": [
       "v2.2.0.2",
       "overview",
-      "esmodules"
+      "esmodules",
+      "integration"
     ],
     "ts": true
   },
@@ -1950,7 +2604,8 @@ function getDemoData() {
       "template",
       "datapanel",
       "tree",
-      "detail"
+      "detail",
+      "integration"
     ]
   },
   {
@@ -1959,6 +2614,7 @@ function getDemoData() {
     "demoPath": "toolkit/vue-cli/README.html",
     "summary": "Shows how to integrate yFiles for HTML in a basic Vue-CLI setup.",
     "category": "integration",
+    "packageType": "no-viewer",
     "thumbnailPath": "resources/image/vuecli.png",
     "sourcePath": "",
     "tags": [
@@ -1969,7 +2625,9 @@ function getDemoData() {
       "v2.2.0.2",
       "component",
       "single",
-      "file"
+      "file",
+      "integration",
+      "webworker"
     ]
   },
   {
@@ -1983,8 +2641,10 @@ function getDemoData() {
     "tags": [
       "webcomponents",
       "shadowdom",
-      "html import"
-    ]
+      "html import",
+      "integration"
+    ],
+    "ts": true
   },
   {
     "id": "html-popup",
@@ -2004,7 +2664,8 @@ function getDemoData() {
       "tooltip",
       "structure",
       "detail"
-    ]
+    ],
+    "ts": true
   },
   {
     "id": "css3-animations-and-transitions",
@@ -2021,7 +2682,25 @@ function getDemoData() {
     ],
     "keywords": [
       "curves"
-    ]
+    ],
+    "ts": true
+  },
+  {
+    "id": "webgl-animations",
+    "name": "WebGL2 Animations",
+    "demoPath": "style/webgl-animations/index.html",
+    "summary": "Shows howto use WebGL2 animations to highlight interesting parts of a graph.",
+    "category": "style",
+    "thumbnailPath": "resources/image/webgl-animations.png",
+    "sourcePath": "style/webgl-animations/WebGLAnimationsDemo.js",
+    "tags": [
+      "animation",
+      "WebGL2"
+    ],
+    "keywords": [
+      "v2.4.0.0"
+    ],
+    "ts": true
   },
   {
     "id": "editable-path-style",
@@ -2062,7 +2741,8 @@ function getDemoData() {
       "folding",
       "labels",
       "ports"
-    ]
+    ],
+    "ts": true
   },
   {
     "id": "vue.js-template-node-style",
@@ -2082,7 +2762,25 @@ function getDemoData() {
       "databinding",
       "datapanel",
       "tree"
-    ]
+    ],
+    "ts": true
+  },
+  {
+    "id": "webgl-icon-node",
+    "name": "WebGL2 Icon Node",
+    "demoPath": "style/webgl-icon-node/index.html",
+    "summary": "Shows how to render icon nodes with WebGL2.",
+    "category": "style",
+    "thumbnailPath": "resources/image/webgl-icon-node.png",
+    "sourcePath": "style/webgl-icon-node/WebGLIconNodeDemo.js",
+    "tags": [
+      "styles",
+      "WebGL2"
+    ],
+    "keywords": [
+      "v2.4.0.0"
+    ],
+    "ts": true
   },
   {
     "id": "selection-styling",
@@ -2099,7 +2797,8 @@ function getDemoData() {
     "keywords": [
       "selectionstyling",
       "labels"
-    ]
+    ],
+    "ts": true
   },
   {
     "id": "style-decorators",
@@ -2115,7 +2814,8 @@ function getDemoData() {
     ],
     "keywords": [
       "ports"
-    ]
+    ],
+    "ts": true
   },
   {
     "id": "data-table",
@@ -2132,7 +2832,8 @@ function getDemoData() {
     "keywords": [
       "datatable",
       "structure"
-    ]
+    ],
+    "ts": true
   },
   {
     "id": "html-label",
@@ -2148,7 +2849,8 @@ function getDemoData() {
     ],
     "keywords": [
       "foreignObject"
-    ]
+    ],
+    "ts": true
   },
   {
     "id": "invariant-label-style",
@@ -2167,7 +2869,8 @@ function getDemoData() {
       "v2.2.0.2",
       "size",
       "fit"
-    ]
+    ],
+    "ts": true
   },
   {
     "id": "bridges",
@@ -2185,7 +2888,8 @@ function getDemoData() {
       "intersection",
       "intersecting",
       "groups"
-    ]
+    ],
+    "ts": true
   },
   {
     "id": "edge-to-edge",
@@ -2201,7 +2905,8 @@ function getDemoData() {
     ],
     "keywords": [
       "portcandidateprovider"
-    ]
+    ],
+    "ts": true
   },
   {
     "id": "file-operations",
@@ -2220,7 +2925,8 @@ function getDemoData() {
       "load",
       "save",
       "IO"
-    ]
+    ],
+    "ts": true
   },
   {
     "id": "graphml",
@@ -2229,7 +2935,7 @@ function getDemoData() {
     "summary": "Provides a live view of the graph's GraphML representation.",
     "category": "view",
     "thumbnailPath": "resources/image/graphml.png",
-    "sourcePath": "view/graphml/GraphMLDemo.html",
+    "sourcePath": "view/graphml/GraphMLDemo.js",
     "tags": [
       "GraphML",
       "I/O"
@@ -2244,7 +2950,8 @@ function getDemoData() {
       "labels",
       "curve",
       "bezier"
-    ]
+    ],
+    "ts": true
   },
   {
     "id": "graphml-compatibility",
@@ -2289,7 +2996,7 @@ function getDemoData() {
     "summary": "Loads the yFiles module resources using ES module imports.",
     "category": "loading",
     "thumbnailPath": "resources/image/esmodules.png",
-    "sourcePath": "loading/esmodules/src/ESModulesDemo.js",
+    "sourcePath": "loading/esmodules/ESModulesDemo.js",
     "tags": [
       "ES modules",
       "import"
@@ -2306,7 +3013,7 @@ function getDemoData() {
     "summary": "Shows how to bundle the yFiles library in a <a href=\"http://browserify.org\" target=\"_blank\">Browserify</a> project.",
     "category": "loading",
     "thumbnailPath": "resources/image/browserify.png",
-    "sourcePath": "loading/browserify/browserify-demo.js",
+    "sourcePath": "loading/browserify/src/browserify-demo.js",
     "tags": [
       "deployment",
       "modules"
@@ -2330,7 +3037,8 @@ function getDemoData() {
       "optimizer"
     ],
     "keywords": [
-      "v2.2.0.0"
+      "v2.2.0.0",
+      "webworker"
     ]
   },
   {
@@ -2340,7 +3048,7 @@ function getDemoData() {
     "summary": "Loads the yFiles modules using plain old &lt;script&gt; tags.",
     "category": "loading",
     "thumbnailPath": "resources/image/scriptloading.png",
-    "sourcePath": "loading/scriptloading/ScriptLoadingDemo.html",
+    "sourcePath": "loading/scriptloading/ScriptLoadingDemo.js",
     "tags": [
       "loader",
       "modules"
@@ -2351,46 +3059,82 @@ function getDemoData() {
     ]
   },
   {
-    "id": "web-worker",
-    "name": "Web Worker",
-    "demoPath": "loading/webworker/README.html",
-    "summary": "Shows how to run a yFiles layout algorithm in a Web Worker task in order to prevent the layout calculation from blocking the UI.",
+    "id": "web-worker-webpack",
+    "name": "Web Worker Webpack",
+    "demoPath": "loading/webworker-webpack/README.html",
+    "summary": "Shows how to run a yFiles layout algorithm in a Web Worker task using Webpack.",
     "category": "loading",
     "thumbnailPath": "resources/image/webworker.png",
-    "sourcePath": "loading/webworker/WebWorkerDemo.js",
+    "sourcePath": "loading/webworker-webpack/src/WebWorkerWebpackDemo.ts",
     "tags": [
-      "threading",
+      "web worker",
       "layout",
-      "hierarchic"
+      "hierarchic",
+      "webpack"
     ],
     "keywords": [
+      "v2.4.0.0",
+      "webworker",
       "threads",
+      "threading",
       "background",
       "json",
       "folding",
-      "hierarchic"
-    ]
+      "hierarchic",
+      "webpack"
+    ],
+    "ts": true
+  },
+  {
+    "id": "web-worker-modules",
+    "name": "Web Worker Modules",
+    "summary": "Shows how to run a layout in a Web Worker task using module workers.",
+    "demoPath": "loading/webworker-modules/index.html",
+    "sourcePath": "loading/webworker-modules/WebWorkerModulesDemo.js",
+    "thumbnailPath": "resources/image/webworkerlayout.png",
+    "category": "loading",
+    "tags": [
+      "web worker",
+      "layout",
+      "hierarchic",
+      "modules"
+    ],
+    "keywords": [
+      "v2.4.0.0",
+      "webworker",
+      "threads",
+      "threading",
+      "background",
+      "async",
+      "modules"
+    ],
+    "ts": true
   },
   {
     "id": "web-worker-umd",
     "name": "Web Worker UMD",
     "demoPath": "loading/webworker-umd/index.html",
-    "summary": "Shows how to run a yFiles layout algorithm in a Web Worker task in order to prevent the layout calculation from blocking the UI.",
+    "summary": "Shows how to run a yFiles layout algorithm in a Web Worker task using AMD modules.",
     "category": "loading",
     "thumbnailPath": "resources/image/webworker.png",
     "sourcePath": "loading/webworker-umd/WebWorkerDemo.js",
     "tags": [
-      "threading",
+      "web worker",
       "layout",
-      "hierarchic"
+      "hierarchic",
+      "umd"
     ],
     "keywords": [
+      "v2.4.0.0",
+      "webworker",
       "threads",
+      "threading",
       "background",
       "json",
       "folding",
       "hierarchic",
-      "nonsymbolic"
+      "nonsymbolic",
+      "umd"
     ]
   },
   {
@@ -2419,7 +3163,7 @@ function getDemoData() {
     "summary": "Shows how to lazily load yFiles in a <a href=\"https://webpack.js.org/\" target=\"_blank\">webpack</a> project with dynamic imports.",
     "category": "loading",
     "thumbnailPath": "resources/image/webpack.png",
-    "sourcePath": "loading/webpack-lazy-loading/src/webpack-demo.js",
+    "sourcePath": "loading/webpack-lazy-yfiles/src/webpack-demo.js",
     "tags": [
       "ES Modules",
       "lazy",
@@ -2465,7 +3209,8 @@ function getDemoData() {
     ],
     "keywords": [
       "labels"
-    ]
+    ],
+    "ts": true
   },
   {
     "id": "rendering-order",
@@ -2485,7 +3230,8 @@ function getDemoData() {
       "ports",
       "labels",
       "groups"
-    ]
+    ],
+    "ts": true
   },
   {
     "id": "node-selection-resizing",
@@ -2520,7 +3266,8 @@ function getDemoData() {
     ],
     "keywords": [
       "placement"
-    ]
+    ],
+    "ts": true
   },
   {
     "id": "custom-port-location-model",
@@ -2537,7 +3284,8 @@ function getDemoData() {
     "keywords": [
       "portcandidateprovider",
       "placement"
-    ]
+    ],
+    "ts": true
   },
   {
     "id": "custom-snapping",
@@ -2556,7 +3304,8 @@ function getDemoData() {
       "lines",
       "labels",
       "move"
-    ]
+    ],
+    "ts": true
   },
   {
     "id": "context-menu",
@@ -2572,7 +3321,8 @@ function getDemoData() {
     "keywords": [
       "contextmenu",
       "copy"
-    ]
+    ],
+    "ts": true
   },
   {
     "id": "drag-and-drop",
@@ -2594,7 +3344,8 @@ function getDemoData() {
       "html5",
       "native",
       "move"
-    ]
+    ],
+    "ts": true
   },
   {
     "id": "edge-reconnection",
@@ -2610,7 +3361,8 @@ function getDemoData() {
     "keywords": [
       "portcandidateprovider",
       "ports"
-    ]
+    ],
+    "ts": true
   },
   {
     "id": "label-editing",
@@ -2627,7 +3379,8 @@ function getDemoData() {
     "keywords": [
       "text",
       "validation"
-    ]
+    ],
+    "ts": true
   },
   {
     "id": "label-handle-provider",
@@ -2643,7 +3396,8 @@ function getDemoData() {
     ],
     "keywords": [
       "handles"
-    ]
+    ],
+    "ts": true
   },
   {
     "id": "move-unselected-nodes",
@@ -2660,7 +3414,8 @@ function getDemoData() {
     "keywords": [
       "inputmode",
       "move"
-    ]
+    ],
+    "ts": true
   },
   {
     "id": "orthogonal-edges",
@@ -2676,7 +3431,8 @@ function getDemoData() {
     "keywords": [
       "orthogonaledges",
       "move"
-    ]
+    ],
+    "ts": true
   },
   {
     "id": "port-candidate-provider",
@@ -2692,7 +3448,8 @@ function getDemoData() {
     ],
     "keywords": [
       "portcandidateprovider"
-    ]
+    ],
+    "ts": true
   },
   {
     "id": "position-handler",
@@ -2708,7 +3465,8 @@ function getDemoData() {
     "keywords": [
       "positionhandler",
       "move"
-    ]
+    ],
+    "ts": true
   },
   {
     "id": "reparent-handler",
@@ -2724,7 +3482,8 @@ function getDemoData() {
     ],
     "keywords": [
       "reparenthandler"
-    ]
+    ],
+    "ts": true
   },
   {
     "id": "reshape-handle-provider-configuration",
@@ -2785,7 +3544,8 @@ function getDemoData() {
       "v2.1.0.2",
       "testable",
       "free"
-    ]
+    ],
+    "ts": true
   },
   {
     "id": "single-selection",
@@ -2801,7 +3561,8 @@ function getDemoData() {
     ],
     "keywords": [
       "singleselection"
-    ]
+    ],
+    "ts": true
   },
   {
     "id": "size-constraint-provider",
@@ -2817,7 +3578,8 @@ function getDemoData() {
     "keywords": [
       "sizeconstraintprovider",
       "handles"
-    ]
+    ],
+    "ts": true
   },
   {
     "id": "webdriverio",
@@ -2879,6 +3641,7 @@ function getDemoData() {
   {
     "id": "without-view",
     "name": "Layout Without View",
+    "sourcePath": "layout/without-view/LayoutWithoutViewDemo.js",
     "demoPath": "layout/without-view/index.html",
     "summary": "Shows how to use the graph analysis and layout algorithms without a view and without the IGraph API",
     "category": "layout",
@@ -3507,9 +4270,7 @@ function getDemoData() {
     "thumbnailPath": "resources/image/tutorial3step1.png",
     "category": "tutorial-application-features",
     "tags": [
-      "template",
-      "simple",
-      "app"
+      "tutorial"
     ],
     "ts": true
   },
@@ -3521,9 +4282,9 @@ function getDemoData() {
     "thumbnailPath": "resources/image/tutorial3step2.png",
     "category": "tutorial-application-features",
     "tags": [
-      "rectangle",
+      "background",
       "icon",
-      "group"
+      "tutorial"
     ],
     "keywords": [
       "v2.2.0.0",
@@ -3541,12 +4302,15 @@ function getDemoData() {
     "category": "tutorial-application-features",
     "tags": [
       "JSON",
-      "file",
-      "input"
+      "I/O",
+      "tutorial"
     ],
     "keywords": [
-      "I/O",
-      "read"
+      "read",
+      "write",
+      "input",
+      "file",
+      "database"
     ],
     "ts": true
   },
@@ -3560,13 +4324,16 @@ function getDemoData() {
     "packageType": "no-viewer",
     "tags": [
       "JSON",
-      "lanes",
-      "table"
+      "I/O",
+      "table",
+      "tutorial"
     ],
     "keywords": [
-      "I/O",
       "read",
-      "input"
+      "write",
+      "input",
+      "file",
+      "database"
     ],
     "ts": true
   },
@@ -3578,16 +4345,18 @@ function getDemoData() {
     "thumbnailPath": "resources/image/tutorial3step5.png",
     "category": "tutorial-application-features",
     "tags": [
-      "mouse",
+      "interaction",
       "icon",
-      "region",
-      "image"
+      "tutorial"
     ],
     "keywords": [
       "NodeDecorator",
       "ILookupDecorator",
       "NodeStyleBase",
-      "event"
+      "image",
+      "event",
+      "region",
+      "input mode"
     ],
     "ts": true
   },
@@ -3599,14 +4368,15 @@ function getDemoData() {
     "thumbnailPath": "resources/image/tutorial03.png",
     "category": "tutorial-application-features",
     "tags": [
-      "mouse",
-      "event",
-      "input mode"
+      "interaction",
+      "tutorial"
     ],
     "keywords": [
       "DropInputMode",
       "addDragDroppedListener",
-      "move"
+      "move",
+      "event",
+      "input mode"
     ],
     "ts": true
   },
@@ -3618,13 +4388,14 @@ function getDemoData() {
     "thumbnailPath": "resources/image/tutorial3step8.png",
     "category": "tutorial-application-features",
     "tags": [
-      "navigation",
-      "tab",
-      "clickable"
+      "interaction",
+      "tutorial"
     ],
     "keywords": [
       "ItemHoverInputMode",
-      "CONTROL"
+      "CONTROL",
+      "event",
+      "input mode"
     ],
     "ts": true
   },
@@ -3636,14 +4407,17 @@ function getDemoData() {
     "thumbnailPath": "resources/image/tutorial3step9.png",
     "category": "tutorial-application-features",
     "tags": [
-      "hide",
-      "subset",
-      "group"
+      "filtering",
+      "group",
+      "tutorial"
     ],
     "keywords": [
       "v2.2.0.0",
       "FilteredGraphWrapper",
-      "predicate"
+      "subset",
+      "predicate",
+      "hide",
+      "hiding"
     ],
     "ts": true
   },
@@ -3655,14 +4429,15 @@ function getDemoData() {
     "thumbnailPath": "resources/image/tutorial3step10.png",
     "category": "tutorial-application-features",
     "tags": [
-      "hide",
-      "subset",
-      "folder",
-      "group"
+      "filtering",
+      "group",
+      "tutorial"
     ],
     "keywords": [
       "v2.2.0.0",
       "FilteredGraphWrapper",
+      "subset",
+      "folder",
       "predicate",
       "masterGraph",
       "wrappedGraph",
@@ -3681,9 +4456,9 @@ function getDemoData() {
     "thumbnailPath": "resources/image/tutorial3step11.png",
     "category": "tutorial-application-features",
     "tags": [
-      "folder",
+      "folding",
       "group",
-      "folded"
+      "tutorial"
     ],
     "keywords": [
       "v2.2.0.0",
@@ -3706,13 +4481,14 @@ function getDemoData() {
     "category": "tutorial-application-features",
     "tags": [
       "clipboard",
-      "cut",
-      "paste"
+      "tutorial"
     ],
     "keywords": [
       "v2.2.0.0",
       "GraphCopier",
-      "copy"
+      "copy",
+      "cut",
+      "paste"
     ],
     "ts": true
   },
@@ -3724,7 +4500,8 @@ function getDemoData() {
     "thumbnailPath": "resources/image/demo-graph-decorator.png",
     "category": "tutorial-application-features",
     "tags": [
-      "interaction"
+      "interaction",
+      "tutorial"
     ],
     "keywords": [
       "v2.2.0.2",
@@ -3746,12 +4523,13 @@ function getDemoData() {
     "category": "tutorial-application-features",
     "tags": [
       "highlight",
+      "tutorial"
+    ],
+    "keywords": [
+      "v2.2.0.0",
       "query",
       "match",
       "find"
-    ],
-    "keywords": [
-      "v2.2.0.0"
     ],
     "ts": true
   },
@@ -3763,15 +4541,18 @@ function getDemoData() {
     "thumbnailPath": "resources/image/tutorial3step13.png",
     "category": "tutorial-application-features",
     "tags": [
-      "align",
-      "visual",
-      "interactive"
+      "grid",
+      "interaction",
+      "tutorial"
     ],
     "keywords": [
       "GraphSnapContext",
       "LabelSnapContext",
       "GridSnapTypes",
-      "GridVisualCreator"
+      "GridVisualCreator",
+      "align",
+      "visual",
+      "interactive"
     ],
     "ts": true
   },
@@ -3783,13 +4564,15 @@ function getDemoData() {
     "thumbnailPath": "resources/image/tutorial3step1.png",
     "category": "tutorial-application-features",
     "tags": [
+      "GraphML",
       "I/O",
+      "tutorial"
+    ],
+    "keywords": [
+      "GraphMLSupport",
       "read",
       "write",
       "file"
-    ],
-    "keywords": [
-      "GraphMLSupport"
     ],
     "ts": true
   },
@@ -3801,15 +4584,19 @@ function getDemoData() {
     "thumbnailPath": "resources/image/tutorial3step1.png",
     "category": "tutorial-application-features",
     "tags": [
-      "property",
-      "save",
-      "tooltip",
-      "I/O"
+      "GraphML",
+      "I/O",
+      "tutorial"
     ],
     "keywords": [
       "IMapper",
       "mapperRegistry",
-      "GraphMLIOHandler"
+      "GraphMLIOHandler",
+      "data",
+      "JSON",
+      "read",
+      "write",
+      "file"
     ],
     "ts": true
   },
@@ -3822,8 +4609,7 @@ function getDemoData() {
     "category": "tutorial-application-features",
     "tags": [
       "labels",
-      "right-to-left",
-      "ellipsis"
+      "tutorial"
     ],
     "keywords": [
       "v2.3.0.0",
@@ -3831,7 +4617,9 @@ function getDemoData() {
       "linebreak",
       "rtl",
       "character",
-      "word"
+      "word",
+      "right-to-left",
+      "ellipsis"
     ],
     "ts": true
   },
@@ -3843,17 +4631,41 @@ function getDemoData() {
     "thumbnailPath": "resources/image/tutorial3step16.png",
     "category": "tutorial-application-features",
     "tags": [
-      "overview",
-      "data",
-      "intermediate"
+      "styles",
+      "performance",
+      "tutorial"
     ],
     "keywords": [
       "v2.2.0.0",
       "bind",
-      "performance",
       "readability",
       "hide",
-      "detail"
+      "rendering",
+      "data",
+      "sketch"
+    ],
+    "ts": true
+  },
+  {
+    "id": "tutorial-application-features--markup-labels",
+    "name": "Markup Labels",
+    "summary": "Markup label style lets you use html-like markup to structure and style the label text.",
+    "demoPath": "03-tutorial-application-features/markup-labels/index.html",
+    "thumbnailPath": "resources/image/tutorial3markuplabels.png",
+    "category": "tutorial-application-features",
+    "tags": [
+      "styles",
+      "labels",
+      "tutorial"
+    ],
+    "keywords": [
+      "v2.3.0.0",
+      "rich",
+      "text",
+      "styling",
+      "html",
+      "xml",
+      "color"
     ],
     "ts": true
   },
@@ -3865,14 +4677,16 @@ function getDemoData() {
     "thumbnailPath": "resources/image/tutorial3step17.png",
     "category": "tutorial-application-features",
     "tags": [
-      "decorator",
-      "mouse"
+      "interaction",
+      "styles",
+      "tutorial"
     ],
     "keywords": [
       "NodeDecorator",
       "ILookupDecorator",
       "NodeStyleBase",
-      "event"
+      "event",
+      "decorator"
     ],
     "ts": true
   },
@@ -3885,7 +4699,8 @@ function getDemoData() {
     "category": "tutorial-application-features",
     "tags": [
       "edge creation",
-      "bend"
+      "bends",
+      "tutorial"
     ],
     "keywords": [
       "OrthogonalEdgeEditingContext",
@@ -3901,15 +4716,17 @@ function getDemoData() {
     "thumbnailPath": "resources/image/tutorial3step19.png",
     "category": "tutorial-application-features",
     "tags": [
-      "interactive",
+      "interaction",
       "selection",
-      "handle"
+      "tutorial"
     ],
     "keywords": [
       "v2.2.0.0",
       "PositionHandler",
       "RectangleIndicatorInstaller",
-      "RectangleHandle"
+      "RectangleHandle",
+      "webworker",
+      "handle"
     ],
     "ts": true
   },
@@ -3921,14 +4738,15 @@ function getDemoData() {
     "category": "tutorial-application-features",
     "thumbnailPath": "resources/image/navigation.png",
     "tags": [
-      "introduction",
+      "exploration",
       "tutorial"
     ],
     "keywords": [
       "v2.2.0.0",
       "navigation",
       "zoom",
-      "move"
+      "move",
+      "interaction"
     ],
     "ts": true
   },
@@ -3940,8 +4758,12 @@ function getDemoData() {
     "thumbnailPath": "resources/image/tutorial3step1.png",
     "category": "tutorial-application-features",
     "tags": [
-      "tutorial",
-      "introduction"
+      "interaction",
+      "tutorial"
+    ],
+    "keywords": [
+      "move",
+      "resize"
     ],
     "ts": true
   },
@@ -3954,13 +4776,15 @@ function getDemoData() {
     "category": "tutorial-application-features",
     "tags": [
       "hover",
-      "mouse",
-      "information"
+      "interaction",
+      "tutorial"
     ],
     "keywords": [
       "mouseHoverInputMode",
       "addQueryItemToolTipListener",
-      "event"
+      "event",
+      "data",
+      "JSON"
     ],
     "ts": true
   },
@@ -3972,9 +4796,9 @@ function getDemoData() {
     "thumbnailPath": "resources/image/tutorial3accessibility.png",
     "category": "tutorial-application-features",
     "tags": [
-      "aria",
       "accessibility",
-      "screen reader"
+      "aria",
+      "tutorial"
     ],
     "keywords": [
       "v2.3.0.0",
@@ -3986,25 +4810,23 @@ function getDemoData() {
     "ts": true
   },
   {
-    "id": "tutorial-application-features--markup-labels",
-    "name": "Markup Labels",
-    "summary": "Markup label style lets you use html-like markup to structure and style the label text.",
-    "demoPath": "03-tutorial-application-features/markup-labels/index.html",
-    "thumbnailPath": "resources/image/tutorial3markuplabels.png",
+    "id": "tutorial-application-features--webgl-rendering",
+    "name": "WebGL2 Rendering",
+    "summary": "Shows how to enable the WebGL2 rendering mode.",
+    "demoPath": "03-tutorial-application-features/webgl-rendering/index.html",
+    "thumbnailPath": "resources/image/feature-webgl-rendering.png",
     "category": "tutorial-application-features",
     "tags": [
-      "styles",
-      "labels",
-      "markup"
+      "WebGL2",
+      "performance",
+      "tutorial"
     ],
     "keywords": [
-      "v2.3.0.0",
-      "rich",
-      "text",
-      "styling",
-      "html",
-      "xml",
-      "color"
+      "v2.4.0.0",
+      "large",
+      "performance",
+      "styles",
+      "fast"
     ],
     "ts": true
   }

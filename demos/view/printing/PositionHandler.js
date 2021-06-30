@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -26,38 +26,51 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { BaseClass, IInputModeContext, IPositionHandler, MutablePoint, Point, Rect } from 'yfiles'
+import {
+  BaseClass,
+  IInputModeContext,
+  IPositionHandler,
+  MutablePoint,
+  MutableRectangle,
+  Point
+} from 'yfiles'
 
 /**
  * A position handler that moves a given rectangle.
  */
 export default class PositionHandler extends BaseClass(IPositionHandler) {
   /**
-   * @param {Rect} rectangle
+   * @param {!MutableRectangle} rectangle
    */
   constructor(rectangle) {
     super()
+    this._offset = new MutablePoint()
     this.rectangle = rectangle
-    this.$offset = new MutablePoint()
   }
 
-  /** @type {Point} */
+  /**
+   * @type {!Point}
+   */
   get location() {
     return this.rectangle.topLeft
   }
 
-  /** @type {number} */
+  /**
+   * @type {!MutablePoint}
+   */
   get offset() {
-    return this.$offset
-  }
-
-  /** @type {number} */
-  set offset(value) {
-    this.$offset = value
+    return this._offset
   }
 
   /**
-   * @param {IInputModeContext} context
+   * @type {!MutablePoint}
+   */
+  set offset(value) {
+    this._offset = value
+  }
+
+  /**
+   * @param {!IInputModeContext} context
    */
   initializeDrag(context) {
     const x = this.rectangle.x - context.canvasComponent.lastEventLocation.x
@@ -66,9 +79,9 @@ export default class PositionHandler extends BaseClass(IPositionHandler) {
   }
 
   /**
-   * @param {IInputModeContext} context
-   * @param {Point} originalLocation
-   * @param {Point} newLocation
+   * @param {!IInputModeContext} context
+   * @param {!Point} originalLocation
+   * @param {!Point} newLocation
    */
   handleMove(context, originalLocation, newLocation) {
     const newX = newLocation.x + this.offset.x
@@ -77,17 +90,17 @@ export default class PositionHandler extends BaseClass(IPositionHandler) {
   }
 
   /**
-   * @param {IInputModeContext} context
-   * @param {Point} originalLocation
+   * @param {!IInputModeContext} context
+   * @param {!Point} originalLocation
    */
   cancelDrag(context, originalLocation) {
     this.rectangle.relocate(originalLocation)
   }
 
   /**
-   * @param {IInputModeContext} context
-   * @param {Point} originalLocation
-   * @param {Point} newLocation
+   * @param {!IInputModeContext} context
+   * @param {!Point} originalLocation
+   * @param {!Point} newLocation
    */
   dragFinished(context, originalLocation, newLocation) {
     const newX = newLocation.x + this.offset.x

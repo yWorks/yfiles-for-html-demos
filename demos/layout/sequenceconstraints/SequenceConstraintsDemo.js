@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -50,23 +50,33 @@ import RandomGraphGenerator from '../../utils/RandomGraphGenerator.js'
 import { bindAction, bindCommand, showApp } from '../../resources/demo-app.js'
 import loadJson from '../../resources/load-json.js'
 
-let graphComponent = null
-
+/**
+ * @param {!object} licenseData
+ */
 function run(licenseData) {
   License.value = licenseData
-  // initialize the GraphComponent
-  graphComponent = new GraphComponent('graphComponent')
 
-  initializeInputMode()
-  initializeGraph()
+  const graphComponent = new GraphComponent('graphComponent')
+
+  initializeInputMode(graphComponent)
+  initializeGraph(graphComponent.graph)
+
+  createGraph(graphComponent.graph)
+
+  runLayout(graphComponent)
+
   initializeConverters()
 
-  registerCommands()
+  registerCommands(graphComponent)
 
   showApp(graphComponent)
 }
 
-async function runLayout() {
+/**
+ * @param {!GraphComponent} graphComponent
+ * @returns {!Promise}
+ */
+async function runLayout(graphComponent) {
   // create a new layout algorithm
   const hierarchicLayout = new HierarchicLayout({
     orthogonalRouting: true
@@ -78,62 +88,28 @@ async function runLayout() {
   // this is the factory that we apply the constraints to
   const sequenceConstraints = hierarchicLayoutData.sequenceConstraints
 
-  // special handling for "first" and "last" position
-  const headNodes = []
-  const mixedNodes = []
-  const tailNodes = []
-
-  // iterate over all nodes in the graph
-  graphComponent.graph.nodes.forEach(node => {
-    // get their constraints
+  // assign constraints for the nodes in the graph
+  for (const node of graphComponent.graph.nodes) {
     const data = node.tag
     if (data && data.constraints) {
-      // add them to the appropriate list
-      switch (data.value) {
-        case 0:
-          headNodes.push(node)
-          break
-        case 7:
-          tailNodes.push(node)
-          break
-        default:
-          mixedNodes.push(node)
-          break
+      if (data.value === 0) {
+        sequenceConstraints.placeAtHead(node)
+      } else if (data.value === 7) {
+        sequenceConstraints.placeAtTail(node)
+      } else {
+        sequenceConstraints.itemComparables.mapper.set(node, data.value)
       }
     }
-  })
-
-  // add the "at head" constraint for all head nodes
-  headNodes.forEach(headNode => {
-    sequenceConstraints.placeAtHead(headNode)
-  })
-
-  // add the "at tail" constraint for all tail nodes
-  tailNodes.forEach(tailNode => {
-    sequenceConstraints.placeAtTail(tailNode)
-  })
-
-  // add an "after" constraint for all nodes whose value is lower than the currently
-  // looked at node.
-  // You'll probably want to use an algorithm with better performance
-  mixedNodes.forEach(node => {
-    mixedNodes.forEach(otherNode => {
-      const data = node.tag
-      const otherData = otherNode.tag
-
-      if (data && otherData && data.value < otherData.value) {
-        sequenceConstraints.placeAfter(node, otherNode)
-      }
-    })
-  })
+  }
 
   // perform the layout operation
   setUIDisabled(true)
   try {
     await graphComponent.morphLayout(hierarchicLayout, '1s', hierarchicLayoutData)
   } catch (error) {
-    if (typeof window.reportError === 'function') {
-      window.reportError(error)
+    const reporter = window.reportError
+    if (typeof reporter === 'function') {
+      reporter(error)
     } else {
       throw error
     }
@@ -144,8 +120,7 @@ async function runLayout() {
 
 /**
  * Disables the HTML elements of the UI and the input mode.
- *
- * @param disabled true if the elements should be disabled, false otherwise
+ * @param {boolean} disabled true if the elements should be disabled, false otherwise
  */
 function setUIDisabled(disabled) {
   document.getElementById('newButton').disabled = disabled
@@ -156,8 +131,9 @@ function setUIDisabled(disabled) {
 
 /**
  * Initializes the input mode for interaction.
+ * @param {!GraphComponent} graphComponent
  */
-function initializeInputMode() {
+function initializeInputMode(graphComponent) {
   const inputMode = new GraphEditorInputMode({
     nodeCreator: createNodeCallback,
     labelEditableItems: GraphItemTypes.NONE,
@@ -170,13 +146,14 @@ function initializeInputMode() {
       const node = args.item
       const location = args.location
       const layout = node.layout
-      if (node.tag) {
-        if (node.tag.constraints) {
+      const constraints = node.tag
+      if (constraints instanceof SequenceConstraintsData) {
+        if (constraints.constraints) {
           if (location.y > layout.y + layout.height * 0.5) {
             if (location.x < layout.x + layout.width * 0.3) {
-              node.tag.value = Math.max(0, node.tag.value - 1)
+              node.tag.value = Math.max(0, constraints.value - 1)
             } else if (location.x > layout.x + layout.width * 0.7) {
-              node.tag.value = Math.min(7, node.tag.value + 1)
+              node.tag.value = Math.min(7, constraints.value + 1)
             } else {
               node.tag.constraints = !node.tag.constraints
             }
@@ -187,71 +164,75 @@ function initializeInputMode() {
       }
     }
   })
+
   graphComponent.inputMode = inputMode
 }
 
 /**
  * Initializes the graph instance setting default styles and creates a small sample graph.
+ * @param {!IGraph} graph
  */
-function initializeGraph() {
-  const graph = graphComponent.graph
+function initializeGraph(graph) {
+  // minimum size for nodes
+  const size = new Size(60, 50)
 
-  // set the style as the default for all new nodes
   const defaultStyle = new TemplateNodeStyle('ConstraintNodeStyle')
+  defaultStyle.minimumSize = size
+  // set the style as the default for all new nodes
   graph.nodeDefaults.style = defaultStyle
-  // let the node decide how much space it needs and make sure it doesn't get any smaller.
-  graph.nodeDefaults.size = new Size(60, 50)
-  defaultStyle.minimumSize = graph.nodeDefaults.size
 
-  // create the graph and perform a layout operation
-  createGraph()
-  runLayout()
+  graph.nodeDefaults.size = size
 }
 
 /**
  * Clears the existing graph and creates a new random graph
+ * @param {!IGraph} graph
  */
-function createGraph() {
+function createGraph(graph) {
   // remove all nodes and edges from the graph
-  graphComponent.graph.clear()
+  graph.clear()
 
   // create a new random graph
   new RandomGraphGenerator({
-    allowCycles: true,
-    allowMultipleEdges: false,
-    allowSelfLoops: false,
-    edgeCount: 25,
-    nodeCount: 20,
+    $allowCycles: true,
+    $allowMultipleEdges: false,
+    $allowSelfLoops: false,
+    $edgeCount: 25,
+    $nodeCount: 20,
     nodeCreator: graph => createNodeCallback(null, graph, Point.ORIGIN, null)
-  }).generate(graphComponent.graph)
-
-  // center the graph to prevent the initial layout fading in from the top left corner
-  graphComponent.fitGraphBounds()
+  }).generate(graph)
 }
 
 /**
  * Binds commands to the buttons in the toolbar.
+ * @param {!GraphComponent} graphComponent
  */
-function registerCommands() {
+function registerCommands(graphComponent) {
+  const graph = graphComponent.graph
   bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent)
   bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent)
   bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent)
 
   bindAction("button[data-command='NewGraph']", () => {
-    createGraph()
-    runLayout()
+    createGraph(graph)
+    runLayout(graphComponent)
   })
-  bindAction("button[data-command='EnableAllConstraints']", enableConstraints)
-  bindAction("button[data-command='DisableAllConstraints']", disableConstraints)
-  bindAction("button[data-command='Layout']", runLayout)
+  bindAction("button[data-command='EnableAllConstraints']", () =>
+    setConstraintsEnabled(graph, true)
+  )
+  bindAction("button[data-command='DisableAllConstraints']", () =>
+    setConstraintsEnabled(graph, false)
+  )
+  bindAction("button[data-command='Layout']", () => runLayout(graphComponent))
 }
 
 /**
  * Callback that actually creates the node and its business object.
- * @param {IInputModeContext} context
- * @param {IGraph} graph
- * @param {Point} location
- * @param {INode} parent
+ * @param {!IInputModeContext} context
+ * @param {!IGraph} graph
+ * @param {!Point} location
+ * @param {?INode} parent
+ * @returns {!INode}
  */
 function createNodeCallback(context, graph, location, parent) {
   const bounds = Rect.fromCenter(location, graph.nodeDefaults.size)
@@ -262,38 +243,24 @@ function createNodeCallback(context, graph, location, parent) {
 }
 
 /**
- * Disables all constraints on the nodes.
+ * Enables or disables all constraints for the graph's nodes.
+ * @param {!IGraph} graph
+ * @param {boolean} enabled
  */
-function disableConstraints() {
-  graphComponent.graph.nodes.forEach(node => {
+function setConstraintsEnabled(graph, enabled) {
+  for (const node of graph.nodes) {
     const data = node.tag
     if (data) {
-      data.constraints = false
+      data.constraints = enabled
     }
-  })
-}
-
-/**
- * Enables all constraints on the nodes.
- */
-function enableConstraints() {
-  graphComponent.graph.nodes.forEach(node => {
-    const data = node.tag
-    if (data) {
-      data.constraints = true
-    }
-  })
+  }
 }
 
 /**
  * Initializes the converters for the constraint node styles.
  */
 function initializeConverters() {
-  // create an object to store the converter functions
-  const store = {}
-  TemplateNodeStyle.CONVERTERS.sequenceconstraintsdemo = store
-  // converter function for node background
-  store.backgroundconverter = value => {
+  const backgroundconverter = value => {
     if (Number.isInteger(value)) {
       switch (value) {
         case 0:
@@ -308,23 +275,16 @@ function initializeConverters() {
     return '#FFF'
   }
 
-  store.textcolorconverter = value => {
+  const textcolorconverter = value => {
     if (Number.isInteger(value)) {
-      switch (value) {
-        case 0:
-          return 'black'
-        case 7:
-          return 'black'
-        default:
-          if (value / 7 > 0.5) {
-            return 'black'
-          }
+      if (value === 0 || value > 3) {
+        return 'black'
       }
     }
     return 'white'
   }
 
-  store.constraintconverter = value => {
+  const constraintconverter = value => {
     switch (value) {
       case 0:
         return 'First'
@@ -335,8 +295,17 @@ function initializeConverters() {
     }
   }
 
-  store.constraintsvisibilityconverter = constraints => (constraints ? 'visible' : 'hidden')
-  store.noconstraintsvisibilityconverter = constraints => (constraints ? 'hidden' : 'visible')
+  const constraintsvisibilityconverter = constraints => (constraints ? 'visible' : 'hidden')
+  const noconstraintsvisibilityconverter = constraints => (constraints ? 'hidden' : 'visible')
+
+  // create an object to store the converter functions
+  TemplateNodeStyle.CONVERTERS.sequenceconstraintsdemo = {
+    backgroundconverter,
+    textcolorconverter,
+    constraintconverter,
+    constraintsvisibilityconverter,
+    noconstraintsvisibilityconverter
+  }
 }
 
 // property changed support - needed for data-binding to the Control Style
@@ -355,28 +324,28 @@ class SequenceConstraintsData extends BaseClass(IPropertyObservable) {
    */
   constructor(value, constraints) {
     super()
-    this.$value = value
-    this.$constraints = constraints
-    this.$propertyChangedListeners = []
+    this.propertyChangedListeners = []
+    this._value = value
+    this._constraints = constraints
   }
 
   /**
    * The weight of the object. And object with a lower number will be displayed to the left.
    * The number 0 means the node should be the first, 7 means it should be the last.
-   * @return {number}
+   * @type {number}
    */
   get value() {
-    return this.$value
+    return this._value
   }
 
   /**
    * The weight of the object. And object with a lower number will be displayed to the left.
    * The number 0 means the node should be the first, 7 means it should be the last.
-   * @param {number} value
+   * @type {number}
    */
   set value(value) {
-    const oldVal = this.$value
-    this.$value = value
+    const oldVal = this._value
+    this._value = value
     if (oldVal !== value && this.propertyChanged) {
       this.propertyChanged(this, VALUE_CHANGED_EVENT_ARGS)
     }
@@ -385,20 +354,20 @@ class SequenceConstraintsData extends BaseClass(IPropertyObservable) {
   /**
    * Describes whether or not the constraint is active. If <code>true</code>, the constraint will be taken into
    * account by the layout algorithm.
-   * @return {boolean}
+   * @type {boolean}
    */
   get constraints() {
-    return this.$constraints
+    return this._constraints
   }
 
   /**
    * Describes whether or not the constraint is active. If <code>true</code>, the constraint will be taken into
    * account by the layout algorithm.
-   * @param {boolean} value
+   * @type {boolean}
    */
   set constraints(value) {
-    const oldConstraints = this.$constraints
-    this.$constraints = value
+    const oldConstraints = this._constraints
+    this._constraints = value
     if (oldConstraints !== value && this.propertyChanged) {
       this.propertyChanged(this, CONSTRAINTS_CHANGED_EVENT_ARGS)
     }
@@ -406,32 +375,32 @@ class SequenceConstraintsData extends BaseClass(IPropertyObservable) {
 
   /**
    * Adds a listener for property changes
-   * @param {function(PropertyChangedEventArgs)} listener
+   * @param {!function} listener
    */
   addPropertyChangedListener(listener) {
-    this.$propertyChangedListeners.push(listener)
+    this.propertyChangedListeners.push(listener)
   }
 
   /**
    * Removes a listener for property changes
-   * @param {function(PropertyChangedEventArgs)} listener
+   * @param {!function} listener
    */
   removePropertyChangedListener(listener) {
-    const index = this.$propertyChangedListeners.indexOf(listener)
+    const index = this.propertyChangedListeners.indexOf(listener)
     if (index >= 0) {
-      this.$propertyChangedListeners.splice(index, 1)
+      this.propertyChangedListeners.splice(index, 1)
     }
   }
 
   /**
    * Notifies all registered listeners when a property changed.
-   * @param {Object} sender
-   * @param {PropertyChangedEventArgs} args
+   * @param {*} sender
+   * @param {!PropertyChangedEventArgs} args
    */
   propertyChanged(sender, args) {
-    this.$propertyChangedListeners.forEach(listener => {
+    for (const listener of this.propertyChangedListeners) {
       listener(sender, args)
-    })
+    }
   }
 }
 

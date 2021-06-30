@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -26,138 +26,29 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import {
-  EventRecognizers,
-  GraphComponent,
-  GraphEditorInputMode,
-  GraphItemTypes,
-  ICommand,
-  IGraph,
-  IModelItem,
-  License,
-  Rect
-} from 'yfiles'
+import { GraphComponent, GraphEditorInputMode, IGraph, License, Point, Rect, Size } from 'yfiles'
 
-import { bindAction, showApp } from '../../resources/demo-app.js'
+import { bindAction, bindChangeListener, showApp } from '../../resources/demo-app.js'
 import { initDemoStyles } from '../../resources/demo-styles.js'
 import loadJson from '../../resources/load-json.js'
-let commandBindings = []
-
-/**
- * The previously set multiselection recognizer
- */
-let oldMultiSelectionRecognizer = null
-
-let singleSelectionEnabled = false
+import { disableSingleSelection, enableSingleSelection } from './SingleSelectionHelper.js'
 
 /**
  * Changes the selection mode.
- * @param {GraphComponent} graphComponent
+ * @param {!GraphComponent} graphComponent
+ * @param {boolean} [singleSelectionEnabled=true]
  */
-function toggleSingleSelection(graphComponent) {
-  const toggleSelection = document.querySelector('#toggleSingleSelection')
-  singleSelectionEnabled = toggleSelection.checked
-
-  const mode = graphComponent.inputMode
+function toggleSingleSelection(graphComponent, singleSelectionEnabled = true) {
   if (singleSelectionEnabled) {
-    // remember old recognizer so we can restore it later
-    oldMultiSelectionRecognizer = mode.multiSelectionRecognizer
-
-    // disable marquee selection
-    mode.marqueeSelectionInputMode.enabled = false
-    // disable multi selection with Ctrl-Click
-    mode.multiSelectionRecognizer = EventRecognizers.NEVER
-
-    // deactivate commands that can lead to multi selection
-    mode.availableCommands.remove(ICommand.TOGGLE_ITEM_SELECTION)
-    mode.availableCommands.remove(ICommand.SELECT_ALL)
-
-    mode.navigationInputMode.availableCommands.remove(ICommand.EXTEND_SELECTION_LEFT)
-    mode.navigationInputMode.availableCommands.remove(ICommand.EXTEND_SELECTION_UP)
-    mode.navigationInputMode.availableCommands.remove(ICommand.EXTEND_SELECTION_DOWN)
-    mode.navigationInputMode.availableCommands.remove(ICommand.EXTEND_SELECTION_RIGHT)
-
-    // add dummy command bindings that do nothing in order to prevent default behavior
-    commandBindings.push(mode.keyboardInputMode.addCommandBinding(ICommand.EXTEND_SELECTION_LEFT))
-    commandBindings.push(mode.keyboardInputMode.addCommandBinding(ICommand.EXTEND_SELECTION_UP))
-    commandBindings.push(mode.keyboardInputMode.addCommandBinding(ICommand.EXTEND_SELECTION_DOWN))
-    commandBindings.push(mode.keyboardInputMode.addCommandBinding(ICommand.EXTEND_SELECTION_RIGHT))
-
-    // add custom binding for toggle item selection
-    commandBindings.push(
-      mode.keyboardInputMode.addCommandBinding(
-        ICommand.TOGGLE_ITEM_SELECTION,
-        (command, parameter, source) => toggleItemSelectionExecuted(graphComponent, parameter),
-        (command, parameter, source) => toggleItemSelectionCanExecute(graphComponent, parameter)
-      )
-    )
-    // Also clear the selection - even though the setup works when more than one item is selected, it looks a bit
-    // strange
-    graphComponent.selection.clear()
+    enableSingleSelection(graphComponent)
   } else {
-    // restore old settings
-    mode.marqueeSelectionInputMode.enabled = true
-    mode.multiSelectionRecognizer = oldMultiSelectionRecognizer
-
-    // re-activate commands
-    mode.availableCommands.add(ICommand.TOGGLE_ITEM_SELECTION)
-    mode.availableCommands.add(ICommand.SELECT_ALL)
-
-    mode.navigationInputMode.availableCommands.add(ICommand.EXTEND_SELECTION_LEFT)
-    mode.navigationInputMode.availableCommands.add(ICommand.EXTEND_SELECTION_UP)
-    mode.navigationInputMode.availableCommands.add(ICommand.EXTEND_SELECTION_DOWN)
-    mode.navigationInputMode.availableCommands.add(ICommand.EXTEND_SELECTION_RIGHT)
-
-    // remove the previously registered command bindings
-    for (let i = 0; i < commandBindings.length; i++) {
-      commandBindings[i].remove()
-    }
-    commandBindings = []
+    disableSingleSelection(graphComponent)
   }
 }
 
 /**
- * Checks if toggling the selection state of an item respecting the single selection policy is allowed
- * @param {GraphComponent} graphComponent The given graphComponent
- * @param {Object} parameter The given parameter
+ * @param {!object} licenseData
  */
-function toggleItemSelectionCanExecute(graphComponent, parameter) {
-  // if we have an item, the command can be executed
-  const modelItem = IModelItem.isInstance(parameter) ? parameter : graphComponent.currentItem
-  return modelItem !== null
-}
-
-/**
- * Custom command handler that allows toggling the selection state of an item
- * respecting the single selection policy.
- * @param {GraphComponent} graphComponent The given graphComponent
- * @param {Object} parameter The given parameter
- */
-function toggleItemSelectionExecuted(graphComponent, parameter) {
-  // get the item
-  const modelItem = IModelItem.isInstance(parameter) ? parameter : graphComponent.currentItem
-  const inputMode = graphComponent.inputMode
-
-  // check if it allowed to be selected
-  if (
-    modelItem === null ||
-    !graphComponent.graph.contains(modelItem) ||
-    !GraphItemTypes.itemIsOfTypes(inputMode.selectableItems, modelItem)
-  ) {
-    return
-  }
-
-  const isSelected = inputMode.graphSelection.isSelected(modelItem)
-  if (isSelected) {
-    // the item is selected and needs to be unselected - just clear the selection
-    inputMode.graphSelection.clear()
-  } else {
-    // the items is unselected - unselect all other items and select the currentItem
-    inputMode.graphSelection.clear()
-    inputMode.setSelected(modelItem, true)
-  }
-}
-
 function run(licenseData) {
   License.value = licenseData
   // initialize the GraphComponent
@@ -175,8 +66,8 @@ function run(licenseData) {
   graphComponent.fitGraphBounds()
 
   // wire up the UI
-  bindAction("input[data-command='ToggleSingleSelection']", () =>
-    toggleSingleSelection(graphComponent)
+  bindChangeListener("input[data-command='ToggleSingleSelection']", checked =>
+    toggleSingleSelection(graphComponent, checked)
   )
 
   toggleSingleSelection(graphComponent)
@@ -184,25 +75,29 @@ function run(licenseData) {
   showApp(graphComponent)
 }
 
-/**
- * @type {number[]}
- */
-const sampleX = [317, 291, 220, 246, 221, 150, 142, 213, 232, 71, 0]
-
-/**
- * @type {number[]}
- */
-const sampleY = [87, 2, 0, 73, 144, 180, 251, 286, 215, 285, 320]
+const sampleNodeLocations = [
+  [317, 87],
+  [291, 2],
+  [220, 0],
+  [246, 73],
+  [221, 144],
+  [150, 180],
+  [142, 251],
+  [213, 286],
+  [232, 215],
+  [71, 285],
+  [0, 320]
+]
 
 /**
  * Creates the sample graph.
- * @param {IGraph} graph
+ * @param {!IGraph} graph
  */
 function createSampleGraph(graph) {
   graph.clear()
-  const nodes = new Array(sampleX.length)
-  for (let i = 0; i < nodes.length; i++) {
-    nodes[i] = graph.createNode(new Rect(sampleX[i], sampleY[i], 30, 30))
+  const nodes = []
+  for (const location of sampleNodeLocations) {
+    nodes.push(graph.createNode(new Rect(Point.from(location), new Size(30, 30))))
   }
 
   graph.createEdge(nodes[2], nodes[1])

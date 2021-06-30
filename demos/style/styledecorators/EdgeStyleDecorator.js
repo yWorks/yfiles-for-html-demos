@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -44,7 +44,9 @@ import {
   SimplePort,
   Size,
   Stroke,
-  SvgVisualGroup
+  SvgVisual,
+  SvgVisualGroup,
+  Visual
 } from 'yfiles'
 
 /**
@@ -52,28 +54,28 @@ import {
  *
  * This implementation wraps {@link PolylineEdgeStyle}.
  *
- * The {@link PolylineEdgeStyle#pen} of the wrapped style is modified based on the value stored in the
- * edge's tag. In order to render the edge's bend, and arbitrary {@link IPortStyle port style}, that
- * can be set in the constructor, is used.
+ * The {@link PolylineEdgeStyle#stroke} of the wrapped style is modified based on the value stored
+ * in the edge's tag. An arbitrary {@link IPortStyle port style}, that can be set in the
+ * constructor, is used to render the edge's bend, a
  */
 export default class EdgeStyleDecorator extends EdgeStyleBase {
   /**
    * Initializes a new instance of this class.
-   * @param {IPortStyle} bendStyle An optional port style that is used to draw the bends.
+   * @param {!IPortStyle} bendStyle A port style that is used to draw the bends.
    */
   constructor(bendStyle) {
     super()
-    this.bendStyle = bendStyle || null
+    this.bendStyle = bendStyle
     const baseStyle = new PolylineEdgeStyle()
-    baseStyle.smoothing = 5.0
+    baseStyle.smoothingLength = 5.0
     this.baseStyle = baseStyle
   }
 
   /**
    * Creates a new visual as combination of the base edge visualization and the bend visualizations.
-   * @param {IRenderContext} context The render context.
-   * @param {IEdge} edge The edge to which this style instance is assigned.
-   * @returns {Visual} The created visual.
+   * @param {!IRenderContext} context The render context.
+   * @param {!IEdge} edge The edge to which this style instance is assigned.
+   * @returns {!Visual} The created visual.
    * @see EdgeStyleBase#createVisual
    */
   createVisual(context, edge) {
@@ -86,26 +88,23 @@ export default class EdgeStyleDecorator extends EdgeStyleBase {
       .createVisual(context)
     group.add(baseVisual)
 
-    if (this.bendStyle !== null) {
-      const bendGroup = new SvgVisualGroup()
-      group.add(bendGroup)
-      this.renderBends(context, bendGroup, edge)
-    }
+    const bendGroup = new SvgVisualGroup()
+    group.add(bendGroup)
+    this.renderBends(context, bendGroup, edge)
     return group
   }
 
   /**
    * Updates the provided visual.
-   * @param {IRenderContext} context The render context.
-   * @param {Visual|SvgVisual} oldVisual The visual that has been created in the call to
-   *        {@link EdgeStyleBase#createVisual}.
-   * @param {IEdge} edge The edge to which this style instance is assigned.
-   * @returns {Visual} The updated visual.
+   * @param {!IRenderContext} context The render context.
+   * @param {!Visual} oldVisual The visual that has been created in the call to {@link EdgeStyleBase#createVisual}.
+   * @param {!IEdge} edge The edge to which this style instance is assigned.
+   * @returns {!Visual} The updated visual.
    * @see EdgeStyleBase#updateVisual
    */
   updateVisual(context, oldVisual, edge) {
     // check whether the elements are as expected
-    if (oldVisual.children.size !== 2) {
+    if (!(oldVisual instanceof SvgVisualGroup) || oldVisual.children.size !== 2) {
       return this.createVisual(context, edge)
     }
 
@@ -119,18 +118,16 @@ export default class EdgeStyleDecorator extends EdgeStyleBase {
       oldVisual.children.set(0, baseVisual)
     }
 
-    if (this.bendStyle !== null) {
-      const bendGroup = oldVisual.children.get(1)
-      this.renderBends(context, bendGroup, edge)
-    }
+    const bendGroup = oldVisual.children.get(1)
+    this.renderBends(context, bendGroup, edge)
     return oldVisual
   }
 
   /**
    * Renders the edge's bends, using {@link EdgeStyleDecorator#bendStyle} and dummy ports.
-   * @param {IRenderContext} context The render context.
-   * @param {SvgVisualGroup} group The group element.
-   * @param {IEdge} edge The edge.
+   * @param {!IRenderContext} context The render context.
+   * @param {!SvgVisualGroup} group The group element.
+   * @param {!IEdge} edge The edge.
    */
   renderBends(context, group, edge) {
     const bends = edge.bends
@@ -139,26 +136,28 @@ export default class EdgeStyleDecorator extends EdgeStyleBase {
       // remove last child
       group.remove(group.children.get(group.children.size - 1))
     }
+
+    const bendStyle = this.bendStyle
+    const stroke = this.baseStyle.stroke
+    if (
+      bendStyle instanceof NodeStylePortStyleAdapter &&
+      bendStyle.nodeStyle instanceof ShapeNodeStyle
+    ) {
+      const diameter = stroke.thickness * 2
+      bendStyle.renderSize = new Size(diameter, diameter)
+      bendStyle.nodeStyle.fill = stroke.fill
+    }
+
     // update existing bend visuals
+    const dummyPort = new SimplePort(edge)
+    const portLocationModel = BendAnchoredPortLocationModel.INSTANCE
     for (let i = 0; i < group.children.size; i++) {
-      // create a dummy port at the bend's location to render
-      const dummyPort = new SimplePort(
-        edge,
-        BendAnchoredPortLocationModel.INSTANCE.createFromSource(i - 1)
-      )
+      // place the dummy port at the bend's location
+      dummyPort.locationParameter = portLocationModel.createFromSource(i - 1)
+
       // update the dummy port visual
-      if (
-        this.bendStyle instanceof NodeStylePortStyleAdapter &&
-        this.bendStyle.nodeStyle instanceof ShapeNodeStyle
-      ) {
-        this.bendStyle.renderSize = new Size(
-          this.baseStyle.stroke.thickness * 2,
-          this.baseStyle.stroke.thickness * 2
-        )
-        this.bendStyle.nodeStyle.fill = this.baseStyle.stroke.fill
-      }
-      const visual = this.bendStyle.renderer
-        .getVisualCreator(dummyPort, this.bendStyle)
+      const visual = bendStyle.renderer
+        .getVisualCreator(dummyPort, bendStyle)
         .updateVisual(context, group.children.get(i))
       // switch instances if necessary
       if (group.children.get(i) !== visual) {
@@ -167,24 +166,12 @@ export default class EdgeStyleDecorator extends EdgeStyleBase {
     }
     // add missing visuals
     for (let i = group.children.size; i < bends.size; i++) {
-      // create a dummy port at the bend's location to render
-      const dummyPort = new SimplePort(
-        edge,
-        BendAnchoredPortLocationModel.INSTANCE.createFromSource(i - 1)
-      )
+      // place the dummy port at the bend's location
+      dummyPort.locationParameter = portLocationModel.createFromSource(i - 1)
+
       // render the dummy port visual
-      if (
-        this.bendStyle instanceof NodeStylePortStyleAdapter &&
-        this.bendStyle.nodeStyle instanceof ShapeNodeStyle
-      ) {
-        this.bendStyle.renderSize = new Size(
-          this.baseStyle.stroke.thickness * 2,
-          this.baseStyle.stroke.thickness * 2
-        )
-        this.bendStyle.nodeStyle.fill = this.baseStyle.stroke.fill
-      }
-      const bendVisual = this.bendStyle.renderer
-        .getVisualCreator(dummyPort, this.bendStyle)
+      const bendVisual = bendStyle.renderer
+        .getVisualCreator(dummyPort, bendStyle)
         .createVisual(context)
       group.children.add(bendVisual)
     }
@@ -192,8 +179,8 @@ export default class EdgeStyleDecorator extends EdgeStyleBase {
 
   /**
    * Returns a stroke for the provided data.
-   * @param {object} data A custom data object.
-   * @return {Stroke} The stroke for the provided data.
+   * @param {!string} data A custom data object.
+   * @returns {!Stroke} The stroke for the provided data.
    */
   static getStroke(data) {
     switch (data) {
@@ -212,9 +199,9 @@ export default class EdgeStyleDecorator extends EdgeStyleBase {
 
   /**
    * Returns the bounds provided by the base style for the edge.
-   * @param {ICanvasContext} context The canvas context.
-   * @param {IEdge} edge The edge to which this style instance is assigned.
-   * @returns {Rect} The visual bounds.
+   * @param {!ICanvasContext} context The canvas context.
+   * @param {!IEdge} edge The edge to which this style instance is assigned.
+   * @returns {!Rect} The visual bounds.
    * @override
    * @see EdgeStyleBase#getBounds
    */
@@ -224,9 +211,9 @@ export default class EdgeStyleDecorator extends EdgeStyleBase {
 
   /**
    * Returns whether the base visualization for the specified edge is visible.
-   * @param {ICanvasContext} context The canvas context.
-   * @param {Rect} rectangle The clipping rectangle.
-   * @param {IEdge} edge The edge to which this style instance is assigned.
+   * @param {!ICanvasContext} context The canvas context.
+   * @param {!Rect} rectangle The clipping rectangle.
+   * @param {!IEdge} edge The edge to which this style instance is assigned.
    * @returns {boolean} <code>true</code> if the specified edge is visible in the clipping rectangle;
    *   <code>false</code> otherwise.
    * @override
@@ -240,10 +227,10 @@ export default class EdgeStyleDecorator extends EdgeStyleBase {
 
   /**
    * Returns whether the base visualization is hit.
-   * @param {IInputModeContext} context The context.
-   * @param {Point} location The point to test.
-   * @param {IEdge} edge The edge to which this style instance is assigned.
-   * @return {boolean} <code>true</code> if the base visualization is hit.
+   * @param {!IInputModeContext} context The context.
+   * @param {!Point} location The point to test.
+   * @param {!IEdge} edge The edge to which this style instance is assigned.
+   * @returns {boolean} <code>true</code> if the base visualization is hit.
    * @see EdgeStyleBase#isHit
    */
   isHit(context, location, edge) {
@@ -252,10 +239,10 @@ export default class EdgeStyleDecorator extends EdgeStyleBase {
 
   /**
    * Returns whether the base visualization is in the box.
-   * @param {IInputModeContext} context The input mode context.
-   * @param {Rect} rectangle The marquee selection box.
-   * @param {IEdge} edge The edge to which this style instance is assigned.
-   * @return {boolean} <code>true</code> if the base visualization is hit.
+   * @param {!IInputModeContext} context The input mode context.
+   * @param {!Rect} rectangle The marquee selection box.
+   * @param {!IEdge} edge The edge to which this style instance is assigned.
+   * @returns {boolean} <code>true</code> if the base visualization is hit.
    * @see EdgeStyleBase#isInBox
    */
   isInBox(context, rectangle, edge) {
@@ -267,9 +254,9 @@ export default class EdgeStyleDecorator extends EdgeStyleBase {
 
   /**
    * Delegates the lookup to the base style.
-   * @param {IEdge} edge The edge to use for the context lookup.
-   * @param {Class} type The type to query.
-   * @returns {Object} An implementation of the <code>type</code> or <code>null</code>.
+   * @param {!IEdge} edge The edge to use for the context lookup.
+   * @param {!Class} type The type to query.
+   * @returns {?object} An implementation of the <code>type</code> or <code>null</code>.
    * @see EdgeStyleBase#lookup
    */
   lookup(edge, type) {

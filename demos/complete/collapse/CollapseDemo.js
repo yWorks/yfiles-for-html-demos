@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -39,10 +39,11 @@ import {
   HierarchicLayout,
   ICommand,
   IGraph,
+  ILayoutAlgorithm,
   INode,
   LayoutExecutor,
-  LayoutOrientation,
   License,
+  MultiStageLayout,
   OrganicLayout,
   PlaceNodesAtBarycenterStage,
   Size,
@@ -54,37 +55,17 @@ import { bindChangeListener, bindCommand, showApp } from '../../resources/demo-a
 import CollapseAndExpandNodes from './CollapseAndExpandNodes.js'
 import loadJson from '../../resources/load-json.js'
 
-function run(licenseData) {
-  License.value = licenseData
-  graphComponent = new GraphComponent('graphComponent')
-
-  collapseAndExpandNodes = new CollapseAndExpandNodes(graphComponent)
-  initializeLayouts()
-
-  initializeInputModes()
-
-  graphComponent.graph = initializeGraph()
-  graphComponent.fitGraphBounds()
-  registerCommands()
-  runLayout()
-  showApp(graphComponent)
-}
-
 /**
- * an Object from CollapseAndExpandNodes class which provides collapsing and expanding functions.
+ * Utilities for collapsing and expanding nodes.
  * @type {CollapseAndExpandNodes}
  */
-let collapseAndExpandNodes = null
+let collapseAndExpandNodes
 
 /**
- * Map from layout names to layout algorithms. For keys of type string and other non-yFiles
- * types, the ES2015 Map is preferable other the HashMap.
- * @type {Map}
+ * The demo's graph view.
+ * @type {GraphComponent}
  */
-const layoutAlgorithms = new Map()
-
-/** @type {GraphComponent} */
-let graphComponent = null
+let graphComponent
 
 /**
  * Indicates whether a layout is currently in calculation.
@@ -93,49 +74,69 @@ let graphComponent = null
 let runningLayout = false
 
 /**
- * Initializes the graph instance, setting default styles and creating a small sample graph.
- *
- * @return {IGraph} The FilteredGraphWrapper instance that will be displayed in the graph component.
+ * Bootstraps the demo.
+ * @param {!object} licenseData
  */
-function initializeGraph() {
-  // Create the graph instance that will hold the complete graph.
+function run(licenseData) {
+  License.value = licenseData
+
+  graphComponent = new GraphComponent('graphComponent')
+
+  collapseAndExpandNodes = new CollapseAndExpandNodes(graphComponent)
+
+  configureUserInteraction()
+
+  graphComponent.graph = createGraph()
+  graphComponent.fitGraphBounds()
+
+  registerCommands()
+
+  runLayout(null, false)
+
+  showApp(graphComponent)
+}
+
+/**
+ * Creates a filtered graph that displays nodes depending on the corresponding nodeVisibility
+ * of the demo's collapseAndExpandNodes utility.
+ * @returns {!FilteredGraphWrapper} a filtered graph.
+ */
+function createGraph() {
+  // create the graph instance that will hold the complete graph
   const completeGraph = new DefaultGraph()
 
-  // Create a new style that uses the specified svg snippet as a template for the node.
+  // create a new style that uses the specified svg snippet as a template for the node
   const leafNodeStyle = new TemplateNodeStyle('LeafNodeStyleTemplate')
 
-  // Create a new style that uses the specified svg snippet as a template for the node.
-  completeGraph.nodeDefaults.style = new TemplateNodeStyle('InnerNodeStyleTemplate')
-  completeGraph.nodeDefaults.style.styleTag = { collapsed: true }
+  // create a new style that uses the specified svg snippet as a template for the node
+  const style = new TemplateNodeStyle('InnerNodeStyleTemplate')
+  style.styleTag = { collapsed: true }
+  completeGraph.nodeDefaults.style = style
   completeGraph.nodeDefaults.size = new Size(60, 30)
   completeGraph.nodeDefaults.shareStyleInstance = false
   completeGraph.nodeDefaults.labels.layoutParameter = ExteriorLabelModel.SOUTH
 
-  // Set the converters for the collapsible node styles
+  // set the converters for the collapsible node styles
   TemplateNodeStyle.CONVERTERS.collapseDemo = {
     // converter function for node background
-    backgroundConverter: data => {
-      return data && data.collapsed ? '#FF8C00' : '#68B0E3'
-    },
+    backgroundConverter: data => (data && data.collapsed ? '#FF8C00' : '#68B0E3'),
     // converter function for node icon
-    iconConverter: data => {
-      return data && data.collapsed ? '#expand_icon' : '#collapse_icon'
-    }
+    iconConverter: data => (data && data.collapsed ? '#expand_icon' : '#collapse_icon')
   }
 
   buildTree(completeGraph, 5)
 
-  completeGraph.nodes.forEach(node => {
-    // Initially, 3 levels are expanded and thus, 4 levels are visible
+  for (const node of completeGraph.nodes) {
+    // initially, 3 levels are expanded and thus, 4 levels are visible
     node.style.styleTag = { collapsed: node.tag.level > 2 }
     collapseAndExpandNodes.setCollapsed(node, node.tag.level > 2)
     collapseAndExpandNodes.setNodeVisibility(node, node.tag.level < 4)
 
-    // Set a different style to leaf nodes
+    // set a different style to leaf nodes
     if (completeGraph.outDegree(node) === 0) {
       completeGraph.setStyle(node, leafNodeStyle)
     }
-  })
+  }
 
   // Create a filtered graph of the original graph that contains only non-collapsed sub-parts.
   // The predicate methods specify which should be part of the filtered graph.
@@ -147,18 +148,19 @@ function initializeGraph() {
 }
 
 /**
- * Creates a configured GraphViewerInputMode for this demo and registers it as the
- * inputMode of the GraphComponent.
+ * Configures user interaction for the demo.
+ * Aside from a click listener for collapsing and expanding nodes, user interaction is restricted
+ * to panning and zooming.
  */
-function initializeInputModes() {
+function configureUserInteraction() {
   const graphViewerInputMode = new GraphViewerInputMode({
     selectableItems: GraphItemTypes.NONE,
     clickableItems: GraphItemTypes.NODE
   })
 
-  // Add an event listener that expands or collapses the clicked node.
+  // add an event listener that expands or collapses the clicked node
   graphViewerInputMode.addItemClickedListener(async (sender, args) => {
-    if (!INode.isInstance(args.item)) {
+    if (!(args.item instanceof INode)) {
       return
     }
     const node = args.item
@@ -182,44 +184,85 @@ function initializeInputModes() {
 }
 
 /**
- * Creates the configured layout algorithms of this demo.
+ * Creates a new balloon layout algorithm instance.
+ * @returns {!BalloonLayout}
  */
-function initializeLayouts() {
+function newBalloonLayout() {
   const balloonLayout = new BalloonLayout()
   balloonLayout.fromSketchMode = true
   balloonLayout.compactnessFactor = 1.0
   balloonLayout.allowOverlaps = true
-  layoutAlgorithms.set('Balloon', balloonLayout)
+  return balloonLayout
+}
 
+/**
+ * Creates a new organic layout algorithm instance.
+ * @returns {!OrganicLayout}
+ */
+function newOrganicLayout() {
   const organicLayout = new OrganicLayout()
   organicLayout.minimumNodeDistance = 100
   organicLayout.preferredEdgeLength = 80
   organicLayout.deterministic = true
   organicLayout.nodeOverlapsAllowed = true
-  layoutAlgorithms.set('Organic', organicLayout)
+  return organicLayout
+}
 
-  layoutAlgorithms.set('Tree', new TreeLayout())
+/**
+ * Creates a new tree layout algorithm instance.
+ * @returns {!TreeLayout}
+ */
+function newTreeLayout() {
+  return new TreeLayout()
+}
 
-  const hierarchicLayout = new HierarchicLayout()
-  hierarchicLayout.layoutOrientation = LayoutOrientation.TOP_TO_BOTTOM
-  hierarchicLayout.nodePlacer.barycenterMode = true
-  layoutAlgorithms.set('Hierarchic', hierarchicLayout)
+/**
+ * Creates a new hierarchic layout algorithm instance.
+ * @returns {!HierarchicLayout}
+ */
+function newHierarchicLayout() {
+  return new HierarchicLayout()
+}
+
+/**
+ * Creates a new layout algorithm instance.
+ * @param {!string} algorithmName the name of the layout algorithm that will be created.
+ * @returns {!ILayoutAlgorithm}
+ */
+function newLayoutAlgorithm(algorithmName) {
+  let algorithm
+  switch (algorithmName) {
+    case 'Tree':
+      algorithm = newTreeLayout()
+      break
+    case 'Balloon':
+      algorithm = newBalloonLayout()
+      break
+    case 'Organic':
+      algorithm = newOrganicLayout()
+      break
+    case 'Hierarchic':
+      algorithm = newHierarchicLayout()
+      break
+    default:
+      algorithm = newTreeLayout()
+      break
+  }
 
   // For a nice layout animation, we use PlaceNodesAtBarycenterStage to make sure new nodes
   // appear at the position of their parent and FixNodeLayoutStage to keep the clicked node
   // at its current location.
-  layoutAlgorithms.forEach(layout => {
-    layout.prependStage(new PlaceNodesAtBarycenterStage())
-    layout.prependStage(new FixNodeLayoutStage())
-  })
+  algorithm.prependStage(new PlaceNodesAtBarycenterStage())
+  algorithm.prependStage(new FixNodeLayoutStage())
+  return algorithm
 }
 
 /**
  * Applies a new layout to the current graph.
- *
- * @param {INode} toggledNode An optional toggled node. The children of this node are laid out as
- *   incremental items. Without affected node, a 'from scratch' layout is calculated.
+ * @param {?INode} toggledNode The children of this node are laid out as incremental items.
+ * Without a toggled node, a 'from scratch' layout is calculated.
  * @param {boolean} expand Whether this is part of an expand or a collapse action.
+ * @returns {!Promise}
  */
 async function runLayout(toggledNode, expand) {
   if (runningLayout) {
@@ -229,7 +272,7 @@ async function runLayout(toggledNode, expand) {
 
   const layoutComboBox = document.getElementById('layoutComboBox')
   layoutComboBox.disabled = true
-  const currentLayout = layoutAlgorithms.get(layoutComboBox.value)
+  const currentLayout = newLayoutAlgorithm(layoutComboBox.value)
   const currentLayoutData = new CompositeLayoutData()
 
   collapseAndExpandNodes.configureLayout(toggledNode, expand, currentLayoutData, currentLayout)
@@ -244,8 +287,9 @@ async function runLayout(toggledNode, expand) {
   try {
     await layoutExecutor.start()
   } catch (error) {
-    if (typeof window.reportError === 'function') {
-      window.reportError(error)
+    const reporter = window.reportError
+    if (typeof reporter === 'function') {
+      reporter(error)
     } else {
       throw error
     }
@@ -256,9 +300,8 @@ async function runLayout(toggledNode, expand) {
 }
 
 /**
- * Builds a random sample graph.
- *
- * @param {IGraph} graph
+ * Builds a sample tree graph.
+ * @param {!IGraph} graph
  * @param {number} levelCount
  */
 function buildTree(graph, levelCount) {
@@ -269,10 +312,9 @@ function buildTree(graph, levelCount) {
 }
 
 /**
- * Recursively add children to the given root node.
- *
- * @param {IGraph} graph
- * @param {INode} root
+ * Adds children to the given root node.
+ * @param {!IGraph} graph
+ * @param {!INode} root
  * @param {number} childrenCount
  * @param {number} levelCount
  */
@@ -281,7 +323,7 @@ function addChildren(graph, root, childrenCount, levelCount) {
   if (level >= levelCount) {
     return
   }
-  for (let i = 0; i < childrenCount; i++) {
+  for (let i = 0; i < childrenCount; ++i) {
     const child = graph.createNode({
       tag: { level: level }
     })
@@ -291,7 +333,7 @@ function addChildren(graph, root, childrenCount, levelCount) {
 }
 
 /**
- * Registers zoom commands for the toolbar buttons.
+ * Binds the various commands available in yFiles for HTML to the buttons in the demo's toolbar.
  */
 function registerCommands() {
   bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent, null)
@@ -300,7 +342,7 @@ function registerCommands() {
   bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
 
   bindChangeListener("select[data-command='SelectLayout']", () => {
-    runLayout()
+    runLayout(null, false)
   })
 }
 

@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -58,18 +58,18 @@ import { NonOverlapPositionHandler } from './NonOverlapPositionHandler'
 import { NonOverlapReshapeHandler } from './NonOverlapReshapeHandler'
 import { LayoutHelper } from './LayoutHelper'
 import { HidingEdgeDescriptor } from './HidingEdgeDescriptor'
-import { SingleSelectionSupport } from './SingleSelectionSupport'
+import { enableSingleSelection } from '../../input/singleselection/SingleSelectionHelper'
 
 // @ts-ignore
 let graphComponent: GraphComponent = null
 
-async function run(licenseData: object): Promise<void> {
+function run(licenseData: object) {
   License.value = licenseData
   graphComponent = new GraphComponent('#graphComponent')
 
   configureModelManager(graphComponent.graphModelManager)
   initializeInputModes()
-  await initializeGraph()
+  initializeGraph()
 
   // bind the buttons to their commands
   registerCommands()
@@ -100,7 +100,7 @@ function initializeInputModes(): void {
   editMode.allowGroupingOperations = true
 
   // enable single selection
-  new SingleSelectionSupport().enable(graphComponent)
+  enableSingleSelection(graphComponent)
 
   // enable orthogonal edge editing
   const orthogonalEdgeEditingContext = new OrthogonalEdgeEditingContext()

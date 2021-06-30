@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -44,16 +44,20 @@ import {
   IEdge,
   IGraph,
   ILabel,
+  ILabelOwner,
+  IMapper,
+  IModelItem,
+  IncrementalHintItemMapping,
   INode,
   ItemClickedEventArgs,
   LabelPlacements,
-  LayoutGraphAdapter,
   LayoutMode,
   LayoutOrientation,
   License,
   Mapper,
   MaximumFlow,
   MinimumCostFlow,
+  MinimumCostFlowResult,
   PartitionGrid,
   PartitionGridData,
   PreferredPlacementDescriptor,
@@ -74,22 +78,22 @@ import { bindAction, bindChangeListener, bindCommand, showApp } from '../../reso
 import loadJson from '../../resources/load-json.js'
 
 /**
- * The GraphComponent
+ * The GraphComponent.
  * @type {GraphComponent}
  */
-let graphComponent = null
+let graphComponent
 
 /**
- * The minCutLine visual object
+ * The visual object which renders the minimum cut line.
  * @type {MinCutLine}
  */
-let minCutLine = null
+let minCutLine
 
 /**
- * The HTML Popup for this demo.
+ * Manages a Popup which offers some interactive HTML elements.
  * @type {HTMLPopupSupport}
  */
-let edgePopup = null
+let edgePopup
 
 /**
  * Determines if a layout is currently running.
@@ -99,25 +103,21 @@ let inLayout = false
 
 /**
  * Holds the latest flow values for each edge.
- * @type {Mapper}
  */
 const lastFlowMap = new Mapper()
 
 /**
  * Constant for MAX-FLOW algorithm.
- * @type {number}
  */
 const MAX_FLOW = 0
 
 /**
  * Constant for MIN-COST algorithm.
- * @type {number}
  */
 const MIN_COST_FLOW = 1
 
 /**
  * Constant for MAX-FLOW-MIN-COST algorithm.
- * @type {number}
  */
 const MAX_FLOW_MIN_CUT = 2
 
@@ -128,13 +128,15 @@ const MAX_FLOW_MIN_CUT = 2
 let nodesToChange = []
 
 /**
- * Holds the compoundEdit that is created when a dragging event starts.
+ * Holds the compoundEdit which brackets multiple undo units
+ * which are created during dragging.
  * @type {ICompoundEdit}
  */
-let compoundEdit = null
+let compoundEdit
 
 /**
  * Runs the demo.
+ * @param {*} licenseData
  */
 function run(licenseData) {
   License.value = licenseData
@@ -152,6 +154,7 @@ function run(licenseData) {
 
 /**
  * Initializes the graph.
+ * Sets up styles and visual decorations of graph elements.
  */
 function initializeGraph() {
   const graph = graphComponent.graph
@@ -163,25 +166,6 @@ function initializeGraph() {
 
   // enable the undo engine
   graph.undoEngineEnabled = true
-
-  // add preferred placement for labels
-  graph.mapperRegistry.createDelegateMapper(
-    ILabel.$class,
-    PreferredPlacementDescriptor.$class,
-    LayoutGraphAdapter.EDGE_LABEL_LAYOUT_PREFERRED_PLACEMENT_DESCRIPTOR_DP_KEY,
-    key => {
-      const preferredPlacementDescriptor = new PreferredPlacementDescriptor()
-      if (key.tag === 'cost') {
-        preferredPlacementDescriptor.sideOfEdge = LabelPlacements.LEFT_OF_EDGE
-        preferredPlacementDescriptor.distanceToEdge = 5
-      } else {
-        preferredPlacementDescriptor.sideOfEdge = LabelPlacements.ON_EDGE
-      }
-
-      preferredPlacementDescriptor.freeze()
-      return preferredPlacementDescriptor
-    }
-  )
 
   graph.edgeDefaults.labels.layoutParameter = FreeEdgeLabelModel.INSTANCE.createDefaultParameter()
 
@@ -210,12 +194,13 @@ function initializeGraph() {
 
 /**
  * Initializes the GraphComponent.
+ * Sets up visual decorations of the canvas.
  */
 function initializeGraphComponent() {
   minCutLine = new MinCutLine()
   graphComponent.highlightGroup.addChild(minCutLine, ICanvasObjectDescriptor.ALWAYS_DIRTY_INSTANCE)
 
-  const edgePopupContent = window.document.getElementById('edgePopupContent')
+  const edgePopupContent = document.getElementById('edgePopupContent')
   // We use the EdgePathLabelModel for the edge pop-up
   const edgeLabelModel = new EdgePathLabelModel({
     autoRotation: false,
@@ -230,9 +215,7 @@ function initializeGraphComponent() {
     edgeLabelModel.createDefaultParameter()
   )
 
-  graphComponent.addZoomChangedListener(() => {
-    graphComponent.invalidate()
-  })
+  graphComponent.addZoomChangedListener(() => graphComponent.invalidate())
 }
 
 /**
@@ -249,8 +232,9 @@ function createEditorInputMode() {
 
   const networkFlowsInputMode = new NetworkFlowInputMode()
   networkFlowsInputMode.priority = 1
-  networkFlowsInputMode.addDragFinished((item, oldTag) => {
-    if (INode.isInstance(item)) {
+  networkFlowsInputMode.addDragFinished(async (item, oldTag) => {
+    // crates undo units for tag changes
+    if (item instanceof INode) {
       const tagUndoUnit = new TagUndoUnit(
         'Supply/demand changed',
         'Supply/demand changed',
@@ -263,7 +247,7 @@ function createEditorInputMode() {
       if (compoundEdit) {
         compoundEdit.commit()
       }
-    } else {
+    } else if (item instanceof IEdge) {
       const tagUndoUnit = new TagUndoUnit(
         'Capacity changed',
         'Capacity changed',
@@ -275,11 +259,10 @@ function createEditorInputMode() {
       calculateNodeSize(item.sourceNode)
       calculateNodeSize(item.targetNode)
       runFlowAlgorithm()
-      runLayout(true, () => {
-        if (compoundEdit) {
-          compoundEdit.commit()
-        }
-      })
+      await runLayout(true)
+      if (compoundEdit) {
+        compoundEdit.commit()
+      }
     }
   })
   networkFlowsInputMode.addDragStartedListener(() => {
@@ -289,7 +272,7 @@ function createEditorInputMode() {
   inputMode.add(networkFlowsInputMode)
 
   // deletion
-  inputMode.addDeletedSelectionListener(() => {
+  inputMode.addDeletedSelectionListener(async () => {
     const deletedCompoundEdit = graphComponent.graph.beginEdit('Element deleted', 'Element deleted')
     // if an edge was removed, calculate the new node size of its endpoints
     if (nodesToChange.length > 0) {
@@ -301,16 +284,15 @@ function createEditorInputMode() {
       nodesToChange = []
     }
     runFlowAlgorithm()
-    runLayout(true, () => {
-      deletedCompoundEdit.commit()
-    })
+    await runLayout(true)
+    deletedCompoundEdit.commit()
   })
 
   inputMode.addDeletingSelectionListener((sender, args) => {
     edgePopup.currentItem = null
     // collect all nodes that are endpoints of removed edges
     args.selection.forEach(item => {
-      if (IEdge.isInstance(item)) {
+      if (item instanceof IEdge) {
         nodesToChange.push(item.sourceNode)
         nodesToChange.push(item.targetNode)
       }
@@ -321,7 +303,7 @@ function createEditorInputMode() {
   inputMode.createEdgeInputMode.allowSelfloops = false
 
   // edge creation
-  inputMode.createEdgeInputMode.addEdgeCreatedListener((sender, args) => {
+  inputMode.createEdgeInputMode.addEdgeCreatedListener(async (sender, args) => {
     const edgeCreatedCompoundEdit = graphComponent.graph.beginEdit('EdgeCreation', 'EdgeCreation')
     const edge = args.item
     edge.tag = {
@@ -337,15 +319,11 @@ function createEditorInputMode() {
     calculateNodeSize(edge.sourceNode)
     calculateNodeSize(edge.targetNode)
     runFlowAlgorithm()
-    runLayout(
-      true,
-      () => {
-        edgeCreatedCompoundEdit.commit()
-      },
-      [edge.sourceNode, edge.targetNode]
-    )
+    await runLayout(true, [edge.sourceNode, edge.targetNode])
+    edgeCreatedCompoundEdit.commit()
   })
 
+  // node creation
   inputMode.addNodeCreatedListener((sender, event) => {
     event.item.tag = {
       supply: 0,
@@ -354,9 +332,7 @@ function createEditorInputMode() {
     }
   })
 
-  inputMode.addCanvasClickedListener(() => {
-    edgePopup.currentItem = null
-  })
+  inputMode.addCanvasClickedListener(() => (edgePopup.currentItem = null))
 
   inputMode.addItemClickedListener(onClicked)
   graphComponent.inputMode = inputMode
@@ -364,13 +340,13 @@ function createEditorInputMode() {
 
 /**
  * Presents a popup that provides buttons for increasing/decreasing the edge capacity.
- * @param {Object} sender The sender of the event
- * @param {ItemClickedEventArgs} args The event data
+ * @param {*} sender The sender of the event
+ * @param {!ItemClickedEventArgs.<IModelItem>} args The event data
  */
 function onClicked(sender, args) {
   const item = args.item
-  if (ILabel.isInstance(item) && item.tag === 'cost') {
-    document.getElementById('cost-form').value = parseInt(item.text)
+  if (item instanceof ILabel && item.tag === 'cost') {
+    document.getElementById('cost-form').value = parseInt(item.text).toString()
     edgePopup.currentItem = item.owner
     return
   }
@@ -380,7 +356,7 @@ function onClicked(sender, args) {
 
 /**
  * Calculates the node size based on the thickness of incoming and outgoing edges.
- * @param {INode} node The given node
+ * @param {!INode} node The given node
  */
 function calculateNodeSize(node) {
   const graph = graphComponent.graph
@@ -396,7 +372,7 @@ function calculateNodeSize(node) {
 /**
  * Updates the thickness of the given edge. The thickness is the percentage of flow that passes through an edge in
  * comparison to the overall thickness.
- * @param {IEdge} edge The given edge
+ * @param {!IEdge} edge The given edge
  */
 function updateEdgeThickness(edge) {
   if (edge.labels.size === 0) {
@@ -433,9 +409,7 @@ function runFlowAlgorithm() {
 
   // remove tags for the nodes that belong to the cut
   // needed only for max-flow min-cut
-  graphComponent.graph.nodes.forEach(node => {
-    node.tag.cut = false
-  })
+  graphComponent.graph.nodes.forEach(node => (node.tag.cut = false))
 
   // determine the algorithm to run
   const algorithmComboBox = document.getElementById('algorithmComboBox')
@@ -459,12 +433,13 @@ function runFlowAlgorithm() {
   flowLabel.style.display = 'inline-block'
   const flowInput = document.getElementById('flowValue')
   flowInput.style.display = 'inline-block'
-  flowInput.value = flowValue
+  flowInput.value = flowValue.toString()
 }
 
 /**
  * Runs the maximum flow minimum cost algorithm.
  * @param {boolean} minCut True if the min cut should be also calculated, false otherwise
+ * @returns {number} The calculated maximum flow.
  */
 function calculateMaxFlowMinCut(minCut) {
   const graph = graphComponent.graph
@@ -501,10 +476,9 @@ function calculateMaxFlowMinCut(minCut) {
 
   const maxFlowMinCutResult = maxFlowMinCut.run(graph)
   graph.nodes.forEach(node => {
-    const flow = (graph.inDegree(node) > 0
-      ? graph.inEdgesAt(node)
-      : graph.outEdgesAt(node)
-    ).sum(edge => maxFlowMinCutResult.flow.get(edge))
+    const flow = (graph.inDegree(node) > 0 ? graph.inEdgesAt(node) : graph.outEdgesAt(node)).sum(
+      edge => maxFlowMinCutResult.flow.get(edge) || 0
+    )
     node.tag = {
       flow,
       supply: 0,
@@ -512,27 +486,17 @@ function calculateMaxFlowMinCut(minCut) {
     }
   })
 
-  sourceNodes.forEach(sourceNode => {
-    sourceNode.tag.source = true
-  })
-  sinkNodes.forEach(sinkNode => {
-    sinkNode.tag.sink = true
-  })
+  sourceNodes.forEach(sourceNode => (sourceNode.tag.source = true))
+  sinkNodes.forEach(sinkNode => (sinkNode.tag.sink = true))
 
   // add the flow values as tags to edges
-  maxFlowMinCutResult.flow.forEach(({ key, value }) => {
-    key.tag.flow = value
-  })
+  maxFlowMinCutResult.flow.forEach(({ key, value }) => (key.tag.flow = value))
 
   if (minCut) {
     // add tags for the nodes that belong to the cut
-    maxFlowMinCutResult.sourcePartition.forEach(node => {
-      node.tag.cut = true
-    })
+    maxFlowMinCutResult.sourcePartition.forEach(node => (node.tag.cut = true))
 
-    maxFlowMinCutResult.sinkPartition.forEach(node => {
-      node.tag.cut = false
-    })
+    maxFlowMinCutResult.sinkPartition.forEach(node => (node.tag.cut = false))
   }
 
   // show the result
@@ -542,6 +506,7 @@ function calculateMaxFlowMinCut(minCut) {
 
 /**
  * Runs the minimum cost flow algorithm.
+ * @returns {number} The calculated minimum cost.
  */
 function calculateMinCostFlow() {
   const graph = graphComponent.graph
@@ -560,7 +525,7 @@ function calculateMinCostFlow() {
   } finally {
     // store the flow for each edge in its tag
     graph.edges.forEach(edge => {
-      edge.tag.flow = minCostFlowResult.flow.get(edge) || 0
+      edge.tag.flow = minCostFlowResult ? minCostFlowResult.flow.get(edge) || 0 : 0
 
       if (edge.labels.size > 1) {
         // add label for cost
@@ -591,20 +556,16 @@ function calculateMinCostFlow() {
       }
     })
 
-    getSupplyNodes(graph).forEach(supplyNode => {
-      supplyNode.tag.source = true
-    })
-    getDemandNodes(graph).forEach(demandNode => {
-      demandNode.tag.sink = true
-    })
+    getSupplyNodes(graph).forEach(supplyNode => (supplyNode.tag.source = true))
+    getDemandNodes(graph).forEach(demandNode => (demandNode.tag.sink = true))
   }
-  return minCostFlowResult ? minCostFlowResult.totalCost : null
+  return minCostFlowResult ? minCostFlowResult.totalCost : 0
 }
 
 /**
  * Returns an array of all supply-nodes.
- * @param {IGraph} graph The input graph
- * @returns {Array<INode>} An array of all supply-nodes.
+ * @param {!IGraph} graph The input graph
+ * @returns {!Array.<INode>} An array of all supply-nodes.
  */
 function getSupplyNodes(graph) {
   const supplyNodes = []
@@ -618,8 +579,8 @@ function getSupplyNodes(graph) {
 
 /**
  * Returns an array of all demand-nodes.
- * @param {IGraph} graph The input graph
- * @returns {Array<INode>} An array of all demand-nodes.
+ * @param {!IGraph} graph The input graph
+ * @returns {!Array.<INode>} An array of all demand-nodes.
  */
 function getDemandNodes(graph) {
   const demandNodes = []
@@ -634,10 +595,11 @@ function getDemandNodes(graph) {
 /**
  * Run a hierarchic layout.
  * @param {boolean} incremental True if the algorithm should run in incremental mode, false otherwise
- * @param {Array?} additionalIncrementalNodes An array of the incremental nodes
- * @param {function} finishHandler The handler that will be executed when the layout has finished.
+ * @param additionalIncrementalNodes An array of the incremental nodes
+ * @param {!Array.<INode>} [additionalIncrementalNodes]
+ * @returns {!Promise}
  */
-async function runLayout(incremental, finishHandler, additionalIncrementalNodes) {
+async function runLayout(incremental, additionalIncrementalNodes) {
   const graph = graphComponent.graph
   const algorithmComboBox = document.getElementById('algorithmComboBox')
 
@@ -663,37 +625,46 @@ async function runLayout(incremental, finishHandler, additionalIncrementalNodes)
     // mark all sources and sinks as well as passed additional nodes as incremental
     const hintsFactory = layoutAlgorithm.createIncrementalHintsFactory()
     const incrementalNodesMapper = new Mapper()
-    getSourceNodes().forEach(node => {
+    getSourceNodes().forEach(node =>
       incrementalNodesMapper.set(node, hintsFactory.createLayerIncrementallyHint(node))
-    })
-    getSinkNodes().forEach(node => {
+    )
+    getSinkNodes().forEach(node =>
       incrementalNodesMapper.set(node, hintsFactory.createLayerIncrementallyHint(node))
-    })
+    )
     if (additionalIncrementalNodes) {
-      additionalIncrementalNodes.forEach(node => {
+      additionalIncrementalNodes.forEach(node =>
         incrementalNodesMapper.set(node, hintsFactory.createLayerIncrementallyHint(node))
-      })
+      )
     }
-    layoutData.incrementalHints = incrementalNodesMapper
+    layoutData.incrementalHints = IncrementalHintItemMapping.from(incrementalNodesMapper)
   } else {
     layoutAlgorithm.layoutMode = LayoutMode.FROM_SCRATCH
   }
 
   // sources will be in the first layer, sinks in the last layer
   const layerConstraints = layoutData.layerConstraints
-  getSourceNodes().forEach(node => {
-    layerConstraints.placeAtTop(node)
-  })
+  getSourceNodes().forEach(node => layerConstraints.placeAtTop(node))
 
-  getSinkNodes().forEach(node => {
-    layerConstraints.placeAtBottom(node)
-  })
+  getSinkNodes().forEach(node => layerConstraints.placeAtBottom(node))
 
   if (algorithmComboBox.selectedIndex === MAX_FLOW_MIN_CUT) {
     layoutData.partitionGridData = new PartitionGridData({
       grid: new PartitionGrid(1, 2, 0, 150, 0, 0),
       cellIds: (node, grid) => (node.tag.cut ? grid.createCellId(0, 0) : grid.createCellId(0, 1))
     })
+  }
+
+  layoutData.edgeLabelPreferredPlacement.delegate = key => {
+    const preferredPlacementDescriptor = new PreferredPlacementDescriptor()
+    if (key.tag === 'cost') {
+      preferredPlacementDescriptor.sideOfEdge = LabelPlacements.LEFT_OF_EDGE
+      preferredPlacementDescriptor.distanceToEdge = 5
+    } else {
+      preferredPlacementDescriptor.sideOfEdge = LabelPlacements.ON_EDGE
+    }
+
+    preferredPlacementDescriptor.freeze()
+    return preferredPlacementDescriptor
   }
 
   await graphComponent.morphLayout(layoutAlgorithm, '1s', layoutData)
@@ -714,15 +685,11 @@ async function runLayout(incremental, finishHandler, additionalIncrementalNodes)
   if (algorithmComboBox.selectedIndex === MAX_FLOW_MIN_CUT) {
     updateMinCutLine()
   }
-
-  if (finishHandler) {
-    finishHandler()
-  }
 }
 
 /**
  * Returns the source nodes of the graph, i.e., the ones with in-degree 0.
- * @returns {Array} An array of the source nodes of the graph, i.e., the ones with in-degree 0
+ * @returns {!Array.<INode>} An array of the source nodes of the graph, i.e., the ones with in-degree 0
  */
 function getSourceNodes() {
   const sourceNodes = []
@@ -741,7 +708,7 @@ function getSourceNodes() {
 
 /**
  * Returns the sink nodes of the graph, i.e., the ones with out-degree 0.
- * @returns {Array} An array of the sink nodes of the graph, i.e., the ones with out-degree 0
+ * @returns {!Array.<INode>} An array of the sink nodes of the graph, i.e., the ones with out-degree 0
  */
 function getSinkNodes() {
   const sinkNodes = []
@@ -766,7 +733,8 @@ function updateMinCutLine() {
   const graphBounds = graphComponent.contentRect
 
   // hold the old bounds to store in the undo unit
-  const oldBounds = minCutLine.bounds ? new Rect(minCutLine.bounds) : null
+  const oldBounds = new Rect(minCutLine.bounds)
+
   if (graph.edges.size > 0) {
     // find the center between the last "source-cut"-layer and the first "target-cut"-layer
     minCutLine.visible = true
@@ -788,7 +756,7 @@ function updateMinCutLine() {
         graphBounds.height + 60
       )
     } else {
-      minCutLine.bounds = null
+      minCutLine.bounds = Rect.EMPTY
     }
 
     // create the undo unit
@@ -818,20 +786,20 @@ function visualizeResult() {
   const diff = extrema.max - extrema.min
 
   graph.edges.forEach(edge => {
-    let colorIndex
+    let colorIndex = 0
     if (edge.tag.capacity !== 0) {
       if (diff === 0) {
         colorIndex = gradientCount - 1
       } else {
         const flowPercentage = (edge.tag.flow * 100) / edge.tag.capacity
         const colorScale = (gradientCount - 1) / diff
-        colorIndex = parseInt((flowPercentage - extrema.min) * colorScale) % gradientCount
+        colorIndex = Math.floor((flowPercentage - extrema.min) * colorScale) % gradientCount
       }
       edge.tag.color = colors[colorIndex]
     }
     const textLabelStyle = new DefaultLabelStyle({
       font: '11px bold Arial',
-      textFill: edge.tag.capacity === 0 || colorIndex < colors.size * 0.4 ? 'black' : 'cyan'
+      textFill: edge.tag.capacity === 0 || colorIndex < colors.length * 0.4 ? 'black' : 'cyan'
     })
 
     const label = edge.labels.get(0)
@@ -844,9 +812,9 @@ function visualizeResult() {
 
 /**
  * Calculates the extrema of the capacities or flows of the edges.
- * @param {IGraph} graph The given graph
+ * @param {!IGraph} graph The given graph
  * @param {boolean} useCapacity True if capacity should be used, false otherwise
- * @returns {{min: Number, max: number}}
+ * @returns {!object}
  */
 function calculateExtrema(graph, useCapacity) {
   let min = Number.MAX_VALUE
@@ -870,10 +838,10 @@ function calculateExtrema(graph, useCapacity) {
 
 /**
  * Generates random colors for nodes and edges.
- * @param {Color} startColor The start color
- * @param {Color} endColor The end color
+ * @param {!Color} startColor The start color
+ * @param {!Color} endColor The end color
  * @param {number} gradientCount The number of gradient steps
- * @return {Array} An array or random gradient colors
+ * @returns {!Array.<Color>} An array or random gradient colors
  */
 function generateColors(startColor, endColor, gradientCount) {
   const colors = []
@@ -905,34 +873,15 @@ function registerCommands() {
   bindCommand("button[data-command='Redo']", ICommand.REDO, graphComponent)
   bindChangeListener("select[data-command='AlgorithmSelectionChanged']", onAlgorithmChanged)
   bindAction("button[data-command='Reload']", () => {
-    if (edgePopup) {
-      edgePopup.currentItem = null
-    }
+    edgePopup.currentItem = null
     createSampleGraph()
   })
   bindAction("button[data-command='Layout']", () => {
-    if (edgePopup) {
-      edgePopup.currentItem = null
-    }
+    edgePopup.currentItem = null
     runLayout(false)
   })
-
-  document.getElementById('costPlus').addEventListener(
-    'click',
-    () => {
-      updateCostForm(1)
-    },
-    true
-  )
-
-  document.getElementById('costMinus').addEventListener(
-    'click',
-    () => {
-      updateCostForm(-1)
-    },
-    true
-  )
-
+  document.getElementById('costPlus').addEventListener('click', () => updateCostForm(1), true)
+  document.getElementById('costMinus').addEventListener('click', () => updateCostForm(-1), true)
   document.getElementById('apply').addEventListener(
     'click',
     () => {
@@ -946,14 +895,12 @@ function registerCommands() {
 /**
  * Handles a selection change in the algorithm combo box.
  */
-function onAlgorithmChanged() {
+async function onAlgorithmChanged() {
   updateDescriptionText()
 
   graphComponent.selection.clear()
 
-  if (edgePopup) {
-    edgePopup.currentItem = null
-  }
+  edgePopup.currentItem = null
 
   const graph = graphComponent.graph
   if (graph.nodes.size > 0) {
@@ -971,10 +918,9 @@ function onAlgorithmChanged() {
       }
     })
 
-    runFlowAlgorithm(true)
-    runLayout(false, () => {
-      graphComponent.graph.undoEngine.clear()
-    })
+    runFlowAlgorithm()
+    await runLayout(false)
+    graphComponent.graph.undoEngine.clear()
   }
 }
 
@@ -982,11 +928,12 @@ function onAlgorithmChanged() {
  * Updates the description text based on the selected algorithm.
  */
 function updateDescriptionText() {
-  const descriptionText = window.document.getElementById('description')
-  for (let i = 0; i < descriptionText.childElementCount; i++) {
-    const child = descriptionText.children[i]
-    child.style.display =
-      i === document.getElementById('algorithmComboBox').selectedIndex ? 'block' : 'none'
+  const selectedIndex = document.getElementById('algorithmComboBox').selectedIndex
+  const descriptionText = document.getElementById('description')
+  let i = 0
+  for (let child = descriptionText.firstElementChild; child; child = child.nextElementSibling) {
+    child.style.display = i === selectedIndex ? 'block' : 'none'
+    ++i
   }
 }
 
@@ -996,11 +943,10 @@ function updateDescriptionText() {
  */
 function updateCostForm(newValue) {
   const form = document.getElementById('cost-form')
-  form.value = Math.max(parseInt(form.value) + newValue, 0)
+  form.value = Math.max(parseInt(form.value) + newValue, 0).toString()
 
-  if (edgePopup.currentItem) {
-    const currentItem = edgePopup.currentItem
-
+  const currentItem = edgePopup.currentItem
+  if (currentItem) {
     currentItem.tag = {
       flow: currentItem.tag.flow,
       color: currentItem.tag.color,
@@ -1008,8 +954,8 @@ function updateCostForm(newValue) {
       cost: parseInt(form.value)
     }
 
-    const label = edgePopup.currentItem.labels.get(1)
-    if (label) {
+    if (currentItem.labels.size > 1) {
+      const label = currentItem.labels.get(1)
       graphComponent.graph.setLabelText(label, `${currentItem.tag.cost} \u20AC`)
     }
   }
@@ -1033,9 +979,7 @@ function createSampleGraph() {
   const graph = graphComponent.graph
   graph.clear()
 
-  if (minCutLine) {
-    minCutLine.bounds = null
-  }
+  minCutLine.bounds = Rect.EMPTY
 
   const node1 = graph.createNode()
   const node2 = graph.createNode()
@@ -1178,9 +1122,7 @@ function createSampleGraph() {
     }
   })
 
-  graph.edges.forEach(edge => {
-    updateEdgeThickness(edge)
-  })
+  graph.edges.forEach(edge => updateEdgeThickness(edge))
 
   graph.nodes.forEach(node => {
     let supply = 0

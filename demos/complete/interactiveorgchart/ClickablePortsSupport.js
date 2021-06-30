@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -28,9 +28,11 @@
  ***************************************************************************/
 import {
   FreeNodePortLocationModel,
-  GraphInputMode,
   GraphItemTypes,
+  GraphViewerInputMode,
   HashMap,
+  IEdge,
+  INode,
   IPort,
   Size,
   StringTemplatePortStyle
@@ -58,7 +60,13 @@ const portStyleTemplate =
  */
 const map = new HashMap()
 
+/**
+ * Manages the ability to collapse or expand subtrees by clicking on the port they are connected to.
+ */
 export default class ClickablePortsSupport {
+  /**
+   * @param {!OrgChartGraph} orgChartGraph
+   */
   constructor(orgChartGraph) {
     this.orgChartGraph = orgChartGraph
 
@@ -85,8 +93,10 @@ export default class ClickablePortsSupport {
         map.set(edge.sourceNode, edge.sourcePort)
 
         // styling only the source ports which have children
-        const portStyle = new StringTemplatePortStyle(portStyleTemplate)
-        portStyle.renderSize = new Size(20, 20)
+        const portStyle = new StringTemplatePortStyle({
+          svgContent: portStyleTemplate,
+          renderSize: new Size(20, 20)
+        })
         portStyle.styleTag = { collapsed: false }
         this.orgChartGraph.filteredGraph.setStyle(edge.sourcePort, portStyle)
         this.orgChartGraph.filteredGraph.setPortLocationParameter(
@@ -98,24 +108,27 @@ export default class ClickablePortsSupport {
   }
 
   /**
-   * @param {GraphInputMode} graphInputMode
+   * Modifies the given input mode to support the collapse/expand functionality on port clicks.
+   * @param {!GraphViewerInputMode} graphInputMode The mode to modify.
    */
   initializeInputMode(graphInputMode) {
+    // add ports to the clickable items
     graphInputMode.clickableItems = GraphItemTypes.NODE | GraphItemTypes.PORT
     graphInputMode.clickHitTestOrder = [GraphItemTypes.PORT, GraphItemTypes.NODE]
 
+    // listen to clicks on items
     graphInputMode.addItemClickedListener((sender, args) => {
       const port = args.item
       const orgChartGraph = this.orgChartGraph
-      if (IPort.isInstance(port) && orgChartGraph.completeGraph.inEdgesAt(port).size === 0) {
-        const node = args.item.owner
+      if (port instanceof IPort && orgChartGraph.completeGraph.inEdgesAt(port).size === 0) {
+        // if the item is a port and it has not incoming edges expand or collapse the sub tree
+        const node = port.owner
         if (orgChartGraph.canExecuteHideChildren(node)) {
           orgChartGraph.executeHideChildren(node)
           this.setCollapsedStyleToChildren(node)
         } else {
           if (orgChartGraph.canExecuteShowChildren(node)) {
             orgChartGraph.executeShowChildren(node)
-
             this.setExpandStyleToNode(node)
           }
         }
@@ -128,6 +141,7 @@ export default class ClickablePortsSupport {
    * Set the collapsed style to all ports connected to the children to the given node and for the node it selves.
    * We use this function after hide children of a node, then we should change the style of the node's port and for the
    * children.
+   * @param {!INode} node
    */
   setCollapsedStyleToChildren(node) {
     const nodes = OrgChartGraph.collectSubtreeNodes(this.orgChartGraph.completeGraph, node)
@@ -142,6 +156,7 @@ export default class ClickablePortsSupport {
   /**
    * Set the expand style to the port of the given node.
    * we use this function after show children of a node, then we will change only the style of the node.
+   * @param {!INode} node
    */
   setExpandStyleToNode(node) {
     const portIn = map.get(node)

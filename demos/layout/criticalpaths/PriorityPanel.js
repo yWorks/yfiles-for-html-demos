@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -50,12 +50,13 @@ import { addClass, removeClass } from '../../resources/demo-app.js'
 export default class PriorityPanel {
   /**
    * Creates a new instance of {@link PriorityPanel}.
+   * @param {!GraphComponent} graphComponent
    */
   constructor(graphComponent) {
+    this.dirty = false
+    this._currentItems = null
     this.graphComponent = graphComponent
-    this.$div = document.getElementById('priority-panel')
-    this.$currentItems = null
-    this.$dirty = false
+    this.div = document.getElementById('priority-panel')
 
     // make the popup invisible
     this.div.style.opacity = '0'
@@ -66,61 +67,29 @@ export default class PriorityPanel {
   }
 
   /**
-   * Sets the container {@link PriorityPanel#div div element}.
-   * @param {HTMLElement} value
-   */
-  set div(value) {
-    this.$div = value
-  }
-
-  /**
-   * Returns the container {@link PriorityPanel#div div element}.
-   * @return {HTMLElement}
-   */
-  get div() {
-    return this.$div
-  }
-
-  /**
    * Sets the {@link IModelItem item} to display information for.
    * Setting this property to a value other than <code>null</code> shows the pop-up.
-   * Setting the property to null hides the pop-up.
-   * @param {Array.<IModelItem>} items
+   * Setting the property to <code>null</code> hides the pop-up.
+   * @type {?Array.<IModelItem>}
    */
   set currentItems(items) {
     if (items && items.length > 0) {
-      if (!equals(items, this.$currentItems)) {
-        this.$currentItems = items
+      if (!equals(items, this._currentItems)) {
+        this._currentItems = items
         this.show()
       }
     } else {
-      this.$currentItems = null
+      this._currentItems = null
       this.hide()
     }
   }
 
   /**
    * Returns all {@link IModelItem}s to display information for.
-   * @return {Array.<IModelItem>}
+   * @type {?Array.<IModelItem>}
    */
   get currentItems() {
-    return this.$currentItems
-  }
-
-  /**
-   * Specifies whether or not the {@link PriorityPanel} needs to update its position.
-   * @param {boolean} value
-   */
-  set dirty(value) {
-    this.$dirty = value
-  }
-
-  /**
-   * Specifies whether or not the {@link PriorityPanel} needs to update its position.
-   * @return {boolean}
-   */
-  get dirty() {
-    return this.$dirty
+    return this._currentItems
   }
 
   /**
@@ -158,19 +127,21 @@ export default class PriorityPanel {
   /**
    * Registers a click listener to given element which will invoke the callback {@link #itemPriorityChanged} and
    * {@link #priorityChanged} in case the priority of the current item changed.
-   * @param {HTMLElement} element
+   * @param {!HTMLElement} element
    * @param {number} priority
    */
   addClickListener(element, priority) {
     element.addEventListener('click', () => {
-      this.currentItems.forEach(item => {
-        const oldPriority = item.tag && item.tag.priority ? item.tag.priority : 0
-        if (oldPriority !== priority) {
-          this.itemPriorityChanged(item, priority, oldPriority)
-        }
-      })
-      this.priorityChanged()
-      this.currentItems = null
+      if (this.currentItems) {
+        this.currentItems.forEach(item => {
+          const oldPriority = item.tag && item.tag.priority ? item.tag.priority : 0
+          if (oldPriority !== priority) {
+            this.itemPriorityChanged(item, priority, oldPriority)
+          }
+        })
+        this.priorityChanged()
+        this.currentItems = null
+      }
     })
   }
 
@@ -183,12 +154,14 @@ export default class PriorityPanel {
     for (let i = 0; i < 6; i++) {
       removeClass(document.getElementById(`priority-button-${i}`), 'current-priority')
     }
-    this.currentItems.forEach(item => {
-      addClass(
-        document.getElementById(`priority-button-${item.tag.priority || 0}`),
-        'current-priority'
-      )
-    })
+    if (this.currentItems) {
+      this.currentItems.forEach(item => {
+        addClass(
+          document.getElementById(`priority-button-${item.tag.priority || 0}`),
+          'current-priority'
+        )
+      })
+    }
     this.updateLocation()
   }
 
@@ -213,21 +186,21 @@ export default class PriorityPanel {
     const zoom = this.graphComponent.zoom
 
     let dummyLabel = null
-    let labelModelParemeter = null
-    if (IEdge.isInstance(this.currentItems[0])) {
-      labelModelParemeter = new EdgePathLabelModel({
+    let labelModelParameter = null
+    if (this.currentItems[0] instanceof IEdge) {
+      labelModelParameter = new EdgePathLabelModel({
         autoRotation: false
       }).createDefaultParameter()
-      dummyLabel = new SimpleLabel(this.currentItems[0], '', labelModelParemeter)
-    } else if (INode.isInstance(this.currentItems[0])) {
-      labelModelParemeter = ExteriorLabelModel.NORTH
-      dummyLabel = new SimpleLabel(this.currentItems[0], '', labelModelParemeter)
+      dummyLabel = new SimpleLabel(this.currentItems[0], '', labelModelParameter)
+    } else if (this.currentItems[0] instanceof INode) {
+      labelModelParameter = ExteriorLabelModel.NORTH
+      dummyLabel = new SimpleLabel(this.currentItems[0], '', labelModelParameter)
     }
-    if (labelModelParemeter.supports(dummyLabel)) {
+    if (labelModelParameter && dummyLabel && labelModelParameter.supports(dummyLabel)) {
       dummyLabel.preferredSize = new Size(width / zoom, height / zoom)
-      const { anchorX, anchorY } = labelModelParemeter.model.getGeometry(
+      const { anchorX, anchorY } = labelModelParameter.model.getGeometry(
         dummyLabel,
-        labelModelParemeter
+        labelModelParameter
       )
       this.setLocation(anchorX, anchorY - height / zoom)
     }
@@ -247,7 +220,7 @@ export default class PriorityPanel {
 
   /**
    * Callback for when the priority changed for a specific edge.
-   * @param {IModelItem} item
+   * @param {!IModelItem} item
    * @param {number} newPriority
    * @param {number} oldPriority
    */
@@ -261,8 +234,9 @@ export default class PriorityPanel {
 
 /**
  * Checks the given arrays for equality.
- * @param {Array} array1
- * @param {Array} array2
+ * @param {?Array.<IModelItem>} array1
+ * @param {?Array.<IModelItem>} array2
+ * @returns {boolean}
  */
 function equals(array1, array2) {
   if (array1 && array2) {

@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -36,7 +36,7 @@ import {
   IModelItem,
   INode
 } from 'yfiles'
-import { Structure } from './MindmapUtil.js'
+import { isCrossReference } from './MindmapUtil.js'
 
 /**
  * Provides a special {@link ICanvasObjectGroup} for cross reference edges
@@ -45,47 +45,32 @@ import { Structure } from './MindmapUtil.js'
 export default class MindmapGraphModelManager extends GraphModelManager {
   /**
    * Constructs the GraphModelManager.
-   * @param {GraphComponent} graphComponent The given graphComponent.
-   * @param {ICanvasObjectGroup} contentGroup The content group.
+   * @param {!GraphComponent} graphComponent The given graphComponent.
+   * @param {!ICanvasObjectGroup} contentGroup The content group.
    */
   constructor(graphComponent, contentGroup) {
     super(graphComponent, contentGroup)
-    this.$crossReferenceEdgeGroup = this.createContentGroup()
+    // The cross reference canvas group
+    this.crossReferenceEdgeGroup = this.createContentGroup()
     this.hierarchicNestingPolicy = HierarchicNestingPolicy.NODES
   }
 
   /**
-   * Gets the cross reference canvas group.
-   * @return {ICanvasObjectGroup}
-   */
-  get crossReferenceEdgeGroup() {
-    return this.$crossReferenceEdgeGroup
-  }
-
-  /**
-   * Sets the cross reference canvas group.
-   * @param {ICanvasObjectGroup} value The given canvas group.
-   */
-  set crossReferenceEdgeGroup(value) {
-    this.$crossReferenceEdgeGroup = value
-  }
-
-  /**
    * Retrieves the Canvas Object group to use for the given item.
-   * @param {IModelItem} modelItem The given item.
-   * @return {ICanvasObjectGroup}
+   * @param {!IModelItem} modelItem The given item.
+   * @returns {!ICanvasObjectGroup}
    */
   getCanvasObjectGroup(modelItem) {
-    if (IEdge.isInstance(modelItem)) {
-      if (Structure.isCrossReference(modelItem)) {
+    if (modelItem instanceof IEdge) {
+      if (isCrossReference(modelItem)) {
         return this.crossReferenceEdgeGroup
       }
       return this.edgeGroup
-    } else if (INode.isInstance(modelItem)) {
+    } else if (modelItem instanceof INode) {
       return this.nodeGroup
-    } else if (ILabel.isInstance(modelItem) && INode.isInstance(modelItem.owner)) {
+    } else if (modelItem instanceof ILabel && modelItem.owner instanceof INode) {
       return this.nodeLabelGroup
-    } else if (ILabel.isInstance(modelItem) && IEdge.isInstance(modelItem.owner)) {
+    } else if (modelItem instanceof ILabel && modelItem.owner instanceof IEdge) {
       return this.edgeLabelGroup
     }
     return this.contentGroup

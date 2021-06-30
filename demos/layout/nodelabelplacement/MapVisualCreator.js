@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -34,8 +34,9 @@ import { BaseClass, IRenderContext, IVisualCreator, SvgVisual, Visual } from 'yf
 export default class MapVisualCreator extends BaseClass(IVisualCreator) {
   /**
    * Creates the visual for the background map.
-   * @param {IRenderContext} context The context that describes where the visual will be used
+   * @param {!IRenderContext} context The context that describes where the visual will be used
    * return {Visual} The visual for the background map
+   * @returns {!SvgVisual}
    */
   createVisual(context) {
     const image = window.document.createElementNS('http://www.w3.org/2000/svg', 'image')
@@ -47,9 +48,10 @@ export default class MapVisualCreator extends BaseClass(IVisualCreator) {
 
   /**
    * Updates the visual for the background map.
-   * @param {IRenderContext} context The context that describes where the visual will be used
-   * @param {Visual} oldVisual The old visual
+   * @param {!IRenderContext} context The context that describes where the visual will be used
+   * @param {!Visual} oldVisual The old visual
    * return {Visual} The visual for the background map
+   * @returns {!Visual}
    */
   updateVisual(context, oldVisual) {
     return oldVisual

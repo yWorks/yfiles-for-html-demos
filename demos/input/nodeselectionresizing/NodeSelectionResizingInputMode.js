@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -149,8 +149,10 @@ export class NodeSelectionResizingInputMode extends InputModeBase {
     }
 
     // create own HandleInputMode for the handles
-    this.handleInputMode = new HandleInputMode()
-    this.handleInputMode.priority = 1
+    this.handleInputMode = new HandleInputMode({
+      priority: 1,
+      enabled: false
+    })
 
     // notify the GraphSnapContext which nodes are resized and shouldn't provide SnapLines
     this.handleInputMode.addDragStartedListener(delegate(this.registerReshapedNodes, this))
@@ -170,7 +172,6 @@ export class NodeSelectionResizingInputMode extends InputModeBase {
     )
 
     this.handleInputMode.install(context, controller)
-    this.handleInputMode.enabled = false
 
     // update handles depending on the changed node selection
     geim.addMultiSelectionStartedListener(delegate(this.multiSelectionStarted, this))
@@ -725,11 +726,8 @@ class ReshapeHandlerBase extends BaseClass(IReshapeHandler) {
         this.reshapeSnapResultProviders.set(node, snapResultProvider)
       }
       // store orthogonal edge drag handler that keeps edges at node orthogonal
-      const orthogonalEdgeDragHandler = OrthogonalEdgeEditingContext.createOrthogonalEdgeDragHandler(
-        context,
-        node,
-        false
-      )
+      const orthogonalEdgeDragHandler =
+        OrthogonalEdgeEditingContext.createOrthogonalEdgeDragHandler(context, node, false)
       if (orthogonalEdgeDragHandler) {
         this.orthogonalEdgeDragHandlers.set(node, orthogonalEdgeDragHandler)
       }
@@ -1301,7 +1299,7 @@ class NodeSelectionReshapeHandle extends BaseClass(IHandle) {
 
   /**
    * @param {*} eventSource
-   * @param {?EventArgs} evt
+   * @param {!EventArgs} evt
    * @returns {boolean}
    */
   centerReshapeRecognizer(eventSource, evt) {
@@ -1310,7 +1308,7 @@ class NodeSelectionReshapeHandle extends BaseClass(IHandle) {
 
   /**
    * @param {*} eventSource
-   * @param {?EventArgs} evt
+   * @param {!EventArgs} evt
    * @returns {boolean}
    */
   ratioReshapeRecognizer(eventSource, evt) {

@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -121,12 +121,22 @@ export class RichTextEditorInputMode extends TextEditorInputMode {
 
     // stop propagation on the events of the editor container, otherwise the GraphComponent gains
     // focus when clicking elements in the editor and thus close the editor box.
-    container.addEventListener('mousedown', e => e.stopPropagation(), false)
-    container.addEventListener('mouseup', e => e.stopPropagation(), false)
-    container.addEventListener('mouseout', e => e.stopPropagation(), false)
-    container.addEventListener('mousemove', e => e.stopPropagation(), false)
-    container.addEventListener('mouseover', e => e.stopPropagation(), false)
-    container.addEventListener('click', e => e.stopPropagation(), false)
+    ;[
+      'mousedown',
+      'mouseup',
+      'mouseout',
+      'mousemove',
+      'mouseover',
+      'click',
+      'touchstart',
+      'touchend',
+      'touchmove',
+      'pointerup',
+      'pointerdown',
+      'pointermove'
+    ].forEach(event => {
+      container.addEventListener(event, e => e.stopPropagation(), false)
+    })
     return container
   }
 }

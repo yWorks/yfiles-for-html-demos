@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -28,12 +28,15 @@
  ***************************************************************************/
 import {
   GraphComponent,
+  GraphInputMode,
   GraphItemTypes,
   GraphOverviewComponent,
   GraphViewerInputMode,
+  HoveredItemChangedEventArgs,
   IArrow,
   ICommand,
   IGraph,
+  IModelItem,
   INode,
   Key,
   License,
@@ -48,7 +51,7 @@ import {
 import ContextMenu from '../../utils/ContextMenu.js'
 import GraphSearch from '../../utils/GraphSearch.js'
 import ClickablePortsSupport from './ClickablePortsSupport.js'
-import PrintingSupport from '../../view/printing/PrintingSupport.js'
+import PrintingSupport from '../../utils/PrintingSupport.js'
 import OrgChartPropertiesView from './OrgChartPropertiesView.js'
 import { bindAction, bindCommand, showApp } from '../../resources/demo-app.js'
 import OrgChartData from './resources/OrgChartData.js'
@@ -56,29 +59,41 @@ import OrgChartGraph from './OrgChartGraph.js'
 import loadJson from '../../resources/load-json.js'
 import VuejsNodeStyle from '../../utils/VuejsNodeStyle.js'
 
+/**
+ * @typedef {Object} Employee
+ * @property {string} position
+ * @property {string} name
+ * @property {string} email
+ * @property {string} phone
+ * @property {string} fax
+ * @property {string} businessUnit
+ * @property {string} status
+ * @property {string} icon
+ * @property {Array.<Employee>} [subordinates]
+ * @property {Employee} [parent]
+ */
+
+/** @type {GraphComponent} */
 let graphComponent = null
 
 /**
  * The overview graph shown alongside the GraphComponent.
- * @type {GraphOverviewComponent}
- **/
+ ** @type {GraphOverviewComponent}
+ */
 let overviewComponent = null
 
-/**
- * @type {OrgChartGraph}
- */
+/** @type {OrgChartGraph} */
 let orgChartGraph = null
 
-/**
- * @type {OrgChartGraphSearch}
- */
+/** @type {OrgChartGraphSearch} */
 let graphSearch = null
 
-/**
- * @type {OrgChartGraphSearch}
- */
+/** @type {ClickablePortsSupport} */
 let clickablePortsSupport = null
 
+/**
+ * @param {!object} licenseData
+ */
 function run(licenseData) {
   License.value = licenseData
   graphComponent = new GraphComponent('graphComponent')
@@ -123,9 +138,9 @@ function createPropertiesView() {
   const propertiesViewElement = document.getElementById('propertiesView')
   const propertiesView = new OrgChartPropertiesView(propertiesViewElement, email => {
     const nodeForEMail =
-      email != null &&
+      email !== null &&
       orgChartGraph.completeGraph.nodes.find(node => node.tag != null && email === node.tag.email)
-    if (nodeForEMail != null) {
+    if (nodeForEMail !== null) {
       orgChartGraph.zoomToItem(nodeForEMail)
       graphComponent.focus()
     }
@@ -155,7 +170,7 @@ function configureContextMenu() {
     }
   })
 
-  // Add and event listener that populates the context menu according to the hit elements, or cancels showing a menu.
+  // Add an event listener that populates the context menu according to the hit elements, or cancels showing a menu.
   // This PopulateItemContextMenu is fired when calling the ContextMenuInputMode.shouldOpenMenu method above.
   inputMode.addPopulateItemContextMenuListener((sender, args) => {
     populateContextMenu(contextMenu, graphComponent, args)
@@ -175,9 +190,9 @@ function configureContextMenu() {
 /**
  * Populates the context menu based on the item the mouse hovers over.
  *
- * @param {GraphComponent} graphComponent The given graphComponent
- * @param {ContextMenu} contextMenu The context menu.
- * @param {PopulateItemContextMenuEventArgs} args The event args.
+ * @param {!GraphComponent} graphComponent The given graphComponent
+ * @param {!ContextMenu} contextMenu The context menu.
+ * @param {!PopulateItemContextMenuEventArgs.<IModelItem>} args The event args.
  */
 function populateContextMenu(contextMenu, graphComponent, args) {
   // The 'showMenu' property is set to true to inform the input mode that we actually want to show a context menu
@@ -187,10 +202,10 @@ function populateContextMenu(contextMenu, graphComponent, args) {
 
   contextMenu.clearItems()
 
-  const node = INode.isInstance(args.item) ? args.item : null
+  const node = args.item
 
   // if we clicked on a node
-  if (node !== null) {
+  if (node instanceof INode) {
     graphComponent.currentItem = node
     // Create the context menu items
     if (orgChartGraph.canExecuteHideParent(node)) {
@@ -252,9 +267,11 @@ function registerCommands() {
   const showAllCommand = ICommand.createCommand()
   kim.addCommandBinding(
     showAllCommand,
-    async () => {
-      await orgChartGraph.executeShowAll()
-      graphSearch.updateSearch(document.getElementById('searchBox').value)
+    () => {
+      orgChartGraph.executeShowAll().then(() => {
+        graphSearch.updateSearch(document.getElementById('searchBox').value)
+      })
+      return true
     },
     () => orgChartGraph.canExecuteShowAll()
   )
@@ -263,33 +280,41 @@ function registerCommands() {
 
   kim.addKeyBinding({
     key: Key.SUBTRACT,
-    execute: async () => {
-      await orgChartGraph.executeHideChildren(graphComponent.currentItem)
-      graphSearch.updateSearch(document.getElementById('searchBox').value)
+    execute: () => {
+      orgChartGraph.executeHideChildren(graphComponent.currentItem).then(() => {
+        graphSearch.updateSearch(document.getElementById('searchBox').value)
+      })
+      return true
     },
     canExecute: () => orgChartGraph.canExecuteHideChildren(graphComponent.currentItem)
   })
   kim.addKeyBinding({
     key: Key.ADD,
-    execute: async () => {
-      await orgChartGraph.executeShowChildren(graphComponent.currentItem)
-      graphSearch.updateSearch(document.getElementById('searchBox').value)
+    execute: () => {
+      orgChartGraph.executeShowChildren(graphComponent.currentItem).then(() => {
+        graphSearch.updateSearch(document.getElementById('searchBox').value)
+      })
+      return true
     },
     canExecute: () => orgChartGraph.canExecuteShowChildren(graphComponent.currentItem)
   })
   kim.addKeyBinding({
     key: Key.PAGE_DOWN,
-    execute: async () => {
-      await orgChartGraph.executeHideParent(graphComponent.currentItem)
-      graphSearch.updateSearch(document.getElementById('searchBox').value)
+    execute: () => {
+      orgChartGraph.executeHideParent(graphComponent.currentItem).then(() => {
+        graphSearch.updateSearch(document.getElementById('searchBox').value)
+      })
+      return true
     },
     canExecute: () => orgChartGraph.canExecuteHideParent(graphComponent.currentItem)
   })
   kim.addKeyBinding({
     key: Key.PAGE_UP,
-    execute: async () => {
-      await orgChartGraph.executeShowParent(graphComponent.currentItem)
-      graphSearch.updateSearch(document.getElementById('searchBox').value)
+    execute: () => {
+      orgChartGraph.executeShowParent(graphComponent.currentItem).then(() => {
+        graphSearch.updateSearch(document.getElementById('searchBox').value)
+      })
+      return true
     },
     canExecute: () => orgChartGraph.canExecuteShowParent(graphComponent.currentItem)
   })
@@ -313,7 +338,7 @@ function initializeInputMode() {
     orgChartGraph.zoomToItem(graphComponent.currentItem)
   })
 
-  graphViewerInputMode.itemHoverInputMode.addHoveredItemChangedListener(function (sender, args) {
+  graphViewerInputMode.itemHoverInputMode.addHoveredItemChangedListener((sender, args) => {
     // we use the highlight manager to highlight hovered items
     const manager = graphComponent.highlightIndicatorManager
     if (args.oldItem) {
@@ -370,7 +395,7 @@ const nodeStyleTemplate = `<g>
 
 /**
  * Sets style defaults for nodes and edges.
- * @param {IGraph} graph
+ * @param {!IGraph} graph
  */
 function registerElementDefaults(graph) {
   // use the VuejsNodeStyle to display the nodes through a svg template
@@ -393,7 +418,7 @@ function registerElementDefaults(graph) {
  * Adds a "parent" reference to all subordinates contained in the source data.
  * The parent reference is needed to create the colleague and parent links
  * in the properties view.
- * @param {Object} nodesSourceItem The source data in JSON format
+ * @param {!Employee} nodesSourceItem The source data in JSON format
  */
 function addParentReferences(nodesSourceItem) {
   const subs = nodesSourceItem.subordinates
@@ -408,8 +433,8 @@ function addParentReferences(nodesSourceItem) {
 
 /**
  * Creates the sample graph of this demo.
- * @param {Object} nodesSource The source data in JSON format.
- * @return {IGraph} The complete sample graph of this demo.
+ * @param {!Array.<Employee>} nodesSource The source data in JSON format.
+ * @returns {!IGraph} The complete sample graph of this demo.
  */
 function createGraph(nodesSource) {
   addParentReferences(nodesSource[0])
@@ -418,7 +443,7 @@ function createGraph(nodesSource) {
   registerElementDefaults(treeBuilder.graph)
   // configure the root nodes
   const rootSource = treeBuilder.createRootNodesSource(nodesSource)
-  // configure the recursive structure of the childs
+  // configure the recursive structure of the children
   rootSource.addChildNodesSource(data => data.subordinates, rootSource)
   treeBuilder.buildGraph()
 
@@ -435,39 +460,45 @@ function print() {
   printingSupport.margin = 1
   printingSupport.tileWidth = 842
   printingSupport.tileHeight = 595
-  printingSupport.print(graphComponent, null)
+  printingSupport.print(graphComponent, undefined)
 }
 
 /**
  * Helper function to draw a round rectangle on a given canvas context.
+ * @param {!CanvasRenderingContext2D} ctx
+ * @param {number} x
+ * @param {number} y
+ * @param {number} width
+ * @param {number} height
+ * @param {?number} radius
  */
 function roundRect(ctx, x, y, width, height, radius) {
-  if (typeof radius === 'undefined') {
+  if (!radius) {
     radius = 5
   }
-  radius = {
+  const roundRectRadius = {
     tl: radius,
     tr: radius,
     br: radius,
     bl: radius
   }
   ctx.beginPath()
-  ctx.moveTo(x + radius.tl, y)
-  ctx.lineTo(x + width - radius.tr, y)
-  ctx.quadraticCurveTo(x + width, y, x + width, y + radius.tr)
-  ctx.lineTo(x + width, y + height - radius.br)
-  ctx.quadraticCurveTo(x + width, y + height, x + width - radius.br, y + height)
-  ctx.lineTo(x + radius.bl, y + height)
-  ctx.quadraticCurveTo(x, y + height, x, y + height - radius.bl)
-  ctx.lineTo(x, y + radius.tl)
-  ctx.quadraticCurveTo(x, y, x + radius.tl, y)
+  ctx.moveTo(x + roundRectRadius.tl, y)
+  ctx.lineTo(x + width - roundRectRadius.tr, y)
+  ctx.quadraticCurveTo(x + width, y, x + width, y + roundRectRadius.tr)
+  ctx.lineTo(x + width, y + height - roundRectRadius.br)
+  ctx.quadraticCurveTo(x + width, y + height, x + width - roundRectRadius.br, y + height)
+  ctx.lineTo(x + roundRectRadius.bl, y + height)
+  ctx.quadraticCurveTo(x, y + height, x, y + height - roundRectRadius.bl)
+  ctx.lineTo(x, y + roundRectRadius.tl)
+  ctx.quadraticCurveTo(x, y, x + roundRectRadius.tl, y)
   ctx.closePath()
 }
 
 /**
- * Creates the dropshadow element for the nodes
- * @param {Size} nodeSize
- * @return {SVGImageElement}
+ * Creates the drop shadow element for the nodes
+ * @param {!Size} nodeSize
+ * @returns {!SVGImageElement}
  */
 function createDropShadowElement(nodeSize) {
   // pre-render the node's drop shadow using HTML5 canvas rendering
@@ -478,13 +509,13 @@ function createDropShadowElement(nodeSize) {
   context.fillStyle = 'rgba(0,0,0,0.4)'
   context.filter = 'blur(4px)'
   context.globalAlpha = 0.6
-  roundRect(context, 10, 10, nodeSize.width, nodeSize.height)
+  roundRect(context, 10, 10, nodeSize.width, nodeSize.height, null)
   context.fill()
   const dataUrl = canvas.toDataURL('image/png')
   // put the drop-shadow in an SVG image element
   const image = window.document.createElementNS('http://www.w3.org/2000/svg', 'image')
-  image.setAttribute('width', canvas.width)
-  image.setAttribute('height', canvas.height)
+  image.setAttribute('width', `${canvas.width}`)
+  image.setAttribute('height', `${canvas.height}`)
   image.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', dataUrl)
   // switch off pointer events on the drop shadow
   image.setAttribute('style', 'pointer-events: none')
@@ -500,9 +531,9 @@ class OrgChartGraphSearch extends GraphSearch {
   /**
    * Returns whether the given node is a match when searching for the given text.
    * This method searches the matching string to the labels and the tags of the nodes.
-   * @param {INode} node The node to be examined
-   * @param {string} text The text to be queried
-   * @return {boolean} True if the node matches the text, false otherwise
+   * @param {!INode} node The node to be examined
+   * @param {!string} text The text to be queried
+   * @returns {boolean} True if the node matches the text, false otherwise
    */
   matches(node, text) {
     const lowercaseText = text.toLowerCase()

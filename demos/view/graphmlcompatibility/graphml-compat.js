@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -273,7 +273,8 @@ yfiles.lang.module('compat.graphml.common', function (exports) {
       },
 
       provideValue: function (/*yfiles.graph.ILookup*/ serviceProvider) {
-        var /*yfiles.graphml.FolderNodeStateExtension*/ newInstance = new yfiles.graphml.FolderNodeStateExtension()
+        var /*yfiles.graphml.FolderNodeStateExtension*/ newInstance =
+            new yfiles.graphml.FolderNodeStateExtension()
         {
           newInstance.style = this.$style
           newInstance.layout = this.$layout
@@ -7346,11 +7347,8 @@ yfiles.lang.module('compat.graphml.xaml', function (exports) {
           this.$distanceRelativeToEdge = distanceRelativeToEdge
           this.$angle = angle
           this.$autoRotationEnabled = autoRotationEnabled
-          this.$defaultParameter = new compat.graphml.xaml.RotatedSliderEdgeLabelModel.RotatedSliderParameter(
-            this,
-            0,
-            0.0
-          )
+          this.$defaultParameter =
+            new compat.graphml.xaml.RotatedSliderEdgeLabelModel.RotatedSliderParameter(this, 0, 0.0)
         }
       },
 
@@ -7466,9 +7464,8 @@ yfiles.lang.module('compat.graphml.xaml', function (exports) {
         var /*yfiles.geometry.GeneralPath*/ generalPath = edge.style.renderer
             .getPathGeometry(edge, edge.style)
             .getPath()
-        var /*yfiles.geometry.Point[]*/ path = compat.graphml.xaml.RotatedSliderEdgeLabelModel.getPathPoints(
-            generalPath
-          )
+        var /*yfiles.geometry.Point[]*/ path =
+            compat.graphml.xaml.RotatedSliderEdgeLabelModel.getPathPoints(generalPath)
         // check path
         if (
           path.length < 2 ||
@@ -7612,9 +7609,8 @@ yfiles.lang.module('compat.graphml.xaml', function (exports) {
             .getPathGeometry(edge, edge.style)
             .getPath()
         // get array of path points
-        var /*yfiles.geometry.Point[]*/ path = compat.graphml.xaml.RotatedSliderEdgeLabelModel.getPathPoints(
-            generalPath
-          )
+        var /*yfiles.geometry.Point[]*/ path =
+            compat.graphml.xaml.RotatedSliderEdgeLabelModel.getPathPoints(generalPath)
 
         // if something is wrong with the path generate one trivial position)
         if (
@@ -7720,18 +7716,18 @@ yfiles.lang.module('compat.graphml.xaml', function (exports) {
           rect.setCenter(new Point(p.x, p.y))
         } else {
           // calc offset vector
-          var /*yfiles.geometry.Point*/ offsetVec = compat.graphml.xaml.RotatedSliderEdgeLabelModel.orthoNormal(
-              segmentVector
-            )
+          var /*yfiles.geometry.Point*/ offsetVec =
+              compat.graphml.xaml.RotatedSliderEdgeLabelModel.orthoNormal(segmentVector)
           if (this.$distanceRelativeToEdge) {
             if (compat.graphml.xaml.RotatedSliderEdgeLabelModel.isNegative(dist)) {
               offsetVec = new Point(-offsetVec.x, -offsetVec.y)
             }
           } else {
-            var /*number*/ offsetAngle = compat.graphml.xaml.RotatedSliderEdgeLabelModel.calculateAngle(
-                compat.graphml.xaml.RotatedSliderEdgeLabelModel.ZERO_VECTOR,
-                offsetVec
-              )
+            var /*number*/ offsetAngle =
+                compat.graphml.xaml.RotatedSliderEdgeLabelModel.calculateAngle(
+                  compat.graphml.xaml.RotatedSliderEdgeLabelModel.ZERO_VECTOR,
+                  offsetVec
+                )
             if (offsetAngle === 2 * Math.PI) {
               offsetAngle = 0
             }
@@ -7749,9 +7745,8 @@ yfiles.lang.module('compat.graphml.xaml', function (exports) {
           var /*yfiles.geometry.Point*/ rectCenter = p.add(offsetVec)
           rect.setCenter(new Point(rectCenter.x, rectCenter.y))
           // calc distance to segment
-          var /*yfiles.geometry.Point[]*/ corners = compat.graphml.xaml.RotatedSliderEdgeLabelModel.getCorners(
-              rect
-            )
+          var /*yfiles.geometry.Point[]*/ corners =
+              compat.graphml.xaml.RotatedSliderEdgeLabelModel.getCorners(rect)
           var /*number*/ minDist = Number.MAX_VALUE
           for (var /*number*/ i = 0; i < corners.length; i++) {
             minDist = Math.min(
@@ -7887,10 +7882,8 @@ yfiles.lang.module('compat.graphml.xaml', function (exports) {
         if (tryAlternative) {
           // try to place label at another side
           var /*number*/
-            alternativeSide = compat.graphml.xaml.RotatedSliderEdgeLabelModel.determineAlternativeNodeSide(
-              p1,
-              p2
-            )
+            alternativeSide =
+              compat.graphml.xaml.RotatedSliderEdgeLabelModel.determineAlternativeNodeSide(p1, p2)
           var /*yfiles.geometry.Point*/ anchorAlternative = this.$placeOnSide(
               alternativeSide,
               lineSegment,
@@ -7900,10 +7893,8 @@ yfiles.lang.module('compat.graphml.xaml', function (exports) {
               dist
             )
           bounds.anchor = anchorAlternative // try alternative
-          var /*number*/ distToNodeAlternative = compat.graphml.xaml.RotatedSliderEdgeLabelModel.getDistance(
-              nodeBox,
-              bounds
-            ) // measure alternative
+          var /*number*/ distToNodeAlternative =
+              compat.graphml.xaml.RotatedSliderEdgeLabelModel.getDistance(nodeBox, bounds) // measure alternative
           // see if the situation got worse
           if (
             distToNodeAlternative <
@@ -7929,9 +7920,8 @@ yfiles.lang.module('compat.graphml.xaml', function (exports) {
         /*boolean*/ singleSegment
       ) {
         // determine the two segments of boundsR0 that are adjacent to the given edge segment
-        var /*yfiles.geometry.Point[]*/ boundsR0Corner = compat.graphml.xaml.RotatedSliderEdgeLabelModel.getCorners(
-            boundsR0
-          )
+        var /*yfiles.geometry.Point[]*/ boundsR0Corner =
+            compat.graphml.xaml.RotatedSliderEdgeLabelModel.getCorners(boundsR0)
         var /*number*/ closestPointR0Index = edgeSegment.$getClosestPointIndex(boundsR0Corner)
         var /*yfiles.geometry.Point*/ otherPoint1 =
             closestPointR0Index > 0 ? boundsR0Corner[closestPointR0Index - 1] : boundsR0Corner[3]
@@ -7950,9 +7940,8 @@ yfiles.lang.module('compat.graphml.xaml', function (exports) {
 
         // check on which of both segments of boundsR0 (boundsR1) adjacent to the edge segment consecutive
         // candidates touch each other
-        var /*yfiles.geometry.Point[]*/ boundsR1Corner = compat.graphml.xaml.RotatedSliderEdgeLabelModel.getCorners(
-            boundsR1
-          )
+        var /*yfiles.geometry.Point[]*/ boundsR1Corner =
+            compat.graphml.xaml.RotatedSliderEdgeLabelModel.getCorners(boundsR1)
 
         var /*yfiles.geometry.Point*/ vectorSegment1 = boundsR0Segment1.$toVector()
         var /*compat.graphml.xaml.RotatedSliderEdgeLabelModel.LineSegment*/
@@ -8030,12 +8019,10 @@ yfiles.lang.module('compat.graphml.xaml', function (exports) {
             intermediateCandidatesCountSegment1 >= intermediateCandidatesCountSegment2
         var /*number*/ dist = useFirstSegment ? distSegment1 : distSegment2
 
-        var /*compat.graphml.xaml.RotatedSliderEdgeLabelModel.LineSegment*/ segment = useFirstSegment
-            ? boundsR0Segment1
-            : boundsR0Segment2
-        var /*compat.graphml.xaml.RotatedSliderEdgeLabelModel.LineSegment*/ otherSegment = useFirstSegment
-            ? boundsR0Segment2
-            : boundsR0Segment1
+        var /*compat.graphml.xaml.RotatedSliderEdgeLabelModel.LineSegment*/ segment =
+            useFirstSegment ? boundsR0Segment1 : boundsR0Segment2
+        var /*compat.graphml.xaml.RotatedSliderEdgeLabelModel.LineSegment*/ otherSegment =
+            useFirstSegment ? boundsR0Segment2 : boundsR0Segment1
 
         var /*number*/ intermediateCandidatesCount = useFirstSegment
             ? intermediateCandidatesCountSegment1
@@ -8065,11 +8052,12 @@ yfiles.lang.module('compat.graphml.xaml', function (exports) {
             tmpLocation,
             tmpLocation.add(segment.$toVector())
           )
-        var /*boolean*/ nextAnchorFound = compat.graphml.xaml.RotatedSliderEdgeLabelModel.findLineIntersection(
-            orthoTmpLocationLine,
-            projLine,
-            nextAnchor
-          )
+        var /*boolean*/ nextAnchorFound =
+            compat.graphml.xaml.RotatedSliderEdgeLabelModel.findLineIntersection(
+              orthoTmpLocationLine,
+              projLine,
+              nextAnchor
+            )
         if (!nextAnchorFound) {
           nextAnchor.value = tmpLocation
         }
@@ -8114,10 +8102,11 @@ yfiles.lang.module('compat.graphml.xaml', function (exports) {
         var /*yfiles.geometry.Point*/ p1 = lineSegment.$firstEndPoint
         var /*yfiles.geometry.Point*/ p2 = lineSegment.$secondEndPoint
         var /*yfiles.geometry.Point*/ lineSegmentVector = lineSegment.$toVector()
-        var /*number*/ segmentAngle = compat.graphml.xaml.RotatedSliderEdgeLabelModel.calculateAngle(
-            lineSegmentVector,
-            compat.graphml.xaml.RotatedSliderEdgeLabelModel.ZERO_VECTOR
-          )
+        var /*number*/ segmentAngle =
+            compat.graphml.xaml.RotatedSliderEdgeLabelModel.calculateAngle(
+              lineSegmentVector,
+              compat.graphml.xaml.RotatedSliderEdgeLabelModel.ZERO_VECTOR
+            )
         var /*yfiles.geometry.Rect*/ bBox = rectClone.bounds
         if (side === compat.graphml.xaml.RotatedSliderEdgeLabelModel.NODE_SIDE_TOP) {
           var /*boolean*/ leftOfEdge
@@ -8164,11 +8153,12 @@ yfiles.lang.module('compat.graphml.xaml', function (exports) {
           rectClone.moveBy(new Point(intersectionPoint.value.x - closestPoint.x, 0))
           if (!isCenterSlider) {
             // include edge to label distance
-            var /*number*/ distanceOffset = compat.graphml.xaml.RotatedSliderEdgeLabelModel.calcProjDistance(
-                lineSegment,
-                new Point(1, 0),
-                Math.abs(dist)
-              )
+            var /*number*/ distanceOffset =
+                compat.graphml.xaml.RotatedSliderEdgeLabelModel.calcProjDistance(
+                  lineSegment,
+                  new Point(1, 0),
+                  Math.abs(dist)
+                )
             if (isFinite(distanceOffset)) {
               if (leftOfEdge) {
                 distanceOffset = -distanceOffset
@@ -8223,11 +8213,12 @@ yfiles.lang.module('compat.graphml.xaml', function (exports) {
             rectClone.moveBy(new Point(intersectionPoint.value.x - closestPoint.x, 0))
             if (!isCenterSlider) {
               // include edge to label distance
-              var /*number*/ distanceOffset = compat.graphml.xaml.RotatedSliderEdgeLabelModel.calcProjDistance(
-                  lineSegment,
-                  new Point(1, 0),
-                  Math.abs(dist)
-                )
+              var /*number*/ distanceOffset =
+                  compat.graphml.xaml.RotatedSliderEdgeLabelModel.calcProjDistance(
+                    lineSegment,
+                    new Point(1, 0),
+                    Math.abs(dist)
+                  )
               if (isFinite(distanceOffset)) {
                 if (!leftOfEdge) {
                   distanceOffset = -distanceOffset
@@ -8275,11 +8266,12 @@ yfiles.lang.module('compat.graphml.xaml', function (exports) {
               rectClone.moveBy(new Point(0, intersectionPoint.value.y - closestPoint.y))
               if (!isCenterSlider) {
                 // include edge to label distance
-                var /*number*/ distanceOffset = compat.graphml.xaml.RotatedSliderEdgeLabelModel.calcProjDistance(
-                    lineSegment,
-                    new Point(0, 1),
-                    Math.abs(dist)
-                  )
+                var /*number*/ distanceOffset =
+                    compat.graphml.xaml.RotatedSliderEdgeLabelModel.calcProjDistance(
+                      lineSegment,
+                      new Point(0, 1),
+                      Math.abs(dist)
+                    )
                 if (isFinite(distanceOffset)) {
                   if (belowEdge) {
                     distanceOffset = -distanceOffset
@@ -8329,11 +8321,12 @@ yfiles.lang.module('compat.graphml.xaml', function (exports) {
                 rectClone.moveBy(new Point(0, intersectionPoint.value.y - closestPoint.y))
                 if (!isCenterSlider) {
                   // include edge to label distance
-                  var /*number*/ distanceOffset = compat.graphml.xaml.RotatedSliderEdgeLabelModel.calcProjDistance(
-                      lineSegment,
-                      new Point(0, 1),
-                      Math.abs(dist)
-                    )
+                  var /*number*/ distanceOffset =
+                      compat.graphml.xaml.RotatedSliderEdgeLabelModel.calcProjDistance(
+                        lineSegment,
+                        new Point(0, 1),
+                        Math.abs(dist)
+                      )
                   if (isFinite(distanceOffset)) {
                     if (!belowEdge) {
                       distanceOffset = -distanceOffset
@@ -8422,9 +8415,8 @@ yfiles.lang.module('compat.graphml.xaml', function (exports) {
             .getPathGeometry(edge, edge.style)
             .getPath()
         // get array of path points
-        var /*yfiles.geometry.Point[]*/ path = compat.graphml.xaml.RotatedSliderEdgeLabelModel.getPathPoints(
-            generalPath
-          )
+        var /*yfiles.geometry.Point[]*/ path =
+            compat.graphml.xaml.RotatedSliderEdgeLabelModel.getPathPoints(generalPath)
 
         // if something is wrong with the path, generate one trivial position
         if (
@@ -8738,16 +8730,10 @@ yfiles.lang.module('compat.graphml.xaml', function (exports) {
           if (r1.intersects(r2)) {
             return 0.0
           }
-          var /*number*/ distVertical = compat.graphml.xaml.RotatedSliderEdgeLabelModel.orthogonalDistanceTo(
-              r1,
-              r2,
-              false
-            )
-          var /*number*/ distHorizontal = compat.graphml.xaml.RotatedSliderEdgeLabelModel.orthogonalDistanceTo(
-              r1,
-              r2,
-              true
-            )
+          var /*number*/ distVertical =
+              compat.graphml.xaml.RotatedSliderEdgeLabelModel.orthogonalDistanceTo(r1, r2, false)
+          var /*number*/ distHorizontal =
+              compat.graphml.xaml.RotatedSliderEdgeLabelModel.orthogonalDistanceTo(r1, r2, true)
           return Math.sqrt(distVertical * distVertical + distHorizontal * distHorizontal)
         },
 
@@ -8886,10 +8872,11 @@ yfiles.lang.module('compat.graphml.xaml', function (exports) {
           /*yfiles.geometry.Point*/ alignSegment,
           /*number*/ dist
         ) {
-          var /*number*/ segmentAngle = compat.graphml.xaml.RotatedSliderEdgeLabelModel.calculateAngle(
-              edgeSegment.$toVector(),
-              alignSegment
-            )
+          var /*number*/ segmentAngle =
+              compat.graphml.xaml.RotatedSliderEdgeLabelModel.calculateAngle(
+                edgeSegment.$toVector(),
+                alignSegment
+              )
           if (segmentAngle === Math.PI * 0.5) {
             return dist
           } else {
@@ -9523,8 +9510,9 @@ yfiles.lang.module('compat.graphml.xaml', function (exports) {
 
       convert: function (/*yfiles.graphml.IWriteContext*/ context, /*Object*/ value) {
         var /*compat.graphml.xaml.RotatedSliderEdgeLabelModel.RotatedSliderParameter*/
-          parameter = /*(compat.graphml.xaml.RotatedSliderEdgeLabelModel.RotatedSliderParameter)*/ this
-            .$innerParameter
+          parameter =
+            /*(compat.graphml.xaml.RotatedSliderEdgeLabelModel.RotatedSliderParameter)*/ this
+              .$innerParameter
         var /*compat.graphml.xaml.SliderParameterLocation*/ side =
             this.$labelModel.distance ===
             /*(compat.graphml.xaml.RotatedSliderEdgeLabelModel)*/ parameter.$model.$distance
@@ -9581,18 +9569,20 @@ yfiles.lang.module('compat.graphml.xaml', function (exports) {
           if (distance === 0.0) {
             dist += Number.MIN_VALUE
           }
-          this.$leftModel = new compat.graphml.xaml.RotatedSliderEdgeLabelModel.FromDistanceAngleDistanceRelativeToEdgeAndAutoRotationEnabled(
-            -dist,
-            angle,
-            distanceRelativeToEdge,
-            autoRotationEnabled
-          )
-          this.$rightModel = new compat.graphml.xaml.RotatedSliderEdgeLabelModel.FromDistanceAngleDistanceRelativeToEdgeAndAutoRotationEnabled(
-            dist,
-            angle,
-            distanceRelativeToEdge,
-            autoRotationEnabled
-          )
+          this.$leftModel =
+            new compat.graphml.xaml.RotatedSliderEdgeLabelModel.FromDistanceAngleDistanceRelativeToEdgeAndAutoRotationEnabled(
+              -dist,
+              angle,
+              distanceRelativeToEdge,
+              autoRotationEnabled
+            )
+          this.$rightModel =
+            new compat.graphml.xaml.RotatedSliderEdgeLabelModel.FromDistanceAngleDistanceRelativeToEdgeAndAutoRotationEnabled(
+              dist,
+              angle,
+              distanceRelativeToEdge,
+              autoRotationEnabled
+            )
         }
       },
 
@@ -9785,10 +9775,12 @@ yfiles.lang.module('compat.graphml.xaml', function (exports) {
         var /*yfiles.graph.ILabelModelParameter*/
           rightParam = this /*(yfiles.graph.ILabelModelParameterFinder)*/.$rightModel
             .findBestParameter(label, this.$rightModel, labelLayout)
-        var /*yfiles.geometry.IOrientedRectangle*/ leftGeom = this /*(yfiles.graph.ILabelModel)*/.$leftModel
-            .getGeometry(label, leftParam)
-        var /*yfiles.geometry.IOrientedRectangle*/ rightGeom = this /*(yfiles.graph.ILabelModel)*/.$rightModel
-            .getGeometry(label, rightParam)
+        var /*yfiles.geometry.IOrientedRectangle*/ leftGeom =
+            this /*(yfiles.graph.ILabelModel)*/.$leftModel
+              .getGeometry(label, leftParam)
+        var /*yfiles.geometry.IOrientedRectangle*/ rightGeom =
+            this /*(yfiles.graph.ILabelModel)*/.$rightModel
+              .getGeometry(label, rightParam)
         var /*yfiles.geometry.Point*/ layoutCenter = labelLayout.orientedRectangleCenter
         var /*number*/ leftDist = leftGeom.orientedRectangleCenter.distanceTo(layoutCenter)
         var /*number*/ rightDist = rightGeom.orientedRectangleCenter.distanceTo(layoutCenter)
@@ -10369,7 +10361,8 @@ yfiles.lang.module('compat.graphml.xaml', function (exports) {
           newInstance = new yfiles.graphml.StripeLabelModelParameterExtension()
         {
           newInstance.model = this.$model
-          newInstance.position = /*(yfiles.graph.StripeLabelModel.StripeLabelModelPosition)*/ this.$position
+          newInstance.position =
+            /*(yfiles.graph.StripeLabelModel.StripeLabelModelPosition)*/ this.$position
         }
         var /*yfiles.graphml.StripeLabelModelParameterExtension*/ coreExtension = newInstance
         return coreExtension.provideValue(serviceProvider)
@@ -10527,7 +10520,8 @@ yfiles.lang.module('compat.graphml.xaml', function (exports) {
           newInstance = new yfiles.graphml.StretchStripeLabelModelParameterExtension()
         {
           newInstance.model = this.$model
-          newInstance.position = /*(yfiles.graph.StretchStripeLabelModel.StretchStripeLabelModelPosition)*/ this.$position
+          newInstance.position =
+            /*(yfiles.graph.StretchStripeLabelModel.StretchStripeLabelModelPosition)*/ this.$position
         }
         var /*yfiles.graphml.StretchStripeLabelModelParameterExtension*/ coreExtension = newInstance
         return coreExtension.provideValue(serviceProvider)
@@ -10830,9 +10824,8 @@ yfiles.lang.module('compat.graphml.xaml', function (exports) {
           sliderEdgeLabelModel = /*(compat.graphml.xaml.SliderEdgeLabelModel)*/ model
         var /*yfiles.collections.List<yfiles.graph.ILabelModelParameter>*/ result = new List()
         var /*yfiles.graph.IEdge*/ edge = /*(yfiles.graph.IEdge)*/ label.owner
-        var /*yfiles.styles.IPathGeometry*/ geometry = compat.graphml.xaml.SliderEdgeLabelModel.getPathGeometry(
-            edge
-          )
+        var /*yfiles.styles.IPathGeometry*/ geometry =
+            compat.graphml.xaml.SliderEdgeLabelModel.getPathGeometry(edge)
         if (geometry !== null) {
           var /*number*/ count = geometry.getSegmentCount()
           for (var /*number*/ i = 0; i < count; i++) {
@@ -11359,7 +11352,8 @@ yfiles.lang.module('compat.graphml.xaml', function (exports) {
       provideValue: function (/*yfiles.graph.ILookup*/ serviceProvider) {
         var /*yfiles.styles.TableNodeStyle*/ newInstance = new TableNodeStyle()
         {
-          newInstance.tableRenderingOrder = /*(yfiles.styles.TableRenderingOrder)*/ this.$tableRenderingOrder
+          newInstance.tableRenderingOrder =
+            /*(yfiles.styles.TableRenderingOrder)*/ this.$tableRenderingOrder
           newInstance.table = this.$table
         }
         var /*yfiles.styles.TableNodeStyle*/ tableNodeStyle = newInstance
@@ -11440,7 +11434,8 @@ yfiles.lang.module('compat.graphml.xaml', function (exports) {
             new compat.graphml.xaml.DynamicTableNodeStyleExtension.DynamicTableNodeStyleRenderer()
           )
         {
-          newInstance.tableRenderingOrder = /*(yfiles.styles.TableRenderingOrder)*/ this.$tableRenderingOrder
+          newInstance.tableRenderingOrder =
+            /*(yfiles.styles.TableRenderingOrder)*/ this.$tableRenderingOrder
         }
         var /*yfiles.styles.TableNodeStyle*/ tableNodeStyle = newInstance
         if (this.$backgroundStyleSet) {
@@ -11671,16 +11666,18 @@ yfiles.lang.module('compat.graphml.xaml', function (exports) {
       },
 
       $initSideSliderEdgeLabelModel: function () {
-        this.$leftSlider = new compat.graphml.xaml.SliderEdgeLabelModel.FromDistanceAngleAndEdgeRelativeDistance(
-          1,
-          0,
-          true
-        )
-        this.$rightSlider = new compat.graphml.xaml.SliderEdgeLabelModel.FromDistanceAngleAndEdgeRelativeDistance(
-          -1,
-          0,
-          true
-        )
+        this.$leftSlider =
+          new compat.graphml.xaml.SliderEdgeLabelModel.FromDistanceAngleAndEdgeRelativeDistance(
+            1,
+            0,
+            true
+          )
+        this.$rightSlider =
+          new compat.graphml.xaml.SliderEdgeLabelModel.FromDistanceAngleAndEdgeRelativeDistance(
+            -1,
+            0,
+            true
+          )
       },
 
       $static: {
@@ -11724,8 +11721,8 @@ yfiles.lang.module('compat.graphml.xaml', function (exports) {
 
             convert: function (/*yfiles.graphml.IWriteContext*/ context, /*Object*/ value) {
               var /*compat.graphml.xaml.SliderEdgeLabelModel.SliderParameter*/
-                parameter = /*(compat.graphml.xaml.SliderEdgeLabelModel.SliderParameter)*/ this
-                  .$parameter
+                parameter =
+                  /*(compat.graphml.xaml.SliderEdgeLabelModel.SliderParameter)*/ this.$parameter
               if (
                 (this.$location & compat.graphml.xaml.SliderParameterLocation.FROM_TARGET) ===
                 compat.graphml.xaml.SliderParameterLocation.FROM_TARGET
@@ -11978,6 +11975,9 @@ yfiles.lang.module('compat.graphml.xaml', function (exports) {
 
       $textAlignment: null,
 
+      /**
+       * @yjs:keep=textAlignment
+       */
       textAlignment: {
         $meta: function () {
           return [TypeAttribute(compat.graphml.xaml.TextAlignment.$class)]
@@ -12083,8 +12083,10 @@ yfiles.lang.module('compat.graphml.xaml', function (exports) {
           newInstance.clipText = this.$clipText
           newInstance.textFill = this.$textBrush
           newInstance.font = this.$typeface
-          newInstance.horizontalTextAlignment = /*(yfiles.view.HorizontalTextAlignment)*/ this.$textAlignment
-          newInstance.verticalTextAlignment = /*(yfiles.view.HorizontalTextAlignment)*/ this.$verticalTextAlignment
+          newInstance.horizontalTextAlignment =
+            /*(yfiles.view.HorizontalTextAlignment)*/ this.$textAlignment
+          newInstance.verticalTextAlignment =
+            /*(yfiles.view.HorizontalTextAlignment)*/ this.$verticalTextAlignment
           newInstance.wrapping = /*(yfiles.view.TextWrapping)*/ this.$trimming
         }
         return newInstance
@@ -12122,7 +12124,8 @@ yfiles.lang.module('compat.graphml.xaml', function (exports) {
       },
 
       provideValue: function (/*yfiles.graph.ILookup*/ serviceProvider) {
-        var /*yfiles.styles.NodeStylePortStyleAdapter*/ newInstance = new NodeStylePortStyleAdapter()
+        var /*yfiles.styles.NodeStylePortStyleAdapter*/ newInstance =
+            new NodeStylePortStyleAdapter()
         {
           newInstance.renderSize = new Size(4, 4)
           var /*yfiles.styles.ShapeNodeStyle*/ newInstance2 = new ShapeNodeStyle()
@@ -12216,7 +12219,8 @@ yfiles.lang.module('compat.graphml.xaml', function (exports) {
       },
 
       provideValue: function (/*yfiles.graph.ILookup*/ serviceProvider) {
-        var /*yfiles.styles.NodeStylePortStyleAdapter*/ newInstance = new NodeStylePortStyleAdapter()
+        var /*yfiles.styles.NodeStylePortStyleAdapter*/ newInstance =
+            new NodeStylePortStyleAdapter()
         {
           newInstance.nodeStyle = this.$nodeStyle
           newInstance.renderSize = this.$renderSize
@@ -13048,7 +13052,8 @@ yfiles.lang.module('compat.graphml.xaml', function (exports) {
         var /*yfiles.graphml.ExteriorLabelModelParameterExtension*/
           newInstance = new yfiles.graphml.ExteriorLabelModelParameterExtension()
         {
-          newInstance.position = /*(yfiles.graph.ExteriorLabelModel.ExteriorLabelModelPosition)*/ this.$position
+          newInstance.position =
+            /*(yfiles.graph.ExteriorLabelModel.ExteriorLabelModelPosition)*/ this.$position
           newInstance.model = this.$model
         }
         var /*yfiles.graphml.ExteriorLabelModelParameterExtension*/ coreExtension = newInstance
@@ -13430,7 +13435,8 @@ yfiles.lang.module('compat.graphml.xaml', function (exports) {
               INSTANCE: null,
 
               $clinit: function () {
-                compat.graphml.xaml.ControlStyleBaseExtension.EmptyLookup.INSTANCE = new compat.graphml.xaml.ControlStyleBaseExtension.EmptyLookup()
+                compat.graphml.xaml.ControlStyleBaseExtension.EmptyLookup.INSTANCE =
+                  new compat.graphml.xaml.ControlStyleBaseExtension.EmptyLookup()
               }
             }
           }
@@ -14270,7 +14276,8 @@ yfiles.lang.module('compat.graphml.xaml', function (exports) {
           newInstance.ratio = new Point(0.5, 0.5).add(this.$offset)
           newInstance.offset = Point.ORIGIN
         }
-        var /*yfiles.graphml.FreeNodePortLocationModelParameterExtension*/ coreExtension = newInstance
+        var /*yfiles.graphml.FreeNodePortLocationModelParameterExtension*/ coreExtension =
+            newInstance
         return coreExtension.provideValue(serviceProvider)
       },
 
@@ -14658,9 +14665,11 @@ yfiles.lang.module('compat.graphml.xaml', function (exports) {
           newInstance = new yfiles.graphml.NinePositionsEdgeLabelModelParameterExtension()
         {
           newInstance.model = this.$model
-          newInstance.position = /*(yfiles.graph.NinePositionsEdgeLabelModel.NinePositionsEdgeLabelModelPosition)*/ this.$position
+          newInstance.position =
+            /*(yfiles.graph.NinePositionsEdgeLabelModel.NinePositionsEdgeLabelModelPosition)*/ this.$position
         }
-        var /*yfiles.graphml.NinePositionsEdgeLabelModelParameterExtension*/ coreExtension = newInstance
+        var /*yfiles.graphml.NinePositionsEdgeLabelModelParameterExtension*/ coreExtension =
+            newInstance
         return coreExtension.provideValue(serviceProvider)
       }
     }
@@ -14858,7 +14867,8 @@ yfiles.lang.module('compat.graphml.xaml', function (exports) {
       $items: null,
 
       provideValue: function (/*yfiles.graph.ILookup*/ serviceProvider) {
-        var /*yfiles.graphml.GeneralPathExtension*/ generalPathExtension = new yfiles.graphml.GeneralPathExtension()
+        var /*yfiles.graphml.GeneralPathExtension*/ generalPathExtension =
+            new yfiles.graphml.GeneralPathExtension()
         var /*yfiles.collections.IEnumerator*/ tmpEnumerator
         for (tmpEnumerator = this.$items.getEnumerator(); tmpEnumerator.moveNext(); ) {
           var /*Object*/ item = tmpEnumerator.current
@@ -15243,7 +15253,8 @@ yfiles.lang.module('compat.graphml.xaml', function (exports) {
         var /*yfiles.graphml.InteriorLabelModelParameterExtension*/
           newInstance = new yfiles.graphml.InteriorLabelModelParameterExtension()
         {
-          newInstance.position = /*(yfiles.graph.InteriorLabelModel.InteriorLabelModelPosition)*/ this.$position
+          newInstance.position =
+            /*(yfiles.graph.InteriorLabelModel.InteriorLabelModelPosition)*/ this.$position
           newInstance.model = this.$model
         }
         var /*yfiles.graphml.InteriorLabelModelParameterExtension*/ coreExtension = newInstance
@@ -15396,10 +15407,12 @@ yfiles.lang.module('compat.graphml.xaml', function (exports) {
         var /*yfiles.graphml.InteriorStretchLabelModelParameterExtension*/
           newInstance = new yfiles.graphml.InteriorStretchLabelModelParameterExtension()
         {
-          newInstance.position = /*(yfiles.graph.InteriorStretchLabelModel.InteriorStretchLabelModelPosition)*/ this.$position
+          newInstance.position =
+            /*(yfiles.graph.InteriorStretchLabelModel.InteriorStretchLabelModelPosition)*/ this.$position
           newInstance.model = this.$model
         }
-        var /*yfiles.graphml.InteriorStretchLabelModelParameterExtension*/ coreExtension = newInstance
+        var /*yfiles.graphml.InteriorStretchLabelModelParameterExtension*/ coreExtension =
+            newInstance
         return coreExtension.provideValue(serviceProvider)
       },
 
@@ -15847,7 +15860,8 @@ yfiles.lang.module('compat.graphml.xaml', function (exports) {
         }),
 
         $clinit: function () {
-          compat.graphml.xaml.AnchoredPortLocationModel.INSTANCE = new compat.graphml.xaml.AnchoredPortLocationModel()
+          compat.graphml.xaml.AnchoredPortLocationModel.INSTANCE =
+            new compat.graphml.xaml.AnchoredPortLocationModel()
         }
       }
     }

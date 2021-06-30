@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -54,47 +54,72 @@ import loadJson from '../../resources/load-json.js'
  * to that node and the 'delegateHandler' parameter will be set to the
  * position handler that would have been returned without setting this
  * function as decorator.
- * @param {IGraph} graph The given graph
- * @param {MutableRectangle} boundaryRectangle The rectangle that limits the nodes position.
- * @return {IPositionHandler}
+ * @param {!IGraph} graph The given graph
+ * @param {!MutableRectangle} boundaryRectangle The rectangle that limits the nodes position.
  */
 function registerPositionHandler(graph, boundaryRectangle) {
-  const nodeDecorator = graph.decorator.nodeDecorator
-  nodeDecorator.positionHandlerDecorator.setImplementationWrapper((node, delegateHandler) => {
-    // Obtain the tag from the node
-    const nodeTag = node.tag
+  const positionHandlerDecorator = graph.decorator.nodeDecorator.positionHandlerDecorator
+  positionHandlerDecorator.setImplementationWrapper((node, delegateHandler) => {
+    if (!delegateHandler) {
+      return null
+    }
 
     // Check if it is a known tag and choose the respective implementation.
     // Fallback to the default behavior otherwise.
-    if (typeof nodeTag !== 'string') {
+    if (node == null || typeof node.tag !== 'string') {
       return delegateHandler
-    } else if (nodeTag === 'orange') {
-      // This implementation delegates certain behavior to the default implementation
-      return new OrangePositionHandler(boundaryRectangle, node, delegateHandler)
-    } else if (nodeTag === 'firebrick') {
-      // A simple implementation that prohibits moving
-      return new RedPositionHandler()
-    } else if (nodeTag === 'royalblue') {
-      // Implementation that uses two levels of delegation to create a combined behavior
-      return new OrangePositionHandler(
-        boundaryRectangle,
-        node,
-        new GreenPositionHandler(delegateHandler)
-      )
-    } else if (nodeTag === 'green') {
-      // Another implementation that delegates certain behavior to the default implementation
-      return new GreenPositionHandler(delegateHandler)
     }
-    return delegateHandler
+
+    switch (node.tag) {
+      case 'orange':
+        // This implementation delegates certain behavior to the default implementation
+        return new OrangePositionHandler(boundaryRectangle, node, delegateHandler)
+      case 'firebrick':
+        // A simple implementation that prohibits moving
+        return new RedPositionHandler()
+      case 'royalblue':
+        // Implementation that uses two levels of delegation to create a combined behavior
+        return new OrangePositionHandler(
+          boundaryRectangle,
+          node,
+          new GreenPositionHandler(delegateHandler)
+        )
+      case 'green':
+        // Another implementation that delegates certain behavior to the default implementation
+        return new GreenPositionHandler(delegateHandler)
+      default:
+        return delegateHandler
+    }
   })
 }
 
+/**
+ * @param {!object} licenseData
+ */
 function run(licenseData) {
   License.value = licenseData
   // initialize the GraphComponent
   const graphComponent = new GraphComponent('graphComponent')
-  const graph = graphComponent.graph
 
+  configureUserInteraction(graphComponent)
+
+  // Create the rectangle that limits the movement of some nodes
+  // and add it to the graphComponent.
+  const boundaryRectangle = new MutableRectangle(20, 20, 480, 400)
+  graphComponent.backgroundGroup.addChild(boundaryRectangle, new LimitingRectangleDescriptor())
+
+  registerPositionHandler(graphComponent.graph, boundaryRectangle)
+
+  createSampleGraph(graphComponent.graph)
+
+  showApp(graphComponent)
+}
+
+/**
+ * Restricits interactive editing to selecting and moving nodes for the given graph component.
+ * @param {!GraphComponent} graphComponent The demo's graph component.
+ */
+function configureUserInteraction(graphComponent) {
   // Create a default editor input mode
   const graphEditorInputMode = new GraphEditorInputMode()
 
@@ -104,27 +129,14 @@ function run(licenseData) {
   graphEditorInputMode.allowClipboardOperations = false
   // don't show resize handles,
   graphEditorInputMode.showHandleItems = GraphItemTypes.NONE
-  // and enable the undo feature.
-  graph.undoEngineEnabled = true
 
   // Finally, set the input mode to the graph component.
   graphComponent.inputMode = graphEditorInputMode
-
-  // Create the rectangle that limits the movement of some nodes
-  // and add it to the graphComponent.
-  const boundaryRectangle = new MutableRectangle(20, 20, 480, 400)
-  graphComponent.backgroundGroup.addChild(boundaryRectangle, new LimitingRectangleDescriptor())
-
-  registerPositionHandler(graph, boundaryRectangle)
-
-  createSampleGraph(graph)
-
-  showApp(graphComponent)
 }
 
 /**
- * Creates the sample graph of this demo.
- * @param {IGraph} graph The input graph
+ * Creates the sample graph for this demo.
+ * @param {!IGraph} graph The graph displayed in the demo's graph component.
  */
 function createSampleGraph(graph) {
   createNode(graph, 100, 100, 100, 30, 'firebrick', 'whitesmoke', 'Unmovable')
@@ -140,21 +152,18 @@ function createSampleGraph(graph) {
     'whitesmoke',
     'Limited to Rectangle\nand One Axis'
   )
-
-  // clear undo after initial graph loading
-  graph.undoEngine.clear()
 }
 
 /**
  * Creates a sample node for this demo.
- * @param {IGraph} graph The given graph
+ * @param {!IGraph} graph The given graph
  * @param {number} x The node's x-coordinate
  * @param {number} y The node's y-coordinate
  * @param {number} w The node's width
  * @param {number} h The node's height
- * @param {string} cssClass The given css class
- * @param {string} textColor The color of the text
- * @param {string} labelText The nodes label's text
+ * @param {!string} cssClass The given css class
+ * @param {!string} textColor The color of the text
+ * @param {!string} labelText The nodes label's text
  */
 function createNode(graph, x, y, w, h, cssClass, textColor, labelText) {
   const textLabelStyle = new DefaultLabelStyle({

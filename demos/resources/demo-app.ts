@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -34,6 +34,8 @@ import {
   detectInternetExplorerVersion
 } from '../utils/Workarounds'
 import { GraphMLIOHandler } from 'yfiles'
+
+export type OptionData = { value: string; text: string }
 
 // match CSS media query
 const SIDEBAR_WIDTH = 320
@@ -498,6 +500,86 @@ export function setComboboxValue(comboBoxId: any, value: any): void {
 }
 
 /**
+ * Adds options to an HTMLSelectElement
+ * @param selectElement the HTMLSelectElement
+ * @param values the option values
+ */
+export function addOptions(selectElement: HTMLSelectElement, ...values: (string | OptionData)[]) {
+  for (const value of values) {
+    const option = document.createElement('option')
+    if (typeof value === 'string') {
+      option.value = value
+      option.text = value
+    } else {
+      option.value = value.value
+      option.text = value.text
+    }
+    selectElement.add(option)
+  }
+  selectElement.dispatchEvent(new Event('change'))
+}
+/**
+ * Adds navigation buttons to an HTMLSelectElement
+ * @param selectElement the HTMLSelectElement
+ * @param wrapAround whether to wrap around when navigating beyond the end or beginning of the select
+ */
+export function addNavigationButtons(selectElement: HTMLSelectElement, wrapAround = true) {
+  if (selectElement.parentElement == null) {
+    throw new Error('The element must have a parent')
+  }
+
+  const prevButton = document.createElement('button')
+  prevButton.setAttribute('title', 'Previous')
+  prevButton.setAttribute('class', 'demo-icon-yIconPrevious')
+  prevButton.addEventListener('click', e => {
+    const newIndex = selectElement.selectedIndex - 1
+    selectElement.selectedIndex =
+      newIndex >= 0 ? newIndex : wrapAround ? selectElement.options.length - 1 : 0
+    selectElement.dispatchEvent(new Event('change'))
+  })
+
+  const nextButton = document.createElement('button')
+  nextButton.setAttribute('title', 'Next')
+  nextButton.setAttribute('class', 'demo-icon-yIconNext')
+  nextButton.addEventListener('click', e => {
+    const newIndex = selectElement.selectedIndex + 1
+    const lastIndex = selectElement.options.length - 1
+    selectElement.selectedIndex = newIndex <= lastIndex ? newIndex : wrapAround ? 0 : lastIndex
+    selectElement.dispatchEvent(new Event('change'))
+  })
+
+  selectElement.parentElement.insertBefore(prevButton, selectElement)
+  if (selectElement.nextElementSibling != null) {
+    selectElement.parentElement.insertBefore(nextButton, selectElement.nextElementSibling)
+  } else {
+    selectElement.parentElement.appendChild(nextButton)
+  }
+
+  const updateDisabled = () => {
+    const lastIndex = selectElement.options.length - 1
+    prevButton.disabled =
+      selectElement.disabled || (!wrapAround && selectElement.selectedIndex === 0)
+    nextButton.disabled =
+      selectElement.disabled || (!wrapAround && selectElement.selectedIndex === lastIndex)
+  }
+
+  selectElement.addEventListener('change', _ => {
+    updateDisabled()
+  })
+
+  const disabledObserver = new MutationObserver(mutations => {
+    for (const mutation of mutations) {
+      if (mutation.attributeName === 'disabled') {
+        updateDisabled()
+        return
+      }
+    }
+  })
+  disabledObserver.observe(selectElement, { attributes: true })
+  return selectElement
+}
+
+/**
  * Reads a graph from the given filename.
  * @param graphMLIOHandler The GraphMLIOHandler that is used to read the graph
  * @param graph The graph.
@@ -531,12 +613,3 @@ export function readGraph(
 
 // initialize the application
 initializeDemo()
-
-export {
-  detectFirefoxVersion,
-  detectInternetExplorerVersion,
-  detectiOSVersion,
-  passiveSupported,
-  nativeDragAndDropSupported,
-  pointerEventsSupported
-} from '../utils/Workarounds.js'

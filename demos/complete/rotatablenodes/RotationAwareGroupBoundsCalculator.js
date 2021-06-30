@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -39,22 +39,22 @@ import { RotatableNodeStyleDecorator } from './RotatableNodes.js'
 
 /**
  * Calculates group bounds taking the rotated layout for nodes which
- * {@link RotatableNodes.RotatableNodeStyleDecorator support rotation}.
+ * {@link RotatableNodeStyleDecorator support rotation}.
  */
 export default class RotationAwareGroupBoundsCalculator extends BaseClass(IGroupBoundsCalculator) {
   /**
    * Calculates the minimum bounds for the given group node to enclose all its children plus insets.
-   * @param {IGraph} graph
-   * @param {INode} groupNode
-   * @return {Rect}
+   * @param {!IGraph} graph
+   * @param {!INode} groupNode
+   * @returns {!Rect}
    */
   calculateBounds(graph, groupNode) {
     let bounds = Rect.EMPTY
     graph.getChildren(groupNode).forEach(node => {
-      const styleWrapper = node.style
-      if (styleWrapper instanceof RotatableNodeStyleDecorator) {
+      const style = node.style
+      if (style instanceof RotatableNodeStyleDecorator) {
         // if the node supports rotation: add the outer bounds of the rotated layout
-        bounds = Rect.add(bounds, styleWrapper.getRotatedLayout(node).bounds)
+        bounds = Rect.add(bounds, style.getRotatedLayout(node).bounds)
       } else {
         // in all other cases: add the node's layout
         bounds = Rect.add(bounds, node.layout.toRect())
@@ -67,8 +67,8 @@ export default class RotationAwareGroupBoundsCalculator extends BaseClass(IGroup
 
 /**
  * Returns insets to add to apply to the given groupNode.
- * @param {INode} groupNode
- * @return {Insets}
+ * @param {!INode} groupNode
+ * @returns {!Insets}
  */
 function getInsets(groupNode) {
   const provider = groupNode.lookup(INodeInsetsProvider.$class)

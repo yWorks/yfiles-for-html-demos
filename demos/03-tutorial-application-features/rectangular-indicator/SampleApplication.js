@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -131,8 +131,9 @@ function initializeInputModes() {
  */
 function addExportRectInputModes(inputMode) {
   // create a mode that deals with the handles
-  const exportHandleInputMode = new HandleInputMode()
-  exportHandleInputMode.priority = 1
+  const exportHandleInputMode = new HandleInputMode({
+    priority: 1
+  })
   // add it to the graph editor mode
   inputMode.add(exportHandleInputMode)
 
@@ -145,12 +146,13 @@ function addExportRectInputModes(inputMode) {
   exportHandleInputMode.handles = newDefaultCollectionModel
 
   // create a mode that allows for dragging the export rectangle at the sides
-  const moveInputMode = new MoveInputMode()
-  moveInputMode.positionHandler = new PositionHandler(exportRect)
-  moveInputMode.hitTestable = IHitTestable.create((context, location) => {
-    const path = new GeneralPath(5)
-    path.appendRectangle(exportRect, false)
-    return path.pathContains(location, context.hitTestRadius + 3 / context.zoom)
+  const moveInputMode = new MoveInputMode({
+    positionHandler: new PositionHandler(exportRect),
+    hitTestable: IHitTestable.create((context, location) => {
+      const path = new GeneralPath(5)
+      path.appendRectangle(exportRect, false)
+      return path.pathContains(location, context.hitTestRadius + 3 / context.zoom)
+    })
   })
 
   // add it to the edit mode

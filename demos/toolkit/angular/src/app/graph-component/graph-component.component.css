@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -27,10 +27,14 @@
  **
  ***************************************************************************/
 .graph-component {
-  position: absolute;
-  top: 100px;
-  bottom: 0;
-  left: 0;
+  width: 100%;
+  height: 100%;
   right: 320px;
   background-color: #eeeeee;
+}
+
+:host ::ng-deep .yfiles-canvascomponent .yfiles-tooltip {
+  background-color: transparent;
+  border: none;
+  padding: 0;
 }

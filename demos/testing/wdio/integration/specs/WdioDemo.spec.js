@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -48,7 +48,13 @@ describe('Wdio Demo', () => {
 
       await zoomInButton.click()
 
-      const zoom = await wdioDemoPage.zoom
+      // zooming is animated, thus wait a before checking the value
+      const checkZoomPromise = new Promise(resolve => {
+        setTimeout(() => {
+          resolve(wdioDemoPage.zoom)
+        }, 1000)
+      })
+      const zoom = await checkZoomPromise
       expect(zoom).to.be.greaterThan(initialZoom)
     })
   })

@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -27,14 +27,16 @@
  **
  ***************************************************************************/
 import {
-  ILabel,
-  ILabelStyle,
-  IRenderContext,
   IconLabelStyle,
+  ILabel,
+  ILabelModelParameter,
+  ILabelStyle,
   Insets,
   InteriorLabelModel,
+  IRenderContext,
   LabelStyleBase,
   Size,
+  SvgVisual,
   Visual
 } from 'yfiles'
 
@@ -52,7 +54,7 @@ export default class StateLabelDecorator extends LabelStyleBase {
    * The decorator constructor.
    * The wrapped labelStyle is passed as <code>wrappedStyle</code>
    * and used by the iconLabelStyle to render the text label.
-   * @param {ILabelStyle} wrappedStyle The wrapped labelStyle that is used to render the text.
+   * @param {!ILabelStyle} wrappedStyle The wrapped labelStyle that is used to render the text.
    */
   constructor(wrappedStyle) {
     super()
@@ -61,17 +63,18 @@ export default class StateLabelDecorator extends LabelStyleBase {
     this.insetsLeft = new Insets(0, 0, StateLabelDecorator.STATE_ICON_SIZE.width + 4, 0)
     this.insetsRight = new Insets(StateLabelDecorator.STATE_ICON_SIZE.width + 4, 0, 0, 0)
 
-    this.$wrappedStyle = new IconLabelStyle({
+    this._wrappedStyle = new IconLabelStyle({
       icon: 'resources/no-icon-16.png',
       iconSize: StateLabelDecorator.STATE_ICON_SIZE,
       iconPlacement: this.labelModelParameterLeft
     })
-    this.$wrappedStyle.wrapped = wrappedStyle
+
+    this._wrappedStyle.wrapped = wrappedStyle
   }
 
   /**
    * Returns the default icon's size.
-   * @return {Size}
+   * @type {!Size}
    */
   static get STATE_ICON_SIZE() {
     return new Size(16, 16)
@@ -79,7 +82,7 @@ export default class StateLabelDecorator extends LabelStyleBase {
 
   /**
    * Returns an array with the state icons.
-   * @return {string[]}
+   * @type {!Array.<string>}
    */
   static get STATE_ICONS() {
     return [
@@ -101,27 +104,28 @@ export default class StateLabelDecorator extends LabelStyleBase {
   /**
    * Gets the style used to render the icon label.
    * The explicit getter/setter is needed to support (de-)serialization.
-   * @return {IconLabelStyle}
+   * @type {!IconLabelStyle}
    */
   get wrappedStyle() {
-    return this.$wrappedStyle
+    return this._wrappedStyle
   }
 
   /**
    * Sets the style used to render the icon label.
    * The explicit getter/setter is needed to support (de-)serialization.
-   * @param {IconLabelStyle} value The style to be set.
+   * @param value The style to be set.
+   * @type {!IconLabelStyle}
    */
   set wrappedStyle(value) {
-    this.$wrappedStyle = value
+    this._wrappedStyle = value
   }
 
   /**
    * Creates the Visual and initializes the RenderDataCache.
-   * @param {IRenderContext} renderContext The render context.
-   * @param {ILabel} label The label to which this style instance is assigned.
+   * @param {!IRenderContext} renderContext The render context.
+   * @param {!ILabel} label The label to which this style instance is assigned.
    * @see Overrides {@link LabelStyleBase#createVisual}
-   * @return {Visual}
+   * @returns {!Visual}
    */
   createVisual(renderContext, label) {
     // create the cache for updating the visual
@@ -140,11 +144,11 @@ export default class StateLabelDecorator extends LabelStyleBase {
 
   /**
    * Updates the Visual if cache data can be reused, creates a new Visual otherwise.
-   * @param {IRenderContext} renderContext The render context.
-   * @param {Visual} oldVisual The old visual.
-   * @param {ILabel} label The label to which this style instance is assigned.
+   * @param {!IRenderContext} renderContext The render context.
+   * @param {!Visual} oldVisual The old visual.
+   * @param {!ILabel} label The label to which this style instance is assigned.
    * @see Overrides {@link LabelStyleBase#updateVisual}
-   * @return {Visual}
+   * @returns {!Visual}
    */
   updateVisual(renderContext, oldVisual, label) {
     const cache = this.createRenderDataCache(label.owner.tag)
@@ -167,9 +171,9 @@ export default class StateLabelDecorator extends LabelStyleBase {
 
   /**
    * Returns the preferred size of the wrapped {@link StateLabelDecorator#wrappedStyle}.
-   * @param {ILabel} label The given label.
+   * @param {!ILabel} label The given label.
    * @see Overrides {@link LabelStyleBase#getPreferredSize}
-   * @return {Size}
+   * @returns {!Size}
    */
   getPreferredSize(label) {
     const cache = this.createRenderDataCache(label.owner.tag)
@@ -179,7 +183,7 @@ export default class StateLabelDecorator extends LabelStyleBase {
 
   /**
    * Configures the wrappedStyle using parameters stored in RenderDataCache cache.
-   * @param {object} cache The data render cache.
+   * @param {!RenderDataCache} cache The data render cache.
    */
   configureIconStyle(cache) {
     this.wrappedStyle.iconPlacement = cache.labelModelParameter
@@ -190,8 +194,8 @@ export default class StateLabelDecorator extends LabelStyleBase {
 
   /**
    * Creates a RenderDataCache using values in NodeData.
-   * @param {object} data The label tag.
-   * @return {RenderDataCache}
+   * @param {!NodeData} data The label tag.
+   * @returns {!RenderDataCache}
    */
   createRenderDataCache(data) {
     // place icon left or right of text
@@ -219,28 +223,32 @@ export default class StateLabelDecorator extends LabelStyleBase {
  * The equals method detects if the cache has changed.
  */
 class RenderDataCache {
+  /**
+   * @param {!ILabelModelParameter} labelModelParameter
+   * @param {!Insets} insets
+   * @param {!string} icon
+   * @param {!Size} size
+   */
   constructor(labelModelParameter, insets, icon, size) {
-    this.labelModelParameter = labelModelParameter
-    this.insets = insets
-    this.icon = icon
     this.size = size
+    this.icon = icon
+    this.insets = insets
+    this.labelModelParameter = labelModelParameter
   }
 
-  /** @return {boolean} */
+  /**
+   * @param {!object} obj
+   * @returns {boolean}
+   */
   equals(obj) {
     if (!(obj instanceof RenderDataCache)) {
       return false
     }
-    return this.equalsWithOther(obj)
-  }
-
-  /** @return {boolean} */
-  equalsWithOther(other) {
     return (
-      this.labelModelParameter.equals(other.labelModelParameter) &&
-      this.insets.equals(other.insets) &&
-      this.icon === other.icon &&
-      this.size.equals(other.size)
+      this.labelModelParameter === obj.labelModelParameter &&
+      this.insets.equals(obj.insets) &&
+      this.icon === obj.icon &&
+      this.size.equals(obj.size)
     )
   }
 }

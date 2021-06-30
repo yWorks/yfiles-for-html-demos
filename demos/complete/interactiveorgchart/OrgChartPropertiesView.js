@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -27,12 +27,13 @@
  **
  ***************************************************************************/
 import { addClass } from '../../resources/demo-app.js'
+import { INode } from 'yfiles'
 
 export default class OrgChartPropertiesView {
   /**
    * Creates a new OrgChartPropertiesView
-   * @param {Element} element The DOM element that will be filled with the properties.
-   * @param {function(INode)} selectAndZoomToNodeWithEmail - the function will be called when clicking
+   * @param {!Element} element The DOM element that will be filled with the properties.
+   * @param {!function} selectAndZoomToNodeWithEmail - the function will be called when clicking
    *   on email links in the View
    */
   constructor(element, selectAndZoomToNodeWithEmail) {
@@ -40,10 +41,13 @@ export default class OrgChartPropertiesView {
     this.selectAndZoomToNodeWithEmail = selectAndZoomToNodeWithEmail
   }
 
+  /**
+   * @param {!INode} node
+   */
   showProperties(node) {
     this.clear()
 
-    if (node == null || node.tag == null) {
+    if (node === null || node.tag === null) {
       return
     }
 
@@ -145,11 +149,11 @@ export default class OrgChartPropertiesView {
   /**
    * Creates an SVG element that references the provided SVG icon, e.g.:
    * <svg width="50" height="50"><use xlink:href="#usericon_male1"></use></svg>
-   * @param {object} iconRef
+   * @param {!string} iconRef
    * @param {number} width
    * @param {number} height
-   * @param {string} viewBox
-   * @return {*}
+   * @param {!string} viewBox
+   * @returns {!SVGElement}
    */
   createSVGIcon(iconRef, width, height, viewBox) {
     const svgNS = 'http://www.w3.org/2000/svg'
@@ -157,8 +161,8 @@ export default class OrgChartPropertiesView {
     const svgElement = document.createElementNS(svgNS, 'svg')
     const useElement = document.createElementNS(svgNS, 'image')
     useElement.setAttributeNS(xlinkNS, 'xlink:href', './resources/' + iconRef + '.svg')
-    svgElement.setAttribute('width', width)
-    svgElement.setAttribute('height', height)
+    svgElement.setAttribute('width', `${width}`)
+    svgElement.setAttribute('height', `${height}`)
     svgElement.setAttribute('viewBox', viewBox)
     svgElement.appendChild(useElement)
     return svgElement
@@ -168,7 +172,8 @@ export default class OrgChartPropertiesView {
    * clicking a link to another employee in the properties view will select
    * and zoom to the corresponding node in the organization chart.
    * We use the E-Mail address to identify individual employees.
-   * @param {object} employee
+   * @param {!Employee} employee
+   * @returns {!HTMLElement}
    */
   createLinkEntry(employee) {
     const element = createElement('a', employee.name)
@@ -187,7 +192,9 @@ export default class OrgChartPropertiesView {
 
 /**
  * Creates a DOM element with the specified text content
- * @returns {HTMLElement}
+ * @param {!string} tagName
+ * @param {!string} textContent
+ * @returns {!HTMLElement}
  */
 function createElement(tagName, textContent) {
   const element = document.createElement(tagName)

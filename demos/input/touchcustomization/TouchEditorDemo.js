@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -31,7 +31,6 @@ import {
   ArrowType,
   BevelNodeStyle,
   Color,
-  ContextMenuInputMode,
   DefaultGraph,
   DefaultLabelStyle,
   DefaultPortCandidateDescriptor,
@@ -48,6 +47,7 @@ import {
   IBendCreator,
   ICommand,
   IEdge,
+  IGraph,
   ILabel,
   IModelItem,
   INode,
@@ -60,6 +60,7 @@ import {
   PanelNodeStyle,
   Point,
   PolylineEdgeStyle,
+  PopulateItemContextMenuEventArgs,
   Rect,
   ShapeNodeShape,
   ShapeNodeStyle,
@@ -68,6 +69,7 @@ import {
   SnapPanningBehaviors,
   SolidColorFill,
   Stroke,
+  TouchEventArgs,
   TouchEventRecognizers
 } from 'yfiles'
 
@@ -77,44 +79,49 @@ import EdgeReconnectionPortCandidateProvider from './EdgeReconnectionPortCandida
 import WrappingHandle from './WrappingHandle.js'
 import HandleTemplate from './HandleTemplate.js'
 import DialContextMenu from './DialContextMenu.js'
-import { DemoGroupStyle, initDemoStyles, DemoNodeStyle } from '../../resources/demo-styles.js'
+import { DemoGroupStyle, DemoNodeStyle, initDemoStyles } from '../../resources/demo-styles.js'
 import TouchHandleInputMode from './TouchHandleInputMode.js'
 import { showApp } from '../../resources/demo-app.js'
 import loadJson from '../../resources/load-json.js'
 import PortCandidateTemplate from './PortCandidateTemplate.js'
 
 /** @type {GraphComponent} */
-let graphComponent = null
+let graphComponent
 
 const handleRadius = 15
 
+/**
+ * @param {!object} licenseData
+ */
 function run(licenseData) {
   License.value = licenseData
+
   // initialize the GraphComponent
   graphComponent = new GraphComponent('graphComponent')
-  initializeGraph()
+  graphComponent.graph = createConfiguredGraph()
 
   // initialize the drag and drop panel
   initializeDnDPanel()
 
   // create the input mode
-  const inputMode = createEditorMode()
-  graphComponent.inputMode = inputMode
+  const geim = createEditorMode()
+  graphComponent.inputMode = geim
   // initialize the pan snapping selection box
-  initializePanSnapping(inputMode)
+  initializePanSnapping(geim)
   // configure the custom handles
-  initializeCustomHandles()
+  initializeCustomHandles(graphComponent)
   // configure the custom port candidates
-  initializeCustomPortCandidates()
+  initializeCustomPortCandidates(graphComponent)
   // configure the selection decoration
-  configureSelectionDecoration()
+  configureSelectionDecoration(graphComponent)
   // configure edge reconnection
-  configurePortInteraction()
+  configurePortInteraction(graphComponent.graph)
 
   // create the initial graph
-  populateGraph()
-  // clear the undo engine
-  graphComponent.graph.foldingView.manager.masterGraph.undoEngine.clear()
+  populateGraph(graphComponent.graph)
+
+  // enable undo and redo
+  graphComponent.graph.foldingView.manager.masterGraph.undoEngineEnabled = true
 
   showApp(graphComponent)
 
@@ -124,73 +131,75 @@ function run(licenseData) {
 /**
  * Creates the default input mode for the <code>GraphControl</code>,
  * a {@link GraphEditorInputMode} and configures it.
+ * @returns {!GraphEditorInputMode}
  */
 function createEditorMode() {
-  const mode = new GraphEditorInputMode()
+  const geim = new GraphEditorInputMode()
 
-  mode.contextMenuItems =
+  geim.contextMenuItems =
     GraphItemTypes.NODE | GraphItemTypes.EDGE | GraphItemTypes.LABEL | GraphItemTypes.BEND
 
   // disable direct item creation
-  mode.allowCreateNode = false
-  mode.allowCreateBend = false
-  mode.allowCreateEdge = false
+  geim.allowCreateNode = false
+  geim.allowCreateBend = false
+  geim.allowCreateEdge = false
 
   // switch off default edge creation gesture
-  mode.createEdgeInputMode.enabled = false
+  geim.createEdgeInputMode.enabled = false
   // switch off marquee selection
-  mode.marqueeSelectionInputMode.enabled = false
+  geim.marqueeSelectionInputMode.enabled = false
 
   // enable grouping
-  mode.allowGroupingOperations = true
+  geim.allowGroupingOperations = true
 
-  mode.textEditorInputMode.autoCommitOnFocusLost = true
+  geim.textEditorInputMode.autoCommitOnFocusLost = true
 
-  mode.handleInputMode = new TouchHandleInputMode(handleRadius)
+  geim.handleInputMode = new TouchHandleInputMode(handleRadius)
 
-  mode.handleInputMode.pressedRecognizerTouch = TouchEventRecognizers.TOUCH_DOWN_PRIMARY
-  mode.moveInputMode.pressedRecognizerTouch = TouchEventRecognizers.TOUCH_DOWN_PRIMARY
+  geim.handleInputMode.pressedRecognizerTouch = TouchEventRecognizers.TOUCH_DOWN_PRIMARY
+  geim.moveInputMode.pressedRecognizerTouch = TouchEventRecognizers.TOUCH_DOWN_PRIMARY
 
   // enable lasso selection
-  mode.lassoSelectionInputMode.enabled = true
+  geim.lassoSelectionInputMode.enabled = true
 
-  configureLassoSelection(mode)
+  configureLassoSelection(geim)
 
   // configure drag and drop
-  const nodeDropInputMode = mode.nodeDropInputMode
+  const nodeDropInputMode = geim.nodeDropInputMode
   nodeDropInputMode.enabled = true
   nodeDropInputMode.isGroupNodePredicate = node =>
     node.style instanceof PanelNodeStyle || node.style instanceof DemoGroupStyle
   nodeDropInputMode.showPreview = true
 
   // configure input mode priorities
-  mode.lassoSelectionInputMode.priority = mode.moveViewportInputMode.priority - 1
-  mode.moveInputMode.priority = mode.moveViewportInputMode.priority - 2
-  mode.handleInputMode.priority = mode.moveViewportInputMode.priority - 3
+  geim.lassoSelectionInputMode.priority = geim.moveViewportInputMode.priority - 1
+  geim.moveInputMode.priority = geim.moveViewportInputMode.priority - 2
+  geim.handleInputMode.priority = geim.moveViewportInputMode.priority - 3
 
-  initializeContextMenu(mode)
-  addCancelButtonListeners(mode)
+  initializeContextMenu(geim)
+  addCancelButtonListeners(geim)
 
-  return mode
+  return geim
 }
 
 /**
  * Customizes lasso selection start and finish gestures.
+ * @param {!GraphEditorInputMode} geim
  */
-function configureLassoSelection(mode) {
+function configureLassoSelection(geim) {
   // configure tap-down start gesture for lasso selection
-  let lastTapLocation = null
-  let lastTapTime = null
-  mode.tapInputMode.addTappedListener((sender, args) => {
+  let lastTapLocation = Point.ORIGIN
+  let lastTapTime = new Date()
+  geim.tapInputMode.addTappedListener((sender, args) => {
     // remember the location and time of the last tap
     lastTapLocation = args.location
     lastTapTime = new Date()
   })
-  mode.lassoSelectionInputMode.prepareRecognizerTouch = (sender, args) => {
+  geim.lassoSelectionInputMode.prepareRecognizerTouch = (sender, args) => {
     // check if the event was a touch down
     if (lastTapTime !== null && TouchEventRecognizers.TOUCH_DOWN_PRIMARY(sender, args)) {
-      // check if it occured within the valid double tap time and range
-      const timeDelta = new Date() - lastTapTime
+      // check if it occurred within the valid double tap time and range
+      const timeDelta = elapsedTime(lastTapTime, new Date())
       const distanceDelta = lastTapLocation.distanceTo(args.location)
       return (
         timeDelta < graphComponent.doubleTapTime.totalMilliseconds &&
@@ -200,45 +209,59 @@ function configureLassoSelection(mode) {
     return false
   }
   // configure touch/mouse up as finish gesture for lasso selection
-  mode.lassoSelectionInputMode.finishRecognizerTouch = TouchEventRecognizers.TOUCH_UP_PRIMARY
-  mode.lassoSelectionInputMode.finishRecognizer = MouseEventRecognizers.UP
+  geim.lassoSelectionInputMode.finishRecognizerTouch = TouchEventRecognizers.TOUCH_UP_PRIMARY
+  geim.lassoSelectionInputMode.finishRecognizer = MouseEventRecognizers.UP
+}
+
+/**
+ * Calculates the milliseconds that lie between the two given dates.
+ * @param {!Date} before
+ * @param {!Date} after
+ * @returns {number}
+ */
+function elapsedTime(before, after) {
+  const t1 = before.getTime()
+  const t2 = after.getTime()
+  return t2 - t1
 }
 
 /**
  * Registers the input mode listeners that show and hide the cancel button.
+ * @param {!GraphEditorInputMode} geim
  */
-function addCancelButtonListeners(mode) {
+function addCancelButtonListeners(geim) {
   const cancelButton = document.getElementById('cancelButton')
 
-  const createEdgeButtonListener = evt => {
-    mode.createEdgeInputMode.cancel()
+  const createEdgeButtonListener = () => {
+    geim.createEdgeInputMode.cancel()
   }
-  mode.createEdgeInputMode.addEdgeCreationStartedListener(() => {
+  geim.createEdgeInputMode.addEdgeCreationStartedListener(() => {
     cancelButton.innerHTML = 'Cancel Edge Creation'
     cancelButton.className = 'demo-button-visible'
     cancelButton.addEventListener('click', createEdgeButtonListener)
   })
-  mode.createEdgeInputMode.addGestureFinishedListener(() => {
+  geim.createEdgeInputMode.addGestureFinishedListener(() => {
     cancelButton.className = 'demo-button-invisible'
     cancelButton.removeEventListener('click', createEdgeButtonListener)
   })
-  mode.createEdgeInputMode.addGestureCanceledListener(() => {
+  geim.createEdgeInputMode.addGestureCanceledListener(() => {
     cancelButton.className = 'demo-button-invisible'
     cancelButton.removeEventListener('click', createEdgeButtonListener)
   })
 
-  const resizeNodeButtonListener = evt => {
-    mode.handleInputMode.cancel()
+  const resizeNodeButtonListener = () => {
+    geim.handleInputMode.cancel()
   }
-  mode.handleInputMode.addDragStartedListener(() => {
-    const type = mode.handleInputMode.currentHandle.type & HandleTypes.TYPE_MASK
+  geim.handleInputMode.addDragStartedListener(() => {
+    const handle = geim.handleInputMode.currentHandle
+    const type = (handle ? handle.type : HandleTypes.MOVE) & HandleTypes.TYPE_MASK
     switch (type) {
       case HandleTypes.RESIZE:
         cancelButton.innerHTML = 'Cancel Resize'
         break
       default:
-      case HandleTypes.MOVE:
         cancelButton.innerHTML = 'Cancel Move'
+        break
     }
 
     cancelButton.className = 'demo-button-visible'
@@ -246,33 +269,33 @@ function addCancelButtonListeners(mode) {
     // register the touchend listener because click is not fired for the secondary pointer
     cancelButton.addEventListener('touchend', resizeNodeButtonListener)
   })
-  mode.handleInputMode.addDragFinishedListener(() => {
+  geim.handleInputMode.addDragFinishedListener(() => {
     cancelButton.className = 'demo-button-invisible'
     cancelButton.removeEventListener('click', resizeNodeButtonListener)
     cancelButton.removeEventListener('touchend', resizeNodeButtonListener)
   })
-  mode.handleInputMode.addDragCanceledListener(() => {
+  geim.handleInputMode.addDragCanceledListener(() => {
     cancelButton.className = 'demo-button-invisible'
     cancelButton.removeEventListener('click', resizeNodeButtonListener)
     cancelButton.removeEventListener('touchend', resizeNodeButtonListener)
   })
 
-  const moveNodeButtonListener = evt => {
-    mode.moveInputMode.cancel()
+  const moveNodeButtonListener = () => {
+    geim.moveInputMode.cancel()
   }
-  mode.moveInputMode.addDragStartedListener(() => {
+  geim.moveInputMode.addDragStartedListener(() => {
     cancelButton.innerHTML = 'Cancel Node Move'
     cancelButton.className = 'demo-button-visible'
     cancelButton.addEventListener('click', moveNodeButtonListener)
     // register the touchend listener because click is not fired for the secondary pointer
     cancelButton.addEventListener('touchend', moveNodeButtonListener)
   })
-  mode.moveInputMode.addDragFinishedListener(() => {
+  geim.moveInputMode.addDragFinishedListener(() => {
     cancelButton.className = 'demo-button-invisible'
     cancelButton.removeEventListener('click', moveNodeButtonListener)
     cancelButton.removeEventListener('touchend', moveNodeButtonListener)
   })
-  mode.moveInputMode.addDragCanceledListener(() => {
+  geim.moveInputMode.addDragCanceledListener(() => {
     cancelButton.className = 'demo-button-invisible'
     cancelButton.removeEventListener('click', moveNodeButtonListener)
     cancelButton.removeEventListener('touchend', moveNodeButtonListener)
@@ -281,40 +304,35 @@ function addCancelButtonListeners(mode) {
 
 /**
  * Initializes the dial context menu.
- * @param mode
+ * @param {!GraphEditorInputMode} geim
  */
-function initializeContextMenu(mode) {
+function initializeContextMenu(geim) {
   const contextMenu = new DialContextMenu(graphComponent)
-  contextMenu.addEventListeners(graphComponent, handleContextMenuTrigger)
-
-  /**
-   * This listener function informs the {@link ContextMenuInputMode} that a context menu should be opened. If that is
-   * permitted by {@link ContextMenuInputMode}, this method actually makes the HTML elements of the menu visible.
-   * @param {Point} location
-   */
-  function handleContextMenuTrigger(location) {
+  contextMenu.addEventListeners(graphComponent, location => {
     const worldLocation = graphComponent.toWorldCoordinates(graphComponent.toViewFromPage(location))
-    const showMenu = mode.contextMenuInputMode.shouldOpenMenu(worldLocation)
+    const showMenu = geim.contextMenuInputMode.shouldOpenMenu(worldLocation)
 
     // Check whether showing the context menu is permitted
     if (showMenu) {
       contextMenu.show(location, document.body)
     }
-  }
+  })
 
   // Add an event listener that populates the context menu according to the hit elements or cancels showing a menu.
   // In this demo, we add item-specific menu entries for nodes, edges, and the empty canvas
-  mode.addPopulateItemContextMenuListener((sender, args) => populateContextMenu(contextMenu, args))
+  geim.addPopulateItemContextMenuListener((sender, args) => populateContextMenu(contextMenu, args))
 
   // Add a listener that closes the menu when the input mode requests this
-  mode.contextMenuInputMode.addCloseMenuListener(() => contextMenu.close())
+  geim.contextMenuInputMode.addCloseMenuListener(() => contextMenu.close())
 
   // If the context menu closes itself, for example because a menu item was clicked, we must inform the input mode
-  contextMenu.setOnCloseCallback(() => mode.contextMenuInputMode.menuClosed())
+  contextMenu.setOnCloseCallback(() => geim.contextMenuInputMode.menuClosed())
 }
 
 /**
  * Populates the context menu with items.
+ * @param {!DialContextMenu} contextMenu
+ * @param {!PopulateItemContextMenuEventArgs.<IModelItem>} args
  */
 function populateContextMenu(contextMenu, args) {
   args.showMenu = true
@@ -324,163 +342,216 @@ function populateContextMenu(contextMenu, args) {
 
   updateSelection(item)
   contextMenu.graphItem = item
-  if (INode.isInstance(item)) {
-    // configure node context menu
-    contextMenu
-      .addContextMenuItem(
-        (location, node) => {
-          ICommand.EDIT_LABEL.execute(node, graphComponent)
-        },
-        'resources/edit.svg',
-        'Edit Label'
-      )
-      .addContextMenuItem(
-        () => {
-          ICommand.GROUP_SELECTION.execute(null, graphComponent)
-        },
-        'resources/group.svg',
-        'Group Selected Nodes'
-      )
-      .addContextMenuItem(deleteSelectedNodes, 'resources/delete.svg', 'Delete Selected Nodes')
-      .addContextMenuItem(startEdgeCreation, 'resources/create-edge.svg', 'Create Edge')
-      .addContextMenuItem(
-        () => ICommand.COPY.execute(null, graphComponent),
-        'resources/copy.svg',
-        'Copy Selection',
-        graphComponent.selection.size === 0
-      )
-      .addContextMenuItem(
-        () => ICommand.CUT.execute(null, graphComponent),
-        'resources/cut.svg',
-        'Cut Selection',
-        graphComponent.selection.size === 0
-      )
-      .addContextMenuItem(
-        location => ICommand.PASTE.execute(location, graphComponent),
-        'resources/paste.svg',
-        'Paste',
-        graphComponent.clipboard.empty
-      )
-  } else if (IEdge.isInstance(item)) {
-    // configure edge context menu
-    contextMenu
-      .addContextMenuItem(
-        (location, edge) => {
-          ICommand.EDIT_LABEL.execute(edge, graphComponent)
-        },
-        'resources/edit.svg',
-        'Edit Label'
-      )
-      .addContextMenuItem(createBend, 'resources/create-bend.svg', 'Create Bend')
-      .addContextMenuItem(deleteSelectedEdges, 'resources/delete.svg', 'Delete Selected Edges')
-      .addContextMenuItem(
-        () => ICommand.COPY.execute(null, graphComponent),
-        'resources/copy.svg',
-        'Copy Selection',
-        graphComponent.selection.size === 0
-      )
-      .addContextMenuItem(
-        () => ICommand.CUT.execute(null, graphComponent),
-        'resources/cut.svg',
-        'Cut Selection',
-        graphComponent.selection.size === 0
-      )
-      .addContextMenuItem(
-        location => ICommand.PASTE.execute(location, graphComponent),
-        'resources/paste.svg',
-        'Paste',
-        graphComponent.clipboard.empty
-      )
-  } else if (ILabel.isInstance(item)) {
-    // configure label context menu
-    contextMenu
-      .addContextMenuItem(
-        (location, label) => {
-          ICommand.EDIT_LABEL.execute(label, graphComponent)
-        },
-        'resources/edit.svg',
-        'Edit Label'
-      )
-      .addContextMenuItem(deleteSelectedLabels, 'resources/delete.svg', 'Delete Selected Labels')
-      .addContextMenuItem(
-        () => ICommand.COPY.execute(null, graphComponent),
-        'resources/copy.svg',
-        'Copy Selection',
-        graphComponent.selection.size === 0
-      )
-      .addContextMenuItem(
-        () => ICommand.CUT.execute(null, graphComponent),
-        'resources/cut.svg',
-        'Cut Selection',
-        graphComponent.selection.size === 0
-      )
-  } else if (IBend.isInstance(item)) {
-    contextMenu.addContextMenuItem(
-      deleteSelectedBends,
-      'resources/delete.svg',
-      'Delete Selected Bends'
-    )
-    // configure bend context menu
-  } else if (item === null) {
-    // configure background context menu
-    contextMenu
-      .addContextMenuItem(
-        () => ICommand.FIT_GRAPH_BOUNDS.execute(null, graphComponent),
-        'resources/fit-content.svg',
-        'Fit Content'
-      )
-      .addContextMenuItem(
-        () => ICommand.UNDO.execute(null, graphComponent),
-        'resources/backward.svg',
-        'Undo',
-        !ICommand.UNDO.canExecute(null, graphComponent)
-      )
-      .addContextMenuItem(
-        () => ICommand.REDO.execute(null, graphComponent),
-        'resources/forward.svg',
-        'Redo',
-        !ICommand.REDO.canExecute(null, graphComponent)
-      )
-      .addContextMenuItem(
-        location => {
-          graphComponent.graph.createNodeAt(location)
-        },
-        'resources/create-node.svg',
-        'Create Node'
-      )
-      .addContextMenuItem(
-        () => ICommand.COPY.execute(null, graphComponent),
-        'resources/copy.svg',
-        'Copy Selection',
-        graphComponent.selection.size === 0
-      )
-      .addContextMenuItem(
-        () => ICommand.CUT.execute(null, graphComponent),
-        'resources/cut.svg',
-        'Cut Selection',
-        graphComponent.selection.size === 0
-      )
-      .addContextMenuItem(
-        location => ICommand.PASTE.execute(location, graphComponent),
-        'resources/paste.svg',
-        'Paste',
-        graphComponent.clipboard.empty
-      )
+
+  if (item instanceof INode) {
+    addNodeActions(contextMenu, item)
+  } else if (item instanceof IEdge) {
+    addEdgeActions(contextMenu, item)
+  } else if (item instanceof ILabel) {
+    addLabelActions(contextMenu, item)
+  } else if (item instanceof IBend) {
+    addBendActions(contextMenu, item)
+  } else if (!item) {
+    addCanvasActions(contextMenu)
   } else {
     args.showMenu = false
   }
 }
 
 /**
+ * Adds actions for nodes to the given context menu.
+ * @param {!DialContextMenu} contextMenu
+ * @param {!INode} node
+ */
+function addNodeActions(contextMenu, node) {
+  contextMenu
+    .addContextMenuItem(
+      (location, node) => {
+        ICommand.EDIT_LABEL.execute(node, graphComponent)
+      },
+      'resources/edit.svg',
+      'Edit Label',
+      false
+    )
+    .addContextMenuItem(
+      () => {
+        ICommand.GROUP_SELECTION.execute(null, graphComponent)
+      },
+      'resources/group.svg',
+      'Group Selected Nodes',
+      false
+    )
+    .addContextMenuItem(deleteSelectedNodes, 'resources/delete.svg', 'Delete Selected Nodes', false)
+    .addContextMenuItem(startEdgeCreation, 'resources/create-edge.svg', 'Create Edge', false)
+    .addContextMenuItem(
+      () => ICommand.COPY.execute(null, graphComponent),
+      'resources/copy.svg',
+      'Copy Selection',
+      graphComponent.selection.size === 0
+    )
+    .addContextMenuItem(
+      () => ICommand.CUT.execute(null, graphComponent),
+      'resources/cut.svg',
+      'Cut Selection',
+      graphComponent.selection.size === 0
+    )
+    .addContextMenuItem(
+      location => ICommand.PASTE.execute(location, graphComponent),
+      'resources/paste.svg',
+      'Paste',
+      graphComponent.clipboard.empty
+    )
+}
+
+/**
+ * Adds actions for edges to the given context menu.
+ * @param {!DialContextMenu} contextMenu
+ * @param {!IEdge} edge
+ */
+function addEdgeActions(contextMenu, edge) {
+  contextMenu
+    .addContextMenuItem(
+      (location, edge) => {
+        ICommand.EDIT_LABEL.execute(edge, graphComponent)
+      },
+      'resources/edit.svg',
+      'Edit Label',
+      false
+    )
+    .addContextMenuItem(createBend, 'resources/create-bend.svg', 'Create Bend', false)
+    .addContextMenuItem(deleteSelectedEdges, 'resources/delete.svg', 'Delete Selected Edges', false)
+    .addContextMenuItem(
+      () => ICommand.COPY.execute(null, graphComponent),
+      'resources/copy.svg',
+      'Copy Selection',
+      graphComponent.selection.size === 0
+    )
+    .addContextMenuItem(
+      () => ICommand.CUT.execute(null, graphComponent),
+      'resources/cut.svg',
+      'Cut Selection',
+      graphComponent.selection.size === 0
+    )
+    .addContextMenuItem(
+      location => ICommand.PASTE.execute(location, graphComponent),
+      'resources/paste.svg',
+      'Paste',
+      graphComponent.clipboard.empty
+    )
+}
+
+/**
+ * Adds actions for bends to the given context menu.
+ * @param {!DialContextMenu} contextMenu
+ * @param {!IBend} bend
+ */
+function addBendActions(contextMenu, bend) {
+  contextMenu.addContextMenuItem(
+    deleteSelectedBends,
+    'resources/delete.svg',
+    'Delete Selected Bends',
+    false
+  )
+}
+
+/**
+ * Adds actions for labels to the given context menu.
+ * @param {!DialContextMenu} contextMenu
+ * @param {!ILabel} label
+ */
+function addLabelActions(contextMenu, label) {
+  contextMenu
+    .addContextMenuItem(
+      (location, label) => {
+        ICommand.EDIT_LABEL.execute(label, graphComponent)
+      },
+      'resources/edit.svg',
+      'Edit Label',
+      false
+    )
+    .addContextMenuItem(
+      deleteSelectedLabels,
+      'resources/delete.svg',
+      'Delete Selected Labels',
+      false
+    )
+    .addContextMenuItem(
+      () => ICommand.COPY.execute(null, graphComponent),
+      'resources/copy.svg',
+      'Copy Selection',
+      graphComponent.selection.size === 0
+    )
+    .addContextMenuItem(
+      () => ICommand.CUT.execute(null, graphComponent),
+      'resources/cut.svg',
+      'Cut Selection',
+      graphComponent.selection.size === 0
+    )
+}
+
+/**
+ * Adds application actions to the given context menu.
+ * Application actions are actions that are available when "the context" is not a graph element.
+ * @param {!DialContextMenu} contextMenu
+ */
+function addCanvasActions(contextMenu) {
+  contextMenu
+    .addContextMenuItem(
+      () => ICommand.FIT_GRAPH_BOUNDS.execute(null, graphComponent),
+      'resources/fit-content.svg',
+      'Fit Content',
+      false
+    )
+    .addContextMenuItem(
+      () => ICommand.UNDO.execute(null, graphComponent),
+      'resources/backward.svg',
+      'Undo',
+      !ICommand.UNDO.canExecute(null, graphComponent)
+    )
+    .addContextMenuItem(
+      () => ICommand.REDO.execute(null, graphComponent),
+      'resources/forward.svg',
+      'Redo',
+      !ICommand.REDO.canExecute(null, graphComponent)
+    )
+    .addContextMenuItem(
+      location => {
+        graphComponent.graph.createNodeAt(location)
+      },
+      'resources/create-node.svg',
+      'Create Node',
+      false
+    )
+    .addContextMenuItem(
+      () => ICommand.COPY.execute(null, graphComponent),
+      'resources/copy.svg',
+      'Copy Selection',
+      graphComponent.selection.size === 0
+    )
+    .addContextMenuItem(
+      () => ICommand.CUT.execute(null, graphComponent),
+      'resources/cut.svg',
+      'Cut Selection',
+      graphComponent.selection.size === 0
+    )
+    .addContextMenuItem(
+      location => ICommand.PASTE.execute(location, graphComponent),
+      'resources/paste.svg',
+      'Paste',
+      graphComponent.clipboard.empty
+    )
+}
+
+/**
  * Helper method that updates the selection state when the context menu is opened on a graph item.
- * @param {IModelItem} item The item or <code>null</code>.
+ * @param {?IModelItem} item The item or <code>null</code>.
  */
 function updateSelection(item) {
   if (
-    INode.isInstance(item) ||
-    IEdge.isInstance(item) ||
-    ILabel.isInstance(item) ||
-    IBend.isInstance(item)
+    item instanceof INode ||
+    item instanceof IEdge ||
+    item instanceof ILabel ||
+    item instanceof IBend
   ) {
     if (!graphComponent.selection.isSelected(item)) {
       graphComponent.selection.clear()
@@ -494,13 +565,14 @@ function updateSelection(item) {
 
 /**
  * Installs custom handle visualizations for resize and move handles.
+ * @param {!GraphComponent} graphComponent
  */
-function initializeCustomHandles() {
+function initializeCustomHandles(graphComponent) {
   // create the handle templates
-  const handleTemplateDefault = `<ellipse cx='${handleRadius}' cy='${handleRadius}' rx='${handleRadius}' ry='${handleRadius}' class='demo-handle demo-handle-default'></ellipse>`
-  const handleTemplateMove = `<ellipse cx='${handleRadius}' cy='${handleRadius}' rx='${handleRadius}' ry='${handleRadius}' class='demo-handle demo-handle-move'></ellipse>`
-  const handleTemplateMoveBend = `<ellipse cx='${handleRadius}' cy='${handleRadius}' rx='${handleRadius}' ry='${handleRadius}' class='demo-handle demo-handle-move-bend'></ellipse>`
-  const handleTemplateResize = `<ellipse cx='${handleRadius}' cy='${handleRadius}' rx='${handleRadius}' ry='${handleRadius}' class='demo-handle demo-handle-resize'></ellipse>`
+  const handleTemplateDefault = newHandleTemplate(handleRadius, 'demo-handle-default')
+  const handleTemplateMove = newHandleTemplate(handleRadius, 'demo-handle-move')
+  const handleTemplateMoveBend = newHandleTemplate(handleRadius, 'demo-handle-move-bend')
+  const handleTemplateResize = newHandleTemplate(handleRadius, 'demo-handle-resize')
 
   // put the custom handles in the resources
   const handleSize = new Size(handleRadius * 2, handleRadius * 2)
@@ -523,14 +595,26 @@ function initializeCustomHandles() {
 
   // use variant 2 of move handle for bends
   graphComponent.graph.decorator.bendDecorator.handleDecorator.setImplementationWrapper(
-    (bend, handle) => new WrappingHandle(handle, HandleTypes.MOVE | HandleTypes.VARIANT2)
+    (bend, handle) =>
+      handle ? new WrappingHandle(handle, HandleTypes.MOVE | HandleTypes.VARIANT2, null) : null
   )
 }
 
 /**
- * Installs custom port candidate visualizations for interactive edge creation.
+ * Creates a template string for resize and move handles.
+ * @param {number} radius
+ * @param {!string} cssClass
+ * @returns {!string}
  */
-function initializeCustomPortCandidates() {
+function newHandleTemplate(radius, cssClass) {
+  return `<ellipse cx='${handleRadius}' cy='${handleRadius}' rx='${handleRadius}' ry='${handleRadius}' class='demo-handle ${cssClass}'></ellipse>`
+}
+
+/**
+ * Installs custom port candidate visualizations for interactive edge creation.
+ * @param {!GraphComponent} graphComponent
+ */
+function initializeCustomPortCandidates(graphComponent) {
   const validFocusedStyle = new ShapeNodeStyle({
     shape: 'ellipse',
     fill: 'rgba(11, 85, 23, 0.9)',
@@ -555,31 +639,29 @@ function initializeCustomPortCandidates() {
 
 /**
  * Customizes the selection visualization.
+ * @param {!GraphComponent} graphComponent
  */
-function configureSelectionDecoration() {
-  const fill = new SolidColorFill(86, 143, 195, 255)
-
+function configureSelectionDecoration(graphComponent) {
   const decorator = graphComponent.graph.decorator
 
   decorator.nodeDecorator.selectionDecorator.hideImplementation()
   decorator.nodeDecorator.focusIndicatorDecorator.hideImplementation()
 
   // edge selection
-  const edgeDecorationInstaller = new EdgeStyleDecorationInstaller()
-  const stroke = new Stroke(fill, 4)
-  edgeDecorationInstaller.edgeStyle = new PolylineEdgeStyle({
-    stroke
-  })
-
-  decorator.edgeDecorator.selectionDecorator.setImplementation(edgeDecorationInstaller)
+  decorator.edgeDecorator.selectionDecorator.setImplementation(
+    new EdgeStyleDecorationInstaller({
+      edgeStyle: new PolylineEdgeStyle({
+        stroke: new Stroke(new SolidColorFill(86, 143, 195, 255), 4)
+      })
+    })
+  )
 
   graphComponent.selection.addItemSelectionChangedListener((sender, args) => {
     const item = args.item
-    if (args.itemSelected && IEdge.isInstance(item)) {
-      const edge = item
-      edge.bends.forEach(bend => {
-        graphComponent.selection.setSelected(bend, true)
-      })
+    if (args.itemSelected && item instanceof IEdge) {
+      for (const bend of item.bends) {
+        sender.setSelected(bend, true)
+      }
     }
   })
 }
@@ -587,9 +669,10 @@ function configureSelectionDecoration() {
 /**
  * Makes it possible to reconnect edges to other nodes.
  * Also adds port candidates for each side of a node.
+ * @param {!IGraph} graph
  */
-function configurePortInteraction() {
-  const decorator = graphComponent.graph.foldingView.manager.masterGraph.decorator
+function configurePortInteraction(graph) {
+  const decorator = graph.decorator
   decorator.edgeDecorator.edgeReconnectionPortCandidateProviderDecorator.setFactory(
     edge => new EdgeReconnectionPortCandidateProvider(edge)
   )
@@ -600,29 +683,29 @@ function configurePortInteraction() {
 
 /**
  * Initializes the graph instance and set default styles.
+ * @returns {!IGraph}
  */
-function initializeGraph() {
+function createConfiguredGraph() {
   // Enable folding
   const foldingManager = new FoldingManager()
   const foldingView = foldingManager.createFoldingView()
-  graphComponent.graph = foldingView.graph
+  const graph = foldingView.graph
 
-  foldingManager.masterGraph.undoEngineEnabled = true
+  graph.nodeDefaults.size = new Size(100, 60)
 
-  graphComponent.graph.nodeDefaults.size = new Size(100, 60)
-
-  initDemoStyles(graphComponent.graph)
+  initDemoStyles(graph)
 
   const fill = new SolidColorFill(51, 102, 153, 255)
-  const stroke = new Stroke(fill, 4)
-  graphComponent.graph.edgeDefaults.style = new PolylineEdgeStyle({
-    stroke,
+  graph.edgeDefaults.style = new PolylineEdgeStyle({
+    stroke: new Stroke(fill, 4),
     targetArrow: new Arrow({
       fill,
       type: ArrowType.TRIANGLE,
       scale: 2
     })
   })
+
+  return graph
 }
 
 /**
@@ -630,9 +713,7 @@ function initializeGraph() {
  */
 function deleteSelectedNodes() {
   const nodesToRemove = graphComponent.selection.selectedNodes.toArray()
-  nodesToRemove.forEach(node => {
-    graphComponent.graph.remove(node)
-  })
+  nodesToRemove.forEach(node => graphComponent.graph.remove(node))
 }
 
 /**
@@ -640,9 +721,7 @@ function deleteSelectedNodes() {
  */
 function deleteSelectedEdges() {
   const edgesToRemove = graphComponent.selection.selectedEdges.toArray()
-  edgesToRemove.forEach(edge => {
-    graphComponent.graph.remove(edge)
-  })
+  edgesToRemove.forEach(edge => graphComponent.graph.remove(edge))
 }
 
 /**
@@ -650,9 +729,7 @@ function deleteSelectedEdges() {
  */
 function deleteSelectedLabels() {
   const labelsToRemove = graphComponent.selection.selectedLabels.toArray()
-  labelsToRemove.forEach(label => {
-    graphComponent.graph.remove(label)
-  })
+  labelsToRemove.forEach(label => graphComponent.graph.remove(label))
 }
 
 /**
@@ -660,34 +737,38 @@ function deleteSelectedLabels() {
  */
 function deleteSelectedBends() {
   const bendsToRemove = graphComponent.selection.selectedBends.toArray()
-  bendsToRemove.forEach(bend => {
-    graphComponent.graph.remove(bend)
-  })
+  bendsToRemove.forEach(bend => graphComponent.graph.remove(bend))
 }
 
 /**
  * Starts edge creation at the given node.
+ * @param {!Point} location
+ * @param {!IModelItem} item
  */
-function startEdgeCreation(location, node) {
+function startEdgeCreation(location, item) {
   setTimeout(() => {
-    graphComponent.inputMode.createEdgeInputMode.enabled = true
-    ICommand.BEGIN_EDGE_CREATION.execute(node, graphComponent)
+    const geim = graphComponent.inputMode
+    geim.createEdgeInputMode.enabled = true
+    ICommand.BEGIN_EDGE_CREATION.execute(item, graphComponent)
     const listener = () => {
-      graphComponent.inputMode.createEdgeInputMode.enabled = false
-      graphComponent.inputMode.createEdgeInputMode.removeGestureFinishedListener(listener)
-      graphComponent.inputMode.createEdgeInputMode.removeGestureCanceledListener(listener)
+      geim.createEdgeInputMode.enabled = false
+      geim.createEdgeInputMode.removeGestureFinishedListener(listener)
+      geim.createEdgeInputMode.removeGestureCanceledListener(listener)
     }
-    graphComponent.inputMode.createEdgeInputMode.addGestureFinishedListener(listener)
-    graphComponent.inputMode.createEdgeInputMode.addGestureCanceledListener(listener)
+    geim.createEdgeInputMode.addGestureFinishedListener(listener)
+    geim.createEdgeInputMode.addGestureCanceledListener(listener)
   }, 0)
 }
 
 /**
- * Creates a bend at the given location for the specified edge.
+ * Creates a bend at the given location for the given edge.
+ * @param {!Point} location
+ * @param {!IModelItem} item
  */
-function createBend(location, edge) {
+function createBend(location, item) {
+  const edge = item
   const bendCreator = edge.lookup(IBendCreator.$class)
-  let bend = null
+  let bend
   if (bendCreator) {
     const bendIndex = bendCreator.createBend(
       graphComponent.inputMode.inputModeContext,
@@ -717,39 +798,41 @@ function initializeDnDPanel() {
 
 /**
  * Initializes the snap panning selection box.
+ * @param {!GraphEditorInputMode} geim
  */
-function initializePanSnapping(inputMode) {
+function initializePanSnapping(geim) {
   const select = document.querySelector('#snapPanningBox>select')
-  select.addEventListener('change', evt => {
+  select.addEventListener('change', () => {
     const item = select[select.selectedIndex]
     switch (item.value) {
       case 'horizontal':
-        inputMode.moveViewportInputMode.snapPanning = SnapPanningBehaviors.HORIZONTAL
+        geim.moveViewportInputMode.snapPanning = SnapPanningBehaviors.HORIZONTAL
         break
       case 'vertical':
-        inputMode.moveViewportInputMode.snapPanning = SnapPanningBehaviors.VERTICAL
+        geim.moveViewportInputMode.snapPanning = SnapPanningBehaviors.VERTICAL
         break
       case 'both':
-        inputMode.moveViewportInputMode.snapPanning = SnapPanningBehaviors.BOTH
+        geim.moveViewportInputMode.snapPanning = SnapPanningBehaviors.BOTH
         break
       default:
-        inputMode.moveViewportInputMode.snapPanning = SnapPanningBehaviors.NONE
+        geim.moveViewportInputMode.snapPanning = SnapPanningBehaviors.NONE
+        break
     }
   })
 }
 
 /**
  * Creates the nodes that provide the visualizations for the drag and drop panel.
+ * @returns {!Array.<INode>}
  */
 function createDnDPanelNodes() {
   // Create a new temporary graph for the nodes
   const nodeContainer = new DefaultGraph()
 
   // Create some nodes
-  const groupStyle = new DemoGroupStyle()
-  groupStyle.isCollapsible = true
-  groupStyle.solidHitTest = true
-  const groupNodeStyle = groupStyle
+  const groupNodeStyle = new DemoGroupStyle()
+  groupNodeStyle.isCollapsible = true
+  groupNodeStyle.solidHitTest = true
 
   // A label model with insets for the expand/collapse button
   const groupLabelModel = new InteriorStretchLabelModel({ insets: new Insets(4, 4, 4, 4) })
@@ -780,7 +863,7 @@ function createDnDPanelNodes() {
   nodeContainer.createNode(new Rect(0, 0, 100, 60), new BevelNodeStyle({ color: nodeColor }))
 
   const shinyPlateNodeStyle = new ShinyPlateNodeStyle({
-    fill: new SolidColorFill(nodeColor),
+    fill: orangeFill,
     drawShadow: false
   })
   nodeContainer.createNode(new Rect(0, 0, 100, 60), shinyPlateNodeStyle)
@@ -790,10 +873,9 @@ function createDnDPanelNodes() {
 
 /**
  * Creates a sample graph.
+ * @param {!IGraph} graph
  */
-function populateGraph() {
-  const graph = graphComponent.graph
-
+function populateGraph(graph) {
   const node1 = graph.createNodeAt(new Point(30, 30))
   const node2 = graph.createNodeAt(new Point(30, 250))
 

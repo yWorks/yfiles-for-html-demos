@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -7,7 +7,7 @@
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.3.
+     // This demo file is part of yFiles for HTML 2.4.
      // Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
@@ -36,8 +36,15 @@
 
   <title>Simple Graph Builder Demo [yFiles for HTML]</title>
 
-  <link rel="stylesheet" href="../../node_modules/yfiles/yfiles.css">
   <link rel="stylesheet" href="../../resources/style/demo.css">
+
+  <link rel="stylesheet" href="data-view.css">
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.59.2/codemirror.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.59.2/addon/dialog/dialog.css">
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.59.2/codemirror.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.59.2/mode/javascript/javascript.min.js"></script>
 
   <script src="../../resources/filesystem-warning.js"></script>
 
@@ -63,9 +70,12 @@
   <h1 class="demo-sidebar-header">Description</h1>
   <div class="demo-sidebar-content">
     <p>
-      This demo uses <a href="https://docs.yworks.com/yfileshtml/#/api/GraphBuilder" target="_blank">GraphBuilder</a>, <a href="https://docs.yworks.com/yfileshtml/#/api/TreeBuilder" target="_blank">TreeBuilder</a> or <a href="https://docs.yworks.com/yfileshtml/#/api/AdjacencyGraphBuilder" target="_blank">AdjacencyGraphBuilder</a> to
-      automatically build a graph from business data. <br/> The business data can be stored in <em>arrays</em> or in
-      <em>JSON</em> format.<br/> The nodes are visualized by a <a href="https://docs.yworks.com/yfileshtml/#/api/TemplateNodeStyle" target="_blank">TemplateNodeStyle</a> instance that binds to the
+      This demo automatically builds a graph from business data using <a href="https://docs.yworks.com/yfileshtml/#/api/GraphBuilder" target="_blank">GraphBuilder</a>,
+      <a href="https://docs.yworks.com/yfileshtml/#/api/TreeBuilder" target="_blank">TreeBuilder</a> or <a href="https://docs.yworks.com/yfileshtml/#/api/AdjacencyGraphBuilder" target="_blank">AdjacencyGraphBuilder</a>. <br/> The business data is stored in arrays or in
+      <b>JSON</b> format.<br/>
+    </p>
+
+    <p>The nodes are visualized by a <a href="https://docs.yworks.com/yfileshtml/#/api/TemplateNodeStyle" target="_blank">TemplateNodeStyle</a> instance that binds to the
       business data objects which <a href="https://docs.yworks.com/yfileshtml/#/api/GraphBuilder" target="_blank">GraphBuilder</a>, <a href="https://docs.yworks.com/yfileshtml/#/api/TreeBuilder" target="_blank">TreeBuilder</a> and <a href="https://docs.yworks.com/yfileshtml/#/api/AdjacencyGraphBuilder" target="_blank">AdjacencyGraphBuilder</a>
       store in the graph item's <a href="https://docs.yworks.com/yfileshtml/#/api/ITagOwner#tag" target="_blank">ITagOwner#tag</a>.
     </p>
@@ -104,9 +114,9 @@
       <dt><code>createGroupNodesSource</code></dt>
       <dd>Registers a data source that represents the group nodes.</dd>
       <dt><code>AdjacencyNodesSource.addPredecessorIds</code></dt>
-      <dd>Registers a provider for source node ids to which edges are created.</dd>
+      <dd>Registers a provider for source node IDs to which edges are created.</dd>
       <dt><code>AdjacencyNodesSource.addSuccessorIds</code></dt>
-      <dd>Registers a provider for target node ids to which edges are created.</dd>
+      <dd>Registers a provider for target node IDs to which edges are created.</dd>
     </dl>
 
     <h3>Input Data</h3>
@@ -124,6 +134,8 @@
 </aside>
 
 <div class="demo-content">
+  <div id="data-view"></div>
+
   <div class="demo-toolbar">
     <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
     <button data-command="ZoomOriginal" title="Zoom to original size" class="demo-icon-yIconZoomOriginal"></button>

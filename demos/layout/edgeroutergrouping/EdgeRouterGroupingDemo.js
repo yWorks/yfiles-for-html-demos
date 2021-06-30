@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -32,6 +32,7 @@ import {
   BridgeCrossingStyle,
   BridgeManager,
   EdgeRouter,
+  EdgeRouterData,
   EdgeStyleBase,
   EdgeStyleDecorationInstaller,
   GraphBuilder,
@@ -42,26 +43,29 @@ import {
   IArrow,
   ICommand,
   IEdge,
+  IModelItem,
   INode,
   IRenderContext,
   License,
   NodeStylePortStyleAdapter,
-  PolylineEdgeRouterData,
   PolylineEdgeStyle,
   PopulateItemContextMenuEventArgs,
   Rect,
   ShapeNodeShape,
   ShapeNodeStyle,
+  Size,
   SmoothingPolicy,
+  SolidColorFill,
   StyleDecorationZoomPolicy,
   SvgVisual,
   SvgVisualGroup,
+  Visual,
   VoidPortStyle
 } from 'yfiles'
 
 import ContextMenu from '../../utils/ContextMenu.js'
 import SampleData from './resources/SampleData.js'
-import { initDemoStyles } from '../../resources/demo-styles.js'
+import { DemoNodeStyle, initDemoStyles } from '../../resources/demo-styles.js'
 import {
   addClass,
   bindAction,
@@ -72,11 +76,14 @@ import {
 import loadJson from '../../resources/load-json.js'
 
 /** @type {GraphComponent} */
-let graphComponent = null
+let graphComponent
 
 /** @type {boolean} */
 let portGroupMode = false
 
+/**
+ * @param {*} licenseData
+ */
 function run(licenseData) {
   License.value = licenseData
   graphComponent = new GraphComponent('graphComponent')
@@ -89,22 +96,23 @@ function run(licenseData) {
 /**
  * Applies the {@link EdgeRouter} to the current graph including the edge/port group information in
  * the edges' tags.
+ * @returns {!Promise}
  */
 async function runEdgeRouter() {
   setUIDisabled(true)
 
   const layout = new EdgeRouter()
-  const layoutData = new PolylineEdgeRouterData()
+  const layoutData = new EdgeRouterData()
 
   if (portGroupMode) {
-    layoutData.sourcePortGroupIds = edge =>
+    layoutData.sourcePortGroupIds.delegate = edge =>
       edge.tag && edge.tag.sourceGroupId ? edge.tag.sourceGroupId : null
-    layoutData.targetPortGroupIds = edge =>
+    layoutData.targetPortGroupIds.delegate = edge =>
       edge.tag && edge.tag.targetGroupId ? edge.tag.targetGroupId : null
   } else {
-    layoutData.sourceGroupIds = edge =>
+    layoutData.sourceGroupIds.delegate = edge =>
       edge.tag && edge.tag.sourceGroupId ? edge.tag.sourceGroupId : null
-    layoutData.targetGroupIds = edge =>
+    layoutData.targetGroupIds.delegate = edge =>
       edge.tag && edge.tag.targetGroupId ? edge.tag.targetGroupId : null
   }
 
@@ -117,7 +125,7 @@ function createSampleGraph() {
   graph.clear()
   initDemoStyles(graph)
   graph.nodeDefaults.style.cssClass = 'node-color'
-  graph.nodeDefaults.size = [50, 30]
+  graph.nodeDefaults.size = Size.from([50, 30])
   graph.edgeDefaults.style = new PolylineEdgeStyle({
     stroke: '3px #BBBBBB',
     targetArrow: new Arrow({
@@ -166,7 +174,7 @@ function createSampleGraph() {
 
 /**
  * Updates the selection when an item is right-clicked for a context menu.
- * @param {INode|IEdge} item
+ * @param {?IModelItem} item
  */
 function updateSelection(item) {
   const selection = graphComponent.selection
@@ -175,7 +183,7 @@ function updateSelection(item) {
       selection.clear()
       selection.setSelected(item, true)
     } else {
-      if (IEdge.isInstance(item)) {
+      if (item instanceof IEdge) {
         selection.selectedNodes.clear()
       } else {
         selection.selectedEdges.clear()
@@ -187,24 +195,27 @@ function updateSelection(item) {
 
 /**
  * Groups the given edges according to the type. In case 'override' is true, a new tag is set.
- * @param {'source'|'target'|'source-and-target'|'ungroup'} type
- * @param {Array} edges
+ * @param {!('source'|'target'|'source-and-target'|'ungroup')} type
+ * @param {!Array.<IEdge>} edges
  * @param {boolean} override
  */
 function groupEdges(type, edges, override) {
   const id = Date.now()
   edges.forEach(edge => {
-    const tag = {}
+    const tag = {
+      sourceGroupId: undefined,
+      targetGroupId: undefined
+    }
     switch (type) {
       case 'source':
-        tag.sourceGroupId = `s ${id} ${edge.sourceNode.hashCode()}`
+        tag.sourceGroupId = `s ${id} ${hashCode(edge.sourceNode)}`
         break
       case 'target':
-        tag.targetGroupId = `t ${id} ${edge.targetNode.hashCode()}`
+        tag.targetGroupId = `t ${id} ${hashCode(edge.targetNode)}`
         break
       case 'source-and-target':
-        tag.sourceGroupId = `s ${id} ${edge.sourceNode.hashCode()}`
-        tag.targetGroupId = `t ${id} ${edge.targetNode.hashCode()}`
+        tag.sourceGroupId = `s ${id} ${hashCode(edge.sourceNode)}`
+        tag.targetGroupId = `t ${id} ${hashCode(edge.targetNode)}`
         break
       default:
     }
@@ -222,8 +233,17 @@ function groupEdges(type, edges, override) {
 }
 
 /**
+ * Returns the hash code of the given node.
+ * @param {!INode} node
+ * @returns {number}
+ */
+function hashCode(node) {
+  return node.hashCode()
+}
+
+/**
  * Updates the styles to distinguish the different types of edge/port grouping.
- * @param {IEdge} edge
+ * @param {!IEdge} edge
  */
 function updateStyles(edge) {
   const tag = edge.tag
@@ -308,8 +328,8 @@ function configureInteraction() {
 
 /**
  * Adds menu items to the context menu depending on what type of graph element was hit.
- * @param {object} contextMenu
- * @param {PopulateItemContextMenuEventArgs} args
+ * @param {!ContextMenu} contextMenu
+ * @param {!PopulateItemContextMenuEventArgs.<IModelItem>} args
  */
 function populateContextMenu(contextMenu, args) {
   args.showMenu = true
@@ -321,7 +341,7 @@ function populateContextMenu(contextMenu, args) {
     item = selection.selectedEdges.first()
   }
   updateSelection(item)
-  if (IEdge.isInstance(item)) {
+  if (item instanceof IEdge) {
     contextMenu.clearItems()
     const selectedEdges = selection.selectedEdges.toArray()
     if (portGroupMode) {
@@ -353,7 +373,7 @@ function populateContextMenu(contextMenu, args) {
       addClass(sourceAndTargetGroupMenuItem, 'source-and-target-edge-group')
     }
     contextMenu.addMenuItem('Ungroup', () => groupEdges('ungroup', selectedEdges, true))
-  } else if (INode.isInstance(item)) {
+  } else if (item instanceof INode) {
     let outgoingEdges = []
     let incomingEdges = []
     let incidentEdges = []
@@ -452,7 +472,7 @@ function registerCommands() {
 
 /**
  * Disables the HTML elements of the UI.
- * @param disabled true if the element should be disabled, false otherwise
+ * @param {boolean} disabled true if the element should be disabled, false otherwise
  */
 function setUIDisabled(disabled) {
   document.querySelector("button[data-command='Reset']").disabled = disabled
@@ -466,20 +486,21 @@ function setUIDisabled(disabled) {
  */
 class HighlightEdgeStyle extends EdgeStyleBase {
   /**
-   * @param {IRenderContext} context
-   * @param {IEdge} edge
-   * @returns {Visual}
+   * @param {!IRenderContext} context
+   * @param {!IEdge} edge
+   * @returns {!Visual}
    */
   createVisual(context, edge) {
-    const strokeColor = edge.style.stroke.fill.color
+    const style = edge.style
+    const strokeColor = style.stroke.fill.color
     const highlightColor = `rgba(${strokeColor.r}, ${strokeColor.g}, ${strokeColor.b})`
     const visualGroup = new SvgVisualGroup()
     const highlight = document.createElementNS('http://www.w3.org/2000/svg', 'g')
     const highlightPath = document.createElementNS('http://www.w3.org/2000/svg', 'path')
     const path = this.cropPath(
       edge,
-      edge.style.sourceArrow,
-      edge.style.targetArrow,
+      style.sourceArrow,
+      style.targetArrow,
       this.getPath(edge)
     ).createSmoothedPath(15, SmoothingPolicy.ASYMMETRIC, true)
     highlightPath.setAttribute('d', path.createSvgPathData())
@@ -503,7 +524,7 @@ class HighlightEdgeStyle extends EdgeStyleBase {
 
     const highlightVisual = new SvgVisual(highlight)
     visualGroup.add(highlightVisual)
-    visualGroup.add(edge.style.renderer.getVisualCreator(edge, edge.style).createVisual(context))
+    visualGroup.add(style.renderer.getVisualCreator(edge, style).createVisual(context))
 
     return visualGroup
   }

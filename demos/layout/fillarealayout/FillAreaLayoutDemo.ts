@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -67,12 +67,12 @@ let selectionRect: Rect | null = null
  */
 let componentAssignmentStrategy: ComponentAssignmentStrategy = ComponentAssignmentStrategy.SINGLE
 
-async function run(licenseData: object): Promise<void> {
+function run(licenseData: object) {
   License.value = licenseData
   graphComponent = new GraphComponent('#graphComponent')
 
   initializeInputModes()
-  await initializeGraph()
+  initializeGraph()
 
   // bind the buttons to their commands
   registerCommands()
@@ -97,6 +97,7 @@ function initializeInputModes(): void {
 
   // registers handlers which are called when selected nodes are deleted
   editMode.addDeletingSelectionListener(onDeletingSelection)
+  // eslint-disable-next-line @typescript-eslint/no-misused-promises
   editMode.addDeletedSelectionListener(onDeletedSelection)
 }
 

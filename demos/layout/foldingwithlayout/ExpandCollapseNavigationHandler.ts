@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -31,6 +31,7 @@ import {
   ClearAreaLayoutData,
   CompositeLayoutData,
   EdgeRouter,
+  EdgeRouterData,
   EdgeRouterScope,
   FillAreaLayout,
   FillAreaLayoutData,
@@ -52,7 +53,6 @@ import {
   NodeAlignmentPolicy,
   PartialLayoutEdgeRoutingStrategy,
   Point,
-  PolylineEdgeRouterData,
   Rect,
   SequentialLayout,
   YRectangle
@@ -280,11 +280,11 @@ export class ExpandCollapseNavigationHelper {
     const groupLayout = masterGroupNode!.layout.toRect()
     const folderLayout = foldingView!.manager.getFolderNodeState(masterGroupNode!).layout
 
-    if (groupLayout!.contains(folderLayout!)) {
+    if (groupLayout.contains(folderLayout)) {
       this.fillArea(groupNode, groupLayout, foldingView!)
     } else {
       // the folder node exceeds the area of the group node
-      const combinedBounds = Rect.add(groupLayout!.toRect()!, folderLayout!.toRect()!)
+      const combinedBounds = Rect.add(groupLayout.toRect()!, folderLayout.toRect()!)
       this.clearAndFillArea(groupNode, combinedBounds, foldingView!)
     }
   }
@@ -409,7 +409,7 @@ export class ExpandCollapseNavigationHelper {
   private static createFillAreaLayoutData(groupNode: INode, foldingView: IFoldingView): LayoutData {
     return new CompositeLayoutData(
       new FillAreaLayoutData({ fixedNodes: groupNode }),
-      new PolylineEdgeRouterData({ affectedEdges: foldingView.graph.edgesAt(groupNode) })
+      new EdgeRouterData({ affectedEdges: foldingView.graph.edgesAt(groupNode) })
     )
   }
 

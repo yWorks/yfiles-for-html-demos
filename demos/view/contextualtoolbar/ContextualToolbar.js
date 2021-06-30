@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -27,6 +27,7 @@
  **
  ***************************************************************************/
 import {
+  ArcEdgeStyle,
   Arrow,
   DefaultLabelStyle,
   EdgePathLabelModel,
@@ -35,11 +36,12 @@ import {
   FontStyle,
   FontWeight,
   GraphComponent,
-  IArrow,
   ICommand,
   IEdge,
   ILabel,
   ILabelModelParameter,
+  ILabelOwner,
+  IModelItem,
   INode,
   IOrientedRectangle,
   MutableRectangle,
@@ -50,6 +52,7 @@ import {
   SimpleLabel,
   SimpleNode,
   Size,
+  Stroke,
   TextDecoration
 } from 'yfiles'
 
@@ -78,17 +81,16 @@ export default class ContextualToolbar {
    * Sets the items to display the contextual toolbar for.
    * Setting this property to a value other than null shows the toolbar.
    * Setting the property to null hides the toolbar.
-   * @type {IModelItem[]}
+   * @type {!Array.<IModelItem>}
    */
   set selectedItems(array) {
-    if (array === null) {
-      // eslint-disable-next-line no-throw-literal
+    if (!array) {
       throw "SelectedItems can't be null. To hide the toolbar, set an empty array."
     }
-    this.$selectedItems = array
-    this.$containsEdges = this.getSelectedEdges().length > 0
-    this.$containsNodes = this.getSelectedNodes().length > 0
-    this.$containsLabels = this.getSelectedLabels().length > 0
+    this._selectedItems = array
+    this.containsEdges = this.getSelectedEdges().length > 0
+    this.containsNodes = this.getSelectedNodes().length > 0
+    this.containsLabels = this.getSelectedLabels().length > 0
     if (array.length > 0) {
       this.show()
     } else {
@@ -98,31 +100,34 @@ export default class ContextualToolbar {
 
   /**
    * Gets the items to display information for.
-   * @type {IModelItem[]}
+   * @type {!Array.<IModelItem>}
    */
   get selectedItems() {
-    return this.$selectedItems
+    return this._selectedItems
   }
 
   /**
    * Constructs a new instance of the ContextualToolbar.
-   * @param {GraphComponent} graphComponent
-   * @param {HTMLElement} container
+   * @param {!GraphComponent} graphComponent
+   * @param {!HTMLElement} container
    */
   constructor(graphComponent, container) {
-    this.$graphComponent = graphComponent
-    this.$container = container
+    this.containsEdges = false
+    this.containsNodes = false
+    this.containsLabels = false
+    this.dirty = false
+    this.graphComponent = graphComponent
+    this.container = container
 
     // initialize a label model parameter that is used to position the node pop-up
     const nodeLabelModel = new ExteriorLabelModel({ insets: 10 })
-    this.$nodeLabelModelParameter = nodeLabelModel.createParameter(ExteriorLabelModelPosition.NORTH)
+    this.nodeLabelModelParameter = nodeLabelModel.createParameter(ExteriorLabelModelPosition.NORTH)
 
     // initialize a label model parameter that is used to position the edge pop-up
     const edgeLabelModel = new EdgePathLabelModel({ autoRotation: false })
-    this.$edgeLabelModelParameter = edgeLabelModel.createDefaultParameter()
+    this.edgeLabelModelParameter = edgeLabelModel.createDefaultParameter()
 
-    this.$selectedItems = []
-    this.$dirty = false
+    this._selectedItems = []
 
     this.registerUpdateListeners()
     this.registerClickListeners()
@@ -130,19 +135,19 @@ export default class ContextualToolbar {
 
   /**
    * Applies the font settings given by the parameter object to all selected labels.
-   * @param {Object} parameterObject
-   * @param {string|Fill?} color
+   * @param {!object} parameterObject
+   * @param {*} [color]
    */
   applyFontStyle(parameterObject, color) {
     const labels = this.getSelectedLabels()
-    labels.forEach(label => {
+    for (const label of labels) {
       const clone = label.style.clone()
       if (color) {
         clone.textFill = color
       }
       clone.font = clone.font.createCopy(parameterObject)
-      this.$graphComponent.graph.setStyle(label, clone)
-    })
+      this.graphComponent.graph.setStyle(label, clone)
+    }
   }
 
   /**
@@ -151,35 +156,31 @@ export default class ContextualToolbar {
    */
   changeFontSize(doIncrease) {
     const labels = this.getSelectedLabels()
-    labels.forEach(label => {
+    for (const label of labels) {
       const clone = label.style.clone()
-      const fontSize = Math.max(
-        2,
-        doIncrease ? label.style.font.fontSize + 2 : label.style.font.fontSize - 2
-      )
+      let fontSize = clone.font.fontSize
+      fontSize = Math.max(2, doIncrease ? fontSize + 2 : fontSize - 2)
       clone.font = clone.font.createCopy({ fontSize })
-      this.$graphComponent.graph.setStyle(label, clone)
-    })
+      this.graphComponent.graph.setStyle(label, clone)
+    }
   }
 
   /**
    * Applies the given color and shape to the selected nodes.
-   * @param {string?} color
-   * @param {string|ShapeNodeShape?} shape
+   * @param {?string} color
+   * @param {?ShapeNodeShapeStringValues} [shape]
    */
   applyNodeStyle(color, shape) {
     const nodes = this.getSelectedNodes()
-    nodes.forEach(node => {
-      const clone = node.style.clone()
-      if (color) {
-        clone.fill = color
-        clone.stroke = color
-      }
-      if (shape) {
-        clone.shape = shape
-      }
-      this.$graphComponent.graph.setStyle(node, clone)
-    })
+    for (const node of nodes) {
+      const style = node.style
+      const clone = new ShapeNodeStyle({
+        fill: color || style.fill,
+        stroke: color || style.stroke,
+        shape: shape || style.shape
+      })
+      this.graphComponent.graph.setStyle(node, clone)
+    }
   }
 
   /**
@@ -188,8 +189,8 @@ export default class ContextualToolbar {
   createConnectedNode() {
     const nodes = this.getSelectedNodes()
     const newSelection = []
-    nodes.forEach(node => {
-      const graph = this.$graphComponent.graph
+    for (const node of nodes) {
+      const graph = this.graphComponent.graph
       const clone = node.style.clone()
       const location = this.getConnectedNodeLocation(node)
       const newNode = graph.createNode(
@@ -198,19 +199,19 @@ export default class ContextualToolbar {
       )
       graph.createEdge(node, newNode)
       newSelection.push(newNode)
-    })
-    this.$graphComponent.selection.clear()
-    newSelection.forEach(item => this.$graphComponent.selection.setSelected(item, true))
+    }
+    this.graphComponent.selection.clear()
+    newSelection.forEach(item => this.graphComponent.selection.setSelected(item, true))
   }
 
   /**
    * Finds a location for the new node that doesn't overlap with other nodes.
-   * @param {INode} originalNode
-   * @returns {Point}
+   * @param {!INode} originalNode
+   * @returns {!Point}
    */
   getConnectedNodeLocation(originalNode) {
     const originalLayout = originalNode.layout
-    const nodes = this.$graphComponent.graph.nodes
+    const nodes = this.graphComponent.graph.nodes
     const stepSize = 70
     for (let i = 1; i < 10; i++) {
       for (let j = i * stepSize; j >= -i * stepSize; j -= stepSize) {
@@ -241,44 +242,44 @@ export default class ContextualToolbar {
 
   /**
    * Applies the given color and arrow type to the selected edges.
-   * @param {string|Stroke?} color
-   * @param {string|ArrowType?} sourceArrowType
-   * @param {string|ArrowType?} targetArrowType
+   * @param {?string} color
+   * @param {?ArrowTypeStringValues} sourceArrowType
+   * @param {?ArrowTypeStringValues} targetArrowType
    */
   applyEdgeStyle(color, sourceArrowType, targetArrowType) {
-    const edges = this.getSelectedEdges()
-    edges.forEach(edge => {
-      const clone = edge.style.clone()
-      if (color) {
-        const strokeClone = edge.style.stroke.cloneCurrentValue()
-        strokeClone.fill = color
-        clone.stroke = strokeClone
-      }
-      if (targetArrowType || (color && clone.targetArrow !== IArrow.NONE)) {
-        const newArrow = new Arrow()
-        newArrow.fill = clone.stroke.fill
-        newArrow.type = targetArrowType || clone.targetArrow.type
-        newArrow.scale = 1.5
-        clone.targetArrow = newArrow
-      }
-      if (sourceArrowType || (color && clone.sourceArrow !== IArrow.NONE)) {
-        const newArrow = new Arrow()
-        newArrow.fill = clone.stroke.fill
-        newArrow.type = sourceArrowType || clone.sourceArrow.type
-        newArrow.scale = 1.5
-        clone.sourceArrow = newArrow
-      }
-      this.$graphComponent.graph.setStyle(edge, clone)
-    })
+    for (const edge of this.getSelectedEdges()) {
+      const oldStyle = edge.style
+      const oldStroke = oldStyle.stroke
+      const oldSourceArrow = oldStyle.sourceArrow
+      const oldTargetArrow = oldStyle.targetArrow
+
+      const newStyle = oldStyle.clone()
+      newStyle.stroke = new Stroke({
+        fill: color || oldStroke.fill,
+        thickness: oldStroke.thickness
+      })
+      newStyle.sourceArrow = new Arrow({
+        type: sourceArrowType || oldSourceArrow.type,
+        fill: color || oldStroke.fill,
+        scale: 1.5
+      })
+      newStyle.targetArrow = new Arrow({
+        type: targetArrowType || oldTargetArrow.type,
+        fill: color || oldStroke.fill,
+        scale: 1.5
+      })
+
+      this.graphComponent.graph.setStyle(edge, newStyle)
+    }
   }
 
   /**
    * Helper function to show/hide a picker container.
-   * @param {Event} e The event of the toggle button.
+   * @param {!Event} e The event of the toggle button.
    */
   showPickerContainer(e) {
     const toggleButton = e.target
-    const pickerContainer = document.getElementById(e.target.getAttribute('data-container-id'))
+    const pickerContainer = document.getElementById(toggleButton.getAttribute('data-container-id'))
     const show = toggleButton.checked
 
     if (!show) {
@@ -293,7 +294,7 @@ export default class ContextualToolbar {
     pickerContainer.style.display = 'block'
     const labelElement = document.querySelector(`label[for="${toggleButton.id}"]`)
     const labelBoundingRect = labelElement.getBoundingClientRect()
-    const toolbarClientRect = this.$container.getBoundingClientRect()
+    const toolbarClientRect = this.container.getBoundingClientRect()
     const pickerClientRect = pickerContainer.getBoundingClientRect()
     pickerContainer.style.left = `${
       labelBoundingRect.left +
@@ -301,7 +302,7 @@ export default class ContextualToolbar {
       pickerContainer.clientWidth / 2 -
       toolbarClientRect.left
     }px`
-    const gcAnchor = this.$graphComponent.toPageFromView(new Point(0, 0))
+    const gcAnchor = this.graphComponent.toPageFromView(new Point(0, 0))
     if (toolbarClientRect.top - gcAnchor.y < pickerClientRect.height + 20) {
       pickerContainer.style.top = '55px'
       addClass(pickerContainer, 'bottom')
@@ -318,8 +319,10 @@ export default class ContextualToolbar {
 
   /**
    * Closes all picker containers except for the given elements.
-   * @param {HTMLInputElement?} exceptToggleButton The container toggle that should not be closed.
-   * @param {HTMLElement?} exceptContainer The container that should not be closed.
+   * @param exceptToggleButton The container toggle that should not be closed.
+   * @param exceptContainer The container that should not be closed.
+   * @param {!HTMLInputElement} [exceptToggleButton]
+   * @param {!HTMLElement} [exceptContainer]
    */
   hideAllPickerContainer(exceptToggleButton, exceptContainer) {
     const toggleButtons = document.querySelectorAll('input[data-container-id]')
@@ -344,35 +347,33 @@ export default class ContextualToolbar {
 
   /**
    * Returns an array of the currently selected edges.
-   * @returns {IEdge[]}
+   * @returns {!Array.<IEdge>}
    */
   getSelectedEdges() {
-    return this.selectedItems.filter(item => IEdge.isInstance(item))
+    return this.selectedItems.filter(item => item instanceof IEdge)
   }
 
   /**
    * Returns an array of the currently selected nodes.
-   * @returns {INode[]}
+   * @returns {!Array.<INode>}
    */
   getSelectedNodes() {
-    return this.selectedItems.filter(item => INode.isInstance(item))
+    return this.selectedItems.filter(item => item instanceof INode)
   }
 
   /**
    * Returns an array of the currently selected labels.
-   * @returns {ILabel[]}
+   * @returns {!Array.<ILabel>}
    */
   getSelectedLabels() {
     const labels = []
-    this.selectedItems.forEach(item => {
-      if (ILabel.isInstance(item)) {
+    for (const item of this.selectedItems) {
+      if (item instanceof ILabel) {
         labels.push(item)
-      } else if (INode.isInstance(item) || IEdge.isInstance(item)) {
-        item.labels.forEach(label => {
-          labels.push(label)
-        })
+      } else if (item instanceof ILabelOwner) {
+        labels.push(...item.labels)
       }
-    })
+    }
     return labels
   }
 
@@ -383,25 +384,25 @@ export default class ContextualToolbar {
     const nodeUI = document.getElementById('node-ui')
     const labelUI = document.getElementById('label-ui')
     const edgeUI = document.getElementById('edge-ui')
-    if (this.$containsNodes) {
-      addClass(this.$container, 'node-ui-visible')
+    if (this.containsNodes) {
+      addClass(this.container, 'node-ui-visible')
       nodeUI.style.display = 'inline-block'
     } else {
-      removeClass(this.$container, 'node-ui-visible')
+      removeClass(this.container, 'node-ui-visible')
       nodeUI.style.display = 'none'
     }
-    if (this.$containsLabels) {
-      addClass(this.$container, 'label-ui-visible')
+    if (this.containsLabels) {
+      addClass(this.container, 'label-ui-visible')
       labelUI.style.display = 'inline-block'
     } else {
-      removeClass(this.$container, 'label-ui-visible')
+      removeClass(this.container, 'label-ui-visible')
       labelUI.style.display = 'none'
     }
-    if (this.$containsEdges) {
-      addClass(this.$container, 'edge-ui-visible')
+    if (this.containsEdges) {
+      addClass(this.container, 'edge-ui-visible')
       edgeUI.style.display = 'inline-block'
     } else {
-      removeClass(this.$container, 'edge-ui-visible')
+      removeClass(this.container, 'edge-ui-visible')
       edgeUI.style.display = 'none'
     }
   }
@@ -413,14 +414,13 @@ export default class ContextualToolbar {
   updateLabelControlState() {
     const labels = this.getSelectedLabels()
     if (labels.length > 0) {
-      const firstLabel = labels[0]
+      const font = labels[0].style.font
       const fontBoldToggle = document.getElementById('font-bold')
-      fontBoldToggle.checked = firstLabel.style.font.fontWeight === FontWeight.BOLD
+      fontBoldToggle.checked = font.fontWeight === FontWeight.BOLD
       const fontItalicToggle = document.getElementById('font-italic')
-      fontItalicToggle.checked = firstLabel.style.font.fontStyle === FontStyle.ITALIC
+      fontItalicToggle.checked = font.fontStyle === FontStyle.ITALIC
       const fontUnderlineToggle = document.getElementById('font-underline')
-      fontUnderlineToggle.checked =
-        firstLabel.style.font.textDecoration === TextDecoration.UNDERLINE
+      fontUnderlineToggle.checked = font.textDecoration === TextDecoration.UNDERLINE
     }
   }
 
@@ -428,8 +428,8 @@ export default class ContextualToolbar {
    * Makes this toolbar visible near the given items.
    */
   show() {
-    clearTimeout(this.$hideTimer)
-    this.$container.style.display = 'block'
+    clearTimeout(this.hideTimer)
+    this.container.style.display = 'block'
 
     // we hide the picker containers such that we don't need to update their position if new elements are added to
     // the toolbar
@@ -444,7 +444,7 @@ export default class ContextualToolbar {
     // place the contextual toolbar
     this.updateLocation()
 
-    this.$container.style.opacity = '1'
+    this.container.style.opacity = '1'
   }
 
   /**
@@ -452,11 +452,11 @@ export default class ContextualToolbar {
    */
   hide() {
     this.hideAllPickerContainer()
-    this.$container.style.opacity = '0'
+    this.container.style.opacity = '0'
     // Remove the entire toolbar from the document flow otherwise it will block mouse events. However, we still want
     // to fade it out first.
-    this.$hideTimer = setTimeout(() => {
-      this.$container.style.display = 'none'
+    this.hideTimer = setTimeout(() => {
+      this.container.style.display = 'none'
     }, 300)
   }
 
@@ -469,23 +469,23 @@ export default class ContextualToolbar {
     if (this.selectedItems.length === 0) {
       return
     }
-    const width = this.$container.clientWidth
-    const height = this.$container.clientHeight
-    const zoom = this.$graphComponent.zoom
+    const width = this.container.clientWidth
+    const height = this.container.clientHeight
+    const zoom = this.graphComponent.zoom
 
     let dummyOwner
     let labelModelParameter
 
-    if (this.$containsEdges && !this.$containsNodes) {
+    if (this.containsEdges && !this.containsNodes) {
       // if only edges are selected, we want to use the first edge as position reference
-      dummyOwner = this.selectedItems.find(item => IEdge.isInstance(item))
-      labelModelParameter = this.$edgeLabelModelParameter
+      dummyOwner = this.selectedItems.find(item => item instanceof IEdge)
+      labelModelParameter = this.edgeLabelModelParameter
     } else {
       // if nodes and edges are selected, we use the union of the node's bounding boxes as position reference
       dummyOwner = new SimpleNode({
         layout: this.getEnclosingRect()
       })
-      labelModelParameter = this.$nodeLabelModelParameter
+      labelModelParameter = this.nodeLabelModelParameter
     }
 
     // create a dummy label to let the LabelModelParameter compute the correct location
@@ -499,16 +499,17 @@ export default class ContextualToolbar {
 
   /**
    * Returns the union rectangle of the selected nodes and labels.
+   * @returns {!MutableRectangle}
    */
   getEnclosingRect() {
     const enclosingRect = new MutableRectangle()
-    this.selectedItems.forEach(item => {
-      if (INode.isInstance(item) || ILabel.isInstance(item)) {
+    for (const item of this.selectedItems) {
+      if (item instanceof INode || item instanceof ILabel) {
         // we need the axis-parallel bounding rectangle, thus look out for oriented rectangles of the labels
-        const bounds = IOrientedRectangle.isInstance(item.layout) ? item.layout.bounds : item.layout
+        const bounds = item.layout instanceof IOrientedRectangle ? item.layout.bounds : item.layout
         enclosingRect.setToUnion(enclosingRect, bounds)
       }
-    })
+    }
     return enclosingRect
   }
 
@@ -521,42 +522,38 @@ export default class ContextualToolbar {
    */
   setLocation(x, y, width, height) {
     // Calculate the view coordinates since we have to place the div in the regular HTML coordinate space
-    const viewPoint = this.$graphComponent.toViewCoordinates(new Point(x, y))
-    const gcSize = this.$graphComponent.innerSize
+    const viewPoint = this.graphComponent.toViewCoordinates(new Point(x, y))
+    const gcSize = this.graphComponent.innerSize
     const padding = 15
     const left = Math.min(gcSize.width - width - padding, Math.max(padding, viewPoint.x))
     const top = Math.min(gcSize.height - height - padding, Math.max(padding, viewPoint.y))
-    this.$container.style.left = `${left}px`
-    this.$container.style.top = `${top}px`
+    this.container.style.left = `${left}px`
+    this.container.style.top = `${top}px`
   }
 
   /**
    * Adds listeners for graph changes, to update the location or state of the toolbar accordingly.
    */
   registerUpdateListeners() {
-    this.$graphComponent.addViewportChangedListener(() => {
+    this.graphComponent.addViewportChangedListener(() => {
       if (this.selectedItems.length > 0) {
-        this.$dirty = true
+        this.dirty = true
       }
     })
-    this.$graphComponent.graph.addNodeLayoutChangedListener(() => {
+    this.graphComponent.graph.addNodeLayoutChangedListener(() => {
       if (this.selectedItems.length > 0) {
-        this.$dirty = true
+        this.dirty = true
       }
     })
-    this.$graphComponent.addUpdatedVisualListener(() => {
-      if (this.selectedItems.length > 0 && this.$dirty) {
-        this.$dirty = false
+    this.graphComponent.addUpdatedVisualListener(() => {
+      if (this.selectedItems.length > 0 && this.dirty) {
+        this.dirty = false
         this.updateLocation()
       }
     })
-    this.$graphComponent.graph.undoEngine.addUnitUndoneListener(() =>
-      this.updateLabelControlState()
-    )
-    this.$graphComponent.graph.undoEngine.addUnitRedoneListener(() =>
-      this.updateLabelControlState()
-    )
-    this.$graphComponent.clipboard.addElementsCutListener(() => this.hide())
+    this.graphComponent.graph.undoEngine.addUnitUndoneListener(() => this.updateLabelControlState())
+    this.graphComponent.graph.undoEngine.addUnitRedoneListener(() => this.updateLabelControlState())
+    this.graphComponent.clipboard.addElementsCutListener(() => this.hide())
   }
 
   /**
@@ -596,10 +593,7 @@ export default class ContextualToolbar {
       this.applyNodeStyle(null, shape)
     })
 
-    bindActions('#quick-element-creation', e => {
-      const type = e.target.getAttribute('data-type')
-      this.createConnectedNode(type)
-    })
+    bindActions('#quick-element-creation', _ => this.createConnectedNode())
 
     bindActions('#arrow-picker-types > button', e => {
       const arrowType = e.target.getAttribute('data-type')
@@ -613,25 +607,28 @@ export default class ContextualToolbar {
 
     bindActions('#edge-colors > button', e => {
       const color = e.target.getAttribute('data-color')
-      this.applyEdgeStyle(color)
+      this.applyEdgeStyle(color, null, null)
     })
 
     bindAction('#font-bold', e => {
       this.hideAllPickerContainer()
+      const target = e.target
       this.applyFontStyle({
-        fontWeight: e.target.checked ? e.target.getAttribute('data-fontWeight') : 'normal'
+        fontWeight: target.checked ? target.getAttribute('data-fontWeight') : 'normal'
       })
     })
     bindAction('#font-italic', e => {
       this.hideAllPickerContainer()
+      const target = e.target
       this.applyFontStyle({
-        fontStyle: e.target.checked ? e.target.getAttribute('data-fontStyle') : 'normal'
+        fontStyle: target.checked ? target.getAttribute('data-fontStyle') : 'normal'
       })
     })
     bindAction('#font-underline', e => {
       this.hideAllPickerContainer()
+      const target = e.target
       this.applyFontStyle({
-        textDecoration: e.target.checked ? e.target.getAttribute('data-textDecoration') : 'none'
+        textDecoration: target.checked ? target.getAttribute('data-textDecoration') : 'none'
       })
     })
     bindAction('#decrease-font-size', () => {
@@ -643,36 +640,36 @@ export default class ContextualToolbar {
       this.changeFontSize(true)
     })
 
-    bindCommand("div[data-command='Cut']", ICommand.CUT, this.$graphComponent)
-    bindCommand("div[data-command='Duplicate']", ICommand.DUPLICATE, this.$graphComponent)
-    bindCommand("div[data-command='Delete']", ICommand.DELETE, this.$graphComponent)
+    bindCommand("div[data-command='Cut']", ICommand.CUT, this.graphComponent)
+    bindCommand("div[data-command='Duplicate']", ICommand.DUPLICATE, this.graphComponent)
+    bindCommand("div[data-command='Delete']", ICommand.DELETE, this.graphComponent)
     // we don't use the bindCommand helper for some buttons, because we want to close the picker container after the
     // command was executed
     const pasteButton = document.querySelector("div[data-command='Paste']")
     ICommand.PASTE.addCanExecuteChangedListener(() => {
-      if (ICommand.PASTE.canExecute(null, this.$graphComponent)) {
+      if (ICommand.PASTE.canExecute(null, this.graphComponent)) {
         pasteButton.removeAttribute('disabled')
       } else {
         pasteButton.setAttribute('disabled', 'disabled')
       }
     })
     pasteButton.addEventListener('click', () => {
-      if (ICommand.PASTE.canExecute(null, this.$graphComponent)) {
-        ICommand.PASTE.execute(null, this.$graphComponent)
+      if (ICommand.PASTE.canExecute(null, this.graphComponent)) {
+        ICommand.PASTE.execute(null, this.graphComponent)
         this.hideAllPickerContainer()
       }
     })
     const copyButton = document.querySelector("div[data-command='Copy']")
     ICommand.COPY.addCanExecuteChangedListener(() => {
-      if (ICommand.COPY.canExecute(null, this.$graphComponent)) {
+      if (ICommand.COPY.canExecute(null, this.graphComponent)) {
         copyButton.removeAttribute('disabled')
       } else {
         copyButton.setAttribute('disabled', 'disabled')
       }
     })
     copyButton.addEventListener('click', () => {
-      if (ICommand.COPY.canExecute(null, this.$graphComponent)) {
-        ICommand.COPY.execute(null, this.$graphComponent)
+      if (ICommand.COPY.canExecute(null, this.graphComponent)) {
+        ICommand.COPY.execute(null, this.graphComponent)
         this.hideAllPickerContainer()
       }
     })

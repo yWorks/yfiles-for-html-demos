@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -29,8 +29,10 @@
 import {
   DefaultPortCandidate,
   FreeNodePortLocationModel,
+  IEnumerable,
   IInputModeContext,
   INode,
+  IPortCandidate,
   List,
   PortCandidateProviderBase,
   PortCandidateValidity
@@ -44,7 +46,7 @@ import {
 export default class BluePortCandidateProvider extends PortCandidateProviderBase {
   /**
    * Creates a new instance of <code>BluePortCandidateProvider</code>.
-   * @param {INode} node The given node.
+   * @param {!INode} node The given node.
    */
   constructor(node) {
     super()
@@ -58,15 +60,16 @@ export default class BluePortCandidateProvider extends PortCandidateProviderBase
    * Note that the various variants of getPortCandidates of
    * {@link PortCandidateProviderBase} delegate to this method.
    * This can be used to provide the same candidates for all use-cases.
-   * @param {IInputModeContext} context The context for which the candidates should be provided
+   * @param {!IInputModeContext} context The context for which the candidates should be provided
    * @see Overrides {@link PortCandidateProviderBase#getPortCandidates}
-   * @return {IEnumerable.<IPortCandidate>}
+   * @returns {!IEnumerable.<IPortCandidate>}
    */
   getPortCandidates(context) {
     const candidates = new List()
     const graph = context.graph
+
     // Create the candidate for each port
-    if (graph !== null) {
+    if (graph) {
       this.node.ports.forEach(port => {
         const portCandidate = new DefaultPortCandidate(port)
         portCandidate.validity =
@@ -74,6 +77,7 @@ export default class BluePortCandidateProvider extends PortCandidateProviderBase
         candidates.add(portCandidate)
       })
     }
+
     // If no candidates have been created so far, create a single invalid candidate as fallback
     if (candidates.size === 0) {
       const item = new DefaultPortCandidate(

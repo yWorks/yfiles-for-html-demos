@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -94,13 +94,13 @@ function run(licenseData: any): void {
   License.value = licenseData
 
   graphComponent = new GraphComponent('graphComponent')
-  const graph = graphComponent!.graph
+  const graph = graphComponent.graph
 
   graph.nodeDefaults.size = new Size(150, 60)
   graph.edgeDefaults.labels.layoutParameter = new FreeEdgeLabelModel().createDefaultParameter()
 
   // configure the input mode
-  graphComponent!.inputMode = new GraphViewerInputMode()
+  graphComponent.inputMode = new GraphViewerInputMode()
 
   // configure label placement
   const preferredPlacementDescriptor = new PreferredPlacementDescriptor({
@@ -177,14 +177,14 @@ async function buildGraphFromData(update: boolean): Promise<void> {
     try {
       graphBuilder!.updateGraph()
     } catch (e) {
-      alert(`${e.message}`)
+      alert(`${(e as Error).message}`)
     }
   } else {
     graphBuilder!.graph.clear()
     try {
       graphBuilder!.buildGraph()
     } catch (e) {
-      alert(`${e.message}`)
+      alert(`${(e as Error).message}`)
     }
     graphComponent!.fitGraphBounds()
   }
@@ -277,7 +277,7 @@ function initializeSamplesComboBox(): void {
     option.textContent = samples[i].name
     // @ts-ignore
     option.value = samples[i]
-    samplesComboBox!.appendChild(option)
+    samplesComboBox.appendChild(option)
   }
 }
 
@@ -291,9 +291,7 @@ function removeAllChildren(htmlElement: HTMLElement): void {
  * Instantiates the sources list boxes
  * @param sourcesFactory
  */
-function createSourcesLists(
-  sourcesFactory: SourcesFactory
-): {
+function createSourcesLists(sourcesFactory: SourcesFactory): {
   nodesSourcesListBox: SourcesListBox<NodesSourceDefinitionBuilderConnector>
   edgesSourcesListBox: SourcesListBox<EdgesSourceDefinitionBuilderConnector>
 } {
@@ -306,14 +304,18 @@ function createSourcesLists(
     sourceName => sourcesFactory.createNodesSourceConnector(sourceName),
     NodesSourceDialog,
     nodeSourcesListRootElement,
-    () => buildGraphFromData(true)
+    () => {
+      buildGraphFromData(true)
+    }
   )
 
   const edgesSourcesListBox = new SourcesListBox(
     sourceName => sourcesFactory.createEdgesSourceConnector(sourceName),
     EdgesSourceDialog,
     edgesSourcesListRootElement,
-    () => buildGraphFromData(true)
+    () => {
+      buildGraphFromData(true)
+    }
   )
 
   return { nodesSourcesListBox, edgesSourcesListBox }

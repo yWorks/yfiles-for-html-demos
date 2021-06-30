@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -27,17 +27,13 @@
  **
  ***************************************************************************/
 import {
-  DashStyle,
   GraphComponent,
   GraphEditorInputMode,
-  GraphItemTypes,
-  IArrow,
   ICommand,
   INode,
   ITreeLayoutNodePlacer,
   License,
   PolylineEdgeStyle,
-  ShapeNodeShape,
   ShapeNodeStyle,
   Size,
   Stroke,
@@ -56,19 +52,19 @@ import * as TreeData from './resources/TreeData.js'
 import CreateTreeEdgeInputMode from './CreateTreeEdgeInputMode.js'
 import { bindAction, bindChangeListener, bindCommand, showApp } from '../../resources/demo-app.js'
 import loadJson from '../../resources/load-json.js'
-import NodePlacerPanel from './NodePlacerPanel.js'
+import NodePlacerPanel, { LayerFills } from './NodePlacerPanel.js'
 
 /**
  * The graph component which contains the tree graph.
  * @type {GraphComponent}
  */
-let graphComponent = null
+let graphComponent
 
 /**
  * The panel which provides access to the node placer settings.
  * @type {NodePlacerPanel}
  */
-let nodePlacerPanel = null
+let nodePlacerPanel
 
 /**
  * Flag to prevent re-entrant layout calculations.
@@ -78,9 +74,11 @@ let busy = false
 
 /**
  * Launches the TreeLayoutDemo.
+ * @param {!object} licenseData
  */
 function run(licenseData) {
   License.value = licenseData
+
   // initialize the graph component
   graphComponent = new GraphComponent('graphComponent')
 
@@ -100,6 +98,8 @@ function run(licenseData) {
 
 /**
  * Runs a {@link TreeLayout} using the specified {@link ITreeLayoutNodePlacer}s.
+ * @param {boolean} initConfig
+ * @returns {!Promise}
  */
 async function runLayout(initConfig) {
   if (busy) {
@@ -138,7 +138,11 @@ async function runLayout(initConfig) {
   }
 
   // run the layout animated
-  await graphComponent.morphLayout(configuration.layout, '0.5s', configuration.layoutData)
+  await graphComponent.morphLayout(
+    configuration.layout,
+    '0.5s',
+    configuration.layoutData ? configuration.layoutData : null
+  )
   setBusy(false)
 }
 
@@ -148,7 +152,7 @@ async function runLayout(initConfig) {
 function initializesInputModes() {
   // create a new GraphEditorInputMode
   const inputMode = new GraphEditorInputMode({
-    // disable label editing on double click, so it won't interfere with toggeling the node's assistant marking
+    // disable label editing on double click, so it won't interfere with toggling the node's assistant marking
     allowEditLabelOnDoubleClick: false,
     // add a custom CreateEdgeInputMode that will also create the edge's target to keep the tree-structure intact
     createEdgeInputMode: new CreateTreeEdgeInputMode(),
@@ -157,9 +161,9 @@ function initializesInputModes() {
     allowUndoOperations: false,
     // forbid node creation and allow only node deletion to maintain the tree-structure
     allowCreateNode: false,
-    selectableItems: GraphItemTypes.NODE,
-    deletableItems: GraphItemTypes.NODE,
-    focusableItems: GraphItemTypes.NONE
+    selectableItems: 'node',
+    deletableItems: 'node',
+    focusableItems: 'none'
   })
   inputMode.createEdgeInputMode.priority = 45
 
@@ -188,45 +192,41 @@ function initializesInputModes() {
 
   // update the settings panel when selection changed to be able to edit its node placer
   inputMode.addMultiSelectionFinishedListener((sender, args) =>
-    nodePlacerPanel.onNodeSelectionChanged(args.selection)
+    nodePlacerPanel.onNodeSelectionChanged(args.selection.ofType(INode.$class).toArray())
   )
 
   // toggle the assistant marking for the double-clicked node
   inputMode.addItemDoubleClickedListener((sender, args) => {
-    if (INode.isInstance(args.item)) {
+    if (args.item instanceof INode) {
       const node = args.item
       node.tag.assistant = !node.tag.assistant
       const nodeStyle = node.style.clone()
-      if (nodeStyle) {
-        nodeStyle.stroke = !node.tag.assistant
-          ? null
-          : new Stroke({
-              fill: 'black',
-              thickness: 2,
-              dashStyle: DashStyle.DASH
-            })
-        graphComponent.graph.setStyle(node, nodeStyle)
-      }
+      nodeStyle.stroke = !node.tag.assistant
+        ? null
+        : new Stroke({
+            fill: 'black',
+            thickness: 2,
+            dashStyle: 'dash'
+          })
+      graphComponent.graph.setStyle(node, nodeStyle)
       runLayout(false)
     }
   })
 
   // labels may influence the order of child nodes, if they are changed a new layout should be calculated
   inputMode.addLabelAddedListener((sender, args) => {
-    if (!isNaN(args.item.text)) {
+    if (!isNaN(Number(args.item.text))) {
       runLayout(false)
     }
   })
   inputMode.addLabelTextChangedListener((sender, args) => {
-    if (!isNaN(args.item.text)) {
+    if (!isNaN(Number(args.item.text))) {
       runLayout(false)
     }
   })
 
   // update layout and settings panel when an edge was created
-  inputMode.createEdgeInputMode.addEdgeCreatedListener((sender, args) => {
-    runLayout(false)
-  })
+  inputMode.createEdgeInputMode.addEdgeCreatedListener(() => runLayout(false))
 
   // assign the input mode to the graph component
   graphComponent.inputMode = inputMode
@@ -234,8 +234,8 @@ function initializesInputModes() {
 
 /**
  * Finds all nodes in the subtree rooted by the selected node and collects them in the passed array.
- * @param {INode} selectedNode
- * @param {Array.<INode>} nodesToDelete
+ * @param {!INode} selectedNode
+ * @param {!Array.<INode>} nodesToDelete
  */
 function collectSubtreeNodes(selectedNode, nodesToDelete) {
   nodesToDelete.push(selectedNode)
@@ -247,15 +247,24 @@ function collectSubtreeNodes(selectedNode, nodesToDelete) {
 }
 
 /**
- * Reads a tree graph from file
+ * @typedef {Object} TreeNodeType
+ * @property {(number|string)} id
+ * @property {number} layer
+ * @property {boolean} [assistant]
+ * @property {Array.<TreeNodeType>} [children]
  */
-function loadGraph() {
+
+/**
+ * Reads a tree graph from file
+ * @returns {!Promise}
+ */
+async function loadGraph() {
   const graph = graphComponent.graph
   graph.clear()
 
   // initialize the node and edge default styles, they will be applied to the newly created graph
   graph.nodeDefaults.style = new ShapeNodeStyle({
-    shape: ShapeNodeShape.ROUND_RECTANGLE,
+    shape: 'round-rectangle',
     stroke: 'white',
     fill: 'crimson'
   })
@@ -263,7 +272,7 @@ function loadGraph() {
   graph.nodeDefaults.shareStyleInstance = false
 
   graph.edgeDefaults.style = new PolylineEdgeStyle({
-    targetArrow: IArrow.TRIANGLE
+    targetArrow: 'triangle'
   })
 
   // select tree data
@@ -305,14 +314,15 @@ function loadGraph() {
 
   // update the node fill colors according to their layers
   graph.nodes.forEach(node => {
-    node.style.fill = NodePlacerPanel.layerFills[node.tag.layer % NodePlacerPanel.layerFills.length]
+    const style = node.style
+    style.fill = LayerFills[node.tag.layer % LayerFills.length]
     if (node.tag.assistant) {
-      node.style.stroke = '2px dashed black'
+      style.stroke = Stroke.from('2px dashed black')
     }
   })
 
   // apply layout
-  runLayout(true)
+  await runLayout(true)
 }
 
 /**
@@ -331,7 +341,7 @@ function registerCommands() {
   bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent)
   bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent)
   bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent)
-  bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
+  bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1)
 
   bindChangeListener("select[data-command='SelectSample']", loadGraph)
 
@@ -340,13 +350,13 @@ function registerCommands() {
   const nextSample = document.getElementById('next-sample')
   bindAction("button[data-command='PreviousSample']", () => {
     samples.selectedIndex = Math.max(samples.selectedIndex - 1, 0)
-    loadGraph(samples.options[samples.selectedIndex].text)
+    loadGraph()
     previousSample.disabled = samples.selectedIndex === 0
     nextSample.disabled = samples.selectedIndex === samples.options.length - 1
   })
   bindAction("button[data-command='NextSample']", () => {
     samples.selectedIndex = Math.min(samples.selectedIndex + 1, samples.options.length - 1)
-    loadGraph(samples.options[samples.selectedIndex].text)
+    loadGraph()
     previousSample.disabled = samples.selectedIndex === 0
     nextSample.disabled = samples.selectedIndex === samples.options.length - 1
   })

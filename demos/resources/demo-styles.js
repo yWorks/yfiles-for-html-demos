@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -41,7 +41,9 @@ import yfiles, {
   GeneralPath,
   GraphComponent,
   GraphMLAttribute,
+  GraphMLIOHandler,
   GraphOverviewCanvasVisualCreator,
+  HandleSerializationEventArgs,
   IArrow,
   IBoundsProvider,
   ICanvasContext,
@@ -49,16 +51,17 @@ import yfiles, {
   IGraph,
   IInputModeContext,
   ILassoTestable,
+  ILookup,
   INode,
   INodeInsetsProvider,
   INodeSizeConstraintProvider,
+  Insets,
+  InteriorStretchLabelModel,
+  InteriorStretchLabelModelPosition,
   IObstacleProvider,
   IRenderContext,
   ISvgDefsCreator,
   IVisualCreator,
-  Insets,
-  InteriorStretchLabelModel,
-  InteriorStretchLabelModelPosition,
   MarkupExtension,
   MoveInputMode,
   NodeSizeConstraintProvider,
@@ -83,16 +86,16 @@ export class DemoNodeStyle extends NodeStyleBase {
 
   /**
    * Creates the visual for a node.
-   * @param {INode} node
-   * @param {IRenderContext} renderContext
-   * @return {SvgVisual}
+   * @param {!IRenderContext} renderContext
+   * @param {!INode} node
+   * @returns {!SvgVisual}
    */
   createVisual(renderContext, node) {
     const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect')
-    const layout = node.layout
+    const { x, y, width, height } = node.layout
     const nodeRounding = '2'
-    rect.width.baseVal.value = layout.width
-    rect.height.baseVal.value = layout.height
+    rect.width.baseVal.value = width
+    rect.height.baseVal.value = height
     rect.setAttribute('rx', nodeRounding)
     rect.setAttribute('ry', nodeRounding)
     rect.setAttribute('fill', '#FF8C00')
@@ -104,24 +107,24 @@ export class DemoNodeStyle extends NodeStyleBase {
     }
 
     rect['data-renderDataCache'] = {
-      x: layout.x,
-      y: layout.y,
-      width: layout.width,
-      height: layout.height,
+      x,
+      y,
+      width,
+      height,
       cssClass: this.cssClass
     }
 
-    rect.setAttribute('transform', 'translate(' + layout.x + ' ' + layout.y + ')')
+    rect.setAttribute('transform', `translate(${x} ${y})`)
 
     return new SvgVisual(rect)
   }
 
   /**
    * Re-renders the node by updating the old visual for improved performance.
-   * @param {INode} node
-   * @param {IRenderContext} renderContext
-   * @param {SvgVisual} oldVisual
-   * @return {SvgVisual}
+   * @param {!IRenderContext} renderContext
+   * @param {!SvgVisual} oldVisual
+   * @param {!INode} node
+   * @returns {!SvgVisual}
    */
   updateVisual(renderContext, oldVisual, node) {
     const rect = oldVisual.svgElement
@@ -131,8 +134,7 @@ export class DemoNodeStyle extends NodeStyleBase {
     }
 
     const layout = node.layout
-    const width = layout.width
-    const height = layout.height
+    const { x, y, width, height } = layout
 
     if (cache.width !== width) {
       rect.width.baseVal.value = width
@@ -142,10 +144,10 @@ export class DemoNodeStyle extends NodeStyleBase {
       rect.height.baseVal.value = height
       cache.height = height
     }
-    if (cache.x !== layout.x || cache.y !== layout.y) {
-      rect.transform.baseVal.getItem(0).setTranslate(layout.x, layout.y)
-      cache.x = layout.x
-      cache.y = layout.y
+    if (cache.x !== x || cache.y !== y) {
+      rect.transform.baseVal.getItem(0).setTranslate(x, y)
+      cache.x = x
+      cache.y = y
     }
 
     if (cache.cssClass !== this.cssClass) {
@@ -174,17 +176,16 @@ export class DemoGroupStyle extends NodeStyleBase {
     this.cssClass = ''
     this.isCollapsible = false
     this.solidHitTest = false
-
-    this.$borderColor = '#68B0E3'
-    this.$folderFrontColor = '#68B0E3'
-    this.$folderBackColor = '#3C679B'
+    this.borderColor = '#68B0E3'
+    this.folderFrontColor = '#68B0E3'
+    this.folderBackColor = '#3C679B'
   }
 
   /**
    * Creates the visual for a collapsed or expanded group node.
-   * @param {INode} node
-   * @param {IRenderContext} renderContext
-   * @return {SvgVisual}
+   * @param {!IRenderContext} renderContext
+   * @param {!INode} node
+   * @returns {!SvgVisual}
    */
   createVisual(renderContext, node) {
     const gc = renderContext.canvasComponent
@@ -193,20 +194,20 @@ export class DemoGroupStyle extends NodeStyleBase {
     // avoid defs support recursion - nothing to see here - move along!
     container.setAttribute('data-referencesafe', 'true')
     if (this.isCollapsed(node, gc)) {
-      this.$renderFolder(node, container, renderContext)
+      this.renderFolder(node, container, renderContext)
     } else {
-      this.$renderGroup(node, container, renderContext)
+      this.renderGroup(node, container, renderContext)
     }
-    container.setAttribute('transform', 'translate(' + layout.x + ' ' + layout.y + ')')
+    container.setAttribute('transform', `translate(${layout.x} ${layout.y})`)
     return new SvgVisual(container)
   }
 
   /**
    * Re-renders the group node by updating the old visual for improved performance.
-   * @param {INode} node
-   * @param {IRenderContext} renderContext
-   * @param {SvgVisual} oldVisual
-   * @return {SvgVisual}
+   * @param {!IRenderContext} renderContext
+   * @param {!SvgVisual} oldVisual
+   * @param {!INode} node
+   * @returns {!SvgVisual}
    */
   updateVisual(renderContext, oldVisual, node) {
     const container = oldVisual.svgElement
@@ -215,55 +216,49 @@ export class DemoGroupStyle extends NodeStyleBase {
       return this.createVisual(renderContext, node)
     }
     if (this.isCollapsed(node, renderContext.canvasComponent)) {
-      this.$updateFolder(node, container, renderContext)
+      this.updateFolder(node, container, renderContext)
     } else {
-      this.$updateGroup(node, container, renderContext)
+      this.updateGroup(node, container, renderContext)
     }
     return oldVisual
   }
 
   /**
    * Helper function to create a collapsed group node visual inside the given container.
-   * @param {INode} node
-   * @param {Element} container
-   * @param {IRenderContext} ctx
-   * @private
+   * @param {!INode} node
+   * @param {!Element} container
+   * @param {!IRenderContext} ctx
    */
-  $renderFolder(node, container, ctx) {
-    const layout = node.layout
-    const width = layout.width
-    const height = layout.height
+  renderFolder(node, container, ctx) {
+    const { x, y, width, height } = node.layout
 
     const backgroundRect = document.createElementNS(SVG_NS, 'rect')
-    backgroundRect.setAttribute('fill', this.$folderBackColor)
+    backgroundRect.setAttribute('fill', this.folderBackColor)
     backgroundRect.setAttribute('stroke', '#FFF')
     backgroundRect.setAttribute('stroke-width', '1px')
     backgroundRect.width.baseVal.value = width
     backgroundRect.height.baseVal.value = height
 
-    const path =
-      'M ' +
-      (width - 0.5) +
-      ',2 l -25,0 q -2,0 -4,3.75 l -4,7.5 q -2,3.75 -4,3.75 L 0.5,17 L 0.5,' +
-      (height - 0.5) +
-      ' l ' +
-      (width - 1) +
-      ',0 Z'
+    const path = `M ${
+      width - 0.5
+    },2 l -25,0 q -2,0 -4,3.75 l -4,7.5 q -2,3.75 -4,3.75 L 0.5,17 L 0.5,${height - 0.5} l ${
+      width - 1
+    },0 Z`
 
     const folderPath = document.createElementNS(SVG_NS, 'path')
     folderPath.setAttribute('d', path)
-    folderPath.setAttribute('fill', this.$folderFrontColor)
+    folderPath.setAttribute('fill', this.folderFrontColor)
 
     container.appendChild(backgroundRect)
     container.appendChild(folderPath)
 
-    const expandButton = this.$createButton(false)
+    const expandButton = this.createButton(false)
     CollapsibleNodeStyleDecoratorRenderer.addToggleExpansionStateCommand(expandButton, node, ctx)
-    expandButton.svgElement.setAttribute('transform', 'translate(' + (width - 17) + ' 5)')
+    expandButton.svgElement.setAttribute('transform', `translate(${width - 17} 5)`)
     container.appendChild(expandButton.svgElement)
 
     if (this.cssClass) {
-      container.setAttribute('class', this.cssClass + '-collapsed')
+      container.setAttribute('class', `${this.cssClass}-collapsed`)
       backgroundRect.setAttribute('class', 'folder-background')
       folderPath.setAttribute('class', 'folder-foreground')
     }
@@ -271,24 +266,23 @@ export class DemoGroupStyle extends NodeStyleBase {
     container['data-renderDataCache'] = {
       isCollapsible: this.isCollapsible,
       collapsed: true,
-      width: width,
-      height: height,
-      x: layout.x,
-      y: layout.y
+      width,
+      height,
+      x,
+      y
     }
   }
 
   /**
    * Helper function to update the visual of a collapsed group node.
-   * @param {INode} node
-   * @param {Element} container
-   * @param {IRenderContext} ctx
-   * @private
+   * @param {!INode} node
+   * @param {!SVGGElement} container
+   * @param {!IRenderContext} ctx
    */
-  $updateFolder(node, container, ctx) {
+  updateFolder(node, container, ctx) {
     const cache = container['data-renderDataCache']
     if (!cache || this.isCollapsible !== cache.isCollapsible) {
-      this.$renderFolder(node, container, ctx)
+      this.renderFolder(node, container, ctx)
       return
     }
 
@@ -298,23 +292,18 @@ export class DemoGroupStyle extends NodeStyleBase {
 
     if (!cache.collapsed) {
       // transition from expanded state
-      path =
-        'M ' +
-        (width - 0.5) +
-        ',2 l -25,0 q -2,0 -4,3.75 l -4,7.5 q -2,3.75 -4,3.75 L 0.5,17 L 0.5,' +
-        (height - 0.5) +
-        ' l ' +
-        (width - 1) +
-        ',0 Z'
+      path = `M ${width - 0.5},2 l -25,0 q -2,0 -4,3.75 l -4,7.5 q -2,3.75 -4,3.75 L 0.5,17 L 0.5,${
+        height - 0.5
+      } l ${width - 1},0 Z`
 
       backgroundRect = container.childNodes.item(0)
-      backgroundRect.setAttribute('fill', this.$folderBackColor)
+      backgroundRect.setAttribute('fill', this.folderBackColor)
       backgroundRect.setAttribute('stroke', '#FFF')
       backgroundRect.setAttribute('stroke-width', '1px')
 
       folderPath = document.createElementNS(SVG_NS, 'path')
       folderPath.setAttribute('d', path)
-      folderPath.setAttribute('fill', this.$folderFrontColor)
+      folderPath.setAttribute('fill', this.folderFrontColor)
 
       container.replaceChild(folderPath, container.childNodes.item(1))
 
@@ -325,10 +314,10 @@ export class DemoGroupStyle extends NodeStyleBase {
       const vMinus = document.createElementNS(SVG_NS, 'rect')
       vMinus.setAttribute('width', '2')
       vMinus.setAttribute('height', '8')
-      vMinus.setAttribute('x', 5)
-      vMinus.setAttribute('y', 2)
-      vMinus.setAttribute('fill', this.$borderColor)
-      vMinus.setAttribute('stroke-width', 0) // we don't want a stroke here, even if it is set in the corresponding
+      vMinus.setAttribute('x', '5')
+      vMinus.setAttribute('y', '2')
+      vMinus.setAttribute('fill', this.borderColor)
+      vMinus.setAttribute('stroke-width', '0') // we don't want a stroke here, even if it is set in the corresponding
       // css class
 
       if (this.cssClass) {
@@ -350,14 +339,9 @@ export class DemoGroupStyle extends NodeStyleBase {
       backgroundRect.width.baseVal.value = width
       backgroundRect.height.baseVal.value = height
 
-      path =
-        'M ' +
-        (width - 0.5) +
-        ',2 l -25,0 q -2,0 -4,3.75 l -4,7.5 q -2,3.75 -4,3.75 L 0.5,17 L 0.5,' +
-        (height - 0.5) +
-        ' l ' +
-        (width - 1) +
-        ',0 Z'
+      path = `M ${width - 0.5},2 l -25,0 q -2,0 -4,3.75 l -4,7.5 q -2,3.75 -4,3.75 L 0.5,17 L 0.5,${
+        height - 0.5
+      } l ${width - 1},0 Z`
       folderPath = container.childNodes.item(1)
       folderPath.setAttribute('d', path)
 
@@ -379,18 +363,17 @@ export class DemoGroupStyle extends NodeStyleBase {
 
   /**
    * Helper function to create an expanded group node visual inside the given container.
-   * @param {INode} node
-   * @param {Element} container
-   * @param {IRenderContext} ctx
-   * @private
+   * @param {!INode} node
+   * @param {!Element} container
+   * @param {!IRenderContext} ctx
    */
-  $renderGroup(node, container, ctx) {
+  renderGroup(node, container, ctx) {
     const layout = node.layout
     const width = layout.width
     const height = layout.height
 
     const outerRect = document.createElementNS(SVG_NS, 'rect')
-    outerRect.setAttribute('fill', this.$borderColor)
+    outerRect.setAttribute('fill', this.borderColor)
     outerRect.setAttribute('stroke', '#FFF')
     outerRect.setAttribute('stroke-width', '1px')
     outerRect.width.baseVal.value = width
@@ -411,13 +394,13 @@ export class DemoGroupStyle extends NodeStyleBase {
     container.appendChild(innerRect)
 
     if (this.isCollapsible) {
-      const collapseButton = this.$createButton(true)
+      const collapseButton = this.createButton(true)
       CollapsibleNodeStyleDecoratorRenderer.addToggleExpansionStateCommand(
         collapseButton,
         node,
         ctx
       )
-      collapseButton.svgElement.setAttribute('transform', 'translate(' + (width - 17) + ' 5)')
+      collapseButton.svgElement.setAttribute('transform', `translate(${width - 17} 5)`)
       container.appendChild(collapseButton.svgElement)
     }
 
@@ -438,30 +421,28 @@ export class DemoGroupStyle extends NodeStyleBase {
 
   /**
    * Helper function to update the visual of an expanded group node.
-   * @param {INode} node
-   * @param {Element} container
-   * @param {IRenderContext} ctx
-   * @private
+   * @param {!INode} node
+   * @param {!SVGGElement} container
+   * @param {!IRenderContext} ctx
    */
-  $updateGroup(node, container, ctx) {
+  updateGroup(node, container, ctx) {
     const cache = container['data-renderDataCache']
     if (!cache || this.isCollapsible !== cache.isCollapsible) {
-      this.$renderGroup(node, container, ctx)
+      this.renderGroup(node, container, ctx)
       return
     }
 
-    const width = node.layout.width
-    const height = node.layout.height
-    let backgroundRect = null
-    let innerRect = null
-    let innerWidth = null
-    let innerHeight = null
-    let headerHeight = null
+    const { width, height } = node.layout
+    let backgroundRect
+    let innerRect
+    let innerWidth
+    let innerHeight
+    let headerHeight
 
     if (cache.collapsed) {
       // transition from collapsed state
       backgroundRect = container.childNodes.item(0)
-      backgroundRect.setAttribute('fill', this.$borderColor)
+      backgroundRect.setAttribute('fill', this.borderColor)
 
       innerRect = document.createElementNS(SVG_NS, 'rect')
       innerWidth = width - BORDER_THICKNESS2
@@ -512,8 +493,7 @@ export class DemoGroupStyle extends NodeStyleBase {
       cache.width = width
       cache.height = height
     }
-    const x = node.layout.x
-    const y = node.layout.y
+    const { x, y } = node.layout
     if (cache.x !== x || cache.y !== y) {
       container.transform.baseVal.getItem(0).setTranslate(x, y)
       cache.x = x
@@ -524,11 +504,10 @@ export class DemoGroupStyle extends NodeStyleBase {
   /**
    * Helper function to create the collapse/expand button.
    * @param {boolean} collapse
-   * @return {SvgVisual}
-   * @private
+   * @returns {!SvgVisual}
    */
-  $createButton(collapse) {
-    const color = this.$borderColor
+  createButton(collapse) {
+    const color = this.borderColor
     const container = document.createElementNS(SVG_NS, 'g')
     const rect = document.createElementNS(SVG_NS, 'rect')
     rect.setAttribute('fill', '#FFF')
@@ -576,16 +555,16 @@ export class DemoGroupStyle extends NodeStyleBase {
 
   /**
    * Performs a lookup operation.
-   * @param {INode} node
-   * @param {Class} type
-   * @return Object
+   * @param {!INode} node
+   * @param {!Class} type
+   * @returns {*}
    */
   lookup(node, type) {
     if (type === ILassoTestable.$class) {
-      return new ILassoTestable((context, lassoPath) => {
-        const path = new GeneralPath()
-        const insetsProvider = node.lookup(INodeInsetsProvider.$class)
-        if (insetsProvider) {
+      const insetsProvider = node.lookup(INodeInsetsProvider.$class)
+      if (insetsProvider instanceof INodeInsetsProvider) {
+        return ILassoTestable.create((context, lassoPath) => {
+          const path = new GeneralPath()
           const insets = insetsProvider.getInsets(node)
           const outerRect = node.layout.toRect()
           path.appendRectangle(outerRect, false)
@@ -602,13 +581,15 @@ export class DemoGroupStyle extends NodeStyleBase {
             lassoPath.intersects(path, context.hitTestRadius) ||
             lassoPath.areaContains(node.layout.topLeft)
           )
-        } else {
-          // no insets - we only check the center of the node.
-          return lassoPath.areaContains(node.layout.center, context.hitTestRadius)
-        }
-      })
+        })
+      } else {
+        // no insets - we only check the center of the node.
+        return ILassoTestable.create((context, lassoPath) =>
+          lassoPath.areaContains(node.layout.center, context.hitTestRadius)
+        )
+      }
     } else if (type === INodeInsetsProvider.$class) {
-      return new INodeInsetsProvider(node => {
+      return INodeInsetsProvider.create(_ => {
         const margin = 5
         return new Insets(
           BORDER_THICKNESS + margin,
@@ -625,49 +606,56 @@ export class DemoGroupStyle extends NodeStyleBase {
 
   /**
    * Hit test which considers HitTestRadius specified in CanvasContext.
-   * @param {IInputModeContext} inputModeContext
-   * @param {Point} p
-   * @param {INode} node
-   * @return {boolean} True if p is inside node.
+   * @returns {boolean} True if p is inside node.
+   * @param {!IInputModeContext} inputModeContext
+   * @param {!Point} p
+   * @param {!INode} node
    */
   isHit(inputModeContext, p, node) {
     const layout = node.layout.toRect()
     if (this.solidHitTest || this.isCollapsed(node, inputModeContext.canvasComponent)) {
       return layout.containsWithEps(p, inputModeContext.hitTestRadius)
-    } else {
-      if (
-        (yfiles.input.CreateEdgeInputMode &&
-          inputModeContext.parentInputMode instanceof yfiles.input.CreateEdgeInputMode &&
-          inputModeContext.parentInputMode.isCreationInProgress) ||
-        (inputModeContext.parentInputMode instanceof MoveInputMode &&
-          inputModeContext.parentInputMode.isDragging) ||
-        inputModeContext.parentInputMode instanceof DropInputMode
-      ) {
-        // during edge creation - the whole area is considered a hit
-        return layout.containsWithEps(p, inputModeContext.hitTestRadius)
-      }
-      const innerWidth = layout.width - BORDER_THICKNESS2
-      const innerHeight = layout.height - HEADER_THICKNESS - BORDER_THICKNESS
-      const innerLayout = new Rect(
-        layout.x + BORDER_THICKNESS,
-        layout.y + HEADER_THICKNESS,
-        innerWidth,
-        innerHeight
-      ).getEnlarged(-inputModeContext.hitTestRadius)
-
-      return layout.containsWithEps(p, inputModeContext.hitTestRadius) && !innerLayout.contains(p)
     }
+
+    const CreateEdgeInputMode = yfiles.CreateEdgeInputMode || yfiles.input.CreateEdgeInputMode
+    if (
+      (CreateEdgeInputMode &&
+        inputModeContext.parentInputMode instanceof CreateEdgeInputMode &&
+        inputModeContext.parentInputMode.isCreationInProgress) ||
+      (inputModeContext.parentInputMode instanceof MoveInputMode &&
+        inputModeContext.parentInputMode.isDragging) ||
+      inputModeContext.parentInputMode instanceof DropInputMode
+    ) {
+      // during edge creation - the whole area is considered a hit
+      return layout.containsWithEps(p, inputModeContext.hitTestRadius)
+    }
+    const innerWidth = layout.width - BORDER_THICKNESS2
+    const innerHeight = layout.height - HEADER_THICKNESS - BORDER_THICKNESS
+    const innerLayout = new Rect(
+      layout.x + BORDER_THICKNESS,
+      layout.y + HEADER_THICKNESS,
+      innerWidth,
+      innerHeight
+    ).getEnlarged(-inputModeContext.hitTestRadius)
+
+    return layout.containsWithEps(p, inputModeContext.hitTestRadius) && !innerLayout.contains(p)
   }
 
+  /**
+   * @param {!IInputModeContext} inputModeContext
+   * @param {!Rect} box
+   * @param {!INode} node
+   * @returns {boolean}
+   */
   isInBox(inputModeContext, box, node) {
     return box.contains(node.layout.topLeft) && box.contains(node.layout.bottomRight)
   }
 
   /**
    * Returns whether or not the given group node is collapsed.
-   * @param {INode} node
-   * @param {GraphComponent} gc
-   * @return {boolean}
+   * @param {!INode} node
+   * @param {?CanvasComponent} gc
+   * @returns {boolean}
    */
   isCollapsed(node, gc) {
     if (!(gc instanceof GraphComponent)) {
@@ -686,19 +674,17 @@ export class DemoGroupStyle extends NodeStyleBase {
 export class DemoArrow extends BaseClass(IArrow, IVisualCreator, IBoundsProvider) {
   constructor() {
     super()
-
     this.cssClass = ''
-
-    this.$anchor = null
-    this.$direction = null
-    this.$arrowFigure = null
+    this.anchor = null
+    this.direction = null
+    this.arrowFigure = null
   }
 
   /**
    * Returns the length of the arrow, i.e. the distance from the arrow's tip to
    * the position where the visual representation of the edge's path should begin.
    * @see Specified by {@link IArrow#length}.
-   * @return {number}
+   * @type {number}
    */
   get length() {
     return 5.5
@@ -709,7 +695,7 @@ export class DemoArrow extends BaseClass(IArrow, IVisualCreator, IBoundsProvider
    * This value is used by edge styles to let the
    * edge appear to end shortly before its actual target.
    * @see Specified by {@link IArrow#cropLength}.
-   * @return {number}
+   * @type {number}
    */
   get cropLength() {
     return 1
@@ -717,15 +703,15 @@ export class DemoArrow extends BaseClass(IArrow, IVisualCreator, IBoundsProvider
 
   /**
    * Returns a configured visual creator.
-   * @param {IEdge} edge
+   * @param {!IEdge} edge
    * @param {boolean} atSource
-   * @param {Point} anchor
-   * @param {Point} direction
-   * @return {DemoArrow}
+   * @param {!Point} anchor
+   * @param {!Point} direction
+   * @returns {!DemoArrow}
    */
   getVisualCreator(edge, atSource, anchor, direction) {
-    this.$anchor = anchor
-    this.$direction = direction
+    this.anchor = anchor
+    this.direction = direction
     return this
   }
 
@@ -733,44 +719,44 @@ export class DemoArrow extends BaseClass(IArrow, IVisualCreator, IBoundsProvider
    * Gets an {@link IBoundsProvider} implementation that can yield
    * this arrow's bounds if painted at the given location using the
    * given direction for the given edge.
-   * @param {IEdge} edge the edge this arrow belongs to
+   * @param {!IEdge} edge the edge this arrow belongs to
    * @param {boolean} atSource whether this will be the source arrow
-   * @param {Point} anchor the anchor point for the tip of the arrow
-   * @param {Point} direction the direction the arrow is pointing in
-   * @return {DemoArrow}
+   * @param {!Point} anchor the anchor point for the tip of the arrow
+   * @param {!Point} direction the direction the arrow is pointing in
    * an implementation of the {@link IBoundsProvider} interface that can
    * subsequently be used to query the bounds. Clients will always call
    * this method before using the implementation and may not cache the instance returned.
    * This allows for applying the flyweight design pattern to implementations.
    * @see Specified by {@link IArrow#getBoundsProvider}.
+   * @returns {!DemoArrow}
    */
   getBoundsProvider(edge, atSource, anchor, direction) {
-    this.$anchor = anchor
-    this.$direction = direction
+    this.anchor = anchor
+    this.direction = direction
     return this
   }
 
   /**
    * This method is called by the framework to create a visual
    * that will be included into the {@link IRenderContext}.
-   * @param {IRenderContext} ctx The context that describes where the visual will be used.
-   * @return {Visual}
+   * @param {!IRenderContext} ctx The context that describes where the visual will be used.
    * The arrow visual to include in the canvas object visual tree./>.
    * @see {@link DemoArrow#updateVisual}
    * @see Specified by {@link IVisualCreator#createVisual}.
+   * @returns {!Visual}
    */
   createVisual(ctx) {
     // Create a new path to draw the arrow
-    if (this.$arrowFigure === null) {
-      this.$arrowFigure = new GeneralPath()
-      this.$arrowFigure.moveTo(new Point(-7.5, -2.5))
-      this.$arrowFigure.lineTo(new Point(0, 0))
-      this.$arrowFigure.lineTo(new Point(-7.5, 2.5))
-      this.$arrowFigure.close()
+    if (this.arrowFigure === null) {
+      this.arrowFigure = new GeneralPath()
+      this.arrowFigure.moveTo(new Point(-7.5, -2.5))
+      this.arrowFigure.lineTo(new Point(0, 0))
+      this.arrowFigure.lineTo(new Point(-7.5, 2.5))
+      this.arrowFigure.close()
     }
 
     const path = window.document.createElementNS('http://www.w3.org/2000/svg', 'path')
-    path.setAttribute('d', this.$arrowFigure.createSvgPathData())
+    path.setAttribute('d', this.arrowFigure.createSvgPathData())
     path.setAttribute('fill', '#336699')
 
     if (this.cssClass) {
@@ -780,24 +766,13 @@ export class DemoArrow extends BaseClass(IArrow, IVisualCreator, IBoundsProvider
     // Rotate arrow and move it to correct position
     path.setAttribute(
       'transform',
-      'matrix(' +
-        this.$direction.x +
-        ' ' +
-        this.$direction.y +
-        ' ' +
-        -this.$direction.y +
-        ' ' +
-        this.$direction.x +
-        ' ' +
-        this.$anchor.x +
-        ' ' +
-        this.$anchor.y +
-        ')'
+      `matrix(${this.direction.x} ${this.direction.y} ${-this.direction.y} ${this.direction.x} ${
+        this.anchor.x
+      } ${this.anchor.y})`
     )
-
     path['data-renderDataCache'] = {
-      direction: this.$direction,
-      anchor: this.$anchor
+      direction: this.direction,
+      anchor: this.anchor
     }
 
     return new SvgVisual(path)
@@ -810,37 +785,27 @@ export class DemoArrow extends BaseClass(IArrow, IVisualCreator, IBoundsProvider
    * update an existing Visual that has previously been created by the same instance during a call
    * to {@link DemoArrow#createVisual}. Implementations may update the <code>oldVisual</code>
    * and return that same reference, or create a new visual and return the new instance or <code>null</code>.
-   * @param {IRenderContext} ctx The context that describes where the visual will be used in.
-   * @param {Visual} oldVisual The visual instance that had been returned the last time the
+   * @param {!IRenderContext} ctx The context that describes where the visual will be used in.
+   * @param {!SvgVisual} oldVisual The visual instance that had been returned the last time the
    *   {@link DemoArrow#createVisual} method was called on this instance.
-   * @return {Visual}
    *  <code>oldVisual</code>, if this instance modified the visual, or a new visual that should replace the
    * existing one in the canvas object visual tree.
    * @see {@link DemoArrow#createVisual}
    * @see {@link ICanvasObjectDescriptor}
    * @see {@link CanvasComponent}
    * @see Specified by {@link IVisualCreator#updateVisual}.
+   * @returns {!Visual}
    */
   updateVisual(ctx, oldVisual) {
     const path = oldVisual.svgElement
     const cache = path['data-renderDataCache']
 
-    if (this.$direction !== cache.direction || this.$anchor !== cache.anchor) {
+    if (this.direction !== cache.direction || this.anchor !== cache.anchor) {
       path.setAttribute(
         'transform',
-        'matrix(' +
-          this.$direction.x +
-          ' ' +
-          this.$direction.y +
-          ' ' +
-          -this.$direction.y +
-          ' ' +
-          this.$direction.x +
-          ' ' +
-          this.$anchor.x +
-          ' ' +
-          this.$anchor.y +
-          ')'
+        `matrix(${this.direction.x} ${this.direction.y} ${-this.direction.y} ${this.direction.x} ${
+          this.anchor.x
+        } ${this.anchor.y})`
       )
     }
 
@@ -850,41 +815,37 @@ export class DemoArrow extends BaseClass(IArrow, IVisualCreator, IBoundsProvider
   /**
    * Returns the bounds of the arrow for the current flyweight configuration.
    * @see Specified by {@link IBoundsProvider#getBounds}.
-   * @param {IRenderContext} ctx
-   * @return {Rect}
+   * @param {!IRenderContext} ctx
+   * @returns {!Rect}
    */
   getBounds(ctx) {
-    return new Rect(this.$anchor.x - 8, this.$anchor.y - 8, 32, 32)
+    return new Rect(this.anchor.x - 8, this.anchor.y - 8, 32, 32)
   }
 }
 
-const isBrowserWithBadMarkerSupport = $isMicrosoftBrowser() || $detectSafariWebkit()
+const isBrowserWithBadMarkerSupport = isMicrosoftBrowser() || detectSafariWebkit()
 
 /**
  * Check if the used browser is IE or Edge.
- * @return {boolean}
- *
- * @private
+ * @returns {boolean}
  */
-function $isMicrosoftBrowser() {
+function isMicrosoftBrowser() {
   return (
     window.navigator.userAgent.indexOf('MSIE ') > 0 ||
-    !!window.navigator.userAgent.match(/Trident.*rv:11\./) ||
-    !!window.navigator.userAgent.match(/Edge\/(1[2678])./i)
+    /Trident.*rv:11\./.test(window.navigator.userAgent) ||
+    /Edge\/(1[2678])./i.test(window.navigator.userAgent)
   )
 }
 
 /**
  * Returns version of Safari.
- * @return {number} Version of Safari or -1 if browser is not Safari.
- *
- * @private
+ * @returns {number} Version of Safari or -1 if browser is not Safari.
  */
-function $detectSafariVersion() {
+function detectSafariVersion() {
   const ua = window.navigator.userAgent
   const isSafari = ua.indexOf('Safari') !== -1 && ua.indexOf('Chrome') === -1
   if (isSafari) {
-    const safariVersionMatch = ua.match(new RegExp('Version\\/(\\d*\\.\\d*)', ''))
+    const safariVersionMatch = /Version\/(\d*\.\d*)/.exec(ua)
     if (safariVersionMatch && safariVersionMatch.length > 1) {
       return parseInt(safariVersionMatch[1])
     }
@@ -896,12 +857,10 @@ function $detectSafariVersion() {
  * Returns true for browsers that use the Safari 11 Webkit engine.
  *
  * In detail, these are Safari 11 on either macOS or iOS, Chrome on iOS 11, and Firefox on iOS 11.
- * @return {boolean}
- *
- * @private
+ * @returns {boolean}
  */
-function $detectSafariWebkit() {
-  return $detectSafariVersion() > -1 || !!/(CriOS|FxiOS)/.exec(window.navigator.userAgent)
+function detectSafariWebkit() {
+  return detectSafariVersion() > -1 || !!/(CriOS|FxiOS)/.exec(window.navigator.userAgent)
 }
 
 export class DemoEdgeStyle extends EdgeStyleBase {
@@ -909,48 +868,50 @@ export class DemoEdgeStyle extends EdgeStyleBase {
     super()
     this.cssClass = ''
 
-    this.$hiddenArrow = new Arrow({
+    this.hiddenArrow = new Arrow({
       type: ArrowType.NONE,
       cropLength: 6,
       scale: 1
     })
-    this.$fallbackArrow = new DemoArrow()
-    this.$markerDefsSupport = null
+
+    this.fallbackArrow = new DemoArrow()
+    this.markerDefsSupport = null
     this.showTargetArrows = true
     this.useMarkerArrows = true
   }
 
   /**
    * Helper function to crop a {@link GeneralPath} by the length of the used arrow.
-   * @param {IEdge} edge
-   * @param {GeneralPath} gp
-   * @return {GeneralPath}
-   * @private
+   * @param {!IEdge} edge
+   * @param {?GeneralPath} gp
+   * @returns {?GeneralPath}
    */
-  $cropRenderedPath(edge, gp) {
+  cropRenderedPath(edge, gp) {
+    if (!gp) {
+      return null
+    }
     if (this.showTargetArrows) {
       const dummyArrow =
         !isBrowserWithBadMarkerSupport && this.useMarkerArrows
-          ? this.$hiddenArrow
-          : this.$fallbackArrow
+          ? this.hiddenArrow
+          : this.fallbackArrow
       return this.cropPath(edge, IArrow.NONE, dummyArrow, gp)
-    } else {
-      return this.cropPath(edge, IArrow.NONE, IArrow.NONE, gp)
     }
+    return this.cropPath(edge, IArrow.NONE, IArrow.NONE, gp)
   }
 
   /**
    * Creates the visual for an edge.
-   * @param {IEdge} edge
-   * @param {IRenderContext} renderContext
-   * @return {Visual}
+   * @param {!IRenderContext} renderContext
+   * @param {!IEdge} edge
+   * @returns {?Visual}
    */
   createVisual(renderContext, edge) {
-    let renderPath = this.$createPath(edge)
+    let renderPath = this.createPath(edge)
     // crop the path such that the arrow tip is at the end of the edge
-    renderPath = this.$cropRenderedPath(edge, renderPath)
+    renderPath = this.cropRenderedPath(edge, renderPath)
 
-    if (renderPath.length === 0) {
+    if (!renderPath || renderPath.getLength() === 0) {
       return null
     }
 
@@ -964,58 +925,60 @@ export class DemoEdgeStyle extends EdgeStyleBase {
 
     if (this.cssClass) {
       path.setAttribute('class', this.cssClass)
-      this.$fallbackArrow.cssClass = this.cssClass + '-arrow'
+      this.fallbackArrow.cssClass = this.cssClass + '-arrow'
     }
 
     if (!isBrowserWithBadMarkerSupport && this.useMarkerArrows) {
       this.showTargetArrows &&
         path.setAttribute(
           'marker-end',
-          'url(#' + renderContext.getDefsId(this.$createMarker()) + ')'
+          'url(#' + renderContext.getDefsId(this.createMarker()) + ')'
         )
-
       path['data-renderDataCache'] = {
         path: renderPath,
         obstacleHash: this.getObstacleHash(renderContext)
       }
       return new SvgVisual(path)
-    } else {
-      // use yfiles arrows instead of markers
-      const container = document.createElementNS(SVG_NS, 'g')
-      container.appendChild(path)
-      this.showTargetArrows &&
-        super.addArrows(renderContext, container, edge, gp, IArrow.NONE, this.$fallbackArrow)
-      container['data-renderDataCache'] = {
-        path: renderPath,
-        obstacleHash: this.getObstacleHash(renderContext)
-      }
-      return new SvgVisual(container)
     }
+
+    // use yfiles arrows instead of markers
+    const container = document.createElementNS(SVG_NS, 'g')
+    container.appendChild(path)
+    this.showTargetArrows &&
+      super.addArrows(renderContext, container, edge, gp, IArrow.NONE, this.fallbackArrow)
+    container['data-renderDataCache'] = {
+      path: renderPath,
+      obstacleHash: this.getObstacleHash(renderContext)
+    }
+    return new SvgVisual(container)
   }
 
   /**
    * Re-renders the edge by updating the old visual for improved performance.
-   * @param {IEdge} edge
-   * @param {IRenderContext} renderContext
-   * @param {Visual} oldVisual
-   * @return {Visual}
+   * @param {!IRenderContext} renderContext
+   * @param {!SvgVisual} oldVisual
+   * @param {!IEdge} edge
+   * @returns {?Visual}
    */
   updateVisual(renderContext, oldVisual, edge) {
     if (oldVisual === null) {
       return this.createVisual(renderContext, edge)
     }
 
-    let renderPath = this.$createPath(edge)
-    if (renderPath.length === 0) {
+    let renderPath = this.createPath(edge)
+    if (!renderPath || renderPath.getLength() === 0) {
       return null
     }
     // crop the path such that the arrow tip is at the end of the edge
-    renderPath = this.$cropRenderedPath(edge, renderPath)
+    renderPath = this.cropRenderedPath(edge, renderPath)
     const newObstacleHash = this.getObstacleHash(renderContext)
 
-    let path = oldVisual.svgElement
+    const path = oldVisual.svgElement
     const cache = path['data-renderDataCache']
-    if (!renderPath.hasSameValue(cache.path) || cache.obstacleHash !== newObstacleHash) {
+    if (
+      renderPath &&
+      (!renderPath.hasSameValue(cache.path) || cache.obstacleHash !== newObstacleHash)
+    ) {
       cache.path = renderPath
       cache.obstacleHash = newObstacleHash
       const gp = this.createPathWithBridges(renderPath, renderContext)
@@ -1027,13 +990,13 @@ export class DemoEdgeStyle extends EdgeStyleBase {
       } else {
         // update code for yfiles arrows
         const container = oldVisual.svgElement
-        path = container.childNodes.item(0)
+        const path = container.childNodes.item(0)
         path.setAttribute('d', pathData)
         while (container.childElementCount > 1) {
           container.removeChild(container.lastChild)
         }
         this.showTargetArrows &&
-          super.addArrows(renderContext, container, edge, gp, IArrow.NONE, this.$fallbackArrow)
+          super.addArrows(renderContext, container, edge, gp, IArrow.NONE, this.fallbackArrow)
       }
     }
     return oldVisual
@@ -1041,14 +1004,16 @@ export class DemoEdgeStyle extends EdgeStyleBase {
 
   /**
    * Creates the path of an edge.
-   * @param {IEdge} edge
-   * @return {GeneralPath}
-   * @private
+   * @param {!IEdge} edge
+   * @returns {?GeneralPath}
    */
-  $createPath(edge) {
-    let path
-    // build path
-    if (edge.sourcePort.owner === edge.targetPort.owner && edge.bends.size < 2) {
+  createPath(edge) {
+    if (
+      edge.sourcePort &&
+      edge.targetPort &&
+      edge.sourcePort.owner === edge.targetPort.owner &&
+      edge.bends.size < 2
+    ) {
       // pretty self loops
       let outerX, outerY
       if (edge.bends.size === 1) {
@@ -1056,7 +1021,7 @@ export class DemoEdgeStyle extends EdgeStyleBase {
         outerX = bendLocation.x
         outerY = bendLocation.y
       } else {
-        if (INode.isInstance(edge.sourcePort.owner)) {
+        if (edge.sourcePort.owner instanceof INode) {
           outerX = edge.sourcePort.owner.layout.x - 20
           outerY = edge.sourcePort.owner.layout.y - 20
         } else {
@@ -1068,43 +1033,42 @@ export class DemoEdgeStyle extends EdgeStyleBase {
           outerY = sourcePortLocation.y - 20
         }
       }
-      path = new GeneralPath(4)
-      let lastPoint = edge.sourcePort.locationParameter.model.getLocation(
+      const path = new GeneralPath(4)
+      const sourceLocation = edge.sourcePort.locationParameter.model.getLocation(
         edge.sourcePort,
         edge.sourcePort.locationParameter
       )
-      path.moveTo(lastPoint)
-      path.lineTo(outerX, lastPoint.y)
+      path.moveTo(sourceLocation)
+      path.lineTo(outerX, sourceLocation.y)
       path.lineTo(outerX, outerY)
-      lastPoint = edge.targetPort.locationParameter.model.getLocation(
+      const targetLocation = edge.targetPort.locationParameter.model.getLocation(
         edge.targetPort,
         edge.targetPort.locationParameter
       )
-      path.lineTo(lastPoint.x, outerY)
-      path.lineTo(lastPoint)
-    } else {
-      path = super.getPath(edge)
+      path.lineTo(targetLocation.x, outerY)
+      path.lineTo(targetLocation)
+      return path
     }
-    return path
+    return super.getPath(edge)
   }
 
   /**
    * Gets the path of the edge cropped at the node border.
-   * @param {IEdge} edge
-   * @return {GeneralPath}
+   * @param {!IEdge} edge
+   * @returns {?GeneralPath}
    */
   getPath(edge) {
-    const path = this.$createPath(edge)
+    const path = this.createPath(edge)
     // crop path at node border
-    return this.cropPath(edge, IArrow.NONE, IArrow.NONE, path)
+    return path ? this.cropPath(edge, IArrow.NONE, IArrow.NONE, path) : null
   }
 
   /**
    * Decorates a given path with bridges.
    * All work is delegated to the BridgeManager's addBridges() method.
-   * @param {GeneralPath} path The path to decorate.
-   * @param {IRenderContext} context The render context.
-   * @return {GeneralPath} A copy of the given path with bridges.
+   * @param {!GeneralPath} path The path to decorate.
+   * @param {!IRenderContext} context The render context.
+   * @returns {!GeneralPath} A copy of the given path with bridges.
    */
   createPathWithBridges(path, context) {
     const manager = this.getBridgeManager(context)
@@ -1117,8 +1081,8 @@ export class DemoEdgeStyle extends EdgeStyleBase {
    * The obstacle hash changes if any obstacle has changed on the entire graph.
    * The hash is used to avoid re-rendering the edge if nothing has changed.
    * This method gets the obstacle hash from the BridgeManager.
-   * @param {IRenderContext} context The context to get the obstacle hash for.
-   * @return {number} A hash value which represents the state of the obstacles.
+   * @param {!IRenderContext} context The context to get the obstacle hash for.
+   * @returns {number} A hash value which represents the state of the obstacles.
    */
   getObstacleHash(context) {
     const manager = this.getBridgeManager(context)
@@ -1129,45 +1093,48 @@ export class DemoEdgeStyle extends EdgeStyleBase {
 
   /**
    * Queries the context's lookup for a BridgeManager instance.
-   * @param {IRenderContext} context The context to get the BridgeManager from.
-   * @return {BridgeManager} The BridgeManager for the given context instance or null
+   * @param {!IRenderContext} context The context to get the BridgeManager from.
+   * @returns {?BridgeManager} The BridgeManager for the given context instance or null
    */
   getBridgeManager(context) {
-    if (!context) {
-      return null
-    }
-    const bm = context.lookup(BridgeManager.$class)
-    return bm instanceof BridgeManager ? bm : null
+    return context.lookup(BridgeManager.$class)
   }
 
   /**
    * Determines whether the visual representation of the edge has been hit at the given location.
-   * @param {IEdge} edge
-   * @param {Point} p
-   * @param {IInputModeContext} inputModeContext
-   * @return {boolean}
+   * @param {!IInputModeContext} inputModeContext
+   * @param {!Point} p
+   * @param {!IEdge} edge
+   * @returns {boolean}
    */
   isHit(inputModeContext, p, edge) {
     if (
-      (edge.sourcePort.owner === edge.targetPort.owner && edge.bends.size < 2) ||
+      (edge.sourcePort != null &&
+        edge.targetPort != null &&
+        edge.sourcePort.owner === edge.targetPort.owner &&
+        edge.bends.size < 2) ||
       super.isHit(inputModeContext, p, edge)
     ) {
       const path = this.getPath(edge)
-      return path && path.pathContains(p, inputModeContext.hitTestRadius + 1)
-    } else {
-      return false
+      return path !== null && path.pathContains(p, inputModeContext.hitTestRadius + 1)
     }
+    return false
   }
 
   /**
    * Determines whether the edge visual is visible or not.
-   * @param {IEdge} edge
-   * @param {Rect} clip
-   * @param {ICanvasContext} canvasContext
-   * @return {boolean}
+   * @param {!ICanvasContext} canvasContext
+   * @param {!Rect} clip
+   * @param {!IEdge} edge
+   * @returns {boolean}
    */
   isVisible(canvasContext, clip, edge) {
-    if (edge.sourcePort.owner === edge.targetPort.owner && edge.bends.size < 2) {
+    if (
+      edge.sourcePort != null &&
+      edge.targetPort != null &&
+      edge.sourcePort.owner === edge.targetPort.owner &&
+      edge.bends.size < 2
+    ) {
       // handle self-loops
       const spl = edge.sourcePort.locationParameter.model.getLocation(
         edge.sourcePort,
@@ -1187,7 +1154,7 @@ export class DemoEdgeStyle extends EdgeStyleBase {
         outerX = bendLocation.x
         outerY = bendLocation.y
       } else {
-        if (INode.isInstance(edge.sourcePort.owner)) {
+        if (edge.sourcePort.owner instanceof INode) {
           outerX = edge.sourcePort.owner.layout.x - 20
           outerY = edge.sourcePort.owner.layout.y - 20
         } else {
@@ -1214,31 +1181,27 @@ export class DemoEdgeStyle extends EdgeStyleBase {
 
   /**
    * Helper method to let the svg marker be created by the {@link ISvgDefsCreator} implementation.
-   * @return {ISvgDefsCreator}
-   * @private
+   * @returns {!ISvgDefsCreator}
    */
-  $createMarker() {
-    if (this.$markerDefsSupport === null) {
-      this.$markerDefsSupport = new MarkerDefsSupport(this.cssClass)
+  createMarker() {
+    if (this.markerDefsSupport === null) {
+      this.markerDefsSupport = new MarkerDefsSupport(this.cssClass)
     }
-    return this.$markerDefsSupport
+    return this.markerDefsSupport
   }
 
   /**
    * This implementation of the look up provides a custom implementation of the
    * {@link IObstacleProvider} to support bridges.
    * @see Overrides {@link EdgeStyleBase#lookup}
-   * @param {IEdge} edge
-   * @param {Class} type
-   * @return {Object}
+   * @param {!IEdge} edge
+   * @param {!Class} type
+   * @returns {!object}
    */
   lookup(edge, type) {
-    if (type === IObstacleProvider.$class) {
-      // Provide the own IObstacleProvider implementation
-      return new BasicEdgeObstacleProvider(edge)
-    } else {
-      return super.lookup(edge, type)
-    }
+    return type === IObstacleProvider.$class
+      ? new BasicEdgeObstacleProvider(edge)
+      : super.lookup(edge, type)
   }
 }
 
@@ -1246,21 +1209,24 @@ export class DemoEdgeStyle extends EdgeStyleBase {
  * Manages the arrow markers as svg definitions.
  */
 export class MarkerDefsSupport extends BaseClass(ISvgDefsCreator) {
-  constructor() {
+  /**
+   * @param {!''} cssClass
+   */
+  constructor(cssClass = '') {
     super()
-    this.cssClass = ''
+    this.cssClass = cssClass
   }
 
   /**
    * Creates a defs-element.
-   * @param {ICanvasContext} context
-   * @return {SVGElement}
+   * @param {!ICanvasContext} context
+   * @returns {!SVGElement}
    */
   createDefsElement(context) {
     const markerElement = document.createElementNS(SVG_NS, 'marker')
     markerElement.setAttribute('viewBox', '0 0 15 10')
-    markerElement.setAttribute('refX', 2)
-    markerElement.setAttribute('refY', 5)
+    markerElement.setAttribute('refX', '2')
+    markerElement.setAttribute('refY', '5')
     markerElement.setAttribute('markerWidth', '7')
     markerElement.setAttribute('markerHeight', '7')
     markerElement.setAttribute('orient', 'auto')
@@ -1279,22 +1245,21 @@ export class MarkerDefsSupport extends BaseClass(ISvgDefsCreator) {
 
   /**
    * Checks if the specified node references the element represented by this object.
-   * @param {ICanvasContext} context
-   * @param {Node} node
-   * @param {string} id
-   * @return {boolean}
-   **/
+   * @param {!ICanvasContext} context
+   * @param {!Node} node
+   * @param {!string} id
+   * @returns {boolean}
+   */
   accept(context, node, id) {
-    if (node.nodeType !== 1) {
-      return false
-    }
-    return ISvgDefsCreator.isAttributeReference(node, 'marker-end', id)
+    return node.nodeType !== Node.ELEMENT_NODE
+      ? false
+      : ISvgDefsCreator.isAttributeReference(node, 'marker-end', id)
   }
 
   /**
    * Updates the defs element with the current gradient data.
-   * @param {ICanvasContext} context
-   * @param {SVGElement} oldElement
+   * @param {!ICanvasContext} context
+   * @param {!SVGElement} oldElement
    */
   updateDefsElement(context, oldElement) {
     // Nothing to do here
@@ -1305,6 +1270,9 @@ export class MarkerDefsSupport extends BaseClass(ISvgDefsCreator) {
  * A custom IObstacleProvider implementation for this style.
  */
 export class BasicEdgeObstacleProvider extends BaseClass(IObstacleProvider) {
+  /**
+   * @param {!IEdge} edge
+   */
   constructor(edge) {
     super()
     this.edge = edge
@@ -1312,8 +1280,8 @@ export class BasicEdgeObstacleProvider extends BaseClass(IObstacleProvider) {
 
   /**
    * Returns this edge's path as obstacle.
-   * @param {IRenderContext} canvasContext
-   * @return {GeneralPath} The edge's path.
+   * @returns {?GeneralPath} The edge's path.
+   * @param {!IRenderContext} canvasContext
    */
   getObstacles(canvasContext) {
     return this.edge.style.renderer.getPathGeometry(this.edge, this.edge.style).getPath()
@@ -1325,9 +1293,9 @@ export class BasicEdgeObstacleProvider extends BaseClass(IObstacleProvider) {
  */
 export class DemoStyleOverviewPaintable extends GraphOverviewCanvasVisualCreator {
   /**
-   * @param {IRenderContext} renderContext
-   * @param {CanvasRenderingContext2D} ctx
-   * @param {INode} node
+   * @param {!IRenderContext} renderContext
+   * @param {!CanvasRenderingContext2D} ctx
+   * @param {!INode} node
    */
   paintNode(renderContext, ctx, node) {
     ctx.fillStyle = 'rgb(128, 128, 128)'
@@ -1336,25 +1304,24 @@ export class DemoStyleOverviewPaintable extends GraphOverviewCanvasVisualCreator
   }
 
   /**
-   * @param {IRenderContext} renderContext
-   * @param {CanvasRenderingContext2D} ctx
-   * @param {INode} node
+   * @param {!IRenderContext} renderContext
+   * @param {!CanvasRenderingContext2D} ctx
+   * @param {!INode} node
    */
   paintGroupNode(renderContext, ctx, node) {
-    ctx.fill = 'rgb(211, 211, 211)'
     ctx.fillStyle = 'rgb(211, 211, 211)'
     ctx.strokeStyle = 'rgb(211, 211, 211)'
     ctx.lineWidth = 4
-    const layout = node.layout
-    ctx.strokeRect(layout.x, layout.y, layout.width, layout.height)
-    ctx.fillRect(layout.x, layout.y, layout.width, 22)
+    const { x, y, width, height } = node.layout
+    ctx.strokeRect(x, y, width, height)
+    ctx.fillRect(x, y, width, 22)
     ctx.lineWidth = 1
   }
 }
 
 /**
  * Initializes graph defaults using the demo styles
- * @param {IGraph} graph
+ * @param {!IGraph} graph
  */
 export function initDemoStyles(graph) {
   // set graph defaults
@@ -1393,23 +1360,36 @@ export function initDemoStyles(graph) {
 class DemoNodeStyleExtension extends MarkupExtension {
   constructor() {
     super()
-    this.$cssClass = ''
+    this._cssClass = ''
   }
 
+  /**
+   * @type {!string}
+   */
   get cssClass() {
-    return this.$cssClass
+    return this._cssClass
   }
 
+  /**
+   * @type {!string}
+   */
   set cssClass(value) {
-    this.$cssClass = value
+    this._cssClass = value
   }
 
+  /**
+   * @type {!object}
+   */
   static get $meta() {
     return {
       cssClass: [GraphMLAttribute().init({ defaultValue: '' }), TypeAttribute(YString.$class)]
     }
   }
 
+  /**
+   * @param {!ILookup} serviceProvider
+   * @returns {!DemoNodeStyle}
+   */
   provideValue(serviceProvider) {
     const style = new DemoNodeStyle()
     style.cssClass = this.cssClass
@@ -1420,35 +1400,56 @@ class DemoNodeStyleExtension extends MarkupExtension {
 class DemoGroupStyleExtension extends MarkupExtension {
   constructor() {
     super()
-    this.$cssClass = ''
-    this.$isCollapsible = false
-    this.$solidHitTest = false
+    this._cssClass = ''
+    this._isCollapsible = false
+    this._solidHitTest = false
   }
 
+  /**
+   * @type {!string}
+   */
   get cssClass() {
-    return this.$cssClass
+    return this._cssClass
   }
 
+  /**
+   * @type {!string}
+   */
   set cssClass(value) {
-    this.$cssClass = value
+    this._cssClass = value
   }
 
+  /**
+   * @type {boolean}
+   */
   get isCollapsible() {
-    return this.$isCollapsible
+    return this._isCollapsible
   }
 
+  /**
+   * @type {boolean}
+   */
   set isCollapsible(value) {
-    this.$isCollapsible = value
+    this._isCollapsible = value
   }
 
+  /**
+   * @type {boolean}
+   */
   get solidHitTest() {
-    return this.$solidHitTest
+    return this._solidHitTest
   }
 
+  /**
+   * @type {boolean}
+   */
   set solidHitTest(value) {
-    this.$solidHitTest = value
+    this._solidHitTest = value
   }
 
+  /**
+   * @type {!object}
+   */
   static get $meta() {
     return {
       cssClass: [GraphMLAttribute().init({ defaultValue: '' }), TypeAttribute(YString.$class)],
@@ -1463,6 +1464,10 @@ class DemoGroupStyleExtension extends MarkupExtension {
     }
   }
 
+  /**
+   * @param {!ILookup} serviceProvider
+   * @returns {!DemoGroupStyle}
+   */
   provideValue(serviceProvider) {
     const style = new DemoGroupStyle()
     style.cssClass = this.cssClass
@@ -1475,35 +1480,56 @@ class DemoGroupStyleExtension extends MarkupExtension {
 class DemoEdgeStyleExtension extends MarkupExtension {
   constructor() {
     super()
-    this.$cssClass = ''
-    this.$showTargetArrows = true
-    this.$useMarkerArrows = true
+    this._cssClass = ''
+    this._showTargetArrows = true
+    this._useMarkerArrows = true
   }
 
+  /**
+   * @type {!string}
+   */
   get cssClass() {
-    return this.$cssClass
+    return this._cssClass
   }
 
+  /**
+   * @type {!string}
+   */
   set cssClass(value) {
-    this.$cssClass = value
+    this._cssClass = value
   }
 
+  /**
+   * @type {boolean}
+   */
   get showTargetArrows() {
-    return this.$showTargetArrows
+    return this._showTargetArrows
   }
 
+  /**
+   * @type {boolean}
+   */
   set showTargetArrows(value) {
-    this.$showTargetArrows = value
+    this._showTargetArrows = value
   }
 
+  /**
+   * @type {boolean}
+   */
   get useMarkerArrows() {
-    return this.$useMarkerArrows
+    return this._useMarkerArrows
   }
 
+  /**
+   * @type {boolean}
+   */
   set useMarkerArrows(value) {
-    this.$useMarkerArrows = value
+    this._useMarkerArrows = value
   }
 
+  /**
+   * @type {!object}
+   */
   static get $meta() {
     return {
       cssClass: [GraphMLAttribute().init({ defaultValue: '' }), TypeAttribute(YString.$class)],
@@ -1518,6 +1544,10 @@ class DemoEdgeStyleExtension extends MarkupExtension {
     }
   }
 
+  /**
+   * @param {!ILookup} serviceProvider
+   * @returns {!DemoEdgeStyle}
+   */
   provideValue(serviceProvider) {
     const style = new DemoEdgeStyle()
     style.cssClass = this.cssClass
@@ -1530,23 +1560,36 @@ class DemoEdgeStyleExtension extends MarkupExtension {
 class DemoArrowExtension extends MarkupExtension {
   constructor() {
     super()
-    this.$cssClass = ''
+    this._cssClass = ''
   }
 
+  /**
+   * @type {!string}
+   */
   get cssClass() {
-    return this.$cssClass
+    return this._cssClass
   }
 
+  /**
+   * @type {!string}
+   */
   set cssClass(value) {
-    this.$cssClass = value
+    this._cssClass = value
   }
 
+  /**
+   * @type {!object}
+   */
   static get $meta() {
     return {
       cssClass: [GraphMLAttribute().init({ defaultValue: '' }), TypeAttribute(YString.$class)]
     }
   }
 
+  /**
+   * @param {!ILookup} serviceProvider
+   * @returns {!DemoArrow}
+   */
   provideValue(serviceProvider) {
     const arrow = new DemoArrow()
     arrow.cssClass = this.cssClass
@@ -1558,7 +1601,7 @@ export const DemoSerializationListener = (source, args) => {
   const item = args.item
 
   let markupExtension
-  let markupExtensionClass
+  let markupExtensionClass = null
   if (item instanceof DemoNodeStyle) {
     markupExtension = new DemoNodeStyleExtension()
     markupExtension.cssClass = item.cssClass
@@ -1588,7 +1631,6 @@ export const DemoSerializationListener = (source, args) => {
   }
 }
 
-// export a default object to be able to map a namespace to this module for serialization
 export default {
   DemoNodeStyle,
   DemoEdgeStyle,

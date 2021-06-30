@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -94,7 +94,7 @@ export function createTableLayoutData(): LayoutData {
 
     // use a grid with one column and a lot of rows. It must have enough cells for the nodes
     const grid = new PartitionGrid(1000, 1)
-    grid.rows!.forEach((row: RowDescriptor): void => {
+    grid.rows.forEach((row: RowDescriptor): void => {
       row.topInset = 2.5
       row.bottomInset = 2.5
     })

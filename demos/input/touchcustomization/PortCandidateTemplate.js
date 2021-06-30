@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -30,6 +30,7 @@ import {
   BaseClass,
   INodeStyle,
   IRenderContext,
+  IVisualCreator,
   IVisualTemplate,
   Rect,
   SimpleNode,
@@ -42,46 +43,58 @@ import {
 export default class PortCandidateTemplate extends BaseClass(IVisualTemplate) {
   /**
    * Creates a new instance of this adapter class.
-   * @param {INodeStyle} nodeStyle
+   * @param {!INodeStyle} nodeStyle
    */
   constructor(nodeStyle) {
     super()
+
     // create a dummy node to render
-    const node = new SimpleNode()
-    node.style = nodeStyle
-    // set the size of the port candidate here - it has to be centered at 0/0
-    node.layout = new Rect(-8, -8, 16, 16)
-    this.dummyNode = node
+    this.dummyNode = newDummyNode(nodeStyle)
   }
 
   /**
    * Delegates to the given {@link INodeStyle} to create the visual.
-   *
-   * @param {IRenderContext} context - The context that describes where the visual will be used.
-   * @param {Rect} bounds - The current bounds to use for the visual.
-   * @param {*} dataObject - The data object to visualize.
-   * @returns {SvgVisual}
+   * @param {!IRenderContext} context The context that describes where the visual will be used.
+   * @param {!Rect} bounds The current bounds to use for the visual.
+   * @param {!object} dataObject The data object to visualize.
+   * @returns {!SvgVisual}
    */
   createVisual(context, bounds, dataObject) {
     // delegate the rendering to the node style
-    return this.dummyNode.style.renderer
-      .getVisualCreator(this.dummyNode, this.dummyNode.style)
-      .createVisual(context)
+    return this.getVisualCreator().createVisual(context)
   }
 
   /**
    * Delegates to the given {@link INodeStyle} to update the visual.
-   *
-   * @param {IRenderContext} context - The context that describes where the visual will be used in.
-   * @param {SvgVisual} oldVisual - The visual instance that had been returned the last time the {@link IVisualTemplate#createVisual} method was called on this instance.
-   * @param {Rect} bounds - The current bounds to use for the visual.
-   * @param {*} dataObject - The data object to visualize.
-   * @returns {SvgVisual}
+   * @param {!IRenderContext} context The context that describes where the visual will be used in.
+   * @param {!SvgVisual} oldVisual The visual instance that had been returned the last time the
+   * {@link IVisualTemplate#createVisual} method was called on this instance.
+   * @param {!Rect} bounds The current bounds to use for the visual.
+   * @param {!object} dataObject The data object to visualize.
+   * @returns {!SvgVisual}
    */
   updateVisual(context, oldVisual, bounds, dataObject) {
     // delegate the rendering to the node style
-    return this.dummyNode.style.renderer
-      .getVisualCreator(this.dummyNode, this.dummyNode.style)
-      .updateVisual(context)
+    return this.getVisualCreator().updateVisual(context, oldVisual)
   }
+
+  /**
+   * @returns {!IVisualCreator}
+   */
+  getVisualCreator() {
+    const style = this.dummyNode.style
+    return style.renderer.getVisualCreator(this.dummyNode, style)
+  }
+}
+
+/**
+ * @param {!INodeStyle} style
+ * @returns {!SimpleNode}
+ */
+function newDummyNode(style) {
+  const node = new SimpleNode()
+  node.style = style
+  // set the size of the port candidate here - it has to be centered at 0/0
+  node.layout = new Rect(-8, -8, 16, 16)
+  return node
 }

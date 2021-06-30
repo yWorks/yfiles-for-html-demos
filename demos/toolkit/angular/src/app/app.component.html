@@ -3,8 +3,13 @@
   <button (click)="zoomOriginal()" title="Zoom to original size" class="demo-icon-yIconZoomOriginal demo-toolbar-button"></button>
   <button (click)="zoomOut()" title="Zoom Out" class="demo-icon-yIconZoomOut demo-toolbar-button"></button>
   <button (click)="fitContent()" title="Fit Content" class="demo-icon-yIconZoomFit demo-toolbar-button"></button>
+  <span class="demo-separator"></span>
+  <input type="text" [ngModel]="searchString" (ngModelChange)="onSearchInput($event)" (keyup.enter)="graphSearch.zoomToSearchResult()" class="search" placeholder="Search Names" name="searchString">
 </div>
 
-<graph-component></graph-component>
+<div class="graph-container">
+  <graph-component></graph-component>
+  <app-graph-overview-component class="graph-overview-component"></app-graph-overview-component>
+</div>
 
 <properties-view class="demo-sidebar demo-right" [person]="currentPerson"></properties-view>

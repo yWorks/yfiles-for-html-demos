@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { INode, IRenderContext, NodeStyleBase, SvgVisual, Visual } from 'yfiles'
+import { GraphComponent, INode, IRenderContext, NodeStyleBase, SvgVisual } from 'yfiles'
 import { addClass, removeClass } from '../../resources/demo-app.js'
 
 /**
@@ -35,10 +35,10 @@ import { addClass, removeClass } from '../../resources/demo-app.js'
 export default class CSS3NodeStyle extends NodeStyleBase {
   /**
    * Re-renders the node and updates its CSS classes.
-   * @param {IRenderContext} context
-   * @param {Visual} oldVisual
-   * @param {INode} node
-   * @return {SvgVisual}
+   * @param {!IRenderContext} context
+   * @param {!SvgVisual} oldVisual
+   * @param {!INode} node
+   * @returns {!SvgVisual}
    */
   updateVisual(context, oldVisual, node) {
     const g = oldVisual.svgElement
@@ -76,9 +76,9 @@ export default class CSS3NodeStyle extends NodeStyleBase {
 
   /**
    * Creates the visual for a node and sets some additional CSS classes on it.
-   * @param {IRenderContext} context
-   * @param {INode} node
-   * @return {SvgVisual}
+   * @param {!IRenderContext} context
+   * @param {!INode} node
+   * @returns {!SvgVisual}
    */
   createVisual(context, node) {
     const g = document.createElementNS('http://www.w3.org/2000/svg', 'g')
@@ -90,8 +90,8 @@ export default class CSS3NodeStyle extends NodeStyleBase {
     rect.height.baseVal.value = layout.height
     shine.width.baseVal.value = layout.width / 5
     shine.height.baseVal.value = layout.height
-    rect.setAttribute('rx', nodeRounding)
-    rect.setAttribute('ry', nodeRounding)
+    rect.setAttribute('rx', `${nodeRounding}`)
+    rect.setAttribute('ry', `${nodeRounding}`)
     rect.setAttribute('fill', '#FF8C00')
     rect.setAttribute('stroke', '#FFF')
     rect.setAttribute('stroke-width', '1px')
@@ -112,7 +112,6 @@ export default class CSS3NodeStyle extends NodeStyleBase {
         removeClass(g, 'node-created')
       }
     })
-
     g['data-renderDataCache'] = {
       x: layout.x,
       y: layout.y,
@@ -129,9 +128,9 @@ export default class CSS3NodeStyle extends NodeStyleBase {
 
   /**
    * Sets additional CSS classes on the node visual based on the state of the node.
-   * @param {IRenderContext} context
-   * @param {INode} node
-   * @param {Element} element
+   * @param {!IRenderContext} context
+   * @param {!INode} node
+   * @param {!Element} element
    */
   setCssClasses(context, node, element) {
     // add the node-created class if the node was just created and remove the created flag on its
@@ -142,14 +141,15 @@ export default class CSS3NodeStyle extends NodeStyleBase {
     }
 
     // add the node-focused class if the node is currently focused, remove the class otherwise
-    if (context.canvasComponent.focusIndicatorManager.focusedItem === node) {
+    const canvasComponent = context.canvasComponent
+    if (canvasComponent.currentItem === node) {
       addClass(element, 'node-focused')
     } else {
       removeClass(element, 'node-focused')
     }
 
     // add the node-selected class if the node is currently selected, remove the class otherwise
-    if (context.canvasComponent.selection.selectedNodes.includes(node)) {
+    if (canvasComponent.selection.selectedNodes.includes(node)) {
       addClass(element, 'node-selected')
     } else {
       removeClass(element, 'node-selected')

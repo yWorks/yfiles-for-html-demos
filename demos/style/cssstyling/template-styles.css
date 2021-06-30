@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -148,6 +148,19 @@
 .yfiles-canvascomponent .yfiles-scrollbar .yfiles-scrollbar-range.yfiles-scrollbar-range-vertical {
   width: 10px;
 }
+
+.yfiles-canvascomponent .yfiles-scrollbar .yfiles-scrollbar-range.yfiles-scrollbar-range-vertical {
+  top: 10px;
+  bottom: 10px;
+}
+
+.yfiles-canvascomponent
+  .yfiles-scrollbar
+  .yfiles-scrollbar-range.yfiles-scrollbar-range-horizontal {
+  left: 10px;
+  right: 10px;
+}
+
 .yfiles-canvascomponent .yfiles-scrollbar.yfiles-scrollbar-horizontal,
 .yfiles-canvascomponent .yfiles-scrollbar.yfiles-scrollbar-vertical {
   background-color: transparent;
@@ -166,17 +179,18 @@
   width: 10px;
   height: 10px;
 }
+
 .yfiles-canvascomponent .yfiles-scrollbar .yfiles-button.yfiles-button-left {
-  background: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNSIgaGVpZ2h0PSIxMCI+PHBhdGggZD0iTTUgNSBMMTAgMSBMMTAgOSBaIi8+PC9zdmc+DQo=);
+  background-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNSIgaGVpZ2h0PSIxMCI+PHBhdGggZD0iTTUgNSBMMTAgMSBMMTAgOSBaIi8+PC9zdmc+DQo=);
 }
 .yfiles-canvascomponent .yfiles-scrollbar .yfiles-button.yfiles-button-right {
-  background: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNSIgaGVpZ2h0PSIxMCI+PHBhdGggZD0iTTUgMSBMMTAgNSBMNSA5IFoiLz48L3N2Zz4NCg==);
+  background-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNSIgaGVpZ2h0PSIxMCI+PHBhdGggZD0iTTUgMSBMMTAgNSBMNSA5IFoiLz48L3N2Zz4NCg==);
 }
 .yfiles-canvascomponent .yfiles-scrollbar .yfiles-button.yfiles-button-down {
-  background: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMCIgaGVpZ2h0PSIxNSI+PHBhdGggZD0iTTEgNSBMOSA1IEw1IDEwIFoiLz48L3N2Zz4NCg==);
+  background-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMCIgaGVpZ2h0PSIxNSI+PHBhdGggZD0iTTEgNSBMOSA1IEw1IDEwIFoiLz48L3N2Zz4NCg==);
 }
 .yfiles-canvascomponent .yfiles-scrollbar .yfiles-button.yfiles-button-up {
-  background: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMCIgaGVpZ2h0PSIxNSI+PHBhdGggZD0iTTEgMTAgTDUgNSBMOSAxMCBaIi8+PC9zdmc+DQo=);
+  background-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMCIgaGVpZ2h0PSIxNSI+PHBhdGggZD0iTTEgMTAgTDUgNSBMOSAxMCBaIi8+PC9zdmc+DQo=);
 }
 
 /* Tooltips */

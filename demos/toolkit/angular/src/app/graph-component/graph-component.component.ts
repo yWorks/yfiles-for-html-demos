@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -26,8 +26,30 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { AfterViewInit, Component, ElementRef, NgZone, ViewChild } from '@angular/core'
-import { GraphComponent, GraphViewerInputMode } from 'yfiles'
+import {
+  AfterViewInit,
+  ApplicationRef,
+  Component,
+  ComponentFactoryResolver,
+  ElementRef,
+  Injector,
+  ViewChild
+} from '@angular/core'
+import { GraphComponentService } from '../services/graph-component.service'
+import {
+  GraphComponent,
+  GraphItemTypes,
+  GraphViewerInputMode,
+  ICommand,
+  IEdge,
+  IModelItem,
+  INode,
+  Point,
+  Rect,
+  TimeSpan
+} from 'yfiles'
+import { TooltipComponent } from '../tooltip/tooltip.component'
+import { Person } from '../person'
 
 @Component({
   selector: 'graph-component',
@@ -36,19 +58,114 @@ import { GraphComponent, GraphViewerInputMode } from 'yfiles'
 })
 export class GraphComponentComponent implements AfterViewInit {
   @ViewChild('graphComponentRef') graphComponentRef!: ElementRef
-  graphComponent!: GraphComponent
 
-  private zone: NgZone
+  contextMenuActions: { title: string; action: () => void }[] = []
+  private graphComponent!: GraphComponent
 
-  constructor(zone: NgZone) {
-    this.zone = zone
-  }
+  constructor(
+    private graphComponentService: GraphComponentService,
+    private injector: Injector,
+    private appRef: ApplicationRef,
+    private componentFactoryResolver: ComponentFactoryResolver
+  ) {}
 
   ngAfterViewInit(): void {
-    // run outside Angular so the change detection won't slow down yFiles
-    this.zone.runOutsideAngular(() => {
-      this.graphComponent = new GraphComponent(this.graphComponentRef.nativeElement)
-      this.graphComponent.inputMode = new GraphViewerInputMode()
+    // add the GraphComponent to the div of this component
+    this.graphComponent = this.graphComponentService.getGraphComponent()
+    const div = this.graphComponent.div
+    div.style.height = '100%'
+    this.graphComponentRef.nativeElement.appendChild(div)
+
+    // register tooltips on nodes and edges
+    this.initializeTooltips()
+  }
+
+  onPopulateContextMenu(item: IModelItem) {
+    const contextMenuItems = []
+    if (item instanceof INode || item instanceof IEdge) {
+      contextMenuItems.push({
+        title: 'Zoom to item',
+        action: () => {
+          // center the item in the viewport
+          const targetBounds =
+            item instanceof INode
+              ? item.layout.toRect()
+              : Rect.add(item.sourceNode!.layout.toRect(), item.targetNode!.layout.toRect())
+          ICommand.ZOOM.execute(
+            targetBounds.getEnlarged(50 / this.graphComponent.zoom),
+            this.graphComponent
+          )
+        }
+      })
+    }
+    this.contextMenuActions = contextMenuItems
+  }
+
+  /**
+   * Dynamic tooltips are implemented by adding a tooltip provider as an event handler for
+   * the {@link MouseHoverInputMode#addQueryToolTipListener QueryToolTip} event of the
+   * GraphEditorInputMode using the
+   * {@link ToolTipQueryEventArgs} parameter.
+   * The {@link ToolTipQueryEventArgs} parameter provides three relevant properties:
+   * Handled, QueryLocation, and ToolTip. The Handled property is a flag which indicates
+   * whether the tooltip was already set by one of possibly several tooltip providers. The
+   * QueryLocation property contains the mouse position for the query in world coordinates.
+   * The tooltip is set by setting the ToolTip property.
+   */
+  private initializeTooltips(): void {
+    const inputMode = this.graphComponent.inputMode as GraphViewerInputMode
+
+    // show tooltips only for nodes and edges
+    inputMode.toolTipItems = GraphItemTypes.NODE | GraphItemTypes.EDGE
+
+    // Customize the tooltip's behavior to our liking.
+    const mouseHoverInputMode = inputMode.mouseHoverInputMode
+    mouseHoverInputMode.toolTipLocationOffset = new Point(15, 15)
+    mouseHoverInputMode.delay = TimeSpan.fromMilliseconds(500)
+    mouseHoverInputMode.duration = TimeSpan.fromSeconds(5)
+
+    // Register a listener for when a tooltip should be shown.
+    inputMode.addQueryItemToolTipListener((src, eventArgs) => {
+      if (eventArgs.handled) {
+        // Tooltip content has already been assigned -> nothing to do.
+        return
+      }
+
+      // Use a rich HTML element as tooltip content. Alternatively, a plain string would do as well.
+      eventArgs.toolTip = this.createTooltipContent(eventArgs.item!)
+
+      // Indicate that the tooltip content has been set.
+      eventArgs.handled = true
     })
+  }
+
+  /**
+   * The tooltip may either be a plain string or it can also be a rich HTML element. In this case, we
+   * return a compiled Angular component.
+   */
+  private createTooltipContent(item: IModelItem) {
+    let tooltipTitle = ''
+    let tooltipContent = ''
+
+    if (item instanceof INode) {
+      tooltipTitle = (item.tag as Person).name
+      tooltipContent = (item.tag as Person).businessUnit
+    } else if (item instanceof IEdge) {
+      tooltipTitle = 'Subordinate'
+      tooltipContent = (item.targetNode!.tag as Person).name
+    }
+
+    // Retrieve the factory for TooltipComponents
+    const componentFactory = this.componentFactoryResolver.resolveComponentFactory(TooltipComponent)
+    // Have the factory create a new TooltipComponent
+    const container = document.createElement('div')
+    const tooltipRef = componentFactory.create(this.injector, undefined, container)
+    // Attach the component to the Angular component tree so that change detection will work
+    this.appRef.attachView(tooltipRef.hostView)
+    // Assign the NodeComponent's item input property
+    tooltipRef.instance.title = tooltipTitle
+    tooltipRef.instance.content = tooltipContent
+
+    return container
   }
 }

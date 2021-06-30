@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -29,7 +29,7 @@
 .option-ui-tabbar {
   position: relative;
   box-sizing: border-box;
-  background: #a0a0a0;
+  background: #ebeef0;
   color: #fff;
 }
 
@@ -137,7 +137,7 @@
   white-space: nowrap;
   cursor: pointer;
   pointer-events: auto;
-  background-color: transparent;
+  background: transparent;
 }
 
 .option-ui-button > div * {
@@ -152,7 +152,8 @@
 }
 
 .option-ui-button .icon {
-  width: 2em;
+  width: 1.75em;
+  margin-left: 2px;
   fill: currentColor;
 }
 
@@ -192,7 +193,7 @@ form.option-ui-combobox div.combobox-container label {
 }
 
 .option-ui-api-link {
-  background-color: #5cb85c;
+  background-color: #4caf50;
   color: #fff !important;
   font-size: 10px;
   margin-left: 5px;
@@ -206,7 +207,7 @@ form.option-ui-combobox div.combobox-container label {
 .option-ui-dropdown {
   position: relative;
   box-sizing: border-box;
-  background: #a0a0a0;
+  background: #90a4ae;
   color: #fff;
 }
 
@@ -299,7 +300,7 @@ input[type='range'] {
 
 input[type='range']::-webkit-slider-runnable-track {
   height: 2px;
-  background: #a0a0a0;
+  background: #38434f;
   border: none;
   border-radius: 3px;
 }
@@ -310,7 +311,7 @@ input[type='range']::-webkit-slider-thumb {
   height: 14px;
   width: 14px;
   border-radius: 50%;
-  background: #a0a0a0;
+  background: #38434f;
   margin-top: -6px;
 }
 
@@ -320,7 +321,7 @@ input[type='range']:focus {
 
 input[type='range']::-moz-range-track {
   height: 2px;
-  background: #a0a0a0;
+  background: #38434f;
   border: none;
   border-radius: 3px;
 }
@@ -330,7 +331,7 @@ input[type='range']::-moz-range-thumb {
   height: 14px;
   width: 14px;
   border-radius: 50%;
-  background: #a0a0a0;
+  background: #38434f;
 }
 
 input[type='range']:-moz-focusring {
@@ -347,12 +348,12 @@ input[type='range']::-ms-track {
 }
 
 input[type='range']::-ms-fill-lower {
-  background: #a0a0a0;
+  background: #38434f;
   border-radius: 10px;
 }
 
 input[type='range']::-ms-fill-upper {
-  background: #a0a0a0;
+  background: #38434f;
   border-radius: 10px;
 }
 
@@ -361,7 +362,7 @@ input[type='range']::-ms-thumb {
   height: 14px;
   width: 14px;
   border-radius: 50%;
-  background: #a0a0a0;
+  background: #29323c;
   margin-top: 0px;
 }
 
@@ -394,14 +395,21 @@ form.option-ui-spinner div.spinner-container label {
 .option-ui input,
 .option-ui select {
   margin: 0;
-  font-family: sans-serif;
-  font-size: 14.4px;
+  font-family: Tahoma, Verdana, sans-serif;
+  font-size: 14px;
 }
 
 .option-ui-htmlblock {
-  font-family: Tahoma, Verdana, sans-serif;
   font-size: 12px;
-  line-height: 135%;
+  padding: 3px 16px;
+}
+
+.option-ui-htmlblock p:first-child {
+  margin-top: 0;
+}
+
+.option-ui-htmlblock *:last-child {
+  margin-bottom: 0;
 }
 
 .option-ui .block {
@@ -424,14 +432,22 @@ form.option-ui-spinner div.spinner-container label {
   left: 0;
 }
 
+.demo-collapsible-pane-content {
+  padding: 0 0 10px 0;
+  background: #fff;
+}
+
+.option-ui-form-section {
+  border-left: 2px solid #f7f7f7;
+}
+
 .option-ui-form-group {
   position: relative;
-  border-top: 1px solid #ccc;
+  border-top: 1px solid #e0e0e0;
 }
 
 .option-ui-form-group.collapsed {
   margin-bottom: 0;
-  border-top: 1px solid #ccc;
   padding-bottom: 0;
 }
 
@@ -447,12 +463,13 @@ form.option-ui-spinner div.spinner-container label {
   color: #333;
   font-weight: 400;
   padding: 0;
-  background-color: #eee;
+  background: #eeeeee;
   width: 100%;
 }
 
 .option-ui-form-group .option-ui-form-group > [data-option-ui-button] > div {
   width: 100%;
+  letter-spacing: initial;
 }
 
 .option-ui-form-group .option-ui-form-group .option-ui-form-section {
@@ -461,7 +478,7 @@ form.option-ui-spinner div.spinner-container label {
 }
 
 .option-ui-form-group .option-ui-form-group.collapsed > .option-ui-button {
-  background-color: #eee;
+  background-color: #eceff1;
   color: #333;
 }
 
@@ -493,18 +510,31 @@ form.option-ui-spinner div.spinner-container label {
   overflow-y: auto;
 }
 
-.option-ui-form-group {
-  background-color: #fff;
+.option-ui-form-group .option-ui-button {
+  transition: background-color 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  font-family: Tahoma, Verdana, sans-serif;
+  font-size: 14px;
+  letter-spacing: 1px;
+}
+
+.option-ui-form-group .option-ui-button:hover {
+  box-shadow: inset 0 0 100px 100px rgba(255, 255, 255, 0.1);
+}
+
+.option-ui-form-group.collapsed .option-ui-button:hover {
+  box-shadow: inset 0 0 100px 100px rgba(0, 0, 0, 0.05);
 }
 
 .option-ui-form-group.collapsed > .option-ui-button {
-  background-color: #a0a0a0;
-  color: #fff;
+  background: inherit;
+  color: #666;
+  font-weight: normal;
 }
 
 .option-ui-form-group > .option-ui-button {
-  background-color: #a0a0a0;
   width: 100%;
+  background: transparent linear-gradient(90deg, #29323c 0%, #38434f 100%) 0 0 no-repeat padding-box;
   color: #fff;
 }
 
@@ -541,7 +571,7 @@ form.option-ui-slider input[type='number'] {
 }
 
 .option-ui-item {
-  padding: 2px 0;
+  padding: 2px 8px;
 }
 
 .option-ui-item label {
@@ -608,7 +638,6 @@ form.option-ui-slider input[type='number'] {
   .option-ui input,
   .option-ui select {
     margin: 0;
-    font-family: sans-serif;
     font-size: 12px;
   }
 

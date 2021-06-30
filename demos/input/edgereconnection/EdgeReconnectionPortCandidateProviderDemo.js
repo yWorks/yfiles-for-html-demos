@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -32,14 +32,14 @@ import {
   GraphEditorInputMode,
   IEdgeReconnectionPortCandidateProvider,
   IGraph,
+  INode,
   IPortCandidateProvider,
   License,
   NodeStylePortStyleAdapter,
   Point,
   PortCandidateValidity,
   Rect,
-  ShapeNodeStyle,
-  YString
+  ShapeNodeStyle
 } from 'yfiles'
 
 import { DemoNodeStyle, DemoEdgeStyle } from '../../resources/demo-styles.js'
@@ -55,7 +55,7 @@ import loadJson from '../../resources/load-json.js'
  * This callback function is called whenever a node in the graph is queried
  * for its <code>IEdgePortCandidateProvider</code>. In this case, the 'node'
  * parameter will be set to that node.
- * @param {IGraph} graph The given graph
+ * @param {!IGraph} graph The given graph
  */
 function registerEdgePortCandidateProvider(graph) {
   const edgeDecorator = graph.decorator.edgeDecorator
@@ -64,7 +64,7 @@ function registerEdgePortCandidateProvider(graph) {
     const edgeTag = edge.tag
 
     // Check if it is a known tag and choose the respective implementation
-    if (!YString.isInstance(edgeTag)) {
+    if (typeof edgeTag !== 'string') {
       return null
     } else if (edgeTag === 'firebrick') {
       return new RedEdgePortCandidateProvider(edge)
@@ -82,6 +82,7 @@ function registerEdgePortCandidateProvider(graph) {
 
 /**
  * Called after this application has been set up by the demo framework.
+ * @param {*} licenseData
  */
 function run(licenseData) {
   License.value = licenseData
@@ -122,7 +123,7 @@ function run(licenseData) {
 
 /**
  * Creates the sample graph of this demo.
- * @param {GraphComponent} graphComponent The given graphComponent
+ * @param {!GraphComponent} graphComponent The given graphComponent
  */
 function createSampleGraph(graphComponent) {
   const graph = graphComponent.graph
@@ -163,10 +164,10 @@ function createSampleGraph(graphComponent) {
 
 /**
  * Creates the sample graph of the given css class for different colored graphs.
- * @param {IGraph} graph The given graph
- * @param {string} cssClass The given cssClass
+ * @param {!IGraph} graph The given graph
+ * @param {!string} cssClass The given cssClass
  * @param {number} yOffset An y-offset
- * @return {INode[]}
+ * @returns {!Array.<INode>}
  */
 function createSubgraph(graph, cssClass, yOffset) {
   const nodeStyle = new DemoNodeStyle()

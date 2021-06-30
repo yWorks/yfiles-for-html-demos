@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -33,8 +33,13 @@ import {
   FontWeight,
   GeneralPath,
   Geom,
+  IEnumerable,
+  IRectangle,
   IRenderContext,
   IVisualCreator,
+  Point,
+  Rect,
+  ResultItemCollection,
   SvgVisual,
   TextRenderSupport,
   Visual,
@@ -45,38 +50,34 @@ import {
 import VoronoiDiagram from './VoronoiDiagram.js'
 
 /**
+ * Sets the value of the attribute with the given name for the given element.
+ * @param {!Element} e The Element for which an attribute value is set.
+ * @param {!string} name The name of the attribute to set.
+ * @param {!(number|string)} value The value of the attribute to set.
+ */
+function setAttribute(e, name, value) {
+  e.setAttribute(name, value.toString())
+}
+
+/**
  * This visual draws a Voronoi diagram.
  */
 export class VoronoiVisual extends BaseClass(IVisualCreator) {
   /**
    * Creates a new VoronoiVisual that draws the faces of the given voronoi diagram.
-   * @param {VoronoiDiagram} voronoiDiagram
+   * @param {!VoronoiDiagram} voronoiDiagram
+   * @param {!object} clusters
    */
-  constructor(voronoiDiagram) {
+  constructor(voronoiDiagram, clusters) {
     super()
-    this.$voronoiDiagram = voronoiDiagram
-  }
-
-  /**
-   * Gets the clusters' object from which the visual will be created.
-   * @return {Object}
-   */
-  get clusters() {
-    return this.$clusters
-  }
-
-  /**
-   * Sets the clusters' object from which the visual will be created.
-   * @param {Object} clusters The clusters' object
-   */
-  set clusters(clusters) {
-    this.$clusters = clusters
+    this.clusters = clusters
+    this.voronoiDiagram = voronoiDiagram
   }
 
   /**
    * Creates the Voronoi visual.
-   * @param {IRenderContext} context The context that describes where the visual will be used
-   * @return {Visual} The visual for the Voronoi diagram
+   * @param {!IRenderContext} context The context that describes where the visual will be used
+   * @returns {!Visual} The visual for the Voronoi diagram
    */
   createVisual(context) {
     const container = document.createElementNS('http://www.w3.org/2000/svg', 'g')
@@ -84,15 +85,15 @@ export class VoronoiVisual extends BaseClass(IVisualCreator) {
     const colors = generateColors(
       Color.ROYAL_BLUE,
       Color.LIGHT_CYAN,
-      this.$voronoiDiagram.voronoiFaces.length + 1
+      this.voronoiDiagram.voronoiFaces.length + 1
     )
 
-    this.$voronoiDiagram.voronoiFaces.forEach((face, index) => {
+    this.voronoiDiagram.voronoiFaces.forEach((face, index) => {
       const svgPath = face.createSvgPath()
       const color = colors[index]
-      svgPath.setAttribute('fill', `rgb(${color.r},${color.g},${color.b})`)
-      svgPath.setAttribute('stroke', 'none')
-      svgPath.setAttribute('stroke-width', '20')
+      setAttribute(svgPath, 'fill', `rgb(${color.r},${color.g},${color.b})`)
+      setAttribute(svgPath, 'stroke', 'none')
+      setAttribute(svgPath, 'stroke-width', '20')
       container.appendChild(svgPath)
     })
 
@@ -105,9 +106,9 @@ export class VoronoiVisual extends BaseClass(IVisualCreator) {
 
   /**
    * Updates the Voronoi visual
-   * @param {IRenderContext} context The context that describes where the visual will be used
-   * @param {Visual} oldVisual The old visual
-   * @return {Visual}  The visual for the Voronoi diagram
+   * @param {!IRenderContext} context The context that describes where the visual will be used
+   * @param {!Visual} oldVisual The old visual
+   * @returns {!Visual} The visual for the Voronoi diagram
    */
   updateVisual(context, oldVisual) {
     return this.createVisual(context)
@@ -115,8 +116,8 @@ export class VoronoiVisual extends BaseClass(IVisualCreator) {
 
   /**
    * Draws an X on the given coordinate.
-   * @param {YPoint} point The given coordinates
-   * @param {Element} container The svg container
+   * @param {!Point} point The given coordinates
+   * @param {!Element} container The svg container
    */
   static drawClusterCenter(point, container) {
     const path = document.createElementNS('http://www.w3.org/2000/svg', 'path')
@@ -124,9 +125,9 @@ export class VoronoiVisual extends BaseClass(IVisualCreator) {
     const d = `M${point.x - offset},${point.y - offset} L${point.x + offset},${point.y + offset} M${
       point.x + offset
     },${point.y - offset} L${point.x - offset},${point.y + offset}`
-    path.setAttribute('d', d)
-    path.setAttribute('stroke', '#666666')
-    path.setAttribute('stroke-width', '4')
+    setAttribute(path, 'd', d)
+    setAttribute(path, 'stroke', '#666666')
+    setAttribute(path, 'stroke-width', '4')
     container.appendChild(path)
   }
 }
@@ -135,33 +136,24 @@ export class VoronoiVisual extends BaseClass(IVisualCreator) {
  * This visual creates a polygon around the nodes that belong to the same cluster.
  */
 export class PolygonVisual extends BaseClass(IVisualCreator) {
-  constructor(drawCenter) {
+  /**
+   * Creates a new instance.
+   * @param {boolean} drawCenter Whether to draw an X at the center.
+   * @param {!object} clusters The clusters to draw. Defines the number of clusters,
+   * the layout of the nodes contained in the clusters, and the center of the clusters
+   */
+  constructor(drawCenter, clusters) {
     super()
+    this.clusters = clusters
+    this.drawCenter = drawCenter
     this.startColor = Color.ROYAL_BLUE
     this.endColor = Color.LAVENDER
-    this.$drawCenter = drawCenter
-  }
-
-  /**
-   * Gets the clusters' object from which the visual will be created.
-   * @return {Object}
-   */
-  get clusters() {
-    return this.$clusters
-  }
-
-  /**
-   * Sets the clusters' object from which the visual will be created.
-   * @param {Object} clusters The clusters' object
-   */
-  set clusters(clusters) {
-    this.$clusters = clusters
   }
 
   /**
    * Creates the polygonal visual containing the nodes that belong to the same cluster.
-   * @param {IRenderContext} context The context that describes where the visual will be used
-   * @return {Visual} The polygonal visual
+   * @param {!IRenderContext} context The context that describes where the visual will be used
+   * @returns {!Visual} The polygonal visual
    */
   createVisual(context) {
     const element = document.createElementNS('http://www.w3.org/2000/svg', 'g')
@@ -195,26 +187,26 @@ export class PolygonVisual extends BaseClass(IVisualCreator) {
         generalPath = generalPath.createSmoothedPath(50)
 
         const cluster = generalPath.createSvgPath()
-        cluster.setAttribute('fill', `rgb(${color.r},${color.g},${color.b})`)
-        cluster.setAttribute('stroke', `rgb(${color.r},${color.g},${color.b})`)
-        cluster.setAttribute('stroke-linejoin', 'round')
-        cluster.setAttribute('stroke-width', '30')
+        setAttribute(cluster, 'fill', `rgb(${color.r},${color.g},${color.b})`)
+        setAttribute(cluster, 'stroke', `rgb(${color.r},${color.g},${color.b})`)
+        setAttribute(cluster, 'stroke-linejoin', 'round')
+        setAttribute(cluster, 'stroke-width', '30')
 
         element.appendChild(cluster)
       } else {
         const cluster = document.createElementNS('http://www.w3.org/2000/svg', 'ellipse')
         const layout = clusterNodeBounds[0]
-        cluster.setAttribute('cx', layout.center.x)
-        cluster.setAttribute('cy', layout.center.y)
-        cluster.setAttribute('rx', (layout.width + 10) * 0.5)
-        cluster.setAttribute('ry', (layout.height + 10) * 0.5)
-        cluster.setAttribute('fill', `rgb(${color.r},${color.g},${color.b})`)
-        cluster.setAttribute('stroke', `rgb(${color.r},${color.g},${color.b})`)
+        setAttribute(cluster, 'cx', layout.center.x)
+        setAttribute(cluster, 'cy', layout.center.y)
+        setAttribute(cluster, 'rx', (layout.width + 10) * 0.5)
+        setAttribute(cluster, 'ry', (layout.height + 10) * 0.5)
+        setAttribute(cluster, 'fill', `rgb(${color.r},${color.g},${color.b})`)
+        setAttribute(cluster, 'stroke', `rgb(${color.r},${color.g},${color.b})`)
         element.appendChild(cluster)
       }
     }
 
-    if (this.$drawCenter) {
+    if (this.drawCenter) {
       this.clusters.centroids.forEach(point => {
         VoronoiVisual.drawClusterCenter(point, element)
       })
@@ -225,9 +217,9 @@ export class PolygonVisual extends BaseClass(IVisualCreator) {
 
   /**
    * Updates the polygonal containing the nodes that belong to the same cluster.
-   * @param {IRenderContext} context The context that describes where the visual will be used
-   * @param {Visual} oldVisual The old visual
-   * @return {Visual} The polygonal diagram
+   * @param {!IRenderContext} context The context that describes where the visual will be used
+   * @param {!Visual} oldVisual The old visual
+   * @returns {!Visual} The polygonal diagram
    */
   updateVisual(context, oldVisual) {
     return this.createVisual(context)
@@ -235,19 +227,24 @@ export class PolygonVisual extends BaseClass(IVisualCreator) {
 }
 
 /**
- * This visual creates a polygon around the nodes that belong to the same cluster.
+ * Creates the coordinate axis of the dendrogram.
+ * This is only used for Hierarchical Clustering.
  */
 export class AxisVisual extends BaseClass(IVisualCreator) {
+  /**
+   * @param {number} maxY
+   * @param {!Rect} rect
+   */
   constructor(maxY, rect) {
     super()
-    this.maxY = maxY
     this.rect = rect
+    this.maxY = maxY
   }
 
   /**
    * Creates the polygonal visual containing the nodes that belong to the same cluster.
-   * @param {IRenderContext} context The context that describes where the visual will be used
-   * @return {Visual} The polygonal visual
+   * @param {!IRenderContext} context The context that describes where the visual will be used
+   * @returns {!Visual} The polygonal visual
    */
   createVisual(context) {
     const container = document.createElementNS('http://www.w3.org/2000/svg', 'g')
@@ -256,13 +253,13 @@ export class AxisVisual extends BaseClass(IVisualCreator) {
     const offset = 20
     const verticalOffset = 4
     const color = 'rgb(51,102,153)'
-    rect.setAttribute('x', this.rect.x - offset)
-    rect.setAttribute('y', this.rect.y - offset)
-    rect.setAttribute('width', this.rect.width + 2 * offset)
-    rect.setAttribute('height', this.rect.height + offset - verticalOffset)
-    rect.setAttribute('stroke', color)
-    rect.setAttribute('stroke-width', '3')
-    rect.setAttribute('fill', 'none')
+    setAttribute(rect, 'x', this.rect.x - offset)
+    setAttribute(rect, 'y', this.rect.y - offset)
+    setAttribute(rect, 'width', this.rect.width + 2 * offset)
+    setAttribute(rect, 'height', this.rect.height + offset - verticalOffset)
+    setAttribute(rect, 'stroke', color)
+    setAttribute(rect, 'stroke-width', '3')
+    setAttribute(rect, 'fill', 'none')
     container.appendChild(rect)
 
     const division = 20
@@ -270,16 +267,16 @@ export class AxisVisual extends BaseClass(IVisualCreator) {
     let j = 0
     for (let i = this.rect.maxY - verticalOffset; i >= this.rect.y - division; i -= division) {
       const marks = window.document.createElementNS('http://www.w3.org/2000/svg', 'line')
-      marks.setAttribute('x1', this.rect.x - offset - 5)
-      marks.setAttribute('y1', i)
-      marks.setAttribute('x2', this.rect.x - offset + 5)
-      marks.setAttribute('y2', i)
-      marks.setAttribute('stroke', color)
-      marks.setAttribute('stroke-width', '2')
+      setAttribute(marks, 'x1', this.rect.x - offset - 5)
+      setAttribute(marks, 'y1', i)
+      setAttribute(marks, 'x2', this.rect.x - offset + 5)
+      setAttribute(marks, 'y2', i)
+      setAttribute(marks, 'stroke', color)
+      setAttribute(marks, 'stroke-width', '2')
       container.appendChild(marks)
 
       const text = window.document.createElementNS('http://www.w3.org/2000/svg', 'text')
-      text.textContent = j
+      text.textContent = j.toString()
 
       const textSize = TextRenderSupport.measureText(
         text.textContent,
@@ -289,12 +286,12 @@ export class AxisVisual extends BaseClass(IVisualCreator) {
           fontWeight: FontWeight.BOLD
         })
       )
-      text.setAttribute('transform', 'translate(4 14)')
-      text.setAttribute('font-size', '14px')
-      text.setAttribute('font-family', 'Arial')
-      text.setAttribute('fill', color)
-      text.setAttribute('x', this.rect.x - offset - 10 - 2 * textSize.width)
-      text.setAttribute('y', i - textSize.height)
+      setAttribute(text, 'transform', 'translate(4 14)')
+      setAttribute(text, 'font-size', '14px')
+      setAttribute(text, 'font-family', 'Arial')
+      setAttribute(text, 'fill', color)
+      setAttribute(text, 'x', this.rect.x - offset - 10 - 2 * textSize.width)
+      setAttribute(text, 'y', i - textSize.height)
       container.appendChild(text)
       j += division
     }
@@ -304,9 +301,9 @@ export class AxisVisual extends BaseClass(IVisualCreator) {
 
   /**
    * Updates the polygonal containing the nodes that belong to the same cluster.
-   * @param {IRenderContext} context The context that describes where the visual will be used
-   * @param {Visual} oldVisual The old visual
-   * @return {Visual} The polygonal diagram
+   * @param {!IRenderContext} context The context that describes where the visual will be used
+   * @param {!Visual} oldVisual The old visual
+   * @returns {!Visual} The polygonal diagram
    */
   updateVisual(context, oldVisual) {
     return this.createVisual(context)
@@ -314,48 +311,40 @@ export class AxisVisual extends BaseClass(IVisualCreator) {
 }
 
 /**
- * Creates the visual rectangle that determines the current time window that will be examined.
+ * Creates the visualization for the cut-off.
+ * A red line with a label for the cut-off value.
+ * This is only used for Hierarchical Clustering.
  */
 export class CutoffVisual extends BaseClass(IVisualCreator) {
+  /**
+   * @param {!IRectangle} rectangle
+   * @param {number} maxY
+   */
   constructor(rectangle, maxY) {
     super()
+    this.maxY = maxY
+    this.rectangle = rectangle
     this.rectangle = rectangle
     this.maxY = maxY
-    this.$cutOffValue = Math.ceil(this.maxY - this.rectangle.center.y + 1)
-  }
-
-  /**
-   * Gets the value of the cut in the dendrogram component.
-   * @type {number}
-   */
-  get cutOffValue() {
-    return this.$cutOffValue
-  }
-
-  /**
-   * Sets the value of the cut in the dendrogram component.
-   * @type {number}
-   */
-  set cutOffValue(value) {
-    this.$cutOffValue = value
+    this.cutOffValue = Math.ceil(this.maxY - this.rectangle.center.y + 1)
   }
 
   /**
    * Creates the time frame rectangle.
-   * @param {IRenderContext} context The context that describes where the visual will be used
-   * @return {SvgVisual}
+   * @param {!IRenderContext} context The context that describes where the visual will be used
+   * @returns {!SvgVisual}
    */
   createVisual(context) {
     const svgNamespace = 'http://www.w3.org/2000/svg'
     const container = document.createElementNS(svgNamespace, 'g')
     const cutOffLine = document.createElementNS(svgNamespace, 'rect')
-    cutOffLine.setAttribute('x', '0')
-    cutOffLine.setAttribute('y', '0')
-    cutOffLine.setAttribute('width', this.rectangle.width.toString())
-    cutOffLine.setAttribute('height', '2')
-    cutOffLine.setAttribute('stroke', 'firebrick')
-    cutOffLine.setAttribute('stroke-width', '1')
-    cutOffLine.setAttribute('fill', 'firebrick')
+    setAttribute(cutOffLine, 'x', '0')
+    setAttribute(cutOffLine, 'y', '0')
+    setAttribute(cutOffLine, 'width', this.rectangle.width.toString())
+    setAttribute(cutOffLine, 'height', '2')
+    setAttribute(cutOffLine, 'stroke', 'firebrick')
+    setAttribute(cutOffLine, 'stroke-width', '1')
+    setAttribute(cutOffLine, 'fill', 'firebrick')
     container.appendChild(cutOffLine)
 
     const font = new Font({
@@ -365,22 +354,22 @@ export class CutoffVisual extends BaseClass(IVisualCreator) {
 
     const text = window.document.createElementNS('http://www.w3.org/2000/svg', 'text')
     text.textContent = `Cut-off:  ${this.cutOffValue}`
-    text.setAttribute('fill', 'firebrick')
+    setAttribute(text, 'fill', 'firebrick')
     font.applyTo(text)
     const textSize = TextRenderSupport.measureText(text.textContent, font)
-    text.setAttribute('x', this.rectangle.width + 5)
-    text.setAttribute('y', textSize.height * 0.5 - 2)
+    setAttribute(text, 'x', this.rectangle.width + 5)
+    setAttribute(text, 'y', textSize.height * 0.5 - 2)
     container.appendChild(text)
 
-    container.setAttribute('transform', `translate(${this.rectangle.x} ${this.rectangle.y})`)
+    setAttribute(container, 'transform', `translate(${this.rectangle.x} ${this.rectangle.y})`)
     return new SvgVisual(container)
   }
 
   /**
    * Updates the time frame rectangle to improve performance.
-   * @param {IRenderContext} context The context that describes where the visual will be used
-   * @param {Visual} oldVisual The old visual
-   * @return {SvgVisual}
+   * @param {!IRenderContext} context The context that describes where the visual will be used
+   * @param {!Visual} oldVisual The old visual
+   * @returns {!SvgVisual}
    */
   updateVisual(context, oldVisual) {
     return this.createVisual(context)
@@ -389,12 +378,12 @@ export class CutoffVisual extends BaseClass(IVisualCreator) {
 
 /**
  * Generates random colors for nodes and edges.
- * @param {Color} startColor The start color
- * @param {Color} endColor The end color
+ * @param {!Color} startColor The start color
+ * @param {!Color} endColor The end color
  * @param {number} gradientCount The number of gradient steps
- * @return {Array} An array or random gradient colors
+ * @returns {!Array.<Color>} An array or random gradient colors
  */
-function generateColors(startColor, endColor, gradientCount) {
+export function generateColors(startColor, endColor, gradientCount) {
   const colors = []
   const stepCount = gradientCount - 1
 

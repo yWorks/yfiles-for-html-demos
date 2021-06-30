@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -37,6 +37,7 @@ import {
   ICommand,
   IEdge,
   IGraph,
+  IModelItem,
   INode,
   LabelSnapContext,
   License,
@@ -60,45 +61,58 @@ import loadJson from '../../resources/load-json.js'
 import { webGlSupported } from '../../utils/Workarounds.js'
 
 /** @type {GraphComponent} */
-let graphComponent = null
+let graphComponent
 
 /** @type {GraphOverviewComponent} */
-let overviewComponent = null
+let overviewComponent
 
+/**
+ * Runs the demo.
+ * @param {!object} licenseData
+ */
 function run(licenseData) {
   License.value = licenseData
-  // initialize the GraphComponent and GraphOverviewComponent
+
+  // Initialize the GraphComponent and GraphOverviewComponent
   graphComponent = new GraphComponent('graphComponent')
   overviewComponent = new GraphOverviewComponent('overviewComponent')
   overviewComponent.graphComponent = graphComponent
 
+  // Configure and enable folding
   const foldingManager = new FoldingManager()
   const foldingView = foldingManager.createFoldingView()
   foldingView.enqueueNavigationalUndoUnits = true
-
   const graph = foldingView.graph
-  foldingManager.masterGraph.undoEngineEnabled = true
-
   graphComponent.graph = graph
+
+  // Styling for the overviewComponent
   overviewComponent.graphVisualCreator = new DemoStyleOverviewPaintable(graph)
 
+  // Setup the default styles for the graph
   setDefaultStyles(graph)
-  enableGraphML()
 
+  // Enable GraphML support
+  enableGraphML(graphComponent)
+
+  // Specify a configured input mode that enables graph editing
   graphComponent.inputMode = createEditorMode()
 
+  // Create a sample graph
   createSampleGraph(graph)
-
   graphComponent.fitGraphBounds()
 
-  registerCommands()
+  // Enable the undo engine on the master graph
+  foldingManager.masterGraph.undoEngineEnabled = true
+
+  // Register commands for the buttons in this demo
+  registerCommands(graphComponent)
 
   showApp(graphComponent, overviewComponent)
 }
 
 /**
  * Creates the editor input mode for this demo.
- * @return {GraphEditorInputMode}
+ * @returns {!GraphEditorInputMode}
  */
 function createEditorMode() {
   const mode = new GraphEditorInputMode({
@@ -137,7 +151,7 @@ function createEditorMode() {
     }
   })
 
-  // Add and event listener that populates the context menu according to the hit elements, or cancels showing a menu.
+  // Add an event listener that populates the context menu according to the hit elements, or cancels showing a menu.
   // This PopulateItemContextMenu is fired when calling the ContextMenuInputMode.shouldOpenMenu method above.
   mode.addPopulateItemContextMenuListener((sender, args) => populateContextMenu(contextMenu, args))
 
@@ -156,32 +170,31 @@ function createEditorMode() {
 
 /**
  * Creates a configured {@link GraphSnapContext} for this demo.
- * @return {GraphSnapContext}
+ * @returns {!GraphSnapContext}
  */
 function createGraphSnapContext() {
-  const graphSnapContext = new GraphSnapContext({
+  return new GraphSnapContext({
     enabled: false
   })
-  return graphSnapContext
 }
 
 /**
  * Creates a configured {@link LabelSnapContext} for this demo.
- * @return {LabelSnapContext}
+ * @returns {!LabelSnapContext}
  */
 function createLabelSnapContext() {
-  const labelSnapContext = new LabelSnapContext({
+  return new LabelSnapContext({
     enabled: false,
     snapDistance: 15,
     snapLineExtension: 100
   })
-  return labelSnapContext
 }
 
 /**
  * Enables loading and saving the graph to GraphML.
+ * @param {!GraphComponent} graphComponent
  */
-function enableGraphML() {
+function enableGraphML(graphComponent) {
   const gs = new GraphMLSupport({
     graphComponent,
     storageLocation: StorageLocation.FILE_SYSTEM
@@ -197,11 +210,11 @@ function enableGraphML() {
 
 /**
  * Sets default styles to the graph.
- * @param {IGraph} graph The graph
+ * @param {!IGraph} graph The graph
  */
 function setDefaultStyles(graph) {
   // Assign the default demo styles
-  initDemoStyles(graphComponent.graph)
+  initDemoStyles(graph)
 
   // Set the default node label position to centered below the node with the FreeNodeLabelModel that supports label
   // snapping
@@ -221,10 +234,14 @@ function setDefaultStyles(graph) {
   )
 }
 
-function registerCommands() {
+/**
+ * Binds the various commands available in yFiles for HTML to the buttons in the demo's toolbar.
+ * @param {!GraphComponent} graphComponent
+ */
+function registerCommands(graphComponent) {
   bindAction("button[data-command='New']", () => {
     graphComponent.graph.clear()
-    ICommand.FIT_GRAPH_BOUNDS.execute(null, graphComponent)
+    graphComponent.fitGraphBounds()
   })
   bindCommand("button[data-command='Open']", ICommand.OPEN, graphComponent, null)
   bindCommand("button[data-command='Save']", ICommand.SAVE, graphComponent, null)
@@ -257,16 +274,13 @@ function registerCommands() {
   bindCommand("button[data-command='EnterGroup']", ICommand.ENTER_GROUP, graphComponent, null)
   bindCommand("button[data-command='ExitGroup']", ICommand.EXIT_GROUP, graphComponent, null)
 
+  const geim = graphComponent.inputMode
   bindAction('#demo-snapping-button', () => {
-    graphComponent.inputMode.snapContext.enabled = document.querySelector(
-      '#demo-snapping-button'
-    ).checked
-    graphComponent.inputMode.labelSnapContext.enabled = document.querySelector(
-      '#demo-snapping-button'
-    ).checked
+    geim.snapContext.enabled = document.querySelector('#demo-snapping-button').checked
+    geim.labelSnapContext.enabled = document.querySelector('#demo-snapping-button').checked
   })
   bindAction('#demo-orthogonal-editing-button', () => {
-    graphComponent.inputMode.orthogonalEdgeEditingContext.enabled = document.querySelector(
+    geim.orthogonalEdgeEditingContext.enabled = document.querySelector(
       '#demo-orthogonal-editing-button'
     ).checked
   })
@@ -284,8 +298,8 @@ function selectAllNodes() {
 
 /**
  * Populates the context menu based on the item the mouse hovers over
- * @param {object} contextMenu The context menu.
- * @param {PopulateItemContextMenuEventArgs} args The event args.
+ * @param {!ContextMenu} contextMenu The context menu.
+ * @param {!PopulateItemContextMenuEventArgs.<IModelItem>} args The event args.
  */
 function populateContextMenu(contextMenu, args) {
   // The 'showMenu' property is set to true to inform the input mode that we actually want to show a context menu
@@ -342,6 +356,7 @@ function populateContextMenu(contextMenu, args) {
 
 /**
  * Creates the initial graph.
+ * @param {!IGraph} graph
  */
 function createSampleGraph(graph) {
   graph.clear()
@@ -365,20 +380,20 @@ function createSampleGraph(graph) {
 
   const group1 = graph.createGroupNode({
     layout: new Rect(25, 45, 202.5, 353),
-    labels: 'Group 1'
+    labels: ['Group 1']
   })
   graph.groupNodes(group1, [n2, n3, n4, n9, n10])
 
   const group2 = graph.createGroupNode({
     parent: group1,
     layout: new Rect(98, 222, 119.5, 116),
-    labels: 'Group 2'
+    labels: ['Group 2']
   })
   graph.groupNodes(group2, [n5, n6, n7, n8])
 
   const group3 = graph.createGroupNode({
     layout: new Rect(10, 413, 170, 141),
-    labels: 'Group 3'
+    labels: ['Group 3']
   })
   graph.groupNodes(group3, [n11, n12, n13, n14, n15])
 
@@ -397,9 +412,6 @@ function createSampleGraph(graph) {
   graph.createEdge(n13, n16)
   graph.createEdge(n12, n14)
   graph.createEdge(n12, n15)
-
-  // clear the undo engine
-  graph.foldingView.manager.masterGraph.undoEngine.clear()
 }
 
 // Start the demo

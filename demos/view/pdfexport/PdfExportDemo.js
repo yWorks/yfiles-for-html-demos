@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -41,6 +41,8 @@ import {
   HandlePositions,
   IArrow,
   ICommand,
+  IGraph,
+  IHandle,
   IHitTestable,
   ImageNodeStyle,
   Insets,
@@ -70,38 +72,60 @@ import {
   bindAction,
   bindChangeListener,
   bindCommand,
-  detectInternetExplorerVersion,
   removeClass,
   showApp
 } from '../../resources/demo-app.js'
+import { detectInternetExplorerVersion } from '../../utils/Workarounds.js'
 import loadJson from '../../resources/load-json.js'
+import { initDemoStyles } from '../../resources/demo-styles.js'
 
-/** the server urls */
+/**
+ * This demo supports specific PDF output sizes.
+ */
+export /**
+ * @readonly
+ * @enum {number}
+ */
+const PaperSize = {
+  A3: 'A3',
+  A4: 'A4',
+  A5: 'A5',
+  A6: 'A6',
+  LETTER: 'Letter',
+  AUTO: 'Auto'
+}
+
+/**
+ * Server URLs for server-side export.
+ */
 const NODE_SERVER_URL = 'http://localhost:3001'
 const JAVA_SERVLET_URL = 'http://localhost:8080/BatikServlet/BatikServlet'
 
-/** @type {GraphComponent} */
-let graphComponent = null
-
-/** @type {ClientSidePdfExport} */
-let clientSidePdfExport = null
-
-/** @type {ServerSidePdfExport} */
-let serverSidePdfExport = null
+/**
+ * Handles the client-sided PDF export.
+ */
+const clientSidePdfExport = new ClientSidePdfExport()
 
 /**
- * region that will be exported
+ * Handles the server-sided PDF export.
+ */
+const serverSidePdfExport = new ServerSidePdfExport()
+
+/**
+ * The area that will be exported.
  * @type {MutableRectangle}
  */
-let exportRect = null
+let exportRect
 
 /**
- * detect IE version for x-browser compatibility
- * @type {number}
+ * The detected IE version for x-browser compatibility.
  */
-let ieVersion = -1
+const ieVersion = detectInternetExplorerVersion()
 
-async function run(licenseData) {
+/**
+ * @param {!object} licenseData
+ */
+function run(licenseData) {
   License.value = licenseData
   if (window.location.protocol === 'file:') {
     alert(
@@ -111,25 +135,24 @@ async function run(licenseData) {
     )
   }
 
-  // bootstrap application
-  graphComponent = new GraphComponent('graphComponent')
-  clientSidePdfExport = new ClientSidePdfExport()
-  serverSidePdfExport = new ServerSidePdfExport()
-  ieVersion = detectInternetExplorerVersion()
+  // initialize the main GraphComponent
+  const graphComponent = new GraphComponent('graphComponent')
+  initializeInteraction(graphComponent)
+  retainAspectRatio(graphComponent.graph)
 
-  initializeInputModes()
-  keepAspectRatio()
+  // demonstrate export capabilities with different samples
+  addNetworkSample(graphComponent.graph)
+  addCustomFontSample(graphComponent.graph)
+  addBezierEdgesSample(graphComponent.graph)
 
-  // create sample graph
-  createNetworkGraph()
-  createCustomFontGraph()
-  createBezierEdgesGraph()
+  // set nice default styles for nodes and edges
+  initDemoStyles(graphComponent.graph)
+
+  graphComponent.fitGraphBounds()
 
   // disable client-side export button in IE9 and hide the save buttons
   if (ieVersion !== -1 && ieVersion <= 9) {
-    document.getElementById('ExportButton').disabled = true
-    const clientSaveButton = document.getElementById('clientPdfSaveButton')
-    clientSaveButton.setAttribute('style', 'display: none')
+    disableClientSaveButton()
   }
 
   // disable server-side export in IE9 due to limited XHR CORS support
@@ -137,245 +160,101 @@ async function run(licenseData) {
     enableServerSideExportButtons()
   }
 
-  registerCommands()
-
+  registerCommands(graphComponent)
   showApp(graphComponent)
 }
 
-async function enableServerSideExportButtons() {
-  // if a server is available, enable the server export button
-  const isAliveJava = await isServerAlive(JAVA_SERVLET_URL)
-  document.getElementById('BatikServerExportButton').disabled = !isAliveJava
-
-  const isAliveNode = await isServerAlive(NODE_SERVER_URL)
-  document.getElementById('NodeServerServerExportButton').disabled = !isAliveNode
-}
-
 /**
- * Wires up the UI.
+ * Initializes user interaction.
+ * Aside from basic editing, this demo provides a visual marker (the 'export rectangle') that
+ * determines the area that will be exported. Users may move and resize the marker with their mouse.
+ * @param {!GraphComponent} graphComponent The demo's main graph view.
  */
-function registerCommands() {
-  bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent)
-  bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent)
-  bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
+function initializeInteraction(graphComponent) {
+  const geim = new GraphEditorInputMode()
 
-  const inputPaperSize = document.getElementById('paperSize')
-  const inputScale = document.getElementById('scale')
-  const inputMargin = document.getElementById('margin')
-  const inputUseRect = document.getElementById('useRect')
-
-  bindChangeListener('#paperSize', newSize => {
-    inputScale.disabled = newSize !== 'auto'
-  })
-
-  bindAction("button[data-command='Export']", async () => {
-    const paperSize = inputPaperSize.value === 'auto' ? null : inputPaperSize.value
-    const scale = parseFloat(inputScale.value)
-    const margin = parseFloat(inputMargin.value)
-    if (checkInputValues(scale, margin)) {
-      const rectangle = inputUseRect && inputUseRect.checked ? new Rect(exportRect) : null
-
-      // configure export, export the image and show a dialog to save the image
-      clientSidePdfExport.scale = scale
-      clientSidePdfExport.margins = new Insets(margin)
-      clientSidePdfExport.paperSize = paperSize
-      const { raw, uri } = await clientSidePdfExport.exportPdf(graphComponent.graph, rectangle)
-      if (ieVersion !== -1) {
-        // disable HTML preview in IE
-        FileSaveSupport.save(raw, 'graph.pdf').catch(() => {
-          alert(
-            'Saving directly to the filesystem is not supported by this browser. Please use the server based export instead.'
-          )
-        })
-      } else {
-        showClientExportDialog(raw, uri)
-      }
-    }
-  })
-
-  bindAction("button[data-command='BatikServerExportButton']", async () => {
-    const paperSize = inputPaperSize.value === 'auto' ? null : inputPaperSize.value
-    const scale = parseFloat(inputScale.value)
-    const margin = parseFloat(inputMargin.value)
-    if (checkInputValues(scale, margin)) {
-      const rectangle = inputUseRect && inputUseRect.checked ? new Rect(exportRect) : null
-
-      // configure export, export the SVG and show a dialog to download the image
-      serverSidePdfExport.scale = scale
-      serverSidePdfExport.margins = new Insets(margin)
-      serverSidePdfExport.paperSize = paperSize
-      const pdf = await serverSidePdfExport.exportSvg(graphComponent.graph, rectangle)
-      requestServerExport(pdf.element, pdf.size, JAVA_SERVLET_URL)
-    }
-  })
-  bindAction("button[data-command='NodeServerServerExportButton']", async () => {
-    const paperSize = inputPaperSize.value === 'auto' ? null : inputPaperSize.value
-    const scale = parseFloat(inputScale.value)
-    const margin = parseFloat(inputMargin.value)
-    if (checkInputValues(scale, margin)) {
-      const rectangle = inputUseRect && inputUseRect.checked ? new Rect(exportRect) : null
-
-      // configure export, export the SVG and show a dialog to download the image
-      serverSidePdfExport.scale = scale
-      serverSidePdfExport.margins = new Insets(margin)
-      serverSidePdfExport.paperSize = paperSize
-      const pdf = await serverSidePdfExport.exportSvg(graphComponent.graph, rectangle)
-      requestServerExport(pdf.element, pdf.size, NODE_SERVER_URL)
-    }
-  })
-
-  document.getElementById('closeButton').addEventListener(
-    'click',
-    () => {
-      hidePopup()
-    },
-    false
-  )
-}
-
-/**
- * Checks whether or not the given parameters are a valid input for export.
- * @param {number} scale
- * @param {number} margin
- * @return {boolean}
- */
-function checkInputValues(scale, margin) {
-  if (isNaN(scale) || scale <= 0) {
-    alert('Scale must be a positive number.')
-    return false
-  }
-  if (isNaN(margin) || margin < 0) {
-    alert('Margin must be a non-negative number.')
-    return false
-  }
-  return true
-}
-
-/**
- * Requests the PDF export from the server.
- * @param {Element} svgElement
- * @param {Size} size
- * @param {string} serverUrl
- */
-function requestServerExport(svgElement, size, serverUrl) {
-  const svgString = SvgExport.exportSvgString(svgElement)
-  serverSidePdfExport.requestFile(serverUrl, 'pdf', svgString, size)
-
-  hidePopup()
-}
-
-/**
- * Shows the export dialog for the client-side graph exports.
- * @param {string} raw
- * @param {string} pdfUrl
- */
-function showClientExportDialog(raw, pdfUrl) {
-  const pdfIframe = document.createElement('iframe')
-  pdfIframe.setAttribute('style', 'width: 99%; height: 99%')
-  pdfIframe.src = pdfUrl
-  const pdfContainerInner = document.getElementById('pdfContainerInner')
-  pdfContainerInner.innerHTML = ''
-  pdfContainerInner.appendChild(pdfIframe)
-
-  const pdfButton = cloneAndReplace(document.getElementById('clientPdfSaveButton'))
-  pdfButton.addEventListener(
-    'click',
-    () => {
-      FileSaveSupport.save(raw, 'graph.pdf').catch(() => {
-        alert(
-          'Saving directly to the filesystem is not supported by this browser. Please use the server based export instead.'
-        )
-      })
-    },
-    false
-  )
-
-  showPopup()
-}
-
-/**
- * Initializes the input modes.
- */
-function initializeInputModes() {
-  graphComponent.inputMode = new GraphEditorInputMode()
-
-  // create the model for the export rectangle
+  // create the model for the export rectangle, ...
   exportRect = new MutableRectangle(-20, 0, 300, 160)
-
-  // visualize it
+  // ... visualize it in the canvas, ...
   const installer = new RectangleIndicatorInstaller(exportRect)
   installer.addCanvasObject(
     graphComponent.createRenderContext(),
     graphComponent.backgroundGroup,
     exportRect
   )
+  // ... and make it movable and resizable
+  addExportRectInputModes(geim)
 
-  addExportRectInputModes(graphComponent.inputMode)
+  // assign the configured input mode to the GraphComponent
+  graphComponent.inputMode = geim
 }
 
 /**
- * Since this demo uses image nodes, we make sure that they always keep their aspect ratio during
- * resize.
- */
-function keepAspectRatio() {
-  graphComponent.graph.decorator.nodeDecorator.reshapeHandleProviderDecorator.setFactory(
-    node => node.style instanceof ImageNodeStyle,
-    node => {
-      const keepAspectRatio = new NodeReshapeHandleProvider(
-        node,
-        node.lookup(IReshapeHandler.$class),
-        HandlePositions.CORNERS
-      )
-      keepAspectRatio.ratioReshapeRecognizer = EventRecognizers.ALWAYS
-      return keepAspectRatio
-    }
-  )
-}
-
-/**
- * Adds the view modes that handle the resizing and movement of the export rectangle.
- * @param {GraphInputMode} inputMode
+ * Adds the view modes that handle moving and resizing of the export rectangle.
+ * @param {!GraphInputMode} inputMode The demo's main input mode.
  */
 function addExportRectInputModes(inputMode) {
-  // create a mode that deals with the handles
-  const exportHandleInputMode = new HandleInputMode()
-  exportHandleInputMode.priority = 1
-  // add it to the graph editor mode
+  // create a mode that deals with resizing the export rectangle and ...
+  const exportHandleInputMode = new HandleInputMode({
+    // ensure that this mode takes precedence over most other modes
+    // i.e. resizing the export rectangle takes precedence over other interactive editing
+    priority: 1
+  })
+  // ... add it to the demo's main input mode
   inputMode.add(exportHandleInputMode)
 
-  // now the handles
+  // create handles for resizing the export rectangle and ...
   const newDefaultCollectionModel = new ObservableCollection()
   newDefaultCollectionModel.add(new RectangleHandle(HandlePositions.NORTH_EAST, exportRect))
   newDefaultCollectionModel.add(new RectangleHandle(HandlePositions.NORTH_WEST, exportRect))
   newDefaultCollectionModel.add(new RectangleHandle(HandlePositions.SOUTH_EAST, exportRect))
   newDefaultCollectionModel.add(new RectangleHandle(HandlePositions.SOUTH_WEST, exportRect))
+  // ... add the handles to the input mode that is responsible for resizing the export rectangle
   exportHandleInputMode.handles = newDefaultCollectionModel
 
-  // create a mode that allows for dragging the export rectangle at the sides
-  const moveInputMode = new MoveInputMode()
-  moveInputMode.positionHandler = new PositionHandler(exportRect)
-  moveInputMode.hitTestable = IHitTestable.create((context, location) => {
-    const path = new GeneralPath(5)
-    path.appendRectangle(exportRect, false)
-    return path.pathContains(location, context.hitTestRadius + 3 / context.zoom)
+  // create a mode that deals with moving the export rectangle and ...
+  const moveInputMode = new MoveInputMode({
+    // create a custom position handler that moves the export rectangle on mouse events
+    positionHandler: new PositionHandler(exportRect),
+    // create a hit testable that determines if a mouse event occurs 'on' the export rectangle
+    // and thus should be handled by this mode
+    hitTestable: IHitTestable.create((context, location) => {
+      const path = new GeneralPath(5)
+      path.appendRectangle(exportRect, false)
+      return path.pathContains(location, context.hitTestRadius + 3 / context.zoom)
+    }),
+    // ensure that this mode takes precedence over the move input mode used for regular graph
+    // elements
+    priority: 41
   })
 
-  // add it to the edit mode
-  moveInputMode.priority = 41
+  // ... add it to the demo's main input mode
   inputMode.add(moveInputMode)
 }
 
 /**
- * Create a graph with network style nodes.
+ * Configures node resize behavior to force resize operations to keep the aspect ratio of the
+ * respective nodes.
+ * @param {!IGraph} graph The demo's graph.
  */
-function createNetworkGraph() {
-  const graph = graphComponent.graph
+function retainAspectRatio(graph) {
+  graph.decorator.nodeDecorator.reshapeHandleProviderDecorator.setFactory(node => {
+    const keepAspectRatio = new NodeReshapeHandleProvider(
+      node,
+      node.lookup(IReshapeHandler.$class),
+      HandlePositions.CORNERS
+    )
+    keepAspectRatio.ratioReshapeRecognizer = EventRecognizers.ALWAYS
+    return keepAspectRatio
+  })
+}
 
-  // set the workstation as default node style
-  graph.nodeDefaults.style = new ImageNodeStyle('./resources/workstation.svg')
-  graph.nodeDefaults.size = new Size(40, 40)
-  graph.edgeDefaults.style = new PolylineEdgeStyle({
+/**
+ * Adds sample nodes and edges representing a simple computer network.
+ * @param {!IGraph} graph The demo's graph.
+ */
+function addNetworkSample(graph) {
+  const edgeStyle = new PolylineEdgeStyle({
     targetArrow: IArrow.DEFAULT
   })
 
@@ -393,34 +272,30 @@ function createNetworkGraph() {
   const n4 = graph.createNodeAt(new Point(220, 100), workstationStyle)
   const n5 = graph.createNodeAt(new Point(320, 100), workstationStyle)
 
-  graph.createEdge(n1, n2)
-  graph.createEdge(n1, n3)
-  graph.createEdge(n1, n4)
-  graph.createEdge(n1, n5)
+  graph.createEdge(n1, n2, edgeStyle)
+  graph.createEdge(n1, n3, edgeStyle)
+  graph.createEdge(n1, n4, edgeStyle)
+  graph.createEdge(n1, n5, edgeStyle)
 
   graph.addLabel(n1, 'Switch', labelModelParameter2)
   graph.addLabel(n2, 'Workstation 1', labelModelParameter1)
   graph.addLabel(n3, 'Workstation 2', labelModelParameter1)
   graph.addLabel(n4, 'Workstation 3', labelModelParameter1)
   graph.addLabel(n5, 'Workstation 4', labelModelParameter1)
-
-  graphComponent.fitGraphBounds()
 }
 
 /**
- * Creates a graph with labels that use a custom font.
+ * Adds sample nodes with labels that use a custom font.
+ * @param {!IGraph} graph The demo's graph.
  */
-function createCustomFontGraph() {
-  const graph = graphComponent.graph
-
-  graph.nodeDefaults.style = new ShapeNodeStyle({ fill: 'orange' })
-  graph.nodeDefaults.size = new Size(50, 50)
-  graph.edgeDefaults.style = new PolylineEdgeStyle({ targetArrow: IArrow.DEFAULT })
+function addCustomFontSample(graph) {
+  const nodeStyle = new ShapeNodeStyle({ fill: 'orange' })
 
   const labelModel = new ExteriorLabelModel({ insets: 10 })
 
-  graph.createNodeAt({
-    location: [55, 210],
+  graph.createNode({
+    style: nodeStyle,
+    layout: [55, 210, 50, 50],
     labels: [
       {
         text: 'Кирилица',
@@ -435,8 +310,9 @@ function createCustomFontGraph() {
     ]
   })
 
-  graph.createNodeAt({
-    location: [205, 210],
+  graph.createNode({
+    style: nodeStyle,
+    layout: [205, 210, 50, 50],
     labels: [
       {
         text: '平仮名',
@@ -450,74 +326,153 @@ function createCustomFontGraph() {
       }
     ]
   })
-
-  graphComponent.fitGraphBounds()
 }
 
 /**
- * Creates a graph that uses curved edges.
+ * Adds curved edges.
+ * @param {!IGraph} graph The demo's graph.
  */
-function createBezierEdgesGraph() {
-  const graph = graphComponent.graph
-
-  graph.nodeDefaults.style = new ShapeNodeStyle({
+function addBezierEdgesSample(graph) {
+  const nodeStyle = new ShapeNodeStyle({
     shape: ShapeNodeShape.ROUND_RECTANGLE,
     fill: 'lightgrey',
     stroke: '2px white'
   })
-  graph.nodeDefaults.size = new Size(30, 30)
-  graph.edgeDefaults.style = new BezierEdgeStyle({
-    stroke: '28px #66dc143c'
-  })
+  const edgeStyle = new BezierEdgeStyle({ stroke: '28px #66dc143c' })
 
-  const node1 = graph.createNode([0, 300, 30, 60])
-  const node2 = graph.createNode([0, 375, 30, 90])
-  const node3 = graph.createNode([0, 480, 30, 60])
-  const node4 = graph.createNode([230, 300, 30, 110])
-  const node5 = graph.createNode([230, 430, 30, 110])
+  const node1 = graph.createNode([0, 300, 30, 60], nodeStyle)
+  const node2 = graph.createNode([0, 375, 30, 90], nodeStyle)
+  const node3 = graph.createNode([0, 480, 30, 60], nodeStyle)
+  const node4 = graph.createNode([230, 300, 30, 110], nodeStyle)
+  const node5 = graph.createNode([230, 430, 30, 110], nodeStyle)
 
-  const edge1 = graph.createEdge({ source: node1, target: node4, bends: [] })
+  const edge1 = graph.createEdge({ source: node1, target: node4, bends: [], style: edgeStyle })
   graph.setPortLocation(edge1.sourcePort, new Point(30, 315))
   graph.setPortLocation(edge1.targetPort, new Point(230, 315))
   const edge2 = graph.createEdge({
     source: node1,
     target: node5,
-    bends: [new Point(80, 345), new Point(180, 445)]
+    bends: [new Point(80, 345), new Point(180, 445)],
+    style: edgeStyle
   })
   graph.setPortLocation(edge2.sourcePort, new Point(30, 345))
   graph.setPortLocation(edge2.targetPort, new Point(230, 445))
   const edge3 = graph.createEdge({
     source: node2,
     target: node4,
-    bends: [new Point(80, 450), new Point(180, 355)]
+    bends: [new Point(80, 450), new Point(180, 355)],
+    style: edgeStyle
   })
   graph.setPortLocation(edge3.sourcePort, new Point(30, 450))
   graph.setPortLocation(edge3.targetPort, new Point(230, 355))
   const edge4 = graph.createEdge({
     source: node2,
     target: node5,
-    bends: [new Point(80, 390), new Point(180, 485)]
+    bends: [new Point(80, 390), new Point(180, 485)],
+    style: edgeStyle
   })
   graph.setPortLocation(edge4.sourcePort, new Point(30, 390))
   graph.setPortLocation(edge4.targetPort, new Point(230, 485))
   const edge5 = graph.createEdge({
     source: node3,
     target: node4,
-    bends: [new Point(80, 495), new Point(180, 395)]
+    bends: [new Point(80, 495), new Point(180, 395)],
+    style: edgeStyle
   })
   graph.setPortLocation(edge5.sourcePort, new Point(30, 495))
   graph.setPortLocation(edge5.targetPort, new Point(230, 395))
-  const edge6 = graph.createEdge({ source: node3, target: node5, bends: [] })
+  const edge6 = graph.createEdge({ source: node3, target: node5, bends: [], style: edgeStyle })
   graph.setPortLocation(edge6.sourcePort, new Point(30, 525))
   graph.setPortLocation(edge6.targetPort, new Point(230, 525))
-
-  graphComponent.fitGraphBounds()
 }
 
 /**
- * Check if the server at <code>url</code> is alive.
- * @param {string} url
- * @return {Promise}
+ * Checks whether or not the given parameters are a valid input for export.
+ * @param {number} scale The desired scale factor for the image export.
+ * @param {number} margin The desired margins for the image export.
+ * @returns {boolean}
+ */
+function checkInputValues(scale, margin) {
+  if (isNaN(scale) || scale <= 0) {
+    alert('Scale must be a positive number.')
+    return false
+  }
+  if (isNaN(margin) || margin < 0) {
+    alert('Margin must be a non-negative number.')
+    return false
+  }
+  return true
+}
+
+/**
+ * Requests a server-side export.
+ * @param {!Element} svgElement The SVG document that is to be exported.
+ * @param {!Size} size The size of the exported image.
+ * @param {!string} url The URL of the service that will convert the given SVG document to a PDF.
+ * @returns {*}
+ */
+function requestServerExport(svgElement, size, url) {
+  const svgString = SvgExport.exportSvgString(svgElement)
+  serverSidePdfExport.requestFile(url, 'pdf', svgString, size)
+  hidePopup()
+}
+
+/**
+ * Shows the export dialog for the client-side graph exports.
+ * @param {!string} raw The raw PDF content that is written to a file.
+ * @param {!string} pdfUrl A data URI representation of the generated PDF that can be previewed.
+ */
+function showClientExportDialog(raw, pdfUrl) {
+  const pdfIframe = document.createElement('iframe')
+  pdfIframe.setAttribute('style', 'width: 99%; height: 99%')
+  pdfIframe.src = pdfUrl
+  const pdfContainerInner = document.getElementById('pdfContainerInner')
+  pdfContainerInner.innerHTML = ''
+  pdfContainerInner.appendChild(pdfIframe)
+
+  const saveButton = document.getElementById('clientPdfSaveButton')
+  const pdfButton = cloneAndReplace(saveButton)
+  pdfButton.addEventListener(
+    'click',
+    () => {
+      FileSaveSupport.save(raw, 'graph.pdf').catch(() => {
+        alert(
+          'Saving directly to the filesystem is not supported by this browser. Please use the server based export instead.'
+        )
+      })
+    },
+    false
+  )
+
+  showPopup()
+}
+
+/**
+ * Disables the client-side save button in IE9.
+ */
+function disableClientSaveButton() {
+  document.getElementById('ExportButton').disabled = true
+  const clientSaveButton = document.getElementById('clientPdfSaveButton')
+  clientSaveButton.setAttribute('style', 'display: none')
+}
+
+/**
+ * Enables server-side export buttons.
+ * @returns {!Promise}
+ */
+async function enableServerSideExportButtons() {
+  // if a server is available, enable the server export button
+  const isAliveJava = await isServerAlive(JAVA_SERVLET_URL)
+  document.getElementById('BatikServerExportButton').disabled = !isAliveJava
+
+  const isAliveNode = await isServerAlive(NODE_SERVER_URL)
+  document.getElementById('NodeServerServerExportButton').disabled = !isAliveNode
+}
+
+/**
+ * Checks if the server at the given URL is alive.
+ * @param {!string} url The URL of the service to check.
+ * @returns {!Promise.<(Response|boolean)>}
  */
 function isServerAlive(url) {
   const initObject = {
@@ -534,8 +489,8 @@ function isServerAlive(url) {
 
 /**
  * Replaces the given element with a clone. This prevents adding multiple listeners to a button.
- * @param {HTMLElement} element
- * @return {HTMLElement}
+ * @param {!HTMLElement} element The element to replace.
+ * @returns {!HTMLElement}
  */
 function cloneAndReplace(element) {
   const clone = element.cloneNode(true)
@@ -555,6 +510,90 @@ function hidePopup() {
  */
 function showPopup() {
   removeClass(document.getElementById('popup'), 'hidden')
+}
+
+/**
+ * Returns the chosen export paper size.
+ * @returns {!PaperSize}
+ */
+function getPaperSize() {
+  const inputPaperSize = document.getElementById('paperSize')
+  return PaperSize[inputPaperSize.value]
+}
+
+/**
+ * Wires up the UI.
+ * @param {!GraphComponent} graphComponent The demo's main graph view.
+ */
+function registerCommands(graphComponent) {
+  bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent)
+  bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent)
+  bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent)
+  bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
+
+  const inputScale = document.getElementById('scale')
+  const inputMargin = document.getElementById('margin')
+  const inputUseRect = document.getElementById('useRect')
+
+  bindChangeListener('#paperSize', newSize => {
+    inputScale.disabled = newSize !== 'auto'
+  })
+
+  bindAction("button[data-command='Export']", async () => {
+    const scale = parseFloat(inputScale.value)
+    const margin = parseFloat(inputMargin.value)
+    if (checkInputValues(scale, margin)) {
+      const rectangle = inputUseRect && inputUseRect.checked ? new Rect(exportRect) : null
+
+      // configure export, export the PDF and show a dialog to save the PDF file
+      clientSidePdfExport.scale = scale
+      clientSidePdfExport.margins = new Insets(margin)
+      clientSidePdfExport.paperSize = getPaperSize()
+      const { raw, uri } = await clientSidePdfExport.exportPdf(graphComponent.graph, rectangle)
+      if (ieVersion !== -1) {
+        // disable HTML preview in IE and directly download the file
+        FileSaveSupport.save(raw, 'graph.pdf').catch(() => {
+          alert(
+            'Saving directly to the filesystem is not supported by this browser. Please use the server based export instead.'
+          )
+        })
+      } else {
+        showClientExportDialog(raw, uri)
+      }
+    }
+  })
+
+  bindAction("button[data-command='BatikServerExportButton']", async () => {
+    const scale = parseFloat(inputScale.value)
+    const margin = parseFloat(inputMargin.value)
+    if (checkInputValues(scale, margin)) {
+      const rectangle = inputUseRect && inputUseRect.checked ? new Rect(exportRect) : null
+
+      // configure export, export the SVG and show a dialog to download the image
+      serverSidePdfExport.scale = scale
+      serverSidePdfExport.margins = new Insets(margin)
+      serverSidePdfExport.paperSize = getPaperSize()
+      const pdf = await serverSidePdfExport.exportSvg(graphComponent.graph, rectangle)
+      requestServerExport(pdf.element, pdf.size, JAVA_SERVLET_URL)
+    }
+  })
+
+  bindAction("button[data-command='NodeServerServerExportButton']", async () => {
+    const scale = parseFloat(inputScale.value)
+    const margin = parseFloat(inputMargin.value)
+    if (checkInputValues(scale, margin)) {
+      const rectangle = inputUseRect && inputUseRect.checked ? new Rect(exportRect) : null
+
+      // configure export, export the SVG and show a dialog to download the image
+      serverSidePdfExport.scale = scale
+      serverSidePdfExport.margins = new Insets(margin)
+      serverSidePdfExport.paperSize = getPaperSize()
+      const pdf = await serverSidePdfExport.exportSvg(graphComponent.graph, rectangle)
+      requestServerExport(pdf.element, pdf.size, NODE_SERVER_URL)
+    }
+  })
+
+  bindAction('#closeButton', hidePopup)
 }
 
 // run the demo

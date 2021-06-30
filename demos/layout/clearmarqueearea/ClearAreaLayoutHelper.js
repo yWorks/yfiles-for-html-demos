@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -64,7 +64,7 @@ export class ClearAreaLayoutHelper {
    * Initializes the helper.
    * @param {!GraphComponent} graphComponent The control that displays the graph.
    * @param {!Rect} clearRectangle
-   * @param {!INode} groupNode
+   * @param {?INode} groupNode
    * @param {!ComponentAssignmentStrategy} componentAssignmentStrategy
    * @param {!ClearAreaStrategy} clearAreaStrategy
    */

@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -306,6 +306,8 @@ export const ConfigConverter = Class('ConfigConverter', {
     this.writeMembers(config1, config)
     this.writeApply(config1, config)
     this.writeMembersArray(config1)
+
+    config1._preset = null
     return config1
   },
 
@@ -397,7 +399,19 @@ export const ConfigConverter = Class('ConfigConverter', {
 
       // determine type
       const objectDescriptor = Object.getOwnPropertyDescriptor(type.Object.prototype, name)
-      const isProperty = objectDescriptor.hasOwnProperty('get')
+      let propertyMask = 0
+      if (objectDescriptor.hasOwnProperty('get')) {
+        // readable property
+        propertyMask += 1
+      }
+      if (
+        propertyMask &&
+        objectDescriptor.hasOwnProperty('set') &&
+        void 0 !== objectDescriptor.set
+      ) {
+        // writable property
+        propertyMask += 2
+      }
       const valueType = typeOf(objectDescriptor.value)
       const isField =
         objectDescriptor.hasOwnProperty('value') &&
@@ -410,14 +424,14 @@ export const ConfigConverter = Class('ConfigConverter', {
       const member = {
         name: name,
         _attributes: attributes,
-        isProperty: isProperty,
+        propertyMask: propertyMask,
         isField: isField,
         isMethod: isMethod
       }
 
       // assign the type attribute if there is any
       if (type !== null) {
-        if (isProperty) {
+        if (propertyMask) {
           member.propertyType = typeAttribute
         } else if (isField) {
           member.fieldType = typeAttribute
@@ -469,7 +483,7 @@ export const ConfigConverter = Class('ConfigConverter', {
     }
     if (member.isField) {
       this.collectField(member)
-    } else if (member.isProperty) {
+    } else if (isProperty(member)) {
       this.collectProperty(member)
     } else if (member.isMethod) {
       this.collectMethod(member)
@@ -591,7 +605,7 @@ export const ConfigConverter = Class('ConfigConverter', {
     }
     if (member.isField) {
       members[member.name] = this.visitField(member, yFilesObj)
-    } else if (member.isProperty) {
+    } else if (isProperty(member)) {
       members[member.name] = this.visitProperty(member, yFilesObj)
     } else if (member.isMethod) {
       members[member.name] = visitMethod(member, yFilesObj)
@@ -656,7 +670,9 @@ export const ConfigConverter = Class('ConfigConverter', {
     this.writeLabel(property, p)
     this.writeOptions(property, property.propertyType, p)
     this.writeValueProperty(property, p, yFilesObj)
-    this.writeDefault(property, p, yFilesObj)
+    if (isReadWrite(property)) {
+      this.writeDefault(property, p, yFilesObj)
+    }
     this.writeComponent(property, property.propertyType, p)
     this.writeUtilityProperties(property, p, yFilesObj)
     let /** Object[] */ arr
@@ -900,7 +916,7 @@ export const ConfigConverter = Class('ConfigConverter', {
    * @return {boolean}
    */
   isOptionGroup: function (groupMember) {
-    if (groupMember.isProperty) {
+    if (isProperty(groupMember)) {
       return groupMember.propertyType === OptionGroup.$class
     } else if (groupMember.isField) {
       return groupMember.fieldType === OptionGroup.$class
@@ -1037,6 +1053,14 @@ export const ConfigConverter = Class('ConfigConverter', {
   }
 })
 
+function isProperty(member) {
+  return member.propertyMask > 0
+}
+
+function isReadWrite(property) {
+  return (property.propertyMask & 2) === 2
+}
+
 /** @return {boolean} */
 function startsWith(text, pattern) {
   return text.slice(0, pattern.length) === pattern
@@ -1061,6 +1085,23 @@ function getMemberObject(member) {
   return o
 }
 
+function pathToChild(members, name, path) {
+  for (const member of members) {
+    if (member.name === name) {
+      path.push(member)
+      return !0
+    }
+
+    if (member.type === 'group') {
+      if (pathToChild(member.members, name, path)) {
+        path.push(member)
+        return !0
+      }
+    }
+  }
+  return !1
+}
+
 /**
  * The OptionEditor provides means to initialize and communicate with yFilesOptionUI.
  * The OptionEditor serves as interface class between the angular.js part - yFilesOptionUI - and the
@@ -1082,11 +1123,9 @@ export const OptionEditor = Class('OptionEditor', {
 
     const angular = window['angular']
     if (angular && angular['bootstrap']) {
-      angular['bootstrap'].apply(angular, [rootElement, ['yFilesOptionUI']])
-
-      const el = angular['element'].apply(angular, [rootElement])
-      this.injector = el['injector'].apply(el, null)
+      this.injector = angular['bootstrap'].apply(angular, [rootElement, ['yFilesOptionUI']])
       this.optionConfigService = this.injector['get'].apply(this.injector, ['OptionConfig'])
+      this.eventBus = this.injector['get'].apply(this.injector, ['eventBus'])
     }
   },
 
@@ -1115,6 +1154,48 @@ export const OptionEditor = Class('OptionEditor', {
    */
   validateCallback: null,
 
+  addChangeListener: function (listener) {
+    const eventBus = this.eventBus
+    if (eventBus) {
+      eventBus.addChangeListener(listener)
+    }
+  },
+
+  expand: function (name) {
+    const service = this.optionConfigService
+    if (service) {
+      const path = []
+      pathToChild(service.config.membersArray, name, path)
+      if (path.length > 0) {
+        for (let i = path.length - 1; i > 0; --i) {
+          path[i]._isCollapsed = !1
+        }
+      }
+    }
+  },
+
+  setPresetName: function (presetName) {
+    const service = this.optionConfigService
+    if (service) {
+      service.config._preset = presetName
+      this.refresh()
+    }
+  },
+
+  refresh: function () {
+    const service = this.optionConfigService
+    if (service) {
+      service.forceDigest()
+    }
+  },
+
+  reset: function () {
+    const service = this.optionConfigService
+    if (service) {
+      service.resetConfig()
+    }
+  },
+
   /**
    * Get or set the configuration object in yFilesOptionUI. The configuration object is first
    * converted into a Javascript Object using {@link ConfigConverter} before setting it.
@@ -1128,7 +1209,10 @@ export const OptionEditor = Class('OptionEditor', {
       this.config1 = value
       const convertedConfig = this.config1 !== null ? this.converter.convert(this.config1) : null
       if (this.optionConfigService && this.optionConfigService['setConfig']) {
-        this.optionConfigService['setConfig'].apply(this.optionConfigService, [convertedConfig])
+        this.optionConfigService['setConfig'].apply(this.optionConfigService, [
+          convertedConfig,
+          !!value.collapsedInitialization
+        ])
       }
     }
   },
@@ -1221,7 +1305,7 @@ function createReferences(config) {
     }
   }
 
-  function addRecursiveDisabledCheck(hierarchy, parentPointer, recursive) {
+  function addProperties(hierarchy, parentPointer, recursive) {
     function wrapRecFun(member, parentPointer) {
       return parentPointer
         ? function () {
@@ -1236,24 +1320,55 @@ function createReferences(config) {
     }
 
     for (let j = 0; j < hierarchy.length; j++) {
-      let memberPointer = hierarchy[j],
-        member = memberPointer._member,
-        fun = wrapRecFun(member, recursive && parentPointer)
-      Object.defineProperty(memberPointer, '_recIsDisabled', { get: fun }),
-        addRecursiveDisabledCheck(
-          memberPointer.members || [],
-          memberPointer,
-          recursive || void 0 !== member
-        )
+      const memberPointer = hierarchy[j]
+      const member = memberPointer._member
+
+      const isDisabledImpl = wrapRecFun(member, recursive && parentPointer)
+      Object.defineProperty(memberPointer, '_recIsDisabled', { get: isDisabledImpl })
+
+      if (memberPointer.type === 'option') {
+        const isHiddenImpl = function () {
+          return member.isHidden && member.isHidden()
+        }
+        Object.defineProperty(memberPointer, '_isHidden', { get: isHiddenImpl })
+        const isChangedImpl = function () {
+          return void 0 !== member.default && member.value !== member.default
+        }
+        Object.defineProperty(memberPointer, '_isChanged', { get: isChangedImpl })
+      }
+
+      addProperties(memberPointer.members || [], memberPointer, recursive || void 0 !== member)
     }
   }
 
   if (!config) {
     return null
   }
-  var hierarchy = config.membersArray,
-    members = config.members
-  return addMemberReferences(hierarchy), addRecursiveDisabledCheck(hierarchy), config
+  var hierarchy = config.membersArray
+  var members = config.members
+  addMemberReferences(hierarchy)
+  addProperties(hierarchy)
+  return config
+}
+
+function newEventBus() {
+  const bus = new Object()
+  bus['listeners'] = []
+
+  bus['addChangeListener'] = function (listener) {
+    this.listeners.push(listener)
+  }
+
+  bus['emit'] = function (event) {
+    for (const listener of this.listeners) {
+      listener(event)
+    }
+  }
+
+  bus['getEmitter'] = function () {
+    return this.emit.bind(this)
+  }
+  return bus
 }
 
 !(function () {
@@ -1341,8 +1456,7 @@ function createReferences(config) {
           '<g xmlns="http://www.w3.org/2000/svg"><polygon points="16.6,8.6 12,13.2 7.4,8.6 6,10 12,16 18,10 "></polygon></g>',
         chevronDown:
           '<g xmlns="http://www.w3.org/2000/svg"><polygon points="10,6 8.6,7.4 13.2,12 8.6,16.6 10,18 16,12 "></polygon></g>',
-        undo:
-          '<g xmlns="http://www.w3.org/2000/svg"><path d="M12,5V1.5l-5,5l5,5V7c3.3,0,6,2.7,6,6s-2.7,6-6,6c-3.3,0-6-2.7-6-6H4c0,4.4,3.6,8,8,8c4.4,0,8-3.6,8-8S16.4,5,12,5z"></path></g>'
+        undo: '<g xmlns="http://www.w3.org/2000/svg"><path d="M12,5V1.5l-5,5l5,5V7c3.3,0,6,2.7,6,6s-2.7,6-6,6c-3.3,0-6-2.7-6-6H4c0,4.4,3.6,8,8,8c4.4,0,8-3.6,8-8S16.4,5,12,5z"></path></g>'
       }
     module.directive('optionUiButton', function () {
       return {
@@ -1390,8 +1504,16 @@ function createReferences(config) {
           option: '=',
           disabled: '='
         },
-        controller: ['$scope', function () {}],
-        link: function () {}
+        controller: [
+          '$scope',
+          'eventBus',
+          function ($scope, eventBus) {
+            $scope.eventBus = eventBus
+          }
+        ],
+        link: function (scope, elem) {
+          elem.on('change', scope.eventBus.getEmitter())
+        }
       }
     })
   })(),
@@ -1407,7 +1529,16 @@ function createReferences(config) {
           options: '=',
           disabled: '='
         },
-        link: function () {}
+        controller: [
+          '$scope',
+          'eventBus',
+          function ($scope, eventBus) {
+            $scope.eventBus = eventBus
+          }
+        ],
+        link: function (scope, elem) {
+          elem.on('change', scope.eventBus.getEmitter())
+        }
       }
     })
   })(),
@@ -1460,8 +1591,16 @@ function createReferences(config) {
           option: '=',
           disabled: '='
         },
-        controller: ['$scope', function () {}],
-        link: function () {}
+        controller: [
+          '$scope',
+          'eventBus',
+          function ($scope, eventBus) {
+            $scope.eventBus = eventBus
+          }
+        ],
+        link: function (scope, elem) {
+          elem.on('change', scope.eventBus.getEmitter())
+        }
       }
     }),
       module.directive('optionUiNumberParser', [
@@ -1502,8 +1641,16 @@ function createReferences(config) {
             option: '=',
             disabled: '='
           },
-          controller: ['$scope', function () {}],
-          link: function () {}
+          controller: [
+            '$scope',
+            'eventBus',
+            function ($scope, eventBus) {
+              $scope.eventBus = eventBus
+            }
+          ],
+          link: function (scope, elem) {
+            elem.on('change', scope.eventBus.getEmitter())
+          }
         }
       }
     ])
@@ -1519,8 +1666,16 @@ function createReferences(config) {
           options: '=',
           disabled: '='
         },
-        controller: ['$scope', function () {}],
-        link: function () {}
+        controller: [
+          '$scope',
+          'eventBus',
+          function ($scope, eventBus) {
+            $scope.eventBus = eventBus
+          }
+        ],
+        link: function (scope, elem) {
+          elem.on('change', scope.eventBus.getEmitter())
+        }
       }
     })
   })(),
@@ -1615,6 +1770,7 @@ var relativeTemplatePath = relativeTemplatePath || ''
         return {
           restrict: 'A',
           scope: {
+            presetName: '=',
             members: '=',
             accordeon: '@'
           },
@@ -1658,11 +1814,7 @@ var relativeTemplatePath = relativeTemplatePath || ''
         link: function (scope, elem, attrs, ctrl) {
           ctrl &&
             ctrl.setCollapseFunction(function (member, members) {
-              member._isCollapsed &&
-                angular.forEach(members, function (member) {
-                  member._isCollapsed = !0
-                }),
-                (member._isCollapsed = !member._isCollapsed)
+              member._isCollapsed = !member._isCollapsed
             })
         }
       }
@@ -1736,6 +1888,7 @@ var relativeTemplatePath = relativeTemplatePath || ''
 })(),
   (function () {
     const module = angular.module('yFilesOptionUI')
+    module.value('eventBus', newEventBus())
     module.service('OptionConfig', [
       '$rootScope',
       function ($rootScope) {
@@ -1744,20 +1897,23 @@ var relativeTemplatePath = relativeTemplatePath || ''
           (this.getConfig = function () {
             return this.config
           }),
-          (this.setConfig = function (obj) {
+          (this.setConfig = function (obj, collapsedInit) {
             ;(this.config = createReferences(obj)),
               this.config != null &&
                 (angular.forEach(this.config.membersArray, function (member) {
                   member._isCollapsed = !0
                 }),
-                (this.config.membersArray[0]._isCollapsed = !1)),
+                !collapsedInit && (this.config.membersArray[0]._isCollapsed = !1)),
               $rootScope.$$phase || $rootScope.$apply()
           }),
           (this.resetConfig = function () {
             this.config != null &&
               angular.forEach(this.config.members, function (member) {
-                member.reset()
+                member.reset && member.reset()
               })
+          }),
+          (this.forceDigest = function () {
+            $rootScope.$digest()
           }),
           (this.setConfigValidCb = function (fn) {
             this.configValidCb = fn

@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { HandleInputMode, IHandle, Point } from 'yfiles'
+import { CanvasComponent, HandleInputMode, IHandle, Point } from 'yfiles'
 
 /**
  * A customized HandleInputMode that considers the handle size during hit testing.
@@ -34,8 +34,7 @@ import { HandleInputMode, IHandle, Point } from 'yfiles'
 export default class TouchHandleInputMode extends HandleInputMode {
   /**
    * Creates a new instance with the given handle radius.
-   * @constructs
-   * @param {number} handleRadius - The radius of the handles.
+   * @param {number} handleRadius The radius of the handles.
    */
   constructor(handleRadius) {
     super()
@@ -43,36 +42,49 @@ export default class TouchHandleInputMode extends HandleInputMode {
   }
 
   /**
-   * Override touch hit test to take handle size into account.
-   * @param {IHandle} handle - The handle to check
-   * @param {Point} location - The world coordinates to check.
-   * @param {Point} distance - The distance of the handle to the touch location. In the default
-   *   implementation, this is a tuple representing the x- and y-distance of the handle to the touch location.
+   * Overrides touch hit test to take handle size into account.
+   * @param {!IHandle} handle The handle to check
+   * @param {!Point} location The world coordinates to check.
+   * @param {!Point} distance The distance of the handle to the touch location. In the default
+   * implementation, this is a tuple representing the x- and y-distance of the handle to the
+   * touch location.
    * @returns {boolean}
    */
   handleIsHitTouch(handle, location, distance) {
-    const canvasComponent = this.inputModeContext.canvasComponent
-    const maxDistance =
-      canvasComponent != null
-        ? canvasComponent.hitTestRadiusTouch + this.handleRadius
-        : this.handleRadius
-    return distance.vectorLength <= maxDistance
+    return this.isHit(distance, true)
   }
 
   /**
-   * Override hit test to take handle size into account.
-   * @param {IHandle} handle - The handle to check
-   * @param {Point} location - The view coordinates to check.
-   * @param {Point} distance - The distance of the handle to the location. In the default
-   *   implementation, this is a tuple representing the x- and y-distance of the handle to the location.
+   * Overrides hit test to take handle size into account.
+   * @param {!IHandle} handle The handle to check
+   * @param {!Point} location The view coordinates to check.
+   * @param {!Point} distance The distance of the handle to the location. In the default
+   * implementation, this is a tuple representing the x- and y-distance of the handle to the
+   * location.
    * @returns {boolean}
    */
   handleIsHit(handle, location, distance) {
-    const canvasComponent = this.inputModeContext.canvasComponent
-    const maxDistance =
-      canvasComponent != null
-        ? canvasComponent.hitTestRadius + this.handleRadius
-        : this.handleRadius
-    return distance.vectorLength <= maxDistance
+    return this.isHit(distance, false)
   }
+
+  /**
+   * @param {!Point} distance
+   * @param {boolean} touch
+   * @returns {boolean}
+   */
+  isHit(distance, touch) {
+    const canvasComponent = this.inputModeContext.canvasComponent
+    const extend = canvasComponent ? getHitTestRadius(canvasComponent, touch) : 0
+    return distance.vectorLength <= extend + this.handleRadius
+  }
+}
+
+/**
+ * Gets the hit test or touch hit test radius for the given component.
+ * @param {!CanvasComponent} canvasComponent
+ * @param {boolean} touch
+ * @returns {number}
+ */
+function getHitTestRadius(canvasComponent, touch) {
+  return touch ? canvasComponent.hitTestRadiusTouch : canvasComponent.hitTestRadius
 }

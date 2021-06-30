@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -29,6 +29,8 @@
 import {
   GraphEditorInputMode,
   IArrow,
+  IGraph,
+  IInputMode,
   License,
   PolylineEdgeStyle,
   Rect,
@@ -47,7 +49,7 @@ if (window.customElements) {
   document.querySelector('.demo-content').appendChild(warningDiv)
   warningDiv.outerHTML = `
     <div style="padding: 50px; margin-top: 100px;">
-      <p style="font-size: 2rem;">Your browser doesn't support Web Components.</p>
+      <p style="font-size: 2rem;">Your browser does not support Web Components.</p>
       <p> See <a href="https://www.webcomponents.org/">webcomponents.org</a> and
         <a href="https://caniuse.com/#search=web%20components">caniuse.com</a> for details on browser support for Web Components.
       </p>
@@ -55,26 +57,25 @@ if (window.customElements) {
 `
 }
 
-async function run(licenseData) {
+/**
+ * @typedef {*} GraphComponentElementType
+ */
+
+/**
+ * @param {!object} licenseData
+ */
+function run(licenseData) {
   License.value = licenseData
+
   enableWorkarounds()
 
   // create a custom graph component element
   const graphComponent = document.createElement('graph-component')
   graphComponent.setAttribute('id', 'graphComponent')
 
-  // load yFiles.css since the CSS has to be set when the GraphComponent is initialized
-  // simply including a <link> in the webcomponent is not enough, since it is loaded in a non-blocking way
-  const response = await fetch('../../node_modules/yfiles/yfiles.css')
-
-  if (response.status === 200) {
-    // set loaded CSS
-    graphComponent.cssStyle = await response.text()
-  }
-
   document.querySelector('.demo-content').appendChild(graphComponent)
 
-  graphComponent.inputMode = new GraphEditorInputMode()
+  graphComponent.editMode = new GraphEditorInputMode()
 
   // initialize graph
   initializeGraph(graphComponent.graph)
@@ -87,6 +88,9 @@ async function run(licenseData) {
   defineShadowDomHelper()
 }
 
+/**
+ * @param {!IGraph} graph
+ */
 function initializeGraph(graph) {
   // initialize default styles
   graph.nodeDefaults.style = new ShapeNodeStyle({
@@ -107,24 +111,43 @@ function initializeGraph(graph) {
 }
 
 /**
- * Wires up the UI.
+ * Binds actions to demo's UI controls.
+ * @param {!GraphComponentElementType} graphComponent
  */
 function registerCommands(graphComponent) {
-  document.querySelector("button[data-command='ZoomIn']").addEventListener('click', () => {
-    graphComponent.zoom *= 1.2
+  addClickListener("button[data-command='ZoomIn']", () => {
+    graphComponent.zoom *= 1.25
   })
-  document.querySelector("button[data-command='ZoomOut']").addEventListener('click', () => {
-    graphComponent.zoom /= 1.2
+  addClickListener("button[data-command='ZoomOut']", () => {
+    graphComponent.zoom *= 0.8
   })
-  document.querySelector("button[data-command='FitContent']").addEventListener('click', () => {
+  addClickListener("button[data-command='FitContent']", () => {
     graphComponent.fitGraphBounds()
   })
-  document.querySelector("button[data-command='ZoomOriginal']").addEventListener('click', () => {
-    graphComponent.zoom = 1
+  addClickListener("button[data-command='ZoomOriginal']", () => {
+    // Demonstrates how changing the 'zoom' HTML attribute of a custom 'graph-component' element
+    // will change the 'zoom' property of the corresponding yFiles GraphComponent instance.
+    // This approach is meant as a proof-of-concept for reflecting GraphComponent properties as
+    // HTML attributes.
+    // In a real world application, the class defining the custom 'graph-component' should expose
+    // a 'zoom' property of type number and simply forward calls of said property to the zoom
+    // property of the associated yFiles GraphComponent instance (i.e. the approach from ZoomIn and
+    // ZoomOut above).
+    graphComponent.setAttribute('zoom', '1')
   })
-  document.querySelector('#useShadow').addEventListener('click', () => {
+  addClickListener('#useShadow', () => {
     graphComponent.toggleShadowRoot()
   })
+}
+
+/**
+ * Adds the given handler as a listener for click events to the element identified by the given
+ * selector.
+ * @param {!string} selector
+ * @param {!function} handler
+ */
+function addClickListener(selector, handler) {
+  document.querySelector(selector).addEventListener('click', handler)
 }
 
 /**

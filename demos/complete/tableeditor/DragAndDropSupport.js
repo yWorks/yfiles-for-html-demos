@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -28,7 +28,6 @@
  ***************************************************************************/
 import {
   DashStyle,
-  DragDropEffects,
   Fill,
   IGraph,
   IStripe,
@@ -44,31 +43,30 @@ import {
   StripeDropInputMode,
   Stroke,
   Table,
-  VoidNodeStyle
+  VoidNodeStyle,
+  DragSource,
+  DefaultLabelStyle
 } from 'yfiles'
 import { DemoStripeStyle, DemoTableStyle } from './TableStyles.js'
 import { DemoNodeStyle } from '../../resources/demo-styles.js'
-import {
-  addClass,
-  passiveSupported,
-  pointerEventsSupported,
-  removeClass
-} from '../../resources/demo-app.js'
+import { addClass, removeClass } from '../../resources/demo-app.js'
+import { pointerEventsSupported } from '../../utils/Workarounds.js'
 
 import { DragAndDropPanel } from '../../utils/DndPanel.js'
 
 /**
  * Configures drag and drop interaction that considers dropping nodes on table nodes.
- * @param {IGraph} graph
- * @returns {NodeDropInputMode}
+ * @param {!IGraph} graph
+ * @returns {!NodeDropInputMode}
  */
 export function configureDndInputMode(graph) {
-  const nodeDropInputMode = new NodeDropInputMode()
-  nodeDropInputMode.showPreview = true
-  nodeDropInputMode.enabled = true
-  nodeDropInputMode.isGroupNodePredicate = draggedNode =>
-    // tables and tagged nodes should be created as group nodes
-    draggedNode.lookup(ITable.$class) !== null || draggedNode.tag === 'GroupNode'
+  const nodeDropInputMode = new NodeDropInputMode({
+    showPreview: true,
+    enabled: true,
+    isGroupNodePredicate: draggedNode =>
+      // tables and tagged nodes should be created as group nodes
+      draggedNode.lookup(ITable.$class) !== null || draggedNode.tag === 'GroupNode'
+  })
 
   nodeDropInputMode.isValidParentPredicate = node => {
     const draggedNode = nodeDropInputMode.lastDragEventArgs.item.getData('yfiles.graph.INode')
@@ -86,17 +84,17 @@ export function configureDndInputMode(graph) {
  * Configures the drag and drop panel.
  */
 export function configureDndPanel() {
-  const dndPanel = new DragAndDropPanel(document.getElementById('dndPanel'), passiveSupported)
-  // Set the callback that starts the actual drag and drop operation
+  const dndPanel = new DragAndDropPanel(document.getElementById('dndPanel'))
+  // set the callback that starts the actual drag and drop operation
   dndPanel.beginDragCallback = (element, data) => {
     const dragPreview = element.cloneNode(true)
     dragPreview.style.margin = '0'
-    let dragSource = null
-    if (IStripe.isInstance(data)) {
+    let dragSource
+    if (data instanceof IStripe) {
       dragSource = StripeDropInputMode.startDrag(
         element,
         data,
-        DragDropEffects.ALL,
+        'all',
         true,
         pointerEventsSupported ? dragPreview : null
       )
@@ -104,7 +102,7 @@ export function configureDndPanel() {
       dragSource = NodeDropInputMode.startDrag(
         element,
         data,
-        DragDropEffects.ALL,
+        'all',
         true,
         pointerEventsSupported ? dragPreview : null
       )
@@ -123,7 +121,7 @@ export function configureDndPanel() {
 
 /**
  * Creates the nodes that provide the visualizations for the style panel.
- * @return {SimpleNode[]}
+ * @returns {!Array.<SimpleNode>}
  */
 function createDndPanelNodes() {
   const nodeContainer = []
@@ -181,9 +179,8 @@ function createDndPanelNodes() {
   sampleTable.rowDefaults.labels.style.textFill = Fill.WHITE
 
   // the style for the columns is simpler, we use a node control style that only points the header insets.
-  sampleTable.columnDefaults.style = columnSampleTable.columnDefaults.style = new NodeStyleStripeStyleAdapter(
-    new DemoStripeStyle()
-  )
+  sampleTable.columnDefaults.style = columnSampleTable.columnDefaults.style =
+    new NodeStyleStripeStyleAdapter(new DemoStripeStyle())
   sampleTable.columnDefaults.labels.style.textFill = Fill.WHITE
 
   // create a row and a column in the sample table

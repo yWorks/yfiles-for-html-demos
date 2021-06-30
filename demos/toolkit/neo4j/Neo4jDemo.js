@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -49,6 +49,7 @@ import {
   License,
   NodeStyleDecorationInstaller,
   OrganicLayout,
+  ParallelEdgeRouter,
   ParallelSubstructureStyle,
   PolylineEdgeStyle,
   ShapeNodeShape,
@@ -67,13 +68,13 @@ import { createGraphBuilder } from './Neo4jGraphBuilder.js'
 import { connectToDB, Neo4jEdge, Neo4jNode } from './Neo4jUtil.js'
 
 /** @type {GraphComponent} */
-let graphComponent = null
+let graphComponent
 
 /** @type {function} */
-let runCypherQuery = null
+let runCypherQuery
 
 /** @type {GraphBuilder} */
-let graphBuilder = null
+let graphBuilder
 
 /** @type {Array} */
 let nodes = []
@@ -94,6 +95,7 @@ const queryErrorContainer = document.getElementById('queryError')
 
 /**
  * Runs the demo.
+ * @param {!object} licenseData
  */
 function run(licenseData) {
   License.value = licenseData
@@ -237,7 +239,7 @@ function onCurrentItemChanged() {
   }
 
   const currentItem = graphComponent.currentItem
-  const isNode = INode.isInstance(currentItem)
+  const isNode = currentItem instanceof INode
   selectedNodeContainer.hidden = !isNode
   if (isNode) {
     const node = currentItem
@@ -265,6 +267,7 @@ function onCurrentItemChanged() {
  * Loads the graph data from the Neo4j database and constructs a graph using a custom
  * {@link GraphBuilder}.
  * @yjs:keep=nodeIds,end
+ * @returns {!Promise}
  */
 async function loadGraph() {
   // show a loading indicator, as the queries can take a while to complete
@@ -273,9 +276,9 @@ async function loadGraph() {
 
   graphComponent.graph.clear()
   // maximum number of nodes that should be fetched
-  const numNodes = numNodesInput.value
+  const numNodes = parseInt(numNodesInput.value)
   // minimum number of labels that should be present in the returned data
-  const numLabels = numLabelsInput.value
+  const numLabels = parseInt(numLabelsInput.value)
 
   // letters that are used as names for nodes in the cypher query
   const letters = ['a', 'b', 'c', 'd', 'e'].slice(0, numLabels)
@@ -291,13 +294,11 @@ async function loadGraph() {
     }
   }
   // run the query to get the nodes
-  const nodeResult = await runCypherQuery(
-    `MATCH ${matchClause}
+  const nodeResult = await runCypherQuery(`MATCH ${matchClause}
       WHERE ${whereClauses.join(' AND ')}
       WITH [${letters.join(',')}] AS nodes LIMIT ${numNodes * numLabels}
       UNWIND nodes AS node
-      RETURN DISTINCT node`
-  )
+      RETURN DISTINCT node`)
   // extract the nodes from the query result
   nodes = nodeResult.records.map(record => record.get('node'))
   // obtain an array of all node ids
@@ -329,7 +330,7 @@ async function loadGraph() {
 /**
  * This method will be called whenever the mouse moves over a different item. We show a highlight
  * indicator to make it easier for the user to understand the graph's structure.
- * @param {IModelItem} hoveredItem The currently hovered item
+ * @param {!IModelItem} hoveredItem The currently hovered item
  */
 function onHoveredItemChanged(hoveredItem) {
   // we use the highlight manager of the GraphComponent to highlight related items
@@ -338,15 +339,15 @@ function onHoveredItemChanged(hoveredItem) {
   // first remove previous highlights
   manager.clearHighlights()
   // then see where we are hovering over, now
-  if (hoveredItem !== null) {
+  if (hoveredItem) {
     // we highlight the item itself
     manager.addHighlight(hoveredItem)
-    if (INode.isInstance(hoveredItem)) {
+    if (hoveredItem instanceof INode) {
       // and if it's a node, we highlight all adjacent edges, too
       graphComponent.graph.edgesAt(hoveredItem).forEach(edge => {
         manager.addHighlight(edge)
       })
-    } else if (IEdge.isInstance(hoveredItem)) {
+    } else if (hoveredItem instanceof IEdge) {
       // if it's an edge - we highlight the adjacent nodes
       manager.addHighlight(hoveredItem.sourceNode)
       manager.addHighlight(hoveredItem.targetNode)
@@ -356,6 +357,7 @@ function onHoveredItemChanged(hoveredItem) {
 
 /**
  * Applies an organic layout to the current graph. Tries to highlight substructures in the process.
+ * @returns {!Promise}
  */
 async function doLayout() {
   setUIDisabled(true)

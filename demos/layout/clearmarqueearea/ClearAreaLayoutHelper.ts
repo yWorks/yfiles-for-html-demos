@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -82,7 +82,7 @@ export class ClearAreaLayoutHelper {
   /**
    * The group node within which the marquee was created, otherwise null.
    */
-  public groupNode: INode
+  public groupNode: INode | null
 
   /**
    * The {@link ILayoutAlgorithm} that makes space for the marquee rectangle.
@@ -102,7 +102,7 @@ export class ClearAreaLayoutHelper {
   public constructor(
     graphComponent: GraphComponent,
     clearRectangle: Rect,
-    groupNode: INode,
+    groupNode: INode | null,
     componentAssignmentStrategy: ComponentAssignmentStrategy,
     clearAreaStrategy: ClearAreaStrategy
   ) {

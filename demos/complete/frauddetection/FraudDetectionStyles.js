@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -27,31 +27,37 @@
  **
  ***************************************************************************/
 import {
-  CanvasComponent,
-  Color,
   EdgeStyleBase,
   EdgeStyleDecorationInstaller,
   GeneralPath,
   GeomUtilities,
+  GraphComponent,
   HighlightIndicatorManager,
   HtmlCanvasVisual,
   ICanvasContext,
+  ICanvasObjectGroup,
+  ICanvasObjectInstaller,
   IEdge,
   IInputModeContext,
   IModelItem,
   INode,
+  IPoint,
   IRenderContext,
   NodeStyleBase,
   NodeStyleDecorationInstaller,
   Point,
   PolylineEdgeStyle,
   Rect,
-  SolidColorFill,
-  Stroke,
-  StyleDecorationZoomPolicy,
+  Size,
   SvgVisual,
   Visual
 } from 'yfiles'
+
+/**
+ * @typedef {Object} NodeStyleCache
+ * @property {Size} size
+ * @property {boolean} fraud
+ */
 
 /**
  * A simple node style that visualizes a circular node with an icon.
@@ -59,9 +65,10 @@ import {
 export class IconNodeStyle extends NodeStyleBase {
   /**
    * Creates the visual for a circular node with an icon.
-   * @param {IRenderContext} context The render context
-   * @param {INode} node The node to which this style instance is assigned
+   * @param {!IRenderContext} context The render context
+   * @param {!INode} node The node to which this style instance is assigned
    * @see Overrides {@link NodeStyleBase#createVisual}
+   * @returns {!SvgVisual}
    */
   createVisual(context, node) {
     const g = window.document.createElementNS('http://www.w3.org/2000/svg', 'g')
@@ -74,12 +81,12 @@ export class IconNodeStyle extends NodeStyleBase {
     const nodeLayout = node.layout
     const width = nodeLayout.width * 0.5
     const height = nodeLayout.height * 0.5
-    shape.setAttribute('cx', width)
-    shape.setAttribute('cy', height)
-    shape.setAttribute('rx', width)
-    shape.setAttribute('ry', height)
-    shape.setAttribute('fill', IconNodeStyle.getFillColor(node))
-    shape.setAttribute('stroke', IconNodeStyle.getStrokeColor(node))
+    shape.setAttribute('cx', width.toString())
+    shape.setAttribute('cy', height.toString())
+    shape.setAttribute('rx', width.toString())
+    shape.setAttribute('ry', height.toString())
+    shape.setAttribute('fill', getFillColor(node))
+    shape.setAttribute('stroke', getStrokeColor(node))
     shape.setAttribute('stroke-width', '2')
     g.appendChild(shape)
 
@@ -90,10 +97,10 @@ export class IconNodeStyle extends NodeStyleBase {
       const iconWidth = nodeLayout.width * 0.6
       const iconHeight = nodeLayout.height * 0.6
       icon.setAttributeNS('http://www.w3.org/1999/xlink', 'href', source)
-      icon.setAttribute('width', iconWidth)
-      icon.setAttribute('height', iconHeight)
-      icon.setAttribute('x', width - iconWidth * 0.5)
-      icon.setAttribute('y', height - iconHeight * 0.5)
+      icon.setAttribute('width', iconWidth.toString())
+      icon.setAttribute('height', iconHeight.toString())
+      icon.setAttribute('x', (width - iconWidth * 0.5).toString())
+      icon.setAttribute('y', (height - iconHeight * 0.5).toString())
       g.appendChild(icon)
     }
 
@@ -104,10 +111,11 @@ export class IconNodeStyle extends NodeStyleBase {
 
   /**
    * Re-renders the node using the old visual for performance reasons.
-   * @param {IRenderContext} context The render context
-   * @param {SvgVisual} oldVisual The old visual
-   * @param {INode} node The node to which this style instance is assigned
+   * @param {!IRenderContext} context The render context
+   * @param {!SvgVisual} oldVisual The old visual
+   * @param {!INode} node The node to which this style instance is assigned
    * @see Overrides {@link NodeStyleBase#updateVisual}
+   * @returns {!SvgVisual}
    */
   updateVisual(context, oldVisual, node) {
     const g = oldVisual.svgElement
@@ -118,173 +126,94 @@ export class IconNodeStyle extends NodeStyleBase {
 
     const layout = node.layout
     // update node size
-    if (!newCache.equalsSize(newCache, oldCache)) {
+    if (!newCache.size.equals(oldCache.size)) {
       const shape = g.firstElementChild
       const width = layout.width * 0.5
       const height = layout.height * 0.5
-      shape.setAttribute('cx', width)
-      shape.setAttribute('cy', height)
-      shape.setAttribute('rx', width)
-      shape.setAttribute('ry', height)
+      shape.setAttribute('cx', width.toString())
+      shape.setAttribute('cy', height.toString())
+      shape.setAttribute('rx', width.toString())
+      shape.setAttribute('ry', height.toString())
 
       const icon = g.lastElementChild
       const iconWidth = layout.width * 0.6
       const iconHeight = layout.height * 0.6
-      icon.setAttribute('width', iconWidth)
-      icon.setAttribute('height', iconHeight)
-      icon.setAttribute('x', width - iconWidth * 0.5)
-      icon.setAttribute('y', height - iconHeight * 0.5)
+      icon.setAttribute('width', iconWidth.toString())
+      icon.setAttribute('height', iconHeight.toString())
+      icon.setAttribute('x', (width - iconWidth * 0.5).toString())
+      icon.setAttribute('y', (height - iconHeight * 0.5).toString())
     }
 
     // update node color depending on the fraud state
     if (newCache.fraud !== oldCache.fraud) {
       const shape = g.firstElementChild
-      shape.setAttribute('fill', IconNodeStyle.getFillColor(node))
-      shape.setAttribute('stroke', IconNodeStyle.getStrokeColor(node))
+      shape.setAttribute('fill', getFillColor(node))
+      shape.setAttribute('stroke', getStrokeColor(node))
     }
 
     // update location
     SvgVisual.setTranslate(g, layout.x, layout.y)
-
     g['render-data-cache'] = newCache
     return oldVisual
   }
 
   /**
    * Creates an object containing all necessary data to create a visual for the node.
-   * @param {INode} node The node
-   * @return {object} The render data cache object
+   * @param {!INode} node The node
+   * @returns {!NodeStyleCache} The render data cache object
    */
   static createRenderDataCache(node) {
     const layout = node.layout
     return {
       size: layout.toSize(),
-      fraud: node.tag.fraud,
-      equalsSize: (self, other) => self.size.equals(other.size)
+      fraud: node.tag.fraud
     }
   }
 
   /**
    * Returns the resource path of the icon file according to the node's type.
-   * @param {INode} node The node
-   * @return {string} The resource path of the icon
+   * @param {!INode} node The node
+   * @returns {?string} The resource path of the icon
    */
   static getIconPath(node) {
     switch (node.tag.type) {
       case 'Account Holder':
-        return './resources/account-holder.svg'
+        return 'resources/account-holder.svg'
       case 'Address':
-        return './resources/address.svg'
+        return 'resources/address.svg'
       case 'Phone Number':
-        return './resources/phone.svg'
+        return 'resources/phone.svg'
       case 'Bank Branch':
-        return './resources/bank.svg'
+        return 'resources/bank.svg'
       case 'New Account':
-        return './resources/new-account.svg'
+        return 'resources/new-account.svg'
       case 'Loan':
-        return './resources/loan.svg'
+        return 'resources/loan.svg'
       case 'Payment':
-        return './resources/payment.svg'
+        return 'resources/payment.svg'
       case 'Credit Card':
-        return './resources/credit-card.svg'
+        return 'resources/credit-card.svg'
       case 'Participant':
-        return './resources/account-holder.svg'
+        return 'resources/account-holder.svg'
       case 'Doctor':
-        return './resources/doctor.svg'
+        return 'resources/doctor.svg'
       case 'Lawyer':
-        return './resources/lawyer.svg'
+        return 'resources/lawyer.svg'
       case 'Car':
-        return './resources/car.svg'
+        return 'resources/car.svg'
       case 'Accident':
-        return './resources/accident.svg'
+        return 'resources/accident.svg'
       default:
         return null
     }
   }
 
   /**
-   * Returns the fill color of the node according to its type.
-   * @param {INode} node The node
-   * @return {string} The fill color for the node (SVG)
-   */
-  static getFillColor(node) {
-    if (node.tag.fraud) {
-      return 'orangered'
-    }
-    switch (node.tag.type) {
-      case 'Account Holder':
-        return 'dodgerblue'
-      case 'Address':
-        return 'lightskyblue'
-      case 'Phone Number':
-        return 'plum'
-      case 'Bank Branch':
-        return 'salmon'
-      case 'New Account':
-        return 'gold'
-      case 'Loan':
-        return 'mediumseagreen'
-      case 'Credit Card':
-        return 'mediumseagreen'
-      case 'Payment':
-        return 'lightgreen'
-      case 'Participant':
-      case 'Doctor':
-      case 'Lawyer':
-      case 'Car':
-      case 'Accident':
-        return 'lightgray'
-      default:
-        return 'yellowgreen'
-    }
-  }
-
-  /**
-   * Returns the stroke color of the node according to its type.
-   * @param {INode} node The node
-   * @return {string} The stroke color for the node (SVG)
-   */
-  static getStrokeColor(node) {
-    if (node.tag.fraud) {
-      return 'orangered'
-    }
-    switch (node.tag.type) {
-      case 'Account Holder':
-        return 'dodgerblue'
-      case 'Address':
-        return 'lightskyblue'
-      case 'Phone Number':
-        return 'plum'
-      case 'Bank Branch':
-        return 'salmon'
-      case 'New Account':
-        return 'gold'
-      case 'Loan':
-        return 'mediumseagreen'
-      case 'Credit Card':
-        return 'mediumseagreen'
-      case 'Payment':
-        return 'lightgreen'
-      case 'Participant':
-        return 'mediumseagreen'
-      case 'Doctor':
-        return 'lightskyblue'
-      case 'Lawyer':
-        return 'dodgerblue'
-      case 'Car':
-        return 'gold'
-      case 'Accident':
-        return 'salmon'
-      default:
-        return 'yellowgreen'
-    }
-  }
-
-  /**
    * Gets the outline of the node, an ellipse in this case.
-   * @param {INode} node The given node
+   * @param {!INode} node The given node
    * This allows for correct edge path intersection calculation, among others.
    * @see Overrides {@link NodeStyleBase#getOutline}
+   * @returns {!GeneralPath}
    */
   getOutline(node) {
     const outline = new GeneralPath()
@@ -295,9 +224,10 @@ export class IconNodeStyle extends NodeStyleBase {
   /**
    * Get the bounding box of the node.
    * This is used for bounding box calculations and includes the visual shadow.
-   * @param {ICanvasContext} canvasContext The context to calculate the bounds for
-   * @param {INode} node The given node
+   * @param {!ICanvasContext} canvasContext The context to calculate the bounds for
+   * @param {!INode} node The given node
    * @see Overrides {@link NodeStyleBase#getBounds}
+   * @returns {!Rect}
    */
   getBounds(canvasContext, node) {
     return node.layout.toRect()
@@ -305,10 +235,11 @@ export class IconNodeStyle extends NodeStyleBase {
 
   /**
    * Checks if a point hits the node's bounds. Considers HitTestRadius.
-   * @param {ICanvasContext} canvasContext The canvas context
-   * @param {Point} point The point to test
-   * @param {INode} node The given node
+   * @param {!ICanvasContext} canvasContext The canvas context
+   * @param {!Point} point The point to test
+   * @param {!INode} node The given node
    * @see Overrides {@link NodeStyleBase#isHit}
+   * @returns {boolean}
    */
   isHit(canvasContext, point, node) {
     return GeomUtilities.ellipseContains(node.layout.toRect(), point, canvasContext.hitTestRadius)
@@ -316,10 +247,11 @@ export class IconNodeStyle extends NodeStyleBase {
 
   /**
    * Checks if a node is inside a certain box. Considers HitTestRadius.
-   * @param {IInputModeContext} context The input mode context
-   * @param {Rect} box The marquee selection box
-   * @param {INode} node The given node
+   * @param {!IInputModeContext} context The input mode context
+   * @param {!Rect} box The marquee selection box
+   * @param {!INode} node The given node
    * @see Overrides {@link NodeStyleBase#isInBox}
+   * @returns {boolean}
    */
   isInBox(context, box, node) {
     // early exit if not even the bounds are contained in the box
@@ -347,9 +279,10 @@ export class IconNodeStyle extends NodeStyleBase {
 
   /**
    * Exact geometric check whether a point lies inside the circular node.
-   * @param {INode} node The given node
-   * @param {Point} point The point to test
+   * @param {!INode} node The given node
+   * @param {!Point} point The point to test
    * @see Overrides {@link NodeStyleBase#isInside}
+   * @returns {boolean}
    */
   isInside(node, point) {
     return GeomUtilities.ellipseContains(node.layout.toRect(), point, 0)
@@ -363,9 +296,10 @@ export class IconNodeStyle extends NodeStyleBase {
 export class CanvasEdgeStyle extends EdgeStyleBase {
   /**
    * Creates the visual for an edge.
-   * @param {IRenderContext} context The render context
-   * @param {IEdge} edge The given edge
+   * @param {!IRenderContext} context The render context
+   * @param {!IEdge} edge The given edge
    * @see Overrides {@link NodeStyleBase#createVisual}
+   * @returns {!EdgeRenderVisual}
    */
   createVisual(context, edge) {
     return new EdgeRenderVisual(edge)
@@ -373,10 +307,11 @@ export class CanvasEdgeStyle extends EdgeStyleBase {
 
   /**
    * Updates the visual for an edge.
-   * @param {IRenderContext} context The render context
-   * @param {Visual} oldVisual The old visual
-   * @param {IEdge} edge The given edge
+   * @param {!IRenderContext} context The render context
+   * @param {!Visual} oldVisual The old visual
+   * @param {!IEdge} edge The given edge
    * @see Overrides {@link NodeStyleBase#createVisual}
+   * @returns {!Visual}
    */
   updateVisual(context, oldVisual, edge) {
     return oldVisual
@@ -384,10 +319,10 @@ export class CanvasEdgeStyle extends EdgeStyleBase {
 
   /**
    * Determines whether the visual representation of the edge has been hit at the given location.
-   * @param {IInputModeContext} canvasContext The input mode context
-   * @param {Point} p The point to test
-   * @param {IEdge} edge The edge to which this style instance is assigned
-   * @return {boolean} True if the specified edge representation is hit, false otherwise
+   * @param {!IInputModeContext} canvasContext The input mode context
+   * @param {!Point} p The point to test
+   * @param {!IEdge} edge The edge to which this style instance is assigned
+   * @returns {boolean} True if the specified edge representation is hit, false otherwise
    */
   isHit(canvasContext, p, edge) {
     // we use a very simple hit logic here (the base implementation)
@@ -411,7 +346,7 @@ export class CanvasEdgeStyle extends EdgeStyleBase {
 class EdgeRenderVisual extends HtmlCanvasVisual {
   /**
    * Creates a EdgeRenderVisual for the given edge with the given thickness.
-   * @param {IEdge} edge The given edge
+   * @param {!IEdge} edge The given edge
    */
   constructor(edge) {
     super()
@@ -420,23 +355,22 @@ class EdgeRenderVisual extends HtmlCanvasVisual {
 
   /**
    * Paints onto the context using HTML5 Canvas operations.
-   * @param {IRenderContext} context The render context
-   * @param {CanvasRenderingContext2D} ctx The HTML5 Canvas context to use for rendering
+   * @param {!IRenderContext} context The render context
+   * @param {!CanvasRenderingContext2D} ctx The HTML5 Canvas context to use for rendering
    */
   paint(context, ctx) {
     ctx.save()
     ctx.beginPath()
-    let location = this.edge.sourcePort.dynamicLocation
+    let location = this.edge.sourcePort.location
     ctx.moveTo(location.x, location.y)
     this.edge.bends.forEach(bend => {
       location = bend.location
       ctx.lineTo(location.x, location.y)
     })
-    location = this.edge.targetPort.dynamicLocation
+    location = this.edge.targetPort.location
     ctx.lineTo(location.x, location.y)
     ctx.lineWidth = 5
-    const color = getColor(this.edge)
-    ctx.strokeStyle = `rgb(${color.r}, ${color.g}, ${color.b})`
+    ctx.strokeStyle = getColor(this.edge)
     ctx.stroke()
     ctx.restore()
   }
@@ -448,11 +382,11 @@ class EdgeRenderVisual extends HtmlCanvasVisual {
 export class FraudHighlightManager extends HighlightIndicatorManager {
   /**
    * Creates a new HighlightManager for fraud.
-   * @param {CanvasComponent} canvas
+   * @param {!GraphComponent} canvas
    */
   constructor(canvas) {
     super(canvas)
-    const graphModelManager = this.canvasComponent.graphModelManager
+    const graphModelManager = canvas.graphModelManager
     // the edges' highlight group should be above the nodes
     this.edgeHighlightGroup = graphModelManager.contentGroup.addGroup()
     this.edgeHighlightGroup.below(graphModelManager.nodeGroup)
@@ -464,8 +398,8 @@ export class FraudHighlightManager extends HighlightIndicatorManager {
 
   /**
    * This implementation always returns the highlightGroup of the canvasComponent of this instance.
-   * @param {IModelItem} item The item to check
-   * @return {ICanvasObjectGroup} An ICanvasObjectGroup or null
+   * @param {!IModelItem} item The item to check
+   * @returns {?ICanvasObjectGroup} An ICanvasObjectGroup or null
    */
   getCanvasObjectGroup(item) {
     if (IEdge.isInstance(item)) {
@@ -478,24 +412,22 @@ export class FraudHighlightManager extends HighlightIndicatorManager {
 
   /**
    * Callback used by install to retrieve the installer for a given item.
-   * @param {IModelItem} item The item to find an installer for
-   * @returns {ICanvasObjectInstaller}
+   * @param {!IModelItem} item The item to find an installer for
+   * @returns {?ICanvasObjectInstaller}
    */
   getInstaller(item) {
-    if (INode.isInstance(item)) {
-      const nodeDecorationInstaller = new NodeStyleDecorationInstaller({
+    if (item instanceof INode) {
+      return new NodeStyleDecorationInstaller({
         margins: 2,
-        zoomPolicy: StyleDecorationZoomPolicy.MIXED,
+        zoomPolicy: 'mixed',
         nodeStyle: new IconNodeStyle()
       })
-      return nodeDecorationInstaller
-    } else if (IEdge.isInstance(item)) {
-      const fill = new SolidColorFill(getColor(item))
+    } else if (item instanceof IEdge) {
       return new EdgeStyleDecorationInstaller({
         edgeStyle: new PolylineEdgeStyle({
-          stroke: new Stroke(fill, 8)
+          stroke: `8px solid ${getColor(item)}`
         }),
-        zoomPolicy: StyleDecorationZoomPolicy.WORLD_COORDINATES
+        zoomPolicy: 'world-coordinates'
       })
     }
     return super.getInstaller(item)
@@ -504,28 +436,106 @@ export class FraudHighlightManager extends HighlightIndicatorManager {
 
 /**
  * Returns the color of the edge according to it type.
- * @param {IEdge} edge The given edge
- * @return {Color} The color for the edge
+ * @param {!IEdge} edge The given edge
+ * @returns {!string} The color for the edge
  */
 function getColor(edge) {
   const tag = edge.tag
   if (tag && tag.fraud && !tag.type) {
-    return Color.ORANGE_RED
+    return 'orangered'
   }
   switch (tag.type) {
     case 'witnesses':
-      return Color.MEDIUM_SEA_GREEN
+      return 'mediumseagreen'
     case 'involves':
-      return Color.SALMON
+      return 'salmon'
     case 'drives':
-      return Color.DARK_SEA_GREEN
+      return 'darkseagreen'
     case 'isPassenger':
-      return Color.YELLOW_GREEN
+      return 'yellowgreen'
     case 'represents':
-      return Color.DODGER_BLUE
+      return 'dodgerblue'
     case 'heals':
-      return Color.LIGHT_SKY_BLUE
+      return 'lightskyblue'
     default:
-      return Color.LIGHT_GRAY
+      return 'lightgray'
+  }
+}
+
+/**
+ * Returns the fill color of the node according to its type.
+ * @param {!INode} node The node
+ * @returns {!string} The fill color for the node (SVG)
+ */
+function getFillColor(node) {
+  if (node.tag.fraud) {
+    return 'orangered'
+  }
+  switch (node.tag.type) {
+    case 'Account Holder':
+      return 'dodgerblue'
+    case 'Address':
+      return 'lightskyblue'
+    case 'Phone Number':
+      return 'plum'
+    case 'Bank Branch':
+      return 'salmon'
+    case 'New Account':
+      return 'gold'
+    case 'Loan':
+      return 'mediumseagreen'
+    case 'Credit Card':
+      return 'mediumseagreen'
+    case 'Payment':
+      return 'lightgreen'
+    case 'Participant':
+    case 'Doctor':
+    case 'Lawyer':
+    case 'Car':
+    case 'Accident':
+      return 'lightgray'
+    default:
+      return 'yellowgreen'
+  }
+}
+
+/**
+ * Returns the stroke color of the node according to its type.
+ * @param {!INode} node The node
+ * @returns {!string} The stroke color for the node (SVG)
+ */
+function getStrokeColor(node) {
+  if (node.tag.fraud) {
+    return 'orangered'
+  }
+  switch (node.tag.type) {
+    case 'Account Holder':
+      return 'dodgerblue'
+    case 'Address':
+      return 'lightskyblue'
+    case 'Phone Number':
+      return 'plum'
+    case 'Bank Branch':
+      return 'salmon'
+    case 'New Account':
+      return 'gold'
+    case 'Loan':
+      return 'mediumseagreen'
+    case 'Credit Card':
+      return 'mediumseagreen'
+    case 'Payment':
+      return 'lightgreen'
+    case 'Participant':
+      return 'mediumseagreen'
+    case 'Doctor':
+      return 'lightskyblue'
+    case 'Lawyer':
+      return 'dodgerblue'
+    case 'Car':
+      return 'gold'
+    case 'Accident':
+      return 'salmon'
+    default:
+      return 'yellowgreen'
   }
 }

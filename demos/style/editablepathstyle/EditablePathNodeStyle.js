@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -26,6 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
+/* eslint-disable no-dupe-else-if */
 import {
   BaseClass,
   Cursor,
@@ -125,8 +126,8 @@ export default class EditablePathNodeStyle extends NodeStyleBase {
       this.$path = options.path || createDefaultPath()
       this.$pathStyle = new GeneralPathNodeStyle({
         path: this.$path,
-        fill: options.fill,
-        stroke: options.stroke
+        fill: options.fill ?? null,
+        stroke: options.stroke ?? null
       })
     } else {
       this.$path = createDefaultPath()

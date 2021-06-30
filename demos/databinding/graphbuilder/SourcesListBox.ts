@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -28,7 +28,7 @@
  ***************************************************************************/
 import { SourceDialog } from './EditSourceDialog'
 import { SourceDefinition, SourceDefinitionBuilderConnector } from './ModelClasses'
-import { addClass } from '../../resources/demo-app.js'
+import { addClass } from '../../resources/demo-app'
 
 /**
  * Control containing a list of sub controls for every {link SourceDefinition} added to it
@@ -104,12 +104,12 @@ export class SourcesListBox<
 
     const editButton = document.createElement('button')
     addClass(editButton, 'editButton')
-    editButton.addEventListener('click', () =>
+    editButton.addEventListener('click', () => {
       new this.DialogFactory(newDefinition, () => {
         label.textContent = newDefinition.sourceDefinition.name
         this.dataUpdatedCallback()
       }).show()
-    )
+    })
     editButton.textContent = 'Edit'
 
     const removeButton = document.createElement('button')

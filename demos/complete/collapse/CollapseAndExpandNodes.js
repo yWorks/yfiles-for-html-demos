@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -30,12 +30,14 @@
 import {
   Bfs,
   CompositeLayoutData,
+  FilteredGraphWrapper,
   FixNodeLayoutData,
   GraphComponent,
   HashMap,
   HierarchicLayout,
   HierarchicLayoutData,
   IGraph,
+  IIncrementalHintsFactory,
   ILayoutAlgorithm,
   IList,
   INode,
@@ -45,108 +47,132 @@ import {
   OrganicLayoutData,
   OrganicLayoutScope,
   PlaceNodesAtBarycenterStage,
-  PlaceNodesAtBarycenterStageData
+  PlaceNodesAtBarycenterStageData,
+  TemplateNodeStyle
 } from 'yfiles'
 
 /**
- * Provides collapsing and expanding functions and configure the layout
+ * Provides utility function for collapsing and expanding nodes as well as configuring layout
+ * algorithms.
  */
 export default class CollapseAndExpandNodes {
+  /**
+   * @param {!GraphComponent} graphComponent
+   */
   constructor(graphComponent) {
-    /** Map that stores whether a node is collapsed. */
-    this.nodeCollapsedMap = new HashMap()
-
-    /** Map that stores the node visibility. */
-    this.nodeVisibility = new HashMap()
-
-    /** @type {GraphComponent} */
     this.graphComponent = graphComponent
+    this.nodeCollapsedMap = new HashMap()
+    this.nodeVisibility = new HashMap()
   }
 
+  /**
+   * Sets the given node's collapsed state.
+   * @param {!INode} node The node whose state is set.
+   * @param {boolean} collapsed The given node's new state.
+   */
   setCollapsed(node, collapsed) {
     this.nodeCollapsedMap.set(node, collapsed)
   }
 
+  /**
+   * Gets the given node's collapsed state.
+   * @param {!INode} node The node whose state is queried.
+   * @returns {boolean}
+   */
+  isCollapsed(node) {
+    return !!this.nodeCollapsedMap.get(node)
+  }
+
+  /**
+   * Sets the given node's visibility.
+   * @param {!INode} node The node whose state is set.
+   * @param {boolean} visible The given node's new state.
+   */
   setNodeVisibility(node, visible) {
     this.nodeVisibility.set(node, visible)
   }
 
+  /**
+   * Gets the given node's visibility.
+   * @param {!INode} node The node whose state is queried.
+   * @returns {boolean}
+   */
   getNodeVisibility(node) {
     return !!this.nodeVisibility.get(node)
   }
 
   /**
    * Show the children of a collapsed node.
-   * @param {INode} node The node that should be expanded
+   * @param {!INode} node The node that should be expanded
    */
   expand(node) {
-    // Stores the collapsed state of the node in the style tag in order
-    // to be able to bind to it using a template binding.
-    node.style.styleTag = { collapsed: false }
-    this.nodeCollapsedMap.set(node, false)
-
-    const filteredGraph = this.graphComponent.graph
-    this.getDescendants(filteredGraph.wrappedGraph, node, succ =>
-      this.nodeCollapsedMap.get(succ)
-    ).forEach(succ => {
-      this.nodeVisibility.set(succ, true)
-    })
+    this.collapseExpandImpl(node, false)
   }
 
   /**
-   * Hide the children of a expanded node.
-   * @param {INode} node The node that should be collapsed
+   * Hide the children of an expanded node.
+   * @param {!INode} node The node that should be collapsed
    */
   collapse(node) {
-    node.style.styleTag = { collapsed: true }
-    this.nodeCollapsedMap.set(node, true)
+    this.collapseExpandImpl(node, true)
+  }
+
+  /**
+   * Collapses or expands the given node.
+   * @param {!INode} node The node whose children will be hidden or shown.
+   * @param {boolean} collapse If true, the given node's children will be hidden;
+   * otherwise they will be shown.
+   */
+  collapseExpandImpl(node, collapse) {
+    // Stores the collapsed state of the node in the style tag in order
+    // to be able to bind to it using a template binding.
+    node.style.styleTag = { collapsed: collapse }
+    this.setCollapsed(node, collapse)
 
     const filteredGraph = this.graphComponent.graph
-    this.getDescendants(filteredGraph.wrappedGraph, node, succ =>
-      this.nodeCollapsedMap.get(succ)
+    CollapseAndExpandNodes.getDescendants(filteredGraph.wrappedGraph, node, succ =>
+      this.isCollapsed(succ)
     ).forEach(succ => {
-      this.nodeVisibility.set(succ, false)
+      this.setNodeVisibility(succ, !collapse)
     })
   }
 
   /**
    * Returns the descendants of the given node.
-   *
-   * @param {IGraph} graph The graph.
-   * @param {INode} node The node.
-   * @param {function(INode):boolean?} recursionFilter An optional node predicate that specifies whether
-   *   the recursion should continue for the given node.
-   * @return {IList.<INode>} The descendants of the given node.
+   * @param {!IGraph} graph The graph.
+   * @param {!INode} node The node.
+   * @param {!function} recursionFilter A node predicate that specifies whether
+   * the recursion should continue for the given node.
+   * @returns {!IList.<INode>} The descendants of the given node.
    */
-  getDescendants(graph, node, recursionFilter) {
+  static getDescendants(graph, node, recursionFilter) {
     const visited = new HashMap()
     const descendants = new List()
     const nodes = [node]
     while (nodes.length > 0) {
-      graph.successors(nodes.pop()).forEach(s => {
+      for (const s of graph.successors(nodes.pop())) {
         if (!visited.get(s)) {
           visited.set(s, true)
           descendants.add(s)
-          if (recursionFilter == null || !recursionFilter(s)) {
+          if (!recursionFilter(s)) {
             nodes.push(s)
           }
         }
-      })
+      }
     }
     return descendants
   }
 
   /**
    * Moves incremental nodes between their neighbors before expanding for a smooth animation.
-   *
-   * @param {HashMap} incrementalMap
+   * @param {!HashMap.<INode,boolean>} incrementalNodes the nodes that need to be moved.
    */
-  prepareSmoothExpandLayoutAnimation(incrementalMap) {
+  prepareSmoothExpandLayoutAnimation(incrementalNodes) {
     const graph = this.graphComponent.graph
 
     // mark the new nodes and place them between their neighbors
     const layoutData = new PlaceNodesAtBarycenterStageData({
-      affectedNodes: node => incrementalMap.has(node)
+      affectedNodes: node => incrementalNodes.has(node)
     })
 
     const layout = new PlaceNodesAtBarycenterStage()
@@ -154,26 +180,30 @@ export default class CollapseAndExpandNodes {
   }
 
   /**
-   * Configures a new layout to the current graph.
-   *
+   * Configures a new layout for the current graph.
    * Incremental nodes are moved between their neighbors before expanding for a smooth animation.
-   * @param {INode} toggledNode An optional toggled node. The children of this node are laid out as
-   *   incremental items. Without affected node, a 'from scratch' layout is calculated.
+   * @param {?INode} toggledNode The children of this node are laid out as incremental items.
+   * Without a toggled node, a 'from scratch' layout is calculated.
    * @param {boolean} expand Whether this is part of an expand or a collapse action.
-   * @param {CompositeLayoutData} currentLayoutData
-   * @param {ILayoutAlgorithm} currentLayout
+   * @param {!CompositeLayoutData} currentLayoutData Additional configuration data for the given layout algorithm and the
+   * demo's graph.
+   * @param {!ILayoutAlgorithm} currentLayout The layout algorithm to arrange the demo's graph.
    */
   configureLayout(toggledNode, expand, currentLayoutData, currentLayout) {
     const graph = this.graphComponent.graph
     if (toggledNode) {
-      // Keep the clicked node at its location
+      // keep the clicked node at its location
       currentLayoutData.items.add(
         new FixNodeLayoutData({
           fixedNodes: toggledNode
         })
       )
 
-      const incrementalNodes = this.getDescendants(graph, toggledNode)
+      const incrementalNodes = CollapseAndExpandNodes.getDescendants(
+        graph,
+        toggledNode,
+        node => false
+      )
       const incrementalMap = new HashMap()
       incrementalNodes.forEach(node => {
         incrementalMap.set(node, true)
@@ -218,7 +248,7 @@ export default class CollapseAndExpandNodes {
         currentLayoutData.items.add(
           new HierarchicLayoutData({
             incrementalHints: (item, hintsFactory) => {
-              if (incrementalNodes.includes(item)) {
+              if (item instanceof INode && incrementalNodes.includes(item)) {
                 return hintsFactory.createLayerIncrementallyHint(item)
               }
             }

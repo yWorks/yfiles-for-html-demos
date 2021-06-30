@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -27,8 +27,8 @@
  **
  ***************************************************************************/
 import {
-  Class,
   GraphMLAttribute,
+  ILookup,
   MarkupExtension,
   TypeAttribute,
   XamlAttributeWritePolicy,
@@ -40,17 +40,26 @@ import VuejsNodeStyle from './VuejsNodeStyle.js'
 export default class VuejsNodeStyleMarkupExtension extends MarkupExtension {
   constructor() {
     super()
-    this.$template = ''
+    this._template = ''
   }
 
+  /**
+   * @type {!string}
+   */
   get template() {
-    return this.$template
+    return this._template
   }
 
+  /**
+   * @type {!string}
+   */
   set template(value) {
-    this.$template = value
+    this._template = value
   }
 
+  /**
+   * @type {!object}
+   */
   static get $meta() {
     return {
       $self: [GraphMLAttribute().init({ contentProperty: 'template' })],
@@ -64,6 +73,9 @@ export default class VuejsNodeStyleMarkupExtension extends MarkupExtension {
     }
   }
 
+  /**
+   * @param {!ILookup} serviceProvider
+   */
   provideValue(serviceProvider) {
     return new VuejsNodeStyle(this.template)
   }

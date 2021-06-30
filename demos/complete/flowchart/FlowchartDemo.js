@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -40,12 +40,12 @@ import {
   HorizontalTextAlignment,
   IArrow,
   ICommand,
+  INode,
   InteriorStretchLabelModel,
   License,
   MinimumNodeSizeStage,
   NodeDropInputMode,
   OrthogonalEdgeEditingContext,
-  OrthogonalEdgeEditingPolicy,
   PanelNodeStyle,
   Point,
   PolylineEdgeStyle,
@@ -55,12 +55,12 @@ import {
   StorageLocation
 } from 'yfiles'
 
-import * as FlowchartData from './resources/FlowchartData.js'
+import FlowchartData from './resources/FlowchartData.js'
 import FlowchartStyle, {
   FlowchartNodeStyle,
+  FlowchartNodeType,
   FlowchartSerializationListener
 } from './FlowchartStyle.js'
-import { DragAndDropPanel } from '../../utils/DndPanel.js'
 import FlowchartLayoutData from './FlowchartLayoutData.js'
 import FlowchartLayout from './FlowchartLayout.js'
 import {
@@ -68,29 +68,39 @@ import {
   bindAction,
   bindChangeListener,
   bindCommand,
-  passiveSupported,
-  pointerEventsSupported,
   removeClass,
   setComboboxValue,
   showApp
 } from '../../resources/demo-app.js'
+import { pointerEventsSupported } from '../../utils/Workarounds.js'
 import loadJson from '../../resources/load-json.js'
+import { DragAndDropPanel } from '../../utils/DndPanel.js'
 
 /** @type {GraphComponent} */
 let graphComponent = null
 
-function run(licenseData) {
+/**
+ * @param {*} licenseData
+ * @returns {!Promise}
+ */
+async function run(licenseData) {
   License.value = licenseData
   graphComponent = new GraphComponent('graphComponent')
 
-  configureInputModes()
+  configureUserInteraction()
   initializeDnDPanel()
-  initializeGraph()
+  initializeGraphDefaults()
+
+  // load an initial sample
+  await loadGraph('ProblemSolving')
 
   registerCommands()
   showApp(graphComponent)
 }
 
+/**
+ * @returns {!Promise}
+ */
 async function runLayout() {
   setUIDisabled(true)
 
@@ -107,11 +117,12 @@ async function runLayout() {
     await graphComponent.morphLayout(
       new MinimumNodeSizeStage(flowchartLayout),
       '0.5s',
-      flowchartLayoutData
+      flowchartLayoutData.create(graphComponent.graph)
     )
   } catch (error) {
-    if (typeof window.reportError === 'function') {
-      window.reportError(error)
+    const reporter = window.reportError
+    if (typeof reporter === 'function') {
+      reporter(error)
     } else {
       throw error
     }
@@ -122,6 +133,7 @@ async function runLayout() {
 
 /**
  * @param {boolean} positive
+ * @returns {number}
  */
 function getBranchDirection(positive) {
   const select = positive
@@ -141,6 +153,9 @@ function getBranchDirection(positive) {
   }
 }
 
+/**
+ * @returns {!('none'|'all'|'optimized')}
+ */
 function getInEdgeGroupingStyle() {
   const select = document.getElementById('select-in-edge-grouping')
   switch (select.selectedIndex) {
@@ -157,7 +172,7 @@ function getInEdgeGroupingStyle() {
 /**
  * Configures the input mode for the given graphComponent.
  */
-function configureInputModes() {
+function configureUserInteraction() {
   // configure snapping
   const snapContext = new GraphSnapContext({
     nodeToNodeDistance: 30,
@@ -169,28 +184,23 @@ function configureInputModes() {
     gridSnapType: GridSnapTypes.ALL
   })
 
-  const mode = new GraphEditorInputMode({
+  graphComponent.inputMode = new GraphEditorInputMode({
     allowGroupingOperations: true,
     orthogonalEdgeEditingContext: new OrthogonalEdgeEditingContext(),
-    orthogonalBendRemoval: OrthogonalEdgeEditingPolicy.ALWAYS,
-    snapContext
+    snapContext,
+    // enable drag an drop for elements in the palette
+    nodeDropInputMode: new NodeDropInputMode({
+      showPreview: true,
+      enabled: true
+    })
   })
-  mode.createEdgeInputMode.orthogonalEdgeCreation = OrthogonalEdgeEditingPolicy.ALWAYS
-
-  // enable drag an drop for elements in the palette
-  const nodeDropInputMode = new NodeDropInputMode()
-  nodeDropInputMode.showPreview = true
-  nodeDropInputMode.enabled = true
-  mode.nodeDropInputMode = nodeDropInputMode
-
-  graphComponent.inputMode = mode
 }
 
 /**
  * Initializes the drag and drop panel.
  */
 function initializeDnDPanel() {
-  const dndPanel = new DragAndDropPanel(document.getElementById('dndPanel'), passiveSupported)
+  const dndPanel = new DragAndDropPanel(document.getElementById('dndPanel'))
   // Set the callback that starts the actual drag and drop operation
   dndPanel.beginDragCallback = (element, data) => {
     const dragPreview = element.cloneNode(true)
@@ -216,59 +226,28 @@ function initializeDnDPanel() {
 
 /**
  * Creates the nodes that provide the visualizations for the style panel.
- * @return {SimpleNode[]}
+ * @returns {!Array.<INode>}
  */
 function createDnDPanelNodes() {
   const nodeContainer = []
 
-  // create a nodes with each style
-  const nodeStyles = [
-    'process',
-    'decision',
-    'start1',
-    'start2',
-    'terminator',
-    'cloud',
-    'data',
-    'directData',
-    'database',
-    'document',
-    'predefinedProcess',
-    'storedData',
-    'internalStorage',
-    'sequentialData',
-    'manualInput',
-    'card',
-    'paperType',
-    'delay',
-    'display',
-    'manualOperation',
-    'preparation',
-    'loopLimit',
-    'loopLimitEnd',
-    'onPageReference',
-    'offPageReference',
-    'annotation',
-    'userMessage',
-    'networkMessage'
-  ]
-
-  nodeStyles.forEach(type => {
+  // create a node for each style node type
+  for (const type of Object.keys(FlowchartNodeType)) {
     const node = new SimpleNode()
     node.layout = new Rect(0, 0, 80, 40)
-    node.style = new FlowchartNodeStyle(type)
+    node.style = new FlowchartNodeStyle(FlowchartNodeType[type])
     nodeContainer.push(node)
-  })
+  }
 
   return nodeContainer
 }
 
 /**
- * Initializes defaults for the graph and loads an initial sample.
+ * Initializes defaults for the graph.
  */
-function initializeGraph() {
+function initializeGraphDefaults() {
   const graph = graphComponent.graph
-  graph.nodeDefaults.style = new FlowchartNodeStyle('start1')
+  graph.nodeDefaults.style = new FlowchartNodeStyle(FlowchartNodeType.Start1)
   graph.nodeDefaults.size = new Size(80, 40)
   graph.nodeDefaults.labels.style = new DefaultLabelStyle({
     horizontalTextAlignment: HorizontalTextAlignment.CENTER
@@ -291,30 +270,34 @@ function initializeGraph() {
   })
 
   graph.groupNodeDefaults.labels.layoutParameter = InteriorStretchLabelModel.NORTH
-
-  loadGraph('ProblemSolving')
 }
 
 /**
- * Loads a sample graph from data according to the given sample name.
- * @param {string} sampleName
+ * Loads the sample graph with the given name from the data.
+ * @param {!string} sampleName
+ * @returns {!Promise}
  */
-function loadGraph(sampleName) {
+async function loadGraph(sampleName) {
   const sample =
     FlowchartData[sampleName.replace('Sample: ', '').replace(' ', '')] ||
     FlowchartData.ProblemSolving
 
-  // clear graph
+  // clear the graph
   graphComponent.graph.clear()
 
-  // initialize graph builder
+  // initialize the graph builder
   const builder = new GraphBuilder({
     graph: graphComponent.graph,
     nodes: [
       {
         data: sample.nodes,
         id: 'id',
-        labels: ['label']
+        labels: ['label'],
+        layout: dataItem =>
+          dataItem.type === 'decision'
+            ? Rect.fromCenter(Point.ORIGIN, new Size(145, 100))
+            : Rect.fromCenter(Point.ORIGIN, new Size(145, 60)),
+        style: dataItem => new FlowchartNodeStyle(dataItem.type)
       }
     ],
     edges: [
@@ -327,21 +310,11 @@ function loadGraph(sampleName) {
     ]
   })
 
-  // create graph
+  // create the graph
   graphComponent.graph = builder.buildGraph()
 
-  // update node styles and sizes according to node types.
-  graphComponent.graph.nodes.forEach(node => {
-    graphComponent.graph.setStyle(node, new FlowchartNodeStyle(node.tag.type))
-    if (node.tag.type === 'decision') {
-      graphComponent.graph.setNodeLayout(node, Rect.fromCenter(Point.ORIGIN, new Size(145, 100)))
-    } else {
-      graphComponent.graph.setNodeLayout(node, Rect.fromCenter(Point.ORIGIN, new Size(145, 60)))
-    }
-  })
-
   // apply layout
-  runLayout()
+  await runLayout()
 }
 
 /**
@@ -391,8 +364,9 @@ function registerCommands() {
 
 /**
  * Loads the selected graph and applies a flowchart layout.
+ * @returns {!Promise}
  */
-function updateGraph() {
+async function updateGraph() {
   const select = document.getElementById('select-sample')
   const allowFlatwiseEdges = document.getElementById('allow-flatwise-edges')
 
@@ -431,12 +405,12 @@ function updateGraph() {
       break
   }
 
-  loadGraph(select.value)
+  await loadGraph(select.value)
 }
 
 /**
  * Enables/disabled the toolbar elements and the input mode.
- * @param {boolean} disabled <code>true</code> if the ui should be disabled, <code>false</code>
+ * @param {boolean} disabled true if the ui should be disabled, false
  *   otherwise.
  */
 function setUIDisabled(disabled) {

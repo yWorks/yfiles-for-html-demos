@@ -9,16 +9,17 @@
     "test": "wdio wdio.conf.js"
   },
   "dependencies": {
-    "yfiles": "../../../lib-dev/es-modules/yfiles-23.0.4-dev.tgz"
+    "yfiles": "../../../lib-dev/es-modules/yfiles-24.0.0-dev.tgz"
   },
   "devDependencies": {
-    "@wdio/cli": "^5.12.5",
-    "@wdio/junit-reporter": "^5.12.3",
-    "@wdio/local-runner": "^5.12.5",
-    "@wdio/mocha-framework": "^5.12.1",
-    "@wdio/selenium-standalone-service": "^5.12.1",
-    "@wdio/spec-reporter": "^5.12.1",
-    "chai": "^4.2.0",
+    "@wdio/cli": "^7.7.4",
+    "@wdio/junit-reporter": "^7.7.3",
+    "@wdio/local-runner": "^7.7.4",
+    "@wdio/mocha-framework": "^7.7.4",
+    "@wdio/selenium-standalone-service": "^7.7.4",
+    "@wdio/spec-reporter": "^7.7.3",
+    "@wdio/sync": "^7.7.4",
+    "chai": "^4.3.4",
     "express": "^4.17.1"
   }
 }

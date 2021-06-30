@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -120,7 +120,7 @@ Use a more recent browser like Chrome, Edge, Firefox or Safari to run this demo 
   // wire up the controls
   const input = document.querySelector("[data-command='MaximumDuration']") as HTMLInputElement
   function setProgress(progress: number): void {
-    processItemVisual!.time = progress * maxTime
+    processItemVisual.time = progress * maxTime
     input.value = String(progress * 100)
   }
 

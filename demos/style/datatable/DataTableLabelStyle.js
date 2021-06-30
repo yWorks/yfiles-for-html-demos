@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -26,18 +26,8 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import {
-  Font,
-  ILabel,
-  IRenderContext,
-  LabelStyleBase,
-  Size,
-  SvgVisual,
-  TextRenderSupport,
-  Visual
-} from 'yfiles'
-import DataTableNodeStyle from './DataTableNodeStyle.js'
-import RenderDataCache from './RenderDataCache.js'
+import { ILabel, IRenderContext, LabelStyleBase, Size, SvgVisual, TextRenderSupport } from 'yfiles'
+import { DataTableRenderSupport, RenderDataCache, SVGNS } from './DataTableRenderSupport.js'
 
 /**
  * A label style to display data in a tabular fashion.
@@ -50,30 +40,23 @@ export default class DataTableLabelStyle extends LabelStyleBase {
    */
   constructor() {
     super()
-    this.textPadding = 3
-    this.tablePadding = 2
-    this.className = 'myTableLabel'
-
-    this.font = new Font({
-      fontFamily: 'Arial',
-      fontSize: 12
-    })
+    this.renderSupport = new DataTableRenderSupport('myTableLabel', false)
   }
 
   /**
    * Creates the visual for the given label.
    * @see Overrides {@link LabelStyleBase#createVisual}
-   * @param {IRenderContext} context
-   * @param {ILabel} label
-   * @return {SvgVisual}
+   * @param {!IRenderContext} context
+   * @param {!ILabel} label
+   * @returns {!SvgVisual}
    */
   createVisual(context, label) {
     // This implementation creates a 'g' element and uses it for the rendering of the label.
-    const g = window.document.createElementNS('http://www.w3.org/2000/svg', 'g')
+    const g = document.createElementNS(SVGNS, 'g')
     // Get the necessary data for rendering of the label
-    const cache = new RenderDataCache(label.owner.tag, this.font)
+    const cache = new RenderDataCache(label.owner.tag, this.renderSupport.font)
     // Render the label
-    this.render(g, label, cache)
+    this.renderSupport.render(g, label.layout.toSize(), cache)
 
     // move container to correct location
     const transform = LabelStyleBase.createLayoutTransform(context, label.layout, true)
@@ -85,21 +68,21 @@ export default class DataTableLabelStyle extends LabelStyleBase {
   /**
    * Re-renders the label using the old visual for performance reasons.
    * @see Overrides {@link LabelStyleBase#updateVisual}
-   * @param {IRenderContext} context
-   * @param {Visual} oldVisual
-   * @param {ILabel} label
-   * @return {SvgVisual}
+   * @param {!IRenderContext} context
+   * @param {!SvgVisual} oldVisual
+   * @param {!ILabel} label
+   * @returns {!SvgVisual}
    */
   updateVisual(context, oldVisual, label) {
     const container = oldVisual.svgElement
     // Get the data with which the oldvisual was created
     const oldCache = container['data-renderDataCache']
     // Get the data for the new visual
-    const newCache = new RenderDataCache(label.owner.tag, this.font)
-    if (!oldCache.equals(newCache)) {
+    const newCache = new RenderDataCache(label.owner.tag, this.renderSupport.font)
+    if (!newCache.equals(oldCache)) {
       // The data or font changed, create a new visual
       newCache.adoptValues(oldCache)
-      this.render(container, label, newCache)
+      this.renderSupport.render(container, label.layout.toSize(), newCache)
     }
 
     // nothing changed, return the old visual
@@ -111,123 +94,17 @@ export default class DataTableLabelStyle extends LabelStyleBase {
   }
 
   /**
-   * Creates the visual for the given label.
-   * @param {SVGElement} container
-   * @param {ILabel} label
-   * @param {object} cache
-   */
-  render(container, label, cache) {
-    // store information with the visual on how we created it
-    container['data-renderDataCache'] = cache
-
-    const layout = label.layout
-    // The group containing all other elements
-    container.setAttribute('class', this.className)
-
-    // The table background
-    container.appendChild(
-      DataTableNodeStyle.createRectangle(
-        0,
-        0,
-        layout.width,
-        layout.height,
-        `${this.className} background`
-      )
-    )
-
-    const names = cache.propertyNames
-    if (names) {
-      this.updateTextSizes(names, cache)
-      container.appendChild(this.createTextElement(names, cache.data, cache))
-
-      const path = window.document.createElementNS('http://www.w3.org/2000/svg', 'path')
-      path.setAttribute('class', `${this.className} grid`)
-      path.setAttribute('d', this.createInnerGridPathString(names.length, layout, cache))
-      container.appendChild(path)
-    }
-
-    // The table border
-    container.appendChild(
-      DataTableNodeStyle.createRectangle(
-        0,
-        0,
-        layout.width,
-        layout.height,
-        `${this.className} border`
-      )
-    )
-  }
-
-  /**
-   * Creates the path data string for the inner grid lines.
-   * @param {number} columnCount
-   * @param {Size} size
-   * @param {object} renderDataCache
-   * @return {string}
-   */
-  createInnerGridPathString(columnCount, size, renderDataCache) {
-    const cellHeight = renderDataCache.lineHeight + 2 * this.textPadding
-    const tp = 0.5 * this.tablePadding
-    const maxX = size.width - tp
-    const maxY = size.height - tp
-
-    let y = this.tablePadding + cellHeight
-    let d = ''
-    for (let i = 1; i < columnCount && y < maxY; i++, y += cellHeight) {
-      d += ` M ${tp} ${y} H ${maxX}`
-    }
-
-    const vLineX = this.tablePadding + renderDataCache.maxLabelWidth + 2 * this.textPadding
-    if (vLineX < maxX) {
-      d += ` M ${vLineX} ${tp} V ${maxY}`
-    }
-    return d.length > 0 ? d : 'M 0 0'
-  }
-
-  /**
-   * Creates the text element, containing all label texts and all value texts.
-   * @param {Array.<string>} names
-   * @param {object} data
-   * @param {object} renderDataCache
-   * @return {Element}
-   */
-  createTextElement(names, data, renderDataCache) {
-    const text = window.document.createElementNS('http://www.w3.org/2000/svg', 'text')
-
-    const cellHeight = renderDataCache.lineHeight + 2 * this.textPadding
-    const labelTextX = this.tablePadding + this.textPadding
-    const valueTextX = this.tablePadding + renderDataCache.maxLabelWidth + 3 * this.textPadding
-
-    // Create lines with text and horizontal splitters
-    let y = this.tablePadding
-    for (let i = 0; i < names.length; i++) {
-      y += cellHeight
-      const propertyName = names[i]
-      const propertyData = data[propertyName]
-      const baseline = y - this.textPadding - 2
-
-      const nameTitleCase = DataTableNodeStyle.toTitleCase(propertyName)
-      text.appendChild(
-        DataTableNodeStyle.createTextBlock(labelTextX, baseline, nameTitleCase, this.className)
-      )
-      text.appendChild(
-        DataTableNodeStyle.createTextBlock(valueTextX, baseline, propertyData, this.className)
-      )
-    }
-
-    return text
-  }
-
-  /**
    * Callback that returns the preferred {@link Size size} of the label.
-   * @param {ILabel} label The label to which this style instance is assigned.
-   * @return {Size} The preferred size.
+   * @param {!ILabel} label The label to which this style instance is assigned.
+   * @returns {!Size} The preferred size.
    */
   getPreferredSize(label) {
     const data = label.owner.tag
-    if (data === null) {
+    if (!data) {
       return Size.EMPTY
     }
+
+    const font = this.renderSupport.font
 
     const propertyNames = Object.keys(data)
     let labelColumnWidth = 0.0
@@ -236,50 +113,20 @@ export default class DataTableLabelStyle extends LabelStyleBase {
       const propertyName = propertyNames[i]
       labelColumnWidth = Math.max(
         labelColumnWidth,
-        TextRenderSupport.measureText(propertyName, this.font).width
+        TextRenderSupport.measureText(propertyName, font).width
       )
       valueColumnWidth = Math.max(
         valueColumnWidth,
-        TextRenderSupport.measureText(data[propertyName], this.font).width
+        TextRenderSupport.measureText(data[propertyName], font).width
       )
     }
 
-    const lineHeight = TextRenderSupport.measureText('Xg', this.font).height
-    const tabPad2 = 2 * this.tablePadding
+    const lineHeight = TextRenderSupport.measureText('Xg', font).height
+    const tabPad2 = 2 * this.renderSupport.tablePadding
+    const textPad = this.renderSupport.textPadding
     return new Size(
-      tabPad2 + 4 * this.textPadding + labelColumnWidth + valueColumnWidth,
-      tabPad2 + propertyNames.length * (2 * this.textPadding + lineHeight)
+      tabPad2 + 4 * textPad + labelColumnWidth + valueColumnWidth,
+      tabPad2 + propertyNames.length * (2 * textPad + lineHeight)
     )
-  }
-
-  /**
-   * Updates the line height and the maximum label width stored in the given RenderDataCache
-   * by measuring the given texts.
-   * @param {Array.<string>} names
-   * @param {object} renderDataCache
-   */
-  updateTextSizes(names, renderDataCache) {
-    if (renderDataCache.lineHeight < 0) {
-      renderDataCache.lineHeight = TextRenderSupport.measureText('Xg', this.font).height
-    }
-    if (renderDataCache.maxLabelWidth < 0) {
-      renderDataCache.maxLabelWidth = this.calculateMaximumLabelWidth(names)
-    }
-  }
-
-  /**
-   * Calculates the maximum label width by measuring the texts.
-   * @param {Array.<string>} names
-   * @return {number}
-   */
-  calculateMaximumLabelWidth(names) {
-    let labelColumnWidth = 0.0
-    for (let i = 0; i < names.length; i++) {
-      labelColumnWidth = Math.max(
-        labelColumnWidth,
-        TextRenderSupport.measureText(names[i], this.font).width
-      )
-    }
-    return labelColumnWidth
   }
 }

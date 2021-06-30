@@ -24,8 +24,8 @@
         <li>Toggle editing support using the "Toggle Editing" button.</li>
         <li>
           After the graph has been edited, click
-          <img style="vertical-align: middle;" src="../assets/reload-16.svg" /> to reload the
-          initial sample graph.
+          <img style="vertical-align: middle" src="../assets/reload-16.svg" /> to reload the initial
+          sample graph.
         </li>
         <li>
           The integrated development server of the Vue-CLI project will automatically update the

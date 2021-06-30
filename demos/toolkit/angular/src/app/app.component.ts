@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -32,25 +32,37 @@ import {
   Component,
   ComponentFactoryResolver,
   Injector,
-  NgZone,
-  ViewChild
+  NgZone
 } from '@angular/core'
 import {
+  GraphComponent,
   IArrow,
   ICommand,
   IGraph,
-  PolylineEdgeStyle,
+  INode,
+  LayoutExecutorAsync,
   OrganicEdgeRouter,
+  PolylineEdgeStyle,
   Size,
   TreeLayout,
-  TreeReductionStage,
-  INode
+  TreeReductionStage
 } from 'yfiles'
-import { GraphComponentComponent } from './graph-component/graph-component.component'
 import { EDGE_DATA, NODE_DATA } from './data'
-import 'yfiles/view-layout-bridge.js'
 import { Person } from './person'
 import { NodeComponentStyle } from './NodeComponentStyle'
+import { detectInternetExplorerVersion } from '../utils/Workarounds'
+import { GraphComponentService } from './services/graph-component.service'
+import GraphSearch from '../utils/GraphSearch'
+
+const ieVersion = detectInternetExplorerVersion()
+const useWebWorkerLayout = ieVersion === -1 || ieVersion > 11
+
+// Run layout calculation on a Web Worker
+let layoutWorker: Worker
+if (useWebWorkerLayout && typeof Worker !== 'undefined') {
+  // @ts-ignore
+  layoutWorker = new Worker(new URL('./layout.worker.ts', import.meta.url), { type: 'module' })
+}
 
 @Component({
   selector: 'app-root',
@@ -60,72 +72,74 @@ import { NodeComponentStyle } from './NodeComponentStyle'
 export class AppComponent implements AfterViewInit {
   title = 'app'
 
-  @ViewChild(GraphComponentComponent)
-  private gcComponent!: GraphComponentComponent
-
   public currentPerson?: Person
+  private graphComponent!: GraphComponent
+  searchString = ''
+  graphSearch!: GraphSearch
 
-  // eslint-disable-next-line no-useless-constructor
   constructor(
     private _injector: Injector,
     private _resolver: ComponentFactoryResolver,
     private _appRef: ApplicationRef,
-    private _zone: NgZone
+    private _zone: NgZone,
+    private _graphComponentService: GraphComponentService
   ) {}
 
   ngAfterViewInit() {
-    // run outside Angular so the change detection won't slow down yFiles
-    this._zone.runOutsideAngular(() => {
-      const graphComponent = this.gcComponent.graphComponent
-      const graph = graphComponent.graph
+    this.graphComponent = this._graphComponentService.getGraphComponent()
 
-      graph.nodeDefaults.size = new Size(285, 100)
-      graph.nodeDefaults.style = new NodeComponentStyle(
-        this._injector,
-        this._resolver,
-        this._appRef,
-        this._zone
-      )
+    // specify node and edge styles for newly created items
+    this.setDefaultStyles(this.graphComponent.graph)
 
-      graph.edgeDefaults.style = new PolylineEdgeStyle({
-        stroke: '2px rgb(170, 170, 170)',
-        targetArrow: IArrow.NONE
-      })
+    // hook up the properties view panel with the current item of the graph
+    this.graphComponent.addCurrentItemChangedListener(() => {
+      this.currentPerson = this.graphComponent.currentItem!.tag
+    })
 
-      graphComponent.addCurrentItemChangedListener(() => {
-        this.currentPerson = graphComponent.currentItem!.tag
-      })
+    // create a sample graph from data
+    createSampleGraph(this.graphComponent.graph)
+    this.graphComponent.fitGraphBounds()
 
-      createSampleGraph(graph)
+    // arrange the graph elements in a tree-like fashion
+    runLayout(this.graphComponent)
 
-      runLayout(graph)
+    // register the graph search
+    this.graphSearch = new PersonSearch(this.graphComponent)
+  }
 
-      graphComponent.fitGraphBounds()
+  private setDefaultStyles(graph: IGraph) {
+    graph.nodeDefaults.size = new Size(285, 100)
+    graph.nodeDefaults.style = new NodeComponentStyle(
+      this._injector,
+      this._resolver,
+      this._appRef,
+      this._zone
+    )
+
+    graph.edgeDefaults.style = new PolylineEdgeStyle({
+      stroke: '2px rgb(170, 170, 170)',
+      targetArrow: IArrow.NONE
     })
   }
 
   zoomIn() {
-    this._zone.runOutsideAngular(() => {
-      ICommand.INCREASE_ZOOM.execute(null, this.gcComponent.graphComponent)
-    })
+    ICommand.INCREASE_ZOOM.execute(null, this.graphComponent)
   }
 
   zoomOriginal() {
-    this._zone.runOutsideAngular(() => {
-      ICommand.ZOOM.execute(1, this.gcComponent.graphComponent)
-    })
+    ICommand.ZOOM.execute(1, this.graphComponent)
   }
 
   zoomOut() {
-    this._zone.runOutsideAngular(() => {
-      ICommand.DECREASE_ZOOM.execute(null, this.gcComponent.graphComponent)
-    })
+    ICommand.DECREASE_ZOOM.execute(null, this.graphComponent)
   }
 
   fitContent() {
-    this._zone.runOutsideAngular(() => {
-      ICommand.FIT_GRAPH_BOUNDS.execute(null, this.gcComponent.graphComponent)
-    })
+    ICommand.FIT_GRAPH_BOUNDS.execute(null, this.graphComponent)
+  }
+
+  onSearchInput(query: string) {
+    this.graphSearch.updateSearch(query)
   }
 }
 
@@ -147,13 +161,47 @@ function createSampleGraph(graph: IGraph): void {
   })
 }
 
-function runLayout(graph: IGraph): void {
-  const treeLayout = new TreeLayout()
-  const treeReductionStage = new TreeReductionStage()
-  treeReductionStage.nonTreeEdgeRouter = new OrganicEdgeRouter()
-  treeReductionStage.nonTreeEdgeSelectionKey = OrganicEdgeRouter.AFFECTED_EDGES_DP_KEY
+async function runLayout(graphComponent: GraphComponent): Promise<void> {
+  if (layoutWorker != null) {
+    // run layout calculation in a Web Worker thread
 
-  treeLayout.appendStage(treeReductionStage)
+    // helper function that performs the actual message passing to the web worker
+    function webWorkerMessageHandler(data: unknown): Promise<any> {
+      return new Promise(resolve => {
+        layoutWorker.onmessage = (e: any) => resolve(e.data)
+        layoutWorker.postMessage(data)
+      })
+    }
 
-  graph.applyLayout(treeLayout)
+    // create an asynchronous layout executor that calculates a layout on the worker
+    const executor = new LayoutExecutorAsync({
+      messageHandler: webWorkerMessageHandler,
+      graphComponent,
+      duration: '1s',
+      easedAnimation: true,
+      animateViewport: true
+    })
+
+    await executor.start()
+  } else {
+    // just run the layout calculation in the main thread
+    const treeLayout = new TreeLayout()
+    const treeReductionStage = new TreeReductionStage()
+    treeReductionStage.nonTreeEdgeRouter = new OrganicEdgeRouter()
+    treeReductionStage.nonTreeEdgeSelectionKey = OrganicEdgeRouter.AFFECTED_EDGES_DP_KEY
+
+    treeLayout.appendStage(treeReductionStage)
+
+    await graphComponent.morphLayout(treeLayout, '1s')
+  }
+}
+
+class PersonSearch extends GraphSearch {
+  matches(node: INode, text: string): boolean {
+    if (node.tag instanceof Person) {
+      const person = node.tag
+      return person.name.toLowerCase().indexOf(text.toLowerCase()) !== -1
+    }
+    return false
+  }
 }

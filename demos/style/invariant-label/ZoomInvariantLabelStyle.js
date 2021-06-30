@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -49,26 +49,27 @@ import {
   Rect,
   SimpleLabel,
   Size,
+  SvgVisual,
   SvgVisualGroup,
-  Visual
+  WebGLSupport
 } from 'yfiles'
 
 /**
  * A label style that renders labels at the same size regardless of the zoom level.
  * The style is implemented as a wrapper for an existing label style.
  */
-class ZoomInvariantLabelStyleBase extends LabelStyleBase {
+export class ZoomInvariantLabelStyleBase extends LabelStyleBase {
   /**
    * Instantiates a new label style.
    *
-   * @param {ILabelStyle} innerLabelStyle the style of the label
+   * @param {!ILabelStyle} innerLabelStyle the style of the label
    * @param {number} zoomThreshold the threshold that we use to control the label's size
    */
   constructor(innerLabelStyle, zoomThreshold) {
     super()
-    this.innerLabelStyle = innerLabelStyle
     this.dummyLabelLayout = new OrientedRectangle()
     this.dummyLabelBounds = new OrientedRectangle()
+    this.innerLabelStyle = innerLabelStyle
     this.dummyLabel = new SimpleLabel(
       null,
       '',
@@ -80,7 +81,8 @@ class ZoomInvariantLabelStyleBase extends LabelStyleBase {
   /**
    * Returns the preferred size calculated by the inner style.
    *
-   * @param {ILabel} label the current label which will be styled
+   * @param {!ILabel} label the current label which will be styled
+   * @returns {!Size}
    */
   getPreferredSize(label) {
     return this.innerLabelStyle.renderer.getPreferredSize(label, this.innerLabelStyle)
@@ -89,8 +91,9 @@ class ZoomInvariantLabelStyleBase extends LabelStyleBase {
   /**
    * Determines the scale factor for the given label and zoom level.
    *
-   * @param {ILabel} label the current label which will be styled
+   * @param {!ILabel} label the current label which will be styled
    * @param {number} zoom the current zoom level
+   * @returns {number}
    */
   getScaleForZoom(label, zoom) {
     // base implementation does nothing
@@ -100,9 +103,9 @@ class ZoomInvariantLabelStyleBase extends LabelStyleBase {
   /**
    * Creates the visual for the label.
    *
-   * @param {ILabel} label The label to which this style instance is assigned.
-   * @param {IRenderContext} ctx The render context.
-   * @return {Visual | SvgVisualGroup} The visual as required by the {@link IVisualCreator#createVisual} interface.
+   * @param {!ILabel} label The label to which this style instance is assigned.
+   * @param {!IRenderContext} ctx The render context.
+   * @returns {!SvgVisualGroup} The visual as required by the {@link IVisualCreator#createVisual} interface.
    */
   createVisual(ctx, label) {
     this.updateDummyLabel(ctx, label)
@@ -126,7 +129,7 @@ class ZoomInvariantLabelStyleBase extends LabelStyleBase {
     )
 
     // pass inverse transform to nullify the scaling and translation on the context
-    // therefor inner styles can use the context's methods without considering the current transform
+    // therefore inner styles can use the context's methods without considering the current transform
     const inverseTransform = container.transform.clone()
     inverseTransform.invert()
     const innerContext = new DummyContext(ctx, scale * ctx.zoom, inverseTransform)
@@ -144,10 +147,10 @@ class ZoomInvariantLabelStyleBase extends LabelStyleBase {
   /**
    * Update the visual previously created by createVisual.
    *
-   * @param {ILabel} label The label to which this style instance is assigned.
-   * @param {IRenderContext} ctx The render context.
-   * @param {Visual | SvgVisualGroup} oldVisual The visual that has been created in the call to createVisual.
-   * @return {Visual | null} visual as required by the {@link IVisualCreator#createVisual} interface.
+   * @param {!ILabel} label The label to which this style instance is assigned.
+   * @param {!IRenderContext} ctx The render context.
+   * @param {!SvgVisualGroup} oldVisual The visual that has been created in the call to createVisual.
+   * @returns {?SvgVisual} visual as required by the {@link IVisualCreator#createVisual} interface.
    */
   updateVisual(ctx, oldVisual, label) {
     this.updateDummyLabel(ctx, label)
@@ -175,13 +178,13 @@ class ZoomInvariantLabelStyleBase extends LabelStyleBase {
     )
 
     // pass inverse transform to nullify the scaling and translation on the context
-    // therefor inner styles can use the context's methods without considering the current transform
+    // therefore inner styles can use the context's methods without considering the current transform
     const inverseTransform = oldVisual.transform.clone()
     inverseTransform.invert()
     const innerContext = new DummyContext(ctx, scale * ctx.zoom, inverseTransform)
 
     const updatedVisual = creator.updateVisual(innerContext, visual)
-    if (updatedVisual === null) {
+    if (!updatedVisual) {
       // nothing to display -> return nothing
       return null
     }
@@ -196,10 +199,8 @@ class ZoomInvariantLabelStyleBase extends LabelStyleBase {
 
   /**
    * Updates the internal label to match the given original label.
-   *
-   * @param {ICanvasContext} context
-   * @param {ILabel} original
-   * @private
+   * @param {!ICanvasContext} context
+   * @param {!ILabel} original
    */
   updateDummyLabel(context, original) {
     this.dummyLabel.owner = original.owner
@@ -221,9 +222,9 @@ class ZoomInvariantLabelStyleBase extends LabelStyleBase {
   /**
    * Gets the bounds of the visual for the label in the given context.
    *
-   * @param {ILabel} label The label to which this style instance is assigned.
-   * @param {ICanvasContext} canvasContext The canvas context.
-   * @return {Rect} The visual bounds of the visual representation.
+   * @param {!ILabel} label The label to which this style instance is assigned.
+   * @param {!ICanvasContext} canvasContext The canvas context.
+   * @returns {!Rect} The visual bounds of the visual representation.
    */
   getBounds(canvasContext, label) {
     this.updateDummyLabel(canvasContext, label)
@@ -240,10 +241,10 @@ class ZoomInvariantLabelStyleBase extends LabelStyleBase {
   /**
    * Determines whether the visualization for the specified label is visible in the context.
    *
-   * @param {ILabel} label The label to which this style instance is assigned.
-   * @param {Rect} clip The clipping rectangle.
-   * @param {ICanvasContext} canvasContext The canvas context.
-   * @return {boolean}
+   * @param {!ILabel} label The label to which this style instance is assigned.
+   * @param {!Rect} clip The clipping rectangle.
+   * @param {!ICanvasContext} canvasContext The canvas context.
+   * @returns {boolean}
    */
   isVisible(canvasContext, clip, label) {
     this.updateDummyLabel(canvasContext, label)
@@ -253,10 +254,10 @@ class ZoomInvariantLabelStyleBase extends LabelStyleBase {
   /**
    * Determines whether the visual representation of the label has been hit at the given location.
    *
-   * @param {ILabel} label The label to which this style instance is assigned.
-   * @param {Point} p The point to test.
-   * @param {IInputModeContext} canvasContext The canvas context.
-   * @return {boolean}
+   * @param {!ILabel} label The label to which this style instance is assigned.
+   * @param {!Point} p The point to test.
+   * @param {!IInputModeContext} canvasContext The canvas context.
+   * @returns {boolean}
    */
   isHit(canvasContext, p, label) {
     this.updateDummyLabel(canvasContext, label)
@@ -266,10 +267,10 @@ class ZoomInvariantLabelStyleBase extends LabelStyleBase {
   /**
    * Determines whether the visualization for the specified label is included in the marquee selection.
    *
-   * @param {ILabel} label The label to which this style instance is assigned.
-   * @param {Rect} box The marquee selection box.
-   * @param {IInputModeContext} canvasContext The canvas context.
-   * @return {boolean}
+   * @param {!ILabel} label The label to which this style instance is assigned.
+   * @param {!Rect} box The marquee selection box.
+   * @param {!IInputModeContext} canvasContext The canvas context.
+   * @returns {boolean}
    */
   isInBox(canvasContext, box, label) {
     this.updateDummyLabel(canvasContext, label)
@@ -279,9 +280,9 @@ class ZoomInvariantLabelStyleBase extends LabelStyleBase {
   /**
    * Returns an adjusted selection rectangle for the resized label styles.
    *
-   * @param {ILabel} label
-   * @param {Class} type
-   * @return {Object}
+   * @param {!ILabel} label
+   * @param {!Class} type
+   * @returns {!object}
    */
   lookup(label, type) {
     if (type === ISelectionIndicatorInstaller.$class) {
@@ -295,8 +296,9 @@ export class ZoomInvariantBelowThresholdLabelStyle extends ZoomInvariantLabelSty
   /**
    * Stops the label from getting smaller in view coordinates if the zoom is smaller than zoomThreshold.
    *
-   * @param {ILabel} label the current label which will be styled
+   * @param {!ILabel} label the current label which will be styled
    * @param {number} zoom the current zoom level
+   * @returns {number}
    */
   getScaleForZoom(label, zoom) {
     if (zoom > this.zoomThreshold) {
@@ -310,8 +312,9 @@ export class ZoomInvariantAboveThresholdLabelStyle extends ZoomInvariantLabelSty
   /**
    * Stops the label from getting larger in view coordinates if the zoom is greater than zoomThreshold.
    *
-   * @param {ILabel} label the current label which will be styled
+   * @param {!ILabel} label the current label which will be styled
    * @param {number} zoom the current zoom level
+   * @returns {number}
    */
   getScaleForZoom(label, zoom) {
     if (zoom < this.zoomThreshold) {
@@ -322,6 +325,11 @@ export class ZoomInvariantAboveThresholdLabelStyle extends ZoomInvariantLabelSty
 }
 
 export class ZoomInvariantOutsideRangeLabelStyle extends ZoomInvariantLabelStyleBase {
+  /**
+   * @param {!ILabelStyle} innerLabelStyle
+   * @param {number} zoomThreshold
+   * @param {number} maxScale
+   */
   constructor(innerLabelStyle, zoomThreshold, maxScale) {
     super(innerLabelStyle, zoomThreshold)
     this.maxScale = maxScale
@@ -331,8 +339,9 @@ export class ZoomInvariantOutsideRangeLabelStyle extends ZoomInvariantLabelStyle
    * Stops the label from getting smaller in view coordinates if the zoom is smaller than zoomThreshold
    * and stops it from getting larger in view coordinates if the zoom is greater than maxScale.
    *
-   * @param {ILabel} label the current label which will be styled
+   * @param {!ILabel} label the current label which will be styled
    * @param {number} zoom the current zoom level
+   * @returns {number}
    */
   getScaleForZoom(label, zoom) {
     if (zoom < this.zoomThreshold) {
@@ -346,26 +355,30 @@ export class ZoomInvariantOutsideRangeLabelStyle extends ZoomInvariantLabelStyle
 }
 
 export class FitOwnerLabelStyle extends ZoomInvariantLabelStyleBase {
+  /**
+   * @param {!ILabelStyle} innerLabelStyle
+   */
   constructor(innerLabelStyle) {
     super(innerLabelStyle, 1)
   }
 
   /**
    * Scales the label to fit its owner.
-   * @param {ILabel} label the current label which will be styled
+   * @param {!ILabel} label the current label which will be styled
+   * @param {number} zoom the scale for the zoom
+   * @returns {number}
    */
   getScaleForZoom(label, zoom) {
     const labelWidth = label.layout.width
     let ratio = 1
-    if (INode.isInstance(label.owner)) {
+    if (label.owner instanceof INode) {
       const nodeWidth = label.owner.layout.width
       ratio = Math.min(1, nodeWidth / labelWidth)
-    } else if (IEdge.isInstance(label.owner)) {
+    } else if (label.owner instanceof IEdge) {
       const edge = label.owner
-      const edgeLength = Math.sqrt(
-        Math.pow(edge.sourcePort.location.x - edge.targetPort.location.x, 2) +
-          Math.pow(edge.sourcePort.location.y - edge.targetPort.location.y, 2)
-      )
+      const sourcePortLocation = edge.sourcePort.location
+      const targetPortLocation = edge.targetPort.location
+      const edgeLength = sourcePortLocation.distanceTo(targetPortLocation)
       ratio = Math.min(1, edgeLength / labelWidth)
     }
     return ratio
@@ -374,42 +387,58 @@ export class FitOwnerLabelStyle extends ZoomInvariantLabelStyleBase {
 
 class DummyContext extends BaseClass(IRenderContext) {
   /**
-   * @param {IRenderContext} innerContext
+   * @param {!IRenderContext} innerContext
    * @param {number} zoom
-   * @param {Matrix} inverseTransform
+   * @param {!Matrix} inverseTransform
    */
   constructor(innerContext, zoom, inverseTransform) {
     super()
     this.innerContext = innerContext
-    this.$zoom = zoom
-    this.$transform = inverseTransform
+    this._zoom = zoom
+    this._transform = inverseTransform
 
     // multiply all necessary transforms with the given inverse transform to nullify the outer transform
-    this.$viewTransform = this.$transformMatrix(this.innerContext.viewTransform)
-    this.$intermediateTransform = this.$transformMatrix(this.innerContext.intermediateTransform)
-    this.$projection = this.$transformMatrix(this.innerContext.projection)
+    // multiply all necessary transforms with the given inverse transform to nullify the outer transform
+    this._viewTransform = this.transformMatrix(innerContext.viewTransform)
+    this._intermediateTransform = this.transformMatrix(innerContext.intermediateTransform)
+    this._projection = this.transformMatrix(innerContext.projection)
   }
 
   get canvasComponent() {
     return this.innerContext.canvasComponent
   }
 
+  /**
+   * @type {!Rect}
+   */
   get clip() {
     return this.innerContext.clip
   }
 
+  /**
+   * @type {!Matrix}
+   */
   get viewTransform() {
-    return this.$viewTransform
+    return this._viewTransform
   }
 
+  /**
+   * @type {!Matrix}
+   */
   get intermediateTransform() {
-    return this.$intermediateTransform
+    return this._intermediateTransform
   }
 
+  /**
+   * @type {!Matrix}
+   */
   get projection() {
-    return this.$projection
+    return this._projection
   }
 
+  /**
+   * @type {!Element}
+   */
   get defsElement() {
     return this.innerContext.defsElement
   }
@@ -418,47 +447,62 @@ class DummyContext extends BaseClass(IRenderContext) {
     return this.innerContext.svgDefsManager
   }
 
+  /**
+   * @type {number}
+   */
   get zoom() {
-    return this.$zoom
+    return this._zoom
   }
 
+  /**
+   * @type {number}
+   */
   get hitTestRadius() {
     return this.innerContext.hitTestRadius
   }
 
   /**
-   * @param {Point} worldPoint
-   * @returns {Point}
+   * @type {!WebGLSupport}
+   */
+  get webGLSupport() {
+    return this.innerContext.webGLSupport
+  }
+
+  /**
+   * @param {!Point} worldPoint
+   * @returns {!Point}
    */
   toViewCoordinates(worldPoint) {
-    return this.$viewTransform.transform(worldPoint)
+    return this._viewTransform.transform(worldPoint)
   }
 
   /**
-   * @param {Point} intermediatePoint
-   * @returns {Point}
+   * @param {!Point} intermediatePoint
+   * @returns {!Point}
    */
   intermediateToViewCoordinates(intermediatePoint) {
-    return this.$projection.transform(intermediatePoint)
+    return this._projection.transform(intermediatePoint)
   }
 
   /**
-   * @param {Point} worldPoint
-   * @returns {Point}
+   * @param {!Point} worldPoint
+   * @returns {!Point}
    */
   worldToIntermediateCoordinates(worldPoint) {
-    return this.$intermediateTransform.transform(worldPoint)
+    return this._intermediateTransform.transform(worldPoint)
   }
 
   /**
-   * @param {ISvgDefsCreator} defsSupport
+   * @param {!ISvgDefsCreator} defsSupport
+   * @returns {!string}
    */
   getDefsId(defsSupport) {
     return this.innerContext.getDefsId(defsSupport)
   }
 
   /**
-   * @param {Class} type
+   * @param {!Class} type
+   * @returns {?object}
    */
   lookup(type) {
     return this.innerContext.lookup(type)
@@ -466,12 +510,12 @@ class DummyContext extends BaseClass(IRenderContext) {
 
   /**
    * Multiplies the given matrix with the inverse transform of the invariant label style.
-   * @param {Matrix} matrix
-   * @returns {Matrix}
+   * @param {!Matrix} matrix
+   * @returns {!Matrix}
    */
-  $transformMatrix(matrix) {
+  transformMatrix(matrix) {
     const transformed = matrix.clone()
-    transformed.multiply(this.$transform, MatrixOrder.APPEND)
+    transformed.multiply(this._transform, MatrixOrder.APPEND)
     return transformed
   }
 }

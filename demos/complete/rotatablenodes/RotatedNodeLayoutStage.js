@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -33,6 +33,7 @@ import {
   IDataMap,
   IDataProvider,
   ILayoutAlgorithm,
+  IOrientedRectangle,
   LayoutGraph,
   LayoutStageBase,
   Maps,
@@ -47,7 +48,15 @@ import {
 } from 'yfiles'
 
 /**
- * Layout Stage which handles {@link RotatableNodes.RotatableNodeStyleDecorator rotated nodes}.
+ * @typedef {Object} Dimensions
+ * @property {Point} offset
+ * @property {Size} size
+ * @property {GeneralPath} outline
+ * @property {YPoint} location
+ */
+
+/**
+ * Layout Stage which handles {@link RotatableNodeStyleDecorator rotated nodes}.
  * The during the {@link LayoutStageBase#coreLayout} the layout is calculated with the rotated node's
  * bounding box, i.e. a rectangular box which is large enough to fully include the rotated node. The edges are
  * connected with the actual rotated shape of the node according to the {@link #edgeRoutingMode}.
@@ -55,36 +64,22 @@ import {
 export default class RotatedNodeLayoutStage extends LayoutStageBase {
   /**
    * Creates a new instance with an optional core layout algorithm.
-   * @param {ILayoutAlgorithm} coreLayout
+   * @param {?ILayoutAlgorithm} [coreLayout=null]
    */
   constructor(coreLayout = null) {
     super(coreLayout)
-    this.$edgeRoutingMode = 'shortest-straight-path-to-border'
+
+    // How to connect edges from the bounding box to the actual shape.
+    this.edgeRoutingMode = 'shortest-straight-path-to-border'
   }
 
   /**
    * The {@link IDataProvider} key to register a data provider that provides the outline and
    * oriented layout to this stage.
-   * @return {string}
+   * @type {!string}
    */
   static get ROTATED_NODE_LAYOUT_DP_KEY() {
     return 'RotatedNodeLayoutStage.RotatedNodeLayoutDpKey'
-  }
-
-  /**
-   * Returns the mode to use to connect edges from the bounding box to the actual shape.
-   * @return {'no-routing'|'shortest-straight-path-to-border'|'fixed-port'}
-   */
-  get edgeRoutingMode() {
-    return this.$edgeRoutingMode
-  }
-
-  /**
-   * Specifies the mode to use to connect edges from the bounding box to the actual shape.
-   * @param {'no-routing'|'shortest-straight-path-to-border'|'fixed-port'} mode
-   */
-  set edgeRoutingMode(mode) {
-    this.$edgeRoutingMode = mode
   }
 
   /**
@@ -96,7 +91,7 @@ export default class RotatedNodeLayoutStage extends LayoutStageBase {
    * After the core layout the original node sizes are restored. If the {@link #edgeRoutingMode} is set to
    * 'shortest-straight-path-to-border', the last edge segment is extended from the bounding box to the rotated
    * layout.
-   * @param {LayoutGraph} graph
+   * @param {!LayoutGraph} graph
    */
   applyLayout(graph) {
     if (!this.coreLayout) {
@@ -152,7 +147,8 @@ export default class RotatedNodeLayoutStage extends LayoutStageBase {
           const oldDimensions = {
             offset,
             size: originalSize,
-            outline
+            outline,
+            location: null
           }
           if (this.edgeRoutingMode === 'fixed-port') {
             // EdgeRoutingMode: FixedPort: keep the ports at their current location
@@ -286,12 +282,12 @@ export default class RotatedNodeLayoutStage extends LayoutStageBase {
   /**
    * Find the best {@link PortSide} according to the position of the port.
    * The orientation is not rotated, i.e. bottomLeft is always the anchor of the oriented rectangle.
-   * @param {Point} point
-   * @param {Point} bottomLeft
-   * @param {Point} bottomRight
-   * @param {Point} topLeft
-   * @param {Point} topRight
-   * @return {PortSide}
+   * @param {!Point} point
+   * @param {!Point} bottomLeft
+   * @param {!Point} bottomRight
+   * @param {!Point} topLeft
+   * @param {!Point} topRight
+   * @returns {!PortSide}
    */
   findBestSide(point, bottomLeft, bottomRight, topLeft, topRight) {
     // determine the distances to the sides of the oriented rectangle
@@ -320,8 +316,8 @@ export default class RotatedNodeLayoutStage extends LayoutStageBase {
    * rotation.
    * If the oriented rectangle is rotated 180° the port sides will be flipped, e.g. the port constraints will be
    * replaced.
-   * @param {IDataMap} portConstraints
-   * @param {Edge} edge
+   * @param {!IDataMap} portConstraints
+   * @param {!Edge} edge
    * @param {number} angle
    */
   fixPortConstraintSide(portConstraints, edge, angle) {
@@ -390,9 +386,9 @@ export default class RotatedNodeLayoutStage extends LayoutStageBase {
 
   /**
    * Fix the ports for 'shortest-straight-path-to-border' by enlarging the adjacent segment to the rotated layout.
-   * @param {LayoutGraph} graph
-   * @param {Edge} edge
-   * @param {GeneralPath} path
+   * @param {!LayoutGraph} graph
+   * @param {!Edge} edge
+   * @param {!GeneralPath} path
    * @param {boolean} atSource
    */
   fixPorts(graph, edge, path, atSource) {
@@ -403,9 +399,8 @@ export default class RotatedNodeLayoutStage extends LayoutStageBase {
       ? (pointCount > 0 ? el.getPoint(0) : graph.getTargetPointAbs(edge)).toPoint()
       : (pointCount > 0 ? el.getPoint(pointCount - 1) : graph.getSourcePointAbs(edge)).toPoint()
     // The port itself
-    const port = (atSource
-      ? graph.getSourcePointAbs(edge)
-      : graph.getTargetPointAbs(edge)
+    const port = (
+      atSource ? graph.getSourcePointAbs(edge) : graph.getTargetPointAbs(edge)
     ).toPoint()
     // The adjacent segment as vector pointing from the opposite point to the port
     const direction = port.subtract(firstBend)

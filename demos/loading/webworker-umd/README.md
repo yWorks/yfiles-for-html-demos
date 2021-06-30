@@ -8,9 +8,9 @@ This demo shows how to run a yFiles layout algorithm in a [Web Worker](https://h
 
 In order to run this demo, please run `npm install` in the demo folder.
 
-Because web workers cannot load ES modules (yet), this demo loads yFiles using the AMD loader require.js
+This demo loads yFiles using the AMD loader require.js
 
-To transfer the graph structure and layout between the worker and the main page, a simple JSON format is used. As the web worker environment does not support any DOM-related functionality, the GraphML format can't be used for this purpose.
+The graph, layout, and layout data are configured in the main thread and transferred to the web worker using class [LayoutExecutorAsync](https://docs.yworks.com/yfileshtml/#/api/LayoutExecutorAsync). The actual layout calculation is performed in _WorkerLayout.js_ with class [LayoutExecutorAsyncWorker](https://docs.yworks.com/yfileshtml/#/api/LayoutExecutorAsyncWorker) on the web worker thread.
 
 ## Things to Try
 

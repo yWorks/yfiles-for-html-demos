@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -41,7 +41,7 @@ import HeightHandle from './HeightHandle'
  * An {@link IHandleProvider} implementation that
  * adds a {@link HeightHandle} to a node's available handles.
  */
-export default class HeightHandleProvider extends BaseClass<IHandleProvider>(IHandleProvider) {
+export default class HeightHandleProvider extends BaseClass(IHandleProvider) {
   private readonly node: INode
   private readonly delegateHandler: IHandleProvider
   private readonly minimumHeight: number

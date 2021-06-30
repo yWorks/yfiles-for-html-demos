@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -83,7 +83,9 @@ export class NonOverlapReshapeHandler extends BaseClass(IReshapeHandler) {
   handleReshape(context, originalBounds, newBounds) {
     this.clearTimeout()
     this.handler.handleReshape(context, originalBounds, newBounds)
-    this.timeoutHandle = setTimeout(() => this.layoutHelper.runLayout(), 50)
+    this.timeoutHandle = setTimeout(() => {
+      this.layoutHelper.runLayout()
+    }, 50)
   }
 
   /**

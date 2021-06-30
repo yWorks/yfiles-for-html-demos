@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -31,20 +31,17 @@ import {
   EdgePathLabelModel,
   EdgeStyleDecorationInstaller,
   ExteriorLabelModel,
-  ExteriorLabelModelPosition,
   GraphComponent,
   GraphEditorInputMode,
   GraphItemTypes,
   ICommand,
   LabelStyleDecorationInstaller,
   License,
-  List,
   NodeStyleDecorationInstaller,
   NodeStyleLabelStyleAdapter,
   Point,
   PolylineEdgeStyle,
   Rect,
-  ShapeNodeShape,
   ShapeNodeStyle,
   Size,
   StyleDecorationZoomPolicy,
@@ -52,31 +49,36 @@ import {
 } from 'yfiles'
 
 import { DemoEdgeStyle, DemoNodeStyle } from '../../resources/demo-styles.js'
-import { bindAction, bindChangeListener, bindCommand, showApp } from '../../resources/demo-app.js'
+import { bindChangeListener, bindCommand, showApp } from '../../resources/demo-app.js'
 import loadJson from '../../resources/load-json.js'
 
 /** @type {GraphComponent} */
-let graphComponent = null
+let graphComponent
 
 /** @type {NodeStyleDecorationInstaller} */
-let nodeDecorationInstaller = null
+let nodeDecorationInstaller
 
 /** @type {EdgeStyleDecorationInstaller} */
-let edgeDecorationInstaller = null
+let edgeDecorationInstaller
 
 /** @type {LabelStyleDecorationInstaller} */
-let labelDecorationInstaller = null
+let labelDecorationInstaller
 
-let zoomModeComboBox = null
+/** @type {HTMLSelectElement} */
+let zoomModeComboBox
 
+/** @type {boolean} */
 let nodesSelected = true
 
+/** @type {boolean} */
 let edgesSelected = true
 
+/** @type {boolean} */
 let labelsSelected = true
 
 /**
  * Runs the demo.
+ * @param {!object} licenseData
  */
 function run(licenseData) {
   License.value = licenseData
@@ -105,9 +107,9 @@ function init() {
   zoomModeComboBox = document.getElementById('zoomModeComboBox')
 
   // initialize the helper UI
-  zoomModeComboBox.items = List.fromArray(['Mixed', 'WorldCoordinates', 'ViewCoordinates'])
+  const items = ['Mixed', 'Zoom with Graph', 'Always the same size']
 
-  zoomModeComboBox.items.forEach(name => {
+  items.forEach(name => {
     const option = document.createElement('option')
     option.text = name
     zoomModeComboBox.add(option)
@@ -134,9 +136,7 @@ function initializeGraph() {
   // nodes...
   graph.nodeDefaults.labels.style = simpleLabelStyle
   const exteriorLabelModel = new ExteriorLabelModel({ insets: 15 })
-  graph.nodeDefaults.labels.layoutParameter = exteriorLabelModel.createParameter(
-    ExteriorLabelModelPosition.NORTH
-  )
+  graph.nodeDefaults.labels.layoutParameter = exteriorLabelModel.createParameter('north')
 
   graph.edgeDefaults.style = new DemoEdgeStyle()
   graph.edgeDefaults.labels.style = simpleLabelStyle
@@ -145,15 +145,15 @@ function initializeGraph() {
   graph.edgeDefaults.labels.layoutParameter = new EdgePathLabelModel().createDefaultParameter()
 
   // create a simple sample graph
-  const n1 = graph.createNode(new Rect(0, 0, 50, 30))
-  const n2 = graph.createNode(new Rect(250, 20, 50, 30))
+  const n1 = graph.createNode({ layout: new Rect(0, 0, 50, 30), labels: ['Node 1'] })
+  const n2 = graph.createNode({ layout: new Rect(250, 20, 50, 30), labels: ['Node 2'] })
 
-  graph.addLabel(n1, 'Node 1')
-  graph.addLabel(n2, 'Node 2')
-
-  const edge = graph.createEdge(n1, n2)
-  graph.addBend(edge, new Point(100, 35))
-  graph.addLabel(edge, 'Edge Label')
+  graph.createEdge({
+    source: n1,
+    target: n2,
+    bends: [new Point(100, 35)],
+    labels: ['Edge Label']
+  })
 
   // center the graph on the screen
   graphComponent.fitGraphBounds()
@@ -200,7 +200,7 @@ function initializeDecoration() {
     // decoration
     labelStyle: new NodeStyleLabelStyleAdapter(
       new ShapeNodeStyle({
-        shape: ShapeNodeShape.ROUND_RECTANGLE,
+        shape: 'round-rectangle',
         stroke: 'rgb(104, 176, 227)',
         fill: 'transparent'
       }),
@@ -214,13 +214,13 @@ function initializeDecoration() {
   const decorator = graphComponent.graph.decorator
 
   const nodeSelection = decorator.nodeDecorator.selectionDecorator
-  nodeSelection.setImplementation(node => nodesSelected, nodeDecorationInstaller)
+  nodeSelection.setImplementation(() => nodesSelected, nodeDecorationInstaller)
 
   const edgeSelection = decorator.edgeDecorator.selectionDecorator
-  edgeSelection.setImplementation(edge => edgesSelected, edgeDecorationInstaller)
+  edgeSelection.setImplementation(() => edgesSelected, edgeDecorationInstaller)
 
   const labelSelection = decorator.labelDecorator.selectionDecorator
-  labelSelection.setImplementation(label => labelsSelected, labelDecorationInstaller)
+  labelSelection.setImplementation(() => labelsSelected, labelDecorationInstaller)
 }
 
 /**
@@ -228,15 +228,12 @@ function initializeDecoration() {
  * edges, and labels according to the current settings.
  */
 function updateZoomModeDecoration() {
-  let selectedZoomMode
-
-  if (zoomModeComboBox.selectedIndex === 1) {
-    selectedZoomMode = StyleDecorationZoomPolicy.WORLD_COORDINATES
-  } else if (zoomModeComboBox.selectedIndex === 2) {
-    selectedZoomMode = StyleDecorationZoomPolicy.VIEW_COORDINATES
-  } else {
-    selectedZoomMode = StyleDecorationZoomPolicy.MIXED
-  }
+  const zoomModes = [
+    StyleDecorationZoomPolicy.MIXED,
+    StyleDecorationZoomPolicy.WORLD_COORDINATES,
+    StyleDecorationZoomPolicy.VIEW_COORDINATES
+  ]
+  const selectedZoomMode = zoomModes[zoomModeComboBox.selectedIndex]
 
   nodeDecorationInstaller.zoomPolicy = selectedZoomMode
   edgeDecorationInstaller.zoomPolicy = selectedZoomMode
@@ -259,10 +256,7 @@ function selectAllEdges() {
 
 function selectAllLabels() {
   const labelSelection = graphComponent.selection.selectedLabels
-  graphComponent.graph.edgeLabels.forEach(label => {
-    labelSelection.setSelected(label, true)
-  })
-  graphComponent.graph.nodeLabels.forEach(label => {
+  graphComponent.graph.labels.forEach(label => {
     labelSelection.setSelected(label, true)
   })
 }
@@ -271,48 +265,56 @@ function selectAllLabels() {
  * Wires up the UI.
  */
 function registerCommands() {
-  bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent, null)
-  bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent, null)
-  bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent, null)
-  bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
+  bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent)
+  bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent)
+  bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent)
+  bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1)
 
-  bindCommand(
-    "button[data-command='GroupSelection']",
-    ICommand.GROUP_SELECTION,
-    graphComponent,
-    null
-  )
-  bindCommand(
-    "button[data-command='UngroupSelection']",
-    ICommand.UNGROUP_SELECTION,
-    graphComponent,
-    null
-  )
+  bindCommand("button[data-command='GroupSelection']", ICommand.GROUP_SELECTION, graphComponent)
+  bindCommand("button[data-command='UngroupSelection']", ICommand.UNGROUP_SELECTION, graphComponent)
 
-  bindAction("input[data-command='UpdateNodeDecorationCommand']", customNodeDecorationChanged)
-  bindAction("input[data-command='UpdateEdgeDecorationCommand']", customEdgeDecorationChanged)
-  bindAction("input[data-command='UpdateLabelDecorationCommand']", customLabelDecorationChanged)
+  bindChangeListener(
+    "input[data-command='UpdateNodeDecorationCommand']",
+    customNodeDecorationChanged
+  )
+  bindChangeListener(
+    "input[data-command='UpdateEdgeDecorationCommand']",
+    customEdgeDecorationChanged
+  )
+  bindChangeListener(
+    "input[data-command='UpdateLabelDecorationCommand']",
+    customLabelDecorationChanged
+  )
 
   bindChangeListener("select[data-command='ZoomMode']", zoomModeChanged)
 }
 
-function customNodeDecorationChanged() {
-  nodesSelected = document.querySelector("input[data-command='UpdateNodeDecorationCommand']")
-    .checked
+/**
+ * @param {boolean} value
+ */
+function customNodeDecorationChanged(value) {
+  nodesSelected = value
+  // de-select and re-select all nodes to refresh the selection visualization
   graphComponent.selection.selectedNodes.clear()
   selectAllNodes()
 }
 
-function customEdgeDecorationChanged() {
-  edgesSelected = document.querySelector("input[data-command='UpdateEdgeDecorationCommand']")
-    .checked
+/**
+ * @param {boolean} value
+ */
+function customEdgeDecorationChanged(value) {
+  edgesSelected = value
+  // de-select and re-select all edges to refresh the selection visualization
   graphComponent.selection.selectedEdges.clear()
   selectAllEdges()
 }
 
-function customLabelDecorationChanged() {
-  labelsSelected = document.querySelector("input[data-command='UpdateLabelDecorationCommand']")
-    .checked
+/**
+ * @param {boolean} value
+ */
+function customLabelDecorationChanged(value) {
+  labelsSelected = value
+  // de-select and re-select all labels to refresh the selection visualization
   graphComponent.selection.selectedLabels.clear()
   selectAllLabels()
 }

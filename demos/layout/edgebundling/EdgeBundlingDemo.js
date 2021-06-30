@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -34,10 +34,10 @@ import {
   ConnectedComponents,
   Cursor,
   CurveFittingLayoutStage,
+  DefaultNodePlacer,
   EdgeBundleDescriptor,
   EdgeBundlingStage,
   EdgeBundlingStageData,
-  Enum,
   FreeNodeLabelModel,
   GenericLabeling,
   GraphBuilder,
@@ -48,7 +48,9 @@ import {
   IEdge,
   IGraph,
   ILayoutAlgorithm,
+  IModelItem,
   INode,
+  LayoutData,
   License,
   Mapper,
   OrganicEdgeRouter,
@@ -57,6 +59,7 @@ import {
   RadialLayout,
   RadialLayoutData,
   Rect,
+  ResultItemMapping,
   StraightLineEdgeRouter,
   TreeLayout,
   TreeLayoutEdgeRoutingStyle,
@@ -83,6 +86,18 @@ import RoutingSampleData from './resources/routing.js'
 import loadJson from '../../resources/load-json.js'
 
 /**
+ * @typedef {Object} NodeData
+ * @property {number} id
+ * @property {object} layout
+ */
+
+/**
+ * @typedef {Object} GraphData
+ * @property {Array.<object>} nodes
+ * @property {Array.<object>} edges
+ */
+
+/**
  * The GraphComponent
  * @type {GraphComponent}
  */
@@ -92,18 +107,30 @@ let graphComponent = null
  * Holds the component index for each node.
  * It is necessary for determining in circular layouts the circle id in graphs with more than one
  * connected components.
- * @type {Mapper}
+ * @type {ResultItemMapping.<INode,number>}
  */
-const componentsMap = new Mapper()
+let componentsMap = new ResultItemMapping()
 
 /**
  * Holds the edge bundle descriptors for each edge.
- * @type {Mapper}
  */
 const bundleDescriptorMap = new Mapper()
 
+/**
+ * Holds whether an edge has to be bundled or not.
+ */
 const bundlesMap = new Mapper()
 
+// inits the UI's elements
+const samplesComboBox = document.getElementById('sample-combo-box')
+const previousButton = document.getElementById('previous-sample-button')
+const nextButton = document.getElementById('next-sample-button')
+const bundlingStrengthSlider = document.getElementById('bundling-strength-slider')
+const bundlingStrengthLabel = document.getElementById('bundling-strength-label')
+
+/**
+ * @param {!object} licenseData
+ */
 function run(licenseData) {
   License.value = licenseData
   // initialize the GraphComponent
@@ -195,7 +222,7 @@ function createInputMode() {
     }
   })
 
-  // Add and event listener that populates the context menu according to the hit elements, or cancels showing a menu.
+  // Add an event listener that populates the context menu according to the hit elements, or cancels showing a menu.
   // This PopulateItemContextMenu is fired when calling the ContextMenuInputMode.shouldOpenMenu method above.
   mode.addPopulateItemContextMenuListener((sender, args) => populateContextMenu(contextMenu, args))
 
@@ -214,8 +241,8 @@ function createInputMode() {
 
 /**
  * Populates the context menu based on the item the mouse hovers over
- * @param {object} contextMenu The context menu.
- * @param {PopulateItemContextMenuEventArgs} args The event args.
+ * @param {!ContextMenu} contextMenu The context menu.
+ * @param {!PopulateItemContextMenuEventArgs.<IModelItem>} args The event args.
  */
 function populateContextMenu(contextMenu, args) {
   // The 'showMenu' property is set to true to inform the input mode that we actually want to show a context menu
@@ -271,8 +298,8 @@ function populateContextMenu(contextMenu, args) {
 
 /**
  * Counts the number of bundled and unbundled edges of a given selection.
- * @param {Array} edges The selected edges
- * @return {Object} The number of bundled and unbundled edges as an object
+ * @param {!Array.<IEdge>} edges The selected edges
+ * @returns {!object} The number of bundled and unbundled edges as an object
  *
  */
 function countBundledEdges(edges) {
@@ -296,7 +323,7 @@ function countBundledEdges(edges) {
 
 /**
  * Enables or disables the edge bundling for the given edge.
- * @param {Array} edges The edges to update
+ * @param {!Array.<IEdge>} edges The edges to update
  * @param {boolean} isBundled True if the edges should be bundled, false otherwise
  */
 function updateBundlingForSelectedEdges(edges, isBundled) {
@@ -351,7 +378,6 @@ function initializeGraph() {
  * Called when the selected item in the graph chooser combo box has changed.
  */
 function onSampleChanged() {
-  const samplesComboBox = document.getElementById('sample-combo-box')
   let sampleData
   switch (samplesComboBox.selectedIndex) {
     default:
@@ -385,30 +411,40 @@ function onSampleChanged() {
 
 /**
  * Parses the JSON and creates the graph elements.
- * @param {IGraph} graph The graph to populate with the items.
- * @param {string} graphData The JSON data
+ * @param {!IGraph} graph The graph to populate with the items.
+ * @param {!GraphData} graphData The JSON data
  */
 function loadGraph(graph, graphData) {
   setBusy(true)
 
   graph.clear()
 
-  const builder = new GraphBuilder(graph)
-  builder.createNodesSource({
-    data: graphData.nodes,
-    id: 'id',
-    layout: data => {
-      const layout = data.layout
-      return new Rect(
-        layout.x,
-        layout.y,
-        layout.w || graph.nodeDefaults.size.width,
-        layout.h || graph.nodeDefaults.size.height
-      )
-    },
-    labels: ['name']
+  const builder = new GraphBuilder({
+    graph: graph,
+    nodes: [
+      {
+        data: graphData.nodes,
+        id: 'id',
+        layout: data => {
+          const layout = data.layout
+          return new Rect(
+            layout.x,
+            layout.y,
+            layout.w || graph.nodeDefaults.size.width,
+            layout.h || graph.nodeDefaults.size.height
+          )
+        },
+        labels: ['name']
+      }
+    ],
+    edges: [
+      {
+        data: graphData.edges,
+        sourceId: 'source',
+        targetId: 'target'
+      }
+    ]
   })
-  builder.createEdgesSource(graphData.edges, 'source', 'target')
   graph = builder.buildGraph()
 
   graph.edges.forEach(edge => {
@@ -423,7 +459,7 @@ function loadGraph(graph, graphData) {
  * Runs the layout.
  */
 async function runLayout() {
-  const selectedIndex = document.getElementById('sample-combo-box').selectedIndex
+  const selectedIndex = samplesComboBox.selectedIndex
   let layoutAlgorithm
   let layoutData
   switch (selectedIndex) {
@@ -480,7 +516,7 @@ async function runLayout() {
 /**
  * Creates and configures the circular layout algorithm.
  * @param {boolean} singleCycle True if the layout should be single-cycle, false otherwise
- * @return {CircularLayout} The configured circular layout algorithm
+ * @returns {!CircularLayout} The configured circular layout algorithm
  */
 function createCircularLayout(singleCycle) {
   const circularLayout = new CircularLayout({
@@ -496,7 +532,7 @@ function createCircularLayout(singleCycle) {
 
 /**
  * Creates and configures the radial layout algorithm.
- * @return {RadialLayout} The configured radial layout algorithm
+ * @returns {!RadialLayout} The configured radial layout algorithm
  */
 function createRadialLayout() {
   const radialLayout = new RadialLayout({
@@ -508,7 +544,7 @@ function createRadialLayout() {
 
 /**
  * Creates and configures the balloon layout algorithm.
- * @return {BalloonLayout} The configured balloon layout algorithm
+ * @returns {!BalloonLayout} The configured balloon layout algorithm
  */
 function createBalloonLayout() {
   const balloonLayout = new BalloonLayout({
@@ -524,7 +560,7 @@ function createBalloonLayout() {
 
 /**
  * Creates and configures the tree layout algorithm.
- * @return {ClassicTreeLayout} The configured tree layout algorithm
+ * @returns {!TreeLayout} The configured tree layout algorithm
  */
 function createTreeLayout() {
   const treeLayout = new TreeLayout({
@@ -541,7 +577,7 @@ function createTreeLayout() {
 
 /**
  * Creates and configures the tree reduction stage.
- * @return {TreeReductionStage}
+ * @returns {!TreeReductionStage}
  */
 function createTreeReductionStage() {
   const labelingAlgorithm = new GenericLabeling({
@@ -557,7 +593,7 @@ function createTreeReductionStage() {
 
 /**
  * Creates and configures the edge bundling stage
- * @return {ILayoutAlgorithm}
+ * @returns {!ILayoutAlgorithm}
  */
 function createEdgeBundlingStage() {
   const edgeBundlingStage = new EdgeBundlingStage(new StraightLineEdgeRouter())
@@ -567,14 +603,13 @@ function createEdgeBundlingStage() {
 
 /**
  * Configures the edge bundling descriptor.
- * @param {ILayoutAlgorithm} layoutAlgorithm The layout algorithm to integrate the edge bundling
+ * @param {!(EdgeBundlingStage|CircularLayout|RadialLayout|TreeReductionStage)} layoutAlgorithm The layout algorithm to integrate the edge bundling
  */
 function configureEdgeBundling(layoutAlgorithm) {
   // we could either enable here the bezier fitting or append the CurveFittingLayoutStage to our layout algorithm
   // if we would like to adjust the approximation error
   // bundlingDescriptor.bezierFitting = true;
-  const bundlingStrength = document.getElementById('bundling-strength-slider').value
-  layoutAlgorithm.edgeBundling.bundlingStrength = parseFloat(bundlingStrength)
+  layoutAlgorithm.edgeBundling.bundlingStrength = parseFloat(bundlingStrengthSlider.value)
   layoutAlgorithm.edgeBundling.defaultBundleDescriptor = new EdgeBundleDescriptor({
     bundled: true
   })
@@ -582,34 +617,34 @@ function configureEdgeBundling(layoutAlgorithm) {
 
 /**
  * Updates the circle information for each node.
- * @param {CircularLayoutData} layoutData The current layout data
+ * @param {!CircularLayoutData} layoutData The current layout data
  */
 function updateNodeInformation(layoutData) {
   const graph = graphComponent.graph
-  const circleNodes = []
-  const circleCenters = []
+  const circleNodes = new Mapper()
+  const circleCenters = new Mapper()
 
   // store the nodes that belong to each circle
   graph.nodes.forEach(node => {
     const circleId = layoutData.circleIds.get(node)
     const componentId = componentsMap.get(node)
-    const id = circleId !== null ? `${circleId} ${componentId}` : -1
-    if (id !== -1) {
-      if (!circleNodes[id]) {
-        circleNodes[id] = []
+    const id = circleId !== null ? `${circleId} ${componentId}` : '-1'
+    if (id !== '-1') {
+      if (!circleNodes.get(id)) {
+        circleNodes.set(id, [])
       }
-      circleNodes[id].push(node)
+      circleNodes.get(id).push(node)
     }
   })
 
   // calculate the center of each circle
-  Object.keys(circleNodes).forEach(circleId => {
-    if (!circleId.includes('-1') && circleNodes[circleId].length > 2) {
-      circleCenters[circleId] = calculateCircleCenter(circleNodes[circleId])
-    } else {
-      circleCenters[circleId] = null
+  for (const entry of circleNodes.entries) {
+    const circleId = entry.key
+    const entryNodes = entry.value
+    if (circleId !== '-1' && entryNodes.length > 2) {
+      circleCenters.set(circleId, calculateCircleCenter(entryNodes))
     }
-  })
+  }
 
   // store to the node's tag the circle id, the center of the circle and the nodes that belong to the node's circle
   // this information is needed for the creation of the circular sector node style
@@ -617,19 +652,19 @@ function updateNodeInformation(layoutData) {
     const circleId = layoutData.circleIds.get(node)
     const componentId = componentsMap.get(node)
     // add to the tag an id consisted of the component to which this node belongs plus the circle id
-    const id = circleId !== null ? `${circleId} ${componentId}` : -1
+    const id = circleId !== null ? `${circleId} ${componentId}` : '-1'
     node.tag = {
       circleId: id,
-      center: circleCenters[id],
-      circleNodes: circleNodes[id]
+      center: circleCenters.get(id),
+      circleNodeSize: circleNodes.get(id)?.length || 0
     }
   })
 }
 
 /**
  * Calculates the coordinates of the circle formed by the given points
- * @param {Array} circleNodes An array containing the 3 points that form the circle
- * @return {Point} The coordinates of the center of the circle
+ * @param {!Array.<INode>} circleNodes An array containing the 3 points that form the circle
+ * @returns {!Point} The coordinates of the center of the circle
  */
 function calculateCircleCenter(circleNodes) {
   const p1 = circleNodes[0].layout.center
@@ -651,15 +686,13 @@ function calculateCircleCenter(circleNodes) {
  */
 function calculateConnectedComponents() {
   const graph = graphComponent.graph
-  const selectedIndex = document.getElementById('sample-combo-box').selectedIndex
+  const selectedIndex = samplesComboBox.selectedIndex
   if (
     selectedIndex === LayoutAlgorithm.SINGLE_CYCLE ||
     selectedIndex === LayoutAlgorithm.CIRCULAR
   ) {
     const result = new ConnectedComponents().run(graph)
-    result.nodeComponentIds.forEach((node, index) => {
-      componentsMap.set(node, index)
-    })
+    componentsMap = result.nodeComponentIds
   }
 }
 
@@ -675,8 +708,6 @@ function registerCommands() {
   bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
 
   bindAction("button[data-command='PreviousFile']", () => {
-    const samplesComboBox = document.getElementById('sample-combo-box')
-    const previousButton = document.getElementById('previous-sample-button')
     updateUIState()
     if (!previousButton.disabled) {
       samplesComboBox.selectedIndex--
@@ -684,8 +715,6 @@ function registerCommands() {
     }
   })
   bindAction("button[data-command='NextFile']", () => {
-    const samplesComboBox = document.getElementById('sample-combo-box')
-    const nextButton = document.getElementById('next-sample-button')
     if (!nextButton.disabled) {
       samplesComboBox.selectedIndex++
       onSampleChanged()
@@ -693,13 +722,10 @@ function registerCommands() {
   })
   bindChangeListener("select[data-command='SampleSelectionChanged']", onSampleChanged)
 
-  const bundlingStrength = document.getElementById('bundling-strength-slider')
-  bundlingStrength.addEventListener(
+  bundlingStrengthSlider.addEventListener(
     'change',
     () => {
-      document.getElementById(
-        'bundling-strength-label'
-      ).textContent = bundlingStrength.value.toString()
+      bundlingStrengthLabel.textContent = bundlingStrengthSlider.value.toString()
       applyLayout()
     },
     true
@@ -710,10 +736,8 @@ function registerCommands() {
  * Updates the elements of the UI's state and checks whether the buttons should be enabled or not.
  */
 function updateUIState() {
-  const samplesComboBox = document.getElementById('sample-combo-box')
-  document.getElementById('previous-sample-button').disabled = samplesComboBox.selectedIndex === 0
-  document.getElementById('next-sample-button').disabled =
-    samplesComboBox.selectedIndex === samplesComboBox.childElementCount - 1
+  previousButton.disabled = samplesComboBox.selectedIndex === 0
+  nextButton.disabled = samplesComboBox.selectedIndex === samplesComboBox.childElementCount - 1
 }
 
 /**
@@ -753,21 +777,26 @@ function setBusy(isBusy) {
  * @param {boolean} disabled True if the UI's elements should be disabled, false otherwise
  */
 function setUIDisabled(disabled) {
-  document.getElementById('sample-combo-box').disabled = disabled
-  document.getElementById('previous-sample-button').disabled = disabled
-  document.getElementById('next-sample-button').disabled = disabled
-  document.getElementById('bundling-strength-slider').disabled = disabled
-  document.getElementById('bundling-strength-label').disabled = disabled
+  samplesComboBox.disabled = disabled
+  previousButton.disabled = disabled
+  nextButton.disabled = disabled
+
+  bundlingStrengthSlider.disabled = disabled
+  bundlingStrengthLabel.disabled = disabled
 }
 
-const LayoutAlgorithm = Enum('LayoutAlgorithm', {
+/**
+ * @readonly
+ * @enum {number}
+ */
+const LayoutAlgorithm = {
   SINGLE_CYCLE: 0,
   CIRCULAR: 1,
   RADIAL: 2,
   BALLOON: 3,
   TREE: 4,
   ROUTER: 5
-})
+}
 
 // runs the demo
 loadJson().then(run)

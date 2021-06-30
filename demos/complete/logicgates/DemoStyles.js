@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -43,26 +43,35 @@ import {
 
 import { LogicGateType } from './LogicGatesHelper.js'
 
+export class GateNodeStyle extends NodeStyleBase {
+  /**
+   * @param {!LogicGateType} gateType
+   */
+  constructor(gateType) {
+    super()
+    this.gateType = gateType
+  }
+}
+
 /**
  * An implementation of an {@link INodeStyle} that uses the convenience class
  * {@link NodeStyleBase} as the base class.
  */
-export class AndGateNodeStyle extends NodeStyleBase {
+export class AndGateNodeStyle extends GateNodeStyle {
   /**
    * Creates a new instance of AndGateNodeStyle
    * @param {boolean} negated
    */
   constructor(negated) {
-    super()
-    this.gateType = negated ? LogicGateType.NAND : LogicGateType.AND
+    super(negated ? LogicGateType.NAND : LogicGateType.AND)
   }
 
   /**
    * Creates the visual for a node.
-   * @param {IRenderContext} context The render context.
-   * @param {INode} node The node to which this style instance is assigned.
+   * @param {!IRenderContext} context The render context.
+   * @param {!INode} node The node to which this style instance is assigned.
    * @see Overrides {@link NodeStyleBase#createVisual}
-   * @return {SvgVisual}
+   * @returns {!SvgVisual}
    */
   createVisual(context, node) {
     const g = window.document.createElementNS('http://www.w3.org/2000/svg', 'g')
@@ -77,13 +86,16 @@ export class AndGateNodeStyle extends NodeStyleBase {
 
   /**
    * Re-renders the node using the old visual for performance reasons.
-   * @param {IRenderContext} context The render context
-   * @param {Visual} oldVisual The old visual
-   * @param {INode} node The node to which this style instance is assigned
+   * @param {!IRenderContext} context The render context
+   * @param {!Visual} oldVisual The old visual
+   * @param {!INode} node The node to which this style instance is assigned
    * @see Overrides {@link NodeStyleBase#updateVisual}
-   * @return {SvgVisual}
+   * @returns {!Visual}
    */
   updateVisual(context, oldVisual, node) {
+    if (!(oldVisual instanceof SvgVisual)) {
+      return this.createVisual(context, node)
+    }
     const container = oldVisual.svgElement
     // get the data with which the oldvisual was created
     const oldCache = container['data-renderDataCache']
@@ -106,9 +118,9 @@ export class AndGateNodeStyle extends NodeStyleBase {
 
   /**
    * Creates the Svg elements and adds them to the container.
-   * @param {Element} container The svg element
-   * @param {Object} cache The render-data cache object
-   * @param {INode} node The given node
+   * @param {!Element} container The svg element
+   * @param {!RenderDataCache} cache The render-data cache object
+   * @param {!INode} node The given node
    */
   render(container, cache, node) {
     // store information with the visual on how we created it
@@ -150,8 +162,8 @@ export class AndGateNodeStyle extends NodeStyleBase {
     const outputPortPath = new GeneralPath()
     outputPortPath.moveTo(new Point(isNegated ? extremaX + 2 * width * 0.03 : extremaX, y2))
     outputPortPath.lineTo(new Point(width, y2))
-    let stroke = node.tag && node.tag.targetHighlight ? 'indianred' : 'black'
-    createPath(container, outputPortPath, 'none', stroke)
+    const outputStroke = node.tag && node.tag.targetHighlight ? 'indianred' : 'black'
+    createPath(container, outputPortPath, 'none', outputStroke)
 
     // create input port
     const inputPortPath = new GeneralPath()
@@ -159,8 +171,8 @@ export class AndGateNodeStyle extends NodeStyleBase {
     inputPortPath.lineTo(new Point(x1, y1))
     inputPortPath.moveTo(new Point(x1, y3))
     inputPortPath.lineTo(new Point(0, y3))
-    stroke = node.tag && node.tag.sourceHighlight ? 'lawngreen' : 'black'
-    createPath(container, inputPortPath, 'none', stroke)
+    const inputStroke = node.tag && node.tag.sourceHighlight ? 'lawngreen' : 'black'
+    createPath(container, inputPortPath, 'none', inputStroke)
 
     if (isNegated) {
       appendEllipse(
@@ -177,15 +189,15 @@ export class AndGateNodeStyle extends NodeStyleBase {
     const textContent = isNegated ? 'NAND' : 'AND'
     const text = createText(textContent, fontSize)
     const textSize = TextRenderSupport.measureText(
-      text.textContent,
+      text.textContent || '',
       new Font({
         fontFamily: 'Arial',
         fontSize,
         fontWeight: FontWeight.BOLD
       })
     )
-    text.setAttribute('x', (node.layout.width - textSize.width) * 0.45)
-    text.setAttribute('y', (node.layout.height - textSize.height) * 0.8)
+    setAttribute(text, 'x', (node.layout.width - textSize.width) * 0.45)
+    setAttribute(text, 'y', (node.layout.height - textSize.height) * 0.8)
 
     container.appendChild(text)
   }
@@ -195,18 +207,17 @@ export class AndGateNodeStyle extends NodeStyleBase {
  * An implementation of an {@link INodeStyle} that uses the convenience class
  * {@link NodeStyleBase} as the base class.
  */
-export class NotNodeStyle extends NodeStyleBase {
+export class NotNodeStyle extends GateNodeStyle {
   constructor() {
-    super()
-    this.gateType = LogicGateType.NOT
+    super(LogicGateType.NOT)
   }
 
   /**
    * Creates the visual for a node.
-   * @param {IRenderContext} context The render context.
-   * @param {INode} node The node to which this style instance is assigned.
+   * @param {!IRenderContext} context The render context.
+   * @param {!INode} node The node to which this style instance is assigned.
    * @see Overrides {@link NodeStyleBase#createVisual}
-   * @return {SvgVisual}
+   * @returns {!SvgVisual}
    */
   createVisual(context, node) {
     // This implementation creates a 'g' element and uses it as a container for the rendering of the node.
@@ -222,11 +233,11 @@ export class NotNodeStyle extends NodeStyleBase {
 
   /**
    * Re-renders the node using the old visual for performance reasons.
-   * @param {IRenderContext} context The render context
-   * @param {SvgVisual} oldVisual The old visual
-   * @param {INode} node The node to which this style instance is assigned
+   * @param {!IRenderContext} context The render context
+   * @param {!SvgVisual} oldVisual The old visual
+   * @param {!INode} node The node to which this style instance is assigned
    * @see Overrides {@link NodeStyleBase#updateVisual}
-   * @return {SvgVisual}
+   * @returns {!SvgVisual}
    */
   updateVisual(context, oldVisual, node) {
     const container = oldVisual.svgElement
@@ -251,9 +262,9 @@ export class NotNodeStyle extends NodeStyleBase {
 
   /**
    * Creates the Svg elements and adds them to the container.
-   * @param {Element} container The svg element
-   * @param {Object} cache The render-data cache object
-   * @param {INode} node The given node
+   * @param {!Element} container The svg element
+   * @param {!RenderDataCache} cache The render-data cache object
+   * @param {!INode} node The given node
    */
   render(container, cache, node) {
     // store information with the visual on how we created it
@@ -282,52 +293,60 @@ export class NotNodeStyle extends NodeStyleBase {
     const inputPortPath = new GeneralPath()
     inputPortPath.moveTo(new Point(0, height * 0.5))
     inputPortPath.lineTo(new Point(x1, height * 0.5))
-    let stroke = node.tag && node.tag.sourceHighlight ? 'lawngreen' : 'black'
-    createPath(container, inputPortPath, 'none', stroke)
+    const inputStroke = node.tag && node.tag.sourceHighlight ? 'lawngreen' : 'black'
+    createPath(container, inputPortPath, 'none', inputStroke)
 
     // create output port
     const outputPortPath = new GeneralPath()
     outputPortPath.moveTo(new Point(x2 + 2 * width * 0.03, height * 0.5))
     outputPortPath.lineTo(new Point(width, height * 0.5))
-    stroke = node.tag && node.tag.targetHighlight ? 'indianred' : 'black'
-    createPath(container, outputPortPath, 'none', stroke)
+    const outputStroke = node.tag && node.tag.targetHighlight ? 'indianred' : 'black'
+    createPath(container, outputPortPath, 'none', outputStroke)
 
     const fontSize = Math.floor(node.layout.height * 0.25)
     const text = createText('NOT', fontSize)
     const textSize = TextRenderSupport.measureText(
-      text.textContent,
+      text.textContent || '',
       new Font({
         fontFamily: 'Arial',
         fontSize,
         fontWeight: FontWeight.BOLD
       })
     )
-    text.setAttribute('x', (node.layout.width - textSize.width) * 0.33)
-    text.setAttribute('y', (node.layout.height - textSize.height) * 0.8)
+    setAttribute(text, 'x', (node.layout.width - textSize.width) * 0.33)
+    setAttribute(text, 'y', (node.layout.height - textSize.height) * 0.8)
     container.appendChild(text)
   }
+}
+
+/**
+ * @param {!Element} element
+ * @param {!string} name
+ * @param {!(number|string)} value
+ */
+function setAttribute(element, name, value) {
+  element.setAttribute(name, value.toString())
 }
 
 /**
  * An implementation of an {@link INodeStyle} that uses the convenience class
  * {@link NodeStyleBase} as the base class.
  */
-export class OrNodeStyle extends NodeStyleBase {
+export class OrNodeStyle extends GateNodeStyle {
   /**
    * Creates a new instance of OrNodeStyle.
    * @param {boolean} negated
    */
   constructor(negated) {
-    super()
-    this.gateType = negated ? LogicGateType.NOR : LogicGateType.OR
+    super(negated ? LogicGateType.NOR : LogicGateType.OR)
   }
 
   /**
    * Creates the visual for a node.
-   * @param {IRenderContext} context The render context.
-   * @param {INode} node The node to which this style instance is assigned.
+   * @param {!IRenderContext} context The render context.
+   * @param {!INode} node The node to which this style instance is assigned.
    * @see Overrides {@link NodeStyleBase#createVisual}
-   * @return {SvgVisual}
+   * @returns {!SvgVisual}
    */
   createVisual(context, node) {
     // This implementation creates a 'g' element and uses it as a container for the rendering of the node.
@@ -343,13 +362,16 @@ export class OrNodeStyle extends NodeStyleBase {
 
   /**
    * Re-renders the node using the old visual for performance reasons.
-   * @param {IRenderContext} context The render context
-   * @param {Visual} oldVisual The old visual
-   * @param {INode} node The node to which this style instance is assigned
+   * @param {!IRenderContext} context The render context
+   * @param {!Visual} oldVisual The old visual
+   * @param {!INode} node The node to which this style instance is assigned
    * @see Overrides {@link NodeStyleBase#updateVisual}
-   * @return {SvgVisual}
+   * @returns {!SvgVisual}
    */
   updateVisual(context, oldVisual, node) {
+    if (!(oldVisual instanceof SvgVisual)) {
+      return this.createVisual(context, node)
+    }
     const container = oldVisual.svgElement
     // get the data with which the oldvisual was created
     const oldCache = container['data-renderDataCache']
@@ -372,9 +394,9 @@ export class OrNodeStyle extends NodeStyleBase {
 
   /**
    * Creates the Svg elements and adds them to the container.
-   * @param {Element} container The svg element
-   * @param {Object} cache The render-data cache object
-   * @param {INode} node The given node
+   * @param {!Element} container The svg element
+   * @param {!RenderDataCache} cache The render-data cache object
+   * @param {!INode} node The given node
    */
   render(container, cache, node) {
     // store information with the visual on how we created it
@@ -444,15 +466,15 @@ export class OrNodeStyle extends NodeStyleBase {
     const textContent = isNegated ? 'NOR' : 'OR'
     const text = createText(textContent, fontSize)
     const textSize = TextRenderSupport.measureText(
-      text.textContent,
+      text.textContent || '',
       new Font({
         fontFamily: 'Arial',
         fontSize,
         fontWeight: FontWeight.BOLD
       })
     )
-    text.setAttribute('x', (node.layout.width - textSize.width) * 0.4)
-    text.setAttribute('y', (node.layout.height - textSize.height) * 0.8)
+    setAttribute(text, 'x', (node.layout.width - textSize.width) * 0.4)
+    setAttribute(text, 'y', (node.layout.height - textSize.height) * 0.8)
     container.appendChild(text)
   }
 }
@@ -461,22 +483,21 @@ export class OrNodeStyle extends NodeStyleBase {
  * An implementation of an {@link INodeStyle} that uses the convenience class
  * {@link NodeStyleBase} as the base class.
  */
-export class XOrNodeStyle extends NodeStyleBase {
+export class XOrNodeStyle extends GateNodeStyle {
   /**
    * Creates a new instance of XOrNodeStyle.
    * @param {boolean} negated
    */
   constructor(negated) {
-    super()
-    this.gateType = negated ? LogicGateType.XNOR : LogicGateType.XOR
+    super(negated ? LogicGateType.XNOR : LogicGateType.XOR)
   }
 
   /**
    * Creates the visual for a node.
-   * @param {IRenderContext} context The render context.
-   * @param {INode} node The node to which this style instance is assigned.
+   * @param {!IRenderContext} context The render context.
+   * @param {!INode} node The node to which this style instance is assigned.
    * @see Overrides {@link NodeStyleBase#createVisual}
-   * @return {SvgVisual}
+   * @returns {!SvgVisual}
    */
   createVisual(context, node) {
     // This implementation creates a 'g' element and uses it as a container for the rendering of the node.
@@ -492,13 +513,16 @@ export class XOrNodeStyle extends NodeStyleBase {
 
   /**
    * Re-renders the node using the old visual for performance reasons.
-   * @param {IRenderContext} context The render context
-   * @param {Visual} oldVisual The old visual
-   * @param {INode} node The node to which this style instance is assigned
+   * @param {!IRenderContext} context The render context
+   * @param {!Visual} oldVisual The old visual
+   * @param {!INode} node The node to which this style instance is assigned
    * @see Overrides {@link NodeStyleBase#updateVisual}
-   * @return {SvgVisual}
+   * @returns {!SvgVisual}
    */
   updateVisual(context, oldVisual, node) {
+    if (!(oldVisual instanceof SvgVisual)) {
+      return this.createVisual(context, node)
+    }
     const container = oldVisual.svgElement
     // get the data with which the oldvisual was created
     const oldCache = container['data-renderDataCache']
@@ -521,9 +545,9 @@ export class XOrNodeStyle extends NodeStyleBase {
 
   /**
    * Creates the Svg elements and adds them to the container.
-   * @param {Element} container The svg element
-   * @param {Object} cache The render-data cache object
-   * @param {INode} node The given node
+   * @param {!Element} container The svg element
+   * @param {!RenderDataCache} cache The render-data cache object
+   * @param {!INode} node The given node
    */
   render(container, cache, node) {
     // store information with the visual on how we created it
@@ -587,15 +611,15 @@ export class XOrNodeStyle extends NodeStyleBase {
     inputPortPath.lineTo(x11, y1)
     inputPortPath.moveTo(0, y3)
     inputPortPath.lineTo(x21, y3)
-    let stroke = node.tag && node.tag.sourceHighlight ? 'lawngreen' : 'black'
-    createPath(container, inputPortPath, 'none', stroke)
+    const inputStroke = node.tag && node.tag.sourceHighlight ? 'lawngreen' : 'black'
+    createPath(container, inputPortPath, 'none', inputStroke)
 
     // create output port
     const outputPortPath = new GeneralPath()
     outputPortPath.moveTo(isNegated ? x3 + 2 * width * 0.03 : x3, y2)
     outputPortPath.lineTo(width, y2)
-    stroke = node.tag && node.tag.targetHighlight ? 'indianred' : 'black'
-    createPath(container, outputPortPath, 'none', stroke)
+    const outputStroke = node.tag && node.tag.targetHighlight ? 'indianred' : 'black'
+    createPath(container, outputPortPath, 'none', outputStroke)
 
     if (isNegated) {
       appendEllipse(container, x3 + width * 0.03, height * 0.5, width * 0.03, width * 0.03, fillId)
@@ -605,15 +629,15 @@ export class XOrNodeStyle extends NodeStyleBase {
     const textContent = isNegated ? 'XNOR' : 'XOR'
     const text = createText(textContent, fontSize)
     const textSize = TextRenderSupport.measureText(
-      text.textContent,
+      text.textContent || '',
       new Font({
         fontFamily: 'Arial',
         fontSize,
         fontWeight: FontWeight.BOLD
       })
     )
-    text.setAttribute('x', (node.layout.width - textSize.width) * 0.535)
-    text.setAttribute('y', (node.layout.height - textSize.height) * 0.8)
+    setAttribute(text, 'x', (node.layout.width - textSize.width) * 0.535)
+    setAttribute(text, 'y', (node.layout.height - textSize.height) * 0.8)
     container.appendChild(text)
   }
 }
@@ -621,11 +645,11 @@ export class XOrNodeStyle extends NodeStyleBase {
 /**
  * Calculates a point on the bezier cubic curve based on the given t value.
  * @param {number} t The parametric value t in [0,1]
- * @param {Point} firstPoint The first point of the curve
- * @param {Point} endPoint The end point of the curve
- * @param {Point} c1 The first control point of the curve
- * @param {Point} c2 The second control point of the curve
- * @return {number} The calculated point the cubic bezier curve
+ * @param {!Point} firstPoint The first point of the curve
+ * @param {!Point} endPoint The end point of the curve
+ * @param {!Point} c1 The first control point of the curve
+ * @param {!Point} c2 The second control point of the curve
+ * @returns {number} The calculated point the cubic bezier curve
  */
 function getPointOnCurve(t, firstPoint, endPoint, c1, c2) {
   return (
@@ -637,9 +661,17 @@ function getPointOnCurve(t, firstPoint, endPoint, c1, c2) {
 }
 
 /**
+ * @typedef {Object} RenderDataCache
+ * @property {Size} size
+ * @property {boolean} sourceHighlight
+ * @property {boolean} targetHighlight
+ * @property {function} equals
+ */
+
+/**
  * Creates an object containing all necessary data to create a visual for the node.
- * @param {INode} node The node to which this style instance is assigned.
- * @return {object} The render data cache object
+ * @param {!INode} node The node to which this style instance is assigned.
+ * @returns {!RenderDataCache} The render data cache object
  */
 function createRenderDataCache(node) {
   return {
@@ -655,10 +687,10 @@ function createRenderDataCache(node) {
 
 /**
  * Creates a linear gradient and appends it to the given container element.
- * @param {Element} container The svg element to append the gradient to
- * @param {Size} size The node's size
- * @param {string} gradientId The id for the gradient
- * @return {Element} A linear gradient
+ * @param {!Element} container The svg element to append the gradient to
+ * @param {!Size} size The node's size
+ * @param {!string} gradientId The id for the gradient
+ * @returns {!Element} A linear gradient
  */
 function appendGradient(container, size, gradientId) {
   // Create the defs section in container
@@ -670,19 +702,19 @@ function appendGradient(container, size, gradientId) {
 
   const gradient = window.document.createElementNS('http://www.w3.org/2000/svg', 'linearGradient')
   gradient.id = gradientId
-  gradient.setAttribute('x1', '0')
-  gradient.setAttribute('y1', '0')
-  gradient.setAttribute('x2', 0.5 / (size.width / max))
-  gradient.setAttribute('y2', 1 / (size.height / max))
-  gradient.setAttribute('spreadMethod', 'pad')
+  setAttribute(gradient, 'x1', '0')
+  setAttribute(gradient, 'y1', '0')
+  setAttribute(gradient, 'x2', 0.5 / (size.width / max))
+  setAttribute(gradient, 'y2', 1 / (size.height / max))
+  setAttribute(gradient, 'spreadMethod', 'pad')
   const stop1 = window.document.createElementNS('http://www.w3.org/2000/svg', 'stop')
-  stop1.setAttribute('stop-color', 'white')
-  stop1.setAttribute('stop-opacity', '0.7')
-  stop1.setAttribute('offset', '0')
+  setAttribute(stop1, 'stop-color', 'white')
+  setAttribute(stop1, 'stop-opacity', '0.7')
+  setAttribute(stop1, 'offset', '0')
   const stop2 = window.document.createElementNS('http://www.w3.org/2000/svg', 'stop')
-  stop2.setAttribute('stop-color', 'rgb(102,153,204)')
-  stop2.setAttribute('stop-opacity', '0.5')
-  stop2.setAttribute('offset', '0.7')
+  setAttribute(stop2, 'stop-color', 'rgb(102,153,204)')
+  setAttribute(stop2, 'stop-opacity', '0.5')
+  setAttribute(stop2, 'offset', '0.7')
   gradient.appendChild(stop1)
   gradient.appendChild(stop2)
   defs.appendChild(gradient)
@@ -692,12 +724,12 @@ function appendGradient(container, size, gradientId) {
 
 /**
  * Creates an svg ellipse and appends it to the given container element.
- * @param {Element} container The svg element to append the ellipse to
+ * @param {!Element} container The svg element to append the ellipse to
  * @param {number} cx The x coordinate of the center of the ellipse
  * @param {number} cy The y coordinate of the center of the ellipse
  * @param {number} rx The horizontal radius
  * @param {number} ry The vertical radius
- * @param {string} id The gradient id
+ * @param {!string} id The gradient id
  */
 function appendEllipse(container, cx, cy, rx, ry, id) {
   const ellipse = window.document.createElementNS('http://www.w3.org/2000/svg', 'ellipse')
@@ -705,51 +737,54 @@ function appendEllipse(container, cx, cy, rx, ry, id) {
   ellipse.cy.baseVal.value = cy
   ellipse.rx.baseVal.value = rx
   ellipse.ry.baseVal.value = ry
-  ellipse.setAttribute('fill', `url(#${id})`)
-  ellipse.setAttribute('stroke', 'black')
-  ellipse.setAttribute('stroke-width', '2')
+  setAttribute(ellipse, 'fill', `url(#${id})`)
+  setAttribute(ellipse, 'stroke', 'black')
+  setAttribute(ellipse, 'stroke-width', '2')
   container.appendChild(ellipse)
 }
 
 /**
  * Creates an svg path from the given general path and appends it to the given container element.
- * @param {Element} container The svg element to append the path to
- * @param {GeneralPath} generalPath The given general path
- * @param {string} fill The fill for this path
- * @param {string} stroke The stroke for this path
+ * @param {!Element} container The svg element to append the path to
+ * @param {!GeneralPath} generalPath The given general path
+ * @param fill The fill for this path
+ * @param stroke The stroke for this path
+ * @param {!string} [fill]
+ * @param {!string} [stroke]
  */
 function createPath(container, generalPath, fill, stroke) {
   const path = generalPath.createSvgPath()
-  path.setAttribute('stroke', stroke || 'black')
-  path.setAttribute('stroke-width', '2')
-  path.setAttribute('fill', fill || 'none')
-  path.setAttribute('stroke-linejoin', 'round')
+  setAttribute(path, 'stroke', stroke || 'black')
+  setAttribute(path, 'stroke-width', '2')
+  setAttribute(path, 'fill', fill || 'none')
+  setAttribute(path, 'stroke-linejoin', 'round')
   container.appendChild(path)
 }
 
 /**
  * Creates an svg text element with the given content and font size.
- * @param textContent The text content
- * @param fontSize The font size
- * @returns {Element} The created text element
+ * @param {!string} textContent The text content
+ * @param {number} fontSize The font size
+ * @returns {!Element} The created text element
  */
 function createText(textContent, fontSize) {
   const text = window.document.createElementNS('http://www.w3.org/2000/svg', 'text')
   text.textContent = textContent
-  text.setAttribute('font-family', 'Arial')
-  text.setAttribute('fill', '#333333')
+  setAttribute(text, 'font-family', 'Arial')
+  setAttribute(text, 'fill', '#333333')
 
-  text.setAttribute('font-size', `${fontSize}px`)
-  text.setAttribute('font-family', 'Arial')
-  text.setAttribute('font-weight', 'bold')
+  setAttribute(text, 'font-size', `${fontSize}px`)
+  setAttribute(text, 'font-family', 'Arial')
+  setAttribute(text, 'font-weight', 'bold')
   return text
 }
 
+/** @type {number} */
 let fillId = 0
 
 /**
  * Counts the number of gradient fills used to generate a unique id.
- * @return {number}
+ * @returns {number}
  */
 function getFillId() {
   return fillId++

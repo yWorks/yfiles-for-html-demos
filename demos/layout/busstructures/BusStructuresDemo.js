@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -37,30 +37,37 @@ import {
   HierarchicLayoutData,
   ICommand,
   IEdge,
+  IGraph,
   License,
-  PolylineEdgeStyle
+  List,
+  PolylineEdgeStyle,
+  Size
 } from 'yfiles'
 
 import SampleData from './resources/SampleData.js'
-import { initDemoStyles } from '../../resources/demo-styles.js'
+import { DemoNodeStyle, initDemoStyles } from '../../resources/demo-styles.js'
 import { bindAction, bindChangeListener, bindCommand, showApp } from '../../resources/demo-app.js'
 import loadJson from '../../resources/load-json.js'
 
 const busStructuresToggle = document.getElementById('bus-structures-toggle')
 const beforeBusSlider = document.getElementById('before-bus-slider')
 const afterBusSlider = document.getElementById('after-bus-slider')
-const busSliders = document.getElementById('bus-sliders')
 const busPresetSelect = document.getElementById('bus-preset-select')
 
-/** @type {GraphComponent} */
-let graphComponent = null
+/**
+ * Displays the demo's graph.
+ * @type {GraphComponent}
+ */
+let graphComponent
 
-/** @type {boolean} */
+/**
+ * State guard to prevent concurrent layout calculations.
+ * @type {boolean}
+ */
 let layoutRunning = false
 
 /**
  * A collection of colors which is used to distinguish the different buses.
- * @type {string[]}
  */
 const colors = [
   'crimson',
@@ -79,52 +86,70 @@ const colors = [
   'orangered'
 ]
 
-function run(licenseData) {
+/**
+ * Bootstraps the demo.
+ * @param {!object} licenseData The yFiles license information.
+ * @returns {!Promise}
+ */
+async function run(licenseData) {
   License.value = licenseData
+
   graphComponent = new GraphComponent('graphComponent')
 
-  // configure the input mode
-  graphComponent.inputMode = new GraphEditorInputMode()
-  graphComponent.graph.undoEngineEnabled = true
+  configureGraph(graphComponent.graph)
 
-  // create the graph
+  // create the demo's sample graph
   loadGraph(graphComponent.graph)
-  runLayout()
 
-  // clear the undo engine to prevent undo of initial graph
-  graphComponent.graph.undoEngine.clear()
+  // arange the sample graph
+  await runLayout()
+
+  // enable interactive editing
+  graphComponent.inputMode = new GraphEditorInputMode()
 
   registerCommands()
   showApp(graphComponent)
 }
 
 /**
- * Applies the {@link HierarchicLayout} configured with the {@link HierarchicLayoutData} as given
- * by the current UI state.
+ * Arranges the demo's graph with {@link HierarchicLayout}.
+ * The hierarchic layout algorithm is configured to route edges in bus structures.
+ * @returns {!Promise}
  */
 async function runLayout() {
   if (layoutRunning) {
-    return
+    return Promise.resolve()
   }
   layoutRunning = true
   disableUI(true)
 
-  // clear previous edge highlights
   const graph = graphComponent.graph
-  graph.edges.forEach(edge => graph.setStyle(edge, graph.edgeDefaults.getStyleInstance()))
+  // we collect each star structure with more than 5 incoming/outgoing edges as a bus structure
+  const busses = busStructuresToggle.checked ? getBusStructures(graph) : []
 
+  // clear previous edge highlights
+  graph.edges.forEach(edge => graph.setStyle(edge, graph.edgeDefaults.getStyleInstance()))
+  // set new highlights: use a common line color for all edges belonging to the same bus structure
+  for (const busEdges of busses) {
+    highlightEdges(graph, busEdges)
+  }
+
+  // create a configured hierarchic layout instance
   const layout = new HierarchicLayout({
     orthogonalRouting: true,
     automaticEdgeGrouping: true
   })
-  const layoutData = createHierarchicLayoutData()
 
-  // apply the layout
+  // create layout data that defines bus structures
+  const layoutData = createHierarchicLayoutData(graph, busses)
+
   try {
+    // apply the layout
     await graphComponent.morphLayout({ layout, layoutData, morphDuration: '700ms' })
   } catch (error) {
-    if (typeof window.reportError === 'function') {
-      window.reportError(error)
+    const reporter = window.reportError
+    if (typeof reporter === 'function') {
+      reporter(error)
     } else {
       throw error
     }
@@ -135,70 +160,48 @@ async function runLayout() {
 }
 
 /**
- * Loads the graph from the sample JSON data and configures some default styles.
+ * Creates the layout data defining bus structures for the {@link HierarchicLayout} based
+ * on the current UI state.
+ * @param {!IGraph} graph The graph that will be laid out.
+ * @param {!Array.<List.<IEdge>>} busses An array of edge lists, each list defining one bus structure.
+ * @returns {!HierarchicLayoutData}
  */
-function loadGraph(graph) {
-  initDemoStyles(graph)
-  graph.nodeDefaults.shareStyleInstance = false
-  graph.nodeDefaults.style.cssClass = 'node-color'
-  graph.nodeDefaults.size = [50, 30]
-  graph.edgeDefaults.style = getEdgeStyle('#BBBBBB')
-  graph.edgeDefaults.shareStyleInstance = false
-
-  const data = SampleData
-  const builder = new GraphBuilder(graph)
-  builder.createNodesSource(data.nodes, 'id')
-  builder.createEdgesSource(data.edges, 'source', 'target')
-  builder.buildGraph()
-}
-
-/**
- * Creates the layout data for the {@link HierarchicLayout} based on the current UI state.
- * @return {HierarchicLayoutData}
- */
-function createHierarchicLayoutData() {
+function createHierarchicLayoutData(graph, busses) {
   const hierarchicLayoutData = new HierarchicLayoutData()
 
-  // parse the current UI state to create the respective configuration
-  if (busStructuresToggle.checked) {
-    // we assign buses to each star structure with more than 5 incoming/outgoing edges
-    const busStructures = getBusStructures()
-    busStructures.forEach(edgeList => {
-      highlightEdges(edgeList)
+  for (const busEdges of busses) {
+    const busDescriptor = new HierarchicLayoutBusDescriptor()
 
-      const busDescriptor = new HierarchicLayoutBusDescriptor()
+    // maybe limit the bus structure sizes
+    const busSettings = getBusSettings(busPresetSelect.value, busEdges.size)
+    if (busSettings !== null) {
+      busDescriptor.maximumNodesBeforeBus = busSettings.maxBeforeBus
+      busDescriptor.maximumNodesAfterBus = busSettings.maxAfterBus
+    }
 
-      // maybe limit the bus structure sizes
-      const busSettings = getBusSettings(busPresetSelect.value, edgeList.size)
-      if (busSettings) {
-        busDescriptor.maximumNodesBeforeBus = busSettings.maxBeforeBus
-        busDescriptor.maximumNodesAfterBus = busSettings.maxAfterBus
-      }
+    // add the bus descriptor to the layout data
+    const busCollection = hierarchicLayoutData.buses.add(busDescriptor)
 
-      // add the bus descriptor to the layout data
-      const busCollection = hierarchicLayoutData.buses.add(busDescriptor)
-
-      // specify which edges are part of this bus
-      busCollection.items = edgeList
-    })
+    // specify which edges are part of this bus
+    busCollection.items = busEdges
   }
 
   return hierarchicLayoutData
 }
 
 /**
- * Returns settings for the bus structures of the {@link HierarchicLayoutData} based on the current
- * UI state.
- * @param {string} preset A selected preset in the UI
+ * Returns settings for bus structure descriptors of {@link HierarchicLayoutData}.
+ * @param {!string} busStylePreset The desired bus style preset.
  * @param {number} elementCount The number of elements in the bus that is to be configured
- * @return {null | {maxBeforeBus: number, maxAfterBus: number}}
+ * @returns {?object}
  */
-function getBusSettings(preset, elementCount) {
-  let beforeBusValue
-  let afterBusValue
-  switch (preset) {
+function getBusSettings(busStylePreset, elementCount) {
+  let beforeBusValue = 0
+  let afterBusValue = 0
+  switch (busStylePreset) {
     case 'balanced':
-      return null // the default bus structure setting without further configuration
+      // the default bus structure setting without further configuration
+      return null
     case 'squares':
       // eslint-disable-next-line no-case-declarations
       const rowLength = Math.ceil(Math.sqrt(elementCount))
@@ -221,8 +224,6 @@ function getBusSettings(preset, elementCount) {
       beforeBusValue = parseInt(beforeBusSlider.value)
       afterBusValue = parseInt(afterBusSlider.value)
   }
-  setSliderValue('before-bus-slider', beforeBusValue)
-  setSliderValue('after-bus-slider', afterBusValue)
   return {
     maxBeforeBus: beforeBusValue,
     maxAfterBus: afterBusValue
@@ -230,59 +231,45 @@ function getBusSettings(preset, elementCount) {
 }
 
 /**
- * Helper function to set a value to a given slider element in the UI.
+ * Returns an array of edge lists. The edges in each list should be grouped into one bus structure.
+ * This demo identifies those structure by looking for stars that are made up from incoming
+ * or outgoing edges.
+ * @param {!IGraph} graph The graph to check for star structures.
+ * @returns {!Array.<List.<IEdge>>} An array of edge lists that should be grouped into a bus.
  */
-function setSliderValue(sliderId, value) {
-  const slider = document.getElementById(sliderId)
-  const sliderLabel = slider.nextElementSibling
-  slider.value = isFinite(value) ? value : 20
-  sliderLabel.textContent = value.toString()
-}
-
-/**
- * Returns an array of edge lists that should be grouped into a bus structure. This demo identifies
- * those structure by looking for stars that are made up from incoming or outgoing edges.
- * @return {IListEnumerable.<IEdge>[]} An array of edge lists that should be grouped into a bus.
- */
-function getBusStructures() {
+function getBusStructures(graph) {
   const busStructures = []
-  const graph = graphComponent.graph
 
   // find star roots with incoming edges
-  const starRootsIncoming = graphComponent.graph.nodes.filter(node => {
-    return graphComponent.graph.inEdgesAt(node).size > 5
-  })
-  starRootsIncoming.forEach(root => busStructures.push(graph.inEdgesAt(root)))
+  const starRootsIncoming = graph.nodes.filter(node => graph.inEdgesAt(node).size > 5)
+  starRootsIncoming.forEach(root => busStructures.push(graph.inEdgesAt(root).toList()))
 
   // find star roots with outgoing edges
-  const starRootsOutgoing = graphComponent.graph.nodes.filter(node => {
-    return graphComponent.graph.outEdgesAt(node).size > 5
-  })
-  starRootsOutgoing.forEach(root => busStructures.push(graph.outEdgesAt(root)))
+  const starRootsOutgoing = graph.nodes.filter(node => graph.outEdgesAt(node).size > 5)
+  starRootsOutgoing.forEach(root => busStructures.push(graph.outEdgesAt(root).toList()))
 
   return busStructures
 }
 
 /**
  * Highlights the given edges by applying a specific color to each edge.
- * @param {IListEnumerable.<IEdge>} edgeList
+ * @param {!IGraph} graph The graph whose edges will be highlighted.
+ * @param {!List.<IEdge>} edgeList The edges that will be highlighted.
  */
-function highlightEdges(edgeList) {
-  const graph = graphComponent.graph
-
+function highlightEdges(graph, edgeList) {
   // in this demo we just assign a color based on the number of edges for the bus structure
-  const color = colors[edgeList.size % colors.length]
-  edgeList.forEach(edge => {
-    graph.setStyle(edge, getEdgeStyle(color))
-  })
+  const style = newEdgeStyle(colors[edgeList.size % colors.length])
+  for (const edge of edgeList) {
+    graph.setStyle(edge, style)
+  }
 }
 
 /**
  * Returns an edge style with the given color.
- * @param {string} color
- * @return {PolylineEdgeStyle}
+ * @param {!string} color The line color for the created edge style.
+ * @returns {!PolylineEdgeStyle}
  */
-function getEdgeStyle(color) {
+function newEdgeStyle(color) {
   return new PolylineEdgeStyle({
     stroke: `3px ${color}`,
     targetArrow: new Arrow({
@@ -291,6 +278,44 @@ function getEdgeStyle(color) {
     }),
     smoothingLength: 15
   })
+}
+
+/**
+ * Configures default visualizations for the given graph.
+ * @param {!IGraph} graph The demo's graph.
+ */
+function configureGraph(graph) {
+  initDemoStyles(graph)
+
+  graph.nodeDefaults.shareStyleInstance = false
+  graph.nodeDefaults.style.cssClass = 'node-color'
+  graph.nodeDefaults.size = new Size(50, 30)
+  graph.edgeDefaults.style = newEdgeStyle('#BBBBBB')
+  graph.edgeDefaults.shareStyleInstance = false
+}
+
+/**
+ * Creates a sample graph structure from the demo's sample data.
+ * @param {!IGraph} graph The demo's graph.
+ */
+function loadGraph(graph) {
+  const data = SampleData
+  const builder = new GraphBuilder(graph)
+  builder.createNodesSource(data.nodes, 'id')
+  builder.createEdgesSource(data.edges, 'source', 'target')
+  builder.buildGraph()
+}
+
+/**
+ * Helper function to set a value to a given slider element in the UI.
+ * @param {!string} sliderId
+ * @param {number} value
+ */
+function setSliderValue(sliderId, value) {
+  const slider = document.getElementById(sliderId)
+  const sliderLabel = slider.nextElementSibling
+  slider.value = String(isFinite(value) ? value : 20)
+  sliderLabel.textContent = value.toString()
 }
 
 /**
@@ -314,32 +339,35 @@ function registerCommands() {
   bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent)
   bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent)
 
-  bindChangeListener("input[data-command='ToggleBusStructures']", useBusStructures => {
+  const busSliders = document.getElementById('bus-sliders')
+  bindChangeListener("input[data-command='ToggleBusStructures']", async useBusStructures => {
     busSliders.style.opacity = useBusStructures && busPresetSelect.value === 'custom' ? '1' : '0.5'
-    runLayout()
+    await runLayout()
   })
 
-  bindChangeListener("select[data-command='SelectBusPreset']", preset => {
+  const beforeBusLabel = document.getElementById('before-bus-label')
+  const afterBusLabel = document.getElementById('after-bus-label')
+  bindChangeListener("select[data-command='SelectBusPreset']", async preset => {
     busSliders.style.opacity = preset === 'custom' ? '1' : '0.5'
     if (preset === 'custom') {
-      if (afterBusSlider.nextElementSibling.textContent === 'Infinity') {
+      if (afterBusLabel.textContent === 'Infinity') {
         setSliderValue('after-bus-slider', 5)
       }
-      if (beforeBusSlider.nextElementSibling.textContent === 'Infinity') {
+      if (beforeBusLabel.textContent === 'Infinity') {
         setSliderValue('before-bus-slider', 5)
       }
     }
-    runLayout()
+    await runLayout()
   })
 
-  bindChangeListener('#before-bus-slider', () => {
-    document.getElementById('before-bus-label').textContent = beforeBusSlider.value.toString()
-    runLayout()
+  bindChangeListener('#before-bus-slider', async () => {
+    beforeBusLabel.textContent = beforeBusSlider.value.toString()
+    await runLayout()
   })
 
-  bindChangeListener('#after-bus-slider', () => {
-    document.getElementById('after-bus-label').textContent = afterBusSlider.value.toString()
-    runLayout()
+  bindChangeListener('#after-bus-slider', async () => {
+    afterBusLabel.textContent = afterBusSlider.value.toString()
+    await runLayout()
   })
 
   bindAction("button[data-command='Layout']", runLayout)

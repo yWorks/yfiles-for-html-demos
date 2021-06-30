@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -32,6 +32,7 @@ import {
   GraphComponent,
   ILabelModelParameter,
   IModelItem,
+  INode,
   Point,
   SimpleLabel,
   Size
@@ -47,18 +48,18 @@ import {
 export default class NodePopup {
   /**
    * Creates a new popup.
-   * @param {GraphComponent} graphComponent
-   * @param {string} div
+   * @param {!GraphComponent} graphComponent
+   * @param {!string} id
    */
-  constructor(graphComponent, div) {
+  constructor(graphComponent, id) {
+    this.currentItem = null
+    this.dirty = false
     this.graphComponent = graphComponent
 
     const labelModel = new ExteriorLabelModel({ insets: 2 })
     this.layoutParameter = labelModel.createParameter(ExteriorLabelModelPosition.EAST)
-    this.currentItem = null
-    this.dirty = false
 
-    this.div = document.getElementById(div)
+    this.div = document.getElementById(id)
     this.div.style.display = 'none'
     this.registerListeners()
   }
@@ -67,7 +68,7 @@ export default class NodePopup {
    * Updates the {@link IModelItem item} to display information for.
    * Setting this property to a value other than null shows the popup.
    * Setting the property to null hides the popup.
-   * @param {IModelItem} item The item whose information is displayed.
+   * @param {?INode} item The item whose information is displayed.
    */
   updatePopup(item) {
     if (item === this.currentItem) {
@@ -87,21 +88,21 @@ export default class NodePopup {
    */
   registerListeners() {
     // add listener for viewport changes to set a dirty mark when zooming or panning
-    this.graphComponent.addViewportChangedListener((sender, event) => {
+    this.graphComponent.addViewportChangedListener(() => {
       if (this.currentItem) {
         this.dirty = true
       }
     })
 
     // add listener for node bounds changes to set a dirty mark when moving the corresponding node
-    this.graphComponent.graph.addNodeLayoutChangedListener((source, node, oldLayout) => {
+    this.graphComponent.graph.addNodeLayoutChangedListener((source, node) => {
       if (this.currentItem && this.currentItem === node) {
         this.dirty = true
       }
     })
 
     // add listener for updates of the visual tree to actually update the location of the popup when needed
-    this.graphComponent.addUpdatedVisualListener((sender, event) => {
+    this.graphComponent.addUpdatedVisualListener(() => {
       if (this.currentItem && this.dirty) {
         this.dirty = false
         this.updateLocation()
@@ -111,7 +112,7 @@ export default class NodePopup {
     // Add close button listener to be able to close the popup by clicking the button
     document.getElementById(`${this.div.id}-closeButton`).addEventListener(
       'click',
-      event => {
+      () => {
         this.updatePopup(null)
       },
       true
@@ -135,7 +136,7 @@ export default class NodePopup {
 
   /**
    * Updates the content of the popup using the information stored in the tag of the given model item.
-   * @param {IModelItem} item The item from which the information is retrieved.
+   * @param {!IModelItem} item The item from which the information is retrieved.
    */
   updateContent(item) {
     if (item.tag) {
@@ -184,8 +185,8 @@ export default class NodePopup {
 
   /**
    * Retrieve the information from the tag element.
-   * @param {Object} tag The tag object from which to retrieve the information.
-   * @return {Array} An array of arrays with length = 2 which stores a name and a value for each piece of information.
+   * @param {!object} tag The tag object from which to retrieve the information.
+   * @returns {!Array.<Array.<string|*>>} An array of arrays with length = 2 which stores a name and a value for each piece of information.
    */
   getInfo(tag) {
     const info = []
@@ -194,9 +195,9 @@ export default class NodePopup {
     if (typeof tag.info === 'string') {
       info.push(['info', tag.info])
     } else {
-      Object.keys(tag.info).forEach(key => {
+      for (const key of Object.keys(tag.info)) {
         info.push([key, tag.info[key]])
-      })
+      }
     }
 
     // also add enter and exit dates

@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -31,13 +31,17 @@ import {
   BalloonLayoutData,
   Class,
   ComponentArrangementStyles,
+  ComponentLayout,
   EdgeBundleDescriptor,
   EdgeRouter,
-  EnumDefinition,
+  EdgeRouterScope,
+  Enum,
   FreeNodeLabelModel,
   GenericLabeling,
   GraphComponent,
+  ILayoutAlgorithm,
   InterleavedMode,
+  LayoutData,
   NodeLabelingPolicy,
   OrganicEdgeRouter,
   RootNodePolicy,
@@ -47,7 +51,12 @@ import {
   YString
 } from 'yfiles'
 
-import LayoutConfiguration from './LayoutConfiguration.js'
+import LayoutConfiguration, {
+  EdgeLabeling,
+  LabelPlacementAlongEdge,
+  LabelPlacementOrientation,
+  LabelPlacementSideOfEdge
+} from './LayoutConfiguration.js'
 import {
   ComponentAttribute,
   Components,
@@ -72,11 +81,10 @@ const BalloonLayoutConfig = Class('BalloonLayoutConfig', {
    */
   constructor: function () {
     LayoutConfiguration.call(this)
-    this.$initBalloonLayoutConfig()
     const layout = new BalloonLayout()
 
     this.rootNodePolicyItem = RootNodePolicy.DIRECTED_ROOT
-    this.routingStyleForNonTreeEdgesItem = BalloonLayoutConfig.EnumRoute.ORTHOGONAL
+    this.routingStyleForNonTreeEdgesItem = RoutingStyle.ORTHOGONAL
     this.actOnSelectionOnlyItem = false
     this.preferredChildWedgeItem = layout.preferredChildWedge
     this.preferredRootWedgeItem = layout.preferredRootWedge
@@ -87,21 +95,20 @@ const BalloonLayoutConfig = Class('BalloonLayoutConfig', {
     this.placeChildrenInterleavedItem = layout.interleavedMode === InterleavedMode.ALL_NODES
     this.straightenChainsItem = layout.chainStraighteningMode
 
-    this.nodeLabelingStyleItem =
-      BalloonLayoutConfig.EnumNodeLabelingPolicies.CONSIDER_CURRENT_POSITION
-    this.edgeLabelingItem = BalloonLayoutConfig.EnumEdgeLabeling.NONE
-    this.labelPlacementAlongEdgeItem = LayoutConfiguration.EnumLabelPlacementAlongEdge.CENTERED
-    this.labelPlacementSideOfEdgeItem = LayoutConfiguration.EnumLabelPlacementSideOfEdge.ON_EDGE
-    this.labelPlacementOrientationItem =
-      LayoutConfiguration.EnumLabelPlacementOrientation.HORIZONTAL
+    this.nodeLabelingStyleItem = NodeLabelingPolicies.CONSIDER_CURRENT_POSITION
+    this.edgeLabelingItem = EdgeLabeling.NONE
+    this.labelPlacementAlongEdgeItem = LabelPlacementAlongEdge.CENTERED
+    this.labelPlacementSideOfEdgeItem = LabelPlacementSideOfEdge.ON_EDGE
+    this.labelPlacementOrientationItem = LabelPlacementOrientation.HORIZONTAL
     this.labelPlacementDistanceItem = 10.0
+    this.title = 'Balloon Layout'
   },
 
   /**
-   * Creates and configures a layout and the graph's {@link IGraph#mapperRegistry} if necessary.
-   * @param {GraphComponent} graphComponent The <code>GraphComponent</code> to apply the
+   * Creates and configures a layout.
+   * @param graphComponent The <code>GraphComponent</code> to apply the
    *   configuration on.
-   * @return {ILayoutAlgorithm} The configured layout algorithm.
+   * @return The configured layout algorithm.
    */
   createConfiguredLayout: function (graphComponent) {
     const layout = new BalloonLayout()
@@ -121,17 +128,17 @@ const BalloonLayoutConfig = Class('BalloonLayoutConfig', {
       : InterleavedMode.OFF
 
     switch (this.nodeLabelingStyleItem) {
-      case BalloonLayoutConfig.EnumNodeLabelingPolicies.NONE:
+      case NodeLabelingPolicies.NONE:
         layout.considerNodeLabels = false
         break
-      case BalloonLayoutConfig.EnumNodeLabelingPolicies.RAYLIKE_LEAVES:
+      case NodeLabelingPolicies.RAYLIKE_LEAVES:
         layout.integratedNodeLabeling = true
         layout.nodeLabelingPolicy = NodeLabelingPolicy.RAY_LIKE_LEAVES
         break
-      case BalloonLayoutConfig.EnumNodeLabelingPolicies.CONSIDER_CURRENT_POSITION:
+      case NodeLabelingPolicies.CONSIDER_CURRENT_POSITION:
         layout.considerNodeLabels = true
         break
-      case BalloonLayoutConfig.EnumNodeLabelingPolicies.HORIZONTAL:
+      case NodeLabelingPolicies.HORIZONTAL:
         layout.integratedNodeLabeling = true
         layout.nodeLabelingPolicy = NodeLabelingPolicy.HORIZONTAL
         break
@@ -146,29 +153,26 @@ const BalloonLayoutConfig = Class('BalloonLayoutConfig', {
 
     const treeReductionStage = new TreeReductionStage()
     multiStageLayout.appendStage(treeReductionStage)
-    if (this.routingStyleForNonTreeEdgesItem === BalloonLayoutConfig.EnumRoute.ORGANIC) {
-      const organic = new OrganicEdgeRouter()
-      treeReductionStage.nonTreeEdgeRouter = organic
+    if (this.routingStyleForNonTreeEdgesItem === RoutingStyle.ORGANIC) {
+      treeReductionStage.nonTreeEdgeRouter = new OrganicEdgeRouter()
       treeReductionStage.nonTreeEdgeSelectionKey = OrganicEdgeRouter.AFFECTED_EDGES_DP_KEY
-    } else if (this.routingStyleForNonTreeEdgesItem === BalloonLayoutConfig.EnumRoute.ORTHOGONAL) {
+    } else if (this.routingStyleForNonTreeEdgesItem === RoutingStyle.ORTHOGONAL) {
       const edgeRouter = new EdgeRouter()
       edgeRouter.rerouting = true
-      edgeRouter.scope = 'ROUTE_AFFECTED_EDGES'
+      edgeRouter.scope = EdgeRouterScope.ROUTE_AFFECTED_EDGES
       treeReductionStage.nonTreeEdgeSelectionKey = edgeRouter.affectedEdgesDpKey
       treeReductionStage.nonTreeEdgeRouter = edgeRouter
-    } else if (
-      this.routingStyleForNonTreeEdgesItem === BalloonLayoutConfig.EnumRoute.STRAIGHTLINE
-    ) {
+    } else if (this.routingStyleForNonTreeEdgesItem === RoutingStyle.STRAIGHTLINE) {
       treeReductionStage.nonTreeEdgeRouter = treeReductionStage.createStraightLineRouter()
-    } else if (this.routingStyleForNonTreeEdgesItem === BalloonLayoutConfig.EnumRoute.BUNDLED) {
+    } else if (this.routingStyleForNonTreeEdgesItem === RoutingStyle.BUNDLED) {
       const ebc = treeReductionStage.edgeBundling
       ebc.bundlingStrength = this.edgeBundlingStrengthItem
       ebc.defaultBundleDescriptor = new EdgeBundleDescriptor({
-        bundled: this.routingStyleForNonTreeEdgesItem === BalloonLayoutConfig.EnumRoute.BUNDLED
+        bundled: this.routingStyleForNonTreeEdgesItem === RoutingStyle.BUNDLED
       })
     }
 
-    if (this.edgeLabelingItem === BalloonLayoutConfig.EnumEdgeLabeling.GENERIC) {
+    if (this.edgeLabelingItem === EdgeLabeling.GENERIC) {
       layout.integratedEdgeLabeling = false
 
       const genericLabeling = new GenericLabeling()
@@ -177,14 +181,14 @@ const BalloonLayoutConfig = Class('BalloonLayoutConfig', {
       genericLabeling.reduceAmbiguity = this.reduceAmbiguityItem
       layout.labelingEnabled = true
       layout.labeling = genericLabeling
-    } else if (this.edgeLabelingItem === BalloonLayoutConfig.EnumEdgeLabeling.INTEGRATED) {
+    } else if (this.edgeLabelingItem === EdgeLabeling.INTEGRATED) {
       layout.integratedEdgeLabeling = true
       treeReductionStage.nonTreeEdgeLabelingAlgorithm = new GenericLabeling()
     }
 
     if (
-      this.nodeLabelingStyleItem === BalloonLayoutConfig.EnumNodeLabelingPolicies.RAYLIKE_LEAVES ||
-      this.nodeLabelingStyleItem === BalloonLayoutConfig.EnumNodeLabelingPolicies.HORIZONTAL
+      this.nodeLabelingStyleItem === NodeLabelingPolicies.RAYLIKE_LEAVES ||
+      this.nodeLabelingStyleItem === NodeLabelingPolicies.HORIZONTAL
     ) {
       graphComponent.graph.nodeLabels.forEach(label => {
         graphComponent.graph.setLabelLayoutParameter(
@@ -198,7 +202,7 @@ const BalloonLayoutConfig = Class('BalloonLayoutConfig', {
       })
     }
 
-    LayoutConfiguration.addPreferredPlacementDescriptor(
+    this.addPreferredPlacementDescriptor(
       graphComponent.graph,
       this.labelPlacementAlongEdgeItem,
       this.labelPlacementSideOfEdgeItem,
@@ -211,35 +215,19 @@ const BalloonLayoutConfig = Class('BalloonLayoutConfig', {
 
   /**
    * Creates and configures the layout data.
-   * @return {LayoutData} The configured layout data.
+   * @return The configured layout data.
    */
   createConfiguredLayoutData: function (graphComponent, layout) {
     const layoutData = new BalloonLayoutData()
 
     if (this.rootNodePolicyItem === RootNodePolicy.SELECTED_ROOT) {
       const selection = graphComponent.selection.selectedNodes
-
       if (selection.size > 0) {
-        const root = selection.first()
-        layoutData.treeRoot = node => node === root
+        layoutData.treeRoot.item = selection.first()
       }
     }
 
     return layoutData
-  },
-
-  // ReSharper disable InconsistentNaming
-  // ReSharper disable UnusedMember.Global
-  /** @type {OptionGroup} */
-  DescriptionGroup: {
-    $meta: function () {
-      return [
-        LabelAttribute('Description'),
-        OptionGroupAttribute('RootGroup', 5),
-        TypeAttribute(OptionGroup.$class)
-      ]
-    },
-    value: null
   },
 
   /** @type {OptionGroup} */
@@ -302,8 +290,6 @@ const BalloonLayoutConfig = Class('BalloonLayoutConfig', {
     value: null
   },
 
-  // ReSharper restore UnusedMember.Global
-  // ReSharper restore InconsistentNaming
   /** @type {string} */
   descriptionText: {
     $meta: function () {
@@ -321,12 +307,6 @@ const BalloonLayoutConfig = Class('BalloonLayoutConfig', {
       )
     }
   },
-
-  /**
-   * Backing field for below property
-   * @type {RootNodePolicy}
-   */
-  $rootNodePolicyItem: null,
 
   /** @type {RootNodePolicy} */
   rootNodePolicyItem: {
@@ -348,21 +328,10 @@ const BalloonLayoutConfig = Class('BalloonLayoutConfig', {
         TypeAttribute(RootNodePolicy.$class)
       ]
     },
-    get: function () {
-      return this.$rootNodePolicyItem
-    },
-    set: function (value) {
-      this.$rootNodePolicyItem = value
-    }
+    value: null
   },
 
-  /**
-   * Backing field for below property
-   * @type {BalloonLayoutConfig.EnumRoute}
-   */
-  $routingStyleForNonTreeEdgesItem: null,
-
-  /** @type {BalloonLayoutConfig.EnumRoute} */
+  /** @type {RoutingStyle} */
   routingStyleForNonTreeEdgesItem: {
     $meta: function () {
       return [
@@ -373,28 +342,17 @@ const BalloonLayoutConfig = Class('BalloonLayoutConfig', {
         OptionGroupAttribute('GeneralGroup', 20),
         EnumValuesAttribute().init({
           values: [
-            ['Orthogonal', BalloonLayoutConfig.EnumRoute.ORTHOGONAL],
-            ['Organic', BalloonLayoutConfig.EnumRoute.ORGANIC],
-            ['Straight-Line', BalloonLayoutConfig.EnumRoute.STRAIGHTLINE],
-            ['Bundled', BalloonLayoutConfig.EnumRoute.BUNDLED]
+            ['Orthogonal', RoutingStyle.ORTHOGONAL],
+            ['Organic', RoutingStyle.ORGANIC],
+            ['Straight-Line', RoutingStyle.STRAIGHTLINE],
+            ['Bundled', RoutingStyle.BUNDLED]
           ]
         }),
-        TypeAttribute(BalloonLayoutConfig.EnumRoute.$class)
+        TypeAttribute(Enum.$class)
       ]
     },
-    get: function () {
-      return this.$routingStyleForNonTreeEdgesItem
-    },
-    set: function (value) {
-      this.$routingStyleForNonTreeEdgesItem = value
-    }
+    value: null
   },
-
-  /**
-   * Backing field for below property
-   * @type {boolean}
-   */
-  $actOnSelectionOnlyItem: false,
 
   /** @type {boolean} */
   actOnSelectionOnlyItem: {
@@ -408,19 +366,8 @@ const BalloonLayoutConfig = Class('BalloonLayoutConfig', {
         TypeAttribute(YBoolean.$class)
       ]
     },
-    get: function () {
-      return this.$actOnSelectionOnlyItem
-    },
-    set: function (value) {
-      this.$actOnSelectionOnlyItem = value
-    }
+    value: false
   },
-
-  /**
-   * Backing field for below property
-   * @type {number}
-   */
-  $edgeBundlingStrengthItem: 1.0,
 
   /** @type {number} */
   edgeBundlingStrengthItem: {
@@ -440,12 +387,7 @@ const BalloonLayoutConfig = Class('BalloonLayoutConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function () {
-      return this.$edgeBundlingStrengthItem
-    },
-    set: function (value) {
-      this.$edgeBundlingStrengthItem = value
-    }
+    value: 1.0
   },
 
   /** @type {boolean} */
@@ -454,15 +396,9 @@ const BalloonLayoutConfig = Class('BalloonLayoutConfig', {
       return [TypeAttribute(YBoolean.$class)]
     },
     get: function () {
-      return this.routingStyleForNonTreeEdgesItem !== BalloonLayoutConfig.EnumRoute.BUNDLED
+      return this.routingStyleForNonTreeEdgesItem !== RoutingStyle.BUNDLED
     }
   },
-
-  /**
-   * Backing field for below property
-   * @type {number}
-   */
-  $preferredChildWedgeItem: 0,
 
   /** @type {number} */
   preferredChildWedgeItem: {
@@ -481,19 +417,8 @@ const BalloonLayoutConfig = Class('BalloonLayoutConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function () {
-      return this.$preferredChildWedgeItem
-    },
-    set: function (value) {
-      this.$preferredChildWedgeItem = value
-    }
+    value: 0
   },
-
-  /**
-   * Backing field for below property
-   * @type {number}
-   */
-  $preferredRootWedgeItem: 0,
 
   /** @type {number} */
   preferredRootWedgeItem: {
@@ -512,19 +437,8 @@ const BalloonLayoutConfig = Class('BalloonLayoutConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function () {
-      return this.$preferredRootWedgeItem
-    },
-    set: function (value) {
-      this.$preferredRootWedgeItem = value
-    }
+    value: 0
   },
-
-  /**
-   * Backing field for below property
-   * @type {number}
-   */
-  $minimumEdgeLengthItem: 0,
 
   /** @type {number} */
   minimumEdgeLengthItem: {
@@ -543,19 +457,8 @@ const BalloonLayoutConfig = Class('BalloonLayoutConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function () {
-      return this.$minimumEdgeLengthItem
-    },
-    set: function (value) {
-      this.$minimumEdgeLengthItem = value
-    }
+    value: 0
   },
-
-  /**
-   * Backing field for below property
-   * @type {number}
-   */
-  $compactnessFactorItem: 0,
 
   /** @type {number} */
   compactnessFactorItem: {
@@ -575,19 +478,8 @@ const BalloonLayoutConfig = Class('BalloonLayoutConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function () {
-      return this.$compactnessFactorItem
-    },
-    set: function (value) {
-      this.$compactnessFactorItem = value
-    }
+    value: 0
   },
-
-  /**
-   * Backing field for below property
-   * @type {boolean}
-   */
-  $allowOverlapsItem: false,
 
   /** @type {boolean} */
   allowOverlapsItem: {
@@ -601,19 +493,8 @@ const BalloonLayoutConfig = Class('BalloonLayoutConfig', {
         TypeAttribute(YBoolean.$class)
       ]
     },
-    get: function () {
-      return this.$allowOverlapsItem
-    },
-    set: function (value) {
-      this.$allowOverlapsItem = value
-    }
+    value: false
   },
-
-  /**
-   * Backing field for below property
-   * @type {boolean}
-   */
-  $balloonFromSketchItem: false,
 
   /** @type {boolean} */
   balloonFromSketchItem: {
@@ -627,19 +508,8 @@ const BalloonLayoutConfig = Class('BalloonLayoutConfig', {
         TypeAttribute(YBoolean.$class)
       ]
     },
-    get: function () {
-      return this.$balloonFromSketchItem
-    },
-    set: function (value) {
-      this.$balloonFromSketchItem = value
-    }
+    value: false
   },
-
-  /**
-   * Backing field for below property
-   * @type {boolean}
-   */
-  $placeChildrenInterleavedItem: false,
 
   /** @type {boolean} */
   placeChildrenInterleavedItem: {
@@ -653,19 +523,8 @@ const BalloonLayoutConfig = Class('BalloonLayoutConfig', {
         TypeAttribute(YBoolean.$class)
       ]
     },
-    get: function () {
-      return this.$placeChildrenInterleavedItem
-    },
-    set: function (value) {
-      this.$placeChildrenInterleavedItem = value
-    }
+    value: false
   },
-
-  /**
-   * Backing field for below property
-   * @type {boolean}
-   */
-  $straightenChainsItem: false,
 
   /** @type {boolean} */
   straightenChainsItem: {
@@ -679,21 +538,10 @@ const BalloonLayoutConfig = Class('BalloonLayoutConfig', {
         TypeAttribute(YBoolean.$class)
       ]
     },
-    get: function () {
-      return this.$straightenChainsItem
-    },
-    set: function (value) {
-      this.$straightenChainsItem = value
-    }
+    value: false
   },
 
-  /**
-   * Backing field for below property
-   * @type {BalloonLayoutConfig.EnumNodeLabelingPolicies}
-   */
-  $nodeLabelingStyleItem: null,
-
-  /** @type {BalloonLayoutConfig.EnumNodeLabelingPolicies} */
+  /** @type {NodeLabelingPolicies} */
   nodeLabelingStyleItem: {
     $meta: function () {
       return [
@@ -704,32 +552,24 @@ const BalloonLayoutConfig = Class('BalloonLayoutConfig', {
         OptionGroupAttribute('NodePropertiesGroup', 20),
         EnumValuesAttribute().init({
           values: [
-            ['Ignore Labels', BalloonLayoutConfig.EnumNodeLabelingPolicies.NONE],
-            [
-              'Consider Labels',
-              BalloonLayoutConfig.EnumNodeLabelingPolicies.CONSIDER_CURRENT_POSITION
-            ],
-            ['Horizontal', BalloonLayoutConfig.EnumNodeLabelingPolicies.HORIZONTAL],
-            ['Ray-like at Leaves', BalloonLayoutConfig.EnumNodeLabelingPolicies.RAYLIKE_LEAVES]
+            ['Ignore Labels', NodeLabelingPolicies.NONE],
+            ['Consider Labels', NodeLabelingPolicies.CONSIDER_CURRENT_POSITION],
+            ['Horizontal', NodeLabelingPolicies.HORIZONTAL],
+            ['Ray-like at Leaves', NodeLabelingPolicies.RAYLIKE_LEAVES]
           ]
         }),
-        TypeAttribute(BalloonLayoutConfig.EnumNodeLabelingPolicies.$class)
+        TypeAttribute(Enum.$class)
       ]
     },
-    get: function () {
-      return this.$nodeLabelingStyleItem
-    },
-    set: function (value) {
-      this.$nodeLabelingStyleItem = value
-    }
+    value: null
   },
 
   /**
-   * @type {BalloonLayoutConfig.EnumEdgeLabeling}
+   * @type {EdgeLabeling}
    */
   $edgeLabelingItem: null,
 
-  /** @type {BalloonLayoutConfig.EnumEdgeLabeling} */
+  /** @type {EdgeLabeling} */
   edgeLabelingItem: {
     $meta: function () {
       return [
@@ -740,12 +580,12 @@ const BalloonLayoutConfig = Class('BalloonLayoutConfig', {
         OptionGroupAttribute('EdgePropertiesGroup', 10),
         EnumValuesAttribute().init({
           values: [
-            ['None', BalloonLayoutConfig.EnumEdgeLabeling.NONE],
-            ['Integrated', BalloonLayoutConfig.EnumEdgeLabeling.INTEGRATED],
-            ['Generic', BalloonLayoutConfig.EnumEdgeLabeling.GENERIC]
+            ['None', EdgeLabeling.NONE],
+            ['Integrated', EdgeLabeling.INTEGRATED],
+            ['Generic', EdgeLabeling.GENERIC]
           ]
         }),
-        TypeAttribute(BalloonLayoutConfig.EnumEdgeLabeling.$class)
+        TypeAttribute(Enum.$class)
       ]
     },
     get: function () {
@@ -753,20 +593,13 @@ const BalloonLayoutConfig = Class('BalloonLayoutConfig', {
     },
     set: function (value) {
       this.$edgeLabelingItem = value
-      if (value === BalloonLayoutConfig.EnumEdgeLabeling.INTEGRATED) {
-        this.labelPlacementOrientationItem =
-          LayoutConfiguration.EnumLabelPlacementOrientation.PARALLEL
-        this.labelPlacementAlongEdgeItem = LayoutConfiguration.EnumLabelPlacementAlongEdge.AT_TARGET
+      if (value === EdgeLabeling.INTEGRATED) {
+        this.labelPlacementOrientationItem = LabelPlacementOrientation.PARALLEL
+        this.labelPlacementAlongEdgeItem = LabelPlacementAlongEdge.AT_TARGET
         this.labelPlacementDistanceItem = 0
       }
     }
   },
-
-  /**
-   * Backing field for below property
-   * @type {boolean}
-   */
-  $reduceAmbiguityItem: false,
 
   /** @type {boolean} */
   reduceAmbiguityItem: {
@@ -780,12 +613,7 @@ const BalloonLayoutConfig = Class('BalloonLayoutConfig', {
         TypeAttribute(YBoolean.$class)
       ]
     },
-    get: function () {
-      return this.$reduceAmbiguityItem
-    },
-    set: function (value) {
-      this.$reduceAmbiguityItem = value
-    }
+    value: false
   },
 
   /** @type {boolean} */
@@ -794,17 +622,11 @@ const BalloonLayoutConfig = Class('BalloonLayoutConfig', {
       return [TypeAttribute(YBoolean.$class)]
     },
     get: function () {
-      return this.edgeLabelingItem !== BalloonLayoutConfig.EnumEdgeLabeling.GENERIC
+      return this.edgeLabelingItem !== EdgeLabeling.GENERIC
     }
   },
 
-  /**
-   * Backing field for below property
-   * @type {LayoutConfiguration.EnumLabelPlacementOrientation}
-   */
-  $labelPlacementOrientationItem: null,
-
-  /** @type {LayoutConfiguration.EnumLabelPlacementOrientation} */
+  /** @type {LabelPlacementOrientation} */
   labelPlacementOrientationItem: {
     $meta: function () {
       return [
@@ -815,21 +637,16 @@ const BalloonLayoutConfig = Class('BalloonLayoutConfig', {
         OptionGroupAttribute('PreferredPlacementGroup', 10),
         EnumValuesAttribute().init({
           values: [
-            ['Parallel', LayoutConfiguration.EnumLabelPlacementOrientation.PARALLEL],
-            ['Orthogonal', LayoutConfiguration.EnumLabelPlacementOrientation.ORTHOGONAL],
-            ['Horizontal', LayoutConfiguration.EnumLabelPlacementOrientation.HORIZONTAL],
-            ['Vertical', LayoutConfiguration.EnumLabelPlacementOrientation.VERTICAL]
+            ['Parallel', LabelPlacementOrientation.PARALLEL],
+            ['Orthogonal', LabelPlacementOrientation.ORTHOGONAL],
+            ['Horizontal', LabelPlacementOrientation.HORIZONTAL],
+            ['Vertical', LabelPlacementOrientation.VERTICAL]
           ]
         }),
-        TypeAttribute(LayoutConfiguration.EnumLabelPlacementOrientation.$class)
+        TypeAttribute(Enum.$class)
       ]
     },
-    get: function () {
-      return this.$labelPlacementOrientationItem
-    },
-    set: function (value) {
-      this.$labelPlacementOrientationItem = value
-    }
+    value: null
   },
 
   /** @type {boolean} */
@@ -839,19 +656,13 @@ const BalloonLayoutConfig = Class('BalloonLayoutConfig', {
     },
     get: function () {
       return (
-        this.edgeLabelingItem === BalloonLayoutConfig.EnumEdgeLabeling.NONE ||
-        this.edgeLabelingItem === BalloonLayoutConfig.EnumEdgeLabeling.INTEGRATED
+        this.edgeLabelingItem === EdgeLabeling.NONE ||
+        this.edgeLabelingItem === EdgeLabeling.INTEGRATED
       )
     }
   },
 
-  /**
-   * Backing field for below property
-   * @type {LayoutConfiguration.EnumLabelPlacementAlongEdge}
-   */
-  $labelPlacementAlongEdgeItem: null,
-
-  /** @type {LayoutConfiguration.EnumLabelPlacementAlongEdge} */
+  /** @type {LabelPlacementAlongEdge} */
   labelPlacementAlongEdgeItem: {
     $meta: function () {
       return [
@@ -862,23 +673,18 @@ const BalloonLayoutConfig = Class('BalloonLayoutConfig', {
         OptionGroupAttribute('PreferredPlacementGroup', 20),
         EnumValuesAttribute().init({
           values: [
-            ['Anywhere', LayoutConfiguration.EnumLabelPlacementAlongEdge.ANYWHERE],
-            ['At Source', LayoutConfiguration.EnumLabelPlacementAlongEdge.AT_SOURCE],
-            ['At Source Port', LayoutConfiguration.EnumLabelPlacementAlongEdge.AT_SOURCE_PORT],
-            ['At Target', LayoutConfiguration.EnumLabelPlacementAlongEdge.AT_TARGET],
-            ['At Target Port', LayoutConfiguration.EnumLabelPlacementAlongEdge.AT_TARGET_PORT],
-            ['Centered', LayoutConfiguration.EnumLabelPlacementAlongEdge.CENTERED]
+            ['Anywhere', LabelPlacementAlongEdge.ANYWHERE],
+            ['At Source', LabelPlacementAlongEdge.AT_SOURCE],
+            ['At Source Port', LabelPlacementAlongEdge.AT_SOURCE_PORT],
+            ['At Target', LabelPlacementAlongEdge.AT_TARGET],
+            ['At Target Port', LabelPlacementAlongEdge.AT_TARGET_PORT],
+            ['Centered', LabelPlacementAlongEdge.CENTERED]
           ]
         }),
-        TypeAttribute(LayoutConfiguration.EnumLabelPlacementAlongEdge.$class)
+        TypeAttribute(Enum.$class)
       ]
     },
-    get: function () {
-      return this.$labelPlacementAlongEdgeItem
-    },
-    set: function (value) {
-      this.$labelPlacementAlongEdgeItem = value
-    }
+    value: null
   },
 
   /** @type {boolean} */
@@ -888,19 +694,13 @@ const BalloonLayoutConfig = Class('BalloonLayoutConfig', {
     },
     get: function () {
       return (
-        this.edgeLabelingItem === BalloonLayoutConfig.EnumEdgeLabeling.NONE ||
-        this.edgeLabelingItem === BalloonLayoutConfig.EnumEdgeLabeling.INTEGRATED
+        this.edgeLabelingItem === EdgeLabeling.NONE ||
+        this.edgeLabelingItem === EdgeLabeling.INTEGRATED
       )
     }
   },
 
-  /**
-   * Backing field for below property
-   * @type {LayoutConfiguration.EnumLabelPlacementSideOfEdge}
-   */
-  $labelPlacementSideOfEdgeItem: null,
-
-  /** @type {LayoutConfiguration.EnumLabelPlacementSideOfEdge} */
+  /** @type {LabelPlacementSideOfEdge} */
   labelPlacementSideOfEdgeItem: {
     $meta: function () {
       return [
@@ -911,22 +711,17 @@ const BalloonLayoutConfig = Class('BalloonLayoutConfig', {
         OptionGroupAttribute('PreferredPlacementGroup', 30),
         EnumValuesAttribute().init({
           values: [
-            ['Anywhere', LayoutConfiguration.EnumLabelPlacementSideOfEdge.ANYWHERE],
-            ['On Edge', LayoutConfiguration.EnumLabelPlacementSideOfEdge.ON_EDGE],
-            ['Left', LayoutConfiguration.EnumLabelPlacementSideOfEdge.LEFT],
-            ['Right', LayoutConfiguration.EnumLabelPlacementSideOfEdge.RIGHT],
-            ['Left or Right', LayoutConfiguration.EnumLabelPlacementSideOfEdge.LEFT_OR_RIGHT]
+            ['Anywhere', LabelPlacementSideOfEdge.ANYWHERE],
+            ['On Edge', LabelPlacementSideOfEdge.ON_EDGE],
+            ['Left', LabelPlacementSideOfEdge.LEFT],
+            ['Right', LabelPlacementSideOfEdge.RIGHT],
+            ['Left or Right', LabelPlacementSideOfEdge.LEFT_OR_RIGHT]
           ]
         }),
-        TypeAttribute(LayoutConfiguration.EnumLabelPlacementSideOfEdge.$class)
+        TypeAttribute(Enum.$class)
       ]
     },
-    get: function () {
-      return this.$labelPlacementSideOfEdgeItem
-    },
-    set: function (value) {
-      this.$labelPlacementSideOfEdgeItem = value
-    }
+    value: null
   },
 
   /** @type {boolean} */
@@ -935,15 +730,9 @@ const BalloonLayoutConfig = Class('BalloonLayoutConfig', {
       return [TypeAttribute(YBoolean.$class)]
     },
     get: function () {
-      return this.edgeLabelingItem === BalloonLayoutConfig.EnumEdgeLabeling.NONE
+      return this.edgeLabelingItem === EdgeLabeling.NONE
     }
   },
-
-  /**
-   * Backing field for below property
-   * @type {number}
-   */
-  $labelPlacementDistanceItem: 0,
 
   /** @type {number} */
   labelPlacementDistanceItem: {
@@ -962,12 +751,7 @@ const BalloonLayoutConfig = Class('BalloonLayoutConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function () {
-      return this.$labelPlacementDistanceItem
-    },
-    set: function (value) {
-      this.$labelPlacementDistanceItem = value
-    }
+    value: 0
   },
 
   /** @type {boolean} */
@@ -977,50 +761,33 @@ const BalloonLayoutConfig = Class('BalloonLayoutConfig', {
     },
     get: function () {
       return (
-        this.edgeLabelingItem === BalloonLayoutConfig.EnumEdgeLabeling.NONE ||
-        this.edgeLabelingItem === BalloonLayoutConfig.EnumEdgeLabeling.INTEGRATED ||
-        this.labelPlacementSideOfEdgeItem ===
-          LayoutConfiguration.EnumLabelPlacementSideOfEdge.ON_EDGE
+        this.edgeLabelingItem === EdgeLabeling.NONE ||
+        this.edgeLabelingItem === EdgeLabeling.INTEGRATED ||
+        this.labelPlacementSideOfEdgeItem === LabelPlacementSideOfEdge.ON_EDGE
       )
     }
-  },
-
-  $initBalloonLayoutConfig: function () {
-    this.$rootNodePolicyItem = RootNodePolicy.DIRECTED_ROOT
-    this.$routingStyleForNonTreeEdgesItem = BalloonLayoutConfig.EnumRoute.ORTHOGONAL
-    this.$nodeLabelingStyleItem = BalloonLayoutConfig.EnumNodeLabelingPolicies.NONE
-    this.$edgeLabelingItem = BalloonLayoutConfig.EnumEdgeLabeling.NONE
-    this.$labelPlacementOrientationItem = LayoutConfiguration.EnumLabelPlacementOrientation.PARALLEL
-    this.$labelPlacementAlongEdgeItem = LayoutConfiguration.EnumLabelPlacementAlongEdge.ANYWHERE
-    this.$labelPlacementSideOfEdgeItem = LayoutConfiguration.EnumLabelPlacementSideOfEdge.ANYWHERE
-  },
-
-  $static: {
-    EnumRoute: new EnumDefinition(() => {
-      return {
-        ORTHOGONAL: 0,
-        ORGANIC: 1,
-        STRAIGHTLINE: 2,
-        BUNDLED: 3
-      }
-    }),
-
-    EnumEdgeLabeling: new EnumDefinition(() => {
-      return {
-        NONE: 0,
-        INTEGRATED: 1,
-        GENERIC: 2
-      }
-    }),
-
-    EnumNodeLabelingPolicies: new EnumDefinition(() => {
-      return {
-        NONE: 0,
-        HORIZONTAL: 1,
-        RAYLIKE_LEAVES: 2,
-        CONSIDER_CURRENT_POSITION: 3
-      }
-    })
   }
 })
 export default BalloonLayoutConfig
+
+export /**
+ * @readonly
+ * @enum {number}
+ */
+const NodeLabelingPolicies = {
+  NONE: 0,
+  HORIZONTAL: 1,
+  RAYLIKE_LEAVES: 2,
+  CONSIDER_CURRENT_POSITION: 3
+}
+
+export /**
+ * @readonly
+ * @enum {number}
+ */
+const RoutingStyle = {
+  ORTHOGONAL: 0,
+  ORGANIC: 1,
+  STRAIGHTLINE: 2,
+  BUNDLED: 3
+}

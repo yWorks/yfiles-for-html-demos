@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -34,14 +34,17 @@ const express = require('express')
 const multer = require('multer') // multipart/form-data parsing
 const open = require('open')
 const favicon = require('serve-favicon')
-const resolveYfiles = require('./resolve-yfiles')
+const resolveYFiles = require('./resolve-yfiles')
+const topLevelPackageJson = require('../../package.json')
 
-let defaultPage = '/README.html'
+let defaultPage = '/demos-ts/README.html'
 if (process.argv.length > 2) {
   defaultPage = process.argv[2]
 }
 
 const app = express()
+const server = http.createServer(app)
+
 let staticRoot = path.join(__dirname, '../..')
 if (typeof process.env.DEMO_SERVER_ROOT !== 'undefined') {
   staticRoot = path.resolve(process.env.DEMO_SERVER_ROOT)
@@ -51,12 +54,22 @@ app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*')
   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept')
   res.header('Access-Control-Expose-Headers', 'X-Powered-By, X-yFiles-for-HTML-Demo-Server')
-  res.header('X-yFiles-for-HTML-Demo-Server', 'true')
+  res.header('X-yFiles-for-HTML-Demo-Server', topLevelPackageJson.version)
   if (req.path && req.path.includes('node_modules/yfiles')) {
     // disables caching
     res.header('Cache-Control', 'no-store')
   }
   next()
+})
+
+app.get('/self-path', (req, res) => {
+  res.send(__dirname)
+})
+
+app.post('/shutdown', (req, res) => {
+  console.log('Shutdown signal received, stopping...')
+  res.sendStatus(200)
+  server.close()
 })
 
 const favIconPath = path.join(staticRoot, 'demos-js/resources/image', 'favicon.ico')
@@ -68,7 +81,7 @@ const serveStatic = express.static(staticRoot, {
   index: ['README.html', 'index.html', 'index.htm']
 })
 
-app.use(resolveYfiles({ staticRoot }))
+app.use(resolveYFiles.resolve({ staticRoot }))
 
 app.use('/', serveStatic)
 
@@ -171,14 +184,44 @@ app.post('/file/load', upload.single(inputFormName), (req, res) => {
       'Access-Control-Allow-Origin': '*',
       'Access-Control-Allow-Headers': 'X-Requested-With'
     })
-    .send(`<html><body><script>window.parent.postMessage('${message}', '*')</script></body></html>`)
+    .send(
+      `<html lang="en"><body><script>window.parent.postMessage('${message}', '*')</script></body></html>`
+    )
+})
+
+app.use(express.json())
+
+app.post('/config/setConfig', (req, res) => {
+  try {
+    resolveYFiles.setResolveConfig(
+      JSON.stringify({ logRequests: req.body.logRequests, resolveDirs: [...req.body.resolveDirs] })
+    )
+    res.set({ 'Content-Type': 'application/json' })
+    res.status(200).send(JSON.stringify(resolveYFiles.getResolveConfig()))
+  } catch (e) {
+    res.status(500).send(e.toString())
+  }
+})
+
+app.get('/config/getConfig', (req, res) => {
+  res.set({ 'Content-Type': 'application/json' })
+  res.status(200).send(JSON.stringify(resolveYFiles.getResolveConfig()))
+})
+
+app.get('/config/getLibraryLocations', (req, res) => {
+  try {
+    const libraryLocations = resolveYFiles.findLibraryLocations(staticRoot)
+    res.set({ 'Content-Type': 'application/json' })
+    res.status(200).send(JSON.stringify(libraryLocations))
+  } catch (e) {
+    res.status(500).send(e.toString())
+  }
 })
 
 let port = 4242
 if (typeof process.env.DEMO_SERVER_PORT !== 'undefined') {
   port = parseInt(process.env.DEMO_SERVER_PORT, 10)
 }
-const server = http.createServer(app)
 
 server.on('error', e => {
   if (e.code === 'EADDRINUSE') {

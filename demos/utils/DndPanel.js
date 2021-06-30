@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import {
+import yfiles, {
   GraphComponent,
   IEdge,
   ILabel,
@@ -34,7 +34,6 @@ import {
   INode,
   Insets,
   IPort,
-  IStripe,
   ListEnumerable,
   Point,
   Rect,
@@ -42,6 +41,11 @@ import {
   SvgExport,
   VoidNodeStyle
 } from 'yfiles'
+import { passiveSupported } from './Workarounds.js'
+
+/**
+ * @typedef {(T|object)} Item
+ */
 
 /**
  * A palette of sample nodes. Users can drag and drop the nodes from this palette to a graph control.
@@ -49,67 +53,28 @@ import {
 export class DragAndDropPanel {
   /**
    * Create a new style panel in the given element.
-   * @param {HTMLElement} div The element that will display the palette items.
-   * @param {boolean} passiveSupported Whether or not the browser supports active and passive event listeners.
+   * @param {!HTMLElement} div The element that will display the palette items.
    */
-  constructor(div, passiveSupported) {
-    this.divField = div
-    this.$maxItemWidth = 150
-    this.passiveSupported = !!passiveSupported
-    this.$copyNodeLabels = true
-  }
+  constructor(div) {
+    this.div = div
 
-  /**
-   * The main element of this panel.
-   */
-  get div() {
-    return this.divField
-  }
+    // The desired maximum width of each item. This value is used to decide whether or not a
+    // visualization must be scaled down.
+    this.maxItemWidth = 150
 
-  set div(div) {
-    this.divField = div
-  }
+    // Whether the labels of the DnD node visual should be transferred to the created node or discarded.
+    this.copyNodeLabels = true
 
-  /**
-   * The desired maximum width of each item. This value is used to decide whether or not a
-   * visualization must be scaled down.
-   */
-  get maxItemWidth() {
-    return this.$maxItemWidth
-  }
-
-  set maxItemWidth(width) {
-    this.$maxItemWidth = width
-  }
-
-  /**
-   * A callback that is called then the user presses the mouse button on an item.
-   * It should start the actual drag and drop operation.
-   */
-  get beginDragCallback() {
-    return this.$beginDragCallback
-  }
-
-  set beginDragCallback(callback) {
-    this.$beginDragCallback = callback
-  }
-
-  /**
-   * Whether the labels of the DnD node visual should be transferred to the created node or discarded.
-   * @returns {Boolean}
-   */
-  get copyNodeLabels() {
-    return this.$copyNodeLabels
-  }
-
-  set copyNodeLabels(value) {
-    this.$copyNodeLabels = value
+    // A callback that is called then the user presses the mouse button on an item.
+    // It should start the actual drag and drop operation.
+    this.beginDragCallback = null
   }
 
   /**
    * Adds the items provided by the given factory to this palette.
    * This method delegates the creation of the visualization of each node
    * to createNodeVisual.
+   * @param {?function} itemFactory
    */
   populatePanel(itemFactory) {
     if (!itemFactory) {
@@ -121,12 +86,12 @@ export class DragAndDropPanel {
 
     // Convert the nodes into plain visualizations
     const graphComponent = new GraphComponent()
-    for (let i = 0; i < items.length; i++) {
-      const item = items[i]
-      const modelItem = INode.isInstance(item) || IEdge.isInstance(item) ? item : item.element
-      const visual = INode.isInstance(modelItem)
-        ? this.createNodeVisual(item, graphComponent)
-        : this.createEdgeVisual(item, graphComponent)
+    for (const item of items) {
+      const modelItem = item instanceof INode || item instanceof IEdge ? item : item.element
+      const visual =
+        modelItem instanceof INode
+          ? this.createNodeVisual(modelItem, graphComponent)
+          : this.createEdgeVisual(modelItem, graphComponent)
       this.addPointerDownListener(modelItem, visual, this.beginDragCallback)
       this.div.appendChild(visual)
     }
@@ -136,18 +101,16 @@ export class DragAndDropPanel {
    * Creates an element that contains the visualization of the given node.
    * This method is used by populatePanel to create the visualization
    * for each node provided by the factory.
-   * @return {HTMLDivElement}
+   * @param {!Item.<INode>} original
+   * @param {!GraphComponent} graphComponent
+   * @returns {!HTMLDivElement}
    */
   createNodeVisual(original, graphComponent) {
     const graph = graphComponent.graph
     graph.clear()
 
-    const originalNode = INode.isInstance(original) ? original : original.element
-    const node = graph.createNode(
-      originalNode.layout.toRect(),
-      originalNode.style,
-      originalNode.tag
-    )
+    const originalNode = original instanceof INode ? original : original.element
+    const node = graph.createNode(originalNode.layout, originalNode.style, originalNode.tag)
     originalNode.labels.forEach(label => {
       graph.addLabel(
         node,
@@ -163,18 +126,23 @@ export class DragAndDropPanel {
     })
     this.updateViewport(graphComponent)
 
-    return this.exportAndWrap(graphComponent, original.tooltip)
+    return this.exportAndWrap(
+      graphComponent,
+      original instanceof INode ? undefined : original.tooltip
+    )
   }
 
   /**
    * Creates an element that contains the visualization of the given edge.
-   * @return {HTMLDivElement}
+   * @param {!Item.<IEdge>} original
+   * @param {!GraphComponent} graphComponent
+   * @returns {!HTMLDivElement}
    */
   createEdgeVisual(original, graphComponent) {
     const graph = graphComponent.graph
     graph.clear()
 
-    const originalEdge = IEdge.isInstance(original) ? original : original.element
+    const originalEdge = original instanceof IEdge ? original : original.element
 
     const n1 = graph.createNode(new Rect(0, 10, 0, 0), VoidNodeStyle.INSTANCE)
     const n2 = graph.createNode(new Rect(50, 40, 0, 0), VoidNodeStyle.INSTANCE)
@@ -187,9 +155,15 @@ export class DragAndDropPanel {
     // provide some more insets to account for the arrow heads
     graphComponent.updateContentRect(new Insets(5))
 
-    return this.exportAndWrap(graphComponent, original.tooltip)
+    return this.exportAndWrap(
+      graphComponent,
+      original instanceof IEdge ? undefined : original.tooltip
+    )
   }
 
+  /**
+   * @param {!GraphComponent} graphComponent
+   */
   updateViewport(graphComponent) {
     const graph = graphComponent.graph
     let viewport = Rect.EMPTY
@@ -213,11 +187,15 @@ export class DragAndDropPanel {
 
   /**
    * Exports and wraps the original visualization in an HTML element.
-   * @return {HTMLDivElement}
+   * @param {!GraphComponent} graphComponent
+   * @param {!string} [tooltip]
+   * @returns {!HTMLDivElement}
    */
   exportAndWrap(graphComponent, tooltip) {
-    const exporter = new SvgExport(graphComponent.contentRect)
-    exporter.margins = new Insets(5)
+    const exporter = new SvgExport({
+      worldBounds: graphComponent.contentRect,
+      margins: 5
+    })
 
     exporter.scale = exporter.calculateScaleForWidth(
       Math.min(this.maxItemWidth, graphComponent.contentRect.width)
@@ -230,8 +208,8 @@ export class DragAndDropPanel {
     const div = document.createElement('div')
     div.setAttribute('class', 'demo-dndPanelItem')
     div.appendChild(visual)
-    div.style.setProperty('width', visual.getAttribute('width'), '')
-    div.style.setProperty('height', visual.getAttribute('height'), '')
+    div.style.setProperty('width', visual.getAttribute('width'))
+    div.style.setProperty('height', visual.getAttribute('height'))
     div.style.setProperty('touch-action', 'none')
     try {
       div.style.setProperty('cursor', 'grab', '')
@@ -246,6 +224,9 @@ export class DragAndDropPanel {
 
   /**
    * Adds a mousedown listener to the given element that starts the drag operation.
+   * @param {!(INode|IEdge)} item
+   * @param {!HTMLElement} element
+   * @param {?function} callback
    */
   addPointerDownListener(item, element, callback) {
     if (!callback) {
@@ -254,21 +235,23 @@ export class DragAndDropPanel {
 
     // the actual drag operation
     const doDragOperation = () => {
-      if (typeof IStripe !== 'undefined' && IStripe.isInstance(item.tag)) {
+      // Ensure that the following code still works, even when the view-table module isn't loaded
+      const IStripe = yfiles.graph.IStripe
+      if (IStripe && item.tag instanceof IStripe) {
         // If the dummy node has a stripe as its tag, we use the stripe directly
         // This allows StripeDropInputMode to take over
         callback(element, item.tag)
-      } else if (ILabel.isInstance(item.tag) || IPort.isInstance(item.tag)) {
+      } else if (item.tag instanceof ILabel || item.tag instanceof IPort) {
         callback(element, item.tag)
-      } else if (IEdge.isInstance(item)) {
+      } else if (item instanceof IEdge) {
         callback(element, item)
-      } else {
+      } else if (item instanceof INode) {
         // Otherwise, we just use the node itself and let (hopefully) NodeDropInputMode take over
         const simpleNode = new SimpleNode()
         simpleNode.layout = item.layout
         simpleNode.style = item.style.clone()
         simpleNode.tag = item.tag
-        simpleNode.labels = this.$copyNodeLabels ? item.labels : IListEnumerable.EMPTY
+        simpleNode.labels = this.copyNodeLabels ? item.labels : IListEnumerable.EMPTY
         if (item.ports.size > 0) {
           simpleNode.ports = new ListEnumerable(item.ports)
         }
@@ -320,7 +303,7 @@ export class DragAndDropPanel {
       element.addEventListener(
         'touchstart',
         touchStartListener,
-        this.passiveSupported ? { passive: false } : false
+        passiveSupported ? { passive: false } : false
       )
     }
   }

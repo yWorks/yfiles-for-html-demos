@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -30,7 +30,7 @@ import {
   GraphComponent,
   IEdge,
   ILabelModelParameter,
-  IModelItem,
+  INode,
   Point,
   SimpleLabel,
   Size
@@ -38,7 +38,7 @@ import {
 
 /**
  * Adds a HTML panel on top of the contents of the GraphComponent that can
- * display arbitrary information about a {@link IModelItem graph item}.
+ * display arbitrary information about a node or an edge.
  * In order to not interfere with the positioning of the pop-up, HTML content
  * should be added as ancestor of the {@link HTMLPopupSupport#div div element}, and
  * use relative positioning. This implementation uses a
@@ -49,53 +49,39 @@ export default class HTMLPopupSupport {
   /**
    * Constructor that takes the graphComponent, the container div element and an ILabelModelParameter
    * to determine the relative position of the popup.
-   * @param {GraphComponent} graphComponent
-   * @param {HTMLElement} div
-   * @param {ILabelModelParameter} labelModelParameter
+   * @param {!GraphComponent} graphComponent
+   * @param {!HTMLElement} div
+   * @param {!ILabelModelParameter} labelModelParameter
    */
   constructor(graphComponent, div, labelModelParameter) {
-    this.graphComponent = graphComponent
     this.labelModelParameter = labelModelParameter
+    this.div = div
+    this.graphComponent = graphComponent
+    this._currentItem = null
 
-    this.$div = div
-    this.$currentItem = null
-    this.$dirty = false
+    // The flag for the current position is no longer valid.
+    this.dirty = false
+
     // make the popup invisible
     div.style.opacity = '0'
     div.style.display = 'none'
-    this.$div.setAttribute('class', 'popupContent')
+    this.div.setAttribute('class', 'popupContent')
 
     this.registerListeners()
   }
 
   /**
-   * Set the container {@link HTMLPopupSupport#div div element}.
-   * @type {HTMLElement}
-   */
-  set div(value) {
-    this.$div = value
-  }
-
-  /**
-   * Gets the container {@link HTMLPopupSupport#div div element}.
-   * @type {HTMLElement}
-   */
-  get div() {
-    return this.$div
-  }
-
-  /**
-   * Sets the {@link IModelItem item} to display information for.
+   * Sets the node or edge to display information for.
    * Setting this property to a value other than null shows the pop-up.
    * Setting the property to null hides the pop-up.
-   * @type {IModelItem}
+   * @type {?(IEdge|INode)}
    */
   set currentItem(value) {
-    if (value === this.$currentItem) {
+    if (value === this._currentItem) {
       return
     }
-    this.$currentItem = value
-    if (value !== null) {
+    this._currentItem = value
+    if (value) {
       this.show()
     } else {
       this.hide()
@@ -103,28 +89,11 @@ export default class HTMLPopupSupport {
   }
 
   /**
-   * Gets the {@link IModelItem item} to display information for.
-   * @type {IModelItem}
+   * Gets the node or edge to display information for.
+   * @type {?(IEdge|INode)}
    */
   get currentItem() {
-    return this.$currentItem
-  }
-
-  /**
-   * Sets the flag for the current position is no longer valid.
-   * @param value true if the current position is no longer valid, false otherwise
-   * @type {boolean}
-   */
-  set dirty(value) {
-    this.$dirty = value
-  }
-
-  /**
-   * Gets the flag for the current position is no longer valid.
-   * @type {boolean}
-   */
-  get dirty() {
-    return this.$dirty
+    return this._currentItem
   }
 
   /**
@@ -132,57 +101,68 @@ export default class HTMLPopupSupport {
    */
   registerListeners() {
     // Add power button listener
-    document.getElementById('powerButton').addEventListener(
-      'click',
-      evt => {
-        if (this.currentItem !== null) {
-          const itemTag = this.currentItem.tag
-          itemTag.enabled = !itemTag.enabled
-          const powerButtonPath = document.getElementById('powerButton-path')
-          if (itemTag.enabled) {
-            powerButtonPath.setAttribute('class', '')
-          } else {
-            powerButtonPath.setAttribute('class', 'powerButton-off')
-          }
-          this.graphComponent.invalidate()
-        }
-      },
-      true
-    )
+    const powerButton = document.getElementById('powerButton')
+    powerButton.addEventListener('click', () => this.togglePowerButton(), true)
 
     // Add close button listener
-    document.getElementById('closeButton').addEventListener(
-      'click',
-      evt => {
-        this.hide()
-      },
-      true
-    )
+    const closeButton = document.getElementById('closeButton')
+    closeButton.addEventListener('click', () => this.hide(), true)
 
     // Add listener for viewport changes
-    this.graphComponent.addViewportChangedListener((sender, propertyChangedEventArgs) => {
+    this.graphComponent.addViewportChangedListener(() => {
       if (this.currentItem) {
         this.dirty = true
       }
     })
 
     // Add listeners for node layout changes
-    this.graphComponent.graph.addNodeLayoutChangedListener((node, oldLayout) => {
-      if (
-        ((this.currentItem && this.currentItem === node) || IEdge.isInstance(this.currentItem)) &&
-        (node === this.currentItem.sourcePort.owner || node === this.currentItem.targetPort.owner)
-      ) {
+    this.graphComponent.graph.addNodeLayoutChangedListener(node => {
+      if (this.hasItemPositionChanged(node)) {
         this.dirty = true
       }
     })
 
     // Add listener for updates of the visual tree
-    this.graphComponent.addUpdatedVisualListener((sender, eventArgs) => {
+    this.graphComponent.addUpdatedVisualListener(() => {
       if (this.currentItem && this.dirty) {
         this.dirty = false
         this.updateLocation()
       }
     })
+  }
+
+  togglePowerButton() {
+    if (this.currentItem) {
+      const itemTag = this.currentItem.tag
+      itemTag.enabled = !itemTag.enabled
+
+      const powerButtonPath = document.getElementById('powerButton-path')
+      powerButtonPath.setAttribute('class', itemTag.enabled ? '' : 'powerButton-off')
+
+      this.graphComponent.invalidate()
+    }
+  }
+
+  /**
+   * Checks if the position of the item has been affected by a layout change of the given node.
+   * @param {!INode} node
+   * @returns {boolean}
+   */
+  hasItemPositionChanged(node) {
+    if (!this.currentItem) {
+      return false
+    }
+
+    // the current item is a node and has been changed
+    if (this.currentItem === node) {
+      return true
+    }
+
+    // the current item is an edge and one of its adjacent nodes have been changed
+    return (
+      this.currentItem instanceof IEdge &&
+      (node === this.currentItem.sourceNode || node === this.currentItem.targetNode)
+    )
   }
 
   /**
@@ -191,9 +171,7 @@ export default class HTMLPopupSupport {
   show() {
     this.div.style.display = 'block'
     // ensure opacity is set after display block, to enable the fading animation
-    setTimeout(() => {
-      this.div.style.opacity = '1'
-    }, 0)
+    setTimeout(() => (this.div.style.opacity = '1'), 0)
     this.div.setAttribute('class', 'popupContent popupContentFade')
     this.updateLocation()
   }
@@ -207,6 +185,7 @@ export default class HTMLPopupSupport {
     const clonedTooltip = this.div.cloneNode(true)
     clonedTooltip.setAttribute('class', 'popupContentClone')
     parent.appendChild(clonedTooltip)
+
     // fade the clone out, then remove it from the DOM. Both actions need to be timed.
     setTimeout(() => {
       clonedTooltip.setAttribute('class', 'popupContentClone invisible')
@@ -214,6 +193,7 @@ export default class HTMLPopupSupport {
         parent.removeChild(clonedTooltip)
       }, 300)
     }, 10)
+
     // make the original popup invisible
     this.div.style.opacity = '0'
     this.div.style.display = 'none'
@@ -228,33 +208,43 @@ export default class HTMLPopupSupport {
     if (!this.currentItem && !this.labelModelParameter) {
       return
     }
+
+    const newLocation = this.calculateLocation()
+    if (newLocation) {
+      this.setLocation(newLocation)
+      setTimeout(() => this.div.setAttribute('class', 'popupContent'), 300)
+    }
+  }
+
+  /**
+   * @returns {?Point}
+   */
+  calculateLocation() {
     const width = this.div.clientWidth
     const height = this.div.clientHeight
     const zoom = this.graphComponent.zoom
 
     // create a dummy label to let the LabelModelParameter compute the correct location
     const dummyLabel = new SimpleLabel(this.currentItem, '', this.labelModelParameter)
-    if (this.labelModelParameter.supports(dummyLabel)) {
-      dummyLabel.preferredSize = new Size(width / zoom, height / zoom)
-      const newLayout = this.labelModelParameter.model.getGeometry(
-        dummyLabel,
-        this.labelModelParameter
-      )
-      this.setLocation(newLayout.anchorX, newLayout.anchorY - (height + 10) / zoom)
-      setTimeout(() => {
-        this.div.setAttribute('class', 'popupContent')
-      }, 300)
+    if (!this.labelModelParameter.supports(dummyLabel)) {
+      return null
     }
+
+    dummyLabel.preferredSize = new Size(width / zoom, height / zoom)
+    const labelLayout = this.labelModelParameter.model.getGeometry(
+      dummyLabel,
+      this.labelModelParameter
+    )
+    return new Point(labelLayout.anchorX, labelLayout.anchorY - (height + 10) / zoom)
   }
 
   /**
    * Sets the location of this pop-up to the given world coordinates.
-   * @param {number} x The target x-coordinate of the pop-up.
-   * @param {number} y The target y-coordinate of the pop-up.
+   * @param {!Point} location
    */
-  setLocation(x, y) {
+  setLocation(location) {
     // Calculate the view coordinates since we have to place the div in the regular HTML coordinate space
-    const viewPoint = this.graphComponent.toViewCoordinates(new Point(x, y))
+    const viewPoint = this.graphComponent.toViewCoordinates(location)
     this.div.style.setProperty('transform', `translate(${viewPoint.x}px, ${viewPoint.y}px)`)
   }
 }

@@ -18,4 +18,4 @@ This demo shows how to configure [LassoSelectionInputMode](https://docs.yworks.c
   - Select Complete Nodes: Nodes will only be selected if the lasso completely contains them.
   - Select Node's Center: The selection will only contain nodes whose center is inside the lasso line.
 
-Note that on touch devices the selection gestures starts with a long press.
+Note that on touch devices the selection gesture starts with a long press.

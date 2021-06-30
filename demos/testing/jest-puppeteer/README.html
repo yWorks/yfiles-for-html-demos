@@ -5,7 +5,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.3.
+     // This demo file is part of yFiles for HTML 2.4.
      // Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
@@ -33,95 +33,68 @@
      ////////////////////////////////////////////////////////////////////////-->
 
   <title>Jest Puppeteer Demo [yFiles for HTML]</title>
-  <link rel="stylesheet" type="text/css" href="../../../doc/documentation-style.css">
+  <link rel="stylesheet" type="text/css" href="../../../doc/readme-style.css">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 </head>
 <body>
-<header>
-  <div class="content-centered">
-    <div class="logo"></div>
-    <div class="title">
-      <a href="../../README.html">yFiles for HTML</a> <span class="angle-right"></span> Jest Puppeteer Demo
-    </div>
-  </div>
-</header>
-<div class="content">
-  <div class="content-centered">
-    <h1>Jest Puppeteer Demo</h1>
-
-    <p>
-      The Jest Puppeteer demo shows how to use <a href="https://jestjs.io/en/" target="_blank">Jest</a> for integration
-      testing a <a href="https://reactjs.org/" target="_blank">React</a> application that uses yFiles for HTML.
-    </p>
-
-    <p>
-      To start the demo and run the integration tests:
-    </p>
-    <ol>
-      <li>
-        Go to the demo's directory <code>demos-js/testing/jest-puppeteer</code>.
-      </li>
-      <li>
-        Run <code>npm install</code>.
-      </li>
-      <li>
-        Start the demo: Run <code>npm run start-test</code>.
-      </li>
-      <li>
-        Run the integration tests: <code>npm run test:integration</code>.
-      </li>
-    </ol>
-
-    <p>
-      The demo starts with an empty graph, but graph items can be created interactively. The integration tests test this
-      functionality by simulating node, edge and port creation gestures and verifying that the graph instance actually
-      contains the newly created graph items.
-    </p>
-
-    <p>
-      The tests run in a <a target="_blank" href="https://github.com/smooth-code/jest-puppeteer">puppeteer
-      environment</a> instead of the default <a target="_blank" href="https://github.com/jsdom/jsdom">jsdom</a>
-      environment, because yFiles for HTML needs a fully HTML5 compliant browser environment, which jsdom does not
-      provide (in particular, jsdom lacks a complete SVG DOM implementation).
-    </p>
-    <p>With puppeteer, the tests can run in a full Chrome headless environment instead.</p>
-
-    <p>In order to obtain access to the yFiles API, in particular for access to the <a href="https://docs.yworks.com/yfileshtml/#/api/GraphComponent" target="_blank">GraphComponent</a> instance
-    through <a href="https://docs.yworks.com/yfileshtml/#/api/CanvasComponent#getComponent" target="_blank">CanvasComponent#getComponent</a>, this sample introduces an environment variable that causes
-    the application code to expose the yFiles API to the global scope.</p>
-
-  </div>
+<div id="header" class="simple-header">
+  Jest Puppeteer Demo
 </div>
-<footer class="default-footer">
-  <div class="footer-block">
-    <h4>Contents</h4>
-    <a href="../../../README.html">Welcome Page</a><br> <a href="../../../doc/api/index.html">API Documentation</a><br>
-    <a href="../../../doc/api/index.html#/dguide/getting_started">Getting Started</a><br> <a
-    href="../../../doc/readme/legal/SOFTWARE_LICENSE_AGREEMENT.html">License Agreement</a><br> <a
-    href="../../../doc/readme/support.html">Help and Support</a>
-  </div>
-  <div class="footer-block">
-    <h4>Contact</h4>
-    yWorks GmbH<br> Vor dem Kreuzberg 28<br> 72070 T&uuml;bingen<br> Germany<br> Phone: <a href="tel:+497071979050">+49
-    7071 979050</a><br> Email: <a href="https://www.yworks.com/contact">contact(at)yworks.com</a>
-  </div>
-  <div class="footer-block">
-    <h4>Follow Us</h4>
-    <div class="social">
-      <a href="https://www.yworks.com/products/yfiles-for-html" target="_blank" class="web">Homepage</a> <a href="https://www.yworks.com/newsfeed"
-      target="_blank" class="rss">RSS Feed</a>
+<main>
+  <div class="content-centered">
+    <div class="content">
+      <div class="breadcrumbs">
+        <a href="../../README.html">yFiles for HTML</a> <span class="angle-right"></span> Jest Puppeteer Demo
+      </div>
+      <h1>Jest Puppeteer Demo</h1>
+
+      <p>
+        The Jest Puppeteer demo shows how to use <a href="https://jestjs.io/en/" target="_blank">Jest</a> for
+        integration testing a <a href="https://reactjs.org/" target="_blank">React</a> application that uses yFiles for
+        HTML.
+      </p>
+
+      <p>
+        To start the demo and run the integration tests:
+      </p>
+      <ol>
+        <li>
+          Go to the demo's directory <code>demos-js/testing/jest-puppeteer</code>.
+        </li>
+        <li>
+          Run <code>npm install</code>.
+        </li>
+        <li>
+          Start the demo: Run <code>npm run start-test</code>.
+        </li>
+        <li>
+          Run the integration tests: <code>npm run test:integration</code>.
+        </li>
+      </ol>
+
+      <p>
+        The demo starts with an empty graph, but graph items can be created interactively. The integration tests test
+        this functionality by simulating node, edge and port creation gestures and verifying that the graph instance
+        actually contains the newly created graph items.
+      </p>
+
+      <p>
+        The tests run in a <a target="_blank" href="https://github.com/smooth-code/jest-puppeteer">puppeteer
+        environment</a> instead of the default <a target="_blank" href="https://github.com/jsdom/jsdom">jsdom</a>
+        environment, because yFiles for HTML needs a fully HTML5 compliant browser environment, which jsdom does not
+        provide (in particular, jsdom lacks a complete SVG DOM implementation).
+      </p>
+      <p>With puppeteer, the tests can run in a full Chrome headless environment instead.</p>
+
+      <p>In order to obtain access to the yFiles API, in particular for access to the <a href="https://docs.yworks.com/yfileshtml/#/api/GraphComponent" target="_blank">GraphComponent</a> instance
+        through <a href="https://docs.yworks.com/yfileshtml/#/api/CanvasComponent#getComponent" target="_blank">CanvasComponent#getComponent</a>, this sample introduces an environment variable that causes the
+        application code to expose the yFiles API to the global scope.</p>
+
     </div>
-    <div>
-      <a href="https://github.com/yWorks" target="_blank" class="gh">GitHub</a> <a href="https://twitter.com/yworks"
-      target="_blank" class="tw">Twitter</a> <a href="https://www.youtube.com/user/yWorksTube" target="_blank"
-      class="yt">YouTube</a>
-    </div>
-    <br><br> <span class="copyright">COPYRIGHT &#x00A9; 2021 yWorks</span><br> <a
-    href="https://www.yworks.com/company/legal/imprint">Legal Disclosure</a> | <a
-    href="https://www.yworks.com/company/legal/terms-of-use">Terms of Use</a> | <a
-    href="https://www.yworks.com/company/legal/privacy">Privacy Policy</a>
+    <!-- populated by readme-style.js -->
+    <div id="footer-detailed"></div>
   </div>
-  <div class="footer-block logo"></div>
-</footer>
+</main>
+<script src="../../../doc/readme-style.js"></script>
 </body>
 </html>

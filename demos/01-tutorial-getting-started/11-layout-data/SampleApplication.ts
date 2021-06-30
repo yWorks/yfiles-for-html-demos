@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -127,6 +127,7 @@ async function runLayout(): Promise<void> {
     // this is just for the purpose of the demo - usually you would employ your own
     // logging or error handling logic, here
     if (typeof (window as any).reportError === 'function') {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
       ;(window as any).reportError(error)
     } else {
       throw error

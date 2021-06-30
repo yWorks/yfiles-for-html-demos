@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -50,11 +50,7 @@ import MySimpleEdgeStyle from './MySimpleEdgeStyle'
 /**
  * A simple IArrow implementation that renders the arrow as a custom filled shape.
  */
-export default class MySimpleArrow extends BaseClass<IArrow, IVisualCreator, IBoundsProvider>(
-  IArrow,
-  IVisualCreator,
-  IBoundsProvider
-) {
+export default class MySimpleArrow extends BaseClass(IArrow, IVisualCreator, IBoundsProvider) {
   anchor: Point
   direction: Point
   private $thickness: number
@@ -327,7 +323,7 @@ export default class MySimpleArrow extends BaseClass<IArrow, IVisualCreator, IBo
  * the defs elements, those have to implement {@link ISvgDefsCreator} that offers a
  * defined interface to deal with.
  */
-class MyGradientSupport extends BaseClass<ISvgDefsCreator>(ISvgDefsCreator) {
+class MyGradientSupport extends BaseClass(ISvgDefsCreator) {
   gradient: SVGElement
 
   constructor(gradient: SVGElement) {

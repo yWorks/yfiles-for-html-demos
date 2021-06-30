@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -26,21 +26,33 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { WebGLVisual } from 'yfiles'
+import { Color, IEnumerable, IRenderContext, Point, WebGLVisual } from 'yfiles'
 
 export default class WebglBlobVisual extends WebGLVisual {
+  /**
+   * @param {!IEnumerable.<Point>} locations
+   * @param {!Color} color
+   * @param {number} [size]
+   * @param {number} [maxBlobCount]
+   */
   constructor(locations, color, size, maxBlobCount) {
     super()
-    this.size = size || 100
+    this.dataToSend = null
+    this.fragmentShader = ''
+    this.buffer = null
+    this.vertexBuffer = null
     this.locations = locations
-    this.maxBlobCount = maxBlobCount || 128
     this.color = color || { r: 128, g: 128, b: 128, a: 128 }
+    this.size = size || 100
+    this.maxBlobCount = maxBlobCount || 128
   }
 
   /**
    * @yjs:keep=enable
+   * @param {!IRenderContext} renderContext
+   * @param {!WebGLRenderingContext} gl
    */
-  render(renderContext, /** WebGLRenderingContext */ gl) {
+  render(renderContext, gl) {
     if (!this.buffer) {
       // initialize and cache all the data that we need for the first time
       const maxUniformVectors = gl.getParameter(gl.MAX_FRAGMENT_UNIFORM_VECTORS)

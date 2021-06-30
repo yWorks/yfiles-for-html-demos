@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 width="16px" height="16px" viewBox="0 0 16 16" enable-background="new 0 0 16 16" xml:space="preserve">
+<g>
+    <path fill="#ffffff" d="M8,3C5.239,3,3,5.239,3,8c0,2.762,2.239,5,5,5c2.762,0,5-2.238,5-5C13,5.239,10.762,3,8,3     z M8,11c-1.657,0-3-1.344-3-3c0-1.657,1.343-3,3-3c1.656,0,3,1.343,3,3C11,9.656,9.656,11,8,11z"/>
+    <path fill="#ffffff" d="M8,2C4.687,2,2,4.687,2,8s2.687,6,6,6s6-2.687,6-6S11.313,2,8,2z M8,11c-1.657,0-3-1.344-3-3     c0-1.657,1.343-3,3-3c1.656,0,3,1.343,3,3C11,9.656,9.656,11,8,11z"/>
+    <rect x="6.5" y="12" width="3" height="4" fill="#ffffff"></rect>
+    <rect x="12" y="6.51" width="4" height="3" fill="#ffffff"></rect>
+    <rect x="6.5" y="0" width="3" height="3" fill="#ffffff"></rect>
+    <rect x="0" y="6.504" width="3" height="4" fill="#ffffff"></rect>
+    <rect x="2.257" y="10.243" width="3" height="4" fill="#ffffff" transform="matrix(0.7071 0.7071 -0.7071 0.7071 9.7574 0.929)"></rect>
+    <rect x="10.235" y="10.75" width="4" height="3" fill="#ffffff" transform="matrix(0.707 0.7072 -0.7072 0.707 12.2484 -5.0639)"></rect>
+    <rect x="11.096" y="1.904" width="3" height="3" fill="#ffffff" transform="matrix(0.7073 0.7069 -0.7069 0.7073 6.0937 -7.9087)"></rect>
+    <rect x="1.755" y="2.26" width="4" height="3" fill="#ffffff" transform="matrix(0.7071 0.7071 -0.7071 0.7071 3.7584 -1.5535)"></rect>
+</g>
+</svg>

@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -95,7 +95,9 @@ export class NonOverlapPositionHandler extends BaseClass(IPositionHandler) {
     this.handler.handleMove(context, originalLocation, newLocation)
 
     if (!this.reparentHandler || !this.reparentHandler.isReparentGesture(context, this.node)) {
-      this.timeoutHandle = setTimeout(() => this.layoutHelper.runLayout(), 50)
+      this.timeoutHandle = setTimeout(() => {
+        this.layoutHelper.runLayout()
+      }, 50)
     }
   }
 

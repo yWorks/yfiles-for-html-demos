@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -27,19 +27,21 @@
  **
  ***************************************************************************/
 import { IGraph, IModelItem, IWriteContext, KeyType, OutputHandlerBase, YObject } from 'yfiles'
+import GraphMLProperty from './GraphMLProperty.js'
+import { PropertiesPanel } from './PropertiesPanel.js'
 
 /**
  * An output handler that writes primitive data types and ignores complex types.
  */
 export default class SimpleOutputHandler extends OutputHandlerBase {
   /**
-   * @param {GraphMLProperty} property
-   * @param {PropertiesPanel} propertiesPanel
+   * @param {!GraphMLProperty} property
+   * @param {!PropertiesPanel} propertiesPanel
    */
   constructor(property, propertiesPanel) {
     super(YObject.$class, YObject.$class, property.keyScope, property.name, property.type)
-    this.property = property
     this.propertiesPanel = propertiesPanel
+    this.property = property
     this.defaultExists = property.defaultExists
     if (property.defaultExists) {
       this.defaultValue = property.defaultValue
@@ -53,8 +55,8 @@ export default class SimpleOutputHandler extends OutputHandlerBase {
    * cannot be serialized in a meaningful manner.
    *
    * @see Overrides {@link OutputHandlerBase#writeValueCore}
-   * @param {IWriteContext} context
-   * @param {object} data
+   * @param {!IWriteContext} context
+   * @param {*} data
    */
   writeValueCore(context, data) {
     if (data !== null) {
@@ -85,15 +87,15 @@ export default class SimpleOutputHandler extends OutputHandlerBase {
 
   /**
    * Gets the value for the given key.
-   * @param {IWriteContext} context
-   * @param {Object} key
-   * @return {Object}
    * @see Overrides {@link OutputHandlerBase#getValue}
+   * @param {!IWriteContext} context
+   * @param {*} key
+   * @returns {*}
    */
   getValue(context, key) {
-    if (IModelItem.isInstance(key)) {
-      return this.propertiesPanel.getItemValue(this.property, key)
-    } else if (IGraph.isInstance(key) && context.objectStack.size === 2) {
+    if (key instanceof IModelItem) {
+      return this.propertiesPanel.getItemValue(key, this.property)
+    } else if (key instanceof IGraph && context.objectStack.size === 2) {
       return this.propertiesPanel.getGraphValue(this.property)
     }
     return null

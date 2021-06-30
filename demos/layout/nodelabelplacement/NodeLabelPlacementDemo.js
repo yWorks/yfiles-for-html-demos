@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -41,8 +41,8 @@ import {
   HorizontalTextAlignment,
   ICanvasObjectDescriptor,
   ICommand,
+  ILabelModel,
   INode,
-  Insets,
   InteriorLabelModel,
   LabelCandidateDescriptor,
   LayoutExecutor,
@@ -63,7 +63,7 @@ import loadJson from '../../resources/load-json.js'
  * The graph component.
  * @type {GraphComponent}
  */
-let graphComponent = null
+let graphComponent
 
 /**
  * Holds whether or not a layout is in progress.
@@ -79,8 +79,10 @@ let labelModels = []
 
 /**
  * Runs the demo.
+ * @param {!object} licenseData
+ * @returns {!Promise}
  */
-function run(licenseData) {
+async function run(licenseData) {
   License.value = licenseData
   graphComponent = new GraphComponent('graphComponent')
 
@@ -94,7 +96,7 @@ function run(licenseData) {
   initializeInputMode()
 
   // create the sample graph
-  createSampleGraph()
+  await createSampleGraph()
 
   // wire up the UI
   registerCommands()
@@ -107,52 +109,45 @@ function run(licenseData) {
  * Initialize the node label options.
  */
 function initializeOptions() {
-  const labelModelParameters = []
-  let model = new ExteriorLabelModel({ insets: 5 })
-  labelModelParameters.push(model.createParameter(ExteriorLabelModelPosition.NORTH))
-  labelModelParameters.push(model.createParameter(ExteriorLabelModelPosition.NORTH_EAST))
-  labelModelParameters.push(model.createParameter(ExteriorLabelModelPosition.NORTH_WEST))
-  labelModelParameters.push(model.createParameter(ExteriorLabelModelPosition.SOUTH))
-  labelModelParameters.push(model.createParameter(ExteriorLabelModelPosition.SOUTH_EAST))
-  labelModelParameters.push(model.createParameter(ExteriorLabelModelPosition.SOUTH_WEST))
-  labelModelParameters.push(model.createParameter(ExteriorLabelModelPosition.EAST))
-  labelModelParameters.push(model.createParameter(ExteriorLabelModelPosition.WEST))
-  model = new ExteriorLabelModel({ insets: new Insets(10) })
-  labelModelParameters.push(model.createParameter(ExteriorLabelModelPosition.NORTH))
-  labelModelParameters.push(model.createParameter(ExteriorLabelModelPosition.NORTH_EAST))
-  labelModelParameters.push(model.createParameter(ExteriorLabelModelPosition.NORTH_WEST))
-  labelModelParameters.push(model.createParameter(ExteriorLabelModelPosition.SOUTH))
-  labelModelParameters.push(model.createParameter(ExteriorLabelModelPosition.SOUTH_EAST))
-  labelModelParameters.push(model.createParameter(ExteriorLabelModelPosition.SOUTH_WEST))
-  labelModelParameters.push(model.createParameter(ExteriorLabelModelPosition.EAST))
-  labelModelParameters.push(model.createParameter(ExteriorLabelModelPosition.WEST))
-  model = new ExteriorLabelModel({ insets: new Insets(15) })
-  labelModelParameters.push(model.createParameter(ExteriorLabelModelPosition.NORTH))
-  labelModelParameters.push(model.createParameter(ExteriorLabelModelPosition.NORTH_EAST))
-  labelModelParameters.push(model.createParameter(ExteriorLabelModelPosition.NORTH_WEST))
-  labelModelParameters.push(model.createParameter(ExteriorLabelModelPosition.SOUTH))
-  labelModelParameters.push(model.createParameter(ExteriorLabelModelPosition.SOUTH_EAST))
-  labelModelParameters.push(model.createParameter(ExteriorLabelModelPosition.SOUTH_WEST))
-  labelModelParameters.push(model.createParameter(ExteriorLabelModelPosition.EAST))
-  labelModelParameters.push(model.createParameter(ExteriorLabelModelPosition.WEST))
+  const modelWithInset5 = new ExteriorLabelModel({ insets: 5 })
+  const modelWithInset10 = new ExteriorLabelModel({ insets: 10 })
+  const modelWithInset15 = new ExteriorLabelModel({ insets: 15 })
+
+  const labelModelParameters = [
+    modelWithInset5.createParameter(ExteriorLabelModelPosition.NORTH),
+    modelWithInset5.createParameter(ExteriorLabelModelPosition.NORTH_EAST),
+    modelWithInset5.createParameter(ExteriorLabelModelPosition.NORTH_WEST),
+    modelWithInset5.createParameter(ExteriorLabelModelPosition.SOUTH),
+    modelWithInset5.createParameter(ExteriorLabelModelPosition.SOUTH_EAST),
+    modelWithInset5.createParameter(ExteriorLabelModelPosition.SOUTH_WEST),
+    modelWithInset5.createParameter(ExteriorLabelModelPosition.EAST),
+    modelWithInset5.createParameter(ExteriorLabelModelPosition.WEST),
+
+    modelWithInset10.createParameter(ExteriorLabelModelPosition.NORTH),
+    modelWithInset10.createParameter(ExteriorLabelModelPosition.NORTH_EAST),
+    modelWithInset10.createParameter(ExteriorLabelModelPosition.NORTH_WEST),
+    modelWithInset10.createParameter(ExteriorLabelModelPosition.SOUTH),
+    modelWithInset10.createParameter(ExteriorLabelModelPosition.SOUTH_EAST),
+    modelWithInset10.createParameter(ExteriorLabelModelPosition.SOUTH_WEST),
+    modelWithInset10.createParameter(ExteriorLabelModelPosition.EAST),
+    modelWithInset10.createParameter(ExteriorLabelModelPosition.WEST),
+
+    modelWithInset15.createParameter(ExteriorLabelModelPosition.NORTH),
+    modelWithInset15.createParameter(ExteriorLabelModelPosition.NORTH_EAST),
+    modelWithInset15.createParameter(ExteriorLabelModelPosition.NORTH_WEST),
+    modelWithInset15.createParameter(ExteriorLabelModelPosition.SOUTH),
+    modelWithInset15.createParameter(ExteriorLabelModelPosition.SOUTH_EAST),
+    modelWithInset15.createParameter(ExteriorLabelModelPosition.SOUTH_WEST),
+    modelWithInset15.createParameter(ExteriorLabelModelPosition.EAST),
+    modelWithInset15.createParameter(ExteriorLabelModelPosition.WEST)
+  ]
 
   const genericLabelModel = new GenericLabelModel(labelModelParameters[0])
   labelModelParameters.forEach(labelModelParameter => {
     const insets = labelModelParameter.model.insets.top
-    let profit
-    if (insets < 10) {
-      profit = 1.0
-    } else if (insets < 15) {
-      profit = 0.9
-    } else {
-      profit = 0.8
-    }
-    genericLabelModel.addParameter(
-      labelModelParameter,
-      new LabelCandidateDescriptor({
-        profit
-      })
-    )
+    const profit = insets < 10 ? 1.0 : insets < 15 ? 0.9 : 0.8
+    const labelCandidateDescriptor = new LabelCandidateDescriptor({ profit })
+    genericLabelModel.addParameter(labelModelParameter, labelCandidateDescriptor)
   })
 
   labelModels = [
@@ -211,16 +206,17 @@ function initializeInputMode() {
 
 /**
  * Configures the label models and runs the labeling algorithm.
+ * @returns {!Promise}
  */
 async function placeLabels() {
   if (inLayout) {
     return
   }
   // Check if the label size input is valid. Valid inputs are greater than zero and less than 50.
-  const textSize = parseFloat(document.getElementById('labelFontSizeField').value)
+  const fontSizeElement = document.getElementById('labelFontSizeField')
+  const textSize = parseFloat(fontSizeElement.value)
   if (isNaN(textSize) || textSize <= 0 || textSize > 50) {
-    alert('Label size should be greater than 0 and less than 50.')
-    return
+    return alert('Label size should be greater than 0 and less than 50.')
   }
 
   const graph = graphComponent.graph
@@ -229,8 +225,9 @@ async function placeLabels() {
   const labelModelComboBox = document.getElementById('labelModelComboBox')
   const labelModel = labelModels[labelModelComboBox.selectedIndex]
   // sets the label model based on the selected value of the corresponding combo-box
-  graph.labels.forEach(label => {
-    if (INode.isInstance(label.owner)) {
+  graph.labels
+    .filter(label => label.owner instanceof INode)
+    .forEach(label => {
       // if the default label model is not the selected, change it
       if (labelModel !== graph.nodeDefaults.labels.layoutParameter.model) {
         graph.setLabelLayoutParameter(label, labelModel.createDefaultParameter())
@@ -245,8 +242,8 @@ async function placeLabels() {
         })
         graph.setStyle(label, new CityLabelStyle(updatedStyle))
       }
-    }
-  })
+    })
+
   // set as default label model parameter
   graph.nodeDefaults.labels.layoutParameter = labelModel.createDefaultParameter()
   const updatedStyle = new DefaultLabelStyle({
@@ -262,6 +259,7 @@ async function placeLabels() {
     removeEdgeOverlaps: true,
     profitModel: new ExtendedLabelCandidateProfitModel()
   })
+
   try {
     await new LayoutExecutor({
       graphComponent,
@@ -270,8 +268,9 @@ async function placeLabels() {
       easedAnimation: true
     }).start()
   } catch (error) {
-    if (typeof window.reportError === 'function') {
-      window.reportError(error)
+    const reportError = window.reportError
+    if (typeof reportError === 'function') {
+      reportError(error)
     } else {
       throw error
     }
@@ -307,8 +306,9 @@ function registerCommands() {
 
 /**
  * Creates the sample graph.
+ * @returns {!Promise}
  */
-function createSampleGraph() {
+async function createSampleGraph() {
   const builder = new GraphBuilder(graphComponent.graph)
   const defaultNodeSize = graphComponent.graph.nodeDefaults.size
   builder.createNodesSource({
@@ -323,7 +323,7 @@ function createSampleGraph() {
   graphComponent.fitGraphBounds()
 
   // places the node labels
-  placeLabels()
+  await placeLabels()
 }
 
 // runs the demo

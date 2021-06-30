@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -32,7 +32,9 @@ import {
   FreeNodePortLocationModel,
   IEdge,
   IEdgeReconnectionPortCandidateProvider,
+  IEnumerable,
   IInputModeContext,
+  IPortCandidate,
   IPortCandidateProvider,
   List
 } from 'yfiles'
@@ -46,7 +48,7 @@ export default class OrangeEdgePortCandidateProvider extends BaseClass(
 ) {
   /**
    * Creates a new instance of <code>OrangeEdgePortCandidateProvider</code>.
-   * @param {IEdge} edge The given edge
+   * @param {!IEdge} edge The given edge
    */
   constructor(edge) {
     super()
@@ -56,9 +58,9 @@ export default class OrangeEdgePortCandidateProvider extends BaseClass(
   /**
    * Returns candidates for all ports at orange nodes in the graph, except
    * for the current target node to avoid the creation of selfloops.
-   * @param {IInputModeContext} context The context for which the candidates should be provided
+   * @param {!IInputModeContext} context The context for which the candidates should be provided
    * @see Specified by {@link IEdgeReconnectionPortCandidateProvider#getSourcePortCandidates}.
-   * @return {IEnumerable.<IPortCandidate>}
+   * @returns {!IEnumerable.<IPortCandidate>}
    */
   getSourcePortCandidates(context) {
     const result = new List()
@@ -73,7 +75,7 @@ export default class OrangeEdgePortCandidateProvider extends BaseClass(
       if (node !== this.edge.targetPort.owner && node.tag === 'orange') {
         const provider = node.lookup(IPortCandidateProvider.$class)
         // If available, use the candidates from the provider. Otherwise, add a default candidate.
-        if (provider !== null) {
+        if (provider instanceof IPortCandidateProvider) {
           result.addRange(provider.getAllTargetPortCandidates(context))
         } else {
           result.add(new DefaultPortCandidate(node, FreeNodePortLocationModel.NODE_CENTER_ANCHORED))
@@ -86,9 +88,9 @@ export default class OrangeEdgePortCandidateProvider extends BaseClass(
   /**
    * Returns candidates for all ports at orange nodes in the graph, except
    * for the current source node to avoid the creation of selfloops.
-   * @param {IInputModeContext} context The context for which the candidates should be provided
+   * @param {!IInputModeContext} context The context for which the candidates should be provided
    * @see Specified by {@link IEdgeReconnectionPortCandidateProvider#getTargetPortCandidates}.
-   * @return {IEnumerable.<IPortCandidate>}
+   * @returns {!IEnumerable.<IPortCandidate>}
    */
   getTargetPortCandidates(context) {
     const result = new List()
@@ -103,7 +105,7 @@ export default class OrangeEdgePortCandidateProvider extends BaseClass(
       if (node !== this.edge.sourcePort.owner && node.tag === 'orange') {
         const provider = node.lookup(IPortCandidateProvider.$class)
         // If available, use the candidates from the provider. Otherwise, add a default candidate.
-        if (provider !== null) {
+        if (provider instanceof IPortCandidateProvider) {
           result.addRange(provider.getAllSourcePortCandidates(context))
         } else {
           result.add(new DefaultPortCandidate(node, FreeNodePortLocationModel.NODE_CENTER_ANCHORED))

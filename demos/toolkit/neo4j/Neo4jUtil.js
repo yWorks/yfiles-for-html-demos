@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -26,8 +26,6 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-/* global neo4j */
-
 /**
  * @yjs:keep=types,Node
  */
@@ -39,9 +37,10 @@ export const Neo4jEdge = neo4j.types.Relationship
 
 /**
  * Establishes a connection to a Neo4j database.
- * @param {string} url The URL to connect to (neo4j:// bolt:// neo4j+s://)
- * @param {string} user The username to use.
- * @param {string} pass The password to use.
+ * @param {!string} url The URL to connect to (neo4j:// bolt:// neo4j+s://)
+ * @param {!string} user The username to use.
+ * @param {!string} pass The password to use.
+ * @returns {!Promise.<Promise.<Result>>}
  */
 export async function connectToDB(url, user, pass) {
   // create a new Neo4j driver instance
@@ -59,14 +58,18 @@ export async function connectToDB(url, user, pass) {
   return runCypherQuery
 }
 
+/**
+ * @param {*} neo4jDriver
+ */
 function createCypherQueryRunner(neo4jDriver) {
   /**
+   * Runs the Cypher query.
    * @param {string} query
    * @param {Object} [params]
    * @return {Promise}
    * @yjs:keep=run
    */
-  return async function runCypherQuery(query, params = {}) {
+  return async (query, params = {}) => {
     const session = neo4jDriver.session('READ')
     let result
     try {
@@ -79,3 +82,41 @@ function createCypherQueryRunner(neo4jDriver) {
     return result
   }
 }
+
+/**
+ * @typedef {Object} Node
+ * @property {Integer} identity
+ * @property {Array.<string>} labels
+ * @property {Object} properties
+ */
+
+/**
+ * @typedef {Object} Relationship
+ * @property {Integer} identity
+ * @property {Integer} start
+ * @property {Integer} end
+ * @property {string} type
+ * @property {Object} properties
+ */
+
+/**
+ * @typedef {Object} Record
+ * @property {Array.<String>} keys
+ * @property {Number} length
+ * @property {function} get
+ * @property {function} forEach
+ */
+
+/**
+ * @typedef {Object} Integer
+ * @property {number} high
+ * @property {number} low
+ * @property {function} toInt
+ * @property {function} equals
+ */
+
+/**
+ * @typedef {Object} Result
+ * @property {Promise} summary
+ * @property {Array.<Record>} records
+ */

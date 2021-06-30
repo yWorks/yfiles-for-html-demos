@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -34,23 +34,40 @@ const outerRadius = 100
 const spacing = 2
 const titleOffset = 15
 
+/**
+ * @typedef {Object} MenuItem
+ * @property {function} callback
+ * @property {string} icon
+ * @property {string} title
+ * @property {boolean} disabled
+ * @property {SVGElement} element
+ */
+
+/**
+ * @param {!Array.<MenuItem>} items
+ * @param {!Point} location
+ * @returns {!SVGElement}
+ */
 function createMenu(items, location) {
   const n = items.length
   const pi2 = Math.PI * 2
 
   const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
+
   // temporarily add the svg to the body so the elements can be measured
-  window.document.body.appendChild(svg)
+  const tempParent = document.body
+  tempParent.appendChild(svg)
+
   svg.addEventListener('contextmenu', e => e.preventDefault())
   svg.setAttribute('class', 'demo-dial-menu')
-  svg.setAttribute('width', outerRadius)
-  svg.setAttribute('height', outerRadius)
+  svg.setAttribute('width', `${outerRadius}`)
+  svg.setAttribute('height', `${outerRadius}`)
   svg.style.width = `${outerRadius}px`
   svg.style.height = `${outerRadius}px`
   svg.setAttribute('viewBox', `0 0 ${outerRadius} ${outerRadius}`)
   svg.style.position = 'absolute'
   svg.style.overflow = 'visible'
-  svg.style.zIndex = 999999
+  svg.style.zIndex = '999999'
 
   const g = document.createElementNS('http://www.w3.org/2000/svg', 'g')
   const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs')
@@ -126,21 +143,19 @@ function createMenu(items, location) {
     }
 
     if (item.icon) {
-      if (typeof item.icon === 'string') {
-        const icon = document.createElementNS('http://www.w3.org/2000/svg', 'image')
-        icon.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', item.icon)
-        icon.setAttribute('width', '32')
-        icon.setAttribute('height', '32')
-        const position = (outerRadius + innerRadius) / 2
-        icon.setAttribute(
-          'transform',
-          `translate(${-16 + Math.sin(middleAngle) * position}, ${
-            -16 - Math.cos(middleAngle) * position
-          })`
-        )
-        icon.setAttribute('class', 'demo-dial-icon')
-        itemContainer.appendChild(icon)
-      }
+      const icon = document.createElementNS('http://www.w3.org/2000/svg', 'image')
+      icon.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', item.icon)
+      icon.setAttribute('width', '32')
+      icon.setAttribute('height', '32')
+      const position = (outerRadius + innerRadius) / 2
+      icon.setAttribute(
+        'transform',
+        `translate(${-16 + Math.sin(middleAngle) * position}, ${
+          -16 - Math.cos(middleAngle) * position
+        })`
+      )
+      icon.setAttribute('class', 'demo-dial-icon')
+      itemContainer.appendChild(icon)
     }
 
     if (item.title) {
@@ -189,27 +204,37 @@ function createMenu(items, location) {
 
   g.setAttribute('transform', `translate(${location.x} ${location.y})`)
 
-  svg.parentNode.removeChild(svg)
+  tempParent.removeChild(svg)
+
   return svg
 }
 
+/** @type {SVGElement} */
 let hoveredItem = null
 
+/** @type {function} */
 let touchMoveListener = null
+/** @type {function} */
 let touchEndListener = null
+/** @type {function} */
 let mouseMoveListener = null
+/** @type {function} */
 let mouseUpListener = null
 
+/**
+ * @param {!Array.<MenuItem>} items
+ * @param {!Point} location
+ * @param {!DialContextMenu} contextMenu
+ */
 function addEventListeners(items, location, contextMenu) {
   function updateHover(eventLocation) {
     const index = getItemIndex(location, eventLocation, items.length)
     let item = null
-    //
     if (index >= 0 && index < Number.POSITIVE_INFINITY) {
       item = items[index].element
     }
     if (hoveredItem !== item) {
-      if (hoveredItem !== null) {
+      if (hoveredItem) {
         removeClass(hoveredItem, 'highlighted')
       }
       hoveredItem = item
@@ -227,8 +252,9 @@ function addEventListeners(items, location, contextMenu) {
     if (index < Number.POSITIVE_INFINITY) {
       const item = items[index]
       if (!item.disabled && typeof item.callback === 'function') {
-        const worldLocation = contextMenu.$graphComponent.toWorldCoordinates(
-          contextMenu.$graphComponent.toViewFromPage(location)
+        const graphComponent = contextMenu.graphComponent
+        const worldLocation = graphComponent.toWorldCoordinates(
+          graphComponent.toViewFromPage(location)
         )
         item.callback(worldLocation, contextMenu.graphItem)
       }
@@ -254,30 +280,30 @@ function addEventListeners(items, location, contextMenu) {
     endGesture(new Point(evt.pageX, evt.pageY))
   }
 
-  window.document.addEventListener('touchstart', touchMoveListener, true)
-  window.document.addEventListener('touchmove', touchMoveListener, true)
-  window.document.addEventListener('touchend', touchEndListener, true)
+  document.addEventListener('touchstart', touchMoveListener, true)
+  document.addEventListener('touchmove', touchMoveListener, true)
+  document.addEventListener('touchend', touchEndListener, true)
 
-  window.document.addEventListener('mousedown', mouseMoveListener)
-  window.document.addEventListener('mousemove', mouseMoveListener)
-  window.document.addEventListener('mouseup', mouseUpListener)
+  document.addEventListener('mousedown', mouseMoveListener)
+  document.addEventListener('mousemove', mouseMoveListener)
+  document.addEventListener('mouseup', mouseUpListener)
 }
 
 function removeEventListeners() {
-  window.document.removeEventListener('touchstart', touchMoveListener, true)
-  window.document.removeEventListener('touchmove', touchMoveListener, true)
-  window.document.removeEventListener('touchend', touchEndListener, true)
+  document.removeEventListener('touchstart', touchMoveListener, true)
+  document.removeEventListener('touchmove', touchMoveListener, true)
+  document.removeEventListener('touchend', touchEndListener, true)
 
-  window.document.removeEventListener('mousedown', mouseMoveListener)
-  window.document.removeEventListener('mousemove', mouseMoveListener)
-  window.document.removeEventListener('mouseup', mouseUpListener)
+  document.removeEventListener('mousedown', mouseMoveListener)
+  document.removeEventListener('mousemove', mouseMoveListener)
+  document.removeEventListener('mouseup', mouseUpListener)
 }
 
 /**
  * Gets the item index.
- * @param menuLocation The location of the menu
- * @param eventLocation The location of the event
- * @param itemCount The number of menu items
+ * @param {!Point} menuLocation The location of the menu
+ * @param {!Point} eventLocation The location of the event
+ * @param {number} itemCount The number of menu items
  * @returns {number} Returns the index of the item at the given location; -1 if the location is inside the
  *   innerRadius, Number.POSITIVE_INFINITY if the location is outside the outerRadius.
  */
@@ -306,19 +332,20 @@ function getItemIndex(menuLocation, eventLocation, itemCount) {
 export default class DialContextMenu {
   /**
    * Creates a new instance.
-   * @param graphComponent The GraphComponent to use the context menu in.
+   * @param {!GraphComponent} graphComponent The GraphComponent to use the context menu in.
    */
   constructor(graphComponent) {
+    this.graphComponent = graphComponent
     this.$items = []
     this.$graphItem = null
     this.$closeCallback = null
     this.$menuElement = null
-    this.$graphComponent = graphComponent
+    this.isOpen = false
   }
 
   /**
    * Gets the context menu items
-   * @returns {Array}
+   * @type {!Array.<MenuItem>}
    */
   get items() {
     return this.$items
@@ -326,7 +353,7 @@ export default class DialContextMenu {
 
   /**
    * Gets the graph item that is associated with the context menu.
-   * @returns {IModelItem}
+   * @type {?IModelItem}
    */
   get graphItem() {
     return this.$graphItem
@@ -334,7 +361,7 @@ export default class DialContextMenu {
 
   /**
    * Sets the graph item that is associated with the context menu.
-   * @param {IModelItem} value
+   * @type {?IModelItem}
    */
   set graphItem(value) {
     this.$graphItem = value
@@ -348,34 +375,39 @@ export default class DialContextMenu {
   }
 
   /**
-   * Adds an item to the context menu. Returns 'this', so this function can be chained.
-   * @param {Function} clickCallback The function to execute when the item has been clicked
-   * @param {Element} [icon] The item icon
-   * @param {string} [title] The item title
-   * @param {Boolean} [disabled] Whether the item is disabled
-   * @returns {DialContextMenu}
-   */
-  addContextMenuItem(clickCallback, icon, title, disabled) {
-    this.items.push({
-      callback: clickCallback,
-      icon: icon || null,
-      title: title || '',
-      disabled: !!disabled
-    })
-    return this
-  }
-
-  /**
    * Sets the callback that is executed when the context menu closes
+   * @param {!function} callback
    */
   setOnCloseCallback(callback) {
     this.$closeCallback = callback
   }
 
   /**
+   * Adds an item to the context menu. Returns 'this', so this function can be chained.
+   * @param {!function} clickCallback The function to execute when the item has been clicked
+   * @param  [icon] The item icon
+   * @param  [title] The item title
+   * @param  [disabled] Whether the item is disabled
+   * @param {!string} icon
+   * @param {!string} title
+   * @param {boolean} disabled
+   * @returns {!DialContextMenu}
+   */
+  addContextMenuItem(clickCallback, icon, title, disabled) {
+    this.items.push({
+      callback: clickCallback,
+      icon,
+      title,
+      disabled,
+      element: null
+    })
+    return this
+  }
+
+  /**
    * Shows the context menu at the given location with the specified parent element
-   * @param {Point} location The location in which the context menu should open
-   * @param {Element} parentElement The parent element of the context menu
+   * @param {!Point} location The location in which the context menu should open
+   * @param {!Element} parentElement The parent element of the context menu
    */
   show(location, parentElement) {
     this.close()
@@ -409,8 +441,8 @@ export default class DialContextMenu {
    * not handled correctly in Chrome. In other browsers, when the Context Menu key is pressed,
    * the correct <code>contextmenu</code> event is fired but the event location is not meaningful.
    * In this case, we set a better location, centered on the given element.
-   * @param {GraphComponent} graphComponent
-   * @param {function(Point)} openCallback
+   * @param {!GraphComponent} graphComponent
+   * @param {!function} openCallback
    */
   addEventListeners(graphComponent, openCallback) {
     const parent = graphComponent.div // The element on which we listen for contextmenu events.
@@ -420,22 +452,21 @@ export default class DialContextMenu {
         // might be open already because of the longpress listener
         return
       }
-      const me = evt
-      if (evt.mozInputSource === 1 && me.button === 0) {
+      if (evt.mozInputSource === 1 && evt.button === 0) {
         // This event was triggered by the context menu key in Firefox.
         // Thus, the coordinates of the event point to the lower left corner of the element and should be corrected.
         openCallback(getCenterInPage(parent))
-      } else if (me.pageX === 0 && me.pageY === 0) {
+      } else if (evt.pageX === 0 && evt.pageY === 0) {
         // Most likely, this event was triggered by the context menu key in IE.
         // Thus, the coordinates are meaningless and should be corrected.
         openCallback(getCenterInPage(parent))
       } else {
-        openCallback(new Point(me.pageX, me.pageY))
+        openCallback(new Point(evt.pageX, evt.pageY))
       }
     }
 
     const contextMenuKeyListener = evt => {
-      if (evt.keyCode === 93) {
+      if (evt.key === 'ContextMenu') {
         evt.preventDefault()
         openCallback(getCenterInPage(parent))
       }
@@ -456,8 +487,8 @@ export default class DialContextMenu {
 
 /**
  * Calculates the location of the center of the given element in absolute coordinates relative to the body element.
- * @param {HTMLElement} element
- * @return {Point}
+ * @param {!HTMLElement} element
+ * @returns {!Point}
  */
 function getCenterInPage(element) {
   let left = element.clientWidth / 2.0

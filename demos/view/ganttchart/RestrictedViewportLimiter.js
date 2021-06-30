@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -26,13 +26,16 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { CanvasComponent, Rect, ViewportLimiter } from 'yfiles'
+import { CanvasComponent, GraphComponent, Rect, ViewportLimiter } from 'yfiles'
 
 /**
  * A viewport limiter implementation that forbids scrolling above or below
  * the vertical bounds of the task lanes.
  */
 export default class RestrictedViewportLimiter extends ViewportLimiter {
+  /**
+   * @param {!GraphComponent} taskComponent
+   */
   constructor(taskComponent) {
     super()
     this.taskComponent = taskComponent
@@ -40,9 +43,9 @@ export default class RestrictedViewportLimiter extends ViewportLimiter {
 
   /**
    * Limits the viewport to the area which contains task nodes.
-   * @param {CanvasComponent} canvas - The canvas control on which the viewport should be applied.
-   * @param {Rect} suggestedViewport - The suggested viewport.
-   * @returns {Rect}
+   * @param {!CanvasComponent} canvas - The canvas control on which the viewport should be applied.
+   * @param {!Rect} suggestedViewport - The suggested viewport.
+   * @returns {!Rect}
    */
   limitViewport(canvas, suggestedViewport) {
     const topY = this.taskComponent.contentRect.y

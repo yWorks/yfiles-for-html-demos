@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -26,8 +26,8 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-/* eslint-disable react/prop-types */
 import React, { Component } from 'react'
+import PropTypes from 'prop-types'
 import './DemoDescription.css'
 import ItemElement from './ItemElement.jsx'
 import plusIcon from '../assets/plus-16.svg'
@@ -74,4 +74,11 @@ export default class DemoDataPanel extends Component {
       </div>
     )
   }
+}
+
+DemoDataPanel.propTypes = {
+  graphData: PropTypes.object,
+  onResetData: PropTypes.func,
+  onAddNode: PropTypes.func,
+  onRemoveNode: PropTypes.func
 }

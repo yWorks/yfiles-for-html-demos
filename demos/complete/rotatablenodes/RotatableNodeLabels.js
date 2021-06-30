@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -45,15 +45,16 @@ import {
   MarkupExtension,
   OrientedRectangle,
   TypeAttribute,
-  YBoolean
+  YBoolean,
+  IEnumerable
 } from 'yfiles'
 
 import { RotatableNodeStyleDecorator } from './RotatableNodes.js'
 
 /**
  * A {@link ILabelModel} decorator for node labels that wraps another label model and considers the
- * {@link RotatableNodes.RotatableNodeStyleDecorator#angle rotation angle} of the label owner when a
- * {@link RotatableNodes.RotatableNodeStyleDecorator} is used.
+ * {@link RotatableNodeStyleDecorator#angle rotation angle} of the label owner when a
+ * {@link RotatableNodeStyleDecorator} is used.
  * This will make the node labels rotate with the node's rotation.
  */
 export class RotatableNodeLabelModelDecorator extends BaseClass(
@@ -61,52 +62,23 @@ export class RotatableNodeLabelModelDecorator extends BaseClass(
   IMarkupExtensionConverter
 ) {
   /**
-   * Returns whether or not the rotation of the label owner should be considered.
-   * @return {boolean}
-   */
-  get useNodeRotation() {
-    return this.$useNodeRotation
-  }
-
-  /**
-   * Specifies whether or not the rotation of the label owner should be considered.
-   * @param {boolean} useNodeRotation
-   */
-  set useNodeRotation(useNodeRotation) {
-    this.$useNodeRotation = useNodeRotation
-  }
-
-  /**
-   * Returns the wrapped label model.
-   * @return {ILabelModel}
-   */
-  get wrapped() {
-    return this.$wrapped
-  }
-
-  /**
-   * Specifies the wrapped label model.
-   * @param {ILabelModel} wrapped
-   */
-  set wrapped(wrapped) {
-    this.$wrapped = wrapped
-  }
-
-  /**
    * Creates a new instance of {@link RotatableNodeLabelModelDecorator}.
-   * @param {ILabelModel} wrapped
+   * @param {!ILabelModel} wrapped
    */
   constructor(wrapped) {
     super()
-    this.$wrapped = wrapped || FreeNodeLabelModel.INSTANCE
-    this.$useNodeRotation = true
+    // Specifies the wrapped label model.
+    this.wrapped = wrapped || FreeNodeLabelModel.INSTANCE
+    // Specifies whether or not the rotation of the label owner should be considered.
+    this.useNodeRotation = true
   }
 
   /**
    * Provides custom implementations of {@link ILabelModelParameterProvider} and
    * {@link ILabelModelParameterFinder} that consider the nodes rotation.
-   * @param {Class} type
-   * @return {ILabelModelParameterProvider|ILabelModelParameterFinder|null}
+   * Wraps the default implementations in a special wrapper which supports rotation.
+   * @param {!Class} type
+   * @returns {?object}
    */
   lookup(type) {
     if (type === ILabelModelParameterProvider.$class) {
@@ -126,9 +98,9 @@ export class RotatableNodeLabelModelDecorator extends BaseClass(
 
   /**
    * Returns the current geometry of the given label.
-   * @param {ILabel} label
-   * @param {ILabelModelParameter} parameter
-   * @return {IOrientedRectangle}
+   * @param {!ILabel} label
+   * @param {!ILabelModelParameter} parameter
+   * @returns {!IOrientedRectangle}
    */
   getGeometry(label, parameter) {
     const styleWrapper = this.getNodeStyleWrapper(label)
@@ -136,7 +108,7 @@ export class RotatableNodeLabelModelDecorator extends BaseClass(
     const orientedRectangle = wrappedParameter.model.getGeometry(label, wrappedParameter)
     if (
       !this.useNodeRotation ||
-      !INode.isInstance(label.owner) ||
+      !(label.owner instanceof INode) ||
       styleWrapper === null ||
       styleWrapper.angle === 0
     ) {
@@ -158,7 +130,7 @@ export class RotatableNodeLabelModelDecorator extends BaseClass(
 
   /**
    * Creates a wrapped instance of the wrapped label model's default parameter.
-   * @return {RotatableNodeLabelModelDecoratorParameter}
+   * @returns {!RotatableNodeLabelModelDecoratorParameter}
    */
   createDefaultParameter() {
     return new RotatableNodeLabelModelDecoratorParameter(
@@ -169,8 +141,8 @@ export class RotatableNodeLabelModelDecorator extends BaseClass(
 
   /**
    * Creates a wrapped parameter containing the given parameter.
-   * @param {ILabelModelParameter} wrapped
-   * @return {RotatableNodeLabelModelDecoratorParameter}
+   * @param {!ILabelModelParameter} wrapped
+   * @returns {!RotatableNodeLabelModelDecoratorParameter}
    */
   createWrappingParameter(wrapped) {
     return new RotatableNodeLabelModelDecoratorParameter(wrapped, this)
@@ -178,9 +150,9 @@ export class RotatableNodeLabelModelDecorator extends BaseClass(
 
   /**
    * Provides a lookup context for the given combination of label and parameter.
-   * @param {ILabel} label
-   * @param {ILabelModelParameter} parameter
-   * @return {ILookup}
+   * @param {!ILabel} label
+   * @param {!ILabelModelParameter} parameter
+   * @returns {!ILookup}
    */
   getContext(label, parameter) {
     const wrappedParameter = this.getWrappedParameter(parameter)
@@ -189,22 +161,24 @@ export class RotatableNodeLabelModelDecorator extends BaseClass(
 
   /**
    * Returns the wrapped label model parameter
-   * @param {ILabelModelParameter} parameter
-   * @return {ILabelModelParameter}
+   * @param {!ILabelModelParameter} parameter
+   * @returns {!ILabelModelParameter}
    */
   getWrappedParameter(parameter) {
-    return parameter.wrapped
+    return parameter instanceof RotatableNodeLabelModelDecoratorParameter
+      ? parameter.wrapped
+      : parameter
   }
 
   /**
-   * Returns the wrapping style for nodes when {@link RotatableNodes.RotatableNodeStyleDecorator}
+   * Returns the wrapping style for nodes when {@link RotatableNodeStyleDecorator}
    * is used, null otherwise.
-   * @param {ILabel} label
-   * @return {RotatableNodes.RotatableNodeStyleDecorator|null}
+   * @param {!ILabel} label
+   * @returns {?RotatableNodeStyleDecorator}
    */
   getNodeStyleWrapper(label) {
     const node = label.owner
-    if (INode.isInstance(node)) {
+    if (node instanceof INode) {
       return node.style instanceof RotatableNodeStyleDecorator ? node.style : null
     }
     return null
@@ -212,9 +186,9 @@ export class RotatableNodeLabelModelDecorator extends BaseClass(
 
   /**
    * Returns that this label model can be converted.
-   * @param {IWriteContext} context
-   * @param {object} value
-   * @return {boolean}
+   * @param {!IWriteContext} context
+   * @param {*} value
+   * @returns {boolean}
    */
   canConvert(context, value) {
     return true
@@ -222,9 +196,9 @@ export class RotatableNodeLabelModelDecorator extends BaseClass(
 
   /**
    * Converts this label model using {@link RotatableNodeLabelModelDecoratorExtension}.
-   * @param {IWriteContext} context
-   * @param {object} value
-   * @return {RotatableNodeLabelModelDecoratorParameterExtension}
+   * @param {!IWriteContext} context
+   * @param {*} value
+   * @returns {!RotatableNodeLabelModelDecoratorExtension}
    */
   convert(context, value) {
     const extension = new RotatableNodeLabelModelDecoratorExtension()
@@ -244,18 +218,19 @@ export class RotatableNodeLabelModelDecoratorParameter extends BaseClass(
 ) {
   /**
    * Creates a new instance wrapping the given parameter.
-   * @param {ILabelModelParameter} wrapped
-   * @param {ILabelModel} model
+   * @param {!ILabelModelParameter} wrapped
+   * @param {!ILabelModel} model
    */
   constructor(wrapped, model) {
     super()
-    this.$wrapped = wrapped
-    this.$model = model
+    // Specifies the wrapped label model parameter.
+    this.wrapped = wrapped
+    this._model = model
   }
 
   /**
    * Returns a copy of this label model parameter.
-   * @return {RotatableNodeLabelModelDecoratorParameter}
+   * @returns {*}
    */
   clone() {
     return new RotatableNodeLabelModelDecoratorParameter(this.wrapped, this.model)
@@ -263,65 +238,50 @@ export class RotatableNodeLabelModelDecoratorParameter extends BaseClass(
 
   /**
    * Returns the label model.
-   * @return {ILabelModel}
+   * @type {!ILabelModel}
    */
   get model() {
-    return this.$model
+    return this._model
   }
 
   /**
    * Specifies the label model.
-   * @param {ILabelModel} model
+   * @type {!ILabelModel}
    */
   set model(model) {
-    this.$model = model
+    this._model = model
   }
 
   /**
-   * Returns the wrapped label model parameter.
-   * @return {ILabelModelParameter}
-   */
-  get wrapped() {
-    return this.$wrapped
-  }
-
-  /**
-   * Specifies the wrapped label model parameter.
-   * @param {ILabelModelParameter} wrapped
-   */
-  set wrapped(wrapped) {
-    this.$wrapped = wrapped
-  }
-
-  /**
+   * Whether this parameter supports the given label.
    * Accepts node labels that are supported by the wrapped label model parameter.
-   * @param {ILabel} label
-   * @return {boolean}
+   * @param {!ILabel} label
+   * @returns {boolean}
    */
   supports(label) {
-    return INode.isInstance(label.owner) && this.wrapped.supports(label)
+    return label.owner instanceof INode && this.wrapped.supports(label)
   }
 
   /**
    * Returns that this label model parameter can be converted.
-   * @param {IWriteContext} context
-   * @param {object} value
-   * @return {boolean}
+   * @param {!IWriteContext} context
+   * @param {*} value
+   * @returns {boolean}
    */
   canConvert(context, value) {
     return true
   }
 
   /**
-   * Converts this label model parameter using
+   * Converts this label model parameter to a
    * {@link RotatableNodeLabelModelDecoratorParameterExtension}.
-   * @param {IWriteContext} context
-   * @param {object} value
-   * @return {RotatableNodeLabelModelDecoratorParameterExtension}
+   * @param {!IWriteContext} context
+   * @param {*} value
+   * @returns {!RotatableNodeLabelModelDecoratorParameterExtension}
    */
   convert(context, value) {
     const extension = new RotatableNodeLabelModelDecoratorParameterExtension()
-    extension.model = this.model
+    extension.model = this._model
     extension.wrapped = this.wrapped
     return extension
   }
@@ -333,7 +293,7 @@ export class RotatableNodeLabelModelDecoratorParameter extends BaseClass(
 class RotatedNodeLabelModelParameterProvider extends BaseClass(ILabelModelParameterProvider) {
   /**
    * Returns a new instance using the given parameter provider.
-   * @param {ILabelModelParameterProvider} wrapped
+   * @param {!ILabelModelParameterProvider} wrapped
    */
   constructor(wrapped) {
     super()
@@ -342,9 +302,9 @@ class RotatedNodeLabelModelParameterProvider extends BaseClass(ILabelModelParame
 
   /**
    * Returns a set of possible wrapped {@link ILabelModelParameter} instances.
-   * @param {ILabel} label
-   * @param {ILabelModel} model
-   * @return {IEnumerable}
+   * @param {!ILabel} label
+   * @param {!ILabelModel} model
+   * @returns {!IEnumerable.<ILabelModelParameter>}
    */
   getParameters(label, model) {
     const wrapperModel = model
@@ -363,7 +323,7 @@ class RotatedNodeLabelModelParameterProvider extends BaseClass(ILabelModelParame
 class RotatedNodeLabelModelParameterFinder extends BaseClass(ILabelModelParameterFinder) {
   /**
    * Creates a new instance using the given parameter finder.
-   * @param {ILabelModelParameterFinder} wrapped
+   * @param {!ILabelModelParameterFinder} wrapped
    */
   constructor(wrapped) {
     super()
@@ -373,10 +333,10 @@ class RotatedNodeLabelModelParameterFinder extends BaseClass(ILabelModelParamete
   /**
    * Finds the label model parameter that describes the given label layout best. Sometimes the
    * layout cannot be met exactly, then the nearest location is used.
-   * @param {ILabel} label
-   * @param {ILabelModel} model
-   * @param {IOrientedRectangle} labelLayout
-   * @return {RotatableNodeLabelModelDecoratorParameter|IPortLocationModelParameter}
+   * @param {!ILabel} label
+   * @param {!ILabelModel} model
+   * @param {!IOrientedRectangle} labelLayout
+   * @returns {!ILabelModelParameter}
    */
   findBestParameter(label, model, labelLayout) {
     const wrapperModel = model
@@ -387,7 +347,6 @@ class RotatedNodeLabelModelParameterFinder extends BaseClass(ILabelModelParamete
       )
     }
 
-    /** @type {INode} */
     const node = label.owner
     const rotatedCenter = styleWrapper.getRotatedPoint(
       labelLayout.orientedRectangleCenter,
@@ -412,40 +371,41 @@ class RotatedNodeLabelModelParameterFinder extends BaseClass(ILabelModelParamete
 export class RotatableNodeLabelModelDecoratorExtension extends MarkupExtension {
   constructor() {
     super()
-    this.$useNodeRotation = true
-    this.$wrapped = null
+    this._useNodeRotation = true
+    this._wrapped = null
   }
 
   /**
-   * @return {boolean}
+   * @type {boolean}
    */
   get useNodeRotation() {
-    return this.$useNodeRotation
+    return this._useNodeRotation
   }
 
   /**
-   * @param {boolean} value
+   * @type {boolean}
    */
   set useNodeRotation(value) {
-    this.$useNodeRotation = value
+    this._useNodeRotation = value
   }
 
   /**
-   * @return {ILabelModel}
+   * @type {!ILabelModel}
    */
   get wrapped() {
-    return this.$wrapped
+    return this._wrapped
   }
 
   /**
-   * @param {ILabelModel} value
+   * @type {!ILabelModel}
    */
   set wrapped(value) {
-    this.$wrapped = value
+    this._wrapped = value
   }
 
   /**
-   * Meta attributes for the {@link GraphMLIOHandler}.
+   * Meta attributes for GraphML serialization.
+   * @type {!object}
    */
   static get $meta() {
     return {
@@ -457,8 +417,8 @@ export class RotatableNodeLabelModelDecoratorExtension extends MarkupExtension {
   }
 
   /**
-   * @param {ILookup} serviceProvider
-   * @return {object}
+   * @param {!ILookup} serviceProvider
+   * @returns {*}
    */
   provideValue(serviceProvider) {
     const labelModel = new RotatableNodeLabelModelDecorator(this.wrapped)
@@ -471,37 +431,43 @@ export class RotatableNodeLabelModelDecoratorExtension extends MarkupExtension {
  * Markup extension that helps (de-)serializing a {@link RotatableNodeLabelModelDecoratorParameter).
  */
 export class RotatableNodeLabelModelDecoratorParameterExtension extends MarkupExtension {
+  constructor() {
+    super()
+    this._model = null
+    this._wrapped = null
+  }
+
   /**
-   * @return {ILabelModel}
+   * @type {!ILabelModel}
    */
   get model() {
-    return this.$model
+    return this._model
   }
 
   /**
-   * @param {ILabelModel} value
+   * @type {!ILabelModel}
    */
   set model(value) {
-    this.$model = value
+    this._model = value
   }
 
   /**
-   * @return {ILabelModelParameter}
+   * @type {!ILabelModelParameter}
    */
   get wrapped() {
-    return this.$wrapped
+    return this._wrapped
   }
 
   /**
-   * @param {ILabelModelParameter} value
+   * @type {!ILabelModelParameter}
    */
   set wrapped(value) {
-    this.$wrapped = value
+    this._wrapped = value
   }
 
   /**
-   * @param {ILookup} serviceProvider
-   * @return {object}
+   * @param {!ILookup} serviceProvider
+   * @returns {*}
    */
   provideValue(serviceProvider) {
     const rotatableModel = this.model

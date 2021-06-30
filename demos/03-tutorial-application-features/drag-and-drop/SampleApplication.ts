@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -49,15 +49,8 @@ import {
   SvgExport
 } from 'yfiles'
 
-import {
-  addClass,
-  bindAction,
-  bindCommand,
-  passiveSupported,
-  pointerEventsSupported,
-  removeClass,
-  showApp
-} from '../../resources/demo-app'
+import { addClass, bindAction, bindCommand, removeClass, showApp } from '../../resources/demo-app'
+import { passiveSupported, pointerEventsSupported } from '../../utils/Workarounds'
 import loadJson from '../../resources/load-json'
 
 // @ts-ignore

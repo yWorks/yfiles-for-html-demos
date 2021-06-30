@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -30,6 +30,7 @@ import {
   DragDropEffects,
   EdgeDirectionPolicy,
   EdgeRouter,
+  EdgeRouterData,
   FreeNodePortLocationModel,
   GraphComponent,
   GraphEditorInputMode,
@@ -40,15 +41,16 @@ import {
   ICommand,
   IEdgeReconnectionPortCandidateProvider,
   IGraph,
+  ILayoutAlgorithm,
   INode,
+  IPort,
+  LayoutData,
   LayoutOrientation,
   License,
-  List,
   ListEnumerable,
   NodeDropInputMode,
   OrthogonalEdgeEditingContext,
   Point,
-  PolylineEdgeRouterData,
   PortConstraint,
   PortSide,
   Rect,
@@ -65,17 +67,20 @@ import {
   bindAction,
   bindChangeListener,
   bindCommand,
-  passiveSupported,
-  pointerEventsSupported,
   removeClass,
   showApp
 } from '../../resources/demo-app.js'
+import { pointerEventsSupported } from '../../utils/Workarounds.js'
 import loadJson from '../../resources/load-json.js'
 
 /** @type {GraphComponent} */
-let graphComponent = null
+let graphComponent
 
-function run(licenseData) {
+/**
+ * @param {!object} licenseData
+ * @returns {!Promise}
+ */
+async function run(licenseData) {
   License.value = licenseData
   graphComponent = new GraphComponent('graphComponent')
 
@@ -89,7 +94,7 @@ function run(licenseData) {
   createInputMode()
 
   // create the sample graph
-  createSampleGraph()
+  await createSampleGraph()
 
   // wire up the UI
   registerCommands()
@@ -102,7 +107,7 @@ function run(licenseData) {
  * Initializes the drag and drop panel.
  */
 function initializeDnDPanel() {
-  const dndPanel = new DragAndDropPanel(document.getElementById('dndPanel'), passiveSupported)
+  const dndPanel = new DragAndDropPanel(document.getElementById('dndPanel'))
   // Set the callback that starts the actual drag and drop operation
   dndPanel.beginDragCallback = (element, data) => {
     const dragPreview = element.cloneNode(true)
@@ -115,10 +120,10 @@ function initializeDnDPanel() {
       pointerEventsSupported ? dragPreview : null
     )
     dragSource.addQueryContinueDragListener((src, args) => {
-      if (args.dropTarget === null) {
-        removeClass(dragPreview, 'hidden')
-      } else {
+      if (args.dropTarget) {
         addClass(dragPreview, 'hidden')
+      } else {
+        removeClass(dragPreview, 'hidden')
       }
     })
   }
@@ -128,27 +133,22 @@ function initializeDnDPanel() {
 
 /**
  * Creates the nodes that provide the visualizations for the style panel.
- * @return {SimpleNode[]}
+ * @returns {!Array.<SimpleNode>}
  */
 function createDnDPanelNodes() {
-  const nodeContainer = []
-
   // Create some nodes with different styles
   const nodeStyles = [
-    new AndGateNodeStyle(),
+    new AndGateNodeStyle(false),
     new AndGateNodeStyle(true),
     new NotNodeStyle(),
-    new OrNodeStyle(),
+    new OrNodeStyle(false),
     new OrNodeStyle(true),
-    new XOrNodeStyle(),
+    new XOrNodeStyle(false),
     new XOrNodeStyle(true)
   ]
 
-  nodeStyles.forEach(style => {
-    const node = new SimpleNode()
-    node.layout = new Rect(0, 0, 100, 50)
-    node.style = style
-    nodeContainer.push(node)
+  const nodeContainer = nodeStyles.map(style => {
+    return new SimpleNode({ layout: new Rect(0, 0, 100, 50), style: style })
   })
 
   // create the port descriptor for the nodes
@@ -162,7 +162,7 @@ function createDnDPanelNodes() {
  */
 function initializeGraph() {
   const graph = graphComponent.graph
-  graph.nodeDefaults.style = new AndGateNodeStyle()
+  graph.nodeDefaults.style = new AndGateNodeStyle(false)
   graph.nodeDefaults.size = new Size(100, 50)
 
   // don't delete ports a removed edge was connected to
@@ -224,12 +224,13 @@ function createInputMode() {
   mode.itemHoverInputMode.addHoveredItemChangedListener((sender, args) => {
     const item = args.item
     const oldItem = args.oldItem
-    if (oldItem != null && oldItem.tag != null && INode.isInstance(oldItem)) {
+
+    if (oldItem && oldItem.tag && oldItem instanceof INode) {
       oldItem.tag.sourceHighlight = false
       oldItem.tag.targetHighlight = false
     }
 
-    if (item != null && item.tag != null && INode.isInstance(item)) {
+    if (item && item.tag && item instanceof INode) {
       item.tag.sourceHighlight = true
       item.tag.targetHighlight = true
     }
@@ -237,19 +238,17 @@ function createInputMode() {
   })
 
   // create a new NodeDropInputMode to configure the drag and drop operation
-  const nodeDropInputMode = new NodeDropInputMode()
-  // enables the display of the dragged element during the drag
-  nodeDropInputMode.showPreview = true
-  // by default the mode available in GraphEditorInputMode is disabled, so first enable it
-  nodeDropInputMode.enabled = true
-  mode.nodeDropInputMode = nodeDropInputMode
+  mode.nodeDropInputMode = new NodeDropInputMode({
+    // enables the display of the dragged element during the drag
+    showPreview: true,
+    // by default the mode available in GraphEditorInputMode is disabled, so first enable it
+    enabled: true
+  })
 
   const originalNodeCreator = mode.nodeDropInputMode.itemCreator
   mode.nodeDropInputMode.itemCreator = (context, graph, draggedNode, dropTarget, point) => {
-    if (draggedNode) {
-      const modelItem = new SimpleNode()
-      modelItem.style = draggedNode.style
-      modelItem.layout = draggedNode.layout
+    if (draggedNode instanceof INode) {
+      const modelItem = new SimpleNode({ style: draggedNode.style, layout: draggedNode.layout })
 
       const newNode = originalNodeCreator(context, graph, modelItem, dropTarget, point)
       // copy the ports
@@ -268,34 +267,41 @@ function createInputMode() {
 /**
  * Applies the selected layout algorithm.
  * @param {boolean} clearUndo True if the undo engine should be cleared, false otherwise
+ * @returns {!Promise}
  */
 async function runLayout(clearUndo) {
-  const selectedIndex = document.getElementById('algorithm-select-box').selectedIndex
+  const algorithmSelect = document.getElementById('algorithm-select-box')
+  const selectedIndex = algorithmSelect.selectedIndex
+
   let layout
   let layoutData
+
   if (selectedIndex === 0) {
     layout = new HierarchicLayout({
       layoutOrientation: LayoutOrientation.LEFT_TO_RIGHT,
       orthogonalRouting: true
     })
     layoutData = new HierarchicLayoutData({
-      sourcePortConstraints: edge => PortConstraint.create(PortSide.EAST, true),
-      targetPortConstraints: edge => PortConstraint.create(PortSide.WEST, true)
+      sourcePortConstraints: _ => PortConstraint.create(PortSide.EAST, true),
+      targetPortConstraints: _ => PortConstraint.create(PortSide.WEST, true)
     })
   } else {
     layout = new EdgeRouter()
-    layoutData = new PolylineEdgeRouterData({
-      sourcePortConstraints: edge => PortConstraint.create(PortSide.EAST, true),
-      targetPortConstraints: edge => PortConstraint.create(PortSide.WEST, true)
+    layoutData = new EdgeRouterData({
+      sourcePortConstraints: _ => PortConstraint.create(PortSide.EAST, true),
+      targetPortConstraints: _ => PortConstraint.create(PortSide.WEST, true)
     })
   }
+
   setUIDisabled(true)
+
   try {
     await graphComponent.morphLayout(layout, '1s', layoutData)
     graphComponent.fitGraphBounds()
   } catch (error) {
-    if (typeof window.reportError === 'function') {
-      window.reportError(error)
+    const reportError = window.reportError
+    if (typeof reportError === 'function') {
+      reportError(error)
     } else {
       throw error
     }
@@ -310,11 +316,14 @@ async function runLayout(clearUndo) {
 /**
  * Disables the HTML elements of the UI and the input mode.
  *
- * @param disabled true if the elements should be disabled, false otherwise
+ * @param {boolean} disabled true if the elements should be disabled, false otherwise
  */
 function setUIDisabled(disabled) {
-  document.getElementById('algorithm-select-box').disabled = disabled
-  document.getElementById('layoutButton').disabled = disabled
+  const algorithmSelect = document.getElementById('algorithm-select-box')
+  const layoutButton = document.getElementById('layoutButton')
+
+  algorithmSelect.disabled = disabled
+  layoutButton.disabled = disabled
 }
 
 /**
@@ -335,13 +344,14 @@ function registerCommands() {
   bindCommand("button[data-command='Delete']", ICommand.DELETE, graphComponent)
 
   bindChangeListener("select[data-command='AlgorithmSelectionChanged']", runLayout)
-  bindAction("button[data-command='Layout']", runLayout)
+  bindAction("button[data-command='Layout']", _ => runLayout(false))
 }
 
 /**
  * Creates the sample graph for this demo.
+ * @returns {!Promise}
  */
-function createSampleGraph() {
+async function createSampleGraph() {
   const graph = graphComponent.graph
 
   const node1 = graph.createNode({ style: new AndGateNodeStyle(true) })
@@ -350,18 +360,18 @@ function createSampleGraph() {
   const node4 = graph.createNode({ style: new NotNodeStyle() })
   const node5 = graph.createNode({ style: new AndGateNodeStyle(true) })
 
-  const node6 = graph.createNode({ style: new AndGateNodeStyle() })
+  const node6 = graph.createNode({ style: new AndGateNodeStyle(false) })
   const node7 = graph.createNode({ style: new AndGateNodeStyle(true) })
-  const node8 = graph.createNode({ style: new AndGateNodeStyle() })
+  const node8 = graph.createNode({ style: new AndGateNodeStyle(false) })
 
-  const node9 = graph.createNode({ style: new AndGateNodeStyle() })
+  const node9 = graph.createNode({ style: new AndGateNodeStyle(false) })
   const node10 = graph.createNode({ style: new NotNodeStyle() })
 
-  const node11 = graph.createNode({ style: new AndGateNodeStyle() })
+  const node11 = graph.createNode({ style: new AndGateNodeStyle(false) })
   const node12 = graph.createNode({ style: new NotNodeStyle() })
 
   // create the port descriptors for the graph nodes
-  createPortDescriptors(graph.nodes, graph)
+  createPortDescriptors([...graph.nodes], graph)
 
   // create the edges
   const node1Ports = node1.ports.toArray()
@@ -390,13 +400,14 @@ function createSampleGraph() {
   graph.createEdge(node10Ports[0], node12Ports[1])
 
   // run the layout
-  runLayout(true)
+  await runLayout(true)
 }
 
 /**
  * Creates the port descriptors for the given graph.
- * @param {Array} nodes The nodes of the drag and drop panel
- * @param {IGraph} graph The given graph
+ * @param {!Array.<INode>} nodes The nodes of the drag and drop panel
+ * @param graph The given graph
+ * @param {!IGraph} [graph]
  */
 function createPortDescriptors(nodes, graph) {
   nodes.forEach(node => {
@@ -421,7 +432,7 @@ function createPortDescriptors(nodes, graph) {
     })
 
     if (!graph) {
-      node.ports = new ListEnumerable(new List(List.fromArray(ports)))
+      node.ports = new ListEnumerable(ports)
     }
   })
 }

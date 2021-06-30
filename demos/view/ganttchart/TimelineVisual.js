@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -27,29 +27,28 @@
  **
  ***************************************************************************/
 /* global moment */
-
 import { CanvasComponent, HtmlCanvasVisual, IRenderContext } from 'yfiles'
 import GanttMapper from './GanttMapper.js'
 
 const colors = ['#6991ff', '#9bc3ff']
 
 /**
- * Manages and renders the timeline ruler
+ * Paints the timeline ruler.
  */
 export default class TimelineVisual extends HtmlCanvasVisual {
   /**
-   * Creates a new instance.
-   * @param {GanttMapper} mapper The mapper.
+   * Creates a new instance of TimelineVisual.
+   * @param {!GanttMapper} mapper The mapper to help with converting from coordinates to dates.
    */
   constructor(mapper) {
     super()
-    /** @type {GanttMapper} */
     this.mapper = mapper
   }
 
   /**
-   * @param {IRenderContext} renderContext - The render context of the {@link CanvasComponent}
-   * @param {CanvasRenderingContext2D} canvasContext - The HTML5 Canvas context to use for rendering.
+   * Paints a timeline of months and days.
+   * @param {!IRenderContext} renderContext The render context of the {@link CanvasComponent}
+   * @param {!CanvasRenderingContext2D} canvasContext The HTML5 Canvas context to use for rendering.
    */
   paint(renderContext, canvasContext) {
     const mapper = this.mapper
@@ -70,6 +69,11 @@ export default class TimelineVisual extends HtmlCanvasVisual {
 
   /**
    * Draws the day separators.
+   * @param {!IRenderContext} renderContext
+   * @param {!CanvasRenderingContext2D} canvasContext
+   * @param {number} beginX
+   * @param {number} endX
+   * @param {!MomentInput} beginDate
    */
   drawDays(renderContext, canvasContext, beginX, endX, beginDate) {
     const date = moment(beginDate)
@@ -99,6 +103,13 @@ export default class TimelineVisual extends HtmlCanvasVisual {
     }
   }
 
+  /**
+   * @param {!IRenderContext} renderContext
+   * @param {!CanvasRenderingContext2D} canvasContext
+   * @param {number} beginX
+   * @param {number} endX
+   * @param {!MomentInput} beginDate
+   */
   drawMonths(renderContext, canvasContext, beginX, endX, beginDate) {
     const date = moment(beginDate)
 

@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -35,7 +35,6 @@ import {
   ICanvasObjectGroup,
   IHighlightIndicatorInstaller,
   IHitTestable,
-  IModelItem,
   INode,
   IRenderContext,
   IVisibilityTestable,
@@ -44,6 +43,7 @@ import {
   Point,
   Rect,
   SimpleNode,
+  SvgVisual,
   SvgVisualGroup,
   Visual,
   VoidVisualCreator
@@ -59,15 +59,15 @@ export default class MagnifyNodeHighlightInstaller extends BaseClass(IHighlightI
   /**
    * This the main method of the interface that performs the installation of an item's visual representation in the
    * canvas by adding ICanvasObjects.
-   * @param {ICanvasContext} context The context that contains the information required to install the
+   * @param {!ICanvasContext} context The context that contains the information required to install the
    *   visual representation
-   * @param {ICanvasObjectGroup} group The canvas object group to add the newly generated ICanvasObject
-   * @param {Object} item The item to install.
-   * @return {ICanvasObject} The newly generated ICanvasObject for the item's visual representation or
+   * @param {!ICanvasObjectGroup} group The canvas object group to add the newly generated ICanvasObject
+   * @param {*} item The item to install.
+   * @returns {?ICanvasObject} The newly generated ICanvasObject for the item's visual representation or
    *   null if nothing was installed.
    */
   addCanvasObject(context, group, item) {
-    if (INode.isInstance(item)) {
+    if (item instanceof INode) {
       return group.addChild(item, new NodeStyleDescriptor())
     }
     return null
@@ -85,79 +85,68 @@ class NodeStyleDescriptor extends BaseClass(
 ) {
   constructor() {
     super()
-    // create a dummy node that will be drawn as highlight above the original node.
-    this.$item = new SimpleNode()
-    this.$original = null
-  }
 
-  /**
-   * Gets the item with all data relevant for drawing the highlight.
-   * @return {IModelItem}
-   */
-  get item() {
-    return this.$item
+    // create a dummy node that will be drawn as highlight above the original node.
+    this.item = new SimpleNode()
+
+    this.original = null
   }
 
   /**
    * Sets the item with all data relevant for drawing the highlight.
-   * @param {IModelItem} item The item to be set
+   * @param {*} item The item to be set
    */
-  set item(item) {
-    this.$original = INode.isInstance(item) ? item : null
-    if (this.$original !== null) {
-      this.item.labels = this.$original.labels
-      this.item.ports = this.$original.ports
-      this.item.style = this.$original.style
-      this.item.tag = this.$original.tag
-      this.item.layout = this.$original.layout
+  updateItem(item) {
+    if (item instanceof INode) {
+      this.original = item
+      this.item.labels = item.labels
+      this.item.ports = item.ports
+      this.item.style = item.style
+      this.item.tag = item.tag
+      this.item.layout = item.layout
+    } else {
+      this.original = null
+      this.item = new SimpleNode()
     }
   }
 
   /**
-   * Returns the original node that gets highlighted.
-   * @return {INode}
-   */
-  getOriginal() {
-    return this.$original
-  }
-
-  /**
    * Returns an implementation of IVisualCreator that will create the Visual tree for the user object.
-   * @param {Object} forUserObject The user object to create a Visual for
-   * @return {IVisualCreator} An implementation of IVisualCreator
+   * @param {*} forUserObject The user object to create a Visual for
+   * @returns {!IVisualCreator} An implementation of IVisualCreator
    */
   getVisualCreator(forUserObject) {
-    this.item = forUserObject
-    return this.getOriginal() !== null ? this : VoidVisualCreator.INSTANCE
+    this.updateItem(forUserObject)
+    return this.original !== null ? this : VoidVisualCreator.INSTANCE
   }
 
   /**
    * Returns an implementation of IBoundsProvider that can determine the visible bounds of the rendering of the user
    * object.
-   * @param {Object} forUserObject The user object to query the bounds for
-   * @return {IBoundsProvider} An implementation of IBoundsProvider
+   * @param {*} forUserObject The user object to query the bounds for
+   * @returns {!IBoundsProvider} An implementation of IBoundsProvider
    */
   getBoundsProvider(forUserObject) {
-    this.item = forUserObject
-    return this.getOriginal() !== null ? this : IBoundsProvider.EMPTY
+    this.updateItem(forUserObject)
+    return this.original !== null ? this : IBoundsProvider.EMPTY
   }
 
   /**
    * Returns an implementation of IVisibilityTestable that can determine if the rendering of the user object would be
    * visible in a given context.
-   * @param {Object} forUserObject The user object to query the visibility test for
-   * @return {IVisibilityTestable} An implementation of IVisibilityTestable
+   * @param {*} forUserObject The user object to query the visibility test for
+   * @returns {!IVisibilityTestable} An implementation of IVisibilityTestable
    */
   getVisibilityTestable(forUserObject) {
-    this.item = forUserObject
-    return this.getOriginal() !== null ? this : IVisibilityTestable.NEVER
+    this.updateItem(forUserObject)
+    return this.original !== null ? this : IVisibilityTestable.NEVER
   }
 
   /**
    * Returns an implementation of IHitTestable that can determine whether the rendering of the user object has
    * been hit at a given coordinate.
-   * @param {Object} forUserObject The user object to do the hit testing for
-   * @return {IHitTestable} An implementation of IHitTestable
+   * @param {*} forUserObject The user object to do the hit testing for
+   * @returns {!IHitTestable} An implementation of IHitTestable
    */
   getHitTestable(forUserObject) {
     return IHitTestable.NEVER
@@ -165,9 +154,9 @@ class NodeStyleDescriptor extends BaseClass(
 
   /**
    * Determines whether the given canvas object is deemed dirty and needs updating.
-   * @param {ICanvasContext} context The context that will be used for the update
-   * @param {ICanvasObject} canvasObject The object to check
-   * @return {boolean} True if the given canvas object needs updating, false otherwise
+   * @param {!ICanvasContext} context The context that will be used for the update
+   * @param {!ICanvasObject} canvasObject The object to check
+   * @returns {boolean} True if the given canvas object needs updating, false otherwise
    */
   isDirty(context, canvasObject) {
     return true
@@ -175,8 +164,8 @@ class NodeStyleDescriptor extends BaseClass(
 
   /**
    * Creates the descriptor's visual.
-   * @param {IRenderContext} context The context that describes where the visual will be used
-   * @return {Visual} The newly created visual
+   * @param {!IRenderContext} context The context that describes where the visual will be used
+   * @returns {?Visual} The newly created visual
    */
   createVisual(context) {
     // create a visual group
@@ -185,7 +174,7 @@ class NodeStyleDescriptor extends BaseClass(
     // use the node style to create a visual for the node
     const nodeStyle = this.item.style
     const nodeVisual = nodeStyle.renderer
-      .getVisualCreator(this.getOriginal(), nodeStyle)
+      .getVisualCreator(this.original, nodeStyle)
       .createVisual(context)
     group.add(nodeVisual)
 
@@ -205,12 +194,12 @@ class NodeStyleDescriptor extends BaseClass(
 
   /**
    * Updates the descriptor's visual.
-   * @param {IRenderContext} context The context that describes where the visual will be used
-   * @param {Visual} oldVisual The old visual
-   * @return {Visual} The newly created visual
+   * @param {!IRenderContext} context The context that describes where the visual will be used
+   * @param {!Visual} oldVisual The old visual
+   * @returns {?Visual} The newly created visual
    */
   updateVisual(context, oldVisual) {
-    if (oldVisual.children.size !== 2) {
+    if (!(oldVisual instanceof SvgVisualGroup) || oldVisual.children.size !== 2) {
       return this.createVisual(context)
     }
 
@@ -224,7 +213,7 @@ class NodeStyleDescriptor extends BaseClass(
     // use the node style to update the highlight
     const nodeStyle = this.item.style
     const updatedNodeVisual = nodeStyle.renderer
-      .getVisualCreator(this.getOriginal(), nodeStyle)
+      .getVisualCreator(this.original, nodeStyle)
       .updateVisual(context, nodeVisual)
 
     // use the label style to update the highlight
@@ -243,7 +232,7 @@ class NodeStyleDescriptor extends BaseClass(
       oldVisual.children.set(0, updatedNodeVisual)
     }
     if (updatedLabelVisual !== labelVisual) {
-      oldVisual.set(1, updatedLabelVisual)
+      oldVisual.children.set(1, updatedLabelVisual)
     }
 
     // move visual to the right location and adjust size
@@ -253,8 +242,8 @@ class NodeStyleDescriptor extends BaseClass(
 
   /**
    * Arranges the visual to the correct location.
-   * @param {IRenderContext} context The context that describes where the visual will be used
-   * @param {SvgVisualGroup} group The svg visual group
+   * @param {!IRenderContext} context The context that describes where the visual will be used
+   * @param {!SvgVisualGroup} group The svg visual group
    */
   arrangeVisual(context, group) {
     const itemCenterX = this.item.layout.x + this.item.layout.width * 0.5
@@ -273,8 +262,8 @@ class NodeStyleDescriptor extends BaseClass(
 
   /**
    * Returns a tight rectangular area where the whole rendering would fit into.
-   * @param {ICanvasContext} context The context to calculate the bounds for
-   * @return {Rect} The bounds of the visual
+   * @param {!ICanvasContext} context The context to calculate the bounds for
+   * @returns {!Rect} The bounds of the visual
    */
   getBounds(context) {
     return this.item.style.renderer.getBoundsProvider(this.item, this.item.style).getBounds(context)
@@ -282,9 +271,9 @@ class NodeStyleDescriptor extends BaseClass(
 
   /**
    * Determines whether an element might intersect the visible region for a given context.
-   * @param {ICanvasContext} context The context to determine the visibility for.
-   * @param {Rect} rectangle The visible region clip
-   * @return {boolean} True if the element intersects the visible region, false otherwise
+   * @param {!ICanvasContext} context The context to determine the visibility for.
+   * @param {!Rect} rectangle The visible region clip
+   * @returns {boolean} True if the element intersects the visible region, false otherwise
    */
   isVisible(context, rectangle) {
     return this.getBounds(context).intersects(rectangle)

@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -26,7 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { INode, IRenderContext, NodeStyleBase, SvgVisual, Visual } from 'yfiles'
+import { INode, IRenderContext, NodeStyleBase, SvgVisual } from 'yfiles'
 
 /**
  * The node style used for the non-root nodes of the mindmap.
@@ -34,35 +34,19 @@ import { INode, IRenderContext, NodeStyleBase, SvgVisual, Visual } from 'yfiles'
 export default class MindmapNodeStyle extends NodeStyleBase {
   /**
    * Creates a new instance of this style using the given class name.
-   * @param {string} className The css class attributed to the node.
+   * @param {!string} className The css class attributed to the node.
    */
   constructor(className) {
     super()
-    this.$className = className
-  }
-
-  /**
-   * Gets the class name associated with this node style.
-   * @return {string}
-   */
-  get className() {
-    return this.$className
-  }
-
-  /**
-   * Sets the class name to this node style.
-   * @param {string} value The value to be set.
-   */
-  set className(value) {
-    this.$className = value
+    this.className = className
   }
 
   /**
    * Creates the visual for this node style.
-   * @param {IRenderContext} renderContext The render context.
-   * @param {INode} node The node to which this style instance is assigned.
+   * @param {!IRenderContext} renderContext The render context.
+   * @param {!INode} node The node to which this style instance is assigned.
    * @see Overrides {@link NodeStyleBase#createVisual}
-   * @return {SvgVisual}
+   * @returns {!SvgVisual}
    */
   createVisual(renderContext, node) {
     // create a container element
@@ -75,11 +59,11 @@ export default class MindmapNodeStyle extends NodeStyleBase {
 
   /**
    * Updates the visual.
-   * @param {IRenderContext} renderContext The render context.
-   * @param {SvgVisual} oldVisual The old visual.
-   * @param {INode} node The node to which this style instance is assigned.
+   * @param {!IRenderContext} renderContext The render context.
+   * @param {!SvgVisual} oldVisual The old visual.
+   * @param {!INode} node The node to which this style instance is assigned.
    * @see Overrides {@link NodeStyleBase#updateVisual}
-   * @return {SvgVisual}
+   * @returns {!SvgVisual}
    */
   updateVisual(renderContext, oldVisual, node) {
     const nodeSize = node.layout.toSize()
@@ -102,9 +86,9 @@ export default class MindmapNodeStyle extends NodeStyleBase {
 
   /**
    * Creates the Svg elements and adds them to the container.
-   * @param {IRenderContext} renderContext The render context.
-   * @param {INode} node The node to which this style instance is assigned.
-   * @param {Element} container The svg element.
+   * @param {!IRenderContext} renderContext The render context.
+   * @param {!INode} node The node to which this style instance is assigned.
+   * @param {!Element} container The svg element.
    */
   render(renderContext, node, container) {
     const nodeSize = node.layout.toSize()
@@ -114,8 +98,7 @@ export default class MindmapNodeStyle extends NodeStyleBase {
     const line = window.document.createElementNS('http://www.w3.org/2000/svg', 'line')
     line.x1.baseVal.value = 0
     line.x2.baseVal.value = w
-    line.y1.baseVal.value = h
-    line.y2.baseVal.value = h
+    line.y1.baseVal.value = line.y2.baseVal.value = h
     // set the CSS class for the line
     line.setAttribute('class', `nodeUnderline ${this.className}`)
     line.setAttribute('stroke', node.tag.color)
@@ -126,7 +109,7 @@ export default class MindmapNodeStyle extends NodeStyleBase {
     rect.width.baseVal.value = w
     rect.height.baseVal.value = h
     // set the CSS class for the rect
-    rect.setAttribute('class', `nodeBackground ${this.className}`)
+    rect.classList.add('nodeBackground', this.className)
 
     container.appendChild(rect)
     container.appendChild(line)

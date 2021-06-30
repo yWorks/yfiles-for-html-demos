@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -186,7 +186,7 @@ function initializeToggleAggregation(): void {
       // prevent default behavior, which would select nodes that are no longer in the graph
       evt.handled = true
 
-      toggleAggregationNode(evt.item as INode)
+      toggleAggregationNode(evt.item)
     }
   )
   graphComponent.inputMode = graphViewerInputMode
@@ -205,7 +205,7 @@ function initializeToggleAggregation(): void {
  * Toggles the aggregation of a node, runs a layout and sets the current item.
  */
 function toggleAggregationNode(node: INode): void {
-  if (!aggregationHelper.aggregateGraph!.isAggregationItem(node)) {
+  if (!aggregationHelper.aggregateGraph.isAggregationItem(node)) {
     // is an original node -> only set current item
     graphComponent.currentItem = node
     return
@@ -247,7 +247,7 @@ function zoomToLocation(edge: IEdge, currentMouseClickLocation: Point): void {
   // The distance between where we clicked and the viewport center
   const offset = currentMouseClickLocation.subtract(graphComponent.viewport.center)
   // Zooms to the new location of the mouse
-  graphComponent.zoomToAnimated(location!.subtract(offset), graphComponent.zoom)
+  graphComponent.zoomToAnimated(location.subtract(offset), graphComponent.zoom)
 }
 
 /**
@@ -307,8 +307,8 @@ function onHoveredItemChanged(sender: object, evt: HoveredItemChangedEventArgs):
   const newItem = evt.item
   if (newItem) {
     // we highlight the item itself
-    const node = newItem instanceof INode ? (newItem as INode) : null
-    const edge = newItem instanceof IEdge ? (newItem as IEdge) : null
+    const node = newItem instanceof INode ? newItem : null
+    const edge = newItem instanceof IEdge ? newItem : null
     if (node && aggregationHelper.isOriginalNodeOrPlaceHolder(node)) {
       addHighlight(node)
       // and if it's a node, we highlight all adjacent edges, too
@@ -405,7 +405,7 @@ async function runAggregation(): Promise<void> {
   await setUiDisabled(true)
 
   graphComponent.graph = new DefaultGraph()
-  aggregationHelper.aggregateGraph!.dispose()
+  aggregationHelper.aggregateGraph.dispose()
   await runAggregationAndReplaceGraph(originalGraph)
 
   switchViewButton.innerText = 'Switch To Filtered View'
@@ -440,7 +440,7 @@ function createFilteredView(): FilteredGraphWrapper {
     originalGraph,
     node => {
       node = aggregationHelper.getPlaceholder(node)
-      const aggregateGraph = aggregationHelper.aggregateGraph!
+      const aggregateGraph = aggregationHelper.aggregateGraph
       return aggregateGraph.contains(node)
     },
     () => true
@@ -451,8 +451,8 @@ function createFilteredView(): FilteredGraphWrapper {
     filteredGraph.setNodeLayout(node, aggregationHelper.getPlaceholder(node).layout.toRect())
   }
 
-  // reset any rotated labels
-  for (const label of filteredGraph.labels) {
+  // reset any rotated node labels
+  for (const label of filteredGraph.nodeLabels) {
     filteredGraph.setLabelLayoutParameter(
       label,
       FreeNodeLabelModel.INSTANCE.createDefaultParameter()
@@ -530,7 +530,7 @@ async function runBalloonLayout(affectedNodes?: IListEnumerable<INode>): Promise
   // prepend a TreeReduction stage with the hierarchy edges as tree edges
   const treeReductionStage = new TreeReductionStage()
   treeReductionStage.nonTreeEdgeRouter = treeReductionStage.createStraightLineRouter()
-  treeReductionStage.edgeBundling!.bundlingStrength = 1
+  treeReductionStage.edgeBundling.bundlingStrength = 1
   layout.prependStage(treeReductionStage)
   const nonTreeEdges = graphComponent.graph.edges
     .filter(e => !aggregationHelper.isHierarchyEdge(e))
@@ -561,7 +561,7 @@ async function runBalloonLayout(affectedNodes?: IListEnumerable<INode>): Promise
 
 async function runCircularLayout(): Promise<void> {
   const circularLayout = new CircularLayout()
-  circularLayout.balloonLayout!.interleavedMode = InterleavedMode.ALL_NODES
+  circularLayout.balloonLayout.interleavedMode = InterleavedMode.ALL_NODES
   await graphComponent.morphLayout(circularLayout, '0.5s')
 }
 
@@ -720,7 +720,7 @@ function onInfoPanelPropertiesChanged(): void {
 
   let aggregate = null
   if (aggregationHelper && graphComponent.currentItem instanceof INode) {
-    aggregate = aggregationHelper.getAggregateForNode(graphComponent.currentItem as INode)
+    aggregate = aggregationHelper.getAggregateForNode(graphComponent.currentItem)
   }
   const descendantCountElement = document.getElementById('descendant-count') as HTMLLabelElement
   descendantCountElement.innerText = aggregate ? aggregate.descendantCount.toString() : '0'

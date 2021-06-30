@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -309,7 +309,7 @@ export class TagUndoUnit extends UndoUnitBase {
  * A custom position handler which constrains the movement along the y axis.
  * This implementation wraps the default position handler and delegates most of the work to it.
  */
-export class ConstrainedPositionHandler extends BaseClass<IPositionHandler>(IPositionHandler) {
+export class ConstrainedPositionHandler extends BaseClass(IPositionHandler) {
   handler: IPositionHandler | null
   private lastLocation = Point.ORIGIN
 

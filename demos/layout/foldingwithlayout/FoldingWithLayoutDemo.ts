@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -47,7 +47,7 @@ import {
 
 import GraphData from './resources/SampleData'
 import loadJson from '../../resources/load-json'
-import { initDemoStyles } from '../../resources/demo-styles.js'
+import { initDemoStyles } from '../../resources/demo-styles'
 import { bindCommand, showApp } from '../../resources/demo-app'
 import { ExpandCollapseNavigationHelper } from './ExpandCollapseNavigationHandler'
 
@@ -170,10 +170,10 @@ function buildGraph(graph: IGraph): void {
     recursiveGroupLayering: true,
     layoutMode: LayoutMode.INCREMENTAL
   })
-  hierarchicLayout.edgeLayoutDescriptor!.routingStyle = new HierarchicLayoutRoutingStyle(
+  hierarchicLayout.edgeLayoutDescriptor.routingStyle = new HierarchicLayoutRoutingStyle(
     HierarchicLayoutEdgeRoutingStyle.ORTHOGONAL
   )
-  hierarchicLayout.edgeLayoutDescriptor!.recursiveEdgeStyle = RecursiveEdgeStyle.DIRECTED
+  hierarchicLayout.edgeLayoutDescriptor.recursiveEdgeStyle = RecursiveEdgeStyle.DIRECTED
 
   // apply a layout and move it to the top of the graph component
   graph.applyLayout(hierarchicLayout)

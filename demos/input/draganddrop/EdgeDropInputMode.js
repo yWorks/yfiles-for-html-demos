@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -34,7 +34,8 @@ import {
   ItemDropInputMode,
   Point,
   Rect,
-  VoidNodeStyle
+  VoidNodeStyle,
+  IModelItem
 } from 'yfiles'
 
 /**
@@ -48,19 +49,22 @@ export default class EdgeDropInputMode extends ItemDropInputMode {
   }
 
   /**
-   * @returns {IEdge}
+   * @type {!IEdge}
    */
   get draggedItem() {
     return this.dropData
   }
 
   /**
-   * @param {Point} dragLocation - The location to return the drop target for.
-   * @returns {IModelItem}
+   * @param {!Point} dragLocation - The location to return the drop target for.
+   * @returns {?IModelItem}
    */
   getDropTarget(dragLocation) {
-    const parentMode = this.inputModeContext.parentInputMode
-    if (parentMode instanceof GraphEditorInputMode) {
+    if (
+      this.inputModeContext &&
+      this.inputModeContext.parentInputMode instanceof GraphEditorInputMode
+    ) {
+      const parentMode = this.inputModeContext.parentInputMode
       const hitItems = parentMode.findItems(dragLocation, [
         GraphItemTypes.NODE,
         GraphItemTypes.EDGE
@@ -82,7 +86,7 @@ export default class EdgeDropInputMode extends ItemDropInputMode {
   }
 
   /**
-   * @param {IGraph} previewGraph - The preview graph to fill.
+   * @param {!IGraph} previewGraph - The preview graph to fill.
    */
   populatePreviewGraph(previewGraph) {
     const graph = previewGraph
@@ -97,23 +101,26 @@ export default class EdgeDropInputMode extends ItemDropInputMode {
   }
 
   /**
-   * @param {IGraph} previewGraph - The preview graph to update.
-   * @param {Point} dragLocation - The current drag location.
+   * @param {!IGraph} previewGraph - The preview graph to update.
+   * @param {!Point} dragLocation - The current drag location.
    */
   updatePreview(previewGraph, dragLocation) {
     previewGraph.setNodeCenter(
       previewGraph.nodes.elementAt(0),
       dragLocation.subtract(this.previewNodeOffset)
     )
+
     previewGraph.setNodeCenter(
       previewGraph.nodes.elementAt(1),
       dragLocation.add(this.previewNodeOffset)
     )
+
     const edge = previewGraph.edges.first()
     previewGraph.clearBends(edge)
     previewGraph.addBend(edge, dragLocation.subtract(this.previewBendOffset))
     previewGraph.addBend(edge, dragLocation.add(this.previewBendOffset))
-    if (this.inputModeContext.canvasComponent !== null) {
+
+    if (this.inputModeContext && this.inputModeContext.canvasComponent) {
       this.inputModeContext.canvasComponent.invalidate()
     }
   }

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -7,7 +7,7 @@
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.3.
+     // This demo file is part of yFiles for HTML 2.4.
      // Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
@@ -36,91 +36,15 @@
 
   <title>Layout Styles Demo [yFiles for HTML]</title>
 
-  <link rel="stylesheet" href="../../node_modules/yfiles/yfiles.css">
   <link rel="stylesheet" href="../../resources/style/demo.css">
   <link rel="stylesheet" href="../../resources/style/demo-option-editor.css">
+  <link rel="stylesheet" href="./resources/styles.css">
 
   <script src="../../resources/filesystem-warning.js"></script>
 
+  <!-- load Angular for the settings panel of the layouts -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.7.9/angular.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-sanitize/1.7.9/angular-sanitize.min.js"></script>
-
-  <style type="text/css">
-
-    #data-editor-header select:not(.demo-disabled),
-    #data-editor-header select:not(.demo-disabled):hover{
-      border-color: #888;
-      border-width: 1px;
-      padding-left: 1px;
-    }
-
-    .option-ui-content-container {
-      overflow-y:visible;
-    }
-
-    #data-editor-header {
-      font-size:120%;
-      padding:8px 8px 0px;
-      min-height:26px;
-      background-color:#A0A0A0;
-      color:#f7f7f7;
-      height:66px;
-    }
-
-    #data-editor {
-      position: absolute;
-      right: 25px;
-      left: 25px;
-      bottom: 45px;
-      top: 150px;
-      overflow: auto;
-      -webkit-overflow-scrolling:touch;
-    }
-
-    #data-editor-button-container {
-      position:absolute;
-      bottom:0;
-      width:100%;
-      background-color:#f7f7f7;
-      min-width: 235px;
-    }
-
-    .flat-button {
-      width: 7.5em;
-      height: inherit;
-      margin:11px 0 11px 11px;
-      padding: 14px 9px 14px 9px;
-      background-color: #A0A0A0;
-      color:#f7f7f7;
-      border:none;
-    }
-
-    #apply-layout-button {
-      background-color: #1871BD;
-      color:#f7f7f7;
-    }
-
-    #apply-layout-button:hover:not(.demo-disabled) {
-      background-color: #328AD5;
-    }
-
-    #layout-select-box {
-      font-size:14.4px;
-      margin-top:10px;
-    }
-
-    #reset-layout-button:hover {
-      background-color: #B0B0B0;
-    }
-
-    @media screen and (max-width:1024px) {
-      .demo-splitter {
-        width:10px;
-        -webkit-user-select: none;
-      }
-    }
-
-  </style>
 </head>
 <body class="demo-has-left demo-has-right">
   <!--
@@ -134,7 +58,7 @@
       tree, circular, balloon, and several edge routing styles. </p>
 
     <p>
-      The configuration panel provides access to the most important settings of each algorithm.
+      The configuration panel provides access to the settings of each algorithm.
       Typically, an algorithm allows even more options in code.</p>
 
     <p>
@@ -149,18 +73,21 @@
 
     <ul>
       <li>
-        Browse the <em>Sample Graphs</em> and <em>Layout Styles</em>.
+        Browse the <em>Layout Algorithms</em> and <em>Sample Graphs</em>.
       </li>
       <li>
-        Explore the various <em>configuration options</em> of the layout algorithms.
+        Explore and apply the settings of the layout algorithms.
       </li>
       <li>
-        Run a layout algorithm with the selected settings by pressing the <em>Apply</em> button.
-      </li>
-      <li>
-        Restore the default settings of an algorithm with the <em>Reset</em> button.
+        Try a preset configuration to explore different aspects of the layout algorithms.
       </li>
     </ul>
+
+    <div id="layout-description-container">
+      <h2 id="layout-title">Layout Description</h2>
+      <div id="layout-description"></div>
+    </div>
+
   </div>
 </aside>
 
@@ -175,13 +102,6 @@
     <button data-command="New" title="New" class="demo-icon-yIconNew"></button>
     <button data-command="Open" title="Open a GraphML file" class="demo-icon-yIconOpen"></button>
     <button data-command="Save" title="Save a GraphML file" class="demo-icon-yIconSave"></button>
-
-    <span class="demo-separator"></span>
-
-    <span>Sample</span>
-    <button data-command="PreviousFile" title="Open previous graph" class="demo-icon-yIconPrevious" id="previous-sample-button"></button>
-    <select data-command="SampleSelectionChanged" title="Select a sample graph" id="sample-combo-box"></select>
-    <button data-command="NextFile" title="Open next graph" class="demo-icon-yIconNext" id="next-sample-button"></button>
 
     <span class="demo-separator"></span>
 
@@ -233,21 +153,44 @@
 The sidebar for the properties and settings
 -->
 <aside class="demo-sidebar demo-right">
-  <h1 class="demo-sidebar-header">Layout Style</h1>
+  <h1 class="demo-sidebar-header">Configuration</h1>
   <div class="demo-sidebar-content">
-    <form id="data-editor-header">
-      <label>Layout Style<br/>
-        <select id="layout-select-box" data-command="LayoutSelectionChanged" title="Select a layout algorithm"></select>
-      </label>
-    </form>
+    <div class="data-editor-header" style="padding-bottom: 0;">
+      <h2 style="margin-top: 0;">Layout Algorithm</h2>
+      <div class="content">
+          <button data-command="PreviousStyle" title="Previous Layout Style" class="sidebar-button demo-icon-yIconPrevious" id="previous-sample-button"></button>
+          <select id="layout-select-box" data-command="LayoutSelectionChanged" title="Select a layout algorithm"></select>
+          <button data-command="NextStyle" title="Next Layout Style" class="sidebar-button demo-icon-yIconNext" id="next-sample-button"></button>
+      </div>
+    </div>
+
+    <div class="data-editor-header">
+      <h2>Sample Graph</h2>
+      <div class="content">
+        <select id="sample-select-box" data-command="SampleSelectionChanged" title="Select a sample for the layout algorithm"></select>
+        <button data-command="OpenInSidebar" title="Open a GraphML file" class="sidebar-button open-button demo-icon-yIconOpen"></button>
+      </div>
+    </div>
+
+
+    <div class="data-editor-header" style="padding: 0 8px;">
+      <h2>Settings</h2>
+    </div>
+
+    <div class="data-editor-tab">
+      <div class="data-editor-tab-title">
+        <span class="presets-icon"></span>
+        <span>Presets</span>
+      </div>
+      <div id="data-presets"></div>
+    </div>
 
     <div id="data-editor">
-
       <!-- Begin Templates -->
       <script type="text/ng-template" id="./templates/option-ui.html">
         <div class="option-ui-content-container">
           <div class="option-ui-content">
-            <div data-option-ui-form data-accordeon data-members="config.membersArray"></div>
+            <div data-option-ui-form data-accordeon data-members="config.membersArray" data-preset-name="config._preset"></div>
           </div>
         </div>
 
@@ -259,12 +202,17 @@ The sidebar for the properties and settings
             <div class="option-ui-form-group" data-ng-class="{hidden: member._member._isHidden, 'aria-disabled': member._recIsDisabled, collapsed: member._isCollapsed}">
               <div data-option-ui-button data-click-callback="toggleCollapsed(member, members)" data-label="::member._member.label" data-icon="member._isCollapsed ? 'chevronDown' : 'chevronRight'"></div><br>
               <div option-ui-collapse class="option-ui-form-section" data-collapsed="member._isCollapsed">
-                <div data-option-ui-form data-members="member.members"></div>
+                <div data-option-ui-form data-members="member.members" data-preset-name="presetName"></div>
               </div>
             </div>
           </div>
-          <div data-ng-repeat-end data-ng-if="member.type==='option'">
-            <div data-option-ui-item data-option="member._member" data-disabled="member._recIsDisabled" data-ng-class="{disabled: member._recIsDisabled}"></div>
+          <div data-ng-repeat-end data-ng-if="member.type==='option'" style="position: relative">
+            <div
+             data-option-ui-item data-option="member._member"
+             data-disabled="member._recIsDisabled"
+             data-ng-class="{disabled: member._recIsDisabled, 'value-changed': member._isChanged, hidden: member._isHidden}"></div>
+            <span data-ng-if="!member._isHidden && member._isChanged && $parent.presetName !== null" class="value-changed-icon" title="Applied by {{$parent.presetName}} preset"></span>
+            <span data-ng-if="!member._isHidden && member._isChanged && $parent.presetName === null" class="value-changed-icon" title="Setting differs from the default configuration"></span>
           </div>
         </form>
       </script>
@@ -419,12 +367,14 @@ The sidebar for the properties and settings
       <!-- End Templates -->
     </div>
     <div id="data-editor-button-container" class="demo-form-block">
-      <button id="apply-layout-button" class="flat-button" data-command="LayoutCommand" title="Apply the Layout">
-        <span>Apply</span>
+      <button id="apply-layout-button" class="flat-button primary" data-command="LayoutCommand" title="Apply the Layout&#013;(CTRL + Enter)">
+        <span>Apply Layout</span>
       </button>
-      <button id="reset-layout-button" class="flat-button" data-command="ResetConfigCommand" title="Reset Configuration">
-        <span>Reset</span>
-      </button>
+    </div>
+
+    <div id="preset-tooltip">
+      <span class="triangle"></span>
+      <div class="content"></div>
     </div>
   </div>
 </aside>

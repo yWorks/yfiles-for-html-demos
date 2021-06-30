@@ -20,7 +20,3 @@ The bound values can be manipulated and processed using converters. This makes i
 
 The binding context gives you information about the current state, e.g. the zoom level, the item size, the item's selection state, etc. Template bindings are written like this:  
 `width="{TemplateBinding width}"`
-
-### Automatic Property Changes
-
-The interface `IPropertyObservable` gives you the ability to update bindings automatically when the item's business data changes. For this reason, the business data in this demo is wrapped by class `Employee`.

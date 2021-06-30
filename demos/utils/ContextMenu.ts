@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -50,6 +50,7 @@ export default class ContextMenu {
   closeOnEscListener: (e: KeyboardEvent) => void
   blurredTimeout: number | null
   isOpen: boolean
+  private onClosedCallbackField: () => void
 
   /**
    * Creates a new empty menu.
@@ -62,6 +63,7 @@ export default class ContextMenu {
     this.element = contextMenu
     this.blurredTimeout = null
     this.isOpen = false
+    this.onClosedCallbackField = null!
 
     // Listeners for focus events since this menu closes itself if it loses the focus.
     this.focusOutListener = (evt: FocusEvent): void => {
@@ -82,7 +84,7 @@ export default class ContextMenu {
       this.close()
       // Set the focus to the graph component
       graphComponent.focus()
-      this.onClosedCallback!()
+      this.onClosedCallback()
     }
 
     // A ESC key press listener that closes the menu and calls the callback.
@@ -109,7 +111,7 @@ export default class ContextMenu {
   /**
    * Adds a new menu entry with the given text and click-listener to this menu.
    */
-  addMenuItem(label: string, clickListener: (e: MouseEvent) => void): HTMLElement {
+  addMenuItem(label: string, clickListener: ((e: MouseEvent) => void) | null): HTMLElement {
     const menuItem = document.createElement('button')
     menuItem.setAttribute('class', 'demo-menu-item')
     menuItem.innerHTML = label
@@ -152,7 +154,11 @@ export default class ContextMenu {
     style.setProperty('position', 'absolute', '')
     style.setProperty('left', `${location.x}px`, '')
     style.setProperty('top', `${location.y}px`, '')
-    document.body.appendChild(this.element)
+    if (document.fullscreenElement && !document.fullscreenElement.contains(document.body)) {
+      document.fullscreenElement.appendChild(this.element)
+    } else {
+      document.body.appendChild(this.element)
+    }
 
     // trigger enter animation
     setTimeout(() => {
@@ -202,24 +208,21 @@ export default class ContextMenu {
     this.isOpen = false
   }
 
-  onClosedCallbackField?: () => void
   /**
    * Sets a callback function that is invoked if the context menu closed itself, for example because a
    * menu item was clicked.
    *
    * Typically, the provided callback informs the <code>ContextMenuInputMode</code> that this menu is
    * closed.
-   *
-   * @type {function}
    */
   get onClosedCallback() {
-    if (!this.onClosedCallbackField) {
+    if (this.onClosedCallbackField == null) {
       alert('For this context menu, the onClosedCallback property must be set.')
     }
     return this.onClosedCallbackField
   }
 
-  set onClosedCallback(callback) {
+  set onClosedCallback(callback: () => void) {
     this.onClosedCallbackField = callback
   }
 
@@ -276,11 +279,11 @@ export default class ContextMenu {
       // Additionally add a long press listener especially for iOS, since it does not fire the contextmenu event.
       let contextMenuTimer: number | undefined
       graphComponent.addTouchDownListener((sender, args) => {
-        contextMenuTimer = (setTimeout(() => {
+        contextMenuTimer = setTimeout(() => {
           openingCallback(
             graphComponent.toPageFromView(graphComponent.toViewCoordinates(args.location))
           )
-        }, 500) as any) as number
+        }, 500) as any as number
       })
       graphComponent.addTouchUpListener(() => {
         clearTimeout(contextMenuTimer)
@@ -314,9 +317,9 @@ export default class ContextMenu {
       // If the browser doesn't provide a related target, we wait a little bit to see whether the focus is given to
       // another button in this context menu
       this.element.addEventListener('focusin', this.focusInListener)
-      this.blurredTimeout = (setTimeout(() => {
+      this.blurredTimeout = setTimeout(() => {
         this.close()
-      }, 350) as any) as number
+      }, 350) as any as number
     }
   }
 

@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -44,10 +44,10 @@ import {
 /**
  * Creates the visualization for the limiting rectangle.
  */
-export default class LimitingRectangleDescriptor extends BaseClass<
+export default class LimitingRectangleDescriptor extends BaseClass(
   ICanvasObjectDescriptor,
   IVisualCreator
->(ICanvasObjectDescriptor, IVisualCreator) {
+) {
   rectangle: MutableRectangle | null = null
 
   /**

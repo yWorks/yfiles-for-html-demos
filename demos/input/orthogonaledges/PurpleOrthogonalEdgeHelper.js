@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -26,7 +26,14 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { IEdge, IGraph, IInputModeContext, IShapeGeometry, OrthogonalEdgeHelper } from 'yfiles'
+import {
+  IEdge,
+  IGraph,
+  IInputModeContext,
+  IOrthogonalEdgeHelper,
+  IShapeGeometry,
+  OrthogonalEdgeHelper
+} from 'yfiles'
 
 /**
  * An {@link OrthogonalEdgeHelper} that enables moving the
@@ -36,13 +43,13 @@ import { IEdge, IGraph, IInputModeContext, IShapeGeometry, OrthogonalEdgeHelper 
 export default class PurpleOrthogonalEdgeHelper extends OrthogonalEdgeHelper {
   /**
    * Enables moving the source and target of the edge to other ports.
-   * @param {IInputModeContext} inputModeContext The input mode context in which the segment is edited
-   * @param {IEdge} edge The edge to inspect
+   * @param {!IInputModeContext} inputModeContext The input mode context in which the segment is edited
+   * @param {!IEdge} edge The edge to inspect
    * @param {boolean} sourceEnd <code>True</code> if the source end of the edge is queried, <code>false</code> for
    * the target end
    * @see Overrides {@link OrthogonalEdgeHelper#shouldMoveEndImplicitly}
    * @see Specified by {@link IOrthogonalEdgeHelper#shouldMoveEndImplicitly}.
-   * @return {boolean}
+   * @returns {boolean}
    */
   shouldMoveEndImplicitly(inputModeContext, edge, sourceEnd) {
     return true
@@ -51,17 +58,18 @@ export default class PurpleOrthogonalEdgeHelper extends OrthogonalEdgeHelper {
   /**
    * Removes bends inside of nodes, in addition to the clean-ups provided by
    * the base implementation.
-   * @param {IInputModeContext} inputModeContext  The input mode context which edited the edge
-   * @param {IGraph} graph The graph to use for modifying the edge instance
-   * @param {IEdge} edge  The edge to clean up the path
+   * @param {!IInputModeContext} inputModeContext The input mode context which edited the edge
+   * @param {!IGraph} graph The graph to use for modifying the edge instance
+   * @param {!IEdge} edge The edge to clean up the path
    * @see Overrides {@link OrthogonalEdgeHelper#cleanUpEdge}
    * @see Specified by {@link IOrthogonalEdgeHelper#cleanUpEdge}.
    */
   cleanUpEdge(inputModeContext, graph, edge) {
     super.cleanUpEdge(inputModeContext, graph, edge)
+
     // now check bends which lie inside the node bounds and remove them...
     const sourceNode = edge.sourceNode
-    if (sourceNode !== null) {
+    if (sourceNode) {
       const sourceContainsTest = sourceNode.lookup(IShapeGeometry.$class)
       while (
         edge.bends.size > 0 &&
@@ -76,8 +84,9 @@ export default class PurpleOrthogonalEdgeHelper extends OrthogonalEdgeHelper {
         graph.remove(edge.bends.first())
       }
     }
+
     const targetNode = edge.targetNode
-    if (targetNode !== null) {
+    if (targetNode) {
       const targetContainsTest = targetNode.lookup(IShapeGeometry.$class)
       while (
         edge.bends.size > 0 &&

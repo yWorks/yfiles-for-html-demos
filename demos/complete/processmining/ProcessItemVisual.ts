@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -106,9 +106,9 @@ class ProcessItemProgramInfo extends WebGLProgramInfo {
     this.timeUniformLocation = gl.getUniformLocation(program, 'time')
   }
 
-  private initRainbowTexture(gl: WebGLRenderingContext): WebGLTexture {
+  private initRainbowTexture(gl: WebGLRenderingContext): WebGLTexture | null {
     // noinspection AssignmentResultUsedJS
-    const texture = (this.texture = gl.createTexture()!)
+    const texture = (this.texture = gl.createTexture())
     gl.bindTexture(gl.TEXTURE_2D, texture)
     const width = 256
     const height = 1
@@ -232,7 +232,7 @@ void main() {
       pos.y += h;
       v_coord.y = 1.;
     }
-    gl_Position = vec4((viewTransform * vec3(pos, 1)).xy, 0., 1.);
+    gl_Position = vec4((u_yf_worldToWebGL * vec3(pos, 1)).xy, 0., 1.);
   } else {
     gl_Position = vec4(-10.,-10.,-10.,1);
   }
@@ -393,7 +393,7 @@ export class ProcessItemVisual extends WebGLVisual {
 
       program.info = new ProcessItemProgramInfo(vertexCount)
       program.info.init(gl, program)
-      this.updateData(program.info!)
+      this.updateData(program.info)
     }
 
     program.info.render(renderContext, gl, this.time)
@@ -435,10 +435,7 @@ export class ProcessItemVisual extends WebGLVisual {
   }
 }
 
-class ProcessItemCanvasObjectDescriptor extends BaseClass<ICanvasObjectDescriptor, IVisualCreator>(
-  ICanvasObjectDescriptor,
-  IVisualCreator
-) {
+class ProcessItemCanvasObjectDescriptor extends BaseClass(ICanvasObjectDescriptor, IVisualCreator) {
   private processItemVisual: ProcessItemVisual | null = null
   getBoundsProvider(forUserObject: unknown): IBoundsProvider {
     return IBoundsProvider.UNBOUNDED

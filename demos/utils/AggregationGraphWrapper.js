@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -445,7 +445,7 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
    */
   aggregate(nodes, layout, style, tag) {
     const badNode = nodes.firstOrDefault(node => !this.contains(node))
-    if (badNode) {
+    if (badNode != null) {
       throw new Error(
         `ArgumentError: Affected parameter nodes: Cannot aggregate node ${badNode} that is not in this graph.`
       )
@@ -709,7 +709,7 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
 
   /**
    * @param {!INode} node
-   * @returns {!AggregationNode}
+   * @returns {?AggregationNode}
    */
   $findAggregationNode(node) {
     return this.aggregationNodes.firstOrDefault(n => n.aggregatedNodes.includes(node))
@@ -759,6 +759,7 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
    * @returns {!IListEnumerable.<T>} The items that are aggregated by the <code>item</code>. If an aggregation node is passed, this will return
    * the aggregated nodes. If an aggregation edge is passed, this will return the edges it replaces. Otherwise an empty
    * enumerable will be returned. The enumerable may contain both aggregation items as well as original items.
+   * @template {IModelItem} T
    */
   getAggregatedItems(item) {
     if (item instanceof AggregationNode) {
@@ -857,11 +858,12 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
     const isAggregationItem = this.isAggregationItem(port)
     let tmp
     // check the auto-cleanup policy to apply
-    const autoCleanUp = (isAggregationItem
-      ? this.aggregationNodeDefaults
-      : this.isGroupNode((tmp = port.owner) instanceof INode ? tmp : null)
-      ? this.wrappedGraph.groupNodeDefaults
-      : this.wrappedGraph.nodeDefaults
+    const autoCleanUp = (
+      isAggregationItem
+        ? this.aggregationNodeDefaults
+        : this.isGroupNode((tmp = port.owner) instanceof INode ? tmp : null)
+        ? this.wrappedGraph.groupNodeDefaults
+        : this.wrappedGraph.nodeDefaults
     ).ports.autoCleanUp
     if (!autoCleanUp) {
       return
@@ -949,6 +951,7 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
   }
 
   /**
+   * @template {(IPortOwner|IPort)} T
    * @param {!T} owner
    * @param {!AdjacencyTypes} type
    * @returns {!IListEnumerable.<IEdge>}
@@ -1604,6 +1607,7 @@ export class AggregationGraphWrapper extends GraphWrapperBase {
   }
 
   /**
+   * @template {(INode|IPort)} T
    * @param {!(T|object)} source
    * @param {!T} [target]
    * @param {?IEdgeStyle} [style]
@@ -2302,6 +2306,7 @@ class AggregationEdge extends BaseClass(IEdge) {
   }
 
   /**
+   * @template {(IPort|IPortOwner)} T
    * @param {!T} port
    * @returns {!T}
    */

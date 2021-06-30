@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -31,7 +31,7 @@ import { BaseClass, Cursor, HandleTypes, IHandle, IInputModeContext, INode, Poin
 /**
  * An {@link IHandle} implementation that changes the height in a node's tag.
  */
-export default class HeightHandle extends BaseClass<IHandle>(IHandle) {
+export default class HeightHandle extends BaseClass(IHandle) {
   private dragging: boolean
   private originalHeight = 0
   private node: INode

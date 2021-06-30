@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -35,8 +35,8 @@ import { ILayoutAlgorithm, LayoutGraph, LayoutGraphUtilities, LayoutStageBase, P
 export default class CenterGraphStage extends LayoutStageBase {
   /**
    * Creates a new instance with a center point.
-   * @param {ILayoutAlgorithm} coreLayout
-   * @param {Point} centerPoint
+   * @param {!ILayoutAlgorithm} coreLayout
+   * @param {!Point} centerPoint
    */
   constructor(coreLayout, centerPoint) {
     super(coreLayout)
@@ -45,7 +45,7 @@ export default class CenterGraphStage extends LayoutStageBase {
 
   /**
    * Centers the graph after calculating the core layout.
-   * @param {LayoutGraph} graph
+   * @param {!LayoutGraph} graph
    */
   applyLayout(graph) {
     this.applyLayoutCore(graph)

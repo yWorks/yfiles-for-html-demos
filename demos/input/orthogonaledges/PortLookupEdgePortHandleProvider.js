@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -44,17 +44,16 @@ export default class PortLookupEdgePortHandleProvider extends BaseClass(IEdgePor
   /**
    * Returns a handle that is constrained to the layout rectangle of the
    * port's owner node.
-   * @param {IInputModeContext} context The context in which the handle will be used
-   * @param {IEdge} edge The edge for which an handle is needed
-   * @param {boolean} sourceHandle  <code>True</code> if the handle for the source side/port should be returned,
+   * @param {!IInputModeContext} context The context in which the handle will be used
+   * @param {!IEdge} edge The edge for which an handle is needed
+   * @param {boolean} sourceHandle <code>True</code> if the handle for the source side/port should be returned,
    * <code>false</code> for the target side/port
-   * @returns {IHandle}
    * @see Specified by {@link IEdgePortHandleProvider#getHandle}.
-   * @return {IHandle}
+   * @returns {!IHandle}
    */
   getHandle(context, edge, sourceHandle) {
     const port = sourceHandle ? edge.sourcePort : edge.targetPort
-    return INode.isInstance(port.owner)
+    return port.owner instanceof INode
       ? new NodeLayoutPortLocationHandle(port.owner, port.lookup(IHandle.$class))
       : port.lookup(IHandle.$class)
   }

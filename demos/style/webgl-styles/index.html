@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+
+<!-- ////////////////////////////////////////////////////////////////////////
+     // @license
+     // This demo file is part of yFiles for HTML 2.4.
+     // Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
+     // 72070 Tuebingen, Germany. All rights reserved.
+     //
+     // yFiles demo files exhibit yFiles for HTML functionalities. Any redistribution
+     // of demo files in source code or binary form, with or without
+     // modification, is not permitted.
+     //
+     // Owners of a valid software license for a yFiles for HTML version that this
+     // demo is shipped with are allowed to use the demo source code as basis
+     // for their own yFiles for HTML powered applications. Use of such programs is
+     // governed by the rights and conditions as set out in the yFiles for HTML
+     // license agreement.
+     //
+     // THIS SOFTWARE IS PROVIDED ''AS IS'' AND ANY EXPRESS OR IMPLIED
+     // WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+     // MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+     // NO EVENT SHALL yWorks BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+     // SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+     // TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+     // PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+     // LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+     // NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+     // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+     // 
+     ////////////////////////////////////////////////////////////////////////-->
+
+  <title>WebGL2 Styles [yFiles for HTML]</title>
+
+  <link rel="stylesheet" href="../../resources/style/demo.css">
+
+  <script src="../../resources/filesystem-warning.js"></script>
+
+  <style>
+    #no-webgl-support {
+      text-align: center;
+      font-size: 24px;
+      position: absolute;
+      top: 100px;
+      padding: 2em;
+      left: 0;
+      right: 0;
+      line-height: 2;
+    }
+
+    .twoColumn {
+      display: grid;
+      grid-template-columns: 3fr 6fr;
+      align-items: center;
+      column-gap: 2px;
+      row-gap: 2px;
+      margin-bottom: 10px;
+    }
+
+    input[type=range] {
+      -webkit-appearance: none;
+      width: 200px;
+      height: 6px;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      background-color: #666;
+      opacity: 0.8;
+      width: 6px;
+      height: 16px;
+    }
+
+    select {
+      font-size: 12px;
+    }
+
+  </style>
+
+  <!-- Load the FontAwesome resources  -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+    integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w=="
+    crossorigin="anonymous" />
+  <!-- The required fonts have to be loaded manually to ensure they are immediately available for rendering -->
+  <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/webfonts/fa-solid-900.woff2"
+    as="font" type="font/woff2"
+    crossorigin="anonymous">
+  <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/webfonts/fa-brands-400.woff2"
+    as="font" type="font/woff2"
+    crossorigin="anonymous">
+</head>
+<body class="demo-has-left demo-has-right">
+
+<aside class="demo-sidebar demo-left">
+  <h1 class="demo-sidebar-header">Description</h1>
+  <div class="demo-sidebar-content">
+    <p>
+      This demo shows the available styles for nodes, edges and labels in WebGL2
+      rendering.
+    </p>
+    <p>
+      For nodes there are seven shapes with three node effects available, edges
+      can have three edge styles with four arrow types, and finally labels
+      can have any of three label styles.
+    </p>
+    <p>
+      The initial graph displays the various node shapes in the columns and the
+      node effects in the rows.
+    </p>
+    <p>
+      Rows are grouped together in a group node which can be collapsed and expanded.
+      When expanding a group node, the previously set style is re-applied to the children. For the sake of brevity
+      saving and restoring styles has been omitted for labels and edges and the group node itself.
+    </p>
+    <p>
+      Every node has two labels, one using the <a href="https://docs.yworks.com/yfileshtml/#/api/WebGL2DefaultLabelStyle" target="_blank">WebGL2DefaultLabelStyle</a> and
+      one using the <a href="https://docs.yworks.com/yfileshtml/#/api/WebGL2IconLabelStyle" target="_blank">WebGL2IconLabelStyle</a>.
+    </p>
+    <p>
+      Every row also has a an edge style with a distinct  arrow type for the
+      source and target arrows.
+    </p>
+
+    <h2>Things to try</h2>
+    <p>
+      You can configure the styles for newly created nodes, edges and labels.
+      Note that labels are automatically added to new nodes according to the
+      current label style configuration.
+    </p>
+    <p>
+      You can also apply the configured styles to all or the selected graph
+      elements by clicking the "Apply Styles" button.
+    </p>
+    <p>
+      Group nodes can be collapsed and expanded by clicking on it's IconLabel.
+    </p>
+
+    <h3>Note on Firefox</h3>
+    <p>
+      Firefox currently has a problem generating images from the Font Awesome
+      glyphs used as image labels for the nodes. Please reload the demo to
+      properly show the image labels.
+    </p>
+  </div>
+</aside>
+
+<aside class="demo-sidebar demo-right">
+  <h1 class="demo-sidebar-header">Configuration</h1>
+  <div class="demo-sidebar-content">
+    <h2>Styles</h2>
+    <p>
+      Styles are applied automatically on node and edge creation.
+    </p>
+    <h3>Nodes</h3>
+    <div class="twoColumn">
+      <span>Shape</span>
+      <select title="NodeShape" id="nodeShape">
+        <option>ELLIPSE</option>
+        <option>RECTANGLE</option>
+        <option>ROUND_RECTANGLE</option>
+        <option>HEXAGON</option>
+        <option>HEXAGON2</option>
+        <option>TRIANGLE</option>
+        <option>OCTAGON</option>
+        <option>PILL</option>
+      </select>
+      <span>Effect</span>
+      <select title="NodeEffect" id="nodeEffect">
+        <option>NONE</option>
+        <option>SHADOW</option>
+        <option>AMBIENT_FILL_COLOR</option>
+        <option>AMBIENT_STROKE_COLOR</option>
+      </select>
+      <span>Fill</span>
+      <input type="range" id="nodeFill" min="0" max="180" style="width: 180px">
+      <span>Black Stroke</span>
+      <input type="checkbox" id="nodeStroke">
+
+    </div>
+
+    <h3>Edges</h3>
+    <div class="twoColumn">
+      <span>Style</span>
+      <select title="Style" id="edgeStyle">
+        <option>Default</option>
+        <option>Arc</option>
+        <option>Bridge</option>
+      </select>
+      <span>Source arrow</span>
+      <select title="Source Arrow" id="sourceArrow">
+        <option>NONE</option>
+        <option>DEFAULT</option>
+        <option>DEFAULT_SMALL</option>
+        <option>DEFAULT_LARGE</option>
+        <option>POINTED</option>
+        <option>TRIANGLE</option>
+        <option>TRIANGLE_SMALL</option>
+        <option>TRIANGLE_LARGE</option>
+      </select>
+      <span>Target arrow</span>
+      <select title="Target Arrow" id="targetArrow">
+        <option>NONE</option>
+        <option>DEFAULT</option>
+        <option>DEFAULT_SMALL</option>
+        <option>DEFAULT_LARGE</option>
+        <option>POINTED</option>
+        <option>TRIANGLE</option>
+        <option>TRIANGLE_SMALL</option>
+        <option>TRIANGLE_LARGE</option>
+      </select>
+    </div>
+
+    <h3>Labels</h3>
+    <div class="twoColumn">
+      <span>Shape</span>
+      <select title="Shape" id="labelShape">
+        <option>RECTANGLE</option>
+        <option selected>ROUND_RECTANGLE</option>
+        <option>PILL</option>
+      </select>
+    </div>
+    <p style="margin-top: 20px">
+      Click "Apply Styles" to set the styles to all or the selected elements.
+    </p>
+    <p style="margin-top: 20px">
+      <button data-command="ApplyStyles" title="Apply styles" class="labeled">Apply Styles</button>
+      <input type="checkbox" id="stylesOnSelection" checked><label for="stylesOnSelection">to selection only</label>
+    </p>
+  </div>
+</aside>
+
+<div class="demo-content">
+  <div class="demo-toolbar">
+    <button data-command="ZoomOriginal" title="Zoom to original size"
+      class="demo-icon-yIconZoomOriginal"></button>
+    <button data-command="FitContent" title="Fit Content" class="demo-icon-yIconZoomFit"></button>
+    <span class="demo-separator"></span>
+    <button data-command="GroupSelection" title="Group selected element" class="demo-icon-yIconGroup"></button>
+    <button data-command="UngroupSelection" title="Ungroup selected element" class="demo-icon-yIconUngroup"></button>
+  </div>
+
+  <div id="graphComponent"></div>
+
+  <div id="no-webgl-support" style="display:none;">
+    Your browser or device does not support WebGL2.<br> This demo only works if WebGL2 is available.<br> Please use a
+    modern browser like Chrome, Edge, Firefox, or Opera.<br> In Safari, WebGL2 is an experimental feature that needs to
+    be activated explicitly.
+  </div>
+</div>
+
+
+<script type="module" crossorigin="anonymous" src="WebGLStylesDemo.js"></script>
+</body>
+</html>

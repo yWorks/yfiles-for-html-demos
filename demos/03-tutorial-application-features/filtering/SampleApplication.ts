@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -259,18 +259,16 @@ function registerCommands(): void {
     // filtering items
     filterItems()
     // enable the reset button
-    ;(document.querySelector(
-      "button[data-command='ResetFilter']"
-    ) as HTMLButtonElement)!.disabled = false
+    ;(document.querySelector("button[data-command='ResetFilter']") as HTMLButtonElement)!.disabled =
+      false
   })
 
   bindAction("button[data-command='ResetFilter']", () => {
     // restoring items
     restoreItems()
     // disable the reset button
-    ;(document.querySelector(
-      "button[data-command='ResetFilter']"
-    ) as HTMLButtonElement)!.disabled = true
+    ;(document.querySelector("button[data-command='ResetFilter']") as HTMLButtonElement)!.disabled =
+      true
   })
 
   // adds a listener for the current selection to enable/disable the filter button
@@ -289,9 +287,8 @@ function updateResetButtonState(): void {
     fullGraph.nodes.some(node => node.tag && node.tag.filtered) ||
     fullGraph.edges.some(edge => edge.tag && edge.tag.filtered)
   // set the reset button
-  ;(document.querySelector(
-    "button[data-command='ResetFilter']"
-  ) as HTMLButtonElement)!.disabled = !hasFilteredItems
+  ;(document.querySelector("button[data-command='ResetFilter']") as HTMLButtonElement)!.disabled =
+    !hasFilteredItems
 }
 
 /**

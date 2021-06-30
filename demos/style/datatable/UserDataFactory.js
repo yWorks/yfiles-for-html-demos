@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -28,7 +28,6 @@
  ***************************************************************************/
 // This file contains a generator for random user data objects for this demo.
 
-/** @type {string} */
 const FIRST_NAMES = [
   'Alexander',
   'Amy',
@@ -44,7 +43,6 @@ const FIRST_NAMES = [
   'Valerie'
 ]
 
-/** @type {string} */
 const FAMILY_NAMES = [
   'Burns',
   'Burnett',
@@ -57,29 +55,34 @@ const FAMILY_NAMES = [
   'Roberts'
 ]
 
-/** @type {string} */
 const UNITS = ['Development', 'Management', 'Marketing', 'R&D', 'Sales']
 
 /**
- * @return {Object}
+ * @typedef {Object} UserData
+ * @property {string} name
+ * @property {string} unit
+ * @property {string} email
+ * @property {string} phone
+ * @property {string} fax
  */
+
 export default function createNewRandomUserData() {
-  const userData = {}
   const firstName = FIRST_NAMES[getRandomInt(FIRST_NAMES.length)]
   const familyName = FAMILY_NAMES[getRandomInt(FAMILY_NAMES.length)]
-  userData.name = `${firstName} ${familyName}`
-  userData.unit = UNITS[getRandomInt(UNITS.length)]
-  userData.email = `${firstName.toLowerCase() + familyName.toLowerCase()}@yoyodyne.com`
   const phoneNumber = getRandomInt(90000) + 10000
-  userData.phone = `555-${phoneNumber}`
-  userData.fax = `555-${phoneNumber + 1}`
-  return userData
+  return {
+    name: `${firstName} ${familyName}`,
+    unit: UNITS[getRandomInt(UNITS.length)],
+    email: `${firstName.toLowerCase() + familyName.toLowerCase()}@yoyodyne.com`,
+    phone: `555-${phoneNumber}`,
+    fax: `555-${phoneNumber + 1}`
+  }
 }
 
 /**
  * Returns a random integer.
  * @param {number} upper
- * @return {number}
+ * @returns {number}
  */
 function getRandomInt(upper) {
   return Math.floor(Math.random() * upper)

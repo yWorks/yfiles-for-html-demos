@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -35,15 +35,15 @@ import {
 } from 'yfiles'
 
 /**
- * Customizes the grid snapping behavior by providing a SnapResult for the left side of the node.
+ * Customizes the grid snapping behavior by providing a snap result for the left side of a node.
  */
 export default class LeftNodeSnapResultProvider extends NodeSnapResultProvider {
   /**
-   * Collects snap results that snap the node to a grid and adds them to the argument.
-   * @param {GraphSnapContext} context The context in which the snapping is performed
-   * @param {CollectSnapResultsEventArgs} args The arguments to add the results to
-   * @param {Rect} suggestedLayout The layout of the node if it would move without snapping
-   * @param {INode} node The node that is currently being processed
+   * Collects snap results that snap the left side of a node to a grid.
+   * @param {!GraphSnapContext} context The context in which the snapping is performed
+   * @param {!CollectSnapResultsEventArgs} args The arguments to add the results to
+   * @param {!Rect} suggestedLayout The layout of the node if it would move without snapping
+   * @param {!INode} node The node that is currently being processed
    */
   collectGridSnapResults(context, args, suggestedLayout, node) {
     // snap to left side of node

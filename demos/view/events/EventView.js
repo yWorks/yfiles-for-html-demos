@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -27,34 +27,11 @@
  **
  ***************************************************************************/
 /**
- * @typedef {object} LogItem
- * @property {string} isGroup
- * @property {HTMLElement} element
- */
-
-/**
- * @typedef {LogItem} LogMessage
- * @property {string} message
- * @property {date} date
- * @property {string} eventType
- * @property {string} category
- */
-
-/**
- * @typedef {LogItem} LogGroup
- * @property {Array.<LogMessage>} repeatedMessages
- * @property {number} repeatCount
- */
-
-/**
  * This class creates an event log to display messages.
  */
 export default class EventView {
-  /**
-   * Creates a new instance of <code>EventView</code>.
-   */
   constructor() {
-    this.$logElement = null
+    this._logElement = null
     this.groupEvents = true
     this.messages = []
     this.startDate = new Date()
@@ -62,13 +39,13 @@ export default class EventView {
 
   /**
    * Returns the dom element that displays the log message.
-   * @returns {HTMLElement}
+   * @type {!HTMLElement}
    */
   get logElement() {
-    if (this.$logElement === null) {
-      this.$logElement = document.getElementById('log')
+    if (this._logElement === null) {
+      this._logElement = document.getElementById('log')
     }
-    return this.$logElement
+    return this._logElement
   }
 
   /**
@@ -82,21 +59,22 @@ export default class EventView {
 
   /**
    * Adds the given text to the log element.
-   * @param {string} text The text to be added
-   * @param {EventArgs} eventType The type of the event
-   * @param {string} category The category of the event
+   * @param {!string} text The text to be added
+   * @param {!string} eventType The type of the event
+   * @param {!string} category The category of the event
    */
   addMessage(text, eventType, category) {
-    if (typeof eventType === 'undefined') {
+    if (!eventType) {
       eventType = text
     }
-    const /** @type {LogMessage} */ message = {
-        isGroup: false,
-        message: text,
-        date: new Date(),
-        eventType,
-        category
-      }
+
+    const message = {
+      isGroup: false,
+      message: text,
+      date: new Date(),
+      eventType,
+      category
+    }
     this.messages.push(message)
     this.createElementForLogItem(message)
 
@@ -107,15 +85,14 @@ export default class EventView {
 
   /**
    * Creates a log element for the given message.
-   * @param {object} item The log message to create the element for
+   * @param {!(Message|MessageGroup)} item The log message to create the element for
    */
   createElementForLogItem(item) {
     if (item.isGroup) {
-      const /** @type {LogGroup} */ group = item
-      group.element = this.createGroupElement(group)
-      this.updateGroup(group)
+      item.element = this.createGroupElement()
+      this.updateGroup(item)
     } else {
-      const /** @type {LogMessage} */ message = item
+      const message = item
       message.element = this.createMessageElement(message)
     }
     this.appendElementToLog(item.element)
@@ -123,7 +100,7 @@ export default class EventView {
 
   /**
    * Appends the given element to the current log element.
-   * @param {HTMLElement} element The element to be added
+   * @param {!HTMLElement} element The element to be added
    */
   appendElementToLog(element) {
     const logElement = this.logElement
@@ -136,10 +113,9 @@ export default class EventView {
 
   /**
    * Creates an element group for the given group.
-   * @param {object} group
-   * @return {HTMLElement}
+   * @returns {!HTMLElement}
    */
-  createGroupElement(group) {
+  createGroupElement() {
     const element = document.createElement('div')
     element.setAttribute('class', 'logGroup')
     return element
@@ -147,8 +123,8 @@ export default class EventView {
 
   /**
    * Creates the log element for the given message.
-   * @param {object} message
-   * @return {HTMLElement}
+   * @param {!Message} message
+   * @returns {!HTMLElement}
    */
   createMessageElement(message) {
     const element = document.createElement('div')
@@ -159,7 +135,7 @@ export default class EventView {
 
   /**
    * Updates the given element group.
-   * @param {object} group
+   * @param {!MessageGroup} group
    */
   updateGroup(group) {
     const element = group.element
@@ -180,7 +156,7 @@ export default class EventView {
 
     const countDiv = document.createElement('div')
     countDiv.setAttribute('class', 'logGroup-count')
-    countDiv.textContent = group.repeatCount
+    countDiv.textContent = group.repeatCount.toString()
     containerDiv.appendChild(countDiv)
 
     element.appendChild(containerDiv)
@@ -188,11 +164,11 @@ export default class EventView {
 
   /**
    * Returns the text of the given message.
-   * @param {object} message
-   * @return {string}
+   * @param {!Message} message
+   * @returns {!string}
    */
   getLogText(message) {
-    const dateDiff = message.date - this.startDate
+    const dateDiff = message.date.getMilliseconds() - this.startDate.getMilliseconds()
     // remove hours
     let rest = dateDiff - ((dateDiff / 3600000) | 0) * 3600000
     // calculate minutes
@@ -219,7 +195,7 @@ export default class EventView {
 
   /**
    * Removes the given message.
-   * @param {object} removeThese
+   * @param {!Array.<Message>} removeThese
    */
   removeMessages(removeThese) {
     for (let i = 0; i < removeThese.length; i++) {
@@ -229,7 +205,7 @@ export default class EventView {
 
   /**
    * Removes the given log element from the dom.
-   * @param {object} item
+   * @param {!Message} item
    */
   removeLogItem(item) {
     const index = this.messages.indexOf(item)
@@ -252,10 +228,11 @@ export default class EventView {
    * Merges with the latest group log element.
    */
   mergeWithLatestGroup() {
-    const /** @type {LogGroup} */ latestGroup = this.getLatestGroup()
-    if (latestGroup == null) {
+    const latestGroup = this.getLatestGroup()
+    if (!latestGroup) {
       return
     }
+
     const ungroupedMessages = this.getLatestMessages()
     const groupCount = latestGroup.repeatedMessages.length
     if (ungroupedMessages.length < groupCount) {
@@ -281,11 +258,11 @@ export default class EventView {
         const startIndex2 = start - 2 * length + 1
         const ungroupedMessagesRange2 = ungroupedMessages.slice(startIndex2, startIndex2 + length)
         if (this.compareTypes(ungroupedMessagesRange1, ungroupedMessagesRange2)) {
-          const /** @type {LogGroup} */ group = {
-              isGroup: true,
-              repeatCount: 2,
-              repeatedMessages: ungroupedMessagesRange2
-            }
+          const group = {
+            isGroup: true,
+            repeatCount: 2,
+            repeatedMessages: ungroupedMessagesRange2
+          }
           this.messages.push(group)
           this.removeMessages(ungroupedMessagesRange1)
           this.removeMessages(ungroupedMessagesRange2)
@@ -297,7 +274,7 @@ export default class EventView {
 
   /**
    * Returns the latest messages.
-   * @returns {Array}
+   * @returns {!Array.<Message>}
    */
   getLatestMessages() {
     const r = []
@@ -313,11 +290,10 @@ export default class EventView {
 
   /**
    * Returns the latest group.
-   * @returns {object | null}
+   * @returns {?MessageGroup}
    */
   getLatestGroup() {
-    for (let i = this.messages.length - 1; i >= 0; i--) {
-      const message = this.messages[i]
+    for (const message of this.messages) {
       if (message.isGroup) {
         return message
       }
@@ -326,19 +302,37 @@ export default class EventView {
   }
 
   /**
-   * @param {Array} types1
-   * @param {Array} types2
+   * @param {!Array.<Message>} m1
+   * @param {!Array.<Message>} m2
    * @returns {boolean}
    */
-  compareTypes(types1, types2) {
-    if (types1.length !== types2.length) {
+  compareTypes(m1, m2) {
+    if (m1.length !== m2.length) {
       return false
     }
-    for (let i = 0; i < types1.length; i++) {
-      if (types1[i].eventType !== types2[i].eventType) {
+    for (let i = 0; i < m1.length; i++) {
+      if (m1[i].eventType !== m2[i].eventType) {
         return false
       }
     }
     return true
   }
 }
+
+/**
+ * @typedef {Object} Message
+ * @property {boolean} isGroup
+ * @property {string} message
+ * @property {Date} date
+ * @property {string} eventType
+ * @property {string} category
+ * @property {HTMLElement} [element]
+ */
+
+/**
+ * @typedef {Object} MessageGroup
+ * @property {boolean} isGroup
+ * @property {HTMLElement} [element]
+ * @property {Array.<Message>} repeatedMessages
+ * @property {number} repeatCount
+ */

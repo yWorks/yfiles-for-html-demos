@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -27,9 +27,18 @@
  **
  ***************************************************************************/
 const licenseData = require('../../../../lib/license')
-const jsonIO = require('./server-io')
 
-const { License, HierarchicLayout, MinimumNodeSizeStage, DefaultGraph } = require('yfiles-umd')
+const { LayoutExecutorAsyncWorker, License, HierarchicLayout, DefaultGraph } = require('yfiles-umd')
+
+function applyLayout(graph) {
+  // apply an HierarchicLayout on the input graph
+  const layout = new HierarchicLayout({
+    nodeToNodeDistance: 50,
+    considerNodeLabels: true,
+    integratedEdgeLabeling: true
+  })
+  return layout.applyLayout(graph)
+}
 
 // Create a minimal Express server
 const express = require('express')
@@ -47,7 +56,7 @@ const server = app.listen(3001, () => {
 })
 
 // Listen to /layout POST requests
-app.post('/layout', (req, res) => {
+app.post('/layout', async (req, res) => {
   // Allow cross-origin requests
   res.header('Access-Control-Allow-Origin', '*')
   res.header('Access-Control-Allow-Headers', 'X-Requested-With')
@@ -62,30 +71,18 @@ app.post('/layout', (req, res) => {
     return
   }
 
-  const inputGraph = JSON.parse(req.body)
+  const data = JSON.parse(req.body)
 
-  const resultGraph = runLayout(inputGraph)
+  // The LayoutExecutorAsyncWorker can be hooked up with messages from the LayoutExecutorAsync
+  const worker = new LayoutExecutorAsyncWorker(applyLayout)
 
-  res.write(JSON.stringify(resultGraph))
+  // run the LayoutExecutorAsyncWorker on the input data
+  const result = await worker.process(data)
+
+  // return the data of the layouted graph to the main thread
+  res.write(JSON.stringify(result))
   res.end()
 })
-
-/**
- * Calculate a layout for the provided JSON graph
- * @param {JSONGraph} inputGraph
- * @returns {JSONGraph}
- */
-function runLayout(inputGraph) {
-  const graph = jsonIO.read(inputGraph)
-
-  const layout = new HierarchicLayout()
-  layout.nodeToNodeDistance = 50
-  layout.considerNodeLabels = true
-  layout.integratedEdgeLabeling = true
-  graph.applyLayout(new MinimumNodeSizeStage(layout))
-
-  return jsonIO.write(graph)
-}
 
 function checkLicense() {
   const g = new DefaultGraph()

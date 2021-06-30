@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -29,13 +29,13 @@
 /**
  * Saves the given string to a file with either the File API and the download attribute or with
  * the Internet Explorer specific function msSaveOrOpenBlob.
- * See {@link SaveToFileOperation.fileConstructorIsAvailable()} and {@link SaveToFileOperation.msSaveIsAvailable()}
- * for details on browser compatibility.
+ * See {@link SaveToFileOperation.isFileConstructorAvailable()} and
+ * {@link SaveToFileOperation.isMsSaveAvailable()} for details on browser compatibility.
  */
 export default class SaveToFileOperation {
   /**
    * Checks if the operation can be executed.
-   * @return {boolean}
+   * @returns {boolean}
    */
   isAvailable() {
     return (
@@ -47,9 +47,9 @@ export default class SaveToFileOperation {
    * Saves the file to the file system using the HTML5 File download or
    * the proprietary msSaveOrOpenBlob function in Internet Explorer.
    *
-   * @param {string} fileContent The file contents to be saved.
-   * @param {string} fileName The default filename for the downloaded file.
-   * @return {Promise} A promise which resolves when the save operation is complete.
+   * @param {!string} fileContent The file contents to be saved.
+   * @param {!string} fileName The default filename for the downloaded file.
+   * @returns {!Promise.<string>} A promise which resolves when the save operation is complete.
    */
   save(fileContent, fileName) {
     return new Promise((resolve, reject) => {
@@ -96,7 +96,7 @@ export default class SaveToFileOperation {
           }
           // For the options, extract the mime type from the Data URL
           blob = new Blob([new Uint8Array(byteArray)], {
-            type: dataUrlParts[0].match(/:(.*?);/, '')[1]
+            type: new RegExp(/:(.*?);/).exec(dataUrlParts[0])[1]
           })
         } else {
           blob = new Blob([fileContent])
@@ -124,7 +124,7 @@ export default class SaveToFileOperation {
    * <li>FileSaver.js: https://github.com/eligrey/FileSaver.js </li>
    * <li>saveAs.js: https://gist.github.com/phanect/46b692241c6bbe456994 </li>
    * </ul>
-   * @return {boolean}
+   * @returns {boolean}
    */
   static isFileConstructorAvailable() {
     // Test whether required functions exist
@@ -154,7 +154,7 @@ export default class SaveToFileOperation {
    * This works in IE 10+.
    * See https://docs.microsoft.com/en-us/previous-versions/windows/internet-explorer/ie-developer/samples/hh779016(v=vs.85)
    * for more details.
-   * @return {boolean}
+   * @returns {boolean}
    */
   static isMsSaveAvailable() {
     return (

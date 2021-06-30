@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -29,7 +29,9 @@
 import {
   CanvasComponent,
   Color,
+  GraphComponent,
   HighlightIndicatorManager,
+  ICanvasObjectInstaller,
   INode,
   Insets,
   NodeStyleDecorationInstaller,
@@ -47,8 +49,8 @@ export default class GraphSearch {
    * The search result is updated on every key press and the 'ENTER' key zooms the viewport to the currently
    * matching nodes.
    *
-   * @param {HTMLElement} searchBox The search box element.
-   * @param {GraphSearch} graphSearch The GraphSearch instance.
+   * @param {!HTMLElement} searchBox The search box element.
+   * @param {!GraphSearch} graphSearch The GraphSearch instance.
    */
   static registerEventListener(searchBox, graphSearch) {
     searchBox.addEventListener('input', e => {
@@ -57,8 +59,7 @@ export default class GraphSearch {
 
     // adds the listener that will focus to the result of the search
     searchBox.addEventListener('keypress', e => {
-      const key = e.which || e.keyCode
-      if (key === 13) {
+      if (e.key === 'Enter') {
         graphSearch.zoomToSearchResult()
       }
     })
@@ -66,18 +67,20 @@ export default class GraphSearch {
 
   /**
    * Creates a new instance of this class with the default highlight style.
+   *
+   * @param {!GraphComponent} graphComponent The graphComponent on which the search will be applied
    */
   constructor(graphComponent) {
+    this.matchingNodes = []
     this.graphComponent = graphComponent
     this.searchHighlightIndicatorInstaller = new SearchHighlightIndicatorManager(
       this.graphComponent
     )
-    this.matchingNodes = []
   }
 
   /**
    * Gets the decoration installer used for highlighting the matching nodes.
-   * @returns {NodeStyleDecorationInstaller}
+   * @type {!NodeStyleDecorationInstaller}
    */
   get highlightDecoration() {
     return this.searchHighlightIndicatorInstaller.nodeHighlightDecoration
@@ -85,7 +88,8 @@ export default class GraphSearch {
 
   /**
    * Sets the decoration installer used for highlighting the matching nodes.
-   * @param {NodeStyleDecorationInstaller} highlightDecoration The given highlight style
+   * @param highlightDecoration The given highlight style
+   * @type {!NodeStyleDecorationInstaller}
    */
   set highlightDecoration(highlightDecoration) {
     this.searchHighlightIndicatorInstaller.nodeHighlightDecoration = highlightDecoration
@@ -93,7 +97,7 @@ export default class GraphSearch {
 
   /**
    * Updates the search results for the given search query.
-   * @param {string} searchText The text of the search query.
+   * @param {!string} searchText The text of the search query.
    */
   updateSearch(searchText) {
     // we use the search highlight manager to highlight matching items
@@ -153,9 +157,9 @@ export default class GraphSearch {
    * This implementation searches for the given string in the label text of the nodes.
    * Overwrite this method to implement custom matching rules.
    *
-   * @param {INode} node The node to be examined
-   * @param {string} text The text to be queried
-   * @return {boolean} True if the node matches the text, false otherwise
+   * @param {!INode} node The node to be examined
+   * @param {!string} text The text to be queried
+   * @returns {boolean} True if the node matches the text, false otherwise
    */
   matches(node, text) {
     return node.labels.some(label => label.text.toLowerCase().indexOf(text.toLowerCase()) !== -1)
@@ -169,7 +173,7 @@ export default class GraphSearch {
 class SearchHighlightIndicatorManager extends HighlightIndicatorManager {
   /**
    * Creates the SearchHighlightIndicatorManager.
-   * @param {CanvasComponent} canvasComponent The associated graphComponent
+   * @param {!CanvasComponent} canvasComponent The associated graphComponent
    * highlighting
    */
   constructor(canvasComponent) {
@@ -188,7 +192,7 @@ class SearchHighlightIndicatorManager extends HighlightIndicatorManager {
 
   /**
    * Gets the highlight decoration used for the nodes.
-   * @returns {NodeStyleDecorationInstaller}
+   * @type {!NodeStyleDecorationInstaller}
    */
   get nodeHighlightDecoration() {
     return this.$decorationInstaller
@@ -196,7 +200,8 @@ class SearchHighlightIndicatorManager extends HighlightIndicatorManager {
 
   /**
    * Sets the highlight decoration used for the nodes.
-   * @param {NodeStyleDecorationInstaller} highlightDecoration The given highlight style
+   * @param highlightDecoration The given highlight style
+   * @type {!NodeStyleDecorationInstaller}
    */
   set nodeHighlightDecoration(highlightDecoration) {
     this.$decorationInstaller = highlightDecoration
@@ -204,8 +209,8 @@ class SearchHighlightIndicatorManager extends HighlightIndicatorManager {
 
   /**
    * Callback used by install to retrieve the installer for a given item.
-   * @param item The item to find an installer for.
-   * @returns {ICanvasObjectInstaller}
+   * @param {!INode} item The item to find an installer for.
+   * @returns {!ICanvasObjectInstaller}
    */
   getInstaller(item) {
     return this.$decorationInstaller

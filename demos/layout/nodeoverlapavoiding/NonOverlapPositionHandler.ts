@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -44,7 +44,7 @@ import {
 } from 'yfiles'
 import { LayoutHelper } from './LayoutHelper'
 
-export class NonOverlapPositionHandler extends BaseClass<IPositionHandler>(IPositionHandler) {
+export class NonOverlapPositionHandler extends BaseClass(IPositionHandler) {
   /**
    * The node we are currently moving.
    */
@@ -84,7 +84,7 @@ export class NonOverlapPositionHandler extends BaseClass<IPositionHandler>(IPosi
   public initializeDrag(context: IInputModeContext): void {
     this.reparentHandler = context.lookup(IReparentNodeHandler.$class) as IReparentNodeHandler
     this.layoutHelper = new LayoutHelper(context.canvasComponent as GraphComponent, this.node!)
-    this.layoutHelper!.initializeLayout()
+    this.layoutHelper.initializeLayout()
     this.handler!.initializeDrag(context)
   }
 
@@ -97,7 +97,9 @@ export class NonOverlapPositionHandler extends BaseClass<IPositionHandler>(IPosi
     this.handler!.handleMove(context, originalLocation, newLocation)
 
     if (!this.reparentHandler || !this.reparentHandler.isReparentGesture(context, this.node!)) {
-      this.timeoutHandle = setTimeout(() => this.layoutHelper!.runLayout(), 50)
+      this.timeoutHandle = setTimeout(() => {
+        this.layoutHelper!.runLayout()
+      }, 50)
     }
   }
 

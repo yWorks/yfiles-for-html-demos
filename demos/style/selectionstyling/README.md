@@ -10,21 +10,21 @@ Customizing the painting of the focus indicator and the highlighting is possible
 
 ## Things to Try
 
-- Switch between the default visualization and the _Custom Styling_ of nodes, edges and labels with the toolbar buttons.
-- Test the different _Zoom Modes_ for the custom selection painting.
+- Switch between the default visualization and the _Custom Selection Decoration_ of nodes, edges and labels with the toolbar buttons.
+- Test the different _Zoom Modes_ for the custom selection rendering.
 
-## Zoom Mode Property
+## Zoom Mode
 
 Specifies how the zoom level affects the custom selecting painting.
 
-WorldCoordinates
+Zoom with graph
 
 The visual is rendered in the world coordinate space and scales with the zoom level like a regular graph item visualization, for example a node style.
 
-ViewCoordinates
+Always the same size
 
 The visual is rendered in the view coordinate space and doesn't scale with the zoom level, similar to the default node resize handles, for example.
 
 Mixed
 
-Uses WorldCoordinates rendering for zoom level ≥ 1 and ViewCoordinates rendering for zoom level < 1.
+Uses world coordinates for zoom level ≥ 1 and view coordinates for zoom level < 1.

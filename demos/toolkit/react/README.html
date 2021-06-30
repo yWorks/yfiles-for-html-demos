@@ -5,7 +5,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.3.
+     // This demo file is part of yFiles for HTML 2.4.
      // Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
@@ -33,93 +33,92 @@
      ////////////////////////////////////////////////////////////////////////-->
 
   <title>React Demo [yFiles for HTML]</title>
-  <link rel="stylesheet" type="text/css" href="../../../doc/documentation-style.css">
+  <link rel="stylesheet" type="text/css" href="../../../doc/readme-style.css">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 </head>
 <body>
-<header>
+<div id="header" class="simple-header">
+  React Demo
+</div>
+<main>
   <div class="content-centered">
-    <div class="logo"></div>
-    <div class="title">
-      <a href="../../README.html">yFiles for HTML</a> <span class="angle-right"></span> React Demo
-    </div>
-  </div>
-</header>
-<div class="content">
-  <div class="content-centered">
-    <h1>React Demo</h1>
+    <div class="content">
+      <div class="breadcrumbs">
+        <a href="../../README.html">yFiles for HTML</a> <span class="angle-right"></span> React Demo
+      </div>
 
-    <p>
-      The React demo shows how to integrate yFiles in a basic <a href="https://reactjs.org/" target="_blank">React</a>
-      application based on <a href="https://facebook.github.io/create-react-app/" target="_blank">Create React
-      App</a>.
-    </p>
+      <h1>React Demo</h1>
 
-    <p>
-      To start the demo
-    </p>
-    <ol>
-      <li>
-        Go to the demo's directory <code>demos-js/toolkit/react</code>.
-      </li>
-      <li>
-        Run <code>npm install</code>.
-      </li>
-      <li>
-        Run <code>npm run start</code>.
-      </li>
-    </ol>
-    <p>This will start the development server of the toolkit.</p>
+      <p>
+        The React demo shows how to integrate yFiles in a basic <a href="https://reactjs.org/" target="_blank">React</a>
+        application based on <a href="https://facebook.github.io/create-react-app/" target="_blank">Create React App</a>.
+      </p>
 
-    <p>The integrated development server of the project will automatically update the application upon code changes.</p>
+      <p>
+        To start the demo
+      </p>
+      <ol>
+        <li>
+          Go to the demo's directory <code>demos-js/toolkit/react</code>.
+        </li>
+        <li>
+          Run <code>npm install</code>.
+        </li>
+        <li>
+          Run <code>npm run start</code>.
+        </li>
+      </ol>
+      <p>This will start the development server of the toolkit.</p>
 
-    <div class="note">
-      Note: The <code>/.env/</code> file with <code>SKIP_PREFLIGHT_CHECK=true</code> is only necessary due to the
-      version mismatch of eslint for the react-scripts and the yFiles demo package. If you use the source code of this
-      application outside of the yFiles demo package tree, this file won't be necessary.
-    </div>
+      <p>The integrated development server of the project will automatically update the application upon code
+        changes.</p>
 
-    <h1>Deploying React with yFiles</h1>
+      <div class="info-box">
+        Note: The <code>/.env/</code> file with <code>SKIP_PREFLIGHT_CHECK=true</code> is only necessary due to the
+        version mismatch of eslint for the react-scripts and the yFiles demo package. If you use the source code of this
+        application outside of the yFiles demo package tree, this file won't be necessary.
+      </div>
 
-    <p>
-      There are no special caveats that you need to look out for when you load yFiles as NPM dependency as in this demo
-      application. However, we recommend to include the <a href="https://www.npmjs.com/package/@yworks/optimizer"
-      target="_blank">@yworks/optimizer</a> when you deploy your app for production.
-    </p>
-    <p>
-      The optimizer will obfuscate the public API of the yFiles module files, as well as yFiles API usages in
-      application sources.
-    </p>
-    <p>
-      We highly recommend obfuscating the yFiles for HTML library prior to deploying your application to a public web
-      server to reduce the download size of the library for the end user. Note that, at the time of writing, you are not
-      required to use obfuscation.
-    </p>
+      <h1>Deploying React with yFiles</h1>
 
-    <p>
-      Here is how you can include the <code>@yworks/optimizer</code> in this application that was built with the <a
-      href="https://facebook.github.io/create-react-app/" target="_blank">Create React App</a> toolkit.
-    </p>
+      <p>
+        There are no special caveats that you need to look out for when you load yFiles as NPM dependency as in this
+        demo application. However, we recommend to include the <a href="https://www.npmjs.com/package/@yworks/optimizer"
+        target="_blank">@yworks/optimizer</a> when you deploy your app for production.
+      </p>
+      <p>
+        The optimizer will obfuscate the public API of the yFiles module files, as well as yFiles API usages in
+        application sources.
+      </p>
+      <p>
+        We highly recommend obfuscating the yFiles for HTML library prior to deploying your application to a public web
+        server to reduce the download size of the library for the end user. Note that, at the time of writing, you are
+        not required to use obfuscation.
+      </p>
 
-    <ol>
-      <li>
-        Run <code>npm run eject</code> to gain the full control over the deployment of this application. See also <a
-        href="https://facebook.github.io/create-react-app/docs/available-scripts#npm-run-eject" target="_blank">npm run
-        eject</a>.
-      </li>
-      <li>
-        Then install the dependencies that are necessary to build JSX files, i.e.<br/>
-        <code>npm install --save @babel/plugin-transform-react-jsx @babel/plugin-transform-react-jsx-source</code><br/>
-        Now, the application can be started and built with either <code>npm run start</code> or <code>npm run build</code>.
-      </li>
-      <li>
-        Then we need the <code>@yworks/optimizer</code> dependency, which you can install with:<br/>
-        <code>npm install --save-dev @yworks/optimizer</code>
-      </li>
-      <li>
-        To include the <code>@yworks/optimizer</code> in the build process for production builds, prepend the following
-        plugin in <code>/config/webpack.config.js</code>:
-        <pre>
+      <p>
+        Here is how you can include the <code>@yworks/optimizer</code> in this application that was built with the <a
+        href="https://facebook.github.io/create-react-app/" target="_blank">Create React App</a> toolkit.
+      </p>
+
+      <ol>
+        <li>
+          Run <code>npm run eject</code> to gain the full control over the deployment of this application. See also <a
+          href="https://facebook.github.io/create-react-app/docs/available-scripts#npm-run-eject" target="_blank">npm
+          run eject</a>.
+        </li>
+        <li>
+          Then install the dependencies that are necessary to build JSX files, i.e.<br/> <code>npm install --save @babel/plugin-transform-react-jsx @babel/plugin-transform-react-jsx-source</code><br/>
+          Now, the application can be started and built with either <code>npm run start</code> or
+          <code>npm run build</code>.
+        </li>
+        <li>
+          Then we need the <code>@yworks/optimizer</code> dependency, which you can install with:<br/> <code>npm install --save-dev @yworks/optimizer</code>
+        </li>
+        <li>
+          To include the <code>@yworks/optimizer</code> in the build process for production builds, prepend the
+          following plugin in <code>/config/webpack.config.js</code>:
+          <pre>
 plugins: [
   isEnvProduction && new yWorksOptimizer({
     blacklist: ['render', 'Component', 'nodesSource', 'edgesSource']
@@ -127,47 +126,19 @@ plugins: [
   ...
 ]
         </pre>
-        Don't forget to require it first:<br/>
-        <code>const yWorksOptimizer = require('@yworks/optimizer/webpack-plugin')</code>
-      </li>
-      <li>
-        That's it. When you now build for production with <code>npm run build</code>, the optimizer will do its job and
-        the bundle will be obfuscated.
-      </li>
-    </ol>
+          Don't forget to require it first:<br/> <code>const yWorksOptimizer = require('@yworks/optimizer/webpack-plugin')</code>
+        </li>
+        <li>
+          That's it. When you now build for production with <code>npm run build</code>, the optimizer will do its job
+          and the bundle will be obfuscated.
+        </li>
+      </ol>
 
-  </div>
-</div>
-<footer class="default-footer">
-  <div class="footer-block">
-    <h4>Contents</h4>
-    <a href="../../../README.html">Welcome Page</a><br> <a href="../../../doc/api/index.html">API Documentation</a><br>
-    <a href="../../../doc/api/index.html#/dguide/getting_started">Getting Started</a><br> <a
-    href="../../../doc/readme/legal/SOFTWARE_LICENSE_AGREEMENT.html">License Agreement</a><br> <a
-    href="../../../doc/readme/support.html">Help and Support</a>
-  </div>
-  <div class="footer-block">
-    <h4>Contact</h4>
-    yWorks GmbH<br> Vor dem Kreuzberg 28<br> 72070 T&uuml;bingen<br> Germany<br> Phone: <a href="tel:+497071979050">+49
-    7071 979050</a><br> Email: <a href="https://www.yworks.com/contact">contact(at)yworks.com</a>
-  </div>
-  <div class="footer-block">
-    <h4>Follow Us</h4>
-    <div class="social">
-      <a href="https://www.yworks.com/products/yfiles-for-html" target="_blank" class="web">Homepage</a> <a href="https://www.yworks.com/newsfeed"
-      target="_blank" class="rss">RSS Feed</a>
     </div>
-    <div>
-      <a href="https://github.com/yWorks" target="_blank" class="gh">GitHub</a> <a href="https://twitter.com/yworks"
-      target="_blank" class="tw">Twitter</a> <a href="https://www.youtube.com/user/yWorksTube" target="_blank"
-      class="yt">YouTube</a>
-    </div>
-    <br><br> <span class="copyright">COPYRIGHT &#x00A9; 2021 yWorks</span><br> <a
-    href="https://www.yworks.com/company/legal/imprint">Legal Disclosure</a> | <a
-    href="https://www.yworks.com/company/legal/terms-of-use">Terms of Use</a> | <a
-    href="https://www.yworks.com/company/legal/privacy">Privacy Policy</a>
+    <!-- populated by readme-style.js -->
+    <div id="footer-detailed"></div>
   </div>
-  <div class="footer-block logo"></div>
-</footer>
+</main>
+<script src="../../../doc/readme-style.js"></script>
 </body>
 </html>

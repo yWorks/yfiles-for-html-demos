@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -182,6 +182,9 @@ function createGraph(graph: IGraph): void {
   zOrderSupport.setTempNormalizedZOrders(null)
   zOrderSupport.applyTempZOrders()
 
+  // clear undo queue to prevent the possibility of undoing the sample graph creation
+  graph.foldingView?.manager!.masterGraph.undoEngine!.clear()
+
   graphComponent.fitGraphBounds()
 }
 
@@ -205,10 +208,7 @@ function updateLabel(node: INode, zIndex: number): void {
     : graphComponent.graph.foldingView!.manager.masterGraph
 
   if (node.labels.some(label => label.tag && label.tag.showZIndex)) {
-    graph.setLabelText(
-      node.labels.find(label => label.tag.showZIndex),
-      `Level: ${zIndex}`
-    )
+    graph.setLabelText(node.labels.find(label => label.tag.showZIndex)!, `Level: ${zIndex}`)
   } else {
     graph.addLabel({
       owner: node,

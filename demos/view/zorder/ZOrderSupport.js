@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -54,6 +54,7 @@ import {
   IOutputHandler,
   IParseContext,
   IPositionHandler,
+  IReparentNodeHandler,
   ItemCopiedEventArgs,
   ItemEventArgs,
   ItemModelManager,
@@ -660,11 +661,9 @@ export class ZOrderNodePositionHandler extends GroupingNodePositionHandler {
    */
   setCurrentParent(context, node, parent) {
     if (parent !== this.$initialParent) {
-      let tmp
       // node is temporarily at a new parent
-      const moveInputMode =
-        (tmp = context.parentInputMode) instanceof ZOrderMoveInputMode ? tmp : null
-      if (moveInputMode) {
+      if (context.parentInputMode instanceof ZOrderMoveInputMode) {
+        const moveInputMode = context.parentInputMode
         // the ZOrderMoveInputMode knows all moved nodes and therefore can provide the new z-order for this node
         const tempZOrder = moveInputMode.getZOrderForNewParent(node, parent)
         // 'parent' is only a temporary new parent so the old z-order should be kept but a new temporary one is set
@@ -896,6 +895,13 @@ export class ZOrderGraphEditorInputMode extends GraphEditorInputMode {
       ZOrderGraphEditorInputMode.TO_BACK,
       zOrderSupport.toBack.bind(zOrderSupport)
     )
+
+    // delegate reparenting of nodes to a custom implementation that adjusts the reparented
+    // node's z-order accordingly
+    this.reparentNodeHandler = new ZOrderReparentHandler(
+      this.reparentNodeHandler,
+      this.zOrderSupport
+    )
   }
 
   /**
@@ -1046,25 +1052,94 @@ export class ZOrderGraphEditorInputMode extends GraphEditorInputMode {
     const newParent = this.graph.getParent(evt.item)
     this.newParents.add(newParent)
   }
+}
 
+/**
+ * Delegates reparenting to an external callback function. The callback function is intended to
+ * provide pre- and post-processing only. The actual reparenting operation should be performed by
+ * the reparent handler that is passed to the callback function.
+ */
+class ZOrderReparentHandler extends BaseClass(IReparentNodeHandler) {
   /**
-   * @param {!NodeEventArgs} evt
+   * @param {!IReparentNodeHandler} handler
+   * @param {!ZOrderSupport} zOrderSupport
    */
-  onNodeReparented(evt) {
-    super.onNodeReparented(evt)
-    const node = evt.item
-    const zIndex = this.calculateNewZIndex(node, this.graph.getParent(node))
-    this.zOrderSupport.setZOrder(node, zIndex)
-    this.graphComponent.graphModelManager.update(node)
+  constructor(handler, zOrderSupport) {
+    super()
+    this.zOrderSupport = zOrderSupport
+    this.handler = handler
   }
 
   /**
+   * @param {!IInputModeContext} context
    * @param {!INode} node
-   * @param {?INode} parent
+   * @returns {boolean}
+   */
+  isReparentGesture(context, node) {
+    return this.handler.isReparentGesture(context, node)
+  }
+
+  /**
+   * @param {!IInputModeContext} context
+   * @param {!INode} node
+   * @param {?INode} newParent
+   * @returns {boolean}
+   */
+  isValidParent(context, node, newParent) {
+    return this.handler.isValidParent(context, node, newParent)
+  }
+
+  /**
+   * @param {!IInputModeContext} context
+   * @param {!INode} node
+   * @param {?INode} newParent
+   */
+  reparent(context, node, newParent) {
+    // Determine the node's and the parent's representatives in the master graph.
+    // This has to be done prior to the reparenting operation, because if the new parent is a
+    // folder node (i.e. a closed group node), the given node will be removed from the current
+    // view graph as part of the reparenting operation. In this case, the corresponding master nodes
+    // cannot be determined anymore after reparenting is done.
+    // Being able to determine the master nodes right before reparenting is the whole reason
+    // for decorating the default reparent handler here.
+    const support = this.zOrderSupport
+    const masterNode = support.getMasterNode(node)
+    const masterParent = newParent ? support.getMasterNode(newParent) : null
+
+    // reparent the node
+    this.handler.reparent(context, node, newParent)
+
+    // update the node's z-order index
+    const graphComponent = context.canvasComponent
+    const viewGraph = graphComponent.graph
+    const masterGraph = ZOrderReparentHandler.getMasterGraph(viewGraph)
+    const zIndex = this.calculateNewZIndex(masterGraph, masterNode, masterParent)
+    support.setZOrder(masterNode, zIndex)
+
+    const viewNode = ZOrderReparentHandler.getViewNode(viewGraph, masterNode)
+    if (viewNode) {
+      graphComponent.graphModelManager.update(viewNode)
+    }
+  }
+
+  /**
+   * @param {!IInputModeContext} context
+   * @param {!INode} node
+   * @returns {boolean}
+   */
+  shouldReparent(context, node) {
+    return this.handler.shouldReparent(context, node)
+  }
+
+  /**
+   * Calculates an appropriate z-order index for the given node in the given graph.
+   * @param {!IGraph} masterGraph
+   * @param {!INode} masterNode
+   * @param {?INode} masterParent
    * @returns {number}
    */
-  calculateNewZIndex(node, parent) {
-    const children = this.graph.getChildren(parent)
+  calculateNewZIndex(masterGraph, masterNode, masterParent) {
+    const children = masterGraph.getChildren(masterParent)
     if (children.size === 1) {
       // node is the only child
       return 0
@@ -1073,10 +1148,33 @@ export class ZOrderGraphEditorInputMode extends GraphEditorInputMode {
     return (
       children.reduce(
         (acc, current) =>
-          current !== node ? Math.max(acc, this.zOrderSupport.getZOrder(current)) : acc,
+          current !== masterNode ? Math.max(acc, this.zOrderSupport.getZOrder(current)) : acc,
         Number.MIN_VALUE
       ) + 1
     )
+  }
+
+  /**
+   * Returns the master graph associated to the given view graph if folding is enabled for said
+   * view graph.
+   * @param {!IGraph} viewGraph
+   * @returns {!IGraph}
+   */
+  static getMasterGraph(viewGraph) {
+    const foldingView = viewGraph.foldingView
+    return foldingView ? foldingView.manager.masterGraph : viewGraph
+  }
+
+  /**
+   * Returns the view node for the given master node or null if the given master node has no
+   * representative in the given view graph.
+   * @param {!IGraph} viewGraph
+   * @param {!INode} masterNode
+   * @returns {?INode}
+   */
+  static getViewNode(viewGraph, masterNode) {
+    const foldingView = viewGraph.foldingView
+    return foldingView ? foldingView.getViewItem(masterNode) : masterNode
   }
 }
 

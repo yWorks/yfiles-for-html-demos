@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -55,6 +55,7 @@ export default class ContextMenu {
     this.element = contextMenu
     this.blurredTimeout = null
     this.isOpen = false
+    this.onClosedCallbackField = null
 
     // Listeners for focus events since this menu closes itself if it loses the focus.
     this.focusOutListener = evt => {
@@ -102,7 +103,7 @@ export default class ContextMenu {
   /**
    * Adds a new menu entry with the given text and click-listener to this menu.
    * @param {!string} label
-   * @param {!function} clickListener
+   * @param {?function} clickListener
    * @returns {!HTMLElement}
    */
   addMenuItem(label, clickListener) {
@@ -149,7 +150,11 @@ export default class ContextMenu {
     style.setProperty('position', 'absolute', '')
     style.setProperty('left', `${location.x}px`, '')
     style.setProperty('top', `${location.y}px`, '')
-    document.body.appendChild(this.element)
+    if (document.fullscreenElement && !document.fullscreenElement.contains(document.body)) {
+      document.fullscreenElement.appendChild(this.element)
+    } else {
+      document.body.appendChild(this.element)
+    }
 
     // trigger enter animation
     setTimeout(() => {
@@ -205,18 +210,16 @@ export default class ContextMenu {
    *
    * Typically, the provided callback informs the <code>ContextMenuInputMode</code> that this menu is
    * closed.
-   *
-   * @type {function}
    */
   get onClosedCallback() {
-    if (!this.onClosedCallbackField) {
+    if (this.onClosedCallbackField == null) {
       alert('For this context menu, the onClosedCallback property must be set.')
     }
     return this.onClosedCallbackField
   }
 
   /**
-   * @type {*}
+   * @type {!function}
    */
   set onClosedCallback(callback) {
     this.onClosedCallbackField = callback

@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -26,6 +26,20 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
+/**
+ * @typedef {Object} SampleDataType
+ * @property {string} position
+ * @property {string} name
+ * @property {string} email
+ * @property {string} phone
+ * @property {string} fax
+ * @property {string} businessUnit
+ * @property {string} status
+ * @property {string} icon
+ * @property {object} layout
+ * @property {string} id
+ */
+
 export default {
   nodes: [
     {

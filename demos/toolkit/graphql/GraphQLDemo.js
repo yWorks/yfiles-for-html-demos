@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -34,6 +34,7 @@ import {
   GraphItemTypes,
   GraphViewerInputMode,
   ICommand,
+  IGraph,
   IModelItem,
   INode,
   InteriorStretchLabelModel,
@@ -52,37 +53,81 @@ import { graphQLQuery } from './GraphQLQuery.js'
 import { SocialNetworkGraphBuilder } from './SocialNetworkGraphBuilder.js'
 import { SocialNetworkNodeStyle } from './SocialNetworkNodeStyle.js'
 import PropertiesPanel from './PropertiesPanel.js'
+import { copyWithFriends } from './Person.js'
 
 Class.ensure(LayoutExecutor)
 
 /** @type {GraphComponent} */
-let graphComponent = null
+let graphComponent
 
 /** @type {SocialNetworkGraphBuilder} */
-let graphBuilder = null
+let graphBuilder
 
 /** @type {PropertiesPanel} */
-let propertiesPanel = null
+let propertiesPanel
+
+/**
+ * GraphQL query to retrieve all persons in the data set
+ */
+const queryAllPersons = `{
+  persons {
+    id
+    name
+    icon
+    friendsCount
+    friends {
+      id
+    }
+  }
+}`
+
+/**
+ * GraphQL query to retrieve the one person whose ID matches the given ID
+ */
+const querySinglePerson = `query loadSinglePerson ($id: ID!) {
+  person(id: $id) {
+    id
+    name
+    icon
+    friendsCount
+  }
+}`
+
+/**
+ * GraphQL query to retrieve all friends of the person with the given ID
+ */
+const queryFriends = `query loadFriends ($id: ID!) {
+  person(id: $id) {
+    friends {
+      id
+      name
+      icon
+      friendsCount
+    }
+  }
+}`
 
 /**
  * Runs the demo.
+ * @param {!object} licenseData
+ * @returns {!Promise}
  */
 async function run(licenseData) {
   License.value = licenseData
 
   graphComponent = new GraphComponent('graphComponent')
 
-  initializeGraph()
+  configureGraph(graphComponent.graph)
 
   graphBuilder = new SocialNetworkGraphBuilder(graphComponent.graph)
 
-  createInputMode()
-  createPropertiesPanel()
-  registerCommands()
+  configureInteraction(graphComponent)
+  createPropertiesPanel(graphComponent)
+  registerCommands(graphComponent)
 
   showApp(graphComponent)
 
-  await loadSinglePerson('1')
+  await loadSinglePerson(1)
   const initialNode = graphComponent.graph.nodes.firstOrDefault()
   if (initialNode) {
     await loadFriends(initialNode)
@@ -91,10 +136,9 @@ async function run(licenseData) {
 
 /**
  * Initializes the styles for the graph nodes, edges, labels.
+ * @param {!IGraph} graph
  */
-function initializeGraph() {
-  const graph = graphComponent.graph
-
+function configureGraph(graph) {
   // nodes
   graph.nodeDefaults.style = new SocialNetworkNodeStyle()
   graph.nodeDefaults.shareStyleInstance = false
@@ -125,8 +169,9 @@ function initializeGraph() {
 
 /**
  * Initialize and configure the input mode. Only allow viewing of the data and moving nodes around.
+ * @param {!GraphComponent} graphComponent
  */
-function createInputMode() {
+function configureInteraction(graphComponent) {
   const mode = new GraphViewerInputMode({
     clickableItems: GraphItemTypes.NODE,
     focusableItems: GraphItemTypes.NODE,
@@ -136,6 +181,7 @@ function createInputMode() {
 
   mode.addItemDoubleClickedListener(async (sender, evt) => {
     await loadFriends(evt.item)
+
     // update the properties panel, since new friends may be visible now
     propertiesPanel.showProperties(graphComponent.currentItem)
   })
@@ -145,8 +191,9 @@ function createInputMode() {
 
 /**
  * Create the properties panel that displays the information about the current person.
+ * @param {!GraphComponent} graphComponent
  */
-function createPropertiesPanel() {
+function createPropertiesPanel(graphComponent) {
   const propertiesPanelRoot = document.getElementById('propertiesView')
   propertiesPanel = new PropertiesPanel(propertiesPanelRoot)
 
@@ -158,7 +205,7 @@ function createPropertiesPanel() {
 /**
  * Moves incremental nodes between their neighbors before expanding for a smooth animation.
  *
- * @param {List.<INode>} newNodes
+ * @param {!Iterable.<INode>} newNodes
  */
 function prepareSmoothExpandLayoutAnimation(newNodes) {
   const graph = graphComponent.graph
@@ -173,19 +220,9 @@ function prepareSmoothExpandLayoutAnimation(newNodes) {
 }
 
 /**
- * Wires up the UI.
- */
-function registerCommands() {
-  bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent, null)
-  bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent, null)
-  bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent, null)
-  bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
-  bindAction("button[data-command='Reset']", () => loadSinglePerson('1'))
-  bindAction("button[data-command='LoadAll']", () => loadAll())
-}
-
-/**
  * Runs an organic layout.
+ * @param {!Iterable.<INode>} [newNodes]
+ * @returns {!Promise}
  */
 async function runLayout(newNodes) {
   if (newNodes) {
@@ -198,40 +235,27 @@ async function runLayout(newNodes) {
 
 /**
  * Clears the graph and fetches a single person.
+ * @param {number} id
+ * @returns {!Promise}
  */
 async function loadSinglePerson(id) {
-  const data = await tryQuery(
-    `
-query loadSinglePerson ($id: ID!) {
-  person(id: $id) {
-    id
-    name
-    icon
-    friendsCount
-  }
-}
-`,
-    { id }
-  )
-
+  const data = await tryQuery(querySinglePerson, { id })
   if (!data) {
     return
   }
 
   graphBuilder.clear()
-  const person = Object.assign({ friends: [] }, data.person)
-  graphBuilder.addPersons([person])
+  graphBuilder.addPersons([copyWithFriends(data.person, [])])
   await runLayout()
-  return person
 }
 
 /**
  * Loads all friends of the person.
- * @param {IModelItem} item The node for which the friends should be loaded
- * @return {Promise<void>} The layout animation promise
+ * @param {!IModelItem} item The node for which the friends should be loaded
+ * @returns {!Promise} The layout animation promise
  */
 async function loadFriends(item) {
-  if (!INode.isInstance(item)) {
+  if (!(item instanceof INode)) {
     return
   }
 
@@ -240,51 +264,25 @@ async function loadFriends(item) {
     return
   }
 
-  const data = await tryQuery(
-    `
-query loadFriends ($id: ID!) {
-  person(id: $id) {
-    friends {
-      id
-      name
-      icon
-      friendsCount
-    }
-  }
-}
-`,
-    { id: person.id }
-  )
-
+  const data = await tryQuery(queryFriends, { id: person.id })
   if (!data) {
     return Promise.resolve()
   }
 
-  const friends = data.person.friends.map(friend => Object.assign({ friends: [person] }, friend))
-  const dataCopy = Object.assign({}, person)
-  const newNodes = graphBuilder.addPersons([Object.assign(dataCopy, { friends })].concat(friends))
+  const friends = data.person.friends
+  const copiedFriends = friends.map(friend => copyWithFriends(friend, [person]))
+  const copiedPerson = copyWithFriends(person, copiedFriends)
+  const newNodes = graphBuilder.addPersons([copiedPerson].concat(copiedFriends))
 
   return runLayout(newNodes)
 }
 
 /**
  * Loads the complete social network.
+ * @returns {!Promise}
  */
 async function loadAll() {
-  const data = await tryQuery(`
-{
-  persons {
-    id
-    name
-    icon
-    friendsCount
-    friends {
-      id
-    }
-  }
-}
-    `)
-
+  const data = await tryQuery(queryAllPersons)
   if (!data) {
     return
   }
@@ -296,15 +294,34 @@ async function loadAll() {
 
 /**
  * Executes a query and shows an error dialog if the server is not reachable.
+ * @param {!string} query
+ * @param {!object} variables
+ * @returns {!Promise}
  */
 async function tryQuery(query, variables = {}) {
   try {
     const response = await graphQLQuery(query, variables)
     return response.data
   } catch (e) {
-    document.getElementById('fetchError').style.setProperty('display', 'unset')
+    const errorDialog = document.getElementById('fetchError')
+    if (errorDialog) {
+      errorDialog.style.setProperty('display', 'unset')
+    }
     return null
   }
+}
+
+/**
+ * Binds actions and commands to the demo's UI controls.
+ * @param {!GraphComponent} graphComponent
+ */
+function registerCommands(graphComponent) {
+  bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent, null)
+  bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent, null)
+  bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent, null)
+  bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
+  bindAction("button[data-command='Reset']", () => loadSinglePerson(1))
+  bindAction("button[data-command='LoadAll']", () => loadAll())
 }
 
 loadJson().then(run)

@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -40,17 +40,7 @@ import {
   Size
 } from 'yfiles'
 
-export class PortReshapeHandle extends BaseClass<IHandle>(IHandle) {
-  readonly context: IInputModeContext
-  readonly port: IPort
-  readonly adapter: NodeStylePortStyleAdapter
-  readonly position: HandlePositions
-
-  /**
-   * The initial RenderSize used to reset the size on Cancel.
-   */
-  private initialRenderSize: Size = Size.EMPTY
-
+export class PortReshapeHandle extends BaseClass(IHandle) {
   /**
    * The margins the handle is placed form the port visualization bounds.
    * The margins are applied in view coordinates. Default is <c>4</c>.
@@ -58,9 +48,9 @@ export class PortReshapeHandle extends BaseClass<IHandle>(IHandle) {
   public margins: number
 
   /**
-   * The minimum size the {@link NodeStylePortStyleAdapter.renderSize} may have.
+   * The initial render size (i.e. the size of the port visualization). Used to reset the visualization size on cancel.
    */
-  public minimumSize: Size = Size.EMPTY
+  private initialRenderSize: Size = Size.EMPTY
 
   /**
    * Creates a new instance for port and its adapter.
@@ -68,18 +58,16 @@ export class PortReshapeHandle extends BaseClass<IHandle>(IHandle) {
    * @param port The port whose visualization shall be resized.
    * @param adapter The adapter whose render size shall be changed.
    * @param position The position of the handle.
+   * @param minimumSize The minimum render size for the given port.
    */
   public constructor(
-    context: IInputModeContext,
-    port: IPort,
-    adapter: NodeStylePortStyleAdapter,
-    position: HandlePositions
+    private readonly context: IInputModeContext,
+    private readonly port: IPort,
+    private readonly adapter: NodeStylePortStyleAdapter,
+    private readonly position: HandlePositions,
+    private readonly minimumSize: Size
   ) {
     super()
-    this.context = context
-    this.position = position
-    this.adapter = adapter
-    this.port = port
     this.margins = 4
   }
 
@@ -92,7 +80,7 @@ export class PortReshapeHandle extends BaseClass<IHandle>(IHandle) {
 
   /**
    * Calculates the location of the handle considering the {@link IPort.location port location},
-   * {@link NodeStylePortStyleAdapter.renderSize} and {@link margins}.
+   * {@link NodeStylePortStyleAdapter.renderSize render size} and {@link margins}.
    */
   private calculateLocation(): Point {
     const portLocation = this.port.location
@@ -129,7 +117,7 @@ export class PortReshapeHandle extends BaseClass<IHandle>(IHandle) {
   }
 
   /**
-   * Stores the initial {@link NodeStylePortStyleAdapter.renderSize}.
+   * Stores the initial {@link NodeStylePortStyleAdapter.renderSize render size}.
    * @param context The context of the reshape gesture.
    */
   public initializeDrag(context: IInputModeContext): void {
@@ -137,7 +125,7 @@ export class PortReshapeHandle extends BaseClass<IHandle>(IHandle) {
   }
 
   /**
-   * Calculates and applies the new {@link NodeStylePortStyleAdapter.renderSize}.
+   * Calculates and applies the new {@link NodeStylePortStyleAdapter.renderSize render size}.
    * @param context The context of the reshape gesture.
    * @param originalLocation The value of the {@link location} property at the time of {@link initializeDrag}.
    * @param newLocation The coordinates in the world coordinate system that the client wants the handle to be at.
@@ -149,8 +137,14 @@ export class PortReshapeHandle extends BaseClass<IHandle>(IHandle) {
     this.adapter.renderSize = this.calculateNewSize(delta)
   }
 
+  /**
+   * Calculates the size adjustment for the port's render size from the previous and current
+   * mouse location.
+   * @param originalLocation The value of the {@link location} property at the time of {@link initializeDrag}.
+   * @param newLocation The coordinates in the world coordinate system that the client wants the handle to be at.
+   */
   private calculateDelta(originalLocation: Point, newLocation: Point): Size {
-    // calculate the delta the mouse has been moved since InitializeDrag
+    // calculate the delta the mouse has been moved since initializeDrag
     const mouseDelta = newLocation.subtract(originalLocation)
     // depending on the handle position this mouse delta shall increase or decrease the render size
     switch (this.position) {
@@ -174,6 +168,11 @@ export class PortReshapeHandle extends BaseClass<IHandle>(IHandle) {
     return Size.EMPTY
   }
 
+  /**
+   * Calculates the new render size for the port from the current render size and the given
+   * size adjustment while respecting the {@link minimumSize minimum size}.
+   * @param delta the size adjustment for the port's render size.
+   */
   private calculateNewSize(delta: Size): Size {
     const newWidth = Math.max(this.minimumSize.width, this.initialRenderSize.width + delta.width)
     const newHeight = Math.max(
@@ -184,7 +183,7 @@ export class PortReshapeHandle extends BaseClass<IHandle>(IHandle) {
   }
 
   /**
-   * Resets {@link NodeStylePortStyleAdapter.renderSize} to its initial value.
+   * Resets the {@link NodeStylePortStyleAdapter.renderSize render size} to its initial value.
    * @param context The context of the reshape gesture.
    * @param originalLocation The value of the {@link location} property at the time of {@link initializeDrag}.
    */
@@ -193,7 +192,7 @@ export class PortReshapeHandle extends BaseClass<IHandle>(IHandle) {
   }
 
   /**
-   * Calculates and applies the final {@link NodeStylePortStyleAdapter.renderSize}.
+   * Calculates and applies the final {@link NodeStylePortStyleAdapter.renderSize render size}.
    * @param context The context of the reshape gesture.
    * @param originalLocation The value of the {@link location} property at the time of {@link initializeDrag}.
    * @param newLocation The coordinates in the world coordinate system that the client wants the handle to be at.

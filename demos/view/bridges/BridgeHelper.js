@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -33,10 +33,10 @@ import {
   INode,
   IObstacleProvider,
   IRenderContext,
-  IShapeGeometry,
   Insets,
-  MutableRectangle,
-  Point
+  Point,
+  BridgeCrossingStyle,
+  BridgeOrientationStyle
 } from 'yfiles'
 import { DemoGroupStyle } from '../../resources/demo-styles.js'
 
@@ -46,7 +46,7 @@ import { DemoGroupStyle } from '../../resources/demo-styles.js'
 export class CustomCallback extends BaseClass(IBridgeCreator) {
   /**
    * Creates a new instance of <code>CustomCallback</code>
-   * @param {IBridgeCreator} fallback
+   * @param {!IBridgeCreator} fallback
    */
   constructor(fallback) {
     super()
@@ -55,7 +55,8 @@ export class CustomCallback extends BaseClass(IBridgeCreator) {
 
   /**
    * Returns the CrossingStyle to be used.
-   * @return {BridgeCrossingStyle}
+   * @param {!IRenderContext} context
+   * @returns {!BridgeCrossingStyle}
    */
   getCrossingStyle(context) {
     return this.fallback.getCrossingStyle(context)
@@ -63,7 +64,8 @@ export class CustomCallback extends BaseClass(IBridgeCreator) {
 
   /**
    * Returns the BridgeOrientationStyle to be used.
-   * @return {BridgeOrientationStyle}
+   * @param {!IRenderContext} context
+   * @returns {!BridgeOrientationStyle}
    */
   getOrientationStyle(context) {
     return this.fallback.getOrientationStyle(context)
@@ -71,7 +73,8 @@ export class CustomCallback extends BaseClass(IBridgeCreator) {
 
   /**
    * Returns the width of the bridge to be used.
-   * @return {number}
+   * @param {!IRenderContext} context
+   * @returns {number}
    */
   getBridgeWidth(context) {
     return this.fallback.getBridgeWidth(context)
@@ -79,30 +82,30 @@ export class CustomCallback extends BaseClass(IBridgeCreator) {
 
   /**
    * Returns the height of the bridge to be used.
-   * @return {number}
+   * @param {!IRenderContext} context
+   * @returns {number}
    */
   getBridgeHeight(context) {
     return this.fallback.getBridgeHeight(context)
   }
 
   /**
-   * Called by the BridgeManager if the getCrossingStyle method yields BridgeCrossingStyle.CUSTOM to
+   * Called by the BridgeManager if the getCrossingStyle method returns BridgeCrossingStyle.CUSTOM to
    * insert a bridge into the given general path.
-   * @param {IRenderContext} context The given render context
-   * @param {GeneralPath} path The general path to be used
-   * @param {Point} startPoint The coordinates of the starting point of the bridge.
-   * @param {Point} endPoint The coordinates of the ending point of the bridge.
+   * @param {!IRenderContext} context The given render context
+   * @param {!GeneralPath} path The general path to be used
+   * @param {!Point} startPoint The coordinates of the starting point of the bridge.
+   * @param {!Point} endPoint The coordinates of the ending point of the bridge.
    * @param {number} gapLength The distance between the starting point and the end point.
    */
   createCustomBridge(context, path, startPoint, endPoint, gapLength) {
     // first finish the last segment
     path.lineTo(startPoint)
-    // then calculate the gap
-    const vectorLength = gapLength
-    if (vectorLength > 1) {
+    // then draw our custom bridge, if the gap is large enough
+    if (gapLength > 1) {
       // some helper vectors first
       const delta = endPoint.subtract(startPoint)
-      const rightVector = delta.multiply(1 / vectorLength)
+      const rightVector = delta.multiply(1 / gapLength)
       const upVector = new Point(rightVector.y, -rightVector.x)
 
       // get the height from the context
@@ -121,13 +124,9 @@ export class CustomCallback extends BaseClass(IBridgeCreator) {
         endPoint.subtract(rightVector.multiply(arc)),
         endPoint.add(upVector.multiply(-height)).add(rightVector.multiply(arc))
       )
-      // finally make sure that the edge continues at the right location
-      path.moveTo(endPoint)
-    } else {
-      // for very short gaps, we use a trivial rendering
-      path.lineTo(startPoint)
-      path.moveTo(endPoint)
     }
+    // finally make sure that the edge continues at the right location
+    path.moveTo(endPoint)
   }
 }
 
@@ -139,7 +138,7 @@ export class CustomCallback extends BaseClass(IBridgeCreator) {
 export class GroupNodeObstacleProvider extends BaseClass(IObstacleProvider) {
   /**
    * Creates a new instance of <code>GroupNodeObstacleProvider</code>
-   * @param {INode} groupNode
+   * @param {!INode} groupNode
    */
   constructor(groupNode) {
     super()
@@ -148,9 +147,9 @@ export class GroupNodeObstacleProvider extends BaseClass(IObstacleProvider) {
 
   /**
    * Returns an obstacle for the node style's outline.
-   * @param {IRenderContext} context The given render context
-   * @return {GeneralPath | null}
+   * @param {!IRenderContext} context The given render context
    * @see Specified by {@link IObstacleProvider#getObstacles}.
+   * @returns {?GeneralPath}
    */
   getObstacles(context) {
     const style = this.groupNode.style
@@ -167,24 +166,19 @@ export class GroupNodeObstacleProvider extends BaseClass(IObstacleProvider) {
   /**
    * Uses the node style's outline as obstacle.
    * For node style renderers that don't provide a {@link IShapeGeometry}, no bridges will be created.
-   * @return {GeneralPath | null}
+   * @returns {?GeneralPath}
    */
   createPath() {
     const style = this.groupNode.style
-    const geometry = style.renderer.getShapeGeometry(this.groupNode, style)
-    if (geometry !== null) {
-      let outline = geometry.getOutline()
-      if (style instanceof DemoGroupStyle) {
-        outline = new GeneralPath()
-        outline.appendRectangle(
-          new MutableRectangle(
-            this.groupNode.layout.toRect().getEnlarged(new Insets(-4, -22, -4, -4))
-          ),
-          false
-        )
-      }
+    if (style instanceof DemoGroupStyle) {
+      const outline = new GeneralPath()
+      outline.appendRectangle(
+        this.groupNode.layout.toRect().getEnlarged(new Insets(-4, -22, -4, -4)),
+        false
+      )
       return outline
     }
-    return null
+    const geometry = style.renderer.getShapeGeometry(this.groupNode, style)
+    return geometry.getOutline()
   }
 }

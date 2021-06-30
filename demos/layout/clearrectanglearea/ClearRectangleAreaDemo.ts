@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -191,7 +191,9 @@ function registerCommands(): void {
  */
 function onClearingStrategyChanged(): void {
   const strategy = clearingStrategyComboBox.options[clearingStrategyComboBox.selectedIndex].value
-  options.clearAreaStrategy = ClearAreaStrategy[strategy as keyof typeof ClearAreaStrategy]
+  options.clearAreaStrategy = ClearAreaStrategy[
+    strategy as keyof typeof ClearAreaStrategy
+  ] as ClearAreaStrategy
 }
 
 /**
@@ -202,16 +204,17 @@ function onComponentAssignmentStrategyChanged(): void {
     componentAssignmentStrategyComboBox.options[componentAssignmentStrategyComboBox.selectedIndex]
       .value
 
-  options.componentAssignmentStrategy =
-    ComponentAssignmentStrategy[strategy as keyof typeof ComponentAssignmentStrategy]
+  options.componentAssignmentStrategy = ComponentAssignmentStrategy[
+    strategy as keyof typeof ComponentAssignmentStrategy
+  ] as ComponentAssignmentStrategy
 }
 
 /**
  * enables/disables the sample buttons depending on sample combo selected index
  */
 function updateSampleButtonStates(): void {
-  previousButton!.disabled = samplesComboBox!.selectedIndex === 0
-  nextButton!.disabled = samplesComboBox.selectedIndex === samplesComboBox.childElementCount - 1
+  previousButton.disabled = samplesComboBox.selectedIndex === 0
+  nextButton.disabled = samplesComboBox.selectedIndex === samplesComboBox.childElementCount - 1
 }
 
 /**
@@ -259,8 +262,9 @@ function addClearRectInputModes(inputMode: MultiplexingInputMode): void {
   rectangleHandles.minimumSize = new Size(10, 10)
 
   // create a mode that deals with the handles
-  const handleInputMode = new HandleInputMode()
-  handleInputMode.priority = 1
+  const handleInputMode = new HandleInputMode({
+    priority: 1
+  })
 
   // add it to the graph editor mode
   inputMode.add(handleInputMode)
@@ -277,12 +281,11 @@ function addClearRectInputModes(inputMode: MultiplexingInputMode): void {
   handleInputMode.handles = handleCollection
 
   // create a mode that allows for dragging the rectangle at the sides
-  const moveInputMode = new MoveInputMode()
-  moveInputMode.positionHandler = new RectanglePositionHandler(clearRect)
-  moveInputMode.hitTestable = IHitTestable.create((context, location) =>
-    clearRect.contains(location)
-  )
-  moveInputMode.priority = 41
+  const moveInputMode = new MoveInputMode({
+    positionHandler: new RectanglePositionHandler(clearRect),
+    hitTestable: IHitTestable.create((context, location) => clearRect.contains(location)),
+    priority: 41
+  })
 
   // handle dragging the rectangle
   moveInputMode.addDragStartingListener((sender, evt) => onDragStarting(sender, evt))
@@ -452,7 +455,7 @@ function loadGraph(sampleName: string): void {
 /**
  * Visual template used for the clear rectangle
  */
-class ClearRectTemplate extends BaseClass<IVisualTemplate>(IVisualTemplate) {
+class ClearRectTemplate extends BaseClass(IVisualTemplate) {
   createVisual(context: IRenderContext, bounds: Rect, dataObject: object): SvgVisual | null {
     const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect')
 

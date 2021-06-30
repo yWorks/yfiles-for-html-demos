@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -44,6 +44,7 @@ import {
   GridSnapTypes,
   ICommand,
   IEdge,
+  IEdgeStyle,
   ILabel,
   ImageNodeStyle,
   INode,
@@ -70,16 +71,15 @@ import {
 } from 'yfiles'
 
 import { DragAndDropPanel } from '../../utils/DndPanel.js'
-import NativeDragAndDropPanel from './NativeDragAndDropPanel.js'
+import { DragAndDropPanelItem, NativeDragAndDropPanel } from './NativeDragAndDropPanel.js'
 import {
   addClass,
   bindChangeListener,
   bindCommand,
-  nativeDragAndDropSupported,
-  passiveSupported,
   removeClass,
   showApp
 } from '../../resources/demo-app.js'
+import { nativeDragAndDropSupported } from '../../utils/Workarounds.js'
 import { DemoGroupStyle, DemoNodeStyle, initDemoStyles } from '../../resources/demo-styles.js'
 import loadJson from '../../resources/load-json.js'
 import EdgeDropInputMode from './EdgeDropInputMode.js'
@@ -87,13 +87,13 @@ import EdgeDropInputMode from './EdgeDropInputMode.js'
 Class.ensure(Arrow)
 
 /**
- * The panel containing the palette of elements to drop onto the graph component using yFiles drag and drop.
+ * The panel containing the palette of elements to drop onto the graph component using native drag and drop.
  * @type {NativeDragAndDropPanel}
  */
 let nativeDragAndDropPanel = null
 
 /**
- * The panel containing the palette of elements to drop onto the graph component using native drag and drop.
+ * The panel containing the palette of elements to drop onto the graph component using yFiles drag and drop.
  * @type {DragAndDropPanel}
  */
 let dragAndDropPanel = null
@@ -101,6 +101,7 @@ let dragAndDropPanel = null
 /**
  *  This demo shows how to enable drag and drop functionality for nodes using class
  *  {@link NodeDropInputMode}.
+ * @param {!object} licenseData
  */
 function run(licenseData) {
   License.value = licenseData
@@ -153,7 +154,7 @@ function run(licenseData) {
 
 /**
  * Initializes the drag and drop panel.
- * @param {GraphComponent} graphComponent
+ * @param {!GraphComponent} graphComponent
  */
 function initializeDnDPanel(graphComponent) {
   // initialize panel for native drag and drop
@@ -164,13 +165,14 @@ function initializeDnDPanel(graphComponent) {
   nativeDragAndDropPanel.populatePanel(createDnDPanelItems)
 
   // initialize panel for yFiles drag and drop
-  dragAndDropPanel = new DragAndDropPanel(document.getElementById('dndPanel'), passiveSupported)
+  dragAndDropPanel = new DragAndDropPanel(document.getElementById('dndPanel'))
   // Set the callback that starts the actual drag and drop operation
   dragAndDropPanel.beginDragCallback = (element, data) => {
     const dragPreview = element.cloneNode(true)
     dragPreview.style.margin = '0'
-    let dragSource
-    if (ILabel.isInstance(data)) {
+
+    let dragSource = null
+    if (data instanceof ILabel) {
       dragSource = LabelDropInputMode.startDrag(
         element,
         data,
@@ -178,7 +180,7 @@ function initializeDnDPanel(graphComponent) {
         true,
         dragPreview
       )
-    } else if (IPort.isInstance(data)) {
+    } else if (data instanceof IPort) {
       dragSource = PortDropInputMode.startDrag(
         element,
         data,
@@ -186,7 +188,7 @@ function initializeDnDPanel(graphComponent) {
         true,
         dragPreview
       )
-    } else if (IEdge.isInstance(data)) {
+    } else if (data instanceof IEdge) {
       new DragSource(element).startDrag(
         new DragDropItem(IEdge.$class.name, data),
         DragDropEffects.ALL
@@ -219,7 +221,7 @@ function initializeDnDPanel(graphComponent) {
 
 /**
  * Creates the items that provide the visualizations for the style panel.
- * @return {IModelItem[]}
+ * @returns {!Array.<DragAndDropPanelItem.<(INode|IEdge)>>}
  */
 function createDnDPanelItems() {
   const itemContainer = []
@@ -244,12 +246,12 @@ function createDnDPanelItems() {
   )
   groupLabel.style = groupLabelStyle
   groupNode.labels = new ListEnumerable([groupLabel])
-  itemContainer.push({ element: groupNode, tooltip: 'Group Node' })
+  itemContainer.push(new DragAndDropPanelItem(groupNode, 'Group Node'))
 
   const demoStyleNode = new SimpleNode()
   demoStyleNode.layout = new Rect(0, 0, 60, 40)
   demoStyleNode.style = new DemoNodeStyle()
-  itemContainer.push({ element: demoStyleNode, tooltip: 'Demo Node' })
+  itemContainer.push(new DragAndDropPanelItem(demoStyleNode, 'Demo Node'))
 
   const shapeStyleNode = new SimpleNode()
   shapeStyleNode.layout = new Rect(0, 0, 60, 40)
@@ -258,7 +260,7 @@ function createDnDPanelItems() {
     stroke: 'rgb(255, 140, 0)',
     fill: 'rgb(255, 140, 0)'
   })
-  itemContainer.push({ element: shapeStyleNode, tooltip: 'Shape Node' })
+  itemContainer.push(new DragAndDropPanelItem(shapeStyleNode, 'Shape Node'))
 
   const shinyPlateNode = new SimpleNode()
   shinyPlateNode.layout = new Rect(0, 0, 60, 40)
@@ -266,12 +268,12 @@ function createDnDPanelItems() {
     fill: 'rgb(255, 140, 0)',
     drawShadow: false
   })
-  itemContainer.push({ element: shinyPlateNode, tooltip: 'Shiny Plate Node' })
+  itemContainer.push(new DragAndDropPanelItem(shinyPlateNode, 'Shiny Plate Node'))
 
   const imageStyleNode = new SimpleNode()
   imageStyleNode.layout = new Rect(0, 0, 60, 60)
   imageStyleNode.style = new ImageNodeStyle('resources/y.svg')
-  itemContainer.push({ element: imageStyleNode, tooltip: 'Image Node' })
+  itemContainer.push(new DragAndDropPanelItem(imageStyleNode, 'Image Node'))
 
   const portNode = new SimpleNode()
   portNode.layout = new Rect(0, 0, 5, 5)
@@ -286,7 +288,7 @@ function createDnDPanelItems() {
   )
   portNode.tag = port
   portNode.ports = new ListEnumerable([port])
-  itemContainer.push({ element: portNode, tooltip: 'Port' })
+  itemContainer.push(new DragAndDropPanelItem(portNode, 'Port'))
 
   const labelNode = new SimpleNode()
   labelNode.layout = new Rect(0, 0, 5, 5)
@@ -307,7 +309,7 @@ function createDnDPanelItems() {
   label.preferredSize = labelStyle.renderer.getPreferredSize(label, labelStyle)
   labelNode.tag = label
   labelNode.labels = new ListEnumerable([label])
-  itemContainer.push({ element: labelNode, tooltip: 'Label' })
+  itemContainer.push(new DragAndDropPanelItem(labelNode, 'Label'))
 
   const edge1 = new SimpleEdge({
     style: new PolylineEdgeStyle({
@@ -327,42 +329,43 @@ function createDnDPanelItems() {
     })
   })
 
-  itemContainer.push({ element: edge1, tooltip: 'Default' })
-  itemContainer.push({ element: edge2, tooltip: 'Bidirectional' })
-  itemContainer.push({ element: edge3, tooltip: 'Dashed' })
+  itemContainer.push(new DragAndDropPanelItem(edge1, 'Default'))
+  itemContainer.push(new DragAndDropPanelItem(edge2, 'Bidirectional'))
+  itemContainer.push(new DragAndDropPanelItem(edge3, 'Dashed'))
 
   return itemContainer
 }
 
 /**
  * Enables support for dropping edges on the given {@link GraphEditorInputMode}.
- * @param {GraphEditorInputMode} mode
+ * @param {!GraphEditorInputMode} mode
  */
 function configureEdgeDropInputMode(mode) {
   const edgeDropInputMode = new EdgeDropInputMode()
-  let originalEdgeDefaultStyle = null
+  let originalEdgeDefaultStyle
 
   // This method is called when an edge style is dropped onto the canvas. The edge
   // may be dropped onto a node, another edge or onto the empty canvas.
   edgeDropInputMode.itemCreator = (ctx, graph, draggedItem, dropTarget, dropLocation) => {
-    if (!IEdge.isInstance(draggedItem)) {
-      return
+    if (!(draggedItem instanceof IEdge)) {
+      return null
     }
     // Use the dropped edge style for changed/created edges.
     const style = draggedItem.style
 
-    if (IEdge.isInstance(dropTarget)) {
+    if (dropTarget instanceof IEdge) {
       // Set the style of the edge at the drop location to the dropped style.
       graph.setStyle(dropTarget, style)
     } else {
       // Look for a node at the drop location.
-      const node = INode.isInstance(dropTarget) ? dropTarget : graph.createNodeAt(dropLocation)
+      const node = dropTarget instanceof INode ? dropTarget : graph.createNodeAt(dropLocation)
       // Start the creation of an edge from the node at a suitable port candidate
       // for the drop location with the dropped edge style.
       const candidateLocation = graph.nodeDefaults.ports.getLocationParameterInstance(node)
       const candidate = new DefaultPortCandidate(node, candidateLocation)
 
-      const createEdgeInputMode = ctx.canvasComponent.inputMode.createEdgeInputMode
+      const geim = ctx.canvasComponent.inputMode
+      const createEdgeInputMode = geim.createEdgeInputMode
 
       // store the previous edge style
       originalEdgeDefaultStyle = createEdgeInputMode.edgeDefaults.style
@@ -374,6 +377,7 @@ function configureEdgeDropInputMode(mode) {
       createEdgeInputMode.doStartEdgeCreation(candidate)
     }
     ctx.canvasComponent.focus()
+    return null
   }
 
   // register the EdgeDropInputMode on the GraphEditorInputMode
@@ -390,7 +394,7 @@ function configureEdgeDropInputMode(mode) {
 
 /**
  * Configures the input mode for the given graphComponent.
- * @param {GraphComponent} graphComponent
+ * @param {!GraphComponent} graphComponent
  */
 function configureInputModes(graphComponent) {
   // configure the snapping context
@@ -408,36 +412,35 @@ function configureInputModes(graphComponent) {
   })
 
   // create a new NodeDropInputMode to configure the drag and drop operation
-  const nodeDropInputMode = new NodeDropInputMode()
-  // enables the display of the dragged element during the drag
-  nodeDropInputMode.showPreview = true
-  // initially disables snapping fo the dragged element to existing elements
-  nodeDropInputMode.snappingEnabled = false
-  // by default the mode available in GraphEditorInputMode is disabled, so first enable it
-  nodeDropInputMode.enabled = true
-  // nodes that have a DemoGroupStyle assigned have to be created as group nodes
-  nodeDropInputMode.isGroupNodePredicate = draggedNode =>
-    draggedNode.style instanceof DemoGroupStyle
-  mode.nodeDropInputMode = nodeDropInputMode
+  mode.nodeDropInputMode = new NodeDropInputMode({
+    // enables the display of the dragged element during the drag
+    showPreview: true,
+    // initially disables snapping fo the dragged element to existing elements
+    snappingEnabled: false,
+    // by default the mode available in GraphEditorInputMode is disabled, so first enable it
+    enabled: true,
+    // nodes that have a DemoGroupStyle assigned have to be created as group nodes
+    isGroupNodePredicate: draggedNode => draggedNode.style instanceof DemoGroupStyle
+  })
 
-  const labelDropInputMode = new LabelDropInputMode()
-  labelDropInputMode.showPreview = true
-  labelDropInputMode.snappingEnabled = false
-  labelDropInputMode.enabled = true
-  labelDropInputMode.useBestMatchingParameter = true
-  // allow for nodes and edges to be the new label owner
-  labelDropInputMode.isValidLabelOwnerPredicate = labelOwner =>
-    INode.isInstance(labelOwner) || IEdge.isInstance(labelOwner) || IPort.isInstance(labelOwner)
-  mode.labelDropInputMode = labelDropInputMode
+  mode.labelDropInputMode = new LabelDropInputMode({
+    showPreview: true,
+    snappingEnabled: false,
+    enabled: true,
+    useBestMatchingParameter: true,
+    // allow for nodes and edges to be the new label owner
+    isValidLabelOwnerPredicate: labelOwner =>
+      labelOwner instanceof INode || labelOwner instanceof IEdge || labelOwner instanceof IPort
+  })
 
-  const portDropInputMode = new PortDropInputMode()
-  portDropInputMode.showPreview = true
-  portDropInputMode.snappingEnabled = false
-  portDropInputMode.enabled = true
-  portDropInputMode.useBestMatchingParameter = true
-  // allow only for nodes to be the new port owner
-  portDropInputMode.isValidPortOwnerPredicate = portOwner => INode.isInstance(portOwner)
-  mode.portDropInputMode = portDropInputMode
+  mode.portDropInputMode = new PortDropInputMode({
+    showPreview: true,
+    snappingEnabled: false,
+    enabled: true,
+    useBestMatchingParameter: true,
+    // allow only for nodes to be the new port owner
+    isValidPortOwnerPredicate: portOwner => portOwner instanceof INode
+  })
 
   // configure the edge drop input mode
   configureEdgeDropInputMode(mode)
@@ -447,7 +450,7 @@ function configureInputModes(graphComponent) {
 
 /**
  * Creates an initial sample graph.
- * @param {GraphComponent} graphComponent
+ * @param {!GraphComponent} graphComponent
  */
 function createSampleGraph(graphComponent) {
   const graph = graphComponent.graph
@@ -469,7 +472,7 @@ function createSampleGraph(graphComponent) {
 
 /**
  * Wires up the UI.
- * @param {GraphComponent} graphComponent
+ * @param {!GraphComponent} graphComponent
  */
 function registerCommands(graphComponent) {
   bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent)
@@ -483,12 +486,15 @@ function registerCommands(graphComponent) {
 
 /**
  * Configures the NodeDropInputMode based on the selected combobox index.
- * @param {GraphComponent} graphComponent The given graphComponent
+ * @param {!GraphComponent} graphComponent The given graphComponent
  */
 function onFeaturesChanged(graphComponent) {
   const disabledIndicator = document.getElementById('disabled-indicator')
-  const nodeDropInputMode = graphComponent.inputMode.nodeDropInputMode
-  switch (document.getElementById('featuresComboBox').selectedIndex) {
+  const geim = graphComponent.inputMode
+  const nodeDropInputMode = geim.nodeDropInputMode
+  const featureComboBox = document.getElementById('featuresComboBox')
+
+  switch (featureComboBox.selectedIndex) {
     case 1:
       nativeDragAndDropPanel.showPreview = true
       nodeDropInputMode.snappingEnabled = true

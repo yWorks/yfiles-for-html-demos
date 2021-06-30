@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -72,12 +72,12 @@ export class SankeyLayout {
       nodeToNodeDistance: 30,
       backLoopRouting: true
     })
-    hierarchicLayout.edgeLayoutDescriptor!.minimumFirstSegmentLength = 80
-    hierarchicLayout.edgeLayoutDescriptor!.minimumLastSegmentLength = 80
+    hierarchicLayout.edgeLayoutDescriptor.minimumFirstSegmentLength = 80
+    hierarchicLayout.edgeLayoutDescriptor.minimumLastSegmentLength = 80
 
     // a port border gap ratio of zero means that ports can be placed directly on the corners of the nodes
     const portBorderRatio = 1
-    hierarchicLayout.nodeLayoutDescriptor!.portBorderGapRatios = portBorderRatio
+    hierarchicLayout.nodeLayoutDescriptor.portBorderGapRatios = portBorderRatio
     // configures the generic labeling algorithm which produces more compact results, here
     const genericLabeling = hierarchicLayout.labeling as MISLabelingBase
     genericLabeling.reduceAmbiguity = false
@@ -193,7 +193,7 @@ class NodeResizingStage extends LayoutStageBase {
    * @param graph The given graph
    */
   applyLayout(graph: LayoutGraph): void {
-    graph.nodes!.forEach((node: YNode): void => {
+    graph.nodes.forEach((node: YNode): void => {
       this.adjustNodeSize(node, graph)
     })
 

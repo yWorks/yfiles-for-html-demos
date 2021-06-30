@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -39,6 +39,7 @@ import {
   IModelItem,
   INode,
   Mapper,
+  PolylineEdgeStyle,
   Rect,
   ResultItemMapping,
   SolidColorFill
@@ -49,111 +50,32 @@ import {
   SingleColorNodeStyle,
   SourceTargetNodeStyle
 } from './DemoStyles.js'
+import ContextMenu from '../../utils/ContextMenu.js'
 
 /**
  * Abstract base class for the different algorithm configurations that can be displayed in the demo.
  */
 export default class AlgorithmConfiguration {
   constructor() {
-    this.$directed = false
-    this.$useUniformWeights = false
-    this.$incrementalElements = null
-    this.$descriptionText = ''
-    this.$edgeRemoved = false
-    this.$kValue = 0
-  }
+    // Whether or not the edges should be considered as directed.
+    this.directed = false
 
-  /**
-   * Specifies whether or not the edges should be considered as directed.
-   * @param {boolean} directed true for directed edge, false otherwise
-   */
-  set directed(directed) {
-    this.$directed = directed
-  }
+    // Whether or not to use uniform weights for all edges.
+    this.useUniformWeights = false
 
-  /**
-   * Returns whether or not the edges should be considered as directed.
-   * @return {boolean} directed true for directed edge, false otherwise
-   */
-  get directed() {
-    return this.$directed
-  }
+    // Marks the elements that are changed from user actions, like add/remove node, add/remove edge.
+    this.incrementalElements = null
 
-  /**
-   * Specifies whether or not to use uniform weights for all edges.
-   * @param {boolean} useUniformWeights
-   */
-  set useUniformWeights(useUniformWeights) {
-    this.$useUniformWeights = useUniformWeights
-  }
+    // Whether one or several edge(s) have been removed.
+    this.edgeRemoved = false
 
-  /**
-   * Returns whether or not to use uniform weights for all edges.
-   * @return {boolean}
-   */
-  get useUniformWeights() {
-    return this.$useUniformWeights
-  }
-
-  /**
-   * Sets the k value for use in the k-Core algorithm
-   * @param k value
-   */
-  set kValue(kValue) {
-    this.$kValue = kValue
-  }
-
-  /**
-   * Returns the k value for use in the k-Core algorithm
-   * @returns {number} k value
-   */
-  get kValue() {
-    return this.$kValue
-  }
-
-  /**
-   * Marks the elements that are changed from user actions, like add/remove node, add/remove edge.
-   * @param {Mapper} incrementalElements the incremental elements mapper
-   */
-  set incrementalElements(incrementalElements) {
-    this.$incrementalElements = incrementalElements
-  }
-
-  /**
-   * Returns the elements that are changed from user actions, like add/remove node, add/remove edge.
-   * @return {Mapper} the incremental elements mapper
-   */
-  get incrementalElements() {
-    return this.$incrementalElements
-  }
-
-  /**
-   * Specifies whether an edge(s) have been removed.
-   * @param {boolean} value true if a value has been removed, false otherwise
-   */
-  set edgeRemoved(value) {
-    this.$edgeRemoved = value
-  }
-
-  /**
-   * Returns whether an edge(s) have been removed.
-   * @return {boolean} true if a value has been removed, false otherwise
-   */
-  get edgeRemoved() {
-    return this.$edgeRemoved
-  }
-
-  /**
-   * Must be overridden to return the description text for the selected algorithm.
-   * @returns {string} the description text for the selected algorithm
-   */
-  get descriptionText() {
-    return this.$descriptionText
+    // The k value for use in the k-Core algorithm.
+    this.kValue = 0
   }
 
   /**
    * Calculates the layout and performs post-processing steps.
-   * @param {GraphComponent} graphComponent the given graph component
+   * @param {!GraphComponent} graphComponent the given graph component
    */
   apply(graphComponent) {
     this.runAlgorithm(graphComponent.graph)
@@ -161,23 +83,23 @@ export default class AlgorithmConfiguration {
 
   /**
    * May be overridden to add algorithm-specific entries and functionality to the context menu.
-   * @param {Object} contextMenu the context menu to which the entries are added
-   * @param {INode} item the item that is affected by this context menu
-   * @param {GraphComponent} graphComponent the given graph component
+   * @param {!ContextMenu} contextMenu the context menu to which the entries are added
+   * @param {!INode} item the item that is affected by this context menu
+   * @param {!GraphComponent} graphComponent the given graph component
    */
   populateContextMenu(contextMenu, item, graphComponent) {}
 
   /**
    * Must be overridden to run the selected algorithm.
-   * @param {IGraph} graph the graph on which the algorithm is executed
+   * @param {!IGraph} graph the graph on which the algorithm is executed
    */
   runAlgorithm(graph) {}
 
   /**
    * Returns a node style for marked nodes.
    * @param {number} type the type of node which determines the color of the style
-   * @param {object} gradient whether or not the color is chosen as a gradient or different colors are applied
-   * @returns {SingleColorNodeStyle}
+   * @param {!object} gradient whether or not the color is chosen as a gradient or different colors are applied
+   * @returns {!SingleColorNodeStyle}
    */
   getMarkedNodeStyle(type, gradient) {
     const colors = this.generateColors(gradient)
@@ -188,7 +110,7 @@ export default class AlgorithmConfiguration {
    * Returns a node style to mark source and target nodes of paths.
    * @param {boolean} source true if the node is a source node of a path.
    * @param {boolean} target true if the node is a target node of a path.
-   * @returns {SourceTargetNodeStyle} the marked nodes' style
+   * @returns {!SourceTargetNodeStyle} the marked nodes' style
    */
   getSourceTargetNodeStyle(source, target) {
     let type
@@ -206,9 +128,11 @@ export default class AlgorithmConfiguration {
    * Returns a node style for marked edges.
    * @param {boolean} isDirected whether or not the style draws an arrow
    * @param {number} type the type of node which determines the color of the style
-   * @param {object} [gradient] whether or not the color is chosen as a gradient or different colors are applied
-   * @param {string} [svgColor] the color for the edge
-   * @returns {IEdgeStyle} the marked edges' style
+   * @param  [gradient] whether or not the color is chosen as a gradient or different colors are applied
+   * @param  [svgColor] the color for the edge
+   * @returns {!IEdgeStyle} the marked edges' style
+   * @param {?object} [gradient=null]
+   * @param {?string} [svgColor=null]
    */
   getMarkedEdgeStyle(isDirected, type, gradient = null, svgColor = null) {
     if (!svgColor) {
@@ -220,26 +144,19 @@ export default class AlgorithmConfiguration {
       fill: new SolidColorFill(svgColor),
       type: ArrowType.DEFAULT
     })
-    const noneArrow = IArrow.NONE
 
-    let markedEdgeStyle
     if (gradient != null) {
-      markedEdgeStyle = new SingleColorEdgeStyle(svgColor)
-      markedEdgeStyle.targetArrow = isDirected ? arrow : noneArrow
+      return new SingleColorEdgeStyle(svgColor, isDirected ? arrow : IArrow.NONE)
     } else {
-      markedEdgeStyle = new MultiColorEdgeStyle(svgColor)
-      markedEdgeStyle.thickness = 5
-      markedEdgeStyle.targetArrow = isDirected ? arrow : noneArrow
+      return new MultiColorEdgeStyle(svgColor, isDirected ? arrow : IArrow.NONE, 5)
     }
-
-    return markedEdgeStyle
   }
 
   /**
    * Generates random colors for nodes and edges.
    *
-   * @param {object} gradient whether or not the color is chosen as a gradient or different colors are applied
-   * @returns {Array} an array of strings representing colors in the form of rgb[x,x,x]
+   * @param {?object} gradient whether or not the color is chosen as a gradient or different colors are applied
+   * @returns {!Array.<string>} an array of strings representing colors in the form of rgb[x,x,x]
    */
   generateColors(gradient) {
     if (gradient != null) {
@@ -284,8 +201,8 @@ export default class AlgorithmConfiguration {
   /**
    * Callback that gets the edge weight for a given edge.
    * This implementation retrieves the weights from the labels or alternatively from the edge length.
-   * @param {IEdge} edge the given edge.
-   * @return {number} weight of the edge
+   * @param {!IEdge} edge the given edge.
+   * @returns {number} weight of the edge
    */
   getEdgeWeight(edge) {
     if (this.useUniformWeights) {
@@ -320,19 +237,19 @@ export default class AlgorithmConfiguration {
 
   /**
    * Finds the edge components that are affected based on the elements marked as incremental.
-   * @param {ResultItemMapping} components the existing components
-   * @param {IGraph} graph the given graph
-   * @return {object} object containing the edge affected components
+   * @param {!ResultItemMapping.<IEdge,number>} components the existing components
+   * @param {!IGraph} graph the given graph
+   * @returns {!Set.<number>} the set of indices of the edge affected components
    */
   getAffectedEdgeComponents(components, graph) {
     const affectedComponents = new Set()
 
-    if (this.incrementalElements !== null && typeof this.incrementalElements !== 'undefined') {
+    if (this.incrementalElements && components) {
       this.incrementalElements.entries.forEach(pair => {
         if (graph.contains(pair.key)) {
           graph.edgesAt(pair.key, AdjacencyTypes.ALL).forEach(edge => {
-            if (components) {
-              const componentIdx = components.get(edge)
+            const componentIdx = components.get(edge)
+            if (componentIdx !== null) {
               affectedComponents.add(componentIdx)
             }
           })
@@ -344,19 +261,19 @@ export default class AlgorithmConfiguration {
 
   /**
    * Finds the node components that are affected based on the elements marked as incremental.
-   * @param {ResultItemMapping} components the existing components
-   * @param {IGraph} graph the given graph
-   * @return {object} object containing the affected node components
+   * @param {!ResultItemMapping.<INode,number>} components the existing components
+   * @param {!IGraph} graph the given graph
+   * @returns {!Set.<number>} the set of indices of the node affected components
    */
   getAffectedNodeComponents(components, graph) {
     const affectedComponents = new Set()
 
-    if (this.incrementalElements !== null && typeof this.incrementalElements !== 'undefined') {
+    if (this.incrementalElements && components) {
       this.incrementalElements.entries.forEach(pair => {
-        if (components) {
-          const node = pair.key
-          if (node && graph.contains(node)) {
-            const componentIdx = components.get(node)
+        const node = pair.key
+        if (node && graph.contains(node)) {
+          const componentIdx = components.get(node)
+          if (componentIdx !== null) {
             affectedComponents.add(componentIdx)
           }
         }
@@ -367,37 +284,37 @@ export default class AlgorithmConfiguration {
 
   /**
    * Determines the color of a node or an edge.
-   * @param {Array} colors the existing color array
+   * @param {!Array.<string>} colors the existing color array
    * @param {number} componentIdx the component index of the element
-   * @param {Set} affectedComponents the array of the affected components
-   * @param {Map} color2AffectedComponent the map for the color of each affected component
+   * @param {!Set.<number>} affectedComponents the array of the affected components
+   * @param {!Map.<number,string>} affectedComponent2Color the map for the color of each affected component
    * @param {number} largestComponentIdx the index of the largest component
-   * @param {Array} allComponents an array of all components
-   * @param {IGraph} graph the given graph
-   * @param {IModelItem} element the given element (node/edge)
-   * @return {string} a string representing the element color in rgb[x,x,x] format
+   * @param {!Array.<Array.<IModelItem>>} allComponents an array of all components
+   * @param {!IGraph} graph the given graph
+   * @param {!IModelItem} element the given element (node/edge)
+   * @returns {!string} a string representing the element color in rgb[x,x,x] format
    */
   determineElementColor(
     colors,
     componentIdx,
     affectedComponents,
-    color2AffectedComponent,
+    affectedComponent2Color,
     largestComponentIdx,
     allComponents,
     graph,
     element
   ) {
     // if from scratch, generate colors
-    if (this.incrementalElements === null || typeof this.incrementalElements === 'undefined') {
+    if (!this.incrementalElements) {
       return colors[componentIdx % colors.length]
     } else if (affectedComponents.has(componentIdx)) {
       // if the elements doesn't belong to an affected component
-      if (!color2AffectedComponent.has(componentIdx)) {
+      if (!affectedComponent2Color.has(componentIdx)) {
         let uniqueColor
         // if the component is the larger one, find the color that most of the nodes have
         if (largestComponentIdx === componentIdx && allComponents[componentIdx].length !== 1) {
           const majorColor = this.generateMajorColor(allComponents[componentIdx])
-          if (typeof majorColor !== 'undefined') {
+          if (majorColor) {
             uniqueColor = majorColor
           } else {
             uniqueColor = colors[componentIdx % colors.length]
@@ -410,7 +327,7 @@ export default class AlgorithmConfiguration {
           uniqueColor = AlgorithmConfiguration.hasValidColorTag(element)
             ? element.tag.color
             : this.generateUniqueColor(graph, colors)
-        } else if (IEdge.isInstance(element)) {
+        } else if (element instanceof IEdge) {
           if (
             this.incrementalElements.get(element.sourceNode) &&
             this.incrementalElements.get(element.targetNode)
@@ -428,9 +345,11 @@ export default class AlgorithmConfiguration {
               ? element.tag.color
               : this.generateUniqueColor(graph, colors)
         }
-        color2AffectedComponent.set(componentIdx, uniqueColor)
+        if (uniqueColor) {
+          affectedComponent2Color.set(componentIdx, uniqueColor)
+        }
       }
-      return color2AffectedComponent.get(componentIdx)
+      return affectedComponent2Color.get(componentIdx)
     }
 
     // for the nodes that are not affected, keep their color
@@ -438,10 +357,17 @@ export default class AlgorithmConfiguration {
   }
 
   /**
+   * @param {!INode} item
+   */
+  isIncremental(item) {
+    return this.incrementalElements && this.incrementalElements.get(item)
+  }
+
+  /**
    * Finds the component with the larger number of elements.
-   * @param {Set} affectedComponents the set of the affected components
-   * @param {Array} allComponents an array of all components
-   * @return {number} the index of the largest component
+   * @param {!Set.<number>} affectedComponents the set of the affected components
+   * @param {!Array.<Array.<IModelItem>>} allComponents an array of all components
+   * @returns {number} the index of the largest component
    */
   getLargestComponentIndex(affectedComponents, allComponents) {
     if (allComponents && affectedComponents !== null && affectedComponents.size > 0) {
@@ -458,35 +384,12 @@ export default class AlgorithmConfiguration {
           } else if (
             allComponents[componentIndex].length === allComponents[largestComponentIdx].length
           ) {
-            let largestComponentIncrementalElements = 0
-            allComponents[largestComponentIdx].forEach(item => {
-              if (IEdge.isInstance(item)) {
-                if (this.incrementalElements.get(item.sourceNode)) {
-                  largestComponentIncrementalElements++
-                }
-
-                if (this.incrementalElements.get(item.targetNode)) {
-                  largestComponentIncrementalElements++
-                }
-              } else if (this.incrementalElements.get(item)) {
-                largestComponentIncrementalElements++
-              }
-            })
-
-            let currentComponentIncrementalElements = 0
-            allComponents[componentIndex].forEach(item => {
-              if (IEdge.isInstance(item)) {
-                if (this.incrementalElements.get(item.sourceNode)) {
-                  currentComponentIncrementalElements++
-                }
-
-                if (this.incrementalElements.get(item.targetNode)) {
-                  currentComponentIncrementalElements++
-                }
-              } else if (this.incrementalElements.get(item)) {
-                currentComponentIncrementalElements++
-              }
-            })
+            const largestComponentIncrementalElements = this.countIncrementalElements(
+              allComponents[largestComponentIdx]
+            )
+            const currentComponentIncrementalElements = this.countIncrementalElements(
+              allComponents[componentIndex]
+            )
             largestComponentIdx =
               largestComponentIncrementalElements >= currentComponentIncrementalElements
                 ? componentIndex
@@ -501,10 +404,26 @@ export default class AlgorithmConfiguration {
   }
 
   /**
+   * @param {!Array.<IModelItem>} items
+   */
+  countIncrementalElements(items) {
+    let incrementalElements = 0
+    items.forEach(item => {
+      if (item instanceof IEdge) {
+        if (this.isIncremental(item.sourceNode) || this.isIncremental(item.targetNode)) {
+          incrementalElements++
+        }
+      } else if (item instanceof INode && this.isIncremental(item)) {
+        incrementalElements++
+      }
+    })
+    return incrementalElements
+  }
+
+  /**
    * Finds the color that most of the elements of the component have.
-   * @param {Array} component the components' array
-   * @return {string} a string representing the color that most of the elements of the components have in rgb[x,x,x]
-   *   format
+   * @param {!Array.<IModelItem>} component the components' array
+   * @returns {!string} a string representing the color that most of the elements of the components have in rgb[x,x,x] format
    */
   generateMajorColor(component) {
     const color2Frequency = new Map()
@@ -513,7 +432,7 @@ export default class AlgorithmConfiguration {
     for (let i = 0; i < component.length; i++) {
       const element = component[i]
 
-      if (INode.isInstance(element) || IEdge.isInstance(element)) {
+      if (element instanceof INode || element instanceof IEdge) {
         if (element.tag !== null && element.tag.color !== null && element.tag.color !== undefined) {
           const color = element.tag.color
           if (!color2Frequency.has(color)) {
@@ -529,22 +448,21 @@ export default class AlgorithmConfiguration {
     // finds the color with the maximum frequency
     let maxFrequency = 0
     let colorWithMaxFrequency
-
-    color2Frequency.forEach((frequency, color) => {
+    for (const [color, frequency] of color2Frequency) {
       if (maxFrequency < frequency) {
         maxFrequency = frequency
         colorWithMaxFrequency = color
       }
-    })
+    }
 
     return colorWithMaxFrequency
   }
 
   /**
    * Generates a color that does not already exist in the graph, unless such a color does not exist.
-   * @param {IGraph} graph the given graph
-   * @param {Array} colors an array with the existing colors
-   * @return {string} a string representing a unique color in rgb[x,x,x] format
+   * @param {!IGraph} graph the given graph
+   * @param {!Array.<string>} colors an array with the existing colors
+   * @returns {?string} a string representing a unique color in rgb[x,x,x] format
    */
   generateUniqueColor(graph, colors) {
     const existingColors = new Set()
@@ -575,8 +493,8 @@ export default class AlgorithmConfiguration {
 
   /**
    * Checks if a graph element has a valid color in the tag.
-   * @param {IModelItem} element the given graph element
-   * @return {boolean} true if a graph element has a valid color in the tag, false otherwise.
+   * @param {!IModelItem} element the given graph element
+   * @returns {boolean} true if a graph element has a valid color in the tag, false otherwise.
    */
   static hasValidColorTag(element) {
     return element.tag !== null && element.tag.color !== null && element.tag.color !== undefined
@@ -584,7 +502,7 @@ export default class AlgorithmConfiguration {
 
   /**
    * Resets the default style to all nodes and edges of the graph.
-   * @param {IGraph} graph the graph to be reset.
+   * @param {!IGraph} graph the graph to be reset.
    */
   resetGraph(graph) {
     graph.nodes.forEach(node => {

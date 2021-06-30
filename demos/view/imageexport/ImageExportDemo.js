@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -37,6 +37,8 @@ import {
   HandleInputMode,
   HandlePositions,
   IArrow,
+  IGraph,
+  IHandle,
   IHitTestable,
   ImageNodeStyle,
   Insets,
@@ -58,70 +60,193 @@ import PositionHandler from './PositionHandler.js'
 import FileSaveSupport from '../../utils/FileSaveSupport.js'
 import ServerSideImageExport from './ServerSideImageExport.js'
 import ClientSideImageExport from './ClientSideImageExport.js'
-import {
-  addClass,
-  bindAction,
-  detectInternetExplorerVersion,
-  removeClass,
-  showApp
-} from '../../resources/demo-app.js'
+import { addClass, bindAction, removeClass, showApp } from '../../resources/demo-app.js'
+import { detectInternetExplorerVersion } from '../../utils/Workarounds.js'
+
 import loadJson from '../../resources/load-json.js'
 
-/** the server urls */
+/**
+ * Server URLs for server-side export.
+ */
 const NODE_SERVER_URL = 'http://localhost:3000'
 const JAVA_SERVLET_URL = 'http://localhost:8080/BatikServlet/BatikServlet'
 
-/** @type {GraphComponent} */
-let graphComponent = null
-
-/** @type {ClientSideImageExport} */
-let clientSideImageExport = null
-
-/** @type {ServerSideImageExport} */
-let serverSideImageExport = null
+/**
+ * Handles the client-sided image export.
+ */
+const clientSideImageExport = new ClientSideImageExport()
 
 /**
- * region that will be exported
+ * Handles the server-sided image export.
+ */
+const serverSideImageExport = new ServerSideImageExport()
+
+/**
+ * The area that will be exported.
  * @type {MutableRectangle}
  */
-let exportRect = null
+let exportRect
 
 /**
- * detect IE version for x-browser compatibility
- * @type {number}
+ * The detected IE version for x-browser compatibility.
  */
-let ieVersion = -1
+const ieVersion = detectInternetExplorerVersion()
 
+/**
+ * @param {!object} licenseData
+ */
 function run(licenseData) {
   License.value = licenseData
   if (window.location.protocol === 'file:') {
     alert(
       'This demo features image export with inlined images. ' +
-        'Due to the browsers security settings, images can not be inlined if the demo is started from the file system. ' +
+        'Due to the browsers security settings, images cannot be inlined if the demo is started from the file system. ' +
         'Please start the demo from a web server.'
     )
   }
 
-  // initialize the UI's elements
-  init()
+  // initialize the main GraphComponent
+  const graphComponent = new GraphComponent('graphComponent')
+  initializeInteraction(graphComponent)
+  retainAspectRatio(graphComponent.graph)
 
-  initializeInputModes()
-  keepAspectRatio()
-  initializeGraph()
+  initializeGraph(graphComponent.graph)
+  graphComponent.fitGraphBounds()
 
   // disable the client-side save button in IE9
   if (ieVersion !== -1 && ieVersion <= 9) {
     disableClientSaveButton()
   }
 
-  // disable server-side export in IE9 due to limited XHR CORS support
+  // enable server-side export in any browser except for IE9 due to limited XHR CORS support
   if (ieVersion === -1 || (ieVersion !== -1 && ieVersion > 9)) {
     enableServerSideExportButtons()
   }
 
-  registerCommands()
-
+  registerCommands(graphComponent)
   showApp(graphComponent)
+}
+
+/**
+ * Initializes user interaction.
+ * Aside from basic editing, this demo provides a visual marker (the 'export rectangle') that
+ * determines the area that will be exported. Users may move and resize the marker with their mouse.
+ * @param {!GraphComponent} graphComponent The demo's main graph view.
+ */
+function initializeInteraction(graphComponent) {
+  const geim = new GraphEditorInputMode()
+
+  // create the model for the export rectangle, ...
+  exportRect = new MutableRectangle(-10, 0, 300, 160)
+  // ... visualize it in the canvas, ...
+  const installer = new RectangleIndicatorInstaller(exportRect)
+  installer.addCanvasObject(
+    graphComponent.createRenderContext(),
+    graphComponent.backgroundGroup,
+    exportRect
+  )
+  // ... and make it movable and resizable
+  addExportRectInputModes(geim)
+
+  // assign the configured input mode to the GraphComponent
+  graphComponent.inputMode = geim
+}
+
+/**
+ * Adds the view modes that handle moving and resizing of the export rectangle.
+ * @param {!GraphInputMode} inputMode The demo's main input mode.
+ */
+function addExportRectInputModes(inputMode) {
+  // create a mode that deals with resizing the export rectangle and ...
+  const exportHandleInputMode = new HandleInputMode({
+    // ensure that this mode takes precedence over most other modes
+    // i.e. resizing the export rectangle takes precedence over other interactive editing
+    priority: 1
+  })
+  // ... add it to the demo's main input mode
+  inputMode.add(exportHandleInputMode)
+
+  // create handles for resizing the export rectangle and ...
+  const newDefaultCollectionModel = new ObservableCollection()
+  newDefaultCollectionModel.add(new RectangleHandle(HandlePositions.NORTH_EAST, exportRect))
+  newDefaultCollectionModel.add(new RectangleHandle(HandlePositions.NORTH_WEST, exportRect))
+  newDefaultCollectionModel.add(new RectangleHandle(HandlePositions.SOUTH_EAST, exportRect))
+  newDefaultCollectionModel.add(new RectangleHandle(HandlePositions.SOUTH_WEST, exportRect))
+  // ... add the handles to the input mode that is responsible for resizing the export rectangle
+  exportHandleInputMode.handles = newDefaultCollectionModel
+
+  // create a mode that deals with moving the export rectangle and ...
+  const moveInputMode = new MoveInputMode({
+    // create a custom position handler that moves the export rectangle on mouse events
+    positionHandler: new PositionHandler(exportRect),
+    // create a hit testable that determines if a mouse event occurs 'on' the export rectangle
+    // and thus should be handled by this mode
+    hitTestable: IHitTestable.create((context, location) => {
+      const path = new GeneralPath(5)
+      path.appendRectangle(exportRect, false)
+      return path.pathContains(location, context.hitTestRadius + 3 / context.zoom)
+    }),
+    // ensure that this mode takes precedence over the move input mode used for regular graph
+    // elements
+    priority: 41
+  })
+
+  // ... add it to the demo's main input mode
+  inputMode.add(moveInputMode)
+}
+
+/**
+ * Configures node resize behavior to force resize operations to keep the aspect ratio of the
+ * respective nodes.
+ * @param {!IGraph} graph The demo's graph.
+ */
+function retainAspectRatio(graph) {
+  graph.decorator.nodeDecorator.reshapeHandleProviderDecorator.setFactory(node => {
+    const keepAspectRatio = new NodeReshapeHandleProvider(
+      node,
+      node.lookup(IReshapeHandler.$class),
+      HandlePositions.CORNERS
+    )
+    keepAspectRatio.ratioReshapeRecognizer = EventRecognizers.ALWAYS
+    return keepAspectRatio
+  })
+}
+
+/**
+ * Initializes the graph instance and set default styles.
+ * @param {!IGraph} graph
+ */
+function initializeGraph(graph) {
+  const newPolylineEdgeStyle = new PolylineEdgeStyle()
+  newPolylineEdgeStyle.targetArrow = IArrow.DEFAULT
+  graph.edgeDefaults.style = newPolylineEdgeStyle
+
+  const switchStyle = new ImageNodeStyle('./resources/switch.svg')
+  const workstationStyle = new ImageNodeStyle('./resources/workstation.svg')
+
+  const labelModel = new ExteriorLabelModel()
+  const labelModelParameter1 = labelModel.createParameter(ExteriorLabelModelPosition.SOUTH)
+  const labelModelParameter2 = labelModel.createParameter(ExteriorLabelModelPosition.NORTH)
+
+  const n1 = graph.createNode(new Rect(170, 20, 40, 40), switchStyle)
+  const n2 = graph.createNode(new Rect(20, 100, 40, 40), workstationStyle)
+  const n3 = graph.createNode(new Rect(120, 100, 40, 40), workstationStyle)
+  const n4 = graph.createNode(new Rect(220, 100, 40, 40), workstationStyle)
+  const n5 = graph.createNode(new Rect(320, 100, 40, 40), workstationStyle)
+
+  graph.createEdge(n1, n2)
+  graph.createEdge(n1, n3)
+  graph.createEdge(n1, n4)
+  graph.createEdge(n1, n5)
+
+  graph.addLabel(n1, 'Switch', labelModelParameter2)
+  graph.addLabel(n2, 'Workstation 1', labelModelParameter1)
+  graph.addLabel(n3, 'Workstation 2', labelModelParameter1)
+  graph.addLabel(n4, 'Workstation 3', labelModelParameter1)
+  graph.addLabel(n5, 'Workstation 4', labelModelParameter1)
+
+  // use the workstation as default node style for newly created nodes
+  graph.nodeDefaults.style = workstationStyle
 }
 
 /**
@@ -130,7 +255,6 @@ function run(licenseData) {
 function disableClientSaveButton() {
   const clientSaveButton = document.getElementById('clientPngSaveButton')
   clientSaveButton.setAttribute('style', 'display: none')
-  // add save hint
   const hint = document.createElement('p')
   hint.innerHTML = 'Right-click the image and hit "Save As&hellip;" to save the png file.'
   hint.setAttribute('style', 'margin: 0')
@@ -142,7 +266,7 @@ function disableClientSaveButton() {
 }
 
 /**
- * Enables server-side export buttons
+ * Enables server-side export buttons.
  */
 async function enableServerSideExportButtons() {
   // if a server is available, enable the server export button
@@ -154,21 +278,126 @@ async function enableServerSideExportButtons() {
 }
 
 /**
- * Initializes the UI's elements.
+ * Checks whether or not the given parameters are a valid input for export.
+ * @param {number} scale The desired scale factor for the image export.
+ * @param {number} margin The desired margins for the image export.
+ * @returns {boolean}
  */
-function init() {
-  graphComponent = new GraphComponent('graphComponent')
+function checkInputValues(scale, margin) {
+  if (isNaN(scale) || scale <= 0) {
+    alert('Scale must be a positive number.')
+    return false
+  }
+  if (isNaN(margin) || margin < 0) {
+    alert('Margin must be a non-negative number.')
+    return false
+  }
+  return true
+}
 
-  clientSideImageExport = new ClientSideImageExport()
-  serverSideImageExport = new ServerSideImageExport()
+/**
+ * Requests a server-side export.
+ * @param {!string} svgData A string representation of the SVG document to be exported.
+ * @param {!Size} size The size of the exported image.
+ * @param {!string} url The URL of the service that will convert the given SVG document to a raster image.
+ */
+function requestServerExport(svgData, size, url) {
+  serverSideImageExport.requestFile(url, 'png', svgData, size)
+  hidePopup()
+}
 
-  ieVersion = detectInternetExplorerVersion()
+/**
+ * Shows the export dialog for the client-side graph exports.
+ * @param {?HTMLImageElement} pngImage The DOM representation of the raster image that is exported.
+ */
+function showClientExportDialog(pngImage) {
+  const saveButton = document.getElementById('clientPngSaveButton')
+  const imageContainerInner = document.getElementById('imageContainerInner')
+  imageContainerInner.innerHTML = ''
+
+  if (pngImage === null) {
+    imageContainerInner.innerHTML = `
+<p>
+  Image export in IE9 is possible in general, but requires an older version of canvg.<br>
+  Please refer to this older Version of the Image Export demo, that used the old version of canvg:
+</p>
+<p>
+  <a href="https://github.com/yWorks/yfiles-for-html-demos/tree/v2.3.0.3/demos/view/imageexport" target="_blank">
+  https://github.com/yWorks/yfiles-for-html-demos/tree/v2.3.0.3/demos/view/imageexport</a>
+</p>
+<p>
+  See the index.html and ClientSideImageExport.js for further details.
+</p>
+`
+    saveButton.disabled = true
+  } else {
+    imageContainerInner.appendChild(pngImage)
+
+    const imageButton = cloneAndReplace(saveButton)
+    imageButton.addEventListener(
+      'click',
+      () => {
+        FileSaveSupport.save(pngImage.src, 'graph.png').catch(() => {
+          alert(
+            'Saving directly to the filesystem is not supported by this browser. Please use the server based export instead.'
+          )
+        })
+      },
+      false
+    )
+  }
+
+  showPopup()
+}
+
+/**
+ * Checks if the server at the given URL is alive.
+ * @param {!string} url The URL of the service to check.
+ * @returns {!Promise.<(Response|boolean)>}
+ */
+function isServerAlive(url) {
+  const initObject = {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'text/plain;charset=UTF-8'
+    },
+    body: 'isAlive',
+    mode: 'no-cors'
+  }
+
+  return fetch(url, initObject).catch(() => Promise.resolve(false))
+}
+
+/**
+ * Replaces the given element with a clone. This prevents adding multiple listeners to a button.
+ * @param {!HTMLElement} element The element to replace.
+ * @returns {!HTMLElement}
+ */
+function cloneAndReplace(element) {
+  const clone = element.cloneNode(true)
+  element.parentNode.replaceChild(clone, element)
+  return clone
+}
+
+/**
+ * Hides the export dialog.
+ */
+function hidePopup() {
+  addClass(document.getElementById('popup'), 'hidden')
+}
+
+/**
+ * Shows the export dialog.
+ */
+function showPopup() {
+  removeClass(document.getElementById('popup'), 'hidden')
 }
 
 /**
  * Wires up the UI.
+ * @param {!GraphComponent} graphComponent The demo's main graph view.
  */
-function registerCommands() {
+function registerCommands(graphComponent) {
   const inputScale = document.getElementById('scale')
   const inputMargin = document.getElementById('margin')
   const inputUseRect = document.getElementById('useRect')
@@ -208,6 +437,7 @@ function registerCommands() {
       requestServerExport(svgString, svg.size, JAVA_SERVLET_URL)
     }
   })
+
   bindAction("button[data-command='NodeServerServerExportButton']", async () => {
     const scale = parseFloat(inputScale.value)
     const margin = parseFloat(inputMargin.value)
@@ -224,237 +454,7 @@ function registerCommands() {
     }
   })
 
-  document.getElementById('closeButton').addEventListener(
-    'click',
-    () => {
-      hidePopup()
-    },
-    false
-  )
-}
-
-/**
- * Checks whether or not the given parameters are a valid input for export.
- * @param {number} scale
- * @param {number} margin
- * @return {boolean}
- */
-function checkInputValues(scale, margin) {
-  if (isNaN(scale) || scale <= 0) {
-    alert('Scale must be a positive number.')
-    return false
-  }
-  if (isNaN(margin) || margin < 0) {
-    alert('Margin must be a non-negative number.')
-    return false
-  }
-  return true
-}
-
-/**
- * Requests a server-side export.
- * @param {String} svgData
- * @param {Size} size
- * @param {string} url
- */
-function requestServerExport(svgData, size, url) {
-  serverSideImageExport.requestFile(url, 'png', svgData, size)
-  hidePopup()
-}
-
-/**
- * Shows the export dialog for the client-side graph exports.
- * @param {HTMLImageElement|null} pngImage
- */
-function showClientExportDialog(pngImage) {
-  const imageContainerInner = document.getElementById('imageContainerInner')
-  imageContainerInner.innerHTML = ''
-
-  if (pngImage === null) {
-    imageContainerInner.innerHTML = `
-<p>
-  Image export in IE9 is possible in general, but requires an older version of canvg.<br>
-  Please refer to this older Version of the Image Export demo, that used the old version of canvg:
-</p>
-<p>
-  <a href="https://github.com/yWorks/yfiles-for-html-demos/tree/v2.3.0.3/demos/view/imageexport" target="_blank">
-  https://github.com/yWorks/yfiles-for-html-demos/tree/v2.3.0.3/demos/view/imageexport</a>
-</p>
-<p>
-  See the index.html and ClientSideImageExport.js for further details.
-</p>
-`
-    document.getElementById('clientPngSaveButton').disabled = true
-  } else {
-    imageContainerInner.appendChild(pngImage)
-
-    const imageButton = cloneAndReplace(document.getElementById('clientPngSaveButton'))
-    imageButton.addEventListener(
-      'click',
-      () => {
-        FileSaveSupport.save(pngImage.src, 'graph.png').catch(() => {
-          alert(
-            'Saving directly to the filesystem is not supported by this browser. Please use the server based export instead.'
-          )
-        })
-      },
-      false
-    )
-  }
-
-  showPopup()
-}
-
-/**
- * Initializes the input modes.
- */
-function initializeInputModes() {
-  graphComponent.inputMode = new GraphEditorInputMode()
-
-  // create the model for the export rectangle
-  exportRect = new MutableRectangle(-10, 0, 300, 160)
-
-  // visualize it
-  const installer = new RectangleIndicatorInstaller(exportRect)
-  installer.addCanvasObject(
-    graphComponent.createRenderContext(),
-    graphComponent.backgroundGroup,
-    exportRect
-  )
-
-  addExportRectInputModes(graphComponent.inputMode)
-}
-
-/**
- * Since this demo uses image nodes, we make sure that they always keep their aspect ratio during
- * resize.
- */
-function keepAspectRatio() {
-  graphComponent.graph.decorator.nodeDecorator.reshapeHandleProviderDecorator.setFactory(node => {
-    const keepAspectRatio = new NodeReshapeHandleProvider(
-      node,
-      node.lookup(IReshapeHandler.$class),
-      HandlePositions.CORNERS
-    )
-    keepAspectRatio.ratioReshapeRecognizer = EventRecognizers.ALWAYS
-    return keepAspectRatio
-  })
-}
-
-/**
- * Adds the view modes that handle the resizing and movement of the export rectangle.
- * @param {GraphInputMode} inputMode
- */
-function addExportRectInputModes(inputMode) {
-  // create a mode that deals with the handles
-  const exportHandleInputMode = new HandleInputMode()
-  exportHandleInputMode.priority = 1
-  // add it to the graph editor mode
-  inputMode.add(exportHandleInputMode)
-
-  // now the handles
-  const newDefaultCollectionModel = new ObservableCollection()
-  newDefaultCollectionModel.add(new RectangleHandle(HandlePositions.NORTH_EAST, exportRect))
-  newDefaultCollectionModel.add(new RectangleHandle(HandlePositions.NORTH_WEST, exportRect))
-  newDefaultCollectionModel.add(new RectangleHandle(HandlePositions.SOUTH_EAST, exportRect))
-  newDefaultCollectionModel.add(new RectangleHandle(HandlePositions.SOUTH_WEST, exportRect))
-  exportHandleInputMode.handles = newDefaultCollectionModel
-
-  // create a mode that allows for dragging the export rectangle at the sides
-  const moveInputMode = new MoveInputMode()
-  moveInputMode.positionHandler = new PositionHandler(exportRect)
-  moveInputMode.hitTestable = IHitTestable.create((context, location) => {
-    const path = new GeneralPath(5)
-    path.appendRectangle(exportRect, false)
-    return path.pathContains(location, context.hitTestRadius + 3 / context.zoom)
-  })
-
-  // add it to the edit mode
-  moveInputMode.priority = 41
-  inputMode.add(moveInputMode)
-}
-
-/**
- * Initializes the graph instance and set default styles.
- */
-function initializeGraph() {
-  const graph = graphComponent.graph
-  const newPolylineEdgeStyle = new PolylineEdgeStyle()
-  newPolylineEdgeStyle.targetArrow = IArrow.DEFAULT
-  graph.edgeDefaults.style = newPolylineEdgeStyle
-
-  const switchStyle = new ImageNodeStyle('./resources/switch.svg')
-  const workstationStyle = new ImageNodeStyle('./resources/workstation.svg')
-
-  const labelModel = new ExteriorLabelModel()
-  const labelModelParameter1 = labelModel.createParameter(ExteriorLabelModelPosition.SOUTH)
-  const labelModelParameter2 = labelModel.createParameter(ExteriorLabelModelPosition.NORTH)
-
-  // create sample graph
-  const n1 = graph.createNode(new Rect(170, 20, 40, 40), switchStyle)
-  const n2 = graph.createNode(new Rect(20, 100, 40, 40), workstationStyle)
-  const n3 = graph.createNode(new Rect(120, 100, 40, 40), workstationStyle)
-  const n4 = graph.createNode(new Rect(220, 100, 40, 40), workstationStyle)
-  const n5 = graph.createNode(new Rect(320, 100, 40, 40), workstationStyle)
-
-  graph.createEdge(n1, n2)
-  graph.createEdge(n1, n3)
-  graph.createEdge(n1, n4)
-  graph.createEdge(n1, n5)
-
-  graph.addLabel(n1, 'Switch', labelModelParameter2)
-  graph.addLabel(n2, 'Workstation 1', labelModelParameter1)
-  graph.addLabel(n3, 'Workstation 2', labelModelParameter1)
-  graph.addLabel(n4, 'Workstation 3', labelModelParameter1)
-  graph.addLabel(n5, 'Workstation 4', labelModelParameter1)
-
-  // set the workstation as default node style
-  graph.nodeDefaults.style = workstationStyle
-
-  graphComponent.fitGraphBounds()
-}
-
-/**
- * Check if the server at <code>url</code> is alive.
- * @param {string} url
- * @return {Promise}
- */
-function isServerAlive(url) {
-  const initObject = {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'text/plain;charset=UTF-8'
-    },
-    body: 'isAlive',
-    mode: 'no-cors'
-  }
-
-  return fetch(url, initObject).catch(() => Promise.resolve(false))
-}
-
-/**
- * Replaces the given element with a clone. This prevents adding multiple listeners to a button.
- * @param {HTMLElement} element
- * @return {HTMLElement}
- */
-function cloneAndReplace(element) {
-  const clone = element.cloneNode(true)
-  element.parentNode.replaceChild(clone, element)
-  return clone
-}
-
-/**
- * Hides the export dialog.
- */
-function hidePopup() {
-  addClass(document.getElementById('popup'), 'hidden')
-}
-
-/**
- * Shows the export dialog.
- */
-function showPopup() {
-  removeClass(document.getElementById('popup'), 'hidden')
+  bindAction('#closeButton', hidePopup)
 }
 
 // run the demo

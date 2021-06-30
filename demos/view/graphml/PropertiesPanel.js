@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -27,6 +27,7 @@
  **
  ***************************************************************************/
 import { HashMap, IEdge, IModelItem, INode, IPort, KeyScope, KeyType, List } from 'yfiles'
+import GraphMLProperty from './GraphMLProperty.js'
 import PropertiesPanelUI from './PropertiesPanelUI.js'
 
 /**
@@ -34,19 +35,19 @@ import PropertiesPanelUI from './PropertiesPanelUI.js'
  */
 export class PropertiesPanel {
   /**
-   * @param {HTMLElement} div
+   * @param {!HTMLElement} div
    */
   constructor(div) {
     this.itemMap = new HashMap()
-    /** @type {HashMap.<GraphMLProperty,>} */
     this.graphMap = new HashMap()
-    this.currentItem = null
+    this._currentItem = null
+    this.somethingChangedListener = () => {}
     this.ui = new PropertiesPanelUI(div)
 
     // register the callback that is called when a new item property has been added
     this.ui.itemPropertyAddedCallback = (name, value) => {
       const scope = this.getCurrentItemScope()
-      if (scope !== null) {
+      if (scope) {
         const property = this.addItemProperty(name, KeyType.STRING, scope)
         this.setItemProperty(this.currentItem, property, value)
         this.ui.addItemProperty(property, value)
@@ -76,7 +77,7 @@ export class PropertiesPanel {
 
   /**
    * Gets the graph and item properties.
-   * @type {IEnumerable.<GraphMLProperty>}
+   * @type {!List.<GraphMLProperty>}
    */
   get properties() {
     const list = new List()
@@ -87,10 +88,10 @@ export class PropertiesPanel {
 
   /**
    * Adds a new item property with the given name, type and scope.
-   * @param {string} propertyName
-   * @param {KeyType} type
-   * @param {KeyScope} keyScope
-   * @return {GraphMLProperty}
+   * @param {!string} propertyName
+   * @param {!KeyType} type
+   * @param {!KeyScope} keyScope
+   * @returns {!GraphMLProperty}
    */
   addItemProperty(propertyName, type, keyScope) {
     const property = new GraphMLProperty()
@@ -104,9 +105,9 @@ export class PropertiesPanel {
 
   /**
    * Adds a new graph property with the given name and type.
-   * @param {string} propertyName
-   * @param {KeyType} type
-   * @return {GraphMLProperty}
+   * @param {!string} propertyName
+   * @param {!KeyType} type
+   * @returns {!GraphMLProperty}
    */
   addGraphProperty(propertyName, type) {
     const property = new GraphMLProperty()
@@ -120,33 +121,35 @@ export class PropertiesPanel {
 
   /**
    * Gets the value for a given item and property.
-   * @param {GraphMLProperty} property
-   * @param {IModelItem} item
-   * @return {Object}
+   * @param {!IModelItem} item
+   * @param {!GraphMLProperty} property
+   * @returns {*}
    */
-  getItemValue(property, item) {
-    const propertyDict = this.itemMap.get(property)
-    if (propertyDict.has(item)) {
-      return this.itemMap.get(property).get(item)
+  getItemValue(item, property) {
+    const propertiesMap = this.itemMap.get(property)
+    if (propertiesMap && propertiesMap.has(item)) {
+      return propertiesMap.get(item)
     }
     return null
   }
 
   /**
    * Sets the property value for a given item.
-   * @param {IModelItem} item
-   * @param {GraphMLProperty} property
-   * @param {object} value
+   * @param {!IModelItem} item
+   * @param {!GraphMLProperty} property
+   * @param {*} value
    */
   setItemProperty(item, property, value) {
-    const dict = this.itemMap.get(property)
-    dict.set(item, value)
+    const propertiesMap = this.itemMap.get(property)
+    if (propertiesMap) {
+      propertiesMap.set(item, value)
+    }
   }
 
   /**
    * Gets the graph value for the given property.
-   * @param {GraphMLProperty} property
-   * @return {Object}
+   * @param {!GraphMLProperty} property
+   * @returns {*}
    */
   getGraphValue(property) {
     if (this.graphMap.has(property)) {
@@ -157,8 +160,8 @@ export class PropertiesPanel {
 
   /**
    * Sets the graph value for the given property.
-   * @param {GraphMLProperty} property
-   * @param {object} value
+   * @param {!GraphMLProperty} property
+   * @param {*} value
    */
   setGraphProperty(property, value) {
     this.graphMap.set(property, value)
@@ -174,18 +177,28 @@ export class PropertiesPanel {
   }
 
   /**
-   * Sets the item that is currently being displayed.
-   * @param {IModelItem} currentItem
+   * @type {?IModelItem}
    */
-  setCurrentItem(currentItem) {
-    this.ui.setCurrentItemVisibility(currentItem !== null)
+  get currentItem() {
+    return this._currentItem
+  }
+
+  /**
+   * Sets the item that is currently being displayed.
+   * @type {?IModelItem}
+   */
+  set currentItem(currentItem) {
+    this.ui.setCurrentItemVisibility(!!currentItem)
     this.ui.clearItemProperties()
-    this.currentItem = currentItem
-    this.itemMap.keys.forEach(property => {
-      if (PropertiesPanel.suitsScope(currentItem, property.keyScope)) {
-        this.ui.addItemProperty(property, this.getItemValue(property, currentItem))
-      }
-    })
+    this._currentItem = currentItem
+
+    if (currentItem) {
+      this.itemMap.keys.forEach(property => {
+        if (PropertiesPanel.suitsScope(currentItem, property.keyScope)) {
+          this.ui.addItemProperty(property, this.getItemValue(currentItem, property))
+        }
+      })
+    }
   }
 
   /**
@@ -199,45 +212,39 @@ export class PropertiesPanel {
 
   /**
    * Parses the string value for the given key type.
-   * @param {string} newVal The value to parse
-   * @param {KeyType} keyType The target type
-   * @return {Object} The parsed value.
+   * @param {!string} newVal The value to parse
+   * @param {!KeyType} keyType The target type
+   * @returns {*} The parsed value.
    */
   static parseValue(newVal, keyType) {
-    let val = newVal
     switch (keyType) {
       case KeyType.INT:
-        val = Number.parseInt(newVal)
-        break
+        return Number.parseInt(newVal)
       case KeyType.LONG:
-        val = Number.parseInt(newVal)
-        break
+        return Number.parseInt(newVal)
       case KeyType.FLOAT:
-        val = Number.parseFloat(newVal)
-        break
+        return Number.parseFloat(newVal)
       case KeyType.DOUBLE:
-        val = Number.parseFloat(newVal)
-        break
+        return Number.parseFloat(newVal)
       case KeyType.BOOLEAN:
-        val = newVal
-        break
+        return !!newVal
       default:
+        return newVal
     }
-    return val
   }
 
   /**
    * Gets the scope that fits the current item.
-   * @return {KeyScope}
+   * @returns {?KeyScope}
    */
   getCurrentItemScope() {
-    if (INode.isInstance(this.currentItem)) {
+    if (this.currentItem instanceof INode) {
       return KeyScope.NODE
     }
-    if (IEdge.isInstance(this.currentItem)) {
+    if (this.currentItem instanceof IEdge) {
       return KeyScope.EDGE
     }
-    if (IPort.isInstance(this.currentItem)) {
+    if (this.currentItem instanceof IPort) {
       return KeyScope.PORT
     }
     return null
@@ -245,20 +252,20 @@ export class PropertiesPanel {
 
   /**
    * Checks if the given item suits the given scope.
-   * @param {IModelItem} modelItem
-   * @param {KeyScope} scope
-   * @return {boolean}
+   * @param {!IModelItem} modelItem
+   * @param {!KeyScope} scope
+   * @returns {boolean}
    */
   static suitsScope(modelItem, scope) {
     switch (scope) {
       case KeyScope.ALL:
         return true
       case KeyScope.NODE:
-        return INode.isInstance(modelItem)
+        return modelItem instanceof INode
       case KeyScope.EDGE:
-        return IEdge.isInstance(modelItem)
+        return modelItem instanceof IEdge
       case KeyScope.PORT:
-        return IPort.isInstance(modelItem)
+        return modelItem instanceof IPort
       default:
         return false
     }
@@ -266,7 +273,7 @@ export class PropertiesPanel {
 
   /**
    * Called when data has changed.
-   * @param {function} listener the listener which gets notified when something changed.
+   * @param {!function} listener the listener which gets notified when something changed.
    */
   addSomethingChangedListener(listener) {
     this.somethingChangedListener = listener
@@ -276,37 +283,13 @@ export class PropertiesPanel {
    * Called when data has changed.
    */
   removeSomethingChangedListener() {
-    this.somethingChangedListener = null
+    this.somethingChangedListener = () => {}
   }
 
   /**
    * Notifies the listener if there is one that something changed.
    */
   onSomethingChanged() {
-    if (this.somethingChangedListener !== null) {
-      this.somethingChangedListener()
-    }
-  }
-}
-
-/**
- * Models a property of the GraphML content.
- */
-export class GraphMLProperty {
-  constructor() {
-    /** @type {Object} */
-    this.defaultValue = null
-
-    /** @type {boolean} */
-    this.defaultExists = false
-
-    /** @type {string} */
-    this.name = null
-
-    /** @type {KeyType} */
-    this.type = KeyType.INT
-
-    /** @type {KeyScope} */
-    this.keyScope = KeyScope.ALL
+    this.somethingChangedListener()
   }
 }

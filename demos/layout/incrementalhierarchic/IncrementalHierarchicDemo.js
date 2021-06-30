@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -27,6 +27,7 @@
  **
  ***************************************************************************/
 import {
+  CanvasComponent,
   GivenLayersLayerer,
   GraphComponent,
   GraphEditorInputMode,
@@ -46,7 +47,8 @@ import {
   MinimumNodeSizeStage,
   PortConstraint,
   PortConstraintKeys,
-  Size
+  Size,
+  IInputMode
 } from 'yfiles'
 
 import PortConstraintBendHandle from './PortConstraintBendHandle.js'
@@ -64,6 +66,7 @@ import loadJson from '../../resources/load-json.js'
  * Create new edges and watch the routings being calculated immediately.
  * Drag the first and last bend of an edge to interactively assign or reset port constraints.
  * Use the context menu to reroute selected edges or optimize selected nodes locations.
+ * @param {!object} licenseData
  */
 function run(licenseData) {
   License.value = licenseData
@@ -85,10 +88,10 @@ function run(licenseData) {
 }
 
 /** @type {GraphComponent} */
-let graphComponent = null
+let graphComponent
 
 /** @type {IGraph} */
-let graph = null
+let graph
 
 function registerCommands() {
   bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent)
@@ -114,7 +117,7 @@ function initializeInputModes() {
 /**
  * Creates the default input mode for the {@link GraphComponent} a
  * {@link GraphEditorInputMode}.
- * @return {IInputMode} a specialized GraphEditorInputMode instance
+ * @returns {!IInputMode} a specialized GraphEditorInputMode instance
  */
 function createEditorMode() {
   const mode = new GraphEditorInputMode({
@@ -125,20 +128,20 @@ function createEditorMode() {
   mode.createEdgeInputMode.allowCreateBend = false
 
   // register hooks whenever something is dragged or resized
-  mode.handleInputMode.addDragFinishedListener((sender, args) => {
+  mode.handleInputMode.addDragFinishedListener((_sender, _args) => {
     updateLayout()
   })
-  mode.moveInputMode.addDragFinishedListener((sender, args) => {
+  mode.moveInputMode.addDragFinishedListener((_sender, _args) => {
     updateLayout()
   })
   // ... and when new nodes are created interactively
-  mode.addNodeCreatedListener((sender, args) => {
+  mode.addNodeCreatedListener((_sender, args) => {
     const newLayer = layerVisual.getLayer(args.item.layout.center)
     newLayerMapper.set(args.item, newLayer)
     updateLayout()
   })
   // ... or edges
-  mode.createEdgeInputMode.addEdgeCreatedListener((sender, args) => {
+  mode.createEdgeInputMode.addEdgeCreatedListener((_sender, args) => {
     incrementalEdges.add(args.item)
     updateLayout()
   })
@@ -156,13 +159,13 @@ function createEditorMode() {
     }
   })
 
-  // Add and event listener that populates the context menu according to the hit elements, or cancels showing a menu.
+  // Add an event listener that populates the context menu according to the hit elements, or cancels showing a menu.
   // This PopulateItemContextMenu is fired when calling the ContextMenuInputMode.shouldOpenMenu method above.
   mode.addPopulateItemContextMenuListener((sender, args) => {
     contextMenu.clearItems()
     // see if it's a node but not a not empty group node
     const item = args.item
-    if (INode.isInstance(item) && !graph.isGroupNode(item)) {
+    if (item instanceof INode && !graph.isGroupNode(item)) {
       // see if it's already selected
       const selectedNodes = graphComponent.selection.selectedNodes
       if (!selectedNodes.isSelected(item)) {
@@ -173,14 +176,14 @@ function createEditorMode() {
       selectedNodes.setSelected(item, true)
       graphComponent.currentItem = item
       // mark all selected nodes for incremental layout
-      contextMenu.addMenuItem('Reinsert Incrementally', event => {
+      contextMenu.addMenuItem('Reinsert Incrementally', () => {
         incrementalNodes.addRange(selectedNodes)
         updateLayout()
       })
       args.handled = true
     }
     // if it's an edge...
-    if (IEdge.isInstance(item)) {
+    if (item instanceof IEdge) {
       // update selection state
       const selectedEdges = graphComponent.selection.selectedEdges
       if (!selectedEdges.isSelected(item)) {
@@ -189,7 +192,7 @@ function createEditorMode() {
       selectedEdges.setSelected(item, true)
       graphComponent.currentItem = item
       // and offer option to reroute selected edges
-      contextMenu.addMenuItem('Reroute', event => {
+      contextMenu.addMenuItem('Reroute', () => {
         incrementalEdges.addRange(selectedEdges)
         updateLayout()
       })
@@ -332,7 +335,7 @@ function initializeGraph() {
   graph.decorator.bendDecorator.handleDecorator.setImplementationWrapper(
     bend =>
       bend.owner.bends.get(0) === bend || bend.owner.bends.get(bend.owner.bends.size - 1) === bend,
-    createBendHandle.bind(this)
+    createBendHandle
   )
 
   // create a small sample graph with given layers
@@ -404,9 +407,9 @@ function createSampleGraph() {
 
 /**
  * Callback that creates the bend IHandle for the first and last bends.
- * @param {IBend} bend The bend.
- * @param {IHandle} baseHandle The original implementation to delegate to.
- * @return {IHandle} The new handle that allows for interactively assign the port constraints.
+ * @param {?IBend} bend The bend.
+ * @param {?IHandle} baseHandle The original implementation to delegate to.
+ * @returns {?IHandle} The new handle that allows for interactively assign the port constraints.
  */
 function createBendHandle(bend, baseHandle) {
   if (bend.owner.bends.get(0) === bend) {
@@ -424,13 +427,13 @@ function createBendHandle(bend, baseHandle) {
  * Visualizes the layers and manages layer regions and contains tests.
  * @type {LayerVisual}
  */
-let layerVisual = null
+let layerVisual
 
 /**
  * holds for each node the layer
- * @type {IMapper.<INode,number>}
+ * @type {Mapper.<INode,number>}
  */
-let layerMapper = null
+let layerMapper
 
 /**
  * whether a layout is currently running
@@ -442,31 +445,31 @@ let layouting = false
  * holds temporary layer reassignments that will be assigned during the next layout
  * @type {Mapper.<INode,number>}
  */
-let newLayerMapper = null
+let newLayerMapper
 
 /**
  * holds for each edge a port constraint for the source end
- * @type {IMapper.<IEdge,PortConstraint>}
+ * @type {Mapper.<IEdge,PortConstraint>}
  */
-let sourcePortConstraints = null
+let sourcePortConstraints
 
 /**
  * holds for each edge a port constraint for the target end
- * @type {IMapper.<IEdge,PortConstraint>}
+ * @type {Mapper.<IEdge,PortConstraint>}
  */
-let targetPortConstraints = null
+let targetPortConstraints
 
 /**
  * holds a list of nodes to insert incrementally during the next layout
  * @type {List.<INode>}
  */
-let incrementalNodes = null
+let incrementalNodes
 
 /**
  * holds a list of edges to reroute incrementally during the next layout
  * @type {List.<IEdge>}
  */
-let incrementalEdges = null
+let incrementalEdges
 
 // start demo
 loadJson().then(run)

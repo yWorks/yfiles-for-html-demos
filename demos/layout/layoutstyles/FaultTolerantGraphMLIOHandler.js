@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -27,35 +27,19 @@
  **
  ***************************************************************************/
 import {
-  ArcEdgeStyle,
-  BevelNodeStyle,
-  Class,
-  DefaultLabelStyle,
-  GeneralPathNodeStyle,
+  GraphComponent,
   GraphItemTypes,
   GraphMLIOHandler,
-  IconLabelStyle,
-  ImageNodeStyle,
-  NodeStyleLabelStyleAdapter,
-  NodeStylePortStyleAdapter,
-  PanelNodeStyle,
-  PolylineEdgeStyle,
+  GraphMLParser,
+  IEdge,
+  IGraph,
+  INode,
+  Mapper,
   SerializationProperties,
-  ShapeNodeStyle,
-  ShinyPlateNodeStyle,
-  StringTemplateLabelStyle,
-  StringTemplateNodeStyle,
-  StringTemplatePortStyle,
   StripeTypes,
-  TableNodeStyle,
-  TemplateLabelStyle,
-  TemplateNodeStyle,
-  TemplatePortStyle,
-  WebGLImageNodeStyle,
-  WebGLPolylineEdgeStyle,
-  WebGLShapeNodeStyle,
-  WebGLTaperedEdgeStyle
+  YBoolean
 } from 'yfiles'
+import DemoStyles, { DemoSerializationListener } from '../../resources/demo-styles.js'
 
 /**
  * This GraphML IO Handler can read graphs with unknown styles.
@@ -63,22 +47,17 @@ import {
  * First, it reads with default settings. If this fails, reading styles is disabled for the next
  * try.
  */
-export class FaultTolerantGraphMLIOHandler extends GraphMLIOHandler {
+class FaultTolerantGraphMLIOHandler extends GraphMLIOHandler {
   constructor() {
     super()
-    /**
-     * Specifies whether reading styles is disabled.
-     * @type {boolean}
-     * @private
-     */
     this.disableStyles = false
-    /**
-     * An optional callback that is executed before the second try.
-     * @type {function(Error)}
-     */
     this.onRetry = null
   }
 
+  /**
+   * @param {!GraphMLParser} parser
+   * @param {!IGraph} graph
+   */
   configureGraphMLParser(parser, graph) {
     super.configureGraphMLParser(parser, graph)
     parser.setDeserializationProperty(
@@ -91,24 +70,42 @@ export class FaultTolerantGraphMLIOHandler extends GraphMLIOHandler {
     )
   }
 
+  /**
+   * @param {!IGraph} graph
+   * @param {!Document} document
+   * @returns {!Promise.<IGraph>}
+   */
   async readFromDocument(graph, document) {
     return this.retry(() => super.readFromDocument(graph, document))
   }
 
-  readFromURL(graph, url) {
+  /**
+   * @param {!IGraph} graph
+   * @param {!string} url
+   * @returns {!Promise.<IGraph>}
+   */
+  async readFromURL(graph, url) {
     return this.retry(() => super.readFromURL(graph, url))
   }
 
+  /**
+   * @param {!function} read
+   * @returns {!Promise.<IGraph>}
+   */
   async retry(read) {
     try {
       this.disableStyles = false
       return await read()
-    } catch (e) {
-      if (!e.message || e.message.indexOf('Unable to map XML element') === -1) {
-        throw e
+    } catch (err) {
+      if (
+        !(err instanceof Error) ||
+        err.message == null ||
+        err.message.indexOf('Unable to map XML element') === -1
+      ) {
+        throw err
       }
       if (typeof this.onRetry === 'function') {
-        this.onRetry(e)
+        this.onRetry(err)
       }
 
       // retry with styles disabled
@@ -118,30 +115,47 @@ export class FaultTolerantGraphMLIOHandler extends GraphMLIOHandler {
   }
 }
 
-export function ensureDefaultStyles() {
-  Class.ensure(
-    ArcEdgeStyle,
-    BevelNodeStyle,
-    DefaultLabelStyle,
-    GeneralPathNodeStyle,
-    IconLabelStyle,
-    ImageNodeStyle,
-    NodeStyleLabelStyleAdapter,
-    NodeStylePortStyleAdapter,
-    PanelNodeStyle,
-    PolylineEdgeStyle,
-    ShapeNodeStyle,
-    ShinyPlateNodeStyle,
-    StringTemplateLabelStyle,
-    StringTemplateNodeStyle,
-    StringTemplatePortStyle,
-    TableNodeStyle,
-    TemplateLabelStyle,
-    TemplateNodeStyle,
-    TemplatePortStyle,
-    WebGLImageNodeStyle,
-    WebGLPolylineEdgeStyle,
-    WebGLShapeNodeStyle,
-    WebGLTaperedEdgeStyle
+/**
+ * Creates a preconfigured GraphMLIOHandler that supports all styles that are used in this demo.
+ * @param {!GraphComponent} [graphComponent]
+ * @returns {!GraphMLIOHandler}
+ */
+export function createConfiguredGraphMLIOHandler(graphComponent) {
+  const graphMLIOHandler = new FaultTolerantGraphMLIOHandler()
+  // enable serialization of the demo styles - without a namespace mapping, serialization will fail
+  graphMLIOHandler.addXamlNamespaceMapping(
+    'http://www.yworks.com/yFilesHTML/demos/FlatDemoStyle/1.0',
+    DemoStyles
   )
+  graphMLIOHandler.addHandleSerializationListener(DemoSerializationListener)
+
+  if (graphComponent) {
+    const selectedEdges = new Mapper()
+    const selectedNodes = new Mapper()
+
+    // read selection state for edges ...
+    graphMLIOHandler.addInputMapper(IEdge.$class, YBoolean.$class, 'SelectedEdges', selectedEdges)
+    // ... and nodes.
+    graphMLIOHandler.addInputMapper(INode.$class, YBoolean.$class, 'SelectedNodes', selectedNodes)
+
+    // set selection state for edges and nodes once parsing is finished
+    graphMLIOHandler.addParsedListener((sender, args) => {
+      const selection = graphComponent.selection
+      selection.clear()
+
+      const graph = graphComponent.graph
+      for (const node of graph.nodes) {
+        if (selectedNodes.get(node)) {
+          selection.setSelected(node, true)
+        }
+      }
+      for (const edge of graph.edges) {
+        if (selectedEdges.get(edge)) {
+          selection.setSelected(edge, true)
+        }
+      }
+    })
+  }
+
+  return graphMLIOHandler
 }

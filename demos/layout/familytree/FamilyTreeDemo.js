@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -36,6 +36,8 @@ import {
   GraphViewerInputMode,
   IArrow,
   ICommand,
+  IGraph,
+  INode,
   InteriorLabelModel,
   License,
   PolylineEdgeStyle,
@@ -48,34 +50,29 @@ import { bindCommand, showApp } from '../../resources/demo-app.js'
 import loadJson from '../../resources/load-json.js'
 import GraphBuilderData from './resources/kennedy-family.js'
 
-/** @type {GraphComponent} */
-let graphComponent = null
-
+/**
+ * @param {!object} licenseData
+ */
 function run(licenseData) {
   License.value = licenseData
 
   // Initialize the GraphComponent and place it in the div with CSS selector #graphComponent
-  graphComponent = new GraphComponent('#graphComponent')
+  const graphComponent = new GraphComponent('#graphComponent')
 
   // Configure interaction
   graphComponent.inputMode = new GraphViewerInputMode()
 
   // Configures default styles for the edges
-  setDefaultEdgeStyle()
+  setDefaultEdgeStyle(graphComponent.graph)
 
   // Read a sample graph from an embedded resource file
-  createSampleGraph()
-
-  // Sets the nodes's styles, the male node will be blue,
-  // the female node will be pink and the family node that connect
-  // partners with each other and their children will be gray and circle.
-  setFamilyNodesStyle()
+  createSampleGraph(graphComponent.graph)
 
   // Apply the family tree layout on the graph
-  runLayout()
+  runLayout(graphComponent)
 
   // Bind the demo buttons to their commands
-  registerCommands()
+  registerCommands(graphComponent)
 
   // Initialize the demo application's CSS and Javascript for the description
   showApp(graphComponent)
@@ -84,8 +81,9 @@ function run(licenseData) {
 /**
  * Applies the family tree layout using the nodes' types stored in the tags.
  * The node's type is important to configure the layout algorithm.
+ * @param {!GraphComponent} graphComponent
  */
-function runLayout() {
+function runLayout(graphComponent) {
   const familyTreeLayout = new FamilyTreeLayout()
   const familyTreeLayoutData = new FamilyTreeLayoutData({
     familyTypes: node => {
@@ -96,12 +94,15 @@ function runLayout() {
           return FamilyType.FEMALE
         case 'FAMILY':
           return FamilyType.FAMILY
+        default:
+          return null
       }
     }
   })
   graphComponent.morphLayout(familyTreeLayout, '1s', familyTreeLayoutData).catch(error => {
-    if (typeof window.reportError === 'function') {
-      window.reportError(error)
+    const reporter = window.reportError
+    if (typeof reporter === 'function') {
+      reporter(error)
     } else {
       throw error
     }
@@ -110,59 +111,10 @@ function runLayout() {
 
 /**
  * Creates the sample graph.
+ * @param {!IGraph} graph
  */
-function createSampleGraph() {
-  const graph = graphComponent.graph
-
-  // Creates styles for the labels in the nodes
-  const namesStyle = new DefaultLabelStyle({
-    font: '14px Tahoma',
-    textFill: 'black',
-    horizontalTextAlignment: 'Center',
-    insets: [-10, 0, 0, 0]
-  })
-  const dateStyle = new DefaultLabelStyle({
-    font: '11px Tahoma',
-    textFill: 'rgb(119,136,153)',
-    insets: [5, 5, 5, 5]
-  })
-
-  // Use the GraphBuilder to create the graph items from data
-  const builder = new GraphBuilder(graph)
-  const nodesSource = builder.createNodesSource({
-    data: GraphBuilderData.nodes,
-    id: 'id',
-    layout: data => new Rect(0, 0, data.layout.width, data.layout.height)
-  })
-  const labelCreator = nodesSource.nodeCreator.createLabelsSource(data => data.labels).labelCreator
-  labelCreator.textProvider = 'text'
-  labelCreator.layoutParameterProvider = data => {
-    const text = data.text
-    if (text.indexOf('*') !== -1) {
-      return InteriorLabelModel.SOUTH_WEST
-    } else if (text.indexOf('✝') !== -1) {
-      return InteriorLabelModel.SOUTH_EAST
-    }
-    return InteriorLabelModel.CENTER
-  }
-  labelCreator.styleProvider = data => {
-    const text = data.text
-    if (text.indexOf('*') !== -1 || text.indexOf('✝') !== -1) {
-      return dateStyle
-    }
-    return namesStyle
-  }
-  builder.createEdgesSource(GraphBuilderData.edges, 'source', 'target', 'id')
-
-  builder.buildGraph()
-}
-
-/**
- * Assigns the style to the family tree nodes. Males will be visualized in blue color, females in
- * pink and the family nodes that connect partners with each other and their children will be
- * circular with gray color.
- */
-function setFamilyNodesStyle() {
+function createSampleGraph(graph) {
+  // Create styles for the nodes
   const maleStyle = new ShapeNodeStyle({
     fill: 'rgb(176,224,230)',
     stroke: 'white',
@@ -178,27 +130,89 @@ function setFamilyNodesStyle() {
     stroke: 'white',
     shape: ShapeNodeShape.ELLIPSE
   })
-  const graph = graphComponent.graph
-  graph.nodes.forEach(node => {
-    switch (node.tag.familyType) {
-      case 'MALE':
-        graph.setStyle(node, maleStyle)
-        break
-      case 'FEMALE':
-        graph.setStyle(node, femaleStyle)
-        break
-      case 'FAMILY':
-        graph.setStyle(node, familyKnot)
-        break
-    }
+
+  // Create styles for the labels in the nodes
+  const namesStyle = new DefaultLabelStyle({
+    font: '14px Tahoma',
+    textFill: 'black',
+    horizontalTextAlignment: 'center',
+    insets: [-10, 0, 0, 0]
   })
+  const dateStyle = new DefaultLabelStyle({
+    font: '11px Tahoma',
+    textFill: 'rgb(119,136,153)',
+    insets: [5, 5, 5, 5]
+  })
+
+  // Use the GraphBuilder to create the graph items from data
+  const builder = new GraphBuilder(graph)
+  const nodesSource = builder.createNodesSource({
+    data: GraphBuilderData.nodes,
+    id: 'id',
+    layout: data => new Rect(0, 0, data.layout.width, data.layout.height)
+  })
+
+  // Configure the styles to use for nodes
+  const nodeCreator = nodesSource.nodeCreator
+  nodeCreator.styleProvider = data => {
+    switch (data.familyType) {
+      case 'MALE':
+        return maleStyle
+      case 'FEMALE':
+        return femaleStyle
+      case 'FAMILY':
+        return familyKnot
+      default:
+        return null
+    }
+  }
+
+  const labelCreator = nodeCreator.createLabelsSource(data => data.labels).labelCreator
+  labelCreator.textProvider = data => data.text
+  labelCreator.layoutParameterProvider = data => {
+    const text = data.text
+    if (isBirthDate(text)) {
+      return InteriorLabelModel.SOUTH_WEST
+    } else if (isDeathDate(text)) {
+      return InteriorLabelModel.SOUTH_EAST
+    }
+    return InteriorLabelModel.CENTER
+  }
+  // Configure the styles to use for labels
+  labelCreator.styleProvider = data => {
+    const text = data.text
+    return isBirthDate(text) || isDeathDate(text) ? dateStyle : namesStyle
+  }
+
+  builder.createEdgesSource(GraphBuilderData.edges, 'source', 'target', 'id')
+
+  builder.buildGraph()
+}
+
+/**
+ * Determines if the given date string denotes a birth date.
+ * @param {!string} text
+ * @returns {boolean}
+ */
+function isBirthDate(text) {
+  return text.indexOf('*') !== -1
+}
+
+/**
+ * Determines if the given date string denotes a death date.
+ * @param {!string} text
+ * @returns {boolean}
+ */
+function isDeathDate(text) {
+  return text.indexOf('✝') !== -1
 }
 
 /**
  * Assigns default styles for the edges.
+ * @param {!IGraph} graph
  */
-function setDefaultEdgeStyle() {
-  graphComponent.graph.edgeDefaults.style = new PolylineEdgeStyle({
+function setDefaultEdgeStyle(graph) {
+  graph.edgeDefaults.style = new PolylineEdgeStyle({
     stroke: '2px rgb(170, 170, 170)',
     targetArrow: IArrow.NONE
   })
@@ -206,8 +220,9 @@ function setDefaultEdgeStyle() {
 
 /** Helper method that binds the various commands available in yFiles for HTML to the buttons
  * in the demo's toolbar.
+ * @param {!GraphComponent} graphComponent
  */
-function registerCommands() {
+function registerCommands(graphComponent) {
   bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent)
   bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent)
   bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent)

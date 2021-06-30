@@ -41,7 +41,7 @@ Show the GraphML content in a new browser window.
 
 #### Server
 
-Download to a file via a dedicated server. The GraphML content is sub,itted to the server which responds with a download URL for the respective file. The handling of the download then depends on the user's browser settings. See [Server Operations](#server-operations) for details on enabling server requests.
+Download to a file via a dedicated server. The GraphML content is submitted to the server which responds with a download URL for the respective file. The handling of the download then depends on the user's browser settings. See [Server Operations](#server-operations) for details on enabling server requests.
 
 #### Local Storage
 

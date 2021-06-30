@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -39,14 +39,16 @@ import {
   NodeStyleDecorationInstaller,
   Point,
   Rect,
-  ShapeNodeShape,
   ShapeNodeStyle,
   SimpleNode,
   Size,
-  VoidNodeStyle
+  VoidNodeStyle,
+  IEdge,
+  INode,
+  ICanvasObject
 } from 'yfiles'
 
-import NodePlacerPanel from './NodePlacerPanel.js'
+import { LayerFills } from './NodePlacerPanel.js'
 
 /**
  * An {@link IInputMode} which creates an edge along with a target node when dragging on an unselected
@@ -58,7 +60,9 @@ export default class CreateTreeEdgeInputMode extends CreateEdgeInputMode {
    */
   constructor() {
     super()
+
     this.targetNode = null
+    this.canvasObject = null
 
     // edge creation can end anytime because the target node is also created by this input mode
     this.endHitTestable = IHitTestable.ALWAYS
@@ -68,7 +72,7 @@ export default class CreateTreeEdgeInputMode extends CreateEdgeInputMode {
 
   /**
    * Creates the dummy edge and the dummy node that are used as a preview during edge creation.
-   * @return {IEdge}
+   * @returns {!IEdge}
    */
   createDummyEdge() {
     const dummyEdge = super.createDummyEdge()
@@ -81,7 +85,7 @@ export default class CreateTreeEdgeInputMode extends CreateEdgeInputMode {
 
   /**
    * Adds the visualization for the target node when the edge creation gesture started.
-   * @param {EdgeEventArgs} event
+   * @param {!EdgeEventArgs} event
    */
   onEdgeCreationStarted(event) {
     super.onEdgeCreationStarted(event)
@@ -96,14 +100,11 @@ export default class CreateTreeEdgeInputMode extends CreateEdgeInputMode {
         )
 
         // initialize style so it matches the other nodes in this new layer
-        this.targetNode.tag = { layer: sourceNode.tag.layer + 1 }
+        this.targetNode.tag = { layer: Number(sourceNode.tag.layer) + 1 }
         this.targetNode.style = new ShapeNodeStyle({
-          shape: ShapeNodeShape.ROUND_RECTANGLE,
+          shape: 'round-rectangle',
           stroke: 'white',
-          fill:
-            NodePlacerPanel.layerFills[
-              this.targetNode.tag.layer % NodePlacerPanel.layerFills.length
-            ]
+          fill: LayerFills[this.targetNode.tag.layer % LayerFills.length]
         })
 
         // do not show a target indicator, it is obvious that the new node will be the target
@@ -129,7 +130,7 @@ export default class CreateTreeEdgeInputMode extends CreateEdgeInputMode {
 
   /**
    * Updates the target location and the position of the dummy node.
-   * @param {Point} location
+   * @param {!Point} location
    */
   updateTargetLocation(location) {
     super.updateTargetLocation(location)
@@ -140,8 +141,8 @@ export default class CreateTreeEdgeInputMode extends CreateEdgeInputMode {
 
   /**
    * Returns the current dummy node since it is always the target for the created edge.
-   * @param {Point} location The location is ignored in this implementation.
-   * @return {INode}
+   * @param {!Point} location The location is ignored in this implementation.
+   * @returns {?INode}
    */
   getTarget(location) {
     return this.targetNode
@@ -149,9 +150,13 @@ export default class CreateTreeEdgeInputMode extends CreateEdgeInputMode {
 
   /**
    * Creates the actual edge and target node after edge creation is finished.
-   * @return {IEdge}
+   * @returns {?IEdge}
    */
   createEdge() {
+    if (this.targetNode === null) {
+      return null
+    }
+
     const graph = this.inputModeContext.graph
 
     // create the target node
@@ -162,7 +167,9 @@ export default class CreateTreeEdgeInputMode extends CreateEdgeInputMode {
     )
 
     // clean up the dummy node visualization
-    this.canvasObject.remove()
+    if (this.canvasObject) {
+      this.canvasObject.remove()
+    }
     this.canvasObject = null
     this.targetNode = null
 
@@ -173,8 +180,10 @@ export default class CreateTreeEdgeInputMode extends CreateEdgeInputMode {
       new DefaultPortCandidate(node, FreeNodePortLocationModel.NODE_CENTER_ANCHORED)
     )
 
-    // fire edge created event
-    this.onEdgeCreated(new EdgeEventArgs(edge))
+    if (edge) {
+      // fire edge created event
+      this.onEdgeCreated(new EdgeEventArgs(edge))
+    }
     return edge
   }
 

@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -455,8 +455,8 @@ function createFilteredView() {
     filteredGraph.setNodeLayout(node, aggregationHelper.getPlaceholder(node).layout.toRect())
   }
 
-  // reset any rotated labels
-  for (const label of filteredGraph.labels) {
+  // reset any rotated node labels
+  for (const label of filteredGraph.nodeLabels) {
     filteredGraph.setLabelLayoutParameter(
       label,
       FreeNodeLabelModel.INSTANCE.createDefaultParameter()

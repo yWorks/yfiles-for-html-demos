@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -27,72 +27,80 @@
  **
  ***************************************************************************/
 import { addClass } from '../../resources/demo-app.js'
+import { INode } from 'yfiles'
 
 export default class PropertiesPanel {
   /**
    * Creates a new properties panel that shows the individual properties.
-   * @param {Element} element The DOM element that will be filled with the properties.
+   * @param {!HTMLElement} element The DOM element that will be filled with the properties.
    */
   constructor(element) {
     this.element = element
   }
 
+  /**
+   * @param {!INode} node
+   */
   showProperties(node) {
     this.clear()
 
-    if (node == null || node.tag == null) {
+    if (!node || !node.tag) {
       return
     }
 
     // When the graph is created with the GraphBuilder, the business data of each object is made
     // available in the node's tag.
     const person = node.tag
+
     const heading = document.createElement('div')
     addClass(heading, 'user-detail')
     this.element.appendChild(heading)
+
     // The person's icon
     const icon = document.createElement('span')
     addClass(icon, 'usericon')
     addClass(icon, person.icon)
     heading.appendChild(icon)
+
     // The person's name
     heading.appendChild(createElement('h2', person.name))
+
     // Display the individual properties
     const table = document.createElement('table')
     this.element.appendChild(table)
+
     // The person's id
     let tr = document.createElement('tr')
-    table.appendChild(tr)
     tr.appendChild(createElement('td', 'ID'))
-    tr.appendChild(createElement('td', person.id))
+    tr.appendChild(createElement('td', `${person.id}`))
+    table.appendChild(tr)
+
     // The person's icon
     tr = document.createElement('tr')
-    table.appendChild(tr)
     tr.appendChild(createElement('td', 'Icon'))
     tr.appendChild(createElement('td', person.icon))
+    table.appendChild(tr)
+
     // The person's friends count
     tr = document.createElement('tr')
-    table.appendChild(tr)
     tr.appendChild(createElement('td', 'Nr. of Friends'))
-    tr.appendChild(createElement('td', person.friendsCount))
+    tr.appendChild(createElement('td', `${person.friendsCount}`))
+    table.appendChild(tr)
 
     // Create a list of friends
-    const friends = person.friends
-    if (typeof friends !== 'undefined') {
-      const subTr = document.createElement('tr')
-      subTr.appendChild(createElement('td', 'Visible Friends'))
-      const subTd = document.createElement('td')
-      friends.forEach(friend => {
-        if (subTd.childElementCount > 0) {
-          subTd.appendChild(document.createTextNode(', '))
-        }
-        const name = document.createElement('span')
-        name.innerHTML = friend.name
-        subTd.appendChild(name)
-      }, this)
-      subTr.appendChild(subTd)
-      table.appendChild(subTr)
+    const subTr = document.createElement('tr')
+    subTr.appendChild(createElement('td', 'Visible Friends'))
+    const subTd = document.createElement('td')
+    for (const friend of person.friends) {
+      if (subTd.childElementCount > 0) {
+        subTd.appendChild(document.createTextNode(', '))
+      }
+      const name = document.createElement('span')
+      name.innerHTML = friend.name
+      subTd.appendChild(name)
     }
+    subTr.appendChild(subTd)
+    table.appendChild(subTr)
   }
 
   /**
@@ -105,7 +113,9 @@ export default class PropertiesPanel {
 
 /**
  * Creates a DOM element with the specified text content
- * @returns {HTMLElement}
+ * @param {!string} tagName
+ * @param {!string} textContent
+ * @returns {!HTMLElement}
  */
 function createElement(tagName, textContent) {
   const element = document.createElement(tagName)

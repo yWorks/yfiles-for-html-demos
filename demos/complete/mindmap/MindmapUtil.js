@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -33,262 +33,237 @@ import {
   FreeNodePortLocationModel,
   IEdge,
   IEdgeStyle,
+  IEnumerable,
   IGraph,
+  IInputModeContext,
   ILabelStyle,
-  IModelItem,
   INode,
   INodeStyle,
-  IPortCandidate,
-  IRenderContext,
   InteriorLabelModel,
+  IPortCandidate,
   List,
   PortCandidateProviderBase,
-  UndoUnitBase,
-  YObject
+  TreeAnalysis,
+  UndoUnitBase
 } from 'yfiles'
 
+const CROSS_REFERENCE_MARKER = 'CrossReference'
+
 /**
- * This class contains utility methods that deal with the mindmap graph.
+ * Gets the mindmap root.
+ * @param {!IGraph} graph The input graph.
  */
-export class Structure {
-  /**
-   * Returns a string for marking an edge as a cross reference edge.
-   * @return {string}
-   */
-  static get CROSS_REFERENCE_MARKER() {
-    return 'CrossReference'
-  }
+export function getRoot(graph) {
+  // return the first node with no incoming mindmap edges
+  return graph.nodes.first(node => getInEdge(node, graph) === null)
+}
 
-  /**
-   * Gets the mindmap root.
-   * @param {IGraph} graph The input graph.
-   */
-  static getRoot(graph) {
-    // return the first node with no incoming mindmap edges
-    return graph.nodes.first(node => Structure.getInEdge(node, graph) === null)
-  }
+/**
+ * Creates the arrays containing the nodes and edges of a subtree
+ * of a given root.
+ * @param {!IGraph} graph The input graph.
+ * @param {!INode} subtreeRoot The root node of the subtree.
+ * @param {!Array.<INode>} nodes A list to be filled with the nodes of the subtree.
+ * @param {!Array.<IEdge>} edges A list to be filled with the edges of the subtree.
+ */
+export function getSubtree(graph, subtreeRoot, nodes, edges) {
+  const treeAnalysis = new TreeAnalysis({
+    subgraphEdges: graph.edges.filter(e => !isCrossReference(e))
+  })
+  const analysisResult = treeAnalysis.run(graph)
+  const subtree = analysisResult.getSubtree(subtreeRoot)
+  nodes.push(...subtree.nodes)
+  edges.push(...subtree.edges)
+}
 
-  /**
-   * Creates the arrays containing the nodes and edges of a subtree
-   * of a given root.
-   * @param {IGraph} graph The input graph.
-   * @param {INode} subtreeRoot The root node of the subtree.
-   * @param {List} nodes A list to be filled with the nodes of the subtree.
-   * @param {List} edges A list to be filled with the edges of the subtree.
-   */
-  static getSubtree(graph, subtreeRoot, nodes, edges) {
-    const outEdges = graph.outEdgesAt(subtreeRoot)
-    outEdges.forEach(outEdge => {
-      if (!Structure.isCrossReference(outEdge)) {
-        Structure.getSubtree(graph, outEdge.targetNode, nodes, edges)
-      }
-    })
-    graph.inEdgesAt(subtreeRoot).forEach(edge => {
-      if (!Structure.isCrossReference(edge)) {
-        edges.add(edge)
-      }
-    })
-    nodes.add(subtreeRoot)
-  }
+/**
+ * Gets the first incoming edge that's not a cross reference or null.
+ * @param {!INode} node The given node.
+ * @param {!IGraph} graph The input graph.
+ * @returns {?IEdge}
+ */
+export function getInEdge(node, graph) {
+  return graph.inEdgesAt(node).find(edge => !isCrossReference(edge))
+}
 
-  /**
-   * Gets the first incoming edge that's not a cross reference or null.
-   * @param {INode} node The given node.
-   * @param {IGraph} graph The input graph.
-   * @return {IEdge}
-   */
-  static getInEdge(node, graph) {
-    return graph.inEdgesAt(node).find(edge => !Structure.isCrossReference(edge))
-  }
-
-  /**
-   * Creates a sibling node for a given node.
-   * @param {INode} node The given node.
-   * @param {IGraph} graph The input graph.
-   * @param {INodeStyle} nodeStyle The desired node style.
-   * @param {IEdgeStyle} edgeStyle The desired edge style.
-   * @param {ILabelStyle} labelStyle The desired label style.
-   * @return {INode} The created sibling.
-   */
-  static createSibling(graph, node, nodeStyle, edgeStyle, labelStyle) {
-    const nodeData = node.tag
-    // siblings can't be created for the root node
-    if (!Structure.isRoot(node)) {
-      const inEdge = Structure.getInEdge(node, graph)
-      if (inEdge !== null) {
-        const parent = inEdge.sourceNode
-        // create data for sibling
-        const data = {
-          depth: nodeData.depth,
-          isLeft: nodeData.isLeft,
-          color: nodeData.color,
-          isCollapsed: false,
-          stateIcon: 0
-        }
-        const sibling = graph.createNode(node.layout.toRect(), nodeStyle, data)
-        graph.addLabel(sibling, ' ', InteriorLabelModel.CENTER, labelStyle)
-        graph.createEdge(parent, sibling, edgeStyle)
-        return sibling
-      }
+/**
+ * Creates a sibling node for a given node.
+ * @param {!INode} node The given node.
+ * @param {!IGraph} graph The input graph.
+ * @param {!INodeStyle} nodeStyle The desired node style.
+ * @param {!IEdgeStyle} edgeStyle The desired edge style.
+ * @param {!ILabelStyle} labelStyle The desired label style.
+ * @returns {?INode} The created sibling.
+ */
+export function createSibling(graph, node, nodeStyle, edgeStyle, labelStyle) {
+  const nodeData = node.tag
+  // siblings can't be created for the root node
+  if (!isRoot(node)) {
+    const inEdge = getInEdge(node, graph)
+    if (inEdge !== null) {
+      const parent = inEdge.sourceNode
+      // create data for sibling
+      const data = { ...nodeData, isCollapsed: false, stateIcon: 0 }
+      const sibling = graph.createNode(node.layout.toRect(), nodeStyle, data)
+      graph.addLabel(sibling, ' ', InteriorLabelModel.CENTER, labelStyle)
+      graph.createEdge(parent, sibling, edgeStyle)
+      return sibling
     }
+  }
+  return null
+}
+
+/**
+ * Creates a child node for a given parent.
+ * @param {!IGraph} graph The input graph.
+ * @param {!INode} parent The given parent node.
+ * @param {!INodeStyle} nodeStyle The desired node style.
+ * @param {!IEdgeStyle} edgeStyle The desired edge style.
+ * @param {!ILabelStyle} labelStyle The desired label style.
+ * @returns {!INode} The created child.
+ */
+export function createChild(graph, parent, nodeStyle, edgeStyle, labelStyle) {
+  const parentNodeData = parent.tag
+  let left = parentNodeData.isLeft
+
+  // if parent is root, find side to keep tree balanced
+  if (isRoot(parent)) {
+    // get all edges starting at root and count left or right
+    let balance = 0
+    graph.outEdgesAt(parent).forEach(edge => {
+      if (!isCrossReference(edge)) {
+        balance += isLeft(edge.targetNode) ? -1 : 1
+      }
+    })
+    left = balance > 0
+  }
+  const data = {
+    depth: parentNodeData.depth + 1,
+    isLeft: left,
+    color: '#4477FF',
+    isCollapsed: false,
+    stateIcon: 0
+  }
+  const node = graph.createNode(parent.layout.toRect(), nodeStyle, data)
+  graph.addLabel(node, ' ', InteriorLabelModel.CENTER, labelStyle)
+  graph.createEdge(parent, node, edgeStyle)
+  return node
+}
+
+/**
+ * Creates a cross reference edge.
+ * @param {!IInputModeContext} context The given context.
+ * @param {!IGraph} graph The input graph.
+ * @param {!IPortCandidate} sourceCandidate The source port candidate.
+ * @param {?IPortCandidate} targetCandidate The target port candidate.
+ * @param {!IEdge} dummyEdge The dummy edge instance that serves as template for the actual edge
+ *   creation.
+ * @returns {?IEdge} The newly created cross reference edge.
+ */
+export function createCrossReferenceEdge(
+  context,
+  graph,
+  sourceCandidate,
+  targetCandidate,
+  dummyEdge
+) {
+  if (!sourceCandidate || !targetCandidate) {
+    // cancel if either candidate is missing
     return null
   }
+  // get the source and target ports from the candidates
+  const sourcePort = sourceCandidate.port || sourceCandidate.createPort(context)
+  const targetPort = targetCandidate.port || targetCandidate.createPort(context)
+  // create the edge between the source and target port
+  return graph.createEdge(sourcePort, targetPort, dummyEdge.style, CROSS_REFERENCE_MARKER)
+}
 
-  /**
-   * Creates a child node for a given parent.
-   * @param {IGraph} graph The input graph.
-   * @param {INode} parent The given parent node.
-   * @param {INodeStyle} nodeStyle The desired node style.
-   * @param {IEdgeStyle} edgeStyle The desired edge style.
-   * @param {ILabelStyle} labelStyle The desired label style.
-   * @return {INode} The created child.
-   */
-  static createChild(graph, parent, nodeStyle, edgeStyle, labelStyle) {
-    const parentNodeData = parent.tag
-    let isLeft = parentNodeData.isLeft
-
-    // if parent is root, find side to keep tree balanced
-    if (Structure.isRoot(parent)) {
-      // get all edges starting at root and count left or right
-      let balance = 0
-      graph.outEdgesAt(parent).forEach(edge => {
-        if (!Structure.isCrossReference(edge)) {
-          balance += Structure.isLeft(edge.targetNode) ? -1 : 1
-        }
-      })
-      isLeft = balance > 0
+/**
+ * Removes a node and its subtree.
+ * @param {!IGraph} graph The input graph.
+ * @param {!INode} subtreeRoot The root node of the subtree.
+ */
+export function removeSubtree(graph, subtreeRoot) {
+  const edges = []
+  graph.edges.toList().copyTo(edges, 0)
+  for (let i = 0; i < edges.length; i++) {
+    const edge = edges[i]
+    // call this method recursively for all child nodes
+    if (graph.contains(edge) && edge.sourceNode === subtreeRoot && !isCrossReference(edge)) {
+      removeSubtree(graph, edge.targetNode)
     }
-    const data = {
-      depth: parentNodeData.depth + 1,
-      isLeft,
-      color: '#4477FF',
-      isCollapsed: false,
-      stateIcon: 0
+  }
+  graph.remove(subtreeRoot)
+}
+
+/**
+ * Sets the depth information of a given node and its subtree.
+ * @param {!IGraph} graph The input graph.
+ * @param {!INode} node The node to set the depth.
+ * @param {number} depth The given depth.
+ */
+export function setSubtreeDepths(graph, node, depth) {
+  graph.outEdgesAt(node).forEach(edge => {
+    if (!isCrossReference(edge)) {
+      setSubtreeDepths(graph, edge.targetNode, depth + 1)
     }
-    const node = graph.createNode(parent.layout.toRect(), nodeStyle, data)
-    graph.addLabel(node, ' ', InteriorLabelModel.CENTER, labelStyle)
-    graph.createEdge(parent, node, edgeStyle)
-    return node
-  }
+  })
+  node.tag.depth = depth
+}
 
-  /**
-   * Creates a cross reference edge.
-   * @param {IRenderContext} context The given context.
-   * @param {IGraph} graph The input graph.
-   * @param {IPortCandidate} sourceCandidate The source port candidate.
-   * @param {IPortCandidate} targetCandidate The target port candidate.
-   * @param {IEdge} dummyEdge The dummy edge instance that serves as template for the actual edge
-   *   creation.
-   * @return {IEdge} The newly created cross reference edge.
-   */
-  static createCrossReferenceEdge(context, graph, sourceCandidate, targetCandidate, dummyEdge) {
-    if (!sourceCandidate || !targetCandidate) {
-      // cancel if either candidate is missing
-      return null
-    }
-    // get the source and target ports from the candidates
-    const sourcePort = sourceCandidate.port || sourceCandidate.createPort(context)
-    const targetPort = targetCandidate.port || targetCandidate.createPort(context)
-    // create the edge between the source and target port
-    return graph.createEdge(
-      sourcePort,
-      targetPort,
-      dummyEdge.style,
-      Structure.CROSS_REFERENCE_MARKER
-    )
-  }
+/**
+ * Returns whether an edge is a cross reference edge.
+ * @param {?IEdge} edge The given edge.
+ * @returns {boolean} True if the edge is a cross reference edge, false otherwise
+ */
+export function isCrossReference(edge) {
+  return edge.tag === CROSS_REFERENCE_MARKER
+}
 
-  /**
-   * Removes a node and its subtree.
-   * @param {IGraph} graph The input graph.
-   * @param {INode} subtreeRoot The root node of the subtree.
-   */
-  static removeSubtree(graph, subtreeRoot) {
-    const edges = []
-    graph.edges.toList().copyTo(edges, 0)
-    for (let i = 0; i < edges.length; i++) {
-      const edge = edges[i]
-      // call this method recursively for all child nodes
-      if (
-        graph.contains(edge) &&
-        edge.sourceNode === subtreeRoot &&
-        !Structure.isCrossReference(edge)
-      ) {
-        Structure.removeSubtree(graph, edge.targetNode)
-      }
-    }
-    graph.remove(subtreeRoot)
-  }
+/**
+ * Returns whether a node is collapsed.
+ * @param {!INode} node The given node.
+ * @returns {boolean} True if a node is collapsed, false otherwise
+ */
+export function isCollapsed(node) {
+  return node.tag.isCollapsed
+}
 
-  /**
-   * Sets the depth information of a given node and its subtree.
-   * @param {IGraph} graph The input graph.
-   * @param {INode} node The node to set the depth.
-   * @param {number} depth The given depth.
-   */
-  static setSubtreeDepths(graph, node, depth) {
-    graph.outEdgesAt(node).forEach(edge => {
-      if (!Structure.isCrossReference(edge)) {
-        Structure.setSubtreeDepths(graph, edge.targetNode, depth + 1)
-      }
-    })
-    node.tag.depth = depth
-  }
+/**
+ * Returns whether a node is on the left of the root.
+ * @param {!INode} node The given node.
+ * @returns {boolean} True if a node is on the left of the root, false otherwise
+ */
+export function isLeft(node) {
+  return node.tag.isLeft
+}
 
-  /**
-   * Returns whether an edge is a cross reference edge.
-   * @param {IEdge} edge The given edge.
-   * @return {boolean} True if the edge is a cross reference edge, false otherwise
-   */
-  static isCrossReference(edge) {
-    return YObject.equals(edge.tag, Structure.CROSS_REFERENCE_MARKER)
-  }
+/**
+ * Returns whether a node is the root node.
+ * @param {!INode} node The given node.
+ * @returns {boolean} True if a node is the root, false otherwise
+ */
+export function isRoot(node) {
+  return node.tag.depth === 0
+}
 
-  /**
-   * Returns whether a node is collapsed.
-   * @param {INode} node The given node.
-   * @return {boolean} True if a node is collapsed, false otherwise
-   */
-  static isCollapsed(node) {
-    return node.tag.isCollapsed
-  }
+/**
+ * Returns the depth of a node.
+ * @param {!INode} node The given node.
+ * @returns {number} The depth of a node
+ */
+export function getDepth(node) {
+  return node.tag.depth
+}
 
-  /**
-   * Returns whether a node is on the left of the root.
-   * @param {INode} node The given node.
-   * @return {boolean} True if a node is on the left of the root, false otherwise
-   */
-  static isLeft(node) {
-    return node.tag.isLeft
-  }
-
-  /**
-   * Returns whether a node is the root node.
-   * @param {INode} node The given node.
-   * @return {boolean} True if a node is the root, false otherwise
-   */
-  static isRoot(node) {
-    return node.tag.depth === 0
-  }
-
-  /**
-   * Returns the depth of a node.
-   * @param {INode} node The given node.
-   * @return {number} The depth of a node
-   */
-  static getDepth(node) {
-    return node.tag.depth
-  }
-
-  /**
-   * Returns whether a node has children.
-   * @param {INode} node The given node.
-   * @param {IGraph} graph The given graph.
-   * @return {boolean} True if a node ahs children, false otherwise
-   */
-  static hasChildNodes(node, graph) {
-    return graph.outEdgesAt(node).find(edge => !Structure.isCrossReference(edge)) !== null
-  }
+/**
+ * Returns whether a node has children.
+ * @param {!INode} node The given node.
+ * @param {!IGraph} graph The given graph.
+ * @returns {boolean} True if a node ahs children, false otherwise
+ */
+export function hasChildNodes(node, graph) {
+  return graph.outEdgesAt(node).find(edge => !isCrossReference(edge)) !== null
 }
 
 /**
@@ -296,14 +271,17 @@ export class Structure {
  */
 export class CenterPortCandidateProvider extends PortCandidateProviderBase {
   /**
-   * @param {INode} node
+   * @param {!INode} node
    */
   constructor(node) {
     super()
     this.node = node
   }
 
-  /** @return {IEnumerable.<IPortCandidate>} */
+  /**
+   * @param {!IInputModeContext} context
+   * @returns {!IEnumerable.<IPortCandidate>}
+   */
   getPortCandidates(context) {
     const candidates = new List()
     const defaultPortCandidate = new DefaultPortCandidate(
@@ -321,19 +299,19 @@ export class CenterPortCandidateProvider extends PortCandidateProviderBase {
 export class TagChangeUndoUnit extends UndoUnitBase {
   /**
    * The constructor.
-   * @param {string} undoName Name of the undo operation.
-   * @param {string} redoName Name of the redo operation
-   * @param {Object} oldTag The data to restore the previous state.
-   * @param {Object} newTag The data to restore the next state.
-   * @param {IModelItem} item The owner of the tag.
-   * @param {function(IModelItem)} callback Callback that is executed after undo and redo.
+   * @param {!string} undoName Name of the undo operation.
+   * @param {!string} redoName Name of the redo operation
+   * @param {!NodeData} oldTag The data to restore the previous state.
+   * @param {!NodeData} newTag The data to restore the next state.
+   * @param {!INode} item The owner of the tag.
+   * @param {?function} callback Callback that is executed after undo and redo.
    */
   constructor(undoName, redoName, oldTag, newTag, item, callback) {
     super(undoName, redoName)
-    this.oldTag = oldTag
-    this.newTag = newTag
-    this.item = item
     this.callback = callback
+    this.item = item
+    this.newTag = newTag
+    this.oldTag = oldTag
   }
 
   /**
@@ -341,9 +319,7 @@ export class TagChangeUndoUnit extends UndoUnitBase {
    */
   undo() {
     this.item.tag = this.oldTag
-    if (this.callback !== null) {
-      this.callback(this.item)
-    }
+    this.callback?.(this.item)
   }
 
   /**
@@ -351,9 +327,7 @@ export class TagChangeUndoUnit extends UndoUnitBase {
    */
   redo() {
     this.item.tag = this.newTag
-    if (this.callback !== null) {
-      this.callback(this.item)
-    }
+    this.callback?.(this.item)
   }
 }
 
@@ -363,7 +337,7 @@ export class TagChangeUndoUnit extends UndoUnitBase {
  */
 export class MyArcEdgeStyleRenderer extends ArcEdgeStyleRenderer {
   configure() {
-    if (this.edge.style instanceof ArcEdgeStyle && this.style instanceof ArcEdgeStyle) {
+    if (this.edge.style instanceof ArcEdgeStyle) {
       // Take the height of the edge's actual style and assign
       // it to the style instance used by this renderer
       this.style.height = this.edge.style.height

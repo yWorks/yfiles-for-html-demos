@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -28,7 +28,10 @@
  ***************************************************************************/
 import {
   Animator,
+  ComponentArrangementStyles,
+  ComponentLayout,
   ConnectedComponents,
+  FilteredGraphWrapper,
   GraphBuilder,
   GraphComponent,
   GraphEditorInputMode,
@@ -41,10 +44,10 @@ import {
   Insets,
   Key,
   License,
-  List,
   Mapper,
   NodeStyleDecorationInstaller,
   OrganicLayout,
+  Point,
   Rect,
   ShapeNodeStyle,
   Size,
@@ -55,7 +58,6 @@ import {
 import FraudDetectionView from './FraudDetectionView.js'
 import InteractiveLayout from './InteractiveLayout.js'
 import { CanvasEdgeStyle, FraudHighlightManager, IconNodeStyle } from './FraudDetectionStyles.js'
-import InsuranceFraudData from './resources/InsuranceFraudData.js'
 import {
   addClass,
   bindChangeListener,
@@ -64,40 +66,52 @@ import {
   showApp
 } from '../../resources/demo-app.js'
 import BankFraudData from './resources/BankFraudData.js'
+import InsuranceFraudData from './resources/InsuranceFraudData.js'
 import FraudDetection from './FraudDetection.js'
 import NodePopup from './NodePopup.js'
 import TimelineComponent from './TimelineComponent.js'
 import loadJson from '../../resources/load-json.js'
 
 /**
+ * @typedef {Object} NodeTag
+ * @property {number} id
+ * @property {string} type
+ * @property {Array.<string>} enter
+ * @property {Array.<string>} exit
+ * @property {(string|object)} info
+ * @property {number} x
+ * @property {number} y
+ */
+
+/**
  * The main graph component that displays the graph.
  * @type {GraphComponent}
  */
-let graphComponent = null
+let graphComponent
 
 /**
  * The timeline component that displays the timeline for the graph.
  * @type {TimelineComponent}
  */
-let timelineComponent = null
+let timelineComponent
 
 /**
  * The interactive layout.
  * @type {InteractiveLayout}
  */
-let layout = null
+let layout
 
 /**
  * The fraud detection.
  * @type {FraudDetection}
  */
-let fraudDetection = null
+let fraudDetection
 
 /**
  * The popup which displays additional information for a node.
  * @type {NodePopup}
  */
-let nodePopup = null
+let nodePopup
 
 /**
  * Flag to indicate whether or not the UI is busy when loading a graph.
@@ -113,13 +127,11 @@ let fraudDetectionView = null
 
 /**
  * Holds the component's index to which each node belongs.
- * @type {Mapper}
  */
 const node2Component = new Mapper()
 
 /**
  * Maps each component with the list of nodes that this component contains.
- * @type {Mapper}
  */
 const component2Nodes = new Mapper()
 
@@ -138,18 +150,19 @@ let currentFraudComponent = -1
  * Runs the zoom animations invoked by ALT key.
  * @type {Animator}
  */
-let zoomAnimator = null
+let zoomAnimator
 
 /**
  * Holds the manager responsible for the highlighting of the fraud components.
- * @type {HighlightIndicatorManager}
+ * @type {HighlightIndicatorManager.<IModelItem>}
  */
-let fraudHighlightManager = null
+let fraudHighlightManager
 
 /**
  * Starts a demo which shows fraud detection on a graph with changing time-frames. Since the nodes
  * have different timestamps (defined in their tag object), they will only appear in some
  * time-frames. Time-frames are chosen using a timeline component.
+ * @param {!object} licenseData
  */
 function run(licenseData) {
   License.value = licenseData
@@ -214,10 +227,10 @@ function initializeGraphComponent() {
     allowUndoOperations: false,
     allowEditLabelOnDoubleClick: false,
     clickableItems: GraphItemTypes.NODE | GraphItemTypes.EDGE,
-    selectableItems: GraphItemTypes.NODE,
-    focusableItems: GraphItemTypes.NONE,
-    showHandleItems: GraphItemTypes.NONE,
-    deletableItems: GraphItemTypes.NONE,
+    selectableItems: 'node',
+    focusableItems: 'none',
+    showHandleItems: 'none',
+    deletableItems: 'none',
     clickHitTestOrder: [GraphItemTypes.NODE, GraphItemTypes.EDGE]
   })
   inputMode.moveInputMode.enabled = false
@@ -225,7 +238,7 @@ function initializeGraphComponent() {
 
   // show popup on right click
   inputMode.addItemRightClickedListener((sender, event) => {
-    if (!busy && INode.isInstance(event.item)) {
+    if (!busy && event.item instanceof INode) {
       nodePopup.updatePopup(event.item)
       event.handled = true
     }
@@ -235,9 +248,8 @@ function initializeGraphComponent() {
   inputMode.addItemLeftClickedListener((sender, event) => {
     const item = event.item
     if (event.item.tag.fraud) {
-      const componentIndex = INode.isInstance(item)
-        ? node2Component.get(item)
-        : node2Component.get(item.sourceNode)
+      const componentIndex =
+        item instanceof INode ? node2Component.get(item) : node2Component.get(item.sourceNode)
       onFraudWarning(componentIndex)
     }
   })
@@ -402,7 +414,7 @@ function initializeGraphComponent() {
 
 /**
  * Sets coordinates for the node in case there already are visible nodes connected.
- * @param {INode} node
+ * @param {!INode} node
  */
 function setInitialCoordinates(node) {
   const visited = new Set()
@@ -411,15 +423,14 @@ function setInitialCoordinates(node) {
   while (stack.length > 0) {
     const stackNode = stack.pop()
     if (!visited.has(stackNode)) {
-      // eslint-disable-next-line no-loop-func
-      timelineComponent.filteredGraph.wrappedGraph.edgesAt(stackNode).forEach(edge => {
+      for (const edge of timelineComponent.filteredGraph.wrappedGraph.edgesAt(stackNode)) {
         const opposite = edge.opposite(stackNode)
         if (graphComponent.graph.contains(opposite)) {
           coordinates = opposite.layout.center
         } else {
           stack.push(opposite)
         }
-      })
+      }
       visited.add(stackNode)
     }
 
@@ -487,11 +498,15 @@ function highlightFraudComponent(componentIndex) {
       if (edge.tag.fraud && !visitedEdges.has(edge)) {
         fraudHighlightManager.addHighlight(edge)
         visitedEdges.add(edge)
-        fraudHighlightManager.addHighlight(edge.sourceNode)
-        fraudHighlightManager.addHighlight(edge.targetNode)
 
-        graphComponent.highlightIndicatorManager.addHighlight(edge.sourceNode)
-        graphComponent.highlightIndicatorManager.addHighlight(edge.targetNode)
+        const sourceNode = edge.sourceNode
+        const targetNode = edge.targetNode
+
+        fraudHighlightManager.addHighlight(sourceNode)
+        fraudHighlightManager.addHighlight(targetNode)
+
+        graphComponent.highlightIndicatorManager.addHighlight(sourceNode)
+        graphComponent.highlightIndicatorManager.addHighlight(targetNode)
       }
     })
   })
@@ -499,18 +514,18 @@ function highlightFraudComponent(componentIndex) {
 
 /**
  * Update the highlight for the current item.
- * @param {IModelItem} item The current item
- * @param {IModelItem} oldItem The old item
+ * @param {?IModelItem} item The current item
+ * @param {?IModelItem} oldItem The old item
  */
 function updateHighlights(item, oldItem) {
   const highlightManager = graphComponent.highlightIndicatorManager
   fraudHighlightManager.clearHighlights()
   highlightManager.clearHighlights()
   if (item) {
-    if (INode.isInstance(item)) {
+    if (item instanceof INode) {
       // hover also the warning button
       const componentIdx = node2Component.get(item)
-      const warningButton = document.getElementById(componentIdx)
+      const warningButton = document.getElementById(componentIdx.toString())
       if (warningButton) {
         addClass(warningButton, 'hover')
       }
@@ -519,7 +534,7 @@ function updateHighlights(item, oldItem) {
         const componentIndex = node2Component.get(item)
         highlightFraudComponent(componentIndex)
       }
-    } else if (IEdge.isInstance(item) && item.tag.fraud) {
+    } else if (item instanceof IEdge && item.tag.fraud) {
       // change the cursor to pointer
       addClass(graphComponent.div, 'customCursor')
       const componentIndex = node2Component.get(item.sourceNode)
@@ -533,7 +548,7 @@ function updateHighlights(item, oldItem) {
     if (INode.isInstance(oldItem)) {
       // remove hover from the warning button
       const componentIdx = node2Component.get(oldItem)
-      const warningButton = document.getElementById(componentIdx)
+      const warningButton = document.getElementById(componentIdx.toString())
       // add hover to button
       if (warningButton) {
         removeClass(warningButton, 'hover')
@@ -581,7 +596,7 @@ function initializeGraph() {
         shape: 'ellipse'
       }),
       margins: 2,
-      zoomPolicy: StyleDecorationZoomPolicy.MIXED
+      zoomPolicy: 'mixed'
     })
   )
 
@@ -594,7 +609,7 @@ function initializeGraph() {
 
 /**
  * Loads a graph from the given JSON data.
- * @param {object} fraudData The JSON data from which the graph is retrieved.
+ * @param {!object} fraudData The JSON data from which the graph is retrieved.
  */
 function loadSampleGraph(fraudData) {
   setBusy(true)
@@ -638,7 +653,7 @@ function loadSampleGraph(fraudData) {
       nodeOverlapsAllowed: false,
       preferredEdgeLength: 50
     })
-    organicLayout.componentLayout.style = 'packed_compact_circle'
+    organicLayout.componentLayout.style = ComponentArrangementStyles.PACKED_COMPACT_CIRCLE
     graphComponent.graph.applyLayout(organicLayout)
     graphComponent.fitGraphBounds()
 
@@ -687,9 +702,9 @@ function calculateComponents() {
     const componentIdx = result.nodeComponentIds.get(node)
     node2Component.set(node, componentIdx)
     if (!component2Nodes.get(componentIdx)) {
-      component2Nodes.set(componentIdx, new List())
+      component2Nodes.set(componentIdx, [])
     }
-    component2Nodes.get(componentIdx).add(node)
+    component2Nodes.get(componentIdx).push(node)
   })
 
   if (bankFraud) {
@@ -699,11 +714,10 @@ function calculateComponents() {
         fullGraph.edgesAt(node).forEach(edge => {
           const sourceNode = edge.sourceNode
           const targetNode = edge.targetNode
-          const componentIdx = sourceNode.equals(node)
-            ? node2Component.get(targetNode)
-            : node2Component.get(sourceNode)
+          const componentIdx =
+            sourceNode === node ? node2Component.get(targetNode) : node2Component.get(sourceNode)
           if (!component2Nodes.get(componentIdx).includes(node)) {
-            component2Nodes.get(componentIdx).add(node)
+            component2Nodes.get(componentIdx).push(node)
           }
         })
       }
@@ -745,7 +759,7 @@ function detectFraud() {
         })
       }
       // remove the warning button
-      const warningButton = document.getElementById(componentIdx)
+      const warningButton = document.getElementById(componentIdx.toString())
       if (warningButton && warningButton.parentNode) {
         warningButton.parentNode.removeChild(warningButton)
       }
@@ -761,11 +775,11 @@ function createFraudWarning(componentIdx) {
   const warningButton = document.createElement('input')
   warningButton.type = 'button'
   warningButton.title = `Component ${componentIdx}`
-  warningButton.id = componentIdx
+  warningButton.id = componentIdx.toString()
   warningButton.className = 'warning'
-  warningButton.value = componentIdx
+  warningButton.value = componentIdx.toString()
   document.getElementById('toolBar').appendChild(warningButton)
-  warningButton.addEventListener('click', evt => onFraudWarning(parseInt(evt.currentTarget.id)))
+  warningButton.addEventListener('click', () => onFraudWarning(componentIdx))
   warningButton.addEventListener('mouseover', onMouseOver)
   warningButton.addEventListener('mouseleave', onMouseOut)
 }
@@ -792,14 +806,13 @@ function onFraudWarning(componentIdx) {
 
       // open the fraud detection view
       const bankFraud = document.getElementById('sampleSelect').value === 'bank-fraud'
-      const layoutAlgorithm = bankFraud ? FraudDetectionView.ORGANIC : FraudDetectionView.HIERARCHIC
-
+      const layoutStyle = bankFraud ? 'organic' : 'hierarchic'
       // create the fraud detection view using the full graph
       fraudDetectionView = new FraudDetectionView(
         graphComponent.graph.wrappedGraph,
         componentNodes,
         componentIdx,
-        layoutAlgorithm,
+        layoutStyle,
         closeFraudDetectionView
       )
     }
@@ -808,7 +821,7 @@ function onFraudWarning(componentIdx) {
 
 /**
  * Invoked when the mouse is over a warning button to highlight the associated component.
- * @param {MouseEvent} evt The invoked mouse event
+ * @param {!MouseEvent} evt The invoked mouse event
  */
 function onMouseOver(evt) {
   // get the id of the button that is being hovered
@@ -819,7 +832,7 @@ function onMouseOver(evt) {
 
 /**
  * Invoked when the mouse leaves a warning button.
- * @param {MouseEvent} evt The invoked mouse event
+ * @param {!MouseEvent} evt The invoked mouse event
  */
 function onMouseOut(evt) {
   fraudHighlightManager.clearHighlights()

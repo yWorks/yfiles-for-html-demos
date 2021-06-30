@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -37,8 +37,7 @@ import {
   MutableRectangle,
   NodeSizeConstraintProvider,
   Rect,
-  Size,
-  YString
+  Size
 } from 'yfiles'
 
 import { DemoNodeStyle } from '../../resources/demo-styles.js'
@@ -47,30 +46,28 @@ import LimitedRectangleDescriptor from './LimitedRectangleDescriptor.js'
 import GreenSizeConstraintProvider from './GreenSizeConstraintProvider.js'
 import BlueSizeConstraintProvider from './BlueSizeConstraintProvider.js'
 import loadJson from '../../resources/load-json.js'
+
 /**
  * Registers a callback function as decorator that provides a custom
  * {@link INodeSizeConstraintProvider} for each node.
  * This callback function is called whenever a node in the graph is queried
  * for its <code>ISizeConstraintProvider</code>. In this case, the 'node' parameter will be set
  * to that node.
- * @param {IGraph} graph The given graph
- * @param {MutableRectangle} boundaryRectangle The rectangle that limits the node's size.
- * @return {INodeSizeConstraintProvider}
+ * @param {!IGraph} graph The given graph
+ * @param {!MutableRectangle} boundaryRectangle The rectangle that limits the node's size.
  */
 function registerSizeConstraintProvider(graph, boundaryRectangle) {
-  // One shared instance that will be used by all blue nodes
+  // one shared instance that will be used by all blue nodes
   const blueSizeConstraintProvider = new BlueSizeConstraintProvider()
 
   const nodeDecorator = graph.decorator.nodeDecorator
   nodeDecorator.sizeConstraintProviderDecorator.setFactory(node => {
-    // Obtain the tag from the node
+    // obtain the tag from the node
     const nodeTag = node.tag
 
     // Check if it is a known tag and choose the respective implementation.
     // Fallback to the default behavior otherwise.
-    if (!YString.isInstance(nodeTag)) {
-      return null
-    } else if (nodeTag === 'royalblue') {
+    if (nodeTag === 'royalblue') {
       return blueSizeConstraintProvider
     } else if (nodeTag === 'green') {
       return new GreenSizeConstraintProvider()
@@ -81,44 +78,44 @@ function registerSizeConstraintProvider(graph, boundaryRectangle) {
   })
 }
 
+/**
+ * @param {*} licenseData
+ */
 function run(licenseData) {
   License.value = licenseData
   // initialize the GraphComponent
   const graphComponent = new GraphComponent('graphComponent')
-  const graph = graphComponent.graph
 
-  // Create a default editor input mode
-  const graphEditorInputMode = new GraphEditorInputMode({
-    // Just for user convenience: disable node, edge creation and clipboard operations,
+  // create a default editor input mode
+  graphComponent.inputMode = new GraphEditorInputMode({
+    // just for user convenience: disable node, edge creation and clipboard operations,
     allowCreateEdge: false,
     allowCreateNode: false,
-    allowClipboardOperations: false, // don't allow moving nodes,
+    allowClipboardOperations: false,
     movableItems: GraphItemTypes.NONE
   })
-  // and enable the undo feature.
-  graph.undoEngineEnabled = true
-
-  // Finally, set the input mode to the graph component.
-  graphComponent.inputMode = graphEditorInputMode
 
   // Create the rectangle that limits the movement of some nodes
   // and add it to the graphComponent.
   const boundaryRectangle = new MutableRectangle(210, 350, 30, 30)
   graphComponent.highlightGroup.addChild(boundaryRectangle, new LimitedRectangleDescriptor())
 
-  // let boundaryRectangle = new MutableRectangle(20, 20, 480, 400);
-  // graphComponent.backgroundGroup.addChild(boundaryRectangle, new LimitingRectangleDescriptor());
+  const graph = graphComponent.graph
 
+  // register size constraint providers that are the main subject of this demo
   registerSizeConstraintProvider(graph, boundaryRectangle)
 
   createSampleGraph(graph)
+
+  // enable undo and redo
+  graph.undoEngineEnabled = true
 
   showApp(graphComponent)
 }
 
 /**
- * Creates the sample graph of this demo.
- * @param {IGraph} graph The input graph
+ * Creates the demo's sample graph.
+ * @param {!IGraph} graph The graph to populate
  */
 function createSampleGraph(graph) {
   createNode(graph, 100, 100, 100, 60, 'royalblue', 'whitesmoke', 'Never Shrink\n(Max 3x)')
@@ -126,21 +123,18 @@ function createSampleGraph(graph) {
   createNode(graph, 100, 215, 100, 30, 'green', 'whitesmoke', 'Enclose Label')
   createNode(graph, 300, 200, 140, 80, 'green', 'whitesmoke', 'Enclose Label,\nEven Large Ones')
   createNode(graph, 200, 340, 140, 140, 'orange', 'black', 'Encompass Rectangle,\nMin and Max Size')
-
-  // clear undo after initial graph loading
-  graph.undoEngine.clear()
 }
 
 /**
  * Creates a sample node for this demo.
- * @param {IGraph} graph The given graph
+ * @param {!IGraph} graph The given graph
  * @param {number} x The node's x-coordinate
  * @param {number} y The node's y-coordinate
  * @param {number} w The node's width
  * @param {number} h The node's height
- * @param {string} cssClass The given css class
- * @param {string} textColor The color of the text
- * @param {string} labelText The nodes label's text
+ * @param {!string} cssClass The given css class
+ * @param {!string} textColor The color of the text
+ * @param {!string} labelText The nodes label's text
  */
 function createNode(graph, x, y, w, h, cssClass, textColor, labelText) {
   const textLabelStyle = new DefaultLabelStyle({

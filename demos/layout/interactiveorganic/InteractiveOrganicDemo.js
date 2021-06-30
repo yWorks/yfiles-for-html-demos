@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -36,6 +36,7 @@ import {
   ICommand,
   IEnumerable,
   IGraph,
+  IInputMode,
   IModelItem,
   INode,
   InteractiveOrganicLayout,
@@ -54,10 +55,10 @@ import loadJson from '../../resources/load-json.js'
  * The GraphComponent.
  * @type {GraphComponent}
  */
-let graphComponent = null
+let graphComponent
 
 /**
- * The maximal time the layout will run.
+ * How long the layout will run at most (in milliseconds).
  */
 const MAX_TIME = 1000
 
@@ -65,7 +66,7 @@ const MAX_TIME = 1000
  * The layout algorithm.
  * @type {InteractiveOrganicLayout}
  */
-let layout = null
+let layout
 
 /**
  * The copy of the graph used for the layout.
@@ -87,34 +88,18 @@ let layoutContext
 
 /**
  * Runs the demo.
+ * @param {!object} licenseData
  */
 function run(licenseData) {
   License.value = licenseData
+
   graphComponent = new GraphComponent('graphComponent')
 
   graphComponent.inputMode = createEditorMode()
 
-  initializeGraph()
+  initializeDefaultStyles(graphComponent.graph)
 
-  registerCommands()
-
-  showApp(graphComponent)
-}
-
-/**
- * Initializes the graph instance setting default styles
- * and creating a small sample graph.
- */
-function initializeGraph() {
-  const graph = graphComponent.graph
-
-  // set some defaults
-  graph.nodeDefaults.style = new InteractiveOrganicFastNodeStyle()
-  graph.nodeDefaults.shareStyleInstance = true
-  graph.edgeDefaults.style = new InteractiveOrganicFastEdgeStyle()
-  graph.edgeDefaults.shareStyleInstance = true
-
-  createSampleGraph(graph)
+  createSampleGraph(graphComponent.graph)
 
   // center the initial graph
   graphComponent.fitGraphBounds()
@@ -126,7 +111,31 @@ function initializeGraph() {
   layout = startLayout()
   wakeUp()
 
-  // register a listener so that structure updates are handled automatically
+  addListeners(graphComponent.graph)
+
+  registerCommands()
+
+  showApp(graphComponent)
+}
+
+/**
+ * Initializes default styles for the given graph.
+ * @param {!IGraph} graph
+ */
+function initializeDefaultStyles(graph) {
+  // set some defaults
+  graph.nodeDefaults.style = new InteractiveOrganicFastNodeStyle()
+  graph.nodeDefaults.shareStyleInstance = true
+  graph.edgeDefaults.style = new InteractiveOrganicFastEdgeStyle()
+  graph.edgeDefaults.shareStyleInstance = true
+}
+
+/**
+ * Registers listeners that update the copied layout graph in response to structural changes
+ * in the given graph.
+ * @param {!IGraph} graph
+ */
+function addListeners(graph) {
   graph.addNodeCreatedListener((source, args) => {
     if (layout !== null) {
       const center = args.item.layout.center
@@ -140,20 +149,14 @@ function initializeGraph() {
       window.setTimeout(synchronize, MAX_TIME + 1)
     }
   })
-  graph.addNodeRemovedListener((source, args) => {
-    synchronize()
-  })
-  graph.addEdgeCreatedListener((source, args) => {
-    synchronize()
-  })
-  graph.addEdgeRemovedListener((source, args) => {
-    synchronize()
-  })
+  graph.addNodeRemovedListener(() => synchronize())
+  graph.addEdgeCreatedListener(() => synchronize())
+  graph.addEdgeRemovedListener(() => synchronize())
 }
 
 /**
  * Creates the input mode for the graphComponent.
- * @return {IInputMode} a new GraphEditorInputMode instance
+ * @returns {!IInputMode} a new GraphEditorInputMode instance
  */
 function createEditorMode() {
   // create default interaction with a number of disabled input modes.
@@ -185,11 +188,11 @@ function createEditorMode() {
 /**
  * Registers the listeners to the given move input mode in order to tell the organic layout what
  * nodes are moved interactively.
- * @param {MoveInputMode} moveInputMode The input mode that should be observed
+ * @param {!MoveInputMode} moveInputMode The input mode that should be observed
  */
 function initMoveMode(moveInputMode) {
   // register callbacks to notify the organic layout of changes
-  moveInputMode.addDragStartedListener((sender, args) => onMoveInitialized(sender.affectedItems))
+  moveInputMode.addDragStartedListener(sender => onMoveInitialized(sender.affectedItems))
   moveInputMode.addDragCanceledListener(onMoveCanceled)
   moveInputMode.addDraggedListener(onMoving)
   moveInputMode.addDragFinishedListener(onMovedFinished)
@@ -198,7 +201,7 @@ function initMoveMode(moveInputMode) {
 /**
  * Called once the move operation has been initialized.
  * Calculates which components stay fixed and which nodes will be moved by the user.
- * @param {IEnumerable.<IModelItem>} affectedItems The dragged items
+ * @param {!IEnumerable.<IModelItem>} affectedItems The dragged items
  */
 function onMoveInitialized(affectedItems) {
   if (layout !== null) {
@@ -207,8 +210,8 @@ function onMoveInitialized(affectedItems) {
     GraphConnectivity.connectedComponents(copy, componentNumber)
     const movedComponents = new Set()
     const selectedNodes = new Set()
-    movedNodes = affectedItems.filter(item => INode.isInstance(item)).toArray()
-    movedNodes.forEach(node => {
+    movedNodes = affectedItems.ofType(INode.$class).toArray()
+    for (const node of movedNodes) {
       const copiedNode = copy.getCopiedNode(node)
       if (copiedNode !== null) {
         // remember that we nailed down this node
@@ -227,14 +230,14 @@ function onMoveInitialized(affectedItems) {
         // In this case, the node itself is fixed, but it's neighbors will wake up
         increaseHeat(copiedNode, layout, 0.5)
       }
-    })
+    }
 
     // make all nodes that are not actively moved float freely
-    copy.nodes.forEach(copiedNode => {
+    for (const copiedNode of copy.nodes) {
       if (!selectedNodes.has(copiedNode)) {
         layout.setInertia(copiedNode, 0)
       }
-    })
+    }
 
     // dispose the map
     copy.disposeNodeMap(componentNumber)
@@ -250,7 +253,7 @@ function onMoveInitialized(affectedItems) {
 function onMoving() {
   if (layout !== null) {
     const copy = copiedLayoutGraph
-    movedNodes.forEach(node => {
+    for (const node of movedNodes) {
       const copiedNode = copy.getCopiedNode(node)
       if (copiedNode !== null) {
         // Update the position of the node in the CLG to match the one in the IGraph
@@ -258,7 +261,7 @@ function onMoving() {
         // Increasing the heat has the effect that the layout will consider these nodes as not completely placed...
         increaseHeat(copiedNode, layout, 0.05)
       }
-    })
+    }
     // Notify the layout that there is new work to do...
     layout.wakeUp()
   }
@@ -270,19 +273,19 @@ function onMoving() {
 function onMoveCanceled() {
   if (layout !== null) {
     const copy = copiedLayoutGraph
-    movedNodes.forEach(node => {
+    for (const node of movedNodes) {
       const copiedNode = copy.getCopiedNode(node)
       if (copiedNode !== null) {
         // Update the position of the node in the CLG to match the one in the IGraph
         layout.setCenter(copiedNode, node.layout.center.x, node.layout.center.y)
         layout.setStress(copiedNode, 0)
       }
-    })
-    copy.nodes.forEach(copiedNode => {
+    }
+    for (const copiedNode of copy.nodes) {
       // Reset the node's inertia to be fixed
-      layout.setInertia(copiedNode, 1.0)
+      layout.setInertia(copiedNode, 1)
       layout.setStress(copiedNode, 0)
-    }) // We don't want to restart the layout (since we canceled the drag anyway...)
+    } // We don't want to restart the layout (since we canceled the drag anyway...)
   }
 }
 
@@ -293,19 +296,19 @@ function onMoveCanceled() {
 function onMovedFinished() {
   if (layout !== null) {
     const copy = copiedLayoutGraph
-    movedNodes.forEach(node => {
+    for (const node of movedNodes) {
       const copiedNode = copy.getCopiedNode(node)
       if (copiedNode !== null) {
         // Update the position of the node in the CLG to match the one in the IGraph
         layout.setCenter(copiedNode, node.layout.center.x, node.layout.center.y)
         layout.setStress(copiedNode, 0)
       }
-    })
-    copy.nodes.forEach(copiedNode => {
+    }
+    for (const copiedNode of copy.nodes) {
       // Reset the node's inertia to be fixed
-      layout.setInertia(copiedNode, 1.0)
+      layout.setInertia(copiedNode, 1)
       layout.setStress(copiedNode, 0)
-    })
+    }
   }
 }
 
@@ -321,7 +324,7 @@ function registerCommands() {
 
 /**
  * Creates a new layout instance and starts a new execution context for it.
- * @return {InteractiveOrganicLayout}
+ * @returns {!InteractiveOrganicLayout}
  */
 function startLayout() {
   // create the layout
@@ -354,9 +357,9 @@ function startLayout() {
 function wakeUp() {
   if (layout !== null) {
     // we make all nodes freely movable
-    copiedLayoutGraph.nodes.forEach(copiedNode => {
+    for (const copiedNode of copiedLayoutGraph.nodes) {
       layout.setInertia(copiedNode, 0)
-    })
+    }
     // then wake up the layout
     layout.wakeUp()
 
@@ -367,9 +370,9 @@ function wakeUp() {
         // don't freeze the nodes if a node is currently being moved
         return
       }
-      copiedLayoutGraph.nodes.forEach(copiedNode => {
+      for (const copiedNode of copiedLayoutGraph.nodes) {
         layout.setInertia(copiedNode, 1)
-      })
+      }
     }, 2000)
   }
 }
@@ -387,21 +390,21 @@ function synchronize() {
 /**
  * Helper method that increases the heat of the neighbors of a given node by a given value.
  * This will make the layout algorithm move the neighbor nodes more quickly.
- * @param {YNode} copiedNode
- * @param {InteractiveOrganicLayout} layoutAlgorithm
+ * @param {!YNode} copiedNode
+ * @param {!InteractiveOrganicLayout} layoutAlgorithm
  * @param {number} delta
  */
 function increaseHeat(copiedNode, layoutAlgorithm, delta) {
   // Increase Heat of neighbors
-  copiedNode.neighbors.forEach(neighbor => {
+  for (const neighbor of copiedNode.neighbors) {
     const oldStress = layoutAlgorithm.getStress(neighbor)
     layoutAlgorithm.setStress(neighbor, Math.min(1, oldStress + delta))
-  })
+  }
 }
 
 /**
  * Creates sample graph.
- * @param {IGraph} graph
+ * @param {!IGraph} graph
  */
 function createSampleGraph(graph) {
   const nodes = []

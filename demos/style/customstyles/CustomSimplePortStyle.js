@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -26,7 +26,8 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { PortStyleBase, Rect, Size, SvgVisual } from 'yfiles'
+import { ICanvasContext, IPort, IRenderContext, PortStyleBase, Rect, Size, SvgVisual } from 'yfiles'
+import { SVGNS } from './Namespaces.js'
 
 /** the size of the port rendering */
 const WIDTH = 4
@@ -37,13 +38,17 @@ const HEIGHT = 4
  * The port is rendered as a circle.
  */
 export default class CustomSimplePortStyle extends PortStyleBase {
-  /** @return {SvgVisual} */
-  createVisual(renderContext, port) {
+  /**
+   * @param {!IRenderContext} context
+   * @param {!IPort} port
+   * @returns {!SvgVisual}
+   */
+  createVisual(context, port) {
     // create the ellipse
-    const ellipse = window.document.createElementNS('http://www.w3.org/2000/svg', 'ellipse')
+    const ellipse = window.document.createElementNS(SVGNS, 'ellipse')
     ellipse.setAttribute('fill', 'none')
     ellipse.setAttribute('stroke', 'rgb(255,255,255)')
-    ellipse.setAttribute('stroke-opacity', 0.31)
+    ellipse.setAttribute('stroke-opacity', '0.31')
     ellipse.cx.baseVal.value = WIDTH * 0.5
     ellipse.cy.baseVal.value = HEIGHT * 0.5
     ellipse.rx.baseVal.value = WIDTH * 0.5
@@ -56,8 +61,13 @@ export default class CustomSimplePortStyle extends PortStyleBase {
     return new SvgVisual(ellipse)
   }
 
-  /** @return {SvgVisual} */
-  updateVisual(renderContext, oldVisual, port) {
+  /**
+   * @param {!IRenderContext} context
+   * @param {!SvgVisual} oldVisual
+   * @param {!IPort} port
+   * @returns {!SvgVisual}
+   */
+  updateVisual(context, oldVisual, port) {
     const ellipse = oldVisual.svgElement
     const portLocation = port.locationParameter.model.getLocation(port, port.locationParameter)
     // arrange the old ellipse
@@ -71,9 +81,11 @@ export default class CustomSimplePortStyle extends PortStyleBase {
    * Calculates the bounds of this port.
    * These are also used for arranging the visual, hit testing, visibility testing, and marquee box tests.
    * @see Overrides {@link PortStyleBase#getBounds}
-   * @return {Rect}
+   * @param {!ICanvasContext} context
+   * @param {!IPort} port
+   * @returns {!Rect}
    */
-  getBounds(canvasContext, port) {
+  getBounds(context, port) {
     const portLocation = port.locationParameter.model.getLocation(port, port.locationParameter)
     return Rect.fromCenter(portLocation, new Size(WIDTH, HEIGHT))
   }

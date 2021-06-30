@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -31,8 +31,10 @@ import {
   DefaultPortCandidate,
   IEdge,
   IEdgeReconnectionPortCandidateProvider,
+  IEnumerable,
   IInputModeContext,
   IListEnumerable,
+  IPortCandidate,
   List
 } from 'yfiles'
 
@@ -46,7 +48,7 @@ export default class RedEdgePortCandidateProvider extends BaseClass(
 ) {
   /**
    * Creates a new instance of <code>OrangeEdgePortCandidateProvider</code>.
-   * @param {IEdge} edge The given edge
+   * @param {!IEdge} edge The given edge
    */
   constructor(edge) {
     super()
@@ -55,9 +57,9 @@ export default class RedEdgePortCandidateProvider extends BaseClass(
 
   /**
    * Returns only the current port as candidate, thus effectively disabling relocation.
-   * @param {IInputModeContext} context The context for which the candidates should be provided
+   * @param {!IInputModeContext} context The context for which the candidates should be provided
    * @see Specified by {@link IEdgeReconnectionPortCandidateProvider#getSourcePortCandidates}.
-   * @return {IEnumerable.<IPortCandidate>}
+   * @returns {!IEnumerable.<IPortCandidate>}
    */
   getSourcePortCandidates(context) {
     const candidates = new List()
@@ -67,9 +69,9 @@ export default class RedEdgePortCandidateProvider extends BaseClass(
 
   /**
    * Returns no candidates, thus effectively disabling relocation.
-   * @param {IInputModeContext} context The context for which the candidates should be provided
+   * @param {!IInputModeContext} context The context for which the candidates should be provided
    * @see Specified by {@link IEdgeReconnectionPortCandidateProvider#getTargetPortCandidates}.
-   * @return {IEnumerable.<IPortCandidate>}
+   * @returns {!IEnumerable.<IPortCandidate>}
    */
   getTargetPortCandidates(context) {
     return IListEnumerable.EMPTY

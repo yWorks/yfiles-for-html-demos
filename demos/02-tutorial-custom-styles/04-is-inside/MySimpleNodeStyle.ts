@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -142,7 +142,7 @@ export default class MySimpleNodeStyle extends NodeStyleBase {
    * @see Overrides {@link NodeStyleBase#updateVisual}
    */
   updateVisual(context: IRenderContext, oldVisual: SvgVisual, node: INode): SvgVisual {
-    const container = oldVisual.svgElement as SVGElement
+    const container = oldVisual.svgElement
     // get the data with which the oldvisual was created
     const oldCache = (container as any)['data-renderDataCache']
     // get the data for the new visual
@@ -170,13 +170,11 @@ export default class MySimpleNodeStyle extends NodeStyleBase {
     const color = this.getNodeColor(node)
 
     // Remember center points of labels to draw label edges, relative the node's top left corner
-    const labelLocations = node.labels.toArray().map(
-      (label: ILabel): Point => {
-        const center = label.layout.orientedRectangleCenter
-        const topLeft = node.layout.topLeft
-        return new Point(center.x - topLeft.x, center.y - topLeft.y)
-      }
-    )
+    const labelLocations = node.labels.toArray().map((label: ILabel): Point => {
+      const center = label.layout.orientedRectangleCenter
+      const topLeft = node.layout.topLeft
+      return new Point(center.x - topLeft.x, center.y - topLeft.y)
+    })
     return {
       color,
       size: node.layout.toSize(),

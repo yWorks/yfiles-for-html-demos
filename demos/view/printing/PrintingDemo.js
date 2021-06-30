@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -32,6 +32,7 @@ import {
   GraphEditorInputMode,
   HandleInputMode,
   HandlePositions,
+  IHandle,
   IHitTestable,
   License,
   MoveInputMode,
@@ -42,7 +43,7 @@ import {
   RectangleIndicatorInstaller
 } from 'yfiles'
 
-import PrintingSupport from './PrintingSupport.js'
+import PrintingSupport from '../../utils/PrintingSupport.js'
 import PositionHandler from './PositionHandler.js'
 import { initDemoStyles } from '../../resources/demo-styles.js'
 import { bindAction, showApp } from '../../resources/demo-app.js'
@@ -57,20 +58,27 @@ let graphComponent = null
  */
 let exportRect = null
 
+/** @type {HTMLInputElement} */
 let margin = null
 
+/** @type {HTMLInputElement} */
 let scale = null
 
+/** @type {HTMLInputElement} */
 let useRect = null
 
+/** @type {HTMLInputElement} */
 let useTilePrinting = null
 
+/** @type {HTMLInputElement} */
 let useTileWidth = null
 
+/** @type {HTMLInputElement} */
 let useTileHeight = null
 
 /**
  * Runs the demo.
+ * @param {!object} licenseData
  */
 function run(licenseData) {
   License.value = licenseData
@@ -141,12 +149,13 @@ function initializeGraph() {
 
 /**
  * Adds the input modes that handle the resizing and movement of the export rectangle.
- * @param {GraphEditorInputMode} inputMode
+ * @param {!GraphEditorInputMode} inputMode
  */
 function addExportRectInputModes(inputMode) {
   // create a mode that deals with the handles
-  const exportHandleInputMode = new HandleInputMode()
-  exportHandleInputMode.priority = 1
+  const exportHandleInputMode = new HandleInputMode({
+    priority: 1
+  })
   // add it to the graph editor mode
   inputMode.add(exportHandleInputMode)
 
@@ -159,16 +168,17 @@ function addExportRectInputModes(inputMode) {
   exportHandleInputMode.handles = exportHandles
 
   // create a mode that allows for dragging the export rectangle at the sides
-  const moveInputMode = new MoveInputMode()
-  moveInputMode.positionHandler = new PositionHandler(exportRect)
-  moveInputMode.hitTestable = IHitTestable.create((context, location) => {
-    const path = new GeneralPath(5)
-    path.appendRectangle(exportRect, false)
-    return path.pathContains(location, context.hitTestRadius + 3 / context.zoom)
+  const moveInputMode = new MoveInputMode({
+    positionHandler: new PositionHandler(exportRect),
+    hitTestable: IHitTestable.create((context, location) => {
+      const path = new GeneralPath(5)
+      path.appendRectangle(exportRect, false)
+      return path.pathContains(location, context.hitTestRadius + 3 / context.zoom)
+    }),
+    priority: 41
   })
 
   // add it to the edit mode
-  moveInputMode.priority = 41
   inputMode.add(moveInputMode)
 }
 
@@ -199,16 +209,19 @@ function printButtonClick() {
   // finally start the "printing" process.
   // this will open a new document in a separate browser window/tab and use
   // the javascript "print()" method of the browser to print the document.
-  printingSupport.printGraph(graphComponent.graph, useRect.checked ? exportRect.toRect() : null)
+  printingSupport.printGraph(
+    graphComponent.graph,
+    useRect.checked ? exportRect.toRect() : undefined
+  )
 }
 
 /**
- * @param {number} number
- * @param {string} text
- * @return {boolean}
+ * @param {!string} input
+ * @param {!string} text
+ * @returns {boolean}
  */
-function isValidInput(number, text) {
-  const value = parseFloat(number)
+function isValidInput(input, text) {
+  const value = parseFloat(input)
   if (isNaN(value)) {
     alert(`${text} must be a valid number.`)
     return false

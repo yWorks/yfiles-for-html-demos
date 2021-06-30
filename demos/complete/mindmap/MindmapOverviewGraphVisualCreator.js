@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -27,7 +27,7 @@
  **
  ***************************************************************************/
 import { GraphOverviewCanvasVisualCreator, IEdge, INode, IRenderContext } from 'yfiles'
-import { Structure } from './MindmapUtil.js'
+import { isRoot } from './MindmapUtil.js'
 
 /**
  * The class provides functionality for custom style of overview control.
@@ -35,16 +35,16 @@ import { Structure } from './MindmapUtil.js'
 export default class MindmapOverviewGraphVisualCreator extends GraphOverviewCanvasVisualCreator {
   /**
    * Custom node painting code.
-   * @param {IRenderContext} renderContext The render context.
-   * @param {CanvasRenderingContext2D} ctx The HTML canvas rendering context.
-   * @param {INode} node The node to which this style instance is assigned.
+   * @param {!IRenderContext} renderContext The render context.
+   * @param {!CanvasRenderingContext2D} ctx The HTML canvas rendering context.
+   * @param {!INode} node The node to which this style instance is assigned.
    * @see Overrides {@link GraphOverviewCanvasVisualCreator#paintNode}
    */
   paintNode(renderContext, ctx, node) {
     ctx.fillStyle = 'rgb(200, 200, 200)'
     ctx.strokeStyle = 'rgb(0,0,0)'
     const layout = node.layout
-    if (Structure.isRoot(node)) {
+    if (isRoot(node)) {
       ctx.save()
       ctx.translate(layout.center.x, layout.center.y)
       ctx.scale(1, layout.height / layout.width)
@@ -64,9 +64,9 @@ export default class MindmapOverviewGraphVisualCreator extends GraphOverviewCanv
 
   /**
    * Custom edge painting code.
-   * @param {IRenderContext} renderContext The render context.
-   * @param {CanvasRenderingContext2D} ctx The HTML canvas rendering context.
-   * @param {IEdge} edge The edge to which this style instance is assigned.
+   * @param {!IRenderContext} renderContext The render context.
+   * @param {!CanvasRenderingContext2D} ctx The HTML canvas rendering context.
+   * @param {!IEdge} edge The edge to which this style instance is assigned.
    * @see Overrides {@link GraphOverviewCanvasVisualCreator#paintEdge}
    */
   paintEdge(renderContext, ctx, edge) {

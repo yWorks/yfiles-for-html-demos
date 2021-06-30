@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -30,12 +30,14 @@ import {
   IHitTestable,
   IInputModeContext,
   InputModeEventArgs,
+  List,
   MoveInputMode,
   Point,
   Rect,
   Size
 } from 'yfiles'
 import AdditionalSnapLinePositionHandler from './AdditionalSnapLinePositionHandler.js'
+import AdditionalSnapLineVisualCreator from './AdditionalSnapLineVisualCreator.js'
 
 /**
  * This input mode allows moving free snaplines using a drag gesture.
@@ -43,53 +45,38 @@ import AdditionalSnapLinePositionHandler from './AdditionalSnapLinePositionHandl
 export default class AdditionalSnapLineMoveInputMode extends MoveInputMode {
   /**
    * Creates a new instance of <code>AdditionalSnapLineMoveInputMode</code>
-   * @param snapLineCreators {List.<AdditionalSnapLineVisualCreator>}
+   * @param {!List.<AdditionalSnapLineVisualCreator>} snapLineCreators {List.<AdditionalSnapLineVisualCreator>}
    */
   constructor(snapLineCreators) {
     super()
-    this.$snapLineCreators = snapLineCreators
-    this.initialize()
-  }
-
-  /**
-   * Returns the list of snap lines.
-   * @return {IEnumerable.<AdditionalSnapLineVisualCreator>}
-   */
-  get snapLineCreators() {
-    return this.$snapLineCreators
-  }
-
-  /**
-   * Clears the {@link MoveInputMode#positionHandler} property and sets
-   * the {@link MoveInputMode#hitTestable} property to check for hit
-   * {@link AdditionalSnapLineVisualCreator}s.
-   */
-  initialize() {
+    this.handler = null
+    this.snapLineCreators = snapLineCreators
     this.positionHandler = null
     this.hitTestable = IHitTestable.create(this.isValidHit.bind(this))
   }
 
   /**
    * Returns true if an AdditionalSnapLine can be found in a close surrounding of the given location.
-   * @param {IInputModeContext} context
-   * @param {Point} location
-   * @return {boolean}
+   * @param {!IInputModeContext} context
+   * @param {!Point} location
+   * @returns {boolean}
    */
   isValidHit(context, location) {
     const line = this.tryGetAdditionalSnapLineCreatorAt(location)
-    if (line !== null) {
+    if (line) {
       this.handler = new AdditionalSnapLinePositionHandler(line, location)
       return true
+    } else {
+      this.handler = null
+      return false
     }
-    this.handler = null
-    return false
   }
 
   /**
    * Returns the first AdditionalSnapLine found in a close surrounding of the given location
    * or null if none can be found.
-   * @param {Point} location
-   * @return {AdditionalSnapLineVisualCreator}
+   * @param {!Point} location
+   * @returns {?AdditionalSnapLineVisualCreator}
    */
   tryGetAdditionalSnapLineCreatorAt(location) {
     const surrounding = new Rect(location.add(new Point(-3, -3)), new Size(6, 6))
@@ -98,8 +85,8 @@ export default class AdditionalSnapLineMoveInputMode extends MoveInputMode {
 
   /**
    * Sets the {@link MoveInputMode#positionHandler} property.
-   * @param {InputModeEventArgs} inputModeEventArgs
    * @see Overrides {@link MoveInputMode#onDragStarting}
+   * @param {!InputModeEventArgs} inputModeEventArgs
    */
   onDragStarting(inputModeEventArgs) {
     this.positionHandler = this.handler
@@ -108,8 +95,8 @@ export default class AdditionalSnapLineMoveInputMode extends MoveInputMode {
 
   /**
    * Clears the {@link MoveInputMode#positionHandler} property.
-   * @param {InputModeEventArgs} inputModeEventArgs
    * @see Overrides {@link MoveInputMode#onDragCanceled}
+   * @param {!InputModeEventArgs} inputModeEventArgs
    */
   onDragCanceled(inputModeEventArgs) {
     super.onDragCanceled(inputModeEventArgs)
@@ -119,6 +106,7 @@ export default class AdditionalSnapLineMoveInputMode extends MoveInputMode {
   /**
    * Clears the {@link MoveInputMode#positionHandler} property.
    * @see Overrides {@link MoveInputMode#onDragFinished}
+   * @param {!InputModeEventArgs} inputModeEventArgs
    */
   onDragFinished(inputModeEventArgs) {
     super.onDragFinished(inputModeEventArgs)

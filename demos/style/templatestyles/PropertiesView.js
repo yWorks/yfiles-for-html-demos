@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -26,6 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
+import { INode } from 'yfiles'
 import { addClass } from '../../resources/demo-app.js'
 
 /**
@@ -34,12 +35,15 @@ import { addClass } from '../../resources/demo-app.js'
 export default class PropertiesView {
   /**
    * Creates a new PropertiesView
-   * @param {Element} element The DOM element that will be filled with the properties.
+   * @param {!Element} element The DOM element that will be filled with the properties.
    */
   constructor(element) {
     this.element = element
   }
 
+  /**
+   * @param {!INode} node
+   */
   showProperties(node) {
     this.clear()
 
@@ -105,8 +109,8 @@ export default class PropertiesView {
     tr.appendChild(createElement('td', 'Status'))
     const statusTd = document.createElement('td')
     tr.appendChild(statusTd)
-    const statusSelect = this.createStatusSelect()
-    statusSelect.addEventListener('change', evt => {
+    const statusSelect = createStatusSelect()
+    statusSelect.addEventListener('change', () => {
       employee.status = statusSelect.value
       // notify the template style binding engine of the property change
       employee.firePropertyChanged('status')
@@ -115,23 +119,14 @@ export default class PropertiesView {
     statusSelect.value = employee.status.toLowerCase()
   }
 
-  createStatusSelect() {
-    const select = document.createElement('select')
-    this.createStatusOption(select, 'Present')
-    this.createStatusOption(select, 'Busy')
-    this.createStatusOption(select, 'Unavailable')
-    return select
-  }
-
-  createStatusOption(select, val) {
-    const option = document.createElement('option')
-    option.setAttribute('value', val.toLowerCase())
-    option.textContent = val
-    select.appendChild(option)
-  }
-
+  /**
+   * @param {*} employee
+   * @param {!HTMLElement} nameElement
+   * @param {!HTMLInputElement} nameInput
+   * @param {!HTMLButtonElement} editButton
+   */
   addNameEventListeners(employee, nameElement, nameInput, editButton) {
-    editButton.addEventListener('click', evt => {
+    editButton.addEventListener('click', () => {
       nameElement.style.display = 'none'
       nameInput.style.display = 'inline-block'
       nameInput.focus()
@@ -159,9 +154,7 @@ export default class PropertiesView {
       }
     })
 
-    nameInput.addEventListener('blur', evt => {
-      cancelNameEdit()
-    })
+    nameInput.addEventListener('blur', () => cancelNameEdit())
   }
 
   clear() {
@@ -171,10 +164,34 @@ export default class PropertiesView {
 
 /**
  * Creates a DOM element with the specified text content
- * @returns {HTMLElement}
+ * @param {!string} tagName
+ * @param {!string} textContent
+ * @returns {!HTMLElement}
  */
 function createElement(tagName, textContent) {
   const element = document.createElement(tagName)
   element.textContent = textContent
   return element
+}
+
+/**
+ * @returns {!HTMLSelectElement}
+ */
+function createStatusSelect() {
+  const select = document.createElement('select')
+  createStatusOption(select, 'Present')
+  createStatusOption(select, 'Busy')
+  createStatusOption(select, 'Unavailable')
+  return select
+}
+
+/**
+ * @param {!HTMLSelectElement} select
+ * @param {!string} val
+ */
+function createStatusOption(select, val) {
+  const option = document.createElement('option')
+  option.setAttribute('value', val.toLowerCase())
+  option.textContent = val
+  select.appendChild(option)
 }

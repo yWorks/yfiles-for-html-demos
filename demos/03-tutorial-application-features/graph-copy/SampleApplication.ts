@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -54,11 +54,9 @@ import {
 import { bindAction, bindCommand, showApp } from '../../resources/demo-app'
 import loadJson from '../../resources/load-json'
 
-// @ts-ignore
-let originalGraphComponent: GraphComponent = null
+let originalGraphComponent: GraphComponent = null!
 
-// @ts-ignore
-let copyGraphComponent: GraphComponent = null
+let copyGraphComponent: GraphComponent = null!
 
 /**
  * Bootstraps the demo.
@@ -220,6 +218,7 @@ function registerCommands(): void {
     ICommand.UNGROUP_SELECTION,
     originalGraphComponent
   )
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
   const kim = (originalGraphComponent.inputMode as GraphEditorInputMode).keyboardInputMode
   const copy = ICommand.createCommand()
   kim.addCommandBinding(copy, copyGraph, (): boolean => originalGraphComponent.selection.size > 0)

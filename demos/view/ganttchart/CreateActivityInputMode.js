@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -27,16 +27,21 @@
  **
  ***************************************************************************/
 import {
+  GraphComponent,
   GraphModelManager,
+  ICanvasObject,
+  INode,
+  IRenderContext,
   IVisualTemplate,
   MarqueeSelectionEventArgs,
   MarqueeSelectionInputMode,
   Rect,
-  SimpleNode
+  SimpleNode,
+  SvgVisual
 } from 'yfiles'
 
-import GanttMapper from './GanttMapper.js'
 import ActivityNodeStyle from './ActivityNodeStyle.js'
+import GanttMapper from './GanttMapper.js'
 
 /**
  * A customized MarqueeSelectionInputMode that makes it possible to create task nodes.
@@ -49,33 +54,39 @@ import ActivityNodeStyle from './ActivityNodeStyle.js'
 export default class CreateActivityInputMode extends MarqueeSelectionInputMode {
   /**
    * Creates a new instance.
-   * @param {GanttMapper} mapper The mapper.
-   * @param {function(INode):void} applyCallback The callback that is executed when the gesture is finished.
+   * @param {!GanttMapper} mapper The mapper.
+   * @param {!function} applyCallback The callback that is executed when the gesture is finished.
    */
   constructor(mapper, applyCallback) {
     super()
 
-    /** @type {GanttMapper} */
-    this.mapper = mapper
-    /** @type {function(INode):void} */
     this.applyCallback = applyCallback
+    this.mapper = mapper
 
-    // create the dummy node
+    // The dummy node that is rendered during task creation.
     this.dummyNode = new SimpleNode()
 
+    // The task for which a new activity will be created.
+    this.task = null
+
+    // The canvas object in the graph component scene graph that holds the visualization that is
+    // rendered during the task creation.
+    this.canvasObject = null
+
     // switch off the default template
-    this.template = new IVisualTemplate({
-      createVisual() {
+    this.template = IVisualTemplate.create({
+      createVisual(_context, _bounds, _data) {
         return null
       },
-      updateVisual() {
+      updateVisual(_context, _oldVisual, _bounds, _dataObject) {
         return null
       }
     })
   }
 
   /**
-   * @param {MarqueeSelectionEventArgs} evt - The event argument that contains context information.
+   * Creates the dummy node and adds the visualization to the graph control.
+   * @param {!MarqueeSelectionEventArgs} evt The event argument that contains context information.
    */
   onDragStarted(evt) {
     // get the dragged rectangle
@@ -99,12 +110,13 @@ export default class CreateActivityInputMode extends MarqueeSelectionInputMode {
     }
 
     const task = this.mapper.getTask(layout.y)
+    const graphComponent = this.inputModeContext.canvasComponent
     this.dummyNode.style = task.color
       ? new ActivityNodeStyle(task.color)
-      : this.inputModeContext.canvasComponent.graph.nodeDefaults.style
+      : graphComponent.graph.nodeDefaults.style
 
     // add the dummy node visual to the graph control
-    this.canvasObject = this.inputModeContext.canvasComponent.contentGroup.addChild(
+    this.canvasObject = graphComponent.contentGroup.addChild(
       this.dummyNode,
       GraphModelManager.DEFAULT_NODE_DESCRIPTOR
     )
@@ -113,7 +125,8 @@ export default class CreateActivityInputMode extends MarqueeSelectionInputMode {
   }
 
   /**
-   * @param {MarqueeSelectionEventArgs} evt - The event argument that contains context information.
+   * Updates the dummy node visualization.
+   * @param {!MarqueeSelectionEventArgs} evt The event argument that contains context information.
    */
   onDragging(evt) {
     // update the dummy node layout
@@ -127,7 +140,9 @@ export default class CreateActivityInputMode extends MarqueeSelectionInputMode {
   }
 
   /**
-   * @param {MarqueeSelectionEventArgs} evt - The event argument that contains context information.
+   * Removes the dummy node visualization and creates a new activity node in
+   * its place.
+   * @param {!MarqueeSelectionEventArgs} evt The event argument that contains context information.
    */
   onDragFinished(evt) {
     // remove the dummy node visual
@@ -156,7 +171,8 @@ export default class CreateActivityInputMode extends MarqueeSelectionInputMode {
   }
 
   /**
-   * @param {MarqueeSelectionEventArgs} evt - The event argument that contains context information.
+   * Removes the dummy node.
+   * @param {!MarqueeSelectionEventArgs} evt The event argument that contains context information.
    */
   onDragCanceled(evt) {
     // remove the dummy node visual
@@ -167,6 +183,10 @@ export default class CreateActivityInputMode extends MarqueeSelectionInputMode {
     super.onDragCanceled(evt)
   }
 
+  /**
+   * @param {!Rect} marqueeRect
+   * @returns {!Rect}
+   */
   getDummyNodeLayout(marqueeRect) {
     const x = marqueeRect.x
     // get the y coordinate of the task the drag was started in

@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -33,6 +33,7 @@ import {
   ILabel,
   ILabelModelParameterFinder,
   IListEnumerable,
+  IModelItem,
   INode,
   Insets,
   IPort,
@@ -44,61 +45,45 @@ import {
 } from 'yfiles'
 import EdgeDropInputMode from './EdgeDropInputMode.js'
 
+export class DragAndDropPanelItem {
+  /**
+   * @param {!T} element
+   * @param {!string} tooltip
+   */
+  constructor(element, tooltip) {
+    this.tooltip = tooltip
+    this.element = element
+  }
+}
+
 // @yjs:keep=effectAllowed
+
 /**
  * A palette of sample nodes. Users can drag and drop the nodes from this palette to a graph control.
  */
-export default class NativeDragAndDropPanel {
+export class NativeDragAndDropPanel {
   /**
    * Create a new style panel in the given element.
-   * @param {HTMLElement} div The element that will display the palette items.
-   * @param {GraphComponent} graphComponent The graph component.
+   * @param {!HTMLElement} div The element that will display the palette items.
+   * @param {!GraphComponent} graphComponent The graph component.
    */
   constructor(div, graphComponent) {
+    // Whether or not to show a preview during the drag.
+    this.showPreview = true
+
+    // Whether the labels of the DnD node visual should be transferred to the created node or discarded.
+    this.copyNodeLabels = true
+
     this.div = div
     this.graphComponent = graphComponent
-    this.$showPreview = true
-    this.$copyNodeLabels = true
-  }
-
-  /**
-   * Returns whether or not to show a preview during the drag.
-   * @return {boolean}
-   */
-  get showPreview() {
-    return this.$showPreview
-  }
-
-  /**
-   * Sets whether or not to show a preview during the drag.
-   * @param {boolean} showPreview
-   */
-  set showPreview(showPreview) {
-    this.$showPreview = showPreview
-  }
-
-  /**
-   * Whether the labels of the DnD node visual should be transferred to the created node or discarded.
-   * @returns {Boolean}
-   */
-  get copyNodeLabels() {
-    return this.$copyNodeLabels
-  }
-
-  set copyNodeLabels(value) {
-    this.$copyNodeLabels = value
   }
 
   /**
    * Adds the items in the given array to the palette.
    * This method delegates the creation of the visualization of each node to createNodeVisual.
-   * @param {function} itemFactory
+   * @param {!function} itemFactory
    */
   populatePanel(itemFactory) {
-    if (!itemFactory) {
-      return
-    }
-
     const items = itemFactory()
 
     // This map is used for getting the instances from the string data of the data transfer during 'drop'
@@ -107,21 +92,22 @@ export default class NativeDragAndDropPanel {
     // Convert the nodes into plain visualizations
     const exportGraphComponent = new GraphComponent()
     const noPreviewElement = document.createElement('div')
-    for (let i = 0; i < items.length; i++) {
-      const item = items[i]
+
+    items.forEach((item, i) => {
       const modelItem = item.element
 
       // The item ID is used to get the node instance from the data transfer during 'drop'
       const itemId = `item ${i}`
-      const visual = INode.isInstance(modelItem)
-        ? this.createNodeVisual(item, exportGraphComponent)
-        : this.createEdgeVisual(item, exportGraphComponent)
+      const visual =
+        modelItem instanceof INode
+          ? this.createNodeVisual(item, exportGraphComponent)
+          : this.createEdgeVisual(item, exportGraphComponent)
 
-      if (IPort.isInstance(modelItem.tag)) {
+      if (modelItem.tag instanceof IPort) {
         id2items.set(itemId, modelItem.tag)
-      } else if (ILabel.isInstance(modelItem.tag)) {
+      } else if (modelItem.tag instanceof ILabel) {
         id2items.set(itemId, modelItem.tag)
-      } else if (IEdge.isInstance(modelItem)) {
+      } else if (modelItem instanceof IEdge) {
         id2items.set(itemId, modelItem)
       } else {
         // Store a node without labels to create a plain node on drop
@@ -130,21 +116,25 @@ export default class NativeDragAndDropPanel {
         modifiedNode.style = modelItem.style
         modifiedNode.ports = modelItem.ports
         modifiedNode.tag = modelItem.tag
-        modifiedNode.labels = this.$copyNodeLabels ? modelItem.labels : IListEnumerable.EMPTY
+        modifiedNode.labels = this.copyNodeLabels ? modelItem.labels : IListEnumerable.EMPTY
         id2items.set(itemId, modifiedNode)
       }
 
       // Set the item ID as data of the data transfer and configure some other drop properties according to the
       // dragged type
       visual.addEventListener('dragstart', e => {
+        if (!e.dataTransfer) {
+          return
+        }
+
         e.dataTransfer.dropEffect = 'copy'
         e.dataTransfer.effectAllowed = 'copy'
 
-        if (IPort.isInstance(modelItem.tag)) {
+        if (modelItem.tag instanceof IPort) {
           e.dataTransfer.setData(IPort.$class.name, itemId)
-        } else if (ILabel.isInstance(modelItem.tag)) {
+        } else if (modelItem.tag instanceof ILabel) {
           e.dataTransfer.setData(ILabel.$class.name, itemId)
-        } else if (IEdge.isInstance(modelItem)) {
+        } else if (modelItem instanceof IEdge) {
           e.dataTransfer.setData(IEdge.$class.name, itemId)
         } else {
           e.dataTransfer.setData(INode.$class.name, itemId)
@@ -162,10 +152,10 @@ export default class NativeDragAndDropPanel {
 
       // Finally, add the visual to palette
       this.div.appendChild(visual)
-    }
+    })
 
     if (
-      GraphEditorInputMode.isInstance(this.graphComponent.inputMode) &&
+      this.graphComponent.inputMode instanceof GraphEditorInputMode &&
       this.graphComponent.inputMode.nodeDropInputMode
     ) {
       // An item creator returns the node instance for the ID of the data transfer.
@@ -222,7 +212,7 @@ export default class NativeDragAndDropPanel {
       const edgeDropInputMode = this.graphComponent.inputMode
         .getSortedModes()
         .find(mode => mode instanceof EdgeDropInputMode)
-      if (edgeDropInputMode) {
+      if (edgeDropInputMode instanceof EdgeDropInputMode) {
         const oldEdgeCreator = edgeDropInputMode.itemCreator
         edgeDropInputMode.itemCreator = (context, graph, info, dropTarget, dropLocation) => {
           let edge = info
@@ -241,9 +231,9 @@ export default class NativeDragAndDropPanel {
    * Creates an element that contains the visualization of the given node.
    * This method is used by populatePanel to create the visualization
    * for each node provided by the factory.
-   * @param {Object} original
-   * @param {GraphComponent} exportGraphComponent
-   * @return {HTMLElement}
+   * @param {!DragAndDropPanelItem.<INode>} original
+   * @param {!GraphComponent} exportGraphComponent
+   * @returns {!HTMLElement}
    */
   createNodeVisual(original, exportGraphComponent) {
     const exportGraph = exportGraphComponent.graph
@@ -274,7 +264,9 @@ export default class NativeDragAndDropPanel {
 
   /**
    * Creates an element that contains the visualization of the given edge.
-   * @return {HTMLElement}
+   * @param {!DragAndDropPanelItem.<IEdge>} original
+   * @param {!GraphComponent} graphComponent
+   * @returns {!HTMLElement}
    */
   createEdgeVisual(original, graphComponent) {
     const exportGraph = graphComponent.graph
@@ -294,7 +286,9 @@ export default class NativeDragAndDropPanel {
 
 /**
  * Exports and wraps the original visualization in an HTML element.
- * @return {HTMLElement}
+ * @param {!GraphComponent} graphComponent
+ * @param {!string} tooltip
+ * @returns {!HTMLElement}
  */
 function exportAndWrap(graphComponent, tooltip) {
   graphComponent.updateContentRect(new Insets(5))

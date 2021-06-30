@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -36,16 +36,28 @@ import {
   ICanvasObjectDescriptor,
   IInputMode,
   IInputModeContext,
-  IModelItem,
   INode,
   InputModeBase,
   ISelectionIndicatorInstaller,
   ModelManager,
   Point,
-  SolidColorFill
+  SolidColorFill,
+  ClickEventArgs,
+  ICanvasObjectInstaller,
+  ICanvasObjectGroup,
+  GraphComponent,
+  ISelectionModel,
+  ICanvasContext,
+  PropertyChangedEventArgs,
+  NodeEventArgs,
+  MouseEventArgs,
+  TouchEventArgs,
+  ItemSelectionChangedEventArgs,
+  IEnumerator
 } from 'yfiles'
 
 import ButtonVisualCreator from './ButtonVisualCreator.js'
+import { UMLNodeStyle } from './UMLNodeStyle.js'
 
 /**
  * An {@link IInputMode} which will provide buttons for edge creation for the graph component's
@@ -58,16 +70,18 @@ export default class UMLContextButtonsInputMode extends InputModeBase {
     this.buttonNodes = new DefaultSelectionModel()
 
     // initializes listener functions in order to install/uninstall them
-    this.onCurrentItemChangedListener = () => this.onCurrentItemChanged()
+    this.onCurrentItemChangedListener = (sender, evt) => this.onCurrentItemChanged()
     this.onCanvasClickedListener = (sender, evt) => this.onCanvasClicked(evt)
     this.onNodeRemovedListener = (sender, evt) => this.onNodeRemoved(evt.item)
     this.startEdgeCreationListener = (sender, evt) => this.startEdgeCreation(evt.location)
+
+    this.manager = null
   }
 
   /**
    * Installs the necessary listeners of this input mode.
-   * @param {IInputModeContext} context the context to install this mode into
-   * @param {ConcurrencyController} controller The {@link InputModeBase#controller} for
+   * @param {!IInputModeContext} context the context to install this mode into
+   * @param {!ConcurrencyController} controller The {@link InputModeBase#controller} for
    *   this mode.
    */
   install(context, controller) {
@@ -75,7 +89,7 @@ export default class UMLContextButtonsInputMode extends InputModeBase {
 
     // use a selection indicator manager which only "selects" the current item
     // so the buttons are only displayed for one node
-    const graphComponent = context.canvasComponent
+    const graphComponent = getGraphComponentFromContext(context)
     this.manager = new MySelectionIndicatorManager(graphComponent, this.buttonNodes)
 
     // keep buttons updated and their add interaction
@@ -104,7 +118,7 @@ export default class UMLContextButtonsInputMode extends InputModeBase {
 
   /**
    * Remove the button visuals when the node is deleted.
-   * @param {IModelItem} item
+   * @param {!INode} item
    */
   onNodeRemoved(item) {
     this.buttonNodes.setSelected(item, false)
@@ -112,15 +126,14 @@ export default class UMLContextButtonsInputMode extends InputModeBase {
 
   /**
    * Called when the mouse button is pressed to initiate edge creation in case a button is hit.
-   * @param {Point} location
+   * @param {!Point} location
    */
   startEdgeCreation(location) {
     if (this.active && this.canRequestMutex()) {
-      const graphComponent = this.inputModeContext.canvasComponent
+      const graphComponent = this.getGraphComponent()
 
       // check which node currently has the buttons and invoke create edge input mode to create a new edge
-      for (let enumerator = this.buttonNodes.getEnumerator(); enumerator.moveNext(); ) {
-        const buttonNode = enumerator.current
+      for (const buttonNode of this.buttonNodes) {
         const styleButton = ButtonVisualCreator.getStyleButtonAt(
           graphComponent,
           buttonNode,
@@ -160,16 +173,16 @@ export default class UMLContextButtonsInputMode extends InputModeBase {
 
   /**
    * Check whether a context button has been clicked.
-   * @param {ClickEventArgs} evt
+   * @param {!ClickEventArgs} evt
    */
   onCanvasClicked(evt) {
     const location = evt.location
     if (this.active && this.canRequestMutex()) {
-      const graphComponent = this.inputModeContext.canvasComponent
+      const graphComponent = this.getGraphComponent()
       for (let enumerator = this.buttonNodes.getEnumerator(); enumerator.moveNext(); ) {
         const buttonNode = enumerator.current
         const contextButton = ButtonVisualCreator.getContextButtonAt(buttonNode, location)
-        if (contextButton) {
+        if (contextButton && buttonNode.style instanceof UMLNodeStyle) {
           if (contextButton === 'interface') {
             const isInterface = buttonNode.style.model.stereotype === 'interface'
             buttonNode.style.model.stereotype = isInterface ? '' : 'interface'
@@ -194,11 +207,11 @@ export default class UMLContextButtonsInputMode extends InputModeBase {
 
   /**
    * Removed the installed listeners when they are not needed anymore.
-   * @param {IInputModeContext} context - The context to remove this mode from. This is the same
+   * @param {!IInputModeContext} context - The context to remove this mode from. This is the same
    *   instance that has been passed to {@link InputModeBase#install}.
    */
   uninstall(context) {
-    const graphComponent = context.canvasComponent
+    const graphComponent = getGraphComponentFromContext(context)
     graphComponent.removeCurrentItemChangedListener(this.onCurrentItemChangedListener)
     graphComponent.removeMouseDragListener(this.startEdgeCreationListener)
     graphComponent.removeMouseClickListener(this.startEdgeCreationListener)
@@ -212,6 +225,21 @@ export default class UMLContextButtonsInputMode extends InputModeBase {
     this.manager = null
     super.uninstall(context)
   }
+
+  /**
+   * @returns {!GraphComponent}
+   */
+  getGraphComponent() {
+    return getGraphComponentFromContext(this.inputModeContext)
+  }
+}
+
+/**
+ * @param {!IInputModeContext} context
+ * @returns {!GraphComponent}
+ */
+function getGraphComponentFromContext(context) {
+  return context.canvasComponent
 }
 
 /**
@@ -219,6 +247,10 @@ export default class UMLContextButtonsInputMode extends InputModeBase {
  * such that the edge creation buttons are drawn on top of the selected etc.
  */
 class MySelectionIndicatorManager extends ModelManager {
+  /**
+   * @param {!GraphComponent} canvas
+   * @param {!ISelectionModel.<INode>} model
+   */
   constructor(canvas, model) {
     super(canvas)
     this.model = model
@@ -229,12 +261,12 @@ class MySelectionIndicatorManager extends ModelManager {
   }
 
   /**
-   * @param {T} item The item to find an installer for.
-   * @returns {ICanvasObjectInstaller}
+   * @param {!INode} item The item to find an installer for.
+   * @returns {!ICanvasObjectInstaller}
    */
   getInstaller(item) {
-    return new ISelectionIndicatorInstaller((iCanvasContext, iCanvasObjectGroup, node) =>
-      iCanvasObjectGroup.addChild(
+    return ISelectionIndicatorInstaller.create((context, group, node) =>
+      group.addChild(
         new ButtonVisualCreator(node, this.canvasComponent),
         ICanvasObjectDescriptor.ALWAYS_DIRTY_INSTANCE
       )
@@ -242,8 +274,8 @@ class MySelectionIndicatorManager extends ModelManager {
   }
 
   /**
-   * @param {T} item The item to find a canvas object group for.
-   * @returns {ICanvasObjectGroup}
+   * @param {!INode} item The item to find a canvas object group for.
+   * @returns {!ICanvasObjectGroup}
    */
   getCanvasObjectGroup(item) {
     return this.buttonGroup
@@ -251,7 +283,7 @@ class MySelectionIndicatorManager extends ModelManager {
 
   /**
    * Called when the selection of the internal model changes.
-   * @param {IModelItem} item The item that is the subject of the event
+   * @param {!INode} item The item that is the subject of the event
    * @param {boolean} itemSelected Whether the item is selected
    */
   selectionChanged(item, itemSelected) {

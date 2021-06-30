@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -31,6 +31,8 @@ import {
   Class,
   CompositeLayoutStage,
   GraphComponent,
+  ILayoutAlgorithm,
+  LayoutData,
   OrganicEdgeRouter,
   OrganicEdgeRouterData,
   RemoveOverlapsStage,
@@ -70,13 +72,14 @@ const OrganicEdgeRouterConfig = Class('OrganicEdgeRouterConfig', {
     this.keepBendsItem = router.keepExistingBends
     this.routeOnlyNecessaryItem = !router.routeAllEdges
     this.allowMovingNodesItem = false
+    this.title = 'Organic Edge Router'
   },
 
   /**
    * Creates and configures a layout and the graph's {@link IGraph#mapperRegistry} if necessary.
-   * @param {GraphComponent} graphComponent The <code>GraphComponent</code> to apply the
+   * @param graphComponent The <code>GraphComponent</code> to apply the
    *   configuration on.
-   * @return {ILayoutAlgorithm} The configured layout algorithm.
+   * @return The configured layout algorithm.
    */
   createConfiguredLayout: function (graphComponent) {
     const router = new OrganicEdgeRouter()
@@ -109,28 +112,16 @@ const OrganicEdgeRouterConfig = Class('OrganicEdgeRouterConfig', {
 
   /**
    * Creates and configures the layout data.
-   * @return {LayoutData} The configured layout data.
+   * @return The configured layout data.
    */
   createConfiguredLayoutData: function (graphComponent, layout) {
-    const layoutData = new OrganicEdgeRouterData()
-
     if (this.selectionOnlyItem) {
-      layoutData.affectedEdges = graphComponent.selection.selectedEdges
+      return new OrganicEdgeRouterData({
+        affectedEdges: graphComponent.selection.selectedEdges
+      })
+    } else {
+      return new OrganicEdgeRouterData()
     }
-
-    return layoutData
-  },
-
-  /** @type {OptionGroup} */
-  DescriptionGroup: {
-    $meta: function () {
-      return [
-        LabelAttribute('Description'),
-        OptionGroupAttribute('RootGroup', 5),
-        TypeAttribute(OptionGroup.$class)
-      ]
-    },
-    value: null
   },
 
   /** @type {OptionGroup} */
@@ -159,12 +150,6 @@ const OrganicEdgeRouterConfig = Class('OrganicEdgeRouterConfig', {
     }
   },
 
-  /**
-   * Backing field for below property
-   * @type {boolean}
-   */
-  $selectionOnlyItem: false,
-
   /** @type {boolean} */
   selectionOnlyItem: {
     $meta: function () {
@@ -177,19 +162,8 @@ const OrganicEdgeRouterConfig = Class('OrganicEdgeRouterConfig', {
         TypeAttribute(YBoolean.$class)
       ]
     },
-    get: function () {
-      return this.$selectionOnlyItem
-    },
-    set: function (value) {
-      this.$selectionOnlyItem = value
-    }
+    value: false
   },
-
-  /**
-   * Backing field for below property
-   * @type {number}
-   */
-  $minimumNodeDistanceItem: 0,
 
   /** @type {number} */
   minimumNodeDistanceItem: {
@@ -208,19 +182,8 @@ const OrganicEdgeRouterConfig = Class('OrganicEdgeRouterConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function () {
-      return this.$minimumNodeDistanceItem
-    },
-    set: function (value) {
-      this.$minimumNodeDistanceItem = value
-    }
+    value: 0
   },
-
-  /**
-   * Backing field for below property
-   * @type {boolean}
-   */
-  $keepBendsItem: false,
 
   /** @type {boolean} */
   keepBendsItem: {
@@ -234,19 +197,8 @@ const OrganicEdgeRouterConfig = Class('OrganicEdgeRouterConfig', {
         TypeAttribute(YBoolean.$class)
       ]
     },
-    get: function () {
-      return this.$keepBendsItem
-    },
-    set: function (value) {
-      this.$keepBendsItem = value
-    }
+    value: false
   },
-
-  /**
-   * Backing field for below property
-   * @type {boolean}
-   */
-  $routeOnlyNecessaryItem: false,
 
   /** @type {boolean} */
   routeOnlyNecessaryItem: {
@@ -260,19 +212,8 @@ const OrganicEdgeRouterConfig = Class('OrganicEdgeRouterConfig', {
         TypeAttribute(YBoolean.$class)
       ]
     },
-    get: function () {
-      return this.$routeOnlyNecessaryItem
-    },
-    set: function (value) {
-      this.$routeOnlyNecessaryItem = value
-    }
+    value: false
   },
-
-  /**
-   * Backing field for below property
-   * @type {boolean}
-   */
-  $allowMovingNodesItem: false,
 
   /** @type {boolean} */
   allowMovingNodesItem: {
@@ -283,12 +224,7 @@ const OrganicEdgeRouterConfig = Class('OrganicEdgeRouterConfig', {
         TypeAttribute(YBoolean.$class)
       ]
     },
-    get: function () {
-      return this.$allowMovingNodesItem
-    },
-    set: function (value) {
-      this.$allowMovingNodesItem = value
-    }
+    value: false
   }
 })
 export default OrganicEdgeRouterConfig

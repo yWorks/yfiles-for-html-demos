@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -27,28 +27,35 @@
  **
  ***************************************************************************/
 import {
+  Class,
   Enum,
   ExteriorLabelModel,
   ExteriorLabelModelPosition,
   FreeNodeLabelModel,
   GraphComponent,
+  GraphEditorInputMode,
   GraphItemTypes,
   HashMap,
   ICommand,
   IEdge,
+  IEdgeStyle,
+  IEnumerable,
   ILabel,
   ILabelModelParameter,
   ILabelOwner,
   IModelItem,
   INode,
+  INodeStyle,
   IPort,
+  IPortStyle,
   List,
   NinePositionsEdgeLabelModel,
   Point,
   Rect,
   SimpleLabel,
   SimpleNode,
-  Size
+  Size,
+  YObject
 } from 'yfiles'
 
 import { bindAction, bindActions, bindChangeListener } from '../../resources/demo-app.js'
@@ -75,29 +82,29 @@ import {
   SubState,
   TaskType
 } from './bpmn-view.js'
+import ContextMenu from '../../utils/ContextMenu.js'
 
 class BpmnPopup {
   /**
-   * @param {GraphComponent} graphComponent
-   * @param {HTMLElement} div
-   * @param {ILabelModelParameter} labelModelParameter
+   * @param {!GraphComponent} graphComponent
+   * @param {!HTMLElement} div
+   * @param {!ILabelModelParameter} labelModelParameter
    */
   constructor(graphComponent, div, labelModelParameter) {
+    this._currentItem = null
+    this.dirty = false
     this.graphComponent = graphComponent
     this.labelModelParameter = labelModelParameter
 
     this.divField = div
     div.style.display = 'none'
-    this.currentItemField = null
-
-    this.dirty = false
 
     this.registerListeners()
   }
 
   /**
    * Returns the pop-up div.
-   * @type {Element}
+   * @type {!Element}
    */
   get div() {
     return this.divField
@@ -107,23 +114,23 @@ class BpmnPopup {
    * Gets the {@link IModelItem item} to display information for.
    * Setting this property to a value other than null shows the pop-up.
    * Setting the property to null hides the pop-up.
-   * @type {IModelItem}
+   * @type {?IModelItem}
    */
   get currentItem() {
-    return this.currentItemField
+    return this._currentItem
   }
 
   /**
    * Sets the {@link IModelItem item} to display information for.
    * Setting this property to a value other than null shows the pop-up.
    * Setting the property to null hides the pop-up.
-   * @type {IModelItem}
+   * @type {?IModelItem}
    */
   set currentItem(value) {
-    if (value === this.currentItemField) {
+    if (value === this._currentItem) {
       return
     }
-    this.currentItemField = value
+    this._currentItem = value
     if (value !== null) {
       this.show()
     } else {
@@ -134,7 +141,7 @@ class BpmnPopup {
   registerListeners() {
     // Add listener for viewport changes
     this.graphComponent.addViewportChangedListener(() => {
-      if (this.currentItemField) {
+      if (this._currentItem) {
         this.dirty = true
       }
     })
@@ -142,10 +149,10 @@ class BpmnPopup {
     // Add listeners for node bounds changes
     this.graphComponent.graph.addNodeLayoutChangedListener((sender, node) => {
       if (
-        (this.currentItemField && this.currentItemField === node) ||
-        (IEdge.isInstance(this.currentItemField) &&
-          (node === this.currentItemField.sourcePort.owner ||
-            node === this.currentItemField.targetPort.owner))
+        (this._currentItem && this._currentItem === node) ||
+        (this._currentItem instanceof IEdge &&
+          (node === this._currentItem.sourcePort.owner ||
+            node === this._currentItem.targetPort.owner))
       ) {
         this.dirty = true
       }
@@ -153,7 +160,7 @@ class BpmnPopup {
 
     // Add listener for updates of the visual tree
     this.graphComponent.addUpdatedVisualListener(() => {
-      if (this.currentItemField && this.dirty) {
+      if (this._currentItem && this.dirty) {
         this.dirty = false
         this.updateLocation()
       }
@@ -180,7 +187,7 @@ class BpmnPopup {
    * {@link BpmnPopupSupport#labelModelParameter}. Currently, this implementation does not support rotated pop-ups.
    */
   updateLocation() {
-    if (!this.currentItemField && !this.labelModelParameter) {
+    if (!this._currentItem && !this.labelModelParameter) {
       return
     }
     const width = this.divField.clientWidth
@@ -194,10 +201,10 @@ class BpmnPopup {
     )
     dummyLabel.preferredSize = new Size(width / zoom, height / zoom)
 
-    if (ILabelOwner.isInstance(this.currentItemField)) {
-      dummyLabel.owner = this.currentItemField
-    } else if (IPort.isInstance(this.currentItemField)) {
-      const location = this.currentItemField.location
+    if (this._currentItem instanceof ILabelOwner) {
+      dummyLabel.owner = this._currentItem
+    } else if (this._currentItem instanceof IPort) {
+      const location = this._currentItem.location
       const newSimpleNode = new SimpleNode()
       newSimpleNode.layout = new Rect(location.x - 10, location.y - 10, 20, 20)
       dummyLabel.owner = newSimpleNode
@@ -230,18 +237,73 @@ class BpmnPopup {
  */
 export default class BpmnPopupSupport {
   /**
-   * @param {GraphComponent} graphComponent
-   * @param {ContextMenu} contextMenu
+   * @param {!GraphComponent} graphComponent
+   * @param {!ContextMenu} contextMenu
    */
   constructor(graphComponent, contextMenu) {
-    this.graphComponent = graphComponent
-    this.contextMenu = contextMenu
+    this.gatewayTypeBox = document.getElementById('gatewayTypeBox')
+    this.eventTypeBox = document.getElementById('eventTypeBox')
+
+    this.eventCharacteristicBox = document.getElementById('eventCharacteristicBox')
+
+    this.activityAdHocCheckBox = document.getElementById('activityAdHocCheckBox')
+
+    this.activityCompensationCheckBox = document.getElementById('activityCompensationCheckBox')
+
+    this.activityTypeBox = document.getElementById('activityTypeBox')
+
+    this.activityLoopCharacteristicBox = document.getElementById('activityLoopCharacteristicBox')
+
+    this.activitySubStateBox = document.getElementById('activitySubStateBox')
+    this.activityTaskTypeBox = document.getElementById('activityTaskTypeBox')
+
+    this.activityTriggerEventCharacteristicBox = document.getElementById(
+      'activityTriggerEventCharacteristicBox'
+    )
+
+    this.activityTriggerEventTypeBox = document.getElementById('activityTriggerEventTypeBox')
+
+    this.conversationTypeBox = document.getElementById('conversationTypeBox')
+
+    this.choreographyInitiatingAtTopCheckBox = document.getElementById(
+      'choreographyInitiatingAtTopCheckBox'
+    )
+
+    this.choreographyInitiatingMessageCheckBox = document.getElementById(
+      'choreographyInitiatingMessageCheckBox'
+    )
+
+    this.choreographyResponseMessageCheckBox = document.getElementById(
+      'choreographyResponseMessageCheckBox'
+    )
+
+    this.choreographyTypeBox = document.getElementById('choreographyTypeBox')
+
+    this.choreographyLoopCharacteristicBox = document.getElementById(
+      'choreographyLoopCharacteristicBox'
+    )
+
+    this.choreographySubStateBox = document.getElementById('choreographySubStateBox')
+
+    this.dataObjectCollectionCheckBox = document.getElementById('dataObjectCollectionCheckBox')
+
+    this.dataObjectTypeBox = document.getElementById('dataObjectTypeBox')
+
+    this.poolMultipleCheckBox = document.getElementById('poolMultipleCheckBox')
+
+    this.edgeTypeBox = document.getElementById('edgeTypeBox')
+    this.portEventTypeBox = document.getElementById('portEventTypeBox')
+
+    this.portEventCharacteristicBox = document.getElementById('portEventCharacteristicBox')
 
     // the currently visible popup.
     this.activePopup = null
 
     // a mapping of BPMN styles to popup-support to identify the right popup to show for an item.
     this.typePopups = new HashMap()
+
+    this.graphComponent = graphComponent
+    this.contextMenu = contextMenu
 
     this.initializePopups()
     this.initializePopupSynchronization()
@@ -251,42 +313,6 @@ export default class BpmnPopupSupport {
    * Initialize UI elements used in the popups.
    */
   initializePopups() {
-    // get the combo and check boxes used in the popups
-    this.gatewayTypeBox = document.getElementById('gatewayTypeBox')
-    this.eventTypeBox = document.getElementById('eventTypeBox')
-    this.eventCharacteristicBox = document.getElementById('eventCharacteristicBox')
-    this.activityAdHocCheckBox = document.getElementById('activityAdHocCheckBox')
-    this.activityCompensationCheckBox = document.getElementById('activityCompensationCheckBox')
-    this.activityTypeBox = document.getElementById('activityTypeBox')
-    this.activityLoopCharacteristicBox = document.getElementById('activityLoopCharacteristicBox')
-    this.activitySubStateBox = document.getElementById('activitySubStateBox')
-    this.activityTaskTypeBox = document.getElementById('activityTaskTypeBox')
-    this.activityTriggerEventCharacteristicBox = document.getElementById(
-      'activityTriggerEventCharacteristicBox'
-    )
-    this.activityTriggerEventTypeBox = document.getElementById('activityTriggerEventTypeBox')
-    this.conversationTypeBox = document.getElementById('conversationTypeBox')
-    this.choreographyInitiatingAtTopCheckBox = document.getElementById(
-      'choreographyInitiatingAtTopCheckBox'
-    )
-    this.choreographyInitiatingMessageCheckBox = document.getElementById(
-      'choreographyInitiatingMessageCheckBox'
-    )
-    this.choreographyResponseMessageCheckBox = document.getElementById(
-      'choreographyResponseMessageCheckBox'
-    )
-    this.choreographyTypeBox = document.getElementById('choreographyTypeBox')
-    this.choreographyLoopCharacteristicBox = document.getElementById(
-      'choreographyLoopCharacteristicBox'
-    )
-    this.choreographySubStateBox = document.getElementById('choreographySubStateBox')
-    this.dataObjectCollectionCheckBox = document.getElementById('dataObjectCollectionCheckBox')
-    this.dataObjectTypeBox = document.getElementById('dataObjectTypeBox')
-    this.poolMultipleCheckBox = document.getElementById('poolMultipleCheckBox')
-    this.edgeTypeBox = document.getElementById('edgeTypeBox')
-    this.portEventTypeBox = document.getElementById('portEventTypeBox')
-    this.portEventCharacteristicBox = document.getElementById('portEventCharacteristicBox')
-
     // fill combo boxes with enum types
     populateComboBox(this.activityTypeBox, ActivityType.$class)
     populateComboBox(this.gatewayTypeBox, GatewayType.$class)
@@ -333,9 +359,9 @@ export default class BpmnPopupSupport {
 
   /**
    * Creates a popup for the given style.
-   * @param {string} popupContentName
-   * @param {object} styleName
-   * @param {ILabelModelParameter} popupPlacement
+   * @param {!string} popupContentName
+   * @param {!(Class.<INodeStyle>|Class.<IEdgeStyle>|Class.<IPortStyle>)} styleName
+   * @param {!ILabelModelParameter} popupPlacement
    */
   createPopup(popupContentName, styleName, popupPlacement) {
     // get the popup template from the DOM
@@ -346,35 +372,40 @@ export default class BpmnPopupSupport {
     this.typePopups.set(styleName, popup)
   }
 
+  /**
+   * @param {!Class} clazz
+   * @returns {boolean}
+   */
   hasPropertyPopup(clazz) {
     return this.typePopups.has(clazz)
   }
 
   /**
    * Shows an updated popup for the clicked item.
-   * @param {IModelItem} clickedItem
+   * @param {!IModelItem} clickedItem
    */
   showPropertyPopup(clickedItem) {
     // hide any current popups
     this.hidePropertyPopup()
 
     // check if a popup support has been mapped to the style of the clicked item
-    const popup = { value: null }
-    const currentItem = ILabel.isInstance(clickedItem) ? clickedItem.owner : clickedItem
+    let popupValue
+    const currentItem = clickedItem instanceof ILabel ? clickedItem.owner : clickedItem
     if (
-      INode.isInstance(currentItem) ||
-      IEdge.isInstance(currentItem) ||
-      IPort.isInstance(currentItem)
+      currentItem instanceof INode ||
+      currentItem instanceof IEdge ||
+      currentItem instanceof IPort
     ) {
-      const typePopup = this.typePopups.get(currentItem.style.getClass())
+      const style = currentItem.style
+      const typePopup = this.typePopups.get(style.getClass())
       if (typePopup) {
-        popup.value = typePopup
+        popupValue = typePopup
       }
     }
 
-    if (popup.value) {
+    if (popupValue) {
       // A popup was found for the double-clicked item so we update and show it
-      this.activePopup = popup.value
+      this.activePopup = popupValue
       // update data displayed in the pop-up
       this.updatePopupContent(currentItem)
       // open pop-up
@@ -409,12 +440,12 @@ export default class BpmnPopupSupport {
 
   /**
    * Updates the popup-content to be in sync with the selected options of the current item.
-   * @param {IModelItem} item The item for which the popup is assembled.
+   * @param {!IModelItem} item The item for which the popup is assembled.
    */
   updatePopupContent(item) {
     // for all properties of the current item's style we set the value in the according combo or check box of the
     // active popup
-    if (INode.isInstance(item)) {
+    if (item instanceof INode) {
       const nodeStyle = item.style
       if (nodeStyle instanceof GatewayNodeStyle) {
         this.gatewayTypeBox.value = Enum.getName(GatewayType.$class, nodeStyle.type)
@@ -481,13 +512,13 @@ export default class BpmnPopupSupport {
       if (nodeStyle instanceof PoolNodeStyle) {
         this.poolMultipleCheckBox.checked = nodeStyle.multipleInstance
       }
-    } else if (IEdge.isInstance(item)) {
+    } else if (item instanceof IEdge) {
       const edgeStyle = item.style
 
       if (edgeStyle instanceof BpmnEdgeStyle) {
         this.edgeTypeBox.value = Enum.getName(EdgeType.$class, edgeStyle.type)
       }
-    } else if (IPort.isInstance(item)) {
+    } else if (item instanceof IPort) {
       const portStyle = item.style
       if (portStyle instanceof EventPortStyle) {
         this.portEventTypeBox.value = Enum.getName(EventType.$class, portStyle.type)
@@ -519,6 +550,7 @@ export default class BpmnPopupSupport {
         graphEditorInputMode.cut()
         this.updatePopupState()
         this.contextMenu.close()
+        return true
       },
       () =>
         GraphItemTypes.enumerableContainsTypes(
@@ -535,6 +567,7 @@ export default class BpmnPopupSupport {
         graphEditorInputMode.undo()
         this.updatePopupState()
         this.contextMenu.close()
+        return true
       },
       () => this.graphComponent.graph.undoEngine.canUndo()
     )
@@ -547,6 +580,7 @@ export default class BpmnPopupSupport {
         graphEditorInputMode.redo()
         this.updatePopupState()
         this.contextMenu.close()
+        return true
       },
       () => this.graphComponent.graph.undoEngine.canRedo()
     )
@@ -606,16 +640,17 @@ export default class BpmnPopupSupport {
     })
     bindChangeListener("select[data-command='ActivityTaskTypeChanged']", () => {
       this.setNodeComboBoxValue(TaskType.$class, this.activityTaskTypeBox, (node, value) => {
-        node.style.taskType = value
+        const style = node.style
+        style.taskType = value
         if (TaskType.EVENT_TRIGGERED === value) {
           this.activityTriggerEventCharacteristicBox.value = Enum.getName(
             EventCharacteristic.$class,
-            node.style.triggerEventCharacteristic
+            style.triggerEventCharacteristic
           )
           this.activityTriggerEventCharacteristicBox.disabled = false
           this.activityTriggerEventTypeBox.value = Enum.getName(
             EventType.$class,
-            node.style.triggerEventType
+            style.triggerEventType
           )
           this.activityTriggerEventTypeBox.disabled = false
         } else {
@@ -737,8 +772,8 @@ export default class BpmnPopupSupport {
 
   /**
    * Set the value of the check box to the according node style property
-   * @param {HTMLElement} checkBox
-   * @param {function(INode, string)} setter
+   * @param {!HTMLInputElement} checkBox
+   * @param {!function} setter
    */
   setNodeCheckBoxValue(checkBox, setter) {
     if (!this.activePopup || !this.activePopup.currentItem) {
@@ -752,9 +787,9 @@ export default class BpmnPopupSupport {
 
   /**
    * Sets the value of the combo box to the according node style property.
-   * @param {object} enumType
-   * @param {HTMLElement} comboBox
-   * @param {function(INode, string)} setter
+   * @param {!Class} enumType
+   * @param {!HTMLSelectElement} comboBox
+   * @param {!function} setter
    */
   setNodeComboBoxValue(enumType, comboBox, setter) {
     if (!this.activePopup || !this.activePopup.currentItem) {
@@ -769,9 +804,9 @@ export default class BpmnPopupSupport {
 
   /**
    * Sets the value of the combo box to the according port style property.
-   * @param {object} enumType
-   * @param {HTMLElement} comboBox
-   * @param {function(INode, string)} setter
+   * @param {!Class} enumType
+   * @param {!HTMLSelectElement} comboBox
+   * @param {!function} setter
    */
   setPortComboBoxValue(enumType, comboBox, setter) {
     if (!this.activePopup || !this.activePopup.currentItem) {
@@ -801,8 +836,8 @@ export default class BpmnPopupSupport {
 
 /**
  * Adds options to the given combo box for the content of the enum type.
- * @param {HTMLElement} comboBox
- * @param {object} enumType
+ * @param {!HTMLSelectElement} comboBox
+ * @param {!Class} enumType
  */
 function populateComboBox(comboBox, enumType) {
   getEnumNames(enumType).forEach(name => {
@@ -814,15 +849,14 @@ function populateComboBox(comboBox, enumType) {
 
 /**
  * Returns a list containing all values of the given enum type.
- * @param {object} enumType
- * @return {IEnumerable.<string>}
+ * @param {!Class} enumType
+ * @returns {!IEnumerable.<string>}
  */
 function getEnumNames(enumType) {
   // get all numeric values of the enum type...
   const values = Enum.getValues(enumType)
   const nameList = new List()
-  let i
-  for (i = 0; i < values.length; i++) {
+  for (let i = 0; i < values.length; i++) {
     const value = values[i]
     // ... convert the numeric value in the enum value name and add it to the list of enum value names
     nameList.insert(0, Enum.getName(enumType, value))

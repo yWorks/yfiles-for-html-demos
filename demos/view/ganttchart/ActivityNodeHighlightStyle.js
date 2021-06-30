@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -26,15 +26,15 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { INode, IRenderContext, NodeStyleBase, SvgVisual } from 'yfiles'
+import { Color, INode, IRenderContext, NodeStyleBase, SvgVisual } from 'yfiles'
 
 /**
  * A simple node style to render the node highlight for activity nodes.
- * Only createVisual() is implemented, since updateVisual() is not called for node highlight.
+ * Only createVisual() is implemented, since updateVisual() is not called when highlighting nodes.
  */
 export default class ActivityNodeHighlightStyle extends NodeStyleBase {
   /**
-   * @param {object} color
+   * @param {!Color} color
    */
   constructor(color) {
     super()
@@ -42,10 +42,10 @@ export default class ActivityNodeHighlightStyle extends NodeStyleBase {
   }
 
   /**
-   * Creates the visual element for the highlight.
-   * @param {IRenderContext} context - The render context.
-   * @param {INode} node - The node to which this style instance is assigned.
-   * @returns {SvgVisual}
+   * Creates the highlight visualization for the given node.
+   * @param {!IRenderContext} context The render context.
+   * @param {!INode} node The node to which this style instance is assigned.
+   * @returns {!SvgVisual}
    */
   createVisual(context, node) {
     // get the activity data
@@ -66,14 +66,14 @@ export default class ActivityNodeHighlightStyle extends NodeStyleBase {
     const halfHeight = layout.height * 0.5
 
     // create the round rectangle
-    const rect = window.document.createElementNS('http://www.w3.org/2000/svg', 'rect')
+    const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect')
     rect.width.baseVal.value = rectWidth
     rect.height.baseVal.value = layout.height
     rect.rx.baseVal.value = halfHeight
     rect.ry.baseVal.value = halfHeight
     rect.setAttribute('fill', 'none')
     rect.setAttribute('stroke', this.color)
-    rect.setAttribute('stroke-width', 4)
+    rect.setAttribute('stroke-width', '4')
 
     // translate rect to node position
     SvgVisual.setTranslate(rect, layout.x + rectX, layout.y)

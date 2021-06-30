@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -53,29 +53,29 @@ import { addClass, removeClass } from '../../resources/demo-app.js'
 export default class CustomEditLabelHelper extends EditLabelHelper {
   /**
    * Creates an instance of CustomEditLabelHelper.
-   * @param {ILabelOwner} owner
-   * @param {ILabel} label
-   * @param {ILabelModelParameter} firstLabelParam
-   * @param {ILabelStyle} firstLabelStyle
+   * @param {?ILabelOwner} owner
+   * @param {?ILabel} label
+   * @param {!ILabelModelParameter} firstLabelParam
+   * @param {!ILabelStyle} firstLabelStyle
    */
   constructor(owner, label, firstLabelParam, firstLabelStyle) {
     super()
-    this.$owner = owner
-    this.$label = label
-    this.$firstLabelParam = firstLabelParam
-    this.$firstLabelStyle = firstLabelStyle
+    this.firstLabelStyle = firstLabelStyle
+    this.firstLabelParam = firstLabelParam
+    this.label = label
+    this.owner = owner
   }
 
   /**
    * This method is only called when a label should be added to owner.
    *
    * This implementation prevents adding of more than two labels
-   * @param {LabelEditingEventArgs} args
+   * @param {!LabelEditingEventArgs} args
    */
   onLabelAdding(args) {
     args.textEditorInputModeConfigurator = this.configureTextEditorInputMode
     // Prevent adding more than two labels...
-    if (this.$owner.labels.size >= 2) {
+    if (!this.owner || this.owner.labels.size >= 2) {
       args.cancel = true
       return
     }
@@ -87,13 +87,13 @@ export default class CustomEditLabelHelper extends EditLabelHelper {
    *
    * This implementation return the special style for the first if there are no labels yet, and the base style
    * otherwise.
-   * @param {IInputModeContext} context
-   * @param {ILabelOwner} owner
-   * @return {ILabelStyle}
+   * @param {!IInputModeContext} context
+   * @param {!ILabelOwner} owner
+   * @returns {?ILabelStyle}
    */
   getLabelStyle(context, owner) {
-    if (owner.labels.size === 0 || !(this.$firstLabelStyle === owner.labels.get(0).style)) {
-      return this.$firstLabelStyle
+    if (owner.labels.size === 0 || !(this.firstLabelStyle === owner.labels.get(0).style)) {
+      return this.firstLabelStyle
     }
     return super.getLabelStyle(context, owner)
   }
@@ -103,16 +103,16 @@ export default class CustomEditLabelHelper extends EditLabelHelper {
    *
    * This implementation returns the special parameter for the first label if there are no labels yet, and the base
    * label model parameter otherwise.
-   * @param {IInputModeContext} context
-   * @param {ILabelOwner} owner
-   * @return {ILabelModelParameter}
+   * @param {!IInputModeContext} context
+   * @param {!ILabelOwner} owner
+   * @returns {?ILabelModelParameter}
    */
   getLabelParameter(context, owner) {
     if (
       owner.labels.size === 0 ||
-      !(this.$firstLabelParam === owner.labels.get(0).layoutParameter)
+      !(this.firstLabelParam === owner.labels.get(0).layoutParameter)
     ) {
-      return this.$firstLabelParam
+      return this.firstLabelParam
     }
     return super.getLabelParameter(context, owner)
   }
@@ -121,13 +121,13 @@ export default class CustomEditLabelHelper extends EditLabelHelper {
    * This method is called when label should be edited.
    *
    * If a label is edited directly, we either return it (if it is the second label) or prevent editing.
-   * @param {LabelEditingEventArgs} args
+   * @param {!LabelEditingEventArgs} args
    */
   onLabelEditing(args) {
     args.textEditorInputModeConfigurator = this.configureTextEditorInputMode
-    if (this.$label !== null) {
+    if (this.label) {
       // We are directly editing the label
-      if (this.$label.style === this.$firstLabelStyle) {
+      if (this.label.style === this.firstLabelStyle) {
         // The first label is never editable
         args.label = null
         args.cancel = true
@@ -137,18 +137,18 @@ export default class CustomEditLabelHelper extends EditLabelHelper {
       // We are not the first label
       // return the label and disallow editing
       // If we are editing the first label, the framework will then try to add label by calling addLabel
-      args.label = this.$label
+      args.label = this.label
       args.handled = true
       return
     }
 
     // Implicit editing - this is only reached if we are trying to edit labels for an owner which does not yet have
     // any labels
-    if (this.$owner === null) {
+    if (!this.owner) {
       super.onLabelEditing(args)
       return
     }
-    if (this.$owner.labels.size <= 1) {
+    if (this.owner.labels.size <= 1) {
       // Add a second label instead (since we'll never edit the first one)
       this.onLabelAdding(args)
       return
@@ -156,17 +156,17 @@ export default class CustomEditLabelHelper extends EditLabelHelper {
 
     // If more than one label, edit the second one
     args.label =
-      this.$owner.labels.get(0).style === this.$firstLabelStyle
-        ? this.$owner.labels.get(1)
-        : this.$owner.labels.get(0)
+      this.owner.labels.get(0).style === this.firstLabelStyle
+        ? this.owner.labels.get(1)
+        : this.owner.labels.get(0)
     args.handled = true
   }
 
   /**
    * Customize the text editor when we are using our helper.
-   * @param {IInputModeContext} context
-   * @param {TextEditorInputMode} mode
-   * @param {ILabel} labelToEdit
+   * @param {!IInputModeContext} context
+   * @param {!TextEditorInputMode} mode
+   * @param {!ILabel} labelToEdit
    */
   configureTextEditorInputMode(context, mode, labelToEdit) {
     const textBox = mode.editorContainer

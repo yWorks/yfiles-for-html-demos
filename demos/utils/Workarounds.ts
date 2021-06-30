@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -26,6 +26,7 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
+/* eslint-disable @typescript-eslint/prefer-regexp-exec */
 import { Workarounds } from 'yfiles'
 
 export function detectChromeVersion(): number {
@@ -282,6 +283,14 @@ function detectWebGlSupported(): boolean {
   return !!canvas.getContext('webgl') || !!canvas.getContext('experimental-webgl')
 }
 
+/**
+ * Returns whether or not the browser supports WebGL2 rendering.
+ */
+function detectWebGl2Supported(): boolean {
+  const canvas = document.createElement('canvas')
+  return !!canvas.getContext('webgl2')
+}
+
 export function enableWorkarounds(): void {
   const internetExplorerVersion = detectInternetExplorerVersion()
   const chromeVersion = detectChromeVersion()
@@ -332,3 +341,5 @@ export const nativeDragAndDropSupported = detectNativeDragAndDropSupported()
 export const pointerEventsSupported = detectPointerEventsSupported()
 /** States whether the browser supports WebGL rendering */
 export const webGlSupported = detectWebGlSupported()
+/** States whether the browser supports WebGL2 rendering */
+export const webGl2Supported = detectWebGl2Supported()

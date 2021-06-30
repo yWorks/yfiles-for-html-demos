@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -7,7 +7,7 @@
 
 <!-- ////////////////////////////////////////////////////////////////////////
      // @license
-     // This demo file is part of yFiles for HTML 2.3.
+     // This demo file is part of yFiles for HTML 2.4.
      // Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
      // 72070 Tuebingen, Germany. All rights reserved.
      //
@@ -36,13 +36,12 @@
 
   <title>ES Modules Loading Demo [yFiles for HTML]</title>
 
-  <link rel="stylesheet" href="../../node_modules/yfiles/yfiles.css">
   <link rel="stylesheet" href="../../resources/style/demo.css">
 
   <script src="../../resources/filesystem-warning.js"></script>
 
 </head>
-<body class="demo-has-left demo-hide-left-when-small">
+<body class="demo-has-left demo-hide-left-when-small loaded">
 
 <aside class="demo-sidebar demo-left">
   <h1 class="demo-sidebar-header">Description</h1>
@@ -64,27 +63,12 @@
 </aside>
 
 <div class="demo-content">
+  <div class="demo-header">
+    <a href="https://www.yworks.com" target="_blank"> <img src="../../resources/icons/ylogo.svg" class="demo-y-logo"> </a> <a
+    href="../../README.html" target="_blank">yFiles for HTML</a> <span class="demo-title">ES Modules Loading Demo [yFiles for HTML</span>
+  </div>
   <div class="demo-toolbar">
-    <button data-command="ZoomIn" title="Zoom In" class="demo-icon-yIconZoomIn"></button>
-    <button data-command="ZoomOriginal" title="Zoom to original size" class="demo-icon-yIconZoomOriginal"></button>
-    <button data-command="ZoomOut" title="Zoom Out" class="demo-icon-yIconZoomOut"></button>
-    <button data-command="FitContent" title="Fit Content" class="demo-icon-yIconZoomFit"></button>
-
-    <span class="demo-separator"></span>
-
-    <button data-command="Cut" title="Cut" class="demo-icon-yIconCut"></button>
-    <button data-command="Copy" title="Copy" class="demo-icon-yIconCopy"></button>
-    <button data-command="Paste" title="Paste" class="demo-icon-yIconPaste"></button>
-    <button data-command="Delete" title="Delete" class="demo-icon-yIconDelete"></button>
-
-    <span class="demo-separator"></span>
-
-    <button data-command="Undo" title="Undo" class="demo-icon-yIconUndo"></button>
-    <button data-command="Redo" title="Redo" class="demo-icon-yIconRedo"></button>
-
-    <span class="demo-separator"></span>
-
-    <button id="layoutButton" data-command="Layout" title="Layout" class="demo-icon-yIconLayout labeled">Layout</button>
+    <button data-command="Layout" title="Layout" class="demo-icon-yIconLayout labeled">Layout</button>
   </div>
 
   <div id="graphComponent"></div>

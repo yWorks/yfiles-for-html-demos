@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -28,9 +28,12 @@
  ***************************************************************************/
 import {
   Class,
-  EnumDefinition,
+  Enum,
   GraphComponent,
+  ILayoutAlgorithm,
+  LayoutData,
   PartitionGrid,
+  PartitionGridData,
   TabularLayout,
   TabularLayoutData,
   TabularLayoutNodeLayoutDescriptor,
@@ -68,36 +71,37 @@ const TabularLayoutConfig = Class('TabularLayoutConfig', {
 
     const layout = new TabularLayout()
 
-    this.layoutPolicyItem = TabularLayoutConfig.EnumLayoutPolicies.AUTO_SIZE
+    this.layoutPolicyItem = LayoutPolicies.AUTO_SIZE
     this.rowCountItem = 8
     this.columnCountItem = 12
-    this.horizontalAlignmentItem = TabularLayoutConfig.EnumHorizontalAlignments.CENTER
-    this.verticalAlignmentItem = TabularLayoutConfig.EnumHorizontalAlignments.CENTER
+    this.horizontalAlignmentItem = HorizontalAlignments.CENTER
+    this.verticalAlignmentItem = HorizontalAlignments.CENTER
     this.considerNodeLabelsItem = layout.considerNodeLabels
     this.minimumRowHeightItem = 0
     this.minimumColumnWidthItem = 0
     this.cellInsetsItem = 5
+    this.title = 'Tabular Layout'
   },
 
   /**
    * Creates and configures a layout and the graph's {@link IGraph#mapperRegistry} if necessary.
-   * @param {GraphComponent} graphComponent The <code>GraphComponent</code> to apply the
+   * @param graphComponent The <code>GraphComponent</code> to apply the
    *   configuration on.
-   * @return {ILayoutAlgorithm} The configured layout algorithm.
+   * @return The configured layout algorithm.
    */
   createConfiguredLayout: function (graphComponent) {
     const layout = new TabularLayout()
 
     switch (this.layoutPolicyItem) {
-      case TabularLayoutConfig.EnumLayoutPolicies.AUTO_SIZE:
+      case LayoutPolicies.AUTO_SIZE:
         layout.layoutPolicy = TabularLayoutPolicy.AUTO_SIZE
         break
-      case TabularLayoutConfig.EnumLayoutPolicies.FIXED_TABLE_SIZE:
-      case TabularLayoutConfig.EnumLayoutPolicies.SINGLE_ROW:
-      case TabularLayoutConfig.EnumLayoutPolicies.SINGLE_COLUMN:
+      case LayoutPolicies.FIXED_TABLE_SIZE:
+      case LayoutPolicies.SINGLE_ROW:
+      case LayoutPolicies.SINGLE_COLUMN:
         layout.layoutPolicy = TabularLayoutPolicy.FIXED_SIZE
         break
-      case TabularLayoutConfig.EnumLayoutPolicies.FROM_SKETCH:
+      case LayoutPolicies.FROM_SKETCH:
         layout.layoutPolicy = TabularLayoutPolicy.FROM_SKETCH
         break
       default:
@@ -110,32 +114,32 @@ const TabularLayoutConfig = Class('TabularLayoutConfig', {
 
   /**
    * Creates and configures the layout data.
-   * @return {LayoutData} The configured layout data.
+   * @return The configured layout data.
    */
   createConfiguredLayoutData: function (graphComponent, layout) {
     let horizontalAlignment
     switch (this.horizontalAlignmentItem) {
       default:
-      case TabularLayoutConfig.EnumHorizontalAlignments.CENTER:
+      case HorizontalAlignments.CENTER:
         horizontalAlignment = 0.5
         break
-      case TabularLayoutConfig.EnumHorizontalAlignments.LEFT:
+      case HorizontalAlignments.LEFT:
         horizontalAlignment = 0
         break
-      case TabularLayoutConfig.EnumHorizontalAlignments.RIGHT:
+      case HorizontalAlignments.RIGHT:
         horizontalAlignment = 1
         break
     }
     let verticalAlignment
     switch (this.verticalAlignmentItem) {
       default:
-      case TabularLayoutConfig.EnumVerticalAlignments.CENTER:
+      case VerticalAlignments.CENTER:
         verticalAlignment = 0.5
         break
-      case TabularLayoutConfig.EnumVerticalAlignments.TOP:
+      case VerticalAlignments.TOP:
         verticalAlignment = 0
         break
-      case TabularLayoutConfig.EnumVerticalAlignments.BOTTOM:
+      case VerticalAlignments.BOTTOM:
         verticalAlignment = 1
         break
     }
@@ -147,7 +151,7 @@ const TabularLayoutConfig = Class('TabularLayoutConfig', {
     const nodeCount = graphComponent.graph.nodes.size
     let partitionGrid
     switch (this.layoutPolicyItem) {
-      case TabularLayoutConfig.EnumLayoutPolicies.FIXED_TABLE_SIZE: {
+      case LayoutPolicies.FIXED_TABLE_SIZE: {
         const rowCount = this.rowCountItem
         const columnCount = this.columnCountItem
         if (rowCount * columnCount >= nodeCount) {
@@ -158,10 +162,10 @@ const TabularLayoutConfig = Class('TabularLayoutConfig', {
         }
         break
       }
-      case TabularLayoutConfig.EnumLayoutPolicies.SINGLE_ROW:
+      case LayoutPolicies.SINGLE_ROW:
         partitionGrid = new PartitionGrid(1, nodeCount)
         break
-      case TabularLayoutConfig.EnumLayoutPolicies.SINGLE_COLUMN:
+      case LayoutPolicies.SINGLE_COLUMN:
         partitionGrid = new PartitionGrid(nodeCount, 1)
         break
       default:
@@ -184,22 +188,8 @@ const TabularLayoutConfig = Class('TabularLayoutConfig', {
 
     return new TabularLayoutData({
       nodeLayoutDescriptors: nodeLayoutDescriptor,
-      partitionGridData: { grid: partitionGrid }
+      partitionGridData: new PartitionGridData({ grid: partitionGrid })
     })
-  },
-
-  // ReSharper disable InconsistentNaming
-  // ReSharper disable UnusedMember.Global
-  /** @type {OptionGroup} */
-  DescriptionGroup: {
-    $meta: function () {
-      return [
-        LabelAttribute('Description'),
-        OptionGroupAttribute('RootGroup', 5),
-        TypeAttribute(OptionGroup.$class)
-      ]
-    },
-    value: null
   },
 
   /** @type {OptionGroup} */
@@ -214,8 +204,6 @@ const TabularLayoutConfig = Class('TabularLayoutConfig', {
     value: null
   },
 
-  // ReSharper restore UnusedMember.Global
-  // ReSharper restore InconsistentNaming
   /** @type {string} */
   descriptionText: {
     $meta: function () {
@@ -234,13 +222,7 @@ const TabularLayoutConfig = Class('TabularLayoutConfig', {
     }
   },
 
-  /**
-   * Backing field for below property
-   * @type {TabularLayoutConfig.EnumLayoutPolicies}
-   */
-  $layoutPolicyItem: null,
-
-  /** @type {TabularLayoutConfig.EnumLayoutPolicies} */
+  /** @type {LayoutPolicies} */
   layoutPolicyItem: {
     $meta: function () {
       return [
@@ -248,29 +230,18 @@ const TabularLayoutConfig = Class('TabularLayoutConfig', {
         OptionGroupAttribute('GeneralGroup', 10),
         EnumValuesAttribute().init({
           values: [
-            ['Automatic Table Size', TabularLayoutConfig.EnumLayoutPolicies.AUTO_SIZE],
-            ['Single Row', TabularLayoutConfig.EnumLayoutPolicies.SINGLE_ROW],
-            ['Single Column', TabularLayoutConfig.EnumLayoutPolicies.SINGLE_COLUMN],
-            ['Fixed Table Size', TabularLayoutConfig.EnumLayoutPolicies.FIXED_TABLE_SIZE],
-            ['From Sketch', TabularLayoutConfig.EnumLayoutPolicies.FROM_SKETCH]
+            ['Automatic Table Size', LayoutPolicies.AUTO_SIZE],
+            ['Single Row', LayoutPolicies.SINGLE_ROW],
+            ['Single Column', LayoutPolicies.SINGLE_COLUMN],
+            ['Fixed Table Size', LayoutPolicies.FIXED_TABLE_SIZE],
+            ['From Sketch', LayoutPolicies.FROM_SKETCH]
           ]
         }),
-        TypeAttribute(TabularLayoutPolicy.$class)
+        TypeAttribute(Enum.$class)
       ]
     },
-    get: function () {
-      return this.$layoutPolicyItem
-    },
-    set: function (value) {
-      this.$layoutPolicyItem = value
-    }
+    value: null
   },
-
-  /**
-   * Backing field for below property
-   * @type {number}
-   */
-  $rowCountItem: 0,
 
   /** @type {number} */
   rowCountItem: {
@@ -290,12 +261,7 @@ const TabularLayoutConfig = Class('TabularLayoutConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function () {
-      return this.$rowCountItem
-    },
-    set: function (value) {
-      this.$rowCountItem = value
-    }
+    value: 1
   },
 
   /** @type {boolean} */
@@ -304,15 +270,9 @@ const TabularLayoutConfig = Class('TabularLayoutConfig', {
       return [TypeAttribute(YBoolean.$class)]
     },
     get: function () {
-      return this.layoutPolicyItem !== TabularLayoutConfig.EnumLayoutPolicies.FIXED_TABLE_SIZE
+      return this.layoutPolicyItem !== LayoutPolicies.FIXED_TABLE_SIZE
     }
   },
-
-  /**
-   * Backing field for below property
-   * @type {number}
-   */
-  $columnCountItem: 1,
 
   /** @type {number} */
   columnCountItem: {
@@ -332,12 +292,7 @@ const TabularLayoutConfig = Class('TabularLayoutConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function () {
-      return this.$columnCountItem
-    },
-    set: function (value) {
-      this.$columnCountItem = value
-    }
+    value: 1
   },
 
   /** @type {boolean} */
@@ -346,15 +301,9 @@ const TabularLayoutConfig = Class('TabularLayoutConfig', {
       return [TypeAttribute(YBoolean.$class)]
     },
     get: function () {
-      return this.layoutPolicyItem !== TabularLayoutConfig.EnumLayoutPolicies.FIXED_TABLE_SIZE
+      return this.layoutPolicyItem !== LayoutPolicies.FIXED_TABLE_SIZE
     }
   },
-
-  /**
-   * Backing field for below property
-   * @type {boolean}
-   */
-  $considerNodeLabelsItem: false,
 
   /** @type {boolean} */
   considerNodeLabelsItem: {
@@ -368,21 +317,10 @@ const TabularLayoutConfig = Class('TabularLayoutConfig', {
         TypeAttribute(YBoolean.$class)
       ]
     },
-    get: function () {
-      return this.$considerNodeLabelsItem
-    },
-    set: function (value) {
-      this.$considerNodeLabelsItem = value
-    }
+    value: false
   },
 
-  /**
-   * Backing field for below property
-   * @type {TabularLayoutConfig.EnumHorizontalAlignments}
-   */
-  $horizontalAlignmentItem: null,
-
-  /** @type {TabularLayoutConfig.EnumHorizontalAlignments} */
+  /** @type {HorizontalAlignments} */
   horizontalAlignmentItem: {
     $meta: function () {
       return [
@@ -393,29 +331,18 @@ const TabularLayoutConfig = Class('TabularLayoutConfig', {
         ),
         EnumValuesAttribute().init({
           values: [
-            ['Left', TabularLayoutConfig.EnumHorizontalAlignments.LEFT],
-            ['Center', TabularLayoutConfig.EnumHorizontalAlignments.CENTER],
-            ['Right', TabularLayoutConfig.EnumHorizontalAlignments.RIGHT]
+            ['Left', HorizontalAlignments.LEFT],
+            ['Center', HorizontalAlignments.CENTER],
+            ['Right', HorizontalAlignments.RIGHT]
           ]
         }),
-        TypeAttribute(TabularLayoutConfig.EnumHorizontalAlignments.$class)
+        TypeAttribute(Enum.$class)
       ]
     },
-    get: function () {
-      return this.$horizontalAlignmentItem
-    },
-    set: function (value) {
-      this.$horizontalAlignmentItem = value
-    }
+    value: null
   },
 
-  /**
-   * Backing field for below property
-   * @type {TabularLayoutConfig.EnumVerticalAlignments}
-   */
-  $verticalAlignmentItem: null,
-
-  /** @type {TabularLayoutConfig.EnumVerticalAlignments} */
+  /** @type {VerticalAlignments} */
   verticalAlignmentItem: {
     $meta: function () {
       return [
@@ -426,27 +353,16 @@ const TabularLayoutConfig = Class('TabularLayoutConfig', {
         ),
         EnumValuesAttribute().init({
           values: [
-            ['Top', TabularLayoutConfig.EnumVerticalAlignments.TOP],
-            ['Center', TabularLayoutConfig.EnumVerticalAlignments.CENTER],
-            ['Bottom', TabularLayoutConfig.EnumVerticalAlignments.BOTTOM]
+            ['Top', VerticalAlignments.TOP],
+            ['Center', VerticalAlignments.CENTER],
+            ['Bottom', VerticalAlignments.BOTTOM]
           ]
         }),
-        TypeAttribute(TabularLayoutConfig.EnumVerticalAlignments.$class)
+        TypeAttribute(Enum.$class)
       ]
     },
-    get: function () {
-      return this.$verticalAlignmentItem
-    },
-    set: function (value) {
-      this.$verticalAlignmentItem = value
-    }
+    value: null
   },
-
-  /**
-   * Backing field for below property
-   * @type {number}
-   */
-  $cellInsetsItem: 0,
 
   /** @type {number} */
   cellInsetsItem: {
@@ -463,19 +379,8 @@ const TabularLayoutConfig = Class('TabularLayoutConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function () {
-      return this.$cellInsetsItem
-    },
-    set: function (value) {
-      this.$cellInsetsItem = value
-    }
+    value: 0
   },
-
-  /**
-   * Backing field for below property
-   * @type {number}
-   */
-  $minimumRowHeightItem: 0,
 
   /** @type {number} */
   minimumRowHeightItem: {
@@ -495,19 +400,8 @@ const TabularLayoutConfig = Class('TabularLayoutConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function () {
-      return this.$minimumRowHeightItem
-    },
-    set: function (value) {
-      this.$minimumRowHeightItem = value
-    }
+    value: 0
   },
-
-  /**
-   * Backing field for below property
-   * @type {number}
-   */
-  $minimumColumnWidthItem: 0,
 
   /** @type {number} */
   minimumColumnWidthItem: {
@@ -527,38 +421,39 @@ const TabularLayoutConfig = Class('TabularLayoutConfig', {
         TypeAttribute(YNumber.$class)
       ]
     },
-    get: function () {
-      return this.$minimumColumnWidthItem
-    },
-    set: function (value) {
-      this.$minimumColumnWidthItem = value
-    }
-  },
-
-  $static: {
-    EnumLayoutPolicies: new EnumDefinition(() => {
-      return {
-        AUTO_SIZE: 0,
-        SINGLE_ROW: 1,
-        SINGLE_COLUMN: 2,
-        FIXED_TABLE_SIZE: 3,
-        FROM_SKETCH: 4
-      }
-    }),
-    EnumHorizontalAlignments: new EnumDefinition(() => {
-      return {
-        LEFT: 0,
-        CENTER: 1,
-        RIGHT: 2
-      }
-    }),
-    EnumVerticalAlignments: new EnumDefinition(() => {
-      return {
-        TOP: 0,
-        CENTER: 1,
-        BOTTOM: 2
-      }
-    })
+    value: 0
   }
 })
 export default TabularLayoutConfig
+
+/**
+ * @readonly
+ * @enum {number}
+ */
+const LayoutPolicies = {
+  AUTO_SIZE: 0,
+  SINGLE_ROW: 1,
+  SINGLE_COLUMN: 2,
+  FIXED_TABLE_SIZE: 3,
+  FROM_SKETCH: 4
+}
+
+/**
+ * @readonly
+ * @enum {number}
+ */
+const HorizontalAlignments = {
+  LEFT: 0,
+  CENTER: 1,
+  RIGHT: 2
+}
+
+/**
+ * @readonly
+ * @enum {number}
+ */
+const VerticalAlignments = {
+  TOP: 0,
+  CENTER: 1,
+  BOTTOM: 2
+}

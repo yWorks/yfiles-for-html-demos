@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -31,7 +31,9 @@ import {
   FilteredGraphWrapper,
   GraphComponent,
   IEdge,
+  IEnumerable,
   IGraph,
+  IHandle,
   IHandleProvider,
   IInputModeContext,
   ILookup,
@@ -44,7 +46,7 @@ import {
 } from 'yfiles'
 
 import MindmapLayout from './MindmapLayout.js'
-import { Structure } from './MindmapUtil.js'
+import { getInEdge, getRoot, getSubtree, isLeft, isRoot } from './MindmapUtil.js'
 
 /**
  * A position handler that moves a node and its subtree.
@@ -61,18 +63,30 @@ import { Structure } from './MindmapUtil.js'
 export class SubtreePositionHandler extends BaseClass(IPositionHandler) {
   /**
    * Creates the SubtreePositionHandler.
-   * @param {IPositionHandler} handler The given position handler.
+   * @param {!IPositionHandler} handler The given position handler.
    */
   constructor(handler) {
     super()
-    this.handler = handler
     this.lastLocation = new Point(0, 0)
     this.rootNodeCenter = new Point(0, 0)
+
+    // get the selected node
+    this.movedNode = null
+
+    // get the mindmap root node
+    this.globalRoot = null
+
+    this.subtreeNodes = []
+    this.subtreeEdges = []
+    this.originalParent = null
+    this.originalIsLeft = false
+    this.oldParent = null
+    this.handler = handler
   }
 
   /**
    * Returns the maximum allowed distance for a parent candidate
-   * @return {number}
+   * @type {number}
    */
   static get MAX_DISTANCE() {
     return 300
@@ -80,8 +94,8 @@ export class SubtreePositionHandler extends BaseClass(IPositionHandler) {
 
   /**
    * Returns a view of the location of the item.
-   * @see Specified by {@link IDragHandler#location}.
-   * @type {IPoint}
+   * @see Specified by {@link IPositionHandler#location}.
+   * @type {!IPoint}
    */
   get location() {
     return this.handler.location
@@ -89,7 +103,7 @@ export class SubtreePositionHandler extends BaseClass(IPositionHandler) {
 
   /**
    * Called when the drag starts.
-   * @param {IInputModeContext} inputModeContext The context to retrieve information about the drag from.
+   * @param {!IInputModeContext} inputModeContext The context to retrieve information about the drag from.
    */
   initializeDrag(inputModeContext) {
     const fullGraph = SubtreePositionHandler.getFullGraph(inputModeContext)
@@ -99,30 +113,30 @@ export class SubtreePositionHandler extends BaseClass(IPositionHandler) {
     // get the selected node
     this.movedNode = inputModeContext.canvasComponent.selection.selectedNodes.first()
     // get the mindmap root node
-    this.globalRoot = Structure.getRoot(fullGraph)
+    this.globalRoot = getRoot(fullGraph)
     this.rootNodeCenter = this.globalRoot.layout.center
 
-    this.subtreeNodes = new List()
-    this.subtreeEdges = new List()
+    this.subtreeNodes = []
+    this.subtreeEdges = []
 
     // get subtree nodes
-    Structure.getSubtree(fullGraph, this.movedNode, this.subtreeNodes, this.subtreeEdges)
+    getSubtree(fullGraph, this.movedNode, this.subtreeNodes, this.subtreeEdges)
     // get incoming edge of moved node
-    const inEdge = Structure.getInEdge(this.movedNode, fullGraph)
+    const inEdge = getInEdge(this.movedNode, fullGraph)
     // store data at drag start
     if (inEdge) {
       this.originalParent = inEdge.sourceNode
-      this.originalIsLeft = Structure.isLeft(this.movedNode)
+      this.originalIsLeft = isLeft(this.movedNode)
       this.oldParent = this.originalParent
     }
   }
 
   /**
    * Handles the move during the dragging.
-   * @param {IInputModeContext} inputModeContext The context in which the interactive drag is started.
-   * @param {Point} originalLocation The location at the time of initializeDrag.
-   * @param {Point} newLocation The new location.
-   * @return {boolean}
+   * @param {!IInputModeContext} inputModeContext The context in which the interactive drag is started.
+   * @param {!Point} originalLocation The location at the time of initializeDrag.
+   * @param {!Point} newLocation The new location.
+   * @returns {boolean}
    */
   handleMove(inputModeContext, originalLocation, newLocation) {
     if (newLocation.equals(this.lastLocation)) {
@@ -151,8 +165,8 @@ export class SubtreePositionHandler extends BaseClass(IPositionHandler) {
 
   /**
    * Cancels the dragging.
-   * @param {IInputModeContext} inputModeContext The context in which the interactive drag is started.
-   * @param {Point} originalLocation The location at the time of initializeDrag.
+   * @param {!IInputModeContext} inputModeContext The context in which the interactive drag is started.
+   * @param {!Point} originalLocation The location at the time of initializeDrag.
    */
   cancelDrag(inputModeContext, originalLocation) {
     this.handler.cancelDrag(inputModeContext, originalLocation)
@@ -178,33 +192,23 @@ export class SubtreePositionHandler extends BaseClass(IPositionHandler) {
 
   /**
    * Called when the drag has finished.
-   * @param {IInputModeContext} inputModeContext The context in which the interactive drag is started.
-   * @param {Point} originalLocation The location at the time of initializeDrag.
-   * @param {Point} newLocation The new location.
+   * @param {!IInputModeContext} inputModeContext The context in which the interactive drag is started.
+   * @param {!Point} originalLocation The location at the time of initializeDrag.
+   * @param {!Point} newLocation The new location.
    */
   dragFinished(inputModeContext, originalLocation, newLocation) {
     this.handler.dragFinished(inputModeContext, originalLocation, newLocation)
   }
 
   /**
-   * Sets the handler's position.
-   * @param {Point} location The location to be set.
-   */
-  setPosition(location) {
-    this.handler.setPosition(location)
-  }
-
-  /**
    * Mirrors the subtree of the moved node.
-   * @param {boolean} isLeft True if the node is on the left of the subtree, false otherwise.
-   * @param {IGraph} graph The input graph.
+   * @param {boolean} left True if the node is on the left of the subtree, false otherwise.
+   * @param {!IGraph} graph The input graph.
    */
-  mirrorSubtree(isLeft, graph) {
-    if (Structure.isLeft(this.movedNode) !== isLeft) {
+  mirrorSubtree(left, graph) {
+    if (isLeft(this.movedNode) !== left) {
       // set isLeft state
-      this.subtreeNodes.forEach(n => {
-        n.tag.isLeft = !Structure.isLeft(n)
-      })
+      this.subtreeNodes.forEach(n => (n.tag.isLeft = !isLeft(n)))
       // calculate an automatic layout
       MindmapLayout.instance.layoutSubtree(graph, this.movedNode)
     }
@@ -212,42 +216,35 @@ export class SubtreePositionHandler extends BaseClass(IPositionHandler) {
 
   /**
    * Moves the subtree by a given delta.
-   * @param {Point} delta The distance to be moved.
-   * @param {IGraph} graph The input graph.
+   * @param {!Point} delta The distance to be moved.
+   * @param {!IGraph} graph The input graph.
    */
   moveSubtree(delta, graph) {
     // move all subtree nodes
-    this.subtreeNodes.forEach(
-      /** INode */ n => {
-        graph.setNodeLayout(
-          n,
-          new Rect(n.layout.x + delta.x, n.layout.y + delta.y, n.layout.width, n.layout.height)
-        )
-      }
+    this.subtreeNodes.forEach(n =>
+      graph.setNodeLayout(
+        n,
+        new Rect(n.layout.x + delta.x, n.layout.y + delta.y, n.layout.width, n.layout.height)
+      )
     )
     // move all bends of subtree edges
-    this.subtreeEdges.forEach(
-      /** IEdge */ e => {
-        e.bends.forEach(bend => {
-          graph.setBendLocation(
-            bend,
-            new Point(bend.location.x + delta.x, bend.location.y + delta.y)
-          )
-        })
-      }
+    this.subtreeEdges.forEach(e =>
+      e.bends.forEach(bend =>
+        graph.setBendLocation(bend, new Point(bend.location.x + delta.x, bend.location.y + delta.y))
+      )
     )
   }
 
   /**
    * Removes the old incoming edge and create a new edge from the new parent to the moved node.
-   * @param {INode} newParent The new parent of the node.
-   * @param {IGraph} graph The input graph.
-   * @return {IEdge} The edge created.
+   * @param {?INode} newParent The new parent of the node.
+   * @param {!IGraph} graph The input graph.
+   * @returns {?IEdge} The edge created.
    */
   updateInEdge(newParent, graph) {
     if (graph.inDegree(this.movedNode) > 0) {
       // remove old edge
-      const removedEdge = Structure.getInEdge(this.movedNode, graph)
+      const removedEdge = getInEdge(this.movedNode, graph)
       if (removedEdge !== null) {
         graph.remove(removedEdge)
       }
@@ -269,21 +266,22 @@ export class SubtreePositionHandler extends BaseClass(IPositionHandler) {
    * Returns null if the distance to the found candidate exceeds
    * the {@link SubtreePositionHandler#MAX_DISTANCE limit}.
    * @param {boolean} isLeft True if the node is on the left of the subtree, false otherwise.
-   * @param {IGraph} graph The input graph.
-   * @return {INode} The parent candidate, or null.
+   * @param {!IGraph} graph The input graph.
+   * @returns {?INode} The parent candidate, or null.
    */
   computeClosestNode(isLeft, graph) {
-    let /** @type {Point} */ p
+    let p
     let d = Number.POSITIVE_INFINITY
     let dMin = Number.POSITIVE_INFINITY
-    let /** @type {INode} */ newParent = null
+    let newParent = null
+
     graph.nodes.forEach(n => {
       if (!this.subtreeNodes.includes(n)) {
         let /** @type {Point} */ q
 
         if (isLeft) {
           q = this.movedNode.layout.bottomRight
-          if (Structure.isRoot(n)) {
+          if (isRoot(n)) {
             p = n.layout.center
             d = p.distanceTo(q)
           } else {
@@ -294,7 +292,7 @@ export class SubtreePositionHandler extends BaseClass(IPositionHandler) {
           }
         } else {
           q = this.movedNode.layout.bottomLeft
-          if (Structure.isRoot(n)) {
+          if (isRoot(n)) {
             p = n.layout.center
             d = p.distanceTo(q)
           } else {
@@ -319,21 +317,19 @@ export class SubtreePositionHandler extends BaseClass(IPositionHandler) {
 
   /**
    * Returns a list of the bend locations of the given edge.
-   * @param {IEdge} edge The given edge.
-   * @return {List.<Point>}
+   * @param {!IEdge} edge The given edge.
+   * @returns {!List.<Point>}
    */
   getBendLocations(edge) {
     const points = new List()
-    edge.bends.forEach(bend => {
-      points.add(bend.location.toPoint())
-    })
+    edge.bends.forEach(bend => points.add(bend.location.toPoint()))
     return points
   }
 
   /**
    * Gets the full graph from the context.
-   * @param {IInputModeContext} inputModeContext The given context.
-   * @return {IGraph}
+   * @param {!IInputModeContext} inputModeContext The given context.
+   * @returns {!IGraph}
    */
   static getFullGraph(inputModeContext) {
     let graph = null
@@ -353,7 +349,7 @@ export class SubtreePositionHandler extends BaseClass(IPositionHandler) {
  */
 export class ArcEdgeHandleProvider extends BaseClass(IHandleProvider) {
   /**
-   * @param {IEdge} edge
+   * @param {!IEdge} edge
    */
   constructor(edge) {
     super()
@@ -361,8 +357,8 @@ export class ArcEdgeHandleProvider extends BaseClass(IHandleProvider) {
   }
 
   /**
-   * @param {IInputModeContext} inputModeContext
-   * @return {ICollection.<IHandle>}
+   * @param {!IInputModeContext} inputModeContext
+   * @returns {!IEnumerable.<IHandle>}
    */
   getHandles(inputModeContext) {
     if (ILookup.isInstance(this.edge.style.renderer)) {

@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -27,10 +27,10 @@
  **
  ***************************************************************************/
 const path = require('path')
-const { CleanWebpackPlugin } = require('clean-webpack-plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
+const HtmlWebpackPlugin = require('html-webpack-plugin')
 
-const merge = require('webpack-merge')
+const { merge } = require('webpack-merge')
 const devConfig = require('./webpack.dev')
 const prodConfig = require('./webpack.prod')
 
@@ -44,7 +44,7 @@ const baseConfig = {
           chunks: 'all',
           priority: 10
         },
-        vendors: {
+        defaultVendors: {
           test: /[\\/]node_modules[\\/]/,
           name: 'vendors',
           chunks: 'all'
@@ -67,33 +67,35 @@ const baseConfig = {
       },
       {
         test: /\.css$/,
-        use: [MiniCssExtractPlugin.loader, 'css-loader'],
+        use: [
+          {
+            loader: MiniCssExtractPlugin.loader,
+            options: {
+              publicPath: './'
+            }
+          },
+          'css-loader'
+        ],
         sideEffects: true
       },
       {
         test: /\.(png|svg|jpg|gif)$/,
-        use: {
-          loader: 'file-loader',
-          options: {
-            publicPath: '.'
-          }
-        }
+        type: 'asset/resource'
       }
     ]
   },
   plugins: [
-    new CleanWebpackPlugin(),
+    new HtmlWebpackPlugin({
+      template: path.resolve(__dirname, 'index.template.html')
+    }),
     new MiniCssExtractPlugin({
       filename: '[name].css',
       chunkFilename: '[id].css'
     })
   ],
   output: {
-    filename: '[name].js',
-    path: path.resolve(__dirname, 'dist'), // This is necessary when using the webpack dev server, so the bundles can
-    // be loaded from dist/
-    // https://webpack.js.org/configuration/output/#output-publicpath
-    publicPath: 'dist'
+    clean: true,
+    path: path.resolve(__dirname, 'dist')
   }
 }
 

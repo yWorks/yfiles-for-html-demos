@@ -2,4 +2,8 @@
 **/dist/
 **/*.html
 **/*.md
-view/largegraphs/resources/*.json
+/starter-kits/**
+/03-tutorial-application-features/webgl-rendering/resources/*.json
+/internal/webgl-performance-tests/resources/*.json
+/view/large-graphs/resources/*.json
+/view/rendering-optimizations/resources/*.json

@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -30,12 +30,15 @@ import {
   BaseClass,
   ConstrainedHandle,
   IBend,
+  ICanvasObject,
   ICanvasObjectDescriptor,
   IEdge,
   IHandle,
   IInputModeContext,
+  INode,
   IRenderContext,
   IVisualCreator,
+  Mapper,
   Matrix,
   Point,
   PortConstraint,
@@ -51,13 +54,17 @@ import {
 export default class PortConstraintBendHandle extends BaseClass(ConstrainedHandle, IVisualCreator) {
   /**
    * Creates a new handle that wraps the base handle.
-   * @param {IHandle} baseHandle
+   * @param {!IHandle} baseHandle
    * @param {boolean} sourceEnd
-   * @param {IBend} bend
-   * @param {IMapper.<IEdge,PortConstraint>} portConstraints
+   * @param {!IBend} bend
+   * @param {!Mapper.<IEdge,PortConstraint>} portConstraints
    */
   constructor(baseHandle, sourceEnd, bend, portConstraints) {
     super(baseHandle)
+    this.portConstraints = portConstraints
+    this.bend = bend
+    this.sourceEnd = sourceEnd
+    this.canvasObject = null
     this.sourceEnd = sourceEnd
     this.bend = bend
     this.portConstraints = portConstraints
@@ -67,8 +74,8 @@ export default class PortConstraintBendHandle extends BaseClass(ConstrainedHandl
    * Called when a drag of the handle is initialized.
    * To indicate in which direction the port constraint will be assigned, an arrow visual is added.
    * @see overrides {@link ConstrainedHandle#onInitialized}
-   * @param {IInputModeContext} inputModeContext
-   * @param {Point} originalLocation
+   * @param {!IInputModeContext} inputModeContext
+   * @param {!Point} originalLocation
    */
   onInitialized(inputModeContext, originalLocation) {
     super.onInitialized(inputModeContext, originalLocation)
@@ -82,13 +89,13 @@ export default class PortConstraintBendHandle extends BaseClass(ConstrainedHandl
    * Called when a drag of the handle is canceled.
    * The arrow visual is removed.
    * @see overrides {@link ConstrainedHandle#onCanceled}
-   * @param {IInputModeContext} inputModeContext
-   * @param {Point} originalLocation
+   * @param {!IInputModeContext} inputModeContext
+   * @param {!Point} originalLocation
    */
   onCanceled(inputModeContext, originalLocation) {
     super.onCanceled(inputModeContext, originalLocation)
     // remove the indicator
-    this.deinstallArrowPath(inputModeContext)
+    this.uninstallArrowPath(inputModeContext)
     this.canvasObject.remove()
   }
 
@@ -96,14 +103,14 @@ export default class PortConstraintBendHandle extends BaseClass(ConstrainedHandl
    * Called when a drag of the handle is canceled.
    * The port constraints are assigned and the arrow visual is removed.
    * @see overrides {@link ConstrainedHandle#onFinished}
-   * @param {IInputModeContext} inputModeContext
-   * @param {Point} originalLocation
-   * @param {Point} newLocation
+   * @param {!IInputModeContext} inputModeContext
+   * @param {!Point} originalLocation
+   * @param {!Point} newLocation
    */
   onFinished(inputModeContext, originalLocation, newLocation) {
     super.onFinished(inputModeContext, originalLocation, newLocation)
     // remove the indicator
-    this.deinstallArrowPath(inputModeContext)
+    this.uninstallArrowPath(inputModeContext)
     this.canvasObject.remove()
 
     // calculate the direction
@@ -139,9 +146,10 @@ export default class PortConstraintBendHandle extends BaseClass(ConstrainedHandl
   /**
    * Returns the unconstrained location.
    * @see overrides {@link ConstrainedHandle#constrainNewLocation}
-   * @param {IInputModeContext} inputModeContext
-   * @param {Point} originalLocation
-   * @param {Point} newLocation
+   * @param {!IInputModeContext} context
+   * @param {!Point} originalLocation
+   * @param {!Point} newLocation
+   * @returns {!Point}
    */
   constrainNewLocation(context, originalLocation, newLocation) {
     return newLocation
@@ -149,9 +157,9 @@ export default class PortConstraintBendHandle extends BaseClass(ConstrainedHandl
 
   /**
    * Creates a visual that contains an arrow visualization for the direction of port constraints.
-   * @return {Visual}
    * @see overrides {@link IVisualCreator#createVisual}
-   * @param {IRenderContext} context
+   * @param {!IRenderContext} context
+   * @returns {!Visual}
    */
   createVisual(context) {
     const a = window.document.createElementNS('http://www.w3.org/2000/svg', 'use')
@@ -163,13 +171,15 @@ export default class PortConstraintBendHandle extends BaseClass(ConstrainedHandl
 
   /**
    * Updates the arrow visualization for the direction of port constraints.
-   * @return {Visual}
    * @see overrides {@link IVisualCreator#createVisual}
-   * @param {IRenderContext} context
-   * @param {Visual} oldVisual
-   * @return {Visual}
+   * @param {!IRenderContext} context
+   * @param {!Visual} oldVisual
+   * @returns {!Visual}
    */
   updateVisual(context, oldVisual) {
+    if (!(oldVisual instanceof SvgVisual)) {
+      return this.createVisual(context)
+    }
     const a = oldVisual.svgElement
     const transform = this.getArrowTransform()
     a.setAttribute('transform', transform.toSvgTransform())
@@ -179,7 +189,7 @@ export default class PortConstraintBendHandle extends BaseClass(ConstrainedHandl
   /**
    * Returns a transform that put the arrow visualization in place.
    * The arrow is moved to the respective node and rotated in the according direction.
-   * @return {Matrix}
+   * @returns {!Matrix}
    */
   getArrowTransform() {
     let transform = new Matrix()
@@ -223,7 +233,7 @@ export default class PortConstraintBendHandle extends BaseClass(ConstrainedHandl
 
   /**
    * Creates the arrow path and stores it in the defs section of the CanvasComponent.
-   * @param {IInputModeContext} context
+   * @param {!IInputModeContext} context
    */
   installArrowPath(context) {
     if (window.document.getElementById(BEND_HANDLE_PORT_CONSTRAINT_ARROW_TEMPLATE_KEY) !== null) {
@@ -243,9 +253,9 @@ export default class PortConstraintBendHandle extends BaseClass(ConstrainedHandl
 
   /**
    * Removes the arrow path from the defs section of the CanvasComponent.
-   * @param {IInputModeContext} context
+   * @param {!IInputModeContext} context
    */
-  deinstallArrowPath(context) {
+  uninstallArrowPath(context) {
     const arrowPathElement = window.document.getElementById(
       BEND_HANDLE_PORT_CONSTRAINT_ARROW_TEMPLATE_KEY
     )
@@ -260,13 +270,11 @@ export default class PortConstraintBendHandle extends BaseClass(ConstrainedHandl
 
 /**
  * The minimum distance to require for a port constraint
- * @type {number}
  */
 const MIN_DISTANCE = 12
 
 /**
  * The key to access the path element for the port constraint arrow in defs
- * @type {string}
  */
 const BEND_HANDLE_PORT_CONSTRAINT_ARROW_TEMPLATE_KEY =
   'BEND_HANDLE_PORT_CONSTRAINT_ARROW_TEMPLATE_KEY'

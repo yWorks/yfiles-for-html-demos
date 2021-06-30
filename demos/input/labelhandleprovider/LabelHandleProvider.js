@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -31,6 +31,8 @@ import {
   FreeEdgeLabelModel,
   FreeLabelModel,
   FreeNodeLabelModel,
+  IEnumerable,
+  IHandle,
   IHandleProvider,
   IInputModeContext,
   ILabel,
@@ -48,24 +50,24 @@ import LabelResizeHandle from './LabelResizeHandle.js'
 export default class LabelHandleProvider extends BaseClass(IHandleProvider) {
   /**
    * Creates a new instance of <code>LabelHandleProvider</code>.
-   * @param {ILabel} label The given label
+   * @param {!ILabel} label The given label
    */
   constructor(label) {
     super()
-    this.$label = label
+    this.label = label
   }
 
   /**
    * Implementation of {@link IHandleProvider#getHandles}.
    *
    * Returns a list of available handles for the label this instance has been created for.
-   * @param {IInputModeContext} context
-   * @return {IEnumerable<IHandle>}
+   * @param {!IInputModeContext} context
+   * @returns {!IEnumerable.<IHandle>}
    */
   getHandles(context) {
     // return a list of the available handles
     const handles = new List()
-    const labelModel = this.$label.layoutParameter.model
+    const labelModel = this.label.layoutParameter.model
     if (labelModel instanceof InteriorStretchLabelModel) {
       // Some label models are not resizable at all - don't provide any handles
     } else if (
@@ -74,13 +76,13 @@ export default class LabelHandleProvider extends BaseClass(IHandleProvider) {
       labelModel instanceof FreeLabelModel
     ) {
       // These models support resizing in one direction
-      handles.add(new LabelResizeHandle(this.$label, false))
+      handles.add(new LabelResizeHandle(this.label, false))
       // They also support rotation
-      handles.add(new LabelRotateHandle(this.$label, context))
+      handles.add(new LabelRotateHandle(this.label, context))
     } else {
       // For all other models, we assume the *center* needs to stay the same
       // This requires that the label must be resized symmetrically in both directions
-      handles.add(new LabelResizeHandle(this.$label, true))
+      handles.add(new LabelResizeHandle(this.label, true))
     }
     return handles
   }

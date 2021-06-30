@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -28,13 +28,14 @@
  ***************************************************************************/
 import {
   CollapsibleNodeStyleDecorator,
-  CollapsibleNodeStyleDecoratorRenderer,
   ExteriorLabelModel,
   ExteriorLabelModelPosition,
   FoldingManager,
   GraphComponent,
   GraphEditorInputMode,
   ICommand,
+  IGraph,
+  IInputMode,
   InteriorLabelModel,
   InteriorLabelModelPosition,
   License,
@@ -51,27 +52,32 @@ import CustomSimplePortStyle from './CustomSimplePortStyle.js'
 import { bindAction, bindCommand, showApp } from '../../resources/demo-app.js'
 import loadJson from '../../resources/load-json.js'
 
-/** @type {GraphComponent} */
-let graphComponent = null
+/** @type {FoldingManager} */
+let foldingManager
 
+/**
+ * @param {!object} licenseData
+ */
 function run(licenseData) {
   License.value = licenseData
-  graphComponent = new GraphComponent('graphComponent')
 
-  configureGroupNodeStyles()
+  const graphComponent = new GraphComponent('graphComponent')
 
   // From now on, everything can be done on the actual managed view instance
-  enableFolding()
+  enableFolding(graphComponent)
 
-  // initialize the graph
-  initializeGraph()
+  // Initialize default styles for nodes
+  initializeStyles(graphComponent.graph)
 
-  // initialize the input mode
+  // Create some graph elements with the above defined styles.
+  createSampleGraph(graphComponent.graph)
+
+  // Initialize the input mode
   graphComponent.inputMode = createEditorMode()
 
   graphComponent.fitGraphBounds()
 
-  registerCommands()
+  registerCommands(graphComponent)
 
   showApp(graphComponent)
 }
@@ -79,9 +85,21 @@ function run(licenseData) {
 /**
  * Sets a custom NodeStyle instance as a template for newly created
  * nodes in the graph.
+ * @param {!IGraph} graph
  */
-function initializeGraph() {
-  const graph = graphComponent.graph
+function initializeStyles(graph) {
+  // Wrap the style with CollapsibleNodeStyleDecorator
+  // Use a custom renderer to change the collapse button visualization
+  const nodeStyleDecorator = new CollapsibleNodeStyleDecorator(
+    new CustomGroupNodeStyle(),
+    new CustomCollapsibleNodeStyleDecoratorRenderer(new Size(14, 14))
+  )
+  // Use a different label model for button placement
+  const newInteriorLabelModel = new InteriorLabelModel({ insets: 2 })
+  nodeStyleDecorator.buttonPlacement = newInteriorLabelModel.createParameter(
+    InteriorLabelModelPosition.SOUTH_EAST
+  )
+  graph.groupNodeDefaults.style = nodeStyleDecorator
 
   // Create a new style and use it as default port style
   graph.nodeDefaults.ports.style = new CustomSimplePortStyle()
@@ -96,30 +114,26 @@ function initializeGraph() {
   graph.edgeDefaults.labels.style = new CustomSimpleLabelStyle()
 
   graph.nodeDefaults.size = new Size(50, 50)
-
-  // Create some graph elements with the above defined styles.
-  createSampleGraph()
 }
 
 /**
  * Creates the default input mode for the graphComponent,
  * a {@link GraphEditorInputMode}.
- * @return {IInputMode} a new GraphEditorInputMode instance
+ * @returns {!IInputMode} a new GraphEditorInputMode instance
  */
 function createEditorMode() {
-  const mode = new GraphEditorInputMode({
+  return new GraphEditorInputMode({
     allowEditLabel: true,
     hideLabelDuringEditing: false,
     allowGroupingOperations: true
   })
-  return mode
 }
 
 /**
  * Creates the initial sample graph.
+ * @param {!IGraph} graph
  */
-function createSampleGraph() {
-  const graph = graphComponent.graph
+function createSampleGraph(graph) {
   const n0 = graph.createNodeAt({
     location: new Point(291, 433),
     tag: 'rgb(108, 0, 255)'
@@ -186,73 +200,44 @@ function createSampleGraph() {
   group1.tag = 'gold'
 }
 
-function registerCommands() {
+/**
+ * @param {!GraphComponent} graphComponent
+ */
+function registerCommands(graphComponent) {
   bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent, null)
   bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent, null)
   bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent, null)
   bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
 
-  bindAction("button[data-command='ModifyColors']", () => modifyColors())
+  bindAction("button[data-command='ModifyColors']", () => modifyColors(graphComponent))
 }
-
-/**
- * Configures the default style for group nodes.
- */
-function configureGroupNodeStyles() {
-  graphComponent.graph.groupNodeDefaults.style = new CustomGroupNodeStyle()
-}
-
-/**
- * @type {FoldingManager}
- */
-let foldingManager = null
 
 /**
  * Enables folding - changes the graphComponent's graph to a managed view
  * that provides the actual collapse/expand state.
+ * @param {!GraphComponent} graphComponent
  */
-function enableFolding() {
+function enableFolding(graphComponent) {
   // Creates the folding manager and sets its master graph to
   // the single graph that has served for all purposes up to this point
   foldingManager = new FoldingManager(graphComponent.graph)
   // Creates a managed view from the master graph and
   // replaces the existing graph view with a managed view
   graphComponent.graph = foldingManager.createFoldingView().graph
-  wrapGroupNodeStyles()
-}
-
-/**
- * Changes the default style for group nodes.
- * We use {@link CollapsibleNodeStyleDecorator} to wrap the
- * group style, since we want to have nice +/- buttons for collapse/expand.
- * The {@link CollapsibleNodeStyleDecoratorRenderer renderer} is
- * customized in order to change the collapse button visualization.
- */
-function wrapGroupNodeStyles() {
-  // Wrap the style with CollapsibleNodeStyleDecorator
-  // Use a custom renderer to change the collapse button visualization
-  const nodeStyleDecorator = new CollapsibleNodeStyleDecorator(
-    graphComponent.graph.groupNodeDefaults.style,
-    new CustomCollapsibleNodeStyleDecoratorRenderer(new Size(14, 14))
-  )
-  // Use a different label model for button placement
-  const newInteriorLabelModel = new InteriorLabelModel({ insets: 2 })
-  nodeStyleDecorator.buttonPlacement = newInteriorLabelModel.createParameter(
-    InteriorLabelModelPosition.SOUTH_EAST
-  )
-  graphComponent.graph.groupNodeDefaults.style = nodeStyleDecorator
 }
 
 /**
  * Modifies the tag of each leaf node.
+ * @param {!GraphComponent} graphComponent
  */
-function modifyColors() {
+function modifyColors(graphComponent) {
   const graph = graphComponent.graph
   // set the tag of all non-group (leaf) nodes to a new color
-  const leafNodes = graph.nodes.filter(node => !graph.isGroupNode(node))
-  leafNodes.forEach(node => {
-    node.tag = `hsl(${Math.random() * 360},100%,50%)`
-  })
+  graph.nodes
+    .filter(node => !graph.isGroupNode(node))
+    .forEach(node => {
+      node.tag = `hsl(${Math.random() * 360},100%,50%)`
+    })
   // and invalidate the view as the graph cannot know that we changed the styles
   graphComponent.invalidate()
 }

@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -54,7 +54,6 @@ import {
   IGraph,
   ILabel,
   ILabelOwner,
-  IListEnumerable,
   IMap,
   INode,
   Insets,
@@ -62,6 +61,7 @@ import {
   InteriorStretchLabelModel,
   InteriorStretchLabelModelPosition,
   IPort,
+  IPortStyle,
   IRow,
   IStripe,
   ITable,
@@ -110,6 +110,16 @@ import {
 } from './bpmn-view.js'
 
 /**
+ * @typedef {Object} Diagram
+ * @property {string} name
+ * @property {number} nodeCount
+ * @property {number} edgeCount
+ */
+/**
+ * @typedef {function} SelectedDiagramCallback
+ */
+
+/**
  * Parser for the BPMN 2.0 abstract syntax.
  */
 export class BpmnDiParser {
@@ -118,7 +128,7 @@ export class BpmnDiParser {
    * @type {!IGraph}
    */
   get masterGraph() {
-    return this.$view.manager.masterGraph
+    return this.view.manager.masterGraph
   }
 
   /**
@@ -126,7 +136,7 @@ export class BpmnDiParser {
    * @type {!FoldingManager}
    */
   get manager() {
-    return this.$view.manager
+    return this.view.manager
   }
 
   /**
@@ -134,11 +144,11 @@ export class BpmnDiParser {
    * @type {boolean}
    */
   static get REARRANGE_LABELS() {
-    if (typeof BpmnDiParser.$REARRANGE_LABELS === 'undefined') {
-      BpmnDiParser.$REARRANGE_LABELS = false
+    if (typeof BpmnDiParser._REARRANGE_LABELS === 'undefined') {
+      BpmnDiParser._REARRANGE_LABELS = false
     }
 
-    return BpmnDiParser.$REARRANGE_LABELS
+    return BpmnDiParser._REARRANGE_LABELS
   }
 
   /**
@@ -146,11 +156,11 @@ export class BpmnDiParser {
    * @type {boolean}
    */
   static get PARSE_ALL_LABELS() {
-    if (typeof BpmnDiParser.$PARSE_ALL_LABELS === 'undefined') {
-      BpmnDiParser.$PARSE_ALL_LABELS = true
+    if (typeof BpmnDiParser._PARSE_ALL_LABELS === 'undefined') {
+      BpmnDiParser._PARSE_ALL_LABELS = true
     }
 
-    return BpmnDiParser.$PARSE_ALL_LABELS
+    return BpmnDiParser._PARSE_ALL_LABELS
   }
 
   /**
@@ -158,11 +168,11 @@ export class BpmnDiParser {
    * @type {boolean}
    */
   static get PARSE_FOLDED_DIAGRAMS() {
-    if (typeof BpmnDiParser.$PARSE_FOLDED_DIAGRAMS === 'undefined') {
-      BpmnDiParser.$PARSE_FOLDED_DIAGRAMS = true
+    if (typeof BpmnDiParser._PARSE_FOLDED_DIAGRAMS === 'undefined') {
+      BpmnDiParser._PARSE_FOLDED_DIAGRAMS = true
     }
 
-    return BpmnDiParser.$PARSE_FOLDED_DIAGRAMS
+    return BpmnDiParser._PARSE_FOLDED_DIAGRAMS
   }
 
   /**
@@ -170,11 +180,11 @@ export class BpmnDiParser {
    * @type {boolean}
    */
   static get SHOW_ALL_DIAGRAMS() {
-    if (typeof BpmnDiParser.$SHOW_ALL_DIAGRAMS === 'undefined') {
-      BpmnDiParser.$SHOW_ALL_DIAGRAMS = false
+    if (typeof BpmnDiParser._SHOW_ALL_DIAGRAMS === 'undefined') {
+      BpmnDiParser._SHOW_ALL_DIAGRAMS = false
     }
 
-    return BpmnDiParser.$SHOW_ALL_DIAGRAMS
+    return BpmnDiParser._SHOW_ALL_DIAGRAMS
   }
 
   /**
@@ -182,11 +192,11 @@ export class BpmnDiParser {
    * @type {boolean}
    */
   static get PARSE_EDGES() {
-    if (typeof BpmnDiParser.$PARSE_EDGES === 'undefined') {
-      BpmnDiParser.$PARSE_EDGES = true
+    if (typeof BpmnDiParser._PARSE_EDGES === 'undefined') {
+      BpmnDiParser._PARSE_EDGES = true
     }
 
-    return BpmnDiParser.$PARSE_EDGES
+    return BpmnDiParser._PARSE_EDGES
   }
 
   /**
@@ -195,14 +205,12 @@ export class BpmnDiParser {
    * @type {boolean}
    */
   static get MULTI_LINE_EXTERIOR_NODE_LABELS() {
-    if (typeof BpmnDiParser.$MULTI_LINE_EXTERIOR_NODE_LABELS === 'undefined') {
-      BpmnDiParser.$MULTI_LINE_EXTERIOR_NODE_LABELS = false
+    if (typeof BpmnDiParser._MULTI_LINE_EXTERIOR_NODE_LABELS === 'undefined') {
+      BpmnDiParser._MULTI_LINE_EXTERIOR_NODE_LABELS = false
     }
 
-    return BpmnDiParser.$MULTI_LINE_EXTERIOR_NODE_LABELS
+    return BpmnDiParser._MULTI_LINE_EXTERIOR_NODE_LABELS
   }
-
-  // region File Parsing
 
   /**
    * Constructs a new instance of the parser
@@ -217,32 +225,34 @@ export class BpmnDiParser {
     // The currently used diagram
     this.currentDiagram = null
 
-    this.$view = null
+    this.view = null
 
     // LabelModel for Nodes with Exterior Label. Provides 32 possible Positions.
     this.genericLabelModel = null
 
     // Can't use BPMN-Constants here, so we have to add the standard size of message envelopes.
-    this.$bpmnMessageSize = new Size(20, 14)
+    this.bpmnMessageSize = new Size(20, 14)
 
-    this.$initGenericLabelModel()
     // Maps a process BpmnElement to the BpmnElement that referenced this process in a 'processRef'
     this.processRefSource = new HashMap()
+
+    this.initGenericLabelModel()
   }
 
   /**
    * Called to parse and build a graph.
    * @param {!IGraph} graph The graph Instance build the diagram in.
    * @param {!string} data data to get the graph from.
-   * @param [selectDiagramCallback=null] Callback method which chooses one diagram name from a given list.
+   * @param  [selectDiagramCallback=null] Callback method which chooses one diagram name from a given list.
    * If no method is provided the first diagram is chosen.
-   * @param {!function} [selectDiagramCallback]
+   * @param  [selectDiagramCallback]
+   * @param {!SelectedDiagramCallback} [selectDiagramCallback]
    * @returns {!Promise}
    */
   load(graph, data, selectDiagramCallback) {
     // Initialize FoldingManager & View for the Graph
-    this.$view = graph.foldingView
-    if (!this.$view) {
+    this.view = graph.foldingView
+    if (!this.view) {
       throw new Error('Folding must be enabled.')
     }
     const multiLabelFolderNodeConverter = new MultiLabelFolderNodeConverter()
@@ -281,17 +291,13 @@ export class BpmnDiParser {
     return new Promise(resolve => {
       if (selectDiagramCallback) {
         selectDiagramCallback(
-          topLevelDiagrams.map(d => {
-            return {
-              name: d.name,
-              nodeCount: d.plane.listOfShapes.size,
-              edgeCount: d.plane.listOfEdges.size
-            }
-          })
+          topLevelDiagrams.map(d => ({
+            name: d.name,
+            nodeCount: d.plane.listOfShapes.size,
+            edgeCount: d.plane.listOfEdges.size
+          }))
         ).then(chosenName => {
-          diaToLoad = topLevelDiagrams.firstOrDefault(d => {
-            return d.name === chosenName
-          })
+          diaToLoad = topLevelDiagrams.firstOrDefault(d => d.name === chosenName)
           resolve(diaToLoad)
         })
       } else {
@@ -301,7 +307,7 @@ export class BpmnDiParser {
     }).then(diaToLoad => {
       // Loads the selected Diagram into the supplied Graph
       if (diaToLoad) {
-        this.$loadDiagram(diaToLoad, null)
+        this.loadDiagram(diaToLoad, null)
       }
     })
   }
@@ -309,7 +315,7 @@ export class BpmnDiParser {
   /**
    * Initialize the genericLabelModel Using a model with 32 positions (better than ExteriorLabelModel which only has 8) to enable more options for customization in the user interface.
    */
-  $initGenericLabelModel() {
+  initGenericLabelModel() {
     let exteriorLabelModel = new ExteriorLabelModel()
     exteriorLabelModel.insets = new Insets(3, 3, 3, 3)
     this.genericLabelModel = new GenericLabelModel(
@@ -546,67 +552,61 @@ export class BpmnDiParser {
     )
   }
 
-  // endregion
-
-  // region Building Backbone
-
   /**
-   * Builds the first diagram via drawing the individual nodes &amp; edges
+   * Builds the first diagram via drawing the individual nodes and edges.
    * @param {!BpmnDiagram} diagram The diagram to draw
-   * @param {!INode} localRoot The local root node
-   * @private
+   * @param {?INode} localRoot The local root node
    */
-  $loadDiagram(diagram, localRoot) {
+  loadDiagram(diagram, localRoot) {
     this.currentDiagram = diagram
 
     // iterate the BpmnElements of the BpmnPlane and build up all with a BpmnShape first and with a BpmnEdge afterwards
     const bpmnEdges = new List()
-    for (const child of diagram.plane.element.children) {
-      this.$buildElement(child, diagram.plane, localRoot, bpmnEdges)
+    const plane = diagram.plane
+    for (const child of plane.element.children) {
+      this.buildElement(child, plane, localRoot, bpmnEdges)
     }
     for (const bpmnEdge of bpmnEdges) {
-      this.$buildEdge(bpmnEdge)
+      this.buildEdge(bpmnEdge)
     }
 
     // If we collapse the shape before we add edges, edge labels disappear -> Folding after edge creation
     // But we have to rearrange Labels first, otherwise they are not in sync with the positions after folding.
-    this.$rearrange()
-    for (const shape of diagram.plane.listOfShapes) {
+    this.rearrange()
+    const view = this.view
+    for (const shape of plane.listOfShapes) {
       if (shape.isExpanded === 'false') {
-        this.$view.collapse(shape.element.node)
+        view.collapse(shape.element.node)
       }
     }
 
     if (BpmnDiParser.PARSE_FOLDED_DIAGRAMS) {
       for (const child of diagram.children) {
-        const collapsed = !this.$view.isExpanded(child.value.node)
-        const lastRoot = this.$view.localRoot
+        const collapsed = !view.isExpanded(child.value.node)
+        const lastRoot = view.localRoot
         if (collapsed) {
-          this.$view.localRoot = child.value.node
+          view.localRoot = child.value.node
         }
-        this.$loadDiagram(child.key, child.value.node)
+        this.loadDiagram(child.key, child.value.node)
         if (collapsed) {
-          this.$view.localRoot = lastRoot
+          view.localRoot = lastRoot
         }
       }
     }
 
     const groupNodes = this.masterGraph.nodes
-      .filter(node => {
-        return node.style instanceof GroupNodeStyle
-      })
+      .filter(node => node.style instanceof GroupNodeStyle)
       .toList()
     for (const groupNode of groupNodes) {
       if (this.masterGraph.getChildren(groupNode).size === 0) {
         const newChildren = this.masterGraph
           .getChildren(this.masterGraph.getParent(groupNode))
-          .filter(child => {
-            return (
+          .filter(
+            child =>
               child !== groupNode &&
               groupNode.layout.contains(child.layout.topLeft) &&
               groupNode.layout.contains(child.layout.bottomRight)
-            )
-          })
+          )
           .toList()
         for (const newChild of newChildren) {
           this.masterGraph.setParent(newChild, groupNode)
@@ -619,15 +619,15 @@ export class BpmnDiParser {
    * Returns the {@link BpmnShape} for the <code>element</code> in the context of this <code>plane</code>.
    * @param {!BpmnElement} element The element to get the shape for.
    * @param {!BpmnPlane} plane The plane containing the shape for the element.
-   * @returns {!BpmnShape}
+   * @returns {?BpmnShape}
    */
-  $getShape(element, plane) {
+  getShape(element, plane) {
     const referencedElement =
       element.name === 'participantRef' ? this.document.elements.get(element.value) : null
 
     // check if there is a valid shape for this element or the referenced one
     for (const shape of plane.listOfShapes) {
-      if (this.$isValidShape(shape, element, referencedElement, plane)) {
+      if (this.isValidShape(shape, element, referencedElement, plane)) {
         return shape
       }
     }
@@ -638,11 +638,11 @@ export class BpmnDiParser {
    * Returns whether the <code>shape</code> belongs to this <code>element</code> or <code>referencedElement</code> in the context of the <code>plane</code>.
    * @param {!BpmnShape} shape The shape to check validity for.
    * @param {!BpmnElement} element The element to check if the shape is valid.
-   * @param {!BpmnElement} referencedElement The element referenced by element.
+   * @param {?BpmnElement} referencedElement The element referenced by element.
    * @param {!BpmnPlane} plane The plane containing this shape.
    * @returns {boolean}
    */
-  $isValidShape(shape, element, referencedElement, plane) {
+  isValidShape(shape, element, referencedElement, plane) {
     if (shape.element !== element && shape.element !== referencedElement) {
       // shape has to be defined for Element or referenced Element
       return false
@@ -651,9 +651,12 @@ export class BpmnDiParser {
       // there is no ChoreographyActivityShape, so no further checks needed
       return true
     }
-    if (element.parent.name === 'choreographyTask' || element.parent.name === 'subChoreography') {
+    if (
+      element.parent &&
+      (element.parent.name === 'choreographyTask' || element.parent.name === 'subChoreography')
+    ) {
       // if a ChoreographyActivityShape is defined, we need to be inside the defined choreographyTask or subChoreography
-      const choreoShape = this.$getShape(element.parent, plane)
+      const choreoShape = this.getShape(element.parent, plane)
       if (choreoShape) {
         return shape.choreographyActivityShape === choreoShape.id
       }
@@ -665,9 +668,9 @@ export class BpmnDiParser {
    * Returns the {@link BpmnEdge} for the <code>element</code> in the context of this <code>plane</code>.
    * @param {!BpmnElement} element The element to get an BpmnEdge for.
    * @param {!BpmnPlane} plane The plane containing the BpmnEdges.
-   * @returns {!BpmnEdge}
+   * @returns {?BpmnEdge}
    */
-  $getEdge(element, plane) {
+  static getEdge(element, plane) {
     for (const bpmnEdge of plane.listOfEdges) {
       if (bpmnEdge.element === element) {
         return bpmnEdge
@@ -680,21 +683,21 @@ export class BpmnDiParser {
    * Recursively builds BPMN items from <code>element</code> and its descendents.
    * @param {!BpmnElement} element The element to build an BPMN item for.
    * @param {!BpmnPlane} plane The plane containing the shapes for the current {@link BpmnDiagram}.
-   * @param {!INode} localRoot The current root node.
+   * @param {?INode} localRoot The current root node.
    * @param {!ICollection.<BpmnEdge>} bpmnEdges The Collection to add all found {@link BpmnEdge} to process later.
    */
-  $buildElement(element, plane, localRoot, bpmnEdges) {
+  buildElement(element, plane, localRoot, bpmnEdges) {
     if (element.name === 'laneSet') {
       // build up the Pool structure defined by the laneSet
-      this.$buildPool(element, plane, localRoot)
+      this.buildPool(element, plane, localRoot)
     } else {
-      const bpmnShape = this.$getShape(element, plane)
-      const bpmnEdge = this.$getEdge(element, plane)
+      const bpmnShape = this.getShape(element, plane)
+      const bpmnEdge = BpmnDiParser.getEdge(element, plane)
       if (bpmnShape) {
         if (!element.parent.node) {
           element.parent.node = localRoot
         }
-        this.$buildShape(bpmnShape, element)
+        this.buildShape(bpmnShape, element)
       } else if (bpmnEdge) {
         bpmnEdges.add(bpmnEdge)
         return
@@ -702,9 +705,9 @@ export class BpmnDiParser {
       if (element.process) {
         // The element references another Process so build it as well
         const process = { value: null }
-        if (this.$tryGetElementForId(element.process, process)) {
+        if (this.tryGetElementForId(element.process, process)) {
           this.processRefSource.set(process.value, element)
-          this.$buildElement(process.value, plane, localRoot, bpmnEdges)
+          this.buildElement(process.value, plane, localRoot, bpmnEdges)
         }
       }
       // check if all children or only data associations shall be processed
@@ -723,7 +726,7 @@ export class BpmnDiParser {
           child.name === 'dataInputAssociation' ||
           child.name === 'dataOutputAssociation'
         ) {
-          this.$buildElement(child, plane, localRoot, bpmnEdges)
+          this.buildElement(child, plane, localRoot, bpmnEdges)
         }
       }
     }
@@ -735,7 +738,7 @@ export class BpmnDiParser {
    * @param {!object} element The element to set if one could be found for the given id.
    * @returns {boolean}
    */
-  $tryGetElementForId(id, element) {
+  tryGetElementForId(id, element) {
     element.value = null
     if (this.document.elements.has(id)) {
       element.value = this.document.elements.get(id)
@@ -757,7 +760,7 @@ export class BpmnDiParser {
   /**
    * Uses a labeling algorithm to rearrange the labels to reduce overlaps
    */
-  $rearrange() {
+  rearrange() {
     if (!BpmnDiParser.REARRANGE_LABELS) {
       return
     }
@@ -797,125 +800,125 @@ export class BpmnDiParser {
    * @param {!BpmnShape} shape The {@link BpmnShape} to draw.
    * @param {!BpmnElement} originalElement The original element the shape shall be applied for.
    */
-  $buildShape(shape, originalElement) {
+  buildShape(shape, originalElement) {
     const bounds = new Rect(shape.x, shape.y, shape.width, shape.height)
 
     switch (shape.element.name) {
       // Gateways
       case 'exclusiveGateway':
         if (shape.isMarkerVisible) {
-          this.$buildGatewayNode(shape, bounds, GatewayType.EXCLUSIVE_WITH_MARKER)
+          this.buildGatewayNode(shape, bounds, GatewayType.EXCLUSIVE_WITH_MARKER)
         } else {
-          this.$buildGatewayNode(shape, bounds, GatewayType.EXCLUSIVE_WITHOUT_MARKER)
+          this.buildGatewayNode(shape, bounds, GatewayType.EXCLUSIVE_WITHOUT_MARKER)
         }
         break
       case 'parallelGateway':
-        this.$buildGatewayNode(shape, bounds, GatewayType.PARALLEL)
+        this.buildGatewayNode(shape, bounds, GatewayType.PARALLEL)
         break
       case 'inclusiveGateway':
-        this.$buildGatewayNode(shape, bounds, GatewayType.INCLUSIVE)
+        this.buildGatewayNode(shape, bounds, GatewayType.INCLUSIVE)
         break
       case 'eventBasedGateway':
         if (shape.getAttribute('eventGatewayType') === 'Exclusive') {
-          this.$buildGatewayNode(shape, bounds, GatewayType.EXCLUSIVE_EVENT_BASED)
+          this.buildGatewayNode(shape, bounds, GatewayType.EXCLUSIVE_EVENT_BASED)
         } else if (shape.getAttribute('eventGatewayType') === 'Parallel') {
-          this.$buildGatewayNode(shape, bounds, GatewayType.PARALLEL_EVENT_BASED)
+          this.buildGatewayNode(shape, bounds, GatewayType.PARALLEL_EVENT_BASED)
         } else {
-          this.$buildGatewayNode(shape, bounds, GatewayType.EVENT_BASED)
+          this.buildGatewayNode(shape, bounds, GatewayType.EVENT_BASED)
         }
         break
       case 'complexGateway':
-        this.$buildGatewayNode(shape, bounds, GatewayType.COMPLEX)
+        this.buildGatewayNode(shape, bounds, GatewayType.COMPLEX)
         break
 
       // Activities - Tasks
       case 'task':
-        this.$buildTaskNode(shape, bounds, TaskType.ABSTRACT)
+        this.buildTaskNode(shape, bounds, TaskType.ABSTRACT)
         break
       case 'userTask':
-        this.$buildTaskNode(shape, bounds, TaskType.USER)
+        this.buildTaskNode(shape, bounds, TaskType.USER)
         break
       case 'manualTask':
-        this.$buildTaskNode(shape, bounds, TaskType.MANUAL)
+        this.buildTaskNode(shape, bounds, TaskType.MANUAL)
         break
       case 'serviceTask':
-        this.$buildTaskNode(shape, bounds, TaskType.SERVICE)
+        this.buildTaskNode(shape, bounds, TaskType.SERVICE)
         break
       case 'scriptTask':
-        this.$buildTaskNode(shape, bounds, TaskType.SCRIPT)
+        this.buildTaskNode(shape, bounds, TaskType.SCRIPT)
         break
       case 'sendTask':
-        this.$buildTaskNode(shape, bounds, TaskType.SEND)
+        this.buildTaskNode(shape, bounds, TaskType.SEND)
         break
       case 'receiveTask':
-        this.$buildTaskNode(shape, bounds, TaskType.RECEIVE)
+        this.buildTaskNode(shape, bounds, TaskType.RECEIVE)
         break
       case 'businessRuleTask':
-        this.$buildTaskNode(shape, bounds, TaskType.BUSINESS_RULE)
+        this.buildTaskNode(shape, bounds, TaskType.BUSINESS_RULE)
         break
 
       // Activities - subProcess
       case 'subProcess':
         if (shape.getAttribute('triggeredByEvent') === 'true') {
-          this.$buildSubProcessNode(shape, bounds, ActivityType.EVENT_SUB_PROCESS)
+          this.buildSubProcessNode(shape, bounds, ActivityType.EVENT_SUB_PROCESS)
         } else {
-          this.$buildSubProcessNode(shape, bounds, ActivityType.SUB_PROCESS)
+          this.buildSubProcessNode(shape, bounds, ActivityType.SUB_PROCESS)
         }
         break
 
       // Activities - Ad-Hoc Sub-Process
       case 'adHocSubProcess':
         if (shape.getAttribute('triggeredByEvent') === 'true') {
-          this.$buildSubProcessNode(shape, bounds, ActivityType.EVENT_SUB_PROCESS)
+          this.buildSubProcessNode(shape, bounds, ActivityType.EVENT_SUB_PROCESS)
         } else {
-          this.$buildSubProcessNode(shape, bounds, ActivityType.SUB_PROCESS)
+          this.buildSubProcessNode(shape, bounds, ActivityType.SUB_PROCESS)
         }
         break
 
       // Activities - Transaction
       case 'transaction':
-        this.$buildSubProcessNode(shape, bounds, ActivityType.TRANSACTION)
+        this.buildSubProcessNode(shape, bounds, ActivityType.TRANSACTION)
         break
 
       // Activities - callActivity
       case 'callActivity':
-        this.$buildSubProcessNode(shape, bounds, ActivityType.CALL_ACTIVITY)
+        this.buildSubProcessNode(shape, bounds, ActivityType.CALL_ACTIVITY)
         break
 
       // Events
       case 'startEvent':
         if (shape.getAttribute('isInterrupting') === 'true') {
-          this.$buildEventNode(shape, bounds, EventCharacteristic.SUB_PROCESS_INTERRUPTING)
+          this.buildEventNode(shape, bounds, EventCharacteristic.SUB_PROCESS_INTERRUPTING)
         } else if (shape.getAttribute('isInterrupting') === 'false') {
-          this.$buildEventNode(shape, bounds, EventCharacteristic.SUB_PROCESS_NON_INTERRUPTING)
+          this.buildEventNode(shape, bounds, EventCharacteristic.SUB_PROCESS_NON_INTERRUPTING)
         } else {
-          this.$buildEventNode(shape, bounds, EventCharacteristic.START)
+          this.buildEventNode(shape, bounds, EventCharacteristic.START)
         }
         break
       case 'endEvent':
-        this.$buildEventNode(shape, bounds, EventCharacteristic.END)
+        this.buildEventNode(shape, bounds, EventCharacteristic.END)
         break
       case 'boundaryEvent':
         // Boundary Events are realized as Ports instead of Nodes
-        this.$buildBoundaryEvent(shape)
+        this.buildBoundaryEvent(shape)
         break
       case 'intermediateThrowEvent':
-        this.$buildEventNode(shape, bounds, EventCharacteristic.THROWING)
+        this.buildEventNode(shape, bounds, EventCharacteristic.THROWING)
         break
       case 'intermediateCatchEvent':
-        this.$buildEventNode(shape, bounds, EventCharacteristic.CATCHING)
+        this.buildEventNode(shape, bounds, EventCharacteristic.CATCHING)
         break
 
       // Conversation
       case 'conversation':
-        this.$buildConversationNode(shape, bounds, ConversationType.CONVERSATION, null)
+        this.buildConversationNode(shape, bounds, ConversationType.CONVERSATION, null)
         break
       case 'callConversation': {
         const refElement = { value: null }
-        if (this.$tryGetElementForId(shape.getAttribute('calledCollaborationRef'), refElement)) {
+        if (this.tryGetElementForId(shape.getAttribute('calledCollaborationRef'), refElement)) {
           switch (refElement.value.name) {
             case 'collaboration':
-              this.$buildConversationNode(
+              this.buildConversationNode(
                 shape,
                 bounds,
                 ConversationType.CALLING_COLLABORATION,
@@ -923,7 +926,7 @@ export class BpmnDiParser {
               )
               break
             case 'globalConversation':
-              this.$buildConversationNode(
+              this.buildConversationNode(
                 shape,
                 bounds,
                 ConversationType.CALLING_GLOBAL_CONVERSATION,
@@ -932,7 +935,7 @@ export class BpmnDiParser {
               break
             default:
               // This should not happen under strict conformance
-              this.$buildConversationNode(
+              this.buildConversationNode(
                 shape,
                 bounds,
                 ConversationType.CONVERSATION,
@@ -944,14 +947,14 @@ export class BpmnDiParser {
         break
       }
       case 'subConversation':
-        this.$buildConversationNode(shape, bounds, ConversationType.SUB_CONVERSATION, null)
+        this.buildConversationNode(shape, bounds, ConversationType.SUB_CONVERSATION, null)
         break
 
       // Choreography
       case 'choreographyTask':
       case 'subChoreography':
       case 'callChoreography':
-        this.$buildChoreographyNode(shape, bounds)
+        this.buildChoreographyNode(shape, bounds)
         break
 
       // Participants
@@ -959,50 +962,51 @@ export class BpmnDiParser {
         const parent = originalElement.parent
         // If the participant is not part of a choreography node, create a node
         if (parent.name.toLowerCase().indexOf('choreography') === -1) {
-          this.$buildParticipantNode(shape, bounds)
+          this.buildParticipantNode(shape, bounds)
         } else if (parent.node) {
           // Else add it to the appropriate choreography
-          this.$buildParticipantLabel(shape)
+          this.buildParticipantLabel(shape)
         }
         break
       }
       case 'participantRef':
         break
       case 'textAnnotation':
-        this.$buildTextAnnotationNode(shape, bounds)
+        this.buildTextAnnotationNode(shape, bounds)
         break
       case 'group':
-        this.$buildGroupNode(shape, bounds)
+        this.buildGroupNode(shape, bounds)
         break
       case 'dataObjectReference': {
         // Find out, if the data Object is a collection
         let collection = false
         const dataObject = { value: null }
-        if (this.$tryGetElementForId(shape.getAttribute('dataObjectRef'), dataObject)) {
-          if (dataObject.value.attributes.has('isCollection')) {
-            if (dataObject.value.attributes.get('isCollection') === 'true') {
+        if (this.tryGetElementForId(shape.getAttribute('dataObjectRef'), dataObject)) {
+          const bpmnElement = dataObject.value
+          if (bpmnElement.attributes.has('isCollection')) {
+            if (bpmnElement.attributes.get('isCollection') === 'true') {
               collection = true
             }
           }
         }
-        this.$buildDataObjectNode(shape, bounds, DataObjectType.NONE, collection)
+        this.buildDataObjectNode(shape, bounds, DataObjectType.NONE, collection)
         break
       }
       case 'dataInput': {
         // Find out, if the data Object is a collection
         const collection = shape.getAttribute('isCollection') === 'true'
-        this.$buildDataObjectNode(shape, bounds, DataObjectType.INPUT, collection)
+        this.buildDataObjectNode(shape, bounds, DataObjectType.INPUT, collection)
         break
       }
       case 'dataOutput': {
         // Find out, if the data Object is a collection
         const collection = shape.getAttribute('isCollection') === 'true'
-        this.$buildDataObjectNode(shape, bounds, DataObjectType.OUTPUT, collection)
+        this.buildDataObjectNode(shape, bounds, DataObjectType.OUTPUT, collection)
         break
       }
       // DataStore
       case 'dataStoreReference':
-        this.$buildDataStoreReferenceNode(shape, bounds)
+        this.buildDataStoreReferenceNode(shape, bounds)
         break
     }
     const iNode = shape.element.node
@@ -1015,56 +1019,56 @@ export class BpmnDiParser {
    * Creates an {@link IEdge} on the graph
    * @param {!BpmnEdge} edge The {@link BpmnEdge} to draw.
    */
-  $buildEdge(edge) {
+  buildEdge(edge) {
     const element = edge.element
     const source = edge.source
     let iEdge = null
     switch (element.name) {
       case 'sequenceFlow':
         if (element.getChild('conditionExpression') && !source.name.endsWith('Gateway')) {
-          iEdge = this.$buildDefaultEdge(edge, EdgeType.CONDITIONAL_FLOW)
+          iEdge = this.buildDefaultEdge(edge, EdgeType.CONDITIONAL_FLOW)
         } else if (source && source.getValue('default') === element.id) {
-          iEdge = this.$buildDefaultEdge(edge, EdgeType.DEFAULT_FLOW)
+          iEdge = this.buildDefaultEdge(edge, EdgeType.DEFAULT_FLOW)
         } else {
-          iEdge = this.$buildDefaultEdge(edge, EdgeType.SEQUENCE_FLOW)
+          iEdge = this.buildDefaultEdge(edge, EdgeType.SEQUENCE_FLOW)
         }
         break
       case 'association':
         switch (edge.getAttribute('associationDirection')) {
           case 'None':
-            iEdge = this.$buildDefaultEdge(edge, EdgeType.ASSOCIATION)
+            iEdge = this.buildDefaultEdge(edge, EdgeType.ASSOCIATION)
             break
           case 'One':
-            iEdge = this.$buildDefaultEdge(edge, EdgeType.DIRECTED_ASSOCIATION)
+            iEdge = this.buildDefaultEdge(edge, EdgeType.DIRECTED_ASSOCIATION)
             break
           case 'Both':
-            iEdge = this.$buildDefaultEdge(edge, EdgeType.BIDIRECTED_ASSOCIATION)
+            iEdge = this.buildDefaultEdge(edge, EdgeType.BIDIRECTED_ASSOCIATION)
             break
           default:
             // This shouldn't happen under strict conformance
-            iEdge = this.$buildDefaultEdge(edge, EdgeType.ASSOCIATION)
+            iEdge = this.buildDefaultEdge(edge, EdgeType.ASSOCIATION)
             break
         }
         break
       case 'dataAssociation':
-        iEdge = this.$buildDefaultEdge(edge, EdgeType.ASSOCIATION)
+        iEdge = this.buildDefaultEdge(edge, EdgeType.ASSOCIATION)
         break
       case 'conversationLink':
-        iEdge = this.$buildDefaultEdge(edge, EdgeType.CONVERSATION)
+        iEdge = this.buildDefaultEdge(edge, EdgeType.CONVERSATION)
         break
       case 'messageFlow':
-        iEdge = this.$buildMessageFlow(edge)
+        iEdge = this.buildMessageFlow(edge)
         break
       case 'dataInputAssociation':
-        iEdge = this.$buildDefaultEdge(edge, EdgeType.DIRECTED_ASSOCIATION)
+        iEdge = this.buildDefaultEdge(edge, EdgeType.DIRECTED_ASSOCIATION)
         break
       case 'dataOutputAssociation':
-        iEdge = this.$buildDefaultEdge(edge, EdgeType.DIRECTED_ASSOCIATION)
+        iEdge = this.buildDefaultEdge(edge, EdgeType.DIRECTED_ASSOCIATION)
         break
     }
     if (iEdge) {
       // Create label & set style
-      this.$addEdgeLabel(edge)
+      this.addEdgeLabel(edge)
 
       this.setEdgeTag(edge, iEdge)
     }
@@ -1092,20 +1096,16 @@ export class BpmnDiParser {
     }
   }
 
-  // endregion
-
-  // region Building Shapes
-
   /**
    * Builds a Gateway node
    * @param {!BpmnShape} shape
    * @param {!Rect} bounds
-   * @param {!GatewayType} type
+   * @param {number} type
    */
-  $buildGatewayNode(shape, bounds, type) {
+  buildGatewayNode(shape, bounds, type) {
     const node = this.masterGraph.createNode(bounds, null, null)
     const element = shape.element
-    this.$setParent(node, element.parent.node)
+    this.setParent(node, element.parent.node)
     element.node = node
 
     // dataAssociations point to invisible children of activities, therefore, the INode has to be linked there
@@ -1117,11 +1117,11 @@ export class BpmnDiParser {
     this.masterGraph.setStyle(node, gatewayStyle)
 
     // Add Label
-    const label = this.$addNodeLabel(node, shape)
+    const label = this.addNodeLabel(node, shape)
     if (shape.hasLabelPosition()) {
-      this.$setFixedBoundsLabelStyle(label, shape.labelBounds)
+      this.setFixedBoundsLabelStyle(label, shape.labelBounds)
     } else {
-      this.$setExternalLabelStyle(label)
+      this.setExternalLabelStyle(label)
       if (shape.hasLabelSize()) {
         this.masterGraph.setLabelPreferredSize(label, shape.labelBounds.size)
       }
@@ -1132,12 +1132,12 @@ export class BpmnDiParser {
    * Builds a Task node
    * @param {!BpmnShape} shape
    * @param {!Rect} bounds
-   * @param {!TaskType} type
+   * @param {number} type
    */
-  $buildTaskNode(shape, bounds, type) {
+  buildTaskNode(shape, bounds, type) {
     const node = this.masterGraph.createNode(bounds, null, null)
     const element = shape.element
-    this.$setParent(node, element.parent.node)
+    this.setParent(node, element.parent.node)
     element.node = node
 
     // dataAssociations point to invisible children of activities, therefore, the INode has to be linked there
@@ -1152,30 +1152,30 @@ export class BpmnDiParser {
     this.masterGraph.setStyle(node, activityStyle)
 
     // Add Label
-    const label = this.$addNodeLabel(node, shape)
-    this.$setInternalLabelStyle(label)
+    const label = this.addNodeLabel(node, shape)
+    this.setInternalLabelStyle(label)
   }
 
   /**
    * Builds a SubProcess node
    * @param {!BpmnShape} shape
    * @param {!Rect} bounds
-   * @param {!ActivityType} type
+   * @param {number} type
    */
-  $buildSubProcessNode(shape, bounds, type) {
+  buildSubProcessNode(shape, bounds, type) {
     const node = this.masterGraph.createNode(bounds, null, null)
     const element = shape.element
 
     // All SubProcess have to be GroupNodes, so they can be collapsed/expanded
     this.masterGraph.setIsGroupNode(node, true)
 
-    this.$setParent(node, element.parent.node)
+    this.setParent(node, element.parent.node)
     element.node = node
     const calledElement = { value: null }
 
     // If this subProcess is a callActivity and calls an existing process, link the Node there as well
     if (element.calledElement) {
-      if (this.$tryGetElementForId(element.calledElement, calledElement)) {
+      if (this.tryGetElementForId(element.calledElement, calledElement)) {
         calledElement.value.node = node
       }
     }
@@ -1187,10 +1187,10 @@ export class BpmnDiParser {
     activityStyle.compensation = shape.getAttribute('isForCompensation') === 'true'
     activityStyle.loopCharacteristic = element.getLoopCharacteristics()
     // Get, if the subProcess is expanded
-    const label = this.$addNodeLabel(node, shape)
-    this.$setSubProcessLabelStyle(label)
+    const label = this.addNodeLabel(node, shape)
+    this.setSubProcessLabelStyle(label)
     activityStyle.activityType = type
-    activityStyle.triggerEventType = this.$getEventType(shape)
+    activityStyle.triggerEventType = BpmnDiParser.getEventType(shape)
 
     if (shape.getAttribute('isInterrupting') === 'true') {
       activityStyle.triggerEventCharacteristic = EventCharacteristic.SUB_PROCESS_INTERRUPTING
@@ -1206,12 +1206,12 @@ export class BpmnDiParser {
    * Builds an Event node
    * @param {!BpmnShape} shape
    * @param {!Rect} bounds
-   * @param {!EventCharacteristic} characteristic
+   * @param {number} characteristic
    */
-  $buildEventNode(shape, bounds, characteristic) {
+  buildEventNode(shape, bounds, characteristic) {
     const node = this.masterGraph.createNode(bounds, null, null)
     const element = shape.element
-    this.$setParent(node, element.parent.node)
+    this.setParent(node, element.parent.node)
     element.node = node
 
     // dataAssociations point to invisible children of activities, therefore, the INode has to be linked there
@@ -1219,16 +1219,16 @@ export class BpmnDiParser {
 
     // Add Style
     const eventStyle = new EventNodeStyle()
-    eventStyle.type = this.$getEventType(shape)
+    eventStyle.type = BpmnDiParser.getEventType(shape)
     eventStyle.characteristic = characteristic
     this.masterGraph.setStyle(node, eventStyle)
 
     // Add Label
-    const label = this.$addNodeLabel(node, shape)
+    const label = this.addNodeLabel(node, shape)
     if (shape.hasLabelPosition()) {
-      this.$setFixedBoundsLabelStyle(label, shape.labelBounds)
+      this.setFixedBoundsLabelStyle(label, shape.labelBounds)
     } else {
-      this.$setExternalLabelStyle(label)
+      this.setExternalLabelStyle(label)
       if (shape.hasLabelSize()) {
         this.masterGraph.setLabelPreferredSize(label, shape.labelBounds.size)
       }
@@ -1239,19 +1239,23 @@ export class BpmnDiParser {
    * Builds a Boundary Event, realized as a port instead of a node
    * @param {!BpmnShape} shape
    */
-  $buildBoundaryEvent(shape) {
+  buildBoundaryEvent(shape) {
     const parent = { value: null }
-    this.$tryGetElementForId(shape.getAttribute('attachedToRef'), parent)
+    this.tryGetElementForId(shape.getAttribute('attachedToRef'), parent)
     const portStyle = new EventPortStyle()
-    portStyle.type = this.$getEventType(shape)
+    portStyle.type = BpmnDiParser.getEventType(shape)
     portStyle.characteristic =
       shape.getAttribute('cancelActivity') === 'false'
         ? EventCharacteristic.BOUNDARY_NON_INTERRUPTING
         : EventCharacteristic.BOUNDARY_INTERRUPTING
-    if (!parent.value) {
+
+    const parentValue = parent.value
+    if (!parentValue) {
       throw new Error('Shape with no parent')
     }
-    if (!parent.value.node) {
+
+    const parentNode = parentValue.node
+    if (!parentNode) {
       this.document.messages.add(
         'The node for boundaryEvent ' + shape.id + ' was not (yet) created!'
       )
@@ -1261,20 +1265,20 @@ export class BpmnDiParser {
     const element = shape.element
 
     // dataAssociations point to invisible children of Tasks, therefore, the INode has to be linked there
-    element.setINodeInputOutput(parent.value.node)
+    element.setINodeInputOutput(parentNode)
 
     const port = this.masterGraph.addPortAt(
-      parent.value.node,
+      parentNode,
       new Point(shape.x + shape.width / 2, shape.y + shape.height / 2),
       portStyle,
       null
     )
     element.port = port
-    element.node = parent.value.node
-    const label = this.$addNodeLabel(port, shape)
+    element.node = parentNode
+    const label = this.addNodeLabel(port, shape)
 
     if (shape.hasLabelPosition()) {
-      this.$setFixedBoundsLabelStyle(label, shape.labelBounds)
+      this.setFixedBoundsLabelStyle(label, shape.labelBounds)
     } else {
       this.masterGraph.setStyle(label, new DefaultLabelStyle())
       if (shape.hasLabelSize()) {
@@ -1291,13 +1295,13 @@ export class BpmnDiParser {
    * Builds a Conversation node
    * @param {!BpmnShape} shape
    * @param {!Rect} bounds
-   * @param {!ConversationType} type
-   * @param {!BpmnElement} refElement
+   * @param {number} type
+   * @param {?BpmnElement} refElement
    */
-  $buildConversationNode(shape, bounds, type, refElement) {
+  buildConversationNode(shape, bounds, type, refElement) {
     const node = this.masterGraph.createNode(bounds, null, null)
     const element = shape.element
-    this.$setParent(node, element.parent.node)
+    this.setParent(node, element.parent.node)
 
     element.node = node
 
@@ -1310,11 +1314,11 @@ export class BpmnDiParser {
     this.masterGraph.setStyle(node, conversationStyle)
 
     // Add Label
-    const label = this.$addNodeLabel(node, shape)
+    const label = this.addNodeLabel(node, shape)
     if (shape.hasLabelPosition()) {
-      this.$setFixedBoundsLabelStyle(label, shape.labelBounds)
+      this.setFixedBoundsLabelStyle(label, shape.labelBounds)
     } else {
-      this.$setExternalLabelStyle(label)
+      this.setExternalLabelStyle(label)
       if (shape.hasLabelSize()) {
         this.masterGraph.setLabelPreferredSize(label, shape.labelBounds.size)
       }
@@ -1326,10 +1330,10 @@ export class BpmnDiParser {
    * @param {!BpmnShape} shape
    * @param {!Rect} bounds
    */
-  $buildChoreographyNode(shape, bounds) {
-    const node = this.masterGraph.createGroupNode(this.$view.localRoot, bounds, null, null)
+  buildChoreographyNode(shape, bounds) {
+    const node = this.masterGraph.createGroupNode(this.view.localRoot, bounds, null, null)
     const element = shape.element
-    this.$setParent(node, element.parent.node)
+    this.setParent(node, element.parent.node)
     element.node = node
 
     // dataAssociations point to invisible children of Tasks, therefore, the INode has to be linked there
@@ -1340,7 +1344,7 @@ export class BpmnDiParser {
     // Get Loop Characteristics
     element.topParticipants = 0
     element.bottomParticipants = 0
-    const label = this.$addNodeLabel(node, shape)
+    const label = this.addNodeLabel(node, shape)
 
     // Get SubState
     if (shape.isExpanded === 'true') {
@@ -1353,20 +1357,20 @@ export class BpmnDiParser {
       this.masterGraph.setStyle(node, choreographyStyle)
     }
 
-    this.$setChoreographyLabelStyle(label)
+    this.setChoreographyLabelStyle(label)
   }
 
   /**
    * Builds a dataObject Node
    * @param {!BpmnShape} shape
    * @param {!Rect} bounds
-   * @param {!DataObjectType} type
+   * @param {number} type
    * @param {boolean} isCollection
    */
-  $buildDataObjectNode(shape, bounds, type, isCollection) {
+  buildDataObjectNode(shape, bounds, type, isCollection) {
     const node = this.masterGraph.createNode(bounds, null, null)
     const element = shape.element
-    this.$setParent(node, element.parent.node)
+    this.setParent(node, element.parent.node)
     element.node = node
 
     // dataAssociations point to invisible children of Tasks, therefore, the INode has to be linked there
@@ -1377,12 +1381,12 @@ export class BpmnDiParser {
     objectStyle.collection = isCollection
     this.masterGraph.setStyle(node, objectStyle)
 
-    const label = this.$addNodeLabel(node, shape)
+    const label = this.addNodeLabel(node, shape)
 
     if (shape.hasLabelPosition()) {
-      this.$setFixedBoundsLabelStyle(label, shape.labelBounds)
+      this.setFixedBoundsLabelStyle(label, shape.labelBounds)
     } else {
-      this.$setExternalLabelStyle(label)
+      this.setExternalLabelStyle(label)
       if (shape.hasLabelSize()) {
         this.masterGraph.setLabelPreferredSize(label, shape.labelBounds.size)
       }
@@ -1394,19 +1398,19 @@ export class BpmnDiParser {
    * @param {!BpmnShape} shape
    * @param {!Rect} bounds
    */
-  $buildParticipantNode(shape, bounds) {
+  buildParticipantNode(shape, bounds) {
     const element = shape.element
     const processRef = element.process
     const processElement = { value: null }
     if (
       !processRef ||
-      !this.$tryGetElementForId(processRef, processElement) ||
+      !this.tryGetElementForId(processRef, processElement) ||
       !processElement.value.getChild('laneSet')
     ) {
       // not connected to a process so we need our own node
 
       const node = this.masterGraph.createNode(bounds, null, null)
-      this.$setParent(node, element.parent.node)
+      this.setParent(node, element.parent.node)
       element.node = node
       if (processElement.value) {
         processElement.value.node = node
@@ -1415,7 +1419,7 @@ export class BpmnDiParser {
       // dataAssociations point to invisible children of Tasks, therefore, the INode has to be linked there
       element.setINodeInputOutput(node)
 
-      const partStyle = this.$createTable(shape)
+      const partStyle = BpmnDiParser.createTable(shape)
       if (element.hasChild('participantMultiplicity')) {
         if (convertToInt(element.getChildAttribute('participantMultiplicity', 'maximum')) > 1) {
           partStyle.multipleInstance = true
@@ -1427,10 +1431,10 @@ export class BpmnDiParser {
       const table = partStyle.tableNodeStyle.table
       if (shape.isHorizontal) {
         const row = table.rootRow.childRows.first()
-        this.$addTableLabel(table, row, shape)
+        BpmnDiParser.addTableLabel(table, row, shape)
       } else {
         const column = table.rootColumn.childColumns.first()
-        this.$addTableLabel(table, column, shape)
+        BpmnDiParser.addTableLabel(table, column, shape)
       }
     }
   }
@@ -1439,7 +1443,7 @@ export class BpmnDiParser {
    * Builds a participant label inside a choreography node
    * @param {!BpmnShape} shape
    */
-  $buildParticipantLabel(shape) {
+  buildParticipantLabel(shape) {
     const choreography = this.currentDiagram.plane.getShape(shape.choreographyActivityShape).element
     const node = choreography.node
     let top = false
@@ -1455,7 +1459,7 @@ export class BpmnDiParser {
     }
     const participant = new Participant()
     participant.multiInstance = multipleInstance
-    let label = this.$addParticipantLabel(node, shape)
+    let label = this.addParticipantLabel(node, shape)
     switch (shape.partBandKind) {
       case ParticipantBandKind.TOP_INITIATING:
         if (shape.isMessageVisible) {
@@ -1524,7 +1528,7 @@ export class BpmnDiParser {
     // Sets the label Style of the new participant
     let parameter = ChoreographyLabelModel.INSTANCE.createParticipantParameter(top, index)
     this.masterGraph.setLabelLayoutParameter(label, parameter)
-    let defaultLabelStyle = this.$setCustomLabelStyle(label)
+    let defaultLabelStyle = this.setCustomLabelStyle(label)
     this.masterGraph.setStyle(label, defaultLabelStyle)
 
     // checks, if there is a message, if yes, tries to set text label
@@ -1533,7 +1537,7 @@ export class BpmnDiParser {
 
       for (const child of children) {
         const messageFlow = { value: null }
-        if (this.$tryGetElementForId(child.value, messageFlow)) {
+        if (this.tryGetElementForId(child.value, messageFlow)) {
           if (messageFlow.value.source === element.id) {
             const message = messageFlow.value.label || ''
             label = this.masterGraph.addLabel({
@@ -1547,7 +1551,7 @@ export class BpmnDiParser {
               parameter = ChoreographyLabelModel.SOUTH_MESSAGE
             }
             this.masterGraph.setLabelLayoutParameter(label, parameter)
-            defaultLabelStyle = this.$setCustomLabelStyle(label)
+            defaultLabelStyle = this.setCustomLabelStyle(label)
             this.masterGraph.setStyle(label, defaultLabelStyle)
             break
           }
@@ -1561,10 +1565,10 @@ export class BpmnDiParser {
    * @param {!BpmnShape} shape
    * @param {!Rect} bounds
    */
-  $buildTextAnnotationNode(shape, bounds) {
+  buildTextAnnotationNode(shape, bounds) {
     const node = this.masterGraph.createNode(bounds, null, null)
     const element = shape.element
-    this.$setParent(node, element.parent.node)
+    this.setParent(node, element.parent.node)
     element.node = node
 
     // Add Style
@@ -1572,8 +1576,8 @@ export class BpmnDiParser {
     this.masterGraph.setStyle(node, annotationStyle)
 
     // Add Label
-    const label = this.$addNodeLabel(node, shape)
-    this.$setInternalLabelStyle(label)
+    const label = this.addNodeLabel(node, shape)
+    this.setInternalLabelStyle(label)
   }
 
   /**
@@ -1581,7 +1585,7 @@ export class BpmnDiParser {
    * @param {!BpmnShape} shape
    * @param {!Rect} bounds
    */
-  $buildGroupNode(shape, bounds) {
+  buildGroupNode(shape, bounds) {
     const element = shape.element
     const node = this.masterGraph.createGroupNode(
       element.parent.node,
@@ -1601,8 +1605,8 @@ export class BpmnDiParser {
     }
 
     // Add Label
-    const label = this.$addNodeLabel(node, shape)
-    this.$setGroupLabelStyle(label)
+    const label = this.addNodeLabel(node, shape)
+    this.setGroupLabelStyle(label)
   }
 
   /**
@@ -1610,10 +1614,10 @@ export class BpmnDiParser {
    * @param {!BpmnShape} shape
    * @param {!Rect} bounds
    */
-  $buildDataStoreReferenceNode(shape, bounds) {
+  buildDataStoreReferenceNode(shape, bounds) {
     const node = this.masterGraph.createNode(bounds, null, null)
     const element = shape.element
-    this.$setParent(node, element.parent.node)
+    this.setParent(node, element.parent.node)
     element.node = node
 
     // dataAssociations point to invisible children of Tasks, therefore, the INode has to be linked there
@@ -1624,11 +1628,11 @@ export class BpmnDiParser {
     this.masterGraph.setStyle(node, dataStoreStyle)
 
     // Add Label
-    const label = this.$addNodeLabel(node, shape)
+    const label = this.addNodeLabel(node, shape)
     if (shape.hasLabelPosition()) {
-      this.$setFixedBoundsLabelStyle(label, shape.labelBounds)
+      this.setFixedBoundsLabelStyle(label, shape.labelBounds)
     } else {
-      this.$setExternalLabelStyle(label)
+      this.setExternalLabelStyle(label)
       if (shape.hasLabelSize()) {
         this.masterGraph.setLabelPreferredSize(label, shape.labelBounds.size)
       }
@@ -1638,9 +1642,9 @@ export class BpmnDiParser {
   /**
    * Retrieves the correct EventType, returns EventNodeStyle with the EventType set accordingly
    * @param {!BpmnShape} shape
-   * @returns {!EventType}
+   * @returns {number}
    */
-  $getEventType(shape) {
+  static getEventType(shape) {
     let eventType = EventType.PLAIN
     const element = shape.element
 
@@ -1688,15 +1692,11 @@ export class BpmnDiParser {
    * @param {!INode} node
    * @param {!INode} parentNode
    */
-  $setParent(node, parentNode) {
+  setParent(node, parentNode) {
     if (this.masterGraph.contains(parentNode)) {
       this.masterGraph.setParent(node, parentNode)
     }
   }
-
-  // endregion
-
-  // region Building Labels
 
   /**
    * Adds a label to a node
@@ -1704,7 +1704,7 @@ export class BpmnDiParser {
    * @param {!BpmnShape} shape
    * @returns {!ILabel}
    */
-  $addNodeLabel(owner, shape) {
+  addNodeLabel(owner, shape) {
     // blank label, in case we added none
     let name = shape.element.label
     // only has label name, if we added one before
@@ -1720,7 +1720,7 @@ export class BpmnDiParser {
    * @param {!BpmnShape} shape
    * @returns {!ILabel}
    */
-  $addParticipantLabel(owner, shape) {
+  addParticipantLabel(owner, shape) {
     // blank label, in case we added none
     let name = shape.element.label
     // only has label name, if we added one before
@@ -1736,7 +1736,7 @@ export class BpmnDiParser {
    * @param {!IStripe} owner
    * @param {!BpmnShape} shape
    */
-  $addTableLabel(table, owner, shape) {
+  static addTableLabel(table, owner, shape) {
     // blank label, in case we added none
     let name = shape.element.label
     // only has label name, if we added one before
@@ -1750,7 +1750,7 @@ export class BpmnDiParser {
    * Adds a label to an edge
    * @param {!BpmnEdge} edge
    */
-  $addEdgeLabel(edge) {
+  addEdgeLabel(edge) {
     // blank label, in case we added none
     let name = edge.element.label
     // only has label name, if we added one before
@@ -1762,9 +1762,9 @@ export class BpmnDiParser {
       const label = this.masterGraph.addLabel({ owner, text: name, tag: edge.labelStyle || null })
 
       if (edge.hasLabelPosition()) {
-        this.$setFixedBoundsLabelStyle(label, edge.labelBounds)
+        this.setFixedBoundsLabelStyle(label, edge.labelBounds)
       } else {
-        this.$setEdgeLabelStyle(label)
+        this.setEdgeLabelStyle(label)
         if (edge.hasLabelSize()) {
           this.masterGraph.setLabelPreferredSize(label, edge.labelBounds.size)
         }
@@ -1777,13 +1777,11 @@ export class BpmnDiParser {
    * @param {!ILabel} label
    * @param {!Rect} bounds
    */
-  $setFixedBoundsLabelStyle(label, bounds) {
-    const model = INode.isInstance(label.owner)
-      ? new FreeNodeLabelModel()
-      : new FreeEdgeLabelModel()
+  setFixedBoundsLabelStyle(label, bounds) {
+    const model = label.owner instanceof INode ? new FreeNodeLabelModel() : new FreeEdgeLabelModel()
     const parameter = model.findBestParameter(label, model, new OrientedRectangle(bounds))
     this.masterGraph.setLabelLayoutParameter(label, parameter)
-    const defaultLabelStyle = this.$setCustomLabelStyle(label)
+    const defaultLabelStyle = this.setCustomLabelStyle(label)
     this.masterGraph.setStyle(label, defaultLabelStyle)
     this.masterGraph.setLabelPreferredSize(label, new Size(bounds.width, bounds.height))
   }
@@ -1792,14 +1790,14 @@ export class BpmnDiParser {
    * Sets label style for tasks (Centered)
    * @param {!ILabel} label
    */
-  $setInternalLabelStyle(label) {
+  setInternalLabelStyle(label) {
     const model = new InteriorStretchLabelModel()
     model.insets = new Insets(3, 3, 3, 3)
     this.masterGraph.setLabelLayoutParameter(
       label,
       model.createParameter(InteriorStretchLabelModelPosition.CENTER)
     )
-    const defaultLabelStyle = this.$setCustomLabelStyle(label)
+    const defaultLabelStyle = this.setCustomLabelStyle(label)
     defaultLabelStyle.horizontalTextAlignment = HorizontalTextAlignment.CENTER
     defaultLabelStyle.verticalTextAlignment = VerticalTextAlignment.CENTER
     defaultLabelStyle.wrapping = TextWrapping.WORD
@@ -1810,9 +1808,9 @@ export class BpmnDiParser {
    * Sets label style nodes that have an external label (South of the node)
    * @param {!ILabel} label
    */
-  $setExternalLabelStyle(label) {
+  setExternalLabelStyle(label) {
     this.masterGraph.setLabelLayoutParameter(label, this.genericLabelModel.createDefaultParameter())
-    const defaultLabelStyle = this.$setCustomLabelStyle(label)
+    const defaultLabelStyle = this.setCustomLabelStyle(label)
     defaultLabelStyle.horizontalTextAlignment = HorizontalTextAlignment.CENTER
     defaultLabelStyle.verticalTextAlignment = VerticalTextAlignment.CENTER
     this.masterGraph.setStyle(label, defaultLabelStyle)
@@ -1835,9 +1833,9 @@ export class BpmnDiParser {
    * Sets label style for the TaskNameBand in a Choreography
    * @param {!ILabel} label
    */
-  $setChoreographyLabelStyle(label) {
+  setChoreographyLabelStyle(label) {
     this.masterGraph.setLabelLayoutParameter(label, ChoreographyLabelModel.TASK_NAME_BAND)
-    const defaultLabelStyle = this.$setCustomLabelStyle(label)
+    const defaultLabelStyle = this.setCustomLabelStyle(label)
     defaultLabelStyle.wrapping = TextWrapping.WORD
     defaultLabelStyle.horizontalTextAlignment = HorizontalTextAlignment.CENTER
     defaultLabelStyle.verticalTextAlignment = VerticalTextAlignment.CENTER
@@ -1848,14 +1846,14 @@ export class BpmnDiParser {
    * Sets label style for SubProcesses (Upper left corner)
    * @param {!ILabel} label
    */
-  $setSubProcessLabelStyle(label) {
+  setSubProcessLabelStyle(label) {
     const model = new InteriorStretchLabelModel()
     model.insets = new Insets(3, 3, 3, 3)
     this.masterGraph.setLabelLayoutParameter(
       label,
       model.createParameter(InteriorStretchLabelModelPosition.NORTH)
     )
-    const defaultLabelStyle = this.$setCustomLabelStyle(label)
+    const defaultLabelStyle = this.setCustomLabelStyle(label)
     defaultLabelStyle.horizontalTextAlignment = HorizontalTextAlignment.LEFT
     defaultLabelStyle.verticalTextAlignment = VerticalTextAlignment.TOP
     this.masterGraph.setStyle(label, defaultLabelStyle)
@@ -1865,14 +1863,14 @@ export class BpmnDiParser {
    * Sets label style for Groups (Upper boundary)
    * @param {!ILabel} label
    */
-  $setGroupLabelStyle(label) {
+  setGroupLabelStyle(label) {
     const model = new InteriorStretchLabelModel()
     model.insets = new Insets(3, 3, 3, 3)
     this.masterGraph.setLabelLayoutParameter(
       label,
       model.createParameter(InteriorStretchLabelModelPosition.NORTH)
     )
-    const defaultLabelStyle = this.$setCustomLabelStyle(label)
+    const defaultLabelStyle = this.setCustomLabelStyle(label)
     defaultLabelStyle.horizontalTextAlignment = HorizontalTextAlignment.CENTER
     this.masterGraph.setStyle(label, defaultLabelStyle)
   }
@@ -1881,7 +1879,7 @@ export class BpmnDiParser {
    * Sets edge label style
    * @param {!ILabel} label
    */
-  $setEdgeLabelStyle(label) {
+  setEdgeLabelStyle(label) {
     if (label) {
       const model = new EdgePathLabelModel(
         0,
@@ -1894,7 +1892,7 @@ export class BpmnDiParser {
       model.sideOfEdge = EdgeSides.ABOVE_EDGE
       model.autoRotation = false
       this.masterGraph.setLabelLayoutParameter(label, model.createDefaultParameter())
-      const defaultLabelStyle = this.$setCustomLabelStyle(label)
+      const defaultLabelStyle = this.setCustomLabelStyle(label)
       defaultLabelStyle.horizontalTextAlignment = HorizontalTextAlignment.CENTER
       this.masterGraph.setStyle(label, defaultLabelStyle)
     }
@@ -1905,23 +1903,18 @@ export class BpmnDiParser {
    * @param {!ILabel} label
    * @returns {!DefaultLabelStyle}
    */
-  $setCustomLabelStyle(label) {
+  setCustomLabelStyle(label) {
     const styleName = label.tag
     return this.currentDiagram.getStyle(styleName)
   }
 
-  // endregion
-
-  // region Building Edges
-
-  // Builds all edges, except for message flows
   /**
-   * @private
+   * Builds all edges, except for message flows
    * @param {!BpmnEdge} edge
-   * @param {!EdgeType} type
-   * @returns {!IEdge}
+   * @param {number} type
+   * @returns {?IEdge}
    */
-  $buildDefaultEdge(edge, type) {
+  buildDefaultEdge(edge, type) {
     const sourceVar = edge.source
     const targetVar = edge.target
     const waypoints = edge.waypoints
@@ -2023,9 +2016,9 @@ export class BpmnDiParser {
   /**
    * Builds MessageFlow edges
    * @param {!BpmnEdge} edge
-   * @returns {!IEdge}
+   * @returns {?IEdge}
    */
-  $buildMessageFlow(edge) {
+  buildMessageFlow(edge) {
     const sourceVar = edge.source
     const targetVar = edge.target
     const waypoints = edge.waypoints
@@ -2064,7 +2057,7 @@ export class BpmnDiParser {
         ? targetVar.port
         : this.masterGraph.addPortAt(targetNode, target, null, null)
 
-    const iEdge = this.masterGraph.createEdge(sourcePort, targetPort, null, null)
+    const iEdge = this.masterGraph.createEdge(sourcePort, targetPort)
     for (const point of waypoints) {
       this.masterGraph.addBend(iEdge, point, -1)
     }
@@ -2086,7 +2079,7 @@ export class BpmnDiParser {
         )
         model.sideOfEdge = EdgeSides.ON_EDGE
         model.autoRotation = false
-        this.masterGraph.setLabelPreferredSize(messageLabel, this.$bpmnMessageSize)
+        this.masterGraph.setLabelPreferredSize(messageLabel, this.bpmnMessageSize)
         this.masterGraph.setLabelLayoutParameter(
           messageLabel,
           model.createParameterFromCenter(0.5, EdgeSides.ON_EDGE)
@@ -2095,7 +2088,9 @@ export class BpmnDiParser {
       }
       case MessageVisibleKind.NON_INITIATING: {
         const messageLabel = this.masterGraph.addLabel(iEdge, '')
-        this.masterGraph.setStyle(messageLabel, MessageLabelStyle.responseStyle())
+        const messageLabelStyle = new MessageLabelStyle()
+        messageLabelStyle.isInitiating = false
+        this.masterGraph.setStyle(messageLabel, messageLabelStyle)
         const model = new EdgeSegmentLabelModel(
           0,
           0,
@@ -2105,7 +2100,7 @@ export class BpmnDiParser {
         )
         model.sideOfEdge = EdgeSides.ON_EDGE
         model.autoRotation = false
-        this.masterGraph.setLabelPreferredSize(messageLabel, this.$bpmnMessageSize)
+        this.masterGraph.setLabelPreferredSize(messageLabel, this.bpmnMessageSize)
         this.masterGraph.setLabelLayoutParameter(
           messageLabel,
           model.createParameterFromCenter(0.5, EdgeSides.ON_EDGE)
@@ -2124,17 +2119,13 @@ export class BpmnDiParser {
     return iEdge
   }
 
-  // endregion
-
-  // region Building Tables
-
   /**
    * @param {!BpmnElement} element
    * @param {!BpmnPlane} plane
-   * @param {!INode} localRoot
+   * @param {?INode} localRoot
    * @returns {!INode}
    */
-  $buildPool(element, plane, localRoot) {
+  buildPool(element, plane, localRoot) {
     let parent = element.parent
     while (parent.name !== 'process' && parent.name !== 'subProcess') {
       parent = parent.parent
@@ -2144,12 +2135,12 @@ export class BpmnDiParser {
     let isHorizontal = false
     let multipleInstance = false
 
-    let tableShape = this.$getShape(element, plane)
+    let tableShape = this.getShape(element, plane)
     if (!tableShape && parent) {
-      tableShape = this.$getShape(parent, plane)
+      tableShape = this.getShape(parent, plane)
       if (!tableShape && this.processRefSource.has(parent)) {
         const processRefSource = this.processRefSource.get(parent)
-        tableShape = this.$getShape(processRefSource, plane)
+        tableShape = this.getShape(processRefSource, plane)
         if (processRefSource.hasChild('participantMultiplicity')) {
           if (
             convertToInt(processRefSource.getChildAttribute('participantMultiplicity', 'maximum')) >
@@ -2168,7 +2159,7 @@ export class BpmnDiParser {
     } else {
       // check the child lanes for their shapes
       for (const lane of element.getChildren('lane')) {
-        const laneShape = this.$getShape(lane, plane)
+        const laneShape = this.getShape(lane, plane)
         if (laneShape) {
           layout = Rect.add(
             layout,
@@ -2178,7 +2169,7 @@ export class BpmnDiParser {
         }
       }
     }
-    let node = null
+    let node
     if (!layout.isEmpty) {
       let table
       if (parent && parent.table) {
@@ -2187,7 +2178,7 @@ export class BpmnDiParser {
       } else {
         // table was already initialized for the Process due to a Participant element
         node = this.masterGraph.createNode(localRoot, layout, null, null)
-        const poolStyle = this.$createPoolNodeStyle(isHorizontal)
+        const poolStyle = BpmnDiParser.createPoolNodeStyle(isHorizontal)
         poolStyle.multipleInstance = multipleInstance
         this.masterGraph.setStyle(node, poolStyle)
         table = poolStyle.tableNodeStyle.table
@@ -2224,7 +2215,7 @@ export class BpmnDiParser {
         ? table.rootColumn.childColumns.first()
         : table.rootColumn
       if (tableShape) {
-        parentStripe = this.$addToTable(tableShape, table, node, parentStripe)
+        parentStripe = this.addToTable(tableShape, table, node, parentStripe)
       }
 
       element.node = node
@@ -2232,21 +2223,17 @@ export class BpmnDiParser {
         parent.node = node
       }
 
-      this.$addChildLanes(element, table, parentStripe, plane, node)
+      this.addChildLanes(element, table, parentStripe, plane, node)
 
       // Resize the root row/column after adding a column/row with insets
       if (isHorizontal) {
         const max = table.rootRow.leaves
-          .map(s => {
-            return s.layout.x - table.layout.x + s.insets.left
-          })
+          .map(s => s.layout.x - table.layout.x + s.insets.left)
           .reduce((acc, val) => Math.max(acc, val), Number.MIN_VALUE)
         table.setSize(table.rootColumn.childColumns.first(), node.layout.width - max)
       } else {
         const max = table.rootColumn.leaves
-          .map(s => {
-            return s.layout.y - table.layout.y + s.insets.top
-          })
+          .map(s => s.layout.y - table.layout.y + s.insets.top)
           .reduce((acc, val) => Math.max(acc, val), Number.MIN_VALUE)
         table.setSize(table.rootRow.childRows.first(), node.layout.height - max)
       }
@@ -2278,20 +2265,20 @@ export class BpmnDiParser {
    * @param {!BpmnPlane} plane
    * @param {!INode} node
    */
-  $addChildLanes(element, table, parentStripe, plane, node) {
+  addChildLanes(element, table, parentStripe, plane, node) {
     for (const lane of element.getChildren('lane')) {
-      const laneShape = this.$getShape(lane, plane)
+      const laneShape = this.getShape(lane, plane)
       if (laneShape) {
-        const addedStripe = this.$addToTable(laneShape, table, node, parentStripe)
+        const addedStripe = this.addToTable(laneShape, table, node, parentStripe)
         for (const refElement of lane.getChildren('flowNodeRef')) {
           const bpmnElement = { value: null }
-          if (refElement.value && this.$tryGetElementForId(refElement.value, bpmnElement)) {
+          if (refElement.value && this.tryGetElementForId(refElement.value, bpmnElement)) {
             bpmnElement.value.parent.node = node
           }
         }
         const childLaneSet = lane.getChild('childLaneSet')
         if (childLaneSet) {
-          this.$addChildLanes(childLaneSet, table, addedStripe, plane, node)
+          this.addChildLanes(childLaneSet, table, addedStripe, plane, node)
         }
       }
     }
@@ -2305,7 +2292,7 @@ export class BpmnDiParser {
    * @param {!IStripe} parentStripe
    * @returns {!IStripe}
    */
-  $addToTable(shape, table, node, parentStripe) {
+  addToTable(shape, table, node, parentStripe) {
     // lane element
     const element = shape.element
 
@@ -2313,27 +2300,27 @@ export class BpmnDiParser {
 
     element.node = node
     if (shape.isHorizontal) {
-      const parentRow = IRow.isInstance(parentStripe) ? parentStripe : null
+      const parentRow = parentStripe instanceof IRow ? parentStripe : null
       // getIndex
-      const index = parentRow.childRows.filter(siblingRow => {
-        return siblingRow.tag.y < shape.y
-      }).size
+      const index = parentRow
+        ? parentRow.childRows.filter(siblingRow => siblingRow.tag.y < shape.y).size
+        : -1
 
       const row = table.createChildRow(parentRow, shape.height, null, null, null, null, index)
       row.tag = new Point(shape.x, shape.y)
 
-      this.$addTableLabel(table, row, shape)
+      BpmnDiParser.addTableLabel(table, row, shape)
       return row
     } else {
       const parentCol = IColumn.isInstance(parentStripe) ? parentStripe : null
       // getIndex
-      const index = parentCol.childColumns.filter(siblingCol => {
-        return siblingCol.tag.x < shape.x
-      }).size
+      const index = parentCol
+        ? parentCol.childColumns.filter(siblingCol => siblingCol.tag.x < shape.x).size
+        : -1
 
       const col = table.createChildColumn(parentCol, shape.width, null, null, null, null, index)
       col.tag = new Point(shape.x, shape.y)
-      this.$addTableLabel(table, col, shape)
+      BpmnDiParser.addTableLabel(table, col, shape)
       return col
     }
   }
@@ -2343,8 +2330,8 @@ export class BpmnDiParser {
    * @param {!BpmnShape} shape
    * @returns {!PoolNodeStyle}
    */
-  $createTable(shape) {
-    const poolNodeStyle = this.$createPoolNodeStyle(shape.isHorizontal)
+  static createTable(shape) {
+    const poolNodeStyle = BpmnDiParser.createPoolNodeStyle(shape.isHorizontal)
     const table = poolNodeStyle.tableNodeStyle.table
 
     // Create first row & column
@@ -2372,11 +2359,10 @@ export class BpmnDiParser {
   }
 
   /**
-   * @private
    * @param {boolean} isHorizontal
    * @returns {!PoolNodeStyle}
    */
-  $createPoolNodeStyle(isHorizontal) {
+  static createPoolNodeStyle(isHorizontal) {
     const partStyle = new PoolNodeStyle(!isHorizontal)
     const table = partStyle.tableNodeStyle.table
 
@@ -2391,8 +2377,6 @@ export class BpmnDiParser {
 
     return partStyle
   }
-
-  // endregion
 }
 
 /**
@@ -2406,38 +2390,31 @@ export class BpmnDiagram {
   constructor(xNode) {
     // BPMNPlane of this diagram
     this.plane = null
+
     // The default label style for this diagram instance
     this.defaultStyle = null
+
     // List of all child diagrams this diagram contains
     this.children = new HashMap()
+
     // All BPMNLabelStyle instances of this diagram
     this.styles = new HashMap()
-    // Id of this diagram
-    this.id = ''
-    // These parameters are currently unused. They are part of the BPMN Syntax and might be used in the future.
-    this.documentation = ''
-    this.resolution = ''
 
     // Get name, if it exists
     // The name of this diagram
     this.name = BpmnNamespaceManager.getAttributeValue(xNode, BpmnNamespaceManager.BPMN, 'name')
-
     // Name Diagram "Unnamed", if it has no name (for choosing, if file contains multiple diagrams)
     if (!this.name) {
       this.name = 'Unnamed Diagram'
     }
-
-    // Get id, if it exists
+    // Id of this diagram
     this.id = BpmnNamespaceManager.getAttributeValue(xNode, BpmnNamespaceManager.BPMN, 'id')
-
-    // Get documentation, if it exists
+    // These parameters are currently unused. They are part of the BPMN Syntax and might be used in the future.
     this.documentation = BpmnNamespaceManager.getAttributeValue(
       xNode,
       BpmnNamespaceManager.BPMN,
       'documentation'
     )
-
-    // Get resolution, if it exists
     this.resolution = BpmnNamespaceManager.getAttributeValue(
       xNode,
       BpmnNamespaceManager.BPMN,
@@ -2504,18 +2481,22 @@ export class BpmnDocument {
   constructor(doc) {
     // Mapping of all IDs of BPMN elements to these elements.
     this.elements = new HashMap()
+
     // List of all diagrams, that are parsed from this document.
     this.diagrams = new List()
+
     // List of diagrams representing a "process", "choreography" or "collaboration"
     this.topLevelDiagrams = new List()
+
     // Mapping from a BPMN element to the diagram representing it.
     this.elementToDiagram = new HashMap()
+
     // Collection of all warning during program flow
     this.messages = new List()
 
     // parse the XML file
     const callingElements = new List()
-    this.$recursiveElements(doc.documentElement, null, callingElements)
+    this.recursiveElements(doc.documentElement, null, callingElements)
 
     // collect all elements that are linked to from a plane
     for (const diagram of this.diagrams) {
@@ -2523,7 +2504,7 @@ export class BpmnDocument {
         const planeElement = diagram.plane.element
         this.elementToDiagram.set(planeElement, diagram)
       } catch {
-        this.messages.add('Tried to add a diagram with the already existing id: ' + diagram.id)
+        this.messages.add(`Tried to add a diagram with the already existing id: ${diagram.id}`)
       }
     }
 
@@ -2545,8 +2526,8 @@ export class BpmnDocument {
             }
           }
         }
-        for (const child of diagram.plane.element.children) {
-          this.$collectChildDiagrams(child, diagram)
+        for (const child of element.children) {
+          this.collectChildDiagrams(child, diagram)
         }
       }
     }
@@ -2557,7 +2538,7 @@ export class BpmnDocument {
    * @param {!BpmnElement} bpmnElement The element to check.
    * @param {!BpmnDiagram} diagram The diagram to collect the child diagrams for.
    */
-  $collectChildDiagrams(bpmnElement, diagram) {
+  collectChildDiagrams(bpmnElement, diagram) {
     let currentDiagram = diagram
 
     if (this.elementToDiagram.has(bpmnElement)) {
@@ -2566,21 +2547,21 @@ export class BpmnDocument {
       currentDiagram = childDiagram
     }
     for (const child of bpmnElement.children) {
-      this.$collectChildDiagrams(child, currentDiagram)
+      this.collectChildDiagrams(child, currentDiagram)
     }
     if (bpmnElement.process && this.elements.has(bpmnElement.process)) {
       const process = this.elements.get(bpmnElement.process)
-      this.$collectChildDiagrams(process, currentDiagram)
+      this.collectChildDiagrams(process, currentDiagram)
     }
   }
 
   /**
    * Traverses Depth-First through the bpmn XML file, collecting and linking all Elements.
    * @param {!Element} xNode The XML node to start with
-   * @param {!BpmnElement} parent The parent {@link BpmnElement}
+   * @param {?BpmnElement} parent The parent {@link BpmnElement}
    * @param {!ICollection.<BpmnElement>} callingElements A list to add all {@link BpmnElement} with a valid 'CalledElement' or 'Process' property.
    */
-  $recursiveElements(xNode, parent, callingElements) {
+  recursiveElements(xNode, parent, callingElements) {
     const element = new BpmnElement(xNode)
     if (element.calledElement) {
       callingElements.add(element)
@@ -2596,11 +2577,11 @@ export class BpmnDocument {
         // so if the id contains a prefix, it is mapped with and without it
         const prefix = xNode.prefix
         if (prefix) {
-          this.elements.set(prefix + ':' + element.id, element)
+          this.elements.set(`${prefix}:${element.id}`, element)
         }
       } catch {
         this.messages.add(
-          'Error while trying to add second Element with the same id: ' + element.id
+          `Error while trying to add second Element with the same id: ${element.id}`
         )
       }
     }
@@ -2618,11 +2599,11 @@ export class BpmnDocument {
       const localName = xChild.localName
       if (nameSpace === BpmnNamespaceManager.BPMN) {
         // Add all bpmn elements to the dictionary
-        this.$recursiveElements(xChild, element, callingElements)
+        this.recursiveElements(xChild, element, callingElements)
       } else if (nameSpace === BpmnNamespaceManager.BPMN_DI) {
         // Parse a diagram as whole
         if (localName === 'BPMNDiagram') {
-          const diagram = this.$buildDiagram(xChild)
+          const diagram = this.buildDiagram(xChild)
           if (diagram.plane) {
             this.diagrams.add(diagram)
           } else {
@@ -2642,10 +2623,10 @@ export class BpmnDocument {
    * @param {!Element} xNode The XML node to start with
    * @returns {!BpmnDiagram} The parsed {@link BpmnDiagram}
    */
-  $buildDiagram(xNode) {
+  buildDiagram(xNode) {
     const diagram = new BpmnDiagram(xNode)
 
-    const bpmnPlane = this.$buildPlane(
+    const bpmnPlane = this.buildPlane(
       BpmnNamespaceManager.getElement(xNode, BpmnNamespaceManager.BPMN_DI, 'BPMNPlane')
     )
     if (bpmnPlane) {
@@ -2670,9 +2651,9 @@ export class BpmnDocument {
   /**
    * Parse all bpmn shapes and bpmn edges and their associations and attributes from one {@link BpmnPlane}
    * @param {!Element} xNode The XML node to start with
-   * @returns {!BpmnPlane}
+   * @returns {?BpmnPlane}
    */
-  $buildPlane(xNode) {
+  buildPlane(xNode) {
     const plane = new BpmnPlane(xNode, this.elements)
     if (!plane.element) {
       return null
@@ -2766,26 +2747,30 @@ export class BpmnDocument {
  * Class for BPMNEdge objects
  */
 export class BpmnEdge {
-  /** @type {SimpleLabel} */
+  /**
+   * @type {!SimpleLabel}
+   */
   static get CALCULATE_SIZE_LABEL() {
-    if (typeof BpmnEdge.$CALCULATE_SIZE_LABEL === 'undefined') {
-      BpmnEdge.$CALCULATE_SIZE_LABEL = new SimpleLabel(
+    if (typeof BpmnEdge._CALCULATE_SIZE_LABEL === 'undefined') {
+      BpmnEdge._CALCULATE_SIZE_LABEL = new SimpleLabel(
         new SimpleNode(),
         '',
         FreeNodeLabelModel.INSTANCE.createDefaultParameter()
       )
     }
 
-    return BpmnEdge.$CALCULATE_SIZE_LABEL
+    return BpmnEdge._CALCULATE_SIZE_LABEL
   }
 
-  /** @type {DefaultLabelStyle} */
+  /**
+   * @type {!DefaultLabelStyle}
+   */
   static get CALCULATE_SIZE_LABEL_STYLE() {
-    if (typeof BpmnEdge.$CALCULATE_SIZE_LABEL_STYLE === 'undefined') {
-      BpmnEdge.$CALCULATE_SIZE_LABEL_STYLE = new DefaultLabelStyle()
+    if (typeof BpmnEdge._CALCULATE_SIZE_LABEL_STYLE === 'undefined') {
+      BpmnEdge._CALCULATE_SIZE_LABEL_STYLE = new DefaultLabelStyle()
     }
 
-    return BpmnEdge.$CALCULATE_SIZE_LABEL_STYLE
+    return BpmnEdge._CALCULATE_SIZE_LABEL_STYLE
   }
 
   /**
@@ -2810,19 +2795,27 @@ export class BpmnEdge {
     // The custom style of this label
     this.labelStyle = null
 
-    // List of all waypoints (ports &amp; bends)
+    // List of all waypoints (ports and bends)
     this.waypoints = new List()
+
     // True, if this edge has a label
     this.hasLabel = false
+
     // The label bounds of this edge
     this.labelBounds = new Rect(0, 0, 0, 0)
+
     // The source element of this edge
     this.source = null
+
     // The target element of this edge
     this.target = null
+
+    // Visibility of a message envelope on this edge
     // Visibility of a message envelope on this edge
     this.messageVisibleK = MessageVisibleKind.UNSPECIFIED
 
+    // Get id
+    // The id of this edge
     // Get id
     // The id of this edge
     this.id = BpmnNamespaceManager.getAttributeValue(xEdge, BpmnNamespaceManager.BPMN_DI, 'Id')
@@ -2978,7 +2971,7 @@ export class BpmnEdge {
   /**
    * Returns the value of the given attribute of the linked BpmnElement, or null
    * @param {!string} attribute Id (name) of the attribute to get
-   * @returns {!string} value of the attribute or null
+   * @returns {?string} value of the attribute or null
    */
   getAttribute(attribute) {
     return this.element.getValue(attribute)
@@ -3032,8 +3025,10 @@ export class BpmnElement {
 
     // List of all children of this element
     this.children = new List()
+
     // List of all {@link Node} that were children of this element but have a different namespace then {@link BpmnNamespaceManager#BPMN} or {@link BpmnNamespaceManager#BPMN_DI}.
     this.foreignChildren = new List()
+
     // List of all attributes, that do not have a Property
     this.attributes = new HashMap()
 
@@ -3078,7 +3073,9 @@ export class BpmnElement {
     }
 
     // The value (string text between XML tags) of this Element
+    // The value (string text between XML tags) of this Element
     this.value = xNode.textContent
+    // The name of the element type
     // The name of the element type
     this.name = xNode.localName
     switch (this.name) {
@@ -3125,7 +3122,7 @@ export class BpmnElement {
    * Returns the Value of an Attribute of a given child
    * @param {!string} name The name
    * @param {!string} attribute The Attribute
-   * @returns {!string}
+   * @returns {?string}
    */
   getChildAttribute(name, attribute) {
     let value = null
@@ -3140,7 +3137,7 @@ export class BpmnElement {
   /**
    * Returns the first child with the given name
    * @param {!string} name The name
-   * @returns {!BpmnElement}
+   * @returns {?BpmnElement}
    */
   getChild(name) {
     for (const child of this.children) {
@@ -3223,7 +3220,7 @@ export class BpmnElement {
 
   /**
    * Returns the Loop Characteristics of this Element
-   * @returns {!LoopCharacteristic}
+   * @returns {number}
    */
   getLoopCharacteristics() {
     if (this.hasChild('multiInstanceLoopCharacteristics')) {
@@ -3253,7 +3250,7 @@ export class BpmnElement {
   /**
    * Searches until the nearest Ancestor in a given List of BpmnElements is found, or null if there is no ancestor in the List (Which means there is something wrong)
    * @param {!HashMap.<BpmnElement,BpmnDiagram>} planeElements A list of BpmnElements
-   * @returns {!BpmnDiagram}
+   * @returns {?BpmnDiagram}
    */
   getNearestAncestor(planeElements) {
     let parent = this.parent
@@ -3276,11 +3273,11 @@ export class BpmnLabelStyle {
    * @type {number}
    */
   static get LABEL_TEXT_SIZE() {
-    if (typeof BpmnLabelStyle.$LABEL_TEXT_SIZE === 'undefined') {
-      BpmnLabelStyle.$LABEL_TEXT_SIZE = 11
+    if (typeof BpmnLabelStyle._LABEL_TEXT_SIZE === 'undefined') {
+      BpmnLabelStyle._LABEL_TEXT_SIZE = 11
     }
 
-    return BpmnLabelStyle.$LABEL_TEXT_SIZE
+    return BpmnLabelStyle._LABEL_TEXT_SIZE
   }
 
   /**
@@ -3322,21 +3319,22 @@ export class BpmnLabelStyle {
    * @param {!Element} xStyle The XML Element to be converted into this style
    */
   constructor(xStyle) {
-    // The id (name) of this style
-    this.id = null
-    // The font used in this style
-    this.font = 'Arial'
     // The font size used in this style
     this.size = 0
+
     // True, if this style depicts text in bold
     this.isBold = false
+
     // True, if this style depicts text in italic
     this.isItalic = false
+
     // True, if this style underlines text
     this.isUnderline = false
+
     // True, if this style depicts style with a StrikeThrough
     this.isStrikeThrough = false
 
+    // The id (name) of this style
     this.id = BpmnNamespaceManager.getAttributeValue(xStyle, BpmnNamespaceManager.DC, 'id')
 
     // Parse Values of the Label Style
@@ -3409,6 +3407,7 @@ export class BpmnLabelStyle {
       textDecoration |= TextDecoration.LINE_THROUGH
     }
 
+    // The font used in this style
     this.labelStyle.font = new Font(
       this.font,
       BpmnLabelStyle.LABEL_TEXT_SIZE,
@@ -3434,49 +3433,59 @@ export class BpmnLabelStyle {
  * Provides convenience methods to search for specific XElements and XAttributes and test results for the relevant BPMN Namespaces
  */
 export class BpmnNamespaceManager {
-  /** @type {'http://www.w3.org/2001/XMLSchema-instance'} */
+  /**
+   * @type {!string}
+   */
   static get XSI() {
-    if (typeof BpmnNamespaceManager.$XSI === 'undefined') {
-      BpmnNamespaceManager.$XSI = 'http://www.w3.org/2001/XMLSchema-instance'
+    if (typeof BpmnNamespaceManager._XSI === 'undefined') {
+      BpmnNamespaceManager._XSI = 'http://www.w3.org/2001/XMLSchema-instance'
     }
 
-    return BpmnNamespaceManager.$XSI
+    return BpmnNamespaceManager._XSI
   }
 
-  /** @type {'http://www.omg.org/spec/BPMN/20100524/MODEL'} */
+  /**
+   * @type {!string}
+   */
   static get BPMN() {
-    if (typeof BpmnNamespaceManager.$BPMN === 'undefined') {
-      BpmnNamespaceManager.$BPMN = 'http://www.omg.org/spec/BPMN/20100524/MODEL'
+    if (typeof BpmnNamespaceManager._BPMN === 'undefined') {
+      BpmnNamespaceManager._BPMN = 'http://www.omg.org/spec/BPMN/20100524/MODEL'
     }
 
-    return BpmnNamespaceManager.$BPMN
+    return BpmnNamespaceManager._BPMN
   }
 
-  /** @type {'http://www.omg.org/spec/BPMN/20100524/DI'} */
+  /**
+   * @type {!string}
+   */
   static get BPMN_DI() {
-    if (typeof BpmnNamespaceManager.$BPMN_DI === 'undefined') {
-      BpmnNamespaceManager.$BPMN_DI = 'http://www.omg.org/spec/BPMN/20100524/DI'
+    if (typeof BpmnNamespaceManager._BPMN_DI === 'undefined') {
+      BpmnNamespaceManager._BPMN_DI = 'http://www.omg.org/spec/BPMN/20100524/DI'
     }
 
-    return BpmnNamespaceManager.$BPMN_DI
+    return BpmnNamespaceManager._BPMN_DI
   }
 
-  /** @type {'http://www.omg.org/spec/DD/20100524/DI'} */
+  /**
+   * @type {!string}
+   */
   static get DI() {
-    if (typeof BpmnNamespaceManager.$DI === 'undefined') {
-      BpmnNamespaceManager.$DI = 'http://www.omg.org/spec/DD/20100524/DI'
+    if (typeof BpmnNamespaceManager._DI === 'undefined') {
+      BpmnNamespaceManager._DI = 'http://www.omg.org/spec/DD/20100524/DI'
     }
 
-    return BpmnNamespaceManager.$DI
+    return BpmnNamespaceManager._DI
   }
 
-  /** @type {'http://www.omg.org/spec/DD/20100524/DC'} */
+  /**
+   * @type {!string}
+   */
   static get DC() {
-    if (typeof BpmnNamespaceManager.$DC === 'undefined') {
-      BpmnNamespaceManager.$DC = 'http://www.omg.org/spec/DD/20100524/DC'
+    if (typeof BpmnNamespaceManager._DC === 'undefined') {
+      BpmnNamespaceManager._DC = 'http://www.omg.org/spec/DD/20100524/DC'
     }
 
-    return BpmnNamespaceManager.$DC
+    return BpmnNamespaceManager._DC
   }
 
   /**
@@ -3506,7 +3515,7 @@ export class BpmnNamespaceManager {
    * @param {!Element} xElement The element
    * @param {!string} nameSpace The namespace
    * @param {!string} localName The local name
-   * @returns {!Element}
+   * @returns {?Element}
    */
   static getElement(xElement, nameSpace, localName) {
     const children = xElement.children
@@ -3549,6 +3558,7 @@ export class BpmnPlane {
   constructor(xNode, elements) {
     // List of all {@link BpmnEdge}s in this plane
     this.listOfEdges = new List()
+
     // List of all {@link BpmnShape}s in this plane
     this.listOfShapes = new List()
 
@@ -3581,7 +3591,7 @@ export class BpmnPlane {
   /**
    * Returns the {@link BpmnShape} with the given id.
    * @param {!string} id Id
-   * @returns {!BpmnShape} {@link BpmnShape} with the given id, or null if no {@link BpmnShape} with this id exists
+   * @returns {?BpmnShape} {@link BpmnShape} with the given id, or null if no {@link BpmnShape} with this id exists
    */
   getShape(id) {
     for (const shape of this.listOfShapes) {
@@ -3612,14 +3622,19 @@ export class BpmnShape {
 
     // Is true, if this shape has a label
     this.hasLabel = false
+
     // Bounds for the shapes label, if it has one
     this.labelBounds = new Rect(0, 0, 0, 0)
+
     // X position of the upper left corner of this shape
     this.x = 0
+
     // Y position of the upper left corner of this shape
     this.y = 0
+
     // Height of the shape
     this.height = 30
+
     // Width of the shape
     this.width = 30
 
@@ -3811,8 +3826,6 @@ export class BpmnShape {
   }
 }
 
-/**
- */
 export class MultiLabelFolderNodeConverter extends DefaultFolderNodeConverter {
   constructor() {
     super()
@@ -3960,12 +3973,10 @@ export class MultiLabelFolderNodeConverter extends DefaultFolderNodeConverter {
 
 /**
  * Visibility of a message envelope on an edge
- */
-export /**
  * @readonly
  * @enum {number}
  */
-const MessageVisibleKind = {
+export const MessageVisibleKind = {
   UNSPECIFIED: 0,
   INITIATING: 1,
   NON_INITIATING: 2
@@ -3973,12 +3984,10 @@ const MessageVisibleKind = {
 
 /**
  * Enum for the different participant bands
- */
-export /**
  * @readonly
  * @enum {number}
  */
-const ParticipantBandKind = {
+export const ParticipantBandKind = {
   BOTTOM_INITIATING: 0,
   TOP_NON_INITIATING: 1,
   MIDDLE_NON_INITIATING: 2,

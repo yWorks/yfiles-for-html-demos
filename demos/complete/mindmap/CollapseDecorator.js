@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -31,17 +31,18 @@ import {
   ExteriorLabelModel,
   ExteriorLabelModelPosition,
   FilteredGraphWrapper,
+  GeneralPath,
   GraphComponent,
   ICanvasContext,
+  IconLabelStyle,
   IGraph,
   IInputModeContext,
-  ILabelModel,
+  ILabelModelParameter,
   INode,
   INodeStyle,
-  IRenderContext,
-  IconLabelStyle,
   Insets,
   InteriorLabelModel,
+  IRenderContext,
   NodeStyleBase,
   Point,
   Rect,
@@ -52,7 +53,8 @@ import {
 } from 'yfiles'
 
 import DemoCommands from './DemoCommands.js'
-import { Structure } from './MindmapUtil.js'
+import { passiveSupported } from '../../utils/Workarounds.js'
+import { hasChildNodes } from './MindmapUtil.js'
 
 /**
  * A node style decorator that adds a collapse button to the node.
@@ -70,74 +72,19 @@ import { Structure } from './MindmapUtil.js'
 export default class CollapseDecorator extends NodeStyleBase {
   /**
    * Creates a new instance of this style using the given wrappedStyle style.
-   * @param {INodeStyle} wrappedStyle The style that is decorated by this instance.
+   * @param {!INodeStyle} wrappedStyle The style that is decorated by this instance.
    */
   constructor(wrappedStyle) {
     super()
     this.wrappedStyle = wrappedStyle
-    this.passiveSupported = detectPassiveSupported()
-  }
-
-  /**
-   * Returns the size of the icon.
-   * @return {Size}
-   */
-  static get ICON_SIZE() {
-    return new Size(18, 18)
-  }
-
-  /**
-   * Returns the style of an icon that will be placed on the left of the node.
-   * @return {IconLabelStyle}
-   */
-  static get ICON_STYLE_LEFT() {
-    return new IconLabelStyle({
-      icon: 'resources/arrowLeft.svg',
-      iconSize: CollapseDecorator.ICON_SIZE,
-      iconPlacement: InteriorLabelModel.CENTER
-    })
-  }
-
-  /**
-   * Returns the style of an icon that will be placed on the right of the node.
-   * @return {IconLabelStyle}
-   */
-  static get ICON_STYLE_RIGHT() {
-    return new IconLabelStyle({
-      icon: 'resources/arrowRight.svg',
-      iconSize: CollapseDecorator.ICON_SIZE,
-      iconPlacement: InteriorLabelModel.CENTER
-    })
-  }
-
-  /**
-   * Returns the label model parameter for a label that will be placed on the left of the node.
-   * @return {ILabelModelParameter}
-   */
-  static get LABEL_MODEL_PARAMETER_LEFT() {
-    return CollapseDecorator.initLabelModelParameterLeft(
-      new ExteriorLabelModel(),
-      new Insets(0, 0, 0, -10)
-    ).createParameter(ExteriorLabelModelPosition.SOUTH_WEST)
-  }
-
-  /**
-   * Returns the label model parameter for a label that will be placed on the right of the node.
-   * @return {ILabelModelParameter|IPortLocationModelParameter}
-   */
-  static get LABEL_MODEL_PARAMETER_RIGHT() {
-    return CollapseDecorator.initLabelModelParameterRight(
-      new ExteriorLabelModel(),
-      new Insets(0, 0, 0, -10)
-    ).createParameter(ExteriorLabelModelPosition.SOUTH_EAST)
   }
 
   /**
    * Creates the wrappedStyle visual and adds the icon visualization.
-   * @param {IRenderContext} context The render context.
-   * @param {INode} node The node to which this style instance is assigned.
+   * @param {!IRenderContext} context The render context.
+   * @param {!INode} node The node to which this style instance is assigned.
    * @see Overrides {@link NodeStyleBase#createVisual}
-   * @return {SvgVisual}
+   * @returns {!SvgVisual}
    */
   createVisual(context, node) {
     // create the outer g element
@@ -151,7 +98,7 @@ export default class CollapseDecorator extends NodeStyleBase {
     const iconVisual = this.createIconVisual(
       node,
       context,
-      Structure.hasChildNodes(node, CollapseDecorator.getFullGraph(context))
+      hasChildNodes(node, getFullGraph(context))
     )
 
     // adds the click and touch event listeners to the state icon
@@ -171,10 +118,10 @@ export default class CollapseDecorator extends NodeStyleBase {
         const demoCommand = new DemoCommands(context.canvasComponent)
         demoCommand.executeToggleCollapseState(node)
       },
-      this.passiveSupported
+      passiveSupported
         ? {
             passive: false,
-            useCapture: true
+            capture: true
           }
         : true
     )
@@ -190,11 +137,11 @@ export default class CollapseDecorator extends NodeStyleBase {
 
   /**
    * Updates the Visual.
-   * @param {IRenderContext} context The render context.
-   * @param {Visual} oldVisual The old visual.
-   * @param {INode} node The node to which this style instance is assigned.
+   * @param {!IRenderContext} context The render context.
+   * @param {!Visual} oldVisual The old visual.
+   * @param {!INode} node The node to which this style instance is assigned.
    * @see Overrides {@link NodeStyleBase#updateVisual}
-   * @return {Visual}
+   * @returns {!Visual}
    */
   updateVisual(context, oldVisual, node) {
     const container = oldVisual.svgElement
@@ -210,13 +157,13 @@ export default class CollapseDecorator extends NodeStyleBase {
     }
 
     // retrieve the icon visual from the container
-    const iconVisual = container.childNodes[1]
+    const iconElement = container.childNodes[1]
     // update the icon visual
     CollapseDecorator.updateIconVisual(
       node,
       context,
-      iconVisual,
-      Structure.hasChildNodes(node, CollapseDecorator.getFullGraph(context))
+      iconElement,
+      hasChildNodes(node, getFullGraph(context))
     )
 
     return oldVisual
@@ -224,16 +171,16 @@ export default class CollapseDecorator extends NodeStyleBase {
 
   /**
    * Creates the icon visualization.
-   * @param {INode} node The node to create the visual for.
-   * @param {IRenderContext} context The render context.
+   * @param {!INode} node The node to create the visual for.
+   * @param {!IRenderContext} context The render context.
    * @param {boolean} visible True if the icon should be visible, false otherwise.
-   * @return {Element} The icon visual.
+   * @return The icon visual.
    */
   createIconVisual(node, context, visible) {
     const g = window.document.createElementNS('http://www.w3.org/2000/svg', 'g')
 
     // create a label that acts as a dummy item to render the icon
-    const label = CollapseDecorator.createDummyLabel(node)
+    const label = createDummyLabel(node)
     // store the label with the visual for updating
     g['data-renderCache'] = label
 
@@ -242,9 +189,10 @@ export default class CollapseDecorator extends NodeStyleBase {
       const renderer = label.style.renderer
       const creator = renderer.getVisualCreator(label, label.style)
       const iconVisual = creator.createVisual(context)
-      iconVisual.svgElement.setAttribute('class', 'collapseButton')
       if (iconVisual !== null) {
+        iconVisual.svgElement.setAttribute('class', 'collapseButton')
         g.appendChild(iconVisual.svgElement)
+        g['data-visual'] = iconVisual
       }
     }
     return g
@@ -252,22 +200,22 @@ export default class CollapseDecorator extends NodeStyleBase {
 
   /**
    * Updates the icon visualization with the current data.
-   * @param {INode} node The node to update the visual for.
-   * @param {IRenderContext} context The render context.
-   * @param {Element} container The HTML Element that contains the icon.
+   * @param {!INode} node The node to update the visual for.
+   * @param {!IRenderContext} context The render context.
+   * @param {!Element} container The HTML Element that contains the icon.
    * @param {boolean} visible True if the icon should be visible, false otherwise.
    */
   static updateIconVisual(node, context, container, visible) {
     // retrieve the old dummy label from the container
     const label = container['data-renderCache']
     // get the label model parameter and style to use for the dummy label
-    const newModelParameter = CollapseDecorator.getLabelModelParameter(node.tag)
-    const newStyle = CollapseDecorator.getLabelStyle(node.tag)
+    const newModelParameter = getLabelModelParameter(node.tag)
+    const newStyle = getLabelStyle(node.tag)
 
-    const oldButtonVisual = container.hasChildNodes() ? container.childNodes[0] : null
+    const oldButtonVisual = container['data-visual']
 
     if (visible) {
-      let /** @type {Visual} */ newButtonVisual
+      let newButtonVisual
       if (
         label.style.icon === newStyle.icon &&
         label.style.iconPlacement === newStyle.iconPlacement &&
@@ -288,6 +236,7 @@ export default class CollapseDecorator extends NodeStyleBase {
       }
 
       if (oldButtonVisual !== newButtonVisual) {
+        container['data-visual'] = newButtonVisual
         newButtonVisual.svgElement.setAttribute('class', 'collapseButton')
         while (container.hasChildNodes()) {
           // remove all children
@@ -305,53 +254,12 @@ export default class CollapseDecorator extends NodeStyleBase {
   }
 
   /**
-   * Creates the dummy label used to render the icon.
-   * @param {INode} node The node to create the label for.
-   * @return {SimpleLabel}
-   */
-  static createDummyLabel(node) {
-    const data = node.tag
-    // create a new dummy label
-    const label = new SimpleLabel(node, '', CollapseDecorator.getLabelModelParameter(data))
-    // set the size
-    label.preferredSize = CollapseDecorator.ICON_SIZE
-    // set the label style
-    label.style = CollapseDecorator.getLabelStyle(node.tag)
-    return label
-  }
-
-  /**
-   * Gets the label style used to render the dummy label.
-   * @param {Object} data The node tag.
-   * @return {IconLabelStyle}
-   */
-  static getLabelStyle(data) {
-    return data.isLeft === data.isCollapsed
-      ? CollapseDecorator.ICON_STYLE_LEFT
-      : CollapseDecorator.ICON_STYLE_RIGHT
-  }
-
-  /**
-   * Gets the label model parameter used to render the dummy label.
-   * @param {Object} data The node tag.
-   * @return {ILabelModelParameter}
-   */
-  static getLabelModelParameter(data) {
-    if (data.depth === 0) {
-      return ExteriorLabelModel.SOUTH
-    }
-    return data.isLeft
-      ? CollapseDecorator.LABEL_MODEL_PARAMETER_LEFT
-      : CollapseDecorator.LABEL_MODEL_PARAMETER_RIGHT
-  }
-
-  /**
    * Checks if the icon and the wrappedStyle style are visible.
-   * @param {ICanvasContext} canvasContext The canvas context.
-   * @param {Rect} clip The clipping rectangle.
-   * @param {INode} node The given node.
+   * @param {!ICanvasContext} canvasContext The canvas context.
+   * @param {!Rect} clip The clipping rectangle.
+   * @param {!INode} node The given node.
    * @see Overrides {@link NodeStyleBase#isVisible}
-   * @return {boolean}
+   * @returns {boolean}
    */
   isVisible(canvasContext, clip, node) {
     // check if node bounds + icon is visible
@@ -359,12 +267,7 @@ export default class CollapseDecorator extends NodeStyleBase {
       node.layout
         .toRect()
         .getEnlarged(
-          new Insets(
-            CollapseDecorator.ICON_SIZE.width,
-            CollapseDecorator.ICON_SIZE.height,
-            CollapseDecorator.ICON_SIZE.width,
-            CollapseDecorator.ICON_SIZE.height
-          )
+          new Insets(ICON_SIZE.width, ICON_SIZE.height, ICON_SIZE.width, ICON_SIZE.height)
         )
     )
     return (
@@ -377,9 +280,9 @@ export default class CollapseDecorator extends NodeStyleBase {
 
   /**
    * Delegates the call to the wrappedStyle style.
-   * @param {INode} node The given node.
+   * @param {!INode} node The given node.
    * @see Overrides {@link NodeStyleBase#getOutline}
-   * @return {GeneralPath}
+   * @returns {?GeneralPath}
    */
   getOutline(node) {
     return this.wrappedStyle.renderer.getShapeGeometry(node, this.wrappedStyle).getOutline()
@@ -387,10 +290,10 @@ export default class CollapseDecorator extends NodeStyleBase {
 
   /**
    * Delegates the call to the wrappedStyle style.
-   * @param {ICanvasContext} canvasContext The canvas context.
-   * @param {INode} node The given node.
+   * @param {!ICanvasContext} canvasContext The canvas context.
+   * @param {!INode} node The given node.
    * @see Overrides {@link NodeStyleBase#getBounds}
-   * @return {Rect}
+   * @returns {!Rect}
    */
   getBounds(canvasContext, node) {
     return this.wrappedStyle.renderer
@@ -400,11 +303,11 @@ export default class CollapseDecorator extends NodeStyleBase {
 
   /**
    * Delegates the call to the wrappedStyle style.
-   * @param {IInputModeContext} canvasContext The canvas context.
-   * @param {Point} p The point to test.
-   * @param {INode} node The given node.
+   * @param {!IInputModeContext} canvasContext The canvas context.
+   * @param {!Point} p The point to test.
+   * @param {!INode} node The given node.
    * @see Overrides {@link NodeStyleBase#isHit}
-   * @return {boolean}
+   * @returns {boolean}
    */
   isHit(canvasContext, p, node) {
     return this.wrappedStyle.renderer
@@ -414,11 +317,11 @@ export default class CollapseDecorator extends NodeStyleBase {
 
   /**
    * Delegates the call to the wrappedStyle style.
-   * @param {IInputModeContext} canvasContext The canvas context.
-   * @param {Rect} box The marquee selection box.
-   * @param {INode} node The given node.
+   * @param {!IInputModeContext} canvasContext The canvas context.
+   * @param {!Rect} box The marquee selection box.
+   * @param {!INode} node The given node.
    * @see Overrides {@link NodeStyleBase#isInBox}
-   * @return {boolean}
+   * @returns {boolean}
    */
   isInBox(canvasContext, box, node) {
     return this.wrappedStyle.renderer
@@ -428,10 +331,10 @@ export default class CollapseDecorator extends NodeStyleBase {
 
   /**
    * Delegates the call to the wrappedStyle style.
-   * @param {INode} node The given node.
-   * @param {Class} type The type to query.
+   * @param {!INode} node The given node.
+   * @param {!Class} type The type to query.
    * @see Overrides {@link NodeStyleBase#lookup}
-   * @return {Object}
+   * @returns {?object}
    */
   lookup(node, type) {
     return this.wrappedStyle.renderer.getContext(node, this.wrappedStyle).lookup(type)
@@ -439,11 +342,11 @@ export default class CollapseDecorator extends NodeStyleBase {
 
   /**
    * Delegates the call to the wrappedStyle style.
-   * @param {INode} node The given node.
-   * @param {Point} inner The inner coordinates.
-   * @param {Point} outer The outer coordinates.
+   * @param {!INode} node The given node.
+   * @param {!Point} inner The inner coordinates.
+   * @param {!Point} outer The outer coordinates.
    * @see Overrides {@link NodeStyleBase#getIntersection}
-   * @return {Point}
+   * @returns {?Point}
    */
   getIntersection(node, inner, outer) {
     return this.wrappedStyle.renderer
@@ -453,70 +356,113 @@ export default class CollapseDecorator extends NodeStyleBase {
 
   /**
    * Delegates the call to the wrappedStyle style.
-   * @param {INode} node The given node.
-   * @param {Point} point The point to test.
+   * @param {!INode} node The given node.
+   * @param {!Point} point The point to test.
    * @see Overrides {@link NodeStyleBase#isInside}
-   * @return {boolean}
+   * @returns {boolean}
    */
   isInside(node, point) {
     return this.wrappedStyle.renderer.getShapeGeometry(node, this.wrappedStyle).isInside(point)
   }
-
-  /**
-   * Gets the full graph from the context.
-   * @param {IRenderContext} context The render context.
-   * @return {IGraph}
-   */
-  static getFullGraph(context) {
-    let /** @type {IGraph} */ graph = null
-    if (context.canvasComponent instanceof GraphComponent) {
-      graph = context.canvasComponent.graph
-      if (graph instanceof FilteredGraphWrapper) {
-        graph = graph.wrappedGraph
-      }
-    }
-    return graph
-  }
-
-  /**
-   * Returns a label model parameter that places the label in the bottom-left of the node.
-   * @param {ILabelModel} newExteriorLabelModel The given label model.
-   * @param {Insets} p1 The given insets.
-   * @return {ILabelModel} The label model.
-   */
-  static initLabelModelParameterLeft(newExteriorLabelModel, p1) {
-    newExteriorLabelModel.insets = p1
-    return newExteriorLabelModel
-  }
-
-  /**
-   * Returns a label model parameter that places the label in the bottom-right of the node.
-   * @param {ILabelModel} newExteriorLabelModel The given label model.
-   * @param {Insets} p1 The given insets.
-   * @return {ILabelModel} The label model.
-   */
-  static initLabelModelParameterRight(newExteriorLabelModel, p1) {
-    newExteriorLabelModel.insets = p1
-    return newExteriorLabelModel
-  }
 }
 
 /**
- * Returns whether or not the browser supports active and passive event listeners. Feature Detection.
- * @return {boolean}
+ * Returns the size of the icon.
  */
-function detectPassiveSupported() {
-  let supported
-  try {
-    const opts = Object.defineProperty({}, 'passive', {
-      get: () => {
-        supported = true
-      }
-    })
-    window.addEventListener('test', null, opts)
-  } catch (e) {
-    supported = false
-  }
+const ICON_SIZE = new Size(18, 18)
 
-  return supported
+/**
+ * Returns the style of an icon that will be placed on the left of the node.
+ * @returns {!IconLabelStyle}
+ */
+function getIconStyleLeft() {
+  return new IconLabelStyle({
+    icon: 'resources/arrowLeft.svg',
+    iconSize: ICON_SIZE,
+    iconPlacement: InteriorLabelModel.CENTER
+  })
+}
+
+/**
+ * Returns the style of an icon that will be placed on the right of the node.
+ * @returns {!IconLabelStyle}
+ */
+function getIconStyleRight() {
+  return new IconLabelStyle({
+    icon: 'resources/arrowRight.svg',
+    iconSize: ICON_SIZE,
+    iconPlacement: InteriorLabelModel.CENTER
+  })
+}
+
+/**
+ * Returns the label model parameter for a label that will be placed on the left of the node.
+ * @returns {!ILabelModelParameter}
+ */
+function getLabelModelParameterLeft() {
+  return new ExteriorLabelModel({ insets: new Insets(0, 0, 0, -9) }).createParameter(
+    ExteriorLabelModelPosition.SOUTH_WEST
+  )
+}
+
+/**
+ * Returns the label model parameter for a label that will be placed on the right of the node.
+ * @returns {!ILabelModelParameter}
+ */
+function getLabelModelParameterRight() {
+  return new ExteriorLabelModel({ insets: new Insets(0, 0, 0, -9) }).createParameter(
+    ExteriorLabelModelPosition.SOUTH_EAST
+  )
+}
+
+/**
+ * Creates the dummy label used to render the icon.
+ * @param {!INode} node The node to create the label for.
+ * @returns {!SimpleLabel}
+ */
+function createDummyLabel(node) {
+  const data = node.tag
+  // create a new dummy label
+  const label = new SimpleLabel(node, '', getLabelModelParameter(data))
+  // set the size
+  label.preferredSize = ICON_SIZE
+  // set the label style
+  label.style = getLabelStyle(node.tag)
+  return label
+}
+
+/**
+ * Gets the label style used to render the dummy label.
+ * @param {!NodeData} data The node tag.
+ * @returns {!IconLabelStyle}
+ */
+function getLabelStyle(data) {
+  return data.isLeft === data.isCollapsed ? getIconStyleLeft() : getIconStyleRight()
+}
+
+/**
+ * Gets the label model parameter used to render the dummy label.
+ * @param {!NodeData} data The node tag.
+ * @returns {!ILabelModelParameter}
+ */
+function getLabelModelParameter(data) {
+  if (data.depth === 0) {
+    return ExteriorLabelModel.SOUTH
+  }
+  return data.isLeft ? getLabelModelParameterLeft() : getLabelModelParameterRight()
+}
+
+/**
+ * Gets the full graph from the context.
+ * @param {!IRenderContext} context The render context.
+ * @returns {?IGraph}
+ */
+function getFullGraph(context) {
+  if (context.canvasComponent instanceof GraphComponent) {
+    const graph = context.canvasComponent.graph
+    if (graph instanceof FilteredGraphWrapper) {
+      return graph.wrappedGraph
+    }
+  }
+  return null
 }

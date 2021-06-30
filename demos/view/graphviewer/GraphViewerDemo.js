@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -44,6 +44,7 @@ import {
   IEdge,
   IGraph,
   IInputModeContext,
+  IMapper,
   IModelItem,
   INode,
   License,
@@ -59,6 +60,7 @@ import {
   Stroke,
   StyleDecorationZoomPolicy,
   TemplateNodeStyle,
+  TimeSpan,
   YString
 } from 'yfiles'
 
@@ -79,19 +81,20 @@ import {
 } from '../../resources/demo-app.js'
 import loadJson from '../../resources/load-json.js'
 
-let graphComponent = null
+/** @type {GraphComponent} */
+let graphComponent
 
 /** @type {GraphOverviewComponent} */
-let overviewComponent = null
+let overviewComponent
 
-/** @type {Mapper} */
-let graphDescriptionMapper = null
+/** @type {Mapper.<IGraph,string>} */
+let graphDescriptionMapper
 
 /**
  * Holds the graph search object functionality.
- * @type {GraphSearch}
+ * @type {CustomGraphSearch}
  */
-let graphSearch = null
+let graphSearch
 
 // get hold of some UI elements
 const graphChooserBox = document.getElementById('graphChooserBox')
@@ -103,8 +106,12 @@ const nodeInfoDescription = document.getElementById('nodeInfoDescription')
 const nodeInfoUrl = document.getElementById('nodeInfoUrl')
 const searchBox = document.getElementById('searchBox')
 
+/**
+ * @param {!object} licenseData
+ */
 function run(licenseData) {
   License.value = licenseData
+
   // initialize the GraphComponent and GraphOverviewComponent
   graphComponent = new GraphComponent('graphComponent')
   overviewComponent = new GraphOverviewComponent('overviewComponent', graphComponent)
@@ -123,8 +130,7 @@ function run(licenseData) {
   // add the graph functionality
   initializeGraphSearch()
 
-  // add the sample graphs
-  ;[
+  for (const sample of [
     'computer-network',
     'orgchart',
     'movies',
@@ -135,14 +141,17 @@ function run(licenseData) {
     'uml-diagram',
     'large-tree',
     'bezier-style'
-  ].forEach(graph => {
+  ]) {
     const option = document.createElement('option')
-    option.text = graph
-    option.value = graph
+    option.text = sample
+    option.value = sample
     graphChooserBox.add(option)
-  })
-  readSampleGraph() // load the first graph
-  onCurrentItemChanged() // reset the node info view
+  }
+
+  // load the first graph
+  readSampleGraph()
+  // reset the node info view
+  onCurrentItemChanged()
 
   // initialize the GraphViewerInputMode which is available in 'yfiles/view-component'
   // and does not require 'yfiles/view-editor' in contrast to GraphEditorInputMode
@@ -235,9 +244,9 @@ function initializeHighlightStyles() {
     zoomPolicy: StyleDecorationZoomPolicy.VIEW_COORDINATES
   })
 
-  decorator.edgeDecorator.highlightDecorator.setFactory(edge => {
-    return edge.style instanceof BezierEdgeStyle ? bezierEdgeStyleHighlight : edgeStyleHighlight
-  })
+  decorator.edgeDecorator.highlightDecorator.setFactory(edge =>
+    edge.style instanceof BezierEdgeStyle ? bezierEdgeStyleHighlight : edgeStyleHighlight
+  )
 }
 
 /**
@@ -286,12 +295,14 @@ function initializeInputMode() {
   // when the mouse hovers for a longer time over an item we may optionally display a
   // tooltip. Use this callback for querying the tooltip contents.
   graphViewerInputMode.addQueryItemToolTipListener((sender, evt) => {
-    evt.toolTip = onQueryItemToolTip(evt.item)
+    if (evt.item) {
+      evt.toolTip = onQueryItemToolTip(evt.item)
+    }
   })
   // slightly offset the tooltip so that it does not interfere with the mouse
   graphViewerInputMode.mouseHoverInputMode.toolTipLocationOffset = new Point(0, 10)
   // we show the tooltip for a very long time...
-  graphViewerInputMode.mouseHoverInputMode.duration = '10s'
+  graphViewerInputMode.mouseHoverInputMode.duration = TimeSpan.from('10s')
 
   // if we click on an item we want to perform a custom action, so register a callback
   graphViewerInputMode.addItemClickedListener((sender, evt) => onItemClicked(evt.item))
@@ -314,7 +325,7 @@ function initializeInputMode() {
 
 /**
  * Initialize the context menu.
- * @param {GraphInputMode} inputMode
+ * @param {!GraphInputMode} inputMode
  */
 function initializeContextMenu(inputMode) {
   // we tell the input mode that we want to get context menus on nodes
@@ -333,7 +344,7 @@ function initializeContextMenu(inputMode) {
     }
   })
 
-  // Add and event listener that populates the context menu according to the hit elements, or cancels showing a menu.
+  // Add an event listener that populates the context menu according to the hit elements, or cancels showing a menu.
   // This PopulateItemContextMenu is fired when calling the ContextMenuInputMode.shouldOpenMenu method above.
   inputMode.addPopulateItemContextMenuListener((sender, args) =>
     populateContextMenu(contextMenu, args)
@@ -354,7 +365,7 @@ function initializeContextMenu(inputMode) {
  * Called when the mouse hovers over a different item.
  * This method will be called whenever the mouse moves over a different item. We show a highlight
  * indicator to make it easier for the user to understand the graph's structure.
- * @param {IModelItem} item
+ * @param {!IModelItem} item
  */
 function onHoveredItemChanged(item) {
   // we use the highlight manager of the GraphComponent to highlight related items
@@ -367,12 +378,12 @@ function onHoveredItemChanged(item) {
   if (newItem !== null) {
     // we highlight the item itself
     manager.addHighlight(newItem)
-    if (INode.isInstance(newItem)) {
+    if (newItem instanceof INode) {
       // and if it's a node, we highlight all adjacent edges, too
-      graphComponent.graph.edgesAt(newItem).forEach(edge => {
+      for (const edge of graphComponent.graph.edgesAt(newItem)) {
         manager.addHighlight(edge)
-      })
-    } else if (IEdge.isInstance(newItem)) {
+      }
+    } else if (newItem instanceof IEdge) {
       // if it's an edge - we highlight the adjacent nodes
       manager.addHighlight(newItem.sourceNode)
       manager.addHighlight(newItem.targetNode)
@@ -382,30 +393,33 @@ function onHoveredItemChanged(item) {
 
 /**
  * Helper function to populate the context menu.
- * @param {ContextMenu}contextMenu
- * @param {PopulateItemContextMenuEventArgs} e
+ * @param {!ContextMenu} contextMenu
+ * @param {!PopulateItemContextMenuEventArgs.<IModelItem>} e
  */
 function populateContextMenu(contextMenu, e) {
-  if (!INode.isInstance(e.item)) {
+  if (!(e.item instanceof INode)) {
     return
   }
-  const url = getUrlMapper().get(e.item)
-  if (url !== null) {
-    contextMenu.clearItems()
-    // if the selected item is a node and has an URL mapped to it:
-    // create a context menu item to open the link
-    contextMenu.addMenuItem('Open External Link', () => {
-      window.open(url, '_blank')
-    })
-    // we don't want to be queried again if there are more items at this location
-    e.showMenu = true
+
+  const url = getUrl(e.item)
+  if (!url) {
+    return
   }
+
+  contextMenu.clearItems()
+  // if the selected item is a node and has an URL mapped to it:
+  // create a context menu item to open the link
+  contextMenu.addMenuItem('Open External Link', () => {
+    window.open(url, '_blank')
+  })
+  // we don't want to be queried again if there are more items at this location
+  e.showMenu = true
 }
 
 /**
  * Called when the mouse has been clicked somewhere.
- * @param {IInputModeContext} context The context for the current event
- * @param {Point} location The location of the click
+ * @param {!IInputModeContext} context The context for the current event
+ * @param {!Point} location The location of the click
  */
 function onClickInputModeOnClicked(context, location) {
   // we check if there was something at the provided location..
@@ -438,13 +452,13 @@ function onCurrentItemChanged() {
   nodeInfoUrl.innerHTML = 'None'
 
   const currentItem = graphComponent.currentItem
-  if (INode.isInstance(currentItem)) {
+  if (currentItem instanceof INode) {
     // for nodes display the label and the values of the mappers for description and URLs..
     const node = currentItem
     nodeInfo.innerHTML = node.labels.size > 0 ? node.labels.elementAt(0).text : 'Empty'
-    const content = getDescriptionMapper().get(node)
-    nodeInfoDescription.innerHTML = content !== null ? content : 'Empty'
-    const url = getUrlMapper().get(node)
+    const content = getDescription(node)
+    nodeInfoDescription.innerHTML = content ? content : 'Empty'
+    const url = getUrl(node)
     if (url !== null) {
       const a = document.createElement('a')
       a.setAttribute('href', url)
@@ -458,10 +472,10 @@ function onCurrentItemChanged() {
 
 /**
  * If an item has been clicked, we can execute a custom command.
- * @param {IModelItem} item The item that it has been clicked
+ * @param {!IModelItem} item The item that it has been clicked
  */
 function onItemClicked(item) {
-  if (INode.isInstance(item)) {
+  if (item instanceof INode) {
     // we adjust the currentItem property
     graphComponent.currentItem = item
     // if the shift and control key had been pressed, we enter the group node if possible
@@ -478,25 +492,23 @@ function onItemClicked(item) {
 
 /**
  * Callback that will determine the tooltip content when the mouse hovers over a node.
- * @param {IModelItem} item The item for which the tooltip is queried
- * @return {Element | null} The tooltip element or null if no tooltip is available
+ * @param {!IModelItem} item The item for which the tooltip is queried
+ * @returns {?HTMLElement} The tooltip element or null if no tooltip is available
  */
 function onQueryItemToolTip(item) {
-  if (INode.isInstance(item)) {
-    const node = item
-    const descriptionMapper = getDescriptionMapper()
-    const description = descriptionMapper !== null ? descriptionMapper.get(node) : null
-    const toolTipText =
-      getToolTipMapper().get(node) !== null ? getToolTipMapper().get(node) : description
-    return toolTipText !== null ? createTooltipContent(toolTipText) : null
+  if (item instanceof INode) {
+    const description = getDescription(item)
+    const toolTip = getToolTip(item)
+    const text = toolTip ? toolTip : description
+    return text ? createTooltipContent(text) : null
   }
   return null
 }
 
 /**
  * Create the toolTip as a rich HTML element.
- * @param {string} toolTipText
- * @return {Element} The tooltip element
+ * @returns {!HTMLElement} The tooltip element
+ * @param {!string} toolTipText
  */
 function createTooltipContent(toolTipText) {
   const text = document.createElement('p')
@@ -522,7 +534,7 @@ async function readSampleGraph() {
   // then load the graph
   await readGraph(createGraphMLIOHandler(), graphComponent.graph, fileName)
   // when done - fit the bounds
-  ICommand.FIT_GRAPH_BOUNDS.execute(null, graphComponent)
+  graphComponent.fitGraphBounds()
   // and update the graph description pane
   const desc = graphDescriptionMapper.get(graphComponent.graph.foldingView.manager.masterGraph)
   graphDescription.innerHTML = desc !== null ? desc : ''
@@ -531,29 +543,46 @@ async function readSampleGraph() {
 }
 
 /**
- * @return {IMapper.<INode,string>}
+ * Gets the value associated to the given node for the given key.
+ * @param {!INode} node
+ * @param {!string} key
+ * @returns {?string}
  */
-function getDescriptionMapper() {
-  return graphComponent.graph.mapperRegistry.getMapper('Description')
+function getMappedValue(node, key) {
+  const mapper = graphComponent.graph.mapperRegistry.getMapper(key)
+  return mapper ? mapper.get(node) : null
 }
 
 /**
- * @return {IMapper.<INode,string>}
+ * Gets the description for the given node.
+ * @param {!INode} node
+ * @returns {?string}
  */
-function getToolTipMapper() {
-  return graphComponent.graph.mapperRegistry.getMapper('ToolTip')
+function getDescription(node) {
+  return getMappedValue(node, 'Description')
 }
 
 /**
- * @return {IMapper.<INode,string>}
+ * Gets the tool tip text for the given node.
+ * @param {!INode} node
+ * @returns {?string}
  */
-function getUrlMapper() {
-  return graphComponent.graph.mapperRegistry.getMapper('Url')
+function getToolTip(node) {
+  return getMappedValue(node, 'ToolTip')
+}
+
+/**
+ * Gets the external resource location for the given node.
+ * @param {!INode} node
+ * @returns {?string}
+ */
+function getUrl(node) {
+  return getMappedValue(node, 'Url')
 }
 
 /**
  * Helper method that creates and configures the GraphML parser.
- * @return {GraphMLIOHandler}
+ * @returns {!GraphMLIOHandler}
  */
 function createGraphMLIOHandler() {
   const ioHandler = new GraphMLIOHandler()
@@ -662,21 +691,20 @@ function onNextButtonClicked() {
  * Initializes the converters for org chart styles.
  */
 function initConverters() {
-  // Linewrapping converter for orgchart
-  const store = {}
-  TemplateNodeStyle.CONVERTERS.orgchartconverters = store
-  store.linebreakconverter = (value, firstline) => {
-    if (typeof value === 'string') {
-      let copy = value
-      while (copy.length > 20 && copy.indexOf(' ') > -1) {
-        copy = copy.substring(0, copy.lastIndexOf(' '))
+  TemplateNodeStyle.CONVERTERS.orgchartconverters = {
+    linebreakconverter: (value, firstline) => {
+      if (typeof value === 'string') {
+        let copy = value
+        while (copy.length > 20 && copy.indexOf(' ') > -1) {
+          copy = copy.substring(0, copy.lastIndexOf(' '))
+        }
+        if (firstline === 'true') {
+          return copy
+        }
+        return value.substring(copy.length)
       }
-      if (firstline === 'true') {
-        return copy
-      }
-      return value.substring(copy.length)
+      return ''
     }
-    return ''
   }
 }
 
@@ -688,9 +716,9 @@ class CustomGraphSearch extends GraphSearch {
   /**
    * Returns whether the given node is a match when searching for the given text.
    * This method searches the matching string to the labels and the tags of the nodes.
-   * @param {INode} node The node to be examined
-   * @param {string} text The text to be queried
-   * @return {boolean} True if the node matches the text, false otherwise
+   * @param {!INode} node The node to be examined
+   * @param {!string} text The text to be queried
+   * @returns {boolean} True if the node matches the text, false otherwise
    */
   matches(node, text) {
     const lowercaseText = text.toLowerCase()

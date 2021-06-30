@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -27,6 +27,7 @@
  **
  ***************************************************************************/
 /* global moment */
+
 /**
  * A helper class that handles the data model and maps graph coordinates to the corresponding dates.
  * The originDate specified in the data model is set as the origin on the x-axis.
@@ -34,48 +35,57 @@
  * @yjs:keep=duration
  */
 export default class GanttMapper {
+  /**
+   * @param {*} dataModel
+   */
   constructor(dataModel) {
-    this.$originDate = moment(dataModel.originDate)
+    this._subRowMap = new Map()
+    this._subRowCountMap = new Map()
+    this._originDate = moment(dataModel.originDate)
     this.tasks = dataModel.tasks.slice()
-    this.$subrowMap = new Map()
-    this.$subrowCountMap = new Map()
   }
 
   /**
    * Calculates the x coordinate for a given date.
+   * @param {!MomentInput} date
+   * @returns {number}
    */
   getX(date) {
     const momentDate = moment(date)
-    const duration = moment.duration(momentDate.diff(this.$originDate))
+    const duration = moment.duration(momentDate.diff(this._originDate))
     const days = duration.asHours() / 24.0
     return days * GanttMapper.dayWidth
   }
 
   /**
    * Calculates the date for a given x coordinate.
-   * @param x
-   * @returns {*}
+   * @param {number} x
+   * @returns {!Moment}
    */
   getDate(x) {
     const duration = x / GanttMapper.dayWidth
     const durationMin = (duration * 24 * 60) | 0
-    return moment(this.$originDate).add(moment.duration(durationMin, 'minutes'))
+    return moment(this._originDate).add(moment.duration(durationMin, 'minutes'))
   }
 
   /**
-   * Gets the y coordinate for a given activity, considering the subrow information.
+   * Gets the y coordinate for a given activity, considering the sub row information.
+   * @param {!Activity} activity
+   * @returns {number}
    */
   getActivityY(activity) {
     const taskId = activity.taskId
     const task = this.tasks.find(t => t.id === taskId)
     let y = this.getTaskY(task) + GanttMapper.activitySpacing
-    const subrow = this.getSubrowIndex(activity)
-    y += subrow * (GanttMapper.activityHeight + GanttMapper.activitySpacing)
+    const subRow = this.getSubRowIndex(activity)
+    y += subRow * (GanttMapper.activityHeight + GanttMapper.activitySpacing)
     return y
   }
 
   /**
    * Gets the y coordinate for a given task.
+   * @param {!Task} task
+   * @returns {number}
    */
   getTaskY(task) {
     const index = this.tasks.findIndex(t => t.id === task.id)
@@ -88,6 +98,8 @@ export default class GanttMapper {
 
   /**
    * Gets the task at the given y coordinate.
+   * @param {number} y
+   * @returns {!Task}
    */
   getTask(y) {
     let currentY = 0
@@ -103,57 +115,67 @@ export default class GanttMapper {
 
   /**
    * Gets the task with the given id.
+   * @param {number} taskId
+   * @returns {!Task}
    */
   getTaskForId(taskId) {
     return this.tasks.find(task => task.id === taskId)
   }
 
   /**
-   * Calculates the task height, including subrows and spacing.
+   * Calculates the task height, including sub rows and spacing.
+   * @param {!Task} task
+   * @returns {number}
    */
   getCompleteTaskHeight(task) {
-    const subrowCount = this.getSubrowCount(task)
+    const subRowCount = this.getSubRowCount(task)
     return (
-      subrowCount * (GanttMapper.activityHeight + GanttMapper.activitySpacing) +
+      subRowCount * (GanttMapper.activityHeight + GanttMapper.activitySpacing) +
       GanttMapper.activitySpacing
     )
   }
 
   /**
-   * Gets the subrow in which the given activity is placed.
+   * Gets the sub row in which the given activity is placed.
+   * @param {!Activity} activity
+   * @returns {number}
    */
-  getSubrowIndex(activity) {
-    if (typeof this.$subrowMap.get(activity) !== 'undefined') {
-      return this.$subrowMap.get(activity)
+  getSubRowIndex(activity) {
+    if (typeof this._subRowMap.get(activity) !== 'undefined') {
+      return this._subRowMap.get(activity)
     }
     return 0
   }
 
   /**
-   * Gets the number of subrows for a given task.
+   * Gets the number of sub rows for a given task.
+   * @param {!Task} task
+   * @returns {number}
    */
-  getSubrowCount(task) {
-    return typeof this.$subrowCountMap.get(task.id) === 'number'
-      ? this.$subrowCountMap.get(task.id)
+  getSubRowCount(task) {
+    return typeof this._subRowCountMap.get(task.id) === 'number'
+      ? this._subRowCountMap.get(task.id)
       : 1
   }
 
   /**
-   * @returns {Map}
+   * @type {!Map.<Activity,number>}
    */
-  get subrowMap() {
-    return this.$subrowMap
+  get subRowMap() {
+    return this._subRowMap
   }
 
   /**
-   * @returns {Map}
+   * @type {!Map.<number,number>}
    */
-  get subrowCountMap() {
-    return this.$subrowCountMap
+  get subRowCountMap() {
+    return this._subRowCountMap
   }
 
   /**
    * Calculates the total activity duration in hours
+   * @param {!Activity} activity
+   * @returns {number}
    */
   getTotalActivityDuration(activity) {
     const duration = moment.duration(moment(activity.endDate).diff(moment(activity.startDate)))
@@ -180,33 +202,66 @@ export default class GanttMapper {
 
   /**
    * Gets the date corresponding to x=0.
-   * @returns {*}
+   * @type {!Moment}
    */
   get originDate() {
-    return moment(this.$originDate)
+    return moment(this._originDate)
   }
 
+  /**
+   * @param {!MomentInput} date
+   * @param {!string} formatString
+   * @returns {!string}
+   */
   static format(date, formatString) {
     return moment(date).format(formatString)
   }
 
   /**
    * Gets the width in the graph coordinate system that corresponds to one day.
-   * @returns {number}
+   * @type {number}
    */
   static get dayWidth() {
     return 80
   }
 
+  /**
+   * @type {number}
+   */
   static get taskSpacing() {
     return 10
   }
 
+  /**
+   * @type {number}
+   */
   static get activitySpacing() {
     return 20
   }
 
+  /**
+   * @type {number}
+   */
   static get activityHeight() {
     return 40
   }
 }
+
+/**
+ * @typedef {Object} Activity
+ * @property {number} id
+ * @property {string} [name]
+ * @property {number} taskId
+ * @property {string} startDate
+ * @property {string} endDate
+ * @property {number} [leadTime]
+ * @property {Array.<number>} [dependencies]
+ * @property {number} [followUpTime]
+ */
+
+/**
+ * @typedef {Object} Task
+ * @property {number} id
+ * @property {string} name
+ * @property {object} color
+ */

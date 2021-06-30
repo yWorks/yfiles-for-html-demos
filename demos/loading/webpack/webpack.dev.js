@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -27,36 +27,18 @@
  **
  ***************************************************************************/
 const webpack = require('webpack')
-const HtmlWebpackPlugin = require('html-webpack-plugin')
-const HtmlWebpackHarddiskPlugin = require('html-webpack-harddisk-plugin')
-const path = require('path')
 
 module.exports = {
   mode: 'development',
   entry: {
-    app: ['regenerator-runtime/runtime', './src/webpack-demo.js']
+    app: ['./src/webpack-demo.js']
   },
   devServer: {
-    contentBase: [
-      path.join(__dirname, '.'),
-      // serve the package root as well, so relative links to assets (css/images) work in dev server
-      path.join(__dirname, '../../../')
-    ],
-    compress: true,
-    hot: true,
-    port: 9003
+    hot: true
   },
+  // default devtool needs to be disabled for the SourceMapDevToolPlugin below to be used
+  devtool: false,
   plugins: [
-    new webpack.HotModuleReplacementPlugin(),
-    new HtmlWebpackPlugin({
-      inject: true,
-      filename: '../index.html',
-      template: path.resolve(__dirname, 'index.template.html'),
-      // Always write the resulting html file to disk, so it can be picked up by the webpack dev server.
-      // This functionality is provided by the plugin below.
-      alwaysWriteToDisk: true
-    }),
-    new HtmlWebpackHarddiskPlugin(),
     new webpack.SourceMapDevToolPlugin({
       filename: '[file].map',
       // add source maps for non-library code to enable convenient debugging

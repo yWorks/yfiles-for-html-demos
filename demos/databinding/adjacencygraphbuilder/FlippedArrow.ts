@@ -1,6 +1,6 @@
 /****************************************************************************
  ** @license
- ** This demo file is part of yFiles for HTML 2.3.
+ ** This demo file is part of yFiles for HTML 2.4.
  ** Copyright (c) 2000-2021 by yWorks GmbH, Vor dem Kreuzberg 28,
  ** 72070 Tuebingen, Germany. All rights reserved.
  **
@@ -31,7 +31,7 @@ import { BaseClass, IArrow, IBoundsProvider, IEdge, IVisualCreator, Point } from
 /**
  * A simple wrapper around an {@link IArrow} that rotates the arrow by 180 degrees.
  */
-export class FlippedArrow extends BaseClass<IArrow>(IArrow) {
+export class FlippedArrow extends BaseClass(IArrow) {
   private readonly wrappedArrow: IArrow
   private readonly offset: number
 
