@@ -53,7 +53,13 @@ import {
   TreeLayoutData,
   TreeReductionStage
 } from 'yfiles'
-import { bindAction, bindChangeListener, bindCommand, showApp } from '../../resources/demo-app'
+import {
+  bindAction,
+  bindChangeListener,
+  bindCommand,
+  checkLicense,
+  showApp
+} from '../../resources/demo-app'
 import loadJson from '../../resources/load-json'
 import {
   CircularSampleData,
@@ -402,4 +408,4 @@ function setUIDisabled(disabled: boolean): void {
   ;(graphComponent.inputMode as GraphEditorInputMode).enabled = !disabled
 }
 
-loadJson().then(run)
+loadJson().then(checkLicense).then(run)

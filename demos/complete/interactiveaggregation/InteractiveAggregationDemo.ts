@@ -61,7 +61,7 @@ import { AggregationGraphWrapper, EdgeReplacementPolicy } from '../../utils/Aggr
 import ContextMenu from '../../utils/ContextMenu'
 import loadJson from '../../resources/load-json'
 import { initDemoStyles } from '../../resources/demo-styles'
-import { bindCommand, showApp } from '../../resources/demo-app'
+import { bindCommand, checkLicense, showApp } from '../../resources/demo-app'
 
 Class.ensure(LayoutExecutor)
 
@@ -459,4 +459,4 @@ class ShapeAndFill {
   }
 }
 
-loadJson().then(run)
+loadJson().then(checkLicense).then(run)

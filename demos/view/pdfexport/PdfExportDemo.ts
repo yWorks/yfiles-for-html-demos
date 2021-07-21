@@ -72,6 +72,7 @@ import {
   bindAction,
   bindChangeListener,
   bindCommand,
+  checkLicense,
   removeClass,
   showApp
 } from '../../resources/demo-app'
@@ -584,4 +585,4 @@ function registerCommands(graphComponent: GraphComponent): void {
 }
 
 // run the demo
-loadJson().then(run)
+loadJson().then(checkLicense).then(run)

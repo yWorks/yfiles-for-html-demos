@@ -56,7 +56,13 @@ import {
 import SampleData from './resources/sample'
 import MapVisualCreator from './MapVisualCreator'
 import CityLabelStyle from './CityLabelStyle'
-import { bindAction, bindChangeListener, bindCommand, showApp } from '../../resources/demo-app'
+import {
+  bindAction,
+  bindChangeListener,
+  bindCommand,
+  checkLicense,
+  showApp
+} from '../../resources/demo-app'
 import loadJson from '../../resources/load-json'
 
 /**
@@ -320,4 +326,4 @@ async function createSampleGraph(): Promise<void> {
 }
 
 // runs the demo
-loadJson().then(run)
+loadJson().then(checkLicense).then(run)

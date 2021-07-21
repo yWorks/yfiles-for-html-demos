@@ -54,7 +54,7 @@ import {
   WebGL2ShapeNodeStyle
 } from 'yfiles'
 
-import { bindAction, bindCommand, showApp } from '../../resources/demo-app'
+import { bindAction, bindCommand, checkLicense, showApp } from '../../resources/demo-app'
 import loadJson from '../../resources/load-json'
 import { webGl2Supported } from '../../utils/Workarounds'
 
@@ -155,6 +155,16 @@ function setUIDisabled(disabled: boolean) {
 }
 
 /**
+ * Displays or hides the loading indicator.
+ */
+async function setLoadingIndicatorVisibility(visible: boolean, message = '') {
+  const loadingIndicator = document.querySelector<HTMLElement>('#loadingIndicator')!
+  loadingIndicator.style.display = visible ? 'block' : 'none'
+  loadingIndicator.innerText = message
+  return new Promise(resolve => setTimeout(resolve, 0))
+}
+
+/**
  * Updates the graph information on the sidebar.
  */
 function updateGraphInformation(graph: IGraph) {
@@ -224,10 +234,17 @@ async function addLayer(graphComponent: GraphComponent) {
   const gmm = graphComponent.graphModelManager as WebGL2GraphModelManager
   const fadeInAnimation = gmm.createFadeAnimation(WebGL2FadeAnimationType.FADE_IN, '1s')
 
+  const numberChildren = queue.length * childCount
+
+  if (numberChildren > 20_000) {
+    await setLoadingIndicatorVisibility(true, 'Creating child nodes...')
+  }
   extendTree(graphComponent, currentLayers, childCount, queue, fadeInAnimation)
+
   graph.tag = { maxLayer: currentLayers, childCount: childCount }
 
   await runExtendLayout(graphComponent, fadeInAnimation)
+  await setLoadingIndicatorVisibility(false)
   setUIDisabled(false)
 
   updateGraphInformation(graphComponent.graph)
@@ -311,8 +328,14 @@ async function removeLayer(graphComponent: GraphComponent) {
       removeNodes.push(node)
     }
   })
+
+  if (removeNodes.length > 20_000) {
+    await setLoadingIndicatorVisibility(true, 'Removing child nodes...')
+  }
   await reduceTree(graphComponent, removeNodes)
   graph.tag = { maxLayer: currentLayers, childCount: childCount }
+
+  await setLoadingIndicatorVisibility(false)
   setUIDisabled(false)
 
   updateGraphInformation(graphComponent.graph)
@@ -431,4 +454,4 @@ class AnimatedLayoutExecutor extends LayoutExecutor {
 }
 
 // start demo
-loadJson().then(run)
+loadJson().then(checkLicense).then(run)

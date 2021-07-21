@@ -61,7 +61,7 @@ import {
 
 import ContextMenuSupport from './ContextMenuSupport'
 import { DemoGroupStyle, DemoNodeStyle } from '../../resources/demo-styles'
-import { bindAction, bindCommand, showApp } from '../../resources/demo-app'
+import { bindAction, bindCommand, checkLicense, showApp } from '../../resources/demo-app'
 import loadJson from '../../resources/load-json'
 
 let graphComponent: GraphComponent
@@ -335,4 +335,4 @@ class HighlightEdgeStyle extends EdgeStyleBase {
   }
 }
 
-loadJson().then(run)
+loadJson().then(checkLicense).then(run)

@@ -55,7 +55,7 @@ import Connection from './Connection.js'
 import Device from './Device.js'
 import ConnectionStyle from './ConnectionStyle.js'
 import DeviceStyle from './DeviceStyle.js'
-import { bindAction, bindCommand, showApp } from '../../resources/demo-app.js'
+import { bindAction, bindCommand, checkLicense, showApp } from '../../resources/demo-app.js'
 import D3BarChart from './D3BarChart.js'
 import HTMLPopupSupport from './HTMLPopupSupport.js'
 import loadJson from '../../resources/load-json.js'
@@ -540,4 +540,4 @@ function registerCommands() {
   })
 }
 
-loadJson().then(run)
+loadJson().then(checkLicense).then(run)

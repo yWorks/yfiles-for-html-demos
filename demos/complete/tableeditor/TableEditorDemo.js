@@ -63,7 +63,13 @@ import DemoStyles, {
   DemoEdgeStyle,
   DemoSerializationListener
 } from '../../resources/demo-styles.js'
-import { bindAction, bindCommand, readGraph, showApp } from '../../resources/demo-app.js'
+import {
+  bindAction,
+  bindCommand,
+  checkLicense,
+  readGraph,
+  showApp
+} from '../../resources/demo-app.js'
 import loadJson from '../../resources/load-json.js'
 
 /**
@@ -386,4 +392,4 @@ function registerCommands() {
 }
 
 // run the demo
-loadJson().then(run)
+loadJson().then(checkLicense).then(run)

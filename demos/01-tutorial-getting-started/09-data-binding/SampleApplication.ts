@@ -54,7 +54,7 @@ import {
 } from 'yfiles'
 
 import ContextMenu from '../../utils/ContextMenu'
-import { bindCommand, showApp } from '../../resources/demo-app'
+import { bindCommand, checkLicense, showApp } from '../../resources/demo-app'
 import loadJson from '../../resources/load-json'
 
 // @ts-ignore
@@ -476,4 +476,4 @@ function registerCommands(): void {
 }
 
 // start tutorial
-loadJson().then(run)
+loadJson().then(checkLicense).then(run)

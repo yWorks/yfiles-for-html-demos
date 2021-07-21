@@ -38,7 +38,7 @@ import {
   PopulateItemContextMenuEventArgs
 } from 'yfiles'
 import ContextMenu from '../../utils/ContextMenu.js'
-import { showApp } from '../../resources/demo-app.js'
+import { checkLicense, showApp } from '../../resources/demo-app.js'
 import { initDemoStyles } from '../../resources/demo-styles.js'
 import loadJson from '../../resources/load-json.js'
 
@@ -167,4 +167,4 @@ function createSampleGraph(graph) {
 }
 
 // Runs the demo
-loadJson().then(run)
+loadJson().then(checkLicense).then(run)

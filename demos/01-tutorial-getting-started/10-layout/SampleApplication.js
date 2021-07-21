@@ -58,7 +58,7 @@ import {
 } from 'yfiles'
 
 import ContextMenu from '../../utils/ContextMenu.js'
-import { bindAction, bindCommand, showApp } from '../../resources/demo-app.js'
+import { bindAction, bindCommand, checkLicense, showApp } from '../../resources/demo-app.js'
 import loadJson from '../../resources/load-json.js'
 import GraphBuilderData from './resources/graph.js'
 
@@ -458,4 +458,4 @@ function registerCommands() {
 }
 
 // start tutorial
-loadJson().then(run)
+loadJson().then(checkLicense).then(run)

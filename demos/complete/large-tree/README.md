@@ -1,4 +1,4 @@
-# Large Tree
+# Large Collapsible Tree Demo
 
 <img src="../../resources/image/large-tree.png" alt="demo-thumbnail" height="320"/>
 

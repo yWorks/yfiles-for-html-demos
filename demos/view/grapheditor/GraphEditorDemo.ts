@@ -51,7 +51,7 @@ import {
 } from 'yfiles'
 
 import ContextMenu from '../../utils/ContextMenu'
-import { bindAction, bindCommand, showApp } from '../../resources/demo-app'
+import { bindAction, bindCommand, checkLicense, showApp } from '../../resources/demo-app'
 import DemoStyles, {
   DemoSerializationListener,
   DemoStyleOverviewPaintable,
@@ -413,4 +413,4 @@ function createSampleGraph(graph: IGraph): void {
 }
 
 // Start the demo
-loadJson().then(run)
+loadJson().then(checkLicense).then(run)

@@ -50,5 +50,6 @@ module.exports = {
   },
   output: {
     filename: '[name].[contenthash].js'
-  }
+  },
+  target: ['web', 'es5']
 }

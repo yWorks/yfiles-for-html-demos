@@ -46,7 +46,7 @@ import {
 } from 'yfiles'
 
 import MySimpleNodeStyle from './MySimpleNodeStyle.js'
-import { bindAction, bindCommand, showApp } from '../../resources/demo-app.js'
+import { bindAction, bindCommand, checkLicense, showApp } from '../../resources/demo-app.js'
 import loadJson from '../../resources/load-json.js'
 
 /** @type {GraphComponent} */
@@ -195,4 +195,4 @@ function createSampleGraph() {
 }
 
 // Start demo
-loadJson().then(run)
+loadJson().then(checkLicense).then(run)

@@ -61,7 +61,7 @@ import {
   IArrow
 } from 'yfiles'
 
-import { bindAction, bindCommand, showApp } from '../../resources/demo-app.js'
+import { bindAction, bindCommand, checkLicense, showApp } from '../../resources/demo-app.js'
 import loadJson from '../../resources/load-json.js'
 import { webGl2Supported } from '../../utils/Workarounds.js'
 import { createFontAwesomeIcon } from '../../utils/IconCreation.js'
@@ -211,25 +211,23 @@ function enableFolding(graphComponent) {
 
   // add a click listener to check if an expand/collapse label has been left-clicked
   geim.addItemLeftClickedListener((sender, args) => {
-    if (args.item instanceof ILabel) {
-      // the node this label belongs to
-      const node = args.item.owner
-      if (node != null) {
-        // check that it is a collapsible group node
-        const masterNode = view.getMasterItem(node)
-        if (foldingManager?.masterGraph.isGroupNode(masterNode)) {
-          const gmm = graphComponent.graphModelManager
-          if (view.isExpanded(masterNode)) {
-            geim.navigationInputMode.collapseGroup(node)
-            gmm.setStyle(node, getWebGLGroupStyle())
-            addImageLabel(node, graphComponent, 1, new Color(61, 85, 219))
-          } else {
-            geim.navigationInputMode.expandGroup(node)
-            gmm.setStyle(node, getWebGLGroupStyle())
-            addImageLabel(node, graphComponent, 0, new Color(61, 85, 219))
-          }
-        }
-      }
+    if (!(args.item instanceof ILabel) || !(args.item.owner instanceof INode)) {
+      return
+    }
+    const node = args.item.owner
+    const masterNode = view.getMasterItem(node)
+    if (!foldingManager?.masterGraph.isGroupNode(masterNode)) {
+      return
+    }
+    const gmm = graphComponent.graphModelManager
+    if (view.isExpanded(masterNode)) {
+      geim.navigationInputMode.collapseGroup(node)
+      gmm.setStyle(node, getWebGLGroupStyle())
+      addImageLabel(node, graphComponent, 1, new Color(61, 85, 219))
+    } else {
+      geim.navigationInputMode.expandGroup(node)
+      gmm.setStyle(node, getWebGLGroupStyle())
+      addImageLabel(node, graphComponent, 0, new Color(61, 85, 219))
     }
   })
 }
@@ -267,17 +265,23 @@ function configureInteraction(graphComponent) {
   geim.addNodeCreatedListener((inputMode, evt) => {
     const gmm = graphComponent.graphModelManager
     const node = evt.item
+
+    if (graphComponent.graph.isGroupNode(node)) {
+      gmm.setStyle(node, getWebGLGroupStyle())
+      // add a minus sign as image label
+      addImageLabel(node, graphComponent, 0, new Color(61, 85, 219))
+      return
+    }
+
     addLabel(node, graphComponent)
     addImageLabel(node, graphComponent)
-    gmm.setStyle(
-      node,
-      new WebGL2ShapeNodeStyle(
-        getConfiguredNodeShape(),
-        getConfiguredNodeColor(graphComponent.graph.isGroupNode(node)),
-        getConfiguredNodeStroke(),
-        getConfiguredNodeEffect()
-      )
-    )
+    const shape = getConfiguredNodeShape()
+    const color = getConfiguredNodeColor()
+    const stroke = getConfiguredNodeStroke()
+    const effect = getConfiguredNodeEffect()
+    gmm.setStyle(node, new WebGL2ShapeNodeStyle(shape, color, stroke, effect))
+    // used for restoring node shape etc. after collapsing and expanding a group node
+    node.tag = new MyWebGLStyleDescriptor(shape, color, stroke, effect)
   })
 
   // On edge creation, set the configured edge style
@@ -360,16 +364,12 @@ function createFontAwesomeIcons() {
 }
 
 /**
- * Creates a color using the "nodeFill" slider value as the hue
- * and differing lightness for group and non-group nodes.
- *
- * @param {boolean} isGroupNode whether the color will be used for a group node.
+ * Creates a color using the "nodeFill" slider value as the hue.
  * @returns {!Color}
  */
-function getConfiguredNodeColor(isGroupNode) {
-  const lightness = isGroupNode ? 0.85 : 0.5
+function getConfiguredNodeColor() {
   const colorSliderValue = parseInt(document.getElementById('nodeFill').value)
-  return Color.fromHSLA(colorSliderValue / 180, 1, lightness, 1.0)
+  return Color.fromHSLA(colorSliderValue / 180, 1, 0.5, 1.0)
 }
 
 /**
@@ -587,7 +587,7 @@ function createGraph(graphComponent) {
     })
     const groupNodeStyle = getWebGLGroupStyle()
     gmm.setStyle(groupNode, groupNodeStyle)
-    // add a minus sign as imagelabel
+    // add a minus sign as image label
     addImageLabel(groupNode, graphComponent, 0, new Color(61, 85, 219))
 
     for (const shape of shapes) {
@@ -648,12 +648,15 @@ function registerCommands(graphComponent) {
     const gmm = graphComponent.graphModelManager
 
     const nodesToStyle = useSelection
-      ? graphComponent.selection.selectedNodes
-      : graphComponent.graph.nodes
+      ? graphComponent.selection.selectedNodes.filter(
+          node => !graphComponent.graph.isGroupNode(node)
+        )
+      : graphComponent.graph.nodes.filter(node => !graphComponent.graph.isGroupNode(node))
+
     const configuredNodeShape = getConfiguredNodeShape()
     const configuredNodeEffect = getConfiguredNodeEffect()
     nodesToStyle.forEach(node => {
-      const configuredNodeColor = getConfiguredNodeColor(graphComponent.graph.isGroupNode(node))
+      const configuredNodeColor = getConfiguredNodeColor()
       const configuredNodeStroke = getConfiguredNodeStroke()
       gmm.setStyle(
         node,
@@ -682,7 +685,7 @@ function registerCommands(graphComponent) {
     })
 
     const labelsToStyle = useSelection
-      ? graphComponent.selection.selectedLabels
+      ? graphComponent.selection.selectedLabels.filter(label => label.text.length > 0)
       : graphComponent.graph.labels
     const configuredLabelShape = getConfiguredLabelShape()
     labelsToStyle.forEach(label => {
@@ -736,4 +739,4 @@ class MyWebGLStyleDescriptor {
 }
 
 // start demo
-loadJson().then(run)
+loadJson().then(checkLicense).then(run)

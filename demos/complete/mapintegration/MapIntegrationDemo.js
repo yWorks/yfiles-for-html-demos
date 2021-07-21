@@ -70,7 +70,7 @@ import {
 import FlightData from './resources/FlightData.js'
 import CenterGraphStage from './CenterGraphStage.js'
 import ZoomAnimation from './ZoomAnimation.js'
-import { addClass, showApp } from '../../resources/demo-app.js'
+import { addClass, checkLicense, showApp } from '../../resources/demo-app.js'
 import {
   applyLayoutStyles,
   applyMapStyles,
@@ -577,4 +577,4 @@ function createGraph() {
   builder.buildGraph()
 }
 
-loadJson().then(run)
+loadJson().then(checkLicense).then(run)

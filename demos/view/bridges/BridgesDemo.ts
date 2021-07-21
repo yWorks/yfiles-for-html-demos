@@ -43,7 +43,7 @@ import {
 } from 'yfiles'
 
 import { CustomCallback, GroupNodeObstacleProvider } from './BridgeHelper'
-import { bindChangeListener, bindCommand, showApp } from '../../resources/demo-app'
+import { bindChangeListener, bindCommand, checkLicense, showApp } from '../../resources/demo-app'
 import { initDemoStyles } from '../../resources/demo-styles'
 import loadJson from '../../resources/load-json'
 
@@ -329,4 +329,4 @@ function createSampleGraph(): void {
 }
 
 // run the demo
-loadJson().then(run)
+loadJson().then(checkLicense).then(run)

@@ -43,7 +43,7 @@ import {
   StorageLocation
 } from 'yfiles'
 
-import { bindAction, bindCommand, readGraph, showApp } from '../../resources/demo-app'
+import { bindAction, bindCommand, checkLicense, readGraph, showApp } from '../../resources/demo-app'
 import loadJson from '../../resources/load-json'
 import DemoStyles, {
   DemoNodeStyle,
@@ -187,4 +187,4 @@ function registerCommands(): void {
 }
 
 // start demo
-loadJson().then(run)
+loadJson().then(checkLicense).then(run)

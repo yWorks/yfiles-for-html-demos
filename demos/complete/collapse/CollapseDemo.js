@@ -51,7 +51,7 @@ import {
   TreeLayout
 } from 'yfiles'
 
-import { bindChangeListener, bindCommand, showApp } from '../../resources/demo-app.js'
+import { bindChangeListener, bindCommand, checkLicense, showApp } from '../../resources/demo-app.js'
 import CollapseAndExpandNodes from './CollapseAndExpandNodes.js'
 import loadJson from '../../resources/load-json.js'
 
@@ -347,4 +347,4 @@ function registerCommands() {
 }
 
 // run the demo
-loadJson().then(run)
+loadJson().then(checkLicense).then(run)

@@ -44,7 +44,7 @@ import SaveToFileOperation from './SaveToFileOperation'
 import SaveToNewWindowOperation from './SaveToNewWindowOperation'
 import SaveToWebStorageOperation from './SaveToWebStorageOperation'
 import SaveViaServerOperation from './SaveViaServerOperation'
-import { bindAction, showApp } from '../../resources/demo-app'
+import { bindAction, checkLicense, showApp } from '../../resources/demo-app'
 import DemoStyles, { DemoSerializationListener, initDemoStyles } from '../../resources/demo-styles'
 import loadJson from '../../resources/load-json'
 
@@ -278,4 +278,4 @@ function querySelector<T extends HTMLElement>(selector: string): T {
 }
 
 // Runs the demo.
-loadJson().then(run)
+loadJson().then(checkLicense).then(run)

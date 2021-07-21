@@ -48,7 +48,7 @@ import {
 
 import DemoStyles, { DemoSerializationListener } from '../../resources/demo-styles.js'
 import HTMLPopupSupport from './HTMLPopupSupport.js'
-import { bindCommand, readGraph, showApp } from '../../resources/demo-app.js'
+import { bindCommand, checkLicense, readGraph, showApp } from '../../resources/demo-app.js'
 import loadJson from '../../resources/load-json.js'
 
 /**
@@ -265,4 +265,4 @@ function registerCommands(graphComponent) {
 }
 
 // Starts the demo
-loadJson().then(run)
+loadJson().then(checkLicense).then(run)

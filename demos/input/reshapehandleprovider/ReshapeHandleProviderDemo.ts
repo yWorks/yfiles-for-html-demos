@@ -43,7 +43,7 @@ import {
   Size
 } from 'yfiles'
 
-import { readGraph, showApp } from '../../resources/demo-app'
+import { checkLicense, readGraph, showApp } from '../../resources/demo-app'
 import loadJson from '../../resources/load-json'
 import { PortReshapeHandleProvider } from './PortReshapeHandlerProvider'
 
@@ -183,4 +183,4 @@ function onBlur(): void {
   graphEditorInputMode.requeryHandles()
 }
 
-loadJson().then(run)
+loadJson().then(checkLicense).then(run)

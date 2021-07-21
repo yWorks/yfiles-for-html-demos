@@ -64,7 +64,13 @@ import {
 } from 'yfiles'
 
 import { DemoEdgeStyle, DemoNodeStyle } from '../../resources/demo-styles'
-import { bindAction, bindChangeListener, bindCommand, showApp } from '../../resources/demo-app'
+import {
+  bindAction,
+  bindChangeListener,
+  bindCommand,
+  checkLicense,
+  showApp
+} from '../../resources/demo-app'
 import loadJson from '../../resources/load-json'
 
 type EdgeLabelPlacementOption = {
@@ -767,4 +773,4 @@ function getAffectedLabels(): IEnumerable<ILabel> {
   return selectedLabels.size > 0 ? selectedLabels : graph.edgeLabels
 }
 
-loadJson().then(run)
+loadJson().then(checkLicense).then(run)

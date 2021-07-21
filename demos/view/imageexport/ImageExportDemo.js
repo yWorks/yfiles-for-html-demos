@@ -60,7 +60,13 @@ import PositionHandler from './PositionHandler.js'
 import FileSaveSupport from '../../utils/FileSaveSupport.js'
 import ServerSideImageExport from './ServerSideImageExport.js'
 import ClientSideImageExport from './ClientSideImageExport.js'
-import { addClass, bindAction, removeClass, showApp } from '../../resources/demo-app.js'
+import {
+  addClass,
+  bindAction,
+  checkLicense,
+  removeClass,
+  showApp
+} from '../../resources/demo-app.js'
 import { detectInternetExplorerVersion } from '../../utils/Workarounds.js'
 
 import loadJson from '../../resources/load-json.js'
@@ -458,4 +464,4 @@ function registerCommands(graphComponent) {
 }
 
 // run the demo
-loadJson().then(run)
+loadJson().then(checkLicense).then(run)

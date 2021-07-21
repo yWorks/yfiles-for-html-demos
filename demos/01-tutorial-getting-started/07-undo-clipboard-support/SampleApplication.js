@@ -42,7 +42,7 @@ import {
   Size
 } from 'yfiles'
 
-import { bindCommand, showApp } from '../../resources/demo-app.js'
+import { bindCommand, checkLicense, showApp } from '../../resources/demo-app.js'
 import loadJson from '../../resources/load-json.js'
 
 /** @type {GraphComponent} */
@@ -318,4 +318,4 @@ function registerCommands() {
 }
 
 // start tutorial
-loadJson().then(run)
+loadJson().then(checkLicense).then(run)

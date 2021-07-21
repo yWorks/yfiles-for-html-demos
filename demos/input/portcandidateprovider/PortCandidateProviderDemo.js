@@ -48,7 +48,7 @@ import OrangePortCandidateProvider from './OrangePortCandidateProvider.js'
 import GreenPortCandidateProvider from './GreenPortCandidateProvider.js'
 import BluePortCandidateProvider from './BluePortCandidateProvider.js'
 import RedPortCandidateProvider from './RedPortCandidateProvider.js'
-import { showApp } from '../../resources/demo-app.js'
+import { checkLicense, showApp } from '../../resources/demo-app.js'
 import { DemoNodeStyle } from '../../resources/demo-styles.js'
 import loadJson from '../../resources/load-json.js'
 
@@ -207,4 +207,4 @@ function createNode(graph, x, y, w, h, cssClass, labelText) {
 }
 
 // run the demo
-loadJson().then(run)
+loadJson().then(checkLicense).then(run)

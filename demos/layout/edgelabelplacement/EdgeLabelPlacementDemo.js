@@ -64,7 +64,13 @@ import {
 } from 'yfiles'
 
 import { DemoEdgeStyle, DemoNodeStyle } from '../../resources/demo-styles.js'
-import { bindAction, bindChangeListener, bindCommand, showApp } from '../../resources/demo-app.js'
+import {
+  bindAction,
+  bindChangeListener,
+  bindCommand,
+  checkLicense,
+  showApp
+} from '../../resources/demo-app.js'
 import loadJson from '../../resources/load-json.js'
 
 /**
@@ -739,4 +745,4 @@ function getAffectedLabels() {
   return selectedLabels.size > 0 ? selectedLabels : graph.edgeLabels
 }
 
-loadJson().then(run)
+loadJson().then(checkLicense).then(run)

@@ -45,7 +45,7 @@ import {
 } from 'yfiles'
 
 import { DemoEdgeStyle, DemoNodeStyle } from '../../resources/demo-styles.js'
-import { showApp } from '../../resources/demo-app.js'
+import { checkLicense, showApp } from '../../resources/demo-app.js'
 import PortLookupEdgePortHandleProvider from './PortLookupEdgePortHandleProvider.js'
 import BlueBendCreator from './BlueBendCreator.js'
 import BlueOrthogonalEdgeHelper from './BlueOrthogonalEdgeHelper.js'
@@ -253,4 +253,4 @@ function createSamplePorts(graph, node, toEastSide) {
 }
 
 // run the demo
-loadJson().then(run)
+loadJson().then(checkLicense).then(run)

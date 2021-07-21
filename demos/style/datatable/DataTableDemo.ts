@@ -45,7 +45,7 @@ import {
 import createNewRandomUserData from './UserDataFactory'
 import DataTableLabelStyle from './DataTableLabelStyle'
 import DataTableNodeStyle from './DataTableNodeStyle'
-import { bindAction, bindCommand, showApp } from '../../resources/demo-app'
+import { bindAction, bindCommand, checkLicense, showApp } from '../../resources/demo-app'
 import loadJson from '../../resources/load-json'
 
 function run(licenseData: object): void {
@@ -230,4 +230,4 @@ function registerCommands(graphComponent: GraphComponent): void {
 }
 
 // Runs the demo
-loadJson().then(run)
+loadJson().then(checkLicense).then(run)

@@ -62,7 +62,7 @@ import {
 } from 'yfiles'
 
 import { DemoEdgeStyle, DemoNodeStyle } from '../../resources/demo-styles.js'
-import { bindAction, bindCommand, showApp } from '../../resources/demo-app.js'
+import { bindAction, bindCommand, checkLicense, showApp } from '../../resources/demo-app.js'
 import loadJson from '../../resources/load-json.js'
 import { createGraphBuilder } from './Neo4jGraphBuilder.js'
 import { connectToDB, Neo4jEdge, Neo4jNode } from './Neo4jUtil.js'
@@ -511,4 +511,4 @@ function registerCommands() {
 }
 
 // start demo
-loadJson().then(run)
+loadJson().then(checkLicense).then(run)

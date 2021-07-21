@@ -46,6 +46,7 @@ import {
   bindAction,
   bindChangeListener,
   bindCommand,
+  checkLicense,
   readGraph,
   showApp
 } from '../../resources/demo-app.js'
@@ -260,4 +261,4 @@ function initializeConverters() {
   }
 }
 
-loadJson().then(run)
+loadJson().then(checkLicense).then(run)

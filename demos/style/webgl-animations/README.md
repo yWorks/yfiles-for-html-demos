@@ -1,4 +1,4 @@
-# WebGL2 Animations
+# WebGL2 Animations Demo
 
 <img src="../../resources/image/webgl-animations.png" alt="demo-thumbnail" height="320"/>
 

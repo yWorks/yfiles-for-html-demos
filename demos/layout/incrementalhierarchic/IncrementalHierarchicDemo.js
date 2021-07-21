@@ -55,7 +55,7 @@ import PortConstraintBendHandle from './PortConstraintBendHandle.js'
 import LayerPositionHandler from './LayerPositionHandler.js'
 import { initDemoStyles } from '../../resources/demo-styles.js'
 import ContextMenu from '../../utils/ContextMenu.js'
-import { bindCommand, showApp } from '../../resources/demo-app.js'
+import { bindCommand, checkLicense, showApp } from '../../resources/demo-app.js'
 import LayerVisual from './LayerVisual.js'
 import loadJson from '../../resources/load-json.js'
 
@@ -472,4 +472,4 @@ let incrementalNodes
 let incrementalEdges
 
 // start demo
-loadJson().then(run)
+loadJson().then(checkLicense).then(run)

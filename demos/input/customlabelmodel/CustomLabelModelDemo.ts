@@ -38,7 +38,7 @@ import {
 
 import CustomNodeLabelModel, { CustomNodeLabelModelParameter } from './CustomNodeLabelModel'
 import DemoStyles, { DemoSerializationListener, initDemoStyles } from '../../resources/demo-styles'
-import { bindAction, bindCommand, showApp } from '../../resources/demo-app'
+import { bindAction, bindCommand, checkLicense, showApp } from '../../resources/demo-app'
 import loadJson from '../../resources/load-json'
 
 let graphComponent: GraphComponent = null!
@@ -129,4 +129,4 @@ function registerCommands(): void {
   bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
 }
 
-loadJson().then(run)
+loadJson().then(checkLicense).then(run)

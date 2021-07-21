@@ -46,7 +46,7 @@ import {
   WaitInputMode
 } from 'yfiles'
 
-import { bindAction, bindCommand, showApp } from '../../resources/demo-app.js'
+import { bindAction, bindCommand, checkLicense, showApp } from '../../resources/demo-app.js'
 import loadJson from '../../resources/load-json.js'
 import { detectChromeVersion } from '../../utils/Workarounds.js'
 import { initDemoStyles } from '../../resources/demo-styles.js'
@@ -870,4 +870,4 @@ function getLoremIpsum() {
 }
 
 // start demo
-loadJson().then(run)
+loadJson().then(checkLicense).then(run)

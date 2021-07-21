@@ -47,7 +47,7 @@ import {
   Size
 } from 'yfiles'
 
-import { bindAction, bindCommand, showApp } from '../../resources/demo-app'
+import { bindAction, bindCommand, checkLicense, showApp } from '../../resources/demo-app'
 import { DemoStyleOverviewPaintable, initDemoStyles } from '../../resources/demo-styles'
 import loadJson from '../../resources/load-json'
 
@@ -202,4 +202,4 @@ function registerCommands(): void {
 }
 
 // run the demo
-loadJson().then(run)
+loadJson().then(checkLicense).then(run)

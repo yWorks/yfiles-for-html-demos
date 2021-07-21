@@ -46,7 +46,7 @@ import {
 } from 'yfiles'
 
 import { initDemoStyles } from '../../resources/demo-styles.js'
-import { bindCommand, showApp } from '../../resources/demo-app.js'
+import { bindCommand, checkLicense, showApp } from '../../resources/demo-app.js'
 import loadJson from '../../resources/load-json.js'
 import { RichTextEditorInputMode } from './RichTextEditorInputMode.js'
 
@@ -178,4 +178,4 @@ function registerCommands() {
   bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
 }
 
-loadJson().then(run)
+loadJson().then(checkLicense).then(run)

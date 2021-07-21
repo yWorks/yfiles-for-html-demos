@@ -378,10 +378,14 @@ const HierarchicLayoutConfig = (Class as any)('HierarchicLayoutConfig', {
     }
 
     if (this.highlightCriticalPath) {
+      // highlight the longest path in the graph as critical path
+      // since the longest path algorithm only works for acyclic graphs,
+      // feedback edges and self loops have to be excluded here
       const feedbackEdgeSetResult = new FeedbackEdgeSet().run(graph)
       const longestPath = new LongestPath({
         subgraphEdges: {
-          excludes: (edge: IEdge) => feedbackEdgeSetResult.feedbackEdgeSet.contains(edge)
+          excludes: (edge: IEdge) =>
+            feedbackEdgeSetResult.feedbackEdgeSet.contains(edge) || edge.isSelfloop
         }
       }).run(graph)
       if (longestPath.edges.size > 0) {
@@ -1851,7 +1855,7 @@ const HierarchicLayoutConfig = (Class as any)('HierarchicLayoutConfig', {
    */
   shouldDisableGridSpacingItem: <any>{
     get: function (): boolean {
-      return !this.$gridEnabledItem
+      return !this.gridEnabledItem
     }
   },
 
@@ -1882,7 +1886,7 @@ const HierarchicLayoutConfig = (Class as any)('HierarchicLayoutConfig', {
    */
   shouldDisableGridPortAssignmentItem: <any>{
     get: function (): boolean {
-      return !this.$gridEnabledItem
+      return !this.gridEnabledItem
     }
   }
 })

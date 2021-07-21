@@ -51,7 +51,13 @@ import {
 } from 'yfiles'
 
 import SamplesData from './samples.js'
-import { bindAction, bindChangeListener, bindCommand, showApp } from '../../resources/demo-app.js'
+import {
+  bindAction,
+  bindChangeListener,
+  bindCommand,
+  checkLicense,
+  showApp
+} from '../../resources/demo-app.js'
 import loadJson from '../../resources/load-json.js'
 import { EdgesSourceDialog, NodesSourceDialog } from './EditSourceDialog.js'
 import { SourcesListBox } from './SourcesListBox.js'
@@ -340,4 +346,4 @@ function createLayout() {
 }
 
 // run the demo
-loadJson().then(run)
+loadJson().then(checkLicense).then(run)

@@ -48,7 +48,13 @@ import {
 import PriorityPanel from './PriorityPanel.js'
 import * as SampleData from './resources/SampleData.js'
 import { DemoNodeStyle } from '../../resources/demo-styles.js'
-import { bindAction, bindChangeListener, bindCommand, showApp } from '../../resources/demo-app.js'
+import {
+  bindAction,
+  bindChangeListener,
+  bindCommand,
+  checkLicense,
+  showApp
+} from '../../resources/demo-app.js'
 import loadJson from '../../resources/load-json.js'
 
 /**
@@ -338,4 +344,4 @@ function registerCommands() {
   })
 }
 
-loadJson().then(run)
+loadJson().then(checkLicense).then(run)

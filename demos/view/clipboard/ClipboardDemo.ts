@@ -46,7 +46,7 @@ import {
 } from 'yfiles'
 
 import { ClipboardBusinessObject, createClipboardBusinessObject } from './ClipboardBusinessObject'
-import { bindAction, bindCommand, showApp } from '../../resources/demo-app'
+import { bindAction, bindCommand, checkLicense, showApp } from '../../resources/demo-app'
 import loadJson from '../../resources/load-json'
 import { TagCopyItem, TaggedNodeClipboardHelper } from './ClipboardHelper'
 
@@ -381,4 +381,4 @@ function initConverters(): void {
   }
 }
 
-loadJson().then(run)
+loadJson().then(checkLicense).then(run)

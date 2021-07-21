@@ -48,7 +48,7 @@ import {
 import GraphData from './resources/SampleData'
 import loadJson from '../../resources/load-json'
 import { initDemoStyles } from '../../resources/demo-styles'
-import { bindCommand, showApp } from '../../resources/demo-app'
+import { bindCommand, checkLicense, showApp } from '../../resources/demo-app'
 import { ExpandCollapseNavigationHelper } from './ExpandCollapseNavigationHandler'
 
 // @ts-ignore
@@ -180,4 +180,4 @@ function buildGraph(graph: IGraph): void {
 }
 
 // run the demo
-loadJson().then(run)
+loadJson().then(checkLicense).then(run)

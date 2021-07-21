@@ -59,7 +59,7 @@ import {
 import GraphSearch from '../../utils/GraphSearch'
 import LevelOfDetailNodeStyle from './LevelOfDetailNodeStyle'
 import OrgChartPropertiesView from './OrgChartPropertiesView'
-import { bindAction, bindCommand, showApp } from '../../resources/demo-app'
+import { bindAction, bindCommand, checkLicense, showApp } from '../../resources/demo-app'
 import OrgChartData from './resources/OrgChartData'
 import loadJson from '../../resources/load-json'
 
@@ -398,4 +398,4 @@ class OrgChartGraphSearch extends GraphSearch {
   }
 }
 
-loadJson().then(run)
+loadJson().then(checkLicense).then(run)

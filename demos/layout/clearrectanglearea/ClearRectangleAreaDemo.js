@@ -63,7 +63,13 @@ import { ClearAreaLayoutHelper } from './ClearAreaLayoutHelper.js'
 import { LayoutOptions } from './LayoutOptions.js'
 import { RectanglePositionHandler } from './RectanglePositionHandler.js'
 
-import { bindAction, bindChangeListener, bindCommand, showApp } from '../../resources/demo-app.js'
+import {
+  bindAction,
+  bindChangeListener,
+  bindCommand,
+  checkLicense,
+  showApp
+} from '../../resources/demo-app.js'
 
 import loadJson from '../../resources/load-json.js'
 import { DemoGroupStyle, DemoNodeStyle, initDemoStyles } from '../../resources/demo-styles.js'
@@ -494,4 +500,4 @@ class ClearRectTemplate extends BaseClass(IVisualTemplate) {
 }
 
 // run the demo
-loadJson().then(run)
+loadJson().then(checkLicense).then(run)

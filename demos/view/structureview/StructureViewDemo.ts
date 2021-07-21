@@ -36,7 +36,7 @@ import {
   Rect
 } from 'yfiles'
 import StructureView from './StructureView'
-import { bindAction, bindCommand, showApp } from '../../resources/demo-app'
+import { bindAction, bindCommand, checkLicense, showApp } from '../../resources/demo-app'
 import { initDemoStyles } from '../../resources/demo-styles'
 import loadJson from '../../resources/load-json'
 
@@ -242,4 +242,4 @@ function registerCommands(graphComponent: GraphComponent, structureView: Structu
 }
 
 // Start the demo
-loadJson().then(run)
+loadJson().then(checkLicense).then(run)

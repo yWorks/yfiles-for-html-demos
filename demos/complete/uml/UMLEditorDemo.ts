@@ -62,7 +62,7 @@ import {
   createRealizationStyle,
   isInheritance
 } from './UMLEdgeStyleFactory'
-import { bindAction, bindCommand, showApp } from '../../resources/demo-app'
+import { bindAction, bindCommand, checkLicense, showApp } from '../../resources/demo-app'
 import * as umlModel from './UMLClassModel'
 import UMLStyle, { UMLNodeStyle, UMLNodeStyleSerializationListener } from './UMLNodeStyle'
 import loadJson from '../../resources/load-json'
@@ -399,4 +399,4 @@ function registerCommands(): void {
 }
 
 // start demo
-loadJson().then(run)
+loadJson().then(checkLicense).then(run)

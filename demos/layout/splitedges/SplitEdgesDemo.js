@@ -61,7 +61,7 @@ import {
 
 import ContextMenuSupport from './ContextMenuSupport.js'
 import { DemoGroupStyle, DemoNodeStyle } from '../../resources/demo-styles.js'
-import { bindAction, bindCommand, showApp } from '../../resources/demo-app.js'
+import { bindAction, bindCommand, checkLicense, showApp } from '../../resources/demo-app.js'
 import loadJson from '../../resources/load-json.js'
 
 /** @type {GraphComponent} */
@@ -341,4 +341,4 @@ class HighlightEdgeStyle extends EdgeStyleBase {
   }
 }
 
-loadJson().then(run)
+loadJson().then(checkLicense).then(run)

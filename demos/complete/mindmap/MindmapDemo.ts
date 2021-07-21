@@ -89,7 +89,7 @@ import {
   TagChangeUndoUnit
 } from './MindmapUtil'
 import MindmapEditorInputMode from './MindmapEditorInputMode'
-import { bindAction, bindCommand, showApp } from '../../resources/demo-app'
+import { bindAction, bindCommand, checkLicense, showApp } from '../../resources/demo-app'
 import MindmapOverviewGraphVisualCreator from './MindmapOverviewGraphVisualCreator'
 import MindmapLayout from './MindmapLayout'
 import DemoCommands from './DemoCommands'
@@ -1027,4 +1027,4 @@ function createSampleGraph(): void {
 }
 
 // Start the demo
-loadJson().then(run)
+loadJson().then(checkLicense).then(run)

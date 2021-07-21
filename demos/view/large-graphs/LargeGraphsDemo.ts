@@ -39,7 +39,13 @@ import {
   NodeReshapeHandleProvider
 } from 'yfiles'
 
-import { addNavigationButtons, addOptions, bindCommand, showApp } from '../../resources/demo-app'
+import {
+  addNavigationButtons,
+  addOptions,
+  bindCommand,
+  checkLicense,
+  showApp
+} from '../../resources/demo-app'
 import loadJson from '../../resources/load-json'
 
 import RenderingTypesManager from './RenderingTypesManager'
@@ -292,4 +298,4 @@ function initToolbar(graphComponent: GraphComponent): void {
 }
 
 // start tutorial
-loadJson().then(run)
+loadJson().then(checkLicense).then(run)

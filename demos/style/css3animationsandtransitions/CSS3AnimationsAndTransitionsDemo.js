@@ -38,7 +38,7 @@ import {
 
 import CSS3NodeStyle from './CSS3NodeStyle.js'
 import { initDemoStyles } from '../../resources/demo-styles.js'
-import { bindCommand, showApp } from '../../resources/demo-app.js'
+import { bindCommand, checkLicense, showApp } from '../../resources/demo-app.js'
 import loadJson from '../../resources/load-json.js'
 
 /** @type {GraphComponent} */
@@ -139,4 +139,4 @@ function registerCommands() {
 }
 
 // start demo
-loadJson().then(run)
+loadJson().then(checkLicense).then(run)

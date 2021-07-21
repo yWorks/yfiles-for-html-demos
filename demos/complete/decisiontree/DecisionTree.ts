@@ -117,7 +117,9 @@ export default class DecisionTree {
     // load the input module and initialize the input mode
     this.initializeInputModes()
 
-    this.initializeDecisionGraph(rootNode)
+    if (originalGraph.nodes.size > 0) {
+      this.initializeDecisionGraph(rootNode)
+    }
   }
 
   /**

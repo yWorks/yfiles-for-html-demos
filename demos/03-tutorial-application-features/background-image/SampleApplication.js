@@ -45,7 +45,7 @@ import {
 
 import RectangleVisualCreator from './RectangleVisualCreator.js'
 import ImageVisualCreator from './ImageVisualCreator.js'
-import { bindAction, bindCommand, showApp } from '../../resources/demo-app.js'
+import { bindAction, bindCommand, checkLicense, showApp } from '../../resources/demo-app.js'
 import loadJson from '../../resources/load-json.js'
 
 /**
@@ -225,4 +225,4 @@ function registerCommands() {
 }
 
 // start tutorial
-loadJson().then(run)
+loadJson().then(checkLicense).then(run)

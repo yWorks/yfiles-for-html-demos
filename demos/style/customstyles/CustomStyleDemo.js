@@ -49,7 +49,7 @@ import CustomSimpleLabelStyle from './CustomSimpleLabelStyle.js'
 import CustomSimpleEdgeStyle from './CustomSimpleEdgeStyle.js'
 import CustomSimpleNodeStyle from './CustomSimpleNodeStyle.js'
 import CustomSimplePortStyle from './CustomSimplePortStyle.js'
-import { bindAction, bindCommand, showApp } from '../../resources/demo-app.js'
+import { bindAction, bindCommand, checkLicense, showApp } from '../../resources/demo-app.js'
 import loadJson from '../../resources/load-json.js'
 
 /** @type {FoldingManager} */
@@ -243,4 +243,4 @@ function modifyColors(graphComponent) {
 }
 
 // start demo
-loadJson().then(run)
+loadJson().then(checkLicense).then(run)

@@ -103,6 +103,7 @@ import {
   bindAction,
   bindChangeListener,
   bindCommand,
+  checkLicense,
   removeClass,
   showApp
 } from '../../resources/demo-app.js'
@@ -1394,4 +1395,4 @@ function querySelector(selector) {
 }
 
 // start demo
-loadJson().then(run)
+loadJson().then(checkLicense).then(run)

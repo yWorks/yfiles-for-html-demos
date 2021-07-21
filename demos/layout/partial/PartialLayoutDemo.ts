@@ -65,6 +65,7 @@ import {
   bindAction,
   bindChangeListener,
   bindCommand,
+  checkLicense,
   readGraph,
   setComboboxValue,
   showApp
@@ -548,4 +549,4 @@ function getElementById<T extends HTMLElement>(id: string): T {
 }
 
 // run the demo
-loadJson().then(run)
+loadJson().then(checkLicense).then(run)

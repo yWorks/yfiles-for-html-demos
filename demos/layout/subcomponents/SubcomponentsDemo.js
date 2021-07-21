@@ -56,7 +56,13 @@ import {
 
 import SampleData from './resources/SampleData.js'
 import { DemoEdgeStyle, DemoNodeStyle } from '../../resources/demo-styles.js'
-import { bindAction, bindChangeListener, bindCommand, showApp } from '../../resources/demo-app.js'
+import {
+  bindAction,
+  bindChangeListener,
+  bindCommand,
+  checkLicense,
+  showApp
+} from '../../resources/demo-app.js'
 import loadJson from '../../resources/load-json.js'
 
 // We need to load the 'router-polyline' module explicitly to prevent tree-shaking
@@ -405,4 +411,4 @@ function registerCommands(graphComponent) {
 }
 
 // run the demo
-loadJson().then(run)
+loadJson().then(checkLicense).then(run)

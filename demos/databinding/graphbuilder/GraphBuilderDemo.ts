@@ -51,7 +51,13 @@ import {
 } from 'yfiles'
 
 import SamplesData from './samples'
-import { bindAction, bindChangeListener, bindCommand, showApp } from '../../resources/demo-app'
+import {
+  bindAction,
+  bindChangeListener,
+  bindCommand,
+  checkLicense,
+  showApp
+} from '../../resources/demo-app'
 import loadJson from '../../resources/load-json'
 import { EdgesSourceDialog, NodesSourceDialog } from './EditSourceDialog'
 import { SourcesListBox } from './SourcesListBox'
@@ -334,4 +340,4 @@ function createLayout(): HierarchicLayout {
 }
 
 // run the demo
-loadJson().then(run)
+loadJson().then(checkLicense).then(run)

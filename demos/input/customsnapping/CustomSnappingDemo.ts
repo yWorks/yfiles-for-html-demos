@@ -52,7 +52,7 @@ import AdditionalSnapLineVisualCreator from './AdditionalSnapLineVisualCreator'
 import { initDemoStyles } from '../../resources/demo-styles'
 import OrthogonalLabelSnapLineProviderWrapper from './OrthogonalLabelSnapLineProviderWrapper'
 import ShapeBasedGridNodeSnapResultProvider from './ShapeBasedGridNodeSnapResultProvider'
-import { showApp } from '../../resources/demo-app'
+import { checkLicense, showApp } from '../../resources/demo-app'
 import AdditionalSnapLineMoveInputMode from './AdditionalSnapLineMoveInputMode'
 import loadJson from '../../resources/load-json'
 
@@ -284,4 +284,4 @@ function createSampleGraph(graph: IGraph): void {
 }
 
 // run the demo
-loadJson().then(run)
+loadJson().then(checkLicense).then(run)

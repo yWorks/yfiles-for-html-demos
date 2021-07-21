@@ -43,7 +43,7 @@ import {
 } from 'yfiles'
 
 import { DemoNodeStyle } from '../../resources/demo-styles'
-import { showApp } from '../../resources/demo-app'
+import { checkLicense, showApp } from '../../resources/demo-app'
 import LimitingRectangleDescriptor from './LimitingRectangleDescriptor'
 import PurpleNodeReshapeHandleProvider from './PurpleNodeReshapeHandleProvider'
 import loadJson from '../../resources/load-json'
@@ -199,4 +199,4 @@ function createNode(
   })
 }
 
-loadJson().then(run)
+loadJson().then(checkLicense).then(run)

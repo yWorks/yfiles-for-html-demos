@@ -71,7 +71,13 @@ import * as ClusteringData from './resources/ClusteringData.js'
 import VoronoiDiagram from './VoronoiDiagram.js'
 import { PolygonVisual, VoronoiVisual } from './DemoVisuals.js'
 import { DendrogramComponent } from './DendrogramSupport.js'
-import { bindAction, bindChangeListener, bindCommand, showApp } from '../../resources/demo-app.js'
+import {
+  bindAction,
+  bindChangeListener,
+  bindCommand,
+  checkLicense,
+  showApp
+} from '../../resources/demo-app.js'
 import loadJson from '../../resources/load-json.js'
 
 /**
@@ -836,4 +842,4 @@ const ClusteringAlgorithm = {
 }
 
 // Run the demo
-loadJson().then(run)
+loadJson().then(checkLicense).then(run)

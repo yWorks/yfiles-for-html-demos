@@ -81,7 +81,7 @@ import HandleTemplate from './HandleTemplate.js'
 import DialContextMenu from './DialContextMenu.js'
 import { DemoGroupStyle, DemoNodeStyle, initDemoStyles } from '../../resources/demo-styles.js'
 import TouchHandleInputMode from './TouchHandleInputMode.js'
-import { showApp } from '../../resources/demo-app.js'
+import { checkLicense, showApp } from '../../resources/demo-app.js'
 import loadJson from '../../resources/load-json.js'
 import PortCandidateTemplate from './PortCandidateTemplate.js'
 
@@ -885,4 +885,4 @@ function populateGraph(graph) {
   graph.addBend(e, new Point(200, 250))
 }
 
-loadJson().then(run)
+loadJson().then(checkLicense).then(run)

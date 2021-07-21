@@ -61,7 +61,7 @@ import {
 
 import PropertiesView from './PropertiesView.js'
 import OrgChartData from './resources/OrgChartData.js'
-import { bindCommand, showApp } from '../../resources/demo-app.js'
+import { bindCommand, checkLicense, showApp } from '../../resources/demo-app.js'
 import loadJson from '../../resources/load-json.js'
 
 /**
@@ -415,4 +415,4 @@ function registerCommands(graphComponent) {
 }
 
 // start demo
-loadJson().then(run)
+loadJson().then(checkLicense).then(run)

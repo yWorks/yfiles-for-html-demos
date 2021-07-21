@@ -52,7 +52,7 @@ import AdditionalSnapLineVisualCreator from './AdditionalSnapLineVisualCreator.j
 import { initDemoStyles } from '../../resources/demo-styles.js'
 import OrthogonalLabelSnapLineProviderWrapper from './OrthogonalLabelSnapLineProviderWrapper.js'
 import ShapeBasedGridNodeSnapResultProvider from './ShapeBasedGridNodeSnapResultProvider.js'
-import { showApp } from '../../resources/demo-app.js'
+import { checkLicense, showApp } from '../../resources/demo-app.js'
 import AdditionalSnapLineMoveInputMode from './AdditionalSnapLineMoveInputMode.js'
 import loadJson from '../../resources/load-json.js'
 
@@ -287,4 +287,4 @@ function createSampleGraph(graph) {
 }
 
 // run the demo
-loadJson().then(run)
+loadJson().then(checkLicense).then(run)

@@ -76,8 +76,11 @@ export default class ReactGraphComponent extends Component {
 
     // Newly created elements are animated during which the graph data should not be modified
     this.updating = false
-    this.scheduledUpdate = null
     this.isDirty = false
+    this.scheduledUpdate = null
+    this.nodesSource = null
+    this.edgesSource = null
+    this.$query = ''
 
     // include the yFiles License
     License.value = yFilesLicense

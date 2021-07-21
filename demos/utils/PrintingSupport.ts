@@ -98,7 +98,15 @@ export default class PrintingSupport {
           .map(co =>
             co.descriptor.getBoundsProvider(co.userObject).getBounds(graphComponent.canvasContext)
           )
-          .flatMap(b => IEnumerable.from([b.topLeft, b.topRight, b.bottomLeft, b.bottomRight]))
+          .filter(bounds => bounds.isFinite)
+          .flatMap(bounds =>
+            IEnumerable.from([
+              bounds.topLeft,
+              bounds.topRight,
+              bounds.bottomLeft,
+              bounds.bottomRight
+            ])
+          )
       )
     }
 

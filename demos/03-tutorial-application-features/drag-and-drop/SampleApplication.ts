@@ -49,7 +49,14 @@ import {
   SvgExport
 } from 'yfiles'
 
-import { addClass, bindAction, bindCommand, removeClass, showApp } from '../../resources/demo-app'
+import {
+  addClass,
+  bindAction,
+  bindCommand,
+  checkLicense,
+  removeClass,
+  showApp
+} from '../../resources/demo-app'
 import { passiveSupported, pointerEventsSupported } from '../../utils/Workarounds'
 import loadJson from '../../resources/load-json'
 
@@ -298,4 +305,4 @@ function registerCommands(): void {
 }
 
 // start tutorial
-loadJson().then(run)
+loadJson().then(checkLicense).then(run)

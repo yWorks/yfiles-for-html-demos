@@ -48,7 +48,13 @@ import {
   SelectionEventArgs
 } from 'yfiles'
 
-import { bindAction, bindChangeListener, bindCommand, showApp } from '../../resources/demo-app.js'
+import {
+  bindAction,
+  bindChangeListener,
+  bindCommand,
+  checkLicense,
+  showApp
+} from '../../resources/demo-app.js'
 import loadJson from '../../resources/load-json.js'
 import { initDemoStyles } from '../../resources/demo-styles.js'
 import SampleData from './resources/SampleData.js'
@@ -277,4 +283,4 @@ function updateButtons(sampleGraphs) {
 }
 
 // start tutorial
-loadJson().then(run)
+loadJson().then(checkLicense).then(run)

@@ -41,7 +41,7 @@ import {
 } from 'yfiles'
 import SampleData from './D3ChartNodesData'
 import D3ChartNodeStyle from './D3ChartNodeStyle'
-import { bindCommand, showApp } from '../../resources/demo-app'
+import { bindCommand, checkLicense, showApp } from '../../resources/demo-app'
 import loadJson from '../../resources/load-json'
 
 let graphComponent: GraphComponent
@@ -139,4 +139,4 @@ function registerCommands(): void {
 }
 
 // start demo
-loadJson().then(run)
+loadJson().then(checkLicense).then(run)

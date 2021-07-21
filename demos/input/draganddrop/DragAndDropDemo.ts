@@ -76,6 +76,7 @@ import {
   addClass,
   bindChangeListener,
   bindCommand,
+  checkLicense,
   removeClass,
   showApp
 } from '../../resources/demo-app'
@@ -528,4 +529,4 @@ function updateDisabledIndicator(): void {
 }
 
 // Runs the demo
-loadJson().then(run)
+loadJson().then(checkLicense).then(run)

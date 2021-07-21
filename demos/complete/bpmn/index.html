@@ -67,8 +67,11 @@
 
     .demo-dialog {
       padding: 10px;
-      display: none;
       cursor: default;
+    }
+
+    .demo-popup {
+      display: none;
     }
 
     .demo-error-dialog {
@@ -233,7 +236,7 @@
   </div>
   <div id="graphComponent">
     <!-- The content templates for the popup panels -->
-    <div id="gatewayPopupContent" class="demo-dialog">
+    <div id="gatewayPopupContent" class="demo-dialog demo-popup">
       <div class="popupHeader">Gateway</div>
       <button data-command="ClosePopup" title="Close the Popup" class="close-popup-button demo-icon-yIconDelete"></button>
       <label>
@@ -242,7 +245,7 @@
       </label>
     </div>
 
-    <div id="eventPopupContent" class="demo-dialog">
+    <div id="eventPopupContent" class="demo-dialog demo-popup">
       <div class="popupHeader">Event</div>
       <button data-command="ClosePopup" title="Close the Popup" class="close-popup-button demo-icon-yIconDelete"></button>
       <label>
@@ -255,7 +258,7 @@
       </label>
     </div>
 
-    <div id="activityPopupContent" class="demo-dialog">
+    <div id="activityPopupContent" class="demo-dialog demo-popup">
       <div class="popupHeader">Activity</div>
       <button data-command="ClosePopup" title="Close the Popup" class="close-popup-button demo-icon-yIconDelete"></button>
       <label>
@@ -292,7 +295,7 @@
       </label>
     </div>
 
-    <div id="conversationPopupContent" class="demo-dialog">
+    <div id="conversationPopupContent" class="demo-dialog demo-popup">
       <div class="popupHeader">Conversation</div>
       <button data-command="ClosePopup" title="Close the Popup" class="close-popup-button demo-icon-yIconDelete"></button>
       <label>
@@ -301,7 +304,7 @@
       </label>
     </div>
 
-    <div id="choreographyPopupContent" class="demo-dialog">
+    <div id="choreographyPopupContent" class="demo-dialog demo-popup">
       <div class="popupHeader">Choreography</div>
       <button data-command="ClosePopup" title="Close the Popup" class="close-popup-button demo-icon-yIconDelete"></button>
       <label>
@@ -330,7 +333,7 @@
       </label>
     </div>
 
-    <div id="dataObjectPopupContent" class="demo-dialog">
+    <div id="dataObjectPopupContent" class="demo-dialog demo-popup">
       <div class="popupHeader">DataObject</div>
       <button data-command="ClosePopup" title="Close the Popup" class="close-popup-button demo-icon-yIconDelete"></button>
       <label>
@@ -343,7 +346,7 @@
       </label>
     </div>
 
-    <div id="poolPopupContent" class="demo-dialog">
+    <div id="poolPopupContent" class="demo-dialog demo-popup">
       <div class="popupHeader">Pool</div>
       <button data-command="ClosePopup" title="Close the Popup" class="close-popup-button demo-icon-yIconDelete"></button>
       <label>
@@ -352,7 +355,7 @@
       </label>
     </div>
 
-    <div id="edgePopupContent" class="demo-dialog">
+    <div id="edgePopupContent" class="demo-dialog demo-popup">
       <div class="popupHeader">Edge</div>
       <button data-command="ClosePopup" title="Close the Popup" class="close-popup-button demo-icon-yIconDelete"></button>
       <label>
@@ -361,7 +364,7 @@
       </label>
     </div>
 
-    <div id="portPopupContent" class="demo-dialog">
+    <div id="portPopupContent" class="demo-dialog demo-popup">
       <div class="popupHeader">Boundary Event</div>
       <button data-command="ClosePopup" title="Close the Popup" class="close-popup-button demo-icon-yIconDelete"></button>
       <label>

@@ -49,7 +49,7 @@ import {
   ClipboardBusinessObject,
   createClipboardBusinessObject
 } from './ClipboardBusinessObject.js'
-import { bindAction, bindCommand, showApp } from '../../resources/demo-app.js'
+import { bindAction, bindCommand, checkLicense, showApp } from '../../resources/demo-app.js'
 import loadJson from '../../resources/load-json.js'
 import { TagCopyItem, TaggedNodeClipboardHelper } from './ClipboardHelper.js'
 
@@ -381,4 +381,4 @@ function initConverters() {
   }
 }
 
-loadJson().then(run)
+loadJson().then(checkLicense).then(run)

@@ -41,7 +41,7 @@ import {
 } from 'yfiles'
 
 import { DemoNodeStyle } from '../../resources/demo-styles.js'
-import { showApp } from '../../resources/demo-app.js'
+import { checkLicense, showApp } from '../../resources/demo-app.js'
 import LimitedRectangleDescriptor from './LimitedRectangleDescriptor.js'
 import GreenSizeConstraintProvider from './GreenSizeConstraintProvider.js'
 import BlueSizeConstraintProvider from './BlueSizeConstraintProvider.js'
@@ -152,4 +152,4 @@ function createNode(graph, x, y, w, h, cssClass, textColor, labelText) {
   })
 }
 
-loadJson().then(run)
+loadJson().then(checkLicense).then(run)

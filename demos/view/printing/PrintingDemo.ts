@@ -46,7 +46,7 @@ import {
 import PrintingSupport from '../../utils/PrintingSupport'
 import PositionHandler from './PositionHandler'
 import { initDemoStyles } from '../../resources/demo-styles'
-import { bindAction, showApp } from '../../resources/demo-app'
+import { bindAction, checkLicense, showApp } from '../../resources/demo-app'
 import loadJson from '../../resources/load-json'
 
 let graphComponent: GraphComponent = null!
@@ -221,4 +221,4 @@ function isValidInput(input: string, text: string): boolean {
 }
 
 // run the demo
-loadJson().then(run)
+loadJson().then(checkLicense).then(run)

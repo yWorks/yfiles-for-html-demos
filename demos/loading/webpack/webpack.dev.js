@@ -33,9 +33,6 @@ module.exports = {
   entry: {
     app: ['./src/webpack-demo.js']
   },
-  devServer: {
-    hot: true
-  },
   // default devtool needs to be disabled for the SourceMapDevToolPlugin below to be used
   devtool: false,
   plugins: [

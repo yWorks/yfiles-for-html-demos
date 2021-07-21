@@ -46,7 +46,13 @@ import {
   StarSubstructureStyle
 } from 'yfiles'
 import NodeTypePanel from '../../utils/NodeTypePanel'
-import { bindAction, bindChangeListener, bindCommand, showApp } from '../../resources/demo-app'
+import {
+  bindAction,
+  bindChangeListener,
+  bindCommand,
+  checkLicense,
+  showApp
+} from '../../resources/demo-app'
 import DemoStyles, {
   DemoEdgeStyle,
   DemoNodeStyle,
@@ -524,4 +530,4 @@ function getElementById<T extends HTMLElement>(id: string): T {
 }
 
 // start tutorial
-loadJson().then(run)
+loadJson().then(checkLicense).then(run)

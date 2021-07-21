@@ -41,7 +41,7 @@ import {
 } from 'yfiles'
 
 import { initDemoStyles } from '../../resources/demo-styles.js'
-import { bindAction, bindCommand, showApp } from '../../resources/demo-app.js'
+import { bindAction, bindCommand, checkLicense, showApp } from '../../resources/demo-app.js'
 import loadJson from '../../resources/load-json.js'
 
 let graphComponent = null
@@ -795,4 +795,4 @@ function getLoremIpsum() {
 }
 
 // start demo
-loadJson().then(run)
+loadJson().then(checkLicense).then(run)

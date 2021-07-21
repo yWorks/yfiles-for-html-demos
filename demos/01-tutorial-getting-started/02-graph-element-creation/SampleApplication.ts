@@ -27,7 +27,7 @@
  **
  ***************************************************************************/
 import { FreeNodePortLocationModel, GraphComponent, License, Point, Rect } from 'yfiles'
-import { showApp } from '../../resources/demo-app'
+import { checkLicense, showApp } from '../../resources/demo-app'
 import loadJson from '../../resources/load-json'
 
 // @ts-ignore
@@ -118,4 +118,4 @@ function populateGraph(): void {
 // ////////////////////////////////////////////////////
 
 // start tutorial
-loadJson().then(run)
+loadJson().then(checkLicense).then(run)

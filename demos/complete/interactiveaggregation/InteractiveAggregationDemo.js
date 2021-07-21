@@ -64,7 +64,7 @@ import {
 import ContextMenu from '../../utils/ContextMenu.js'
 import loadJson from '../../resources/load-json.js'
 import { initDemoStyles } from '../../resources/demo-styles.js'
-import { bindCommand, showApp } from '../../resources/demo-app.js'
+import { bindCommand, checkLicense, showApp } from '../../resources/demo-app.js'
 
 Class.ensure(LayoutExecutor)
 
@@ -469,4 +469,4 @@ class ShapeAndFill {
   }
 }
 
-loadJson().then(run)
+loadJson().then(checkLicense).then(run)

@@ -52,7 +52,7 @@ import {
 } from 'yfiles'
 
 import VuejsNodeStyle from './VuejsNodeStyle.js'
-import { showApp } from '../../resources/demo-app.js'
+import { checkLicense, showApp } from '../../resources/demo-app.js'
 import orgChartData from './resources/OrgChartData.js'
 import loadJson from '../../resources/load-json.js'
 
@@ -74,7 +74,7 @@ const sharedData = {
   focusedNodeData: null
 }
 
-loadJson().then(run)
+loadJson().then(checkLicense).then(run)
 
 function run(licenseData) {
   License.value = licenseData

@@ -45,7 +45,7 @@ import {
 import createNewRandomUserData from './UserDataFactory.js'
 import DataTableLabelStyle from './DataTableLabelStyle.js'
 import DataTableNodeStyle from './DataTableNodeStyle.js'
-import { bindAction, bindCommand, showApp } from '../../resources/demo-app.js'
+import { bindAction, bindCommand, checkLicense, showApp } from '../../resources/demo-app.js'
 import loadJson from '../../resources/load-json.js'
 
 /**
@@ -239,4 +239,4 @@ function registerCommands(graphComponent) {
 }
 
 // Runs the demo
-loadJson().then(run)
+loadJson().then(checkLicense).then(run)

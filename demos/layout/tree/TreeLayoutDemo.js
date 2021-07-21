@@ -50,7 +50,13 @@ import {
 } from './TreeLayoutConfigurations.js'
 import * as TreeData from './resources/TreeData.js'
 import CreateTreeEdgeInputMode from './CreateTreeEdgeInputMode.js'
-import { bindAction, bindChangeListener, bindCommand, showApp } from '../../resources/demo-app.js'
+import {
+  bindAction,
+  bindChangeListener,
+  bindCommand,
+  checkLicense,
+  showApp
+} from '../../resources/demo-app.js'
 import loadJson from '../../resources/load-json.js'
 import NodePlacerPanel, { LayerFills } from './NodePlacerPanel.js'
 
@@ -362,4 +368,4 @@ function registerCommands() {
   })
 }
 
-loadJson().then(run)
+loadJson().then(checkLicense).then(run)

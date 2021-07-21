@@ -87,7 +87,13 @@ import DemoStyles, {
 } from '../../resources/demo-styles'
 import * as RotatableNodes from './RotatableNodes'
 import { RotatableNodesSerializationListener, RotatableNodeStyleDecorator } from './RotatableNodes'
-import { bindAction, bindChangeListener, bindCommand, showApp } from '../../resources/demo-app'
+import {
+  bindAction,
+  bindChangeListener,
+  bindCommand,
+  checkLicense,
+  showApp
+} from '../../resources/demo-app'
 import loadJson from '../../resources/load-json'
 
 let graphComponent: GraphComponent
@@ -642,4 +648,4 @@ function addRotatedStyles(): void {
 }
 
 // run the demo
-loadJson().then(run)
+loadJson().then(checkLicense).then(run)

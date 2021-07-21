@@ -85,7 +85,13 @@ import {
   YRectangle
 } from 'yfiles'
 
-import { bindAction, bindChangeListener, bindCommand, showApp } from '../../resources/demo-app'
+import {
+  bindAction,
+  bindChangeListener,
+  bindCommand,
+  checkLicense,
+  showApp
+} from '../../resources/demo-app'
 import loadJson from '../../resources/load-json'
 import { AggregationHelper, AggregationNodeInfo } from './AggregationHelper'
 import { AggregationGraphWrapper, EdgeReplacementPolicy } from '../../utils/AggregationGraphWrapper'
@@ -812,4 +818,4 @@ function registerCommands(): void {
 }
 
 // start tutorial
-loadJson().then(run)
+loadJson().then(checkLicense).then(run)

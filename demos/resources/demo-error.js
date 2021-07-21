@@ -28,6 +28,9 @@
  ***************************************************************************/
 import { Exception, yfiles } from 'yfiles'
 
+export const INVALID_LICENSE_MESSAGE =
+  'This is an expected error caused by invalid or missing license data.'
+
 const OK_STATE = 'OK'
 const ERROR_STATE = 'Error!'
 
@@ -111,8 +114,10 @@ export function registerErrorDialog() {
 
   window.onunhandledrejection = e => {
     if (e.reason instanceof Error) {
-      logError(unwindStack(e.reason))
-      openErrorDialog(null, null, 0, 0, e.reason)
+      if (e.reason.message !== INVALID_LICENSE_MESSAGE) {
+        logError(unwindStack(e.reason))
+        openErrorDialog(null, null, 0, 0, e.reason)
+      }
     } else if (typeof e.reason === 'string') {
       logError(e.reason)
       openErrorDialog(e.reason, null, 0, 0, null)

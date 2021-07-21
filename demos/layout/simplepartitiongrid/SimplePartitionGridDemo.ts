@@ -39,7 +39,7 @@ import {
   PartitionGridData
 } from 'yfiles'
 import GraphData from './resources/GraphData'
-import { bindCommand, showApp } from '../../resources/demo-app'
+import { bindCommand, checkLicense, showApp } from '../../resources/demo-app'
 import loadJson from '../../resources/load-json'
 import SimplePartitionGridVisualCreator from './SimplePartitionGridVisualCreator'
 import { initDemoStyles } from '../../resources/demo-styles'
@@ -198,4 +198,4 @@ function registerCommands(): void {
   bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
 }
 // run the demo
-loadJson().then(run)
+loadJson().then(checkLicense).then(run)

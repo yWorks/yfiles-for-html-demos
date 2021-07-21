@@ -942,4 +942,4 @@ class AdditionalEditLabelHelper extends EditLabelHelper {
 }
 
 // start the demo
-loadJson().then(run)
+loadJson().then(DemoApp.checkLicense).then(run)

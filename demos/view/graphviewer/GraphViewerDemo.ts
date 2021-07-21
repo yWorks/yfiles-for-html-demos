@@ -76,6 +76,7 @@ import {
   bindAction,
   bindChangeListener,
   bindCommand,
+  checkLicense,
   readGraph,
   showApp
 } from '../../resources/demo-app'
@@ -719,4 +720,4 @@ class CustomGraphSearch extends GraphSearch {
 }
 
 // run the demo
-loadJson().then(run)
+loadJson().then(checkLicense).then(run)

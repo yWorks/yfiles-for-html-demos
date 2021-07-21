@@ -72,7 +72,13 @@ import PathsConfig from './PathsConfig.js'
 import ConnectivityConfig from './ConnectivityConfig.js'
 import MinimumSpanningTreeConfig from './MinimumSpanningTreeConfig.js'
 import SubstructuresConfig from './SubstructuresConfig.js'
-import { bindAction, bindChangeListener, bindCommand, showApp } from '../../resources/demo-app.js'
+import {
+  bindAction,
+  bindChangeListener,
+  bindCommand,
+  checkLicense,
+  showApp
+} from '../../resources/demo-app.js'
 import loadJson from '../../resources/load-json.js'
 import AlgorithmConfiguration from './AlgorithmConfiguration.js'
 
@@ -1431,4 +1437,4 @@ function handleError(error) {
 }
 
 // run the demo
-loadJson().then(run)
+loadJson().then(checkLicense).then(run)

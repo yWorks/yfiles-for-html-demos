@@ -44,7 +44,7 @@ import {
   SmartEdgeLabelModel
 } from 'yfiles'
 
-import { showApp, bindAction, bindCommand } from '../../resources/demo-app.js'
+import { bindAction, bindCommand, checkLicense, showApp } from '../../resources/demo-app.js'
 import LabelStyleDecorator from './LabelStyleDecorator.js'
 import EdgeStyleDecorator from './EdgeStyleDecorator.js'
 import NodeStyleDecorator from './NodeStyleDecorator.js'
@@ -240,4 +240,4 @@ function registerCommands(graphComponent) {
 }
 
 // start demo
-loadJson().then(run)
+loadJson().then(checkLicense).then(run)

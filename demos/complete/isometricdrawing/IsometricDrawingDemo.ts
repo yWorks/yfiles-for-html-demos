@@ -74,7 +74,7 @@ import {
   WebGLPolylineEdgeStyle
 } from 'yfiles'
 import IsometricData from './resources/IsometricData'
-import { bindAction, bindInputListener, showApp } from '../../resources/demo-app'
+import { bindAction, bindInputListener, checkLicense, showApp } from '../../resources/demo-app'
 import loadJson from '../../resources/load-json'
 import IsometricWebGLNodeStyle from './IsometricWebGLNodeStyle'
 import HeightHandleProvider from './HeightHandleProvider'
@@ -399,4 +399,4 @@ function setUIDisabled(disabled: boolean): void {
   ;(document.getElementById('rotation') as HTMLInputElement).disabled = disabled
 }
 
-loadJson().then(run)
+loadJson().then(checkLicense).then(run)

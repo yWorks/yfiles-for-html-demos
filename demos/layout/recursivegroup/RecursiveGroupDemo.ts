@@ -49,6 +49,7 @@ import {
   bindAction,
   bindChangeListener,
   bindCommand,
+  checkLicense,
   readGraph,
   showApp
 } from '../../resources/demo-app'
@@ -195,4 +196,4 @@ function setUIDisabled(disabled: boolean): void {
 }
 
 // start the demo
-loadJson().then(run)
+loadJson().then(checkLicense).then(run)

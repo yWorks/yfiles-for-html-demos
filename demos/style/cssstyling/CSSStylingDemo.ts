@@ -49,7 +49,7 @@ import {
   Visualization
 } from 'yfiles'
 import { DemoEdgeStyle, DemoNodeStyle } from '../../resources/demo-styles'
-import { bindCommand, showApp } from '../../resources/demo-app'
+import { bindCommand, checkLicense, showApp } from '../../resources/demo-app'
 import loadJson from '../../resources/load-json'
 
 let graphComponent: GraphComponent
@@ -235,4 +235,4 @@ class GraphOverviewVisualCreator extends GraphOverviewCanvasVisualCreator {
 }
 
 // start demo
-loadJson().then(run)
+loadJson().then(checkLicense).then(run)

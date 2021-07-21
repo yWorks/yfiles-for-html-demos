@@ -42,7 +42,8 @@ import {
   bindChangeListener,
   bindCommand,
   readGraph,
-  showApp
+  showApp,
+  checkLicense
 } from '../../resources/demo-app.js'
 import loadJson from '../../resources/load-json.js'
 
@@ -181,4 +182,4 @@ function onNextButtonClicked() {
 }
 
 // run the demo
-loadJson().then(run)
+loadJson().then(checkLicense).then(run)

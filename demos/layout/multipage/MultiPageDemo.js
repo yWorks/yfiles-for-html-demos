@@ -66,6 +66,7 @@ import {
   bindAction,
   bindChangeListener,
   bindCommand,
+  checkLicense,
   readGraph,
   showApp
 } from '../../resources/demo-app.js'
@@ -532,4 +533,4 @@ async function loadModelGraph(graphId) {
   runMultiPageLayout()
 }
 
-loadJson().then(run)
+loadJson().then(checkLicense).then(run)

@@ -50,7 +50,7 @@ import {
 
 import LabelHandleProvider from './LabelHandleProvider'
 import { initDemoStyles } from '../../resources/demo-styles'
-import { bindCommand, showApp } from '../../resources/demo-app'
+import { bindCommand, checkLicense, showApp } from '../../resources/demo-app'
 import loadJson from '../../resources/load-json'
 
 let graphComponent: GraphComponent
@@ -208,4 +208,4 @@ function registerCommands(): void {
 }
 
 // run the demo
-loadJson().then(run)
+loadJson().then(checkLicense).then(run)

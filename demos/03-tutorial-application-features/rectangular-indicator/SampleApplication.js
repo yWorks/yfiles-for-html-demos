@@ -54,7 +54,7 @@ import {
 } from 'yfiles'
 
 import PositionHandler from './PositionHandler.js'
-import { bindAction, bindCommand, showApp } from '../../resources/demo-app.js'
+import { bindAction, bindCommand, checkLicense, showApp } from '../../resources/demo-app.js'
 import loadJson from '../../resources/load-json.js'
 
 /**
@@ -245,4 +245,4 @@ function registerCommands() {
 }
 
 // start tutorial
-loadJson().then(run)
+loadJson().then(checkLicense).then(run)

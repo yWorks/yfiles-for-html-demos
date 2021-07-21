@@ -67,6 +67,7 @@ import {
   bindAction,
   bindChangeListener,
   bindCommand,
+  checkLicense,
   removeClass,
   showApp
 } from '../../resources/demo-app.js'
@@ -438,4 +439,4 @@ function createPortDescriptors(nodes, graph) {
 }
 
 // run the demo
-loadJson().then(run)
+loadJson().then(checkLicense).then(run)

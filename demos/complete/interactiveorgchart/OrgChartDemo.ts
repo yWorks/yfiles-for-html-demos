@@ -53,7 +53,7 @@ import GraphSearch from '../../utils/GraphSearch'
 import ClickablePortsSupport from './ClickablePortsSupport'
 import PrintingSupport from '../../utils/PrintingSupport'
 import OrgChartPropertiesView from './OrgChartPropertiesView'
-import { bindAction, bindCommand, showApp } from '../../resources/demo-app'
+import { bindAction, bindCommand, checkLicense, showApp } from '../../resources/demo-app'
 import OrgChartData from './resources/OrgChartData'
 import OrgChartGraph from './OrgChartGraph'
 import loadJson from '../../resources/load-json'
@@ -555,4 +555,4 @@ class OrgChartGraphSearch extends GraphSearch {
   }
 }
 
-loadJson().then(run)
+loadJson().then(checkLicense).then(run)

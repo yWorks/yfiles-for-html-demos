@@ -54,7 +54,13 @@ import {
 
 import SimpleOutputHandler from './SimpleOutputHandler.js'
 import SimpleInputHandler from './SimpleInputHandler.js'
-import { bindAction, bindCommand, readGraph, showApp } from '../../resources/demo-app.js'
+import {
+  bindAction,
+  bindCommand,
+  checkLicense,
+  readGraph,
+  showApp
+} from '../../resources/demo-app.js'
 import { PropertiesPanel } from './PropertiesPanel.js'
 import DemoStyles, {
   DemoSerializationListener,
@@ -585,4 +591,4 @@ function registerCommands() {
   bindCommand("button[data-command='UngroupSelection']", ICommand.UNGROUP_SELECTION, graphComponent)
 }
 
-loadJson().then(run)
+loadJson().then(checkLicense).then(run)

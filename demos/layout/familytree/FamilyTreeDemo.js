@@ -46,7 +46,7 @@ import {
   ShapeNodeStyle
 } from 'yfiles'
 
-import { bindCommand, showApp } from '../../resources/demo-app.js'
+import { bindCommand, checkLicense, showApp } from '../../resources/demo-app.js'
 import loadJson from '../../resources/load-json.js'
 import GraphBuilderData from './resources/kennedy-family.js'
 
@@ -230,4 +230,4 @@ function registerCommands(graphComponent) {
 }
 
 // start tutorial
-loadJson().then(run)
+loadJson().then(checkLicense).then(run)

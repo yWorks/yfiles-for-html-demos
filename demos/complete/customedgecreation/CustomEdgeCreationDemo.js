@@ -52,7 +52,13 @@ import {
   VoidPortStyle
 } from 'yfiles'
 
-import { bindAction, bindChangeListener, bindCommand, showApp } from '../../resources/demo-app.js'
+import {
+  bindAction,
+  bindChangeListener,
+  bindCommand,
+  checkLicense,
+  showApp
+} from '../../resources/demo-app.js'
 import loadJson from '../../resources/load-json.js'
 import { initDemoStyles } from '../../resources/demo-styles.js'
 import { RoutingCreateEdgeInputMode, RoutingStrategy } from './RoutingCreateEdgeInputMode.js'
@@ -478,4 +484,4 @@ function registerCommands(graphComponent) {
 }
 
 // start demo
-loadJson().then(run)
+loadJson().then(checkLicense).then(run)

@@ -44,7 +44,7 @@ import {
   ShapeNodeStyle
 } from 'yfiles'
 
-import { bindCommand, showApp } from '../../resources/demo-app.js'
+import { bindCommand, checkLicense, showApp } from '../../resources/demo-app.js'
 import loadJson from '../../resources/load-json.js'
 import { DemoNodeStyle, initDemoStyles } from '../../resources/demo-styles.js'
 import GraphData from './resources/GraphData.js'
@@ -181,4 +181,4 @@ function registerCommands() {
 }
 
 // run the demo
-loadJson().then(run)
+loadJson().then(checkLicense).then(run)

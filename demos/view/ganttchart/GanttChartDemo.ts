@@ -83,7 +83,7 @@ import ActivityNodeHighlightStyle from './ActivityNodeHighlightStyle'
 import RoutingEdgeStyle from './RoutingEdgeStyle'
 import ActivityNodePortLocationModel from './ActivityNodePortLocationModel'
 import ActivityNodeStyle from './ActivityNodeStyle'
-import { showApp } from '../../resources/demo-app'
+import { checkLicense, showApp } from '../../resources/demo-app'
 import dataModel from './resources/datamodel'
 import GanttMapper from './GanttMapper'
 import loadJson from '../../resources/load-json'
@@ -981,4 +981,4 @@ function updateContentRects() {
 }
 
 // Start the demo
-loadJson().then(run)
+loadJson().then(checkLicense).then(run)

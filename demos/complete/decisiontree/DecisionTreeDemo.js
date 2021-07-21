@@ -65,6 +65,7 @@ import {
   bindAction,
   bindChangeListener,
   bindCommand,
+  checkLicense,
   hasClass,
   readGraph,
   removeClass,
@@ -612,4 +613,4 @@ async function readSampleGraph() {
 }
 
 // run the demo
-loadJson().then(run)
+loadJson().then(checkLicense).then(run)

@@ -40,7 +40,7 @@ import {
 } from 'yfiles'
 
 import LevelOfDetailNodeStyle from './LevelOfDetailNodeStyle.js'
-import { bindAction, bindCommand, showApp } from '../../resources/demo-app.js'
+import { bindAction, bindCommand, checkLicense, showApp } from '../../resources/demo-app.js'
 import loadJson from '../../resources/load-json.js'
 
 /** @type {GraphComponent} */
@@ -208,4 +208,4 @@ function createGraph() {
   graphComponent.fitGraphBounds()
 }
 
-loadJson().then(run)
+loadJson().then(checkLicense).then(run)

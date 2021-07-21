@@ -48,7 +48,7 @@ import {
 } from 'yfiles'
 
 import { InteractiveOrganicFastEdgeStyle, InteractiveOrganicFastNodeStyle } from './DemoStyles'
-import { bindCommand, showApp } from '../../resources/demo-app'
+import { bindCommand, checkLicense, showApp } from '../../resources/demo-app'
 import loadJson from '../../resources/load-json'
 
 /**
@@ -431,4 +431,4 @@ function createSampleGraph(graph: IGraph): void {
 }
 
 // start demo
-loadJson().then(run)
+loadJson().then(checkLicense).then(run)

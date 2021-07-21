@@ -59,6 +59,7 @@ import {
   bindAction,
   bindChangeListener,
   bindCommand,
+  checkLicense,
   removeClass,
   showApp
 } from '../../resources/demo-app'
@@ -482,4 +483,4 @@ function registerCommands(): void {
 }
 
 // start tutorial
-loadJson().then(run)
+loadJson().then(checkLicense).then(run)

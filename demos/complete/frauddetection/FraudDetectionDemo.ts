@@ -62,6 +62,7 @@ import {
   addClass,
   bindChangeListener,
   bindCommand,
+  checkLicense,
   removeClass,
   showApp
 } from '../../resources/demo-app'
@@ -888,4 +889,4 @@ function animateViewPort(componentIdx: number, highlight: boolean) {
 }
 
 // start the demo
-loadJson().then(run)
+loadJson().then(checkLicense).then(run)

@@ -28,7 +28,7 @@
  ***************************************************************************/
 import loadJson from '../../../resources/load-json.js'
 import { GraphComponent, GraphViewerInputMode, ICommand, License } from 'yfiles'
-import { bindAction, bindCommand, showApp } from '../../../resources/demo-app.js'
+import { bindAction, bindCommand, checkLicense, showApp } from '../../../resources/demo-app.js'
 import { createEdge, createNode } from './ItemFactory.js'
 
 function run(licenseData) {
@@ -62,4 +62,4 @@ function registerCommands(graphComponent) {
   bindAction('#createEdgeButton', () => createEdge(graphComponent.graph, graphComponent.selection))
 }
 
-loadJson().then(run)
+loadJson().then(checkLicense).then(run)

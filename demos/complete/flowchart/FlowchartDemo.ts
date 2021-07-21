@@ -68,6 +68,7 @@ import {
   bindAction,
   bindChangeListener,
   bindCommand,
+  checkLicense,
   removeClass,
   setComboboxValue,
   showApp
@@ -412,4 +413,4 @@ function setUIDisabled(disabled: boolean): void {
   ;(document.getElementById('layout') as HTMLInputElement).disabled = disabled
 }
 
-loadJson().then(run)
+loadJson().then(checkLicense).then(run)

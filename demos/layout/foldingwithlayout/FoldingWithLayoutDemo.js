@@ -48,7 +48,7 @@ import {
 import GraphData from './resources/SampleData.js'
 import loadJson from '../../resources/load-json.js'
 import { initDemoStyles } from '../../resources/demo-styles.js'
-import { bindCommand, showApp } from '../../resources/demo-app.js'
+import { bindCommand, checkLicense, showApp } from '../../resources/demo-app.js'
 import { ExpandCollapseNavigationHelper } from './ExpandCollapseNavigationHandler.js'
 
 /** @type {GraphComponent} */
@@ -182,4 +182,4 @@ function buildGraph(graph) {
 }
 
 // run the demo
-loadJson().then(run)
+loadJson().then(checkLicense).then(run)

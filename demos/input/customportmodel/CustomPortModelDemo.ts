@@ -51,7 +51,7 @@ import {
   CustomNodePortLocationModelParameter,
   PortLocation
 } from './CustomNodePortLocationModel'
-import { bindAction, bindCommand, showApp } from '../../resources/demo-app'
+import { bindAction, bindCommand, checkLicense, showApp } from '../../resources/demo-app'
 import loadJson from '../../resources/load-json'
 
 let graphComponent: GraphComponent = null!
@@ -187,4 +187,4 @@ function registerCommands(): void {
   bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
 }
 
-loadJson().then(run)
+loadJson().then(checkLicense).then(run)

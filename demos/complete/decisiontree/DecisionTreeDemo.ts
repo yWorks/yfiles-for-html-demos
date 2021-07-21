@@ -62,6 +62,7 @@ import {
   bindAction,
   bindChangeListener,
   bindCommand,
+  checkLicense,
   hasClass,
   readGraph,
   removeClass,
@@ -606,4 +607,4 @@ async function readSampleGraph(): Promise<IGraph> {
 }
 
 // run the demo
-loadJson().then(run)
+loadJson().then(checkLicense).then(run)

@@ -53,7 +53,7 @@ import GraphSearch from '../../utils/GraphSearch.js'
 import ClickablePortsSupport from './ClickablePortsSupport.js'
 import PrintingSupport from '../../utils/PrintingSupport.js'
 import OrgChartPropertiesView from './OrgChartPropertiesView.js'
-import { bindAction, bindCommand, showApp } from '../../resources/demo-app.js'
+import { bindAction, bindCommand, checkLicense, showApp } from '../../resources/demo-app.js'
 import OrgChartData from './resources/OrgChartData.js'
 import OrgChartGraph from './OrgChartGraph.js'
 import loadJson from '../../resources/load-json.js'
@@ -553,4 +553,4 @@ class OrgChartGraphSearch extends GraphSearch {
   }
 }
 
-loadJson().then(run)
+loadJson().then(checkLicense).then(run)

@@ -105,7 +105,7 @@ export default class ReactGraphComponent extends Component<
   private nodesSource: NodesSource<NodeData> | null
   private edgesSource: EdgesSource<EdgeData> | null
   private graphSearch: NodeTagSearch
-  private $query: string = ''
+  private $query: string
 
   constructor(props: ReactGraphComponentProps) {
     super(props)
@@ -125,6 +125,7 @@ export default class ReactGraphComponent extends Component<
     this.scheduledUpdate = null
     this.nodesSource = null
     this.edgesSource = null
+    this.$query = ''
 
     // include the yFiles License
     License.value = yFilesLicense

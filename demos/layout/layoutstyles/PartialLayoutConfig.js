@@ -29,6 +29,7 @@
 import {
   CircularLayout,
   Class,
+  ClearAreaLayout,
   ComponentAssignmentStrategy,
   Enum,
   GraphComponent,
@@ -58,6 +59,10 @@ import {
   OptionGroupAttribute,
   TypeAttribute
 } from '../../resources/demo-option-editor.js'
+
+// We need to load the module 'layout-area' explicitly to be able to use the method
+// 'allowMovingFixedElements' from the PartialLayout
+Class.ensure(ClearAreaLayout)
 
 /**
  * Configuration options for the layout algorithm of the same name.

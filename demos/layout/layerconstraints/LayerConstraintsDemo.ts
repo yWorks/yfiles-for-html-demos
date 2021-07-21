@@ -50,7 +50,7 @@ import {
 } from 'yfiles'
 
 import RandomGraphGenerator from '../../utils/RandomGraphGenerator'
-import { bindAction, bindCommand, showApp } from '../../resources/demo-app'
+import { bindAction, bindCommand, checkLicense, showApp } from '../../resources/demo-app'
 import loadJson from '../../resources/load-json'
 
 function run(licenseData: object): void {
@@ -446,4 +446,4 @@ class LayerConstraintsData extends BaseClass(IPropertyObservable) {
 }
 
 // run the demo
-loadJson().then(run)
+loadJson().then(checkLicense).then(run)

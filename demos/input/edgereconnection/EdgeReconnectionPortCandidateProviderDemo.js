@@ -43,7 +43,7 @@ import {
 } from 'yfiles'
 
 import { DemoNodeStyle, DemoEdgeStyle } from '../../resources/demo-styles.js'
-import { showApp } from '../../resources/demo-app.js'
+import { checkLicense, showApp } from '../../resources/demo-app.js'
 import GreenEdgePortCandidateProvider from './GreenEdgePortCandidateProvider.js'
 import BlueEdgePortCandidateProvider from './BlueEdgePortCandidateProvider.js'
 import OrangeEdgePortCandidateProvider from './OrangeEdgePortCandidateProvider.js'
@@ -186,4 +186,4 @@ function createSubgraph(graph, cssClass, yOffset) {
 }
 
 // run the demo
-loadJson().then(run)
+loadJson().then(checkLicense).then(run)

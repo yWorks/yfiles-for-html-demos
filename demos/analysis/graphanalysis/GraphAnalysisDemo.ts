@@ -72,7 +72,13 @@ import PathsConfig from './PathsConfig'
 import ConnectivityConfig from './ConnectivityConfig'
 import MinimumSpanningTreeConfig from './MinimumSpanningTreeConfig'
 import SubstructuresConfig from './SubstructuresConfig'
-import { bindAction, bindChangeListener, bindCommand, showApp } from '../../resources/demo-app'
+import {
+  bindAction,
+  bindChangeListener,
+  bindCommand,
+  checkLicense,
+  showApp
+} from '../../resources/demo-app'
 import loadJson from '../../resources/load-json'
 import AlgorithmConfiguration from './AlgorithmConfiguration'
 
@@ -1416,4 +1422,4 @@ function handleError(error: any): void {
 }
 
 // run the demo
-loadJson().then(run)
+loadJson().then(checkLicense).then(run)

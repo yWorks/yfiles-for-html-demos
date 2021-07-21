@@ -44,7 +44,7 @@ import SaveToFileOperation from './SaveToFileOperation.js'
 import SaveToNewWindowOperation from './SaveToNewWindowOperation.js'
 import SaveToWebStorageOperation from './SaveToWebStorageOperation.js'
 import SaveViaServerOperation from './SaveViaServerOperation.js'
-import { bindAction, showApp } from '../../resources/demo-app.js'
+import { bindAction, checkLicense, showApp } from '../../resources/demo-app.js'
 import DemoStyles, {
   DemoSerializationListener,
   initDemoStyles
@@ -303,4 +303,4 @@ function querySelector(selector) {
 }
 
 // Runs the demo.
-loadJson().then(run)
+loadJson().then(checkLicense).then(run)

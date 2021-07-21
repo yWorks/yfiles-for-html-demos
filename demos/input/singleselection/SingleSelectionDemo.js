@@ -28,7 +28,7 @@
  ***************************************************************************/
 import { GraphComponent, GraphEditorInputMode, IGraph, License, Point, Rect, Size } from 'yfiles'
 
-import { bindAction, bindChangeListener, showApp } from '../../resources/demo-app.js'
+import { bindChangeListener, checkLicense, showApp } from '../../resources/demo-app.js'
 import { initDemoStyles } from '../../resources/demo-styles.js'
 import loadJson from '../../resources/load-json.js'
 import { disableSingleSelection, enableSingleSelection } from './SingleSelectionHelper.js'
@@ -118,4 +118,4 @@ function createSampleGraph(graph) {
   graph.undoEngine.clear()
 }
 
-loadJson().then(run)
+loadJson().then(checkLicense).then(run)

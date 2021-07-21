@@ -48,7 +48,7 @@ import TreeBuilderDataJson from './tree-builder-data-json.js'
 import TreeBuilderDataArray from './tree-builder-data-array.js'
 import AdjacentBuilderIdDataArray from './adjacent-builder-id-data-array.js'
 import GraphBuilderData from './graph-builder-data.js'
-import { bindChangeListener, bindCommand, showApp } from '../../resources/demo-app.js'
+import { bindChangeListener, bindCommand, checkLicense, showApp } from '../../resources/demo-app.js'
 import { initDemoStyles } from '../../resources/demo-styles.js'
 import loadJson from '../../resources/load-json.js'
 import { initDataView, updateDataView } from './data-view.js'
@@ -297,4 +297,4 @@ function registerCommands(graphComponent) {
 }
 
 // run the demo
-loadJson().then(run)
+loadJson().then(checkLicense).then(run)

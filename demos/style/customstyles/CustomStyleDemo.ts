@@ -49,7 +49,7 @@ import CustomSimpleLabelStyle from './CustomSimpleLabelStyle'
 import CustomSimpleEdgeStyle from './CustomSimpleEdgeStyle'
 import CustomSimpleNodeStyle from './CustomSimpleNodeStyle'
 import CustomSimplePortStyle from './CustomSimplePortStyle'
-import { bindAction, bindCommand, showApp } from '../../resources/demo-app'
+import { bindAction, bindCommand, checkLicense, showApp } from '../../resources/demo-app'
 import loadJson from '../../resources/load-json'
 
 let foldingManager: FoldingManager
@@ -232,4 +232,4 @@ function modifyColors(graphComponent: GraphComponent): void {
 }
 
 // start demo
-loadJson().then(run)
+loadJson().then(checkLicense).then(run)

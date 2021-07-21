@@ -57,6 +57,7 @@ import {
   bindChangeListener,
   bindCommand,
   bindInputListener,
+  checkLicense,
   showApp
 } from '../../resources/demo-app'
 import loadJson from '../../resources/load-json'
@@ -325,4 +326,4 @@ function registerCommands(): void {
 }
 
 // start demo
-loadJson().then(run)
+loadJson().then(checkLicense).then(run)

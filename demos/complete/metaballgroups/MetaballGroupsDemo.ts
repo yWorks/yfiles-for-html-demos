@@ -46,7 +46,7 @@ import {
   SolidColorFill
 } from 'yfiles'
 import WebglBlobVisual from './WebglBlobVisual'
-import { bindAction, bindCommand, showApp } from '../../resources/demo-app'
+import { bindAction, bindCommand, checkLicense, showApp } from '../../resources/demo-app'
 import loadJson from '../../resources/load-json'
 import { webGlSupported } from '../../utils/Workarounds'
 
@@ -204,4 +204,4 @@ class BlobBackground extends BaseClass<IVisualCreator>(IVisualCreator) implement
   }
 }
 
-loadJson().then(run)
+loadJson().then(checkLicense).then(run)

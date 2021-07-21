@@ -27,7 +27,7 @@
  **
  ***************************************************************************/
 import { GraphComponent, GraphEditorInputMode, IGraph, License, Rect, INode } from 'yfiles'
-import { showApp } from '../../resources/demo-app.js'
+import { checkLicense, showApp } from '../../resources/demo-app.js'
 import { initDemoStyles, DemoNodeStyle, DemoGroupStyle } from '../../resources/demo-styles.js'
 import DemoReparentNodeHandler from './DemoReparentNodeHandler.js'
 import loadJson from '../../resources/load-json.js'
@@ -135,4 +135,4 @@ function createGroupNode(graph, x, y, cssClass, labelText) {
 }
 
 // run the demo
-loadJson().then(run)
+loadJson().then(checkLicense).then(run)

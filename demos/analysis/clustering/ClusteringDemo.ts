@@ -71,7 +71,13 @@ import * as ClusteringData from './resources/ClusteringData'
 import VoronoiDiagram from './VoronoiDiagram'
 import { PolygonVisual, VoronoiVisual } from './DemoVisuals'
 import { DendrogramComponent } from './DendrogramSupport'
-import { bindAction, bindChangeListener, bindCommand, showApp } from '../../resources/demo-app'
+import {
+  bindAction,
+  bindChangeListener,
+  bindCommand,
+  checkLicense,
+  showApp
+} from '../../resources/demo-app'
 import loadJson from '../../resources/load-json'
 
 /**
@@ -827,4 +833,4 @@ enum ClusteringAlgorithm {
 }
 
 // Run the demo
-loadJson().then(run)
+loadJson().then(checkLicense).then(run)

@@ -48,7 +48,7 @@ import {
   SolidColorFill,
   Stroke
 } from 'yfiles'
-import { bindAction, bindCommand, showApp } from '../../resources/demo-app.js'
+import { bindAction, bindCommand, checkLicense, showApp } from '../../resources/demo-app.js'
 import loadJson from '../../resources/load-json.js'
 import { initDemoStyles } from '../../resources/demo-styles.js'
 import SampleData from './resources/SampleData.js'
@@ -364,4 +364,4 @@ function registerCommands() {
 }
 
 // run the demo
-loadJson().then(run)
+loadJson().then(checkLicense).then(run)

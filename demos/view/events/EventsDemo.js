@@ -107,6 +107,7 @@ import {
   bindAction,
   bindActions,
   bindCommand,
+  checkLicense,
   removeClass,
   showApp
 } from '../../resources/demo-app.js'
@@ -2451,6 +2452,9 @@ function createBendInputModeOnDragging(sender, args) {
  * @param {!PopulateMenuEventArgs} args An object that contains the event data
  */
 function contextMenuInputModeOnPopulateMenu(sender, args) {
+  // as we just "simulated" a context menu by calling contextMenuInputMode.shouldOpenMenu
+  // we should either fill and show a menu or - as in this case - set showMenu to 'false'
+  args.showMenu = false
   log(sender, 'ContextMenuInputMode Populate Context Menu')
 }
 
@@ -3203,11 +3207,13 @@ function setupToolTips() {
 function setupContextMenu() {
   editorMode.contextMenuItems = GraphItemTypes.NODE
   editorMode.addPopulateItemContextMenuListener((sender, args) => {
+    args.showMenu = false
     args.handled = true
   })
 
   viewerMode.contextMenuItems = GraphItemTypes.NODE
   viewerMode.addPopulateItemContextMenuListener((sender, args) => {
+    args.showMenu = false
     args.handled = true
   })
 }
@@ -3386,4 +3392,4 @@ function initOptionHeadings() {
 }
 
 // Start the demo
-loadJson().then(run)
+loadJson().then(checkLicense).then(run)

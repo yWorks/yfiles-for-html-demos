@@ -1,4 +1,4 @@
-# WebGL2 Styles
+# WebGL2 Styles Demo
 
 <img src="../../resources/image/webgl-styles.png" alt="demo-thumbnail" height="320"/>
 
@@ -14,7 +14,7 @@ Rows are grouped together in a group node which can be collapsed and expanded. W
 
 Every node has two labels, one using the [WebGL2DefaultLabelStyle](https://docs.yworks.com/yfileshtml/#/api/WebGL2DefaultLabelStyle) and one using the [WebGL2IconLabelStyle](https://docs.yworks.com/yfileshtml/#/api/WebGL2IconLabelStyle).
 
-Every row also has a an edge style with a distinct arrow type for the source and target arrows.
+Every row also has an edge style with a distinct arrow type for the source and target arrows.
 
 ## Things to try
 

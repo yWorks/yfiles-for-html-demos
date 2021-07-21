@@ -60,7 +60,7 @@ import TableStyles from './TableStyles'
 import MyReparentHandler from './MyReparentHandler'
 import ContextMenu from '../../utils/ContextMenu'
 import DemoStyles, { DemoEdgeStyle, DemoSerializationListener } from '../../resources/demo-styles'
-import { bindAction, bindCommand, readGraph, showApp } from '../../resources/demo-app'
+import { bindAction, bindCommand, checkLicense, readGraph, showApp } from '../../resources/demo-app'
 import loadJson from '../../resources/load-json'
 
 /**
@@ -383,4 +383,4 @@ function registerCommands(): void {
 }
 
 // run the demo
-loadJson().then(run)
+loadJson().then(checkLicense).then(run)

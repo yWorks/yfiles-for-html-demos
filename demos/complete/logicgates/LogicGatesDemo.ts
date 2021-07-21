@@ -67,6 +67,7 @@ import {
   bindAction,
   bindChangeListener,
   bindCommand,
+  checkLicense,
   removeClass,
   showApp
 } from '../../resources/demo-app'
@@ -429,4 +430,4 @@ function createPortDescriptors(nodes: INode[], graph?: IGraph): void {
 }
 
 // run the demo
-loadJson().then(run)
+loadJson().then(checkLicense).then(run)

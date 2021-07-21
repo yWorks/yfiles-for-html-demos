@@ -26,14 +26,14 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { registerErrorDialog } from './demo-error.js'
+import { registerErrorDialog, INVALID_LICENSE_MESSAGE } from './demo-error.js'
 import {
   detectiOSVersion,
   enableWorkarounds,
   detectSafariVersion,
   detectInternetExplorerVersion
 } from '../utils/Workarounds.js'
-import { GraphMLIOHandler } from 'yfiles'
+import { DefaultGraph, GraphComponent, GraphMLIOHandler, License } from 'yfiles'
 
 /**
  * @typedef {Object} OptionData
@@ -662,6 +662,26 @@ export function readGraph(graphMLIOHandler, graph, filename) {
       throw error
     }
   })
+}
+
+/**
+ * Checks whether the license is a valid yfiles license.
+ * @param {!object} licenseData The license data to be checked
+ */
+export function checkLicense(licenseData) {
+  License.value = licenseData
+  const g = new DefaultGraph()
+  g.createNode()
+  if (g.nodes.size === 1) {
+    return licenseData
+  }
+  window.setTimeout(() => {
+    document.body.innerHTML =
+      '<div id="errorComponent" style="margin:auto; width:40em; height: 100%;"></div>'
+    new GraphComponent('errorComponent')
+  }, 200)
+
+  return Promise.reject(new Error(INVALID_LICENSE_MESSAGE))
 }
 
 // initialize the application

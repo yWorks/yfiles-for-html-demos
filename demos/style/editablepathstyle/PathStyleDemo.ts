@@ -54,7 +54,7 @@ import {
 } from 'yfiles'
 
 import EditablePathNodeStyle, { PathHandle, updateHandles } from './EditablePathNodeStyle'
-import { bindCommand, showApp } from '../../resources/demo-app'
+import { bindCommand, checkLicense, showApp } from '../../resources/demo-app'
 import loadJson from '../../resources/load-json'
 
 // @ts-ignore
@@ -338,4 +338,4 @@ function registerCommands(): void {
 }
 
 // start demo
-loadJson().then(run)
+loadJson().then(checkLicense).then(run)

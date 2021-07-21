@@ -47,7 +47,7 @@ import {
 } from 'yfiles'
 
 import RandomGraphGenerator from '../../utils/RandomGraphGenerator.js'
-import { bindAction, bindCommand, showApp } from '../../resources/demo-app.js'
+import { bindAction, bindCommand, checkLicense, showApp } from '../../resources/demo-app.js'
 import loadJson from '../../resources/load-json.js'
 
 /**
@@ -405,4 +405,4 @@ class SequenceConstraintsData extends BaseClass(IPropertyObservable) {
 }
 
 // run the demo
-loadJson().then(run)
+loadJson().then(checkLicense).then(run)

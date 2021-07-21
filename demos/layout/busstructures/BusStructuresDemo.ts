@@ -46,7 +46,13 @@ import {
 
 import SampleData from './resources/SampleData'
 import { DemoNodeStyle, initDemoStyles } from '../../resources/demo-styles'
-import { bindAction, bindChangeListener, bindCommand, showApp } from '../../resources/demo-app'
+import {
+  bindAction,
+  bindChangeListener,
+  bindCommand,
+  checkLicense,
+  showApp
+} from '../../resources/demo-app'
 import loadJson from '../../resources/load-json'
 
 const busStructuresToggle = document.getElementById('bus-structures-toggle') as HTMLInputElement
@@ -367,4 +373,4 @@ function registerCommands(): void {
 }
 
 // run the demo
-loadJson().then(run)
+loadJson().then(checkLicense).then(run)

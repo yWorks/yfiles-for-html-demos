@@ -47,7 +47,7 @@ import {
   ZoomInvariantOutsideRangeLabelStyle,
   ZoomInvariantLabelStyleBase
 } from './ZoomInvariantLabelStyle'
-import { bindChangeListener, bindCommand, showApp } from '../../resources/demo-app'
+import { bindChangeListener, bindCommand, checkLicense, showApp } from '../../resources/demo-app'
 import loadJson from '../../resources/load-json'
 import { initDemoStyles } from '../../resources/demo-styles'
 
@@ -225,4 +225,4 @@ function registerCommands(): void {
   bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
 }
 
-loadJson().then(run)
+loadJson().then(checkLicense).then(run)

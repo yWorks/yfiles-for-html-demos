@@ -41,7 +41,7 @@ import {
 } from 'yfiles'
 
 import { initDemoStyles } from '../../resources/demo-styles'
-import { bindChangeListener, showApp } from '../../resources/demo-app'
+import { bindChangeListener, checkLicense, showApp } from '../../resources/demo-app'
 import loadJson from '../../resources/load-json'
 
 let graphComponent: GraphComponent
@@ -233,4 +233,4 @@ function registerCommands(): void {
   )
 }
 
-loadJson().then(run)
+loadJson().then(checkLicense).then(run)

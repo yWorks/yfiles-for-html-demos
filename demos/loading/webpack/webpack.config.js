@@ -96,7 +96,8 @@ const baseConfig = {
   output: {
     clean: true,
     path: path.resolve(__dirname, 'dist')
-  }
+  },
+  target: 'web'
 }
 
 module.exports = function (env, options) {

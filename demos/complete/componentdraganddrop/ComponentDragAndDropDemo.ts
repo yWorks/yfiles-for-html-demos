@@ -55,7 +55,14 @@ import {
 } from 'yfiles'
 import { ComponentDropInputMode } from './ComponentDropInputMode'
 import { ClearAreaLayoutHelper } from './ClearAreaLayoutHelper'
-import { addClass, bindAction, bindCommand, removeClass, showApp } from '../../resources/demo-app'
+import {
+  addClass,
+  bindAction,
+  bindCommand,
+  checkLicense,
+  removeClass,
+  showApp
+} from '../../resources/demo-app'
 import { passiveSupported, pointerEventsSupported } from '../../utils/Workarounds'
 import loadJson from '../../resources/load-json'
 
@@ -454,4 +461,4 @@ function registerCommands(): void {
   })
 }
 
-loadJson().then(run)
+loadJson().then(checkLicense).then(run)

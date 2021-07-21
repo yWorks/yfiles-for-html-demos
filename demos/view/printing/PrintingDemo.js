@@ -46,7 +46,7 @@ import {
 import PrintingSupport from '../../utils/PrintingSupport.js'
 import PositionHandler from './PositionHandler.js'
 import { initDemoStyles } from '../../resources/demo-styles.js'
-import { bindAction, showApp } from '../../resources/demo-app.js'
+import { bindAction, checkLicense, showApp } from '../../resources/demo-app.js'
 import loadJson from '../../resources/load-json.js'
 
 /** @type {GraphComponent} */
@@ -236,4 +236,4 @@ function isValidInput(input, text) {
 }
 
 // run the demo
-loadJson().then(run)
+loadJson().then(checkLicense).then(run)

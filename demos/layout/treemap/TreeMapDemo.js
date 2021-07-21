@@ -67,7 +67,7 @@ import {
 } from 'yfiles'
 
 import TreeMapData from './resources/TreeMapData.js'
-import { bindAction, bindCommand, showApp } from '../../resources/demo-app.js'
+import { bindAction, bindCommand, checkLicense, showApp } from '../../resources/demo-app.js'
 import loadJson from '../../resources/load-json.js'
 
 /**
@@ -806,4 +806,4 @@ function getElementById(id) {
   return document.getElementById(id)
 }
 
-loadJson().then(run)
+loadJson().then(checkLicense).then(run)

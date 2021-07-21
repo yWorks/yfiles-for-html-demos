@@ -74,6 +74,7 @@ import {
   bindAction,
   bindChangeListener,
   bindCommand,
+  checkLicense,
   removeClass,
   showApp
 } from '../../resources/demo-app'
@@ -808,4 +809,4 @@ enum LayoutAlgorithm {
 }
 
 // runs the demo
-loadJson().then(run)
+loadJson().then(checkLicense).then(run)

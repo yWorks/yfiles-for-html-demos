@@ -1,4 +1,4 @@
-# Large Graphs
+# Large Graphs Demo
 
 <img src="../../resources/image/large-graphs.png" alt="demo-thumbnail" height="320"/>
 

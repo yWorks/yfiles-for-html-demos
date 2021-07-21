@@ -65,7 +65,7 @@ import {
 } from 'yfiles'
 
 import FileSaveSupport from '../../utils/FileSaveSupport.js'
-import { bindAction, bindCommand, showApp } from '../../resources/demo-app.js'
+import { bindAction, bindCommand, checkLicense, showApp } from '../../resources/demo-app.js'
 import loadJson from '../../resources/load-json.js'
 
 /** @type {GraphComponent} */
@@ -468,4 +468,4 @@ async function loadJSON(url) {
 }
 
 // start tutorial
-loadJson().then(run)
+loadJson().then(checkLicense).then(run)

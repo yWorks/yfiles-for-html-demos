@@ -40,7 +40,7 @@ import {
 
 import HtmlLabelStyle from './HtmlLabelStyle'
 import { initDemoStyles } from '../../resources/demo-styles'
-import { addClass, showApp, bindCommand } from '../../resources/demo-app'
+import { addClass, checkLicense, showApp, bindCommand } from '../../resources/demo-app'
 import loadJson from '../../resources/load-json'
 /**
  * Simple demo that shows how to create a custom style that uses HTML for rendering the labels.
@@ -211,4 +211,4 @@ function registerCommands(): void {
   bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
 }
 
-loadJson().then(run)
+loadJson().then(checkLicense).then(run)

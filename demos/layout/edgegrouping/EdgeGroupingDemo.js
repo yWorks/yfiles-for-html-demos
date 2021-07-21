@@ -72,6 +72,7 @@ import {
   bindAction,
   bindChangeListener,
   bindCommand,
+  checkLicense,
   showApp
 } from '../../resources/demo-app.js'
 import loadJson from '../../resources/load-json.js'
@@ -533,4 +534,4 @@ class HighlightEdgeStyle extends EdgeStyleBase {
   }
 }
 
-loadJson().then(run)
+loadJson().then(checkLicense).then(run)

@@ -49,7 +49,7 @@ import {
 } from 'yfiles'
 
 import { DemoEdgeStyle, DemoNodeStyle } from '../../resources/demo-styles.js'
-import { bindChangeListener, bindCommand, showApp } from '../../resources/demo-app.js'
+import { bindChangeListener, bindCommand, checkLicense, showApp } from '../../resources/demo-app.js'
 import loadJson from '../../resources/load-json.js'
 
 /** @type {GraphComponent} */
@@ -325,4 +325,4 @@ function zoomModeChanged() {
 }
 
 // start demo
-loadJson().then(run)
+loadJson().then(checkLicense).then(run)

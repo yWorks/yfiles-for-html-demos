@@ -548,6 +548,13 @@ export default class FraudDetectionView {
       graphTimeline.removeChild(child)
     }
 
+    if (this.fraudDetectionTimeline) {
+      const animation = this.fraudDetectionTimeline.getTimeFrameAnimation()
+      if (animation && animation.animating) {
+        animation.stopAnimation()
+      }
+    }
+
     if (this.onCloseListener) {
       this.onCloseListener()
     }

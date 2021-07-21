@@ -54,7 +54,7 @@ import {
 
 import SimpleOutputHandler from './SimpleOutputHandler'
 import SimpleInputHandler from './SimpleInputHandler'
-import { bindAction, bindCommand, readGraph, showApp } from '../../resources/demo-app'
+import { bindAction, bindCommand, checkLicense, readGraph, showApp } from '../../resources/demo-app'
 import { PropertiesPanel } from './PropertiesPanel'
 import DemoStyles, { DemoSerializationListener, initDemoStyles } from '../../resources/demo-styles'
 import EditorSync from './EditorSync'
@@ -561,4 +561,4 @@ function registerCommands(): void {
   bindCommand("button[data-command='UngroupSelection']", ICommand.UNGROUP_SELECTION, graphComponent)
 }
 
-loadJson().then(run)
+loadJson().then(checkLicense).then(run)

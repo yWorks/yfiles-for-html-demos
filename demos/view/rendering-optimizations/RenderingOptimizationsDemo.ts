@@ -91,6 +91,7 @@ import {
   bindAction,
   bindChangeListener,
   bindCommand,
+  checkLicense,
   removeClass,
   showApp
 } from '../../resources/demo-app'
@@ -1454,7 +1455,7 @@ function querySelector<T extends HTMLElement>(selector: string): T {
 }
 
 // run the demo
-loadJson().then(run)
+loadJson().then(checkLicense).then(run)
 
 class StyledWebGL2GraphModelManager extends WebGL2GraphModelManager {
   private _defaultStyles: WebGLStyles | null = null

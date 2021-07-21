@@ -40,7 +40,7 @@ import {
 } from 'yfiles'
 
 import { initDemoStyles } from '../../resources/demo-styles.js'
-import { bindChangeListener, showApp } from '../../resources/demo-app.js'
+import { bindChangeListener, checkLicense, showApp } from '../../resources/demo-app.js'
 import loadJson from '../../resources/load-json.js'
 
 /** @type {GraphComponent} */
@@ -239,4 +239,4 @@ function registerCommands() {
   )
 }
 
-loadJson().then(run)
+loadJson().then(checkLicense).then(run)

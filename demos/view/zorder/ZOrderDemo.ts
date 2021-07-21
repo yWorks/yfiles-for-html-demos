@@ -44,7 +44,7 @@ import {
   Size,
   StorageLocation
 } from 'yfiles'
-import { bindAction, bindCommand, showApp } from '../../resources/demo-app'
+import { bindAction, bindCommand, checkLicense, showApp } from '../../resources/demo-app'
 import loadJson from '../../resources/load-json'
 import { ZIndexChangedEventArgs, ZOrderGraphEditorInputMode, ZOrderSupport } from './ZOrderSupport'
 import DemoStyles, { DemoSerializationListener, initDemoStyles } from '../../resources/demo-styles'
@@ -256,4 +256,4 @@ function registerCommands(): void {
 }
 
 // start tutorial
-loadJson().then(run)
+loadJson().then(checkLicense).then(run)

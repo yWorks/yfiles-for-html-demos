@@ -39,7 +39,7 @@ import {
 } from 'yfiles'
 
 import { DemoNodeStyle } from '../../resources/demo-styles.js'
-import { showApp } from '../../resources/demo-app.js'
+import { checkLicense, showApp } from '../../resources/demo-app.js'
 import LimitingRectangleDescriptor from './LimitedRectangleDescriptor.js'
 import GreenPositionHandler from './GreenPositionHandler.js'
 import RedPositionHandler from './RedPositionHandler.js'
@@ -182,4 +182,4 @@ function createNode(graph, x, y, w, h, cssClass, textColor, labelText) {
 }
 
 // run the demo
-loadJson().then(run)
+loadJson().then(checkLicense).then(run)

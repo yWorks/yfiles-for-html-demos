@@ -68,6 +68,7 @@ import {
   bindAction,
   bindChangeListener,
   bindCommand,
+  checkLicense,
   removeClass,
   setComboboxValue,
   showApp
@@ -427,4 +428,4 @@ function setUIDisabled(disabled) {
   document.getElementById('layout').disabled = disabled
 }
 
-loadJson().then(run)
+loadJson().then(checkLicense).then(run)

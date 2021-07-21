@@ -41,7 +41,7 @@ import {
 } from 'yfiles'
 
 import { DemoNodeStyle } from '../../resources/demo-styles'
-import { showApp } from '../../resources/demo-app'
+import { checkLicense, showApp } from '../../resources/demo-app'
 import LimitedRectangleDescriptor from './LimitedRectangleDescriptor'
 import GreenSizeConstraintProvider from './GreenSizeConstraintProvider'
 import BlueSizeConstraintProvider from './BlueSizeConstraintProvider'
@@ -158,4 +158,4 @@ function createNode(
   })
 }
 
-loadJson().then(run)
+loadJson().then(checkLicense).then(run)

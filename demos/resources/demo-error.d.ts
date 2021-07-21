@@ -26,4 +26,6 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
+export const INVALID_LICENSE_MESSAGE: string
+
 export function registerErrorDialog(): void

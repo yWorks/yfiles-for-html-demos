@@ -65,7 +65,7 @@ import {
 import type { CellId } from './PartitionGridVisualCreator'
 import PartitionGridVisualCreator, { generateGradientColors } from './PartitionGridVisualCreator'
 import GraphData from './resources/GraphData'
-import { bindAction, bindCommand, showApp } from '../../resources/demo-app'
+import { bindAction, bindCommand, checkLicense, showApp } from '../../resources/demo-app'
 import loadJson from '../../resources/load-json'
 
 /**
@@ -1239,4 +1239,4 @@ function getElementById<T extends HTMLElement>(id: string): T {
 }
 
 // run the demo
-loadJson().then(run)
+loadJson().then(checkLicense).then(run)

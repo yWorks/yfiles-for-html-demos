@@ -42,7 +42,7 @@ import {
 import MySimpleEdgeStyle from './MySimpleEdgeStyle'
 import MySimpleLabelStyle from './MySimpleLabelStyle'
 import MySimpleNodeStyle from './MySimpleNodeStyle'
-import { bindCommand, showApp } from '../../resources/demo-app'
+import { bindCommand, checkLicense, showApp } from '../../resources/demo-app'
 import loadJson from '../../resources/load-json'
 
 // @ts-ignore
@@ -153,4 +153,4 @@ function createSampleGraph(): void {
 }
 
 // Start demo
-loadJson().then(run)
+loadJson().then(checkLicense).then(run)

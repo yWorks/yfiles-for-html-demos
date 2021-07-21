@@ -66,7 +66,7 @@ import {
 } from './SankeyHelper'
 import ContextMenu from '../../utils/ContextMenu'
 import { SankeyLayout } from './SankeyLayout'
-import { bindCommand, showApp } from '../../resources/demo-app'
+import { bindCommand, checkLicense, showApp } from '../../resources/demo-app'
 import loadJson from '../../resources/load-json'
 
 const colors = [
@@ -669,4 +669,4 @@ function assignEdgeColorsAtNode(node: INode): void {
 }
 
 // runs the demo
-loadJson().then(run)
+loadJson().then(checkLicense).then(run)

@@ -90,6 +90,7 @@ import {
   bindAction,
   bindChangeListener,
   bindCommand,
+  checkLicense,
   removeClass,
   showApp
 } from '../../resources/demo-app'
@@ -1579,4 +1580,4 @@ class TagMementoSupport extends BaseClass(IMementoSupport) implements IMementoSu
 }
 
 // run the demo
-loadJson().then(run)
+loadJson().then(checkLicense).then(run)

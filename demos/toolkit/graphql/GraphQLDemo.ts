@@ -47,7 +47,7 @@ import {
   PolylineEdgeStyle,
   Size
 } from 'yfiles'
-import { bindAction, bindCommand, showApp } from '../../resources/demo-app'
+import { bindAction, bindCommand, checkLicense, showApp } from '../../resources/demo-app'
 import loadJson from '../../resources/load-json'
 import { graphQLQuery } from './GraphQLQuery'
 import { SocialNetworkGraphBuilder } from './SocialNetworkGraphBuilder'
@@ -307,4 +307,4 @@ function registerCommands(graphComponent: GraphComponent): void {
   bindAction("button[data-command='LoadAll']", () => loadAll())
 }
 
-loadJson().then(run)
+loadJson().then(checkLicense).then(run)

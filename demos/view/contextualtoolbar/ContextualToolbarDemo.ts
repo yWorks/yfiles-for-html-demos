@@ -44,7 +44,7 @@ import {
   SmartEdgeLabelModel
 } from 'yfiles'
 
-import { bindCommand, showApp } from '../../resources/demo-app'
+import { bindCommand, checkLicense, showApp } from '../../resources/demo-app'
 import ContextualToolbar from './ContextualToolbar'
 import loadJson from '../../resources/load-json'
 
@@ -217,4 +217,4 @@ function createSampleGraph(graph: IGraph): void {
 }
 
 // Start the demo
-loadJson().then(run)
+loadJson().then(checkLicense).then(run)

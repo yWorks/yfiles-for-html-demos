@@ -28,7 +28,7 @@
  ***************************************************************************/
 import loadJson from '../../resources/load-json.js'
 import * as y from 'yfiles'
-import { bindCommand, showApp } from '../../resources/demo-app.js'
+import { bindCommand, checkLicense, showApp } from '../../resources/demo-app.js'
 const { GraphComponent, GraphEditorInputMode, ICommand, License } = y
 
 function run(licenseData) {
@@ -58,4 +58,4 @@ function registerCommands(graphComponent) {
   bindCommand("button[data-command='ZoomOriginal']", ICommand.ZOOM, graphComponent, 1.0)
 }
 
-loadJson().then(run)
+loadJson().then(checkLicense).then(run)

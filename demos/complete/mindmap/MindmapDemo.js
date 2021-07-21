@@ -88,7 +88,7 @@ import {
   TagChangeUndoUnit
 } from './MindmapUtil.js'
 import MindmapEditorInputMode from './MindmapEditorInputMode.js'
-import { bindAction, bindCommand, showApp } from '../../resources/demo-app.js'
+import { bindAction, bindCommand, checkLicense, showApp } from '../../resources/demo-app.js'
 import MindmapOverviewGraphVisualCreator from './MindmapOverviewGraphVisualCreator.js'
 import MindmapLayout from './MindmapLayout.js'
 import DemoCommands from './DemoCommands.js'
@@ -1043,4 +1043,4 @@ function createSampleGraph() {
 }
 
 // Start the demo
-loadJson().then(run)
+loadJson().then(checkLicense).then(run)

@@ -44,7 +44,13 @@ import {
   Size
 } from 'yfiles'
 
-import { bindAction, bindActions, bindCommand, showApp } from '../../resources/demo-app'
+import {
+  bindAction,
+  bindActions,
+  bindCommand,
+  checkLicense,
+  showApp
+} from '../../resources/demo-app'
 import loadJson from '../../resources/load-json'
 import MoveNodesAsideStage from './MoveNodesAsideStage'
 import AlignmentStage from './AlignmentStage'
@@ -291,4 +297,4 @@ function registerCommands(): void {
 }
 
 // start tutorial
-loadJson().then(run)
+loadJson().then(checkLicense).then(run)

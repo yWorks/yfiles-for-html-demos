@@ -49,7 +49,7 @@ import {
   WebGL2Stroke
 } from 'yfiles'
 
-import { bindCommand, showApp } from '../../resources/demo-app'
+import { bindCommand, checkLicense, showApp } from '../../resources/demo-app'
 import loadJson from '../../resources/load-json'
 import { webGl2Supported } from '../../utils/Workarounds'
 
@@ -551,7 +551,7 @@ function collectComponent(graph: IGraph, node: INode): Component {
 }
 
 // start demo
-loadJson().then(run)
+loadJson().then(checkLicense).then(run)
 
 /**
  * A data holder for the nodes and edges that belong to a connected component.

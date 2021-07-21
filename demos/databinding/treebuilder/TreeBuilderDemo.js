@@ -46,7 +46,13 @@ import {
   PreferredPlacementDescriptor,
   TemplateNodeStyle
 } from 'yfiles'
-import { bindAction, bindChangeListener, bindCommand, showApp } from '../../resources/demo-app.js'
+import {
+  bindAction,
+  bindChangeListener,
+  bindCommand,
+  checkLicense,
+  showApp
+} from '../../resources/demo-app.js'
 import loadJson from '../../resources/load-json.js'
 import { SchemaComponent } from './SchemaComponent.js'
 import samples from './samples.js'
@@ -261,4 +267,4 @@ function createLayout() {
 }
 
 // run the demo
-loadJson().then(run)
+loadJson().then(checkLicense).then(run)

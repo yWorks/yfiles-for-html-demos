@@ -91,6 +91,7 @@ import {
   bindAction,
   bindChangeListener,
   bindCommand,
+  checkLicense,
   removeClass,
   showApp
 } from '../../resources/demo-app.js'
@@ -1496,7 +1497,7 @@ function querySelector(selector) {
 }
 
 // run the demo
-loadJson().then(run)
+loadJson().then(checkLicense).then(run)
 
 class StyledWebGL2GraphModelManager extends WebGL2GraphModelManager {
   constructor() {

@@ -52,7 +52,7 @@ import {
 
 import MazeData from './resources/maze.js'
 import { initDemoStyles } from '../../resources/demo-styles.js'
-import { bindAction, bindCommand, showApp } from '../../resources/demo-app.js'
+import { bindAction, bindCommand, checkLicense, showApp } from '../../resources/demo-app.js'
 import { OptionEditor } from '../../resources/demo-option-editor.js'
 import loadJson from '../../resources/load-json.js'
 import PolylineEdgeRouterConfig from './PolylineEdgeRouterConfig.js'
@@ -445,4 +445,4 @@ class MazeVisual extends BaseClass(IVisualCreator) {
 }
 
 // runs the demo
-loadJson().then(run)
+loadJson().then(checkLicense).then(run)

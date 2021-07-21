@@ -56,7 +56,7 @@ import {
 } from 'yfiles'
 
 import { initDemoStyles } from '../../resources/demo-styles'
-import { bindAction, bindCommand, showApp } from '../../resources/demo-app'
+import { bindAction, bindCommand, checkLicense, showApp } from '../../resources/demo-app'
 import loadJson from '../../resources/load-json'
 import { EdgePathPortCandidateProvider } from './EdgePathPortCandidateProvider'
 
@@ -261,4 +261,4 @@ function setRandomEdgeColor(edge: IEdge): void {
   }
 }
 
-loadJson().then(run)
+loadJson().then(checkLicense).then(run)

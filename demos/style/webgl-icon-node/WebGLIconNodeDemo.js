@@ -26,7 +26,13 @@
  ** SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **
  ***************************************************************************/
-import { addNavigationButtons, addOptions, bindCommand, showApp } from '../../resources/demo-app.js'
+import {
+  addNavigationButtons,
+  addOptions,
+  bindCommand,
+  checkLicense,
+  showApp
+} from '../../resources/demo-app.js'
 import {
   Color,
   DefaultGraph,
@@ -387,4 +393,4 @@ async function setLoadingIndicatorVisibility(visible, message = '') {
   return new Promise(resolve => setTimeout(resolve, 0))
 }
 
-loadJson().then(run)
+loadJson().then(checkLicense).then(run)

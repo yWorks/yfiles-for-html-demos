@@ -42,7 +42,13 @@ import {
 } from 'yfiles'
 import loadJson from '../../resources/load-json.js'
 import { NodeSelectionResizingInputMode } from './NodeSelectionResizingInputMode.js'
-import { bindAction, bindChangeListener, bindCommand, showApp } from '../../resources/demo-app.js'
+import {
+  bindAction,
+  bindChangeListener,
+  bindCommand,
+  checkLicense,
+  showApp
+} from '../../resources/demo-app.js'
 import { initDemoStyles } from '../../resources/demo-styles.js'
 import SampleData from './resources/SampleData.js'
 
@@ -152,4 +158,4 @@ function registerCommands() {
 }
 
 // run the demo
-loadJson().then(run)
+loadJson().then(checkLicense).then(run)

@@ -46,7 +46,14 @@ import SampleData from './resources/sample'
 import type { SampleDataType } from './resources/sample'
 import VuejsNodeStyleMarkupExtension from '../../utils/VuejsNodeStyleMarkupExtension'
 import VuejsNodeStyle from '../../utils/VuejsNodeStyle'
-import { addClass, bindAction, bindCommand, removeClass, showApp } from '../../resources/demo-app'
+import {
+  addClass,
+  bindAction,
+  bindCommand,
+  checkLicense,
+  removeClass,
+  showApp
+} from '../../resources/demo-app'
 import loadJson from '../../resources/load-json'
 // import CodeMirror typings
 import CodeMirror, { EditorConfiguration, EditorFromTextArea } from 'codemirror'
@@ -310,4 +317,4 @@ function registerCommands(): void {
   })
 }
 
-loadJson().then(run)
+loadJson().then(checkLicense).then(run)
