@@ -212,7 +212,7 @@ export default class ActivityNodeStyle extends NodeStyleBase {
       } else {
         while (container.childElementCount > 2) {
           // there is nothing to render - remove the old elements container
-          container.removeChild(container.lastChild as ChildNode)
+          container.removeChild(container.lastChild!)
         }
       }
     }

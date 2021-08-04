@@ -2518,13 +2518,13 @@ function getDemoData() {
     "tags": [
       "react",
       "json",
-      "data",
-      "webpack",
-      "integration",
-      "webworker"
+      "webpack"
     ],
     "keywords": [
-      "v2.2.0.2"
+      "v2.2.0.2",
+      "webworker",
+      "data",
+      "integration"
     ]
   },
   {
@@ -2538,13 +2538,12 @@ function getDemoData() {
     "sourcePath": "",
     "tags": [
       "react",
-      "json",
-      "data",
-      "typescript",
-      "integration"
+      "json"
     ],
     "keywords": [
-      "v2.2.0.2"
+      "v2.2.0.2",
+      "data",
+      "integration"
     ],
     "ts": true
   },
@@ -4511,6 +4510,47 @@ function getDemoData() {
       "ports",
       "IPortCandidate",
       "portcandidateprovider"
+    ],
+    "ts": true
+  },
+  {
+    "id": "tutorial-application-features--simple-highlight",
+    "name": "Simple Highlight Decorator",
+    "summary": "Shows how to highlight nodes and edges when the mouse hovers over them.",
+    "demoPath": "03-tutorial-application-features/simple-highlight-decorator/index.html",
+    "thumbnailPath": "resources/image/highlight-decorator.png",
+    "category": "tutorial-application-features",
+    "tags": [
+      "highlight",
+      "hover",
+      "interaction"
+    ],
+    "keywords": [
+      "v2.4.0.2",
+      "GraphDecorator",
+      "NodeDecorator",
+      "HighlightDecorator"
+    ],
+    "ts": true
+  },
+  {
+    "id": "tutorial-application-features--complex-highlight",
+    "name": "Complex Highlight Decorator",
+    "summary": "Shows how to highlight nodes with different effects based on data stored in their tags.",
+    "demoPath": "03-tutorial-application-features/complex-highlight-decorator/index.html",
+    "thumbnailPath": "resources/image/complex-highlight-decorator.png",
+    "category": "tutorial-application-features",
+    "tags": [
+      "highlight",
+      "hover",
+      "interaction"
+    ],
+    "keywords": [
+      "v2.4.0.2",
+      "GraphDecorator",
+      "NodeDecorator",
+      "HighlightDecorator",
+      "HighlightIndicatorManager"
     ],
     "ts": true
   },

@@ -98,9 +98,16 @@ async function runNodeJSLayout(clearUndo) {
   try {
     await remoteExecutor.start()
   } catch (e) {
-    alert(
-      'Layout request failed. Is the layout server running? \n\nPlease start the layout server and reload the demo.\n'
-    )
+    if (e instanceof TypeError) {
+      alert(
+        `Layout request failed with message "${e.message}".
+
+Is the layout server running? If not, start the layout server and reload the demo.
+`
+      )
+    } else {
+      throw e
+    }
   } finally {
     if (clearUndo) {
       graphComponent.graph.undoEngine.clear()

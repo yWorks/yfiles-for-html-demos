@@ -203,12 +203,11 @@ function initializeGraph(graph: IGraph): void {
   // minimum size for nodes
   const size = new Size(60, 50)
 
-  // set the style as the default for all new nodes
   const defaultStyle = new TemplateNodeStyle('ConstraintNodeStyle')
   defaultStyle.minimumSize = size
-
+  // set the style as the default for all new nodes
   graph.nodeDefaults.style = defaultStyle
-  // let the node decide how much space it needs and make sure it doesn't get any smaller.
+
   graph.nodeDefaults.size = size
 
   // create a simple label style

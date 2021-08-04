@@ -8,4 +8,4 @@ This demo loads the yFiles module resources using ES module imports.
 
 Using the ES library modules, you can load the yFiles types through [import statements](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/import) , e.g.:
 
-`import { GraphComponent, GraphEditorInputMode, Rect, ICommand, TimeSpan } from '../../../lib/es-modules/view-editor.js';`
+`import { GraphComponent, GraphEditorInputMode, Rect, ICommand, TimeSpan } from './node_modules/yfiles/yfiles.js';`

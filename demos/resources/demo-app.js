@@ -580,16 +580,17 @@ export function addOptions(selectElement, ...values) {
  * Adds navigation buttons to an HTMLSelectElement
  * @param {!HTMLSelectElement} selectElement the HTMLSelectElement
  * @param wrapAround whether to wrap around when navigating beyond the end or beginning of the select
+ * @param {!''} classList additional classes for the navigation buttons
  * @param {boolean} [wrapAround=true]
  */
-export function addNavigationButtons(selectElement, wrapAround = true) {
+export function addNavigationButtons(selectElement, wrapAround = true, classList = '') {
   if (selectElement.parentElement == null) {
     throw new Error('The element must have a parent')
   }
 
   const prevButton = document.createElement('button')
   prevButton.setAttribute('title', 'Previous')
-  prevButton.setAttribute('class', 'demo-icon-yIconPrevious')
+  prevButton.setAttribute('class', 'demo-icon-yIconPrevious ' + classList)
   prevButton.addEventListener('click', e => {
     const newIndex = selectElement.selectedIndex - 1
     selectElement.selectedIndex =
@@ -599,7 +600,7 @@ export function addNavigationButtons(selectElement, wrapAround = true) {
 
   const nextButton = document.createElement('button')
   nextButton.setAttribute('title', 'Next')
-  nextButton.setAttribute('class', 'demo-icon-yIconNext')
+  nextButton.setAttribute('class', 'demo-icon-yIconNext ' + classList)
   nextButton.addEventListener('click', e => {
     const newIndex = selectElement.selectedIndex + 1
     const lastIndex = selectElement.options.length - 1

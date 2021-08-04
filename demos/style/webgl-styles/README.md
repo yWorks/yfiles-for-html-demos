@@ -6,9 +6,9 @@
 
 This demo shows the available styles for nodes, edges and labels in WebGL2 rendering.
 
-For nodes there are seven shapes with three node effects available, edges can have three edge styles with four arrow types, and finally labels can have any of three label styles.
+For nodes there are eight shapes with three node effects available, edges can have three edge styles with four arrow types, and finally labels can have any of three label styles.
 
-The initial graph displays the various node shapes in the columns and the node effects in the rows.
+The initial graph displays the various node shapes in the columns and the node effects, edge and arrow types in the rows.
 
 Rows are grouped together in a group node which can be collapsed and expanded. When expanding a group node, the previously set style is re-applied to the children. For the sake of brevity saving and restoring styles has been omitted for labels and edges and the group node itself.
 

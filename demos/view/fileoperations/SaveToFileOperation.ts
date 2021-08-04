@@ -101,6 +101,7 @@ export default class SaveToFileOperation {
           blob = new Blob([fileContent])
         }
 
+        // @ts-ignore
         if (window.navigator.msSaveOrOpenBlob(blob, fileName)) {
           resolve('File saved successfully')
         } else {
@@ -155,7 +156,8 @@ export default class SaveToFileOperation {
    */
   static isMsSaveAvailable(): boolean {
     return (
-      typeof window.Blob === 'function' && typeof window.navigator.msSaveOrOpenBlob === 'function'
+      typeof window.Blob === 'function' &&
+      typeof (window.navigator as any).msSaveOrOpenBlob === 'function'
     )
   }
 }

@@ -70,7 +70,7 @@
       e => {
         // create a new remote layout executor
         const executor = new LayoutExecutorAsyncWorker(applyLayout)
-        executor.process(e.data).then(postMessage)
+        executor.process(e.data).then(postMessage).catch(postMessage)
       },
       false
     )

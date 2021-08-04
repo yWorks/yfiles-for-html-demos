@@ -246,7 +246,7 @@ export default class CollapseDecorator extends NodeStyleBase {
         newButtonVisual.svgElement.setAttribute('class', 'collapseButton')
         while (container.hasChildNodes()) {
           // remove all children
-          container.removeChild(container.firstChild as ChildNode)
+          container.removeChild(container.firstChild!)
         }
         container.appendChild(newButtonVisual.svgElement)
       }
@@ -254,7 +254,7 @@ export default class CollapseDecorator extends NodeStyleBase {
       // if not visible, remove all children
       while (container.hasChildNodes()) {
         // remove all children
-        container.removeChild(container.firstChild as ChildNode)
+        container.removeChild(container.firstChild!)
       }
     }
   }

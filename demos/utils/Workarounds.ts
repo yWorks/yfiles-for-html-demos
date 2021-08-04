@@ -176,6 +176,7 @@ export function detectArmDevice(): boolean {
 export function detectiOSVersion(): number {
   const ua = window.navigator.userAgent
 
+  // @ts-ignore
   if (window.MSStream) {
     // this is IE
     return -1

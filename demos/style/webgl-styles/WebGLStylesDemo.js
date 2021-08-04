@@ -35,6 +35,7 @@ import {
   GraphComponent,
   GraphEditorInputMode,
   GraphItemTypes,
+  IArrow,
   ICommand,
   IGraph,
   ILabel,
@@ -43,6 +44,7 @@ import {
   ItemEventArgs,
   License,
   NodeAlignmentPolicy,
+  PolylineEdgeStyle,
   Size,
   WebGL2ArcEdgeStyle,
   WebGL2ArrowType,
@@ -56,9 +58,7 @@ import {
   WebGL2SelectionIndicatorManager,
   WebGL2ShapeNodeShape,
   WebGL2ShapeNodeStyle,
-  WebGL2Stroke,
-  PolylineEdgeStyle,
-  IArrow
+  WebGL2Stroke
 } from 'yfiles'
 
 import { bindAction, bindCommand, checkLicense, showApp } from '../../resources/demo-app.js'
@@ -89,7 +89,6 @@ function run(licenseData) {
   enableWebGLRendering(graphComponent)
   configureDefaultStyles(graphComponent.graph)
   configureInteraction(graphComponent)
-  configureUI()
 
   fontAwesomeIcons = createFontAwesomeIcons()
 
@@ -322,23 +321,6 @@ function enableWebGLRendering(graphComponent) {
 }
 
 /**
- * Sets a rainbow image as background for the node fill slider
- */
-function configureUI() {
-  const canvas = document.createElement('canvas')
-  canvas.setAttribute('width', '180')
-  canvas.setAttribute('height', '15')
-  const ctx = canvas.getContext('2d')
-  for (let x = 0; x < 180; x++) {
-    ctx.fillStyle = `hsl(${x * 2}, 100%, 50%)`
-    ctx.strokeStyle = `hsl(${x * 2}, 100%, 50%)`
-    ctx.fillRect(x, 0, 1, 15)
-  }
-  const colorSlider = document.getElementById('nodeFill')
-  colorSlider.style.backgroundImage = `url(${canvas.toDataURL()})`
-}
-
-/**
  * Creates an array of {@link ImageData} from a selection of font awesome classes.
  * @returns {!Array.<ImageData>}
  */
@@ -364,12 +346,12 @@ function createFontAwesomeIcons() {
 }
 
 /**
- * Creates a color using the "nodeFill" slider value as the hue.
+ * Creates a color using the "nodeFill" color input.
  * @returns {!Color}
  */
 function getConfiguredNodeColor() {
-  const colorSliderValue = parseInt(document.getElementById('nodeFill').value)
-  return Color.fromHSLA(colorSliderValue / 180, 1, 0.5, 1.0)
+  const pickerValue = document.getElementById('nodeFill').value
+  return Color.from(pickerValue)
 }
 
 /**
@@ -568,13 +550,40 @@ function createGraph(graphComponent) {
   let x = 0
   let y = 0
   let lastNode = null
+  let countNormalNodes = 0 // counts the non-group nodes in the graph for color variation
+
   for (const effect of effects) {
     lastNode = null
-    const edgeStyle = new WebGL2PolylineEdgeStyle({
+
+    // use different arrow and edge styles for each row
+    const effectArrow = effect2arrow.get(effect)
+    const polylineEdgeStyle = new WebGL2PolylineEdgeStyle({
       stroke: 'black',
-      sourceArrow: effect2arrow.get(effect),
-      targetArrow: effect2arrow.get(effect)
+      sourceArrow: effectArrow,
+      targetArrow: effectArrow
     })
+
+    const arcEdgeStyles = []
+    const bridgeEdgeStyles = []
+    for (const height of [40, 20, -20, -40]) {
+      arcEdgeStyles.push(
+        new WebGL2ArcEdgeStyle({
+          stroke: 'black',
+          sourceArrow: effectArrow,
+          targetArrow: effectArrow,
+          height
+        })
+      )
+      bridgeEdgeStyles.push(
+        new WebGL2BridgeEdgeStyle({
+          stroke: 'black',
+          sourceArrow: effectArrow,
+          targetArrow: effectArrow,
+          height,
+          fanLength: 65
+        })
+      )
+    }
 
     // create a group node of appropriate size to house the following nodes
     const groupNode = graph.createGroupNode({
@@ -596,7 +605,7 @@ function createGraph(graphComponent) {
       // save the styles properties so as to be able to recreate it after group has been collapsed - optional for folding
       const styleDescriptor = new MyWebGLStyleDescriptor(
         shape,
-        Color.fromHSLA(graph.nodes.size / 32, 1, 0.5, 1.0),
+        Color.fromHSLA(countNormalNodes / 32, 1, 0.5, 1.0),
         effect === WebGL2NodeEffect.AMBIENT_STROKE_COLOR ? WebGL2Stroke.BLACK : WebGL2Stroke.NONE,
         effect
       )
@@ -611,16 +620,39 @@ function createGraph(graphComponent) {
         node,
         new WebGL2ShapeNodeStyle(
           shape,
-          Color.fromHSLA(graph.nodes.size / 32, 1, 0.5, 1.0),
+          Color.fromHSLA(countNormalNodes / 32, 1, 0.5, 1.0),
           effect === WebGL2NodeEffect.AMBIENT_STROKE_COLOR ? WebGL2Stroke.BLACK : WebGL2Stroke.NONE,
           effect
         )
       )
+      countNormalNodes++
 
       addImageLabel(node, graphComponent)
       if (lastNode) {
-        const edge = graph.createEdge(lastNode, node)
-        gmm.setStyle(edge, edgeStyle)
+        if (effect === WebGL2NodeEffect.NONE) {
+          for (let styleIdx = 0; styleIdx < arcEdgeStyles.length; styleIdx++) {
+            const edge = graph.createEdge(lastNode, node)
+            gmm.setStyle(edge, arcEdgeStyles[styleIdx])
+          }
+        } else if (effect === WebGL2NodeEffect.SHADOW) {
+          for (let styleIdx = 0; styleIdx < bridgeEdgeStyles.length; styleIdx++) {
+            const edge = graph.createEdge(lastNode, node)
+            gmm.setStyle(edge, bridgeEdgeStyles[styleIdx])
+          }
+        } else if (effect === WebGL2NodeEffect.AMBIENT_FILL_COLOR) {
+          const edge = graph.createEdge(lastNode, node)
+          gmm.setStyle(edge, polylineEdgeStyle)
+          // add some bends to display polyline functionality
+          const bend1x = lastNode.layout.center.x + 65
+          const bend1y = lastNode.layout.center.y + 20
+          const bend2x = lastNode.layout.center.x + 85
+          const bend2y = lastNode.layout.center.y - 20
+          graph.addBend(edge, [bend1x, bend1y])
+          graph.addBend(edge, [bend2x, bend2y])
+        } else {
+          const edge = graph.createEdge(lastNode, node)
+          gmm.setStyle(edge, polylineEdgeStyle)
+        }
       }
       graph.setParent(node, groupNode)
       lastNode = node

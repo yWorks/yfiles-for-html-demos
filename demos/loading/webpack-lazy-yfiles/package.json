@@ -7,7 +7,7 @@
   "private": true,
   "main": "webpack-demo.js",
   "dependencies": {
-    "yfiles": "../../../lib-dev/es-modules/yfiles-24.0.1-dev.tgz"
+    "yfiles": "../../../lib-dev/es-modules/yfiles-24.0.2-dev.tgz"
   },
   "scripts": {
     "production": "webpack --mode production",

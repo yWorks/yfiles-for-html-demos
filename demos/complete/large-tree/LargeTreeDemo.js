@@ -71,7 +71,7 @@ let webGL2EdgeStyle
 /**
  * Configures the maximum graph size reachable with layer additions
  */
-const maxGraphSize = 120_000
+const maxGraphSize = 250_000
 
 /**
  * @param {!object} licenseData
@@ -105,7 +105,7 @@ function initializeStyleDefaults() {
     nodeStyles.push(new WebGL2ShapeNodeStyle('round-rectangle', color, '#0000'))
   })
 
-  webGL2EdgeStyle = new WebGL2PolylineEdgeStyle({ targetArrow: 'triangle' })
+  webGL2EdgeStyle = new WebGL2PolylineEdgeStyle({ targetArrow: 'triangle-small' })
 }
 
 /**
@@ -167,6 +167,7 @@ function setUIDisabled(disabled) {
  * Displays or hides the loading indicator.
  * @param {boolean} visible
  * @param {!''} message
+ * @returns {!Promise}
  */
 async function setLoadingIndicatorVisibility(visible, message = '') {
   const loadingIndicator = document.querySelector('#loadingIndicator')
@@ -202,6 +203,7 @@ function registerCommands(graphComponent) {
  * Creates the tree with a given number of layers
  * @param {!GraphComponent} graphComponent the graphComponent
  * @param {number} layers the depth of the tree
+ * @returns {!Promise}
  */
 async function createGraph(graphComponent, layers) {
   const graph = graphComponent.graph
@@ -228,6 +230,7 @@ async function createGraph(graphComponent, layers) {
 /**
  * Adds a layer to the graph.
  * @param {!GraphComponent} graphComponent
+ * @returns {!Promise}
  */
 async function addLayer(graphComponent) {
   currentLayers++
@@ -297,6 +300,7 @@ function extendTree(graphComponent, maxLayer, childCount, queue, fadeInAnimation
  * @param {number} layer
  * @param {!Array.<INode>} queue
  * @param {!Point} center
+ * @returns {!INode}
  */
 function createTreeNode(graph, layer, queue, center) {
   const node = graph.createNodeAt(center)
@@ -313,7 +317,11 @@ function createTreeNode(graph, layer, queue, center) {
  * @returns {!Promise}
  */
 async function runExtendLayout(graphComponent, fadeInAnimation) {
-  const coreLayout = new BalloonLayout({ compactnessFactor: 0.05 })
+  const coreLayout = new BalloonLayout()
+  if (shouldReduceEdgeLength(graphComponent.graph)) {
+    coreLayout.minimumEdgeLength = 0
+  }
+
   const graph = graphComponent.graph
 
   const fixedNodeData = new FixNodeLayoutData({
@@ -327,6 +335,7 @@ async function runExtendLayout(graphComponent, fadeInAnimation) {
 /**
  * Removes a layer from the graph.
  * @param {!GraphComponent} graphComponent
+ * @returns {!Promise}
  */
 async function removeLayer(graphComponent) {
   currentLayers--
@@ -361,6 +370,7 @@ async function removeLayer(graphComponent) {
  *
  * @param {!GraphComponent} graphComponent the graph component
  * @param {!Array.<INode>} removeNodes the nodes to remove
+ * @returns {!Promise}
  */
 async function reduceTree(graphComponent, removeNodes) {
   const graph = graphComponent.graph
@@ -372,7 +382,15 @@ async function reduceTree(graphComponent, removeNodes) {
 
   const barycenterStage = new PlaceNodesAtBarycenterStage()
   const subgraphLayout = new SubgraphLayout({ affectedNodesDpKey: '__SUBGRAPH_LAYOUT_KEY' })
-  const balloonLayout = new BalloonLayout({ subgraphLayoutEnabled: true, subgraphLayout })
+
+  const balloonLayout = new BalloonLayout({
+    subgraphLayoutEnabled: true,
+    subgraphLayout
+  })
+  if (shouldReduceEdgeLength(graphComponent.graph)) {
+    balloonLayout.minimumEdgeLength = 0
+  }
+
   const layout = new SequentialLayout({ layouts: [balloonLayout, barycenterStage] })
 
   const gmm = graphComponent.graphModelManager
@@ -399,6 +417,16 @@ async function reduceTree(graphComponent, removeNodes) {
 }
 
 /**
+ * Determines if {@link BalloonLayout} should route edges as short as possible to produce the most
+ * compact arrangement possible.
+ * @param {!IGraph} graph the graph to be arranged.
+ * @returns {boolean}
+ */
+function shouldReduceEdgeLength(graph) {
+  return graph.nodes.size > 1_000
+}
+
+/**
  * Cleans up all WebGL2 animations, as only a limited number of set animations are allowed
  * @param {!GraphComponent} graphComponent
  */
@@ -420,6 +448,7 @@ function cleanupAnimations(graphComponent) {
  * @param {!LayoutData} layoutData
  * @param {!WebGL2Animation} nodeFadeOutAnimation
  * @param {!WebGL2Animation} edgeFadeOutAnimation
+ * @returns {!Promise}
  */
 async function applyLayout(
   graphComponent,

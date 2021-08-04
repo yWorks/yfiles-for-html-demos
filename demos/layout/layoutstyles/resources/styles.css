@@ -49,7 +49,8 @@
 }
 
 #layout-select-box,
-#sample-select-box {
+#sample-select-box,
+.sidebar-select-box {
   font-size: 14px;
   width: 95%;
   margin: 0 4px;

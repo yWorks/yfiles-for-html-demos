@@ -74,13 +74,17 @@ app.post('/layout', async (req, res) => {
   const data = JSON.parse(req.body)
 
   // The LayoutExecutorAsyncWorker can be hooked up with messages from the LayoutExecutorAsync
-  const worker = new LayoutExecutorAsyncWorker(applyLayout)
+  const executor = new LayoutExecutorAsyncWorker(applyLayout)
 
   // run the LayoutExecutorAsyncWorker on the input data
-  const result = await worker.process(data)
+  try {
+    const result = await executor.process(data)
+    // return the data of the layouted graph to the main thread
+    res.write(JSON.stringify(result))
+  } catch (e) {
+    res.write(JSON.stringify(e))
+  }
 
-  // return the data of the layouted graph to the main thread
-  res.write(JSON.stringify(result))
   res.end()
 })
 

@@ -47,8 +47,9 @@ import {
 } from 'yfiles'
 import NodeTypePanel from '../../utils/NodeTypePanel'
 import {
+  addNavigationButtons,
+  addOptions,
   bindAction,
-  bindChangeListener,
   bindCommand,
   checkLicense,
   showApp
@@ -67,8 +68,6 @@ Class.ensure(ImageNodeStyle)
 
 let graphComponent: GraphComponent
 
-let sampleIndex = 0
-
 let layoutRunning = false
 
 let alterTypeOrStructure = true
@@ -76,7 +75,7 @@ let alterTypeOrStructure = true
 /**
  * Bootstraps the demo.
  */
-async function run(licenseData: object): Promise<void> {
+function run(licenseData: object): void {
   License.value = licenseData
   graphComponent = new GraphComponent('#graphComponent')
 
@@ -95,21 +94,11 @@ async function run(licenseData: object): Promise<void> {
   // initializes the context menu for changing a node's type
   initializeTypePanel(graphComponent)
 
-  // create an initial sample graph
-  await loadSample()
-
   // bind the buttons to their commands
-  registerCommands()
+  initializeUI()
 
   // initialize the application's CSS and JavaScript for the description
   showApp(graphComponent)
-}
-
-/**
- * Calculates a new graph layout and applies the new layout in an animated fashion.
- */
-async function runLayoutAnimated(): Promise<void> {
-  await runLayout(true)
 }
 
 /**
@@ -281,7 +270,7 @@ function initializeTypePanel(graphComponent: GraphComponent): void {
   const typePanel = new NodeTypePanel(graphComponent)
   typePanel.nodeTypeChanged = (item, newType) => setNodeType(item, newType)
 
-  typePanel.typeChanged = () => runLayoutAnimated()
+  typePanel.typeChanged = () => runLayout(true)
 
   // update the nodes whose types will be changed on selection change events
   graphComponent.selection.addItemSelectionChangedListener(
@@ -305,34 +294,18 @@ function setNodeType(node: INode, type: number): void {
 }
 
 /**
- * Changes the currently displayed sample graph.
- * @param index the index of the sample to show.
- */
-async function changeSample(index: number): Promise<void> {
-  sampleIndex = index
-  getElementById<HTMLSelectElement>('sample-combo-box').selectedIndex = sampleIndex
-  getElementById<HTMLSelectElement>('settings-sample-combo-box').selectedIndex = sampleIndex
-
-  await loadSample()
-}
-
-/**
  * Loads a sample graph for testing the substructure and node types support of the organic layout
  * algorithm.
  */
-async function loadSample(): Promise<void> {
-  // determine which sample to load
-  const sampleComboBox = getElementById<HTMLSelectElement>('sample-combo-box')
-  const sample = sampleComboBox.options[sampleIndex]
-
+async function loadSample(sample: string): Promise<void> {
   disableUI(true)
   try {
     // load sample data
     const newGraph = new DefaultGraph()
-    await updateGraph(newGraph, `resources/${sample.value}.graphml`)
+    await updateGraph(newGraph, `resources/${sample}.graphml`)
 
     // update the settings UI to match the sample's default layout settings
-    const data = await loadSampleData(`resources/${sample.value}.json`)
+    const data = await loadSampleData(`resources/${sample}.json`)
     updateLayoutSettings(data)
 
     // update input mode setting depending on whether we are allowed to change the graph structure
@@ -343,15 +316,15 @@ async function loadSample(): Promise<void> {
     inputMode.allowDuplicate = alterTypeOrStructure
     inputMode.deletableItems = alterTypeOrStructure ? GraphItemTypes.ALL : GraphItemTypes.NONE
 
-    // enable undo/redo
-    newGraph.undoEngineEnabled = true
-
     // center new sample graph in current view
     graphComponent.graph = newGraph
 
     // configures default styles for newly created graph elements
     configureGraph(graphComponent.graph)
     await runLayout(false)
+
+    // enable undo/redo
+    newGraph.undoEngineEnabled = true
 
     // tell the demo's commands to update their state, i.e.
     // this ensures that the undo/redo toolbar controls get the correct enabled/disabled state
@@ -472,43 +445,37 @@ function disableUI(disabled: boolean): void {
 }
 
 /**
- * Binds the various commands available in yFiles for HTML to the buttons in the tutorial's toolbar.
+ * Binds actions and commands to the demo's UI controls.
  */
-function registerCommands(): void {
+function initializeUI(): void {
   bindCommand("button[data-command='ZoomIn']", ICommand.INCREASE_ZOOM, graphComponent)
   bindCommand("button[data-command='ZoomOut']", ICommand.DECREASE_ZOOM, graphComponent)
   bindCommand("button[data-command='FitContent']", ICommand.FIT_GRAPH_BOUNDS, graphComponent)
   bindCommand("button[data-command='Undo']", ICommand.UNDO, graphComponent)
   bindCommand("button[data-command='Redo']", ICommand.REDO, graphComponent)
 
-  const primary = getElementById<HTMLSelectElement>('sample-combo-box')
-  const secondary = getElementById<HTMLSelectElement>('settings-sample-combo-box')
-
-  const sampleCount = primary.options.length
-  primary.addEventListener('change', e =>
-    changeSample((e.target as HTMLSelectElement).selectedIndex)
+  const sampleSelect = document.querySelector<HTMLSelectElement>('#sample-combo-box')!
+  sampleSelect.addEventListener('change', async () => {
+    await loadSample(sampleSelect.options[sampleSelect.selectedIndex].value)
+  })
+  // as a final step, addOptions will fire a change event
+  // due to the change listener registered above, this will load the initial sample graph
+  addOptions(
+    sampleSelect,
+    { text: 'Simple Mixed, Large', value: 'mixed_large' },
+    { text: 'Simple Mixed, Small', value: 'mixed_small' },
+    { text: 'Simple Parallel', value: 'parallel' },
+    { text: 'Simple Star', value: 'star' },
+    { text: 'Computer Network', value: 'computer_network' }
   )
-  secondary.addEventListener('change', e =>
-    changeSample((e.target as HTMLSelectElement).selectedIndex)
-  )
+  addNavigationButtons(sampleSelect, true, 'sidebar-button')
 
-  bindAction('#previous-sample-button', () =>
-    changeSample((sampleCount + sampleIndex - 1) % sampleCount)
-  )
-  bindAction('#next-sample-button', () =>
-    changeSample((sampleCount + sampleIndex + 1) % sampleCount)
-  )
+  // changing a value automatically runs a layout
+  for (const editor of document.querySelectorAll('.settings-editor')) {
+    editor.addEventListener('change', async () => await runLayout(true))
+  }
 
-  bindChangeListener('#cycleStyle', runLayoutAnimated)
-  bindChangeListener('#chainStyle', runLayoutAnimated)
-  bindChangeListener('#starStyle', runLayoutAnimated)
-  bindChangeListener('#parallelStyle', runLayoutAnimated)
-  bindChangeListener('#use-edge-grouping', runLayoutAnimated)
-  bindChangeListener('#consider-node-types', runLayoutAnimated)
-  bindChangeListener('#separate-parallel', runLayoutAnimated)
-  bindChangeListener('#separate-star', runLayoutAnimated)
-
-  bindAction('#layout', runLayoutAnimated)
+  bindAction('#apply-layout-button', async () => await runLayout(true))
 }
 
 /**

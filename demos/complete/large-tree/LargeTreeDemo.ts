@@ -69,9 +69,9 @@ let webGL2EdgeStyle: WebGL2PolylineEdgeStyle
 /**
  * Configures the maximum graph size reachable with layer additions
  */
-const maxGraphSize = 120_000
+const maxGraphSize = 250_000
 
-function run(licenseData: object) {
+function run(licenseData: object): void {
   if (!webGl2Supported) {
     // show message if the browsers does not support WebGL2
     document.getElementById('no-webgl-support')!.removeAttribute('style')
@@ -95,18 +95,18 @@ function run(licenseData: object) {
 /**
  * Initializes the WebGL2 node and edge styles
  */
-function initializeStyleDefaults() {
+function initializeStyleDefaults(): void {
   ;['#242265', '#C0FC1A', '#FF6C00', '#00D8FF', '#BA85FF', '#6E0E0A'].forEach(color => {
     nodeStyles.push(new WebGL2ShapeNodeStyle('round-rectangle', color, '#0000'))
   })
 
-  webGL2EdgeStyle = new WebGL2PolylineEdgeStyle({ targetArrow: 'triangle' })
+  webGL2EdgeStyle = new WebGL2PolylineEdgeStyle({ targetArrow: 'triangle-small' })
 }
 
 /**
  * Enables WebGL as the rendering technique
  */
-function enableWebGLRendering(graphComponent: GraphComponent) {
+function enableWebGLRendering(graphComponent: GraphComponent): void {
   graphComponent.graphModelManager = new WebGL2GraphModelManager()
   graphComponent.selectionIndicatorManager = new WebGL2SelectionIndicatorManager(graphComponent)
 }
@@ -114,7 +114,7 @@ function enableWebGLRendering(graphComponent: GraphComponent) {
 /**
  * Initializes the graph manipulation UI elements
  */
-function initializeInputElements(graphComponent: GraphComponent) {
+function initializeInputElements(graphComponent: GraphComponent): void {
   const childInputElement = document.querySelector<HTMLInputElement>('#childCountInput')!
   const childCountElement = document.querySelector<HTMLSpanElement>('#childCount')!
   childCountElement.textContent = childInputElement.value
@@ -128,7 +128,7 @@ function initializeInputElements(graphComponent: GraphComponent) {
  * Updates the graph manipulation UI
  * Enables and disables the add/remove layer buttons depending on graph size and child count
  */
-function updateLayersUI(graphComponent: GraphComponent) {
+function updateLayersUI(graphComponent: GraphComponent): void {
   // update display of current layers
   const layerCountElement = document.querySelector<HTMLSpanElement>('#layerCount')!
   layerCountElement.textContent = String(currentLayers)
@@ -148,7 +148,7 @@ function updateLayersUI(graphComponent: GraphComponent) {
 /**
  * Enables/disables the graph manipulation UI. Used during graph changes and extendLayout.
  */
-function setUIDisabled(disabled: boolean) {
+function setUIDisabled(disabled: boolean): void {
   document.querySelector<HTMLButtonElement>('#addLayer')!.disabled = disabled
   document.querySelector<HTMLButtonElement>('#removeLayer')!.disabled = disabled
   document.querySelector<HTMLInputElement>('#childCountInput')!.disabled = disabled
@@ -157,7 +157,7 @@ function setUIDisabled(disabled: boolean) {
 /**
  * Displays or hides the loading indicator.
  */
-async function setLoadingIndicatorVisibility(visible: boolean, message = '') {
+async function setLoadingIndicatorVisibility(visible: boolean, message = ''): Promise<void> {
   const loadingIndicator = document.querySelector<HTMLElement>('#loadingIndicator')!
   loadingIndicator.style.display = visible ? 'block' : 'none'
   loadingIndicator.innerText = message
@@ -167,7 +167,7 @@ async function setLoadingIndicatorVisibility(visible: boolean, message = '') {
 /**
  * Updates the graph information on the sidebar.
  */
-function updateGraphInformation(graph: IGraph) {
+function updateGraphInformation(graph: IGraph): void {
   document.querySelector('#numberNodes')!.textContent = String(graph.nodes.size)
   document.querySelector('#numberEdges')!.textContent = String(graph.edges.size)
 }
@@ -190,7 +190,7 @@ function registerCommands(graphComponent: GraphComponent): void {
  * @param graphComponent the graphComponent
  * @param layers the depth of the tree
  */
-async function createGraph(graphComponent: GraphComponent, layers: number) {
+async function createGraph(graphComponent: GraphComponent, layers: number): Promise<void> {
   const graph = graphComponent.graph
   const gmm = graphComponent.graphModelManager as WebGL2GraphModelManager
   const childCount = Number(document.querySelector<HTMLInputElement>('#childCountInput')!.value)
@@ -215,7 +215,7 @@ async function createGraph(graphComponent: GraphComponent, layers: number) {
 /**
  * Adds a layer to the graph.
  */
-async function addLayer(graphComponent: GraphComponent) {
+async function addLayer(graphComponent: GraphComponent): Promise<void> {
   currentLayers++
   const graph = graphComponent.graph
   const graphInfo = graph.tag
@@ -266,7 +266,7 @@ function extendTree(
   childCount: number,
   queue: INode[],
   fadeInAnimation: WebGL2Animation
-) {
+): void {
   const graph = graphComponent.graph
   const gmm = graphComponent.graphModelManager as WebGL2GraphModelManager
 
@@ -284,7 +284,7 @@ function extendTree(
   }
 }
 
-function createTreeNode(graph: IGraph, layer: number, queue: INode[], center: Point) {
+function createTreeNode(graph: IGraph, layer: number, queue: INode[], center: Point): INode {
   const node = graph.createNodeAt(center)
   node.tag = { layer }
   queue.push(node)
@@ -301,7 +301,11 @@ async function runExtendLayout(
   graphComponent: GraphComponent,
   fadeInAnimation: WebGL2Animation
 ): Promise<void> {
-  const coreLayout = new BalloonLayout({ compactnessFactor: 0.05 })
+  const coreLayout = new BalloonLayout()
+  if (shouldReduceEdgeLength(graphComponent.graph)) {
+    coreLayout.minimumEdgeLength = 0
+  }
+
   const graph = graphComponent.graph
 
   const fixedNodeData = new FixNodeLayoutData({
@@ -315,7 +319,7 @@ async function runExtendLayout(
 /**
  * Removes a layer from the graph.
  */
-async function removeLayer(graphComponent: GraphComponent) {
+async function removeLayer(graphComponent: GraphComponent): Promise<void> {
   currentLayers--
   const graph = graphComponent.graph
 
@@ -349,7 +353,7 @@ async function removeLayer(graphComponent: GraphComponent) {
  * @param graphComponent the graph component
  * @param removeNodes the nodes to remove
  */
-async function reduceTree(graphComponent: GraphComponent, removeNodes: INode[]) {
+async function reduceTree(graphComponent: GraphComponent, removeNodes: INode[]): Promise<void> {
   const graph = graphComponent.graph
 
   const barycenterData = new PlaceNodesAtBarycenterStageData({ affectedNodes: removeNodes })
@@ -359,7 +363,15 @@ async function reduceTree(graphComponent: GraphComponent, removeNodes: INode[]) 
 
   const barycenterStage = new PlaceNodesAtBarycenterStage()
   const subgraphLayout = new SubgraphLayout({ affectedNodesDpKey: '__SUBGRAPH_LAYOUT_KEY' })
-  const balloonLayout = new BalloonLayout({ subgraphLayoutEnabled: true, subgraphLayout })
+
+  const balloonLayout = new BalloonLayout({
+    subgraphLayoutEnabled: true,
+    subgraphLayout
+  })
+  if (shouldReduceEdgeLength(graphComponent.graph)) {
+    balloonLayout.minimumEdgeLength = 0
+  }
+
   const layout = new SequentialLayout({ layouts: [balloonLayout, barycenterStage] })
 
   const gmm = graphComponent.graphModelManager as WebGL2GraphModelManager
@@ -386,9 +398,18 @@ async function reduceTree(graphComponent: GraphComponent, removeNodes: INode[]) 
 }
 
 /**
+ * Determines if {@link BalloonLayout} should route edges as short as possible to produce the most
+ * compact arrangement possible.
+ * @param graph the graph to be arranged.
+ */
+function shouldReduceEdgeLength(graph: IGraph): boolean {
+  return graph.nodes.size > 1_000
+}
+
+/**
  * Cleans up all WebGL2 animations, as only a limited number of set animations are allowed
  */
-function cleanupAnimations(graphComponent: GraphComponent) {
+function cleanupAnimations(graphComponent: GraphComponent): void {
   const graph = graphComponent.graph
   const gmm = graphComponent.graphModelManager as WebGL2GraphModelManager
   graph.nodes.forEach(node => {
@@ -413,7 +434,7 @@ async function applyLayout(
   layoutData: LayoutData,
   nodeFadeOutAnimation: WebGL2Animation,
   edgeFadeOutAnimation: WebGL2Animation
-) {
+): Promise<void> {
   const executor = new AnimatedLayoutExecutor({
     graphComponent,
     layout: layout,

@@ -37,6 +37,7 @@
   <title>Organic Substructures Demo [yFiles for HTML]</title>
 
   <link rel="stylesheet" href="../../resources/style/demo.css">
+  <link rel="stylesheet" href="../../layout/layoutstyles/resources/styles.css">
   <link rel="stylesheet" href="resources/node-styles.css">
 
   <script src="../../resources/filesystem-warning.js"></script>
@@ -81,15 +82,10 @@
       padding: 8px;
     }
 
-    .demo-sidebar .demo-sidebar-content .settings-headline {
-      color: #ffffff;
-      margin: 0;
-    }
-
-    .settings-content, .settings-grid {
-      background: #ffffff;
-      margin-bottom: 16px;
+    .demo-sidebar-content .settings-grid {
+      background-color: white;
       padding: 8px;
+      font-size: 14px;
     }
 
     .settings-content select {
@@ -185,35 +181,6 @@
 
     <button data-command="Undo" title="Undo" class="demo-icon-yIconUndo"></button>
     <button data-command="Redo" title="Redo" class="demo-icon-yIconRedo"></button>
-
-    <span class="demo-separator"></span>
-
-    <span>Sample</span>
-    <button
-     title="Open previous graph"
-     class="demo-icon-yIconPrevious toolbar-component"
-     id="previous-sample-button"></button>
-    <select
-     class="toolbar-component"
-     title="Select a sample graph"
-     id="sample-combo-box">
-      <option value="mixed_large">Simple Mixed, Large</option>
-      <option value="mixed_small">Simple Mixed, Small</option>
-      <option value="parallel">Simple Parallel</option>
-      <option value="star">Simple Star</option>
-      <option value="computer_network">Computer Network</option>
-    </select>
-    <button
-     title="Open next graph"
-     class="demo-icon-yIconNext toolbar-component"
-     id="next-sample-button"></button>
-
-    <span class="demo-separator"></span>
-
-    <button
-     class="demo-icon-yIconLayout labeled toolbar-component"
-     title="Arrange Graph"
-     id="layout">Layout</button>
   </div>
 
   <div id="graphComponent">
@@ -231,85 +198,93 @@
   </div>
 </div>
 
+<!--
+The sidebar for the properties and settings
+-->
 <aside class="demo-sidebar demo-right">
-  <h1 class="demo-sidebar-header">Layout Settings</h1>
+  <h1 class="demo-sidebar-header">Configuration</h1>
   <div class="demo-sidebar-content">
-    <h3 class="settings-headline">Sample</h3>
-    <div class="settings-content">
-      <select
-        class="settings-editor-component"
-        id="settings-sample-combo-box">
-        <option value="mixed_large">Simple Mixed, Large</option>
-        <option value="mixed_small">Simple Mixed, Small</option>
-        <option value="parallel">Simple Parallel</option>
-        <option value="star">Simple Star</option>
-        <option value="computer_network">Computer Network</option>
-        <option value="insurance_fraud">Insurance Fraud</option>
-      </select>
+    <div class="data-editor-header">
+      <h2 style="margin-top: 0;">Sample Graph</h2>
+      <div class="content ">
+        <select id="sample-combo-box" class="sidebar-select-box" title="Select a sample for the layout algorithm"></select>
+      </div>
     </div>
-    <h3 class="settings-headline">Substructure Layout</h3>
-    <div class="settings-grid">
-      <label for="cycleStyle" class="settings-label settings-row1">Cycles</label>
-      <select
-        class="settings-editor settings-row1"
-        title="Select a style for cycle substructures"
-        id="cycleStyle">
-        <option value="NONE">Ignore</option>
-        <option value="CIRCULAR">Circular</option>
-      </select>
-      <label for="chainStyle" class="settings-label settings-row2">Chains</label>
-      <select
-        class="settings-editor settings-row2"
-        title="Select a style for chain substructures"
-        id="chainStyle">
-        <option value="NONE">Ignore</option>
-        <option value="RECTANGULAR">Rectangular</option>
-        <option value="STRAIGHT_LINE">Straight-Line</option>
-      </select>
-      <label for="starStyle" class="settings-label settings-row3">Star</label>
-      <select
-        class="settings-editor settings-row3"
-        title="Select a style for star substructures"
-        id="starStyle">
-        <option value="NONE">Ignore</option>
-        <option value="CIRCULAR">Circular</option>
-        <option value="RADIAL">Radial</option>
-        <option value="SEPARATED_RADIAL">Separated Radial</option>
-      </select>
-      <label for="parallelStyle" class="settings-label settings-row4">Parallel</label>
-      <select
-        class="settings-editor settings-row4"
-        title="Select a style for parallel substructures"
-        id="parallelStyle">
-        <option value="NONE">Ignore</option>
-        <option value="RADIAL">Radial</option>
-        <option value="RECTANGULAR">Rectangular</option>
-        <option value="STRAIGHT_LINE">Straight-Line</option>
-      </select>
-      <label for="use-edge-grouping" class="settings-label settings-row5">Use Edge Grouping</label>
-      <input
-        class="settings-editor settings-row5"
-        id="use-edge-grouping"
-        type="checkbox"/>
+
+    <div class="data-editor-header">
+      <h2 style="margin-top: 0;">Substructure Layout</h2>
+      <div class="settings-grid">
+        <label for="cycleStyle" class="settings-label settings-row1">Cycles</label>
+        <select
+          class="settings-editor settings-row1"
+          title="Select a style for cycle substructures"
+          id="cycleStyle">
+          <option value="NONE">Ignore</option>
+          <option value="CIRCULAR">Circular</option>
+        </select>
+        <label for="chainStyle" class="settings-label settings-row2">Chains</label>
+        <select
+          class="settings-editor settings-row2"
+          title="Select a style for chain substructures"
+          id="chainStyle">
+          <option value="NONE">Ignore</option>
+          <option value="RECTANGULAR">Rectangular</option>
+          <option value="STRAIGHT_LINE">Straight-Line</option>
+        </select>
+        <label for="starStyle" class="settings-label settings-row3">Star</label>
+        <select
+          class="settings-editor settings-row3"
+          title="Select a style for star substructures"
+          id="starStyle">
+          <option value="NONE">Ignore</option>
+          <option value="CIRCULAR">Circular</option>
+          <option value="RADIAL">Radial</option>
+          <option value="SEPARATED_RADIAL">Separated Radial</option>
+        </select>
+        <label for="parallelStyle" class="settings-label settings-row4">Parallel</label>
+        <select
+          class="settings-editor settings-row4"
+          title="Select a style for parallel substructures"
+          id="parallelStyle">
+          <option value="NONE">Ignore</option>
+          <option value="RADIAL">Radial</option>
+          <option value="RECTANGULAR">Rectangular</option>
+          <option value="STRAIGHT_LINE">Straight-Line</option>
+        </select>
+        <label for="use-edge-grouping" class="settings-label settings-row5">Use Edge Grouping</label>
+        <input
+          class="settings-editor settings-row5"
+          id="use-edge-grouping"
+          type="checkbox"/>
+      </div>
     </div>
-    <h3 class="settings-headline">Node Types</h3>
-    <div class="settings-grid">
-      <label for="consider-node-types" class="settings-label settings-row1">Consider Node Types</label>
-      <input
-        class="settings-editor settings-row1"
-        id="consider-node-types"
-        type="checkbox"
-        checked/>
-      <label for="separate-parallel" class="settings-label settings-row2">Separate Parallel Structures by Type</label>
-      <input
-        class="settings-editor settings-row2"
-        id="separate-parallel"
-        type="checkbox"/>
-      <label for="separate-star" class="settings-label settings-row3">Separate Star Structures by Type</label>
-      <input
-        class="settings-editor settings-row3"
-        id="separate-star"
-        type="checkbox"/>
+
+    <div class="data-editor-header">
+      <h2 style="margin-top: 0;">Node Types</h2>
+      <div class="settings-grid">
+        <label for="consider-node-types" class="settings-label settings-row1">Consider Node Types</label>
+        <input
+          class="settings-editor settings-row1"
+          id="consider-node-types"
+          type="checkbox"
+          checked/>
+        <label for="separate-parallel" class="settings-label settings-row2">Separate Parallel Structures by Type</label>
+        <input
+          class="settings-editor settings-row2"
+          id="separate-parallel"
+          type="checkbox"/>
+        <label for="separate-star" class="settings-label settings-row3">Separate Star Structures by Type</label>
+        <input
+          class="settings-editor settings-row3"
+          id="separate-star"
+          type="checkbox"/>
+      </div>
+    </div>
+
+    <div id="data-editor-button-container" class="demo-form-block">
+      <button id="apply-layout-button" class="flat-button primary" data-command="LayoutCommand" title="Apply the Layout&#013;(CTRL + Enter)">
+        <span>Apply Layout</span>
+      </button>
     </div>
   </div>
 </aside>

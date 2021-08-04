@@ -161,21 +161,6 @@ function configureUI() {
 
   // The demo starts with the "Pulse" configuration
   configureFrequencyMagnitudeSelects(true, 2, 2)
-
-  // configure fade color slider
-  const canvas = document.createElement('canvas')
-  canvas.setAttribute('width', '180')
-  canvas.setAttribute('height', '15')
-  const ctx = canvas.getContext('2d')
-  for (let x = 0; x < 180; x++) {
-    ctx.fillStyle = `hsl(${x * 2}, 100%, 50%)`
-    ctx.strokeStyle = `hsl(${x * 2}, 100%, 50%)`
-    ctx.fillRect(x, 0, 1, 15)
-  }
-  const colorSlider1 = document.getElementById('fadeColor1')
-  colorSlider1.style.backgroundImage = `url(${canvas.toDataURL()})`
-  const colorSlider2 = document.getElementById('fadeColor2')
-  colorSlider2.style.backgroundImage = `url(${canvas.toDataURL()})`
 }
 
 /**
@@ -367,17 +352,15 @@ function getFadeAnimationType(fadeDirection, fadeType) {
 }
 
 /**
- * Creates a color using the "fadeColor" slider value as the hue
+ * Gets the colors from the fade to color pickers
  * @returns {!object}
  */
 function getConfiguredFadeColors() {
-  const color1SliderValue = parseInt(document.getElementById('fadeColor1').value)
-
-  const color2SliderValue = parseInt(document.getElementById('fadeColor2').value)
-
+  const color1pickerValue = document.getElementById('fadeColor1').value
+  const color2pickerValue = document.getElementById('fadeColor2').value
   return {
-    color1: Color.fromHSLA(color1SliderValue / 180, 1, 0.5, 1.0),
-    color2: Color.fromHSLA(color2SliderValue / 180, 1, 0.5, 1.0)
+    color1: Color.from(color1pickerValue),
+    color2: Color.from(color2pickerValue)
   }
 }
 
@@ -513,7 +496,7 @@ function handleError(error) {
  * @returns {!Array.<Component>}
  */
 function calculateComponents(graph) {
-  let components = new Array()
+  const components = new Array()
   graph.nodes.forEach(node => {
     if (!node.tag) {
       components.push(collectComponent(graph, node))
@@ -528,16 +511,16 @@ function calculateComponents(graph) {
  * @returns {!Component}
  */
 function collectComponent(graph, node) {
-  let component = new Component()
+  const component = new Component()
   node.tag = component
   component.nodes.add(node)
 
-  let nodes = new Array(node)
+  const nodes = new Array(node)
   while (nodes.length > 0) {
     const currentNode = nodes.pop()
     graph.edgesAt(currentNode, AdjacencyTypes.ALL).forEach(edge => {
       component.edges.add(edge)
-      let oppositeNode = edge.opposite(currentNode)
+      const oppositeNode = edge.opposite(currentNode)
       if (!oppositeNode.tag) {
         oppositeNode.tag = component
         component.nodes.add(oppositeNode)
