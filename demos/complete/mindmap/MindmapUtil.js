@@ -63,17 +63,17 @@ export function getRoot(graph) {
  * of a given root.
  * @param {!IGraph} graph The input graph.
  * @param {!INode} subtreeRoot The root node of the subtree.
- * @param {!Array.<INode>} nodes A list to be filled with the nodes of the subtree.
- * @param {!Array.<IEdge>} edges A list to be filled with the edges of the subtree.
+ * @param nodes A list to be filled with the nodes of the subtree.
+ * @param edges A list to be filled with the edges of the subtree.
+ * @returns {!object}
  */
-export function getSubtree(graph, subtreeRoot, nodes, edges) {
+export function getSubtree(graph, subtreeRoot) {
   const treeAnalysis = new TreeAnalysis({
-    subgraphEdges: graph.edges.filter(e => !isCrossReference(e))
+    subgraphEdges: e => !isCrossReference(e)
   })
   const analysisResult = treeAnalysis.run(graph)
   const subtree = analysisResult.getSubtree(subtreeRoot)
-  nodes.push(...subtree.nodes)
-  edges.push(...subtree.edges)
+  return { nodes: [...subtree.nodes], edges: [...subtree.edges] }
 }
 
 /**

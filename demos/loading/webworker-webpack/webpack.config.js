@@ -75,6 +75,13 @@ const baseConfig = {
   resolve: {
     extensions: ['.tsx', '.ts', '.js']
   },
+  optimization: {
+    // don't split chunks for web worker
+    splitChunks: {
+      chunks: 'all',
+      minSize: 100000
+    }
+  },
   plugins: [
     new MiniCssExtractPlugin({
       filename: '[name].css',

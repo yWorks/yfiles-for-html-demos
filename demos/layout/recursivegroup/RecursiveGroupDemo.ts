@@ -83,19 +83,17 @@ function run(licenseData: object): void {
 async function runLayout(): Promise<void> {
   setUIDisabled(true)
 
-  const selectedLayout = (
-    document.getElementById('select-sample') as HTMLSelectElement
-  ).value.substring(8)
+  const selectedLayout = (document.getElementById('select-sample') as HTMLSelectElement).value
   const fromSketch = (document.getElementById('from-sketch') as HTMLInputElement).checked
 
   let layout: ILayoutAlgorithm
   let layoutData: LayoutData
   switch (selectedLayout) {
-    case 'Table':
+    case 'table':
       layout = createTableLayout(fromSketch)
       layoutData = createTableLayoutData()
       break
-    case 'Three-Tier':
+    case 'three-tier':
       layout = createThreeTierLayout(fromSketch)
       layoutData = createThreeTierLayoutData(graphComponent.graph, fromSketch)
       break
@@ -165,9 +163,7 @@ function registerCommands(): void {
  * Loads the table or three-tire.
  */
 async function loadSample(): Promise<void> {
-  const filename = (document.getElementById('select-sample') as HTMLSelectElement).value.substring(
-    8
-  )
+  const filename = (document.getElementById('select-sample') as HTMLSelectElement).value
   const path = `resources/${filename}.graphml`
 
   const ioHandler = new GraphMLIOHandler()

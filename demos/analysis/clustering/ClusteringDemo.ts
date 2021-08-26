@@ -49,8 +49,9 @@ import {
   IEnumerable,
   IGraph,
   INode,
-  IRectangle,
   Insets,
+  IRectangle,
+  IVisualCreator,
   KMeansClustering,
   KMeansClusteringResult,
   LabelPropagationClustering,
@@ -63,8 +64,7 @@ import {
   Point,
   PolylineEdgeStyle,
   Rect,
-  ShapeNodeStyle,
-  IVisualCreator
+  ShapeNodeStyle
 } from 'yfiles'
 
 import * as ClusteringData from './resources/ClusteringData'
@@ -563,8 +563,7 @@ function onAlgorithmChanged() {
   selectedAlgorithm = algorithmsComboBox.selectedIndex
 
   // determine the file name that will be used for loading the graph
-  const key = (algorithmsComboBox[selectedAlgorithm] as HTMLOptionElement).value
-  const fileName = key.replace(' ', '').replace('-', '')
+  const fileName = algorithmsComboBox.value
 
   // Adjusts the window appearance. This method is needed since when the selected clustering algorithm is
   // HIERARCHICAL, the window has to be split to visualize the dendrogram.

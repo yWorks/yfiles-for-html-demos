@@ -875,12 +875,7 @@ async function onDragFinished() {
         oldTagData!,
         newTagData,
         movedNode!,
-        node => {
-          const subtreeNodes: INode[] = []
-          const subtreeEdges: IEdge[] = []
-          getSubtree(fullGraph, node, subtreeNodes, subtreeEdges)
-          subtreeNodes.forEach(n => (n.tag.isLeft = node.tag.isLeft))
-        }
+        node => getSubtree(fullGraph, node).nodes.forEach(n => (n.tag.isLeft = node.tag.isLeft))
       )
     )
   } else {
@@ -945,10 +940,8 @@ function startCrossReferenceEdgeCreation(node: INode): void {
  * @param subtreeRoot The root node of the subtree.
  */
 function updateStyles(subtreeRoot: INode): void {
-  const subtreeNodes: INode[] = []
-  const subtreeEdges: IEdge[] = []
   const fullGraph = filteredGraph.wrappedGraph!
-  getSubtree(fullGraph, subtreeRoot, subtreeNodes, subtreeEdges)
+  const { nodes: subtreeNodes, edges: subtreeEdges } = getSubtree(fullGraph, subtreeRoot)
 
   subtreeNodes.forEach(node => {
     const depth = getDepth(node)

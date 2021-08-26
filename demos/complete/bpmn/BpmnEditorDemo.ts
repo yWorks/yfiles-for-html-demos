@@ -125,8 +125,6 @@ import loadJson from '../../resources/load-json'
 import { BpmnDiParser } from './bpmn-di'
 import { pointerEventsSupported } from '../../utils/Workarounds'
 
-const numberOfDiSamples = 1
-
 let graphComponent: GraphComponent
 
 /**
@@ -430,9 +428,10 @@ async function onGraphChooserBoxSelectionChanged(): Promise<void> {
   setUIDisabled(true)
 
   // now derive the file name
-  const selectedItem = graphChooserBox.options[graphChooserBox.selectedIndex].value
-  const graphName = selectedItem.toLowerCase().replace(/ /g, '_')
-  if (graphChooserBox.selectedIndex >= graphChooserBox.options.length - numberOfDiSamples) {
+  const selectedItem = graphChooserBox.options[graphChooserBox.selectedIndex]
+  const graphName = selectedItem.value
+  const isBpmnDi = selectedItem.getAttribute('data-type') === 'bpmn-di'
+  if (isBpmnDi) {
     const content = await loadBpmnDiSample(graphName)
     if (content !== null) {
       const bpmnDiParser = new BpmnDiParser()

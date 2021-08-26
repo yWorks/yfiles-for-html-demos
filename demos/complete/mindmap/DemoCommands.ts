@@ -127,9 +127,7 @@ export default class DemoCommands {
     }
 
     // collect subtree nodes to expand/collapse them with a nice animation
-    let subtreeNodes: INode[] = []
-    const subTreeEdges: IEdge[] = []
-    getSubtree(fullGraph, node, subtreeNodes, subTreeEdges)
+    let { nodes: subtreeNodes } = getSubtree(fullGraph, node)
     subtreeNodes = subtreeNodes.filter(subtreeNode => subtreeNode !== node)
 
     await MindmapLayout.instance.layout(this.graphComponent, subtreeNodes, collapsed)

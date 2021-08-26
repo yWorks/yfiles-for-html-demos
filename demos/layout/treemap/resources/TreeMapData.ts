@@ -11631,8 +11631,8 @@ export default {
       color: 'rgb(0, 109, 124)'
     },
     {
-      id: 'yFiles-for-HTML-Complete/doc/documentation-style.css',
-      label: 'documentation-style.css\n(14.09kb)',
+      id: 'yFiles-for-HTML-Complete/doc/readme-style.css',
+      label: 'readme-style.css\n(14.09kb)',
       groupRef: 'yFiles-for-HTML-Complete/doc',
       size: '14085',
       color: 'rgb(0, 164, 137)'

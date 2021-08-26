@@ -455,7 +455,7 @@ function registerCommands(): void {
   bindAction("button[data-command='Layout']", runEdgeRouter)
   bindAction("button[data-command='Reset']", createSampleGraph)
   bindChangeListener("select[data-command='TogglePortGroupMode']", value => {
-    portGroupMode = value === 'Port Grouping'
+    portGroupMode = value === 'port-grouping'
     graphComponent.graph.edges.forEach(edge => {
       updateStyles(edge)
     })

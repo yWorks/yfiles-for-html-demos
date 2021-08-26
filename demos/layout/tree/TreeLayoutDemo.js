@@ -125,19 +125,19 @@ async function runLayout(initConfig) {
       default:
         configuration = createGenericConfiguration(graphComponent.graph, nodePlacerPanel)
         break
-      case 'Default Tree':
+      case 'default':
         configuration = createDefaultTreeConfiguration(graphComponent.graph, nodePlacerPanel)
         break
-      case 'Wide Tree':
+      case 'wide':
         configuration = createWideTreeConfiguration(graphComponent.graph, nodePlacerPanel)
         break
-      case 'Category Tree':
+      case 'category':
         configuration = createCategoryTreeConfiguration(graphComponent.graph, nodePlacerPanel)
         break
-      case 'General Graph':
+      case 'general':
         configuration = createGeneralGraphConfiguration(graphComponent.graph, nodePlacerPanel)
         break
-      case 'Large Tree':
+      case 'large':
         configuration = createLargeTreeConfiguration(graphComponent.graph, nodePlacerPanel)
         break
     }
@@ -286,19 +286,19 @@ async function loadGraph() {
   const sample = document.getElementById('select-sample').value
   switch (sample) {
     default:
-    case 'Default Tree':
+    case 'default':
       nodesSource = TreeData.DefaultTree.nodesSource
       break
-    case 'Wide Tree':
+    case 'wide':
       nodesSource = TreeData.DefaultTree.nodesSource
       break
-    case 'Category Tree':
+    case 'category':
       nodesSource = TreeData.CategoryTree.nodesSource
       break
-    case 'General Graph':
+    case 'general':
       nodesSource = TreeData.GeneralGraph.nodesSource
       break
-    case 'Large Tree':
+    case 'large':
       nodesSource = TreeData.LargeTree.nodesSource
       break
   }
@@ -311,7 +311,7 @@ async function loadGraph() {
   // create the graph
   builder.buildGraph()
 
-  if (sample === 'General Graph') {
+  if (sample === 'general') {
     // add some non-tree edges
     graph.createEdge(graph.nodes.get(1), graph.nodes.get(22))
     graph.createEdge(graph.nodes.get(3), graph.nodes.get(16))

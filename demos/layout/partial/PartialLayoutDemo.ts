@@ -464,32 +464,31 @@ async function loadScenario(): Promise<void> {
     partialEdgesMapper
   )
 
-  const sample = getElementById<HTMLSelectElement>('select-sample')
-    .value.substring(10)
-    .toLowerCase()
+  const sample = getElementById<HTMLSelectElement>('select-sample').value
+
   const path = `resources/${sample}.graphml`
   switch (sample) {
     default:
-    case 'Hierarchic':
+    case 'hierarchic':
       setOptions(
-        'Hierarchic',
-        'Connected',
-        'Barycenter',
-        'Orthogonal',
-        'Top to Bottom',
+        'hierarchic',
+        'connected',
+        'barycenter',
+        'orthogonal',
+        'top-to-bottom',
         5,
         true,
         true
       )
       break
-    case 'Orthogonal':
-      setOptions('Orthogonal', 'Single', 'Barycenter', 'Orthogonal', 'None', 20, false, true)
+    case 'orthogonal':
+      setOptions('orthogonal', 'single', 'barycenter', 'orthogonal', 'none', 20, false, true)
       break
-    case 'Organic':
-      setOptions('Organic', 'Single', 'Barycenter', 'Automatic', 'None', 30, true, false)
+    case 'organic':
+      setOptions('organic', 'single', 'barycenter', 'automatic', 'none', 30, true, false)
       break
-    case 'Circular':
-      setOptions('Circular', 'Connected', 'Barycenter', 'Automatic', 'None', 10, true, false)
+    case 'circular':
+      setOptions('circular', 'connected', 'barycenter', 'automatic', 'none', 10, true, false)
       break
   }
 

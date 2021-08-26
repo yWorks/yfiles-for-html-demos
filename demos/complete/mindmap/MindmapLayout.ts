@@ -197,12 +197,10 @@ export default class MindmapLayout {
    * root node.
    * @param graph The input graph.
    * @param subtreeRoot The root node of the subtree.
+   * @param subtreeNodes Pre-calculated nodes belonging to the subtree
+   * @param subtreeEdges Pre-calculated edges belonging to the subtree
    */
-  layoutSubtree(graph: IGraph, subtreeRoot: INode) {
-    const nodes: INode[] = []
-    const edges: IEdge[] = []
-    getSubtree(graph, subtreeRoot, nodes, edges)
-
+  layoutSubtree(graph: IGraph, subtreeRoot: INode, subtreeNodes: INode[], subtreeEdges: IEdge[]) {
     // fix node layout stage - mark subtree root node as fixed
     const layoutData = this.createLayoutData()
       .combineWith(
@@ -212,11 +210,11 @@ export default class MindmapLayout {
       )
       .combineWith(
         new SubgraphLayoutData({
-          subgraphNodes: nodes
+          subgraphNodes: subtreeNodes
         })
       )
 
-    this.adjustPortLocations(graph, edges)
+    this.adjustPortLocations(graph, subtreeEdges)
     graph.applyLayout(new SubgraphLayout(this.treeLayout), layoutData)
   }
 

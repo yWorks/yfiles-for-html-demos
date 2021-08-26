@@ -130,30 +130,30 @@
     <h3>Animation Type</h3>
     <p>Choose one of the available basic animation types.</p>
     <select id="baseAnimation" title="Animation to use on element hover." style="width: 130px">
-      <option selected>Pulse</option>
-      <option>Shake</option>
-      <option>Fade</option>
+      <option selected value="Pulse">Pulse</option>
+      <option value="Shake">Shake</option>
+      <option value="Fade">Fade</option>
     </select>
 
     <h3>Animated Elements</h3>
     <p>Choose the graphical elements of the animated graph part. Not available for 'Shake'.</p>
     <select id="animatedElements" title="Which parts of the graph to animate." style="width: 130px">
-      <option selected>Nodes And Edges</option>
-      <option>Node Effect</option>
+      <option selected value="Nodes And Edges">Nodes And Edges</option>
+      <option value="Node Effect">Node Effect</option>
     </select>
 
     <h3>Fade Type</h3>
     <p>Choose the fade target. I.e. what to fade to or from. Not available for 'Pulse' and 'Shake'.</p>
     <select id="fadeType" title="For fade animations, whether to animate to the effect or away from it." style="width: 130px">
-      <option selected>Gray</option>
-      <option>Color</option>
-      <option>Invisible</option>
+      <option selected value="Gray">Gray</option>
+      <option value='Color'>Color</option>
+      <option value='Invisible'>Invisible</option>
     </select>
 
     <h3>Fade Direction</h3>
     <p>Choose, whether to fade <em>to</em> an effect or away <em>from</em> it. Not available for 'Pulse' and 'Shake'.</p>
     <select id="fadeDirection" title="For fade animations, whether to animate to the effect or away from it." style="width: 130px">
-      <option>From</option>
+      <option value='From'>From</option>
       <option selected>To</option>
     </select>
 
@@ -165,30 +165,30 @@
     <h3>Animation Frequency</h3>
     <p>Choose the animation frequency. Not available for fade animations.</p>
     <select id="animationFrequency" title="Animation frequency" style="width: 130px">
-      <option>1Hz</option>
-      <option selected>2Hz</option>
-      <option>5Hz</option>
-      <option>7.5Hz</option>
-      <option>10Hz</option>
+      <option value='1'>1Hz</option>
+      <option selected value="2">2Hz</option>
+      <option value='5'>5Hz</option>
+      <option value='7.5'>7.5Hz</option>
+      <option value='10'>10Hz</option>
     </select>
 
     <h3>Animation Magnitude</h3>
     <p>Choose the animation magnitude. Not available for fade animations.</p>
     <select id="animationMagnitude" title="Animation magnitude" style="width: 130px">
       <option selected>2</option>
-      <option>5</option>
-      <option>10</option>
-      <option>20</option>
+      <option value='5'>5</option>
+      <option value='10'>10</option>
+      <option value='20'>20</option>
     </select>
 
     <h3>Animation Duration</h3>
     <select id="animationDuration" title="Animation duration" style="width: 130px">
-      <option>500ms</option>
-      <option>1s</option>
-      <option>5s</option>
-      <option selected>10s</option>
-      <option>30s</option>
-      <option>60s</option>
+      <option value='500ms'>500ms</option>
+      <option value='1s'>1s</option>
+      <option value='5s'>5s</option>
+      <option selected value="10s">10s</option>
+      <option value='30s'>30s</option>
+      <option value='60s'>60s</option>
     </select>
   </div>
 </aside>

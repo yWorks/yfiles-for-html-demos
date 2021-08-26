@@ -223,16 +223,16 @@ function newHierarchicLayout(): HierarchicLayout {
 function newLayoutAlgorithm(algorithmName: string): ILayoutAlgorithm {
   let algorithm: MultiStageLayout
   switch (algorithmName) {
-    case 'Tree':
+    case 'tree':
       algorithm = newTreeLayout()
       break
-    case 'Balloon':
+    case 'balloon':
       algorithm = newBalloonLayout()
       break
-    case 'Organic':
+    case 'organic':
       algorithm = newOrganicLayout()
       break
-    case 'Hierarchic':
+    case 'hierarchic':
       algorithm = newHierarchicLayout()
       break
     default:

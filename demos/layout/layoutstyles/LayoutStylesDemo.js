@@ -329,7 +329,7 @@ function getIndexInComboBox(combobox, value) {
  */
 function initializeComboBox(combobox, names) {
   while (combobox.firstChild) {
-    combobox.removeChild(combobox.lastChild)
+    combobox.removeChild(combobox.firstChild)
   }
 
   for (const entry of names) {
@@ -344,7 +344,7 @@ function initializeComboBox(combobox, names) {
     }
     const option = document.createElement('option')
     combobox.add(option)
-    option.label = label
+    option.textContent = label
     if (entry === comboBoxSeparatorItem) {
       option.disabled = true
     } else {
@@ -997,7 +997,7 @@ function addCustomGraphEntry() {
   if (customGraphIdx === -1) {
     const option = document.createElement('option')
     sampleComboBox.add(option)
-    option.label = 'Modified Graph'
+    option.textContent = 'Modified Graph'
     option.value = getNormalizedName(option.label)
     customGraphIdx = sampleComboBox.options.length - 1
   }

@@ -544,7 +544,7 @@ function getPreferredSize(graph) {
   const preferredSize = preferredSizes.get(
     masterGraph.nodes.filter(node => node.tag && node.tag.groupTag === groupTag).firstOrDefault()
   )
-  if (zoomingMode === 'Aspect Ratio of Root' && preferredSize) {
+  if (zoomingMode === 'aspect-ratio' && preferredSize) {
     // if we have a preferred size specified, then the according property on the layout algorithm is configured
     // we do not keep the exact size, but the aspect ratio. the larger side has always size DEFAULT_MAP_SIZE
     if (preferredSize.height > preferredSize.width) {
@@ -563,7 +563,7 @@ function getPreferredSize(graph) {
  */
 function getTilingAlgorithm() {
   const tilingAlgorithm = getElementById('select-tiling-algorithm').value
-  return tilingAlgorithm === 'Squarified' ? TilingPolicy.SQUARIFIED : TilingPolicy.SLICE_AND_DICE
+  return tilingAlgorithm === 'squarified' ? TilingPolicy.SQUARIFIED : TilingPolicy.SLICE_AND_DICE
 }
 
 /**
@@ -575,8 +575,8 @@ function createNodeComparer(graph) {
   const sortingCriterion = getElementById('select-sorting-criterion').value
   const fileDirectoryOrder = getElementById('select-file-directory-order').value
   const ascending = sortingCriterion.indexOf('ascending') !== -1
-  const useNameAsCriterion = sortingCriterion.startsWith('Name')
-  const considerLeafState = fileDirectoryOrder.startsWith('Files')
+  const useNameAsCriterion = sortingCriterion.indexOf('name') === 0
+  const considerLeafState = fileDirectoryOrder.indexOf('files') === 0
   const leavesTrailing = fileDirectoryOrder.indexOf('after') !== -1
   if (useNameAsCriterion) {
     graph.mapperRegistry.createDelegateMapper(

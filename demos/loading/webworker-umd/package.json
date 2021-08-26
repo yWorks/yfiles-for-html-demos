@@ -6,6 +6,6 @@
   "private": true,
   "dependencies": {
     "requirejs": "^2.3.6",
-    "yfiles-umd": "../../../lib-dev/umd/yfiles-umd-24.0.2-dev.tgz"
+    "yfiles-umd": "../../../lib-dev/umd/yfiles-umd-24.0.3-dev.tgz"
   }
 }

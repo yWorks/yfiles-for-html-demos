@@ -140,11 +140,11 @@
 
     <button id="previous-sample" data-command="PreviousSample" title="Previous Sample Graph" class="demo-icon-yIconPrevious" disabled></button>
     <select id="select-sample" data-type="ComboBox" data-command="SelectSample" title="Choose a Sample Graph">
-      <option>Sample: Problem Solving</option>
-      <option>Sample: Student Registration</option>
-      <option>Sample: eCommerce</option>
-      <option>Sample: Computing Factorial</option>
-      <option>Sample: Largest Number</option>
+      <option value="ProblemSolving">Sample: Problem Solving</option>
+      <option value="StudentRegistration">Sample: Student Registration</option>
+      <option value="eCommerce">Sample: eCommerce</option>
+      <option value="ComputingFactorial">Sample: Computing Factorial</option>
+      <option value="LargestNumber">Sample: Largest Number</option>
     </select>
     <button id="next-sample" data-command="NextSample" title="Next Sample Graph" class="demo-icon-yIconNext"></button>
 
@@ -152,23 +152,23 @@
 
     <span>'Yes'-Branch</span> <select id="select-positive-branch-direction" data-command="SelectPositiveBranchDirection"
       title="Choose a preferred direction for edges with 'Yes'-Labels">
-    <option>Same As Flow</option>
-    <option>Flatwise</option>
-    <option>Left In Flow</option>
-    <option>Right In Flow</option>
-    <option selected>Undefined</option>
+    <option value='same-as-flow'>Same As Flow</option>
+    <option value='flatwise'>Flatwise</option>
+    <option value='left-in-flow'>Left In Flow</option>
+    <option value='right-in-flow'>Right In Flow</option>
+    <option selected value="undefined">Undefined</option>
   </select> <span>'No'-Branch</span> <select id="select-negative-branch-direction"
       data-command="SelectNegativeBranchDirection" title="Choose a preferred direction for edges with 'No'-Labels">
-    <option>Same As Flow</option>
-    <option>Flatwise</option>
-    <option>Left In Flow</option>
-    <option>Right In Flow</option>
-    <option selected>Undefined</option>
+    <option value='same-as-flow'>Same As Flow</option>
+    <option value='flatwise'>Flatwise</option>
+    <option value='left-in-flow'>Left In Flow</option>
+    <option value='right-in-flow'>Right In Flow</option>
+    <option selected value="undefined">Undefined</option>
   </select> <span>In-Edge Grouping</span> <select id="select-in-edge-grouping"
       data-command="SelectInEdgeGrouping" title="Choose in which way edges are grouped">
-    <option>None</option>
-    <option>All</option>
-    <option selected>Optimized</option>
+    <option value='none'>None</option>
+    <option value='all'>All</option>
+    <option selected value="optimized">Optimized</option>
   </select> <input type="checkbox" id="allow-flatwise-edges" class="demo-toggle-button labeled" checked/> <label
       for="allow-flatwise-edges">Allow Flatwise Edges</label>
 

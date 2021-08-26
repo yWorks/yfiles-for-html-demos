@@ -159,7 +159,7 @@ export default class EventView {
    * Returns the text of the given message.
    */
   getLogText(message: Message): string {
-    const dateDiff = message.date.getMilliseconds() - this.startDate.getMilliseconds()
+    const dateDiff = message.date.getTime() - this.startDate.getTime()
     // remove hours
     let rest = dateDiff - ((dateDiff / 3600000) | 0) * 3600000
     // calculate minutes

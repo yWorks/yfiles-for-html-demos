@@ -67,7 +67,7 @@ class MarkdownLabelStyleRenderer extends MarkupLabelStyleRenderer {
    * @param {!Font} font
    * @param {!string} text
    * @param {!Size} maxSize
-   * @param {!(TextWrapping|'none'|'character'|'character-ellipsis'|'word'|'word-ellipsis')} wrapping
+   * @param {!TextWrapping} wrapping
    * @param {boolean} rightToLeft
    * @returns {!string}
    */

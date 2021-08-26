@@ -118,11 +118,11 @@ export class SubtreePositionHandler
     this.globalRoot = getRoot(fullGraph)
     this.rootNodeCenter = this.globalRoot.layout.center
 
-    this.subtreeNodes = []
-    this.subtreeEdges = []
-
     // get subtree nodes
-    getSubtree(fullGraph, this.movedNode, this.subtreeNodes, this.subtreeEdges)
+    ;({ nodes: this.subtreeNodes, edges: this.subtreeEdges } = getSubtree(
+      fullGraph,
+      this.movedNode
+    ))
     // get incoming edge of moved node
     const inEdge = getInEdge(this.movedNode, fullGraph)
     // store data at drag start
@@ -219,7 +219,12 @@ export class SubtreePositionHandler
       // set isLeft state
       this.subtreeNodes.forEach(n => (n.tag.isLeft = !isLeft(n)))
       // calculate an automatic layout
-      MindmapLayout.instance.layoutSubtree(graph, this.movedNode)
+      MindmapLayout.instance.layoutSubtree(
+        graph,
+        this.movedNode,
+        this.subtreeNodes,
+        this.subtreeEdges
+      )
     }
   }
 

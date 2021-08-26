@@ -60,12 +60,12 @@ class MarkdownLabelStyleRenderer extends MarkupLabelStyleRenderer {
     return md.render(markdownText)
   }
 
-  addTextElements(
+  protected addTextElements(
     textElement: SVGTextElement,
     font: Font,
     text: string,
     maxSize: Size,
-    wrapping: TextWrapping | 'none' | 'character' | 'character-ellipsis' | 'word' | 'word-ellipsis',
+    wrapping: TextWrapping,
     rightToLeft: boolean
   ): string {
     // call the super implementation with the converted markdown text

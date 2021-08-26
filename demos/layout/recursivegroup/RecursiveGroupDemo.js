@@ -85,17 +85,17 @@ function run(licenseData) {
 async function runLayout() {
   setUIDisabled(true)
 
-  const selectedLayout = document.getElementById('select-sample').value.substring(8)
+  const selectedLayout = document.getElementById('select-sample').value
   const fromSketch = document.getElementById('from-sketch').checked
 
   let layout
   let layoutData
   switch (selectedLayout) {
-    case 'Table':
+    case 'table':
       layout = createTableLayout(fromSketch)
       layoutData = createTableLayoutData()
       break
-    case 'Three-Tier':
+    case 'three-tier':
       layout = createThreeTierLayout(fromSketch)
       layoutData = createThreeTierLayoutData(graphComponent.graph, fromSketch)
       break
@@ -164,7 +164,7 @@ function registerCommands() {
  * @returns {!Promise}
  */
 async function loadSample() {
-  const filename = document.getElementById('select-sample').value.substring(8)
+  const filename = document.getElementById('select-sample').value
   const path = `resources/${filename}.graphml`
 
   const ioHandler = new GraphMLIOHandler()

@@ -2209,34 +2209,6 @@ class AggregationEdge extends BaseClass(IEdge) {
   }
 
   /**
-   * @type {?INode}
-   */
-  get sourceNode() {
-    return this.$sourceNode
-  }
-
-  /**
-   * @type {?INode}
-   */
-  set sourceNode(value) {
-    this.$sourceNode = value
-  }
-
-  /**
-   * @type {?INode}
-   */
-  get targetNode() {
-    return this.$targetNode
-  }
-
-  /**
-   * @type {?INode}
-   */
-  set targetNode(value) {
-    this.$targetNode = value
-  }
-
-  /**
    * @type {!IPort}
    */
   get targetPort() {
@@ -2296,8 +2268,6 @@ class AggregationEdge extends BaseClass(IEdge) {
     this.$graph = graph
     this.$sourcePort = sourcePort
     this.$targetPort = targetPort
-    this.$sourceNode = sourcePort.owner instanceof AggregationNode ? sourcePort.owner : null
-    this.$targetNode = targetPort.owner instanceof AggregationNode ? targetPort.owner : null
     this.$style = style
     this.$bends = new List()
     this.$ports = new List()

@@ -231,6 +231,9 @@
   .demo-right-hidden .demo-sidebar.demo-right {
     right: -100% !important;
   }
+  .demo-left-hidden .demo-sidebar.demo-left {
+    left: -100% !important;
+  }
   .demo-hide-right-when-small:not(.demo-right-hidden) .demo-content {
     right: 0;
   }

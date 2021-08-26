@@ -262,9 +262,7 @@ function initializeGraphDefaults(): void {
  * Loads the sample graph with the given name from the data.
  */
 async function loadGraph(sampleName: string): Promise<void> {
-  const sample =
-    (FlowchartData as any)[sampleName.replace('Sample: ', '').replace(' ', '')] ||
-    FlowchartData.ProblemSolving
+  const sample = (FlowchartData as any)[sampleName] || FlowchartData.ProblemSolving
 
   // clear the graph
   graphComponent.graph.clear()
@@ -357,33 +355,33 @@ async function updateGraph(): Promise<void> {
   switch (select.selectedIndex) {
     default:
     case 0:
-      setComboboxValue('select-positive-branch-direction', 'Undefined')
-      setComboboxValue('select-negative-branch-direction', 'Undefined')
-      setComboboxValue('select-in-edge-grouping', 'Optimized')
+      setComboboxValue('select-positive-branch-direction', 'undefined')
+      setComboboxValue('select-negative-branch-direction', 'undefined')
+      setComboboxValue('select-in-edge-grouping', 'optimized')
       allowFlatwiseEdges.checked = true
       break
     case 1:
-      setComboboxValue('select-positive-branch-direction', 'Same As Flow')
-      setComboboxValue('select-negative-branch-direction', 'Left In Flow')
-      setComboboxValue('select-in-edge-grouping', 'Optimized')
+      setComboboxValue('select-positive-branch-direction', 'same-as-flow')
+      setComboboxValue('select-negative-branch-direction', 'left-in-flow')
+      setComboboxValue('select-in-edge-grouping', 'optimized')
       allowFlatwiseEdges.checked = true
       break
     case 2:
-      setComboboxValue('select-positive-branch-direction', 'Same As Flow')
-      setComboboxValue('select-negative-branch-direction', 'Flatwise')
-      setComboboxValue('select-in-edge-grouping', 'Optimized')
+      setComboboxValue('select-positive-branch-direction', 'same-as-flow')
+      setComboboxValue('select-negative-branch-direction', 'flatwise')
+      setComboboxValue('select-in-edge-grouping', 'optimized')
       allowFlatwiseEdges.checked = true
       break
     case 3:
-      setComboboxValue('select-positive-branch-direction', 'Same As Flow')
-      setComboboxValue('select-negative-branch-direction', 'Flatwise')
-      setComboboxValue('select-in-edge-grouping', 'Optimized')
+      setComboboxValue('select-positive-branch-direction', 'same-as-flow')
+      setComboboxValue('select-negative-branch-direction', 'flatwise')
+      setComboboxValue('select-in-edge-grouping', 'optimized')
       allowFlatwiseEdges.checked = true
       break
     case 4:
-      setComboboxValue('select-positive-branch-direction', 'Flatwise')
-      setComboboxValue('select-negative-branch-direction', 'Flatwise')
-      setComboboxValue('select-in-edge-grouping', 'None')
+      setComboboxValue('select-positive-branch-direction', 'flatwise')
+      setComboboxValue('select-negative-branch-direction', 'flatwise')
+      setComboboxValue('select-in-edge-grouping', 'none')
       allowFlatwiseEdges.checked = false
       break
   }

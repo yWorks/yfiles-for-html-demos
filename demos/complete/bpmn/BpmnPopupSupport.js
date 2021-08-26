@@ -48,7 +48,6 @@ import {
   INodeStyle,
   IPort,
   IPortStyle,
-  List,
   NinePositionsEdgeLabelModel,
   Point,
   Rect,
@@ -840,26 +839,24 @@ export default class BpmnPopupSupport {
  * @param {!Class} enumType
  */
 function populateComboBox(comboBox, enumType) {
-  getEnumNames(enumType).forEach(name => {
+  Enum.getValueNames(enumType).forEach(name => {
     const option = document.createElement('option')
-    option.innerHTML = name
+    option.innerText = getFriendlyName(name)
+    option.value = name
     comboBox.options.add(option)
   })
 }
 
 /**
- * Returns a list containing all values of the given enum type.
- * @param {!Class} enumType
- * @returns {!IEnumerable.<string>}
+ * Returns a readable name for all-caps enum constants.
+ * @param {!string} name
  */
-function getEnumNames(enumType) {
-  // get all numeric values of the enum type...
-  const values = Enum.getValues(enumType)
-  const nameList = new List()
-  for (let i = 0; i < values.length; i++) {
-    const value = values[i]
-    // ... convert the numeric value in the enum value name and add it to the list of enum value names
-    nameList.insert(0, Enum.getName(enumType, value))
-  }
-  return nameList
+function getFriendlyName(name) {
+  // First character in uppercase
+  let result = name.substring(0, 1) + name.substring(1).toLowerCase()
+  // Dashes where necessary
+  result = result.replace(/(sub|non)_/g, '$1-')
+  // Replace underscores with spaces
+  result = result.replace(/_/g, ' ')
+  return result
 }

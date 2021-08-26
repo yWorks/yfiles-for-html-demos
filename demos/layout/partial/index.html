@@ -130,10 +130,10 @@
     <span class="demo-separator"></span>
 
     <select id="select-sample" data-command="SelectSample" title="Choose from predefined samples">
-      <option>Scenario: Hierarchic</option>
-      <option>Scenario: Orthogonal</option>
-      <option>Scenario: Organic</option>
-      <option>Scenario: Circular</option>
+      <option value="hierarchic">Scenario: Hierarchic</option>
+      <option value="orthogonal">Scenario: Orthogonal</option>
+      <option value="organic">Scenario: Organic</option>
+      <option value="circular">Scenario: Circular</option>
     </select>
     <button id="refresh" data-command="Refresh" title="Refresh sample graph" class="demo-icon-yIconReload"></button>
 
@@ -153,38 +153,38 @@
     <div class="demo-properties">
       <div class="demo-form-block"><label for="component-assignment" class="option-label">Component Assignment</label>
         <select id="component-assignment" class="option-element">
-          <option>Single</option>
-          <option>Connected</option>
+          <option value="single">Single</option>
+          <option value="connected">Connected</option>
         </select></div>
       <div class="demo-form-block"><label for="subgraph-layout" class="option-label">Subgraph Layout</label> <select
           id="subgraph-layout" class="option-element">
-        <option>Hierarchic</option>
-        <option>Orthogonal</option>
-        <option>Organic</option>
-        <option>Circular</option>
-        <option>Unchanged</option>
+        <option value="hierarchic">Hierarchic</option>
+        <option value="orthogonal">Orthogonal</option>
+        <option value="organic">Organic</option>
+        <option value="circular">Circular</option>
+        <option value="unchanged">Unchanged</option>
       </select></div>
       <div class="demo-form-block"><label for="subgraph-positioning" class="option-label">Subgraph Positioning</label>
         <select id="subgraph-positioning" class="option-element">
-          <option>Barycenter</option>
-          <option>From Sketch</option>
+          <option value="barycenter">Barycenter</option>
+          <option value="from-sketch">From Sketch</option>
         </select></div>
       <div class="demo-form-block"><label for="edge-routing-style" class="option-label">Edge Routing Style</label>
         <select id="edge-routing-style" class="option-element">
-          <option>Automatic</option>
-          <option>Orthogonal</option>
-          <option>Straightline</option>
-          <option>Organic</option>
-          <option>Octilinear</option>
+          <option value='automatic'>Automatic</option>
+          <option value='orthogonal'>Orthogonal</option>
+          <option value='straightline'>Straightline</option>
+          <option value='organic'>Organic</option>
+          <option value='octilinear'>Octilinear</option>
         </select></div>
       <div class="demo-form-block"><label for="layout-orientation" class="option-label">Layout Orientation</label>
         <select id="layout-orientation" class="option-element">
-          <option>None</option>
-          <option>Auto-detect</option>
-          <option>Top to Bottom</option>
-          <option>Bottom to Top</option>
-          <option>Left to Right</option>
-          <option>Right to Left</option>
+          <option value='none'>None</option>
+          <option value='auto-detect'>Auto-detect</option>
+          <option value='top-to-bottom'>Top to Bottom</option>
+          <option value='bottom-to-top'>Bottom to Top</option>
+          <option value='left-to-right'>Left to Right</option>
+          <option value='right-to-left'>Right to Left</option>
         </select></div>
       <div class="demo-form-block">
         <label for="node-distance" class="option-label">Minimum Node Distance</label> <input type="number"

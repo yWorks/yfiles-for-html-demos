@@ -139,7 +139,7 @@ function configureUI() {
     frequency: number,
     magnitude: number
   ) {
-    animationFrequencySelect.value = `${frequency}Hz`
+    animationFrequencySelect.value = `${frequency}`
     animationMagnitudeSelect.value = `${magnitude}`
     animationFrequencySelect.disabled = !enable
     animationMagnitudeSelect.disabled = !enable
@@ -148,7 +148,7 @@ function configureUI() {
     if (enable) {
       animationDurationSelect.value = '10s'
     } else {
-      // for fade animations, a shorter animation duration is more niticeable
+      // for fade animations, a shorter animation duration is more noticeable
       animationDurationSelect.value = '1s'
     }
   }
@@ -383,7 +383,7 @@ function getAnimationConfiguration(): {
     .value as FadeDirection
   const fadeType = document.querySelector<HTMLSelectElement>('#fadeType')!.value as FadeType
   const animationFrequency = parseInt(
-    document.querySelector<HTMLSelectElement>('#animationFrequency')!.value.replace('Hz', '')
+    document.querySelector<HTMLSelectElement>('#animationFrequency')!.value
   )
   const animationMagnitude = parseInt(
     document.querySelector<HTMLSelectElement>('#animationMagnitude')!.value

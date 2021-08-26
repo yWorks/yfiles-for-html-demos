@@ -8,7 +8,7 @@
   "main": "webpack-demo.js",
   "dependencies": {
     "color": "3.1.3",
-    "yfiles": "../../../lib-dev/es-modules/yfiles-24.0.2-dev.tgz"
+    "yfiles": "../../../lib-dev/es-modules/yfiles-24.0.3-dev.tgz"
   },
   "scripts": {
     "postinstall": "node -e \"require('fs-extra').copySync('../../utils/Workarounds.js', './src/utils/Workarounds.js')\"",
